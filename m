@@ -1,97 +1,117 @@
 From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [RFC PATCH 1/5] gpio: gpiolib: Add core support for maintaining
- GPIO values on reset
-Date: Fri, 20 Oct 2017 19:02:27 +1030
-Message-ID: <1508488347.24322.51.camel@aj.id.au>
+Subject: Re: [RFC PATCH 3/5] gpio: gpiolib: Add chardev support for
+ maintaining GPIO values on reset
+Date: Fri, 20 Oct 2017 19:32:53 +1030
+Message-ID: <1508490173.24322.53.camel@aj.id.au>
 References: <20171020033727.21557-1-andrew@aj.id.au>
-         <20171020033727.21557-2-andrew@aj.id.au>
-         <CACRpkda-7-uM5x4kbNXkx3F7F4VTZtTvXfys5VPFb1YiVDo1+g@mail.gmail.com>
-         <CACRpkdaW5jMEh_OR2oiy_Bc-6Cb+GM1Uap+1u2T2hw85CwBh3g@mail.gmail.com>
+         <20171020033727.21557-4-andrew@aj.id.au>
+         <CACRpkdY4F-ocFxomLEsVyGA0odGooWysQq5MHi9qwUt6E_VDzA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-ZSkrhS+dG0skM+wwegTq"
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaW5jMEh_OR2oiy_Bc-6Cb+GM1Uap+1u2T2hw85CwBh3g@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
+        protocol="application/pgp-signature"; boundary="=-K4mhhnvm7upcPcUWi8ee"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:50561 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752302AbdJTJDE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 20 Oct 2017 05:03:04 -0400
+In-Reply-To: <CACRpkdY4F-ocFxomLEsVyGA0odGooWysQq5MHi9qwUt6E_VDzA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Michael Welling <mwelling@emacinc.com>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Joel Stanley <joel@jms.id.au>, Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@opensource.cirrus.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>, linux-aspeed@lists.ozlabs.org
-List-Id: linux-gpio@vger.kernel.org
 
 
---=-ZSkrhS+dG0skM+wwegTq
+--=-K4mhhnvm7upcPcUWi8ee
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2017-10-20 at 09:43 +0200, Linus Walleij wrote:
-> On Fri, Oct 20, 2017 at 9:17 AM, Linus Walleij <linus.walleij@linaro.org>=
- wrote:
-> > > > On Fri, Oct 20, 2017 at 5:37 AM, Andrew Jeffery <andrew@aj.id.au> w=
-rote:
+On Fri, 2017-10-20 at 09:27 +0200, Linus Walleij wrote:
+> I paged Bartosz and Michael on this, they are experts on the use cases fo=
+r
+> the character device and their opinions are likely more valuable than min=
+e.
+>=20
+> > On Fri, Oct 20, 2017 at 5:37 AM, Andrew Jeffery <andrew@aj.id.au> wrote=
+:
+> > Similar to devicetree support, add flags and mappings to expose reset
+> > tolerance configuration through the chardev interface.
 > >=20
-> > > GPIO state reset tolerance is implemented in gpiolib through the
-> > > addition of a new pinconf parameter. With that, some renaming of help=
-ers
-> > > is done to clarify the scope of the already existing
-> > > gpiochip_line_is_persistent(), as it's now ambiguous as to whether th=
-at
-> > > means on suspend, reset or both.
-> >=20
-> > Isn't it most reasonable to say persistance covers both cases, reset
-> > and/or sleep? This seems a bit like overdefined.
+> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 >=20
-> I should also add: right now persistance is defined in negative terms,
-> you can supply the flag "may lose value", which means the subsystem
-> by default, and driver by default, will try to keep values persistent acr=
-oss
-> sleep.
+> (...)
 >=20
-> Then it is possible to opt in for not doing so. (Usually to save power I
-> think.)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0* Unconditionally configure reset tolerance, as =
+it's possible
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0* that the tolerance flag itself becomes toleran=
+t to resets.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0* Thus it could remain set from a previous envir=
+onment, but
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0* the current environment may not expect it so.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0*/
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0ret =3D gpiod_set_reset_tolerant(desc,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0!!(lflags & GPIOHANDLE_REQUEST_RE=
+SET_TOLERANT));
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0if (ret < 0)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0goto o=
+ut_free_descs;
 >=20
-> I think that especially for userspace use cases, saving power should
-> not really be the concern, but correct me if I'm wrong. I am thinking
-> of a box with a DC plug wired up to a factory line here.
+> First, as noted in the first patch, IMO we should just go for persistance=
+,
+> i.e. you want to flag to the system to keep the line persistent in any ca=
+se,
+> no matter if the system goes to sleep or resets.
 >=20
-> What we have in the Arizona driver is an opt-in where the DT can
-> say "don't preserve the value=C2=A0=C2=A0this line during system sleep" i=
-.e. "lay lose
-> value" and we can extend that flag to mean "don't preserve this line
-> during reset either" but by default assume that we should.
+> So the usecase is going to be a control system or similar, a makerspace
+> project, an industrial product of some kind, driving GPIO from userspace.
+>=20
+> I don't see it as helpful to give userspace control over whether the line
+> is persistent or not. It is more reasonable to assume persistance for
+> userspace use cases, don't you think? Whether the system goes to sleep
+> or the gpiochip resets should not make a door suddenly close or the
+> lights in the christmas tree go out, right? I think if the gpiochip suppo=
+rts
+> persistance of any kind, we should try to use it and not have userspace
+> provide flags for that.
 
-Yeah, the preserve polarity was another thing I debated given the
-current example with the Arizona driver. Not preserving is the default
-for the Aspeed hardware, so that ended up influencing my choice. Not
-that implementation details should necessarily influence interface
-design, but it was at least more than a coin toss.
-
-I don't have anything specific against preserving by default, just my
-gut instinct and the hardware went the other way. As long as we expose
-the option to opt out, which the additions for the Arizona already do.
-
-Cheers,
+Right. I guess the counter argument to your examples is if the gpio is
+controlling any active process that we don't want to continue if we've
+lost the capacity to monitor some other inputs (some kind of dead-man's=20
+switch). But maybe the argument is that should be implemented in the
+kernel anyway?
 
 Andrew
---=-ZSkrhS+dG0skM+wwegTq
+--=-K4mhhnvm7upcPcUWi8ee
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCgAGBQJZ6bSbAAoJEJ0dnzgO5LT5UUEP/RfdSznqJGJ+zlAtZ58qjsct
-qRHU+r+//EDTqrv6ukCG5cY1R7invTIfP4e0+ajMz7hJ9DUhifWsc2L5efUkIMpR
-mctcseROL77TI0uGtpPuW5G9xxCmxYpbE/woOtNdtQlGLgIQ+DawO+W8zvWBhsut
-EjhVAEfQyvrK5q7b5D45OkH2J9ejO/k0GxpNZs66FGxgC41O6AGj4ZfUBSgBdyqm
-HNjH9uLyfs4JR9bXptsdGTTCJAxog02UWLmROpGfiwz0ZwN6cdnJSl4dcu1Swn8D
-4o+UPAg4j1bqHiV7dWIitJEM+cn9c0Ybpt1VPS1/WF6aGggubws89e9MnrNimrVS
-k7qS3A7WRQJ3MPlBAwNLwfjPa+eBDBw5t8wZSDXSvXp37+mwHDgQotA9jZAR4Jqj
-BdUAxHAy5yBIgopwo+G0XdHt/izkGGnoZBDToNBO67kD8Ct1lEDAjHn0ljal1k3l
-heRjmkN2PiJ55d9QjF7qe/GbT6DZST5QiC1lOdSlg5f9G9Gm4KiyfSmkxneKYHTF
-aERByeN/doqdYPtQ7LxlpBgN7bql9UBCn2I8PZimU1+zZu75no1F5eH8IFOV7vpJ
-JWbHgg7JspuZY98pQMoFV6ASbJmTiQiWYMimm4ybXSb4Btdhgx0EJDOGaBi0r9ls
-BzTFqMLL678jOVu0EkNA
-=4duz
+iQIcBAABCgAGBQJZ6bu9AAoJEJ0dnzgO5LT5WwcP/3taBkLhJi7NTeYM4U3/kvuZ
+pAnUi43H5rLbM7Ynx0eXZ0OHlPHRJBZDpYZmCfqdqSX+8hRELJNIlkj0u7+uXfAd
+Dnn9x4LTM/qS56/AedpDePgfkYGffKvG5cWF+0ZSmiuRqlExlyQKPaFXH05B1zq1
+ChtLY8WSBJayx46ZwzX3sqCltvjiR878Mo7H5LnpScrzvOwJ3MGOKmRODF2HZ9LR
+tnDsSiMPXsbXNGFSMerPhikmdY4vFSjx+eD431PNUfLfeaJbYb6Q2EYvWDel3b0u
+Bx8BoVrKXvIcq3kFOK6DrR528GLexI2yhoPRAb2dfu+5jQXQDsm68Q3K7HKhG8ly
+H7aqrkEtDdssgtHo+yzEPdJgt8dXkPdr03QyOwQDo7h/cPZvcJ2wpnauYirIhSp/
+1Oc6sEYWTc3QXxL6vo5g0cyTBbiiRE454wgvlmg3WXpejBxQm+ITQSCA1Z4h33ZE
+WMhYrtnN9aszORegK4nCrasVy5Wrpw1NdEGgWz1bzmkn9LMgmjkM3kdqamHikVL1
+Lgcv3Ttk/s9Y43d2T5yVB+lRz491h7wJKULFMc+7oKrB3OkbTvDkyXEWEbIC2eKQ
+l6imHChFkNy4KwK/kXXJ0xQkFXDuEDFMdPKk0ktMTkrmOvGJyaIbQ2UUQqUx3xxn
+kNO/AZaSuhyVZq8g2BmZ
+=WhCU
 -----END PGP SIGNATURE-----
 
---=-ZSkrhS+dG0skM+wwegTq--
+--=-K4mhhnvm7upcPcUWi8ee--
 
