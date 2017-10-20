@@ -1,45 +1,66 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V1 2/2] pinctrl: qcom: spmi-gpio: Set is_enabled flag in set_mux()
-Date: Fri, 20 Oct 2017 11:51:50 +0200
-Message-ID: <CACRpkdZ65Myn7QdFwAqTrt9T+7-1FDu9DBqCz0VZizSY7BRctA@mail.gmail.com>
-References: <20171013061550.996-1-fenglinw@codeaurora.org> <20171013061550.996-3-fenglinw@codeaurora.org>
- <20171016222955.GQ1165@minitux> <78f23ed8-7e3e-ffc9-bdbe-e10622e0c757@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 00/14] pinctrl: sh-pfc: Add suspend/resume support
+Date: Fri, 20 Oct 2017 11:56:50 +0200
+Message-ID: <CAMuHMdU3FjCv6va8yeNVOhnOD00FDo618JDtyu6gZFO=rd=bUQ@mail.gmail.com>
+References: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <78f23ed8-7e3e-ffc9-bdbe-e10622e0c757@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Fenglin Wu <fenglinw@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, David Collins <collinsd@codeaurora.org>, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1508167679-21155-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 17, 2017 at 6:36 AM, Fenglin Wu <fenglinw@codeaurora.org> wrote=
-:
+On Mon, Oct 16, 2017 at 5:27 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and their
+> pinctrl register state is lost.  Note that as the boot loader skips most
+> initialization after system resume, pinctrl register state differs from
+> the state encountered during normal system boot, too.
+>
+> To fix this, save all GPIO and peripheral function select, module
+> select, drive strength control, bias, and other I/O control registers
+> during system suspend, and restore them during resume.
+>
+> This series consists of 4 parts:
+>   - Patches 1-2 are cleanups,
+>   - Patches 3-9 introduce a generic way to describe bias (pull-up/down)
+>     registers, and converts the R-Car Gen3 and R-Car M1A bias support
+>     over,
+>   - Patches 10-13 introduce a generic way to describe various IOCTRL
+>     registers, and converts the R-Car Gen3 I/O voltage support over,
+>   - Patch 14 implements the actual suspend/resume code, using the
+>     generic bias and IOCTRL support introduced earlier.
+>
+> To avoid overhead on platforms not needing it, the suspend/resume code
+> has a build time dependency on sleep and PSCI support, and a runtime
+> dependency on PSCI.
+>
+> Due to the more compact description of bias registers, this series
+> actually decreases kernel size (by ca. 112 bytes for renesas_defconfig,
+> and ca. 60 bytes for shmobile_defconfig).
+>
+> Changes compared to v1:
+>   - Add Reviewed-by,
+>   - Shorten sh_pfc_{read,write}_reg() function names to
+>     sh_pfc_{read,write}(),
+>   - Use ARRAY_SIZE() instead of hardcoded constant 32,
+>   - Add curly braces to nested for statements,
+>   - Add a sentinel comment, to make it more explicit that a last zero
+>     entry is required in sh_pfc_soc_info.bias_regs[] arrays,
+>
+> I plan to queue this in sh-pfc-for-v4.15.
 
-> I am not sure if this is valid case but it would happen: The
-> hardware or the sw prior to linux kernel has the default setting of the
-> function and config for one GPIO but we need to keep it disabled until
-> the consumer request it, in this case, we just need to define the pinmux
-> and ignore the pinconf definition in its device node.
+Done.
 
-This firmware-kernel partitioning of responsibilities makes me nervous
-every time it happens. Who's in charge really? Who fixes bugs? Firmware?
-Linux? Linux overriding firmware? Linux overriding firmware on special
-firmware revisions? Linux overriding firmware on special firmware revisions
-that cannot be detected and instead needs to be passed as cmdline
-parmeters?
+Gr{oetje,eeting}s,
 
-This kind of stuff gives me the creeps and just a general feeling of not
-being in control having very little clue as to what is really going on in
-the system.
+                        Geert
 
-But I guess that is essentially the working assumption for things like
-ACPI and other behind-my-back firmware: don't worry be happy.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Anyways, it's up to Bj=C3=B6rn to establish what is best for the qcom pin c=
-ontrol,
-I'm just gonna accept whatever he ACKs. Just rambling.
-
-Yours,
-Linus Walleij
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
