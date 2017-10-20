@@ -1,117 +1,45 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [RFC PATCH 3/5] gpio: gpiolib: Add chardev support for
- maintaining GPIO values on reset
-Date: Fri, 20 Oct 2017 19:32:53 +1030
-Message-ID: <1508490173.24322.53.camel@aj.id.au>
-References: <20171020033727.21557-1-andrew@aj.id.au>
-         <20171020033727.21557-4-andrew@aj.id.au>
-         <CACRpkdY4F-ocFxomLEsVyGA0odGooWysQq5MHi9qwUt6E_VDzA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V1 2/2] pinctrl: qcom: spmi-gpio: Set is_enabled flag in set_mux()
+Date: Fri, 20 Oct 2017 11:51:50 +0200
+Message-ID: <CACRpkdZ65Myn7QdFwAqTrt9T+7-1FDu9DBqCz0VZizSY7BRctA@mail.gmail.com>
+References: <20171013061550.996-1-fenglinw@codeaurora.org> <20171013061550.996-3-fenglinw@codeaurora.org>
+ <20171016222955.GQ1165@minitux> <78f23ed8-7e3e-ffc9-bdbe-e10622e0c757@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-K4mhhnvm7upcPcUWi8ee"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:50561 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752302AbdJTJDE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 20 Oct 2017 05:03:04 -0400
-In-Reply-To: <CACRpkdY4F-ocFxomLEsVyGA0odGooWysQq5MHi9qwUt6E_VDzA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Michael Welling <mwelling@emacinc.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Joel Stanley <joel@jms.id.au>, Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@opensource.cirrus.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>, linux-aspeed@lists.ozlabs.org
-
-
---=-K4mhhnvm7upcPcUWi8ee
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <78f23ed8-7e3e-ffc9-bdbe-e10622e0c757@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Fenglin Wu <fenglinw@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, David Collins <collinsd@codeaurora.org>, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org
+List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 2017-10-20 at 09:27 +0200, Linus Walleij wrote:
-> I paged Bartosz and Michael on this, they are experts on the use cases fo=
-r
-> the character device and their opinions are likely more valuable than min=
-e.
->=20
-> > On Fri, Oct 20, 2017 at 5:37 AM, Andrew Jeffery <andrew@aj.id.au> wrote=
+On Tue, Oct 17, 2017 at 6:36 AM, Fenglin Wu <fenglinw@codeaurora.org> wrote=
 :
-> > Similar to devicetree support, add flags and mappings to expose reset
-> > tolerance configuration through the chardev interface.
-> >=20
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
->=20
-> (...)
->=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0* Unconditionally configure reset tolerance, as =
-it's possible
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0* that the tolerance flag itself becomes toleran=
-t to resets.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0* Thus it could remain set from a previous envir=
-onment, but
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0* the current environment may not expect it so.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0*/
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0ret =3D gpiod_set_reset_tolerant(desc,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0!!(lflags & GPIOHANDLE_REQUEST_RE=
-SET_TOLERANT));
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0if (ret < 0)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0goto o=
-ut_free_descs;
->=20
-> First, as noted in the first patch, IMO we should just go for persistance=
-,
-> i.e. you want to flag to the system to keep the line persistent in any ca=
-se,
-> no matter if the system goes to sleep or resets.
->=20
-> So the usecase is going to be a control system or similar, a makerspace
-> project, an industrial product of some kind, driving GPIO from userspace.
->=20
-> I don't see it as helpful to give userspace control over whether the line
-> is persistent or not. It is more reasonable to assume persistance for
-> userspace use cases, don't you think? Whether the system goes to sleep
-> or the gpiochip resets should not make a door suddenly close or the
-> lights in the christmas tree go out, right? I think if the gpiochip suppo=
-rts
-> persistance of any kind, we should try to use it and not have userspace
-> provide flags for that.
 
-Right. I guess the counter argument to your examples is if the gpio is
-controlling any active process that we don't want to continue if we've
-lost the capacity to monitor some other inputs (some kind of dead-man's=20
-switch). But maybe the argument is that should be implemented in the
-kernel anyway?
+> I am not sure if this is valid case but it would happen: The
+> hardware or the sw prior to linux kernel has the default setting of the
+> function and config for one GPIO but we need to keep it disabled until
+> the consumer request it, in this case, we just need to define the pinmux
+> and ignore the pinconf definition in its device node.
 
-Andrew
---=-K4mhhnvm7upcPcUWi8ee
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+This firmware-kernel partitioning of responsibilities makes me nervous
+every time it happens. Who's in charge really? Who fixes bugs? Firmware?
+Linux? Linux overriding firmware? Linux overriding firmware on special
+firmware revisions? Linux overriding firmware on special firmware revisions
+that cannot be detected and instead needs to be passed as cmdline
+parmeters?
 
------BEGIN PGP SIGNATURE-----
+This kind of stuff gives me the creeps and just a general feeling of not
+being in control having very little clue as to what is really going on in
+the system.
 
-iQIcBAABCgAGBQJZ6bu9AAoJEJ0dnzgO5LT5WwcP/3taBkLhJi7NTeYM4U3/kvuZ
-pAnUi43H5rLbM7Ynx0eXZ0OHlPHRJBZDpYZmCfqdqSX+8hRELJNIlkj0u7+uXfAd
-Dnn9x4LTM/qS56/AedpDePgfkYGffKvG5cWF+0ZSmiuRqlExlyQKPaFXH05B1zq1
-ChtLY8WSBJayx46ZwzX3sqCltvjiR878Mo7H5LnpScrzvOwJ3MGOKmRODF2HZ9LR
-tnDsSiMPXsbXNGFSMerPhikmdY4vFSjx+eD431PNUfLfeaJbYb6Q2EYvWDel3b0u
-Bx8BoVrKXvIcq3kFOK6DrR528GLexI2yhoPRAb2dfu+5jQXQDsm68Q3K7HKhG8ly
-H7aqrkEtDdssgtHo+yzEPdJgt8dXkPdr03QyOwQDo7h/cPZvcJ2wpnauYirIhSp/
-1Oc6sEYWTc3QXxL6vo5g0cyTBbiiRE454wgvlmg3WXpejBxQm+ITQSCA1Z4h33ZE
-WMhYrtnN9aszORegK4nCrasVy5Wrpw1NdEGgWz1bzmkn9LMgmjkM3kdqamHikVL1
-Lgcv3Ttk/s9Y43d2T5yVB+lRz491h7wJKULFMc+7oKrB3OkbTvDkyXEWEbIC2eKQ
-l6imHChFkNy4KwK/kXXJ0xQkFXDuEDFMdPKk0ktMTkrmOvGJyaIbQ2UUQqUx3xxn
-kNO/AZaSuhyVZq8g2BmZ
-=WhCU
------END PGP SIGNATURE-----
+But I guess that is essentially the working assumption for things like
+ACPI and other behind-my-back firmware: don't worry be happy.
 
---=-K4mhhnvm7upcPcUWi8ee--
+Anyways, it's up to Bj=C3=B6rn to establish what is best for the qcom pin c=
+ontrol,
+I'm just gonna accept whatever he ACKs. Just rambling.
 
+Yours,
+Linus Walleij
