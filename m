@@ -1,60 +1,55 @@
-From: Christian Lamparter <chunkeey-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv4 2/2] Add a GPIO driver for Altera FPGA Manager Fabric I/O
-Date: Fri, 20 Oct 2017 21:08:18 +0200
-Message-ID: <4519589.dXStasooJK@debian64>
-References: <AM5PR0701MB26576FCB30CDCA6F989C9B80E4420@AM5PR0701MB2657.eurprd07.prod.outlook.com> <CACRpkdZXaTk-+LMcV8bZTg0bZ9cPxORHpXNL7m+bwnvr57yJ9A@mail.gmail.com> <AM5PR0701MB26576FBB8EDEF83F3AA82B89E4430@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+From: Bernd Edlinger <bernd.edlinger-PkbjNfxxIASELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCHv4 2/2] Add a GPIO driver for Altera FPGA Manager Fabric
+ I/O
+Date: Fri, 20 Oct 2017 20:05:25 +0000
+Message-ID: <AM5PR0701MB2657A43F0E553624BCFD5781E4430@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+References: <AM5PR0701MB26576FCB30CDCA6F989C9B80E4420@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+ <CACRpkdZXaTk-+LMcV8bZTg0bZ9cPxORHpXNL7m+bwnvr57yJ9A@mail.gmail.com>
+ <AM5PR0701MB26576FBB8EDEF83F3AA82B89E4430@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+ <4519589.dXStasooJK@debian64>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AM5PR0701MB26576FBB8EDEF83F3AA82B89E4430-drxRBzqxKr3KnPtvPVqCtTMcllmSiLMWnBOFsp37pqbUKgpGm//BTAC/G2K4zDHf@public.gmane.org>
+In-Reply-To: <4519589.dXStasooJK@debian64>
+Content-Language: en-US
+Content-ID: <DCAD84C9A580A6429568790DCDE7B639-MxyWWZKIsxacE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bernd Edlinger <bernd.edlinger-PkbjNfxxIASELgA04lAiVw@public.gmane.org>
+To: Christian Lamparter <chunkeey-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Friday, October 20, 2017 5:48:11 PM CEST Bernd Edlinger wrote:
-> On 10/20/17 18:45, Linus Walleij wrote:
-> > On Fri, Oct 20, 2017 at 4:40 PM, Bernd Edlinger
-> > <bernd.edlinger-PkbjNfxxIASELgA04lAiVw@public.gmane.org> wrote:
-> >> On 10/20/17 10:10, Linus Walleij wrote:
-> > 
-> >>>> +       err = bgpio_init(&port->bgc, gpio->dev, 4, dat, NULL, NULL,
-> >>>> +                        NULL, NULL, 0);
-> >>>
-> >>> But all you add is input-only GPIO chips. Also for the output ports.
-> >>>
-> >>
-> >> Well actually this allows both input and output,
-> >> but while the input port could be written by accident,
-> >> the hardware does the right thing and ignores the write cycle.
-> >>
-> >> The other parameters of bgpio_input are for devices with
-> >> explicit set- and reset-signals, and configurable
-> >> output-direction etc, which I don't have.
-> > 
-> > Ah! You're right. With just one register it becomes one of these that
-> > read and write into that register, simply. Sorry for my ignorance.
-> > 
-> > I would prefer if you set the flag BGPIOF_NO_OUTPUT on the input
-> > only version though. Semantics may matter to the mmio gpio core.
-> > 
-> 
-> Ah, thanks, that's a good suggestion.
-> 
-> I will do that and send an updated patch.
-Wait.
-
-I had the same comment about this earlier and a few more suggestions
-to move the driver to gpio-mmio's dt. Didn't you read the mail?
-
-<https://marc.info/?l=linux-gpio&m=150678737724132&w=2>
-
-It made it to the list archive, so I'm pretty sure this got delivered
-to you as well.
-
-Regards,
-Christian
+T24gMTAvMjAvMTcgMjE6MDgsIENocmlzdGlhbiBMYW1wYXJ0ZXIgd3JvdGU6DQo+IFdhaXQuDQo+
+IA0KPiBJIGhhZCB0aGUgc2FtZSBjb21tZW50IGFib3V0IHRoaXMgZWFybGllciBhbmQgYSBmZXcg
+bW9yZSBzdWdnZXN0aW9ucw0KPiB0byBtb3ZlIHRoZSBkcml2ZXIgdG8gZ3Bpby1tbWlvJ3MgZHQu
+IERpZG4ndCB5b3UgcmVhZCB0aGUgbWFpbD8NCj4gDQo+IDxodHRwczovL21hcmMuaW5mby8/bD1s
+aW51eC1ncGlvJm09MTUwNjc4NzM3NzI0MTMyJnc9Mj4NCj4gDQo+IEl0IG1hZGUgaXQgdG8gdGhl
+IGxpc3QgYXJjaGl2ZSwgc28gSSdtIHByZXR0eSBzdXJlIHRoaXMgZ290IGRlbGl2ZXJlZA0KPiB0
+byB5b3UgYXMgd2VsbC4NCj4gDQoNCkhpLA0KDQpsb29rcyBsaWtlIEkgb3Zlcmxvb2tlZCB5b3Vy
+IG1lc3NhZ2UsIHNvcnJ5Lg0KDQogPiBIbSwgSXMgaXQgcG9zc2libGUgdG8gZGlmZmVyZW5jaWF0
+ZSBpdCBmcm9tIGEgInN5c2NvbiIgZGV2aWNlPw0KDQpUaGlzIGlzIG5vdCBhIHJlZ2lzdGVyIHJl
+Z2lvbiBjb250YWluaW5nIGEgc2V0IG9mIG1pc2NlbGxhbmVvdXMNCnJlZ2lzdGVycywgd2hpY2gg
+YXJlIG5vdCBjb2hlc2l2ZSBlbm91Z2ggdG8gcmVwcmVzZW50IGFzIGFueSBzcGVjaWZpYw0KdHlw
+ZSBvZiBkZXZpY2UuICBBdCBsZWFzdCBub3QgaG93IEkgdW5kZXJzdGFuZCB0aGUgdGVybS4NCg0K
+VGhhdCB3b3VsZCBtZWFuIHVucmVsYXRlZCBidXQgaGFyZHdpcmVkIGZ1bmN0aW9ucyB0aGF0IHNo
+YXJlDQp0aGUgc2FtZSByZWdpc3Rlci4gIFRoZSB2YXJpb3VzIGZ1bmN0aW9ucyB3b3VsZCBiZSBm
+aXhlZCBhbmQgZG9jdW1lbnRlZA0KaW4gdGhlIG1hbnVhbC4NCg0KVGhlIGRpZmZlcmVuY2UgaXMg
+dGhhdCB0aGVyZSBpcyBubyBmaXhlZCBmdW5jdGlvbiBhdCBhbGwsDQpsaWtlIGluIHRoZSBjYXNl
+IG9mIGEgSS9PIHBpbiB3aGVyZSB0aGUgc2lnbmFsIGlzIHJvdXRlZCBvbiB0aGUgUENCDQp0byBz
+b21lIGV4dGVybmFsIGRldmljZS4NCg0KSW5zdGVhZCB0aGUgc2lnbmFscyBhcmUgcm91dGVkIHRo
+cm91Z2ggdGhlIGludGVybmFsIGludGVyY29ubmVjdA0KdG8gbG9naWMgZnVuY3Rpb25zIG9uIHRo
+ZSBGUEdBLg0KDQogPiBUaGUgZHJpdmVyIHNlZW1kIGZhaXJseSBzaW1wbGUuIFNvLCBZb3UgY291
+bGQgYWN0dWFsbHkgZ2V0DQogPiBhd2F5IHdpdGgganVzdCBhZGRpbmcgdGhlICJhbHRyLGZwZ2Ft
+Z3ItZ3BpbyIgY29tcGF0aWJsZSBzdHJpbmcNCiA+IHRvIGdwaW8tbW1pby5jJ3MgYmdwaW9fb2Zf
+bWF0Y2ggc3RydWN0IGF0IFswXSBhbmQgY2hhbmdlIHRoZSBkdA0KID4gdG8gc29tZXRoaW5nIGxp
+a2UgdGhpczoNCg0KVGhpcyBzdHJ1Y3R1cmUgZG9lcyBub3QgcmVmbGVjdCB0aGUgaW50ZXJuYWwg
+cmVnaXN0ZXIgc3RydWN0dXJlIG9mIHRoZQ0KRlBHQSBNYW5hZ2VyJ3MgSS9PIHJlZ2lzdGVyIGJs
+b2NrIGFueSBtb3JlLg0KDQpJIHRoaW5rIHRoaXMgY291bGQgb2YgY291cnNlIGJlIGEgY29tcGxl
+dGVseSBnZW5lcmljIGRyaXZlciwgaW4gdGhhdA0KY2FzZSBJIHNlZSBubyBuZWVkIHRvIHVzZSBh
+IHN0cmluZyBsaWtlICJhbHRyLGZwZ2FtZ3ItZ3BpbyIgYXQgYWxsLA0KbWF5YmUganVzdCAiZ2Vu
+ZXJpYy1ncGlvIi4NCg0KSSB3b3VsZCBzdGlsbCBzZWUgYSB2YWx1ZSBpbiBoYXZpbmcgYSBzcGVj
+aWZpYyBkcml2ZXIgZm9yIHRoaXMNCnNwZWNpZmljIGhhcmR3YXJlLg0KDQpCdXQgaXMgdGhpcyBk
+cml2ZXIgaXMgdG9vIHNpbXBsZSwgdG8gYmUgYWNjZXB0YWJsZT8NCg0KDQpCZXJuZC4NCg==
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
