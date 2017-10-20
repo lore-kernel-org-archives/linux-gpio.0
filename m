@@ -1,125 +1,218 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: mpc8xxx: Do not reverse bits using bgpio
-Date: Fri, 20 Oct 2017 16:14:13 +0200
-Message-ID: <20171020141413.29459-1-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH] gpio: mmio: Make pin2mask() a private business
+Date: Fri, 20 Oct 2017 16:36:05 +0200
+Message-ID: <20171020143605.18689-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:50345 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbdJTOQV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Oct 2017 10:16:21 -0400
-Received: by mail-lf0-f65.google.com with SMTP id a132so13366628lfa.7
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Oct 2017 07:16:20 -0700 (PDT)
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44941 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752839AbdJTOiM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Oct 2017 10:38:12 -0400
+Received: by mail-lf0-f66.google.com with SMTP id 75so13447829lfx.1
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Oct 2017 07:38:11 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Liu Gang <Gang.Liu@nxp.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <anton@enomsg.org>
 
-The MPC8xxx driver is always instantiating its generic GPIO functions
-with the flag BGPIOF_BIG_ENDIAN. This means "big-endian bit order"
-and means the bits representing the GPIO lines in the registers are
-reversed around 31 bits so line 0 is at bit 31 and so forth down to
-line 31 in bit 0.
+The vtable call pin2mask() was introducing a vtable function call
+in every gpiochip callback for a generic MMIO GPIO chip. This was
+not exactly efficient. (Maybe link-time optimization could get rid of
+it, I don't know.)
 
-Instead of looping into the generic MMIO gpio to do the simple
-calculation of a bitmask, through a vtable call with two parameters
-likely using stack frames etc (unless the compiler optimize it)
-and obscuring the view for the programmer, let's just open-code
-what the call does. This likely executes faster, saves space and
-makes the code easier to read.
+After removing all external calls into this API we can make it a
+boolean flag in the struct gpio_chip call and sink the function into
+the gpio-mmio driver yielding encapsulation and potential speedups.
 
-Cc: Liu Gang <Gang.Liu@nxp.com>
-Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Cc: Anton Vorontsov <anton@enomsg.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-mpc8xxx.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-mmio.c    | 45 +++++++++++++++++++--------------------------
+ include/linux/gpio/driver.h |  8 ++++----
+ 2 files changed, 23 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 8c93dec498fa..ff5bf9c5dcec 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -21,6 +21,7 @@
- #include <linux/slab.h>
- #include <linux/irq.h>
- #include <linux/gpio/driver.h>
-+#include <linux/bitops.h>
- 
- #define MPC8XXX_GPIO_PINS	32
- 
-@@ -44,6 +45,16 @@ struct mpc8xxx_gpio_chip {
- 	unsigned int irqn;
- };
- 
-+/*
-+ * This hardware has a big endian bit assignment such that GPIO line 0 is
-+ * connected to bit 31, line 1 to bit 30 ... line 31 to bit 0.
-+ * This inline helper give the right bitmask for a certain line.
-+ */
-+static inline u32 mpc_pin2mask(unsigned int offset)
-+{
-+	return BIT(31 - offset);
-+}
-+
- /* Workaround GPIO 1 errata on MPC8572/MPC8536. The status of GPIOs
-  * defined as output cannot be determined by reading GPDAT register,
-  * so we use shadow data register instead. The status of input pins
-@@ -59,7 +70,7 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- 	val = gc->read_reg(mpc8xxx_gc->regs + GPIO_DAT) & ~out_mask;
- 	out_shadow = gc->bgpio_data & out_mask;
- 
--	return !!((val | out_shadow) & gc->pin2mask(gc, gpio));
-+	return !!((val | out_shadow) & mpc_pin2mask(offset));
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index f7da40e46c55..63bb48878de1 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -126,20 +126,16 @@ static unsigned long bgpio_read32be(void __iomem *reg)
+ 	return ioread32be(reg);
  }
  
- static int mpc5121_gpio_dir_out(struct gpio_chip *gc,
-@@ -120,7 +131,7 @@ static void mpc8xxx_irq_unmask(struct irq_data *d)
- 
- 	gc->write_reg(mpc8xxx_gc->regs + GPIO_IMR,
- 		gc->read_reg(mpc8xxx_gc->regs + GPIO_IMR)
--		| gc->pin2mask(gc, irqd_to_hwirq(d)));
-+		| mpc_pin2mask(irqd_to_hwirq(d)));
- 
- 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
- }
-@@ -135,7 +146,7 @@ static void mpc8xxx_irq_mask(struct irq_data *d)
- 
- 	gc->write_reg(mpc8xxx_gc->regs + GPIO_IMR,
- 		gc->read_reg(mpc8xxx_gc->regs + GPIO_IMR)
--		& ~(gc->pin2mask(gc, irqd_to_hwirq(d))));
-+		& ~mpc_pin2mask(irqd_to_hwirq(d)));
- 
- 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
- }
-@@ -146,7 +157,7 @@ static void mpc8xxx_irq_ack(struct irq_data *d)
- 	struct gpio_chip *gc = &mpc8xxx_gc->gc;
- 
- 	gc->write_reg(mpc8xxx_gc->regs + GPIO_IER,
--		      gc->pin2mask(gc, irqd_to_hwirq(d)));
-+		      mpc_pin2mask(irqd_to_hwirq(d)));
+-static unsigned long bgpio_pin2mask(struct gpio_chip *gc, unsigned int pin)
++static unsigned long bgpio_line2mask(struct gpio_chip *gc, unsigned int line)
+ {
+-	return BIT(pin);
+-}
+-
+-static unsigned long bgpio_pin2mask_be(struct gpio_chip *gc,
+-				       unsigned int pin)
+-{
+-	return BIT(gc->bgpio_bits - 1 - pin);
++	if (gc->be_bits)
++		return BIT(gc->bgpio_bits - 1 - line);
++	return BIT(line);
  }
  
- static int mpc8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
-@@ -160,7 +171,7 @@ static int mpc8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
- 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
- 		gc->write_reg(mpc8xxx_gc->regs + GPIO_ICR,
- 			gc->read_reg(mpc8xxx_gc->regs + GPIO_ICR)
--			| gc->pin2mask(gc, irqd_to_hwirq(d)));
-+			| mpc_pin2mask(irqd_to_hwirq(d)));
- 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
- 		break;
+ static int bgpio_get_set(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	unsigned long pinmask = gc->pin2mask(gc, gpio);
++	unsigned long pinmask = bgpio_line2mask(gc, gpio);
  
-@@ -168,7 +179,7 @@ static int mpc8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
- 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
- 		gc->write_reg(mpc8xxx_gc->regs + GPIO_ICR,
- 			gc->read_reg(mpc8xxx_gc->regs + GPIO_ICR)
--			& ~(gc->pin2mask(gc, irqd_to_hwirq(d))));
-+			& ~mpc_pin2mask(irqd_to_hwirq(d)));
- 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
- 		break;
+ 	if (gc->bgpio_dir & pinmask)
+ 		return !!(gc->read_reg(gc->reg_set) & pinmask);
+@@ -149,7 +145,7 @@ static int bgpio_get_set(struct gpio_chip *gc, unsigned int gpio)
  
+ static int bgpio_get(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	return !!(gc->read_reg(gc->reg_dat) & gc->pin2mask(gc, gpio));
++	return !!(gc->read_reg(gc->reg_dat) & bgpio_line2mask(gc, gpio));
+ }
+ 
+ static void bgpio_set_none(struct gpio_chip *gc, unsigned int gpio, int val)
+@@ -158,7 +154,7 @@ static void bgpio_set_none(struct gpio_chip *gc, unsigned int gpio, int val)
+ 
+ static void bgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+-	unsigned long mask = gc->pin2mask(gc, gpio);
++	unsigned long mask = bgpio_line2mask(gc, gpio);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+@@ -176,7 +172,7 @@ static void bgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ static void bgpio_set_with_clear(struct gpio_chip *gc, unsigned int gpio,
+ 				 int val)
+ {
+-	unsigned long mask = gc->pin2mask(gc, gpio);
++	unsigned long mask = bgpio_line2mask(gc, gpio);
+ 
+ 	if (val)
+ 		gc->write_reg(gc->reg_set, mask);
+@@ -186,7 +182,7 @@ static void bgpio_set_with_clear(struct gpio_chip *gc, unsigned int gpio,
+ 
+ static void bgpio_set_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+-	unsigned long mask = gc->pin2mask(gc, gpio);
++	unsigned long mask = bgpio_line2mask(gc, gpio);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+@@ -216,9 +212,9 @@ static void bgpio_multiple_get_masks(struct gpio_chip *gc,
+ 			break;
+ 		if (__test_and_clear_bit(i, mask)) {
+ 			if (test_bit(i, bits))
+-				*set_mask |= gc->pin2mask(gc, i);
++				*set_mask |= bgpio_line2mask(gc, i);
+ 			else
+-				*clear_mask |= gc->pin2mask(gc, i);
++				*clear_mask |= bgpio_line2mask(gc, i);
+ 		}
+ 	}
+ }
+@@ -294,7 +290,7 @@ static int bgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ 
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+ 
+-	gc->bgpio_dir &= ~gc->pin2mask(gc, gpio);
++	gc->bgpio_dir &= ~bgpio_line2mask(gc, gpio);
+ 	gc->write_reg(gc->reg_dir, gc->bgpio_dir);
+ 
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+@@ -305,7 +301,7 @@ static int bgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ static int bgpio_get_dir(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	/* Return 0 if output, 1 of input */
+-	return !(gc->read_reg(gc->reg_dir) & gc->pin2mask(gc, gpio));
++	return !(gc->read_reg(gc->reg_dir) & bgpio_line2mask(gc, gpio));
+ }
+ 
+ static int bgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+@@ -316,7 +312,7 @@ static int bgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+ 
+-	gc->bgpio_dir |= gc->pin2mask(gc, gpio);
++	gc->bgpio_dir |= bgpio_line2mask(gc, gpio);
+ 	gc->write_reg(gc->reg_dir, gc->bgpio_dir);
+ 
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+@@ -330,7 +326,7 @@ static int bgpio_dir_in_inv(struct gpio_chip *gc, unsigned int gpio)
+ 
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+ 
+-	gc->bgpio_dir |= gc->pin2mask(gc, gpio);
++	gc->bgpio_dir |= bgpio_line2mask(gc, gpio);
+ 	gc->write_reg(gc->reg_dir, gc->bgpio_dir);
+ 
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+@@ -346,7 +342,7 @@ static int bgpio_dir_out_inv(struct gpio_chip *gc, unsigned int gpio, int val)
+ 
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+ 
+-	gc->bgpio_dir &= ~gc->pin2mask(gc, gpio);
++	gc->bgpio_dir &= ~bgpio_line2mask(gc, gpio);
+ 	gc->write_reg(gc->reg_dir, gc->bgpio_dir);
+ 
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+@@ -357,12 +353,11 @@ static int bgpio_dir_out_inv(struct gpio_chip *gc, unsigned int gpio, int val)
+ static int bgpio_get_dir_inv(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	/* Return 0 if output, 1 if input */
+-	return !!(gc->read_reg(gc->reg_dir) & gc->pin2mask(gc, gpio));
++	return !!(gc->read_reg(gc->reg_dir) & bgpio_line2mask(gc, gpio));
+ }
+ 
+ static int bgpio_setup_accessors(struct device *dev,
+ 				 struct gpio_chip *gc,
+-				 bool bit_be,
+ 				 bool byte_be)
+ {
+ 
+@@ -406,8 +401,6 @@ static int bgpio_setup_accessors(struct device *dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	gc->pin2mask = bit_be ? bgpio_pin2mask_be : bgpio_pin2mask;
+-
+ 	return 0;
+ }
+ 
+@@ -531,8 +524,8 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = bgpio_setup_accessors(dev, gc, flags & BGPIOF_BIG_ENDIAN,
+-				    flags & BGPIOF_BIG_ENDIAN_BYTE_ORDER);
++	gc->be_bits = !!(flags & BGPIOF_BIG_ENDIAN);
++	ret = bgpio_setup_accessors(dev, gc, flags & BGPIOF_BIG_ENDIAN_BYTE_ORDER);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index bda95a9b7b8c..ed04fa2a00a8 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -67,9 +67,9 @@ struct module;
+  *	registers.
+  * @read_reg: reader function for generic GPIO
+  * @write_reg: writer function for generic GPIO
+- * @pin2mask: some generic GPIO controllers work with the big-endian bits
+- *	notation, e.g. in a 8-bits register, GPIO7 is the least significant
+- *	bit. This callback assigns the right bit mask.
++ * @be_bits: if the generic GPIO has big endian bit order (bit 31 is representing
++ *	line 0, bit 30 is line 1 ... bit 0 is line 31) this is set to true by the
++ *	generic GPIO core. It is for internal housekeeping only.
+  * @reg_dat: data (in) register for generic GPIO
+  * @reg_set: output set register (out=high) for generic GPIO
+  * @reg_clr: output clear register (out=low) for generic GPIO
+@@ -151,7 +151,7 @@ struct gpio_chip {
+ #if IS_ENABLED(CONFIG_GPIO_GENERIC)
+ 	unsigned long (*read_reg)(void __iomem *reg);
+ 	void (*write_reg)(void __iomem *reg, unsigned long data);
+-	unsigned long (*pin2mask)(struct gpio_chip *gc, unsigned int pin);
++	bool be_bits;
+ 	void __iomem *reg_dat;
+ 	void __iomem *reg_set;
+ 	void __iomem *reg_clr;
 -- 
 2.13.6
 
