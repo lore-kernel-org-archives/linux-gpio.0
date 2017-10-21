@@ -1,56 +1,49 @@
-From: Bernd Edlinger <bernd.edlinger-PkbjNfxxIASELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCHv4 2/2] Add a GPIO driver for Altera FPGA Manager Fabric
- I/O
-Date: Fri, 20 Oct 2017 20:05:25 +0000
-Message-ID: <AM5PR0701MB2657A43F0E553624BCFD5781E4430@AM5PR0701MB2657.eurprd07.prod.outlook.com>
-References: <AM5PR0701MB26576FCB30CDCA6F989C9B80E4420@AM5PR0701MB2657.eurprd07.prod.outlook.com>
- <CACRpkdZXaTk-+LMcV8bZTg0bZ9cPxORHpXNL7m+bwnvr57yJ9A@mail.gmail.com>
- <AM5PR0701MB26576FBB8EDEF83F3AA82B89E4430@AM5PR0701MB2657.eurprd07.prod.outlook.com>
- <4519589.dXStasooJK@debian64>
+From: Gregory Fong <gregory.0xf0@gmail.com>
+Subject: Re: [PATCH] gpio: brcmstb: Do not use gc->pin2mask()
+Date: Fri, 20 Oct 2017 17:42:26 -0700
+Message-ID: <CADtm3G45xfePss-OPxYaSoznJDeYaNtD-GwGFkUneik1=Y9qYQ@mail.gmail.com>
+References: <20171020134817.28040-1-linus.walleij@linaro.org>
+ <CADtm3G71v3J9V==bAJBr-xxR2c3iWL32eh0dSg7o2v2C0oAQ2w@mail.gmail.com> <CACRpkdaHx+=B=0xigumJieOOm99O=vuDQ-ZxFKjh7DGLxtjBtA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4519589.dXStasooJK@debian64>
-Content-Language: en-US
-Content-ID: <DCAD84C9A580A6429568790DCDE7B639-MxyWWZKIsxacE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Christian Lamparter <chunkeey-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:46064 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752925AbdJUAm5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Oct 2017 20:42:57 -0400
+Received: by mail-wm0-f65.google.com with SMTP id q124so667476wmb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Oct 2017 17:42:57 -0700 (PDT)
+In-Reply-To: <CACRpkdaHx+=B=0xigumJieOOm99O=vuDQ-ZxFKjh7DGLxtjBtA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Doug Berger <opendmb@gmail.com>
 
-T24gMTAvMjAvMTcgMjE6MDgsIENocmlzdGlhbiBMYW1wYXJ0ZXIgd3JvdGU6DQo+IFdhaXQuDQo+
-IA0KPiBJIGhhZCB0aGUgc2FtZSBjb21tZW50IGFib3V0IHRoaXMgZWFybGllciBhbmQgYSBmZXcg
-bW9yZSBzdWdnZXN0aW9ucw0KPiB0byBtb3ZlIHRoZSBkcml2ZXIgdG8gZ3Bpby1tbWlvJ3MgZHQu
-IERpZG4ndCB5b3UgcmVhZCB0aGUgbWFpbD8NCj4gDQo+IDxodHRwczovL21hcmMuaW5mby8/bD1s
-aW51eC1ncGlvJm09MTUwNjc4NzM3NzI0MTMyJnc9Mj4NCj4gDQo+IEl0IG1hZGUgaXQgdG8gdGhl
-IGxpc3QgYXJjaGl2ZSwgc28gSSdtIHByZXR0eSBzdXJlIHRoaXMgZ290IGRlbGl2ZXJlZA0KPiB0
-byB5b3UgYXMgd2VsbC4NCj4gDQoNCkhpLA0KDQpsb29rcyBsaWtlIEkgb3Zlcmxvb2tlZCB5b3Vy
-IG1lc3NhZ2UsIHNvcnJ5Lg0KDQogPiBIbSwgSXMgaXQgcG9zc2libGUgdG8gZGlmZmVyZW5jaWF0
-ZSBpdCBmcm9tIGEgInN5c2NvbiIgZGV2aWNlPw0KDQpUaGlzIGlzIG5vdCBhIHJlZ2lzdGVyIHJl
-Z2lvbiBjb250YWluaW5nIGEgc2V0IG9mIG1pc2NlbGxhbmVvdXMNCnJlZ2lzdGVycywgd2hpY2gg
-YXJlIG5vdCBjb2hlc2l2ZSBlbm91Z2ggdG8gcmVwcmVzZW50IGFzIGFueSBzcGVjaWZpYw0KdHlw
-ZSBvZiBkZXZpY2UuICBBdCBsZWFzdCBub3QgaG93IEkgdW5kZXJzdGFuZCB0aGUgdGVybS4NCg0K
-VGhhdCB3b3VsZCBtZWFuIHVucmVsYXRlZCBidXQgaGFyZHdpcmVkIGZ1bmN0aW9ucyB0aGF0IHNo
-YXJlDQp0aGUgc2FtZSByZWdpc3Rlci4gIFRoZSB2YXJpb3VzIGZ1bmN0aW9ucyB3b3VsZCBiZSBm
-aXhlZCBhbmQgZG9jdW1lbnRlZA0KaW4gdGhlIG1hbnVhbC4NCg0KVGhlIGRpZmZlcmVuY2UgaXMg
-dGhhdCB0aGVyZSBpcyBubyBmaXhlZCBmdW5jdGlvbiBhdCBhbGwsDQpsaWtlIGluIHRoZSBjYXNl
-IG9mIGEgSS9PIHBpbiB3aGVyZSB0aGUgc2lnbmFsIGlzIHJvdXRlZCBvbiB0aGUgUENCDQp0byBz
-b21lIGV4dGVybmFsIGRldmljZS4NCg0KSW5zdGVhZCB0aGUgc2lnbmFscyBhcmUgcm91dGVkIHRo
-cm91Z2ggdGhlIGludGVybmFsIGludGVyY29ubmVjdA0KdG8gbG9naWMgZnVuY3Rpb25zIG9uIHRo
-ZSBGUEdBLg0KDQogPiBUaGUgZHJpdmVyIHNlZW1kIGZhaXJseSBzaW1wbGUuIFNvLCBZb3UgY291
-bGQgYWN0dWFsbHkgZ2V0DQogPiBhd2F5IHdpdGgganVzdCBhZGRpbmcgdGhlICJhbHRyLGZwZ2Ft
-Z3ItZ3BpbyIgY29tcGF0aWJsZSBzdHJpbmcNCiA+IHRvIGdwaW8tbW1pby5jJ3MgYmdwaW9fb2Zf
-bWF0Y2ggc3RydWN0IGF0IFswXSBhbmQgY2hhbmdlIHRoZSBkdA0KID4gdG8gc29tZXRoaW5nIGxp
-a2UgdGhpczoNCg0KVGhpcyBzdHJ1Y3R1cmUgZG9lcyBub3QgcmVmbGVjdCB0aGUgaW50ZXJuYWwg
-cmVnaXN0ZXIgc3RydWN0dXJlIG9mIHRoZQ0KRlBHQSBNYW5hZ2VyJ3MgSS9PIHJlZ2lzdGVyIGJs
-b2NrIGFueSBtb3JlLg0KDQpJIHRoaW5rIHRoaXMgY291bGQgb2YgY291cnNlIGJlIGEgY29tcGxl
-dGVseSBnZW5lcmljIGRyaXZlciwgaW4gdGhhdA0KY2FzZSBJIHNlZSBubyBuZWVkIHRvIHVzZSBh
-IHN0cmluZyBsaWtlICJhbHRyLGZwZ2FtZ3ItZ3BpbyIgYXQgYWxsLA0KbWF5YmUganVzdCAiZ2Vu
-ZXJpYy1ncGlvIi4NCg0KSSB3b3VsZCBzdGlsbCBzZWUgYSB2YWx1ZSBpbiBoYXZpbmcgYSBzcGVj
-aWZpYyBkcml2ZXIgZm9yIHRoaXMNCnNwZWNpZmljIGhhcmR3YXJlLg0KDQpCdXQgaXMgdGhpcyBk
-cml2ZXIgaXMgdG9vIHNpbXBsZSwgdG8gYmUgYWNjZXB0YWJsZT8NCg0KDQpCZXJuZC4NCg==
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Fri, Oct 20, 2017 at 9:39 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Oct 20, 2017 at 5:51 PM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
+>> Hi Linus,
+>>
+>> On Fri, Oct 20, 2017 at 6:48 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> The pin2mask() accessor only shuffles BIT ORDER in big endian systems,
+>>> i.e. the bitstuffing is swizzled big endian so "bit 0" is bit 7 or
+>>> bit 15 or bit 31 or so.
+>>>
+>>> The brcmstb only uses big endian BYTE ORDER which will be taken car of
+>>> by the ->write_reg() callback.
+>>>
+>>> Just use BIT(offset) to assign the bit.
+>>
+>> I believe the patches that Doug is putting together already take care
+>> of this, would you be OK with it being handled in there instead?
+>
+> I would prefer that those changes base on top of this instead.
+>
+> I need to get rid of ->pin2mask() for other GPIO improvements in
+> the core, like supporting .get_multiple() in gpio-mmio.
+>
+> I can apply this to the devel branch per immediately so Doug can base
+> his work on top of it.
+
+Makes sense.  Feel free to throw this on if you want:
+
+Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
