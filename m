@@ -1,79 +1,83 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] gpio: brcmstb: Do not use gc->pin2mask()
-Date: Sun, 22 Oct 2017 11:26:08 -0700
-Message-ID: <40157fee-d31b-3b3a-3152-198a0f6b7469@gmail.com>
-References: <20171020134817.28040-1-linus.walleij@linaro.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] gpio-adnp: Use common error handling code in
+ adnp_gpio_dbg_show()
+Date: Sun, 22 Oct 2017 20:27:00 +0200
+Message-ID: <1e2fb84c-9a5b-dc56-c93b-7eef03fc9b7a@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:55434 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932075AbdJVS0M (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 22 Oct 2017 14:26:12 -0400
-Received: by mail-oi0-f68.google.com with SMTP id g125so27220327oib.12
-        for <linux-gpio@vger.kernel.org>; Sun, 22 Oct 2017 11:26:12 -0700 (PDT)
-In-Reply-To: <20171020134817.28040-1-linus.walleij@linaro.org>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Gregory Fong <gregory.0xf0@gmail.com>, opendmb@gmail.com
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 22 Oct 2017 20:21:55 +0200
 
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
-On 10/20/2017 06:48 AM, Linus Walleij wrote:
-> The pin2mask() accessor only shuffles BIT ORDER in big endian systems,
-> i.e. the bitstuffing is swizzled big endian so "bit 0" is bit 7 or
-> bit 15 or bit 31 or so.
-> 
-> The brcmstb only uses big endian BYTE ORDER which will be taken car of
-> by the ->write_reg() callback.
-> 
-> Just use BIT(offset) to assign the bit.
-> 
-> Cc: Gregory Fong <gregory.0xf0@gmail.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This issue was detected by using the Coccinelle software.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-adnp.c | 29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
-> ---
->  drivers/gpio/gpio-brcmstb.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-> index 27e92e57adae..9b8fcca7ad17 100644
-> --- a/drivers/gpio/gpio-brcmstb.c
-> +++ b/drivers/gpio/gpio-brcmstb.c
-> @@ -20,6 +20,7 @@
->  #include <linux/irqchip/chained_irq.h>
->  #include <linux/interrupt.h>
->  #include <linux/reboot.h>
-> +#include <linux/bitops.h>
->  
->  #define GIO_BANK_SIZE           0x20
->  #define GIO_ODEN(bank)          (((bank) * GIO_BANK_SIZE) + 0x00)
-> @@ -68,16 +69,15 @@ static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
->  {
->  	struct gpio_chip *gc = &bank->gc;
->  	struct brcmstb_gpio_priv *priv = bank->parent_priv;
-> -	u32 mask = gc->pin2mask(gc, offset);
->  	u32 imask;
->  	unsigned long flags;
->  
->  	spin_lock_irqsave(&gc->bgpio_lock, flags);
->  	imask = gc->read_reg(priv->reg_base + GIO_MASK(bank->id));
->  	if (enable)
-> -		imask |= mask;
-> +		imask |= BIT(offset);
->  	else
-> -		imask &= ~mask;
-> +		imask &= ~BIT(offset);
->  	gc->write_reg(priv->reg_base + GIO_MASK(bank->id), imask);
->  	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
->  }
-> 
-
+diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+index 89863ea25de1..7f475eef3faa 100644
+--- a/drivers/gpio/gpio-adnp.c
++++ b/drivers/gpio/gpio-adnp.c
+@@ -192,28 +192,20 @@ static void adnp_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 		mutex_lock(&adnp->i2c_lock);
+ 
+ 		err = adnp_read(adnp, GPIO_DDR(adnp) + i, &ddr);
+-		if (err < 0) {
+-			mutex_unlock(&adnp->i2c_lock);
+-			return;
+-		}
++		if (err < 0)
++			goto unlock;
+ 
+ 		err = adnp_read(adnp, GPIO_PLR(adnp) + i, &plr);
+-		if (err < 0) {
+-			mutex_unlock(&adnp->i2c_lock);
+-			return;
+-		}
++		if (err < 0)
++			goto unlock;
+ 
+ 		err = adnp_read(adnp, GPIO_IER(adnp) + i, &ier);
+-		if (err < 0) {
+-			mutex_unlock(&adnp->i2c_lock);
+-			return;
+-		}
++		if (err < 0)
++			goto unlock;
+ 
+ 		err = adnp_read(adnp, GPIO_ISR(adnp) + i, &isr);
+-		if (err < 0) {
+-			mutex_unlock(&adnp->i2c_lock);
+-			return;
+-		}
++		if (err < 0)
++			goto unlock;
+ 
+ 		mutex_unlock(&adnp->i2c_lock);
+ 
+@@ -240,6 +232,11 @@ static void adnp_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 				   direction, level, interrupt, pending);
+ 		}
+ 	}
++
++	return;
++
++unlock:
++	mutex_unlock(&adnp->i2c_lock);
+ }
+ 
+ static int adnp_gpio_setup(struct adnp *adnp, unsigned int num_gpios)
 -- 
-Florian
+2.14.2
