@@ -1,53 +1,130 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5 00/13] gpio: Tight IRQ chip integration
-Date: Mon, 23 Oct 2017 09:47:08 +0100
-Message-ID: <a71b5600-dc22-c53a-7909-48e39c8cf3e6@nvidia.com>
-References: <20171013154913.29448-1-thierry.reding@gmail.com>
- <f25cd66f-1382-8007-9744-0dbd72757163@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f25cd66f-1382-8007-9744-0dbd72757163-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 1/2] pinctrl: intel: Make offset to interrupt status register configurable
+Date: Mon, 23 Oct 2017 15:40:25 +0300
+Message-ID: <20171023124026.48996-1-mika.westerberg@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Some GPIO blocks have the interrupt status (GPI_IS) offset different
+than it normally is, so make it configurable. If no offset is specified
+we use the default.
 
-On 16/10/17 19:09, Jon Hunter wrote:
-> Hi Linus,
-> 
-> On 13/10/17 16:49, Thierry Reding wrote:
->> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Hi Linus,
->>
->> here's the latest series of patches that implement the tighter IRQ chip
->> integration. I've dropped the banked infrastructure for now as per the
->> discussion with Grygorii.
->>
->> The first couple of patches are mostly preparatory work in order to
->> consolidate all IRQ chip related fields in a new structure and create
->> the base functionality for adding IRQ chips.
->>
->> After that, I've added the Tegra186 GPIO support patch that makes use of
->> the new tight integration.
-> 
-> I have reviewed this series and tested on Tegra, so for the series ...
-> 
-> Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Tested-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> We would really like to get support for Tegra186 GPIO in v4.15, so
-> please let us know if you think that this is do-able.
+While there remove two unused constants from the core driver.
 
-Any feedback/comments?
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 20 ++++++++++++--------
+ drivers/pinctrl/intel/pinctrl-intel.h |  3 +++
+ 2 files changed, 15 insertions(+), 8 deletions(-)
 
-Thanks
-Jon
-
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 71df0f70b61f..3761fd29100f 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -30,8 +30,6 @@
+ 
+ #define PADBAR				0x00c
+ #define GPI_IS				0x100
+-#define GPI_GPE_STS			0x140
+-#define GPI_GPE_EN			0x160
+ 
+ #define PADOWN_BITS			4
+ #define PADOWN_SHIFT(p)			((p) % 8 * PADOWN_BITS)
+@@ -818,7 +816,7 @@ static void intel_gpio_irq_ack(struct irq_data *d)
+ 	community = intel_get_community(pctrl, pin);
+ 	if (community) {
+ 		const struct intel_padgroup *padgrp;
+-		unsigned gpp, gpp_offset;
++		unsigned gpp, gpp_offset, is_offset;
+ 
+ 		padgrp = intel_community_get_padgroup(community, pin);
+ 		if (!padgrp)
+@@ -826,9 +824,10 @@ static void intel_gpio_irq_ack(struct irq_data *d)
+ 
+ 		gpp = padgrp->reg_num;
+ 		gpp_offset = padgroup_offset(padgrp, pin);
++		is_offset = community->is_offset + gpp * 4;
+ 
+ 		raw_spin_lock(&pctrl->lock);
+-		writel(BIT(gpp_offset), community->regs + GPI_IS + gpp * 4);
++		writel(BIT(gpp_offset), community->regs + is_offset);
+ 		raw_spin_unlock(&pctrl->lock);
+ 	}
+ }
+@@ -843,7 +842,7 @@ static void intel_gpio_irq_enable(struct irq_data *d)
+ 	community = intel_get_community(pctrl, pin);
+ 	if (community) {
+ 		const struct intel_padgroup *padgrp;
+-		unsigned gpp, gpp_offset;
++		unsigned gpp, gpp_offset, is_offset;
+ 		unsigned long flags;
+ 		u32 value;
+ 
+@@ -853,10 +852,11 @@ static void intel_gpio_irq_enable(struct irq_data *d)
+ 
+ 		gpp = padgrp->reg_num;
+ 		gpp_offset = padgroup_offset(padgrp, pin);
++		is_offset = community->is_offset + gpp * 4;
+ 
+ 		raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 		/* Clear interrupt status first to avoid unexpected interrupt */
+-		writel(BIT(gpp_offset), community->regs + GPI_IS + gpp * 4);
++		writel(BIT(gpp_offset), community->regs + is_offset);
+ 
+ 		value = readl(community->regs + community->ie_offset + gpp * 4);
+ 		value |= BIT(gpp_offset);
+@@ -991,7 +991,8 @@ static irqreturn_t intel_gpio_community_irq_handler(struct intel_pinctrl *pctrl,
+ 		const struct intel_padgroup *padgrp = &community->gpps[gpp];
+ 		unsigned long pending, enabled, gpp_offset;
+ 
+-		pending = readl(community->regs + GPI_IS + padgrp->reg_num * 4);
++		pending = readl(community->regs + community->is_offset +
++				padgrp->reg_num * 4);
+ 		enabled = readl(community->regs + community->ie_offset +
+ 				padgrp->reg_num * 4);
+ 
+@@ -1241,6 +1242,9 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ 		community->regs = regs;
+ 		community->pad_regs = regs + padbar;
+ 
++		if (!community->is_offset)
++			community->is_offset = GPI_IS;
++
+ 		ret = intel_pinctrl_add_padgroups(pctrl, community);
+ 		if (ret)
+ 			return ret;
+@@ -1356,7 +1360,7 @@ static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
+ 		for (gpp = 0; gpp < community->ngpps; gpp++) {
+ 			/* Mask and clear all interrupts */
+ 			writel(0, base + community->ie_offset + gpp * 4);
+-			writel(0xffff, base + GPI_IS + gpp * 4);
++			writel(0xffff, base + community->is_offset + gpp * 4);
+ 		}
+ 	}
+ }
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index 7fdb07753c2d..13b0bd6eb2a2 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -73,6 +73,8 @@ struct intel_padgroup {
+  * @hostown_offset: Register offset of HOSTSW_OWN from @regs. If %0 then it
+  *                  is assumed that the host owns the pin (rather than
+  *                  ACPI).
++ * @is_offset: Register offset of GPI_IS from @regs. If %0 then uses the
++ *             default (%0x100).
+  * @ie_offset: Register offset of GPI_IE from @regs.
+  * @pin_base: Starting pin of pins in this community
+  * @gpp_size: Maximum number of pads in each group, such as PADCFGLOCK,
+@@ -98,6 +100,7 @@ struct intel_community {
+ 	unsigned padown_offset;
+ 	unsigned padcfglock_offset;
+ 	unsigned hostown_offset;
++	unsigned is_offset;
+ 	unsigned ie_offset;
+ 	unsigned pin_base;
+ 	unsigned gpp_size;
 -- 
-nvpublic
+2.14.2
