@@ -1,83 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] gpio-adnp: Use common error handling code in
- adnp_gpio_dbg_show()
-Date: Sun, 22 Oct 2017 20:27:00 +0200
-Message-ID: <1e2fb84c-9a5b-dc56-c93b-7eef03fc9b7a@users.sourceforge.net>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v8 0/2] gpio: uniphier: UniPhier GPIO driver
+Date: Mon, 23 Oct 2017 09:55:12 +0900
+Message-ID: <CAK7LNAShGckx5Cd_ghrQM49hVGw1vUQVovjYUgqgLjOKXY1fiA@mail.gmail.com>
+References: <1507808176-5223-1-git-send-email-yamada.masahiro@socionext.com> <CACRpkdbRtpsmkp5BZcCH4vOvqoeMT_1UGUkOEoJ+mYypgnKezA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-GB
+In-Reply-To: <CACRpkdbRtpsmkp5BZcCH4vOvqoeMT_1UGUkOEoJ+mYypgnKezA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Oct 2017 20:21:55 +0200
+Hi Linus,
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function.
+2017-10-16 17:24 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Thu, Oct 12, 2017 at 1:36 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>
+>> Changes in v8:
+>>   - Move dt-binding header to binding commit
+>>   - Add MAINTAINERS entry for the binding doc
+>>   - Add a consumer example to the binding doc
+>
+> This v8 looks OK to me.
+>
+> The stuff is still hard to understand, but that is because the HW is
+> very complex and strangely designed, not because of the driver
+> author. I really think you did your best, thanks!
+>
+> I'll wait some days and see if the DT people have something to say
+> before applying it, but I'm as happy as I can be I guess.
+>
 
-This issue was detected by using the Coccinelle software.
+Still waiting for DT people?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpio/gpio-adnp.c | 29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
-index 89863ea25de1..7f475eef3faa 100644
---- a/drivers/gpio/gpio-adnp.c
-+++ b/drivers/gpio/gpio-adnp.c
-@@ -192,28 +192,20 @@ static void adnp_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 		mutex_lock(&adnp->i2c_lock);
- 
- 		err = adnp_read(adnp, GPIO_DDR(adnp) + i, &ddr);
--		if (err < 0) {
--			mutex_unlock(&adnp->i2c_lock);
--			return;
--		}
-+		if (err < 0)
-+			goto unlock;
- 
- 		err = adnp_read(adnp, GPIO_PLR(adnp) + i, &plr);
--		if (err < 0) {
--			mutex_unlock(&adnp->i2c_lock);
--			return;
--		}
-+		if (err < 0)
-+			goto unlock;
- 
- 		err = adnp_read(adnp, GPIO_IER(adnp) + i, &ier);
--		if (err < 0) {
--			mutex_unlock(&adnp->i2c_lock);
--			return;
--		}
-+		if (err < 0)
-+			goto unlock;
- 
- 		err = adnp_read(adnp, GPIO_ISR(adnp) + i, &isr);
--		if (err < 0) {
--			mutex_unlock(&adnp->i2c_lock);
--			return;
--		}
-+		if (err < 0)
-+			goto unlock;
- 
- 		mutex_unlock(&adnp->i2c_lock);
- 
-@@ -240,6 +232,11 @@ static void adnp_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 				   direction, level, interrupt, pending);
- 		}
- 	}
-+
-+	return;
-+
-+unlock:
-+	mutex_unlock(&adnp->i2c_lock);
- }
- 
- static int adnp_gpio_setup(struct adnp *adnp, unsigned int num_gpios)
+As you know, it is almost deadline
+of DT pull requests to arm-soc maintainers.
+
+If the driver (and binding) is not applied,
+I cannot add GPIO nodes to my DT,
+i.e. I would have to wait for one more development cycle
+to use GPIO.
+
+
+
+
 -- 
-2.14.2
+Best Regards
+Masahiro Yamada
