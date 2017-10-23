@@ -1,52 +1,45 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v8 0/2] gpio: uniphier: UniPhier GPIO driver
-Date: Mon, 23 Oct 2017 09:55:12 +0900
-Message-ID: <CAK7LNAShGckx5Cd_ghrQM49hVGw1vUQVovjYUgqgLjOKXY1fiA@mail.gmail.com>
-References: <1507808176-5223-1-git-send-email-yamada.masahiro@socionext.com> <CACRpkdbRtpsmkp5BZcCH4vOvqoeMT_1UGUkOEoJ+mYypgnKezA@mail.gmail.com>
+Date: Mon, 23 Oct 2017 10:38:58 +0200
+Message-ID: <CACRpkdbkhGLc776nWD1o1-pzy-0umxJ2cVS9nWW5kaP_8VyNSQ@mail.gmail.com>
+References: <1507808176-5223-1-git-send-email-yamada.masahiro@socionext.com>
+ <CACRpkdbRtpsmkp5BZcCH4vOvqoeMT_1UGUkOEoJ+mYypgnKezA@mail.gmail.com> <CAK7LNAShGckx5Cd_ghrQM49hVGw1vUQVovjYUgqgLjOKXY1fiA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbRtpsmkp5BZcCH4vOvqoeMT_1UGUkOEoJ+mYypgnKezA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAK7LNAShGckx5Cd_ghrQM49hVGw1vUQVovjYUgqgLjOKXY1fiA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Mon, Oct 23, 2017 at 2:55 AM, Masahiro Yamada
+<yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
 
-2017-10-16 17:24 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Thu, Oct 12, 2017 at 1:36 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
+> Still waiting for DT people?
+
+Nah I gave up now.
+
+> As you know, it is almost deadline
+> of DT pull requests to arm-soc maintainers.
 >
->> Changes in v8:
->>   - Move dt-binding header to binding commit
->>   - Add MAINTAINERS entry for the binding doc
->>   - Add a consumer example to the binding doc
->
-> This v8 looks OK to me.
->
-> The stuff is still hard to understand, but that is because the HW is
-> very complex and strangely designed, not because of the driver
-> author. I really think you did your best, thanks!
->
-> I'll wait some days and see if the DT people have something to say
-> before applying it, but I'm as happy as I can be I guess.
->
+> If the driver (and binding) is not applied,
+> I cannot add GPIO nodes to my DT,
+> i.e. I would have to wait for one more development cycle
+> to use GPIO.
 
-Still waiting for DT people?
+I understand your concern.
 
+Patches are applied.
 
-As you know, it is almost deadline
-of DT pull requests to arm-soc maintainers.
+You may send you pull requests to ARM SoC now, feel
+free to add my
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+on the DTS patches.
 
-If the driver (and binding) is not applied,
-I cannot add GPIO nodes to my DT,
-i.e. I would have to wait for one more development cycle
-to use GPIO.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
