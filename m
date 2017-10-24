@@ -1,52 +1,86 @@
 From: Doug Berger <opendmb@gmail.com>
-Subject: [PATCH v2 0/7] gpio: brcmstb: improved interrupt and wake support
-Date: Tue, 24 Oct 2017 12:54:44 -0700
-Message-ID: <20171024195451.30535-1-opendmb@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:51290 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751330AbdJXTzi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Oct 2017 15:55:38 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH v2 2/7] gpio: brcmstb: allow all instances to be wakeup sources
+Date: Tue, 24 Oct 2017 12:54:46 -0700
+Message-ID: <20171024195451.30535-3-opendmb@gmail.com>
+References: <20171024195451.30535-1-opendmb@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171024195451.30535-1-opendmb@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Gregory Fong <gregory.0xf0@gmail.com>
 Cc: Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-gpio@vger.kernel.org
 
-This patch set collects a number of improvements to the GPIO driver
-used by Broadcom Set-Top-Box devices.
+This commit allows a wakeup parent interrupt to be shared between
+instances.
 
-Primarily they are aimed at correcting problems with the interrupt
-controller implementation, but they also extend the functionality for
-waking on GPIO interrupts.
+It also removes the redundant can_wake member of the private data
+structure by using whether the parent_wake_irq has been defined to
+indicate that the GPIO device can wake.
 
-V2:
-  - Added Linus' patch to remove pin2mask introduced between v1 and v2
-  - Added additional detail to the commit messages based on feedback
-  - Removed "gpio: brcmstb: enable masking of interrupts when changing
-    type" at Gregory Fong's request.
-  - renamed variables for consistent use of offset as relative to a bank
-    and hwirq is relative to the device (i.e. first bank of a device)
-  - renamed GIO_REG_COUNT to NUMBER_OF_GIO_REGISTERS for clarity
-  - renamed regs to saved_regs for clarity
-  - corrected multi-line comment style
-  - used true and false instead of 1 and 0 with bool type
-  - converted wake_mask to need_wakeup_event boolean for clarity
+Fixes: 19a7b6940b78 ("gpio: brcmstb: Add interrupt and wakeup source support")
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
+---
+ drivers/gpio/gpio-brcmstb.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Doug Berger (6):
-  gpio: brcmstb: allow all instances to be wakeup sources
-  gpio: brcmstb: release the bgpio lock during irq handlers
-  gpio: brcmstb: switch to handle_level_irq flow
-  gpio: brcmstb: correct the configuration of level interrupts
-  gpio: brcmstb: consolidate interrupt domains
-  gpio: brcmstb: implement suspend/resume/shutdown
-
-Linus Walleij (1):
-  gpio: brcmstb: Do not use gc->pin2mask()
-
- drivers/gpio/Kconfig        |   2 +-
- drivers/gpio/gpio-brcmstb.c | 418 +++++++++++++++++++++++++++++++++-----------
- 2 files changed, 320 insertions(+), 100 deletions(-)
-
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index 9b8fcca7ad17..2031b73e066c 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2015 Broadcom Corporation
++ * Copyright (C) 2015-2017 Broadcom
+  *
+  * This program is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU General Public License as
+@@ -47,7 +47,6 @@ struct brcmstb_gpio_priv {
+ 	struct platform_device *pdev;
+ 	int parent_irq;
+ 	int gpio_base;
+-	bool can_wake;
+ 	int parent_wake_irq;
+ 	struct notifier_block reboot_notifier;
+ };
+@@ -349,10 +348,11 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 	/* Ensures that all non-wakeup IRQs are disabled at suspend */
+ 	bank->irq_chip.flags = IRQCHIP_MASK_ON_SUSPEND;
+ 
+-	if (IS_ENABLED(CONFIG_PM_SLEEP) && !priv->can_wake &&
++	if (IS_ENABLED(CONFIG_PM_SLEEP) && !priv->parent_wake_irq &&
+ 			of_property_read_bool(np, "wakeup-source")) {
+ 		priv->parent_wake_irq = platform_get_irq(pdev, 1);
+ 		if (priv->parent_wake_irq < 0) {
++			priv->parent_wake_irq = 0;
+ 			dev_warn(dev,
+ 				"Couldn't get wake IRQ - GPIOs will not be able to wake from sleep");
+ 		} else {
+@@ -364,8 +364,9 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 			device_set_wakeup_capable(dev, true);
+ 			device_wakeup_enable(dev);
+ 			err = devm_request_irq(dev, priv->parent_wake_irq,
+-					brcmstb_gpio_wake_irq_handler, 0,
+-					"brcmstb-gpio-wake", priv);
++					       brcmstb_gpio_wake_irq_handler,
++					       IRQF_SHARED,
++					       "brcmstb-gpio-wake", priv);
+ 
+ 			if (err < 0) {
+ 				dev_err(dev, "Couldn't request wake IRQ");
+@@ -375,11 +376,10 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 			priv->reboot_notifier.notifier_call =
+ 				brcmstb_gpio_reboot;
+ 			register_reboot_notifier(&priv->reboot_notifier);
+-			priv->can_wake = true;
+ 		}
+ 	}
+ 
+-	if (priv->can_wake)
++	if (priv->parent_wake_irq)
+ 		bank->irq_chip.irq_set_wake = brcmstb_gpio_irq_set_wake;
+ 
+ 	err = gpiochip_irqchip_add(&bank->gc, &bank->irq_chip, 0,
 -- 
 2.14.1
-
