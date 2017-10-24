@@ -1,58 +1,32 @@
-From: Doug Berger <opendmb@gmail.com>
-Subject: Re: [PATCH 7/7] gpio: brcmstb: implement suspend/resume/shutdown
-Date: Mon, 23 Oct 2017 16:06:39 -0700
-Message-ID: <b6a889bc-261d-2082-568c-2eb4847b44b5@gmail.com>
-References: <20170930034057.15166-1-opendmb@gmail.com>
- <20170930034057.15166-8-opendmb@gmail.com> <20171019090359.GB31645@kessel>
- <aa8a2900-22a5-5ec5-2afc-038fc42ea940@gmail.com>
- <CADtm3G5utU_-6+FMqnxN0LYJggLhSe7Q6V5LbwchLQLe5zVing@mail.gmail.com>
+From: "David.Wu" <david.wu@rock-chips.com>
+Subject: Re: pinctrl: rockchip: Add iomux-route switching support for rk3288
+Date: Tue, 24 Oct 2017 09:23:41 +0800
+Message-ID: <63f59d2b-01f2-3484-f3cc-fec63d546f11@rock-chips.com>
+References: <20171021085310.16246-1-heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:53160 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751290AbdJWXGo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Oct 2017 19:06:44 -0400
-In-Reply-To: <CADtm3G5utU_-6+FMqnxN0LYJggLhSe7Q6V5LbwchLQLe5zVing@mail.gmail.com>
-Content-Language: en-US
+Received: from lucky1.263xmail.com ([211.157.147.131]:54268 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751215AbdJXBXs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Oct 2017 21:23:48 -0400
+In-Reply-To: <20171021085310.16246-1-heiko@sntech.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Heiko Stuebner <heiko@sntech.de>, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, hans.verkuil@cisco.com, linux-rockchip@lists.infradead.org
 
-On 10/20/2017 05:54 PM, Gregory Fong wrote:
-> On Thu, Oct 19, 2017 at 11:39 AM, Doug Berger <opendmb@gmail.com> wrote:
->>>> +static int brcmstb_gpio_resume(struct device *dev)
->>>> +{
->>>> +    struct brcmstb_gpio_priv *priv = dev_get_drvdata(dev);
->>>> +    struct brcmstb_gpio_bank *bank;
->>>> +    u32 wake_mask = 0;
->>>
->>> This isn't really being used as a mask, contrary to appearances.  It's
->>> just tracking whether any active IRQs were seen.  Please change to use a
->>> bool instead and adjust the name accordingly.
->>>
->>
->> I see your point, but I believe it is cleaner to use this to consolidate
->> the bit masks returned by each __brcmstb_gpio_get_active_irqs() call.
->> This allows a single test rather than a test per bank.
-> 
-> What about something like this?
-> 
-> bool need_wakeup_event = false;
-> 
-> list_for_each_entry(bank, &priv->bank_list, node) {
->         need_wakeup_event |= !!__brcmstb_gpio_get_active_irqs(bank);
->         brcmstb_gpio_bank_restore(priv, bank);
-> }
-> 
-> if (priv->parent_wake_irq && need_wakeup_event)
->         pm_wakeup_event(dev, 0);
-> 
+Hi Heiko,
 
-It's less efficient, but it is not performance sensitive so if you feel
-this is more understandable I'll make the change.
+在 2017/10/21 16:53, Heiko Stuebner 写道:
+> The rk3288 also has one function that can be routed to one of two pins,
+> the hdmi cec functionality can use either gpio7c0 or gpio7c7.
+> So add the route switching support for it.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Tested-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Thanks,
-    Doug
+Reviewed-by: David Wu <david.wu@rock-chips.com>
+Thanks.
+
