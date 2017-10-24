@@ -1,7 +1,7 @@
 From: Doug Berger <opendmb@gmail.com>
-Subject: [PATCH v2 3/7] gpio: brcmstb: release the bgpio lock during irq handlers
-Date: Tue, 24 Oct 2017 12:54:47 -0700
-Message-ID: <20171024195451.30535-4-opendmb@gmail.com>
+Subject: [PATCH v2 4/7] gpio: brcmstb: switch to handle_level_irq flow
+Date: Tue, 24 Oct 2017 12:54:48 -0700
+Message-ID: <20171024195451.30535-5-opendmb@gmail.com>
 References: <20171024195451.30535-1-opendmb@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171024195451.30535-1-opendmb@gmail.com>
@@ -10,77 +10,81 @@ To: Gregory Fong <gregory.0xf0@gmail.com>
 Cc: Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-The basic memory-mapped GPIO controller lock must be released
-before calling the registered GPIO interrupt handlers to allow
-the interrupt handlers to access the hardware.
+Reading and writing the gpio bank status register each time a pending
+interrupt bit is serviced could cause new pending bits to be cleared
+without servicing the associated interrupts.
 
-Examples of why a GPIO interrupt handler might want to access
-the GPIO hardware include an interrupt that is configured to
-trigger on rising and falling edges that needs to read the
-current level of the input to know how to respond, or an
-interrupt that causes a change in a GPIO output in the same
-bank. If the lock is not released before enterring the handler
-the hardware accesses will deadlock when they attempt to grab
-the lock.
-
-Since the lock is only needed to protect the calculation of
-unmasked pending interrupts create a dedicated function to
-perform this and hide the complexity.
+By using the handle_level_irq flow instead of the handle_simple_irq
+flow we get proper handling of interrupt masking as well as acking
+of interrupts.  The irq_ack method is added to support this.
 
 Fixes: 19a7b6940b78 ("gpio: brcmstb: Add interrupt and wakeup source support")
 Signed-off-by: Doug Berger <opendmb@gmail.com>
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
 ---
- drivers/gpio/gpio-brcmstb.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-brcmstb.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index 2031b73e066c..fd8c0412f8af 100644
+index fd8c0412f8af..513de4936a25 100644
 --- a/drivers/gpio/gpio-brcmstb.c
 +++ b/drivers/gpio/gpio-brcmstb.c
-@@ -63,6 +63,21 @@ brcmstb_gpio_gc_to_priv(struct gpio_chip *gc)
- 	return bank->parent_priv;
+@@ -114,6 +114,16 @@ static void brcmstb_gpio_irq_unmask(struct irq_data *d)
+ 	brcmstb_gpio_set_imask(bank, d->hwirq, true);
  }
  
-+static unsigned long
-+brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
++static void brcmstb_gpio_irq_ack(struct irq_data *d)
 +{
-+	void __iomem *reg_base = bank->parent_priv->reg_base;
-+	unsigned long status;
-+	unsigned long flags;
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct brcmstb_gpio_bank *bank = gpiochip_get_data(gc);
++	struct brcmstb_gpio_priv *priv = bank->parent_priv;
++	u32 mask = BIT(d->hwirq);
 +
-+	spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
-+	status = bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
-+		 bank->gc.read_reg(reg_base + GIO_MASK(bank->id));
-+	spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
-+
-+	return status;
++	gc->write_reg(priv->reg_base + GIO_STAT(bank->id), mask);
 +}
 +
- static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
- 		unsigned int offset, bool enable)
+ static int brcmstb_gpio_irq_set_type(struct irq_data *d, unsigned int type)
  {
-@@ -204,11 +219,8 @@ static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+@@ -217,21 +227,16 @@ static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
+ {
+ 	struct brcmstb_gpio_priv *priv = bank->parent_priv;
  	struct irq_domain *irq_domain = bank->gc.irqdomain;
- 	void __iomem *reg_base = priv->reg_base;
+-	void __iomem *reg_base = priv->reg_base;
  	unsigned long status;
--	unsigned long flags;
  
--	spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
--	while ((status = bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
--			 bank->gc.read_reg(reg_base + GIO_MASK(bank->id)))) {
-+	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
+ 	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
  		int bit;
  
  		for_each_set_bit(bit, &status, 32) {
-@@ -223,7 +235,6 @@ static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
+-			u32 stat = bank->gc.read_reg(reg_base +
+-						      GIO_STAT(bank->id));
+ 			if (bit >= bank->width)
+ 				dev_warn(&priv->pdev->dev,
+ 					 "IRQ for invalid GPIO (bank=%d, offset=%d)\n",
+ 					 bank->id, bit);
+-			bank->gc.write_reg(reg_base + GIO_STAT(bank->id),
+-					    stat | BIT(bit));
  			generic_handle_irq(irq_find_mapping(irq_domain, bit));
  		}
  	}
--	spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
- }
+@@ -354,6 +359,7 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 	bank->irq_chip.name = dev_name(dev);
+ 	bank->irq_chip.irq_mask = brcmstb_gpio_irq_mask;
+ 	bank->irq_chip.irq_unmask = brcmstb_gpio_irq_unmask;
++	bank->irq_chip.irq_ack = brcmstb_gpio_irq_ack;
+ 	bank->irq_chip.irq_set_type = brcmstb_gpio_irq_set_type;
  
- /* Each UPG GIO block has one IRQ for all banks */
+ 	/* Ensures that all non-wakeup IRQs are disabled at suspend */
+@@ -394,7 +400,7 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 		bank->irq_chip.irq_set_wake = brcmstb_gpio_irq_set_wake;
+ 
+ 	err = gpiochip_irqchip_add(&bank->gc, &bank->irq_chip, 0,
+-				   handle_simple_irq, IRQ_TYPE_NONE);
++				   handle_level_irq, IRQ_TYPE_NONE);
+ 	if (err)
+ 		return err;
+ 	gpiochip_set_chained_irqchip(&bank->gc, &bank->irq_chip,
 -- 
 2.14.1
