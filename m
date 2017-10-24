@@ -1,32 +1,70 @@
-From: "David.Wu" <david.wu@rock-chips.com>
-Subject: Re: pinctrl: rockchip: Add iomux-route switching support for rk3288
-Date: Tue, 24 Oct 2017 09:23:41 +0800
-Message-ID: <63f59d2b-01f2-3484-f3cc-fec63d546f11@rock-chips.com>
-References: <20171021085310.16246-1-heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:54268 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751215AbdJXBXs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Oct 2017 21:23:48 -0400
-In-Reply-To: <20171021085310.16246-1-heiko@sntech.de>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: uniphier: remove eMMC hardware reset pin-mux
+Date: Tue, 24 Oct 2017 13:11:11 +0900
+Message-ID: <1508818271-6298-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, hans.verkuil@cisco.com, linux-rockchip@lists.infradead.org
 
-Hi Heiko,
+This is handled by the mmc-pwrseq-emmc driver, which controls
+an eMMC hardware reset via a GPIO line.
 
-在 2017/10/21 16:53, Heiko Stuebner 写道:
-> The rk3288 also has one function that can be routed to one of two pins,
-> the hdmi cec functionality can use either gpio7c0 or gpio7c7.
-> So add the route switching support for it.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Tested-by: Hans Verkuil <hans.verkuil@cisco.com>
+Remove it from the function pin-mux settings.
 
-Reviewed-by: David Wu <david.wu@rock-chips.com>
-Thanks.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 4 ++--
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 4 ++--
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+index 9c5e359..8a5ecd6 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+@@ -472,8 +472,8 @@ static const struct pinctrl_pin_desc uniphier_ld11_pins[] = {
+ 
+ static const unsigned aout_pins[] = {135, 136, 137, 138, 139, 140, 141, 142};
+ static const int aout_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
+-static const unsigned emmc_pins[] = {18, 19, 20, 21, 22, 23, 24, 25};
+-static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned int emmc_pins[] = {19, 20, 21, 22, 23, 24, 25};
++static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0};
+ static const unsigned emmc_dat8_pins[] = {26, 27, 28, 29};
+ static const int emmc_dat8_muxvals[] = {0, 0, 0, 0};
+ static const unsigned ether_rmii_pins[] = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+index 8334128..3be7967 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+@@ -553,8 +553,8 @@ static const struct pinctrl_pin_desc uniphier_ld20_pins[] = {
+ 
+ static const unsigned aout_pins[] = {135, 136, 137, 138, 139, 140, 141, 142};
+ static const int aout_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
+-static const unsigned emmc_pins[] = {18, 19, 20, 21, 22, 23, 24, 25};
+-static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned int emmc_pins[] = {19, 20, 21, 22, 23, 24, 25};
++static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0};
+ static const unsigned emmc_dat8_pins[] = {26, 27, 28, 29};
+ static const int emmc_dat8_muxvals[] = {0, 0, 0, 0};
+ static const unsigned ether_rgmii_pins[] = {30, 31, 32, 33, 34, 35, 36, 37, 38,
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+index d9f166f..dbe94a9 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+@@ -776,8 +776,8 @@ static const struct pinctrl_pin_desc uniphier_pxs3_pins[] = {
+ 			     250, UNIPHIER_PIN_PULL_DOWN),
+ };
+ 
+-static const unsigned int emmc_pins[] = {31, 32, 33, 34, 35, 36, 37, 38};
+-static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned int emmc_pins[] = {32, 33, 34, 35, 36, 37, 38};
++static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0};
+ static const unsigned int emmc_dat8_pins[] = {39, 40, 41, 42};
+ static const int emmc_dat8_muxvals[] = {0, 0, 0, 0};
+ static const unsigned int ether_rgmii_pins[] = {52, 53, 54, 55, 56, 57, 58, 59,
+-- 
+2.7.4
