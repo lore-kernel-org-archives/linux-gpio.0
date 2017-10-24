@@ -1,70 +1,52 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: remove eMMC hardware reset pin-mux
-Date: Tue, 24 Oct 2017 13:11:11 +0900
-Message-ID: <1508818271-6298-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Doug Berger <opendmb@gmail.com>
+Subject: [PATCH v2 0/7] gpio: brcmstb: improved interrupt and wake support
+Date: Tue, 24 Oct 2017 12:54:44 -0700
+Message-ID: <20171024195451.30535-1-opendmb@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:51290 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbdJXTzi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Oct 2017 15:55:38 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory Fong <gregory.0xf0@gmail.com>
+Cc: Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This is handled by the mmc-pwrseq-emmc driver, which controls
-an eMMC hardware reset via a GPIO line.
+This patch set collects a number of improvements to the GPIO driver
+used by Broadcom Set-Top-Box devices.
 
-Remove it from the function pin-mux settings.
+Primarily they are aimed at correcting problems with the interrupt
+controller implementation, but they also extend the functionality for
+waking on GPIO interrupts.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+V2:
+  - Added Linus' patch to remove pin2mask introduced between v1 and v2
+  - Added additional detail to the commit messages based on feedback
+  - Removed "gpio: brcmstb: enable masking of interrupts when changing
+    type" at Gregory Fong's request.
+  - renamed variables for consistent use of offset as relative to a bank
+    and hwirq is relative to the device (i.e. first bank of a device)
+  - renamed GIO_REG_COUNT to NUMBER_OF_GIO_REGISTERS for clarity
+  - renamed regs to saved_regs for clarity
+  - corrected multi-line comment style
+  - used true and false instead of 1 and 0 with bool type
+  - converted wake_mask to need_wakeup_event boolean for clarity
 
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 4 ++--
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 4 ++--
- drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+Doug Berger (6):
+  gpio: brcmstb: allow all instances to be wakeup sources
+  gpio: brcmstb: release the bgpio lock during irq handlers
+  gpio: brcmstb: switch to handle_level_irq flow
+  gpio: brcmstb: correct the configuration of level interrupts
+  gpio: brcmstb: consolidate interrupt domains
+  gpio: brcmstb: implement suspend/resume/shutdown
 
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-index 9c5e359..8a5ecd6 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-@@ -472,8 +472,8 @@ static const struct pinctrl_pin_desc uniphier_ld11_pins[] = {
- 
- static const unsigned aout_pins[] = {135, 136, 137, 138, 139, 140, 141, 142};
- static const int aout_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
--static const unsigned emmc_pins[] = {18, 19, 20, 21, 22, 23, 24, 25};
--static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
-+static const unsigned int emmc_pins[] = {19, 20, 21, 22, 23, 24, 25};
-+static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0};
- static const unsigned emmc_dat8_pins[] = {26, 27, 28, 29};
- static const int emmc_dat8_muxvals[] = {0, 0, 0, 0};
- static const unsigned ether_rmii_pins[] = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-index 8334128..3be7967 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-@@ -553,8 +553,8 @@ static const struct pinctrl_pin_desc uniphier_ld20_pins[] = {
- 
- static const unsigned aout_pins[] = {135, 136, 137, 138, 139, 140, 141, 142};
- static const int aout_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
--static const unsigned emmc_pins[] = {18, 19, 20, 21, 22, 23, 24, 25};
--static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
-+static const unsigned int emmc_pins[] = {19, 20, 21, 22, 23, 24, 25};
-+static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0};
- static const unsigned emmc_dat8_pins[] = {26, 27, 28, 29};
- static const int emmc_dat8_muxvals[] = {0, 0, 0, 0};
- static const unsigned ether_rgmii_pins[] = {30, 31, 32, 33, 34, 35, 36, 37, 38,
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
-index d9f166f..dbe94a9 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
-@@ -776,8 +776,8 @@ static const struct pinctrl_pin_desc uniphier_pxs3_pins[] = {
- 			     250, UNIPHIER_PIN_PULL_DOWN),
- };
- 
--static const unsigned int emmc_pins[] = {31, 32, 33, 34, 35, 36, 37, 38};
--static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
-+static const unsigned int emmc_pins[] = {32, 33, 34, 35, 36, 37, 38};
-+static const int emmc_muxvals[] = {0, 0, 0, 0, 0, 0, 0};
- static const unsigned int emmc_dat8_pins[] = {39, 40, 41, 42};
- static const int emmc_dat8_muxvals[] = {0, 0, 0, 0};
- static const unsigned int ether_rgmii_pins[] = {52, 53, 54, 55, 56, 57, 58, 59,
+Linus Walleij (1):
+  gpio: brcmstb: Do not use gc->pin2mask()
+
+ drivers/gpio/Kconfig        |   2 +-
+ drivers/gpio/gpio-brcmstb.c | 418 +++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 320 insertions(+), 100 deletions(-)
+
 -- 
-2.7.4
+2.14.1
+
