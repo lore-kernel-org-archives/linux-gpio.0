@@ -1,29 +1,26 @@
-From: Alan Tull <atull@kernel.org>
+From: Hoan Tran <hotran@apm.com>
 Subject: Re: [PATCH] gpio: dwapb: fix bgpio usage
-Date: Tue, 24 Oct 2017 15:22:56 -0500
-Message-ID: <CANk1AXTVdTeo6LtCHdK-XeRqkyccru4xKaFndoOasa7WpyB+0Q@mail.gmail.com>
+Date: Tue, 24 Oct 2017 13:26:37 -0700
+Message-ID: <CAFHUOYz-8K9cppjFZda4uebnYU8NGnJnhoXrnVj5jKwX4k1AQw@mail.gmail.com>
 References: <20171020102951.6305-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751323AbdJXUXh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 24 Oct 2017 16:23:37 -0400
-Received: from mail-ua0-f179.google.com (mail-ua0-f179.google.com [209.85.217.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 474BB217C1
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Oct 2017 20:23:37 +0000 (UTC)
-Received: by mail-ua0-f179.google.com with SMTP id b11so16260098uae.12
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Oct 2017 13:23:37 -0700 (PDT)
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:55957 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751336AbdJXU0i (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Oct 2017 16:26:38 -0400
+Received: by mail-oi0-f65.google.com with SMTP id g125so39503295oib.12
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Oct 2017 13:26:38 -0700 (PDT)
 In-Reply-To: <20171020102951.6305-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Hoan Tran <hotran@apm.com>
+Cc: linux-gpio@vger.kernel.org, Alan Tull <atull@kernel.org>
 
-On Fri, Oct 20, 2017 at 5:29 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+Hi Linus,
+
+On Fri, Oct 20, 2017 at 3:29 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
 > The DW APB GPIO driver uses the generic GPIO library gpio-mmio,
 > and initialize the flags as "false", which should be 0.
 >
@@ -35,9 +32,6 @@ On Fri, Oct 20, 2017 at 5:29 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
 > Cc: Hoan Tran <hotran@apm.com>
 > Cc: Alan Tull <atull@kernel.org>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-
-Acked-by: Alan Tull <atull@kernel.org>
-
 > ---
 >  drivers/gpio/gpio-dwapb.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -67,3 +61,8 @@ Acked-by: Alan Tull <atull@kernel.org>
 > --
 > 2.13.6
 >
+
+Acked-by: Hoan Tran <hotran@apm.com>
+
+Regards
+Hoan
