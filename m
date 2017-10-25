@@ -1,104 +1,87 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH 1/2] gpio: gpiolib: Expand sleep tolerance to include
- controller reset
-Date: Wed, 25 Oct 2017 09:32:01 +0100
-Message-ID: <20171025083201.wdudlzgphypyhmwc@localhost.localdomain>
-References: <20171025050417.27992-1-andrew@aj.id.au>
- <20171025050417.27992-2-andrew@aj.id.au>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v2 0/3] pinctrl: sunxi: Start to enforce the strict mode
+Date: Wed, 25 Oct 2017 14:40:27 +0200
+Message-ID: <20171025124027.oosswpymrwkvcvxx@flea>
+References: <cover.3e8ef5cb08d0164375d7644df0548e5f39b0fe66.1507582414.git-series.maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="hvqm426gbm6gtooa"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:40715 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbdJYMka (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Oct 2017 08:40:30 -0400
 Content-Disposition: inline
-In-Reply-To: <20171025050417.27992-2-andrew@aj.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, frowand.list@gmail.com, joel@jms.id.au, ckeepax@opensource.wolfsonmicro.com, ldewangan@nvidia.com, ryan_chen@aspeedtech.com, bgolaszewski@baylibre.com, mwelling@emacinc.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org
+In-Reply-To: <cover.3e8ef5cb08d0164375d7644df0548e5f39b0fe66.1507582414.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Wed, Oct 25, 2017 at 03:34:16PM +1030, Andrew Jeffery wrote:
-> Reset tolerance is added to gpiolib with the introduction of a new
-> pinconf parameter propagating the request to hardware. The existing
-> persistence support for sleep is augmented to include reset tolerance
-> if the GPIO driver provides it. Persistence continues to be enabled by
-> default; in-kernel consumers can opt out, but userspace (currently) does
-> not have a choice.
-> 
-> The *_SLEEP_MAY_LOSE_VALUE and *_SLEEP_MAINTAIN_VALUE symbols are
-> renamed, dropping the SLEEP prefix to reflect that the concept is no
-> longer sleep-specific.  I feel that renaming to just *_MAY_LOSE_VALUE
-> could initially be misinterpreted, so I've further changed the symbols
-> to *_TRANSITORY and *_PERSISTENT to address this.
-> 
-> The sysfs interface is modified only to keep consistency with the
-> chardev interface in enforcing persistence for userspace exports.
-> 
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> ---
-> I'm not wedded to the names 'transitory' and 'persistent', so feel free to
-> paint the bikeshed some other colour.
-> 
 
-I am happy enough with the names.
+--hvqm426gbm6gtooa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  drivers/gpio/gpiolib-of.c               |  6 ++--
->  drivers/gpio/gpiolib-sysfs.c            | 14 +++++---
->  drivers/gpio/gpiolib.c                  | 58 ++++++++++++++++++++++++++++++---
->  drivers/gpio/gpiolib.h                  |  2 +-
->  include/dt-bindings/gpio/gpio.h         |  6 ++--
->  include/linux/gpio/consumer.h           |  8 +++++
->  include/linux/gpio/machine.h            |  4 +--
->  include/linux/of_gpio.h                 |  2 +-
->  include/linux/pinctrl/pinconf-generic.h |  2 ++
->  9 files changed, 84 insertions(+), 18 deletions(-)
+Hi Linus,
 
-> @@ -2424,6 +2428,46 @@ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
->  EXPORT_SYMBOL_GPL(gpiod_set_debounce);
->  
->  /**
-> + * gpiod_set_transitory - Lose or retain GPIO state on suspend or reset
-> + * @desc: descriptor of the GPIO for which to configure persistence
-> + * @transitory: True to lose state on suspend or reset, false for persistence
-> + *
-> + * Returns:
-> + * 0 on success, otherwise a negative error code.
-> + */
-> +int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
-> +{
-> +	struct gpio_chip *chip;
-> +	unsigned long packed;
-> +	int gpio;
-> +	int rc;
-> +
-> +	/* Handle FLAG_TRANSITORY first for suspend case */
-> +	if (transitory)
-> +		set_bit(FLAG_TRANSITORY, &desc->flags);
-> +	else
-> +		clear_bit(FLAG_TRANSITORY, &desc->flags);
-> +
-> +	/* Configure reset persistence if the controller supports it */
-> +	chip = desc->gdev->chip;
-> +	if (!chip->set_config)
-> +		return 0;
-> +
-> +	packed = pinconf_to_config_packed(PIN_CONFIG_RESET_TOLERANT,
-> +					  !transitory);
-> +	gpio = gpio_chip_hwgpio(desc);
-> +	rc = chip->set_config(chip, gpio, packed);
-> +	if (rc == -ENOTSUPP) {
-> +		dev_dbg(&desc->gdev->dev, "Reset tolerance not supported for GPIO %d\n",
-> +				gpio);
-> +		return 0;
-> +	}
-> +
-> +	return rc;
+On Mon, Oct 09, 2017 at 10:53:36PM +0200, Maxime Ripard wrote:
+> Hi,
+>=20
+> Here is an attempt to enable pinctrl's strict mode on our pinctrl drivers.
+> Indeed, our controllers should have had that mode enabled since its
+> introduction.
+>=20
+> However, there's a number of issues with old device trees that prevent fr=
+om
+> just enabling it for all the devices. There's basically two of them:
+>=20
+>   - Most of our old DTs have a pinctrl node for GPIOs, which will result =
+in
+>     an error when the driver is going to request the gpio because it would
+>     already be requested automatically by pinctrl. We cannot break those.
+>=20
+>   - Some of these GPIOs also need to change their pin configuration to add
+>     a bias or change the current output, and there isn't a migration path.
+>=20
+> Let's just keep the old behaviour for the old SoCs, and enforce it on the
+> new one, and enabled it by default so that the situation at least doesn't
+> get worse.
+>=20
+> This has been tested on an A83t (strict on) and an H3 (strict off) board.
 
-This means that if we have a set_config we are directly
-equating PERSISTENT to RESET_TOLERANT, which seems wrong to
-me. I might have a GPIO on a controller with pinconf that
-doesn't have anything to do with RESET_TOLERANT. Should the
-PIN_CONFIG_RESET_TOLERANT, really just be PIN_CONFIG_PERSISTENT?
-And then its upto the driver what persistence means for that
-chip?
+Did you have some time to look at this?
 
-Thanks,
-Charles
+The earlier we merge it the better, so ideally I'd really like to get
+this into 4.15.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--hvqm426gbm6gtooa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZ8IY6AAoJEBx+YmzsjxAgVFQQAJ5unt+yoywNjA+qXV6U1QSi
+KTFHQ51u1nAC+2Hb0j0l4+gs7PPe0p8ZBophmsKcv7kqIFFD3tOxOXs4Ib7Trx55
+DMA/55WIwNu7eJUvvBuMI4vl4jZp6ppb8X4OzZh2Qh/z5u2QsgcYddI9omTAXHlz
+pISskNL8eDJXnm81qN3JoGxlO3gkVNBgjcsc5yH97aGhydv52/j7j8X5Z9oS6Nzk
+9ApOjVCXVYsF4LSrZ0bNi5O3Sv5yVFRucbwY/mCrHZduekx4XljZFnWayJXaa1mK
+m4UPP70va6ZeaZ9Gf33xBykyqh1nJtaK+OuO4ORXe+k3e9R+iZjmKlsZ6cZBqqRE
+VZ3h3fws9+WXhZFIE54bZkkWGfNDgDLJ5tfQL2VTYxdONdGIx9azSTdtmdgsjMSI
+QJk8Wp704Sn5/8BmcQVicSRDqu6HF8Mrw/x1cZ57BOALwW1ZBzU6XcvdEnAJLITL
+5hsWQfq/0VlgAqrdauWtxX6AnF5c8JCM97kWDWMHmCohfUDZn9VUe3EjLM3n3XI2
+9k9ygQUdSiTz6Eas18siQ/whN511/jGjNqcy9hSFSqg69wuHD3utap+vtcZJdHt2
+Z5cJwXqowpiUpeqwMwp2CeeFWb/GQC3tAnn8PWvVNwm/MMP4GhJeQhQ/wRW52X0B
+GA+Vf8oa/WttGvSf+hGx
+=R6+b
+-----END PGP SIGNATURE-----
+
+--hvqm426gbm6gtooa--
