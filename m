@@ -1,62 +1,107 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5 00/13] gpio: Tight IRQ chip integration
-Date: Thu, 26 Oct 2017 08:18:20 +0100
-Message-ID: <42211eed-3996-b968-330c-36c6ca160e0b@nvidia.com>
-References: <20171013154913.29448-1-thierry.reding@gmail.com>
- <f25cd66f-1382-8007-9744-0dbd72757163@nvidia.com>
- <a71b5600-dc22-c53a-7909-48e39c8cf3e6@nvidia.com>
+From: Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>
+Subject: Re: [PATCH 1/2] gpio: gpiolib: Expand sleep tolerance to include
+ controller reset
+Date: Thu, 26 Oct 2017 10:03:18 +0100
+Message-ID: <20171026090318.uv6lvmkt4injiihc@localhost.localdomain>
+References: <20171025050417.27992-1-andrew@aj.id.au>
+ <20171025050417.27992-2-andrew@aj.id.au>
+ <20171025083201.wdudlzgphypyhmwc@localhost.localdomain>
+ <1508978453.13477.7.camel@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4352 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932185AbdJZHS4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Oct 2017 03:18:56 -0400
-In-Reply-To: <a71b5600-dc22-c53a-7909-48e39c8cf3e6@nvidia.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1508978453.13477.7.camel-zrmu5oMJ5Fs@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ryan_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org, bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, mwelling-ei31t81uNw5BDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-aspeed-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Ping!
+On Thu, Oct 26, 2017 at 11:10:53AM +1030, Andrew Jeffery wrote:
+> On Wed, 2017-10-25 at 09:32 +0100, Charles Keepax wrote:
+> > On Wed, Oct 25, 2017 at 03:34:16PM +1030, Andrew Jeffery wrote:
+> > This means that if we have a set_config we are directly
+> > equating PERSISTENT to RESET_TOLERANT, which seems wrong to
+> > me. I might have a GPIO on a controller with pinconf that
+> > doesn't have anything to do with RESET_TOLERANT. Should the
+> > PIN_CONFIG_RESET_TOLERANT, really just be PIN_CONFIG_PERSISTENT?
+> > And then its upto the driver what persistence means for that
+> > chip?
+> 
+> Right, maybe I'm tying the design in a bit too closely with the Aspeed hardware
+> again. I'm coming out in favour of changing it based on my thoughts below.
+> 
+> However, I want to understand whether there are alternatives to reset tolerance
+> as a property. The obvious one is sleep persistence as implemented in the
+> Arizona driver, but it didn't take the set_config() route with its initial
+> implementation.
+> 
+> The set_config() approach was largely driven by the sysfs patch in
+> the RFC series, because I wanted a way to propagate the desired property
+> to hardware without affecting (or again calling through the handlers for) the
+> export state or direction. It seemed to come out neat enough in general so I
+> kept it.
+> 
+> Were you thinking of using set_config() to control the Arizona's behaviour and
+> do something other than the calls to gpiochip_line_is_persistent() in
+> arizona_gpio_direction_{in,out}() (as in, keep the state inside the device
+> driver rather than querying gpiolib where the state is currently stored)? That
+> would seem neat in that it gives us one method of setting both persistence
+> types (and in this case I should rename the pinconf parameter). With that we
+> could probably get rid of gpiochip_line_is_persistent(). A small downside is
+> some duplicated state (we probably still want to keep FLAG_TRANSITORY in
+> gpiolib).
+> 
+> Would it be reasonable for other drivers to implement sleep persistence in the
+> same manner as the Arizona driver currently does? If that's the case, I don't
+> think there is a third tolerance option in addition to sleep and reset, and so
+> we might not need to rename the pinconf parameter.
+> 
+> Finally, we could implement reset persistence in the same manner as the
+> Arizona's sleep persistence (with gpiochip_line_is_persistent()) given the
+> sysfs patch has been thrown away.
+> 
+> So to summarise, having rambled a bit, I see the situation as:
+> 
+> 1. Rename the pinconf parameter, and patch the Arizona driver to use
+>    set_config() and hold sleep persistence state internally.
+> 2. Drop the pinconf parameter and do something similar to the Arizona's sleep
+>    persistence for reset persistence in the Aspeed driver.
+> 3. Keep things as proposed are and live with two approaches to persistence
+> 
+> Point 3 seems like the least desirable. I'm leaning towards 1. I could probably
+> live with 2. after experimenting with it and confirming it's workable for me.
+> 
+> If you think 1. is the way to go are you happy for me to send a patch to the
+> Arizona driver implementing the change?
+> 
 
-On 23/10/17 09:47, Jon Hunter wrote:
-> Hi Linus,
-> 
-> On 16/10/17 19:09, Jon Hunter wrote:
->> Hi Linus,
->>
->> On 13/10/17 16:49, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> Hi Linus,
->>>
->>> here's the latest series of patches that implement the tighter IRQ chip
->>> integration. I've dropped the banked infrastructure for now as per the
->>> discussion with Grygorii.
->>>
->>> The first couple of patches are mostly preparatory work in order to
->>> consolidate all IRQ chip related fields in a new structure and create
->>> the base functionality for adding IRQ chips.
->>>
->>> After that, I've added the Tegra186 GPIO support patch that makes use of
->>> the new tight integration.
->>
->> I have reviewed this series and tested on Tegra, so for the series ...
->>
->> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->> Tested-by: Jon Hunter <jonathanh@nvidia.com>
->>
->> We would really like to get support for Tegra186 GPIO in v4.15, so
->> please let us know if you think that this is do-able.
-> 
-> Any feedback/comments?
-> 
-> Thanks
-> Jon
-> 
+I guess the design was more playing to the fact that in the
+Arizona case we arn't really setting any register bit for the
+persisence, we are just not letting the CODEC power down whilst
+the GPIO is in use. The config approach does make more sense in
+the case where you are actually setting register bits.
 
--- 
-nvpublic
+I don't have any great objection to keeping the persistence state
+in the Arizona GPIO driver, but it does seem to be duplicating
+the state a little. Also an early version of the patch chain did
+that and we decided it would better in the core.
+
+I am not opposed to option 3 either. For example open-drain has
+a similar setup where there is a pin config option for it and
+also a GPIO function call to check for its presence on a specific
+GPIO. Certainly my objection was just that we were equating the
+very generic property to a very specific pinconf.
+
+I think I would probably be keen to see what Linus's thoughts
+are, but my feelings are really your patch is probably good if we
+just rename the RESET_TOLERANT pinconf to something a little more
+generic.
+
+Thanks,
+Charles
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
