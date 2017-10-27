@@ -1,59 +1,68 @@
-From: Gregory Fong <gregory.0xf0@gmail.com>
-Subject: Re: [PATCH v2 7/7] gpio: brcmstb: implement suspend/resume/shutdown
-Date: Thu, 26 Oct 2017 16:51:55 -0700
-Message-ID: <CADtm3G6vOqTbcxKWhbuWXrTsz-85cdfHwnM4KwS3Y9iPFPjQBg@mail.gmail.com>
-References: <20171024195451.30535-1-opendmb@gmail.com> <20171024195451.30535-8-opendmb@gmail.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH] pinctrl: armada-37xx: Add edge both type gpio irq support
+Date: Fri, 27 Oct 2017 14:57:36 +0200
+Message-ID: <87a80c4ukf.fsf@free-electrons.com>
+References: <20171019131003.9684-1-gregory.clement@free-electrons.com>
+        <20171019133828.GC6615@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171024195451.30535-8-opendmb@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Berger <opendmb@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:49270 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752459AbdJ0M5s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Oct 2017 08:57:48 -0400
+In-Reply-To: <20171019133828.GC6615@lunn.ch> (Andrew Lunn's message of "Thu,
+        19 Oct 2017 15:38:28 +0200")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Ken Ma <make@marvell.com>
 
-On Tue, Oct 24, 2017 at 12:54 PM, Doug Berger <opendmb@gmail.com> wrote:
-> This commit corrects problems with the previous wake implementation
-> by implementing suspend and resume power management operations and
-> the driver shutdown operation.
->
-> Wake masks are used to keep track of which GPIO should wake the
-> device.  On suspend the GPIO state is saved and the possible wakeup
-> sources are explicitly unmasked in the hardware. Non-wakeup sources
-> are explicitly masked so IRQCHIP_MASK_ON_SUSPEND is no longer
-> necessary.  The saved state of the GPIO is restored upon resume.
-> It is important not to write to the GPIO status register since this
-> has the effect of clearing bits.  The status register is explicitly
-> removed from the register save and restore to ensure this.
->
-> The shutdown operation allows the hardware to be put into the same
-> quiesced state as the suspend operation and removes the need for
-> the reboot notifier.
->
-> Unfortunately, there appears to be some confusion about whether
-> a pending disabled wake interrupt should wake the system. If a wake
-> capable interrupt is disabled using the default "lazy disable"
-> behavior and it is triggered before the suspend_device_irq call
-> the interrupt hardware will be acknowledged by mask_ack_irq and the
-> IRQS_PENDING flag is added to its state. However, the IRQS_PENDING
-> flag of wake interrupts is not checked to prevent the transition to
-> suspend and the hardware has been acked which prevents its wakeup.
-> If the lazy disabled interrupt is triggered after the call to
-> suspend_device_irqs then the wakeup logic will abort the suspend.
-> The irq_disable method is defined by this GPIO driver to prevent
-> lazy disable so that the pending hardware state remains asserted
-> allowing the hardware to wake and providing a consistent behavior.
->
-> In addition, the IRQ_DISABLE_UNLAZY flag is set for the non-wake
-> parent interrupt as a convenience to prevent the need to add code
-> to the brcmstb_gpio_irq_handler to support "lazy disable" of the
-> non-wake parent interrupt when it is disabled during suspend and
-> resume. Chained interrupt parents are not normally disabled, but
-> these GPIO devices have different parent interrupts for wake and
-> non-wake handling. It is convenient to mask the non-wake parent
-> when suspending to preserve the hardware state for proper wakeup
-> accounting when the driver is resumed.
->
-> Signed-off-by: Doug Berger <opendmb@gmail.com>
+Hi Andrew,
+ 
+ On jeu., oct. 19 2017, Andrew Lunn <andrew@lunn.ch> wrote:
 
-Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
+> On Thu, Oct 19, 2017 at 03:10:03PM +0200, Gregory CLEMENT wrote:
+>> From: Ken Ma <make@marvell.com>
+>> 
+>> Current edge both type gpio irqs which need to swap polarity in each
+>> interrupt are not supported, this patch adds edge both type gpio irq
+>> support.
+>
+> So is the assumption here that you can handle the interrupt and flip
+> the edge, faster than it takes the signal to change?
+>
+> If the software is too slow, you loose the following edge? And you
+> might loose the edge after that as well, since the software will at
+> some point handle the interrupt and reconfigure the edge, potentially
+> for the wrong edge?
+>
+> Or am i missing something which makes this race free?
+
+To put more context, this patch is just the port of what is currently
+done in gpio-mvebu.c.
+
+I needed this support for the SD detect pin and didn't have any issue
+because it was not an intensive use at all.
+
+Going back to your concern, yes if the interrupt frequency is too high
+we might loose 2 events. But the same things could happen with a single
+edge, we can still miss an event.  But I agree that with the "both edge"
+mode then we will loose 2 events instead of one.
+
+It is the problem for the edge interrupt in general. So as soon as you
+use edge interrupt you must be ready to loose some interrupt.
+
+In the end I don't think it is a problem.
+
+Gregory
+
+
+>
+>    Andrew
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
