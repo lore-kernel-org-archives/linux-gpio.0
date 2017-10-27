@@ -1,31 +1,34 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH] pinctrl: armada-37xx: Add edge both type gpio irq support
-Date: Fri, 27 Oct 2017 21:39:59 +0200
-Message-ID: <20171027193959.GB2385@lunn.ch>
-References: <20171019131003.9684-1-gregory.clement@free-electrons.com>
- <20171019133828.GC6615@lunn.ch>
- <87a80c4ukf.fsf@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 0/2] GPIO support for Socionext Synquacer
+Date: Fri, 27 Oct 2017 21:21:46 +0100
+Message-ID: <20171027202148.4188-1-ard.biesheuvel@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([185.16.172.187]:60250 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932143AbdJ0TkC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 27 Oct 2017 15:40:02 -0400
-Content-Disposition: inline
-In-Reply-To: <87a80c4ukf.fsf@free-electrons.com>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:43223 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751417AbdJ0UWF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Oct 2017 16:22:05 -0400
+Received: by mail-wm0-f68.google.com with SMTP id m72so3806956wmc.0
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Oct 2017 13:22:04 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Ken Ma <make@marvell.com>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, daniel.thompson@linaro.org, leif.lindholm@linaro.org, jaswinder.singh@linaro.org, masami.hiramatsu@linaro.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Hi Gregory
+The Socionext Synquacer SC2A11, which is used in the arm64 Developer Box,
+shares its GPIO IP with a Fujitsu SoC for which we already have support
+in the tree. So let's tweak it so that we can reuse it.
 
-> In the end I don't think it is a problem.
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-I think it should be clearly documented somewhere. Hardware which can
-do both edges in hardware won't have this problem. If i'm using this
-generic feature, i want an idea if it is mostly going to work, or
-always going to work.
+Ard Biesheuvel (2):
+  gpio: mb86s7x: share with other SoCs as module
+  gpio: mb86s70: Revert "Return error if requesting an already assigned
+    gpio"
 
-   Andrew
+ drivers/gpio/Kconfig        |  3 +--
+ drivers/gpio/gpio-mb86s7x.c | 17 +++++++++++------
+ 2 files changed, 12 insertions(+), 8 deletions(-)
+
+-- 
+2.11.0
+
