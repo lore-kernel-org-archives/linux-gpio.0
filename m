@@ -1,68 +1,31 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+From: Andrew Lunn <andrew@lunn.ch>
 Subject: Re: [PATCH] pinctrl: armada-37xx: Add edge both type gpio irq support
-Date: Fri, 27 Oct 2017 14:57:36 +0200
-Message-ID: <87a80c4ukf.fsf@free-electrons.com>
+Date: Fri, 27 Oct 2017 21:39:59 +0200
+Message-ID: <20171027193959.GB2385@lunn.ch>
 References: <20171019131003.9684-1-gregory.clement@free-electrons.com>
-        <20171019133828.GC6615@lunn.ch>
+ <20171019133828.GC6615@lunn.ch>
+ <87a80c4ukf.fsf@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:49270 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752459AbdJ0M5s (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Oct 2017 08:57:48 -0400
-In-Reply-To: <20171019133828.GC6615@lunn.ch> (Andrew Lunn's message of "Thu,
-        19 Oct 2017 15:38:28 +0200")
+Received: from vps0.lunn.ch ([185.16.172.187]:60250 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932143AbdJ0TkC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 27 Oct 2017 15:40:02 -0400
+Content-Disposition: inline
+In-Reply-To: <87a80c4ukf.fsf@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Ken Ma <make@marvell.com>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Ken Ma <make@marvell.com>
 
-Hi Andrew,
- 
- On jeu., oct. 19 2017, Andrew Lunn <andrew@lunn.ch> wrote:
+Hi Gregory
 
-> On Thu, Oct 19, 2017 at 03:10:03PM +0200, Gregory CLEMENT wrote:
->> From: Ken Ma <make@marvell.com>
->> 
->> Current edge both type gpio irqs which need to swap polarity in each
->> interrupt are not supported, this patch adds edge both type gpio irq
->> support.
->
-> So is the assumption here that you can handle the interrupt and flip
-> the edge, faster than it takes the signal to change?
->
-> If the software is too slow, you loose the following edge? And you
-> might loose the edge after that as well, since the software will at
-> some point handle the interrupt and reconfigure the edge, potentially
-> for the wrong edge?
->
-> Or am i missing something which makes this race free?
+> In the end I don't think it is a problem.
 
-To put more context, this patch is just the port of what is currently
-done in gpio-mvebu.c.
+I think it should be clearly documented somewhere. Hardware which can
+do both edges in hardware won't have this problem. If i'm using this
+generic feature, i want an idea if it is mostly going to work, or
+always going to work.
 
-I needed this support for the SD detect pin and didn't have any issue
-because it was not an intensive use at all.
-
-Going back to your concern, yes if the interrupt frequency is too high
-we might loose 2 events. But the same things could happen with a single
-edge, we can still miss an event.  But I agree that with the "both edge"
-mode then we will loose 2 events instead of one.
-
-It is the problem for the edge interrupt in general. So as soon as you
-use edge interrupt you must be ready to loose some interrupt.
-
-In the end I don't think it is a problem.
-
-Gregory
-
-
->
->    Andrew
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+   Andrew
