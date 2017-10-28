@@ -1,38 +1,53 @@
 From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 1/7] gpio: brcmstb: Do not use gc->pin2mask()
-Date: Sat, 28 Oct 2017 09:54:07 -0700
-Message-ID: <914591ef-f6b6-8e9b-a3cc-b7ac82391fd6@gmail.com>
+Subject: Re: [PATCH v2 6/7] gpio: brcmstb: consolidate interrupt domains
+Date: Sat, 28 Oct 2017 09:56:22 -0700
+Message-ID: <ff7a5f19-9f64-7872-6a77-57779e24d45c@gmail.com>
 References: <20171024195451.30535-1-opendmb@gmail.com>
- <20171024195451.30535-2-opendmb@gmail.com>
+ <20171024195451.30535-7-opendmb@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171024195451.30535-2-opendmb@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:44835 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751230AbdJ1Q40 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Oct 2017 12:56:26 -0400
+In-Reply-To: <20171024195451.30535-7-opendmb@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Berger <opendmb@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Brian Norris <computersforpeace@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Doug Berger <opendmb@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 
 
 On 10/24/2017 12:54 PM, Doug Berger wrote:
-> From: Linus Walleij <linus.walleij@linaro.org>
+> The GPIOLIB IRQ chip helpers were very appealing, but badly broke
+> the 1:1 mapping between a GPIO controller's device_node and its
+> interrupt domain.
 > 
-> The pin2mask() accessor only shuffles BIT ORDER in big endian systems,
-> i.e. the bitstuffing is swizzled big endian so "bit 0" is bit 7 or
-> bit 15 or bit 31 or so.
+> When another device-tree node references a GPIO device as its
+> interrupt parent, the irq_create_of_mapping() function looks for
+> the irq domain of the GPIO device and since all bank irq domains
+> reference the same GPIO device node it always resolves to the irq
+> domain of the first bank regardless of which bank the number of
+> the GPIO should resolve. This domain can only map hwirq numbers
+> 0-31 so interrupts on GPIO above that can't be mapped by the
+> device-tree.
 > 
-> The brcmstb only uses big endian BYTE ORDER which will be taken car of
-> by the ->write_reg() callback.
+> This commit effectively reverts the patch from Gregory Fong [1]
+> that was accepted upstream and replaces it with a consolidated
+> irq domain implementation with one larger interrupt domain per
+> GPIO controller instance spanning multiple GPIO banks based on
+> an earlier patch [2] also submitted by Gregory Fong.
 > 
-> Just use BIT(offset) to assign the bit.
+> [1] https://patchwork.kernel.org/patch/6921561/
+> [2] https://patchwork.kernel.org/patch/6347811/
 > 
-> Cc: Gregory Fong <gregory.0xf0@gmail.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Fixes: 19a7b6940b78 ("gpio: brcmstb: Add interrupt and wakeup source support")
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
 
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+
 -- 
 Florian
