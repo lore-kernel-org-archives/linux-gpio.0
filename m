@@ -1,49 +1,93 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 1/4] pinctrl: gemini: Add missing functions
-Date: Sat, 28 Oct 2017 15:37:16 +0200
-Message-ID: <20171028133719.27528-1-linus.walleij@linaro.org>
+Subject: [PATCH 2/4] pinctrl: Add skew-delay pin config and bindings
+Date: Sat, 28 Oct 2017 15:37:17 +0200
+Message-ID: <20171028133719.27528-2-linus.walleij@linaro.org>
+References: <20171028133719.27528-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:51232 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbdJ1Njh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Oct 2017 09:39:37 -0400
-Received: by mail-lf0-f67.google.com with SMTP id r129so10112155lff.8
-        for <linux-gpio@vger.kernel.org>; Sat, 28 Oct 2017 06:39:37 -0700 (PDT)
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:46787 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751278AbdJ1Nl1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Oct 2017 09:41:27 -0400
+Received: by mail-lf0-f66.google.com with SMTP id g70so10126649lfl.3
+        for <linux-gpio@vger.kernel.org>; Sat, 28 Oct 2017 06:41:27 -0700 (PDT)
+In-Reply-To: <20171028133719.27528-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org
 
-Some two functions were missing from the Gemini pin control
-driver. Noticed when trying to use ethernet. Fix it up by
-adding them.
+Some pin controllers (such as the Gemini) can control the
+expected clock skew and output delay on certain pins with a
+sub-nanosecond granularity. This is typically done by shunting
+in a number of double inverters in front of or behind the pin.
+Make it possible to configure this with a generic binding.
 
+Cc: devicetree@vger.kernel.org
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/pinctrl-gemini.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 4 ++++
+ drivers/pinctrl/pinconf-generic.c                              | 2 ++
+ include/linux/pinctrl/pinconf-generic.h                        | 5 +++++
+ 3 files changed, 11 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-gemini.c b/drivers/pinctrl/pinctrl-gemini.c
-index 39e6221e7100..7ffd768c0e02 100644
---- a/drivers/pinctrl/pinctrl-gemini.c
-+++ b/drivers/pinctrl/pinctrl-gemini.c
-@@ -2074,6 +2074,16 @@ static const struct gemini_pmx_func gemini_pmx_functions[] = {
- 		.num_groups = ARRAY_SIZE(satagrps),
- 	},
- 	{
-+		.name = "usb",
-+		.groups = usbgrps,
-+		.num_groups = ARRAY_SIZE(usbgrps),
-+	},
-+	{
-+		.name = "gmii",
-+		.groups = gmiigrps,
-+		.num_groups = ARRAY_SIZE(gmiigrps),
-+	},
-+	{
- 		.name = "pci",
- 		.groups = pcigrps,
- 		.num_groups = ARRAY_SIZE(pcigrps),
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+index 4483cc31e531..ad9bbbba36e9 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+@@ -271,6 +271,10 @@ output-high		- set the pin to output mode with high level
+ sleep-hardware-state	- indicate this is sleep related state which will be programmed
+ 			  into the registers for the sleep state.
+ slew-rate		- set the slew rate
++skew-delay		- this affects the expected clock skew on input pins
++			  and the delay before latching a value to an output
++			  pin. Typically indicates how many double-inverters are
++			  used to delay the signal.
+ 
+ For example:
+ 
+diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+index 8eaa25c3384f..b4f7f8a458ea 100644
+--- a/drivers/pinctrl/pinconf-generic.c
++++ b/drivers/pinctrl/pinconf-generic.c
+@@ -49,6 +49,7 @@ static const struct pin_config_item conf_items[] = {
+ 	PCONFDUMP(PIN_CONFIG_POWER_SOURCE, "pin power source", "selector", true),
+ 	PCONFDUMP(PIN_CONFIG_SLEEP_HARDWARE_STATE, "sleep hardware state", NULL, false),
+ 	PCONFDUMP(PIN_CONFIG_SLEW_RATE, "slew rate", NULL, true),
++	PCONFDUMP(PIN_CONFIG_SKEW_DELAY, "skew delay", NULL, true),
+ };
+ 
+ static void pinconf_generic_dump_one(struct pinctrl_dev *pctldev,
+@@ -181,6 +182,7 @@ static const struct pinconf_generic_params dt_params[] = {
+ 	{ "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
+ 	{ "sleep-hardware-state", PIN_CONFIG_SLEEP_HARDWARE_STATE, 0 },
+ 	{ "slew-rate", PIN_CONFIG_SLEW_RATE, 0 },
++	{ "skew-delay", PIN_CONFIG_SKEW_DELAY, 0 },
+ };
+ 
+ /**
+diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
+index 5d8bc7f21c2a..ec6dadcc1fde 100644
+--- a/include/linux/pinctrl/pinconf-generic.h
++++ b/include/linux/pinctrl/pinconf-generic.h
+@@ -90,6 +90,10 @@
+  * @PIN_CONFIG_SLEW_RATE: if the pin can select slew rate, the argument to
+  *	this parameter (on a custom format) tells the driver which alternative
+  *	slew rate to use.
++ * @PIN_CONFIG_SKEW_DELAY: if the pin has programmable skew rate (on inputs)
++ *	or latch delay (on outputs) this parameter (in a custom format)
++ *	specifies the clock skew or latch delay. It typically controls how
++ *	many double inverters are put in front of the line.
+  * @PIN_CONFIG_END: this is the last enumerator for pin configurations, if
+  *	you need to pass in custom configurations to the pin controller, use
+  *	PIN_CONFIG_END+1 as the base offset.
+@@ -117,6 +121,7 @@ enum pin_config_param {
+ 	PIN_CONFIG_POWER_SOURCE,
+ 	PIN_CONFIG_SLEEP_HARDWARE_STATE,
+ 	PIN_CONFIG_SLEW_RATE,
++	PIN_CONFIG_SKEW_DELAY,
+ 	PIN_CONFIG_END = 0x7F,
+ 	PIN_CONFIG_MAX = 0xFF,
+ };
 -- 
 2.13.6
 
