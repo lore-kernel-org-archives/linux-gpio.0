@@ -1,71 +1,47 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 7/7] gpio: brcmstb: implement suspend/resume/shutdown
-Date: Sat, 28 Oct 2017 09:58:27 -0700
-Message-ID: <a77ad531-f90f-bffb-ef07-2228e44affb8@gmail.com>
-References: <20171024195451.30535-1-opendmb@gmail.com>
- <20171024195451.30535-8-opendmb@gmail.com>
+From: John Moore <dpiri03@gmail.com>
+Subject: Attention: My Good Friend
+Date: Sun, 29 Oct 2017 11:48:14 +0000
+Message-ID: <CADgemUQ6xJCBAxs6h4eVcDRgksEthgO6zB4DMZ-wx8av9viNHQ@mail.gmail.com>
+Reply-To: rosecynthia1@diplomats.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:56499 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751230AbdJ1Q6b (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Oct 2017 12:58:31 -0400
-In-Reply-To: <20171024195451.30535-8-opendmb@gmail.com>
-Content-Language: en-US
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:56390 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751147AbdJ2LsQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Oct 2017 07:48:16 -0400
+Received: by mail-wr0-f194.google.com with SMTP id r79so9842008wrb.13
+        for <linux-gpio@vger.kernel.org>; Sun, 29 Oct 2017 04:48:15 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Doug Berger <opendmb@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+
+Attention,
+
+This is my second time I am sending you this notification, simple
+contact Diplomat Rose C. James on her email address
+(rosecynthia1@diplomats.com) with your
+
+contact information
+
+1. Name,
+2. Address,
+3. Phone number,
+4. Age,
+5. Occupation
+
+and your nearest airport to land, so that she can deliver the Package
+worth $4.6 Million as she just landed in your country now but
+misplaced your
+
+information, she will give you more details when you re-confirm
+details. Your personal code to the box is XLA21492014SD, and the color
+is silver. NB indicate
+
+this code to the diplomat Rose Cynthia, so that she can know that you
+are the rightful owner of the box.
 
 
 
-On 10/24/2017 12:54 PM, Doug Berger wrote:
-> This commit corrects problems with the previous wake implementation
-> by implementing suspend and resume power management operations and
-> the driver shutdown operation.
-> 
-> Wake masks are used to keep track of which GPIO should wake the
-> device.  On suspend the GPIO state is saved and the possible wakeup
-> sources are explicitly unmasked in the hardware. Non-wakeup sources
-> are explicitly masked so IRQCHIP_MASK_ON_SUSPEND is no longer
-> necessary.  The saved state of the GPIO is restored upon resume.
-> It is important not to write to the GPIO status register since this
-> has the effect of clearing bits.  The status register is explicitly
-> removed from the register save and restore to ensure this.
-> 
-> The shutdown operation allows the hardware to be put into the same
-> quiesced state as the suspend operation and removes the need for
-> the reboot notifier.
-> 
-> Unfortunately, there appears to be some confusion about whether
-> a pending disabled wake interrupt should wake the system. If a wake
-> capable interrupt is disabled using the default "lazy disable"
-> behavior and it is triggered before the suspend_device_irq call
-> the interrupt hardware will be acknowledged by mask_ack_irq and the
-> IRQS_PENDING flag is added to its state. However, the IRQS_PENDING
-> flag of wake interrupts is not checked to prevent the transition to
-> suspend and the hardware has been acked which prevents its wakeup.
-> If the lazy disabled interrupt is triggered after the call to
-> suspend_device_irqs then the wakeup logic will abort the suspend.
-> The irq_disable method is defined by this GPIO driver to prevent
-> lazy disable so that the pending hardware state remains asserted
-> allowing the hardware to wake and providing a consistent behavior.
-> 
-> In addition, the IRQ_DISABLE_UNLAZY flag is set for the non-wake
-> parent interrupt as a convenience to prevent the need to add code
-> to the brcmstb_gpio_irq_handler to support "lazy disable" of the
-> non-wake parent interrupt when it is disabled during suspend and
-> resume. Chained interrupt parents are not normally disabled, but
-> these GPIO devices have different parent interrupts for wake and
-> non-wake handling. It is convenient to mask the non-wake parent
-> when suspending to preserve the hardware state for proper wakeup
-> accounting when the driver is resumed.
-> 
-> Signed-off-by: Doug Berger <opendmb@gmail.com>
-
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
--- 
-Florian
+Best regard
+Mr John MooreRegards,
++22998086931 (rosecynthia2@diplomats.com)
