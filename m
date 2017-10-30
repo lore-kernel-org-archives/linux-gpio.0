@@ -1,89 +1,99 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 16/16] arm64: dts: marvell: armada-3720-espressobin: fill UART nodes
-Date: Mon, 30 Oct 2017 16:46:13 +0100
-Message-ID: <87fua01vwa.fsf@free-electrons.com>
-References: <20171013090200.31034-1-miquel.raynal@free-electrons.com>
-        <20171013090200.31034-17-miquel.raynal@free-electrons.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 1/3] pinctrl: mcp23s08: Improve unlocking of a mutex in
+ mcp23s08_irq()
+Date: Mon, 30 Oct 2017 16:46:39 +0100
+Message-ID: <01bfaa76-f947-f148-077b-35949bf8e229@users.sourceforge.net>
+References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:35110 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932156AbdJ3PqO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Oct 2017 11:46:14 -0400
-In-Reply-To: <20171013090200.31034-17-miquel.raynal@free-electrons.com>
-        (Miquel Raynal's message of "Fri, 13 Oct 2017 11:02:00 +0200")
+Received: from mout.web.de ([212.227.17.11]:61050 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932156AbdJ3Pqm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 30 Oct 2017 11:46:42 -0400
+In-Reply-To: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
+Content-Language: en-GB
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Miquel Raynal <miquel.raynal@free-electrons.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jiri Slaby <jslaby@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree@vger.kernel.org, Antoine Tenart <antoine.tenart@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, Wilson Ding <dingwei@marvell.com>, linux-arm-kernel@lists.infradead.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Miquel,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 16:03:12 +0100
+
+* Add a jump target so that a call of the function "mutex_unlock" is stored
+  only twice in this function implementation.
+
+* Replace five calls by goto statements.
+
+* Adjust five condition checks.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/pinctrl-mcp23s08.c | 35 +++++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index 3e40d4245512..919eb7268331 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -457,31 +457,22 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+ 		defval_changed, gpio_set;
  
- On ven., oct. 13 2017, Miquel Raynal <miquel.raynal@free-electrons.com> wrote:
-
-> Fill ESPRESSObin uart0 node with pinctrl information like in the
-> Armada-3720-DB device tree (which uses the same node).
->
-> Also explain how to enable the second UART port available on the
-> headers. This second port is not enabled by default because both
-> headers are dedicated to expose general purpose pins and remapping
-> some of them to use the second UART would break existing users.
->
-> Suggested-by: László ÁSHIN <laszlo@ashin.hu>
-> Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
-
-Applied on mvebu/dt64
-
-Thanks,
-
-Gregory
-
-> ---
->
-> Changes since v1: comment about UART1 node.
->
->  arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-> index 2ce52ba74f73..bdfb5553ddb5 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-> +++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-> @@ -98,9 +98,21 @@
->  
->  /* Exported on the micro USB connector J5 through an FTDI */
->  &uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart1_pins>;
->  	status = "okay";
->  };
->  
-> +/*
-> + * Connector J17 and J18 expose a number of different features. Some pins are
-> + * multiplexed. This is the case for instance for the following features:
-> + * - UART1 (pin 24 = RX, pin 26 = TX). See armada-3720-db.dts for an example of
-> + *   how to enable it. Beware that the signals are 1.8V TTL.
-> + * - I2C
-> + * - SPI
-> + * - MMC
-> + */
-> +
->  /* J7 */
->  &usb3 {
->  	status = "okay";
-> -- 
-> 2.11.0
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
+ 	mutex_lock(&mcp->lock);
+-	if (mcp_read(mcp, MCP_INTF, &intf) < 0) {
+-		mutex_unlock(&mcp->lock);
+-		return IRQ_HANDLED;
+-	}
++	if (mcp_read(mcp, MCP_INTF, &intf))
++		goto unlock;
+ 
+-	if (mcp_read(mcp, MCP_INTCAP, &intcap) < 0) {
+-		mutex_unlock(&mcp->lock);
+-		return IRQ_HANDLED;
+-	}
++	if (mcp_read(mcp, MCP_INTCAP, &intcap))
++		goto unlock;
+ 
+-	if (mcp_read(mcp, MCP_INTCON, &intcon) < 0) {
+-		mutex_unlock(&mcp->lock);
+-		return IRQ_HANDLED;
+-	}
++	if (mcp_read(mcp, MCP_INTCON, &intcon))
++		goto unlock;
+ 
+-	if (mcp_read(mcp, MCP_DEFVAL, &defval) < 0) {
+-		mutex_unlock(&mcp->lock);
+-		return IRQ_HANDLED;
+-	}
++	if (mcp_read(mcp, MCP_DEFVAL, &defval))
++		goto unlock;
+ 
+ 	/* This clears the interrupt(configurable on S18) */
+-	if (mcp_read(mcp, MCP_GPIO, &gpio) < 0) {
+-		mutex_unlock(&mcp->lock);
+-		return IRQ_HANDLED;
+-	}
++	if (mcp_read(mcp, MCP_GPIO, &gpio))
++		goto unlock;
++
+ 	gpio_orig = mcp->cached_gpio;
+ 	mcp->cached_gpio = gpio;
+ 	mutex_unlock(&mcp->lock);
+@@ -543,6 +534,10 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+ 	}
+ 
+ 	return IRQ_HANDLED;
++
++unlock:
++	mutex_unlock(&mcp->lock);
++	return IRQ_HANDLED;
+ }
+ 
+ static void mcp23s08_irq_mask(struct irq_data *data)
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.14.3
+
