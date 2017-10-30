@@ -1,102 +1,71 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] pinctrl: pistachio: Use common error handling code in
- pistachio_gpio_register()
-Date: Mon, 30 Oct 2017 18:51:19 +0100
-Message-ID: <0b8eced6-c4d9-6b0b-ac23-de764622e91c@users.sourceforge.net>
+Subject: [PATCH] pinctrl: sirf: Use common error handling code in
+ sirfsoc_dt_node_to_map()
+Date: Mon, 30 Oct 2017 19:36:40 +0100
+Message-ID: <80911d4b-d819-335c-106e-70d7672e645b@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([217.72.192.78]:56539 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:58197 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932243AbdJ3RvZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 30 Oct 2017 13:51:25 -0400
+        id S1752785AbdJ3ShY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 30 Oct 2017 14:37:24 -0400
 Content-Language: en-GB
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Damien Horsley <Damien.Horsley@imgtec.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Barry Song <baohua@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Julia Lawall <Julia.Lawall@lip6.fr>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, Patrice Chotard <patrice.chotard@st.com>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 18:40:10 +0100
+Date: Mon, 30 Oct 2017 19:26:56 +0100
 
-Adjust jump targets so that a bit of exception handling can be better
-reused at the end of this function.
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/pinctrl-pistachio.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/pinctrl/sirf/pinctrl-sirf.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
-index 55375b1b3cc8..b314eb61bf35 100644
---- a/drivers/pinctrl/pinctrl-pistachio.c
-+++ b/drivers/pinctrl/pinctrl-pistachio.c
-@@ -1362,21 +1362,21 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
- 		if (!child) {
- 			dev_err(pctl->dev, "No node for bank %u\n", i);
- 			ret = -ENODEV;
--			goto err;
-+			goto remove_chips;
- 		}
+diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+index d64add0b84cc..5ec2f37f5180 100644
+--- a/drivers/pinctrl/sirf/pinctrl-sirf.c
++++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+@@ -89,16 +89,12 @@ static int sirfsoc_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	/* calculate number of maps required */
+ 	for_each_child_of_node(np_config, np) {
+ 		ret = of_property_read_string(np, "sirf,function", &function);
+-		if (ret < 0) {
+-			of_node_put(np);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto put_node;
  
- 		if (!of_find_property(child, "gpio-controller", NULL)) {
- 			dev_err(pctl->dev,
- 				"No gpio-controller property for bank %u\n", i);
- 			ret = -ENODEV;
--			goto err;
-+			goto remove_chips;
- 		}
+ 		ret = of_property_count_strings(np, "sirf,pins");
+-		if (ret < 0) {
+-			of_node_put(np);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto put_node;
  
- 		irq = irq_of_parse_and_map(child, 0);
- 		if (irq < 0) {
- 			dev_err(pctl->dev, "No IRQ for bank %u: %d\n", i, irq);
- 			ret = irq;
--			goto err;
-+			goto remove_chips;
- 		}
- 
- 		bank = &pctl->gpio_banks[i];
-@@ -1389,7 +1389,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
- 		if (ret < 0) {
- 			dev_err(pctl->dev, "Failed to add GPIO chip %u: %d\n",
- 				i, ret);
--			goto err;
-+			goto remove_chips;
- 		}
- 
- 		ret = gpiochip_irqchip_add(&bank->gpio_chip, &bank->irq_chip,
-@@ -1397,8 +1397,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
- 		if (ret < 0) {
- 			dev_err(pctl->dev, "Failed to add IRQ chip %u: %d\n",
- 				i, ret);
--			gpiochip_remove(&bank->gpio_chip);
--			goto err;
-+			goto remove_chip;
- 		}
- 		gpiochip_set_chained_irqchip(&bank->gpio_chip, &bank->irq_chip,
- 					     irq, pistachio_gpio_irq_handler);
-@@ -1409,13 +1408,15 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
- 		if (ret < 0) {
- 			dev_err(pctl->dev, "Failed to add GPIO range %u: %d\n",
- 				i, ret);
--			gpiochip_remove(&bank->gpio_chip);
--			goto err;
-+			goto remove_chip;
- 		}
+ 		count += ret;
  	}
+@@ -125,6 +121,10 @@ static int sirfsoc_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	*num_maps = count;
  
  	return 0;
--err:
 +
-+remove_chip:
-+	gpiochip_remove(&bank->gpio_chip);
-+remove_chips:
- 	for (; i > 0; i--) {
- 		bank = &pctl->gpio_banks[i - 1];
- 		gpiochip_remove(&bank->gpio_chip);
++put_node:
++	of_node_put(np);
++	return ret;
+ }
+ 
+ static void sirfsoc_dt_free_map(struct pinctrl_dev *pctldev,
 -- 
 2.14.3
 
