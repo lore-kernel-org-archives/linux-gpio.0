@@ -1,91 +1,85 @@
-From: Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] gpio: gpiolib: Generalise state persistence
- beyond sleep
-Date: Mon, 30 Oct 2017 09:57:26 +0000
-Message-ID: <20171030095726.a43lpshlyfta4vrq@localhost.localdomain>
-References: <20171030062218.27005-1-andrew@aj.id.au>
- <20171030062218.27005-2-andrew@aj.id.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] pinctrl: max77620: Use common error handling code in
+ max77620_pinconf_set()
+Date: Mon, 30 Oct 2017 15:00:07 +0100
+Message-ID: <afdb4e5f-15f7-14b5-7a35-f8420dec683c@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171030062218.27005-2-andrew-zrmu5oMJ5Fs@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ryan_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-aspeed-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.web.de ([217.72.192.78]:51622 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752455AbdJ3OAU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 30 Oct 2017 10:00:20 -0400
+Content-Language: en-GB
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 30, 2017 at 04:52:17PM +1030, Andrew Jeffery wrote:
-> General support for state persistence is added to gpiolib with the
-> introduction of a new pinconf parameter to propagate the request to
-> hardware. The existing persistence support for sleep is adapted to
-> include hardware support if the GPIO driver provides it. Persistence
-> continues to be enabled by default; in-kernel consumers can opt out, but
-> userspace (currently) does not have a choice.
-> 
-> The *_SLEEP_MAY_LOSE_VALUE and *_SLEEP_MAINTAIN_VALUE symbols are
-> renamed, dropping the SLEEP prefix to reflect that the concept is no
-> longer sleep-specific.  I feel that renaming to just *_MAY_LOSE_VALUE
-> could initially be misinterpreted, so I've further changed the symbols
-> to *_TRANSITORY and *_PERSISTENT to address this.
-> 
-> The sysfs interface is modified only to keep consistency with the
-> chardev interface in enforcing persistence for userspace exports.
-> 
-> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-> ---
->  /**
-> + * gpiod_set_transitory - Lose or retain GPIO state on suspend or reset
-> + * @desc: descriptor of the GPIO for which to configure persistence
-> + * @transitory: True to lose state on suspend or reset, false for persistence
-> + *
-> + * Returns:
-> + * 0 on success, otherwise a negative error code.
-> + */
-> +int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
-> +{
-> +	struct gpio_chip *chip;
-> +	unsigned long packed;
-> +	int gpio;
-> +	int rc;
-> +
-> +	/* Handle FLAG_TRANSITORY first for suspend case */
-> +	if (transitory)
-> +		set_bit(FLAG_TRANSITORY, &desc->flags);
-> +	else
-> +		clear_bit(FLAG_TRANSITORY, &desc->flags);
-> +
-> +	/* Configure reset persistence if the controller supports it */
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 30 Oct 2017 14:55:52 +0100
 
-This comment could use an update.
+* Add a jump target so that a specific error message is stored only once
+  at the end of this function implementation.
 
-> +	chip = desc->gdev->chip;
-> +	if (!chip->set_config)
-> +		return 0;
-> +
-> +	packed = pinconf_to_config_packed(PIN_CONFIG_PERSIST_STATE,
-> +					  !transitory);
-> +	gpio = gpio_chip_hwgpio(desc);
-> +	rc = chip->set_config(chip, gpio, packed);
-> +	if (rc == -ENOTSUPP) {
-> +		dev_dbg(&desc->gdev->dev, "Reset tolerance not supported for GPIO %d\n",
-> +				gpio);
+* Replace two calls of the function "dev_err" by goto statements.
 
-And this debug message.
+* Adjust two condition checks.
 
-> +		return 0;
-> +	}
-> +
-> +	return rc;
-> +}
-> +EXPORT_SYMBOL_GPL(gpiod_set_transitory);
-> +
+This issue was detected by using the Coccinelle software.
 
-Otherwise think this all looks good to me.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/pinctrl-max77620.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-Thanks,
-Charles
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/pinctrl-max77620.c b/drivers/pinctrl/pinctrl-max77620.c
+index b8d2180a2bea..a7f37063518e 100644
+--- a/drivers/pinctrl/pinctrl-max77620.c
++++ b/drivers/pinctrl/pinctrl-max77620.c
+@@ -420,11 +420,9 @@ static int max77620_pinconf_set(struct pinctrl_dev *pctldev,
+ 						 MAX77620_REG_GPIO0 + pin,
+ 						 MAX77620_CNFG_GPIO_DRV_MASK,
+ 						 val);
+-			if (ret < 0) {
+-				dev_err(dev, "Reg 0x%02x update failed %d\n",
+-					MAX77620_REG_GPIO0 + pin, ret);
+-				return ret;
+-			}
++			if (ret)
++				goto report_update_failure;
++
+ 			mpci->pin_info[pin].drv_type = val ?
+ 				MAX77620_PIN_PP_DRV : MAX77620_PIN_OD_DRV;
+ 			break;
+@@ -435,11 +433,9 @@ static int max77620_pinconf_set(struct pinctrl_dev *pctldev,
+ 						 MAX77620_REG_GPIO0 + pin,
+ 						 MAX77620_CNFG_GPIO_DRV_MASK,
+ 						 val);
+-			if (ret < 0) {
+-				dev_err(dev, "Reg 0x%02x update failed %d\n",
+-					MAX77620_REG_GPIO0 + pin, ret);
+-				return ret;
+-			}
++			if (ret)
++				goto report_update_failure;
++
+ 			mpci->pin_info[pin].drv_type = val ?
+ 				MAX77620_PIN_PP_DRV : MAX77620_PIN_OD_DRV;
+ 			break;
+@@ -536,6 +532,11 @@ static int max77620_pinconf_set(struct pinctrl_dev *pctldev,
+ 	}
+ 
+ 	return 0;
++
++report_update_failure:
++	dev_err(dev, "Reg 0x%02x update failed %d\n",
++		MAX77620_REG_GPIO0 + pin, ret);
++	return ret;
+ }
+ 
+ static const struct pinconf_ops max77620_pinconf_ops = {
+-- 
+2.14.3
+
