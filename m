@@ -1,36 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/3] pinctrl-mcp23s08: Fine-tuning for two function
- implementations
-Date: Mon, 30 Oct 2017 16:45:31 +0100
-Message-ID: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
+From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v2 13/16] arm64: dts: marvell: armada-37xx: add UART clock
+Date: Mon, 30 Oct 2017 16:45:36 +0100
+Message-ID: <87she01vxb.fsf@free-electrons.com>
+References: <20171013090200.31034-1-miquel.raynal@free-electrons.com>
+        <20171013090200.31034-14-miquel.raynal@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:65114 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752005AbdJ3Ppf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 30 Oct 2017 11:45:35 -0400
-Content-Language: en-GB
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171013090200.31034-14-miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+        (Miquel Raynal's message of "Fri, 13 Oct 2017 11:01:57 +0200")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Miquel Raynal <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 30 Oct 2017 16:40:20 +0100
+Hi Miquel,
+ 
+ On ven., oct. 13 2017, Miquel Raynal <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 
-Three update suggestions were taken into account
-from static source code analysis.
+> Add the missing clock property to armada-3700 UART node.
+>
+> This clock will be used to derive the prescaler value to comply with
+> the requested baudrate.
+>
+> Signed-off-by: Miquel Raynal <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> Acked-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 
-Markus Elfring (3):
-  Improve unlocking of a mutex in mcp23s08_irq()
-  Use common error handling code in mcp23s08_dbg_show()
-  Combine two function calls in mcp23s08_dbg_show()
+Applied on mvebu/dt64
 
- drivers/pinctrl/pinctrl-mcp23s08.c | 80 ++++++++++++++++++--------------------
- 1 file changed, 37 insertions(+), 43 deletions(-)
+Thanks,
+
+Gregory
+
+> ---
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+> index b554cdaf5e53..a36d667f770e 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+> @@ -135,6 +135,7 @@
+>  			uart0: serial@12000 {
+>  				compatible = "marvell,armada-3700-uart";
+>  				reg = <0x12000 0x200>;
+> +				clocks = <&xtalclk>;
+>  				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+>  				status = "disabled";
+>  			};
+> -- 
+> 2.11.0
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
 -- 
-2.14.3
-
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
