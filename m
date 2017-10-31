@@ -1,40 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio-rcar: use devm_ioremap_resource()
-Date: Tue, 31 Oct 2017 09:53:17 +0100
-Message-ID: <CACRpkdYnF4Groyqchi--3deyxVcak5uRFegWChF4ANbPAD-0rA@mail.gmail.com>
-References: <20171012210818.806395567@cogentembedded.com>
+Subject: Re: [PATCH] gpio-adnp: Use common error handling code in adnp_gpio_dbg_show()
+Date: Tue, 31 Oct 2017 10:09:43 +0100
+Message-ID: <CACRpkdaz3QLYmA4AkUUZ1Hr0un9a0bub1isJ24Nh_JkwR=W3Qg@mail.gmail.com>
+References: <1e2fb84c-9a5b-dc56-c93b-7eef03fc9b7a@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:54784 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751457AbdJaIxS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Oct 2017 04:53:18 -0400
-Received: by mail-io0-f193.google.com with SMTP id e89so33305370ioi.11
-        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 01:53:18 -0700 (PDT)
-In-Reply-To: <20171012210818.806395567@cogentembedded.com>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:53870 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751409AbdJaJJo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Oct 2017 05:09:44 -0400
+Received: by mail-io0-f196.google.com with SMTP id 189so33454330iow.10
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 02:09:44 -0700 (PDT)
+In-Reply-To: <1e2fb84c-9a5b-dc56-c93b-7eef03fc9b7a@users.sourceforge.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@avionic-design.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Oct 12, 2017 at 11:08 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
+On Sun, Oct 22, 2017 at 8:27 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-> Using devm_ioremap_resource() has several advantages over devm_ioremap():
-> - it checks the passed resource's validity;
-> - it calls devm_request_mem_region() to check for the resource overlap;
-> - it prints an error message in case of error.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 22 Oct 2017 20:21:55 +0200
 >
-> We can call devm_ioremap_resource() instead of devm_ioremap_nocache()
-> as ioremap() and ioremap_nocache()  are implemented identically on ARM.
-> Doing this saves 2 LoCs and 80 bytes (AArch64 gcc 4.8.5).
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function.
 >
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Patch applied with Geert's review tag.
-
-Sorry for delay, too busy as always.
+That's a nice patch.
+Patch applied.
 
 Yours,
 Linus Walleij
