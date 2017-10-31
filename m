@@ -1,56 +1,40 @@
-From: Timur Tabi <timur@codeaurora.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Subject: Re: [PATCH 2/4] gpiolib: add bitmask for valid GPIO lines
-Date: Tue, 31 Oct 2017 13:54:56 -0500
-Message-ID: <02208047-38c8-f97b-5c53-6cced7bdecc6@codeaurora.org>
+Date: Tue, 31 Oct 2017 21:05:57 +0200
+Message-ID: <1509476757.10233.143.camel@linux.intel.com>
 References: <1509396602-1936-1-git-send-email-timur@codeaurora.org>
- <1509396602-1936-3-git-send-email-timur@codeaurora.org>
- <1509441149.10233.80.camel@linux.intel.com>
+         <1509396602-1936-3-git-send-email-timur@codeaurora.org>
+         <1509441149.10233.80.camel@linux.intel.com>
+         <02208047-38c8-f97b-5c53-6cced7bdecc6@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1509441149.10233.80.camel@linux.intel.com>
-Content-Language: en-US
+In-Reply-To: <02208047-38c8-f97b-5c53-6cced7bdecc6@codeaurora.org>
 Sender: linux-arm-msm-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Timur Tabi <timur@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 10/31/2017 04:12 AM, Andy Shevchenko wrote:
-> Instead of mangling this function wouldn't be better to introduce a
-> separate one for line and perhaps a third one which calls them both?
+On Tue, 2017-10-31 at 13:54 -0500, Timur Tabi wrote:
+> On 10/31/2017 04:12 AM, Andy Shevchenko wrote:
+> > Instead of mangling this function wouldn't be better to introduce a
+> > separate one for line and perhaps a third one which calls them both?
+> 
+> The diff is convoluted, but the end result is clean:
 
-The diff is convoluted, but the end result is clean:
+> Is this acceptable?
 
-static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
-{
-	if (gpiochip->irq_need_valid_mask) {
-		gpiochip->irq_valid_mask =
-			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
-				sizeof(long), GFP_KERNEL);
-		if (!gpiochip->irq_valid_mask)
-			return -ENOMEM;
+I also put in the comment the following:
 
-		/* Assume by default all GPIOs are valid */
-		bitmap_fill(gpiochip->irq_valid_mask, gpiochip->ngpio);
-	}
+--- 8< --- 8< --- 8< ---
 
-	if (gpiochip->line_need_valid_mask) {
-		gpiochip->line_valid_mask =
-			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
-				sizeof(long), GFP_KERNEL);
-		if (!gpiochip->line_valid_mask)
-			return -ENOMEM;
+...for my opinion it will drastically increase readability and reduce
+diff as well (better for review).
 
-		/* Assume by default all GPIOs are valid */
-		bitmap_fill(gpiochip->line_valid_mask, gpiochip->ngpio);
-	}
+--- 8< --- 8< --- 8< ---
 
-	return 0;
-}
-
-Is this acceptable?
+The decision is up to Linus. I simple shared my opinion.
 
 -- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
