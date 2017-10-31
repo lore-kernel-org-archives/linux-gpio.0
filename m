@@ -1,95 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] GPIO support for Socionext Synquacer
-Date: Tue, 31 Oct 2017 14:13:40 +0100
-Message-ID: <CACRpkdb89o6b+os8RMUB-TN=Sz0UmGeesWYvqYbupNFF438kmA@mail.gmail.com>
-References: <20171027202148.4188-1-ard.biesheuvel@linaro.org>
- <CACRpkdbfM6SuXxkbfcmJ-JxK1Mt=oxy1qN3rEawoNb8gpmjM9Q@mail.gmail.com> <CAKv+Gu-20f8VXW1x1T5BVoFwFiiNsS1XYvrA7XPo438-C6=u+A@mail.gmail.com>
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH] pinctrl: armada-37xx: Add edge both type gpio irq support
+Date: Tue, 31 Oct 2017 14:16:17 +0100
+Message-ID: <20171031131617.GA11647@lunn.ch>
+References: <20171019131003.9684-1-gregory.clement@free-electrons.com>
+ <CACRpkdbqjh5U5QoE_B+7GfSyDdHW-NCAvogGq-2n8j6L6nG-Gw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:53655 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751539AbdJaNNl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Oct 2017 09:13:41 -0400
-Received: by mail-io0-f194.google.com with SMTP id 189so34952489iow.10
-        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 06:13:41 -0700 (PDT)
-In-Reply-To: <CAKv+Gu-20f8VXW1x1T5BVoFwFiiNsS1XYvrA7XPo438-C6=u+A@mail.gmail.com>
+Received: from vps0.lunn.ch ([185.16.172.187]:35050 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751050AbdJaNQT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 31 Oct 2017 09:16:19 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbqjh5U5QoE_B+7GfSyDdHW-NCAvogGq-2n8j6L6nG-Gw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Leif Lindholm <leif.lindholm@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, Masami Hiramatsu <masami.hiramatsu@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Antoine Tenart <antoine.tenart@free-electrons.com>, =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Ken Ma <make@marvell.com>
 
-On Tue, Oct 31, 2017 at 1:27 PM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
+> Patch applied.
+> 
+> The discussion here is interesting, it is customary for GPIO drivers
+> to implement double-edge detection emulation by swapping the
+> edge detector around like this.
 
-> I currently have this in my DTS:
->
-> &gpio {
->     dsw3_1 {
->         gpios = <0 GPIO_ACTIVE_HIGH>;
->         gpio-hog;
->         input;
->     };
->
->     dsw3_2 {
->         gpios = <1 GPIO_ACTIVE_HIGH>;
->         gpio-hog;
->         input;
->     };
->
->     dsw3_3 {
->         gpios = <2 GPIO_ACTIVE_HIGH>;
->         gpio-hog;
->         input;
->     };
->
->     dsw3_4 {
->         gpios = <3 GPIO_ACTIVE_HIGH>;
->         gpio-hog;
->         input;
->     };
->
->     dsw3_5 {
->         gpios = <4 GPIO_ACTIVE_HIGH>;
->         gpio-hog;
->         input;
->     };
->
->     dsw3_6 {
->         gpios = <5 GPIO_ACTIVE_HIGH>;
->         gpio-hog;
->         input;
->     };
->
->     dsw3_7 {
->         gpios = <6 GPIO_ACTIVE_HIGH>;
->         gpio-hog;
->         input;
->     };
->
->     dsw3_8 {
->         gpios = <7 GPIO_ACTIVE_HIGH>;
->         gpio-hog;
->         input;
->     };
->
-> for the 8 DIP switches that are connected to GPIO lines.
+Hi Linus
 
-I have no idea how to make proper use of DIP switches really.
-We *could* route them as inputs using GPIO keys, but it would
-maybe give people the idea that it is a good idea to start
-prying them at runtime.
+I was not aware this was customary.
 
-If they don't have a usecase I would just leave them as this.
+> It might be possible to collect some generic information about
+> this in the Documentation/gpio/driver.txt document.
 
-I guess/hope they will not be used by userspace either.
+Yes, i think it should be documented somewhere. Even in the use case
+here, detecting an SD card being inserted/removed, you could get some
+bounce on the microswitch, miss an edge, and be in the wrong state.
 
-> So I can add the names for all the lines that have a purpose, but is
-> that orthogonal to hogging?
-
-Naming is orthogonal to hogging and should be a functional name
-for the line, preferably header name, else rail name or something
-else reasonable.
-
-Yours,
-Linus Walleij
+       Andrew
