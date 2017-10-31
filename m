@@ -1,67 +1,40 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 0/3] pinctrl: sunxi: Start to enforce the strict mode
-Date: Tue, 31 Oct 2017 09:52:07 +0100
-Message-ID: <20171031085207.fpoemk2bo5byjojy@flea>
-References: <cover.3e8ef5cb08d0164375d7644df0548e5f39b0fe66.1507582414.git-series.maxime.ripard@free-electrons.com>
- <20171025124027.oosswpymrwkvcvxx@flea>
- <CACRpkdb+o_cfMnPDczF+WNNcVsPg3vTauqLZuCtv474MCM4sSQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/1] gpio-rcar: use devm_ioremap_resource()
+Date: Tue, 31 Oct 2017 09:53:17 +0100
+Message-ID: <CACRpkdYnF4Groyqchi--3deyxVcak5uRFegWChF4ANbPAD-0rA@mail.gmail.com>
+References: <20171012210818.806395567@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5ie5l6noy46rjtd3"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb+o_cfMnPDczF+WNNcVsPg3vTauqLZuCtv474MCM4sSQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:54784 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751457AbdJaIxS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Oct 2017 04:53:18 -0400
+Received: by mail-io0-f193.google.com with SMTP id e89so33305370ioi.11
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 01:53:18 -0700 (PDT)
+In-Reply-To: <20171012210818.806395567@cogentembedded.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
+On Thu, Oct 12, 2017 at 11:08 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 
---5ie5l6noy46rjtd3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Using devm_ioremap_resource() has several advantages over devm_ioremap():
+> - it checks the passed resource's validity;
+> - it calls devm_request_mem_region() to check for the resource overlap;
+> - it prints an error message in case of error.
+>
+> We can call devm_ioremap_resource() instead of devm_ioremap_nocache()
+> as ioremap() and ioremap_nocache()  are implemented identically on ARM.
+> Doing this saves 2 LoCs and 80 bytes (AArch64 gcc 4.8.5).
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-On Tue, Oct 31, 2017 at 09:46:54AM +0100, Linus Walleij wrote:
-> On Wed, Oct 25, 2017 at 2:40 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->=20
-> > Did you have some time to look at this?
-> >
-> > The earlier we merge it the better, so ideally I'd really like to get
-> > this into 4.15.
->=20
-> Just overloaded as usual.
->=20
-> Patches applied.
+Patch applied with Geert's review tag.
 
-No worries, thanks for applying them ! :)
+Sorry for delay, too busy as always.
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---5ie5l6noy46rjtd3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZ+Dm3AAoJEBx+YmzsjxAgbHAP/0F7M5CKmmkWtHs5VVQMNIEP
-Q8xe2zUWaEXjFLhSKb/hkM/MHbCtVtLQOcVW6KUlkIjMp2i43YkwRYMCL4D749ov
-fMek4ZEtYFZ/9yQixO+KckiME0n0IPX8/pQWfZ2qM7v7rBYvx14KmA8JJYZoKcmU
-5QZgt7bvpB4XZPA7U/riWm+fX6WBstl11u0HCqDV8C7y2dTiZ5vp44YTrP+EKCih
-YuOQMTTWrwiR+CtYTKdfAbdMwRDXSDTL7uv2lhtkIlwbic9h4brxfrucVxDX6MoX
-8Ou6v3wSjK1A1umHDngy4Pi6FakcoZTcmsek60eZkZ0lVzRPkLMuw73aesWCcZFd
-XeOWizvn1OeEqzx8lkgmtSLAX9NXfOTOPBZuO3v2X/81NFyEO1tDuGtZuKH78vOQ
-+0bbK7qUye6uNRwoBsgv7S8NU+E3MQOzAcIJJsHf7rkstEJtTnR92UhRfiyPyIVN
-iwjoGSWhp00OnLHWTVZLYksGl4j3reXvYdjoi3AABV3eTvYWkCp7uhF+o3Usv6wj
-QG1bwSrjICj2TAj+7sYzny4EVOwiD3gw1DHns2juOApXyeQ08ArvnKTy/pgV5x3h
-PgxL9fEwwA8Ro3ViT1lfOVtt/a6McK8PWDrxVUVx6P4G/efNQInVLUbNOcMLbTGv
-xcOOw5K3jkfmi0SSsuqM
-=XY2I
------END PGP SIGNATURE-----
-
---5ie5l6noy46rjtd3--
+Yours,
+Linus Walleij
