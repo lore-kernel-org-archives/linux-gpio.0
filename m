@@ -1,57 +1,62 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 3/5] gpio: gpiolib: Add chardev support for
- maintaining GPIO values on reset
-Date: Tue, 31 Oct 2017 10:59:55 +0100
-Message-ID: <CACRpkdZzr3JHo=AEZejXn0nw0mZo02OWFmmTiUBjgr+bH+NOAw@mail.gmail.com>
-References: <20171020033727.21557-1-andrew@aj.id.au> <20171020033727.21557-4-andrew@aj.id.au>
- <CACRpkdY4F-ocFxomLEsVyGA0odGooWysQq5MHi9qwUt6E_VDzA@mail.gmail.com>
- <1508490173.24322.53.camel@aj.id.au> <20171025081454.4avrf57mf33khu7c@localhost.localdomain>
- <1508976339.13477.5.camel@aj.id.au>
+Subject: Re: [PATCHv5 2/2] Add a GPIO driver for Altera FPGA Manager Fabric I/O
+Date: Tue, 31 Oct 2017 11:04:15 +0100
+Message-ID: <CACRpkdaxh45e1V_xc6AdjmkAv12_AMuXb45+1b8nFOw3N3A3aA@mail.gmail.com>
+References: <AM5PR0701MB26575D4E585B51AC8784E49BE4450@AM5PR0701MB2657.eurprd07.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1508976339.13477.5.camel@aj.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Michael Welling <mwelling@emacinc.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Joel Stanley <joel@jms.id.au>, Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@opensource.cirrus.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>, linux-aspeed@lists.ozlabs.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:44773 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754307AbdJaKEQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Oct 2017 06:04:16 -0400
+Received: by mail-io0-f195.google.com with SMTP id m16so33766753iod.1
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 03:04:16 -0700 (PDT)
+In-Reply-To: <AM5PR0701MB26575D4E585B51AC8784E49BE4450@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Rob Herring <robh@kernel.org>, Christian Lamparter <chunkeey@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Thu, Oct 26, 2017 at 2:05 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+On Thu, Oct 26, 2017 at 5:28 PM, Bernd Edlinger
+<bernd.edlinger@hotmail.de> wrote:
 
-> I feel that taking this argument to its logical conclusion leads to
-> never exporting any GPIOs to userspace and doing everything in the
-> kernel.
+> This is an internal 32-bit input and 32-bit output port to the FPGA logic.
+>
+> Instantiate this in the device tree as:
+>
+>   gpio3: gpio@ff706010 {
+>    #address-cells = <1>;
+>    #size-cells = <0>;
+>    compatible = "altr,fpgamgr-gpio";
+>    reg = <0xff706010 0x8>;
+>    status = "okay";
+>
+>    portd: gpio-controller@0 {
+>     compatible = "altr,fpgamgr-gpio-output";
+>     gpio-controller;
+>     #gpio-cells = <2>;
+>     reg = <0>;
+>    };
+>
+>    porte: gpio-controller@1 {
+>     compatible = "altr,fpgamgr-gpio-input";
+>     gpio-controller;
+>     #gpio-cells = <2>;
+>     reg = <1>;
+>    };
+>   };
+>
+> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+(...)
+> +       err = bgpio_init(&port->bgc, gpio->dev, 4, dat, NULL, NULL,
+> +                        NULL, NULL, pp->idx ? BGPIOF_NO_OUTPUT : 0);
 
-That is very much how I feel about things anyways.
-In a recent presentation:
-https://dflund.se/~triad/papers/GPIO-for-Engineers-and-Makers.pdf
+Don't magically use the index to determine which block
+us input-only.
 
-I had the following text:
-
-The Rules of Linux Userspace GPIO
-1. You do not access GPIOs from userspace
-2. YOU DO NOT ACCESS GPIOS FROM USERSPACE
-3. Read Documentation/gpio/drivers-on-gpio.txt
-4. Use the character device
-
-> If userspace has exported the GPIO and is managing its state,
-> then it can *already* cause very weird hardware behaviour if set wrong.
-> The fact that userspace is controlling the GPIO state and not the
-> kernel already says that the kernel doesn't know how to manage it, so
-> why not expose the option for userspace to set the persistence, given
-> that it should know what it's doing?
-
-People do need to access GPIOs from userspace for things
-like one-off makerspace projects, relays on factory lines,
-fire alarms, door openers etc etc.
-
-One-off projects is fine, the user likely has an idea about the
-whole system that is comprehensive. They use the random
-raspberry Pi (etc) development board for this. OK.
-
-When we are talking about adding GPIO in mass-market goods
-such as phones and tablets and laptops userspace GPIO
-access become more and more dubious.
+Use the port-specific compatible string and match to
+handle this using .data in the match.
 
 Yours,
 Linus Walleij
