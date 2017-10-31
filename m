@@ -1,70 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] GPIO support for Socionext Synquacer
-Date: Tue, 31 Oct 2017 14:19:05 +0100
-Message-ID: <CACRpkdZofzS+bNL4UjwHUb-jVev-1NbENVGuxCY3Q3hchdZCbA@mail.gmail.com>
-References: <20171027202148.4188-1-ard.biesheuvel@linaro.org>
- <CACRpkdbfM6SuXxkbfcmJ-JxK1Mt=oxy1qN3rEawoNb8gpmjM9Q@mail.gmail.com> <CAKv+Gu-20f8VXW1x1T5BVoFwFiiNsS1XYvrA7XPo438-C6=u+A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: armada-37xx: Add edge both type gpio irq support
+Date: Tue, 31 Oct 2017 14:27:13 +0100
+Message-ID: <CACRpkdZxWwXcB8o4+gsYN+mnoQvE7eT5sPOO1mKNuELuo7T70g@mail.gmail.com>
+References: <20171019131003.9684-1-gregory.clement@free-electrons.com>
+ <CACRpkdbqjh5U5QoE_B+7GfSyDdHW-NCAvogGq-2n8j6L6nG-Gw@mail.gmail.com> <20171031131617.GA11647@lunn.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:49793 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751565AbdJaNTH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Oct 2017 09:19:07 -0400
-Received: by mail-io0-f196.google.com with SMTP id n137so35015111iod.6
-        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 06:19:06 -0700 (PDT)
-In-Reply-To: <CAKv+Gu-20f8VXW1x1T5BVoFwFiiNsS1XYvrA7XPo438-C6=u+A@mail.gmail.com>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:45577 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751620AbdJaN1O (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Oct 2017 09:27:14 -0400
+Received: by mail-io0-f173.google.com with SMTP id i38so35030130iod.2
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 06:27:14 -0700 (PDT)
+In-Reply-To: <20171031131617.GA11647@lunn.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Leif Lindholm <leif.lindholm@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, Masami Hiramatsu <masami.hiramatsu@linaro.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Antoine Tenart <antoine.tenart@free-electrons.com>, =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Ken Ma <make@marvell.com>
 
-On Tue, Oct 31, 2017 at 1:27 PM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> On 31 October 2017 at 12:20, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Fri, Oct 27, 2017 at 10:21 PM, Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>
->>> The Socionext Synquacer SC2A11, which is used in the arm64 Developer Box,
->>> shares its GPIO IP with a Fujitsu SoC for which we already have support
->>> in the tree. So let's tweak it so that we can reuse it.
->>>
->>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>>
->>> Ard Biesheuvel (2):
->>>   gpio: mb86s7x: share with other SoCs as module
->>>   gpio: mb86s70: Revert "Return error if requesting an already assigned
->>>     gpio"
->>
->> Nice. We might need to look into the following wrt this driver:
->>
->> - Using generic MMIO GPIO, i.e. select GPIO_GENERIC in Kconfig
->>   and a patch such as commit 6d125412fc16802012a17665638f49b0b0c81f18
->>   "gpio: iop: Use generic GPIO MMIO functions for driver"
->>   apart from reduced code size this brings the .get_multiple() and
->>   .set_multiple() callbacks for FREE.
->>   The fact that the driver is so simple that it should have been using
->>   MMIO/GENERIC GPIO is a plain oversight during review.
+On Tue, Oct 31, 2017 at 2:16 PM, Andrew Lunn <andrew@lunn.ch> wrote:
+
+>> The discussion here is interesting, it is customary for GPIO drivers
+>> to implement double-edge detection emulation by swapping the
+>> edge detector around like this.
 >
-> Does this work with the layout if this chip? It has 32 GPIO lines,
-> whose controls are mapped onto the lowest 8 bits of 4 adjacent 32-bit
-> registers.
+> Hi Linus
+>
+> I was not aware this was customary.
+>
+>> It might be possible to collect some generic information about
+>> this in the Documentation/gpio/driver.txt document.
+>
+> Yes, i think it should be documented somewhere. Even in the use case
+> here, detecting an SD card being inserted/removed, you could get some
+> bounce on the microswitch, miss an edge, and be in the wrong state.
 
-I didn't look close enough. No GPIO MMIO is just for simple
-1:1 mapping of say 32 bits, so it won't work.
+Indeed :/
 
-There is opportunity to exploit [get|set]_multiple() callbacks
-for any bits that end up in the same group of 8 though,
-but it requires some elaborate code for just this driver.
-It does make for a nice 8-line oscilloscope to sample
-all 8 lines simultaneously with .get_multiple() for example.
+This is I guess why it is a good idea to combine this with the
+debounce feature if the hardware supports it.
 
-But that is just optimization.
-
-If you have the datasheet, also check if the block is really this
-simple and whether it maybe actually supports some pin config
-like open drain or debounce etc, we have support for that
-as well these days using .set_config() in the drivers.
+I'll think about some writeup.
 
 Yours,
 Linus Walleij
