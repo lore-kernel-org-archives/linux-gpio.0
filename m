@@ -1,48 +1,104 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 05/15] gpio: max732x: Remove duplicate NULL check
-Date: Tue, 31 Oct 2017 16:21:39 +0200
-Message-ID: <20171031142149.32512-5-andriy.shevchenko@linux.intel.com>
-References: <20171031142149.32512-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20171031142149.32512-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH] pinctrl: pistachio: Use common error handling code in pistachio_gpio_register()
+Date: Tue, 31 Oct 2017 09:13:42 -0700
+Message-ID: <CAL1qeaEQV+Cz6Y5XUg-kAZUhANHGsSoAWT_oGgM4Y_PieZOXdA@mail.gmail.com>
+References: <0b8eced6-c4d9-6b0b-ac23-de764622e91c@users.sourceforge.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <0b8eced6-c4d9-6b0b-ac23-de764622e91c@users.sourceforge.net>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Damien Horsley <Damien.Horsley@imgtec.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Since i2c_unregister_device() became NULL-aware we may remove duplicate
-NULL check.
+Markus,
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-max732x.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+On Mon, Oct 30, 2017 at 10:51 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 30 Oct 2017 18:40:10 +0100
+>
+> Adjust jump targets so that a bit of exception handling can be better
+> reused at the end of this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
-index 7f4d26ce5f23..5fc2efd837fd 100644
---- a/drivers/gpio/gpio-max732x.c
-+++ b/drivers/gpio/gpio-max732x.c
-@@ -709,8 +709,7 @@ static int max732x_probe(struct i2c_client *client,
- 	return 0;
- 
- out_failed:
--	if (chip->client_dummy)
--		i2c_unregister_device(chip->client_dummy);
-+	i2c_unregister_device(chip->client_dummy);
- 	return ret;
- }
- 
-@@ -734,8 +733,7 @@ static int max732x_remove(struct i2c_client *client)
- 	gpiochip_remove(&chip->gpio_chip);
- 
- 	/* unregister any dummy i2c_client */
--	if (chip->client_dummy)
--		i2c_unregister_device(chip->client_dummy);
-+	i2c_unregister_device(chip->client_dummy);
- 
- 	return 0;
- }
--- 
-2.14.2
+Acked-by: Andrew Bresticker <abrestic@chromium.org>
+
+> ---
+>  drivers/pinctrl/pinctrl-pistachio.c | 19 ++++++++++---------
+>  1 file changed, 10 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
+> index 55375b1b3cc8..b314eb61bf35 100644
+> --- a/drivers/pinctrl/pinctrl-pistachio.c
+> +++ b/drivers/pinctrl/pinctrl-pistachio.c
+> @@ -1362,21 +1362,21 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+>                 if (!child) {
+>                         dev_err(pctl->dev, "No node for bank %u\n", i);
+>                         ret = -ENODEV;
+> -                       goto err;
+> +                       goto remove_chips;
+>                 }
+>
+>                 if (!of_find_property(child, "gpio-controller", NULL)) {
+>                         dev_err(pctl->dev,
+>                                 "No gpio-controller property for bank %u\n", i);
+>                         ret = -ENODEV;
+> -                       goto err;
+> +                       goto remove_chips;
+>                 }
+>
+>                 irq = irq_of_parse_and_map(child, 0);
+>                 if (irq < 0) {
+>                         dev_err(pctl->dev, "No IRQ for bank %u: %d\n", i, irq);
+>                         ret = irq;
+> -                       goto err;
+> +                       goto remove_chips;
+>                 }
+>
+>                 bank = &pctl->gpio_banks[i];
+> @@ -1389,7 +1389,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+>                 if (ret < 0) {
+>                         dev_err(pctl->dev, "Failed to add GPIO chip %u: %d\n",
+>                                 i, ret);
+> -                       goto err;
+> +                       goto remove_chips;
+>                 }
+>
+>                 ret = gpiochip_irqchip_add(&bank->gpio_chip, &bank->irq_chip,
+> @@ -1397,8 +1397,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+>                 if (ret < 0) {
+>                         dev_err(pctl->dev, "Failed to add IRQ chip %u: %d\n",
+>                                 i, ret);
+> -                       gpiochip_remove(&bank->gpio_chip);
+> -                       goto err;
+> +                       goto remove_chip;
+>                 }
+>                 gpiochip_set_chained_irqchip(&bank->gpio_chip, &bank->irq_chip,
+>                                              irq, pistachio_gpio_irq_handler);
+> @@ -1409,13 +1408,15 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+>                 if (ret < 0) {
+>                         dev_err(pctl->dev, "Failed to add GPIO range %u: %d\n",
+>                                 i, ret);
+> -                       gpiochip_remove(&bank->gpio_chip);
+> -                       goto err;
+> +                       goto remove_chip;
+>                 }
+>         }
+>
+>         return 0;
+> -err:
+> +
+> +remove_chip:
+> +       gpiochip_remove(&bank->gpio_chip);
+> +remove_chips:
+>         for (; i > 0; i--) {
+>                 bank = &pctl->gpio_banks[i - 1];
+>                 gpiochip_remove(&bank->gpio_chip);
+> --
+> 2.14.3
+>
