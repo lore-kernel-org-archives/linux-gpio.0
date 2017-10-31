@@ -1,120 +1,41 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH 2/4] gpiolib: add bitmask for valid GPIO lines
-Date: Mon, 30 Oct 2017 15:50:00 -0500
-Message-ID: <1509396602-1936-3-git-send-email-timur@codeaurora.org>
-References: <1509396602-1936-1-git-send-email-timur@codeaurora.org>
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1509396602-1936-1-git-send-email-timur@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: timur@codeaurora.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/3] pinctrl: sunxi: Introduce the strict flag
+Date: Tue, 31 Oct 2017 09:44:40 +0100
+Message-ID: <CACRpkdavwWk4LBEzm3=0K1kMx2Nc4SoYE0kZw3pqDcfr9-st+A@mail.gmail.com>
+References: <cover.3e8ef5cb08d0164375d7644df0548e5f39b0fe66.1507582414.git-series.maxime.ripard@free-electrons.com>
+ <c764ce12c83daefabaaea6a2df293c68f078c5e2.1507582414.git-series.maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:55465 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751378AbdJaIol (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Oct 2017 04:44:41 -0400
+Received: by mail-io0-f193.google.com with SMTP id p186so33278957ioe.12
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 01:44:41 -0700 (PDT)
+In-Reply-To: <c764ce12c83daefabaaea6a2df293c68f078c5e2.1507582414.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Add support for specifying that some GPIOs within a range are unavailable.
-Some systems have a sparse list of GPIOs, where a range of GPIOs is
-specified (usually 0 to n-1), but some subset within that range is
-absent or unavailable for whatever reason.
+On Mon, Oct 9, 2017 at 10:53 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
 
-To support this, allow drivers to specify a bitmask of GPIOs that
-are present or absent.  Gpiolib will then block access to those that
-are absent.
+> Our pinctrl device should have had strict set all along. However, it wasn't
+> the case, and most of our old device trees also have a pinctrl group in
+> addition to the GPIOs properties, which mean that we can't really turn it
+> on now.
+>
+> All our new SoCs don't have that group, so we should still enable that mode
+> on the newer one though.
+>
+> In order to enable it by default, add a flag that will allow to disable
+> that mode that should be set by pinctrl drivers that cannot be migrated.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
----
- drivers/gpio/gpiolib.c      | 43 +++++++++++++++++++++++++++++++++++--------
- include/linux/gpio/driver.h |  2 ++
- 2 files changed, 37 insertions(+), 8 deletions(-)
+Patch applied.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 60553af4c004..c32387936cdd 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1481,22 +1481,36 @@ static struct gpio_chip *find_chip_by_name(const char *name)
- 
- static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
- {
--	if (!gpiochip->irq_need_valid_mask)
--		return 0;
-+	if (gpiochip->irq_need_valid_mask) {
-+		gpiochip->irq_valid_mask =
-+			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
-+				sizeof(long), GFP_KERNEL);
-+		if (!gpiochip->irq_valid_mask)
-+			return -ENOMEM;
- 
--	gpiochip->irq_valid_mask = kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
--					   sizeof(long), GFP_KERNEL);
--	if (!gpiochip->irq_valid_mask)
--		return -ENOMEM;
-+		/* Assume by default all GPIOs are valid */
-+		bitmap_fill(gpiochip->irq_valid_mask, gpiochip->ngpio);
-+	}
- 
--	/* Assume by default all GPIOs are valid */
--	bitmap_fill(gpiochip->irq_valid_mask, gpiochip->ngpio);
-+	if (gpiochip->line_need_valid_mask) {
-+		gpiochip->line_valid_mask =
-+			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
-+				sizeof(long), GFP_KERNEL);
-+		if (!gpiochip->line_valid_mask)
-+			return -ENOMEM;
-+
-+		/* Assume by default all GPIOs are valid */
-+		bitmap_fill(gpiochip->line_valid_mask, gpiochip->ngpio);
-+	}
- 
- 	return 0;
- }
- 
- static void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip)
- {
-+	kfree(gpiochip->line_valid_mask);
-+	gpiochip->line_valid_mask = NULL;
-+
- 	kfree(gpiochip->irq_valid_mask);
- 	gpiochip->irq_valid_mask = NULL;
- }
-@@ -1510,6 +1524,15 @@ static bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gpiochip,
- 	return test_bit(offset, gpiochip->irq_valid_mask);
- }
- 
-+static bool gpiochip_irqchip_line_valid(const struct gpio_chip *gpiochip,
-+					unsigned int offset)
-+{
-+	/* No mask means all valid */
-+	if (likely(!gpiochip->line_valid_mask))
-+		return true;
-+	return test_bit(offset, gpiochip->line_valid_mask);
-+}
-+
- /**
-  * gpiochip_set_cascaded_irqchip() - connects a cascaded irqchip to a gpiochip
-  * @gpiochip: the gpiochip to set the irqchip chain to
-@@ -3320,6 +3343,10 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 		return desc;
- 	}
- 
-+	/* Make sure the GPIO is valid before we request it. */
-+	if (!gpiochip_irqchip_line_valid(desc->gdev->chip, idx))
-+		return ERR_PTR(-EACCES);
-+
- 	status = gpiod_request(desc, con_id);
- 	if (status < 0)
- 		return ERR_PTR(status);
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index c97f8325e8bf..83df2934bdf7 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -172,6 +172,8 @@ struct gpio_chip {
- 	bool			irq_nested;
- 	bool			irq_need_valid_mask;
- 	unsigned long		*irq_valid_mask;
-+	bool			line_need_valid_mask;
-+	unsigned long		*line_valid_mask;
- 	struct lock_class_key	*lock_key;
- #endif
- 
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Yours,
+Linus Walleij
