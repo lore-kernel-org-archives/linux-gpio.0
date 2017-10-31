@@ -1,32 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: ti-iodelay: remove redundant unused variable dev
-Date: Tue, 31 Oct 2017 14:28:51 +0100
-Message-ID: <CACRpkda=VXb7R=8F-TKKOQDv4jwRsvoCXn9JQ=4foRUsszOvvQ@mail.gmail.com>
-References: <20171031112051.21451-1-colin.king@canonical.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <20171031112051.21451-1-colin.king@canonical.com>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 05/15] gpio: max732x: Remove duplicate NULL check
+Date: Tue, 31 Oct 2017 16:21:39 +0200
+Message-ID: <20171031142149.32512-5-andriy.shevchenko@linux.intel.com>
+References: <20171031142149.32512-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <20171031142149.32512-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 31, 2017 at 12:20 PM, Colin King <colin.king@canonical.com> wrote:
+Since i2c_unregister_device() became NULL-aware we may remove duplicate
+NULL check.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer dev is being assigned but is never used, hence it is
-> redundant and can be removed. Cleans up clang warnings:
->
-> drivers/pinctrl/ti/pinctrl-ti-iodelay.c:582:2: warning: Value stored
-> to 'dev' is never read
-> drivers/pinctrl/ti/pinctrl-ti-iodelay.c:701:2: warning: Value stored
-> to 'dev' is never read
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-max732x.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Patch applied.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
+index 7f4d26ce5f23..5fc2efd837fd 100644
+--- a/drivers/gpio/gpio-max732x.c
++++ b/drivers/gpio/gpio-max732x.c
+@@ -709,8 +709,7 @@ static int max732x_probe(struct i2c_client *client,
+ 	return 0;
+ 
+ out_failed:
+-	if (chip->client_dummy)
+-		i2c_unregister_device(chip->client_dummy);
++	i2c_unregister_device(chip->client_dummy);
+ 	return ret;
+ }
+ 
+@@ -734,8 +733,7 @@ static int max732x_remove(struct i2c_client *client)
+ 	gpiochip_remove(&chip->gpio_chip);
+ 
+ 	/* unregister any dummy i2c_client */
+-	if (chip->client_dummy)
+-		i2c_unregister_device(chip->client_dummy);
++	i2c_unregister_device(chip->client_dummy);
+ 
+ 	return 0;
+ }
+-- 
+2.14.2
