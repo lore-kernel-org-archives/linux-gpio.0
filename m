@@ -1,70 +1,64 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCHv5 1/2] Add device tree bindings for Altera FPGA Manager GPIO
-Date: Tue, 31 Oct 2017 11:06:01 +0100
-Message-ID: <CACRpkdZb4_pyvDE0UfO+54LKMa1eLvszYzicPknmUmAHPjRzrw@mail.gmail.com>
-References: <AM5PR0701MB2657C7D3D62759DCFCF65048E4450@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] pinctrl: ti-iodelay: remove redundant unused variable dev
+Date: Tue, 31 Oct 2017 11:20:51 +0000
+Message-ID: <20171031112051.21451-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:45327 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754250AbdJaKGD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Oct 2017 06:06:03 -0400
-Received: by mail-io0-f193.google.com with SMTP id i38so33761273iod.2
-        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 03:06:02 -0700 (PDT)
-In-Reply-To: <AM5PR0701MB2657C7D3D62759DCFCF65048E4450@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+Received: from youngberry.canonical.com ([91.189.89.112]:41843 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbdJaLUz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Oct 2017 07:20:55 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Rob Herring <robh@kernel.org>, Christian Lamparter <chunkeey@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 26, 2017 at 5:28 PM, Bernd Edlinger
-<bernd.edlinger@hotmail.de> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-> ---
->  .../bindings/gpio/gpio-altera-fpgamgr.txt          | 43 ++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-altera-fpgamgr.txt
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-altera-fpgamgr.txt b/Documentation/devicetree/bindings/gpio/gpio-altera-fpgamgr.txt
-> new file mode 100644
-> index 0000000..6e2ad47
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-altera-fpgamgr.txt
-> @@ -0,0 +1,43 @@
-> +Altera FPGA Manager GPIO controller bindings
-> +
-> +Required controller properties:
-> +- #address-cells : Should be 1
-> +- #size-cells : Should be 0
-> +- compatible:
-> +  - "altr,fpgamgr-gpio"
-> +- reg: Physical base address and length of the controller's registers.
-> +
-> +The FPGA Manager has two 32-bit ports, one for input and one for output.
-> +
-> +Port properties:
-> +- compatible:
-> +  - "altr,fpgamgr-gpio-output"
-> +  - "altr,fpgamgr-gpio-input"
-> +- #gpio-cells : Should be 2
-> +  - The first cell is the gpio offset number.
-> +  - The second cell is reserved and is currently unused.
-> +- gpio-controller : Marks the device node as a GPIO controller.
-> +- reg : Port number, 0 for output, 1 for input.
+The pointer dev is being assigned but is never used, hence it is
+redundant and can be removed. Cleans up clang warnings:
 
-Don't do this. Create one device using a compatible
-for each port. Do not create a top-level device containing
-the two ports.
+drivers/pinctrl/ti/pinctrl-ti-iodelay.c:582:2: warning: Value stored
+to 'dev' is never read
+drivers/pinctrl/ti/pinctrl-ti-iodelay.c:701:2: warning: Value stored
+to 'dev' is never read
 
-If you anyway want a top level device, use "simple-bus"
-or something, not "altr,fpgamgr-gpio".
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Only two compatibles/devices:
-> +  - "altr,fpgamgr-gpio-output"
-> +  - "altr,fpgamgr-gpio-input"
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+index 5c1b6325d80d..a8a6510183b6 100644
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -575,11 +575,9 @@ static int ti_iodelay_pinconf_group_get(struct pinctrl_dev *pctldev,
+ 					unsigned long *config)
+ {
+ 	struct ti_iodelay_device *iod;
+-	struct device *dev;
+ 	struct ti_iodelay_pingroup *group;
+ 
+ 	iod = pinctrl_dev_get_drvdata(pctldev);
+-	dev = iod->dev;
+ 	group = ti_iodelay_get_pingroup(iod, selector);
+ 
+ 	if (!group)
+@@ -693,12 +691,10 @@ static void ti_iodelay_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 					      unsigned int selector)
+ {
+ 	struct ti_iodelay_device *iod;
+-	struct device *dev;
+ 	struct ti_iodelay_pingroup *group;
+ 	int i;
+ 
+ 	iod = pinctrl_dev_get_drvdata(pctldev);
+-	dev = iod->dev;
+ 	group = ti_iodelay_get_pingroup(iod, selector);
+ 	if (!group)
+ 		return;
+-- 
+2.14.1
 
-
-Yours,
-Linus Walleij
