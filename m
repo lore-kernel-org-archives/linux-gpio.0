@@ -1,138 +1,33 @@
-From: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Subject: [PATCH v3 2/2] gpio: aspeed: Add support for reset tolerance
-Date: Wed,  1 Nov 2017 15:04:57 +1100
-Message-ID: <20171101040457.1200-3-andrew@aj.id.au>
-References: <20171101040457.1200-1-andrew@aj.id.au>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171101040457.1200-1-andrew-zrmu5oMJ5Fs@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ryan_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-aspeed-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Subject: Re: [PATCH 1/4] pinctrl: gemini: Add missing functions
+Date: Wed, 1 Nov 2017 06:55:38 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1711010655140.4454@T420s>
+References: <20171028133719.27528-1-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:57099 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbdKAF6I (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Nov 2017 01:58:08 -0400
+Received: by mail-wm0-f65.google.com with SMTP id z3so2777704wme.5
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 22:58:07 -0700 (PDT)
+In-Reply-To: <20171028133719.27528-1-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-Use the new pinconf parameter for state persistence to expose the
-associated capability of the Aspeed GPIO controller.
+Hi Linus
 
-Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
----
- drivers/gpio/gpio-aspeed.c | 39 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+On Sat, 28 Oct 2017, Linus Walleij wrote:
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index 00dc1c020198..3125dcb9211d 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -60,6 +60,7 @@ struct aspeed_gpio_bank {
- 	uint16_t	val_regs;
- 	uint16_t	irq_regs;
- 	uint16_t	debounce_regs;
-+	uint16_t	tolerance_regs;
- 	const char	names[4][3];
- };
- 
-@@ -70,48 +71,56 @@ static const struct aspeed_gpio_bank aspeed_gpio_banks[] = {
- 		.val_regs = 0x0000,
- 		.irq_regs = 0x0008,
- 		.debounce_regs = 0x0040,
-+		.tolerance_regs = 0x001c,
- 		.names = { "A", "B", "C", "D" },
- 	},
- 	{
- 		.val_regs = 0x0020,
- 		.irq_regs = 0x0028,
- 		.debounce_regs = 0x0048,
-+		.tolerance_regs = 0x003c,
- 		.names = { "E", "F", "G", "H" },
- 	},
- 	{
- 		.val_regs = 0x0070,
- 		.irq_regs = 0x0098,
- 		.debounce_regs = 0x00b0,
-+		.tolerance_regs = 0x00ac,
- 		.names = { "I", "J", "K", "L" },
- 	},
- 	{
- 		.val_regs = 0x0078,
- 		.irq_regs = 0x00e8,
- 		.debounce_regs = 0x0100,
-+		.tolerance_regs = 0x00fc,
- 		.names = { "M", "N", "O", "P" },
- 	},
- 	{
- 		.val_regs = 0x0080,
- 		.irq_regs = 0x0118,
- 		.debounce_regs = 0x0130,
-+		.tolerance_regs = 0x012c,
- 		.names = { "Q", "R", "S", "T" },
- 	},
- 	{
- 		.val_regs = 0x0088,
- 		.irq_regs = 0x0148,
- 		.debounce_regs = 0x0160,
-+		.tolerance_regs = 0x015c,
- 		.names = { "U", "V", "W", "X" },
- 	},
- 	{
- 		.val_regs = 0x01E0,
- 		.irq_regs = 0x0178,
- 		.debounce_regs = 0x0190,
-+		.tolerance_regs = 0x018c,
- 		.names = { "Y", "Z", "AA", "AB" },
- 	},
- 	{
--		.val_regs = 0x01E8,
--		.irq_regs = 0x01A8,
-+		.val_regs = 0x01e8,
-+		.irq_regs = 0x01a8,
- 		.debounce_regs = 0x01c0,
-+		.tolerance_regs = 0x01bc,
- 		.names = { "AC", "", "", "" },
- 	},
- };
-@@ -534,6 +543,30 @@ static int aspeed_gpio_setup_irqs(struct aspeed_gpio *gpio,
- 	return 0;
- }
- 
-+static int aspeed_gpio_reset_tolerance(struct gpio_chip *chip,
-+					unsigned int offset, bool enable)
-+{
-+	struct aspeed_gpio *gpio = gpiochip_get_data(chip);
-+	const struct aspeed_gpio_bank *bank;
-+	unsigned long flags;
-+	u32 val;
-+
-+	bank = to_bank(offset);
-+
-+	spin_lock_irqsave(&gpio->lock, flags);
-+	val = readl(gpio->base + bank->tolerance_regs);
-+
-+	if (enable)
-+		val |= GPIO_BIT(offset);
-+	else
-+		val &= ~GPIO_BIT(offset);
-+
-+	writel(val, gpio->base + bank->tolerance_regs);
-+	spin_unlock_irqrestore(&gpio->lock, flags);
-+
-+	return 0;
-+}
-+
- static int aspeed_gpio_request(struct gpio_chip *chip, unsigned int offset)
- {
- 	if (!have_gpio(gpiochip_get_data(chip), offset))
-@@ -771,6 +804,8 @@ static int aspeed_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
- 			param == PIN_CONFIG_DRIVE_OPEN_SOURCE)
- 		/* Return -ENOTSUPP to trigger emulation, as per datasheet */
- 		return -ENOTSUPP;
-+	else if (param == PIN_CONFIG_PERSIST_STATE)
-+		return aspeed_gpio_reset_tolerance(chip, offset, arg);
- 
- 	return -ENOTSUPP;
- }
--- 
-2.11.0
+> Some two functions were missing from the Gemini pin control
+> driver. Noticed when trying to use ethernet. Fix it up by
+> adding them.
+> 
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+
