@@ -1,40 +1,51 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 2/4] gpiolib: add bitmask for valid GPIO lines
-Date: Tue, 31 Oct 2017 21:05:57 +0200
-Message-ID: <1509476757.10233.143.camel@linux.intel.com>
-References: <1509396602-1936-1-git-send-email-timur@codeaurora.org>
-         <1509396602-1936-3-git-send-email-timur@codeaurora.org>
-         <1509441149.10233.80.camel@linux.intel.com>
-         <02208047-38c8-f97b-5c53-6cced7bdecc6@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <02208047-38c8-f97b-5c53-6cced7bdecc6@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH v3 0/2] gpio: Generalise state persistence
+Date: Wed,  1 Nov 2017 15:04:55 +1100
+Message-ID: <20171101040457.1200-1-andrew@aj.id.au>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:46669 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750716AbdKAEFi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Nov 2017 00:05:38 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Andrew Jeffery <andrew@aj.id.au>, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, frowand.list@gmail.com, joel@jms.id.au, ckeepax@opensource.wolfsonmicro.com, ldewangan@nvidia.com, ryan_chen@aspeedtech.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org
 
-On Tue, 2017-10-31 at 13:54 -0500, Timur Tabi wrote:
-> On 10/31/2017 04:12 AM, Andy Shevchenko wrote:
-> > Instead of mangling this function wouldn't be better to introduce a
-> > separate one for line and perhaps a third one which calls them both?
-> 
-> The diff is convoluted, but the end result is clean:
+Hello,
 
-> Is this acceptable?
+This series provides an API to configure general GPIO state persistence in
+gpiolib. Previously, only sleep persistence was considered, but controllers
+like one found in Aspeed BMCs also support persistence of state across
+controller resets. There is some prior discussion on v1[1] and the initial
+RFC[2], and minor comments on v2[3]. v3 addresses minor issues with comments
+and debug statements[4], removing remaining references to reset tolerance.
 
-I also put in the comment the following:
+Please review!
 
---- 8< --- 8< --- 8< ---
+Andrew
 
-...for my opinion it will drastically increase readability and reduce
-diff as well (better for review).
+[1] https://www.spinics.net/lists/devicetree/msg200027.html
+[2] https://www.spinics.net/lists/devicetree/msg199559.html
+[3] https://www.spinics.net/lists/kernel/msg2635769.html
+[4] https://www.spinics.net/lists/devicetree/msg200040.html
 
---- 8< --- 8< --- 8< ---
+Andrew Jeffery (2):
+  gpio: gpiolib: Generalise state persistence beyond sleep
+  gpio: aspeed: Add support for reset tolerance
 
-The decision is up to Linus. I simple shared my opinion.
+ drivers/gpio/gpio-aspeed.c              | 39 +++++++++++++++++++--
+ drivers/gpio/gpiolib-of.c               |  6 ++--
+ drivers/gpio/gpiolib-sysfs.c            | 14 +++++---
+ drivers/gpio/gpiolib.c                  | 61 ++++++++++++++++++++++++++++++---
+ drivers/gpio/gpiolib.h                  |  2 +-
+ include/dt-bindings/gpio/gpio.h         |  6 ++--
+ include/linux/gpio/consumer.h           |  8 +++++
+ include/linux/gpio/machine.h            |  4 +--
+ include/linux/of_gpio.h                 |  2 +-
+ include/linux/pinctrl/pinconf-generic.h |  2 ++
+ 10 files changed, 124 insertions(+), 20 deletions(-)
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.11.0
+
