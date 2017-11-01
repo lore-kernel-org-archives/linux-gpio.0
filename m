@@ -1,35 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 00/13] gpio: Tight IRQ chip integration
-Date: Wed, 1 Nov 2017 14:44:27 +0100
-Message-ID: <CACRpkdaPSQnDMkF+JWM1X9-PtJZw01ywK7VRE=Pa3wA9+kkjcg@mail.gmail.com>
-References: <20171013154913.29448-1-thierry.reding@gmail.com>
- <f25cd66f-1382-8007-9744-0dbd72757163@nvidia.com> <a71b5600-dc22-c53a-7909-48e39c8cf3e6@nvidia.com>
- <42211eed-3996-b968-330c-36c6ca160e0b@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/4] pinctrl: Add skew-delay pin config and bindings
+Date: Wed, 1 Nov 2017 16:26:59 -0500
+Message-ID: <20171101212659.be4phj2wha66x63d@rob-hp-laptop>
+References: <20171028133719.27528-1-linus.walleij@linaro.org>
+ <20171028133719.27528-2-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f174.google.com ([209.85.223.174]:44536 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753637AbdKANo2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Nov 2017 09:44:28 -0400
-Received: by mail-io0-f174.google.com with SMTP id m16so6148887iod.1
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Nov 2017 06:44:28 -0700 (PDT)
-In-Reply-To: <42211eed-3996-b968-330c-36c6ca160e0b@nvidia.com>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:45856 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933382AbdKAV1B (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Nov 2017 17:27:01 -0400
+Content-Disposition: inline
+In-Reply-To: <20171028133719.27528-2-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On Thu, Oct 26, 2017 at 9:18 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+On Sat, Oct 28, 2017 at 03:37:17PM +0200, Linus Walleij wrote:
+> Some pin controllers (such as the Gemini) can control the
+> expected clock skew and output delay on certain pins with a
+> sub-nanosecond granularity. This is typically done by shunting
+> in a number of double inverters in front of or behind the pin.
+> Make it possible to configure this with a generic binding.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 4 ++++
+>  drivers/pinctrl/pinconf-generic.c                              | 2 ++
+>  include/linux/pinctrl/pinconf-generic.h                        | 5 +++++
+>  3 files changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> index 4483cc31e531..ad9bbbba36e9 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> @@ -271,6 +271,10 @@ output-high		- set the pin to output mode with high level
+>  sleep-hardware-state	- indicate this is sleep related state which will be programmed
+>  			  into the registers for the sleep state.
+>  slew-rate		- set the slew rate
+> +skew-delay		- this affects the expected clock skew on input pins
+> +			  and the delay before latching a value to an output
+> +			  pin. Typically indicates how many double-inverters are
+> +			  used to delay the signal.
 
-> Ping!
+Units?
 
-I am mostly happy with the series but:
-
-- I would like Grygorii to get time to review it or at least ACK
-  and say his points are adressed.
-- Thierry said quite early that he has to make a v6 respin since
-  it collides with other patches.
-
-Yours,
-Linus Walleij
+>  
+>  For example:
+>  
