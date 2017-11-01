@@ -1,34 +1,36 @@
-From: Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Subject: Re: [PATCH 2/4] pinctrl: Add skew-delay pin config and bindings
-Date: Wed, 1 Nov 2017 06:56:12 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1711010655480.4454@T420s>
-References: <20171028133719.27528-1-linus.walleij@linaro.org> <20171028133719.27528-2-linus.walleij@linaro.org>
+From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Subject: Re: [PATCH 3/4] pinctrl: gemini: Use generic DT parser
+Date: Wed, 1 Nov 2017 06:56:41 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1711010656180.4454@T420s>
+References: <20171028133719.27528-1-linus.walleij@linaro.org> <20171028133719.27528-3-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171028133719.27528-2-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Janos Laube <janos.dev-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paulius Zaleckas <paulius.zaleckas-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:44944 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750973AbdKAF7K (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Nov 2017 01:59:10 -0400
+Received: by mail-wm0-f67.google.com with SMTP id n74so15342555wmi.1
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Oct 2017 22:59:09 -0700 (PDT)
+In-Reply-To: <20171028133719.27528-3-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-Hi Linus,
+Hi Linus
 
 On Sat, 28 Oct 2017, Linus Walleij wrote:
 
-> Some pin controllers (such as the Gemini) can control the
-> expected clock skew and output delay on certain pins with a
-> sub-nanosecond granularity. This is typically done by shunting
-> in a number of double inverters in front of or behind the pin.
-> Make it possible to configure this with a generic binding.
+> We can just use the generic Device Tree parser code
+> in this driver and save some code.
 > 
-> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
+>  drivers/pinctrl/Kconfig          |  1 +
+>  drivers/pinctrl/pinctrl-gemini.c | 66 +++-------------------------------------
+>  2 files changed, 5 insertions(+), 62 deletions(-)
+> 
 
-Acked-by: Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Acked-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
