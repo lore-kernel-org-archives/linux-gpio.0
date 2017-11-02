@@ -1,43 +1,82 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] pinctrl: armada-37xx: remove unused variable
-Date: Thu,  2 Nov 2017 15:29:13 +0100
-Message-ID: <20171102142932.774199-1-arnd@arndb.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:54341 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933021AbdKBOaS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Nov 2017 10:30:18 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/4] pinctrl: Add skew-delay pin config and bindings
+Date: Thu, 2 Nov 2017 15:32:16 +0100
+Message-ID: <CACRpkdZcB9ghYYFSQdTqpuN29DZZeY_AKimQ62-5W7+Mymm1HQ@mail.gmail.com>
+References: <20171028133719.27528-1-linus.walleij@linaro.org>
+ <20171028133719.27528-2-linus.walleij@linaro.org> <20171101212659.be4phj2wha66x63d@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171101212659.be4phj2wha66x63d@rob-hp-laptop>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Janos Laube <janos.dev-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paulius Zaleckas <paulius.zaleckas-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ken Ma <make@marvell.com>, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-A cleanup left behind a temporary variable that is now unused:
+On Wed, Nov 1, 2017 at 10:26 PM, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Sat, Oct 28, 2017 at 03:37:17PM +0200, Linus Walleij wrote:
+>> Some pin controllers (such as the Gemini) can control the
+>> expected clock skew and output delay on certain pins with a
+>> sub-nanosecond granularity. This is typically done by shunting
+>> in a number of double inverters in front of or behind the pin.
+>> Make it possible to configure this with a generic binding.
+>>
+>> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> ---
+>>  Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 4 ++++
+>>  drivers/pinctrl/pinconf-generic.c                              | 2 ++
+>>  include/linux/pinctrl/pinconf-generic.h                        | 5 +++++
+>>  3 files changed, 11 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+>> index 4483cc31e531..ad9bbbba36e9 100644
+>> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+>> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+>> @@ -271,6 +271,10 @@ output-high              - set the pin to output mode with high level
+>>  sleep-hardware-state - indicate this is sleep related state which will be programmed
+>>                         into the registers for the sleep state.
+>>  slew-rate            - set the slew rate
+>> +skew-delay           - this affects the expected clock skew on input pins
+>> +                       and the delay before latching a value to an output
+>> +                       pin. Typically indicates how many double-inverters are
+>> +                       used to delay the signal.
+>
+> Units?
 
-drivers/pinctrl/mvebu/pinctrl-armada-37xx.c: In function 'armada_37xx_irq_startup':
-drivers/pinctrl/mvebu/pinctrl-armada-37xx.c:693:20: error: unused variable 'chip' [-Werror=unused-variable]
+Number of double-inverters I guess, just as it says.
 
-This removes the declarations as well.
+skew-delay = <1>; // number of inverter pairs
 
-Fixes: 3ee9e605caea ("pinctrl: armada-37xx: Stop using struct gpio_chip.irq_base")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 2 --
- 1 file changed, 2 deletions(-)
+Like with other bindings of this type they are custom.
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index 68a4af12fb0a..2149f8d955cf 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -690,8 +690,6 @@ static void armada_37xx_irq_handler(struct irq_desc *desc)
- 
- static unsigned int armada_37xx_irq_startup(struct irq_data *d)
- {
--	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
--
- 	/*
- 	 * The mask field is a "precomputed bitmask for accessing the
- 	 * chip registers" which was introduced for the generic
--- 
-2.9.0
+The Gemini datasheet says "every unit represents about 0.2 ns".
 
+So if you set it to 1, that means (as far as I can guess) this
+is shunted in:
+
+   |\    |\
+--+ >o--+ >o---
+   |/    |/
+
+The signal will take ~0.2 ns to propagate through this.
+For 2, there will be four inverters etc.
+
+It is dependent of production technology, and I do not know
+if everyone is using something like double-inverters.
+
+We could try to define a value in picoseconds instead so I
+would need to set this to 200 in that case if you think that is better:
+
+skew-delay = <200>; // picoseconds
+
+I think it would be kludgy since with increasing clock speeds
+maybe picoseconds would be too big even. Nanoseconds is
+apparently already a to coarse unit.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
