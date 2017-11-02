@@ -1,82 +1,131 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/4] pinctrl: Add skew-delay pin config and bindings
-Date: Thu, 2 Nov 2017 15:32:16 +0100
-Message-ID: <CACRpkdZcB9ghYYFSQdTqpuN29DZZeY_AKimQ62-5W7+Mymm1HQ@mail.gmail.com>
-References: <20171028133719.27528-1-linus.walleij@linaro.org>
- <20171028133719.27528-2-linus.walleij@linaro.org> <20171101212659.be4phj2wha66x63d@rob-hp-laptop>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171101212659.be4phj2wha66x63d@rob-hp-laptop>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Janos Laube <janos.dev-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paulius Zaleckas <paulius.zaleckas-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v6 00/12] gpio: Tight IRQ chip integration
+Date: Thu,  2 Nov 2017 18:49:29 +0100
+Message-ID: <20171102174941.3461-1-thierry.reding@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:49764 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932945AbdKBRtp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Nov 2017 13:49:45 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Nov 1, 2017 at 10:26 PM, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Sat, Oct 28, 2017 at 03:37:17PM +0200, Linus Walleij wrote:
->> Some pin controllers (such as the Gemini) can control the
->> expected clock skew and output delay on certain pins with a
->> sub-nanosecond granularity. This is typically done by shunting
->> in a number of double inverters in front of or behind the pin.
->> Make it possible to configure this with a generic binding.
->>
->> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> ---
->>  Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 4 ++++
->>  drivers/pinctrl/pinconf-generic.c                              | 2 ++
->>  include/linux/pinctrl/pinconf-generic.h                        | 5 +++++
->>  3 files changed, 11 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
->> index 4483cc31e531..ad9bbbba36e9 100644
->> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
->> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
->> @@ -271,6 +271,10 @@ output-high              - set the pin to output mode with high level
->>  sleep-hardware-state - indicate this is sleep related state which will be programmed
->>                         into the registers for the sleep state.
->>  slew-rate            - set the slew rate
->> +skew-delay           - this affects the expected clock skew on input pins
->> +                       and the delay before latching a value to an output
->> +                       pin. Typically indicates how many double-inverters are
->> +                       used to delay the signal.
->
-> Units?
+From: Thierry Reding <treding@nvidia.com>
 
-Number of double-inverters I guess, just as it says.
+Hi Linus,
 
-skew-delay = <1>; // number of inverter pairs
+here's the latest series of patches that implement the tighter IRQ chip
+integration. I've dropped the banked infrastructure for now as per the
+discussion with Grygorii.
 
-Like with other bindings of this type they are custom.
+The first couple of patches are mostly preparatory work in order to
+consolidate all IRQ chip related fields in a new structure and create
+the base functionality for adding IRQ chips.
 
-The Gemini datasheet says "every unit represents about 0.2 ns".
+After that, I've added the Tegra186 GPIO support patch that makes use of
+the new tight integration.
 
-So if you set it to 1, that means (as far as I can guess) this
-is shunted in:
+Changes in v6:
+- rebased on latest linux-gpio devel branch
+- one patch dropped due to rebase
 
-   |\    |\
---+ >o--+ >o---
-   |/    |/
+Changes in v5:
+- dropped the banked infrastructure patches for now (Grygorii)
+- allocate interrupts on demand, rather than upfront (Grygorii)
+- split up the first patch further as requested by Grygorii
 
-The signal will take ~0.2 ns to propagate through this.
-For 2, there will be four inverters etc.
+Not sure what happened in between here. Notes in commit logs indicate
+that this is actually version 5, but I can't find the cover letter for
+v3 and v4.
 
-It is dependent of production technology, and I do not know
-if everyone is using something like double-inverters.
+Changes in v2:
+- rename pins to lines for consistent terminology
+- rename gpio_irq_chip_banked_handler() to
+  gpio_irq_chip_banked_chained_handler()
 
-We could try to define a value in picoseconds instead so I
-would need to set this to 200 in that case if you think that is better:
+Thierry
 
-skew-delay = <200>; // picoseconds
 
-I think it would be kludgy since with increasing clock speeds
-maybe picoseconds would be too big even. Nanoseconds is
-apparently already a to coarse unit.
+*** BLURB HERE ***
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thierry Reding (12):
+  gpio: Introduce struct gpio_irq_chip
+  gpio: Move irqchip into struct gpio_irq_chip
+  gpio: Move irqdomain into struct gpio_irq_chip
+  gpio: Move irq_handler to struct gpio_irq_chip
+  gpio: Move irq_default_type to struct gpio_irq_chip
+  gpio: Move irq_chained_parent to struct gpio_irq_chip
+  gpio: Move irq_nested into struct gpio_irq_chip
+  gpio: Move irq_valid_mask into struct gpio_irq_chip
+  gpio: Move lock_key into struct gpio_irq_chip
+  gpio: Implement tighter IRQ chip integration
+  gpio: Export gpiochip_irq_{map,unmap}()
+  gpio: Add Tegra186 support
+
+ Documentation/gpio/driver.txt               |   6 +-
+ drivers/bcma/driver_gpio.c                  |   2 +-
+ drivers/gpio/Kconfig                        |   9 +
+ drivers/gpio/Makefile                       |   1 +
+ drivers/gpio/gpio-104-dio-48e.c             |   2 +-
+ drivers/gpio/gpio-104-idi-48.c              |   2 +-
+ drivers/gpio/gpio-104-idio-16.c             |   2 +-
+ drivers/gpio/gpio-adnp.c                    |   2 +-
+ drivers/gpio/gpio-altera.c                  |   4 +-
+ drivers/gpio/gpio-aspeed.c                  |   6 +-
+ drivers/gpio/gpio-ath79.c                   |   2 +-
+ drivers/gpio/gpio-crystalcove.c             |   2 +-
+ drivers/gpio/gpio-dln2.c                    |   2 +-
+ drivers/gpio/gpio-ftgpio010.c               |   2 +-
+ drivers/gpio/gpio-ingenic.c                 |   2 +-
+ drivers/gpio/gpio-intel-mid.c               |   2 +-
+ drivers/gpio/gpio-lynxpoint.c               |   2 +-
+ drivers/gpio/gpio-max732x.c                 |   2 +-
+ drivers/gpio/gpio-merrifield.c              |   2 +-
+ drivers/gpio/gpio-omap.c                    |   2 +-
+ drivers/gpio/gpio-pca953x.c                 |   2 +-
+ drivers/gpio/gpio-pcf857x.c                 |   2 +-
+ drivers/gpio/gpio-pci-idio-16.c             |   2 +-
+ drivers/gpio/gpio-pl061.c                   |   2 +-
+ drivers/gpio/gpio-rcar.c                    |   2 +-
+ drivers/gpio/gpio-reg.c                     |   4 +-
+ drivers/gpio/gpio-stmpe.c                   |   6 +-
+ drivers/gpio/gpio-tc3589x.c                 |   2 +-
+ drivers/gpio/gpio-tegra186.c                | 623 ++++++++++++++++++++++++++++
+ drivers/gpio/gpio-vf610.c                   |   2 +-
+ drivers/gpio/gpio-wcove.c                   |   2 +-
+ drivers/gpio/gpio-ws16c48.c                 |   2 +-
+ drivers/gpio/gpio-xgene-sb.c                |   2 +-
+ drivers/gpio/gpio-xlp.c                     |   2 +-
+ drivers/gpio/gpio-zx.c                      |   2 +-
+ drivers/gpio/gpio-zynq.c                    |   2 +-
+ drivers/gpio/gpiolib.c                      | 213 ++++++++--
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c       |   4 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    |   2 +-
+ drivers/pinctrl/intel/pinctrl-baytrail.c    |   6 +-
+ drivers/pinctrl/intel/pinctrl-cherryview.c  |   6 +-
+ drivers/pinctrl/intel/pinctrl-intel.c       |   2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |   2 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c   |   4 +-
+ drivers/pinctrl/pinctrl-amd.c               |   2 +-
+ drivers/pinctrl/pinctrl-at91.c              |   2 +-
+ drivers/pinctrl/pinctrl-coh901.c            |   2 +-
+ drivers/pinctrl/pinctrl-mcp23s08.c          |   2 +-
+ drivers/pinctrl/pinctrl-oxnas.c             |   2 +-
+ drivers/pinctrl/pinctrl-pic32.c             |   2 +-
+ drivers/pinctrl/pinctrl-pistachio.c         |   2 +-
+ drivers/pinctrl/pinctrl-st.c                |   2 +-
+ drivers/pinctrl/pinctrl-sx150x.c            |   2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c          |   2 +-
+ drivers/pinctrl/sirf/pinctrl-atlas7.c       |   2 +-
+ drivers/pinctrl/sirf/pinctrl-sirf.c         |   2 +-
+ drivers/pinctrl/spear/pinctrl-plgpio.c      |   2 +-
+ drivers/platform/x86/intel_int0002_vgpio.c  |   6 +-
+ include/linux/gpio/driver.h                 | 154 +++++--
+ 59 files changed, 1004 insertions(+), 136 deletions(-)
+ create mode 100644 drivers/gpio/gpio-tegra186.c
+
+-- 
+2.14.1
+
