@@ -1,53 +1,54 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/4] pinctrl: Add skew-delay pin config and bindings
-Date: Wed, 1 Nov 2017 16:26:59 -0500
-Message-ID: <20171101212659.be4phj2wha66x63d@rob-hp-laptop>
-References: <20171028133719.27528-1-linus.walleij@linaro.org>
- <20171028133719.27528-2-linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/2] gpio: gpiolib: Generalise state persistence
+ beyond sleep
+Date: Wed, 1 Nov 2017 19:15:31 -0500
+Message-ID: <20171102001531.6j7isyrcwjjwovho@rob-hp-laptop>
+References: <20171101040457.1200-1-andrew@aj.id.au>
+ <20171101040457.1200-2-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:45856 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933382AbdKAV1B (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Nov 2017 17:27:01 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:55596 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933008AbdKBAPd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Nov 2017 20:15:33 -0400
 Content-Disposition: inline
-In-Reply-To: <20171028133719.27528-2-linus.walleij@linaro.org>
+In-Reply-To: <20171101040457.1200-2-andrew@aj.id.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, frowand.list@gmail.com, joel@jms.id.au, ckeepax@opensource.wolfsonmicro.com, ldewangan@nvidia.com, ryan_chen@aspeedtech.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org
 
-On Sat, Oct 28, 2017 at 03:37:17PM +0200, Linus Walleij wrote:
-> Some pin controllers (such as the Gemini) can control the
-> expected clock skew and output delay on certain pins with a
-> sub-nanosecond granularity. This is typically done by shunting
-> in a number of double inverters in front of or behind the pin.
-> Make it possible to configure this with a generic binding.
+On Wed, Nov 01, 2017 at 03:04:56PM +1100, Andrew Jeffery wrote:
+> General support for state persistence is added to gpiolib with the
+> introduction of a new pinconf parameter to propagate the request to
+> hardware. The existing persistence support for sleep is adapted to
+> include hardware support if the GPIO driver provides it. Persistence
+> continues to be enabled by default; in-kernel consumers can opt out, but
+> userspace (currently) does not have a choice.
 > 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> The *_SLEEP_MAY_LOSE_VALUE and *_SLEEP_MAINTAIN_VALUE symbols are
+> renamed, dropping the SLEEP prefix to reflect that the concept is no
+> longer sleep-specific.  I feel that renaming to just *_MAY_LOSE_VALUE
+> could initially be misinterpreted, so I've further changed the symbols
+> to *_TRANSITORY and *_PERSISTENT to address this.
+> 
+> The sysfs interface is modified only to keep consistency with the
+> chardev interface in enforcing persistence for userspace exports.
+> 
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 > ---
->  Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 4 ++++
->  drivers/pinctrl/pinconf-generic.c                              | 2 ++
->  include/linux/pinctrl/pinconf-generic.h                        | 5 +++++
->  3 files changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> index 4483cc31e531..ad9bbbba36e9 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> @@ -271,6 +271,10 @@ output-high		- set the pin to output mode with high level
->  sleep-hardware-state	- indicate this is sleep related state which will be programmed
->  			  into the registers for the sleep state.
->  slew-rate		- set the slew rate
-> +skew-delay		- this affects the expected clock skew on input pins
-> +			  and the delay before latching a value to an output
-> +			  pin. Typically indicates how many double-inverters are
-> +			  used to delay the signal.
+>  drivers/gpio/gpiolib-of.c               |  6 ++--
+>  drivers/gpio/gpiolib-sysfs.c            | 14 +++++---
+>  drivers/gpio/gpiolib.c                  | 61 ++++++++++++++++++++++++++++++---
+>  drivers/gpio/gpiolib.h                  |  2 +-
 
-Units?
+>  include/dt-bindings/gpio/gpio.h         |  6 ++--
 
->  
->  For example:
->  
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  include/linux/gpio/consumer.h           |  8 +++++
+>  include/linux/gpio/machine.h            |  4 +--
+>  include/linux/of_gpio.h                 |  2 +-
+>  include/linux/pinctrl/pinconf-generic.h |  2 ++
+>  9 files changed, 87 insertions(+), 18 deletions(-)
