@@ -1,40 +1,50 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v2 0/2] pinctrl: Allow indicating loss of state across
- suspend/resume
-Date: Fri, 3 Nov 2017 10:33:53 -0700
-Message-ID: <20171103173353.GJ28152@atomide.com>
-References: <20171102231551.16220-1-f.fainelli@gmail.com>
- <20171103103707.3e5wb3c7foxbuvvg@localhost.localdomain>
- <20171103161120.GH28152@atomide.com>
- <da808465-dc64-6c33-0be6-e038e0f84bce@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: armada-37xx: remove unused variable
+Date: Fri, 3 Nov 2017 23:21:44 +0100
+Message-ID: <CACRpkdYzT9Gn747gj4U5inBDFBk30mtENctSbuBRYkjxHpNv1g@mail.gmail.com>
+References: <20171102142932.774199-1-arnd@arndb.de> <CACRpkdbAfBXMbgiG3avQ7CUwZdoY1_qGJt-tq-sDLoR4z0zOew@mail.gmail.com>
+ <CAK8P3a2eL_PDic4J_5oMNeLBYU1698TsCBbDaWLxuP+wS30FzA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <da808465-dc64-6c33-0be6-e038e0f84bce@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, ckeepax@opensource.wolfsonmicro.com, swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, bcm-kernel-feedback-list@broadcom.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:47969 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbdKCWVp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Nov 2017 18:21:45 -0400
+Received: by mail-io0-f196.google.com with SMTP id h70so9405350ioi.4
+        for <linux-gpio@vger.kernel.org>; Fri, 03 Nov 2017 15:21:45 -0700 (PDT)
+In-Reply-To: <CAK8P3a2eL_PDic4J_5oMNeLBYU1698TsCBbDaWLxuP+wS30FzA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ken Ma <make@marvell.com>, Thierry Reding <treding@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-* Florian Fainelli <f.fainelli@gmail.com> [171103 17:04]:
-> On 11/03/2017 09:11 AM, Tony Lindgren wrote:
-> The pinctrl provider is losing its state, hence these two patches.
+On Fri, Nov 3, 2017 at 10:11 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Fri, Nov 3, 2017 at 8:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Thu, Nov 2, 2017 at 3:29 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>>> A cleanup left behind a temporary variable that is now unused:
+>>>
+>>> drivers/pinctrl/mvebu/pinctrl-armada-37xx.c: In function 'armada_37xx_irq_startup':
+>>> drivers/pinctrl/mvebu/pinctrl-armada-37xx.c:693:20: error: unused variable 'chip' [-Werror=unused-variable]
+>>>
+>>> This removes the declarations as well.
+>>>
+>>> Fixes: 3ee9e605caea ("pinctrl: armada-37xx: Stop using struct gpio_chip.irq_base")
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>
+>> It is used on the head of development, so it's fixed in -next.
+>>
+>> Is it such a big issue for v4.14 that you think I should send it
+>> to Torvalds as a fix at this point or can I just leave it?
+>
+> I'm confused. The build warning showed up in linux-next yesterday after
+> 3ee9e605caea got merged, which removes the user of that variable.
+> In v4.14 it is still used.
 
-OK
+I just confused myself by trying to apply it to the pin control
+tree while the refactorings were in the GPIO tree.
 
-> > Anyways, the context lost flag should be managed in the PM core for
-> > the device, so adding linux-pm and Rafael to Cc.
-> 
-> I don't think it's that simple but sure, why not.
+Applied it to the right tree now, thanks!
 
-Just having bool context_lost in struct dev_pm_info would probably
-be enough to allow drivers to deal with it. This flag could then
-be set for a device by power domain related code that knows if
-context got lost.
-
-Anybody got better ideas?
-
-Regards,
-
-Tony
+Linus Walleij
