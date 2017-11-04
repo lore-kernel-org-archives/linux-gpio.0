@@ -1,50 +1,84 @@
-From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v6 00/12] gpio: Tight IRQ chip integration
-Date: Fri, 3 Nov 2017 18:50:28 -0500
-Message-ID: <0e96761d-a110-ff25-fa2e-319bedf3d8ac@ti.com>
-References: <20171102174941.3461-1-thierry.reding@gmail.com>
- <CACRpkdZaLtpEfx6C5cqHFMk11TXnHxp-sZ+T38PCf+Jh1B2BjQ@mail.gmail.com>
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v3 1/5] iio: proximity: sx9500: Assign interrupt from
+ GpioIo()
+Date: Sat, 4 Nov 2017 03:11:19 +0000
+Message-ID: <20171104031119.00006e56@huawei.com>
+References: <20171103130340.42459-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZaLtpEfx6C5cqHFMk11TXnHxp-sZ+T38PCf+Jh1B2BjQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9950 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750959AbdKDDMe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Nov 2017 23:12:34 -0400
+In-Reply-To: <20171103130340.42459-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-hi Linus,
+On Fri, 3 Nov 2017 15:03:36 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-On 11/03/2017 05:50 PM, Linus Walleij wrote:
-> On Thu, Nov 2, 2017 at 6:49 PM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> The commit 0f0796509c07
 > 
->> here's the latest series of patches that implement the tighter IRQ chip
->> integration. I've dropped the banked infrastructure for now as per the
->> discussion with Grygorii.
+> ("iio: remove gpio interrupt probing from drivers that use a single
+> interrupt")
 > 
-> And I really liked that part.
-> 
->> The first couple of patches are mostly preparatory work in order to
->> consolidate all IRQ chip related fields in a new structure and create
->> the base functionality for adding IRQ chips.
->>
->> After that, I've added the Tegra186 GPIO support patch that makes use of
->> the new tight integration.
->>
->> Changes in v6:
->> - rebased on latest linux-gpio devel branch
->> - one patch dropped due to rebase
-> 
-> I guess I will consider queueing them already for v4.15 if
-> Torvalds churns out another -rc on sunday, I do not
-> doubt that you will finish it as we have discussed with banks and
-> all. If v4.14 is released on sunday let's queue this early for v4.16.
+> removed custom IRQ assignment for the drivers which are enumerated via
+> ACPI or OF. Unfortunately, some ACPI tables have IRQ line defined as
+> GpioIo() resource and thus automatic IRQ allocation will fail.
 
-Can you see my reply?
-https://lkml.org/lkml/2017/11/3/820
+I'll ask the obvious question - is this allowed under the ACPI spec?
 
--- 
-regards,
--grygorii
+> 
+> Partially revert the commit 0f0796509c07 to restore original
+> behaviour.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+I really don't like scattering fixes for broken ACPI tables through
+drivers...  Is there really no better solution to this?
+
+On patches like this best to pull in ACPI and GPIO on the cc list.
+
+Also cc'd Mika who made the original change to support gpioint.
+
+
+
+Jonathan
+
+> ---
+>  drivers/iio/proximity/sx9500.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/iio/proximity/sx9500.c
+> b/drivers/iio/proximity/sx9500.c index 53c5d653e780..df23dbcc030a
+> 100644 --- a/drivers/iio/proximity/sx9500.c
+> +++ b/drivers/iio/proximity/sx9500.c
+> @@ -869,6 +869,7 @@ static int sx9500_init_device(struct iio_dev
+> *indio_dev) static void sx9500_gpio_probe(struct i2c_client *client,
+>  			      struct sx9500_data *data)
+>  {
+> +	struct gpio_desc *gpiod_int;
+>  	struct device *dev;
+>  
+>  	if (!client)
+> @@ -876,6 +877,14 @@ static void sx9500_gpio_probe(struct i2c_client
+> *client, 
+>  	dev = &client->dev;
+>  
+> +	if (client->irq <= 0) {
+> +		gpiod_int = devm_gpiod_get(dev, SX9500_GPIO_INT,
+> GPIOD_IN);
+> +		if (IS_ERR(gpiod_int))
+> +			dev_err(dev, "gpio get irq failed\n");
+> +		else
+> +			client->irq = gpiod_to_irq(gpiod_int);
+> +	}
+> +
+>  	data->gpiod_rst = devm_gpiod_get(dev, SX9500_GPIO_RESET,
+> GPIOD_OUT_HIGH); if (IS_ERR(data->gpiod_rst)) {
+>  		dev_warn(dev, "gpio get reset pin failed\n");
+
