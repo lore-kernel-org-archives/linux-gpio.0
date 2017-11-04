@@ -1,54 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/5] iio: proximity: sx9500: Assign interrupt from GpioIo()
-Date: Sat, 4 Nov 2017 11:43:53 +0100
-Message-ID: <CACRpkdYhJK2=2UAO5sZ0WGouF-V8woiuhTzCYQYz29PuQKcfQQ@mail.gmail.com>
-References: <20171103130340.42459-1-andriy.shevchenko@linux.intel.com> <20171104031119.00006e56@huawei.com>
+From: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Subject: Re: [PATCH v2 0/2] pinctrl: Allow indicating loss of state across suspend/resume
+Date: Sat, 04 Nov 2017 13:25:43 +0100
+Message-ID: <2452741.VnAOAIxsj2@aspire.rjw.lan>
+References: <20171102231551.16220-1-f.fainelli@gmail.com> <da808465-dc64-6c33-0be6-e038e0f84bce@gmail.com> <20171103173353.GJ28152@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20171104031119.00006e56@huawei.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Cameron <jic23@kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171103173353.GJ28152-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Nov 4, 2017 at 4:11 AM, Jonathan Cameron
-<Jonathan.Cameron@huawei.com> wrote:
-> On Fri, 3 Nov 2017 15:03:36 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->
->> The commit 0f0796509c07
->>
->> ("iio: remove gpio interrupt probing from drivers that use a single
->> interrupt")
->>
->> removed custom IRQ assignment for the drivers which are enumerated via
->> ACPI or OF. Unfortunately, some ACPI tables have IRQ line defined as
->> GpioIo() resource and thus automatic IRQ allocation will fail.
->
-> I'll ask the obvious question - is this allowed under the ACPI spec?
->
->>
->> Partially revert the commit 0f0796509c07 to restore original
->> behaviour.
->>
->> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> I really don't like scattering fixes for broken ACPI tables through
-> drivers...  Is there really no better solution to this?
->
-> On patches like this best to pull in ACPI and GPIO on the cc list.
->
-> Also cc'd Mika who made the original change to support gpioint.
+On Friday, November 3, 2017 6:33:53 PM CET Tony Lindgren wrote:
+> * Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> [171103 17:04]:
+> > On 11/03/2017 09:11 AM, Tony Lindgren wrote:
+> > The pinctrl provider is losing its state, hence these two patches.
+> 
+> OK
+> 
+> > > Anyways, the context lost flag should be managed in the PM core for
+> > > the device, so adding linux-pm and Rafael to Cc.
+> > 
+> > I don't think it's that simple but sure, why not.
+> 
+> Just having bool context_lost in struct dev_pm_info would probably
+> be enough to allow drivers to deal with it. This flag could then
+> be set for a device by power domain related code that knows if
+> context got lost.
 
-Andy and Mika are the maintainers of ACPI GPIO, I have only
-superficial knowledge of how that actually works. But it's good if
-Mika can look at it too.
+Something like: if the driver sees "context_lost" set, it should restore
+the context to the device from memory?
 
-The only thing that I know for sure about ACPI GPIO is the same
-as always : the people who devised it think that they are releaving
-the OS authors of a burden by taking stuff over, and end up
-creating more work for us since they make mistakes and
-deploy them in firmware that "cannot be fixed".
+But the it would also need to save the context beforehand, so why not to
+restore it unconditionally on resume?
 
-Linus Walleij
+Thanks,
+Rafael
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
