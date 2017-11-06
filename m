@@ -1,75 +1,202 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH] pinctrl: Fix armada-37xx pmic pin group numbering
-Date: Mon, 06 Nov 2017 17:09:07 +0100
-Message-ID: <87shdr75jw.fsf@free-electrons.com>
-References: <CABQZ+_QYDE9k31ywvHqSEsNPjsnGQHMd0oCyErKFAT1PpETkEg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: gemini: Fix GMAC groups
+Date: Mon,  6 Nov 2017 21:27:34 +0100
+Message-ID: <20171106202734.4891-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:48185 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752211AbdKFQJT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Nov 2017 11:09:19 -0500
-In-Reply-To: <CABQZ+_QYDE9k31ywvHqSEsNPjsnGQHMd0oCyErKFAT1PpETkEg@mail.gmail.com>
-        (Henrik Juul Pedersen's message of "Mon, 6 Nov 2017 17:02:58 +0100")
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:54705 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932655AbdKFU3k (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Nov 2017 15:29:40 -0500
+Received: by mail-lf0-f66.google.com with SMTP id a2so11921902lfh.11
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Nov 2017 12:29:39 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Henrik Juul Pedersen <hjp@liab.dk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Emil Vesterdahl <emil@liab.dk>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Henrik,
+The GMII groups need to be split across GMAC0 and GMAC1 since
+GMAC0 is always available but GMAC1 masks GPIO2 lines 0-7
+so we might want just one interface out.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/pinctrl-gemini.c | 79 +++++++++++++++++++++++++++-------------
+ 1 file changed, 54 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-gemini.c b/drivers/pinctrl/pinctrl-gemini.c
+index bd6133f06759..ecfc9733db7e 100644
+--- a/drivers/pinctrl/pinctrl-gemini.c
++++ b/drivers/pinctrl/pinctrl-gemini.c
+@@ -96,6 +96,13 @@ struct gemini_pin_group {
+  *   you are stuck with it.
+  */
+ #define GLOBAL_MISC_CTRL	0x30
++#define GEMINI_GMAC_IOSEL_MASK	GENMASK(28, 27)
++/* Not really used */
++#define GEMINI_GMAC_IOSEL_GMAC0_GMII	BIT(28)
++/* Activated with GMAC1 */
++#define GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII BIT(27)
++/* This will be the default */
++#define GEMINI_GMAC_IOSEL_GMAC0_RGMII_GMAC1_GPIO2 0
+ #define TVC_CLK_PAD_ENABLE	BIT(20)
+ #define PCI_CLK_PAD_ENABLE	BIT(17)
+ #define LPC_CLK_PAD_ENABLE	BIT(16)
+@@ -109,8 +116,8 @@ struct gemini_pin_group {
+ #define NAND_PADS_DISABLE	BIT(2)
+ #define PFLASH_PADS_DISABLE	BIT(1)
+ #define SFLASH_PADS_DISABLE	BIT(0)
+-#define PADS_MASK		(GENMASK(9, 0) | BIT(16) | BIT(17) | BIT(20))
+-#define PADS_MAXBIT		20
++#define PADS_MASK		(GENMASK(9, 0) | BIT(16) | BIT(17) | BIT(20) | BIT(27))
++#define PADS_MAXBIT		27
  
- On lun., nov. 06 2017, Henrik Juul Pedersen <hjp@liab.dk> wrote:
-
-> Fix pin numbering in Marvell ARMADA 37xx pincontroller.
->
-> The pmic0 and pmic1 pin groups start on pins 6 and 7 respectively.
->
-> Signed-off-by: Henrik Juul Pedersen <hjp@liab.dk>
-
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-when applying the patch, we should also add:
-
-Fixes: 87466ccd9401 ("pinctrl: armada-37xx: Add pin controller support
-for Armada 37xx")
-Cc: <stable@vger.kernel.org>
-
-Thanks,
-
-Gregory
-
-> ---
->  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-> b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-> index 71b94474..e223fac2 100644
-> --- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-> @@ -157,8 +157,8 @@ static struct armada_37xx_pin_group
-> armada_37xx_nb_groups[] = {
->   PIN_GRP_GPIO("pwm1", 12, 1, BIT(4), "pwm"),
->   PIN_GRP_GPIO("pwm2", 13, 1, BIT(5), "pwm"),
->   PIN_GRP_GPIO("pwm3", 14, 1, BIT(6), "pwm"),
-> - PIN_GRP_GPIO("pmic1", 17, 1, BIT(7), "pmic"),
-> - PIN_GRP_GPIO("pmic0", 16, 1, BIT(8), "pmic"),
-> + PIN_GRP_GPIO("pmic1", 7, 1, BIT(7), "pmic"),
-> + PIN_GRP_GPIO("pmic0", 6, 1, BIT(8), "pmic"),
->   PIN_GRP_GPIO("i2c2", 2, 2, BIT(9), "i2c"),
->   PIN_GRP_GPIO("i2c1", 0, 2, BIT(10), "i2c"),
->   PIN_GRP_GPIO("spi_cs1", 17, 1, BIT(12), "spi"),
-> -- 
-> 2.14.1
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
+ /* Ordered by bit index */
+ static const char * const gemini_padgroups[] = {
+@@ -516,9 +523,12 @@ static const unsigned int usb_3512_pins[] = {
+ };
+ 
+ /* GMII, ethernet pins */
+-static const unsigned int gmii_3512_pins[] = {
+-	311, 240, 258, 276, 294, 312, 241, 259, 277, 295, 313, 242, 260, 278, 296,
+-	315, 297, 279, 261, 243, 316, 298, 280, 262, 244, 317, 299, 281
++static const unsigned int gmii_gmac0_3512_pins[] = {
++	240, 241, 242, 258, 259, 260, 276, 277, 278, 294, 295, 311, 312, 313
++};
++
++static const unsigned int gmii_gmac1_3512_pins[] = {
++	243, 244, 261, 262, 279, 280, 281, 296, 297, 298, 299, 315, 316, 317
+ };
+ 
+ static const unsigned int pci_3512_pins[] = {
+@@ -668,10 +678,10 @@ static const unsigned int gpio1c_3512_pins[] = {
+ /* The GPIO1D (28-31) pins overlap with LCD and TVC */
+ static const unsigned int gpio1d_3512_pins[] = { 246, 319, 301, 283 };
+ 
+-/* The GPIO2A (0-3) pins overlap with GMII and extended parallel flash */
++/* The GPIO2A (0-3) pins overlap with GMII GMAC1 and extended parallel flash */
+ static const unsigned int gpio2a_3512_pins[] = { 315, 297, 279, 261 };
+ 
+-/* The GPIO2B (4-7) pins overlap with GMII, extended parallel flash and LCD */
++/* The GPIO2B (4-7) pins overlap with GMII GMAC1, extended parallel flash and LCD */
+ static const unsigned int gpio2b_3512_pins[] = { 262, 244, 317, 299 };
+ 
+ /* The GPIO2C (8-31) pins overlap with PCI */
+@@ -738,9 +748,16 @@ static const struct gemini_pin_group gemini_3512_pin_groups[] = {
+ 		.num_pins = ARRAY_SIZE(usb_3512_pins),
+ 	},
+ 	{
+-		.name = "gmiigrp",
+-		.pins = gmii_3512_pins,
+-		.num_pins = ARRAY_SIZE(gmii_3512_pins),
++		.name = "gmii_gmac0_grp",
++		.pins = gmii_gmac0_3512_pins,
++		.num_pins = ARRAY_SIZE(gmii_gmac0_3512_pins),
++	},
++	{
++		.name = "gmii_gmac1_grp",
++		.pins = gmii_gmac1_3512_pins,
++		.num_pins = ARRAY_SIZE(gmii_gmac1_3512_pins),
++		/* Bring out RGMII on the GMAC1 pins */
++		.value = GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
+ 	},
+ 	{
+ 		.name = "pcigrp",
+@@ -954,14 +971,15 @@ static const struct gemini_pin_group gemini_3512_pin_groups[] = {
+ 		.name = "gpio2agrp",
+ 		.pins = gpio2a_3512_pins,
+ 		.num_pins = ARRAY_SIZE(gpio2a_3512_pins),
+-		/* Conflict with GMII and extended parallel flash */
++		.mask = GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
++		/* Conflict with GMII GMAC1 and extended parallel flash */
+ 	},
+ 	{
+ 		.name = "gpio2bgrp",
+ 		.pins = gpio2b_3512_pins,
+ 		.num_pins = ARRAY_SIZE(gpio2b_3512_pins),
+-		/* Conflict with GMII, extended parallel flash and LCD */
+-		.mask = LCD_PADS_ENABLE,
++		/* Conflict with GMII GMAC1, extended parallel flash and LCD */
++		.mask = LCD_PADS_ENABLE | GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
+ 	},
+ 	{
+ 		.name = "gpio2cgrp",
+@@ -1441,9 +1459,12 @@ static const unsigned int usb_3516_pins[] = {
+ };
+ 
+ /* GMII, ethernet pins */
+-static const unsigned int gmii_3516_pins[] = {
+-	306, 307, 308, 309, 310, 325, 326, 327, 328, 329, 330, 345, 346, 347,
+-	348, 349, 350, 351, 367, 368, 369, 370, 371, 386, 387, 389, 390, 391
++static const unsigned int gmii_gmac0_3516_pins[] = {
++	306, 307, 325, 326, 327, 328, 345, 346, 347, 348, 367, 368, 386, 387
++};
++
++static const unsigned int gmii_gmac1_3516_pins[] = {
++	308, 309, 310, 329, 330, 349, 350, 351, 369, 370, 371, 389, 390, 391
+ };
+ 
+ static const unsigned int pci_3516_pins[] = {
+@@ -1585,10 +1606,10 @@ static const unsigned int gpio1c_3516_pins[] = {
+ /* The GPIO1D (28-31) pins overlap with TVC */
+ static const unsigned int gpio1d_3516_pins[] = { 353, 311, 394, 374 };
+ 
+-/* The GPIO2A (0-3) pins overlap with GMII and extended parallel flash */
++/* The GPIO2A (0-3) pins overlap with GMII GMAC1 and extended parallel flash */
+ static const unsigned int gpio2a_3516_pins[] = { 308, 369, 389, 329 };
+ 
+-/* The GPIO2B (4-7) pins overlap with GMII, extended parallel flash and LCD */
++/* The GPIO2B (4-7) pins overlap with GMII GMAC1, extended parallel flash and LCD */
+ static const unsigned int gpio2b_3516_pins[] = { 391, 351, 310, 371 };
+ 
+ /* The GPIO2C (8-31) pins overlap with PCI */
+@@ -1660,9 +1681,16 @@ static const struct gemini_pin_group gemini_3516_pin_groups[] = {
+ 		.num_pins = ARRAY_SIZE(usb_3516_pins),
+ 	},
+ 	{
+-		.name = "gmiigrp",
+-		.pins = gmii_3516_pins,
+-		.num_pins = ARRAY_SIZE(gmii_3516_pins),
++		.name = "gmii_gmac0_grp",
++		.pins = gmii_gmac0_3516_pins,
++		.num_pins = ARRAY_SIZE(gmii_gmac0_3516_pins),
++	},
++	{
++		.name = "gmii_gmac1_grp",
++		.pins = gmii_gmac1_3516_pins,
++		.num_pins = ARRAY_SIZE(gmii_gmac1_3516_pins),
++		/* Bring out RGMII on the GMAC1 pins */
++		.value = GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
+ 	},
+ 	{
+ 		.name = "pcigrp",
+@@ -1861,14 +1889,15 @@ static const struct gemini_pin_group gemini_3516_pin_groups[] = {
+ 		.name = "gpio2agrp",
+ 		.pins = gpio2a_3516_pins,
+ 		.num_pins = ARRAY_SIZE(gpio2a_3516_pins),
+-		/* Conflict with GMII and extended parallel flash */
++		.mask = GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
++		/* Conflict with GMII GMAC1 and extended parallel flash */
+ 	},
+ 	{
+ 		.name = "gpio2bgrp",
+ 		.pins = gpio2b_3516_pins,
+ 		.num_pins = ARRAY_SIZE(gpio2b_3516_pins),
+-		/* Conflict with GMII, extended parallel flash and LCD */
+-		.mask = LCD_PADS_ENABLE,
++		/* Conflict with GMII GMAC1, extended parallel flash and LCD */
++		.mask = LCD_PADS_ENABLE | GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
+ 	},
+ 	{
+ 		.name = "gpio2cgrp",
+@@ -1971,7 +2000,7 @@ static const char * const icegrps[] = { "icegrp" };
+ static const char * const idegrps[] = { "idegrp" };
+ static const char * const satagrps[] = { "satagrp" };
+ static const char * const usbgrps[] = { "usbgrp" };
+-static const char * const gmiigrps[] = { "gmiigrp" };
++static const char * const gmiigrps[] = { "gmii_gmac0_grp", "gmii_gmac1_grp" };
+ static const char * const pcigrps[] = { "pcigrp" };
+ static const char * const lpcgrps[] = { "lpcgrp" };
+ static const char * const lcdgrps[] = { "lcdgrp" };
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.13.6
+
