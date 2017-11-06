@@ -1,202 +1,356 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: gemini: Fix GMAC groups
-Date: Mon,  6 Nov 2017 21:27:34 +0100
-Message-ID: <20171106202734.4891-1-linus.walleij@linaro.org>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v6 00/12] gpio: Tight IRQ chip integration
+Date: Mon, 6 Nov 2017 17:13:33 -0600
+Message-ID: <e5996910-43a0-a75e-5f7f-a0606e05d914@ti.com>
+References: <20171102174941.3461-1-thierry.reding@gmail.com>
+ <ca8c7138-2e87-0481-ac8c-7077bed749f6@ti.com> <20171106111807.GA6756@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:54705 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932655AbdKFU3k (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Nov 2017 15:29:40 -0500
-Received: by mail-lf0-f66.google.com with SMTP id a2so11921902lfh.11
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Nov 2017 12:29:39 -0800 (PST)
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:17771 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752366AbdKFXNj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Nov 2017 18:13:39 -0500
+In-Reply-To: <20171106111807.GA6756@ulmo>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The GMII groups need to be split across GMAC0 and GMAC1 since
-GMAC0 is always available but GMAC1 masks GPIO2 lines 0-7
-so we might want just one interface out.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/pinctrl-gemini.c | 79 +++++++++++++++++++++++++++-------------
- 1 file changed, 54 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-gemini.c b/drivers/pinctrl/pinctrl-gemini.c
-index bd6133f06759..ecfc9733db7e 100644
---- a/drivers/pinctrl/pinctrl-gemini.c
-+++ b/drivers/pinctrl/pinctrl-gemini.c
-@@ -96,6 +96,13 @@ struct gemini_pin_group {
-  *   you are stuck with it.
-  */
- #define GLOBAL_MISC_CTRL	0x30
-+#define GEMINI_GMAC_IOSEL_MASK	GENMASK(28, 27)
-+/* Not really used */
-+#define GEMINI_GMAC_IOSEL_GMAC0_GMII	BIT(28)
-+/* Activated with GMAC1 */
-+#define GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII BIT(27)
-+/* This will be the default */
-+#define GEMINI_GMAC_IOSEL_GMAC0_RGMII_GMAC1_GPIO2 0
- #define TVC_CLK_PAD_ENABLE	BIT(20)
- #define PCI_CLK_PAD_ENABLE	BIT(17)
- #define LPC_CLK_PAD_ENABLE	BIT(16)
-@@ -109,8 +116,8 @@ struct gemini_pin_group {
- #define NAND_PADS_DISABLE	BIT(2)
- #define PFLASH_PADS_DISABLE	BIT(1)
- #define SFLASH_PADS_DISABLE	BIT(0)
--#define PADS_MASK		(GENMASK(9, 0) | BIT(16) | BIT(17) | BIT(20))
--#define PADS_MAXBIT		20
-+#define PADS_MASK		(GENMASK(9, 0) | BIT(16) | BIT(17) | BIT(20) | BIT(27))
-+#define PADS_MAXBIT		27
- 
- /* Ordered by bit index */
- static const char * const gemini_padgroups[] = {
-@@ -516,9 +523,12 @@ static const unsigned int usb_3512_pins[] = {
- };
- 
- /* GMII, ethernet pins */
--static const unsigned int gmii_3512_pins[] = {
--	311, 240, 258, 276, 294, 312, 241, 259, 277, 295, 313, 242, 260, 278, 296,
--	315, 297, 279, 261, 243, 316, 298, 280, 262, 244, 317, 299, 281
-+static const unsigned int gmii_gmac0_3512_pins[] = {
-+	240, 241, 242, 258, 259, 260, 276, 277, 278, 294, 295, 311, 312, 313
-+};
-+
-+static const unsigned int gmii_gmac1_3512_pins[] = {
-+	243, 244, 261, 262, 279, 280, 281, 296, 297, 298, 299, 315, 316, 317
- };
- 
- static const unsigned int pci_3512_pins[] = {
-@@ -668,10 +678,10 @@ static const unsigned int gpio1c_3512_pins[] = {
- /* The GPIO1D (28-31) pins overlap with LCD and TVC */
- static const unsigned int gpio1d_3512_pins[] = { 246, 319, 301, 283 };
- 
--/* The GPIO2A (0-3) pins overlap with GMII and extended parallel flash */
-+/* The GPIO2A (0-3) pins overlap with GMII GMAC1 and extended parallel flash */
- static const unsigned int gpio2a_3512_pins[] = { 315, 297, 279, 261 };
- 
--/* The GPIO2B (4-7) pins overlap with GMII, extended parallel flash and LCD */
-+/* The GPIO2B (4-7) pins overlap with GMII GMAC1, extended parallel flash and LCD */
- static const unsigned int gpio2b_3512_pins[] = { 262, 244, 317, 299 };
- 
- /* The GPIO2C (8-31) pins overlap with PCI */
-@@ -738,9 +748,16 @@ static const struct gemini_pin_group gemini_3512_pin_groups[] = {
- 		.num_pins = ARRAY_SIZE(usb_3512_pins),
- 	},
- 	{
--		.name = "gmiigrp",
--		.pins = gmii_3512_pins,
--		.num_pins = ARRAY_SIZE(gmii_3512_pins),
-+		.name = "gmii_gmac0_grp",
-+		.pins = gmii_gmac0_3512_pins,
-+		.num_pins = ARRAY_SIZE(gmii_gmac0_3512_pins),
-+	},
-+	{
-+		.name = "gmii_gmac1_grp",
-+		.pins = gmii_gmac1_3512_pins,
-+		.num_pins = ARRAY_SIZE(gmii_gmac1_3512_pins),
-+		/* Bring out RGMII on the GMAC1 pins */
-+		.value = GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
- 	},
- 	{
- 		.name = "pcigrp",
-@@ -954,14 +971,15 @@ static const struct gemini_pin_group gemini_3512_pin_groups[] = {
- 		.name = "gpio2agrp",
- 		.pins = gpio2a_3512_pins,
- 		.num_pins = ARRAY_SIZE(gpio2a_3512_pins),
--		/* Conflict with GMII and extended parallel flash */
-+		.mask = GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
-+		/* Conflict with GMII GMAC1 and extended parallel flash */
- 	},
- 	{
- 		.name = "gpio2bgrp",
- 		.pins = gpio2b_3512_pins,
- 		.num_pins = ARRAY_SIZE(gpio2b_3512_pins),
--		/* Conflict with GMII, extended parallel flash and LCD */
--		.mask = LCD_PADS_ENABLE,
-+		/* Conflict with GMII GMAC1, extended parallel flash and LCD */
-+		.mask = LCD_PADS_ENABLE | GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
- 	},
- 	{
- 		.name = "gpio2cgrp",
-@@ -1441,9 +1459,12 @@ static const unsigned int usb_3516_pins[] = {
- };
- 
- /* GMII, ethernet pins */
--static const unsigned int gmii_3516_pins[] = {
--	306, 307, 308, 309, 310, 325, 326, 327, 328, 329, 330, 345, 346, 347,
--	348, 349, 350, 351, 367, 368, 369, 370, 371, 386, 387, 389, 390, 391
-+static const unsigned int gmii_gmac0_3516_pins[] = {
-+	306, 307, 325, 326, 327, 328, 345, 346, 347, 348, 367, 368, 386, 387
-+};
-+
-+static const unsigned int gmii_gmac1_3516_pins[] = {
-+	308, 309, 310, 329, 330, 349, 350, 351, 369, 370, 371, 389, 390, 391
- };
- 
- static const unsigned int pci_3516_pins[] = {
-@@ -1585,10 +1606,10 @@ static const unsigned int gpio1c_3516_pins[] = {
- /* The GPIO1D (28-31) pins overlap with TVC */
- static const unsigned int gpio1d_3516_pins[] = { 353, 311, 394, 374 };
- 
--/* The GPIO2A (0-3) pins overlap with GMII and extended parallel flash */
-+/* The GPIO2A (0-3) pins overlap with GMII GMAC1 and extended parallel flash */
- static const unsigned int gpio2a_3516_pins[] = { 308, 369, 389, 329 };
- 
--/* The GPIO2B (4-7) pins overlap with GMII, extended parallel flash and LCD */
-+/* The GPIO2B (4-7) pins overlap with GMII GMAC1, extended parallel flash and LCD */
- static const unsigned int gpio2b_3516_pins[] = { 391, 351, 310, 371 };
- 
- /* The GPIO2C (8-31) pins overlap with PCI */
-@@ -1660,9 +1681,16 @@ static const struct gemini_pin_group gemini_3516_pin_groups[] = {
- 		.num_pins = ARRAY_SIZE(usb_3516_pins),
- 	},
- 	{
--		.name = "gmiigrp",
--		.pins = gmii_3516_pins,
--		.num_pins = ARRAY_SIZE(gmii_3516_pins),
-+		.name = "gmii_gmac0_grp",
-+		.pins = gmii_gmac0_3516_pins,
-+		.num_pins = ARRAY_SIZE(gmii_gmac0_3516_pins),
-+	},
-+	{
-+		.name = "gmii_gmac1_grp",
-+		.pins = gmii_gmac1_3516_pins,
-+		.num_pins = ARRAY_SIZE(gmii_gmac1_3516_pins),
-+		/* Bring out RGMII on the GMAC1 pins */
-+		.value = GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
- 	},
- 	{
- 		.name = "pcigrp",
-@@ -1861,14 +1889,15 @@ static const struct gemini_pin_group gemini_3516_pin_groups[] = {
- 		.name = "gpio2agrp",
- 		.pins = gpio2a_3516_pins,
- 		.num_pins = ARRAY_SIZE(gpio2a_3516_pins),
--		/* Conflict with GMII and extended parallel flash */
-+		.mask = GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
-+		/* Conflict with GMII GMAC1 and extended parallel flash */
- 	},
- 	{
- 		.name = "gpio2bgrp",
- 		.pins = gpio2b_3516_pins,
- 		.num_pins = ARRAY_SIZE(gpio2b_3516_pins),
--		/* Conflict with GMII, extended parallel flash and LCD */
--		.mask = LCD_PADS_ENABLE,
-+		/* Conflict with GMII GMAC1, extended parallel flash and LCD */
-+		.mask = LCD_PADS_ENABLE | GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
- 	},
- 	{
- 		.name = "gpio2cgrp",
-@@ -1971,7 +2000,7 @@ static const char * const icegrps[] = { "icegrp" };
- static const char * const idegrps[] = { "idegrp" };
- static const char * const satagrps[] = { "satagrp" };
- static const char * const usbgrps[] = { "usbgrp" };
--static const char * const gmiigrps[] = { "gmiigrp" };
-+static const char * const gmiigrps[] = { "gmii_gmac0_grp", "gmii_gmac1_grp" };
- static const char * const pcigrps[] = { "pcigrp" };
- static const char * const lpcgrps[] = { "lpcgrp" };
- static const char * const lcdgrps[] = { "lcdgrp" };
+On 11/06/2017 05:18 AM, Thierry Reding wrote:
+> On Fri, Nov 03, 2017 at 05:30:30PM -0500, Grygorii Strashko wrote:
+>> Hi
+>>
+>> On 11/02/2017 12:49 PM, Thierry Reding wrote:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> Hi Linus,
+>>>
+>>> here's the latest series of patches that implement the tighter IRQ chip
+>>> integration. I've dropped the banked infrastructure for now as per the
+>>> discussion with Grygorii.
+>>>
+>>> The first couple of patches are mostly preparatory work in order to
+>>> consolidate all IRQ chip related fields in a new structure and create
+>>> the base functionality for adding IRQ chips.
+>>>
+>>> After that, I've added the Tegra186 GPIO support patch that makes use of
+>>> the new tight integration.
+>>>
+>>> Changes in v6:
+>>> - rebased on latest linux-gpio devel branch
+>>> - one patch dropped due to rebase
+>>>
+>>> Changes in v5:
+>>> - dropped the banked infrastructure patches for now (Grygorii)
+>>> - allocate interrupts on demand, rather than upfront (Grygorii)
+>>> - split up the first patch further as requested by Grygorii
+>>>
+>>> Not sure what happened in between here. Notes in commit logs indicate
+>>> that this is actually version 5, but I can't find the cover letter for
+>>> v3 and v4.
+>>>
+>>> Changes in v2:
+>>> - rename pins to lines for consistent terminology
+>>> - rename gpio_irq_chip_banked_handler() to
+>>>     gpio_irq_chip_banked_chained_handler()
+>>>
+>>
+>> Sry, for delayed reply, very sorry.
+>>
+>> Patches 1 - 9, 11 : looks good, so
+>> Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>>
+>> Patch 10 - unfortunately not all my comment were incorporated [1],
+>> so below diff on top of patch 10
+>> which illustrates what i want and also converts gpio-omap to use new infra as
+>> test for this new infra.
+>>
+>> Pls, take a look
+>>
+>> [1] https://www.spinics.net/lists/linux-tegra/msg31145.html
+> 
+> Most of the changes I had deemed to be material for follow-up patches
+> since they aren't immediately relevant to the gpio_irq_chip conversion
+> nor needed by the Tegra186 patch.
+> 
+> However, a couple of the hunks below seem like they should be part of
+> the initial series.
+> 
+>> -----------><-------------
+>>  From 210fe3ad7a642691a1b7603e441f6980b10ff2b4 Mon Sep 17 00:00:00 2001
+>> From: Grygorii Strashko <grygorii.strashko@ti.com>
+>> Date: Fri, 3 Nov 2017 17:24:51 -0500
+>> Subject: [PATCH] [not for merge] gpiolib: update and test new gpioirq chip
+>>   infra
+>>
+>> changes in gpiolib:
+>>   - move set_parent to gpiochip_irq_map() and use parents instead of map for only
+>>     one parent
+>>   - add gpio_irq_chip->first_irq for static IRQ allocation
+>>   - fix nested = true if parent_handler not set
+>>   - fix gpiochip_irqchip_remove() if parent_handler not set
+>>   - get of_node from gpiodev
+>>   - fix lock_key: drivers do not need to set it, but looks a bit overcomplicated
+>>     as lock_class_key will be created for each gpiochip_add_data() call.
+>>     Honestly, do not seem better way :(
+>>
+>> GPIO OMAP driver updated to use new gpioirq chip infra and tested on am335x-evm.
+>> seems it's working - can see irqs from keys.
+>>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> ---
+>>   drivers/gpio/gpio-omap.c    | 36 ++++++++++++++--------------
+>>   drivers/gpio/gpiolib.c      | 58 +++++++++++++++++++--------------------------
+>>   include/linux/gpio/driver.h | 32 ++++++++++++++++++++++++-
+>>   3 files changed, 73 insertions(+), 53 deletions(-)
+> [...]
+>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> [...]
+>> @@ -1642,6 +1644,7 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+>>   			    irq_hw_number_t hwirq)
+>>   {
+>>   	struct gpio_chip *chip = d->host_data;
+>> +	int err = 0;
+>>   
+>>   	if (!gpiochip_irqchip_irq_valid(chip, hwirq))
+>>   		return -ENXIO;
+>> @@ -1658,6 +1661,12 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+>>   		irq_set_nested_thread(irq, 1);
+>>   	irq_set_noprobe(irq);
+>>   
+>> +	if (chip->irq.num_parents == 1)
+>> +		err = irq_set_parent(irq, chip->irq.parents[0]);
+>> +	else if (chip->irq.map)
+>> +		err = irq_set_parent(irq, chip->irq.map[hwirq]);
+>> +	if (err < 0)
+>> +		return err;
+> 
+> Yeah, this looks sensible. Both in that this is a slightly better place
+> to call it and that the handling for num_parents == 1 is necessary, too.
+> 
+>>   	/*
+>>   	 * No set-up of the hardware will happen if IRQ_TYPE_NONE
+>>   	 * is passed as default type.
+>> @@ -1712,30 +1721,18 @@ static void gpiochip_irq_relres(struct irq_data *d)
+>>   
+>>   static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+>>   {
+>> -	unsigned int irq;
+>> -	int err;
+>> -
+>>   	if (!gpiochip_irqchip_irq_valid(chip, offset))
+>>   		return -ENXIO;
+>>   
+>> -	irq = irq_create_mapping(chip->irq.domain, offset);
+>> -	if (!irq)
+>> -		return 0;
+>> -
+>> -	if (chip->irq.map) {
+>> -		err = irq_set_parent(irq, chip->irq.map[offset]);
+>> -		if (err < 0)
+>> -			return err;
+>> -	}
+>> -
+>> -	return irq;
+>> +	return irq_create_mapping(chip->irq.domain, offset);
+>>   }
+>>   
+>>   /**
+>>    * gpiochip_add_irqchip() - adds an IRQ chip to a GPIO chip
+>>    * @gpiochip: the GPIO chip to add the IRQ chip to
+>>    */
+>> -static int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
+>> +static int gpiochip_add_irqchip_key(struct gpio_chip *gpiochip,
+>> +				    struct lock_class_key *lock_key)
+>>   {
+>>   	struct irq_chip *irqchip = gpiochip->irq.chip;
+>>   	const struct irq_domain_ops *ops;
+>> @@ -1753,17 +1750,8 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
+>>   	}
+>>   
+>>   	type = gpiochip->irq.default_type;
+>> -	np = gpiochip->parent->of_node;
+>> -
+>> -#ifdef CONFIG_OF_GPIO
+>> -	/*
+>> -	 * If the gpiochip has an assigned OF node this takes precedence
+>> -	 * FIXME: get rid of this and use gpiochip->parent->of_node
+>> -	 * everywhere
+>> -	 */
+>> -	if (gpiochip->of_node)
+>> -		np = gpiochip->of_node;
+>> -#endif
+>> +	/* called from gpiochip_add_data() and is set properly */
+>> +	np = gpiochip->gpiodev->dev.of_node;
+> 
+> Indeed, looks like we have this twice now.
+> 
+>>   
+>>   	/*
+>>   	 * Specifying a default trigger is a terrible idea if DT or ACPI is
+>> @@ -1789,7 +1777,8 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
+>>   		ops = &gpiochip_domain_ops;
+>>   
+>>   	gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
+>> -						     0, ops, gpiochip);
+>> +						     gpiochip->irq.first_irq,
+>> +						     ops, gpiochip);
+>>   	if (!gpiochip->irq.domain)
+>>   		return -EINVAL;
+> 
+> This seems backward. You just spent a lot of time getting rid of all
+> users of first_irq (it's actually the reason why I dropped one of the
+> patches from the series, since first_irq is no longer used), so why
+> reintroduce it?
+
+Yes. It required for HW/drivers not supported (or partially supported)
+SPARSE_IRQ. And it's not exactly the same as dropped base_irq.
+If SPARSE_IRQ not supported - driver should ensure that proper
+ Linux IRQ range allocated (or reserved) and pass first_irq number to the gpiolib
+For example, in case of OMAP GPIO this is required for OMAP1 support and
+driver has code
+  irq_base = devm_irq_alloc_descs(bank->chip.parent, -1, 0, bank->width, 0);
+
+irq_base makes no sense in case of SPARSE_IRQ compatible driver and
+therefore was removed from gpiolib to avoid mis-usage - drivers should
+maintain it by itself if requred.
+
+> 
+>>   
+>> @@ -1818,9 +1807,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
+>>   		}
+>>   
+>>   		gpiochip->irq.nested = false;
+>> -	} else {
+>> -		gpiochip->irq.nested = true;
+>>   	}
+>> +	/* GPIO driver might not specify parent_handler, but it doesn't mean
+>> +	 * it's irq_nested, as driver may use request_irq() */
+> 
+> That's certainly how irq_nested is used in gpiolib, though. Interrupts
+> are considered either cascaded or nested. Maybe this needs clarification
+> in general?
+
+No. Please, take closer look at 
+gpiochip_set_nested_irqchip() 
+gpiochip_set_cascaded_irqchip()
+gpiochip_set_chained_irqchip()
+gpiochip_set_nested_irqchip()
+ and how they are used.
+Also, take a look on OMAP driver - it doesn't install chained handler.
+
+gpiolib now can discover automatically only when child irqs are not nested
+(nested here means - threaded nested), therefore different APIs were introduced
+gpiochip_set_chained_irqchip()
+gpiochip_set_nested_irqchip()
+
+So, with your change:
+- nested = false; can be set auto if parent_handler provided
+- nested = <set by driver> if no parent_handler provided
+because with this patch full GPIO IRQ configuration expected to be done
+from inside  gpiochip_add_data().
+
+> 
+>>   
+>>   	acpi_gpiochip_request_interrupts(gpiochip);
+>>   
+>> @@ -1839,7 +1828,7 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
+>>   
+>>   	acpi_gpiochip_free_interrupts(gpiochip);
+>>   
+>> -	if (gpiochip->irq.chip) {
+>> +	if (gpiochip->irq.chip && gpiochip->irq.parent_handler) {
+>>   		struct gpio_irq_chip *irq = &gpiochip->irq;
+>>   		unsigned int i;
+>>   
+> 
+> Yeah, this seems like a good idea, though I think this is safe
+> regardless of irq.parent_handler.
+> 
+>> @@ -1972,7 +1961,8 @@ EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_key);
+>>   
+>>   #else /* CONFIG_GPIOLIB_IRQCHIP */
+>>   
+>> -static inline int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
+>> +static inline int gpiochip_add_irqchip_key(struct gpio_chip *gpiochip,
+>> +					   struct lock_class_key *lock_key)
+>>   {
+>>   	return 0;
+>>   }
+>> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+>> index 51fc7b0..3254996 100644
+>> --- a/include/linux/gpio/driver.h
+>> +++ b/include/linux/gpio/driver.h
+>> @@ -128,6 +128,15 @@ struct gpio_irq_chip {
+>>   	 * in IRQ domain of the chip.
+>>   	 */
+>>   	unsigned long *valid_mask;
+>> +
+>> +	/**
+>> +	 * @first_irq:
+>> +	 *
+>> +	 * Required for static irq allocation.
+>> +	 * if set irq_domain_add_simple() will allocate and map all IRQs
+>> +	 * during initialization.
+>> +	 */
+>> +	unsigned int first_irq;
+> 
+> Again, what was the point of removing all users of this if we need to
+> add it again?
+> 
+> It seems to me like dynamic allocation should be a prerequisite for
+> drivers to use this new code, otherwise we'll just end up adding special
+> cases to this otherwise generic code.
+
+The idea, as i see it, is to be able to re-use you change for as much drivers
+as possible (as I illustrated for OMAP) and in this case we need support backward
+compatibility with non SPARSE_IRQ compatible drivers.
+
+> 
+>>   };
+>>   
+>>   static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
+>> @@ -312,8 +321,29 @@ struct gpio_chip {
+>>   extern const char *gpiochip_is_requested(struct gpio_chip *chip,
+>>   			unsigned offset);
+>>   
+>> +extern int gpiochip_add_data_key(struct gpio_chip *chip, void *data,
+>> +				 struct  *irq_lock_key);
+>> +#ifdef CONFIG_LOCKDEP
+>> +/*
+>> + * Lockdep requires that each irqchip instance be created with a
+>> + * unique key so as to avoid unnecessary warnings. This upfront
+>> + * boilerplate static inlines provides such a key for each
+>> + * unique instance which is created now from inside gpiochip_add_data_key().
+>> + */
+>> +static inline int gpiochip_add_data(struct gpio_chip *chip, void *data)
+>> +{
+>> +	static struct lock_class_key key;
+>> +
+>> +	return gpiochip_add_data_key(chip, data, key);
+>> +}
+> 
+> This looks like a neat improvement, but I think it can be done in a
+> follow-up to remove the boilerplate in drivers.
+
+Can't agree here - it better to be considered now. 
+Now only two GPIO drivers define lock_class_key:
+./drivers/gpio/gpio-bcm-kona.c:static struct lock_class_key gpio_lock_class;
+./drivers/gpio/gpio-brcmstb.c:static struct lock_class_key brcmstb_gpio_irq_lock_class;
+
+and these drivers do not use gpioirq framework (your tegra driver will be the third).
+
+So, if proposed changes will be applied all drivers switched to use it will need to define
+its own lock_class_key again and it will be step back.
+
+Another question that solution I've proposed may be not ideal :(
+
+
 -- 
-2.13.6
-
+regards,
+-grygorii
