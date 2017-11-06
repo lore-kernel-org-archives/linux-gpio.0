@@ -1,40 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 00/12] gpio: Tight IRQ chip integration
-Date: Mon, 6 Nov 2017 14:22:22 +0100
-Message-ID: <CACRpkda888GdPdH_qkeyA64hukyqxryc1uvHWEab92PR32Xt_g@mail.gmail.com>
-References: <20171102174941.3461-1-thierry.reding@gmail.com>
- <CACRpkdZaLtpEfx6C5cqHFMk11TXnHxp-sZ+T38PCf+Jh1B2BjQ@mail.gmail.com> <0e96761d-a110-ff25-fa2e-319bedf3d8ac@ti.com>
+From: Henrik Juul Pedersen <hjp@liab.dk>
+Subject: Possible bug in Armada-37xx pincontroller
+Date: Mon, 6 Nov 2017 15:12:31 +0100
+Message-ID: <CABQZ+_Qy1ghA3_zMTHGjbfhwmfRNGaGRxUfsgUmayeOKxpEJvQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:57255 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753019AbdKFNWX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Nov 2017 08:22:23 -0500
-Received: by mail-it0-f66.google.com with SMTP id r127so5018533itb.5
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Nov 2017 05:22:23 -0800 (PST)
-In-Reply-To: <0e96761d-a110-ff25-fa2e-319bedf3d8ac@ti.com>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:56524 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753125AbdKFOMd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Nov 2017 09:12:33 -0500
+Received: by mail-lf0-f66.google.com with SMTP id 90so10627258lfs.13
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Nov 2017 06:12:32 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Emil Vesterdahl <emil@liab.dk>
 
-On Sat, Nov 4, 2017 at 12:50 AM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 11/03/2017 05:50 PM, Linus Walleij wrote:
+Hi,
 
->> I guess I will consider queueing them already for v4.15 if
->> Torvalds churns out another -rc on sunday, I do not
->> doubt that you will finish it as we have discussed with banks and
->> all. If v4.14 is released on sunday let's queue this early for v4.16.
->
-> Can you see my reply?
-> https://lkml.org/lkml/2017/11/3/820
+After some review of a current Armada 37xx design, we stumbled upon
+some pin numbering, which seems doubly-defined, and doesn't seem to
+follow the documentation available to us.
 
-Yes so I was considering queueing patches 1-9 with your ACK so
-Thierry can get his patch stack down and focus on the add-on
-stuff at the end of the series.
+We haven't gotten our hardware yet, so we haven't been able to test
+it, but the following patch is as we believe it should be defined.
 
-Thierry, does it sound reasonable?
+Best regards,
+Henrik Juul Pedersen
+LIAB ApS
 
-Linus Walleij
+---
+
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 71b944748304..e223fac20993 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -157,8 +157,8 @@ static struct armada_37xx_pin_group
+armada_37xx_nb_groups[] = {
+        PIN_GRP_GPIO("pwm1", 12, 1, BIT(4), "pwm"),
+        PIN_GRP_GPIO("pwm2", 13, 1, BIT(5), "pwm"),
+        PIN_GRP_GPIO("pwm3", 14, 1, BIT(6), "pwm"),
+-       PIN_GRP_GPIO("pmic1", 17, 1, BIT(7), "pmic"),
+-       PIN_GRP_GPIO("pmic0", 16, 1, BIT(8), "pmic"),
++       PIN_GRP_GPIO("pmic1", 7, 1, BIT(7), "pmic"),
++       PIN_GRP_GPIO("pmic0", 6, 1, BIT(8), "pmic"),
+        PIN_GRP_GPIO("i2c2", 2, 2, BIT(9), "i2c"),
+        PIN_GRP_GPIO("i2c1", 0, 2, BIT(10), "i2c"),
+        PIN_GRP_GPIO("spi_cs1", 17, 1, BIT(12), "spi"),
