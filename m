@@ -1,206 +1,321 @@
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 2/8] pinctrl: sh-pfc: r8a7745: Add CAN[01] support
-Date: Tue,  7 Nov 2017 15:10:43 +0000
-Message-ID: <1510067449-17017-3-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:62803 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934564AbdKGPLD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Nov 2017 10:11:03 -0500
-In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v2 0/2] pinctrl: Allow indicating loss of state across
+ suspend/resume
+Date: Tue, 7 Nov 2017 08:00:06 -0800
+Message-ID: <20171107160006.GQ28152@atomide.com>
+References: <20171102231551.16220-1-f.fainelli@gmail.com>
+ <da808465-dc64-6c33-0be6-e038e0f84bce@gmail.com>
+ <20171103173353.GJ28152@atomide.com>
+ <2452741.VnAOAIxsj2@aspire.rjw.lan>
+ <7091cb38-e55b-fa20-114e-bd77950ea912@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <7091cb38-e55b-fa20-114e-bd77950ea912@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Charles Keepax <ckeepax@opensource.cirrus.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, ckeepax@opensource.wolfsonmicro.com, swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Simon Horman <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
 
-This patch adds PFC CAN0 and CAN1 pin groups and functions, enabling CAN
-bus on the RZ/G1E.
+* Florian Fainelli <f.fainelli@gmail.com> [171104 17:21]:
+> 
+> 
+> On 11/04/2017 05:25 AM, Rafael J. Wysocki wrote:
+> > On Friday, November 3, 2017 6:33:53 PM CET Tony Lindgren wrote:
+> >> * Florian Fainelli <f.fainelli@gmail.com> [171103 17:04]:
+> >>> On 11/03/2017 09:11 AM, Tony Lindgren wrote:
+> >>> The pinctrl provider is losing its state, hence these two patches.
+> >>
+> >> OK
+> >>
+> >>>> Anyways, the context lost flag should be managed in the PM core for
+> >>>> the device, so adding linux-pm and Rafael to Cc.
+> >>>
+> >>> I don't think it's that simple but sure, why not.
+> >>
+> >> Just having bool context_lost in struct dev_pm_info would probably
+> >> be enough to allow drivers to deal with it. This flag could then
+> >> be set for a device by power domain related code that knows if
+> >> context got lost.
+> > 
+> > Something like: if the driver sees "context_lost" set, it should restore
+> > the context to the device from memory?
+> 
+> That is what is being proposed here, except that the actual mechanism
+> where this matters needs to be in the core pinctrl code, otherwise the
+> state (context) is not restored due to a check that attempts not to
+> (re)apply a previous state.
+> 
+> > 
+> > But the it would also need to save the context beforehand, so why not to
+> > restore it unconditionally on resume?
+> 
+> That's what my original attempts did here:
+> 
+> https://patchwork.kernel.org/patch/9598969/
+> 
+> but Linus rightfully requested this to be done differently, hence this
+> attempt now to solve it in a slightly more flexible way based on DT
+> properties.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+For runtime PM, restoring the state constantly is unnecessary and not
+good for battery life. The logic can be just:
+
+1. Device driver runtime PM suspend saves the state when needed
+
+2. Device driver runtime PM resume checks if context_lost was set by
+   the bus or power domain code
+
+3. If context was lost, device driver restores the state, or in some
+   cases may need re-run the driver register init related parts
+   to bring the driver back up, then clears the context_lost flag
+
+How about something like the following patch? So far only compile
+tested with CONFIG_PM enabled. If that looks like the way to go,
+I'll test it properly and add some comments for the functions and
+post a proper patch :)
+
+Regards,
+
+Tony
+
+8< ----------------------
+>From tony Mon Sep 17 00:00:00 2001
+From: Tony Lindgren <tony@atomide.com>
+Date: Mon, 6 Nov 2017 07:02:54 -0800
+Subject: [PATCH] RFC: PM / context: Add support for context lost handling
+
+On some hardware device drivers can lose their context in deeper
+idle states when the power is cut off for some power domain.
+
+As the drivers themselves may not be aware if the context was lost
+without reinitializing the device, we want to provide few helpers
+for tracking if device context was lost in a generic way.
+
+Typically the interconnect or power domain hardware knows when
+context was lost and we can set up a function for the consumer
+drivers to query the context lost state.
+
+The helpers for context lost that can be used in the following way:
+
+1. Power domain or interconnect code registers a callback function
+   with for a device
+
+   error = dev_pm_register_context_lost_handler(dev, cb, data);
+   if (error)
+   	...
+
+2. A consumer device driver saves it's state as needed in suspend
+   or runtime PM suspend
+
+3. A power domain is powered off during idle, and context is lost
+   for all the devices in that power domain
+
+4. On resume or runtime PM resume, a device driver queries the
+   context lost state and restores the context if needed
+
+   error = dev_pm_update_context_lost(dev);
+   if (error)
+   	...
+
+   if (dev_pm_was_context_lost(dev))
+	restore_context(ddata);
+
+REVISIT: Compile tested only, needs testing and comments
+
+Not-Yet-Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 146 +++++++++++++++++++++++++++++++++++
- 1 file changed, 146 insertions(+)
+ drivers/base/power/Makefile  |  1 +
+ drivers/base/power/context.c | 84 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/base/power/power.h   |  6 ++++
+ include/linux/pm.h           |  1 +
+ include/linux/pm_context.h   | 51 +++++++++++++++++++++++++++
+ 5 files changed, 143 insertions(+)
+ create mode 100644 drivers/base/power/context.c
+ create mode 100644 include/linux/pm_context.h
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index 333a3470..e5b3d5f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -1608,6 +1608,116 @@ static const unsigned int avb_gmii_mux[] = {
- 	AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
- 	AVB_COL_MARK,
- };
+diff --git a/drivers/base/power/Makefile b/drivers/base/power/Makefile
+--- a/drivers/base/power/Makefile
++++ b/drivers/base/power/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_PM)	+= sysfs.o generic_ops.o common.o qos.o runtime.o wakeirq.o
++obj-$(CONFIG_PM)	+= context.o
+ obj-$(CONFIG_PM_SLEEP)	+= main.o wakeup.o
+ obj-$(CONFIG_PM_TRACE_RTC)	+= trace.o
+ obj-$(CONFIG_PM_GENERIC_DOMAINS)	+=  domain.o domain_governor.o
+diff --git a/drivers/base/power/context.c b/drivers/base/power/context.c
+new file mode 100644
+--- /dev/null
++++ b/drivers/base/power/context.c
+@@ -0,0 +1,84 @@
++/*
++ * context.c - Device context lost helper functions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+/* - CAN -------------------------------------------------------------------- */
-+static const unsigned int can0_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(6, 15), RCAR_GP_PIN(6, 14),
-+};
++#include <linux/device.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/slab.h>
++#include <linux/pm_runtime.h>
++#include <linux/pm_context.h>
 +
-+static const unsigned int can0_data_mux[] = {
-+	CAN0_TX_MARK, CAN0_RX_MARK,
-+};
++#include "power.h"
 +
-+static const unsigned int can0_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(3, 16), RCAR_GP_PIN(3, 15),
-+};
++bool dev_pm_was_context_lost(struct device *dev)
++{
++	struct context_lost *ctx = dev->power.context_lost;
++	unsigned long flags;
 +
-+static const unsigned int can0_data_b_mux[] = {
-+	CAN0_TX_B_MARK, CAN0_RX_B_MARK,
-+};
++	if (!dev || !ctx)
++		return false;
 +
-+static const unsigned int can0_data_c_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(2, 17), RCAR_GP_PIN(2, 16),
-+};
++	spin_lock_irqsave(&dev->power.lock, flags);
++	if (ctx->cb)
++		ctx->lost = ctx->cb(dev, ctx->data);
++	spin_unlock_irqrestore(&dev->power.lock, flags);
 +
-+static const unsigned int can0_data_c_mux[] = {
-+	CAN0_TX_C_MARK, CAN0_RX_C_MARK,
-+};
++	return ctx->lost;
++}
++EXPORT_SYMBOL_GPL(dev_pm_was_context_lost);
 +
-+static const unsigned int can0_data_d_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 11),
-+};
++int dev_pm_register_context_lost_handler(struct device *dev,
++					 bool (*cb)(struct device *dev,
++						    void *data),
++					 void *data)
++{
++	struct context_lost *ctx = dev->power.context_lost;
++	unsigned long flags;
 +
-+static const unsigned int can0_data_d_mux[] = {
-+	CAN0_TX_D_MARK, CAN0_RX_D_MARK,
-+};
++	if (!dev || !cb)
++		return -EINVAL;
 +
-+static const unsigned int can1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(6, 25), RCAR_GP_PIN(6, 24),
-+};
++	if (ctx)
++		return -EEXIST;
 +
-+static const unsigned int can1_data_mux[] = {
-+	CAN1_TX_MARK, CAN1_RX_MARK,
-+};
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
 +
-+static const unsigned int can1_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 1),
-+};
++	ctx->data = data;
++	ctx->cb = cb;
 +
-+static const unsigned int can1_data_b_mux[] = {
-+	CAN1_TX_B_MARK, CAN1_RX_B_MARK,
-+};
++	spin_lock_irqsave(&dev->power.lock, flags);
++	dev->power.context_lost = ctx;
++	spin_unlock_irqrestore(&dev->power.lock, flags);
 +
-+static const unsigned int can1_data_c_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 5),
-+};
++	return 0;
++}
++EXPORT_SYMBOL_GPL(dev_pm_register_context_lost_handler);
 +
-+static const unsigned int can1_data_c_mux[] = {
-+	CAN1_TX_C_MARK, CAN1_RX_C_MARK,
-+};
++int dev_pm_unregister_context_lost_handler(struct device *dev)
++{
++	struct context_lost *ctx = dev->power.context_lost;
++	unsigned long flags;
 +
-+static const unsigned int can1_data_d_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(3, 31), RCAR_GP_PIN(3, 30),
-+};
++	if (!ctx)
++		return -ENODEV;
 +
-+static const unsigned int can1_data_d_mux[] = {
-+	CAN1_TX_D_MARK, CAN1_RX_D_MARK,
-+};
++	spin_lock_irqsave(&dev->power.lock, flags);
++	dev->power.context_lost = NULL;
++	spin_unlock_irqrestore(&dev->power.lock, flags);
++	kfree(ctx);
 +
-+static const unsigned int can_clk_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(3, 31),
-+};
-+
-+static const unsigned int can_clk_mux[] = {
-+	CAN_CLK_MARK,
-+};
-+
-+static const unsigned int can_clk_b_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(1, 23),
-+};
-+
-+static const unsigned int can_clk_b_mux[] = {
-+	CAN_CLK_B_MARK,
-+};
-+
-+static const unsigned int can_clk_c_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(1, 0),
-+};
-+
-+static const unsigned int can_clk_c_mux[] = {
-+	CAN_CLK_C_MARK,
-+};
-+
-+static const unsigned int can_clk_d_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+
-+static const unsigned int can_clk_d_mux[] = {
-+	CAN_CLK_D_MARK,
-+};
-+
- /* - DU --------------------------------------------------------------------- */
- static const unsigned int du0_rgb666_pins[] = {
- 	/* R[7:2], G[7:2], B[7:2] */
-@@ -3459,6 +3569,18 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_mdio),
- 	SH_PFC_PIN_GROUP(avb_mii),
- 	SH_PFC_PIN_GROUP(avb_gmii),
-+	SH_PFC_PIN_GROUP(can0_data),
-+	SH_PFC_PIN_GROUP(can0_data_b),
-+	SH_PFC_PIN_GROUP(can0_data_c),
-+	SH_PFC_PIN_GROUP(can0_data_d),
-+	SH_PFC_PIN_GROUP(can1_data),
-+	SH_PFC_PIN_GROUP(can1_data_b),
-+	SH_PFC_PIN_GROUP(can1_data_c),
-+	SH_PFC_PIN_GROUP(can1_data_d),
-+	SH_PFC_PIN_GROUP(can_clk),
-+	SH_PFC_PIN_GROUP(can_clk_b),
-+	SH_PFC_PIN_GROUP(can_clk_c),
-+	SH_PFC_PIN_GROUP(can_clk_d),
- 	SH_PFC_PIN_GROUP(du0_rgb666),
- 	SH_PFC_PIN_GROUP(du0_rgb888),
- 	SH_PFC_PIN_GROUP(du0_clk0_out),
-@@ -3731,6 +3853,28 @@ static const char * const avb_groups[] = {
- 	"avb_gmii",
- };
++	return 0;
++}
++EXPORT_SYMBOL_GPL(dev_pm_unregister_context_lost_handler);
+diff --git a/drivers/base/power/power.h b/drivers/base/power/power.h
+--- a/drivers/base/power/power.h
++++ b/drivers/base/power/power.h
+@@ -39,6 +39,12 @@ extern void dev_pm_enable_wake_irq_check(struct device *dev,
+ 					 bool can_change_status);
+ extern void dev_pm_disable_wake_irq_check(struct device *dev);
  
-+static const char * const can0_groups[] = {
-+	"can0_data",
-+	"can0_data_b",
-+	"can0_data_c",
-+	"can0_data_d",
-+	"can_clk",
-+	"can_clk_b",
-+	"can_clk_c",
-+	"can_clk_d",
++struct context_lost {
++	bool lost;
++	bool (*cb)(struct device *dev, void *data);
++	void *data;
 +};
 +
-+static const char * const can1_groups[] = {
-+	"can1_data",
-+	"can1_data_b",
-+	"can1_data_c",
-+	"can1_data_d",
-+	"can_clk",
-+	"can_clk_b",
-+	"can_clk_c",
-+	"can_clk_d",
-+};
+ #ifdef CONFIG_PM_SLEEP
+ 
+ extern int device_wakeup_attach_irq(struct device *dev,
+diff --git a/include/linux/pm.h b/include/linux/pm.h
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -606,6 +606,7 @@ struct dev_pm_info {
+ 	struct work_struct	work;
+ 	wait_queue_head_t	wait_queue;
+ 	struct wake_irq		*wakeirq;
++	struct context_lost	*context_lost;
+ 	atomic_t		usage_count;
+ 	atomic_t		child_count;
+ 	unsigned int		disable_depth:3;
+diff --git a/include/linux/pm_context.h b/include/linux/pm_context.h
+new file mode 100644
+--- /dev/null
++++ b/include/linux/pm_context.h
+@@ -0,0 +1,51 @@
++/*
++ * pm_context.h - Device context lost helper functions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
- static const char * const du0_groups[] = {
- 	"du0_rgb666",
- 	"du0_rgb888",
-@@ -4102,6 +4246,8 @@ static const char * const vin1_groups[] = {
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-+	SH_PFC_FUNCTION(can0),
-+	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(du0),
- 	SH_PFC_FUNCTION(du1),
- 	SH_PFC_FUNCTION(eth),
++#ifndef _LINUX_PM_CONTEXT_H
++#define _LINUX_PM_CONTEXT_H
++
++#ifdef CONFIG_PM
++
++extern bool dev_pm_was_context_lost(struct device *dev);
++
++extern int
++dev_pm_register_context_lost_handler(struct device *dev,
++				     bool (*cb)(struct device *dev,
++						void *data),
++				     void *data);
++
++extern int dev_pm_unregister_context_lost_handler(struct device *dev);
++
++#else	/* !CONFIG_PM */
++
++static inline bool dev_pm_was_context_lost(struct device *dev)
++{
++	return false;
++}
++
++static inline int
++dev_pm_register_context_lost_handler(struct device *dev,
++				     bool (*cb)(struct device *dev,
++						void *data),
++				     void *data);
++{
++	return -ENODEV;
++}
++
++static inline int dev_pm_unregister_context_lost_handler(struct device *dev)
++{
++	return -ENODEV;
++}
++
++#endif	/* CONFIG_PM */
++#endif	/* _LINUX_PM_CONTEXT_H */
 -- 
-2.7.4
-
+2.15.0
