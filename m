@@ -1,125 +1,71 @@
 From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH 2/4] gpiolib: add bitmask for valid GPIO lines
-Date: Tue,  7 Nov 2017 17:07:34 -0600
-Message-ID: <1510096056-13765-3-git-send-email-timur@codeaurora.org>
+Subject: [PATCH 1/4] [v2] Revert "gpio: set up initial state from .get_direction()"
+Date: Tue,  7 Nov 2017 17:07:33 -0600
+Message-ID: <1510096056-13765-2-git-send-email-timur@codeaurora.org>
 References: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57056 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755020AbdKGXHo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Nov 2017 18:07:44 -0500
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
 In-Reply-To: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-arm-msm-owner@vger.kernel.org
 To: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: timur@codeaurora.org
+List-Id: linux-gpio@vger.kernel.org
 
-Add support for specifying that some GPIOs within a range are unavailable.
-Some systems have a sparse list of GPIOs, where a range of GPIOs is
-specified (usually 0 to n-1), but some subset within that range is
-absent or unavailable for whatever reason.
+This reverts commit 72d3200061776264941be1b5a9bb8e926b3b30a5.
 
-To support this, allow drivers to specify a bitmask of GPIOs that
-are present or absent.  Gpiolib will then block access to those that
-are absent.
+We cannot blindly query the direction of all GPIOs when the pins are
+first registered.  The get_direction callback normally triggers a
+read/write to hardware, but we shouldn't be touching the hardware for
+an individual GPIO until after it's been properly claimed.
 
 Signed-off-by: Timur Tabi <timur@codeaurora.org>
 ---
- drivers/gpio/gpiolib.c      | 43 +++++++++++++++++++++++++++++++++++--------
- include/linux/gpio/driver.h |  2 ++
- 2 files changed, 37 insertions(+), 8 deletions(-)
+ drivers/gpio/gpiolib.c | 31 +++++++------------------------
+ 1 file changed, 7 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 60553af4c004..c32387936cdd 100644
+index eb80dac4e26a..60553af4c004 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -1481,22 +1481,36 @@ static struct gpio_chip *find_chip_by_name(const char *name)
+@@ -1221,31 +1221,14 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ 		struct gpio_desc *desc = &gdev->descs[i];
  
- static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
- {
--	if (!gpiochip->irq_need_valid_mask)
--		return 0;
-+	if (gpiochip->irq_need_valid_mask) {
-+		gpiochip->irq_valid_mask =
-+			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
-+				sizeof(long), GFP_KERNEL);
-+		if (!gpiochip->irq_valid_mask)
-+			return -ENOMEM;
+ 		desc->gdev = gdev;
+-		/*
+-		 * REVISIT: most hardware initializes GPIOs as inputs
+-		 * (often with pullups enabled) so power usage is
+-		 * minimized. Linux code should set the gpio direction
+-		 * first thing; but until it does, and in case
+-		 * chip->get_direction is not set, we may expose the
+-		 * wrong direction in sysfs.
+-		 */
+-
+-		if (chip->get_direction) {
+-			/*
+-			 * If we have .get_direction, set up the initial
+-			 * direction flag from the hardware.
+-			 */
+-			int dir = chip->get_direction(chip, i);
  
--	gpiochip->irq_valid_mask = kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
--					   sizeof(long), GFP_KERNEL);
--	if (!gpiochip->irq_valid_mask)
--		return -ENOMEM;
-+		/* Assume by default all GPIOs are valid */
-+		bitmap_fill(gpiochip->irq_valid_mask, gpiochip->ngpio);
-+	}
- 
--	/* Assume by default all GPIOs are valid */
--	bitmap_fill(gpiochip->irq_valid_mask, gpiochip->ngpio);
-+	if (gpiochip->line_need_valid_mask) {
-+		gpiochip->line_valid_mask =
-+			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
-+				sizeof(long), GFP_KERNEL);
-+		if (!gpiochip->line_valid_mask)
-+			return -ENOMEM;
-+
-+		/* Assume by default all GPIOs are valid */
-+		bitmap_fill(gpiochip->line_valid_mask, gpiochip->ngpio);
-+	}
- 
- 	return 0;
- }
- 
- static void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip)
- {
-+	kfree(gpiochip->line_valid_mask);
-+	gpiochip->line_valid_mask = NULL;
-+
- 	kfree(gpiochip->irq_valid_mask);
- 	gpiochip->irq_valid_mask = NULL;
- }
-@@ -1510,6 +1524,15 @@ static bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gpiochip,
- 	return test_bit(offset, gpiochip->irq_valid_mask);
- }
- 
-+static bool gpiochip_irqchip_line_valid(const struct gpio_chip *gpiochip,
-+					unsigned int offset)
-+{
-+	/* No mask means all valid */
-+	if (likely(!gpiochip->line_valid_mask))
-+		return true;
-+	return test_bit(offset, gpiochip->line_valid_mask);
-+}
-+
- /**
-  * gpiochip_set_cascaded_irqchip() - connects a cascaded irqchip to a gpiochip
-  * @gpiochip: the gpiochip to set the irqchip chain to
-@@ -3320,6 +3343,10 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 		return desc;
+-			if (!dir)
+-				set_bit(FLAG_IS_OUT, &desc->flags);
+-		} else if (!chip->direction_input) {
+-			/*
+-			 * If the chip lacks the .direction_input callback
+-			 * we logically assume all lines are outputs.
+-			 */
+-			set_bit(FLAG_IS_OUT, &desc->flags);
+-		}
++		/* REVISIT: most hardware initializes GPIOs as inputs (often
++		 * with pullups enabled) so power usage is minimized. Linux
++		 * code should set the gpio direction first thing; but until
++		 * it does, and in case chip->get_direction is not set, we may
++		 * expose the wrong direction in sysfs.
++		 */
++		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
  	}
  
-+	/* Make sure the GPIO is valid before we request it. */
-+	if (!gpiochip_irqchip_line_valid(desc->gdev->chip, idx))
-+		return ERR_PTR(-EACCES);
-+
- 	status = gpiod_request(desc, con_id);
- 	if (status < 0)
- 		return ERR_PTR(status);
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 424e5139ff10..853828ccabc8 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -173,6 +173,8 @@ struct gpio_chip {
- 	bool			irq_nested;
- 	bool			irq_need_valid_mask;
- 	unsigned long		*irq_valid_mask;
-+	bool			line_need_valid_mask;
-+	unsigned long		*line_valid_mask;
- 	struct lock_class_key	*lock_key;
- #endif
- 
+ #ifdef CONFIG_PINCTRL
 -- 
 Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
 Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
 Code Aurora Forum, a Linux Foundation Collaborative Project.
-
