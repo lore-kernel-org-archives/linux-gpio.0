@@ -1,68 +1,79 @@
-From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 0/2] pinctrl: Allow indicating loss of state across
- suspend/resume
-Date: Tue, 7 Nov 2017 08:00:47 -0800
-Message-ID: <20171107160047.GR28152@atomide.com>
-References: <20171102231551.16220-1-f.fainelli@gmail.com>
- <20171103103707.3e5wb3c7foxbuvvg@localhost.localdomain>
- <20171103161120.GH28152@atomide.com>
- <da808465-dc64-6c33-0be6-e038e0f84bce@gmail.com>
- <20171103173353.GJ28152@atomide.com>
- <20171104083707.gtmnhbrzlqjulwe4@localhost.localdomain>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v6 00/12] gpio: Tight IRQ chip integration
+Date: Tue, 7 Nov 2017 10:49:58 -0600
+Message-ID: <87fd58e7-8f46-5660-9c23-189e656529e0@ti.com>
+References: <20171102174941.3461-1-thierry.reding@gmail.com>
+ <ca8c7138-2e87-0481-ac8c-7077bed749f6@ti.com> <20171106111807.GA6756@ulmo>
+ <e5996910-43a0-a75e-5f7f-a0606e05d914@ti.com> <20171107111344.GA7314@ulmo>
+ <20171107115238.GB7314@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171104083707.gtmnhbrzlqjulwe4-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>
-Cc: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171107115238.GB7314@ulmo>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-* Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org> [171104 08:38]:
-> On Fri, Nov 03, 2017 at 10:33:53AM -0700, Tony Lindgren wrote:
-> > * Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> [171103 17:04]:
-> > > On 11/03/2017 09:11 AM, Tony Lindgren wrote:
-> > > The pinctrl provider is losing its state, hence these two patches.
-> > 
-> > OK
-> > 
-> > > > Anyways, the context lost flag should be managed in the PM core for
-> > > > the device, so adding linux-pm and Rafael to Cc.
-> > > 
-> > > I don't think it's that simple but sure, why not.
-> > 
-> > Just having bool context_lost in struct dev_pm_info would probably
-> > be enough to allow drivers to deal with it. This flag could then
-> > be set for a device by power domain related code that knows if
-> > context got lost.
-> > 
-> > Anybody got better ideas?
-> > 
+
+
+On 11/07/2017 05:52 AM, Thierry Reding wrote:
+> On Tue, Nov 07, 2017 at 12:13:44PM +0100, Thierry Reding wrote:
+>> On Mon, Nov 06, 2017 at 05:13:33PM -0600, Grygorii Strashko wrote:
+>>> On 11/06/2017 05:18 AM, Thierry Reding wrote:
+>>>> On Fri, Nov 03, 2017 at 05:30:30PM -0500, Grygorii Strashko wrote:
+> [...]
+>>>>> @@ -312,8 +321,29 @@ struct gpio_chip {
+>>>>>    extern const char *gpiochip_is_requested(struct gpio_chip *chip,
+>>>>>    			unsigned offset);
+>>>>>    
+>>>>> +extern int gpiochip_add_data_key(struct gpio_chip *chip, void *data,
+>>>>> +				 struct  *irq_lock_key);
+>>>>> +#ifdef CONFIG_LOCKDEP
+>>>>> +/*
+>>>>> + * Lockdep requires that each irqchip instance be created with a
+>>>>> + * unique key so as to avoid unnecessary warnings. This upfront
+>>>>> + * boilerplate static inlines provides such a key for each
+>>>>> + * unique instance which is created now from inside gpiochip_add_data_key().
+>>>>> + */
+>>>>> +static inline int gpiochip_add_data(struct gpio_chip *chip, void *data)
+>>>>> +{
+>>>>> +	static struct lock_class_key key;
+>>>>> +
+>>>>> +	return gpiochip_add_data_key(chip, data, key);
+>>>>> +}
+>>>>
+>>>> This looks like a neat improvement, but I think it can be done in a
+>>>> follow-up to remove the boilerplate in drivers.
+>>>
+>>> Can't agree here - it better to be considered now.
+>>> Now only two GPIO drivers define lock_class_key:
+>>> ./drivers/gpio/gpio-bcm-kona.c:static struct lock_class_key gpio_lock_class;
+>>> ./drivers/gpio/gpio-brcmstb.c:static struct lock_class_key brcmstb_gpio_irq_lock_class;
+>>>
+>>> and these drivers do not use gpioirq framework (your tegra driver will be the third).
+>>>
+>>> So, if proposed changes will be applied all drivers switched to use it will need to define
+>>> its own lock_class_key again and it will be step back.
+>>
+>> I think this would be a minor, mostly mechanical refactoring to do as
+>> follow-up. But since you feel very strongly about it, I'll add that into
+>> the series.
 > 
-> Should the provider driver not know its state will be lost since
-> will have had its PM ops called, and it should be aware of the
-> state it was in. So doesn't it just need to restore that state on
-> resume? Feels a bit like we are over complicating this here.
-> Apologies if I am missing some here.
+> After implementing this, I'm having second thoughts. We've got a bunch
+> of drivers calling gpiochip_add_data() that never register an IRQ chip
+> but which will each add a struct lock_class_key after this change, and
+> it will never be used. Now, struct lock_class_key is only 8 bytes big,
+> so maybe this isn't a big deal, but it still seems like a waste.
 
-Well any driver can lose context depending on the hardare, this
-could be both the pinctrl provider and the pinctrl consumer drivers :)
+True. And this I've called my approach not ideal, but I do not see other way to do it :(
+- that's price to pay for gpioirq chip initialization integration in
+gpiochip_add_data() which limits APIs variation used by GPIO drivers. 
 
-If your pinctrl provider driver knows when it lost context and
-knows when to restore it, then no generic code is needed
-necessarily for your use case.
+Any other opinions, thoughts?
 
-But as the drivers themselves are not aware themselves when they
-lost context without checking that all registers are initialized
-properly, I think we need something generic for tracking the context
-lost. Typically it's the power domain hardware that knows when
-context was lost.
-
-Regards,
-
-Tony
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+regards,
+-grygorii
