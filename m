@@ -1,145 +1,42 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v7 00/15] gpio: Tight IRQ chip integration
-Date: Tue, 7 Nov 2017 14:02:31 -0600
-Message-ID: <5986dff3-448a-6a18-6f3f-c317a8376630@ti.com>
-References: <20171107181559.6318-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171107181559.6318-1-thierry.reding@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Timur Tabi <timur@codeaurora.org>
+Subject: [PATCH 0/4] [v7] pinctrl: qcom: add support for sparse GPIOs
+Date: Tue,  7 Nov 2017 17:07:32 -0600
+Message-ID: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:56916 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752865AbdKGXHm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Nov 2017 18:07:42 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: timur@codeaurora.org
 
+A series of patches that add support for GPIO maps that have holes in
+them.  That is, even though a client driver has N consecutive GPIOs,
+some are just unavailable for whatever reason, and the hardware should
+not be accessed for those GPIOs.
 
+Frankly, I like V5 of this patchset better, because it uses an
+existing API (gpiochip_add_pin_range) and is less intrusive.
 
-On 11/07/2017 12:15 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Hi Linus,
-> 
-> here's the latest series of patches that implement the tighter IRQ chip
-> integration. I've dropped the banked infrastructure for now as per the
-> discussion with Grygorii.
-> 
-> The first couple of patches are mostly preparatory work in order to
-> consolidate all IRQ chip related fields in a new structure and create
-> the base functionality for adding IRQ chips.
-> 
-> After that, I've added the Tegra186 GPIO support patch that makes use of
-> the new tight integration.
+v7: fixed missing signed-off-by in patch #1
 
-Thanks a lot.
-Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Timur Tabi (4):
+  [v2] Revert "gpio: set up initial state from .get_direction()"
+  gpiolib: add bitmask for valid GPIO lines
+  [v6] pinctrl: qcom: disable GPIO groups with no pins
+  [v3] pinctrl: qcom: qdf2xxx: add support for new ACPI HID QCOM8002
 
-> 
-> Changes in v7:
-> - squashes in a few fixes pointed out by Grygorii
-> - adds a couple of patches on top to support driver conversion
-> 
-> Changes in v6:
-> - rebased on latest linux-gpio devel branch
-> - one patch dropped due to rebase
-> 
-> Changes in v5:
-> - dropped the banked infrastructure patches for now (Grygorii)
-> - allocate interrupts on demand, rather than upfront (Grygorii)
-> - split up the first patch further as requested by Grygorii
-> 
-> Not sure what happened in between here. Notes in commit logs indicate
-> that this is actually version 5, but I can't find the cover letter for
-> v3 and v4.
-> 
-> Changes in v2:
-> - rename pins to lines for consistent terminology
-> - rename gpio_irq_chip_banked_handler() to
->    gpio_irq_chip_banked_chained_handler()
-> 
-> Thierry
-> 
-> Thierry Reding (15):
->    gpio: Introduce struct gpio_irq_chip
->    gpio: Move irqchip into struct gpio_irq_chip
->    gpio: Move irqdomain into struct gpio_irq_chip
->    gpio: Move irq_handler to struct gpio_irq_chip
->    gpio: Move irq_default_type to struct gpio_irq_chip
->    gpio: Move irq_chained_parent to struct gpio_irq_chip
->    gpio: Move irq_nested into struct gpio_irq_chip
->    gpio: Move irq_valid_mask into struct gpio_irq_chip
->    gpio: Move lock_key into struct gpio_irq_chip
->    gpio: Implement tighter IRQ chip integration
->    gpio: Export gpiochip_irq_{map,unmap}()
->    gpio: Add Tegra186 support
->    gpio: Disambiguate struct gpio_irq_chip.nested
->    gpio: Introduce struct gpio_irq_chip.first
->    gpio: Automatically add lockdep keys
-> 
->   Documentation/gpio/driver.txt               |   6 +-
->   drivers/bcma/driver_gpio.c                  |   2 +-
->   drivers/gpio/Kconfig                        |   9 +
->   drivers/gpio/Makefile                       |   1 +
->   drivers/gpio/gpio-104-dio-48e.c             |   2 +-
->   drivers/gpio/gpio-104-idi-48.c              |   2 +-
->   drivers/gpio/gpio-104-idio-16.c             |   2 +-
->   drivers/gpio/gpio-adnp.c                    |   2 +-
->   drivers/gpio/gpio-altera.c                  |   4 +-
->   drivers/gpio/gpio-aspeed.c                  |   6 +-
->   drivers/gpio/gpio-ath79.c                   |   2 +-
->   drivers/gpio/gpio-crystalcove.c             |   2 +-
->   drivers/gpio/gpio-dln2.c                    |   2 +-
->   drivers/gpio/gpio-ftgpio010.c               |   2 +-
->   drivers/gpio/gpio-ingenic.c                 |   2 +-
->   drivers/gpio/gpio-intel-mid.c               |   2 +-
->   drivers/gpio/gpio-lynxpoint.c               |   2 +-
->   drivers/gpio/gpio-max732x.c                 |   2 +-
->   drivers/gpio/gpio-merrifield.c              |   2 +-
->   drivers/gpio/gpio-omap.c                    |   2 +-
->   drivers/gpio/gpio-pca953x.c                 |   2 +-
->   drivers/gpio/gpio-pcf857x.c                 |   2 +-
->   drivers/gpio/gpio-pci-idio-16.c             |   2 +-
->   drivers/gpio/gpio-pl061.c                   |   2 +-
->   drivers/gpio/gpio-rcar.c                    |   2 +-
->   drivers/gpio/gpio-reg.c                     |   4 +-
->   drivers/gpio/gpio-stmpe.c                   |   6 +-
->   drivers/gpio/gpio-tc3589x.c                 |   2 +-
->   drivers/gpio/gpio-tegra186.c                | 623 ++++++++++++++++++++++++++++
->   drivers/gpio/gpio-vf610.c                   |   2 +-
->   drivers/gpio/gpio-wcove.c                   |   2 +-
->   drivers/gpio/gpio-ws16c48.c                 |   2 +-
->   drivers/gpio/gpio-xgene-sb.c                |   2 +-
->   drivers/gpio/gpio-xlp.c                     |   2 +-
->   drivers/gpio/gpio-zx.c                      |   2 +-
->   drivers/gpio/gpio-zynq.c                    |   2 +-
->   drivers/gpio/gpiolib.c                      | 241 +++++++----
->   drivers/pinctrl/bcm/pinctrl-bcm2835.c       |   5 +-
->   drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    |   2 +-
->   drivers/pinctrl/intel/pinctrl-baytrail.c    |   6 +-
->   drivers/pinctrl/intel/pinctrl-cherryview.c  |   6 +-
->   drivers/pinctrl/intel/pinctrl-intel.c       |   2 +-
->   drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |   2 +-
->   drivers/pinctrl/nomadik/pinctrl-nomadik.c   |   4 +-
->   drivers/pinctrl/pinctrl-amd.c               |   2 +-
->   drivers/pinctrl/pinctrl-at91.c              |   2 +-
->   drivers/pinctrl/pinctrl-coh901.c            |   2 +-
->   drivers/pinctrl/pinctrl-mcp23s08.c          |   2 +-
->   drivers/pinctrl/pinctrl-oxnas.c             |   2 +-
->   drivers/pinctrl/pinctrl-pic32.c             |   2 +-
->   drivers/pinctrl/pinctrl-pistachio.c         |   2 +-
->   drivers/pinctrl/pinctrl-st.c                |   2 +-
->   drivers/pinctrl/pinctrl-sx150x.c            |   2 +-
->   drivers/pinctrl/qcom/pinctrl-msm.c          |   2 +-
->   drivers/pinctrl/sirf/pinctrl-atlas7.c       |   2 +-
->   drivers/pinctrl/sirf/pinctrl-sirf.c         |   2 +-
->   drivers/pinctrl/spear/pinctrl-plgpio.c      |   2 +-
->   drivers/platform/x86/intel_int0002_vgpio.c  |   6 +-
->   include/linux/gpio/driver.h                 | 200 +++++++--
->   59 files changed, 1046 insertions(+), 169 deletions(-)
->   create mode 100644 drivers/gpio/gpio-tegra186.c
-> 
+ drivers/gpio/gpiolib.c                 |  74 +++++++++--------
+ drivers/pinctrl/qcom/pinctrl-msm.c     |  48 +++++++++--
+ drivers/pinctrl/qcom/pinctrl-msm.h     |   2 +
+ drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 145 +++++++++++++++++++++++++--------
+ include/linux/gpio/driver.h            |   2 +
+ 5 files changed, 197 insertions(+), 74 deletions(-)
 
 -- 
-regards,
--grygorii
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
