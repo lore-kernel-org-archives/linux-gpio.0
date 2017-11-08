@@ -1,109 +1,82 @@
 From: Thierry Reding <treding@nvidia.com>
-Subject: Re: [pinctrl:devel 152/153] drivers/gpio/gpiolib.c:1942:19: error:
- conflicting types for 'gpiochip_add_irqchip'
-Date: Wed, 8 Nov 2017 16:04:16 +0100
-Message-ID: <20171108150416.GA827@ulmo>
-References: <201711082210.wr6yyeS7%fengguang.wu@intel.com>
+Subject: Re: [pinctrl:devel 152/153] drivers/gpio/gpiolib.c:1943:19: warning:
+ 'struct lock_dep_class' declared inside parameter list
+Date: Wed, 8 Nov 2017 16:07:16 +0100
+Message-ID: <20171108150716.GB827@ulmo>
+References: <201711082209.w9VtmkEu%fengguang.wu@intel.com>
+ <CAMuHMdVVTuCem3-P70ZvNBGw7g-_2Q+h2Ed_76cJEpfWrYnkQg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
+        protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:14633 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751370AbdKHPEW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Nov 2017 10:04:22 -0500
-In-Reply-To: <201711082210.wr6yyeS7%fengguang.wu@intel.com>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:17416 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751566AbdKHPHV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Nov 2017 10:07:21 -0500
+In-Reply-To: <CAMuHMdVVTuCem3-P70ZvNBGw7g-_2Q+h2Ed_76cJEpfWrYnkQg@mail.gmail.com>
 Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: kbuild test robot <fengguang.wu@intel.com>
-Cc: kbuild-all@01.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: kbuild test robot <fengguang.wu@intel.com>, "kbuild-all@01.org" <kbuild-all@01.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
---HcAYCG3uE/tztfnV
+--98e8jtXdkpgskNou
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 08, 2017 at 10:43:12PM +0800, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinc=
-trl.git devel
-> head:   bfcadc85ef134881fce5f8635648e36de1ab4c9d
-> commit: 959bc7b22bd25a3a907fbb9b26a1d0cbdf98ef40 [152/153] gpio: Automati=
-cally add lockdep keys
-> config: x86_64-acpi-redef (attached as .config)
-> compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-> reproduce:
->         git checkout 959bc7b22bd25a3a907fbb9b26a1d0cbdf98ef40
->         # save the attached .config to linux build tree
->         make ARCH=3Dx86_64=20
+On Wed, Nov 08, 2017 at 04:04:05PM +0100, Geert Uytterhoeven wrote:
+> On Wed, Nov 8, 2017 at 3:38 PM, kbuild test robot
+> <fengguang.wu@intel.com> wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pi=
+nctrl.git devel
+> > head:   bfcadc85ef134881fce5f8635648e36de1ab4c9d
+> > commit: 959bc7b22bd25a3a907fbb9b26a1d0cbdf98ef40 [152/153] gpio: Automa=
+tically add lockdep keys
+> > config: m68k-m5475evb_defconfig (attached as .config)
+> > compiler: m68k-linux-gcc (GCC) 4.9.0
+> > reproduce:
+> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/s=
+bin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         git checkout 959bc7b22bd25a3a907fbb9b26a1d0cbdf98ef40
+> >         # save the attached .config to linux build tree
+> >         make.cross ARCH=3Dm68k
+> >
+> > All warnings (new ones prefixed by >>):
+> >
+> >>> drivers/gpio/gpiolib.c:1943:19: warning: 'struct lock_dep_class' decl=
+ared inside parameter list
+> >                struct lock_dep_class *lock_key)
+> >                       ^
 >=20
-> All error/warnings (new ones prefixed by >>):
->=20
-> >> drivers/gpio/gpiolib.c:1943:19: warning: 'struct lock_dep_class' decla=
-red inside parameter list will not be visible outside of this definition or=
- declaration
->                struct lock_dep_class *lock_key)
->                       ^~~~~~~~~~~~~~
-> >> drivers/gpio/gpiolib.c:1942:19: error: conflicting types for 'gpiochip=
-_add_irqchip'
->     static inline int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
->                       ^~~~~~~~~~~~~~~~~~~~
->    drivers/gpio/gpiolib.c:75:12: note: previous declaration of 'gpiochip_=
-add_irqchip' was here
->     static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
->                ^~~~~~~~~~~~~~~~~~~~
-> >> drivers/gpio/gpiolib.c:75:12: warning: 'gpiochip_add_irqchip' used but=
- never defined
->=20
-> vim +/gpiochip_add_irqchip +1942 drivers/gpio/gpiolib.c
->=20
->   1941=09
-> > 1942	static inline int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
-> > 1943					       struct lock_dep_class *lock_key)
->   1944	{
->   1945		return 0;
->   1946	}
->   1947=09
+> s/lock_dep_class/lock_class_key/
 
-Hi Linus,
-
-this should be fixed with the following patch. It can just be squashed
-into the lockdep keys patch.
+Yeah, I just sent Linus a fixup patch for that. Sorry for not noticing
+earlier. I was focussing my build tests on covering as many GPIO drivers
+as possible but never actually thought of building this for
+!GPIOLIB_IRQCHIP.
 
 Thierry
---- >8 ---
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 2b37f1e2ca76..6d9f225ed861 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1940,7 +1940,7 @@ EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_key);
- #else /* CONFIG_GPIOLIB_IRQCHIP */
 
- static inline int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
--                                      struct lock_dep_class *lock_key)
-+                                      struct lock_class_key *lock_key)
- {
-        return 0;
- }
-
---HcAYCG3uE/tztfnV
+--98e8jtXdkpgskNou
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloDHO0ACgkQ3SOs138+
-s6EOrw/+I0FV0J/0FGzkZqdQsgnrB61AOjOHKsZ/qqwZ6WXL8ml9o6SyS+CrMfqz
-wYLD/qaZ8a5Ex+m5FmdzDSF4YzfmUjZaEDUvFkduE32LudDaHvvdkcknv7kCywsN
-3UJI3uQRSV+iUtBEms2dVOVGWiBVQLkSTJpMCb+biEEhgxJ5H36+oW21h01gedGt
-pcQ99rtBv/mlzju/SfIp80H+VO7qSK/MvOYh4JDZX3GfRT0FjIoOGC6cg6wVF2LD
-DMsAhHpEJ9GRwWZfx8XdxEHeqprXZvBu19FK/Fr2f+3VUw804QKWkVSQyjLYuqqh
-NYFOLTrI3fb31xCMjLhsjAkRCXWOW+oeD8Tv1of0FMzZJxHrWaJsFaum7BIYUkiA
-t/f5DZwSFPcV3cVJUQGKxrWiOU4lML3zaUbehCWUyec/1GAQwi4ZkE8xQh3Tfasc
-XuGSGA6jSH0j6Qep6FSPLWpKWrMhxR1/Q+NqhwXdjiQ32/LWZGVfHbcy0JDX7RGL
-xQLiuqqKgVROZUeOwIvS7klBeZbYApmVHgr4oZ+3b7qB+f184OvP1hjOiZZ0kOD4
-kZyhxrXwElA6xUHGMi3sQ6+B7O7q4gqz94Kofy3zVfc+kN5Ig6Y5pWCqqjtnFjO+
-m5XqkJTl/9CJ4Uylu7uaZgo8KQquDI935+qIe4fQcR/3LkaZq/k=
-=n9le
+iQIyBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloDHaQACgkQ3SOs138+
+s6FqBA/4t3H0gkJEp7ZCMf9GA0fut0ZidiiHLAxjFf5nLWNiWQRU9y88ciANn4ev
+jsySKEypa0R6f7SH9vs2CtnOMkUg2n7rc0iifUGWND8MEPZAaLCnTniIU2VvBvzs
+SUxGFnvDO1nEH4rHx1yKeX8g74+azZjEziez4JCqvjyvGheEt3siCFDs1ZwNH9SK
+P46PkccJPSUP4Zm1ZPAux0EpJ6Guug49Rh2RAdZslJ1A7rlD69/x7lHkZVFC5oWp
+QV2tJfaZpesaG4IA6EsUexxbhavh0nFe8FTrTAykFCz4hYWZsxH63Da6lORaNrPr
+FpJPeOS5PVR7h3XlZIZx0d181W7YlqDHIf0Q85TDLTUC8O01f+lmRbwvBf+9rf5u
+V3RxCD9kOYf+phUjtxZ09rc1UmK9BY4WJQalOzbRWdGH+YUyT8oH9mWFTT+eUsiI
+4aFx/3WEGrjwPWU6LwRIV11OXcpvr29J7RxLfVzWRQqOEfJoC9p2UD4NVuLEECt5
+9LLsa/UoM+U7xVTns+ERe+h1+vLvwiPuAi+pB2fUxwXt4kwS1tXcitio/TBMfHOv
+ZuuB//BcHaDCl3q+0T7T4f78CdTxP4+AsBlgEuVjayalMgxRWTLWmSzLo3RpDLhc
+2ongY7G9s+xjLTZkPlqo4XTyOi93cPm9JnnilD5+fr09sO/hpQ==
+=Aqu3
 -----END PGP SIGNATURE-----
 
---HcAYCG3uE/tztfnV--
+--98e8jtXdkpgskNou--
