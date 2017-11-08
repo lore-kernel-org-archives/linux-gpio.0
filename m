@@ -1,54 +1,37 @@
-From: Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 0/4] add pinctrl driver for Meson-AXG SoC
-Date: Wed, 8 Nov 2017 14:46:25 +0800
-Message-ID: <20171108064625.30517-1-yixun.lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Subject: [PATCH 1/4] documentation: Add compatibles for Amlogic Meson AXG pin controllers
+Date: Wed, 8 Nov 2017 14:47:11 +0800
+Message-ID: <20171108064711.32376-1-yixun.lan@amlogic.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, Xingyu Chen <xingyu.chen-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-patch [1/4]:
-	Document the new pinctrl compatible string for Meson-AXG
+From: Xingyu Chen <xingyu.chen@amlogic.com>
 
-patch [2/4]:
-	Introduce a new pinctrl pinmux ops for Meson-AXG SoC.
-The pinctrl IP has been changed, and now it use 4-bit continuous bit
-to decribe the pin.
-	    
-patch [3/4]:
-	Add pinctrl driver for Meson-AXG SoC.
+Add compatibles for Amlogic Meson AXG pin controllers
 
-patch [4/4]:
-	Add the DT info for the pinctrl driver found in Meson-AXG SoC.
+Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Xingyu Chen (4):
-  documentation: Add compatibles for Amlogic Meson AXG pin controllers
-  pinctrl: meson-axg: Introduce a pinctrl pinmux ops for Meson-AXG SoC
-  pinctrl: meson-axg: Add new pinctrl driver for Meson AXG  SoC
-  ARM64: dts: meson-axg: add pinctrl DT info for Meson-AXG SoC
-
- .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |   2 +
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  43 +
- drivers/pinctrl/meson/Kconfig                      |   9 +
- drivers/pinctrl/meson/Makefile                     |   2 +
- drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c      | 118 +++
- drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h      |  62 ++
- drivers/pinctrl/meson/pinctrl-meson-axg.c          | 976 +++++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson.h              |   1 +
- include/dt-bindings/gpio/meson-axg-gpio.h          | 116 +++
- 9 files changed, 1329 insertions(+)
- create mode 100644 drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
- create mode 100644 drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h
- create mode 100644 drivers/pinctrl/meson/pinctrl-meson-axg.c
- create mode 100644 include/dt-bindings/gpio/meson-axg-gpio.h
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+index 2392557ede27..2c12f9789116 100644
+--- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+@@ -9,6 +9,8 @@ Required properties for the root node:
+ 		      "amlogic,meson-gxbb-aobus-pinctrl"
+ 		      "amlogic,meson-gxl-periphs-pinctrl"
+ 		      "amlogic,meson-gxl-aobus-pinctrl"
++		      "amlogic,meson-axg-periphs-pinctrl"
++		      "amlogic,meson-axg-aobus-pinctrl"
+  - reg: address and size of registers controlling irq functionality
+ 
+ === GPIO sub-nodes ===
 -- 
 2.14.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
