@@ -1,168 +1,82 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH 3/4] [v6] pinctrl: qcom: disable GPIO groups with no pins
-Date: Tue,  7 Nov 2017 17:07:35 -0600
-Message-ID: <1510096056-13765-4-git-send-email-timur@codeaurora.org>
-References: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57194 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756636AbdKGXHq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Nov 2017 18:07:46 -0500
-In-Reply-To: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 0/2] pinctrl: Allow indicating loss of state across suspend/resume
+Date: Wed, 08 Nov 2017 01:23:14 +0100
+Message-ID: <4931157.VlYOOLbas7@aspire.rjw.lan>
+References: <20171102231551.16220-1-f.fainelli@gmail.com> <7091cb38-e55b-fa20-114e-bd77950ea912@gmail.com> <20171107160006.GQ28152@atomide.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171107160006.GQ28152@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, ckeepax@opensource.wolfsonmicro.com, swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: timur@codeaurora.org
 
-pinctrl-msm only accepts an array of GPIOs from 0 to n-1, and it expects
-each group to support have only one pin (npins == 1).
+On Tuesday, November 7, 2017 5:00:06 PM CET Tony Lindgren wrote:
+> * Florian Fainelli <f.fainelli@gmail.com> [171104 17:21]:
+> > 
+> > 
+> > On 11/04/2017 05:25 AM, Rafael J. Wysocki wrote:
+> > > On Friday, November 3, 2017 6:33:53 PM CET Tony Lindgren wrote:
+> > >> * Florian Fainelli <f.fainelli@gmail.com> [171103 17:04]:
+> > >>> On 11/03/2017 09:11 AM, Tony Lindgren wrote:
+> > >>> The pinctrl provider is losing its state, hence these two patches.
+> > >>
+> > >> OK
+> > >>
+> > >>>> Anyways, the context lost flag should be managed in the PM core for
+> > >>>> the device, so adding linux-pm and Rafael to Cc.
+> > >>>
+> > >>> I don't think it's that simple but sure, why not.
+> > >>
+> > >> Just having bool context_lost in struct dev_pm_info would probably
+> > >> be enough to allow drivers to deal with it. This flag could then
+> > >> be set for a device by power domain related code that knows if
+> > >> context got lost.
+> > > 
+> > > Something like: if the driver sees "context_lost" set, it should restore
+> > > the context to the device from memory?
+> > 
+> > That is what is being proposed here, except that the actual mechanism
+> > where this matters needs to be in the core pinctrl code, otherwise the
+> > state (context) is not restored due to a check that attempts not to
+> > (re)apply a previous state.
+> > 
+> > > 
+> > > But the it would also need to save the context beforehand, so why not to
+> > > restore it unconditionally on resume?
+> > 
+> > That's what my original attempts did here:
+> > 
+> > https://patchwork.kernel.org/patch/9598969/
+> > 
+> > but Linus rightfully requested this to be done differently, hence this
+> > attempt now to solve it in a slightly more flexible way based on DT
+> > properties.
+> 
+> For runtime PM, restoring the state constantly is unnecessary and not
+> good for battery life. The logic can be just:
+> 
+> 1. Device driver runtime PM suspend saves the state when needed
+> 
+> 2. Device driver runtime PM resume checks if context_lost was set by
+>    the bus or power domain code
+> 
+> 3. If context was lost, device driver restores the state, or in some
+>    cases may need re-run the driver register init related parts
+>    to bring the driver back up, then clears the context_lost flag
+> 
+> How about something like the following patch? So far only compile
+> tested with CONFIG_PM enabled. If that looks like the way to go,
+> I'll test it properly and add some comments for the functions and
+> post a proper patch :)
 
-We can support "sparse" GPIO maps if we allow for some groups to have zero
-pins (npins == 0).  These pins are "hidden" from the rest of the driver
-and gpiolib.
+Honestly, I'm not sure.
 
-A new boolean 'sparse' indicates whether the GPIO map is sparse.  If any
-GPIO has an 'npins' value of 0, then 'sparse' must be set to True.
+I'd rather have a context_lost flag to start with and see how/if
+drivers will use that before adding any common infra for handling
+this.
 
-Most access to unavailable GPIOs can be blocked via the gpio_chip.request
-function.  The one exception is when gpiochip_add_data() scans all of
-the GPIOs without "requesting" them.  To cover this case,
-msm_gpio_get_direction() separately checks if the GPIO is available.
-
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 48 +++++++++++++++++++++++++++++++++-----
- drivers/pinctrl/qcom/pinctrl-msm.h |  2 ++
- 2 files changed, 44 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index ff491da64dab..66c68a314ca9 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -507,6 +507,11 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 	};
- 
- 	g = &pctrl->soc->groups[offset];
-+
-+	/* If the GPIO group has no pins, then don't show it. */
-+	if (!g->npins)
-+		return;
-+
- 	ctl_reg = readl(pctrl->regs + g->ctl_reg);
- 
- 	is_out = !!(ctl_reg & BIT(g->oe_bit));
-@@ -516,7 +521,7 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 
- 	seq_printf(s, " %-8s: %-3s %d", g->name, is_out ? "out" : "in", func);
- 	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
--	seq_printf(s, " %s", pulls[pull]);
-+	seq_printf(s, " %s\n", pulls[pull]);
- }
- 
- static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
-@@ -524,23 +529,36 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	unsigned gpio = chip->base;
- 	unsigned i;
- 
--	for (i = 0; i < chip->ngpio; i++, gpio++) {
-+	for (i = 0; i < chip->ngpio; i++, gpio++)
- 		msm_gpio_dbg_show_one(s, NULL, chip, i, gpio);
--		seq_puts(s, "\n");
--	}
- }
- 
- #else
- #define msm_gpio_dbg_show NULL
- #endif
- 
-+/*
-+ * If the requested GPIO has no pins, then treat it as unavailable.
-+ * Otherwise, call the standard request function.
-+ */
-+static int msm_gpio_request(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct msm_pinctrl *pctrl = gpiochip_get_data(chip);
-+	const struct msm_pingroup *g = &pctrl->soc->groups[offset];
-+
-+	if (!g->npins)
-+		return -ENODEV;
-+
-+	return gpiochip_generic_request(chip, offset);
-+}
-+
- static const struct gpio_chip msm_gpio_template = {
- 	.direction_input  = msm_gpio_direction_input,
- 	.direction_output = msm_gpio_direction_output,
- 	.get_direction    = msm_gpio_get_direction,
- 	.get              = msm_gpio_get,
- 	.set              = msm_gpio_set,
--	.request          = gpiochip_generic_request,
-+	.request          = msm_gpio_request,
- 	.free             = gpiochip_generic_free,
- 	.dbg_show         = msm_gpio_dbg_show,
- };
-@@ -813,6 +831,8 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	struct gpio_chip *chip;
- 	int ret;
- 	unsigned ngpio = pctrl->soc->ngpios;
-+	const struct msm_pingroup *groups = pctrl->soc->groups;
-+	unsigned int i;
- 
- 	if (WARN_ON(ngpio > MAX_NR_GPIO))
- 		return -EINVAL;
-@@ -825,13 +845,29 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	chip->owner = THIS_MODULE;
- 	chip->of_node = pctrl->dev->of_node;
- 
-+	/* If the GPIO map is sparse, then we need to disable specific IRQs */
-+	if (pctrl->soc->sparse) {
-+		chip->irq_need_valid_mask = true;
-+		chip->line_need_valid_mask = true;
-+	}
-+
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
- 		dev_err(pctrl->dev, "Failed register gpiochip\n");
- 		return ret;
- 	}
- 
--	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
-+	if (chip->line_need_valid_mask) {
-+		for (i = 0; i < ngpio; i++)
-+			if (!groups[i].npins) {
-+				clear_bit(i, pctrl->chip.irq_valid_mask);
-+				clear_bit(i, pctrl->chip.line_valid_mask);
-+			}
-+	}
-+
-+	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
-+				     0, 0, ngpio);
-+
- 	if (ret) {
- 		dev_err(pctrl->dev, "Failed to add pin range\n");
- 		gpiochip_remove(&pctrl->chip);
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
-index 9b9feea540ff..70762bcb84cb 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.h
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.h
-@@ -107,6 +107,7 @@ struct msm_pingroup {
-  * @ngroups:	    The numbmer of entries in @groups.
-  * @ngpio:	    The number of pingroups the driver should expose as GPIOs.
-  * @pull_no_keeper: The SoC does not support keeper bias.
-+ * @sparse:         The GPIO map is sparse (some GPIOs have npins == 0)
-  */
- struct msm_pinctrl_soc_data {
- 	const struct pinctrl_pin_desc *pins;
-@@ -117,6 +118,7 @@ struct msm_pinctrl_soc_data {
- 	unsigned ngroups;
- 	unsigned ngpios;
- 	bool pull_no_keeper;
-+	bool sparse;
- };
- 
- int msm_pinctrl_probe(struct platform_device *pdev,
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+Thanks,
+Rafael
