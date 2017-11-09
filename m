@@ -1,71 +1,52 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH] gpio: Fix undefined lock_dep_class
-Date: Thu, 9 Nov 2017 11:06:33 +0100
-Message-ID: <20171109100633.GB20678@ulmo>
-References: <20171108204236.4493-1-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="QTprm0S8XgL7H0Dt"
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] gpio: rcar: Add r8a77995 (R-Car D3) support
+Date: Thu,  9 Nov 2017 11:39:20 +0100
+Message-ID: <1510223960-14139-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:5934 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752920AbdKIKGi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Nov 2017 05:06:38 -0500
-In-Reply-To: <20171108204236.4493-1-linus.walleij@linaro.org>
-Content-Disposition: inline
+Received: from albert.telenet-ops.be ([195.130.137.90]:56820 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751373AbdKIKjY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Nov 2017 05:39:24 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
---QTprm0S8XgL7H0Dt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-On Wed, Nov 08, 2017 at 09:42:36PM +0100, Linus Walleij wrote:
-> The struct is wrong, this is named lock_class_key.
->=20
-> Cc: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpiolib.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 961b5da38bb9..86dcd02cf602 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1940,7 +1940,7 @@ EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_key);
->  #else /* CONFIG_GPIOLIB_IRQCHIP */
-> =20
->  static inline int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
-> -				       struct lock_dep_class *lock_key)
-> +				       struct lock_class_key *key)
->  {
->  	return 0;
->  }
+This patch adds binding for r8a77995 (R-Car D3). This SoC can use
+"renesas,rcar-gen3-gpio" fallback compatibility. So, this patch
+doesn't modify the gpio-rcar driver.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Linus: it seems this one fell through the cracks, as the later
+f76a2d9d7f9524c5 ("gpio-rcar: document R8A77970 bindings") did get
+applied.
 
---QTprm0S8XgL7H0Dt
-Content-Type: application/pgp-signature; name="signature.asc"
+Thx!
 
------BEGIN PGP SIGNATURE-----
+v2:
+  - Add Acked-by, rebased.
+---
+ Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloEKKkACgkQ3SOs138+
-s6GJ/xAAkLIVTL9XGGPYerzM3lUQDt1GN6VfgqAOGaXIimvPBgnKPmOoM8rbQ3Ri
-gjEAqbFFuketoT9DRqvxcfydn7kdPpqAm/Cf40+8LlxwCzrNEM4Or9Cb4+HjXJeZ
-3rJpQLgkxzMUO1kzLJsuWCNK1zz8CcbIUpsm5Zm2Rmx1FknzgWJWAUI6W2t7qwSd
-DViTP7sI8pfrp6PpNm0UQVJQSahjZ1HQd5DMOhbYOo6hTtDPQeqehaaERnH3/Hp9
-kEnw7VhsX67evm7rHWBnBvppWpXxryBQpd5fkwrhVKPJpS+YhiSJT/IpRwc2vxpc
-uz5ZG7SYp/eDBLTpwnZ478LeBT0ZNZ8flzHlnfxoWoQbmrHrhQjQkQ+DjUm7eL8y
-RItobZUdRQX+YtPt73IOjT9T1FS8pu66hGHD9zNB66yNyM95xCGuDdLo1xcoZOYb
-cfBANSn1yntcwgLjHHxvukuzEEAydX3nHEb/cnapf9MqYVZWn9hKEcsBicpbfutK
-7Sr5d9feSOkYiaO6eNP4DaBxaBM0HPBGRuXw5l1tg+pe4brfnEjKHUKrHz9NxqVy
-oB2H8hDdA519JXdBcxR3CKXFpqKjdYiobSKxHaFr/IaoqLpDlACQWpYl4qZhJWpw
-esRJt6QcFApq9J0hE2frHLXD21gaD2nAkCoodtHwmHZ2j1RjRqM=
-=Y8fP
------END PGP SIGNATURE-----
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+index 41137a1cc099b7e7..a7ac460ad6572526 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
++++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+@@ -15,6 +15,7 @@ Required Properties:
+     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
+     - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
+     - "renesas,gpio-r8a77970": for R8A77970 (R-Car V3M) compatible GPIO controller.
++    - "renesas,gpio-r8a77995": for R8A77995 (R-Car D3) compatible GPIO controller.
+     - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
+     - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
+     - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
+-- 
+2.7.4
 
---QTprm0S8XgL7H0Dt--
