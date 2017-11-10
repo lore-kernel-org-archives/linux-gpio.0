@@ -1,62 +1,48 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/3] renesas: irqchip: Use wakeup_path i.s.o. explicit clock handling
-Date: Thu,  9 Nov 2017 14:48:30 +0100
-Message-ID: <1510235313-32445-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] gpio: tegra186: Remove tegra186_gpio_lock_class
+Date: Fri, 10 Nov 2017 14:10:55 +0800
+Message-ID: <20171110061055.12431-1-axel.lin@ingics.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:56262 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750802AbdKJGLI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Nov 2017 01:11:08 -0500
+Received: by mail-pg0-f66.google.com with SMTP id 207so3884581pgc.12
+        for <linux-gpio@vger.kernel.org>; Thu, 09 Nov 2017 22:11:08 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
 
-	Hi all,
+This is no longer required after commit 959bc7b22bd2
+("gpio: Automatically add lockdep keys")
 
-If an interrupt controller in a Renesas ARM SoC is part of a Clock
-Domain, and it is part of the wakeup path, it must be kept active during
-system suspend.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/gpio/gpio-tegra186.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Currently this is handled in all interrupt controller drivers by
-explicitly increasing the use count of the module clock when the device
-is part of the wakeup path.  However, this explicit clock handling is
-merely a workaround for a failure to properly communicate wakeup
-information to the device core.
-
-Hence this series fixes the affected drivers by setting the devices'
-power.wakeup_path fields instead, to indicate they are part of the
-wakeup path.  Depending on the PM Domain's active_wakeup configuration,
-the genpd core code will keep the device enabled (and the clock running)
-during system suspend when needed.
-
-Note that most of these patches depend on the series "[PATCH v2 0/3] PM
-/ Domain: renesas: Fix active wakeup behavior", hence they should not be
-applied yet.
-
-This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
-r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7796/salvator-x, and
-sh73a0/kzm9g.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  irqchip/renesas-intc-irqpin: Use wakeup_path i.s.o. explicit clock
-    handling
-  irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
-  gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
-
- drivers/gpio/gpio-rcar.c                  | 43 +++++++++++++----------------
- drivers/irqchip/irq-renesas-intc-irqpin.c | 45 +++++++++++++------------------
- drivers/irqchip/irq-renesas-irqc.c        | 35 ++++++++++++------------
- 3 files changed, 54 insertions(+), 69 deletions(-)
-
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index b55b5ca882c7..7f1aa4c21e0d 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -404,8 +404,6 @@ static const struct irq_domain_ops tegra186_gpio_irq_domain_ops = {
+ 	.xlate = tegra186_gpio_irq_domain_xlate,
+ };
+ 
+-static struct lock_class_key tegra186_gpio_lock_class;
+-
+ static int tegra186_gpio_probe(struct platform_device *pdev)
+ {
+ 	unsigned int i, j, offset;
+@@ -496,7 +494,6 @@ static int tegra186_gpio_probe(struct platform_device *pdev)
+ 	irq->chip = &gpio->intc;
+ 	irq->domain_ops = &tegra186_gpio_irq_domain_ops;
+ 	irq->handler = handle_simple_irq;
+-	irq->lock_key = &tegra186_gpio_lock_class;
+ 	irq->default_type = IRQ_TYPE_NONE;
+ 	irq->parent_handler = tegra186_gpio_irq;
+ 	irq->parent_handler_data = gpio;
 -- 
-2.7.4
+2.11.0
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
