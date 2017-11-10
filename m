@@ -1,37 +1,26 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] pinctrl: denverton: Fix UART2 RTS pin mode
-Date: Fri, 10 Nov 2017 19:55:18 +0200
-Message-ID: <20171110175518.83719-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:6644 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750807AbdKJRzV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 10 Nov 2017 12:55:21 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH 0/2] Add Renesas R8A77970 PFC driver
+Date: Fri, 10 Nov 2017 20:58:59 +0300
+Message-ID: <20171110175859.365490212@cogentembedded.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-UART2 RTS is mode 2 of the pin.
+Hello!
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-denverton.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Here's a set of 2 patches against the 'sh-pfcl' branch of Geert Uyyterhoeven's
+'renesas-drivers.git' repo. The patches add support for the R8A77970 PFC (note
+that the pin pull-up/down support was removed in the last minute since that
+part of the PFC driver has been reworked by Geert -- I will convert my code to
+the new pull-up/down API later...
 
-diff --git a/drivers/pinctrl/intel/pinctrl-denverton.c b/drivers/pinctrl/intel/pinctrl-denverton.c
-index 4500880240f2..6572550cfe78 100644
---- a/drivers/pinctrl/intel/pinctrl-denverton.c
-+++ b/drivers/pinctrl/intel/pinctrl-denverton.c
-@@ -207,7 +207,7 @@ static const unsigned int dnv_uart0_pins[] = { 60, 61, 64, 65 };
- static const unsigned int dnv_uart0_modes[] = { 2, 3, 1, 1 };
- static const unsigned int dnv_uart1_pins[] = { 94, 95, 96, 97 };
- static const unsigned int dnv_uart2_pins[] = { 60, 61, 62, 63 };
--static const unsigned int dnv_uart2_modes[] = { 1, 1, 2, 2 };
-+static const unsigned int dnv_uart2_modes[] = { 1, 2, 2, 2 };
- static const unsigned int dnv_emmc_pins[] = {
- 	142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152,
- };
--- 
-2.14.2
+[1/2] pinctrl: sh-pfc: add PORT_GP_CFG_{6|22}() helper macros
+[2/2] pinctrl: sh-pfc: add R8A77970 PFC support
 
+MBR, Sergei
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
