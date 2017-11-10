@@ -1,46 +1,59 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH v2] gpio: davinci: Assign first bank regs for unbanked case
-Date: Fri, 10 Nov 2017 16:43:17 +0530
-Message-ID: <1510312397-29040-1-git-send-email-j-keerthy@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:53681 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752648AbdKJLNw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Nov 2017 06:13:52 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/6] gpiolib: acpi: Assign polarity when call acpi_populate_gpio_lookup()
+Date: Fri, 10 Nov 2017 15:40:28 +0200
+Message-ID: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, j-keerthy@ti.com, t-kristo@ti.com
 
-As per the re-design assign the first bank regs for unbanked
-irq case. This was missed out in the original patch.
+There is no need, since we preserve firmware settings, to override
+polarity for GpioInt() resources.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Fixes: b5cf3fd827d2e1 ("gpio: davinci: Redesign driver to accommodate ngpios in one gpio chip")
+While Documentation/gpio-properties.txt refers to any from GpioIo() /
+GpioInt() resources, the active_low flag has been introduced to fill the
+gap only for GpioIo() which lacks of that information.
+
+Moreover, in case of GpioInt() existed solution was broken anyway, it
+overrides only in one direction, i.e. from 0 to 1, otherwise it would be
+still 1 as defined in the resource macro.
+
+So, move the assignment to a right place and forbid to (semi-)override
+polarity for GpioInt() type of resources.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
+ drivers/gpio/gpiolib-acpi.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Changes in v2:
-
-  * Fixed $Author
-
- drivers/gpio/gpio-davinci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index f75d844..e4b3d7d 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -383,7 +383,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
- 	u32 mask;
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index eb4528c87c0b..2a85d27eb028 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -531,8 +531,8 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ 			lookup->info.triggering = agpio->triggering;
+ 		} else {
+ 			lookup->info.flags = acpi_gpio_to_gpiod_flags(agpio);
++			lookup->info.polarity = lookup->active_low;
+ 		}
+-
+ 	}
  
- 	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
--	g = (struct davinci_gpio_regs __iomem *)d->regs;
-+	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
- 	mask = __gpio_mask(data->irq - d->base_irq);
+ 	return 1;
+@@ -557,11 +557,8 @@ static int acpi_gpio_resource_lookup(struct acpi_gpio_lookup *lookup,
+ 	if (!lookup->desc)
+ 		return -ENOENT;
  
- 	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+-	if (info) {
++	if (info)
+ 		*info = lookup->info;
+-		if (lookup->active_low)
+-			info->polarity = lookup->active_low;
+-	}
+ 	return 0;
+ }
+ 
 -- 
-1.9.1
+2.14.2
 
