@@ -1,38 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung/s3c24xx: add CONFIG_OF dependency
-Date: Fri, 10 Nov 2017 11:40:52 +0100
-Message-ID: <CACRpkdbSPqATnL_ROFM2VtCYcBPyybxxmnyQbn6bohDeFYa09g@mail.gmail.com>
-References: <20171107141244.3377780-1-arnd@arndb.de>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH] gpio: davinci: Assign first bank regs for unbanked case
+Date: Fri, 10 Nov 2017 16:37:07 +0530
+Message-ID: <1510312027-28543-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52612 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752857AbdKJKky (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Nov 2017 05:40:54 -0500
-Received: by mail-it0-f67.google.com with SMTP id j140so1167642itj.1
-        for <linux-gpio@vger.kernel.org>; Fri, 10 Nov 2017 02:40:53 -0800 (PST)
-In-Reply-To: <20171107141244.3377780-1-arnd@arndb.de>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:31323 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752405AbdKJLHV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Nov 2017 06:07:21 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, j-keerthy@ti.com, t-kristo@ti.com
 
-On Tue, Nov 7, 2017 at 3:12 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+From: "J, KEERTHY" <j-keerthy@ti.com>
 
-> The driver fails to build without CONFIG_OF:
->
-> drivers/pinctrl/samsung/pinctrl-samsung.c: In function 'samsung_gpiolib_register':
-> drivers/pinctrl/samsung/pinctrl-samsung.c:936:5: error: 'struct gpio_chip' has no member named 'of_node'
->
-> This configuration is now possible since we can now select the
-> PINCTRL subsystem on S3C24xx machines other than the device tree
-> based ones.
->
-> Fixes: d219b924611a ("pinctrl: change Kconfig PINCTRL variable to a menuconfig")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+As per the re-design assign the first bank regs for unbanked
+irq case. This was missed out in the original patch.
 
-Patch applied!
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Fixes: b5cf3fd827d2e1 ("gpio: davinci: Redesign driver to accommodate ngpios in one gpio chip")
+---
+ drivers/gpio/gpio-davinci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index f75d844..e4b3d7d 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -383,7 +383,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
+ 	u32 mask;
+ 
+ 	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
+-	g = (struct davinci_gpio_regs __iomem *)d->regs;
++	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
+ 	mask = __gpio_mask(data->irq - d->base_irq);
+ 
+ 	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+-- 
+1.9.1
+
