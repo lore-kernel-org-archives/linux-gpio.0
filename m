@@ -1,70 +1,48 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 6/6] gpiolib: acpi: Introduce NO_RESTRICTION quirk
-Date: Fri, 10 Nov 2017 15:40:33 +0200
-Message-ID: <20171110134033.85461-6-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/6] gpiolib: acpi: Don't contaminate return parameter in case of error
+Date: Fri, 10 Nov 2017 15:40:29 +0200
+Message-ID: <20171110134033.85461-2-andriy.shevchenko@linux.intel.com>
 References: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:40135 "EHLO mga02.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:58731 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751117AbdKJNkj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 10 Nov 2017 08:40:39 -0500
+        id S1751455AbdKJNkv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 10 Nov 2017 08:40:51 -0500
 In-Reply-To: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Allow to relax IoRestriction for certain cases.
+If error occurs, leave lookup parameter untouched.
 
-One of the use case is incorrectly cooked ACPI table where interrupt pin is
-defined with GpioIo() macro with IoRestrictionOutputOnly.
+There is no functional change, since all current callers just bail out
+in case of error without using the assigned pieces.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpiolib-acpi.c | 13 ++++++++++---
- include/linux/acpi.h        |  4 ++++
- 2 files changed, 14 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib-acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 711f64b9dd30..430a1475212d 100644
+index 2a85d27eb028..f640445099ab 100644
 --- a/drivers/gpio/gpiolib-acpi.c
 +++ b/drivers/gpio/gpiolib-acpi.c
-@@ -496,11 +496,18 @@ int
- acpi_gpio_update_gpiod_flags(enum gpiod_flags *flags, struct acpi_gpio_info *info)
- {
- 	struct device *dev = &info->adev->dev;
-+	enum gpiod_flags old = *flags;
- 	int ret;
+@@ -585,7 +585,6 @@ static int acpi_gpio_property_lookup(struct fwnode_handle *fwnode,
+ 	 * The property was found and resolved, so need to lookup the GPIO based
+ 	 * on returned args.
+ 	 */
+-	lookup->adev = args.adev;
+ 	if (args.nargs != 3)
+ 		return -EPROTO;
  
--	ret = __acpi_gpio_update_gpiod_flags(flags, info->flags);
--	if (ret)
--		dev_dbg(dev, "Override GPIO initialization flags\n");
-+	ret = __acpi_gpio_update_gpiod_flags(&old, info->flags);
-+	if (info->quirks & ACPI_GPIO_QUIRK_NO_IO_RESTRICTION) {
-+		if (ret)
-+			dev_warn(dev, FW_BUG "GPIO not in correct mode, fixing\n");
-+	} else {
-+		if (ret)
-+			dev_dbg(dev, "Override GPIO initialization flags\n");
-+		*flags = old;
-+	}
+@@ -593,6 +592,7 @@ static int acpi_gpio_property_lookup(struct fwnode_handle *fwnode,
+ 	lookup->pin_index = args.args[1];
+ 	lookup->active_low = !!args.args[2];
  
- 	return ret;
++	lookup->adev = args.adev;
+ 	return 0;
  }
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 25fe77fccea0..06b6eb775115 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -978,6 +978,10 @@ struct acpi_gpio_mapping {
- 	const char *name;
- 	const struct acpi_gpio_params *data;
- 	unsigned int size;
-+
-+/* Ignore IoRestriction field */
-+#define ACPI_GPIO_QUIRK_NO_IO_RESTRICTION	BIT(0)
-+
- 	unsigned int quirks;
- };
  
 -- 
 2.14.2
