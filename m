@@ -1,43 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: gemini: Fix missing pad descriptions
-Date: Mon, 13 Nov 2017 22:39:05 +0100
-Message-ID: <20171113213905.8923-1-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:53603 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751356AbdKMVlK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Nov 2017 16:41:10 -0500
-Received: by mail-lf0-f65.google.com with SMTP id 73so5674596lfu.10
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Nov 2017 13:41:09 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: Re: [PATCH 0/4] [v7] pinctrl: qcom: add support for sparse GPIOs
+Date: Mon, 13 Nov 2017 22:49:05 +0100
+Message-ID: <CACRpkdbwe9+TovFYoD-W_9kabe+jsVbN6juJQBUzicq=1XDphg@mail.gmail.com>
+References: <1510096056-13765-1-git-send-email-timur@codeaurora.org> <c219c289-9cad-f96c-f766-ec28af8f078d@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <c219c289-9cad-f96c-f766-ec28af8f078d@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>, Varadarajan Narayanan <varada@codeaurora.org>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>
 
-A pretty clever static checker found a bug in my patch: I added more
-bits to a bitmask but didn't extend the array indexed to the same
-bitmask.
+On Mon, Nov 13, 2017 at 8:19 PM, Timur Tabi <timur@codeaurora.org> wrote:
 
-Fixes: 756a024f3983 ("pinctrl: gemini: Fix GMAC groups")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/pinctrl-gemini.c | 2 ++
- 1 file changed, 2 insertions(+)
+> Any chance of these patches going into 4.15?
 
-diff --git a/drivers/pinctrl/pinctrl-gemini.c b/drivers/pinctrl/pinctrl-gemini.c
-index ecfc9733db7e..e9b83e291edf 100644
---- a/drivers/pinctrl/pinctrl-gemini.c
-+++ b/drivers/pinctrl/pinctrl-gemini.c
-@@ -136,6 +136,8 @@ static const char * const gemini_padgroups[] = {
- 	"PCI CLK",
- 	NULL, NULL,
- 	"TVC CLK",
-+	NULL, NULL, NULL, NULL, NULL,
-+	"GMAC1",
- };
- 
- static const struct pinctrl_pin_desc gemini_3512_pins[] = {
--- 
-2.13.6
+Sadly no. The merge window is open.
 
+>  I've been making lots of
+> changes, but I haven't gotten a lot of feedback.  I still think that v7 i=
+s
+> more intrusive and risky than v5, with no real benefit.  But at this poin=
+t,
+> I just want something to be merged so that I stop thinking about it.
+
+I am waiting for feedback from the maintainer(s) mainly Bj=C3=B6rn.
+
+There are only so many people I really trust with reviewing
+qualcomm pinctrl code: Bj=C3=B6rn and Stephen mainly.
+Especially for the core of the driver.
+
+>From what I have understood Qualcomm has one finger constantly
+on the fast-forward button for upstreaming right now, which I think
+is good (everyone should have!) but the limited number of trusted
+maintainers of core infrastructure code makes bottlenecks form
+around these drivers where review is really needed and deep queues
+of patches form. Sorry.
+
+If the manpower shortage persists maybe we can seek some
+review from other major contributors to these drivers?
+Varadarajan and Neil for example?
+
+Yours,
+Linus Walleij
