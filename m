@@ -1,36 +1,83 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 0/4] [v7] pinctrl: qcom: add support for sparse GPIOs
-Date: Mon, 13 Nov 2017 13:19:02 -0600
-Message-ID: <c219c289-9cad-f96c-f766-ec28af8f078d@codeaurora.org>
-References: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: add R8A77970 PFC support
+Date: Mon, 13 Nov 2017 21:32:13 +0100
+Message-ID: <CAMuHMdW4HhzPVK-5XZKYhxvZwFUQhxPW=TDDQd7ZYY96Bz1AMw@mail.gmail.com>
+References: <20171110181552.227541251@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:32776 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752547AbdKMTTF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Nov 2017 14:19:05 -0500
-In-Reply-To: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
-Content-Language: en-US
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:48628 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755185AbdKMUcO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Nov 2017 15:32:14 -0500
+In-Reply-To: <20171110181552.227541251@cogentembedded.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-On 11/07/2017 05:07 PM, Timur Tabi wrote:
-> A series of patches that add support for GPIO maps that have holes in
-> them.  That is, even though a client driver has N consecutive GPIOs,
-> some are just unavailable for whatever reason, and the hardware should
-> not be accessed for those GPIOs.
+Hi Sergei,
 
-Any chance of these patches going into 4.15?  I've been making lots of 
-changes, but I haven't gotten a lot of feedback.  I still think that v7 
-is more intrusive and risky than v5, with no real benefit.  But at this 
-point, I just want something to be merged so that I stop thinking about it.
+On Fri, Nov 10, 2017 at 6:59 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the PFC support for the R8A77970 SoC including pin groups for some
+> on-chip devices such as CAN-FD, EtherAVB, [H]SCIF, I2C, INTC-EX, MMC,
+> MSIOF, PWM, VIN...
+>
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
+Thanks for your patch!
 
+For CPU_ALL_PORT(), pins, groups, and functions:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.16, with the two nits below fixed.
 
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+> --- /dev/null
+> +++ renesas-drivers/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
+
+[...]
+
+> +/* - VIN0 ------------------------------------------------------------------- */
+
+[...]
+
+> +static const unsigned int vin0_sync_pins[] = {
+> +       /* VSYNC#, HSYNC# */
+> +       RCAR_GP_PIN(2, 3), RCAR_GP_PIN(2, 2),
+
+The order of the above doesn't match the order below (will fix while applying).
+
+> +};
+> +static const unsigned int vin0_sync_mux[] = {
+> +       VI0_HSYNC_N_MARK, VI0_VSYNC_N_MARK,
+> +};
+
+> +/* - VIN1 ------------------------------------------------------------------- */
+
+[...]
+
+> +static const unsigned int vin1_sync_pins[] = {
+> +       /* VSYNC#, HSYNC# */
+> +       RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 2),
+
+Likewise.
+
+> +};
+> +static const unsigned int vin1_sync_mux[] = {
+> +       VI1_HSYNC_N_MARK, VI1_VSYNC_N_MARK,
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
