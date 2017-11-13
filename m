@@ -1,73 +1,53 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v1 6/6] gpiolib: acpi: Introduce NO_RESTRICTION quirk
-Date: Mon, 13 Nov 2017 15:19:30 +0200
-Message-ID: <20171113131930.GB18997@lahna.fi.intel.com>
-References: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
- <20171110134033.85461-6-andriy.shevchenko@linux.intel.com>
- <20171113115554.GY18997@lahna.fi.intel.com>
- <1510578648.25007.166.camel@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1510578648.25007.166.camel@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] gpio: uniphier: merge fix for "Update irq_domain_ops.activate() signature"
+Date: Mon, 13 Nov 2017 22:36:16 +0900
+Message-ID: <1510580176-7483-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conuserg-10.nifty.com ([210.131.2.77]:36183 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752820AbdKMNg4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Nov 2017 08:36:56 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, Nov 13, 2017 at 03:10:48PM +0200, Andy Shevchenko wrote:
-> On Mon, 2017-11-13 at 13:55 +0200, Mika Westerberg wrote:
-> > On Fri, Nov 10, 2017 at 03:40:33PM +0200, Andy Shevchenko wrote:
-> > > Allow to relax IoRestriction for certain cases.
-> > > 
-> > > One of the use case is incorrectly cooked ACPI table where interrupt
-> > > pin is
-> > > defined with GpioIo() macro with IoRestrictionOutputOnly.
-> > > 
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > I think you should include user of this quirk in the patch series as
-> > well. Otherwise it is pretty pointless to add random quirks without
-> > real issues they are supposed to solve ;-)
-> 
-> Something like below?
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Yes, but I would also add comment on top of the added line explaining
-why this particular quirk is needed in this particular system.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
 
-> --- a/drivers/extcon/extcon-intel-int3496.c
-> +++ b/drivers/extcon/extcon-intel-int3496.c
-> @@ -50,7 +50,7 @@ static const struct acpi_gpio_params vbus_gpios = {
-> INT3496_GPIO_VBUS_EN, 0, fal
->  static const struct acpi_gpio_params mux_gpios = {
-> INT3496_GPIO_USB_MUX, 0, false };
->  
->  static const struct acpi_gpio_mapping acpi_int3496_default_gpios[] = {
-> -       { "id-gpios", &id_gpios, 1 },
-> +       { "id-gpios", &id_gpios, 1, ACPI_GPIO_QUIRK_NO_IO_RESTRICTION },
->         { "vbus-gpios", &vbus_gpios, 1 },
->         { "mux-gpios", &mux_gpios, 1 },
->         { },
-> @@ -112,9 +112,6 @@ static int int3496_probe(struct platform_device
-> *pdev)
->                 ret = PTR_ERR(data->gpio_usb_id);
->                 dev_err(dev, "can't request USB ID GPIO: %d\n", ret);
->                 return ret;
-> -       } else if (gpiod_get_direction(data->gpio_usb_id) !=
-> GPIOF_DIR_IN) {
-> -               dev_warn(dev, FW_BUG "USB ID GPIO not in input mode,
-> fixing\n");
-> -               gpiod_direction_input(data->gpio_usb_id);
->         }
-> 
-> > 
-> > Anyway looks good to me,
-> > 
-> > Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> 
-> Thanks!
-> 
-> -- 
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Intel Finland Oy
+Changes since Stephens's original post
+  - Fix checkpatch.pl warning
+    "CHECK: Alignment should match open parenthesis"
+  - Stretch lines since it fits in 80-columns
+
+
+ drivers/gpio/gpio-uniphier.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
+index d62cea4..71b768e 100644
+--- a/drivers/gpio/gpio-uniphier.c
++++ b/drivers/gpio/gpio-uniphier.c
+@@ -300,13 +300,15 @@ static int uniphier_gpio_irq_domain_alloc(struct irq_domain *domain,
+ 	return irq_domain_alloc_irqs_parent(domain, virq, 1, &parent_fwspec);
+ }
+ 
+-static void uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
+-					      struct irq_data *data)
++static int uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
++					     struct irq_data *data, bool early)
+ {
+ 	struct uniphier_gpio_priv *priv = domain->host_data;
+ 	struct gpio_chip *chip = &priv->chip;
+ 
+ 	gpiochip_lock_as_irq(chip, data->hwirq + UNIPHIER_GPIO_IRQ_OFFSET);
++
++	return 0;
+ }
+ 
+ static void uniphier_gpio_irq_domain_deactivate(struct irq_domain *domain,
+-- 
+2.7.4
+
