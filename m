@@ -1,83 +1,55 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: add R8A77970 PFC support
-Date: Mon, 13 Nov 2017 21:32:13 +0100
-Message-ID: <CAMuHMdW4HhzPVK-5XZKYhxvZwFUQhxPW=TDDQd7ZYY96Bz1AMw@mail.gmail.com>
-References: <20171110181552.227541251@cogentembedded.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [bug report] pinctrl: gemini: Fix GMAC groups
+Date: Mon, 13 Nov 2017 22:40:05 +0100
+Message-ID: <CACRpkdYMUagJSMYkfhYsdqgfQsd+8ucTe+-LxnDcNY2xB9DFjQ@mail.gmail.com>
+References: <20171113111357.4nxo7cgawpwdhkoq@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:48628 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755185AbdKMUcO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Nov 2017 15:32:14 -0500
-In-Reply-To: <20171110181552.227541251@cogentembedded.com>
+Received: from mail-io0-f175.google.com ([209.85.223.175]:57145 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751356AbdKMVkG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Nov 2017 16:40:06 -0500
+Received: by mail-io0-f175.google.com with SMTP id t11so2992790iof.13
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Nov 2017 13:40:06 -0800 (PST)
+In-Reply-To: <20171113111357.4nxo7cgawpwdhkoq@mwanda>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-gpio@vger.kernel.org
 
-Hi Sergei,
+On Mon, Nov 13, 2017 at 12:42 PM, Dan Carpenter
+<dan.carpenter@oracle.com> wrote:
 
-On Fri, Nov 10, 2017 at 6:59 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the PFC support for the R8A77970 SoC including pin groups for some
-> on-chip devices such as CAN-FD, EtherAVB, [H]SCIF, I2C, INTC-EX, MMC,
-> MSIOF, PWM, VIN...
+> Hello Linus Walleij,
 >
-> Based on the original (and large) patch by Daisuke Matsushita
-> <daisuke.matsushita.ns@hitachi.com>.
+> The patch 756a024f3983: "pinctrl: gemini: Fix GMAC groups" from Nov
+> 6, 2017, leads to the following static checker warning:
 >
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>         drivers/pinctrl/pinctrl-gemini.c:2190 gemini_pmx_set_mux()
+>         error: buffer overflow 'gemini_padgroups' 21 <= 26
+>
+> drivers/pinctrl/pinctrl-gemini.c
+>   2180          /* Print changed states */
+>   2181          tmp = grp->mask;
+>   2182          for_each_set_bit(i, &tmp, PADS_MAXBIT) {
+>                                           ^^^^^^^^^^^
+> We boosted this from 20 to 27
+>
+>   2183                  bool enabled = !(i > 3);
+>   2184
+>   2185                  /* Did not go low though it should */
+>   2186                  if (after & BIT(i)) {
+>   2187                          dev_err(pmx->dev,
+>   2188                                  "pin group %s could not be %s: "
+>   2189                                  "probably a hardware limitation\n",
+>   2190                                  gemini_padgroups[i],
+>                                         ^^^^^^^^^^^^^^^^^^^
+> so we need to add more strings to this array as well.
 
-Thanks for your patch!
+I'm impressed by this static checking, thanks a *lot*!
 
-For CPU_ALL_PORT(), pins, groups, and functions:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.16, with the two nits below fixed.
+I've sent a patch to fix it up.
 
-> --- /dev/null
-> +++ renesas-drivers/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-
-[...]
-
-> +/* - VIN0 ------------------------------------------------------------------- */
-
-[...]
-
-> +static const unsigned int vin0_sync_pins[] = {
-> +       /* VSYNC#, HSYNC# */
-> +       RCAR_GP_PIN(2, 3), RCAR_GP_PIN(2, 2),
-
-The order of the above doesn't match the order below (will fix while applying).
-
-> +};
-> +static const unsigned int vin0_sync_mux[] = {
-> +       VI0_HSYNC_N_MARK, VI0_VSYNC_N_MARK,
-> +};
-
-> +/* - VIN1 ------------------------------------------------------------------- */
-
-[...]
-
-> +static const unsigned int vin1_sync_pins[] = {
-> +       /* VSYNC#, HSYNC# */
-> +       RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 2),
-
-Likewise.
-
-> +};
-> +static const unsigned int vin1_sync_mux[] = {
-> +       VI1_HSYNC_N_MARK, VI1_VSYNC_N_MARK,
-> +};
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
