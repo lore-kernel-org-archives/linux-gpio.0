@@ -1,49 +1,98 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/4] [v7] pinctrl: qcom: add support for sparse GPIOs
-Date: Tue, 14 Nov 2017 11:03:39 +0100
-Message-ID: <CACRpkdYT1NDzuEuDU47jC-iXTE8JWxqGnKhJYKp0oGiL1wX7ig@mail.gmail.com>
-References: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
- <c219c289-9cad-f96c-f766-ec28af8f078d@codeaurora.org> <CACRpkdbwe9+TovFYoD-W_9kabe+jsVbN6juJQBUzicq=1XDphg@mail.gmail.com>
- <b8bbba8d-f91f-8e8f-8e79-2e772b48d9b9@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <b8bbba8d-f91f-8e8f-8e79-2e772b48d9b9@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Varadarajan Narayanan <varada@codeaurora.org>, Neil Armstrong <narmstrong@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Chris Chiu <chiu@endlessm.com>
+Subject: [PATCH] pinctrl: intel: save HOSTSW_OWN register over suspend/resume
+Date: Tue, 14 Nov 2017 18:41:36 +0800
+Message-ID: <20171114104136.25595-1-chiu@endlessm.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:52981 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750828AbdKNKlm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Nov 2017 05:41:42 -0500
+Received: by mail-pg0-f67.google.com with SMTP id j16so9518496pgn.9
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Nov 2017 02:41:42 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux@endlessm.com
 
-On Mon, Nov 13, 2017 at 10:53 PM, Timur Tabi <timur@codeaurora.org> wrote:
-> On 11/13/2017 03:49 PM, Linus Walleij wrote:
->>
->>
->>  From what I have understood Qualcomm has one finger constantly
->> on the fast-forward button for upstreaming right now, which I think
->> is good (everyone should have!) but the limited number of trusted
->> maintainers of core infrastructure code makes bottlenecks form
->> around these drivers where review is really needed and deep queues
->> of patches form. Sorry.
->
->
-> That's one of the reasons why I prefer v5 of my patch instead of v7.  v5
-> does not touch the core.  It's much less intrusive and has no risk of
-> breaking other drivers.  I can't say that about v7.
+The touchpad in the Asus laptop model X540NA is unresponsive
+after suspend/resume. The following error appears during resume:
 
-The more intrusive design is on my request so I will look at it in detail
-ASAP. I took a quick look and liked what I saw, I just need to make
-sure about the details. Also it'd be nice to have a nod from Bj=C3=B6rn.
+i2c_hid i2c-ELAN1200:00: failed to reset device.
 
-The main reason for some of the work is ACPI, am I right?
+The problem here is that i2c_hid does not notice the interrupt
+being generated at this point. Because the GPIO which connects
+to touchpad interrupt is in ACPI mode after resume and no longer
+work as IRQ.
 
-Timur could you look quickly at the series posted by Andy Shevchenko
-(6 patches prefixed gpiolib: acpi: ) for augmenting ACPI GPIOs in the core?
-Especially patch 5 and 6 which introduce the ability to add quirks in the
-core.
+Fix this by saving HOSTSW_OWN register during suspend and restore
+them at resume.
 
-I'd like to get some ARM-based people to look at it to make sure we
-those systems can also quirk their GPIOs if need be.
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 6dc1096d3d34..eaafa0e534f3 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -83,6 +83,7 @@ struct intel_pad_context {
+ 
+ struct intel_community_context {
+ 	u32 *intmask;
++	u32 *modemask;
+ };
+ 
+ struct intel_pinctrl_context {
+@@ -1158,6 +1159,7 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
+ 	for (i = 0; i < pctrl->ncommunities; i++) {
+ 		struct intel_community *community = &pctrl->communities[i];
+ 		u32 *intmask;
++		u32 *modemask;
+ 
+ 		intmask = devm_kcalloc(pctrl->dev, community->ngpps,
+ 				       sizeof(*intmask), GFP_KERNEL);
+@@ -1165,6 +1167,13 @@ static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
+ 			return -ENOMEM;
+ 
+ 		communities[i].intmask = intmask;
++
++		modemask = devm_kcalloc(pctrl->dev, community->ngpps,
++				       sizeof(*modemask), GFP_KERNEL);
++		if (!modemask)
++			return -ENOMEM;
++
++		communities[i].modemask = modemask;
+ 	}
+ 
+ 	pctrl->context.pads = pads;
+@@ -1329,6 +1338,10 @@ int intel_pinctrl_suspend(struct device *dev)
+ 		base = community->regs + community->ie_offset;
+ 		for (gpp = 0; gpp < community->ngpps; gpp++)
+ 			communities[i].intmask[gpp] = readl(base + gpp * 4);
++
++		base = community->regs + community->hostown_offset;
++		for (gpp = 0; gpp < community->ngpps; gpp++)
++			communities[i].modemask[gpp] = readl(base + gpp * 4);
+ 	}
+ 
+ 	return 0;
+@@ -1411,7 +1424,14 @@ int intel_pinctrl_resume(struct device *dev)
+ 		base = community->regs + community->ie_offset;
+ 		for (gpp = 0; gpp < community->ngpps; gpp++) {
+ 			writel(communities[i].intmask[gpp], base + gpp * 4);
+-			dev_dbg(dev, "restored mask %d/%u %#08x\n", i, gpp,
++			dev_dbg(dev, "restored intmask %d/%u %#08x\n", i, gpp,
++				readl(base + gpp * 4));
++		}
++
++		base = community->regs + community->hostown_offset;
++		for (gpp = 0; gpp < community->ngpps; gpp++) {
++			writel(communities[i].modemask[gpp], base + gpp * 4);
++			dev_dbg(dev, "restored modemask %d/%u %#08x\n", i, gpp,
+ 				readl(base + gpp * 4));
+ 		}
+ 	}
+-- 
+2.11.0
+
