@@ -1,39 +1,58 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 0/4] [v7] pinctrl: qcom: add support for sparse GPIOs
-Date: Mon, 13 Nov 2017 15:53:45 -0600
-Message-ID: <b8bbba8d-f91f-8e8f-8e79-2e772b48d9b9@codeaurora.org>
-References: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
- <c219c289-9cad-f96c-f766-ec28af8f078d@codeaurora.org>
- <CACRpkdbwe9+TovFYoD-W_9kabe+jsVbN6juJQBUzicq=1XDphg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: add R8A77970 PFC support
+Date: Tue, 14 Nov 2017 09:48:40 +0100
+Message-ID: <CAMuHMdVoyjB_9q9=5hF3XKtF7bdJOCCgCWkTnRZwC4Zxaix_BA@mail.gmail.com>
+References: <20171110181552.227541251@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:50578 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751845AbdKMVxs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Nov 2017 16:53:48 -0500
-In-Reply-To: <CACRpkdbwe9+TovFYoD-W_9kabe+jsVbN6juJQBUzicq=1XDphg@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46127 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751597AbdKNIsl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Nov 2017 03:48:41 -0500
+In-Reply-To: <20171110181552.227541251@cogentembedded.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-On 11/13/2017 03:49 PM, Linus Walleij wrote:
-> 
->  From what I have understood Qualcomm has one finger constantly
-> on the fast-forward button for upstreaming right now, which I think
-> is good (everyone should have!) but the limited number of trusted
-> maintainers of core infrastructure code makes bottlenecks form
-> around these drivers where review is really needed and deep queues
-> of patches form. Sorry.
+Hi Sergei,
 
-That's one of the reasons why I prefer v5 of my patch instead of v7.  v5 
-does not touch the core.  It's much less intrusive and has no risk of 
-breaking other drivers.  I can't say that about v7.
+On Fri, Nov 10, 2017 at 6:59 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the PFC support for the R8A77970 SoC including pin groups for some
+> on-chip devices such as CAN-FD, EtherAVB, [H]SCIF, I2C, INTC-EX, MMC,
+> MSIOF, PWM, VIN...
+>
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns@hitachi.com>.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+> --- /dev/null
+> +++ renesas-drivers/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
+
+> +/* - EtherAVB --------------------------------------------------------------- */
+
+> +static const unsigned int avb0_mdio_pins[] = {
+> +       /* AVB0_MDC, AVB0_MDIO */
+> +       RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14),
+> +};
+> +static const unsigned int avb0_mdio_mux[] = {
+> +       AVB0_MDC_MARK, AVB0_MDIO_MARK,
+> +};
+
+Upon second look: this group is called "avb(0)_mdc" instead of "avb(0)_mdio"
+on all other R-Car Gen3 SoCs?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
