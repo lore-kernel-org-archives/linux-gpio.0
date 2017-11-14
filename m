@@ -1,83 +1,56 @@
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 2/2] pinctrl: sh-pfc: r8a7791: Add can_clk function
-Date: Tue, 14 Nov 2017 15:41:17 +0000
-Message-ID: <1510674077-31136-3-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1510674077-31136-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1510674077-31136-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH] pinctrl: armada-37xx: Fix direction_output() callback behavior
+Date: Tue, 14 Nov 2017 17:51:50 +0100
+Message-ID: <20171114165150.19599-1-gregory.clement@free-electrons.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds can_clk function to r8a7743/r8a7791 which is cleaner,
-and allows for independent configuration.
-We keep the can_clk* pins definitions from within can0_groups and
-can1_groups for uniformity and backwards compatibility.
+The direction_output callback of the gpio_chip structure is supposed to
+set the output direction but also to set the value of the gpio. For the
+armada-37xx driver this callback acted as the gpio_set_direction callback
+for the pinctrl.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+This patch fixes the behavior of the direction_output callback by also
+applying the value received as parameter.
+
+Cc: stable@vger.kernel.org
+Fixes: 5715092a458c ("pinctrl: armada-37xx: Add gpio support")
+Reported-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
-v1->v2
-* Retained can_clk* pins inside can[01]_groups
-* Added comments
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 10bd35f..c01ef02d 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -4826,6 +4826,10 @@ static const char * const can0_groups[] = {
- 	"can0_data_d",
- 	"can0_data_e",
- 	"can0_data_f",
-+	/*
-+	 * Retained for backwards compatibility, use can_clk_groups in new
-+	 * designs.
-+	 */
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -4837,6 +4841,21 @@ static const char * const can1_groups[] = {
- 	"can1_data_b",
- 	"can1_data_c",
- 	"can1_data_d",
-+	/*
-+	 * Retained for backwards compatibility, use can_clk_groups in new
-+	 * designs.
-+	 */
-+	"can_clk",
-+	"can_clk_b",
-+	"can_clk_c",
-+	"can_clk_d",
-+};
-+
-+/*
-+ * can_clk_groups allows for independent configuration, use can_clk function
-+ * in new designs.
-+ */
-+static const char * const can_clk_groups[] = {
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -5308,7 +5327,7 @@ static const char * const vin2_groups[] = {
- };
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 71b944748304..c5fe7d4a9065 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -408,12 +408,21 @@ static int armada_37xx_gpio_direction_output(struct gpio_chip *chip,
+ {
+ 	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
+ 	unsigned int reg = OUTPUT_EN;
+-	unsigned int mask;
++	unsigned int mask, val, ret;
  
- static const struct {
--	struct sh_pfc_function common[56];
-+	struct sh_pfc_function common[57];
- 	struct sh_pfc_function r8a779x[2];
- } pinmux_functions = {
- 	.common = {
-@@ -5316,6 +5335,7 @@ static const struct {
- 		SH_PFC_FUNCTION(avb),
- 		SH_PFC_FUNCTION(can0),
- 		SH_PFC_FUNCTION(can1),
-+		SH_PFC_FUNCTION(can_clk),
- 		SH_PFC_FUNCTION(du),
- 		SH_PFC_FUNCTION(du0),
- 		SH_PFC_FUNCTION(du1),
+ 	armada_37xx_update_reg(&reg, offset);
+ 	mask = BIT(offset);
+ 
+-	return regmap_update_bits(info->regmap, reg, mask, mask);
++	ret = regmap_update_bits(info->regmap, reg, mask, mask);
++
++	if (ret)
++		return ret;
++
++	reg = OUTPUT_VAL;
++	val = value ? mask : 0;
++	regmap_update_bits(info->regmap, reg, mask, val);
++
++	return 0;
+ }
+ 
+ static int armada_37xx_gpio_get(struct gpio_chip *chip, unsigned int offset)
 -- 
-2.7.4
+2.14.2
