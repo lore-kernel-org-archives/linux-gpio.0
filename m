@@ -1,55 +1,55 @@
-From: " M,Shakour Rosarita" <hassanamira04@gmail.com>
-Subject: Hello Dear...
-Date: Wed, 15 Nov 2017 11:34:09 +0000
-Message-ID: <CADmkupiA2objgsQxK=03WmWJhZVp3+F-yDxXOLOm2rgTnpKhzw__714.168328750198$1510745706$gmane$org@mail.gmail.com>
-Reply-To: mshakourrosarita22@gmail.com
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: Fwd: [PATCH 2/4] gpiolib: add bitmask for valid GPIO lines
+Date: Wed, 15 Nov 2017 13:38:39 +0200
+Message-ID: <1510745919.25007.234.camel@linux.intel.com>
+References: <1510096056-13765-3-git-send-email-timur@codeaurora.org>
+         <b2b5374b-17a6-e068-ef8b-edc90d34c352@codeaurora.org>
+         <20171115062837.GA22802@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:45962 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756754AbdKOLeK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Nov 2017 06:34:10 -0500
-Received: by mail-qt0-f196.google.com with SMTP id n32so17378780qtb.2
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Nov 2017 03:34:10 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20171115062837.GA22802@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Varadarajan Narayanan <varada@codeaurora.org>, timur@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Dear...
+On Wed, 2017-11-15 at 11:58 +0530, Varadarajan Narayanan wrote:
 
-I know that this message will come to you as a surprise. I hoped that
-you will not expose or betray this trust and confident that I am about
-to repose on you, my name is M, Shakour Rosarita. I am 19 years old
-Girl, female, from Tartu Syria, (never married) 61 kg, white in
-complexion, and I am currently living in the refugee camp here in
-Abidjan Ivory Coast, My late beloved father M,Shakour Hassin was a
-renowned businessman and owner of Natour Petrol Station in Syria, he
-was killed in a stampede riot in Tartu, Syria.
-When I got the news about my parents. I fled to a nearby country
-Jordan before I joined a ferry to Africa and came to Abidjan capital
-city Ivory Coast West Africa find safety here.
-I came in 2015 to Abidjan and I now live in refugee camps here as
-refugees are allowed freely to enter here without, My late father
-deposited (US$6.200.000.00m) My late father kept the money at the bank
-of Africa, I want you to help me transfer the money to your hand so
-that you will help me bring me into your country for my continue
-education.
+> > +	if (gpiochip->irq_need_valid_mask) {
+> > +		gpiochip->irq_valid_mask =
+> > +			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
+> > +				sizeof(long), GFP_KERNEL);
+> 
+> Since 'irq_valid_mask' is getting filled below wouldn't a kmalloc
+> suffice?
 
-I sent my pictures here for you to see. Who I am seriously looking for
-a good-person in my life, so I want to hear from you soon and learn
-more about you.
+I suppose you meant kmalloc_array.
+Anyway, it's a separate change if you wish, because Timur didn't change
+the original approach here.
 
-I am an open-minded and friendly girl to share a good time with you
-and have fun and enjoy on the go, bird watching, the rest of our
-lives. My Hobbies, tourism books, dance, music, soccer, tennis,
-swimming and cinema.
-I would just think about you, including your dose and doesn=E2=80=99t .I
-believe we will do well together, and live like one family.
-Thank you and God bless you, for you in your promise to help me here,
-looking forward to your reply by the grace of God and have a good day.
-I hope you send me your photos as well? I await your next reply in
-faith please reply through my private email at
-(mshakourrosarita22@gmail.com):
-Thanks.
-Ms Rosarita
+> > +		if (!gpiochip->irq_valid_mask)
+> > +			return -ENOMEM;
+> > 
+
+
+> > +		/* Assume by default all GPIOs are valid */
+> > +		bitmap_fill(gpiochip->irq_valid_mask, gpiochip-
+> > >ngpio);
+> > +	}
+> > 
+
+
+> > +	if (gpiochip->line_need_valid_mask) {
+> > +		gpiochip->line_valid_mask =
+> > +			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
+> > +				sizeof(long), GFP_KERNEL);
+> 
+> Since 'line_valid_mask' is getting filled below wouldn't a kmalloc
+> suffice?
+
+This one just mimics previous, so, see above.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
