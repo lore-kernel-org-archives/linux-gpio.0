@@ -1,104 +1,41 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH] gpio: omap: initialize gpioirq chip as part of gpiochip_add_data
-Date: Wed, 15 Nov 2017 12:36:33 -0600
-Message-ID: <20171115183633.12382-1-grygorii.strashko@ti.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: add R8A77970 PFC support
+Date: Wed, 15 Nov 2017 13:22:24 -0600
+Message-ID: <20171115192224.wse7klcuiqqk4o4m@rob-hp-laptop>
+References: <20171110181552.227541251@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:17154 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933366AbdKOSgw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Nov 2017 13:36:52 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20171110181552.227541251-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Vladimir Barinov <vladimir.barinov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Grygorii Strashko <grygorii.strashko@ti.com>
 
-Hence, series from Thierry Reding [1] merged - the OMAP GPIO driver can be
-switched to reuse new feature and just fill new struct gpio_irq_chip before
-calling gpiochip_add_data() instead of using few separate gpioirq chip
-APIs. gpiochip_add_data() will do the job and create and initialize gpioirq
-chip
+On Fri, Nov 10, 2017 at 08:59:01PM +0300, Sergei Shtylyov wrote:
+> Add the PFC support for the R8A77970 SoC including pin groups for some
+> on-chip devices such as CAN-FD, EtherAVB, [H]SCIF, I2C, INTC-EX, MMC,
+> MSIOF, PWM, VIN...
+> 
+> Based on the original (and large) patch by Daisuke Matsushita
+> <daisuke.matsushita.ns-FCd8Q96Dh0JBDgjK7y7TUQ@public.gmane.org>.
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+> 
+> ---
+>  Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt |    1 
 
-[1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1531592.html
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
-Linus,
-
-This for next, I assume.
-
- drivers/gpio/gpio-omap.c | 32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index ce27d6a..a6fe851 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1054,6 +1054,7 @@ static void omap_gpio_mod_init(struct gpio_bank *bank)
- 
- static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- {
-+	struct gpio_irq_chip *irq;
- 	static int gpio;
- 	int irq_base = 0;
- 	int ret;
-@@ -1081,16 +1082,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 	}
- 	bank->chip.ngpio = bank->width;
- 
--	ret = gpiochip_add_data(&bank->chip, bank);
--	if (ret) {
--		dev_err(bank->chip.parent,
--			"Could not register gpio chip %d\n", ret);
--		return ret;
--	}
--
--	if (!bank->is_mpuio)
--		gpio += bank->width;
--
- #ifdef CONFIG_ARCH_OMAP1
- 	/*
- 	 * REVISIT: Once we have OMAP1 supporting SPARSE_IRQ, we can drop
-@@ -1111,25 +1102,30 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 			irqc->irq_set_wake = NULL;
- 	}
- 
--	ret = gpiochip_irqchip_add(&bank->chip, irqc,
--				   irq_base, handle_bad_irq,
--				   IRQ_TYPE_NONE);
-+	irq = &bank->chip.irq;
-+	irq->chip = irqc;
-+	irq->handler = handle_bad_irq;
-+	irq->default_type = IRQ_TYPE_NONE;
-+	irq->num_parents = 1;
-+	irq->parents = &bank->irq;
-+	irq->first = irq_base;
- 
-+	ret = gpiochip_add_data(&bank->chip, bank);
- 	if (ret) {
- 		dev_err(bank->chip.parent,
--			"Couldn't add irqchip to gpiochip %d\n", ret);
--		gpiochip_remove(&bank->chip);
--		return -ENODEV;
-+			"Could not register gpio chip %d\n", ret);
-+		return ret;
- 	}
- 
--	gpiochip_set_chained_irqchip(&bank->chip, irqc, bank->irq, NULL);
--
- 	ret = devm_request_irq(bank->chip.parent, bank->irq,
- 			       omap_gpio_irq_handler,
- 			       0, dev_name(bank->chip.parent), bank);
- 	if (ret)
- 		gpiochip_remove(&bank->chip);
- 
-+	if (!bank->is_mpuio)
-+		gpio += bank->width;
-+
- 	return ret;
- }
- 
--- 
-2.10.5
-
+>  drivers/pinctrl/sh-pfc/Kconfig                                    |    5 
+>  drivers/pinctrl/sh-pfc/Makefile                                   |    1 
+>  drivers/pinctrl/sh-pfc/core.c                                     |    6 
+>  drivers/pinctrl/sh-pfc/pfc-r8a77970.c                             | 2421 ++++++++++
+>  drivers/pinctrl/sh-pfc/sh_pfc.h                                   |    1 
+>  6 files changed, 2435 insertions(+)
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
