@@ -1,65 +1,65 @@
 From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 0/4] [v7] pinctrl: qcom: add support for sparse GPIOs
-Date: Wed, 15 Nov 2017 09:06:15 -0600
-Message-ID: <8a0fe5e6-b27c-1e23-b9ec-5fc18a0ae27b@codeaurora.org>
-References: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
- <c219c289-9cad-f96c-f766-ec28af8f078d@codeaurora.org>
- <CACRpkdbwe9+TovFYoD-W_9kabe+jsVbN6juJQBUzicq=1XDphg@mail.gmail.com>
- <b8bbba8d-f91f-8e8f-8e79-2e772b48d9b9@codeaurora.org>
- <CACRpkdYT1NDzuEuDU47jC-iXTE8JWxqGnKhJYKp0oGiL1wX7ig@mail.gmail.com>
+Subject: Re: Fwd: [PATCH 4/4] [v3] pinctrl: qcom: qdf2xxx: add support for new
+ ACPI HID QCOM8002
+Date: Wed, 15 Nov 2017 09:14:27 -0600
+Message-ID: <54f0056d-7367-92ad-50dd-bdfdaf5c7b6a@codeaurora.org>
+References: <1510096056-13765-5-git-send-email-timur@codeaurora.org>
+ <133cd447-c5c8-2b3e-1ae2-484307d5e39d@codeaurora.org>
+ <20171115064722.GB22802@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:36148 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757778AbdKOPGS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Nov 2017 10:06:18 -0500
-In-Reply-To: <CACRpkdYT1NDzuEuDU47jC-iXTE8JWxqGnKhJYKp0oGiL1wX7ig@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20171115064722.GB22802@codeaurora.org>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Varadarajan Narayanan <varada@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Varadarajan Narayanan <varada@codeaurora.org>, Neil Armstrong <narmstrong@baylibre.com>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 
-On 11/14/2017 04:03 AM, Linus Walleij wrote:
-> The more intrusive design is on my request so I will look at it in detail
-> ASAP. I took a quick look and liked what I saw, I just need to make
-> sure about the details. Also it'd be nice to have a nod from Björn.
+On 11/15/2017 12:47 AM, Varadarajan Narayanan wrote:
+>> +	if (id->driver_data == QDF2XXX_V1) {
+>> +		avail_gpios = num_gpios;
+>> +
+>> +		gpios = devm_kcalloc(&pdev->dev, avail_gpios, sizeof(gpios[0]),
+>> +				     GFP_KERNEL);
+> Wouldn't kmalloc suffice since the array gets initialized just below.
+
+Sure.
+
+>> +		if (!gpios)
+>> +			return -ENOMEM;
+>> +
+>> +		for (i = 0; i < avail_gpios; i++)
+>> +			gpios[i] = i;
+>> +	} else {
+>> +		/* The number of GPIOs in the approved list */
+>> +		ret = device_property_read_u16_array(&pdev->dev, "gpios",
+>> +						     NULL, 0);
+>> +		if (ret < 0) {
+>> +			dev_err(&pdev->dev, "missing 'num-gpios' property\n");
+>> +			return ret;
+>> +		}
+>> +		if (!ret || ret > MAX_GPIOS) {
+> Instead of ret > MAX_GPIOS, should we check for ret > num_gpios?
+
+Yes.
+
 > 
-> The main reason for some of the work is ACPI, am I right?
+>> +			dev_err(&pdev->dev, "invalid 'num-gpios' property\n");
+>> +			return -ENODEV;
+>> +		}
+> In both the above error messages 'num-gpios' should be 'gpios'
 
-Yes.  We don't have a nice hierarchical tree that lists the individual 
-pins and their purposes.  We just have a dumb list of GPIOs.
+Thanks, I not sure how that got messed up.
 
-> Timur could you look quickly at the series posted by Andy Shevchenko
-> (6 patches prefixed gpiolib: acpi: ) for augmenting ACPI GPIOs in the core?
-> Especially patch 5 and 6 which introduce the ability to add quirks in the
-> core.
+> 
+>> +		avail_gpios = ret;
+>> +
+>> +		gpios = devm_kcalloc(&pdev->dev, avail_gpios, sizeof(gpios[0]),
+>> +				     GFP_KERNEL);
+> devm_kmalloc?
 
-So this is something that I've never really understood with 
-gpiolib-acpi.  I don't think this file is used with the pin control driver.
-
-We do have GpioInt and GpioIo statements in our GPIO table, but they 
-don't appear to be using the TLMM (our GPIO / pin control device)
-
-For example:
-
-GpioInt(Level, ActiveHigh, Exclusive, PullNone, , "\\_SB.TCS0.QIC5") {10}
-
-The \\_SB.TCS0 device is NOT the TLMM.  It's our "irq combiner" which 
-has something to do with performance measurement.  I think the
-
-I don't think Andy's patch set has anything to do with my patches.  My 
-patches just try to register a GPIO device, whereas the gpiolib-acpi 
-patches are about ACPI nodes performing gpio-like operations.
-
-
-> I'd like to get some ARM-based people to look at it to make sure we
-> those systems can also quirk their GPIOs if need be.
-
-My patches aren't about a quirk.  All I'm trying to do is registers 
-specific GPIOs rather than one giant block of them.
+Ok.
 
 -- 
 Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
