@@ -1,45 +1,104 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7794: Add can_clk function
-Date: Wed, 15 Nov 2017 17:19:56 +0100
-Message-ID: <CAMuHMdX4gT7GxLh2jqBdMakYAcxvN_z1J0Puf2966Kfg5ym4hA@mail.gmail.com>
-References: <1510674077-31136-1-git-send-email-fabrizio.castro@bp.renesas.com> <1510674077-31136-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH] gpio: omap: initialize gpioirq chip as part of gpiochip_add_data
+Date: Wed, 15 Nov 2017 12:36:33 -0600
+Message-ID: <20171115183633.12382-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1510674077-31136-2-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:17154 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933366AbdKOSgw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Nov 2017 13:36:52 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Grygorii Strashko <grygorii.strashko@ti.com>
 
-Hi Fabrizio,
+Hence, series from Thierry Reding [1] merged - the OMAP GPIO driver can be
+switched to reuse new feature and just fill new struct gpio_irq_chip before
+calling gpiochip_add_data() instead of using few separate gpioirq chip
+APIs. gpiochip_add_data() will do the job and create and initialize gpioirq
+chip
 
-On Tue, Nov 14, 2017 at 4:41 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch adds can_clk function to r8a7745/r8a7794 which is cleaner,
-> and allows for independent configuration.
-> We keep the can_clk* pins definitions from within can0_groups and
-> can1_groups for uniformity and backwards compatibility.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> ---
-> v1->v2
-> * Retained can_clk* pins inside can[01]_groups
-> * Added comments
+[1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1531592.html
 
-Thanks for the update!
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+Linus,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.16.
+This for next, I assume.
 
-Gr{oetje,eeting}s,
+ drivers/gpio/gpio-omap.c | 32 ++++++++++++++------------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
 
-                        Geert
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index ce27d6a..a6fe851 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1054,6 +1054,7 @@ static void omap_gpio_mod_init(struct gpio_bank *bank)
+ 
+ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ {
++	struct gpio_irq_chip *irq;
+ 	static int gpio;
+ 	int irq_base = 0;
+ 	int ret;
+@@ -1081,16 +1082,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 	}
+ 	bank->chip.ngpio = bank->width;
+ 
+-	ret = gpiochip_add_data(&bank->chip, bank);
+-	if (ret) {
+-		dev_err(bank->chip.parent,
+-			"Could not register gpio chip %d\n", ret);
+-		return ret;
+-	}
+-
+-	if (!bank->is_mpuio)
+-		gpio += bank->width;
+-
+ #ifdef CONFIG_ARCH_OMAP1
+ 	/*
+ 	 * REVISIT: Once we have OMAP1 supporting SPARSE_IRQ, we can drop
+@@ -1111,25 +1102,30 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 			irqc->irq_set_wake = NULL;
+ 	}
+ 
+-	ret = gpiochip_irqchip_add(&bank->chip, irqc,
+-				   irq_base, handle_bad_irq,
+-				   IRQ_TYPE_NONE);
++	irq = &bank->chip.irq;
++	irq->chip = irqc;
++	irq->handler = handle_bad_irq;
++	irq->default_type = IRQ_TYPE_NONE;
++	irq->num_parents = 1;
++	irq->parents = &bank->irq;
++	irq->first = irq_base;
+ 
++	ret = gpiochip_add_data(&bank->chip, bank);
+ 	if (ret) {
+ 		dev_err(bank->chip.parent,
+-			"Couldn't add irqchip to gpiochip %d\n", ret);
+-		gpiochip_remove(&bank->chip);
+-		return -ENODEV;
++			"Could not register gpio chip %d\n", ret);
++		return ret;
+ 	}
+ 
+-	gpiochip_set_chained_irqchip(&bank->chip, irqc, bank->irq, NULL);
+-
+ 	ret = devm_request_irq(bank->chip.parent, bank->irq,
+ 			       omap_gpio_irq_handler,
+ 			       0, dev_name(bank->chip.parent), bank);
+ 	if (ret)
+ 		gpiochip_remove(&bank->chip);
+ 
++	if (!bank->is_mpuio)
++		gpio += bank->width;
++
+ 	return ret;
+ }
+ 
+-- 
+2.10.5
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
