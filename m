@@ -1,67 +1,155 @@
-From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
-Subject: RE: [PATCH v6 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
- region driver
-Date: Wed, 15 Nov 2017 03:08:26 +0000
-Message-ID: <6F87890CF0F5204F892DEA1EF0D77A5972FD33B0@FMSMSX114.amr.corp.intel.com>
-References: <1501288226-27469-1-git-send-email-rajmohan.mani@intel.com>
- <20170814203900.qobophvzcrdtv34s@kekkonen.localdomain>
- <20171002165402.5ypqveemuz2ziuiq@valkosipuli.retiisi.org.uk>
- <1897738.1BtWKn31FQ@aspire.rjw.lan>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+Subject: Re: Fwd: [PATCH 2/4] gpiolib: add bitmask for valid GPIO lines
+Date: Wed, 15 Nov 2017 11:58:38 +0530
+Message-ID: <20171115062837.GA22802@codeaurora.org>
+References: <1510096056-13765-3-git-send-email-timur@codeaurora.org>
+ <b2b5374b-17a6-e068-ef8b-edc90d34c352@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1897738.1BtWKn31FQ@aspire.rjw.lan>
-Content-Language: en-US
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Sakari Ailus <sakari.ailus@iki.fi>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Len Brown <lenb@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:33616 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752362AbdKOG2q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Nov 2017 01:28:46 -0500
+Content-Disposition: inline
+In-Reply-To: <b2b5374b-17a6-e068-ef8b-edc90d34c352@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: timur@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Hi Rafael,
+Timur,
 
-> -----Original Message-----
-> From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
-> Sent: Tuesday, October 03, 2017 4:44 AM
-> To: Sakari Ailus <sakari.ailus@iki.fi>
-> Cc: Mani, Rajmohan <rajmohan.mani@intel.com>; linux-
-> kernel@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
-> acpi@vger.kernel.org; Lee Jones <lee.jones@linaro.org>; Linus Walleij
-> <linus.walleij@linaro.org>; Alexandre Courbot <gnurou@gmail.com>; Len
-> Brown <lenb@kernel.org>; Andy Shevchenko <andy.shevchenko@gmail.com>
-> Subject: Re: [PATCH v6 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
-> region driver
-> 
-> On Monday, October 2, 2017 6:54:03 PM CEST Sakari Ailus wrote:
-> > Hi Rafael,
-> >
-> > On Mon, Aug 14, 2017 at 11:39:00PM +0300, Sakari Ailus wrote:
-> > > On Fri, Jul 28, 2017 at 05:30:26PM -0700, Rajmohan Mani wrote:
-> > > > The Kabylake platform coreboot (Chrome OS equivalent of
-> > > > BIOS) has defined 4 operation regions for the TI TPS68470 PMIC.
-> > > > These operation regions are to enable/disable voltage regulators,
-> > > > configure voltage regulators, enable/disable clocks and to
-> > > > configure clocks.
-> > > >
-> > > > This config adds ACPI operation region support for TI TPS68470 PMIC.
-> > > > TPS68470 device is an advanced power management unit that powers a
-> > > > Compact Camera Module (CCM), generates clocks for image sensors,
-> > > > drives a dual LED for flash and incorporates two LED drivers for
-> > > > general purpose indicators.
-> > > > This driver enables ACPI operation region support to control
-> > > > voltage regulators and clocks for the TPS68470 PMIC.
-> > > >
-> > > > Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
-> > >
-> > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> >
-> > The other two patches from the set are in v4.14-rc1.
-> 
-> Thanks!
-> 
-> I'll queue it up for 4.15 then.
-> 
+> Add support for specifying that some GPIOs within a range are unavailable.
+> Some systems have a sparse list of GPIOs, where a range of GPIOs is
+> specified (usually 0 to n-1), but some subset within that range is
+> absent or unavailable for whatever reason.
+>
+> To support this, allow drivers to specify a bitmask of GPIOs that
+> are present or absent.  Gpiolib will then block access to those that
+> are absent.
+>
+> Signed-off-by: Timur Tabi <timur@codeaurora.org>
+> ---
+>  drivers/gpio/gpiolib.c      | 43 +++++++++++++++++++++++++++++++++++--------
+>  include/linux/gpio/driver.h |  2 ++
+>  2 files changed, 37 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 60553af4c004..c32387936cdd 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1481,22 +1481,36 @@ static struct gpio_chip *find_chip_by_name(const char *name)
+>
+>  static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
+>  {
+> -	if (!gpiochip->irq_need_valid_mask)
+> -		return 0;
+> +	if (gpiochip->irq_need_valid_mask) {
+> +		gpiochip->irq_valid_mask =
+> +			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
+> +				sizeof(long), GFP_KERNEL);
 
-Thanks. This patch has landed in mainline kernel couple of days ago.
+Since 'irq_valid_mask' is getting filled below wouldn't a kmalloc suffice?
 
-Raj
+> +		if (!gpiochip->irq_valid_mask)
+> +			return -ENOMEM;
+>
+> -	gpiochip->irq_valid_mask = kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
+> -					   sizeof(long), GFP_KERNEL);
+> -	if (!gpiochip->irq_valid_mask)
+> -		return -ENOMEM;
+> +		/* Assume by default all GPIOs are valid */
+> +		bitmap_fill(gpiochip->irq_valid_mask, gpiochip->ngpio);
+> +	}
+>
+> -	/* Assume by default all GPIOs are valid */
+> -	bitmap_fill(gpiochip->irq_valid_mask, gpiochip->ngpio);
+> +	if (gpiochip->line_need_valid_mask) {
+> +		gpiochip->line_valid_mask =
+> +			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
+> +				sizeof(long), GFP_KERNEL);
+
+Since 'line_valid_mask' is getting filled below wouldn't a kmalloc suffice?
+
+Thanks
+Varada
+
+> +		if (!gpiochip->line_valid_mask)
+> +			return -ENOMEM;
+> +
+> +		/* Assume by default all GPIOs are valid */
+> +		bitmap_fill(gpiochip->line_valid_mask, gpiochip->ngpio);
+> +	}
+>
+>  	return 0;
+>  }
+>
+>  static void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip)
+>  {
+> +	kfree(gpiochip->line_valid_mask);
+> +	gpiochip->line_valid_mask = NULL;
+> +
+>  	kfree(gpiochip->irq_valid_mask);
+>  	gpiochip->irq_valid_mask = NULL;
+>  }
+> @@ -1510,6 +1524,15 @@ static bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gpiochip,
+>  	return test_bit(offset, gpiochip->irq_valid_mask);
+>  }
+>
+> +static bool gpiochip_irqchip_line_valid(const struct gpio_chip *gpiochip,
+> +					unsigned int offset)
+> +{
+> +	/* No mask means all valid */
+> +	if (likely(!gpiochip->line_valid_mask))
+> +		return true;
+> +	return test_bit(offset, gpiochip->line_valid_mask);
+> +}
+> +
+>  /**
+>   * gpiochip_set_cascaded_irqchip() - connects a cascaded irqchip to a gpiochip
+>   * @gpiochip: the gpiochip to set the irqchip chain to
+> @@ -3320,6 +3343,10 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+>  		return desc;
+>  	}
+>
+> +	/* Make sure the GPIO is valid before we request it. */
+> +	if (!gpiochip_irqchip_line_valid(desc->gdev->chip, idx))
+> +		return ERR_PTR(-EACCES);
+> +
+>  	status = gpiod_request(desc, con_id);
+>  	if (status < 0)
+>  		return ERR_PTR(status);
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index 424e5139ff10..853828ccabc8 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -173,6 +173,8 @@ struct gpio_chip {
+>  	bool			irq_nested;
+>  	bool			irq_need_valid_mask;
+>  	unsigned long		*irq_valid_mask;
+> +	bool			line_need_valid_mask;
+> +	unsigned long		*line_valid_mask;
+>  	struct lock_class_key	*lock_key;
+>  #endif
+>
+> --
+> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+> Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+> Code Aurora Forum, a Linux Foundation Collaborative Project.
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+> --
+> "QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+>
+> ---
+> This email has been checked for viruses by Avast antivirus software.
+> https://www.avast.com/antivirus
+>
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
