@@ -1,51 +1,50 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: intel-gpio interrupts stop firing with Focaltech I2C-HID touchpad
-Date: Fri, 17 Nov 2017 13:00:57 +0200
-Message-ID: <20171117110057.GD17200@lahna.fi.intel.com>
-References: <CAD8Lp47LZs6qbd00CDeX4s-eQkqf1dGO9VaFXuCaReQ2yE73Og@mail.gmail.com>
- <20171116115244.GQ17200@lahna.fi.intel.com>
- <CAD8Lp46fz-80hsOY1b4BFSHrr15Pk8nhYbaFh7MA0hquVSSc4g@mail.gmail.com>
- <20171116130743.GT17200@lahna.fi.intel.com>
- <CAB4CAwcqxBJNnaS9q7S7dy_1GoR5m1VHY89y+8g-G7rXBBJ1hg@mail.gmail.com>
- <20171117091134.GB17200@lahna.fi.intel.com>
- <CAB4CAwdsAXqb-2KQr3s1Z6UBJoBXwrks41qY5S8va=zz3UQ1hA@mail.gmail.com>
- <CAB4CAwfGsjtfZxHVvdyEAooqqK0whJS0MFZSsbm8+E0fi=hJyg@mail.gmail.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 1/4] documentation: Add compatibles for Amlogic Meson AXG
+ pin controllers
+Date: Fri, 17 Nov 2017 14:16:24 +0100
+Message-ID: <f1659ac3-84d7-f8a0-7335-a8f9ce351d79@baylibre.com>
+References: <20171108064711.32376-1-yixun.lan@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:48484 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753151AbdKQLBJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 17 Nov 2017 06:01:09 -0500
-Content-Disposition: inline
-In-Reply-To: <CAB4CAwfGsjtfZxHVvdyEAooqqK0whJS0MFZSsbm8+E0fi=hJyg@mail.gmail.com>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36114 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933637AbdKQNQ1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Nov 2017 08:16:27 -0500
+Received: by mail-wm0-f67.google.com with SMTP id r68so6425674wmr.1
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Nov 2017 05:16:26 -0800 (PST)
+In-Reply-To: <20171108064711.32376-1-yixun.lan@amlogic.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Chiu <chiu@endlessm.com>
-Cc: Daniel Drake <drake@endlessm.com>, heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Endless Linux Upstreaming Team <linux@endlessm.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 17, 2017 at 06:01:27PM +0800, Chris Chiu wrote:
-> Hi Mika,
->     Here's the full dmesg log you need. The touchpad stop reporting at
-> the last of the log.
-> https://gist.github.com/mschiu77/a0b8d24a586a228c55eca30c87c71d41
+On 08/11/2017 07:47, Yixun Lan wrote:
+> From: Xingyu Chen <xingyu.chen@amlogic.com>
+> 
+> Add compatibles for Amlogic Meson AXG pin controllers
+> 
+> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+> index 2392557ede27..2c12f9789116 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+> @@ -9,6 +9,8 @@ Required properties for the root node:
+>  		      "amlogic,meson-gxbb-aobus-pinctrl"
+>  		      "amlogic,meson-gxl-periphs-pinctrl"
+>  		      "amlogic,meson-gxl-aobus-pinctrl"
+> +		      "amlogic,meson-axg-periphs-pinctrl"
+> +		      "amlogic,meson-axg-aobus-pinctrl"
+>   - reg: address and size of registers controlling irq functionality
+>  
+>  === GPIO sub-nodes ===
+> 
 
-Thanks!
-
-I did not spot anything suspicious in the i2c-hid initialization. When
-the issue happens, can you check what the pin state is and if it changes
-when you use the touchpad? If I read your ACPI tables right, something
-like this:
-
-  # grep GPIO_18 /sys/kernel/debug/pinctrl/INT3452:00/pins
-
-(it could be another INT3452:* device as well).
-
-The GPIO line should be high and when the touchpad is pressed it should
-go low.
-
-Then another thing, if you unload i2c-hid and load it back, does it
-start working again?
-
-  # modprobe -r i2c-hid
-  # modprobe i2c-hid
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
