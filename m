@@ -1,39 +1,51 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 3/4] [v6] pinctrl: qcom: disable GPIO groups with no pins
-Date: Thu, 16 Nov 2017 20:58:57 -0600
-Message-ID: <dff45d26-e9df-6a4f-00a9-7d9ec5cbdf49@codeaurora.org>
-References: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
- <1510096056-13765-4-git-send-email-timur@codeaurora.org>
- <20171117024332.GU11955@codeaurora.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over
+ suspend/resume
+Date: Fri, 17 Nov 2017 08:49:04 +0200
+Message-ID: <20171117064904.GZ17200@lahna.fi.intel.com>
+References: <20171114104136.25595-1-chiu@endlessm.com>
+ <20171115080446.GY17200@lahna.fi.intel.com>
+ <018180A5-B0D2-418E-9DBC-EF5F310F7295@endlessm.com>
+ <20171115101302.GA17200@lahna.fi.intel.com>
+ <CAB4CAwc-SFtw4+74Qe-vX57JRGDjJMt9xM2+ev3OiipzwxBPBw@mail.gmail.com>
+ <20171116124431.GS17200@lahna.fi.intel.com>
+ <CAB4CAwfHx8DgCYk0piVnrTa7YP2=6A8Le4ekoENFPyNVF9g1rw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:44560 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756126AbdKQC7E (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Nov 2017 21:59:04 -0500
-In-Reply-To: <20171117024332.GU11955@codeaurora.org>
-Content-Language: en-US
+Received: from mga07.intel.com ([134.134.136.100]:38437 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757044AbdKQGzk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 17 Nov 2017 01:55:40 -0500
+Content-Disposition: inline
+In-Reply-To: <CAB4CAwfHx8DgCYk0piVnrTa7YP2=6A8Le4ekoENFPyNVF9g1rw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Chris Chiu <chiu@endlessm.com>
+Cc: heikki.krogerus@linux.intel.com, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Linux Upstreaming Team <linux@endlessm.com>
 
-On 11/16/17 8:43 PM, Stephen Boyd wrote:
->> Most access to unavailable GPIOs can be blocked via the gpio_chip.request
->> function.  The one exception is when gpiochip_add_data() scans all of
+On Thu, Nov 16, 2017 at 09:27:51PM +0800, Chris Chiu wrote:
+> On Thu, Nov 16, 2017 at 8:44 PM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > On Wed, Nov 15, 2017 at 06:19:56PM +0800, Chris Chiu wrote:
+> >> Hi Mika,
+> >>     I've confirmed with Asus and they said it's the latest BIOS for
+> >> shipment and verified OK on Windows. So their BIOS team will not do
+> >> anything for this.
+> >
+> > I'll ask around if our Windows people know anything about this. My gut
+> > feeling is that the Windows driver does not touch HOSTSW_OWN either.
+> 
+> Thanks. Please let me know if you need any information. I still keep
+> the machine.
 
-> If patch 1 is applied is this statement still true?
+Got confirmation from Windows people. So Windows pretty much saves and
+restores the same registers than we do (padcfg + ie).
 
-Nope.
+Have you tried whether s2idle works instead of S3 suspend? You can try
+it like
 
->> the GPIOs without "requesting" them.  To cover this case,
-> s/GPIOs/GPIOs for their direction/ perhaps?
+  # echo freeze > /sys/power/state
 
-Ok.
-
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+If that works, I'm guessing that this system uses s2idle and that's also
+what Windows uses and could explain why it works in Windows.
