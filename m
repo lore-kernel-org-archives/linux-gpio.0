@@ -1,54 +1,51 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] gpio: pca953x: fix vendor prefix for PCA9654
-Date: Fri, 17 Nov 2017 13:47:04 +0300
-Message-ID: <7232ae40-189b-9ec5-87ef-7933e161422f@cogentembedded.com>
-References: <20171116201842.006310882@cogentembedded.com>
- <CAMuHMdVAD5saFjnkMViTeCm2vDYfEraq9DdHqNLet3YHjo0UeQ@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: intel-gpio interrupts stop firing with Focaltech I2C-HID touchpad
+Date: Fri, 17 Nov 2017 13:00:57 +0200
+Message-ID: <20171117110057.GD17200@lahna.fi.intel.com>
+References: <CAD8Lp47LZs6qbd00CDeX4s-eQkqf1dGO9VaFXuCaReQ2yE73Og@mail.gmail.com>
+ <20171116115244.GQ17200@lahna.fi.intel.com>
+ <CAD8Lp46fz-80hsOY1b4BFSHrr15Pk8nhYbaFh7MA0hquVSSc4g@mail.gmail.com>
+ <20171116130743.GT17200@lahna.fi.intel.com>
+ <CAB4CAwcqxBJNnaS9q7S7dy_1GoR5m1VHY89y+8g-G7rXBBJ1hg@mail.gmail.com>
+ <20171117091134.GB17200@lahna.fi.intel.com>
+ <CAB4CAwdsAXqb-2KQr3s1Z6UBJoBXwrks41qY5S8va=zz3UQ1hA@mail.gmail.com>
+ <CAB4CAwfGsjtfZxHVvdyEAooqqK0whJS0MFZSsbm8+E0fi=hJyg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37389 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751268AbdKQKrH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Nov 2017 05:47:07 -0500
-Received: by mail-lf0-f68.google.com with SMTP id y2so1268792lfj.4
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Nov 2017 02:47:07 -0800 (PST)
-In-Reply-To: <CAMuHMdVAD5saFjnkMViTeCm2vDYfEraq9DdHqNLet3YHjo0UeQ@mail.gmail.com>
-Content-Language: en-US
+Received: from mga07.intel.com ([134.134.136.100]:48484 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753151AbdKQLBJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 17 Nov 2017 06:01:09 -0500
+Content-Disposition: inline
+In-Reply-To: <CAB4CAwfGsjtfZxHVvdyEAooqqK0whJS0MFZSsbm8+E0fi=hJyg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: Chris Chiu <chiu@endlessm.com>
+Cc: Daniel Drake <drake@endlessm.com>, heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Endless Linux Upstreaming Team <linux@endlessm.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-On 11/17/2017 12:06 PM, Geert Uytterhoeven wrote:
+On Fri, Nov 17, 2017 at 06:01:27PM +0800, Chris Chiu wrote:
+> Hi Mika,
+>     Here's the full dmesg log you need. The touchpad stop reporting at
+> the last of the log.
+> https://gist.github.com/mschiu77/a0b8d24a586a228c55eca30c87c71d41
 
->> Despite commit 55020c8056a8 ("of: Add vendor prefix for ON Semiconductor
->> Corp.") was made long ago, the latter commit 9f49f6dd0473 ("gpio: pca953x:
->> add onsemi,pca9654 id") made use of another, undocumented vendor prefix.
-> 
-> Ouch...
-> 
->> Since such prefix doesn't seem to be used in any device trees, I think we
->> can just fix the "compatible" string in the driver and the bindings and be
->> done with that...
->>
->> Fixes: 9f49f6dd0473 ("gpio: pca953x: add onsemi,pca9654 id")
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>
->> ---
->> The patch is against the 'fixes' branch of LinusW's 'linux-gpio.git' repo.
->>
->>   Documentation/devicetree/bindings/gpio/gpio-pca953x.txt |    2 +-
->>   drivers/gpio/gpio-pca953x.c                             |    2 +-
-> 
-> There's another (different) one in
-> Documentation/devicetree/bindings/misc/idt_89hpesx.txt
+Thanks!
 
-    Saw that. Do you think it also should be fixed (in this patch)?
+I did not spot anything suspicious in the i2c-hid initialization. When
+the issue happens, can you check what the pin state is and if it changes
+when you use the touchpad? If I read your ACPI tables right, something
+like this:
 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
+  # grep GPIO_18 /sys/kernel/debug/pinctrl/INT3452:00/pins
 
-MBR, Sergei
+(it could be another INT3452:* device as well).
+
+The GPIO line should be high and when the touchpad is pressed it should
+go low.
+
+Then another thing, if you unload i2c-hid and load it back, does it
+start working again?
+
+  # modprobe -r i2c-hid
+  # modprobe i2c-hid
