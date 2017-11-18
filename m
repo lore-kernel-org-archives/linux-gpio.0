@@ -1,44 +1,37 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 3/4] [v6] pinctrl: qcom: disable GPIO groups with no pins
-Date: Fri, 17 Nov 2017 15:44:47 -0600
-Message-ID: <393b4ba0-237f-5108-b20c-f4e55052e82d@codeaurora.org>
-References: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
- <1510096056-13765-4-git-send-email-timur@codeaurora.org>
- <20171117024332.GU11955@codeaurora.org>
- <dff45d26-e9df-6a4f-00a9-7d9ec5cbdf49@codeaurora.org>
- <20171117174617.GA29777@codeaurora.org>
- <2671cc63-6c8b-987d-ceb3-bd158bb9d1c3@codeaurora.org>
- <20171117214207.GA18379@codeaurora.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v1 1/6] gpiolib: acpi: Assign polarity when call acpi_populate_gpio_lookup()
+Date: Sat, 18 Nov 2017 15:55:50 +0100
+Message-ID: <3386279.Ob0QzBfdKF@aspire.rjw.lan>
+References: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20171117214207.GA18379@codeaurora.org>
-Content-Language: en-US
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 11/17/2017 03:42 PM, Stephen Boyd wrote:
->> Patch 1 prevents gpiolib from accessing GPIOs that haven't been
->> properly requested.
->>
->> Patch 2 adds an infrastructure for sparse GPIO maps
->>
->> Patch 3 updates pinctrl-msm to use that expose that new infrastructure
->>
->> Patch 4 updates pinctrl-qdf2xxx to work with the new feature in pinctrl-msm
->>
-> Ok. What path doesn't request the gpio though? If we don't have a
-> path that fails to request the gpio before using it then I don't
-> see the need for this patch.
+On Friday, November 10, 2017 2:40:28 PM CET Andy Shevchenko wrote:
+> There is no need, since we preserve firmware settings, to override
+> polarity for GpioInt() resources.
+> 
+> While Documentation/gpio-properties.txt refers to any from GpioIo() /
+> GpioInt() resources, the active_low flag has been introduced to fill the
+> gap only for GpioIo() which lacks of that information.
+> 
+> Moreover, in case of GpioInt() existed solution was broken anyway, it
+> overrides only in one direction, i.e. from 0 to 1, otherwise it would be
+> still 1 as defined in the resource macro.
+> 
+> So, move the assignment to a right place and forbid to (semi-)override
+> polarity for GpioInt() type of resources.
 
-Sorry, I don't understand your question.  Patches 2-4 are all about 
-creating a sparse GPIO map.  All patch 1 does is stop initializing all 
-the GPIOs with an initial direction.
+I'm assuming that this series is targeted at the GPIO subsystem.
 
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Please let me know if that's not the case.
+
+Thanks,
+Rafael
+
