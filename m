@@ -1,68 +1,128 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: intel-gpio interrupts stop firing with Focaltech I2C-HID touchpad
-Date: Mon, 20 Nov 2017 12:32:07 +0200
-Message-ID: <20171120103207.GB22431@lahna.fi.intel.com>
-References: <20171116130743.GT17200@lahna.fi.intel.com>
- <CAB4CAwcqxBJNnaS9q7S7dy_1GoR5m1VHY89y+8g-G7rXBBJ1hg@mail.gmail.com>
- <20171117091134.GB17200@lahna.fi.intel.com>
- <CAB4CAwdsAXqb-2KQr3s1Z6UBJoBXwrks41qY5S8va=zz3UQ1hA@mail.gmail.com>
- <CAB4CAwfGsjtfZxHVvdyEAooqqK0whJS0MFZSsbm8+E0fi=hJyg@mail.gmail.com>
- <20171117110057.GD17200@lahna.fi.intel.com>
- <CAB4CAwcELV0LWeeBCP9MYt0i=W2sy_Cspwm2vD3K8az+hApQ3g@mail.gmail.com>
- <20171117133518.GF17200@lahna.fi.intel.com>
- <20171117135225.GG17200@lahna.fi.intel.com>
- <CAB4CAweOMHG6M0Bg_oXOVo0XuiKcvQgxO=h6qbdg4ZoskoJS9w@mail.gmail.com>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: [v5 RESEND 00/17] Add support for Cirrus Logic CS47L35/L85/L90/L91 codecs
+Date: Mon, 20 Nov 2017 14:10:34 +0000
+Message-ID: <20171120141051.29467-1-rf@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAB4CAweOMHG6M0Bg_oXOVo0XuiKcvQgxO=h6qbdg4ZoskoJS9w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Chiu <chiu@endlessm.com>
-Cc: Daniel Drake <drake@endlessm.com>, heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Endless Linux Upstreaming Team <linux@endlessm.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:53444 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751181AbdKTOLL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 20 Nov 2017 09:11:11 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net
+Cc: alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Fitzgerald <rf@opensource.cirrus.com>
 
-On Mon, Nov 20, 2017 at 01:18:51PM +0800, Chris Chiu wrote:
-> On Fri, Nov 17, 2017 at 9:52 PM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > On Fri, Nov 17, 2017 at 03:35:18PM +0200, Mika Westerberg wrote:
-> >> > pin 18 (GPIO_18) GPIO 0x40900100 0x00024075
-> >
-> > Hmm,
-> >
-> > If I decode 0x40900100 correctly PADCFG0_GPIROUTIOXAPIC (BIT 20) flag is
-> > set for the pin. This means the interrupt is routed to IO-APIC instead.
-> >
-> > Now, we do clear that flag along with the others when the GPIO is
-> > requested through gpio_request() but in this case we go through irqchip
-> > instead so the flag is not cleared.
-> >
-> > I wonder if the following patch changes anything?
-> >
-> > diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> > index 71df0f70b61f..06af096f5768 100644
-> > --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> > +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> > @@ -939,6 +939,10 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned type)
-> >
-> >         value &= ~(PADCFG0_RXEVCFG_MASK | PADCFG0_RXINV);
-> >
-> > +       /* Disable SCI/SMI/NMI generation */
-> > +       value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
-> > +       value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
-> > +
-> >         if ((type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH) {
-> >                 value |= PADCFG0_RXEVCFG_EDGE_BOTH << PADCFG0_RXEVCFG_SHIFT;
-> >         } else if (type & IRQ_TYPE_EDGE_FALLING) {
-> 
-> It does change after the patch. I didn't have the touchpad stopping
-> things after a long time test.
-> The INT3452:00/pins under /sys/kernel/debug/pinctrl shows the
-> following for GPIO 18.
-> pin 18 (GPIO_18) GPIO 0x40800102 0x00024075
+Patches still waiting for review/ack:
+#8 regulator
+#9 irqchip
+#14-17 ASoC
 
-Great, thanks for testing!
+Summary of changes since V4:
+- Fixed review comments on MFD code
+- Fixed dependency error in core codec driver
+- minor bugfix to core codec driver
 
-> Anything else you need from me?
+Richard Fitzgerald (17):
+  mfd: madera: Add register definitions for Cirrus Logic Madera codecs
+  mfd: madera: Add DT bindings for Cirrus Logic Madera codecs
+  mfd: madera: Add common support for Cirrus Logic Madera codecs
+  mfd: madera: Register map tables for Cirrus Logic CS47L35
+  mfd: madera: Register map tables for Cirrus Logic CS47L85
+  mfd: madera: Register map tables for Cirrus Logic CS47L90/91
+  regulator: arizona-micsupp: Add support for Cirrus Logic Madera codecs
+  regulator: arizona-ldo1: Add support for Cirrus Logic Madera codecs
+  irqchip: Add driver for Cirrus Logic Madera codecs
+  pinctrl: madera: Add DT bindings for Cirrus Logic Madera codecs
+  pinctrl: madera: Add driver for Cirrus Logic Madera codecs
+  gpio: madera: Support Cirrus Logic Madera class codecs
+  ASoC: madera: Add DT bindings for Cirrus Logic Madera codecs
+  ASoC: madera: Add common support for Cirrus Logic Madera codecs
+  ASoC: cs47l35: Add codec driver for Cirrus Logic CS47L35
+  ASoC: cs47l85: Add codec driver for Cirrus Logic CS47L85
+  ASoC: cs47l90: Add codec driver for Cirrus Logic CS47L90
 
-Nope, I'll make a proper patch and send it out this week.
+ Documentation/devicetree/bindings/mfd/madera.txt   |  102 +
+ .../bindings/pinctrl/cirrus,madera-pinctrl.txt     |   99 +
+ .../bindings/regulator/arizona-regulator.txt       |    3 +-
+ Documentation/devicetree/bindings/sound/madera.txt |   67 +
+ MAINTAINERS                                        |   23 +
+ drivers/gpio/Kconfig                               |    6 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-madera.c                         |  196 +
+ drivers/irqchip/Kconfig                            |    3 +
+ drivers/irqchip/Makefile                           |    1 +
+ drivers/irqchip/irq-madera.c                       |  301 ++
+ drivers/mfd/Kconfig                                |   48 +
+ drivers/mfd/Makefile                               |   13 +
+ drivers/mfd/cs47l35-tables.c                       | 1610 +++++++
+ drivers/mfd/cs47l85-tables.c                       | 3010 +++++++++++++
+ drivers/mfd/cs47l90-tables.c                       | 2675 ++++++++++++
+ drivers/mfd/madera-core.c                          |  599 +++
+ drivers/mfd/madera-i2c.c                           |  139 +
+ drivers/mfd/madera-spi.c                           |  138 +
+ drivers/mfd/madera.h                               |   44 +
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/cirrus/Kconfig                     |   15 +
+ drivers/pinctrl/cirrus/Makefile                    |   11 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l35.c           |   46 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l85.c           |   60 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l90.c           |   58 +
+ drivers/pinctrl/cirrus/pinctrl-madera.c            | 1074 +++++
+ drivers/pinctrl/cirrus/pinctrl-madera.h            |   40 +
+ drivers/regulator/Kconfig                          |   15 +-
+ drivers/regulator/arizona-ldo1.c                   |   82 +-
+ drivers/regulator/arizona-micsupp.c                |   71 +-
+ include/dt-bindings/sound/madera.h                 |   27 +
+ include/linux/irqchip/irq-madera-pdata.h           |   23 +
+ include/linux/irqchip/irq-madera.h                 |   98 +
+ include/linux/mfd/madera/core.h                    |  196 +
+ include/linux/mfd/madera/pdata.h                   |   61 +
+ include/linux/mfd/madera/registers.h               | 3987 ++++++++++++++++++
+ include/sound/madera-pdata.h                       |   61 +
+ sound/soc/codecs/Kconfig                           |   23 +
+ sound/soc/codecs/Makefile                          |    8 +
+ sound/soc/codecs/cs47l35.c                         | 1748 ++++++++
+ sound/soc/codecs/cs47l85.c                         | 2722 ++++++++++++
+ sound/soc/codecs/cs47l90.c                         | 2661 ++++++++++++
+ sound/soc/codecs/madera.c                          | 4439 ++++++++++++++++++++
+ sound/soc/codecs/madera.h                          |  470 +++
+ 46 files changed, 27066 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/madera.txt
+ create mode 100644 drivers/gpio/gpio-madera.c
+ create mode 100644 drivers/irqchip/irq-madera.c
+ create mode 100644 drivers/mfd/cs47l35-tables.c
+ create mode 100644 drivers/mfd/cs47l85-tables.c
+ create mode 100644 drivers/mfd/cs47l90-tables.c
+ create mode 100644 drivers/mfd/madera-core.c
+ create mode 100644 drivers/mfd/madera-i2c.c
+ create mode 100644 drivers/mfd/madera-spi.c
+ create mode 100644 drivers/mfd/madera.h
+ create mode 100644 drivers/pinctrl/cirrus/Kconfig
+ create mode 100644 drivers/pinctrl/cirrus/Makefile
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l35.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l85.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l90.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera.h
+ create mode 100644 include/dt-bindings/sound/madera.h
+ create mode 100644 include/linux/irqchip/irq-madera-pdata.h
+ create mode 100644 include/linux/irqchip/irq-madera.h
+ create mode 100644 include/linux/mfd/madera/core.h
+ create mode 100644 include/linux/mfd/madera/pdata.h
+ create mode 100644 include/linux/mfd/madera/registers.h
+ create mode 100644 include/sound/madera-pdata.h
+ create mode 100644 sound/soc/codecs/cs47l35.c
+ create mode 100644 sound/soc/codecs/cs47l85.c
+ create mode 100644 sound/soc/codecs/cs47l90.c
+ create mode 100644 sound/soc/codecs/madera.c
+ create mode 100644 sound/soc/codecs/madera.h
+
+-- 
+2.11.0
+
