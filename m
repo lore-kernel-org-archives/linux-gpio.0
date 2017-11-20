@@ -1,37 +1,38 @@
 From: Jesse Chan <jc@linux.com>
-Subject: [PATCH] gpio: ath79: add missing MODULE_DESCRIPTION/LICENSE
-Date: Mon, 20 Nov 2017 12:54:26 -0800
-Message-ID: <20171120205426.83707-1-jc@linux.com>
+Subject: [PATCH] gpio: iop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Mon, 20 Nov 2017 12:54:52 -0800
+Message-ID: <20171120205452.84185-1-jc@linux.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Jesse Chan <jc@linux.com>, Alban Bedel <albeu@free.fr>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jesse Chan <jc@linux.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 This change resolves a new compile-time warning
 when built as a loadable module:
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-ath79.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-iop.o
 see include/linux/module.h for more information
 
-This adds the license as "GPL v2", which matches the header of the file.
+This adds the license as "GPL", which matches the header of the file.
 
-MODULE_DESCRIPTION is also added.
+MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
 
 Signed-off-by: Jesse Chan <jc@linux.com>
 ---
- drivers/gpio/gpio-ath79.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpio/gpio-iop.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
-index 5fad89dfab7e..3ae7c1876bf4 100644
---- a/drivers/gpio/gpio-ath79.c
-+++ b/drivers/gpio/gpio-ath79.c
-@@ -324,3 +324,6 @@ static struct platform_driver ath79_gpio_driver = {
- };
- 
- module_platform_driver(ath79_gpio_driver);
+diff --git a/drivers/gpio/gpio-iop.c b/drivers/gpio/gpio-iop.c
+index 98c7ff2a76e7..8d62db447ec1 100644
+--- a/drivers/gpio/gpio-iop.c
++++ b/drivers/gpio/gpio-iop.c
+@@ -58,3 +58,7 @@ static int __init iop3xx_gpio_init(void)
+ 	return platform_driver_register(&iop3xx_gpio_driver);
+ }
+ arch_initcall(iop3xx_gpio_init);
 +
-+MODULE_DESCRIPTION("Atheros AR71XX/AR724X/AR913X GPIO API support");
-+MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("GPIO handling for Intel IOP3xx processors");
++MODULE_AUTHOR("Lennert Buytenhek <buytenh@wantstofly.org>");
++MODULE_LICENSE("GPL");
 -- 
 2.14.1
