@@ -1,92 +1,38 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v3 1/5] iio: proximity: sx9500: Assign interrupt from
- GpioIo()
-Date: Mon, 20 Nov 2017 12:30:27 +0200
-Message-ID: <20171120103027.GA22431@lahna.fi.intel.com>
-References: <20171103130340.42459-1-andriy.shevchenko@linux.intel.com>
- <20171104031119.00006e56@huawei.com>
- <20171106093556.GR2283@lahna.fi.intel.com>
- <20171119152411.12e4c7cb@archlinux>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH v2 1/2] pinctrl: meson-axg: Introduce a pinctrl pinmux
+ ops for Meson-AXG SoC
+Date: Mon, 20 Nov 2017 11:33:11 +0100
+Message-ID: <1511173991.6971.7.camel@baylibre.com>
+References: <20171120100825.16613-1-yixun.lan@amlogic.com>
+         <20171120100825.16613-2-yixun.lan@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171119152411.12e4c7cb@archlinux>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:37891 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751019AbdKTKdN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Nov 2017 05:33:13 -0500
+Received: by mail-wm0-f51.google.com with SMTP id 128so9074991wmo.3
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Nov 2017 02:33:13 -0800 (PST)
+In-Reply-To: <20171120100825.16613-2-yixun.lan@amlogic.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yixun Lan <yixun.lan@amlogic.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Sun, Nov 19, 2017 at 03:24:11PM +0000, Jonathan Cameron wrote:
-> On Mon, 6 Nov 2017 11:35:56 +0200
-> Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
+On Mon, 2017-11-20 at 18:08 +0800, Yixun Lan wrote:
+> From: Xingyu Chen <xingyu.chen@amlogic.com>
 > 
-> > On Sat, Nov 04, 2017 at 03:11:19AM +0000, Jonathan Cameron wrote:
-> > > On Fri, 3 Nov 2017 15:03:36 +0200
-> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > >   
-> > > > The commit 0f0796509c07
-> > > > 
-> > > > ("iio: remove gpio interrupt probing from drivers that use a single
-> > > > interrupt")
-> > > > 
-> > > > removed custom IRQ assignment for the drivers which are enumerated via
-> > > > ACPI or OF. Unfortunately, some ACPI tables have IRQ line defined as
-> > > > GpioIo() resource and thus automatic IRQ allocation will fail.  
-> > > 
-> > > I'll ask the obvious question - is this allowed under the ACPI spec?  
-> > 
-> > Yes, it is perfectly fine.
+> The pin controller has been updated in the Amlogic Meson AXG series,
+> which use continuous 4-bit register to select function for each pin.
+> In order to support this, a new pinmux operations "meson_axg_pmx_ops"
+> has been added.
 > 
-> I'm unconvinced...
-> 
-> > 
-> > > > Partially revert the commit 0f0796509c07 to restore original
-> > > > behaviour.
-> > > > 
-> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>  
-> > > 
-> > > I really don't like scattering fixes for broken ACPI tables through
-> > > drivers...  Is there really no better solution to this?  
-> > 
-> > This is not about broken ACPI tables. We just currently have
-> > "convenience" stuff in the kernel that translates trivial things like a
-> > single ACPI GpioInt() resource directly to a device interrupt. If the
-> > table has multiple GpioInt()s or uses GpioIo() then it is up to the
-> > driver to handle device specific details.
-> 
-> I agree on the multiple cases needing hanlding. 
-> What bothers me is that there is no guarantee at all that a GpioIo
-> can even do an interrupt.
-> 
-> (table 6.2.17 in the 6.1 spec for example makes it clear that we are
-> in a mess)  If it is a gpioio lots of the interrupt specific stuff
-> cannot be supplied (all the stuff in byte 7)
-> 
-> So as I read the ACPI specification any interrupt specified as GpioIO
-> is simply broken.
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Well, it is the same with DT if you just declare GPIOs as in "xxx-gpios"
-but still use them to trigger interrupts.
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Normally you would use GpioInt in ACPI case but sometimes there might
-actually be need to use the GPIO as input/output without interrupts. I
-remember there was some I2C connected touchpanel that required some
-magic to be done when it was put to low power states. In those cases
-GpioIo is more correct IMHO.
+> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 
-It is also possible that the BIOS people just messed this up.
-
-> > > On patches like this best to pull in ACPI and GPIO on the cc list.
-> > > 
-> > > Also cc'd Mika who made the original change to support gpioint.  
-> > 
-> > The patch looks fine to me,
-> > 
-> > Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> 
-> I'll probably take it anyway to support the platforms doing this particular
-> piece of fun as doubtlessly the chance of fixing the firmware is next
-> to nothing...
-
-Thanks!
