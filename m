@@ -1,266 +1,47 @@
-From: Yixun Lan <yixun.lan@amlogic.com>
-Subject: [PATCH v2 1/2] pinctrl: meson-axg: Introduce a pinctrl pinmux ops for Meson-AXG SoC
-Date: Mon, 20 Nov 2017 18:08:24 +0800
-Message-ID: <20171120100825.16613-2-yixun.lan@amlogic.com>
-References: <20171120100825.16613-1-yixun.lan@amlogic.com>
+From: Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
+Subject: [RESEND PATCH v3 0/2] dt: add pinctrl driver for Meson-AXG SoC
+Date: Mon, 20 Nov 2017 18:23:52 +0800
+Message-ID: <20171120102354.5354-1-yixun.lan@amlogic.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:37184 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750777AbdKTKJI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Nov 2017 05:09:08 -0500
-In-Reply-To: <20171120100825.16613-1-yixun.lan@amlogic.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, Xingyu Chen <xingyu.chen-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Yixun Lan <yixun.lan@amlogic.com>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-From: Xingyu Chen <xingyu.chen@amlogic.com>
+This is DT part patchset for adding pinctrl support for
+the Amlogic's Meson-AXG SoC.
+  
+Changes since v2 at [2]:
+  -- Resend this patch series due to fail to send patch [2/2]
 
-The pin controller has been updated in the Amlogic Meson AXG series,
-which use continuous 4-bit register to select function for each pin.
-In order to support this, a new pinmux operations "meson_axg_pmx_ops"
-has been added.
+Changes since v1 at [1]:
+  -- Separate DT part patches
+  -- Add Neil Armstrong's Ack
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/pinctrl/meson/Kconfig                 |   3 +
- drivers/pinctrl/meson/Makefile                |   1 +
- drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c | 118 ++++++++++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h |  62 ++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson.h         |   1 +
- 5 files changed, 185 insertions(+)
- create mode 100644 drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
- create mode 100644 drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h
+[2]
+http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005390.html
 
-diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
-index 1a51778759ea..fe5e6ca88412 100644
---- a/drivers/pinctrl/meson/Kconfig
-+++ b/drivers/pinctrl/meson/Kconfig
-@@ -38,4 +38,7 @@ config PINCTRL_MESON_GXL
- config PINCTRL_MESON8_PMX
- 	bool
- 
-+config PINCTRL_MESON_AXG_PMX
-+	bool
-+
- endif
-diff --git a/drivers/pinctrl/meson/Makefile b/drivers/pinctrl/meson/Makefile
-index cbd47bb74549..8de839512677 100644
---- a/drivers/pinctrl/meson/Makefile
-+++ b/drivers/pinctrl/meson/Makefile
-@@ -4,3 +4,4 @@ obj-$(CONFIG_PINCTRL_MESON8) += pinctrl-meson8.o
- obj-$(CONFIG_PINCTRL_MESON8B) += pinctrl-meson8b.o
- obj-$(CONFIG_PINCTRL_MESON_GXBB) += pinctrl-meson-gxbb.o
- obj-$(CONFIG_PINCTRL_MESON_GXL) += pinctrl-meson-gxl.o
-+obj-$(CONFIG_PINCTRL_MESON_AXG_PMX) += pinctrl-meson-axg-pmx.o
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
-new file mode 100644
-index 000000000000..e8931d9cf863
---- /dev/null
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
-@@ -0,0 +1,118 @@
-+/*
-+ * Second generation of pinmux driver for Amlogic Meson-AXG SoC.
-+ *
-+ * Copyright (c) 2017 Baylibre SAS.
-+ * Author:  Jerome Brunet  <jbrunet@baylibre.com>
-+ *
-+ * Copyright (c) 2017 Amlogic, Inc. All rights reserved.
-+ * Author: Xingyu Chen <xingyu.chen@amlogic.com>
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+ */
-+
-+/*
-+ * This new generation of pinctrl IP is mainly adopted by the
-+ * Meson-AXG SoC and later series, which use 4-width continuous
-+ * register bit to select the function for each pin.
-+ *
-+ * The value 0 is always selecting the GPIO mode, while other
-+ * values (start from 1) for selecting the function mode.
-+ */
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
-+
-+#include "pinctrl-meson.h"
-+#include "pinctrl-meson-axg-pmx.h"
-+
-+static int meson_axg_pmx_get_bank(struct meson_pinctrl *pc,
-+			unsigned int pin,
-+			struct meson_pmx_bank **bank)
-+{
-+	int i;
-+	struct meson_axg_pmx_data *pmx = pc->data->pmx_data;
-+
-+	for (i = 0; i < pmx->num_pmx_banks; i++)
-+		if (pin >= pmx->pmx_banks[i].first &&
-+				pin <= pmx->pmx_banks[i].last) {
-+			*bank = &pmx->pmx_banks[i];
-+			return 0;
-+		}
-+
-+	return -EINVAL;
-+}
-+
-+static int meson_pmx_calc_reg_and_offset(struct meson_pmx_bank *bank,
-+			unsigned int pin, unsigned int *reg,
-+			unsigned int *offset)
-+{
-+	int shift;
-+
-+	shift = pin - bank->first;
-+
-+	*reg = bank->reg + (bank->offset + (shift << 2)) / 32;
-+	*offset = (bank->offset + (shift << 2)) % 32;
-+
-+	return 0;
-+}
-+
-+static int meson_axg_pmx_update_function(struct meson_pinctrl *pc,
-+			unsigned int pin, unsigned int func)
-+{
-+	int ret;
-+	int reg;
-+	int offset;
-+	struct meson_pmx_bank *bank;
-+
-+	ret = meson_axg_pmx_get_bank(pc, pin, &bank);
-+	if (ret)
-+		return ret;
-+
-+	meson_pmx_calc_reg_and_offset(bank, pin, &reg, &offset);
-+
-+	ret = regmap_update_bits(pc->reg_mux, reg << 2,
-+		0xf << offset, (func & 0xf) << offset);
-+
-+	return ret;
-+}
-+
-+static int meson_axg_pmx_set_mux(struct pinctrl_dev *pcdev,
-+			unsigned int func_num, unsigned int group_num)
-+{
-+	int i;
-+	int ret;
-+	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
-+	struct meson_pmx_func *func = &pc->data->funcs[func_num];
-+	struct meson_pmx_group *group = &pc->data->groups[group_num];
-+	struct meson_pmx_axg_data *pmx_data =
-+		(struct meson_pmx_axg_data *)group->data;
-+
-+	dev_dbg(pc->dev, "enable function %s, group %s\n", func->name,
-+		group->name);
-+
-+	for (i = 0; i < group->num_pins; i++) {
-+		ret = meson_axg_pmx_update_function(pc, group->pins[i],
-+			pmx_data->func);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int meson_axg_pmx_request_gpio(struct pinctrl_dev *pcdev,
-+			struct pinctrl_gpio_range *range, unsigned int offset)
-+{
-+	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
-+
-+	return meson_axg_pmx_update_function(pc, offset, 0);
-+}
-+
-+const struct pinmux_ops meson_axg_pmx_ops = {
-+	.set_mux = meson_axg_pmx_set_mux,
-+	.get_functions_count = meson_pmx_get_funcs_count,
-+	.get_function_name = meson_pmx_get_func_name,
-+	.get_function_groups = meson_pmx_get_groups,
-+	.gpio_request_enable = meson_axg_pmx_request_gpio,
-+};
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h
-new file mode 100644
-index 000000000000..8ff88bf2e849
---- /dev/null
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h
-@@ -0,0 +1,62 @@
-+/*
-+ * Copyright (c) 2017 Baylibre SAS.
-+ * Author:  Jerome Brunet  <jbrunet@baylibre.com>
-+ *
-+ * Copyright (c) 2017 Amlogic, Inc. All rights reserved.
-+ * Author: Xingyu Chen <xingyu.chen@amlogic.com>
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+ */
-+
-+struct meson_pmx_bank {
-+	const char *name;
-+	unsigned int first;
-+	unsigned int last;
-+	unsigned int reg;
-+	unsigned int offset;
-+};
-+
-+struct meson_axg_pmx_data {
-+	struct meson_pmx_bank *pmx_banks;
-+	unsigned int num_pmx_banks;
-+};
-+
-+#define BANK_PMX(n, f, l, r, o)				\
-+	{							\
-+		.name   = n,					\
-+		.first	= f,					\
-+		.last	= l,					\
-+		.reg	= r,					\
-+		.offset = o,					\
-+	}
-+
-+struct meson_pmx_axg_data {
-+        unsigned int func;
-+};
-+
-+#define PMX_DATA(f)							\
-+	{								\
-+		.func = f,						\
-+	}
-+
-+#define GROUP(grp, f)							\
-+	{								\
-+		.name = #grp,						\
-+		.pins = grp ## _pins,                                   \
-+		.num_pins = ARRAY_SIZE(grp ## _pins),			\
-+		.data = (const struct meson_pmx_axg_data[]){		\
-+			PMX_DATA(f),					\
-+		},							\
-+	}
-+
-+#define GPIO_GROUP(gpio)						\
-+	{								\
-+		.name = #gpio,						\
-+		.pins = (const unsigned int[]){ gpio },			\
-+		.num_pins = 1,						\
-+		.data = (const struct meson_pmx_axg_data[]){		\
-+			PMX_DATA(0),					\
-+		},							\
-+	}
-+
-+extern const struct pinmux_ops meson_axg_pmx_ops;
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 183b6e471635..12a391109329 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -108,6 +108,7 @@ struct meson_pinctrl_data {
- 	struct meson_bank *banks;
- 	unsigned int num_banks;
- 	const struct pinmux_ops *pmx_ops;
-+	void *pmx_data;
- };
- 
- struct meson_pinctrl {
+[1] 
+http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005270.html
+http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005271.html
+http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005272.html
+http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005273.html
+http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005274.html
+
+Xingyu Chen (2):
+  documentation: Add compatibles for Amlogic Meson AXG pin controllers
+  ARM64: dts: meson-axg: add pinctrl DT info for Meson-AXG SoC
+
+ .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |  2 +
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi         | 44 ++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+
 -- 
 2.15.0
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
