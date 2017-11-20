@@ -1,34 +1,37 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] gpio: pca953x: fix vendor prefix for PCA9654
-Date: Mon, 20 Nov 2017 13:01:22 -0600
-Message-ID: <20171120190122.vzg3d6ikgxablfu6@rob-hp-laptop>
-References: <20171116201842.006310882@cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171116201842.006310882@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, linux-renesas-soc@vger.kernel.org
+From: Jesse Chan <jc@linux.com>
+Subject: [PATCH] gpio: ath79: add missing MODULE_DESCRIPTION/LICENSE
+Date: Mon, 20 Nov 2017 12:54:26 -0800
+Message-ID: <20171120205426.83707-1-jc@linux.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Jesse Chan <jc@linux.com>, Alban Bedel <albeu@free.fr>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 16, 2017 at 11:18:32PM +0300, Sergei Shtylyov wrote:
-> Despite commit 55020c8056a8 ("of: Add vendor prefix for ON Semiconductor
-> Corp.") was made long ago, the latter commit 9f49f6dd0473 ("gpio: pca953x:
-> add onsemi,pca9654 id") made use of another, undocumented vendor prefix.
-> Since such prefix doesn't seem to be used in any device trees, I think we
-> can just fix the "compatible" string in the driver and the bindings and be
-> done with that...
-> 
-> Fixes: 9f49f6dd0473 ("gpio: pca953x: add onsemi,pca9654 id")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
-> The patch is against the 'fixes' branch of LinusW's 'linux-gpio.git' repo.
-> 
->  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt |    2 +-
->  drivers/gpio/gpio-pca953x.c                             |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+This change resolves a new compile-time warning
+when built as a loadable module:
 
-Acked-by: Rob Herring <robh@kernel.org>
+WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-ath79.o
+see include/linux/module.h for more information
+
+This adds the license as "GPL v2", which matches the header of the file.
+
+MODULE_DESCRIPTION is also added.
+
+Signed-off-by: Jesse Chan <jc@linux.com>
+---
+ drivers/gpio/gpio-ath79.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+index 5fad89dfab7e..3ae7c1876bf4 100644
+--- a/drivers/gpio/gpio-ath79.c
++++ b/drivers/gpio/gpio-ath79.c
+@@ -324,3 +324,6 @@ static struct platform_driver ath79_gpio_driver = {
+ };
+ 
+ module_platform_driver(ath79_gpio_driver);
++
++MODULE_DESCRIPTION("Atheros AR71XX/AR724X/AR913X GPIO API support");
++MODULE_LICENSE("GPL v2");
+-- 
+2.14.1
