@@ -1,43 +1,45 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC PATCH 1/3] dt-bindings: pinctrl: sunxi: document new
- generic binding
-Date: Mon, 20 Nov 2017 12:52:12 -0600
-Message-ID: <20171120185212.h2v2ewslxpl7q23l@rob-hp-laptop>
-References: <20171113012523.2328-1-andre.przywara@arm.com>
- <20171113012523.2328-2-andre.przywara@arm.com>
+Subject: Re: [PATCH] gpio: pca953x: fix vendor prefix for PCA9654
+Date: Mon, 20 Nov 2017 12:59:37 -0600
+Message-ID: <20171120185936.fu7avfqwjzl2q4wm@rob-hp-laptop>
+References: <20171116201842.006310882@cogentembedded.com>
+ <CAMuHMdVAD5saFjnkMViTeCm2vDYfEraq9DdHqNLet3YHjo0UeQ@mail.gmail.com>
+ <7232ae40-189b-9ec5-87ef-7933e161422f@cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:39654 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752015AbdKTSwQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Nov 2017 13:52:16 -0500
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171113012523.2328-2-andre.przywara@arm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <7232ae40-189b-9ec5-87ef-7933e161422f@cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Icenowy Zheng <icenowy@aosc.xyz>
 
-On Mon, Nov 13, 2017 at 01:25:21AM +0000, Andre Przywara wrote:
-> So far all the Allwinner pinctrl drivers provided a table in the
-> kernel to describe all the pins and the link between the pinctrl functions
-> names (strings) and their respective mux values (register values).
+On Fri, Nov 17, 2017 at 01:47:04PM +0300, Sergei Shtylyov wrote:
+> On 11/17/2017 12:06 PM, Geert Uytterhoeven wrote:
 > 
-> Extend the binding to put those mappings in the DT, so that any SoC can
-> describe its pinctrl and GPIO data fully there instead of relying on
-> tables.
-> This uses a generic compatible name, to be prepended with an SoC
-> specific name in the node.
+> > > Despite commit 55020c8056a8 ("of: Add vendor prefix for ON Semiconductor
+> > > Corp.") was made long ago, the latter commit 9f49f6dd0473 ("gpio: pca953x:
+> > > add onsemi,pca9654 id") made use of another, undocumented vendor prefix.
+> > 
+> > Ouch...
+> > 
+> > > Since such prefix doesn't seem to be used in any device trees, I think we
+> > > can just fix the "compatible" string in the driver and the bindings and be
+> > > done with that...
+> > > 
+> > > Fixes: 9f49f6dd0473 ("gpio: pca953x: add onsemi,pca9654 id")
+> > > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > > 
+> > > ---
+> > > The patch is against the 'fixes' branch of LinusW's 'linux-gpio.git' repo.
+> > > 
+> > >   Documentation/devicetree/bindings/gpio/gpio-pca953x.txt |    2 +-
+> > >   drivers/gpio/gpio-pca953x.c                             |    2 +-
+> > 
+> > There's another (different) one in
+> > Documentation/devicetree/bindings/misc/idt_89hpesx.txt
 > 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   | 58 ++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
+>    Saw that. Do you think it also should be fixed (in this patch)?
 
-I'm leaving this one to Linus...
-
-Generally, this has not been the direction we've wanted to go. What 
-makes this unique to Allwinner?
-
-Rob
+IMO, separate.
