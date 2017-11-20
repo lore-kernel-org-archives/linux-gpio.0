@@ -1,45 +1,92 @@
-From: Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
-Subject: [RESEND PATCH v3 1/2] documentation: Add compatibles for Amlogic Meson AXG pin controllers
-Date: Mon, 20 Nov 2017 18:23:53 +0800
-Message-ID: <20171120102354.5354-2-yixun.lan@amlogic.com>
-References: <20171120102354.5354-1-yixun.lan@amlogic.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v3 1/5] iio: proximity: sx9500: Assign interrupt from
+ GpioIo()
+Date: Mon, 20 Nov 2017 12:30:27 +0200
+Message-ID: <20171120103027.GA22431@lahna.fi.intel.com>
+References: <20171103130340.42459-1-andriy.shevchenko@linux.intel.com>
+ <20171104031119.00006e56@huawei.com>
+ <20171106093556.GR2283@lahna.fi.intel.com>
+ <20171119152411.12e4c7cb@archlinux>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171120102354.5354-1-yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, Xingyu Chen <xingyu.chen-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171119152411.12e4c7cb@archlinux>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Xingyu Chen <xingyu.chen-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
+On Sun, Nov 19, 2017 at 03:24:11PM +0000, Jonathan Cameron wrote:
+> On Mon, 6 Nov 2017 11:35:56 +0200
+> Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
+> 
+> > On Sat, Nov 04, 2017 at 03:11:19AM +0000, Jonathan Cameron wrote:
+> > > On Fri, 3 Nov 2017 15:03:36 +0200
+> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > >   
+> > > > The commit 0f0796509c07
+> > > > 
+> > > > ("iio: remove gpio interrupt probing from drivers that use a single
+> > > > interrupt")
+> > > > 
+> > > > removed custom IRQ assignment for the drivers which are enumerated via
+> > > > ACPI or OF. Unfortunately, some ACPI tables have IRQ line defined as
+> > > > GpioIo() resource and thus automatic IRQ allocation will fail.  
+> > > 
+> > > I'll ask the obvious question - is this allowed under the ACPI spec?  
+> > 
+> > Yes, it is perfectly fine.
+> 
+> I'm unconvinced...
+> 
+> > 
+> > > > Partially revert the commit 0f0796509c07 to restore original
+> > > > behaviour.
+> > > > 
+> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>  
+> > > 
+> > > I really don't like scattering fixes for broken ACPI tables through
+> > > drivers...  Is there really no better solution to this?  
+> > 
+> > This is not about broken ACPI tables. We just currently have
+> > "convenience" stuff in the kernel that translates trivial things like a
+> > single ACPI GpioInt() resource directly to a device interrupt. If the
+> > table has multiple GpioInt()s or uses GpioIo() then it is up to the
+> > driver to handle device specific details.
+> 
+> I agree on the multiple cases needing hanlding. 
+> What bothers me is that there is no guarantee at all that a GpioIo
+> can even do an interrupt.
+> 
+> (table 6.2.17 in the 6.1 spec for example makes it clear that we are
+> in a mess)  If it is a gpioio lots of the interrupt specific stuff
+> cannot be supplied (all the stuff in byte 7)
+> 
+> So as I read the ACPI specification any interrupt specified as GpioIO
+> is simply broken.
 
-Add compatibles for Amlogic Meson AXG pin controllers
+Well, it is the same with DT if you just declare GPIOs as in "xxx-gpios"
+but still use them to trigger interrupts.
 
-Reviewed-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Signed-off-by: Xingyu Chen <xingyu.chen-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
----
- Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Normally you would use GpioInt in ACPI case but sometimes there might
+actually be need to use the GPIO as input/output without interrupts. I
+remember there was some I2C connected touchpanel that required some
+magic to be done when it was put to low power states. In those cases
+GpioIo is more correct IMHO.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-index 2392557ede27..2c12f9789116 100644
---- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-@@ -9,6 +9,8 @@ Required properties for the root node:
- 		      "amlogic,meson-gxbb-aobus-pinctrl"
- 		      "amlogic,meson-gxl-periphs-pinctrl"
- 		      "amlogic,meson-gxl-aobus-pinctrl"
-+		      "amlogic,meson-axg-periphs-pinctrl"
-+		      "amlogic,meson-axg-aobus-pinctrl"
-  - reg: address and size of registers controlling irq functionality
- 
- === GPIO sub-nodes ===
--- 
-2.15.0
+It is also possible that the BIOS people just messed this up.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > > On patches like this best to pull in ACPI and GPIO on the cc list.
+> > > 
+> > > Also cc'd Mika who made the original change to support gpioint.  
+> > 
+> > The patch looks fine to me,
+> > 
+> > Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> 
+> I'll probably take it anyway to support the platforms doing this particular
+> piece of fun as doubtlessly the chance of fixing the firmware is next
+> to nothing...
+
+Thanks!
