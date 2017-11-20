@@ -1,64 +1,41 @@
-From: Chris Chiu <chiu@endlessm.com>
-Subject: Re: intel-gpio interrupts stop firing with Focaltech I2C-HID touchpad
-Date: Mon, 20 Nov 2017 13:18:51 +0800
-Message-ID: <CAB4CAweOMHG6M0Bg_oXOVo0XuiKcvQgxO=h6qbdg4ZoskoJS9w@mail.gmail.com>
-References: <20171116115244.GQ17200@lahna.fi.intel.com> <CAD8Lp46fz-80hsOY1b4BFSHrr15Pk8nhYbaFh7MA0hquVSSc4g@mail.gmail.com>
- <20171116130743.GT17200@lahna.fi.intel.com> <CAB4CAwcqxBJNnaS9q7S7dy_1GoR5m1VHY89y+8g-G7rXBBJ1hg@mail.gmail.com>
- <20171117091134.GB17200@lahna.fi.intel.com> <CAB4CAwdsAXqb-2KQr3s1Z6UBJoBXwrks41qY5S8va=zz3UQ1hA@mail.gmail.com>
- <CAB4CAwfGsjtfZxHVvdyEAooqqK0whJS0MFZSsbm8+E0fi=hJyg@mail.gmail.com>
- <20171117110057.GD17200@lahna.fi.intel.com> <CAB4CAwcELV0LWeeBCP9MYt0i=W2sy_Cspwm2vD3K8az+hApQ3g@mail.gmail.com>
- <20171117133518.GF17200@lahna.fi.intel.com> <20171117135225.GG17200@lahna.fi.intel.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 0/8] Add CAN support to iwg2[02]d
+Date: Mon, 20 Nov 2017 11:07:10 +0100
+Message-ID: <20171120100710.f74cqhu5ngbs2faf@verge.net.au>
+References: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40515 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbdKTFSx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Nov 2017 00:18:53 -0500
-Received: by mail-wm0-f67.google.com with SMTP id b189so15960028wmd.5
-        for <linux-gpio@vger.kernel.org>; Sun, 19 Nov 2017 21:18:53 -0800 (PST)
-In-Reply-To: <20171117135225.GG17200@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1510067449-17017-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Daniel Drake <drake@endlessm.com>, heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Endless Linux Upstreaming Team <linux@endlessm.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-On Fri, Nov 17, 2017 at 9:52 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Fri, Nov 17, 2017 at 03:35:18PM +0200, Mika Westerberg wrote:
->> > pin 18 (GPIO_18) GPIO 0x40900100 0x00024075
->
-> Hmm,
->
-> If I decode 0x40900100 correctly PADCFG0_GPIROUTIOXAPIC (BIT 20) flag is
-> set for the pin. This means the interrupt is routed to IO-APIC instead.
->
-> Now, we do clear that flag along with the others when the GPIO is
-> requested through gpio_request() but in this case we go through irqchip
-> instead so the flag is not cleared.
->
-> I wonder if the following patch changes anything?
->
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> index 71df0f70b61f..06af096f5768 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -939,6 +939,10 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned type)
->
->         value &= ~(PADCFG0_RXEVCFG_MASK | PADCFG0_RXINV);
->
-> +       /* Disable SCI/SMI/NMI generation */
-> +       value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
-> +       value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
-> +
->         if ((type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH) {
->                 value |= PADCFG0_RXEVCFG_EDGE_BOTH << PADCFG0_RXEVCFG_SHIFT;
->         } else if (type & IRQ_TYPE_EDGE_FALLING) {
+On Tue, Nov 07, 2017 at 03:10:41PM +0000, Fabrizio Castro wrote:
+> Hello,
+> 
+> this series delivers all of the changes necessary to add CAN bus
+> support to the:
+> * iW-RainboW-G22D SODIMM, and
+> * iW-RainboW-G20M-Qseven-RZG1M
+> development platforms, including documentation, pinctrl driver, SoC
+> specific device trees, and board specific device trees.
+> 
+> This work has been based and tested on top of:
+> renesas-devel-20171106-v4.14-rc8
+> 
+> Best regards,
+> 
+> Fabrizio Castro (8):
+>   dt-bindings: can: rcar_can: document r8a774[35] can support
+>   pinctrl: sh-pfc: r8a7745: Add CAN[01] support
+>   ARM: dts: r8a7745: Add CAN[01] SoC support
+>   ARM: dts: iwg22d-sodimm: Add can0 support to carrier board
+>   ARM: dts: iwg22d-sodimm-dbhd-ca: Add can1 support to HDMI DB
+>   ARM: dts: r8a7743: Add CAN[01] SoC support
+>   ARM: dts: iwg20d-q7-common: Add can0 support to carrier board
+>   ARM: dts: iwg20d-q7-dbcm-ca: Add can1 support to camera DB
 
-It does change after the patch. I didn't have the touchpad stopping
-things after a long time test.
-The INT3452:00/pins under /sys/kernel/debug/pinctrl shows the
-following for GPIO 18.
-pin 18 (GPIO_18) GPIO 0x40800102 0x00024075
-
-Anything else you need from me?
+Thanks, I have applied the "ARM: dts" patches for inclusion in v4.16.
