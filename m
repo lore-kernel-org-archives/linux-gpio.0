@@ -1,113 +1,57 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH v3 4/5] pinctrl: mcp23s08: configure irq polarity using
- irq data
-Date: Tue, 21 Nov 2017 14:34:34 +0100
-Message-ID: <20171121133434.tuvxtrrbabjk4zeg@earth>
-References: <1511252491-79952-1-git-send-email-preid@electromag.com.au>
- <1511252491-79952-5-git-send-email-preid@electromag.com.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="llqy5ouemfbgccz3"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:56972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751115AbdKUNei (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 21 Nov 2017 08:34:38 -0500
-Content-Disposition: inline
-In-Reply-To: <1511252491-79952-5-git-send-email-preid@electromag.com.au>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] gpio: 74x164: Fix crash during .remove()
+Date: Tue, 21 Nov 2017 15:18:10 +0100
+Message-ID: <1511273890-552-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Fabio Estevam <fabio.estevam@nxp.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Phil Reid <preid@electromag.com.au>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
+Commit 7ebc194d0fd4bb0f ("gpio: 74x164: Introduce 'enable-gpios'
+property") added a new member gpiod_oe to the end of the struct
+gen_74x164_chip, after the zero-length buffer array.
 
---llqy5ouemfbgccz3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+However, this buffer is a flexible array, allocated together with the
+structure during .probe().  As the buffer is no longer the last member,
+writing to it corrupts the newly added member after it.
+During device removal, the corrupted member will be used as a pointer,
+leading to a crash.
 
-Hi,
+This went unnoticed, as the flexible array was declared as "buffer[0]"
+instead of "buffer[]", and thus did not trigger a "flexible array member
+not at end of struct" error from gcc.
 
-On Tue, Nov 21, 2017 at 04:21:30PM +0800, Phil Reid wrote:
-> The irq polarity is already encoded in the irq config. Use that to
-> determine the polarity for the mcp32s08 irq output instead of the
-> custom microchip,irq-active-high property.
->=20
-> Signed-off-by: Phil Reid <preid@electromag.com.au>
-> ---
+Move the gpiod_oe field up to fix this, and drop the zero from the array
+size to prevent future similar bugs.
 
-I don't like, that we use the flags for configuring the host
-interrupt input and the mcp23xxx interrupt output. Usually
-when the interrupt line has an inverter on it, board DTS files
-just toggle the interrupts polarity. This will not work with
-this patch applied. We would need to explicitly add an inverter
-in the interrupt line, which is completely different to how its
-implemented everywhere else (I know at least some Tegra devices
-have implicit inverters on interrupt lines).
+Fixes: 7ebc194d0fd4bb0f ("gpio: 74x164: Introduce 'enable-gpios' property")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpio/gpio-74x164.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-In case this is really wanted, this patch and the first patch
-should be merged to avoid temporarily exposing the splitted
-logic.
-
--- Sebastian
-
->  drivers/pinctrl/pinctrl-mcp23s08.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl=
--mcp23s08.c
-> index 8ff9b77..6b3f810 100644
-> --- a/drivers/pinctrl/pinctrl-mcp23s08.c
-> +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-> @@ -773,6 +773,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, s=
-truct device *dev,
->  	bool mirror =3D false;
->  	bool irq_active_high =3D false;
->  	bool open_drain =3D false;
-> +	u32 irq_trig;
-> =20
->  	mutex_init(&mcp->lock);
-> =20
-> @@ -863,9 +864,13 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, =
-struct device *dev,
->  	mcp->irq_controller =3D
->  		device_property_read_bool(dev, "interrupt-controller");
->  	if (mcp->irq && mcp->irq_controller) {
-> -		irq_active_high =3D
-> -			device_property_read_bool(dev,
-> -					      "microchip,irq-active-high");
-> +		if (device_property_present(dev, "microchip,irq-active-high"))
-> +			dev_warn(dev,
-> +				 "microchip,irq-active-high is deprecated\n");
-> +
-> +		irq_trig =3D irqd_get_trigger_type(irq_get_irq_data(mcp->irq));
-> +		if (irq_trig =3D=3D IRQF_TRIGGER_HIGH)
-> +			irq_active_high =3D true;
-> =20
->  		mirror =3D device_property_read_bool(dev, "microchip,irq-mirror");
->  		open_drain =3D device_property_read_bool(dev, "drive-open-drain");
-> --=20
-> 1.8.3.1
->=20
-
---llqy5ouemfbgccz3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAloUK18ACgkQ2O7X88g7
-+pphEQ/9HJ30zkX/9YtQ84+YqkQZ6ICtG5wUVJn8LY4mLEjZmCeHTxq/dQurX/UB
-zOY8Zydn/JWjDH7RnmHoRdWAeYl3TXtWnIawOFRCOUT34stglx9KkLghPVTyA/G7
-17pa/XL3TZHr+VZg1zT3TbMKCMN2J5G9xO+MD7wOTLQrLzWuGbzLK+/Xa1419tIJ
-N2hDOVsFGaVkUHGbBt5H6Ee43zwCF2/lGAJO9Fv8yfCrUkb5p8tmCo9FoiZRYjvU
-tr1ZL+b1OpsabOXq1baS8RJkRKXH7BqRpO69Z1dBFEG6cgtkd3MOC4uXqy7apknC
-ZwjteNGgPIT9JyYsmgY+BJk5JQwINOp9iP2orWfwsGQ44nxSPI6YHng6Pd2X1t/j
-ttFNn2n1mFVvoo5mtot39TziB8t8xA6lbhesVlD39nEIWYbGPFgAO0TcriyZTWXP
-MhG2QwCqN9IH0QAa4vZlAhHPqmP+MWbpa+IQjKfPcguOfhdi2ThjgsvmDX/FZtFG
-t6hDuKElRaLgL8Z9EC9K/2PTfCOX5V+5chRu9oGYGwNubZ0Ma/wQgc6CXQ0aNFyS
-I5GQZf75YjKW3wBnTK8JGgplvdlab7GUz8PLMKv9lR/TNh+v77AA5D5eBgYJa8Ba
-MHq6rdFY41RnVy42qrda/6z4c0nQtqBOeuRF50/opki1i66/emk=
-=5uJG
------END PGP SIGNATURE-----
-
---llqy5ouemfbgccz3--
+diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
+index 6b535ec858cc3533..15a1f4b348c41b29 100644
+--- a/drivers/gpio/gpio-74x164.c
++++ b/drivers/gpio/gpio-74x164.c
+@@ -23,6 +23,7 @@
+ struct gen_74x164_chip {
+ 	struct gpio_chip	gpio_chip;
+ 	struct mutex		lock;
++	struct gpio_desc	*gpiod_oe;
+ 	u32			registers;
+ 	/*
+ 	 * Since the registers are chained, every byte sent will make
+@@ -31,8 +32,7 @@ struct gen_74x164_chip {
+ 	 * register at the end of the transfer. So, to have a logical
+ 	 * numbering, store the bytes in reverse order.
+ 	 */
+-	u8			buffer[0];
+-	struct gpio_desc	*gpiod_oe;
++	u8			buffer[];
+ };
+ 
+ static int __gen_74x164_write_config(struct gen_74x164_chip *chip)
+-- 
+2.7.4
