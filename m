@@ -1,48 +1,84 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: save HOSTSW_OWN register over
- suspend/resume
-Date: Tue, 21 Nov 2017 14:04:22 +0200
-Message-ID: <20171121120422.GR22431@lahna.fi.intel.com>
-References: <20171115080446.GY17200@lahna.fi.intel.com>
- <018180A5-B0D2-418E-9DBC-EF5F310F7295@endlessm.com>
- <20171115101302.GA17200@lahna.fi.intel.com>
- <CAB4CAwc-SFtw4+74Qe-vX57JRGDjJMt9xM2+ev3OiipzwxBPBw@mail.gmail.com>
- <20171116124431.GS17200@lahna.fi.intel.com>
- <CAB4CAwfHx8DgCYk0piVnrTa7YP2=6A8Le4ekoENFPyNVF9g1rw@mail.gmail.com>
- <20171117064904.GZ17200@lahna.fi.intel.com>
- <CAB4CAwdGQjXc6gsswyCgLTfFRN9CgcC=OJ6pz4rX-HCn8AT-TQ@mail.gmail.com>
- <20171121105205.GP22431@lahna.fi.intel.com>
- <CAB4CAwcjXi=YX+0PEC6wBdfAZ=am+BceB4HCFzTXzdts_FE2vQ@mail.gmail.com>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH v3 2/5] dt-bindings: pinctrl: mcp23s08: add documentation
+ for drive-open-drain
+Date: Tue, 21 Nov 2017 13:56:09 +0100
+Message-ID: <20171121125608.j77ouhvxqcsebycx@earth>
+References: <1511252491-79952-1-git-send-email-preid@electromag.com.au>
+ <1511252491-79952-3-git-send-email-preid@electromag.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mdkh3gu6zkxw5zrf"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:22608 "EHLO mga01.intel.com"
+Received: from mail.kernel.org ([198.145.29.99]:53538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751782AbdKUMNK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 21 Nov 2017 07:13:10 -0500
+        id S1752021AbdKUM4M (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 21 Nov 2017 07:56:12 -0500
 Content-Disposition: inline
-In-Reply-To: <CAB4CAwcjXi=YX+0PEC6wBdfAZ=am+BceB4HCFzTXzdts_FE2vQ@mail.gmail.com>
+In-Reply-To: <1511252491-79952-3-git-send-email-preid@electromag.com.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Chiu <chiu@endlessm.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Upstreaming Team <linux@endlessm.com>
+To: Phil Reid <preid@electromag.com.au>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Tue, Nov 21, 2017 at 07:54:26PM +0800, Chris Chiu wrote:
-> Yup, I checked the value of the corresponded pin. It shows following before
-> suspend
-> pin 18 (GPIO_18) GPIO 0x40800102 0x00024075
-> 
-> Then after resume
-> pin 18 (GPIO_18) GPIO 0x40800102 0x00024075 [ACPI]
 
-OK, so ownership is changed to ACPI.
+--mdkh3gu6zkxw5zrf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> What else register do you suggest me to compare? The PADCFG2 is invalid
+Hi,
 
-It's fine APL does not have PADCFG2.
+On Tue, Nov 21, 2017 at 04:21:28PM +0800, Phil Reid wrote:
+> This flag set the mcp23s08 device irq type to open drain active low.
+>=20
+> Signed-off-by: Phil Reid <preid@electromag.com.au>
+> ---
 
-Hmm, I don't understand how this can work in Windows either. The Windows
-people told me that they don't save and restore anything else than
-padcfg registers + ie. If the ownership is changed to ACPI it means you
-don't get interrupts anymore (only GPEs) and that applies to Windows as
-well.
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+
+-- Sebastian
+
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.t=
+xt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+> index 9c451c2..a5a8322 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+> @@ -45,6 +45,8 @@ Optional properties:
+>    - first cell is the pin number
+>    - second cell is used to specify flags.
+>  - interrupt-controller: Marks the device node as a interrupt controller.
+> +- drive-open-drain: Sets the ODR flag in the IOCON register. This config=
+ures
+> +        the IRQ output as open drain active low.
+> =20
+>  Optional device specific properties:
+>  - microchip,irq-mirror: Sets the mirror flag in the IOCON register. Devi=
+ces
+> --=20
+> 1.8.3.1
+>=20
+
+--mdkh3gu6zkxw5zrf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAloUImUACgkQ2O7X88g7
++pq8IA/+Lk+zlVZa29Bsf2WbCHIrryS3t8rWYFWSjT6R7xFk9GX6h2KJHQgzaXm/
+KpHpC3vs7To3acQuf4GPS6AqeAwY2f+Vn+/s3p80XlNVW59KAlIy0xPSXcS9INEE
+uqfrA+51CrJRF6enaK6+3X3WTIkZq01yBDHYzGTABVHyMhT5JdWnq0p0nOXGLjL9
+e1e+elYwiZHryiU4g6/nslsYzOFNdz3H/2TjjIZ6Qu3ELNA8C/agVu5sosTcBuNT
+boHVTthMaQdOrRVfT6qns14byzreFuctWH4Wjoqbht/IIn+mbNkjQgIOk4Htp9tZ
+lYO4DrgPiEmx8bF0453duREuJrLPosch2hYyqIpqNkLZpyYmbgE8HWZKgO8VotCD
+ldjXQdmQgRllhCEXhhRzg9dQBReIGhwSNdgis400NNb9pWPgS5SZeaioQXE9lU3k
+vLhxhYi4WJhM7jRCK2hy6LH7CxeGY9WfCuasXY/7bAKAIPDFIBr4GrstmtpjeXQL
+egwWCP7CtT+OUmWAnl/KoM/UbYTeiP0v1qH4NqsEznKxvpzPlS95Hpj9y7TQd81i
+G6Os8V2sH2XB0pyFrxy6rnT+99SXKZmC4ydBgXEK6bjxtE8uPAFet5k5fPb1kSF1
+b28o0SJ7CDJGrO+G9x03H0uIwRfcWdzRRjT6HDOtJJ4CzbBq2jo=
+=Ml6P
+-----END PGP SIGNATURE-----
+
+--mdkh3gu6zkxw5zrf--
