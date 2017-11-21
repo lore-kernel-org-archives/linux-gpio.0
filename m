@@ -1,53 +1,62 @@
-From: Chris Chiu <chiu@endlessm.com>
-Subject: Re: [PATCH] pinctrl: intel: Initialize GPIO properly when used
- through irqchip
-Date: Tue, 21 Nov 2017 11:18:04 +0800
-Message-ID: <CAB4CAwchVf2G0N+OtAxbHR0+Gwd2a8otM7PKyXykGuksV68Wuw@mail.gmail.com>
-References: <20171120151936.68726-1-mika.westerberg@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:43573 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752265AbdKUDSG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Nov 2017 22:18:06 -0500
-Received: by mail-wm0-f53.google.com with SMTP id x63so370144wmf.2
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Nov 2017 19:18:05 -0800 (PST)
-In-Reply-To: <20171120151936.68726-1-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
+Subject: [PATCH v3 3/5] pinctrl: mcp23s08: add open drain configuration for irq output
+Date: Tue, 21 Nov 2017 16:21:29 +0800
+Message-ID: <1511252491-79952-4-git-send-email-preid@electromag.com.au>
+References: <1511252491-79952-1-git-send-email-preid@electromag.com.au>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1511252491-79952-1-git-send-email-preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Daniel Drake <drake@endlessm.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On Mon, Nov 20, 2017 at 11:19 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> When a GPIO is requested using gpiod_get_* APIs the intel pinctrl driver
-> switches the pin to GPIO mode and makes sure interrupts are routed to
-> the GPIO hardware instead of IOAPIC. However, if the GPIO is used
-> directly through irqchip, as is the case with many I2C-HID devices where
-> I2C core automatically configures interrupt for the device, the pin is
-> not initialized as GPIO. Instead we rely that the BIOS configures the
-> pin accordingly which seems not to be the case at least in Asus X540NA
-> SKU3 with Focaltech touchpad.
->
-> When the pin is not properly configured it might result weird behaviour
-> like interrupts suddenly stop firing completely and the touchpad stops
-> responding to user input.
->
-> Fix this by properly initializing the pin to GPIO mode also when it is
-> used directly through irqchip.
->
-> Reported-by: Daniel Drake <drake@endlessm.com>
-> Reported-by: Chris Chiu <chiu@endlessm.com>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
-> Chris, Daniel,
->
-> Could you check that this still solves the issue and maybe provide your
-> Tested-by? Thanks!
->
+The mcp23s08 series device can be configured for wired and interrupts
+using an external pull-up and open drain output via the IOCON_ODR bit.
+And "drive-open-drain" property to enable this.
 
-I've verified on X540NA here and it's working fine w/o any abnormal touchpad
-stop.
+Signed-off-by: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-mcp23s08.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Tested-by: Chris Chiu <chiu@endlessm.com>
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index cc1f9f6..8ff9b77 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -772,6 +772,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 	int status, ret;
+ 	bool mirror = false;
+ 	bool irq_active_high = false;
++	bool open_drain = false;
+ 
+ 	mutex_init(&mcp->lock);
+ 
+@@ -867,10 +868,11 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 					      "microchip,irq-active-high");
+ 
+ 		mirror = device_property_read_bool(dev, "microchip,irq-mirror");
++		open_drain = device_property_read_bool(dev, "drive-open-drain");
+ 	}
+ 
+ 	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror ||
+-	     irq_active_high) {
++	     irq_active_high || open_drain) {
+ 		/* mcp23s17 has IOCON twice, make sure they are in sync */
+ 		status &= ~(IOCON_SEQOP | (IOCON_SEQOP << 8));
+ 		status |= IOCON_HAEN | (IOCON_HAEN << 8);
+@@ -882,6 +884,9 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 		if (mirror)
+ 			status |= IOCON_MIRROR | (IOCON_MIRROR << 8);
+ 
++		if (open_drain)
++			status |= IOCON_ODR | (IOCON_ODR << 8);
++
+ 		if (type == MCP_TYPE_S18 || type == MCP_TYPE_018)
+ 			status |= IOCON_INTCC | (IOCON_INTCC << 8);
+ 
+-- 
+1.8.3.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
