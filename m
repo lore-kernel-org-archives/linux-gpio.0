@@ -1,32 +1,34 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 5/5] dt-bindings: pinctrl: deprecate
- 'microchip,irq-active-high' property
-Date: Tue, 21 Nov 2017 12:37:37 -0600
-Message-ID: <20171121183737.d6l4pw4mkdxrvb7i@rob-hp-laptop>
-References: <1511252491-79952-1-git-send-email-preid@electromag.com.au>
- <1511252491-79952-6-git-send-email-preid@electromag.com.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:40515 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751235AbdKUShi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Nov 2017 13:37:38 -0500
-Content-Disposition: inline
-In-Reply-To: <1511252491-79952-6-git-send-email-preid@electromag.com.au>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: gemini: Fix usage of 3512 groups
+Date: Wed, 22 Nov 2017 21:04:14 +0100
+Message-ID: <20171122200414.24874-1-linus.walleij@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Phil Reid <preid@electromag.com.au>
-Cc: linus.walleij@linaro.org, mark.rutland@arm.com, sre@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Tue, Nov 21, 2017 at 04:21:31PM +0800, Phil Reid wrote:
-> The irq output polarity can be determined from the 'interrupts'
-> configuration. So 'microchip,irq-active-high' is not required.
-> 
-> Signed-off-by: Phil Reid <preid@electromag.com.au>
-> ---
->  Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+The pin config lookup function was still hardcoding the
+3516 pin set, which is obviously wrong. Use the pointer
+in the state container.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/pinctrl-gemini.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/pinctrl/pinctrl-gemini.c b/drivers/pinctrl/pinctrl-gemini.c
+index e9b83e291edf..c11b8f14d841 100644
+--- a/drivers/pinctrl/pinctrl-gemini.c
++++ b/drivers/pinctrl/pinctrl-gemini.c
+@@ -2322,7 +2322,7 @@ static const struct gemini_pin_conf *gemini_get_pin_conf(struct gemini_pmx *pmx,
+ 	int i;
+ 
+ 	for (i = 0; i < pmx->nconfs; i++) {
+-		retconf = &gemini_confs_3516[i];
++		retconf = &pmx->confs[i];
+ 		if (retconf->pin == pin)
+ 			return retconf;
+ 	}
+-- 
+2.14.3
