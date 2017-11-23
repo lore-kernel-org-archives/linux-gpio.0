@@ -1,50 +1,60 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] gpio: uniphier: fix mismatch between license text and
- MODULE_LICENSE
-Date: Thu, 23 Nov 2017 19:01:49 +0900
-Message-ID: <1511431310-9892-1-git-send-email-yamada.masahiro@socionext.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add GP-1-28 port pin support
+Date: Thu, 23 Nov 2017 11:03:40 +0100
+Message-ID: <CAMuHMdUkC507jjdX6DaG_w3RMLepshD01eTiVZLaHAijWP=K3Q@mail.gmail.com>
+References: <1510802091-30535-1-git-send-email-ykaneko0929@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Philippe Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35755 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752206AbdKWKDm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Nov 2017 05:03:42 -0500
+In-Reply-To: <1510802091-30535-1-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-The comment block of this file indicates GPL-2.0 "only", while the
-MODULE_LICENSE is GPL-2.0 "or later", as include/linux/module.h
-describes as follows:
+Hi Kaneko-san,
 
-  "GPL"                           [GNU Public License v2 or later]
-  "GPL v2"                        [GNU Public License v2]
+On Thu, Nov 16, 2017 at 4:14 AM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch supports GP-1-28 port pin of R8A7795 ES2.0 SoC added in
+> Rev.0.54E of the R-Car Gen3 Hardware User's Manual or later version.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-I am the author of this driver, and my intention is GPL-2.0 "only".
+Thanks for your patch!
 
-Fixes: dbe776c2ca54 ("gpio: uniphier: add UniPhier GPIO controller driver")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
 
- drivers/gpio/gpio-uniphier.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> @@ -5246,7 +5248,7 @@ enum {
+>                 { RCAR_GP_PIN(1, 19),  0, 3 },  /* A19 */
+>         } },
+>         { PINMUX_DRIVE_REG("DRVCTRL8", 0xe6060320) {
+> -               { PIN_NUMBER('F', 1), 28, 3 },  /* CLKOUT */
+> +               { RCAR_GP_PIN(1, 28), 28, 3 },  /* CLKOUT */
+>                 { RCAR_GP_PIN(1, 20), 24, 3 },  /* CS0 */
+>                 { RCAR_GP_PIN(1, 21), 20, 3 },  /* CS1_A26 */
+>                 { RCAR_GP_PIN(1, 22), 16, 3 },  /* BS */
 
-diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
-index 016d742..761d827 100644
---- a/drivers/gpio/gpio-uniphier.c
-+++ b/drivers/gpio/gpio-uniphier.c
-@@ -505,4 +505,4 @@ module_platform_driver(uniphier_gpio_driver);
- 
- MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
- MODULE_DESCRIPTION("UniPhier GPIO driver");
--MODULE_LICENSE("GPL");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+You should make a similar change to the corresponding entry for "PUEN2",
+cfr. drivers/pinctrl/sh-pfc/pfc-r8a7796.c.
+
+With that fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
