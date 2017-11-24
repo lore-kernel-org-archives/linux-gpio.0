@@ -1,59 +1,46 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH v2] gpio: davinci: Assign first bank regs for unbanked
- case
-Date: Fri, 24 Nov 2017 12:54:50 +0530
-Message-ID: <15cfc870-272e-0e40-31a5-7dc1c348fe11@ti.com>
-References: <1510312397-29040-1-git-send-email-j-keerthy@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/2] gpio: gpiolib: Generalise state persistence beyond sleep
+Date: Fri, 24 Nov 2017 10:50:47 +0100
+Message-ID: <CACRpkdaar7b_RJ9GneJB84TGRGasSy8PwzJRr81BAooYmF_VAw@mail.gmail.com>
+References: <20171101040457.1200-1-andrew@aj.id.au> <20171101040457.1200-2-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:63020 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751620AbdKXHYx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Nov 2017 02:24:53 -0500
-In-Reply-To: <1510312397-29040-1-git-send-email-j-keerthy@ti.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171101040457.1200-2-andrew@aj.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Frank Rowand <frowand.list@gmail.com>, Joel Stanley <joel@jms.id.au>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Laxman Dewangan <ldewangan@nvidia.com>, Ryan Chen <ryan_chen@aspeedtech.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org, OpenBMC Maillist <openbmc@lists.ozlabs.org>, linux-aspeed@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com
 
+On Wed, Nov 1, 2017 at 5:04 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
 
+> General support for state persistence is added to gpiolib with the
+> introduction of a new pinconf parameter to propagate the request to
+> hardware. The existing persistence support for sleep is adapted to
+> include hardware support if the GPIO driver provides it. Persistence
+> continues to be enabled by default; in-kernel consumers can opt out, but
+> userspace (currently) does not have a choice.
+>
+> The *_SLEEP_MAY_LOSE_VALUE and *_SLEEP_MAINTAIN_VALUE symbols are
+> renamed, dropping the SLEEP prefix to reflect that the concept is no
+> longer sleep-specific.  I feel that renaming to just *_MAY_LOSE_VALUE
+> could initially be misinterpreted, so I've further changed the symbols
+> to *_TRANSITORY and *_PERSISTENT to address this.
+>
+> The sysfs interface is modified only to keep consistency with the
+> chardev interface in enforcing persistence for userspace exports.
+>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 
-On Friday 10 November 2017 04:43 PM, Keerthy wrote:
-> As per the re-design assign the first bank regs for unbanked
-> irq case. This was missed out in the original patch.
+This does not apply to the Torvalds master HEAD anymore
+so please:
 
-Linus,
+- Collect ACKs
+- Rebase on Torvalds tree or v4.15-rc1 when it's out
+- Resend
 
-A gentle ping.
+The functionality per se looks very nice :) so I want to apply this
+ASAP.
 
-- Keerthy
-
-> 
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> Fixes: b5cf3fd827d2e1 ("gpio: davinci: Redesign driver to accommodate ngpios in one gpio chip")
-> ---
-> 
-> Changes in v2:
-> 
->   * Fixed $Author
-> 
->  drivers/gpio/gpio-davinci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index f75d844..e4b3d7d 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -383,7 +383,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
->  	u32 mask;
->  
->  	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
-> -	g = (struct davinci_gpio_regs __iomem *)d->regs;
-> +	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
->  	mask = __gpio_mask(data->irq - d->base_irq);
->  
->  	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
-> 
+Yours,
+Linus Walleij
