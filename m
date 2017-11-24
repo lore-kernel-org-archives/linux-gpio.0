@@ -1,89 +1,158 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH 1/3] dt-bindings: pinctrl: sunxi: document new
- generic binding
-Date: Fri, 24 Nov 2017 11:52:40 +0100
-Message-ID: <20171124105240.GB3792@ulmo>
+From: Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [RFC PATCH 1/3] dt-bindings: pinctrl: sunxi: document new generic
+ binding
+Date: Fri, 24 Nov 2017 11:58:54 +0000
+Message-ID: <d3bbbcb4-eb91-7f6a-bc0e-a99bb69351c4@arm.com>
 References: <20171113012523.2328-1-andre.przywara@arm.com>
  <20171113012523.2328-2-andre.przywara@arm.com>
  <CACRpkdbpfkM4odz425+4qyUCF5vqPWBQ=F5Yk7AtJL5SqXghpg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:40749 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753118AbdKXKwn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Nov 2017 05:52:43 -0500
-Content-Disposition: inline
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42676 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753426AbdKXL64 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 24 Nov 2017 06:58:56 -0500
 In-Reply-To: <CACRpkdbpfkM4odz425+4qyUCF5vqPWBQ=F5Yk7AtJL5SqXghpg@mail.gmail.com>
+Content-Language: en-GB
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Andre Przywara <andre.przywara@arm.com>
+To: Linus Walleij <linus.walleij@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
 Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Icenowy Zheng <icenowy@aosc.xyz>
 
+Hi Linus,
 
---98e8jtXdkpgskNou
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+thanks for having a look!
 
-On Fri, Nov 24, 2017 at 11:19:52AM +0100, Linus Walleij wrote:
-> On Mon, Nov 13, 2017 at 2:25 AM, Andre Przywara <andre.przywara@arm.com> =
-wrote:
->=20
-> > So far all the Allwinner pinctrl drivers provided a table in the
-> > kernel to describe all the pins and the link between the pinctrl functi=
-ons
-> > names (strings) and their respective mux values (register values).
-> >
-> > Extend the binding to put those mappings in the DT, so that any SoC can
-> > describe its pinctrl and GPIO data fully there instead of relying on
-> > tables.
-> > This uses a generic compatible name, to be prepended with an SoC
-> > specific name in the node.
+On 24/11/17 10:19, Linus Walleij wrote:
+> On Mon, Nov 13, 2017 at 2:25 AM, Andre Przywara <andre.przywara@arm.com> wrote:
+> 
+>> So far all the Allwinner pinctrl drivers provided a table in the
+>> kernel to describe all the pins and the link between the pinctrl functions
+>> names (strings) and their respective mux values (register values).
+>>
+>> Extend the binding to put those mappings in the DT, so that any SoC can
+>> describe its pinctrl and GPIO data fully there instead of relying on
+>> tables.
+>> This uses a generic compatible name, to be prepended with an SoC
+>> specific name in the node.
+>>
+>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> (...)
+> 
+> I definately want feedback from Maxime before I do anything with
+> this patch series.
+> 
+>> +** Generic pinctrl binding
+>> +The above binding requires knowledge of the actual mux setting values for
+>> +each supported SoC in the code parsing the DT (for instance the kernel).
+>> +The generic binding puts this information in the DT. It uses the
+>> +"allwinner,sunxi-pinctrl" compatible, in addition to some SoC specific string.
+>> +It extends the above described binding as follows:
+>> +Required properties:
+>> +- allwinner,gpio-pins: An array of 32-bit numbers to denote the number of
+>> +  implemented pins per pin controller port. Non-implemented ports can specify
+>> +  0 here. There will be as many ports as this array has elements.
+> 
+> I don't understand what this adds that gpio-ranges does not already
+> provide.
+> Documentation/devicetree/bindings/gpio/gpio.txt
+> at the end of the file.
 
-This seems backwards to me. I'm not sure if Rob has any hard rules on
-this, but in the past I've seen a lot of drivers stick this kind of data
-into drivers. I personally also prefer that approach because the data is
-completely static and there's no way for any specific board to customize
-it. So the tables are in fact implied completely by the SoC compatible
-string.
+Ah, thanks for the pointer, will try to see if that fits in here.
+Although here (despite my clumsy naming) I think this is more about the
+"pinmux" pins than the GPIOs. I am not sure if it's just my
+understanding or if on Allwinner we just happen to have every pinmux pin
+being a GPIO pin as well, so the distinction between the two isn't so clear.
 
-Moving all of this data into device tree has a number of disadvantages:
+> These ranges exist exactly to map pin controller pins in a pin controller
+> to GPIO lines in a gpiochip.
 
-  * Existing boards already use the static tables in the driver, and the
-    device trees don't contain any data, so you can't get rid of any of
-    the existing tables because it would break ABI.
+Which makes it a bit more confusing because we have the pinctrl and GPIO
+controller drivers combined in one file.
 
-  * Moving the table into the DT doesn't actually solve anything because
-    the driver would have to validate the DT description to make sure it
-    contains valid data. And in order to validate DT content, the driver
-    would need a copy of the table anyway.
+>> +- allwinner,irq-pin-map: Contains a number of IRQ port maps, describing the
+>> +  relationship between interrupt banks and GPIO pins. Each map has six 32-bit
+>> +  members:
+>> +  <[IRQ port] [1st IRQ pin] [GPIO port] [1st GPIO pin] [mux value] [length]>
+>> +  This maps the first [length] IRQ pins starting with [IRQ port]:[1st IRQ pin]
+>> +  to [GPIO port]:[1st GPIO pin], all using [mux value] to select the IRQ
+>> +  functionality.
+> 
+> We have recently added GPIO "bank" awareness into gpiolib
+> via Thierry Reding's patches, so a gpiochip can use the generic
+> GPIOLIB_IRQCHIP and specify multiple IRQ parents with a map.
+> 
+> Please see if you can use this instead.
 
-I don't think you're going to do yourself any favours by pushing this. I
-also don't see the commit description give any reason why you want to
-move the table into device tree. Do you see any advantages in doing so?
+Thanks for the hint, will have a look.
 
-Thierry
+> If any of this should be expressed in the DT bindings it should
+> be genericized and not use any "allwinner,*" prefixes, and it
+> should preferably just be hard-coded in the driver and switched
+> in from the compatible string IMO.
 
---98e8jtXdkpgskNou
-Content-Type: application/pgp-signature; name="signature.asc"
+I agree, this allwinner prefix was just a first shot for the RFC.
 
------BEGIN PGP SIGNATURE-----
+The reason for this map is that older Allwinner SoCs have *one* IRQ pin
+bank, which contains pins from *multiple* GPIO banks. The A10/A20 for
+instance maps the first 22 IRQ pins to Port H0-H21, the remaining 10 IRQ
+pins are on port I10-I19. This irq-pin-map is an admittedly
+over-engineered attempt to express this is a generic way, trying to
+embrace the DT way of mapping things, like we do with the "ranges"
+property, for instance.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAloX+fgACgkQ3SOs138+
-s6GECA/6AhoheN1vOHn3tsv1of8EzrTButkbflD6wIGdmG0aiZ0isIU8aOvarsTi
-YESN5J//BrRpiV0EMfvSnKinYXW0Plptcxqu1ltyB3TXrQlou9k28+v4xSyf7tyF
-B5tsC84nubafEF2dmLg2+eCOcAEvzrn+bdUiCD2X0hAbnBvMAhC5p3lD3LTaBueK
-dx/o3JsXvkKWxsVKkTZy+ZK8BV2+LY0BOd+4ArTD8G/luEvhL6lg5t/HyL7AjRXi
-GuS7ncaMkZtIFlNw3iJtKHM+i0u+8b3w165X9z5P8gcfNhlC25oNFgzz2/dVJktd
-8x2+/9DbLPQInv19jNMupHPJN6o3OLpXaXseGp31bYjtrI2T9NTwJwMfnUL/7Lex
-It33pO8vWO/DfnTfjZ1xX9id1eQDf7ohpYqCM0QmsJwg5yORxOOwi+mohJC+KaAq
-/QPro6/GXo9TMkJCqhZ4qmlmh14DfCbc7t84JJy9YBRBt03wCRcLSRMDqEST3Mth
-SRXA6SNZGAznuiaOwBQg2pmFYtVly4ckzQKx8yTKSjIHK1rsVa8GQ+7rEJLpNvAi
-sgFuz/YgALV2h1whqFZN5RzRz58sABWgC48BzH4WyJ/jyUCDZCrk/5XKyavzQJm2
-ZVGUWySV67FKU1d5IYFW8s3x8EFgZJMvTHpH+409JNDv0gFX1rI=
-=f/oA
------END PGP SIGNATURE-----
+Recent SoCs just have some GPIO banks which map directly to IRQ pin
+banks (on the A64 ports B, G and H map to IRQ bank 0, 1 and 2), so this
+is not really needed here. My first version indeed just had a simpler
+list to express this.
 
---98e8jtXdkpgskNou--
+This series aims to build on top of the existing driver as much as
+possible, so some things are not as elegant as they could be.
+
+>> +Optional properties:
+>> +- allwinner,port-base: The number of GPIO ports to skip at the beginning.
+>> +- allwinner,irq-bank-base: The number of IRQ banks to skip at the beginning.
+> 
+> I don't understand this. It looks hacky. Can you elaborate why this
+> is needed?
+
+It is indeed hacky, and just maps the irq_bank_base member of struct
+sunxi_pinctrl_desc into the DT. My understanding is that the A33 skips
+the first interrupt bank in the register map, for whatever reason. Might
+just be an implementation oddity.
+I am just wondering if this could be expressed with the irq-pin-map
+above. Or if it's more or less an A33 bug, we could derive this from the
+compatible string.
+
+>> +- allwinner,irq-read-needs-mux: Specifies that reading the line level of
+>> +  a pin configured as an IRQ pin is not possible. A driver needs to switch
+>> +  to the GPIO-in function to be able to read the level.
+> 
+> I guess it is a bool flag?
+
+Right, should mention that.
+
+>> +Required properties for subnodes:
+>> +- pinmux: An array of mux values to write into the respective MMIO register
+>> +  bits for this pin when selecting the function. If this array has less
+>> +  elements than pins, the *last* value will be used for all pins beyond that.
+>> +  This allows to use a single element for the (likely) case all pins use the
+>> +  same mux value.
+> 
+> This is a standard bindings so I don't have much against it. But I
+> need Maxime's input here, I think we should keep Allwinner consistent
+> across SoCs.
+
+I can understand that, and that's why I choose the new binding to just
+be an extension of what we have already.
+
+I am happy to have a discussion on that in general - actually this was
+one aim of this series. See the other thread.
+
+I might even write some summary on how it works today and why I believe
+it should be improved, I just wasn't sure that was actually needed.
+
+Cheers,
+Andre.
