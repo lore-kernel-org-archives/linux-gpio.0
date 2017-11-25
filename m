@@ -1,19 +1,65 @@
-From: Dinah Nilesh <egwuejiuchechukwu@rocketmail.com>
-Subject: hi
-Date: Sat, 25 Nov 2017 08:47:22 +0000 (UTC)
-Message-ID: <1306861357.2039279.1511599642819@mail.yahoo.com>
-References: <1306861357.2039279.1511599642819.ref@mail.yahoo.com>
-Reply-To: Dinah Nilesh <dinahnilesh@hotmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sonic305-20.consmr.mail.ne1.yahoo.com ([66.163.185.146]:44091
-        "EHLO sonic305-20.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750808AbdKYIr0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 25 Nov 2017 03:47:26 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+Subject: [PATCH 0/2] pinctrl: sunxi: Fix H5 MMC access
+Date: Sat, 25 Nov 2017 12:01:58 +0000
+Message-ID: <20171125120200.23294-1-andre.przywara@arm.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chris Obbard <obbardc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hello From Dinah!
+Commit 1396007286b1 ("pinctrl: sunxi: Enforce the strict mode by default")
+enabled the strict mode for the H5 pin controller driver, so that it denies
+multiple requests for a single pin.
+However the existing DTs for the Allwinner H5 boards reference the CD pin
+for the micro SD card (MMC0) *twice* in their node, so that the driver
+stumbles upon the new strict mode and refuses to load:
+
+...
+sun50i-h5-pinctrl 1c20800.pinctrl: pin PF6 already requested by 1c0f000.mmc; cannot claim for 1c20800.pinctrl:166
+sun50i-h5-pinctrl 1c20800.pinctrl: pin-166 (1c20800.pinctrl:166) status -22
+sunxi-mmc: probe of 1c0f000.mmc failed with error -22
+...
+
+This prevents booting (from SD cards) on H5 boards.
+This can be rather easily fixed by removing the redundant CD pin reference
+from the pinctrl-0 property of the MMC0 node, which patch 1/2 actually does.
+
+However this now prevents existing DTs to boot with newer kernels (current
+Linus' HEAD, for instance), so we have to disable strict mode for the H5
+as well (as we do with other SoCs already, including the H3).
+
+Tested on the OrangePi PC2:
+- current 4.15-rc0 boots with fixed DT (patch 1/2), but fails with older DTs
+- 4.14 (and older) kernels boot with both older and this fixed DT
+- 4.15-rc0 with patch 2/2 applied boots with both older and this fixed DTs
+
+Thanks to Chris Obbard for reporting this.
+
+Cheers,
+Andre.
+
+P.S. I was wondering if we should teach the MMC driver to cope with failing
+CD pin requests or let it detect the redundancy and avoid the second GPIO
+request instead. AFAICT this would allow to enable strict mode for the H5
+again?
+
+Andre Przywara (2):
+  arm64: dts: allwinner: H5: remove redundant MMC0 card detect pin
+  pinctrl: sunxi: Disable strict mode for H5 driver
+
+ arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts    | 2 +-
+ arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo2.dts         | 2 +-
+ arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts        | 2 +-
+ arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts      | 2 +-
+ arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts | 2 +-
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h5.c                       | 6 ++++--
+ 6 files changed, 9 insertions(+), 7 deletions(-)
+
+-- 
+2.14.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
