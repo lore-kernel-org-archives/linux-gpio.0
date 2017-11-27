@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 09/18] gpio: mockup: extend the debugfs layout
-Date: Mon, 27 Nov 2017 11:48:45 +0100
-Message-ID: <20171127104854.333-10-brgl@bgdev.pl>
+Subject: [PATCH 08/18] gpio: mockup: pass the named_lines parameter over platform_data
+Date: Mon, 27 Nov 2017 11:48:44 +0100
+Message-ID: <20171127104854.333-9-brgl@bgdev.pl>
 References: <20171127104854.333-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171127104854.333-1-brgl@bgdev.pl>
@@ -10,48 +10,45 @@ To: Linus Walleij <linus.walleij@linaro.org>, Bamvor Jian Zhang <bamvor.zhangjia
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-Currently each chip has a dedicated directory in debugfs for event
-triggers. We use the chip's label for the directory name, but the user
-can't really associate these directories with chip names without
-parsing the relevant sysfs entries.
-
-Use chip names for directory names. For backward compatibility: create
-links pointing to the actual directories named using the chip labels.
+Move the last bits of code dealing with module parameters to the init
+function. Add a new variable to platform data, which indicates to the
+probe function if it should name the GPIO lines. If we ever want to
+make the line naming more fine-grained (e.g. per chip switch) it will
+be easier this way.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-mockup.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 9da90ad87030..9a880e15ea0b 100644
+index 2dbaeb69d2d2..9da90ad87030 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -196,17 +196,23 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 				      struct gpio_mockup_chip *chip)
- {
- 	struct gpio_mockup_dbgfs_private *priv;
--	struct dentry *evfile;
-+	struct dentry *evfile, *link;
- 	struct gpio_chip *gc;
-+	const char *devname;
- 	char *name;
- 	int i;
+@@ -68,6 +68,7 @@ struct gpio_mockup_platform_data {
+ 	int base;
+ 	int ngpio;
+ 	int index;
++	bool named_lines;
+ };
  
- 	gc = &chip->gc;
-+	devname = dev_name(&gc->gpiodev->dev);
+ static int gpio_mockup_ranges[GPIO_MOCKUP_MAX_RANGES];
+@@ -272,7 +273,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	if (!chip->lines)
+ 		return -ENOMEM;
  
--	chip->dbg_dir = debugfs_create_dir(gc->label, gpio_mockup_dbg_dir);
-+	chip->dbg_dir = debugfs_create_dir(devname, gpio_mockup_dbg_dir);
- 	if (!chip->dbg_dir)
- 		goto err;
+-	if (gpio_mockup_named_lines) {
++	if (pdata->named_lines) {
+ 		rv = gpio_mockup_name_lines(dev, chip);
+ 		if (rv)
+ 			return rv;
+@@ -344,6 +345,7 @@ static int __init gpio_mockup_init(void)
+ 		pdata.ngpio = pdata.base < 0
+ 				? gpio_mockup_ranges[i * 2 + 1]
+ 				: gpio_mockup_ranges[i * 2 + 1] - pdata.base;
++		pdata.named_lines = gpio_mockup_named_lines;
  
-+	link = debugfs_create_symlink(gc->label, gpio_mockup_dbg_dir, devname);
-+	if (!link)
-+		goto err;
-+
- 	for (i = 0; i < gc->ngpio; i++) {
- 		name = devm_kasprintf(dev, GFP_KERNEL, "%d", i);
- 		if (!name)
+ 		pdev = platform_device_register_resndata(NULL,
+ 							 GPIO_MOCKUP_NAME,
 -- 
 2.15.0
