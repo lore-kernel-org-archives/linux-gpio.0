@@ -1,34 +1,35 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 06/18] gpio: mockup: remove a stray tab
-Date: Mon, 27 Nov 2017 11:48:42 +0100
-Message-ID: <20171127104854.333-7-brgl@bgdev.pl>
-References: <20171127104854.333-1-brgl@bgdev.pl>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171127104854.333-1-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v3 2/5] iio: proximity: sx9500: Add GPIO ACPI mapping
+ table
+Date: Mon, 27 Nov 2017 17:08:12 +0200
+Message-ID: <1511795292.25007.454.camel@linux.intel.com>
+References: <20171103130340.42459-1-andriy.shevchenko@linux.intel.com>
+         <20171103130340.42459-2-andriy.shevchenko@linux.intel.com>
+         <20171104031403.000073b0@huawei.com> <20171119152934.66a481c0@archlinux>
+         <20171125142425.31dd862c@archlinux>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20171125142425.31dd862c@archlinux>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Minor coding style fix.
+On Sat, 2017-11-25 at 14:24 +0000, Jonathan Cameron wrote:
+> On Sun, 19 Nov 2017 15:29:34 +0000
+> Jonathan Cameron <jic23@kernel.org> wrote:
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- drivers/gpio/gpio-mockup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Andy, any updates on the above?   I probably won't be sending
+> a fixes pull until next weekend, but would be good to know if this
+> should be in there or not by then!
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 0aa68242f33b..9b2823a33538 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -27,7 +27,7 @@
- #include "gpiolib.h"
- 
- #define GPIO_MOCKUP_NAME	"gpio-mockup"
--#define	GPIO_MOCKUP_MAX_GC	10
-+#define GPIO_MOCKUP_MAX_GC	10
- /*
-  * We're storing two values per chip: the GPIO base and the number
-  * of GPIO lines.
+Yes, as you suggested I tried to add quirks to the core, so, this patch
+will be definitely changed.
+
+Thus, let's postpone.
+
 -- 
-2.15.0
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
