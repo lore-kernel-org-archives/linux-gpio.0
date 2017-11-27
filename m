@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 17/18] gpio: mockup: rename gpio_mockup_params_nr to gpio_mockup_num_ranges
-Date: Mon, 27 Nov 2017 11:48:53 +0100
-Message-ID: <20171127104854.333-18-brgl@bgdev.pl>
+Subject: [PATCH 11/18] gpio: mockup: group code by logic
+Date: Mon, 27 Nov 2017 11:48:47 +0100
+Message-ID: <20171127104854.333-12-brgl@bgdev.pl>
 References: <20171127104854.333-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171127104854.333-1-brgl@bgdev.pl>
@@ -10,46 +10,78 @@ To: Linus Walleij <linus.walleij@linaro.org>, Bamvor Jian Zhang <bamvor.zhangjia
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-This variable holds the number of mockup GPIO ranges so rename it
-accordingly.
+Keep GPIO chip callbacks, event trigger callbacks and mockup chip
+setup code visibly separated. We're mostly good - just need to move
+the line naming routine below.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-mockup.c | 46 +++++++++++++++++++++++-----------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 0abb53038ba8..a6bfbe58bc63 100644
+index 8a61328a255d..dba5e79e3278 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -72,8 +72,8 @@ struct gpio_mockup_platform_data {
- };
+@@ -123,29 +123,6 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
+ 	return chip->lines[offset].dir;
+ }
  
- static int gpio_mockup_ranges[GPIO_MOCKUP_MAX_RANGES];
--static int gpio_mockup_params_nr;
--module_param_array(gpio_mockup_ranges, int, &gpio_mockup_params_nr, 0400);
-+static int gpio_mockup_num_ranges;
-+module_param_array(gpio_mockup_ranges, int, &gpio_mockup_num_ranges, 0400);
+-static int gpio_mockup_name_lines(struct device *dev,
+-				  struct gpio_mockup_chip *chip)
+-{
+-	struct gpio_chip *gc = &chip->gc;
+-	char **names;
+-	int i;
+-
+-	names = devm_kcalloc(dev, gc->ngpio, sizeof(char *), GFP_KERNEL);
+-	if (!names)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < gc->ngpio; i++) {
+-		names[i] = devm_kasprintf(dev, GFP_KERNEL,
+-					  "%s-%d", gc->label, i);
+-		if (!names[i])
+-			return -ENOMEM;
+-	}
+-
+-	gc->names = (const char *const *)names;
+-
+-	return 0;
+-}
+-
+ static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+@@ -238,6 +215,29 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
+ 	dev_err(dev, "error creating debugfs directory\n");
+ }
  
- static bool gpio_mockup_named_lines;
- module_param_named(gpio_mockup_named_lines,
-@@ -338,13 +338,13 @@ static int __init gpio_mockup_init(void)
- 	struct gpio_mockup_platform_data pdata;
- 	struct platform_device *pdev;
- 
--	if ((gpio_mockup_params_nr < 2) ||
--	    (gpio_mockup_params_nr % 2) ||
--	    (gpio_mockup_params_nr > GPIO_MOCKUP_MAX_RANGES))
-+	if ((gpio_mockup_num_ranges < 2) ||
-+	    (gpio_mockup_num_ranges % 2) ||
-+	    (gpio_mockup_num_ranges > GPIO_MOCKUP_MAX_RANGES))
- 		return -EINVAL;
- 
- 	/* Each chip is described by two values. */
--	num_chips = gpio_mockup_params_nr / 2;
-+	num_chips = gpio_mockup_num_ranges / 2;
- 
- 	/*
- 	 * The second value in the <base GPIO - number of GPIOS> pair must
++static int gpio_mockup_name_lines(struct device *dev,
++				  struct gpio_mockup_chip *chip)
++{
++	struct gpio_chip *gc = &chip->gc;
++	char **names;
++	int i;
++
++	names = devm_kcalloc(dev, gc->ngpio, sizeof(char *), GFP_KERNEL);
++	if (!names)
++		return -ENOMEM;
++
++	for (i = 0; i < gc->ngpio; i++) {
++		names[i] = devm_kasprintf(dev, GFP_KERNEL,
++					  "%s-%d", gc->label, i);
++		if (!names[i])
++			return -ENOMEM;
++	}
++
++	gc->names = (const char *const *)names;
++
++	return 0;
++}
++
+ static int gpio_mockup_probe(struct platform_device *pdev)
+ {
+ 	struct gpio_mockup_platform_data *pdata;
 -- 
 2.15.0
