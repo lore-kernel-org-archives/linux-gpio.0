@@ -1,34 +1,35 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: sunxi: Fix A80 interrupt pin bank
-Date: Mon, 27 Nov 2017 14:47:20 +0800
-Message-ID: <CAGb2v65LUmqe6pFzPBkp5rC0iNG+PXLqyHVjye0emu4yvtt-BA@mail.gmail.com>
-References: <20171125121948.24012-1-andre.przywara@arm.com>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH] pinctrl: sunxi: Fix A64 UART mux value
+Date: Mon, 27 Nov 2017 14:47:54 +0800
+Message-ID: <CAGb2v65jB68TgGpnfZFy8K07qcM=WT5Qq9p8DQdS+eYAyc73Nw@mail.gmail.com>
+References: <20171125121230.23555-1-andre.przywara@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBE7K53IAKGQEYMOO5DI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20171125121948.24012-1-andre.przywara-5wv7dgnIgG8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:47514 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750838AbdK0GsU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Nov 2017 01:48:20 -0500
+Received: from mail-wr0-f179.google.com (mail-wr0-f179.google.com [209.85.128.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: b93043)
+        by smtp.csie.ntu.edu.tw (Postfix) with ESMTPSA id 0473620526
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Nov 2017 14:48:18 +0800 (CST)
+Received: by mail-wr0-f179.google.com with SMTP id z14so25307479wrb.8
+        for <linux-gpio@vger.kernel.org>; Sun, 26 Nov 2017 22:48:17 -0800 (PST)
+In-Reply-To: <20171125121230.23555-1-andre.przywara@arm.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-sunxi <linux-sunxi@googlegroups.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sat, Nov 25, 2017 at 8:19 PM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
-> On the A80 the pins on port B can trigger interrupts, and those are
-> assigned to the second interrupt bank.
-> Having two pins assigned to the same interrupt bank/pin combination does
-> not look healthy (instead more like a copy&paste bug from pins PA14-PA16),
-> so fix the interrupt bank for pins PB14-PB16, which is actually 1.
+On Sat, Nov 25, 2017 at 8:12 PM, Andre Przywara <andre.przywara@arm.com> wrote:
+> To use pin PF4 as the RX signal of UART0, we have to write 0b011 into
+> the respective pin controller register.
+> Fix the wrong value we had in our table so far.
 >
-> I don't have any A80 board, so could not test this.
->
-> Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Fixes: d5e9fb31baa2 ("pinctrl: sunxi: Add A80 pinctrl muxing options")
+Fixes: 96851d391d02 ("drivers: pinctrl: add driver for Allwinner A64 SoC")
+Acked-by: Chen-Yu Tsai <wens@csie.org>
