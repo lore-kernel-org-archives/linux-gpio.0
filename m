@@ -1,70 +1,42 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 12/18] gpio: mockup: fix debugfs handling
-Date: Mon, 27 Nov 2017 11:48:48 +0100
-Message-ID: <20171127104854.333-13-brgl@bgdev.pl>
+Subject: [PATCH 10/18] gpio: mockup: change the type of value field in line state struct
+Date: Mon, 27 Nov 2017 11:48:46 +0100
+Message-ID: <20171127104854.333-11-brgl@bgdev.pl>
 References: <20171127104854.333-1-brgl@bgdev.pl>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38525 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752234AbdK0KtU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Nov 2017 05:49:20 -0500
+Received: by mail-wr0-f195.google.com with SMTP id z75so24573613wrc.5
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Nov 2017 02:49:19 -0800 (PST)
 In-Reply-To: <20171127104854.333-1-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-List-Id: linux-gpio@vger.kernel.org
 
-The debugfs routines returning pointers can return NULL or error codes
-embedded with ERR_PTR(). Check the return values with IS_ERR_OR_NULL().
-
-While we're at it: make the error message more specific so it's not
-confused with the one emitted when the top-level gpio-mockup debugfs
-directory creation fails.
+GPIO values are universally represented as integers. Change the type
+of the variable storing the current line value to int for consistency.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-mockup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index dba5e79e3278..68a0c1e06a16 100644
+index 9a880e15ea0b..8a61328a255d 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -183,11 +183,11 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 	devname = dev_name(&gc->gpiodev->dev);
+@@ -48,7 +48,7 @@ enum {
+  */
+ struct gpio_mockup_line_status {
+ 	int dir;
+-	bool value;
++	int value;
+ };
  
- 	chip->dbg_dir = debugfs_create_dir(devname, gpio_mockup_dbg_dir);
--	if (!chip->dbg_dir)
-+	if (IS_ERR_OR_NULL(chip->dbg_dir))
- 		goto err;
- 
- 	link = debugfs_create_symlink(gc->label, gpio_mockup_dbg_dir, devname);
--	if (!link)
-+	if (IS_ERR_OR_NULL(link))
- 		goto err;
- 
- 	for (i = 0; i < gc->ngpio; i++) {
-@@ -205,14 +205,14 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 
- 		evfile = debugfs_create_file(name, 0200, chip->dbg_dir, priv,
- 					     &gpio_mockup_event_ops);
--		if (!evfile)
-+		if (IS_ERR_OR_NULL(evfile))
- 			goto err;
- 	}
- 
- 	return;
- 
- err:
--	dev_err(dev, "error creating debugfs directory\n");
-+	dev_err(dev, "error creating debugfs event files\n");
- }
- 
- static int gpio_mockup_name_lines(struct device *dev,
-@@ -336,7 +336,7 @@ static int __init gpio_mockup_init(void)
- 	num_chips = gpio_mockup_params_nr / 2;
- 
- 	gpio_mockup_dbg_dir = debugfs_create_dir("gpio-mockup-event", NULL);
--	if (!gpio_mockup_dbg_dir)
-+	if (IS_ERR_OR_NULL(gpio_mockup_dbg_dir))
- 		gpio_mockup_err("error creating debugfs directory\n");
- 
- 	err = platform_driver_register(&gpio_mockup_driver);
+ struct gpio_mockup_chip {
 -- 
 2.15.0
+
