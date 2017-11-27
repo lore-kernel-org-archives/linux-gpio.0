@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 11/18] gpio: mockup: group code by logic
-Date: Mon, 27 Nov 2017 11:48:47 +0100
-Message-ID: <20171127104854.333-12-brgl@bgdev.pl>
+Subject: [PATCH 15/18] gpio: mockup: implement gpio_mockup_set_multiple()
+Date: Mon, 27 Nov 2017 11:48:51 +0100
+Message-ID: <20171127104854.333-16-brgl@bgdev.pl>
 References: <20171127104854.333-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171127104854.333-1-brgl@bgdev.pl>
@@ -10,78 +10,42 @@ To: Linus Walleij <linus.walleij@linaro.org>, Bamvor Jian Zhang <bamvor.zhangjia
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-Keep GPIO chip callbacks, event trigger callbacks and mockup chip
-setup code visibly separated. We're mostly good - just need to move
-the line naming routine below.
+Implement the set_multiple() callback and register it with the gpiolib
+framework. This is only meant to also test the internal kernel API.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 46 +++++++++++++++++++++++-----------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+ drivers/gpio/gpio-mockup.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 8a61328a255d..dba5e79e3278 100644
+index dfb9ee03a2f0..cbc823e43151 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -123,29 +123,6 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
- 	return chip->lines[offset].dir;
+@@ -96,6 +96,16 @@ static void gpio_mockup_set(struct gpio_chip *gc,
+ 	chip->lines[offset].value = !!value;
  }
  
--static int gpio_mockup_name_lines(struct device *dev,
--				  struct gpio_mockup_chip *chip)
--{
--	struct gpio_chip *gc = &chip->gc;
--	char **names;
--	int i;
--
--	names = devm_kcalloc(dev, gc->ngpio, sizeof(char *), GFP_KERNEL);
--	if (!names)
--		return -ENOMEM;
--
--	for (i = 0; i < gc->ngpio; i++) {
--		names[i] = devm_kasprintf(dev, GFP_KERNEL,
--					  "%s-%d", gc->label, i);
--		if (!names[i])
--			return -ENOMEM;
--	}
--
--	gc->names = (const char *const *)names;
--
--	return 0;
--}
--
- static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-@@ -238,6 +215,29 @@ static void gpio_mockup_debugfs_setup(struct device *dev,
- 	dev_err(dev, "error creating debugfs directory\n");
- }
- 
-+static int gpio_mockup_name_lines(struct device *dev,
-+				  struct gpio_mockup_chip *chip)
++static void gpio_mockup_set_multiple(struct gpio_chip *gc,
++				     unsigned long *mask, unsigned long *bits)
 +{
-+	struct gpio_chip *gc = &chip->gc;
-+	char **names;
-+	int i;
++	unsigned int bit;
 +
-+	names = devm_kcalloc(dev, gc->ngpio, sizeof(char *), GFP_KERNEL);
-+	if (!names)
-+		return -ENOMEM;
++	for_each_set_bit(bit, mask, gc->ngpio)
++		gpio_mockup_set(gc, bit, test_bit(bit, bits));
 +
-+	for (i = 0; i < gc->ngpio; i++) {
-+		names[i] = devm_kasprintf(dev, GFP_KERNEL,
-+					  "%s-%d", gc->label, i);
-+		if (!names[i])
-+			return -ENOMEM;
-+	}
-+
-+	gc->names = (const char *const *)names;
-+
-+	return 0;
 +}
 +
- static int gpio_mockup_probe(struct platform_device *pdev)
+ static int gpio_mockup_dirout(struct gpio_chip *gc,
+ 			      unsigned int offset, int value)
  {
- 	struct gpio_mockup_platform_data *pdata;
+@@ -269,6 +279,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	gc->parent = dev;
+ 	gc->get = gpio_mockup_get;
+ 	gc->set = gpio_mockup_set;
++	gc->set_multiple = gpio_mockup_set_multiple;
+ 	gc->direction_output = gpio_mockup_dirout;
+ 	gc->direction_input = gpio_mockup_dirin;
+ 	gc->get_direction = gpio_mockup_get_direction;
 -- 
 2.15.0
