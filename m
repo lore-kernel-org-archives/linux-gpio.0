@@ -1,35 +1,39 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v3 2/5] iio: proximity: sx9500: Add GPIO ACPI mapping
- table
-Date: Mon, 27 Nov 2017 17:08:12 +0200
-Message-ID: <1511795292.25007.454.camel@linux.intel.com>
-References: <20171103130340.42459-1-andriy.shevchenko@linux.intel.com>
-         <20171103130340.42459-2-andriy.shevchenko@linux.intel.com>
-         <20171104031403.000073b0@huawei.com> <20171119152934.66a481c0@archlinux>
-         <20171125142425.31dd862c@archlinux>
+From: Adam Borowski <kilobyte@angband.pl>
+Subject: [PATCH] gpio: it87: fix mojibake in module metadata
+Date: Tue, 28 Nov 2017 04:21:49 +0100
+Message-ID: <20171128032149.9951-1-kilobyte@angband.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20171125142425.31dd862c@archlinux>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from tartarus.angband.pl ([89.206.35.136]:50445 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751454AbdK1DYW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Nov 2017 22:24:22 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.eu>, linux-gpio@vger.kernel.org
+Cc: Adam Borowski <kilobyte@angband.pl>
 
-On Sat, 2017-11-25 at 14:24 +0000, Jonathan Cameron wrote:
-> On Sun, 19 Nov 2017 15:29:34 +0000
-> Jonathan Cameron <jic23@kernel.org> wrote:
+It had twice-encoded Unicode.
 
-> Hi Andy, any updates on the above?   I probably won't be sending
-> a fixes pull until next weekend, but would be good to know if this
-> should be in there or not by then!
+Signed-off-by: Adam Borowski <kilobyte@angband.pl>
+---
+ drivers/gpio/gpio-it87.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, as you suggested I tried to add quirks to the core, so, this patch
-will be definitely changed.
-
-Thus, let's postpone.
-
+diff --git a/drivers/gpio/gpio-it87.c b/drivers/gpio/gpio-it87.c
+index d43d0a2cc4c5..efb46edff81f 100644
+--- a/drivers/gpio/gpio-it87.c
++++ b/drivers/gpio/gpio-it87.c
+@@ -414,6 +414,6 @@ static void __exit it87_gpio_exit(void)
+ module_init(it87_gpio_init);
+ module_exit(it87_gpio_exit);
+ 
+-MODULE_AUTHOR("Diego Elio PettenÃ² <flameeyes@flameeyes.eu>");
++MODULE_AUTHOR("Diego Elio Pettenò <flameeyes@flameeyes.eu>");
+ MODULE_DESCRIPTION("GPIO interface for IT87xx Super I/O chips");
+ MODULE_LICENSE("GPL");
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.15.0
+
