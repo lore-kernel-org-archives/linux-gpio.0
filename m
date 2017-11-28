@@ -1,71 +1,68 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] gpio: gpio-stmpe: make various char arrays static const, shrinks object size
-Date: Tue, 28 Nov 2017 18:23:39 +0000
-Message-ID: <20171128182339.24579-1-colin.king@canonical.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH] pinctrl: cherryview: limit Strago DMI workarounds to version
+ 1.0
+Date: Tue, 28 Nov 2017 11:14:35 -0800
+Message-ID: <20171128191435.uxftu3bl4x4f2fxi@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
+virtual interrupt numbers for keyboard/touchpa/touchscreen controllers
+in ACPI tables, they will also update BIOS version number from 1.0
+to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
+numbers on Strago boards to those that still carry BIOSes 1.0.
 
-Don't populate the read-only arrays edge_det_values, rise_values and
-fall_values on the stack but instead make them static and constify them.
-Makes the object code smaller by over 240 bytes:
-
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   9525	   2520	    192	  12237	   2fcd	drivers/gpio/gpio-stmpe.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-   9025	   2776	    192	  11993	   2ed9	drivers/gpio/gpio-stmpe.o
-
-(gcc version 7.2.0 x86_64)
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/gpio/gpio-stmpe.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index e6e5cca624a7..e3d048e65339 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -273,15 +273,21 @@ static void stmpe_dbg_show_one(struct seq_file *s,
- 		u8 fall_reg;
- 		u8 irqen_reg;
- 
--		char *edge_det_values[] = {"edge-inactive",
--					   "edge-asserted",
--					   "not-supported"};
--		char *rise_values[] = {"no-rising-edge-detection",
--				       "rising-edge-detection",
--				       "not-supported"};
--		char *fall_values[] = {"no-falling-edge-detection",
--				       "falling-edge-detection",
--				       "not-supported"};
-+		static const char * const edge_det_values[] = {
-+			"edge-inactive",
-+			"edge-asserted",
-+			"not-supported"
-+		};
-+		static const char * const rise_values[] = {
-+			"no-rising-edge-detection",
-+			"rising-edge-detection",
-+			"not-supported"
-+		};
-+		static const char * const fall_values[] = {
-+			"no-falling-edge-detection",
-+			"falling-edge-detection",
-+			"not-supported"
-+		};
- 		#define NOT_SUPPORTED_IDX 2
- 		u8 edge_det = NOT_SUPPORTED_IDX;
- 		u8 rise = NOT_SUPPORTED_IDX;
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index be37946182e1..b22ea0fe86f1 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1545,6 +1545,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
++			DMI_MATCH(DMI_BIOS_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1552,6 +1553,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
++			DMI_MATCH(DMI_BIOS_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1559,6 +1561,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
++			DMI_MATCH(DMI_BIOS_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1566,6 +1569,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
++			DMI_MATCH(DMI_BIOS_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{}
 -- 
-2.14.1
+2.15.0.417.g466bffb3ac-goog
+
+
+-- 
+Dmitry
