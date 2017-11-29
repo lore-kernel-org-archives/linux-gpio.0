@@ -1,29 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 05/15] gpio: max732x: Remove duplicate NULL check
-Date: Wed, 29 Nov 2017 13:26:01 +0100
-Message-ID: <CACRpkdZU3ik2p+ugq3FT2dEuXKq0Cfe+uvZC38j6pCHOaRG1ZA@mail.gmail.com>
-References: <20171031142149.32512-1-andriy.shevchenko@linux.intel.com> <20171031142149.32512-5-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/6] gpiolib: acpi: Assign polarity when call acpi_populate_gpio_lookup()
+Date: Wed, 29 Nov 2017 13:27:34 +0100
+Message-ID: <CACRpkdb3+GMZqi00BXgDcJZFRdNbQqe6gG14fzEL0W5e_+WDUQ@mail.gmail.com>
+References: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20171031142149.32512-5-andriy.shevchenko@linux.intel.com>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-gpio@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 31, 2017 at 3:21 PM, Andy Shevchenko
+On Fri, Nov 10, 2017 at 2:40 PM, Andy Shevchenko
 <andriy.shevchenko@linux.intel.com> wrote:
 
-> Since i2c_unregister_device() became NULL-aware we may remove duplicate
-> NULL check.
+> There is no need, since we preserve firmware settings, to override
+> polarity for GpioInt() resources.
 >
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
+> While Documentation/gpio-properties.txt refers to any from GpioIo() /
+> GpioInt() resources, the active_low flag has been introduced to fill the
+> gap only for GpioIo() which lacks of that information.
+>
+> Moreover, in case of GpioInt() existed solution was broken anyway, it
+> overrides only in one direction, i.e. from 0 to 1, otherwise it would be
+> still 1 as defined in the resource macro.
+>
+> So, move the assignment to a right place and forbid to (semi-)override
+> polarity for GpioInt() type of resources.
+>
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-For some reason this was missed since halloween.
-Patch applied.
+Patch applied with Mika's ACK.
 
 Yours,
 Linus Walleij
