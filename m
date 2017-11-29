@@ -1,76 +1,58 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v2 1/2] pinctrl: Allow a device to indicate when to force
- a state
-Date: Wed, 29 Nov 2017 10:27:29 -0800
-Message-ID: <20171129182729.GK28152@atomide.com>
-References: <20171102231551.16220-1-f.fainelli@gmail.com>
- <20171102231551.16220-2-f.fainelli@gmail.com>
- <20171129170102.GH28152@atomide.com>
- <d1695f25-a795-cbda-bee4-47c0b16050f8@gmail.com>
- <20171129174500.GJ28152@atomide.com>
- <ff2e6268-4738-4858-5cf0-368a23c81ccc@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC] Periodic Output, Timestamped Input
+Date: Wed, 29 Nov 2017 23:54:32 +0100
+Message-ID: <CACRpkdabNMHgs_ywzrgSg-AgQL1wtQN8SaxuZtCruiXnfrXGQw@mail.gmail.com>
+References: <87ineapo5w.fsf@linux.intel.com> <CACRpkdY+72nz9gK=kSESoNdM+xicx-rnpKNz-UbYZ+TFLUXpbA@mail.gmail.com>
+ <87shcxw5n3.fsf@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:52650 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751077AbdK2S1e (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 29 Nov 2017 13:27:34 -0500
-Content-Disposition: inline
-In-Reply-To: <ff2e6268-4738-4858-5cf0-368a23c81ccc@gmail.com>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33142 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753177AbdK2Wyd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Nov 2017 17:54:33 -0500
+Received: by mail-io0-f195.google.com with SMTP id t196so5524901iof.0
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2017 14:54:33 -0800 (PST)
+In-Reply-To: <87shcxw5n3.fsf@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, ckeepax@opensource.cirrus.com, ckeepax@opensource.wolfsonmicro.com, swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, bcm-kernel-feedback-list@broadcom.com
+To: Felipe Balbi <felipe.balbi@linux.intel.com>, =?UTF-8?Q?Bartosz_Go=C5=82aszewski?= <bartekgola@gmail.com>
+Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio@vger.kernel.org
 
-* Florian Fainelli <f.fainelli@gmail.com> [171129 18:17]:
-> On 11/29/2017 09:45 AM, Tony Lindgren wrote:
-> > * Florian Fainelli <f.fainelli@gmail.com> [171129 17:37]:
-> >> On 11/29/2017 09:01 AM, Tony Lindgren wrote:
-> >>> * Florian Fainelli <f.fainelli@gmail.com> [171102 23:18]:
-> >>>> It may happen that a device needs to force applying a state, e.g:
-> >>>> because it only defines one state of pin states (default) but loses
-> >>>> power/register contents when entering low power modes. Add a
-> >>>> pinctrl_dev::flags bitmask to help describe future quirks and define
-> >>>> PINCTRL_FLG_FORCE_STATE as such a settable flag.
-> >>>
-> >>> It makes sense to tag the existing state with the context loss
-> >>> information as otherwise we'll be duplicating the state in the
-> >>> pinctrl driver potentially for hundreds of pins.
-> >>>
-> >>> Maybe this patch description should clarify that it's the
-> >>> pinctrl device restoring the pin state, not the pinctrl
-> >>> consumer devices?
-> >>>
-> >>> So maybe just "a pinctrl device needs to force apply a state"
-> >>> instead of just device above?
-> >>
-> >> It's a bit more involved than that, the pinctrl consumer device might
-> >> want to restore a particular state by calling pinctrl_select_state(),
-> >> however, because of the (p->state == state)check, the pinctrl provider
-> >> driver has no chance of making that call do the actual HW programming.
-> > 
-> > Hmm but isn't it the pinctrl provider device losing context here?
-> 
-> It is the pinctrl provider indeed.
-> 
-> > I think the restore of the pin state should somehow happen automatically
-> > by the pinctrl provider driver without a need for the pinctrl consumer
-> > drivers to do anything.
-> 
-> Correct.
+On Wed, Nov 29, 2017 at 2:56 PM, Felipe Balbi
+<felipe.balbi@linux.intel.com> wrote:
+> Me:
+>> For the other thing: timestamping of GPIO events, we already
+>> support timestamps for userspace GPIOs, but all it does is use
+>> the kernel time, see gpiolib.c:
+>>
+>> static irqreturn_t lineevent_irq_thread(int irq, void *p)
+>> {
+>>         struct lineevent_state *le = p;
+>>         struct gpioevent_data ge;
+>>         int ret, level;
+>>
+>>         ge.timestamp = ktime_get_real_ns();
+>>         level = gpiod_get_value_cansleep(le->desc);
+>
+> this is running as a thread with interrupts enabled, AFAICT. This means
+> this thread can be preempted at least on PREEMPT_RT kernels, so your
+> timestamp can be wrong, right?
 
-OK thanks for confirming that.
+Yes, it can be off. What we should do to get i better is
+something like what I did in:
+drivers/iio/gyro/mpu3050-core.c
 
-> > Or what's the use case for pinctrl consumer driver wanting to store
-> > a pin?
-> 
-> I actually meant that a consumer driver could aalso call
-> pinctrl_select_state() in one of its resume callback for instance, but
-> if the pinctrl provider driver does nothing (or rather the core, on
-> behalf of the provider), this would be an issue. This was not super
-> clear, so I will stop using that example from now on :)
+Here I have both a hard and a soft IRQ handler (fast/slow if
+you like) and take the timestamp in the hard IRQ, then use
+it in the thread.
 
-OK yeah that's probably where the confusion comes from :)
+This should be done identically in gpiolib to increase precision
+in the general case.
 
-Tony
+I was thinking about it already when implementing it but it fell
+out of my mind. I'm putting in on my TODO. (CC to bartosz
+who might be interested, he's using these ABIs quite a bit.)
+
+Yours,
+Linus Walleij
