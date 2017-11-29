@@ -1,60 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: intel: Initialize GPIO properly when used
- through irqchip
-Date: Wed, 29 Nov 2017 13:39:00 +0100
-Message-ID: <CACRpkdbkt_=g0TGhPyh+s-oCFQniXEeKMG=Z56_WZHGqkr4nwg@mail.gmail.com>
-References: <20171120151936.68726-1-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 1/3] pinctrl: mcp23s08: Improve unlocking of a mutex in mcp23s08_irq()
+Date: Wed, 29 Nov 2017 13:51:35 +0100
+Message-ID: <CACRpkdYBawKHhD833zzhJktv8Ub07=JUW9oCFpvptWzJCL+D-g@mail.gmail.com>
+References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net> <01bfaa76-f947-f148-077b-35949bf8e229@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171120151936.68726-1-mika.westerberg@linux.intel.com>
+In-Reply-To: <01bfaa76-f947-f148-077b-35949bf8e229@users.sourceforge.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Daniel Drake <drake@endlessm.com>, Chris Chiu <chiu@endlessm.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 20, 2017 at 4:19 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Mon, Oct 30, 2017 at 4:46 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-> When a GPIO is requested using gpiod_get_* APIs the intel pinctrl driver
-> switches the pin to GPIO mode and makes sure interrupts are routed to
-> the GPIO hardware instead of IOAPIC. However, if the GPIO is used
-> directly through irqchip, as is the case with many I2C-HID devices where
-> I2C core automatically configures interrupt for the device, the pin is
-> not initialized as GPIO. Instead we rely that the BIOS configures the
-> pin accordingly which seems not to be the case at least in Asus X540NA
-> SKU3 with Focaltech touchpad.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 30 Oct 2017 16:03:12 +0100
 >
-> When the pin is not properly configured it might result weird behaviour
-> like interrupts suddenly stop firing completely and the touchpad stops
-> responding to user input.
+> * Add a jump target so that a call of the function "mutex_unlock" is stored
+>   only twice in this function implementation.
 >
-> Fix this by properly initializing the pin to GPIO mode also when it is
-> used directly through irqchip.
+> * Replace five calls by goto statements.
 >
-> Reported-by: Daniel Drake <drake@endlessm.com>
-> Reported-by: Chris Chiu <chiu@endlessm.com>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-
-Should this have a Fixes:?
-
-Should this have a Cc: stable@vger.kernel.org?
-
-> Chris, Daniel,
+> * Adjust five condition checks.
 >
-> Could you check that this still solves the issue and maybe provide your
-> Tested-by? Thanks!
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Pls pick up Tested-by's when resending.
-
-> +static void __intel_gpio_init_gpio(void __iomem *padcfg0)
-
-I just don't like __underscore_means_inner_function() I
-strongly prefer function_has_a_proper_name() so please
-come up with something that describes what it is really doing
-and name it like that.
-
-With that fixes, I'll apply it pronto.
+Nice, patch applied.
 
 Yours,
 Linus Walleij
