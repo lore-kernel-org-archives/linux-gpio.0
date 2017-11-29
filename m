@@ -1,103 +1,162 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2] pinctrl: intel: Initialize GPIO properly when used through irqchip
-Date: Wed, 29 Nov 2017 16:25:44 +0300
-Message-ID: <20171129132544.33399-1-mika.westerberg@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC] Periodic Output, Timestamped Input
+Date: Wed, 29 Nov 2017 14:31:26 +0100
+Message-ID: <CACRpkdY+72nz9gK=kSESoNdM+xicx-rnpKNz-UbYZ+TFLUXpbA@mail.gmail.com>
+References: <87ineapo5w.fsf@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:42345 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752484AbdK2NZt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 29 Nov 2017 08:25:49 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:45962 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752292AbdK2Nb1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Nov 2017 08:31:27 -0500
+Received: by mail-it0-f66.google.com with SMTP id z6so3968953iti.4
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2017 05:31:27 -0800 (PST)
+In-Reply-To: <87ineapo5w.fsf@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Daniel Drake <drake@endlessm.com>, Chris Chiu <chiu@endlessm.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Felipe Balbi <felipe.balbi@linux.intel.com>, linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-gpio@vger.kernel.org
 
-When a GPIO is requested using gpiod_get_* APIs the intel pinctrl driver
-switches the pin to GPIO mode and makes sure interrupts are routed to
-the GPIO hardware instead of IOAPIC. However, if the GPIO is used
-directly through irqchip, as is the case with many I2C-HID devices where
-I2C core automatically configures interrupt for the device, the pin is
-not initialized as GPIO. Instead we rely that the BIOS configures the
-pin accordingly which seems not to be the case at least in Asus X540NA
-SKU3 with Focaltech touchpad.
+Hi Felipe,
 
-When the pin is not properly configured it might result weird behaviour
-like interrupts suddenly stop firing completely and the touchpad stops
-responding to user input.
+this is nice and interesting technology!
 
-Fix this by properly initializing the pin to GPIO mode also when it is
-used directly through irqchip.
+I am quoting the whole mail over to linux-pwm and Thierry
+as well as  linux-iio and Jon Cameron for consideration. My comments
+at the end.
 
-Fixes: 7981c0015af2 ("pinctrl: intel: Add Intel Sunrisepoint pin controller and GPIO support")
-Reported-by: Daniel Drake <drake@endlessm.com>
-Reported-and-tested-by: Chris Chiu <chiu@endlessm.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: stable@vger.kernel.org
----
-Changes from v1:
+On Thu, Nov 16, 2017 at 10:29 AM, Felipe Balbi
+<felipe.balbi@linux.intel.com> wrote:
+>
+> Hi Linus,
+>
+> Before I put a lot of code down, I wanted to get a feeling from you as
+> to how you'd like two new features to be implemented.
+>
+> In a future platform we may have two new features in our GPIO
+> controller which allows for periodic assertion of GPIO Output
+> (controlled by HW, we just program the interval) and Timestamping of
+> GPIO Input events.
+>
+> I was thinking that we could use pin config for that. Something along
+> the lines of:
+>
+> @@ -700,6 +700,12 @@ static int intel_config_set_debounce(struct intel_pinctrl *pctrl, unsigned pin,
+>         return ret;
+>  }
+>
+> +static int intel_config_set_output_periodic(struct intel_pinctrl *pctrl,
+> +                                           unsigned pin, unsigned period_ms)
+> +{
+> +       return 0;
+> +}
+> +
+>  static int intel_config_set(struct pinctrl_dev *pctldev, unsigned pin,
+>                           unsigned long *configs, unsigned nconfigs)
+>  {
+> @@ -726,6 +732,13 @@ static int intel_config_set(struct pinctrl_dev *pctldev, unsigned pin,
+>                                 return ret;
+>                         break;
+>
+> +               case PIN_CONFIG_OUTPUT_PERIODIC:
+> +                       ret = intel_config_set_output_periodic(pctrl, pin,
+> +                               pinconf_to_config_argument(configs[i]));
+> +                       if (ret)
+> +                               return ret;
+> +                       break;
+> +
+>                 default:
+>                         return -ENOTSUPP;
+>                 }
+> modified   include/linux/pinctrl/pinconf-generic.h
+> @@ -90,6 +90,9 @@
+>   * @PIN_CONFIG_SLEW_RATE: if the pin can select slew rate, the argument to
+>   *     this parameter (on a custom format) tells the driver which alternative
+>   *     slew rate to use.
+> + * @PIN_CONFIG_OUTPUT_PERIODIC: this will configure the pin as an
+> + *     output periodic toggle. The argument is period in
+> + *     microseconds.
+>   * @PIN_CONFIG_END: this is the last enumerator for pin configurations, if
+>   *     you need to pass in custom configurations to the pin controller, use
+>   *     PIN_CONFIG_END+1 as the base offset.
+> @@ -117,6 +120,7 @@ enum pin_config_param {
+>         PIN_CONFIG_POWER_SOURCE,
+>         PIN_CONFIG_SLEEP_HARDWARE_STATE,
+>         PIN_CONFIG_SLEW_RATE,
+> +       PIN_CONFIG_OUTPUT_PERIODIC,
+>         PIN_CONFIG_END = 0x7F,
+>         PIN_CONFIG_MAX = 0xFF,
+>  };
+>
+> As for timestamp of input, we would likely request the input as an IRQ
+> and use the IRQ to read whatever register, wherever it may be.
+>
+> Do you have any comments about this? Should I go ahead with current
+> assumptions?
 
-  * Renamed __intel_gpio_init_gpio() to intel_gpio_set_gpio_mode()
-  * Added Fixes: and Cc stable@vger.kernel.org
-  * Added Tested-by from Chris Chiu
+So the first thing: periodic assetion of a GPIO, sounds awfully lot
+like PWM does it not? I guess the output is a square wave?
 
- drivers/pinctrl/intel/pinctrl-intel.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+While it is possible to model things like this as pin config, have you
+considered just adding a PWM interface and present it to the kernel
+as a PWM (possibly with a separate resource, in DT we use &phandle
+but in ACPI I guess you Intel people have something else for PWM)?
+If need be we can ask the ACPI people.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 12a1af45acb9..32209f37b2be 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -425,6 +425,18 @@ static void __intel_gpio_set_direction(void __iomem *padcfg0, bool input)
- 	writel(value, padcfg0);
- }
- 
-+static void intel_gpio_set_gpio_mode(void __iomem *padcfg0)
-+{
-+	u32 value;
-+
-+	/* Put the pad into GPIO mode */
-+	value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
-+	/* Disable SCI/SMI/NMI generation */
-+	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
-+	value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
-+	writel(value, padcfg0);
-+}
-+
- static int intel_gpio_request_enable(struct pinctrl_dev *pctldev,
- 				     struct pinctrl_gpio_range *range,
- 				     unsigned pin)
-@@ -432,7 +444,6 @@ static int intel_gpio_request_enable(struct pinctrl_dev *pctldev,
- 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 	void __iomem *padcfg0;
- 	unsigned long flags;
--	u32 value;
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 
-@@ -442,13 +453,7 @@ static int intel_gpio_request_enable(struct pinctrl_dev *pctldev,
- 	}
- 
- 	padcfg0 = intel_get_padcfg(pctrl, pin, PADCFG0);
--	/* Put the pad into GPIO mode */
--	value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
--	/* Disable SCI/SMI/NMI generation */
--	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
--	value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
--	writel(value, padcfg0);
--
-+	intel_gpio_set_gpio_mode(padcfg0);
- 	/* Disable TX buffer and enable RX (this will be input) */
- 	__intel_gpio_set_direction(padcfg0, true);
- 
-@@ -935,6 +940,8 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned type)
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 
-+	intel_gpio_set_gpio_mode(reg);
-+
- 	value = readl(reg);
- 
- 	value &= ~(PADCFG0_RXEVCFG_MASK | PADCFG0_RXINV);
--- 
-2.15.0
+For the other thing: timestamping of GPIO events, we already
+support timestamps for userspace GPIOs, but all it does is use
+the kernel time, see gpiolib.c:
 
+static irqreturn_t lineevent_irq_thread(int irq, void *p)
+{
+        struct lineevent_state *le = p;
+        struct gpioevent_data ge;
+        int ret, level;
+
+        ge.timestamp = ktime_get_real_ns();
+        level = gpiod_get_value_cansleep(le->desc);
+
+        if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
+            && le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE) {
+                if (level)
+                        /* Emit low-to-high event */
+                        ge.id = GPIOEVENT_EVENT_RISING_EDGE;
+                else
+                        /* Emit high-to-low event */
+                        ge.id = GPIOEVENT_EVENT_FALLING_EDGE;
+        } else if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE && level) {
+                /* Emit low-to-high event */
+                ge.id = GPIOEVENT_EVENT_RISING_EDGE;
+        } else if (le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE && !level) {
+                /* Emit high-to-low event */
+                ge.id = GPIOEVENT_EVENT_FALLING_EDGE;
+        } else {
+                return IRQ_NONE;
+        }
+
+        ret = kfifo_put(&le->events, ge);
+        if (ret != 0)
+                wake_up_poll(&le->wait, POLLIN);
+
+        return IRQ_HANDLED;
+}
+
+IIO already has a variety of timestamps to use, see
+drivers/iio/industrialio-event.c.
+
+What is on my TODO is to unify GPIO event timestamping with that
+of IIO.
+
+If there is further a *hardware* timestamp, that would be yet another
+alternative timestamp, so we should first extend to use the different
+timestamps supported by IIO and then add "hardware-native"
+timestamping to the mix IMO. Unless there are other ideas.
+
+Lars-Peter Clausen may have a better idea of what to do here, he
+has run a few complex use cases like GNUradio (IIRC) using
+timestamping. Also I think sensorfusion-type scenarios use these
+timestamps quite a lot.
+
+Yours,
+Linus Walleij
