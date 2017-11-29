@@ -1,31 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] pinctrl: mcp23s08: Combine two function calls in mcp23s08_dbg_show()
-Date: Wed, 29 Nov 2017 13:56:27 +0100
-Message-ID: <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
-References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net> <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
+Subject: Re: [PATCH v2 2/2] pinctrl: Allow indicating loss of pin states
+ during low-power
+Date: Wed, 29 Nov 2017 14:01:18 +0100
+Message-ID: <CACRpkdZtFRB_iy1bDPZ0wkK0jf7pkTGtbZG4gQUJVR+eiO+dhA@mail.gmail.com>
+References: <20171102231551.16220-1-f.fainelli@gmail.com> <20171102231551.16220-3-f.fainelli@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:46914 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753621AbdK2NBT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Nov 2017 08:01:19 -0500
+Received: by mail-it0-f66.google.com with SMTP id t1so3860272ite.5
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2017 05:01:19 -0800 (PST)
+In-Reply-To: <20171102231551.16220-3-f.fainelli@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>, ext Tony Lindgren <tony@atomide.com>
+Cc: linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Stephen Warren <swarren@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Al Cooper <alcooperx@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 
-On Mon, Oct 30, 2017 at 4:49 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+On Fri, Nov 3, 2017 at 12:15 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 30 Oct 2017 16:34:44 +0100
+> Some platforms (e.g: Broadcom STB: BMIPS_GENERIC/ARCH_BRCMSTB) will lose
+> their register contents when entering their lower power state. In such a
+> case, the pinctrl-single driver that is used will not be able to restore
+> the power states without telling the core about it and having
+> pinctrl_select_state() check for that.
 >
-> * Print a line break together with other data in a single function call.
+> This patch adds a new optional boolean property that Device Tree can
+> define in order to obtain exactly that and having the core pinctrl code
+> take that into account.
 >
-> * Adjust indentation.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-This does not apply.
-Possibly depends on 2/3.
+Florian, I'm really sorry for losing track of this patch set, it's
+important stuff and I see why systems are dependent on something
+like this.
+
+Tony: can you look at this from a pinctrl-single point of view?
+This is the intended consumer: pinctrl-single users that lose the
+hardware state over suspend/resume.
+
+How do you see this working with other pinctrl-single users?
 
 Yours,
 Linus Walleij
