@@ -1,111 +1,83 @@
-From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: uniphier: add UniPhier pinctrl binding
-Date: Wed, 29 Nov 2017 12:44:22 +0900
-Message-ID: <CAK7LNAQYBe=x8sOBTrz8zE+5JEhOu+3eQKd8fbSAxi9Zuy18jQ@mail.gmail.com>
-References: <1511855386-10421-1-git-send-email-yamada.masahiro@socionext.com> <20171128152706.pg3tndrrne3nhduy@rob-hp-laptop>
+From: walter harms <wharms@bfs.de>
+Subject: Re: [PATCH] gpio: gpio-stmpe: make various char arrays static const,
+ shrinks object size
+Date: Wed, 29 Nov 2017 09:19:35 +0100
+Message-ID: <5A1E6D97.1050109@bfs.de>
+References: <20171128182339.24579-1-colin.king@canonical.com>
+Reply-To: wharms@bfs.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171128152706.pg3tndrrne3nhduy@rob-hp-laptop>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171128182339.24579-1-colin.king@canonical.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Rob,
 
 
-2017-11-29 0:27 GMT+09:00 Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
-> On Tue, Nov 28, 2017 at 04:49:45PM +0900, Masahiro Yamada wrote:
->> The driver has been in the tree for a while, but its binding document
->> is missing.  Hence, here it is.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
->> ---
->>
->>  .../pinctrl/socionext,uniphier-pinctrl.txt         | 27 ++++++++++++++++++++++
->>  MAINTAINERS                                        |  1 +
->>  2 files changed, 28 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
->> new file mode 100644
->> index 0000000..8173b12
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
->> @@ -0,0 +1,27 @@
->> +UniPhier SoCs pin controller
->> +
->> +Required properties:
->> +- compatible: should be one of the following:
->> +    "socionext,uniphier-ld4-pinctrl"  - for LD4 SoC
->> +    "socionext,uniphier-pro4-pinctrl" - for Pro4 SoC
->> +    "socionext,uniphier-sld8-pinctrl" - for sLD8 SoC
->> +    "socionext,uniphier-pro5-pinctrl" - for Pro5 SoC
->> +    "socionext,uniphier-pxs2-pinctrl" - for PXs2 SoC
->> +    "socionext,uniphier-ld6b-pinctrl" - for LD6b SoC
->> +    "socionext,uniphier-ld11-pinctrl" - for LD11 SoC
->> +    "socionext,uniphier-ld20-pinctrl" - for LD20 SoC
->> +    "socionext,uniphier-pxs3-pinctrl" - for PXs3 SoC
->> +
->> +Note:
->> +The UniPhier pinctrl should be a subnode of a "syscon" compatible node.
->> +
->> +Example:
->> +     soc-glue@5f800000 {
->> +             compatible = "socionext,uniphier-pro4-soc-glue",
->> +                          "simple-mfd", "syscon";
->> +             reg = <0x5f800000 0x2000>;
->> +
->> +             pinctrl: pinctrl {
->> +                     compatible = "socionext,uniphier-pro4-pinctrl";
->
-> There's not a contiguous register range that can be put here?
+Am 28.11.2017 19:23, schrieb Colin King:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the read-only arrays edge_det_values, rise_values and
+> fall_values on the stack but instead make them static and constify them.
+> Makes the object code smaller by over 240 bytes:
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    9525	   2520	    192	  12237	   2fcd	drivers/gpio/gpio-stmpe.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    9025	   2776	    192	  11993	   2ed9	drivers/gpio/gpio-stmpe.o
+> 
+> (gcc version 7.2.0 x86_64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpio/gpio-stmpe.c | 24 +++++++++++++++---------
+>  1 file changed, 15 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+> index e6e5cca624a7..e3d048e65339 100644
+> --- a/drivers/gpio/gpio-stmpe.c
+> +++ b/drivers/gpio/gpio-stmpe.c
+> @@ -273,15 +273,21 @@ static void stmpe_dbg_show_one(struct seq_file *s,
+>  		u8 fall_reg;
+>  		u8 irqen_reg;
+>  
+> -		char *edge_det_values[] = {"edge-inactive",
+> -					   "edge-asserted",
+> -					   "not-supported"};
+> -		char *rise_values[] = {"no-rising-edge-detection",
+> -				       "rising-edge-detection",
+> -				       "not-supported"};
+> -		char *fall_values[] = {"no-falling-edge-detection",
+> -				       "falling-edge-detection",
+> -				       "not-supported"};
+> +		static const char * const edge_det_values[] = {
+> +			"edge-inactive",
+> +			"edge-asserted",
+> +			"not-supported"
+> +		};
+> +		static const char * const rise_values[] = {
+> +			"no-rising-edge-detection",
+> +			"rising-edge-detection",
+> +			"not-supported"
+> +		};
+> +		static const char * const fall_values[] = {
+> +			"no-falling-edge-detection",
+> +			"falling-edge-detection",
+> +			"not-supported"
+> +		};
+>  		#define NOT_SUPPORTED_IDX 2
 
+@maintainer:
+the define here is hard to find, perhaps i should be move to a place
+where i can be found more easily. Like the beginning of line.
 
-Right.
-
-I saw SATA PHY registers are inserted among the pinctrl registers.
-
-Hardware engineers often make crazy design.
-
-
-
-
-
->> +             };
->> +     };
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index aa71ab52f..38b0ddc 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -2042,6 +2042,7 @@ L:      linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org (moderated for non-subscribers)
->>  T:   git git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
->>  S:   Maintained
->>  F:   Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
->> +F:   Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
->>  F:   arch/arm/boot/dts/uniphier*
->>  F:   arch/arm/include/asm/hardware/cache-uniphier.h
->>  F:   arch/arm/mach-uniphier/
->> --
->> 2.7.4
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+re,
+ wh
+>  		u8 edge_det = NOT_SUPPORTED_IDX;
+>  		u8 rise = NOT_SUPPORTED_IDX;
