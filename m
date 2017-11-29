@@ -1,41 +1,94 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: Re: [3/3] pinctrl: mcp23s08: Combine two function calls in
- mcp23s08_dbg_show()
-Date: Wed, 29 Nov 2017 15:04:31 +0100
-Message-ID: <2132d281-c4da-81b0-6dc7-4b42807cebf0@users.sourceforge.net>
-References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
- <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
- <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
-Content-Language: en-GB
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH] pinctrl: stm32: Fix copyright
+Date: Wed, 29 Nov 2017 15:25:32 +0100
+Message-ID: <20171129142532.23468-1-benjamin.gaignard@st.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
->> * Print a line break together with other data in a single function call.
->>
->> * Adjust indentation.
-…
-> 
-> This does not apply.
-> Possibly depends on 2/3.
+Uniformize STMicroelectronics copyrights header
 
-Partly, yes.
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c     | 1 +
+ drivers/pinctrl/stm32/pinctrl-stm32.h     | 1 +
+ drivers/pinctrl/stm32/pinctrl-stm32f429.c | 1 +
+ drivers/pinctrl/stm32/pinctrl-stm32f469.c | 4 ++--
+ drivers/pinctrl/stm32/pinctrl-stm32f746.c | 1 +
+ drivers/pinctrl/stm32/pinctrl-stm32h743.c | 4 ++--
+ 6 files changed, 8 insertions(+), 4 deletions(-)
 
-
-How do you think about the following possibilities?
-
-* Omit two context lines at the end from this update step.
-  or
-* Refer to the jump label “done” (instead of renaming it to “unlock” before).
-
-
-Would you try once more to integrate the shown small change?
-
-Regards,
-Markus
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index a276c61be217..0676a254caeb 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) Maxime Coquelin 2015
++ * Copyright (C) STMicroelectronics SA 2017
+  * Author:  Maxime Coquelin <mcoquelin.stm32@gmail.com>
+  * License terms:  GNU General Public License (GPL), version 2
+  *
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.h b/drivers/pinctrl/stm32/pinctrl-stm32.h
+index 8702a9992ce5..76027765144b 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.h
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.h
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) Maxime Coquelin 2015
++ * Copyright (C) STMicroelectronics SA 2017
+  * Author:  Maxime Coquelin <mcoquelin.stm32@gmail.com>
+  * License terms:  GNU General Public License (GPL), version 2
+  */
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32f429.c b/drivers/pinctrl/stm32/pinctrl-stm32f429.c
+index 4bbade25acc6..4987fe553a1a 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32f429.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32f429.c
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) Maxime Coquelin 2015
++ * Copyright (C) STMicroelectronics SA 2017
+  * Author:  Maxime Coquelin <mcoquelin.stm32@gmail.com>
+  * License terms:  GNU General Public License (GPL), version 2
+  */
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32f469.c b/drivers/pinctrl/stm32/pinctrl-stm32f469.c
+index 86c8cebfa9b9..292ec13d7364 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32f469.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32f469.c
+@@ -1,6 +1,6 @@
+ /*
+- * Copyright (C) Alexandre Torgue 2016
+- * Author:  Alexandre Torgue <alexandre.torgue@st.com>
++ * Copyright (C) STMicroelectronics SA 2017
++ * Author:  Alexandre Torgue <alexandre.torgue@st.com> for STMicroelectronics.
+  * License terms:  GNU General Public License (GPL), version 2
+  */
+ #include <linux/init.h>
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32f746.c b/drivers/pinctrl/stm32/pinctrl-stm32f746.c
+index a2fae7357c36..c22972e4b96c 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32f746.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32f746.c
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) Maxime Coquelin 2015
++ * Copyright (C) STMicroelectronics SA 2017
+  * Author:  Maxime Coquelin <mcoquelin.stm32@gmail.com>
+  * License terms:  GNU General Public License (GPL), version 2
+  */
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32h743.c b/drivers/pinctrl/stm32/pinctrl-stm32h743.c
+index e34b2b9217ce..34ed8220ffdf 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32h743.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32h743.c
+@@ -1,6 +1,6 @@
+ /*
+- * Copyright (C) Alexandre Torgue 2017
+- * Author:  Alexandre Torgue <alexandre.torgue@st.com>
++ * Copyright (C) STMicroelectronics SA 2017
++ * Author:  Alexandre Torgue <alexandre.torgue@st.com> for STMicroelectronics.
+  * License terms:  GNU General Public License (GPL), version 2
+  */
+ #include <linux/init.h>
+-- 
+2.15.0
