@@ -1,63 +1,29 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v6 03/17] mfd: madera: Add common support
- for Cirrus Logic Madera codecs
-Date: Wed, 29 Nov 2017 11:36:58 +0000
-Message-ID: <1eff5a38-cff3-449b-bda4-047f50a9f1d4@EX17.ad.cirrus.com>
-References: <20171123171316.10868-1-rf@opensource.wolfsonmicro.com>
- <fe8064a5-8692-46c1-9f53-ab0a429baeeb@EX17.ad.cirrus.com>
- <CACRpkdaxKjPd_k8tuO3R4+5LFT4_37zn6ruDRPd5j9xNAH4+Dw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 05/15] gpio: max732x: Remove duplicate NULL check
+Date: Wed, 29 Nov 2017 13:26:01 +0100
+Message-ID: <CACRpkdZU3ik2p+ugq3FT2dEuXKq0Cfe+uvZC38j6pCHOaRG1ZA@mail.gmail.com>
+References: <20171031142149.32512-1-andriy.shevchenko@linux.intel.com> <20171031142149.32512-5-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CACRpkdaxKjPd_k8tuO3R4+5LFT4_37zn6ruDRPd5j9xNAH4+Dw@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, alsa-devel@alsa-project.org, Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Nikesh Oswal <Nikesh.Oswal@wolfsonmicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <20171031142149.32512-5-andriy.shevchenko@linux.intel.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 29/11/17 10:18, Linus Walleij wrote:
-> On Thu, Nov 23, 2017 at 6:13 PM, Richard Fitzgerald
-> <rf@opensource.wolfsonmicro.com> wrote:
-> 
->> +config MFD_MADERA_I2C
->> +       bool "Cirrus Logic Madera codecs with I2C"
->> +       select MFD_MADERA
->> +       select REGMAP_I2C
->> +       depends on I2C
->> +       depends on PINCTRL
->> +       help
->> +         Support for the Cirrus Logic Madera platform audio SoC
->> +         core functionality controlled via I2C.
->> +
->> +config MFD_MADERA_SPI
->> +       bool "Cirrus Logic Madera codecs with SPI"
->> +       select MFD_MADERA
->> +       select REGMAP_SPI
->> +       depends on SPI_MASTER
->> +       depends on PINCTRL
->> +       help
->> +         Support for the Cirrus Logic Madera platform audio SoC
->> +         core functionality controlled via SPI.
-> 
-> Why do the I2C and SPI subdrivers depend on PINCTRL?
-> 
-> They sure don't seem to be using any pinctrl-specific APIs.
-> 
+On Tue, Oct 31, 2017 at 3:21 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-They require PINCTRL even if they don't call any functions on it because 
-the chip won't work correctly if there isn't a PINCTRL driver to apply 
-the correct pinmux configuration.
+> Since i2c_unregister_device() became NULL-aware we may remove duplicate
+> NULL check.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> Yours,
-> Linus Walleij
-> 
+For some reason this was missed since halloween.
+Patch applied.
+
+Yours,
+Linus Walleij
