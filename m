@@ -1,43 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: don't allow OPEN_DRAIN & OPEN_SOURCE flags simultaneously
-Date: Wed, 29 Nov 2017 14:16:47 +0100
-Message-ID: <CACRpkdZE0OufEXQtpkFqSoei_jkrEbJW07ekmpYTx=MEQ2qsYw@mail.gmail.com>
-References: <20171115154743.5921-1-brgl@bgdev.pl>
+Subject: Re: [PATCH] gpio: omap: initialize gpioirq chip as part of gpiochip_add_data
+Date: Wed, 29 Nov 2017 14:19:34 +0100
+Message-ID: <CACRpkdaSCMyp9kjsWZiR-gLU-d4C93FMB+SH+VVAWvB6J0_-Jg@mail.gmail.com>
+References: <20171115183633.12382-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f176.google.com ([209.85.223.176]:44322 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753083AbdK2NQt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Nov 2017 08:16:49 -0500
-Received: by mail-io0-f176.google.com with SMTP id w127so3614351iow.11
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2017 05:16:48 -0800 (PST)
-In-Reply-To: <20171115154743.5921-1-brgl@bgdev.pl>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:41650 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752182AbdK2NTf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Nov 2017 08:19:35 -0500
+Received: by mail-it0-f68.google.com with SMTP id x28so3979524ita.0
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2017 05:19:34 -0800 (PST)
+In-Reply-To: <20171115183633.12382-1-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>
 
-On Wed, Nov 15, 2017 at 4:47 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Wed, Nov 15, 2017 at 7:36 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-> Do not allow OPEN_SOURCE & OPEN_DRAIN flags in a single request. If
-> the hardware actually supports enabling both at the same time the
-> electrical result would be disastrous.
+> Hence, series from Thierry Reding [1] merged - the OMAP GPIO driver can be
+> switched to reuse new feature and just fill new struct gpio_irq_chip before
+> calling gpiochip_add_data() instead of using few separate gpioirq chip
+> APIs. gpiochip_add_data() will do the job and create and initialize gpioirq
+> chip
 >
-> Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
-> There was a misunderstanding as to what the goal of my previous commit
-> 609aaf6a6029 ("gpiolib: don't allow OPEN_DRAIN & OPEN_SOURCE flags for
-> input") was, which resulted in discovering another thing that needs
-> fixing. This change was suggested to me by Linus earlier today.
-
-Awesome, thanks.
+> [1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1531592.html
+>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
 Patch applied.
 
-I wonder if we should even put some swear words into dmesg
-for this.
+Thierry: can you confirm that the stuff is used as intended?
 
 Yours,
 Linus Walleij
