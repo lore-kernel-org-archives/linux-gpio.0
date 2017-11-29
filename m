@@ -1,45 +1,60 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 6/6] gpiolib: acpi: Introduce NO_RESTRICTION quirk
-Date: Wed, 29 Nov 2017 13:35:18 +0100
-Message-ID: <CACRpkdY64u0T+BW_ACzZEr7cB+W1aixsn4ZB50EsBUJZttpMaw@mail.gmail.com>
-References: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
- <20171110134033.85461-6-andriy.shevchenko@linux.intel.com>
- <20171113115554.GY18997@lahna.fi.intel.com> <1510578648.25007.166.camel@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: Initialize GPIO properly when used
+ through irqchip
+Date: Wed, 29 Nov 2017 13:39:00 +0100
+Message-ID: <CACRpkdbkt_=g0TGhPyh+s-oCFQniXEeKMG=Z56_WZHGqkr4nwg@mail.gmail.com>
+References: <20171120151936.68726-1-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:39787 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751668AbdK2MfT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Nov 2017 07:35:19 -0500
-Received: by mail-it0-f52.google.com with SMTP id 68so3896378ite.4
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2017 04:35:19 -0800 (PST)
-In-Reply-To: <1510578648.25007.166.camel@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171120151936.68726-1-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Daniel Drake <drake@endlessm.com>, Chris Chiu <chiu@endlessm.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 
-On Mon, Nov 13, 2017 at 2:10 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Mon, 2017-11-13 at 13:55 +0200, Mika Westerberg wrote:
->> On Fri, Nov 10, 2017 at 03:40:33PM +0200, Andy Shevchenko wrote:
->> > Allow to relax IoRestriction for certain cases.
->> >
->> > One of the use case is incorrectly cooked ACPI table where interrupt
->> > pin is
->> > defined with GpioIo() macro with IoRestrictionOutputOnly.
->> >
->> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>
->> I think you should include user of this quirk in the patch series as
->> well. Otherwise it is pretty pointless to add random quirks without
->> real issues they are supposed to solve ;-)
+On Mon, Nov 20, 2017 at 4:19 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+
+> When a GPIO is requested using gpiod_get_* APIs the intel pinctrl driver
+> switches the pin to GPIO mode and makes sure interrupts are routed to
+> the GPIO hardware instead of IOAPIC. However, if the GPIO is used
+> directly through irqchip, as is the case with many I2C-HID devices where
+> I2C core automatically configures interrupt for the device, the pin is
+> not initialized as GPIO. Instead we rely that the BIOS configures the
+> pin accordingly which seems not to be the case at least in Asus X540NA
+> SKU3 with Focaltech touchpad.
 >
-> Something like below?
+> When the pin is not properly configured it might result weird behaviour
+> like interrupts suddenly stop firing completely and the touchpad stops
+> responding to user input.
+>
+> Fix this by properly initializing the pin to GPIO mode also when it is
+> used directly through irqchip.
+>
+> Reported-by: Daniel Drake <drake@endlessm.com>
+> Reported-by: Chris Chiu <chiu@endlessm.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-I bet this patch is already somewhere in my mailbox else just send
-it separately. All these patches are applied.
+Should this have a Fixes:?
+
+Should this have a Cc: stable@vger.kernel.org?
+
+> Chris, Daniel,
+>
+> Could you check that this still solves the issue and maybe provide your
+> Tested-by? Thanks!
+
+Pls pick up Tested-by's when resending.
+
+> +static void __intel_gpio_init_gpio(void __iomem *padcfg0)
+
+I just don't like __underscore_means_inner_function() I
+strongly prefer function_has_a_proper_name() so please
+come up with something that describes what it is really doing
+and name it like that.
+
+With that fixes, I'll apply it pronto.
 
 Yours,
 Linus Walleij
