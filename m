@@ -1,73 +1,73 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] pinctrl: Allow a device to indicate when to force
- a state
-Date: Wed, 29 Nov 2017 14:06:34 +0100
-Message-ID: <CACRpkdY82RPKNbVPC8XC3BeHa27-gsyu2j+G-pSFgg8AYUJvZw@mail.gmail.com>
-References: <20171102231551.16220-1-f.fainelli@gmail.com> <20171102231551.16220-2-f.fainelli@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: uniphier: merge fix for "Update irq_domain_ops.activate()
+ signature"
+Date: Wed, 29 Nov 2017 14:08:35 +0100
+Message-ID: <CACRpkdb=hL02-yr+bJYiJ4xqR029YUFJHs34TdvCb8aeyJH6Uw@mail.gmail.com>
+References: <1510580176-7483-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171102231551.16220-2-f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>, Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35884 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752232AbdK2NIg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Nov 2017 08:08:36 -0500
+Received: by mail-io0-f193.google.com with SMTP id 81so3630129iof.3
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2017 05:08:36 -0800 (PST)
+In-Reply-To: <1510580176-7483-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Fri, Nov 3, 2017 at 12:15 AM, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+Masahiro,
 
-> It may happen that a device needs to force applying a state, e.g:
-> because it only defines one state of pin states (default) but loses
-> power/register contents when entering low power modes. Add a
-> pinctrl_dev::flags bitmask to help describe future quirks and define
-> PINCTRL_FLG_FORCE_STATE as such a settable flag.
->
-> Signed-off-by: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+can you check that this ended up all right in the merge window,
+else send a fixup patch?
 
-So if I understand correctly, the state is lost across
-suspend/resume, correct?
-
-Or are we even talking runtime PM runtime_suspend
-and runtime_resume here?
-
-> @@ -1197,9 +1197,21 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
->  {
->         struct pinctrl_setting *setting, *setting2;
->         struct pinctrl_state *old_state = p->state;
-> +       bool force = false;
->         int ret;
->
-> -       if (p->state == state)
-> +       if (p->state) {
-> +               list_for_each_entry(setting, &p->state->settings, node) {
-> +                       if (setting->pctldev->flags & PINCTRL_FLG_FORCE_STATE)
-> +                               force = true;
-> +               }
-> +       }
-> +
-> +       /* Some controllers may want to force this operation when they define
-> +        * only one set of functions and lose power state, e.g: pinctrl-single
-> +        * with its pinctrl-single,low-power-state-loss property.
-> +        */
-> +       if (p->state == state && !force)
->                 return 0;
-
-So the idea is we go and change the state even if we are in the right
-state already, I understand that much.
-
-But how is pinctrl_select_state() being called in the first place under
-these circumstances?
-
-If this comes from the resume() callback in .pm of the device driver,
-would not the same thing be achived if you just set some mock
-"sleep" state in suspend()? It could even have exactly the same settings
-as the "default" state, as long as it is another state, the register
-will be reprogrammed.
-
-See further include/linux/pinctrl/pinctrl-state.h
+Sorry for the mess.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+On Mon, Nov 13, 2017 at 2:36 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>
+> Changes since Stephens's original post
+>   - Fix checkpatch.pl warning
+>     "CHECK: Alignment should match open parenthesis"
+>   - Stretch lines since it fits in 80-columns
+>
+>
+>  drivers/gpio/gpio-uniphier.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
+> index d62cea4..71b768e 100644
+> --- a/drivers/gpio/gpio-uniphier.c
+> +++ b/drivers/gpio/gpio-uniphier.c
+> @@ -300,13 +300,15 @@ static int uniphier_gpio_irq_domain_alloc(struct irq_domain *domain,
+>         return irq_domain_alloc_irqs_parent(domain, virq, 1, &parent_fwspec);
+>  }
+>
+> -static void uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
+> -                                             struct irq_data *data)
+> +static int uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
+> +                                            struct irq_data *data, bool early)
+>  {
+>         struct uniphier_gpio_priv *priv = domain->host_data;
+>         struct gpio_chip *chip = &priv->chip;
+>
+>         gpiochip_lock_as_irq(chip, data->hwirq + UNIPHIER_GPIO_IRQ_OFFSET);
+> +
+> +       return 0;
+>  }
+>
+>  static void uniphier_gpio_irq_domain_deactivate(struct irq_domain *domain,
+> --
+> 2.7.4
+>
