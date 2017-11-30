@@ -1,85 +1,60 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: uniphier: add UniPhier pinctrl binding
-Date: Thu, 30 Nov 2017 14:24:15 -0600
-Message-ID: <CAL_JsqJ=ocVCQig4cQKrF3nrYWg+ou9yu+USs201vHUS-O8GFQ@mail.gmail.com>
-References: <1511855386-10421-1-git-send-email-yamada.masahiro@socionext.com>
- <20171128152706.pg3tndrrne3nhduy@rob-hp-laptop> <CAK7LNAQYBe=x8sOBTrz8zE+5JEhOu+3eQKd8fbSAxi9Zuy18jQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK7LNAQYBe=x8sOBTrz8zE+5JEhOu+3eQKd8fbSAxi9Zuy18jQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: ftgpio010: Fix some more registers
+Date: Thu, 30 Nov 2017 22:17:18 +0100
+Message-ID: <20171130211718.8074-1-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44063 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750890AbdK3VTY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Nov 2017 16:19:24 -0500
+Received: by mail-lf0-f66.google.com with SMTP id x204so9458111lfa.11
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Nov 2017 13:19:23 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-On Tue, Nov 28, 2017 at 9:44 PM, Masahiro Yamada
-<yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
-> Hi Rob,
->
->
-> 2017-11-29 0:27 GMT+09:00 Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
->> On Tue, Nov 28, 2017 at 04:49:45PM +0900, Masahiro Yamada wrote:
->>> The driver has been in the tree for a while, but its binding document
->>> is missing.  Hence, here it is.
->>>
->>> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
->>> ---
->>>
->>>  .../pinctrl/socionext,uniphier-pinctrl.txt         | 27 ++++++++++++++++++++++
->>>  MAINTAINERS                                        |  1 +
->>>  2 files changed, 28 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
->>> new file mode 100644
->>> index 0000000..8173b12
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
->>> @@ -0,0 +1,27 @@
->>> +UniPhier SoCs pin controller
->>> +
->>> +Required properties:
->>> +- compatible: should be one of the following:
->>> +    "socionext,uniphier-ld4-pinctrl"  - for LD4 SoC
->>> +    "socionext,uniphier-pro4-pinctrl" - for Pro4 SoC
->>> +    "socionext,uniphier-sld8-pinctrl" - for sLD8 SoC
->>> +    "socionext,uniphier-pro5-pinctrl" - for Pro5 SoC
->>> +    "socionext,uniphier-pxs2-pinctrl" - for PXs2 SoC
->>> +    "socionext,uniphier-ld6b-pinctrl" - for LD6b SoC
->>> +    "socionext,uniphier-ld11-pinctrl" - for LD11 SoC
->>> +    "socionext,uniphier-ld20-pinctrl" - for LD20 SoC
->>> +    "socionext,uniphier-pxs3-pinctrl" - for PXs3 SoC
->>> +
->>> +Note:
->>> +The UniPhier pinctrl should be a subnode of a "syscon" compatible node.
->>> +
->>> +Example:
->>> +     soc-glue@5f800000 {
->>> +             compatible = "socionext,uniphier-pro4-soc-glue",
->>> +                          "simple-mfd", "syscon";
->>> +             reg = <0x5f800000 0x2000>;
->>> +
->>> +             pinctrl: pinctrl {
->>> +                     compatible = "socionext,uniphier-pro4-pinctrl";
->>
->> There's not a contiguous register range that can be put here?
->
->
-> Right.
->
-> I saw SATA PHY registers are inserted among the pinctrl registers.
+There is a register for "bypass" which seems to not be
+used for anything in some silicon designs, but may be used
+in others, and there is both a raw and masked interrupt
+status register.
 
-Okay,
+Define them all for clarity, no semantic changes.
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-ftgpio010.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> Hardware engineers often make crazy design.
+diff --git a/drivers/gpio/gpio-ftgpio010.c b/drivers/gpio/gpio-ftgpio010.c
+index 7b3394fdc624..aa825925db52 100644
+--- a/drivers/gpio/gpio-ftgpio010.c
++++ b/drivers/gpio/gpio-ftgpio010.c
+@@ -21,12 +21,14 @@
+ #define GPIO_DATA_OUT		0x00
+ #define GPIO_DATA_IN		0x04
+ #define GPIO_DIR		0x08
++#define GPIO_BYPASS_IN		0x0C
+ #define GPIO_DATA_SET		0x10
+ #define GPIO_DATA_CLR		0x14
+ #define GPIO_PULL_EN		0x18
+ #define GPIO_PULL_TYPE		0x1C
+ #define GPIO_INT_EN		0x20
+-#define GPIO_INT_STAT		0x24
++#define GPIO_INT_STAT_RAW	0x24
++#define GPIO_INT_STAT_MASKED	0x28
+ #define GPIO_INT_MASK		0x2C
+ #define GPIO_INT_CLR		0x30
+ #define GPIO_INT_TYPE		0x34
+@@ -147,7 +149,7 @@ static void ftgpio_gpio_irq_handler(struct irq_desc *desc)
+ 
+ 	chained_irq_enter(irqchip, desc);
+ 
+-	stat = readl(g->base + GPIO_INT_STAT);
++	stat = readl(g->base + GPIO_INT_STAT_RAW);
+ 	if (stat)
+ 		for_each_set_bit(offset, &stat, gc->ngpio)
+ 			generic_handle_irq(irq_find_mapping(gc->irq.domain,
+-- 
+2.14.3
 
-If there's 2 ways to do things, they will find a 3rd way.
-
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
