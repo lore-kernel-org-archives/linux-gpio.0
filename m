@@ -1,33 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Timestamp events in hardirq handler
-Date: Thu, 30 Nov 2017 10:49:28 +0100
-Message-ID: <CACRpkdZ1PMOC0WuS4O=B1ieJyBCwLDzQ=UHri43yEYJmuNtwNQ@mail.gmail.com>
-References: <20171130092655.25965-1-linus.walleij@linaro.org> <3058528.dbeyJzq7DI@ws-stein>
+Subject: Re: [PATCH v1 6/6] gpiolib: acpi: Introduce NO_RESTRICTION quirk
+Date: Thu, 30 Nov 2017 10:57:26 +0100
+Message-ID: <CACRpkdZ3rHjZZNwAL4KF_FtP6gQgATwk7F8-S8Y3VPZbJ2TdmQ@mail.gmail.com>
+References: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
+ <20171110134033.85461-6-andriy.shevchenko@linux.intel.com>
+ <20171113115554.GY18997@lahna.fi.intel.com> <1510578648.25007.166.camel@linux.intel.com>
+ <CACRpkdY64u0T+BW_ACzZEr7cB+W1aixsn4ZB50EsBUJZttpMaw@mail.gmail.com> <1511962871.25007.485.camel@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:46088 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750760AbdK3Jt3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Nov 2017 04:49:29 -0500
-Received: by mail-io0-f182.google.com with SMTP id x129so6870828iod.13
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Nov 2017 01:49:29 -0800 (PST)
-In-Reply-To: <3058528.dbeyJzq7DI@ws-stein>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1511962871.25007.485.camel@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, Felipe Balbi <felipe.balbi@linux.intel.com>
 
-On Thu, Nov 30, 2017 at 10:46 AM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
-> On Thursday, November 30, 2017, 10:26:55 AM CET Linus Walleij wrote:
+On Wed, Nov 29, 2017 at 2:41 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
->> +     s64 timestamp;
->     ^^^
-> u64? ktime_get_real_ns() returns u64 and struct gpioevent_data
-> has __u64 for timestamp.
+> It
+> would be nice if you can prepare immutable branch in case the subsystems
+> would like to merge patches via their respective trees.
 
-OK sorry, fixing it. Thanks for noticing!
+I have created a branch named "ib-gpio-acpi-quirks" in my tree
+with the six patches from you, then merged that to my devel
+branch.
+
+You can point subsystem maintainers to that one.
 
 Yours,
 Linus Walleij
