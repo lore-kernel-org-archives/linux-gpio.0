@@ -1,64 +1,36 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 0/3] pinctrl: sunxi: Add DT-based
- generic pinctrl driver
-Date: Thu, 30 Nov 2017 16:20:52 +0100
-Message-ID: <CACRpkdZQPspH79_nS-WgiSg6d2meXUztgocYbxO07vTgP1HehA@mail.gmail.com>
-References: <20171113012523.2328-1-andre.przywara@arm.com> <CACRpkdYFoUmGJYdKz0t9gsrkK=u8-oJjaRBXtNYHaUt9kSa3_g@mail.gmail.com>
- <54ecfdf7-cf4a-3eae-2661-47fa668a6066@arm.com>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: sunxi: Fix A80 interrupt pin bank
+Date: Thu, 30 Nov 2017 16:48:29 +0100
+Message-ID: <CACRpkdaYpObvUdzXgVi84P_uQt8tWWEvYgovwN9jn07OFrVgMw@mail.gmail.com>
+References: <20171125121948.24012-1-andre.przywara@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBVODQDIQKGQEPTBZYGI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <54ecfdf7-cf4a-3eae-2661-47fa668a6066-5wv7dgnIgG8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34919 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751444AbdK3Psa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Nov 2017 10:48:30 -0500
+Received: by mail-it0-f68.google.com with SMTP id f143so8952056itb.0
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Nov 2017 07:48:30 -0800 (PST)
+In-Reply-To: <20171125121948.24012-1-andre.przywara@arm.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi <linux-sunxi@googlegroups.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org
 
-On Fri, Nov 24, 2017 at 1:05 PM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
-> On 24/11/17 10:28, Linus Walleij wrote:
+On Sat, Nov 25, 2017 at 1:19 PM, Andre Przywara <andre.przywara@arm.com> wrote:
 
->> The DT maintainers have been pretty clear on that they don't like
->> using the the DT as a generic fit-all information dump. They
->> prefer to look up hardware data from per-soc compatible strings.
-(...)
-> I am just a bit worried that with Allwinner recently playing the SKU
-> game we end up with tons of tables for only slightly different SoCs (see
-> the H3 and H5, for instance). And with single image kernels we pile up
-> quite some *data* in each kernel, which is of little interest for
-> everyone else.
+> On the A80 the pins on port B can trigger interrupts, and those are
+> assigned to the second interrupt bank.
+> Having two pins assigned to the same interrupt bank/pin combination does
+> not look healthy (instead more like a copy&paste bug from pins PA14-PA16),
+> so fix the interrupt bank for pins PB14-PB16, which is actually 1.
+>
+> I don't have any A80 board, so could not test this.
+>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-So what you are saying is that you want to use the DTS for
-data dumping and what I'm saying is that the DT maintainers
-do not like that stance.
-
-They will have to speak on the issue directly before we continue
-I think.
-
-I have been getting a *LOT* of pushback to putting large amounts
-of data and configuration in the DTS recently, so IIUC that is something
-they simply don't like, probably for good reasons.
-
-C.f:
-https://www.spinics.net/lists/dri-devel/msg150321.html
-
-> Also my understanding is that the actual Allwinner pin controller IP
-> (register map) is very much the same across all SoCs. Mostly the only
-> difference is the mapping between pins and mux functions, which we
-> express in the DT already anyway (in the subnodes). And this is really a
-> poster book example of what DT should be doing: express the specific
-> mappings of a particular implementation. I don't see why this would need
-> to be per-board only, if we can pull this up to the SoC level.
-
-It's not me you need to sell this point.
-
-You need to sell it to the DT maintainers.
+Patch applied with Chen-Yu's ACK and fixes tag.
 
 Yours,
 Linus Walleij
