@@ -1,44 +1,84 @@
-From: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 2/2] pinctrl: sunxi: Disable strict mode for H5 driver
-Date: Thu, 30 Nov 2017 16:07:17 +0000
-Message-ID: <3ef7cfa4-cc1a-f24b-0013-f36db82781e5@arm.com>
-References: <20171125120200.23294-1-andre.przywara@arm.com>
- <20171125120200.23294-3-andre.przywara@arm.com>
- <CACRpkdZX5U=JoQFS+X96+F68yVSZbnCZpgNfAnvfJGxZ9moi8A@mail.gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] dt-bindings: pinctrl: uniphier: add UniPhier pinctrl binding
+Date: Thu, 30 Nov 2017 14:24:15 -0600
+Message-ID: <CAL_JsqJ=ocVCQig4cQKrF3nrYWg+ou9yu+USs201vHUS-O8GFQ@mail.gmail.com>
+References: <1511855386-10421-1-git-send-email-yamada.masahiro@socionext.com>
+ <20171128152706.pg3tndrrne3nhduy@rob-hp-laptop> <CAK7LNAQYBe=x8sOBTrz8zE+5JEhOu+3eQKd8fbSAxi9Zuy18jQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZX5U=JoQFS+X96+F68yVSZbnCZpgNfAnvfJGxZ9moi8A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-GB
+In-Reply-To: <CAK7LNAQYBe=x8sOBTrz8zE+5JEhOu+3eQKd8fbSAxi9Zuy18jQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chris Obbard <obbardc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
-
-On 30/11/17 15:51, Linus Walleij wrote:
-> On Sat, Nov 25, 2017 at 1:02 PM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
-> 
->> All of the H5 boards in the kernel reference the MMC0 CD pin twice in
->> their DT, so strict mode will make the MMC driver fail to load.
->> To keep existing DTs working, disable strict mode in the H5 driver.
+On Tue, Nov 28, 2017 at 9:44 PM, Masahiro Yamada
+<yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
+> Hi Rob,
+>
+>
+> 2017-11-29 0:27 GMT+09:00 Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
+>> On Tue, Nov 28, 2017 at 04:49:45PM +0900, Masahiro Yamada wrote:
+>>> The driver has been in the tree for a while, but its binding document
+>>> is missing.  Hence, here it is.
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+>>> ---
+>>>
+>>>  .../pinctrl/socionext,uniphier-pinctrl.txt         | 27 ++++++++++++++++++++++
+>>>  MAINTAINERS                                        |  1 +
+>>>  2 files changed, 28 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
+>>> new file mode 100644
+>>> index 0000000..8173b12
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
+>>> @@ -0,0 +1,27 @@
+>>> +UniPhier SoCs pin controller
+>>> +
+>>> +Required properties:
+>>> +- compatible: should be one of the following:
+>>> +    "socionext,uniphier-ld4-pinctrl"  - for LD4 SoC
+>>> +    "socionext,uniphier-pro4-pinctrl" - for Pro4 SoC
+>>> +    "socionext,uniphier-sld8-pinctrl" - for sLD8 SoC
+>>> +    "socionext,uniphier-pro5-pinctrl" - for Pro5 SoC
+>>> +    "socionext,uniphier-pxs2-pinctrl" - for PXs2 SoC
+>>> +    "socionext,uniphier-ld6b-pinctrl" - for LD6b SoC
+>>> +    "socionext,uniphier-ld11-pinctrl" - for LD11 SoC
+>>> +    "socionext,uniphier-ld20-pinctrl" - for LD20 SoC
+>>> +    "socionext,uniphier-pxs3-pinctrl" - for PXs3 SoC
+>>> +
+>>> +Note:
+>>> +The UniPhier pinctrl should be a subnode of a "syscon" compatible node.
+>>> +
+>>> +Example:
+>>> +     soc-glue@5f800000 {
+>>> +             compatible = "socionext,uniphier-pro4-soc-glue",
+>>> +                          "simple-mfd", "syscon";
+>>> +             reg = <0x5f800000 0x2000>;
+>>> +
+>>> +             pinctrl: pinctrl {
+>>> +                     compatible = "socionext,uniphier-pro4-pinctrl";
 >>
->> Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
->> Reported-by: Chris Obbard <obbardc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> 
-> Patch applied with Maxime's ACK.
+>> There's not a contiguous register range that can be put here?
+>
+>
+> Right.
+>
+> I saw SATA PHY registers are inserted among the pinctrl registers.
 
-Thanks for that (also to Maxime and Chen-Yu) and the smooth handling!
+Okay,
 
-Sorry, I just see that I didn't point this out explicitly, but this is
-to fix a regression introduced in 4.15-rc1, so is this on a branch that
-will be pushed for 4.15-rc, still? (Couldn't find anything quickly on
-kernel.org)
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-Cheers,
-Andre.
+> Hardware engineers often make crazy design.
+
+If there's 2 ways to do things, they will find a 3rd way.
+
+Rob
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
