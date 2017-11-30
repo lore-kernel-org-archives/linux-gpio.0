@@ -1,33 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pca953x: fix vendor prefix for PCA9654
-Date: Thu, 30 Nov 2017 14:38:50 +0100
-Message-ID: <CACRpkda3+dBT60i0M1Fjaa1sxJuxFpKidCC2M9YxozMNkAVTcg@mail.gmail.com>
-References: <20171116201842.006310882@cogentembedded.com>
+Subject: Re: [PATCH] gpio: iop: add missing MODULE_DESCRIPTION/AUTHOR/LICENSE
+Date: Thu, 30 Nov 2017 14:41:12 +0100
+Message-ID: <CACRpkdYwYn1TXhcCsCnU7p9++ya96V66tnVJUY5QePOMcMuvsg@mail.gmail.com>
+References: <20171120205452.84185-1-jc@linux.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20171116201842.006310882@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171120205452.84185-1-jc@linux.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jesse Chan <jc@linux.com>
+Cc: linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 16, 2017 at 9:18 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
+On Mon, Nov 20, 2017 at 9:54 PM, Jesse Chan <jc@linux.com> wrote:
 
-> Despite commit 55020c8056a8 ("of: Add vendor prefix for ON Semiconductor
-> Corp.") was made long ago, the latter commit 9f49f6dd0473 ("gpio: pca953x:
-> add onsemi,pca9654 id") made use of another, undocumented vendor prefix.
-> Since such prefix doesn't seem to be used in any device trees, I think we
-> can just fix the "compatible" string in the driver and the bindings and be
-> done with that...
+> This change resolves a new compile-time warning
+> when built as a loadable module:
 >
-> Fixes: 9f49f6dd0473 ("gpio: pca953x: add onsemi,pca9654 id")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-iop.o
+> see include/linux/module.h for more information
+>
+> This adds the license as "GPL", which matches the header of the file.
+>
+> MODULE_DESCRIPTION and MODULE_AUTHOR are also added.
+>
+> Signed-off-by: Jesse Chan <jc@linux.com>
 
-Patch applied with Rob's ACK.
-
-Thanks for spotting this in time.
+Patch applied.
 
 Yours,
 Linus Walleij
