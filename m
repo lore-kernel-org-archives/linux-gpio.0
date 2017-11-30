@@ -1,31 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] pinctrl: meson-axg: Add new pinctrl driver for
- Meson AXG SoC
-Date: Thu, 30 Nov 2017 14:31:00 +0100
-Message-ID: <CACRpkdYsOcBm5pVJwB2X4mWctHpNt_mWhAkPo0MDSyW7NAHccg@mail.gmail.com>
-References: <20171120100825.16613-1-yixun.lan@amlogic.com> <20171120100825.16613-3-yixun.lan@amlogic.com>
+Subject: Re: [PATCH] gpio: pca953x: fix vendor prefix for PCA9654
+Date: Thu, 30 Nov 2017 14:38:50 +0100
+Message-ID: <CACRpkda3+dBT60i0M1Fjaa1sxJuxFpKidCC2M9YxozMNkAVTcg@mail.gmail.com>
+References: <20171116201842.006310882@cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171120100825.16613-3-yixun.lan@amlogic.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-gpio@vger.kernel.org, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20171116201842.006310882@cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 20, 2017 at 11:08 AM, Yixun Lan <yixun.lan@amlogic.com> wrote:
+On Thu, Nov 16, 2017 at 9:18 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 
-> From: Xingyu Chen <xingyu.chen@amlogic.com>
+> Despite commit 55020c8056a8 ("of: Add vendor prefix for ON Semiconductor
+> Corp.") was made long ago, the latter commit 9f49f6dd0473 ("gpio: pca953x:
+> add onsemi,pca9654 id") made use of another, undocumented vendor prefix.
+> Since such prefix doesn't seem to be used in any device trees, I think we
+> can just fix the "compatible" string in the driver and the bindings and be
+> done with that...
 >
-> Add new pinctrl driver for Amlogic's Meson-AXG SoC.
->
-> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> Fixes: 9f49f6dd0473 ("gpio: pca953x: add onsemi,pca9654 id")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Patch applied with the ACKs.
+Patch applied with Rob's ACK.
 
-Nice work!
+Thanks for spotting this in time.
 
 Yours,
 Linus Walleij
