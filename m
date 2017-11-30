@@ -1,32 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 6/6] gpiolib: acpi: Introduce NO_RESTRICTION quirk
-Date: Thu, 30 Nov 2017 10:57:26 +0100
-Message-ID: <CACRpkdZ3rHjZZNwAL4KF_FtP6gQgATwk7F8-S8Y3VPZbJ2TdmQ@mail.gmail.com>
-References: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
- <20171110134033.85461-6-andriy.shevchenko@linux.intel.com>
- <20171113115554.GY18997@lahna.fi.intel.com> <1510578648.25007.166.camel@linux.intel.com>
- <CACRpkdY64u0T+BW_ACzZEr7cB+W1aixsn4ZB50EsBUJZttpMaw@mail.gmail.com> <1511962871.25007.485.camel@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1511962871.25007.485.camel@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Subject: [PATCH] gpio: Clarify that <linux/gpio.h> is legacy
+Date: Thu, 30 Nov 2017 11:04:53 +0100
+Message-ID: <20171130100453.29561-1-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43529 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750984AbdK3KE6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Nov 2017 05:04:58 -0500
+Received: by mail-lf0-f67.google.com with SMTP id 94so7219349lfy.10
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Nov 2017 02:04:58 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-On Wed, Nov 29, 2017 at 2:41 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+It should be clear to developers that they should not include
+this file in new code.
 
-> It
-> would be nice if you can prepare immutable branch in case the subsystems
-> would like to merge patches via their respective trees.
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+While I should certainly try to fix checkpatch.pl to warn
+about this, it doesn't hurt to spell it out in the file as well.
+---
+ include/linux/gpio.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-I have created a branch named "ib-gpio-acpi-quirks" in my tree
-with the six patches from you, then merged that to my devel
-branch.
+diff --git a/include/linux/gpio.h b/include/linux/gpio.h
+index 8ef7fc0ce0f0..91ed23468530 100644
+--- a/include/linux/gpio.h
++++ b/include/linux/gpio.h
+@@ -1,4 +1,14 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * <linux/gpio.h>
++ *
++ * This is the LEGACY GPIO bulk include file, including legacy APIs. It is
++ * used for GPIO drivers still referencing the global GPIO numberspace,
++ * and should not be included in new code.
++ *
++ * If you're implementing a GPIO driver, only include <linux/gpio/driver.h>
++ * If you're implementing a GPIO consumer, only include <linux/gpio/consumer.h>
++ */
+ #ifndef __LINUX_GPIO_H
+ #define __LINUX_GPIO_H
+ 
+-- 
+2.14.3
 
-You can point subsystem maintainers to that one.
-
-Yours,
-Linus Walleij
