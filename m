@@ -1,96 +1,54 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] gpio: uniphier: merge fix for "Update irq_domain_ops.activate()
- signature"
-Date: Thu, 30 Nov 2017 11:21:30 +0900
-Message-ID: <CAK7LNARoXhknthkYxKrk6OPR64_O-UpJRNnxjwxMdpR=Ak7fOQ@mail.gmail.com>
-References: <1510580176-7483-1-git-send-email-yamada.masahiro@socionext.com> <CACRpkdb=hL02-yr+bJYiJ4xqR029YUFJHs34TdvCb8aeyJH6Uw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:62795 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752838AbdK3CW2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Nov 2017 21:22:28 -0500
-Received: from mail-ua0-f170.google.com (mail-ua0-f170.google.com [209.85.217.170]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id vAU2MBgE028982
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Nov 2017 11:22:11 +0900
-Received: by mail-ua0-f170.google.com with SMTP id p33so4793050uag.9
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2017 18:22:11 -0800 (PST)
-In-Reply-To: <CACRpkdb=hL02-yr+bJYiJ4xqR029YUFJHs34TdvCb8aeyJH6Uw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Subject: [PATCH v4 0/2] gpio: Generalise state persistence
+Date: Thu, 30 Nov 2017 14:25:23 +1030
+Message-ID: <20171130035525.29653-1-andrew@aj.id.au>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ryan_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-aspeed-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Hi Linus,
+Hello,
 
-2017-11-29 22:08 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> Masahiro,
->
-> can you check that this ended up all right in the merge window,
-> else send a fixup patch?
->
-> Sorry for the mess.
->
-> Yours,
-> Linus Walleij
->
+This series provides an API to configure general GPIO state persistence in
+gpiolib. Previously, only sleep persistence was considered, but controllers
+like one found in Aspeed BMCs also support persistence of state across
+controller resets. There is some prior discussion on v1[1] and the initial
+RFC[2], and minor comments on v2[3]. v3 addresses minor issues with comments
+and debug statements[4], removing remaining references to reset tolerance.
 
-Linus Torvalds merged it very nicely.
+v4 is just a rebase of v3 onto v4.15-rc1, fixing a conflict with the new
+PIN_CONFIG_SKEW_DELAY pinconf parameter.
 
-Everything looks good to me.
+Please review!
 
+Andrew
 
+[1] https://www.spinics.net/lists/devicetree/msg200027.html
+[2] https://www.spinics.net/lists/devicetree/msg199559.html
+[3] https://www.spinics.net/lists/kernel/msg2635769.html
+[4] https://www.spinics.net/lists/devicetree/msg200040.html
 
+Andrew Jeffery (2):
+  gpio: gpiolib: Generalise state persistence beyond sleep
+  gpio: aspeed: Add support for reset tolerance
 
-> On Mon, Nov 13, 2017 at 2:36 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->>
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>
->> Changes since Stephens's original post
->>   - Fix checkpatch.pl warning
->>     "CHECK: Alignment should match open parenthesis"
->>   - Stretch lines since it fits in 80-columns
->>
->>
->>  drivers/gpio/gpio-uniphier.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
->> index d62cea4..71b768e 100644
->> --- a/drivers/gpio/gpio-uniphier.c
->> +++ b/drivers/gpio/gpio-uniphier.c
->> @@ -300,13 +300,15 @@ static int uniphier_gpio_irq_domain_alloc(struct irq_domain *domain,
->>         return irq_domain_alloc_irqs_parent(domain, virq, 1, &parent_fwspec);
->>  }
->>
->> -static void uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
->> -                                             struct irq_data *data)
->> +static int uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
->> +                                            struct irq_data *data, bool early)
->>  {
->>         struct uniphier_gpio_priv *priv = domain->host_data;
->>         struct gpio_chip *chip = &priv->chip;
->>
->>         gpiochip_lock_as_irq(chip, data->hwirq + UNIPHIER_GPIO_IRQ_OFFSET);
->> +
->> +       return 0;
->>  }
->>
->>  static void uniphier_gpio_irq_domain_deactivate(struct irq_domain *domain,
->> --
->> 2.7.4
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+ drivers/gpio/gpio-aspeed.c              | 39 +++++++++++++++++++--
+ drivers/gpio/gpiolib-of.c               |  6 ++--
+ drivers/gpio/gpiolib-sysfs.c            | 14 +++++---
+ drivers/gpio/gpiolib.c                  | 61 ++++++++++++++++++++++++++++++---
+ drivers/gpio/gpiolib.h                  |  2 +-
+ include/dt-bindings/gpio/gpio.h         |  6 ++--
+ include/linux/gpio/consumer.h           |  8 +++++
+ include/linux/gpio/machine.h            |  4 +--
+ include/linux/of_gpio.h                 |  2 +-
+ include/linux/pinctrl/pinconf-generic.h |  2 ++
+ 10 files changed, 124 insertions(+), 20 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.14.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
