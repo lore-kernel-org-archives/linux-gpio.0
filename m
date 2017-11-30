@@ -1,45 +1,41 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 4/5] pinctrl: mcp23s08: configure irq polarity using
- irq data
-Date: Thu, 30 Nov 2017 15:21:56 +0100
-Message-ID: <CACRpkdbkG_83-gpGqdMA5y3cpAvSbQ2X_xT07PC3+boxPeWbPQ@mail.gmail.com>
-References: <1511252491-79952-1-git-send-email-preid@electromag.com.au>
- <1511252491-79952-5-git-send-email-preid@electromag.com.au>
- <20171121133434.tuvxtrrbabjk4zeg@earth> <c191a9d6-3ebb-e95b-7342-aa18598ddf2b@electromag.com.au>
- <20171121152142.zg3r57gl2kenjwgi@earth>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: 74x164: Fix crash during .remove()
+Date: Thu, 30 Nov 2017 15:32:00 +0100
+Message-ID: <CACRpkdZAVhxF5HJhx0nBqeiinCJPzGQ3q8sGyripO11bVWJXyQ@mail.gmail.com>
+References: <1511273890-552-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171121152142.zg3r57gl2kenjwgi@earth>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1511273890-552-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 21, 2017 at 4:21 PM, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+On Tue, Nov 21, 2017 at 3:18 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> IMHO the explicit line-inverter is a bit over-engineered and
-> implicit line-inverter is enough, but I'm fine with both solutions.
-> I think the DT binding maintainers should comment on this though,
-> since it's pretty much a core decision about interrupt specifiers.
+> Commit 7ebc194d0fd4bb0f ("gpio: 74x164: Introduce 'enable-gpios'
+> property") added a new member gpiod_oe to the end of the struct
+> gen_74x164_chip, after the zero-length buffer array.
+>
+> However, this buffer is a flexible array, allocated together with the
+> structure during .probe().  As the buffer is no longer the last member,
+> writing to it corrupts the newly added member after it.
+> During device removal, the corrupted member will be used as a pointer,
+> leading to a crash.
+>
+> This went unnoticed, as the flexible array was declared as "buffer[0]"
+> instead of "buffer[]", and thus did not trigger a "flexible array member
+> not at end of struct" error from gcc.
+>
+> Move the gpiod_oe field up to fix this, and drop the zero from the array
+> size to prevent future similar bugs.
+>
+> Fixes: 7ebc194d0fd4bb0f ("gpio: 74x164: Introduce 'enable-gpios' property")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I feel the same.
-
-I am very much back and forth on the subject.
-
-Simplicity of use vs modelling the system as it actually works.
-
-Back and forth.
-
-I honestly have just a very vague idea about this.
-
-I don't know if Marc Z as irqchip maintainer has some idea
-on how to model inverters on irq lines or if he's seen some
-solutions to it out there.
+Patch applied for fixes with Fabio's ACK.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
