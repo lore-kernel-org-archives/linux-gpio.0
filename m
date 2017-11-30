@@ -1,58 +1,96 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC] Periodic Output, Timestamped Input
-Date: Wed, 29 Nov 2017 23:54:32 +0100
-Message-ID: <CACRpkdabNMHgs_ywzrgSg-AgQL1wtQN8SaxuZtCruiXnfrXGQw@mail.gmail.com>
-References: <87ineapo5w.fsf@linux.intel.com> <CACRpkdY+72nz9gK=kSESoNdM+xicx-rnpKNz-UbYZ+TFLUXpbA@mail.gmail.com>
- <87shcxw5n3.fsf@linux.intel.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] gpio: uniphier: merge fix for "Update irq_domain_ops.activate()
+ signature"
+Date: Thu, 30 Nov 2017 11:21:30 +0900
+Message-ID: <CAK7LNARoXhknthkYxKrk6OPR64_O-UpJRNnxjwxMdpR=Ak7fOQ@mail.gmail.com>
+References: <1510580176-7483-1-git-send-email-yamada.masahiro@socionext.com> <CACRpkdb=hL02-yr+bJYiJ4xqR029YUFJHs34TdvCb8aeyJH6Uw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33142 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753177AbdK2Wyd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Nov 2017 17:54:33 -0500
-Received: by mail-io0-f195.google.com with SMTP id t196so5524901iof.0
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2017 14:54:33 -0800 (PST)
-In-Reply-To: <87shcxw5n3.fsf@linux.intel.com>
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:62795 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752838AbdK3CW2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Nov 2017 21:22:28 -0500
+Received: from mail-ua0-f170.google.com (mail-ua0-f170.google.com [209.85.217.170]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id vAU2MBgE028982
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Nov 2017 11:22:11 +0900
+Received: by mail-ua0-f170.google.com with SMTP id p33so4793050uag.9
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Nov 2017 18:22:11 -0800 (PST)
+In-Reply-To: <CACRpkdb=hL02-yr+bJYiJ4xqR029YUFJHs34TdvCb8aeyJH6Uw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Felipe Balbi <felipe.balbi@linux.intel.com>, =?UTF-8?Q?Bartosz_Go=C5=82aszewski?= <bartekgola@gmail.com>
-Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Wed, Nov 29, 2017 at 2:56 PM, Felipe Balbi
-<felipe.balbi@linux.intel.com> wrote:
-> Me:
->> For the other thing: timestamping of GPIO events, we already
->> support timestamps for userspace GPIOs, but all it does is use
->> the kernel time, see gpiolib.c:
->>
->> static irqreturn_t lineevent_irq_thread(int irq, void *p)
->> {
->>         struct lineevent_state *le = p;
->>         struct gpioevent_data ge;
->>         int ret, level;
->>
->>         ge.timestamp = ktime_get_real_ns();
->>         level = gpiod_get_value_cansleep(le->desc);
+Hi Linus,
+
+2017-11-29 22:08 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+> Masahiro,
 >
-> this is running as a thread with interrupts enabled, AFAICT. This means
-> this thread can be preempted at least on PREEMPT_RT kernels, so your
-> timestamp can be wrong, right?
+> can you check that this ended up all right in the merge window,
+> else send a fixup patch?
+>
+> Sorry for the mess.
+>
+> Yours,
+> Linus Walleij
+>
 
-Yes, it can be off. What we should do to get i better is
-something like what I did in:
-drivers/iio/gyro/mpu3050-core.c
+Linus Torvalds merged it very nicely.
 
-Here I have both a hard and a soft IRQ handler (fast/slow if
-you like) and take the timestamp in the hard IRQ, then use
-it in the thread.
+Everything looks good to me.
 
-This should be done identically in gpiolib to increase precision
-in the general case.
 
-I was thinking about it already when implementing it but it fell
-out of my mind. I'm putting in on my TODO. (CC to bartosz
-who might be interested, he's using these ABIs quite a bit.)
 
-Yours,
-Linus Walleij
+
+> On Mon, Nov 13, 2017 at 2:36 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>>
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> ---
+>>
+>> Changes since Stephens's original post
+>>   - Fix checkpatch.pl warning
+>>     "CHECK: Alignment should match open parenthesis"
+>>   - Stretch lines since it fits in 80-columns
+>>
+>>
+>>  drivers/gpio/gpio-uniphier.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
+>> index d62cea4..71b768e 100644
+>> --- a/drivers/gpio/gpio-uniphier.c
+>> +++ b/drivers/gpio/gpio-uniphier.c
+>> @@ -300,13 +300,15 @@ static int uniphier_gpio_irq_domain_alloc(struct irq_domain *domain,
+>>         return irq_domain_alloc_irqs_parent(domain, virq, 1, &parent_fwspec);
+>>  }
+>>
+>> -static void uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
+>> -                                             struct irq_data *data)
+>> +static int uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
+>> +                                            struct irq_data *data, bool early)
+>>  {
+>>         struct uniphier_gpio_priv *priv = domain->host_data;
+>>         struct gpio_chip *chip = &priv->chip;
+>>
+>>         gpiochip_lock_as_irq(chip, data->hwirq + UNIPHIER_GPIO_IRQ_OFFSET);
+>> +
+>> +       return 0;
+>>  }
+>>
+>>  static void uniphier_gpio_irq_domain_deactivate(struct irq_domain *domain,
+>> --
+>> 2.7.4
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
