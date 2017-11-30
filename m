@@ -1,32 +1,69 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sunxi: Fix A64 UART mux value
-Date: Thu, 30 Nov 2017 16:49:42 +0100
-Message-ID: <CACRpkdZHdPuWa5sR72cpb6cjRmrYRt6VzA3YQ2jbc-+1DbdAdQ@mail.gmail.com>
-References: <20171125121230.23555-1-andre.przywara@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v3 4/5] pinctrl: mcp23s08: configure irq polarity using
+ irq data
+Date: Thu, 30 Nov 2017 15:50:53 +0000
+Message-ID: <1ba1c850-dd22-fa98-66ea-fcb8527ec5ad@arm.com>
+References: <1511252491-79952-1-git-send-email-preid@electromag.com.au>
+ <1511252491-79952-5-git-send-email-preid@electromag.com.au>
+ <20171121133434.tuvxtrrbabjk4zeg@earth>
+ <c191a9d6-3ebb-e95b-7342-aa18598ddf2b@electromag.com.au>
+ <20171121152142.zg3r57gl2kenjwgi@earth>
+ <CACRpkdbkG_83-gpGqdMA5y3cpAvSbQ2X_xT07PC3+boxPeWbPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:42983 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbdK3Ptn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Nov 2017 10:49:43 -0500
-Received: by mail-io0-f196.google.com with SMTP id u42so7967248ioi.9
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Nov 2017 07:49:43 -0800 (PST)
-In-Reply-To: <20171125121230.23555-1-andre.przywara@arm.com>
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56506 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752130AbdK3Puz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 30 Nov 2017 10:50:55 -0500
+In-Reply-To: <CACRpkdbkG_83-gpGqdMA5y3cpAvSbQ2X_xT07PC3+boxPeWbPQ@mail.gmail.com>
+Content-Language: en-GB
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi <linux-sunxi@googlegroups.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>
+Cc: Phil Reid <preid@electromag.com.au>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 
-On Sat, Nov 25, 2017 at 1:12 PM, Andre Przywara <andre.przywara@arm.com> wrote:
+On 30/11/17 14:21, Linus Walleij wrote:
+> On Tue, Nov 21, 2017 at 4:21 PM, Sebastian Reichel <sre@kernel.org> wrote:
+> 
+>> IMHO the explicit line-inverter is a bit over-engineered and
+>> implicit line-inverter is enough, but I'm fine with both solutions.
+>> I think the DT binding maintainers should comment on this though,
+>> since it's pretty much a core decision about interrupt specifiers.
+> 
+> I feel the same.
+> 
+> I am very much back and forth on the subject.
+> 
+> Simplicity of use vs modelling the system as it actually works.
+> 
+> Back and forth.
+> 
+> I honestly have just a very vague idea about this.
+> 
+> I don't know if Marc Z as irqchip maintainer has some idea
+> on how to model inverters on irq lines or if he's seen some
+> solutions to it out there.
 
-> To use pin PF4 as the RX signal of UART0, we have to write 0b011 into
-> the respective pin controller register.
-> Fix the wrong value we had in our table so far.
->
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+So far, I've seen two types of solutions:
+- One based on a stacked irqchip driver that implements the inverter on
+the irq_set_type method
+- One based on per-device vendor-specific properties in DT
 
-Patch applied with Chen-Yu's ACK and fixes tag.
+While the first one is clearly a big hammer, it has the advantage of not
+adding new stuff to the DT spec, and accurately describe the signal path
+(see the mediatek stuff for reference).
 
-Yours,
-Linus Walleij
+The second one is just a hack, frankly. It just has the advantage of
+being trivial to implement.
+
+I'm clearly inclined to prefer the first solution. But maybe it is time
+to invent a "generic inverter" driver that could be reusable, just like
+we have a generic irqchip?
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
