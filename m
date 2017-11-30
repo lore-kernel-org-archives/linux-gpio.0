@@ -1,41 +1,53 @@
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] gpio: ftgpio010: Fix platform_get_irq's error checking
-Date: Thu, 30 Nov 2017 19:42:32 +0530
-Message-ID: <c6bf37f60d82aa3d425f66f08e10fedc51202b6f.1512051063.git.arvind.yadav.cs@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 4/5] pinctrl: mcp23s08: configure irq polarity using
+ irq data
+Date: Thu, 30 Nov 2017 15:17:23 +0100
+Message-ID: <CACRpkdYabJ3cMeqja3B2Lip1BT6f++k=wAM_NOKcRZQe-BCXBg@mail.gmail.com>
+References: <1511252491-79952-1-git-send-email-preid@electromag.com.au> <1511252491-79952-5-git-send-email-preid@electromag.com.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39042 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751443AbdK3OMo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Nov 2017 09:12:44 -0500
+Received: from mail-io0-f169.google.com ([209.85.223.169]:38290 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751125AbdK3ORY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Nov 2017 09:17:24 -0500
+Received: by mail-io0-f169.google.com with SMTP id d14so7645252ioc.5
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Nov 2017 06:17:24 -0800 (PST)
+In-Reply-To: <1511252491-79952-5-git-send-email-preid@electromag.com.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Phil Reid <preid@electromag.com.au>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sebastian Reichel <sre@kernel.org>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 
-The platform_get_irq() function returns negative if an error occurs.
-zero or positive number on success. platform_get_irq() error checking
-for zero is not correct.
+On Tue, Nov 21, 2017 at 9:21 AM, Phil Reid <preid@electromag.com.au> wrote:
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/gpio/gpio-ftgpio010.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> The irq polarity is already encoded in the irq config. Use that to
+> determine the polarity for the mcp32s08 irq output instead of the
+> custom microchip,irq-active-high property.
+>
+> Signed-off-by: Phil Reid <preid@electromag.com.au>
+(...)
+>         if (mcp->irq && mcp->irq_controller) {
+> -               irq_active_high =
+> -                       device_property_read_bool(dev,
+> -                                             "microchip,irq-active-high");
+> +               if (device_property_present(dev, "microchip,irq-active-high"))
+> +                       dev_warn(dev,
+> +                                "microchip,irq-active-high is deprecated\n");
+> +
+> +               irq_trig = irqd_get_trigger_type(irq_get_irq_data(mcp->irq));
+> +               if (irq_trig == IRQF_TRIGGER_HIGH)
+> +                       irq_active_high = true;
 
-diff --git a/drivers/gpio/gpio-ftgpio010.c b/drivers/gpio/gpio-ftgpio010.c
-index 7b3394f..feff86a 100644
---- a/drivers/gpio/gpio-ftgpio010.c
-+++ b/drivers/gpio/gpio-ftgpio010.c
-@@ -176,8 +176,8 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
- 		return PTR_ERR(g->base);
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (!irq)
--		return -EINVAL;
-+	if (irq < 0)
-+		return irq;
- 
- 	ret = bgpio_init(&g->gc, dev, 4,
- 			 g->base + GPIO_DATA_IN,
--- 
-2.7.4
+This makes the setting from the interrupt line override the
+custom property.
 
+Should it not be the other way around to preserve compatibility
+with elder device trees?
+
+I.e. the custom property overrides the line setting?
+
+Otherwise it looks good.
+
+Yours,
+Linus Walleij
