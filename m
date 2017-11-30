@@ -1,42 +1,33 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 6/6] gpiolib: acpi: Introduce NO_RESTRICTION quirk
-Date: Thu, 30 Nov 2017 13:07:41 +0200
-Message-ID: <1512040061.25007.531.camel@linux.intel.com>
-References: <20171110134033.85461-1-andriy.shevchenko@linux.intel.com>
-         <20171110134033.85461-6-andriy.shevchenko@linux.intel.com>
-         <20171113115554.GY18997@lahna.fi.intel.com>
-         <1510578648.25007.166.camel@linux.intel.com>
-         <CACRpkdY64u0T+BW_ACzZEr7cB+W1aixsn4ZB50EsBUJZttpMaw@mail.gmail.com>
-         <1511962871.25007.485.camel@linux.intel.com>
-         <CACRpkdZ3rHjZZNwAL4KF_FtP6gQgATwk7F8-S8Y3VPZbJ2TdmQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] documentation: Add compatibles for Amlogic Meson
+ AXG pin controllers
+Date: Thu, 30 Nov 2017 14:27:41 +0100
+Message-ID: <CACRpkdZrsDoUqsZhU0dX=19sDVK_J6uZOFSqxVW2EnNcw-EGzw@mail.gmail.com>
+References: <20171120100851.17366-1-yixun.lan@amlogic.com> <20171120100851.17366-2-yixun.lan@amlogic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ3rHjZZNwAL4KF_FtP6gQgATwk7F8-S8Y3VPZbJ2TdmQ@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171120100851.17366-2-yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
+Cc: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Xingyu Chen <xingyu.chen-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:ARM/Amlogic Meson..." <linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 2017-11-30 at 10:57 +0100, Linus Walleij wrote:
-> On Wed, Nov 29, 2017 at 2:41 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > It
-> > would be nice if you can prepare immutable branch in case the
-> > subsystems
-> > would like to merge patches via their respective trees.
-> 
-> I have created a branch named "ib-gpio-acpi-quirks" in my tree
-> with the six patches from you, then merged that to my devel
-> branch.
-> 
-> You can point subsystem maintainers to that one.
-> 
+On Mon, Nov 20, 2017 at 11:08 AM, Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org> wrote:
 
-Thanks!
+> From: Xingyu Chen <xingyu.chen-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
+>
+> Add compatibles for Amlogic Meson AXG pin controllers
+>
+> Reviewed-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+> Signed-off-by: Xingyu Chen <xingyu.chen-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Patch applied with Rob's ACK.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
