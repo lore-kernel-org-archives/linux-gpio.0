@@ -1,58 +1,152 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH] pinctrl: cherryview: Mask all interrupts on Intel_Strago based systems
-Date: Fri,  1 Dec 2017 13:25:04 +0300
-Message-ID: <20171201102504.38709-1-mika.westerberg@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:44011 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751899AbdLAKZH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 1 Dec 2017 05:25:07 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH 2/4] gpiolib: add bitmask for valid GPIO lines
+Date: Fri, 1 Dec 2017 17:08:17 +0530
+Message-ID: <68a11ee4-d0c6-0f4e-3631-125cc4e7a1bd@codeaurora.org>
+References: <1510096056-13765-1-git-send-email-timur@codeaurora.org>
+ <1510096056-13765-3-git-send-email-timur@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1510096056-13765-3-git-send-email-timur@codeaurora.org>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, nbasu@codeaurora.org, vivek.gautam@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org
 
-Guenter Roeck reported an interrupt storm on a prototype system which is
-based on Cyan Chromebook. The root cause turned out to be a incorrectly
-configured pin that triggers spurious interrupts. This will be fixed in
-coreboot but currently we need to prevent the interrupt storm from
-happening by masking all interrupts (but not GPEs) on those systems.
+Hi,
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Reported-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On 11/08/2017 04:37 AM, Timur Tabi wrote:
+> Add support for specifying that some GPIOs within a range are unavailable.
+> Some systems have a sparse list of GPIOs, where a range of GPIOs is
+> specified (usually 0 to n-1), but some subset within that range is
+> absent or unavailable for whatever reason.
+> 
+> To support this, allow drivers to specify a bitmask of GPIOs that
+> are present or absent.  Gpiolib will then block access to those that
+> are absent.
+> 
+> Signed-off-by: Timur Tabi <timur@codeaurora.org>
+> ---
+>   drivers/gpio/gpiolib.c      | 43 +++++++++++++++++++++++++++++++++++--------
+>   include/linux/gpio/driver.h |  2 ++
+>   2 files changed, 37 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 60553af4c004..c32387936cdd 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1481,22 +1481,36 @@ static struct gpio_chip *find_chip_by_name(const char *name)
+>   
+>   static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
+>   {
+> -	if (!gpiochip->irq_need_valid_mask)
+> -		return 0;
+> +	if (gpiochip->irq_need_valid_mask) {
+> +		gpiochip->irq_valid_mask =
+> +			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
+> +				sizeof(long), GFP_KERNEL);
+> +		if (!gpiochip->irq_valid_mask)
+> +			return -ENOMEM;
+>   
+> -	gpiochip->irq_valid_mask = kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
+> -					   sizeof(long), GFP_KERNEL);
+> -	if (!gpiochip->irq_valid_mask)
+> -		return -ENOMEM;
+> +		/* Assume by default all GPIOs are valid */
+> +		bitmap_fill(gpiochip->irq_valid_mask, gpiochip->ngpio);
+> +	}
+>   
+> -	/* Assume by default all GPIOs are valid */
+> -	bitmap_fill(gpiochip->irq_valid_mask, gpiochip->ngpio);
+> +	if (gpiochip->line_need_valid_mask) {
+> +		gpiochip->line_valid_mask =
+> +			kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
+> +				sizeof(long), GFP_KERNEL);
+> +		if (!gpiochip->line_valid_mask)
+> +			return -ENOMEM;
+> +
+> +		/* Assume by default all GPIOs are valid */
+> +		bitmap_fill(gpiochip->line_valid_mask, gpiochip->ngpio);
+> +	}
+>   
+>   	return 0;
+>   }
+>   
+>   static void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip)
+>   {
+> +	kfree(gpiochip->line_valid_mask);
+> +	gpiochip->line_valid_mask = NULL;
+> +
+>   	kfree(gpiochip->irq_valid_mask);
+>   	gpiochip->irq_valid_mask = NULL;
+>   }
+> @@ -1510,6 +1524,15 @@ static bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gpiochip,
+>   	return test_bit(offset, gpiochip->irq_valid_mask);
+>   }
+>   
+> +static bool gpiochip_irqchip_line_valid(const struct gpio_chip *gpiochip,
+> +					unsigned int offset)
+> +{
+> +	/* No mask means all valid */
+> +	if (likely(!gpiochip->line_valid_mask))
+> +		return true;
+> +	return test_bit(offset, gpiochip->line_valid_mask);
+> +}
+> +
+>   /**
+>    * gpiochip_set_cascaded_irqchip() - connects a cascaded irqchip to a gpiochip
+>    * @gpiochip: the gpiochip to set the irqchip chain to
+> @@ -3320,6 +3343,10 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
+>   		return desc;
+>   	}
+>   
+> +	/* Make sure the GPIO is valid before we request it. */
+> +	if (!gpiochip_irqchip_line_valid(desc->gdev->chip, idx))
+> +		return ERR_PTR(-EACCES);
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index aa6c9f569c2b..083ffd397154 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1601,6 +1601,22 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- 			clear_bit(i, chip->irq.valid_mask);
- 	}
- 
-+	/*
-+	 * The same set of machines in chv_no_valid_mask[] have incorrectly
-+	 * configured GPIOs that generate spurious interrupts so we use
-+	 * this same list to apply another quirk for them.
-+	 *
-+	 * See also https://bugzilla.kernel.org/show_bug.cgi?id=197953.
-+	 */
-+	if (!need_valid_mask) {
-+		/*
-+		 * Mask all interrupts the community is able to generate
-+		 * but leave the ones that can only generate GPEs unmasked.
-+		 */
-+		chv_writel(~(BIT(pctrl->community->nirqs) - 1),
-+			   pctrl->regs + CHV_INTMASK);
-+	}
-+
- 	/* Clear all interrupts */
- 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
- 
+We're hitting an issue here ^ when a consumer calls the devm_gpiod_get() API. This API
+internally sets idx in gpiod_get_index to always 0. For example, in the call sequence
+below, the idx argument to gpiochip_irqchip_line_valid is always 0:
+
+devm_gpiod_get(dev, con_id, flags)
+    devm_gpiod_get_index(dev, con_id, 0, flags)
+       gpiod_get_index(dev, con_id, 0, flags)
+          if (!gpiochip_irqchip_line_valid(desc->gdev->chip, 0))
+              return ERR_PTR(-EACCES);
+
+Therefore, with these patches, if we create a sparse gpio map, and the
+0th gpio is set to "not accessible", all gpio requests end up failing with EACCESS
+because idx is always passed as 0.
+
+In gpiochip_irqchip_line_valid, shouldn't we test the nth bit (that corresponds to
+this gpio_desc) in chip->line_valid_mask instead of idx passed above, which is always
+0?
+
+Thanks,
+Archit
+
+
+> +
+>   	status = gpiod_request(desc, con_id);
+>   	if (status < 0)
+>   		return ERR_PTR(status);
+> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> index 424e5139ff10..853828ccabc8 100644
+> --- a/include/linux/gpio/driver.h
+> +++ b/include/linux/gpio/driver.h
+> @@ -173,6 +173,8 @@ struct gpio_chip {
+>   	bool			irq_nested;
+>   	bool			irq_need_valid_mask;
+>   	unsigned long		*irq_valid_mask;
+> +	bool			line_need_valid_mask;
+> +	unsigned long		*line_valid_mask;
+>   	struct lock_class_key	*lock_key;
+>   #endif
+>   
+> 
+
 -- 
-2.15.0
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
