@@ -1,98 +1,46 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v4 02/10] pinctrl: axp209: add pinctrl features
-Date: Fri, 1 Dec 2017 16:57:02 +0100
-Message-ID: <20171201155702.irfox7vf3kfjvpjx@flea.lan>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v4 06/10] pinctrl: axp209: add programmable
+ ADC muxing value
+Date: Fri, 1 Dec 2017 16:57:25 +0100
+Message-ID: <20171201155725.7e7oshnjxbdhn3qv@flea.lan>
 References: <cover.3ff63fdf302c6bda02ea7d160ad2aa5afee0899d.1512135804.git-series.quentin.schulz@free-electrons.com>
- <71c9da94df2a5938cb8c092e40f8e36eec0b01c3.1512135804.git-series.quentin.schulz@free-electrons.com>
+ <a4f348914450705f1f784a2148559e19caf9e9fd.1512135804.git-series.quentin.schulz@free-electrons.com>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qvcxxhgedzncheee"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:56913 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751752AbdLBPgB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 Dec 2017 10:36:01 -0500
+	protocol="application/pgp-signature"; boundary="zeqfzzcfzrltmwfc"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBYMQRPIQKGQEIO3TCXQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Content-Disposition: inline
-In-Reply-To: <71c9da94df2a5938cb8c092e40f8e36eec0b01c3.1512135804.git-series.quentin.schulz@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <a4f348914450705f1f784a2148559e19caf9e9fd.1512135804.git-series.quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, linux@armlinux.org.uk, lee.jones@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, thomas.petazzoni@free-electrons.com, linux-sunxi@googlegroups.com
 
 
---qvcxxhgedzncheee
-Content-Type: text/plain; charset=us-ascii
+--zeqfzzcfzrltmwfc
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 01, 2017 at 02:44:43PM +0100, Quentin Schulz wrote:
-> +static void axp20x_gpio_set(struct gpio_chip *chip, unsigned offset,
-> +			    int value)
-> +{
+On Fri, Dec 01, 2017 at 02:44:47PM +0100, Quentin Schulz wrote:
+> To prepare for patches that will add support for a new PMIC that has a
+> different GPIO adc muxing value, add an adc_mux within axp20x_pctl
+> structure and use it.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 
-checkpatch output:
-WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 
-> +static int axp20x_pmx_set_mux(struct pinctrl_dev *pctldev,
-> +			      unsigned int function, unsigned int group)
-> +{
-> +	struct axp20x_gpio *gpio =3D pinctrl_dev_get_drvdata(pctldev);
-> +	unsigned int mask;
-> +
-> +	/* Every pin supports GPIO_OUT and GPIO_IN functions */
-> +	if (function <=3D AXP20X_FUNC_GPIO_IN)
-> +		return axp20x_pmx_set(pctldev, group,
-> +				      gpio->funcs[function].muxval);
-> +
-> +	if (function =3D=3D AXP20X_FUNC_LDO)
-> +		mask =3D gpio->desc->ldo_mask;
-> +	else
-> +		mask =3D gpio->desc->adc_mask;
-
-What is the point of this test...
-
-> +	if (!(BIT(group) & mask))
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * We let the regulator framework handle the LDO muxing as muxing bits
-> +	 * are basically also regulators on/off bits. It's better not to enforce
-> +	 * any state of the regulator when selecting LDO mux so that we don't
-> +	 * interfere with the regulator driver.
-> +	 */
-> +	if (function =3D=3D AXP20X_FUNC_LDO)
-> +		return 0;
-
-=2E.. if you know that you're not going to do anything with one of the
-outcomes. It would be better to just move that part above, instead of
-doing the same test twice.
-
-It looks good otherwise, thanks!
 Maxime
 
---=20
+-- 
 Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
-
---qvcxxhgedzncheee
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlohe7wACgkQ0rTAlCFN
-r3RTug/7B9/2YVyKXRuUEy3ydimMEwWroviPTBTalRNWLWrVHDebbJmUoK4iSx4S
-7yLEM0Fi4MBzwMW0fHy0hTr6A1o63tu8bxkE2BHHY8WMV8GIgKt03zbLb80Y5zOe
-bHeGLeVnq6iJda45XRX8bGygYmRDRs3dorQl+5aj38GM9cTAr3fCiCkUNSf9DQBe
-GNMnwg2EOjL/+JDBlqAQpZjj73nEv0ESEKhMAC9fAL4Vu/24XoW5wnjp4Gh4PmfC
-EAuQ5B2Q2yFXdcjp+LB6KJBapjTSTKw6ijYkCAEWuNANrssoBslifKeX+ui9nWvG
-GV3VPJXKjFBW/hb7soZw2uWCgnBP55Xauts4Fx1SmiYmSAzqx/UsjW5ga4PNDLWa
-VLSnHjWtWhWEHOcgL45u2uqoowraPIGn6VVxRpvyzmnmufKypa3nEx4pOz8luu8b
-1yMttuBL98HCSsjzdKRLXYwcvOLXehiUqTm2abr0eVZ9uqNBuyfLeW0w303BhUeT
-bJNV4Q+jRa+0DBDeC3sGYck7+K98DFXWCztdYG7LaQJIGVURrQM248LZxYTqOoUF
-9UgfyplxEeH1CukazqYv6kI0GUTHVvOAuCHmcAu+7Xi7LHHOqSeAn/mte49XxSgT
-5oiCXBwzIalid68uQlkA4srw/v0VpLxjiLc00eB40lqLOvwFr/g=
-=FHM2
------END PGP SIGNATURE-----
-
---qvcxxhgedzncheee--
+--zeqfzzcfzrltmwfc--
