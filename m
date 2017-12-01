@@ -1,38 +1,33 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [RFC PATCH 2/3] pinctrl: sunxi: introduce DT-based generic driver
-Date: Fri, 1 Dec 2017 09:45:59 -0800
-Message-ID: <20171201174559.GR28152@atomide.com>
-References: <20171113012523.2328-1-andre.przywara@arm.com>
- <20171113012523.2328-3-andre.przywara@arm.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [libgpiod][PATCH] Make license type consistent between source
+ files and COPYING file
+Date: Fri, 1 Dec 2017 18:51:14 +0100
+Message-ID: <CAMRc=MfUwV4CVe8M1vBuvmJYGDhDiJMmt69WULkF_Tt1mXHARA@mail.gmail.com>
+References: <20171201141740.20033-1-sz.lin@moxa.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:53080 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751486AbdLARqD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 1 Dec 2017 12:46:03 -0500
-Content-Disposition: inline
-In-Reply-To: <20171113012523.2328-3-andre.przywara@arm.com>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:41953 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751157AbdLARvQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Dec 2017 12:51:16 -0500
+Received: by mail-oi0-f44.google.com with SMTP id t78so7685225oie.8
+        for <linux-gpio@vger.kernel.org>; Fri, 01 Dec 2017 09:51:16 -0800 (PST)
+In-Reply-To: <20171201141740.20033-1-sz.lin@moxa.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>, linux-arm-kernel@lists.infradead.org
+To: SZ Lin <sz.lin@moxa.com>
+Cc: Bartosz Golaszewski <bartekgola@gmail.com>, linux-gpio@vger.kernel.org
 
-* Andre Przywara <andre.przywara@arm.com> [171113 01:28]:
-> This driver (shim) allows to fully describe an Allwinner pin controller
-> and its GPIO ports in device tree nodes.
-> It will read some newly introduced properties to build a table
-> describing the pins and their routing. This table matches those that we
-> have hardcoded for various SoCs in the kernel so far.
-> After this table has been created, it will be handed over to the actual
-> pinctrl driver, which registers it with the pinctrl subsystem.
+2017-12-01 15:17 GMT+01:00 SZ Lin <sz.lin@moxa.com>:
+> The license type of COPYING file is "LGPL-2.1+", but it declared
+> with "LGPL-2.1" in the beginning of source files
+>
+> This patch fixes license type inconsistent issue in each source file
+>
+> Signed-off-by: SZ Lin <sz.lin@moxa.com>
 
-Hmm so how come you're not using GENERIC_PINCTRL_GROUPS and
-GENERIC_PINMUX_FUNCTIONS that we now have?
+Applied, thanks!
 
-These together with the #pinctrl-cells property should make things
-quite easy and should also simplify your binding hopefully.
-
-Regards,
-
-Tony
+Best regards,
+Bartosz Golaszewski
