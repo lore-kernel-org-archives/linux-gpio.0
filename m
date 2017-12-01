@@ -1,26 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] MAINTAINERS: add myself as reviewer for gpio-mockup
-Date: Fri, 1 Dec 2017 20:39:36 +0100
-Message-ID: <CACRpkdbjOdDFV-sP00v+nGfS8sMNtNM1Nd+rOJ4b0sQhZdwUaQ@mail.gmail.com>
-References: <20171127105051.10072-1-brgl@bgdev.pl>
+Subject: Re: [PATCH] gpio: it87: fix mojibake in module metadata
+Date: Fri, 1 Dec 2017 20:41:47 +0100
+Message-ID: <CACRpkdaMrvbEwgb-vxgMdB4G5u8onTLqrGt75OL266zW9tt9qg@mail.gmail.com>
+References: <20171128032149.9951-1-kilobyte@angband.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171127105051.10072-1-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:43052 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751682AbdLATls (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Dec 2017 14:41:48 -0500
+Received: by mail-io0-f196.google.com with SMTP id s37so12408596ioe.10
+        for <linux-gpio@vger.kernel.org>; Fri, 01 Dec 2017 11:41:48 -0800 (PST)
+In-Reply-To: <20171128032149.9951-1-kilobyte@angband.pl>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Adam Borowski <kilobyte@angband.pl>
+Cc: =?UTF-8?Q?Diego_Elio_Petten=C3=B2?= <flameeyes@flameeyes.eu>, linux-gpio@vger.kernel.org
 
-On Mon, Nov 27, 2017 at 11:50 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Tue, Nov 28, 2017 at 4:21 AM, Adam Borowski <kilobyte@angband.pl> wrote:
 
-> The user space libgpiod project is now tightly coupled with the
-> gpio-mockup module, so let me know when any changes to it are being
-> proposed.
+> It had twice-encoded Unicode.
 >
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Signed-off-by: Adam Borowski <kilobyte@angband.pl>
 
-Patch applied.
+Ooops. Patch applied.
 
 Yours,
 Linus Walleij
