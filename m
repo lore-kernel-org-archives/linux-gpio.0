@@ -1,62 +1,64 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Mask all interrupts on Intel_Strago
- based systems
-Date: Fri, 1 Dec 2017 15:33:12 +0200
-Message-ID: <20171201133312.GR22431@lahna.fi.intel.com>
-References: <20171201102504.38709-1-mika.westerberg@linux.intel.com>
- <1512131732.25007.534.camel@linux.intel.com>
+From: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH v4 06/10] pinctrl: axp209: add programmable ADC
+ muxing value
+Date: Fri,  1 Dec 2017 14:44:47 +0100
+Message-ID: <a4f348914450705f1f784a2148559e19caf9e9fd.1512135804.git-series.quentin.schulz@free-electrons.com>
+References: <cover.3ff63fdf302c6bda02ea7d160ad2aa5afee0899d.1512135804.git-series.quentin.schulz@free-electrons.com>
+Reply-To: quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:59149 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752379AbdLANdR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 1 Dec 2017 08:33:17 -0500
-Content-Disposition: inline
-In-Reply-To: <1512131732.25007.534.camel@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBCLZXSNY5IDBBD52QXIQKGQEC6QS36Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <cover.3ff63fdf302c6bda02ea7d160ad2aa5afee0899d.1512135804.git-series.quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+In-Reply-To: <cover.3ff63fdf302c6bda02ea7d160ad2aa5afee0899d.1512135804.git-series.quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+References: <cover.3ff63fdf302c6bda02ea7d160ad2aa5afee0899d.1512135804.git-series.quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-gpio@vger.kernel.org
 
-On Fri, Dec 01, 2017 at 02:35:32PM +0200, Andy Shevchenko wrote:
-> On Fri, 2017-12-01 at 13:25 +0300, Mika Westerberg wrote:
-> > Guenter Roeck reported an interrupt storm on a prototype system which
-> > is
-> > based on Cyan Chromebook. The root cause turned out to be a
-> > incorrectly
-> > configured pin that triggers spurious interrupts. This will be fixed
-> > in
-> > coreboot but currently we need to prevent the interrupt storm from
-> > happening by masking all interrupts (but not GPEs) on those systems.
-> > 
-> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
-> 
-> Shouldn't be this URL to the bug mentioned in the comments below?
+To prepare for patches that will add support for a new PMIC that has a
+different GPIO adc muxing value, add an adc_mux within axp20x_pctl
+structure and use it.
 
-Doh! Yes, it should. I'll fix it up.
+Signed-off-by: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-axp209.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> > +	/*
-> > +	 * The same set of machines in chv_no_valid_mask[] have
-> > incorrectly
-> > +	 * configured GPIOs that generate spurious interrupts so we
-> > use
-> > +	 * this same list to apply another quirk for them.
-> > +	 *
-> > +	 * See also https://bugzilla.kernel.org/show_bug.cgi?id=19795
-> > 3.
-> > +	 */
-> 
-> > +		chv_writel(~(BIT(pctrl->community->nirqs) - 1),
-> > +			   pctrl->regs + CHV_INTMASK);
-> 
-> It might be considered to use
-> 
-> GENMASK(32, pctrl->community->nirqs)
-> 
-> instead of
-> 
-> ~(BIT(pctrl->community->nirqs) - 1)
-
-Indeed it looks better with GENMASK() so I'll change it in the next
-version.
+diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
+index 3fae81f..504e96c 100644
+--- a/drivers/pinctrl/pinctrl-axp209.c
++++ b/drivers/pinctrl/pinctrl-axp209.c
+@@ -49,6 +49,7 @@ struct axp20x_pctrl_desc {
+ 	/* Stores the pins supporting ADC function. Bit offset is pin number. */
+ 	u8				adc_mask;
+ 	u8				gpio_status_offset;
++	u8				adc_mux;
+ };
+ 
+ struct axp20x_pinctrl_function {
+@@ -79,6 +80,7 @@ static const struct axp20x_pctrl_desc axp20x_data = {
+ 	.ldo_mask = BIT(0) | BIT(1),
+ 	.adc_mask = BIT(0) | BIT(1),
+ 	.gpio_status_offset = 4,
++	.adc_mux = AXP20X_MUX_ADC,
+ };
+ 
+ static int axp20x_gpio_get_reg(unsigned offset)
+@@ -333,7 +335,7 @@ static void axp20x_build_funcs_groups(struct platform_device *pdev)
+ 	 * See comment in axp20x_pmx_set_mux.
+ 	 */
+ 	pctl->funcs[AXP20X_FUNC_ADC].name = "adc";
+-	pctl->funcs[AXP20X_FUNC_ADC].muxval = AXP20X_MUX_ADC;
++	pctl->funcs[AXP20X_FUNC_ADC].muxval = pctl->desc->adc_mux;
+ 
+ 	/* Every pin supports GPIO_OUT and GPIO_IN functions */
+ 	for (i = 0; i <= AXP20X_FUNC_GPIO_IN; i++) {
+-- 
+git-series 0.9.1
