@@ -1,38 +1,71 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 4/5] pinctrl: mcp23s08: configure irq polarity using
- irq data
-Date: Fri, 1 Dec 2017 09:38:54 +0100
-Message-ID: <CACRpkdbpg70nJM87RZC=a2D_GhuJCK4k2HeNoCXtBGmh-uifSA@mail.gmail.com>
-References: <1511252491-79952-1-git-send-email-preid@electromag.com.au>
- <1511252491-79952-5-git-send-email-preid@electromag.com.au>
- <20171121133434.tuvxtrrbabjk4zeg@earth> <c191a9d6-3ebb-e95b-7342-aa18598ddf2b@electromag.com.au>
- <20171121152142.zg3r57gl2kenjwgi@earth> <CACRpkdbkG_83-gpGqdMA5y3cpAvSbQ2X_xT07PC3+boxPeWbPQ@mail.gmail.com>
- <1ba1c850-dd22-fa98-66ea-fcb8527ec5ad@arm.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH 1/3] dt-bindings: pinctrl: sunxi:
+ document new generic binding
+Date: Fri, 1 Dec 2017 10:38:58 +0100
+Message-ID: <CACRpkdZccQ98Qbw9BvAQZESc9X4UcY9DPz4LngzrhAHT78nSxA@mail.gmail.com>
+References: <20171113012523.2328-1-andre.przywara@arm.com> <20171113012523.2328-2-andre.przywara@arm.com>
+ <CACRpkdbpfkM4odz425+4qyUCF5vqPWBQ=F5Yk7AtJL5SqXghpg@mail.gmail.com>
+ <20171124105240.GB3792@ulmo> <20efcf8f-85a5-3cad-a84b-434ee5cad68e@arm.com>
+ <20171124133123.GA15999@ulmo> <0c8051e6-5d8c-32d6-97e4-11c2283da5b4@arm.com>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:40236 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750994AbdLAIi4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Dec 2017 03:38:56 -0500
-Received: by mail-io0-f193.google.com with SMTP id d21so10458197ioe.7
-        for <linux-gpio@vger.kernel.org>; Fri, 01 Dec 2017 00:38:55 -0800 (PST)
-In-Reply-To: <1ba1c850-dd22-fa98-66ea-fcb8527ec5ad@arm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBNGGQTIQKGQEC63V4QI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <0c8051e6-5d8c-32d6-97e4-11c2283da5b4-5wv7dgnIgG8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Phil Reid <preid@electromag.com.au>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 
-On Thu, Nov 30, 2017 at 4:50 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+On Fri, Nov 24, 2017 at 6:19 PM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
+> On 24/11/17 13:31, Thierry Reding wrote:
 
-> I'm clearly inclined to prefer the first solution. But maybe it is time
-> to invent a "generic inverter" driver that could be reusable, just like
-> we have a generic irqchip?
+>> Register values don't belong in a device tree.
+>
+> I don't think that's true in a general way. This "pinmux" is already an
+> accepted property and used for exactly that purpose in other pinctrl
+> drivers:
+> $ git grep -l '[^,]pinmux = ' arch/arm{,64}/boot/dts
+> Plus the fsl,pinmux-ids property, which seems to serve the same purpose.
 
-I'm leaning towards that we should create
-compatible = "irqline-inverter"; irqchip and just slap that into
-drivers/of/irq.c for everyone. *Maybe* with a Kconfig
-for it if people worry about the extra bytes.
+There are several examples of register values (and register
+numbers even!) being encoded in the kernel.
+
+What we need to ask is whether that is good in the general case
+or bad. I don't even think that has a clear answer, it's a grey area.
+
+So we need to avoid "arguments from consistency" which reads
+something like "you allowed this thing A so now you must allow
+this thing B which is similar". It is not a helpful approach to the
+problem.
+
+Some drivers encode a bunch of data into the device tree,
+pinctrl-single is the most extreme. This conflict between in-DT
+and in-driver data storage has been there since pinctrl was created
+and was the result of a compromise between OMAPs needs
+and everyone else, especially Tegra.
+
+The opinions on this - and it is really opinions, not facts - differ
+between people and over time.
+
+Resolving the conflicts is more about classical diplomacy than
+science unfortunately. I used to think the christian trinity was
+amusing and inconsistent, but nowadays I understand exactly how
+the people who came up with the Nicean creed were reasoning.
+
+What is paramount for me as subsystem maintainer is the fact
+that this driver has an active maintainer. And maintainers
+is what makes things manageable for me. It would be much easier
+for you to have your way if you were submitting an entirely
+new driver. Like this pinmux property, it was submitted by the
+mediatek people because it fits their usecase/hardware especially
+well.
 
 Yours,
 Linus Walleij
