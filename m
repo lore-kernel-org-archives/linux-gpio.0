@@ -1,36 +1,58 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 2/5] iio: proximity: sx9500: Add GPIO ACPI mapping table
-Date: Fri, 1 Dec 2017 11:04:00 +0100
-Message-ID: <CACRpkdZf_O2OwK8rRnCtZ2kKADTorfD4D-ccmcnkz1Md3fJv8Q@mail.gmail.com>
-References: <20171103130340.42459-1-andriy.shevchenko@linux.intel.com>
- <20171103130340.42459-2-andriy.shevchenko@linux.intel.com>
- <20171104031403.000073b0@huawei.com> <20171119152934.66a481c0@archlinux>
- <20171125142425.31dd862c@archlinux> <1511795292.25007.454.camel@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1511795292.25007.454.camel-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Jonathan Cameron <jic23-tko9wxEg+fIOOJlXag/Snyp2UmYkHbXO@public.gmane.org>, Jonathan Cameron <Jonathan.Cameron-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, ACPI Devel Maling List <linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] pinctrl: cherryview: Mask all interrupts on Intel_Strago based systems
+Date: Fri,  1 Dec 2017 13:25:04 +0300
+Message-ID: <20171201102504.38709-1-mika.westerberg@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:44011 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751899AbdLAKZH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 1 Dec 2017 05:25:07 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org
 
-On Mon, Nov 27, 2017 at 4:08 PM, Andy Shevchenko
-<andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org> wrote:
-> On Sat, 2017-11-25 at 14:24 +0000, Jonathan Cameron wrote:
->> On Sun, 19 Nov 2017 15:29:34 +0000
->> Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->
->> Hi Andy, any updates on the above?   I probably won't be sending
->> a fixes pull until next weekend, but would be good to know if this
->> should be in there or not by then!
->
-> Yes, as you suggested I tried to add quirks to the core, so, this patch
-> will be definitely changed.
+Guenter Roeck reported an interrupt storm on a prototype system which is
+based on Cyan Chromebook. The root cause turned out to be a incorrectly
+configured pin that triggers spurious interrupts. This will be fixed in
+coreboot but currently we need to prevent the interrupt storm from
+happening by masking all interrupts (but not GPEs) on those systems.
 
-The quirks mechanics are merged to the GPIO core and an
-immutable branch is available, so Jonathan could "just" pull that in
-and apply (elegent) fixes on top. I think.
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Reported-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index aa6c9f569c2b..083ffd397154 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1601,6 +1601,22 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 			clear_bit(i, chip->irq.valid_mask);
+ 	}
+ 
++	/*
++	 * The same set of machines in chv_no_valid_mask[] have incorrectly
++	 * configured GPIOs that generate spurious interrupts so we use
++	 * this same list to apply another quirk for them.
++	 *
++	 * See also https://bugzilla.kernel.org/show_bug.cgi?id=197953.
++	 */
++	if (!need_valid_mask) {
++		/*
++		 * Mask all interrupts the community is able to generate
++		 * but leave the ones that can only generate GPEs unmasked.
++		 */
++		chv_writel(~(BIT(pctrl->community->nirqs) - 1),
++			   pctrl->regs + CHV_INTMASK);
++	}
++
+ 	/* Clear all interrupts */
+ 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
+ 
+-- 
+2.15.0
+
