@@ -1,69 +1,38 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH v2] gpio: davinci: Assign first bank regs for unbanked
- case
-Date: Fri, 1 Dec 2017 10:59:59 +0530
-Message-ID: <691aafef-ac70-e5de-1bd8-b9d16fd8b124@ti.com>
-References: <1510312397-29040-1-git-send-email-j-keerthy@ti.com>
- <CACRpkdYVzvbJR+Y-7GpA2BwqJjS6=J6zp6Pf5UVxOt0mp4nJ0A@mail.gmail.com>
- <707ccb0f-0fc5-a981-0e21-d3e43bbd96a6@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 4/5] pinctrl: mcp23s08: configure irq polarity using
+ irq data
+Date: Fri, 1 Dec 2017 09:38:54 +0100
+Message-ID: <CACRpkdbpg70nJM87RZC=a2D_GhuJCK4k2HeNoCXtBGmh-uifSA@mail.gmail.com>
+References: <1511252491-79952-1-git-send-email-preid@electromag.com.au>
+ <1511252491-79952-5-git-send-email-preid@electromag.com.au>
+ <20171121133434.tuvxtrrbabjk4zeg@earth> <c191a9d6-3ebb-e95b-7342-aa18598ddf2b@electromag.com.au>
+ <20171121152142.zg3r57gl2kenjwgi@earth> <CACRpkdbkG_83-gpGqdMA5y3cpAvSbQ2X_xT07PC3+boxPeWbPQ@mail.gmail.com>
+ <1ba1c850-dd22-fa98-66ea-fcb8527ec5ad@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:54974 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751009AbdLAFaD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Dec 2017 00:30:03 -0500
-In-Reply-To: <707ccb0f-0fc5-a981-0e21-d3e43bbd96a6@ti.com>
-Content-Language: en-US
+Received: from mail-io0-f193.google.com ([209.85.223.193]:40236 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbdLAIi4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Dec 2017 03:38:56 -0500
+Received: by mail-io0-f193.google.com with SMTP id d21so10458197ioe.7
+        for <linux-gpio@vger.kernel.org>; Fri, 01 Dec 2017 00:38:55 -0800 (PST)
+In-Reply-To: <1ba1c850-dd22-fa98-66ea-fcb8527ec5ad@arm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Phil Reid <preid@electromag.com.au>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 
+On Thu, Nov 30, 2017 at 4:50 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
 
+> I'm clearly inclined to prefer the first solution. But maybe it is time
+> to invent a "generic inverter" driver that could be reusable, just like
+> we have a generic irqchip?
 
-On Friday 01 December 2017 10:10 AM, Keerthy wrote:
-> 
-> 
-> On Thursday 30 November 2017 08:12 PM, Linus Walleij wrote:
->> On Fri, Nov 10, 2017 at 12:13 PM, Keerthy <j-keerthy@ti.com> wrote:
->>
->>> As per the re-design assign the first bank regs for unbanked
->>> irq case. This was missed out in the original patch.
->>>
->>> Signed-off-by: Keerthy <j-keerthy@ti.com>
->>> Fixes: b5cf3fd827d2e1 ("gpio: davinci: Redesign driver to accommodate ngpios in one gpio chip")
->>> ---
->>>
->>> Changes in v2:
->>>
->>>   * Fixed $Author
->>
->> Patch applied for fixes, sorry for eternal delay.
-> 
-> No issues and Thanks!
-> 
->>
->> Keerthy, if you work on DaVinci, would you mind looking quickly at this
->> patch:
->> https://marc.info/?l=linux-input&m=151151651401442&w=2
-> 
-> Sure. I will get back on this.
+I'm leaning towards that we should create
+compatible = "irqline-inverter"; irqchip and just slap that into
+drivers/of/irq.c for everyone. *Maybe* with a Kconfig
+for it if people worry about the extra bytes.
 
-Linus,
-
-Could you please Cc nsekhar@ti.com who Maintains
-
-arch/arm/mach-davinci/board-da850-evm.c
-
-Also could you see Cc me as well on that patch?
-
-Regards,
-Keerthy
-
-> 
->>
->> Yours,
->> Linus Walleij
->>
+Yours,
+Linus Walleij
