@@ -1,58 +1,48 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Mask all interrupts on
- Intel_Strago based systems
-Date: Fri, 01 Dec 2017 14:35:32 +0200
-Message-ID: <1512131732.25007.534.camel@linux.intel.com>
-References: <20171201102504.38709-1-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v3 2/5] iio: proximity: sx9500: Add GPIO ACPI mapping
+ table
+Date: Fri, 01 Dec 2017 14:36:28 +0200
+Message-ID: <1512131788.25007.535.camel@linux.intel.com>
+References: <20171103130340.42459-1-andriy.shevchenko@linux.intel.com>
+         <20171103130340.42459-2-andriy.shevchenko@linux.intel.com>
+         <20171104031403.000073b0@huawei.com> <20171119152934.66a481c0@archlinux>
+         <20171125142425.31dd862c@archlinux>
+         <1511795292.25007.454.camel@linux.intel.com>
+         <CACRpkdZf_O2OwK8rRnCtZ2kKADTorfD4D-ccmcnkz1Md3fJv8Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:35730 "EHLO mga09.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:6211 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752124AbdLAMkF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 1 Dec 2017 07:40:05 -0500
-In-Reply-To: <20171201102504.38709-1-mika.westerberg@linux.intel.com>
+        id S1752124AbdLAMkJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 1 Dec 2017 07:40:09 -0500
+In-Reply-To: <CACRpkdZf_O2OwK8rRnCtZ2kKADTorfD4D-ccmcnkz1Md3fJv8Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Fri, 2017-12-01 at 13:25 +0300, Mika Westerberg wrote:
-> Guenter Roeck reported an interrupt storm on a prototype system which
-> is
-> based on Cyan Chromebook. The root cause turned out to be a
-> incorrectly
-> configured pin that triggers spurious interrupts. This will be fixed
-> in
-> coreboot but currently we need to prevent the interrupt storm from
-> happening by masking all interrupts (but not GPEs) on those systems.
+On Fri, 2017-12-01 at 11:04 +0100, Linus Walleij wrote:
+> On Mon, Nov 27, 2017 at 4:08 PM, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Sat, 2017-11-25 at 14:24 +0000, Jonathan Cameron wrote:
+> > > On Sun, 19 Nov 2017 15:29:34 +0000
+> > > Jonathan Cameron <jic23@kernel.org> wrote:
+> > > Hi Andy, any updates on the above?   I probably won't be sending
+> > > a fixes pull until next weekend, but would be good to know if this
+> > > should be in there or not by then!
+> > 
+> > Yes, as you suggested I tried to add quirks to the core, so, this
+> > patch
+> > will be definitely changed.
 > 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
+> The quirks mechanics are merged to the GPIO core and an
+> immutable branch is available, so Jonathan could "just" pull that in
+> and apply (elegent) fixes on top. I think.
 
-Shouldn't be this URL to the bug mentioned in the comments below?
-
-> +	/*
-> +	 * The same set of machines in chv_no_valid_mask[] have
-> incorrectly
-> +	 * configured GPIOs that generate spurious interrupts so we
-> use
-> +	 * this same list to apply another quirk for them.
-> +	 *
-> +	 * See also https://bugzilla.kernel.org/show_bug.cgi?id=19795
-> 3.
-> +	 */
-
-> +		chv_writel(~(BIT(pctrl->community->nirqs) - 1),
-> +			   pctrl->regs + CHV_INTMASK);
-
-It might be considered to use
-
-GENMASK(32, pctrl->community->nirqs)
-
-instead of
-
-~(BIT(pctrl->community->nirqs) - 1)
+Unfortunately I didn't see any updates WRT GPIO/pin control in linux-next.
+Did you synchronize repositories?
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
