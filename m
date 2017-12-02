@@ -1,26 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 2/2] gpio: aspeed: Add support for reset tolerance
-Date: Sat, 2 Dec 2017 16:22:09 +0100
-Message-ID: <CACRpkdZoch=yFLKGpV2ne6anX7ZjWoem96dgAtWTJJQ0ZSJ9sQ@mail.gmail.com>
-References: <20171130035525.29653-1-andrew@aj.id.au> <20171130035525.29653-3-andrew@aj.id.au>
+Subject: Re: [PATCH v2] pinctrl: stm32: Fix copyright
+Date: Sat, 2 Dec 2017 16:24:00 +0100
+Message-ID: <CACRpkdYUOjOYoi30QPOdQ1e1eS_TJiQKYT0s9tNqYyKhRuyJYA@mail.gmail.com>
+References: <20171130084648.23588-1-benjamin.gaignard@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171130035525.29653-3-andrew@aj.id.au>
+In-Reply-To: <20171130084648.23588-1-benjamin.gaignard@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Frank Rowand <frowand.list@gmail.com>, Joel Stanley <joel@jms.id.au>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Laxman Dewangan <ldewangan@nvidia.com>, Ryan Chen <ryan_chen@aspeedtech.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>, linux-aspeed@lists.ozlabs.org
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 30, 2017 at 4:55 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+On Thu, Nov 30, 2017 at 9:46 AM, Benjamin Gaignard
+<benjamin.gaignard@linaro.org> wrote:
 
-> Use the new pinconf parameter for state persistence to expose the
-> associated capability of the Aspeed GPIO controller.
+> Uniformize STMicroelectronics copyrights header
+> Add SPDX identifier
 >
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> Reviewed-by: Joel Stanley <joel@jms.id.au>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+> CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 
-Patch applied.
+Pulled out the v1 I applied and applied this instead.
 
 Yours,
 Linus Walleij
