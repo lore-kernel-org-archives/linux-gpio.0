@@ -1,73 +1,50 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 03/17] mfd: madera: Add common support for Cirrus Logic
- Madera codecs
-Date: Sat, 2 Dec 2017 13:10:04 +0100
-Message-ID: <CACRpkdZ4QuOhk1LuGftcFozUKdZ4vFAO3omkQ004k39J=jKL7g@mail.gmail.com>
-References: <20171123171316.10868-1-rf@opensource.wolfsonmicro.com>
- <fe8064a5-8692-46c1-9f53-ab0a429baeeb@EX17.ad.cirrus.com> <CACRpkdaxKjPd_k8tuO3R4+5LFT4_37zn6ruDRPd5j9xNAH4+Dw@mail.gmail.com>
- <1eff5a38-cff3-449b-bda4-047f50a9f1d4@EX17.ad.cirrus.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: intel: Initialize GPIO properly when used
+ through irqchip
+Date: Sat, 2 Dec 2017 13:11:30 +0100
+Message-ID: <CACRpkdayJH-z2bnZCiJUy6eg1cDgAjUWGM_DiV0fC+DNAhUwHA@mail.gmail.com>
+References: <20171129132544.33399-1-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1eff5a38-cff3-449b-bda4-047f50a9f1d4-MRjWshV2NDGMZzV0eMwobdBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Nikesh Oswal <Nikesh.Oswal-UVNVL95qEvAciDkP5Hr2oA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171129132544.33399-1-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Daniel Drake <drake@endlessm.com>, Chris Chiu <chiu@endlessm.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 29, 2017 at 12:36 PM, Richard Fitzgerald
-<rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
-> On 29/11/17 10:18, Linus Walleij wrote:
->>
->> On Thu, Nov 23, 2017 at 6:13 PM, Richard Fitzgerald
->> <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
->>
->>> +config MFD_MADERA_I2C
->>> +       bool "Cirrus Logic Madera codecs with I2C"
->>> +       select MFD_MADERA
->>> +       select REGMAP_I2C
->>> +       depends on I2C
->>> +       depends on PINCTRL
->>> +       help
->>> +         Support for the Cirrus Logic Madera platform audio SoC
->>> +         core functionality controlled via I2C.
->>> +
->>> +config MFD_MADERA_SPI
->>> +       bool "Cirrus Logic Madera codecs with SPI"
->>> +       select MFD_MADERA
->>> +       select REGMAP_SPI
->>> +       depends on SPI_MASTER
->>> +       depends on PINCTRL
->>> +       help
->>> +         Support for the Cirrus Logic Madera platform audio SoC
->>> +         core functionality controlled via SPI.
->>
->>
->> Why do the I2C and SPI subdrivers depend on PINCTRL?
->>
->> They sure don't seem to be using any pinctrl-specific APIs.
->>
+On Wed, Nov 29, 2017 at 2:25 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+
+> When a GPIO is requested using gpiod_get_* APIs the intel pinctrl driver
+> switches the pin to GPIO mode and makes sure interrupts are routed to
+> the GPIO hardware instead of IOAPIC. However, if the GPIO is used
+> directly through irqchip, as is the case with many I2C-HID devices where
+> I2C core automatically configures interrupt for the device, the pin is
+> not initialized as GPIO. Instead we rely that the BIOS configures the
+> pin accordingly which seems not to be the case at least in Asus X540NA
+> SKU3 with Focaltech touchpad.
 >
-> They require PINCTRL even if they don't call any functions on it because the
-> chip won't work correctly if there isn't a PINCTRL driver to apply the
-> correct pinmux configuration.
+> When the pin is not properly configured it might result weird behaviour
+> like interrupts suddenly stop firing completely and the touchpad stops
+> responding to user input.
+>
+> Fix this by properly initializing the pin to GPIO mode also when it is
+> used directly through irqchip.
+>
+> Fixes: 7981c0015af2 ("pinctrl: intel: Add Intel Sunrisepoint pin controller and GPIO support")
+> Reported-by: Daniel Drake <drake@endlessm.com>
+> Reported-and-tested-by: Chris Chiu <chiu@endlessm.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: stable@vger.kernel.org
+> ---
+> Changes from v1:
+>
+>   * Renamed __intel_gpio_init_gpio() to intel_gpio_set_gpio_mode()
+>   * Added Fixes: and Cc stable@vger.kernel.org
+>   * Added Tested-by from Chris Chiu
 
-Apply the configuration to what? Sorry I don't get it.
-
-You can't be referring to the internal pin controller of the Madera, since
-that has to come up before its pin controller can even be communicated
-with.
-
-If you mean it is to apply the configuration to the system SoC where
-this coded is connected, this is wrong. There may very well be systems
-which have dedicated pins for the codec, atleast in theory. The fact
-that your reference board needs this is not a universal requirement,
-it should be set up in the machine-specific Kconfig for the reference
-board in that case.
+Patch applied.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
