@@ -1,45 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: gpio-stmpe: make various char arrays static const,
- shrinks object size
-Date: Sat, 2 Dec 2017 13:05:51 +0100
-Message-ID: <CACRpkdbsvC0ziDN=L5PA0u3S2wVoOHkcuqYWAZknsAvOLyXs3g@mail.gmail.com>
-References: <20171128182339.24579-1-colin.king@canonical.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 03/17] mfd: madera: Add common support for Cirrus Logic
+ Madera codecs
+Date: Sat, 2 Dec 2017 13:10:04 +0100
+Message-ID: <CACRpkdZ4QuOhk1LuGftcFozUKdZ4vFAO3omkQ004k39J=jKL7g@mail.gmail.com>
+References: <20171123171316.10868-1-rf@opensource.wolfsonmicro.com>
+ <fe8064a5-8692-46c1-9f53-ab0a429baeeb@EX17.ad.cirrus.com> <CACRpkdaxKjPd_k8tuO3R4+5LFT4_37zn6ruDRPd5j9xNAH4+Dw@mail.gmail.com>
+ <1eff5a38-cff3-449b-bda4-047f50a9f1d4@EX17.ad.cirrus.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:38364 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751568AbdLBMFw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 Dec 2017 07:05:52 -0500
-Received: by mail-it0-f68.google.com with SMTP id r6so5227184itr.3
-        for <linux-gpio@vger.kernel.org>; Sat, 02 Dec 2017 04:05:52 -0800 (PST)
-In-Reply-To: <20171128182339.24579-1-colin.king@canonical.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1eff5a38-cff3-449b-bda4-047f50a9f1d4-MRjWshV2NDGMZzV0eMwobdBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Nikesh Oswal <Nikesh.Oswal-UVNVL95qEvAciDkP5Hr2oA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Nov 28, 2017 at 7:23 PM, Colin King <colin.king@canonical.com> wrote:
+On Wed, Nov 29, 2017 at 12:36 PM, Richard Fitzgerald
+<rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> On 29/11/17 10:18, Linus Walleij wrote:
+>>
+>> On Thu, Nov 23, 2017 at 6:13 PM, Richard Fitzgerald
+>> <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+>>
+>>> +config MFD_MADERA_I2C
+>>> +       bool "Cirrus Logic Madera codecs with I2C"
+>>> +       select MFD_MADERA
+>>> +       select REGMAP_I2C
+>>> +       depends on I2C
+>>> +       depends on PINCTRL
+>>> +       help
+>>> +         Support for the Cirrus Logic Madera platform audio SoC
+>>> +         core functionality controlled via I2C.
+>>> +
+>>> +config MFD_MADERA_SPI
+>>> +       bool "Cirrus Logic Madera codecs with SPI"
+>>> +       select MFD_MADERA
+>>> +       select REGMAP_SPI
+>>> +       depends on SPI_MASTER
+>>> +       depends on PINCTRL
+>>> +       help
+>>> +         Support for the Cirrus Logic Madera platform audio SoC
+>>> +         core functionality controlled via SPI.
+>>
+>>
+>> Why do the I2C and SPI subdrivers depend on PINCTRL?
+>>
+>> They sure don't seem to be using any pinctrl-specific APIs.
+>>
+>
+> They require PINCTRL even if they don't call any functions on it because the
+> chip won't work correctly if there isn't a PINCTRL driver to apply the
+> correct pinmux configuration.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Don't populate the read-only arrays edge_det_values, rise_values and
-> fall_values on the stack but instead make them static and constify them.
-> Makes the object code smaller by over 240 bytes:
->
-> Before:
->    text    data     bss     dec     hex filename
->    9525    2520     192   12237    2fcd drivers/gpio/gpio-stmpe.o
->
-> After:
->    text    data     bss     dec     hex filename
->    9025    2776     192   11993    2ed9 drivers/gpio/gpio-stmpe.o
->
-> (gcc version 7.2.0 x86_64)
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Apply the configuration to what? Sorry I don't get it.
 
-Patch applied.
+You can't be referring to the internal pin controller of the Madera, since
+that has to come up before its pin controller can even be communicated
+with.
+
+If you mean it is to apply the configuration to the system SoC where
+this coded is connected, this is wrong. There may very well be systems
+which have dedicated pins for the codec, atleast in theory. The fact
+that your reference board needs this is not a universal requirement,
+it should be set up in the machine-specific Kconfig for the reference
+board in that case.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
