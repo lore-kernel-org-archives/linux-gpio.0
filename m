@@ -1,122 +1,74 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] pinctrl: Allow indicating loss of pin states
- during low-power
-Date: Sat, 2 Dec 2017 13:48:14 +0100
-Message-ID: <CACRpkdbFHj9pM6R3azVPKgbQ-LMmitEdJHQ5BOEb7Vy=kpNk4A@mail.gmail.com>
-References: <20171102231551.16220-1-f.fainelli@gmail.com> <20171102231551.16220-3-f.fainelli@gmail.com>
- <CACRpkdZtFRB_iy1bDPZ0wkK0jf7pkTGtbZG4gQUJVR+eiO+dhA@mail.gmail.com>
- <20171129170247.GI28152@atomide.com> <96cf5d74-3acf-07b9-9ad8-1011cd99a860@gmail.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [RFC] Periodic Output, Timestamped Input
+Date: Sat, 2 Dec 2017 13:34:03 +0000
+Message-ID: <20171202133403.10651f76@archlinux>
+References: <87ineapo5w.fsf@linux.intel.com>
+        <CACRpkdY+72nz9gK=kSESoNdM+xicx-rnpKNz-UbYZ+TFLUXpbA@mail.gmail.com>
+        <87shcxw5n3.fsf@linux.intel.com>
+        <CACRpkdabNMHgs_ywzrgSg-AgQL1wtQN8SaxuZtCruiXnfrXGQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <96cf5d74-3acf-07b9-9ad8-1011cd99a860-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>, Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:34166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751684AbdLBNeI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 2 Dec 2017 08:34:08 -0500
+In-Reply-To: <CACRpkdabNMHgs_ywzrgSg-AgQL1wtQN8SaxuZtCruiXnfrXGQw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, Bartosz =?UTF-8?B?R28=?= =?UTF-8?B?xYJhc3pld3NraQ==?= <bartekgola@gmail.com>, linux-iio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio@vger.kernel.org, Gregor Boirie <gregor.boirie@parrot.com>
 
-On Wed, Nov 29, 2017 at 6:37 PM, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 11/29/2017 09:02 AM, Tony Lindgren wrote:
+On Wed, 29 Nov 2017 23:54:32 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
->> Hmm well typically a device driver that loses it's context just does
->> save and restore of the registers in runtime PM suspend/resume
->> as needed. In this case it would mean duplicating the state for
->> potentially for hundreds of registers.. So using the existing
->> state in the pinctrl subsystem totally makes sense for the pins.
->>
->> Florian do you have other reasons why this should be done in the
->> pinctrl framework instead of the driver? Might be worth describing
->> the reasoning in the patch descriptions :)
->
-> The pinctrl provider driver that I am using is pinctrl-single, which has
-> proper suspend/resume callbacks but those are not causing any HW
-> programming to happen because of the (p->state == state) check, hence
-> this patch series.
+> On Wed, Nov 29, 2017 at 2:56 PM, Felipe Balbi
+> <felipe.balbi@linux.intel.com> wrote:
+> > Me:  
+> >> For the other thing: timestamping of GPIO events, we already
+> >> support timestamps for userspace GPIOs, but all it does is use
+> >> the kernel time, see gpiolib.c:
+> >>
+> >> static irqreturn_t lineevent_irq_thread(int irq, void *p)
+> >> {
+> >>         struct lineevent_state *le = p;
+> >>         struct gpioevent_data ge;
+> >>         int ret, level;
+> >>
+> >>         ge.timestamp = ktime_get_real_ns();
+> >>         level = gpiod_get_value_cansleep(le->desc);  
+> >
+> > this is running as a thread with interrupts enabled, AFAICT. This means
+> > this thread can be preempted at least on PREEMPT_RT kernels, so your
+> > timestamp can be wrong, right?  
+> 
+> Yes, it can be off. What we should do to get i better is
+> something like what I did in:
+> drivers/iio/gyro/mpu3050-core.c
+> 
+> Here I have both a hard and a soft IRQ handler (fast/slow if
+> you like) and take the timestamp in the hard IRQ, then use
+> it in the thread.
 
-So we are talking about these callbacks, correct?
+I did timing tests for both a long time back but I doubt things have
+changed much.  To do fusion you ideally smooth the result on the basis
+you are fairly sure the internal clock is better than even then jitter
+we get in an interrupt.
 
-#ifdef CONFIG_PM
-static int pinctrl_single_suspend(struct platform_device *pdev,
-                                        pm_message_t state)
-{
-        struct pcs_device *pcs;
+No idea where the absolute numbers went though I'm afraid.
+Perhaps Gregor can provide more info?
 
-        pcs = platform_get_drvdata(pdev);
-        if (!pcs)
-                return -EINVAL;
+Not sure who else is doing sensor fusion currently...
 
-        return pinctrl_force_sleep(pcs->pctl);
-}
+> 
+> This should be done identically in gpiolib to increase precision
+> in the general case.
+> 
+> I was thinking about it already when implementing it but it fell
+> out of my mind. I'm putting in on my TODO. (CC to bartosz
+> who might be interested, he's using these ABIs quite a bit.)
+> 
+> Yours,
+> Linus Walleij
 
-static int pinctrl_single_resume(struct platform_device *pdev)
-{
-        struct pcs_device *pcs;
-
-        pcs = platform_get_drvdata(pdev);
-        if (!pcs)
-                return -EINVAL;
-
-        return pinctrl_force_default(pcs->pctl);
-}
-#endif
-
-Which falls through to this:
-
-/**
- * pinctrl_force_sleep() - turn a given controller device into sleep state
- * @pctldev: pin controller device
- */
-int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
-{
-        if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
-                return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
-        return 0;
-}
-EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
-
-/**
- * pinctrl_force_default() - turn a given controller device into default state
- * @pctldev: pin controller device
- */
-int pinctrl_force_default(struct pinctrl_dev *pctldev)
-{
-        if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
-                return pinctrl_select_state(pctldev->p, pctldev->hog_default);
-        return 0;
-}
-EXPORT_SYMBOL_GPL(pinctrl_force_default);
-
-So am I right in assuming it is actually the hogs that is your biggest
-problem, and those are the states that get lost over suspend/resume
-that are especially problematic?
-
-I.e. you don't have any problem with any non-hogged pinctrl
-handles, those are handled just fine in the suspend/resume
-paths of the client drivers?
-
-If this is the case, it changes the problem scope slightly.
-
-It is fair that functions named *force* should actually enforce
-programming a state.
-
-So then I would suggest somethin else: break pinctrl_select_state()
-into two:
-
-pinctrl_select_state() that works just like before, checking if
-(p->state == state) but which calls a static function
-pinctrl_select_state_commit() that commits the change unconditonally.
-Then alter pinctrl_force_sleep() and pinctrl_force_sleep() to call
-that function.
-
-This should solve your problem without having to alter the semantics
-of pinctrl_select_state() for everyone.
-
-If you want I can cook a patch to illustrate what I mean so you can
-try it.
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
