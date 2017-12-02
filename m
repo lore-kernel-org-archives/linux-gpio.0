@@ -1,216 +1,45 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] pinctrl: gemini: Support drive strength setting
-Date: Sat,  2 Dec 2017 12:23:09 +0100
-Message-ID: <20171202112309.5726-1-linus.walleij@linaro.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: gpio-stmpe: make various char arrays static const,
+ shrinks object size
+Date: Sat, 2 Dec 2017 13:05:51 +0100
+Message-ID: <CACRpkdbsvC0ziDN=L5PA0u3S2wVoOHkcuqYWAZknsAvOLyXs3g@mail.gmail.com>
+References: <20171128182339.24579-1-colin.king@canonical.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38364 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751568AbdLBMFw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 Dec 2017 07:05:52 -0500
+Received: by mail-it0-f68.google.com with SMTP id r6so5227184itr.3
+        for <linux-gpio@vger.kernel.org>; Sat, 02 Dec 2017 04:05:52 -0800 (PST)
+In-Reply-To: <20171128182339.24579-1-colin.king@canonical.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-The Gemini pin controller can set drive strength for a few
-select groups of pins (not individually). Implement this
-for GMAC0 and 1 (ethernet ports), IDE and PCI.
+On Tue, Nov 28, 2017 at 7:23 PM, Colin King <colin.king@canonical.com> wrote:
 
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
-The DT binding part is just using generic bindings, so should be
-pretty uncontroversial.
----
- .../bindings/pinctrl/cortina,gemini-pinctrl.txt    |  3 +
- drivers/pinctrl/pinctrl-gemini.c                   | 81 ++++++++++++++++++++++
- 2 files changed, 84 insertions(+)
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Don't populate the read-only arrays edge_det_values, rise_values and
+> fall_values on the stack but instead make them static and constify them.
+> Makes the object code smaller by over 240 bytes:
+>
+> Before:
+>    text    data     bss     dec     hex filename
+>    9525    2520     192   12237    2fcd drivers/gpio/gpio-stmpe.o
+>
+> After:
+>    text    data     bss     dec     hex filename
+>    9025    2776     192   11993    2ed9 drivers/gpio/gpio-stmpe.o
+>
+> (gcc version 7.2.0 x86_64)
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
-index d857b67fab72..4346ff2dd8e6 100644
---- a/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
-@@ -17,6 +17,9 @@ and generic pin config nodes.
- 
- Supported configurations:
- - skew-delay is supported on the Ethernet pins
-+- drive-strength with 4, 8, 12 or 16 mA as argument is supported for
-+  entire groups on the groups "idegrp", "gmii_gmac0_grp", "gmii_gmac1_grp"
-+  and "pcigrp".
- 
- Example:
- 
-diff --git a/drivers/pinctrl/pinctrl-gemini.c b/drivers/pinctrl/pinctrl-gemini.c
-index c11b8f14d841..56db4e77b220 100644
---- a/drivers/pinctrl/pinctrl-gemini.c
-+++ b/drivers/pinctrl/pinctrl-gemini.c
-@@ -67,6 +67,9 @@ struct gemini_pmx {
-  *	elements in .pins so we can iterate over that array
-  * @mask: bits to clear to enable this when doing pin muxing
-  * @value: bits to set to enable this when doing pin muxing
-+ * @driving_mask: bitmask for the IO Pad driving register for this
-+ *	group, if it supports altering the driving strength of
-+ *	its lines.
-  */
- struct gemini_pin_group {
- 	const char *name;
-@@ -74,12 +77,14 @@ struct gemini_pin_group {
- 	const unsigned int num_pins;
- 	u32 mask;
- 	u32 value;
-+	u32 driving_mask;
- };
- 
- /* Some straight-forward control registers */
- #define GLOBAL_WORD_ID		0x00
- #define GLOBAL_STATUS		0x04
- #define GLOBAL_STATUS_FLPIN	BIT(20)
-+#define GLOBAL_IODRIVE		0x10
- #define GLOBAL_GMAC_CTRL_SKEW	0x1c
- #define GLOBAL_GMAC0_DATA_SKEW	0x20
- #define GLOBAL_GMAC1_DATA_SKEW	0x24
-@@ -738,6 +743,7 @@ static const struct gemini_pin_group gemini_3512_pin_groups[] = {
- 		/* Conflict with all flash usage */
- 		.value = IDE_PADS_ENABLE | NAND_PADS_DISABLE |
- 			PFLASH_PADS_DISABLE | SFLASH_PADS_DISABLE,
-+		.driving_mask = GENMASK(21, 20),
- 	},
- 	{
- 		.name = "satagrp",
-@@ -753,6 +759,7 @@ static const struct gemini_pin_group gemini_3512_pin_groups[] = {
- 		.name = "gmii_gmac0_grp",
- 		.pins = gmii_gmac0_3512_pins,
- 		.num_pins = ARRAY_SIZE(gmii_gmac0_3512_pins),
-+		.driving_mask = GENMASK(17, 16),
- 	},
- 	{
- 		.name = "gmii_gmac1_grp",
-@@ -760,6 +767,7 @@ static const struct gemini_pin_group gemini_3512_pin_groups[] = {
- 		.num_pins = ARRAY_SIZE(gmii_gmac1_3512_pins),
- 		/* Bring out RGMII on the GMAC1 pins */
- 		.value = GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
-+		.driving_mask = GENMASK(19, 18),
- 	},
- 	{
- 		.name = "pcigrp",
-@@ -767,6 +775,7 @@ static const struct gemini_pin_group gemini_3512_pin_groups[] = {
- 		.num_pins = ARRAY_SIZE(pci_3512_pins),
- 		/* Conflict only with GPIO2 */
- 		.value = PCI_PADS_ENABLE | PCI_CLK_PAD_ENABLE,
-+		.driving_mask = GENMASK(23, 22),
- 	},
- 	{
- 		.name = "lpcgrp",
-@@ -1671,6 +1680,7 @@ static const struct gemini_pin_group gemini_3516_pin_groups[] = {
- 		/* Conflict with all flash usage */
- 		.value = IDE_PADS_ENABLE | NAND_PADS_DISABLE |
- 			PFLASH_PADS_DISABLE | SFLASH_PADS_DISABLE,
-+		.driving_mask = GENMASK(21, 20),
- 	},
- 	{
- 		.name = "satagrp",
-@@ -1686,6 +1696,7 @@ static const struct gemini_pin_group gemini_3516_pin_groups[] = {
- 		.name = "gmii_gmac0_grp",
- 		.pins = gmii_gmac0_3516_pins,
- 		.num_pins = ARRAY_SIZE(gmii_gmac0_3516_pins),
-+		.driving_mask = GENMASK(17, 16),
- 	},
- 	{
- 		.name = "gmii_gmac1_grp",
-@@ -1693,6 +1704,7 @@ static const struct gemini_pin_group gemini_3516_pin_groups[] = {
- 		.num_pins = ARRAY_SIZE(gmii_gmac1_3516_pins),
- 		/* Bring out RGMII on the GMAC1 pins */
- 		.value = GEMINI_GMAC_IOSEL_GMAC0_GMAC1_RGMII,
-+		.driving_mask = GENMASK(19, 18),
- 	},
- 	{
- 		.name = "pcigrp",
-@@ -1700,6 +1712,7 @@ static const struct gemini_pin_group gemini_3516_pin_groups[] = {
- 		.num_pins = ARRAY_SIZE(pci_3516_pins),
- 		/* Conflict only with GPIO2 */
- 		.value = PCI_PADS_ENABLE | PCI_CLK_PAD_ENABLE,
-+		.driving_mask = GENMASK(23, 22),
- 	},
- 	{
- 		.name = "lpcgrp",
-@@ -2393,9 +2406,77 @@ static int gemini_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 	return ret;
- }
- 
-+static int gemini_pinconf_group_set(struct pinctrl_dev *pctldev,
-+				    unsigned selector,
-+				    unsigned long *configs,
-+				    unsigned num_configs)
-+{
-+	struct gemini_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
-+	const struct gemini_pin_group *grp = NULL;
-+	enum pin_config_param param;
-+	u32 arg;
-+	u32 val;
-+	int i;
-+
-+	if (pmx->is_3512)
-+		grp = &gemini_3512_pin_groups[selector];
-+	if (pmx->is_3516)
-+		grp = &gemini_3516_pin_groups[selector];
-+
-+	/* First figure out if this group supports configs */
-+	if (!grp->driving_mask) {
-+		dev_err(pmx->dev, "pin config group \"%s\" does "
-+			"not support drive strength setting\n",
-+			grp->name);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < num_configs; i++) {
-+		param = pinconf_to_config_param(configs[i]);
-+		arg = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case PIN_CONFIG_DRIVE_STRENGTH:
-+			switch (arg) {
-+			case 4:
-+				val = 0;
-+				break;
-+			case 8:
-+				val = 1;
-+				break;
-+			case 12:
-+				val = 2;
-+				break;
-+			case 16:
-+				val = 3;
-+				break;
-+			default:
-+				dev_err(pmx->dev,
-+					"invalid drive strength %d mA\n",
-+					arg);
-+				return -ENOTSUPP;
-+			}
-+			val <<= (ffs(grp->driving_mask) - 1);
-+			regmap_update_bits(pmx->map, GLOBAL_IODRIVE,
-+					   grp->driving_mask,
-+					   val);
-+			dev_info(pmx->dev,
-+				 "set group %s to %d mA drive strength mask %08x val %08x\n",
-+				 grp->name, arg, grp->driving_mask, val);
-+			break;
-+		default:
-+			dev_err(pmx->dev, "invalid config param %04x\n", param);
-+			return -ENOTSUPP;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static const struct pinconf_ops gemini_pinconf_ops = {
- 	.pin_config_get = gemini_pinconf_get,
- 	.pin_config_set = gemini_pinconf_set,
-+	.pin_config_group_set = gemini_pinconf_group_set,
- 	.is_generic = true,
- };
- 
--- 
-2.14.3
+Patch applied.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
