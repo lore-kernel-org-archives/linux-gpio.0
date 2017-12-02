@@ -1,35 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: pxa2xx: add MODULE_LICENSE
-Date: Sat, 2 Dec 2017 17:02:20 +0100
-Message-ID: <CACRpkdYWTNEJZ3TUCsgEdDMRytGiOiMV6YhRKgciO1Qwgbeorg@mail.gmail.com>
-References: <20171202094015.11696-1-dja@axtens.net>
+From: arvindY <arvind.yadav.cs@gmail.com>
+Subject: Re: [PATCH] gpio: ftgpio010: Fix platform_get_irq's error checking
+Date: Sat, 2 Dec 2017 22:19:25 +0530
+Message-ID: <5A22D995.9010802@gmail.com>
+References: <c6bf37f60d82aa3d425f66f08e10fedc51202b6f.1512051063.git.arvind.yadav.cs@gmail.com>
+ <CACRpkdZCh-YrsEM+f2XbpYtPuTN_DtEFUFUb-DJjZ-0=EQ5FMA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:46134 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752221AbdLBQCV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 Dec 2017 11:02:21 -0500
-Received: by mail-it0-f68.google.com with SMTP id t1so5654404ite.5
-        for <linux-gpio@vger.kernel.org>; Sat, 02 Dec 2017 08:02:21 -0800 (PST)
-In-Reply-To: <20171202094015.11696-1-dja@axtens.net>
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:43142 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751783AbdLBQt3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 Dec 2017 11:49:29 -0500
+In-Reply-To: <CACRpkdZCh-YrsEM+f2XbpYtPuTN_DtEFUFUb-DJjZ-0=EQ5FMA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Axtens <dja@axtens.net>
-Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Jiri Kosina <trivial@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 
-On Sat, Dec 2, 2017 at 10:40 AM, Daniel Axtens <dja@axtens.net> wrote:
+Hi Linus,
 
-> This fixes the following warning on an allmodconfig build:
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/pinctrl/pxa/pinctrl-pxa2xx.o
+On Saturday 02 December 2017 09:00 PM, Linus Walleij wrote:
+> Hi Arvind,
 >
-> This matches the license in the header.
+> thanks for the patch!
 >
-> Signed-off-by: Daniel Axtens <dja@axtens.net>
-
-Somebody patches this too. Sorry!
-
-Thanks anyway!
-
-Yours,
-Linus Walleij
+> On Thu, Nov 30, 2017 at 3:12 PM, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+>
+>> The platform_get_irq() function returns negative if an error occurs.
+>> zero or positive number on success. platform_get_irq() error checking
+>> for zero is not correct.
+>>
+>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> (...)
+>>          irq = platform_get_irq(pdev, 0);
+>> -       if (!irq)
+>> -               return -EINVAL;
+>> +       if (irq < 0)
+>> +               return irq;
+> This is wrong.
+> For an in-depth explanation why irq 0 in not valid, see:
+> https://lwn.net/Articles/470820/
+Thank you for sharing this Articles. It's really helpful.
+>
+> It should be:
+>
+> if (irq <= 0)
+>    return irq ? irq : -EINVAL;
+>
+> Please update and resubmit. If you have more patches like this,
+> correct them too.
+I will resubmit patch.
+> Yours,
+> Linus Walleij
+Thanks,
+arvind
