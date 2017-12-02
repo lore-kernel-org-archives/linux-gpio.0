@@ -1,44 +1,53 @@
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH v2] gpio: ftgpio010: Fix platform_get_irq's error checking
-Date: Sat,  2 Dec 2017 22:31:01 +0530
-Message-ID: <5abcacf8ee7ecb1e084f93c82cae1768e99fd4e6.1512233762.git.arvind.yadav.cs@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] pinctrl: cherryview: Mask all interrupts on Intel_Strago
+ based systems
+Date: Sat, 2 Dec 2017 09:25:13 -0800
+Message-ID: <e6a8c2aa-787b-d2cc-7a86-c19a7437c038@roeck-us.net>
+References: <20171201102504.38709-1-mika.westerberg@linux.intel.com>
+ <CACRpkdYfOz2ET_0JnqpTwCwRt5Wd0-6zfsjPLx42g8ia-KwgMA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41200 "EHLO
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42644 "EHLO
         mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751848AbdLBRBN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 Dec 2017 12:01:13 -0500
+        with ESMTP id S1751943AbdLBRZQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 2 Dec 2017 12:25:16 -0500
+Received: by mail-pl0-f66.google.com with SMTP id bd8so8053980plb.9
+        for <linux-gpio@vger.kernel.org>; Sat, 02 Dec 2017 09:25:15 -0800 (PST)
+In-Reply-To: <CACRpkdYfOz2ET_0JnqpTwCwRt5Wd0-6zfsjPLx42g8ia-KwgMA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-gpio@vger.kernel.org
 
-The platform_get_irq() function returns negative if an error occurs.
-zero or positive number on success. platform_get_irq() error checking
-for zero is not correct.
+On 12/02/2017 07:51 AM, Linus Walleij wrote:
+> On Fri, Dec 1, 2017 at 11:25 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> 
+>> Guenter Roeck reported an interrupt storm on a prototype system which is
+>> based on Cyan Chromebook. The root cause turned out to be a incorrectly
+>> configured pin that triggers spurious interrupts. This will be fixed in
+>> coreboot but currently we need to prevent the interrupt storm from
+>> happening by masking all interrupts (but not GPEs) on those systems.
+>>
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
+>> Reported-by: Guenter Roeck <linux@roeck-us.net>
+>> Reported-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> 
+> Fixes:?
+> Cc: stable@vger.kernel.org?
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
-changes in v2:
-             It's should be 'irq <= 0' instead of 'irq < 0'.
+Fixes: bcb48cca23ec ("pinctrl: cherryview: Do not mask all interrupts in probe")
 
- drivers/gpio/gpio-ftgpio010.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Mika, any chance to send an update soon ? I would like to apply the patch to
+chromeos-4.14, and I would prefer to use the final version.
 
-diff --git a/drivers/gpio/gpio-ftgpio010.c b/drivers/gpio/gpio-ftgpio010.c
-index 139f73d..fbb12f6 100644
---- a/drivers/gpio/gpio-ftgpio010.c
-+++ b/drivers/gpio/gpio-ftgpio010.c
-@@ -176,8 +176,8 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
- 		return PTR_ERR(g->base);
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (!irq)
--		return -EINVAL;
-+	if (irq <= 0)
-+		return irq ? irq : -EINVAL;
- 
- 	ret = bgpio_init(&g->gc, dev, 4,
- 			 g->base + GPIO_DATA_IN,
--- 
-2.7.4
+On a side note, I confirmed that the problem is also seen on release systems
+(Acer Chromebook R11) as well as on other systems using the same chipset,
+such as Samsung Chromebook 3.
 
+Thanks,
+Guenter
