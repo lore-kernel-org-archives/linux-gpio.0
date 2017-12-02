@@ -1,74 +1,69 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [RFC] Periodic Output, Timestamped Input
-Date: Sat, 2 Dec 2017 13:34:03 +0000
-Message-ID: <20171202133403.10651f76@archlinux>
-References: <87ineapo5w.fsf@linux.intel.com>
-        <CACRpkdY+72nz9gK=kSESoNdM+xicx-rnpKNz-UbYZ+TFLUXpbA@mail.gmail.com>
-        <87shcxw5n3.fsf@linux.intel.com>
-        <CACRpkdabNMHgs_ywzrgSg-AgQL1wtQN8SaxuZtCruiXnfrXGQw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 1/2] gpio: gpiolib: Generalise state persistence beyond sleep
+Date: Sat, 2 Dec 2017 16:20:37 +0100
+Message-ID: <CACRpkda2ix77k3noL3Ze6L3=g8cH_+DK1-HUh6fMkWnSJ1SfUw@mail.gmail.com>
+References: <20171130035525.29653-1-andrew@aj.id.au> <20171130035525.29653-2-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:34166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751684AbdLBNeI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 2 Dec 2017 08:34:08 -0500
-In-Reply-To: <CACRpkdabNMHgs_ywzrgSg-AgQL1wtQN8SaxuZtCruiXnfrXGQw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171130035525.29653-2-andrew@aj.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Frank Rowand <frowand.list@gmail.com>, Joel Stanley <joel@jms.id.au>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Laxman Dewangan <ldewangan@nvidia.com>, Ryan Chen <ryan_chen@aspeedtech.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>, linux-aspeed@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, Bartosz =?UTF-8?B?R28=?= =?UTF-8?B?xYJhc3pld3NraQ==?= <bartekgola@gmail.com>, linux-iio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio@vger.kernel.org, Gregor Boirie <gregor.boirie@parrot.com>
 
-On Wed, 29 Nov 2017 23:54:32 +0100
-Linus Walleij <linus.walleij@linaro.org> wrote:
+On Thu, Nov 30, 2017 at 4:55 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
 
-> On Wed, Nov 29, 2017 at 2:56 PM, Felipe Balbi
-> <felipe.balbi@linux.intel.com> wrote:
-> > Me:  
-> >> For the other thing: timestamping of GPIO events, we already
-> >> support timestamps for userspace GPIOs, but all it does is use
-> >> the kernel time, see gpiolib.c:
-> >>
-> >> static irqreturn_t lineevent_irq_thread(int irq, void *p)
-> >> {
-> >>         struct lineevent_state *le = p;
-> >>         struct gpioevent_data ge;
-> >>         int ret, level;
-> >>
-> >>         ge.timestamp = ktime_get_real_ns();
-> >>         level = gpiod_get_value_cansleep(le->desc);  
-> >
-> > this is running as a thread with interrupts enabled, AFAICT. This means
-> > this thread can be preempted at least on PREEMPT_RT kernels, so your
-> > timestamp can be wrong, right?  
-> 
-> Yes, it can be off. What we should do to get i better is
-> something like what I did in:
-> drivers/iio/gyro/mpu3050-core.c
-> 
-> Here I have both a hard and a soft IRQ handler (fast/slow if
-> you like) and take the timestamp in the hard IRQ, then use
-> it in the thread.
+> General support for state persistence is added to gpiolib with the
+> introduction of a new pinconf parameter to propagate the request to
+> hardware. The existing persistence support for sleep is adapted to
+> include hardware support if the GPIO driver provides it. Persistence
+> continues to be enabled by default; in-kernel consumers can opt out, but
+> userspace (currently) does not have a choice.
+>
+> The *_SLEEP_MAY_LOSE_VALUE and *_SLEEP_MAINTAIN_VALUE symbols are
+> renamed, dropping the SLEEP prefix to reflect that the concept is no
+> longer sleep-specific.  I feel that renaming to just *_MAY_LOSE_VALUE
+> could initially be misinterpreted, so I've further changed the symbols
+> to *_TRANSITORY and *_PERSISTENT to address this.
+>
+> The sysfs interface is modified only to keep consistency with the
+> chardev interface in enforcing persistence for userspace exports.
+>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-I did timing tests for both a long time back but I doubt things have
-changed much.  To do fusion you ideally smooth the result on the basis
-you are fairly sure the internal clock is better than even then jitter
-we get in an interrupt.
+Nice work, patch applied!
 
-No idea where the absolute numbers went though I'm afraid.
-Perhaps Gregor can provide more info?
+> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+> index 3f454eaf2101..0bd472ffb072 100644
+> --- a/drivers/gpio/gpiolib-sysfs.c
+> +++ b/drivers/gpio/gpiolib-sysfs.c
+> @@ -474,11 +474,15 @@ static ssize_t export_store(struct class *class,
+>                         status = -ENODEV;
+>                 goto done;
+>         }
+> -       status = gpiod_export(desc, true);
+> -       if (status < 0)
+> -               gpiod_free(desc);
+> -       else
+> -               set_bit(FLAG_SYSFS, &desc->flags);
+> +
+> +       status = gpiod_set_transitory(desc, false);
+> +       if (!status) {
+> +               status = gpiod_export(desc, true);
+> +               if (status < 0)
+> +                       gpiod_free(desc);
+> +               else
+> +                       set_bit(FLAG_SYSFS, &desc->flags);
+> +       }
 
-Not sure who else is doing sensor fusion currently...
+Part of me just wanna drop this hunk of the patch and let
+the old sysfs ABI rot.
 
-> 
-> This should be done identically in gpiolib to increase precision
-> in the general case.
-> 
-> I was thinking about it already when implementing it but it fell
-> out of my mind. I'm putting in on my TODO. (CC to bartosz
-> who might be interested, he's using these ABIs quite a bit.)
-> 
-> Yours,
-> Linus Walleij
+But I guess that is especially malevolent so I will abstain.
 
+
+Yours,
+Linus Walleij
