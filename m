@@ -1,66 +1,96 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2] pinctrl: cherryview: Mask all interrupts on Intel_Strago based systems
-Date: Mon,  4 Dec 2017 12:11:02 +0300
-Message-ID: <20171204091102.40822-1-mika.westerberg@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:22328 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752860AbdLDJLG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 4 Dec 2017 04:11:06 -0500
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v6 03/17] mfd: madera: Add common support
+ for Cirrus Logic Madera codecs
+Date: Mon, 4 Dec 2017 09:47:00 +0000
+Message-ID: <ce3772d8-3ae7-474f-b9c2-8008bb39fd0b@EX17.ad.cirrus.com>
+References: <20171123171316.10868-1-rf@opensource.wolfsonmicro.com>
+ <fe8064a5-8692-46c1-9f53-ab0a429baeeb@EX17.ad.cirrus.com>
+ <CACRpkdaxKjPd_k8tuO3R4+5LFT4_37zn6ruDRPd5j9xNAH4+Dw@mail.gmail.com>
+ <1eff5a38-cff3-449b-bda4-047f50a9f1d4@EX17.ad.cirrus.com>
+ <CACRpkdZ4QuOhk1LuGftcFozUKdZ4vFAO3omkQ004k39J=jKL7g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CACRpkdZ4QuOhk1LuGftcFozUKdZ4vFAO3omkQ004k39J=jKL7g@mail.gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, alsa-devel@alsa-project.org, Jason Cooper <jason@lakedaemon.net>, "open
+ list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Nikesh Oswal <Nikesh.Oswal@wolfsonmicro.com>
+List-Id: linux-gpio@vger.kernel.org
 
-Guenter Roeck reported an interrupt storm on a prototype system which is
-based on Cyan Chromebook. The root cause turned out to be a incorrectly
-configured pin that triggers spurious interrupts. This will be fixed in
-coreboot but currently we need to prevent the interrupt storm from
-happening by masking all interrupts (but not GPEs) on those systems.
+On 02/12/17 12:10, Linus Walleij wrote:
+> On Wed, Nov 29, 2017 at 12:36 PM, Richard Fitzgerald
+> <rf@opensource.wolfsonmicro.com> wrote:
+>> On 29/11/17 10:18, Linus Walleij wrote:
+>>>
+>>> On Thu, Nov 23, 2017 at 6:13 PM, Richard Fitzgerald
+>>> <rf@opensource.wolfsonmicro.com> wrote:
+>>>
+>>>> +config MFD_MADERA_I2C
+>>>> +       bool "Cirrus Logic Madera codecs with I2C"
+>>>> +       select MFD_MADERA
+>>>> +       select REGMAP_I2C
+>>>> +       depends on I2C
+>>>> +       depends on PINCTRL
+>>>> +       help
+>>>> +         Support for the Cirrus Logic Madera platform audio SoC
+>>>> +         core functionality controlled via I2C.
+>>>> +
+>>>> +config MFD_MADERA_SPI
+>>>> +       bool "Cirrus Logic Madera codecs with SPI"
+>>>> +       select MFD_MADERA
+>>>> +       select REGMAP_SPI
+>>>> +       depends on SPI_MASTER
+>>>> +       depends on PINCTRL
+>>>> +       help
+>>>> +         Support for the Cirrus Logic Madera platform audio SoC
+>>>> +         core functionality controlled via SPI.
+>>>
+>>>
+>>> Why do the I2C and SPI subdrivers depend on PINCTRL?
+>>>
+>>> They sure don't seem to be using any pinctrl-specific APIs.
+>>>
+>>
+>> They require PINCTRL even if they don't call any functions on it because the
+>> chip won't work correctly if there isn't a PINCTRL driver to apply the
+>> correct pinmux configuration.
+> 
+> Apply the configuration to what? Sorry I don't get it.
+> 
+> You can't be referring to the internal pin controller of the Madera, since
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-Fixes: bcb48cca23ec ("pinctrl: cherryview: Do not mask all interrupts in probe")
-Reported-and-tested-by: Guenter Roeck <linux@roeck-us.net>
-Reported-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: stable@vger.kernel.org
----
-Changes from v1:
+Yes I am
 
- * Correct Link to point to the right bugzilla entry
- * Add missing Fixes: and Cc: lines
- * Use GENMASK() instead
+> that has to come up before its pin controller can even be communicated
+> with.
 
- drivers/pinctrl/intel/pinctrl-cherryview.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+So?
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index aa6c9f569c2b..b1ae1618fefe 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1601,6 +1601,22 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- 			clear_bit(i, chip->irq.valid_mask);
- 	}
- 
-+	/*
-+	 * The same set of machines in chv_no_valid_mask[] have incorrectly
-+	 * configured GPIOs that generate spurious interrupts so we use
-+	 * this same list to apply another quirk for them.
-+	 *
-+	 * See also https://bugzilla.kernel.org/show_bug.cgi?id=197953.
-+	 */
-+	if (!need_valid_mask) {
-+		/*
-+		 * Mask all interrupts the community is able to generate
-+		 * but leave the ones that can only generate GPEs unmasked.
-+		 */
-+		chv_writel(GENMASK(31, pctrl->community->nirqs),
-+			   pctrl->regs + CHV_INTMASK);
-+	}
-+
- 	/* Clear all interrupts */
- 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
- 
--- 
-2.15.0
+The MFD driver powers up the chip before registering child drivers.
 
+Also that's not entirely relevant, the pinctrl settings can still be 
+written with the chip off because they will go into the regmap cache and 
+be applied when the chip is next resumed.
+
+> 
+> If you mean it is to apply the configuration to the system SoC where
+> this coded is connected, this is wrong. There may very well be systems
+> which have dedicated pins for the codec, atleast in theory. The fact
+> that your reference board needs this is not a universal requirement,
+> it should be set up in the machine-specific Kconfig for the reference
+> board in that case.
+> 
+> Yours,
+> Linus Walleij
+> 
