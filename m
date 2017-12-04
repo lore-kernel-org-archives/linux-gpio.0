@@ -1,58 +1,66 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 08/10] mfd: axp20x: add pinctrl cell for AXP813
-Date: Mon, 4 Dec 2017 09:02:56 +0000
-Message-ID: <20171204090256.qgl6cdbwi65xv475@dell>
-References: <cover.3ff63fdf302c6bda02ea7d160ad2aa5afee0899d.1512135804.git-series.quentin.schulz@free-electrons.com>
- <e0b4ce746c052b78f08dff54d0ad7ce7ebc611ab.1512135804.git-series.quentin.schulz@free-electrons.com>
- <CACRpkdZJ3gDqnLVW0NZMJiF7qRJSu-0Usys0tKfT-aep4bRxjg@mail.gmail.com>
-Reply-To: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBDA7X7F2WUEBBRE6STIQKGQE3IADQUY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZJ3gDqnLVW0NZMJiF7qRJSu-0Usys0tKfT-aep4bRxjg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v2] pinctrl: cherryview: Mask all interrupts on Intel_Strago based systems
+Date: Mon,  4 Dec 2017 12:11:02 +0300
+Message-ID: <20171204091102.40822-1-mika.westerberg@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:22328 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752860AbdLDJLG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 4 Dec 2017 04:11:06 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org
 
-On Sat, 02 Dec 2017, Linus Walleij wrote:
+Guenter Roeck reported an interrupt storm on a prototype system which is
+based on Cyan Chromebook. The root cause turned out to be a incorrectly
+configured pin that triggers spurious interrupts. This will be fixed in
+coreboot but currently we need to prevent the interrupt storm from
+happening by masking all interrupts (but not GPEs) on those systems.
 
-> On Fri, Dec 1, 2017 at 2:44 PM, Quentin Schulz
-> <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
->=20
-> > As GPIO/pinctrl driver now supports AXP813, add a cell for it.
-> >
-> > Signed-off-by: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> > Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
->=20
-> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->=20
-> It doesn't seem to have any dependencies so I guess Lee can simply
-> apply this separately.
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+Fixes: bcb48cca23ec ("pinctrl: cherryview: Do not mask all interrupts in probe")
+Reported-and-tested-by: Guenter Roeck <linux@roeck-us.net>
+Reported-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: stable@vger.kernel.org
+---
+Changes from v1:
 
-Yup!  Although, I'd prefer to wait for the other patches in the set to
-be applied.  In the mean time:
+ * Correct Link to point to the right bugzilla entry
+ * Add missing Fixes: and Cc: lines
+ * Use GENMASK() instead
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index aa6c9f569c2b..b1ae1618fefe 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1601,6 +1601,22 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 			clear_bit(i, chip->irq.valid_mask);
+ 	}
+ 
++	/*
++	 * The same set of machines in chv_no_valid_mask[] have incorrectly
++	 * configured GPIOs that generate spurious interrupts so we use
++	 * this same list to apply another quirk for them.
++	 *
++	 * See also https://bugzilla.kernel.org/show_bug.cgi?id=197953.
++	 */
++	if (!need_valid_mask) {
++		/*
++		 * Mask all interrupts the community is able to generate
++		 * but leave the ones that can only generate GPEs unmasked.
++		 */
++		chv_writel(GENMASK(31, pctrl->community->nirqs),
++			   pctrl->regs + CHV_INTMASK);
++	}
++
+ 	/* Clear all interrupts */
+ 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
+ 
+-- 
+2.15.0
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
