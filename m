@@ -1,38 +1,41 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: "gpio: Move irqdomain into struct gpio_irq_chip" breaks gpio-reg.c
-Date: Mon, 4 Dec 2017 10:22:54 +0000
-Message-ID: <20171204102254.GS10595@n2100.armlinux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:35664 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751610AbdLDKXH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Dec 2017 05:23:07 -0500
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH][next] pinctrl: intel: ensure error return ret is initialized
+Date: Mon,  4 Dec 2017 17:08:15 +0000
+Message-ID: <20171204170815.14779-1-colin.king@canonical.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
 
-Patch f0fbe7bce733 ("gpio: Move irqdomain into struct gpio_irq_chip")
-breaks the build for gpio-reg.c:
+From: Colin Ian King <colin.king@canonical.com>
 
-drivers/gpio/gpio-reg.c: In function 'gpio_reg_to_irq':
-drivers/gpio/gpio-reg.c:106:19: error: 'struct gpio_reg' has no member named 'irq'
-drivers/gpio/gpio-reg.c:107:27: error: 'struct gpio_reg' has no member named 'irq'
+In the (unlikely) event that community->ngpps is zero, or if every
+gpp->gpio_base is less than zero, then an ininitialized value in
+ret is returned by function intel_gpio_add_pin_ranges. Fix this by
+ensuring ret is initialized to zero.  It's a moot point, but I think
+it is worthwhile ensuring this corner case is fixed.
 
-It's obvious when you look at the patch, which only did this:
+Detected by CoverityScan, CID#1462415 ("Uninitialized scalar variable")
 
--       if (irq >= 0 && r->irqdomain)
--               irq = irq_find_mapping(r->irqdomain, irq);
-+       if (irq >= 0 && r->irq.domain)
-+               irq = irq_find_mapping(r->irq.domain, irq);
+Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-and made no other changes to this file.  Please revert the change to
-this file, or fix it.  Thanks.
-
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 359800fcb951..96e73e30204e 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1083,7 +1083,7 @@ static struct irq_chip intel_gpio_irqchip = {
+ static int intel_gpio_add_pin_ranges(struct intel_pinctrl *pctrl,
+ 				     const struct intel_community *community)
+ {
+-	int ret, i;
++	int ret = 0, i;
+ 
+ 	for (i = 0; i < community->ngpps; i++) {
+ 		const struct intel_padgroup *gpp = &community->gpps[i];
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+2.14.1
