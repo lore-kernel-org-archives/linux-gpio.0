@@ -1,96 +1,38 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v6 03/17] mfd: madera: Add common support
- for Cirrus Logic Madera codecs
-Date: Mon, 4 Dec 2017 09:47:00 +0000
-Message-ID: <ce3772d8-3ae7-474f-b9c2-8008bb39fd0b@EX17.ad.cirrus.com>
-References: <20171123171316.10868-1-rf@opensource.wolfsonmicro.com>
- <fe8064a5-8692-46c1-9f53-ab0a429baeeb@EX17.ad.cirrus.com>
- <CACRpkdaxKjPd_k8tuO3R4+5LFT4_37zn6ruDRPd5j9xNAH4+Dw@mail.gmail.com>
- <1eff5a38-cff3-449b-bda4-047f50a9f1d4@EX17.ad.cirrus.com>
- <CACRpkdZ4QuOhk1LuGftcFozUKdZ4vFAO3omkQ004k39J=jKL7g@mail.gmail.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: "gpio: Move irqdomain into struct gpio_irq_chip" breaks gpio-reg.c
+Date: Mon, 4 Dec 2017 10:22:54 +0000
+Message-ID: <20171204102254.GS10595@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CACRpkdZ4QuOhk1LuGftcFozUKdZ4vFAO3omkQ004k39J=jKL7g@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, alsa-devel@alsa-project.org, Jason Cooper <jason@lakedaemon.net>, "open
- list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Nikesh Oswal <Nikesh.Oswal@wolfsonmicro.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:35664 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751610AbdLDKXH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Dec 2017 05:23:07 -0500
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-On 02/12/17 12:10, Linus Walleij wrote:
-> On Wed, Nov 29, 2017 at 12:36 PM, Richard Fitzgerald
-> <rf@opensource.wolfsonmicro.com> wrote:
->> On 29/11/17 10:18, Linus Walleij wrote:
->>>
->>> On Thu, Nov 23, 2017 at 6:13 PM, Richard Fitzgerald
->>> <rf@opensource.wolfsonmicro.com> wrote:
->>>
->>>> +config MFD_MADERA_I2C
->>>> +       bool "Cirrus Logic Madera codecs with I2C"
->>>> +       select MFD_MADERA
->>>> +       select REGMAP_I2C
->>>> +       depends on I2C
->>>> +       depends on PINCTRL
->>>> +       help
->>>> +         Support for the Cirrus Logic Madera platform audio SoC
->>>> +         core functionality controlled via I2C.
->>>> +
->>>> +config MFD_MADERA_SPI
->>>> +       bool "Cirrus Logic Madera codecs with SPI"
->>>> +       select MFD_MADERA
->>>> +       select REGMAP_SPI
->>>> +       depends on SPI_MASTER
->>>> +       depends on PINCTRL
->>>> +       help
->>>> +         Support for the Cirrus Logic Madera platform audio SoC
->>>> +         core functionality controlled via SPI.
->>>
->>>
->>> Why do the I2C and SPI subdrivers depend on PINCTRL?
->>>
->>> They sure don't seem to be using any pinctrl-specific APIs.
->>>
->>
->> They require PINCTRL even if they don't call any functions on it because the
->> chip won't work correctly if there isn't a PINCTRL driver to apply the
->> correct pinmux configuration.
-> 
-> Apply the configuration to what? Sorry I don't get it.
-> 
-> You can't be referring to the internal pin controller of the Madera, since
+Patch f0fbe7bce733 ("gpio: Move irqdomain into struct gpio_irq_chip")
+breaks the build for gpio-reg.c:
 
-Yes I am
+drivers/gpio/gpio-reg.c: In function 'gpio_reg_to_irq':
+drivers/gpio/gpio-reg.c:106:19: error: 'struct gpio_reg' has no member named 'irq'
+drivers/gpio/gpio-reg.c:107:27: error: 'struct gpio_reg' has no member named 'irq'
 
-> that has to come up before its pin controller can even be communicated
-> with.
+It's obvious when you look at the patch, which only did this:
 
-So?
+-       if (irq >= 0 && r->irqdomain)
+-               irq = irq_find_mapping(r->irqdomain, irq);
++       if (irq >= 0 && r->irq.domain)
++               irq = irq_find_mapping(r->irq.domain, irq);
 
-The MFD driver powers up the chip before registering child drivers.
+and made no other changes to this file.  Please revert the change to
+this file, or fix it.  Thanks.
 
-Also that's not entirely relevant, the pinctrl settings can still be 
-written with the chip off because they will go into the regmap cache and 
-be applied when the chip is next resumed.
-
-> 
-> If you mean it is to apply the configuration to the system SoC where
-> this coded is connected, this is wrong. There may very well be systems
-> which have dedicated pins for the codec, atleast in theory. The fact
-> that your reference board needs this is not a universal requirement,
-> it should be set up in the machine-specific Kconfig for the reference
-> board in that case.
-> 
-> Yours,
-> Linus Walleij
-> 
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
