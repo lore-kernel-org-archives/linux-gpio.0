@@ -1,94 +1,150 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v4 00/10] add pinmuxing support for pins in AXP209 and
- AXP813 PMICs
-Date: Tue, 5 Dec 2017 09:55:58 +0100
-Message-ID: <20171205085558.ernawgdgybd4lzxx@flea.lan>
-References: <cover.3ff63fdf302c6bda02ea7d160ad2aa5afee0899d.1512135804.git-series.quentin.schulz@free-electrons.com>
- <CACRpkdaMxaLjsDETm6_56tyGDu6=W0L4SQCAA2mmSR4mkR-jAA@mail.gmail.com>
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: Re: [RFC] Periodic Output, Timestamped Input
+Date: Tue, 05 Dec 2017 11:20:59 +0200
+Message-ID: <87609ltts4.fsf@linux.intel.com>
+References: <87ineapo5w.fsf@linux.intel.com> <CACRpkdY+72nz9gK=kSESoNdM+xicx-rnpKNz-UbYZ+TFLUXpbA@mail.gmail.com> <87shcxw5n3.fsf@linux.intel.com> <CACRpkdabNMHgs_ywzrgSg-AgQL1wtQN8SaxuZtCruiXnfrXGQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xlguvviawpatacuj"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaMxaLjsDETm6_56tyGDu6=W0L4SQCAA2mmSR4mkR-jAA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdabNMHgs_ywzrgSg-AgQL1wtQN8SaxuZtCruiXnfrXGQw@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz =?utf-8?Q?Go=C5=82as?= =?utf-8?Q?zewski?= <bartekgola@gmail.com>
+Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-
---xlguvviawpatacuj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 02, 2017 at 05:00:03PM +0100, Linus Walleij wrote:
-> On Fri, Dec 1, 2017 at 2:44 PM, Quentin Schulz
-> <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
->=20
-> > The AXP209 and AXP813 PMICs have several pins (respectively 3 and 2) th=
-at can
-> > be used either as GPIOs or for other purposes (ADC or LDO here).
-> >
-> > We already have a GPIO driver for the GPIO use of those pins on the AXP=
-209.
-> > Let's "upgrade" this driver to support all the functions these pins can=
- have.
-> >
-> > Then we add support to this driver for the AXP813 which is slighlty dif=
-ferent
-> > (basically a different offset in two registers and one less pin).
-> >
-> > I suggest patches 1 to 8 go through Linus's tree and 9 and 10 via Maxim=
-e or
-> > Chen-Yu's tree.
-> >
-> > v4:
->=20
-> Looks overall good. As soon as Maxime is happy with everything I will
-> happily apply 1-8 to the pinctrl tree and then pull it to GPIO as well to
-> avoid clashes.
->=20
-> I think there were some minor comments but it seems almost finished.
 
-You can apply everything with my
-Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Hi,
 
-The only comment left is the checkpatch warning, but there's multiple
-occurences of that issue in the driver, so it can definitely be done
-in a separate patch.
+Linus Walleij <linus.walleij@linaro.org> writes:
+> On Wed, Nov 29, 2017 at 2:56 PM, Felipe Balbi
+> <felipe.balbi@linux.intel.com> wrote:
+>> Me:
+>>> For the other thing: timestamping of GPIO events, we already
+>>> support timestamps for userspace GPIOs, but all it does is use
+>>> the kernel time, see gpiolib.c:
+>>>
+>>> static irqreturn_t lineevent_irq_thread(int irq, void *p)
+>>> {
+>>>         struct lineevent_state *le =3D p;
+>>>         struct gpioevent_data ge;
+>>>         int ret, level;
+>>>
+>>>         ge.timestamp =3D ktime_get_real_ns();
+>>>         level =3D gpiod_get_value_cansleep(le->desc);
+>>
+>> this is running as a thread with interrupts enabled, AFAICT. This means
+>> this thread can be preempted at least on PREEMPT_RT kernels, so your
+>> timestamp can be wrong, right?
+>
+> Yes, it can be off. What we should do to get i better is
+> something like what I did in:
+> drivers/iio/gyro/mpu3050-core.c
+>
+> Here I have both a hard and a soft IRQ handler (fast/slow if
+> you like) and take the timestamp in the hard IRQ, then use
+> it in the thread.
+>
+> This should be done identically in gpiolib to increase precision
+> in the general case.
+>
+> I was thinking about it already when implementing it but it fell
+> out of my mind. I'm putting in on my TODO. (CC to bartosz
+> who might be interested, he's using these ABIs quite a bit.)
 
-(But please do it Quentin ;))
+fair enough. In that case, it'll probably be easier to implement
+HW-based timestamping with something like below:
 
-Maxime
+modified   drivers/gpio/gpiolib.c
+@@ -731,7 +731,11 @@ static irqreturn_t lineevent_irq_thread(int irq, void =
+*p)
+ 	struct gpioevent_data ge;
+ 	int ret, level;
+=20
+=2D	ge.timestamp =3D ktime_get_real_ns();
++	if (le->desc->flags & FLAG_HAS_HW_TIMESTAMP)
++		ge.timestamp =3D gpio_get_hw_timestamp(le->desc);
++	else
++		ge.timestamp =3D ktime_get_real_ns();
++
+ 	level =3D gpiod_get_value_cansleep(le->desc);
+=20
+ 	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
+modified   drivers/gpio/gpiolib.h
+@@ -206,6 +206,7 @@ struct gpio_desc {
+ #define FLAG_USED_AS_IRQ 9	/* GPIO is connected to an IRQ */
+ #define FLAG_IS_HOGGED	11	/* GPIO is hogged */
+ #define FLAG_SLEEP_MAY_LOSE_VALUE 12	/* GPIO may lose value in sleep */
++#define FLAG_HAS_HW_TIMESTAMP 13 /* GPIO has HW-based timestamping */
+=20
+ 	/* Connection label */
+ 	const char		*label;
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+We may even extract ktime_get_real_ns() to gpio_get_timestamp() and do
+the branching in that function, like:
 
---xlguvviawpatacuj
+modified   drivers/gpio/gpiolib.c
+@@ -731,7 +731,7 @@ static irqreturn_t lineevent_irq_thread(int irq, void *=
+p)
+ 	struct gpioevent_data ge;
+ 	int ret, level;
+=20
+=2D	ge.timestamp =3D ktime_get_real_ns();
++	ge.timestamp =3D gpiod_get_timestamp(le->desc);
+ 	level =3D gpiod_get_value_cansleep(le->desc);
+=20
+ 	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
+@@ -3155,6 +3155,14 @@ int gpiod_get_value_cansleep(const struct gpio_desc =
+*desc)
+ }
+ EXPORT_SYMBOL_GPL(gpiod_get_value_cansleep);
+=20
++u64 gpiod_get_timestamp(const struct gpio_desc *desc)
++{
++	if (desc->flags & FLAG_HAS_HW_TIMESTAMP)
++		return gpiod_get_raw_timestamp(desc);
++	else
++		return ktime_get_real_ns();
++}
++
+ /**
+  * gpiod_get_raw_array_value_cansleep() - read raw values from an array of=
+ GPIOs
+  * @array_size: number of elements in the descriptor / value arrays
+modified   drivers/gpio/gpiolib.h
+@@ -206,6 +206,7 @@ struct gpio_desc {
+ #define FLAG_USED_AS_IRQ 9	/* GPIO is connected to an IRQ */
+ #define FLAG_IS_HOGGED	11	/* GPIO is hogged */
+ #define FLAG_SLEEP_MAY_LOSE_VALUE 12	/* GPIO may lose value in sleep */
++#define FLAG_HAS_HW_TIMESTAMP 13 /* GPIO has HW-based timestamping */
+=20
+ 	/* Connection label */
+ 	const char		*label;
+
+=2D-=20
+balbi
+
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlomXxoACgkQ0rTAlCFN
-r3RvYw/9HAyKPI6MVsZfBMuGtO8Ppdk3YQTl2CaGiI4h3hcCsOw4edTH2HsUJpQm
-iS/ZFOgnpLNY0QY8AgeM08PR2vLuvIIz+YC95mKdm4Wnjp+pIm6Q0+qdXj/i0jY/
-qqeeC7HvphRQdR46khQoLCwpilMJyp1NFRm2zym1FVpHaVX+kdK8e3ibSvDvUxHy
-/kMYsiLOuDKAfjhtfNiR4PFaqSYBT5mAlZ92R2C+Bide5awqO2yWWhYHv30qQTA4
-3fkm3STLnDpry/eF33sJyDT3YU7TmxQvoNkamIuYCCzAXpJbhkPL+AkX57NOXZ5k
-+/XBPa63pREU9f+aDGTPh05gMV3Te2ND3v+3J+9/Imnr4Y0K90B/SydASW8I0F94
-3hIE20qz0njG0x4XMVuyc8pgg59qdRwgHvH/c3gXH2Rikbmq6FOC47V2yzgaCrmJ
-2qt9AxMuUrwB2qVLdD05Yf7iZ+xk2otAiNUg5NzHRffZyqIt3sjNzDEmw5aTIUZR
-F2QJFIsKtqKXfapYqagNXjjHUNTTKm2UtjiI3dDsNAZv8Nt0RdR/P+VqvU+a3J1z
-GuJzEVDt+Us7IohLiUMZIRq16c/BOmlSJCqIvYxOtGkC1LD2h5PeTbZD6qjDvWDA
-fIq+GMUtu4JTJHIXt9IA9KGhJeew8fyletulQix+v+E8XsmKutY=
-=gMWJ
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlomZPsACgkQzL64meEa
+mQZR8hAAhXWq/g+B9J8Exm+vSrodbhsQA83tlB+PAGNOHicWlIsGoCO86DD0ofiZ
+5RzJTdMcyEnwXPuP9/UXfQkzV6DxsBDYcDf6cwTM1T8fdTcQdldm/P36XS+ODKgt
+wBhsMAvvhbqswi+Kr/zONrZsEYirhYaIhA39Ur5FpkbpEOko3OyBTISWIjEUheN9
+wRkqw7siKJatt5g54zfG/lmkP+B7CpJWxmpBNzG/O3EWXqCsGwqyYg8AMvoyn9eH
+PR3+yS1mK+4BV5B4rZpmXOQLaUIq1DW33ANthqwqzA79xcwE3oVeVceK8f2aOXVz
+GkhH++fLUzq2ayDyU3ThMXIHWC4X7O56FyrWcDBZSkjwKr0ZI4DhDWITQrjxkbim
+z08bWS+kVBiV3NTbhVJoaGl+PiSdOOTcXzM3zkXZYVXBd7hh9U87Sy5dB3Xjw8i2
+aNYEsJbDKi4KQtc5qfaufvOnYLNISLlH6cuyRkVoQCHMjROyRu/TrKah46pmKURn
+jl8CijmacQRgixCs9+bCfkMwK1OzeYgBVvVr3aTMnpw+3CTL05A9rRcZ24yja0MO
+gQpx0WaaeLLxTa7XjKxz/SRcjZmQaNH98xp/g2kEakOGhY7HEHt4O9NQYdugERCw
+5XWMLt/lFyMtXJEUzGi/al30muMp604sCuJZ0b2XNlCgPD/wHOY=
+=Lpak
 -----END PGP SIGNATURE-----
-
---xlguvviawpatacuj--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=-=-=--
