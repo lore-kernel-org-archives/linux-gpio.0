@@ -1,21 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for v4.15 take one
-Date: Tue, 5 Dec 2017 14:10:32 +0100
-Message-ID: <CACRpkdYOpzrV8FpG8T0m-JjzOw_NDoqrEjvAuMpj-kcVDPb4LQ@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v4.15 take one
+Date: Tue, 5 Dec 2017 14:17:02 +0100
+Message-ID: <CACRpkdavbHUZm6-g9YfNsc7JBX95zpmDai=fom0TqEU=KwjLdA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36257 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752126AbdLENRD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Dec 2017 08:17:03 -0500
+Received: by mail-it0-f66.google.com with SMTP id d16so1400284itj.1
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Dec 2017 05:17:03 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-gpio@vger.kernel.org
 
 Hi Linus,
 
-here are three small fixes for GPIO. Not much, I'm surprised
-by the silence in my subsystems. All driver fixes.
+as with GPIO not much action in pin control. All is driver fixes.
 
-Please pull it in!
+Please pull them in, details in the signed tag as usual.
 
 Yours,
 Linus Walleij
@@ -26,32 +31,42 @@ The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.15-2
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.15-2
 
-for you to fetch changes up to 8a64e557f399090f5d1917b2f32a065da2b12be1:
+for you to fetch changes up to 07c43a382d7de3db01cc28bf2e17ed151cde2046:
 
-  gpio: pca953x: fix vendor prefix for PCA9654 (2017-12-02 22:41:43 +0100)
-
-----------------------------------------------------------------
-GPIO fixes for the v4.15 cycle:
-
-- Fix a crash in the 74x164 driver
-- Fix IRQ banks in the DaVinci driver
-- Fix the vendor prefix in the PCA953x driver
+  pinctrl: sunxi: Disable strict mode for H5 driver (2017-11-30 16:50:43 +0100)
 
 ----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      gpio: 74x164: Fix crash during .remove()
+Pin control fixes for the v4.15 cycle:
 
-Keerthy (1):
-      gpio: davinci: Assign first bank regs for unbanked case
+- Fix the UART2 RTS pin mode on Intel Denverton.
+- Fix the direction_output() behaviour on the Armada 37xx.
+- Fix the groups selection per-SoC on the Gemini.
+- Fix the interrupt pin bank on the Sunxi A80.
+- Fix the UART mux on the Sunxi A64.
+- Disable the strict mode on the Sunxi H5 driver.
 
-Sergei Shtylyov (1):
-      gpio: pca953x: fix vendor prefix for PCA9654
+----------------------------------------------------------------
+Andre Przywara (3):
+      pinctrl: sunxi: Fix A80 interrupt pin bank
+      pinctrl: sunxi: Fix A64 UART mux value
+      pinctrl: sunxi: Disable strict mode for H5 driver
 
- Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 2 +-
- drivers/gpio/gpio-74x164.c                              | 4 ++--
- drivers/gpio/gpio-davinci.c                             | 2 +-
- drivers/gpio/gpio-pca953x.c                             | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+Andy Shevchenko (1):
+      pinctrl: denverton: Fix UART2 RTS pin mode
+
+Gregory CLEMENT (1):
+      pinctrl: armada-37xx: Fix direction_output() callback behavior
+
+Linus Walleij (1):
+      pinctrl: gemini: Fix usage of 3512 groups
+
+ drivers/pinctrl/intel/pinctrl-denverton.c   |  2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 13 +++++++++++--
+ drivers/pinctrl/pinctrl-gemini.c            |  2 +-
+ drivers/pinctrl/sunxi/pinctrl-sun50i-a64.c  |  2 +-
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h5.c   |  6 ++++--
+ drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c   |  6 +++---
+ 6 files changed, 21 insertions(+), 10 deletions(-)
