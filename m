@@ -1,75 +1,66 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v4 09/10] ARM: dtsi: axp81x: add GPIO DT node
-Date: Tue, 5 Dec 2017 10:39:45 +0100
-Message-ID: <20171205093945.5sudt23fag7q3ric@flea.lan>
-References: <cover.3ff63fdf302c6bda02ea7d160ad2aa5afee0899d.1512135804.git-series.quentin.schulz@free-electrons.com>
- <af90c57ebf97c8f5504a4b5b1dad3638bedadfef.1512135804.git-series.quentin.schulz@free-electrons.com>
- <CAGb2v65mOwNBdit=gKOq0=iv94FNuH__4yvCw4v0NHYiCKccBw@mail.gmail.com>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC] Periodic Output, Timestamped Input
+Date: Tue, 5 Dec 2017 12:01:56 +0100
+Message-ID: <CACRpkdbSPqnOjnmCd6-0FZznw+ojzA87Qmv9n5qxAwFHnHLUOw@mail.gmail.com>
+References: <87ineapo5w.fsf@linux.intel.com> <CACRpkdY+72nz9gK=kSESoNdM+xicx-rnpKNz-UbYZ+TFLUXpbA@mail.gmail.com>
+ <87shcxw5n3.fsf@linux.intel.com> <CACRpkdabNMHgs_ywzrgSg-AgQL1wtQN8SaxuZtCruiXnfrXGQw@mail.gmail.com>
+ <87609ltts4.fsf@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bjgfhlvxfqyubaaf"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBB3GSTHIQKGQE2PE76JI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <CAGb2v65mOwNBdit=gKOq0=iv94FNuH__4yvCw4v0NHYiCKccBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Id: linux-gpio@vger.kernel.org
-
-
---bjgfhlvxfqyubaaf
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:39740 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753178AbdLELB5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Dec 2017 06:01:57 -0500
+Received: by mail-it0-f68.google.com with SMTP id 68so523659ite.4
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Dec 2017 03:01:57 -0800 (PST)
+In-Reply-To: <87609ltts4.fsf@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Felipe Balbi <felipe.balbi@linux.intel.com>, Gregor Boirie <gregor.boirie@parrot.com>
+Cc: =?UTF-8?Q?Bartosz_Go=C5=82aszewski?= <bartekgola@gmail.com>, linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio@vger.kernel.org
 
-Hi,
+On Tue, Dec 5, 2017 at 10:20 AM, Felipe Balbi
+<felipe.balbi@linux.intel.com> wrote:
+> [Me]:
 
-On Tue, Dec 05, 2017 at 05:24:47PM +0800, Chen-Yu Tsai wrote:
-> On Fri, Dec 1, 2017 at 9:44 PM, Quentin Schulz
-> <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> > This adds DT node for the GPIO/pinctrl part present in AXP813/AXP818.
-> >
-> > Signed-off-by: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> > ---
-> >  arch/arm/boot/dts/axp81x.dtsi | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/axp81x.dtsi b/arch/arm/boot/dts/axp81x.dtsi
-> > index 73b761f..0ef959d 100644
-> > --- a/arch/arm/boot/dts/axp81x.dtsi
-> > +++ b/arch/arm/boot/dts/axp81x.dtsi
-> > @@ -48,6 +48,12 @@
-> >         interrupt-controller;
-> >         #interrupt-cells = <1>;
-> >
-> > +       axp_gpio: axp-gpio {
-> > +               compatible = "x-powers,axp813-gpio";
-> > +               gpio-controller;
-> > +               #gpio-cells = <2>;
-> 
-> What about interrupt-controller for directly referenced interrupts from
-> the GPIO pins?
+>> I was thinking about it already when implementing it but it fell
+>> out of my mind. I'm putting in on my TODO. (CC to bartosz
+>> who might be interested, he's using these ABIs quite a bit.)
+>
+> fair enough. In that case, it'll probably be easier to implement
+> HW-based timestamping with something like below:
 
-There's a bit more to it to enable interrupts. You would probably need
-to set up a chained interrupt controller in the GPIO driver, and in
-the DTS with a interrupt-parent and interrupts properties pointing to
-the AXP device itself.
+Indeed.
 
-> Otherwise,
-> 
-> Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+IIO has a per-device sysfs file for setting up
+the POSIX timestamping named current_timestamp_clock.
+This was added by Gregor Boire in commit
+bc2b7dab629a
 
-Applied 9 and 10, thanks!
-Maxime
+The supported timestamps are:
+realtime
+monotonic
+monotonic_raw
+realtime_coarse
+monotonic_coarse
+boottime
+tai
 
--- 
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
---bjgfhlvxfqyubaaf--
+I could really need some help here... :/
+
+It feels like "monotonic" could very well be what you're
+looking for but I don't know the POSIX definition of these.
+Maybe we need to add one more for "device specific"?
+
+What I want to do is factor most of that commit out into
+lib/ and reuse for timestamping in GPIO so we can
+have coherent timestamps across GPIO and IIO.
+
+OK OK O need to get to it and stop talking...
+
+I guess it should be set per-gpiochip rather than
+per-gpio-desc though, but that makes most sense anyways.
+
+Yours,
+Linus Walleij
