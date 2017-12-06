@@ -1,48 +1,120 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH] gpio: gpio-reg: fix build
-Date: Wed, 6 Dec 2017 11:37:45 -0600
-Message-ID: <20171206173745.19853-1-grygorii.strashko@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Pravin Shedge <pravin.shedge4linux@gmail.com>
+Subject: [PATCH 32/45] tools/testing/selftests: remove duplicate includes
+Date: Wed,  6 Dec 2017 23:17:45 +0530
+Message-ID: <1512582465-6581-1-git-send-email-pravin.shedge4linux@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:14229 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751544AbdLFRim (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Dec 2017 12:38:42 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:34678 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751964AbdLFRrz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Dec 2017 12:47:55 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Russell King - ARM Linux <linux@armlinux.org.uk>
+To: linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org, linux-gpio@vger.kernel.org, john.stultz@linaro.org, shuah@kernel.org, bamvor.zhangjian@linaro.org, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, pravin.shedge4linux@gmail.com
 
-Revert changes introduced by commit f0fbe7bce733 ("gpio: Move irqdomain
-into struct gpio_irq_chip") as they are not aplicable to this driver.
+These duplicate includes have been found with scripts/checkincludes.pl but
+they have been removed manually to avoid removing false positives.
 
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>
-Fixes: f0fbe7bce733 ("gpio: Move irqdomain into struct gpio_irq_chip")
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Pravin Shedge <pravin.shedge4linux@gmail.com>
 ---
-Sorry, for inconvenience, but this driver has no users in lkml and
-it can't be enabled through defconfig - only selected, so builds can't
-be verified in standard way.
+ tools/testing/selftests/gpio/gpio-mockup-chardev.c          | 1 -
+ tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c | 1 -
+ tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c         | 1 -
+ tools/testing/selftests/timers/skew_consistency.c           | 1 -
+ tools/testing/selftests/x86/mpx-dig.c                       | 2 --
+ tools/testing/selftests/x86/mpx-mini-test.c                 | 4 ----
+ tools/testing/selftests/x86/unwind_vdso.c                   | 1 -
+ 7 files changed, 11 deletions(-)
 
- drivers/gpio/gpio-reg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-reg.c b/drivers/gpio/gpio-reg.c
-index 23e771d..e85903e 100644
---- a/drivers/gpio/gpio-reg.c
-+++ b/drivers/gpio/gpio-reg.c
-@@ -103,8 +103,8 @@ static int gpio_reg_to_irq(struct gpio_chip *gc, unsigned offset)
- 	struct gpio_reg *r = to_gpio_reg(gc);
- 	int irq = r->irqs[offset];
+diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
+index 667e916..0424aaa 100644
+--- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
++++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
+@@ -12,7 +12,6 @@
+ #include <unistd.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <stdio.h>
+ #include <errno.h>
+ #include <string.h>
+ #include <fcntl.h>
+diff --git a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
+index 167135b..bf599d4 100644
+--- a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
++++ b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
+@@ -3,7 +3,6 @@
+  * Licensed under GPLv2.
+  */
  
--	if (irq >= 0 && r->irq.domain)
--		irq = irq_find_mapping(r->irq.domain, irq);
-+	if (irq >= 0 && r->irqdomain)
-+		irq = irq_find_mapping(r->irqdomain, irq);
- 
- 	return irq;
+-#include <signal.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdbool.h>
+diff --git a/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c b/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
+index 137185b..be05b2c 100644
+--- a/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
++++ b/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
+@@ -14,7 +14,6 @@
+ #include <string.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+-#include <pthread.h>
+ #include <sys/mman.h>
+ #include <unistd.h>
+ #include <pthread.h>
+diff --git a/tools/testing/selftests/timers/skew_consistency.c b/tools/testing/selftests/timers/skew_consistency.c
+index 022b711..8066be9 100644
+--- a/tools/testing/selftests/timers/skew_consistency.c
++++ b/tools/testing/selftests/timers/skew_consistency.c
+@@ -32,7 +32,6 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+-#include <stdlib.h>
+ #include <string.h>
+ #include <sys/wait.h>
+ #include "../kselftest.h"
+diff --git a/tools/testing/selftests/x86/mpx-dig.c b/tools/testing/selftests/x86/mpx-dig.c
+index c13607e..880fbf6 100644
+--- a/tools/testing/selftests/x86/mpx-dig.c
++++ b/tools/testing/selftests/x86/mpx-dig.c
+@@ -8,9 +8,7 @@
+ #include <unistd.h>
+ #include <stdio.h>
+ #include <errno.h>
+-#include <sys/types.h>
+ #include <sys/stat.h>
+-#include <unistd.h>
+ #include <sys/mman.h>
+ #include <string.h>
+ #include <fcntl.h>
+diff --git a/tools/testing/selftests/x86/mpx-mini-test.c b/tools/testing/selftests/x86/mpx-mini-test.c
+index ec0f6b4..f17e0a1 100644
+--- a/tools/testing/selftests/x86/mpx-mini-test.c
++++ b/tools/testing/selftests/x86/mpx-mini-test.c
+@@ -722,10 +722,6 @@ void mpx_cleanup(void)
  }
+ 
+ /*-------------- the following is test case ---------------*/
+-#include <stdint.h>
+-#include <stdbool.h>
+-#include <stdlib.h>
+-#include <stdio.h>
+ #include <time.h>
+ 
+ uint64_t num_lower_brs;
+diff --git a/tools/testing/selftests/x86/unwind_vdso.c b/tools/testing/selftests/x86/unwind_vdso.c
+index 00a26a8..9731133 100644
+--- a/tools/testing/selftests/x86/unwind_vdso.c
++++ b/tools/testing/selftests/x86/unwind_vdso.c
+@@ -44,7 +44,6 @@ int main()
+ #include <stdbool.h>
+ #include <sys/ptrace.h>
+ #include <sys/user.h>
+-#include <sys/ucontext.h>
+ #include <link.h>
+ #include <sys/auxv.h>
+ #include <dlfcn.h>
 -- 
-2.10.5
+2.7.4
 
