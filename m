@@ -1,42 +1,48 @@
-From: biao huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 0/4] add support of pinctrl to MT7622 SoC
-Date: Wed, 6 Dec 2017 14:19:26 +0800
-Message-ID: <1512541166.18805.1.camel@mhfsdcap03>
-References: <cover.1511840374.git.sean.wang@mediatek.com>
- <CACRpkdaL5W5r_4PoYwVK6mcO583Cep5t-ePWqccKx2YDz9=iyA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <CACRpkdaL5W5r_4PoYwVK6mcO583Cep5t-ePWqccKx2YDz9=iyA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Joe.C" <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] gpio: mockup: fix a return value check
+Date: Wed,  6 Dec 2017 17:30:02 +0100
+Message-ID: <20171206163002.26742-1-brgl@bgdev.pl>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45935 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751823AbdLFQaG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Dec 2017 11:30:06 -0500
+Received: by mail-wr0-f193.google.com with SMTP id h1so4512320wre.12
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Dec 2017 08:30:06 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 
-On Fri, 2017-12-01 at 20:50 +0100, Linus Walleij wrote:
-> On Tue, Nov 28, 2017 at 4:49 AM,  <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
-> 
-> > From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> >
-> > The patchset adds support for pinctrl on MT7622 SoC.
-> 
-> It would be good if the other Mediatek driver authors,
-> Honzhou, Yingjoe, Biao and Maoguang could review this patch set.
-> 
-> Yours,
-> Linus Walleij
+The return value of platform_device_register_resndata() on error is
+an error code converted to pointer with ERR_PTR(), not NULL.
 
-It's ok with these patches for MT7622 Pinctrl.
-Thanks.
+Check the return value correctly.
 
-Reviewed-by: Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Biao
+Fixes: 8a39f597bcfd ("gpio: mockup: rework device probing")
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ drivers/gpio/gpio-mockup.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index ea8c730d8af1..3a545ad17817 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -387,11 +387,11 @@ static int __init gpio_mockup_init(void)
+ 							 GPIO_MOCKUP_NAME,
+ 							 i, NULL, 0, &pdata,
+ 							 sizeof(pdata));
+-		if (!pdev) {
++		if (IS_ERR(pdev)) {
+ 			gpio_mockup_err("error registering device");
+ 			platform_driver_unregister(&gpio_mockup_driver);
+ 			gpio_mockup_unregister_pdevs();
+-			return -ENOMEM;
++			return PTR_ERR(pdev);
+ 		}
+ 
+ 		gpio_mockup_pdevs[i] = pdev;
+-- 
+2.15.1
+
