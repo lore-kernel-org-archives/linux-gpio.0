@@ -1,75 +1,104 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: gpio-rcar: Support S2RAM
-Date: Wed, 6 Dec 2017 20:01:52 +0100
-Message-ID: <CAMuHMdXRLuXeVmE9UAFGMdKV4gFSNO3kiVkh-q2MYM8spPkF7Q@mail.gmail.com>
-References: <1512586115-4698-1-git-send-email-ykaneko0929@gmail.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [RESEND PATCH v3 2/2] ARM64: dts: meson-axg: add pinctrl DT info for Meson-AXG SoC
+Date: Wed, 06 Dec 2017 12:18:32 -0800
+Message-ID: <7htvx3r4o7.fsf@baylibre.com>
+References: <20171120102354.5354-1-yixun.lan@amlogic.com>
+        <20171120102354.5354-3-yixun.lan@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35203 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752121AbdLFTBy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Dec 2017 14:01:54 -0500
-In-Reply-To: <1512586115-4698-1-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171120102354.5354-3-yixun.lan@amlogic.com> (Yixun Lan's
+        message of "Mon, 20 Nov 2017 18:23:54 +0800")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-Hi Kaneko-san,
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
-On Wed, Dec 6, 2017 at 7:48 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Hien Dang <hien.dang.eb@renesas.com>
+> From: Xingyu Chen <xingyu.chen@amlogic.com>
 >
-> This patch adds an implementation that saves and restores the state of
-> GPIO configuration on suspend and resume.
+> Add new pinctrl DT info for the Amlogic's Meson-AXG SoC.
 >
-> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-
-Thanks for your patch!
-
-> --- a/drivers/gpio/gpio-rcar.c
-> +++ b/drivers/gpio/gpio-rcar.c
-> @@ -31,6 +31,16 @@
->  #include <linux/spinlock.h>
->  #include <linux/slab.h>
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 44 ++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
 >
-> +struct gpio_rcar_bank_info {
-> +       bool iointsel;
-> +       bool inoutsel;
-> +       bool outdt;
-> +       bool active_high_rising_edge;
-> +       bool level_trigger;
-> +       bool both;
-> +       bool intmsk;
-> +};
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> index 5fc33b76b91c..e0fb860e12c5 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> @@ -9,6 +9,7 @@
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/clock/axg-clkc.h>
+>  #include <dt-bindings/clock/axg-aoclkc.h>
 
-So for each GPIO, you save 7 bools = 7 bytes.
+This doesn't apply because this aoclkc.h header does not exist in
+mainline.
 
->  struct gpio_rcar_priv {
->         void __iomem *base;
->         spinlock_t lock;
-> @@ -41,6 +51,7 @@ struct gpio_rcar_priv {
->         unsigned int irq_parent;
->         bool has_both_edge_trigger;
->         bool needs_clk;
-> +       struct gpio_rcar_bank_info bank_info[32];
+Kevin
 
-That's 32 x 7 = 224 bytes in total.
-
-What about just using 7 u32s instead, one for each register to save?
-That way you only need 7 x 4 = 28 bytes, and you can probably optimize
-the code to just save/restore the whole register at once.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +#include <dt-bindings/gpio/meson-axg-gpio.h>
+>  
+>  / {
+>  	compatible = "amlogic,meson-axg";
+> @@ -173,6 +174,32 @@
+>  			#mbox-cells = <1>;
+>  		};
+>  
+> +		periphs: periphs@ff634000 {
+> +			compatible = "simple-bus";
+> +			reg = <0x0 0xff634000 0x0 0x2000>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges = <0x0 0x0 0x0 0xff634000 0x0 0x2000>;
+> +
+> +			pinctrl_periphs: pinctrl@480 {
+> +				compatible = "amlogic,meson-axg-periphs-pinctrl";
+> +				#address-cells = <2>;
+> +				#size-cells = <2>;
+> +				ranges;
+> +
+> +				gpio: bank@480 {
+> +					reg = <0x0 0x00480 0x0 0x40>,
+> +						<0x0 0x004e8 0x0 0x14>,
+> +						<0x0 0x00520 0x0 0x14>,
+> +						<0x0 0x00430 0x0 0x3c>;
+> +					reg-names = "mux", "pull", "pull-enable", "gpio";
+> +					gpio-controller;
+> +					#gpio-cells = <2>;
+> +					gpio-ranges = <&pinctrl_periphs 0 0 86>;
+> +				};
+> +			};
+> +		};
+> +
+>  		sram: sram@fffc0000 {
+>  			compatible = "amlogic,meson-axg-sram", "mmio-sram";
+>  			reg = <0x0 0xfffc0000 0x0 0x20000>;
+> @@ -209,6 +236,23 @@
+>  				};
+>  			};
+>  
+> +			pinctrl_aobus: pinctrl@14 {
+> +				compatible = "amlogic,meson-axg-aobus-pinctrl";
+> +				#address-cells = <2>;
+> +				#size-cells = <2>;
+> +				ranges;
+> +
+> +				gpio_ao: bank@14 {
+> +					reg = <0x0 0x00014 0x0 0x8>,
+> +						<0x0 0x0002c 0x0 0x4>,
+> +						<0x0 0x00024 0x0 0x8>;
+> +					reg-names = "mux", "pull", "gpio";
+> +					gpio-controller;
+> +					#gpio-cells = <2>;
+> +					gpio-ranges = <&pinctrl_aobus 0 0 15>;
+> +				};
+> +			};
+> +
+>  			uart_AO: serial@3000 {
+>  				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+>  				reg = <0x0 0x3000 0x0 0x18>;
