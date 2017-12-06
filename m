@@ -1,169 +1,42 @@
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [RFC PATCH 1/3] dt-bindings: pinctrl: sunxi: document new generic
- binding
-Date: Wed, 6 Dec 2017 00:55:46 +0000
-Message-ID: <be52417d-9509-f638-65b6-f455fade0c39@arm.com>
-References: <20171113012523.2328-1-andre.przywara@arm.com>
- <20171113012523.2328-2-andre.przywara@arm.com>
- <CACRpkdbpfkM4odz425+4qyUCF5vqPWBQ=F5Yk7AtJL5SqXghpg@mail.gmail.com>
- <20171124105240.GB3792@ulmo> <20efcf8f-85a5-3cad-a84b-434ee5cad68e@arm.com>
- <20171124133123.GA15999@ulmo> <0c8051e6-5d8c-32d6-97e4-11c2283da5b4@arm.com>
- <CACRpkdZ70a7Vk1QPFhkms6ucWmSH6rOUD9_J0h=NjhK+vfXNAA@mail.gmail.com>
+From: biao huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 0/4] add support of pinctrl to MT7622 SoC
+Date: Wed, 6 Dec 2017 14:19:26 +0800
+Message-ID: <1512541166.18805.1.camel@mhfsdcap03>
+References: <cover.1511840374.git.sean.wang@mediatek.com>
+ <CACRpkdaL5W5r_4PoYwVK6mcO583Cep5t-ePWqccKx2YDz9=iyA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZ70a7Vk1QPFhkms6ucWmSH6rOUD9_J0h=NjhK+vfXNAA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <CACRpkdaL5W5r_4PoYwVK6mcO583Cep5t-ePWqccKx2YDz9=iyA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Joe.C" <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
-
-thanks for the reply!
-
-On 01/12/17 09:56, Linus Walleij wrote:
-> On Fri, Nov 24, 2017 at 6:19 PM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
+On Fri, 2017-12-01 at 20:50 +0100, Linus Walleij wrote:
+> On Tue, Nov 28, 2017 at 4:49 AM,  <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
 > 
->> Conceptually I consider the DT being
->> part of the firmware,
+> > From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> >
+> > The patchset adds support for pinctrl on MT7622 SoC.
 > 
-> As it is a subset of open firmware it is obviously firmware.
+> It would be good if the other Mediatek driver authors,
+> Honzhou, Yingjoe, Biao and Maoguang could review this patch set.
 > 
->> so one trust level above the kernel.
-> 
-> We are several kernel developers who don't trust firmware one
-> bit. Several disasters in ACPI has made me ever more convinced
-> that firmware should be trusted less than kernel code.
+> Yours,
+> Linus Walleij
 
-I know what you mean, check commit acd316248205 ;-)
+It's ok with these patches for MT7622 Pinctrl.
+Thanks.
 
-But in the Allwinner case all the firmware is open source, and even
-controlled by the community (ATF & U-Boot). This is even more true for
-the DT. Allwinner came up with their own DT, but since it uses
-completely non-standard bindings, we don't use it at all.
-
-So I don't consider firmware this dark, evil and unhackable blob that
-many people see in it. Instead it is a good opportunity to separate very
-tedious machine-specific parts from the kernel (think of PSCI).
-
-> But this is all very academic.
-
-I agree!
-
->>> Also, device tree bindings are not documentation for how to write a
->>> driver. They are not a replacement for hardware documentation. Nobody
->>> should be expected to be able to write an OS driver solely based on a
->>> device tree binding. Device tree bindings are more of a configuration
->>> interface specification for OS drivers.
->>
->> Yes, but together with the hardware docs you should be able to write a
->> driver. And here you can't, because you are missing the strings. So a
->> BSD developer has to look at Linux code.
-> 
-> This is a fair point. It appears in several drivers.
-> 
-> BSD or even Windows (would they use DT) would have to sit in the
-> back seat just like Linux has been doing for years when it comes
-> to the hopeless Windowsisms in the x86 BIOSes. I suspect some
-> Windows on ARM is already experiencing this, but in the ACPI world,
-> where, incidentally, the servers were being deployed for Linux first
-> and Windows had to follow their example. I bet they have been
-> swearing a lot in Redmond about that.
-
-On the other hand a lot of the ACPI tables have been either taken from
-x86 or designed also with Windows in mind. And frankly, my sympathy for
-MS is quite limited in this respect ;-)
-
-> In general it's one of these areas where we can not be utopian about the
-> hardware descriptions, just fail gracefully in different ways.
-> 
-> I usually try to keep the IETF motto "rough consensus and running
-> code" in mind. I don't know if it helps in this discussion though.
-> 
->>> So that's about 40% of the kernel image. Code really is no good without
->>> data to process.
->>
->> But how much of this is SoC specific configuration data? How much is it
->> in x86? Yes, historically we had and have a lot of configuration data in
->> ARM kernels. But that doesn't mean that we have to continue with this or
->> even increase the share.
-> 
-> What people have been doing is trying to have better Kconfig setups
-> and compile it out by doing kernel modules. It is a bit hopeless with
-> pin controllers: almost all of them have to be built in. And if they come
-> with a lot of data, yeah there you have a real good point.
-> 
-> It would be sad if the ARMv7 multiboot or Aarch64 kernel just grows
-> so that we can't use it but have to go back to shipping board-specific
-> kernels with a huge bunch of stuff compiled out.
-> 
-> I was hoping Moore's law would save us here :/
-> 
-> An option that has been discussed is better used of  __initdata
-> and similar tags, especially with built-in drivers. Sadly, this is
-> hurt by another snag: the compiler or linker file or whatever it is,
-> is preventing us from discarding any strings from the kernel.
-> And pin controllers tend to stack up a lot of these.
-> 
-> This is really sucky and something we should solve in general.
-> I'm not smart enough to tackle any of these problems myself, just
-> to see them and "Oh that's bad. Very bad."
-
-I am sure one can find clever hac^Wsolutions for this problem, but I was
-wondering if a new approach - like putting the per machine data actually
-in DT - isn't the smarter way.
-Hence my suggestion with this driver: we *need* the DT anyway to assign
-pins to devices, so why not just add the few bytes *there*, which allows
-us to have a more or less "data-less" DT driver?
-
->From what I learned the pinctrl subsystem seems to predates the ARM DT
-endeavor, so many design decisions probably didn't consider DT as a
-possible solution in the first way. And this is fine, because this is
-how it was back then. But it doesn't mean it has to stay this way. And I
-carefully thought of solving this problem without alienating existing
-users and developers - by keeping the driver and staying compatible with
-the existing binding and the DTs.
-
->>> The majority of the improvements over the years have been achieved by
->>> moving drivers out of arch/arm and moving board files to DT. The goal
->>> was never to get rid of all data.
->>
->> Sure, not all data. But if we have the relatively easy opportunity to
->> avoid further addition of data, we should do it, I believe.
->> This significantly reduces the amount of kernel code we need to add to
->> support new SoCs.
-> 
-> This is the core of your argument as I perceive it: get rid of data
-> from the kernel, because it is growing wild.
-
-Yes, this, but also to avoid replicating data in other DT consumers. I
-very much like the idea of the DT describing the hardware, but I am a
-bit afraid we loose many good opportunities by treating the DT more like
-a "Linux config file" or an external Linux board file.
-So I wanted to propose a way where we simplify DT usage in other
-systems, while still keeping the Linux driver intact.
-
-> It is a valid cause. Just
-> has to be weighed with other stuff, like maintainability, debuggability,
-> maintainers viewpoint. ...
-
-So to keep Maxime happy I actually designed this "driver" more like a
-shim: to generate the table the current driver expects from the DT, and
-actually not touching the existing driver at all.
-So maintainability should actually be less of a concern: the driver will
-just work with whatever one throws at it from the DT side, without
-requiring frequent changes or additions.
-In the moment we still need to write, review and merge *data* files for
-each new SoC. And as I mentioned before, Allwinner decided to push for
-new, slightly different chips every few months, so there will be more to
-come. With at least the pinctrl driver out of the way we have one
-problem less to worry about.
-
-Cheers,
-Andre.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Biao
