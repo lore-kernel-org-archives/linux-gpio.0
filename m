@@ -1,120 +1,148 @@
-From: Pravin Shedge <pravin.shedge4linux@gmail.com>
-Subject: [PATCH 32/45] tools/testing/selftests: remove duplicate includes
-Date: Wed,  6 Dec 2017 23:17:45 +0530
-Message-ID: <1512582465-6581-1-git-send-email-pravin.shedge4linux@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:34678 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbdLFRrz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Dec 2017 12:47:55 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Subject: [PATCH] gpio: gpio-rcar: Support S2RAM
+Date: Thu,  7 Dec 2017 03:48:35 +0900
+Message-ID: <1512586115-4698-1-git-send-email-ykaneko0929@gmail.com>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org, linux-gpio@vger.kernel.org, john.stultz@linaro.org, shuah@kernel.org, bamvor.zhangjian@linaro.org, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, pravin.shedge4linux@gmail.com
 
-These duplicate includes have been found with scripts/checkincludes.pl but
-they have been removed manually to avoid removing false positives.
+From: Hien Dang <hien.dang.eb@renesas.com>
 
-Signed-off-by: Pravin Shedge <pravin.shedge4linux@gmail.com>
+This patch adds an implementation that saves and restores the state of
+GPIO configuration on suspend and resume.
+
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
- tools/testing/selftests/gpio/gpio-mockup-chardev.c          | 1 -
- tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c | 1 -
- tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c         | 1 -
- tools/testing/selftests/timers/skew_consistency.c           | 1 -
- tools/testing/selftests/x86/mpx-dig.c                       | 2 --
- tools/testing/selftests/x86/mpx-mini-test.c                 | 4 ----
- tools/testing/selftests/x86/unwind_vdso.c                   | 1 -
- 7 files changed, 11 deletions(-)
 
-diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-index 667e916..0424aaa 100644
---- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-+++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-@@ -12,7 +12,6 @@
- #include <unistd.h>
- #include <stdio.h>
- #include <stdlib.h>
--#include <stdio.h>
- #include <errno.h>
- #include <string.h>
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-index 167135b..bf599d4 100644
---- a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-+++ b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-@@ -3,7 +3,6 @@
-  * Licensed under GPLv2.
-  */
+This patch is based on the for-next branch of linux-gpio tree.
+
+ drivers/gpio/gpio-rcar.c | 89 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
+
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index e76de57..c99a2c5 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -31,6 +31,16 @@
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
  
--#include <signal.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <stdbool.h>
-diff --git a/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c b/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
-index 137185b..be05b2c 100644
---- a/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
-+++ b/tools/testing/selftests/powerpc/tm/tm-vmx-unavail.c
-@@ -14,7 +14,6 @@
- #include <string.h>
- #include <stdlib.h>
- #include <stdio.h>
--#include <pthread.h>
- #include <sys/mman.h>
- #include <unistd.h>
- #include <pthread.h>
-diff --git a/tools/testing/selftests/timers/skew_consistency.c b/tools/testing/selftests/timers/skew_consistency.c
-index 022b711..8066be9 100644
---- a/tools/testing/selftests/timers/skew_consistency.c
-+++ b/tools/testing/selftests/timers/skew_consistency.c
-@@ -32,7 +32,6 @@
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <fcntl.h>
--#include <stdlib.h>
- #include <string.h>
- #include <sys/wait.h>
- #include "../kselftest.h"
-diff --git a/tools/testing/selftests/x86/mpx-dig.c b/tools/testing/selftests/x86/mpx-dig.c
-index c13607e..880fbf6 100644
---- a/tools/testing/selftests/x86/mpx-dig.c
-+++ b/tools/testing/selftests/x86/mpx-dig.c
-@@ -8,9 +8,7 @@
- #include <unistd.h>
- #include <stdio.h>
- #include <errno.h>
--#include <sys/types.h>
- #include <sys/stat.h>
--#include <unistd.h>
- #include <sys/mman.h>
- #include <string.h>
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/x86/mpx-mini-test.c b/tools/testing/selftests/x86/mpx-mini-test.c
-index ec0f6b4..f17e0a1 100644
---- a/tools/testing/selftests/x86/mpx-mini-test.c
-+++ b/tools/testing/selftests/x86/mpx-mini-test.c
-@@ -722,10 +722,6 @@ void mpx_cleanup(void)
++struct gpio_rcar_bank_info {
++	bool iointsel;
++	bool inoutsel;
++	bool outdt;
++	bool active_high_rising_edge;
++	bool level_trigger;
++	bool both;
++	bool intmsk;
++};
++
+ struct gpio_rcar_priv {
+ 	void __iomem *base;
+ 	spinlock_t lock;
+@@ -41,6 +51,7 @@ struct gpio_rcar_priv {
+ 	unsigned int irq_parent;
+ 	bool has_both_edge_trigger;
+ 	bool needs_clk;
++	struct gpio_rcar_bank_info bank_info[32];
+ };
+ 
+ #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
+@@ -415,6 +426,83 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
+ 	return 0;
  }
  
- /*-------------- the following is test case ---------------*/
--#include <stdint.h>
--#include <stdbool.h>
--#include <stdlib.h>
--#include <stdio.h>
- #include <time.h>
- 
- uint64_t num_lower_brs;
-diff --git a/tools/testing/selftests/x86/unwind_vdso.c b/tools/testing/selftests/x86/unwind_vdso.c
-index 00a26a8..9731133 100644
---- a/tools/testing/selftests/x86/unwind_vdso.c
-+++ b/tools/testing/selftests/x86/unwind_vdso.c
-@@ -44,7 +44,6 @@ int main()
- #include <stdbool.h>
- #include <sys/ptrace.h>
- #include <sys/user.h>
--#include <sys/ucontext.h>
- #include <link.h>
- #include <sys/auxv.h>
- #include <dlfcn.h>
++#ifdef CONFIG_PM_SLEEP
++static int gpio_rcar_suspend(struct device *dev)
++{
++	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
++	int offset;
++	u32 bit_mask;
++	struct gpio_rcar_bank_info *bank_info;
++
++	for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
++		bank_info = &p->bank_info[offset];
++		bit_mask = BIT(offset);
++		bank_info->iointsel = !!(gpio_rcar_read(p, IOINTSEL) &
++					 bit_mask);
++
++		/* I/O pin  */
++		if (!bank_info->iointsel) {
++			bank_info->inoutsel = !!(gpio_rcar_read(p, INOUTSEL) &
++						 bit_mask);
++			bank_info->outdt = !!(gpio_rcar_read(p, OUTDT) &
++					      bit_mask);
++		/* Interrupt pin  */
++		} else {
++			bank_info->intmsk = !!(gpio_rcar_read(p, INTMSK) &
++					       bit_mask);
++			bank_info->active_high_rising_edge =
++				!(!!(gpio_rcar_read(p, POSNEG) & bit_mask));
++			bank_info->level_trigger =
++				!(!!(gpio_rcar_read(p, EDGLEVEL) & bit_mask));
++			bank_info->both = !!(gpio_rcar_read(p, BOTHEDGE) &
++					     bit_mask);
++		}
++	}
++
++	return 0;
++}
++
++static int gpio_rcar_resume(struct device *dev)
++{
++	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
++	int offset;
++	struct gpio_rcar_bank_info *bank_info;
++
++	for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
++		bank_info = &p->bank_info[offset];
++		/* I/O pin  */
++		if (!bank_info->iointsel) {
++			if (bank_info->inoutsel)
++				gpio_rcar_direction_output(&p->gpio_chip,
++							   offset,
++							   bank_info->outdt);
++			else
++				gpio_rcar_direction_input(&p->gpio_chip,
++							  offset);
++		/* Interrupt pin  */
++		} else {
++			gpio_rcar_config_interrupt_input_mode(
++				p,
++				offset,
++				bank_info->active_high_rising_edge,
++				bank_info->level_trigger,
++				bank_info->both);
++
++			if (bank_info->intmsk)
++				gpio_rcar_write(p, MSKCLR, BIT(offset));
++		}
++	}
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops,
++		gpio_rcar_suspend, gpio_rcar_resume);
++#define DEV_PM_OPS (&gpio_rcar_pm_ops)
++#else
++#define DEV_PM_OPS NULL
++#endif /* CONFIG_PM_SLEEP*/
++
+ static int gpio_rcar_probe(struct platform_device *pdev)
+ {
+ 	struct gpio_rcar_priv *p;
+@@ -536,6 +624,7 @@ static int gpio_rcar_remove(struct platform_device *pdev)
+ 	.remove		= gpio_rcar_remove,
+ 	.driver		= {
+ 		.name	= "gpio_rcar",
++		.pm     = DEV_PM_OPS,
+ 		.of_match_table = of_match_ptr(gpio_rcar_of_table),
+ 	}
+ };
 -- 
-2.7.4
-
+1.9.1
