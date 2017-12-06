@@ -1,104 +1,53 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [RESEND PATCH v3 2/2] ARM64: dts: meson-axg: add pinctrl DT info for Meson-AXG SoC
-Date: Wed, 06 Dec 2017 12:18:32 -0800
-Message-ID: <7htvx3r4o7.fsf@baylibre.com>
-References: <20171120102354.5354-1-yixun.lan@amlogic.com>
-        <20171120102354.5354-3-yixun.lan@amlogic.com>
+From: Gregory Fong <gregory.0xf0@gmail.com>
+Subject: Re: [PATCH 03/45] drivers: gpio: remove duplicate includes
+Date: Wed, 6 Dec 2017 14:29:02 -0800
+Message-ID: <CADtm3G4BsFfxvqXed-jmw5jPD5ZibNwFir7-k3XHU=+LEhyvWg@mail.gmail.com>
+References: <1512439104-15507-1-git-send-email-pravin.shedge4linux@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171120102354.5354-3-yixun.lan@amlogic.com> (Yixun Lan's
-        message of "Mon, 20 Nov 2017 18:23:54 +0800")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38704 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751827AbdLFW3j (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Dec 2017 17:29:39 -0500
+In-Reply-To: <1512439104-15507-1-git-send-email-pravin.shedge4linux@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Pravin Shedge <pravin.shedge4linux@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
+Hi Pravin,
 
-> From: Xingyu Chen <xingyu.chen@amlogic.com>
+On Mon, Dec 4, 2017 at 5:58 PM, Pravin Shedge
+<pravin.shedge4linux@gmail.com> wrote:
+> These duplicate includes have been found with scripts/checkincludes.pl but
+> they have been removed manually to avoid removing false positives.
 >
-> Add new pinctrl DT info for the Amlogic's Meson-AXG SoC.
->
-> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> Signed-off-by: Pravin Shedge <pravin.shedge4linux@gmail.com>
 > ---
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 44 ++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
+>  drivers/gpio/gpio-brcmstb.c | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> index 5fc33b76b91c..e0fb860e12c5 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> @@ -9,6 +9,7 @@
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/clock/axg-clkc.h>
->  #include <dt-bindings/clock/axg-aoclkc.h>
+> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+> index 545d43a..f40ec39 100644
+> --- a/drivers/gpio/gpio-brcmstb.c
+> +++ b/drivers/gpio/gpio-brcmstb.c
+> @@ -11,7 +11,6 @@
+>   * GNU General Public License for more details.
+>   */
+>
+> -#include <linux/bitops.h>
 
-This doesn't apply because this aoclkc.h header does not exist in
-mainline.
+Please remove the second entry at the end of the include list instead
+of this one, since that is the duplicate added accidentally in
+d74423687f9d70417bfec68121cbd35f79bb170f "gpio: brcmstb: Do not use
+gc->pin2mask()" [1].
 
-Kevin
+>  #include <linux/gpio/driver.h>
+>  #include <linux/of_device.h>
+>  #include <linux/of_irq.h>
 
-> +#include <dt-bindings/gpio/meson-axg-gpio.h>
->  
->  / {
->  	compatible = "amlogic,meson-axg";
-> @@ -173,6 +174,32 @@
->  			#mbox-cells = <1>;
->  		};
->  
-> +		periphs: periphs@ff634000 {
-> +			compatible = "simple-bus";
-> +			reg = <0x0 0xff634000 0x0 0x2000>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges = <0x0 0x0 0x0 0xff634000 0x0 0x2000>;
-> +
-> +			pinctrl_periphs: pinctrl@480 {
-> +				compatible = "amlogic,meson-axg-periphs-pinctrl";
-> +				#address-cells = <2>;
-> +				#size-cells = <2>;
-> +				ranges;
-> +
-> +				gpio: bank@480 {
-> +					reg = <0x0 0x00480 0x0 0x40>,
-> +						<0x0 0x004e8 0x0 0x14>,
-> +						<0x0 0x00520 0x0 0x14>,
-> +						<0x0 0x00430 0x0 0x3c>;
-> +					reg-names = "mux", "pull", "pull-enable", "gpio";
-> +					gpio-controller;
-> +					#gpio-cells = <2>;
-> +					gpio-ranges = <&pinctrl_periphs 0 0 86>;
-> +				};
-> +			};
-> +		};
-> +
->  		sram: sram@fffc0000 {
->  			compatible = "amlogic,meson-axg-sram", "mmio-sram";
->  			reg = <0x0 0xfffc0000 0x0 0x20000>;
-> @@ -209,6 +236,23 @@
->  				};
->  			};
->  
-> +			pinctrl_aobus: pinctrl@14 {
-> +				compatible = "amlogic,meson-axg-aobus-pinctrl";
-> +				#address-cells = <2>;
-> +				#size-cells = <2>;
-> +				ranges;
-> +
-> +				gpio_ao: bank@14 {
-> +					reg = <0x0 0x00014 0x0 0x8>,
-> +						<0x0 0x0002c 0x0 0x4>,
-> +						<0x0 0x00024 0x0 0x8>;
-> +					reg-names = "mux", "pull", "gpio";
-> +					gpio-controller;
-> +					#gpio-cells = <2>;
-> +					gpio-ranges = <&pinctrl_aobus 0 0 15>;
-> +				};
-> +			};
-> +
->  			uart_AO: serial@3000 {
->  				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
->  				reg = <0x0 0x3000 0x0 0x18>;
+Thanks,
+Gregory
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/gpio/gpio-brcmstb.c?id=d74423687f9d70417bfec68121cbd35f79bb170f
