@@ -1,144 +1,116 @@
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: Re: [PATCH 2/3] pinctrl: sunxi: Disable strict mode for old pinctrl
- drivers
-Date: Thu, 7 Dec 2017 11:32:31 +0100
-Message-ID: <20171207103231.GL2451@rfolt0960.corp.atmel.com>
-References: <cover.7a61d0bb31530def29efd8b4286d8c0afdaab347.1507236823.git-series.maxime.ripard@free-electrons.com>
- <b09cdfbf4c7546f299031c2923b9f8fcef881e3d.1507236823.git-series.maxime.ripard@free-electrons.com>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v6 03/17] mfd: madera: Add common support
+ for Cirrus Logic Madera codecs
+Date: Thu, 7 Dec 2017 10:52:47 +0000
+Message-ID: <e11d1657-0dfe-4de6-8928-0512ae3c1f1a@EX17.ad.cirrus.com>
+References: <20171123171316.10868-1-rf@opensource.wolfsonmicro.com>
+ <fe8064a5-8692-46c1-9f53-ab0a429baeeb@EX17.ad.cirrus.com>
+ <CACRpkdaxKjPd_k8tuO3R4+5LFT4_37zn6ruDRPd5j9xNAH4+Dw@mail.gmail.com>
+ <1eff5a38-cff3-449b-bda4-047f50a9f1d4@EX17.ad.cirrus.com>
+ <CACRpkdZ4QuOhk1LuGftcFozUKdZ4vFAO3omkQ004k39J=jKL7g@mail.gmail.com>
+ <ce3772d8-3ae7-474f-b9c2-8008bb39fd0b@EX17.ad.cirrus.com>
+ <CACRpkdb_i4k3F0fmDbQciPYTBUCcfpFkqM=5e3gr75-X51TTkg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b09cdfbf4c7546f299031c2923b9f8fcef881e3d.1507236823.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CACRpkdb_i4k3F0fmDbQciPYTBUCcfpFkqM=5e3gr75-X51TTkg@mail.gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, alsa-devel@alsa-project.org, Jason Cooper <jason@lakedaemon.net>, "open
+ list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Nikesh Oswal <Nikesh.Oswal@wolfsonmicro.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
-
-On Thu, Oct 05, 2017 at 10:54:07PM +0200, Maxime Ripard wrote:
-> Old pinctrl drivers will need to disable strict mode for various reasons,
-> among which:
->   - Some DT will still have a pinctrl group for each GPIO used, which will
->     be rejected by pin_request. While we could remove those nodes, we still
->     have to deal with old DTs.
->   - Some GPIOs on these boards need to have their pin configuration changed
->     (for bias or current), and there's no clear migration path
+On 07/12/17 08:54, Linus Walleij wrote:
+> On Mon, Dec 4, 2017 at 10:47 AM, Richard Fitzgerald
+> <rf@opensource.wolfsonmicro.com> wrote:
+>> On 02/12/17 12:10, Linus Walleij wrote:
+>>> On Wed, Nov 29, 2017 at 12:36 PM, Richard Fitzgerald
+>>> <rf@opensource.wolfsonmicro.com> wrote:
+>>>> On 29/11/17 10:18, Linus Walleij wrote:
+>>>>> On Thu, Nov 23, 2017 at 6:13 PM, Richard Fitzgerald
+>>>>> <rf@opensource.wolfsonmicro.com> wrote:
+>>>>>
+>>>>>> +config MFD_MADERA_I2C
+>>>>>> +       bool "Cirrus Logic Madera codecs with I2C"
+>>>>>> +       select MFD_MADERA
+>>>>>> +       select REGMAP_I2C
+>>>>>> +       depends on I2C
+>>>>>> +       depends on PINCTRL
+>>>>>> +       help
+>>>>>> +         Support for the Cirrus Logic Madera platform audio SoC
+>>>>>> +         core functionality controlled via I2C.
+>>>>>> +
+>>>>>> +config MFD_MADERA_SPI
+>>>>>> +       bool "Cirrus Logic Madera codecs with SPI"
+>>>>>> +       select MFD_MADERA
+>>>>>> +       select REGMAP_SPI
+>>>>>> +       depends on SPI_MASTER
+>>>>>> +       depends on PINCTRL
+>>>>>> +       help
+>>>>>> +         Support for the Cirrus Logic Madera platform audio SoC
+>>>>>> +         core functionality controlled via SPI.
+>>>>>
+>>>>>
+>>>>>
+>>>>> Why do the I2C and SPI subdrivers depend on PINCTRL?
+>>>>>
+>>>>> They sure don't seem to be using any pinctrl-specific APIs.
+>>>>>
+>>>>
+>>>> They require PINCTRL even if they don't call any functions on it because
+>>>> the
+>>>> chip won't work correctly if there isn't a PINCTRL driver to apply the
+>>>> correct pinmux configuration.
+>>>
+>>>
+>>> Apply the configuration to what? Sorry I don't get it.
+>>>
+>>> You can't be referring to the internal pin controller of the Madera, since
+>>
+>> Yes I am
 > 
-> Let's disable the strict mode on those SoCs so that there's no breakage.
+> You are saying that the I2C and SPI interface to the Madera codec
+> depends on pin control.
+> 
+> It does not.
+> 
+> You can most certainly talk I2C and SPI to the coded without any
+> pin control. Probably the MFD driver can come up without it.
+> 
+> If what you want is unconditional pin control enabled for this circuit,
+> then have MFD_MADERA select PINCTRL.
+> 
+>>> that has to come up before its pin controller can even be communicated
+>>> with.
+>>
+>>
+>> So?
+>>
+>> The MFD driver powers up the chip before registering child drivers.
+> 
+> Including the pin controller. You just confirmed what I said: the
+> I2C and SPI interfaces do not require pin control to talk to the
+> chip.
+> 
+>> Also that's not entirely relevant, the pinctrl settings can still be written
+>> with the chip off because they will go into the regmap cache and be applied
+>> when the chip is next resumed.
+> 
+> You still have the dependencies wrong.
+> 
+> Yours,
+> Linus Walleij
 > 
 
-I revive this thread since I am facing the same issue. Did you find a way to
-deal with it? I have not seen a new version of this set of patches, I may have
-missed it.
-
-Why you didn't choose to add an optionnal property to enforce the use of
-the strict mode? I mean, with your solution, if there is a new DT with
-an old pin controller, it won't benefit from the strict mode.
-
-Ludovic
-
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c | 1 +
->  drivers/pinctrl/sunxi/pinctrl-sun5i.c     | 1 +
->  drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c | 1 +
->  drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c | 1 +
->  drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c | 1 +
->  drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c  | 3 ++-
->  drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c | 1 +
->  7 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
-> index f763d8d62d6e..295e48fc94bc 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
-> @@ -1289,6 +1289,7 @@ static const struct sunxi_pinctrl_desc sun4i_a10_pinctrl_data = {
->  	.npins = ARRAY_SIZE(sun4i_a10_pins),
->  	.irq_banks = 1,
->  	.irq_read_needs_mux = true,
-> +	.disable_strict_mode = true,
->  };
->  
->  static int sun4i_a10_pinctrl_probe(struct platform_device *pdev)
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun5i.c b/drivers/pinctrl/sunxi/pinctrl-sun5i.c
-> index 47afd558b114..27ec99e81c4c 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun5i.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun5i.c
-> @@ -713,6 +713,7 @@ static const struct sunxi_pinctrl_desc sun5i_pinctrl_data = {
->  	.pins = sun5i_pins,
->  	.npins = ARRAY_SIZE(sun5i_pins),
->  	.irq_banks = 1,
-> +	.disable_strict_mode = true,
->  };
->  
->  static int sun5i_pinctrl_probe(struct platform_device *pdev)
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c b/drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c
-> index 951a25c18815..82ffaf466892 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c
-> @@ -965,6 +965,7 @@ static const struct sunxi_pinctrl_desc sun6i_a31_pinctrl_data = {
->  	.pins = sun6i_a31_pins,
->  	.npins = ARRAY_SIZE(sun6i_a31_pins),
->  	.irq_banks = 4,
-> +	.disable_strict_mode = true,
->  };
->  
->  static int sun6i_a31_pinctrl_probe(struct platform_device *pdev)
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
-> index 721b6935baf3..402fd7d21e7b 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
-> @@ -563,6 +563,7 @@ static const struct sunxi_pinctrl_desc sun8i_a23_pinctrl_data = {
->  	.pins = sun8i_a23_pins,
->  	.npins = ARRAY_SIZE(sun8i_a23_pins),
->  	.irq_banks = 3,
-> +	.disable_strict_mode = true,
->  };
->  
->  static int sun8i_a23_pinctrl_probe(struct platform_device *pdev)
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-> index ef1e0bef4099..da387211a75e 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-> @@ -486,6 +486,7 @@ static const struct sunxi_pinctrl_desc sun8i_a33_pinctrl_data = {
->  	.npins = ARRAY_SIZE(sun8i_a33_pins),
->  	.irq_banks = 2,
->  	.irq_bank_base = 1,
-> +	.disable_strict_mode = true,
->  };
->  
->  static int sun8i_a33_pinctrl_probe(struct platform_device *pdev)
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
-> index 518a92df4418..d1719a738c20 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
-> @@ -491,7 +491,8 @@ static const struct sunxi_pinctrl_desc sun8i_h3_pinctrl_data = {
->  	.pins = sun8i_h3_pins,
->  	.npins = ARRAY_SIZE(sun8i_h3_pins),
->  	.irq_banks = 2,
-> -	.irq_read_needs_mux = true
-> +	.irq_read_needs_mux = true,
-> +	.disable_strict_mode = true,
->  };
->  
->  static int sun8i_h3_pinctrl_probe(struct platform_device *pdev)
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c b/drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c
-> index bc14e954d7a2..472ef0d91b99 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c
-> @@ -721,6 +721,7 @@ static const struct sunxi_pinctrl_desc sun9i_a80_pinctrl_data = {
->  	.pins = sun9i_a80_pins,
->  	.npins = ARRAY_SIZE(sun9i_a80_pins),
->  	.irq_banks = 5,
-> +	.disable_strict_mode = true,
->  };
->  
->  static int sun9i_a80_pinctrl_probe(struct platform_device *pdev)
-> -- 
-> git-series 0.9.1
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+So the short version of this email thread is that it should be "select 
+PINCTRL" ?
