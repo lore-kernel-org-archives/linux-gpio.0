@@ -1,68 +1,144 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH] gpio: gpio-rcar: Support S2RAM
-Date: Thu, 7 Dec 2017 11:27:47 +0100
-Message-ID: <20171207102746.6cwj4nufuemi3so3@verge.net.au>
-References: <1512586115-4698-1-git-send-email-ykaneko0929@gmail.com>
- <CAMuHMdXRLuXeVmE9UAFGMdKV4gFSNO3kiVkh-q2MYM8spPkF7Q@mail.gmail.com>
- <20171207090810.zzltv5567d62w4ka@verge.net.au>
- <CAMuHMdVZuUmy-X5hwYO4SBB_dEQC5Fk2_sWhunojgcOKc1d7rw@mail.gmail.com>
- <CAMuHMdX05GAXX3b-kcZ0yEBR_+3i0zbRgzZ0VnFXWP90wiRjoQ@mail.gmail.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: Re: [PATCH 2/3] pinctrl: sunxi: Disable strict mode for old pinctrl
+ drivers
+Date: Thu, 7 Dec 2017 11:32:31 +0100
+Message-ID: <20171207103231.GL2451@rfolt0960.corp.atmel.com>
+References: <cover.7a61d0bb31530def29efd8b4286d8c0afdaab347.1507236823.git-series.maxime.ripard@free-electrons.com>
+ <b09cdfbf4c7546f299031c2923b9f8fcef881e3d.1507236823.git-series.maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdX05GAXX3b-kcZ0yEBR_+3i0zbRgzZ0VnFXWP90wiRjoQ@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+In-Reply-To: <b09cdfbf4c7546f299031c2923b9f8fcef881e3d.1507236823.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Dec 07, 2017 at 10:26:53AM +0100, Geert Uytterhoeven wrote:
-> On Thu, Dec 7, 2017 at 10:21 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> >>> >  struct gpio_rcar_priv {
-> >>> >         void __iomem *base;
-> >>> >         spinlock_t lock;
-> >>> > @@ -41,6 +51,7 @@ struct gpio_rcar_priv {
-> >>> >         unsigned int irq_parent;
-> >>> >         bool has_both_edge_trigger;
-> >>> >         bool needs_clk;
-> >>> > +       struct gpio_rcar_bank_info bank_info[32];
-> >>>
-> >>> That's 32 x 7 = 224 bytes in total.
-> >>>
-> >>> What about just using 7 u32s instead, one for each register to save?
-> >>> That way you only need 7 x 4 = 28 bytes, and you can probably optimize
-> >>> the code to just save/restore the whole register at once.
-> >>
-> >> So the suggestion is to use a u32 instead of struct gpio_rcar_bank_info,
-> >> and for each field of struct gpio_rcar_bank_info use a bit in the u32?
-> >>
-> >> If so, probably one could go a step further and use a u8 as there are
-> >> currently only 7 fields, thus using 32 x 1 = 32 bytes rather than
-> >> 32 x 4 = 128 bytes.
-> >
-> > I think you misunderstood.
-> > The patch has one gpio_rcar_bank_info for each GPIO.
-> > Each bank has 7 bits (bools), one for each register.
-> > Indexing is done through bank_info[<gpio>].<reg>.
-> > Saving/restoring bits requires converting from hardware register layout to
-> > stored layout ("transposing a 32 x 7 matrix to a 7 x 32 matrix").
-> >
-> > I proposed 7 u32s, one for each register, storing the similar bits for all
-> > 32 GPIOs.
-> > So indexing is reversed, becoming regs[<reg>] & BIT(<gpio>), which is
-> > similar to how the data is stored in hardware registers.
-> > Storing all bits related to a single register in a single u32 may allow to
-> > save/restore all bits of the register in a single operation.
+Hi,
+
+On Thu, Oct 05, 2017 at 10:54:07PM +0200, Maxime Ripard wrote:
+> Old pinctrl drivers will need to disable strict mode for various reasons,
+> among which:
+>   - Some DT will still have a pinctrl group for each GPIO used, which will
+>     be rejected by pin_request. While we could remove those nodes, we still
+>     have to deal with old DTs.
+>   - Some GPIOs on these boards need to have their pin configuration changed
+>     (for bias or current), and there's no clear migration path
 > 
-> More clarification: it's the difference between "int array[7][32]" and
-> "int array[32][7]".  Both store the same amount of data.
-> But if the hardware uses the former organization, you want to
-> save/restore using the same organization, else it requires an expensive
-> transformation.
+> Let's disable the strict mode on those SoCs so that there's no breakage.
+> 
 
-Thanks, you are correct that I misunderstood.
-I understand now.
+I revive this thread since I am facing the same issue. Did you find a way to
+deal with it? I have not seen a new version of this set of patches, I may have
+missed it.
 
-Kaneko-san, could you take a look at switching this around and posting an RFT?
+Why you didn't choose to add an optionnal property to enforce the use of
+the strict mode? I mean, with your solution, if there is a new DT with
+an old pin controller, it won't benefit from the strict mode.
+
+Ludovic
+
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c | 1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun5i.c     | 1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c | 1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c | 1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c | 1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c  | 3 ++-
+>  drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c | 1 +
+>  7 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+> index f763d8d62d6e..295e48fc94bc 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+> @@ -1289,6 +1289,7 @@ static const struct sunxi_pinctrl_desc sun4i_a10_pinctrl_data = {
+>  	.npins = ARRAY_SIZE(sun4i_a10_pins),
+>  	.irq_banks = 1,
+>  	.irq_read_needs_mux = true,
+> +	.disable_strict_mode = true,
+>  };
+>  
+>  static int sun4i_a10_pinctrl_probe(struct platform_device *pdev)
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun5i.c b/drivers/pinctrl/sunxi/pinctrl-sun5i.c
+> index 47afd558b114..27ec99e81c4c 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun5i.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun5i.c
+> @@ -713,6 +713,7 @@ static const struct sunxi_pinctrl_desc sun5i_pinctrl_data = {
+>  	.pins = sun5i_pins,
+>  	.npins = ARRAY_SIZE(sun5i_pins),
+>  	.irq_banks = 1,
+> +	.disable_strict_mode = true,
+>  };
+>  
+>  static int sun5i_pinctrl_probe(struct platform_device *pdev)
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c b/drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c
+> index 951a25c18815..82ffaf466892 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c
+> @@ -965,6 +965,7 @@ static const struct sunxi_pinctrl_desc sun6i_a31_pinctrl_data = {
+>  	.pins = sun6i_a31_pins,
+>  	.npins = ARRAY_SIZE(sun6i_a31_pins),
+>  	.irq_banks = 4,
+> +	.disable_strict_mode = true,
+>  };
+>  
+>  static int sun6i_a31_pinctrl_probe(struct platform_device *pdev)
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
+> index 721b6935baf3..402fd7d21e7b 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
+> @@ -563,6 +563,7 @@ static const struct sunxi_pinctrl_desc sun8i_a23_pinctrl_data = {
+>  	.pins = sun8i_a23_pins,
+>  	.npins = ARRAY_SIZE(sun8i_a23_pins),
+>  	.irq_banks = 3,
+> +	.disable_strict_mode = true,
+>  };
+>  
+>  static int sun8i_a23_pinctrl_probe(struct platform_device *pdev)
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
+> index ef1e0bef4099..da387211a75e 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
+> @@ -486,6 +486,7 @@ static const struct sunxi_pinctrl_desc sun8i_a33_pinctrl_data = {
+>  	.npins = ARRAY_SIZE(sun8i_a33_pins),
+>  	.irq_banks = 2,
+>  	.irq_bank_base = 1,
+> +	.disable_strict_mode = true,
+>  };
+>  
+>  static int sun8i_a33_pinctrl_probe(struct platform_device *pdev)
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
+> index 518a92df4418..d1719a738c20 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
+> @@ -491,7 +491,8 @@ static const struct sunxi_pinctrl_desc sun8i_h3_pinctrl_data = {
+>  	.pins = sun8i_h3_pins,
+>  	.npins = ARRAY_SIZE(sun8i_h3_pins),
+>  	.irq_banks = 2,
+> -	.irq_read_needs_mux = true
+> +	.irq_read_needs_mux = true,
+> +	.disable_strict_mode = true,
+>  };
+>  
+>  static int sun8i_h3_pinctrl_probe(struct platform_device *pdev)
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c b/drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c
+> index bc14e954d7a2..472ef0d91b99 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c
+> @@ -721,6 +721,7 @@ static const struct sunxi_pinctrl_desc sun9i_a80_pinctrl_data = {
+>  	.pins = sun9i_a80_pins,
+>  	.npins = ARRAY_SIZE(sun9i_a80_pins),
+>  	.irq_banks = 5,
+> +	.disable_strict_mode = true,
+>  };
+>  
+>  static int sun9i_a80_pinctrl_probe(struct platform_device *pdev)
+> -- 
+> git-series 0.9.1
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
