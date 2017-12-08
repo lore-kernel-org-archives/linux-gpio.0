@@ -1,41 +1,75 @@
-From: Yixun Lan <yixun.lan@amlogic.com>
-Subject: [PATCH v4 1/2] documentation: Add compatibles for Amlogic Meson AXG pin controllers
-Date: Fri, 8 Dec 2017 09:54:17 +0800
-Message-ID: <20171208015418.9632-2-yixun.lan@amlogic.com>
-References: <20171208015418.9632-1-yixun.lan@amlogic.com>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: Re: [PATCH v5 8/9] pinctrl: axp209: add support for AXP813 GPIOs
+Date: Fri, 8 Dec 2017 14:41:37 +0100
+Message-ID: <96bc20e3-97ca-ae76-9e35-e6af644659c7@free-electrons.com>
+References: <20171205144647.17594-1-quentin.schulz@free-electrons.com>
+ <20171205144647.17594-9-quentin.schulz@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171208015418.9632-1-yixun.lan@amlogic.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Yixun Lan <yixun.lan@amlogic.com>, Xingyu Chen <xingyu.chen@amlogic.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:42377 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753191AbdLHNlu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Dec 2017 08:41:50 -0500
+In-Reply-To: <20171205144647.17594-9-quentin.schulz@free-electrons.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, linux@armlinux.org.uk, maxime.ripard@free-electrons.com, lee.jones@linaro.org
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, thomas.petazzoni@free-electrons.com, linux-sunxi@googlegroups.com
 
-From: Xingyu Chen <xingyu.chen@amlogic.com>
+Hi all,
 
-Add compatibles for Amlogic Meson AXG pin controllers
+There is a bug below.
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Acked-by: Rob Herring <robh at kernel.org>
-Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt | 2 ++
- 1 file changed, 2 insertions(+)
+On 05/12/2017 15:46, Quentin Schulz wrote:
+> The AXP813 has only two GPIOs. GPIO0 can either be used as a GPIO, an
+> LDO regulator or an ADC. GPIO1 can be used either as a GPIO or an LDO
+> regulator.
+> 
+> Moreover, the status bit of the GPIOs when in input mode is not offset
+> by 4 unlike the AXP209.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+[...]
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-index 2392557ede27..2c12f9789116 100644
---- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-@@ -9,6 +9,8 @@ Required properties for the root node:
- 		      "amlogic,meson-gxbb-aobus-pinctrl"
- 		      "amlogic,meson-gxl-periphs-pinctrl"
- 		      "amlogic,meson-gxl-aobus-pinctrl"
-+		      "amlogic,meson-axg-periphs-pinctrl"
-+		      "amlogic,meson-axg-aobus-pinctrl"
-  - reg: address and size of registers controlling irq functionality
- 
- === GPIO sub-nodes ===
+>  static int axp20x_pctl_probe(struct platform_device *pdev)
+>  {
+>  	struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
+>  	struct axp20x_pctl *pctl;
+> +	struct device *dev = &pdev->dev;
+>  	struct pinctrl_desc *pctrl_desc;
+>  	int ret;
+>  
+> @@ -388,9 +413,9 @@ static int axp20x_pctl_probe(struct platform_device *pdev)
+>  	pctl->chip.set			= axp20x_gpio_set;
+>  	pctl->chip.direction_input	= axp20x_gpio_input;
+>  	pctl->chip.direction_output	= axp20x_gpio_output;
+> -	pctl->chip.ngpio		= 3;
+> +	pctl->chip.ngpio		= pctl->desc->npins;
+>  
+> -	pctl->desc = &axp20x_data;
+> +	pctl->desc = (struct axp20x_pctrl_desc *)of_device_get_match_data(dev);
+>  	pctl->regmap = axp20x->regmap;
+>  	pctl->dev = &pdev->dev;
+>  
+
+I am using pctl->desc before retrieving it, thus dereferencing from a
+null pointer.
+
+We just have to move
+pctl->chip.ngpio		= pctl->desc->npins;
+after
+pctl->desc = (struct axp20x_pctrl_desc *)of_device_get_match_data(dev);
+
+Linus, I guess that I should send a patch to fix this or is there an
+other way not to have to apply such a small and dumb patch?
+
+Quentin
 -- 
-2.15.1
+Quentin Schulz, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
