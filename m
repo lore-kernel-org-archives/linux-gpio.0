@@ -1,172 +1,99 @@
-From: Yixun Lan <yixun.lan@amlogic.com>
-Subject: [PATCH] pinctrl: meson-axg: adjust spicc pin naming
-Date: Fri, 8 Dec 2017 23:29:09 +0800
-Message-ID: <20171208152909.15632-1-yixun.lan@amlogic.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:19114 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753691AbdLHP3Y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Dec 2017 10:29:24 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v2 00/13] MIPS: add support for the Microsemi MIPS SoCs
+Date: Fri,  8 Dec 2017 16:46:05 +0100
+Message-ID: <20171208154618.20105-1-alexandre.belloni@free-electrons.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Yixun Lan <yixun.lan@amlogic.com>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-According to datasheet, we should use numbers for the pin naming
-instead of letters. The patch here try to fix this to keep
-the consistency.
+Hi,
 
-This patch should not bring any functional change.
+This patch series adds initial support for the Microsemi MIPS SoCs. It
+is currently focusing on the Microsemi Ocelot (VSC7513, VSC7514).
 
-Fixes: 83c566806a68 ("pinctrl: meson-axg: Add new pinctrl driver for Meson AXG SoC")
-Suggested-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+It adds support for the IRQ controller, pinmux and gpio controller and
+reset control.
 
----
-The issue was raised by Kevin while review the SPI DT part patches, see [1]
-[1] http://lists.infradead.org/pipermail/linux-amlogic/2017-December/005641.html
+This produces a kernel that can boot to the console.
 
-Note: the 'Fixes' is coming from pinctrl's tree 'for-next' branch
----
- drivers/pinctrl/meson/pinctrl-meson-axg.c | 86 +++++++++++++++----------------
- 1 file changed, 43 insertions(+), 43 deletions(-)
+This is a single series for reference but it can also be taken
+separately by each maintainer as each drivers are independant.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-index a1a7d42afd42..1fda9d6c7ea3 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-@@ -156,25 +156,25 @@ static const unsigned int sdio_d3_pins[] = {GPIOX_3};
- static const unsigned int sdio_clk_pins[] = {GPIOX_4};
- static const unsigned int sdio_cmd_pins[] = {GPIOX_5};
- 
--/* spi_a */
--static const unsigned int spi_clk_a_pins[] = {GPIOZ_0};
--static const unsigned int spi_mosi_a_pins[] = {GPIOZ_1};
--static const unsigned int spi_miso_a_pins[] = {GPIOZ_2};
--static const unsigned int spi_ss0_a_pins[] = {GPIOZ_3};
--static const unsigned int spi_ss1_a_pins[] = {GPIOZ_4};
--static const unsigned int spi_ss2_a_pins[] = {GPIOZ_5};
--
--/* spi_b */
--static const unsigned int spi_clk_b_x_pins[] = {GPIOX_19};
--static const unsigned int spi_mosi_b_x_pins[] = {GPIOX_17};
--static const unsigned int spi_miso_b_x_pins[] = {GPIOX_18};
--static const unsigned int spi_ss0_b_x_pins[] = {GPIOX_16};
--
--static const unsigned int spi_clk_b_a_pins[] = {GPIOA_4};
--static const unsigned int spi_mosi_b_a_pins[] = {GPIOA_2};
--static const unsigned int spi_miso_b_a_pins[] = {GPIOA_3};
--static const unsigned int spi_ss0_b_a_pins[] = {GPIOA_5};
--static const unsigned int spi_ss1_b_pins[] = {GPIOA_6};
-+/* spi0 */
-+static const unsigned int spi0_clk_pins[] = {GPIOZ_0};
-+static const unsigned int spi0_mosi_pins[] = {GPIOZ_1};
-+static const unsigned int spi0_miso_pins[] = {GPIOZ_2};
-+static const unsigned int spi0_ss0_pins[] = {GPIOZ_3};
-+static const unsigned int spi0_ss1_pins[] = {GPIOZ_4};
-+static const unsigned int spi0_ss2_pins[] = {GPIOZ_5};
-+
-+/* spi1 */
-+static const unsigned int spi1_clk_x_pins[] = {GPIOX_19};
-+static const unsigned int spi1_mosi_x_pins[] = {GPIOX_17};
-+static const unsigned int spi1_miso_x_pins[] = {GPIOX_18};
-+static const unsigned int spi1_ss0_x_pins[] = {GPIOX_16};
-+
-+static const unsigned int spi1_clk_a_pins[] = {GPIOA_4};
-+static const unsigned int spi1_mosi_a_pins[] = {GPIOA_2};
-+static const unsigned int spi1_miso_a_pins[] = {GPIOA_3};
-+static const unsigned int spi1_ss0_a_pins[] = {GPIOA_5};
-+static const unsigned int spi1_ss1_pins[] = {GPIOA_6};
- 
- /* i2c0 */
- static const unsigned int i2c0_sck_pins[] = {GPIOZ_6};
-@@ -429,12 +429,12 @@ static struct meson_pmx_group meson_axg_periphs_groups[] = {
- 	GROUP(nor_cs, 3),
- 
- 	/* bank GPIOZ */
--	GROUP(spi_clk_a, 1),
--	GROUP(spi_mosi_a, 1),
--	GROUP(spi_miso_a, 1),
--	GROUP(spi_ss0_a, 1),
--	GROUP(spi_ss1_a, 1),
--	GROUP(spi_ss2_a, 1),
-+	GROUP(spi0_clk, 1),
-+	GROUP(spi0_mosi, 1),
-+	GROUP(spi0_miso, 1),
-+	GROUP(spi0_ss0, 1),
-+	GROUP(spi0_ss1, 1),
-+	GROUP(spi0_ss2, 1),
- 	GROUP(i2c0_sck, 1),
- 	GROUP(i2c0_sda, 1),
- 	GROUP(i2c1_sck_z, 1),
-@@ -475,10 +475,10 @@ static struct meson_pmx_group meson_axg_periphs_groups[] = {
- 	GROUP(jtag_tdi_x, 2),
- 	GROUP(jtag_clk_x, 2),
- 	GROUP(jtag_tms_x, 2),
--	GROUP(spi_clk_b_x, 4),
--	GROUP(spi_mosi_b_x, 4),
--	GROUP(spi_miso_b_x, 4),
--	GROUP(spi_ss0_b_x, 4),
-+	GROUP(spi1_clk_x, 4),
-+	GROUP(spi1_mosi_x, 4),
-+	GROUP(spi1_miso_x, 4),
-+	GROUP(spi1_ss0_x, 4),
- 	GROUP(pwm_a_x18, 3),
- 	GROUP(pwm_a_x20, 1),
- 	GROUP(pwm_b_x, 3),
-@@ -521,11 +521,11 @@ static struct meson_pmx_group meson_axg_periphs_groups[] = {
- 	GROUP(spdif_in_a7, 3),
- 	GROUP(spdif_in_a19, 1),
- 	GROUP(spdif_in_a20, 2),
--	GROUP(spi_clk_b_a, 3),
--	GROUP(spi_mosi_b_a, 3),
--	GROUP(spi_miso_b_a, 3),
--	GROUP(spi_ss0_b_a, 3),
--	GROUP(spi_ss1_b, 3),
-+	GROUP(spi1_clk_a, 3),
-+	GROUP(spi1_mosi_a, 3),
-+	GROUP(spi1_miso_a, 3),
-+	GROUP(spi1_ss0_a, 3),
-+	GROUP(spi1_ss1, 3),
- 	GROUP(pwm_a_a, 3),
- 	GROUP(pwm_b_a, 3),
- 	GROUP(pwm_c_a, 3),
-@@ -696,15 +696,15 @@ static const char * const sdio_groups[] = {
- 	"sdio_cmd", "sdio_clk",
- };
- 
--static const char * const spi_a_groups[] = {
--	"spi_clk_a", "spi_mosi_a", "spi_miso_a", "spi_ss0_a",
--	"spi_ss1_a", "spi_ss2_a"
-+static const char * const spi0_groups[] = {
-+	"spi0_clk", "spi0_mosi", "spi0_miso", "spi0_ss0",
-+	"spi0_ss1", "spi0_ss2"
- };
- 
--static const char * const spi_b_groups[] = {
--	"spi_clk_b_x", "spi_mosi_b_x", "spi_miso_b_x", "spi_ss0_b_x",
--	"spi_clk_b_a", "spi_mosi_b_a", "spi_miso_b_a", "spi_ss0_b_a",
--	"spi_ss1_b"
-+static const char * const spi1_groups[] = {
-+	"spi1_clk_x", "spi1_mosi_x", "spi1_miso_x", "spi1_ss0_x",
-+	"spi1_clk_a", "spi1_mosi_a", "spi1_miso_a", "spi1_ss0_a",
-+	"spi1_ss1"
- };
- 
- static const char * const uart_a_groups[] = {
-@@ -849,8 +849,8 @@ static struct meson_pmx_func meson_axg_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
- 	FUNCTION(nor),
--	FUNCTION(spi_a),
--	FUNCTION(spi_b),
-+	FUNCTION(spi0),
-+	FUNCTION(spi1),
- 	FUNCTION(sdio),
- 	FUNCTION(nand),
- 	FUNCTION(uart_a),
+Changes in v2:
+ - removed the wildcard in MAINAINERS
+ - corrected the Cc list
+ - added proper documentation for both syscons
+ - removed the mscc,cpucontrol property
+ - updated the ranges property in the ocelot dtsi
+
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Cc: Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org
+
+
+Alexandre Belloni (13):
+  dt-bindings: Add vendor prefix for Microsemi Corporation
+  dt-bindings: interrupt-controller: Add binding for the Microsemi
+    Ocelot interrupt controller
+  irqchip: Add a driver for the Microsemi Ocelot controller
+  dt-bindings: pinctrl: Add bindings for Microsemi Ocelot
+  pinctrl: Add Microsemi Ocelot SoC driver
+  dt-bindings: mips: Add bindings for Microsemi SoCs
+  dt-bindings: power: reset: Document ocelot-reset binding
+  power: reset: Add a driver for the Microsemi Ocelot reset
+  MIPS: mscc: Add initial support for Microsemi MIPS SoCs
+  MIPS: mscc: add ocelot dtsi
+  MIPS: mscc: add ocelot PCB123 device tree
+  MIPS: defconfigs: add a defconfig for Microsemi SoCs
+  MAINTAINERS: Add entry for Microsemi MIPS SoCs
+
+ .../interrupt-controller/mscc,ocelot-icpu-intr.txt |  22 +
+ Documentation/devicetree/bindings/mips/mscc.txt    |  46 ++
+ .../bindings/pinctrl/mscc,ocelot-pinctrl.txt       |  39 ++
+ .../bindings/power/reset/ocelot-reset.txt          |  17 +
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ MAINTAINERS                                        |   7 +
+ arch/mips/Kbuild.platforms                         |   1 +
+ arch/mips/Kconfig                                  |  24 +
+ arch/mips/boot/dts/Makefile                        |   1 +
+ arch/mips/boot/dts/mscc/Makefile                   |   6 +
+ arch/mips/boot/dts/mscc/ocelot.dtsi                | 115 +++++
+ arch/mips/boot/dts/mscc/ocelot_pcb123.dts          |  27 ++
+ arch/mips/configs/mscc_defconfig                   |  84 ++++
+ arch/mips/mscc/Makefile                            |  11 +
+ arch/mips/mscc/Platform                            |  12 +
+ arch/mips/mscc/setup.c                             | 106 +++++
+ drivers/irqchip/Kconfig                            |   5 +
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-mscc-ocelot.c                  | 109 +++++
+ drivers/pinctrl/Kconfig                            |  10 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-ocelot.c                   | 505 +++++++++++++++++++++
+ drivers/power/reset/Kconfig                        |   7 +
+ drivers/power/reset/Makefile                       |   1 +
+ drivers/power/reset/ocelot-reset.c                 |  86 ++++
+ 25 files changed, 1244 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/mscc,ocelot-icpu-intr.txt
+ create mode 100644 Documentation/devicetree/bindings/mips/mscc.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/mscc,ocelot-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/power/reset/ocelot-reset.txt
+ create mode 100644 arch/mips/boot/dts/mscc/Makefile
+ create mode 100644 arch/mips/boot/dts/mscc/ocelot.dtsi
+ create mode 100644 arch/mips/boot/dts/mscc/ocelot_pcb123.dts
+ create mode 100644 arch/mips/configs/mscc_defconfig
+ create mode 100644 arch/mips/mscc/Makefile
+ create mode 100644 arch/mips/mscc/Platform
+ create mode 100644 arch/mips/mscc/setup.c
+ create mode 100644 drivers/irqchip/irq-mscc-ocelot.c
+ create mode 100644 drivers/pinctrl/pinctrl-ocelot.c
+ create mode 100644 drivers/power/reset/ocelot-reset.c
+
 -- 
 2.15.1
-
