@@ -1,100 +1,133 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: Add helpers to determin direction of gpiods
-Date: Sun, 10 Dec 2017 01:23:40 +0100
-Message-ID: <20171210002340.18460-1-linus.walleij@linaro.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: Allow indicating loss of pin states
+ during low-power
+Date: Sun, 10 Dec 2017 15:38:00 -0800
+Message-ID: <908c66f9-f9bd-a4df-e241-75595a3a3e27@gmail.com>
+References: <20171102231551.16220-1-f.fainelli@gmail.com>
+ <20171102231551.16220-3-f.fainelli@gmail.com>
+ <CACRpkdZtFRB_iy1bDPZ0wkK0jf7pkTGtbZG4gQUJVR+eiO+dhA@mail.gmail.com>
+ <20171129170247.GI28152@atomide.com>
+ <96cf5d74-3acf-07b9-9ad8-1011cd99a860@gmail.com>
+ <CACRpkdbFHj9pM6R3azVPKgbQ-LMmitEdJHQ5BOEb7Vy=kpNk4A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40405 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751002AbdLJAZs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Dec 2017 19:25:48 -0500
-Received: by mail-lf0-f65.google.com with SMTP id c140so8645887lfg.7
-        for <linux-gpio@vger.kernel.org>; Sat, 09 Dec 2017 16:25:47 -0800 (PST)
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40672 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751137AbdLJXiF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 10 Dec 2017 18:38:05 -0500
+In-Reply-To: <CACRpkdbFHj9pM6R3azVPKgbQ-LMmitEdJHQ5BOEb7Vy=kpNk4A@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Stephen Warren <swarren@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Al Cooper <alcooperx@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 
-The gpiod_get_direction() returns 1 for input and 0 for output
-but it's pretty hard to remember which one is which and generally
-unintuitive and messy to provide #defines so let's simply add
-two static inlines to do the job.
 
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Suggested-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- Documentation/gpio/consumer.txt | 14 +++++++++++---
- include/linux/gpio/consumer.h   | 25 +++++++++++++++++++++++++
- 2 files changed, 36 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-index 63e1bd1d88e3..c4b8e3d8c29f 100644
---- a/Documentation/gpio/consumer.txt
-+++ b/Documentation/gpio/consumer.txt
-@@ -162,8 +162,8 @@ The device-managed variants are, unsurprisingly:
- Using GPIOs
- ===========
- 
--Setting Direction
-------------------
-+Setting and Getting Direction
-+-----------------------------
- The first thing a driver must do with a GPIO is setting its direction. If no
- direction-setting flags have been given to gpiod_get*(), this is done by
- invoking one of the gpiod_direction_*() functions:
-@@ -184,7 +184,15 @@ A driver can also query the current direction of a GPIO:
- 
- 	int gpiod_get_direction(const struct gpio_desc *desc)
- 
--This function will return either GPIOF_DIR_IN or GPIOF_DIR_OUT.
-+This function will return either 1 (input) or 0 (output). There are also
-+these convenience helpers:
-+
-+	bool gpiod_is_input(const struct gpio_desc *desc)
-+	bool gpiod_is_output(const struct gpio_desc *desc)
-+
-+These will not provide the same level of error fallbacks: if they fail to
-+obtain the direction, they will print an error and report as input since this
-+is usually safest.
- 
- Be aware that there is no default direction for GPIOs. Therefore, **using a GPIO
- without setting its direction first is illegal and will result in undefined
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 7447d85dbe2f..4e5ee3ec1913 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -487,6 +487,31 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
- 
- #endif /* CONFIG_GPIOLIB */
- 
-+/*
-+ * Helpers that quickly tell whether a line is input or output.
-+ */
-+static inline bool gpiod_is_input(struct gpio_desc *desc)
-+{
-+	int ret = gpiod_get_direction(desc);
-+	if (ret < 0) {
-+		pr_err("GPIO: failed to get direction\n");
-+		/* It is usually safest to assume we are input */
-+		return true;
-+	}
-+	return !!ret;
-+}
-+
-+static inline bool gpiod_is_output(struct gpio_desc *desc)
-+{
-+	int ret = gpiod_get_direction(desc);
-+	if (ret < 0) {
-+		pr_err("GPIO: failed to get direction\n");
-+		/* It is usually safest to assume we are input */
-+		return false;
-+	}
-+	return !ret;
-+}
-+
- static inline
- struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
- 						   const char *con_id,
+On 12/02/2017 04:48 AM, Linus Walleij wrote:
+> On Wed, Nov 29, 2017 at 6:37 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>> On 11/29/2017 09:02 AM, Tony Lindgren wrote:
+> 
+>>> Hmm well typically a device driver that loses it's context just does
+>>> save and restore of the registers in runtime PM suspend/resume
+>>> as needed. In this case it would mean duplicating the state for
+>>> potentially for hundreds of registers.. So using the existing
+>>> state in the pinctrl subsystem totally makes sense for the pins.
+>>>
+>>> Florian do you have other reasons why this should be done in the
+>>> pinctrl framework instead of the driver? Might be worth describing
+>>> the reasoning in the patch descriptions :)
+>>
+>> The pinctrl provider driver that I am using is pinctrl-single, which has
+>> proper suspend/resume callbacks but those are not causing any HW
+>> programming to happen because of the (p->state == state) check, hence
+>> this patch series.
+> 
+> So we are talking about these callbacks, correct?
+> 
+> #ifdef CONFIG_PM
+> static int pinctrl_single_suspend(struct platform_device *pdev,
+>                                         pm_message_t state)
+> {
+>         struct pcs_device *pcs;
+> 
+>         pcs = platform_get_drvdata(pdev);
+>         if (!pcs)
+>                 return -EINVAL;
+> 
+>         return pinctrl_force_sleep(pcs->pctl);
+> }
+> 
+> static int pinctrl_single_resume(struct platform_device *pdev)
+> {
+>         struct pcs_device *pcs;
+> 
+>         pcs = platform_get_drvdata(pdev);
+>         if (!pcs)
+>                 return -EINVAL;
+> 
+>         return pinctrl_force_default(pcs->pctl);
+> }
+> #endif
+> 
+> Which falls through to this:
+> 
+> /**
+>  * pinctrl_force_sleep() - turn a given controller device into sleep state
+>  * @pctldev: pin controller device
+>  */
+> int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
+> {
+>         if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
+>                 return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
+>         return 0;
+> }
+> EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
+> 
+> /**
+>  * pinctrl_force_default() - turn a given controller device into default state
+>  * @pctldev: pin controller device
+>  */
+> int pinctrl_force_default(struct pinctrl_dev *pctldev)
+> {
+>         if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
+>                 return pinctrl_select_state(pctldev->p, pctldev->hog_default);
+>         return 0;
+> }
+> EXPORT_SYMBOL_GPL(pinctrl_force_default);
+> 
+> So am I right in assuming it is actually the hogs that is your biggest
+> problem, and those are the states that get lost over suspend/resume
+> that are especially problematic?
+> 
+> I.e. you don't have any problem with any non-hogged pinctrl
+> handles, those are handled just fine in the suspend/resume
+> paths of the client drivers?
+> 
+> If this is the case, it changes the problem scope slightly.
+> 
+> It is fair that functions named *force* should actually enforce
+> programming a state.
+> 
+> So then I would suggest somethin else: break pinctrl_select_state()
+> into two:
+> 
+> pinctrl_select_state() that works just like before, checking if
+> (p->state == state) but which calls a static function
+> pinctrl_select_state_commit() that commits the change unconditonally.
+> Then alter pinctrl_force_sleep() and pinctrl_force_sleep() to call
+> that function.
+> 
+> This should solve your problem without having to alter the semantics
+> of pinctrl_select_state() for everyone.
+
+This was exactly what I proposed initially here:
+
+http://patchwork.ozlabs.org/patch/734326/
+
+I really want to get this fixed, but I can't do that if we keep losing
+the context of the discussion (pun intended) :).
 -- 
-2.14.3
-
+Florian
