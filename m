@@ -1,94 +1,100 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 0/4] Add support for muxing individual pins
-Date: Fri, 8 Dec 2017 20:15:11 -0800
-Message-ID: <20171209041511.GB4803@minitux>
-References: <20170929101503.6769-1-ckeepax@opensource.cirrus.com>
- <CACRpkdYMBan5WrEvsQDu0dveq13bW4w=3bOgS71fcFfd4e=UGA@mail.gmail.com>
- <20171208142923.2exqaateli2qmtzl@localhost.localdomain>
- <CACRpkdZ_TjC2zoghHpHLXY3tFGkicRGz0pyt=i0828fDs4NjWQ@mail.gmail.com>
- <20171208172244.tbqybyrcubvrnwmm@localhost.localdomain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: Add helpers to determin direction of gpiods
+Date: Sun, 10 Dec 2017 01:23:40 +0100
+Message-ID: <20171210002340.18460-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f41.google.com ([74.125.83.41]:46468 "EHLO
-        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753674AbdLIEPP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Dec 2017 23:15:15 -0500
-Received: by mail-pg0-f41.google.com with SMTP id b11so8059430pgu.13
-        for <linux-gpio@vger.kernel.org>; Fri, 08 Dec 2017 20:15:15 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20171208172244.tbqybyrcubvrnwmm@localhost.localdomain>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40405 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751002AbdLJAZs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Dec 2017 19:25:48 -0500
+Received: by mail-lf0-f65.google.com with SMTP id c140so8645887lfg.7
+        for <linux-gpio@vger.kernel.org>; Sat, 09 Dec 2017 16:25:47 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, ext Tony Lindgren <tony@atomide.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@opensource.cirrus.com, Stephen Warren <swarren@wwwdotorg.org>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
 
-On Fri 08 Dec 09:22 PST 2017, Charles Keepax wrote:
+The gpiod_get_direction() returns 1 for input and 0 for output
+but it's pretty hard to remember which one is which and generally
+unintuitive and messy to provide #defines so let's simply add
+two static inlines to do the job.
 
-> On Fri, Dec 08, 2017 at 03:40:49PM +0100, Linus Walleij wrote:
-> > On Fri, Dec 8, 2017 at 3:29 PM, Charles Keepax
-> > <ckeepax@opensource.cirrus.com> wrote:
-> > 
-> > > (...) I have finally
-> > > managed to get some time to look over the pinctrl-single stuff.
-> > >
-> > > Naively one could convert the pinctrl-single stuff over to use
-> > > the patches I proposed creating one large group for the driver
-> > > and then mux each pin individually from within that.  However I
-> > > am not really sure it would make sense. From the implementation
-> > > so far the pinctrl-single stuff appears to target systems where
-> > > there isn't really a concept of groups. Each pin is just a
-> > > completely separate entry and you can only configure things one
-> > > pin at a time. In that case it almost makes more sense to model
-> > > each pin as an individual group such that it is clearly distinct
-> > > from the others. My thinking had been more along the lines of you
-> > > perhaps have a group that represents an I2S port but you can also
-> > > individually assign each of those pins as a GPIO when not in use
-> > > as the I2S port.
-> > 
-> > So then I toss the qcom driver into the game instead :)
-> > 
-> > If you look at drivers/pinctrl/qcom/* e.g. pinctrl-ipq4019.c or
-> > essentially any of the subdrivers, you find exactly this scenario.
-> > 
-> > I am concerned that if we add infrastructure for this, it needs
-> > to have more than one user. Qualcomm does fit your description
-> > above I think.
-> > 
-> 
-> Yeah I could certainly have a hunt through for other users that
-> would make good candidates to update. The QC driver certainly
-> looks like it would be capable of muxing individual pins,
-> although it looks like it might not let you mux an individual
-> GPIO at the moment, need to dig into that more.
-> 
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Suggested-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ Documentation/gpio/consumer.txt | 14 +++++++++++---
+ include/linux/gpio/consumer.h   | 25 +++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+), 3 deletions(-)
 
-In the Qualcomm hardware we have X GPIO pins and some number of special
-purpose pins. GPIO pins can be muxed and controlled individually and
-the special purpose pins (e.g. SDCC) are controlled as a group.
+diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+index 63e1bd1d88e3..c4b8e3d8c29f 100644
+--- a/Documentation/gpio/consumer.txt
++++ b/Documentation/gpio/consumer.txt
+@@ -162,8 +162,8 @@ The device-managed variants are, unsurprisingly:
+ Using GPIOs
+ ===========
+ 
+-Setting Direction
+------------------
++Setting and Getting Direction
++-----------------------------
+ The first thing a driver must do with a GPIO is setting its direction. If no
+ direction-setting flags have been given to gpiod_get*(), this is done by
+ invoking one of the gpiod_direction_*() functions:
+@@ -184,7 +184,15 @@ A driver can also query the current direction of a GPIO:
+ 
+ 	int gpiod_get_direction(const struct gpio_desc *desc)
+ 
+-This function will return either GPIOF_DIR_IN or GPIOF_DIR_OUT.
++This function will return either 1 (input) or 0 (output). There are also
++these convenience helpers:
++
++	bool gpiod_is_input(const struct gpio_desc *desc)
++	bool gpiod_is_output(const struct gpio_desc *desc)
++
++These will not provide the same level of error fallbacks: if they fail to
++obtain the direction, they will print an error and report as input since this
++is usually safest.
+ 
+ Be aware that there is no default direction for GPIOs. Therefore, **using a GPIO
+ without setting its direction first is illegal and will result in undefined
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 7447d85dbe2f..4e5ee3ec1913 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -487,6 +487,31 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
+ 
+ #endif /* CONFIG_GPIOLIB */
+ 
++/*
++ * Helpers that quickly tell whether a line is input or output.
++ */
++static inline bool gpiod_is_input(struct gpio_desc *desc)
++{
++	int ret = gpiod_get_direction(desc);
++	if (ret < 0) {
++		pr_err("GPIO: failed to get direction\n");
++		/* It is usually safest to assume we are input */
++		return true;
++	}
++	return !!ret;
++}
++
++static inline bool gpiod_is_output(struct gpio_desc *desc)
++{
++	int ret = gpiod_get_direction(desc);
++	if (ret < 0) {
++		pr_err("GPIO: failed to get direction\n");
++		/* It is usually safest to assume we are input */
++		return false;
++	}
++	return !ret;
++}
++
+ static inline
+ struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
+ 						   const char *con_id,
+-- 
+2.14.3
 
-I expected to describe both of these types as "pinctrl groups", but
-after struggling with this I realized that as the control is on
-pin-granularity (for the GPIOs) this is what should be represented as a
-group in pinctl/pinmux/pinconf.
-
-So each GPIO pin can be controlled/muxed individually and as such is
-represented as a group, special groups are describes as one group
-(matching the single set of registers).
-
-To configure a "logical group" (e.g. a UART), we list each pin
-(technically group), specify the same function and the necessary
-configuration options.
-
-
-So if you hardware supports configuring individual pins within a group
-my suggestion is that you should rework the driver to make "group" match
-"configurable thing" and then tie together logical groups when
-configuring your system.
-
-PS. A side effect of this is that e.g. UART is a function of 4 pins, but
-by specifying the pinmux/pinconf of only two of them I have a 2 pin
-UART, without having to describe this setup in the pinctrl driver.
-
-Regards,
-Bjorn
