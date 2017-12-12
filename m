@@ -1,62 +1,132 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 4/4] [v4] pinctrl: qcom: qdf2xxx: add support for new
- ACPI HID QCOM8002
-Date: Tue, 12 Dec 2017 12:05:05 +0200
-Message-ID: <1513073105.25007.618.camel@linux.intel.com>
-References: <1512170904-4749-1-git-send-email-timur@codeaurora.org>
-         <1512170904-4749-5-git-send-email-timur@codeaurora.org>
+From: Chris Obbard <obbardc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/2] pinctrl: sunxi: Disable strict mode for
+ H5 driver
+Date: Tue, 12 Dec 2017 10:35:16 +0000
+Message-ID: <CAP03XeoHGhN84WUXkBpmGEYiLVM-JZj_NBuQgO84sSzLa1acbw@mail.gmail.com>
+References: <20171125120200.23294-1-andre.przywara@arm.com>
+ <20171125120200.23294-3-andre.przywara@arm.com> <CACRpkdZX5U=JoQFS+X96+F68yVSZbnCZpgNfAnvfJGxZ9moi8A@mail.gmail.com>
+ <3ef7cfa4-cc1a-f24b-0013-f36db82781e5@arm.com> <CACRpkdaa0rMxaMseTxXryV7=AhWDQgsO_ZGTj-zGzaqBLFp5sw@mail.gmail.com>
+Reply-To: obbardc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:56303 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751566AbdLLKLL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 12 Dec 2017 05:11:11 -0500
-In-Reply-To: <1512170904-4749-5-git-send-email-timur@codeaurora.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/alternative; boundary="94eb2c1a6580edb3a405602234a4"
+Return-path: <linux-sunxi+bncBCVP56HU4ELBBZPBX3IQKGQEJZHWTJA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <CACRpkdaa0rMxaMseTxXryV7=AhWDQgsO_ZGTj-zGzaqBLFp5sw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
-On Fri, 2017-12-01 at 17:28 -0600, Timur Tabi wrote:
-> Newer versions of the firmware for the Qualcomm Datacenter
-> Technologies
-> QDF2400 restricts access to a subset of the GPIOs on the TLMM.  To
-> prevent older kernels from accidentally accessing the restricted
-> GPIOs,
-> we change the ACPI HID for the TLMM block from QCOM8001 to QCOM8002,
-> and introduce a new property "gpios".  This property is an array of
-> specific GPIOs that are accessible.  When an older kernel boots on
-> newer (restricted) firmware, it will fail to probe.
-> 
-> To implement the sparse GPIO map, we register all of the GPIOs, but
-> set
-> the pin count for the unavailable GPIOs to zero.  The pinctrl-msm
-> driver will block those unavailable GPIOs from being accessed.
-> 
-> To allow newer kernels to support older firmware, the driver retains
-> support for QCOM8001.
+--94eb2c1a6580edb3a405602234a4
+Content-Type: text/plain; charset="UTF-8"
 
-> +static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
-> +	{"QCOM8001", QDF2XXX_V1},
-> +	{"QCOM8002", QDF2XXX_V2},
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
-> 
+Excellent, thanks Linus.  The new DTS files are not in mainline, but this
+can wait ;-)
 
-> +	const struct acpi_device_id *id =
-> +		acpi_match_device(qdf2xxx_acpi_ids, &pdev->dev);
 
-JFYI: there is no need to move IDs like this.
-Use members of struct device_driver wisely.
+Cheers!
 
-> -static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
-> -	{"QCOM8001"},
-> -	{},
-> -};
-> -MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
+On 12 December 2017 at 08:52, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+wrote:
+
+> On Thu, Nov 30, 2017 at 5:07 PM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+> wrote:
+> > On 30/11/17 15:51, Linus Walleij wrote:
+> >> On Sat, Nov 25, 2017 at 1:02 PM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+> wrote:
+> >>
+> >>> All of the H5 boards in the kernel reference the MMC0 CD pin twice in
+> >>> their DT, so strict mode will make the MMC driver fail to load.
+> >>> To keep existing DTs working, disable strict mode in the H5 driver.
+> >>>
+> >>> Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+> >>> Reported-by: Chris Obbard <obbardc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >>
+> >> Patch applied with Maxime's ACK.
+> >
+> > Thanks for that (also to Maxime and Chen-Yu) and the smooth handling!
+> >
+> > Sorry, I just see that I didn't point this out explicitly, but this is
+> > to fix a regression introduced in 4.15-rc1, so is this on a branch that
+> > will be pushed for 4.15-rc, still? (Couldn't find anything quickly on
+> > kernel.org)
+>
+> Should be upstream as:
+> commit 07c43a382d7de3db01cc28bf2e17ed151cde2046
+>
+> Yours,
+> Linus Walleij
+>
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
+
+--94eb2c1a6580edb3a405602234a4
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>Excellent, thanks Linus.=C2=A0 The new DTS files are =
+not in mainline, but this can wait=C2=A0;-)</div><div><br></div><div><br></=
+div><div>Cheers!</div></div><div class=3D"gmail_extra"><br><div class=3D"gm=
+ail_quote">On 12 December 2017 at 08:52, Linus Walleij <span dir=3D"ltr">&l=
+t;<a href=3D"mailto:linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" target=3D"_blank">linus.walle=
+ij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" st=
+yle=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">On Th=
+u, Nov 30, 2017 at 5:07 PM, Andre Przywara &lt;<a href=3D"mailto:andre.przy=
+wara-5wv7dgnIgG8@public.gmane.org">andre.przywara-5wv7dgnIgG8@public.gmane.org</a>&gt; wrote:<br>
+&gt; On 30/11/17 15:51, Linus Walleij wrote:<br>
+&gt;&gt; On Sat, Nov 25, 2017 at 1:02 PM, Andre Przywara &lt;<a href=3D"mai=
+lto:andre.przywara-5wv7dgnIgG8@public.gmane.org">andre.przywara-5wv7dgnIgG8@public.gmane.org</a>&gt; wrote:<br>
+&gt;&gt;<br>
+&gt;&gt;&gt; All of the H5 boards in the kernel reference the MMC0 CD pin t=
+wice in<br>
+&gt;&gt;&gt; their DT, so strict mode will make the MMC driver fail to load=
+.<br>
+&gt;&gt;&gt; To keep existing DTs working, disable strict mode in the H5 dr=
+iver.<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; Signed-off-by: Andre Przywara &lt;<a href=3D"mailto:andre.przy=
+wara-5wv7dgnIgG8@public.gmane.org">andre.przywara-5wv7dgnIgG8@public.gmane.org</a>&gt;<br>
+&gt;&gt;&gt; Reported-by: Chris Obbard &lt;<a href=3D"mailto:obbardc@gmail.=
+com">obbardc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org</a>&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; Patch applied with Maxime&#39;s ACK.<br>
+&gt;<br>
+&gt; Thanks for that (also to Maxime and Chen-Yu) and the smooth handling!<=
+br>
+&gt;<br>
+&gt; Sorry, I just see that I didn&#39;t point this out explicitly, but thi=
+s is<br>
+&gt; to fix a regression introduced in 4.15-rc1, so is this on a branch tha=
+t<br>
+&gt; will be pushed for 4.15-rc, still? (Couldn&#39;t find anything quickly=
+ on<br>
+&gt; <a href=3D"http://kernel.org" target=3D"_blank" rel=3D"noreferrer">ker=
+nel.org</a>)<br>
+<br>
+Should be upstream as:<br>
+commit 07c43a382d7de3db01cc28bf2e17ed<wbr>151cde2046<br>
+<br>
+Yours,<br>
+Linus Walleij<br>
+</blockquote></div><br></div>
+
+<p></p>
+
+-- <br />
+You received this message because you are subscribed to the Google Groups &=
+quot;linux-sunxi&quot; group.<br />
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to <a href=3D"mailto:linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org">linux-s=
+unxi+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org</a>.<br />
+For more options, visit <a href=3D"https://groups.google.com/d/optout">http=
+s://groups.google.com/d/optout</a>.<br />
+
+--94eb2c1a6580edb3a405602234a4--
