@@ -1,83 +1,42 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] gpio: Add helpers to determin direction of gpiods
-Date: Tue, 12 Dec 2017 23:42:07 +0100
-Message-ID: <20171212224207.xi4yiuyhp5radivr@ninjato>
-References: <20171210002340.18460-1-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v6 03/17] mfd: madera: Add common support for Cirrus Logic
+ Madera codecs
+Date: Wed, 13 Dec 2017 00:51:13 +0100
+Message-ID: <CACRpkdahFBqzG_mU63NVZRKHH2VpWJYH6gGwKMiZaiTjFy=-UA@mail.gmail.com>
+References: <20171123171316.10868-1-rf@opensource.wolfsonmicro.com>
+ <fe8064a5-8692-46c1-9f53-ab0a429baeeb@EX17.ad.cirrus.com> <CACRpkdaxKjPd_k8tuO3R4+5LFT4_37zn6ruDRPd5j9xNAH4+Dw@mail.gmail.com>
+ <1eff5a38-cff3-449b-bda4-047f50a9f1d4@EX17.ad.cirrus.com> <CACRpkdZ4QuOhk1LuGftcFozUKdZ4vFAO3omkQ004k39J=jKL7g@mail.gmail.com>
+ <ce3772d8-3ae7-474f-b9c2-8008bb39fd0b@EX17.ad.cirrus.com> <CACRpkdb_i4k3F0fmDbQciPYTBUCcfpFkqM=5e3gr75-X51TTkg@mail.gmail.com>
+ <e11d1657-0dfe-4de6-8928-0512ae3c1f1a@EX17.ad.cirrus.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ulgqb3x656bkgo26"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171210002340.18460-1-linus.walleij@linaro.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:37816 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752723AbdLLXvO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Dec 2017 18:51:14 -0500
+Received: by mail-io0-f177.google.com with SMTP id d16so917767iob.4
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Dec 2017 15:51:14 -0800 (PST)
+In-Reply-To: <e11d1657-0dfe-4de6-8928-0512ae3c1f1a@EX17.ad.cirrus.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, alsa-devel@alsa-project.org, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Nikesh Oswal <Nikesh.Oswal@wolfsonmicro.com>
 
+On Thu, Dec 7, 2017 at 11:52 AM, Richard Fitzgerald
+<rf@opensource.wolfsonmicro.com> wrote:
+> On 07/12/17 08:54, Linus Walleij wrote:
 
---ulgqb3x656bkgo26
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> If what you want is unconditional pin control enabled for this circuit,
+>> then have MFD_MADERA select PINCTRL.
 
-Hey Linus,
+> So the short version of this email thread is that it should be "select
+> PINCTRL" ?
 
-thanks for doing this.
+If by "it" you mean MFD_MADERA tne  I guess yes :D
 
-On Sun, Dec 10, 2017 at 01:23:40AM +0100, Linus Walleij wrote:
-> The gpiod_get_direction() returns 1 for input and 0 for output
-> but it's pretty hard to remember which one is which and generally
-> unintuitive and messy to provide #defines so let's simply add
-> two static inlines to do the job.
->=20
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Suggested-by: Wolfram Sang <wsa@the-dreams.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  Documentation/gpio/consumer.txt | 14 +++++++++++---
->  include/linux/gpio/consumer.h   | 25 +++++++++++++++++++++++++
->  2 files changed, 36 insertions(+), 3 deletions(-)
+I was just confused because I couldn't figure out what you were
+trying to do.
 
-You need to fix the kerneldoc for 'gpiod_get_direction", too. It still
-mentions GPIOF_DIR_*.
-
-> +static inline bool gpiod_is_input(struct gpio_desc *desc)
-> +{
-> +	int ret =3D gpiod_get_direction(desc);
-> +	if (ret < 0) {
-> +		pr_err("GPIO: failed to get direction\n");
-
-Is that really helpful for the user if we don't say which GPIO failed?
-
-> +		/* It is usually safest to assume we are input */
-> +		return true;
-> +	}
-> +	return !!ret;
-> +}
-
-Regards,
-
-   Wolfram
-
-
---ulgqb3x656bkgo26
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlowWz4ACgkQFA3kzBSg
-KbacFQ/8DCJTSvMKuNQrHiAigMM7Odi3+1aKyxYmQg8LyebwItspyQ545zH7T8Hq
-myVriRNQlZF7pyZcVvrJFz+O7N6lz2jEUb7/Mj1Hze5xkrcNLNOkSZ/jsN5vUhNL
-k/tLu+Xa8G7pI7t6ArUHAR1PwwDlKfZhFH4XY5w/Q40rlrtmoxQ2y6RQlBgb7JtD
-0yQY90xpdbUAL5IqA7cwk43TQcPlXfqUoxA4o7b/PSiwcCmdtsSEB0WGY3apTjCq
-UB9dQkqVSiw/V643m5PPT/lZz5ECifMhoAg42KLQBbTdMcsqKrBG6O0aP1XSFMMR
-bK6w+va+5Ec6ViYDHAF+xfcmeMzR31XUYfTRegXzdWduMnTZF/5mRiB+dIj/KYuP
-WouKTgRdqksrX9TwIj9Kf7Gn2F0RatsYtHQqAyJyyX2tk9PbaLkF1h+SLBbZ3vKA
-A+P3Z0TCL0AgEvHcUgbNGKpT0F5Sm7WqvAg9Llo0O+jydJzcFmnNTDSsWChGvZWy
-jbduWOXb+tRBbec/uTDepvmacRs/wb73c84eTJ6gbe7PTI9lpzukiFCqzUYIdm7N
-hP3ubZQLIB8wQw5h+CScBPwQ3brliySf3aCspw0cPMqV6Kp3vSf37L0tPod0p+cs
-EHjaMwplfd3hK0gazZhI4H1jODtbkR1ps0R7Lp8+G/n9yNIc0zA=
-=J/VM
------END PGP SIGNATURE-----
-
---ulgqb3x656bkgo26--
+Yours,
+Linus Walleij
