@@ -1,58 +1,76 @@
-From: Brian Norris <briannorris@chromium.org>
-Subject: [PATCH] pinctrl: rockchip: enable clock when reading pin direction register
-Date: Tue, 12 Dec 2017 09:43:43 -0800
-Message-ID: <20171212174343.192017-1-briannorris@chromium.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:45520 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752323AbdLLRo1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Dec 2017 12:44:27 -0500
-Received: by mail-it0-f67.google.com with SMTP id z6so311403iti.4
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Dec 2017 09:44:26 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Subject: Re: [PATCH] gpio: gpio-rcar: Support S2RAM
+Date: Wed, 13 Dec 2017 03:01:20 +0900
+Message-ID: <CAH1o70JPNdc_Pffiy94-yAeuWB8XRE0HuWLWO4VLvT8n1=S86w@mail.gmail.com>
+References: <1512586115-4698-1-git-send-email-ykaneko0929@gmail.com>
+ <CAMuHMdXRLuXeVmE9UAFGMdKV4gFSNO3kiVkh-q2MYM8spPkF7Q@mail.gmail.com>
+ <20171207090810.zzltv5567d62w4ka@verge.net.au> <CAMuHMdVZuUmy-X5hwYO4SBB_dEQC5Fk2_sWhunojgcOKc1d7rw@mail.gmail.com>
+ <CAMuHMdX05GAXX3b-kcZ0yEBR_+3i0zbRgzZ0VnFXWP90wiRjoQ@mail.gmail.com> <20171207102746.6cwj4nufuemi3so3@verge.net.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20171207102746.6cwj4nufuemi3so3@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Brian Norris <briannorris@chromium.org>
 
-We generally leave the GPIO clock disabled, unless an interrupt is
-requested or we're accessing IO registers. We forgot to do this for the
-->get_direction() callback, which means we can sometimes [1] get
-incorrect results [2] from, e.g., /sys/kernel/debug/gpio.
+Hi Simon-san, Geert-san,
 
-Enable the clock, so we get the right results!
+I am sorry for my late reply.
 
-[1] Sometimes, because many systems have 1 or mor interrupt requested on
-each GPIO bank, so they always leave their clock on.
+2017-12-07 19:27 GMT+09:00 Simon Horman <horms@verge.net.au>:
+> On Thu, Dec 07, 2017 at 10:26:53AM +0100, Geert Uytterhoeven wrote:
+>> On Thu, Dec 7, 2017 at 10:21 AM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>> >>> >  struct gpio_rcar_priv {
+>> >>> >         void __iomem *base;
+>> >>> >         spinlock_t lock;
+>> >>> > @@ -41,6 +51,7 @@ struct gpio_rcar_priv {
+>> >>> >         unsigned int irq_parent;
+>> >>> >         bool has_both_edge_trigger;
+>> >>> >         bool needs_clk;
+>> >>> > +       struct gpio_rcar_bank_info bank_info[32];
+>> >>>
+>> >>> That's 32 x 7 = 224 bytes in total.
+>> >>>
+>> >>> What about just using 7 u32s instead, one for each register to save?
+>> >>> That way you only need 7 x 4 = 28 bytes, and you can probably optimize
+>> >>> the code to just save/restore the whole register at once.
+>> >>
+>> >> So the suggestion is to use a u32 instead of struct gpio_rcar_bank_info,
+>> >> and for each field of struct gpio_rcar_bank_info use a bit in the u32?
+>> >>
+>> >> If so, probably one could go a step further and use a u8 as there are
+>> >> currently only 7 fields, thus using 32 x 1 = 32 bytes rather than
+>> >> 32 x 4 = 128 bytes.
+>> >
+>> > I think you misunderstood.
+>> > The patch has one gpio_rcar_bank_info for each GPIO.
+>> > Each bank has 7 bits (bools), one for each register.
+>> > Indexing is done through bank_info[<gpio>].<reg>.
+>> > Saving/restoring bits requires converting from hardware register layout to
+>> > stored layout ("transposing a 32 x 7 matrix to a 7 x 32 matrix").
+>> >
+>> > I proposed 7 u32s, one for each register, storing the similar bits for all
+>> > 32 GPIOs.
+>> > So indexing is reversed, becoming regs[<reg>] & BIT(<gpio>), which is
+>> > similar to how the data is stored in hardware registers.
+>> > Storing all bits related to a single register in a single u32 may allow to
+>> > save/restore all bits of the register in a single operation.
+>>
+>> More clarification: it's the difference between "int array[7][32]" and
+>> "int array[32][7]".  Both store the same amount of data.
+>> But if the hardware uses the former organization, you want to
+>> save/restore using the same organization, else it requires an expensive
+>> transformation.
+>
+> Thanks, you are correct that I misunderstood.
+> I understand now.
+>
+> Kaneko-san, could you take a look at switching this around and posting an RFT?
 
-[2] Incorrect, meaning the register returns 0, and so we interpret that
-as "input".
+Sure, will do.
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- drivers/pinctrl/pinctrl-rockchip.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 2ba17548ad5b..073de6a9ed34 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -2014,8 +2014,16 @@ static int rockchip_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
- {
- 	struct rockchip_pin_bank *bank = gpiochip_get_data(chip);
- 	u32 data;
-+	int ret;
- 
-+	ret = clk_enable(bank->clk);
-+	if (ret < 0) {
-+		dev_err(bank->drvdata->dev,
-+			"failed to enable clock for bank %s\n", bank->name);
-+		return ret;
-+	}
- 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
-+	clk_disable(bank->clk);
- 
- 	return !(data & BIT(offset));
- }
--- 
-2.15.1.424.g9478a66081-goog
-
+Thanks,
+Kaneko
