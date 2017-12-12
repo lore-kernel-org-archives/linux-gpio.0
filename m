@@ -1,47 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: sunxi: Disable strict mode for H5 driver
-Date: Tue, 12 Dec 2017 09:52:27 +0100
-Message-ID: <CACRpkdaa0rMxaMseTxXryV7=AhWDQgsO_ZGTj-zGzaqBLFp5sw@mail.gmail.com>
-References: <20171125120200.23294-1-andre.przywara@arm.com>
- <20171125120200.23294-3-andre.przywara@arm.com> <CACRpkdZX5U=JoQFS+X96+F68yVSZbnCZpgNfAnvfJGxZ9moi8A@mail.gmail.com>
- <3ef7cfa4-cc1a-f24b-0013-f36db82781e5@arm.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 2/4] [v2] gpiolib: add bitmask for valid GPIO lines
+Date: Tue, 12 Dec 2017 11:58:45 +0200
+Message-ID: <1513072725.25007.614.camel@linux.intel.com>
+References: <1512170904-4749-1-git-send-email-timur@codeaurora.org>
+         <1512170904-4749-3-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:41134 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751622AbdLLIw3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Dec 2017 03:52:29 -0500
-Received: by mail-it0-f68.google.com with SMTP id x28so22794829ita.0
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Dec 2017 00:52:28 -0800 (PST)
-In-Reply-To: <3ef7cfa4-cc1a-f24b-0013-f36db82781e5@arm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1512170904-4749-3-git-send-email-timur@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Chris Obbard <obbardc@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, linux-sunxi <linux-sunxi@googlegroups.com>
 
-On Thu, Nov 30, 2017 at 5:07 PM, Andre Przywara <andre.przywara@arm.com> wrote:
-> On 30/11/17 15:51, Linus Walleij wrote:
->> On Sat, Nov 25, 2017 at 1:02 PM, Andre Przywara <andre.przywara@arm.com> wrote:
->>
->>> All of the H5 boards in the kernel reference the MMC0 CD pin twice in
->>> their DT, so strict mode will make the MMC driver fail to load.
->>> To keep existing DTs working, disable strict mode in the H5 driver.
->>>
->>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
->>> Reported-by: Chris Obbard <obbardc@gmail.com>
->>
->> Patch applied with Maxime's ACK.
->
-> Thanks for that (also to Maxime and Chen-Yu) and the smooth handling!
->
-> Sorry, I just see that I didn't point this out explicitly, but this is
-> to fix a regression introduced in 4.15-rc1, so is this on a branch that
-> will be pushed for 4.15-rc, still? (Couldn't find anything quickly on
-> kernel.org)
+On Fri, 2017-12-01 at 17:28 -0600, Timur Tabi wrote:
+> Add support for specifying that some GPIOs within a range are
+> unavailable.
+> Some systems have a sparse list of GPIOs, where a range of GPIOs is
+> specified (usually 0 to n-1), but some subset within that range is
+> absent or unavailable for whatever reason.
+> 
+> To support this, allow drivers to specify a bitmask of GPIOs that
+> are present or absent.  Gpiolib will then block access to those that
+> are absent.
+ 
+> -	status = gpiochip_irqchip_init_valid_mask(chip);
+> +	status = gpiochip_init_valid_mask(chip);
+>  	if (status)
+>  		goto err_remove_from_list;
+>  
+> +	status = gpiochip_irqchip_init_valid_mask(chip);
+> +	if (status)
+> +		goto err_remove_valid_mask;
 
-Should be upstream as:
-commit 07c43a382d7de3db01cc28bf2e17ed151cde2046
+Yes, this way it looks good!
 
-Yours,
-Linus Walleij
+> +static bool gpiochip_available(const struct gpio_chip *gpiochip,
+> +			   unsigned int offset)
+> +{
+
+> +	pr_info("%s:%u offset=%u\n", __func__, __LINE__, offset);
+
+Debug leftover?
+
+> +
+> +	/* No mask means all valid */
+> +	if (likely(!gpiochip->valid_mask))
+> +		return true;
+> +
+> +	return test_bit(offset, gpiochip->valid_mask);
+
+Not sure which one is better
+ return test_bit();
+or
+ return !!test_bit();
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
