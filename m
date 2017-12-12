@@ -1,74 +1,58 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 4/4] [v4] pinctrl: qcom: qdf2xxx: add support for new
- ACPI HID QCOM8002
-Date: Tue, 12 Dec 2017 13:07:16 +0200
-Message-ID: <1513076836.25007.641.camel@linux.intel.com>
-References: <1512170904-4749-1-git-send-email-timur@codeaurora.org>
- <1512170904-4749-5-git-send-email-timur@codeaurora.org>
- <CACRpkdYer_Q5R4XhWTX3=jwshcKZRSDY9=gOvSeUPsQHbUw6vw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdYer_Q5R4XhWTX3=jwshcKZRSDY9=gOvSeUPsQHbUw6vw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Timur Tabi <timur@codeaurora.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE
- BINDINGS" <devicetree@vger.kernel.org>
-Cc: Archit Taneja <architt@codeaurora.org>, David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Andy Gross <andy.gross@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Varadarajan Narayanan <varada@codeaurora.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+From: Brian Norris <briannorris@chromium.org>
+Subject: [PATCH] pinctrl: rockchip: enable clock when reading pin direction register
+Date: Tue, 12 Dec 2017 09:43:43 -0800
+Message-ID: <20171212174343.192017-1-briannorris@chromium.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:45520 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752323AbdLLRo1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Dec 2017 12:44:27 -0500
+Received: by mail-it0-f67.google.com with SMTP id z6so311403iti.4
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Dec 2017 09:44:26 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Brian Norris <briannorris@chromium.org>
 
-On Tue, 2017-12-12 at 11:42 +0100, Linus Walleij wrote:
-> On Sat, Dec 2, 2017 at 12:28 AM, Timur Tabi <timur@codeaurora.org>
-> wrote:
+We generally leave the GPIO clock disabled, unless an interrupt is
+requested or we're accessing IO registers. We forgot to do this for the
+->get_direction() callback, which means we can sometimes [1] get
+incorrect results [2] from, e.g., /sys/kernel/debug/gpio.
 
-> > +               /* The number of GPIOs in the approved list */
-> > +               ret = device_property_read_u16_array(&pdev->dev,
-> > "gpios",
-> > +                                                    NULL, 0);
-> > +               if (ret < 0) {
-> > +                       dev_err(&pdev->dev, "missing 'gpios'
-> > property\n");
-> > +                       return ret;
-> > +               }
-> 
-> This is in direct conflict with the existing "gpios" binding in device
-> tree.
-> 
-> Where is this name coming from? ACPI standards?
+Enable the clock, so we get the right results!
 
-Not ACPI standards as of my knowledge. ACPI standard defines a common
-scheme how to define properties, it doesn't tell anything about property
-names or any mappings between names to values or names to "OS
-subsystem").
+[1] Sometimes, because many systems have 1 or mor interrupt requested on
+each GPIO bank, so they always leave their clock on.
 
-As for GPIO we just follow *de facto* what DT has right now, i.e. "xxx-
-gpio" or "xxx-gpios" pattern is used to map ACPI standard resource to a
-GPIO name. That's how GPIO ACPI lib is being developed.
+[2] Incorrect, meaning the register returns 0, and so we interpret that
+as "input".
 
-> If device tree and ACPI start defining things which are in direct
-> conflict
-> we can just shut down this device_property() business altogether,
-> it will never work that way.
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+ drivers/pinctrl/pinctrl-rockchip.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-This is fully understandable. Also it works in other direction, i.e. if
-DT will break the established thing it will break also ACPI and built-in 
-device properties.
-
-We are keeping an eye on this not to happen as much as we can in any
-direction.
-
-So, summarize above, I don't see any impediments (except maybe very
-broken ARM64 firmware that is already on devices on market) to make it
-properly from the beginning.
-
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 2ba17548ad5b..073de6a9ed34 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2014,8 +2014,16 @@ static int rockchip_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct rockchip_pin_bank *bank = gpiochip_get_data(chip);
+ 	u32 data;
++	int ret;
+ 
++	ret = clk_enable(bank->clk);
++	if (ret < 0) {
++		dev_err(bank->drvdata->dev,
++			"failed to enable clock for bank %s\n", bank->name);
++		return ret;
++	}
+ 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
++	clk_disable(bank->clk);
+ 
+ 	return !(data & BIT(offset));
+ }
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.15.1.424.g9478a66081-goog
+
