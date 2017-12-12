@@ -1,25 +1,47 @@
-From: "Ms. Ella Golan" <ehuertas@recoleta.edu.pe>
-Subject: re
-Date: Tue, 12 Dec 2017 08:08:59 +0100
-Message-ID: <20171212070827.74A498EB207@mail.recoleta.edu.pe>
-Reply-To: egolaan3@gmail.com
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: sunxi: Disable strict mode for H5 driver
+Date: Tue, 12 Dec 2017 09:52:27 +0100
+Message-ID: <CACRpkdaa0rMxaMseTxXryV7=AhWDQgsO_ZGTj-zGzaqBLFp5sw@mail.gmail.com>
+References: <20171125120200.23294-1-andre.przywara@arm.com>
+ <20171125120200.23294-3-andre.przywara@arm.com> <CACRpkdZX5U=JoQFS+X96+F68yVSZbnCZpgNfAnvfJGxZ9moi8A@mail.gmail.com>
+ <3ef7cfa4-cc1a-f24b-0013-f36db82781e5@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.recoleta.edu.pe ([209.45.59.88]:39456 "EHLO
-        mail.recoleta.edu.pe" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750715AbdLLInx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Dec 2017 03:43:53 -0500
-Content-Description: Mail message body
+Received: from mail-it0-f68.google.com ([209.85.214.68]:41134 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751622AbdLLIw3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Dec 2017 03:52:29 -0500
+Received: by mail-it0-f68.google.com with SMTP id x28so22794829ita.0
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Dec 2017 00:52:28 -0800 (PST)
+In-Reply-To: <3ef7cfa4-cc1a-f24b-0013-f36db82781e5@arm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <ehuertas@recoleta.edu.pe>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Chris Obbard <obbardc@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, linux-sunxi <linux-sunxi@googlegroups.com>
 
-I am Ms.Ella Golan, I am the Executive Vice President Banking Division with=
- FIRST INTERNATIONAL BANK OF ISRAEL LTD (FIBI). I am getting in touch with =
-you regarding an extremely important and urgent matter. If you would oblige=
- me the opportunity, I shall provide you with details upon your response.
+On Thu, Nov 30, 2017 at 5:07 PM, Andre Przywara <andre.przywara@arm.com> wrote:
+> On 30/11/17 15:51, Linus Walleij wrote:
+>> On Sat, Nov 25, 2017 at 1:02 PM, Andre Przywara <andre.przywara@arm.com> wrote:
+>>
+>>> All of the H5 boards in the kernel reference the MMC0 CD pin twice in
+>>> their DT, so strict mode will make the MMC driver fail to load.
+>>> To keep existing DTs working, disable strict mode in the H5 driver.
+>>>
+>>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>>> Reported-by: Chris Obbard <obbardc@gmail.com>
+>>
+>> Patch applied with Maxime's ACK.
+>
+> Thanks for that (also to Maxime and Chen-Yu) and the smooth handling!
+>
+> Sorry, I just see that I didn't point this out explicitly, but this is
+> to fix a regression introduced in 4.15-rc1, so is this on a branch that
+> will be pushed for 4.15-rc, still? (Couldn't find anything quickly on
+> kernel.org)
 
-Faithfully,
-Ms.Ella Golan
+Should be upstream as:
+commit 07c43a382d7de3db01cc28bf2e17ed151cde2046
+
+Yours,
+Linus Walleij
