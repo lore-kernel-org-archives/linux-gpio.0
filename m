@@ -1,65 +1,74 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 1/3] dt-bindings: pinctrl: sunxi: document new generic binding
-Date: Tue, 12 Dec 2017 11:52:28 +0100
-Message-ID: <CACRpkdZBMeG0d2W9n5UQ6c-XgQcoGYJG4bAwnMqq_awpQCuQ7Q@mail.gmail.com>
-References: <20171113012523.2328-1-andre.przywara@arm.com> <20171113012523.2328-2-andre.przywara@arm.com>
- <CACRpkdbpfkM4odz425+4qyUCF5vqPWBQ=F5Yk7AtJL5SqXghpg@mail.gmail.com>
- <20171124105240.GB3792@ulmo> <20efcf8f-85a5-3cad-a84b-434ee5cad68e@arm.com>
- <20171124133123.GA15999@ulmo> <0c8051e6-5d8c-32d6-97e4-11c2283da5b4@arm.com>
- <CACRpkdZ70a7Vk1QPFhkms6ucWmSH6rOUD9_J0h=NjhK+vfXNAA@mail.gmail.com> <be52417d-9509-f638-65b6-f455fade0c39@arm.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 4/4] [v4] pinctrl: qcom: qdf2xxx: add support for new
+ ACPI HID QCOM8002
+Date: Tue, 12 Dec 2017 13:07:16 +0200
+Message-ID: <1513076836.25007.641.camel@linux.intel.com>
+References: <1512170904-4749-1-git-send-email-timur@codeaurora.org>
+ <1512170904-4749-5-git-send-email-timur@codeaurora.org>
+ <CACRpkdYer_Q5R4XhWTX3=jwshcKZRSDY9=gOvSeUPsQHbUw6vw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <be52417d-9509-f638-65b6-f455fade0c39-5wv7dgnIgG8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdYer_Q5R4XhWTX3=jwshcKZRSDY9=gOvSeUPsQHbUw6vw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Timur Tabi <timur@codeaurora.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE
+ BINDINGS" <devicetree@vger.kernel.org>
+Cc: Archit Taneja <architt@codeaurora.org>, David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Andy Gross <andy.gross@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Varadarajan Narayanan <varada@codeaurora.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Dec 6, 2017 at 1:55 AM, Andr=C3=A9 Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org=
+On Tue, 2017-12-12 at 11:42 +0100, Linus Walleij wrote:
+> On Sat, Dec 2, 2017 at 12:28 AM, Timur Tabi <timur@codeaurora.org>
 > wrote:
-> On 01/12/17 09:56, Linus Walleij wrote:
 
->> It is a valid cause. Just
->> has to be weighed with other stuff, like maintainability, debuggability,
->> maintainers viewpoint. ...
->
-> So to keep Maxime happy I actually designed this "driver" more like a
-> shim: to generate the table the current driver expects from the DT, and
-> actually not touching the existing driver at all.
-> So maintainability should actually be less of a concern: the driver will
-> just work with whatever one throws at it from the DT side, without
-> requiring frequent changes or additions.
-> In the moment we still need to write, review and merge *data* files for
-> each new SoC. And as I mentioned before, Allwinner decided to push for
-> new, slightly different chips every few months, so there will be more to
-> come. With at least the pinctrl driver out of the way we have one
-> problem less to worry about.
+> > +               /* The number of GPIOs in the approved list */
+> > +               ret = device_property_read_u16_array(&pdev->dev,
+> > "gpios",
+> > +                                                    NULL, 0);
+> > +               if (ret < 0) {
+> > +                       dev_err(&pdev->dev, "missing 'gpios'
+> > property\n");
+> > +                       return ret;
+> > +               }
+> 
+> This is in direct conflict with the existing "gpios" binding in device
+> tree.
+> 
+> Where is this name coming from? ACPI standards?
 
-I think you need mainly to convince Maxime that this is something that
-he wants to maintain, going forward.
+Not ACPI standards as of my knowledge. ACPI standard defines a common
+scheme how to define properties, it doesn't tell anything about property
+names or any mappings between names to values or names to "OS
+subsystem").
 
-I am as subsystem maintainer pretty pleased as long as standard
-properties etc are used to encode the data into the devicetree, and
-DT maintrainers are not actively vetoing what you do.
+As for GPIO we just follow *de facto* what DT has right now, i.e. "xxx-
+gpio" or "xxx-gpios" pattern is used to map ACPI standard resource to a
+GPIO name. That's how GPIO ACPI lib is being developed.
 
-If it leads to a conflict between Allwinner maintainers it is not worth the
-effort for reasons that are social rather than technical. To me it is a ver=
-y
-nice but as with all volunteer communities also very vulnerable
-endavour.
+> If device tree and ACPI start defining things which are in direct
+> conflict
+> we can just shut down this device_property() business altogether,
+> it will never work that way.
 
-Please make sure not to push your point so hard that it hurts your
-our your colleagues feelings.
+This is fully understandable. Also it works in other direction, i.e. if
+DT will break the established thing it will break also ACPI and built-in 
+device properties.
 
-I know people are passionate about their ideas, which is usally good
-but also scare me sometimes because they sometimes become so
-passionate that it makes them bad team players.
+We are keeping an eye on this not to happen as much as we can in any
+direction.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+So, summarize above, I don't see any impediments (except maybe very
+broken ARM64 firmware that is already on devices on market) to make it
+properly from the beginning.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
