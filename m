@@ -1,54 +1,61 @@
 From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 4/4] [v4] pinctrl: qcom: qdf2xxx: add support for new ACPI
- HID QCOM8002
-Date: Tue, 12 Dec 2017 11:42:11 +0100
-Message-ID: <CACRpkdYer_Q5R4XhWTX3=jwshcKZRSDY9=gOvSeUPsQHbUw6vw@mail.gmail.com>
-References: <1512170904-4749-1-git-send-email-timur@codeaurora.org> <1512170904-4749-5-git-send-email-timur@codeaurora.org>
+Subject: Re: [RFC PATCH 1/3] dt-bindings: pinctrl: sunxi: document new generic binding
+Date: Tue, 12 Dec 2017 11:52:28 +0100
+Message-ID: <CACRpkdZBMeG0d2W9n5UQ6c-XgQcoGYJG4bAwnMqq_awpQCuQ7Q@mail.gmail.com>
+References: <20171113012523.2328-1-andre.przywara@arm.com> <20171113012523.2328-2-andre.przywara@arm.com>
+ <CACRpkdbpfkM4odz425+4qyUCF5vqPWBQ=F5Yk7AtJL5SqXghpg@mail.gmail.com>
+ <20171124105240.GB3792@ulmo> <20efcf8f-85a5-3cad-a84b-434ee5cad68e@arm.com>
+ <20171124133123.GA15999@ulmo> <0c8051e6-5d8c-32d6-97e4-11c2283da5b4@arm.com>
+ <CACRpkdZ70a7Vk1QPFhkms6ucWmSH6rOUD9_J0h=NjhK+vfXNAA@mail.gmail.com> <be52417d-9509-f638-65b6-f455fade0c39@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1512170904-4749-5-git-send-email-timur-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+In-Reply-To: <be52417d-9509-f638-65b6-f455fade0c39-5wv7dgnIgG8@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Timur Tabi <timur-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Archit Taneja <architt-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+To: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Dec 2, 2017 at 12:28 AM, Timur Tabi <timur-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
+On Wed, Dec 6, 2017 at 1:55 AM, Andr=C3=A9 Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org=
+> wrote:
+> On 01/12/17 09:56, Linus Walleij wrote:
 
->         /* Query the number of GPIOs from ACPI */
->         ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
->         if (ret < 0) {
-> -               dev_warn(&pdev->dev, "missing num-gpios property\n");
-> +               dev_err(&pdev->dev, "missing 'num-gpios' property\n");
->                 return ret;
->         }
+>> It is a valid cause. Just
+>> has to be weighed with other stuff, like maintainability, debuggability,
+>> maintainers viewpoint. ...
+>
+> So to keep Maxime happy I actually designed this "driver" more like a
+> shim: to generate the table the current driver expects from the DT, and
+> actually not touching the existing driver at all.
+> So maintainability should actually be less of a concern: the driver will
+> just work with whatever one throws at it from the DT side, without
+> requiring frequent changes or additions.
+> In the moment we still need to write, review and merge *data* files for
+> each new SoC. And as I mentioned before, Allwinner decided to push for
+> new, slightly different chips every few months, so there will be more to
+> come. With at least the pinctrl driver out of the way we have one
+> problem less to worry about.
 
-It's unfortunate that this driver uses the undocumented "num-gpios"
-when the device tree bindings already has standardized "ngpios"
-as the name for this.
+I think you need mainly to convince Maxime that this is something that
+he wants to maintain, going forward.
 
-Maybe it was not standardized back in 2015 when this driver was merged.
+I am as subsystem maintainer pretty pleased as long as standard
+properties etc are used to encode the data into the devicetree, and
+DT maintrainers are not actively vetoing what you do.
 
-Or we were all sloppy :/
+If it leads to a conflict between Allwinner maintainers it is not worth the
+effort for reasons that are social rather than technical. To me it is a ver=
+y
+nice but as with all volunteer communities also very vulnerable
+endavour.
 
-> +               /* The number of GPIOs in the approved list */
-> +               ret = device_property_read_u16_array(&pdev->dev, "gpios",
-> +                                                    NULL, 0);
-> +               if (ret < 0) {
-> +                       dev_err(&pdev->dev, "missing 'gpios' property\n");
-> +                       return ret;
-> +               }
+Please make sure not to push your point so hard that it hurts your
+our your colleagues feelings.
 
-This is in direct conflict with the existing "gpios" binding in device tree.
-
-Where is this name coming from? ACPI standards?
-
-If device tree and ACPI start defining things which are in direct conflict
-we can just shut down this device_property() business altogether,
-it will never work that way.
-
-I would try to merge a DT bindings doc defining "valid-gpios" or something
-like this, can we proceed like that?
+I know people are passionate about their ideas, which is usally good
+but also scare me sometimes because they sometimes become so
+passionate that it makes them bad team players.
 
 Yours,
 Linus Walleij
