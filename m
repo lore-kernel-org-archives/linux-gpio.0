@@ -1,48 +1,228 @@
 From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 4/4] [v4] pinctrl: qcom: qdf2xxx: add support for new ACPI
- HID QCOM8002
-Date: Tue, 12 Dec 2017 14:27:10 -0600
-Message-ID: <88349f2e-5243-8061-cc72-d01fa70e6f2e@codeaurora.org>
-References: <1512170904-4749-1-git-send-email-timur@codeaurora.org>
- <1512170904-4749-5-git-send-email-timur@codeaurora.org>
- <CACRpkdYer_Q5R4XhWTX3=jwshcKZRSDY9=gOvSeUPsQHbUw6vw@mail.gmail.com>
- <1513076836.25007.641.camel@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:34552 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbdLLU1N (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Dec 2017 15:27:13 -0500
-In-Reply-To: <1513076836.25007.641.camel@linux.intel.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: [PATCH 3/3] [v5] pinctrl: qcom: qdf2xxx: add support for new ACPI HID QCOM8002
+Date: Tue, 12 Dec 2017 14:50:58 -0600
+Message-ID: <1513111858-6251-4-git-send-email-timur@codeaurora.org>
+References: <1513111858-6251-1-git-send-email-timur@codeaurora.org>
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1513111858-6251-1-git-send-email-timur@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
+Cc: timur@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
-On 12/12/2017 05:07 AM, Andy Shevchenko wrote:
+Newer versions of the firmware for the Qualcomm Datacenter Technologies
+QDF2400 restricts access to a subset of the GPIOs on the TLMM.  To
+prevent older kernels from accidentally accessing the restricted GPIOs,
+we change the ACPI HID for the TLMM block from QCOM8001 to QCOM8002,
+and introduce a new property "gpios".  This property is an array of
+specific GPIOs that are accessible.  When an older kernel boots on
+newer (restricted) firmware, it will fail to probe.
 
-> Not ACPI standards as of my knowledge. ACPI standard defines a common
-> scheme how to define properties, it doesn't tell anything about property
-> names or any mappings between names to values or names to "OS
-> subsystem").
+To implement the sparse GPIO map, we register all of the GPIOs, but set
+the pin count for the unavailable GPIOs to zero.  The pinctrl-msm
+driver will block those unavailable GPIOs from being accessed.
 
-There was an attempt a while back to standardize this like we do for 
-device tree, but it fell apart.  Device-specific ACPI-only properties 
-are not standarized.  This driver is initialized only on ACPI systems. 
-It has no device tree binding.
+To allow newer kernels to support older firmware, the driver retains
+support for QCOM8001.
 
-> As for GPIO we just follow *de facto* what DT has right now, i.e. "xxx-
-> gpio" or "xxx-gpios" pattern is used to map ACPI standard resource to a
-> GPIO name. That's how GPIO ACPI lib is being developed.
+Signed-off-by: Timur Tabi <timur@codeaurora.org>
+---
+ drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 143 ++++++++++++++++++++++++---------
+ 1 file changed, 107 insertions(+), 36 deletions(-)
 
-GPIOs in device tree are defined completely differently than in ACPI. 
-On DT, the kernel controls the pin muxing.  On ACPI, pins are muxed by 
-firmware and never re-muxed by the operating system.  So all this driver 
-does is expose a few pins as simple GPIOs.
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+index bb3ce5c3e18b..90b32f424a28 100644
+--- a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
++++ b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+@@ -38,68 +38,145 @@
+ /* maximum size of each gpio name (enough room for "gpioXXX" + null) */
+ #define NAME_SIZE	8
+ 
++enum {
++	QDF2XXX_V1,
++	QDF2XXX_V2,
++};
++
++static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
++	{"QCOM8001", QDF2XXX_V1},
++	{"QCOM8002", QDF2XXX_V2},
++	{},
++};
++MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
++
+ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
+ {
++	const struct acpi_device_id *id =
++		acpi_match_device(qdf2xxx_acpi_ids, &pdev->dev);
+ 	struct pinctrl_pin_desc *pins;
+ 	struct msm_pingroup *groups;
+ 	char (*names)[NAME_SIZE];
+ 	unsigned int i;
+ 	u32 num_gpios;
++	unsigned int avail_gpios; /* The number of GPIOs we support */
++	u16 *gpios; /* An array of supported GPIOs */
+ 	int ret;
+ 
+ 	/* Query the number of GPIOs from ACPI */
+ 	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
+ 	if (ret < 0) {
+-		dev_warn(&pdev->dev, "missing num-gpios property\n");
++		dev_err(&pdev->dev, "missing 'num-gpios' property\n");
+ 		return ret;
+ 	}
+-
+ 	if (!num_gpios || num_gpios > MAX_GPIOS) {
+-		dev_warn(&pdev->dev, "invalid num-gpios property\n");
++		dev_err(&pdev->dev, "invalid 'num-gpios' property\n");
+ 		return -ENODEV;
+ 	}
+ 
++	/*
++	 * The QCOM8001 HID contains only the number of GPIOs, and assumes
++	 * that all of them are available. avail_gpios is the same as num_gpios.
++	 *
++	 * The QCOM8002 HID introduces the 'gpios' DSD, which lists
++	 * specific GPIOs that the driver is allowed to access.
++	 *
++	 * The make the common code simpler, in both cases we create an
++	 * array of GPIOs that are accessible.  So for QCOM8001, that would
++	 * be all of the GPIOs.
++	 */
++	if (id->driver_data == QDF2XXX_V1) {
++		avail_gpios = num_gpios;
++
++		gpios = devm_kmalloc_array(&pdev->dev, avail_gpios,
++					   sizeof(gpios[0]), GFP_KERNEL);
++		if (!gpios)
++			return -ENOMEM;
++
++		for (i = 0; i < avail_gpios; i++)
++			gpios[i] = i;
++	} else {
++		/* The number of GPIOs in the approved list */
++		ret = device_property_read_u16_array(&pdev->dev, "gpios",
++						     NULL, 0);
++		if (ret < 0) {
++			dev_err(&pdev->dev, "missing 'gpios' property\n");
++			return ret;
++		}
++		/*
++		 * The number of available GPIOs should be non-zero, and no
++		 * more than the total number of GPIOS.
++		 */
++		if (!ret || ret > num_gpios) {
++			dev_err(&pdev->dev, "invalid 'gpios' property\n");
++			return -ENODEV;
++		}
++		avail_gpios = ret;
++
++		gpios = devm_kmalloc_array(&pdev->dev, avail_gpios,
++					   sizeof(gpios[0]), GFP_KERNEL);
++		if (!gpios)
++			return -ENOMEM;
++
++		ret = device_property_read_u16_array(&pdev->dev, "gpios", gpios,
++						     avail_gpios);
++		if (ret < 0) {
++			dev_err(&pdev->dev, "could not read list of GPIOs\n");
++			return ret;
++		}
++	}
++
+ 	pins = devm_kcalloc(&pdev->dev, num_gpios,
+ 		sizeof(struct pinctrl_pin_desc), GFP_KERNEL);
+ 	groups = devm_kcalloc(&pdev->dev, num_gpios,
+ 		sizeof(struct msm_pingroup), GFP_KERNEL);
+-	names = devm_kcalloc(&pdev->dev, num_gpios, NAME_SIZE, GFP_KERNEL);
++	names = devm_kcalloc(&pdev->dev, avail_gpios, NAME_SIZE, GFP_KERNEL);
+ 
+ 	if (!pins || !groups || !names)
+ 		return -ENOMEM;
+ 
++	/*
++	 * Initialize the array.  GPIOs not listed in the 'gpios' array
++	 * still need a number, but nothing else.
++	 */
+ 	for (i = 0; i < num_gpios; i++) {
+-		snprintf(names[i], NAME_SIZE, "gpio%u", i);
+-
+ 		pins[i].number = i;
+-		pins[i].name = names[i];
+-
+-		groups[i].npins = 1;
+-		groups[i].name = names[i];
+ 		groups[i].pins = &pins[i].number;
++	}
+ 
+-		groups[i].ctl_reg = 0x10000 * i;
+-		groups[i].io_reg = 0x04 + 0x10000 * i;
+-		groups[i].intr_cfg_reg = 0x08 + 0x10000 * i;
+-		groups[i].intr_status_reg = 0x0c + 0x10000 * i;
+-		groups[i].intr_target_reg = 0x08 + 0x10000 * i;
+-
+-		groups[i].mux_bit = 2;
+-		groups[i].pull_bit = 0;
+-		groups[i].drv_bit = 6;
+-		groups[i].oe_bit = 9;
+-		groups[i].in_bit = 0;
+-		groups[i].out_bit = 1;
+-		groups[i].intr_enable_bit = 0;
+-		groups[i].intr_status_bit = 0;
+-		groups[i].intr_target_bit = 5;
+-		groups[i].intr_target_kpss_val = 1;
+-		groups[i].intr_raw_status_bit = 4;
+-		groups[i].intr_polarity_bit = 1;
+-		groups[i].intr_detection_bit = 2;
+-		groups[i].intr_detection_width = 2;
++	/* Populate the entries that are meant to be exposes as GPIOs. */
++	for (i = 0; i < avail_gpios; i++) {
++		unsigned int gpio = gpios[i];
++
++		groups[gpio].npins = 1;
++		snprintf(names[i], NAME_SIZE, "gpio%u", gpio);
++		pins[gpio].name = names[i];
++		groups[gpio].name = names[i];
++
++		groups[gpio].ctl_reg = 0x10000 * gpio;
++		groups[gpio].io_reg = 0x04 + 0x10000 * gpio;
++		groups[gpio].intr_cfg_reg = 0x08 + 0x10000 * gpio;
++		groups[gpio].intr_status_reg = 0x0c + 0x10000 * gpio;
++		groups[gpio].intr_target_reg = 0x08 + 0x10000 * gpio;
++
++		groups[gpio].mux_bit = 2;
++		groups[gpio].pull_bit = 0;
++		groups[gpio].drv_bit = 6;
++		groups[gpio].oe_bit = 9;
++		groups[gpio].in_bit = 0;
++		groups[gpio].out_bit = 1;
++		groups[gpio].intr_enable_bit = 0;
++		groups[gpio].intr_status_bit = 0;
++		groups[gpio].intr_target_bit = 5;
++		groups[gpio].intr_target_kpss_val = 1;
++		groups[gpio].intr_raw_status_bit = 4;
++		groups[gpio].intr_polarity_bit = 1;
++		groups[gpio].intr_detection_bit = 2;
++		groups[gpio].intr_detection_width = 2;
+ 	}
+ 
++	devm_kfree(&pdev->dev, gpios);
++
+ 	qdf2xxx_pinctrl.pins = pins;
+ 	qdf2xxx_pinctrl.groups = groups;
+ 	qdf2xxx_pinctrl.npins = num_gpios;
+@@ -109,12 +186,6 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
+ 	return msm_pinctrl_probe(pdev, &qdf2xxx_pinctrl);
+ }
+ 
+-static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
+-	{"QCOM8001"},
+-	{},
+-};
+-MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
+-
+ static struct platform_driver qdf2xxx_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qdf2xxx-pinctrl",
 -- 
 Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
 Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
