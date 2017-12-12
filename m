@@ -1,54 +1,50 @@
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] drivers/gpio: some possible sleep-in-atomic bugs
-Date: Tue, 12 Dec 2017 11:59:26 +0800
-Message-ID: <0bcab5c0-d938-9eb6-d21d-6b8416d75a65@gmail.com>
+From: <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v2 2/4] pinctrl: mediatek: cleanup for placing all drivers under the menu
+Date: Tue, 12 Dec 2017 14:24:19 +0800
+Message-ID: <fc13c7249505784c1f89a2e0775bb9a75cd38c3f.1513059081.git.sean.wang@mediatek.com>
+References: <cover.1513059081.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:41236 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751123AbdLLD7h (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Dec 2017 22:59:37 -0500
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1513059081.git.sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, andreas@gaisler.com
-Cc: linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-According to drivers/gpio/gpio-grgpio.c, the kernel module may sleep 
-under a spinlock.
-The function call paths are:
-grgpio_remove (acquire the spinlock)
-   gpiochip_remove
-     gpiochip_sysfs_unregister
-       device_unregister --> may sleep
-       mutex_lock --> may sleep
+From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 
-grgpio_remove (acquire the spinlock)
-   gpiochip_remove
-     gpiochip_sysfs_unregister
-       gpiod_free
-         __gpiod_free
-           gpiod_unexport
-             device_unregister --> may sleep
-             mutex_lock --> may sleep
+Since lots of MediaTek drivers had been added, it seems slightly better
+for that adding cleanup for placing MediaTek pinctrl drivers under the
+independent menu as other kinds of drivers usually was done.
 
-grgpio_remove (acquire the spinlock)
-   irq_domain_remove
-     mutex_lock --> may sleep
+Signed-off-by: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Reviewed-by: Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+---
+ drivers/pinctrl/mediatek/Kconfig | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-grgpio_irq_map (acquire the spinlock)
-   request_irq --> may sleep
+diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+index fac9866..03b3023 100644
+--- a/drivers/pinctrl/mediatek/Kconfig
++++ b/drivers/pinctrl/mediatek/Kconfig
+@@ -1,4 +1,5 @@
+-if ARCH_MEDIATEK || COMPILE_TEST
++menu "MediaTek pinctrl drivers"
++	depends on ARCH_MEDIATEK || COMPILE_TEST
+ 
+ config PINCTRL_MTK
+ 	bool
+@@ -46,4 +47,4 @@ config PINCTRL_MT6397
+ 	default MFD_MT6397
+ 	select PINCTRL_MTK
+ 
+-endif
++endmenu
+-- 
+2.7.4
 
-grgpio_irq_unmap (acquire the spinlock)
-   free_irq --> may sleep
-
-
-I do not find a good way to fix them, so I only report.
-These possible bugs is found by my static analysis tool (DSAC) and 
-checked by my code review.
-
-
-Thanks,
-Jia-Ju Bai
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
