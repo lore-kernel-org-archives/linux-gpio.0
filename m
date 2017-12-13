@@ -1,39 +1,92 @@
 From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 2/3] [v8] pinctrl: qcom: disable GPIO groups with no pins
-Date: Wed, 13 Dec 2017 14:37:38 -0800
-Message-ID: <20171213223738.GR7997@codeaurora.org>
+Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new
+ ACPI HID QCOM8002
+Date: Wed, 13 Dec 2017 15:01:55 -0800
+Message-ID: <20171213230155.GS7997@codeaurora.org>
 References: <1513189818-7384-1-git-send-email-timur@codeaurora.org>
- <1513189818-7384-3-git-send-email-timur@codeaurora.org>
+ <1513189818-7384-4-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:58674 "EHLO
+Received: from smtp.codeaurora.org ([198.145.29.96]:53680 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751090AbdLMWhs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Dec 2017 17:37:48 -0500
+        with ESMTP id S1750737AbdLMXB5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Dec 2017 18:01:57 -0500
 Content-Disposition: inline
-In-Reply-To: <1513189818-7384-3-git-send-email-timur@codeaurora.org>
+In-Reply-To: <1513189818-7384-4-git-send-email-timur@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Timur Tabi <timur@codeaurora.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
 On 12/13, Timur Tabi wrote:
-> pinctrl-msm only accepts an array of GPIOs from 0 to n-1, and it expects
-> each group to support have only one pin (npins == 1).
+> Newer versions of the firmware for the Qualcomm Datacenter Technologies
+> QDF2400 restricts access to a subset of the GPIOs on the TLMM.  To
+> prevent older kernels from accidentally accessing the restricted GPIOs,
+> we change the ACPI HID for the TLMM block from QCOM8001 to QCOM8002,
+> and introduce a new property "gpios".  This property is an array of
+> specific GPIOs that are accessible.  When an older kernel boots on
+> newer (restricted) firmware, it will fail to probe.
 > 
-> We can support "sparse" GPIO maps if we allow for some groups to have zero
-> pins (npins == 0).  These pins are "hidden" from the rest of the driver
-> and gpiolib.
+> To implement the sparse GPIO map, we register all of the GPIOs, but set
+> the pin count for the unavailable GPIOs to zero.  The pinctrl-msm
+> driver will block those unavailable GPIOs from being accessed.
 > 
-> Access to unavailable GPIOs is blocked via a request callback.  If the
-> requested GPIO is unavailable, -EACCES is returned, which prevents
-> further access to that GPIO.
+> To allow newer kernels to support older firmware, the driver retains
+> support for QCOM8001.
 > 
 > Signed-off-by: Timur Tabi <timur@codeaurora.org>
 > ---
+>  drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 134 +++++++++++++++++++++++++--------
+>  1 file changed, 103 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+> index bb3ce5c3e18b..deb08e08e86d 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+> @@ -38,68 +38,139 @@
+>  /* maximum size of each gpio name (enough room for "gpioXXX" + null) */
+>  #define NAME_SIZE	8
+>  
+> +enum {
+> +	QDF2XXX_V1,
+> +	QDF2XXX_V2,
+> +};
+> +
+>  static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
+>  {
+> +	const struct acpi_device_id *id;
+>  	struct pinctrl_pin_desc *pins;
+>  	struct msm_pingroup *groups;
+>  	char (*names)[NAME_SIZE];
+>  	unsigned int i;
+>  	u32 num_gpios;
+> +	unsigned int avail_gpios; /* The number of GPIOs we support */
+> +	u16 *gpios; /* An array of supported GPIOs */
+>  	int ret;
+>  
+>  	/* Query the number of GPIOs from ACPI */
+>  	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
+>  	if (ret < 0) {
+> -		dev_warn(&pdev->dev, "missing num-gpios property\n");
+> +		dev_err(&pdev->dev, "missing 'num-gpios' property\n");
+>  		return ret;
+>  	}
+> -
+>  	if (!num_gpios || num_gpios > MAX_GPIOS) {
 
-Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+Given that we have MAX_GPIOS, it would be better to declare a
+bitmap of available gpios of that size on the stack and then
+iterate through the bitmap and set bits for the available ones.
+In the QCOM8001 case, that would be setting all bits up to
+num_gpios, and in the QCOM8002 case it would be iterating through
+the list of gpios from the DSD property and setting the bit for
+that gpio number.  This avoids explicitly allocating a list of
+numbers that is freed almost immediately. Instead we just stack
+256 / sizeof(unsigned long) words and set bits.
+
+Hopefully we could lift the same logic into the core pinctrl msm
+driver for usage on non-ACPI systems.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
