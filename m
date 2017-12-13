@@ -1,37 +1,52 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 4/4] [v4] pinctrl: qcom: qdf2xxx: add support for new ACPI
- HID QCOM8002
-Date: Wed, 13 Dec 2017 08:47:50 -0600
-Message-ID: <fb9ca35d-4794-d528-03ae-73c4c0bd2219@codeaurora.org>
-References: <1512170904-4749-1-git-send-email-timur@codeaurora.org>
- <1512170904-4749-5-git-send-email-timur@codeaurora.org>
- <CACRpkdYer_Q5R4XhWTX3=jwshcKZRSDY9=gOvSeUPsQHbUw6vw@mail.gmail.com>
- <1513076836.25007.641.camel@linux.intel.com>
- <88349f2e-5243-8061-cc72-d01fa70e6f2e@codeaurora.org>
- <1513175798.7000.15.camel@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: Add helpers to determin direction of gpiods
+Date: Wed, 13 Dec 2017 15:54:25 +0100
+Message-ID: <CACRpkdbK1D6cPm__2DRd0LOi=3RgjBj9ubd1_fWE-=KLcEEbjA@mail.gmail.com>
+References: <20171210002340.18460-1-linus.walleij@linaro.org> <20171212224207.xi4yiuyhp5radivr@ninjato>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:51944 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752900AbdLMOrx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Dec 2017 09:47:53 -0500
-In-Reply-To: <1513175798.7000.15.camel@linux.intel.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20171212224207.xi4yiuyhp5radivr@ninjato>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
-On 12/13/2017 08:36 AM, Andy Shevchenko wrote:
-> Wait, runtime muxing is a matter of requesting another function (usually
-> GPIO) and putting it back afterwards. Do you really need anything like
-> this at*runtime*?
+On Tue, Dec 12, 2017 at 11:42 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
-No, there is no runtime muxing on ACPI platforms.
+>>  Documentation/gpio/consumer.txt | 14 +++++++++++---
+>
+> You need to fix the kerneldoc for 'gpiod_get_direction", too. It still
+> mentions GPIOF_DIR_*.
 
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+More places? I can't find them!
+
+I thought the patch removed that here:
+
+-This function will return either GPIOF_DIR_IN or GPIOF_DIR_OUT.
++This function will return either 1 (input) or 0 (output). There are also
++these convenience helpers:
+
+I can only find it in Documentation/gpio/gpio-legacy.txt which is
+fine.
+
+>> +static inline bool gpiod_is_input(struct gpio_desc *desc)
+>> +{
+>> +     int ret = gpiod_get_direction(desc);
+>> +     if (ret < 0) {
+>> +             pr_err("GPIO: failed to get direction\n");
+>
+> Is that really helpful for the user if we don't say which GPIO failed?
+
+I would have to add yet more APIs to do that.
+
+Hm.
+
+Together with Geert's comments I start to lean towards actually
+just creating two new #defines in <linux/consumer.h>.
+
+It has the upside that we can also check the return value
+for errors.
+
+Yours,
+Linus Walleij
