@@ -1,50 +1,67 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Subject: Re: [PATCH 4/4] [v4] pinctrl: qcom: qdf2xxx: add support for new
  ACPI HID QCOM8002
-Date: Wed, 13 Dec 2017 16:32:15 +0200
-Message-ID: <1513175535.7000.10.camel@linux.intel.com>
+Date: Wed, 13 Dec 2017 16:36:38 +0200
+Message-ID: <1513175798.7000.15.camel@linux.intel.com>
 References: <1512170904-4749-1-git-send-email-timur@codeaurora.org>
          <1512170904-4749-5-git-send-email-timur@codeaurora.org>
-         <1513073105.25007.618.camel@linux.intel.com>
-         <bae16fa3-1bdf-74b1-97b7-f6b2db212621@codeaurora.org>
+         <CACRpkdYer_Q5R4XhWTX3=jwshcKZRSDY9=gOvSeUPsQHbUw6vw@mail.gmail.com>
+         <1513076836.25007.641.camel@linux.intel.com>
+         <88349f2e-5243-8061-cc72-d01fa70e6f2e@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <bae16fa3-1bdf-74b1-97b7-f6b2db212621@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:53408 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752989AbdLMOjz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 13 Dec 2017 09:39:55 -0500
+In-Reply-To: <88349f2e-5243-8061-cc72-d01fa70e6f2e@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
-On Tue, 2017-12-12 at 14:17 -0600, Timur Tabi wrote:
-> On 12/12/2017 04:05 AM, Andy Shevchenko wrote:
-> > > +static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
-> > > +	{"QCOM8001", QDF2XXX_V1},
-> > > +	{"QCOM8002", QDF2XXX_V2},
-> > > +	{},
-> > > +};
-> > > +MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
-> > > 
-> > > +	const struct acpi_device_id *id =
-> > > +		acpi_match_device(qdf2xxx_acpi_ids, &pdev->dev);
-> > 
-> > JFYI: there is no need to move IDs like this.
-> > Use members of struct device_driver wisely.
+On Tue, 2017-12-12 at 14:27 -0600, Timur Tabi wrote:
+> On 12/12/2017 05:07 AM, Andy Shevchenko wrote:
 > 
-> I have to move it, otherwise I get:
+> > Not ACPI standards as of my knowledge. ACPI standard defines a
+> > common
+> > scheme how to define properties, it doesn't tell anything about
+> > property
+> > names or any mappings between names to values or names to "OS
+> > subsystem").
 > 
-> drivers/pinctrl/qcom/pinctrl-qdf2xxx.c:49:21: error:
-> 'qdf2xxx_acpi_ids' 
-> undeclared (first use in this function); did you mean
-> 'qdf2xxx_pinctrl'?
-> 
-> I reference the structure in qdf2xxx_pinctrl_probe().
+> There was an attempt a while back to standardize this like we do for 
+> device tree, but it fell apart.  Device-specific ACPI-only properties 
+> are not standarized.  This driver is initialized only on ACPI
+> systems. 
+> It has no device tree binding.
 
-Please, read my comment again. The key part of the phrase: 
-"Use members of struct device_driver"
+It should follow DT *de facto* standard bindings like "ngpios" (though
+it's not needed in ACPI case IIRC) and other properties.
 
-So, do not move the IDs. There are examples in the kernel how to access
-it.
+> > As for GPIO we just follow *de facto* what DT has right now, i.e.
+> > "xxx-
+> > gpio" or "xxx-gpios" pattern is used to map ACPI standard resource
+> > to a
+> > GPIO name. That's how GPIO ACPI lib is being developed.
+> 
+> GPIOs in device tree are defined completely differently than in ACPI. 
+> On DT, the kernel controls the pin muxing.  On ACPI, pins are muxed
+> by 
+> firmware and never re-muxed by the operating system.  So all this
+> driver 
+> does is expose a few pins as simple GPIOs.
+
+Wait, runtime muxing is a matter of requesting another function (usually
+GPIO) and putting it back afterwards. Do you really need anything like
+this at *runtime*?
+
+Pin control design is not compatible with hardware (too abstract), but
+that is the problem of DT as well: I'm referring here to not carefully
+designed so called "pin states". This is another story and has nothing
+specific for ACPI.
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
