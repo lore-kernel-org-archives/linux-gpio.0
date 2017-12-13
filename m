@@ -1,213 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 05/13] pinctrl: Add Microsemi Ocelot SoC driver
-Date: Wed, 13 Dec 2017 09:15:20 +0100
-Message-ID: <CACRpkdZ=+pFZYteq=wM=z-CGejY+dX_SqhtDbbGBn+q60arQ4w@mail.gmail.com>
-References: <20171208154618.20105-1-alexandre.belloni@free-electrons.com> <20171208154618.20105-6-alexandre.belloni@free-electrons.com>
+From: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH] pinctrl: axp209: dereference pointer after it's
+ been set
+Date: Wed, 13 Dec 2017 09:55:03 +0100
+Message-ID: <20171213085503.31899-1-quentin.schulz@free-electrons.com>
+Reply-To: quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171208154618.20105-6-alexandre.belloni@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBCLZXSNY5IDBBOWWYPIQKGQE6LTWS4Y-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, mylene.josserand-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 8, 2017 at 4:46 PM, Alexandre Belloni
-<alexandre.belloni@free-electrons.com> wrote:
+The number of GPIOs is gotten from a field within the structure
+referenced in the of_device.data but it was actually read before it was
+retrieved, thus it was dereferencing a null pointer.
 
-> The Microsemi Ocelot SoC has a few pins that can be used as GPIOs or take
-> multiple other functions. Add a driver for the pinmuxing and the GPIOs.
->
-> There is currently no support for interrupts.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Set the number of GPIOs after retrieving of_device.data.
 
-This looks very good. Nice work!
+Fixes: e1190083b89b ("pinctrl: axp209: add support for AXP813 GPIOs")
 
-I was close to just applying it but found some very minor things.
-When you resend this just send this patch and I can apply it directly
-since there are only Kconfig symbol dependencies and no
-compile-time dependencies in this patch.
+Signed-off-by: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Reported-by: Myl=C3=A8ne Josserand <mylene.josserand-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-axp209.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> +config PINCTRL_OCELOT
-> +       bool "Pinctrl driver for the Microsemi Ocelot SoCs"
-> +       default y
-> +       depends on OF
-> +       depends on MSCC_OCELOT || COMPILE_TEST
-> +       select GENERIC_PINCONF
-> +       select GENERIC_PINCTRL_GROUPS
-> +       select GENERIC_PINMUX_FUNCTIONS
-> +       select REGMAP_MMIO
+diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp=
+209.c
+index 22d3bb0bf927..510a2821e910 100644
+--- a/drivers/pinctrl/pinctrl-axp209.c
++++ b/drivers/pinctrl/pinctrl-axp209.c
+@@ -413,9 +413,11 @@ static int axp20x_pctl_probe(struct platform_device *p=
+dev)
+ 	pctl->chip.set			=3D axp20x_gpio_set;
+ 	pctl->chip.direction_input	=3D axp20x_gpio_input;
+ 	pctl->chip.direction_output	=3D axp20x_gpio_output;
+-	pctl->chip.ngpio		=3D pctl->desc->npins;
+=20
+ 	pctl->desc =3D (struct axp20x_pctrl_desc *)of_device_get_match_data(dev);
++
++	pctl->chip.ngpio		=3D pctl->desc->npins;
++
+ 	pctl->regmap =3D axp20x->regmap;
+ 	pctl->dev =3D &pdev->dev;
+=20
+--=20
+2.14.1
 
-select GPIOLIB
-
-When you run COMPILE_TEST you don't know if you have
-GPIOLIB so select it.
-
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-
-Wow never saw that before. OK I guess.
-
-> +#include <linux/compiler.h>
-> +#include <linux/gpio.h>
-
-Just:
-#include <linux/gpio/driver.h>
-
-<linux/gpio.h> is a legacy include and should not be used.
-
-> +static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
-> +                                unsigned int selector, unsigned int group)
-> +{
-> +       struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
-> +       struct ocelot_pin_caps *pin = ocelot_pins[group].drv_data;
-> +       int f;
-> +
-> +       f = ocelot_pin_function_idx(group, selector);
-> +       if (f < 0)
-> +               return -EINVAL;
-> +
-> +       regmap_update_bits(info->map, OCELOT_GPIO_ALT0, BIT(pin->pin),
-> +                          f << pin->pin);
-> +       regmap_update_bits(info->map, OCELOT_GPIO_ALT1, BIT(pin->pin),
-> +                          f << (pin->pin - 1));
-
-You need to add some comment on what is happening here and how the
-bits are used because just reading these two lines is pretty hard.
-
-I guess f = 0, 1, 2 .... 31 or so.
-
-pin->pin is also 0, 1, 2 ... 31?
-
-BIT(pin->pin) is pretty self-evident. It is masking the bit controlling
-this pin in each register.
-
-But setting bits (f << (pin->pin)) and then in the other register
-(f << (pin->pin -1))?
-
-Maybe you should even add an illustrative dev_dbg() print here
-showing which bits you mask and set, or use some helper bools
-so it is crystal clear what is going on.
-
-So there is two registers to select "alternative functions" (I guess?)
-And each has one bit for the *same* pin.
-
-This is the case also in drivers/pinctrl/nomadik/pinctrl-nomadik.c.
-It turns out to be a pretty horrible design decision: since the two
-bits are not changed in the same register transaction, switching
-from say function "00" to function "11" creates a "glitch" where
-you first activate funcion "10" after writing the first register,
-then finally go to function "11" after writing the second.
-
-This had horrible electrical consequences and required special
-workarounds in Nomadik so be on the lookout for this type
-of problem.
-
-> +static int ocelot_gpio_set_direction(struct pinctrl_dev *pctldev,
-> +                                    struct pinctrl_gpio_range *range,
-> +                                    unsigned int pin, bool input)
-> +{
-> +       struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
-> +
-> +       regmap_update_bits(info->map, OCELOT_GPIO_OE, BIT(pin),
-> +                          input ? BIT(pin) : 0);
-> +
-> +       return 0;
-> +}
-(...)
-> +static const struct pinmux_ops ocelot_pmx_ops = {
-> +       .get_functions_count = ocelot_get_functions_count,
-> +       .get_function_name = ocelot_get_function_name,
-> +       .get_function_groups = ocelot_get_function_groups,
-> +       .set_mux = ocelot_pinmux_set_mux,
-> +       .gpio_set_direction = ocelot_gpio_set_direction,
-> +       .gpio_request_enable = ocelot_gpio_request_enable,
-> +};
-
-This looks a bit weird since the same register is also written
-by the gpiochip to set direction.
-
-If you want to relay the direction setting entirely to the pin
-control subsystem, then just have your callbacks in the
-gpiochip like this:
-
-static int ocelot_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-{
-        return pinctrl_gpio_direction_input(chip->base + offset);
-}
-
-static int ocelot_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
-                                       int value)
-{
-       struct ocelot_pinctrl *info = gpiochip_get_data(chip);
-       unsigned int pin = BIT(offset);
-
-       if (value)
-               regmap_write(info->map, OCELOT_GPIO_OUT_SET, pin);
-       else
-               regmap_write(info->map, OCELOT_GPIO_OUT_CLR, pin);
-
-        return pinctrl_gpio_direction_output(chip->base + offset);
-}
-
-Then all direction setting will just be relayed to the pin control
-side.
-
-Shouldn't this call also set up the altfunction so you know
-the pin is now set in GPIO mode? That is how some other
-drivers do it at least. But maybe you prefer to do the
-muxing "on the side" (using pinmux ops only, and explicitly
-setting up the line as GPIO in e.g. the device tree)?
-
-In that case I think you might not need this callback at all.
-
-Also: are you should you do not need to disable OCELOT_GPIO_OE
-in the .gpio_disable_free() callback?
-
-> +static const struct pinctrl_ops ocelot_pctl_ops = {
-> +       .get_groups_count = ocelot_pctl_get_groups_count,
-> +       .get_group_name = ocelot_pctl_get_group_name,
-> +       .get_group_pins = ocelot_pctl_get_group_pins,
-> +       .dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-> +       .dt_free_map = pinconf_generic_dt_free_map,
-> +};
-
-Nice use of the generic parsers, thanks!
-
-> +       ret = devm_gpiochip_add_data(&pdev->dev, gc, info);
-> +       if (ret)
-> +               return ret;
-> +       //TODO irqchip
-
-/* Please use oldschool comments for now, the license on the top is
-fine though */
-
-> +static const struct regmap_config ocelot_pinctrl_regmap_config = {
-> +       .reg_bits = 32,
-> +       .val_bits = 32,
-> +       .reg_stride = 4,
-> +};
-
-Looks like it could have some more limitations (like max register
-and so on) but it's OK.
-
-> +       base = devm_ioremap_resource(dev,
-> +                       platform_get_resource(pdev, IORESOURCE_MEM, 0));
-> +       if (IS_ERR(base)) {
-> +               dev_err(dev, "Failed to ioremap registers\n");
-> +               return PTR_ERR(base);
-> +       }
-> +
-> +       info->map = devm_regmap_init_mmio(dev, base,
-> +                                         &ocelot_pinctrl_regmap_config);
-> +       if (IS_ERR(info->map)) {
-> +               dev_err(dev, "Failed to create regmap\n");
-> +               return PTR_ERR(info->map);
-> +       }
-
-Nice use of regmap MMIO!
-
-Yours,
-Linus Walleij
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
