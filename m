@@ -1,38 +1,60 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 4/4] [v4] pinctrl: qcom: qdf2xxx: add support for new
- ACPI HID QCOM8002
-Date: Wed, 13 Dec 2017 17:40:44 +0200
-Message-ID: <1513179644.7000.47.camel@linux.intel.com>
-References: <1512170904-4749-1-git-send-email-timur@codeaurora.org>
-         <1512170904-4749-5-git-send-email-timur@codeaurora.org>
-         <1513073105.25007.618.camel@linux.intel.com>
-         <bae16fa3-1bdf-74b1-97b7-f6b2db212621@codeaurora.org>
-         <1513175535.7000.10.camel@linux.intel.com>
-         <9c28bebb-5f57-83e8-9885-5262bbdc1b94@codeaurora.org>
-         <c41db747-757a-131f-14b6-e181403db007@codeaurora.org>
+From: Andreas Larsson <andreas@gaisler.com>
+Subject: Re: [BUG] drivers/gpio: some possible sleep-in-atomic bugs
+Date: Wed, 13 Dec 2017 17:18:12 +0100
+Message-ID: <5A3152C4.4070802@gaisler.com>
+References: <0bcab5c0-d938-9eb6-d21d-6b8416d75a65@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:57400 "EHLO mga02.intel.com"
+Received: from mx2.bahnhof.se ([213.80.101.12]:42131 "EHLO mx2.bahnhof.se"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751090AbdLMPmT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 13 Dec 2017 10:42:19 -0500
-In-Reply-To: <c41db747-757a-131f-14b6-e181403db007@codeaurora.org>
+        id S1750916AbdLMQlu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 13 Dec 2017 11:41:50 -0500
+In-Reply-To: <0bcab5c0-d938-9eb6-d21d-6b8416d75a65@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, 2017-12-13 at 09:18 -0600, Timur Tabi wrote:
-> On 12/13/2017 08:46 AM, Timur Tabi wrote:
+On 2017-12-12 04:59, Jia-Ju Bai wrote:
+> According to drivers/gpio/gpio-grgpio.c, the kernel module may sleep
+> under a spinlock.
+> The function call paths are:
+> grgpio_remove (acquire the spinlock)
+>    gpiochip_remove
+>      gpiochip_sysfs_unregister
+>        device_unregister --> may sleep
+>        mutex_lock --> may sleep
+>
+> grgpio_remove (acquire the spinlock)
+>    gpiochip_remove
+>      gpiochip_sysfs_unregister
+>        gpiod_free
+>          __gpiod_free
+>            gpiod_unexport
+>              device_unregister --> may sleep
+>              mutex_lock --> may sleep
+>
+> grgpio_remove (acquire the spinlock)
+>    irq_domain_remove
+>      mutex_lock --> may sleep
+>
+> grgpio_irq_map (acquire the spinlock)
+>    request_irq --> may sleep
+>
+> grgpio_irq_unmap (acquire the spinlock)
+>    free_irq --> may sleep
+>
+>
+> I do not find a good way to fix them, so I only report.
+> These possible bugs is found by my static analysis tool (DSAC) and
+> checked by my code review.
+Hi!
 
-> I think I found it.  Are you talking about doing this instead:
-> 
-> id = acpi_match_device(pdev->dev.driver->acpi_match_table, &pdev-
-> >dev);
-
-Precisely!
+Thank you for reporting this. I will take a look at it.
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Best Regards,
+Andreas Larsson
+
