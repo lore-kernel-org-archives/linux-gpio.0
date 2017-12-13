@@ -1,103 +1,42 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH 2/3] [v8] pinctrl: qcom: disable GPIO groups with no pins
-Date: Wed, 13 Dec 2017 12:30:17 -0600
-Message-ID: <1513189818-7384-3-git-send-email-timur@codeaurora.org>
-References: <1513189818-7384-1-git-send-email-timur@codeaurora.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:59088 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753144AbdLMSa1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Dec 2017 13:30:27 -0500
-In-Reply-To: <1513189818-7384-1-git-send-email-timur@codeaurora.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH 2/2] gpiolib: use kstrdup_const() for gpio_device label
+Date: Wed, 13 Dec 2017 11:44:39 -0800
+Message-ID: <1513194279.27409.37.camel@perches.com>
+References: <20171213112520.7479-1-brgl@bgdev.pl>
+         <20171213112520.7479-2-brgl@bgdev.pl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171213112520.7479-2-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, Stephen Boyd <sboyd@codeaurora.org>, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
-Cc: timur@codeaurora.org
 
-pinctrl-msm only accepts an array of GPIOs from 0 to n-1, and it expects
-each group to support have only one pin (npins == 1).
+On Wed, 2017-12-13 at 12:25 +0100, Bartosz Golaszewski wrote:
+> Users often pass a pointer to a static string to gpiochip_add_data()
+> family of functions. Avoid unnecessary memory allocations with the
+> provided helper routine.
+[]
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+[]
+> @@ -1171,9 +1171,9 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>  	}
+>  
+>  	if (chip->label)
+> -		gdev->label = kstrdup(chip->label, GFP_KERNEL);
+> +		gdev->label = kstrdup_const(chip->label, GFP_KERNEL);
+>  	else
+> -		gdev->label = kstrdup("unknown", GFP_KERNEL);
+> +		gdev->label = kstrdup_const("unknown", GFP_KERNEL);
 
-We can support "sparse" GPIO maps if we allow for some groups to have zero
-pins (npins == 0).  These pins are "hidden" from the rest of the driver
-and gpiolib.
+A plain ?: would be more intelligible
+and a bit smaller object code too.
 
-Access to unavailable GPIOs is blocked via a request callback.  If the
-requested GPIO is unavailable, -EACCES is returned, which prevents
-further access to that GPIO.
+ie:
+	gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
 
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 7a960590ecaa..d45b4c2b5af1 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -507,6 +507,11 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 	};
- 
- 	g = &pctrl->soc->groups[offset];
-+
-+	/* If the GPIO group has no pins, then don't show it. */
-+	if (!g->npins)
-+		return;
-+
- 	ctl_reg = readl(pctrl->regs + g->ctl_reg);
- 
- 	is_out = !!(ctl_reg & BIT(g->oe_bit));
-@@ -516,7 +521,7 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 
- 	seq_printf(s, " %-8s: %-3s %d", g->name, is_out ? "out" : "in", func);
- 	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
--	seq_printf(s, " %s", pulls[pull]);
-+	seq_printf(s, " %s\n", pulls[pull]);
- }
- 
- static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
-@@ -524,23 +529,36 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	unsigned gpio = chip->base;
- 	unsigned i;
- 
--	for (i = 0; i < chip->ngpio; i++, gpio++) {
-+	for (i = 0; i < chip->ngpio; i++, gpio++)
- 		msm_gpio_dbg_show_one(s, NULL, chip, i, gpio);
--		seq_puts(s, "\n");
--	}
- }
- 
- #else
- #define msm_gpio_dbg_show NULL
- #endif
- 
-+/*
-+ * If the requested GPIO has no pins, then treat it as unavailable.
-+ * Otherwise, call the standard request function.
-+ */
-+static int msm_gpio_request(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct msm_pinctrl *pctrl = gpiochip_get_data(chip);
-+	const struct msm_pingroup *g = &pctrl->soc->groups[offset];
-+
-+	if (!g->npins)
-+		return -EACCES;
-+
-+	return gpiochip_generic_request(chip, offset);
-+}
-+
- static const struct gpio_chip msm_gpio_template = {
- 	.direction_input  = msm_gpio_direction_input,
- 	.direction_output = msm_gpio_direction_output,
- 	.get_direction    = msm_gpio_get_direction,
- 	.get              = msm_gpio_get,
- 	.set              = msm_gpio_set,
--	.request          = gpiochip_generic_request,
-+	.request          = msm_gpio_request,
- 	.free             = gpiochip_generic_free,
- 	.dbg_show         = msm_gpio_dbg_show,
- };
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+>  	if (!gdev->label) {
+>  		status = -ENOMEM;
+>  		goto err_free_descs;
