@@ -1,45 +1,34 @@
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH] pinctrl: axp209: add missing Kconfig dependencies
-Date: Thu, 14 Dec 2017 10:43:35 +0100
-Message-ID: <20171214094335.899-1-quentin.schulz@free-electrons.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:55666 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750737AbdLNJok (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Dec 2017 04:44:40 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 0/6] Add PWM and TPU support to r8a7743
+Date: Thu, 14 Dec 2017 10:56:10 +0000
+Message-ID: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, thomas.petazzoni@free-electrons.com, linux-sunxi@googlegroups.com, rdunlap@infradead.org, Quentin Schulz <quentin.schulz@free-electrons.com>
 
-This fixes some compilation issues.
+Dear All,
 
-GENERIC_PINCONF and OF at least for pinconf_generic_dt_*, PINMUX at
-least for pinmux_ops and GPIOLIB for at least gpio_chip.
+this series includes all that is required to add PWM and TPU SoC specific
+support for the r8a7743.
 
-Fixes: 23f75d7dfa92 ("pinctrl: axp209: add pinctrl features")
+Thanks,
 
-Reported-by: Randy Dunlab <rdunlap@infradead.org>
-Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
----
- drivers/pinctrl/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+Fabrizio Castro (6):
+  ARM: shmobile: defconfig: Enable PWM
+  dt-bindings: pwm: rcar: Document r8a774[35] PWM bindings
+  ARM: dts: r8a7743: Add PWM SoC support
+  dt-bindings: pwm: renesas-tpu: Document r8a774[35] support
+  pinctrl: sh-pfc: r8a7791: Add tpu groups and function
+  ARM: dts: r8a7743: Add TPU support
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index ce126955212c..1dd445116432 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -66,6 +66,10 @@ config PINCTRL_AS3722
- config PINCTRL_AXP209
- 	tristate "X-Powers AXP209 PMIC pinctrl and GPIO Support"
- 	depends on MFD_AXP20X
-+	depends on OF
-+	select PINMUX
-+	select GENERIC_PINCONF
-+	select GPIOLIB
- 	help
- 	  AXP PMICs provides multiple GPIOs that can be muxed for different
- 	  functions. This driver bundles a pinctrl driver to select the function
+ .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   | 10 ++-
+ .../devicetree/bindings/pwm/renesas,tpu-pwm.txt    |  4 +-
+ arch/arm/boot/dts/r8a7743.dtsi                     | 87 ++++++++++++++++++++++
+ arch/arm/configs/shmobile_defconfig                |  1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c               | 42 ++++++++++-
+ 5 files changed, 138 insertions(+), 6 deletions(-)
+
 -- 
-2.14.1
-
+2.7.4
