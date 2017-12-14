@@ -1,22 +1,43 @@
-From: "Ms. Ella Golan" <jpajuelo@ipd.gob.pe>
-Subject: Re.
-Date: Thu, 14 Dec 2017 09:26:25 +0100
-Message-ID: <20171214083212.F3EE6B74CE1CA@mail.ipd.gob.pe>
-Reply-To: egolaan3@gmail.com
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: "gpio-line-names" property - issue with commit 9427ecbed46cc
+Date: Thu, 14 Dec 2017 14:37:07 +0100
+Message-ID: <CACRpkdY22=f0FYVw0AD7eYiyxa6dSNZA8aa6hbyzxZ1wV4bjeA@mail.gmail.com>
+References: <f0bcfd45-a5ac-fce8-2666-ece34c0268ea@c-s.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.ipd.gob.pe ([181.65.214.124]:53078 "EHLO mail.ipd.gob.pe"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752066AbdLNMpv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 14 Dec 2017 07:45:51 -0500
-Content-Description: Mail message body
+Received: from mail-it0-f51.google.com ([209.85.214.51]:38530 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752108AbdLNNhI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Dec 2017 08:37:08 -0500
+Received: by mail-it0-f51.google.com with SMTP id r6so11132587itr.3
+        for <linux-gpio@vger.kernel.org>; Thu, 14 Dec 2017 05:37:08 -0800 (PST)
+In-Reply-To: <f0bcfd45-a5ac-fce8-2666-ece34c0268ea@c-s.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <jpajuelo@ipd.gob.pe>
+To: Christophe LEROY <christophe.leroy@c-s.fr>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org
 
-I am Ms.Ella Golan, I am the Executive Vice President Banking Division with FIRST INTERNATIONAL BANK OF ISRAEL LTD (FIBI). I am getting in touch with you regarding an extremely important and urgent matter. If you would oblige me the opportunity, I shall provide you with details upon your response.
+On Thu, Dec 14, 2017 at 12:54 PM, Christophe LEROY
+<christophe.leroy@c-s.fr> wrote:
 
-Faithfully,
-Ms.Ella Golan
+> Why is it necessary now to set a parent to the GPIO chip whereas it was not
+> necessary before ?
+(...)
+> Is there an easy modification that can be done to your new function
+> devprop_gpiochip_set_names() in order to have the GPIO drivers work as
+> before ?
+
+I am also worried about this.
+
+I have felt that the device property paradigm is too ambitious and assume
+too much about the subtle semantic differences between DT and ACPI
+DSDT. But maybe I'm just whiney.
+
+Looking forward to good ideas on how to solve this!
+
+Mika: is is possible to revert this without breaking something else, if we
+need to?
+
+Yours,
+Linus Walleij
