@@ -1,53 +1,22 @@
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Subject: "gpio-line-names" property - issue with commit 9427ecbed46cc
-Date: Thu, 14 Dec 2017 12:54:01 +0100
-Message-ID: <f0bcfd45-a5ac-fce8-2666-ece34c0268ea@c-s.fr>
+From: "Ms. Ella Golan" <jpajuelo@ipd.gob.pe>
+Subject: Re.
+Date: Thu, 14 Dec 2017 09:26:25 +0100
+Message-ID: <20171214083212.F3EE6B74CE1CA@mail.ipd.gob.pe>
+Reply-To: egolaan3@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pegase1.c-s.fr ([93.17.236.30]:49787 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751729AbdLNLzT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 14 Dec 2017 06:55:19 -0500
-Content-Language: fr
+Received: from www.ipd.gob.pe ([181.65.214.124]:53078 "EHLO mail.ipd.gob.pe"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752066AbdLNMpv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 14 Dec 2017 07:45:51 -0500
+Content-Description: Mail message body
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: Recipients <jpajuelo@ipd.gob.pe>
 
-Hello Mika,
+I am Ms.Ella Golan, I am the Executive Vice President Banking Division with FIRST INTERNATIONAL BANK OF ISRAEL LTD (FIBI). I am getting in touch with you regarding an extremely important and urgent matter. If you would oblige me the opportunity, I shall provide you with details upon your response.
 
-In your commit 9427ecbed46cc, you have modified the way the 
-"gpio-line-names" DT property is handled.
-
-It seems that after that commit, many drivers fail to retrieve that 
-property. After investigation it seems to be because the driver does not 
-assign a parent to the gpio_chip.
-
-Why is it necessary now to set a parent to the GPIO chip whereas it was 
-not necessary before ? In gpio_chip_add_data(), we have:
-
-
-	if (chip->parent) {
-		gdev->dev.parent = chip->parent;
-		gdev->dev.of_node = chip->parent->of_node;
-	}
-
-#ifdef CONFIG_OF_GPIO
-	/* If the gpiochip has an assigned OF node this takes precedence */
-	if (chip->of_node)
-		gdev->dev.of_node = chip->of_node;
-#endif
-
-
-
-Therefore, as far as a chip->of_node is defined, shouldn't it be 
-possible to retrieve "gpio-line-names" property as before without parent ?
-
-Is there an easy modification that can be done to your new function 
-devprop_gpiochip_set_names() in order to have the GPIO drivers work as 
-before ?
-
-Regards
-Christophe
+Faithfully,
+Ms.Ella Golan
