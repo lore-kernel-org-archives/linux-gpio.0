@@ -1,35 +1,39 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [RFC PATCH 0/7] gpiolib: add bias support
-Date: Thu, 14 Dec 2017 17:06:25 +0100
-Message-ID: <20171214160625.GG19186@lunn.ch>
-References: <20171214142138.23008-1-ludovic.desroches@microchip.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Tony Lindgren <tony@atomide.com>
+Subject: [PATCH] pinctrl: single: Remove invalid message
+Date: Thu, 14 Dec 2017 08:51:15 -0800
+Message-ID: <20171214165115.27150-1-tony@atomide.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([185.16.172.187]:32826 "EHLO vps0.lunn.ch"
+Received: from muru.com ([72.249.23.125]:60368 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752944AbdLNQG1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 14 Dec 2017 11:06:27 -0500
-Content-Disposition: inline
-In-Reply-To: <20171214142138.23008-1-ludovic.desroches@microchip.com>
+        id S1753099AbdLNQvU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 14 Dec 2017 11:51:20 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org
 
-> I have not introduced a gpiod_set_bias() because I think the only place to
-> setup this is in the device tree. It's useless to setup a bias pull up if there
-> is an external pull up on the board.
+Pinctrl single should just show how many pins were found, the physical
+address is already in the dev information. So let's remove the wrong
+information that claims to show the physical address but really prints
+a virtual address that is now hashed.
 
-Hi Ludovic
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/pinctrl/pinctrl-single.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I have a use case where having gpiod_set_bias() would be good. The
-DLN2 is a USB device, which offers GPIO, I2C, and SPI services on its
-pins. It is a hot pluggable device, and i'm using it on Intel
-machines, making it double hard to use with Device Tree.
-
-It would be good to be able to set the pull up/down on the GPIO pins,
-probably from a small kernel module which calls gpiod_set_bias(), or
-via /sysfs.
-
-    Andrew
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1774,8 +1774,7 @@ static int pcs_probe(struct platform_device *pdev)
+ 			dev_warn(pcs->dev, "initialized with no interrupts\n");
+ 	}
+ 
+-	dev_info(pcs->dev, "%i pins at pa %p size %u\n",
+-		 pcs->desc.npins, pcs->base, pcs->size);
++	dev_info(pcs->dev, "%i pins, size %u\n", pcs->desc.npins, pcs->size);
+ 
+ 	return pinctrl_enable(pcs->pctl);
+ 
+-- 
+2.15.0
