@@ -1,61 +1,35 @@
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: Re: [PATCH] pinctrl: axp209: add CONFIG_OF dependency
-Date: Fri, 15 Dec 2017 13:53:12 +0100
-Message-ID: <9fa963bb-cc84-d367-9090-c8b7ad796411@free-electrons.com>
-References: <20171215124910.2887096-1-arnd@arndb.de>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Subject: Re: "gpio-line-names" property - issue with commit 9427ecbed46cc
+Date: Fri, 15 Dec 2017 14:13:55 +0100
+Message-ID: <18176ef2-ea97-408d-d16e-a6a8fd22a87c@c-s.fr>
+References: <f0bcfd45-a5ac-fce8-2666-ece34c0268ea@c-s.fr>
+ <CACRpkdY22=f0FYVw0AD7eYiyxa6dSNZA8aa6hbyzxZ1wV4bjeA@mail.gmail.com>
+ <20171215100827.GU22431@lahna.fi.intel.com>
+ <CACRpkdZmGdRdkBZpe=67gEbzk5MU1BosUFwBNrb=e7BYOos-yw@mail.gmail.com>
+ <20171215123946.GZ22431@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171215124910.2887096-1-arnd@arndb.de>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from pegase1.c-s.fr ([93.17.236.30]:26570 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755261AbdLONN6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 15 Dec 2017 08:13:58 -0500
+In-Reply-To: <20171215123946.GZ22431@lahna.fi.intel.com>
+Content-Language: fr
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-Hi Arnd,
 
-On 15/12/2017 13:48, Arnd Bergmann wrote:
-> The pinconf_generic_dt_free_map and pinconf_generic_dt_node_to_map_group
-> functions are only defined when CONFIG_OF is set:
+
+Le 15/12/2017 à 13:39, Mika Westerberg a écrit :
+> On Fri, Dec 15, 2017 at 01:31:54PM +0100, Linus Walleij wrote:
+>> Looking forward to your patch. (I hope.)
 > 
-> drivers/pinctrl/pinctrl-axp209.c:312:21: error: 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a function); did you mean 'pinconf_generic_params'?
-> drivers/pinctrl/pinctrl-axp209.c:313:18: error: 'pinconf_generic_dt_free_map' undeclared here (not in a function); did you mean 'pinconf_generic_params'?
-> 
-> This adds a Kconfig depdency for the driver to prevent randconfig
-> build failures.
-> 
-> Fixes: 23f75d7dfa92 ("pinctrl: axp209: add pinctrl features")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/pinctrl/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-> index ce126955212c..648be90ac1cb 100644
-> --- a/drivers/pinctrl/Kconfig
-> +++ b/drivers/pinctrl/Kconfig
-> @@ -65,7 +65,7 @@ config PINCTRL_AS3722
->  
->  config PINCTRL_AXP209
->  	tristate "X-Powers AXP209 PMIC pinctrl and GPIO Support"
-> -	depends on MFD_AXP20X
-> +	depends on MFD_AXP20X && OF
->  	help
->  	  AXP PMICs provides multiple GPIOs that can be muxed for different
->  	  functions. This driver bundles a pinctrl driver to select the function
+> Speaking of it, Christophe, are you going to update your patch
+> accordingly or do you want me to do that?
 > 
 
-I already sent a patch fixing this issue yesterday:
-
-https://patchwork.kernel.org/patch/10111721/
-
-Thanks anyway :)
-
-Quentin
-
--- 
-Quentin Schulz, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Yes I'm working on it
