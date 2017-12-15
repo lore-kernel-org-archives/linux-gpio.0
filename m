@@ -1,128 +1,37 @@
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2] gpio: fix "gpio-line-names" property retrieval
-Date: Fri, 15 Dec 2017 15:02:33 +0100 (CET)
-Message-ID: <20171215140233.804E768968@localhost.localdomain>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2] gpio: fix "gpio-line-names" property retrieval
+Date: Fri, 15 Dec 2017 20:39:54 +0200
+Message-ID: <20171215183954.GJ22431@lahna.fi.intel.com>
+References: <20171215140233.804E768968@localhost.localdomain>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga12.intel.com ([192.55.52.136]:55761 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755530AbdLOSoU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 15 Dec 2017 13:44:20 -0500
+Content-Disposition: inline
+In-Reply-To: <20171215140233.804E768968@localhost.localdomain>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
 
-Following commit 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names()
-to use device property accessors"), "gpio-line-names" DT property is
-not retrieved anymore when chip->parent is not set by the driver.
-This is due to OF based property reads having been replaced by device
-based property reads.
+On Fri, Dec 15, 2017 at 03:02:33PM +0100, Christophe Leroy wrote:
+> Following commit 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names()
+> to use device property accessors"), "gpio-line-names" DT property is
+> not retrieved anymore when chip->parent is not set by the driver.
+> This is due to OF based property reads having been replaced by device
+> based property reads.
+> 
+> This patch fixes that by making use of
+> fwnode_property_read_string_array() instead of
+> device_property_read_string_array() and handing over either
+> of_fwnode_handle(chip->of_node) or dev_fwnode(chip->parent)
+> to that function.
+> 
+> Fixes: 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names() to use device property accessors")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-This patch fixes that by making use of
-fwnode_property_read_string_array() instead of
-device_property_read_string_array() and handing over either
-of_fwnode_handle(chip->of_node) or dev_fwnode(chip->parent)
-to that function.
-
-Fixes: 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names() to use device property accessors")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- drivers/gpio/gpiolib-acpi.c    |  2 +-
- drivers/gpio/gpiolib-devprop.c | 17 +++++++----------
- drivers/gpio/gpiolib-of.c      |  3 ++-
- drivers/gpio/gpiolib.h         |  3 ++-
- 4 files changed, 12 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index eb4528c87c0b..d6f3d9ee1350 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1074,7 +1074,7 @@ void acpi_gpiochip_add(struct gpio_chip *chip)
- 	}
- 
- 	if (!chip->names)
--		devprop_gpiochip_set_names(chip);
-+		devprop_gpiochip_set_names(chip, dev_fwnode(chip->parent));
- 
- 	acpi_gpiochip_request_regions(acpi_gpio);
- 	acpi_gpiochip_scan_gpios(acpi_gpio);
-diff --git a/drivers/gpio/gpiolib-devprop.c b/drivers/gpio/gpiolib-devprop.c
-index 27f383bda7d9..f748aa3e77f7 100644
---- a/drivers/gpio/gpiolib-devprop.c
-+++ b/drivers/gpio/gpiolib-devprop.c
-@@ -19,30 +19,27 @@
- /**
-  * devprop_gpiochip_set_names - Set GPIO line names using device properties
-  * @chip: GPIO chip whose lines should be named, if possible
-+ * @fwnode: Property Node containing the gpio-line-names property
-  *
-  * Looks for device property "gpio-line-names" and if it exists assigns
-  * GPIO line names for the chip. The memory allocated for the assigned
-  * names belong to the underlying firmware node and should not be released
-  * by the caller.
-  */
--void devprop_gpiochip_set_names(struct gpio_chip *chip)
-+void devprop_gpiochip_set_names(struct gpio_chip *chip,
-+				const struct fwnode_handle *fwnode)
- {
- 	struct gpio_device *gdev = chip->gpiodev;
- 	const char **names;
- 	int ret, i;
- 
--	if (!chip->parent) {
--		dev_warn(&gdev->dev, "GPIO chip parent is NULL\n");
--		return;
--	}
--
--	ret = device_property_read_string_array(chip->parent, "gpio-line-names",
-+	ret = fwnode_property_read_string_array(fwnode, "gpio-line-names",
- 						NULL, 0);
- 	if (ret < 0)
- 		return;
- 
- 	if (ret != gdev->ngpio) {
--		dev_warn(chip->parent,
-+		dev_warn(&gdev->dev,
- 			 "names %d do not match number of GPIOs %d\n", ret,
- 			 gdev->ngpio);
- 		return;
-@@ -52,10 +49,10 @@ void devprop_gpiochip_set_names(struct gpio_chip *chip)
- 	if (!names)
- 		return;
- 
--	ret = device_property_read_string_array(chip->parent, "gpio-line-names",
-+	ret = fwnode_property_read_string_array(fwnode, "gpio-line-names",
- 						names, gdev->ngpio);
- 	if (ret < 0) {
--		dev_warn(chip->parent, "failed to read GPIO line names\n");
-+		dev_warn(&gdev->dev, "failed to read GPIO line names\n");
- 		kfree(names);
- 		return;
- 	}
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index e0d59e61b52f..72a0695d2ac3 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -493,7 +493,8 @@ int of_gpiochip_add(struct gpio_chip *chip)
- 
- 	/* If the chip defines names itself, these take precedence */
- 	if (!chip->names)
--		devprop_gpiochip_set_names(chip);
-+		devprop_gpiochip_set_names(chip,
-+					   of_fwnode_handle(chip->of_node));
- 
- 	of_node_get(chip->of_node);
- 
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index af48322839c3..6c44d1652139 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -228,7 +228,8 @@ static inline int gpio_chip_hwgpio(const struct gpio_desc *desc)
- 	return desc - &desc->gdev->descs[0];
- }
- 
--void devprop_gpiochip_set_names(struct gpio_chip *chip);
-+void devprop_gpiochip_set_names(struct gpio_chip *chip,
-+				const struct fwnode_handle *fwnode);
- 
- /* With descriptor prefix */
- 
--- 
-2.13.3
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
