@@ -1,16 +1,12 @@
-From: chleroy <chleroy@ce692ce0-f8e3-4c9c-b4d7-dcccc219094e.localdomain>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 Subject: [PATCH v2] gpio: fix "gpio-line-names" property retrieval
-Date: Fri, 15 Dec 2017 14:51:42 +0100 (CET)
-Message-ID: <20171215135142.AD5F968968@localhost.localdomain>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pegase1.c-s.fr ([93.17.236.30]:8785 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932091AbdLONvo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 15 Dec 2017 08:51:44 -0500
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Date: Fri, 15 Dec 2017 15:02:33 +0100 (CET)
+Message-ID: <20171215140233.804E768968@localhost.localdomain>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 Following commit 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names()
 to use device property accessors"), "gpio-line-names" DT property is
@@ -130,4 +126,3 @@ index af48322839c3..6c44d1652139 100644
  
 -- 
 2.13.3
-
