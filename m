@@ -1,72 +1,81 @@
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] gpio: fix "gpio-line-names" property retrieval
-Date: Fri, 15 Dec 2017 09:09:15 +0100 (CET)
-Message-ID: <20171215080915.DDA106C974@localhost.localdomain>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
+From: Julien Thierry <julien.thierry@arm.com>
+Subject: Re: [RFC PATCH 2/7] gpio: gpiolib: split the gpiod_configure_flags
+ function
+Date: Fri, 15 Dec 2017 09:26:27 +0000
+Message-ID: <9194f01a-d6af-5399-c43b-64117f743379@arm.com>
+References: <20171214142138.23008-1-ludovic.desroches@microchip.com>
+ <20171214142138.23008-3-ludovic.desroches@microchip.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52456 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755741AbdLOJ0a (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 15 Dec 2017 04:26:30 -0500
+In-Reply-To: <20171214142138.23008-3-ludovic.desroches@microchip.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ludovic Desroches <ludovic.desroches@microchip.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Following commit 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names()
-to use device property accessors"), "gpio-line-names" DT property is
-not retrieved anymore when chip->parent is not set by the driver.
+Hi Ludovic,
 
-This patch fixes that.
+On 14/12/17 14:21, Ludovic Desroches wrote:
+> The gpiod_configure_flags function doesn't only configure flags, it
+> also performs some processing. It implies that it should be called
+> after having requested the GPIO. Split configuration and processing
+> to allow flags configuration before requesting the GPIO. It is
+> needed if we want to set the pin configuration.
+> 
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> ---
+>   drivers/gpio/gpiolib.c | 49 +++++++++++++++++++++++++++++++------------------
+>   drivers/gpio/gpiolib.h |  7 ++++++-
+>   2 files changed, 37 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 0621baddfddc..c887602ca0ff 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -3564,23 +3564,9 @@ struct gpio_desc *__must_check gpiod_get_optional(struct device *dev,
+>   EXPORT_SYMBOL_GPL(gpiod_get_optional);
+>   
+>   
+> -/**
+> - * gpiod_configure_flags - helper function to configure a given GPIO
+> - * @desc:	gpio whose value will be assigned
+> - * @con_id:	function within the GPIO consumer
+> - * @lflags:	gpio_lookup_flags - returned from of_find_gpio() or
+> - *		of_get_gpio_hog()
+> - * @dflags:	gpiod_flags - optional GPIO initialization flags
+> - *
+> - * Return 0 on success, -ENOENT if no GPIO has been assigned to the
+> - * requested function and/or index, or another IS_ERR() code if an error
+> - * occurred while trying to acquire the GPIO.
+> - */
+> -int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+> +void gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+>   		unsigned long lflags, enum gpiod_flags dflags)
+>   {
+> -	int status;
+> -
+>   	if (lflags & GPIO_ACTIVE_LOW)
+>   		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+>   
+> @@ -3601,6 +3587,11 @@ int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+>   	if (lflags & GPIO_OPEN_SOURCE)
+>   		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
+>   
 
-Fixes: 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names()
-to use device property accessors")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- drivers/gpio/gpiolib-devprop.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Small issue, I believe the patch is missing a '}' here to properly split 
+the function.
 
-diff --git a/drivers/gpio/gpiolib-devprop.c b/drivers/gpio/gpiolib-devprop.c
-index 27f383bda7d9..310dbc451a85 100644
---- a/drivers/gpio/gpiolib-devprop.c
-+++ b/drivers/gpio/gpiolib-devprop.c
-@@ -30,20 +30,24 @@ void devprop_gpiochip_set_names(struct gpio_chip *chip)
- 	struct gpio_device *gdev = chip->gpiodev;
- 	const char **names;
- 	int ret, i;
-+	struct device *dev;
- 
--	if (!chip->parent) {
-+	if (chip->parent) {
-+		dev = chip->parent;
-+	} else if (gdev->dev.of_node) {
-+		dev = &gdev->dev;
-+	} else {
- 		dev_warn(&gdev->dev, "GPIO chip parent is NULL\n");
- 		return;
- 	}
- 
--	ret = device_property_read_string_array(chip->parent, "gpio-line-names",
-+	ret = device_property_read_string_array(dev, "gpio-line-names",
- 						NULL, 0);
- 	if (ret < 0)
- 		return;
- 
- 	if (ret != gdev->ngpio) {
--		dev_warn(chip->parent,
--			 "names %d do not match number of GPIOs %d\n", ret,
-+		dev_warn(dev, "names %d do not match number of GPIOs %d\n", ret,
- 			 gdev->ngpio);
- 		return;
- 	}
-@@ -52,10 +56,10 @@ void devprop_gpiochip_set_names(struct gpio_chip *chip)
- 	if (!names)
- 		return;
- 
--	ret = device_property_read_string_array(chip->parent, "gpio-line-names",
-+	ret = device_property_read_string_array(dev, "gpio-line-names",
- 						names, gdev->ngpio);
- 	if (ret < 0) {
--		dev_warn(chip->parent, "failed to read GPIO line names\n");
-+		dev_warn(dev, "failed to read GPIO line names\n");
- 		kfree(names);
- 		return;
- 	}
+Otherwise:
+
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+
+Cheers,
+
 -- 
-2.13.3
+Julien Thierry
