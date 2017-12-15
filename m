@@ -1,37 +1,61 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2] gpio: fix "gpio-line-names" property retrieval
-Date: Fri, 15 Dec 2017 20:39:54 +0200
-Message-ID: <20171215183954.GJ22431@lahna.fi.intel.com>
-References: <20171215140233.804E768968@localhost.localdomain>
+From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v4 0/2] dt: add pinctrl driver for Meson-AXG SoC
+Date: Fri, 15 Dec 2017 11:48:29 -0800
+Message-ID: <7ha7yj93hu.fsf@baylibre.com>
+References: <20171208015418.9632-1-yixun.lan@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga12.intel.com ([192.55.52.136]:55761 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755530AbdLOSoU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 15 Dec 2017 13:44:20 -0500
-Content-Disposition: inline
-In-Reply-To: <20171215140233.804E768968@localhost.localdomain>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171208015418.9632-1-yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org> (Yixun Lan's
+        message of "Fri, 8 Dec 2017 09:54:16 +0800")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Xingyu Chen <xingyu.chen-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
 
-On Fri, Dec 15, 2017 at 03:02:33PM +0100, Christophe Leroy wrote:
-> Following commit 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names()
-> to use device property accessors"), "gpio-line-names" DT property is
-> not retrieved anymore when chip->parent is not set by the driver.
-> This is due to OF based property reads having been replaced by device
-> based property reads.
-> 
-> This patch fixes that by making use of
-> fwnode_property_read_string_array() instead of
-> device_property_read_string_array() and handing over either
-> of_fwnode_handle(chip->of_node) or dev_fwnode(chip->parent)
-> to that function.
-> 
-> Fixes: 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names() to use device property accessors")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Yixun Lan <yixun.lan-LpR1jeaWuhtBDgjK7y7TUQ@public.gmane.org> writes:
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> This is DT part patchset for adding pinctrl support for
+> the Amlogic's Meson-AXG SoC.
+>   
+> Changes since v3 at [3]
+>   -- rebase to khilman's v4.16/dt64 branch and re-send
+>   -- add Rob's Ack
+>
+> Changes since v2 at [2]:
+>   -- Resend this patch series due to fail to send patch [2/2]
+>
+> Changes since v1 at [1]:
+>   -- Separate DT part patches
+>   -- Add Neil Armstrong's Ack
+>
+> [3]
+> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005392.html
+> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005393.html
+> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005394.html
+>
+> [2]
+> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005390.html
+>
+> [1] 
+> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005270.html
+> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005271.html
+> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005272.html
+> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005273.html
+> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005274.html
+>
+> Xingyu Chen (2):
+>   documentation: Add compatibles for Amlogic Meson AXG pin controllers
+>   ARM64: dts: meson-axg: add pinctrl DT info for Meson-AXG SoC
+
+Applied both to v4.14/dt64
+
+Normally, the documentation patch should go with the driver, but since
+Linus has already merged the driver, this time I'll take it with the DT
+itself.
+
+Kevin
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
