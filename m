@@ -1,81 +1,94 @@
-From: Julien Thierry <julien.thierry@arm.com>
-Subject: Re: [RFC PATCH 2/7] gpio: gpiolib: split the gpiod_configure_flags
- function
-Date: Fri, 15 Dec 2017 09:26:27 +0000
-Message-ID: <9194f01a-d6af-5399-c43b-64117f743379@arm.com>
-References: <20171214142138.23008-1-ludovic.desroches@microchip.com>
- <20171214142138.23008-3-ludovic.desroches@microchip.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.16
+Date: Fri, 15 Dec 2017 10:38:52 +0100
+Message-ID: <1513330732-16785-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52456 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755741AbdLOJ0a (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 15 Dec 2017 04:26:30 -0500
-In-Reply-To: <20171214142138.23008-3-ludovic.desroches@microchip.com>
-Content-Language: en-US
+Received: from xavier.telenet-ops.be ([195.130.132.52]:34082 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755121AbdLOJjB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Dec 2017 04:39:01 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@microchip.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hi Ludovic,
+	Hi Linus,
 
-On 14/12/17 14:21, Ludovic Desroches wrote:
-> The gpiod_configure_flags function doesn't only configure flags, it
-> also performs some processing. It implies that it should be called
-> after having requested the GPIO. Split configuration and processing
-> to allow flags configuration before requesting the GPIO. It is
-> needed if we want to set the pin configuration.
-> 
-> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> ---
->   drivers/gpio/gpiolib.c | 49 +++++++++++++++++++++++++++++++------------------
->   drivers/gpio/gpiolib.h |  7 ++++++-
->   2 files changed, 37 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 0621baddfddc..c887602ca0ff 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -3564,23 +3564,9 @@ struct gpio_desc *__must_check gpiod_get_optional(struct device *dev,
->   EXPORT_SYMBOL_GPL(gpiod_get_optional);
->   
->   
-> -/**
-> - * gpiod_configure_flags - helper function to configure a given GPIO
-> - * @desc:	gpio whose value will be assigned
-> - * @con_id:	function within the GPIO consumer
-> - * @lflags:	gpio_lookup_flags - returned from of_find_gpio() or
-> - *		of_get_gpio_hog()
-> - * @dflags:	gpiod_flags - optional GPIO initialization flags
-> - *
-> - * Return 0 on success, -ENOENT if no GPIO has been assigned to the
-> - * requested function and/or index, or another IS_ERR() code if an error
-> - * occurred while trying to acquire the GPIO.
-> - */
-> -int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
-> +void gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
->   		unsigned long lflags, enum gpiod_flags dflags)
->   {
-> -	int status;
-> -
->   	if (lflags & GPIO_ACTIVE_LOW)
->   		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
->   
-> @@ -3601,6 +3587,11 @@ int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
->   	if (lflags & GPIO_OPEN_SOURCE)
->   		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
->   
+The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
 
-Small issue, I believe the patch is missing a '}' here to properly split 
-the function.
+  Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
 
-Otherwise:
+are available in the git repository at:
 
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.16-tag1
 
-Cheers,
+for you to fetch changes up to 527890f72892b127b67567af6bdbdc5288c211c1:
 
--- 
-Julien Thierry
+  pinctrl: sh-pfc: r8a77995: Add CAN FD support (2017-12-05 14:14:56 +0100)
+
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.16
+
+  - Add CAN pin groups on RZ/G1E,
+  - Add CAN and CAN FD pin groups on R-Car H3 ES2.0, and R-Car D3,
+  - Add support for the new R-Car V3M SoC,
+  - Add support for I2C on R-Car D3,
+  - Small fixes and cleanups.
+
+Thanks for pulling!
+
+P.S. There seems to be issues with kernel.org mirrorring. I can't see my
+     tag in the public repo, but the sh-pfc-for-v4.16 branch is up-to-date
+     (last change 10 days ago).
+----------------------------------------------------------------
+Fabrizio Castro (3):
+      pinctrl: sh-pfc: r8a7745: Add CAN[01] support
+      pinctrl: sh-pfc: r8a7794: Add can_clk function
+      pinctrl: sh-pfc: r8a7791: Add can_clk function
+
+Ramesh Shanmugasundaram (2):
+      pinctrl: sh-pfc: r8a7795: Add CAN support
+      pinctrl: sh-pfc: r8a7795: Add CAN FD support
+
+Sergei Shtylyov (2):
+      pinctrl: sh-pfc: Add PORT_GP_CFG_{6|22}() helper macros
+      pinctrl: sh-pfc: Add R8A77970 PFC support
+
+Takeshi Kihara (6):
+      pinctrl: sh-pfc: r8a7795: Add GP-1-28 port pin support
+      pinctrl: sh-pfc: r8a7795-es1: Fix MOD_SEL1 bit[25:24] to 0x3 when using STP_ISEN_1_D
+      pinctrl: sh-pfc: r8a7795: Fix to delete A20..A25 pins function definitions
+      pinctrl: sh-pfc: r8a7796: Fix to delete A20..A25 pins function definitions
+      pinctrl: sh-pfc: r8a7795: Rename RTS{0,1,3,4}# pin function definitions
+      pinctrl: sh-pfc: r8a7796: Rename RTS{0,1,3,4}# pin function definitions
+
+Ulrich Hecht (3):
+      pinctrl: sh-pfc: r8a77995: Add missing pins SCL0 and SDA0 to pinmux data
+      pinctrl: sh-pfc: r8a77995: Add CAN support
+      pinctrl: sh-pfc: r8a77995: Add CAN FD support
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+ drivers/pinctrl/sh-pfc/core.c                      |    6 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |   22 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c               |  166 ++
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c           |    2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |  169 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |   66 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c              | 2329 ++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c              |   88 +
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |   17 +-
+ 12 files changed, 2788 insertions(+), 84 deletions(-)
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77970.c
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
