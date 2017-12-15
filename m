@@ -1,55 +1,72 @@
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Subject: Re: [PATCH v2 05/13] pinctrl: Add Microsemi Ocelot SoC driver
-Date: Fri, 15 Dec 2017 08:59:15 +0100
-Message-ID: <CAOFm3uFsM5Bbb2V-HYKf1kJgHokjUkuRLTht+7gO=-sxJ50faA@mail.gmail.com>
-References: <20171208154618.20105-1-alexandre.belloni@free-electrons.com>
- <20171208154618.20105-6-alexandre.belloni@free-electrons.com>
- <CACRpkdZ=+pFZYteq=wM=z-CGejY+dX_SqhtDbbGBn+q60arQ4w@mail.gmail.com>
- <CAOFm3uF_OjqK0cQ1A4Xkp8kZab+afqPsnF5rB9=a7Dym9jiU4w@mail.gmail.com> <CACRpkdZaaZArEhw3iWaQagrKa__+DcrzSY4i7PWNYwhUiNtm4A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34011 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753605AbdLOH75 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Dec 2017 02:59:57 -0500
-Received: by mail-wm0-f66.google.com with SMTP id y82so29441430wmg.1
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Dec 2017 23:59:57 -0800 (PST)
-In-Reply-To: <CACRpkdZaaZArEhw3iWaQagrKa__+DcrzSY4i7PWNYwhUiNtm4A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] gpio: fix "gpio-line-names" property retrieval
+Date: Fri, 15 Dec 2017 09:09:15 +0100 (CET)
+Message-ID: <20171215080915.DDA106C974@localhost.localdomain>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 
-Alexandre, Linux
+Following commit 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names()
+to use device property accessors"), "gpio-line-names" DT property is
+not retrieved anymore when chip->parent is not set by the driver.
 
-On Fri, Dec 15, 2017 at 12:53 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Wed, Dec 13, 2017 at 10:23 AM, Philippe Ombredanne
-> <pombredanne@nexb.com> wrote:
->> On Wed, Dec 13, 2017 at 9:15 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
->>>
->>> Wow never saw that before. OK I guess.
->>
->> That's the new thing. Less legalese boilerplate, and more code for the
->> better IMHO.
->>
->> You can check the doc patches from Thomas for details [1]
->>
->> [1] https://lkml.org/lkml/2017/12/4/934
->
-> Yeah I'm aware of this part, but I didn't see that combined license
-> before.
->
-> What is the reason for not just using GPL 2 here?
+This patch fixes that.
 
-Linus,
-That'a a question for Alexandre that submitted this patch in the first
-place, not me.
+Fixes: 9427ecbed46cc ("gpio: Rework of_gpiochip_set_names()
+to use device property accessors")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ drivers/gpio/gpiolib-devprop.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-Alexandre?
-
+diff --git a/drivers/gpio/gpiolib-devprop.c b/drivers/gpio/gpiolib-devprop.c
+index 27f383bda7d9..310dbc451a85 100644
+--- a/drivers/gpio/gpiolib-devprop.c
++++ b/drivers/gpio/gpiolib-devprop.c
+@@ -30,20 +30,24 @@ void devprop_gpiochip_set_names(struct gpio_chip *chip)
+ 	struct gpio_device *gdev = chip->gpiodev;
+ 	const char **names;
+ 	int ret, i;
++	struct device *dev;
+ 
+-	if (!chip->parent) {
++	if (chip->parent) {
++		dev = chip->parent;
++	} else if (gdev->dev.of_node) {
++		dev = &gdev->dev;
++	} else {
+ 		dev_warn(&gdev->dev, "GPIO chip parent is NULL\n");
+ 		return;
+ 	}
+ 
+-	ret = device_property_read_string_array(chip->parent, "gpio-line-names",
++	ret = device_property_read_string_array(dev, "gpio-line-names",
+ 						NULL, 0);
+ 	if (ret < 0)
+ 		return;
+ 
+ 	if (ret != gdev->ngpio) {
+-		dev_warn(chip->parent,
+-			 "names %d do not match number of GPIOs %d\n", ret,
++		dev_warn(dev, "names %d do not match number of GPIOs %d\n", ret,
+ 			 gdev->ngpio);
+ 		return;
+ 	}
+@@ -52,10 +56,10 @@ void devprop_gpiochip_set_names(struct gpio_chip *chip)
+ 	if (!names)
+ 		return;
+ 
+-	ret = device_property_read_string_array(chip->parent, "gpio-line-names",
++	ret = device_property_read_string_array(dev, "gpio-line-names",
+ 						names, gdev->ngpio);
+ 	if (ret < 0) {
+-		dev_warn(chip->parent, "failed to read GPIO line names\n");
++		dev_warn(dev, "failed to read GPIO line names\n");
+ 		kfree(names);
+ 		return;
+ 	}
 -- 
-Cordially
-Philippe Ombredanne
+2.13.3
