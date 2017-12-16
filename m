@@ -1,70 +1,59 @@
-From: Yixun Lan <yixun.lan@amlogic.com>
-Subject: Re: [PATCH v4 0/2] dt: add pinctrl driver for Meson-AXG SoC
-Date: Sat, 16 Dec 2017 11:27:59 +0800
-Message-ID: <6949cc46-b391-efb5-e768-7c7ba56f8ec2@amlogic.com>
-References: <20171208015418.9632-1-yixun.lan@amlogic.com>
- <7ha7yj93hu.fsf@baylibre.com>
+From: 58402403@mylife.unisa.ac.za
+Subject: Hallo mein lieber Freund,
+Date: Sat, 16 Dec 2017 15:47:12 +0530
+Message-ID: <VI1PR0102MB2688CF1B82C86C127B695F0FB3080@VI1PR0102MB2688.eurprd01.prod.exchangelabs.com>
+Reply-To: verahollin88@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:46122 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756038AbdLPD2E (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Dec 2017 22:28:04 -0500
-In-Reply-To: <7ha7yj93hu.fsf@baylibre.com>
+Received: from mail-he1eur02hn0207.outbound.protection.outlook.com ([104.47.5.207]:3712
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750850AbdLPKQ3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 16 Dec 2017 05:16:29 -0500
+Content-Description: Mail message body
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: yixun.lan@amlogic.com, linux-amlogic@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Recipients <58402403@mylife.unisa.ac.za>
 
-On 12/16/2017 03:48 AM, Kevin Hilman wrote:
-> Yixun Lan <yixun.lan@amlogic.com> writes:
-> 
->> This is DT part patchset for adding pinctrl support for
->> the Amlogic's Meson-AXG SoC.
->>   
->> Changes since v3 at [3]
->>   -- rebase to khilman's v4.16/dt64 branch and re-send
->>   -- add Rob's Ack
->>
->> Changes since v2 at [2]:
->>   -- Resend this patch series due to fail to send patch [2/2]
->>
->> Changes since v1 at [1]:
->>   -- Separate DT part patches
->>   -- Add Neil Armstrong's Ack
->>
->> [3]
->> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005392.html
->> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005393.html
->> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005394.html
->>
->> [2]
->> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005390.html
->>
->> [1] 
->> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005270.html
->> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005271.html
->> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005272.html
->> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005273.html
->> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005274.html
->>
->> Xingyu Chen (2):
->>   documentation: Add compatibles for Amlogic Meson AXG pin controllers
->>   ARM64: dts: meson-axg: add pinctrl DT info for Meson-AXG SoC
-> 
-> Applied both to v4.14/dt64
-> 
-> Normally, the documentation patch should go with the driver, but since
-> Linus has already merged the driver, this time I'll take it with the DT
-> itself.
-> 
+Hallo mein lieber Freund,
 
-Hi Kevin
- sorry, I just checked Linus' pinctrl tree - the for-next branch, the
-documentation patch is already taken there. so probably you could drop
-it here?
+Ich schreibe Ihnen diese Post mit schweren Tr=E4nen In meinen Augen und gro=
+=DFem Kummer in meinem Herzen, Mein Name ist Vera Hollin Kvan, und ich kont=
+aktiere Sie aus meinem Land Indien Ich m=F6chte Ihnen dies sagen, weil ich =
+keine habe andere Option, als Ihnen zu sagen, wie ich ber=FChrt wurde, um S=
+ie zu =F6ffnen, ich heiratete mit Herrn Hollin Kvan, der mit der tunesische=
+n Botschaft in Madrid Spanien f=FCr neun Jahre arbeitete, bevor er im Jahr =
+2005 starb.Wir waren seit elf Jahren ohne eine Kind.
 
-Yixun
+Er starb nach einer kurzen Krankheit, die nur f=FCnf Tage dauerte. Seit sei=
+nem Tod habe ich beschlossen, nicht wieder zu heiraten. Als mein verstorben=
+er Ehemann lebte, deponierte er die Summe von $ 4,850,000.00USD (vier Milli=
+onen achthundertundf=FCnfzigtausend Dollar) in einer Bank hier in Indien. N=
+ew Delhi die Hauptstadt von Indien, derzeit dieses Geld ist immer noch in d=
+er Bank.
 
+Er machte dieses Geld f=FCr den Export von Gold aus Madrid Spanien Bergbau-=
+Factary.K=FCrzlich mein Arzt sagte mir, dass ich nicht f=FCr die Dauer von =
+sieben Monaten wegen Krebs Problem dauern w=FCrde. Derjenige, der mich am m=
+eisten st=F6rt, ist meine Schlaganfallkrankheit. Nachdem ich meinen Zustand=
+ gekannt habe, habe ich mich entschlossen, Ihnen dieses Geld zu geben, um a=
+uf die weniger privilegierten Leute aufzupassen, Sie werden dieses Geld ver=
+wenden, wie ich hier unterweisen werde.
+
+Ich m=F6chte, dass Sie 30 Prozent des gesamten Geldes f=FCr Ihren pers=F6nl=
+ichen Gebrauch verwenden, w=E4hrend 70% des Geldes f=FCr wohlt=E4tige Zweck=
+e, Menschen auf der Stra=DFe und Hilfe f=FCr das Waisenhaus verwendet werde=
+n. Ich bin als Waise aufgewachsen und habe keinen K=F6rper als Familienmitg=
+lied, nur um zu enden, dass das Haus Gottes auch erhalten bleibt. Tue dies,=
+ damit Gott meine S=FCnden vergibt und meine Seele annimmt, weil diese Kran=
+kheiten mich so sehr gelitten haben. Sobald ich Ihre Antwort erhalten habe,=
+ werde ich Ihnen den Kontakt der Bank hier in Delhi Indien geben und ich we=
+rde auch den Bankmanager anweisen, Ihnen ein Autorit=E4tsschreiben auszuste=
+llen, das Sie als den gegenw=E4rtigen Beg=FCnstigten des Geldes in der Bank=
+ beweisen wird, wenn Sie versichern mir, dass Sie entsprechend handeln, wie=
+ ich es hier dargelegt habe.
+
+In der Hoffnung, Ihre Antwort zu erhalten.
+Von Vera Hollin kVan
