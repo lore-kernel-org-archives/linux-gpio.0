@@ -1,30 +1,70 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: pinctrl: add bindings for MediaTek
- MT7622 SoC
-Date: Fri, 15 Dec 2017 16:28:55 -0600
-Message-ID: <20171215222855.bgeflzdej2lwylnw@rob-hp-laptop>
-References: <cover.1513059081.git.sean.wang@mediatek.com>
- <eb93acdb07a0205e9d3089058b45aee1a6c04d50.1513059081.git.sean.wang@mediatek.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Subject: Re: [PATCH v4 0/2] dt: add pinctrl driver for Meson-AXG SoC
+Date: Sat, 16 Dec 2017 11:27:59 +0800
+Message-ID: <6949cc46-b391-efb5-e768-7c7ba56f8ec2@amlogic.com>
+References: <20171208015418.9632-1-yixun.lan@amlogic.com>
+ <7ha7yj93hu.fsf@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <eb93acdb07a0205e9d3089058b45aee1a6c04d50.1513059081.git.sean.wang@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sean.wang@mediatek.com
-Cc: mark.rutland@arm.com, linus.walleij@linaro.org, matthias.bgg@gmail.com, devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:46122 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756038AbdLPD2E (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Dec 2017 22:28:04 -0500
+In-Reply-To: <7ha7yj93hu.fsf@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: yixun.lan@amlogic.com, linux-amlogic@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Tue, Dec 12, 2017 at 02:24:18PM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On 12/16/2017 03:48 AM, Kevin Hilman wrote:
+> Yixun Lan <yixun.lan@amlogic.com> writes:
 > 
-> Add devicetree bindings for MediaTek MT7622 pinctrl driver.
+>> This is DT part patchset for adding pinctrl support for
+>> the Amlogic's Meson-AXG SoC.
+>>   
+>> Changes since v3 at [3]
+>>   -- rebase to khilman's v4.16/dt64 branch and re-send
+>>   -- add Rob's Ack
+>>
+>> Changes since v2 at [2]:
+>>   -- Resend this patch series due to fail to send patch [2/2]
+>>
+>> Changes since v1 at [1]:
+>>   -- Separate DT part patches
+>>   -- Add Neil Armstrong's Ack
+>>
+>> [3]
+>> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005392.html
+>> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005393.html
+>> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005394.html
+>>
+>> [2]
+>> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005390.html
+>>
+>> [1] 
+>> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005270.html
+>> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005271.html
+>> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005272.html
+>> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005273.html
+>> http://lists.infradead.org/pipermail/linux-amlogic/2017-November/005274.html
+>>
+>> Xingyu Chen (2):
+>>   documentation: Add compatibles for Amlogic Meson AXG pin controllers
+>>   ARM64: dts: meson-axg: add pinctrl DT info for Meson-AXG SoC
 > 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Reviewed-by: Biao Huang <biao.huang@mediatek.com>
-> ---
->  .../devicetree/bindings/pinctrl/pinctrl-mt7622.txt | 351 +++++++++++++++++++++
->  1 file changed, 351 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
+> Applied both to v4.14/dt64
+> 
+> Normally, the documentation patch should go with the driver, but since
+> Linus has already merged the driver, this time I'll take it with the DT
+> itself.
+> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Hi Kevin
+ sorry, I just checked Linus' pinctrl tree - the for-next branch, the
+documentation patch is already taken there. so probably you could drop
+it here?
+
+Yixun
+
