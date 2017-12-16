@@ -1,59 +1,37 @@
-From: 58402403@mylife.unisa.ac.za
-Subject: Hallo mein lieber Freund,
-Date: Sat, 16 Dec 2017 15:47:12 +0530
-Message-ID: <VI1PR0102MB2688CF1B82C86C127B695F0FB3080@VI1PR0102MB2688.eurprd01.prod.exchangelabs.com>
-Reply-To: verahollin88@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+From: Pravin Shedge <pravin.shedge4linux@gmail.com>
+Subject: [PATCH] drivers: gpio: remove duplicate includes
+Date: Sat, 16 Dec 2017 18:26:52 +0530
+Message-ID: <1513429012-8327-1-git-send-email-pravin.shedge4linux@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-he1eur02hn0207.outbound.protection.outlook.com ([104.47.5.207]:3712
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750850AbdLPKQ3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 16 Dec 2017 05:16:29 -0500
-Content-Description: Mail message body
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44709 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756321AbdLPM5C (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 16 Dec 2017 07:57:02 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <58402403@mylife.unisa.ac.za>
+To: gregory.0xf0@gmail.com, linus.walleij@linaro.org, computersforpeace@gmail.com, f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: pravin.shedge4linux@gmail.com
 
-Hallo mein lieber Freund,
+These duplicate includes have been found with scripts/checkincludes.pl
+but they have been removed manually to avoid removing false positives.
 
-Ich schreibe Ihnen diese Post mit schweren Tr=E4nen In meinen Augen und gro=
-=DFem Kummer in meinem Herzen, Mein Name ist Vera Hollin Kvan, und ich kont=
-aktiere Sie aus meinem Land Indien Ich m=F6chte Ihnen dies sagen, weil ich =
-keine habe andere Option, als Ihnen zu sagen, wie ich ber=FChrt wurde, um S=
-ie zu =F6ffnen, ich heiratete mit Herrn Hollin Kvan, der mit der tunesische=
-n Botschaft in Madrid Spanien f=FCr neun Jahre arbeitete, bevor er im Jahr =
-2005 starb.Wir waren seit elf Jahren ohne eine Kind.
+Signed-off-by: Pravin Shedge <pravin.shedge4linux@gmail.com>
+---
+ drivers/gpio/gpio-brcmstb.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Er starb nach einer kurzen Krankheit, die nur f=FCnf Tage dauerte. Seit sei=
-nem Tod habe ich beschlossen, nicht wieder zu heiraten. Als mein verstorben=
-er Ehemann lebte, deponierte er die Summe von $ 4,850,000.00USD (vier Milli=
-onen achthundertundf=FCnfzigtausend Dollar) in einer Bank hier in Indien. N=
-ew Delhi die Hauptstadt von Indien, derzeit dieses Geld ist immer noch in d=
-er Bank.
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index 545d43a..3dcbead 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -19,7 +19,6 @@
+ #include <linux/irqdomain.h>
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/interrupt.h>
+-#include <linux/bitops.h>
+ 
+ enum gio_reg_index {
+ 	GIO_REG_ODEN = 0,
+-- 
+2.7.4
 
-Er machte dieses Geld f=FCr den Export von Gold aus Madrid Spanien Bergbau-=
-Factary.K=FCrzlich mein Arzt sagte mir, dass ich nicht f=FCr die Dauer von =
-sieben Monaten wegen Krebs Problem dauern w=FCrde. Derjenige, der mich am m=
-eisten st=F6rt, ist meine Schlaganfallkrankheit. Nachdem ich meinen Zustand=
- gekannt habe, habe ich mich entschlossen, Ihnen dieses Geld zu geben, um a=
-uf die weniger privilegierten Leute aufzupassen, Sie werden dieses Geld ver=
-wenden, wie ich hier unterweisen werde.
-
-Ich m=F6chte, dass Sie 30 Prozent des gesamten Geldes f=FCr Ihren pers=F6nl=
-ichen Gebrauch verwenden, w=E4hrend 70% des Geldes f=FCr wohlt=E4tige Zweck=
-e, Menschen auf der Stra=DFe und Hilfe f=FCr das Waisenhaus verwendet werde=
-n. Ich bin als Waise aufgewachsen und habe keinen K=F6rper als Familienmitg=
-lied, nur um zu enden, dass das Haus Gottes auch erhalten bleibt. Tue dies,=
- damit Gott meine S=FCnden vergibt und meine Seele annimmt, weil diese Kran=
-kheiten mich so sehr gelitten haben. Sobald ich Ihre Antwort erhalten habe,=
- werde ich Ihnen den Kontakt der Bank hier in Delhi Indien geben und ich we=
-rde auch den Bankmanager anweisen, Ihnen ein Autorit=E4tsschreiben auszuste=
-llen, das Sie als den gegenw=E4rtigen Beg=FCnstigten des Geldes in der Bank=
- beweisen wird, wenn Sie versichern mir, dass Sie entsprechend handeln, wie=
- ich es hier dargelegt habe.
-
-In der Hoffnung, Ihre Antwort zu erhalten.
-Von Vera Hollin kVan
