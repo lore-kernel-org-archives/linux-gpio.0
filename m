@@ -1,37 +1,57 @@
-From: Pravin Shedge <pravin.shedge4linux@gmail.com>
-Subject: [PATCH] drivers: gpio: remove duplicate includes
-Date: Sat, 16 Dec 2017 18:26:52 +0530
-Message-ID: <1513429012-8327-1-git-send-email-pravin.shedge4linux@gmail.com>
+From: Haojian Zhuang <haojian.zhuang@linaro.org>
+Subject: Re: [PATCH] pinctrl: single: Remove invalid message
+Date: Sun, 17 Dec 2017 13:25:13 +0800
+Message-ID: <c51cd2c7-3d36-3dc5-11f8-06c162ca3639@linaro.org>
+References: <20171214165115.27150-1-tony@atomide.com>
+Reply-To: haojian.zhuang@linaro.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44709 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756321AbdLPM5C (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 16 Dec 2017 07:57:02 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:41016 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750770AbdLQFlW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 17 Dec 2017 00:41:22 -0500
+Received: by mail-pg0-f68.google.com with SMTP id o2so7914767pgc.8
+        for <linux-gpio@vger.kernel.org>; Sat, 16 Dec 2017 21:41:21 -0800 (PST)
+In-Reply-To: <20171214165115.27150-1-tony@atomide.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: gregory.0xf0@gmail.com, linus.walleij@linaro.org, computersforpeace@gmail.com, f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: pravin.shedge4linux@gmail.com
+To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org
 
-These duplicate includes have been found with scripts/checkincludes.pl
-but they have been removed manually to avoid removing false positives.
+On 2017/12/15 0:51, Tony Lindgren wrote:
+> Pinctrl single should just show how many pins were found, the physical
+> address is already in the dev information. So let's remove the wrong
+> information that claims to show the physical address but really prints
+> a virtual address that is now hashed.
+> 
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>   drivers/pinctrl/pinctrl-single.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+> --- a/drivers/pinctrl/pinctrl-single.c
+> +++ b/drivers/pinctrl/pinctrl-single.c
+> @@ -1774,8 +1774,7 @@ static int pcs_probe(struct platform_device *pdev)
+>   			dev_warn(pcs->dev, "initialized with no interrupts\n");
+>   	}
+>   
+> -	dev_info(pcs->dev, "%i pins at pa %p size %u\n",
+> -		 pcs->desc.npins, pcs->base, pcs->size);
+> +	dev_info(pcs->dev, "%i pins, size %u\n", pcs->desc.npins, pcs->size);
+>   
+>   	return pinctrl_enable(pcs->pctl);
+>   
+> 
+Hi Tony,
 
-Signed-off-by: Pravin Shedge <pravin.shedge4linux@gmail.com>
----
- drivers/gpio/gpio-brcmstb.c | 1 -
- 1 file changed, 1 deletion(-)
+If there's only one pinctrl region in SoC, it's fine to remove the pa 
+part. But there're always multiple pinctrl regions in Hisilicon SoCs. It 
+causes multiple pinctrl register bases are used. Will it cause debug 
+information harder to read when pa parts are removed?
 
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index 545d43a..3dcbead 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -19,7 +19,6 @@
- #include <linux/irqdomain.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/interrupt.h>
--#include <linux/bitops.h>
- 
- enum gio_reg_index {
- 	GIO_REG_ODEN = 0,
--- 
-2.7.4
-
+Best Regards
+Haojian
