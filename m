@@ -1,165 +1,29 @@
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 3/4] pinctrl: sh-pfc: r8a7794: Add tpu groups and function
-Date: Mon, 18 Dec 2017 18:06:50 +0000
-Message-ID: <1513620411-17478-4-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1513620411-17478-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:42659 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S937874AbdLRSHK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 18 Dec 2017 13:07:10 -0500
-In-Reply-To: <1513620411-17478-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: [PATCH v2 0/4] Add PWM and TPU support to r8a7745
+Date: Mon, 18 Dec 2017 18:06:47 +0000
+Message-ID: <1513620411-17478-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
 
-This patch adds tpu groups and function to r8a7745/r8a7794.
+Dear All,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2:
-* Reworked sorting
+this series includes all that is required to add PWM and TPU SoC specific
+support for the r8a7745.
 
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 101 +++++++++++++++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
+Thanks,
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index dccc20a..f133b4f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -3493,6 +3493,79 @@ static const unsigned int ssi9_ctrl_b_pins[] = {
- static const unsigned int ssi9_ctrl_b_mux[] = {
- 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
- };
-+/* - TPU -------------------------------------------------------------------- */
-+static const unsigned int tpu_to0_pins[] = {
-+	RCAR_GP_PIN(3, 31),
-+};
-+static const unsigned int tpu_to0_mux[] = {
-+	TPUTO0_MARK,
-+};
-+static const unsigned int tpu_to0_b_pins[] = {
-+	RCAR_GP_PIN(3, 30),
-+};
-+static const unsigned int tpu_to0_b_mux[] = {
-+	TPUTO0_B_MARK,
-+};
-+static const unsigned int tpu_to0_c_pins[] = {
-+	RCAR_GP_PIN(1, 18),
-+};
-+static const unsigned int tpu_to0_c_mux[] = {
-+	TPUTO0_C_MARK,
-+};
-+static const unsigned int tpu_to1_pins[] = {
-+	RCAR_GP_PIN(4, 9),
-+};
-+static const unsigned int tpu_to1_mux[] = {
-+	TPUTO1_MARK,
-+};
-+static const unsigned int tpu_to1_b_pins[] = {
-+	RCAR_GP_PIN(4, 0),
-+};
-+static const unsigned int tpu_to1_b_mux[] = {
-+	TPUTO1_B_MARK,
-+};
-+static const unsigned int tpu_to1_c_pins[] = {
-+	RCAR_GP_PIN(4, 4),
-+};
-+static const unsigned int tpu_to1_c_mux[] = {
-+	TPUTO1_C_MARK,
-+};
-+static const unsigned int tpu_to2_pins[] = {
-+	RCAR_GP_PIN(1, 3),
-+};
-+static const unsigned int tpu_to2_mux[] = {
-+	TPUTO2_MARK,
-+};
-+static const unsigned int tpu_to2_b_pins[] = {
-+	RCAR_GP_PIN(1, 0),
-+};
-+static const unsigned int tpu_to2_b_mux[] = {
-+	TPUTO2_B_MARK,
-+};
-+static const unsigned int tpu_to2_c_pins[] = {
-+	RCAR_GP_PIN(0, 22),
-+};
-+static const unsigned int tpu_to2_c_mux[] = {
-+	TPUTO2_C_MARK,
-+};
-+static const unsigned int tpu_to3_pins[] = {
-+	RCAR_GP_PIN(1, 14),
-+};
-+static const unsigned int tpu_to3_mux[] = {
-+	TPUTO3_MARK,
-+};
-+static const unsigned int tpu_to3_b_pins[] = {
-+	RCAR_GP_PIN(1, 13),
-+};
-+static const unsigned int tpu_to3_b_mux[] = {
-+	TPUTO3_B_MARK,
-+};
-+static const unsigned int tpu_to3_c_pins[] = {
-+	RCAR_GP_PIN(0, 21),
-+};
-+static const unsigned int tpu_to3_c_mux[] = {
-+	TPUTO3_C_MARK,
-+};
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_pins[] = {
- 	RCAR_GP_PIN(5, 24), /* PWEN */
-@@ -3926,6 +3999,18 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(ssi9_ctrl),
- 	SH_PFC_PIN_GROUP(ssi9_data_b),
- 	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
-+	SH_PFC_PIN_GROUP(tpu_to0),
-+	SH_PFC_PIN_GROUP(tpu_to0_b),
-+	SH_PFC_PIN_GROUP(tpu_to0_c),
-+	SH_PFC_PIN_GROUP(tpu_to1),
-+	SH_PFC_PIN_GROUP(tpu_to1_b),
-+	SH_PFC_PIN_GROUP(tpu_to1_c),
-+	SH_PFC_PIN_GROUP(tpu_to2),
-+	SH_PFC_PIN_GROUP(tpu_to2_b),
-+	SH_PFC_PIN_GROUP(tpu_to2_c),
-+	SH_PFC_PIN_GROUP(tpu_to3),
-+	SH_PFC_PIN_GROUP(tpu_to3_b),
-+	SH_PFC_PIN_GROUP(tpu_to3_c),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	VIN_DATA_PIN_GROUP(vin0_data, 24),
-@@ -4388,6 +4473,21 @@ static const char * const ssi_groups[] = {
- 	"ssi9_ctrl_b",
- };
- 
-+static const char * const tpu_groups[] = {
-+	"tpu_to0",
-+	"tpu_to0_b",
-+	"tpu_to0_c",
-+	"tpu_to1",
-+	"tpu_to1_b",
-+	"tpu_to1_c",
-+	"tpu_to2",
-+	"tpu_to2_b",
-+	"tpu_to2_c",
-+	"tpu_to3",
-+	"tpu_to3_b",
-+	"tpu_to3_c",
-+};
-+
- static const char * const usb0_groups[] = {
- 	"usb0",
- };
-@@ -4470,6 +4570,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(sdhi1),
- 	SH_PFC_FUNCTION(sdhi2),
- 	SH_PFC_FUNCTION(ssi),
-+	SH_PFC_FUNCTION(tpu),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(vin0),
+Fabrizio Castro (4):
+  pinctrl: sh-pfc: r8a7794: Add PWM[0123456] support
+  ARM: dts: r8a7745: Add PWM SoC support
+  pinctrl: sh-pfc: r8a7794: Add tpu groups and function
+  ARM: dts: r8a7745: Add TPU support
+
+ arch/arm/boot/dts/r8a7745.dtsi       |  87 ++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 266 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 353 insertions(+)
+
 -- 
 2.7.4
-
