@@ -1,86 +1,93 @@
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: Re: [RFC PATCH 2/7] gpio: gpiolib: split the gpiod_configure_flags
- function
-Date: Mon, 18 Dec 2017 08:02:18 +0100
-Message-ID: <20171218070218.GA2446@rfolt0960.corp.atmel.com>
-References: <20171214142138.23008-1-ludovic.desroches@microchip.com>
- <20171214142138.23008-3-ludovic.desroches@microchip.com>
- <9194f01a-d6af-5399-c43b-64117f743379@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH 1/4] gpio: sysfs: change 'value' attribute to prealloc
+Date: Mon, 18 Dec 2017 11:08:29 +0100 (CET)
+Message-ID: <84f3fa77ff5a0b7ac73709de8bdcd93a2cf95271.1513591276.git.christophe.leroy@c-s.fr>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:57885 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750805AbdLRHCT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Dec 2017 02:02:19 -0500
-Content-Disposition: inline
-In-Reply-To: <9194f01a-d6af-5399-c43b-64117f743379@arm.com>
+Received: from pegase1.c-s.fr ([93.17.236.30]:60974 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757648AbdLRKIb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 18 Dec 2017 05:08:31 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Julien Thierry <julien.thierry@arm.com>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Fri, Dec 15, 2017 at 09:26:27AM +0000, Julien Thierry wrote:
-> Hi Ludovic,
-> 
-> On 14/12/17 14:21, Ludovic Desroches wrote:
-> > The gpiod_configure_flags function doesn't only configure flags, it
-> > also performs some processing. It implies that it should be called
-> > after having requested the GPIO. Split configuration and processing
-> > to allow flags configuration before requesting the GPIO. It is
-> > needed if we want to set the pin configuration.
-> > 
-> > Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> > ---
-> >   drivers/gpio/gpiolib.c | 49 +++++++++++++++++++++++++++++++------------------
-> >   drivers/gpio/gpiolib.h |  7 ++++++-
-> >   2 files changed, 37 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > index 0621baddfddc..c887602ca0ff 100644
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -3564,23 +3564,9 @@ struct gpio_desc *__must_check gpiod_get_optional(struct device *dev,
-> >   EXPORT_SYMBOL_GPL(gpiod_get_optional);
-> > -/**
-> > - * gpiod_configure_flags - helper function to configure a given GPIO
-> > - * @desc:	gpio whose value will be assigned
-> > - * @con_id:	function within the GPIO consumer
-> > - * @lflags:	gpio_lookup_flags - returned from of_find_gpio() or
-> > - *		of_get_gpio_hog()
-> > - * @dflags:	gpiod_flags - optional GPIO initialization flags
-> > - *
-> > - * Return 0 on success, -ENOENT if no GPIO has been assigned to the
-> > - * requested function and/or index, or another IS_ERR() code if an error
-> > - * occurred while trying to acquire the GPIO.
-> > - */
-> > -int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
-> > +void gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
-> >   		unsigned long lflags, enum gpiod_flags dflags)
-> >   {
-> > -	int status;
-> > -
-> >   	if (lflags & GPIO_ACTIVE_LOW)
-> >   		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
-> > @@ -3601,6 +3587,11 @@ int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
-> >   	if (lflags & GPIO_OPEN_SOURCE)
-> >   		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
-> 
-> Small issue, I believe the patch is missing a '}' here to properly split the
-> function.
+The GPIO 'value' attribute is time critical. A small bench with
+'perf record' on the app below shows that 80% of the time spent in
+sysfs_kf_seq_show() is spent in memset() for zeroising the buffer.
 
-Thanks, I'll fix it, this ligne was unstaged.
+|--67.48%--sysfs_kf_seq_show
+|          |
+|          |--54.40%--memset
+|          |
+|          |--11.49%--dev_attr_show
+|          |          |
+|          |          |--10.06%--value_show
+|          |          |          |
+|          |          |          |--4.75%--sprintf
+|          |          |          |          |
 
-Regards
+This patch changes the attribute type to prealloc, eliminating the
+need to zeroise the buffer at each read. 'perf record' gives the
+following result.
 
-Ludovic
+|--42.41%--sysfs_kf_read
+|          |
+|          |--39.73%--dev_attr_show
+|          |          |
+|          |          |--38.23%--value_show
+|          |          |          |
+|          |          |          |--29.22%--sprintf
+|          |          |          |          |
 
-> 
-> Otherwise:
-> 
-> Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-> 
-> Cheers,
-> 
-> -- 
-> Julien Thierry
+Test done with the following small app:
+
+int main(int argc, char **argv)
+{
+	int fd = open(argv[1], O_RDONLY);
+
+	for (;;) {
+		int buf[512];
+
+		read(fd, buf, 512);
+		lseek(fd, 0, SEEK_SET);
+	}
+	exit(0);
+}
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ drivers/gpio/gpiolib-sysfs.c | 2 +-
+ include/linux/device.h       | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 3f454eaf2101..7a3f4271393b 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -138,7 +138,7 @@ static ssize_t value_store(struct device *dev,
+ 
+ 	return status;
+ }
+-static DEVICE_ATTR_RW(value);
++static DEVICE_ATTR_PREALLOC(value, S_IWUSR | S_IRUGO, value_show, value_store);
+ 
+ static irqreturn_t gpio_sysfs_irq(int irq, void *priv)
+ {
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 9d32000725da..46ac622e5c6f 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -575,6 +575,9 @@ ssize_t device_store_bool(struct device *dev, struct device_attribute *attr,
+ 
+ #define DEVICE_ATTR(_name, _mode, _show, _store) \
+ 	struct device_attribute dev_attr_##_name = __ATTR(_name, _mode, _show, _store)
++#define DEVICE_ATTR_PREALLOC(_name, _mode, _show, _store) \
++	struct device_attribute dev_attr_##_name = \
++		__ATTR_PREALLOC(_name, _mode, _show, _store)
+ #define DEVICE_ATTR_RW(_name) \
+ 	struct device_attribute dev_attr_##_name = __ATTR_RW(_name)
+ #define DEVICE_ATTR_RO(_name) \
+-- 
+2.13.3
+
