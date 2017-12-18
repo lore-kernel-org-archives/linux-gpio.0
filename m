@@ -1,61 +1,73 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH v2 05/13] pinctrl: Add Microsemi Ocelot SoC driver
-Date: Mon, 18 Dec 2017 17:09:00 +0100
-Message-ID: <20171218160900.GR7022@piout.net>
-References: <20171208154618.20105-1-alexandre.belloni@free-electrons.com>
- <20171208154618.20105-6-alexandre.belloni@free-electrons.com>
- <CACRpkdZ=+pFZYteq=wM=z-CGejY+dX_SqhtDbbGBn+q60arQ4w@mail.gmail.com>
- <CAOFm3uF_OjqK0cQ1A4Xkp8kZab+afqPsnF5rB9=a7Dym9jiU4w@mail.gmail.com>
- <CACRpkdZaaZArEhw3iWaQagrKa__+DcrzSY4i7PWNYwhUiNtm4A@mail.gmail.com>
- <CAOFm3uFsM5Bbb2V-HYKf1kJgHokjUkuRLTht+7gO=-sxJ50faA@mail.gmail.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH 5/6] pinctrl: sh-pfc: r8a7791: Add tpu groups and function
+Date: Mon, 18 Dec 2017 17:13:14 +0000
+Message-ID: <TY1PR06MB0895578E8217996C8CD517ABC00E0@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1513248976-26700-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1513248976-26700-6-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdW8tfg9AnJbLF=yMFbS2R=F37tzfcxYpF6yDtm1WLoY7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAOFm3uFsM5Bbb2V-HYKf1kJgHokjUkuRLTht+7gO=-sxJ50faA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:28235 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935370AbdLRRNY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 18 Dec 2017 12:13:24 -0500
+In-Reply-To: <CAMuHMdW8tfg9AnJbLF=yMFbS2R=F37tzfcxYpF6yDtm1WLoY7g@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 15/12/2017 at 08:59:15 +0100, Philippe Ombredanne wrote:
-> Alexandre, Linux
-> 
-> On Fri, Dec 15, 2017 at 12:53 AM, Linus Walleij
-> <linus.walleij@linaro.org> wrote:
-> > On Wed, Dec 13, 2017 at 10:23 AM, Philippe Ombredanne
-> > <pombredanne@nexb.com> wrote:
-> >> On Wed, Dec 13, 2017 at 9:15 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> >>>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> >>>
-> >>> Wow never saw that before. OK I guess.
-> >>
-> >> That's the new thing. Less legalese boilerplate, and more code for the
-> >> better IMHO.
-> >>
-> >> You can check the doc patches from Thomas for details [1]
-> >>
-> >> [1] https://lkml.org/lkml/2017/12/4/934
-> >
-> > Yeah I'm aware of this part, but I didn't see that combined license
-> > before.
-> >
-> > What is the reason for not just using GPL 2 here?
-> 
-> Linus,
-> That'a a question for Alexandre that submitted this patch in the first
-> place, not me.
-> 
-> Alexandre?
-> 
-
-I'm not the one taking that decision and I don't think this choice has a
-particular issue (we use the same one for device trees).
-
-I guess the idea behind it is to be able to reuse the same code in other
-non-GPL projects.
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjay4NCg0KPiBTdWJqZWN0
+OiBSZTogW1BBVENIIDUvNl0gcGluY3RybDogc2gtcGZjOiByOGE3NzkxOiBBZGQgdHB1IGdyb3Vw
+cyBhbmQgZnVuY3Rpb24NCj4NCj4gSGkgRmFicml6aW8sDQo+DQo+IE9uIFRodSwgRGVjIDE0LCAy
+MDE3IGF0IDExOjU2IEFNLCBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlvLmNhc3Ryb0BicC5y
+ZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRzIHRwdSBncm91cHMgYW5kIGZ1
+bmN0aW9uIHRvIHI4YTc3NDMvcjhhNzc5MS9yOGE3NzkzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
+eTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4g
+UmV2aWV3ZWQtYnk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4NCj4gV2l0
+aCB0aGUgc29ydCBvcmRlciBmaXhlZDoNCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZl
+biA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQoNCkknbGwgc2VuZCBhIHYyIHRvIGZpeCB0aGUg
+b3JkZXIuDQoNClRoYW5rcywNCkZhYg0KDQo+DQo+ID4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3No
+LXBmYy9wZmMtcjhhNzc5MS5jDQo+ID4gKysrIGIvZHJpdmVycy9waW5jdHJsL3NoLXBmYy9wZmMt
+cjhhNzc5MS5jDQo+ID4gQEAgLTM4OTIsNiArMzg5MiwzMiBAQCBzdGF0aWMgY29uc3QgdW5zaWdu
+ZWQgaW50IHNkaGkyX3dwX211eFtdID0gew0KPiA+ICAgICAgICAgU0QyX1dQX01BUkssDQo+ID4g
+IH07DQo+ID4NCj4gPiArLyogLSBUUFUgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gKi8NCj4gPiArc3RhdGljIGNvbnN0
+IHVuc2lnbmVkIGludCB0cHVfdG8wX3BpbnNbXSA9IHsNCj4gPiArICAgICAgIFJDQVJfR1BfUElO
+KDYsIDE0KSwNCj4gPiArfTsNCj4gPiArc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCB0cHVfdG8w
+X211eFtdID0gew0KPiA+ICsgICAgICAgVFBVX1RPMF9NQVJLLA0KPiA+ICt9Ow0KPiA+ICtzdGF0
+aWMgY29uc3QgdW5zaWduZWQgaW50IHRwdV90bzFfcGluc1tdID0gew0KPiA+ICsgICAgICAgUkNB
+Ul9HUF9QSU4oMSwgMTcpLA0KPiA+ICt9Ow0KPiA+ICtzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50
+IHRwdV90bzFfbXV4W10gPSB7DQo+ID4gKyAgICAgICBUUFVfVE8xX01BUkssDQo+ID4gK307DQo+
+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgdHB1X3RvMl9waW5zW10gPSB7DQo+ID4gKyAg
+ICAgICBSQ0FSX0dQX1BJTigxLCAxOCksDQo+ID4gK307DQo+ID4gK3N0YXRpYyBjb25zdCB1bnNp
+Z25lZCBpbnQgdHB1X3RvMl9tdXhbXSA9IHsNCj4gPiArICAgICAgIFRQVV9UTzJfTUFSSywNCj4g
+PiArfTsNCj4gPiArc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCB0cHVfdG8zX3BpbnNbXSA9IHsN
+Cj4gPiArICAgICAgIFJDQVJfR1BfUElOKDEsIDI0KSwNCj4gPiArfTsNCj4gPiArc3RhdGljIGNv
+bnN0IHVuc2lnbmVkIGludCB0cHVfdG8zX211eFtdID0gew0KPiA+ICsgICAgICAgVFBVX1RPM19N
+QVJLLA0KPiA+ICt9Ow0KPiA+ICsNCj4gPiAgLyogLSBTU0kgLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gKi8NCj4gPiAg
+c3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBzc2kwX2RhdGFfcGluc1tdID0gew0KPiA+ICAgICAg
+ICAgLyogU0RBVEEgKi8NCj4NCj4gUGxlYXNlIHVzZSBhbHBoYWJldGljYWwgc29ydCBvcmRlciAo
+YWxzbyBiZWxvdykuDQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAg
+ICAgICAgICAgICBHZWVydA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUn
+cyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+DQo+
+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwg
+bXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJ
+IGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQoNCg0KW2h0dHBzOi8v
+d3d3Mi5yZW5lc2FzLmV1L21lZGlhL2VtYWlsL3VuaWNlZl8yMDE3LmpwZ10NCg0KVGhpcyBDaHJp
+c3RtYXMsIGluc3RlYWQgb2Ygc2VuZGluZyBvdXQgY2FyZHMsIFJlbmVzYXMgRWxlY3Ryb25pY3Mg
+RXVyb3BlIGhhdmUgZGVjaWRlZCB0byBzdXBwb3J0IFVuaWNlZiB3aXRoIGEgZG9uYXRpb24uIEZv
+ciBmdXJ0aGVyIGRldGFpbHMgY2xpY2sgaGVyZTxodHRwczovL3d3dy51bmljZWYub3JnLz4gdG8g
+ZmluZCBvdXQgYWJvdXQgdGhlIHZhbHVhYmxlIHdvcmsgdGhleSBkbywgaGVscGluZyBjaGlsZHJl
+biBhbGwgb3ZlciB0aGUgd29ybGQuDQpXZSB3b3VsZCBsaWtlIHRvIHRha2UgdGhpcyBvcHBvcnR1
+bml0eSB0byB3aXNoIHlvdSBhIE1lcnJ5IENocmlzdG1hcyBhbmQgYSBwcm9zcGVyb3VzIE5ldyBZ
+ZWFyLg0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3cs
+IE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVL
+LiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4
+NjcwOS4NCg==
