@@ -1,7 +1,8 @@
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 3/4] gpio: sysfs: don't use sprintf() for 'value' attribute
-Date: Mon, 18 Dec 2017 11:08:33 +0100 (CET)
-Message-ID: <1fbada4f02475f69abbccd105c92dc3512dd6ab0.1513591276.git.christophe.leroy@c-s.fr>
+Subject: [PATCH 4/4] gpio: sysfs: avoid using kstrtol() in 'value' attribute
+ write
+Date: Mon, 18 Dec 2017 11:08:35 +0100 (CET)
+Message-ID: <d674a102bb9afb07298070f1efd730a94e0fa3bc.1513591276.git.christophe.leroy@c-s.fr>
 References: <84f3fa77ff5a0b7ac73709de8bdcd93a2cf95271.1513591276.git.christophe.leroy@c-s.fr>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <84f3fa77ff5a0b7ac73709de8bdcd93a2cf95271.1513591276.git.christophe.leroy@c-s.fr>
@@ -10,52 +11,76 @@ To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-A bench with 'perf record' shows that most of time spent in value_show()
-is spent in sprintf()
+A 'perf record' on an app continuously writing in the 'value'
+attribute show that most of the time is spent in kstrtol()
 
---42.41%--sysfs_kf_read
+--17.99%--value_store
           |
-          |--39.73%--dev_attr_show
+          |--10.17%--kstrtoint
           |          |
-          |          |--38.23%--value_show
-          |          |          |
-          |          |          |--29.22%--sprintf
-          |          |          |
-          |          |          |--2.94%--gpiod_get_value_cansleep
-          |          |          |
-
-value_show() only returns "0\n" or "1\n", therefore the use of
-sprintf() can be avoided
-
-With this patch we get the following result with 'perf record'
-
---13.89%--sysfs_kf_read
+          |          |--8.82%--kstrtoll
           |
-          |--10.72%--dev_attr_show
-          |          |
-          |          |--9.44%--value_show
-          |          |          |
-          |          |          |--4.61%--gpiod_get_value_cansleep
+          |--2.50%--gpiod_set_value_cansleep
+          |
+          |--1.82%--u16_gpio_set
+          |
+          |--1.46%--value_store
+
+The normal case is to write 0 or 1 in the attribute, therefore
+this patch avoids the call to kstrtol() in the most common cases
+
+Then 'perf record' shows
+
+--7.21%--value_store
+          |
+          |--2.69%--u16_gpio_set
+          |
+          |--1.47%--value_store
+          |
+          |--1.08%--gpiod_set_value_cansleep
+          |
+          |--0.60%--mutex_lock
+          |
+           --0.58%--mutex_unlock
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- drivers/gpio/gpiolib-sysfs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpio/gpiolib-sysfs.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 1b0f415df03b..bb10e8ed456e 100644
+index bb10e8ed456e..31e2352632a2 100644
 --- a/drivers/gpio/gpiolib-sysfs.c
 +++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -110,7 +110,9 @@ static ssize_t value_show(struct device *dev,
- 	if (status < 0)
- 		goto err;
+@@ -8,6 +8,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/kdev_t.h>
+ #include <linux/slab.h>
++#include <linux/ctype.h>
  
--	status = sprintf(buf, "%d\n", status);
-+	buf[0] = '0' + status;
-+	buf[1] = '\n';
-+	status = 2;
- err:
- 	mutex_unlock(&data->mutex);
+ #include "gpiolib.h"
  
+@@ -124,7 +125,7 @@ static ssize_t value_store(struct device *dev,
+ {
+ 	struct gpiod_data *data = dev_get_drvdata(dev);
+ 	struct gpio_desc *desc = data->desc;
+-	ssize_t			status;
++	ssize_t status = 0;
+ 
+ 	mutex_lock(&data->mutex);
+ 
+@@ -133,7 +134,11 @@ static ssize_t value_store(struct device *dev,
+ 	} else {
+ 		long		value;
+ 
+-		status = kstrtol(buf, 0, &value);
++		if (size <= 2 && isdigit(buf[0]) &&
++		    (size == 1 || buf[1] == '\n'))
++			value = buf[0] - '0';
++		else
++			status = kstrtol(buf, 0, &value);
+ 		if (status == 0) {
+ 			gpiod_set_value_cansleep(desc, value);
+ 			status = size;
 -- 
 2.13.3
