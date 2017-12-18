@@ -1,66 +1,86 @@
-From: Haojian Zhuang <haojian.zhuang@linaro.org>
-Subject: Re: [PATCH] pinctrl: single: Remove invalid message
-Date: Mon, 18 Dec 2017 08:21:16 +0800
-Message-ID: <774cac82-775c-134d-66de-3e8964808259@linaro.org>
-References: <20171214165115.27150-1-tony@atomide.com>
- <c51cd2c7-3d36-3dc5-11f8-06c162ca3639@linaro.org>
- <20171217160740.GJ3875@atomide.com>
-Reply-To: haojian.zhuang@linaro.org
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: Re: [RFC PATCH 2/7] gpio: gpiolib: split the gpiod_configure_flags
+ function
+Date: Mon, 18 Dec 2017 08:02:18 +0100
+Message-ID: <20171218070218.GA2446@rfolt0960.corp.atmel.com>
+References: <20171214142138.23008-1-ludovic.desroches@microchip.com>
+ <20171214142138.23008-3-ludovic.desroches@microchip.com>
+ <9194f01a-d6af-5399-c43b-64117f743379@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pl0-f43.google.com ([209.85.160.43]:39321 "EHLO
-        mail-pl0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756920AbdLRAmx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 17 Dec 2017 19:42:53 -0500
-Received: by mail-pl0-f43.google.com with SMTP id bi12so3824290plb.6
-        for <linux-gpio@vger.kernel.org>; Sun, 17 Dec 2017 16:42:53 -0800 (PST)
-In-Reply-To: <20171217160740.GJ3875@atomide.com>
-Content-Language: en-US
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:57885 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750805AbdLRHCT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Dec 2017 02:02:19 -0500
+Content-Disposition: inline
+In-Reply-To: <9194f01a-d6af-5399-c43b-64117f743379@arm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org
+To: Julien Thierry <julien.thierry@arm.com>
+Cc: Ludovic Desroches <ludovic.desroches@microchip.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 2017/12/18 0:07, Tony Lindgren wrote:
-> * Haojian Zhuang <haojian.zhuang@linaro.org> [171217 05:43]:
->> On 2017/12/15 0:51, Tony Lindgren wrote:
->>> Pinctrl single should just show how many pins were found, the physical
->>> address is already in the dev information. So let's remove the wrong
->>> information that claims to show the physical address but really prints
->>> a virtual address that is now hashed.
->>>
->>> Signed-off-by: Tony Lindgren <tony@atomide.com>
->>> ---
->>>    drivers/pinctrl/pinctrl-single.c | 3 +--
->>>    1 file changed, 1 insertion(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
->>> --- a/drivers/pinctrl/pinctrl-single.c
->>> +++ b/drivers/pinctrl/pinctrl-single.c
->>> @@ -1774,8 +1774,7 @@ static int pcs_probe(struct platform_device *pdev)
->>>    			dev_warn(pcs->dev, "initialized with no interrupts\n");
->>>    	}
->>> -	dev_info(pcs->dev, "%i pins at pa %p size %u\n",
->>> -		 pcs->desc.npins, pcs->base, pcs->size);
->>> +	dev_info(pcs->dev, "%i pins, size %u\n", pcs->desc.npins, pcs->size);
->>>    	return pinctrl_enable(pcs->pctl);
->>>
->> Hi Tony,
->>
->> If there's only one pinctrl region in SoC, it's fine to remove the pa part.
->> But there're always multiple pinctrl regions in Hisilicon SoCs. It causes
->> multiple pinctrl register bases are used. Will it cause debug information
->> harder to read when pa parts are removed?
+On Fri, Dec 15, 2017 at 09:26:27AM +0000, Julien Thierry wrote:
+> Hi Ludovic,
 > 
-> I doubt as for years now we've been printing out the va instead of pa
-> and so far nobody noticed :) We still get the real device pa with the
-> dev_info, size and number of pins.
+> On 14/12/17 14:21, Ludovic Desroches wrote:
+> > The gpiod_configure_flags function doesn't only configure flags, it
+> > also performs some processing. It implies that it should be called
+> > after having requested the GPIO. Split configuration and processing
+> > to allow flags configuration before requesting the GPIO. It is
+> > needed if we want to set the pin configuration.
+> > 
+> > Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> > ---
+> >   drivers/gpio/gpiolib.c | 49 +++++++++++++++++++++++++++++++------------------
+> >   drivers/gpio/gpiolib.h |  7 ++++++-
+> >   2 files changed, 37 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > index 0621baddfddc..c887602ca0ff 100644
+> > --- a/drivers/gpio/gpiolib.c
+> > +++ b/drivers/gpio/gpiolib.c
+> > @@ -3564,23 +3564,9 @@ struct gpio_desc *__must_check gpiod_get_optional(struct device *dev,
+> >   EXPORT_SYMBOL_GPL(gpiod_get_optional);
+> > -/**
+> > - * gpiod_configure_flags - helper function to configure a given GPIO
+> > - * @desc:	gpio whose value will be assigned
+> > - * @con_id:	function within the GPIO consumer
+> > - * @lflags:	gpio_lookup_flags - returned from of_find_gpio() or
+> > - *		of_get_gpio_hog()
+> > - * @dflags:	gpiod_flags - optional GPIO initialization flags
+> > - *
+> > - * Return 0 on success, -ENOENT if no GPIO has been assigned to the
+> > - * requested function and/or index, or another IS_ERR() code if an error
+> > - * occurred while trying to acquire the GPIO.
+> > - */
+> > -int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+> > +void gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+> >   		unsigned long lflags, enum gpiod_flags dflags)
+> >   {
+> > -	int status;
+> > -
+> >   	if (lflags & GPIO_ACTIVE_LOW)
+> >   		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+> > @@ -3601,6 +3587,11 @@ int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+> >   	if (lflags & GPIO_OPEN_SOURCE)
+> >   		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
 > 
+> Small issue, I believe the patch is missing a '}' here to properly split the
+> function.
 
-OK
+Thanks, I'll fix it, this ligne was unstaged.
 
 Regards
-Haojian
 
+Ludovic
+
+> 
+> Otherwise:
+> 
+> Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+> 
+> Cheers,
+> 
+> -- 
+> Julien Thierry
