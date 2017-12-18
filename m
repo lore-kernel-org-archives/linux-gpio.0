@@ -1,8 +1,8 @@
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 4/4] gpio: sysfs: avoid using kstrtol() in 'value' attribute
- write
-Date: Mon, 18 Dec 2017 11:08:35 +0100 (CET)
-Message-ID: <d674a102bb9afb07298070f1efd730a94e0fa3bc.1513591276.git.christophe.leroy@c-s.fr>
+Subject: [PATCH 2/4] gpio: sysfs: correct error handling on 'value' attribute
+ read.
+Date: Mon, 18 Dec 2017 11:08:31 +0100 (CET)
+Message-ID: <b9e7fbdb52adee6602b86e0771c6e26f35e21ac4.1513591276.git.christophe.leroy@c-s.fr>
 References: <84f3fa77ff5a0b7ac73709de8bdcd93a2cf95271.1513591276.git.christophe.leroy@c-s.fr>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <84f3fa77ff5a0b7ac73709de8bdcd93a2cf95271.1513591276.git.christophe.leroy@c-s.fr>
@@ -11,76 +11,35 @@ To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-A 'perf record' on an app continuously writing in the 'value'
-attribute show that most of the time is spent in kstrtol()
+'value' attribute is supposed to only return 0 or 1 according to
+the documentation.
+With today's implementation, if gpiod_get_value_cansleep() fails
+the printed 'value' is a negative value.
 
---17.99%--value_store
-          |
-          |--10.17%--kstrtoint
-          |          |
-          |          |--8.82%--kstrtoll
-          |
-          |--2.50%--gpiod_set_value_cansleep
-          |
-          |--1.82%--u16_gpio_set
-          |
-          |--1.46%--value_store
-
-The normal case is to write 0 or 1 in the attribute, therefore
-this patch avoids the call to kstrtol() in the most common cases
-
-Then 'perf record' shows
-
---7.21%--value_store
-          |
-          |--2.69%--u16_gpio_set
-          |
-          |--1.47%--value_store
-          |
-          |--1.08%--gpiod_set_value_cansleep
-          |
-          |--0.60%--mutex_lock
-          |
-           --0.58%--mutex_unlock
+This patch ensures that an error is returned on read instead.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- drivers/gpio/gpiolib-sysfs.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib-sysfs.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index bb10e8ed456e..31e2352632a2 100644
+index 7a3f4271393b..1b0f415df03b 100644
 --- a/drivers/gpio/gpiolib-sysfs.c
 +++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -8,6 +8,7 @@
- #include <linux/interrupt.h>
- #include <linux/kdev_t.h>
- #include <linux/slab.h>
-+#include <linux/ctype.h>
- 
- #include "gpiolib.h"
- 
-@@ -124,7 +125,7 @@ static ssize_t value_store(struct device *dev,
- {
- 	struct gpiod_data *data = dev_get_drvdata(dev);
- 	struct gpio_desc *desc = data->desc;
--	ssize_t			status;
-+	ssize_t status = 0;
+@@ -106,8 +106,12 @@ static ssize_t value_show(struct device *dev,
  
  	mutex_lock(&data->mutex);
  
-@@ -133,7 +134,11 @@ static ssize_t value_store(struct device *dev,
- 	} else {
- 		long		value;
+-	status = sprintf(buf, "%d\n", gpiod_get_value_cansleep(desc));
++	status = gpiod_get_value_cansleep(desc);
++	if (status < 0)
++		goto err;
  
--		status = kstrtol(buf, 0, &value);
-+		if (size <= 2 && isdigit(buf[0]) &&
-+		    (size == 1 || buf[1] == '\n'))
-+			value = buf[0] - '0';
-+		else
-+			status = kstrtol(buf, 0, &value);
- 		if (status == 0) {
- 			gpiod_set_value_cansleep(desc, value);
- 			status = size;
++	status = sprintf(buf, "%d\n", status);
++err:
+ 	mutex_unlock(&data->mutex);
+ 
+ 	return status;
 -- 
 2.13.3
