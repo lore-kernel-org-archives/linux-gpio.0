@@ -1,37 +1,76 @@
-From: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
-Subject: [PATCH] dt-bindings: pinctrl: sh-pfc: Correct SoC family name for R8A7778
-Date: Tue, 19 Dec 2017 17:04:56 +0100
-Message-ID: <1513699496-27931-1-git-send-email-geert+renesas@glider.be>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new
+ ACPI HID QCOM8002
+Date: Tue, 19 Dec 2017 11:10:38 -0800
+Message-ID: <20171219191038.GB7997@codeaurora.org>
+References: <1513189818-7384-1-git-send-email-timur@codeaurora.org>
+ <1513189818-7384-4-git-send-email-timur@codeaurora.org>
+ <20171213230155.GS7997@codeaurora.org>
+ <6ca3b4a6-90b9-0481-beb8-29a95c86f07c@codeaurora.org>
+ <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org>
+ <20171219023935.GA17456@codeaurora.org>
+ <13bbaec1-31d9-f9fe-71b1-5b991f123108@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:60488 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751721AbdLSTKk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Dec 2017 14:10:40 -0500
+Content-Disposition: inline
+In-Reply-To: <13bbaec1-31d9-f9fe-71b1-5b991f123108@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
-R8A7778 is R-Car (not R-Mobile) M1.
+On 12/18, Timur Tabi wrote:
+> On 12/18/17 8:39 PM, Stephen Boyd wrote:
+> >Ah I missed that the u16 array can't be iterated through. Any
+> >chance the ACPI tables can be changed to list pin ranges, like
+> ><33 3>, <90 2>, to indicate that pins 33, 34, 35 and pins 90, 91
+> >are available?
+> 
+> It's too late.  Firmware is already shipping with the current
+> layout. Unfortunately, there's no good peer review process for DSDs
+> that don't have a DT equivalent.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
----
- Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Alright!
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-index bb1790e0b17652e6..dd64dbb4cb0ea98f 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-@@ -15,7 +15,7 @@ Required Properties:
-     - "renesas,pfc-r8a7740": for R8A7740 (R-Mobile A1) compatible pin-controller.
-     - "renesas,pfc-r8a7743": for R8A7743 (RZ/G1M) compatible pin-controller.
-     - "renesas,pfc-r8a7745": for R8A7745 (RZ/G1E) compatible pin-controller.
--    - "renesas,pfc-r8a7778": for R8A7778 (R-Mobile M1) compatible pin-controller.
-+    - "renesas,pfc-r8a7778": for R8A7778 (R-Car M1) compatible pin-controller.
-     - "renesas,pfc-r8a7779": for R8A7779 (R-Car H1) compatible pin-controller.
-     - "renesas,pfc-r8a7790": for R8A7790 (R-Car H2) compatible pin-controller.
-     - "renesas,pfc-r8a7791": for R8A7791 (R-Car M2-W) compatible pin-controller.
+> 
+> >That would allow us to put that into the core
+> >pinctrl-msm.c file a little better and then only expose pins on
+> >the gpiochip when call gpiochip_add_pin_range(). If we want to
+> >support this in DT, I think we would have a DT property like
+> >available-gpios = <33 3>, <90 2>, <100 34> that we can then
+> >iterate through and add only these pins to the gpiochip. That's
+> >better than a bitmap in DT and is still compressed somewhat.
+> 
+> Keep in mind that all this ACPI junk is localized to
+> pinctrl-qdf2xxx. pinctrl-msm does not define any new data
+> structures, it just reuses the existing one.  You can still define
+> your DT properties any way you want in your client drivers.
+> pinctrl-qdf2xxx is specific to the Centriq chips.
+
+Of course.
+
+> 
+> >Without going all the way down into that path, here's my patch to
+> >make your patch smaller, but perhaps we can just look for the
+> >ACPI property or the DT property in the pinctrl-msm.c core and
+> >then add pin ranges directly. Then this ACPI driver doesn't
+> >really need to change besides for the ID update. We can expose
+> >all the pins and offsets, etc. from the hardware driver but cut
+> >out gpios in the core layer in a generic way.
+> 
+> Ok, let me review this.  I don't think there's any gain in moving
+> the ACPI processing to pinctrl-msm, however.
+> 
+
+I will attempt to implement the DT part today. It may make the
+get_direction() revert irrelevant if the gpios aren't even
+exposed to gpiolib in the first place.
+
 -- 
-2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
