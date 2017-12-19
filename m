@@ -1,51 +1,40 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] pinctrl: mvebu: Delete an error message for a failed memory
- allocation in mvebu_pinctrl_probe()
-Date: Tue, 19 Dec 2017 22:37:51 +0100
-Message-ID: <ba1158ce-87be-6033-72b6-b08d7babc443@users.sourceforge.net>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new ACPI
+ HID QCOM8002
+Date: Tue, 19 Dec 2017 16:56:45 -0600
+Message-ID: <735d4316-9b18-2903-aabd-46ead1db5233@codeaurora.org>
+References: <1513189818-7384-1-git-send-email-timur@codeaurora.org>
+ <1513189818-7384-4-git-send-email-timur@codeaurora.org>
+ <20171213230155.GS7997@codeaurora.org>
+ <6ca3b4a6-90b9-0481-beb8-29a95c86f07c@codeaurora.org>
+ <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org>
+ <20171219023935.GA17456@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:62648 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752716AbdLSViE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 19 Dec 2017 16:38:04 -0500
-Content-Language: en-GB
+Received: from smtp.codeaurora.org ([198.145.29.96]:33112 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752298AbdLSW4s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Dec 2017 17:56:48 -0500
+In-Reply-To: <20171219023935.GA17456@codeaurora.org>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 19 Dec 2017 22:30:36 +0100
+On 12/18/2017 08:39 PM, Stephen Boyd wrote:
+> +		if (gpios && gpios[j] != i)
+> +			continue;
+...
+ > +		j++;
 
-Omit an extra message for a memory allocation failure in this function.
+Doesn't this assume that the available GPIOs are listed in numerical 
+order in the ACPI table?  If so, then this patch won't work because that 
+order is not guaranteed.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/mvebu/pinctrl-mvebu.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.c b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-index 163d4614b0f8..9e05cfaf75f0 100644
---- a/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-@@ -636,10 +636,9 @@ int mvebu_pinctrl_probe(struct platform_device *pdev)
- 	 */
- 	size = pctl->num_groups * sizeof(*pctl->groups) + noname * 8;
- 	p = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
--	if (!p) {
--		dev_err(&pdev->dev, "failed to alloc group data\n");
-+	if (!p)
- 		return -ENOMEM;
--	}
-+
- 	pctl->groups = p;
- 	noname_buf = p + pctl->num_groups * sizeof(*pctl->groups);
- 
 -- 
-2.15.1
-
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
