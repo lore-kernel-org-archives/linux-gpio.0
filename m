@@ -1,26 +1,37 @@
-From: Gregory Fong <gregory.0xf0@gmail.com>
-Subject: Re: [PATCH] drivers: gpio: remove duplicate includes
-Date: Mon, 18 Dec 2017 20:52:53 -0800
-Message-ID: <CADtm3G5L61_P36xSz=_ADN=vr48wAe9CxSROKicwTjFge3-y4w@mail.gmail.com>
-References: <1513429012-8327-1-git-send-email-pravin.shedge4linux@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 3/4] pinctrl: sh-pfc: r8a7794: Add tpu groups and function
+Date: Tue, 19 Dec 2017 10:15:04 +0100
+Message-ID: <CAMuHMdXamiNr3OxnWqsXToFdcP5dwBRaHzeQ32rEUtBBghyAjQ@mail.gmail.com>
+References: <1513620411-17478-1-git-send-email-fabrizio.castro@bp.renesas.com> <1513620411-17478-4-git-send-email-fabrizio.castro@bp.renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:46266 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934563AbdLSExZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Dec 2017 23:53:25 -0500
-In-Reply-To: <1513429012-8327-1-git-send-email-pravin.shedge4linux@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1513620411-17478-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, Simon Horman <horms@verge.net.au>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Pravin Shedge <pravin.shedge4linux@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Sat, Dec 16, 2017 at 4:56 AM, Pravin Shedge
-<pravin.shedge4linux@gmail.com> wrote:
-> These duplicate includes have been found with scripts/checkincludes.pl
-> but they have been removed manually to avoid removing false positives.
+On Mon, Dec 18, 2017 at 7:06 PM, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds tpu groups and function to r8a7745/r8a7794.
 >
-> Signed-off-by: Pravin Shedge <pravin.shedge4linux@gmail.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v1->v2:
+> * Reworked sorting
 
-Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
+Thanks for the update, will queue in sh-pfc-for-v4.16.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
