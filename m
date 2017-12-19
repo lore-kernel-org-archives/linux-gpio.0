@@ -1,76 +1,61 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new
- ACPI HID QCOM8002
-Date: Tue, 19 Dec 2017 11:10:38 -0800
-Message-ID: <20171219191038.GB7997@codeaurora.org>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new ACPI
+ HID QCOM8002
+Date: Tue, 19 Dec 2017 13:27:33 -0600
+Message-ID: <1f6b198f-d277-51dd-09ad-e1d751d5c1fa@codeaurora.org>
 References: <1513189818-7384-1-git-send-email-timur@codeaurora.org>
  <1513189818-7384-4-git-send-email-timur@codeaurora.org>
  <20171213230155.GS7997@codeaurora.org>
  <6ca3b4a6-90b9-0481-beb8-29a95c86f07c@codeaurora.org>
  <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org>
  <20171219023935.GA17456@codeaurora.org>
- <13bbaec1-31d9-f9fe-71b1-5b991f123108@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:60488 "EHLO
+Received: from smtp.codeaurora.org ([198.145.29.96]:46544 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751721AbdLSTKk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Dec 2017 14:10:40 -0500
-Content-Disposition: inline
-In-Reply-To: <13bbaec1-31d9-f9fe-71b1-5b991f123108@codeaurora.org>
+        with ESMTP id S1752812AbdLST1g (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Dec 2017 14:27:36 -0500
+In-Reply-To: <20171219023935.GA17456@codeaurora.org>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
-On 12/18, Timur Tabi wrote:
-> On 12/18/17 8:39 PM, Stephen Boyd wrote:
-> >Ah I missed that the u16 array can't be iterated through. Any
-> >chance the ACPI tables can be changed to list pin ranges, like
-> ><33 3>, <90 2>, to indicate that pins 33, 34, 35 and pins 90, 91
-> >are available?
-> 
-> It's too late.  Firmware is already shipping with the current
-> layout. Unfortunately, there's no good peer review process for DSDs
-> that don't have a DT equivalent.
+On 12/18/2017 08:39 PM, Stephen Boyd wrote:
+> +	for (i = 0, j = 0; i < num_gpios; i++) {
+>   		pins[i].number = i;
+> -		pins[i].name = names[i];
+> +		groups[i].pins = &pins[i].number;
+> +
+> +		/* Only expose GPIOs that are available */
+> +		if (gpios && gpios[j] != i)
+> +			continue;
 
-Alright!
+I don't know if I would say this is an improvement.  For one thing, 
+QCOM8001 systems are deprecated and don't really exist any more.  At the 
+time I originally wrote this patch, they were still in the wild, but 
+they're all gone now.  So it's no longer efficient to treat QCOM8001 as 
+the default case.  This means that the for-loop will iterate over the 
+full range now, instead of the partial range that it does with my v10 patch.
 
-> 
-> >That would allow us to put that into the core
-> >pinctrl-msm.c file a little better and then only expose pins on
-> >the gpiochip when call gpiochip_add_pin_range(). If we want to
-> >support this in DT, I think we would have a DT property like
-> >available-gpios = <33 3>, <90 2>, <100 34> that we can then
-> >iterate through and add only these pins to the gpiochip. That's
-> >better than a bitmap in DT and is still compressed somewhat.
-> 
-> Keep in mind that all this ACPI junk is localized to
-> pinctrl-qdf2xxx. pinctrl-msm does not define any new data
-> structures, it just reuses the existing one.  You can still define
-> your DT properties any way you want in your client drivers.
-> pinctrl-qdf2xxx is specific to the Centriq chips.
+If I post another version of this patch, I'm just going to remove 
+support for QCOM8001.
 
-Of course.
+If you want to avoid kmalloc'ing the GPIOs array, we can put it on the 
+stack with a dynamic size, since it will be no more than MAX_GPIOS * 2 
+(i.e. 512) bytes in size.
 
-> 
-> >Without going all the way down into that path, here's my patch to
-> >make your patch smaller, but perhaps we can just look for the
-> >ACPI property or the DT property in the pinctrl-msm.c core and
-> >then add pin ranges directly. Then this ACPI driver doesn't
-> >really need to change besides for the ID update. We can expose
-> >all the pins and offsets, etc. from the hardware driver but cut
-> >out gpios in the core layer in a generic way.
-> 
-> Ok, let me review this.  I don't think there's any gain in moving
-> the ACPI processing to pinctrl-msm, however.
-> 
+	u16 gpios[avail_gpios];
 
-I will attempt to implement the DT part today. It may make the
-get_direction() revert irrelevant if the gpios aren't even
-exposed to gpiolib in the first place.
+It would be a little hackish since it needs to be defined at the 
+beginning of a code block, so I would probably put into its own 
+function, but I still fail to see what's wrong with using kmalloc to 
+allocate that array for short-term use temporarily.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
