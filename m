@@ -1,32 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] drivers: gpio: remove duplicate includes
-Date: Wed, 20 Dec 2017 13:08:05 +0100
-Message-ID: <CACRpkdY5iM_Fsa5oLWtZj8PJbnQ1crbRFkTkTQMrQ_R4sAio+A@mail.gmail.com>
-References: <1513429012-8327-1-git-send-email-pravin.shedge4linux@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: venkat.prashanth2498@gmail.com
+Subject: [PATCH] Drivers: GPIO: Fix printk() warning style
+Date: Wed, 20 Dec 2017 17:46:53 +0530
+Message-ID: <1513772213-30026-1-git-send-email-venkat.prashanth2498@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34012 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755085AbdLTMIG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Dec 2017 07:08:06 -0500
-Received: by mail-it0-f68.google.com with SMTP id m11so11309748iti.1
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Dec 2017 04:08:06 -0800 (PST)
-In-Reply-To: <1513429012-8327-1-git-send-email-pravin.shedge4linux@gmail.com>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35726 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754785AbdLTMRG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Dec 2017 07:17:06 -0500
+Received: by mail-pf0-f194.google.com with SMTP id j124so12494018pfc.2
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Dec 2017 04:17:06 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Pravin Shedge <pravin.shedge4linux@gmail.com>
-Cc: Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, Venkat Prashanth B U <venkat.prashanth2498@gmail.com>
 
-On Sat, Dec 16, 2017 at 1:56 PM, Pravin Shedge
-<pravin.shedge4linux@gmail.com> wrote:
+From: Venkat Prashanth B U <venkat.prashanth2498@gmail.com>
 
-> These duplicate includes have been found with scripts/checkincludes.pl
-> but they have been removed manually to avoid removing false positives.
->
-> Signed-off-by: Pravin Shedge <pravin.shedge4linux@gmail.com>
+Replace printk(KERN_INFO...) by pr_info for more uniform reporting
+of debug information. Issue found by checkpatch.
 
-Patch applied.
+Signed-off-by: Venkat Prashanth B U <venkat.prashanth2498@gmail.com>
+---
+ drivers/gpio/gpio-amd8111.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
+index d00d819..4d72300 100644
+--- a/drivers/gpio/gpio-amd8111.c
++++ b/drivers/gpio/gpio-amd8111.c
+@@ -224,10 +224,10 @@ found:
+
+ 	spin_lock_init(&gp.lock);
+
+-	printk(KERN_INFO "AMD-8111 GPIO detected\n");
++	pr_info("AMD-8111 GPIO detected\n");
+ 	err = gpiochip_add(&gp.chip);
+ 	if (err) {
+-		printk(KERN_ERR "GPIO registering failed (%d)\n",
++		pr_info("GPIO registering failed (%d)\n",
+ 		       err);
+ 		ioport_unmap(gp.pm);
+ 		release_region(gp.pmbase + PMBASE_OFFSET, PMBASE_SIZE);
+--
+1.9.1
+
