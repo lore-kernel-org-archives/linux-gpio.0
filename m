@@ -1,46 +1,31 @@
-From: venkat.prashanth2498@gmail.com
-Subject: [PATCH] Drivers: GPIO: Fix printk() warning style
-Date: Wed, 20 Dec 2017 17:46:53 +0530
-Message-ID: <1513772213-30026-1-git-send-email-venkat.prashanth2498@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35726 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754785AbdLTMRG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Dec 2017 07:17:06 -0500
-Received: by mail-pf0-f194.google.com with SMTP id j124so12494018pfc.2
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Dec 2017 04:17:06 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: mvebu: Delete an error message for a failed
+ memory allocation in mvebu_pinctrl_probe()
+Date: Wed, 20 Dec 2017 13:20:52 +0100
+Message-ID: <CACRpkdZ7bN-1nGLSkRTr_ehZJ1YykGN7EYEZErVkf1r3eXtdQQ@mail.gmail.com>
+References: <ba1158ce-87be-6033-72b6-b08d7babc443@users.sourceforge.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <ba1158ce-87be-6033-72b6-b08d7babc443@users.sourceforge.net>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, Venkat Prashanth B U <venkat.prashanth2498@gmail.com>
 
-From: Venkat Prashanth B U <venkat.prashanth2498@gmail.com>
+On Tue, Dec 19, 2017 at 10:37 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-Replace printk(KERN_INFO...) by pr_info for more uniform reporting
-of debug information. Issue found by checkpatch.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 19 Dec 2017 22:30:36 +0100
+>
+> Omit an extra message for a memory allocation failure in this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Signed-off-by: Venkat Prashanth B U <venkat.prashanth2498@gmail.com>
----
- drivers/gpio/gpio-amd8111.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Patch applied.
 
-diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
-index d00d819..4d72300 100644
---- a/drivers/gpio/gpio-amd8111.c
-+++ b/drivers/gpio/gpio-amd8111.c
-@@ -224,10 +224,10 @@ found:
-
- 	spin_lock_init(&gp.lock);
-
--	printk(KERN_INFO "AMD-8111 GPIO detected\n");
-+	pr_info("AMD-8111 GPIO detected\n");
- 	err = gpiochip_add(&gp.chip);
- 	if (err) {
--		printk(KERN_ERR "GPIO registering failed (%d)\n",
-+		pr_info("GPIO registering failed (%d)\n",
- 		       err);
- 		ioport_unmap(gp.pm);
- 		release_region(gp.pmbase + PMBASE_OFFSET, PMBASE_SIZE);
---
-1.9.1
-
+Yours,
+Linus Walleij
