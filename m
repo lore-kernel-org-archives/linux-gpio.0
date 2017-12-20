@@ -1,37 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.16
-Date: Wed, 20 Dec 2017 10:38:32 +0100
-Message-ID: <CACRpkdYhF7TToWt2WGyUuZN7tp6R3FB92njMserWOsofZvFd5A@mail.gmail.com>
-References: <1513330732-16785-1-git-send-email-geert+renesas@glider.be>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] pinctrl/nomadik/abx500: Adjustments for
+ abx500_gpio_probe()
+Date: Wed, 20 Dec 2017 10:50:13 +0100
+Message-ID: <e5be1da7-460d-a47d-59b8-c1902907f5a4@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1513330732-16785-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alessandro Rubini <rubini@unipv.it>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 15, 2017 at 10:38 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Dec 2017 10:45:01 +0100
 
->         Hi Linus,
->
-> The following changes since commit 4fbd8d194f06c8a3fd2af1ce560ddb31f7ec8323:
->
->   Linux 4.15-rc1 (2017-11-26 16:01:47 -0800)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.16-tag1
->
-> for you to fetch changes up to 527890f72892b127b67567af6bdbdc5288c211c1:
->
->   pinctrl: sh-pfc: r8a77995: Add CAN FD support (2017-12-05 14:14:56 +0100)
+Two update suggestions were taken into account
+from static source code analysis.
 
-Pulled into my devel branch for v4.16.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-Thanks for your efforts! Great work as usual.
+ drivers/pinctrl/nomadik/pinctrl-abx500.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Yours,
-Linus Walleij
+-- 
+2.15.1
