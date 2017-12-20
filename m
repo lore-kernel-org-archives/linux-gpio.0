@@ -1,33 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: single: Remove invalid message
-Date: Wed, 20 Dec 2017 12:39:14 +0100
-Message-ID: <CACRpkdaiPgxyqreyYyetNapFsXOaOB496pW2HmGb8Dyj5T90SQ@mail.gmail.com>
-References: <20171214165115.27150-1-tony@atomide.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] Pinctrl-ADI GPIO2: Adjustments for two function
+ implementations
+Date: Wed, 20 Dec 2017 13:00:43 +0100
+Message-ID: <3d620bed-db19-aacd-0ea5-4c64aee104d1@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:43569 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754994AbdLTLjP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Dec 2017 06:39:15 -0500
-Received: by mail-it0-f67.google.com with SMTP id u62so6409215ita.2
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Dec 2017 03:39:15 -0800 (PST)
-In-Reply-To: <20171214165115.27150-1-tony@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Language: en-GB
+Sender: kernel-janitors-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sonic Zhang <sonic.zhang@analog.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, Linux-OMAP <linux-omap@vger.kernel.org>
 
-On Thu, Dec 14, 2017 at 5:51 PM, Tony Lindgren <tony@atomide.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 20 Dec 2017 12:52:42 +0100
 
-> Pinctrl single should just show how many pins were found, the physical
-> address is already in the dev information. So let's remove the wrong
-> information that claims to show the physical address but really prints
-> a virtual address that is now hashed.
->
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+Two update suggestions were taken into account
+from static source code analysis.
 
-Patch applied.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation in two functions
+  Improve a size determination in two functions
 
-Yours,
-Linus Walleij
+ drivers/pinctrl/pinctrl-adi2.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+-- 
+2.15.1
+
