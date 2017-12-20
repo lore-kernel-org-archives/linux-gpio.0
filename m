@@ -1,53 +1,255 @@
-From: Andrew Cooks <andrew.cooks@opengear.com>
-Subject: pinctrl-amd: What hardware does it apply to?
-Date: Thu, 21 Dec 2017 08:25:03 +1000
-Message-ID: <6c675643-45ec-c57f-f1b2-afb25f3e947e@opengear.com>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: Re: [PATCH] gpio: winbond: add driver
+Date: Thu, 21 Dec 2017 00:13:01 +0100
+Message-ID: <31aab2cd-a21e-537b-d1e2-dc8c1be62225@maciej.szmigiero.name>
+References: <f105bdb7-9b29-517f-1fb6-935ee9e2045c@maciej.szmigiero.name>
+ <CACRpkdZAmUtPrh0Ku+vHbY-gYsCr4+3ORYuygtOaC6X0FNPVYA@mail.gmail.com>
+ <73983ef2-ab7e-cc31-042e-d7831bb6fee0@maciej.szmigiero.name>
+ <CACRpkdbOdKJnSookBnnrSzhgM8zACEXG0CEa-C1tmXCsJcxhfg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0084.outbound.protection.outlook.com ([104.47.38.84]:24448
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754428AbdLTWZZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 20 Dec 2017 17:25:25 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbOdKJnSookBnnrSzhgM8zACEXG0CEa-C1tmXCsJcxhfg@mail.gmail.com>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Ken Xue <Ken.Xue@amd.com>, Tobias Diedrich <ranma+kernel@tdiedrich.de>, Sudheesh Mavila <sudheesh.mavila@amd.com>, platypus-sw <platypus-sw@opengear.com>
 
-Hi Linus
+On 20.12.2017 13:06, Linus Walleij wrote:
+> On Tue, Dec 19, 2017 at 12:07 AM, Maciej S. Szmigiero
+> <mail@maciej.szmigiero.name> wrote:
+>> On 18.12.2017 22:22, Linus Walleij wrote:
+> 
+(..)
+>>>> +static void winbond_gpio_warn_conflict(unsigned int idx, const char *otherdev)
+>>>> +{
+>>>> +       pr_warn(WB_GPIO_DRIVER_NAME
+>>>> +               ": enabled GPIO%u share pins with active %s\n", idx + 1,
+>>>> +               otherdev);
+>>>> +}
+>>>
+>>> I don't understand this otherdev business, is it pin multiplexing?
+>>
+>> Yes, some GPIO pins are shared with some other devices and functions.
+>>
+>> But this is a x86 Super I/O chip so we don't really have a general
+>> ability to detect which should be configured how (and a BIOS might not
+>> have configured pins that it didn't care about correctly).
+> 
+> I see. That is unfortunate, users having to provide module parameters
+> for this is just so 1990ies, not your fault.
+> 
+> I'm just wondering if there is something, anything you can grab onto
+> to detect the type of system you're running on and configure accordingly.
+> Like SMBIOS magic. Or subsystem type on the PCI devices. It's
+> scary to have to insert by hand.
+> 
+> Am I guessing right when assuming this is not really a slot-in card
+> but more a, say, internal bridge om some misc machines?
+> 
+> I'm just thinking that somewhere on this machine there must be some
+> entity that knows what we're running on.
 
-I'm working on gpio for an AMD Family 16h Model 30h system[1]. The SoC is the same as the GX412-TC used in the PC Engines APU2. 
+This driver was developed and tested on a Axiomtek CAPA800 board, which
+has a GPIO header allowing easy access to these Super I/O pins.
+A manual for this board specifically documents poking at hardcoded SIO
+I/O space as the way to read / write them, so yes, it is very much a
+1990's style of operation.
+BTW: DMI data for this board is full of "To Be Filled By O.E.M." as far
+as I can see.
 
-There is an out-of-tree gpio driver (gpio-amd) for this SoC in the meta-amd yocto layer[2].
-Another driver (gpio-sb8xx) was submitted for upstream inclusion, but was knocked back with the suggestion that pinctrl is the way forward[3].
+See also my answer under the next paragraph below.
 
-I would much prefer to use a mainline driver for the system I'm working on, so I'm looking at the pinctrl-amd driver to see whether it applies to our SoC, or whether it could be extended, or used as starting point for a new driver.
+>> So the only practical way is to have an user tell us which GPIO devices
+>> he wants to use and then enable only these (maybe stealing pins from
+>> other devices).
+> 
+> That is fine, it's the system as a whole that counts.
+> 
+> Maybe I misunderstand the usecase: is this an off-the-shelf product
+> support thing (like, to get LEDs on the case of a laptop or read magic
+> switches on a workstation or so) or is it intended for random hacking and
+> special-purpose machines?
 
-The out-of-tree drivers apply to the GX412-TC SoC and uses PCI for probing:
+Well, currently this driver has just a one "hard" user of CAPA800 board
+(where the GPIO signals themselves are a part of the platform but it is
+left unspecified what is their intended use).
+But since SIO GPIO lines are often used internally to implement switching
+of various motherboard functions (I know motherboards with other SIO
+models use them for LED control, main / backup BIOS swapping, etc.) I
+think random hacking and reverse engineering of motherboard signals is
+also a sensible use case for this driver.
 
-gpio-amd registers a platform driver that applies to { PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_HUDSON2_SMBUS }
-gpio-sb8xx applies to { PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_HUDSON2_SMBUS } and { PCI_DEVICE(PCI_VENDOR_ID_ATI, PCI_DEVICE_ID_ATI_SBX00_SMBUS }
+For things like LED control and input switches reading, where these
+are a permanent part of some off-the-shelf platform, I think a specific
+driver that registers with LED and input layer should be used instead.
 
-These IDs make it easy to cross reference with the datasheet, and keeps the coupling between ACPI and the driver low. 
-These drivers do not provide a mechanism for firmware (ACPI or DT) to specify which gpios are safe to use or how to use them.
+>>>> +       else
+>>>> +               pr_notice(WB_GPIO_DRIVER_NAME ": GPIO%u pins are %s\n", idx + 1,
+>>>> +                         winbond_sio_reg_btest(base, output_reg,
+>>>> +                                               output_pp_bit) ?
+>>>> +                         "push-pull" :
+>>>> +                         "open drain");
+>>>
+>>> If your hardware supports open drain then implement .set_config() for
+>>> it in the gpio_chip so you can use the hardware open drain with the driver.
+>>
+>> The problem here is that the device doesn't support per-pin
+>> output driver configuration, only per-GPIO device (8 pins)
+>> configuration.
+> 
+> Hm. That is well supported by pin control while GPIO does not support
+> it since it is line-oriented. Pin control on the other hand, supports
+> group-wise multiplexing and config.
+> 
+> I don't know how much you looked into pin control. It might be a bit
+> heavy for an ISA-type device as this appears to be.
 
-In contrast, the pinctrl-amd driver only mentions the newer KERNCZ platform name and uses ACPI for probing without disclosing any Family or Model numbers.
+Yes, I think pin control is more a thing for complicated SoCs than for
+a few Super I/O chip signals (especially that nothing on any x86
+platform that I have seems to make use of it).
+Besides, it would need adding a support for requesting the proper pins
+on boards with this chip to, for example, the 8250 serial driver.
 
-pinctrl-amd applies to "AMD0030" and "AMDI0030"
+>>> winbond_gpio_configure_uartb()?
+>>
+>> UARTB is a device that the first GPIO device conflicts with.
+>> Should it give a name to this GPIO device configuration function?
+>>
+>> Datasheet calls this device just "GPIO1" (the driver uses zero-based
+>> index internally, however).
+> 
+> Hm I don't know really. Up to you, at least it should be evident
+> from code and comments what is going on.
 
-The ACPI HID matching makes it difficult to determine what family and model the driver applies to, or rather, I have not been able to find such a mapping of HIDs to family and model numbers. It's also impossible to guess an ACPI _HID that may or may not exist for the Family 16h Model 30h platform and even if I allocate a new HID for our ACPI implementation, that HID has little hope of being accepted into the mainline driver.
+OK.
 
-I would like to extend the generically named, but very specifically implemented pinctrl-amd driver to also work on Family 16h, Model 30h (specifically the FT3b package), and I propose to use the PCI_DEVICE_ID_AMD_16H_M30H_NB_F3 symbol to probe for the device.
+>>> winbond_gpio_configure_i2cgpio()?
+>>
+>> Same issue, should a fact that I2C conflicts with two pins of this GPIO
+>> device give its configuration function a "I2C" name?
+> 
+> I see. Well whatever makes most sense I guess.
 
-Does this seem like a sensible way forward?
+OK.
 
-Thanks!
+>>> So figure out some way to not have 6 similar functions but parameterize
+>>> the functions somehow with some struct or so?
+>>
+>> Please note that all these 6 functions share only 3 lines of a
+>> boilerplate code:
+>>>> +       if (!(gpios & BIT(x)))
+>>>> +               return;
+>>
+>> and:
+>>>> +       winbond_gpio_configure_common(base, x, WB_SIO_DEV_FOO,
+>>>> +                                     WB_SIO_BAR,
+>>>> +                                     WB_SIO_XXX,
+>>>> +                                     WB_SIO_YYY,
+>>>> +                                     WB_SIO_ZZZ);
+>>
+>> (Okay, that's technically a more than one line, but only due to line
+>> wrapping).
+> 
+> 
+> You might not see the forest because a lot of trees standing in your way :)
+> 
+> I mean a deeper type of table:
+> 
+> struct winbond_gpio_port {
+>     const char *conflicts;
+>     u8 selector;
+>     u8 testreg;
+>     u8 testval;
+>     ...
+> };
+> 
+> static const struct winbond_gpio_port ports[] = {
+>     {
+>         .conflicts = "UARTB",
+>         .selector = WB_SIO_DEV_UARTB,
+>         .testreg = WB_SIO_UARTB_REG_ENABLE,
+>         .testval = WB_SIO_UARTB_ENABLE_ON,
+>         ...
+>     },
+> };
+> 
+> (...)
+> for (i = 0; i < ARRAY_SIZE(ports); i++) {
+>    struct winbond_gpio_port *port = &ports[i];
+> 
+>    winbond_sio_select_logical(bas, port->selector);
+>    if (winbond_sio_reg_btest(bas, port->testreg, port->testval))
+>       winbond_gpio_warn_conflict(i, port->conflicts);
+> };
+> 
+> Just follow this pattern and also include the registers and values etc
+> for winbond_gpio_config_common() etc and I am pretty sure you can
+> cut it down to a neat table.
 
-Andrew
+I understand now what you had in mind - will do it this way then (it
+looks like this will also solve the function naming problem above).
 
-1. http://support.amd.com/TechDocs/52740_16h_Models_30h-3Fh_BKDG.pdf
-2. http://git.yoctoproject.org/cgit/cgit.cgi/meta-amd/tree/meta-steppeeagle/recipes-kernel/amd-gpio/files/gpio-amd.c
-3. https://lkml.org/lkml/2015/6/20/202
+>> Rest of the code is unique for a particular GPIO device and
+>> the code common for all these devices is already in
+>> winbond_gpio_configure_common().
+>>
+>> Naturally, it can be made into a one, parametrized function, but at a
+>> cost of adding a few additional "if" blocks inside - won't that make it
+>> less readable than separate ones?
+> 
+> I'm not sure you see the option of encoding all magic values and register
+> offsets into the table?
+
+Yes, it is clear now.
+
+>>>> +module_param(gpios, byte, 0444);
+>>>> +MODULE_PARM_DESC(gpios,
+>>>> +                "bitmask of GPIO ports to enable (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
+>>>> +
+>>
+>> This sets which GPIO devices (ports) we enable.
+>>
+>>>> +module_param(ppgpios, byte, 0444);
+>>>> +MODULE_PARM_DESC(ppgpios,
+>>>> +                "bitmask of GPIO ports to set to push-pull mode (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
+>>>> +
+>>>> +module_param(odgpios, byte, 0444);
+>>>> +MODULE_PARM_DESC(odgpios,
+>>>> +                "bitmask of GPIO ports to set to open drain mode (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
+>>
+>> These two above configure which GPIO devices (ports) we enable.
+>> It can't be a one bitmask since we need three values per port: push-pull,
+>> open-drain and keep as-is.
+>>
+>>>> +module_param(pledgpio, bool, 0644);
+>>>> +MODULE_PARM_DESC(pledgpio,
+>>>> +                "enable changing value of GPIO2.0 bit (Power LED), default no.");
+>>>> +
+>>>> +module_param(beepgpio, bool, 0644);
+>>>> +MODULE_PARM_DESC(beepgpio,
+>>>> +                "enable changing value of GPIO2.1 bit (BEEP), default no.");
+>>
+>> These two control a basic PC functionality that I don't think we should
+>> allow tinkering with by default (it is very likely that the firmware
+>> owns these pins).
+> 
+> At least all the text above should be comments in the code so it is
+> crystal clear how to use the parameters for anyone daring enough?
+
+Will add these comments to the code.
+
+> But it falls back to the question of autodetect, naturally. This set of
+> parameters is OK if hacking around like this is necessary.
+
+Since random hacking and reverse engineering will probably represent
+the most common use case for this driver I think they should stay.
+
+> Yours,
+> Linus Walleij
+> 
+
+Best regards,
+Maciej Szmigiero
