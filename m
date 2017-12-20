@@ -1,107 +1,56 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new ACPI
- HID QCOM8002
-Date: Tue, 19 Dec 2017 22:05:14 -0600
-Message-ID: <d511f096-bad4-c7b3-d7d4-11b1fa3b1cce@codeaurora.org>
-References: <1513189818-7384-1-git-send-email-timur@codeaurora.org>
- <1513189818-7384-4-git-send-email-timur@codeaurora.org>
- <20171213230155.GS7997@codeaurora.org>
- <6ca3b4a6-90b9-0481-beb8-29a95c86f07c@codeaurora.org>
- <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org>
- <20171219023935.GA17456@codeaurora.org>
- <735d4316-9b18-2903-aabd-46ead1db5233@codeaurora.org>
- <20171220022626.GH7997@codeaurora.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] pinctrl: Allow indicating loss of pin states
+ during low-power
+Date: Wed, 20 Dec 2017 08:24:07 +0100
+Message-ID: <CACRpkdaXrG0rMChf-SVngsPJrsHbAVbUNfH=4m+RX73NHz3iwg@mail.gmail.com>
+References: <20171102231551.16220-1-f.fainelli@gmail.com> <20171102231551.16220-3-f.fainelli@gmail.com>
+ <CACRpkdZtFRB_iy1bDPZ0wkK0jf7pkTGtbZG4gQUJVR+eiO+dhA@mail.gmail.com>
+ <20171129170247.GI28152@atomide.com> <96cf5d74-3acf-07b9-9ad8-1011cd99a860@gmail.com>
+ <CACRpkdbFHj9pM6R3azVPKgbQ-LMmitEdJHQ5BOEb7Vy=kpNk4A@mail.gmail.com> <908c66f9-f9bd-a4df-e241-75595a3a3e27@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:50502 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754136AbdLTEFR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Dec 2017 23:05:17 -0500
-In-Reply-To: <20171220022626.GH7997@codeaurora.org>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <908c66f9-f9bd-a4df-e241-75595a3a3e27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Charles Keepax <ckeepax-yzvPICuk2AA4QjBA90+/kJqQE7yCjDx5@public.gmane.org>, Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
-On 12/19/17 8:26 PM, Stephen Boyd wrote:
-> The thing that I don't like about this patch is that we're
-> modifying npins to indicate what gpios are available or not and
-> then having a huge diff in this patch to do the 's/i/gpio/'.
+On Mon, Dec 11, 2017 at 12:38 AM, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On 12/02/2017 04:48 AM, Linus Walleij wrote:
 
-Considering how small the driver is, I'm not sure if I'd say it's a 
-"huge" diff.
+>> This should solve your problem without having to alter the semantics
+>> of pinctrl_select_state() for everyone.
+>
+> This was exactly what I proposed initially here:
+>
+> http://patchwork.ozlabs.org/patch/734326/
+>
+> I really want to get this fixed, but I can't do that if we keep losing
+> the context of the discussion (pun intended) :).
 
-Frankly, I think this is a very elegant re-purposing of 'npins'.
+Oh sorry man. I am clearly too stupid for this job...
 
-> Ideally, everything would flow directly from the request callback
-> and the SoC specific pinctrl driver would just tell the core code
-> what all pins exist in hardware even if they're locked away and
-> in use by something non-linux. 
+In accordance with things needing to be intuitive, something named
+*force_* should of course force the setting into the hardware.
 
-So you want the request callback to propagated to the SOC driver?  I 
-guess that could work.
+The original patch didn't mention the fact that it was hogs
+and hogs only that was causing the trouble and that is why I
+got lost. (I guess.) I have been going about this as if it was
+something generic that affect all states in all devices, and to
+me hogs is just an abscure corner of pin controlling...
 
-> That way, we don't have to rejig
-> things in the SoC specific driver when the system configuration
-> changes. I'm hoping we can do the valid mask part generically in
-> the core pinctrl-msm.c file once so that things aren't spread
-> around the SoC specific drivers and we solve ACPI and DT at the
-> same time.
+I applied the patchwork patch from above, and elaborated
+a bit on that it pertains to hogs, let's see what
+happens.
 
-Well, now I'm confused.  First I thought you wanted to move the valid 
-check into pinctrl-qdf2xxx, but now you say you want it done in 
-pinctrl-msm, but isn't that what my patches are doing now?
+For the case where a driver (not hog) needs to handle
+suspend/resume transitions, proper states can hopefully
+be used.
 
-> We will want irq lines to be unallocated for things that aren't
-> GPIOs, I'm not sure about ACPI and if it cares here, and we have
-> a one to one mapping between irqs, GPIOs, and pinctrl pins with
-> this hardware. 
-
-If the pin can't be requested, doesn't that take care of IRQ lines 
-automatically?  I don't touch the irq_valid_mask code.
-
-> Furthermore, we have the irq_valid_mask support in
-> place already, so it seems that we can at least use the mask to
-> be the one place where we indicate which pins are allowed to be
-> used. 
-
-Well, I really didn't want to do that.  Keep in mind that the root 
-problem is getting pinctrl-qdf2xxx to be able to tell pinctrl-msm what 
-pins are valid.  That is the bulk of my code.
-
-I'm understanding you less and less the more I read.
-
- >And it seems like the simplest solution is to set the irq
-> valid mask to be the GPIOs from the device property and then test
-> that bitmask in the pinmux_ops structure's request callback so we
-> cover both gpio (via the gpiochip_generic_request() ->
-> pinmux_request_gpio() -> pin_request() path) and pinctrl (via the
-> pin_request() path). 
-
-I do not understand that.  To be honest, I think I already have the 
-simplest solution, at least for ACPI.  I don't really want to complicate 
-my patches to support DT, since I don't really know what the DT-specific 
-problems are.
-
-> Debugfs will need to test the mask too, but
-> that should be simple. I believe you don't care about pin muxing,
-> but it would make things work in both cases and will help if we
-> want to limit access on platforms that use pin muxing.
-
-I don't care about pin muxing, but my patches already take care of debugfs.
-
-> Let's resolve this by the end of this week. If this plan works we
-> can have the revert patch for get_direction() and the
-> pinctrl-msm.c patch to update the valid mask on gpiochip
-> registration.
-
-Frankly, I thought I had everything resolved already, and it sounds like 
-you want me to start over from scratch anyway.
-
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
