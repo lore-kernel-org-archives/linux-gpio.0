@@ -1,44 +1,47 @@
-From: Dmitry Mastykin <mastichi@gmail.com>
-Subject: pinctrl: mcp23s08: gpio-keys: Unable to get irq number for GPIO
-Date: Wed, 20 Dec 2017 17:44:45 +0300
-Message-ID: <CALieaeeD6qmZTN6K9nH3C3psXd2r=z+x3k97EDOuAG8ra-AouQ@mail.gmail.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new ACPI
+ HID QCOM8002
+Date: Wed, 20 Dec 2017 11:46:35 -0600
+Message-ID: <a5809701-3f81-3f79-f558-a831ce4091c2@codeaurora.org>
+References: <1513189818-7384-1-git-send-email-timur@codeaurora.org>
+ <1513189818-7384-4-git-send-email-timur@codeaurora.org>
+ <20171213230155.GS7997@codeaurora.org>
+ <6ca3b4a6-90b9-0481-beb8-29a95c86f07c@codeaurora.org>
+ <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org>
+ <20171219023935.GA17456@codeaurora.org>
+ <735d4316-9b18-2903-aabd-46ead1db5233@codeaurora.org>
+ <20171220022626.GH7997@codeaurora.org>
+ <d511f096-bad4-c7b3-d7d4-11b1fa3b1cce@codeaurora.org>
+ <20171220081556.GA30524@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:43703 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754746AbdLTOor (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Dec 2017 09:44:47 -0500
-Received: by mail-wm0-f51.google.com with SMTP id n138so10314870wmg.2
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Dec 2017 06:44:46 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20171220081556.GA30524@codeaurora.org>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Phil Reid <preid@electromag.com.au>
 
-Hello,
+On 12/20/2017 02:15 AM, Stephen Boyd wrote:
+> Here's the patch. I get a hang when dumping debugfs, but at least
+> sysfs expose fails when trying to request blocked gpios. I need
+> to check if we need to say "yes" to pins that are above the gpio
+> max for pinctrl. I'll do that tomorrow.
 
-when using gpio-keys with mcp23s08, sometimes it fails to get irq numbers:
+Sorry, I just don't see how this is better than my patches.  I don't 
+understand the need for involving the IRQ valid mask.  I also don't see 
+the value in adding code to look for a property that exists only in one 
+ACPI HID (QCOM8002) as if it were generic.  The "num-gpios" and "gpios" 
+DSDs are not supposed to exist in any other HID, so there should be no 
+code that reads it in pinctrl-msm.
 
-[   10.236393] gpiochip_setup_dev: registered GPIOs 504 to 511 on
-device: gpiochip4 (mcp23008)
-[   10.242995] of_get_named_gpiod_flags: parsed 'gpios' property of
-node '/keys/button@1[0]' - status (0)
-[   10.243759] gpio-keys keys: Unable to get irq number for GPIO 0, error -6
+I'm going on vacation soon.  I will post a v11 that eliminates support 
+for QCOM8001.  Maybe that version is "good enough" for now and you can 
+add DT and/or IRQ support on top of it.
 
-but more often it succeeds (approx. 1:3):
-
-[   10.702204] gpiochip_setup_dev: registered GPIOs 504 to 511 on
-device: gpiochip4 (mcp23008)
-[   10.731450] of_get_named_gpiod_flags: parsed 'gpios' property of
-node '/keys/button@1[0]' - status (0)
-[   10.803577] of_get_named_gpiod_flags: parsed 'gpios' property of
-node '/keys/button@2[0]' - status (0)
-[   10.869131] of_get_named_gpiod_flags: parsed 'gpios' property of
-node '/keys/button@3[0]' - status (0)
-[   10.928949] of_get_named_gpiod_flags: parsed 'gpios' property of
-node '/keys/button@4[0]' - status (0)
-
-Please suggest where could be the problem.
-Thank you!
-
-Dmitry Mastykin
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
