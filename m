@@ -1,52 +1,33 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 2/2] pinctrl/nomadik/abx500: Improve a size determination in
- abx500_gpio_probe()
-Date: Wed, 20 Dec 2017 10:52:34 +0100
-Message-ID: <93beb4d9-99e2-e7f2-e752-2d7228a8df46@users.sourceforge.net>
-References: <e5be1da7-460d-a47d-59b8-c1902907f5a4@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: single: Remove invalid message
+Date: Wed, 20 Dec 2017 12:39:14 +0100
+Message-ID: <CACRpkdaiPgxyqreyYyetNapFsXOaOB496pW2HmGb8Dyj5T90SQ@mail.gmail.com>
+References: <20171214165115.27150-1-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:60383 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754557AbdLTJwx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 20 Dec 2017 04:52:53 -0500
-In-Reply-To: <e5be1da7-460d-a47d-59b8-c1902907f5a4@users.sourceforge.net>
-Content-Language: en-GB
+Received: from mail-it0-f67.google.com ([209.85.214.67]:43569 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754994AbdLTLjP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Dec 2017 06:39:15 -0500
+Received: by mail-it0-f67.google.com with SMTP id u62so6409215ita.2
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Dec 2017 03:39:15 -0800 (PST)
+In-Reply-To: <20171214165115.27150-1-tony@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alessandro Rubini <rubini@unipv.it>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, Linux-OMAP <linux-omap@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 20 Dec 2017 10:22:53 +0100
+On Thu, Dec 14, 2017 at 5:51 PM, Tony Lindgren <tony@atomide.com> wrote:
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+> Pinctrl single should just show how many pins were found, the physical
+> address is already in the dev information. So let's remove the wrong
+> information that claims to show the physical address but really prints
+> a virtual address that is now hashed.
+>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 
-This issue was detected by using the Coccinelle software.
+Patch applied.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/nomadik/pinctrl-abx500.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
-index feb030d1ea63..7d00a5d864f5 100644
---- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
-@@ -1155,8 +1155,7 @@ static int abx500_gpio_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	pct = devm_kzalloc(&pdev->dev, sizeof(struct abx500_pinctrl),
--				   GFP_KERNEL);
-+	pct = devm_kzalloc(&pdev->dev, sizeof(*pct), GFP_KERNEL);
- 	if (!pct)
- 		return -ENOMEM;
- 
--- 
-2.15.1
-
+Yours,
+Linus Walleij
