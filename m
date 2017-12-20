@@ -1,8 +1,8 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new
- ACPI HID QCOM8002
-Date: Tue, 19 Dec 2017 18:26:26 -0800
-Message-ID: <20171220022626.GH7997@codeaurora.org>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new ACPI
+ HID QCOM8002
+Date: Tue, 19 Dec 2017 22:05:14 -0600
+Message-ID: <d511f096-bad4-c7b3-d7d4-11b1fa3b1cce@codeaurora.org>
 References: <1513189818-7384-1-git-send-email-timur@codeaurora.org>
  <1513189818-7384-4-git-send-email-timur@codeaurora.org>
  <20171213230155.GS7997@codeaurora.org>
@@ -10,74 +10,98 @@ References: <1513189818-7384-1-git-send-email-timur@codeaurora.org>
  <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org>
  <20171219023935.GA17456@codeaurora.org>
  <735d4316-9b18-2903-aabd-46ead1db5233@codeaurora.org>
+ <20171220022626.GH7997@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <735d4316-9b18-2903-aabd-46ead1db5233@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:50502 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754136AbdLTEFR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Dec 2017 23:05:17 -0500
+In-Reply-To: <20171220022626.GH7997@codeaurora.org>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
-On 12/19, Timur Tabi wrote:
-> On 12/18/2017 08:39 PM, Stephen Boyd wrote:
-> >+		if (gpios && gpios[j] != i)
-> >+			continue;
-> ...
-> > +		j++;
-> 
-> Doesn't this assume that the available GPIOs are listed in numerical
-> order in the ACPI table?  If so, then this patch won't work because
-> that order is not guaranteed.
-> 
+On 12/19/17 8:26 PM, Stephen Boyd wrote:
+> The thing that I don't like about this patch is that we're
+> modifying npins to indicate what gpios are available or not and
+> then having a huge diff in this patch to do the 's/i/gpio/'.
 
-Yes, I added a comment in the patch about that assumption. It's
-simple enough to sort the array in place with sort() though.
+Considering how small the driver is, I'm not sure if I'd say it's a 
+"huge" diff.
 
-I was looking at the gpiochip_add_pin_ranges() code to try and
-understand how to only expose pins that are supported as gpios
-into gpiolib, and then I looked at the history of these patches
-and wrote some code around pin ranges, got super confused and
-started thinking about adding gpiochips for each range (ugh),
-talked to Bjorn, and now I'm writing this mail. The approach of
-multiple ranges or chips looks like a dead-end that you've
-already gone down so let's not do that.
+Frankly, I think this is a very elegant re-purposing of 'npins'.
 
-The thing that I don't like about this patch is that we're
-modifying npins to indicate what gpios are available or not and
-then having a huge diff in this patch to do the 's/i/gpio/'.
-Ideally, everything would flow directly from the request callback
-and the SoC specific pinctrl driver would just tell the core code
-what all pins exist in hardware even if they're locked away and
-in use by something non-linux. That way, we don't have to rejig
-things in the SoC specific driver when the system configuration
-changes. I'm hoping we can do the valid mask part generically in
-the core pinctrl-msm.c file once so that things aren't spread
-around the SoC specific drivers and we solve ACPI and DT at the
-same time.
+> Ideally, everything would flow directly from the request callback
+> and the SoC specific pinctrl driver would just tell the core code
+> what all pins exist in hardware even if they're locked away and
+> in use by something non-linux. 
 
-We will want irq lines to be unallocated for things that aren't
-GPIOs, I'm not sure about ACPI and if it cares here, and we have
-a one to one mapping between irqs, GPIOs, and pinctrl pins with
-this hardware. Furthermore, we have the irq_valid_mask support in
-place already, so it seems that we can at least use the mask to
-be the one place where we indicate which pins are allowed to be
-used. And it seems like the simplest solution is to set the irq
-valid mask to be the GPIOs from the device property and then test
-that bitmask in the pinmux_ops structure's request callback so we
-cover both gpio (via the gpiochip_generic_request() ->
-pinmux_request_gpio() -> pin_request() path) and pinctrl (via the
-pin_request() path). Debugfs will need to test the mask too, but
-that should be simple. I believe you don't care about pin muxing,
-but it would make things work in both cases and will help if we
-want to limit access on platforms that use pin muxing.
+So you want the request callback to propagated to the SOC driver?  I 
+guess that could work.
 
-Let's resolve this by the end of this week. If this plan works we
-can have the revert patch for get_direction() and the
-pinctrl-msm.c patch to update the valid mask on gpiochip
-registration.
+> That way, we don't have to rejig
+> things in the SoC specific driver when the system configuration
+> changes. I'm hoping we can do the valid mask part generically in
+> the core pinctrl-msm.c file once so that things aren't spread
+> around the SoC specific drivers and we solve ACPI and DT at the
+> same time.
+
+Well, now I'm confused.  First I thought you wanted to move the valid 
+check into pinctrl-qdf2xxx, but now you say you want it done in 
+pinctrl-msm, but isn't that what my patches are doing now?
+
+> We will want irq lines to be unallocated for things that aren't
+> GPIOs, I'm not sure about ACPI and if it cares here, and we have
+> a one to one mapping between irqs, GPIOs, and pinctrl pins with
+> this hardware. 
+
+If the pin can't be requested, doesn't that take care of IRQ lines 
+automatically?  I don't touch the irq_valid_mask code.
+
+> Furthermore, we have the irq_valid_mask support in
+> place already, so it seems that we can at least use the mask to
+> be the one place where we indicate which pins are allowed to be
+> used. 
+
+Well, I really didn't want to do that.  Keep in mind that the root 
+problem is getting pinctrl-qdf2xxx to be able to tell pinctrl-msm what 
+pins are valid.  That is the bulk of my code.
+
+I'm understanding you less and less the more I read.
+
+ >And it seems like the simplest solution is to set the irq
+> valid mask to be the GPIOs from the device property and then test
+> that bitmask in the pinmux_ops structure's request callback so we
+> cover both gpio (via the gpiochip_generic_request() ->
+> pinmux_request_gpio() -> pin_request() path) and pinctrl (via the
+> pin_request() path). 
+
+I do not understand that.  To be honest, I think I already have the 
+simplest solution, at least for ACPI.  I don't really want to complicate 
+my patches to support DT, since I don't really know what the DT-specific 
+problems are.
+
+> Debugfs will need to test the mask too, but
+> that should be simple. I believe you don't care about pin muxing,
+> but it would make things work in both cases and will help if we
+> want to limit access on platforms that use pin muxing.
+
+I don't care about pin muxing, but my patches already take care of debugfs.
+
+> Let's resolve this by the end of this week. If this plan works we
+> can have the revert patch for get_direction() and the
+> pinctrl-msm.c patch to update the valid mask on gpiochip
+> registration.
+
+Frankly, I thought I had everything resolved already, and it sounds like 
+you want me to start over from scratch anyway.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
