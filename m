@@ -1,123 +1,60 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH] gpio: reduce descriptor validation code size
-Date: Thu, 21 Dec 2017 01:27:04 +0100
-Message-ID: <20171221002704.20824-1-linux@rasmusvillemoes.dk>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35580 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932178AbdLUA1K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Dec 2017 19:27:10 -0500
-Received: by mail-wr0-f196.google.com with SMTP id l19so11416232wrc.2
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Dec 2017 16:27:09 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new
+ ACPI HID QCOM8002
+Date: Wed, 20 Dec 2017 16:39:47 -0800
+Message-ID: <20171221003947.GJ7997@codeaurora.org>
+References: <1513189818-7384-4-git-send-email-timur@codeaurora.org>
+ <20171213230155.GS7997@codeaurora.org>
+ <6ca3b4a6-90b9-0481-beb8-29a95c86f07c@codeaurora.org>
+ <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org>
+ <20171219023935.GA17456@codeaurora.org>
+ <735d4316-9b18-2903-aabd-46ead1db5233@codeaurora.org>
+ <20171220022626.GH7997@codeaurora.org>
+ <d511f096-bad4-c7b3-d7d4-11b1fa3b1cce@codeaurora.org>
+ <20171220081556.GA30524@codeaurora.org>
+ <a5809701-3f81-3f79-f558-a831ce4091c2@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <a5809701-3f81-3f79-f558-a831ce4091c2@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-While we do need macros to be able to return from the "calling"
-function, we can still factor the checks done by the VALIDATE_DESC*
-macros into a real helper function. This reduces the backslashtitis,
-avoids duplicating the logic in the two macros and saves about 1K of
-generated code:
+On 12/20, Timur Tabi wrote:
+> On 12/20/2017 02:15 AM, Stephen Boyd wrote:
+> >Here's the patch. I get a hang when dumping debugfs, but at least
+> >sysfs expose fails when trying to request blocked gpios. I need
+> >to check if we need to say "yes" to pins that are above the gpio
+> >max for pinctrl. I'll do that tomorrow.
+> 
+> Sorry, I just don't see how this is better than my patches.  I don't
+> understand the need for involving the IRQ valid mask.  I also don't
+> see the value in adding code to look for a property that exists only
+> in one ACPI HID (QCOM8002) as if it were generic.  The "num-gpios"
+> and "gpios" DSDs are not supposed to exist in any other HID, so
+> there should be no code that reads it in pinctrl-msm.
 
-$ scripts/bloat-o-meter drivers/gpio/gpiolib.o.{0,1}
-add/remove: 1/0 grow/shrink: 0/15 up/down: 104/-1281 (-1177)
-Function                                     old     new   delta
-validate_desc                                  -     104    +104
-gpiod_set_value                              192     135     -57
-gpiod_set_raw_value                          125      67     -58
-gpiod_direction_output                       412     351     -61
-gpiod_set_value_cansleep                     150      70     -80
-gpiod_set_raw_value_cansleep                 132      52     -80
-gpiod_get_raw_value                          139      54     -85
-gpiod_set_debounce                           226     140     -86
-gpiod_direction_output_raw                   124      38     -86
-gpiod_get_value                              161      74     -87
-gpiod_cansleep                               126      39     -87
-gpiod_get_raw_value_cansleep                 130      39     -91
-gpiod_get_value_cansleep                     152      59     -93
-gpiod_is_active_low                          128      33     -95
-gpiod_request                                299     184    -115
-gpiod_direction_input                        386     266    -120
-Total: Before=25460, After=24283, chg -4.62%
+I don't see how it hurts to treat it generically. Presumably
+that's the way it will be done on ACPI platforms going forward?
+No need to tie it to some ACPI HID.
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- drivers/gpio/gpiolib.c | 57 ++++++++++++++++++++++++--------------------------
- 1 file changed, 27 insertions(+), 30 deletions(-)
+I'm trying to resolve everything at once: gpios, pinctrl pins,
+and irqs exposed by the TLMM hardware. The value is that we solve
+it all, once, now. The DT binding can also be resolved at the
+same time, so when we need to express this in DT it's already
+done. Otherwise, something can request irqs from the irqdomain
+even if the irq can't be enabled, or it can try to mux the pin to
+some other function, even if the function selection can't be
+configured.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index aad84a6306c4..adbaa19bffe4 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2165,40 +2165,37 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
-  * macro to avoid endless duplication. If the desc is NULL it is an
-  * optional GPIO and calls should just bail out.
-  */
-+static int validate_desc(const struct gpio_desc *desc, const char *func)
-+{
-+	if (!desc)
-+		return 0;
-+	if (IS_ERR(desc)) {
-+		pr_warn("%s: invalid GPIO (errorpointer)\n", func);
-+		return PTR_ERR(desc);
-+	}
-+	if (!desc->gdev) {
-+		pr_warn("%s: invalid GPIO (no device)\n", func);
-+		return -EINVAL;
-+	}
-+	if (!desc->gdev->chip) {
-+		dev_warn(&desc->gdev->dev,
-+			 "%s: backing chip is gone\n", func);
-+		return 0;
-+	}
-+	return 1;
-+}
-+
- #define VALIDATE_DESC(desc) do { \
--	if (!desc) \
--		return 0; \
--	if (IS_ERR(desc)) {						\
--		pr_warn("%s: invalid GPIO (errorpointer)\n", __func__); \
--		return PTR_ERR(desc); \
--	} \
--	if (!desc->gdev) { \
--		pr_warn("%s: invalid GPIO (no device)\n", __func__); \
--		return -EINVAL; \
--	} \
--	if ( !desc->gdev->chip ) { \
--		dev_warn(&desc->gdev->dev, \
--			 "%s: backing chip is gone\n", __func__); \
--		return 0; \
--	} } while (0)
-+	int __valid = validate_desc(desc, __func__); \
-+	if (__valid <= 0) \
-+		return __valid; \
-+	} while (0)
- 
- #define VALIDATE_DESC_VOID(desc) do { \
--	if (!desc) \
--		return; \
--	if (IS_ERR(desc)) {						\
--		pr_warn("%s: invalid GPIO (errorpointer)\n", __func__); \
-+	int __valid = validate_desc(desc, __func__); \
-+	if (__valid <= 0) \
- 		return; \
--	} \
--	if (!desc->gdev) { \
--		pr_warn("%s: invalid GPIO (no device)\n", __func__); \
--		return; \
--	} \
--	if (!desc->gdev->chip) { \
--		dev_warn(&desc->gdev->dev, \
--			 "%s: backing chip is gone\n", __func__); \
--		return; \
--	} } while (0)
--
-+	} while (0)
- 
- int gpiod_request(struct gpio_desc *desc, const char *label)
- {
+Boiling everything down into the irq valid mask should cover all
+these cases, and not require us to strip const from all the data
+in the non-ACPI pinctrl drivers to replace the value in the npins
+field at runtime.
+
 -- 
-2.11.0
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
