@@ -1,32 +1,27 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Vladimir Zapolskiy <vz@mleia.com>
 Subject: Re: [PATCH] gpio: reduce descriptor validation code size
-Date: Thu, 21 Dec 2017 13:53:45 +0100
-Message-ID: <CACRpkdYXi4kq=CXR5ty_diM0mFUFu+czHyp=79W84CFZ7MYoHg@mail.gmail.com>
+Date: Thu, 21 Dec 2017 14:55:06 +0200
+Message-ID: <15498c25-56c6-c914-4cf6-574a45ed696e@mleia.com>
 References: <20171221002704.20824-1-linux@rasmusvillemoes.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34733 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753108AbdLUMxq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Dec 2017 07:53:46 -0500
-Received: by mail-it0-f68.google.com with SMTP id m11so14568739iti.1
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Dec 2017 04:53:46 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171221002704.20824-1-linux@rasmusvillemoes.dk>
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 1:27 AM, Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
+Hello Rasmus,
 
+On 12/21/2017 02:27 AM, Rasmus Villemoes wrote:
 > While we do need macros to be able to return from the "calling"
 > function, we can still factor the checks done by the VALIDATE_DESC*
 > macros into a real helper function. This reduces the backslashtitis,
 > avoids duplicating the logic in the two macros and saves about 1K of
 > generated code:
->
+> 
 > $ scripts/bloat-o-meter drivers/gpio/gpiolib.o.{0,1}
 > add/remove: 1/0 grow/shrink: 0/15 up/down: 104/-1281 (-1177)
 > Function                                     old     new   delta
@@ -47,12 +42,13 @@ On Thu, Dec 21, 2017 at 1:27 AM, Rasmus Villemoes
 > gpiod_request                                299     184    -115
 > gpiod_direction_input                        386     266    -120
 > Total: Before=25460, After=24283, chg -4.62%
->
+> 
 > Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-Excellent patch! Very happy with this.
+The change looks good from my point of view, thank you for the change.
 
-Patch applied, naturally :)
+Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
 
-Yours,
-Linus Walleij
+--
+With best wishes,
+Vladimir
