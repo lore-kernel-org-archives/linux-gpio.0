@@ -1,60 +1,48 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new
- ACPI HID QCOM8002
-Date: Wed, 20 Dec 2017 16:39:47 -0800
-Message-ID: <20171221003947.GJ7997@codeaurora.org>
-References: <1513189818-7384-4-git-send-email-timur@codeaurora.org>
- <20171213230155.GS7997@codeaurora.org>
- <6ca3b4a6-90b9-0481-beb8-29a95c86f07c@codeaurora.org>
- <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org>
- <20171219023935.GA17456@codeaurora.org>
- <735d4316-9b18-2903-aabd-46ead1db5233@codeaurora.org>
- <20171220022626.GH7997@codeaurora.org>
- <d511f096-bad4-c7b3-d7d4-11b1fa3b1cce@codeaurora.org>
- <20171220081556.GA30524@codeaurora.org>
- <a5809701-3f81-3f79-f558-a831ce4091c2@codeaurora.org>
+From: Joel Stanley <joel@jms.id.au>
+Subject: [PATCH] tools/gpio: Fix build error with musl libc
+Date: Thu, 21 Dec 2017 11:11:31 +1030
+Message-ID: <20171221004131.23691-1-joel@jms.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <a5809701-3f81-3f79-f558-a831ce4091c2@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 12/20, Timur Tabi wrote:
-> On 12/20/2017 02:15 AM, Stephen Boyd wrote:
-> >Here's the patch. I get a hang when dumping debugfs, but at least
-> >sysfs expose fails when trying to request blocked gpios. I need
-> >to check if we need to say "yes" to pins that are above the gpio
-> >max for pinctrl. I'll do that tomorrow.
-> 
-> Sorry, I just don't see how this is better than my patches.  I don't
-> understand the need for involving the IRQ valid mask.  I also don't
-> see the value in adding code to look for a property that exists only
-> in one ACPI HID (QCOM8002) as if it were generic.  The "num-gpios"
-> and "gpios" DSDs are not supposed to exist in any other HID, so
-> there should be no code that reads it in pinctrl-msm.
+The GPIO tools build fails when using a buildroot toolchain that uses musl
+as it's C library:
 
-I don't see how it hurts to treat it generically. Presumably
-that's the way it will be done on ACPI platforms going forward?
-No need to tie it to some ACPI HID.
+arm-broomstick-linux-musleabi-gcc -Wp,-MD,./.gpio-event-mon.o.d \
+ -Wp,-MT,gpio-event-mon.o -O2 -Wall -g -D_GNU_SOURCE \
+ -Iinclude -D"BUILD_STR(s)=#s" -c -o gpio-event-mon.o gpio-event-mon.c
+gpio-event-mon.c:30:6: error: unknown type name ‘u_int32_t’; did you mean ‘uint32_t’?
+      u_int32_t handleflags,
+      ^~~~~~~~~
+      uint32_t
 
-I'm trying to resolve everything at once: gpios, pinctrl pins,
-and irqs exposed by the TLMM hardware. The value is that we solve
-it all, once, now. The DT binding can also be resolved at the
-same time, so when we need to express this in DT it's already
-done. Otherwise, something can request irqs from the irqdomain
-even if the irq can't be enabled, or it can try to mux the pin to
-some other function, even if the function selection can't be
-configured.
+The glibc headers installed on my laptop include sys/types.h in
+unistd.h, but it appears that musl does not.
 
-Boiling everything down into the irq valid mask should cover all
-these cases, and not require us to strip const from all the data
-in the non-ACPI pinctrl drivers to replace the value in the npins
-field at runtime.
+Fixes: 97f69747d8b1 ("tools/gpio: add the gpio-event-mon tool")
+Cc: stable@vger.kernel.org
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ tools/gpio/gpio-event-mon.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/tools/gpio/gpio-event-mon.c b/tools/gpio/gpio-event-mon.c
+index 1c14c2595158..4b36323ea64b 100644
+--- a/tools/gpio/gpio-event-mon.c
++++ b/tools/gpio/gpio-event-mon.c
+@@ -23,6 +23,7 @@
+ #include <getopt.h>
+ #include <inttypes.h>
+ #include <sys/ioctl.h>
++#include <sys/types.h>
+ #include <linux/gpio.h>
+ 
+ int monitor_device(const char *device_name,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.1
