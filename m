@@ -1,50 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] [v11] pinctrl: qcom: add support for sparse GPIOs
-Date: Thu, 21 Dec 2017 13:11:13 +0100
-Message-ID: <CACRpkdYtMbACG0D2zjgw-kN_3pb_VDGH_3DDhyMQD92eE5P0Gw@mail.gmail.com>
-References: <1513797033-9494-1-git-send-email-timur@codeaurora.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: pinctrl-amd: What hardware does it apply to?
+Date: Thu, 21 Dec 2017 14:12:56 +0200
+Message-ID: <20171221121256.GY27654@lahna.fi.intel.com>
+References: <6c675643-45ec-c57f-f1b2-afb25f3e947e@opengear.com>
+ <CACRpkdaHj8SFL5AfSkAqDG0mHpgRVbmHuyrhwMUkEH2c4p0VDg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1513797033-9494-1-git-send-email-timur@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>, Andrew Cooks <andrew.cooks@opengear.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:61989 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752007AbdLUMNB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 21 Dec 2017 07:13:01 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaHj8SFL5AfSkAqDG0mHpgRVbmHuyrhwMUkEH2c4p0VDg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Cooks <andrew.cooks@opengear.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Ken Xue <Ken.Xue@amd.com>, Tobias Diedrich <ranma+kernel@tdiedrich.de>, Sudheesh Mavila <sudheesh.mavila@amd.com>, platypus-sw <platypus-sw@opengear.com>, Timur Tabi <timur@codeaurora.org>
 
-Hi Timur,
+On Thu, Dec 21, 2017 at 11:11:18AM +0100, Linus Walleij wrote:
+> > In contrast, the pinctrl-amd driver only mentions the newer KERNCZ platform
+> > name and uses ACPI for probing without disclosing any Family or Model numbers.
+> >
+> > pinctrl-amd applies to "AMD0030" and "AMDI0030"
+> >
+> > The ACPI HID matching makes it difficult to determine what family and model the
+> > driver applies to, or rather, I have not been able to find such a mapping of HIDs
+> > to family and model numbers. It's also impossible to guess an ACPI _HID
+> > that may or may not exist for the Family 16h Model 30h platform and even if I
+> > allocate a new HID for our ACPI implementation, that HID has little hope of
+> > being accepted into the mainline driver.
+> 
+> I didn't understand anything of what you just wrote.
+> I am basically ignorant when it comes to ACPI details.
+> 
+> So let's CC the GPIO ACPI maintainer, Mika Westerberg.
 
-thank you for your perseverance. I am sorry that I am sometimes not
-fast to respond :(
-
-On Wed, Dec 20, 2017 at 8:10 PM, Timur Tabi <timur@codeaurora.org> wrote:
-
-> Patch 1 reverts an old patch that triggers a get_direction of every
-> pin upon init, without attempting to request the pins first.  The
-> direction is already being queried when the pin is requested.
->
-> Patch 2 adds support to pinctrl-msm for "unavailable" GPIOs.
-
-I have applied both of these to the pinctrl "devel" branch so we
-can see if all is fine.
-
-They have Stephen's ACK so I am happy with them, I am just
-still slightly worried about possible regressions because of
-patch 1.
-
-> Patch 3 extends that support to pinctrl-qdf2xxx.  A recent ACPI change
-> on QDF2400 platforms blocks access to most pins, so the driver can only
-> register a subset.
-
-I see this one is still under discussion.
-
-If nothing drastic happens with patch 1/2 in linux-next
-it should be fine if you just resend this single patch in subsequent
-submissions.
-
-I think it may be worthwhile to keep Andrew Cooks in the loop for
-future submissions as he's trying to solve similar problems for
-AMD.
-
-Yours,
-Linus Walleij
+If the hardware is not the same that is already supported by the
+pinctrl-amd, then you definitely should allocate a new separate ACPI
+_HID for it. That's pretty much what we do with every new SoC because
+they typically don't have identical pin lists among other things.
