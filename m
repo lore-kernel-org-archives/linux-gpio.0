@@ -1,62 +1,55 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: pinctrl: mcp23s08: gpio-keys: Unable to get irq number for GPIO
-Date: Thu, 21 Dec 2017 11:20:31 +0800
-Message-ID: <8832ca04-49f6-0714-f629-8eb8e46e3e88@electromag.com.au>
-References: <CALieaeeD6qmZTN6K9nH3C3psXd2r=z+x3k97EDOuAG8ra-AouQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add SATA pins, groups, and functions
+Date: Thu, 21 Dec 2017 10:07:34 +0100
+Message-ID: <CAMuHMdWC9B9YtDzHJ21zLrzMx8JJxUC5q9LRz3c-Kv2y6M+Y9A@mail.gmail.com>
+References: <20171220215922.22473-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy1.45ru.net.au ([203.30.46.145]:53281 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1756134AbdLUDUe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Dec 2017 22:20:34 -0500
-In-Reply-To: <CALieaeeD6qmZTN6K9nH3C3psXd2r=z+x3k97EDOuAG8ra-AouQ@mail.gmail.com>
-Content-Language: en-AU
+Received: from mail-qk0-f182.google.com ([209.85.220.182]:46599 "EHLO
+        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbdLUJHf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Dec 2017 04:07:35 -0500
+In-Reply-To: <20171220215922.22473-1-wsa+renesas@sang-engineering.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Mastykin <mastichi@gmail.com>, linux-gpio@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-G'day Dmitry,
-On 20/12/2017 22:44, Dmitry Mastykin wrote:
-> Hello,
-> 
-> when using gpio-keys with mcp23s08, sometimes it fails to get irq numbers:
-> 
-> [   10.236393] gpiochip_setup_dev: registered GPIOs 504 to 511 on
-> device: gpiochip4 (mcp23008)
-> [   10.242995] of_get_named_gpiod_flags: parsed 'gpios' property of
-> node '/keys/button@1[0]' - status (0)
-> [   10.243759] gpio-keys keys: Unable to get irq number for GPIO 0, error -6
-> 
-> but more often it succeeds (approx. 1:3):
-> 
-> [   10.702204] gpiochip_setup_dev: registered GPIOs 504 to 511 on
-> device: gpiochip4 (mcp23008)
-> [   10.731450] of_get_named_gpiod_flags: parsed 'gpios' property of
-> node '/keys/button@1[0]' - status (0)
-> [   10.803577] of_get_named_gpiod_flags: parsed 'gpios' property of
-> node '/keys/button@2[0]' - status (0)
-> [   10.869131] of_get_named_gpiod_flags: parsed 'gpios' property of
-> node '/keys/button@3[0]' - status (0)
-> [   10.928949] of_get_named_gpiod_flags: parsed 'gpios' property of
-> node '/keys/button@4[0]' - status (0)
-> 
-> Please suggest where could be the problem.
+Hi Wolfram,
 
-I have a pretty similar use mcp deive (serial 16bit) being used for gpio keypad.
-Haven't seen any issues as yet.
+On Wed, Dec 20, 2017 at 10:59 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Tested with a Salvator-XS and H3 ES2.0.
 
-Is the mcp irq setup succeeding, maybe add a log message to mcp23s08_irq_setup()
+Thanks for your patch!
 
-Maybe probe order related and on defer something is not getting cleaned up correctly?
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-One difference is:
-mcp230xx_probe calls i2c_set_clientdata after mcp23s08_probe_one
-mcp23s08_probe calls spi_set_drvdata before mcp23s08_probe_one
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.16.
 
+> Note: To repeat the test you must:
+> a) switch pin7 from SW12 to OFF
 
--- 
-Regards
-Phil Reid
+Funny how the relation of MD12 to SATA is mentioned only in the Salvator-XS
+hardware manual, but not in the R-Car Gen3 User's Manual? Or did I miss it?
 
+> b) set an external GPIO to 0 by using these commands:
+>         i2cset -y 4 0x20 3 0x7f (set pin to output)
+>         i2cset -y 4 0x20 1 0x7f (set pin to 0)
+
+Time to add the PCA9654 to the DTS, so users can use a gpio-hog instead?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
