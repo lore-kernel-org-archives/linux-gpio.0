@@ -1,54 +1,60 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH] gpio: reduce descriptor validation code size
-Date: Thu, 21 Dec 2017 14:55:06 +0200
-Message-ID: <15498c25-56c6-c914-4cf6-574a45ed696e@mleia.com>
-References: <20171221002704.20824-1-linux@rasmusvillemoes.dk>
+From: Christian Lamparter <chunkeey@gmail.com>
+Subject: Re: pinctrl-amd: What hardware does it apply to?
+Date: Thu, 21 Dec 2017 14:02:01 +0100
+Message-ID: <2142688.oNeEzK9Weu@debian64>
+References: <6c675643-45ec-c57f-f1b2-afb25f3e947e@opengear.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171221002704.20824-1-linux@rasmusvillemoes.dk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:42391 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751881AbdLUNCE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Dec 2017 08:02:04 -0500
+In-Reply-To: <6c675643-45ec-c57f-f1b2-afb25f3e947e@opengear.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andrew Cooks <andrew.cooks@opengear.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Ken Xue <Ken.Xue@amd.com>, Tobias Diedrich <ranma+kernel@tdiedrich.de>, Sudheesh Mavila <sudheesh.mavila@amd.com>, platypus-sw <platypus-sw@opengear.com>, alan@mizrahi.com.ve
 
-Hello Rasmus,
-
-On 12/21/2017 02:27 AM, Rasmus Villemoes wrote:
-> While we do need macros to be able to return from the "calling"
-> function, we can still factor the checks done by the VALIDATE_DESC*
-> macros into a real helper function. This reduces the backslashtitis,
-> avoids duplicating the logic in the two macros and saves about 1K of
-> generated code:
+On Thursday, December 21, 2017 8:25:03 AM CET Andrew Cooks wrote:
+> I'm working on gpio for an AMD Family 16h Model 30h system[1]. 
+> The SoC is the same as the GX412-TC used in the PC Engines APU2. 
 > 
-> $ scripts/bloat-o-meter drivers/gpio/gpiolib.o.{0,1}
-> add/remove: 1/0 grow/shrink: 0/15 up/down: 104/-1281 (-1177)
-> Function                                     old     new   delta
-> validate_desc                                  -     104    +104
-> gpiod_set_value                              192     135     -57
-> gpiod_set_raw_value                          125      67     -58
-> gpiod_direction_output                       412     351     -61
-> gpiod_set_value_cansleep                     150      70     -80
-> gpiod_set_raw_value_cansleep                 132      52     -80
-> gpiod_get_raw_value                          139      54     -85
-> gpiod_set_debounce                           226     140     -86
-> gpiod_direction_output_raw                   124      38     -86
-> gpiod_get_value                              161      74     -87
-> gpiod_cansleep                               126      39     -87
-> gpiod_get_raw_value_cansleep                 130      39     -91
-> gpiod_get_value_cansleep                     152      59     -93
-> gpiod_is_active_low                          128      33     -95
-> gpiod_request                                299     184    -115
-> gpiod_direction_input                        386     266    -120
-> Total: Before=25460, After=24283, chg -4.62%
+> There is an out-of-tree gpio driver (gpio-amd) for this SoC in the
+> meta-amd yocto layer[2]. Another driver (gpio-sb8xx) was submitted
+> for upstream inclusion, but was knocked back with the suggestion
+> that pinctrl is the way forward[3].
 > 
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> I would much prefer to use a mainline driver for the system I'm 
+> working on, so I'm looking at the pinctrl-amd driver to see
+> whether it applies to our SoC, or whether it could be extended,
+> or used as starting point for a new driver.
+> 
+> The out-of-tree drivers apply to the GX412-TC SoC and uses PCI
+> for probing:
 
-The change looks good from my point of view, thank you for the change.
+Just a FYI: due to these difficulties with getting a gpio driver
+upstream, Alan Mizrahi upstreamed an in-kernel led-apu.c driver [0]
+that sort of bypasses the whole pinctrl vs gpio issue.
 
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+|#define APU1_FCH_ACPI_MMIO_BASE 0xFED80000
+|#define APU1_FCH_GPIO_BASE      (APU1_FCH_ACPI_MMIO_BASE + 0x01BD)
+|#define APU1_LEDON              0x08
+|#define APU1_LEDOFF             0xC8
+|#define APU1_NUM_GPIO           3
+|#define APU1_IOSIZE             sizeof(u8)
+|
+|#define APU2_FCH_ACPI_MMIO_BASE 0xFED80000
+|#define APU2_FCH_GPIO_BASE      (APU2_FCH_ACPI_MMIO_BASE + 0x1500)
+|#define APU2_GPIO_BIT_WRITE     22
+|#define APU2_APU2_NUM_GPIO      4
+|#define APU2_IOSIZE             sizeof(u32)
 
---
-With best wishes,
-Vladimir
+If you are just after LEDs or gpio-keys you probably can go the same
+route?
+
+Thanks,
+Christian
+
+[0] <https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/leds/leds-apu.c>
