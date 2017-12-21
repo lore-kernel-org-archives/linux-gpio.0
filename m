@@ -1,38 +1,33 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH] gpiolib: add desc validation to gpiod_set_transitory()
-Date: Thu, 21 Dec 2017 18:37:35 +0200
-Message-ID: <20171221163735.6143-1-vz@mleia.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:44570 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752244AbdLUQhi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 21 Dec 2017 11:37:38 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH] gpiolib: Fix typo in comment ("piochip_add_data")
+Date: Thu, 21 Dec 2017 17:56:34 +0100
+Message-ID: <20171221165635.20764-1-j.neuschaefer@gmx.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
 
-The gpiod_set_transitory() function is publicly exported, and
-it is expected from it to be ready for usage with optional GPIOs
-on consumer's side.
-
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 ---
- drivers/gpio/gpiolib.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 6e19385..a34ea9d 100644
+index aad84a6306c4..544efb3bd0a0 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -2546,6 +2546,7 @@ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory)
- 	int gpio;
- 	int rc;
+@@ -1381,7 +1381,7 @@ static int devm_gpio_chip_match(struct device *dev, void *res, void *data)
+ }
  
-+	VALIDATE_DESC(desc);
- 	/*
- 	 * Handle FLAG_TRANSITORY first, enabling queries to gpiolib for
- 	 * persistence state.
+ /**
+- * devm_gpiochip_add_data() - Resource manager piochip_add_data()
++ * devm_gpiochip_add_data() - Resource manager gpiochip_add_data()
+  * @dev: the device pointer on which irq_chip belongs to.
+  * @chip: the chip to register, with chip->base initialized
+  * @data: driver-private data associated with this chip
 -- 
-2.10.2
-
+2.15.0
