@@ -1,107 +1,77 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: pinctrl-amd: What hardware does it apply to?
-Date: Thu, 21 Dec 2017 11:11:18 +0100
-Message-ID: <CACRpkdaHj8SFL5AfSkAqDG0mHpgRVbmHuyrhwMUkEH2c4p0VDg@mail.gmail.com>
-References: <6c675643-45ec-c57f-f1b2-afb25f3e947e@opengear.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add SATA pins, groups, and
+ functions
+Date: Thu, 21 Dec 2017 12:52:37 +0100
+Message-ID: <20171221115237.vy42lxqo2igygbg2@ninjato>
+References: <20171220215922.22473-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWC9B9YtDzHJ21zLrzMx8JJxUC5q9LRz3c-Kv2y6M+Y9A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6c675643-45ec-c57f-f1b2-afb25f3e947e@opengear.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Cooks <andrew.cooks@opengear.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Ken Xue <Ken.Xue@amd.com>, Tobias Diedrich <ranma+kernel@tdiedrich.de>, Sudheesh Mavila <sudheesh.mavila@amd.com>, platypus-sw <platypus-sw@opengear.com>, Timur Tabi <timur@codeaurora.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ulmomr2qqykx76rw"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWC9B9YtDzHJ21zLrzMx8JJxUC5q9LRz3c-Kv2y6M+Y9A@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Andrew!
 
-Thank you for your mail!
+--ulmomr2qqykx76rw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 20, 2017 at 11:25 PM, Andrew Cooks
-<andrew.cooks@opengear.com> wrote:
+Hi Geert,
 
-> I'm working on gpio for an AMD Family 16h Model 30h system[1].
-> The SoC is the same as the GX412-TC used in the PC Engines APU2.
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in sh-pfc-for-v4.16.
 
-OK
+Thanks for the fast review!
 
-> There is an out-of-tree gpio driver (gpio-amd) for this SoC in the meta-amd yocto layer[2].
+>=20
+> > Note: To repeat the test you must:
+> > a) switch pin7 from SW12 to OFF
+>=20
+> Funny how the relation of MD12 to SATA is mentioned only in the Salvator-=
+XS
+> hardware manual, but not in the R-Car Gen3 User's Manual? Or did I miss i=
+t?
 
-That is bad. It needs to be upstream.
+I just followed the XS manual, to be honest.
 
-I have to try very hard to avoid sarcasm about it "seeming like a good idea
-at the time" and silly things like that.
+> > b) set an external GPIO to 0 by using these commands:
+> >         i2cset -y 4 0x20 3 0x7f (set pin to output)
+> >         i2cset -y 4 0x20 1 0x7f (set pin to 0)
+>=20
+> Time to add the PCA9654 to the DTS, so users can use a gpio-hog instead?
 
-What we are seeing is breakage of social norms, in this case,
-upstream first. :(
+Yes, I'll send some patches (with questions) in a minute. Just wanted to
+check if this one is OK.
 
-> Another driver (gpio-sb8xx) was submitted for upstream inclusion, but was
-> knocked back with the suggestion that pinctrl is the way forward[3].
+See you in a minute ;)
 
-Hm I cannot follow link [3] right now. And I don't remember the submission :(
-It doesn't seem to be in my mail archives either.
+   Wolfram
 
-> I would much prefer to use a mainline driver for the system I'm working
-> on, so I'm looking at the pinctrl-amd driver to see whether it applies to our
-> SoC, or whether it could be extended, or used as starting point for a new driver.
 
-This is the right spirit!
+--ulmomr2qqykx76rw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> The out-of-tree drivers apply to the GX412-TC SoC and uses PCI for probing:
->
-> gpio-amd registers a platform driver that applies to { PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_HUDSON2_SMBUS }
-> gpio-sb8xx applies to { PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_HUDSON2_SMBUS } and { PCI_DEVICE(PCI_VENDOR_ID_ATI, PCI_DEVICE_ID_ATI_SBX00_SMBUS }
->
-> These IDs make it easy to cross reference with the datasheet, and keeps the coupling between ACPI and the driver low.
-> These drivers do not provide a mechanism for firmware (ACPI or DT) to specify which gpios are safe to use or how to use them.
+-----BEGIN PGP SIGNATURE-----
 
-The Intel pin control driver has gone to lengths to avoid using unusable
-ACPI-controlled GPIOs. Thought they were mostly concerned with
-GPIOs not available for IRQs. This is what the "valid_mask" in
-struct gpio_irq_chip is for.
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlo7oIEACgkQFA3kzBSg
+KbayyhAAmSQUUHQwhCPlN1jryXmvWsXP+9//hTfSHHplckoxqIQnrMSxgNT5EBPJ
+JzA+rH+Wka49rXhdnkVD7+l+gIqPoJ8j5IQdEQzGqlV5FBhDM0w+ZEjfGyWKXyRL
+Z1ImP7KlxvxM+nVY85iR2/AJNH6R+nznLhxNtGWtRhi5NlZU+s5e1GdO+/HMrygK
+H6I/9BQF0rBNC7AZJ/QvvK8scNgmcaBKNMAi2uty5WNIiPCCVpurweZ/6M1EQbBE
+rCK2x8NgCYtm+yq9Lur5baI4Mhkj/WwCP+OYGcTW5MS+0fe71G0fyKs5Kdf7B/Ab
+xZ53sgAJpSKM1QQq3A2dSnCHeTttRiatK0oEiduVAZxy5Ne//EG/eEnCZ/wnqWXh
+pR34CSrAfv3t0FGswTHeWnbHGHJdOqvs8rYxInYTPWhIE468Rq+MZ4fo+UYLfC9l
+eT62oRfT/HEcmhUd/t4jtg1McbpSo+jCaMhSI93W/BD5cyIfXaUWdM4dEWk0Uon7
+wcxM1odXi3QLK6hhU8l4AL8jJu5m05GIRc37OOa5VjG2bXdrXJ+nF9tPc9cH7p2Y
+jNhyZRuU5kNrAQ+/hjEqE2S5AOGReuCxrxdp+HWqkGmKS9DlIP9C85nIV6TyIQQ4
+AkXVrVFvI4UJ73Hy2MyvN7xKPXQ9sdcvQvcj/+1h3CNrS1D/8Ic=
+=rB3P
+-----END PGP SIGNATURE-----
 
-Timur Tabi from CodeAurora is currently
-floating a patch set that makes it possible to remove entire sets of
-lines as "controlled by someone else" (read: ACPI BIOS).
-This will apply to the whole GPIO chip.
-https://marc.info/?l=linux-gpio&m=151379704013464&w=2
-
-This is however under heavy discussion.
-
-So there is work being done to mask out sets of GPIOs that
-are used by ACPI. (Or secure worlds or whatever.)
-
-> In contrast, the pinctrl-amd driver only mentions the newer KERNCZ platform
-> name and uses ACPI for probing without disclosing any Family or Model numbers.
->
-> pinctrl-amd applies to "AMD0030" and "AMDI0030"
->
-> The ACPI HID matching makes it difficult to determine what family and model the
-> driver applies to, or rather, I have not been able to find such a mapping of HIDs
-> to family and model numbers. It's also impossible to guess an ACPI _HID
-> that may or may not exist for the Family 16h Model 30h platform and even if I
-> allocate a new HID for our ACPI implementation, that HID has little hope of
-> being accepted into the mainline driver.
-
-I didn't understand anything of what you just wrote.
-I am basically ignorant when it comes to ACPI details.
-
-So let's CC the GPIO ACPI maintainer, Mika Westerberg.
-
-> I would like to extend the generically named, but very specifically implemented
-> pinctrl-amd driver to also work on Family 16h, Model 30h (specifically the FT3b
-> package), and I propose to use the PCI_DEVICE_ID_AMD_16H_M30H_NB_F3
-> symbol to probe for the device.
->
-> Does this seem like a sensible way forward?
-
-Sounds good to me.
-
-Any ACPI questions, I hope Mika can help out with.
-
-The AMD folks are sometimes silent, I would say just hack on it so
-we get somewhere with this!
-
-Your effort is appreciated.
-
-Yours,
-Linus Walleij
+--ulmomr2qqykx76rw--
