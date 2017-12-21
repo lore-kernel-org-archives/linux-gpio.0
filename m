@@ -1,37 +1,47 @@
-From: Vasyl Gomonovych <gomonovych@gmail.com>
-Subject: [PATCH] gpio: fix aspeed_gpio_banks array size check
-Date: Thu, 21 Dec 2017 16:55:10 +0100
-Message-ID: <1513871710-13765-1-git-send-email-gomonovych@gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH] gpiolib: don't dereference a desc before validation
+Date: Thu, 21 Dec 2017 18:37:24 +0200
+Message-ID: <20171221163724.6043-1-vz@mleia.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36651 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751608AbdLUPzU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Dec 2017 10:55:20 -0500
+Received: from mleia.com ([178.79.152.223]:44557 "EHLO mail.mleia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751655AbdLUQh2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 21 Dec 2017 11:37:28 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: joel@jms.id.au, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, gomonovych@gmail.com
-Cc: linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-The test should be >= ARRAY_SIZE() instead of > ARRAY_SIZE().
+The fix restores a proper validation of an input gpio desc, which
+might be needed to deal with optional GPIOs correctly.
 
-Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
+Fixes: 02e479808b5d ("gpio: Alter semantics of *raw* operations to actually be raw")
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 ---
- drivers/gpio/gpio-aspeed.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index 6b3ca6601af2..aac532837b81 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -140,7 +140,7 @@ static const struct aspeed_gpio_bank *to_bank(unsigned int offset)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e9ec44f..72577cd 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2457,7 +2457,7 @@ EXPORT_SYMBOL_GPL(gpiod_direction_output_raw);
+  */
+ int gpiod_direction_output(struct gpio_desc *desc, int value)
  {
- 	unsigned int bank = GPIO_BANK(offset);
+-	struct gpio_chip *gc = desc->gdev->chip;
++	struct gpio_chip *gc;
+ 	int ret;
  
--	WARN_ON(bank > ARRAY_SIZE(aspeed_gpio_banks));
-+	WARN_ON(bank >= ARRAY_SIZE(aspeed_gpio_banks));
- 	return &aspeed_gpio_banks[bank];
- }
+ 	VALIDATE_DESC(desc);
+@@ -2474,6 +2474,7 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+ 		return -EIO;
+ 	}
  
++	gc = desc->gdev->chip;
+ 	if (test_bit(FLAG_OPEN_DRAIN, &desc->flags)) {
+ 		/* First see if we can enable open drain in hardware */
+ 		ret = gpio_set_drive_single_ended(gc, gpio_chip_hwgpio(desc),
 -- 
-1.9.1
+2.10.2
 
