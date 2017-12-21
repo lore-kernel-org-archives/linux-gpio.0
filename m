@@ -1,47 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] tools/gpio: Fix build error with musl libc
-Date: Thu, 21 Dec 2017 13:51:39 +0100
-Message-ID: <CACRpkdYuR33EOS+OPDh+fCcdVsa5N3ajsALyaa5PH7z858euvA@mail.gmail.com>
-References: <20171221004131.23691-1-joel@jms.id.au>
+Subject: Re: [PATCH] gpio: reduce descriptor validation code size
+Date: Thu, 21 Dec 2017 13:53:45 +0100
+Message-ID: <CACRpkdYXi4kq=CXR5ty_diM0mFUFu+czHyp=79W84CFZ7MYoHg@mail.gmail.com>
+References: <20171221002704.20824-1-linux@rasmusvillemoes.dk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:37360 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752553AbdLUMvk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Dec 2017 07:51:40 -0500
-Received: by mail-it0-f67.google.com with SMTP id d137so10728347itc.2
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Dec 2017 04:51:40 -0800 (PST)
-In-Reply-To: <20171221004131.23691-1-joel@jms.id.au>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34733 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753108AbdLUMxq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Dec 2017 07:53:46 -0500
+Received: by mail-it0-f68.google.com with SMTP id m11so14568739iti.1
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Dec 2017 04:53:46 -0800 (PST)
+In-Reply-To: <20171221002704.20824-1-linux@rasmusvillemoes.dk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Joel Stanley <joel@jms.id.au>
-Cc: linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Dec 21, 2017 at 1:41 AM, Joel Stanley <joel@jms.id.au> wrote:
+On Thu, Dec 21, 2017 at 1:27 AM, Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
 
-> The GPIO tools build fails when using a buildroot toolchain that uses mus=
-l
-> as it's C library:
+> While we do need macros to be able to return from the "calling"
+> function, we can still factor the checks done by the VALIDATE_DESC*
+> macros into a real helper function. This reduces the backslashtitis,
+> avoids duplicating the logic in the two macros and saves about 1K of
+> generated code:
 >
-> arm-broomstick-linux-musleabi-gcc -Wp,-MD,./.gpio-event-mon.o.d \
->  -Wp,-MT,gpio-event-mon.o -O2 -Wall -g -D_GNU_SOURCE \
->  -Iinclude -D"BUILD_STR(s)=3D#s" -c -o gpio-event-mon.o gpio-event-mon.c
-> gpio-event-mon.c:30:6: error: unknown type name =E2=80=98u_int32_t=E2=80=
-=99; did you mean =E2=80=98uint32_t=E2=80=99?
->       u_int32_t handleflags,
->       ^~~~~~~~~
->       uint32_t
+> $ scripts/bloat-o-meter drivers/gpio/gpiolib.o.{0,1}
+> add/remove: 1/0 grow/shrink: 0/15 up/down: 104/-1281 (-1177)
+> Function                                     old     new   delta
+> validate_desc                                  -     104    +104
+> gpiod_set_value                              192     135     -57
+> gpiod_set_raw_value                          125      67     -58
+> gpiod_direction_output                       412     351     -61
+> gpiod_set_value_cansleep                     150      70     -80
+> gpiod_set_raw_value_cansleep                 132      52     -80
+> gpiod_get_raw_value                          139      54     -85
+> gpiod_set_debounce                           226     140     -86
+> gpiod_direction_output_raw                   124      38     -86
+> gpiod_get_value                              161      74     -87
+> gpiod_cansleep                               126      39     -87
+> gpiod_get_raw_value_cansleep                 130      39     -91
+> gpiod_get_value_cansleep                     152      59     -93
+> gpiod_is_active_low                          128      33     -95
+> gpiod_request                                299     184    -115
+> gpiod_direction_input                        386     266    -120
+> Total: Before=25460, After=24283, chg -4.62%
 >
-> The glibc headers installed on my laptop include sys/types.h in
-> unistd.h, but it appears that musl does not.
->
-> Fixes: 97f69747d8b1 ("tools/gpio: add the gpio-event-mon tool")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-Patch applied.
+Excellent patch! Very happy with this.
+
+Patch applied, naturally :)
 
 Yours,
 Linus Walleij
