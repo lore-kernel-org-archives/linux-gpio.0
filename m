@@ -1,77 +1,50 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add SATA pins, groups, and
- functions
-Date: Thu, 21 Dec 2017 12:52:37 +0100
-Message-ID: <20171221115237.vy42lxqo2igygbg2@ninjato>
-References: <20171220215922.22473-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdWC9B9YtDzHJ21zLrzMx8JJxUC5q9LRz3c-Kv2y6M+Y9A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/3] [v11] pinctrl: qcom: add support for sparse GPIOs
+Date: Thu, 21 Dec 2017 13:11:13 +0100
+Message-ID: <CACRpkdYtMbACG0D2zjgw-kN_3pb_VDGH_3DDhyMQD92eE5P0Gw@mail.gmail.com>
+References: <1513797033-9494-1-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ulmomr2qqykx76rw"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWC9B9YtDzHJ21zLrzMx8JJxUC5q9LRz3c-Kv2y6M+Y9A@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1513797033-9494-1-git-send-email-timur@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>, Andrew Cooks <andrew.cooks@opengear.com>
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Timur,
 
---ulmomr2qqykx76rw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+thank you for your perseverance. I am sorry that I am sometimes not
+fast to respond :(
 
-Hi Geert,
+On Wed, Dec 20, 2017 at 8:10 PM, Timur Tabi <timur@codeaurora.org> wrote:
 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in sh-pfc-for-v4.16.
+> Patch 1 reverts an old patch that triggers a get_direction of every
+> pin upon init, without attempting to request the pins first.  The
+> direction is already being queried when the pin is requested.
+>
+> Patch 2 adds support to pinctrl-msm for "unavailable" GPIOs.
 
-Thanks for the fast review!
+I have applied both of these to the pinctrl "devel" branch so we
+can see if all is fine.
 
->=20
-> > Note: To repeat the test you must:
-> > a) switch pin7 from SW12 to OFF
->=20
-> Funny how the relation of MD12 to SATA is mentioned only in the Salvator-=
-XS
-> hardware manual, but not in the R-Car Gen3 User's Manual? Or did I miss i=
-t?
+They have Stephen's ACK so I am happy with them, I am just
+still slightly worried about possible regressions because of
+patch 1.
 
-I just followed the XS manual, to be honest.
+> Patch 3 extends that support to pinctrl-qdf2xxx.  A recent ACPI change
+> on QDF2400 platforms blocks access to most pins, so the driver can only
+> register a subset.
 
-> > b) set an external GPIO to 0 by using these commands:
-> >         i2cset -y 4 0x20 3 0x7f (set pin to output)
-> >         i2cset -y 4 0x20 1 0x7f (set pin to 0)
->=20
-> Time to add the PCA9654 to the DTS, so users can use a gpio-hog instead?
+I see this one is still under discussion.
 
-Yes, I'll send some patches (with questions) in a minute. Just wanted to
-check if this one is OK.
+If nothing drastic happens with patch 1/2 in linux-next
+it should be fine if you just resend this single patch in subsequent
+submissions.
 
-See you in a minute ;)
+I think it may be worthwhile to keep Andrew Cooks in the loop for
+future submissions as he's trying to solve similar problems for
+AMD.
 
-   Wolfram
-
-
---ulmomr2qqykx76rw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlo7oIEACgkQFA3kzBSg
-KbayyhAAmSQUUHQwhCPlN1jryXmvWsXP+9//hTfSHHplckoxqIQnrMSxgNT5EBPJ
-JzA+rH+Wka49rXhdnkVD7+l+gIqPoJ8j5IQdEQzGqlV5FBhDM0w+ZEjfGyWKXyRL
-Z1ImP7KlxvxM+nVY85iR2/AJNH6R+nznLhxNtGWtRhi5NlZU+s5e1GdO+/HMrygK
-H6I/9BQF0rBNC7AZJ/QvvK8scNgmcaBKNMAi2uty5WNIiPCCVpurweZ/6M1EQbBE
-rCK2x8NgCYtm+yq9Lur5baI4Mhkj/WwCP+OYGcTW5MS+0fe71G0fyKs5Kdf7B/Ab
-xZ53sgAJpSKM1QQq3A2dSnCHeTttRiatK0oEiduVAZxy5Ne//EG/eEnCZ/wnqWXh
-pR34CSrAfv3t0FGswTHeWnbHGHJdOqvs8rYxInYTPWhIE468Rq+MZ4fo+UYLfC9l
-eT62oRfT/HEcmhUd/t4jtg1McbpSo+jCaMhSI93W/BD5cyIfXaUWdM4dEWk0Uon7
-wcxM1odXi3QLK6hhU8l4AL8jJu5m05GIRc37OOa5VjG2bXdrXJ+nF9tPc9cH7p2Y
-jNhyZRuU5kNrAQ+/hjEqE2S5AOGReuCxrxdp+HWqkGmKS9DlIP9C85nIV6TyIQQ4
-AkXVrVFvI4UJ73Hy2MyvN7xKPXQ9sdcvQvcj/+1h3CNrS1D/8Ic=
-=rB3P
------END PGP SIGNATURE-----
-
---ulmomr2qqykx76rw--
+Yours,
+Linus Walleij
