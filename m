@@ -1,55 +1,37 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add SATA pins, groups, and functions
-Date: Thu, 21 Dec 2017 10:07:34 +0100
-Message-ID: <CAMuHMdWC9B9YtDzHJ21zLrzMx8JJxUC5q9LRz3c-Kv2y6M+Y9A@mail.gmail.com>
-References: <20171220215922.22473-1-wsa+renesas@sang-engineering.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] pinctrl/nomadik/abx500: Delete an error message for a
+ failed memory allocation in abx500_gpio_probe()
+Date: Thu, 21 Dec 2017 10:19:55 +0100
+Message-ID: <CACRpkdbk5_NMRBD0DXOY1AF9tSVVqEySaendm4Q7X6UC2FUPQQ@mail.gmail.com>
+References: <e5be1da7-460d-a47d-59b8-c1902907f5a4@users.sourceforge.net> <1fa81c02-0b51-16d1-b713-971f7f44eb31@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:46599 "EHLO
-        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751220AbdLUJHf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Dec 2017 04:07:35 -0500
-In-Reply-To: <20171220215922.22473-1-wsa+renesas@sang-engineering.com>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:46296 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752101AbdLUJT4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Dec 2017 04:19:56 -0500
+Received: by mail-it0-f66.google.com with SMTP id t1so9896761ite.5
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Dec 2017 01:19:56 -0800 (PST)
+In-Reply-To: <1fa81c02-0b51-16d1-b713-971f7f44eb31@users.sourceforge.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Alessandro Rubini <rubini@unipv.it>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Wolfram,
+On Wed, Dec 20, 2017 at 10:51 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-On Wed, Dec 20, 2017 at 10:59 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Tested with a Salvator-XS and H3 ES2.0.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 20 Dec 2017 10:12:56 +0100
+>
+> Omit an extra message for a memory allocation failure in this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Thanks for your patch!
+Patch applied.
 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.16.
-
-> Note: To repeat the test you must:
-> a) switch pin7 from SW12 to OFF
-
-Funny how the relation of MD12 to SATA is mentioned only in the Salvator-XS
-hardware manual, but not in the R-Car Gen3 User's Manual? Or did I miss it?
-
-> b) set an external GPIO to 0 by using these commands:
->         i2cset -y 4 0x20 3 0x7f (set pin to output)
->         i2cset -y 4 0x20 1 0x7f (set pin to 0)
-
-Time to add the PCA9654 to the DTS, so users can use a gpio-hog instead?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
