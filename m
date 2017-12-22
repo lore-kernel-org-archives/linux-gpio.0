@@ -1,48 +1,86 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] gpio: pca953x: add required properties to example in bindings
-Date: Fri, 22 Dec 2017 21:09:00 +0100
-Message-ID: <20171222200900.8367-1-wsa+renesas@sang-engineering.com>
+From: =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>
+Subject: [PATCH] gpio: serial: max310x: Support open-drain configuration for
+ GPIOs
+Date: Fri, 22 Dec 2017 21:29:44 +0100
+Message-ID: <18c9e927d2b75b3325ee3eae7e78319129faa779.1513983040.git.jan.kundrat@cesnet.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58871 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755940AbdLVUJW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 Dec 2017 15:09:22 -0500
+Received: from office2.cesnet.cz ([195.113.144.244]:47088 "EHLO
+        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752207AbdLVW72 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Dec 2017 17:59:28 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Linus Walleij <linus.walleij@linaro.org>
 
-The binding documentation was missing two required properties in the
-example. Fix it and add them also to the list of required properties.
+The push-pull vs. open-drain are the only supported output modes. The
+inputs are always unconditionally equipped with weak pull-downs. That's
+the only mode, so there's probably no point in exporting that. I wonder
+if it's worthwhile to provide a custom dbg_show method to indicate the
+current status of the outputs, though.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This patch and [1] for i2c-gpio together make it possible to bit-bang an
+I2C bus over GPIOs of an UART which is connected via SPI :). Yes, this
+is crazy, but it's fast enough (while on a 26Mhz SPI HW bus with a
+dual-core 1.6GHz CPU) to drive an I2C bus at 200kHz, according to my
+scope.
+
+[1] https://patchwork.ozlabs.org/patch/852591/
+
+Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
 ---
- Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+My suggestion is for this patch to go in via the tty/serial tree; I plan
+to send more patches to this driver (and some of them are alreay in
+tty-next). --jkt
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-index 0d0158728f897b..a3d51e1cafe972 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-@@ -30,6 +30,11 @@ Required properties:
- 	onnn,pca9654
- 	exar,xra1202
+---
+ drivers/tty/serial/max310x.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
+index d0e55f8456a5..c44387d0625a 100644
+--- a/drivers/tty/serial/max310x.c
++++ b/drivers/tty/serial/max310x.c
+@@ -1187,6 +1187,27 @@ static int max310x_gpio_direction_output(struct gpio_chip *chip,
+ 	return 0;
+ }
  
-+- gpio-controller: Marks the device node as a GPIO controller
-+- #gpio-cells: Must be '2':
-+	- First cell is the GPIO line number
-+	- Second cell is for optional parameters (currently unused)
++static int max310x_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
++				   unsigned long config)
++{
++	struct max310x_port *s = gpiochip_get_data(chip);
++	struct uart_port *port = &s->p[offset / 4].port;
 +
- Optional properties:
-  - reset-gpios: GPIO specification for the RESET input. This is an
- 		active low signal to the PCA953x.
-@@ -44,4 +49,6 @@ Example:
- 		pinctrl-0 = <&pinctrl_pca9505>;
- 		interrupt-parent = <&gpio3>;
- 		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
- 	};
++	switch (pinconf_to_config_param(config)) {
++	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
++		max310x_port_update(port, MAX310X_GPIOCFG_REG,
++				1 << ((offset % 4) + 4),
++				1 << ((offset % 4) + 4));
++		return 0;
++	case PIN_CONFIG_DRIVE_PUSH_PULL:
++		max310x_port_update(port, MAX310X_GPIOCFG_REG,
++				1 << ((offset % 4) + 4), 0);
++		return 0;
++	default:
++		return -ENOTSUPP;
++	}
++}
++
+ static void max310x_gpio_irq_mask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+@@ -1426,6 +1447,7 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
+ 	s->gpio.get		= max310x_gpio_get;
+ 	s->gpio.direction_output= max310x_gpio_direction_output;
+ 	s->gpio.set		= max310x_gpio_set;
++	s->gpio.set_config	= max310x_gpio_set_config;
+ 	s->gpio.base		= -1;
+ 	s->gpio.ngpio		= devtype->nr * 4;
+ 	s->gpio.can_sleep	= 1;
 -- 
-2.11.0
+2.14.3
+
 
