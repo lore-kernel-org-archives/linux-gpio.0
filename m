@@ -1,58 +1,86 @@
-From: Andrew Cooks <andrew.cooks@opengear.com>
-Subject: Re: pinctrl-amd: What hardware does it apply to?
-Date: Fri, 22 Dec 2017 11:17:25 +1000
-Message-ID: <5e17a846-b2c6-c078-3d90-bbf19aea2a8a@opengear.com>
-References: <6c675643-45ec-c57f-f1b2-afb25f3e947e@opengear.com>
- <2142688.oNeEzK9Weu@debian64>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new
+ ACPI HID QCOM8002
+Date: Thu, 21 Dec 2017 17:46:33 -0800
+Message-ID: <20171222014633.GD7997@codeaurora.org>
+References: <6ca3b4a6-90b9-0481-beb8-29a95c86f07c@codeaurora.org>
+ <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org>
+ <20171219023935.GA17456@codeaurora.org>
+ <735d4316-9b18-2903-aabd-46ead1db5233@codeaurora.org>
+ <20171220022626.GH7997@codeaurora.org>
+ <d511f096-bad4-c7b3-d7d4-11b1fa3b1cce@codeaurora.org>
+ <20171220081556.GA30524@codeaurora.org>
+ <a5809701-3f81-3f79-f558-a831ce4091c2@codeaurora.org>
+ <20171221003947.GJ7997@codeaurora.org>
+ <38463c81-eeab-85dc-d197-6081ce1d1130@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-co1nam03on0063.outbound.protection.outlook.com ([104.47.40.63]:53374
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752165AbdLVBRn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 21 Dec 2017 20:17:43 -0500
-In-Reply-To: <2142688.oNeEzK9Weu@debian64>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <38463c81-eeab-85dc-d197-6081ce1d1130@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Christian Lamparter <chunkeey@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Ken Xue <Ken.Xue@amd.com>, Tobias Diedrich <ranma+kernel@tdiedrich.de>, Sudheesh Mavila <sudheesh.mavila@amd.com>, platypus-sw <platypus-sw@opengear.com>, alan@mizrahi.com.ve
 
-Hi Christian
-
-On 21/12/17 23:02, Christian Lamparter wrote:
-> On Thursday, December 21, 2017 8:25:03 AM CET Andrew Cooks wrote:
->> I'm working on gpio for an AMD Family 16h Model 30h system[1]. 
->> The SoC is the same as the GX412-TC used in the PC Engines APU2. 
->>
->> There is an out-of-tree gpio driver (gpio-amd) for this SoC in the
->> meta-amd yocto layer[2]. Another driver (gpio-sb8xx) was submitted
->> for upstream inclusion, but was knocked back with the suggestion
->> that pinctrl is the way forward[3].
->>
->> I would much prefer to use a mainline driver for the system I'm 
->> working on, so I'm looking at the pinctrl-amd driver to see
->> whether it applies to our SoC, or whether it could be extended,
->> or used as starting point for a new driver.
->>
->> The out-of-tree drivers apply to the GX412-TC SoC and uses PCI
->> for probing:
+On 12/20, Timur Tabi wrote:
+> On 12/20/17 6:39 PM, Stephen Boyd wrote:
+> >I don't see how it hurts to treat it generically. Presumably
+> >that's the way it will be done on ACPI platforms going forward?
+> >No need to tie it to some ACPI HID.
 > 
-> Just a FYI: due to these difficulties with getting a gpio driver
-> upstream, Alan Mizrahi upstreamed an in-kernel led-apu.c driver [0]
-> that sort of bypasses the whole pinctrl vs gpio issue.
+> But it is tied to a HID.  The "num-gpios" and "gpios" properties
+> belong to a specific HID.  Someone could create a new HID with
+> different properties, and then what?  That's why I want all the ACPI
+> stuff in the client driver.
+> 
+> At this point I don't really care any more about what the patches
+> look like, but I really do think that putting the ACPI code in
+> pinctrl-msm is a bad idea.
+> 
+> We're debating adding support for multiple TLMMs, and we may create
+> a new HID for that, so that we can define all pins on all TLMMs in
+> one device.  We would need to create a new HID and new DSDs to go
+> with it.
 
-Thanks, I saw that and was somewhat surprised to see it accepted.
+Ok. That's testable with acpi_match_device_ids() though. I can
+add that into pinctrl-msm.c so we don't have to pass info about
+available gpios from ACPI specific driver into the pinctrl-msm
+core driver. That's why I'm trying to avoid doing it in the ACPI
+specific driver. Do it close to where the gpiochip is created
+instead.
+
+Maybe future HIDs could follow the DT design and then we can look
+for the same device property name in both firmwares. Parsing
+ranges is simpler.
 
 > 
-> If you are just after LEDs or gpio-keys you probably can go the same
-> route?
+> >I'm trying to resolve everything at once: gpios, pinctrl pins,
+> >and irqs exposed by the TLMM hardware. The value is that we solve
+> >it all, once, now.
+> 
+> Keep in mind that I am now in vacation, and so I won't be able to
+> submit any more patches for a while.
+> 
+> >The DT binding can also be resolved at the
+> >same time, so when we need to express this in DT it's already
+> >done.
+> 
+> Ok.
+> 
+> >Otherwise, something can request irqs from the irqdomain
+> >even if the irq can't be enabled, or it can try to mux the pin to
+> >some other function, even if the function selection can't be
+> >configured.
+> 
+> Is it possible to request an IRQ for a pin if the pin itself can't
+> be requested?
 
-I could. The gpio-amd driver in the meta-amd yocto layer, which is already functional, is another workable alternative. However, I would prefer the more elegant mainline pinctrl solution, if it's attainable.
+I don't see any place blocking GPIOs turning into IRQs once we
+setup the irqdomain with interrupts. Maybe I missed something,
+but I think you can request an IRQ once the domain has the hwirqs
+associated with it. I will test it out.
 
-Thanks
-
-Andrew
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
