@@ -1,88 +1,67 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: pinctrl-amd: What hardware does it apply to?
-Date: Fri, 22 Dec 2017 08:05:41 +0200
-Message-ID: <20171222060541.GY27654@lahna.fi.intel.com>
+Date: Fri, 22 Dec 2017 08:48:22 +0100
+Message-ID: <CACRpkdaSxJLbk_hN0mgURLk4u4ATbE-HvmX1yM+BWjcrzcKjXA@mail.gmail.com>
 References: <6c675643-45ec-c57f-f1b2-afb25f3e947e@opengear.com>
- <CACRpkdaHj8SFL5AfSkAqDG0mHpgRVbmHuyrhwMUkEH2c4p0VDg@mail.gmail.com>
- <20171221121256.GY27654@lahna.fi.intel.com>
- <44f3de2a-4f1b-bc0c-ee5d-3cdf20a766cf@opengear.com>
+ <2142688.oNeEzK9Weu@debian64> <5e17a846-b2c6-c078-3d90-bbf19aea2a8a@opengear.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:55336 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751887AbdLVGFq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 Dec 2017 01:05:46 -0500
-Content-Disposition: inline
-In-Reply-To: <44f3de2a-4f1b-bc0c-ee5d-3cdf20a766cf@opengear.com>
+Received: from mail-io0-f180.google.com ([209.85.223.180]:43092 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751069AbdLVHsY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Dec 2017 02:48:24 -0500
+Received: by mail-io0-f180.google.com with SMTP id k202so15437625ioe.10
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Dec 2017 23:48:24 -0800 (PST)
+In-Reply-To: <5e17a846-b2c6-c078-3d90-bbf19aea2a8a@opengear.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Andrew Cooks <andrew.cooks@opengear.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Ken Xue <Ken.Xue@amd.com>, Tobias Diedrich <ranma+kernel@tdiedrich.de>, Sudheesh Mavila <sudheesh.mavila@amd.com>, platypus-sw <platypus-sw@opengear.com>, Timur Tabi <timur@codeaurora.org>
+Cc: Christian Lamparter <chunkeey@gmail.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Ken Xue <Ken.Xue@amd.com>, Tobias Diedrich <ranma+kernel@tdiedrich.de>, Sudheesh Mavila <sudheesh.mavila@amd.com>, platypus-sw <platypus-sw@opengear.com>, alan@mizrahi.com.ve
 
-On Fri, Dec 22, 2017 at 10:37:32AM +1000, Andrew Cooks wrote:
-> 
-> 
-> On 21/12/17 22:12, Mika Westerberg wrote:
-> > On Thu, Dec 21, 2017 at 11:11:18AM +0100, Linus Walleij wrote:
-> >>> In contrast, the pinctrl-amd driver only mentions the newer KERNCZ platform
-> >>> name and uses ACPI for probing without disclosing any Family or Model numbers.
-> >>>
-> >>> pinctrl-amd applies to "AMD0030" and "AMDI0030"
-> >>>
-> >>> The ACPI HID matching makes it difficult to determine what family and model the
-> >>> driver applies to, or rather, I have not been able to find such a mapping of HIDs
-> >>> to family and model numbers. It's also impossible to guess an ACPI _HID
-> >>> that may or may not exist for the Family 16h Model 30h platform and even if I
-> >>> allocate a new HID for our ACPI implementation, that HID has little hope of
-> >>> being accepted into the mainline driver.
-> >>
-> >> I didn't understand anything of what you just wrote.
-> >> I am basically ignorant when it comes to ACPI details.
-> >>
-> >> So let's CC the GPIO ACPI maintainer, Mika Westerberg.
-> > 
-> > If the hardware is not the same that is already supported by the
-> > pinctrl-amd, then you definitely should allocate a new separate ACPI
-> > _HID for it. That's pretty much what we do with every new SoC because
-> > they typically don't have identical pin lists among other things.
-> > 
-> 
-> Right. I wonder if my reasons for objecting to using ACPI _HID in this
-> way (as the existing drivers do) are being overlooked, or if there's
-> something missing in my understanding.
+On Fri, Dec 22, 2017 at 2:17 AM, Andrew Cooks <andrew.cooks@opengear.com> wrote:
+> On 21/12/17 23:02, Christian Lamparter wrote:
 
-No, we don't object valid ACPI IDs. Where did you learn that?
+>> Just a FYI: due to these difficulties with getting a gpio driver
+>> upstream, Alan Mizrahi upstreamed an in-kernel led-apu.c driver [0]
+>> that sort of bypasses the whole pinctrl vs gpio issue.
+>
+> Thanks, I saw that and was somewhat surprised to see it accepted.
 
-> Given the HID "AMDI0030", it is difficult for anyone besides AMD to
-> determine what SoC that is intended to match. Joe Random Developer
-> would not be able to find the datasheet for the SoC and verify that
-> this driver works correctly, or whether it is used by any firmware at
-> all.
-> 
-> However, my specific problem is the inverse. Given a SoC without
-> vendor-supplied HID or DSDT ASL (ie. I'm writing the DSDT ASL), I
-> don't know what HID to allocate for the driver and DSDT, and I'm too
-> low in the food chain to allocate the one true HID for this SoC that
-> every firmware developer and driver developer should use. This is not
-> a problem for out-of-tree patches, but it blocks me from contributing
-> usable support for a new SoC.
+I looked at the driver and it seems actually good and doing the
+right thing. If I understand it right:
 
-I think there is a process that allows you to allocate _HID for your
-device buried somewhere in UEFI forums.
+- It does a bunch of magic dmi_match() on DMI_BOARD_NAME
+  to figure out what board this is.
 
-There is also PRP0001 _HID that can be used with Device Tree compatible
-devices (see Documentation/acpi/enumeration.txt that allows you to use
-DT compatible string instead.
+- It then proceeds to register LEDs using some bits in the MMIO
+  area that are used for LEDs.
 
-> So my objection is that the coupling between the driver and ACPI
-> firmware, caused by these special HID strings, is both unnecessary and
-> disempowering. If an appropriate ID register exists in the MMIO space,
-> I think that would solve this issue.
+So these bits/lines are actually not GPIO, since GPIO means
+"general purpose input/output" - they are specific purpose and the
+specific purpose can be detected.
 
-Well, in order to access the MMIO your device needs to be enumerated by
-the kernel. In order to load a driver for the device you need to
-have some sort of identifier for the thing. Yes, you can also create
-a "board file" that has this information and then creates platform
-device for your driver but that sort of things we try to avoid by using
-firmware to describe devices.
+So I don't have any objections from an architectural point of view.
+
+Some may expose the register as GPIO and add LEDs on top but
+it (using drivers/leds/leds-gpio.c) but that may be pointless extra
+abstraction.
+
+It has a deeper problem though. It is writing these GPIO registers
+without any thought of someone else possibly accessing them and
+without any shared locks.
+
+This problem is usually solved by either using GPIO inbetween if
+the GPIO driver takes care of protecting the register, or using
+regmap, preferably with drivers/mfd/syscon.c, so that regmap will
+protect the MMIO register.
+
+So there may be technical reasons to use GPIO or syscon abstractions
+that are not architectural reasons if you see what I mean.
+
+If only these few GPIO lines are actually used and only used for
+these LEDs, (the rest of the bits in the register unused) then this
+driver is as good as any.
+
+Yours,
+Linus Walleij
