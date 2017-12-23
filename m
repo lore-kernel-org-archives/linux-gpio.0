@@ -1,45 +1,38 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] pinctrl: palmas: Delete an error message for a failed memory
- allocation in palmas_pinctrl_probe()
-Date: Sat, 23 Dec 2017 21:30:04 +0100
-Message-ID: <acda9837-523a-2f49-f7ba-b5e60eb8371e@users.sourceforge.net>
+Subject: [PATCH 0/3] Pinctrl-Rockchip: Adjustments for six functions
+Date: Sat, 23 Dec 2017 22:36:56 +0100
+Message-ID: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@nvidia.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 23 Dec 2017 21:16:42 +0100
+Date: Sat, 23 Dec 2017 22:33:44 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+Three update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Delete error messages for a failed memory allocation in two functions
+  Improve a size determination in rockchip_pinctrl_probe()
+  Fix a typo in four comment lines
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pinctrl/pinctrl-palmas.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-palmas.c b/drivers/pinctrl/pinctrl-palmas.c
-index 4d6a5015b927..d42f18cb1bc7 100644
---- a/drivers/pinctrl/pinctrl-palmas.c
-+++ b/drivers/pinctrl/pinctrl-palmas.c
-@@ -1012,10 +1012,8 @@ static int palmas_pinctrl_probe(struct platform_device *pdev)
- 	}
- 
- 	pci = devm_kzalloc(&pdev->dev, sizeof(*pci), GFP_KERNEL);
--	if (!pci) {
--		dev_err(&pdev->dev, "Malloc for pci failed\n");
-+	if (!pci)
- 		return -ENOMEM;
--	}
- 
- 	pci->dev = &pdev->dev;
- 	pci->palmas = dev_get_drvdata(pdev->dev.parent);
 -- 
 2.15.1
