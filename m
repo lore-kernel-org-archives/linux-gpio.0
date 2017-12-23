@@ -1,44 +1,45 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH V2] gpio: of: make example syntactically correct
-Date: Sat, 23 Dec 2017 21:06:41 +0100
-Message-ID: <20171223200641.3709-1-wsa+renesas@sang-engineering.com>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] pinctrl: palmas: Delete an error message for a failed memory
+ allocation in palmas_pinctrl_probe()
+Date: Sat, 23 Dec 2017 21:30:04 +0100
+Message-ID: <acda9837-523a-2f49-f7ba-b5e60eb8371e@users.sourceforge.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@nvidia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The ';' was missing. And cosmetic: there was a space too much.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 23 Dec 2017 21:16:42 +0100
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Omit an extra message for a memory allocation failure in this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ drivers/pinctrl/pinctrl-palmas.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Changes since V1:
-* removed extra spaces (Thanks Sergei!)
-
- Documentation/devicetree/bindings/gpio/gpio.txt | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-index 802402f6cc5d89..bc5fe95d33fff0 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -33,12 +33,12 @@ The following example could be used to describe GPIO pins used as device enable
- and bit-banged data signals:
+diff --git a/drivers/pinctrl/pinctrl-palmas.c b/drivers/pinctrl/pinctrl-palmas.c
+index 4d6a5015b927..d42f18cb1bc7 100644
+--- a/drivers/pinctrl/pinctrl-palmas.c
++++ b/drivers/pinctrl/pinctrl-palmas.c
+@@ -1012,10 +1012,8 @@ static int palmas_pinctrl_probe(struct platform_device *pdev)
+ 	}
  
- 	gpio1: gpio1 {
--		gpio-controller
--		 #gpio-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
- 	};
- 	gpio2: gpio2 {
--		gpio-controller
--		 #gpio-cells = <1>;
-+		gpio-controller;
-+		#gpio-cells = <1>;
- 	};
- 	[...]
+ 	pci = devm_kzalloc(&pdev->dev, sizeof(*pci), GFP_KERNEL);
+-	if (!pci) {
+-		dev_err(&pdev->dev, "Malloc for pci failed\n");
++	if (!pci)
+ 		return -ENOMEM;
+-	}
  
+ 	pci->dev = &pdev->dev;
+ 	pci->palmas = dev_get_drvdata(pdev->dev.parent);
 -- 
-2.11.0
+2.15.1
