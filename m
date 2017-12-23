@@ -1,86 +1,58 @@
-From: =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>
-Subject: [PATCH] gpio: serial: max310x: Support open-drain configuration for
- GPIOs
-Date: Fri, 22 Dec 2017 21:29:44 +0100
-Message-ID: <18c9e927d2b75b3325ee3eae7e78319129faa779.1513983040.git.jan.kundrat@cesnet.cz>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] gpio: of: make example syntactically correct
+Date: Sat, 23 Dec 2017 13:06:47 +0300
+Message-ID: <a3e5175c-5a93-21e3-21e6-4df360bdc390@cogentembedded.com>
+References: <20171222200840.8317-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from office2.cesnet.cz ([195.113.144.244]:47088 "EHLO
-        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752207AbdLVW72 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Dec 2017 17:59:28 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44011 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750713AbdLWKGt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Dec 2017 05:06:49 -0500
+Received: by mail-lf0-f66.google.com with SMTP id o26so19606261lfc.10
+        for <linux-gpio@vger.kernel.org>; Sat, 23 Dec 2017 02:06:49 -0800 (PST)
+In-Reply-To: <20171222200840.8317-1-wsa+renesas@sang-engineering.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Linus Walleij <linus.walleij@linaro.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-The push-pull vs. open-drain are the only supported output modes. The
-inputs are always unconditionally equipped with weak pull-downs. That's
-the only mode, so there's probably no point in exporting that. I wonder
-if it's worthwhile to provide a custom dbg_show method to indicate the
-current status of the outputs, though.
+Hello!
 
-This patch and [1] for i2c-gpio together make it possible to bit-bang an
-I2C bus over GPIOs of an UART which is connected via SPI :). Yes, this
-is crazy, but it's fast enough (while on a 26Mhz SPI HW bus with a
-dual-core 1.6GHz CPU) to drive an I2C bus at 200kHz, according to my
-scope.
+On 12/22/2017 11:08 PM, Wolfram Sang wrote:
 
-[1] https://patchwork.ozlabs.org/patch/852591/
+> The ';' was missing.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>   Documentation/devicetree/bindings/gpio/gpio.txt | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+> index 802402f6cc5d89..53e0a0e01a4ee0 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -33,11 +33,11 @@ The following example could be used to describe GPIO pins used as device enable
+>   and bit-banged data signals:
+>   
+>   	gpio1: gpio1 {
+> -		gpio-controller
+> +		gpio-controller;
+>   		 #gpio-cells = <2>;
 
-Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
----
-My suggestion is for this patch to go in via the tty/serial tree; I plan
-to send more patches to this driver (and some of them are alreay in
-tty-next). --jkt
+    Could as well remove extra space on this line...
 
----
- drivers/tty/serial/max310x.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+>   	};
+>   	gpio2: gpio2 {
+> -		gpio-controller
+> +		gpio-controller;
+>   		 #gpio-cells = <1>;
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index d0e55f8456a5..c44387d0625a 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -1187,6 +1187,27 @@ static int max310x_gpio_direction_output(struct gpio_chip *chip,
- 	return 0;
- }
- 
-+static int max310x_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
-+				   unsigned long config)
-+{
-+	struct max310x_port *s = gpiochip_get_data(chip);
-+	struct uart_port *port = &s->p[offset / 4].port;
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		max310x_port_update(port, MAX310X_GPIOCFG_REG,
-+				1 << ((offset % 4) + 4),
-+				1 << ((offset % 4) + 4));
-+		return 0;
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		max310x_port_update(port, MAX310X_GPIOCFG_REG,
-+				1 << ((offset % 4) + 4), 0);
-+		return 0;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+}
-+
- static void max310x_gpio_irq_mask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-@@ -1426,6 +1447,7 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
- 	s->gpio.get		= max310x_gpio_get;
- 	s->gpio.direction_output= max310x_gpio_direction_output;
- 	s->gpio.set		= max310x_gpio_set;
-+	s->gpio.set_config	= max310x_gpio_set_config;
- 	s->gpio.base		= -1;
- 	s->gpio.ngpio		= devtype->nr * 4;
- 	s->gpio.can_sleep	= 1;
--- 
-2.14.3
+    ... and this.
 
+[...]
 
+MBR, Sergei
