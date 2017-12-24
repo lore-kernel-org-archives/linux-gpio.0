@@ -1,137 +1,59 @@
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: [PATCH/RFT v2] gpio: gpio-rcar: Support S2RAM
-Date: Sun, 24 Dec 2017 22:37:23 +0900
-Message-ID: <1514122643-28838-1-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio: gpio-reg: fix build
+Date: Sun, 24 Dec 2017 16:49:39 +0100
+Message-ID: <CAMuHMdWuHsM2TQaTsK4=XTq-Q1ea7CaNEMhWzDgt_ppqssxYpQ@mail.gmail.com>
+References: <20171206173745.19853-1-grygorii.strashko@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41541 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751680AbdLXNiJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Dec 2017 08:38:09 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:42641 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbdLXPtk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Dec 2017 10:49:40 -0500
+In-Reply-To: <20171206173745.19853-1-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Russell King - ARM Linux <linux@armlinux.org.uk>
 
-From: Hien Dang <hien.dang.eb@renesas.com>
+Hi Grygorii,
 
-This patch adds an implementation that saves and restores the state of
-GPIO configuration on suspend and resume.
+On Wed, Dec 6, 2017 at 6:37 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> Revert changes introduced by commit f0fbe7bce733 ("gpio: Move irqdomain
+> into struct gpio_irq_chip") as they are not aplicable to this driver.
+>
+> Cc: Russell King - ARM Linux <linux@armlinux.org.uk>
+> Fixes: f0fbe7bce733 ("gpio: Move irqdomain into struct gpio_irq_chip")
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+> Sorry, for inconvenience, but this driver has no users in lkml and
+> it can't be enabled through defconfig - only selected, so builds can't
+> be verified in standard way.
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Modify structure of the bank info to simplify a saving registers]
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
+Seems like we need:
 
-This patch is based on the for-next branch of linux-gpio tree.
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -392,7 +392,7 @@ config GPIO_RCAR
+          Say yes here to support GPIO on Renesas R-Car SoCs.
 
-v2 [Yoshihiro Kaneko]
-* Modify structure of the bank info as suggested by Geert Uytterhoeven
+ config GPIO_REG
+-       bool
++       bool "32-bit single register GPIO fixed in/out support" if COMPILE_TEST
+        help
+          A 32-bit single register GPIO fixed in/out implementation.  This
+          can be used to represent any register as a set of GPIO signals.
 
- drivers/gpio/gpio-rcar.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
+Any dependencies to be added?
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index e76de57..7c7360b 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -31,6 +31,16 @@
- #include <linux/spinlock.h>
- #include <linux/slab.h>
- 
-+struct gpio_rcar_bank_info {
-+	u32 iointsel;
-+	u32 inoutsel;
-+	u32 outdt;
-+	u32 active_high_rising_edge;
-+	u32 level_trigger;
-+	u32 both;
-+	u32 intmsk;
-+};
-+
- struct gpio_rcar_priv {
- 	void __iomem *base;
- 	spinlock_t lock;
-@@ -41,6 +51,7 @@ struct gpio_rcar_priv {
- 	unsigned int irq_parent;
- 	bool has_both_edge_trigger;
- 	bool needs_clk;
-+	struct gpio_rcar_bank_info bank_info;
- };
- 
- #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
-@@ -415,6 +426,63 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int gpio_rcar_suspend(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+
-+	p->bank_info.iointsel = gpio_rcar_read(p, IOINTSEL);
-+	p->bank_info.inoutsel = gpio_rcar_read(p, INOUTSEL);
-+	p->bank_info.outdt = gpio_rcar_read(p, OUTDT);
-+	p->bank_info.intmsk = gpio_rcar_read(p, INTMSK);
-+	p->bank_info.active_high_rising_edge = gpio_rcar_read(p, POSNEG);
-+	p->bank_info.level_trigger = gpio_rcar_read(p, EDGLEVEL);
-+	p->bank_info.both = gpio_rcar_read(p, BOTHEDGE);
-+
-+	return 0;
-+}
-+
-+static int gpio_rcar_resume(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+	int offset;
-+	u32 mask;
-+
-+	for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
-+		mask = BIT(offset);
-+		/* I/O pin */
-+		if (!(p->bank_info.iointsel & mask)) {
-+			if (p->bank_info.inoutsel & mask)
-+				gpio_rcar_direction_output(
-+					&p->gpio_chip, offset,
-+					!!(p->bank_info.outdt & mask));
-+			else
-+				gpio_rcar_direction_input(&p->gpio_chip,
-+							  offset);
-+		/* Interrupt pin */
-+		} else {
-+			gpio_rcar_config_interrupt_input_mode(
-+				p,
-+				offset,
-+				!(p->bank_info.active_high_rising_edge & mask),
-+				!!(p->bank_info.level_trigger & mask),
-+				!!(p->bank_info.both & mask));
-+
-+			if (p->bank_info.intmsk & mask)
-+				gpio_rcar_write(p, MSKCLR, mask);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops,
-+		gpio_rcar_suspend, gpio_rcar_resume);
-+#define DEV_PM_OPS (&gpio_rcar_pm_ops)
-+#else
-+#define DEV_PM_OPS NULL
-+#endif /* CONFIG_PM_SLEEP*/
-+
- static int gpio_rcar_probe(struct platform_device *pdev)
- {
- 	struct gpio_rcar_priv *p;
-@@ -536,6 +604,7 @@ static int gpio_rcar_remove(struct platform_device *pdev)
- 	.remove		= gpio_rcar_remove,
- 	.driver		= {
- 		.name	= "gpio_rcar",
-+		.pm     = DEV_PM_OPS,
- 		.of_match_table = of_match_ptr(gpio_rcar_of_table),
- 	}
- };
--- 
-1.9.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
