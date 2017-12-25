@@ -1,315 +1,84 @@
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: Re: [PATCH v2] gpio: winbond: add driver
-Date: Mon, 25 Dec 2017 01:00:00 +0100
-Message-ID: <f3ebd850-c301-2adb-95e7-3a1f37c2259c@maciej.szmigiero.name>
-References: <309acd17-5244-da8c-a28e-dace15ada4fb@maciej.szmigiero.name>
- <20171224224215.GA2372@sophia>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Subject: Re: [PATCH v3 00/27] kill devm_ioremap_nocache
+Date: Mon, 25 Dec 2017 09:09:10 +0800
+Message-ID: <6c0ade63-f4d3-d44d-c622-b091eb2ba902@huawei.com>
+References: <1514026525-32538-1-git-send-email-xieyisheng1@huawei.com>
+ <20171223134831.GB10103@kroah.com>
+ <f7632cf5-2bcc-4d74-b912-3999937a1269@roeck-us.net>
+ <c28ac0bc-8bd2-3dce-3167-8c0f80ec601e@c-s.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vps-vb.mhejs.net ([37.28.154.113]:39408 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751265AbdLYAAF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 24 Dec 2017 19:00:05 -0500
-In-Reply-To: <20171224224215.GA2372@sophia>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <c28ac0bc-8bd2-3dce-3167-8c0f80ec601e@c-s.fr>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: christophe leroy <christophe.leroy@c-s.fr>, Guenter Roeck <linux@roeck-us.net>, Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-mips@linux-mips.org, ulf.hansson@linaro.org, jakub.kicinski@netronome.com, platform-driver-x86@vger.kernel.org, airlied@linux.ie, linux-wireless@vger.kernel.org, linus.walleij@linaro.org, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org, daniel.vetter@intel.com, dan.j.williams@intel.com, jason@lakedaemon.net, linux-rtc@vger.kernel.org, boris.brezillon@free-electrons.com, mchehab@kernel.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, richard@nod.at, marek.vasut@gmail.com, industrypack-devel@lists.sourceforge.net, linux-pci@vger.kernel.org, dvhart@infradead.org, wg@grandegger.com, linux-media@vger.kernel.org, seanpaul@chromium.org, devel@driverdev.osuosl.org, linux-watchdog@vger.kernel.org, arnd@arndb.de, b.zolnierkie@samsung.com, marc.zyngier@arm.com, jslaby@sus
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 
-On 24.12.2017 23:42, William Breathitt Gray wrote:
-> On Fri, Dec 22, 2017 at 07:58:49PM +0100, Maciej S. Szmigiero wrote:
->> This commit adds GPIO driver for Winbond Super I/Os.
->>
->> Currently, only W83627UHG model (also known as Nuvoton NCT6627UD) is
->> supported but in the future a support for other Winbond models, too, can
->> be added to the driver.
->>
->> A module parameter "gpios" sets a bitmask of GPIO ports to enable (bit 0 is
->> GPIO1, bit 1 is GPIO2, etc.).
->> One should be careful which ports one tinkers with since some might be
->> managed by the firmware (for functions like powering on and off, sleeping,
->> BIOS recovery, etc.) and some of GPIO port pins are physically shared with
->> other devices included in the Super I/O chip.
->>
->> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
->> ---
->> Changes from v1:
-(..)
->>
->> Didn't change "linux/errno.h" and "linux/gpio.h" includes to
->> "linux/driver.h" since there is no such file in the current linux-gpio
->> tree and so the driver would not compile with this change.
->> Other GPIO drivers are using these former two include files, too.
-
-Hi William,
-
-> 
-> Hi Maciej,
-> 
-> Sorry for the late response; it looks like you already made it to
-> version 2 of this patch from Linus' initial review. I'll leave the GPIO
-> subsystem related code to him, and stick to the ISA bus style LPC
-> interface communication in my review. ;)
-> 
-> First a quick clarification: I suspect Linus meant to suggest
-> 
->     +#include <linux/gpio/driver.h>
-> 
-> as an alternative to the "linux/errno.h" and "linux/gpio.h" includes.
-
-Thanks for your overall input and clarification, will change these
-headers to "linux/gpio/driver.h" in a respin.
-
-(..)
->> diff --git a/drivers/gpio/gpio-winbond.c b/drivers/gpio/gpio-winbond.c
->> new file mode 100644
->> index 000000000000..385855fb6c9e
->> --- /dev/null
->> +++ b/drivers/gpio/gpio-winbond.c
->> @@ -0,0 +1,758 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * GPIO interface for Winbond Super I/O chips
->> + * Currently, only W83627UHG (Nuvoton NCT6627UD) is supported.
->> + *
->> + * Author: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
->> + */
->> +
->> +#include <linux/errno.h>
->> +#include <linux/gpio.h>
->> +#include <linux/ioport.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
-> 
-> I suggest taking a look at the "linux/isa.h" file. For ISA-style
-> communication such as you would have for LPC interface device, the ISA
-> subsystem can be more practical to utilize than creating a platform
-> device.
-> 
-> The 104-IDIO-16 GPIO driver can serve as a good template for ISA-style
-> drivers; you can find it at drivers/gpio/gpio-104-idio-16.c
-
-OK, will convert the driver to use the ISA instead of platform bus.
-
-(..)
->> +static struct platform_device *winbond_gpio_pdev;
->> +
->> +/* probes chip at provided I/O base address, initializes and registers it */
->> +static int winbond_gpio_try_probe_init(u16 base)
->> +{
->> +	u16 chip;
->> +	int ret;
->> +
->> +	ret = winbond_sio_enter(base);
->> +	if (ret)
->> +		return ret;
->> +
->> +	chip = winbond_sio_reg_read(base, WB_SIO_REG_CHIP_MSB) << 8;
->> +	chip |= winbond_sio_reg_read(base, WB_SIO_REG_CHIP_LSB);
->> +
->> +	pr_notice(WB_GPIO_DRIVER_NAME
->> +		  ": chip ID at %hx is %.4x\n",
->> +		  (unsigned int)base,
->> +		  (unsigned int)chip);
->> +
->> +	if ((chip & WB_SIO_CHIP_ID_W83627UHG_MASK) !=
->> +	    WB_SIO_CHIP_ID_W83627UHG) {
->> +		pr_err(WB_GPIO_DRIVER_NAME
->> +		       ": not an our chip\n");
->> +		winbond_sio_leave(base);
->> +		return -ENODEV;
->> +	}
->> +
->> +	ret = winbond_gpio_configure(base);
->> +
->> +	winbond_sio_leave(base);
->> +
->> +	if (ret)
->> +		return ret;
->> +
->> +	winbond_gpio_pdev = platform_device_alloc(WB_GPIO_DRIVER_NAME, -1);
->> +	if (winbond_gpio_pdev == NULL)
->> +		return -ENOMEM;
->> +
->> +	ret = platform_device_add_data(winbond_gpio_pdev,
->> +				       &base, sizeof(base));
->> +	if (ret) {
->> +		pr_err(WB_GPIO_DRIVER_NAME
->> +		       ": cannot add platform data\n");
->> +		goto ret_put;
->> +	}
->> +
->> +	ret = platform_device_add(winbond_gpio_pdev);
->> +	if (ret) {
->> +		pr_err(WB_GPIO_DRIVER_NAME
->> +		       ": cannot add platform device\n");
->> +		goto ret_put;
->> +	}
-> 
-> These platform_device functions can all go away if you take advantage of
-> the ISA subsystem; the ISA driver handles multiple device allocations
-> for you, and feeds each new device structure to the registered probe
-> callback you set.
-
-OK, I see (although the driver supports just one chip per system since
-motherboards don't have multiple Super I/O chips).
-
-> 
-> By the way Linus, this is the ISA bus equivalent of an "autodetect" you
-> were hoping for in your version 1 responses. It is not a true autodetect
-> in the sense that hardware does not determine the device, but rather the
-> ISA subsystem fakes detection of the devices to feed to the probe
-> callback so that the subsequent driver code fits the device driver model
-> closer to how other subsystems expect it; thus the difference between an
-> ISA and PCI device are abstracted away by their respective ISA and PCI
-> bus drivers.
-
-OK.
-
->> +
->> +	return 0;
->> +
->> +ret_put:
->> +	platform_device_put(winbond_gpio_pdev);
->> +	winbond_gpio_pdev = NULL;
->> +
->> +	return ret;
->> +}
->> +
->> +static struct platform_driver winbond_gpio_pdriver = {
->> +	.driver = {
->> +		.name	= WB_GPIO_DRIVER_NAME,
->> +	},
->> +	.probe		= winbond_gpio_probe,
->> +};
-> 
-> Reimplement this as a struct isa_driver with respective probe callback.
-
-OK.
-
->> +
->> +static int __init winbond_gpio_mod_init(void)
->> +{
->> +	int ret;
->> +
->> +	if (ppgpios & odgpios) {
->> +		pr_err(WB_GPIO_DRIVER_NAME
->> +			": some GPIO ports are set both to push-pull and open drain mode at the same time\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	ret = platform_driver_register(&winbond_gpio_pdriver);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = winbond_gpio_try_probe_init(WB_SIO_BASE);
->> +	if (ret == -ENODEV || ret == -EBUSY)
->> +		ret = winbond_gpio_try_probe_init(WB_SIO_BASE_HIGH);
->> +	if (ret)
->> +		goto ret_unreg;
->> +
->> +	return 0;
->> +
->> +ret_unreg:
->> +	platform_driver_unregister(&winbond_gpio_pdriver);
->> +
->> +	return ret;
->> +}
->> +
->> +static void __exit winbond_gpio_mod_exit(void)
->> +{
->> +	platform_device_unregister(winbond_gpio_pdev);
->> +	platform_driver_unregister(&winbond_gpio_pdriver);
->> +}
->> +
->> +module_init(winbond_gpio_mod_init);
->> +module_exit(winbond_gpio_mod_exit);
-> 
-> The winbond_gpio_mod_init and winbond_gpio_mod_exit functions can be
-> entirely removed as the ISA bus driver handles this for you. Replace the
-> module_init and module_exit macros with simply a module_isa_driver
-> macro.
-
-OK.
-
-> The winbond_gpio_try_probe_init function call should now be moved to the
-> probe callback.
-> 
-> I see that you have a hard-coded WB_SIO_BASE I/O port address. Rather, I
-> would suggest implementing a "base" module parameter array similar to
-> the 104-IDIO-16 driver; this will match the current convention used by
-> ISA-style drivers (I know in this case we only have one device, but it's
-> good to follow convention for other users familar with the ISA
-> subsystem).
->
-> For reference, when I want to load the 104-IDIO-16 GPIO driver to handle
-> 2 distinct 104-idio-16 devices (one located at 0x200 and the other at
-> 0x300) on my system, I do something like the following:
-> 
->     # modprobe gpio-104-idio-16 base=0x200,0x300 irq=3,5
-> 
-> Your Winbond driver will only have the "base" module parameter, but you
-> get the idea: the user can pass in the base address for each specific
-> device.
-
-The device has just two hardcoded I/O port addresses, so 99% of users
-would probably want the driver to probe these two addresses
-automatically without them needing to provide the base address
-explicitly.
-
-However, I can add the "base" module parameter as an override - the
-driver then will simply use it if it is provided, otherwise will try
-the hardcoded addresses.
-
-> By the way, don't hesitate to ask for more information on the ISA
-> subsystem -- a lot of maintainers are unaware that it even exists since
-> so few devices nowadays use ISA-style communication -- but I'm always
-> happy to help. :)
-
-Okay, thanks.
-
-> William Breathitt Gray
-
-Best regards,
-Maciej Szmigiero
- 
->> +
->> +/* This parameter sets which GPIO devices (ports) we enable */
->> +module_param(gpios, byte, 0444);
->> +MODULE_PARM_DESC(gpios,
->> +		 "bitmask of GPIO ports to enable (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
->> +
->> +/*
->> + * These two parameters below set how we configure GPIO ports output drivers.
->> + * It can't be a one bitmask since we need three values per port: push-pull,
->> + * open-drain and keep as-is (this is the default).
->> + */
->> +module_param(ppgpios, byte, 0444);
->> +MODULE_PARM_DESC(ppgpios,
->> +		 "bitmask of GPIO ports to set to push-pull mode (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
->> +
->> +module_param(odgpios, byte, 0444);
->> +MODULE_PARM_DESC(odgpios,
->> +		 "bitmask of GPIO ports to set to open drain mode (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
->> +
->> +/*
->> + * GPIO2.0 and GPIO2.1 control a basic PC functionality that we
->> + * don't allow tinkering with by default (it is very likely that the
->> + * firmware owns these pins).
->> + * These two parameters below allow overriding these prohibitions.
->> + */
->> +module_param(pledgpio, bool, 0644);
->> +MODULE_PARM_DESC(pledgpio,
->> +		 "enable changing value of GPIO2.0 bit (Power LED), default no.");
->> +
->> +module_param(beepgpio, bool, 0644);
->> +MODULE_PARM_DESC(beepgpio,
->> +		 "enable changing value of GPIO2.1 bit (BEEP), default no.");
->> +
->> +MODULE_AUTHOR("Maciej S. Szmigiero <mail@maciej.szmigiero.name>");
->> +MODULE_DESCRIPTION("GPIO interface for Winbond Super I/O chips");
->> +MODULE_LICENSE("GPL");
-
+aGkgQ2hyaXN0b3BoZSBhbmQgR3JlZywKCk9uIDIwMTcvMTIvMjQgMTY6NTUsIGNocmlzdG9waGUg
+bGVyb3kgd3JvdGU6Cj4gCj4gCj4gTGUgMjMvMTIvMjAxNyDDoCAxNjo1NywgR3VlbnRlciBSb2Vj
+ayBhIMOpY3JpdCA6Cj4+IE9uIDEyLzIzLzIwMTcgMDU6NDggQU0sIEdyZWcgS0ggd3JvdGU6Cj4+
+PiBPbiBTYXQsIERlYyAyMywgMjAxNyBhdCAwNjo1NToyNVBNICswODAwLCBZaXNoZW5nIFhpZSB3
+cm90ZToKPj4+PiBIaSBhbGwsCj4+Pj4KPj4+PiBXaGVuIEkgdHJpZWQgdG8gdXNlIGRldm1faW9y
+ZW1hcCBmdW5jdGlvbiBhbmQgcmV2aWV3IHJlbGF0ZWQgY29kZSwgSSBmb3VuZAo+Pj4+IGRldm1f
+aW9yZW1hcCBhbmQgZGV2bV9pb3JlbWFwX25vY2FjaGUgaXMgYWxtb3N0IHRoZSBzYW1lIHdpdGgg
+ZWFjaCBvdGhlciwKPj4+PiBleGNlcHQgb25lIHVzZSBpb3JlbWFwIHdoaWxlIHRoZSBvdGhlciB1
+c2UgaW9yZW1hcF9ub2NhY2hlLgo+Pj4KPj4+IEZvciBhbGwgYXJjaGVzPyAgUmVhbGx5PyAgTG9v
+ayBhdCBNSVBTLCBhbmQgeDg2LCB0aGV5IGhhdmUgZGlmZmVyZW50Cj4+PiBmdW5jdGlvbnMuCj4+
+Pgo+Pgo+PiBCb3RoIG1pcHMgYW5kIHg4NiBlbmQgdXAgbWFwcGluZyB0aGUgc2FtZSBmdW5jdGlv
+biwgYnV0IG90aGVyIGFyY2hlcyBkb24ndC4KPj4gbW4xMDMwMCBpcyBvbmUgd2hlcmUgaW9yZW1h
+cCBhbmQgaW9yZW1hcF9ub2NhY2hlIGFyZSBkZWZpbml0ZWx5IGRpZmZlcmVudC4KPiAKPiBhbHBo
+YTogaWRlbnRpY2FsCj4gYXJjOiBpZGVudGljYWwKPiBhcm06IGlkZW50aWNhbAo+IGFybTY0OiBp
+ZGVudGljYWwKPiBjcmlzOiBkaWZmZXJlbnQgICAgICAgIDw9PQo+IGZydjogaWRlbnRpY2FsCj4g
+aGV4YWdvbmU6IGlkZW50aWNhbAo+IGlhNjQ6IGRpZmZlcmVudCAgICAgICAgPD09Cj4gbTMycjog
+aWRlbnRpY2FsCj4gbTY4azogaWRlbnRpY2FsCj4gbWV0YWc6IGlkZW50aWNhbAo+IG1pY3JvYmxh
+emU6IGlkZW50aWNhbAo+IG1pcHM6IGlkZW50aWNhbAo+IG1uMTAzMDA6IGRpZmZlcmVudCAgICAg
+PD09Cj4gbmlvczogaWRlbnRpY2FsCj4gb3BlbnJpc2M6IGRpZmZlcmVudCAgICA8PT0KPiBwYXJp
+c2M6IGlkZW50aWNhbAo+IHJpc2N2OiBpZGVudGljYWwKPiBzMzkwOiBpZGVudGljYWwKPiBzaDog
+aWRlbnRpY2FsCj4gc3BhcmM6IGlkZW50aWNhbAo+IHRpbGU6IGlkZW50aWNhbAo+IHVtOiByZWx5
+IG9uIGFzbS9nZW5lcmljCj4gdW5pY29yZTMyOiBpZGVudGljYWwKPiB4ODY6IGlkZW50aWNhbAo+
+IGFzbS9nZW5lcmljIChubyBtbXUpOiBpZGVudGljYWwKCldvdywgdGhhdCdzIGNvcnJlY3QsIHNv
+cnJ5IGZvciBJIGhhdmUganVzdCBjaGVja2VkIHRoZSBtYWluIGFyY2hzLCBJIG1lYW5zCng4Nixh
+cm0sIGFybTY0LCBtaXBzLgoKSG93ZXZlciwgSSBzdGFsbCBoYXZlIG5vIGlkZWEgYWJvdXQgd2h5
+IHRoZXNlIDQgYXJjaHMgd2FudCBkaWZmZXJlbnQgaW9yZW1hcApmdW5jdGlvbiB3aXRoIG90aGVy
+cy4gRHJpdmVycyBzZWVtcyBjYW5ub3QgYXdhcmUgdGhpcz8gSWYgZHJpdmVyIGNhbGwgaW9yZW1h
+cAp3YW50IGhlIHJlYWxseSB3YW50IGZvciB0aGVyZSA0IGFyY2hzLCBjYWNoZSBvciBub2NhY2hl
+PwoKPiAKPiBTbyA0IGFtb25nIGFsbCBhcmNoZXMgc2VlbXMgdG8gaGF2ZSBpb3JlbWFwKCkgYW5k
+IGlvcmVtYXBfbm9jYWNoZSgpIGJlaW5nIGRpZmZlcmVudC4KPiAKPiBDb3VsZCB3ZSBoYXZlIGEg
+ZGVmaW5lIHNldCBieSB0aGUgNCBhcmNoZXMgb24gd2hpY2ggaW9yZW1hcCgpIGFuZCBpb3JlbWFw
+X25vY2FjaGUoKSBhcmUgZGlmZmVyZW50LCBzb21ldGhpbmcgbGlrZSBIQVZFX0RJRkZFUkVOVF9J
+T1JFTUFQX05PQ0FDSEUgPwoKVGhlbiwgd2hhdCB0aGUgSEFWRV9ESUZGRVJFTlRfSU9SRU1BUF9O
+T0NBQ0hFIGlzIHVlc2VkIGZvciA/CgpUaGFua3MKWWlzaGVuZwo+IAo+IENocmlzdG9waGUKPiAK
+Pj4KPj4gR3VlbnRlcgo+Pgo+Pj4+IFdoaWxlIGlvcmVtYXAncwo+Pj4+IGRlZmF1bHQgZnVuY3Rp
+b24gaXMgaW9yZW1hcF9ub2NhY2hlLCBzbyBkZXZtX2lvcmVtYXBfbm9jYWNoZSBhbHNvIGhhdmUg
+dGhlCj4+Pj4gc2FtZSBmdW5jdGlvbiB3aXRoIGRldm1faW9yZW1hcCwgd2hpY2ggY2FuIGp1c3Qg
+YmUga2lsbGVkIHRvIHJlZHVjZSB0aGUgc2l6ZQo+Pj4+IG9mIGRldnJlcy5vKGZyb20gMjAzMDQg
+Ynl0ZXMgdG8gMTg5OTIgYnl0ZXMgaW4gbXkgY29tcGlsZSBlbnZpcm9ubWVudCkuCj4+Pj4KPj4+
+PiBJIGhhdmUgcG9zdGVkIHR3byB2ZXJzaW9ucywgd2hpY2ggdXNlIG1hY3JvIGluc3RlYWQgb2Yg
+ZnVuY3Rpb24gZm9yCj4+Pj4gZGV2bV9pb3JlbWFwX25vY2FjaGVbMV0gb3IgZGV2bV9pb3JlbWFw
+WzJdLiBBbmQgR3JlZyBzdWdnZXN0IG1lIHRvIGtpbGwKPj4+PiBkZXZtX2lvcmVtYXBfbm9jYWNo
+ZSBmb3Igbm8gbmVlZCB0byBrZWVwIGEgbWFjcm8gYXJvdW5kIGZvciB0aGUgZHVwbGljYXRlCj4+
+Pj4gdGhpbmcuIFNvIGhlcmUgY29tZXMgdjMgYW5kIHBsZWFzZSBoZWxwIHRvIHJldmlldy4KPj4+
+Cj4+PiBJIGRvbid0IHRoaW5rIHRoaXMgY2FuIGJlIGRvbmUsIHdoYXQgYW0gSSBtaXNzaW5nPyAg
+VGhlc2UgZnVuY3Rpb25zIGFyZQo+Pj4gbm90IGlkZW50aWNhbCwgc29ycnkgZm9yIG1pc3Npbmcg
+dGhhdCBiZWZvcmUuCgpOZXZlciBtaW5kLCBJIHNob3VsZCBjaGVja2VkIGFsbCB0aGUgYXJjaGVz
+LCBzb3JyeSBhYm91dCB0aGF0LgoKPj4+Cj4+PiB0aGFua3MsCj4+Pgo+Pj4gZ3JlZyBrLWgKPj4+
+Cj4+Cj4+IC0tIAo+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGlu
+ZSAidW5zdWJzY3JpYmUgbGludXgtd2F0Y2hkb2ciIGluCj4+IHRoZSBib2R5IG9mIGEgbWVzc2Fn
+ZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQg
+IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAo+IC0tLQo+IEwn
+YWJzZW5jZSBkZSB2aXJ1cyBkYW5zIGNlIGNvdXJyaWVyIMOpbGVjdHJvbmlxdWUgYSDDqXTDqSB2
+w6lyaWZpw6llIHBhciBsZSBsb2dpY2llbCBhbnRpdmlydXMgQXZhc3QuCj4gaHR0cHM6Ly93d3cu
+YXZhc3QuY29tL2FudGl2aXJ1cwo+IAo+IAo+IC4KPiAKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRldmVsIG1haWxpbmcgbGlzdApkZXZlbEBsaW51eGRy
+aXZlcnByb2plY3Qub3JnCmh0dHA6Ly9kcml2ZXJkZXYubGludXhkcml2ZXJwcm9qZWN0Lm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaXZlcmRldi1kZXZlbAo=
