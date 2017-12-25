@@ -1,57 +1,63 @@
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: Re: [PATCH v2] gpio: winbond: add driver
-Date: Mon, 25 Dec 2017 15:48:16 +0100
-Message-ID: <0e8ece1e-3041-ea58-f5b6-298c163fa747@maciej.szmigiero.name>
-References: <309acd17-5244-da8c-a28e-dace15ada4fb@maciej.szmigiero.name>
- <20171224224215.GA2372@sophia>
- <f3ebd850-c301-2adb-95e7-3a1f37c2259c@maciej.szmigiero.name>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] pinctrl: tz1090: Delete an error message for a failed memory
+ allocation in two functions
+Date: Mon, 25 Dec 2017 18:13:56 +0100
+Message-ID: <91c76055-bba2-8a6e-4294-1dae0daf1363@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vps-vb.mhejs.net ([37.28.154.113]:39352 "EHLO vps-vb.mhejs.net"
+Received: from mout.web.de ([212.227.17.12]:60275 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752273AbdLYOsU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 25 Dec 2017 09:48:20 -0500
-In-Reply-To: <f3ebd850-c301-2adb-95e7-3a1f37c2259c@maciej.szmigiero.name>
-Content-Language: en-US
+        id S1751456AbdLYROD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 25 Dec 2017 12:14:03 -0500
+Content-Language: en-GB
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>
 
-On 24.12.2017 23:42, William Breathitt Gray wrote:
-(..)
-> By the way, don't hesitate to ask for more information on the ISA
-> subsystem -- a lot of maintainers are unaware that it even exists since
-> so few devices nowadays use ISA-style communication -- but I'm always
-> happy to help. :)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 25 Dec 2017 17:55:48 +0100
 
-It turns out that all this ISA bus is behind CONFIG_ISA_BUS_API which
-cannot be automatically selected by this driver due to a recursive
-dependency conflict with CONFIG_STX104.
+Omit an extra message for a memory allocation failure in these functions.
 
-All the existing ISA bus drivers seem to depend on CONFIG_ISA_BUS_API
-instead of selecting it but IMHO this is wrong because:
-1) This Kconfig option doesn't really enable or disable any bus support
-but building of a library of some common boilerplate code.
-Libraries are normally selected by drivers needing them and only provided
-as an user-selectable option if there is a possibility that a out-of-tree
-module would need it,
+This issue was detected by using the Coccinelle software.
 
-2) On x86_64 this option (or rather, its parent option CONFIG_ISA_BUS)
-cannot be enabled without CONFIG_EXPERT,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/pinctrl-tz1090.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-3) This device isn't really a ISA bus device any more than, for example,
-a 8250 serial port or a PC-style parallel port and these don't need
-that an user explicitly enables "ISA bus support" in his kernel
-configuration.
+diff --git a/drivers/pinctrl/pinctrl-tz1090.c b/drivers/pinctrl/pinctrl-tz1090.c
+index 74d1ffcc2199..2379ce2be365 100644
+--- a/drivers/pinctrl/pinctrl-tz1090.c
++++ b/drivers/pinctrl/pinctrl-tz1090.c
+@@ -1082,10 +1082,8 @@ static int add_map_configs(struct device *dev,
+ 
+ 	dup_configs = kmemdup(configs, num_configs * sizeof(*dup_configs),
+ 			      GFP_KERNEL);
+-	if (!dup_configs) {
+-		dev_err(dev, "kmemdup(configs) failed\n");
++	if (!dup_configs)
+ 		return -ENOMEM;
+-	}
+ 
+ 	(*map)[*num_maps].type = PIN_MAP_TYPE_CONFIGS_GROUP;
+ 	(*map)[*num_maps].data.configs.group_or_pin = group;
+@@ -1946,10 +1944,9 @@ static int tz1090_pinctrl_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+-	if (!pmx) {
+-		dev_err(&pdev->dev, "Can't alloc tz1090_pmx\n");
++	if (!pmx)
+ 		return -ENOMEM;
+-	}
++
+ 	pmx->dev = &pdev->dev;
+ 	spin_lock_init(&pmx->lock);
+ 
+-- 
+2.15.1
 
-To be clear I'm fine with converting this driver to use the ISA bus (in
-fact, I have already done so), but I think that currently this would be
-a regression from user-friendliness perspective due to the points above.
-
-> William Breathitt Gray
-
-Best regards,
-Maciej Szmigiero
