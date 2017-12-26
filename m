@@ -1,61 +1,347 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] pinctrl: xway: Delete two error messages for a failed memory
- allocation in pinmux_xway_probe()
-Date: Mon, 25 Dec 2017 22:02:03 +0100
-Message-ID: <0a27abb0-c222-765b-3a96-7e02163a0858@users.sourceforge.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] pinctrl: samsung: Add SPDX license identifiers
+Date: Tue, 26 Dec 2017 19:09:42 +0100
+Message-ID: <1514311782-5187-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([217.72.192.78]:59635 "EHLO mout.web.de"
+Received: from mail.kernel.org ([198.145.29.99]:51104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752815AbdLYVCH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 25 Dec 2017 16:02:07 -0500
-Content-Language: en-GB
+        id S1751163AbdLZSJ4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 26 Dec 2017 13:09:56 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, John Crispin <john@phrozen.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Philippe Ombredanne <pombredanne@nexb.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 25 Dec 2017 21:51:26 +0100
+Replace GPL license statements with SPDX GPL-2.0+ license identifiers.
 
-Omit extra messages for a memory allocation failure in this function.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/pinctrl/pinctrl-xway.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/pinctrl/samsung/Kconfig                |  1 +
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c   | 33 ++++++++++-------------
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 33 ++++++++++-------------
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 33 ++++++++++-------------
+ drivers/pinctrl/samsung/pinctrl-exynos.h       |  6 +----
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c   | 21 ++++++---------
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c      | 23 +++++++---------
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c      | 27 ++++++++-----------
+ drivers/pinctrl/samsung/pinctrl-samsung.c      | 37 +++++++++++---------------
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |  6 +----
+ 10 files changed, 89 insertions(+), 131 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index f9e98a7d4f0c..cd0f402c1164 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -1730,18 +1730,16 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 	xway_info.pads = devm_kzalloc(&pdev->dev,
- 			sizeof(struct pinctrl_pin_desc) * xway_chip.ngpio,
- 			GFP_KERNEL);
--	if (!xway_info.pads) {
--		dev_err(&pdev->dev, "Failed to allocate pads\n");
-+	if (!xway_info.pads)
- 		return -ENOMEM;
--	}
-+
- 	for (i = 0; i < xway_chip.ngpio; i++) {
- 		/* strlen("ioXY") + 1 = 5 */
- 		char *name = devm_kzalloc(&pdev->dev, 5, GFP_KERNEL);
+diff --git a/drivers/pinctrl/samsung/Kconfig b/drivers/pinctrl/samsung/Kconfig
+index ecfb90059eeb..11b5eeb14c4a 100644
+--- a/drivers/pinctrl/samsung/Kconfig
++++ b/drivers/pinctrl/samsung/Kconfig
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ #
+ # Samsung Pin control drivers
+ #
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+index 071084d3ee9c..c32399faff57 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+@@ -1,22 +1,17 @@
+-/*
+- * Exynos specific support for Samsung pinctrl/gpiolib driver with eint support.
+- *
+- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- * Copyright (c) 2012 Linaro Ltd
+- *		http://www.linaro.org
+- *
+- * Author: Thomas Abraham <thomas.ab@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This file contains the Samsung Exynos specific information required by the
+- * the Samsung pinctrl/gpiolib driver. It also includes the implementation of
+- * external gpio and wakeup interrupt support.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Exynos specific support for Samsung pinctrl/gpiolib driver with eint support.
++//
++// Copyright (c) 2012 Samsung Electronics Co., Ltd.
++//		http://www.samsung.com
++// Copyright (c) 2012 Linaro Ltd
++//		http://www.linaro.org
++//
++// Author: Thomas Abraham <thomas.ab@samsung.com>
++//
++// This file contains the Samsung Exynos specific information required by the
++// the Samsung pinctrl/gpiolib driver. It also includes the implementation of
++// external gpio and wakeup interrupt support.
  
--		if (!name) {
--			dev_err(&pdev->dev, "Failed to allocate pad name\n");
-+		if (!name)
- 			return -ENOMEM;
--		}
-+
- 		snprintf(name, 5, "io%d", i);
- 		xway_info.pads[i].number = GPIO0 + i;
- 		xway_info.pads[i].name = name;
+ #include <linux/device.h>
+ #include <linux/of_address.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+index 08e9fdb58fd2..fc8f7833bec0 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+@@ -1,22 +1,17 @@
+-/*
+- * Exynos ARMv8 specific support for Samsung pinctrl/gpiolib driver
+- * with eint support.
+- *
+- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- * Copyright (c) 2012 Linaro Ltd
+- *		http://www.linaro.org
+- * Copyright (c) 2017 Krzysztof Kozlowski <krzk@kernel.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This file contains the Samsung Exynos specific information required by the
+- * the Samsung pinctrl/gpiolib driver. It also includes the implementation of
+- * external gpio and wakeup interrupt support.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Exynos ARMv8 specific support for Samsung pinctrl/gpiolib driver
++// with eint support.
++//
++// Copyright (c) 2012 Samsung Electronics Co., Ltd.
++//		http://www.samsung.com
++// Copyright (c) 2012 Linaro Ltd
++//		http://www.linaro.org
++// Copyright (c) 2017 Krzysztof Kozlowski <krzk@kernel.org>
++//
++// This file contains the Samsung Exynos specific information required by the
++// the Samsung pinctrl/gpiolib driver. It also includes the implementation of
++// external gpio and wakeup interrupt support.
+ 
+ #include <linux/slab.h>
+ #include <linux/soc/samsung/exynos-regs-pmu.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index c8d0de7ea160..0a625a64ff5d 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -1,22 +1,17 @@
+-/*
+- * Exynos specific support for Samsung pinctrl/gpiolib driver with eint support.
+- *
+- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- * Copyright (c) 2012 Linaro Ltd
+- *		http://www.linaro.org
+- *
+- * Author: Thomas Abraham <thomas.ab@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This file contains the Samsung Exynos specific information required by the
+- * the Samsung pinctrl/gpiolib driver. It also includes the implementation of
+- * external gpio and wakeup interrupt support.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Exynos specific support for Samsung pinctrl/gpiolib driver with eint support.
++//
++// Copyright (c) 2012 Samsung Electronics Co., Ltd.
++//		http://www.samsung.com
++// Copyright (c) 2012 Linaro Ltd
++//		http://www.linaro.org
++//
++// Author: Thomas Abraham <thomas.ab@samsung.com>
++//
++// This file contains the Samsung Exynos specific information required by the
++// the Samsung pinctrl/gpiolib driver. It also includes the implementation of
++// external gpio and wakeup interrupt support.
+ 
+ #include <linux/device.h>
+ #include <linux/interrupt.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
+index 7639b926c5c1..abd43aa7eb0d 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.h
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * Exynos specific definitions for Samsung pinctrl and gpiolib driver.
+  *
+@@ -10,11 +11,6 @@
+  * pinctrl/gpiolib interface drivers.
+  *
+  * Author: Thomas Abraham <thomas.ab@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  */
+ 
+ #ifndef __PINCTRL_SAMSUNG_EXYNOS_H
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+index 32a3a9fd65c4..3d8d5e812839 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+@@ -1,16 +1,11 @@
+-/*
+- * pin-controller/pin-mux/pin-config/gpio-driver for Samsung's EXYNOS5440 SoC.
+- *
+- * Author: Thomas Abraham <thomas.ab@samsung.com>
+- *
+- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// pin-controller/pin-mux/pin-config/gpio-driver for Samsung's EXYNOS5440 SoC.
++//
++// Author: Thomas Abraham <thomas.ab@samsung.com>
++//
++// Copyright (c) 2012 Samsung Electronics Co., Ltd.
++//		http://www.samsung.com
+ 
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+index edf27264b603..10187cb0e9b9 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+@@ -1,17 +1,12 @@
+-/*
+- * S3C24XX specific support for Samsung pinctrl/gpiolib driver.
+- *
+- * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This file contains the SamsungS3C24XX specific information required by the
+- * Samsung pinctrl/gpiolib driver. It also includes the implementation of
+- * external gpio and wakeup interrupt support.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// S3C24XX specific support for Samsung pinctrl/gpiolib driver.
++//
++// Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
++//
++// This file contains the SamsungS3C24XX specific information required by the
++// Samsung pinctrl/gpiolib driver. It also includes the implementation of
++// external gpio and wakeup interrupt support.
+ 
+ #include <linux/init.h>
+ #include <linux/device.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+index e63663b32907..679628ac4b31 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+@@ -1,19 +1,14 @@
+-/*
+- * S3C64xx specific support for pinctrl-samsung driver.
+- *
+- * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
+- *
+- * Based on pinctrl-exynos.c, please see the file for original copyrights.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This file contains the Samsung S3C64xx specific information required by the
+- * the Samsung pinctrl/gpiolib driver. It also includes the implementation of
+- * external gpio and wakeup interrupt support.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// S3C64xx specific support for pinctrl-samsung driver.
++//
++// Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++//
++// Based on pinctrl-exynos.c, please see the file for original copyrights.
++//
++// This file contains the Samsung S3C64xx specific information required by the
++// the Samsung pinctrl/gpiolib driver. It also includes the implementation of
++// external gpio and wakeup interrupt support.
+ 
+ #include <linux/init.h>
+ #include <linux/device.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index e04f7fe0a65d..da58e4554137 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1,24 +1,19 @@
+-/*
+- * pin-controller/pin-mux/pin-config/gpio-driver for Samsung's SoC's.
+- *
+- * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- * Copyright (c) 2012 Linaro Ltd
+- *		http://www.linaro.org
+- *
+- * Author: Thomas Abraham <thomas.ab@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This driver implements the Samsung pinctrl driver. It supports setting up of
+- * pinmux and pinconf configurations. The gpiolib interface is also included.
+- * External interrupt (gpio and wakeup) support are not included in this driver
+- * but provides extensions to which platform specific implementation of the gpio
+- * and wakeup interrupts can be hooked to.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// pin-controller/pin-mux/pin-config/gpio-driver for Samsung's SoC's.
++//
++// Copyright (c) 2012 Samsung Electronics Co., Ltd.
++//		http://www.samsung.com
++// Copyright (c) 2012 Linaro Ltd
++//		http://www.linaro.org
++//
++// Author: Thomas Abraham <thomas.ab@samsung.com>
++//
++// This driver implements the Samsung pinctrl driver. It supports setting up of
++// pinmux and pinconf configurations. The gpiolib interface is also included.
++// External interrupt (gpio and wakeup) support are not included in this driver
++// but provides extensions to which platform specific implementation of the gpio
++// and wakeup interrupts can be hooked to.
+ 
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index 9af07af6cad6..e204f609823b 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * pin-controller/pin-mux/pin-config/gpio-driver for Samsung's SoC's.
+  *
+@@ -7,11 +8,6 @@
+  *		http://www.linaro.org
+  *
+  * Author: Thomas Abraham <thomas.ab@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  */
+ 
+ #ifndef __PINCTRL_SAMSUNG_H
 -- 
-2.15.1
+2.7.4
 
