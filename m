@@ -1,31 +1,53 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2] gpio: winbond: add driver
-Date: Thu, 28 Dec 2017 17:18:30 +0200
-Message-ID: <1514474310.7000.420.camel@linux.intel.com>
-References: <309acd17-5244-da8c-a28e-dace15ada4fb@maciej.szmigiero.name>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:60255 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753454AbdL1PVe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 28 Dec 2017 10:21:34 -0500
-In-Reply-To: <309acd17-5244-da8c-a28e-dace15ada4fb@maciej.szmigiero.name>
-Sender: linux-gpio-owner@vger.kernel.org
+From: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 0/3] Change ISA_BUS_API dependency to selection
+Date: Thu, 28 Dec 2017 11:01:27 -0500
+Message-ID: <cover.1514475654.git.vilhelm.gray@gmail.com>
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: mail-APzI5cXaD1zVlRWJc41N0YvC60bnQu0Y@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Linus Walleij <linus.walleij@linaro.org>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 
-On Fri, 2017-12-22 at 19:58 +0100, Maciej S. Szmigiero wrote:
-> This commit adds GPIO driver for Winbond Super I/Os.
+The ISA_BUS_API Kconfig option enables the compilation of the ISA bus
+driver. The ISA bus driver does not perform any hardware interaction,
+and is instead just a thin layer of software abstraction to eliminate
+boilerplate code common to ISA-style device drivers. Since ISA_BUS_API
+has no dependencies and does not jeopardize the integrity of the system
+when enabled, drivers should select it when the ISA bus driver
+functionality is needed.
 
-Linus, since you asked me to review this, I can conclude that it is a
-bit far from readiness. Couple of more iterations needed.
+Originally, when the ISA_BUS_API Kconfig option was introduced, it
+served a dual-purpose of masking drivers ISA-style devices not commonly
+found for desktop systems, such as the PC/104 device drivers. This
+secondary semantic was inappropriate for the ISA_BUS_API option, and
+proper masking of these device drivers is now accomplished via dedicated
+Kconfig options such as CONFIG_PC104.
 
-Please, also answer to a comment in review in regard to gpio_valid_mask
-use.
+Linus, please pickup this entire patchset through your GPIO subsystem
+tree; a recursive dependency error is present if these patches are
+cherry-picked (see https://lkml.org/lkml/2017/12/26/235), so they should
+be merged together in the same tree.
+
+Maciej, this patchset resolves the recursive dependency issue you
+encountered, so now you should be able to submit your Winbond GPIO
+driver with the ISA_BUS_API selection as desired.
+
+William Breathitt Gray (3):
+  iio: Change ISA_BUS_API dependency to selection
+  watchdog: Change ISA_BUS_API dependency to selection
+  gpio: Change ISA_BUS_API dependency to selection
+
+ drivers/gpio/Kconfig        | 14 +++++++++-----
+ drivers/iio/adc/Kconfig     |  3 ++-
+ drivers/iio/counter/Kconfig |  3 ++-
+ drivers/iio/dac/Kconfig     |  3 ++-
+ drivers/watchdog/Kconfig    |  3 ++-
+ 5 files changed, 17 insertions(+), 9 deletions(-)
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.15.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
