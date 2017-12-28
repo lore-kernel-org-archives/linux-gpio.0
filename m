@@ -1,86 +1,55 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 3/3] gpio: Change ISA_BUS_API dependency to selection
-Date: Thu, 28 Dec 2017 11:02:19 -0500
-Message-ID: <ff1871fe837aa3a520fefe2602f8f1e13e1db244.1514475654.git.vilhelm.gray@gmail.com>
-References: <cover.1514475654.git.vilhelm.gray@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:37090 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753427AbdL1QC0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Dec 2017 11:02:26 -0500
-In-Reply-To: <cover.1514475654.git.vilhelm.gray@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 0/3] [v11] pinctrl: qcom: add support for sparse GPIOs
+Date: Thu, 28 Dec 2017 08:15:56 -0800
+Message-ID: <20171228161556.GG7997@codeaurora.org>
+References: <1513797033-9494-1-git-send-email-timur@codeaurora.org>
+ <CACRpkdYtMbACG0D2zjgw-kN_3pb_VDGH_3DDhyMQD92eE5P0Gw@mail.gmail.com>
+ <20171227020142.GZ7997@codeaurora.org>
+ <CACRpkda5FQg3W4rnxihVB9y2yv-oF1CwBzFJsKB8cxzQ+zoHNg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkda5FQg3W4rnxihVB9y2yv-oF1CwBzFJsKB8cxzQ+zoHNg@mail.gmail.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Timur Tabi <timur@codeaurora.org>, linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>, Andrew Cooks <andrew.cooks@opengear.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: mail@maciej.szmigiero.name, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 
-The ISA_BUS_API Kconfig option enables the compilation of the ISA bus
-driver. The ISA bus driver does not perform any hardware interaction,
-and is instead just a thin layer of software abstraction to eliminate
-boilerplate code common to ISA-style device drivers. Since ISA_BUS_API
-has no dependencies and does not jeopardize the integrity of the system
-when enabled, drivers should select it when the ISA bus driver
-functionality is needed.
+On 12/28, Linus Walleij wrote:
+> On Wed, Dec 27, 2017 at 3:01 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> 
+> > The different approaches come down to expressing
+> > which pins are available through the gpio valid mask, or through
+> > the npins field of the msm pinctrl driver. Also, my approach
+> > covers more than just GPIOs, it covers irqs and adjusts the
+> > pinctrl pin request function so that pinctrl can't request
+> > unavailable pins.
+> 
+> I agree, this is better.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/Kconfig | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+Thanks for the feedback. I'll update and resend my patch to the
+list.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 395669bfcc26..36ad9ce3dc58 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -590,7 +590,8 @@ menu "Port-mapped I/O GPIO drivers"
- 
- config GPIO_104_DIO_48E
- 	tristate "ACCES 104-DIO-48E GPIO support"
--	depends on PC104 && ISA_BUS_API
-+	depends on PC104
-+	select ISA_BUS_API
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  Enables GPIO support for the ACCES 104-DIO-48E series (104-DIO-48E,
-@@ -600,7 +601,8 @@ config GPIO_104_DIO_48E
- 
- config GPIO_104_IDIO_16
- 	tristate "ACCES 104-IDIO-16 GPIO support"
--	depends on PC104 && ISA_BUS_API
-+	depends on PC104
-+	select ISA_BUS_API
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  Enables GPIO support for the ACCES 104-IDIO-16 family (104-IDIO-16,
-@@ -611,7 +613,8 @@ config GPIO_104_IDIO_16
- 
- config GPIO_104_IDI_48
- 	tristate "ACCES 104-IDI-48 GPIO support"
--	depends on PC104 && ISA_BUS_API
-+	depends on PC104
-+	select ISA_BUS_API
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  Enables GPIO support for the ACCES 104-IDI-48 family (104-IDI-48A,
-@@ -631,7 +634,8 @@ config GPIO_F7188X
- 
- config GPIO_GPIO_MM
- 	tristate "Diamond Systems GPIO-MM GPIO support"
--	depends on PC104 && ISA_BUS_API
-+	depends on PC104
-+	select ISA_BUS_API
- 	help
- 	  Enables GPIO support for the Diamond Systems GPIO-MM and GPIO-MM-12.
- 
-@@ -700,7 +704,7 @@ config GPIO_TS5500
- 
- config GPIO_WS16C48
- 	tristate "WinSystems WS16C48 GPIO support"
--	depends on ISA_BUS_API
-+	select ISA_BUS_API
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  Enables GPIO support for the WinSystems WS16C48. The base port
+> 
+> Would even patch 1 be needed after this? Maybe I should
+> revert that too. Leaving that code in has the upside of showing
+> the actual initial directions of GPIO lines even if they have
+> not been requested, in e.g. debugfs.
+> 
+
+Patch 1 is still needed. Without that patch, we'll be poking each
+GPIO to figure out the direction at boot without checking any
+valid mask or calling the request APIs. I don't see the part in
+debugfs where we show the direction of a GPIO if it hasn't been
+requested. Don't we skip over the unrequested GPIOs because of
+this code in gpiolib_dbg_show()?
+
+	if (!test_bit(FLAG_REQUESTED, &gdesc->flags)) {
+		...
+		continue;
+	}
+
 -- 
-2.15.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
