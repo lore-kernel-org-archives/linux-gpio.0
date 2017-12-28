@@ -1,92 +1,68 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v2] gpio: winbond: add driver
-Date: Wed, 27 Dec 2017 23:58:50 -0500
-Message-ID: <20171228045850.GB11117@sophia>
-References: <309acd17-5244-da8c-a28e-dace15ada4fb@maciej.szmigiero.name>
- <20171224224215.GA2372@sophia>
- <f3ebd850-c301-2adb-95e7-3a1f37c2259c@maciej.szmigiero.name>
- <0e8ece1e-3041-ea58-f5b6-298c163fa747@maciej.szmigiero.name>
- <20171227002410.GA12050@sophia>
- <d6f8aa80-47f1-ccf2-8c85-6839f13058fb@maciej.szmigiero.name>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] pinctrl/spear/plgpio: Delete two error messages for a
+ failed memory allocation in plgpio_probe()
+Date: Thu, 28 Dec 2017 10:56:46 +0530
+Message-ID: <20171228052646.GC8652@vireshk-i7>
+References: <66c3f488-ffdf-e55d-e511-e4af35e670b4@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f174.google.com ([209.85.161.174]:46092 "EHLO
-        mail-yw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbdL1E6x (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Dec 2017 23:58:53 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39269 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbdL1F0u (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Dec 2017 00:26:50 -0500
+Received: by mail-pl0-f66.google.com with SMTP id bi12so20620797plb.6
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Dec 2017 21:26:50 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <d6f8aa80-47f1-ccf2-8c85-6839f13058fb@maciej.szmigiero.name>
+In-Reply-To: <66c3f488-ffdf-e55d-e511-e4af35e670b4@users.sourceforge.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Cameron <jic23@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Viresh Kumar <vireshk@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Dec 27, 2017 at 07:42:21PM +0100, Maciej S. Szmigiero wrote:
->On 27.12.2017 01:24, William Breathitt Gray wrote:
->> On Mon, Dec 25, 2017 at 03:48:16PM +0100, Maciej S. Szmigiero wrote:
->(..)
->>> All the existing ISA bus drivers seem to depend on CONFIG_ISA_BUS_API
->>> instead of selecting it but IMHO this is wrong because:
->>> 1) This Kconfig option doesn't really enable or disable any bus support
->>> but building of a library of some common boilerplate code.
->>> Libraries are normally selected by drivers needing them and only provided
->>> as an user-selectable option if there is a possibility that a out-of-tree
->>> module would need it,
->>>
->>> 2) On x86_64 this option (or rather, its parent option CONFIG_ISA_BUS)
->>> cannot be enabled without CONFIG_EXPERT,
->>>
->>> 3) This device isn't really a ISA bus device any more than, for example,
->>> a 8250 serial port or a PC-style parallel port and these don't need
->>> that an user explicitly enables "ISA bus support" in his kernel
->>> configuration.
->> 
->> I can see what you mean about selecting ISA_BUS_API rather than having
->> it as a dependency for drivers. Part of the reason I added the
->> CONFIG_EXPERT dependency for CONFIG_ISA_BUS -- as well as having
->> CONFIG_ISA_BUS_API be a dependency for the drivers themselves -- was to
->> hide the ISA-style drivers which blindly poke at I/O port addresses,
->> lest a niave user enable all available drivers and unintentionally brick
->> their system when the drivers execute.
->> 
->> I think there is still merit in masking dangerous drivers such as this,
->> since the expected behavior nowadays is for the driver to probe for the
->> device before poking at memory; since ISA-style communication lacks a
->> standard method of detecting devices in hardware, these devices
->> generally pose a danger when loaded by niave users.
->
->This driver accesses the same Super I/O chip as w83627ehf hwmon and
->w83627hf_wdt watchdog drivers.
->In addition to this, there are loads of other hwmon and watchdog drivers
->for x86 Super I/Os in the tree, most of them using the same probing and
->communication style.
->There are even existing GPIO drivers for some Super I/Os like gpio-it87
->and gpio-f7188x.
->
->None of these drivers need CONFIG_EXPERT to be selected.
->
->Also, CONFIG_EXPERT is described as "Configure standard kernel features"
->and that "[it] allows certain base kernel options and settings to be
->disabled or tweaked" for "specialized environments".
->Enabling this driver is not about changing "standard kernel feature" or
->a "base kernel option [or] setting".
+On 27-12-17, 22:39, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Dec 2017 22:34:28 +0100
+> 
+> Omit extra messages for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/pinctrl/spear/pinctrl-plgpio.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/spear/pinctrl-plgpio.c b/drivers/pinctrl/spear/pinctrl-plgpio.c
+> index 6a0ed8ab33b9..d2123e396b29 100644
+> --- a/drivers/pinctrl/spear/pinctrl-plgpio.c
+> +++ b/drivers/pinctrl/spear/pinctrl-plgpio.c
+> @@ -519,10 +519,8 @@ static int plgpio_probe(struct platform_device *pdev)
+>  	int ret, irq;
+>  
+>  	plgpio = devm_kzalloc(&pdev->dev, sizeof(*plgpio), GFP_KERNEL);
+> -	if (!plgpio) {
+> -		dev_err(&pdev->dev, "memory allocation fail\n");
+> +	if (!plgpio)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	plgpio->base = devm_ioremap_resource(&pdev->dev, res);
+> @@ -544,10 +542,8 @@ static int plgpio_probe(struct platform_device *pdev)
+>  			sizeof(*plgpio->csave_regs) *
+>  			DIV_ROUND_UP(plgpio->chip.ngpio, MAX_GPIO_PER_REG),
+>  			GFP_KERNEL);
+> -	if (!plgpio->csave_regs) {
+> -		dev_err(&pdev->dev, "csave registers memory allocation fail\n");
+> +	if (!plgpio->csave_regs)
+>  		return -ENOMEM;
+> -	}
+>  #endif
+>  
+>  	platform_set_drvdata(pdev, plgpio);
 
-I'm sorry, I didn't make it quite clear in my previous reply. I agree
-with you that CONFIG_EXPERT shouldn't be necessary for this driver -- in
-the end, a select ISA_BUS_API line should be all that's needed to have
-ISA bus driver support for your driver.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-My reference to the CONFIG_EXPERT option is for masking options related
-to other ISA-style buses not commonly found in desktop systems. Devices
-like the Super I/O chip wouldn't fall into this category since LPC is
-pretty common and the relevant I/O port addresses are usually well
-known. Ultimately, the Winbond GPIO driver should not need CONFIG_EXPERT
-to be enabled in order to select ISA_BUS_API.
-
-William Breathitt Gray
-
->> 
->> William Breathitt Gray
->
->Maciej Szmigiero
+-- 
+viresh
