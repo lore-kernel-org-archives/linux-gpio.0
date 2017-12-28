@@ -1,42 +1,37 @@
-From: Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH] pinctrl: sunxi: fix a typo when merging A20 support to A10 driver
-Date: Thu, 28 Dec 2017 21:20:09 +0800
-Message-ID: <20171228132009.12839-1-icenowy@aosc.io>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:60975 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753187AbdL1NU1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 28 Dec 2017 08:20:27 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: sunxi: fix a typo when merging A20
+ support to A10 driver
+Date: Thu, 28 Dec 2017 15:06:28 +0100
+Message-ID: <CACRpkdYKrL+eBB4AdvRcqRTvejLqAK9hBpFwkdO7YNmiTpJ4ig@mail.gmail.com>
+References: <20171228132009.12839-1-icenowy@aosc.io>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBZPUSPJAKGQEZQZG4MA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20171228132009.12839-1-icenowy-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Mark Kettenis <mark.kettenis-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Kettenis <mark.kettenis@xs4all.nl>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
 
-When merging A20 pinctrl support to A10 pinctrl driver, the I2C function
-of PI3 is wrongly written as "i2c3" (it should be "i2c4").
+On Thu, Dec 28, 2017 at 2:20 PM, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org> wrote:
 
-Fix this typo.
+> When merging A20 pinctrl support to A10 pinctrl driver, the I2C function
+> of PI3 is wrongly written as "i2c3" (it should be "i2c4").
+>
+> Fix this typo.
+>
+> Fixes: cad4e209c102 ("pinctrl: sunxi: add support of R40 to A10 pinctrl driver")
+> Reported-by: Mark Kettenis <mark.kettenis-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
 
-Fixes: cad4e209c102 ("pinctrl: sunxi: add support of R40 to A10 pinctrl driver")
-Reported-by: Mark Kettenis <mark.kettenis@xs4all.nl>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied.
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
-index 295e48fc94bc..0c7c361ebac5 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
-@@ -1167,7 +1167,7 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "pwm"),		/* PWM1 */
--		  SUNXI_FUNCTION_VARIANT(0x3, "i2c3",	/* SDA */
-+		  SUNXI_FUNCTION_VARIANT(0x3, "i2c4",	/* SDA */
- 					 PINCTRL_SUN7I_A20 |
- 					 PINCTRL_SUN8I_R40)),
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 4),
--- 
-2.14.2
-
+Yours,
+Linus Walleij
