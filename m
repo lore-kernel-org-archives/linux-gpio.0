@@ -1,30 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: fix aspeed_gpio_banks array size check
-Date: Thu, 28 Dec 2017 13:53:27 +0100
-Message-ID: <CACRpkdas9VK2rUJ699GYrA6ETC-eZhnNcHCLYcnFBKk5Vgf9bw@mail.gmail.com>
-References: <1513871710-13765-1-git-send-email-gomonovych@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH] pinctrl: sunxi: fix a typo when merging A20 support to A10 driver
+Date: Thu, 28 Dec 2017 21:20:09 +0800
+Message-ID: <20171228132009.12839-1-icenowy@aosc.io>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:36373 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751411AbdL1Mx2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Dec 2017 07:53:28 -0500
-Received: by mail-io0-f173.google.com with SMTP id i143so18147332ioa.3
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Dec 2017 04:53:28 -0800 (PST)
-In-Reply-To: <1513871710-13765-1-git-send-email-gomonovych@gmail.com>
+Received: from hermes.aosc.io ([199.195.250.187]:60975 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753187AbdL1NU1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 28 Dec 2017 08:20:27 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vasyl Gomonovych <gomonovych@gmail.com>
-Cc: Joel Stanley <joel@jms.id.au>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Kettenis <mark.kettenis@xs4all.nl>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
 
-On Thu, Dec 21, 2017 at 4:55 PM, Vasyl Gomonovych <gomonovych@gmail.com> wrote:
+When merging A20 pinctrl support to A10 pinctrl driver, the I2C function
+of PI3 is wrongly written as "i2c3" (it should be "i2c4").
 
-> The test should be >= ARRAY_SIZE() instead of > ARRAY_SIZE().
->
-> Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
+Fix this typo.
 
-Patch applied.
+Fixes: cad4e209c102 ("pinctrl: sunxi: add support of R40 to A10 pinctrl driver")
+Reported-by: Mark Kettenis <mark.kettenis@xs4all.nl>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+index 295e48fc94bc..0c7c361ebac5 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c
+@@ -1167,7 +1167,7 @@ static const struct sunxi_desc_pin sun4i_a10_pins[] = {
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "pwm"),		/* PWM1 */
+-		  SUNXI_FUNCTION_VARIANT(0x3, "i2c3",	/* SDA */
++		  SUNXI_FUNCTION_VARIANT(0x3, "i2c4",	/* SDA */
+ 					 PINCTRL_SUN7I_A20 |
+ 					 PINCTRL_SUN8I_R40)),
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 4),
+-- 
+2.14.2
+
