@@ -1,51 +1,113 @@
-From: Dmitry Mastykin <mastichi@gmail.com>
-Subject: [PATCH] pinctrl: mcp23s08: fix irq setup order
-Date: Thu, 28 Dec 2017 18:19:24 +0300
-Message-ID: <1514474364-32169-1-git-send-email-mastichi@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36483 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753293AbdL1PUM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Dec 2017 10:20:12 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] pinctrl: vt8500: Delete an error message for a failed memory
+ allocation in five functions
+Date: Thu, 28 Dec 2017 16:20:15 +0100
+Message-ID: <62a3836f-cd3c-2a56-232a-db401b1f88ca@users.sourceforge.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Tony Prisk <linux@prisktech.co.nz>, Stephen Warren <swarren@nvidia.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-Cc: preid@electromag.com.au, Dmitry Mastykin <mastichi@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-When using mcp23s08 module with gpio-keys, often (50% of boots)
-it fails to get irq numbers with message:
-"gpio-keys keys: Unable to get irq number for GPIO 0, error -6".
-Seems that irqs must be setup before devm_gpiochip_add_data().
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 16:12:17 +0100
 
-Signed-off-by: Dmitry Mastykin <mastichi@gmail.com>
+Omit an extra message for a memory allocation failure in these functions.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/pinctrl-mcp23s08.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pinctrl/vt8500/pinctrl-vt8500.c | 4 +---
+ drivers/pinctrl/vt8500/pinctrl-wm8505.c | 4 +---
+ drivers/pinctrl/vt8500/pinctrl-wm8650.c | 4 +---
+ drivers/pinctrl/vt8500/pinctrl-wm8750.c | 4 +---
+ drivers/pinctrl/vt8500/pinctrl-wm8850.c | 4 +---
+ 5 files changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 9c950bbf..447763a 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -891,16 +891,16 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 			goto fail;
- 	}
+diff --git a/drivers/pinctrl/vt8500/pinctrl-vt8500.c b/drivers/pinctrl/vt8500/pinctrl-vt8500.c
+index 767f340d6b11..9086a3758eee 100644
+--- a/drivers/pinctrl/vt8500/pinctrl-vt8500.c
++++ b/drivers/pinctrl/vt8500/pinctrl-vt8500.c
+@@ -458,10 +458,8 @@ static int vt8500_pinctrl_probe(struct platform_device *pdev)
+ 	struct wmt_pinctrl_data *data;
  
--	ret = devm_gpiochip_add_data(dev, &mcp->chip, mcp);
--	if (ret < 0)
--		goto fail;
--
- 	if (mcp->irq && mcp->irq_controller) {
- 		ret = mcp23s08_irq_setup(mcp);
- 		if (ret)
- 			goto fail;
- 	}
+ 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+-	if (!data) {
+-		dev_err(&pdev->dev, "failed to allocate data\n");
++	if (!data)
+ 		return -ENOMEM;
+-	}
  
-+	ret = devm_gpiochip_add_data(dev, &mcp->chip, mcp);
-+	if (ret < 0)
-+		goto fail;
-+
- 	mcp->pinctrl_desc.name = "mcp23xxx-pinctrl";
- 	mcp->pinctrl_desc.pctlops = &mcp_pinctrl_ops;
- 	mcp->pinctrl_desc.confops = &mcp_pinconf_ops;
+ 	data->banks = vt8500_banks;
+ 	data->nbanks = ARRAY_SIZE(vt8500_banks);
+diff --git a/drivers/pinctrl/vt8500/pinctrl-wm8505.c b/drivers/pinctrl/vt8500/pinctrl-wm8505.c
+index a56fdbd87e42..e1aae1d4b0b1 100644
+--- a/drivers/pinctrl/vt8500/pinctrl-wm8505.c
++++ b/drivers/pinctrl/vt8500/pinctrl-wm8505.c
+@@ -489,10 +489,8 @@ static int wm8505_pinctrl_probe(struct platform_device *pdev)
+ 	struct wmt_pinctrl_data *data;
+ 
+ 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+-	if (!data) {
+-		dev_err(&pdev->dev, "failed to allocate data\n");
++	if (!data)
+ 		return -ENOMEM;
+-	}
+ 
+ 	data->banks = wm8505_banks;
+ 	data->nbanks = ARRAY_SIZE(wm8505_banks);
+diff --git a/drivers/pinctrl/vt8500/pinctrl-wm8650.c b/drivers/pinctrl/vt8500/pinctrl-wm8650.c
+index 270dd491f5a1..4678227d4001 100644
+--- a/drivers/pinctrl/vt8500/pinctrl-wm8650.c
++++ b/drivers/pinctrl/vt8500/pinctrl-wm8650.c
+@@ -327,10 +327,8 @@ static int wm8650_pinctrl_probe(struct platform_device *pdev)
+ 	struct wmt_pinctrl_data *data;
+ 
+ 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+-	if (!data) {
+-		dev_err(&pdev->dev, "failed to allocate data\n");
++	if (!data)
+ 		return -ENOMEM;
+-	}
+ 
+ 	data->banks = wm8650_banks;
+ 	data->nbanks = ARRAY_SIZE(wm8650_banks);
+diff --git a/drivers/pinctrl/vt8500/pinctrl-wm8750.c b/drivers/pinctrl/vt8500/pinctrl-wm8750.c
+index 74f7b3a18f3a..c46d6946c8f5 100644
+--- a/drivers/pinctrl/vt8500/pinctrl-wm8750.c
++++ b/drivers/pinctrl/vt8500/pinctrl-wm8750.c
+@@ -366,10 +366,8 @@ static int wm8750_pinctrl_probe(struct platform_device *pdev)
+ 	struct wmt_pinctrl_data *data;
+ 
+ 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+-	if (!data) {
+-		dev_err(&pdev->dev, "failed to allocate data\n");
++	if (!data)
+ 		return -ENOMEM;
+-	}
+ 
+ 	data->banks = wm8750_banks;
+ 	data->nbanks = ARRAY_SIZE(wm8750_banks);
+diff --git a/drivers/pinctrl/vt8500/pinctrl-wm8850.c b/drivers/pinctrl/vt8500/pinctrl-wm8850.c
+index 45792aa7a06e..e2e85316a65e 100644
+--- a/drivers/pinctrl/vt8500/pinctrl-wm8850.c
++++ b/drivers/pinctrl/vt8500/pinctrl-wm8850.c
+@@ -345,10 +345,8 @@ static int wm8850_pinctrl_probe(struct platform_device *pdev)
+ 	struct wmt_pinctrl_data *data;
+ 
+ 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+-	if (!data) {
+-		dev_err(&pdev->dev, "failed to allocate data\n");
++	if (!data)
+ 		return -ENOMEM;
+-	}
+ 
+ 	data->banks = wm8850_banks;
+ 	data->nbanks = ARRAY_SIZE(wm8850_banks);
 -- 
-2.7.4
-
+2.15.1
