@@ -1,36 +1,52 @@
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: Re: [PATCH 0/3] Change ISA_BUS_API dependency to selection
-Date: Thu, 28 Dec 2017 23:53:33 +0100
-Message-ID: <1d23ba1e-6cf9-11b7-2fb2-879fd35ed881@maciej.szmigiero.name>
-References: <cover.1514475654.git.vilhelm.gray@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: serial: max310x: Support open-drain configuration
+ for GPIOs
+Date: Fri, 29 Dec 2017 00:38:13 +0100
+Message-ID: <CACRpkdYi4tLGRHu9+pum+bt9xyOCKUZoLVdum1JvXgOOZRwfBw@mail.gmail.com>
+References: <18c9e927d2b75b3325ee3eae7e78319129faa779.1513983040.git.jan.kundrat@cesnet.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vps-vb.mhejs.net ([37.28.154.113]:50138 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751112AbdL1Wxg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 28 Dec 2017 17:53:36 -0500
-In-Reply-To: <cover.1514475654.git.vilhelm.gray@gmail.com>
-Content-Language: en-US
+Received: from mail-io0-f175.google.com ([209.85.223.175]:45477 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754222AbdL1XiO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Dec 2017 18:38:14 -0500
+Received: by mail-io0-f175.google.com with SMTP id e204so39720202iof.12
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Dec 2017 15:38:14 -0800 (PST)
+In-Reply-To: <18c9e927d2b75b3325ee3eae7e78319129faa779.1513983040.git.jan.kundrat@cesnet.cz>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?B?SmFuIEt1bmRyw6F0?= <jan.kundrat@cesnet.cz>
+Cc: linux-gpio@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
 
-On 28.12.2017 17:01, William Breathitt Gray wrote:
-(..)
-> 
-> Linus, please pickup this entire patchset through your GPIO subsystem
-> tree; a recursive dependency error is present if these patches are
-> cherry-picked (see https://lkml.org/lkml/2017/12/26/235), so they should
-> be merged together in the same tree.
-> 
-> Maciej, this patchset resolves the recursive dependency issue you
-> encountered, so now you should be able to submit your Winbond GPIO
-> driver with the ISA_BUS_API selection as desired.
+On Fri, Dec 22, 2017 at 9:29 PM, Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz> w=
+rote:
 
-Thanks for these patches, will submit the driver as soon as I
-integrate Andy's comments.
+> The push-pull vs. open-drain are the only supported output modes. The
+> inputs are always unconditionally equipped with weak pull-downs. That's
+> the only mode, so there's probably no point in exporting that. I wonder
+> if it's worthwhile to provide a custom dbg_show method to indicate the
+> current status of the outputs, though.
+>
+> This patch and [1] for i2c-gpio together make it possible to bit-bang an
+> I2C bus over GPIOs of an UART which is connected via SPI :). Yes, this
+> is crazy, but it's fast enough (while on a 26Mhz SPI HW bus with a
+> dual-core 1.6GHz CPU) to drive an I2C bus at 200kHz, according to my
+> scope.
+>
+> [1] https://patchwork.ozlabs.org/patch/852591/
+>
+> Signed-off-by: Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz>
+> ---
+> My suggestion is for this patch to go in via the tty/serial tree; I plan
+> to send more patches to this driver (and some of them are alreay in
+> tty-next). --jkt
 
-Maciej
+OK Greg can pick this.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+(Looks very useful for hardware hacking, by the way.)
+
+Yours,
+Linus Walleij
