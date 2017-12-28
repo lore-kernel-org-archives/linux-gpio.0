@@ -1,103 +1,97 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH] pinctrl: baytrail: Enable glitch filter on some systems
-Date: Thu, 28 Dec 2017 23:41:28 +0100
-Message-ID: <20171228224128.29065-1-hdegoede@redhat.com>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: Re: [PATCH v2] gpio: winbond: add driver
+Date: Thu, 28 Dec 2017 23:45:09 +0100
+Message-ID: <20148b19-7076-7c27-9d04-54a0849695b4@maciej.szmigiero.name>
+References: <309acd17-5244-da8c-a28e-dace15ada4fb@maciej.szmigiero.name>
+ <20171224224215.GA2372@sophia>
+ <f3ebd850-c301-2adb-95e7-3a1f37c2259c@maciej.szmigiero.name>
+ <0e8ece1e-3041-ea58-f5b6-298c163fa747@maciej.szmigiero.name>
+ <20171227002410.GA12050@sophia>
+ <d6f8aa80-47f1-ccf2-8c85-6839f13058fb@maciej.szmigiero.name>
+ <20171228045850.GB11117@sophia>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:33526 "EHLO mx1.redhat.com"
+Received: from vps-vb.mhejs.net ([37.28.154.113]:38148 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750982AbdL1Wlc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 28 Dec 2017 17:41:32 -0500
+        id S1751021AbdL1WpO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 28 Dec 2017 17:45:14 -0500
+In-Reply-To: <20171228045850.GB11117@sophia>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Cameron <jic23@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 
-On some systems, some PCB traces attached to edge triggered GpioInts
-are routed in such a way that they pick up enough interference to
-constantly (many times per second) trigger.
+On 28.12.2017 05:58, William Breathitt Gray wrote:
+> On Wed, Dec 27, 2017 at 07:42:21PM +0100, Maciej S. Szmigiero wrote:
+>> On 27.12.2017 01:24, William Breathitt Gray wrote:
+>>> On Mon, Dec 25, 2017 at 03:48:16PM +0100, Maciej S. Szmigiero wrote:
+>> (..)
+>>>> All the existing ISA bus drivers seem to depend on CONFIG_ISA_BUS_API
+>>>> instead of selecting it but IMHO this is wrong because:
+>>>> 1) This Kconfig option doesn't really enable or disable any bus support
+>>>> but building of a library of some common boilerplate code.
+>>>> Libraries are normally selected by drivers needing them and only provided
+>>>> as an user-selectable option if there is a possibility that a out-of-tree
+>>>> module would need it,
+>>>>
+>>>> 2) On x86_64 this option (or rather, its parent option CONFIG_ISA_BUS)
+>>>> cannot be enabled without CONFIG_EXPERT,
+>>>>
+>>>> 3) This device isn't really a ISA bus device any more than, for example,
+>>>> a 8250 serial port or a PC-style parallel port and these don't need
+>>>> that an user explicitly enables "ISA bus support" in his kernel
+>>>> configuration.
+>>>
+>>> I can see what you mean about selecting ISA_BUS_API rather than having
+>>> it as a dependency for drivers. Part of the reason I added the
+>>> CONFIG_EXPERT dependency for CONFIG_ISA_BUS -- as well as having
+>>> CONFIG_ISA_BUS_API be a dependency for the drivers themselves -- was to
+>>> hide the ISA-style drivers which blindly poke at I/O port addresses,
+>>> lest a niave user enable all available drivers and unintentionally brick
+>>> their system when the drivers execute.
+>>>
+>>> I think there is still merit in masking dangerous drivers such as this,
+>>> since the expected behavior nowadays is for the driver to probe for the
+>>> device before poking at memory; since ISA-style communication lacks a
+>>> standard method of detecting devices in hardware, these devices
+>>> generally pose a danger when loaded by niave users.
+>>
+>> This driver accesses the same Super I/O chip as w83627ehf hwmon and
+>> w83627hf_wdt watchdog drivers.
+>> In addition to this, there are loads of other hwmon and watchdog drivers
+>> for x86 Super I/Os in the tree, most of them using the same probing and
+>> communication style.
+>> There are even existing GPIO drivers for some Super I/Os like gpio-it87
+>> and gpio-f7188x.
+>>
+>> None of these drivers need CONFIG_EXPERT to be selected.
+>>
+>> Also, CONFIG_EXPERT is described as "Configure standard kernel features"
+>> and that "[it] allows certain base kernel options and settings to be
+>> disabled or tweaked" for "specialized environments".
+>> Enabling this driver is not about changing "standard kernel feature" or
+>> a "base kernel option [or] setting".
+> 
+> I'm sorry, I didn't make it quite clear in my previous reply. I agree
+> with you that CONFIG_EXPERT shouldn't be necessary for this driver -- in
+> the end, a select ISA_BUS_API line should be all that's needed to have
+> ISA bus driver support for your driver.
 
-Enabling glitch-filtering fixes this. This commit introduces a DMI
-list with systems which need this, but maybe we should enable this on
-all Bay Trail GPIOs used as edge-triggered interrupts?
+My apologies for misunderstanding you.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-I wonder if Windows just enables glitch-filtering on all GPIOs? Can
-someone perhaps dump the register at physical address 0xFED0C550
-(SATAGP0 PINCONF) on a Bay Trail system using GPIO attached volume
-buttons while running Windows?
----
- drivers/pinctrl/intel/pinctrl-baytrail.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> My reference to the CONFIG_EXPERT option is for masking options related
+> to other ISA-style buses not commonly found in desktop systems. Devices
+> like the Super I/O chip wouldn't fall into this category since LPC is
+> pretty common and the relevant I/O port addresses are usually well
+> known. Ultimately, the Winbond GPIO driver should not need CONFIG_EXPERT
+> to be enabled in order to select ISA_BUS_API.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 9c1ca29c60b7..21a60b5dac57 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -14,6 +14,7 @@
-  * more details.
-  */
- 
-+#include <linux/dmi.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/types.h>
-@@ -46,6 +47,7 @@
- #define BYT_TRIG_POS		BIT(25)
- #define BYT_TRIG_LVL		BIT(24)
- #define BYT_DEBOUNCE_EN		BIT(20)
-+#define BYT_GLITCH_FILTER_EN	BIT(19)
- #define BYT_PULL_STR_SHIFT	9
- #define BYT_PULL_STR_MASK	(3 << BYT_PULL_STR_SHIFT)
- #define BYT_PULL_STR_2K		(0 << BYT_PULL_STR_SHIFT)
-@@ -205,6 +207,7 @@ struct byt_gpio {
- 	const struct byt_pinctrl_soc_data *soc_data;
- 	struct byt_community *communities_copy;
- 	struct byt_gpio_pin_context *saved_context;
-+	bool enable_glitch_filter;
- };
- 
- /* SCORE pins, aka GPIOC_<pin_no> or GPIO_S0_SC[<pin_no>] */
-@@ -1580,6 +1583,9 @@ static int byt_irq_type(struct irq_data *d, unsigned int type)
- 	value &= ~(BYT_DIRECT_IRQ_EN | BYT_TRIG_POS | BYT_TRIG_NEG |
- 		   BYT_TRIG_LVL);
- 
-+	if ((type & IRQ_TYPE_EDGE_BOTH) && vg->enable_glitch_filter)
-+		value |= BYT_GLITCH_FILTER_EN;
-+
- 	writel(value, reg);
- 
- 	if (type & IRQ_TYPE_EDGE_BOTH)
-@@ -1776,6 +1782,19 @@ static const struct acpi_device_id byt_gpio_acpi_match[] = {
- };
- MODULE_DEVICE_TABLE(acpi, byt_gpio_acpi_match);
- 
-+/* Some devices need the glitch filter on edge interrupts to avoid IRQ storms */
-+static const struct dmi_system_id enable_glitch_filter_list[] = {
-+	{
-+		/* GP-electronic T701 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "T701"),
-+			DMI_MATCH(DMI_BIOS_VERSION, "BYT70A.YNCHENG.WIN.007"),
-+		},
-+	},
-+	{}
-+};
-+
- static int byt_pinctrl_probe(struct platform_device *pdev)
- {
- 	const struct byt_pinctrl_soc_data *soc_data = NULL;
-@@ -1816,6 +1835,9 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	if (dmi_check_system(enable_glitch_filter_list))
-+		vg->enable_glitch_filter = true;
-+
- 	vg->pctl_desc		= byt_pinctrl_desc;
- 	vg->pctl_desc.name	= dev_name(&pdev->dev);
- 	vg->pctl_desc.pins	= vg->soc_data->pins;
--- 
-2.14.3
+Thanks for the explanation, it is clear for me now what you had on mind.
 
+> William Breathitt Gray
+> 
+
+Maciej Szmigiero
