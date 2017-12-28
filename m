@@ -1,37 +1,63 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: sunxi: fix a typo when merging A20
- support to A10 driver
-Date: Thu, 28 Dec 2017 15:06:28 +0100
-Message-ID: <CACRpkdYKrL+eBB4AdvRcqRTvejLqAK9hBpFwkdO7YNmiTpJ4ig@mail.gmail.com>
-References: <20171228132009.12839-1-icenowy@aosc.io>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] pinctrl: tegra: Delete two error messages for a failed memory
+ allocation in tegra_pinctrl_probe()
+Date: Thu, 28 Dec 2017 15:32:31 +0100
+Message-ID: <0a67035f-e089-85f6-adff-14e41c957ab6@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBZPUSPJAKGQEZQZG4MA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20171228132009.12839-1-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Mark Kettenis <mark.kettenis-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.web.de ([212.227.17.12]:54334 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753751AbdL1Ocy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 28 Dec 2017 09:32:54 -0500
+Content-Language: en-GB
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 28, 2017 at 2:20 PM, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 28 Dec 2017 15:15:08 +0100
 
-> When merging A20 pinctrl support to A10 pinctrl driver, the I2C function
-> of PI3 is wrongly written as "i2c3" (it should be "i2c4").
->
-> Fix this typo.
->
-> Fixes: cad4e209c102 ("pinctrl: sunxi: add support of R40 to A10 pinctrl driver")
-> Reported-by: Mark Kettenis <mark.kettenis-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Omit extra messages for a memory allocation failure in this function.
 
-Patch applied.
+This issue was detected by using the Coccinelle software.
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 51716819129d..72c718e66ebb 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -666,10 +666,9 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 	int fn, gn, gfn;
+ 
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+-	if (!pmx) {
+-		dev_err(&pdev->dev, "Can't alloc tegra_pmx\n");
++	if (!pmx)
+ 		return -ENOMEM;
+-	}
++
+ 	pmx->dev = &pdev->dev;
+ 	pmx->soc = soc_data;
+ 
+@@ -722,10 +721,8 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	pmx->regs = devm_kzalloc(&pdev->dev, pmx->nbanks * sizeof(*pmx->regs),
+ 				 GFP_KERNEL);
+-	if (!pmx->regs) {
+-		dev_err(&pdev->dev, "Can't alloc regs pointer\n");
++	if (!pmx->regs)
+ 		return -ENOMEM;
+-	}
+ 
+ 	for (i = 0; i < pmx->nbanks; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-- 
+2.15.1
+
