@@ -1,56 +1,87 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 2/3] watchdog: Change ISA_BUS_API dependency to selection
-Date: Thu, 28 Dec 2017 10:37:34 -0800
-Message-ID: <839c0f58-408f-33c6-1438-236cd11adff0@roeck-us.net>
-References: <cover.1514475654.git.vilhelm.gray@gmail.com>
- <4035bdd9c6ff2b9686e69c27e5eb887fd8f9a2bf.1514475654.git.vilhelm.gray@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Subject: Re: [PATCH/RFT v2] gpio: gpio-rcar: Support S2RAM
+Date: Fri, 29 Dec 2017 07:20:09 +0900
+Message-ID: <CAH1o70JGD_144k59U7KcMUYY7ie+a0mL-8_wAXtF=aEFK7mNvw@mail.gmail.com>
+References: <1514122643-28838-1-git-send-email-ykaneko0929@gmail.com> <8e88fcd7-655d-fad6-7838-4e84cdfca7c9@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33735 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753794AbdL1Shh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Dec 2017 13:37:37 -0500
-In-Reply-To: <4035bdd9c6ff2b9686e69c27e5eb887fd8f9a2bf.1514475654.git.vilhelm.gray@gmail.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <8e88fcd7-655d-fad6-7838-4e84cdfca7c9@mentor.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>, linus.walleij@linaro.org
-Cc: mail@maciej.szmigiero.name, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>
 
-On 12/28/2017 08:02 AM, William Breathitt Gray wrote:
-> The ISA_BUS_API Kconfig option enables the compilation of the ISA bus
-> driver. The ISA bus driver does not perform any hardware interaction,
-> and is instead just a thin layer of software abstraction to eliminate
-> boilerplate code common to ISA-style device drivers. Since ISA_BUS_API
-> has no dependencies and does not jeopardize the integrity of the system
-> when enabled, drivers should select it when the ISA bus driver
-> functionality is needed.
-> 
-> Cc: Wim Van Sebroeck <wim@iguana.be>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Hi Vladimir,
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+Thank you for your review.
+I will re-spin this patch.
 
-> ---
->   drivers/watchdog/Kconfig | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index ca200d1f310a..c05d5d20eebf 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -864,7 +864,8 @@ config ALIM7101_WDT
->   
->   config EBC_C384_WDT
->   	tristate "WinSystems EBC-C384 Watchdog Timer"
-> -	depends on X86 && ISA_BUS_API
-> +	depends on X86
-> +	select ISA_BUS_API
->   	select WATCHDOG_CORE
->   	help
->   	  Enables watchdog timer support for the watchdog timer on the
-> 
+Thanks,
+Kaneko
 
+2017-12-25 17:35 GMT+09:00 Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>:
+> On 12/24/2017 03:37 PM, Yoshihiro Kaneko wrote:
+>> From: Hien Dang <hien.dang.eb@renesas.com>
+>>
+>> This patch adds an implementation that saves and restores the state of
+>> GPIO configuration on suspend and resume.
+>>
+>> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> [Modify structure of the bank info to simplify a saving registers]
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> ---
+>
+> [snip]
+>
+>> +static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops,
+>> +             gpio_rcar_suspend, gpio_rcar_resume);
+>> +#define DEV_PM_OPS (&gpio_rcar_pm_ops)
+>> +#else
+>> +#define DEV_PM_OPS NULL
+>> +#endif /* CONFIG_PM_SLEEP*/
+>> +
+>>  static int gpio_rcar_probe(struct platform_device *pdev)
+>>  {
+>>       struct gpio_rcar_priv *p;
+>> @@ -536,6 +604,7 @@ static int gpio_rcar_remove(struct platform_device *pdev)
+>>       .remove         = gpio_rcar_remove,
+>>       .driver         = {
+>>               .name   = "gpio_rcar",
+>> +             .pm     = DEV_PM_OPS,
+>>               .of_match_table = of_match_ptr(gpio_rcar_of_table),
+>>       }
+>>  };
+>>
+>
+> You can safely follow the next simpler pattern (add pm functions after
+> gpio_rcar_remove() function and remove DEV_PM_OPS macro):
+>
+> #ifdef CONFIG_PM_SLEEP
+> static int gpio_rcar_suspend(struct device *dev)
+> {
+>         ...
+> }
+>
+> static int gpio_rcar_resume(struct device *dev)
+> {
+>         ...
+> }
+> #endif
+>
+> static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops, gpio_rcar_suspend, gpio_rcar_resume);
+>
+> static struct platform_driver gpio_rcar_device_driver = {
+>         .probe          = gpio_rcar_probe,
+>         .remove         = gpio_rcar_remove,
+>         .driver         = {
+>                 .name   = "gpio_rcar",
+>                 .pm     = &gpio_rcar_pm_ops,
+>                 .of_match_table = of_match_ptr(gpio_rcar_of_table),
+>         }
+> };
+>
+> --
+> With best wishes,
+> Vladimir
