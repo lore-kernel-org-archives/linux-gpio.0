@@ -1,93 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: omap: Give unique labels to each GPIO bank/chip
-Date: Fri, 29 Dec 2017 13:28:12 +0100
-Message-ID: <20171229122812.29743-1-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34141 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbdL2M21 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Dec 2017 07:28:27 -0500
-Received: by mail-wm0-f66.google.com with SMTP id y82so5155648wmg.1
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Dec 2017 04:28:27 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 0/3] renesas: irqchip: Use WAKEUP_PATH driver PM flag
+Date: Fri, 29 Dec 2017 14:31:41 +0100
+Message-ID: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulf Hansson <ulf.hansson@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, linux-omap@vger.kernel.org
 
-As we need to add GPIO lookup tables to the OMAP platforms, we
-need to reference each GPIO chip with a unique label. Use the GPIO
-base to name each chip, "gpio-0-31", "gpio-32-63" etc. Also fix
-a small error on the error path of the probe() where the chip
-would not be free()ed proberly under all circumstances.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Kevin Hilman <khilman@kernel.org>
-Cc: linux-omap@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-omap.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+Changes in v2: [By Ulf Hansson]
+	- I have picked up the series from Geert [1] and converted it into use
+	the WAKEUP_PATH driver PM flag. This includes some minor changes to each
+	patch and updates to the changelogs.
+	- An important note, the WAKEUP_PATH driver PM flag is introduced in a
+	separate series [2], not yet applied, so @subject series depends on it.
+	- One more note, two of the patches has a checkpatch error, however I
+	did not fix them, becuase I think that should be done separate.
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index e136d666f1e5..14fc3fb6f96e 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1059,6 +1059,7 @@ static void omap_gpio_mod_init(struct gpio_bank *bank)
- static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- {
- 	static int gpio;
-+	const char *label;
- 	int irq_base = 0;
- 	int ret;
- 
-@@ -1080,7 +1081,11 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 			bank->chip.parent = &omap_mpuio_device.dev;
- 		bank->chip.base = OMAP_MPUIO(0);
- 	} else {
--		bank->chip.label = "gpio";
-+		label = devm_kasprintf(bank->chip.parent, GFP_KERNEL, "gpio-%d-%d",
-+				       gpio, gpio + bank->width - 1);
-+		if (!label)
-+			return -ENOMEM;
-+		bank->chip.label = label;
- 		bank->chip.base = gpio;
- 	}
- 	bank->chip.ngpio = bank->width;
-@@ -1104,7 +1109,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 					-1, 0, bank->width, 0);
- 	if (irq_base < 0) {
- 		dev_err(bank->chip.parent, "Couldn't allocate IRQ numbers\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto out_err_chip;
- 	}
- #endif
- 
-@@ -1123,7 +1129,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 		dev_err(bank->chip.parent,
- 			"Couldn't add irqchip to gpiochip %d\n", ret);
- 		gpiochip_remove(&bank->chip);
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto out_err_chip;
- 	}
- 
- 	gpiochip_set_chained_irqchip(&bank->chip, irqc, bank->irq, NULL);
-@@ -1132,8 +1139,12 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 			       omap_gpio_irq_handler,
- 			       0, dev_name(bank->chip.parent), bank);
- 	if (ret)
--		gpiochip_remove(&bank->chip);
-+		goto out_err_chip;
-+
-+	return ret;
- 
-+out_err_chip:
-+	gpiochip_remove(&bank->chip);
- 	return ret;
- }
- 
+[1]
+https://lkml.org/lkml/2017/11/9/382
+[2]
+https://marc.info/?l=linux-pm&m=151454744124661&w=2
+
+More information below, picked from Geert's previous cover letter.
+
+Kind regards
+Uffe
+
+
+Hi all,
+
+If an interrupt controller in a Renesas ARM SoC is part of a Clock
+Domain, and it is part of the wakeup path, it must be kept active during
+system suspend.
+
+Currently this is handled in all interrupt controller drivers by
+explicitly increasing the use count of the module clock when the device
+is part of the wakeup path.  However, this explicit clock handling is
+merely a workaround for a failure to properly communicate wakeup
+information to the device core.
+
+Hence this series fixes the affected drivers by setting the devices'
+power.wakeup_path fields instead, to indicate they are part of the
+wakeup path.  Depending on the PM Domain's active_wakeup configuration,
+the genpd core code will keep the device enabled (and the clock running)
+during system suspend when needed.
+
+Note that most of these patches depend on the series "[PATCH v2 0/3] PM
+/ Domain: renesas: Fix active wakeup behavior", hence they should not be
+applied yet.
+
+This has been tested on r8a73a4/ape6evm, r8a7740/armadillo,
+r8a7791/koelsch, r8a7795/salvator-x and -xs, r8a7796/salvator-x, and
+sh73a0/kzm9g.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  irqchip/renesas-intc-irqpin: Use WAKEUP_PATH driver PM flag
+  irqchip/renesas-irqc: Use WAKEUP_PATH driver PM flag
+  gpio: rcar: Use WAKEUP_PATH driver PM flag
+
+ drivers/gpio/gpio-rcar.c                  | 40 +++++++++++------------------
+ drivers/irqchip/irq-renesas-intc-irqpin.c | 42 +++++++++++--------------------
+ drivers/irqchip/irq-renesas-irqc.c        | 32 +++++++++++------------
+ 3 files changed, 45 insertions(+), 69 deletions(-)
+
 -- 
-2.14.3
-
+2.7.4
