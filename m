@@ -1,74 +1,64 @@
-From: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/3] Change ISA_BUS_API dependency to selection
-Date: Thu, 28 Dec 2017 23:25:41 -0500
-Message-ID: <20171229042541.GA321@sophia>
-References: <cover.1514475654.git.vilhelm.gray@gmail.com>
- <4339f82b-5f37-fb8d-2725-d45747608c2e@roeck-us.net>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] gpio-pca953x: fall back to byte-at-a-time for 24-bit io
+Date: Fri, 29 Dec 2017 11:44:47 +0200
+Message-ID: <CAHp75Vcpdh36yjXCCOQthYKdY3vPi5EDrqFWauyv9WDgjcZPYQ@mail.gmail.com>
+References: <1512440242-8983-1-git-send-email-andrew.cooks@opengear.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4339f82b-5f37-fb8d-2725-d45747608c2e-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mail-APzI5cXaD1zVlRWJc41N0YvC60bnQu0Y@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1512440242-8983-1-git-send-email-andrew.cooks@opengear.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Cooks <andrew.cooks@opengear.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, platypus-sw@opengear.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Dec 28, 2017 at 09:03:22AM -0800, Guenter Roeck wrote:
->On 12/28/2017 08:01 AM, William Breathitt Gray wrote:
->> The ISA_BUS_API Kconfig option enables the compilation of the ISA bus
->> driver. The ISA bus driver does not perform any hardware interaction,
->> and is instead just a thin layer of software abstraction to eliminate
->> boilerplate code common to ISA-style device drivers. Since ISA_BUS_API
->> has no dependencies and does not jeopardize the integrity of the system
->> when enabled, drivers should select it when the ISA bus driver
->> functionality is needed.
->> 
->> Originally, when the ISA_BUS_API Kconfig option was introduced, it
->> served a dual-purpose of masking drivers ISA-style devices not commonly
->> found for desktop systems, such as the PC/104 device drivers. This
->> secondary semantic was inappropriate for the ISA_BUS_API option, and
->> proper masking of these device drivers is now accomplished via dedicated
->> Kconfig options such as CONFIG_PC104.
->> 
->> Linus, please pickup this entire patchset through your GPIO subsystem
->> tree; a recursive dependency error is present if these patches are
->> cherry-picked (see https://lkml.org/lkml/2017/12/26/235), so they should
->> be merged together in the same tree.
->> 
->> Maciej, this patchset resolves the recursive dependency issue you
->> encountered, so now you should be able to submit your Winbond GPIO
->> driver with the ISA_BUS_API selection as desired.
->> 
->> William Breathitt Gray (3):
->>    iio: Change ISA_BUS_API dependency to selection
->>    watchdog: Change ISA_BUS_API dependency to selection
->>    gpio: Change ISA_BUS_API dependency to selection
->> 
->>   drivers/gpio/Kconfig        | 14 +++++++++-----
->>   drivers/iio/adc/Kconfig     |  3 ++-
->>   drivers/iio/counter/Kconfig |  3 ++-
->>   drivers/iio/dac/Kconfig     |  3 ++-
->>   drivers/watchdog/Kconfig    |  3 ++-
->>   5 files changed, 17 insertions(+), 9 deletions(-)
->> 
->But why keep "config ISA_BUS" ? Its only purpose is to select ISA_BUS_API.
+On Tue, Dec 5, 2017 at 4:17 AM, Andrew Cooks <andrew.cooks@opengear.com> wrote:
+> Using TCA6424A with i2c-piix4 bus driver requires byte-at-a-time IO,
+> because the i2c-piix4 driver (and probably some SMBus controllers) don't
+> support I2C_SMBUS_I2C_BLOCK_DATA.
 
-I intend to have CONFIG_ISA_BUS now serve purely as a mask for true ISA
-device drivers (e.g. CIO_DAC within this patchset). The legacy
-CONFIG_ISA has a X86_32 dependency which prevents its use for X86_64
-builds -- and unfortunately existing drivers depending on CONFIG_ISA
-expect the X86_32 arch, thus making the task of decoupling that arch
-dependency difficult. I'm hoping CONFIG_ISA_BUS can therefore supersede
-the legacy CONFIG_ISA because an ISA bus can physically exist on a
-non-X86_32 system.
+Why not to fix piix4 for now?
 
-However, there is no longer a need to select ISA_BUS_API, so that should
-be removed, as well as the help text updated to match the changes. I'll
-make these updates and submit a version 2 of this patchset some time
-tomorrow then.
-
-William Breathitt Gray
-
+>  static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+>  {
+> +       int ret, i;
+>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
 >
->Guenter
+> -       return i2c_smbus_write_i2c_block_data(chip->client,
+> +       if (i2c_check_functionality(chip->client->adapter,
+> +                                   I2C_FUNC_SMBUS_WRITE_I2C_BLOCK)) {
+> +               return i2c_smbus_write_i2c_block_data(chip->client,
+>                                               (reg << bank_shift) | REG_ADDR_AI,
+>                                               NBANK(chip), val);
+
+> +       } else {
+
+Redundant and makes useless indentation level below.
+
+> +               for (i = 0; i < NBANK(chip); i++) {
+> +                       ret = i2c_smbus_write_byte_data(chip->client,
+> +                                                       (reg << 1) + i, val[i]);
+> +                       if (ret < 0)
+> +                               return ret;
+> +               }
+> +               return ret;
+> +       }
+>  }
+>
+>  static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+> @@ -249,7 +261,7 @@ static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+>  {
+>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+>
+> -       return i2c_smbus_read_i2c_block_data(chip->client,
+> +       return i2c_smbus_read_i2c_block_data_or_emulated(chip->client,
+>                                              (reg << bank_shift) | REG_ADDR_AI,
+>                                              NBANK(chip), val);
+
+Don't we have a counter part for writing?
+
+Perhaps, it might be another option.
+
+-- 
+With Best Regards,
+Andy Shevchenko
