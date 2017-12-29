@@ -1,144 +1,108 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 1/3] irqchip/renesas-intc-irqpin: Use WAKEUP_PATH driver PM flag
-Date: Fri, 29 Dec 2017 14:31:42 +0100
-Message-ID: <1514554304-18989-2-git-send-email-ulf.hansson@linaro.org>
-References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulf Hansson <ulf.hansson@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH] gpio: omap: Give unique labels to each GPIO bank/chip
+Date: Fri, 29 Dec 2017 15:03:42 +0100
+Message-ID: <20171229140342.GD16993@localhost>
+References: <20171229122812.29743-1-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:32944 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750905AbdL2ODp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Dec 2017 09:03:45 -0500
+Content-Disposition: inline
+In-Reply-To: <20171229122812.29743-1-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, linux-omap@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, Dec 29, 2017 at 01:28:12PM +0100, Linus Walleij wrote:
+> As we need to add GPIO lookup tables to the OMAP platforms, we
+> need to reference each GPIO chip with a unique label. Use the GPIO
+> base to name each chip, "gpio-0-31", "gpio-32-63" etc. Also fix
+> a small error on the error path of the probe() where the chip
+> would not be free()ed proberly under all circumstances.
 
-Since commit 705bc96c2c15313c ("irqchip: renesas-intc-irqpin: Add minimal
-runtime PM support"), when an IRQ is used for wakeup, the INTC block's
-module clock (if exists) is manually kept running during system suspend, to
-make sure the device stays active.
+Since these two changes appear to be entirely unrelated, I suggest
+splitting this one up into two patches.
 
-However, this explicit clock handling is merely a workaround for a failure
-to properly communicate wakeup information to the PM core. Instead, set the
-WAKEUP_PATH driver PM flag to indicate that the device is part of the
-wakeup path, which further also enables middle-layers and PM domains (like
-genpd) to act on this.
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: linux-omap@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-omap.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index e136d666f1e5..14fc3fb6f96e 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1059,6 +1059,7 @@ static void omap_gpio_mod_init(struct gpio_bank *bank)
+>  static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>  {
+>  	static int gpio;
+> +	const char *label;
+>  	int irq_base = 0;
+>  	int ret;
+>  
+> @@ -1080,7 +1081,11 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>  			bank->chip.parent = &omap_mpuio_device.dev;
+>  		bank->chip.base = OMAP_MPUIO(0);
+>  	} else {
+> -		bank->chip.label = "gpio";
+> +		label = devm_kasprintf(bank->chip.parent, GFP_KERNEL, "gpio-%d-%d",
+> +				       gpio, gpio + bank->width - 1);
+> +		if (!label)
+> +			return -ENOMEM;
+> +		bank->chip.label = label;
+>  		bank->chip.base = gpio;
+>  	}
+>  	bank->chip.ngpio = bank->width;
+> @@ -1104,7 +1109,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>  					-1, 0, bank->width, 0);
+>  	if (irq_base < 0) {
+>  		dev_err(bank->chip.parent, "Couldn't allocate IRQ numbers\n");
+> -		return -ENODEV;
+> +		ret = -ENODEV;
+> +		goto out_err_chip;
+>  	}
+>  #endif
+>  
+> @@ -1123,7 +1129,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>  		dev_err(bank->chip.parent,
+>  			"Couldn't add irqchip to gpiochip %d\n", ret);
+>  		gpiochip_remove(&bank->chip);
+> -		return -ENODEV;
+> +		ret = -ENODEV;
+> +		goto out_err_chip;
 
-In case the device is attached to genpd and depending on if it has an
-active wakeup configuration, genpd will keep the device active (the clock
-running) during system suspend when needed. This enables us to remove all
-explicit clock handling code from the driver, so let's do that as well.
+Here it looks like you are now introducing a double free
+(gpiochip_remove) instead.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[Ulf: Converted to use the WAKEUP_PATH driver PM flag]
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/irqchip/irq-renesas-intc-irqpin.c | 42 +++++++++++--------------------
- 1 file changed, 15 insertions(+), 27 deletions(-)
+>  	}
+>  
+>  	gpiochip_set_chained_irqchip(&bank->chip, irqc, bank->irq, NULL);
+> @@ -1132,8 +1139,12 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>  			       omap_gpio_irq_handler,
+>  			       0, dev_name(bank->chip.parent), bank);
+>  	if (ret)
+> -		gpiochip_remove(&bank->chip);
+> +		goto out_err_chip;
+> +
+> +	return ret;
 
-diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
-index 06f29cf..bfc2c5c 100644
---- a/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
-@@ -17,7 +17,6 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
- 
--#include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -78,16 +77,14 @@ struct intc_irqpin_priv {
- 	struct platform_device *pdev;
- 	struct irq_chip irq_chip;
- 	struct irq_domain *irq_domain;
--	struct clk *clk;
- 	unsigned shared_irqs:1;
--	unsigned needs_clk:1;
-+	unsigned wakeup_path:1;
- 	u8 shared_irq_mask;
- };
- 
- struct intc_irqpin_config {
- 	unsigned int irlm_bit;
- 	unsigned needs_irlm:1;
--	unsigned needs_clk:1;
- };
- 
- static unsigned long intc_irqpin_read32(void __iomem *iomem)
-@@ -287,15 +284,7 @@ static int intc_irqpin_irq_set_wake(struct irq_data *d, unsigned int on)
- 	int hw_irq = irqd_to_hwirq(d);
- 
- 	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
--
--	if (!p->clk)
--		return 0;
--
--	if (on)
--		clk_enable(p->clk);
--	else
--		clk_disable(p->clk);
--
-+	p->wakeup_path = on;
- 	return 0;
- }
- 
-@@ -365,12 +354,10 @@ static const struct irq_domain_ops intc_irqpin_irq_domain_ops = {
- static const struct intc_irqpin_config intc_irqpin_irlm_r8a777x = {
- 	.irlm_bit = 23, /* ICR0.IRLM0 */
- 	.needs_irlm = 1,
--	.needs_clk = 0,
- };
- 
- static const struct intc_irqpin_config intc_irqpin_rmobile = {
- 	.needs_irlm = 0,
--	.needs_clk = 1,
- };
- 
- static const struct of_device_id intc_irqpin_dt_ids[] = {
-@@ -422,18 +409,6 @@ static int intc_irqpin_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, p);
- 
- 	config = of_device_get_match_data(dev);
--	if (config)
--		p->needs_clk = config->needs_clk;
--
--	p->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(p->clk)) {
--		if (p->needs_clk) {
--			dev_err(dev, "unable to get clock\n");
--			ret = PTR_ERR(p->clk);
--			goto err0;
--		}
--		p->clk = NULL;
--	}
- 
- 	pm_runtime_enable(dev);
- 	pm_runtime_get_sync(dev);
-@@ -602,12 +577,25 @@ static int intc_irqpin_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int intc_irqpin_suspend(struct device *dev)
-+{
-+	struct intc_irqpin_priv *p = dev_get_drvdata(dev);
-+
-+	dev_pm_set_driver_flags(dev, p->wakeup_path ? DPM_FLAG_WAKEUP_PATH : 0);
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(intc_irqpin_pm_ops, intc_irqpin_suspend, NULL);
-+
- static struct platform_driver intc_irqpin_device_driver = {
- 	.probe		= intc_irqpin_probe,
- 	.remove		= intc_irqpin_remove,
- 	.driver		= {
- 		.name	= "renesas_intc_irqpin",
- 		.of_match_table = intc_irqpin_dt_ids,
-+		.pm	= &intc_irqpin_pm_ops,
- 	}
- };
- 
--- 
-2.7.4
+I'd use "return 0" here for readability reasons.
+
+>  
+> +out_err_chip:
+
+And name this label after what it does, for example, "err_remove_chip".
+
+> +	gpiochip_remove(&bank->chip);
+>  	return ret;
+>  }
+
+Johan
