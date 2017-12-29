@@ -1,30 +1,93 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: baytrail: Enable glitch filter on some systems
-Date: Fri, 29 Dec 2017 12:54:54 +0200
-Message-ID: <20171229105454.GD27654@lahna.fi.intel.com>
-References: <20171228224128.29065-1-hdegoede@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: omap: Give unique labels to each GPIO bank/chip
+Date: Fri, 29 Dec 2017 13:28:12 +0100
+Message-ID: <20171229122812.29743-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:49427 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754826AbdL2Ky6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 29 Dec 2017 05:54:58 -0500
-Content-Disposition: inline
-In-Reply-To: <20171228224128.29065-1-hdegoede@redhat.com>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34141 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbdL2M21 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Dec 2017 07:28:27 -0500
+Received: by mail-wm0-f66.google.com with SMTP id y82so5155648wmg.1
+        for <linux-gpio@vger.kernel.org>; Fri, 29 Dec 2017 04:28:27 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, linux-omap@vger.kernel.org
 
-On Thu, Dec 28, 2017 at 11:41:28PM +0100, Hans de Goede wrote:
-> On some systems, some PCB traces attached to edge triggered GpioInts
-> are routed in such a way that they pick up enough interference to
-> constantly (many times per second) trigger.
-> 
-> Enabling glitch-filtering fixes this. This commit introduces a DMI
-> list with systems which need this, but maybe we should enable this on
-> all Bay Trail GPIOs used as edge-triggered interrupts?
+As we need to add GPIO lookup tables to the OMAP platforms, we
+need to reference each GPIO chip with a unique label. Use the GPIO
+base to name each chip, "gpio-0-31", "gpio-32-63" etc. Also fix
+a small error on the error path of the probe() where the chip
+would not be free()ed proberly under all circumstances.
 
-I think it makes sense to always enable it for GPIOs used as interrupts
-(regardless whether it is edge or level).
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Kevin Hilman <khilman@kernel.org>
+Cc: linux-omap@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-omap.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index e136d666f1e5..14fc3fb6f96e 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1059,6 +1059,7 @@ static void omap_gpio_mod_init(struct gpio_bank *bank)
+ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ {
+ 	static int gpio;
++	const char *label;
+ 	int irq_base = 0;
+ 	int ret;
+ 
+@@ -1080,7 +1081,11 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 			bank->chip.parent = &omap_mpuio_device.dev;
+ 		bank->chip.base = OMAP_MPUIO(0);
+ 	} else {
+-		bank->chip.label = "gpio";
++		label = devm_kasprintf(bank->chip.parent, GFP_KERNEL, "gpio-%d-%d",
++				       gpio, gpio + bank->width - 1);
++		if (!label)
++			return -ENOMEM;
++		bank->chip.label = label;
+ 		bank->chip.base = gpio;
+ 	}
+ 	bank->chip.ngpio = bank->width;
+@@ -1104,7 +1109,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 					-1, 0, bank->width, 0);
+ 	if (irq_base < 0) {
+ 		dev_err(bank->chip.parent, "Couldn't allocate IRQ numbers\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_err_chip;
+ 	}
+ #endif
+ 
+@@ -1123,7 +1129,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 		dev_err(bank->chip.parent,
+ 			"Couldn't add irqchip to gpiochip %d\n", ret);
+ 		gpiochip_remove(&bank->chip);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_err_chip;
+ 	}
+ 
+ 	gpiochip_set_chained_irqchip(&bank->chip, irqc, bank->irq, NULL);
+@@ -1132,8 +1139,12 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 			       omap_gpio_irq_handler,
+ 			       0, dev_name(bank->chip.parent), bank);
+ 	if (ret)
+-		gpiochip_remove(&bank->chip);
++		goto out_err_chip;
++
++	return ret;
+ 
++out_err_chip:
++	gpiochip_remove(&bank->chip);
+ 	return ret;
+ }
+ 
+-- 
+2.14.3
+
