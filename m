@@ -1,108 +1,95 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH] gpio: omap: Give unique labels to each GPIO bank/chip
-Date: Fri, 29 Dec 2017 15:03:42 +0100
-Message-ID: <20171229140342.GD16993@localhost>
-References: <20171229122812.29743-1-linus.walleij@linaro.org>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v2] gpio: winbond: add driver
+Date: Fri, 29 Dec 2017 11:09:18 -0500
+Message-ID: <20171229160918.GA8195@sophia>
+References: <309acd17-5244-da8c-a28e-dace15ada4fb@maciej.szmigiero.name>
+ <1514473954.7000.418.camel@linux.intel.com>
+ <786affb2-68e9-1c5d-6a73-98f3ea09f7b1@maciej.szmigiero.name>
+ <1514543232.7000.507.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:32944 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750905AbdL2ODp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Dec 2017 09:03:45 -0500
+Received: from mail-yw0-f171.google.com ([209.85.161.171]:39735 "EHLO
+        mail-yw0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750869AbdL2QJ0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Dec 2017 11:09:26 -0500
 Content-Disposition: inline
-In-Reply-To: <20171229122812.29743-1-linus.walleij@linaro.org>
+In-Reply-To: <1514543232.7000.507.camel@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, linux-omap@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 
-On Fri, Dec 29, 2017 at 01:28:12PM +0100, Linus Walleij wrote:
-> As we need to add GPIO lookup tables to the OMAP platforms, we
-> need to reference each GPIO chip with a unique label. Use the GPIO
-> base to name each chip, "gpio-0-31", "gpio-32-63" etc. Also fix
-> a small error on the error path of the probe() where the chip
-> would not be free()ed proberly under all circumstances.
+On Fri, Dec 29, 2017 at 12:27:12PM +0200, Andy Shevchenko wrote:
+>On Fri, 2017-12-29 at 00:44 +0100, Maciej S. Szmigiero wrote:
+>> On 28.12.2017 16:12, Andy Shevchenko wrote:
+>> > On Fri, 2017-12-22 at 19:58 +0100, Maciej S. Szmigiero wrote:
+>> > > 
+>
+>> > > +	  You will need to provide a module parameter "gpios", or
+>> > > a
+>> > > +	  boot-time parameter "gpio_winbond.gpios" with a bitmask
+>> > > of
+>> > > GPIO
+>> > > +	  ports to enable (bit 0 is GPIO1, bit 1 is GPIO2, etc.).
+>> > 
+>> > 1. Why it's required?
+>> 
+>> It is required bacause "[o]ne should be careful which ports one
+>> tinkers
+>> with since some might be managed by the firmware (for functions like
+>> powering on and off, sleeping, BIOS recovery, etc.) and some of GPIO
+>> port
+>> pins are physically shared with other devices included in the Super
+>> I/O
+>> chip".
+>
+>I would like to be clear, I was asking about module parameters. Nowadays
+>we won't have new parameters to the kernel.
+>
+>Is there any strong argument to do it so? Is it one above? Can we detect
+>as much as possible run time?
 
-Since these two changes appear to be entirely unrelated, I suggest
-splitting this one up into two patches.
+The Low Pin Count (LPC) bus is a modern computer bus which to software
+resembles the legacy ISA bus of the 1980s. Unfortunately, this means
+port addresses for devices are assumed based on convention and manual
+configuration rather than hardware detection -- as such, there is a
+danger of clobbering another device's address space since addressing
+must be resolved manually.
 
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: linux-omap@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpio-omap.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index e136d666f1e5..14fc3fb6f96e 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -1059,6 +1059,7 @@ static void omap_gpio_mod_init(struct gpio_bank *bank)
->  static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
->  {
->  	static int gpio;
-> +	const char *label;
->  	int irq_base = 0;
->  	int ret;
->  
-> @@ -1080,7 +1081,11 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
->  			bank->chip.parent = &omap_mpuio_device.dev;
->  		bank->chip.base = OMAP_MPUIO(0);
->  	} else {
-> -		bank->chip.label = "gpio";
-> +		label = devm_kasprintf(bank->chip.parent, GFP_KERNEL, "gpio-%d-%d",
-> +				       gpio, gpio + bank->width - 1);
-> +		if (!label)
-> +			return -ENOMEM;
-> +		bank->chip.label = label;
->  		bank->chip.base = gpio;
->  	}
->  	bank->chip.ngpio = bank->width;
-> @@ -1104,7 +1109,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
->  					-1, 0, bank->width, 0);
->  	if (irq_base < 0) {
->  		dev_err(bank->chip.parent, "Couldn't allocate IRQ numbers\n");
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto out_err_chip;
->  	}
->  #endif
->  
-> @@ -1123,7 +1129,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
->  		dev_err(bank->chip.parent,
->  			"Couldn't add irqchip to gpiochip %d\n", ret);
->  		gpiochip_remove(&bank->chip);
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto out_err_chip;
+Maciej, although the base address for the Winbond Super I/O chip cannot
+be probed, does the chip itself offer configuration information for how
+many GPIO are available -- or instead is the total number of GPIO
+supported by firmware always the same and it is left up to the user to
+make sure they do not clobber other devices' address spaces during use?
+My suspicion is the latter, but I figure I may as well ask.
 
-Here it looks like you are now introducing a double free
-(gpiochip_remove) instead.
+If so, I suggest simply allowing access to all supported GPIO to the
+user. My reasoning is this: the user is the one loading the module
+parameter, so they should already know which GPIO they intend to use --
+as such, if they wouldn't have requested it in your "gpios" module
+parameter, they won't use it when the gpiochip is registered. Thus, the
+"gpios" module parameter can be removed and ngpios simply set to the
+total number of supported GPIO.
 
->  	}
->  
->  	gpiochip_set_chained_irqchip(&bank->chip, irqc, bank->irq, NULL);
-> @@ -1132,8 +1139,12 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
->  			       omap_gpio_irq_handler,
->  			       0, dev_name(bank->chip.parent), bank);
->  	if (ret)
-> -		gpiochip_remove(&bank->chip);
-> +		goto out_err_chip;
-> +
-> +	return ret;
+For example, the 104-IDIO-16 GPIO driver supports 32 GPIO lines because
+104-IDIO-16 devices have 32 available GPIO lines. However, this same
+driver may be use for 104-IDIO-8 devices which are firmware compatible
+with 104-IDIO-16 devices. In this case, despite 104-IDIO-8 devices only
+having 16 GPIO lines, ngpios is still set to 32 because the user already
+knows that the upper 16 GPIO lines are not available for their device,
+despite the driver permitting access to them.
 
-I'd use "return 0" here for readability reasons.
+One problem I do see is how to handle your "ppgpios" and "odgpios"
+module parameters, which allow the configuration of push-pull mode and
+open drain mode respectfully. I would like to see these module
+parameters go aways as well and leave it up for the user to configure at
+runtime. Linus, does the GPIO subsystem have a method of dynamically
+setting these kind of pin configurations?
 
->  
-> +out_err_chip:
+William Breathitt Gray
 
-And name this label after what it does, for example, "err_remove_chip".
-
-> +	gpiochip_remove(&bank->chip);
->  	return ret;
->  }
-
-Johan
+>
+>-- 
+>Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>Intel Finland Oy
