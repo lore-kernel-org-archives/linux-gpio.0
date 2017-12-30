@@ -1,48 +1,68 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2 5/5] pc104: Add EXPERT dependency for PC104 Kconfig option
-Date: Fri, 29 Dec 2017 15:14:59 -0500
-Message-ID: <5c573c758e07ee9539045c1b062b9bab1ad1669c.1514578085.git.vilhelm.gray@gmail.com>
-References: <cover.1514578085.git.vilhelm.gray@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: Allow indicating loss of pin states
+ during low-power
+Date: Sat, 30 Dec 2017 11:31:19 -0800
+Message-ID: <8890917a-67e2-6ec6-690f-0121d5de4103@gmail.com>
+References: <20171102231551.16220-1-f.fainelli@gmail.com>
+ <20171102231551.16220-3-f.fainelli@gmail.com>
+ <CACRpkdZtFRB_iy1bDPZ0wkK0jf7pkTGtbZG4gQUJVR+eiO+dhA@mail.gmail.com>
+ <20171129170247.GI28152@atomide.com>
+ <96cf5d74-3acf-07b9-9ad8-1011cd99a860@gmail.com>
+ <CACRpkdbFHj9pM6R3azVPKgbQ-LMmitEdJHQ5BOEb7Vy=kpNk4A@mail.gmail.com>
+ <908c66f9-f9bd-a4df-e241-75595a3a3e27@gmail.com>
+ <CACRpkdaXrG0rMChf-SVngsPJrsHbAVbUNfH=4m+RX73NHz3iwg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:44831 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751304AbdL2UPI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Dec 2017 15:15:08 -0500
-In-Reply-To: <cover.1514578085.git.vilhelm.gray@gmail.com>
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:42784 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbdL3TbX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 30 Dec 2017 14:31:23 -0500
+In-Reply-To: <CACRpkdaXrG0rMChf-SVngsPJrsHbAVbUNfH=4m+RX73NHz3iwg@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: mail@maciej.szmigiero.name, linux@roeck-us.net, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Stephen Warren <swarren@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Al Cooper <alcooperx@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 
-PC/104 device driver Kconfig options previously had an implicit EXPERT
-dependency by way of an explicit ISA_BUS_API dependency. Now that these
-driver Kconfig options select ISA_BUS_API rather than depend on it, the
-PC104 Kconfig option should have an explicit EXPERT dependency.
+Le 12/19/17 à 23:24, Linus Walleij a écrit :
+> On Mon, Dec 11, 2017 at 12:38 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>> On 12/02/2017 04:48 AM, Linus Walleij wrote:
+> 
+>>> This should solve your problem without having to alter the semantics
+>>> of pinctrl_select_state() for everyone.
+>>
+>> This was exactly what I proposed initially here:
+>>
+>> http://patchwork.ozlabs.org/patch/734326/
+>>
+>> I really want to get this fixed, but I can't do that if we keep losing
+>> the context of the discussion (pun intended) :).
+> 
+> Oh sorry man. I am clearly too stupid for this job...
 
-The PC/104 form factor and bus architecture are common in embedded
-and specialized systems, but uncommon in typical desktop setups. For
-this reason, it is best to mask these devices and configurations via the
-EXPERT Kconfig option because the majority of users will never need to
-concern themselves with PC/104.
+No need to slap yourself!
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- init/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> In accordance with things needing to be intuitive, something named
+> *force_* should of course force the setting into the hardware.
+> 
+> The original patch didn't mention the fact that it was hogs
+> and hogs only that was causing the trouble and that is why I
+> got lost. (I guess.) I have been going about this as if it was
+> something generic that affect all states in all devices, and to
+> me hogs is just an abscure corner of pin controlling...
+> 
+> I applied the patchwork patch from above, and elaborated
+> a bit on that it pertains to hogs, let's see what
+> happens.
+> 
+> For the case where a driver (not hog) needs to handle
+> suspend/resume transitions, proper states can hopefully
+> be used.
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 2934249fba46..227ca1300d1b 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1420,7 +1420,7 @@ config PERF_USE_VMALLOC
- 	  See tools/perf/design.txt for details
- 
- config PC104
--	bool "PC/104 support"
-+	bool "PC/104 support" if EXPERT
- 	help
- 	  Expose PC/104 form factor device drivers and options available for
- 	  selection and configuration. Enable this option if your target
+Your commit message makes that clear now, thanks for applying the patch
+and gott nytt år!
 -- 
-2.15.1
-
+Florian
