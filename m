@@ -1,68 +1,114 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: Allow indicating loss of pin states
- during low-power
-Date: Sat, 30 Dec 2017 11:31:19 -0800
-Message-ID: <8890917a-67e2-6ec6-690f-0121d5de4103@gmail.com>
-References: <20171102231551.16220-1-f.fainelli@gmail.com>
- <20171102231551.16220-3-f.fainelli@gmail.com>
- <CACRpkdZtFRB_iy1bDPZ0wkK0jf7pkTGtbZG4gQUJVR+eiO+dhA@mail.gmail.com>
- <20171129170247.GI28152@atomide.com>
- <96cf5d74-3acf-07b9-9ad8-1011cd99a860@gmail.com>
- <CACRpkdbFHj9pM6R3azVPKgbQ-LMmitEdJHQ5BOEb7Vy=kpNk4A@mail.gmail.com>
- <908c66f9-f9bd-a4df-e241-75595a3a3e27@gmail.com>
- <CACRpkdaXrG0rMChf-SVngsPJrsHbAVbUNfH=4m+RX73NHz3iwg@mail.gmail.com>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: Re: [PATCH v2] gpio: winbond: add driver
+Date: Sat, 30 Dec 2017 22:02:58 +0100
+Message-ID: <1d1dc7f9-eb61-9067-1de3-ceecb76b6e46@maciej.szmigiero.name>
+References: <309acd17-5244-da8c-a28e-dace15ada4fb@maciej.szmigiero.name>
+ <1514473954.7000.418.camel@linux.intel.com>
+ <786affb2-68e9-1c5d-6a73-98f3ea09f7b1@maciej.szmigiero.name>
+ <1514543232.7000.507.camel@linux.intel.com> <20171229160918.GA8195@sophia>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:42784 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbdL3TbX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 30 Dec 2017 14:31:23 -0500
-In-Reply-To: <CACRpkdaXrG0rMChf-SVngsPJrsHbAVbUNfH=4m+RX73NHz3iwg@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171229160918.GA8195@sophia>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Stephen Warren <swarren@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Al Cooper <alcooperx@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 
-Le 12/19/17 à 23:24, Linus Walleij a écrit :
-> On Mon, Dec 11, 2017 at 12:38 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->> On 12/02/2017 04:48 AM, Linus Walleij wrote:
-> 
->>> This should solve your problem without having to alter the semantics
->>> of pinctrl_select_state() for everyone.
+On 29.12.2017 17:09, William Breathitt Gray wrote:
+> On Fri, Dec 29, 2017 at 12:27:12PM +0200, Andy Shevchenko wrote:
+>> On Fri, 2017-12-29 at 00:44 +0100, Maciej S. Szmigiero wrote:
+>>> On 28.12.2017 16:12, Andy Shevchenko wrote:
+>>>> On Fri, 2017-12-22 at 19:58 +0100, Maciej S. Szmigiero wrote:
+>>>>>
 >>
->> This was exactly what I proposed initially here:
+>>>>> +	  You will need to provide a module parameter "gpios", or
+>>>>> a
+>>>>> +	  boot-time parameter "gpio_winbond.gpios" with a bitmask
+>>>>> of
+>>>>> GPIO
+>>>>> +	  ports to enable (bit 0 is GPIO1, bit 1 is GPIO2, etc.).
+>>>>
+>>>> 1. Why it's required?
+>>>
+>>> It is required bacause "[o]ne should be careful which ports one
+>>> tinkers
+>>> with since some might be managed by the firmware (for functions like
+>>> powering on and off, sleeping, BIOS recovery, etc.) and some of GPIO
+>>> port
+>>> pins are physically shared with other devices included in the Super
+>>> I/O
+>>> chip".
 >>
->> http://patchwork.ozlabs.org/patch/734326/
+>> I would like to be clear, I was asking about module parameters. Nowadays
+>> we won't have new parameters to the kernel.
 >>
->> I really want to get this fixed, but I can't do that if we keep losing
->> the context of the discussion (pun intended) :).
+>> Is there any strong argument to do it so? Is it one above? Can we detect
+>> as much as possible run time?
 > 
-> Oh sorry man. I am clearly too stupid for this job...
+> The Low Pin Count (LPC) bus is a modern computer bus which to software
+> resembles the legacy ISA bus of the 1980s. Unfortunately, this means
+> port addresses for devices are assumed based on convention and manual
+> configuration rather than hardware detection -- as such, there is a
+> danger of clobbering another device's address space since addressing
+> must be resolved manually.
 
-No need to slap yourself!
+Yes, although according to the datasheet this particular device only
+supports two hardcoded I/O bases (and is soldered on a motherboard) so
+a random conflict is unlikely.
 
 > 
-> In accordance with things needing to be intuitive, something named
-> *force_* should of course force the setting into the hardware.
-> 
-> The original patch didn't mention the fact that it was hogs
-> and hogs only that was causing the trouble and that is why I
-> got lost. (I guess.) I have been going about this as if it was
-> something generic that affect all states in all devices, and to
-> me hogs is just an abscure corner of pin controlling...
-> 
-> I applied the patchwork patch from above, and elaborated
-> a bit on that it pertains to hogs, let's see what
-> happens.
-> 
-> For the case where a driver (not hog) needs to handle
-> suspend/resume transitions, proper states can hopefully
-> be used.
+> Maciej, although the base address for the Winbond Super I/O chip cannot
+> be probed, does the chip itself offer configuration information for how
+> many GPIO are available -- or instead is the total number of GPIO
+> supported by firmware always the same and it is left up to the user to
+> make sure they do not clobber other devices' address spaces during use?
 
-Your commit message makes that clear now, thanks for applying the patch
-and gott nytt år!
--- 
-Florian
+As I wrote in my previous message to Andy unfortunately we don't really
+have a general ability to detect which GPIO device(s) should be configured
+and how since it is very likely that these particular devices and their
+pins that aren't used internally by the firmware aren't even configured
+correctly.
+And we can't simply enable all since these would possibly reconfigure
+these that really should be managed by the firmware or that share pins
+with other devices like UARTs.
+
+> My suspicion is the latter, but I figure I may as well ask.
+> 
+> If so, I suggest simply allowing access to all supported GPIO to the
+> user. My reasoning is this: the user is the one loading the module
+> parameter, so they should already know which GPIO they intend to use --
+> as such, if they wouldn't have requested it in your "gpios" module
+> parameter, they won't use it when the gpiochip is registered. Thus, the
+> "gpios" module parameter can be removed and ngpios simply set to the
+> total number of supported GPIO.
+
+As I wrote above, we can't blindly enable all GPIO ports.
+
+> For example, the 104-IDIO-16 GPIO driver supports 32 GPIO lines because
+> 104-IDIO-16 devices have 32 available GPIO lines. However, this same
+> driver may be use for 104-IDIO-8 devices which are firmware compatible
+> with 104-IDIO-16 devices. In this case, despite 104-IDIO-8 devices only
+> having 16 GPIO lines, ngpios is still set to 32 because the user already
+> knows that the upper 16 GPIO lines are not available for their device,
+> despite the driver permitting access to them.
+> 
+> One problem I do see is how to handle your "ppgpios" and "odgpios"
+> module parameters, which allow the configuration of push-pull mode and
+> open drain mode respectfully. I would like to see these module
+> parameters go aways as well and leave it up for the user to configure at
+> runtime. Linus, does the GPIO subsystem have a method of dynamically
+> setting these kind of pin configurations?
+
+The problem here is that this device doesn't support per-pin output
+driver configuration, only per-GPIO device (8 pins) configuration.
+
+The GPIO subsystem exports an independent configuration for each pin,
+so implementing a GPIO output driver configuration method this way
+would be advertising a capability that the device doesn't really have.
+
+> William Breathitt Gray
+
+Maciej Szmigiero
