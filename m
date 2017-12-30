@@ -1,298 +1,846 @@
 From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: Re: [PATCH v2] gpio: winbond: add driver
-Date: Sat, 30 Dec 2017 22:02:49 +0100
-Message-ID: <089ea9f5-b2c2-8b20-9575-434d53117069@maciej.szmigiero.name>
-References: <309acd17-5244-da8c-a28e-dace15ada4fb@maciej.szmigiero.name>
- <1514473954.7000.418.camel@linux.intel.com>
- <786affb2-68e9-1c5d-6a73-98f3ea09f7b1@maciej.szmigiero.name>
- <1514543232.7000.507.camel@linux.intel.com>
+Subject: [PATCH v3] gpio: winbond: add driver
+Date: Sat, 30 Dec 2017 22:02:34 +0100
+Message-ID: <834ef274-35fc-0384-fb0f-df36effacf7c@maciej.szmigiero.name>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-2
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1514543232.7000.507.camel@linux.intel.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Jonathan Cameron <jic23@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 29.12.2017 11:27, Andy Shevchenko wrote:
-> On Fri, 2017-12-29 at 00:44 +0100, Maciej S. Szmigiero wrote:
->> On 28.12.2017 16:12, Andy Shevchenko wrote:
->>> On Fri, 2017-12-22 at 19:58 +0100, Maciej S. Szmigiero wrote:
->>>>
-> 
->>>> +	  You will need to provide a module parameter "gpios", or
->>>> a
->>>> +	  boot-time parameter "gpio_winbond.gpios" with a bitmask
->>>> of
->>>> GPIO
->>>> +	  ports to enable (bit 0 is GPIO1, bit 1 is GPIO2, etc.).
->>>
->>> 1. Why it's required?
->>
->> It is required bacause "[o]ne should be careful which ports one
->> tinkers
->> with since some might be managed by the firmware (for functions like
->> powering on and off, sleeping, BIOS recovery, etc.) and some of GPIO
->> port
->> pins are physically shared with other devices included in the Super
->> I/O
->> chip".
-> 
-> I would like to be clear, I was asking about module parameters. Nowadays
-> we won't have new parameters to the kernel.
-> 
-> Is there any strong argument to do it so? Is it one above? Can we detect
-> as much as possible run time?
+This commit adds GPIO driver for Winbond Super I/Os.
 
-These GPIO devices are not described anywhere by the platform AFAIK.
-It is also very likely that these particular devices and their pins that
-aren't used internally by the firmware aren't even configured correctly.
+Currently, only W83627UHG model (also known as Nuvoton NCT6627UD) is
+supported but in the future a support for other Winbond models, too, can
+be added to the driver.
 
-That's why we don't really have a general ability to detect which GPIO
-device(s) should be configured and how.
+A module parameter "gpios" sets a bitmask of GPIO ports to enable (bit 0 is
+GPIO1, bit 1 is GPIO2, etc.).
+One should be careful which ports one tinkers with since some might be
+managed by the firmware (for functions like powering on and off, sleeping,
+BIOS recovery, etc.) and some of GPIO port pins are physically shared with
+other devices included in the Super I/O chip.
 
-Other issue is that random hacking and reverse engineering of
-motherboard signals (SIO GPIO lines are often used internally to
-implement switching of various motherboard functions, like LED control,
-main / backup BIOS swapping, etc.) will probably represent the most
-common use case for this driver so its settings should be changeable
-without needing to modify the kernel.
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+---
+Changes from v1:
+* Added SPDX license tag,
 
-Don't think about this driver like a ready driver for some platform,
-like a driver for a Foo motherboard lights or a Bar laptop extra keys.
-In such cases a dedicated driver should be written (which would then
-interact with LED and input subsystems, respectively).
+* Removed gpiobase parameter,
 
->>> 2. GPIO1 -> GPIO0, GPIO2 -> GPIO1, etc ?
->>
->> The chip datasheet calls GPIO devices and their pins "GPIO1", "GPIO2",
->> etc., however the driver uses a more common zero-based indexing (so,
->> for example, we don't waste the zeroth bit).
-> 
-> I dunno what makes less confusion here.
-> 
-> One way, is to provide labels according to data sheet (not so flexible,
-> though), another waste 0th bit for good.
-> 
-> Linus, what's your opinion?
->
-(..)
->>>> +#define WB_SIO_DEV_WDGPIO56 8
->>>> +#define WB_SIO_WDGPIO56_REG_ENABLE 0x30
->>>
->>> Why do we have duplication here?
->>
->> Registers with offset >= 0x30 are
->> specific for a particular device.
->>
->> That's a register in a different device
->> (which happen to have similar function as
->> register 0x30 in, for example, UARTC but
->> nothing in the datasheet guarantees that
->> such mapping will be universal).
-> 
-> OK, then can you put a comment like this one before this very definition
-> block (with offsets >= 0x30) and put a one line comment before each
-> *different* device.
+* Changed uint{8,16}_t types to u{8,16},
 
-Ok.
+* Added kerneldoc descriptions of driver structures,
 
->>>> +static u8 gpios;
->>>> +static u8 ppgpios;
->>>> +static u8 odgpios;
->>>> +static bool pledgpio;
->>>> +static bool beepgpio;
->>>> +static bool i2cgpio;
->>>
->>> Hmm... Too many global variables.
->>
->> All of them, besides i2cgpio, are module parameters, which require
->> global variables.
-> 
-> Same question as on top of this mail.
-> Why do we need all of them?
+* Reformatted winbond_gpio_infos array fields so they are on separate
+lines,
 
-I've responded above to this module parameters issue.
+* Added few comments here and there as requested,
 
->>>> +static void winbond_sio_reg_write(u16 base, u8 reg, u8 data)
->>>> +static u8 winbond_sio_reg_read(u16 base, u8 reg)
->>>> +static void winbond_sio_reg_bset(u16 base, u8 reg, u8 bit)
->>>> +static void winbond_sio_reg_bclear(u16 base, u8 reg, u8 bit)
->>>> +static bool winbond_sio_reg_btest(u16 base, u8 reg, u8 bit)
->>>
->>> regmap API?
->>
->> Looking at the regmap API:
->> * It does not support a I/O port space,
-> 
-> Not an issue, you may provide your own IO accessors.
-I meant here that there is no ready regmap support for the I/O port
-space like there is for AC'97, I2C, MMIO, SPI, SPMI and W1, sorry if I
-wasn't clear enough.
+* Moved port configuration code from separate winbond_gpio_configure_X()
+functions to one, common, parametrized winbond_gpio_configure_port()
+function.
 
->> * It does not support a shared (muxed) register space, where one needs
->> to first request the space for a particular driver, then can perform
->> required sequence of operations, then should release the space,
-> 
-> If it's an MFD, it would be done at MFD level and shared across devices.
-> Also, there is no problem to remap same IO space as many times as
-> driver(s) want(s) to.
-> 
->> * It does not support multiple logical devices sharing a register
->> address space where one needs first to select the logical device, then
->> perform the required sequence of operations.
-> 
-> We have MFD for precisely that kind of devices.
+Changes from v2:
+* Adapted the driver to use the ISA bus instead of the platform one,
 
-Looks like MFD infrastructure isn't generally used for Super I/Os:
-it seems that currently no driver for this type of hardware uses it,
-despite there being a lot of Super I/O hwmon and watchdog drivers in
-the kernel tree (and even two existing GPIO ones).
+* Reformatted register and register bit macros,
 
-Also, w83627ehf hwmon and w83627hf_wdt watchdog drivers (which access
-the same hardware as this driver) would need to be rewritten to use
-this infrastructure, too.
+* Added wb_sio_{notice,warn,err} macros to not repeat pr_* calls with
+the same prefix again and again,
 
-Overall, I think it is just an overkill for such a small driver.
+* Added a comment why a double I/O register write is needed,
 
->>>> +	for (i = 0; i < ARRAY_SIZE(winbond_gpio_infos); i++) {
->>>> +		if (!(gpios & BIT(i)))
->>>> +			continue;
->>>
->>> for_each_set_bit()
->>
->> Do we really want to replace a simple 6-iteration "for" loop with a
->> one that (possibly) does a function call at setup time then an another
->> per iteration?
-> 
-> Yes. Rationale is:
-> - makes less LOCs
-> - makes code more readable and understandble at a glance
-> - unloads optimization stuff to compiler's shoulders.
+* Converted the code to use for_each_set_bit() where it could be used,
 
-Ok.
+* Removed a warning about an impossible condition in
+winbond_gpio_get_info(),
 
->>
->>>> +
->>>> +		if (gpio_num < 8)
->>>> +			break;
->>>> +
->>>> +		gpio_num -= 8;
->>>
->>> Yeah, consider to use % and / paired, see below.
->>
->> Here it is only a simple subtraction of 8 lines per each set bit in
->> 'gpios', how do you suggest to replace it with a faster
->> division-with-reminder operation (I guess it isn't supposed to be 
->> "if (gpio_num / 8 == 0) break;")?
-> 
-> Looking above and below, I actually missed that what you need is
-> hweight().
+* Made winbond_gpio_get_info() return a reduced GPIO number,
 
-Here hweight() felt like a poor fit, but it was used in the code below.
+* Renamed gpiolib callback functions parameter name from gpio_num to
+offset,
 
->>>> +	if (WARN_ON(i >= ARRAY_SIZE(winbond_gpio_infos)))
->>>> +		i = 0;
->>>
->>> Something is even more seriously wrong if you are going to mess with
->>> GPIO 0.
->>>
->>> You have to return an error here.
->>>
->>> Although it should not happen at all, AFAIU.
->>
->> Yes, this condition should never happen in principle (it's only a
->> defensive programming check) so I think that printing a warning and
->> letting it read the first GPIO that is present while disallowing write
->> access would be fine in this very unlikely situation.
-> 
-> I think it's just a waste of effort. If this happens it happens to all
-> GPIO drivers, otherwise it might be some HW issue with memory, for
-> example, that again makes entire system unstable.
-> 
-> % git grep -n WARN -- drivers/gpio/ | cut -f1 -d: | sort -u
-> drivers/gpio/devres.c
-> drivers/gpio/gpio-aspeed.c
-> drivers/gpio/gpio-brcmstb.c
-> drivers/gpio/gpio-bt8xx.c
-> drivers/gpio/gpio-davinci.c
-> drivers/gpio/gpio-grgpio.c
-> drivers/gpio/gpiolib-acpi.c
-> drivers/gpio/gpiolib.c
-> drivers/gpio/gpiolib-of.c
-> drivers/gpio/gpio-omap.c
-> drivers/gpio/gpio-tegra186.c
-> drivers/gpio/gpio-thunderx.c
-> drivers/gpio/gpio-twl4030.c
-> drivers/gpio/gpio-tz1090.c
-> drivers/gpio/gpio-uniphier.c
-> drivers/gpio/gpio-zynq.c
-> 
-> Basically above list minus 4 library files (and perhaps even less to
-> care about similar "should never happen" cases).
-> 
-> $ ls -1 drivers/gpio/ | wc -l
-> 147
+* Changed I/O port number variables to unsigned long type,
 
-I've removed this check now but I cannot say I agree that checks like
-this are just a waste of effort: in fact only yesterday I've hit a
-userspace-triggerable NULL pointer dereference in the pktcdvd driver
-caused by bdev_get_queue() dereferencing an intermediate pointer blindly.
+* Removed explicit casts in logging calls,
 
-Of course, the actual cause of this bug probably lies somewhere else, but
-a "soft" failure of returning an error (or printing a warning, or not
-performing the requested operation, etc.) is no doubt preferred over a
-"hard" failure of a kernel NULL pointer dereference.
+* hweight() is now used for calculating the total GPIO count.
 
-Although in case of bdev_get_queue() function it can be argued that
-this check wasn't done for performance reasons, since it is a core
-blkdev API, one really cannot say so about winbond_gpio_get_info() in
-this driver.
+ drivers/gpio/Kconfig        |  16 +
+ drivers/gpio/Makefile       |   1 +
+ drivers/gpio/gpio-winbond.c | 722 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 739 insertions(+)
+ create mode 100644 drivers/gpio/gpio-winbond.c
 
-(..)
->>>> +	if (winbond_sio_reg_btest(*base, info->invreg, gpio_num))
->>>> +		val = !val;
->>>> +
->>>> +	if (val)
->>>
->>> if (val ^ winbond_sio_reg_btest()) ?
->>
->> Ok.
-> 
-> Just to be clear, I put "question mark" at the end of my proposals in
-> which I completely leave choice on author(s) / maintainer(s).
-
-All right, so I left this one as-is, since I think it is clearer this
-way.
-
->>>> +	/*
->>>> +	 * Add 8 gpios for every GPIO port that was enabled in
->>>> gpios
->>>> +	 * module parameter (that wasn't disabled earlier in
->>>> +	 * winbond_gpio_configure() & co. due to, for example, a
->>>> pin
->>>> conflict).
->>>> +	 */
->>>> +	winbond_gpio_chip.ngpio = 0;
->>>> +	for (i = 0; i < 5; i++)
->>>
->>> 5 is a magic.
->>
->> Ok, will replace with ARRAY_SIZE as it is done in similar places.
->>
->>>> +		if (gpios & BIT(i))
->>>> +			winbond_gpio_chip.ngpio += 8;
->>>
->>> for_each_set_bit()
->>
->> The same situation as with the for_each_set_bit() remark above.
-> 
-> I believe hweight() is suitable here.
-> 
-
-I've adapted the code to use hweight() here.
-
-Maciej
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 395669bfcc26..8c4018855c3b 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -698,6 +698,22 @@ config GPIO_TS5500
+ 	  blocks of the TS-5500: DIO1, DIO2 and the LCD port, and the TS-5600
+ 	  LCD port.
+ 
++config GPIO_WINBOND
++	tristate "Winbond Super I/O GPIO support"
++	select ISA_BUS_API
++	help
++	  This option enables support for GPIOs found on Winbond Super I/O
++	  chips.
++	  Currently, only W83627UHG (also known as Nuvoton NCT6627UD) is
++	  supported.
++
++	  You will need to provide a module parameter "gpios", or a
++	  boot-time parameter "gpio_winbond.gpios" with a bitmask of GPIO
++	  ports to enable (bit 0 is GPIO1, bit 1 is GPIO2, etc.).
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio-winbond.
++
+ config GPIO_WS16C48
+ 	tristate "WinSystems WS16C48 GPIO support"
+ 	depends on ISA_BUS_API
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index bc5dd673fa11..ff3d36d0a443 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -139,6 +139,7 @@ obj-$(CONFIG_GPIO_VIPERBOARD)	+= gpio-viperboard.o
+ obj-$(CONFIG_GPIO_VR41XX)	+= gpio-vr41xx.o
+ obj-$(CONFIG_GPIO_VX855)	+= gpio-vx855.o
+ obj-$(CONFIG_GPIO_WHISKEY_COVE)	+= gpio-wcove.o
++obj-$(CONFIG_GPIO_WINBOND)	+= gpio-winbond.o
+ obj-$(CONFIG_GPIO_WM831X)	+= gpio-wm831x.o
+ obj-$(CONFIG_GPIO_WM8350)	+= gpio-wm8350.o
+ obj-$(CONFIG_GPIO_WM8994)	+= gpio-wm8994.o
+diff --git a/drivers/gpio/gpio-winbond.c b/drivers/gpio/gpio-winbond.c
+new file mode 100644
+index 000000000000..6b5385c3f40d
+--- /dev/null
++++ b/drivers/gpio/gpio-winbond.c
+@@ -0,0 +1,722 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * GPIO interface for Winbond Super I/O chips
++ * Currently, only W83627UHG (Nuvoton NCT6627UD) is supported.
++ *
++ * Author: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
++ */
++
++#include <linux/gpio/driver.h>
++#include <linux/ioport.h>
++#include <linux/isa.h>
++#include <linux/module.h>
++
++#define WB_GPIO_DRIVER_NAME		"gpio-winbond"
++
++#define WB_SIO_BASE			0x2e
++#define WB_SIO_BASE_HIGH		0x4e
++
++#define WB_SIO_EXT_ENTER_KEY		0x87
++#define WB_SIO_EXT_EXIT_KEY		0xaa
++
++/* global chip registers */
++
++#define WB_SIO_REG_LOGICAL		0x07
++
++#define WB_SIO_REG_CHIP_MSB		0x20
++#define WB_SIO_REG_CHIP_LSB		0x21
++
++#define WB_SIO_CHIP_ID_W83627UHG	0xa230
++#define WB_SIO_CHIP_ID_W83627UHG_MASK	GENMASK(15, 4)
++
++#define WB_SIO_REG_DPD			0x22
++#define WB_SIO_REG_DPD_UARTA		4
++#define WB_SIO_REG_DPD_UARTB		5
++
++#define WB_SIO_REG_IDPD		0x23
++#define WB_SIO_REG_IDPD_UARTC		4
++#define WB_SIO_REG_IDPD_UARTD		5
++#define WB_SIO_REG_IDPD_UARTE		6
++#define WB_SIO_REG_IDPD_UARTF		7
++
++#define WB_SIO_REG_GLOBAL_OPT		0x24
++#define WB_SIO_REG_GO_ENFDC		1
++
++#define WB_SIO_REG_OVTGPIO3456		0x29
++#define WB_SIO_REG_OG3456_G3PP		3
++#define WB_SIO_REG_OG3456_G4PP		4
++#define WB_SIO_REG_OG3456_G5PP		5
++#define WB_SIO_REG_OG3456_G6PP		7
++
++#define WB_SIO_REG_I2C_PS		0x2a
++#define WB_SIO_REG_I2CPS_I2CFS		1
++
++#define WB_SIO_REG_GPIO1_MF		0x2c
++#define WB_SIO_REG_G1MF_G2PP		7
++#define WB_SIO_REG_G1MF_G1PP		6
++#define WB_SIO_REG_G1MF_FS_MASK	GENMASK(1, 0)
++#define WB_SIO_REG_G1MF_FS_IR_OFF	0
++#define WB_SIO_REG_G1MF_FS_IR		1
++#define WB_SIO_REG_G1MF_FS_GPIO1	2
++#define WB_SIO_REG_G1MF_FS_UARTB	3
++
++/* not an actual device number, just a value meaning 'no device' */
++#define WB_SIO_DEV_NONE		0xff
++
++/* registers with offsets >= 0x30 are specific for a particular device */
++
++/* UART B logical device */
++#define WB_SIO_DEV_UARTB		0x03
++#define WB_SIO_UARTB_REG_ENABLE	0x30
++#define WB_SIO_UARTB_ENABLE_ON		0
++
++/* UART C logical device */
++#define WB_SIO_DEV_UARTC		0x06
++#define WB_SIO_UARTC_REG_ENABLE	0x30
++#define WB_SIO_UARTC_ENABLE_ON		0
++
++/* GPIO3, GPIO4 logical device */
++#define WB_SIO_DEV_GPIO34		0x07
++#define WB_SIO_GPIO34_REG_ENABLE	0x30
++#define WB_SIO_GPIO34_ENABLE_3		0
++#define WB_SIO_GPIO34_ENABLE_4		1
++#define WB_SIO_GPIO34_REG_IO3		0xe0
++#define WB_SIO_GPIO34_REG_DATA3	0xe1
++#define WB_SIO_GPIO34_REG_INV3		0xe2
++#define WB_SIO_GPIO34_REG_IO4		0xe4
++#define WB_SIO_GPIO34_REG_DATA4	0xe5
++#define WB_SIO_GPIO34_REG_INV4		0xe6
++
++/* WDTO, PLED, GPIO5, GPIO6 logical device */
++#define WB_SIO_DEV_WDGPIO56		0x08
++#define WB_SIO_WDGPIO56_REG_ENABLE	0x30
++#define WB_SIO_WDGPIO56_ENABLE_5	1
++#define WB_SIO_WDGPIO56_ENABLE_6	2
++#define WB_SIO_WDGPIO56_REG_IO5	0xe0
++#define WB_SIO_WDGPIO56_REG_DATA5	0xe1
++#define WB_SIO_WDGPIO56_REG_INV5	0xe2
++#define WB_SIO_WDGPIO56_REG_IO6	0xe4
++#define WB_SIO_WDGPIO56_REG_DATA6	0xe5
++#define WB_SIO_WDGPIO56_REG_INV6	0xe6
++
++/* GPIO1, GPIO2, SUSLED logical device */
++#define WB_SIO_DEV_GPIO12		0x09
++#define WB_SIO_GPIO12_REG_ENABLE	0x30
++#define WB_SIO_GPIO12_ENABLE_1		0
++#define WB_SIO_GPIO12_ENABLE_2		1
++#define WB_SIO_GPIO12_REG_IO1		0xe0
++#define WB_SIO_GPIO12_REG_DATA1	0xe1
++#define WB_SIO_GPIO12_REG_INV1		0xe2
++#define WB_SIO_GPIO12_REG_IO2		0xe4
++#define WB_SIO_GPIO12_REG_DATA2	0xe5
++#define WB_SIO_GPIO12_REG_INV2		0xe6
++
++/* UART D logical device */
++#define WB_SIO_DEV_UARTD		0x0d
++#define WB_SIO_UARTD_REG_ENABLE	0x30
++#define WB_SIO_UARTD_ENABLE_ON		0
++
++/* UART E logical device */
++#define WB_SIO_DEV_UARTE		0x0e
++#define WB_SIO_UARTE_REG_ENABLE	0x30
++#define WB_SIO_UARTE_ENABLE_ON		0
++
++#define wb_sio_notice(...) pr_notice(WB_GPIO_DRIVER_NAME ": " __VA_ARGS__)
++#define wb_sio_warn(...) pr_warn(WB_GPIO_DRIVER_NAME ": " __VA_ARGS__)
++#define wb_sio_err(...) pr_err(WB_GPIO_DRIVER_NAME ": " __VA_ARGS__)
++
++static unsigned long baseparam;
++static unsigned long gpios;
++static unsigned long ppgpios;
++static unsigned long odgpios;
++static bool pledgpio;
++static bool beepgpio;
++static bool i2cgpio;
++
++static int winbond_sio_enter(unsigned long base)
++{
++	if (!request_muxed_region(base, 2, WB_GPIO_DRIVER_NAME))
++		return -EBUSY;
++
++	/*
++	 * datasheet says two successive writes of the "key" value are needed
++	 * in order for chip to enter the "Extended Function Mode"
++	 */
++	outb(WB_SIO_EXT_ENTER_KEY, base);
++	outb(WB_SIO_EXT_ENTER_KEY, base);
++
++	return 0;
++}
++
++static void winbond_sio_select_logical(unsigned long base, u8 dev)
++{
++	outb(WB_SIO_REG_LOGICAL, base);
++	outb(dev, base + 1);
++}
++
++static void winbond_sio_leave(unsigned long base)
++{
++	outb(WB_SIO_EXT_EXIT_KEY, base);
++
++	release_region(base, 2);
++}
++
++static void winbond_sio_reg_write(unsigned long base, u8 reg, u8 data)
++{
++	outb(reg, base);
++	outb(data, base + 1);
++}
++
++static u8 winbond_sio_reg_read(unsigned long base, u8 reg)
++{
++	outb(reg, base);
++	return inb(base + 1);
++}
++
++static void winbond_sio_reg_bset(unsigned long base, u8 reg, u8 bit)
++{
++	u8 val;
++
++	val = winbond_sio_reg_read(base, reg);
++	val |= BIT(bit);
++	winbond_sio_reg_write(base, reg, val);
++}
++
++static void winbond_sio_reg_bclear(unsigned long base, u8 reg, u8 bit)
++{
++	u8 val;
++
++	val = winbond_sio_reg_read(base, reg);
++	val &= ~BIT(bit);
++	winbond_sio_reg_write(base, reg, val);
++}
++
++static bool winbond_sio_reg_btest(unsigned long base, u8 reg, u8 bit)
++{
++	return winbond_sio_reg_read(base, reg) & BIT(bit);
++}
++
++/**
++ * struct winbond_gpio_port_conflict - possibly conflicting device information
++ * @name:	device name (NULL means no conflicting device defined)
++ * @dev:	Super I/O logical device number where the testreg register
++ *		is located (or WB_SIO_DEV_NONE - don't select any
++ *		logical device)
++ * @testreg:	register number where the testbit bit is located
++ * @testbit:	index of a bit to check whether an actual conflict exists
++ * @warnonly:	if set then a conflict isn't fatal (just warn about it),
++ *		otherwise disable the particular GPIO port if a conflict
++ *		is detected
++ */
++struct winbond_gpio_port_conflict {
++	const char *name;
++	u8 dev;
++	u8 testreg;
++	u8 testbit;
++	bool warnonly;
++};
++
++/**
++ * struct winbond_gpio_info - information about a particular GPIO port (device)
++ * @dev:		Super I/O logical device number of the registers
++ *			specified below
++ * @enablereg:		port enable bit register number
++ * @enablebit:		index of a port enable bit
++ * @outputreg:		output driver mode bit register number
++ * @outputppbit:	index of a push-pull output driver mode bit
++ * @ioreg:		data direction register number
++ * @invreg:		pin data inversion register number
++ * @datareg:		pin data register number
++ * @conflict:		description of a device that possibly conflicts with
++ *			this port
++ */
++struct winbond_gpio_info {
++	u8 dev;
++	u8 enablereg;
++	u8 enablebit;
++	u8 outputreg;
++	u8 outputppbit;
++	u8 ioreg;
++	u8 invreg;
++	u8 datareg;
++	struct winbond_gpio_port_conflict conflict;
++};
++
++static const struct winbond_gpio_info winbond_gpio_infos[6] = {
++	{ /* 0 */
++		.dev = WB_SIO_DEV_GPIO12,
++		.enablereg = WB_SIO_GPIO12_REG_ENABLE,
++		.enablebit = WB_SIO_GPIO12_ENABLE_1,
++		.outputreg = WB_SIO_REG_GPIO1_MF,
++		.outputppbit = WB_SIO_REG_G1MF_G1PP,
++		.ioreg = WB_SIO_GPIO12_REG_IO1,
++		.invreg = WB_SIO_GPIO12_REG_INV1,
++		.datareg = WB_SIO_GPIO12_REG_DATA1,
++		.conflict = {
++			.name = "UARTB",
++			.dev = WB_SIO_DEV_UARTB,
++			.testreg = WB_SIO_UARTB_REG_ENABLE,
++			.testbit = WB_SIO_UARTB_ENABLE_ON,
++			.warnonly = true
++		}
++	},
++	{ /* 1 */
++		.dev = WB_SIO_DEV_GPIO12,
++		.enablereg = WB_SIO_GPIO12_REG_ENABLE,
++		.enablebit = WB_SIO_GPIO12_ENABLE_2,
++		.outputreg = WB_SIO_REG_GPIO1_MF,
++		.outputppbit = WB_SIO_REG_G1MF_G2PP,
++		.ioreg = WB_SIO_GPIO12_REG_IO2,
++		.invreg = WB_SIO_GPIO12_REG_INV2,
++		.datareg = WB_SIO_GPIO12_REG_DATA2
++		/* special conflict handling so doesn't use conflict data */
++	},
++	{ /* 2 */
++		.dev = WB_SIO_DEV_GPIO34,
++		.enablereg = WB_SIO_GPIO34_REG_ENABLE,
++		.enablebit = WB_SIO_GPIO34_ENABLE_3,
++		.outputreg = WB_SIO_REG_OVTGPIO3456,
++		.outputppbit = WB_SIO_REG_OG3456_G3PP,
++		.ioreg = WB_SIO_GPIO34_REG_IO3,
++		.invreg = WB_SIO_GPIO34_REG_INV3,
++		.datareg = WB_SIO_GPIO34_REG_DATA3,
++		.conflict = {
++			.name = "UARTC",
++			.dev = WB_SIO_DEV_UARTC,
++			.testreg = WB_SIO_UARTC_REG_ENABLE,
++			.testbit = WB_SIO_UARTC_ENABLE_ON,
++			.warnonly = true
++		}
++	},
++	{ /* 3 */
++		.dev = WB_SIO_DEV_GPIO34,
++		.enablereg = WB_SIO_GPIO34_REG_ENABLE,
++		.enablebit = WB_SIO_GPIO34_ENABLE_4,
++		.outputreg = WB_SIO_REG_OVTGPIO3456,
++		.outputppbit = WB_SIO_REG_OG3456_G4PP,
++		.ioreg = WB_SIO_GPIO34_REG_IO4,
++		.invreg = WB_SIO_GPIO34_REG_INV4,
++		.datareg = WB_SIO_GPIO34_REG_DATA4,
++		.conflict = {
++			.name = "UARTD",
++			.dev = WB_SIO_DEV_UARTD,
++			.testreg = WB_SIO_UARTD_REG_ENABLE,
++			.testbit = WB_SIO_UARTD_ENABLE_ON,
++			.warnonly = true
++		}
++	},
++	{ /* 4 */
++		.dev = WB_SIO_DEV_WDGPIO56,
++		.enablereg = WB_SIO_WDGPIO56_REG_ENABLE,
++		.enablebit = WB_SIO_WDGPIO56_ENABLE_5,
++		.outputreg = WB_SIO_REG_OVTGPIO3456,
++		.outputppbit = WB_SIO_REG_OG3456_G5PP,
++		.ioreg = WB_SIO_WDGPIO56_REG_IO5,
++		.invreg = WB_SIO_WDGPIO56_REG_INV5,
++		.datareg = WB_SIO_WDGPIO56_REG_DATA5,
++		.conflict = {
++			.name = "UARTE",
++			.dev = WB_SIO_DEV_UARTE,
++			.testreg = WB_SIO_UARTE_REG_ENABLE,
++			.testbit = WB_SIO_UARTE_ENABLE_ON,
++			.warnonly = true
++		}
++	},
++	{ /* 5 */
++		.dev = WB_SIO_DEV_WDGPIO56,
++		.enablereg = WB_SIO_WDGPIO56_REG_ENABLE,
++		.enablebit = WB_SIO_WDGPIO56_ENABLE_6,
++		.outputreg = WB_SIO_REG_OVTGPIO3456,
++		.outputppbit = WB_SIO_REG_OG3456_G6PP,
++		.ioreg = WB_SIO_WDGPIO56_REG_IO6,
++		.invreg = WB_SIO_WDGPIO56_REG_INV6,
++		.datareg = WB_SIO_WDGPIO56_REG_DATA6,
++		.conflict = {
++			.name = "FDC",
++			.dev = WB_SIO_DEV_NONE,
++			.testreg = WB_SIO_REG_GLOBAL_OPT,
++			.testbit = WB_SIO_REG_GO_ENFDC,
++			.warnonly = false
++		}
++	}
++};
++
++/* returns whether changing a pin is allowed */
++static bool winbond_gpio_get_info(unsigned int *gpio_num,
++				  const struct winbond_gpio_info **info)
++{
++	bool allow_changing = true;
++	unsigned long i;
++
++	for_each_set_bit(i, &gpios, sizeof(gpios)) {
++		if (*gpio_num < 8)
++			break;
++
++		*gpio_num -= 8;
++	}
++
++	*info = &winbond_gpio_infos[i];
++
++	/*
++	 * GPIO2 (the second port) shares some pins with a basic PC
++	 * functionality, which is very likely controlled by the firmware.
++	 * Don't allow changing these pins by default.
++	 */
++	if (i == 1) {
++		if (*gpio_num == 0 && !pledgpio)
++			allow_changing = false;
++		else if (*gpio_num == 1 && !beepgpio)
++			allow_changing = false;
++		else if ((*gpio_num == 5 || *gpio_num == 6) && !i2cgpio)
++			allow_changing = false;
++	}
++
++	return allow_changing;
++}
++
++static int winbond_gpio_get(struct gpio_chip *gc, unsigned int offset)
++{
++	unsigned long *base = gpiochip_get_data(gc);
++	const struct winbond_gpio_info *info;
++	bool val;
++
++	winbond_gpio_get_info(&offset, &info);
++
++	val = winbond_sio_enter(*base);
++	if (val)
++		return val;
++
++	winbond_sio_select_logical(*base, info->dev);
++
++	val = winbond_sio_reg_btest(*base, info->datareg, offset);
++	if (winbond_sio_reg_btest(*base, info->invreg, offset))
++		val = !val;
++
++	winbond_sio_leave(*base);
++
++	return val;
++}
++
++static int winbond_gpio_direction_in(struct gpio_chip *gc, unsigned int offset)
++{
++	unsigned long *base = gpiochip_get_data(gc);
++	const struct winbond_gpio_info *info;
++	int ret;
++
++	if (!winbond_gpio_get_info(&offset, &info))
++		return -EACCES;
++
++	ret = winbond_sio_enter(*base);
++	if (ret)
++		return ret;
++
++	winbond_sio_select_logical(*base, info->dev);
++
++	winbond_sio_reg_bset(*base, info->ioreg, offset);
++
++	winbond_sio_leave(*base);
++
++	return 0;
++}
++
++static int winbond_gpio_direction_out(struct gpio_chip *gc,
++				      unsigned int offset,
++				      int val)
++{
++	unsigned long *base = gpiochip_get_data(gc);
++	const struct winbond_gpio_info *info;
++	int ret;
++
++	if (!winbond_gpio_get_info(&offset, &info))
++		return -EACCES;
++
++	ret = winbond_sio_enter(*base);
++	if (ret)
++		return ret;
++
++	winbond_sio_select_logical(*base, info->dev);
++
++	winbond_sio_reg_bclear(*base, info->ioreg, offset);
++
++	if (winbond_sio_reg_btest(*base, info->invreg, offset))
++		val = !val;
++
++	if (val)
++		winbond_sio_reg_bset(*base, info->datareg, offset);
++	else
++		winbond_sio_reg_bclear(*base, info->datareg, offset);
++
++	winbond_sio_leave(*base);
++
++	return 0;
++}
++
++static void winbond_gpio_set(struct gpio_chip *gc, unsigned int offset,
++			     int val)
++{
++	unsigned long *base = gpiochip_get_data(gc);
++	const struct winbond_gpio_info *info;
++
++	if (!winbond_gpio_get_info(&offset, &info))
++		return;
++
++	if (winbond_sio_enter(*base) != 0)
++		return;
++
++	winbond_sio_select_logical(*base, info->dev);
++
++	if (winbond_sio_reg_btest(*base, info->invreg, offset))
++		val = !val;
++
++	if (val)
++		winbond_sio_reg_bset(*base, info->datareg, offset);
++	else
++		winbond_sio_reg_bclear(*base, info->datareg, offset);
++
++	winbond_sio_leave(*base);
++}
++
++static struct gpio_chip winbond_gpio_chip = {
++	.base			= -1,
++	.label			= WB_GPIO_DRIVER_NAME,
++	.owner			= THIS_MODULE,
++	.can_sleep		= true,
++	.get			= winbond_gpio_get,
++	.direction_input	= winbond_gpio_direction_in,
++	.set			= winbond_gpio_set,
++	.direction_output	= winbond_gpio_direction_out,
++};
++
++static void winbond_gpio_configure_port0_pins(unsigned long base)
++{
++	unsigned int val;
++
++	val = winbond_sio_reg_read(base, WB_SIO_REG_GPIO1_MF);
++	if ((val & WB_SIO_REG_G1MF_FS_MASK) == WB_SIO_REG_G1MF_FS_GPIO1)
++		return;
++
++	wb_sio_warn("GPIO1 pins were connected to something else (%.2x), fixing\n",
++		    val);
++
++	val &= ~WB_SIO_REG_G1MF_FS_MASK;
++	val |= WB_SIO_REG_G1MF_FS_GPIO1;
++
++	winbond_sio_reg_write(base, WB_SIO_REG_GPIO1_MF, val);
++}
++
++static void winbond_gpio_configure_port1_check_i2c(unsigned long base)
++{
++	i2cgpio = !winbond_sio_reg_btest(base, WB_SIO_REG_I2C_PS,
++					 WB_SIO_REG_I2CPS_I2CFS);
++	if (!i2cgpio)
++		wb_sio_warn("disabling GPIO2.5 and GPIO2.6 as I2C is enabled\n");
++}
++
++static bool winbond_gpio_configure_port(unsigned long base, unsigned int idx)
++{
++	const struct winbond_gpio_info *info = &winbond_gpio_infos[idx];
++	const struct winbond_gpio_port_conflict *conflict = &info->conflict;
++
++	/* is there a possible conflicting device defined? */
++	if (conflict->name != NULL) {
++		if (conflict->dev != WB_SIO_DEV_NONE)
++			winbond_sio_select_logical(base, conflict->dev);
++
++		if (winbond_sio_reg_btest(base, conflict->testreg,
++					  conflict->testbit)) {
++			if (conflict->warnonly)
++				wb_sio_warn("enabled GPIO%u share pins with active %s\n",
++					    idx + 1, conflict->name);
++			else {
++				wb_sio_warn("disabling GPIO%u as %s is enabled\n",
++					    idx + 1, conflict->name);
++				return false;
++			}
++		}
++	}
++
++	/* GPIO1 and GPIO2 need some (additional) special handling */
++	if (idx == 0)
++		winbond_gpio_configure_port0_pins(base);
++	else if (idx == 1)
++		winbond_gpio_configure_port1_check_i2c(base);
++
++	winbond_sio_select_logical(base, info->dev);
++
++	winbond_sio_reg_bset(base, info->enablereg, info->enablebit);
++
++	if (ppgpios & BIT(idx))
++		winbond_sio_reg_bset(base, info->outputreg,
++				     info->outputppbit);
++	else if (odgpios & BIT(idx))
++		winbond_sio_reg_bclear(base, info->outputreg,
++				       info->outputppbit);
++	else
++		wb_sio_notice("GPIO%u pins are %s\n", idx + 1,
++			      winbond_sio_reg_btest(base, info->outputreg,
++						    info->outputppbit) ?
++			      "push-pull" :
++			      "open drain");
++
++	return true;
++}
++
++static int winbond_gpio_configure(unsigned long base)
++{
++	unsigned long i;
++
++	for_each_set_bit(i, &gpios, sizeof(gpios))
++		if (!winbond_gpio_configure_port(base, i))
++			gpios &= ~BIT(i);
++
++	if (!gpios) {
++		wb_sio_err("please use 'gpios' module parameter to select some active GPIO ports to enable\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int winbond_gpio_check_chip(unsigned long base)
++{
++	int ret;
++	unsigned int chip;
++
++	ret = winbond_sio_enter(base);
++	if (ret)
++		return ret;
++
++	chip = winbond_sio_reg_read(base, WB_SIO_REG_CHIP_MSB) << 8;
++	chip |= winbond_sio_reg_read(base, WB_SIO_REG_CHIP_LSB);
++
++	wb_sio_notice("chip ID at %lx is %.4x\n", base, chip);
++
++	if ((chip & WB_SIO_CHIP_ID_W83627UHG_MASK) !=
++	    WB_SIO_CHIP_ID_W83627UHG) {
++		wb_sio_err("not an our chip\n");
++		ret = -ENODEV;
++	}
++
++	winbond_sio_leave(base);
++
++	return ret;
++}
++
++static int winbond_gpio_imatch(struct device *dev, unsigned int id)
++{
++	int ret;
++
++	if (gpios & ~GENMASK(ARRAY_SIZE(winbond_gpio_infos) - 1, 0)) {
++		wb_sio_err("unknown ports enabled in GPIO ports bitmask\n");
++		return 0;
++	}
++
++	if (ppgpios & odgpios) {
++		wb_sio_err("some GPIO ports are set both to push-pull and open drain mode at the same time\n");
++		return 0;
++	}
++
++	if (baseparam != 0)
++		return winbond_gpio_check_chip(baseparam) == 0;
++
++	/*
++	 * if the 'base' module parameter is unset probe two chip default
++	 * I/O port bases
++	 */
++	baseparam = WB_SIO_BASE;
++	ret = winbond_gpio_check_chip(baseparam);
++	if (ret == 0)
++		return 1;
++	else if (ret != -ENODEV && ret != -EBUSY)
++		return 0;
++
++	baseparam = WB_SIO_BASE_HIGH;
++	return winbond_gpio_check_chip(baseparam) == 0;
++}
++
++static int winbond_gpio_iprobe(struct device *dev, unsigned int id)
++{
++	int ret;
++
++	if (baseparam == 0)
++		return -EINVAL;
++
++	ret = winbond_sio_enter(baseparam);
++	if (ret)
++		return ret;
++
++	ret = winbond_gpio_configure(baseparam);
++
++	winbond_sio_leave(baseparam);
++
++	if (ret)
++		return ret;
++
++	/*
++	 * Add 8 gpios for every GPIO port that was enabled in gpios
++	 * module parameter (that wasn't disabled earlier in
++	 * winbond_gpio_configure() & co. due to, for example, a pin conflict).
++	 */
++	winbond_gpio_chip.ngpio = hweight_long(gpios) * 8;
++
++	/*
++	 * GPIO6 port has only 5 pins, so if it is enabled we have to adjust
++	 * the total count appropriately
++	 */
++	if (gpios & BIT(5))
++		winbond_gpio_chip.ngpio -= (8 - 5);
++
++	winbond_gpio_chip.parent = dev;
++
++	return devm_gpiochip_add_data(dev, &winbond_gpio_chip, &baseparam);
++}
++
++static struct isa_driver winbond_gpio_idriver = {
++	.driver = {
++		.name	= WB_GPIO_DRIVER_NAME,
++	},
++	.match	= winbond_gpio_imatch,
++	.probe	= winbond_gpio_iprobe,
++};
++
++module_isa_driver(winbond_gpio_idriver, 1);
++
++module_param_named(base, baseparam, ulong, 0444);
++MODULE_PARM_DESC(base,
++		 "I/O port base (when unset - probe chip default ones)");
++
++/* This parameter sets which GPIO devices (ports) we enable */
++module_param(gpios, ulong, 0444);
++MODULE_PARM_DESC(gpios,
++		 "bitmask of GPIO ports to enable (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
++
++/*
++ * These two parameters below set how we configure GPIO ports output drivers.
++ * It can't be a one bitmask since we need three values per port: push-pull,
++ * open-drain and keep as-is (this is the default).
++ */
++module_param(ppgpios, ulong, 0444);
++MODULE_PARM_DESC(ppgpios,
++		 "bitmask of GPIO ports to set to push-pull mode (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
++
++module_param(odgpios, ulong, 0444);
++MODULE_PARM_DESC(odgpios,
++		 "bitmask of GPIO ports to set to open drain mode (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
++
++/*
++ * GPIO2.0 and GPIO2.1 control a basic PC functionality that we
++ * don't allow tinkering with by default (it is very likely that the
++ * firmware owns these pins).
++ * These two parameters below allow overriding these prohibitions.
++ */
++module_param(pledgpio, bool, 0644);
++MODULE_PARM_DESC(pledgpio,
++		 "enable changing value of GPIO2.0 bit (Power LED), default no.");
++
++module_param(beepgpio, bool, 0644);
++MODULE_PARM_DESC(beepgpio,
++		 "enable changing value of GPIO2.1 bit (BEEP), default no.");
++
++MODULE_AUTHOR("Maciej S. Szmigiero <mail@maciej.szmigiero.name>");
++MODULE_DESCRIPTION("GPIO interface for Winbond Super I/O chips");
++MODULE_LICENSE("GPL");
