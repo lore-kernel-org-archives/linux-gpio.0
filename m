@@ -1,93 +1,86 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2 0/3] renesas: irqchip: Use WAKEUP_PATH driver PM flag
-Date: Sun, 31 Dec 2017 12:47:58 +0100
-Message-ID: <CAJZ5v0iphV9w6wQy2uQ=wW3HEC+eK4ZnS8fBE-GFuESjXM4PCQ@mail.gmail.com>
-References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
- <CAJZ5v0heO9DxbxnrXJeXC0RDQV-oOb=KLJmXWm7uuy=y7U2KjA@mail.gmail.com> <CAMuHMdX0p7rnrtdVOeh71Nd4k8aU3Pi-L6y+LTFKoh21XNUs4w@mail.gmail.com>
+From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/5] iio: Change ISA_BUS_API dependency to selection
+Date: Mon, 1 Jan 2018 09:55:25 +0000
+Message-ID: <20180101095525.0de5021a@archlinux>
+References: <cover.1514578085.git.vilhelm.gray@gmail.com>
+        <84517171cdb142f3f04b45de6ef8daf13442a866.1514578085.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:33482 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751152AbdLaLr7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 31 Dec 2017 06:47:59 -0500
-In-Reply-To: <CAMuHMdX0p7rnrtdVOeh71Nd4k8aU3Pi-L6y+LTFKoh21XNUs4w@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <84517171cdb142f3f04b45de6ef8daf13442a866.1514578085.git.vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mail-APzI5cXaD1zVlRWJc41N0YvC60bnQu0Y@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux PM <linux-pm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Sun, Dec 31, 2017 at 10:22 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Rafael,
->
-> On Sun, Dec 31, 2017 at 1:56 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
->> On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>> From: Geert Uytterhoeven <geert+renesas@glider.be>
->>>
->>> Changes in v2: [By Ulf Hansson]
->>>         - I have picked up the series from Geert [1] and converted it into use
->>>         the WAKEUP_PATH driver PM flag. This includes some minor changes to each
->>>         patch and updates to the changelogs.
->>>         - An important note, the WAKEUP_PATH driver PM flag is introduced in a
->>>         separate series [2], not yet applied, so @subject series depends on it.
->>>         - One more note, two of the patches has a checkpatch error, however I
->>>         did not fix them, becuase I think that should be done separate.
->>>
->>> [1]
->>> https://lkml.org/lkml/2017/11/9/382
->>> [2]
->>> https://marc.info/?l=linux-pm&m=151454744124661&w=2
->>>
->>> More information below, picked from Geert's previous cover letter.
->>>
->>> Kind regards
->>> Uffe
->>>
->>>
->>> Hi all,
->>>
->>> If an interrupt controller in a Renesas ARM SoC is part of a Clock
->>> Domain, and it is part of the wakeup path, it must be kept active during
->>> system suspend.
->>>
->>> Currently this is handled in all interrupt controller drivers by
->>> explicitly increasing the use count of the module clock when the device
->>> is part of the wakeup path.  However, this explicit clock handling is
->>> merely a workaround for a failure to properly communicate wakeup
->>> information to the device core.
->>>
->>> Hence this series fixes the affected drivers by setting the devices'
->>> power.wakeup_path fields instead, to indicate they are part of the
->>> wakeup path.  Depending on the PM Domain's active_wakeup configuration,
->>> the genpd core code will keep the device enabled (and the clock running)
->>> during system suspend when needed.
->>
->> However, there is a convention, documented in the kerneldoc comment of
->> device_init_wakeup(), by which devices participating in system wakeup
->> "passively" (like USB controllers and hubs) are expected to have it
->> enabled by default.
->>
->> If that convention was followed by the devices in question here, the
->> wakeup_path bit would be set for them and no other code changes would
->> be necessary.  So is there any reason for not following it?
->
-> Yes there is.  The need to stay enabled during system suspend depends
-> on the consumer of the interrupt. It is controlled by the consumer using
-> the irq_chip.irq_set_wake() callback at runtime, and may change at runtime.
->
-> If the wakeup_path flag is always set, the interrupt controller will
-> never be suspended during system suspend, and thus waste power.
+On Fri, 29 Dec 2017 15:13:19 -0500
+William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-OK
+> The ISA_BUS_API Kconfig option enables the compilation of the ISA bus
+> driver. The ISA bus driver does not perform any hardware interaction,
+> and is instead just a thin layer of software abstraction to eliminate
+> boilerplate code common to ISA-style device drivers. Since ISA_BUS_API
+> has no dependencies and does not jeopardize the integrity of the system
+> when enabled, drivers should select it when the ISA bus driver
+> functionality is needed.
+> 
+> Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>
+> Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+> Cc: Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Acked-by: Jonathan Cameron <Jonathan.Cameron-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/iio/adc/Kconfig     | 3 ++-
+>  drivers/iio/counter/Kconfig | 3 ++-
+>  drivers/iio/dac/Kconfig     | 3 ++-
+>  3 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index ef86296b8b0d..7c00e5858693 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -658,7 +658,8 @@ config STM32_ADC
+>  
+>  config STX104
+>  	tristate "Apex Embedded Systems STX104 driver"
+> -	depends on PC104 && X86 && ISA_BUS_API
+> +	depends on PC104 && X86
+> +	select ISA_BUS_API
+>  	select GPIOLIB
+>  	help
+>  	  Say yes here to build support for the Apex Embedded Systems STX104
+> diff --git a/drivers/iio/counter/Kconfig b/drivers/iio/counter/Kconfig
+> index 474e1ac4e7c0..bf1e559ad7cd 100644
+> --- a/drivers/iio/counter/Kconfig
+> +++ b/drivers/iio/counter/Kconfig
+> @@ -7,7 +7,8 @@ menu "Counters"
+>  
+>  config 104_QUAD_8
+>  	tristate "ACCES 104-QUAD-8 driver"
+> -	depends on PC104 && X86 && ISA_BUS_API
+> +	depends on PC104 && X86
+> +	select ISA_BUS_API
+>  	help
+>  	  Say yes here to build support for the ACCES 104-QUAD-8 quadrature
+>  	  encoder counter/interface device family (104-QUAD-8, 104-QUAD-4).
+> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> index 965d5c0d2468..76db0768e454 100644
+> --- a/drivers/iio/dac/Kconfig
+> +++ b/drivers/iio/dac/Kconfig
+> @@ -195,7 +195,8 @@ config AD7303
+>  
+>  config CIO_DAC
+>  	tristate "Measurement Computing CIO-DAC IIO driver"
+> -	depends on X86 && ISA_BUS_API
+> +	depends on X86 && (ISA_BUS || PC104)
+> +	select ISA_BUS_API
+>  	help
+>  	  Say yes here to build support for the Measurement Computing CIO-DAC
+>  	  analog output device family (CIO-DAC16, CIO-DAC08, PC104-DAC06). The
 
-For IRQ chips in particular, I think, you don't need add new fields to
-struct dev_pm_info to make it work.
-
-In ->suspend (or ->suspend_late, which may be better) you can check
-the IRQD_WAKEUP_STATE flag of the irq_desc associated with the pin.
-If that is set, you can simply set power.wakeup_path for the device
-and that will make genpd skip it.  Wouldn't that work?
-
-Thanks,
-Rafael
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
