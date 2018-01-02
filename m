@@ -1,31 +1,35 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra: Delete two error messages for a failed
- memory allocation in tegra_pinctrl_probe()
-Date: Tue, 2 Jan 2018 10:00:22 +0100
-Message-ID: <CACRpkdacZsBKukP3LLSJwFyCxULWoRigFwrB4MY4Rf9kbHKGwg@mail.gmail.com>
-References: <0a67035f-e089-85f6-adff-14e41c957ab6@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: mcp23s08: fix irq setup order
+Date: Tue, 2 Jan 2018 10:10:07 +0100
+Message-ID: <CACRpkdZp0kp6vTAOj11Tc2mGD4MvWwpMGTQgEhQiQAdUgapcGw@mail.gmail.com>
+References: <1514474364-32169-1-git-send-email-mastichi@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <0a67035f-e089-85f6-adff-14e41c957ab6-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:41732 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750743AbeABJKI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 04:10:08 -0500
+Received: by mail-it0-f65.google.com with SMTP id x28so38151684ita.0
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 01:10:07 -0800 (PST)
+In-Reply-To: <1514474364-32169-1-git-send-email-mastichi@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dmitry Mastykin <mastichi@gmail.com>, Sebastian Reichel <sre@kernel.org>
+Cc: Phil Reid <preid@electromag.com.au>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Dec 28, 2017 at 3:32 PM, SF Markus Elfring
-<elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org> wrote:
+On Thu, Dec 28, 2017 at 4:19 PM, Dmitry Mastykin <mastichi@gmail.com> wrote:
 
-> From: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-> Date: Thu, 28 Dec 2017 15:15:08 +0100
+> When using mcp23s08 module with gpio-keys, often (50% of boots)
+> it fails to get irq numbers with message:
+> "gpio-keys keys: Unable to get irq number for GPIO 0, error -6".
+> Seems that irqs must be setup before devm_gpiochip_add_data().
 >
-> Omit extra messages for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+> Signed-off-by: Dmitry Mastykin <mastichi@gmail.com>
 
-Patch applied.
+Patch applied, albeit for devel.
+
+Should it be tagged for stable or go into fixes?
 
 Yours,
 Linus Walleij
