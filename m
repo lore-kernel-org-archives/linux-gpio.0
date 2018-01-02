@@ -1,32 +1,59 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 3/3] gpio: rcar: Use WAKEUP_PATH driver PM flag
-Date: Tue, 2 Jan 2018 14:02:12 +0100
-Message-ID: <CAPDyKFrPTJ84-rBcdPH+Vs_L7Hbmh8G-C8fC1zYqP3H3dxn7vw@mail.gmail.com>
-References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
- <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org>
- <CAJZ5v0gWtr1bwi7WVeEbTJPu3KC8YfPvfUh5XDmomiK8TFmfyg@mail.gmail.com> <CAMuHMdVmqM+WA_EaCRHNojpV6NYmS0-V18MoixyV5UdC3cq+2g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVmqM+WA_EaCRHNojpV6NYmS0-V18MoixyV5UdC3cq+2g@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux PM <linux-pm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: [PATCH 2/4] dt-bindings: gpio: add raspberry pi GPIO expander binding
+Date: Tue,  2 Jan 2018 15:19:19 +0200
+Message-ID: <4ca1795c6e09eb89f481cdec55180b4f1165bbfd.1514898134.git.baruch@tkos.co.il>
+References: <cover.1514898134.git.baruch@tkos.co.il>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from guitar.tcltek.co.il ([192.115.133.116]:59297 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751615AbeABNV4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 2 Jan 2018 08:21:56 -0500
+In-Reply-To: <cover.1514898134.git.baruch@tkos.co.il>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dave Stevenson <dave.stevenson@raspberrypi.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, devicetree@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>
 
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> [Ulf: Converted to use the WAKEUP_PATH driver PM flag]
->
-> Ulf: + killing the DEV_PM_OPS define, increasing kernel size if PM_SUSPEND=n?
+The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware over
+I2C. The firmware mailbox interface allows the ARM core to control the
+GPIO lines.
 
-Oh, yes - correct!
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ .../bindings/gpio/brcm,bcm2835-expgpio.txt         | 24 ++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/brcm,bcm2835-expgpio.txt
 
-The code looks nicer, with the penalty of one static struct declared
-and not used, in case CONFIG_PM_SLEEP is unset.
+diff --git a/Documentation/devicetree/bindings/gpio/brcm,bcm2835-expgpio.txt b/Documentation/devicetree/bindings/gpio/brcm,bcm2835-expgpio.txt
+new file mode 100644
+index 000000000000..55257f31a9be
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/brcm,bcm2835-expgpio.txt
+@@ -0,0 +1,24 @@
++Raspberry Pi GPIO expander
++
++The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware. The
++firmware exposes a mailbox interface that allows the ARM core to control the
++GPIO lines on the expander.
++
++Required properties:
++
++- compatible : Should be "brcm,bcm2835-expgpio"
++- gpio-controller : Marks the device node as a gpio controller
++- #gpio-cells : Should be two.  The first cell is the pin number, and
++  the second cell is used to specify the gpio polarity:
++  0 = active high
++  1 = active low
++- firmware : Reference to the RPi firmware device node
++
++Example:
++
++expgpio: expgpio {
++	compatible = "brcm,bcm2835-expgpio";
++	gpio-controller;
++	#gpio-cells = <2>;
++	firmware = <&firmware>;
++};
+-- 
+2.15.1
 
-Should I revert back to your proposal, I am fine with whatever?
-
-[...]
-
-Kind regards
-Uffe
