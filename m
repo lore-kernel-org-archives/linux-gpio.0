@@ -1,25 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: tz1090-pdc: Delete an error message for a failed
- memory allocation in two functions
-Date: Tue, 2 Jan 2018 09:52:20 +0100
-Message-ID: <CACRpkdbVK8R-f9ot5ZKxx+zOHvx=GbfLcjgYKUwjbicLVLagvw@mail.gmail.com>
-References: <f52b8393-9e1f-bd65-1374-4e9db1a0e4c0@users.sourceforge.net>
+Subject: Re: [PATCH] pinctrl: utils: Delete an error message for a failed
+ memory allocation in pinctrl_utils_add_map_configs()
+Date: Tue, 2 Jan 2018 09:53:06 +0100
+Message-ID: <CACRpkdaoo7vfEybH_2DZup6XyCqaTg4fapOk+=i=NPgN0jfP9Q@mail.gmail.com>
+References: <4a1181a6-e37c-3f2b-782c-6dd4279ce39f@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <f52b8393-9e1f-bd65-1374-4e9db1a0e4c0@users.sourceforge.net>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Rob Landley <rob@landley.net>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:37004 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751492AbeABIxH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 03:53:07 -0500
+Received: by mail-it0-f67.google.com with SMTP id d137so38743513itc.2
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 00:53:07 -0800 (PST)
+In-Reply-To: <4a1181a6-e37c-3f2b-782c-6dd4279ce39f@users.sourceforge.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Dec 25, 2017 at 6:34 PM, SF Markus Elfring
+On Mon, Dec 25, 2017 at 8:15 PM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 25 Dec 2017 18:28:02 +0100
+> Date: Mon, 25 Dec 2017 20:04:05 +0100
 >
-> Omit an extra message for a memory allocation failure in these functions.
+> Omit an extra message for a memory allocation failure in this function.
 >
 > This issue was detected by using the Coccinelle software.
 >
