@@ -1,42 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: Change ISA_BUS_API dependency to selection
-Date: Tue, 2 Jan 2018 10:19:36 +0100
-Message-ID: <CACRpkdZ=kYMg==PEK3D==625+8zK_L+bM-WRSnJQDHVDkyQzsw@mail.gmail.com>
-References: <cover.1514475654.git.vilhelm.gray@gmail.com> <ff1871fe837aa3a520fefe2602f8f1e13e1db244.1514475654.git.vilhelm.gray@gmail.com>
- <CACRpkdbYiG7TOOvBa3kWtocae8NikXCdDQkR6LyPd6Umt=DHTA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] gpio: rcar: Use WAKEUP_PATH driver PM flag
+Date: Tue, 2 Jan 2018 10:27:00 +0100
+Message-ID: <CACRpkdZCApUP2YnYK09wzn3MOwH2XL3Jmm=FXHtsc2pwLyVNRw@mail.gmail.com>
+References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org> <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39345 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751551AbeABJTh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 04:19:37 -0500
-Received: by mail-it0-f65.google.com with SMTP id 68so38771872ite.4
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 01:19:36 -0800 (PST)
-In-Reply-To: <CACRpkdbYiG7TOOvBa3kWtocae8NikXCdDQkR6LyPd6Umt=DHTA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Simon Horman <horms@verge.net.au>, Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, LINUXWATCHDOG <linux-watchdog@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jan 2, 2018 at 10:18 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Dec 28, 2017 at 5:02 PM, William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
->
->> The ISA_BUS_API Kconfig option enables the compilation of the ISA bus
->> driver. The ISA bus driver does not perform any hardware interaction,
->> and is instead just a thin layer of software abstraction to eliminate
->> boilerplate code common to ISA-style device drivers. Since ISA_BUS_API
->> has no dependencies and does not jeopardize the integrity of the system
->> when enabled, drivers should select it when the ISA bus driver
->> functionality is needed.
->>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
->
-> Patch applied.
+On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-Ooops there are newer patches, backed it out.
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
+> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO block's
+> module clock (if exists) is manually kept running during system suspend, to
+> make sure the device stays active.
+>
+> However, this explicit clock handling is merely a workaround for a failure
+> to properly communicate wakeup information to the PM core. Instead, set the
+> WAKEUP_PATH driver PM flag to indicate that the device is part of the
+> wakeup path, which further also enables middle-layers and PM domains (like
+> genpd) to act on this.
+>
+> In case the device is attached to genpd and depending on if it has an
+> active wakeup configuration, genpd will keep the device active (the clock
+> running) during system suspend when needed. This enables us to remove all
+> explicit clock handling code from the driver, so let's do that as well.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> [Ulf: Converted to use the WAKEUP_PATH driver PM flag]
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+I guess it is dependent on the other patches?
+
+If you want me to just apply it to the GPIO tree, tell me.
 
 Yours,
 Linus Walleij
