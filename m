@@ -1,39 +1,66 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: baytrail: Enable glitch filter for GPIOs used
- as interrupts
-Date: Tue, 2 Jan 2018 10:39:18 +0100
-Message-ID: <CACRpkdbfuqRJpA5Q5NzeESkP4TmdepsoE3=HDuzyeVhZfXpe=w@mail.gmail.com>
-References: <20180101122357.10465-1-hdegoede@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH] gpio: omap: Fix error path on chip init
+Date: Tue,  2 Jan 2018 11:23:14 +0100
+Message-ID: <20180102102314.12906-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:45029 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751286AbeABJjT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 04:39:19 -0500
-Received: by mail-it0-f66.google.com with SMTP id b5so38195149itc.3
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 01:39:18 -0800 (PST)
-In-Reply-To: <20180101122357.10465-1-hdegoede@redhat.com>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:33972 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751546AbeABKZV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 05:25:21 -0500
+Received: by mail-lf0-f68.google.com with SMTP id h140so4408970lfg.1
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 02:25:20 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>
 
-On Mon, Jan 1, 2018 at 1:23 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+The error path was leaking a gpio_chip at one point.
 
-> On some systems, some PCB traces attached to GpioInts are routed in such
-> a way that they pick up enough interference to constantly (many times per
-> second) trigger.
->
-> Enabling glitch-filtering fixes this.
->
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
-> Changes in v2:
-> -Unconditionally enable glitch-filtering for all GpioInts instead of using
->  a DMI list, as suggested by Mika Westerberg
+Cc: Johan Hovold <johan@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-omap.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Patch applied with Mika's ACK.
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index e136d666f1e5..d83e8624964a 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1104,7 +1104,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 					-1, 0, bank->width, 0);
+ 	if (irq_base < 0) {
+ 		dev_err(bank->chip.parent, "Couldn't allocate IRQ numbers\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err_remove_chip;
+ 	}
+ #endif
+ 
+@@ -1122,8 +1123,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 	if (ret) {
+ 		dev_err(bank->chip.parent,
+ 			"Couldn't add irqchip to gpiochip %d\n", ret);
+-		gpiochip_remove(&bank->chip);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err_remove_chip;
+ 	}
+ 
+ 	gpiochip_set_chained_irqchip(&bank->chip, irqc, bank->irq, NULL);
+@@ -1132,8 +1133,12 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 			       omap_gpio_irq_handler,
+ 			       0, dev_name(bank->chip.parent), bank);
+ 	if (ret)
+-		gpiochip_remove(&bank->chip);
++		goto err_remove_chip;
+ 
++	return 0;
++
++err_remove_chip:
++	gpiochip_remove(&bank->chip);
+ 	return ret;
+ }
+ 
+-- 
+2.14.3
 
-Yours,
-Linus Walleij
