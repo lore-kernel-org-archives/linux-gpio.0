@@ -1,66 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: omap: Fix error path on chip init
-Date: Tue,  2 Jan 2018 11:23:14 +0100
-Message-ID: <20180102102314.12906-1-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:33972 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751546AbeABKZV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 05:25:21 -0500
-Received: by mail-lf0-f68.google.com with SMTP id h140so4408970lfg.1
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 02:25:20 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v2 3/3] gpio: rcar: Use WAKEUP_PATH driver PM flag
+Date: Tue, 2 Jan 2018 11:26:55 +0100
+Message-ID: <CAJZ5v0jGv4C0e0vk02C_zOk6XdCh_Zho1LG3hwvfBBuXDBh29A@mail.gmail.com>
+References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
+ <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org>
+ <CACRpkdZCApUP2YnYK09wzn3MOwH2XL3Jmm=FXHtsc2pwLyVNRw@mail.gmail.com> <CAMuHMdVwCmLYxVA0ivrE8MtCUpfVe4PrzTeC7jqqthShOw93JA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdVwCmLYxVA0ivrE8MtCUpfVe4PrzTeC7jqqthShOw93JA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux PM list <linux-pm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Simon Horman <horms@verge.net.au>, Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>
 
-The error path was leaking a gpio_chip at one point.
+On Tue, Jan 2, 2018 at 10:37 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Linus,
+>
+> On Tue, Jan 2, 2018 at 10:27 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>> From: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
+>>> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO block's
+>>> module clock (if exists) is manually kept running during system suspend, to
+>>> make sure the device stays active.
+>>>
+>>> However, this explicit clock handling is merely a workaround for a failure
+>>> to properly communicate wakeup information to the PM core. Instead, set the
+>>> WAKEUP_PATH driver PM flag to indicate that the device is part of the
+>>> wakeup path, which further also enables middle-layers and PM domains (like
+>>> genpd) to act on this.
+>>>
+>>> In case the device is attached to genpd and depending on if it has an
+>>> active wakeup configuration, genpd will keep the device active (the clock
+>>> running) during system suspend when needed. This enables us to remove all
+>>> explicit clock handling code from the driver, so let's do that as well.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> [Ulf: Converted to use the WAKEUP_PATH driver PM flag]
+>>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>>
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> I guess it is dependent on the other patches?
+>
+> Yes, it depends on (a) a clock patch queued in clk-next for v4.16, and (b) a PM
+> patch introducing WAKEUP_PATH.  Applying it prematurely will cause build
+> or runtime issues.
 
-Cc: Johan Hovold <johan@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-omap.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Plus, I'm not going to apply the WAKEUP_PATH thing just yet.
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index e136d666f1e5..d83e8624964a 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1104,7 +1104,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 					-1, 0, bank->width, 0);
- 	if (irq_base < 0) {
- 		dev_err(bank->chip.parent, "Couldn't allocate IRQ numbers\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_remove_chip;
- 	}
- #endif
- 
-@@ -1122,8 +1123,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 	if (ret) {
- 		dev_err(bank->chip.parent,
- 			"Couldn't add irqchip to gpiochip %d\n", ret);
--		gpiochip_remove(&bank->chip);
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_remove_chip;
- 	}
- 
- 	gpiochip_set_chained_irqchip(&bank->chip, irqc, bank->irq, NULL);
-@@ -1132,8 +1133,12 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 			       omap_gpio_irq_handler,
- 			       0, dev_name(bank->chip.parent), bank);
- 	if (ret)
--		gpiochip_remove(&bank->chip);
-+		goto err_remove_chip;
- 
-+	return 0;
-+
-+err_remove_chip:
-+	gpiochip_remove(&bank->chip);
- 	return ret;
- }
- 
--- 
-2.14.3
+At least not in its current version.
 
+Thanks,
+Rafael
