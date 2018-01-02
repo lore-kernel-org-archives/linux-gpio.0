@@ -1,60 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2] gpio: omap: Give unique labels to each GPIO bank/chip
-Date: Tue,  2 Jan 2018 11:32:48 +0100
-Message-ID: <20180102103248.15803-1-linus.walleij@linaro.org>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH] gpio: omap: Fix error path on chip init
+Date: Tue, 2 Jan 2018 11:39:55 +0100
+Message-ID: <20180102103955.GK16993@localhost>
+References: <20180102102314.12906-1-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:39417 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752247AbeABKe6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 05:34:58 -0500
-Received: by mail-lf0-f67.google.com with SMTP id m20so42136758lfi.6
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 02:34:57 -0800 (PST)
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:39884 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752839AbeABKj4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 05:39:56 -0500
+Received: by mail-lf0-f68.google.com with SMTP id m20so42148708lfi.6
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 02:39:55 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20180102102314.12906-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, linux-omap@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>
 
-As we need to add GPIO lookup tables to the OMAP platforms, we
-need to reference each GPIO chip with a unique label. Use the GPIO
-base to name each chip, "gpio-0-31", "gpio-32-63" etc.
+On Tue, Jan 02, 2018 at 11:23:14AM +0100, Linus Walleij wrote:
+> The error path was leaking a gpio_chip at one point.
+> 
+> Cc: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Kevin Hilman <khilman@kernel.org>
-Cc: linux-omap@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Break out errorpath fix to a separate patch.
----
- drivers/gpio/gpio-omap.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index d83e8624964a..ed07bbcede01 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1059,6 +1059,7 @@ static void omap_gpio_mod_init(struct gpio_bank *bank)
- static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- {
- 	static int gpio;
-+	const char *label;
- 	int irq_base = 0;
- 	int ret;
- 
-@@ -1080,7 +1081,11 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 			bank->chip.parent = &omap_mpuio_device.dev;
- 		bank->chip.base = OMAP_MPUIO(0);
- 	} else {
--		bank->chip.label = "gpio";
-+		label = devm_kasprintf(bank->chip.parent, GFP_KERNEL, "gpio-%d-%d",
-+				       gpio, gpio + bank->width - 1);
-+		if (!label)
-+			return -ENOMEM;
-+		bank->chip.label = label;
- 		bank->chip.base = gpio;
- 	}
- 	bank->chip.ngpio = bank->width;
--- 
-2.14.3
-
+Reviewed-by: Johan Hovold <johan@kernel.org>
