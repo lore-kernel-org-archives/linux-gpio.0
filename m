@@ -1,29 +1,22 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: xway: Delete two error messages for a failed
- memory allocation in pinmux_xway_probe()
-Date: Tue, 2 Jan 2018 09:54:16 +0100
-Message-ID: <CACRpkdZqJYQBZORX2VPEhsYRmsOBYWq6YWftrOLmHKkFviRa5g@mail.gmail.com>
-References: <0a27abb0-c222-765b-3a96-7e02163a0858@users.sourceforge.net>
+Subject: Re: [PATCH] pinctrl: samsung: Add SPDX license identifiers
+Date: Tue, 2 Jan 2018 09:56:18 +0100
+Message-ID: <CACRpkdYuYGgtRoVUpJQ5izjaFocicOff1F89x4sPtpXt0C-EyQ@mail.gmail.com>
+References: <1514311782-5187-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0a27abb0-c222-765b-3a96-7e02163a0858@users.sourceforge.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, John Crispin <john@phrozen.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1514311782-5187-1-git-send-email-krzk@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Dec 25, 2017 at 10:02 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+On Tue, Dec 26, 2017 at 7:09 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 25 Dec 2017 21:51:26 +0100
+> Replace GPL license statements with SPDX GPL-2.0+ license identifiers.
 >
-> Omit extra messages for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Patch applied.
 
