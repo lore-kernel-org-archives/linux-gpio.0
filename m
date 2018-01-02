@@ -1,30 +1,34 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2] pinctrl: baytrail: Enable glitch filter for GPIOs
- used as interrupts
-Date: Tue, 2 Jan 2018 09:31:13 +0200
-Message-ID: <20180102073113.GU27654@lahna.fi.intel.com>
-References: <20180101122357.10465-1-hdegoede@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: don't dereference a desc before validation
+Date: Tue, 2 Jan 2018 09:32:17 +0100
+Message-ID: <CACRpkdYfu9O5HkjZ0peVYyapLyKyx_-FhUOVprVjDpU-aGkV1A@mail.gmail.com>
+References: <20171221163724.6043-1-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:6730 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751254AbeABHbR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 2 Jan 2018 02:31:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20180101122357.10465-1-hdegoede@redhat.com>
+Received: from mail-it0-f41.google.com ([209.85.214.41]:37178 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751316AbeABIcS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 03:32:18 -0500
+Received: by mail-it0-f41.google.com with SMTP id d137so38697328itc.2
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 00:32:18 -0800 (PST)
+In-Reply-To: <20171221163724.6043-1-vz@mleia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: linux-gpio@vger.kernel.org
 
-On Mon, Jan 01, 2018 at 01:23:57PM +0100, Hans de Goede wrote:
-> On some systems, some PCB traces attached to GpioInts are routed in such
-> a way that they pick up enough interference to constantly (many times per
-> second) trigger.
-> 
-> Enabling glitch-filtering fixes this.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+On Thu, Dec 21, 2017 at 5:37 PM, Vladimir Zapolskiy <vz@mleia.com> wrote:
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> The fix restores a proper validation of an input gpio desc, which
+> might be needed to deal with optional GPIOs correctly.
+>
+> Fixes: 02e479808b5d ("gpio: Alter semantics of *raw* operations to actually be raw")
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+
+Hm you're right this looks better.
+
+I don't think it's a regression so queued as a non-critical fix.
+
+Yours,
+Linus Walleij
