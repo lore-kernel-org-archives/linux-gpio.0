@@ -1,24 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] pinctrl: rockchip: Fix a typo in four comment lines
-Date: Tue, 2 Jan 2018 09:48:27 +0100
-Message-ID: <CACRpkdYU0PX+yjCeEzxzMbf_rtdM1T8p6tWqPqj=F7ZfAETGhQ@mail.gmail.com>
-References: <323697d0-e1e8-8d3b-1070-f481cfa30b9a@users.sourceforge.net> <989b7476-5e5e-d1ed-0d95-9dbdcec2382c@users.sourceforge.net>
+Subject: Re: [PATCH 1/2] pinctrl: single: Delete an error message for a failed
+ memory allocation in pcs_probe()
+Date: Tue, 2 Jan 2018 09:49:38 +0100
+Message-ID: <CACRpkdYEnJv2SsR_+Jt=Rp364VgRukjDJ=gBC55X5zOSvu92xw@mail.gmail.com>
+References: <6bc679d1-c1ee-52fe-9ece-b28095f653ec@users.sourceforge.net> <bc8e7af9-6dcb-6f08-388a-31fc1b88cd00@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <989b7476-5e5e-d1ed-0d95-9dbdcec2382c@users.sourceforge.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Jiri Kosina <trivial@kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34785 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751034AbeABItj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 03:49:39 -0500
+Received: by mail-it0-f68.google.com with SMTP id m11so10638718iti.1
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 00:49:38 -0800 (PST)
+In-Reply-To: <bc8e7af9-6dcb-6f08-388a-31fc1b88cd00@users.sourceforge.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Linux-OMAP <linux-omap@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Tony Lindgren <tony@atomide.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Dec 23, 2017 at 10:42 PM, SF Markus Elfring
+On Mon, Dec 25, 2017 at 2:06 PM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 23 Dec 2017 22:22:54 +0100
+> Date: Mon, 25 Dec 2017 11:27:55 +0100
 >
-> Adjust words in these descriptions.
+> Omit an extra message for a memory allocation failure in this function.
+>
+> This issue was detected by using the Coccinelle software.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
