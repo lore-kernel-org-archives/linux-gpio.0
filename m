@@ -1,58 +1,39 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 3/3] gpio: rcar: Use WAKEUP_PATH driver PM flag
-Date: Tue, 2 Jan 2018 10:37:34 +0100
-Message-ID: <CAMuHMdVwCmLYxVA0ivrE8MtCUpfVe4PrzTeC7jqqthShOw93JA@mail.gmail.com>
-References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
- <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org> <CACRpkdZCApUP2YnYK09wzn3MOwH2XL3Jmm=FXHtsc2pwLyVNRw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: baytrail: Enable glitch filter for GPIOs used
+ as interrupts
+Date: Tue, 2 Jan 2018 10:39:18 +0100
+Message-ID: <CACRpkdbfuqRJpA5Q5NzeESkP4TmdepsoE3=HDuzyeVhZfXpe=w@mail.gmail.com>
+References: <20180101122357.10465-1-hdegoede@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZCApUP2YnYK09wzn3MOwH2XL3Jmm=FXHtsc2pwLyVNRw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linux PM list <linux-pm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Simon Horman <horms@verge.net.au>, Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:45029 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751286AbeABJjT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 04:39:19 -0500
+Received: by mail-it0-f66.google.com with SMTP id b5so38195149itc.3
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 01:39:18 -0800 (PST)
+In-Reply-To: <20180101122357.10465-1-hdegoede@redhat.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Mon, Jan 1, 2018 at 1:23 PM, Hans de Goede <hdegoede@redhat.com> wrote:
 
-On Tue, Jan 2, 2018 at 10:27 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> From: Geert Uytterhoeven <geert+renesas@glider.be>
->> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
->> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO block's
->> module clock (if exists) is manually kept running during system suspend, to
->> make sure the device stays active.
->>
->> However, this explicit clock handling is merely a workaround for a failure
->> to properly communicate wakeup information to the PM core. Instead, set the
->> WAKEUP_PATH driver PM flag to indicate that the device is part of the
->> wakeup path, which further also enables middle-layers and PM domains (like
->> genpd) to act on this.
->>
->> In case the device is attached to genpd and depending on if it has an
->> active wakeup configuration, genpd will keep the device active (the clock
->> running) during system suspend when needed. This enables us to remove all
->> explicit clock handling code from the driver, so let's do that as well.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> [Ulf: Converted to use the WAKEUP_PATH driver PM flag]
->> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> On some systems, some PCB traces attached to GpioInts are routed in such
+> a way that they pick up enough interference to constantly (many times per
+> second) trigger.
 >
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Enabling glitch-filtering fixes this.
 >
-> I guess it is dependent on the other patches?
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+> Changes in v2:
+> -Unconditionally enable glitch-filtering for all GpioInts instead of using
+>  a DMI list, as suggested by Mika Westerberg
 
-Yes, it depends on (a) a clock patch queued in clk-next for v4.16, and (b) a PM
-patch introducing WAKEUP_PATH.  Applying it prematurely will cause build
-or runtime issues.
+Patch applied with Mika's ACK.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
