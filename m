@@ -1,46 +1,27 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] gpio: rcar: Use WAKEUP_PATH driver PM flag
-Date: Tue, 2 Jan 2018 10:27:00 +0100
-Message-ID: <CACRpkdZCApUP2YnYK09wzn3MOwH2XL3Jmm=FXHtsc2pwLyVNRw@mail.gmail.com>
-References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org> <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 0/5] Change ISA_BUS_API dependency to selection
+Date: Tue, 2 Jan 2018 10:29:30 +0100
+Message-ID: <CACRpkdbBA0DX22ZGSkQxi+euTSROPzsmLTvSPwY8peg6+7igFQ@mail.gmail.com>
+References: <cover.1514578085.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1514554304-18989-4-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Simon Horman <horms@verge.net.au>, Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1514578085.git.vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "Maciej S. Szmigiero" <mail-APzI5cXaD1zVlRWJc41N0YvC60bnQu0Y@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LINUXWATCHDOG <linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+On Fri, Dec 29, 2017 at 9:13 PM, William Breathitt Gray
+<vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
-> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO block's
-> module clock (if exists) is manually kept running during system suspend, to
-> make sure the device stays active.
->
-> However, this explicit clock handling is merely a workaround for a failure
-> to properly communicate wakeup information to the PM core. Instead, set the
-> WAKEUP_PATH driver PM flag to indicate that the device is part of the
-> wakeup path, which further also enables middle-layers and PM domains (like
-> genpd) to act on this.
->
-> In case the device is attached to genpd and depending on if it has an
-> active wakeup configuration, genpd will keep the device active (the clock
-> running) during system suspend when needed. This enables us to remove all
-> explicit clock handling code from the driver, so let's do that as well.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> [Ulf: Converted to use the WAKEUP_PATH driver PM flag]
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Linus, please pickup this entire patchset through your GPIO subsystem
+> tree; a recursive dependency error is present if these patches are
+> cherry-picked (see https://lkml.org/lkml/2017/12/26/235), so they should
+> be merged together in the same tree.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-I guess it is dependent on the other patches?
-
-If you want me to just apply it to the GPIO tree, tell me.
+OK I just need a bunch of ACKs so giving subsystem maintainers some
+days to come back on this.
 
 Yours,
 Linus Walleij
