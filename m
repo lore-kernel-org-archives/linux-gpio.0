@@ -1,24 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung: Add SPDX license identifiers
-Date: Tue, 2 Jan 2018 09:56:18 +0100
-Message-ID: <CACRpkdYuYGgtRoVUpJQ5izjaFocicOff1F89x4sPtpXt0C-EyQ@mail.gmail.com>
-References: <1514311782-5187-1-git-send-email-krzk@kernel.org>
+Subject: Re: [PATCH] pinctrl/spear/plgpio: Delete two error messages for a
+ failed memory allocation in plgpio_probe()
+Date: Tue, 2 Jan 2018 09:58:01 +0100
+Message-ID: <CACRpkdbAJqrgghCV2tj4FdoPHweKYkze1s1UnmrvU71gqRVkAw@mail.gmail.com>
+References: <66c3f488-ffdf-e55d-e511-e4af35e670b4@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1514311782-5187-1-git-send-email-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:43312 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751447AbeABI6C (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 03:58:02 -0500
+Received: by mail-io0-f194.google.com with SMTP id w188so3872445iod.10
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 00:58:02 -0800 (PST)
+In-Reply-To: <66c3f488-ffdf-e55d-e511-e4af35e670b4@users.sourceforge.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Viresh Kumar <vireshk@kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Dec 26, 2017 at 7:09 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Wed, Dec 27, 2017 at 10:39 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-> Replace GPL license statements with SPDX GPL-2.0+ license identifiers.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 27 Dec 2017 22:34:28 +0100
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Omit extra messages for a memory allocation failure in this function.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Patch applied.
+Patch applied with Viresh's ACK.
 
 Yours,
 Linus Walleij
