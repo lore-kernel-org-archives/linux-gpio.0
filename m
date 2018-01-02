@@ -1,19 +1,30 @@
-From: foundation@gmail.com
-Subject: =?utf-8?q?Spende_von_=E2=82=AC_3=2E400=2E000=2C00_EUR?=
-Date: Tue, 02 Jan 2018 02:11:40 +0200
-Message-ID: <20180102003228.B1F7B2708862@wsbmail01.wsb.wroclaw.pl>
-Reply-To: roycockrumpovertyfoundation@gmail.com
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2] pinctrl: baytrail: Enable glitch filter for GPIOs
+ used as interrupts
+Date: Tue, 2 Jan 2018 09:31:13 +0200
+Message-ID: <20180102073113.GU27654@lahna.fi.intel.com>
+References: <20180101122357.10465-1-hdegoede@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.wsb.wroclaw.pl ([95.143.242.162]:53027 "EHLO
-        wsbmail01.wsb.wroclaw.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751822AbeABAMj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jan 2018 19:12:39 -0500
-Content-Description: Mail message body
+Received: from mga04.intel.com ([192.55.52.120]:6730 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751254AbeABHbR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 2 Jan 2018 02:31:17 -0500
+Content-Disposition: inline
+In-Reply-To: <20180101122357.10465-1-hdegoede@redhat.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <foundation@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
 
-Hallo, ich Roy Cockrum, 58, aus Knoxville, Tennessee Vereinigte Staaten von Amerika, du hast eine Wohltätigkeitsspende von € 3.400.000,00 EUR, ich gewann die America Lotterie in Amerika im Wert von $ 259,9 Millionen, und ich gebe einen Teil davon Zu fünf glücklichen Leuten und Wohltätigkeitshäusern in Gelübde, um die Armut vor dieser Welt zu beseitigen, ich kämpfe gegen die Armut. Kontaktieren Sie mich für weitere Details: roycockrumpovertyfoundation@gmail.com
+On Mon, Jan 01, 2018 at 01:23:57PM +0100, Hans de Goede wrote:
+> On some systems, some PCB traces attached to GpioInts are routed in such
+> a way that they pick up enough interference to constantly (many times per
+> second) trigger.
+> 
+> Enabling glitch-filtering fixes this.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
