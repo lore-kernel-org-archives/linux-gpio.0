@@ -1,43 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] [v11] pinctrl: qcom: add support for sparse GPIOs
-Date: Tue, 2 Jan 2018 10:16:35 +0100
-Message-ID: <CACRpkdYhryd2qKxagw+orpUQaYCKU-x6RH5OB+pr_PTfzBaPng@mail.gmail.com>
-References: <1513797033-9494-1-git-send-email-timur@codeaurora.org>
- <CACRpkdYtMbACG0D2zjgw-kN_3pb_VDGH_3DDhyMQD92eE5P0Gw@mail.gmail.com>
- <20171227020142.GZ7997@codeaurora.org> <CACRpkda5FQg3W4rnxihVB9y2yv-oF1CwBzFJsKB8cxzQ+zoHNg@mail.gmail.com>
- <20171228161556.GG7997@codeaurora.org>
+Subject: Re: [PATCH 3/3] gpio: Change ISA_BUS_API dependency to selection
+Date: Tue, 2 Jan 2018 10:18:03 +0100
+Message-ID: <CACRpkdbYiG7TOOvBa3kWtocae8NikXCdDQkR6LyPd6Umt=DHTA@mail.gmail.com>
+References: <cover.1514475654.git.vilhelm.gray@gmail.com> <ff1871fe837aa3a520fefe2602f8f1e13e1db244.1514475654.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20171228161556.GG7997@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Timur Tabi <timur@codeaurora.org>, linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>, Andrew Cooks <andrew.cooks@opengear.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33943 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751964AbeABJSE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 04:18:04 -0500
+Received: by mail-io0-f196.google.com with SMTP id q188so24093878iod.1
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 01:18:04 -0800 (PST)
+In-Reply-To: <ff1871fe837aa3a520fefe2602f8f1e13e1db244.1514475654.git.vilhelm.gray@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, LINUXWATCHDOG <linux-watchdog@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Dec 28, 2017 at 5:15 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+On Thu, Dec 28, 2017 at 5:02 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-> Patch 1 is still needed. Without that patch, we'll be poking each
-> GPIO to figure out the direction at boot without checking any
-> valid mask or calling the request APIs.
-
-Aha, I just thought you'd augment that code to take valid GPIOs
-into account.
-
-Anyways, I left the patch in, so no worries.
-
-> I don't see the part in
-> debugfs where we show the direction of a GPIO if it hasn't been
-> requested. Don't we skip over the unrequested GPIOs because of
-> this code in gpiolib_dbg_show()?
+> The ISA_BUS_API Kconfig option enables the compilation of the ISA bus
+> driver. The ISA bus driver does not perform any hardware interaction,
+> and is instead just a thin layer of software abstraction to eliminate
+> boilerplate code common to ISA-style device drivers. Since ISA_BUS_API
+> has no dependencies and does not jeopardize the integrity of the system
+> when enabled, drivers should select it when the ISA bus driver
+> functionality is needed.
 >
->         if (!test_bit(FLAG_REQUESTED, &gdesc->flags)) {
->                 ...
->                 continue;
->         }
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-Yes you're right. This is more for lsgpio and the chardev side
-of things for inspecting lines really.
+Patch applied.
 
 Yours,
 Linus Walleij
