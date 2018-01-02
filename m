@@ -1,35 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mcp23s08: fix irq setup order
-Date: Tue, 2 Jan 2018 10:10:07 +0100
-Message-ID: <CACRpkdZp0kp6vTAOj11Tc2mGD4MvWwpMGTQgEhQiQAdUgapcGw@mail.gmail.com>
-References: <1514474364-32169-1-git-send-email-mastichi@gmail.com>
+Subject: Re: [PATCH] pinctrl: vt8500: Delete an error message for a failed
+ memory allocation in five functions
+Date: Tue, 2 Jan 2018 10:11:13 +0100
+Message-ID: <CACRpkdZgxJynjdhgiDxgTZMb7Z_b+ipQZSnCyJ5_aSWtGKnUdw@mail.gmail.com>
+References: <62a3836f-cd3c-2a56-232a-db401b1f88ca@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:41732 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750743AbeABJKI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 04:10:08 -0500
-Received: by mail-it0-f65.google.com with SMTP id x28so38151684ita.0
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 01:10:07 -0800 (PST)
-In-Reply-To: <1514474364-32169-1-git-send-email-mastichi@gmail.com>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:43374 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751355AbeABJLO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jan 2018 04:11:14 -0500
+Received: by mail-io0-f196.google.com with SMTP id w188so3904261iod.10
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jan 2018 01:11:14 -0800 (PST)
+In-Reply-To: <62a3836f-cd3c-2a56-232a-db401b1f88ca@users.sourceforge.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Mastykin <mastichi@gmail.com>, Sebastian Reichel <sre@kernel.org>
-Cc: Phil Reid <preid@electromag.com.au>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, Tony Prisk <linux@prisktech.co.nz>, Stephen Warren <swarren@nvidia.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 28, 2017 at 4:19 PM, Dmitry Mastykin <mastichi@gmail.com> wrote:
+On Thu, Dec 28, 2017 at 4:20 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-> When using mcp23s08 module with gpio-keys, often (50% of boots)
-> it fails to get irq numbers with message:
-> "gpio-keys keys: Unable to get irq number for GPIO 0, error -6".
-> Seems that irqs must be setup before devm_gpiochip_add_data().
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 28 Dec 2017 16:12:17 +0100
 >
-> Signed-off-by: Dmitry Mastykin <mastichi@gmail.com>
+> Omit an extra message for a memory allocation failure in these functions.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Patch applied, albeit for devel.
-
-Should it be tagged for stable or go into fixes?
+Patch applied.
 
 Yours,
 Linus Walleij
