@@ -1,66 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4] bcm2835-gpio-exp: Driver for GPIO expander via
- mailbox service
-Date: Wed, 3 Jan 2018 11:08:15 +0100
-Message-ID: <CACRpkdb73jGGRm5OrXLGYSOjMni-NsOwdC7TXH2k+iAEnAvL2g@mail.gmail.com>
-References: <cover.1514898134.git.baruch@tkos.co.il> <bcac00c71b29c359b59053a30d817a8f17d6731d.1514898134.git.baruch@tkos.co.il>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio: pca953x: add required properties to example in bindings
+Date: Wed, 3 Jan 2018 11:36:08 +0100
+Message-ID: <CAMuHMdURWa9z5_zewz-MQph_g=3MTk3f+QnUmULMbugb6qmNOQ@mail.gmail.com>
+References: <20171222200900.8367-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:40578 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752138AbeACKIR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Jan 2018 05:08:17 -0500
-Received: by mail-it0-f46.google.com with SMTP id f190so1248212ita.5
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Jan 2018 02:08:17 -0800 (PST)
-In-Reply-To: <bcac00c71b29c359b59053a30d817a8f17d6731d.1514898134.git.baruch@tkos.co.il>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:45207 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751154AbeACKgK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Jan 2018 05:36:10 -0500
+In-Reply-To: <20171222200900.8367-1-wsa+renesas@sang-engineering.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-On Tue, Jan 2, 2018 at 2:19 PM, Baruch Siach <baruch@tkos.co.il> wrote:
+Hi Wolfram,
 
-> +config GPIO_BCM_EXP
-> +       bool "Broadcom Exp GPIO"
-> +       depends on OF_GPIO && RASPBERRYPI_FIRMWARE && (ARCH_BCM2835 || COMPILE_TEST)
-> +       help
-> +         Turn on GPIO support for Broadcom chips using the firmware mailbox
-> +         to communicate with VideoCore on BCM283x chips.
+On Fri, Dec 22, 2017 at 9:09 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> The binding documentation was missing two required properties in the
+> example. Fix it and add them also to the list of required properties.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> index 0d0158728f897b..a3d51e1cafe972 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> @@ -30,6 +30,11 @@ Required properties:
+>         onnn,pca9654
+>         exar,xra1202
+>
+> +- gpio-controller: Marks the device node as a GPIO controller
+> +- #gpio-cells: Must be '2':
+> +       - First cell is the GPIO line number
+> +       - Second cell is for optional parameters (currently unused)
 
-Should this be
+Is it really unused?
 
-default RASPBERRYPI_FIRMWARE
+I'd expect at least GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW to work,
+cfr. Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
 
-So it is always available if the firmware interface is there?
-
-> +#include <linux/err.h>
-> +#include <linux/gpio.h>
-
-Just use
-
-#include <linux/driver.h>
-
-> +#define MODULE_NAME "brcmexp-gpio"
-> +#define NUM_GPIO 8
 > +
-> +struct brcmexp_gpio {
-> +       struct gpio_chip gc;
-> +       struct device *dev;
-> +       struct rpi_firmware *fw;
-> +};
-> +
-> +struct gpio_set_config {
-> +       u32 gpio, direction, polarity, term_en, term_pull_up, state;
-> +};
-> +
-> +struct gpio_get_config {
-> +       u32 gpio, direction, polarity, term_en, term_pull_up;
-> +};
+>  Optional properties:
+>   - reset-gpios: GPIO specification for the RESET input. This is an
+>                 active low signal to the PCA953x.
+> @@ -44,4 +49,6 @@ Example:
+>                 pinctrl-0 = <&pinctrl_pca9505>;
+>                 interrupt-parent = <&gpio3>;
+>                 interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
 
-Seems to support some pin control stuff, hm?
+Note that interrupts is also not documented.
 
-The pull ups seems unused though so OK.
+> +               gpio-controller;
+> +               #gpio-cells = <2>;
+>         };
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
