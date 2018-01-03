@@ -1,72 +1,102 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1] DEBUG: BT
-Date: Wed, 03 Jan 2018 19:32:08 +0200
-Message-ID: <1515000728.7000.599.camel@linux.intel.com>
-References: <20180103173055.45679-1-andriy.shevchenko@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v1] gpio: merrifield: Add support of ACPI enabled platforms
+Date: Wed,  3 Jan 2018 19:32:40 +0200
+Message-ID: <20180103173240.45755-1-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:40873 "EHLO mga01.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:45726 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750819AbeACRcM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 3 Jan 2018 12:32:12 -0500
-In-Reply-To: <20180103173055.45679-1-andriy.shevchenko@linux.intel.com>
+        id S1750819AbeACRcn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 3 Jan 2018 12:32:43 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Wed, 2018-01-03 at 19:30 +0200, Andy Shevchenko wrote:
+The driver needs the pin control device name for ACPI.
 
-Sorry for the noise and happy New Year!
+We are looking through ACPI namespace and return first found device
+based on ACPI HID for Intel Merrifield FLIS.
 
-Wrong patch.
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-merrifield.c | 43 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/bluetooth/Makefile  | 2 ++
->  drivers/bluetooth/btbcm.c   | 2 ++
->  drivers/bluetooth/hci_bcm.c | 2 ++
->  3 files changed, 6 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/Makefile b/drivers/bluetooth/Makefile
-> index 4e4e44d09796..2b4d3ab1972e 100644
-> --- a/drivers/bluetooth/Makefile
-> +++ b/drivers/bluetooth/Makefile
-> @@ -44,3 +44,5 @@ hci_uart-$(CONFIG_BT_HCIUART_QCA)	+=
-> hci_qca.o
->  hci_uart-$(CONFIG_BT_HCIUART_AG6XX)	+= hci_ag6xx.o
->  hci_uart-$(CONFIG_BT_HCIUART_MRVL)	+= hci_mrvl.o
->  hci_uart-objs				:= $(hci_uart-y)
-> +
-> +ccflags-y	+= -DDEBUG
-> diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
-> index afa4cb3b16e3..fb0371a935b1 100644
-> --- a/drivers/bluetooth/btbcm.c
-> +++ b/drivers/bluetooth/btbcm.c
-> @@ -21,6 +21,8 @@
->   *
->   */
->  
-> +#define DEBUG
-> +
->  #include <linux/module.h>
->  #include <linux/firmware.h>
->  #include <asm/unaligned.h>
-> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-> index 1fc604a0d870..dedbafb4e38f 100644
-> --- a/drivers/bluetooth/hci_bcm.c
-> +++ b/drivers/bluetooth/hci_bcm.c
-> @@ -21,6 +21,8 @@
->   *
->   */
->  
-> +#define DEBUG
-> +
->  #include <linux/kernel.h>
->  #include <linux/errno.h>
->  #include <linux/skbuff.h>
-
+diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
+index dd67a31ac337..61e75d10669d 100644
+--- a/drivers/gpio/gpio-merrifield.c
++++ b/drivers/gpio/gpio-merrifield.c
+@@ -9,6 +9,7 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include <linux/acpi.h>
+ #include <linux/bitops.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/init.h>
+@@ -380,9 +381,48 @@ static void mrfld_irq_init_hw(struct mrfld_gpio *priv)
+ 	}
+ }
+ 
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id mrfld_pinctrl_acpi_ids[] = {
++	{"INTC1002"},
++	{}
++};
++
++static acpi_status
++mrfld_acpi_find_pinctrl(acpi_handle handle, u32 lvl, void *context, void **rv)
++{
++	const char **name = context;
++	struct acpi_device *adev;
++
++	if (acpi_bus_get_device(handle, &adev))
++		return AE_OK;
++
++	if (acpi_match_device_ids(adev, mrfld_pinctrl_acpi_ids))
++		return AE_OK;
++
++	*name = dev_name(&adev->dev);
++	return AE_CTRL_TERMINATE;
++}
++
++static const char *mrfld_acpi_get_pinctrl_dev_name(const char *fallback)
++{
++	const char *pinctrl_dev_name = fallback;
++
++	acpi_walk_namespace(ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT,
++			    ACPI_UINT32_MAX, mrfld_acpi_find_pinctrl, NULL,
++			    &pinctrl_dev_name, NULL);
++	return pinctrl_dev_name;
++}
++#else
++static inline const char *mrfld_acpi_get_pinctrl_dev_name(const char *fallback)
++{
++	return fallback;
++}
++#endif
++
+ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ {
+ 	const struct mrfld_gpio_pinrange *range;
++	const char *pinctrl_dev_name;
+ 	struct mrfld_gpio *priv;
+ 	u32 gpio_base, irq_base;
+ 	void __iomem *base;
+@@ -439,10 +479,11 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ 		return retval;
+ 	}
+ 
++	pinctrl_dev_name = mrfld_acpi_get_pinctrl_dev_name("pinctrl-merrifield");
+ 	for (i = 0; i < ARRAY_SIZE(mrfld_gpio_ranges); i++) {
+ 		range = &mrfld_gpio_ranges[i];
+ 		retval = gpiochip_add_pin_range(&priv->chip,
+-						"pinctrl-merrifield",
++						pinctrl_dev_name,
+ 						range->gpio_base,
+ 						range->pin_base,
+ 						range->npins);
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.15.1
+
