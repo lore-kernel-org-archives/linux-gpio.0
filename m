@@ -1,56 +1,63 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v3 00/27] kill devm_ioremap_nocache
-Date: Thu, 04 Jan 2018 14:52:54 +0000
-Message-ID: <20289.1515077574@warthog.procyon.org.uk>
-References: <CAK8P3a3i0bKvG56ha9_hzO=z80sVxCQhaeFn6QW3AwbwZs3HPg@mail.gmail.com>
- <1514026525-32538-1-git-send-email-xieyisheng1@huawei.com>
- <20171223134831.GB10103@kroah.com>
- <f7632cf5-2bcc-4d74-b912-3999937a1269@roeck-us.net>
- <c28ac0bc-8bd2-3dce-3167-8c0f80ec601e@c-s.fr>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new ACPI
+ HID QCOM8002
+Date: Thu, 4 Jan 2018 09:46:18 -0600
+Message-ID: <8e985f68-5887-b0d5-8c45-e22b5d8f60cf@codeaurora.org>
+References: <6ca3b4a6-90b9-0481-beb8-29a95c86f07c@codeaurora.org>
+ <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org>
+ <20171219023935.GA17456@codeaurora.org>
+ <735d4316-9b18-2903-aabd-46ead1db5233@codeaurora.org>
+ <20171220022626.GH7997@codeaurora.org>
+ <d511f096-bad4-c7b3-d7d4-11b1fa3b1cce@codeaurora.org>
+ <20171220081556.GA30524@codeaurora.org>
+ <a5809701-3f81-3f79-f558-a831ce4091c2@codeaurora.org>
+ <20171221003947.GJ7997@codeaurora.org>
+ <38463c81-eeab-85dc-d197-6081ce1d1130@codeaurora.org>
+ <20171222014633.GD7997@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAK8P3a3i0bKvG56ha9_hzO=z80sVxCQhaeFn6QW3AwbwZs3HPg@mail.gmail.com>
-Content-ID: <20288.1515077574.1@warthog.procyon.org.uk>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>, linux-mips@linux-mips.org, Ulf Hansson <ulf.hansson@linaro.org>, Jakub Kicinski <jakub.kicinski@netronome.com>, Platform Driver <platform-driver-x86@vger.kernel.org>, David Airlie <airlied@linux.ie>, linux-wireless <linux-wireless@vger.kernel.org>, alsa-devel@alsa-project.org, dri-devel <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>, dhowells@redhat.com, IDE-ML <linux-ide@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Networking <netdev@vger.kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>, Daniel Vetter <daniel.vetter@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jason Cooper <jason@lakedaemon.net>, linux-rtc@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, dmaengine@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Richar
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:53908 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753419AbeADPqV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jan 2018 10:46:21 -0500
+In-Reply-To: <20171222014633.GD7997@codeaurora.org>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, thierry.reding@gmail.com, david.brown@linaro.org, andy.gross@linaro.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 
-QXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4gd3JvdGU6Cgo+IC0gbW4xMDMwMCBhcHBlYXJz
-IHRvIGJlIHdyb25nLCBicm9rZW4gYnkgRGF2aWQgSG93ZWxscyBpbgo+ICAgY29tbWl0IDgzYzJk
-YzE1Y2U4MiAoIk1OMTAzMDA6IEhhbmRsZSBjYWNoZWFibGUgUENJIHJlZ2lvbnMKPiAgIGluIHBj
-aV9pb21hcCgpIikgZm9yIGFueSBkcml2ZXIgY2FsbGluZyBpb3JlbWFwKCkgYnkgdG8gZ2V0IHVu
-Y2FjaGVkCj4gICBtZW1vcnksCgpJdCdzIG5vdCBjbGVhciB3aGF0IHRoZSByaWdodCB0aGluZyB0
-byBkbyB3YXMsIGdpdmVuIHRoYXQgdGhlcmUncyBhbiBpb3JlbWFwKCkKYW5kIGFuIGlvcmVtYXBf
-dW5jYWNoZWQoKS4KCkJ1dCB0aGUgYXNiMjMwNSdzIHBjaV9pb21hcCgpIHdpbGwgdXNlIGlvcmVt
-YXAoKSAodGhlIGNhY2hlYWJsZSB3aW5kb3cpIGlmCklPUkVTT1VSQ0VfQ0FDSEVBQkxFIGlzIHNl
-dCwgYnV0IElPUkVTT1VSQ0VfSU8gaXMgbm90IGFuZCBpb3JlbWFwX3VuY2FjaGVkKCkKb3RoZXJ3
-aXNlLgoKVGhlIG90aGVyIHN1cHBvcnRlZCB1bml0cyBkb24ndCBoYXZlIFBDSSBidXNlcy4KCj4g
-aWYgSSB1bmRlcnN0YW5kIHRoZSBjb21tZW50IGZvciBjb21taXQgMzRmMWJkZWUxOTEwICgibW4x
-MDMwMDogc3dpdGNoIHRvCj4gR0VORVJJQ19QQ0lfSU9NQVAiKSBjb3JyZWN0bHk6IGl0IHNlZW1z
-IHRoYXQgUENJIGFkZHJlc3NlcyBpbmNsdWRlIHRoZQo+ICd1bmNhY2hlZCcgYml0IGJ5IGRlZmF1
-bHQgdG8gZ2V0IHRoZSByaWdodCBiZWhhdmlvciwgYnV0IGRyb3BwaW5nIHRoYXQgYml0Cj4gYnJl
-YWtzIGl0LgoKTm90IGV4YWN0bHkuICBUaGUgQ1BVIGhhcyBhIHdpbmRvdyBpbiB0aGUgcmFuZ2Ug
-MHhhMDAwMDAwMC0weGJmZmZmZmZmIHdoaWNoIGlzCmFuIHVuY2FjaGVkIHZpZXcgb2YgaXRzIGhh
-cmR3YXJlIGJ1c2VzLiAgSXQgaGFzIGFub3RoZXIgd2luZG93IGluIHRoZSByYW5nZQoweDgwMDAw
-MDAwLTB4OWZmZmZmZmYgd2hpY2ggaXMgYSBjYWNoZWQgdmlldyBvZiB0aGF0IHJlZ2lvbi4gIFRo
-ZXNlIHdpbmRvd3MKY2Fubm90IGJlIGNoYW5nZWQgYW5kIGFkZHJlc3NlcyBhYm92ZSAweDgwMDAw
-MDAwIGFyZSBzdGF0aWNhbGx5IG1hcHBlZCBhbmQgYXJlCm9ubHkgYWNjZXNzaWJsZSBieSB0aGUg
-a2VybmVsICh0aGlzIGlzIGhhcmR3aXJlZCBpbiB0aGUgTU1VKS4KClNvIHRoZSBhcmNoIGhhcyB0
-d28gc3Vid2luZG93cyB0byB0aGUgUENJIGJ1cywgb25lIGNhY2hlZCBhbmQgb25lIHVuY2FjaGVk
-LgpUaGVzZSBzdWJ3aW5kb3dzIGFyZSBmdXJ0aGVyIHN1YmRpdmlkZWQgaW50byBpb3BvcnQgYW5k
-IGlvbWVtIHNwYWNlcywgYW4gU1JBTQphbmQgc29tZSBjb250cm9sIHJlZ2lzdGVycyBmb3IgdGhl
-IENQVS1QQ0kgYnJpZGdlLgoKRGF2aWQKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+On 12/21/2017 07:46 PM, Stephen Boyd wrote:
+> Ok. That's testable with acpi_match_device_ids() though. I can
+> add that into pinctrl-msm.c so we don't have to pass info about
+> available gpios from ACPI specific driver into the pinctrl-msm
+> core driver. That's why I'm trying to avoid doing it in the ACPI
+> specific driver. Do it close to where the gpiochip is created
+> instead.
+
+I guess we're just going to have to agree to disagree.  I see the DSDs 
+as being SOC-specific, and therefore belong in the SOC driver.  I'm 
+still going to need an SOC driver to define the TLMM register layout.
+
+But as I said earlier, I've already spent way too much time working on a 
+driver that, in all likelihood, never be used in any production system 
+anyway.
+
+I look forward to reviewing the next version of your patch.
+
+> Maybe future HIDs could follow the DT design and then we can look
+> for the same device property name in both firmwares. 
+
+DSDs generally don't have the vendor prefix that DT properties do.
+
+> Parsing
+> ranges is simpler.
+
+I'm not sure I agree with that.
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
