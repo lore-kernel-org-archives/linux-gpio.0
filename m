@@ -1,142 +1,84 @@
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Subject: Re: [PATCH v3 00/27] kill devm_ioremap_nocache
-Date: Thu, 4 Jan 2018 09:05:45 +0100
-Message-ID: <1eb206ed-95e9-5839-485d-0e549ff3f505@c-s.fr>
-References: <1514026525-32538-1-git-send-email-xieyisheng1@huawei.com>
- <20171223134831.GB10103@kroah.com>
- <b8ff7f17-7f2c-f220-9833-7ae5bd7343d5@c-s.fr>
- <8dd19411-5b06-0aa4-fd0e-e5b112c25dcb@huawei.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v1] gpio: merrifield: Add support of ACPI enabled
+ platforms
+Date: Thu, 4 Jan 2018 11:36:04 +0200
+Message-ID: <20180104093604.GL27654@lahna.fi.intel.com>
+References: <20180103173240.45755-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <8dd19411-5b06-0aa4-fd0e-e5b112c25dcb@huawei.com>
-Content-Language: fr
-Sender: linux-ide-owner@vger.kernel.org
-To: Yisheng Xie <xieyisheng1@huawei.com>, Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, ysxie@foxmail.com, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, boris.brezillon@free-electrons.com, richard@nod.at, marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr, linux-mtd@lists.infradead.org, alsa-devel@alsa-project.org, wim@iguana.be, linux@roeck-us.net, linux-watchdog@vger.kernel.org, b.zolnierkie@samsung.com, linux-fbdev@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, ralf@linux-mips.org, linux-mips@linux-mips.org, lgirdwood@gmail.com, broonie@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, arnd@arndb.de, andriy.shevchenko@linux.intel.com, industrypack-devel@lists.sourceforge.net, wg@grandegger.com, mkl@pengutronix.de, linux-can@vger.kernel.org, mchehab@kernel.org, linux-media@vg
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:56972 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752434AbeADJgI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 4 Jan 2018 04:36:08 -0500
+Content-Disposition: inline
+In-Reply-To: <20180103173240.45755-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
+On Wed, Jan 03, 2018 at 07:32:40PM +0200, Andy Shevchenko wrote:
+> The driver needs the pin control device name for ACPI.
+> 
+> We are looking through ACPI namespace and return first found device
+> based on ACPI HID for Intel Merrifield FLIS.
+> 
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/gpio/gpio-merrifield.c | 43 +++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 42 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
+> index dd67a31ac337..61e75d10669d 100644
+> --- a/drivers/gpio/gpio-merrifield.c
+> +++ b/drivers/gpio/gpio-merrifield.c
+> @@ -9,6 +9,7 @@
+>   * published by the Free Software Foundation.
+>   */
+>  
+> +#include <linux/acpi.h>
+>  #include <linux/bitops.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/init.h>
+> @@ -380,9 +381,48 @@ static void mrfld_irq_init_hw(struct mrfld_gpio *priv)
+>  	}
+>  }
+>  
+> +#ifdef CONFIG_ACPI
+> +static const struct acpi_device_id mrfld_pinctrl_acpi_ids[] = {
+> +	{"INTC1002"},
+> +	{}
+> +};
+> +
+> +static acpi_status
+> +mrfld_acpi_find_pinctrl(acpi_handle handle, u32 lvl, void *context, void **rv)
+> +{
+> +	const char **name = context;
+> +	struct acpi_device *adev;
+> +
+> +	if (acpi_bus_get_device(handle, &adev))
+> +		return AE_OK;
+> +
+> +	if (acpi_match_device_ids(adev, mrfld_pinctrl_acpi_ids))
+> +		return AE_OK;
+> +
+> +	*name = dev_name(&adev->dev);
+> +	return AE_CTRL_TERMINATE;
+> +}
+> +
+> +static const char *mrfld_acpi_get_pinctrl_dev_name(const char *fallback)
+> +{
+> +	const char *pinctrl_dev_name = fallback;
+> +
+> +	acpi_walk_namespace(ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT,
+> +			    ACPI_UINT32_MAX, mrfld_acpi_find_pinctrl, NULL,
+> +			    &pinctrl_dev_name, NULL);
+> +	return pinctrl_dev_name;
+> +}
 
-
-Le 25/12/2017 à 02:34, Yisheng Xie a écrit :
-> 
-> 
-> On 2017/12/24 17:05, christophe leroy wrote:
->>
->>
->> Le 23/12/2017 à 14:48, Greg KH a écrit :
->>> On Sat, Dec 23, 2017 at 06:55:25PM +0800, Yisheng Xie wrote:
->>>> Hi all,
->>>>
->>>> When I tried to use devm_ioremap function and review related code, I found
->>>> devm_ioremap and devm_ioremap_nocache is almost the same with each other,
->>>> except one use ioremap while the other use ioremap_nocache.
->>>
->>> For all arches?  Really?  Look at MIPS, and x86, they have different
->>> functions.
->>>
->>>> While ioremap's
->>>> default function is ioremap_nocache, so devm_ioremap_nocache also have the
->>>> same function with devm_ioremap, which can just be killed to reduce the size
->>>> of devres.o(from 20304 bytes to 18992 bytes in my compile environment).
->>>>
->>>> I have posted two versions, which use macro instead of function for
->>>> devm_ioremap_nocache[1] or devm_ioremap[2]. And Greg suggest me to kill
->>>> devm_ioremap_nocache for no need to keep a macro around for the duplicate
->>>> thing. So here comes v3 and please help to review.
->>>
->>> I don't think this can be done, what am I missing?  These functions are
->>> not identical, sorry for missing that before.
->>
->> devm_ioremap() and devm_ioremap_nocache() are quite similar, both use devm_ioremap_release() for the release, why not just defining:
->>
->> static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
->>                 resource_size_t size, bool nocache)
->> {
->> [...]
->>      if (nocache)
->>          addr = ioremap_nocache(offset, size);
->>      else
->>          addr = ioremap(offset, size);
->> [...]
->> }
->>
->> then in include/linux/io.h
->>
->> static inline void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
->>                 resource_size_t size)
->> {return __devm_ioremap(dev, offset, size, false);}
->>
->> static inline void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
->>                     resource_size_t size);
->> {return __devm_ioremap(dev, offset, size, true);}
-> 
-> Yeah, this seems good to me, right now we have devm_ioremap, devm_ioremap_wc, devm_ioremap_nocache
-> May be we can use an enum like:
-> typedef enum {
-> 	DEVM_IOREMAP = 0,
-> 	DEVM_IOREMAP_NOCACHE,
-> 	DEVM_IOREMAP_WC,
-> } devm_ioremap_type;
-> 
-> static inline void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
->                  resource_size_t size)
->   {return __devm_ioremap(dev, offset, size, DEVM_IOREMAP);}
-> 
->   static inline void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
->                      resource_size_t size);
->   {return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_NOCACHE);}
-> 
->   static inline void __iomem *devm_ioremap_wc(struct device *dev, resource_size_t offset,
->                      resource_size_t size);
->   {return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_WC);}
-> 
->   static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
->                  resource_size_t size, devm_ioremap_type type)
->   {
->       void __iomem **ptr, *addr = NULL;
->   [...]
->       switch (type){
->       case DEVM_IOREMAP:
->           addr = ioremap(offset, size);
->           break;
->       case DEVM_IOREMAP_NOCACHE:
->           addr = ioremap_nocache(offset, size);
->           break;
->       case DEVM_IOREMAP_WC:
->           addr = ioremap_wc(offset, size);
->           break;
->       }
->   [...]
->   }
-
-
-That looks good to me, will you submit a v4 ?
-
-Christophe
-
-> 
-> Thanks
-> Yisheng
-> 
->>
->> Christophe
->>
->>>
->>> thanks,
->>>
->>> greg k-h
->>> -- 
->>> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
->> ---
->> L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
->> https://www.avast.com/antivirus
->>
->>
->> .
->>
+I wonder if there is a better way to "connect" these things without need
+to walk ACPI namespace in GPIO drivers? How does DT handle handle
+separated GPIO and pinctrl drivers? Maybe there is a binding that we
+could reuse in ACPI side.
