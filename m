@@ -1,53 +1,142 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Subject: [PATCH -next] gpio: ath79: Fix potential NULL dereference in ath79_gpio_probe()
-Date: Thu, 4 Jan 2018 06:31:23 +0000
-Message-ID: <1515047483-168600-1-git-send-email-weiyongjun1@huawei.com>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Subject: Re: [PATCH v3 00/27] kill devm_ioremap_nocache
+Date: Thu, 4 Jan 2018 09:05:45 +0100
+Message-ID: <1eb206ed-95e9-5839-485d-0e549ff3f505@c-s.fr>
+References: <1514026525-32538-1-git-send-email-xieyisheng1@huawei.com>
+ <20171223134831.GB10103@kroah.com>
+ <b8ff7f17-7f2c-f220-9833-7ae5bd7343d5@c-s.fr>
+ <8dd19411-5b06-0aa4-fd0e-e5b112c25dcb@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51790 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752138AbeADG0J (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 4 Jan 2018 01:26:09 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <8dd19411-5b06-0aa4-fd0e-e5b112c25dcb@huawei.com>
+Content-Language: fr
+Sender: linux-ide-owner@vger.kernel.org
+To: Yisheng Xie <xieyisheng1@huawei.com>, Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, ysxie@foxmail.com, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, boris.brezillon@free-electrons.com, richard@nod.at, marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr, linux-mtd@lists.infradead.org, alsa-devel@alsa-project.org, wim@iguana.be, linux@roeck-us.net, linux-watchdog@vger.kernel.org, b.zolnierkie@samsung.com, linux-fbdev@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, ralf@linux-mips.org, linux-mips@linux-mips.org, lgirdwood@gmail.com, broonie@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, arnd@arndb.de, andriy.shevchenko@linux.intel.com, industrypack-devel@lists.sourceforge.net, wg@grandegger.com, mkl@pengutronix.de, linux-can@vger.kernel.org, mchehab@kernel.org, linux-media@vg
 List-Id: linux-gpio@vger.kernel.org
-To: Alban Bedel <albeu@free.fr>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org
-
-platform_get_resource() may return NULL, add proper
-check to avoid potential NULL dereferencing.
-
-This is detected by Coccinelle semantic patch.
-
-@@
-expression pdev, res, n, t, e, e1, e2;
-@@
-
-res = platform_get_resource(pdev, t, n);
-+ if (!res)
-+   return -EINVAL;
-... when != res == NULL
-e = devm_ioremap(e1, res->start, e2);
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/gpio/gpio-ath79.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
-index a757171..0bebcba 100644
---- a/drivers/gpio/gpio-ath79.c
-+++ b/drivers/gpio/gpio-ath79.c
-@@ -258,6 +258,8 @@ static int ath79_gpio_probe(struct platform_device *pdev)
- 	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -EINVAL;
- 	ctrl->base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
- 	if (!ctrl->base)
- 		return -ENOMEM;
 
 
 
+Le 25/12/2017 à 02:34, Yisheng Xie a écrit :
+> 
+> 
+> On 2017/12/24 17:05, christophe leroy wrote:
+>>
+>>
+>> Le 23/12/2017 à 14:48, Greg KH a écrit :
+>>> On Sat, Dec 23, 2017 at 06:55:25PM +0800, Yisheng Xie wrote:
+>>>> Hi all,
+>>>>
+>>>> When I tried to use devm_ioremap function and review related code, I found
+>>>> devm_ioremap and devm_ioremap_nocache is almost the same with each other,
+>>>> except one use ioremap while the other use ioremap_nocache.
+>>>
+>>> For all arches?  Really?  Look at MIPS, and x86, they have different
+>>> functions.
+>>>
+>>>> While ioremap's
+>>>> default function is ioremap_nocache, so devm_ioremap_nocache also have the
+>>>> same function with devm_ioremap, which can just be killed to reduce the size
+>>>> of devres.o(from 20304 bytes to 18992 bytes in my compile environment).
+>>>>
+>>>> I have posted two versions, which use macro instead of function for
+>>>> devm_ioremap_nocache[1] or devm_ioremap[2]. And Greg suggest me to kill
+>>>> devm_ioremap_nocache for no need to keep a macro around for the duplicate
+>>>> thing. So here comes v3 and please help to review.
+>>>
+>>> I don't think this can be done, what am I missing?  These functions are
+>>> not identical, sorry for missing that before.
+>>
+>> devm_ioremap() and devm_ioremap_nocache() are quite similar, both use devm_ioremap_release() for the release, why not just defining:
+>>
+>> static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
+>>                 resource_size_t size, bool nocache)
+>> {
+>> [...]
+>>      if (nocache)
+>>          addr = ioremap_nocache(offset, size);
+>>      else
+>>          addr = ioremap(offset, size);
+>> [...]
+>> }
+>>
+>> then in include/linux/io.h
+>>
+>> static inline void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
+>>                 resource_size_t size)
+>> {return __devm_ioremap(dev, offset, size, false);}
+>>
+>> static inline void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
+>>                     resource_size_t size);
+>> {return __devm_ioremap(dev, offset, size, true);}
+> 
+> Yeah, this seems good to me, right now we have devm_ioremap, devm_ioremap_wc, devm_ioremap_nocache
+> May be we can use an enum like:
+> typedef enum {
+> 	DEVM_IOREMAP = 0,
+> 	DEVM_IOREMAP_NOCACHE,
+> 	DEVM_IOREMAP_WC,
+> } devm_ioremap_type;
+> 
+> static inline void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
+>                  resource_size_t size)
+>   {return __devm_ioremap(dev, offset, size, DEVM_IOREMAP);}
+> 
+>   static inline void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
+>                      resource_size_t size);
+>   {return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_NOCACHE);}
+> 
+>   static inline void __iomem *devm_ioremap_wc(struct device *dev, resource_size_t offset,
+>                      resource_size_t size);
+>   {return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_WC);}
+> 
+>   static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
+>                  resource_size_t size, devm_ioremap_type type)
+>   {
+>       void __iomem **ptr, *addr = NULL;
+>   [...]
+>       switch (type){
+>       case DEVM_IOREMAP:
+>           addr = ioremap(offset, size);
+>           break;
+>       case DEVM_IOREMAP_NOCACHE:
+>           addr = ioremap_nocache(offset, size);
+>           break;
+>       case DEVM_IOREMAP_WC:
+>           addr = ioremap_wc(offset, size);
+>           break;
+>       }
+>   [...]
+>   }
+
+
+That looks good to me, will you submit a v4 ?
+
+Christophe
+
+> 
+> Thanks
+> Yisheng
+> 
+>>
+>> Christophe
+>>
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>> -- 
+>>> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>
+>> ---
+>> L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+>> https://www.avast.com/antivirus
+>>
+>>
+>> .
+>>
