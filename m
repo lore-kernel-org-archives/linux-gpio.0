@@ -1,59 +1,136 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH v2 0/3] ACPI, ASoC, gpio: Introduce and use
- acpi_dev_get_dev_name()
-Date: Thu, 4 Jan 2018 11:33:33 -0600
-Message-ID: <c8c6acfa-4dfa-9567-a7a6-49be33ecf4e8@linux.intel.com>
-References: <20180104164709.64387-1-andriy.shevchenko@linux.intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v3] gpio: winbond: add driver
+Date: Thu, 04 Jan 2018 19:35:46 +0200
+Message-ID: <1515087346.7000.696.camel@linux.intel.com>
+References: <834ef274-35fc-0384-fb0f-df36effacf7c@maciej.szmigiero.name>
+         <1515006309.7000.635.camel@linux.intel.com>
+         <d118e4ed-3faf-ebfc-1ad3-ba3d2c1178eb@maciej.szmigiero.name>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:40572 "EHLO mga14.intel.com"
+Received: from mga06.intel.com ([134.134.136.31]:5758 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750990AbeADRdg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 4 Jan 2018 12:33:36 -0500
-In-Reply-To: <20180104164709.64387-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
+        id S1751294AbeADRhU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 4 Jan 2018 12:37:20 -0500
+In-Reply-To: <d118e4ed-3faf-ebfc-1ad3-ba3d2c1178eb@maciej.szmigiero.name>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Jonathan Cameron <jic23@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 
-On 1/4/18 10:47 AM, Andy Shevchenko wrote:
-> It appears that at least one current user (patch 2) and upcoming one
-> (patch 3) need to get device name by ACPI HID.
-> 
-> Here we introduce acpi_dev_get_dev_name() based on code done for
-> acpi_dev_present() and reuse it where appropriate.
-> 
-> The series has been tested on Intel Edison with ACPI enabled U-Boot,
-> while patch 2 wasn't tested anyhow (Pierre, can you help with it?).
+On Thu, 2018-01-04 at 00:41 +0100, Maciej S. Szmigiero wrote:
+> On 03.01.2018 20:05, Andy Shevchenko wrote:
+> > On Sat, 2017-12-30 at 22:02 +0100, Maciej S. Szmigiero wrote:
+> > > This commit adds GPIO driver for Winbond Super I/Os.
 
-Yes I'll try to test later this week. I just have to figure out which of 
-my devices needs this (been a while since I worked on this).
+> > First of all, looking more at this driver, why don't we create a
+> > gpiochip per real "port" during actual configuration?
+> 
+> Hmm.. there is only a one 'chip' here, so why would the driver want to
+> register multiple ones?
+> 
+> That would also create at least one additional point of failure if
+> one or more such gpiochip(s) register but one fails to do so.
+> 
+> > And I still have filing that this one suitable for MFD.
+> 
+> As I wrote previously, that would necessitate rewriting also w83627ehf
+> hwmon and w83627hf_wdt drivers, and would make the driver stand out
+> against other, similar Super I/O drivers.
+> 
+> > Anyone, does it make sense?
 
-> 
-> Since patch 1 and cross subsystem nature of the series I think the best
-> way is to push this via Rafael's linux-pm tree.
-> 
-> In worst case, if, Rafael, you have no objection, push at least first
-> patch for this cycle to allow utilization in the future.
-> 
-> Andy Shevchenko (3):
->    ACPI / utils: Introduce acpi_dev_get_dev_name()
->    ASoC: Intel - Convert users to use acpi_dev_get_dev_name()
->    gpio: merrifield: Add support of ACPI enabled platforms
-> 
->   drivers/acpi/utils.c                    | 40 +++++++++++++++++++++++++++------
->   drivers/gpio/gpio-merrifield.c          | 11 ++++++++-
->   include/acpi/acpi_bus.h                 |  1 +
->   include/linux/acpi.h                    |  6 +++++
->   include/sound/soc-acpi.h                |  7 ------
->   sound/soc/intel/boards/bytcht_da7213.c  |  2 +-
->   sound/soc/intel/boards/bytcr_rt5640.c   |  2 +-
->   sound/soc/intel/boards/bytcr_rt5651.c   |  2 +-
->   sound/soc/intel/boards/cht_bsw_rt5645.c |  2 +-
->   sound/soc/intel/boards/cht_bsw_rt5672.c |  2 +-
->   sound/soc/soc-acpi.c                    | 33 ---------------------------
->   11 files changed, 55 insertions(+), 53 deletions(-)
-> 
+OK, at least I shared my point.
 
+> > > +/* returns whether changing a pin is allowed */
+> > > +static bool winbond_gpio_get_info(unsigned int *gpio_num,
+> > > +				  const struct winbond_gpio_info
+> > > **info)
+> > > +{
+> > > +	bool allow_changing = true;
+> > > +	unsigned long i;
+> > > +
+
+> > > +	for_each_set_bit(i, &gpios, sizeof(gpios)) {
+
+sizeof(gpios) will produce wrong number for you. It's rather
+BITS_PER_LONG here. Right?
+
+> > > +		if (*gpio_num < 8)
+> > > +			break;
+> > > +
+> > > +		*gpio_num -= 8;
+> > > +	}
+> > 
+> > Why not hweight() here?
+> > 
+> > unsigned int shift = hweight_long(gpios) * 8;
+> > unsigned int index = fls_long(gpios); // AFAIU
+> > 
+> > *offset -= *offset >= shift ? shift : shift - 8;
+> > *info = &winbond_gpio_infos[index];
+> > 
+> > ...
+> 
+> Unfortunately, this code doesn't produce the same results as the code
+> above.
+> 
+> First, in this code "index" does not depend on "gpio_num" (or
+> "offset")
+> passed to winbond_gpio_get_info() function, so gpio 0 (on the first
+> GPIO
+> device or port) will access the same winbond_gpio_infos entry as gpio
+> 18
+> (which is located on the third GPIO port).
+
+Actually, it does depend on gpio_num (it's your point to break the
+loop).
+
+So, fls(*offset) then (I renamed gpio_num to offset in my example).
+
+> In fact, the calculated "index" would always point to the last enabled
+> GPIO port (since that is the meaning of "gpios" MSB, assuming this
+> user-provided parameter was properly verified or sanitized).
+
+Yes, I missed that.
+
+> Second, the calculated "offset" would end negative for anything but
+> the
+> very last GPIO port (ok, not really negative since it is an unsigned
+> type,
+> but still not correct either).
+
+So, sounds like hweight_int(*offset) then. No?
+
+> And that even not taking into account the special case of GPIO6 port
+> that has only 5 gpios.
+
+This doesn't matter because of check in ternary operator.
+
+> What we want in this code is for "i" (or "index") to contain the GPIO
+> port number for the passed "gpio_num" (or "offset") and that this
+> last variable ends reduced modulo 8 from its original value.
+
+Yep.
+
+> > > +	if (gpios & ~GENMASK(ARRAY_SIZE(winbond_gpio_infos) - 1,
+> > > 0))
+> > > {
+> > > +		wb_sio_err("unknown ports enabled in GPIO ports
+> > > bitmask\n");
+> > > +		return 0;
+> > > +	}
+> > 
+> > Do we care? Perhaps just enforce mask based on the size and leave
+> > garbage out.
+> 
+> Can be done either way, but I think notifying user that he or she has
+> provided an incorrect parameter value is a good thing - we can use a
+> accept-but-warn style.
+
+I would prefer latter (accept-but-warn).
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
