@@ -1,91 +1,82 @@
-From: Alban <albeu@free.fr>
-Subject: Re: [PATCH -next] gpio: ath79: Fix potential NULL dereference in
- ath79_gpio_probe()
-Date: Fri, 5 Jan 2018 15:06:38 +0100
-Message-ID: <20180105150638.2e483d0d@tock>
-References: <1515047483-168600-1-git-send-email-weiyongjun1@huawei.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [PATCH v2 1/3] ACPI / utils: Introduce
+	acpi_dev_get_dev_name()
+Date: Fri, 5 Jan 2018 09:46:45 -0600
+Message-ID: <52c40d6e-08d1-efe1-9341-55747428d93c@linux.intel.com>
+References: <20180104164709.64387-1-andriy.shevchenko@linux.intel.com>
+ <20180104164709.64387-2-andriy.shevchenko@linux.intel.com>
+ <5e21c7c3-83cf-e038-e57e-0dfa4640862e@linux.intel.com>
+ <1515156235.7000.740.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YpmcGkF=0q7WgTmM4ggtPo."; protocol="application/pgp-signature"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp2-g21.free.fr ([212.27.42.2]:39184 "EHLO smtp2-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751254AbeAEOGx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 5 Jan 2018 09:06:53 -0500
-In-Reply-To: <1515047483-168600-1-git-send-email-weiyongjun1@huawei.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1515156235.7000.740.camel@linux.intel.com>
+Content-Language: en-US
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Aban Bedel <albeu@free.fr>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
---Sig_/YpmcGkF=0q7WgTmM4ggtPo.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 1/5/18 6:43 AM, Andy Shevchenko wrote:
+> On Thu, 2018-01-04 at 18:47 -0600, Pierre-Louis Bossart wrote:
+>>
+>> On 01/04/2018 10:47 AM, Andy Shevchenko wrote:
+>>> Sometimes the user want to have device name of the match rather than
+>>> just checking if device present or not. To make life easier for such
+>>> users introduce acpi_dev_get_dev_name() helper based on code for
+>>> acpi_dev_present().
+>>>
+>>> To be more consistent with the purpose rename
+>>>
+>>>     struct acpi_dev_present_info  -> struct acpi_dev_match_info
+>>>     acpi_dev_present_cb()         -> acpi_dev_match_cb()
+>>>
+>>> in the utils.c file.
+>>>
+>>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>
+>> This works fine on a Dell 5585 where the default codec dai name needs
+>> to
+>> be updated based on the actual HID information, so
+>> Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> 
+> Thanks!
+> 
+> Is this only for patch 1, or for both 1 and 2 ?
+> 
+>> the next patch does not apply directly however, and needs additional
+>> changes for the ES8316 machine driver. see the changes here:
+>> https://github.com/plbossart/sound/tree/topic/bytcht-acpi-fixes
+> 
+> You mean because of this
+> https://github.com/plbossart/sound/commit/2416827fa6d221b27edd6397f17daa
+> a1f3cd5fb0
+> ?
 
-On Thu, 4 Jan 2018 06:31:23 +0000
-Wei Yongjun <weiyongjun1@huawei.com> wrote:
+No, not only, there is also a conflict in soc-acpi.c
+> 
+> I.e. I need to rebase on top of your series.
 
-> platform_get_resource() may return NULL, add proper
-> check to avoid potential NULL dereferencing.
->=20
-> This is detected by Coccinelle semantic patch.
->=20
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
->=20
-> res =3D platform_get_resource(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when !=3D res =3D=3D NULL
-> e =3D devm_ioremap(e1, res->start, e2);
->=20
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/gpio/gpio-ath79.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
-> index a757171..0bebcba 100644
-> --- a/drivers/gpio/gpio-ath79.c
-> +++ b/drivers/gpio/gpio-ath79.c
-> @@ -258,6 +258,8 @@ static int ath79_gpio_probe(struct platform_device *p=
-dev)
->  	}
-> =20
->  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res)
-> +		return -EINVAL;
->  	ctrl->base =3D devm_ioremap(&pdev->dev, res->start, resource_size(res));
->  	if (!ctrl->base)
->  		return -ENOMEM;
+The code I use contains all the Kconfig cleanups (v3 sent yesterday), so 
+there is another dependency here.
 
-This fix is needed, however this patch is not against the current
-version. The current version use res in a call to devm_ioremap_nocache()
-and not devm_ioremap().
-
-Alban
-
---Sig_/YpmcGkF=0q7WgTmM4ggtPo.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJaT4ZuAAoJEHSUmkuduC28p2IQAMaSyYbCz+aM0MVre5rFRBcW
-h4sBuz1V59S3W+zKG+HdfDBhsmzf7o1PGHeA6pvvWni/EkptjsLe/frfMw1FvQ/6
-uxgrFIt+vwgVNvzgKNgZetl3FMcbbZ79TwtaucfZS3cFtdvJxNhe4qJcnOEaWmwd
-nPeg0qJWLzrpFkUSB0i257OH2bh0BhWiaVZgvNYeiPpCmyfLAKQP7mwLPJ6QoguK
-rDU6tT5f3W1O45eCy3zZ5TFDNP32Yj+sIHRTMVB4wKv1EFG3j5B6e4+SpRjExbM6
-kBE2Xw3RHLUfCTeAJ8zeb6le3Hqo0111YQCv53ARKyluJe44Pr9vqdQ/8AqNhzLb
-XadDYg9kdJg2ql2ue7ifS/48MfCji83GdYWwXXSBYli1Pz4KDq/IxRzP9uUcV1Uu
-6RuUaZ0NWmKnKvZeziO2ypgN5dma4JyLkN/QNuLQXXkG1BYmyBj3GpANLhO7L8Dd
-q2vBsnOHDdbrEVvZN9ucuiLi5KJpgeew9XgD6BoJhJcGhogMIEVMvhM0dhahDnSE
-mba/mRBuZN2ml0TEH6RbPxf3XQ33ocqzKEwooknBrlZ9y7wFmTbQ17X215YX44T+
-PXouCulraoQHuJhTgDAg1PGgIpH7n1/jFv58lp5BvJ2as1yDge91CEeMz2RRpTdB
-2l4WYRA7hgpXVP9Ihgrd
-=n4hm
------END PGP SIGNATURE-----
-
---Sig_/YpmcGkF=0q7WgTmM4ggtPo.--
+> 
+>> It's probably best to let this patch go through the acpi tree, and
+>> the
+>> next one through Mark's tree once the first is merged and all the
+>> other
+>> Kconfig/acpi stuff is also in -next?
+> 
+> It wouldn't prevent to push patch 3 as well via linux-pm at the same
+> time as patch 1.
+> 
+> Linus, do you have any objection on that?
+> 
