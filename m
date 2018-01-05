@@ -1,33 +1,50 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: remove redundant mux_setting clear in pinmux_disable_setting()
-Date: Fri,  5 Jan 2018 19:52:26 +0900
-Message-ID: <1515149546-31282-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 1/3] ACPI / utils: Introduce acpi_dev_get_dev_name()
+Date: Fri, 5 Jan 2018 12:05:53 +0000
+Message-ID: <20180105120553.GB9076@sirena.org.uk>
+References: <20180104164709.64387-1-andriy.shevchenko@linux.intel.com>
+ <20180104164709.64387-2-andriy.shevchenko@linux.intel.com>
+ <5e21c7c3-83cf-e038-e57e-0dfa4640862e@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35028 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750907AbeAEMGP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jan 2018 07:06:15 -0500
+Content-Disposition: inline
+In-Reply-To: <5e21c7c3-83cf-e038-e57e-0dfa4640862e@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-desc->mux_setting is set to NULL in pin_free() called just below.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+--98e8jtXdkpgskNou
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- drivers/pinctrl/pinmux.c | 2 --
- 1 file changed, 2 deletions(-)
+On Thu, Jan 04, 2018 at 06:47:56PM -0600, Pierre-Louis Bossart wrote:
 
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-index 55502fc..82b18ef 100644
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -493,8 +493,6 @@ void pinmux_disable_setting(const struct pinctrl_setting *setting)
- 			continue;
- 		}
- 		if (desc->mux_setting == &(setting->data.mux)) {
--			desc->mux_setting = NULL;
--			/* And release the pin */
- 			pin_free(pctldev, pins[i], NULL);
- 		} else {
- 			const char *gname;
--- 
-2.7.4
+> one through Mark's tree once the first is merged and all the other
+> Kconfig/acpi stuff is also in -next?
+
+If we could get this in during the merge window that'd be ideal...
+
+--98e8jtXdkpgskNou
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpPaiAACgkQJNaLcl1U
+h9CVugf8CQ2UXkibjG9lvuexOy890iR6Y9op+ONeR5hDlbzMfKZKqhNGWlJJgAxW
+G3t+e4l4zsUP0Vv6oSmi0rNAESFBS1yW9C6OqUaMA/wPn7oCamgp8PjPBWY2GWN9
+8+GeDFnEIWuIXVeU2AY4bnjDShQHM7BEYa4VvPTeF9uzgJRe6DMqpALkQG06JE7D
+ufNyR4xeAHHUt6o4NLfRVpua30+dyqNx3mK6LrgpfB7SsWl57zoEmbQTS4lm45zn
+WJ/ujqCsABU40vbH5Ug3ju1NV7zORZEh3H2nlSa7ua/mI8p8Qn6GIl+lAxs23ZtA
+ttscNGfvp20ng/CV3hlJUSOo8Mjx4Q==
+=B3o6
+-----END PGP SIGNATURE-----
+
+--98e8jtXdkpgskNou--
