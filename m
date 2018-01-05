@@ -1,162 +1,108 @@
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH v2 1/3] ACPI / utils: Introduce acpi_dev_get_dev_name()
-Date: Thu, 4 Jan 2018 18:47:56 -0600
-Message-ID: <5e21c7c3-83cf-e038-e57e-0dfa4640862e@linux.intel.com>
-References: <20180104164709.64387-1-andriy.shevchenko@linux.intel.com>
- <20180104164709.64387-2-andriy.shevchenko@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 0/3] renesas: irqchip: Use WAKEUP_PATH driver PM flag
+Date: Fri, 5 Jan 2018 10:16:53 +0100
+Message-ID: <CAMuHMdVBBnH2REi4RP6N6S5PaCgrwFteHXPRtnr9jPwtUbx_qA@mail.gmail.com>
+References: <1514554304-18989-1-git-send-email-ulf.hansson@linaro.org>
+ <CAJZ5v0heO9DxbxnrXJeXC0RDQV-oOb=KLJmXWm7uuy=y7U2KjA@mail.gmail.com>
+ <CAMuHMdX0p7rnrtdVOeh71Nd4k8aU3Pi-L6y+LTFKoh21XNUs4w@mail.gmail.com> <CAJZ5v0iphV9w6wQy2uQ=wW3HEC+eK4ZnS8fBE-GFuESjXM4PCQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20180104164709.64387-2-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAJZ5v0iphV9w6wQy2uQ=wW3HEC+eK4ZnS8fBE-GFuESjXM4PCQ@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux PM <linux-pm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Rafael,
 
-
-On 01/04/2018 10:47 AM, Andy Shevchenko wrote:
-> Sometimes the user want to have device name of the match rather than
-> just checking if device present or not. To make life easier for such
-> users introduce acpi_dev_get_dev_name() helper based on code for
-> acpi_dev_present().
+On Sun, Dec 31, 2017 at 12:47 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Sun, Dec 31, 2017 at 10:22 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Sun, Dec 31, 2017 at 1:56 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>>> On Fri, Dec 29, 2017 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>>> From: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>>
+>>>> Changes in v2: [By Ulf Hansson]
+>>>>         - I have picked up the series from Geert [1] and converted it into use
+>>>>         the WAKEUP_PATH driver PM flag. This includes some minor changes to each
+>>>>         patch and updates to the changelogs.
+>>>>         - An important note, the WAKEUP_PATH driver PM flag is introduced in a
+>>>>         separate series [2], not yet applied, so @subject series depends on it.
+>>>>         - One more note, two of the patches has a checkpatch error, however I
+>>>>         did not fix them, becuase I think that should be done separate.
+>>>>
+>>>> [1]
+>>>> https://lkml.org/lkml/2017/11/9/382
+>>>> [2]
+>>>> https://marc.info/?l=linux-pm&m=151454744124661&w=2
+>>>>
+>>>> More information below, picked from Geert's previous cover letter.
+>>>>
+>>>> Kind regards
+>>>> Uffe
+>>>>
+>>>>
+>>>> Hi all,
+>>>>
+>>>> If an interrupt controller in a Renesas ARM SoC is part of a Clock
+>>>> Domain, and it is part of the wakeup path, it must be kept active during
+>>>> system suspend.
+>>>>
+>>>> Currently this is handled in all interrupt controller drivers by
+>>>> explicitly increasing the use count of the module clock when the device
+>>>> is part of the wakeup path.  However, this explicit clock handling is
+>>>> merely a workaround for a failure to properly communicate wakeup
+>>>> information to the device core.
+>>>>
+>>>> Hence this series fixes the affected drivers by setting the devices'
+>>>> power.wakeup_path fields instead, to indicate they are part of the
+>>>> wakeup path.  Depending on the PM Domain's active_wakeup configuration,
+>>>> the genpd core code will keep the device enabled (and the clock running)
+>>>> during system suspend when needed.
+>>>
+>>> However, there is a convention, documented in the kerneldoc comment of
+>>> device_init_wakeup(), by which devices participating in system wakeup
+>>> "passively" (like USB controllers and hubs) are expected to have it
+>>> enabled by default.
+>>>
+>>> If that convention was followed by the devices in question here, the
+>>> wakeup_path bit would be set for them and no other code changes would
+>>> be necessary.  So is there any reason for not following it?
+>>
+>> Yes there is.  The need to stay enabled during system suspend depends
+>> on the consumer of the interrupt. It is controlled by the consumer using
+>> the irq_chip.irq_set_wake() callback at runtime, and may change at runtime.
+>>
+>> If the wakeup_path flag is always set, the interrupt controller will
+>> never be suspended during system suspend, and thus waste power.
 >
-> To be more consistent with the purpose rename
+> OK
 >
->    struct acpi_dev_present_info  -> struct acpi_dev_match_info
->    acpi_dev_present_cb()         -> acpi_dev_match_cb()
+> For IRQ chips in particular, I think, you don't need add new fields to
+> struct dev_pm_info to make it work.
 >
-> in the utils.c file.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-This works fine on a Dell 5585 where the default codec dai name needs to 
-be updated based on the actual HID information, so
-Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> In ->suspend (or ->suspend_late, which may be better) you can check
+> the IRQD_WAKEUP_STATE flag of the irq_desc associated with the pin.
+> If that is set, you can simply set power.wakeup_path for the device
+> and that will make genpd skip it.  Wouldn't that work?
 
-the next patch does not apply directly however, and needs additional 
-changes for the ES8316 machine driver. see the changes here: 
-https://github.com/plbossart/sound/tree/topic/bytcht-acpi-fixes
+The irq_desc is per pin, while suspend is called per platform device, which
+contains one or more irq_chips, each serving one or more pins.
+So checking for IRQD_WAKEUP_STATE means looping over all irq_descs
+associated to the platform device.
 
-It's probably best to let this patch go through the acpi tree, and the 
-next one through Mark's tree once the first is merged and all the other 
-Kconfig/acpi stuff is also in -next?
+Which made me realize {gpio_rcar,irqc,intc_irqpin}_priv.wakeup_path should
+not be a flag, but a counter. Currently it works by luck, as we never have
+two independent wake-up sources being routed through the same irqchip.
 
-> ---
->   drivers/acpi/utils.c    | 40 +++++++++++++++++++++++++++++++++-------
->   include/acpi/acpi_bus.h |  1 +
->   include/linux/acpi.h    |  6 ++++++
->   3 files changed, 40 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/acpi/utils.c b/drivers/acpi/utils.c
-> index 9d49a1acebe3..1da9e986d510 100644
-> --- a/drivers/acpi/utils.c
-> +++ b/drivers/acpi/utils.c
-> @@ -737,16 +737,17 @@ bool acpi_dev_found(const char *hid)
->   }
->   EXPORT_SYMBOL(acpi_dev_found);
->   
-> -struct acpi_dev_present_info {
-> +struct acpi_dev_match_info {
-> +	const char *dev_name;
->   	struct acpi_device_id hid[2];
->   	const char *uid;
->   	s64 hrv;
->   };
->   
-> -static int acpi_dev_present_cb(struct device *dev, void *data)
-> +static int acpi_dev_match_cb(struct device *dev, void *data)
->   {
->   	struct acpi_device *adev = to_acpi_device(dev);
-> -	struct acpi_dev_present_info *match = data;
-> +	struct acpi_dev_match_info *match = data;
->   	unsigned long long hrv;
->   	acpi_status status;
->   
-> @@ -757,6 +758,8 @@ static int acpi_dev_present_cb(struct device *dev, void *data)
->   	    strcmp(adev->pnp.unique_id, match->uid)))
->   		return 0;
->   
-> +	match->dev_name = acpi_dev_name(adev);
-> +
->   	if (match->hrv == -1)
->   		return 1;
->   
-> @@ -789,20 +792,43 @@ static int acpi_dev_present_cb(struct device *dev, void *data)
->    */
->   bool acpi_dev_present(const char *hid, const char *uid, s64 hrv)
->   {
-> -	struct acpi_dev_present_info match = {};
-> +	struct acpi_dev_match_info match = {};
->   	struct device *dev;
->   
->   	strlcpy(match.hid[0].id, hid, sizeof(match.hid[0].id));
->   	match.uid = uid;
->   	match.hrv = hrv;
->   
-> -	dev = bus_find_device(&acpi_bus_type, NULL, &match,
-> -			      acpi_dev_present_cb);
-> -
-> +	dev = bus_find_device(&acpi_bus_type, NULL, &match, acpi_dev_match_cb);
->   	return !!dev;
->   }
->   EXPORT_SYMBOL(acpi_dev_present);
->   
-> +/**
-> + * acpi_dev_get_dev_name - Return device name of first match of ACPI device
-> + * @hid: Hardware ID of the device.
-> + * @uid: Unique ID of the device, pass NULL to not check _UID
-> + * @hrv: Hardware Revision of the device, pass -1 to not check _HRV
-> + *
-> + * Return device name if a matching device was present
-> + * at the moment of invocation, or NULL otherwise.
-> + *
-> + * See additional information in acpi_dev_present() as well.
-> + */
-> +const char *acpi_dev_get_dev_name(const char *hid, const char *uid, s64 hrv)
-> +{
-> +	struct acpi_dev_match_info match = {};
-> +	struct device *dev;
-> +
-> +	strlcpy(match.hid[0].id, hid, sizeof(match.hid[0].id));
-> +	match.uid = uid;
-> +	match.hrv = hrv;
-> +
-> +	dev = bus_find_device(&acpi_bus_type, NULL, &match, acpi_dev_match_cb);
-> +	return dev ? match.dev_name : NULL;
-> +}
-> +EXPORT_SYMBOL(acpi_dev_get_dev_name);
-> +
->   /*
->    * acpi_backlight= handling, this is done here rather then in video_detect.c
->    * because __setup cannot be used in modules.
-> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-> index 79287629c888..8883f5ebb6ce 100644
-> --- a/include/acpi/acpi_bus.h
-> +++ b/include/acpi/acpi_bus.h
-> @@ -90,6 +90,7 @@ acpi_evaluate_dsm_typed(acpi_handle handle, const guid_t *guid, u64 rev,
->   
->   bool acpi_dev_found(const char *hid);
->   bool acpi_dev_present(const char *hid, const char *uid, s64 hrv);
-> +const char *acpi_dev_get_dev_name(const char *hid, const char *uid, s64 hrv);
->   
->   #ifdef CONFIG_ACPI
->   
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 1922063f6894..d6576eec45d1 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -644,6 +644,12 @@ static inline bool acpi_dev_present(const char *hid, const char *uid, s64 hrv)
->   	return false;
->   }
->   
-> +static inline
-> +const char *acpi_dev_get_dev_name(const char *hid, const char *uid, s64 hrv)
-> +{
-> +	return NULL;
-> +}
-> +
->   static inline bool is_acpi_node(struct fwnode_handle *fwnode)
->   {
->   	return false;
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
