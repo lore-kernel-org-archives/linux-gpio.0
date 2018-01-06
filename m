@@ -1,875 +1,583 @@
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: [PATCH v5] gpio: winbond: add driver
-Date: Sat, 6 Jan 2018 00:46:08 +0100
-Message-ID: <ce716371-cc0a-6983-69c5-1a1203a48bc8@maciej.szmigiero.name>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 7bit
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v3] pinctrl: Add Microsemi Ocelot SoC driver
+Date: Sat,  6 Jan 2018 01:09:26 +0100
+Message-ID: <20180106000926.13770-1-alexandre.belloni@free-electrons.com>
+References: <CACRpkdZ=+pFZYteq=wM=z-CGejY+dX_SqhtDbbGBn+q60arQ4w@mail.gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
+In-Reply-To: <CACRpkdZ=+pFZYteq=wM=z-CGejY+dX_SqhtDbbGBn+q60arQ4w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Jonathan Cameron <jic23@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This commit adds GPIO driver for Winbond Super I/Os.
+The Microsemi Ocelot SoC has a few pins that can be used as GPIOs or take
+multiple other functions. Add a driver for the pinmuxing and the GPIOs.
 
-Currently, only W83627UHG model (also known as Nuvoton NCT6627UD) is
-supported but in the future a support for other Winbond models, too, can
-be added to the driver.
+There is currently no support for interrupts.
 
-A module parameter "gpios" sets a bitmask of GPIO ports to enable (bit 0 is
-GPIO1, bit 1 is GPIO2, etc.).
-One should be careful which ports one tinkers with since some might be
-managed by the firmware (for functions like powering on and off, sleeping,
-BIOS recovery, etc.) and some of GPIO port pins are physically shared with
-other devices included in the Super I/O chip.
-
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 ---
-Changes from v1:
-* Added SPDX license tag,
+ - use  pinctrl_gpio_direction_input/output from
+   ocelot_gpio_direction_input/output
+ - add a comment for ALT0/ALT1
+ - fill .max_register of ocelot_pinctrl_regmap_config
 
-* Removed gpiobase parameter,
+ drivers/pinctrl/Kconfig          |  11 +
+ drivers/pinctrl/Makefile         |   1 +
+ drivers/pinctrl/pinctrl-ocelot.c | 511 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 523 insertions(+)
+ create mode 100644 drivers/pinctrl/pinctrl-ocelot.c
 
-* Changed uint{8,16}_t types to u{8,16},
-
-* Added kerneldoc descriptions of driver structures,
-
-* Reformatted winbond_gpio_infos array fields so they are on separate
-lines,
-
-* Added few comments here and there as requested,
-
-* Moved port configuration code from separate winbond_gpio_configure_X()
-functions to one, common, parametrized winbond_gpio_configure_port()
-function.
-
-Changes from v2:
-* Adapted the driver to use the ISA bus instead of the platform one,
-
-* Reformatted register and register bit macros,
-
-* Added wb_sio_{notice,warn,err} macros to not repeat pr_* calls with
-the same prefix again and again,
-
-* Added a comment why a double I/O register write is needed,
-
-* Converted the code to use for_each_set_bit() where it could be used,
-
-* Removed a warning about an impossible condition in
-winbond_gpio_get_info(),
-
-* Made winbond_gpio_get_info() return a reduced GPIO number,
-
-* Renamed gpiolib callback functions parameter name from gpio_num to
-offset,
-
-* Changed I/O port number variables to unsigned long type,
-
-* Removed explicit casts in logging calls,
-
-* hweight() is now used for calculating the total GPIO count.
-
-Changes from v3:
-* Changed the code to use pr_fmt(x) instead of wb_sio_{notice,warn,err}
-logging macros,
-
-* Made the driver warn about but accept extra bits in the "gpios"
-parameter,
-
-* Removed a one case of a redundant 'else',
-
-* Swapped a one missed pair of register bit macros,
-
-* Changed the code to pass a size in bits, not bytes, to
-for_each_set_bit() macros.
-
-Changes from v4:
-* Grouped global parameters in a single static struct,
-
-* Used __clear_bit to clear an unsupported GPIO number bit.
-
- drivers/gpio/Kconfig        |  16 +
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-winbond.c | 732 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 749 insertions(+)
- create mode 100644 drivers/gpio/gpio-winbond.c
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 395669bfcc26..8c4018855c3b 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -698,6 +698,22 @@ config GPIO_TS5500
- 	  blocks of the TS-5500: DIO1, DIO2 and the LCD port, and the TS-5600
- 	  LCD port.
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 4571cc098b76..640fb829935a 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -343,6 +343,17 @@ config PINCTRL_RK805
+ 	help
+ 	  This selects the pinctrl driver for RK805.
  
-+config GPIO_WINBOND
-+	tristate "Winbond Super I/O GPIO support"
-+	select ISA_BUS_API
-+	help
-+	  This option enables support for GPIOs found on Winbond Super I/O
-+	  chips.
-+	  Currently, only W83627UHG (also known as Nuvoton NCT6627UD) is
-+	  supported.
++config PINCTRL_OCELOT
++	bool "Pinctrl driver for the Microsemi Ocelot SoCs"
++	default y
++	depends on OF
++	depends on MSCC_OCELOT || COMPILE_TEST
++	select GPIOLIB
++	select GENERIC_PINCONF
++	select GENERIC_PINCTRL_GROUPS
++	select GENERIC_PINMUX_FUNCTIONS
++	select REGMAP_MMIO
 +
-+	  You will need to provide a module parameter "gpios", or a
-+	  boot-time parameter "gpio_winbond.gpios" with a bitmask of GPIO
-+	  ports to enable (bit 0 is GPIO1, bit 1 is GPIO2, etc.).
-+
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called gpio-winbond.
-+
- config GPIO_WS16C48
- 	tristate "WinSystems WS16C48 GPIO support"
- 	depends on ISA_BUS_API
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index bc5dd673fa11..ff3d36d0a443 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -139,6 +139,7 @@ obj-$(CONFIG_GPIO_VIPERBOARD)	+= gpio-viperboard.o
- obj-$(CONFIG_GPIO_VR41XX)	+= gpio-vr41xx.o
- obj-$(CONFIG_GPIO_VX855)	+= gpio-vx855.o
- obj-$(CONFIG_GPIO_WHISKEY_COVE)	+= gpio-wcove.o
-+obj-$(CONFIG_GPIO_WINBOND)	+= gpio-winbond.o
- obj-$(CONFIG_GPIO_WM831X)	+= gpio-wm831x.o
- obj-$(CONFIG_GPIO_WM8350)	+= gpio-wm8350.o
- obj-$(CONFIG_GPIO_WM8994)	+= gpio-wm8994.o
-diff --git a/drivers/gpio/gpio-winbond.c b/drivers/gpio/gpio-winbond.c
+ source "drivers/pinctrl/aspeed/Kconfig"
+ source "drivers/pinctrl/bcm/Kconfig"
+ source "drivers/pinctrl/berlin/Kconfig"
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index d0d4844f8022..b1cae074a949 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -45,6 +45,7 @@ obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
+ obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
+ obj-$(CONFIG_PINCTRL_INGENIC)	+= pinctrl-ingenic.o
+ obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
++obj-$(CONFIG_PINCTRL_OCELOT)	+= pinctrl-ocelot.o
+ 
+ obj-$(CONFIG_ARCH_ASPEED)	+= aspeed/
+ obj-y				+= bcm/
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
 new file mode 100644
-index 000000000000..7f8f5b02e31d
+index 000000000000..01a50d969111
 --- /dev/null
-+++ b/drivers/gpio/gpio-winbond.c
-@@ -0,0 +1,732 @@
-+// SPDX-License-Identifier: GPL-2.0+
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -0,0 +1,511 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +/*
-+ * GPIO interface for Winbond Super I/O chips
-+ * Currently, only W83627UHG (Nuvoton NCT6627UD) is supported.
++ * Microsemi SoCs pinctrl driver
 + *
-+ * Author: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
++ * Author: <alexandre.belloni@free-electrons.com>
++ * License: Dual MIT/GPL
++ * Copyright (c) 2017 Microsemi Corporation
 + */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 +
 +#include <linux/gpio/driver.h>
-+#include <linux/ioport.h>
-+#include <linux/isa.h>
-+#include <linux/module.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/of_device.h>
++#include <linux/of_platform.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
 +
-+#define WB_GPIO_DRIVER_NAME		KBUILD_MODNAME
++#include "core.h"
++#include "pinconf.h"
++#include "pinmux.h"
 +
-+#define WB_SIO_BASE			0x2e
-+#define WB_SIO_BASE_HIGH		0x4e
++#define OCELOT_GPIO_OUT_SET	0x0
++#define OCELOT_GPIO_OUT_CLR	0x4
++#define OCELOT_GPIO_OUT		0x8
++#define OCELOT_GPIO_IN		0xc
++#define OCELOT_GPIO_OE		0x10
++#define OCELOT_GPIO_INTR	0x14
++#define OCELOT_GPIO_INTR_ENA	0x18
++#define OCELOT_GPIO_INTR_IDENT	0x1c
++#define OCELOT_GPIO_ALT0	0x20
++#define OCELOT_GPIO_ALT1	0x24
++#define OCELOT_GPIO_SD_MAP	0x28
 +
-+#define WB_SIO_EXT_ENTER_KEY		0x87
-+#define WB_SIO_EXT_EXIT_KEY		0xaa
++#define OCELOT_PINS		22
++#define OCELOT_FUNC_PER_PIN	4
 +
-+/* global chip registers */
-+
-+#define WB_SIO_REG_LOGICAL		0x07
-+
-+#define WB_SIO_REG_CHIP_MSB		0x20
-+#define WB_SIO_REG_CHIP_LSB		0x21
-+
-+#define WB_SIO_CHIP_ID_W83627UHG	0xa230
-+#define WB_SIO_CHIP_ID_W83627UHG_MASK	GENMASK(15, 4)
-+
-+#define WB_SIO_REG_DPD			0x22
-+#define WB_SIO_REG_DPD_UARTA		4
-+#define WB_SIO_REG_DPD_UARTB		5
-+
-+#define WB_SIO_REG_IDPD		0x23
-+#define WB_SIO_REG_IDPD_UARTC		4
-+#define WB_SIO_REG_IDPD_UARTD		5
-+#define WB_SIO_REG_IDPD_UARTE		6
-+#define WB_SIO_REG_IDPD_UARTF		7
-+
-+#define WB_SIO_REG_GLOBAL_OPT		0x24
-+#define WB_SIO_REG_GO_ENFDC		1
-+
-+#define WB_SIO_REG_OVTGPIO3456		0x29
-+#define WB_SIO_REG_OG3456_G3PP		3
-+#define WB_SIO_REG_OG3456_G4PP		4
-+#define WB_SIO_REG_OG3456_G5PP		5
-+#define WB_SIO_REG_OG3456_G6PP		7
-+
-+#define WB_SIO_REG_I2C_PS		0x2a
-+#define WB_SIO_REG_I2CPS_I2CFS		1
-+
-+#define WB_SIO_REG_GPIO1_MF		0x2c
-+#define WB_SIO_REG_G1MF_G1PP		6
-+#define WB_SIO_REG_G1MF_G2PP		7
-+#define WB_SIO_REG_G1MF_FS_MASK	GENMASK(1, 0)
-+#define WB_SIO_REG_G1MF_FS_IR_OFF	0
-+#define WB_SIO_REG_G1MF_FS_IR		1
-+#define WB_SIO_REG_G1MF_FS_GPIO1	2
-+#define WB_SIO_REG_G1MF_FS_UARTB	3
-+
-+/* not an actual device number, just a value meaning 'no device' */
-+#define WB_SIO_DEV_NONE		0xff
-+
-+/* registers with offsets >= 0x30 are specific for a particular device */
-+
-+/* UART B logical device */
-+#define WB_SIO_DEV_UARTB		0x03
-+#define WB_SIO_UARTB_REG_ENABLE	0x30
-+#define WB_SIO_UARTB_ENABLE_ON		0
-+
-+/* UART C logical device */
-+#define WB_SIO_DEV_UARTC		0x06
-+#define WB_SIO_UARTC_REG_ENABLE	0x30
-+#define WB_SIO_UARTC_ENABLE_ON		0
-+
-+/* GPIO3, GPIO4 logical device */
-+#define WB_SIO_DEV_GPIO34		0x07
-+#define WB_SIO_GPIO34_REG_ENABLE	0x30
-+#define WB_SIO_GPIO34_ENABLE_3		0
-+#define WB_SIO_GPIO34_ENABLE_4		1
-+#define WB_SIO_GPIO34_REG_IO3		0xe0
-+#define WB_SIO_GPIO34_REG_DATA3	0xe1
-+#define WB_SIO_GPIO34_REG_INV3		0xe2
-+#define WB_SIO_GPIO34_REG_IO4		0xe4
-+#define WB_SIO_GPIO34_REG_DATA4	0xe5
-+#define WB_SIO_GPIO34_REG_INV4		0xe6
-+
-+/* WDTO, PLED, GPIO5, GPIO6 logical device */
-+#define WB_SIO_DEV_WDGPIO56		0x08
-+#define WB_SIO_WDGPIO56_REG_ENABLE	0x30
-+#define WB_SIO_WDGPIO56_ENABLE_5	1
-+#define WB_SIO_WDGPIO56_ENABLE_6	2
-+#define WB_SIO_WDGPIO56_REG_IO5	0xe0
-+#define WB_SIO_WDGPIO56_REG_DATA5	0xe1
-+#define WB_SIO_WDGPIO56_REG_INV5	0xe2
-+#define WB_SIO_WDGPIO56_REG_IO6	0xe4
-+#define WB_SIO_WDGPIO56_REG_DATA6	0xe5
-+#define WB_SIO_WDGPIO56_REG_INV6	0xe6
-+
-+/* GPIO1, GPIO2, SUSLED logical device */
-+#define WB_SIO_DEV_GPIO12		0x09
-+#define WB_SIO_GPIO12_REG_ENABLE	0x30
-+#define WB_SIO_GPIO12_ENABLE_1		0
-+#define WB_SIO_GPIO12_ENABLE_2		1
-+#define WB_SIO_GPIO12_REG_IO1		0xe0
-+#define WB_SIO_GPIO12_REG_DATA1	0xe1
-+#define WB_SIO_GPIO12_REG_INV1		0xe2
-+#define WB_SIO_GPIO12_REG_IO2		0xe4
-+#define WB_SIO_GPIO12_REG_DATA2	0xe5
-+#define WB_SIO_GPIO12_REG_INV2		0xe6
-+
-+/* UART D logical device */
-+#define WB_SIO_DEV_UARTD		0x0d
-+#define WB_SIO_UARTD_REG_ENABLE	0x30
-+#define WB_SIO_UARTD_ENABLE_ON		0
-+
-+/* UART E logical device */
-+#define WB_SIO_DEV_UARTE		0x0e
-+#define WB_SIO_UARTE_REG_ENABLE	0x30
-+#define WB_SIO_UARTE_ENABLE_ON		0
-+
-+/*
-+ * for a description what a particular field of this struct means please see
-+ * a description of the relevant module parameter at the bottom of this file
-+ */
-+struct winbond_gpio_params {
-+	unsigned long base;
-+	unsigned long gpios;
-+	unsigned long ppgpios;
-+	unsigned long odgpios;
-+	bool pledgpio;
-+	bool beepgpio;
-+	bool i2cgpio;
++enum {
++	FUNC_NONE,
++	FUNC_GPIO,
++	FUNC_IRQ0_IN,
++	FUNC_IRQ0_OUT,
++	FUNC_IRQ1_IN,
++	FUNC_IRQ1_OUT,
++	FUNC_MIIM1,
++	FUNC_PCI_WAKE,
++	FUNC_PTP0,
++	FUNC_PTP1,
++	FUNC_PTP2,
++	FUNC_PTP3,
++	FUNC_PWM,
++	FUNC_RECO_CLK0,
++	FUNC_RECO_CLK1,
++	FUNC_SFP0,
++	FUNC_SFP1,
++	FUNC_SFP2,
++	FUNC_SFP3,
++	FUNC_SFP4,
++	FUNC_SFP5,
++	FUNC_SG0,
++	FUNC_SI,
++	FUNC_TACHO,
++	FUNC_TWI,
++	FUNC_TWI_SCL_M,
++	FUNC_UART,
++	FUNC_UART2,
++	FUNC_MAX
 +};
 +
-+static struct winbond_gpio_params params;
++static const char *const ocelot_function_names[] = {
++	[FUNC_NONE]		= "none",
++	[FUNC_GPIO]		= "gpio",
++	[FUNC_IRQ0_IN]		= "irq0_in",
++	[FUNC_IRQ0_OUT]		= "irq0_out",
++	[FUNC_IRQ1_IN]		= "irq1_in",
++	[FUNC_IRQ1_OUT]		= "irq1_out",
++	[FUNC_MIIM1]		= "miim1",
++	[FUNC_PCI_WAKE]		= "pci_wake",
++	[FUNC_PTP0]		= "ptp0",
++	[FUNC_PTP1]		= "ptp1",
++	[FUNC_PTP2]		= "ptp2",
++	[FUNC_PTP3]		= "ptp3",
++	[FUNC_PWM]		= "pwm",
++	[FUNC_RECO_CLK0]	= "reco_clk0",
++	[FUNC_RECO_CLK1]	= "reco_clk1",
++	[FUNC_SFP0]		= "sfp0",
++	[FUNC_SFP1]		= "sfp1",
++	[FUNC_SFP2]		= "sfp2",
++	[FUNC_SFP3]		= "sfp3",
++	[FUNC_SFP4]		= "sfp4",
++	[FUNC_SFP5]		= "sfp5",
++	[FUNC_SG0]		= "sg0",
++	[FUNC_SI]		= "si",
++	[FUNC_TACHO]		= "tacho",
++	[FUNC_TWI]		= "twi",
++	[FUNC_TWI_SCL_M]	= "twi_scl_m",
++	[FUNC_UART]		= "uart",
++	[FUNC_UART2]		= "uart2",
++};
 +
-+static int winbond_sio_enter(unsigned long base)
++struct ocelot_pmx_func {
++	const char **groups;
++	unsigned int ngroups;
++};
++
++struct ocelot_pin_caps {
++	unsigned int pin;
++	unsigned char functions[OCELOT_FUNC_PER_PIN];
++};
++
++struct ocelot_pinctrl {
++	struct device *dev;
++	struct pinctrl_dev *pctl;
++	struct gpio_chip gpio_chip;
++	struct regmap *map;
++	struct ocelot_pmx_func func[FUNC_MAX];
++};
++
++#define OCELOT_P(p, f0, f1, f2)						\
++static struct ocelot_pin_caps ocelot_pin_##p = {			\
++	.pin = p,							\
++	.functions = {							\
++			FUNC_GPIO, FUNC_##f0, FUNC_##f1, FUNC_##f2,	\
++	},								\
++}
++
++OCELOT_P(0,  SG0,       NONE,      NONE);
++OCELOT_P(1,  SG0,       NONE,      NONE);
++OCELOT_P(2,  SG0,       NONE,      NONE);
++OCELOT_P(3,  SG0,       NONE,      NONE);
++OCELOT_P(4,  IRQ0_IN,   IRQ0_OUT,  TWI);
++OCELOT_P(5,  IRQ1_IN,   IRQ1_OUT,  PCI_WAKE);
++OCELOT_P(6,  UART,      TWI_SCL_M, NONE);
++OCELOT_P(7,  UART,      TWI_SCL_M, NONE);
++OCELOT_P(8,  SI,        TWI_SCL_M, IRQ0_OUT);
++OCELOT_P(9,  SI,        TWI_SCL_M, IRQ1_OUT);
++OCELOT_P(10, PTP2,      TWI_SCL_M, SFP0);
++OCELOT_P(11, PTP3,      TWI_SCL_M, SFP1);
++OCELOT_P(12, UART2,     TWI_SCL_M, SFP2);
++OCELOT_P(13, UART2,     TWI_SCL_M, SFP3);
++OCELOT_P(14, MIIM1,     TWI_SCL_M, SFP4);
++OCELOT_P(15, MIIM1,     TWI_SCL_M, SFP5);
++OCELOT_P(16, TWI,       NONE,      SI);
++OCELOT_P(17, TWI,       TWI_SCL_M, SI);
++OCELOT_P(18, PTP0,      TWI_SCL_M, NONE);
++OCELOT_P(19, PTP1,      TWI_SCL_M, NONE);
++OCELOT_P(20, RECO_CLK0, TACHO,     NONE);
++OCELOT_P(21, RECO_CLK1, PWM,       NONE);
++
++#define OCELOT_PIN(n) {						\
++	.number = n,						\
++	.name = "GPIO_"#n,					\
++	.drv_data = &ocelot_pin_##n				\
++}
++
++static const struct pinctrl_pin_desc ocelot_pins[] = {
++	OCELOT_PIN(0),
++	OCELOT_PIN(1),
++	OCELOT_PIN(2),
++	OCELOT_PIN(3),
++	OCELOT_PIN(4),
++	OCELOT_PIN(5),
++	OCELOT_PIN(6),
++	OCELOT_PIN(7),
++	OCELOT_PIN(8),
++	OCELOT_PIN(9),
++	OCELOT_PIN(10),
++	OCELOT_PIN(11),
++	OCELOT_PIN(12),
++	OCELOT_PIN(13),
++	OCELOT_PIN(14),
++	OCELOT_PIN(15),
++	OCELOT_PIN(16),
++	OCELOT_PIN(17),
++	OCELOT_PIN(18),
++	OCELOT_PIN(19),
++	OCELOT_PIN(20),
++	OCELOT_PIN(21),
++};
++
++static int ocelot_get_functions_count(struct pinctrl_dev *pctldev)
 +{
-+	if (!request_muxed_region(base, 2, WB_GPIO_DRIVER_NAME))
-+		return -EBUSY;
++	return ARRAY_SIZE(ocelot_function_names);
++}
++
++static const char *ocelot_get_function_name(struct pinctrl_dev *pctldev,
++					    unsigned int function)
++{
++	return ocelot_function_names[function];
++}
++
++static int ocelot_get_function_groups(struct pinctrl_dev *pctldev,
++				      unsigned int function,
++				      const char *const **groups,
++				      unsigned *const num_groups)
++{
++	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
++
++	*groups  = info->func[function].groups;
++	*num_groups = info->func[function].ngroups;
++
++	return 0;
++}
++
++static int ocelot_pin_function_idx(unsigned int pin, unsigned int function)
++{
++	struct ocelot_pin_caps *p = ocelot_pins[pin].drv_data;
++	int i;
++
++	for (i = 0; i < OCELOT_FUNC_PER_PIN; i++) {
++		if (function == p->functions[i])
++			return i;
++	}
++
++	return -1;
++}
++
++static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
++				 unsigned int selector, unsigned int group)
++{
++	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
++	struct ocelot_pin_caps *pin = ocelot_pins[group].drv_data;
++	int f;
++
++	f = ocelot_pin_function_idx(group, selector);
++	if (f < 0)
++		return -EINVAL;
 +
 +	/*
-+	 * datasheet says two successive writes of the "key" value are needed
-+	 * in order for chip to enter the "Extended Function Mode"
++	 * f is encoded on two bits.
++	 * bit 0 of f goes in BIT(pin) of ALT0, bit 1 of f goes in BIT(pin) of
++	 * ALT1
++	 * This is racy because both registers can't be updated at the same time
++	 * but it doesn't matter much for now.
 +	 */
-+	outb(WB_SIO_EXT_ENTER_KEY, base);
-+	outb(WB_SIO_EXT_ENTER_KEY, base);
++	regmap_update_bits(info->map, OCELOT_GPIO_ALT0, BIT(pin->pin),
++			   f << pin->pin);
++	regmap_update_bits(info->map, OCELOT_GPIO_ALT1, BIT(pin->pin),
++			   f << (pin->pin - 1));
 +
 +	return 0;
 +}
 +
-+static void winbond_sio_select_logical(unsigned long base, u8 dev)
++static int ocelot_gpio_set_direction(struct pinctrl_dev *pctldev,
++				     struct pinctrl_gpio_range *range,
++				     unsigned int pin, bool input)
 +{
-+	outb(WB_SIO_REG_LOGICAL, base);
-+	outb(dev, base + 1);
++	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
++
++	regmap_update_bits(info->map, OCELOT_GPIO_OE, BIT(pin),
++			   input ? BIT(pin) : 0);
++
++	return 0;
 +}
 +
-+static void winbond_sio_leave(unsigned long base)
++static int ocelot_gpio_request_enable(struct pinctrl_dev *pctldev,
++				      struct pinctrl_gpio_range *range,
++				      unsigned int offset)
 +{
-+	outb(WB_SIO_EXT_EXIT_KEY, base);
++	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
 +
-+	release_region(base, 2);
++	regmap_update_bits(info->map, OCELOT_GPIO_ALT0, BIT(offset), 0);
++	regmap_update_bits(info->map, OCELOT_GPIO_ALT1, BIT(offset), 0);
++
++	return 0;
 +}
 +
-+static void winbond_sio_reg_write(unsigned long base, u8 reg, u8 data)
-+{
-+	outb(reg, base);
-+	outb(data, base + 1);
-+}
-+
-+static u8 winbond_sio_reg_read(unsigned long base, u8 reg)
-+{
-+	outb(reg, base);
-+	return inb(base + 1);
-+}
-+
-+static void winbond_sio_reg_bset(unsigned long base, u8 reg, u8 bit)
-+{
-+	u8 val;
-+
-+	val = winbond_sio_reg_read(base, reg);
-+	val |= BIT(bit);
-+	winbond_sio_reg_write(base, reg, val);
-+}
-+
-+static void winbond_sio_reg_bclear(unsigned long base, u8 reg, u8 bit)
-+{
-+	u8 val;
-+
-+	val = winbond_sio_reg_read(base, reg);
-+	val &= ~BIT(bit);
-+	winbond_sio_reg_write(base, reg, val);
-+}
-+
-+static bool winbond_sio_reg_btest(unsigned long base, u8 reg, u8 bit)
-+{
-+	return winbond_sio_reg_read(base, reg) & BIT(bit);
-+}
-+
-+/**
-+ * struct winbond_gpio_port_conflict - possibly conflicting device information
-+ * @name:	device name (NULL means no conflicting device defined)
-+ * @dev:	Super I/O logical device number where the testreg register
-+ *		is located (or WB_SIO_DEV_NONE - don't select any
-+ *		logical device)
-+ * @testreg:	register number where the testbit bit is located
-+ * @testbit:	index of a bit to check whether an actual conflict exists
-+ * @warnonly:	if set then a conflict isn't fatal (just warn about it),
-+ *		otherwise disable the particular GPIO port if a conflict
-+ *		is detected
-+ */
-+struct winbond_gpio_port_conflict {
-+	const char *name;
-+	u8 dev;
-+	u8 testreg;
-+	u8 testbit;
-+	bool warnonly;
++static const struct pinmux_ops ocelot_pmx_ops = {
++	.get_functions_count = ocelot_get_functions_count,
++	.get_function_name = ocelot_get_function_name,
++	.get_function_groups = ocelot_get_function_groups,
++	.set_mux = ocelot_pinmux_set_mux,
++	.gpio_set_direction = ocelot_gpio_set_direction,
++	.gpio_request_enable = ocelot_gpio_request_enable,
 +};
 +
-+/**
-+ * struct winbond_gpio_info - information about a particular GPIO port (device)
-+ * @dev:		Super I/O logical device number of the registers
-+ *			specified below
-+ * @enablereg:		port enable bit register number
-+ * @enablebit:		index of a port enable bit
-+ * @outputreg:		output driver mode bit register number
-+ * @outputppbit:	index of a push-pull output driver mode bit
-+ * @ioreg:		data direction register number
-+ * @invreg:		pin data inversion register number
-+ * @datareg:		pin data register number
-+ * @conflict:		description of a device that possibly conflicts with
-+ *			this port
-+ */
-+struct winbond_gpio_info {
-+	u8 dev;
-+	u8 enablereg;
-+	u8 enablebit;
-+	u8 outputreg;
-+	u8 outputppbit;
-+	u8 ioreg;
-+	u8 invreg;
-+	u8 datareg;
-+	struct winbond_gpio_port_conflict conflict;
-+};
-+
-+static const struct winbond_gpio_info winbond_gpio_infos[6] = {
-+	{ /* 0 */
-+		.dev = WB_SIO_DEV_GPIO12,
-+		.enablereg = WB_SIO_GPIO12_REG_ENABLE,
-+		.enablebit = WB_SIO_GPIO12_ENABLE_1,
-+		.outputreg = WB_SIO_REG_GPIO1_MF,
-+		.outputppbit = WB_SIO_REG_G1MF_G1PP,
-+		.ioreg = WB_SIO_GPIO12_REG_IO1,
-+		.invreg = WB_SIO_GPIO12_REG_INV1,
-+		.datareg = WB_SIO_GPIO12_REG_DATA1,
-+		.conflict = {
-+			.name = "UARTB",
-+			.dev = WB_SIO_DEV_UARTB,
-+			.testreg = WB_SIO_UARTB_REG_ENABLE,
-+			.testbit = WB_SIO_UARTB_ENABLE_ON,
-+			.warnonly = true
-+		}
-+	},
-+	{ /* 1 */
-+		.dev = WB_SIO_DEV_GPIO12,
-+		.enablereg = WB_SIO_GPIO12_REG_ENABLE,
-+		.enablebit = WB_SIO_GPIO12_ENABLE_2,
-+		.outputreg = WB_SIO_REG_GPIO1_MF,
-+		.outputppbit = WB_SIO_REG_G1MF_G2PP,
-+		.ioreg = WB_SIO_GPIO12_REG_IO2,
-+		.invreg = WB_SIO_GPIO12_REG_INV2,
-+		.datareg = WB_SIO_GPIO12_REG_DATA2
-+		/* special conflict handling so doesn't use conflict data */
-+	},
-+	{ /* 2 */
-+		.dev = WB_SIO_DEV_GPIO34,
-+		.enablereg = WB_SIO_GPIO34_REG_ENABLE,
-+		.enablebit = WB_SIO_GPIO34_ENABLE_3,
-+		.outputreg = WB_SIO_REG_OVTGPIO3456,
-+		.outputppbit = WB_SIO_REG_OG3456_G3PP,
-+		.ioreg = WB_SIO_GPIO34_REG_IO3,
-+		.invreg = WB_SIO_GPIO34_REG_INV3,
-+		.datareg = WB_SIO_GPIO34_REG_DATA3,
-+		.conflict = {
-+			.name = "UARTC",
-+			.dev = WB_SIO_DEV_UARTC,
-+			.testreg = WB_SIO_UARTC_REG_ENABLE,
-+			.testbit = WB_SIO_UARTC_ENABLE_ON,
-+			.warnonly = true
-+		}
-+	},
-+	{ /* 3 */
-+		.dev = WB_SIO_DEV_GPIO34,
-+		.enablereg = WB_SIO_GPIO34_REG_ENABLE,
-+		.enablebit = WB_SIO_GPIO34_ENABLE_4,
-+		.outputreg = WB_SIO_REG_OVTGPIO3456,
-+		.outputppbit = WB_SIO_REG_OG3456_G4PP,
-+		.ioreg = WB_SIO_GPIO34_REG_IO4,
-+		.invreg = WB_SIO_GPIO34_REG_INV4,
-+		.datareg = WB_SIO_GPIO34_REG_DATA4,
-+		.conflict = {
-+			.name = "UARTD",
-+			.dev = WB_SIO_DEV_UARTD,
-+			.testreg = WB_SIO_UARTD_REG_ENABLE,
-+			.testbit = WB_SIO_UARTD_ENABLE_ON,
-+			.warnonly = true
-+		}
-+	},
-+	{ /* 4 */
-+		.dev = WB_SIO_DEV_WDGPIO56,
-+		.enablereg = WB_SIO_WDGPIO56_REG_ENABLE,
-+		.enablebit = WB_SIO_WDGPIO56_ENABLE_5,
-+		.outputreg = WB_SIO_REG_OVTGPIO3456,
-+		.outputppbit = WB_SIO_REG_OG3456_G5PP,
-+		.ioreg = WB_SIO_WDGPIO56_REG_IO5,
-+		.invreg = WB_SIO_WDGPIO56_REG_INV5,
-+		.datareg = WB_SIO_WDGPIO56_REG_DATA5,
-+		.conflict = {
-+			.name = "UARTE",
-+			.dev = WB_SIO_DEV_UARTE,
-+			.testreg = WB_SIO_UARTE_REG_ENABLE,
-+			.testbit = WB_SIO_UARTE_ENABLE_ON,
-+			.warnonly = true
-+		}
-+	},
-+	{ /* 5 */
-+		.dev = WB_SIO_DEV_WDGPIO56,
-+		.enablereg = WB_SIO_WDGPIO56_REG_ENABLE,
-+		.enablebit = WB_SIO_WDGPIO56_ENABLE_6,
-+		.outputreg = WB_SIO_REG_OVTGPIO3456,
-+		.outputppbit = WB_SIO_REG_OG3456_G6PP,
-+		.ioreg = WB_SIO_WDGPIO56_REG_IO6,
-+		.invreg = WB_SIO_WDGPIO56_REG_INV6,
-+		.datareg = WB_SIO_WDGPIO56_REG_DATA6,
-+		.conflict = {
-+			.name = "FDC",
-+			.dev = WB_SIO_DEV_NONE,
-+			.testreg = WB_SIO_REG_GLOBAL_OPT,
-+			.testbit = WB_SIO_REG_GO_ENFDC,
-+			.warnonly = false
-+		}
-+	}
-+};
-+
-+/* returns whether changing a pin is allowed */
-+static bool winbond_gpio_get_info(unsigned int *gpio_num,
-+				  const struct winbond_gpio_info **info)
++static int ocelot_pctl_get_groups_count(struct pinctrl_dev *pctldev)
 +{
-+	bool allow_changing = true;
-+	unsigned long i;
-+
-+	for_each_set_bit(i, &params.gpios, BITS_PER_LONG) {
-+		if (*gpio_num < 8)
-+			break;
-+
-+		*gpio_num -= 8;
-+	}
-+
-+	*info = &winbond_gpio_infos[i];
-+
-+	/*
-+	 * GPIO2 (the second port) shares some pins with a basic PC
-+	 * functionality, which is very likely controlled by the firmware.
-+	 * Don't allow changing these pins by default.
-+	 */
-+	if (i == 1) {
-+		if (*gpio_num == 0 && !params.pledgpio)
-+			allow_changing = false;
-+		else if (*gpio_num == 1 && !params.beepgpio)
-+			allow_changing = false;
-+		else if ((*gpio_num == 5 || *gpio_num == 6) && !params.i2cgpio)
-+			allow_changing = false;
-+	}
-+
-+	return allow_changing;
++	return ARRAY_SIZE(ocelot_pins);
 +}
 +
-+static int winbond_gpio_get(struct gpio_chip *gc, unsigned int offset)
++static const char *ocelot_pctl_get_group_name(struct pinctrl_dev *pctldev,
++					      unsigned int group)
 +{
-+	unsigned long *base = gpiochip_get_data(gc);
-+	const struct winbond_gpio_info *info;
-+	bool val;
-+
-+	winbond_gpio_get_info(&offset, &info);
-+
-+	val = winbond_sio_enter(*base);
-+	if (val)
-+		return val;
-+
-+	winbond_sio_select_logical(*base, info->dev);
-+
-+	val = winbond_sio_reg_btest(*base, info->datareg, offset);
-+	if (winbond_sio_reg_btest(*base, info->invreg, offset))
-+		val = !val;
-+
-+	winbond_sio_leave(*base);
-+
-+	return val;
++	return ocelot_pins[group].name;
 +}
 +
-+static int winbond_gpio_direction_in(struct gpio_chip *gc, unsigned int offset)
++static int ocelot_pctl_get_group_pins(struct pinctrl_dev *pctldev,
++				      unsigned int group,
++				      const unsigned int **pins,
++				      unsigned int *num_pins)
 +{
-+	unsigned long *base = gpiochip_get_data(gc);
-+	const struct winbond_gpio_info *info;
++	*pins = &ocelot_pins[group].number;
++	*num_pins = 1;
++
++	return 0;
++}
++
++static const struct pinctrl_ops ocelot_pctl_ops = {
++	.get_groups_count = ocelot_pctl_get_groups_count,
++	.get_group_name = ocelot_pctl_get_group_name,
++	.get_group_pins = ocelot_pctl_get_group_pins,
++	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
++	.dt_free_map = pinconf_generic_dt_free_map,
++};
++
++static struct pinctrl_desc ocelot_desc = {
++	.name = "ocelot-pinctrl",
++	.pins = ocelot_pins,
++	.npins = ARRAY_SIZE(ocelot_pins),
++	.pctlops = &ocelot_pctl_ops,
++	.pmxops = &ocelot_pmx_ops,
++	.owner = THIS_MODULE,
++};
++
++static int ocelot_create_group_func_map(struct device *dev,
++					struct ocelot_pinctrl *info)
++{
++	u16 pins[ARRAY_SIZE(ocelot_pins)];
++	int f, npins, i;
++
++	for (f = 0; f < FUNC_MAX; f++) {
++		for (npins = 0, i = 0; i < ARRAY_SIZE(ocelot_pins); i++) {
++			if (ocelot_pin_function_idx(i, f) >= 0)
++				pins[npins++] = i;
++		}
++
++		info->func[f].ngroups = npins;
++		info->func[f].groups = devm_kzalloc(dev, npins *
++							 sizeof(char *),
++							 GFP_KERNEL);
++		if (!info->func[f].groups)
++			return -ENOMEM;
++
++		for (i = 0; i < npins; i++)
++			info->func[f].groups[i] = ocelot_pins[pins[i]].name;
++	}
++
++	return 0;
++}
++
++static int ocelot_pinctrl_register(struct platform_device *pdev,
++				   struct ocelot_pinctrl *info)
++{
 +	int ret;
 +
-+	if (!winbond_gpio_get_info(&offset, &info))
-+		return -EACCES;
-+
-+	ret = winbond_sio_enter(*base);
-+	if (ret)
++	ret = ocelot_create_group_func_map(&pdev->dev, info);
++	if (ret) {
++		dev_err(&pdev->dev, "Unable to create group func map.\n");
 +		return ret;
++	}
 +
-+	winbond_sio_select_logical(*base, info->dev);
-+
-+	winbond_sio_reg_bset(*base, info->ioreg, offset);
-+
-+	winbond_sio_leave(*base);
++	info->pctl = devm_pinctrl_register(&pdev->dev, &ocelot_desc, info);
++	if (IS_ERR(info->pctl)) {
++		dev_err(&pdev->dev, "Failed to register pinctrl\n");
++		return PTR_ERR(info->pctl);
++	}
 +
 +	return 0;
 +}
 +
-+static int winbond_gpio_direction_out(struct gpio_chip *gc,
-+				      unsigned int offset,
-+				      int val)
++static int ocelot_gpio_get(struct gpio_chip *chip, unsigned int offset)
 +{
-+	unsigned long *base = gpiochip_get_data(gc);
-+	const struct winbond_gpio_info *info;
-+	int ret;
-+
-+	if (!winbond_gpio_get_info(&offset, &info))
-+		return -EACCES;
-+
-+	ret = winbond_sio_enter(*base);
-+	if (ret)
-+		return ret;
-+
-+	winbond_sio_select_logical(*base, info->dev);
-+
-+	winbond_sio_reg_bclear(*base, info->ioreg, offset);
-+
-+	if (winbond_sio_reg_btest(*base, info->invreg, offset))
-+		val = !val;
-+
-+	if (val)
-+		winbond_sio_reg_bset(*base, info->datareg, offset);
-+	else
-+		winbond_sio_reg_bclear(*base, info->datareg, offset);
-+
-+	winbond_sio_leave(*base);
-+
-+	return 0;
-+}
-+
-+static void winbond_gpio_set(struct gpio_chip *gc, unsigned int offset,
-+			     int val)
-+{
-+	unsigned long *base = gpiochip_get_data(gc);
-+	const struct winbond_gpio_info *info;
-+
-+	if (!winbond_gpio_get_info(&offset, &info))
-+		return;
-+
-+	if (winbond_sio_enter(*base) != 0)
-+		return;
-+
-+	winbond_sio_select_logical(*base, info->dev);
-+
-+	if (winbond_sio_reg_btest(*base, info->invreg, offset))
-+		val = !val;
-+
-+	if (val)
-+		winbond_sio_reg_bset(*base, info->datareg, offset);
-+	else
-+		winbond_sio_reg_bclear(*base, info->datareg, offset);
-+
-+	winbond_sio_leave(*base);
-+}
-+
-+static struct gpio_chip winbond_gpio_chip = {
-+	.base			= -1,
-+	.label			= WB_GPIO_DRIVER_NAME,
-+	.owner			= THIS_MODULE,
-+	.can_sleep		= true,
-+	.get			= winbond_gpio_get,
-+	.direction_input	= winbond_gpio_direction_in,
-+	.set			= winbond_gpio_set,
-+	.direction_output	= winbond_gpio_direction_out,
-+};
-+
-+static void winbond_gpio_configure_port0_pins(unsigned long base)
-+{
++	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
 +	unsigned int val;
 +
-+	val = winbond_sio_reg_read(base, WB_SIO_REG_GPIO1_MF);
-+	if ((val & WB_SIO_REG_G1MF_FS_MASK) == WB_SIO_REG_G1MF_FS_GPIO1)
-+		return;
++	regmap_read(info->map, OCELOT_GPIO_IN, &val);
 +
-+	pr_warn("GPIO1 pins were connected to something else (%.2x), fixing\n",
-+		val);
-+
-+	val &= ~WB_SIO_REG_G1MF_FS_MASK;
-+	val |= WB_SIO_REG_G1MF_FS_GPIO1;
-+
-+	winbond_sio_reg_write(base, WB_SIO_REG_GPIO1_MF, val);
++	return !!(val & BIT(offset));
 +}
 +
-+static void winbond_gpio_configure_port1_check_i2c(unsigned long base)
++static void ocelot_gpio_set(struct gpio_chip *chip, unsigned int offset,
++			    int value)
 +{
-+	params.i2cgpio = !winbond_sio_reg_btest(base, WB_SIO_REG_I2C_PS,
-+						WB_SIO_REG_I2CPS_I2CFS);
-+	if (!params.i2cgpio)
-+		pr_warn("disabling GPIO2.5 and GPIO2.6 as I2C is enabled\n");
-+}
++	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
 +
-+static bool winbond_gpio_configure_port(unsigned long base, unsigned int idx)
-+{
-+	const struct winbond_gpio_info *info = &winbond_gpio_infos[idx];
-+	const struct winbond_gpio_port_conflict *conflict = &info->conflict;
-+
-+	/* is there a possible conflicting device defined? */
-+	if (conflict->name != NULL) {
-+		if (conflict->dev != WB_SIO_DEV_NONE)
-+			winbond_sio_select_logical(base, conflict->dev);
-+
-+		if (winbond_sio_reg_btest(base, conflict->testreg,
-+					  conflict->testbit)) {
-+			if (conflict->warnonly)
-+				pr_warn("enabled GPIO%u share pins with active %s\n",
-+					idx + 1, conflict->name);
-+			else {
-+				pr_warn("disabling GPIO%u as %s is enabled\n",
-+					idx + 1, conflict->name);
-+				return false;
-+			}
-+		}
-+	}
-+
-+	/* GPIO1 and GPIO2 need some (additional) special handling */
-+	if (idx == 0)
-+		winbond_gpio_configure_port0_pins(base);
-+	else if (idx == 1)
-+		winbond_gpio_configure_port1_check_i2c(base);
-+
-+	winbond_sio_select_logical(base, info->dev);
-+
-+	winbond_sio_reg_bset(base, info->enablereg, info->enablebit);
-+
-+	if (params.ppgpios & BIT(idx))
-+		winbond_sio_reg_bset(base, info->outputreg,
-+				     info->outputppbit);
-+	else if (params.odgpios & BIT(idx))
-+		winbond_sio_reg_bclear(base, info->outputreg,
-+				       info->outputppbit);
++	if (value)
++		regmap_write(info->map, OCELOT_GPIO_OUT_SET, BIT(offset));
 +	else
-+		pr_notice("GPIO%u pins are %s\n", idx + 1,
-+			  winbond_sio_reg_btest(base, info->outputreg,
-+						info->outputppbit) ?
-+			  "push-pull" :
-+			  "open drain");
-+
-+	return true;
++		regmap_write(info->map, OCELOT_GPIO_OUT_CLR, BIT(offset));
 +}
 +
-+static int winbond_gpio_configure(unsigned long base)
++static int ocelot_gpio_get_direction(struct gpio_chip *chip,
++				     unsigned int offset)
 +{
-+	unsigned long i;
++	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
++	unsigned int val;
 +
-+	for_each_set_bit(i, &params.gpios, BITS_PER_LONG)
-+		if (!winbond_gpio_configure_port(base, i))
-+			__clear_bit(i, &params.gpios);
++	regmap_read(info->map, OCELOT_GPIO_OE, &val);
 +
-+	if (!params.gpios) {
-+		pr_err("please use 'gpios' module parameter to select some active GPIO ports to enable\n");
-+		return -EINVAL;
-+	}
++	return !(val & BIT(offset));
++}
++
++static int ocelot_gpio_direction_input(struct gpio_chip *chip,
++				       unsigned int offset)
++{
++	return pinctrl_gpio_direction_input(chip->base + offset);
++}
++
++static int ocelot_gpio_direction_output(struct gpio_chip *chip,
++					unsigned int offset, int value)
++{
++	struct ocelot_pinctrl *info = gpiochip_get_data(chip);
++	unsigned int pin = BIT(offset);
++
++	if (value)
++		regmap_write(info->map, OCELOT_GPIO_OUT_SET, pin);
++	else
++		regmap_write(info->map, OCELOT_GPIO_OUT_CLR, pin);
++
++	return pinctrl_gpio_direction_output(chip->base + offset);
++}
++
++static const struct gpio_chip ocelot_gpiolib_chip = {
++	.request = gpiochip_generic_request,
++	.free = gpiochip_generic_free,
++	.set = ocelot_gpio_set,
++	.get = ocelot_gpio_get,
++	.get_direction = ocelot_gpio_get_direction,
++	.direction_input = ocelot_gpio_direction_input,
++	.direction_output = ocelot_gpio_direction_output,
++	.owner = THIS_MODULE,
++};
++
++static int ocelot_gpiochip_register(struct platform_device *pdev,
++				    struct ocelot_pinctrl *info)
++{
++	struct gpio_chip *gc;
++	int ret;
++
++	info->gpio_chip = ocelot_gpiolib_chip;
++
++	gc = &info->gpio_chip;
++	gc->ngpio = OCELOT_PINS;
++	gc->parent = &pdev->dev;
++	gc->base = 0;
++	gc->of_node = info->dev->of_node;
++	gc->label = "ocelot-gpio";
++
++	ret = devm_gpiochip_add_data(&pdev->dev, gc, info);
++	if (ret)
++		return ret;
++
++	/* TODO: this can be used as an irqchip but no board is using that */
 +
 +	return 0;
 +}
 +
-+static int winbond_gpio_check_chip(unsigned long base)
-+{
-+	int ret;
-+	unsigned int chip;
-+
-+	ret = winbond_sio_enter(base);
-+	if (ret)
-+		return ret;
-+
-+	chip = winbond_sio_reg_read(base, WB_SIO_REG_CHIP_MSB) << 8;
-+	chip |= winbond_sio_reg_read(base, WB_SIO_REG_CHIP_LSB);
-+
-+	pr_notice("chip ID at %lx is %.4x\n", base, chip);
-+
-+	if ((chip & WB_SIO_CHIP_ID_W83627UHG_MASK) !=
-+	    WB_SIO_CHIP_ID_W83627UHG) {
-+		pr_err("not an our chip\n");
-+		ret = -ENODEV;
-+	}
-+
-+	winbond_sio_leave(base);
-+
-+	return ret;
-+}
-+
-+static int winbond_gpio_imatch(struct device *dev, unsigned int id)
-+{
-+	unsigned long gpios_rem;
-+	int ret;
-+
-+	gpios_rem = params.gpios & ~GENMASK(ARRAY_SIZE(winbond_gpio_infos) - 1,
-+					    0);
-+	if (gpios_rem) {
-+		pr_warn("unknown ports (%lx) enabled in GPIO ports bitmask\n",
-+			gpios_rem);
-+		params.gpios &= ~gpios_rem;
-+	}
-+
-+	if (params.ppgpios & params.odgpios) {
-+		pr_err("some GPIO ports are set both to push-pull and open drain mode at the same time\n");
-+		return 0;
-+	}
-+
-+	if (params.base != 0)
-+		return winbond_gpio_check_chip(params.base) == 0;
-+
-+	/*
-+	 * if the 'base' module parameter is unset probe two chip default
-+	 * I/O port bases
-+	 */
-+	params.base = WB_SIO_BASE;
-+	ret = winbond_gpio_check_chip(params.base);
-+	if (ret == 0)
-+		return 1;
-+	if (ret != -ENODEV && ret != -EBUSY)
-+		return 0;
-+
-+	params.base = WB_SIO_BASE_HIGH;
-+	return winbond_gpio_check_chip(params.base) == 0;
-+}
-+
-+static int winbond_gpio_iprobe(struct device *dev, unsigned int id)
-+{
-+	int ret;
-+
-+	if (params.base == 0)
-+		return -EINVAL;
-+
-+	ret = winbond_sio_enter(params.base);
-+	if (ret)
-+		return ret;
-+
-+	ret = winbond_gpio_configure(params.base);
-+
-+	winbond_sio_leave(params.base);
-+
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Add 8 gpios for every GPIO port that was enabled in gpios
-+	 * module parameter (that wasn't disabled earlier in
-+	 * winbond_gpio_configure() & co. due to, for example, a pin conflict).
-+	 */
-+	winbond_gpio_chip.ngpio = hweight_long(params.gpios) * 8;
-+
-+	/*
-+	 * GPIO6 port has only 5 pins, so if it is enabled we have to adjust
-+	 * the total count appropriately
-+	 */
-+	if (params.gpios & BIT(5))
-+		winbond_gpio_chip.ngpio -= (8 - 5);
-+
-+	winbond_gpio_chip.parent = dev;
-+
-+	return devm_gpiochip_add_data(dev, &winbond_gpio_chip, &params.base);
-+}
-+
-+static struct isa_driver winbond_gpio_idriver = {
-+	.driver = {
-+		.name	= WB_GPIO_DRIVER_NAME,
-+	},
-+	.match	= winbond_gpio_imatch,
-+	.probe	= winbond_gpio_iprobe,
++static const struct regmap_config ocelot_pinctrl_regmap_config = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.max_register = 0x64,
 +};
 +
-+module_isa_driver(winbond_gpio_idriver, 1);
++static const struct of_device_id ocelot_pinctrl_of_match[] = {
++	{ .compatible = "mscc,ocelot-pinctrl" },
++	{},
++};
 +
-+module_param_named(base, params.base, ulong, 0444);
-+MODULE_PARM_DESC(base,
-+		 "I/O port base (when unset - probe chip default ones)");
++int ocelot_pinctrl_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct ocelot_pinctrl *info;
++	void __iomem *base;
++	int ret;
 +
-+/* This parameter sets which GPIO devices (ports) we enable */
-+module_param_named(gpios, params.gpios, ulong, 0444);
-+MODULE_PARM_DESC(gpios,
-+		 "bitmask of GPIO ports to enable (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
++	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
++	if (!info)
++		return -ENOMEM;
 +
-+/*
-+ * These two parameters below set how we configure GPIO ports output drivers.
-+ * It can't be a one bitmask since we need three values per port: push-pull,
-+ * open-drain and keep as-is (this is the default).
-+ */
-+module_param_named(ppgpios, params.ppgpios, ulong, 0444);
-+MODULE_PARM_DESC(ppgpios,
-+		 "bitmask of GPIO ports to set to push-pull mode (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
++	base = devm_ioremap_resource(dev,
++			platform_get_resource(pdev, IORESOURCE_MEM, 0));
++	if (IS_ERR(base)) {
++		dev_err(dev, "Failed to ioremap registers\n");
++		return PTR_ERR(base);
++	}
 +
-+module_param_named(odgpios, params.odgpios, ulong, 0444);
-+MODULE_PARM_DESC(odgpios,
-+		 "bitmask of GPIO ports to set to open drain mode (bit 0 - GPIO1, bit 1 - GPIO2, etc.");
++	info->map = devm_regmap_init_mmio(dev, base,
++					  &ocelot_pinctrl_regmap_config);
++	if (IS_ERR(info->map)) {
++		dev_err(dev, "Failed to create regmap\n");
++		return PTR_ERR(info->map);
++	}
++	dev_set_drvdata(dev, info->map);
++	info->dev = dev;
 +
-+/*
-+ * GPIO2.0 and GPIO2.1 control a basic PC functionality that we
-+ * don't allow tinkering with by default (it is very likely that the
-+ * firmware owns these pins).
-+ * These two parameters below allow overriding these prohibitions.
-+ */
-+module_param_named(pledgpio, params.pledgpio, bool, 0644);
-+MODULE_PARM_DESC(pledgpio,
-+		 "enable changing value of GPIO2.0 bit (Power LED), default no.");
++	ret = ocelot_pinctrl_register(pdev, info);
++	if (ret)
++		return ret;
 +
-+module_param_named(beepgpio, params.beepgpio, bool, 0644);
-+MODULE_PARM_DESC(beepgpio,
-+		 "enable changing value of GPIO2.1 bit (BEEP), default no.");
++	ret = ocelot_gpiochip_register(pdev, info);
++	if (ret)
++		return ret;
 +
-+MODULE_AUTHOR("Maciej S. Szmigiero <mail@maciej.szmigiero.name>");
-+MODULE_DESCRIPTION("GPIO interface for Winbond Super I/O chips");
-+MODULE_LICENSE("GPL");
++	return 0;
++}
++
++static struct platform_driver ocelot_pinctrl_driver = {
++	.driver = {
++		.name = "pinctrl-ocelot",
++		.of_match_table = of_match_ptr(ocelot_pinctrl_of_match),
++		.suppress_bind_attrs = true,
++	},
++	.probe = ocelot_pinctrl_probe,
++};
++builtin_platform_driver(ocelot_pinctrl_driver);
+-- 
+2.15.1
