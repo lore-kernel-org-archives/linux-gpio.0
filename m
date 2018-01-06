@@ -1,119 +1,66 @@
-From: Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 7/7] arm64: allwinner: h6: add support for Pine H64 board
-Date: Sat,  6 Jan 2018 19:53:31 +0800
-Message-ID: <20180106115331.54745-1-icenowy@aosc.io>
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH v2] pinctrl: mcp23s08: Combine two function calls into one in
+ mcp23s08_dbg_show()
+Date: Sat, 6 Jan 2018 20:52:26 +0100
+Message-ID: <3f5bd410-e685-d067-14e3-b8e77552a121@users.sourceforge.net>
+References: <ca1c3c19-7e8c-90f0-493c-b6fae04e6a03@users.sourceforge.net>
+ <0510a811-e653-6310-5c7f-8d6434efca2a@users.sourceforge.net>
+ <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.web.de ([212.227.15.14]:58657 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751718AbeAFTwa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 6 Jan 2018 14:52:30 -0500
+In-Reply-To: <CACRpkdaoUad0i3Kddyp0aJRJ46frHMY9_57mwM3iXAhqL5V3aA@mail.gmail.com>
+Content-Language: en-GB
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Pine H64 is an Allwinner H6-based SBC from Pine64, with the following
-features:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 6 Jan 2018 20:40:04 +0100
 
-- 1GiB/2GiB/4GiB LPDDR3 DRAM (in 4GiB situation only 3GiB is
-accessible)
-- AXP805 PMIC
-- Raspberry-Pi-compatible GPIO header, "Euler" GPIO header (not
-compatible with the "Euler" on Pine A64) and "Expansion" pin header
-- 2 USB 2.0 ports and 1 USB 3.0 ports
-- Audio jack
-- MicroSD slot and eMMC module slot
-- on-board SPI NOR flash
-- 1Gbps Ethernet port (via RTL8211E PHY)
-- HDMI port
+* Print a line break together with other data in a single function call.
 
-Adds initial support for it, including the UART on the Expansion pin
-header.
+* Adjust indentation.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- arch/arm64/boot/dts/allwinner/Makefile             |  1 +
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 66 ++++++++++++++++++++++
- 2 files changed, 67 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
 
-diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index f505227b0250..addf245226f6 100644
---- a/arch/arm64/boot/dts/allwinner/Makefile
-+++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -10,3 +10,4 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-new file mode 100644
-index 000000000000..0d7b294c8aa9
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -0,0 +1,66 @@
-+/*
-+ * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This library is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This library is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+/dts-v1/;
-+
-+#include "sun50i-h6.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Pine H64";
-+	compatible = "pine64,pine-h64", "allwinner,sun50i-h6";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_ph_pins>;
-+	status = "okay";
-+};
+v2:
+This update suggestion was rebased on source files from the software
+"Linux next-20180105".
+
+ drivers/pinctrl/pinctrl-mcp23s08.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index e6ad36dea3e5..95d548f3ba53 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -748,13 +748,12 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 		if (!label)
+ 			continue;
+ 
+-		seq_printf(s, " gpio-%-3d P%c.%d (%-12s) %s %s %s",
+-			chip->base + t, bank, t, label,
+-			(iodir & mask) ? "in " : "out",
+-			(gpio & mask) ? "hi" : "lo",
+-			(gppu & mask) ? "up" : "  ");
++		seq_printf(s, " gpio-%-3d P%c.%d (%-12s) %s %s %s\n",
++			   chip->base + t, bank, t, label,
++			   (iodir & mask) ? "in " : "out",
++			   (gpio & mask) ? "hi" : "lo",
++			   (gppu & mask) ? "up" : "  ");
+ 		/* NOTE:  ignoring the irq-related registers */
+-		seq_puts(s, "\n");
+ 	}
+ done:
+ 	mutex_unlock(&mcp->lock);
 -- 
-2.14.2
+2.15.1
 
