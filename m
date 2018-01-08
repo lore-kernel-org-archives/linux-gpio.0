@@ -1,53 +1,47 @@
-From: Yixun Lan <yixun.lan@amlogic.com>
-Subject: [PATCH 1/2] pinctrl: meson: introduce a macro to have name/groups seperated
-Date: Mon, 8 Jan 2018 15:33:27 +0800
-Message-ID: <20180108073328.205769-2-yixun.lan@amlogic.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 0/2] pinctrl: meson: use one uniform 'function' name
+Date: Mon, 08 Jan 2018 09:52:24 +0100
+Message-ID: <1515401544.5048.67.camel@baylibre.com>
 References: <20180108073328.205769-1-yixun.lan@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180108073328.205769-1-yixun.lan@amlogic.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Yixun Lan <yixun.lan@amlogic.com>, Xingyu Chen <xingyu.chen@amlogic.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Yixun Lan <yixun.lan@amlogic.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-We introduce a macro FUNCTION_EX here, the main motivation is
-trying to have the possibility to expand the macro with the same of the
-'.name' number but different multiple '.groups/.num_groups' numbers.
+On Mon, 2018-01-08 at 15:33 +0800, Yixun Lan wrote:
+> These two patches are general improvement for meson pinctrl driver.
+> It make the two pinctrl trees (ee/ao) to share one uniform 'function' name for
+> one hardware block even its pin groups live inside two differet hardware domains,
+> which for example EE vs AO domain here.
+> 
+> This idea is motivated by Martin's question at [1]
+> 
+> [1]
+>  http://lkml.kernel.org/r/CAFBinCCuQ-NK747+GHDkhZty_UMMgzCYOYFcNTrRDJgU8OM=Gw@mail.gmail.com
+> 
+> 
+> Yixun Lan (2):
+>   pinctrl: meson: introduce a macro to have name/groups seperated
+>   pinctrl: meson-axg: correct the pin expansion of UART_AO_B
+> 
+>  drivers/pinctrl/meson/pinctrl-meson-axg.c | 4 ++--
+>  drivers/pinctrl/meson/pinctrl-meson.h     | 8 +++++---
+>  2 files changed, 7 insertions(+), 5 deletions(-)
 
-With this change, the meson pinctrl drivr is capable of have one uniform
-'function' name but with different pin 'groups', as we face the sitiuation
-that two pin groups may live inside different hardware domain (EE vs AO domain),
-which mean we couldn't put them in one single group.
+Hi Yixun,
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/pinctrl/meson/pinctrl-meson.h | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Honestly, I don't like the idea. I think it adds an unnecessary complexity.
+I don't see the point of FUNCTION_EX(uart_ao_b, _z) when you could simply write 
+FUNCTION(uart_ao_b_z) ... especially when there is just a couple of function per
+SoC available on different domains.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 12a391109329..d8f705098810 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -124,13 +124,15 @@ struct meson_pinctrl {
- 	struct device_node *of_node;
- };
- 
--#define FUNCTION(fn)							\
-+#define FUNCTION_EX(fn, ex)						\
- 	{								\
- 		.name = #fn,						\
--		.groups = fn ## _groups,				\
--		.num_groups = ARRAY_SIZE(fn ## _groups),		\
-+		.groups = fn ## ex ## _groups,				\
-+		.num_groups = ARRAY_SIZE(fn ## ex ## _groups),		\
- 	}
- 
-+#define FUNCTION(fn)	FUNCTION_EX(fn, )
-+
- #define BANK(n, f, l, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib)	\
- 	{								\
- 		.name		= n,					\
--- 
-2.15.1
+A pinctrl driver can already be challenging to understand at first, let's keep
+it simple and avoid adding more macros.
+
+Regards
+Jerome
