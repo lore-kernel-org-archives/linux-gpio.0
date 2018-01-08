@@ -1,14 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: [PATCH 0/4] gpio: Preperatory work for regulators
-Date: Mon,  8 Jan 2018 17:46:33 +0100
-Message-ID: <20180108164637.19919-1-linus.walleij@linaro.org>
+Date: Tue,  9 Jan 2018 00:58:40 +0100
+Message-ID: <20180108235844.22348-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34481 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935148AbeAHQsp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jan 2018 11:48:45 -0500
-Received: by mail-lf0-f66.google.com with SMTP id h140so12788250lfg.1
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jan 2018 08:48:43 -0800 (PST)
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:35904 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758515AbeAIAAv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jan 2018 19:00:51 -0500
+Received: by mail-lf0-f65.google.com with SMTP id c19so13967169lfg.3
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jan 2018 16:00:51 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
