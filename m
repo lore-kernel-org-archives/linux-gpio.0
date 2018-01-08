@@ -1,205 +1,75 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v3 1/3] ACPI / utils: Introduce
- acpi_dev_get_first_match_name()
-Date: Mon, 08 Jan 2018 15:09:20 +0200
-Message-ID: <1515416960.7000.784.camel@linux.intel.com>
-References: <20180105160935.48588-1-andriy.shevchenko@linux.intel.com>
-         <20180105160935.48588-2-andriy.shevchenko@linux.intel.com>
-         <CAJZ5v0iH+2JHe8vCR9tQX62ULwx_eVd1QGPtinSLNDzWx1NmEg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2] gpio: of: Support SPI nonstandard GPIO properties
+Date: Mon, 8 Jan 2018 14:25:43 +0100
+Message-ID: <CAMuHMdWKO5WcLicMdaa7qKj=h-ddzRqNKvmxqVqRhgO9bTENaQ@mail.gmail.com>
+References: <20180108124909.32334-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:19967 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757366AbeAHNQy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 8 Jan 2018 08:16:54 -0500
-In-Reply-To: <CAJZ5v0iH+2JHe8vCR9tQX62ULwx_eVd1QGPtinSLNDzWx1NmEg@mail.gmail.com>
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:42196 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756357AbeAHNZo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jan 2018 08:25:44 -0500
+In-Reply-To: <20180108124909.32334-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi <linux-spi@vger.kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
 
-On Sat, 2018-01-06 at 00:27 +0100, Rafael J. Wysocki wrote:
-> On Fri, Jan 5, 2018 at 5:09 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > Sometimes the user wants to have device name of the match rather
-> > than
-> > just checking if device present or not. To make life easier for such
-> > users introduce acpi_dev_get_first_match_name() helper based on code
-> > for acpi_dev_present().
-> > 
-> > For example, GPIO driver for Intel Merrifield needs to know the
-> > device
-> > name of pin control to be able to apply GPIO mapping table to the
-> > proper
-> > device.
-> > 
-> > To be more consistent with the purpose rename
-> > 
-> >   struct acpi_dev_present_info  -> struct acpi_dev_match_info
-> >   acpi_dev_present_cb()         -> acpi_dev_match_cb()
-> > 
-> > in the utils.c file.
-> > 
-> > Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.co
-> > m>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> OK, so which way do you want this to go in?
+Hi Linus,
 
-If you have no objections, patch 1 may go straight forward to linux-pm
-tree as far as you are okay with the contents.
+On Mon, Jan 8, 2018 at 1:49 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> Before it was clearly established that all GPIO properties in the
+> device tree shall be named "foo-gpios" (with the deprecated variant
+> "foo-gpio" for single lines) we unfortunately merged a few bindings
+> which named the lines "gpio-foo" instead.
+>
+> This is most prominent in the GPIO SPI driver in Linux which names
+> the lines "gpio-sck", "gpio-mosi" and "gpio-miso".
+>
+> As we want to switch the GPIO SPI driver to using descriptors, we
+> need devm_gpiod_get() to return something reasonable when looking
+> up these in the device tree.
+>
+> Put in a special #ifdef:ed kludge to do this special lookup only
+> for the SPI case and gets compiled out if we're not enabling SPI.
+> If we have more oddly defined legacy GPIOs like this, they can be
+> handled in a similar manner.
+>
+> Cc: Rob Herring <robh@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> I will merge this into the GPIO tree as a preparation for the next
+> (v4.17) kernel cycle so that we avoid cross-tree dependencies.
+> I estimate that it is too late to merge the bulk of the patches
+> for v4.16, but this can go in.
+>
+> ChangeLog v1->v2:
+> - Us if IS_ENABLED(CONFIG_SPI_MASTER) instead of
+>   #ifdef CONFIG_SPI_MASTER
 
-I dunno, if Mika's ACK is enough to you to get the second one (patch 2)
-together, otherwise Linus' ACK would be needed or leave it for next
-cycle.
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -117,6 +117,37 @@ int of_get_named_gpio_flags(struct device_node *np, const char *list_name,
+>  }
+>  EXPORT_SYMBOL(of_get_named_gpio_flags);
+>
+> +/*
+> + * The SPI GPIO bindings happened before we managed to establish that GPIO
+> + * properties should be named "foo-gpios" so we have this special kludge for
+> + * them.
+> + */
+> +#if IS_ENABLED(CONFIG_SPI_MASTER)
 
-According to what Mark and Pierre told previously I guess we just
-postpone patch 3 for next cycle.
+AFAIU, Rob really meant C "if", not CPP "#ifdef", so the code path is always
+exercised by the compiler.
 
-> 
-> > ---
-> >  drivers/acpi/utils.c    | 41 ++++++++++++++++++++++++++++++++++--
-> > -----
-> >  include/acpi/acpi_bus.h |  3 +++
-> >  include/linux/acpi.h    |  6 ++++++
-> >  3 files changed, 43 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/acpi/utils.c b/drivers/acpi/utils.c
-> > index 9d49a1acebe3..78db97687f26 100644
-> > --- a/drivers/acpi/utils.c
-> > +++ b/drivers/acpi/utils.c
-> > @@ -737,16 +737,17 @@ bool acpi_dev_found(const char *hid)
-> >  }
-> >  EXPORT_SYMBOL(acpi_dev_found);
-> > 
-> > -struct acpi_dev_present_info {
-> > +struct acpi_dev_match_info {
-> > +       const char *dev_name;
-> >         struct acpi_device_id hid[2];
-> >         const char *uid;
-> >         s64 hrv;
-> >  };
-> > 
-> > -static int acpi_dev_present_cb(struct device *dev, void *data)
-> > +static int acpi_dev_match_cb(struct device *dev, void *data)
-> >  {
-> >         struct acpi_device *adev = to_acpi_device(dev);
-> > -       struct acpi_dev_present_info *match = data;
-> > +       struct acpi_dev_match_info *match = data;
-> >         unsigned long long hrv;
-> >         acpi_status status;
-> > 
-> > @@ -757,6 +758,8 @@ static int acpi_dev_present_cb(struct device
-> > *dev, void *data)
-> >             strcmp(adev->pnp.unique_id, match->uid)))
-> >                 return 0;
-> > 
-> > +       match->dev_name = acpi_dev_name(adev);
-> > +
-> >         if (match->hrv == -1)
-> >                 return 1;
-> > 
-> > @@ -789,20 +792,44 @@ static int acpi_dev_present_cb(struct device
-> > *dev, void *data)
-> >   */
-> >  bool acpi_dev_present(const char *hid, const char *uid, s64 hrv)
-> >  {
-> > -       struct acpi_dev_present_info match = {};
-> > +       struct acpi_dev_match_info match = {};
-> >         struct device *dev;
-> > 
-> >         strlcpy(match.hid[0].id, hid, sizeof(match.hid[0].id));
-> >         match.uid = uid;
-> >         match.hrv = hrv;
-> > 
-> > -       dev = bus_find_device(&acpi_bus_type, NULL, &match,
-> > -                             acpi_dev_present_cb);
-> > -
-> > +       dev = bus_find_device(&acpi_bus_type, NULL, &match,
-> > acpi_dev_match_cb);
-> >         return !!dev;
-> >  }
-> >  EXPORT_SYMBOL(acpi_dev_present);
-> > 
-> > +/**
-> > + * acpi_dev_get_first_match_name - Return name of first match of
-> > ACPI device
-> > + * @hid: Hardware ID of the device.
-> > + * @uid: Unique ID of the device, pass NULL to not check _UID
-> > + * @hrv: Hardware Revision of the device, pass -1 to not check _HRV
-> > + *
-> > + * Return device name if a matching device was present
-> > + * at the moment of invocation, or NULL otherwise.
-> > + *
-> > + * See additional information in acpi_dev_present() as well.
-> > + */
-> > +const char *
-> > +acpi_dev_get_first_match_name(const char *hid, const char *uid, s64
-> > hrv)
-> > +{
-> > +       struct acpi_dev_match_info match = {};
-> > +       struct device *dev;
-> > +
-> > +       strlcpy(match.hid[0].id, hid, sizeof(match.hid[0].id));
-> > +       match.uid = uid;
-> > +       match.hrv = hrv;
-> > +
-> > +       dev = bus_find_device(&acpi_bus_type, NULL, &match,
-> > acpi_dev_match_cb);
-> > +       return dev ? match.dev_name : NULL;
-> > +}
-> > +EXPORT_SYMBOL(acpi_dev_get_first_match_name);
-> > +
-> >  /*
-> >   * acpi_backlight= handling, this is done here rather then in
-> > video_detect.c
-> >   * because __setup cannot be used in modules.
-> > diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-> > index 79287629c888..c9608b0b80c6 100644
-> > --- a/include/acpi/acpi_bus.h
-> > +++ b/include/acpi/acpi_bus.h
-> > @@ -91,6 +91,9 @@ acpi_evaluate_dsm_typed(acpi_handle handle, const
-> > guid_t *guid, u64 rev,
-> >  bool acpi_dev_found(const char *hid);
-> >  bool acpi_dev_present(const char *hid, const char *uid, s64 hrv);
-> > 
-> > +const char *
-> > +acpi_dev_get_first_match_name(const char *hid, const char *uid, s64
-> > hrv);
-> > +
-> >  #ifdef CONFIG_ACPI
-> > 
-> >  #include <linux/proc_fs.h>
-> > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> > index 60f0d3248125..493ac6451773 100644
-> > --- a/include/linux/acpi.h
-> > +++ b/include/linux/acpi.h
-> > @@ -642,6 +642,12 @@ static inline bool acpi_dev_present(const char
-> > *hid, const char *uid, s64 hrv)
-> >         return false;
-> >  }
-> > 
-> > +static inline const char *
-> > +acpi_dev_get_first_match_name(const char *hid, const char *uid, s64
-> > hrv)
-> > +{
-> > +       return NULL;
-> > +}
-> > +
-> >  static inline bool is_acpi_node(struct fwnode_handle *fwnode)
-> >  {
-> >         return false;
-> > --
-> > 2.15.1
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-
-> > acpi" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Gr{oetje,eeting}s,
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
