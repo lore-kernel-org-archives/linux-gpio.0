@@ -1,7 +1,7 @@
 From: Yixun Lan <yixun.lan@amlogic.com>
-Subject: [PATCH 2/2] pinctrl: meson-axg: correct the pin expansion of UART_AO_B
-Date: Mon, 8 Jan 2018 15:33:28 +0800
-Message-ID: <20180108073328.205769-3-yixun.lan@amlogic.com>
+Subject: [PATCH 1/2] pinctrl: meson: introduce a macro to have name/groups seperated
+Date: Mon, 8 Jan 2018 15:33:27 +0800
+Message-ID: <20180108073328.205769-2-yixun.lan@amlogic.com>
 References: <20180108073328.205769-1-yixun.lan@amlogic.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,39 +12,42 @@ To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Yixun Lan <yixun.lan@amlogic.com>, Xingyu Chen <xingyu.chen@amlogic.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The 'uart_ao_b_groups' for the UART_AO_B pins is already defined which is
-living inside the AO domain, for these pins which are routed out from EE domain,
-we need to correct them with the 'FUNCTION_EX' macro, otherwise there is
-a conflict in the code level.
+We introduce a macro FUNCTION_EX here, the main motivation is
+trying to have the possibility to expand the macro with the same of the
+'.name' number but different multiple '.groups/.num_groups' numbers.
 
-Also slightly adjust the name to make it short and more consistent.
+With this change, the meson pinctrl drivr is capable of have one uniform
+'function' name but with different pin 'groups', as we face the sitiuation
+that two pin groups may live inside different hardware domain (EE vs AO domain),
+which mean we couldn't put them in one single group.
 
 Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson-axg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson.h | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-index 1fda9d6c7ea3..308e5433bd04 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-@@ -716,7 +716,7 @@ static const char * const uart_b_groups[] = {
- 	"uart_tx_b_x", "uart_rx_b_x", "uart_cts_b_x", "uart_rts_b_x",
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+index 12a391109329..d8f705098810 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.h
++++ b/drivers/pinctrl/meson/pinctrl-meson.h
+@@ -124,13 +124,15 @@ struct meson_pinctrl {
+ 	struct device_node *of_node;
  };
  
--static const char * const uart_ao_b_gpioz_groups[] = {
-+static const char * const uart_ao_b_z_groups[] = {
- 	"uart_ao_tx_b_z", "uart_ao_rx_b_z",
- 	"uart_ao_cts_b_z", "uart_ao_rts_b_z",
- };
-@@ -855,7 +855,7 @@ static struct meson_pmx_func meson_axg_periphs_functions[] = {
- 	FUNCTION(nand),
- 	FUNCTION(uart_a),
- 	FUNCTION(uart_b),
--	FUNCTION(uart_ao_b_gpioz),
-+	FUNCTION_EX(uart_ao_b, _z),
- 	FUNCTION(i2c0),
- 	FUNCTION(i2c1),
- 	FUNCTION(i2c2),
+-#define FUNCTION(fn)							\
++#define FUNCTION_EX(fn, ex)						\
+ 	{								\
+ 		.name = #fn,						\
+-		.groups = fn ## _groups,				\
+-		.num_groups = ARRAY_SIZE(fn ## _groups),		\
++		.groups = fn ## ex ## _groups,				\
++		.num_groups = ARRAY_SIZE(fn ## ex ## _groups),		\
+ 	}
+ 
++#define FUNCTION(fn)	FUNCTION_EX(fn, )
++
+ #define BANK(n, f, l, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib)	\
+ 	{								\
+ 		.name		= n,					\
 -- 
 2.15.1
