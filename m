@@ -1,35 +1,45 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: qcom: Add sdm845 pinctrl driver
-Date: Mon, 8 Jan 2018 07:44:04 -0800
-Message-ID: <20180108154403.GO12655@minitux>
-References: <20180106015104.19143-1-bjorn.andersson@linaro.org>
- <20180106015104.19143-2-bjorn.andersson@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180106015104.19143-2-bjorn.andersson@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 0/4] gpio: Preperatory work for regulators
+Date: Mon,  8 Jan 2018 17:46:33 +0100
+Message-ID: <20180108164637.19919-1-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34481 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935148AbeAHQsp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jan 2018 11:48:45 -0500
+Received: by mail-lf0-f66.google.com with SMTP id h140so12788250lfg.1
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jan 2018 08:48:43 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri 05 Jan 17:51 PST 2018, Bjorn Andersson wrote:
+I have a patch series of 26 patches to convert fixed and GPIO regulators
+to use only GPIO descriptors.
 
-> From: Rajendra Nayak <rnayak@codeaurora.org>
-> 
-> This adds the pinctrl definitions for the TLMM of SDM845.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> [bjorn: consolidated functions]
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+That is fine stuff for the next merge window (v4.17).
 
-Linus,
+But it'd be nice to get the preperatory work into gpiolib already now
+so we avoid cross-tree dependencies.
 
-This patch is missing some updates introduced between engineering and
-production hardware, which I missed this while reviewing the patch.
+These patches parses the quirky regulators that use nonstandard
+GPIO line names an line flags, and exposes a function to get a named
+GPIO line from a device tree node that does not have a corresponding
+Linux device.
 
-So please don't merge this patch, and forgive me for noise.
+Linus Walleij (4):
+  gpio: of: Support regulator nonstandard GPIO properties
+  gpio: Break out code to get a descriptor from a DT node
+  gpio: Export devm_gpiod_get_from_of_node() for consumers
+  gpio: of: Add special quirk to parse regulator flags
 
-Regards,
-Bjorn
+ drivers/gpio/devres.c         |  42 +++++++++++++++
+ drivers/gpio/gpiolib-of.c     |  78 ++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib.c        | 118 ++++++++++++++++++++++++++++++------------
+ drivers/gpio/gpiolib.h        |   6 +++
+ include/linux/gpio/consumer.h |  17 ++++++
+ 5 files changed, 227 insertions(+), 34 deletions(-)
+
+-- 
+2.14.3
+
