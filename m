@@ -1,50 +1,35 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3] gpio: of: Support SPI nonstandard GPIO properties
-Date: Mon, 8 Jan 2018 09:22:52 -0600
-Message-ID: <CAL_JsqKDObQZQ=GNYvZT013bu_gZvdJVDEP64ujdNC0CowEg=A@mail.gmail.com>
-References: <20180108150221.14193-1-linus.walleij@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: qcom: Add sdm845 pinctrl driver
+Date: Mon, 8 Jan 2018 07:44:04 -0800
+Message-ID: <20180108154403.GO12655@minitux>
+References: <20180106015104.19143-1-bjorn.andersson@linaro.org>
+ <20180106015104.19143-2-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180108150221.14193-1-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180106015104.19143-2-bjorn.andersson@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 8, 2018 at 9:02 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> Before it was clearly established that all GPIO properties in the
-> device tree shall be named "foo-gpios" (with the deprecated variant
-> "foo-gpio" for single lines) we unfortunately merged a few bindings
-> which named the lines "gpio-foo" instead.
->
-> This is most prominent in the GPIO SPI driver in Linux which names
-> the lines "gpio-sck", "gpio-mosi" and "gpio-miso".
->
-> As we want to switch the GPIO SPI driver to using descriptors, we
-> need devm_gpiod_get() to return something reasonable when looking
-> up these in the device tree.
->
-> Put in a special #ifdef:ed kludge to do this special lookup only
-> for the SPI case and gets compiled out if we're not enabling SPI.
-> If we have more oddly defined legacy GPIOs like this, they can be
-> handled in a similar manner.
->
-> Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
-> ChangeLog v2->v3:
-> - Put the if(!IS_ENABLED()) inside the SPI GPIO retrieveal function
->   and rely on the compiler to stub out unused code.
-> ChangeLog v1->v2:
-> - Us if IS_ENABLED(CONFIG_SPI_MASTER) instead of
->   #ifdef CONFIG_SPI_MASTER
-> ---
->  drivers/gpio/gpiolib-of.c | 35 +++++++++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
+On Fri 05 Jan 17:51 PST 2018, Bjorn Andersson wrote:
 
-Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> From: Rajendra Nayak <rnayak@codeaurora.org>
+> 
+> This adds the pinctrl definitions for the TLMM of SDM845.
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> [bjorn: consolidated functions]
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Linus,
+
+This patch is missing some updates introduced between engineering and
+production hardware, which I missed this while reviewing the patch.
+
+So please don't merge this patch, and forgive me for noise.
+
+Regards,
+Bjorn
