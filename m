@@ -1,35 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.16 (take two)
-Date: Mon, 8 Jan 2018 08:19:43 +0100
-Message-ID: <CACRpkdb19pUPB8YE8B4hft90s2Kh7YLDfzG5GcM686tDH-E25A@mail.gmail.com>
-References: <1515148438-5569-1-git-send-email-geert+renesas@glider.be>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Subject: [PATCH 0/2] pinctrl: meson: use one uniform 'function' name
+Date: Mon, 8 Jan 2018 15:33:26 +0800
+Message-ID: <20180108073328.205769-1-yixun.lan@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1515148438-5569-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:22807 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755778AbeAHHdH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jan 2018 02:33:07 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Yixun Lan <yixun.lan@amlogic.com>, Xingyu Chen <xingyu.chen@amlogic.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Fri, Jan 5, 2018 at 11:33 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+These two patches are general improvement for meson pinctrl driver.
+It make the two pinctrl trees (ee/ao) to share one uniform 'function' name for
+one hardware block even its pin groups live inside two differet hardware domains,
+which for example EE vs AO domain here.
 
->         Hi Linus,
->
-> The following changes since commit 527890f72892b127b67567af6bdbdc5288c211c1:
->
->   pinctrl: sh-pfc: r8a77995: Add CAN FD support (2017-12-05 14:14:56 +0100)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.16-tag2
->
-> for you to fetch changes up to 297e5b2b7a8398b4b850d6bdb63f3a3544670b9e:
->
->   pinctrl: sh-pfc: r8a7795: Add SATA pins, groups, and functions (2017-12-21 10:08:23 +0100)
+This idea is motivated by Martin's question at [1]
 
-Pulled to my devel branch for v4.16, thanks!
+[1]
+ http://lkml.kernel.org/r/CAFBinCCuQ-NK747+GHDkhZty_UMMgzCYOYFcNTrRDJgU8OM=Gw@mail.gmail.com
 
-Yours,
-Linus Walleij
+
+Yixun Lan (2):
+  pinctrl: meson: introduce a macro to have name/groups seperated
+  pinctrl: meson-axg: correct the pin expansion of UART_AO_B
+
+ drivers/pinctrl/meson/pinctrl-meson-axg.c | 4 ++--
+ drivers/pinctrl/meson/pinctrl-meson.h     | 8 +++++---
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+-- 
+2.15.1
+
