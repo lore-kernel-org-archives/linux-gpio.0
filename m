@@ -1,99 +1,64 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4/4] gpio: of: Add special quirk to parse regulator flags
-Date: Tue,  9 Jan 2018 01:32:40 +0100
-Message-ID: <20180109003240.22924-1-linus.walleij@linaro.org>
+From: hao_zhang <hao5781286@gmail.com>
+Subject: [RESEND PATCH] ARM: pinctrl: sunxi-pinctrl: fix pin funtion can not
+ be match correctly.
+Date: Tue, 9 Jan 2018 13:59:02 +0800
+Message-ID: <20180109055902.GA1306@arx-s1>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34284 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752907AbeAIAep (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jan 2018 19:34:45 -0500
-Received: by mail-lf0-f66.google.com with SMTP id h140so14038814lfg.1
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jan 2018 16:34:44 -0800 (PST)
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:41331 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932532AbeAIF7N (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Jan 2018 00:59:13 -0500
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: maxime.ripard@free-electrons.com, wens@csie.org, linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, hao5781286@gmail.com
 
-While most GPIOs are indicated to be active low or open drain using
-their twocell flags, we have legacy regulator bindings to take into
-account.
+Pin function can not be match correctly when SUNXI_PIN describe with
+mutiple variant and same function.
 
-Add a quirk respecting the special boolean active-high and open
-drain flags when parsing regulator nodes for GPIOs.
+such as:
+on pinctrl-sun4i-a10.c
 
-This makes it possible to get rid of duplicated inversion semantics
-handling in the regulator core and any regulator drivers parsing
-and handling this separately.
+SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 2),
+		SUNXI_FUNCTION(0x0, "gpio_in"),
+		SUNXI_FUNCTION(0x1, "gpio_out"),
+		SUNXI_FUNCTION_VARIANT(0x2, "pwm",    /* PWM0 */
+			PINCTRL_SUN4I_A10 |
+			PINCTRL_SUN7I_A20),
+		SUNXI_FUNCTION_VARIANT(0x3, "pwm",    /* PWM0 */
+			PINCTRL_SUN8I_R40)),
 
-Unfortunately the old regulator inversion semantics are specified
-such that the presence or absence of "enable-active-high" solely
-controls the semantics, so we cannot deprecate this in favor
-of the phandle-provided inversion flag, instead any such phandle
-inversion flag provided in the second cell of a GPIO handle must be
-actively ignored, so we print a warning to contain the situation
-and make things easy for the users.
+it would always match to the first variant function
+(PINCTRL_SUN4I_A10, PINCTRL_SUN7I_A20)
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+so we should add variant compare on it.
+
+Regards
+Hao
+
+Signed-off-by: hao_zhang <hao5781286@gmail.com>
 ---
- drivers/gpio/gpiolib-of.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 9686922310a4..37bd3e8f2b0b 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -56,6 +56,42 @@ static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
- 	return gpiochip_get_desc(chip, ret);
- }
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 4b6cb25..131adf7 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -83,7 +83,9 @@ sunxi_pinctrl_desc_find_function_by_name(struct sunxi_pinctrl *pctl,
+ 			struct sunxi_desc_function *func = pin->functions;
  
-+static void of_gpio_flags_quirks(struct device_node *np,
-+				 enum of_gpio_flags *flags)
-+{
-+	/*
-+	 * Some GPIO fixed regulator quirks.
-+	 * Note that active low is the default.
-+	 */
-+	if (IS_ENABLED(CONFIG_REGULATOR) &&
-+	    (of_device_is_compatible(np, "reg-fixed-voltage") ||
-+	     of_device_is_compatible(np, "regulator-gpio"))) {
-+		/*
-+		 * The regulator GPIO handles are specified such that the
-+		 * presence or absence of "enable-active-high" solely controls
-+		 * the polarity of the GPIO line. Any phandle flags must
-+		 * be actively ignored.
-+		 */
-+		if (*flags & OF_GPIO_ACTIVE_LOW) {
-+			pr_warn("%s GPIO handle specifies active low - ignored\n",
-+				of_node_full_name(np));
-+			*flags &= ~OF_GPIO_ACTIVE_LOW;
-+		}
-+		if (!of_property_read_bool(np, "enable-active-high"))
-+			*flags |= OF_GPIO_ACTIVE_LOW;
-+	}
-+	/*
-+	 * Legacy open drain handling for fixed voltage regulators.
-+	 */
-+	if (IS_ENABLED(CONFIG_REGULATOR) &&
-+	    of_device_is_compatible(np, "reg-fixed-voltage") &&
-+	    of_property_read_bool(np, "gpio-open-drain")) {
-+		*flags |= (OF_GPIO_SINGLE_ENDED | OF_GPIO_OPEN_DRAIN);
-+		pr_info("%s uses legacy open drain flag - update the DTS if you can\n",
-+			of_node_full_name(np));
-+	}
-+}
-+
- /**
-  * of_get_named_gpiod_flags() - Get a GPIO descriptor and flags for GPIO API
-  * @np:		device node to get GPIO from
-@@ -93,6 +129,8 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
- 	if (IS_ERR(desc))
- 		goto out;
+ 			while (func->name) {
+-				if (!strcmp(func->name, func_name))
++				if (!strcmp(func->name, func_name) &&
++					(!func->variant ||
++					func->variant & pctl->variant))
+ 					return func;
  
-+	of_gpio_flags_quirks(np, flags);
-+
- 	pr_debug("%s: parsed '%s' property of node '%pOF[%d]' - status (%d)\n",
- 		 __func__, propname, np, index,
- 		 PTR_ERR_OR_ZERO(desc));
+ 				func++;
 -- 
-2.14.3
+2.7.4
 
