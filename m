@@ -1,96 +1,73 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: Add missing open drain/source handling to gpiod_set_value_cansleep()
-Date: Tue,  9 Jan 2018 19:08:21 +0100
-Message-ID: <1515521301-4375-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH 3/4] bcm2835-gpio-exp: Driver for GPIO expander via
+ mailbox service
+Date: Tue, 9 Jan 2018 21:15:48 +0100 (CET)
+Message-ID: <1723770444.122196.1515528948685@email.1und1.de>
+References: <cover.1514898134.git.baruch@tkos.co.il>
+ <bcac00c71b29c359b59053a30d817a8f17d6731d.1514898134.git.baruch@tkos.co.il>
+ <2013811470.181895.1514918984637@email.1und1.de>
+ <20180109134135.32i6slkhmqsjnmne@tarshish>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:55198 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751982AbeAIUQP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Jan 2018 15:16:15 -0500
+In-Reply-To: <20180109134135.32i6slkhmqsjnmne@tarshish>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Eric Anholt <eric@anholt.net>, Dave Stevenson <dave.stevenson@raspberrypi.org>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, phil@raspberrypi.org
 
-Since commit f11a04464ae57e8d ("i2c: gpio: Enable working over slow
-can_sleep GPIOs"), probing the i2c RTC connected to an i2c-gpio bus on
-r8a7740/armadillo fails with:
+Hi Baruch,
 
-    rtc-s35390a 0-0030: error resetting chip
-    rtc-s35390a: probe of 0-0030 failed with error -5
+> Baruch Siach <baruch@tkos.co.il> hat am 9. Januar 2018 um 14:41 geschrieben:
+> 
+> 
+> Hi Stefan,
+> 
+> On Tue, Jan 02, 2018 at 07:49:44PM +0100, Stefan Wahren wrote:
+> 
+> [...]
+> 
+> > > +	ret = rpi_firmware_property(gpio->fw, RPI_FIRMWARE_GET_GPIO_CONFIG,
+> > > +				    &get, sizeof(get));
+> > > +	if (ret) {
+> > > +		dev_err(gpio->dev,
+> > > +			"Failed to get GPIO %u config (%d)\n", off, ret);
+> > > +		return ret;
+> > > +	}
+> > 
+> > Shouldn't we also check the in-bound status at get.gpio?
+> 
+> What is the in-bound status value? May you refer me to the documentation?
 
-More debug code reveals:
+unfortunately this mailbox property isn't documented here [1]. So please refer to Phil's explanation [2].
 
-    i2c i2c-0: master_xfer[0] R, addr=0x30, len=1
-    i2c i2c-0: NAK from device addr 0x30 msg #0
-    s35390a_get_reg: ret = -6
+I assume gpio_get_config.gpio of the response would be 0x80000000 in case of an invalid request. But i didn't test it yet.
 
-Commit 02e479808b5d62f8 ("gpio: Alter semantics of *raw* operations to
-actually be raw") moved open drain/source handling from
-gpiod_set_raw_value_commit() to gpiod_set_value(), but forgot to take
-into account that gpiod_set_value_cansleep() also needs this handling.
-The i2c protocol mandates that i2c signals are open drain, hence i2c
-communication fails.
+This was my solution [3] for the RPI_FIRMWARE_GET_CUSTOMER_OTP. But it hadn't been reviewed yet.
 
-Fix this by adding the missing handling to gpiod_set_value_cansleep(),
-using a new common helper __gpiod_set_value_nocheck().
+Stefan
 
-Fixes: 02e479808b5d62f8 ("gpio: Alter semantics of *raw* operations to actually be raw")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-The bad gpio commit is in v4.15-rc1 and later.
-The i2c commit exposing this is not yet upstream, but in i2c/for-next.
----
- drivers/gpio/gpiolib.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+[1] - https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
+[2] - http://lists.infradead.org/pipermail/linux-rpi-kernel/2018-January/007237.html
+[3] - https://github.com/lategoodbye/rpi-zero/blob/bcm2835-otp/drivers/nvmem/raspberrypi-otp.c#L61
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 358bce6e798b476c..7761d632a5b0dd20 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2927,6 +2927,18 @@ void gpiod_set_raw_value(struct gpio_desc *desc, int value)
- }
- EXPORT_SYMBOL_GPL(gpiod_set_raw_value);
- 
-+static void __gpiod_set_value_nocheck(struct gpio_desc *desc, int value)
-+{
-+	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
-+		value = !value;
-+	if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
-+		gpio_set_open_drain_value_commit(desc, value);
-+	else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
-+		gpio_set_open_source_value_commit(desc, value);
-+	else
-+		gpiod_set_raw_value_commit(desc, value);
-+}
-+
- /**
-  * gpiod_set_value() - assign a gpio's value
-  * @desc: gpio whose value will be assigned
-@@ -2941,16 +2953,8 @@ EXPORT_SYMBOL_GPL(gpiod_set_raw_value);
- void gpiod_set_value(struct gpio_desc *desc, int value)
- {
- 	VALIDATE_DESC_VOID(desc);
--	/* Should be using gpiod_set_value_cansleep() */
- 	WARN_ON(desc->gdev->chip->can_sleep);
--	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
--		value = !value;
--	if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
--		gpio_set_open_drain_value_commit(desc, value);
--	else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
--		gpio_set_open_source_value_commit(desc, value);
--	else
--		gpiod_set_raw_value_commit(desc, value);
-+	__gpiod_set_value_nocheck(desc, value);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_value);
- 
-@@ -3277,9 +3281,7 @@ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
- {
- 	might_sleep_if(extra_checks);
- 	VALIDATE_DESC_VOID(desc);
--	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
--		value = !value;
--	gpiod_set_raw_value_commit(desc, value);
-+	__gpiod_set_value_nocheck(desc, value);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
- 
--- 
-2.7.4
+> 
+> > And in all the other gpio ops?
+> 
+> Thanks,
+> baruch
+> 
+> -- 
+>      http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+> =}------------------------------------------------ooO--U--Ooo------------{=
+>    - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
