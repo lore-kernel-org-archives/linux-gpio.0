@@ -1,49 +1,47 @@
-From: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-Subject: Re: [PATCH 3/4] bcm2835-gpio-exp: Driver for GPIO expander via
- mailbox service
-Date: Tue, 9 Jan 2018 15:41:35 +0200
-Message-ID: <20180109134135.32i6slkhmqsjnmne@tarshish>
-References: <cover.1514898134.git.baruch@tkos.co.il>
- <bcac00c71b29c359b59053a30d817a8f17d6731d.1514898134.git.baruch@tkos.co.il>
- <2013811470.181895.1514918984637@email.1und1.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/3] [v6] pinctrl: qcom: qdf2xxx: add support for new ACPI
+ HID QCOM8002
+Date: Tue, 9 Jan 2018 14:46:48 +0100
+Message-ID: <CACRpkdbd07q_EmGE8ROvX62DoF+fV7gNfShzPE_WvQPHhFtqhQ@mail.gmail.com>
+References: <6ca3b4a6-90b9-0481-beb8-29a95c86f07c@codeaurora.org>
+ <615426d4-7c46-9671-87ef-790fb5733385@codeaurora.org> <20171219023935.GA17456@codeaurora.org>
+ <735d4316-9b18-2903-aabd-46ead1db5233@codeaurora.org> <20171220022626.GH7997@codeaurora.org>
+ <d511f096-bad4-c7b3-d7d4-11b1fa3b1cce@codeaurora.org> <20171220081556.GA30524@codeaurora.org>
+ <a5809701-3f81-3f79-f558-a831ce4091c2@codeaurora.org> <20171221003947.GJ7997@codeaurora.org>
+ <38463c81-eeab-85dc-d197-6081ce1d1130@codeaurora.org> <20171222014633.GD7997@codeaurora.org>
+ <8e985f68-5887-b0d5-8c45-e22b5d8f60cf@codeaurora.org> <1515081875.7000.683.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <2013811470.181895.1514918984637-7tX72C7vayboQLBSYMtkGA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1515081875.7000.683.camel@linux.intel.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Timur Tabi <timur@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Varadarajan Narayanan <varada@codeaurora.org>, Archit Taneja <architt@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Stefan,
+On Thu, Jan 4, 2018 at 5:04 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Thu, 2018-01-04 at 09:46 -0600, Timur Tabi wrote:
+>> On 12/21/2017 07:46 PM, Stephen Boyd wrote:
+>> >
+>> > Maybe future HIDs could follow the DT design and then we can look
+>> > for the same device property name in both firmwares.
+>>
+>> DSDs generally don't have the vendor prefix that DT properties do.
+>
+> There are more means to check hardware revisions:
+> HID - Hardware ID
+> CID - Compatible ID
+> UID - Unique ID (good to distinguish instances of the same device on the
+> board)
+> _HRV - Hardware Revision (6.1.6 describes this one)
 
-On Tue, Jan 02, 2018 at 07:49:44PM +0100, Stefan Wahren wrote:
+Thanks Andy.
 
-[...]
+I expect a patch using these features, also include Andy on CC
+as it appears he knows how this should be done. (In difference
+from me...) I'm pretty much relying on other people to understand
+ACPI for me, maybe I should attend a course or something.
 
-> > +	ret = rpi_firmware_property(gpio->fw, RPI_FIRMWARE_GET_GPIO_CONFIG,
-> > +				    &get, sizeof(get));
-> > +	if (ret) {
-> > +		dev_err(gpio->dev,
-> > +			"Failed to get GPIO %u config (%d)\n", off, ret);
-> > +		return ret;
-> > +	}
-> 
-> Shouldn't we also check the in-bound status at get.gpio?
-
-What is the in-bound status value? May you refer me to the documentation?
-
-> And in all the other gpio ops?
-
-Thanks,
-baruch
-
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org - tel: +972.52.368.4656, http://www.tkos.co.il -
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
