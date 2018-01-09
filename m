@@ -1,62 +1,99 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v3 1/3] ACPI / utils: Introduce acpi_dev_get_first_match_name()
-Date: Tue, 09 Jan 2018 01:18:17 +0100
-Message-ID: <3404188.B388fAZkns@aspire.rjw.lan>
-References: <20180105160935.48588-1-andriy.shevchenko@linux.intel.com> <CAJZ5v0iH+2JHe8vCR9tQX62ULwx_eVd1QGPtinSLNDzWx1NmEg@mail.gmail.com> <1515416960.7000.784.camel@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1515416960.7000.784.camel@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Erik Schmauss <erik.schmauss@intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/4] gpio: of: Support regulator nonstandard GPIO properties
+Date: Tue,  9 Jan 2018 01:24:51 +0100
+Message-ID: <20180109002451.22618-1-linus.walleij@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Monday, January 8, 2018 2:09:20 PM CET Andy Shevchenko wrote:
-> On Sat, 2018-01-06 at 00:27 +0100, Rafael J. Wysocki wrote:
-> > On Fri, Jan 5, 2018 at 5:09 PM, Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > Sometimes the user wants to have device name of the match rather
-> > > than
-> > > just checking if device present or not. To make life easier for such
-> > > users introduce acpi_dev_get_first_match_name() helper based on code
-> > > for acpi_dev_present().
-> > > 
-> > > For example, GPIO driver for Intel Merrifield needs to know the
-> > > device
-> > > name of pin control to be able to apply GPIO mapping table to the
-> > > proper
-> > > device.
-> > > 
-> > > To be more consistent with the purpose rename
-> > > 
-> > >   struct acpi_dev_present_info  -> struct acpi_dev_match_info
-> > >   acpi_dev_present_cb()         -> acpi_dev_match_cb()
-> > > 
-> > > in the utils.c file.
-> > > 
-> > > Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.co
-> > > m>
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > OK, so which way do you want this to go in?
-> 
-> If you have no objections, patch 1 may go straight forward to linux-pm
-> tree as far as you are okay with the contents.
-> 
-> I dunno, if Mika's ACK is enough to you to get the second one (patch 2)
-> together, otherwise Linus' ACK would be needed or leave it for next
-> cycle.
-> 
-> According to what Mark and Pierre told previously I guess we just
-> postpone patch 3 for next cycle.
+Before it was clearly established that all GPIO properties in the
+device tree shall be named "foo-gpios" (with the deprecated variant
+"foo-gpio" for single lines) we unfortunately merged a few bindings
+for regulators with random phandle names.
 
-OK
+As we want to switch the GPIO regulator driver to using descriptors,
+we need devm_gpiod_get() to return something reasonable when looking
+up these in the device tree.
 
-Linus, can you please have a look at the [2/3] from this lot and let me know
-whether or not I can take it?
+Put in a special #ifdef:ed kludge to do this special lookup only
+for the regulator case and gets compiled out if we're not enabling
+regulators. Supply a whitelist with properties we accept.
 
-Thanks,
-Rafael
+Cc: Rob Herring <robh@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+This patch is preperatory work for converting fixed and GPIO
+regulators to deal only with GPIO descriptors.
+---
+ drivers/gpio/gpiolib-of.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index e0d59e61b52f..9686922310a4 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -117,6 +117,41 @@ int of_get_named_gpio_flags(struct device_node *np, const char *list_name,
+ }
+ EXPORT_SYMBOL(of_get_named_gpio_flags);
+ 
++/*
++ * Some regulator bindings happened before we managed to establish that GPIO
++ * properties should be named "foo-gpios" so we have this special kludge for
++ * them.
++ */
++static struct gpio_desc *of_find_regulator_gpio(struct device *dev, const char *con_id,
++						enum of_gpio_flags *of_flags)
++{
++	/* These are the connection IDs we accept as legacy GPIO phandles */
++	const char *whitelist[] = {
++		"wlf,ldoena", /* Arizona */
++		"wlf,ldo1ena", /* WM8994 */
++		"wlf,ldo2ena", /* WM8994 */
++	};
++	struct device_node *np = dev->of_node;
++	struct gpio_desc *desc;
++	int i;
++
++	if (!IS_ENABLED(CONFIG_REGULATOR))
++		return ERR_PTR(-ENOENT);
++
++	if (!con_id)
++		return ERR_PTR(-ENOENT);
++
++	for (i = 0; i < ARRAY_SIZE(whitelist); i++)
++		if (!strcmp(con_id, whitelist[i]))
++			break;
++
++	if (i == ARRAY_SIZE(whitelist))
++		return ERR_PTR(-ENOENT);
++
++	desc = of_get_named_gpiod_flags(np, con_id, 0, of_flags);
++	return desc;
++}
++
+ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+ 			       unsigned int idx,
+ 			       enum gpio_lookup_flags *flags)
+@@ -126,6 +161,7 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+ 	struct gpio_desc *desc;
+ 	unsigned int i;
+ 
++	/* Try GPIO property "foo-gpios" and "foo-gpio" */
+ 	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+ 		if (con_id)
+ 			snprintf(prop_name, sizeof(prop_name), "%s-%s", con_id,
+@@ -140,6 +176,10 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+ 			break;
+ 	}
+ 
++	/* Special handling for regulator GPIOs if used */
++	if (IS_ERR(desc))
++		desc = of_find_regulator_gpio(dev, con_id, &of_flags);
++
+ 	if (IS_ERR(desc))
+ 		return desc;
+ 
+-- 
+2.14.3
