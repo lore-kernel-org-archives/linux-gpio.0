@@ -1,182 +1,99 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/4] gpio: Export devm_gpiod_get_from_of_node() for consumers
-Date: Tue,  9 Jan 2018 01:29:59 +0100
-Message-ID: <20180109002959.22738-1-linus.walleij@linaro.org>
+Subject: [PATCH 4/4] gpio: of: Add special quirk to parse regulator flags
+Date: Tue,  9 Jan 2018 01:32:40 +0100
+Message-ID: <20180109003240.22924-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:39281 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752446AbeAIAcG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jan 2018 19:32:06 -0500
-Received: by mail-lf0-f67.google.com with SMTP id m8so7958304lfc.6
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jan 2018 16:32:06 -0800 (PST)
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34284 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752907AbeAIAep (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jan 2018 19:34:45 -0500
+Received: by mail-lf0-f66.google.com with SMTP id h140so14038814lfg.1
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jan 2018 16:34:44 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
 Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-We have been holding back on adding an API for fetching GPIO handles
-directly from device nodes, strongly preferring to get it from the
-spawn devices instead.
+While most GPIOs are indicated to be active low or open drain using
+their twocell flags, we have legacy regulator bindings to take into
+account.
 
-The fwnode interface however already contains an API for doing this,
-as it is used for opaque device tree nodes or ACPI nodes for getting
-handles to LEDs and keys that use GPIO: those are specified as one
-child per LED/key in the device tree and are not individual devices.
+Add a quirk respecting the special boolean active-high and open
+drain flags when parsing regulator nodes for GPIOs.
 
-However regulators present a special problem as they already have
-helper functions to traverse the device tree from a regulator node
-and two levels down to fill in data, and as it already traverses
-GPIO nodes in its own way, and already holds a pointer to each
-regulators device tree node, it makes most sense to export an
-API to fetch the GPIO descriptor directly from the node.
+This makes it possible to get rid of duplicated inversion semantics
+handling in the regulator core and any regulator drivers parsing
+and handling this separately.
 
-We only support the devm_* version for now, hopefully no non-devres
-version will be needed.
+Unfortunately the old regulator inversion semantics are specified
+such that the presence or absence of "enable-active-high" solely
+controls the semantics, so we cannot deprecate this in favor
+of the phandle-provided inversion flag, instead any such phandle
+inversion flag provided in the second cell of a GPIO handle must be
+actively ignored, so we print a warning to contain the situation
+and make things easy for the users.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/devres.c         | 42 ++++++++++++++++++++++++++++++++++++++++++
- drivers/gpio/gpiolib.c        |  9 +++++----
- drivers/gpio/gpiolib.h        |  6 ++++++
- include/linux/gpio/consumer.h | 17 +++++++++++++++++
- 4 files changed, 70 insertions(+), 4 deletions(-)
+ drivers/gpio/gpiolib-of.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-index afbff155a0ba..e82cc763633c 100644
---- a/drivers/gpio/devres.c
-+++ b/drivers/gpio/devres.c
-@@ -124,6 +124,48 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 9686922310a4..37bd3e8f2b0b 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -56,6 +56,42 @@ static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
+ 	return gpiochip_get_desc(chip, ret);
  }
- EXPORT_SYMBOL(devm_gpiod_get_index);
  
-+/**
-+ * devm_gpiod_get_from_of_node() - obtain a GPIO from an OF node
-+ * @dev:	device for lifecycle management
-+ * @node:	handle of the OF node
-+ * @propname:	name of the DT property representing the GPIO
-+ * @index:	index of the GPIO to obtain for the consumer
-+ * @dflags:	GPIO initialization flags
-+ * @label:	label to attach to the requested GPIO
-+ *
-+ * Returns:
-+ * On successful request the GPIO pin is configured in accordance with
-+ * provided @dflags.
-+ *
-+ * In case of error an ERR_PTR() is returned.
-+ */
-+struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
-+					      struct device_node *node,
-+					      const char *propname, int index,
-+					      enum gpiod_flags dflags,
-+					      const char *label)
++static void of_gpio_flags_quirks(struct device_node *np,
++				 enum of_gpio_flags *flags)
 +{
-+	struct gpio_desc **dr;
-+	struct gpio_desc *desc;
-+
-+	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
-+			  GFP_KERNEL);
-+	if (!dr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	desc = gpiod_get_from_of_node(node, propname, index, dflags, label);
-+	if (IS_ERR(desc)) {
-+		devres_free(dr);
-+		return desc;
++	/*
++	 * Some GPIO fixed regulator quirks.
++	 * Note that active low is the default.
++	 */
++	if (IS_ENABLED(CONFIG_REGULATOR) &&
++	    (of_device_is_compatible(np, "reg-fixed-voltage") ||
++	     of_device_is_compatible(np, "regulator-gpio"))) {
++		/*
++		 * The regulator GPIO handles are specified such that the
++		 * presence or absence of "enable-active-high" solely controls
++		 * the polarity of the GPIO line. Any phandle flags must
++		 * be actively ignored.
++		 */
++		if (*flags & OF_GPIO_ACTIVE_LOW) {
++			pr_warn("%s GPIO handle specifies active low - ignored\n",
++				of_node_full_name(np));
++			*flags &= ~OF_GPIO_ACTIVE_LOW;
++		}
++		if (!of_property_read_bool(np, "enable-active-high"))
++			*flags |= OF_GPIO_ACTIVE_LOW;
 +	}
-+
-+	*dr = desc;
-+	devres_add(dev, dr);
-+
-+	return desc;
-+}
-+EXPORT_SYMBOL(devm_gpiod_get_from_of_node);
-+
- /**
-  * devm_fwnode_get_index_gpiod_from_child - get a GPIO descriptor from a
-  *					    device's child node
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 294c255e6227..762a470030ce 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3644,10 +3644,10 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
-  *
-  * In case of error an ERR_PTR() is returned.
-  */
--static struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
--						const char *propname, int index,
--						enum gpiod_flags dflags,
--						const char *label)
-+struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
-+					 const char *propname, int index,
-+					 enum gpiod_flags dflags,
-+					 const char *label)
- {
- 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
- 	unsigned long lflags = 0;
-@@ -3693,6 +3693,7 @@ static struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
- 
- 	return desc;
- }
-+EXPORT_SYMBOL(gpiod_get_from_of_node);
- 
- /**
-  * fwnode_get_named_gpiod - obtain a GPIO from firmware node
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index af48322839c3..187056b8c6a6 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -189,6 +189,12 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 				   struct gpio_desc **desc_array,
- 				   int *value_array);
- 
-+/* This is just passed between gpiolib and devres */
-+struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
-+					 const char *propname, int index,
-+					 enum gpiod_flags dflags,
-+					 const char *label);
-+
- extern struct spinlock gpio_lock;
- extern struct list_head gpio_devices;
- 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 7447d85dbe2f..9f3cb651cb3c 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -150,8 +150,14 @@ struct gpio_desc *gpio_to_desc(unsigned gpio);
- int desc_to_gpio(const struct gpio_desc *desc);
- 
- /* Child properties interface */
-+struct device_node;
- struct fwnode_handle;
- 
-+struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
-+					      struct device_node *node,
-+					      const char *propname, int index,
-+					      enum gpiod_flags dflags,
-+					      const char *label);
- struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 					 const char *propname, int index,
- 					 enum gpiod_flags dflags,
-@@ -464,8 +470,19 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
- }
- 
- /* Child properties interface */
-+struct device_node;
- struct fwnode_handle;
- 
-+static inline
-+struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
-+					      struct device_node *node,
-+					      const char *propname, int index,
-+					      enum gpiod_flags dflags,
-+					      const char *label)
-+{
-+	return ERR_PTR(-ENOSYS);
++	/*
++	 * Legacy open drain handling for fixed voltage regulators.
++	 */
++	if (IS_ENABLED(CONFIG_REGULATOR) &&
++	    of_device_is_compatible(np, "reg-fixed-voltage") &&
++	    of_property_read_bool(np, "gpio-open-drain")) {
++		*flags |= (OF_GPIO_SINGLE_ENDED | OF_GPIO_OPEN_DRAIN);
++		pr_info("%s uses legacy open drain flag - update the DTS if you can\n",
++			of_node_full_name(np));
++	}
 +}
 +
- static inline
- struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 					 const char *propname, int index,
+ /**
+  * of_get_named_gpiod_flags() - Get a GPIO descriptor and flags for GPIO API
+  * @np:		device node to get GPIO from
+@@ -93,6 +129,8 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+ 	if (IS_ERR(desc))
+ 		goto out;
+ 
++	of_gpio_flags_quirks(np, flags);
++
+ 	pr_debug("%s: parsed '%s' property of node '%pOF[%d]' - status (%d)\n",
+ 		 __func__, propname, np, index,
+ 		 PTR_ERR_OR_ZERO(desc));
 -- 
 2.14.3
 
