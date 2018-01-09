@@ -1,45 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 0/4] gpio: Preperatory work for regulators
-Date: Tue,  9 Jan 2018 00:58:40 +0100
-Message-ID: <20180108235844.22348-1-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35904 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758515AbeAIAAv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jan 2018 19:00:51 -0500
-Received: by mail-lf0-f65.google.com with SMTP id c19so13967169lfg.3
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jan 2018 16:00:51 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v3 1/3] ACPI / utils: Introduce acpi_dev_get_first_match_name()
+Date: Tue, 09 Jan 2018 01:18:17 +0100
+Message-ID: <3404188.B388fAZkns@aspire.rjw.lan>
+References: <20180105160935.48588-1-andriy.shevchenko@linux.intel.com> <CAJZ5v0iH+2JHe8vCR9tQX62ULwx_eVd1QGPtinSLNDzWx1NmEg@mail.gmail.com> <1515416960.7000.784.camel@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1515416960.7000.784.camel@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Erik Schmauss <erik.schmauss@intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-I have a patch series of 26 patches to convert fixed and GPIO regulators
-to use only GPIO descriptors.
+On Monday, January 8, 2018 2:09:20 PM CET Andy Shevchenko wrote:
+> On Sat, 2018-01-06 at 00:27 +0100, Rafael J. Wysocki wrote:
+> > On Fri, Jan 5, 2018 at 5:09 PM, Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > Sometimes the user wants to have device name of the match rather
+> > > than
+> > > just checking if device present or not. To make life easier for such
+> > > users introduce acpi_dev_get_first_match_name() helper based on code
+> > > for acpi_dev_present().
+> > > 
+> > > For example, GPIO driver for Intel Merrifield needs to know the
+> > > device
+> > > name of pin control to be able to apply GPIO mapping table to the
+> > > proper
+> > > device.
+> > > 
+> > > To be more consistent with the purpose rename
+> > > 
+> > >   struct acpi_dev_present_info  -> struct acpi_dev_match_info
+> > >   acpi_dev_present_cb()         -> acpi_dev_match_cb()
+> > > 
+> > > in the utils.c file.
+> > > 
+> > > Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.co
+> > > m>
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > 
+> > OK, so which way do you want this to go in?
+> 
+> If you have no objections, patch 1 may go straight forward to linux-pm
+> tree as far as you are okay with the contents.
+> 
+> I dunno, if Mika's ACK is enough to you to get the second one (patch 2)
+> together, otherwise Linus' ACK would be needed or leave it for next
+> cycle.
+> 
+> According to what Mark and Pierre told previously I guess we just
+> postpone patch 3 for next cycle.
 
-That is fine stuff for the next merge window (v4.17).
+OK
 
-But it'd be nice to get the preperatory work into gpiolib already now
-so we avoid cross-tree dependencies.
+Linus, can you please have a look at the [2/3] from this lot and let me know
+whether or not I can take it?
 
-These patches parses the quirky regulators that use nonstandard
-GPIO line names an line flags, and exposes a function to get a named
-GPIO line from a device tree node that does not have a corresponding
-Linux device.
-
-Linus Walleij (4):
-  gpio: of: Support regulator nonstandard GPIO properties
-  gpio: Break out code to get a descriptor from a DT node
-  gpio: Export devm_gpiod_get_from_of_node() for consumers
-  gpio: of: Add special quirk to parse regulator flags
-
- drivers/gpio/devres.c         |  42 +++++++++++++++
- drivers/gpio/gpiolib-of.c     |  78 ++++++++++++++++++++++++++++
- drivers/gpio/gpiolib.c        | 118 ++++++++++++++++++++++++++++++------------
- drivers/gpio/gpiolib.h        |   6 +++
- include/linux/gpio/consumer.h |  17 ++++++
- 5 files changed, 227 insertions(+), 34 deletions(-)
-
--- 
-2.14.3
+Thanks,
+Rafael
 
