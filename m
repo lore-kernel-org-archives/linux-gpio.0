@@ -1,39 +1,34 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: Use seq_puts() in sh_pfc_pin_dbg_show()
-Date: Tue, 9 Jan 2018 15:32:50 +0100
-Message-ID: <CAMuHMdWj-4PeGEobZ6DJTUmjZ=frXrMW+ysSwCYR_F77dFqy9w@mail.gmail.com>
-References: <7e3a88a6-2ea8-1704-b7a0-67f1f4b4f3f6@users.sourceforge.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: correct docs about return value of gpiod_get_direction
+Date: Tue, 9 Jan 2018 15:35:56 +0100
+Message-ID: <CACRpkdZoVogFA+xHruC_cD5==NBgndeTAE5-v2vyaEQGMeajGQ@mail.gmail.com>
+References: <20180109113554.4337-1-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7e3a88a6-2ea8-1704-b7a0-67f1f4b4f3f6@users.sourceforge.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f171.google.com ([209.85.223.171]:41637 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756632AbeAIOf5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Jan 2018 09:35:57 -0500
+Received: by mail-io0-f171.google.com with SMTP id f6so18755588ioh.8
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Jan 2018 06:35:57 -0800 (PST)
+In-Reply-To: <20180109113554.4337-1-wsa@the-dreams.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-gpio@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Sat, Jan 6, 2018 at 9:56 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 6 Jan 2018 21:50:20 +0100
+On Tue, Jan 9, 2018 at 12:35 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 >
-> A string which did not contain a data format specification should be put
-> into a sequence. Thus use the corresponding function "seq_puts".
+> The use of the GPIOF_* flags is deprecated, so don't advertise them
+> here. Document the plain numbers for now until we have a better
+> solution.
 >
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.17.
+Patch applied.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
