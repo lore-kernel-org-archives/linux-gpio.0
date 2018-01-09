@@ -1,33 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: remove redundant mux_setting clear in pinmux_disable_setting()
-Date: Tue, 9 Jan 2018 14:49:08 +0100
-Message-ID: <CACRpkdaCoWz+5=b5t5Aa3npPfMrHsW=c8v6G9vuZ_rXop1ePOA@mail.gmail.com>
-References: <1515149546-31282-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v5] gpio: winbond: add driver
+Date: Tue, 9 Jan 2018 14:53:16 +0100
+Message-ID: <CACRpkdb-mvduoo_Ah0ou6mCjuB+LWZQSrwiOWAY=FbP8Z1_vdw@mail.gmail.com>
+References: <ce716371-cc0a-6983-69c5-1a1203a48bc8@maciej.szmigiero.name>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:44095 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751131AbeAINtJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Jan 2018 08:49:09 -0500
-Received: by mail-it0-f43.google.com with SMTP id b5so11668788itc.3
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Jan 2018 05:49:09 -0800 (PST)
-In-Reply-To: <1515149546-31282-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <ce716371-cc0a-6983-69c5-1a1203a48bc8@maciej.szmigiero.name>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Jonathan Cameron <jic23@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Jan 5, 2018 at 11:52 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Sat, Jan 6, 2018 at 12:46 AM, Maciej S. Szmigiero
+<mail@maciej.szmigiero.name> wrote:
 
-> desc->mux_setting is set to NULL in pin_free() called just below.
+> This commit adds GPIO driver for Winbond Super I/Os.
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Currently, only W83627UHG model (also known as Nuvoton NCT6627UD) is
+> supported but in the future a support for other Winbond models, too, can
+> be added to the driver.
+>
+> A module parameter "gpios" sets a bitmask of GPIO ports to enable (bit 0 is
+> GPIO1, bit 1 is GPIO2, etc.).
+> One should be careful which ports one tinkers with since some might be
+> managed by the firmware (for functions like powering on and off, sleeping,
+> BIOS recovery, etc.) and some of GPIO port pins are physically shared with
+> other devices included in the Super I/O chip.
+>
+> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 
-Patch applied.
+> Changes from v4:
 
-Excellent work, as always.
+This v5 version applied, I also added Andy's review tag.
+
+Good work!
 
 Yours,
 Linus Walleij
