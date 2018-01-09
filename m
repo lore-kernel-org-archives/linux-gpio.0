@@ -1,49 +1,50 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] gpio: serial: max310x: Support open-drain configuration
- for GPIOs
-Date: Tue, 9 Jan 2018 16:37:21 +0100
-Message-ID: <20180109153721.GA17957@kroah.com>
-References: <18c9e927d2b75b3325ee3eae7e78319129faa779.1513983040.git.jan.kundrat@cesnet.cz>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 1/3] ACPI / utils: Introduce
+ acpi_dev_get_first_match_name()
+Date: Tue, 9 Jan 2018 15:54:15 +0000
+Message-ID: <20180109155415.GA11471@sirena.org.uk>
+References: <20180105160935.48588-1-andriy.shevchenko@linux.intel.com>
+ <20180105160935.48588-2-andriy.shevchenko@linux.intel.com>
+ <CAJZ5v0iH+2JHe8vCR9tQX62ULwx_eVd1QGPtinSLNDzWx1NmEg@mail.gmail.com>
+ <1515416960.7000.784.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51650 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933098AbeAIPhU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Jan 2018 10:37:20 -0500
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <18c9e927d2b75b3325ee3eae7e78319129faa779.1513983040.git.jan.kundrat@cesnet.cz>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1515416960.7000.784.camel@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>
-Cc: linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri, Dec 22, 2017 at 09:29:44PM +0100, Jan Kundrát wrote:
-> The push-pull vs. open-drain are the only supported output modes. The
-> inputs are always unconditionally equipped with weak pull-downs. That's
-> the only mode, so there's probably no point in exporting that. I wonder
-> if it's worthwhile to provide a custom dbg_show method to indicate the
-> current status of the outputs, though.
-> 
-> This patch and [1] for i2c-gpio together make it possible to bit-bang an
-> I2C bus over GPIOs of an UART which is connected via SPI :). Yes, this
-> is crazy, but it's fast enough (while on a 26Mhz SPI HW bus with a
-> dual-core 1.6GHz CPU) to drive an I2C bus at 200kHz, according to my
-> scope.
-> 
-> [1] https://patchwork.ozlabs.org/patch/852591/
-> 
-> Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> My suggestion is for this patch to go in via the tty/serial tree; I plan
-> to send more patches to this driver (and some of them are alreay in
-> tty-next). --jkt
 
-Doesn't apply to my tty-next branch, so I can't apply it, please rebase
-and resend.
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-thanks,
+On Mon, Jan 08, 2018 at 03:09:20PM +0200, Andy Shevchenko wrote:
 
-greg k-h
+> According to what Mark and Pierre told previously I guess we just
+> postpone patch 3 for next cycle.
+
+Well, if someone can send me a pull request I could look at merging
+it...  I had thought we might get a new release this week and be in the
+merge window by now TBH.
+
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpU5aQACgkQJNaLcl1U
+h9C/lgf+NyK6Kjnd4dtmdyfbJLaiSbwd7Fx2X0SlVGeNfglwPQw8yJ7Kz4Kokmed
+xDs4JZwemvD5HeGyoTgNuheRLR3vsGBgJCXcE4RR3vaWBA/0I3Z0+EfVW4CGoIXG
+Tc4MO6ZMCJW/VUMBojIoJAfJIbs6rGMPn5yDfTDjUfgpmHN/h0U9KYn1+SZDDAaD
+7a5R2N1U7pEuoO5GSgx/tM1uht/zl+EEYgbHDfpaWY7R4oS/egaNa5FRcuKthv4k
+mJVpklUPM+zruH8G9Oc3m3J3uZxTwKSyjVr0hxfYeT3dDOfP4x+z/lGjeD3YZ5uA
+Z4VPWNXYxOSezO2YS2w3e8RgvnsW3g==
+=SLcA
+-----END PGP SIGNATURE-----
+
+--vkogqOf2sHV7VnPd--
