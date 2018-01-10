@@ -1,43 +1,120 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH 3/4] bcm2835-gpio-exp: Driver for GPIO expander via
- mailbox service
-Date: Wed, 10 Jan 2018 05:45:57 +0200
-Message-ID: <20180110034557.5sqpbsvt6ly6s2go@tarshish>
-References: <cover.1514898134.git.baruch@tkos.co.il>
- <bcac00c71b29c359b59053a30d817a8f17d6731d.1514898134.git.baruch@tkos.co.il>
- <CACRpkdb73jGGRm5OrXLGYSOjMni-NsOwdC7TXH2k+iAEnAvL2g@mail.gmail.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 3/3] pinctrl: qcom: Don't allow protected pins to be
+ requested
+Date: Tue, 9 Jan 2018 22:11:33 -0800
+Message-ID: <20180110061133.GP12655@minitux>
+References: <20180110015848.11480-1-sboyd@codeaurora.org>
+ <20180110015848.11480-4-sboyd@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:59820 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753553AbeAJDqB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 9 Jan 2018 22:46:01 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdb73jGGRm5OrXLGYSOjMni-NsOwdC7TXH2k+iAEnAvL2g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20180110015848.11480-4-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Timur Tabi <timur@codeaurora.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 
-Hi Linus,
+On Tue 09 Jan 17:58 PST 2018, Stephen Boyd wrote:
 
-On Wed, Jan 03, 2018 at 11:08:15AM +0100, Linus Walleij wrote:
-> On Tue, Jan 2, 2018 at 2:19 PM, Baruch Siach <baruch@tkos.co.il> wrote:
-> > +#include <linux/err.h>
-> > +#include <linux/gpio.h>
-> 
-> Just use
-> 
-> #include <linux/driver.h>
+I like it, a few comment below though.
 
-You mean linux/gpio/driver.h, right?
+> +static int msm_gpio_init_irq_valid_mask(struct gpio_chip *chip,
+> +					struct msm_pinctrl *pctrl)
+> +{
+> +	int ret;
+> +	unsigned int len, i;
+> +	unsigned int max_gpios = pctrl->soc->ngpios;
+> +	struct device_node *np = pctrl->dev->of_node;
+> +
+> +	/* The number of GPIOs in the ACPI tables */
+> +	ret = device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0);
+> +	if (ret > 0 && ret < max_gpios) {
+> +		u16 *tmp;
+> +
+> +		len = ret;
+> +		tmp = kmalloc_array(len, sizeof(tmp[0]), GFP_KERNEL);
+> +		if (!tmp)
+> +			return -ENOMEM;
+> +
+> +		ret = device_property_read_u16_array(pctrl->dev, "gpios", tmp,
+> +						     len);
+> +		if (ret < 0) {
+> +			dev_err(pctrl->dev, "could not read list of GPIOs\n");
+> +			kfree(tmp);
+> +			return ret;
+> +		}
+> +
+> +		bitmap_zero(chip->irq_valid_mask, max_gpios);
 
-I still need linux/gpio.h for GPIOF_DIR_*.
+The valid_mask is moving into the gpio_irq_chip, so this should be
+chip->irq.valid_mask.
 
-baruch
+See dc7b0387ee89 ("gpio: Move irq_valid_mask into struct gpio_irq_chip")
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+> +		for (i = 0; i < len; i++)
+> +			set_bit(tmp[i], chip->irq_valid_mask);
+> +
+
+You're leaking tmp here.
+
+> +		return 0;
+> +	}
+> +
+> +	/* If there's a DT ngpios-ranges property then add those ranges */
+> +	ret = of_property_count_u32_elems(np,  "ngpios-ranges");
+> +	if (ret > 0 && ret % 2 == 0 && ret / 2 < max_gpios) {
+> +		u32 start;
+> +		u32 count;
+> +
+> +		len = ret / 2;
+> +		bitmap_zero(chip->irq_valid_mask, max_gpios);
+> +
+> +		for (i = 0; i < len; i++) {
+
+If you take steps of 2, when looping from 0 to ret, your loop index will
+have the value that you're passing as index into the read - without
+duplicating it.
+
+> +			of_property_read_u32_index(np, "ngpios-ranges",
+> +						   i * 2, &start);
+> +			of_property_read_u32_index(np, "ngpios-ranges",
+> +						   i * 2 + 1, &count);
+> +			bitmap_set(chip->irq_valid_mask, start, count);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+[..]
+> @@ -824,6 +907,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+>  	chip->parent = pctrl->dev;
+>  	chip->owner = THIS_MODULE;
+>  	chip->of_node = pctrl->dev->of_node;
+> +	chip->irq_need_valid_mask = msm_gpio_needs_irq_valid_mask(pctrl);
+
+chip->irq.need_valid_mask
+
+>  
+>  	ret = gpiochip_add_data(&pctrl->chip, pctrl);
+>  	if (ret) {
+> @@ -831,6 +915,12 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+>  		return ret;
+>  	}
+>  
+> +	ret = msm_gpio_init_irq_valid_mask(chip, pctrl);
+> +	if (ret) {
+> +		dev_err(pctrl->dev, "Failed to setup irq valid bits\n");
+
+gpiochip_remove() here, to release resources allocated by
+gpiochip_add_data.
+
+> +		return ret;
+> +	}
+> +
+>  	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
+>  	if (ret) {
+>  		dev_err(pctrl->dev, "Failed to add pin range\n");
+
+Regards,
+Bjorn
