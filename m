@@ -1,46 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RESEND PATCH] ARM: pinctrl: sunxi-pinctrl: fix pin funtion can
- not be match correctly.
-Date: Wed, 10 Jan 2018 14:45:06 +0100
-Message-ID: <CACRpkdZrNp7eBCLLPOmCTjdZpi1hzLVrzYSYSw7DeoXMnAWGNw@mail.gmail.com>
-References: <20180109055902.GA1306@arx-s1>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Subject: [PATCH -next] gpio: thunderx: fix error return code in thunderx_gpio_probe()
+Date: Wed, 10 Jan 2018 14:37:13 +0000
+Message-ID: <1515595033-83888-1-git-send-email-weiyongjun1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180109055902.GA1306@arx-s1>
-Sender: linux-kernel-owner@vger.kernel.org
-To: hao_zhang <hao5781286@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50851 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755583AbeAJObG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 10 Jan 2018 09:31:06 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 9, 2018 at 6:59 AM, hao_zhang <hao5781286@gmail.com> wrote:
+Fix to return error code -ENOMEM from the error handling
+case instead of 0, as done elsewhere in this function.
 
-> Pin function can not be match correctly when SUNXI_PIN describe with
-> mutiple variant and same function.
->
-> such as:
-> on pinctrl-sun4i-a10.c
->
-> SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 2),
->                 SUNXI_FUNCTION(0x0, "gpio_in"),
->                 SUNXI_FUNCTION(0x1, "gpio_out"),
->                 SUNXI_FUNCTION_VARIANT(0x2, "pwm",    /* PWM0 */
->                         PINCTRL_SUN4I_A10 |
->                         PINCTRL_SUN7I_A20),
->                 SUNXI_FUNCTION_VARIANT(0x3, "pwm",    /* PWM0 */
->                         PINCTRL_SUN8I_R40)),
->
-> it would always match to the first variant function
-> (PINCTRL_SUN4I_A10, PINCTRL_SUN7I_A20)
->
-> so we should add variant compare on it.
->
-> Regards
-> Hao
->
-> Signed-off-by: hao_zhang <hao5781286@gmail.com>
+Fixes: 5a2a30024d8c ("gpio: Add gpio driver support for ThunderX and OCTEON-TX")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpio/gpio-thunderx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Patch applied with Maxime's ACK.
+diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
+index b5adb79..d16e9d4 100644
+--- a/drivers/gpio/gpio-thunderx.c
++++ b/drivers/gpio/gpio-thunderx.c
+@@ -553,8 +553,10 @@ static int thunderx_gpio_probe(struct pci_dev *pdev,
+ 	txgpio->irqd = irq_domain_create_hierarchy(irq_get_irq_data(txgpio->msix_entries[0].vector)->domain,
+ 						   0, 0, of_node_to_fwnode(dev->of_node),
+ 						   &thunderx_gpio_irqd_ops, txgpio);
+-	if (!txgpio->irqd)
++	if (!txgpio->irqd) {
++		err = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	/* Push on irq_data and the domain for each line. */
+ 	for (i = 0; i < ngpio; i++) {
 
-Yours,
-Linus Walleij
