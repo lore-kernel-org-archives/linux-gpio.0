@@ -1,76 +1,84 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 1/3] gpiolib: Export gpiochip_irqchip_irq_valid() to
- drivers
-Date: Tue, 9 Jan 2018 22:16:21 -0800
-Message-ID: <20180110061621.GQ12655@minitux>
-References: <20180110015848.11480-1-sboyd@codeaurora.org>
- <20180110015848.11480-2-sboyd@codeaurora.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 0/2] pinctrl: meson: use one uniform 'function' name
+Date: Wed, 10 Jan 2018 08:28:44 +0100
+Message-ID: <1515569324.5048.103.camel@baylibre.com>
+References: <20180108073328.205769-1-yixun.lan@amlogic.com>
+         <1515401544.5048.67.camel@baylibre.com>
+         <a6a4ed23-696c-ae2d-9b6a-c2578372b1aa@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180110015848.11480-2-sboyd@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Timur Tabi <timur@codeaurora.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33241 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752180AbeAJH2s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jan 2018 02:28:48 -0500
+Received: by mail-wr0-f194.google.com with SMTP id p6so16449399wrd.0
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Jan 2018 23:28:48 -0800 (PST)
+In-Reply-To: <a6a4ed23-696c-ae2d-9b6a-c2578372b1aa@amlogic.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yixun Lan <yixun.lan@amlogic.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Tue 09 Jan 17:58 PST 2018, Stephen Boyd wrote:
-
-> Some pinctrl drivers can use the gpiochip irq valid information
-> to figure out if certain gpios are exposed to the kernel for
-> usage or not. Expose this API so we can use it in the
-> pinmux_ops::request ops.
+On Wed, 2018-01-10 at 10:12 +0800, Yixun Lan wrote:
 > 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/gpio/gpiolib.c      | 5 +++--
->  include/linux/gpio/driver.h | 3 +++
->  2 files changed, 6 insertions(+), 2 deletions(-)
+> On 01/08/18 16:52, Jerome Brunet wrote:
+> > On Mon, 2018-01-08 at 15:33 +0800, Yixun Lan wrote:
+> > > These two patches are general improvement for meson pinctrl driver.
+> > > It make the two pinctrl trees (ee/ao) to share one uniform 'function' name for
+> > > one hardware block even its pin groups live inside two differet hardware domains,
+> > > which for example EE vs AO domain here.
+> > > 
+> > > This idea is motivated by Martin's question at [1]
+> > > 
+> > > [1]
+> > >  http://lkml.kernel.org/r/CAFBinCCuQ-NK747+GHDkhZty_UMMgzCYOYFcNTrRDJgU8OM=Gw@mail.gmail.com
+> > > 
+> > > 
+> > > Yixun Lan (2):
+> > >   pinctrl: meson: introduce a macro to have name/groups seperated
+> > >   pinctrl: meson-axg: correct the pin expansion of UART_AO_B
+> > > 
+> > >  drivers/pinctrl/meson/pinctrl-meson-axg.c | 4 ++--
+> > >  drivers/pinctrl/meson/pinctrl-meson.h     | 8 +++++---
+> > >  2 files changed, 7 insertions(+), 5 deletions(-)
+> > 
+> > Hi Yixun,
+> > 
+> > Honestly, I don't like the idea. I think it adds an unnecessary complexity.
+> > I don't see the point of FUNCTION_EX(uart_ao_b, _z) when you could simply write 
+> > FUNCTION(uart_ao_b_z) ... especially when there is just a couple of function per
+> > SoC available on different domains.
+> > 
+> > A pinctrl driver can already be challenging to understand at first, let's keep
+> > it simple and avoid adding more macros.
+> > 
 > 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index b80936a25caa..c18b7b60ea1d 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1503,14 +1503,15 @@ static void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip)
->  	gpiochip->irq.valid_mask = NULL;
->  }
->  
-> -static bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gpiochip,
-> -				       unsigned int offset)
-> +bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gpiochip,
-> +				unsigned int offset)
->  {
->  	/* No mask means all valid */
->  	if (likely(!gpiochip->irq.valid_mask))
->  		return true;
->  	return test_bit(offset, gpiochip->irq.valid_mask);
->  }
-> +EXPORT_SYMBOL_GPL(gpiochip_irqchip_irq_valid);
->  
->  /**
->   * gpiochip_set_cascaded_irqchip() - connects a cascaded irqchip to a gpiochip
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index 7258cd676df4..1ba9a331ec51 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -436,6 +436,9 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
->  			     struct lock_class_key *lock_key,
->  			     struct lock_class_key *request_key);
->  
-> +bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gpiochip,
-> +				unsigned int offset);
-> +
->  #ifdef CONFIG_LOCKDEP
->  
->  /*
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> Hi Jerome：
+>   In my opinion, the idea of keeping one uniform 'function' in DT (thus
+> introducing another macro) is worth considering. It would make the DT
+> part much clean.
+
+Ok this is your opinion. I don't share it. Keeping function names tidy is good,
+I don't think we need another macro to do so.
+
+>   And yes, it's a trade-off here, either we 1) do more in code to make
+> DT clean or 2) do nothing in the code level to make DT live with it.
+
+I don't see how adding a macro doing just string concatenation is going to make
+anything more clean. It does not prevent one to write FUNCTION_EX(uart_ao_b,
+_gpioz), resulting in uart_ao_b_gpioz, which is what is apparently considered
+'not clean'
+
+BTW, there no cleanness issue here, the name is just out of the 'usual scheme'
+but there is no problem with. If you want to change this, and
+s/uart_ao_b_gpioz/uart_ao_b_z/, now is the time to change it. 
+
 > 
+> Yixun
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
