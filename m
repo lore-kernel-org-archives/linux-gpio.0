@@ -1,74 +1,102 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: mediatek: mt7622: align error handling of
- mtk_hw_get_value call
-Date: Wed, 10 Jan 2018 10:01:15 +0100
-Message-ID: <dcb31687-5b5e-13fc-022b-b48f1498617b@gmail.com>
-References: <a26c40a8ad2af3cf81b31ae34bc82c1ef80d9279.1515514758.git.sean.wang@mediatek.com>
- <0eb8fd904f9b49d0e992bc2ee725d057f94cf735.1515514758.git.sean.wang@mediatek.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Subject: Re: [PATCH 0/2] pinctrl: meson: use one uniform 'function' name
+Date: Wed, 10 Jan 2018 20:00:29 +0800
+Message-ID: <9a27021f-acfc-a010-8ea1-a1bc8f076b6e@amlogic.com>
+References: <20180108073328.205769-1-yixun.lan@amlogic.com>
+ <1515401544.5048.67.camel@baylibre.com>
+ <a6a4ed23-696c-ae2d-9b6a-c2578372b1aa@amlogic.com>
+ <1515569324.5048.103.camel@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:47005 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964835AbeAJJBT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jan 2018 04:01:19 -0500
-In-Reply-To: <0eb8fd904f9b49d0e992bc2ee725d057f94cf735.1515514758.git.sean.wang@mediatek.com>
-Content-Language: en-US
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:40067 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932218AbeAJMAh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jan 2018 07:00:37 -0500
+In-Reply-To: <1515569324.5048.103.camel@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: sean.wang@mediatek.com, linus.walleij@linaro.org, linux-mediatek@lists.infradead.org, dan.carpenter@oracle.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: yixun.lan@amlogic.com, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org, Xingyu Chen <xingyu.chen@amlogic.com>
 
+Hi Jerome:
 
-
-On 01/09/2018 05:28 PM, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On 01/10/2018 03:28 PM, Jerome Brunet wrote:
+> On Wed, 2018-01-10 at 10:12 +0800, Yixun Lan wrote:
+>>
+>> On 01/08/18 16:52, Jerome Brunet wrote:
+>>> On Mon, 2018-01-08 at 15:33 +0800, Yixun Lan wrote:
+>>>> These two patches are general improvement for meson pinctrl driver.
+>>>> It make the two pinctrl trees (ee/ao) to share one uniform 'function' name for
+>>>> one hardware block even its pin groups live inside two differet hardware domains,
+>>>> which for example EE vs AO domain here.
+>>>>
+>>>> This idea is motivated by Martin's question at [1]
+>>>>
+>>>> [1]
+>>>>  http://lkml.kernel.org/r/CAFBinCCuQ-NK747+GHDkhZty_UMMgzCYOYFcNTrRDJgU8OM=Gw@mail.gmail.com
+>>>>
+>>>>
+>>>> Yixun Lan (2):
+>>>>   pinctrl: meson: introduce a macro to have name/groups seperated
+>>>>   pinctrl: meson-axg: correct the pin expansion of UART_AO_B
+>>>>
+>>>>  drivers/pinctrl/meson/pinctrl-meson-axg.c | 4 ++--
+>>>>  drivers/pinctrl/meson/pinctrl-meson.h     | 8 +++++---
+>>>>  2 files changed, 7 insertions(+), 5 deletions(-)
+>>>
+>>> Hi Yixun,
+>>>
+>>> Honestly, I don't like the idea. I think it adds an unnecessary complexity.
+>>> I don't see the point of FUNCTION_EX(uart_ao_b, _z) when you could simply write 
+>>> FUNCTION(uart_ao_b_z) ... especially when there is just a couple of function per
+>>> SoC available on different domains.
+>>>
+>>> A pinctrl driver can already be challenging to understand at first, let's keep
+>>> it simple and avoid adding more macros.
+>>>
+>>
+>> Hi Jerome：
+>>   In my opinion, the idea of keeping one uniform 'function' in DT (thus
+>> introducing another macro) is worth considering. It would make the DT
+>> part much clean.
 > 
-> Make consistent error handling of all mtk_hw_get_value occurrences using
-> propagating error code from the internal instead of creating a new one.
+> Ok this is your opinion. I don't share it. Keeping function names tidy is good,
+> I don't think we need another macro to do so.
 > 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> -->  drivers/pinctrl/mediatek/pinctrl-mt7622.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>>   And yes, it's a trade-off here, either we 1) do more in code to make
+>> DT clean or 2) do nothing in the code level to make DT live with it.
+> 
+> I don't see how adding a macro doing just string concatenation is going to make
+> anything more clean. It does not prevent one to write FUNCTION_EX(uart_ao_b,
+> _gpioz), resulting in uart_ao_b_gpioz, which is what is apparently considered
+> 'not clean'
+> 
+for the benefits of introducing macro 'FUNCTION_EX', it will end with
+ .name = "uart_ao_b", -> same for both EE, AO domain, and it will match
+the DT part (although still different for '.groups')
+
+
+> BTW, there no cleanness issue here, the name is just out of the 'usual scheme'
+> but there is no problem with. If you want to change this, and
+> s/uart_ao_b_gpioz/uart_ao_b_z/, now is the time to change it. 
+> 
+I'd rather *NOT* to push a pinctrl patch for just changing
+'uart_ao_b_gpioz' to 'uart_ao_b_z' (it's a cosmetic change, and still
+end with two different name - 'uart_ao_b_gpioz/z' & 'uart_ao_b' in DT)
+
+>>
+>> Yixun
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
 > 
 
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-> index dc32e3c..06e8406 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-> @@ -1160,7 +1160,7 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
->  	case PIN_CONFIG_OUTPUT_ENABLE:
->  		err = mtk_hw_get_value(hw, pin, PINCTRL_PIN_REG_DIR, &val);
->  		if (err)
-> -			return -EINVAL;
-> +			return err;
->  
->  		/* HW takes input mode as zero; output mode as non-zero */
->  		if ((val && param == PIN_CONFIG_INPUT_ENABLE) ||
-> @@ -1184,11 +1184,11 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
->  	case PIN_CONFIG_DRIVE_STRENGTH:
->  		err = mtk_hw_get_value(hw, pin, PINCTRL_PIN_REG_E4, &val);
->  		if (err)
-> -			return -EINVAL;
-> +			return err;
->  
->  		err = mtk_hw_get_value(hw, pin, PINCTRL_PIN_REG_E8, &val2);
->  		if (err)
-> -			return -EINVAL;
-> +			return err;
->  
->  		/* 4mA when (e8, e4) = (0, 0); 8mA when (e8, e4) = (0, 1)
->  		 * 12mA when (e8, e4) = (1, 0); 16mA when (e8, e4) = (1, 1)
-> @@ -1203,7 +1203,7 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
->  
->  		err = mtk_hw_get_value(hw, pin, reg, &val);
->  		if (err)
-> -			return -EINVAL;
-> +			return err;
->  
->  		ret = val;
->  
-> 
