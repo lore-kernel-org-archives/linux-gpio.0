@@ -1,30 +1,69 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] gpiolib: Export gpiochip_irqchip_irq_valid() to drivers
-Date: Wed, 10 Jan 2018 14:22:18 +0100
-Message-ID: <CACRpkdbW0cKwfzwVu4dz3pe2qvdT=Pkr6Lxq0FW12S0NfcHd6Q@mail.gmail.com>
-References: <20180110015848.11480-1-sboyd@codeaurora.org> <20180110015848.11480-2-sboyd@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio: Add missing open drain/source handling to gpiod_set_value_cansleep()
+Date: Wed, 10 Jan 2018 14:29:51 +0100
+Message-ID: <CAMuHMdWT9PZHfJtNmAkTSmkodT9AsMKggvFyXi0jmw8YVw6hCQ@mail.gmail.com>
+References: <1515521301-4375-1-git-send-email-geert+renesas@glider.be> <CACRpkdaa4qvCu4tX_ZhbWTGquDjMXm-7FFDZ489LSdx2kM-tRQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20180110015848.11480-2-sboyd@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Timur Tabi <timur@codeaurora.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaa4qvCu4tX_ZhbWTGquDjMXm-7FFDZ489LSdx2kM-tRQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@the-dreams.de>, =?UTF-8?B?SmFuIEt1bmRyw6F0?= <jan.kundrat@cesnet.cz>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Linux I2C <linux-i2c@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jan 10, 2018 at 2:58 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+Hi Linus,
 
-> Some pinctrl drivers can use the gpiochip irq valid information
-> to figure out if certain gpios are exposed to the kernel for
-> usage or not. Expose this API so we can use it in the
-> pinmux_ops::request ops.
+On Wed, Jan 10, 2018 at 2:17 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Jan 9, 2018 at 7:08 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
 >
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>> Since commit f11a04464ae57e8d ("i2c: gpio: Enable working over slow
+>> can_sleep GPIOs"), probing the i2c RTC connected to an i2c-gpio bus on
+>> r8a7740/armadillo fails with:
+>>
+>>     rtc-s35390a 0-0030: error resetting chip
+>>     rtc-s35390a: probe of 0-0030 failed with error -5
+>>
+>> More debug code reveals:
+>>
+>>     i2c i2c-0: master_xfer[0] R, addr=0x30, len=1
+>>     i2c i2c-0: NAK from device addr 0x30 msg #0
+>>     s35390a_get_reg: ret = -6
+>>
+>> Commit 02e479808b5d62f8 ("gpio: Alter semantics of *raw* operations to
+>> actually be raw") moved open drain/source handling from
+>> gpiod_set_raw_value_commit() to gpiod_set_value(), but forgot to take
+>> into account that gpiod_set_value_cansleep() also needs this handling.
+>> The i2c protocol mandates that i2c signals are open drain, hence i2c
+>> communication fails.
+>>
+>> Fix this by adding the missing handling to gpiod_set_value_cansleep(),
+>> using a new common helper __gpiod_set_value_nocheck().
+>>
+>> Fixes: 02e479808b5d62f8 ("gpio: Alter semantics of *raw* operations to actually be raw")
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> The bad gpio commit is in v4.15-rc1 and later.
+>> The i2c commit exposing this is not yet upstream, but in i2c/for-next.
+>
+> Whoops!
+>
+> It appears Meltdown and Spectre saves my ass because now I have
+> time to get this upstream before v4.15...
+>
+> Applied for fixes with the following tweaks: I removed the __prefix (I don't
+> like them) and added kerneldoc.
 
-Makes a lot of sense.
+Looks good to me (also in git). Thanks!
 
-Patch applied with Bj=C3=B6rn's ACK.
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
