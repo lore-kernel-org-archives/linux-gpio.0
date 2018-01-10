@@ -1,40 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Add GPIO support for the ACCES PCIe-IDIO-24 family
-Date: Wed, 10 Jan 2018 14:40:34 +0100
-Message-ID: <CACRpkdaxa2sZR7Tq2Y-AmofH6_hOHgoYWbO+KVdrFqbbeRQbsw@mail.gmail.com>
-References: <20180109222145.2323-1-vilhelm.gray@gmail.com>
+Subject: Re: [RESEND PATCH] ARM: pinctrl: sunxi-pinctrl: fix pin funtion can
+ not be match correctly.
+Date: Wed, 10 Jan 2018 14:45:06 +0100
+Message-ID: <CACRpkdZrNp7eBCLLPOmCTjdZpi1hzLVrzYSYSw7DeoXMnAWGNw@mail.gmail.com>
+References: <20180109055902.GA1306@arx-s1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180109222145.2323-1-vilhelm.gray@gmail.com>
+In-Reply-To: <20180109055902.GA1306@arx-s1>
 Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: hao_zhang <hao5781286@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 9, 2018 at 11:21 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Tue, Jan 9, 2018 at 6:59 AM, hao_zhang <hao5781286@gmail.com> wrote:
 
-> The ACCES PCIe-IDIO-24 device provides 56 lines of digital I/O (24 lines
-> of optically-isolated non-polarized digital inputs for AC and DC control
-> signals, 24 lines of isolated solid state FET digital outputs, and 8
-> non-isolated TTL/CMOS compatible programmable I/O). An interrupt is
-> generated when any of the inputs change state (low to high or high to
-> low).
+> Pin function can not be match correctly when SUNXI_PIN describe with
+> mutiple variant and same function.
 >
-> Input filter control is not supported by this driver, and input filters
-> are deactivated by this driver. These devices are capable of
-> get_multiple and set_multiple functionality, but these functions have
-> not yet been implemented for this driver. Change-Of-State (COS)
-> detection functionality may be configured to fire interrupts on
-> exclusively rising/falling edges, but this driver currently only
-> implements COS detection for either both edges or none.
+> such as:
+> on pinctrl-sun4i-a10.c
 >
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 2),
+>                 SUNXI_FUNCTION(0x0, "gpio_in"),
+>                 SUNXI_FUNCTION(0x1, "gpio_out"),
+>                 SUNXI_FUNCTION_VARIANT(0x2, "pwm",    /* PWM0 */
+>                         PINCTRL_SUN4I_A10 |
+>                         PINCTRL_SUN7I_A20),
+>                 SUNXI_FUNCTION_VARIANT(0x3, "pwm",    /* PWM0 */
+>                         PINCTRL_SUN8I_R40)),
+>
+> it would always match to the first variant function
+> (PINCTRL_SUN4I_A10, PINCTRL_SUN7I_A20)
+>
+> so we should add variant compare on it.
+>
+> Regards
+> Hao
+>
+> Signed-off-by: hao_zhang <hao5781286@gmail.com>
 
-Patch applied.
-
-Really clean and nice work.
+Patch applied with Maxime's ACK.
 
 Yours,
 Linus Walleij
