@@ -1,62 +1,43 @@
-From: Yixun Lan <yixun.lan@amlogic.com>
-Subject: Re: [PATCH 0/2] pinctrl: meson: use one uniform 'function' name
-Date: Wed, 10 Jan 2018 10:12:38 +0800
-Message-ID: <a6a4ed23-696c-ae2d-9b6a-c2578372b1aa@amlogic.com>
-References: <20180108073328.205769-1-yixun.lan@amlogic.com>
- <1515401544.5048.67.camel@baylibre.com>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH 3/4] bcm2835-gpio-exp: Driver for GPIO expander via
+ mailbox service
+Date: Wed, 10 Jan 2018 05:45:57 +0200
+Message-ID: <20180110034557.5sqpbsvt6ly6s2go@tarshish>
+References: <cover.1514898134.git.baruch@tkos.co.il>
+ <bcac00c71b29c359b59053a30d817a8f17d6731d.1514898134.git.baruch@tkos.co.il>
+ <CACRpkdb73jGGRm5OrXLGYSOjMni-NsOwdC7TXH2k+iAEnAvL2g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:40404 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933270AbeAJCMT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Jan 2018 21:12:19 -0500
-In-Reply-To: <1515401544.5048.67.camel@baylibre.com>
+Received: from guitar.tcltek.co.il ([192.115.133.116]:59820 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753553AbeAJDqB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 9 Jan 2018 22:46:01 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb73jGGRm5OrXLGYSOjMni-NsOwdC7TXH2k+iAEnAvL2g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: yixun.lan@amlogic.com, Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 
+Hi Linus,
 
-
-On 01/08/18 16:52, Jerome Brunet wrote:
-> On Mon, 2018-01-08 at 15:33 +0800, Yixun Lan wrote:
->> These two patches are general improvement for meson pinctrl driver.
->> It make the two pinctrl trees (ee/ao) to share one uniform 'function' name for
->> one hardware block even its pin groups live inside two differet hardware domains,
->> which for example EE vs AO domain here.
->>
->> This idea is motivated by Martin's question at [1]
->>
->> [1]
->>  http://lkml.kernel.org/r/CAFBinCCuQ-NK747+GHDkhZty_UMMgzCYOYFcNTrRDJgU8OM=Gw@mail.gmail.com
->>
->>
->> Yixun Lan (2):
->>   pinctrl: meson: introduce a macro to have name/groups seperated
->>   pinctrl: meson-axg: correct the pin expansion of UART_AO_B
->>
->>  drivers/pinctrl/meson/pinctrl-meson-axg.c | 4 ++--
->>  drivers/pinctrl/meson/pinctrl-meson.h     | 8 +++++---
->>  2 files changed, 7 insertions(+), 5 deletions(-)
+On Wed, Jan 03, 2018 at 11:08:15AM +0100, Linus Walleij wrote:
+> On Tue, Jan 2, 2018 at 2:19 PM, Baruch Siach <baruch@tkos.co.il> wrote:
+> > +#include <linux/err.h>
+> > +#include <linux/gpio.h>
 > 
-> Hi Yixun,
+> Just use
 > 
-> Honestly, I don't like the idea. I think it adds an unnecessary complexity.
-> I don't see the point of FUNCTION_EX(uart_ao_b, _z) when you could simply write 
-> FUNCTION(uart_ao_b_z) ... especially when there is just a couple of function per
-> SoC available on different domains.
-> 
-> A pinctrl driver can already be challenging to understand at first, let's keep
-> it simple and avoid adding more macros.
-> 
+> #include <linux/driver.h>
 
-Hi Jerome：
-  In my opinion, the idea of keeping one uniform 'function' in DT (thus
-introducing another macro) is worth considering. It would make the DT
-part much clean.
-  And yes, it's a trade-off here, either we 1) do more in code to make
-DT clean or 2) do nothing in the code level to make DT live with it.
+You mean linux/gpio/driver.h, right?
 
-Yixun
+I still need linux/gpio.h for GPIOF_DIR_*.
+
+baruch
+
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
