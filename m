@@ -1,43 +1,77 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Subject: [PATCH -next] gpio: thunderx: fix error return code in thunderx_gpio_probe()
-Date: Wed, 10 Jan 2018 14:37:13 +0000
-Message-ID: <1515595033-83888-1-git-send-email-weiyongjun1@huawei.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: Add a ngpios-ranges property
+Date: Wed, 10 Jan 2018 08:37:33 -0800
+Message-ID: <20180110163733.GH21040@codeaurora.org>
+References: <20180110015848.11480-1-sboyd@codeaurora.org>
+ <20180110015848.11480-3-sboyd@codeaurora.org>
+ <CACRpkdaN6vmV4L4U76DvD5BN+j1RYCQakTysA+GGPdT8Chc-iw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50851 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755583AbeAJObG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 10 Jan 2018 09:31:06 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaN6vmV4L4U76DvD5BN+j1RYCQakTysA+GGPdT8Chc-iw@mail.gmail.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Timur Tabi <timur@codeaurora.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix to return error code -ENOMEM from the error handling
-case instead of 0, as done elsewhere in this function.
+On 01/10, Linus Walleij wrote:
+> On Wed, Jan 10, 2018 at 2:58 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> 
+> > +- ngpios-ranges:
+> > +       Usage: optional
+> > +       Value type: <prop-encoded-array>
+> > +       Definition: Tuples of GPIO ranges (base, size) indicating
+> > +                   GPIOs available for use.
+> > +
+> >  Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
+> >  a general description of GPIO and interrupt bindings.
+> 
+> I like the tuples syntax. That's fine. It's like gpio-ranges we have
+> already to map between pin controllers and GPIO.
+> 
+> I don't think we can reuse gpio-ranges because that is
+> exclusively for pin control ATM, it would be fine if the ranges
+> were for a specific device, like pin control does, like:
+> 
+> gpio-ranges = <&secure_world_thing 0 20 10>;
+> 
+> But you definately would need a node to tie it to, so that the
+> driver for that node can specify that it's gonna take the
+> GPIOs.
+> 
+> But I think the semantics should be the inverse. That you
+> point out "holes" with the lines we *can't* use.
 
-Fixes: 5a2a30024d8c ("gpio: Add gpio driver support for ThunderX and OCTEON-TX")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/gpio/gpio-thunderx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Ok. I can invert the logic and push it into the core part of the
+code. I'll leave the ACPI part in the msm driver.
 
-diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
-index b5adb79..d16e9d4 100644
---- a/drivers/gpio/gpio-thunderx.c
-+++ b/drivers/gpio/gpio-thunderx.c
-@@ -553,8 +553,10 @@ static int thunderx_gpio_probe(struct pci_dev *pdev,
- 	txgpio->irqd = irq_domain_create_hierarchy(irq_get_irq_data(txgpio->msix_entries[0].vector)->domain,
- 						   0, 0, of_node_to_fwnode(dev->of_node),
- 						   &thunderx_gpio_irqd_ops, txgpio);
--	if (!txgpio->irqd)
-+	if (!txgpio->irqd) {
-+		err = -ENOMEM;
- 		goto out;
-+	}
- 
- 	/* Push on irq_data and the domain for each line. */
- 	for (i = 0; i < ngpio; i++) {
+> 
+> We already support a generic property "ngpios" that says how
+> many of the GPIOs (counted from zero) that can be used,
+> so if those should be able to use this as a generic property it
+> is better with the inverse semantics and say that the
+> "reserved-gpio-ranges", "secureworld-gpio-ranges"
+> (or whatever we decide to call it) takes precedence over
+> ngpios so we don't end up in ambigous places.
+> 
+> Then, will it be possible to put the parsing, handling and
+> disablement of these ranges into drivers/gpio/gpiolib-of.c
+> where we handle the ranges today, or do we need to
+> do it in the individual drivers?
+> 
 
+I'll cook that up right now to do the inverse thing in the
+gpiolib core code with a 'reserved-gpio-ranges' property. I
+haven't looked in much detail, but I would hope that it would
+work pretty easily. Should it be decoupled from the
+GPIOLIB_IRQCHIP config? If the idea is generic, then it may not
+be related to irq lines, but for the qcom driver it was all fine
+because all three concepts: irq, gpios, and pins have a one to
+one relationship. The only place it breaks down is if we have
+more pins than gpios, in which case I punted and just considered
+non-gpio pins as always valid.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
