@@ -1,84 +1,251 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 0/2] pinctrl: meson: use one uniform 'function' name
-Date: Wed, 10 Jan 2018 08:28:44 +0100
-Message-ID: <1515569324.5048.103.camel@baylibre.com>
-References: <20180108073328.205769-1-yixun.lan@amlogic.com>
-         <1515401544.5048.67.camel@baylibre.com>
-         <a6a4ed23-696c-ae2d-9b6a-c2578372b1aa@amlogic.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: uniphier: refactor drive strength get/set functions
+Date: Wed, 10 Jan 2018 17:34:14 +0900
+Message-ID: <1515573254-8894-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:33241 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752180AbeAJH2s (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jan 2018 02:28:48 -0500
-Received: by mail-wr0-f194.google.com with SMTP id p6so16449399wrd.0
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Jan 2018 23:28:48 -0800 (PST)
-In-Reply-To: <a6a4ed23-696c-ae2d-9b6a-c2578372b1aa@amlogic.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yixun Lan <yixun.lan@amlogic.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Wed, 2018-01-10 at 10:12 +0800, Yixun Lan wrote:
-> 
-> On 01/08/18 16:52, Jerome Brunet wrote:
-> > On Mon, 2018-01-08 at 15:33 +0800, Yixun Lan wrote:
-> > > These two patches are general improvement for meson pinctrl driver.
-> > > It make the two pinctrl trees (ee/ao) to share one uniform 'function' name for
-> > > one hardware block even its pin groups live inside two differet hardware domains,
-> > > which for example EE vs AO domain here.
-> > > 
-> > > This idea is motivated by Martin's question at [1]
-> > > 
-> > > [1]
-> > >  http://lkml.kernel.org/r/CAFBinCCuQ-NK747+GHDkhZty_UMMgzCYOYFcNTrRDJgU8OM=Gw@mail.gmail.com
-> > > 
-> > > 
-> > > Yixun Lan (2):
-> > >   pinctrl: meson: introduce a macro to have name/groups seperated
-> > >   pinctrl: meson-axg: correct the pin expansion of UART_AO_B
-> > > 
-> > >  drivers/pinctrl/meson/pinctrl-meson-axg.c | 4 ++--
-> > >  drivers/pinctrl/meson/pinctrl-meson.h     | 8 +++++---
-> > >  2 files changed, 7 insertions(+), 5 deletions(-)
-> > 
-> > Hi Yixun,
-> > 
-> > Honestly, I don't like the idea. I think it adds an unnecessary complexity.
-> > I don't see the point of FUNCTION_EX(uart_ao_b, _z) when you could simply write 
-> > FUNCTION(uart_ao_b_z) ... especially when there is just a couple of function per
-> > SoC available on different domains.
-> > 
-> > A pinctrl driver can already be challenging to understand at first, let's keep
-> > it simple and avoid adding more macros.
-> > 
-> 
-> Hi Jerome：
->   In my opinion, the idea of keeping one uniform 'function' in DT (thus
-> introducing another macro) is worth considering. It would make the DT
-> part much clean.
+There is code duplication between uniphier_conf_pin_drive_get() and
+uniphier_conf_pin_drive_set().  Factor out the common code into
+uniphier_conf_get_drvctrl_data().
 
-Ok this is your opinion. I don't share it. Keeping function names tidy is good,
-I don't think we need another macro to do so.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
->   And yes, it's a trade-off here, either we 1) do more in code to make
-> DT clean or 2) do nothing in the code level to make DT live with it.
+ drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 176 ++++++++++++-----------
+ 1 file changed, 91 insertions(+), 85 deletions(-)
 
-I don't see how adding a macro doing just string concatenation is going to make
-anything more clean. It does not prevent one to write FUNCTION_EX(uart_ao_b,
-_gpioz), resulting in uart_ao_b_gpioz, which is what is apparently considered
-'not clean'
-
-BTW, there no cleanness issue here, the name is just out of the 'usual scheme'
-but there is no problem with. If you want to change this, and
-s/uart_ao_b_gpioz/uart_ao_b_z/, now is the time to change it. 
-
-> 
-> Yixun
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+index 26fda5c..ec0f77a 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+@@ -146,6 +146,71 @@ static const struct pinctrl_ops uniphier_pctlops = {
+ 	.dt_free_map = pinctrl_utils_free_map,
+ };
+ 
++static const unsigned int uniphier_conf_drv_strengths_1bit[] = {4, 8};
++static const unsigned int uniphier_conf_drv_strengths_2bit[] = {8, 12, 16, 20};
++static const unsigned int uniphier_conf_drv_strengths_3bit[] = {4, 5, 7, 9, 11,
++								12, 14, 16};
++static const unsigned int uniphier_conf_drv_strengths_fixed4[] = {4};
++static const unsigned int uniphier_conf_drv_strengths_fixed5[] = {5};
++static const unsigned int uniphier_conf_drv_strengths_fixed8[] = {8};
++
++static int uniphier_conf_get_drvctrl_data(struct pinctrl_dev *pctldev,
++					  unsigned int pin, unsigned int *reg,
++					  unsigned int *shift,
++					  unsigned int *mask,
++					  const unsigned int **strengths)
++{
++	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
++	enum uniphier_pin_drv_type type =
++				uniphier_pin_get_drv_type(desc->drv_data);
++	unsigned int base = 0;
++	unsigned int stride = 0;
++	unsigned int width = 0;
++	unsigned int drvctrl;
++
++	switch (type) {
++	case UNIPHIER_PIN_DRV_1BIT:
++		*strengths = uniphier_conf_drv_strengths_1bit;
++		base = UNIPHIER_PINCTRL_DRVCTRL_BASE;
++		stride = 1;
++		width = 1;
++		break;
++	case UNIPHIER_PIN_DRV_2BIT:
++		*strengths = uniphier_conf_drv_strengths_2bit;
++		base = UNIPHIER_PINCTRL_DRV2CTRL_BASE;
++		stride = 2;
++		width = 2;
++		break;
++	case UNIPHIER_PIN_DRV_3BIT:
++		*strengths = uniphier_conf_drv_strengths_3bit;
++		base = UNIPHIER_PINCTRL_DRV3CTRL_BASE;
++		stride = 4;
++		width = 3;
++		break;
++	case UNIPHIER_PIN_DRV_FIXED4:
++		*strengths = uniphier_conf_drv_strengths_fixed4;
++		break;
++	case UNIPHIER_PIN_DRV_FIXED5:
++		*strengths = uniphier_conf_drv_strengths_fixed5;
++		break;
++	case UNIPHIER_PIN_DRV_FIXED8:
++		*strengths = uniphier_conf_drv_strengths_fixed8;
++		break;
++	default:
++		/* drive strength control is not supported for this pin */
++		return -EINVAL;
++	}
++
++	drvctrl = uniphier_pin_get_drvctrl(desc->drv_data);
++	drvctrl *= stride;
++
++	*reg = base + drvctrl / 32 * 4;
++	*shift = drvctrl % 32;
++	*mask = (1U << width) - 1;
++
++	return 0;
++}
++
+ static int uniphier_conf_pin_bias_get(struct pinctrl_dev *pctldev,
+ 				      unsigned int pin,
+ 				      enum pin_config_param param)
+@@ -201,59 +266,24 @@ static int uniphier_conf_pin_drive_get(struct pinctrl_dev *pctldev,
+ 				       unsigned int pin, u32 *strength)
+ {
+ 	struct uniphier_pinctrl_priv *priv = pinctrl_dev_get_drvdata(pctldev);
+-	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
+-	enum uniphier_pin_drv_type type =
+-				uniphier_pin_get_drv_type(desc->drv_data);
+-	static const unsigned int strength_1bit[] = {4, 8};
+-	static const unsigned int strength_2bit[] = {8, 12, 16, 20};
+-	static const unsigned int strength_3bit[] = {4, 5, 7, 9, 11, 12,
+-						     14, 16};
+-	const unsigned int *supported_strength;
+-	unsigned int drvctrl, reg, shift, mask, width, val;
++	unsigned int reg, shift, mask, val;
++	const unsigned int *strengths;
+ 	int ret;
+ 
+-	switch (type) {
+-	case UNIPHIER_PIN_DRV_1BIT:
+-		supported_strength = strength_1bit;
+-		reg = UNIPHIER_PINCTRL_DRVCTRL_BASE;
+-		width = 1;
+-		break;
+-	case UNIPHIER_PIN_DRV_2BIT:
+-		supported_strength = strength_2bit;
+-		reg = UNIPHIER_PINCTRL_DRV2CTRL_BASE;
+-		width = 2;
+-		break;
+-	case UNIPHIER_PIN_DRV_3BIT:
+-		supported_strength = strength_3bit;
+-		reg = UNIPHIER_PINCTRL_DRV3CTRL_BASE;
+-		width = 4;
+-		break;
+-	case UNIPHIER_PIN_DRV_FIXED4:
+-		*strength = 4;
+-		return 0;
+-	case UNIPHIER_PIN_DRV_FIXED5:
+-		*strength = 5;
+-		return 0;
+-	case UNIPHIER_PIN_DRV_FIXED8:
+-		*strength = 8;
+-		return 0;
+-	default:
+-		/* drive strength control is not supported for this pin */
+-		return -EINVAL;
+-	}
+-
+-	drvctrl = uniphier_pin_get_drvctrl(desc->drv_data);
+-	drvctrl *= width;
+-
+-	reg += drvctrl / 32 * 4;
+-	shift = drvctrl % 32;
+-	mask = (1U << width) - 1;
+-
+-	ret = regmap_read(priv->regmap, reg, &val);
++	ret = uniphier_conf_get_drvctrl_data(pctldev, pin, &reg, &shift,
++					     &mask, &strengths);
+ 	if (ret)
+ 		return ret;
+ 
+-	*strength = supported_strength[(val >> shift) & mask];
++	if (mask) {
++		ret = regmap_read(priv->regmap, reg, &val);
++		if (ret)
++			return ret;
++	} else {
++		val = 0;
++	}
++
++	*strength = strengths[(val >> shift) & mask];
+ 
+ 	return 0;
+ }
+@@ -398,40 +428,20 @@ static int uniphier_conf_pin_drive_set(struct pinctrl_dev *pctldev,
+ {
+ 	struct uniphier_pinctrl_priv *priv = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
+-	enum uniphier_pin_drv_type type =
+-				uniphier_pin_get_drv_type(desc->drv_data);
+-	static const unsigned int strength_1bit[] = {4, 8, -1};
+-	static const unsigned int strength_2bit[] = {8, 12, 16, 20, -1};
+-	static const unsigned int strength_3bit[] = {4, 5, 7, 9, 11, 12, 14,
+-						     16, -1};
+-	const unsigned int *supported_strength;
+-	unsigned int drvctrl, reg, shift, mask, width, val;
++	unsigned int reg, shift, mask, val;
++	const unsigned int *strengths;
++	int ret;
+ 
+-	switch (type) {
+-	case UNIPHIER_PIN_DRV_1BIT:
+-		supported_strength = strength_1bit;
+-		reg = UNIPHIER_PINCTRL_DRVCTRL_BASE;
+-		width = 1;
+-		break;
+-	case UNIPHIER_PIN_DRV_2BIT:
+-		supported_strength = strength_2bit;
+-		reg = UNIPHIER_PINCTRL_DRV2CTRL_BASE;
+-		width = 2;
+-		break;
+-	case UNIPHIER_PIN_DRV_3BIT:
+-		supported_strength = strength_3bit;
+-		reg = UNIPHIER_PINCTRL_DRV3CTRL_BASE;
+-		width = 4;
+-		break;
+-	default:
+-		dev_err(pctldev->dev,
+-			"cannot change drive strength for pin %s\n",
++	ret = uniphier_conf_get_drvctrl_data(pctldev, pin, &reg, &shift,
++					     &mask, &strengths);
++	if (ret) {
++		dev_err(pctldev->dev, "cannot set drive strength for pin %s\n",
+ 			desc->name);
+-		return -EINVAL;
++		return ret;
+ 	}
+ 
+-	for (val = 0; supported_strength[val] > 0; val++) {
+-		if (supported_strength[val] > strength)
++	for (val = 0; val <= mask; val++) {
++		if (strengths[val] > strength)
+ 			break;
+ 	}
+ 
+@@ -442,14 +452,10 @@ static int uniphier_conf_pin_drive_set(struct pinctrl_dev *pctldev,
+ 		return -EINVAL;
+ 	}
+ 
+-	val--;
+-
+-	drvctrl = uniphier_pin_get_drvctrl(desc->drv_data);
+-	drvctrl *= width;
++	if (!mask)
++		return 0;
+ 
+-	reg += drvctrl / 32 * 4;
+-	shift = drvctrl % 32;
+-	mask = (1U << width) - 1;
++	val--;
+ 
+ 	return regmap_update_bits(priv->regmap, reg,
+ 				  mask << shift, val << shift);
+-- 
+2.7.4
