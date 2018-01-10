@@ -1,251 +1,69 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: refactor drive strength get/set functions
-Date: Wed, 10 Jan 2018 17:34:14 +0900
-Message-ID: <1515573254-8894-1-git-send-email-yamada.masahiro@socionext.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: mediatek: mt7622: fix potential
+ uninitialized value being returned
+Date: Wed, 10 Jan 2018 10:00:49 +0100
+Message-ID: <99978b09-cc80-d2cd-7d72-0b34380f6130@gmail.com>
+References: <a26c40a8ad2af3cf81b31ae34bc82c1ef80d9279.1515514758.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <a26c40a8ad2af3cf81b31ae34bc82c1ef80d9279.1515514758.git.sean.wang@mediatek.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: sean.wang@mediatek.com, linus.walleij@linaro.org, linux-mediatek@lists.infradead.org, dan.carpenter@oracle.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-There is code duplication between uniphier_conf_pin_drive_get() and
-uniphier_conf_pin_drive_set().  Factor out the common code into
-uniphier_conf_get_drvctrl_data().
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
 
- drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 176 ++++++++++++-----------
- 1 file changed, 91 insertions(+), 85 deletions(-)
+On 01/09/2018 05:28 PM, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> commit d6ed93551320 ("pinctrl: mediatek: add pinctrl driver for MT7622
+> SoC") leads to the following static checker warning:
+> 
+> drivers/pinctrl/mediatek/pinctrl-mt7622.c:1419 mtk_gpio_get()
+> error: uninitialized symbol 'value'.
+> 1412  static int mtk_gpio_get(struct gpio_chip *chip, unsigned int gpio)
+> 1413  {
+> 1414          struct mtk_pinctrl *hw = dev_get_drvdata(chip->parent);
+> 1415          int value;
+> 1416
+> 1417          mtk_hw_get_value(hw, gpio, PINCTRL_PIN_REG_DI, &value);
+> ^^^^^^^^^^^^^^^^
+> 1418
+> 1419          return !!value;
+> 1420  }
+> 
+> The appropriate error handling must be added to avoid the potential error
+> caused by uninitialized value being returned.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mt7622.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
 
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-index 26fda5c..ec0f77a 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-@@ -146,6 +146,71 @@ static const struct pinctrl_ops uniphier_pctlops = {
- 	.dt_free_map = pinctrl_utils_free_map,
- };
- 
-+static const unsigned int uniphier_conf_drv_strengths_1bit[] = {4, 8};
-+static const unsigned int uniphier_conf_drv_strengths_2bit[] = {8, 12, 16, 20};
-+static const unsigned int uniphier_conf_drv_strengths_3bit[] = {4, 5, 7, 9, 11,
-+								12, 14, 16};
-+static const unsigned int uniphier_conf_drv_strengths_fixed4[] = {4};
-+static const unsigned int uniphier_conf_drv_strengths_fixed5[] = {5};
-+static const unsigned int uniphier_conf_drv_strengths_fixed8[] = {8};
-+
-+static int uniphier_conf_get_drvctrl_data(struct pinctrl_dev *pctldev,
-+					  unsigned int pin, unsigned int *reg,
-+					  unsigned int *shift,
-+					  unsigned int *mask,
-+					  const unsigned int **strengths)
-+{
-+	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
-+	enum uniphier_pin_drv_type type =
-+				uniphier_pin_get_drv_type(desc->drv_data);
-+	unsigned int base = 0;
-+	unsigned int stride = 0;
-+	unsigned int width = 0;
-+	unsigned int drvctrl;
-+
-+	switch (type) {
-+	case UNIPHIER_PIN_DRV_1BIT:
-+		*strengths = uniphier_conf_drv_strengths_1bit;
-+		base = UNIPHIER_PINCTRL_DRVCTRL_BASE;
-+		stride = 1;
-+		width = 1;
-+		break;
-+	case UNIPHIER_PIN_DRV_2BIT:
-+		*strengths = uniphier_conf_drv_strengths_2bit;
-+		base = UNIPHIER_PINCTRL_DRV2CTRL_BASE;
-+		stride = 2;
-+		width = 2;
-+		break;
-+	case UNIPHIER_PIN_DRV_3BIT:
-+		*strengths = uniphier_conf_drv_strengths_3bit;
-+		base = UNIPHIER_PINCTRL_DRV3CTRL_BASE;
-+		stride = 4;
-+		width = 3;
-+		break;
-+	case UNIPHIER_PIN_DRV_FIXED4:
-+		*strengths = uniphier_conf_drv_strengths_fixed4;
-+		break;
-+	case UNIPHIER_PIN_DRV_FIXED5:
-+		*strengths = uniphier_conf_drv_strengths_fixed5;
-+		break;
-+	case UNIPHIER_PIN_DRV_FIXED8:
-+		*strengths = uniphier_conf_drv_strengths_fixed8;
-+		break;
-+	default:
-+		/* drive strength control is not supported for this pin */
-+		return -EINVAL;
-+	}
-+
-+	drvctrl = uniphier_pin_get_drvctrl(desc->drv_data);
-+	drvctrl *= stride;
-+
-+	*reg = base + drvctrl / 32 * 4;
-+	*shift = drvctrl % 32;
-+	*mask = (1U << width) - 1;
-+
-+	return 0;
-+}
-+
- static int uniphier_conf_pin_bias_get(struct pinctrl_dev *pctldev,
- 				      unsigned int pin,
- 				      enum pin_config_param param)
-@@ -201,59 +266,24 @@ static int uniphier_conf_pin_drive_get(struct pinctrl_dev *pctldev,
- 				       unsigned int pin, u32 *strength)
- {
- 	struct uniphier_pinctrl_priv *priv = pinctrl_dev_get_drvdata(pctldev);
--	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
--	enum uniphier_pin_drv_type type =
--				uniphier_pin_get_drv_type(desc->drv_data);
--	static const unsigned int strength_1bit[] = {4, 8};
--	static const unsigned int strength_2bit[] = {8, 12, 16, 20};
--	static const unsigned int strength_3bit[] = {4, 5, 7, 9, 11, 12,
--						     14, 16};
--	const unsigned int *supported_strength;
--	unsigned int drvctrl, reg, shift, mask, width, val;
-+	unsigned int reg, shift, mask, val;
-+	const unsigned int *strengths;
- 	int ret;
- 
--	switch (type) {
--	case UNIPHIER_PIN_DRV_1BIT:
--		supported_strength = strength_1bit;
--		reg = UNIPHIER_PINCTRL_DRVCTRL_BASE;
--		width = 1;
--		break;
--	case UNIPHIER_PIN_DRV_2BIT:
--		supported_strength = strength_2bit;
--		reg = UNIPHIER_PINCTRL_DRV2CTRL_BASE;
--		width = 2;
--		break;
--	case UNIPHIER_PIN_DRV_3BIT:
--		supported_strength = strength_3bit;
--		reg = UNIPHIER_PINCTRL_DRV3CTRL_BASE;
--		width = 4;
--		break;
--	case UNIPHIER_PIN_DRV_FIXED4:
--		*strength = 4;
--		return 0;
--	case UNIPHIER_PIN_DRV_FIXED5:
--		*strength = 5;
--		return 0;
--	case UNIPHIER_PIN_DRV_FIXED8:
--		*strength = 8;
--		return 0;
--	default:
--		/* drive strength control is not supported for this pin */
--		return -EINVAL;
--	}
--
--	drvctrl = uniphier_pin_get_drvctrl(desc->drv_data);
--	drvctrl *= width;
--
--	reg += drvctrl / 32 * 4;
--	shift = drvctrl % 32;
--	mask = (1U << width) - 1;
--
--	ret = regmap_read(priv->regmap, reg, &val);
-+	ret = uniphier_conf_get_drvctrl_data(pctldev, pin, &reg, &shift,
-+					     &mask, &strengths);
- 	if (ret)
- 		return ret;
- 
--	*strength = supported_strength[(val >> shift) & mask];
-+	if (mask) {
-+		ret = regmap_read(priv->regmap, reg, &val);
-+		if (ret)
-+			return ret;
-+	} else {
-+		val = 0;
-+	}
-+
-+	*strength = strengths[(val >> shift) & mask];
- 
- 	return 0;
- }
-@@ -398,40 +428,20 @@ static int uniphier_conf_pin_drive_set(struct pinctrl_dev *pctldev,
- {
- 	struct uniphier_pinctrl_priv *priv = pinctrl_dev_get_drvdata(pctldev);
- 	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
--	enum uniphier_pin_drv_type type =
--				uniphier_pin_get_drv_type(desc->drv_data);
--	static const unsigned int strength_1bit[] = {4, 8, -1};
--	static const unsigned int strength_2bit[] = {8, 12, 16, 20, -1};
--	static const unsigned int strength_3bit[] = {4, 5, 7, 9, 11, 12, 14,
--						     16, -1};
--	const unsigned int *supported_strength;
--	unsigned int drvctrl, reg, shift, mask, width, val;
-+	unsigned int reg, shift, mask, val;
-+	const unsigned int *strengths;
-+	int ret;
- 
--	switch (type) {
--	case UNIPHIER_PIN_DRV_1BIT:
--		supported_strength = strength_1bit;
--		reg = UNIPHIER_PINCTRL_DRVCTRL_BASE;
--		width = 1;
--		break;
--	case UNIPHIER_PIN_DRV_2BIT:
--		supported_strength = strength_2bit;
--		reg = UNIPHIER_PINCTRL_DRV2CTRL_BASE;
--		width = 2;
--		break;
--	case UNIPHIER_PIN_DRV_3BIT:
--		supported_strength = strength_3bit;
--		reg = UNIPHIER_PINCTRL_DRV3CTRL_BASE;
--		width = 4;
--		break;
--	default:
--		dev_err(pctldev->dev,
--			"cannot change drive strength for pin %s\n",
-+	ret = uniphier_conf_get_drvctrl_data(pctldev, pin, &reg, &shift,
-+					     &mask, &strengths);
-+	if (ret) {
-+		dev_err(pctldev->dev, "cannot set drive strength for pin %s\n",
- 			desc->name);
--		return -EINVAL;
-+		return ret;
- 	}
- 
--	for (val = 0; supported_strength[val] > 0; val++) {
--		if (supported_strength[val] > strength)
-+	for (val = 0; val <= mask; val++) {
-+		if (strengths[val] > strength)
- 			break;
- 	}
- 
-@@ -442,14 +452,10 @@ static int uniphier_conf_pin_drive_set(struct pinctrl_dev *pctldev,
- 		return -EINVAL;
- 	}
- 
--	val--;
--
--	drvctrl = uniphier_pin_get_drvctrl(desc->drv_data);
--	drvctrl *= width;
-+	if (!mask)
-+		return 0;
- 
--	reg += drvctrl / 32 * 4;
--	shift = drvctrl % 32;
--	mask = (1U << width) - 1;
-+	val--;
- 
- 	return regmap_update_bits(priv->regmap, reg,
- 				  mask << shift, val << shift);
--- 
-2.7.4
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+> index 3824d82..dc32e3c 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+> @@ -1412,9 +1412,11 @@ static struct pinctrl_desc mtk_desc = {
+>  static int mtk_gpio_get(struct gpio_chip *chip, unsigned int gpio)
+>  {
+>  	struct mtk_pinctrl *hw = dev_get_drvdata(chip->parent);
+> -	int value;
+> +	int value, err;
+>  
+> -	mtk_hw_get_value(hw, gpio, PINCTRL_PIN_REG_DI, &value);
+> +	err = mtk_hw_get_value(hw, gpio, PINCTRL_PIN_REG_DI, &value);
+> +	if (err)
+> +		return err;
+>  
+>  	return !!value;
+>  }
+> 
