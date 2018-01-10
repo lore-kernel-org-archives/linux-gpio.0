@@ -1,69 +1,82 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: Add missing open drain/source handling to gpiod_set_value_cansleep()
-Date: Wed, 10 Jan 2018 14:29:51 +0100
-Message-ID: <CAMuHMdWT9PZHfJtNmAkTSmkodT9AsMKggvFyXi0jmw8YVw6hCQ@mail.gmail.com>
-References: <1515521301-4375-1-git-send-email-geert+renesas@glider.be> <CACRpkdaa4qvCu4tX_ZhbWTGquDjMXm-7FFDZ489LSdx2kM-tRQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: Add a ngpios-ranges property
+Date: Wed, 10 Jan 2018 14:37:53 +0100
+Message-ID: <CACRpkdaN6vmV4L4U76DvD5BN+j1RYCQakTysA+GGPdT8Chc-iw@mail.gmail.com>
+References: <20180110015848.11480-1-sboyd@codeaurora.org> <20180110015848.11480-3-sboyd@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaa4qvCu4tX_ZhbWTGquDjMXm-7FFDZ489LSdx2kM-tRQ@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@the-dreams.de>, =?UTF-8?B?SmFuIEt1bmRyw6F0?= <jan.kundrat@cesnet.cz>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Linux I2C <linux-i2c@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180110015848.11480-3-sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Timur Tabi <timur-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Wed, Jan 10, 2018 at 2:58 AM, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
 
-On Wed, Jan 10, 2018 at 2:17 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Jan 9, 2018 at 7:08 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+> Some qcom platforms make some GPIOs or pins unavailable for use
+> by non-secure operating systems, and thus reading or writing the
+> registers for those pins will cause access control issues.
+> Introduce a DT property to describe the set of GPIOs that are
+> available for use so that higher level OSes are able to know what
+> pins to avoid reading/writing.
 >
->> Since commit f11a04464ae57e8d ("i2c: gpio: Enable working over slow
->> can_sleep GPIOs"), probing the i2c RTC connected to an i2c-gpio bus on
->> r8a7740/armadillo fails with:
->>
->>     rtc-s35390a 0-0030: error resetting chip
->>     rtc-s35390a: probe of 0-0030 failed with error -5
->>
->> More debug code reveals:
->>
->>     i2c i2c-0: master_xfer[0] R, addr=0x30, len=1
->>     i2c i2c-0: NAK from device addr 0x30 msg #0
->>     s35390a_get_reg: ret = -6
->>
->> Commit 02e479808b5d62f8 ("gpio: Alter semantics of *raw* operations to
->> actually be raw") moved open drain/source handling from
->> gpiod_set_raw_value_commit() to gpiod_set_value(), but forgot to take
->> into account that gpiod_set_value_cansleep() also needs this handling.
->> The i2c protocol mandates that i2c signals are open drain, hence i2c
->> communication fails.
->>
->> Fix this by adding the missing handling to gpiod_set_value_cansleep(),
->> using a new common helper __gpiod_set_value_nocheck().
->>
->> Fixes: 02e479808b5d62f8 ("gpio: Alter semantics of *raw* operations to actually be raw")
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> The bad gpio commit is in v4.15-rc1 and later.
->> The i2c commit exposing this is not yet upstream, but in i2c/for-next.
->
-> Whoops!
->
-> It appears Meltdown and Spectre saves my ass because now I have
-> time to get this upstream before v4.15...
->
-> Applied for fixes with the following tweaks: I removed the __prefix (I don't
-> like them) and added kerneldoc.
+> Cc: <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+> Signed-off-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 
-Looks good to me (also in git). Thanks!
+I like the idea, let's check what we think about the details regarding
+naming and semantics, I need feedback from some DT people
+in particular.
 
-Gr{oetje,eeting}s,
+Paging in Grant on this as he might have some input.
 
-                        Geert
+> I stuck this inside msm8996, but maybe it can go somewhere more generic?
 
+Yeah just put it in Documentation/devicetree/bindings/gpio/gpio.txt
+Everyone and its dog doing GPIO reservations "from another world"
+will need to use this.
+
+> +- ngpios-ranges:
+> +       Usage: optional
+> +       Value type: <prop-encoded-array>
+> +       Definition: Tuples of GPIO ranges (base, size) indicating
+> +                   GPIOs available for use.
+> +
+>  Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
+>  a general description of GPIO and interrupt bindings.
+
+I like the tuples syntax. That's fine. It's like gpio-ranges we have
+already to map between pin controllers and GPIO.
+
+I don't think we can reuse gpio-ranges because that is
+exclusively for pin control ATM, it would be fine if the ranges
+were for a specific device, like pin control does, like:
+
+gpio-ranges = <&secure_world_thing 0 20 10>;
+
+But you definately would need a node to tie it to, so that the
+driver for that node can specify that it's gonna take the
+GPIOs.
+
+But I think the semantics should be the inverse. That you
+point out "holes" with the lines we *can't* use.
+
+We already support a generic property "ngpios" that says how
+many of the GPIOs (counted from zero) that can be used,
+so if those should be able to use this as a generic property it
+is better with the inverse semantics and say that the
+"reserved-gpio-ranges", "secureworld-gpio-ranges"
+(or whatever we decide to call it) takes precedence over
+ngpios so we don't end up in ambigous places.
+
+Then, will it be possible to put the parsing, handling and
+disablement of these ranges into drivers/gpio/gpiolib-of.c
+where we handle the ranges today, or do we need to
+do it in the individual drivers?
+
+Yours,
+Linus Walleij
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
