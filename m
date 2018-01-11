@@ -1,25 +1,24 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: uniphier: refactor drive strength get/set functions
-Date: Thu, 11 Jan 2018 10:41:14 +0100
-Message-ID: <CACRpkdY1aYZZFp=WgKhMUWk9v8DCmumwN6whYHQSPFjDFSY4vw@mail.gmail.com>
-References: <1515573254-8894-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH 1/2] pinctrl: mediatek: mt7622: fix potential
+ uninitialized value being returned
+Date: Thu, 11 Jan 2018 10:42:53 +0100
+Message-ID: <CACRpkdY8V7J+vfztrqL5N8eCMLg-85KTfWKDwdiTNeWDtt8yMA@mail.gmail.com>
+References: <a26c40a8ad2af3cf81b31ae34bc82c1ef80d9279.1515514758.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1515573254-8894-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <a26c40a8ad2af3cf81b31ae34bc82c1ef80d9279.1515514758.git.sean.wang@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: sean.wang@mediatek.com
+Cc: "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Dan Carpenter <dan.carpenter@oracle.com>, Matthias Brugger <matthias.bgg@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jan 10, 2018 at 9:34 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Tue, Jan 9, 2018 at 5:28 PM,  <sean.wang@mediatek.com> wrote:
 
-> There is code duplication between uniphier_conf_pin_drive_get() and
-> uniphier_conf_pin_drive_set().  Factor out the common code into
-> uniphier_conf_get_drvctrl_data().
+> From: Sean Wang <sean.wang@mediatek.com>
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> commit d6ed93551320 ("pinctrl: mediatek: add pinctrl driver for MT7622
+> SoC") leads to the following static checker warning:
 
 Patch applied.
 
