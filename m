@@ -1,76 +1,67 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH] gpio: winbond: fix ISA_BUS_API dependency
-Date: Thu, 11 Jan 2018 07:42:20 -0500
-Message-ID: <20180111124220.GA23490@sophia>
-References: <20180111083600.4121805-1-arnd@arndb.de>
- <CACRpkdZwigBVA04=XZNfU72AseRW8DFWsqm2of5Wv7YVpoCMOA@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v1 2/4] ARM: PWM: add allwinner sun8i R40/V40/T3 pwm
+ support.
+Date: Thu, 11 Jan 2018 13:45:23 +0100
+Message-ID: <20180111124523.pnn4rbczruflzprz@flea.lan>
+References: <20180111113241.GA21953@arx-s1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:39298 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932361AbeAKMm2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jan 2018 07:42:28 -0500
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2st3b4fmtclegoga"
+Return-path: <linux-pwm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZwigBVA04=XZNfU72AseRW8DFWsqm2of5Wv7YVpoCMOA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20180111113241.GA21953@arx-s1>
+Sender: linux-pwm-owner@vger.kernel.org
+To: hao_zhang <hao5781286@gmail.com>
+Cc: thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, wens@csie.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Guenter Roeck <linux@roeck-us.net>, "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Jan 11, 2018 at 10:18:56AM +0100, Linus Walleij wrote:
->On Thu, Jan 11, 2018 at 9:35 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->
->> The newly added GPIO driver for winbond chipsets causes a
->> circular dependency warning in Kconfig:
->>
->> drivers/gpio/Kconfig:13:error: recursive dependency detected!
->> drivers/gpio/Kconfig:13:        symbol GPIOLIB is selected by STX104
->> drivers/iio/adc/Kconfig:699:    symbol STX104 depends on ISA_BUS_API
->> arch/Kconfig:830:       symbol ISA_BUS_API is selected by GPIO_WINBOND
->> drivers/gpio/Kconfig:701:       symbol GPIO_WINBOND depends on GPIOLIB
->>
->> The underlying problem is that ISA_BUS_API is not meant to be selected by
->> device drivers, instead it is provided by the architectures that support
->> ISA add-on card devices, or in case of x86 have this explicitly enabled.
->>
->> This particular driver appears to be different from the other ISA_BUS_API
->> based drivers, in that it is not normally an add-on card (ISA or PC104)
->> but instead is an LPC-attached component on the mainboard. We already
->> support other functionality provided by this chip, at least
->> drivers/watchdog/w83627hf_wdt.c and drivers/hwmon/w83627ehf.c, plus
->> there is a discovery function for this hardware in
->> drivers/parport/parport_pc.c.
->>
->> If we want to use this driver without having to enable CONFIG_EXPERT,
->> it might be better to not use the isa_bus_type for it, but rather
->> turn it into a platform_driver, acpi_driver or add an MFD for it that
->> is shared with the wdt and hwmon portions and does the probing.
->>
->> For now, this patch fixes the dependency by changing 'select' into
->> 'depends on'.
->>
->> Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
->> Cc: Guenter Roeck <linux@roeck-us.net>
->> Cc: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
->> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> Fixes: a0d65009411c ("gpio: winbond: Add driver")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
->I've tentatively applied this patch so we don't break the builds.
->
->We had a bunch of discussion about this already ... I guess we
->need to go at it again, waiting for comments from Maciej and
->William.
->
->Yours,
->Linus Walleij
 
-Hi Linus,
+--2st3b4fmtclegoga
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I don't believe this patch is necessary if you pull in the "Change
-ISA_BUS_API dependency to selection" patchset
-(https://patchwork.ozlabs.org/project/linux-gpio/list/?series=20657) as
-it has the proper fix for this recursive dependency.
+Hi,
 
-William Breathitt Gray
+On Thu, Jan 11, 2018 at 07:32:41PM +0800, hao_zhang wrote:
+> This patch add allwinner sun8i R40/V40/T3 pwm support.
+>=20
+> Signed-off-by: hao_zhang <hao5781286@gmail.com>
+
+I don't really know the PWM framework, so I'll obviously leave that
+part to Thierry, but the DT and probe parts look ok.
+
+You have a number of issues with checkpatch though still, please run
+=2E/scripts/checkpatch.pl --strict, and once all the issues have been
+fixed:
+Reviewed-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--2st3b4fmtclegoga
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpXXGIACgkQ0rTAlCFN
+r3Sa4g//WLC1WSgThhJRTgd53Ncm+34gZaJ3DON1lK5RjECsu4rHW5Orxq8/lrom
+tWPjW4ZAOasNTtx6lpUDalO+0x7CewPPyyYgALtEPJdl4hRW4m6iB/o6qsD5QURq
+MKJC1upViXO5tYPb4+2ObAOsQ/cFBcjWDt382tnYM/o6+X/1fvg2OmxqW8wkaJ4u
+3y4d8g1VzPJCXOKIBYgR5bLtGR3U+Kcm7Cawb9VaV706znuZ+/PnFPWjQwlIV0aQ
+pQeC1v3GHPWL7F9KEVKhy8jjanLS/6N9raSazYrtHAEO4iY7PxkGU6gusxZ7UVMf
+XYo66pW64gDQSLdWRzY2FuIeor8kEQcUc3LZ9VH3foGXEDqGaC77qh36Iln9acSX
+KG9hEt1pKp6pM14O0Zckg1Cp0Fa8lVT7gbz1yfwPZg8mXIxIbzHwUi7OfXpwD63P
+qIWsrrsOFWoDaFJKJ3+L/Nr7xLTxZZxSWv9mi6Cllrq28xy+fp0rIysdVFC2BzXY
+aTFKuP+xVfccMLHEmWb1Qdv+t2B1/ovdlNX/2mKNWyuOWTuxou9CeR9phWoRm/vD
+p82itCr7hSkqODpmbkVRaYOqLaKCHksSftDhBif0bB+tb5HE3+0wVRX/M83GmqsJ
+Sw5VwFMuG7mqmDBzE2gwFZWlxSZZdm8tBRIzy/hzAAxRF/9Hnrg=
+=vHZZ
+-----END PGP SIGNATURE-----
+
+--2st3b4fmtclegoga--
