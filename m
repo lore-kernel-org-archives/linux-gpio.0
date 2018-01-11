@@ -1,35 +1,54 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: Add a ngpios-ranges property
-Date: Thu, 11 Jan 2018 10:36:38 -0600
-Message-ID: <73078b7c-c3dd-0927-a82a-fb9369f5b576@codeaurora.org>
-References: <20180110015848.11480-1-sboyd@codeaurora.org>
- <20180110015848.11480-3-sboyd@codeaurora.org>
- <CACRpkdaN6vmV4L4U76DvD5BN+j1RYCQakTysA+GGPdT8Chc-iw@mail.gmail.com>
- <CACxGe6vA652LCosMc+AsQ2Gb_mgiApx+Gxu9judXnO_p3AFcsw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: [PATCH v2 0/4] gpio: driver for the RPi3 GPIO expander
+Date: Thu, 11 Jan 2018 21:44:23 +0200
+Message-ID: <cover.1515698418.git.baruch@tkos.co.il>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:40630 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964888AbeAKQgm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jan 2018 11:36:42 -0500
-In-Reply-To: <CACxGe6vA652LCosMc+AsQ2Gb_mgiApx+Gxu9judXnO_p3AFcsw@mail.gmail.com>
-Content-Language: en-US
+Received: from guitar.tcltek.co.il ([192.115.133.116]:59950 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934425AbeAKTpk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 11 Jan 2018 14:45:40 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+To: Dave Stevenson <dave.stevenson@raspberrypi.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Michael Zoran <mzoran@crowfest.net>, Baruch Siach <baruch@tkos.co.il>
 
-On 01/11/2018 10:33 AM, Grant Likely wrote:
-> What level of access control is implemented here? Is there access
-> control for each GPIO individually, or is it done by banks of GPIOs?
-> Just asking to make sure I understand the problem domain.
+The Raspberry Pi 3 has a GPIO expander that controls, among others, the 
+activity LED, and the camera connector GPIOs. The GPIO expander on an I2C bus 
+that is not directly controlled from the ARM core. The VC4 firmware controls 
+the I2C bus, and allows the ARM core to set/get GPIO settings over its mailbox 
+interface.
 
-On our ACPI system, it's specific GPIOs.  Each GPIO is in its own 64k 
-page, which is what allows us to block specific ones.
+This series adds support for the RPi3 expander.
+
+The driver is ported from the downstream kernel at 
+https://github.com/raspberrypi/linux/, branch rpi-4.9.y.
+
+Changes in v2:
+
+  * Driver renamed to gpio-raspberrypi-exp
+  * Compatible string renamed to "raspberrypi,firmware-gpio"
+  * Firmware error check
+  * Smaller tweaks listed in individual patches
+
+Baruch Siach (3):
+  ARM: bcm2835: sync firmware properties with downstream
+  dt-bindings: gpio: add raspberry pi GPIO expander binding
+  ARM: dts: bcm2837-rpi-3-b: add GPIO expander
+
+Dave Stevenson (1):
+  gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox
+    service
+
+ .../bindings/gpio/raspberrypi,firmware-gpio.txt    |  24 ++
+ arch/arm/boot/dts/bcm2837-rpi-3-b.dts              |  10 +
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-raspberrypi-exp.c                | 258 +++++++++++++++++++++
+ include/soc/bcm2835/raspberrypi-firmware.h         |  18 ++
+ 6 files changed, 320 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
+ create mode 100644 drivers/gpio/gpio-raspberrypi-exp.c
 
 -- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.15.1
+
