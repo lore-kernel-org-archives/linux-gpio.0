@@ -1,83 +1,211 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [pinctrl:devel 63/65]
- drivers/pinctrl/freescale/pinctrl-imx6ul.c:343:33: warning: passing argument 2
- of 'imx_pinctrl_probe' discards 'const' qualifier from pointer target type
-Date: Wed, 10 Jan 2018 19:11:23 +0100
-Message-ID: <59dc10a601670bf18fbcd4d39d685c81@agner.ch>
-References: <201801100031.ehyAIs9l%fengguang.wu@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:44312 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751831AbeAJSLo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jan 2018 13:11:44 -0500
-In-Reply-To: <201801100031.ehyAIs9l%fengguang.wu@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v2 1/2] dt-bindings: pinctrl: Add Qualcomm SDM845 TLMM binding
+Date: Wed, 10 Jan 2018 22:00:03 -0800
+Message-ID: <20180111060004.9333-1-bjorn.andersson@linaro.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bai Ping <ping.bai@nxp.com>, kbuild-all@01.org, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>, kbuild test robot <fengguang.wu@intel.com>
 
-Hi Linus,
+This adds the DeviceTree binding for the Qualcomm SDM845 TLMM block.
 
-On 2018-01-09 17:40, kbuild test robot wrote:
-> tree:  
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-> devel
-> head:   a3a093ae02e2ae81499ad9e78516dccd72906c25
-> commit: ba33f4f42e968854d8367fc4e55b07f835c55832 [63/65] pinctrl:
-> imx6ul: add IOMUXC SNVS pinctrl driver for i.MX 6ULL
-> config: arm-multi_v7_defconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget
-> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
-> -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout ba33f4f42e968854d8367fc4e55b07f835c55832
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm 
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    drivers/pinctrl/freescale/pinctrl-imx6ul.c: In function
-> 'imx6ul_pinctrl_probe':
->>> drivers/pinctrl/freescale/pinctrl-imx6ul.c:343:33: warning: passing argument 2 of 'imx_pinctrl_probe' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
->      return imx_pinctrl_probe(pdev, pinctrl_info);
->                                     ^~~~~~~~~~~~
+Signed-off-by: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
 
+Changes since v1:
+- Added qspi related functions
 
-I think this happened because you only applied patch 5 of the imx
-constify patchset, is that correct?
+ .../bindings/pinctrl/qcom,sdm845-pinctrl.txt       | 176 +++++++++++++++++++++
+ 1 file changed, 176 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
 
-Let me know if you expect me to do something.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
+new file mode 100644
+index 000000000000..602921fedfa6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
+@@ -0,0 +1,176 @@
++Qualcomm SDM845 TLMM block
++
++This binding describes the Top Level Mode Multiplexer block found in the
++SDM845 platform.
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: must be "qcom,sdm845-pinctrl"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: the base address and size of the TLMM register space.
++
++- interrupts:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: should specify the TLMM summary IRQ.
++
++- interrupt-controller:
++	Usage: required
++	Value type: <none>
++	Definition: identifies this node as an interrupt controller
++
++- #interrupt-cells:
++	Usage: required
++	Value type: <u32>
++	Definition: must be 2. Specifying the pin number and flags, as defined
++		    in <dt-bindings/interrupt-controller/irq.h>
++
++- gpio-controller:
++	Usage: required
++	Value type: <none>
++	Definition: identifies this node as a gpio controller
++
++- #gpio-cells:
++	Usage: required
++	Value type: <u32>
++	Definition: must be 2. Specifying the pin number and flags, as defined
++		    in <dt-bindings/gpio/gpio.h>
++
++Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
++a general description of GPIO and interrupt bindings.
++
++Please refer to pinctrl-bindings.txt in this directory for details of the
++common pinctrl bindings used by client devices, including the meaning of the
++phrase "pin configuration node".
++
++The pin configuration nodes act as a container for an arbitrary number of
++subnodes. Each of these subnodes represents some desired configuration for a
++pin, a group, or a list of pins or groups. This configuration can include the
++mux function to select on those pin(s)/group(s), and various pin configuration
++parameters, such as pull-up, drive strength, etc.
++
++
++PIN CONFIGURATION NODES:
++
++The name of each subnode is not important; all subnodes should be enumerated
++and processed purely based on their content.
++
++Each subnode only affects those parameters that are explicitly listed. In
++other words, a subnode that lists a mux function but no pin configuration
++parameters implies no information about any pin configuration parameters.
++Similarly, a pin subnode that describes a pullup parameter implies no
++information about e.g. the mux function.
++
++
++The following generic properties as defined in pinctrl-bindings.txt are valid
++to specify in a pin configuration subnode:
++
++- pins:
++	Usage: required
++	Value type: <string-array>
++	Definition: List of gpio pins affected by the properties specified in
++		    this subnode.
++
++		    Valid pins are:
++		      gpio0-gpio149
++		        Supports mux, bias and drive-strength
++
++		      sdc2_clk, sdc2_cmd, sdc2_data
++		        Supports bias and drive-strength
++
++- function:
++	Usage: required
++	Value type: <string>
++	Definition: Specify the alternative function to be configured for the
++		    specified pins. Functions are only valid for gpio pins.
++		    Valid values are:
++
++		    gpio, adsp_ext, agera_pll, atest_char, atest_tsens,
++		    atest_tsens2, atest_usb1, atest_usb10, atest_usb11,
++		    atest_usb12, atest_usb13, atest_usb2, atest_usb20,
++		    atest_usb21, atest_usb22, atest_usb23, audio_ref,
++		    btfm_slimbus, cam_mclk, cci_async, cci_i2c, cci_timer0,
++		    cci_timer1, cci_timer2, cci_timer3, cci_timer4, cri_trng,
++		    cri_trng0, cri_trng1, dbg_out, ddr_bist, ddr_pxi0,
++		    ddr_pxi1, ddr_pxi2, ddr_pxi3, edp_hot, edp_lcd, gcc_gp1,
++		    gcc_gp2, gcc_gp3, jitter_bist, ldo_en, ldo_update,
++		    lpass_slimbus, m_voc, mdp_vsync, mdp_vsync0, mdp_vsync1,
++		    mdp_vsync2, mdp_vsync3, mss_lte, nav_pps, pa_indicator,
++		    pci_e0, pci_e1, phase_flag, pll_bist, pll_bypassnl,
++		    pll_reset, pri_mi2s, pri_mi2s_ws, prng_rosc, qdss_cti,
++		    qdss, qlink_enable, qlink_request, qua_mi2s, qup0, qup1,
++		    qup10, qup11, qup12, qup13, qup14, qup15, qup2, qup3, qup4,
++		    qup5, qup6, qup7, qup8, qup9, qup_l4, qup_l5, qup_l6,
++		    qspi_clk, qspi_cs, qspi_data, sd_write, sdc4_clk, sdc4_cmd,
++		    sdc4_data, sec_mi2s, sp_cmu, spkr_i2s, ter_mi2s, tgu_ch0,
++		    tgu_ch1, tgu_ch2, tgu_ch3, tsense_pwm1, tsense_pwm2,
++		    tsif1_clk, tsif1_data, tsif1_en, tsif1_error, tsif1_sync,
++		    tsif2_clk, tsif2_data, tsif2_en, tsif2_error, tsif2_sync,
++		    uim1_clk, uim1_data, uim1_present, uim1_reset, uim2_clk,
++		    uim2_data, uim2_present, uim2_reset, uim_batt, usb_phy,
++		    vfr_1, vsense_trigger, wlan1_adc0, wlan1_adc1, wlan2_adc0,
++		    wlan2_adc1,
++
++- bias-disable:
++	Usage: optional
++	Value type: <none>
++	Definition: The specified pins should be configued as no pull.
++
++- bias-pull-down:
++	Usage: optional
++	Value type: <none>
++	Definition: The specified pins should be configued as pull down.
++
++- bias-pull-up:
++	Usage: optional
++	Value type: <none>
++	Definition: The specified pins should be configued as pull up.
++
++- output-high:
++	Usage: optional
++	Value type: <none>
++	Definition: The specified pins are configured in output mode, driven
++		    high.
++		    Not valid for sdc pins.
++
++- output-low:
++	Usage: optional
++	Value type: <none>
++	Definition: The specified pins are configured in output mode, driven
++		    low.
++		    Not valid for sdc pins.
++
++- drive-strength:
++	Usage: optional
++	Value type: <u32>
++	Definition: Selects the drive strength for the specified pins, in mA.
++		    Valid values are: 2, 4, 6, 8, 10, 12, 14 and 16
++
++Example:
++
++	tlmm: pinctrl@03400000 {
++		compatible = "qcom,sdm845-pinctrl";
++		reg = <0x03400000 0xc00000>;
++		interrupts = <GIC_SPI 208 0>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++
++		qup9_active: qup9-active {
++			mux {
++				pins = "gpio4", "gpio5";
++				function = "qup9";
++			};
++
++			config {
++				pins = "gpio4", "gpio5";
++				drive-strength = <2>;
++				bias-disable;
++			};
++		};
++	};
+-- 
+2.15.0
 
 --
-Stefan
-
->    In file included from drivers/pinctrl/freescale/pinctrl-imx6ul.c:19:0:
->    drivers/pinctrl/freescale/pinctrl-imx.h:119:5: note: expected
-> 'struct imx_pinctrl_soc_info *' but argument is of type 'const struct
-> imx_pinctrl_soc_info *'
->     int imx_pinctrl_probe(struct platform_device *pdev,
->         ^~~~~~~~~~~~~~~~~
-> 
-> vim +343 drivers/pinctrl/freescale/pinctrl-imx6ul.c
-> 
->    334
->    335	static int imx6ul_pinctrl_probe(struct platform_device *pdev)
->    336	{
->    337		const struct imx_pinctrl_soc_info *pinctrl_info;
->    338
->    339		pinctrl_info = of_device_get_match_data(&pdev->dev);
->    340		if (!pinctrl_info)
->    341			return -ENODEV;
->    342
->  > 343		return imx_pinctrl_probe(pdev, pinctrl_info);
->    344	}
->    345
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
