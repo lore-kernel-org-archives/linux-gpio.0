@@ -1,36 +1,67 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: Add a ngpios-ranges property
-Date: Thu, 11 Jan 2018 19:56:01 +0000
-Message-ID: <CACxGe6uJNEeDno4w84fCXQ103dKKysy+dyEvV2=QrL5YHNrEtQ@mail.gmail.com>
-References: <20180110015848.11480-1-sboyd@codeaurora.org> <20180110015848.11480-3-sboyd@codeaurora.org>
- <CACRpkdaN6vmV4L4U76DvD5BN+j1RYCQakTysA+GGPdT8Chc-iw@mail.gmail.com>
- <CACxGe6vA652LCosMc+AsQ2Gb_mgiApx+Gxu9judXnO_p3AFcsw@mail.gmail.com> <73078b7c-c3dd-0927-a82a-fb9369f5b576@codeaurora.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/7] pinctrl: sunxi: add support for the Allwinner H6
+ main pin controller
+Date: Thu, 11 Jan 2018 14:24:23 -0600
+Message-ID: <20180111202423.xslkd7nbejkqvoz6@rob-hp-laptop>
+References: <20180106042326.46519-1-icenowy@aosc.io>
+ <20180106042326.46519-3-icenowy@aosc.io>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <73078b7c-c3dd-0927-a82a-fb9369f5b576@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:37670 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932516AbeAKUYZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jan 2018 15:24:25 -0500
+Content-Disposition: inline
+In-Reply-To: <20180106042326.46519-3-icenowy@aosc.io>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
 
-On Thu, Jan 11, 2018 at 4:36 PM, Timur Tabi <timur@codeaurora.org> wrote:
-> On 01/11/2018 10:33 AM, Grant Likely wrote:
->>
->> What level of access control is implemented here? Is there access
->> control for each GPIO individually, or is it done by banks of GPIOs?
->> Just asking to make sure I understand the problem domain.
->
->
-> On our ACPI system, it's specific GPIOs.  Each GPIO is in its own 64k page,
-> which is what allows us to block specific ones.
+On Sat, Jan 06, 2018 at 12:23:22PM +0800, Icenowy Zheng wrote:
+> The Allwinner H6 SoC has two pin controllers, one main controller
+> (called CPUX-PORT in user manual) and one controller in CPUs power
+> domain (called CPUS-PORT in user manual).
+> 
+> This commit introduces support for the main pin controller on H6.
+> 
+> The pin bank A and B are not wired out and hidden from the SoC's
+> documents, however it's shown that the "ATE" (an AC200 chip
+> co-packaged with the H6 die) is connected to the main SoC die via these
+> pin banks. The information about these banks is just copied from the BSP
+> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
+> format.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   4 +-
+>  drivers/pinctrl/sunxi/Kconfig                      |   4 +
+>  drivers/pinctrl/sunxi/Makefile                     |   1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c          | 679 +++++++++++++++++++++
+>  4 files changed, 687 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+> index 09789fdfa749..4523e658b9f2 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+> @@ -27,6 +27,7 @@ Required properties:
+>    "allwinner,sun50i-a64-pinctrl"
+>    "allwinner,sun50i-a64-r-pinctrl"
+>    "allwinner,sun50i-h5-pinctrl"
+> +  "allwinner,sun50i-h6-pinctrl"
+>    "nextthing,gr8-pinctrl"
+>  
+>  - reg: Should contain the register physical address and length for the
+> @@ -39,7 +40,8 @@ Required properties:
+>  
+>  Note: For backward compatibility reasons, the hosc and losc clocks are only
+>  required if you need to use the optional input-debounce property. Any new
+> -device tree should set them.
+> +device tree should set them. For the pin controllers on Allwinner H6 SoC,
+> +there's no APB bus gate, and the "apb" clock should be omitted.
 
-Okay, thanks.
+This should be with the clocks prop definition.
 
-g.
-
->
-> --
-> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-> Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-> Code Aurora Forum, a Linux Foundation Collaborative Project.
+Rob
