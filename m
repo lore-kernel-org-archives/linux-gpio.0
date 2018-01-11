@@ -1,44 +1,122 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fix for v4.15
-Date: Thu, 11 Jan 2018 11:02:36 +0100
-Message-ID: <CACRpkdb=aogLETpR_17533Vrx=r2mMnBrdZpKmaFXzLvnWxYXQ@mail.gmail.com>
+From: Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
+ controllers without bus gate
+Date: Thu, 11 Jan 2018 10:08:19 +0000
+Message-ID: <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
+References: <20180106042326.46519-1-icenowy@aosc.io>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180106042326.46519-1-icenowy@aosc.io>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-this is hopefully the last GPIO fix for v4.15. The bug was
-created by an especially sloppy subsystem maintainer.
+On 06/01/18 04:23, Icenowy Zheng wrote:
+> The Allwinner H6 pin controllers (both the main one and the CPUs one)
+> have no bus gate clocks.
+> 
+> Add support for this kind of pin controllers.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
+>  2 files changed, 21 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> index 4b6cb25bc796..68cd505679d9 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
+>  	unsigned int hosc_div, losc_div;
+>  	struct clk *hosc, *losc;
+>  	u8 div, src;
+> -	int i, ret;
+> +	int i, ret, clk_count;
+> +
+> +	if (pctl->desc->without_bus_gate)
+> +		clk_count = 2;
+> +	else
+> +		clk_count = 3;
+>  
+>  	/* Deal with old DTs that didn't have the oscillators */
+>  	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
+> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+>  			goto gpiochip_error;
+>  	}
+>  
+> -	clk = devm_clk_get(&pdev->dev, NULL);
+> -	if (IS_ERR(clk)) {
+> -		ret = PTR_ERR(clk);
+> -		goto gpiochip_error;
+> -	}
+> +	if (!desc->without_bus_gate) {
 
-Yours,
-Linus Walleij
+Do we really need explicit support for that case?
+Can't we have something that works automatically?
 
-The following changes since commit b2cd1df66037e7c4697c7e40496bf7e4a5e16a2d:
+if (node has clock-names property)		(A)
+	use clocks as enumerated and named there
+else if (node has one clock reference)		(B)
+	use this as gate clock, no debounce support
+else if (node has no clock property at all)	(C)
+	no gate clock needed, no debounce support
 
-  Linux 4.15-rc7 (2018-01-07 14:22:41 -0800)
+On top of that we should add the clock-names property to all DTs, even
+for those with only a "apb" clock. Shouldn't hurt existing kernels.
+Possibly even add debounce support for those on the way, if applicable.
 
-are available in the Git repository at:
+So we would just support case (B) and (C) for legacy reasons.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.15-4
+Does that make sense?
 
-for you to fetch changes up to 1e77fc82110ac36febf46c1e2782f504f7d23099:
+Cheers,
+Andre.
 
-  gpio: Add missing open drain/source handling to
-gpiod_set_value_cansleep() (2018-01-10 14:17:17 +0100)
-
-----------------------------------------------------------------
-GPIO fix for v4.15: fix a raw vs elaborate GPIO descriptor bug
-introduced by yours truly.
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      gpio: Add missing open drain/source handling to gpiod_set_value_cansleep()
-
- drivers/gpio/gpiolib.c | 35 +++++++++++++++++++++++------------
- 1 file changed, 23 insertions(+), 12 deletions(-)
+> +		clk = devm_clk_get(&pdev->dev, NULL);
+> +		if (IS_ERR(clk)) {
+> +			ret = PTR_ERR(clk);
+> +			goto gpiochip_error;
+> +		}
+>  
+> -	ret = clk_prepare_enable(clk);
+> -	if (ret)
+> -		goto gpiochip_error;
+> +		ret = clk_prepare_enable(clk);
+> +		if (ret)
+> +			goto gpiochip_error;
+> +	} else {
+> +		clk = NULL;
+> +	}
+>  
+>  	pctl->irq = devm_kcalloc(&pdev->dev,
+>  				 pctl->desc->irq_banks,
+> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+>  	return 0;
+>  
+>  clk_error:
+> -	clk_disable_unprepare(clk);
+> +	if (clk)
+> +		clk_disable_unprepare(clk);
+>  gpiochip_error:
+>  	gpiochip_remove(pctl->chip);
+>  	return ret;
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> index 11b128f54ed2..ccb6230f0bb5 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
+>  	unsigned			irq_bank_base;
+>  	bool				irq_read_needs_mux;
+>  	bool				disable_strict_mode;
+> +	bool				without_bus_gate;
+>  };
+>  
+>  struct sunxi_pinctrl_function {
+> 
