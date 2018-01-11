@@ -1,60 +1,60 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: winbond: fix ISA_BUS_API dependency
-Date: Thu, 11 Jan 2018 10:18:56 +0100
-Message-ID: <CACRpkdZwigBVA04=XZNfU72AseRW8DFWsqm2of5Wv7YVpoCMOA@mail.gmail.com>
-References: <20180111083600.4121805-1-arnd@arndb.de>
+Subject: Re: [pinctrl:devel 63/65] drivers/pinctrl/freescale/pinctrl-imx6ul.c:343:33:
+ warning: passing argument 2 of 'imx_pinctrl_probe' discards 'const' qualifier
+ from pointer target type
+Date: Thu, 11 Jan 2018 10:21:36 +0100
+Message-ID: <CACRpkdYiKcm+p1xA18PBMOssMmpKnqAjmhqnrd8sZz23aiMBqw@mail.gmail.com>
+References: <201801100031.ehyAIs9l%fengguang.wu@intel.com> <59dc10a601670bf18fbcd4d39d685c81@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180111083600.4121805-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Guenter Roeck <linux@roeck-us.net>, "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:43157 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932787AbeAKJVh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jan 2018 04:21:37 -0500
+Received: by mail-qt0-f193.google.com with SMTP id s3so988418qtb.10
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Jan 2018 01:21:37 -0800 (PST)
+In-Reply-To: <59dc10a601670bf18fbcd4d39d685c81@agner.ch>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: Bai Ping <ping.bai@nxp.com>, kbuild-all@01.org, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>, kbuild test robot <fengguang.wu@intel.com>
 
-On Thu, Jan 11, 2018 at 9:35 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Wed, Jan 10, 2018 at 7:11 PM, Stefan Agner <stefan@agner.ch> wrote:
 
-> The newly added GPIO driver for winbond chipsets causes a
-> circular dependency warning in Kconfig:
+> Hi Linus,
 >
-> drivers/gpio/Kconfig:13:error: recursive dependency detected!
-> drivers/gpio/Kconfig:13:        symbol GPIOLIB is selected by STX104
-> drivers/iio/adc/Kconfig:699:    symbol STX104 depends on ISA_BUS_API
-> arch/Kconfig:830:       symbol ISA_BUS_API is selected by GPIO_WINBOND
-> drivers/gpio/Kconfig:701:       symbol GPIO_WINBOND depends on GPIOLIB
+> On 2018-01-09 17:40, kbuild test robot wrote:
+>> tree:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+>> devel
+>> head:   a3a093ae02e2ae81499ad9e78516dccd72906c25
+>> commit: ba33f4f42e968854d8367fc4e55b07f835c55832 [63/65] pinctrl:
+>> imx6ul: add IOMUXC SNVS pinctrl driver for i.MX 6ULL
+>> config: arm-multi_v7_defconfig (attached as .config)
+>> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+>> reproduce:
+>>         wget
+>> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+>> -O ~/bin/make.cross
+>>         chmod +x ~/bin/make.cross
+>>         git checkout ba33f4f42e968854d8367fc4e55b07f835c55832
+>>         # save the attached .config to linux build tree
+>>         make.cross ARCH=arm
+>>
+>> All warnings (new ones prefixed by >>):
+>>
+>>    drivers/pinctrl/freescale/pinctrl-imx6ul.c: In function
+>> 'imx6ul_pinctrl_probe':
+>>>> drivers/pinctrl/freescale/pinctrl-imx6ul.c:343:33: warning: passing argument 2 of 'imx_pinctrl_probe' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+>>      return imx_pinctrl_probe(pdev, pinctrl_info);
+>>                                     ^~~~~~~~~~~~
 >
-> The underlying problem is that ISA_BUS_API is not meant to be selected by
-> device drivers, instead it is provided by the architectures that support
-> ISA add-on card devices, or in case of x86 have this explicitly enabled.
 >
-> This particular driver appears to be different from the other ISA_BUS_API
-> based drivers, in that it is not normally an add-on card (ISA or PC104)
-> but instead is an LPC-attached component on the mainboard. We already
-> support other functionality provided by this chip, at least
-> drivers/watchdog/w83627hf_wdt.c and drivers/hwmon/w83627ehf.c, plus
-> there is a discovery function for this hardware in
-> drivers/parport/parport_pc.c.
->
-> If we want to use this driver without having to enable CONFIG_EXPERT,
-> it might be better to not use the isa_bus_type for it, but rather
-> turn it into a platform_driver, acpi_driver or add an MFD for it that
-> is shared with the wdt and hwmon portions and does the probing.
->
-> For now, this patch fixes the dependency by changing 'select' into
-> 'depends on'.
->
-> Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Fixes: a0d65009411c ("gpio: winbond: Add driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> I think this happened because you only applied patch 5 of the imx
+> constify patchset, is that correct?
 
-I've tentatively applied this patch so we don't break the builds.
-
-We had a bunch of discussion about this already ... I guess we
-need to go at it again, waiting for comments from Maciej and
-William.
+I guess... I'm looking it over.
 
 Yours,
 Linus Walleij
