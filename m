@@ -1,47 +1,155 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH] gpio: winbond: fix ISA_BUS_API dependency
-Date: Thu, 11 Jan 2018 08:00:45 -0500
-Message-ID: <20180111130045.GA23562@sophia>
-References: <20180111083600.4121805-1-arnd@arndb.de>
+From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Subject: Re: [PATCH 1/7] pinctrl: sunxi: add support for pin
+ controllers without bus gate
+Date: Thu, 11 Jan 2018 21:21:06 +0800
+Message-ID: <3A97A26E-0774-4279-B7B9-8312225E2C72@aosc.io>
+References: <20180106042326.46519-1-icenowy@aosc.io> <ef82983f-6f91-46c2-1f67-7d4efc10c905@arm.com>
+Reply-To: icenowy-h8G6r0blFSE@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:43300 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933141AbeAKNAx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jan 2018 08:00:53 -0500
-Content-Disposition: inline
-In-Reply-To: <20180111083600.4121805-1-arnd@arndb.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBDS6XAN6ZADRB46J3XJAKGQEONWAXIQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <ef82983f-6f91-46c2-1f67-7d4efc10c905-5wv7dgnIgG8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Guenter Roeck <linux@roeck-us.net>, "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jan 11, 2018 at 09:35:15AM +0100, Arnd Bergmann wrote:
->This particular driver appears to be different from the other ISA_BUS_API
->based drivers, in that it is not normally an add-on card (ISA or PC104)
->but instead is an LPC-attached component on the mainboard. We already
->support other functionality provided by this chip, at least
->drivers/watchdog/w83627hf_wdt.c and drivers/hwmon/w83627ehf.c, plus
->there is a discovery function for this hardware in
->drivers/parport/parport_pc.c.
+
+
+=E4=BA=8E 2018=E5=B9=B41=E6=9C=8811=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=887:=
+48:40, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> =E5=86=99=E5=88=B0:
+>Hi,
 >
->If we want to use this driver without having to enable CONFIG_EXPERT,
->it might be better to not use the isa_bus_type for it, but rather
->turn it into a platform_driver, acpi_driver or add an MFD for it that
->is shared with the wdt and hwmon portions and does the probing.
+>another take to avoid this patch at all, I just remembered this from an
+>IRC discussion before:
+>
+>On 06/01/18 04:23, Icenowy Zheng wrote:
+>> The Allwinner H6 pin controllers (both the main one and the CPUs one)
+>> have no bus gate clocks.
+>
+>I don't think this is true. The pin controller *needs* an APB clock,
+>it's just not gate-able or not exposed or documented.
+>The "system bus tree" on page 90 in the manual shows that the "GPIO"
+>block is located on the APB1 bus.
+>So can't we just reference this apb clock directly? That would be much
+>cleaner, "more" correct and require less changes: "The best patch is no
+>patch":
 
-I think there is some merit to reinvestigate an MFD driver at a later
-point; Super I/O chips by their design typically control various
-multiple devices, which I believe fits in well with the MFD paradigm.
-Although other existing Super I/O drivers in the kernel do not make use
-of MFD, this doesn't necessarily mean it is not apt -- it may be
-appropriate to refactor those drivers as well to take advantage of MFD.
+I can accept this. (In fact I have considered this, but
+I don't dare to directly use bus clock in a device, as it's not
+exported before.
 
-As far as this particular patch is concerned however, I'm going to
-suggest waiting for the ISA_BUS_API Kconfig fixes
-((https://patchwork.ozlabs.org/project/linux-gpio/list/?series=20657)
-to be pulled-in; applying this patch now will just require a revert
-later once the patchset makes it into the tree.
+Maxime, Chen-Yu, can you agree the following code?
 
-William Breathitt Gray
+>
+>	clocks =3D <&ccu APB1>, <&osc24M>, <&osc32k>;
+>	/* or whatever this APB clock is actually called. */
+>	clock-names =3D "apb", "hosc", "losc";
+>
+>Cheers,
+>Andre.
+>
+>>=20
+>> Add support for this kind of pin controllers.
+>>=20
+>> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+>> ---
+>>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30
+>++++++++++++++++++++----------
+>>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
+>>  2 files changed, 21 insertions(+), 10 deletions(-)
+>>=20
+>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>> index 4b6cb25bc796..68cd505679d9 100644
+>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct
+>sunxi_pinctrl *pctl,
+>>  	unsigned int hosc_div, losc_div;
+>>  	struct clk *hosc, *losc;
+>>  	u8 div, src;
+>> -	int i, ret;
+>> +	int i, ret, clk_count;
+>> +
+>> +	if (pctl->desc->without_bus_gate)
+>> +		clk_count =3D 2;
+>> +	else
+>> +		clk_count =3D 3;
+>> =20
+>>  	/* Deal with old DTs that didn't have the oscillators */
+>>  	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") !=3D
+>3)
+>> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct
+>platform_device *pdev,
+>>  			goto gpiochip_error;
+>>  	}
+>> =20
+>> -	clk =3D devm_clk_get(&pdev->dev, NULL);
+>> -	if (IS_ERR(clk)) {
+>> -		ret =3D PTR_ERR(clk);
+>> -		goto gpiochip_error;
+>> -	}
+>> +	if (!desc->without_bus_gate) {
+>> +		clk =3D devm_clk_get(&pdev->dev, NULL);
+>> +		if (IS_ERR(clk)) {
+>> +			ret =3D PTR_ERR(clk);
+>> +			goto gpiochip_error;
+>> +		}
+>> =20
+>> -	ret =3D clk_prepare_enable(clk);
+>> -	if (ret)
+>> -		goto gpiochip_error;
+>> +		ret =3D clk_prepare_enable(clk);
+>> +		if (ret)
+>> +			goto gpiochip_error;
+>> +	} else {
+>> +		clk =3D NULL;
+>> +	}
+>> =20
+>>  	pctl->irq =3D devm_kcalloc(&pdev->dev,
+>>  				 pctl->desc->irq_banks,
+>> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct
+>platform_device *pdev,
+>>  	return 0;
+>> =20
+>>  clk_error:
+>> -	clk_disable_unprepare(clk);
+>> +	if (clk)
+>> +		clk_disable_unprepare(clk);
+>>  gpiochip_error:
+>>  	gpiochip_remove(pctl->chip);
+>>  	return ret;
+>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>> index 11b128f54ed2..ccb6230f0bb5 100644
+>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+>> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
+>>  	unsigned			irq_bank_base;
+>>  	bool				irq_read_needs_mux;
+>>  	bool				disable_strict_mode;
+>> +	bool				without_bus_gate;
+>>  };
+>> =20
+>>  struct sunxi_pinctrl_function {
+>>=20
+>
+>_______________________________________________
+>linux-arm-kernel mailing list
+>linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+>http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
