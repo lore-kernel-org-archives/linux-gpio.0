@@ -1,158 +1,114 @@
-From: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 1/7] pinctrl: sunxi: add support for pin
- controllers without bus gate
-Date: Thu, 11 Jan 2018 10:23:52 +0000
-Message-ID: <ba83f00d-c1e5-6f6a-84df-04169860c7eb@arm.com>
-References: <20180106042326.46519-1-icenowy@aosc.io>
- <2ca1ee96-8dc6-c80b-ae11-45895d6a8484@arm.com>
- <CAGb2v64E-XOHVJG0Q-uZeCAdxF37QSVCDfiYmqtv7ydvseQwrw@mail.gmail.com>
-Reply-To: andre.przywara-5wv7dgnIgG8@public.gmane.org
+From: =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
+Subject: Re: [PATCH] gpio: Add missing open drain/source handling to =?iso-8859-1?Q?gpiod=5Fset=5Fvalue=5Fcansleep()?=
+Date: Thu, 11 Jan 2018 11:29:42 +0100
+Message-ID: <02320234-166e-42a2-b076-2c08284d3c99@cesnet.cz>
+References: <1515521301-4375-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDNZNK75ZIKRBLXW3TJAKGQEMKXMWKY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <CAGb2v64E-XOHVJG0Q-uZeCAdxF37QSVCDfiYmqtv7ydvseQwrw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-GB
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1515521301-4375-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+On =C3=BAter=C3=BD 9. ledna 2018 19:08:21 CET, Geert Uytterhoeven wrote:
+> Since commit f11a04464ae57e8d ("i2c: gpio: Enable working over slow
+> can_sleep GPIOs"), probing the i2c RTC connected to an i2c-gpio bus on
+> r8a7740/armadillo fails with:
+>
+>     rtc-s35390a 0-0030: error resetting chip
+>     rtc-s35390a: probe of 0-0030 failed with error -5
+>
+> More debug code reveals:
+>
+>     i2c i2c-0: master_xfer[0] R, addr=3D0x30, len=3D1
+>     i2c i2c-0: NAK from device addr 0x30 msg #0
+>     s35390a_get_reg: ret =3D -6
+>
+> Commit 02e479808b5d62f8 ("gpio: Alter semantics of *raw* operations to
+> actually be raw") moved open drain/source handling from
+> gpiod_set_raw_value_commit() to gpiod_set_value(), but forgot to take
+> into account that gpiod_set_value_cansleep() also needs this handling.
+> The i2c protocol mandates that i2c signals are open drain, hence i2c
+> communication fails.
+>
+> Fix this by adding the missing handling to gpiod_set_value_cansleep(),
+> using a new common helper __gpiod_set_value_nocheck().
+>
+> Fixes: 02e479808b5d62f8 ("gpio: Alter semantics of *raw*=20
+> operations to actually be raw")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> The bad gpio commit is in v4.15-rc1 and later.
+> The i2c commit exposing this is not yet upstream, but in i2c/for-next.
+> ---
+>  drivers/gpio/gpiolib.c | 26 ++++++++++++++------------
+>  1 file changed, 14 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 358bce6e798b476c..7761d632a5b0dd20 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2927,6 +2927,18 @@ void gpiod_set_raw_value(struct=20
+> gpio_desc *desc, int value)
+>  }
+>  EXPORT_SYMBOL_GPL(gpiod_set_raw_value);
+> =20
+> +static void __gpiod_set_value_nocheck(struct gpio_desc *desc, int value)
+> +{
+> +=09if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+> +=09=09value =3D !value;
+> +=09if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
+> +=09=09gpio_set_open_drain_value_commit(desc, value);
+> +=09else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
+> +=09=09gpio_set_open_source_value_commit(desc, value);
+> +=09else
+> +=09=09gpiod_set_raw_value_commit(desc, value);
+> +}
+> +
+>  /**
+>   * gpiod_set_value() - assign a gpio's value
+>   * @desc: gpio whose value will be assigned
+> @@ -2941,16 +2953,8 @@ EXPORT_SYMBOL_GPL(gpiod_set_raw_value);
+>  void gpiod_set_value(struct gpio_desc *desc, int value)
+>  {
+>  =09VALIDATE_DESC_VOID(desc);
+> -=09/* Should be using gpiod_set_value_cansleep() */
+>  =09WARN_ON(desc->gdev->chip->can_sleep);
+> -=09if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+> -=09=09value =3D !value;
+> -=09if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
+> -=09=09gpio_set_open_drain_value_commit(desc, value);
+> -=09else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
+> -=09=09gpio_set_open_source_value_commit(desc, value);
+> -=09else
+> -=09=09gpiod_set_raw_value_commit(desc, value);
+> +=09__gpiod_set_value_nocheck(desc, value);
+>  }
+>  EXPORT_SYMBOL_GPL(gpiod_set_value);
+> =20
+> @@ -3277,9 +3281,7 @@ void gpiod_set_value_cansleep(struct=20
+> gpio_desc *desc, int value)
+>  {
+>  =09might_sleep_if(extra_checks);
+>  =09VALIDATE_DESC_VOID(desc);
+> -=09if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+> -=09=09value =3D !value;
+> -=09gpiod_set_raw_value_commit(desc, value);
+> +=09__gpiod_set_value_nocheck(desc, value);
+>  }
+>  EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+> =20
 
-On 11/01/18 10:14, Chen-Yu Tsai wrote:
-> On Thu, Jan 11, 2018 at 6:08 PM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
->> Hi,
->>
->> On 06/01/18 04:23, Icenowy Zheng wrote:
->>> The Allwinner H6 pin controllers (both the main one and the CPUs one)
->>> have no bus gate clocks.
->>>
->>> Add support for this kind of pin controllers.
->>>
->>> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
->>> ---
->>>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
->>>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
->>>  2 files changed, 21 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->>> index 4b6cb25bc796..68cd505679d9 100644
->>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->>> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
->>>       unsigned int hosc_div, losc_div;
->>>       struct clk *hosc, *losc;
->>>       u8 div, src;
->>> -     int i, ret;
->>> +     int i, ret, clk_count;
->>> +
->>> +     if (pctl->desc->without_bus_gate)
->>> +             clk_count = 2;
->>> +     else
->>> +             clk_count = 3;
->>>
->>>       /* Deal with old DTs that didn't have the oscillators */
->>>       if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
->>> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->>>                       goto gpiochip_error;
->>>       }
->>>
->>> -     clk = devm_clk_get(&pdev->dev, NULL);
->>> -     if (IS_ERR(clk)) {
->>> -             ret = PTR_ERR(clk);
->>> -             goto gpiochip_error;
->>> -     }
->>> +     if (!desc->without_bus_gate) {
->>
->> Do we really need explicit support for that case?
->> Can't we have something that works automatically?
->>
->> if (node has clock-names property)              (A)
->>         use clocks as enumerated and named there
-> 
-> You still need to know if the hardware has a bus gate or not.
-> If it's missing, and it's disabled, you end up with unusable
-> hardware.
+I realize that I'm late to the party (a merge request has been sent), but I=20=
 
-Yes. So what? If you have a broken DT, it will not work. Just don't do
-it. I don't understand why we want to defend against this case.
+can confirm that I tested that this still works for a bitbang I2C over GPIO=20=
 
-> Unless you are fully trusting the device tree to be correct.
+pins connected to MAX14830 managed by max310x.
 
-Sorry, but what else do we trust?
-
-> IMHO that makes for hard to find bugs during SoC bringup.
-
-I am not sure if that is really an issue. I would expect people doing
-SoC bringup to be able to cope with those kinds of problems.
+Tested-By: Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz>
 
 Cheers,
-Andre.
-
-
-> 
-> ChenYu
-> 
->> else if (node has one clock reference)          (B)
->>         use this as gate clock, no debounce support
->> else if (node has no clock property at all)     (C)
->>         no gate clock needed, no debounce support
->>
->> On top of that we should add the clock-names property to all DTs, even
->> for those with only a "apb" clock. Shouldn't hurt existing kernels.
->> Possibly even add debounce support for those on the way, if applicable.
->>
->> So we would just support case (B) and (C) for legacy reasons.
->>
->> Does that make sense?
->>
->> Cheers,
->> Andre.
->>
->>> +             clk = devm_clk_get(&pdev->dev, NULL);
->>> +             if (IS_ERR(clk)) {
->>> +                     ret = PTR_ERR(clk);
->>> +                     goto gpiochip_error;
->>> +             }
->>>
->>> -     ret = clk_prepare_enable(clk);
->>> -     if (ret)
->>> -             goto gpiochip_error;
->>> +             ret = clk_prepare_enable(clk);
->>> +             if (ret)
->>> +                     goto gpiochip_error;
->>> +     } else {
->>> +             clk = NULL;
->>> +     }
->>>
->>>       pctl->irq = devm_kcalloc(&pdev->dev,
->>>                                pctl->desc->irq_banks,
->>> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->>>       return 0;
->>>
->>>  clk_error:
->>> -     clk_disable_unprepare(clk);
->>> +     if (clk)
->>> +             clk_disable_unprepare(clk);
->>>  gpiochip_error:
->>>       gpiochip_remove(pctl->chip);
->>>       return ret;
->>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->>> index 11b128f54ed2..ccb6230f0bb5 100644
->>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
->>> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
->>>       unsigned                        irq_bank_base;
->>>       bool                            irq_read_needs_mux;
->>>       bool                            disable_strict_mode;
->>> +     bool                            without_bus_gate;
->>>  };
->>>
->>>  struct sunxi_pinctrl_function {
->>>
+Jan
