@@ -1,123 +1,78 @@
-From: Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [linux-sunxi] [PATCH 1/7] pinctrl: sunxi: add support for pin
- controllers without bus gate
-Date: Thu, 11 Jan 2018 11:48:40 +0000
-Message-ID: <ef82983f-6f91-46c2-1f67-7d4efc10c905@arm.com>
-References: <20180106042326.46519-1-icenowy@aosc.io>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [pinctrl:devel 63/65]
+ drivers/pinctrl/freescale/pinctrl-imx6ul.c:343:33: warning: passing argument 2
+ of 'imx_pinctrl_probe' discards 'const' qualifier from pointer target type
+Date: Thu, 11 Jan 2018 13:27:13 +0100
+Message-ID: <bf63b551282772456e40645df318479f@agner.ch>
+References: <201801100031.ehyAIs9l%fengguang.wu@intel.com>
+ <59dc10a601670bf18fbcd4d39d685c81@agner.ch>
+ <CACRpkdbtkzLWccs_D=xTh=0LTt9xs=hGUERLafrrhcEHK3H88Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59302 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933688AbeAKLs3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 11 Jan 2018 06:48:29 -0500
-In-Reply-To: <20180106042326.46519-1-icenowy@aosc.io>
-Content-Language: en-GB
+Received: from mail.kmu-office.ch ([178.209.48.109]:56636 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932996AbeAKM1e (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jan 2018 07:27:34 -0500
+In-Reply-To: <CACRpkdbtkzLWccs_D=xTh=0LTt9xs=hGUERLafrrhcEHK3H88Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bai Ping <ping.bai@nxp.com>, kbuild-all@01.org, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>, kbuild test robot <fengguang.wu@intel.com>
 
-Hi,
-
-another take to avoid this patch at all, I just remembered this from an
-IRC discussion before:
-
-On 06/01/18 04:23, Icenowy Zheng wrote:
-> The Allwinner H6 pin controllers (both the main one and the CPUs one)
-> have no bus gate clocks.
-
-I don't think this is true. The pin controller *needs* an APB clock,
-it's just not gate-able or not exposed or documented.
-The "system bus tree" on page 90 in the manual shows that the "GPIO"
-block is located on the APB1 bus.
-So can't we just reference this apb clock directly? That would be much
-cleaner, "more" correct and require less changes: "The best patch is no
-patch":
-
-	clocks = <&ccu APB1>, <&osc24M>, <&osc32k>;
-	/* or whatever this APB clock is actually called. */
-	clock-names = "apb", "hosc", "losc";
-
-Cheers,
-Andre.
-
+On 2018-01-11 10:32, Linus Walleij wrote:
+> On Wed, Jan 10, 2018 at 7:11 PM, Stefan Agner <stefan@agner.ch> wrote:
+>> Hi Linus,
+>>
+>> On 2018-01-09 17:40, kbuild test robot wrote:
+>>> tree:
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+>>> devel
+>>> head:   a3a093ae02e2ae81499ad9e78516dccd72906c25
+>>> commit: ba33f4f42e968854d8367fc4e55b07f835c55832 [63/65] pinctrl:
+>>> imx6ul: add IOMUXC SNVS pinctrl driver for i.MX 6ULL
+>>> config: arm-multi_v7_defconfig (attached as .config)
+>>> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+>>> reproduce:
+>>>         wget
+>>> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+>>> -O ~/bin/make.cross
+>>>         chmod +x ~/bin/make.cross
+>>>         git checkout ba33f4f42e968854d8367fc4e55b07f835c55832
+>>>         # save the attached .config to linux build tree
+>>>         make.cross ARCH=arm
+>>>
+>>> All warnings (new ones prefixed by >>):
+>>>
+>>>    drivers/pinctrl/freescale/pinctrl-imx6ul.c: In function
+>>> 'imx6ul_pinctrl_probe':
+>>>>> drivers/pinctrl/freescale/pinctrl-imx6ul.c:343:33: warning: passing argument 2 of 'imx_pinctrl_probe' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+>>>      return imx_pinctrl_probe(pdev, pinctrl_info);
+>>>                                     ^~~~~~~~~~~~
+>>
+>>
+>> I think this happened because you only applied patch 5 of the imx
+>> constify patchset, is that correct?
 > 
-> Add support for this kind of pin controllers.
+> I have applied patches 1-4 now... patch 5 I can't even find in
+> my inbox :(
 > 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 30 ++++++++++++++++++++----------
->  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 +
->  2 files changed, 21 insertions(+), 10 deletions(-)
+> So I guess not.
 > 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> index 4b6cb25bc796..68cd505679d9 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -1182,7 +1182,12 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
->  	unsigned int hosc_div, losc_div;
->  	struct clk *hosc, *losc;
->  	u8 div, src;
-> -	int i, ret;
-> +	int i, ret, clk_count;
-> +
-> +	if (pctl->desc->without_bus_gate)
-> +		clk_count = 2;
-> +	else
-> +		clk_count = 3;
->  
->  	/* Deal with old DTs that didn't have the oscillators */
->  	if (of_count_phandle_with_args(node, "clocks", "#clock-cells") != 3)
-> @@ -1360,15 +1365,19 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->  			goto gpiochip_error;
->  	}
->  
-> -	clk = devm_clk_get(&pdev->dev, NULL);
-> -	if (IS_ERR(clk)) {
-> -		ret = PTR_ERR(clk);
-> -		goto gpiochip_error;
-> -	}
-> +	if (!desc->without_bus_gate) {
-> +		clk = devm_clk_get(&pdev->dev, NULL);
-> +		if (IS_ERR(clk)) {
-> +			ret = PTR_ERR(clk);
-> +			goto gpiochip_error;
-> +		}
->  
-> -	ret = clk_prepare_enable(clk);
-> -	if (ret)
-> -		goto gpiochip_error;
-> +		ret = clk_prepare_enable(clk);
-> +		if (ret)
-> +			goto gpiochip_error;
-> +	} else {
-> +		clk = NULL;
-> +	}
->  
->  	pctl->irq = devm_kcalloc(&pdev->dev,
->  				 pctl->desc->irq_banks,
-> @@ -1425,7 +1434,8 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->  	return 0;
->  
->  clk_error:
-> -	clk_disable_unprepare(clk);
-> +	if (clk)
-> +		clk_disable_unprepare(clk);
->  gpiochip_error:
->  	gpiochip_remove(pctl->chip);
->  	return ret;
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> index 11b128f54ed2..ccb6230f0bb5 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> @@ -113,6 +113,7 @@ struct sunxi_pinctrl_desc {
->  	unsigned			irq_bank_base;
->  	bool				irq_read_needs_mux;
->  	bool				disable_strict_mode;
-> +	bool				without_bus_gate;
->  };
->  
->  struct sunxi_pinctrl_function {
-> 
+> Can you have a look at my devel branch and send or resend a
+> patch if something is still wrong?
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=devel
+
+All patches are applied now. Note that Patch 5 ("pinctrl: imx6ul: add
+IOMUXC SNVS pinctrl driver for i.MX 6ULL") is not authored by me, so
+that is a bit confusing when looking at the git history.
+
+The above warning has been triggered because patch 5 has been applied
+before patch 1. I guess for strict bisectability it should be
+reordered.. ("pinctrl: imx6ul: add IOMUXC SNVS pinctrl driver for i.MX
+6ULL" should be after "pinctrl: imx: use struct imx_pinctrl_soc_info as
+a const").
+
+--
+Stefan
