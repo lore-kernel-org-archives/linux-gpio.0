@@ -2,18 +2,18 @@ From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [pinctrl:devel 63/65] drivers/pinctrl/freescale/pinctrl-imx6ul.c:343:33:
  warning: passing argument 2 of 'imx_pinctrl_probe' discards 'const' qualifier
  from pointer target type
-Date: Thu, 11 Jan 2018 10:21:36 +0100
-Message-ID: <CACRpkdYiKcm+p1xA18PBMOssMmpKnqAjmhqnrd8sZz23aiMBqw@mail.gmail.com>
+Date: Thu, 11 Jan 2018 10:32:22 +0100
+Message-ID: <CACRpkdbtkzLWccs_D=xTh=0LTt9xs=hGUERLafrrhcEHK3H88Q@mail.gmail.com>
 References: <201801100031.ehyAIs9l%fengguang.wu@intel.com> <59dc10a601670bf18fbcd4d39d685c81@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:43157 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932787AbeAKJVh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jan 2018 04:21:37 -0500
-Received: by mail-qt0-f193.google.com with SMTP id s3so988418qtb.10
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Jan 2018 01:21:37 -0800 (PST)
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:46919 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754762AbeAKJcY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jan 2018 04:32:24 -0500
+Received: by mail-qt0-f194.google.com with SMTP id r39so1017556qtr.13
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Jan 2018 01:32:23 -0800 (PST)
 In-Reply-To: <59dc10a601670bf18fbcd4d39d685c81@agner.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -21,7 +21,6 @@ To: Stefan Agner <stefan@agner.ch>
 Cc: Bai Ping <ping.bai@nxp.com>, kbuild-all@01.org, linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>, kbuild test robot <fengguang.wu@intel.com>
 
 On Wed, Jan 10, 2018 at 7:11 PM, Stefan Agner <stefan@agner.ch> wrote:
-
 > Hi Linus,
 >
 > On 2018-01-09 17:40, kbuild test robot wrote:
@@ -54,7 +53,14 @@ On Wed, Jan 10, 2018 at 7:11 PM, Stefan Agner <stefan@agner.ch> wrote:
 > I think this happened because you only applied patch 5 of the imx
 > constify patchset, is that correct?
 
-I guess... I'm looking it over.
+I have applied patches 1-4 now... patch 5 I can't even find in
+my inbox :(
+
+So I guess not.
+
+Can you have a look at my devel branch and send or resend a
+patch if something is still wrong?
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=devel
 
 Yours,
 Linus Walleij
