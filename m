@@ -1,32 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] gpio: thunderx: fix error return code in thunderx_gpio_probe()
-Date: Thu, 11 Jan 2018 10:50:15 +0100
-Message-ID: <CACRpkdbACSBoj8HzTFw1z8WiMSeerSe6mkBxyk0KYOTrtTXEtQ@mail.gmail.com>
-References: <1515595033-83888-1-git-send-email-weiyongjun1@huawei.com>
+Subject: [GIT PULL] GPIO fix for v4.15
+Date: Thu, 11 Jan 2018 11:02:36 +0100
+Message-ID: <CACRpkdb=aogLETpR_17533Vrx=r2mMnBrdZpKmaFXzLvnWxYXQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:34779 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754677AbeAKJuQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jan 2018 04:50:16 -0500
-Received: by mail-qk0-f193.google.com with SMTP id b76so3542098qkc.1
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Jan 2018 01:50:16 -0800 (PST)
-In-Reply-To: <1515595033-83888-1-git-send-email-weiyongjun1@huawei.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: David Daney <david.daney@cavium.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 10, 2018 at 3:37 PM, Wei Yongjun <weiyongjun1@huawei.com> wrote:
+Hi Linus,
 
-> Fix to return error code -ENOMEM from the error handling
-> case instead of 0, as done elsewhere in this function.
->
-> Fixes: 5a2a30024d8c ("gpio: Add gpio driver support for ThunderX and OCTEON-TX")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-
-Patch applied with David's ACK.
+this is hopefully the last GPIO fix for v4.15. The bug was
+created by an especially sloppy subsystem maintainer.
 
 Yours,
 Linus Walleij
+
+The following changes since commit b2cd1df66037e7c4697c7e40496bf7e4a5e16a2d:
+
+  Linux 4.15-rc7 (2018-01-07 14:22:41 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.15-4
+
+for you to fetch changes up to 1e77fc82110ac36febf46c1e2782f504f7d23099:
+
+  gpio: Add missing open drain/source handling to
+gpiod_set_value_cansleep() (2018-01-10 14:17:17 +0100)
+
+----------------------------------------------------------------
+GPIO fix for v4.15: fix a raw vs elaborate GPIO descriptor bug
+introduced by yours truly.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      gpio: Add missing open drain/source handling to gpiod_set_value_cansleep()
+
+ drivers/gpio/gpiolib.c | 35 +++++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
