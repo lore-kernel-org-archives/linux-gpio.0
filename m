@@ -1,335 +1,98 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 5/7] clk: sunxi-ng: add support for the Allwinner H6 CCU
-Date: Thu, 11 Jan 2018 14:27:07 -0600
-Message-ID: <20180111202707.wqvwaxxekazlbkc4@rob-hp-laptop>
-References: <20180106044918.47513-1-icenowy@aosc.io>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 1/7] pinctrl: sunxi: add support for pin
+ controllers without bus gate
+Date: Fri, 12 Jan 2018 09:51:34 +0100
+Message-ID: <20180112085134.dcsikciujsxuuwhx@flea.lan>
+References: <20180106042326.46519-1-icenowy@aosc.io>
+ <ef82983f-6f91-46c2-1f67-7d4efc10c905@arm.com>
+ <3A97A26E-0774-4279-B7B9-8312225E2C72@aosc.io>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="sqfzuowjuk7oe46v"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBIPO4HJAKGQEWWPHUOA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Content-Disposition: inline
-In-Reply-To: <20180106044918.47513-1-icenowy-h8G6r0blFSE@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <3A97A26E-0774-4279-B7B9-8312225E2C72-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
 To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Jan 06, 2018 at 12:49:16PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC has a CCU which has been largely rearranged.
-> 
-> Add support for it in the sunxi-ng CCU framework.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> ---
->  .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
->  drivers/clk/sunxi-ng/Kconfig                       |    5 +
->  drivers/clk/sunxi-ng/Makefile                      |    1 +
->  drivers/clk/sunxi-ng/ccu-sun50i-h6.c               | 1206 ++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun50i-h6.h               |   63 +
->  include/dt-bindings/clock/sun50i-h6-ccu.h          |  159 +++
->  include/dt-bindings/reset/sun50i-h6-ccu.h          |  110 ++
->  7 files changed, 1545 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.h
->  create mode 100644 include/dt-bindings/clock/sun50i-h6-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun50i-h6-ccu.h
 
-[...] 
+--sqfzuowjuk7oe46v
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/include/dt-bindings/clock/sun50i-h6-ccu.h b/include/dt-bindings/clock/sun50i-h6-ccu.h
-> new file mode 100644
-> index 000000000000..a2d534d917bb
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sun50i-h6-ccu.h
-> @@ -0,0 +1,159 @@
-> +/*
-> + * Copyright (C) 2017 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This file is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This file is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
+1;5002;0c
+On Thu, Jan 11, 2018 at 09:21:06PM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> =E4=BA=8E 2018=E5=B9=B41=E6=9C=8811=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
+7:48:40, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> =E5=86=99=E5=88=B0:
+> >Hi,
+> >
+> >another take to avoid this patch at all, I just remembered this from an
+> >IRC discussion before:
+> >
+> >On 06/01/18 04:23, Icenowy Zheng wrote:
+> >> The Allwinner H6 pin controllers (both the main one and the CPUs one)
+> >> have no bus gate clocks.
+> >
+> >I don't think this is true. The pin controller *needs* an APB clock,
+> >it's just not gate-able or not exposed or documented.
+> >The "system bus tree" on page 90 in the manual shows that the "GPIO"
+> >block is located on the APB1 bus.
+> >So can't we just reference this apb clock directly? That would be much
+> >cleaner, "more" correct and require less changes: "The best patch is no
+> >patch":
+>=20
+> I can accept this. (In fact I have considered this, but
+> I don't dare to directly use bus clock in a device, as it's not
+> exported before.
+>=20
+> Maxime, Chen-Yu, can you agree the following code?
 
-Use SPDX license tag instead.
+Yes, that works for me.
 
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_SUN50I_H6_H_
-> +#define _DT_BINDINGS_CLK_SUN50I_H6_H_
-> +
-> +#define CLK_PLL_PERIPH0		3
-> +
-> +#define CLK_CPUX		21
-> +
-> +#define CLK_DE			29
-> +#define CLK_BUS_DE		30
-> +#define CLK_DEINTERLACE		31
-> +#define CLK_BUS_DEINTERLACE	32
-> +#define CLK_GPU			33
-> +#define CLK_BUS_GPU		34
-> +#define CLK_CE			35
-> +#define CLK_BUS_CE		36
-> +#define CLK_VE			37
-> +#define CLK_BUS_VE		38
-> +#define CLK_EMCE		39
-> +#define CLK_BUS_EMCE		40
-> +#define CLK_VP9			41
-> +#define CLK_BUS_VP9		42
-> +#define CLK_BUS_DMA		43
-> +#define CLK_BUS_MSGBOX		44
-> +#define CLK_BUS_SPINLOCK	45
-> +#define CLK_BUS_HSTIMER		46
-> +#define CLK_AVS			47
-> +#define CLK_BUS_DBG		48
-> +#define CLK_BUS_PSI		49
-> +#define CLK_BUS_PWM		50
-> +#define CLK_BUS_IOMMU		51
-> +
-> +#define CLK_MBUS_DMA		53
-> +#define CLK_MBUS_VE		54
-> +#define CLK_MBUS_CE		55
-> +#define CLK_MBUS_TS		56
-> +#define CLK_MBUS_NAND		57
-> +#define CLK_MBUS_CSI		58
-> +#define CLK_MBUS_DEINTERLACE	59
-> +
-> +#define CLK_NAND0		61
-> +#define CLK_NAND1		62
-> +#define CLK_BUS_NAND		63
-> +#define CLK_MMC0		64
-> +#define CLK_MMC1		65
-> +#define CLK_MMC2		66
-> +#define CLK_BUS_MMC0		67
-> +#define CLK_BUS_MMC1		68
-> +#define CLK_BUS_MMC2		69
-> +#define CLK_BUS_UART0		70
-> +#define CLK_BUS_UART1		71
-> +#define CLK_BUS_UART2		72
-> +#define CLK_BUS_UART3		73
-> +#define CLK_BUS_I2C0		74
-> +#define CLK_BUS_I2C1		75
-> +#define CLK_BUS_I2C2		76
-> +#define CLK_BUS_I2C3		77
-> +#define CLK_BUS_SCR0		78
-> +#define CLK_BUS_SCR1		79
-> +#define CLK_SPI0		80
-> +#define CLK_SPI1		81
-> +#define CLK_BUS_SPI0		82
-> +#define CLK_BUS_SPI1		83
-> +#define CLK_BUS_EMAC		84
-> +#define CLK_TS			85
-> +#define CLK_BUS_TS		86
-> +#define CLK_IR_TX		87
-> +#define CLK_BUS_IR_TX		88
-> +#define CLK_BUS_THS		89
-> +#define CLK_I2S3		90
-> +#define CLK_I2S0		91
-> +#define CLK_I2S1		92
-> +#define CLK_I2S2		93
-> +#define CLK_BUS_I2S0		94
-> +#define CLK_BUS_I2S1		95
-> +#define CLK_BUS_I2S2		96
-> +#define CLK_BUS_I2S3		97
-> +#define CLK_SPDIF		98
-> +#define CLK_BUS_SPDIF		99
-> +#define CLK_DMIC		100
-> +#define CLK_BUS_DMIC		101
-> +#define CLK_AUDIO_HUB		102
-> +#define CLK_BUS_AUDIO_HUB	103
-> +#define CLK_USB_OHCI0		104
-> +#define CLK_USB_PHY0		105
-> +#define CLK_USB_PHY1		106
-> +#define CLK_USB_OHCI3		107
-> +#define CLK_USB_PHY3		108
-> +#define CLK_USB_HSIC_12M	109
-> +#define CLK_USB_HSIC		110
-> +#define CLK_BUS_OHCI0		111
-> +#define CLK_BUS_OHCI3		112
-> +#define CLK_BUS_EHCI0		113
-> +#define CLK_BUS_XHCI		114
-> +#define CLK_BUS_EHCI3		115
-> +#define CLK_BUS_OTG		116
-> +#define CLK_PCIE_REF_100M	117
-> +#define CLK_PCIE_REF		118
-> +#define CLK_PCIE_REF_OUT	119
-> +#define CLK_PCIE_MAXI		120
-> +#define CLK_PCIE_AUX		121
-> +#define CLK_BUS_PCIE		122
-> +#define CLK_HDMI		123
-> +#define CLK_HDMI_CEC		124
-> +#define CLK_BUS_HDMI		125
-> +#define CLK_BUS_TCON_TOP	126
-> +#define CLK_TCON_LCD0		127
-> +#define CLK_BUS_TCON_LCD0	128
-> +#define CLK_TCON_TV0		129
-> +#define CLK_BUS_TCON_TV0	130
-> +#define CLK_CSI_CCI		131
-> +#define CLK_CSI_TOP		132
-> +#define CLK_CSI_MCLK		133
-> +#define CLK_BUS_CSI		134
-> +#define CLK_HDCP		135
-> +#define CLK_BUS_HDCP		136
-> +
-> +#endif /* _DT_BINDINGS_CLK_SUN50I_H6_H_ */
-> diff --git a/include/dt-bindings/reset/sun50i-h6-ccu.h b/include/dt-bindings/reset/sun50i-h6-ccu.h
-> new file mode 100644
-> index 000000000000..d40ae3bf418f
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/sun50i-h6-ccu.h
-> @@ -0,0 +1,110 @@
-> +/*
-> + * Copyright (C) 2017 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This file is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This file is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
+Maxime
 
-Use SPDX license tag instead.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> + */
-> +
-> +#ifndef _DT_BINDINGS_RESET_SUN50I_H6_H_
-> +#define _DT_BINDINGS_RESET_SUN50I_H6_H_
-> +
-> +#define RST_MBUS		0
-> +#define RST_BUS_DE		1
-> +#define RST_BUS_DEINTERLACE	2
-> +#define RST_BUS_GPU		3
-> +#define RST_BUS_CE		4
-> +#define RST_BUS_VE		5
-> +#define RST_BUS_EMCE		6
-> +#define RST_BUS_VP9		7
-> +#define RST_BUS_DMA		8
-> +#define RST_BUS_MSGBOX		9
-> +#define RST_BUS_SPINLOCK	10
-> +#define RST_BUS_HSTIMER		11
-> +#define RST_BUS_DBG		12
-> +#define RST_BUS_PSI		13
-> +#define RST_BUS_PWM		14
-> +#define RST_BUS_IOMMU		15
-> +#define RST_BUS_DRAM		16
-> +#define RST_BUS_NAND		17
-> +#define RST_BUS_MMC0		18
-> +#define RST_BUS_MMC1		19
-> +#define RST_BUS_MMC2		20
-> +#define RST_BUS_UART0		21
-> +#define RST_BUS_UART1		22
-> +#define RST_BUS_UART2		23
-> +#define RST_BUS_UART3		24
-> +#define RST_BUS_I2C0		25
-> +#define RST_BUS_I2C1		26
-> +#define RST_BUS_I2C2		27
-> +#define RST_BUS_I2C3		28
-> +#define RST_BUS_SCR0		29
-> +#define RST_BUS_SCR1		30
-> +#define RST_BUS_SPI0		31
-> +#define RST_BUS_SPI1		32
-> +#define RST_BUS_EMAC		33
-> +#define RST_BUS_TS		34
-> +#define RST_BUS_IR_TX		35
-> +#define RST_BUS_THS		36
-> +#define RST_BUS_I2S0		37
-> +#define RST_BUS_I2S1		38
-> +#define RST_BUS_I2S2		39
-> +#define RST_BUS_I2S3		40
-> +#define RST_BUS_SPDIF		41
-> +#define RST_BUS_DMIC		42
-> +#define RST_BUS_AUDIO_HUB	43
-> +#define RST_USB_PHY0		44
-> +#define RST_USB_PHY1		45
-> +#define RST_USB_PHY3		46
-> +#define RST_USB_HSIC		47
-> +#define RST_BUS_OHCI0		48
-> +#define RST_BUS_OHCI3		49
-> +#define RST_BUS_EHCI0		50
-> +#define RST_BUS_XHCI		51
-> +#define RST_BUS_EHCI3		52
-> +#define RST_BUS_OTG		53
-> +#define RST_BUS_PCIE		54
-> +#define RST_PCIE_POWERUP	55
-> +#define RST_BUS_HDMI		56
-> +#define RST_BUS_HDMI_SUB	57
-> +#define RST_BUS_TCON_TOP	58
-> +#define RST_BUS_TCON_LCD0	59
-> +#define RST_BUS_TCON_TV0	60
-> +#define RST_BUS_CSI		61
-> +#define RST_BUS_HDCP		62
-> +
-> +#endif /* _DT_BINDINGS_RESET_SUN50I_H6_H_ */
-> -- 
-> 2.14.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
+
+--sqfzuowjuk7oe46v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpYdxUACgkQ0rTAlCFN
+r3QKiw/9Hae+QLluYxYJP3sdeGHTY9+aEY/fvPXv/9YjXAN2a1UKHtvC7d/tciwA
+v5BULn6zZ/Pky/8N3AXttmNcfpjJSFMj7BQCw41dlzWL91RCfCsVet2HEmC1xCrq
+3TRmqWEHflDZiHzbG+SNealqOHh7/Ey7wvPMO8YGB/bxNBWb8HTz2nN7s51zD+RS
+W3pWUSZDUYAw1PZyV9RONZTJkcPdnlUJceockBxlrWlojJ+Ya8XqWL4mNy5ZEzR5
+um6WBGYb7x/mdCmIw+6kWY8OgocNgkdSv5oS+HLxr6Vl0Naz/NEiXFo//iFm0BU8
+Db14SUeEdKbwy53WCpr251Nsu/WnXIxnWkPj9d0Pef+XIxh7gt+OcCQsng4tnQ+H
+zQVXcAuRn8yW7FuIm2Ok9DzZYEikRUC8KpqP0VgWMQovnwkel0gKKq6jTtBdiree
+WE+0h+klY0jdCECIqoySgKh/9GWkSSWTHOJDHvk2XapTDEBbgFww7E7gmKNo4rAi
+sFmGqnoL2/wGA4fOrgPF3w+qjabwxxNaQ9Z9YMiWtVVt81xcKfUVGhS1cfkYUir2
+0NSufc/EACIwwHMNOlYrvP+PPuXPAd6lLwitEL0lRc13zj0s26BWMQrPW+nMWGY2
+SGDuo/nKtHb0a2rloBecsZIT5ZZCN0aigYtt6WSDVQrfEkJob+4=
+=jHXY
+-----END PGP SIGNATURE-----
+
+--sqfzuowjuk7oe46v--
