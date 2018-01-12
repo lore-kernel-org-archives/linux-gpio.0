@@ -1,45 +1,62 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v2] gpio: omap: Give unique labels to each GPIO bank/chip
-Date: Fri, 12 Jan 2018 14:43:37 -0600
-Message-ID: <10eba220-e357-5ec2-5134-6da84873ef6d@ti.com>
-References: <20180102103248.15803-1-linus.walleij@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 3/3] ASoC: Intel - Convert to use
+ acpi_dev_get_first_match_name()
+Date: Fri, 12 Jan 2018 21:01:26 +0000
+Message-ID: <20180112210126.GF21458@sirena.org.uk>
+References: <20180105160935.48588-1-andriy.shevchenko@linux.intel.com>
+ <20180105160935.48588-4-andriy.shevchenko@linux.intel.com>
+ <20180112190312.GD21458@sirena.org.uk>
+ <1515788467.7000.978.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:10275 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964844AbeALUnk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jan 2018 15:43:40 -0500
-In-Reply-To: <20180102103248.15803-1-linus.walleij@linaro.org>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="f5QefDQHtn8hx44O"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1515788467.7000.978.camel@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, linux-omap@vger.kernel.org
 
 
+--f5QefDQHtn8hx44O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 01/02/2018 04:32 AM, Linus Walleij wrote:
-> As we need to add GPIO lookup tables to the OMAP platforms, we
-> need to reference each GPIO chip with a unique label. Use the GPIO
-> base to name each chip, "gpio-0-31", "gpio-32-63" etc.
-> 
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: linux-omap@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Break out errorpath fix to a separate patch.
-> ---
->   drivers/gpio/gpio-omap.c | 7 ++++++-
->   1 file changed, 6 insertions(+), 1 deletion(-)
-> 
+On Fri, Jan 12, 2018 at 10:21:07PM +0200, Andy Shevchenko wrote:
+> On Fri, 2018-01-12 at 19:03 +0000, Mark Brown wrote:
 
-Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> > This doesn't apply against current code (even after pulling Raphael's
+> > pull request) - can you please check and resend?
 
--- 
-regards,
--grygorii
+> It requires Pierre's series #2 [1] to be applied first.
+
+Ugh, I see.  I'm surprised I was getting pushed about applying this when
+it had unreviewed dependencies... =20
+
+> [1]: https://www.spinics.net/lists/alsa-devel/msg72463.html
+
+Please include human readable descriptions of things like commits and
+issues being discussed in e-mail in your mails, this makes them much
+easier for humans to read especially when they have no internet access.
+I do frequently catch up on my mail on flights or while otherwise
+travelling so this is even more pressing for me than just being about
+making things a bit easier to read.
+
+--f5QefDQHtn8hx44O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpZIiUACgkQJNaLcl1U
+h9BJcAf/TNJlUnpDrGh39TKWonEt5nPLKmj4aWwG/CSljhNFArL+p+KhEoz/z40m
+rcp8QUKBDZZXNfOLDTi5RSr+LPiLxv2R76nsgAKgsGoBKyBonADSYJJHbb3x6BVC
+j+EVj4SgOGQWne0S3NwxYhGExZnEK5Z8/0/WptLEJJMx5nN7ABNjAiKatHaeB/jh
+jvGkMDPZtEuoKPftAmaFdonDDZ1uLXwdR7MtV0+jIGRHmnvmovYmmj7SdEaq9cO/
+6VJOudmp5x4coIZFMentmb/T+brtfcv3WzoDG8aPCnMQ3Fv07bhj2hM767X60Fwp
+dLn4a6GwbWD8I0keIbXZN3qeLhfFxQ==
+=NYMe
+-----END PGP SIGNATURE-----
+
+--f5QefDQHtn8hx44O--
