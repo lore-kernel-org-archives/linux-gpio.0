@@ -1,34 +1,46 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 13/14] clk: stm32: Add clk entry for SDMMC2 on stm32F769
-Date: Fri, 12 Jan 2018 10:52:44 -0800
-Message-ID: <20180112185244.GQ28313@codeaurora.org>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com>
- <1515759368-16946-14-git-send-email-patrice.chotard@st.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 3/3] ASoC: Intel - Convert to use
+ acpi_dev_get_first_match_name()
+Date: Fri, 12 Jan 2018 19:03:12 +0000
+Message-ID: <20180112190312.GD21458@sirena.org.uk>
+References: <20180105160935.48588-1-andriy.shevchenko@linux.intel.com>
+ <20180105160935.48588-4-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57150 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965081AbeALSwr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jan 2018 13:52:47 -0500
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cYtjc4pxslFTELvY"
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1515759368-16946-14-git-send-email-patrice.chotard@st.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20180105160935.48588-4-andriy.shevchenko@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: patrice.chotard@st.com
-Cc: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On 01/12, patrice.chotard@st.com wrote:
-> From: Patrice Chotard <patrice.chotard@st.com>
-> 
-> STM32F769 has 2 SDMMC port, add clock entry for the second one.
-> 
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-> ---
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+--cYtjc4pxslFTELvY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Fri, Jan 05, 2018 at 06:09:35PM +0200, Andy Shevchenko wrote:
+> Instead of home grown snd_soc_acpi_find_name_from_hid() use
+> acpi_dev_get_first_match_name().
+
+This doesn't apply against current code (even after pulling Raphael's
+pull request) - can you please check and resend?
+
+--cYtjc4pxslFTELvY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpZBm8ACgkQJNaLcl1U
+h9CZDQf+PiyzQu3xKSmImSpyK7LEbagpUO0JZQm8kWvvlnWsqe3CYPIKo746unXy
+6QYDMeWXoh5Rawvy2k8x7jYcsDBrgx66OEf8GR1oJgoVo5QVJGAwPSb8Z95LIg7B
+oih3vR3xlRIE5fcLMtwyVTuN6edfyIFc/Ku7leZ69NhVvSSEsR/gOvj1JkOW2ak2
+gRRuSjy4WdScnR+t4Rv4trH+ZFf4eQcfjhv/GvDr/XgbrppZ9MBRIvCX7WFM8tM8
+lS7W2CaHIQAeZdSY0C/7w1gREKVoWB3GMwW9Cb804bt8+d53MB6GYhbQ/3Eehsd8
+dOVc//625ub5j1NGjs7y2eDAQsrt+Q==
+=OFbF
+-----END PGP SIGNATURE-----
+
+--cYtjc4pxslFTELvY--
