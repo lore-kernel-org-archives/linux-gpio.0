@@ -1,46 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 3/3] ASoC: Intel - Convert to use
- acpi_dev_get_first_match_name()
-Date: Fri, 12 Jan 2018 19:03:12 +0000
-Message-ID: <20180112190312.GD21458@sirena.org.uk>
-References: <20180105160935.48588-1-andriy.shevchenko@linux.intel.com>
- <20180105160935.48588-4-andriy.shevchenko@linux.intel.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/4] gpio-stmpe: Adjustments for two function implementations
+Date: Fri, 12 Jan 2018 21:00:40 +0100
+Message-ID: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cYtjc4pxslFTELvY"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180105160935.48588-4-andriy.shevchenko@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.web.de ([212.227.15.14]:65040 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965081AbeALUAq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 12 Jan 2018 15:00:46 -0500
+Content-Language: en-GB
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 20:58:42 +0100
 
---cYtjc4pxslFTELvY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+A few update suggestions were taken into account
+from static source code analysis.
 
-On Fri, Jan 05, 2018 at 06:09:35PM +0200, Andy Shevchenko wrote:
-> Instead of home grown snd_soc_acpi_find_name_from_hid() use
-> acpi_dev_get_first_match_name().
+Markus Elfring (4):
+  Use seq_putc() in stmpe_dbg_show()
+  Improve a size determination in stmpe_gpio_probe()
+  Move an assignment in stmpe_gpio_probe()
+  Delete an unnecessary variable initialisation in stmpe_gpio_probe()
 
-This doesn't apply against current code (even after pulling Raphael's
-pull request) - can you please check and resend?
+ drivers/gpio/gpio-stmpe.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
---cYtjc4pxslFTELvY
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.15.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpZBm8ACgkQJNaLcl1U
-h9CZDQf+PiyzQu3xKSmImSpyK7LEbagpUO0JZQm8kWvvlnWsqe3CYPIKo746unXy
-6QYDMeWXoh5Rawvy2k8x7jYcsDBrgx66OEf8GR1oJgoVo5QVJGAwPSb8Z95LIg7B
-oih3vR3xlRIE5fcLMtwyVTuN6edfyIFc/Ku7leZ69NhVvSSEsR/gOvj1JkOW2ak2
-gRRuSjy4WdScnR+t4Rv4trH+ZFf4eQcfjhv/GvDr/XgbrppZ9MBRIvCX7WFM8tM8
-lS7W2CaHIQAeZdSY0C/7w1gREKVoWB3GMwW9Cb804bt8+d53MB6GYhbQ/3Eehsd8
-dOVc//625ub5j1NGjs7y2eDAQsrt+Q==
-=OFbF
------END PGP SIGNATURE-----
-
---cYtjc4pxslFTELvY--
