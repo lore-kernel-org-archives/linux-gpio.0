@@ -1,47 +1,45 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] gpio-wm831x: Use seq_putc() in wm831x_gpio_dbg_show()
-Date: Fri, 12 Jan 2018 21:37:53 +0100
-Message-ID: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2] gpio: omap: Give unique labels to each GPIO bank/chip
+Date: Fri, 12 Jan 2018 14:43:37 -0600
+Message-ID: <10eba220-e357-5ec2-5134-6da84873ef6d@ti.com>
+References: <20180102103248.15803-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:59795 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965004AbeALUiC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 12 Jan 2018 15:38:02 -0500
-Content-Language: en-GB
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:10275 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964844AbeALUnk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jan 2018 15:43:40 -0500
+In-Reply-To: <20180102103248.15803-1-linus.walleij@linaro.org>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, linux-omap@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 Jan 2018 21:30:09 +0100
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
 
-This issue was detected by using the Coccinelle software.
+On 01/02/2018 04:32 AM, Linus Walleij wrote:
+> As we need to add GPIO lookup tables to the OMAP platforms, we
+> need to reference each GPIO chip with a unique label. Use the GPIO
+> base to name each chip, "gpio-0-31", "gpio-32-63" etc.
+> 
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: linux-omap@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Break out errorpath fix to a separate patch.
+> ---
+>   drivers/gpio/gpio-omap.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpio/gpio-wm831x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
-index 938bbe3f831c..324813e8304e 100644
---- a/drivers/gpio/gpio-wm831x.c
-+++ b/drivers/gpio/gpio-wm831x.c
-@@ -182,7 +182,7 @@ static void wm831x_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 			dev_err(wm831x->dev,
- 				"GPIO control %d read failed: %d\n",
- 				gpio, reg);
--			seq_printf(s, "\n");
-+			seq_putc(s, '\n');
- 			continue;
- 		}
- 
 -- 
-2.15.1
-
+regards,
+-grygorii
