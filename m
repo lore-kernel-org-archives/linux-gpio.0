@@ -1,75 +1,82 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 3/3] ASoC: Intel - Convert to use
- acpi_dev_get_first_match_name()
-Date: Fri, 12 Jan 2018 21:03:22 +0000
-Message-ID: <20180112210322.GG21458@sirena.org.uk>
-References: <20180105160935.48588-1-andriy.shevchenko@linux.intel.com>
- <20180105160935.48588-4-andriy.shevchenko@linux.intel.com>
- <20180112190312.GD21458@sirena.org.uk>
- <1515788467.7000.978.camel@linux.intel.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: omap: Fix error path on chip init
+Date: Fri, 12 Jan 2018 15:13:44 -0600
+Message-ID: <7804f4c8-c9c3-ccd7-83b3-88b83fa6c518@ti.com>
+References: <20180102102314.12906-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8976082422276450978=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1515788467.7000.978.camel@linux.intel.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: alsa-devel@alsa-project.org, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Liam Girdwood <lgirdwood@gmail.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, linux-acpi@vger.kernel.org, Erik Schmauss <erik.schmauss@intel.com>
-List-Id: linux-gpio@vger.kernel.org
-
-
---===============8976082422276450978==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h3LYUU6HlUDSAOzy"
-Content-Disposition: inline
-
-
---h3LYUU6HlUDSAOzy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Jan 12, 2018 at 10:21:07PM +0200, Andy Shevchenko wrote:
-> On Fri, 2018-01-12 at 19:03 +0000, Mark Brown wrote:
-
-> > This doesn't apply against current code (even after pulling Raphael's
-> > pull request) - can you please check and resend?
-
-> It requires Pierre's series #2 [1] to be applied first.
-
-Oh, and please note that the "and resend" part there is important, if
-I've replied like that it means the patch is gone from my review queue
-so I'll need to go and try to find a copy to do something with it which
-can be error prone.
-
---h3LYUU6HlUDSAOzy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlpZIpkACgkQJNaLcl1U
-h9C0Xwf+J46crKTMqIYBZqKkO5VH73LQBiKoHwsUJuQZC73qjPgfnCUnpPVBk6cB
-PGEHsTKRzOEJU67K4hqmsrlKit+G4bgSwZfl50We6JLTUICg9XhejPb/vV0b7LgR
-YnFHhJ2HMaL7E62LuV7KD5BL9i5O2avxeCd5GQmKh7pJ9lFDuZHeE96GhKYjRJ0L
-qGEYEXYOkxZQswcS8yzWDLRNoj3T3sU+hmxWrDxzZ3hrXkaZH6BBUKIWoE2cT/X3
-m/oVwYW7NnTCTgr8AtL3k/6HcKuCMQXlpm67bm/RFG4PnJVScMsmdv8CdMJk59LU
-F0FmmetV8rBnMfoFJJQzZTjcZRO+YQ==
-=ryRX
------END PGP SIGNATURE-----
-
---h3LYUU6HlUDSAOzy--
-
---===============8976082422276450978==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:52999 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965050AbeALVNr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jan 2018 16:13:47 -0500
+In-Reply-To: <20180102102314.12906-1-linus.walleij@linaro.org>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Johan Hovold <johan@kernel.org>
 
 
---===============8976082422276450978==--
+
+On 01/02/2018 04:23 AM, Linus Walleij wrote:
+> The error path was leaking a gpio_chip at one point.
+> 
+> Cc: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+
+Sry, but this seems not in sync with gpio-next [1]
+
+https://patchwork.kernel.org/patch/10060049/
+
+
+> ---
+>   drivers/gpio/gpio-omap.c | 13 +++++++++----
+>   1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index e136d666f1e5..d83e8624964a 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1104,7 +1104,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>   					-1, 0, bank->width, 0);
+>   	if (irq_base < 0) {
+>   		dev_err(bank->chip.parent, "Couldn't allocate IRQ numbers\n");
+> -		return -ENODEV;
+> +		ret = -ENODEV;
+> +		goto err_remove_chip;
+>   	}
+>   #endif
+>   
+> @@ -1122,8 +1123,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>   	if (ret) {
+>   		dev_err(bank->chip.parent,
+>   			"Couldn't add irqchip to gpiochip %d\n", ret);
+> -		gpiochip_remove(&bank->chip);
+> -		return -ENODEV;
+> +		ret = -ENODEV;
+> +		goto err_remove_chip;
+>   	}
+>   
+>   	gpiochip_set_chained_irqchip(&bank->chip, irqc, bank->irq, NULL);
+> @@ -1132,8 +1133,12 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>   			       omap_gpio_irq_handler,
+>   			       0, dev_name(bank->chip.parent), bank);
+>   	if (ret)
+> -		gpiochip_remove(&bank->chip);
+> +		goto err_remove_chip;
+>   
+> +	return 0;
+> +
+> +err_remove_chip:
+> +	gpiochip_remove(&bank->chip);
+>   	return ret;
+>   }
+>   
+> 
+
+-- 
+regards,
+-grygorii
