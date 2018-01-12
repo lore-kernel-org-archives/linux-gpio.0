@@ -1,38 +1,47 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v3 3/3] ASoC: Intel - Convert to use
- acpi_dev_get_first_match_name()
-Date: Fri, 12 Jan 2018 22:21:07 +0200
-Message-ID: <1515788467.7000.978.camel@linux.intel.com>
-References: <20180105160935.48588-1-andriy.shevchenko@linux.intel.com>
-         <20180105160935.48588-4-andriy.shevchenko@linux.intel.com>
-         <20180112190312.GD21458@sirena.org.uk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] gpio-wm831x: Use seq_putc() in wm831x_gpio_dbg_show()
+Date: Fri, 12 Jan 2018 21:37:53 +0100
+Message-ID: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:10427 "EHLO mga05.intel.com"
+Received: from mout.web.de ([212.227.15.4]:59795 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754506AbeALUZl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 12 Jan 2018 15:25:41 -0500
-In-Reply-To: <20180112190312.GD21458@sirena.org.uk>
+        id S965004AbeALUiC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 12 Jan 2018 15:38:02 -0500
+Content-Language: en-GB
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, 2018-01-12 at 19:03 +0000, Mark Brown wrote:
-> On Fri, Jan 05, 2018 at 06:09:35PM +0200, Andy Shevchenko wrote:
-> > Instead of home grown snd_soc_acpi_find_name_from_hid() use
-> > acpi_dev_get_first_match_name().
-> 
-> This doesn't apply against current code (even after pulling Raphael's
-> pull request) - can you please check and resend?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Jan 2018 21:30:09 +0100
 
-It requires Pierre's series #2 [1] to be applied first.
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-[1]: https://www.spinics.net/lists/alsa-devel/msg72463.html
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-wm831x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
+index 938bbe3f831c..324813e8304e 100644
+--- a/drivers/gpio/gpio-wm831x.c
++++ b/drivers/gpio/gpio-wm831x.c
+@@ -182,7 +182,7 @@ static void wm831x_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 			dev_err(wm831x->dev,
+ 				"GPIO control %d read failed: %d\n",
+ 				gpio, reg);
+-			seq_printf(s, "\n");
++			seq_putc(s, '\n');
+ 			continue;
+ 		}
+ 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.15.1
+
