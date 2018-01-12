@@ -1,49 +1,38 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 4/4] gpio-stmpe: Delete an unnecessary variable initialisation
- in stmpe_gpio_probe()
-Date: Fri, 12 Jan 2018 21:04:32 +0100
-Message-ID: <245fffed-3b76-5265-25b1-9f9077518894@users.sourceforge.net>
-References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v3 3/3] ASoC: Intel - Convert to use
+ acpi_dev_get_first_match_name()
+Date: Fri, 12 Jan 2018 22:21:07 +0200
+Message-ID: <1515788467.7000.978.camel@linux.intel.com>
+References: <20180105160935.48588-1-andriy.shevchenko@linux.intel.com>
+         <20180105160935.48588-4-andriy.shevchenko@linux.intel.com>
+         <20180112190312.GD21458@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:52586 "EHLO mout.web.de"
+Received: from mga05.intel.com ([192.55.52.43]:10427 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965081AbeALUEf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 12 Jan 2018 15:04:35 -0500
-In-Reply-To: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net>
-Content-Language: en-GB
+        id S1754506AbeALUZl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 12 Jan 2018 15:25:41 -0500
+In-Reply-To: <20180112190312.GD21458@sirena.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Erik Schmauss <erik.schmauss@intel.com>, linux-acpi@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 Jan 2018 20:48:40 +0100
+On Fri, 2018-01-12 at 19:03 +0000, Mark Brown wrote:
+> On Fri, Jan 05, 2018 at 06:09:35PM +0200, Andy Shevchenko wrote:
+> > Instead of home grown snd_soc_acpi_find_name_from_hid() use
+> > acpi_dev_get_first_match_name().
+> 
+> This doesn't apply against current code (even after pulling Raphael's
+> pull request) - can you please check and resend?
 
-The local variable "irq" will eventually be set to an appropriate value
-a bit later. Thus omit the explicit initialisation at the beginning.
+It requires Pierre's series #2 [1] to be applied first.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpio/gpio-stmpe.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+[1]: https://www.spinics.net/lists/alsa-devel/msg72463.html
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index d51e27eb1c59..d9f370bf460d 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -432,8 +432,7 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
- 	struct stmpe *stmpe = dev_get_drvdata(pdev->dev.parent);
- 	struct device_node *np = pdev->dev.of_node;
- 	struct stmpe_gpio *stmpe_gpio;
--	int ret;
--	int irq = 0;
-+	int ret, irq;
- 
- 	stmpe_gpio = kzalloc(sizeof(*stmpe_gpio), GFP_KERNEL);
- 	if (!stmpe_gpio)
+
 -- 
-2.15.1
-
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
