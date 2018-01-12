@@ -1,98 +1,129 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 1/7] pinctrl: sunxi: add support for pin
- controllers without bus gate
-Date: Fri, 12 Jan 2018 09:51:34 +0100
-Message-ID: <20180112085134.dcsikciujsxuuwhx@flea.lan>
-References: <20180106042326.46519-1-icenowy@aosc.io>
- <ef82983f-6f91-46c2-1f67-7d4efc10c905@arm.com>
- <3A97A26E-0774-4279-B7B9-8312225E2C72@aosc.io>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Subject: Re: [PATCH v3 00/27] kill devm_ioremap_nocache
+Date: Fri, 12 Jan 2018 17:12:12 +0800
+Message-ID: <ff498c83-d1ee-7553-e20c-a07369f8dad6@huawei.com>
+References: <1514026525-32538-1-git-send-email-xieyisheng1@huawei.com>
+ <20171223134831.GB10103@kroah.com>
+ <b8ff7f17-7f2c-f220-9833-7ae5bd7343d5@c-s.fr>
+ <8dd19411-5b06-0aa4-fd0e-e5b112c25dcb@huawei.com>
+ <1eb206ed-95e9-5839-485d-0e549ff3f505@c-s.fr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sqfzuowjuk7oe46v"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBIPO4HJAKGQEWWPHUOA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <3A97A26E-0774-4279-B7B9-8312225E2C72-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1eb206ed-95e9-5839-485d-0e549ff3f505@c-s.fr>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Christophe LEROY <christophe.leroy@c-s.fr>, Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, ysxie@foxmail.com, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, boris.brezillon@free-electrons.com, richard@nod.at, marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr, linux-mtd@lists.infradead.org, alsa-devel@alsa-project.org, wim@iguana.be, linux@roeck-us.net, linux-watchdog@vger.kernel.org, b.zolnierkie@samsung.com, linux-fbdev@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, ralf@linux-mips.org, linux-mips@linux-mips.org, lgirdwood@gmail.com, broonie@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, arnd@arndb.de, andriy.shevchenko@linux.intel.com, industrypack-devel@lists.sourceforge.net, wg@grandegger.com, mkl@pengutronix.deli
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Christophe ，
 
---sqfzuowjuk7oe46v
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2018/1/4 16:05, Christophe LEROY wrote:
+> 
+> 
+> Le 25/12/2017 à 02:34, Yisheng Xie a écrit :
+>>
+>>
+>> On 2017/12/24 17:05, christophe leroy wrote:
+>>>
+>>>
+>>> Le 23/12/2017 à 14:48, Greg KH a écrit :
+>>>> On Sat, Dec 23, 2017 at 06:55:25PM +0800, Yisheng Xie wrote:
+>>>>> Hi all,
+>>>>>
+>>>>> When I tried to use devm_ioremap function and review related code, I found
+>>>>> devm_ioremap and devm_ioremap_nocache is almost the same with each other,
+>>>>> except one use ioremap while the other use ioremap_nocache.
+>>>>
+>>>> For all arches?  Really?  Look at MIPS, and x86, they have different
+>>>> functions.
+>>>>
+>>>>> While ioremap's
+>>>>> default function is ioremap_nocache, so devm_ioremap_nocache also have the
+>>>>> same function with devm_ioremap, which can just be killed to reduce the size
+>>>>> of devres.o(from 20304 bytes to 18992 bytes in my compile environment).
+>>>>>
+>>>>> I have posted two versions, which use macro instead of function for
+>>>>> devm_ioremap_nocache[1] or devm_ioremap[2]. And Greg suggest me to kill
+>>>>> devm_ioremap_nocache for no need to keep a macro around for the duplicate
+>>>>> thing. So here comes v3 and please help to review.
+>>>>
+>>>> I don't think this can be done, what am I missing?  These functions are
+>>>> not identical, sorry for missing that before.
+>>>
+>>> devm_ioremap() and devm_ioremap_nocache() are quite similar, both use devm_ioremap_release() for the release, why not just defining:
+>>>
+>>> static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
+>>>                 resource_size_t size, bool nocache)
+>>> {
+>>> [...]
+>>>      if (nocache)
+>>>          addr = ioremap_nocache(offset, size);
+>>>      else
+>>>          addr = ioremap(offset, size);
+>>> [...]
+>>> }
+>>>
+>>> then in include/linux/io.h
+>>>
+>>> static inline void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
+>>>                 resource_size_t size)
+>>> {return __devm_ioremap(dev, offset, size, false);}
+>>>
+>>> static inline void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
+>>>                     resource_size_t size);
+>>> {return __devm_ioremap(dev, offset, size, true);}
+>>
+>> Yeah, this seems good to me, right now we have devm_ioremap, devm_ioremap_wc, devm_ioremap_nocache
+>> May be we can use an enum like:
+>> typedef enum {
+>>     DEVM_IOREMAP = 0,
+>>     DEVM_IOREMAP_NOCACHE,
+>>     DEVM_IOREMAP_WC,
+>> } devm_ioremap_type;
+>>
+>> static inline void __iomem *devm_ioremap(struct device *dev, resource_size_t offset,
+>>                  resource_size_t size)
+>>   {return __devm_ioremap(dev, offset, size, DEVM_IOREMAP);}
+>>
+>>   static inline void __iomem *devm_ioremap_nocache(struct device *dev, resource_size_t offset,
+>>                      resource_size_t size);
+>>   {return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_NOCACHE);}
+>>
+>>   static inline void __iomem *devm_ioremap_wc(struct device *dev, resource_size_t offset,
+>>                      resource_size_t size);
+>>   {return __devm_ioremap(dev, offset, size, DEVM_IOREMAP_WC);}
+>>
+>>   static void __iomem *__devm_ioremap(struct device *dev, resource_size_t offset,
+>>                  resource_size_t size, devm_ioremap_type type)
+>>   {
+>>       void __iomem **ptr, *addr = NULL;
+>>   [...]
+>>       switch (type){
+>>       case DEVM_IOREMAP:
+>>           addr = ioremap(offset, size);
+>>           break;
+>>       case DEVM_IOREMAP_NOCACHE:
+>>           addr = ioremap_nocache(offset, size);
+>>           break;
+>>       case DEVM_IOREMAP_WC:
+>>           addr = ioremap_wc(offset, size);
+>>           break;
+>>       }
+>>   [...]
+>>   }
+> 
+> 
+> That looks good to me, will you submit a v4 ?
 
-1;5002;0c
-On Thu, Jan 11, 2018 at 09:21:06PM +0800, Icenowy Zheng wrote:
->=20
->=20
-> =E4=BA=8E 2018=E5=B9=B41=E6=9C=8811=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
-7:48:40, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> =E5=86=99=E5=88=B0:
-> >Hi,
-> >
-> >another take to avoid this patch at all, I just remembered this from an
-> >IRC discussion before:
-> >
-> >On 06/01/18 04:23, Icenowy Zheng wrote:
-> >> The Allwinner H6 pin controllers (both the main one and the CPUs one)
-> >> have no bus gate clocks.
-> >
-> >I don't think this is true. The pin controller *needs* an APB clock,
-> >it's just not gate-able or not exposed or documented.
-> >The "system bus tree" on page 90 in the manual shows that the "GPIO"
-> >block is located on the APB1 bus.
-> >So can't we just reference this apb clock directly? That would be much
-> >cleaner, "more" correct and require less changes: "The best patch is no
-> >patch":
->=20
-> I can accept this. (In fact I have considered this, but
-> I don't dare to directly use bus clock in a device, as it's not
-> exported before.
->=20
-> Maxime, Chen-Yu, can you agree the following code?
+Sorry for late response. And I will submit the v4 as your suggestion.
 
-Yes, that works for me.
+Thanks
+Yisheng
 
-Maxime
+> 
+> Christophe
+> 
+>>
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
-
---sqfzuowjuk7oe46v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpYdxUACgkQ0rTAlCFN
-r3QKiw/9Hae+QLluYxYJP3sdeGHTY9+aEY/fvPXv/9YjXAN2a1UKHtvC7d/tciwA
-v5BULn6zZ/Pky/8N3AXttmNcfpjJSFMj7BQCw41dlzWL91RCfCsVet2HEmC1xCrq
-3TRmqWEHflDZiHzbG+SNealqOHh7/Ey7wvPMO8YGB/bxNBWb8HTz2nN7s51zD+RS
-W3pWUSZDUYAw1PZyV9RONZTJkcPdnlUJceockBxlrWlojJ+Ya8XqWL4mNy5ZEzR5
-um6WBGYb7x/mdCmIw+6kWY8OgocNgkdSv5oS+HLxr6Vl0Naz/NEiXFo//iFm0BU8
-Db14SUeEdKbwy53WCpr251Nsu/WnXIxnWkPj9d0Pef+XIxh7gt+OcCQsng4tnQ+H
-zQVXcAuRn8yW7FuIm2Ok9DzZYEikRUC8KpqP0VgWMQovnwkel0gKKq6jTtBdiree
-WE+0h+klY0jdCECIqoySgKh/9GWkSSWTHOJDHvk2XapTDEBbgFww7E7gmKNo4rAi
-sFmGqnoL2/wGA4fOrgPF3w+qjabwxxNaQ9Z9YMiWtVVt81xcKfUVGhS1cfkYUir2
-0NSufc/EACIwwHMNOlYrvP+PPuXPAd6lLwitEL0lRc13zj0s26BWMQrPW+nMWGY2
-SGDuo/nKtHb0a2rloBecsZIT5ZZCN0aigYtt6WSDVQrfEkJob+4=
-=jHXY
------END PGP SIGNATURE-----
-
---sqfzuowjuk7oe46v--
