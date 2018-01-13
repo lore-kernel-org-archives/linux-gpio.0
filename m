@@ -1,66 +1,47 @@
-From: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
-Subject: Re: [PATCH v2 4/4] ARM: dts: bcm2837-rpi-3-b: add GPIO expander
-Date: Sat, 13 Jan 2018 11:44:22 +0100 (CET)
-Message-ID: <2079522989.43372.1515840262445@email.1und1.de>
-References: <cover.1515698418.git.baruch@tkos.co.il>
- <1cb81e3d7a1b1f7ccf374952fa7e8d2147c186fb.1515698418.git.baruch@tkos.co.il>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] pinctrl: pinmux: Use seq_putc() in pinmux_pins_show()
+Date: Sat, 13 Jan 2018 11:49:02 +0100
+Message-ID: <bb070097-4d6a-3986-398d-7276cb18bb37@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1cb81e3d7a1b1f7ccf374952fa7e8d2147c186fb.1515698418.git.baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.web.de ([212.227.15.4]:64776 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933432AbeAMKtF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 13 Jan 2018 05:49:05 -0500
+Content-Language: en-GB
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Baruch,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 Jan 2018 11:33:47 +0100
 
-> Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org> hat am 11. Januar 2018 um 20:44 geschrieben:
-> 
-> 
-> Add a description of the RPi3 GPIO expander that the VC4 firmware controls.
-> 
-> Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-> ---
-> v2:
->   * Move GPIO expander node out of the soc container
->   * Rename compatible string
->   * Add gpio-line-names property
-> ---
->  arch/arm/boot/dts/bcm2837-rpi-3-b.dts | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
-> index b44b3b5af00d..24555e8a43ec 100644
-> --- a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
-> +++ b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
-> @@ -23,6 +23,16 @@
->  			gpios = <&gpio 47 0>;
->  		};
->  	};
-> +
-> +	expgpio: gpio-expander {
-> +		compatible = "raspberrypi,firmware-gpio";
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		firmware = <&firmware>;
-> +		gpio-line-names = "BT_ON", "WL_ON", "STATUS_LED", "LAN_RUN",
-> +			"HPD_N", "CAM_GPIO0", "CAM_GPIO1", "PWR_LOW_N";
+A single character (line break) should be put into a sequence.
+Thus use the corresponding function "seq_putc".
 
-please one GPIO name per line like in the other files. This makes it easier to review changes and add comments.
+This issue was detected by using the Coccinelle software.
 
-Stefan
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pinctrl/pinmux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +		status = "okay";
-> +	};
->  };
->  
->  /* uart0 communicates with the BT module */
-> -- 
-> 2.15.1
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index 55502fc4479c..139a004a5e71 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -619,7 +619,7 @@ static int pinmux_pins_show(struct seq_file *s, void *what)
+ 				   pctlops->get_group_name(pctldev,
+ 					desc->mux_setting->group));
+ 		else
+-			seq_printf(s, "\n");
++			seq_putc(s, '\n');
+ 	}
+ 
+ 	mutex_unlock(&pctldev->mutex);
+-- 
+2.15.1
+
