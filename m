@@ -1,135 +1,91 @@
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: [PATCH/RFT v3] gpio: gpio-rcar: Support S2RAM
-Date: Tue, 16 Jan 2018 03:20:26 +0900
-Message-ID: <1516040426-15507-1-git-send-email-ykaneko0929@gmail.com>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v3] gpio-mmio: Use the new .get_multiple() callback
+Date: Mon, 15 Jan 2018 19:47:28 +0100
+Message-ID: <20180115184728.GA7999@wunner.de>
+References: <20171020151030.25094-1-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34725 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750773AbeAOSV1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jan 2018 13:21:27 -0500
+Received: from mailout2.hostsharing.net ([83.223.90.233]:35839 "EHLO
+        mailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751205AbeAOSqv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jan 2018 13:46:51 -0500
+Content-Disposition: inline
+In-Reply-To: <20171020151030.25094-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Anton Vorontsov <anton@enomsg.org>, Clemens Gruber <clemens.gruber@pqgruber.com>, Bartosz Golaszewski <brgl@bgdev.pl>
 
-From: Hien Dang <hien.dang.eb@renesas.com>
+On Fri, Oct 20, 2017 at 05:10:30PM +0200, Linus Walleij wrote:
+> It is possible to read all lines of a generic MMIO GPIO chip
+> with a single register read so support this if we are in
+> native endianness.
+> 
+> Add an especially quirky callback to read multiple lines for
+> the variants that require you to read values from the
+> output registers if and only if the line is set as output.
+> We managed to do that with a maximum of two register reads,
+> and just one read if the requested lines are all input or all
+> output.
+> 
+> Cc: Anton Vorontsov <anton@enomsg.org>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-This patch adds an implementation that saves and restores the state of
-GPIO configuration on suspend and resume.
+I was cc'ed on this patch but unfortunately never got around to
+reviewing it as I was swamped with other stuff.  Making up on that
+now as the patch is causing a regression.
 
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Modify structure of the bank info to simplify a saving registers]
-[Remove DEV_PM_OPS macro]
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
 
-This patch is based on the for-next branch of linux-gpio tree.
+> +/*
+> + * This assumes that the bits in the GPIO register are in native endianness.
+> + * We only assign the function pointer if we have that.
+> + */
+> +static int bgpio_get_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+> +				  unsigned long *bits)
+> +{
+> +	unsigned long get_mask = 0;
+> +	unsigned long set_mask = 0;
+> +	int bit = 0;
+> +
+> +	while ((bit = find_next_bit(mask, gc->ngpio, bit)) != gc->ngpio) {
+> +		if (gc->bgpio_dir & BIT(bit))
+> +			set_mask |= BIT(bit);
+> +		else
+> +			get_mask |= BIT(bit);
+> +	}
+> +
+> +	if (set_mask)
+> +		*bits |= gc->read_reg(gc->reg_set) & set_mask;
+> +	if (get_mask)
+> +		*bits |= gc->read_reg(gc->reg_dat) & get_mask;
+> +
+> +	return 0;
+> +}
 
-v2 [Yoshihiro Kaneko]
-* Modify structure of the bank info as suggested by Geert Uytterhoeven
+The while loop needs a "bit++;" at the end lest it becomes an
+infinite loop.  That's because find_next_bit() starts searching
+from "bit", not the bit after "bit".
 
-v3 [Yoshihiro Kaneko]
-* Remove DEV_PM_OPS macro as suggested by Vladimir Zapolskiy
+Second, the while loop appears to be unnecessary, it seems it would
+be possible to simply do this:
 
- drivers/gpio/gpio-rcar.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+	set_mask = mask & gc->bgpio_dir;
+	get_mask = mask & ~gc->bgpio_dir;
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index e76de57..88fbb3e 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -31,6 +31,16 @@
- #include <linux/spinlock.h>
- #include <linux/slab.h>
- 
-+struct gpio_rcar_bank_info {
-+	u32 iointsel;
-+	u32 inoutsel;
-+	u32 outdt;
-+	u32 active_high_rising_edge;
-+	u32 level_trigger;
-+	u32 both;
-+	u32 intmsk;
-+};
-+
- struct gpio_rcar_priv {
- 	void __iomem *base;
- 	spinlock_t lock;
-@@ -41,6 +51,7 @@ struct gpio_rcar_priv {
- 	unsigned int irq_parent;
- 	bool has_both_edge_trigger;
- 	bool needs_clk;
-+	struct gpio_rcar_bank_info bank_info;
- };
- 
- #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
-@@ -531,11 +542,65 @@ static int gpio_rcar_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int gpio_rcar_suspend(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+
-+	p->bank_info.iointsel = gpio_rcar_read(p, IOINTSEL);
-+	p->bank_info.inoutsel = gpio_rcar_read(p, INOUTSEL);
-+	p->bank_info.outdt = gpio_rcar_read(p, OUTDT);
-+	p->bank_info.intmsk = gpio_rcar_read(p, INTMSK);
-+	p->bank_info.active_high_rising_edge = gpio_rcar_read(p, POSNEG);
-+	p->bank_info.level_trigger = gpio_rcar_read(p, EDGLEVEL);
-+	p->bank_info.both = gpio_rcar_read(p, BOTHEDGE);
-+
-+	return 0;
-+}
-+
-+static int gpio_rcar_resume(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+	int offset;
-+	u32 mask;
-+
-+	for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
-+		mask = BIT(offset);
-+		/* I/O pin */
-+		if (!(p->bank_info.iointsel & mask)) {
-+			if (p->bank_info.inoutsel & mask)
-+				gpio_rcar_direction_output(
-+					&p->gpio_chip, offset,
-+					!!(p->bank_info.outdt & mask));
-+			else
-+				gpio_rcar_direction_input(&p->gpio_chip,
-+							  offset);
-+		/* Interrupt pin */
-+		} else {
-+			gpio_rcar_config_interrupt_input_mode(
-+				p,
-+				offset,
-+				!(p->bank_info.active_high_rising_edge & mask),
-+				!!(p->bank_info.level_trigger & mask),
-+				!!(p->bank_info.both & mask));
-+
-+			if (p->bank_info.intmsk & mask)
-+				gpio_rcar_write(p, MSKCLR, mask);
-+		}
-+	}
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM_SLEEP*/
-+
-+static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops, gpio_rcar_suspend, gpio_rcar_resume);
-+
- static struct platform_driver gpio_rcar_device_driver = {
- 	.probe		= gpio_rcar_probe,
- 	.remove		= gpio_rcar_remove,
- 	.driver		= {
- 		.name	= "gpio_rcar",
-+		.pm     = &gpio_rcar_pm_ops,
- 		.of_match_table = of_match_ptr(gpio_rcar_of_table),
- 	}
- };
--- 
-1.9.1
+Third, I think we need to initialize *bits = 0 in case it contains
+garbage.
 
+Fourth, I notice bgpio_dir is an unsigned long.  Not a pointer to
+an unsigned long, so not a bitmap.  Which means we cannot handle
+gc->ngpio > sizeof(unsigned long).  Yet the driver doesn't check this
+condition on ->probe and bail out if it's true.  Of course, once we
+*do* support more than sizeof(unsigned long) pins, we need the while
+loop again.
+
+These issues are repeated in the remainder of the patch.
+
+Thanks,
+
+Lukas
