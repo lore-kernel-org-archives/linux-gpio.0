@@ -1,36 +1,60 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH] gpio-wm831x: Use seq_putc() in wm831x_gpio_dbg_show()
-Date: Mon, 15 Jan 2018 10:03:00 +0000
-Message-ID: <20180115100300.rtvqfaebjm22kcsx@localhost.localdomain>
-References: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH 3/3] backlight: pwm_bl: don't use GPIOF_* with
+ gpiod_get_direction
+Date: Mon, 15 Jan 2018 10:13:23 +0000
+Message-ID: <55b3506a-9192-1b36-9c2a-38ec8502514a@linaro.org>
+References: <20180114210711.13863-1-wsa+renesas@sang-engineering.com>
+ <20180114210711.13863-4-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:44478 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932413AbeAOKDJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 Jan 2018 05:03:09 -0500
-Content-Disposition: inline
-In-Reply-To: <85344479-907c-adf7-6ae6-6d6acff2c1b1@users.sourceforge.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <20180114210711.13863-4-wsa+renesas@sang-engineering.com>
+Content-Language: en-US
+Sender: linux-pwm-owner@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 12, 2018 at 09:37:53PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 12 Jan 2018 21:30:09 +0100
+
+
+On 14/01/18 21:07, Wolfram Sang wrote:
+> The documentation was wrong, gpiod_get_direction() returns 0/1 instead
+> of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
+> ("gpio: correct docs about return value of gpiod_get_direction"). Now,
+> fix this user (until a better, system-wide solution is in place).
 > 
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+
 > ---
-
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-
-Thanks,
-Charles
+> Only build tested!
+> 
+>   drivers/video/backlight/pwm_bl.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> index 1c2289ddd555a6..0fa7d2bd0e4811 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -301,14 +301,14 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+>   
+>   	/*
+>   	 * If the GPIO is not known to be already configured as output, that
+> -	 * is, if gpiod_get_direction returns either GPIOF_DIR_IN or -EINVAL,
+> -	 * change the direction to output and set the GPIO as active.
+> +	 * is, if gpiod_get_direction returns either 1 or -EINVAL, change the
+> +	 * direction to output and set the GPIO as active.
+>   	 * Do not force the GPIO to active when it was already output as it
+>   	 * could cause backlight flickering or we would enable the backlight too
+>   	 * early. Leave the decision of the initial backlight state for later.
+>   	 */
+>   	if (pb->enable_gpio &&
+> -	    gpiod_get_direction(pb->enable_gpio) != GPIOF_DIR_OUT)
+> +	    gpiod_get_direction(pb->enable_gpio) != 0)
+>   		gpiod_direction_output(pb->enable_gpio, 1);
+>   
+>   	pb->power_supply = devm_regulator_get(&pdev->dev, "power");
+> 
