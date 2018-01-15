@@ -1,47 +1,71 @@
-From: Clemens Gruber <clemens.gruber@pqgruber.com>
-Subject: Regression in v4.15 due to GPIO .get_multiple changes
-Date: Mon, 15 Jan 2018 16:35:48 +0100
-Message-ID: <20180115153547.GA4441@archie.localdomain>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: [RFC PATCH 0/2] fixing the gpio ownership
+Date: Mon, 15 Jan 2018 17:22:31 +0100
+Message-ID: <20180115162233.6205-1-ludovic.desroches@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.pqgruber.com ([178.189.19.235]:33970 "EHLO
-        mail.pqgruber.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966132AbeAOPlv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jan 2018 10:41:51 -0500
-Content-Disposition: inline
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:42260 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933469AbeAOQYJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jan 2018 11:24:09 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lukas Wunner <lukas@wunner.de>, Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, nicolas.free@microchip.com, Ludovic Desroches <ludovic.desroches@microchip.com>
 
 Hi,
 
-I noticed a regression when testing the GPIOs on an i.MX6 with the
-current v4.15-rc8 kernel.
+A few weeks ago, I have sent an RFC about adding bias support for GPIOs [1].
 
-When reading the input value of an internal GPIO, for example with
-libgpiod's gpiod_line_get_value, strace shows that userspace blocks
-indefinitely at:
-ioctl(45, GPIOHANDLE_GET_LINE_VALUES_IOCTL
+It was motivated by the fact that I wanted to enable the pinmuxing strict mode
+for my pin controller which can muxed a pin as a peripheral or as a GPIO.
 
-(The process consumes 100% CPU afterwards and can't be killed)
+Enabling the strict mode prevents several devices to be probed because
+requesting a GPIO fails. The pin request function complains about the
+ownership of the GPIO which is different from the mux ownership. I have to
+remove my pinctrl node to avoid this conflict but I need it to configure my
+pins and to set a pull-up bias for my GPIOs.
 
-I looked at changes between v4.14 (working) and v4.15-rc8 (broken),
-especially in drivers/gpio/gpio-{mxc,mmio}.c and identified the
-following two commits to be responsible:
-eec1d566cdf9 ("gpio: Introduce ->get_multiple callback")
-80057cb417b2 ("gpio-mmio: Use the new .get_multiple() callback")
+My first idea was to add new flags in addition to GPIO_ACTIVE_HIGH and others.
+Obviously, it was not the way to go since many new flags may be added:
+strength, debounce, etc.
 
-Reverting both of them (they are interdependent) fixed the problem.
+Then I proposed a very "quick and dirty" patch to give the picture of what I
+have in mind but I had no feedback. It was probably too dirty. The idea was
+to add a cell to the gpios property with a phandle on a pinctrl node which
+contains only the pinconf, no pinmux. The configuration is applied later when
+requesting the GPIO. The main issue is that enabling the strict mode will
+break old DTBs. I was going to submit patches for this but, after using the
+sysfs which still show me a bad ownership, I decided that it should be fixed.
 
-I don't have a patch to fix it yet, but as it is rather late in the
-development cycle of 4.15, I thought it better to report it now. The
-author can probably cook up a fix way quicker or decide if you want to
-revert.
+So I did these patches. Unfortunately, there are several ways to lead to
+gpiod_request(). It does the trick only for the gpiod_get family. The issue is
+still present with legacy gpio_request and fwnode_get_named_gpiod. It seems
+that more and more drivers are converted to use GPIO descriptors so there is
+some hope. The advantage of this solution is to not break old DTBs. As I am
+not aware of all usage of the gpiolib, I tried to implement it in the safest
+way.
 
-If you can't reproduce it, let me know and I can send you ftrace
-records, test your patches or try to come up with a solution myself.
+Regards
 
-Cheers,
-Clemens
+Ludovic
+
+[1] https://www.spinics.net/lists/arm-kernel/msg623149.html
+
+
+Ludovic Desroches (2):
+  pinctrl: add consumer variant for gpio request
+  gpio: provide a consumer when requesting a gpio
+
+ drivers/gpio/gpiolib.c           | 40 +++++++++++++++++++++++++++++++++-------
+ drivers/pinctrl/core.c           | 13 ++++++++++---
+ drivers/pinctrl/pinmux.c         | 16 ++++++++++++++--
+ drivers/pinctrl/pinmux.h         | 10 ++++++++++
+ include/linux/gpio/driver.h      |  5 +++++
+ include/linux/pinctrl/consumer.h |  6 ++++++
+ 6 files changed, 78 insertions(+), 12 deletions(-)
+
+-- 
+2.12.2
+
