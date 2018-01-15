@@ -1,108 +1,56 @@
-From: Hao Zhang <hao5781286@gmail.com>
-Subject: Re: [PATCH v1 4/4] ARM: dts: add pwm node for r40.
-Date: Mon, 15 Jan 2018 19:19:04 +0800
-Message-ID: <CAJeuY799nhZazzRb8JRf6juvWs158pj2LAHpfQ78d-mtO73Y=Q@mail.gmail.com>
-References: <20180111113412.GA22008@arx-s1> <20180111124752.2ljspnaclwgz2s62@flea.lan>
- <CAJeuY78QLOYZUUS7ghakqqpdzigdvpdHCsw+6onkUCjgZMqTzA@mail.gmail.com> <20180115083813.ad2yqdwnd2nskbhs@flea.lan>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 02/14] mmc: mmci: Don't pretend all variants to have
+ MCI_STARBITERR flag
+Date: Mon, 15 Jan 2018 13:32:14 +0100
+Message-ID: <CAPDyKFpqENchQs7c1BSJnorTgidbwHFAHByHJU3t9TV6uHurxA@mail.gmail.com>
+References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com> <1515759368-16946-3-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:34241 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751990AbeAOLTG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jan 2018 06:19:06 -0500
-In-Reply-To: <20180115083813.ad2yqdwnd2nskbhs@flea.lan>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1515759368-16946-3-git-send-email-patrice.chotard@st.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Patrice CHOTARD <patrice.chotard@st.com>
+Cc: Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Andrea Merello <andrea.merello@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org, Mark Rutland <mark.rutland@arm.com>, linux@armlinux.org.uk, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>, linux-pwm@vger.kernel.org
 
-2018-01-15 16:38 GMT+08:00 Maxime Ripard <maxime.ripard@free-electrons.com>:
-> Hi,
+On 12 January 2018 at 13:15,  <patrice.chotard@st.com> wrote:
+> From: Patrice Chotard <patrice.chotard@st.com>
 >
-> On Sun, Jan 14, 2018 at 02:43:39PM +0800, Hao Zhang wrote:
->> 2018-01-11 20:47 GMT+08:00 Maxime Ripard <maxime.ripard@free-electrons.com>:
->> > On Thu, Jan 11, 2018 at 07:34:12PM +0800, hao_zhang wrote:
->> >> This patch add pwm node for r40.
->> >>
->> >> Signed-off-by: hao_zhang <hao5781286@gmail.com>
->> >> ---
->> >>  arch/arm/boot/dts/sun8i-r40.dtsi | 13 +++++++++++++
->> >>  1 file changed, 13 insertions(+)
->> >>
->> >> diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
->> >> index 173dcc1..84c963c 100644
->> >> --- a/arch/arm/boot/dts/sun8i-r40.dtsi
->> >> +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
->> >> @@ -295,6 +295,11 @@
->> >>                               bias-pull-up;
->> >>                       };
->> >>
->> >> +                     pwm_pins: pwm-pins {
->> >> +                             pins = "PB2", "PB3";
->> >> +                             function = "pwm";
->> >> +                     };
->> >> +
->> >
->> > Is it the only combination of pins that is usable?
->> >
->> > If so, you can add the pinctrl-0 property directly in the pwm nodes.
->> >
->>
->> There are 8 channel pwm of R40/V40/T3, the pins that can be configed
->> to pwm are: PB2, PB3, PI20, PI21, PB20, PB21, PB9, PB10
+> This patch prepares for supporting the STM32 variant that
+> has no such bit in the status register.
 >
-> And a single controller, or several of them?
+> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+> ---
+>  drivers/mmc/host/mmci.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+> index 3125dc0..7e56f85 100644
+> --- a/drivers/mmc/host/mmci.c
+> +++ b/drivers/mmc/host/mmci.c
+> @@ -83,6 +83,8 @@
+>   * @qcom_dml: enables qcom specific dma glue for dma transfers.
+>   * @reversed_irq_handling: handle data irq before cmd irq.
+>   * @mmcimask1: true if variant have a MMCIMASK1 register.
+> + * @start_err: true is the variant has STARTBITERR bit inside MMCISTATUS
+> + *            register.
+>   */
+>  struct variant_data {
+>         unsigned int            clkreg;
+> @@ -113,6 +115,7 @@ struct variant_data {
+>         bool                    qcom_dml;
+>         bool                    reversed_irq_handling;
+>         bool                    mmcimask1;
+> +       bool                    start_err;
 
-Single controller with 8 channels pwm output.
+To be consistent with how we implement support for similar variant
+variations, I would prefer to have this being a u32. Something along
+the lines of how the "busy_detect_flag" is being used.
 
->
->> PB2, PB3 can be configed on bananapi-m2-ultra and on my T3 board,
->> but the other pins is not exist on the board or some pin is confilct
->> with other functions, so i just add PB2, PB3. but i think split it
->> is better, just like this :
->>
->> pwm0_pin: pwm0-pin {
->>     pins = "PB2";
->>     function = "pwm";
->> };
->>
->> pwm1_pin: pwm1-pin {
->>     pins = "PB3";
->>     function = "pwm";
->> };
->
-> Yep, that would be better. If it's just a matter of channels, maybe we
-> can even name them pwm-ch0-pin and pwm-ch1-pin? That would be more
-> explicit.
->
+Otherwise this looks good to me.
 
-Agree
+[...]
 
->> the node of pwm2~7 should also be added here?
->
-> If there's no users, no.
->
->> On sun8i-r40-bananapi-m2-ultra.dts:
->> because of the special customize board, i think just add pinctrl-0 = <&pwm0_pin>
->> (PB3 I just use to test pwm channel 1)for bananapi-m2-ultra board is enough.
->>
->> &pwm {
->>     pinctrl-names = "default";
->>     pinctrl-0 = <&pwm0_pin>;
->>     status = "okay";
->> };
->
-> It depends if that PWM is used as a PWM all the time (for example to
-> drive a backlight for a panel tied to the board), or if it's exported
-> through one of the generic pin headers, please leave it populated but
-> disabled (with a comment that it is exported on one of the pin of the
-> headers)
->
-> Thanks!
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+Kind regards
+Uffe
