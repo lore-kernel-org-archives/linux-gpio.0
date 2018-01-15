@@ -1,63 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 04/14] mmc: mmci: Add STM32 variant
-Date: Mon, 15 Jan 2018 02:13:20 +0100
-Message-ID: <CACRpkdYVDpmEmrF=Zk1zX8RCRnPDieTgPuCen6KQ4ttFpAm+Yg@mail.gmail.com>
-References: <1515759368-16946-1-git-send-email-patrice.chotard@st.com> <1515759368-16946-5-git-send-email-patrice.chotard@st.com>
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH 0/6] Nintendo Wii GPIO driver
+Date: Mon, 15 Jan 2018 04:13:55 +0100
+Message-ID: <20180115031401.19577-1-j.neuschaefer@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f176.google.com ([209.85.223.176]:46050 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753122AbeAOBNV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Jan 2018 20:13:21 -0500
-Received: by mail-io0-f176.google.com with SMTP id e20so11460130iof.12
-        for <linux-gpio@vger.kernel.org>; Sun, 14 Jan 2018 17:13:21 -0800 (PST)
-In-Reply-To: <1515759368-16946-5-git-send-email-patrice.chotard@st.com>
+Received: from mout.gmx.net ([212.227.15.18]:62028 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751845AbeAODOP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 14 Jan 2018 22:14:15 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Andrea Merello <andrea.merello@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 
-On Fri, Jan 12, 2018 at 1:15 PM,  <patrice.chotard@st.com> wrote:
+This series adds a driver for the GPIO controller used in the Nintendo
+Wii game console.
 
-> From: Patrice Chotard <patrice.chotard@st.com>
->
-> STM32F4 and STM32F7 MCUs has a SDIO controller that looks like
-> an ARM pl810.
+The driver itself, and the related devicetree work should be pretty
+uncontroversial, but due to the system architecture of the Wii, I also
+had to extend an old resource allocation hack to kernel/resource.c: On
+the Wii, there are two separate RAM ranges, with MMIO right in the
+middle, but AFAIK, Linux on PPC32 doesn't support discontiguous memory
+properly. So the hack is to allocate one big RAM range with a hole
+(marked as reserved memory) for MMIO in the middle.
 
-PL180 you mean. Ulf can fix while applying.
+Because this series touches different subsystems (GPIO, DT, core
+resource management), I guess it should be picked up patch-by-patch by
+the different maintainers.
 
-> This patch adds the STM32 variant so that mmci driver supports it.
->
-> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Jonathan Neuschäfer (6):
+  resource: Extend the PPC32 reserved memory hack
+  powerpc: wii: Explicitly configure GPIO owner for poweroff pin
+  gpio: Add GPIO driver for Nintendo Wii
+  dt-bindings: gpio: Add binding for Wii GPIO controller
+  powerpc: wii.dts: Add ngpios property
+  powerpc: wii.dts: Add GPIO line names
 
-(...)
-> +static struct variant_data variant_stm32 = {
-> +       .fifosize               = 32 * 4,
-> +       .fifohalfsize           = 8 * 4,
-> +       .clkreg                 = MCI_CLK_ENABLE,
-> +       .clkreg_enable          = MCI_ST_UX500_HWFCEN,
+ .../bindings/gpio/nintendo,hollywood-gpio.txt      |  27 +++
+ .../devicetree/bindings/powerpc/nintendo/wii.txt   |   9 +-
+ arch/powerpc/boot/dts/wii.dts                      |   9 +
+ arch/powerpc/platforms/embedded6xx/wii.c           |   7 +
+ drivers/gpio/Kconfig                               |   8 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-hlwd.c                           | 183 +++++++++++++++++++++
+ kernel/resource.c                                  |  21 ++-
+ 8 files changed, 256 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/nintendo,hollywood-gpio.txt
+ create mode 100644 drivers/gpio/gpio-hlwd.c
 
-If the asic designed derived this from ux500 I guess it is proper.
+-- 
+2.15.1
 
-> +       .clkreg_8bit_bus_enable = MCI_ST_8BIT_BUS,
-> +       .clkreg_neg_edge_enable = MCI_ST_UX500_NEG_EDGE,
-> +       .datalength_bits        = 24,
-> +       .datactrl_mask_sdio     = MCI_DPSM_ST_SDIOEN,
-> +       .st_sdio                = true,
-
-Did you test SDIO? I think we lack features for that.
-
-> +       {
-> +               .id     = 0x00880180,
-> +               .mask   = 0x00ffffff,
-> +               .data   = &variant_stm32,
-> +       },
-
-Since ux500 was 480180 I wonder what variants 5,6,7 are...
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
