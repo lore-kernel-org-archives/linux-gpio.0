@@ -1,140 +1,47 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: [PATCH v7 02/17] mfd: madera: Add DT bindings for Cirrus Logic Madera codecs
-Date: Mon, 15 Jan 2018 12:41:50 +0000
-Message-ID: <20180115124205.29042-3-rf@opensource.wolfsonmicro.com>
-References: <20180115124205.29042-1-rf@opensource.wolfsonmicro.com>
+From: Clemens Gruber <clemens.gruber@pqgruber.com>
+Subject: Regression in v4.15 due to GPIO .get_multiple changes
+Date: Mon, 15 Jan 2018 16:35:48 +0100
+Message-ID: <20180115153547.GA4441@archie.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180115124205.29042-1-rf@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net
-Cc: alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.pqgruber.com ([178.189.19.235]:33970 "EHLO
+        mail.pqgruber.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966132AbeAOPlv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jan 2018 10:41:51 -0500
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lukas Wunner <lukas@wunner.de>, Bartosz Golaszewski <brgl@bgdev.pl>
 
-Specification of the bindings for the parent MFD driver component
-of the Cirrus Logic Madera codec drivers.
+Hi,
 
-Note that although the interrupt controller and GPIO are child
-drivers their required bindings are trivial, mandatory, and exist
-within the parent MFD node so are documented here.
+I noticed a regression when testing the GPIOs on an i.MX6 with the
+current v4.15-rc8 kernel.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+When reading the input value of an internal GPIO, for example with
+libgpiod's gpiod_line_get_value, strace shows that userspace blocks
+indefinitely at:
+ioctl(45, GPIOHANDLE_GET_LINE_VALUES_IOCTL
 
----
- Documentation/devicetree/bindings/mfd/madera.txt | 102 +++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
+(The process consumes 100% CPU afterwards and can't be killed)
 
-diff --git a/Documentation/devicetree/bindings/mfd/madera.txt b/Documentation/devicetree/bindings/mfd/madera.txt
-new file mode 100644
-index 000000000000..db3266088386
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/madera.txt
-@@ -0,0 +1,102 @@
-+Cirrus Logic Madera class audio codecs Multi-Functional Device
-+
-+These devices are audio SoCs with extensive digital capabilities and a range
-+of analogue I/O.
-+
-+See also the child driver bindings in:
-+bindings/pinctrl/cirrus,madera-pinctrl.txt
-+bindings/regulator/arizona-regulator.txt
-+bindings/sound/madera.txt
-+
-+Required properties:
-+
-+  - compatible : One of the following chip-specific strings:
-+        "cirrus,cs47l35"
-+        "cirrus,cs47l85"
-+        "cirrus,cs47l90"
-+        "cirrus,cs47l91"
-+        "cirrus,wm1840"
-+
-+  - reg : I2C slave address when connected using I2C, chip select number when
-+    using SPI.
-+
-+  - DCVDD-supply : Power supply for the device as defined in
-+    bindings/regulator/regulator.txt
-+    Mandatory on CS47L35, CS47L90, CS47L91
-+    Optional on CS47L85, WM1840
-+
-+  - AVDD-supply, DBVDD1-supply, DBVDD2-supply, CPVDD1-supply, CPVDD2-supply :
-+    Power supplies for the device
-+
-+  - DBVDD3-supply, DBVDD4-supply : Power supplies for the device
-+    (CS47L85, CS47L90, CS47L91, WM1840)
-+
-+  - SPKVDDL-supply, SPKVDDR-supply : Power supplies for the device
-+    (CS47L85, WM1840)
-+
-+  - SPKVDD-supply : Power supply for the device
-+    (CS47L35)
-+
-+  - interrupt-controller : Indicates that this device is an interrupt controller
-+
-+  - #interrupt-cells: the number of cells to describe an IRQ, must be 2.
-+    The first cell is the IRQ number.
-+    The second cell is the flags, encoded as the trigger masks from
-+    bindings/interrupt-controller/interrupts.txt
-+
-+  - gpio-controller : Indicates this device is a GPIO controller.
-+
-+  - #gpio-cells : Must be 2. The first cell is the pin number. The second cell
-+    is reserved for future use and must be zero
-+
-+  - interrupt-parent : The parent interrupt controller.
-+
-+  - interrupts : The interrupt line the /IRQ signal for the device is
-+    connected to.
-+
-+Optional properties:
-+
-+  - MICVDD-supply : Power supply, only need to be specified if
-+    powered externally
-+
-+  - reset-gpios : One entry specifying the GPIO controlling /RESET.
-+    As defined in bindings/gpio.txt.
-+    Although optional, it is strongly recommended to use a hardware reset
-+
-+  - MICBIASx : Initial data for the MICBIAS regulators, as covered in
-+    Documentation/devicetree/bindings/regulator/regulator.txt.
-+    One for each MICBIAS generator (MICBIAS1, MICBIAS2, ...)
-+    (all codecs)
-+
-+    One for each output pin (MICBIAS1A, MIBCIAS1B, MICBIAS2A, ...)
-+    (all except CS47L85, WM1840)
-+
-+    The following following additional property is supported for the generator
-+    nodes:
-+      - cirrus,ext-cap : Set to 1 if the MICBIAS has external decoupling
-+        capacitors attached.
-+
-+Optional child nodes:
-+    micvdd : Node containing initialization data for the micvdd regulator
-+    See bindings/regulator/arizona-regulator.txt
-+
-+    ldo1 : Node containing initialization data for the LDO1 regulator
-+    See bindings/regulator/arizona-regulator.txt
-+    (cs47l85, wm1840)
-+
-+Example:
-+
-+cs47l85@0 {
-+	compatible = "cirrus,cs47l85";
-+	reg = <0>;
-+
-+	reset-gpios = <&gpio 0>;
-+
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+	interrupts = <&host_irq1>;
-+	interrupt-parent = <&gic>;
-+
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+};
--- 
-2.11.0
+I looked at changes between v4.14 (working) and v4.15-rc8 (broken),
+especially in drivers/gpio/gpio-{mxc,mmio}.c and identified the
+following two commits to be responsible:
+eec1d566cdf9 ("gpio: Introduce ->get_multiple callback")
+80057cb417b2 ("gpio-mmio: Use the new .get_multiple() callback")
+
+Reverting both of them (they are interdependent) fixed the problem.
+
+I don't have a patch to fix it yet, but as it is rather late in the
+development cycle of 4.15, I thought it better to report it now. The
+author can probably cook up a fix way quicker or decide if you want to
+revert.
+
+If you can't reproduce it, let me know and I can send you ftrace
+records, test your patches or try to come up with a solution myself.
+
+Cheers,
+Clemens
