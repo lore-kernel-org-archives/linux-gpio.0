@@ -1,57 +1,128 @@
-From: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-Subject: Re: [PATCH v2 1/4] ARM: bcm2835: sync firmware properties with
- downstream
-Date: Tue, 16 Jan 2018 12:49:04 +0200
-Message-ID: <20180116104904.fsebsozoa4xysbz7@tarshish>
-References: <cover.1515698418.git.baruch@tkos.co.il>
- <e68675d54955c754ebe8ffc2491585fde5b396bc.1515698418.git.baruch@tkos.co.il>
- <1991337128.42939.1515837465503@email.1und1.de>
- <CACRpkdZ_g3-jR-7pOnS9MwpHprfEz8acB9SWcMLyoOVcB0iLvA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ_g3-jR-7pOnS9MwpHprfEz8acB9SWcMLyoOVcB0iLvA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>, linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2] gpio: mmio: Also read bits that are zero
+Date: Tue, 16 Jan 2018 12:00:31 +0100
+Message-ID: <20180116110031.20533-1-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44850 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751969AbeAPLCk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jan 2018 06:02:40 -0500
+Received: by mail-lf0-f66.google.com with SMTP id w23so16861136lfd.11
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Jan 2018 03:02:39 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Clemens Gruber <clemens.gruber@pqgruber.com>, Lukas Wunner <lukas@wunner.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
 
-Hi Linus,
+The code for .get_multiple() has bugs:
 
-On Tue, Jan 16, 2018 at 10:57:32AM +0100, Linus Walleij wrote:
-> On Sat, Jan 13, 2018 at 10:57 AM, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org> wrote:
-> >> Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org> hat am 11. Januar 2018 um 20:44 geschrieben:
-> >>
-> >> Add latest firmware property tags from the latest Raspberry Pi downstream
-> >> kernel. This is needed for the GPIO tags, so we can control the GPIO
-> >> multiplexor lines.
-> >>
-> >> Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-> >
-> > Acked-by: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
-> >
-> > Maybe this is obvious, but patch #3 depends on this change so no cherry-picking allowed.
-> 
-> I will save this for after the merge window as it feels now.
-> 
-> But as far as I have the right ACKs I can put it in the GPIO tree.
-> 
-> Baruch: can you resend the series with all ACKs and push me
-> to apply it all in the GPIO tree if you're fine with this approach?
+1. The simple .get_multiple() just reads a register, masks it
+and sets the return value. This is not correct: we only want to
+assign values (whether 0 or 1) to the bits that are set in the
+mask. Fix this by using &= ~mask to clear all bits in the mask
+and then |= val & mask to set the corresponding bits from the
+read.
 
-I plan to send another revision of this series later today to address Stefan's 
-comments on this one. Once Stefan and/or Eric ack the entire series, I'm fine 
-with you taking it through the GPIO tree if it is OK with the BCM2835 
-maintainers.
+2. The bgpio_get_multiple_be() call has a similar problem: it
+uses the |= operator to set the bits, so only the bits in the
+mask are affected, but it misses to clear all returned bits
+from the mask initially, so some bits will be returned
+erroneously set to 1.
 
-baruch
+3. The bgpio_get_set_multiple() again fails to clear the bits
+from the mask.
 
+4. find_next_bit() wasn't handled correctly, use a totally
+different approach for one function and change the other
+function to follow the design pattern of assigning the first
+bit to -1, then use bit + 1 in the for loop and < num_iterations
+as break condition.
+
+Fixes: 80057cb417b2 ("gpio-mmio: Use the new .get_multiple() callback")
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Reported-by: Clemens Gruber <clemens.gruber@pqgruber.com>
+Reported-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Fix the bug initializing the bit counter to -1 rather than 0
+  by rewriting to exploit cached direction bits for one function
+  and following the kernel design pattern for the other.
+
+Clemens: it would be great if you could test this, I want to
+push the fix ASAP if it solves the problem.
+---
+ drivers/gpio/gpio-mmio.c | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index f9042bcc27a4..7b14d6280e44 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -152,14 +152,13 @@ static int bgpio_get_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ {
+ 	unsigned long get_mask = 0;
+ 	unsigned long set_mask = 0;
+-	int bit = 0;
+ 
+-	while ((bit = find_next_bit(mask, gc->ngpio, bit)) != gc->ngpio) {
+-		if (gc->bgpio_dir & BIT(bit))
+-			set_mask |= BIT(bit);
+-		else
+-			get_mask |= BIT(bit);
+-	}
++	/* Make sure we first clear any bits that are zero when we read the register */
++	*bits &= ~*mask;
++
++	/* Exploit the fact that we know which directions are set */
++	set_mask = *mask & gc->bgpio_dir;
++	get_mask = *mask & ~gc->bgpio_dir;
+ 
+ 	if (set_mask)
+ 		*bits |= gc->read_reg(gc->reg_set) & set_mask;
+@@ -176,13 +175,13 @@ static int bgpio_get(struct gpio_chip *gc, unsigned int gpio)
+ 
+ /*
+  * This only works if the bits in the GPIO register are in native endianness.
+- * It is dirt simple and fast in this case. (Also the most common case.)
+  */
+ static int bgpio_get_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 			      unsigned long *bits)
+ {
+-
+-	*bits = gc->read_reg(gc->reg_dat) & *mask;
++	/* Make sure we first clear any bits that are zero when we read the register */
++	*bits &= ~*mask;
++	*bits |= gc->read_reg(gc->reg_dat) & *mask;
+ 	return 0;
+ }
+ 
+@@ -196,9 +195,12 @@ static int bgpio_get_multiple_be(struct gpio_chip *gc, unsigned long *mask,
+ 	unsigned long val;
+ 	int bit;
+ 
++	/* Make sure we first clear any bits that are zero when we read the register */
++	*bits &= ~*mask;
++
+ 	/* Create a mirrored mask */
+-	bit = 0;
+-	while ((bit = find_next_bit(mask, gc->ngpio, bit)) != gc->ngpio)
++	bit = -1;
++	while ((bit = find_next_bit(mask, gc->ngpio, bit + 1)) < gc->ngpio)
+ 		readmask |= bgpio_line2mask(gc, bit);
+ 
+ 	/* Read the register */
+@@ -208,8 +210,8 @@ static int bgpio_get_multiple_be(struct gpio_chip *gc, unsigned long *mask,
+ 	 * Mirror the result into the "bits" result, this will give line 0
+ 	 * in bit 0 ... line 31 in bit 31 for a 32bit register.
+ 	 */
+-	bit = 0;
+-	while ((bit = find_next_bit(&val, gc->ngpio, bit)) != gc->ngpio)
++	bit = -1;
++	while ((bit = find_next_bit(&val, gc->ngpio, bit + 1)) < gc->ngpio)
+ 		*bits |= bgpio_line2mask(gc, bit);
+ 
+ 	return 0;
 -- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org - tel: +972.52.368.4656, http://www.tkos.co.il -
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.14.3
+
