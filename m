@@ -1,51 +1,65 @@
-From: <patrice.chotard@st.com>
-Subject: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on stm32F769
-Date: Tue, 16 Jan 2018 13:30:58 +0100
-Message-ID: <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Patrice Chotard <patrice.chotard@st.com>
+From: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+Subject: [PATCH v3 2/4] dt-bindings: gpio: add raspberry pi GPIO expander binding
+Date: Tue, 16 Jan 2018 14:45:08 +0200
+Message-ID: <248ce2c6c79b281261184a0ccde8513a9074af4c.1516105893.git.baruch@tkos.co.il>
+References: <cover.1516105893.git.baruch@tkos.co.il>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1516105893.git.baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Patrice Chotard <patrice.chotard@st.com>
+The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware over
+I2C. The firmware mailbox interface allows the ARM core to control the
+GPIO lines.
 
-STM32F769 has 2 SDMMC port, add clock entry for the second one.
-
-Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
 ---
+v3:
+  * Rename node name.
 
-v2 _ Add Acked-by
+v2:
+  * Rename compatible string to raspberrypi,firmware-gpio
+---
+ .../bindings/gpio/raspberrypi,firmware-gpio.txt    | 24 ++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
 
- drivers/clk/clk-stm32f4.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 96c6b6b..8f8a178 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -282,6 +282,7 @@ struct stm32f4_gate_data {
- 
- 	{ STM32F4_RCC_APB2ENR,  0,	"tim1",		"apb2_mul" },
- 	{ STM32F4_RCC_APB2ENR,  1,	"tim8",		"apb2_mul" },
-+	{ STM32F4_RCC_APB2ENR,  7,	"sdmmc2",	"sdmux"    },
- 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
-@@ -315,7 +316,7 @@ struct stm32f4_gate_data {
- 
- static const u64 stm32f746_gate_map[MAX_GATE_MAP] = { 0x000000f17ef417ffull,
- 						      0x0000000000000003ull,
--						      0x04f77f033e01c9ffull };
-+						      0x04f77f833e01c9ffull };
- 
- static const u64 *stm32f4_gate_map;
- 
+diff --git a/Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt b/Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
+new file mode 100644
+index 000000000000..936dc59eba12
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
+@@ -0,0 +1,24 @@
++Raspberry Pi GPIO expander
++
++The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware. The
++firmware exposes a mailbox interface that allows the ARM core to control the
++GPIO lines on the expander.
++
++Required properties:
++
++- compatible : Should be "raspberrypi,firmware-gpio"
++- gpio-controller : Marks the device node as a gpio controller
++- #gpio-cells : Should be two.  The first cell is the pin number, and
++  the second cell is used to specify the gpio polarity:
++  0 = active high
++  1 = active low
++- firmware : Reference to the RPi firmware device node
++
++Example:
++
++expgpio: gpio-expander {
++	compatible = "raspberrypi,firmware-gpio";
++	gpio-controller;
++	#gpio-cells = <2>;
++	firmware = <&firmware>;
++};
 -- 
-1.9.1
+2.15.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
