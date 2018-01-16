@@ -1,96 +1,62 @@
 From: Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH v3 1/4] ARM: bcm2835: sync firmware properties with downstream
-Date: Tue, 16 Jan 2018 14:45:07 +0200
-Message-ID: <061d2f80ebcd7e983411ef3b243229eff0b13186.1516105893.git.baruch@tkos.co.il>
-References: <cover.1516105893.git.baruch@tkos.co.il>
+Subject: [PATCH v3 0/4] gpio: driver for the RPi3 GPIO expander
+Date: Tue, 16 Jan 2018 14:45:06 +0200
+Message-ID: <cover.1516105893.git.baruch@tkos.co.il>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:60294 "EHLO
+Received: from guitar.tcltek.co.il ([192.115.133.116]:60283 "EHLO
         mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751559AbeAPMpZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1751451AbeAPMpZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 16 Jan 2018 07:45:25 -0500
-In-Reply-To: <cover.1516105893.git.baruch@tkos.co.il>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Dave Stevenson <dave.stevenson@raspberrypi.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Linus Walleij <linus.walleij@linaro.org>
 Cc: devicetree@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, linux-gpio@vger.kernel.org, Michael Zoran <mzoran@crowfest.net>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
 
-Add latest firmware property tags from the latest Raspberry Pi downstream
-kernel. This is needed for the GPIO tags, so we can control the GPIO
-multiplexor lines.
+The Raspberry Pi 3 has a GPIO expander that controls, among others, the 
+activity LED, and the camera connector GPIOs. The GPIO expander on an I2C bus 
+that is not directly controlled from the ARM core. The VC4 firmware controls 
+the I2C bus, and allows the ARM core to set/get GPIO settings over its mailbox 
+interface.
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
-v3: Add Stefan's ack
+This series adds support for the RPi3 expander.
 
-v2: No change
----
- include/soc/bcm2835/raspberrypi-firmware.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+The driver is ported from the downstream kernel at 
+https://github.com/raspberrypi/linux/, branch rpi-4.9.y.
 
-diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
-index cb979ad90401..50df5b28d2c9 100644
---- a/include/soc/bcm2835/raspberrypi-firmware.h
-+++ b/include/soc/bcm2835/raspberrypi-firmware.h
-@@ -63,6 +63,7 @@ enum rpi_firmware_property_tag {
- 	RPI_FIRMWARE_GET_MIN_VOLTAGE =                        0x00030008,
- 	RPI_FIRMWARE_GET_TURBO =                              0x00030009,
- 	RPI_FIRMWARE_GET_MAX_TEMPERATURE =                    0x0003000a,
-+	RPI_FIRMWARE_GET_STC =                                0x0003000b,
- 	RPI_FIRMWARE_ALLOCATE_MEMORY =                        0x0003000c,
- 	RPI_FIRMWARE_LOCK_MEMORY =                            0x0003000d,
- 	RPI_FIRMWARE_UNLOCK_MEMORY =                          0x0003000e,
-@@ -72,12 +73,22 @@ enum rpi_firmware_property_tag {
- 	RPI_FIRMWARE_SET_ENABLE_QPU =                         0x00030012,
- 	RPI_FIRMWARE_GET_DISPMANX_RESOURCE_MEM_HANDLE =       0x00030014,
- 	RPI_FIRMWARE_GET_EDID_BLOCK =                         0x00030020,
-+	RPI_FIRMWARE_GET_CUSTOMER_OTP =                       0x00030021,
- 	RPI_FIRMWARE_GET_DOMAIN_STATE =                       0x00030030,
- 	RPI_FIRMWARE_SET_CLOCK_STATE =                        0x00038001,
- 	RPI_FIRMWARE_SET_CLOCK_RATE =                         0x00038002,
- 	RPI_FIRMWARE_SET_VOLTAGE =                            0x00038003,
- 	RPI_FIRMWARE_SET_TURBO =                              0x00038009,
-+	RPI_FIRMWARE_SET_CUSTOMER_OTP =                       0x00038021,
- 	RPI_FIRMWARE_SET_DOMAIN_STATE =                       0x00038030,
-+	RPI_FIRMWARE_GET_GPIO_STATE =                         0x00030041,
-+	RPI_FIRMWARE_SET_GPIO_STATE =                         0x00038041,
-+	RPI_FIRMWARE_SET_SDHOST_CLOCK =                       0x00038042,
-+	RPI_FIRMWARE_GET_GPIO_CONFIG =                        0x00030043,
-+	RPI_FIRMWARE_SET_GPIO_CONFIG =                        0x00038043,
-+	RPI_FIRMWARE_GET_PERIPH_REG =                         0x00030045,
-+	RPI_FIRMWARE_SET_PERIPH_REG =                         0x00038045,
-+
- 
- 	/* Dispmanx TAGS */
- 	RPI_FIRMWARE_FRAMEBUFFER_ALLOCATE =                   0x00040001,
-@@ -91,6 +102,8 @@ enum rpi_firmware_property_tag {
- 	RPI_FIRMWARE_FRAMEBUFFER_GET_VIRTUAL_OFFSET =         0x00040009,
- 	RPI_FIRMWARE_FRAMEBUFFER_GET_OVERSCAN =               0x0004000a,
- 	RPI_FIRMWARE_FRAMEBUFFER_GET_PALETTE =                0x0004000b,
-+	RPI_FIRMWARE_FRAMEBUFFER_GET_TOUCHBUF =               0x0004000f,
-+	RPI_FIRMWARE_FRAMEBUFFER_GET_GPIOVIRTBUF =            0x00040010,
- 	RPI_FIRMWARE_FRAMEBUFFER_RELEASE =                    0x00048001,
- 	RPI_FIRMWARE_FRAMEBUFFER_TEST_PHYSICAL_WIDTH_HEIGHT = 0x00044003,
- 	RPI_FIRMWARE_FRAMEBUFFER_TEST_VIRTUAL_WIDTH_HEIGHT =  0x00044004,
-@@ -100,6 +113,7 @@ enum rpi_firmware_property_tag {
- 	RPI_FIRMWARE_FRAMEBUFFER_TEST_VIRTUAL_OFFSET =        0x00044009,
- 	RPI_FIRMWARE_FRAMEBUFFER_TEST_OVERSCAN =              0x0004400a,
- 	RPI_FIRMWARE_FRAMEBUFFER_TEST_PALETTE =               0x0004400b,
-+	RPI_FIRMWARE_FRAMEBUFFER_TEST_VSYNC =                 0x0004400e,
- 	RPI_FIRMWARE_FRAMEBUFFER_SET_PHYSICAL_WIDTH_HEIGHT =  0x00048003,
- 	RPI_FIRMWARE_FRAMEBUFFER_SET_VIRTUAL_WIDTH_HEIGHT =   0x00048004,
- 	RPI_FIRMWARE_FRAMEBUFFER_SET_DEPTH =                  0x00048005,
-@@ -108,6 +122,10 @@ enum rpi_firmware_property_tag {
- 	RPI_FIRMWARE_FRAMEBUFFER_SET_VIRTUAL_OFFSET =         0x00048009,
- 	RPI_FIRMWARE_FRAMEBUFFER_SET_OVERSCAN =               0x0004800a,
- 	RPI_FIRMWARE_FRAMEBUFFER_SET_PALETTE =                0x0004800b,
-+	RPI_FIRMWARE_FRAMEBUFFER_SET_TOUCHBUF =               0x0004801f,
-+	RPI_FIRMWARE_FRAMEBUFFER_SET_GPIOVIRTBUF =            0x00048020,
-+	RPI_FIRMWARE_FRAMEBUFFER_SET_VSYNC =                  0x0004800e,
-+	RPI_FIRMWARE_FRAMEBUFFER_SET_BACKLIGHT =              0x0004800f,
- 
- 	RPI_FIRMWARE_VCHIQ_INIT =                             0x00048010,
- 
+Changes in v3:
+
+  * Kconfig tweaks
+  * Check rpi_exp_gpio_get_polarity() return value
+  * Redundant header removal
+  * Redundant platform_set_drvdata() call removal
+  * Small coding style changes
+
+Changes in v2:
+
+  * Driver renamed to gpio-raspberrypi-exp
+  * Compatible string renamed to "raspberrypi,firmware-gpio"
+  * Firmware error check
+  * Smaller tweaks listed in individual patches
+
+Baruch Siach (3):
+  ARM: bcm2835: sync firmware properties with downstream
+  dt-bindings: gpio: add raspberry pi GPIO expander binding
+  ARM: dts: bcm2837-rpi-3-b: add GPIO expander
+
+Dave Stevenson (1):
+  gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox
+    service
+
+ .../bindings/gpio/raspberrypi,firmware-gpio.txt    |  24 ++
+ arch/arm/boot/dts/bcm2837-rpi-3-b.dts              |  16 ++
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-raspberrypi-exp.c                | 253 +++++++++++++++++++++
+ include/soc/bcm2835/raspberrypi-firmware.h         |  18 ++
+ 6 files changed, 321 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
+ create mode 100644 drivers/gpio/gpio-raspberrypi-exp.c
+
 -- 
 2.15.1
 
