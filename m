@@ -1,103 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/6] gpio: Add GPIO driver for Nintendo Wii
-Date: Tue, 16 Jan 2018 10:42:54 +0100
-Message-ID: <CACRpkdb11jn4HFdoKLuNVmXeTBntpTAjkVctvH1=R-p6989eTg@mail.gmail.com>
-References: <20180115031401.19577-1-j.neuschaefer@gmx.net> <20180115031401.19577-4-j.neuschaefer@gmx.net>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] ARM: bcm2835: sync firmware properties with downstream
+Date: Tue, 16 Jan 2018 10:57:32 +0100
+Message-ID: <CACRpkdZ_g3-jR-7pOnS9MwpHprfEz8acB9SWcMLyoOVcB0iLvA@mail.gmail.com>
+References: <cover.1515698418.git.baruch@tkos.co.il> <e68675d54955c754ebe8ffc2491585fde5b396bc.1515698418.git.baruch@tkos.co.il>
+ <1991337128.42939.1515837465503@email.1und1.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:41163 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750716AbeAPJmz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jan 2018 04:42:55 -0500
-Received: by mail-io0-f196.google.com with SMTP id f6so16129180ioh.8
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Jan 2018 01:42:54 -0800 (PST)
-In-Reply-To: <20180115031401.19577-4-j.neuschaefer@gmx.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1991337128.42939.1515837465503-7tX72C7vayboQLBSYMtkGA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
+Cc: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>, linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Albert Herranz <albert_herranz@yahoo.es>, Segher Boessenkool <segher@kernel.crashing.org>
 
-On Mon, Jan 15, 2018 at 4:13 AM, Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
+On Sat, Jan 13, 2018 at 10:57 AM, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org> wrote:
+>> Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org> hat am 11. Januar 2018 um 20:44 geschrieben:
+>>
+>>
+>> Add latest firmware property tags from the latest Raspberry Pi downstream
+>> kernel. This is needed for the GPIO tags, so we can control the GPIO
+>> multiplexor lines.
+>>
+>> Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+>
+> Acked-by: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
+>
+> Maybe this is obvious, but patch #3 depends on this change so no cherry-picking allowed.
 
-> This patch is based on code developed by Albert Herranz and the GameCube
-> Linux Team, file arch/powerpc/platforms/embedded6xx/hlwd-gpio.c,
-> available at https://github.com/DeltaResero/GC-Wii-Linux-Kernels, but
-> has grown quite dissimilar.
+I will save this for after the merge window as it feels now.
 
-I'm impressed by this effort. As with all reverse engineering.
+But as far as I have the right ACKs I can put it in the GPIO tree.
 
-> This driver currently uses __raw_readl and __raw_writel to access the
-> GPIO controller's MMIO registers. I wonder if readl/writel plus explicit
-> byte-swapping would be more correct, because it could be independent of
-> the CPU's endianness. That said, this hardware only exists in two
-> big-endian machines (Wii and Wii U).
-
-I don't know about PPC but I think you're supposed to use
-ioread32be() and iowrite32be() to do explicit BE access.
-
-But when I look at it, I think you can just use the gpio-mmio library
-for this driver and cut down code cosiderably.
-
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-
-Can't you just save a pointer to struct device *dev in the
-state container and use dev_info(state->dev, ...) etc instead
-of this?
-
-> +#include <linux/of_gpio.h>
-
-This include should not be needed.
-
-> +/*
-> + * Update the bit with the given bit offset in the given register to a g=
-iven
-> + * value
-> + */
-> +static void hlwd_gpio_update_bit(struct gpio_chip *gc, unsigned int reg,
-> +               int offset, int value)
-> +{
-> +       struct hlwd_gpio *hlwd =3D gpiochip_get_data(gc);
-> +       unsigned long flags;
-> +       u32 bit =3D 1UL << offset;
-
-#include <linux/bitops.h>
-
-u32 bit =3D BIT(offset);
-
-> +       u32 tmp;
-> +
-> +       spin_lock_irqsave(&hlwd->lock, flags);
-> +       tmp =3D __raw_readl(hlwd->regs + reg);
-> +       if (value)
-> +               __raw_writel(tmp | bit, hlwd->regs + reg);
-> +       else
-> +               __raw_writel(tmp & ~bit, hlwd->regs + reg);
-> +       spin_unlock_irqrestore(&hlwd->lock, flags);
-> +}
-
-This looks very much like it is reimplementing the stuff we already
-have in drivers/gpio/gpio-mmio.h.
-
-There is even a big endian access flag for the library.
-And you get so much for free with gpio-mmio.
-
-select GPIO_GENERIC
-in Kconfig
-
-the helpers come in from <linux/gpio/driver.h>
-
-Look at other drivers for inspiration:
-git grep bgpio_init
-
-If you need IRQ support you should probably have your own file
-for this driver, but it will be just a few lines of wrapper using
-bgpio_init() and BGPIOF_BIG_ENDIAN and/or possibly
-BGPIOF_BIG_ENDIAN_BYTE_ORDER.
-
-See the other drivers.
+Baruch: can you resend the series with all ACKs and push me
+to apply it all in the GPIO tree if you're fine with this approach?
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
