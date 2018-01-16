@@ -1,88 +1,55 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [RFC PATCH 1/2] pinctrl: add consumer variant for gpio request
-Date: Tue, 16 Jan 2018 16:33:29 +0200
-Message-ID: <CAHp75Vd9qrp_gjMcZAHQrg8BsG5zQC6jZrkseo222=Xepce+ew@mail.gmail.com>
-References: <20180115162233.6205-1-ludovic.desroches@microchip.com>
- <20180115162233.6205-2-ludovic.desroches@microchip.com> <CAHp75VdGp1_hwK7rUq4u_gKpypdV7LYhV4+kQoVb_u7D+a6pwA@mail.gmail.com>
- <20180116090109.GL2989@rfolt0960.corp.atmel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH] pinctrl: meson: axg: fix gpio_ao bank stop pin
+Date: Tue, 16 Jan 2018 17:29:54 +0100
+Message-ID: <20180116162954.4945-1-jbrunet@baylibre.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36723 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751015AbeAPOdb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jan 2018 09:33:31 -0500
-In-Reply-To: <20180116090109.GL2989@rfolt0960.corp.atmel.com>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:37612 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeAPQ36 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jan 2018 11:29:58 -0500
+Received: by mail-wr0-f193.google.com with SMTP id f11so5359796wre.4
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Jan 2018 08:29:58 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, nicolas.free@microchip.com
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Tue, Jan 16, 2018 at 11:01 AM, Ludovic Desroches
-<ludovic.desroches@microchip.com> wrote:
-> On Mon, Jan 15, 2018 at 10:19:39PM +0200, Andy Shevchenko wrote:
->> On Mon, Jan 15, 2018 at 6:22 PM, Ludovic Desroches
->> <ludovic.desroches@microchip.com> wrote:
->>
->> Did I miss cover letter for this?
-> It seems: https://lkml.org/lkml/2018/1/15/841
+GPIO bank mistakenly stops at GPIOAO_9 while it should stop at GPIOAO_13.
+This gives -EINVAL if one tries to set/get anything on GPIOAO_10 to
+GPIOAO_13 (pull, direction, value)
 
->> > Add a consumer variant to GPIO request relative functions. The goal
->> > is to fix the bad ownership, which is arbitrary set to
->> > "range->name:gpio", of a GPIO.
->>
->> Hmm... It's supposed to be name of the owner of the pin range (pin
->> control device name IIUC).
+Correcting the bank last pin fixes this problem
 
-> Yes, the owner is the pinctrl device.
+Fixes: e072b0f1b03a ("pinctrl: meson-axg: Add new pinctrl driver for Meson AXG SoC")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
 
-> There is an interesting thread here:
-> https://www.spinics.net/lists/linux-gpio/msg16769.html
+Hi Linus,
 
-Okay, I have dove into all links provided. Below a set of my thoughts
-with regard to topic.
+This changes fixes code which was added during this cycle, so it intended
+for your "for-next" branch, not the "fixes" one.
 
-> If things have changed and I missed it, please tell me. I have seen some
-> improvements but it still don't fit my needs.
+Thanks
+Jerome
 
-First of all, the main architectural issue with current pin control
-design is so called "states". It's quite artificial entity which is
-not represented by hardware per se.
+ drivers/pinctrl/meson/pinctrl-meson-axg.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Instead we better to provide an API to pin configuration and pin
-muxing: I would like to switch to *this* pin function with *this* pin
-configuration.
-
-Second, the pin control and GPIOs are orthogonal as your hardware
-confirms. The propagating pin configuration or muxing via GPIO API
-looks to me a wrong direction.
-
-To the point of the specific issue you are trying to solve.  I would
-rather agree with Maxime:
-
-"Something like "if the configuration is a gpio, and my pinctrl driver
-is also a gpio controller, and that gpiod_request is being called on
-that pin, hand over the reference"
-
-Just in case of architectural review imagine a below case. We have two
-UART devices which share same pins, and at the same time their pins
-can be switched to GPIO function. So, use cases and questions:
-- allow potential driver to switch between UARTs at run time
-- allow UART driver to switch mode between no flow control (2 wire
-mode) and HW flow (4 wire mode), though not specifically at run time
-- allow GPIO function for some pins at run time to support OOB wake
-up, for example, when UART is a console
-
-More caveats:
-- switching and reconfiguring pins at run time is a bad idea for the
-start (only some exceptions can be applied, see above) because of
-electrical properties of the devices and potential damage to the
-hardware
-- switching to GPIO is allowed at run time for the purpose of OOB wake source
-- after switching to GPIO and freeing it the pin configuration (and
-perhaps muxing) would return back to previous (before GPIO) settings
-(this would be helpful to case described above: OOB wake up)
-
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+index a1a7d42afd42..6431d77a4704 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+@@ -897,8 +897,8 @@ static struct meson_bank meson_axg_periphs_banks[] = {
+ };
+ 
+ static struct meson_bank meson_axg_aobus_banks[] = {
+-	/*   name    first      last      irq	pullen  pull    dir     out     in  */
+-	BANK("AO",   GPIOAO_0,  GPIOAO_9, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
++	/*   name    first      last       irq    pullen   pull   dir     out     in  */
++	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
+ };
+ 
+ static struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
 -- 
-With Best Regards,
-Andy Shevchenko
+2.14.3
+
