@@ -1,42 +1,37 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/4] ARM: bcm2835: sync firmware properties with downstream
-Date: Tue, 16 Jan 2018 10:57:32 +0100
-Message-ID: <CACRpkdZ_g3-jR-7pOnS9MwpHprfEz8acB9SWcMLyoOVcB0iLvA@mail.gmail.com>
-References: <cover.1515698418.git.baruch@tkos.co.il> <e68675d54955c754ebe8ffc2491585fde5b396bc.1515698418.git.baruch@tkos.co.il>
- <1991337128.42939.1515837465503@email.1und1.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/4] gpio-stmpe: Use seq_putc() in stmpe_dbg_show()
+Date: Tue, 16 Jan 2018 10:59:32 +0100
+Message-ID: <CACRpkdZ0hN+AEbghiyk49s9Qec5Nt2JTZLJfe=oJm1w238U7jA@mail.gmail.com>
+References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net> <91234c1e-9106-ae5d-ebed-8e3d5f272c1e@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1991337128.42939.1515837465503-7tX72C7vayboQLBSYMtkGA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
-Cc: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>, linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f53.google.com ([209.85.214.53]:33836 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750816AbeAPJ7d (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jan 2018 04:59:33 -0500
+Received: by mail-it0-f53.google.com with SMTP id m11so11019950iti.1
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Jan 2018 01:59:32 -0800 (PST)
+In-Reply-To: <91234c1e-9106-ae5d-ebed-8e3d5f272c1e@users.sourceforge.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Jan 13, 2018 at 10:57 AM, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org> wrote:
->> Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org> hat am 11. Januar 2018 um 20:44 geschrieben:
->>
->>
->> Add latest firmware property tags from the latest Raspberry Pi downstream
->> kernel. This is needed for the GPIO tags, so we can control the GPIO
->> multiplexor lines.
->>
->> Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+On Fri, Jan 12, 2018 at 9:01 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 12 Jan 2018 19:30:50 +0100
 >
-> Acked-by: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
+> A single character (line break) should be put into a sequence.
+> Thus use the corresponding function "seq_putc".
 >
-> Maybe this is obvious, but patch #3 depends on this change so no cherry-picking allowed.
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-I will save this for after the merge window as it feels now.
-
-But as far as I have the right ACKs I can put it in the GPIO tree.
-
-Baruch: can you resend the series with all ACKs and push me
-to apply it all in the GPIO tree if you're fine with this approach?
+Patch applied.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
