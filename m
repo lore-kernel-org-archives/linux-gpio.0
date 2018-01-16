@@ -1,134 +1,90 @@
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: Re: [RFC PATCH 1/2] pinctrl: add consumer variant for gpio request
-Date: Tue, 16 Jan 2018 10:01:09 +0100
-Message-ID: <20180116090109.GL2989@rfolt0960.corp.atmel.com>
-References: <20180115162233.6205-1-ludovic.desroches@microchip.com>
- <20180115162233.6205-2-ludovic.desroches@microchip.com>
- <CAHp75VdGp1_hwK7rUq4u_gKpypdV7LYhV4+kQoVb_u7D+a6pwA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: mmio: Also read bits that are zero
+Date: Tue, 16 Jan 2018 10:17:14 +0100
+Message-ID: <20180116091714.20963-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:53093 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750816AbeAPJBV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jan 2018 04:01:21 -0500
-Content-Disposition: inline
-In-Reply-To: <CAHp75VdGp1_hwK7rUq4u_gKpypdV7LYhV4+kQoVb_u7D+a6pwA@mail.gmail.com>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36284 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750926AbeAPJTU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jan 2018 04:19:20 -0500
+Received: by mail-lf0-f65.google.com with SMTP id t79so1116560lfe.3
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Jan 2018 01:19:20 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, nicolas.free@microchip.com
+To: linux-gpio@vger.kernel.org, Clemens Gruber <clemens.gruber@pqgruber.com>, Lukas Wunner <lukas@wunner.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
 
-Hi,
+The code for .get_multiple() has bugs:
 
-On Mon, Jan 15, 2018 at 10:19:39PM +0200, Andy Shevchenko wrote:
-> On Mon, Jan 15, 2018 at 6:22 PM, Ludovic Desroches
-> <ludovic.desroches@microchip.com> wrote:
-> 
-> Did I miss cover letter for this?
-> 
+1. The simple .get_multiple() just reads a register, masks it
+and sets the return value. This is not correct: we only want to
+assign values (whether 0 or 1) to the bits that are set in the
+mask. Fix this by using &= ~mask to clear all bits in the mask
+and then |= val & mask to set the corresponding bits from the
+read.
 
-It seems: https://lkml.org/lkml/2018/1/15/841
+2. The bgpio_get_multiple_be() call has a similar problem: it
+uses the |= operator to set the bits, so only the bits in the
+mask are affected, but it misses to clear all returned bits
+from the mask initially, so some bits will be returned
+erroneously set to 1.
 
-> > Add a consumer variant to GPIO request relative functions. The goal
-> > is to fix the bad ownership, which is arbitrary set to
-> > "range->name:gpio", of a GPIO.
-> 
-> Hmm... It's supposed to be name of the owner of the pin range (pin
-> control device name IIUC).
->
+3. The bgpio_get_set_multiple() again fails to clear the bits
+from the mask.
 
-Yes, the owner is the pinctrl device.
+Fixes: 80057cb417b2 ("gpio-mmio: Use the new .get_multiple() callback")
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Reported-by: Clemens Gruber <clemens.gruber@pqgruber.com>
+Reported-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Clemens: it would be great if you could test this, I want to
+push the fix ASAP if it solves the problem.
+---
+ drivers/gpio/gpio-mmio.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-> > There is a lack of configuration features for GPIO. For instance,
-> > we can't set the bias. Some pin controllers manage both device's
-> > pins and GPIOs. GPIOs can benefit from pin configuration. Usually,
-> > a pinctrl node is used to mux the pin as a GPIO and to set up its
-> > configuration.
-> 
-> Don't we have means to do that?
-> 
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index f9042bcc27a4..eae078d43611 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -154,6 +154,9 @@ static int bgpio_get_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 	unsigned long set_mask = 0;
+ 	int bit = 0;
+ 
++	/* Make sure we first clear any bits that are zero when we read the register */
++	*bits &= ~*mask;
++
+ 	while ((bit = find_next_bit(mask, gc->ngpio, bit)) != gc->ngpio) {
+ 		if (gc->bgpio_dir & BIT(bit))
+ 			set_mask |= BIT(bit);
+@@ -176,13 +179,13 @@ static int bgpio_get(struct gpio_chip *gc, unsigned int gpio)
+ 
+ /*
+  * This only works if the bits in the GPIO register are in native endianness.
+- * It is dirt simple and fast in this case. (Also the most common case.)
+  */
+ static int bgpio_get_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 			      unsigned long *bits)
+ {
+-
+-	*bits = gc->read_reg(gc->reg_dat) & *mask;
++	/* Make sure we first clear any bits that are zero when we read the register */
++	*bits &= ~*mask;
++	*bits |= gc->read_reg(gc->reg_dat) & *mask;
+ 	return 0;
+ }
+ 
+@@ -196,6 +199,9 @@ static int bgpio_get_multiple_be(struct gpio_chip *gc, unsigned long *mask,
+ 	unsigned long val;
+ 	int bit;
+ 
++	/* Make sure we first clear any bits that are zero when we read the register */
++	*bits &= ~*mask;
++
+ 	/* Create a mirrored mask */
+ 	bit = 0;
+ 	while ((bit = find_next_bit(mask, gc->ngpio, bit)) != gc->ngpio)
+-- 
+2.14.3
 
-I don't think so. I am not the only one to have this issue for a long
-time.
-
-There is an interesting thread here:
-https://www.spinics.net/lists/linux-gpio/msg16769.html
-
-If things have changed and I missed it, please tell me. I have seen some
-improvements but it still don't fit my needs.
-
-> At least that what I see in aspeed_gpio_set_config().
-> 
-
-Yes this is part of the improvements I have seen. The set_config
-operation is used at several places in the gpiolib:
-- gpio_set_drive_single_ended
-- gpiod_set_debounce
-- gpiod_set_transitory
-
-It doesn't cover all my needs. In the cover letter, I mentionned that I
-based my job on this adding parameters I need. Someone told me it may be
-difficult to pul all the parameters in one cell. For instance, the drive
-strength is a numeric value using several bits.
-
-I am not sure duplicating the parameters we have for pinconf is the
-appropriate solution. Then I prepare a second set of patches to add a
-cell with a phandle on the pin configuration. I was going to send it
-when I realize that fixing the ownership issue is probably a better
-solution. It may involve more code change but less duplication.
-
-> Or I missed a point here?
-> 
-> > The pinmuxing strict mode involves that a pin which is muxed can't
-> > be requested as a GPIO if the owner is not the same.
-> 
-> Any elaborated example?
-> 
-
-More details in the thread I mentionned earlier. I want to enable the
-strict mode to prevent weird behavior using the sysfs (or the char
-device). Moreover, the strict mode fits the behavior of my pin
-controller.
-
-In my DTS, at the moment, if a device needs GPIOs, then I add a pinctrl
-node where I put the pinmuxing of the pins as GPIOs and I set the
-configuration (for instance, bias pull-up, debounce). If the strict mode
-is enabled, when the driver will request the GPIOs, it will fail even if
-it's the owner of the pinmuxing.
-
-> > Unfortunately,
-> > the ownership of a GPIO is set arbitrarily to "range->name:gpio".
-> > So there is a mismatch about the ownership which prevents a device
-> > from being the owner of the pinmuxing and requesting the same pin as
-> > a GPIO.
-> 
-> > Adding some consumer variants for GPIO request stuff will allow to
-> > pass the name of the device which requests the GPIO to not return an
-> > error if it's also the owner of the pinmuxing.
-> 
-> I think we need something more generic in core than producing more API
-> functions.
-> 
-
-I didn't want to introduce too many changes to keep it safe and I didn't
-want to break current API by adding a parameter.
-
-> But I would like to get problem first.
-> 
-> > +       if (consumer)
-> > +               return pin_request(pctldev, pin, consumer, range);
-> > +
-> 
-> Hmm... My understanding that GPIO is just a (special) function out of
-> pin muxing. So, doing musing is essential to get proper function out
-> of it.
-> 
-> Does your hardware considers this differently? If so, I would really
-> want to see some datasheets.
-
-No you're right about the behavior of my hardware.
-
-Regards
-
-Ludovic
