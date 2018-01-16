@@ -1,31 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sprd: Use seq_putc() in sprd_pinconf_group_dbg_show()
-Date: Tue, 16 Jan 2018 11:08:48 +0100
-Message-ID: <CACRpkdb3WeAFZ8kMB5E6rnwHJtY5=+uFHWOeh1MDp+vejY8qWg@mail.gmail.com>
-References: <a951aa57-b12d-5c8c-561b-d11d385f9872@users.sourceforge.net>
+From: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] ARM: bcm2835: sync firmware properties with
+ downstream
+Date: Tue, 16 Jan 2018 12:49:04 +0200
+Message-ID: <20180116104904.fsebsozoa4xysbz7@tarshish>
+References: <cover.1515698418.git.baruch@tkos.co.il>
+ <e68675d54955c754ebe8ffc2491585fde5b396bc.1515698418.git.baruch@tkos.co.il>
+ <1991337128.42939.1515837465503@email.1und1.de>
+ <CACRpkdZ_g3-jR-7pOnS9MwpHprfEz8acB9SWcMLyoOVcB0iLvA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a951aa57-b12d-5c8c-561b-d11d385f9872@users.sourceforge.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, Baolin Wang <baolin.wang@spreadtrum.com>, Colin Ian King <colin.king@canonical.com>, Dan Carpenter <dan.carpenter@oracle.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZ_g3-jR-7pOnS9MwpHprfEz8acB9SWcMLyoOVcB0iLvA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>, linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Jan 13, 2018 at 12:48 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+Hi Linus,
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 13 Jan 2018 12:42:14 +0100
->
-> A single character (line break) should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+On Tue, Jan 16, 2018 at 10:57:32AM +0100, Linus Walleij wrote:
+> On Sat, Jan 13, 2018 at 10:57 AM, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org> wrote:
+> >> Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org> hat am 11. Januar 2018 um 20:44 geschrieben:
+> >>
+> >> Add latest firmware property tags from the latest Raspberry Pi downstream
+> >> kernel. This is needed for the GPIO tags, so we can control the GPIO
+> >> multiplexor lines.
+> >>
+> >> Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+> >
+> > Acked-by: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
+> >
+> > Maybe this is obvious, but patch #3 depends on this change so no cherry-picking allowed.
+> 
+> I will save this for after the merge window as it feels now.
+> 
+> But as far as I have the right ACKs I can put it in the GPIO tree.
+> 
+> Baruch: can you resend the series with all ACKs and push me
+> to apply it all in the GPIO tree if you're fine with this approach?
 
-Patch applied.
+I plan to send another revision of this series later today to address Stefan's 
+comments on this one. Once Stefan and/or Eric ack the entire series, I'm fine 
+with you taking it through the GPIO tree if it is OK with the BCM2835 
+maintainers.
 
-Yours,
-Linus Walleij
+baruch
+
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org - tel: +972.52.368.4656, http://www.tkos.co.il -
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
