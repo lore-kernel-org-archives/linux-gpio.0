@@ -1,32 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/4] gpio-stmpe: Delete an unnecessary variable
- initialisation in stmpe_gpio_probe()
-Date: Tue, 16 Jan 2018 11:04:10 +0100
-Message-ID: <CACRpkdYr8U-6bzQ7rOX_768Hdo-u1kMQJ3OFWDOR+t11zvrAjw@mail.gmail.com>
-References: <df11c007-360e-ce6b-2f70-61b6fb6b49cf@users.sourceforge.net> <245fffed-3b76-5265-25b1-9f9077518894@users.sourceforge.net>
+Subject: Re: [PATCH] pinctrl/nomadik/abx500: Use seq_putc() in abx500_gpio_dbg_show()
+Date: Tue, 16 Jan 2018 11:06:42 +0100
+Message-ID: <CACRpkdZcJaCQZ8e5GazOoOW_t8sforOSby7_svay0_AVsD1-0A@mail.gmail.com>
+References: <88354751-0a61-4893-35ad-9a7c7337ebce@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44417 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750832AbeAPKEL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jan 2018 05:04:11 -0500
-Received: by mail-io0-f195.google.com with SMTP id k18so16207017ioc.11
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Jan 2018 02:04:11 -0800 (PST)
-In-Reply-To: <245fffed-3b76-5265-25b1-9f9077518894@users.sourceforge.net>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <88354751-0a61-4893-35ad-9a7c7337ebce@users.sourceforge.net>
+Sender: kernel-janitors-owner@vger.kernel.org
 To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jan 12, 2018 at 9:04 PM, SF Markus Elfring
+On Sat, Jan 13, 2018 at 11:09 AM, SF Markus Elfring
 <elfring@users.sourceforge.net> wrote:
 
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 12 Jan 2018 20:48:40 +0100
+> Date: Sat, 13 Jan 2018 11:04:29 +0100
 >
-> The local variable "irq" will eventually be set to an appropriate value
-> a bit later. Thus omit the explicit initialisation at the beginning.
+> A single character (line break) should be put into a sequence.
+> Thus use the corresponding function "seq_putc".
+>
+> This issue was detected by using the Coccinelle software.
 >
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
