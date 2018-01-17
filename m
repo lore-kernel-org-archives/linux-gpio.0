@@ -1,135 +1,95 @@
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: Re: [RFC PATCH 1/2] pinctrl: add consumer variant for gpio request
-Date: Wed, 17 Jan 2018 15:54:58 +0100
-Message-ID: <20180117145458.GO2989@rfolt0960.corp.atmel.com>
-References: <20180115162233.6205-1-ludovic.desroches@microchip.com>
- <20180115162233.6205-2-ludovic.desroches@microchip.com>
- <CAHp75VdGp1_hwK7rUq4u_gKpypdV7LYhV4+kQoVb_u7D+a6pwA@mail.gmail.com>
- <20180116090109.GL2989@rfolt0960.corp.atmel.com>
- <CAHp75Vd9qrp_gjMcZAHQrg8BsG5zQC6jZrkseo222=Xepce+ew@mail.gmail.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH 3/3] pinctrl: sx150x: add a static gpio/pinctrl pin
+ range mapping
+Date: Wed, 17 Jan 2018 09:05:54 -0600
+Message-ID: <1516201554.5522.15.camel@aj.id.au>
+References: <CACRpkdZ8JYoY4nJe8n8zDaY2Lcu3BRPRpzxkv=v4FC7T2zYdiA@mail.gmail.com>
+         <20180117133423.4482-1-peda@axentia.se>
+         <20180117133423.4482-4-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vd9qrp_gjMcZAHQrg8BsG5zQC6jZrkseo222=Xepce+ew@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, nicolas.ferre@microchip.com, Ludovic Desroches <ludovic.desroches@microchip.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-+aJiPoe5CvKTaoBF4kby"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:57337 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750908AbeAQPGA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 17 Jan 2018 10:06:00 -0500
+In-Reply-To: <20180117133423.4482-4-peda@axentia.se>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, linux-gpio@vger.kernel.org
 
-On Tue, Jan 16, 2018 at 04:33:29PM +0200, Andy Shevchenko wrote:
-> On Tue, Jan 16, 2018 at 11:01 AM, Ludovic Desroches
-> <ludovic.desroches@microchip.com> wrote:
-> > On Mon, Jan 15, 2018 at 10:19:39PM +0200, Andy Shevchenko wrote:
-> >> On Mon, Jan 15, 2018 at 6:22 PM, Ludovic Desroches
-> >> <ludovic.desroches@microchip.com> wrote:
-> >>
-> >> Did I miss cover letter for this?
-> > It seems: https://lkml.org/lkml/2018/1/15/841
-> 
-> >> > Add a consumer variant to GPIO request relative functions. The goal
-> >> > is to fix the bad ownership, which is arbitrary set to
-> >> > "range->name:gpio", of a GPIO.
-> >>
-> >> Hmm... It's supposed to be name of the owner of the pin range (pin
-> >> control device name IIUC).
-> 
-> > Yes, the owner is the pinctrl device.
-> 
-> > There is an interesting thread here:
-> > https://www.spinics.net/lists/linux-gpio/msg16769.html
-> 
-> Okay, I have dove into all links provided. Below a set of my thoughts
-> with regard to topic.
-> 
-> > If things have changed and I missed it, please tell me. I have seen some
-> > improvements but it still don't fit my needs.
-> 
-> First of all, the main architectural issue with current pin control
-> design is so called "states". It's quite artificial entity which is
-> not represented by hardware per se.
-> 
-> Instead we better to provide an API to pin configuration and pin
-> muxing: I would like to switch to *this* pin function with *this* pin
-> configuration.
-> 
 
-gpio_request_enable() allows to switch to the GPIO pin function.
+--=-+aJiPoe5CvKTaoBF4kby
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To clarify the situation, from my point of view there are two issues:
+On Wed, 2018-01-17 at 14:34 +0100, Peter Rosin wrote:
+> Without such a range, gpiolib fails with -EPROBE_DEFER, pending the
+> addition of the range. So, without a range, gpiolib will keep
+> deferring indefinitely.
+>=20
+> Fixes: e10f72bf4b3e ("gpio: gpiolib: Generalise state persistence beyond =
+sleep")
 
-- Several pin controllers didn't enabled the strict mode when they were
-  introduced. Nowadays, enabling it will break several DTs. Maybe a DT
-  property to enable/disable strict mode could do the trick: we remove
-  pinctrl nodes (so pinmux + pinconf) for pins which will be requested
-  by gpiod_request() and we set the strict property to true.
+This is a bit of a nit-pick, but I'd argue the hazard always existed in
+the pinctrl-sx150x's probe however hadn't been triggered until now. My
+instinct is Fixes should instead point to 9e80f9064e73 ("pinctrl: Add
+SX150X GPIO Extender Pinctrl Driver"). Having said that I still think
+it's worth pointing out in the commit message that e10f72bf4b3e ("gpio:
+gpiolib: Generalise state persistence beyond sleep") is the motivation
+for your patch (i.e. mention both commits).
 
-- But... The GPIO pin configuration is missing. Some configuration features
-  have been added, we can continue to add new ones but I am not sure
-  it's the best solution. At the moment, we rely on a single cell to
-  manage the configuration. It may not be enough and each time a new pin
-  configuration will appear, it will have to be added both to the gpiolib
-  and pinconf.
+Regardless, thanks to you both for getting to the bottom of this.
 
-> Second, the pin control and GPIOs are orthogonal as your hardware
-> confirms. The propagating pin configuration or muxing via GPIO API
-> looks to me a wrong direction.
-> 
+Andrew
 
-I agree but it seems we have started to follow this path.
+> Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  drivers/pinctrl/pinctrl-sx150x.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-s=
+x150x.c
+> index 049dd15e04ef..cbf58a10113d 100644
+> --- a/drivers/pinctrl/pinctrl-sx150x.c
+> +++ b/drivers/pinctrl/pinctrl-sx150x.c
+> @@ -1193,6 +1193,11 @@ static int sx150x_probe(struct i2c_client *client,
+>  	if (ret)
+>  		return ret;
+> =20
+> +	ret =3D gpiochip_add_pin_range(&pctl->gpio, dev_name(dev),
+> +				     0, 0, pctl->data->npins);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* Add Interrupt support if an irq is specified */
+>  	if (client->irq > 0) {
+>  		pctl->irq_chip.name =3D devm_kstrdup(dev, client->name,
+--=-+aJiPoe5CvKTaoBF4kby
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-> To the point of the specific issue you are trying to solve.  I would
-> rather agree with Maxime:
-> 
-> "Something like "if the configuration is a gpio, and my pinctrl driver
-> is also a gpio controller, and that gpiod_request is being called on
-> that pin, hand over the reference"
-> 
+-----BEGIN PGP SIGNATURE-----
 
-Sorry, what do you see behind "hand over the reference"?
+iQIcBAABCgAGBQJaX2ZSAAoJEJ0dnzgO5LT5ABEP/2urndFcscZsfFyVX817oPyw
+zVK86fVQ68bzZuDo9/ducHnN5ZxzL4L024HgbZyW1x6xkw082EWti8+/SUD4uVIE
+N6c6HqtT2Wqz4Otwcqh62yslPsZ2YMtblkGQstjDb7UN2xea0FRT4VhWfa7Nvklx
+h1icEqzBAGvPu28Ps/lkWbwcgcSQ8tczljorVylFJdLLjH2pLezrcjoNWWUshCkj
+whA3milbz5OBsZLDCQfxob0yZfIgUzGDGa+eC7G+lcGrpy3vzlI9X2oL092nxX2P
+58fJjkvkuzKXDuXUrIaMerbAf6tFMKGrmowFMCseJoQSj32S9rcRlp5XJzNXT4Fu
+VLC8fyX04nB2pFVcSQ0mT2+s4Y5SCPv+Hl7cSYXXQo/KduURFL/3kXguWL4NypF8
+RfcE2KHBrxzcvMf3Atp2xV4APZrgDUl7BwBF3/Rrlm1EyKmY9hoeqVjXWQ83EdMZ
+jX1QXjip71AWvF2n5eynahLg/Kpgyx30AS8ydtxljO5N8eC0D4N8ptdBjCwxagBd
+59NFqlmYjNhALpMbiJQMKc6QLoygvC3laHQ+4yU/BQ46Cr38Jy48sMOZQkehu5a1
+jBa19Jn7trNjI04xLaZISgduFmDupfrcdK61LELJlCLZnaucOZyxQGZn114Gk2zl
+Az78QKMWuRUk3dJKJIiC
+=NQue
+-----END PGP SIGNATURE-----
 
-> Just in case of architectural review imagine a below case. We have two
-> UART devices which share same pins, and at the same time their pins
-> can be switched to GPIO function. So, use cases and questions:
-> - allow potential driver to switch between UARTs at run time
-> - allow UART driver to switch mode between no flow control (2 wire
-> mode) and HW flow (4 wire mode), though not specifically at run time
-> - allow GPIO function for some pins at run time to support OOB wake
-> up, for example, when UART is a console
-> 
+--=-+aJiPoe5CvKTaoBF4kby--
 
-I have the feeling that 1 and 2 are achievable with pinctrl states. 3 may be
-also acheviable excepting if the pin is part of a pinctrl state.
-
-> More caveats:
-> - switching and reconfiguring pins at run time is a bad idea for the
-> start (only some exceptions can be applied, see above) because of
-> electrical properties of the devices and potential damage to the
-> hardware
-> - switching to GPIO is allowed at run time for the purpose of OOB wake source
-> - after switching to GPIO and freeing it the pin configuration (and
-> perhaps muxing) would return back to previous (before GPIO) settings
-> (this would be helpful to case described above: OOB wake up)
-> 
-
-I share another case which is the one motivating me to do these patches.
-
-I am writing a driver for a new device which uses several lines. The lines used
-depends on the firmware loaded so there is no reason to reserve all the
-lines and so the pins corresponding to these lines.
-
-The pins will be requested as GPIOs because the pin controller in this specific
-case is bypassed. I mean, if the device uses a line, it will take the ownership
-even if it is muxed to a function. I want to prevent this.
-
-Before using the line, I'll request the pin as a GPIO. If an error occurs (this
-is why I need to enable the strict mode), it means the pin is already muxed and
-we are going to break the device which uses it.
-
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
