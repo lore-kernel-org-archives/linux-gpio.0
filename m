@@ -1,42 +1,75 @@
-From: Patrice CHOTARD <patrice.chotard@st.com>
-Subject: Re: [PATCH] gpio: stmpe: fix semicolon.cocci warnings
-Date: Wed, 17 Jan 2018 08:26:10 +0000
-Message-ID: <a0287e04-f2b6-487b-6bd3-256908b7006a@st.com>
-References: <201801171059.dszJh8JT%fengguang.wu@intel.com>
- <20180117023405.GA124815@lkp-hsx03>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH v3 4/4] ARM: dts: bcm2837-rpi-3-b: add GPIO expander
+Date: Wed, 17 Jan 2018 09:30:09 +0100
+Message-ID: <6c07ab6a-a2c6-284e-6205-58d2512d0256@i2se.com>
+References: <cover.1516105893.git.baruch@tkos.co.il>
+ <8ba2147dc08bb50a65b49ca2142f7710e1635d20.1516105893.git.baruch@tkos.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:56879 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750806AbeAQI0U (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 17 Jan 2018 03:26:20 -0500
-In-Reply-To: <20180117023405.GA124815@lkp-hsx03>
+Received: from mout.kundenserver.de ([217.72.192.74]:60790 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbeAQIdu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jan 2018 03:33:50 -0500
+In-Reply-To: <8ba2147dc08bb50a65b49ca2142f7710e1635d20.1516105893.git.baruch@tkos.co.il>
 Content-Language: en-US
-Content-ID: <5497355182188344B32DC73A8CF6EA0F@st.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: kbuild test robot <fengguang.wu@intel.com>
-Cc: "kbuild-all@01.org" <kbuild-all@01.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre TORGUE <alexandre.torgue@st.com>
+To: Baruch Siach <baruch@tkos.co.il>, Dave Stevenson <dave.stevenson@raspberrypi.org>, Eric Anholt <eric@anholt.net>, Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Michael Zoran <mzoran@crowfest.net>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
 
-SGkgRmVuZ2d1YW5nDQoNCk9uIDAxLzE3LzIwMTggMDM6MzQgQU0sIGtidWlsZCB0ZXN0IHJvYm90
-IHdyb3RlOg0KPiBGcm9tOiBGZW5nZ3VhbmcgV3UgPGZlbmdndWFuZy53dUBpbnRlbC5jb20+DQo+
-IA0KPiBkcml2ZXJzL2dwaW8vZ3Bpby1zdG1wZS5jOjIwMToyLTM6IFVubmVlZGVkIHNlbWljb2xv
-bg0KPiANCj4gDQo+ICAgUmVtb3ZlIHVubmVlZGVkIHNlbWljb2xvbi4NCj4gDQo+IEdlbmVyYXRl
-ZCBieTogc2NyaXB0cy9jb2NjaW5lbGxlL21pc2Mvc2VtaWNvbG9uLmNvY2NpDQo+IA0KPiBGaXhl
-czogYmI2MjgxNzZkYmM1ICgiZ3Bpbzogc3RtcGU6IGkyYyB0cmFuc2ZlciBhcmUgZm9yYmlkZW4g
-aW4gYXRvbWljIGNvbnRleHQiKQ0KPiBDQzogUGF0cmljZSBDaG90YXJkIDxwYXRyaWNlLmNob3Rh
-cmRAc3QuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBGZW5nZ3VhbmcgV3UgPGZlbmdndWFuZy53dUBp
-bnRlbC5jb20+DQo+IC0tLQ0KPiANCj4gICBncGlvLXN0bXBlLmMgfCAgICAyICstDQo+ICAgMSBm
-aWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiAtLS0gYS9k
-cml2ZXJzL2dwaW8vZ3Bpby1zdG1wZS5jDQo+ICsrKyBiL2RyaXZlcnMvZ3Bpby9ncGlvLXN0bXBl
-LmMNCj4gQEAgLTE5OCw3ICsxOTgsNyBAQCBzdGF0aWMgdm9pZCBzdG1wZV9ncGlvX2lycV9zeW5j
-X3VubG9jayhzDQo+ICAgCWlmIChzdG1wZS0+cGFydG51bSA9PSBTVE1QRTE2MDApIHsNCj4gICAJ
-CXN0bXBlX3JlZ19yZWFkKHN0bXBlLCBzdG1wZS0+cmVnc1tTVE1QRV9JRFhfR1BNUl9MU0JdKTsN
-Cj4gICAJCXN0bXBlX3JlZ19yZWFkKHN0bXBlLCBzdG1wZS0+cmVnc1tTVE1QRV9JRFhfR1BNUl9D
-U0JdKTsNCj4gLQl9Ow0KPiArCX0NCj4gICANCj4gICAJZm9yIChpID0gMDsgaSA8IENBQ0hFX05S
-X1JFR1M7IGkrKykgew0KPiAgIAkJLyogU1RNUEU4MDEgYW5kIFNUTVBFMTYwMCBkb24ndCBoYXZl
-IFJFIGFuZCBGRSByZWdpc3RlcnMgKi8NCj4gDQoNCkFja2VkLWJ5OiBQYXRyaWNlIENob3RhcmQg
-PHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQoNClRoYW5rcw==
+Hi Linus,
+hi Eric,
+
+
+Am 16.01.2018 um 13:45 schrieb Baruch Siach:
+> Add a description of the RPi3 GPIO expander that the VC4 firmware controls.
+>
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+> v3:
+>    * List GPIO names one per line.
+>
+> v2:
+>    * Move GPIO expander node out of the soc container
+>    * Rename compatible string
+>    * Add gpio-line-names property
+> ---
+>   arch/arm/boot/dts/bcm2837-rpi-3-b.dts | 16 ++++++++++++++++
+>   1 file changed, 16 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+> index b44b3b5af00d..8cd93425ffe3 100644
+> --- a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+> +++ b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+> @@ -23,6 +23,22 @@
+>   			gpios = <&gpio 47 0>;
+>   		};
+>   	};
+
+i noticed that this patch conflicts with my patch ("ARM: dts: bcm283x: 
+Use GPIO polarity defines consistently") in linux-next.
+
+How should we proceed?
+
+> +
+> +	expgpio: gpio-expander {
+> +		compatible = "raspberrypi,firmware-gpio";
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		firmware = <&firmware>;
+> +		gpio-line-names = "BT_ON",
+> +				  "WL_ON",
+> +				  "STATUS_LED",
+> +				  "LAN_RUN",
+> +				  "HPD_N",
+> +				  "CAM_GPIO0",
+> +				  "CAM_GPIO1",
+> +				  "PWR_LOW_N";
+> +		status = "okay";
+> +	};
+>   };
+>   
+>   /* uart0 communicates with the BT module */
+
