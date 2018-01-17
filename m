@@ -1,132 +1,112 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [REGRESSION] mux/gpio.c is not able to get any gpio pins
-Date: Wed, 17 Jan 2018 00:57:23 +0100
-Message-ID: <69f82f18-8334-1b88-97ee-04f77ea1ee03@axentia.se>
-References: <6c711f96-e412-f7a6-125b-59c61829d802@axentia.se>
- <CACRpkdZ0zDhxrNoAaytpr2cfMxTNZ4zj+U4WcZSQgVReuUQ=9g@mail.gmail.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH 0/2] pinctrl: meson: use one uniform 'function' name
+Date: Tue, 16 Jan 2018 16:14:55 -0800
+Message-ID: <7h4lnlcpds.fsf@baylibre.com>
+References: <20180108073328.205769-1-yixun.lan@amlogic.com>
+        <1515401544.5048.67.camel@baylibre.com>
+        <a6a4ed23-696c-ae2d-9b6a-c2578372b1aa@amlogic.com>
+        <1515569324.5048.103.camel@baylibre.com>
+        <9a27021f-acfc-a010-8ea1-a1bc8f076b6e@amlogic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ0zDhxrNoAaytpr2cfMxTNZ4zj+U4WcZSQgVReuUQ=9g@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <9a27021f-acfc-a010-8ea1-a1bc8f076b6e@amlogic.com> (Yixun Lan's
+        message of "Wed, 10 Jan 2018 20:00:29 +0800")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Charles Keepax <ckeepax@opensource.cirrus.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org, Xingyu Chen <xingyu.chen@amlogic.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2018-01-17 00:18, Linus Walleij wrote:
-> On Tue, Jan 16, 2018 at 10:47 PM, Peter Rosin <peda@axentia.se> wrote:
-> 
->> diff between the two:
->>
->> --- bootlog.good        2018-01-16 22:39:29.196022434 +0100
->> +++ bootlog.bad 2018-01-16 22:39:51.474264534 +0100
->> @@ -118,7 +118,7 @@
->>  0x000000180000-0x0000001a0000 : "oftree"
->>  0x000000200000-0x000000700000 : "kernel"
->>  0x000000800000-0x000020000000 : "rootfs"
->> -gpio-mux mux-controller: 8-way mux-controller registered
->> +gpio-mux mux-controller: failed to get gpios: -517
->>  NET: Registered protocol family 10
->>  Segment Routing with IPv6
->>  sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
->> @@ -128,15 +128,7 @@
->>  [drm] No driver support for vblank timestamp query.
->>  atmel-hlcdc-display-controller atmel-hlcdc-dc: fb0:  frame buffer device
->>  [drm] Initialized atmel-hlcdc 1.0.0 20141504 for atmel-hlcdc-dc on minor 0
->> -i2c i2c-0: Added multiplexed i2c bus 3
->> -i2c i2c-0: Added multiplexed i2c bus 4
->> -i2c i2c-0: Added multiplexed i2c bus 5
->> -i2c i2c-0: Added multiplexed i2c bus 6
->> -i2c i2c-0: Added multiplexed i2c bus 7
->> -i2c i2c-0: Added multiplexed i2c bus 8
->> -i2c i2c-0: Added multiplexed i2c bus 9
->> -i2c i2c-0: Added multiplexed i2c bus 10
->> -i2c-mux-gpmux i2c-mux: 8-port mux on AT91 adapter
->> +gpio-mux mux-controller: failed to get gpios: -517
-> 
-> It would be clearer with a trace, really.
-> 
-> Not that I'm especially good at using ftrace myself :/
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
-Never used it...
+> Hi Jerome:
+>
+> On 01/10/2018 03:28 PM, Jerome Brunet wrote:
+>> On Wed, 2018-01-10 at 10:12 +0800, Yixun Lan wrote:
+>>>
+>>> On 01/08/18 16:52, Jerome Brunet wrote:
+>>>> On Mon, 2018-01-08 at 15:33 +0800, Yixun Lan wrote:
+>>>>> These two patches are general improvement for meson pinctrl driver.
+>>>>> It make the two pinctrl trees (ee/ao) to share one uniform 'function'=
+ name for
+>>>>> one hardware block even its pin groups live inside two differet hardw=
+are domains,
+>>>>> which for example EE vs AO domain here.
+>>>>>
+>>>>> This idea is motivated by Martin's question at [1]
+>>>>>
+>>>>> [1]
+>>>>>  http://lkml.kernel.org/r/CAFBinCCuQ-NK747+GHDkhZty_UMMgzCYOYFcNTrRDJ=
+gU8OM=3DGw@mail.gmail.com
+>>>>>
+>>>>>
+>>>>> Yixun Lan (2):
+>>>>>   pinctrl: meson: introduce a macro to have name/groups seperated
+>>>>>   pinctrl: meson-axg: correct the pin expansion of UART_AO_B
+>>>>>
+>>>>>  drivers/pinctrl/meson/pinctrl-meson-axg.c | 4 ++--
+>>>>>  drivers/pinctrl/meson/pinctrl-meson.h     | 8 +++++---
+>>>>>  2 files changed, 7 insertions(+), 5 deletions(-)
+>>>>
+>>>> Hi Yixun,
+>>>>
+>>>> Honestly, I don't like the idea. I think it adds an unnecessary comple=
+xity.
+>>>> I don't see the point of FUNCTION_EX(uart_ao_b, _z) when you could sim=
+ply write=20
+>>>> FUNCTION(uart_ao_b_z) ... especially when there is just a couple of fu=
+nction per
+>>>> SoC available on different domains.
+>>>>
+>>>> A pinctrl driver can already be challenging to understand at first, le=
+t's keep
+>>>> it simple and avoid adding more macros.
+>>>>
+>>>
+>>> Hi Jerome=EF=BC=9A
+>>>   In my opinion, the idea of keeping one uniform 'function' in DT (thus
+>>> introducing another macro) is worth considering. It would make the DT
+>>> part much clean.
+>>=20
+>> Ok this is your opinion. I don't share it. Keeping function names tidy i=
+s good,
+>> I don't think we need another macro to do so.
+>>=20
+>>>   And yes, it's a trade-off here, either we 1) do more in code to make
+>>> DT clean or 2) do nothing in the code level to make DT live with it.
+>>=20
+>> I don't see how adding a macro doing just string concatenation is going =
+to make
+>> anything more clean. It does not prevent one to write FUNCTION_EX(uart_a=
+o_b,
+>> _gpioz), resulting in uart_ao_b_gpioz, which is what is apparently consi=
+dered
+>> 'not clean'
+>>=20
+> for the benefits of introducing macro 'FUNCTION_EX', it will end with
+>  .name =3D "uart_ao_b", -> same for both EE, AO domain, and it will match
+> the DT part (although still different for '.groups')
+>
+>
+>> BTW, there no cleanness issue here, the name is just out of the 'usual s=
+cheme'
+>> but there is no problem with. If you want to change this, and
+>> s/uart_ao_b_gpioz/uart_ao_b_z/, now is the time to change it.=20
+>>=20
+> I'd rather *NOT* to push a pinctrl patch for just changing
+> 'uart_ao_b_gpioz' to 'uart_ao_b_z' (it's a cosmetic change, and still
+> end with two different name - 'uart_ao_b_gpioz/z' & 'uart_ao_b' in DT)
 
-> I think gpiod_set_transitory() calls chip->set_config(chip, gpio, packed);
-> which calls  gpiochip_generic_config() which calls
-> pinctrl_gpio_set_config() which calls
-> pinctrl_get_device_gpio_range() which returns -EPROBE_DEFER;
-> if it can't find a range to map the GPIO to pin control.
-> 
-> Can you confirm this with e.g. debug prints in
-> pinctrl_get_device_gpio_range() in drivers/pinctrl/core.c?
+FWIW, I agree with Jerome.
 
-Yep, a debug print hits, so that that seems to be the origin of
-the -EPROBE_DEFER.
+Rather than this patch adding a(nother) hard-to-understand macro, please
+submit a pinctrl rename/cleanup to s/uart_ao_b_gpioz/uart_ao_b_z/.
+Since there are not any users of the _gpioz name, now is the time to do
+it.
 
-> To fix this, I think sx150x_probe() need to be rewritten
-> to register the pin controller first, then the GPIO chip,
-> so the range mapping is up and kicking when the chip gets
-> initialized.
+We're already using the _x _y _z suffixes all over the place, and IMO,
+adding this new macro would make that even more confusing that it
+already is.
 
-I tried with:
-
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index fb242c542dc9..049dd15e04ef 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1144,6 +1144,27 @@ static int sx150x_probe(struct i2c_client *client,
- 	if (ret)
- 		return ret;
- 
-+	/* Pinctrl_desc */
-+	pctl->pinctrl_desc.name = "sx150x-pinctrl";
-+	pctl->pinctrl_desc.pctlops = &sx150x_pinctrl_ops;
-+	pctl->pinctrl_desc.confops = &sx150x_pinconf_ops;
-+	pctl->pinctrl_desc.pins = pctl->data->pins;
-+	pctl->pinctrl_desc.npins = pctl->data->npins;
-+	pctl->pinctrl_desc.owner = THIS_MODULE;
-+
-+	ret = devm_pinctrl_register_and_init(dev, &pctl->pinctrl_desc,
-+					     pctl, &pctl->pctldev);
-+	if (ret) {
-+		dev_err(dev, "Failed to register pinctrl device\n");
-+		return ret;
-+	}
-+
-+	ret = pinctrl_enable(pctl->pctldev);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable pinctrl device\n");
-+		return ret;
-+	}
-+
- 	/* Register GPIO controller */
- 	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
- 	pctl->gpio.base = -1;
-@@ -1217,20 +1238,6 @@ static int sx150x_probe(struct i2c_client *client,
- 					    client->irq);
- 	}
- 
--	/* Pinctrl_desc */
--	pctl->pinctrl_desc.name = "sx150x-pinctrl";
--	pctl->pinctrl_desc.pctlops = &sx150x_pinctrl_ops;
--	pctl->pinctrl_desc.confops = &sx150x_pinconf_ops;
--	pctl->pinctrl_desc.pins = pctl->data->pins;
--	pctl->pinctrl_desc.npins = pctl->data->npins;
--	pctl->pinctrl_desc.owner = THIS_MODULE;
--
--	pctl->pctldev = pinctrl_register(&pctl->pinctrl_desc, dev, pctl);
--	if (IS_ERR(pctl->pctldev)) {
--		dev_err(dev, "Failed to register pinctrl device\n");
--		return PTR_ERR(pctl->pctldev);
--	}
--
- 	return 0;
- }
- 
-
-No disco. I also tried with the pinctrl_enable call last in the probe
-but that was no different.
-
-Cheers,
-Peter
+Kevin
