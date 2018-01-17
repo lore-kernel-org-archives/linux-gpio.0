@@ -1,74 +1,69 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [REGRESSION] mux/gpio.c is not able to get any gpio pins
-Date: Wed, 17 Jan 2018 10:35:18 +0100
-Message-ID: <CACRpkdZz1NqRXtNUUPP8cCkLWo4p6SBBqHV0joXOadN40KjYFg@mail.gmail.com>
-References: <6c711f96-e412-f7a6-125b-59c61829d802@axentia.se>
- <CACRpkdZ0zDhxrNoAaytpr2cfMxTNZ4zj+U4WcZSQgVReuUQ=9g@mail.gmail.com> <69f82f18-8334-1b88-97ee-04f77ea1ee03@axentia.se>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 4/4] ARM: dts: bcm2837-rpi-3-b: add GPIO expander
+Date: Wed, 17 Jan 2018 10:39:06 +0100
+Message-ID: <CACRpkdZTrRUB+AVt6Ccpd_F1SQAX5fnk5c6xB9sisfO18DUZ_Q@mail.gmail.com>
+References: <cover.1516105893.git.baruch@tkos.co.il> <8ba2147dc08bb50a65b49ca2142f7710e1635d20.1516105893.git.baruch@tkos.co.il>
+ <6c07ab6a-a2c6-284e-6205-58d2512d0256@i2se.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <69f82f18-8334-1b88-97ee-04f77ea1ee03@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Charles Keepax <ckeepax@opensource.cirrus.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <6c07ab6a-a2c6-284e-6205-58d2512d0256-eS4NqCHxEME@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
+Cc: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>, linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jan 17, 2018 at 12:57 AM, Peter Rosin <peda@axentia.se> wrote:
-> On 2018-01-17 00:18, Linus Walleij wrote:
+On Wed, Jan 17, 2018 at 9:30 AM, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org> wrote:
 
->> I think gpiod_set_transitory() calls chip->set_config(chip, gpio, packed);
->> which calls  gpiochip_generic_config() which calls
->> pinctrl_gpio_set_config() which calls
->> pinctrl_get_device_gpio_range() which returns -EPROBE_DEFER;
->> if it can't find a range to map the GPIO to pin control.
+> Hi Linus,
+> hi Eric,
+>
+>
+> Am 16.01.2018 um 13:45 schrieb Baruch Siach:
 >>
->> Can you confirm this with e.g. debug prints in
->> pinctrl_get_device_gpio_range() in drivers/pinctrl/core.c?
+>> Add a description of the RPi3 GPIO expander that the VC4 firmware
+>> controls.
+>>
+>> Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+>> ---
+>> v3:
+>>    * List GPIO names one per line.
+>>
+>> v2:
+>>    * Move GPIO expander node out of the soc container
+>>    * Rename compatible string
+>>    * Add gpio-line-names property
+>> ---
+>>   arch/arm/boot/dts/bcm2837-rpi-3-b.dts | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+>> b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+>> index b44b3b5af00d..8cd93425ffe3 100644
+>> --- a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+>> +++ b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+>> @@ -23,6 +23,22 @@
+>>                         gpios = <&gpio 47 0>;
+>>                 };
+>>         };
 >
-> Yep, a debug print hits, so that that seems to be the origin of
-> the -EPROBE_DEFER.
-
-OK we know where it comes from, good.
-
->> To fix this, I think sx150x_probe() need to be rewritten
->> to register the pin controller first, then the GPIO chip,
->> so the range mapping is up and kicking when the chip gets
->> initialized.
 >
-> I tried with:
+> i noticed that this patch conflicts with my patch ("ARM: dts: bcm283x: Use
+> GPIO polarity defines consistently") in linux-next.
+>
+> How should we proceed?
 
-(solution that seems correct)
+All DTS patches shall be merged through ARM SoC so the conflict should
+be resolved by whoever sends the pull requests to ARM SoC before
+sending the pull request.
 
-You should work on top of this change I think.
-
-> No disco. I also tried with the pinctrl_enable call last in the probe
-> but that was no different.
-
-This driver does not define a GPIO range for the GPIOchip though.
-(No gpiochip_add_ranges) so it is dependent on the DTS
-adding a gpio-ranges = <...>; entry.
-
-The only DTS in the kernel tree using this chip does not...
-
-The thing is that when the driver requests generic config by
-assigning gpiochip_generic_config() to .set_config() it
-agrees to define a range mapping, so it may be breaching this
-contract. The primary driver using this method is the Intel driver
-in driver/pinctrl/intel/*. and this uses  gpiochip_add_pin_range()
-explicitly.
-
-I would first try to add the gpio range in the DTS. Then the
-GPIO core will add the range (the code is in drivers/gpio/gpiolib-of.c)
-and everything will be happy.
-
-Another solution would be to do what Intel does and add a
-static GPIO range. Since the SX150x doesn't seem very
-configurable wrt pins-to-gpios mappings, this should be fine.
-
-Yet another solution would be to make a local .set_config() call
-that just calls the local function  sx150x_pinconf_set()
-in some modified version and thus you break the dependence
-between the GPIO and pin controller.
+I think these patches will be for the next kernel anyways, unless Torvalds
+think we should have an -rc9 this time (because of all the meltdowns and
+spectres etc you know).
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
