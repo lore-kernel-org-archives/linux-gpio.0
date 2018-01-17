@@ -1,68 +1,74 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 04/15] mmc: mmci: Add support for setting pad type via pinctrl
-Date: Wed, 17 Jan 2018 10:34:46 +0100
-Message-ID: <CAPDyKFoVT7rqLVzYVrO8JTD_MVLxr_R8PO=fWqLVG4DB1MpnTQ@mail.gmail.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com> <1516105859-3525-5-git-send-email-patrice.chotard@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [REGRESSION] mux/gpio.c is not able to get any gpio pins
+Date: Wed, 17 Jan 2018 10:35:18 +0100
+Message-ID: <CACRpkdZz1NqRXtNUUPP8cCkLWo4p6SBBqHV0joXOadN40KjYFg@mail.gmail.com>
+References: <6c711f96-e412-f7a6-125b-59c61829d802@axentia.se>
+ <CACRpkdZ0zDhxrNoAaytpr2cfMxTNZ4zj+U4WcZSQgVReuUQ=9g@mail.gmail.com> <69f82f18-8334-1b88-97ee-04f77ea1ee03@axentia.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:34518 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752148AbeAQJer (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jan 2018 04:34:47 -0500
-Received: by mail-it0-f42.google.com with SMTP id m11so14220161iti.1
-        for <linux-gpio@vger.kernel.org>; Wed, 17 Jan 2018 01:34:47 -0800 (PST)
-In-Reply-To: <1516105859-3525-5-git-send-email-patrice.chotard@st.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <69f82f18-8334-1b88-97ee-04f77ea1ee03@axentia.se>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Rosin <peda@axentia.se>
+Cc: Andrew Jeffery <andrew@aj.id.au>, Charles Keepax <ckeepax@opensource.cirrus.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Andrea Merello <andrea.merello@gmail.com>
 
-[...]
+On Wed, Jan 17, 2018 at 12:57 AM, Peter Rosin <peda@axentia.se> wrote:
+> On 2018-01-17 00:18, Linus Walleij wrote:
 
->         /*
-> @@ -1616,6 +1625,32 @@ static int mmci_probe(struct amba_device *dev,
->         host = mmc_priv(mmc);
->         host->mmc = mmc;
+>> I think gpiod_set_transitory() calls chip->set_config(chip, gpio, packed);
+>> which calls  gpiochip_generic_config() which calls
+>> pinctrl_gpio_set_config() which calls
+>> pinctrl_get_device_gpio_range() which returns -EPROBE_DEFER;
+>> if it can't find a range to map the GPIO to pin control.
+>>
+>> Can you confirm this with e.g. debug prints in
+>> pinctrl_get_device_gpio_range() in drivers/pinctrl/core.c?
 >
-> +       /*
-> +        * Some variant (STM32) doesn't have opendrain bit, nevertheless
-> +        * pins can be set accordingly using pinctrl
-> +        */
-> +       if (!variant->opendrain) {
-> +               host->pinctrl = devm_pinctrl_get(&dev->dev);
-> +               if (IS_ERR(host->pinctrl)) {
-> +                       dev_err(&dev->dev, "failed to get pinctrl");
-> +                       goto host_free;
-> +               }
-> +
-> +               host->pins_default = pinctrl_lookup_state(host->pinctrl,
-> +                                                         PINCTRL_STATE_DEFAULT);
-> +               if (IS_ERR(host->pins_default)) {
-> +                       dev_warn(mmc_dev(mmc), "Can't select default pins\n");
-> +                       host->pins_default = NULL;
+> Yep, a debug print hits, so that that seems to be the origin of
+> the -EPROBE_DEFER.
 
-This is wrong, I think you should bail out and return the error code instead.
+OK we know where it comes from, good.
 
-Moreover, calling pinctrl_select_state() from ->set_ios by using a
-NULL state, will likely trigger a NULL pointer deference bug in the
-pinctrl layer.
+>> To fix this, I think sx150x_probe() need to be rewritten
+>> to register the pin controller first, then the GPIO chip,
+>> so the range mapping is up and kicking when the chip gets
+>> initialized.
+>
+> I tried with:
 
-> +               }
-> +
-> +               host->pins_opendrain = pinctrl_lookup_state(host->pinctrl,
-> +                                                           MMCI_PINCTRL_STATE_OPENDRAIN);
-> +               if (IS_ERR(host->pins_opendrain)) {
-> +                       dev_warn(mmc_dev(mmc), "Can't select opendrain pins\n");
-> +                       host->pins_opendrain = NULL;
+(solution that seems correct)
 
-Ditto.
+You should work on top of this change I think.
 
-> +               }
-> +       }
-> +
+> No disco. I also tried with the pinctrl_enable call last in the probe
+> but that was no different.
 
-[...]
+This driver does not define a GPIO range for the GPIOchip though.
+(No gpiochip_add_ranges) so it is dependent on the DTS
+adding a gpio-ranges = <...>; entry.
 
-Kind regards
-Uffe
+The only DTS in the kernel tree using this chip does not...
+
+The thing is that when the driver requests generic config by
+assigning gpiochip_generic_config() to .set_config() it
+agrees to define a range mapping, so it may be breaching this
+contract. The primary driver using this method is the Intel driver
+in driver/pinctrl/intel/*. and this uses  gpiochip_add_pin_range()
+explicitly.
+
+I would first try to add the gpio range in the DTS. Then the
+GPIO core will add the range (the code is in drivers/gpio/gpiolib-of.c)
+and everything will be happy.
+
+Another solution would be to do what Intel does and add a
+static GPIO range. Since the SX150x doesn't seem very
+configurable wrt pins-to-gpios mappings, this should be fine.
+
+Yet another solution would be to make a local .set_config() call
+that just calls the local function  sx150x_pinconf_set()
+in some modified version and thus you break the dependence
+between the GPIO and pin controller.
+
+Yours,
+Linus Walleij
