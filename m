@@ -1,145 +1,93 @@
-From: Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-Subject: [PATCH] pinctrl: at91-pio4: add support for drive-strength property
-Date: Thu, 18 Jan 2018 17:02:08 +0100
-Message-ID: <20180118160208.16461-1-ludovic.desroches@microchip.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH v3 00/14] Add MMCI support for STM32F SoCs family
+Date: Thu, 18 Jan 2018 18:01:44 +0100
+Message-ID: <a39cebbe-55b8-9a0c-cc2c-b05d435ed170@st.com>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org, alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+Content-Language: en-US
+Sender: linux-mmc-owner@vger.kernel.org
+To: patrice.chotard@st.com, Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add support for the drive-strength property. Usually its value is
-expressed in mA. Since the numeric value depends on VDDIOP voltage,
-the controller uses low, medium and high to define the drive-strengh.
+Hi Patrice,
 
-The PIO controller accepts two values for the low drive: 0 or 1. Most
-of the time, we don't care about the drive strength, there is no need
-to change it, so 0 is considered as the default value. The low-drive
-value won't be advertised through pinconf-pins file excepted if it
-has been set explicitly in the device tree ie if its value is
-different from 0.
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
----
- .../bindings/pinctrl/atmel,at91-pio4-pinctrl.txt   |  5 ++--
- drivers/pinctrl/pinctrl-at91-pio4.c                | 33 ++++++++++++++++++++++
- include/dt-bindings/pinctrl/at91.h                 |  4 +++
- 3 files changed, 40 insertions(+), 2 deletions(-)
+On 01/18/2018 03:34 PM, patrice.chotard@st.com wrote:
+> From: Patrice Chotard <patrice.chotard@st.com>
+> 
+> This series reworks patches submitted one year ago by Andrea Merello [1]
+> but without succeed to merged it.
+> 
+> STM32F4 and STM32F7 SoCs families embeds a variant of the ARM PrimeCell
+> PL18x SD host controller, for which the mmci driver exists.
+> This series adds support for these SoCs to the mmci driver.
+> 
+> As other variants, this one need some specific quirks, that this
+> series address.
+> 
+> This series has been tested on following boards :
+> 	_ stm32f429-eval
+> 	_ stm32f469-disco
+> 	_ stm32f746-eval
+> 	_ stm32f769-disco
+> 
+> DT update for stm32f7 pinctrl, stm32f746-eval and stm32f769-disco boards
+> will be sent later to avoid conflict with pending stm32f7 series [1] which
+> is not yet merged on kernel mainline.
+> 
+> [1] https://www.spinics.net/lists/linux-mmc/msg41616.html
+> [2] https://patchwork.kernel.org/patch/10104447/
+> 
+> v3: _ patch 3: use variant->opendrain instead of host->variant->opendrain
+>      _ patch 4: exit from probe() if no pinctrl dt node are found
+>      _ previous patch 15: removed as already applied in pinctrl tree
+> 
+> v2: _ add Revievied-by, Acked-by in some patches
+>      _ replace bool by u32 for start_err and opendrain fields of struct variant_data
+>      _ split previous patch 3 in two parts, first patch clean the open drain bit code
+>        and second part add pinctrl pins management when no open drain bit is available.
+>      _ replace "pl180" by "PL180" in patch "mmc: mmci: Add STM32 variant"
+> 
+> Andrea Merello (2):
+>    ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
+>    ARM: dts: stm32: Enable SDIO controller on stm32f469 disco board
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-index 61ac75706cc9..183064bc4bda 100644
---- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-@@ -34,8 +34,8 @@ right representation of the pin.
- 
- Optional properties:
- - GENERIC_PINCONFIG: generic pinconfig options to use, bias-disable,
--bias-pull-down, bias-pull-up, drive-open-drain, input-schmitt-enable,
--input-debounce, output-low, output-high.
-+bias-pull-down, bias-pull-up, drive-open-drain, drive-strength,
-+input-schmitt-enable, input-debounce, output-low, output-high.
- 
- Example:
- 
-@@ -66,6 +66,7 @@ Example:
- 			pinmux = <PIN_PB0>,
- 				 <PIN_PB5>;
- 			bias-pull-up;
-+			drive-strength = <ATMEL_PIO_DRVSTR_LO>;
- 		};
- 
- 		pinctrl_sdmmc1_default: sdmmc1_default {
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 4b57a13758a4..857c0a41a905 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -14,6 +14,7 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <dt-bindings/pinctrl/at91.h>
- #include <linux/clk.h>
- #include <linux/gpio/driver.h>
- /* FIXME: needed for gpio_to_irq(), get rid of this */
-@@ -49,6 +50,8 @@
- #define		ATMEL_PIO_IFSCEN_MASK		BIT(13)
- #define		ATMEL_PIO_OPD_MASK		BIT(14)
- #define		ATMEL_PIO_SCHMITT_MASK		BIT(15)
-+#define		ATMEL_PIO_DRVSTR_MASK		GENMASK(17, 16)
-+#define		ATMEL_PIO_DRVSTR_OFFSET		16
- #define		ATMEL_PIO_CFGR_EVTSEL_MASK	GENMASK(26, 24)
- #define		ATMEL_PIO_CFGR_EVTSEL_FALLING	(0 << 24)
- #define		ATMEL_PIO_CFGR_EVTSEL_RISING	(1 << 24)
-@@ -685,6 +688,11 @@ static int atmel_conf_pin_config_group_get(struct pinctrl_dev *pctldev,
- 			return -EINVAL;
- 		arg = 1;
- 		break;
-+	case PIN_CONFIG_DRIVE_STRENGTH:
-+		if (!(res & ATMEL_PIO_DRVSTR_MASK))
-+			return -EINVAL;
-+		arg = (res & ATMEL_PIO_DRVSTR_MASK) >> ATMEL_PIO_DRVSTR_OFFSET;
-+		break;
- 	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
- 		if (!(res & ATMEL_PIO_SCHMITT_MASK))
- 			return -EINVAL;
-@@ -737,6 +745,18 @@ static int atmel_conf_pin_config_group_set(struct pinctrl_dev *pctldev,
- 			else
- 				conf |= ATMEL_PIO_OPD_MASK;
- 			break;
-+		case PIN_CONFIG_DRIVE_STRENGTH:
-+			switch (arg) {
-+			case ATMEL_PIO_DRVSTR_LO:
-+			case ATMEL_PIO_DRVSTR_ME:
-+			case ATMEL_PIO_DRVSTR_HI:
-+				conf &= (~ATMEL_PIO_DRVSTR_MASK);
-+				conf |= arg << ATMEL_PIO_DRVSTR_OFFSET;
-+				break;
-+			default:
-+				dev_warn(pctldev->dev, "drive strength not updated (incorrect value)\n");
-+			}
-+			break;
- 		case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
- 			if (arg == 0)
- 				conf |= ATMEL_PIO_SCHMITT_MASK;
-@@ -814,6 +834,19 @@ static void atmel_conf_pin_config_dbg_show(struct pinctrl_dev *pctldev,
- 		seq_printf(s, "%s ", "open-drain");
- 	if (conf & ATMEL_PIO_SCHMITT_MASK)
- 		seq_printf(s, "%s ", "schmitt");
-+	if (conf & ATMEL_PIO_DRVSTR_MASK) {
-+		switch ((conf & ATMEL_PIO_DRVSTR_MASK) >> ATMEL_PIO_DRVSTR_OFFSET) {
-+		case ATMEL_PIO_DRVSTR_LO:
-+			seq_printf(s, "%s ", "low-drive");
-+			break;
-+		case ATMEL_PIO_DRVSTR_ME:
-+			seq_printf(s, "%s ", "medium-drive");
-+			break;
-+		case ATMEL_PIO_DRVSTR_HI:
-+			seq_printf(s, "%s ", "high-drive");
-+			break;
-+		}
-+	}
- }
- 
- static const struct pinconf_ops atmel_confops = {
-diff --git a/include/dt-bindings/pinctrl/at91.h b/include/dt-bindings/pinctrl/at91.h
-index 2732d6c0fb39..eb81867eac77 100644
---- a/include/dt-bindings/pinctrl/at91.h
-+++ b/include/dt-bindings/pinctrl/at91.h
-@@ -39,4 +39,8 @@
- #define AT91_PERIPH_C		3
- #define AT91_PERIPH_D		4
- 
-+#define ATMEL_PIO_DRVSTR_LO	1
-+#define ATMEL_PIO_DRVSTR_ME	2
-+#define ATMEL_PIO_DRVSTR_HI	3
-+
- #endif /* __DT_BINDINGS_AT91_PINCTRL_H__ */
--- 
-2.12.2
+Looks good for STM32 machine part (DT/configs/mach-stm32). I will apply 
+them in my next pull request.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks.
+
+Alex
+
+> 
+> Patrice Chotard (12):
+>    mmc: mmci: Don't pretend all variants to have MMCIMASK1 register
+>    mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
+>    mmc: mmci: Don't pretend all variants to have OPENDRAIN bit
+>    mmc: mmci: Add support for setting pad type via pinctrl
+>    mmc: mmci: Add STM32 variant
+>    ARM: dts: stm32: Add SDIO controller for stm32f746
+>    ARM: dts: stm32: Add SDIO controller for stm32f429
+>    ARM: dts: stm32: Enable SDIO controller on stm32429i-eval board
+>    ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
+>    ARM: configs: stm32: Enable MMC_ARMMMCI support
+>    ARM: configs: stm32: Enable EXT3_FS support
+>    clk: stm32: Add clk entry for SDMMC2 on stm32F769
+> 
+>   arch/arm/boot/dts/stm32429i-eval.dts   |  19 +++++
+>   arch/arm/boot/dts/stm32f4-pinctrl.dtsi |  31 +++++++++
+>   arch/arm/boot/dts/stm32f429.dtsi       |  11 +++
+>   arch/arm/boot/dts/stm32f469-disco.dts  |  19 +++++
+>   arch/arm/boot/dts/stm32f746.dtsi       |  22 ++++++
+>   arch/arm/configs/stm32_defconfig       |   3 +
+>   arch/arm/mach-stm32/Kconfig            |   3 +
+>   drivers/clk/clk-stm32f4.c              |   3 +-
+>   drivers/mmc/host/mmci.c                | 124 ++++++++++++++++++++++++++++-----
+>   drivers/mmc/host/mmci.h                |   6 ++
+>   10 files changed, 224 insertions(+), 17 deletions(-)
+> 
