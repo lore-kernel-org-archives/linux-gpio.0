@@ -1,53 +1,74 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] pinctrl: sx150x: add a static gpio/pinctrl pin range mapping
-Date: Thu, 18 Jan 2018 11:03:48 +0100
-Message-ID: <CACRpkdafq9STOKa44kDVfkEPeFekSUDuWbDhYZJzsvOCkrpBiA@mail.gmail.com>
-References: <CACRpkdZ8JYoY4nJe8n8zDaY2Lcu3BRPRpzxkv=v4FC7T2zYdiA@mail.gmail.com>
- <20180117133423.4482-1-peda@axentia.se> <20180117133423.4482-4-peda@axentia.se>
- <CACRpkdZfQkzcGW5dFwgg-b1G+R-323OO4nu3jpUkH=x6Ks+RaQ@mail.gmail.com> <292ad461-1976-84dc-6f08-92bb643bbfd3@axentia.se>
+Subject: Re: [RESEND RFC PATCH 0/2] fixing the gpio ownership
+Date: Thu, 18 Jan 2018 11:16:44 +0100
+Message-ID: <CACRpkdbNqn-MJuzq=BpbNYveD-F8Hee2NY6ny4-SJL+F=wHq7g@mail.gmail.com>
+References: <20180115162407.6314-1-ludovic.desroches@microchip.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33223 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755251AbeARKDt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jan 2018 05:03:49 -0500
-Received: by mail-it0-f66.google.com with SMTP id c102so1421328itd.0
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Jan 2018 02:03:49 -0800 (PST)
-In-Reply-To: <292ad461-1976-84dc-6f08-92bb643bbfd3@axentia.se>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180115162407.6314-1-ludovic.desroches@microchip.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrew Jeffery <andrew@aj.id.au>, Charles Keepax <ckeepax@opensource.cirrus.com>, linux-gpio@vger.kernel.org
 
-On Thu, Jan 18, 2018 at 9:19 AM, Peter Rosin <peda@axentia.se> wrote:
-> On 2018-01-18 08:58, Linus Walleij wrote:
->> On Wed, Jan 17, 2018 at 2:34 PM, Peter Rosin <peda@axentia.se> wrote:
->>
->>> Without such a range, gpiolib fails with -EPROBE_DEFER, pending the
->>> addition of the range. So, without a range, gpiolib will keep
->>> deferring indefinitely.
->>>
->>> Fixes: e10f72bf4b3e ("gpio: gpiolib: Generalise state persistence beyond sleep")
->>> Suggested-by: Linus Walleij <linus.walleij@linaro.org>
->>> Signed-off-by: Peter Rosin <peda@axentia.se>
->>
->> Added the other Fixes: tag as well, add Cc: stable and applied.
->>
->> It will go in for the merge window as it is now, unless Torvalds
->> decide to do an -rc9 in which case I will consider sending it as
->> a separate fix next week.
->
-> I didn't (yet?) receive any notification about patch 2/3 and thought
-> I'd test what would happen without it, and results are not good.
-> I get:
->
-> gpio gpiochip5: (sx1502q): could not create pin range
->
-> So, I guess if 3/3 is going to stable, all three patches should go
-> there.
+Hi Ludovic, thanks for your patches!
 
-OK then I mark them all for stable.
+On Mon, Jan 15, 2018 at 5:24 PM, Ludovic Desroches
+<ludovic.desroches@microchip.com> wrote:
+
+> A few weeks ago, I have sent an RFC about adding bias support for GPIOs [1].
+
+I was confused I think, because the issue of ownership and adding
+bias support were conflated.
+
+I think I discussed properly the ideas I have for pin control properties
+vs the GPIOlib API/ABI in my response to patch 1.
+
+> It was motivated by the fact that I wanted to enable the pinmuxing strict mode
+> for my pin controller which can muxed a pin as a peripheral or as a GPIO.
+
+So that is a different thing from bias support.
+
+> Enabling the strict mode prevents several devices to be probed because
+> requesting a GPIO fails. The pin request function complains about the
+> ownership of the GPIO which is different from the mux ownership. I have to
+> remove my pinctrl node to avoid this conflict but I need it to configure my
+> pins and to set a pull-up bias for my GPIOs.
+
+Okay I think the right solution is to fix the ownership issue, and set
+up bias using pin control/config but use the line through gpiolib for now.
+
+> The main issue is that enabling the strict mode will
+> break old DTBs.
+
+Yeah we need to work around that.
+
+> I was going to submit patches for this but, after using the
+> sysfs which still show me a bad ownership, I decided that it should be fixed.
+
+Yep :)
+
+> So I did these patches. Unfortunately, there are several ways to lead to
+> gpiod_request(). It does the trick only for the gpiod_get family. The issue is
+> still present with legacy gpio_request and fwnode_get_named_gpiod.
+
+fwnode_get_named_gpiod() must really be fixed too. You probably
+want to have things like LEDs and GPIO keys working even if
+your pin controller is strict.
+
+I don't care so much about the old functions, I guess you just have
+to make sure that the drivers for *your* pin controller all use descriptors
+so that you can enable strict mode on *your* pin controller, right?
+
+Restrict your task to this, I'd say.
+
+> It seems
+> that more and more drivers are converted to use GPIO descriptors so there is
+> some hope.
+
+Yeah I'm doing this when I have time. There is plenty of work...
+Help appreciated.
 
 Yours,
 Linus Walleij
