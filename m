@@ -1,92 +1,95 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 00/14] Add MMCI support for STM32F SoCs family
-Date: Thu, 18 Jan 2018 18:16:11 +0100
-Message-ID: <CAPDyKFrccszR9Br6ixy43W_YkYWdDws=1XTPKyHt4iHi1wDG-w@mail.gmail.com>
-References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+From: Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH v2 1/4] ARM: bcm2835: sync firmware properties with downstream
+Date: Thu, 18 Jan 2018 12:50:55 -0800
+Message-ID: <87vafy7uxc.fsf@anholt.net>
+References: <cover.1515698418.git.baruch@tkos.co.il> <e68675d54955c754ebe8ffc2491585fde5b396bc.1515698418.git.baruch@tkos.co.il> <1991337128.42939.1515837465503@email.1und1.de> <CACRpkdZ_g3-jR-7pOnS9MwpHprfEz8acB9SWcMLyoOVcB0iLvA@mail.gmail.com> <20180116104904.fsebsozoa4xysbz7@tarshish> <632b9d56-78cf-1e8e-8cd2-30edd2de70c0@i2se.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard-qxv4g6HH51o@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Patrice CHOTARD <patrice.chotard-qxv4g6HH51o@public.gmane.org>
-Cc: Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anholt.net ([50.246.234.109]:51756 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932702AbeARUu6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 18 Jan 2018 15:50:58 -0500
+In-Reply-To: <632b9d56-78cf-1e8e-8cd2-30edd2de70c0@i2se.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stefan Wahren <stefan.wahren@i2se.com>, Baruch Siach <baruch@tkos.co.il>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-gpio@vger.kernel.org, Michael Zoran <mzoran@crowfest.net>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, Dave Stevenson <dave.stevenson@raspberrypi.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 
-On 18 January 2018 at 15:34,  <patrice.chotard-qxv4g6HH51o@public.gmane.org> wrote:
-> From: Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>
->
-> This series reworks patches submitted one year ago by Andrea Merello [1]
-> but without succeed to merged it.
->
-> STM32F4 and STM32F7 SoCs families embeds a variant of the ARM PrimeCell
-> PL18x SD host controller, for which the mmci driver exists.
-> This series adds support for these SoCs to the mmci driver.
->
-> As other variants, this one need some specific quirks, that this
-> series address.
->
-> This series has been tested on following boards :
->         _ stm32f429-eval
->         _ stm32f469-disco
->         _ stm32f746-eval
->         _ stm32f769-disco
->
-> DT update for stm32f7 pinctrl, stm32f746-eval and stm32f769-disco boards
-> will be sent later to avoid conflict with pending stm32f7 series [1] which
-> is not yet merged on kernel mainline.
->
-> [1] https://www.spinics.net/lists/linux-mmc/msg41616.html
-> [2] https://patchwork.kernel.org/patch/10104447/
->
-> v3: _ patch 3: use variant->opendrain instead of host->variant->opendrain
->     _ patch 4: exit from probe() if no pinctrl dt node are found
->     _ previous patch 15: removed as already applied in pinctrl tree
->
-> v2: _ add Revievied-by, Acked-by in some patches
->     _ replace bool by u32 for start_err and opendrain fields of struct variant_data
->     _ split previous patch 3 in two parts, first patch clean the open drain bit code
->       and second part add pinctrl pins management when no open drain bit is available.
->     _ replace "pl180" by "PL180" in patch "mmc: mmci: Add STM32 variant"
->
-> Andrea Merello (2):
->   ARM: dts: stm32: Add pin map for SDIO controller on stm32f4
->   ARM: dts: stm32: Enable SDIO controller on stm32f469 disco board
->
-> Patrice Chotard (12):
->   mmc: mmci: Don't pretend all variants to have MMCIMASK1 register
->   mmc: mmci: Don't pretend all variants to have MCI_STARBITERR flag
->   mmc: mmci: Don't pretend all variants to have OPENDRAIN bit
->   mmc: mmci: Add support for setting pad type via pinctrl
->   mmc: mmci: Add STM32 variant
->   ARM: dts: stm32: Add SDIO controller for stm32f746
->   ARM: dts: stm32: Add SDIO controller for stm32f429
->   ARM: dts: stm32: Enable SDIO controller on stm32429i-eval board
->   ARM: stm32: Add AMBA support for STM32F4 and STM32F7 SoCs
->   ARM: configs: stm32: Enable MMC_ARMMMCI support
->   ARM: configs: stm32: Enable EXT3_FS support
->   clk: stm32: Add clk entry for SDMMC2 on stm32F769
->
->  arch/arm/boot/dts/stm32429i-eval.dts   |  19 +++++
->  arch/arm/boot/dts/stm32f4-pinctrl.dtsi |  31 +++++++++
->  arch/arm/boot/dts/stm32f429.dtsi       |  11 +++
->  arch/arm/boot/dts/stm32f469-disco.dts  |  19 +++++
->  arch/arm/boot/dts/stm32f746.dtsi       |  22 ++++++
->  arch/arm/configs/stm32_defconfig       |   3 +
->  arch/arm/mach-stm32/Kconfig            |   3 +
->  drivers/clk/clk-stm32f4.c              |   3 +-
->  drivers/mmc/host/mmci.c                | 124 ++++++++++++++++++++++++++++-----
->  drivers/mmc/host/mmci.h                |   6 ++
->  10 files changed, 224 insertions(+), 17 deletions(-)
->
-> --
-> 1.9.1
->
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, applied patch1 to patch5 for next!
+Stefan Wahren <stefan.wahren@i2se.com> writes:
 
-Kind regards
-Uffe
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Hi Baruch,
+>
+> Am 16.01.2018 um 11:49 schrieb Baruch Siach:
+>> Hi Linus,
+>>
+>> On Tue, Jan 16, 2018 at 10:57:32AM +0100, Linus Walleij wrote:
+>>> On Sat, Jan 13, 2018 at 10:57 AM, Stefan Wahren <stefan.wahren@i2se.com=
+> wrote:
+>>>>> Baruch Siach <baruch@tkos.co.il> hat am 11. Januar 2018 um 20:44 gesc=
+hrieben:
+>>>>>
+>>>>> Add latest firmware property tags from the latest Raspberry Pi downst=
+ream
+>>>>> kernel. This is needed for the GPIO tags, so we can control the GPIO
+>>>>> multiplexor lines.
+>>>>>
+>>>>> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+>>>> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+>>>>
+>>>> Maybe this is obvious, but patch #3 depends on this change so no cherr=
+y-picking allowed.
+>>> I will save this for after the merge window as it feels now.
+>>>
+>>> But as far as I have the right ACKs I can put it in the GPIO tree.
+>>>
+>>> Baruch: can you resend the series with all ACKs and push me
+>>> to apply it all in the GPIO tree if you're fine with this approach?
+>> I plan to send another revision of this series later today to address St=
+efan's
+>> comments on this one. Once Stefan and/or Eric ack the entire series, I'm=
+ fine
+>> with you taking it through the GPIO tree if it is OK with the BCM2835
+>> maintainers.
+>>
+>> baruch
+>>
+>
+> we also need an ACK from the devicetree maintainers. So please send a=20
+> copy of the binding patch V3 to Rob Herring and Marc Rutland.
+
+I'll be happy to see patch 1-3 go through the GPIO tree, and we'd take
+#4 in the 2835 tree.  The only risk I see is if we need patch 1 for some
+other change in this cycle -- seems unlikely, but if Linus applied the
+series starting from a rc1 tag and merged it in, then we'll also be able
+to merge that patch over to any other branch we need without duplicating
+it in git history.
+
+Once you get this resent with the DT folks Cced, hopefully it'll be
+pretty quick.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlphCK8ACgkQtdYpNtH8
+nujiIQ/+MkwB2hhq6MgcF3fVDYX5DkmVUuCrKnsfc0bB0FQDwbhQqpVmnyscf/NT
+P/qbosACB+UIRrsgIqAnD0rWXmo7mv3TDOnYfYNxZUbd8XGjIDQe3yYBY2T5txxw
+rRE5Q6PMkgAfkZsucLYrH82GBuhTEAs40oZoSoxiniAGxNOUZd682nixZFvTadrE
+VwjpwHdxp2Wdhsna0cdEZZ0M++GBEwSHpgu/DIBM8PPfuETCx2+JifwNA8Xddhi8
+36mdgagqqKm9uvaqNBXIDbh4OZn0+y/xRrdKjRqynWeCHDpWPQIRR/MdhRhZRNUF
+TsdnM0Y2Q2GPpPqPbg9MTsqXqz5q6boLdIo+zhArB9FDGPnBjRVxdb+83whlw9Cq
+QR9wAJIgXUxPsTp56acXik7A7N3kai2sz0WvDDuMZNG7x82Hew2y8NcRKXP3/KXO
+Rp2rROBxNvTwKj2LeRy3boeaXSIUsXL9FhYnFS+P+TDMOhzxb2E2q7yxc22g2fga
+dgH/7IbyvzgWWYoeYLOAIjt6WlRTkcHi1Syi+6xvwRzZRzcvmuUs8iQZryMtOyrz
+AEnG3NlEbMb45DtqUqdVlfie6MyD6OQ1cbDzxIJOWjt+oer3TgkNgSYAqIKDiVXO
+D8CFDTXKgNckbBth2F1YPvqwe1jkWpzkPBwhFejNUYtJ72oeagY=
+=PVvU
+-----END PGP SIGNATURE-----
+--=-=-=--
