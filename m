@@ -1,85 +1,101 @@
-From: <patrice.chotard@st.com>
-Subject: [PATCH v3 09/14] ARM: dts: stm32: Enable SDIO controller on stm32f469
- disco board
-Date: Thu, 18 Jan 2018 15:34:25 +0100
-Message-ID: <1516286070-24927-10-git-send-email-patrice.chotard@st.com>
-References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: Re: [RESEND RFC PATCH 0/2] fixing the gpio ownership
+Date: Thu, 18 Jan 2018 16:12:11 +0100
+Message-ID: <20180118151211.GW2989@rfolt0960.corp.atmel.com>
+References: <20180115162407.6314-1-ludovic.desroches@microchip.com>
+ <CACRpkdbNqn-MJuzq=BpbNYveD-F8Hee2NY6ny4-SJL+F=wHq7g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>
-Cc: devicetree@vger.kernel.org, Andrea Merello <andrea.merello@gmail.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Patrice Chotard <patrice.chotard@st.com>, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbNqn-MJuzq=BpbNYveD-F8Hee2NY6ny4-SJL+F=wHq7g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Ludovic Desroches <ludovic.desroches@microchip.com>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Andrea Merello <andrea.merello@gmail.com>
+On Thu, Jan 18, 2018 at 11:16:44AM +0100, Linus Walleij wrote:
+> Hi Ludovic, thanks for your patches!
+> 
+> On Mon, Jan 15, 2018 at 5:24 PM, Ludovic Desroches
+> <ludovic.desroches@microchip.com> wrote:
+> 
+> > A few weeks ago, I have sent an RFC about adding bias support for GPIOs [1].
+> 
+> I was confused I think, because the issue of ownership and adding
+> bias support were conflated.
+> 
 
-This patch adds SDIO-related DT nodes required by stm32f469 board
+No problem, at the beginning, I only wanted to enable the strict. Doing
+this involves that I have to remove pinctrl nodes for the pins which are
+going to be request through the gpiolib to avoid conflicts. These pins
+were configured with bias-pull-up. That's why I try to add the bias
+support.
 
-There is a hardware issue on these boards, it misses a pullup on
-the GPIO line used as card detect to allow correct SD card
-detection. To allow correct card detection "broken-cd" property
-is used.
+> I think I discussed properly the ideas I have for pin control properties
+> vs the GPIOlib API/ABI in my response to patch 1.
+> 
 
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
----
+Thanks for the detailed answer about what you have in mind.
 
-v3: _ none
+> > It was motivated by the fact that I wanted to enable the pinmuxing strict mode
+> > for my pin controller which can muxed a pin as a peripheral or as a GPIO.
+> 
+> So that is a different thing from bias support.
+> 
 
-v2: _ none
+Well, yes and not! As a consequence of enabling strict mode, I have to
+find another way to configure the pins.
 
+> > Enabling the strict mode prevents several devices to be probed because
+> > requesting a GPIO fails. The pin request function complains about the
+> > ownership of the GPIO which is different from the mux ownership. I have to
+> > remove my pinctrl node to avoid this conflict but I need it to configure my
+> > pins and to set a pull-up bias for my GPIOs.
+> 
+> Okay I think the right solution is to fix the ownership issue, and set
+> up bias using pin control/config but use the line through gpiolib for now.
+> 
+> > The main issue is that enabling the strict mode will
+> > break old DTBs.
+> 
+> Yeah we need to work around that.
+> 
+> > I was going to submit patches for this but, after using the
+> > sysfs which still show me a bad ownership, I decided that it should be fixed.
+> 
+> Yep :)
+> 
+> > So I did these patches. Unfortunately, there are several ways to lead to
+> > gpiod_request(). It does the trick only for the gpiod_get family. The issue is
+> > still present with legacy gpio_request and fwnode_get_named_gpiod.
+> 
+> fwnode_get_named_gpiod() must really be fixed too. You probably
+> want to have things like LEDs and GPIO keys working even if
+> your pin controller is strict.
+> 
 
- arch/arm/boot/dts/stm32f469-disco.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Yes, I have noticed this issue.
 
-diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
-index 318fb12..ebb97c3 100644
---- a/arch/arm/boot/dts/stm32f469-disco.dts
-+++ b/arch/arm/boot/dts/stm32f469-disco.dts
-@@ -66,6 +66,13 @@
- 		serial0 = &usart3;
- 	};
- 
-+	mmc_vcard: mmc_vcard {
-+		compatible = "regulator-fixed";
-+		regulator-name = "mmc_vcard";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
- 	soc {
- 		dma-ranges = <0xc0000000 0x0 0x10000000>;
- 	};
-@@ -120,6 +127,18 @@
- 	};
- };
- 
-+&sdio {
-+	status = "okay";
-+	vmmc-supply = <&mmc_vcard>;
-+	cd-gpios = <&gpiog 2 0>;
-+	cd-inverted;
-+	broken-cd;
-+	pinctrl-names = "default", "opendrain";
-+	pinctrl-0 = <&sdio_pins>;
-+	pinctrl-1 = <&sdio_pins_od>;
-+	bus-width = <4>;
-+};
-+
- &usart3 {
- 	pinctrl-0 = <&usart3_pins_a>;
- 	pinctrl-names = "default";
--- 
-1.9.1
+> I don't care so much about the old functions, I guess you just have
+> to make sure that the drivers for *your* pin controller all use descriptors
+> so that you can enable strict mode on *your* pin controller, right?
+> 
+
+Right, I have spotted some drivers to fix.
+
+> Restrict your task to this, I'd say.
+> 
+> > It seems
+> > that more and more drivers are converted to use GPIO descriptors so there is
+> > some hope.
+> 
+> Yeah I'm doing this when I have time. There is plenty of work...
+> Help appreciated.
+> 
+
+I will try to handle the ones related to the platforms I am using.
+
+Regards
+
+Ludovic
