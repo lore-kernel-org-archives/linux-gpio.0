@@ -1,131 +1,241 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 1/2] pinctrl: add consumer variant for gpio request
-Date: Thu, 18 Jan 2018 10:46:44 +0100
-Message-ID: <CACRpkdbceFf09UNRT=cmPq1caP=eiEJc_APi55p379AyJt-0Tw@mail.gmail.com>
-References: <20180115162233.6205-1-ludovic.desroches@microchip.com> <20180115162233.6205-2-ludovic.desroches@microchip.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH] gpio: Documentation update
+Date: Thu, 18 Jan 2018 10:44:57 +0100
+Message-ID: <20180118094457.15304-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:32959 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755002AbeARJqr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jan 2018 04:46:47 -0500
-Received: by mail-it0-f68.google.com with SMTP id c102so1378111itd.0
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Jan 2018 01:46:46 -0800 (PST)
-In-Reply-To: <20180115162233.6205-2-ludovic.desroches@microchip.com>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43280 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754902AbeARJrD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jan 2018 04:47:03 -0500
+Received: by mail-lf0-f65.google.com with SMTP id o89so21639995lfg.10
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Jan 2018 01:47:02 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, nicolas.free@microchip.com
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, Jan 15, 2018 at 5:22 PM, Ludovic Desroches
-<ludovic.desroches@microchip.com> wrote:
+Update a slew of documentation files with the latest changes in the
+API/ABI. Again stress that sysfs is deprecated. Add all new flags and
+clean up and move some text.
 
-> Add a consumer variant to GPIO request relative functions. The goal
-> is to fix the bad ownership, which is arbitrary set to
-> "range->name:gpio", of a GPIO.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ Documentation/gpio/board.txt    |  14 ++++--
+ Documentation/gpio/consumer.txt | 105 ++++++++++++++++++++++++----------------
+ Documentation/gpio/driver.txt   |   4 ++
+ Documentation/gpio/sysfs.txt    |  11 +++++
+ 4 files changed, 88 insertions(+), 46 deletions(-)
 
-For this patch on its own (apart from the context):
+diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
+index a0f61898d493..b1d106167baa 100644
+--- a/Documentation/gpio/board.txt
++++ b/Documentation/gpio/board.txt
+@@ -2,6 +2,7 @@ GPIO Mappings
+ =============
+ 
+ This document explains how GPIOs can be assigned to given devices and functions.
++
+ Note that it only applies to the new descriptor-based interface. For a
+ description of the deprecated integer-based GPIO interface please refer to
+ gpio-legacy.txt (actually, there is no real mapping possible with the old
+@@ -49,7 +50,7 @@ This property will make GPIOs 15, 16 and 17 available to the driver under the
+ 
+ 	power = gpiod_get(dev, "power", GPIOD_OUT_HIGH);
+ 
+-The led GPIOs will be active-high, while the power GPIO will be active-low (i.e.
++The led GPIOs will be active high, while the power GPIO will be active low (i.e.
+ gpiod_is_active_low(power) will be true).
+ 
+ The second parameter of the gpiod_get() functions, the con_id string, has to be
+@@ -122,9 +123,14 @@ where
+ 	can be NULL, in which case it will match any function.
+   - idx is the index of the GPIO within the function.
+   - flags is defined to specify the following properties:
+-	* GPIOF_ACTIVE_LOW	- to configure the GPIO as active-low
+-	* GPIOF_OPEN_DRAIN	- GPIO pin is open drain type.
+-	* GPIOF_OPEN_SOURCE	- GPIO pin is open source type.
++	* GPIO_ACTIVE_HIGH	- GPIO line is active high
++	* GPIO_ACTIVE_LOW	- GPIO line is active low
++	* GPIO_OPEN_DRAIN	- GPIO line ise set up as open drain
++	* GPIO_OPEN_SOURCE	- GPIO line is set up as open source
++	* GPIO_PERSISTENT	- GPIO line is persistent during
++				  suspend/resume and maintains its value
++	* GPIO_TRANSITORY	- GPIO line is transitory and may loose its
++				  electrical state during suspend/resume
+ 
+ In the future, these flags might be extended to support more properties.
+ 
+diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+index 7aac33081510..d53e5b5cfc9c 100644
+--- a/Documentation/gpio/consumer.txt
++++ b/Documentation/gpio/consumer.txt
+@@ -66,6 +66,15 @@ for the GPIO. Values can be:
+ * GPIOD_IN to initialize the GPIO as input.
+ * GPIOD_OUT_LOW to initialize the GPIO as output with a value of 0.
+ * GPIOD_OUT_HIGH to initialize the GPIO as output with a value of 1.
++* GPIOD_OUT_LOW_OPEN_DRAIN same as GPIOD_OUT_LOW but also enforce the line
++  to be electrically used with open drain.
++* GPIOD_OUT_HIGH_OPEN_DRAIN same as GPIOD_OUT_HIGH but also enforce the line
++  to be electrically used with open drain.
++
++The two last flags are used for use cases where open drain is mandatory, such
++as I2C: if the line is not already configured as open drain in the mappings
++(see board.txt), then open drain will be enforced anyway and a warning will be
++printed that the board configuration needs to be updated to match the use case.
+ 
+ Both functions return either a valid GPIO descriptor, or an error code checkable
+ with IS_ERR() (they will never return a NULL pointer). -ENOENT will be returned
+@@ -240,59 +249,71 @@ that can't be accessed from hardIRQ handlers, these calls act the same as the
+ spinlock-safe calls.
+ 
+ 
+-Active-low State and Raw GPIO Values
+-------------------------------------
+-Device drivers like to manage the logical state of a GPIO, i.e. the value their
+-device will actually receive, no matter what lies between it and the GPIO line.
+-In some cases, it might make sense to control the actual GPIO line value. The
+-following set of calls ignore the active-low property of a GPIO and work on the
+-raw line value:
+-
+-	int gpiod_get_raw_value(const struct gpio_desc *desc)
+-	void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+-	int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
+-	void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value)
+-	int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+-
+-The active-low state of a GPIO can also be queried using the following call:
+-
+-	int gpiod_is_active_low(const struct gpio_desc *desc)
+-
+-Note that these functions should only be used with great moderation ; a driver
+-should not have to care about the physical line level.
+-
+-
+-The active-low property
+------------------------
+-
+-As a driver should not have to care about the physical line level, all of the
++The active low and open drain semantics
++---------------------------------------
++As a consumer should not have to care about the physical line level, all of the
+ gpiod_set_value_xxx() or gpiod_set_array_value_xxx() functions operate with
+-the *logical* value. With this they take the active-low property into account.
+-This means that they check whether the GPIO is configured to be active-low,
++the *logical* value. With this they take the active low property into account.
++This means that they check whether the GPIO is configured to be active low,
+ and if so, they manipulate the passed value before the physical line level is
+ driven.
+ 
++The same is applicable for open drain or open source output lines: those do not
++actively drive their output high (open drain) or low (open source), they just
++switch their output to a high impedance value. The consumer should not need to
++care. (For details read about open drain in driver.txt.)
++
+ With this, all the gpiod_set_(array)_value_xxx() functions interpret the
+-parameter "value" as "active" ("1") or "inactive" ("0"). The physical line
++parameter "value" as "asserted" ("1") or "de-asserted" ("0"). The physical line
+ level will be driven accordingly.
+ 
+-As an example, if the active-low property for a dedicated GPIO is set, and the
+-gpiod_set_(array)_value_xxx() passes "active" ("1"), the physical line level
++As an example, if the active low property for a dedicated GPIO is set, and the
++gpiod_set_(array)_value_xxx() passes "asserted" ("1"), the physical line level
+ will be driven low.
+ 
+ To summarize:
+ 
+-Function (example)               active-low property  physical line
+-gpiod_set_raw_value(desc, 0);        don't care           low
+-gpiod_set_raw_value(desc, 1);        don't care           high
+-gpiod_set_value(desc, 0);       default (active-high)     low
+-gpiod_set_value(desc, 1);       default (active-high)     high
+-gpiod_set_value(desc, 0);             active-low          high
+-gpiod_set_value(desc, 1);             active-low          low
+-
+-Please note again that the set_raw/get_raw functions should be avoided as much
+-as possible, especially by drivers which should not care about the actual
+-physical line level and worry about the logical value instead.
++Function (example)                 line property          physical line
++gpiod_set_raw_value(desc, 0);      don't care             low
++gpiod_set_raw_value(desc, 1);      don't care             high
++gpiod_set_value(desc, 0);          default (active high)  low
++gpiod_set_value(desc, 1);          default (active high)  high
++gpiod_set_value(desc, 0);          active low             high
++gpiod_set_value(desc, 1);          active low             low
++gpiod_set_value(desc, 0);          default (active high)  low
++gpiod_set_value(desc, 1);          default (active high)  high
++gpiod_set_value(desc, 0);          open drain             low
++gpiod_set_value(desc, 1);          open drain             high impedance
++gpiod_set_value(desc, 0);          open source            high impedance
++gpiod_set_value(desc, 1);          open source            high
++
++It is possible to override these semantics using the *set_raw/'get_raw functions
++but it should be avoided as much as possible, especially by system-agnostic drivers
++which should not need to care about the actual physical line level and worry about
++the logical value instead.
++
++
++Accessing raw GPIO values
++-------------------------
++Consumers exist that need to manage the logical state of a GPIO line, i.e. the value
++their device will actually receive, no matter what lies between it and the GPIO
++line.
++
++The following set of calls ignore the active-low or open drain property of a GPIO and
++work on the raw line value:
++
++	int gpiod_get_raw_value(const struct gpio_desc *desc)
++	void gpiod_set_raw_value(struct gpio_desc *desc, int value)
++	int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
++	void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value)
++	int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
++
++The active low state of a GPIO can also be queried using the following call:
++
++	int gpiod_is_active_low(const struct gpio_desc *desc)
++
++Note that these functions should only be used with great moderation; a driver
++should not have to care about the physical line level or open drain semantics.
+ 
+ 
+ Access multiple GPIOs with a single function call
+diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
+index d8de1c7de85a..3392a0fd4c23 100644
+--- a/Documentation/gpio/driver.txt
++++ b/Documentation/gpio/driver.txt
+@@ -88,6 +88,10 @@ ending up in the pin control back-end "behind" the GPIO controller, usually
+ closer to the actual pins. This way the pin controller can manage the below
+ listed GPIO configurations.
+ 
++If a pin controller back-end is used, the GPIO controller or hardware
++description needs to provide "GPIO ranges" mapping the GPIO line offsets to pin
++numbers on the pin controller so they can properly cross-reference each other.
++
+ 
+ GPIOs with debounce support
+ ---------------------------
+diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sysfs.txt
+index aeab01aa4d00..6cdeab8650cd 100644
+--- a/Documentation/gpio/sysfs.txt
++++ b/Documentation/gpio/sysfs.txt
+@@ -1,6 +1,17 @@
+ GPIO Sysfs Interface for Userspace
+ ==================================
+ 
++THIS ABI IS DEPRECATED, THE ABI DOCUMENTATION HAS BEEN MOVED TO
++Documentation/ABI/obsolete/sysfs-gpio AND NEW USERSPACE CONSUMERS
++ARE SUPPOSED TO USE THE CHARACTER DEVICE ABI. THIS OLD SYSFS ABI WILL
++NOT BE DEVELOPED (NO NEW FEATURES), IT WILL JUST BE MAINTAINED.
++
++Refer to the examples in tools/gpio/* for an introduction to the new
++character device ABI. Also see the userspace header in
++include/uapi/linux/gpio.h
++
++The deprecated sysfs ABI
++------------------------
+ Platforms which use the "gpiolib" implementors framework may choose to
+ configure a sysfs user interface to GPIOs. This is different from the
+ debugfs interface, since it provides control over GPIO direction and
+-- 
+2.14.3
 
-I what you want to achieve is to pass a consumer name from
-gpiolib to pinmux portions of pinctrl, then augment the existing
-pinctrl_gpio_request() to pass an optional consumer name,
-and change all existing in-kernel users to just pass NULL
-and then use the range name as fallback if the consumer
-name is NULL.
-
-> There is a lack of configuration features for GPIO. For instance,
-> we can't set the bias. Some pin controllers manage both device's
-> pins and GPIOs. GPIOs can benefit from pin configuration. Usually,
-> a pinctrl node is used to mux the pin as a GPIO and to set up its
-> configuration.
-
-Pin config takes care of bias, pull up/down, drive strength etc etc.
-
-GPIO hammers lines 0->1, 1->2, and reads them as 0 or 1.
-It can group lines into arrays etc but that is what it does.
-
-The two systems are cross-connected using the GPIO ranges.
-
-There are cross-calls for GPIO to ask pin controllers for favors:
-extern int pinctrl_gpio_request(unsigned gpio);
-extern void pinctrl_gpio_free(unsigned gpio);
-extern int pinctrl_gpio_direction_input(unsigned gpio);
-extern int pinctrl_gpio_direction_output(unsigned gpio);
-extern int pinctrl_gpio_set_config(unsigned gpio, unsigned long config);
-
-Note: when the GPIO hardware is very simple apart from some extra
-register or two providing open drain and/or debounce, the gpio driver
-can simply implement .set_config() itself so no pin control back-end
-is needed. We could require a separate pin config driver but why
-complicate things for the sake of abstraction. Nah.
-
-The last API (pinctrl_gpio_set_config()) should only be called
-to set up electrical properties under special circumstances.
-
-Those are as follows:
-
-1) When the in-kernel client needs to configure electrical properties,
-gpiolib exposes interfaces for this, such as:
-int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
-int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
-
-Likewise devm_gpiod_get() can pass flags such as
-GPIOD_OUT_LOW_OPEN_DRAIN to state that "I want this line,
-and I want it to be initialized logical low (deasserted), and it must
-be open drain" If the corresponding device tree phandle flag or board file
-description or whatever is not also flagging the line as
-open drain, gpiolib will protest with a warning print and
-enforce open drain. But it is clear that it *should* have been
-configured correctly in the device tree.
-
-This API is not all inclusive: notice that we just support open drain,
-not open source. (No upfront design: we just deal with what drivers
-need, not what they may theoretically need.)
-
-This is partly for historical reasons, but it also makes sense that things
-like I2C that can only work electrically with open drain, has a
-way to specify that these lines must really be configured as
-open drain for this thing to work.
-
-This is necessary when the logic of the code must tell gpiolib how to
-electrically use the pin, i.e. it is not a static configuration that comes
-from device tree or ACPI or a board file. This is why open
-drain/source and debounce can be set up from the in-kernel API.
-
-2) Userspace consumers.
-
-To be clear: these are not laptops, desktops, servers, set-top boxes,
-mobile phones etc. Anything comprising a mass-produced system
-should NOT use userspace GPIO. That is just WRONG. Real, widely
-deployed systems should have proper kernel drivers for their
-hardware and deploy their systems with pin config and GPIO use
-cases set up in device tree or ACPI or whatever. NOT in userspace
-scripts.
-
-Userpace consumers are automatic control: oil burners, electric
-bikes, door openers, alarms etc using some GPIO lines as, yeah,
-essentially as GPIO lines. "General purpose", as opposed to
-"dedicated purpose".
-
-These users include the maker community that do some
-fiddely-fiddling with GPIOs from userspace, and that is fine.
-
-Future of this ABI/API:
-
-I do not yet know how much pin config we should allow to come
-in from this end *ONLY*. What does userspace consumers really
-need?
-
-Also there is no reciprocation between userspace ABI and
-in-kernel API.
-
-If we for example decide to let bias and drive strength be set up
-from userspace, that does not necessarily mean that we must
-let all in-kernel drivers do that too. We can allow
-.set_config() to be called from the userspace ABI and down to
-.set_config() in the pin control driver ONLY without allowing the
-same path for in-kernel users.
-
-Yours,
-Linus Walleij
