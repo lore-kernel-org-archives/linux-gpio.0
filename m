@@ -1,55 +1,46 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [RFC] libgpiod public API reviews needed
-Date: Fri, 19 Jan 2018 14:28:40 +0100
-Message-ID: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f174.google.com ([74.125.82.174]:42756 "EHLO
-        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753332AbeASN2l (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Jan 2018 08:28:41 -0500
-Received: by mail-ot0-f174.google.com with SMTP id s3so1376052otc.9
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Jan 2018 05:28:41 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
+Date: Fri, 19 Jan 2018 16:18:20 +0100
+Message-ID: <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
 
-Hi,
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a negative number in the
+allocation below.
 
-I would like to release libgpiod v1.0 soon (preferably before FOSDEM
-2018). The first version (v0.x series) was written in a matter of two
-weeks and the API was not well designed. Since v0.3 release I've been
-working on redesigning the public API to make it simplier and more
-useful.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/soc/rockchip/pm_domains.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I want to commit to a stable interface for the library starting from
-v1.0 but it would be great if I could get some reviews first - it's
-basically only about reviewing a single public header: include/gpiod.h
-in which all public symbols are documented. Any implementation details
-can always be changed later.
+diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+index 5c342167b9db7a16..9936038d38771784 100644
+--- a/drivers/soc/rockchip/pm_domains.c
++++ b/drivers/soc/rockchip/pm_domains.c
+@@ -16,6 +16,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/syscon.h>
+ #include <dt-bindings/power/rk3288-power.h>
+@@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+ 		return -EINVAL;
+ 	}
+ 
+-	clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
++	clk_cnt = of_clk_get_parent_count(node);
+ 	pd = devm_kzalloc(pmu->dev,
+ 			  sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
+ 			  GFP_KERNEL);
+-- 
+2.7.4
 
-The most prominent changes since 0.3 include:
-- removal of custom error handling in favor of errnos
-- merge of two separate interfaces for event requests and regular line requests
-- redesign of the simple API
-- addition of a bunch of helpers for line requests
-- redesign of the iterator API
-- making the use of prefixes more consistent
-- renaming of symbols all over the place
-- and various minor tweaks
-
-As far as usefulness goes - the user space tools that are included all
-use this API and it looks pretty clean.
-
-The project is hosted at kernel.org:
-
-    https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
-
-and the code that needs review is on the master branch.
-
-Thanks in advance to anyone who'll find the time to take a look.
-
-Best regards,
-Bartosz Golaszewski
