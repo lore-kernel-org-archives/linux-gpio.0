@@ -1,33 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RESEND RFC PATCH 0/2] fixing the gpio ownership
-Date: Fri, 19 Jan 2018 22:02:39 +0100
-Message-ID: <CACRpkdaOq=iV5zNG8cXqH_ThF7Aj+GJL0HxA9pBLSvHtd96mrA@mail.gmail.com>
-References: <20180115162407.6314-1-ludovic.desroches@microchip.com>
- <CACRpkdbNqn-MJuzq=BpbNYveD-F8Hee2NY6ny4-SJL+F=wHq7g@mail.gmail.com> <20180118151211.GW2989@rfolt0960.corp.atmel.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: Add Qualcomm SDM845 TLMM
+ binding
+Date: Fri, 19 Jan 2018 15:17:49 -0600
+Message-ID: <20180119211749.xc373t774kpjwg3y@rob-hp-laptop>
+References: <20180111060004.9333-1-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180118151211.GW2989@rfolt0960.corp.atmel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20180111060004.9333-1-bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jan 18, 2018 at 4:12 PM, Ludovic Desroches
-<ludovic.desroches@microchip.com> wrote:
-> On Thu, Jan 18, 2018 at 11:16:44AM +0100, Linus Walleij wrote:
+On Wed, Jan 10, 2018 at 10:00:03PM -0800, Bjorn Andersson wrote:
+> This adds the DeviceTree binding for the Qualcomm SDM845 TLMM block.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> ---
+> 
+> Changes since v1:
+> - Added qspi related functions
+> 
+>  .../bindings/pinctrl/qcom,sdm845-pinctrl.txt       | 176 +++++++++++++++++++++
+>  1 file changed, 176 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm845-pinctrl.txt
 
->> > It seems
->> > that more and more drivers are converted to use GPIO descriptors so there is
->> > some hope.
->>
->> Yeah I'm doing this when I have time. There is plenty of work...
->> Help appreciated.
->
-> I will try to handle the ones related to the platforms I am using.
+> +Example:
+> +
+> +	tlmm: pinctrl@03400000 {
 
-I'm looking into SPI and regulators for the next kernel cycle, so
-those will hopefully get fixed.
+Drop the leading 0.
 
-Yours,
-Linus Walleij
+With that,
+
+Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
