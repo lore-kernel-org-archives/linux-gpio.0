@@ -1,42 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 10/12] gpio: cs5535: Include proper header
-Date: Fri, 19 Jan 2018 07:40:41 +0100
-Message-ID: <20180119064043.18241-10-linus.walleij@linaro.org>
+Subject: [PATCH 04/12] gpio: altera: Include GPIO driver header
+Date: Fri, 19 Jan 2018 07:40:35 +0100
+Message-ID: <20180119064043.18241-4-linus.walleij@linaro.org>
 References: <20180119064043.18241-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34678 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754104AbeASGnV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Jan 2018 01:43:21 -0500
-Received: by mail-lf0-f68.google.com with SMTP id k19so822952lfj.1
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Jan 2018 22:43:20 -0800 (PST)
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36032 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753773AbeASGnI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Jan 2018 01:43:08 -0500
+Received: by mail-lf0-f66.google.com with SMTP id t79so820157lfe.3
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Jan 2018 22:43:07 -0800 (PST)
 In-Reply-To: <20180119064043.18241-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>
 
-This driver has no business including <linux/gpio.h>, it is a
-driver so include <linux/gpio/driver.h>.
+This is a GPIO driver so it should definately include
+<linux/gpio/driver.h>. We want to get rid of <linux/of_gpio.h>
+but that will take a bit longer.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-cs5535.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-altera.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-cs5535.c b/drivers/gpio/gpio-cs5535.c
-index 90278b19aa0e..8814c8f47e57 100644
---- a/drivers/gpio/gpio-cs5535.c
-+++ b/drivers/gpio/gpio-cs5535.c
-@@ -12,7 +12,7 @@
- #include <linux/spinlock.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/driver.h>
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index 8e76d390e653..8c3ff6e2366f 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -18,7 +18,8 @@
+ 
  #include <linux/io.h>
- #include <linux/cs5535.h>
- #include <asm/msr.h>
+ #include <linux/module.h>
+-#include <linux/of_gpio.h>
++#include <linux/gpio/driver.h>
++#include <linux/of_gpio.h> /* For of_mm_gpio_chip */
+ #include <linux/platform_device.h>
+ 
+ #define ALTERA_GPIO_MAX_NGPIO		32
 -- 
 2.14.3
 
