@@ -1,88 +1,75 @@
-From: Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH 2/9] ARM: sunxi: add Allwinner ARMv5 SoCs
-Date: Sat, 20 Jan 2018 14:22:06 +1100
-Message-ID: <CAGRGNgUj47nyf2dkgdk1bT2kO1p5oP8nk5LQ4EpCya2dfK=uMg@mail.gmail.com>
-References: <20180119231735.61504-1-icenowy@aosc.io> <20180119231735.61504-3-icenowy@aosc.io>
- <CAGRGNgUjvvzseAtUuiy5xCaZrLw2Jq4+A_dPXR9r_Xs-yYL1cw@mail.gmail.com> <76DC4CD7-4A07-40C7-80A8-1C2D177E8109@aosc.io>
-Reply-To: julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Clemens Gruber <clemens.gruber@pqgruber.com>
+Subject: Re: [RFC] libgpiod public API reviews needed
+Date: Sat, 20 Jan 2018 17:02:40 +0100
+Message-ID: <20180120160240.GA4548@archie.localdomain>
+References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBDQIP76OUQLBB5HLRLJQKGQEVQS3LIY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <76DC4CD7-4A07-40C7-80A8-1C2D177E8109-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: icenowy-h8G6r0blFSE@public.gmane.org
-Cc: "Mailing List, Arm" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "open list:COMMON CLK FRAMEWORK" <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.pqgruber.com ([178.189.19.235]:65430 "EHLO
+        mail.pqgruber.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754653AbeATQCn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 20 Jan 2018 11:02:43 -0500
+Content-Disposition: inline
+In-Reply-To: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org
 
-Hi Icenowy,
+Hi Bartosz,
 
-On Sat, Jan 20, 2018 at 2:10 PM, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org> wrote:
->
->
-> =E4=BA=8E 2018=E5=B9=B41=E6=9C=8820=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=88=
-11:06:40, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> =E5=86=99=E5=88=B0:
->>Hi Icenowy,
->>
->>On Sat, Jan 20, 2018 at 10:17 AM, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
->>wrote:
->>> Add option for Allwinner ARMv5 SoCs and a SoC suniv (which is a die
->>used
->>> for many new F-series products, including F1C100A, F1C100s, F1C200s,
->>> F1C500, F1C600).
->>>
->>> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
->>> ---
->>>  arch/arm/mach-sunxi/Kconfig    | 13 +++++++++++++
->>>  arch/arm/mach-sunxi/Makefile   |  1 +
->>>  arch/arm/mach-sunxi/sunxi_v5.c | 22 ++++++++++++++++++++++
->>>  3 files changed, 36 insertions(+)
->>>  create mode 100644 arch/arm/mach-sunxi/sunxi_v5.c
->>>
->>> diff --git a/arch/arm/mach-sunxi/Kconfig
->>b/arch/arm/mach-sunxi/Kconfig
->>> index 65509a35935f..78ac9ce70641 100644
->>> --- a/arch/arm/mach-sunxi/Kconfig
->>> +++ b/arch/arm/mach-sunxi/Kconfig
->>> @@ -59,3 +59,16 @@ config MACH_SUN9I
->>>         select ARM_GIC
->>>
->>>  endif
->>> +
->>> +menuconfig ARCH_SUNXI_V5
->>> +       bool "Allwinner SoCs"
->>
->>That name seems a little too generic. Maybe "Allwinner ARMv5 SoCs"?
->
-> This is already required by armv5.
->
-> Allwinner currently has only ARMv5,7,8 SoCs. ARMv8 is under
-> arm64 architecture, and ARMv5 and v7 cannot be selected at the same time.
+On Fri, Jan 19, 2018 at 02:28:40PM +0100, Bartosz Golaszewski wrote:
+> Hi,
+> 
+> I would like to release libgpiod v1.0 soon (preferably before FOSDEM
+> 2018). The first version (v0.x series) was written in a matter of two
+> weeks and the API was not well designed. Since v0.3 release I've been
+> working on redesigning the public API to make it simplier and more
+> useful.
+> 
+> I want to commit to a stable interface for the library starting from
+> v1.0 but it would be great if I could get some reviews first - it's
+> basically only about reviewing a single public header: include/gpiod.h
+> in which all public symbols are documented. Any implementation details
+> can always be changed later.
+> 
+> The most prominent changes since 0.3 include:
+> - removal of custom error handling in favor of errnos
+> - merge of two separate interfaces for event requests and regular line requests
+> - redesign of the simple API
+> - addition of a bunch of helpers for line requests
+> - redesign of the iterator API
+> - making the use of prefixes more consistent
+> - renaming of symbols all over the place
+> - and various minor tweaks
+> 
+> As far as usefulness goes - the user space tools that are included all
+> use this API and it looks pretty clean.
+> 
+> The project is hosted at kernel.org:
+> 
+>     https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
+> 
+> and the code that needs review is on the master branch.
+> 
+> Thanks in advance to anyone who'll find the time to take a look.
 
-I'm going to try to back my way out of this hole by saying that they
-should be more descriptive anyway (and it'll give clueless kconfiggers
-a hint as to why they're not seeing their SoC listed)
+Looks good to me, great work!
 
-However you're right, if both cannot be visible at the same time, then
-it really doesn't matter if they both have the same name.
+Only one question:
 
-Sorry for the noise,
+- GPIOD_LINE_BULK_MAX_LINES
+Would increasing this in the future break the API in your opinion? And
+if so, is 64 enough?
 
---=20
-Julian Calaby
 
-Email: julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Profile: http://www.google.com/profiles/julian.calaby/
+I also have a few minor patches in the works but they are only
+implementation and build system related, not touching gpiod.h.
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+Best regards,
+Clemens
+
+> 
+> Best regards,
+> Bartosz Golaszewski
