@@ -1,40 +1,24 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: Fix a documentation spelling mistake
-Date: Sun, 21 Jan 2018 16:53:30 +0100
-Message-ID: <20180121155330.5657-1-linus.walleij@linaro.org>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH] gpio: Fix a documentation spelling mistake
+Date: Sun, 21 Jan 2018 16:15:48 -0200
+Message-ID: <CAOMZO5DMcFYBDKpwCLoduo+2fU6e5Hr=aEva-gTZv1Ff1byM=A@mail.gmail.com>
+References: <20180121155330.5657-1-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35597 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750832AbeAUPzi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Jan 2018 10:55:38 -0500
-Received: by mail-lf0-f66.google.com with SMTP id a204so7629458lfa.2
-        for <linux-gpio@vger.kernel.org>; Sun, 21 Jan 2018 07:55:37 -0800 (PST)
+Received: from mail-ot0-f174.google.com ([74.125.82.174]:41275 "EHLO
+        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750853AbeAUSPv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Jan 2018 13:15:51 -0500
+Received: by mail-ot0-f174.google.com with SMTP id 44so5605765otk.8
+        for <linux-gpio@vger.kernel.org>; Sun, 21 Jan 2018 10:15:50 -0800 (PST)
+In-Reply-To: <20180121155330.5657-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-Simple etraneous letter.
+On Sun, Jan 21, 2018 at 1:53 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> Simple etraneous letter.
 
-Reported-by: Alexander Stein <alexander.stein@systec-electronic.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- Documentation/gpio/board.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
-index b1d106167baa..659bb19f5b3c 100644
---- a/Documentation/gpio/board.txt
-+++ b/Documentation/gpio/board.txt
-@@ -125,7 +125,7 @@ where
-   - flags is defined to specify the following properties:
- 	* GPIO_ACTIVE_HIGH	- GPIO line is active high
- 	* GPIO_ACTIVE_LOW	- GPIO line is active low
--	* GPIO_OPEN_DRAIN	- GPIO line ise set up as open drain
-+	* GPIO_OPEN_DRAIN	- GPIO line is set up as open drain
- 	* GPIO_OPEN_SOURCE	- GPIO line is set up as open source
- 	* GPIO_PERSISTENT	- GPIO line is persistent during
- 				  suspend/resume and maintains its value
--- 
-2.14.3
-
+s/etraneous/extraneous
