@@ -1,38 +1,72 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC] libgpiod public API reviews needed
-Date: Sun, 21 Jan 2018 23:18:59 +0100
-Message-ID: <CAK8P3a1JeOREOXWz+BBurs3odtDTGEUnpotbLEZEOsX7YUNfeA@mail.gmail.com>
-References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
- <CACRpkdb9JRsL1UFZ0+ipPmhYjd01Gy8+dL7yQ2RTkHJJdhf20w@mail.gmail.com> <CAMRc=MdgntKcwO9ub3XOT6=hFaTZj_rT9O0SpWv=ANm4xRpttw@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Subject: [PATCH] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
+ bits_per_mux != 0
+Date: Sun, 21 Jan 2018 17:03:13 -0600
+Message-ID: <1516575793-30526-1-git-send-email-david@lechnology.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:41444 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750853AbeAUWTB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Jan 2018 17:19:01 -0500
-Received: by mail-oi0-f67.google.com with SMTP id m83so2245092oik.8
-        for <linux-gpio@vger.kernel.org>; Sun, 21 Jan 2018 14:19:01 -0800 (PST)
-In-Reply-To: <CAMRc=MdgntKcwO9ub3XOT6=hFaTZj_rT9O0SpWv=ANm4xRpttw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, David Lechner <david@lechnology.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
 
-On Sun, Jan 21, 2018 at 10:30 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> 2018-01-21 16:49 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
->> On Fri, Jan 19, 2018 at 2:28 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+This fixes pcs_request_gpio() in the pinctrl-single driver when
+bits_per_mux != 0. It appears this was overlooked when the multiple
+pins per register feature was added.
 
-> I was not aware of this, but it seems you're right! Nice catch, thanks.
->
-> How about defining a local struct gpiod_timespec with both seconds and
-> nanoseconds explicitly defined to uint64_t?
+Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure
+multiple pins of different modules")
 
-Where is that timestamp generated? Is this purely a user space interface
-with the time read from gettimeofday(), or are we talking about  a new
-kernel-to-user interface?
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/pinctrl/pinctrl-single.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-In a lot of cases, a simple 64-bit nanosecond counter using CLOCK_MONOTONIC
-timestamps is the most robust and simple solution.
-
-         Arnd
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index 3501491..7a5e2f1 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -391,9 +391,25 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
+ 			|| pin < frange->offset)
+ 			continue;
+ 		mux_bytes = pcs->width / BITS_PER_BYTE;
+-		data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
+-		data |= frange->gpiofunc;
+-		pcs->write(data, pcs->base + pin * mux_bytes);
++
++		if (pcs->bits_per_mux) {
++			int byte_num, offset, pin_shift;
++
++			byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
++			offset = (byte_num / mux_bytes) * mux_bytes;
++			pin_shift = pin % (pcs->width / pcs->bits_per_pin) *
++				    pcs->bits_per_pin;
++
++			data = pcs->read(pcs->base + offset);
++			data &= ~(pcs->fmask << pin_shift);
++			data |= frange->gpiofunc << pin_shift;
++			pcs->write(data, pcs->base + offset);
++		} else {
++			data = pcs->read(pcs->base + pin * mux_bytes);
++			data &= ~pcs->fmask;
++			data |= frange->gpiofunc;
++			pcs->write(data, pcs->base + pin * mux_bytes);
++		}
+ 		break;
+ 	}
+ 	return 0;
+-- 
+2.7.4
