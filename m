@@ -1,51 +1,51 @@
-From: David Lechner <david@lechnology.com>
-Subject: Re: [PATCH] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
- bits_per_mux != 0
-Date: Mon, 22 Jan 2018 11:06:18 -0600
-Message-ID: <d1426fbc-bc82-89cd-d08d-242b16d2c99d@lechnology.com>
-References: <1516575793-30526-1-git-send-email-david@lechnology.com>
- <CAHp75VdkShHhxL+3PyaPEC2Dyr8aWoEH8CQk+bEJ2WD4i6ojHg@mail.gmail.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 3/3] pinctrl: qcom: Don't allow protected pins to be
+ requested
+Date: Mon, 22 Jan 2018 14:03:44 -0600
+Message-ID: <243180ed-cbd2-b21d-f10f-e33ec0d3a34e@codeaurora.org>
+References: <20180110015848.11480-1-sboyd@codeaurora.org>
+ <20180110015848.11480-4-sboyd@codeaurora.org>
+ <f384a6c4-57a5-df18-862c-bf7dad9ea3f4@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vern.gendns.com ([206.190.152.46]:51802 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751087AbeAVRGU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 22 Jan 2018 12:06:20 -0500
-In-Reply-To: <CAHp75VdkShHhxL+3PyaPEC2Dyr8aWoEH8CQk+bEJ2WD4i6ojHg@mail.gmail.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <f384a6c4-57a5-df18-862c-bf7dad9ea3f4@codeaurora.org>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On 01/22/2018 08:49 AM, Andy Shevchenko wrote:
-> On Mon, Jan 22, 2018 at 1:03 AM, David Lechner <david@lechnology.com> wrote:
->> This fixes pcs_request_gpio() in the pinctrl-single driver when
->> bits_per_mux != 0. It appears this was overlooked when the multiple
->> pins per register feature was added.
->>
->> Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure
->> multiple pins of different modules")
+On 01/22/2018 07:55 AM, Timur Tabi wrote:
 > 
-> One line?
+> Just FYI, I'm still going to have to parse "gpios" in my 
+> pinctrl-qdf2xxx.c driver, even though you're also parsing it here. 
+> That's because I need to make sure that the msm_pingroup array only 
+> contains "approve" addresses in its ctl_reg fields.
 
-One line is more important that wrapping to 75 chars?
+Also, my patch
 
-> 
->> +                       byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
->> +                       offset = (byte_num / mux_bytes) * mux_bytes;
->> +                       pin_shift = pin % (pcs->width / pcs->bits_per_pin) *
->> +                                   pcs->bits_per_pin;
-> 
-> Sounds like playing around pretty well defined macro and functions,
-> e.g. DIV_ROUND_UP(), round_up().
-> 
+[PATCH 3/3] [v7] pinctrl: qcom: qdf2xxx: add support for new ACPI HID 
+QCOM8002
 
-I admit, I just copied existing code (which may be a reason to leave this the
-way it is). But, I only see once place to do this:
+Applies on top of your patches as-is.
 
-	offset = round_down(byte_num, mux_bytes);
+Also, what about
 
-Did I miss another?
+[PATCH 1/3] [v2] Revert "gpio: set up initial state from .get_direction()"
+
+I think you still need this patch.
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
