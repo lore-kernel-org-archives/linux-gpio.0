@@ -1,83 +1,43 @@
-From: Raphael Lisicki <rlisicki@radiodata.biz>
-Subject: sharing IRQ when IRQ is always enabled
-Date: Mon, 22 Jan 2018 16:14:14 +0100
-Message-ID: <519fc4da-3baa-195a-b046-2799b2609a53@radiodata.biz>
-References: <7594fad0-00c3-5dc6-c095-908e8a03c31a@radiodata.biz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Clemens Gruber <clemens.gruber@pqgruber.com>
+Subject: [PATCH] [libgpiod] gpiomon: initialize the active low variable
+Date: Mon, 22 Jan 2018 17:12:13 +0100
+Message-ID: <20180122161213.3076-2-clemens.gruber@pqgruber.com>
+References: <20180122161213.3076-1-clemens.gruber@pqgruber.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.radiodata.biz ([78.47.114.250]:52160 "EHLO
-        smtp.radiodata.biz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751054AbeAVPXV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 10:23:21 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by smtp.radiodata.biz (Postfix) with ESMTP id 2853860340
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 16:14:21 +0100 (CET)
-Received: from smtp.radiodata.biz ([127.0.0.1])
-        by localhost (smtp.radiodata.biz [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id URuIixt8qWHC for <linux-gpio@vger.kernel.org>;
-        Mon, 22 Jan 2018 16:14:14 +0100 (CET)
-Received: from mail (mail.radiodata.biz [87.128.68.248])
-        by smtp.radiodata.biz (Postfix) with ESMTPSA id AD97B60309
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 16:14:14 +0100 (CET)
-Received: from [192.168.3.180] (unknown [192.168.3.180])
-        by mail (Postfix) with ESMTPSA id 3DE4D3FF00
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 16:14:14 +0100 (CET)
-In-Reply-To: <7594fad0-00c3-5dc6-c095-908e8a03c31a@radiodata.biz>
-Content-Language: en-US
+Received: from mail.pqgruber.com ([178.189.19.235]:24712 "EHLO
+        mail.pqgruber.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751007AbeAVQP2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 11:15:28 -0500
+In-Reply-To: <20180122161213.3076-1-clemens.gruber@pqgruber.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Clemens Gruber <clemens.gruber@pqgruber.com>
 
-Hello everybody,
+The variable active_low is not initialized, so the value is undefined
+and if the -l argument is not passed, the undefined value remains.
+Fix it by initializing it to false.
 
-I am having trouble to use the I2C port expander NXP PCA9539 as an IRQ 
-source on a board where two of them share the same Interrupt line.
+Signed-off-by: Clemens Gruber <clemens.gruber@pqgruber.com>
+---
+ src/tools/gpiomon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-When the PCA9539 starts, interrupts are already enabled. There is no way 
-to disable interrupts on this chip. This means that both chips pull down 
-the interrupt line. When the driver gets instantiated for the first 
-chip, the interrupt line is enabled and an interrupt caused. This causes 
-the interrupt handler for the first chip to be called, but this does not 
-reset the interrupt coming from the second chip. Its handler is not 
-being called as it is still not installed. This means that the interrupt 
-line will be considered stuck and disabled subsequently.
-
-My device-tree part is as follows:
-
-
-         pca9539: pca9539@74 {
-             compatible = "nxp,pca9539";
-             reg = <0x74>;
-             gpio-controller;
-             #gpio-cells = <2>;
-             interrupt-controller;
-             interrupt-parent = <&pioE>;
-             interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
-         };
-
-         pca9539_1: pca9539@75 {
-             compatible = "nxp,pca9539";
-             reg = <0x75>;
-             gpio-controller;
-             #gpio-cells = <2>;
-             interrupt-controller;
-             interrupt-parent = <&pioE>;
-             interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
-         };
-
-I think I need to delay the activation of the interrupt source until 
-both interrupt handlers have been installed. I have read the code that 
-installs the interrupt handler and it seems that there is no way yet to 
-do so, right?
-
-Is there any other way I might be able to use the IRQ functionality with 
-this port expander and a shared IRQ line? Any pointers?
-
-
-
-Best regards
-
-Raphael Lisicki
+diff --git a/src/tools/gpiomon.c b/src/tools/gpiomon.c
+index ad25815..5e68a4f 100644
+--- a/src/tools/gpiomon.c
++++ b/src/tools/gpiomon.c
+@@ -249,9 +249,9 @@ int main(int argc, char **argv)
+ 	unsigned int offsets[GPIOD_LINE_BULK_MAX_LINES];
+ 	struct timespec timeout = { 10, 0 };
+ 	unsigned int num_lines = 0, offset;
++	bool active_low = false;
+ 	int optc, opti, ret, i;
+ 	struct mon_ctx ctx;
+-	bool active_low;
+ 	char *end;
+ 
+ 	memset(&ctx, 0, sizeof(ctx));
+-- 
+2.16.0
 
