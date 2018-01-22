@@ -1,45 +1,83 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
- bits_per_mux != 0
-Date: Mon, 22 Jan 2018 16:49:51 +0200
-Message-ID: <CAHp75VdkShHhxL+3PyaPEC2Dyr8aWoEH8CQk+bEJ2WD4i6ojHg@mail.gmail.com>
-References: <1516575793-30526-1-git-send-email-david@lechnology.com>
+From: Raphael Lisicki <rlisicki@radiodata.biz>
+Subject: sharing IRQ when IRQ is always enabled
+Date: Mon, 22 Jan 2018 16:14:14 +0100
+Message-ID: <519fc4da-3baa-195a-b046-2799b2609a53@radiodata.biz>
+References: <7594fad0-00c3-5dc6-c095-908e8a03c31a@radiodata.biz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1516575793-30526-1-git-send-email-david@lechnology.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: David Lechner <david@lechnology.com>
-Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.radiodata.biz ([78.47.114.250]:52160 "EHLO
+        smtp.radiodata.biz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751054AbeAVPXV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 10:23:21 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by smtp.radiodata.biz (Postfix) with ESMTP id 2853860340
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 16:14:21 +0100 (CET)
+Received: from smtp.radiodata.biz ([127.0.0.1])
+        by localhost (smtp.radiodata.biz [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id URuIixt8qWHC for <linux-gpio@vger.kernel.org>;
+        Mon, 22 Jan 2018 16:14:14 +0100 (CET)
+Received: from mail (mail.radiodata.biz [87.128.68.248])
+        by smtp.radiodata.biz (Postfix) with ESMTPSA id AD97B60309
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 16:14:14 +0100 (CET)
+Received: from [192.168.3.180] (unknown [192.168.3.180])
+        by mail (Postfix) with ESMTPSA id 3DE4D3FF00
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 16:14:14 +0100 (CET)
+In-Reply-To: <7594fad0-00c3-5dc6-c095-908e8a03c31a@radiodata.biz>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-On Mon, Jan 22, 2018 at 1:03 AM, David Lechner <david@lechnology.com> wrote:
-> This fixes pcs_request_gpio() in the pinctrl-single driver when
-> bits_per_mux != 0. It appears this was overlooked when the multiple
-> pins per register feature was added.
->
-> Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure
-> multiple pins of different modules")
+Hello everybody,
 
-One line?
+I am having trouble to use the I2C port expander NXP PCA9539 as an IRQ 
+source on a board where two of them share the same Interrupt line.
 
-> +                       byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
-> +                       offset = (byte_num / mux_bytes) * mux_bytes;
-> +                       pin_shift = pin % (pcs->width / pcs->bits_per_pin) *
-> +                                   pcs->bits_per_pin;
+When the PCA9539 starts, interrupts are already enabled. There is no way 
+to disable interrupts on this chip. This means that both chips pull down 
+the interrupt line. When the driver gets instantiated for the first 
+chip, the interrupt line is enabled and an interrupt caused. This causes 
+the interrupt handler for the first chip to be called, but this does not 
+reset the interrupt coming from the second chip. Its handler is not 
+being called as it is still not installed. This means that the interrupt 
+line will be considered stuck and disabled subsequently.
 
-Sounds like playing around pretty well defined macro and functions,
-e.g. DIV_ROUND_UP(), round_up().
+My device-tree part is as follows:
 
--- 
-With Best Regards,
-Andy Shevchenko
+
+         pca9539: pca9539@74 {
+             compatible = "nxp,pca9539";
+             reg = <0x74>;
+             gpio-controller;
+             #gpio-cells = <2>;
+             interrupt-controller;
+             interrupt-parent = <&pioE>;
+             interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
+         };
+
+         pca9539_1: pca9539@75 {
+             compatible = "nxp,pca9539";
+             reg = <0x75>;
+             gpio-controller;
+             #gpio-cells = <2>;
+             interrupt-controller;
+             interrupt-parent = <&pioE>;
+             interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
+         };
+
+I think I need to delay the activation of the interrupt source until 
+both interrupt handlers have been installed. I have read the code that 
+installs the interrupt handler and it seems that there is no way yet to 
+do so, right?
+
+Is there any other way I might be able to use the IRQ functionality with 
+this port expander and a shared IRQ line? Any pointers?
+
+
+
+Best regards
+
+Raphael Lisicki
+
