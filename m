@@ -1,74 +1,129 @@
-From: Clemens Gruber <clemens.gruber@pqgruber.com>
-Subject: [PATCH] [libgpiod] Add pkg-config support
-Date: Mon, 22 Jan 2018 17:12:12 +0100
-Message-ID: <20180122161213.3076-1-clemens.gruber@pqgruber.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.pqgruber.com ([178.189.19.235]:37229 "EHLO
-        mail.pqgruber.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751007AbeAVQPV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 11:15:21 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: at91-pio4: add support for drive-strength
+ property
+Date: Mon, 22 Jan 2018 18:05:45 +0100
+Message-ID: <20180122170545.GD3055@rfolt0960.corp.atmel.com>
+References: <20180118160208.16461-1-ludovic.desroches@microchip.com>
+ <CACRpkdanweSmHd_M+feHauEHtvKSW+-W=djb186BFdbxTf20Jg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdanweSmHd_M+feHauEHtvKSW+-W=djb186BFdbxTf20Jg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Clemens Gruber <clemens.gruber@pqgruber.com>
 
-Create a libgpiod.pc file for pkg-config. Allows to use
-PKG_CHECK_MODULES([gpiod], [libgpiod >= 1.0],,) in other
-autoconf-based projects.
+On Mon, Jan 22, 2018 at 09:37:38AM +0100, Linus Walleij wrote:
+> On Thu, Jan 18, 2018 at 5:02 PM, Ludovic Desroches
+> <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org> wrote:
+> 
+> > Add support for the drive-strength property. Usually its value is
+> > expressed in mA. Since the numeric value depends on VDDIOP voltage,
+> > the controller uses low, medium and high to define the drive-strengh.
+> 
+> Aha I see. That's complex. It certainly results in a certain mA drive
+> strength in the end, but what you're saying is that this is not usually
+> what we configure.
+> 
 
-Signed-off-by: Clemens Gruber <clemens.gruber@pqgruber.com>
----
- Makefile.am    |  3 +++
- configure.ac   |  3 ++-
- libgpiod.pc.in | 11 +++++++++++
- 3 files changed, 16 insertions(+), 1 deletion(-)
- create mode 100644 libgpiod.pc.in
+The PIO Controller Interface is:
+Drive Strength:
+0 Low drive
+1 Low drive
+2 Medium drive
+3 High drive
 
-diff --git a/Makefile.am b/Makefile.am
-index af7aecb..dfa6d47 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -11,6 +11,9 @@ ACLOCAL_AMFLAGS = -I m4
- AUTOMAKE_OPTIONS = foreign
- SUBDIRS = include src
- 
-+pkgconfigdir = $(libdir)/pkgconfig
-+pkgconfig_DATA = libgpiod.pc
-+
- if WITH_TESTS
- 
- SUBDIRS += tests
-diff --git a/configure.ac b/configure.ac
-index b4bf214..bb18868 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -120,7 +120,8 @@ then
- 	AC_MSG_NOTICE([doxygen not found - documentation cannot be generated])
- fi
- 
--AC_CONFIG_FILES([Makefile
-+AC_CONFIG_FILES([libgpiod.pc
-+		 Makefile
- 		 include/Makefile
- 		 src/Makefile
- 		 src/lib/Makefile
-diff --git a/libgpiod.pc.in b/libgpiod.pc.in
-new file mode 100644
-index 0000000..48ff113
---- /dev/null
-+++ b/libgpiod.pc.in
-@@ -0,0 +1,11 @@
-+prefix=@prefix@
-+exec_prefix=@exec_prefix@
-+libdir=@libdir@
-+includedir=@includedir@
-+
-+Name: libgpiod
-+Description: Library and tools for the Linux GPIO chardev
-+URL: @PACKAGE_URL@
-+Version: @PACKAGE_VERSION@
-+Libs: -L${libdir} -lgpiod
-+Cflags: -I${includedir}
--- 
-2.16.0
+In the Electrical Characteristics, you have:
+GPIO 1.8V Low: max 1 mA
+GPIO 1.8V Medium: max 10 mA
+GPIO 1.8V High: max 18 mA
+GPIO 3.3V Low: max 2 mA
+GPIO 3.3V Medium: max 20 mA
+GPIO 3.3V High: max 32 mA
 
+> > The PIO controller accepts two values for the low drive: 0 or 1. Most
+> > of the time, we don't care about the drive strength, there is no need
+> > to change it, so 0 is considered as the default value.
+> 
+> Do you mean default value as in "whatever the hardware was set
+> up as at boot time"?
+
+Yes
+
+> 
+> > The low-drive
+> > value won't be advertised through pinconf-pins file excepted if it
+> 
+> except?
+
+Yes
+
+> 
+> > has been set explicitly in the device tree ie if its value is
+> > different from 0.
+> >
+> > Signed-off-by: Ludovic Desroches <ludovic.desroches-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+> 
+> OK I think I get it.
+> 
+> >  Optional properties:
+> >  - GENERIC_PINCONFIG: generic pinconfig options to use, bias-disable,
+> > -bias-pull-down, bias-pull-up, drive-open-drain, input-schmitt-enable,
+> > -input-debounce, output-low, output-high.
+> > +bias-pull-down, bias-pull-up, drive-open-drain, drive-strength,
+> > +input-schmitt-enable, input-debounce, output-low, output-high.
+> (...)
+> > +                       drive-strength = <ATMEL_PIO_DRVSTR_LO>;
+> 
+> So you say you support this argument and it will be something like
+> 
+> include/dt-bindings/pinctrl/at91.h:#define ATMEL_PIO_DRVSTR_LO  1
+> include/dt-bindings/pinctrl/at91.h:#define ATMEL_PIO_DRVSTR_ME  2
+> include/dt-bindings/pinctrl/at91.h:#define ATMEL_PIO_DRVSTR_HI  3
+> 
+> But the definition if generic drive strength is actually in mA.
+> 
+> I think it is OK to deviate from stating it in mA, but you should
+> write this in the DT bindings so people do not get confused.
+> 
+
+Ok
+
+> > @@ -814,6 +834,19 @@ static void atmel_conf_pin_config_dbg_show(struct pinctrl_dev *pctldev,
+> >                 seq_printf(s, "%s ", "open-drain");
+> >         if (conf & ATMEL_PIO_SCHMITT_MASK)
+> >                 seq_printf(s, "%s ", "schmitt");
+> > +       if (conf & ATMEL_PIO_DRVSTR_MASK) {
+> > +               switch ((conf & ATMEL_PIO_DRVSTR_MASK) >> ATMEL_PIO_DRVSTR_OFFSET) {
+> > +               case ATMEL_PIO_DRVSTR_LO:
+> > +                       seq_printf(s, "%s ", "low-drive");
+> > +                       break;
+> > +               case ATMEL_PIO_DRVSTR_ME:
+> > +                       seq_printf(s, "%s ", "medium-drive");
+> > +                       break;
+> > +               case ATMEL_PIO_DRVSTR_HI:
+> > +                       seq_printf(s, "%s ", "high-drive");
+> > +                       break;
+> 
+> But here you know what VDDIOP is, right?
+> 
+
+No, I have no way to retrieve the power for the several VDDIOP power
+rails.
+
+> So in debugfs you could actually print the real drive strength
+> in mA, or both "medium-drive, %u mA"?
+> 
+> Yours,
+> Linus Walleij
+
+Regards
+
+Ludovic
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
