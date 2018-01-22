@@ -1,33 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] gpio: Fix kernel stack leak to userspace
-Date: Mon, 22 Jan 2018 14:48:53 +0100
-Message-ID: <CAK8P3a3ejTV5onHJFZEy-4S4AZXVMp6tirAami_bETvoMtWvuQ@mail.gmail.com>
-References: <20180122122146.25689-1-linus.walleij@linaro.org>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 3/3] pinctrl: qcom: Don't allow protected pins to be
+ requested
+Date: Mon, 22 Jan 2018 07:55:39 -0600
+Message-ID: <f384a6c4-57a5-df18-862c-bf7dad9ea3f4@codeaurora.org>
+References: <20180110015848.11480-1-sboyd@codeaurora.org>
+ <20180110015848.11480-4-sboyd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:33847 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751070AbeAVNsy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 08:48:54 -0500
-In-Reply-To: <20180122122146.25689-1-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20180110015848.11480-4-sboyd@codeaurora.org>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, "# 3.4.x" <stable@vger.kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
 
-On Mon, Jan 22, 2018 at 1:21 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> The GPIO event descriptor was leaking kernel stack to
-> userspace because we don't zero the variable before
-> use. Ooops. Fix this.
->
-> Cc: stable@vger.kernel.org
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpiolib.c | 3 +++
->  1 file changed, 3 insertions(+)
+On 1/9/18 7:58 PM, Stephen Boyd wrote:
+> +		ret = device_property_read_u16_array(pctrl->dev, "gpios", tmp,
+> +						     len);
+> +		if (ret < 0) {
+> +			dev_err(pctrl->dev, "could not read list of GPIOs\n");
+> +			kfree(tmp);
+> +			return ret;
+> +		}
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Just FYI, I'm still going to have to parse "gpios" in my 
+pinctrl-qdf2xxx.c driver, even though you're also parsing it here. 
+That's because I need to make sure that the msm_pingroup array only 
+contains "approve" addresses in its ctl_reg fields.
+
++	for (i = 0; i < avail_gpios; i++) {
++		unsigned int gpio = gpios[i];
++
++		groups[gpio].npins = 1;
++		snprintf(names[i], NAME_SIZE, "gpio%u", gpio);
++		pins[gpio].name = names[i];
++		groups[gpio].name = names[i];
++
++		groups[gpio].ctl_reg = 0x10000 * gpio;
+  		       ^^^^
+
+I do this because I need to make sure that "unapproved" physical 
+addresses are never store anywhere in groups[].  That way, it's 
+impossible for the driver to cause an XPU violation -- the worst that 
+can happen is a null pointer dereference.
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
