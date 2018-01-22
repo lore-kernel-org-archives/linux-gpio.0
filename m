@@ -1,53 +1,80 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH] gpio: Fix kernel stack leak to userspace
-Date: Mon, 22 Jan 2018 13:23:36 +0100
-Message-ID: <CAMRc=Mc-uOMHLf2rn-kv+DqWceVmTCXZyFqa-GJu13HmaTJtpg@mail.gmail.com>
-References: <20180122122146.25689-1-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34530 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750970AbeAVMXh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 07:23:37 -0500
-Received: by mail-oi0-f68.google.com with SMTP id k15so3117673oib.1
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 04:23:36 -0800 (PST)
-In-Reply-To: <20180122122146.25689-1-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Srinivas Ramana <sramana@codeaurora.org>
+Subject: [PATCH] pinctrl: qcom: Add irq_enable callback for msm gpio
+Date: Mon, 22 Jan 2018 18:33:28 +0530
+Message-ID: <1516626208-5655-1-git-send-email-sramana@codeaurora.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: bjorn.andersson@linaro.org, linus.walleij@linaro.org, timur@codeaurora.org, sboyd@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Ramana <sramana@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-2018-01-22 13:21 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
-> The GPIO event descriptor was leaking kernel stack to
-> userspace because we don't zero the variable before
-> use. Ooops. Fix this.
->
-> Cc: stable@vger.kernel.org
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpiolib.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 37e31ba82ca0..754836e4ca0e 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -744,6 +744,9 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
->         struct gpioevent_data ge;
->         int ret, level;
->
-> +       /* Do not leak kernel stack to userspace */
-> +       memset(&ge, 0, sizeof(ge));
-> +
->         ge.timestamp = ktime_get_real_ns();
->         level = gpiod_get_value_cansleep(le->desc);
->
-> --
-> 2.14.3
->
+Introduce the irq_enable callback which will be same as irq_unmask
+except that it will also clear the status bit before unmask.
 
-Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
+This will help in clearing any erroneous interrupts that would
+have got latched when the interrupt is not in use.
+
+There may be devices like UART which can use the same gpio line
+for data rx as well as a wakeup gpio when in suspend. The data that
+was flowing on the line may latch the interrupt and when we enable
+the interrupt before going to suspend, this would trigger the
+unexpected interrupt. This change helps clearing the interrupt
+so that these unexpected interrupts gets cleared.
+
+Signed-off-by: Srinivas Ramana <sramana@codeaurora.org>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 7a960590ecaa..de7c65c15f9e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -610,6 +610,36 @@ static void msm_gpio_irq_mask(struct irq_data *d)
+ 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+ }
+ 
++static void msm_gpio_irq_enable(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
++	const struct msm_pingroup *g;
++	unsigned long flags;
++	u32 val;
++
++	g = &pctrl->soc->groups[d->hwirq];
++
++	raw_spin_lock_irqsave(&pctrl->lock, flags);
++
++	/*
++	 * clear the interrupt status bit before unmask to avoid
++	 * any erroneous interrupts that would have got latched
++	 * when the intterupt is not in use.
++	 */
++	val = readl(pctrl->regs + g->intr_status_reg);
++	val &= ~BIT(g->intr_status_bit);
++	writel(val, pctrl->regs + g->intr_status_reg);
++
++	val = readl(pctrl->regs + g->intr_cfg_reg);
++	val |= BIT(g->intr_enable_bit);
++	writel(val, pctrl->regs + g->intr_cfg_reg);
++
++	set_bit(d->hwirq, pctrl->enabled_irqs);
++
++	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
++}
++
+ static void msm_gpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+@@ -767,6 +797,7 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
+ 
+ static struct irq_chip msm_gpio_irq_chip = {
+ 	.name           = "msmgpio",
++	.irq_enable	= msm_gpio_irq_enable,
+ 	.irq_mask       = msm_gpio_irq_mask,
+ 	.irq_unmask     = msm_gpio_irq_unmask,
+ 	.irq_ack        = msm_gpio_irq_ack,
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., 
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
