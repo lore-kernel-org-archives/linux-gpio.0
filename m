@@ -1,7 +1,7 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
 Subject: Re: [RFC] libgpiod public API reviews needed
-Date: Mon, 22 Jan 2018 10:28:53 +0100
-Message-ID: <CAK8P3a1t3MquLPuZqgds4osrTNTOG494s4fk_nhdn+N=B3qdhg@mail.gmail.com>
+Date: Mon, 22 Jan 2018 12:02:54 +0100
+Message-ID: <CAMRc=MfbQ7d8xrooS7sqDPU-EAfhFJx57t4yqRY-zQ=7gYuHbQ@mail.gmail.com>
 References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
  <CACRpkdb9JRsL1UFZ0+ipPmhYjd01Gy8+dL7yQ2RTkHJJdhf20w@mail.gmail.com>
  <CAMRc=MdgntKcwO9ub3XOT6=hFaTZj_rT9O0SpWv=ANm4xRpttw@mail.gmail.com>
@@ -10,19 +10,19 @@ References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:39328 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750886AbeAVJ2y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 04:28:54 -0500
-Received: by mail-oi0-f65.google.com with SMTP id t8so5476328oie.6
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 01:28:54 -0800 (PST)
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37552 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751024AbeAVLCz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 06:02:55 -0500
+Received: by mail-oi0-f66.google.com with SMTP id t78so1162840oih.4
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 03:02:55 -0800 (PST)
 In-Reply-To: <CAK8P3a3Y4Coj9Y5NT5KsQLpSkTqCDDY6B3sU199uvhoPb9GEYw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
 
-On Mon, Jan 22, 2018 at 10:25 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+2018-01-22 10:25 GMT+01:00 Arnd Bergmann <arnd@arndb.de>:
 > On Mon, Jan 22, 2018 at 9:21 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
 >> On Sun, Jan 21, 2018 at 11:18 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 >>> On Sun, Jan 21, 2018 at 10:30 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
@@ -57,13 +57,33 @@ On Mon, Jan 22, 2018 at 10:25 AM, Arnd Bergmann <arnd@arndb.de> wrote:
 >
 > - on x86, the structures are incompatible between 32-bit and 64-bit
 >   user space, as the former has no padding.
+
+Is this really an issue? Do distros really ship the same bytecode for
+32 and 64 bit architecures? I have never run into such problems
+despite having used different python bindings for C libraries (I'm not
+sure however how many of them dealt with any visible C structs).
+
 > - 'real' timestamps are inconvenient because time may jump in
 >   either direction. Time stamps should use 'monotonic' time, i.e.
 >   ktime_get_ns().
+>
 
-and third:
+@Linus: this doesn't really break the ABI - how do you feel about
+switching to using it in gpiolib.c?
 
-- On anything other than x86-32, you are leaking 32 bits of kernel stack
-  data for each event, which might be a security issue.
+>>> In a lot of cases, a simple 64-bit nanosecond counter using CLOCK_MONOTONIC
+>>> timestamps is the most robust and simple solution.
+>>
+>> Bartosz also seems to think it is the best so would vote to go
+>> for that and we have one problem less.
+>
+> Could we introduce a new ioctl to replace the gpioevent_data() and
+> use a better interface then?
+>
 
-         Arnd
+For the security concern - I guess it would be enough to just zero
+gpioevent_data in lineevent_irq_thread() before putting it into the
+FIFO?
+
+Best regards,
+Bartosz Golaszewski
