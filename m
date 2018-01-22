@@ -1,139 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC] libgpiod public API reviews needed
-Date: Mon, 22 Jan 2018 13:02:26 +0100
-Message-ID: <CACRpkdapAoZ-Gzkx+SwGkkWBmyfeBaAtv1KdJd-wj2dvBamYAQ@mail.gmail.com>
-References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
- <CACRpkdb9JRsL1UFZ0+ipPmhYjd01Gy8+dL7yQ2RTkHJJdhf20w@mail.gmail.com>
- <CAMRc=MdgntKcwO9ub3XOT6=hFaTZj_rT9O0SpWv=ANm4xRpttw@mail.gmail.com>
- <CAK8P3a1JeOREOXWz+BBurs3odtDTGEUnpotbLEZEOsX7YUNfeA@mail.gmail.com>
- <CACRpkdbJUOvNDwM=wZw5iLwPAf-D+i27E9JRzV=Gr0mnZbX3kg@mail.gmail.com> <CAK8P3a3Y4Coj9Y5NT5KsQLpSkTqCDDY6B3sU199uvhoPb9GEYw@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [RFC PATCH 0/9] initial support for "suniv"
+ Allwinner new ARM9 SoC
+Date: Mon, 22 Jan 2018 13:14:35 +0100
+Message-ID: <20180122121435.bpayxk4uzfqbhqse@flea.lan>
+References: <20180119231735.61504-1-icenowy@aosc.io>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:41196 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751024AbeAVMCa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 07:02:30 -0500
-Received: by mail-it0-f65.google.com with SMTP id b77so9599192itd.0
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 04:02:30 -0800 (PST)
-In-Reply-To: <CAK8P3a3Y4Coj9Y5NT5KsQLpSkTqCDDY6B3sU199uvhoPb9GEYw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jeuhtqwctfssk4ie"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBLNLS7JQKGQEMFOSUPQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20180119231735.61504-1-icenowy-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
 
-On Mon, Jan 22, 2018 at 10:25 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, Jan 22, 2018 at 9:21 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
->> /**
->>  * struct gpioevent_data - The actual event being pushed to userspace
->>  * @timestamp: best estimate of time of event occurrence, in nanoseconds
->>  * @id: event identifier
->>  */
->> struct gpioevent_data {
->>         __u64 timestamp;
->>         __u32 id;
->> };
->>
->> It is the same as is used for IIO. Inside the kernel this ultimately
->> comes from ktime_get_real_ns();
->
-> Ah, too bad, that already contains two mistakes:
->
-> - on x86, the structures are incompatible between 32-bit and 64-bit
->   user space, as the former has no padding.
+--jeuhtqwctfssk4ie
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 
-Sigh yeah that's bad... I guess we will be saved by the 64bit
-word coming first in the struct? (with the security problem
-you mention appearing after the 32 bits in ID.)
+On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
+> This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9 SoC.
+> 
+> The same die is packaged differently, come with different co-packaged
+> DRAM or shipped with different SDK; and then made many model names: F23,
+> F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs all
+> share a common feature set and are packaged similarly (eLQFP128 for SoCs
+> without co-packaged DRAM, QFN88 for with DRAM). As their's no
+> functionality hidden on the QFN88 models (except DRAM interface not
+> exported), it's not clever to differentiate them. So I will use suniv as
+> common name of all these SoCs.
 
-[Other mail]
-> - On anything other than x86-32, you are leaking 32 bits of kernel stack
->  data for each event, which might be a security issue.
+Where is that suniv prefix coming from?
 
-OK discussed in following mails, I'll patch this.
+And you need to have a SoC in all your compatibles. This isn't about
+being clever or not, this is just a matter of being able to accurately
+read in a crystal ball. Or maybe it's just the same, in which case,
+I'd really like to have a course :)
 
-> - 'real' timestamps are inconvenient because time may jump in
->   either direction. Time stamps should use 'monotonic' time, i.e.
->   ktime_get_ns().
+You should really answer two questions here:
+  - Are you able to predict whether you'll find an SoC part of that
+    family in the future that derives a bit and will need a compatible
+    of its own?
+  - Are you able to predict which quirks we'll need along the way to
+    support all the SoCs you've listed there?
 
-So what we have in IIO is that it is configurable what timestamp
-you get.
+If you can't answer yes to both these questions, with a 100%
+certainty, then you'll need a SoC name in the compatible.
 
-I've been meaning to fix this by breaking their timestamping
-into lib/ and use the same configurability per-gpiochip for GPIO.
-I guess this is the time to actually do it and stop talking on
-my part :/
+Which doesn't prevent you from sharing as much as possible the DT like
+we did between the A10s and the A13 for example.
 
-They also use the same default timestamp though.
+Maxime
 
-commit bc2b7dab629a ("iio:core: timestamping clock selection support")
-
-The code is in IIO in drivers/iio/industrialio-core.c:
-
-/**
- * iio_get_time_ns() - utility function to get a time stamp for events etc
- * @indio_dev: device
- */
-s64 iio_get_time_ns(const struct iio_dev *indio_dev)
-{
-        struct timespec tp;
-
-        switch (iio_device_get_clock(indio_dev)) {
-        case CLOCK_REALTIME:
-                ktime_get_real_ts(&tp);
-                break;
-        case CLOCK_MONOTONIC:
-                ktime_get_ts(&tp);
-                break;
-        case CLOCK_MONOTONIC_RAW:
-                getrawmonotonic(&tp);
-                break;
-        case CLOCK_REALTIME_COARSE:
-                tp = current_kernel_time();
-                break;
-        case CLOCK_MONOTONIC_COARSE:
-                tp = get_monotonic_coarse();
-                break;
-        case CLOCK_BOOTTIME:
-                get_monotonic_boottime(&tp);
-                break;
-        case CLOCK_TAI:
-                timekeeping_clocktai(&tp);
-                break;
-        default:
-                BUG();
-        }
-
-        return timespec_to_ns(&tp);
-}
-EXPORT_SYMBOL(iio_get_time_ns);
-
-Which clock is used is configured per-device in sysfs.
-
-It's pretty neat I think.
-
->>> In a lot of cases, a simple 64-bit nanosecond counter using CLOCK_MONOTONIC
->>> timestamps is the most robust and simple solution.
->>
->> Bartosz also seems to think it is the best so would vote to go
->> for that and we have one problem less.
->
-> Could we introduce a new ioctl to replace the gpioevent_data() and
-> use a better interface then?
-
-Prior to the above change, all timestamps in IIO were also using
-ktime_get_real_ns(), they changed this without adding a new
-ABI so I don't see why GPIO should. Userspace is not using
-these timestamps much, yet. If there are users who want anything
-else than a relative timestamp, Bartosz probably know who they
-are.
-
-The reason GPIO was using ktime_get_real_ns() was that the
-code was copied from IIO so we got their mistake as legacy,
-and I guess it is fair that we deal with the legacy the same way
-they did. The users are pretty much the same. (Stuff like
-GNURadio.)
-
-Yours,
-Linus Walleij
+-- 
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--jeuhtqwctfssk4ie--
