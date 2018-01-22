@@ -1,80 +1,126 @@
-From: Srinivas Ramana <sramana@codeaurora.org>
-Subject: [PATCH] pinctrl: qcom: Add irq_enable callback for msm gpio
-Date: Mon, 22 Jan 2018 18:33:28 +0530
-Message-ID: <1516626208-5655-1-git-send-email-sramana@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, linus.walleij@linaro.org, timur@codeaurora.org, sboyd@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Ramana <sramana@codeaurora.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC] libgpiod public API reviews needed
+Date: Mon, 22 Jan 2018 14:46:12 +0100
+Message-ID: <CAK8P3a1Skvm48sje8FNDPLYqyz9Lf8q0qX1QETWtyZTxuX4k1g@mail.gmail.com>
+References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
+ <CACRpkdb9JRsL1UFZ0+ipPmhYjd01Gy8+dL7yQ2RTkHJJdhf20w@mail.gmail.com>
+ <CAMRc=MdgntKcwO9ub3XOT6=hFaTZj_rT9O0SpWv=ANm4xRpttw@mail.gmail.com>
+ <CAK8P3a1JeOREOXWz+BBurs3odtDTGEUnpotbLEZEOsX7YUNfeA@mail.gmail.com>
+ <CACRpkdbJUOvNDwM=wZw5iLwPAf-D+i27E9JRzV=Gr0mnZbX3kg@mail.gmail.com>
+ <CAK8P3a3Y4Coj9Y5NT5KsQLpSkTqCDDY6B3sU199uvhoPb9GEYw@mail.gmail.com> <CACRpkdapAoZ-Gzkx+SwGkkWBmyfeBaAtv1KdJd-wj2dvBamYAQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:41211 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751087AbeAVNqO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 08:46:14 -0500
+Received: by mail-ot0-f196.google.com with SMTP id 44so7466246otk.8
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 05:46:14 -0800 (PST)
+In-Reply-To: <CACRpkdapAoZ-Gzkx+SwGkkWBmyfeBaAtv1KdJd-wj2dvBamYAQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
 
-Introduce the irq_enable callback which will be same as irq_unmask
-except that it will also clear the status bit before unmask.
+On Mon, Jan 22, 2018 at 1:02 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Jan 22, 2018 at 10:25 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Mon, Jan 22, 2018 at 9:21 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+>>> /**
+>>>  * struct gpioevent_data - The actual event being pushed to userspace
+>>>  * @timestamp: best estimate of time of event occurrence, in nanoseconds
+>>>  * @id: event identifier
+>>>  */
+>>> struct gpioevent_data {
+>>>         __u64 timestamp;
+>>>         __u32 id;
+>>> };
+>>>
+>>> It is the same as is used for IIO. Inside the kernel this ultimately
+>>> comes from ktime_get_real_ns();
+>>
+>> Ah, too bad, that already contains two mistakes:
+>>
+>> - on x86, the structures are incompatible between 32-bit and 64-bit
+>>   user space, as the former has no padding.
+>
+> Sigh yeah that's bad... I guess we will be saved by the 64bit
+> word coming first in the struct? (with the security problem
+> you mention appearing after the 32 bits in ID.)
 
-This will help in clearing any erroneous interrupts that would
-have got latched when the interrupt is not in use.
+The main problem is the size of the data: kfifo_copy_to_user()
+can copy multiple records, and while the first one would
+remain accessible correctly, the second record contains
+garbage if the kernel adds 4 bytes of padding inbetween.
 
-There may be devices like UART which can use the same gpio line
-for data rx as well as a wakeup gpio when in suspend. The data that
-was flowing on the line may latch the interrupt and when we enable
-the interrupt before going to suspend, this would trigger the
-unexpected interrupt. This change helps clearing the interrupt
-so that these unexpected interrupts gets cleared.
+>> - 'real' timestamps are inconvenient because time may jump in
+>>   either direction. Time stamps should use 'monotonic' time, i.e.
+>>   ktime_get_ns().
+>
+> So what we have in IIO is that it is configurable what timestamp
+> you get.
+>
+> I've been meaning to fix this by breaking their timestamping
+> into lib/ and use the same configurability per-gpiochip for GPIO.
+> I guess this is the time to actually do it and stop talking on
+> my part :/
 
-Signed-off-by: Srinivas Ramana <sramana@codeaurora.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Ok, makes sense.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 7a960590ecaa..de7c65c15f9e 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -610,6 +610,36 @@ static void msm_gpio_irq_mask(struct irq_data *d)
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- }
- 
-+static void msm_gpio_irq_enable(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
-+	const struct msm_pingroup *g;
-+	unsigned long flags;
-+	u32 val;
-+
-+	g = &pctrl->soc->groups[d->hwirq];
-+
-+	raw_spin_lock_irqsave(&pctrl->lock, flags);
-+
-+	/*
-+	 * clear the interrupt status bit before unmask to avoid
-+	 * any erroneous interrupts that would have got latched
-+	 * when the intterupt is not in use.
-+	 */
-+	val = readl(pctrl->regs + g->intr_status_reg);
-+	val &= ~BIT(g->intr_status_bit);
-+	writel(val, pctrl->regs + g->intr_status_reg);
-+
-+	val = readl(pctrl->regs + g->intr_cfg_reg);
-+	val |= BIT(g->intr_enable_bit);
-+	writel(val, pctrl->regs + g->intr_cfg_reg);
-+
-+	set_bit(d->hwirq, pctrl->enabled_irqs);
-+
-+	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+}
-+
- static void msm_gpio_irq_unmask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-@@ -767,6 +797,7 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
- 
- static struct irq_chip msm_gpio_irq_chip = {
- 	.name           = "msmgpio",
-+	.irq_enable	= msm_gpio_irq_enable,
- 	.irq_mask       = msm_gpio_irq_mask,
- 	.irq_unmask     = msm_gpio_irq_unmask,
- 	.irq_ack        = msm_gpio_irq_ack,
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., 
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> They also use the same default timestamp though.
+>
+> commit bc2b7dab629a ("iio:core: timestamping clock selection support")
+>
+> The code is in IIO in drivers/iio/industrialio-core.c:
+>
+> /**
+>  * iio_get_time_ns() - utility function to get a time stamp for events etc
+>  * @indio_dev: device
+>  */
+> s64 iio_get_time_ns(const struct iio_dev *indio_dev)
+> {
+>         struct timespec tp;
+>
+>         switch (iio_device_get_clock(indio_dev)) {
+>         case CLOCK_REALTIME:
+>                 ktime_get_real_ts(&tp);
+>                 break;
+>         case CLOCK_MONOTONIC:
+>                 ktime_get_ts(&tp);
+>                 break;
+>         case CLOCK_MONOTONIC_RAW:
+>                 getrawmonotonic(&tp);
+>                 break;
+>         case CLOCK_REALTIME_COARSE:
+>                 tp = current_kernel_time();
+>                 break;
+>         case CLOCK_MONOTONIC_COARSE:
+>                 tp = get_monotonic_coarse();
+>                 break;
+>         case CLOCK_BOOTTIME:
+>                 get_monotonic_boottime(&tp);
+>                 break;
+>         case CLOCK_TAI:
+>                 timekeeping_clocktai(&tp);
+>                 break;
+>         default:
+>                 BUG();
+>         }
+>
+>         return timespec_to_ns(&tp);
+> }
+> EXPORT_SYMBOL(iio_get_time_ns);
+>
+> Which clock is used is configured per-device in sysfs.
+>
+> It's pretty neat I think.
+
+To be honest, I think this is overcomplicating things. While I
+have a patch to change the interface names and make them
+all ktime_get_*_ns(), most of these clocks make no sense
+at all for a random user space interface, mainly because
+I wouldn't trust user space programmers to make an
+informed decision which of those seven to use.
+
+        Arnd
