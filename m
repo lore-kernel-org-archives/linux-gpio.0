@@ -1,47 +1,59 @@
-From: David Lechner <david@lechnology.com>
-Subject: [PATCH] gpio: davinci: add support for pinmux gpio ranges
-Date: Sun, 21 Jan 2018 17:09:40 -0600
-Message-ID: <1516576180-1467-1-git-send-email-david@lechnology.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: David Lechner <david@lechnology.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH v2 0/6] Nintendo Wii GPIO driver
+Date: Mon, 22 Jan 2018 06:04:05 +0100
+Message-ID: <20180122050411.32460-1-j.neuschaefer@gmx.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.17.21]:63805 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750746AbeAVFEY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 22 Jan 2018 00:04:24 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 
-This adds support for the pinmux gpio ranges feature to the DaVinci gpio
-driver. Only device tree is supported since the non-DT boards don't
-use a generic pinmux controller.
+This series adds a driver for the GPIO controller used in the Nintendo
+Wii game console.
 
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: David Lechner <david@lechnology.com>
----
- drivers/gpio/gpio-davinci.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+The driver itself, and the related devicetree work should be pretty
+uncontroversial, but due to the system architecture of the Wii, I also
+had to extend an old resource allocation hack to kernel/resource.c: On
+the Wii, there are two separate RAM ranges, with MMIO right in the
+middle, but AFAIK, Linux on PPC32 doesn't support discontiguous memory
+properly. So the hack is to allocate one big RAM range with a hole
+(marked as reserved memory) for MMIO in the middle.
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index e4b3d7d..744d6c2 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -20,6 +20,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/irqchip/chained_irq.h>
-@@ -225,6 +226,11 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	chips->chip.of_gpio_n_cells = 2;
- 	chips->chip.parent = dev;
- 	chips->chip.of_node = dev->of_node;
-+
-+	if (of_property_read_bool(dev->of_node, "gpio-ranges")) {
-+		chips->chip.request = gpiochip_generic_request;
-+		chips->chip.free = gpiochip_generic_free;
-+	}
- #endif
- 	spin_lock_init(&chips->lock);
- 	bank_base += ngpio;
+Because this series touches different subsystems (GPIO, DT, core
+resource management), I guess it should be picked up patch-by-patch by
+the different maintainers.
+
+The main difference between v2 and the previous version is that I
+rewrote the driver on top of the GPIO_GENERIC library, saving 60 lines
+of code.
+
+Jonathan Neuschäfer (6):
+  resource: Extend the PPC32 reserved memory hack
+  powerpc: wii: Explicitly configure GPIO owner for poweroff pin
+  gpio: Add GPIO driver for Nintendo Wii
+  dt-bindings: gpio: Add binding for Wii GPIO controller
+  powerpc: wii.dts: Add ngpios property
+  powerpc: wii.dts: Add GPIO line names
+
+ .../bindings/gpio/nintendo,hollywood-gpio.txt      |  27 +++++
+ .../devicetree/bindings/powerpc/nintendo/wii.txt   |   9 +-
+ arch/powerpc/boot/dts/wii.dts                      |   9 ++
+ arch/powerpc/platforms/embedded6xx/wii.c           |   7 ++
+ drivers/gpio/Kconfig                               |   9 ++
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-hlwd.c                           | 123 +++++++++++++++++++++
+ kernel/resource.c                                  |  21 +++-
+ 8 files changed, 197 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/nintendo,hollywood-gpio.txt
+ create mode 100644 drivers/gpio/gpio-hlwd.c
+
 -- 
-2.7.4
+2.15.1
+
