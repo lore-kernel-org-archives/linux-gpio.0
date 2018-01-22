@@ -1,102 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC] libgpiod public API reviews needed
-Date: Mon, 22 Jan 2018 12:12:35 +0100
-Message-ID: <CAK8P3a1MSToyMTnqN1bVvzwK92CdDvAnJCZctbSgu8iM8t3KAQ@mail.gmail.com>
-References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
- <CACRpkdb9JRsL1UFZ0+ipPmhYjd01Gy8+dL7yQ2RTkHJJdhf20w@mail.gmail.com>
- <CAMRc=MdgntKcwO9ub3XOT6=hFaTZj_rT9O0SpWv=ANm4xRpttw@mail.gmail.com>
- <CAK8P3a1JeOREOXWz+BBurs3odtDTGEUnpotbLEZEOsX7YUNfeA@mail.gmail.com>
- <CACRpkdbJUOvNDwM=wZw5iLwPAf-D+i27E9JRzV=Gr0mnZbX3kg@mail.gmail.com>
- <CAK8P3a3Y4Coj9Y5NT5KsQLpSkTqCDDY6B3sU199uvhoPb9GEYw@mail.gmail.com> <CAMRc=MfbQ7d8xrooS7sqDPU-EAfhFJx57t4yqRY-zQ=7gYuHbQ@mail.gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 2/4] arm64: add basic DTS for i.MX8MQ
+Date: Mon, 22 Jan 2018 12:51:23 +0100
+Message-ID: <CAK8P3a0WGrmDp_CbQjDVc_dGNyBN4A4h5HJqUeFygO3RFHuCxw@mail.gmail.com>
+References: <20180117183244.28303-1-l.stach@pengutronix.de> <20180117183244.28303-2-l.stach@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:41403 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750828AbeAVLMg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jan 2018 06:12:36 -0500
-Received: by mail-ot0-f196.google.com with SMTP id 44so7109151otk.8
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Jan 2018 03:12:36 -0800 (PST)
-In-Reply-To: <CAMRc=MfbQ7d8xrooS7sqDPU-EAfhFJx57t4yqRY-zQ=7gYuHbQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180117183244.28303-2-l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Fabio Estevam <fabio.estevam-3arQi8VN3Tc@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, DTML <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, patchwork-lst-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
 
-On Mon, Jan 22, 2018 at 12:02 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> 2018-01-22 10:25 GMT+01:00 Arnd Bergmann <arnd@arndb.de>:
->> On Mon, Jan 22, 2018 at 9:21 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>> On Sun, Jan 21, 2018 at 11:18 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->>>> On Sun, Jan 21, 2018 at 10:30 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>>> 2018-01-21 16:49 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
->>>>>> On Fri, Jan 19, 2018 at 2:28 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>>
->>>>> I was not aware of this, but it seems you're right! Nice catch, thanks.
->>>>>
->>>>> How about defining a local struct gpiod_timespec with both seconds and
->>>>> nanoseconds explicitly defined to uint64_t?
->>>>
->>>> Where is that timestamp generated? Is this purely a user space interface
->>>> with the time read from gettimeofday(), or are we talking about  a new
->>>> kernel-to-user interface?
->>>
->>> This is in include/uapi/linux/gpio.h:
->>>
->>> /**
->>>  * struct gpioevent_data - The actual event being pushed to userspace
->>>  * @timestamp: best estimate of time of event occurrence, in nanoseconds
->>>  * @id: event identifier
->>>  */
->>> struct gpioevent_data {
->>>         __u64 timestamp;
->>>         __u32 id;
->>> };
->>>
->>> It is the same as is used for IIO. Inside the kernel this ultimately
->>> comes from ktime_get_real_ns();
->>
->> Ah, too bad, that already contains two mistakes:
->>
->> - on x86, the structures are incompatible between 32-bit and 64-bit
->>   user space, as the former has no padding.
+On Wed, Jan 17, 2018 at 7:32 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> This adds the basic DTS for the i.MX8MQ.
+> For now only the following peripherals are supported:
+> - IOMUXC (pin controller)
+> - CCM (clock controller)
+> - GPIO
+> - UART
+> - uSDHC (SD/eMMC controller)
+> - FEC (ethernet controller)
+> - i2c
 >
-> Is this really an issue? Do distros really ship the same bytecode for
-> 32 and 64 bit architecures? I have never run into such problems
-> despite having used different python bindings for C libraries (I'm not
-> sure however how many of them dealt with any visible C structs).
-
-It's a huge issue, yes. You should be able to run an 32-bit distro
-or just a standalone 32-bit binary with a 64-bit kernel. This driver
-is otherwise written carefully to allow that, and it will work on all
-other architectures AFAICT, just not on x86.
-
->> - 'real' timestamps are inconvenient because time may jump in
->>   either direction. Time stamps should use 'monotonic' time, i.e.
->>   ktime_get_ns().
->>
+> This is enough to get a very basic board support up and running.
 >
-> @Linus: this doesn't really break the ABI - how do you feel about
-> switching to using it in gpiolib.c?
-
-It is an incompatible ABI change, the question here is whether anyone
-actually cares. If nothing relies on the timestamps being in
-CLOCK_REALTIME domain, then it can be changed, the question
-is just how you want to prove that this is the case.
-
->>>> In a lot of cases, a simple 64-bit nanosecond counter using CLOCK_MONOTONIC
->>>> timestamps is the most robust and simple solution.
->>>
->>> Bartosz also seems to think it is the best so would vote to go
->>> for that and we have one problem less.
->>
->> Could we introduce a new ioctl to replace the gpioevent_data() and
->> use a better interface then?
->>
+> One known limitation is that the driver for the GPC interrupt
+> controller is still missing, rendering the CPU sleep states unusable
+> as there is nothing waking them up anymore. This will be fixed in
+> due course.
 >
-> For the security concern - I guess it would be enough to just zero
-> gpioevent_data in lineevent_irq_thread() before putting it into the
-> FIFO?
+> Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 
-Yes, that part is easy to fix.
+I wonder if there is anything preventing us from putting it all into linux-4.16.
+This is low-risk (nothing would break), and the other three arch/arm64 patches
+are trivial, so if someone can do a review quickly, I'd be willing to pick the
+arm-soc portion up.
 
-      Arnd
+I suppose we need the clk and pintrl drivers to also get merged at the
+same time to make it usable, and we also want the bindings for pinctrl
+and clk to be properly reviewed before adding the nodes to the DT
+so it depends a, bit on the other maintainers.
+
+To me it looks like the drivers are just "yet another i.MX variant" for them,
+it should make little difference that this one is 64-bit.
+
+     Arnd
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
