@@ -1,57 +1,93 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [RFC] libgpiod public API reviews needed
-Date: Tue, 23 Jan 2018 16:14:21 +0100
-Message-ID: <CAMRc=Mc2f7RAoYE3-0MbxUC=1eua0wYjGqd-R+PMwDzLXxcS3Q@mail.gmail.com>
-References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
- <CACRpkdb9JRsL1UFZ0+ipPmhYjd01Gy8+dL7yQ2RTkHJJdhf20w@mail.gmail.com>
- <CAMRc=MdgntKcwO9ub3XOT6=hFaTZj_rT9O0SpWv=ANm4xRpttw@mail.gmail.com>
- <CAK8P3a1JeOREOXWz+BBurs3odtDTGEUnpotbLEZEOsX7YUNfeA@mail.gmail.com>
- <CACRpkdbJUOvNDwM=wZw5iLwPAf-D+i27E9JRzV=Gr0mnZbX3kg@mail.gmail.com>
- <CAK8P3a3Y4Coj9Y5NT5KsQLpSkTqCDDY6B3sU199uvhoPb9GEYw@mail.gmail.com>
- <CAMRc=MfbQ7d8xrooS7sqDPU-EAfhFJx57t4yqRY-zQ=7gYuHbQ@mail.gmail.com> <CAK8P3a1MSToyMTnqN1bVvzwK92CdDvAnJCZctbSgu8iM8t3KAQ@mail.gmail.com>
+From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: Re: [PATCH v2 1/6] resource: Extend the PPC32 reserved memory hack
+Date: Tue, 23 Jan 2018 17:37:39 +0100
+Message-ID: <20180123163739.2sxhzavghzgbjw4c@latitude>
+References: <20180122050411.32460-1-j.neuschaefer@gmx.net>
+ <20180122050411.32460-2-j.neuschaefer@gmx.net>
+ <871sigwx41.fsf@concordia.ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:42337 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750960AbeAWPOW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Jan 2018 10:14:22 -0500
-Received: by mail-oi0-f47.google.com with SMTP id c8so542579oiy.9
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Jan 2018 07:14:22 -0800 (PST)
-In-Reply-To: <CAK8P3a1MSToyMTnqN1bVvzwK92CdDvAnJCZctbSgu8iM8t3KAQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="n5tgjbf2wsepvrep"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <871sigwx41.fsf@concordia.ellerman.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>, Brijesh Singh <brijesh.singh@amd.com>, devicetree@vger.kernel.org, Albert Herranz <albert_herranz@yahoo.es>, linux-gpio@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
 
-2018-01-22 12:12 GMT+01:00 Arnd Bergmann <arnd@arndb.de>:
-> On Mon, Jan 22, 2018 at 12:02 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> 2018-01-22 10:25 GMT+01:00 Arnd Bergmann <arnd@arndb.de>:
->>>
->>> - on x86, the structures are incompatible between 32-bit and 64-bit
->>>   user space, as the former has no padding.
->>
->> Is this really an issue? Do distros really ship the same bytecode for
->> 32 and 64 bit architecures? I have never run into such problems
->> despite having used different python bindings for C libraries (I'm not
->> sure however how many of them dealt with any visible C structs).
->
-> It's a huge issue, yes. You should be able to run an 32-bit distro
-> or just a standalone 32-bit binary with a 64-bit kernel. This driver
-> is otherwise written carefully to allow that, and it will work on all
-> other architectures AFAICT, just not on x86.
->
 
-Besides using struct timespec, I have other structs in gpiod.h which
-would pose problems for ctypes-based python bindings - for example
-struct gpiod_line_request_config which contains a pointer (C string).
-If instead of using ctypes, I'd just use python's C extension modules,
-is there any other trap caused by different data layout between 32 and
-64 bit architectures that I should be aware of?
+--n5tgjbf2wsepvrep
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also: if python bindings are the only victim of that - I'm ok with
-timespec. It's up to bindings to provide a correct interface after
-all, isn't it?
+On Tue, Jan 23, 2018 at 11:58:06PM +1100, Michael Ellerman wrote:
+> Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net> writes:
+>=20
+> > On the Nintendo Wii, there are two ranges of physical memory, and MMIO
+> > in between, but Linux on ppc32 doesn't support discontiguous memory.
+> > Therefore a hack was introduced in commit c5df7f775148 ("powerpc: allow
+> > ioremap within reserved memory regions") and commit de32400dd26e ("wii:
+> > use both mem1 and mem2 as ram"):
+> >
+> >  - Treat the area from the start of the first memory area (MEM1) to the
+> >    end of the second (MEM2) as one big memory area, but mark the part
+> >    that doesn't belong to MEM1 or MEM2 as reserved.
+> >  - Only on the Wii, allow ioremap to be used on reserved memory.
+> >
+> > This hack, however, doesn't account for the "resource"-based API in
+> > kernel/resource.c, because __request_region performs its own checks.
+> >
+> > Extend the hack to kernel/resource.c, to allow more drivers to allocate
+> > their MMIO regions on the Wii.
+>=20
+> Hi Jonathan,
+>=20
+> Sorry but I can't merge a hack like this in generic code.
 
-Best regards,
-Bartosz Golaszewski
+Makes sense.
+
+> Has anyone looked at adding proper discontig mem support to PPC32?
+
+I'm not aware of any such effort.
+
+Do you have any pointer on how to implement discontiguous memory
+support? CONFIG_ARCH_SPARSEMEM_ENABLE seems relevant.
+
+> Or can we punch a hole in the resource in the right place? Maybe from
+> add_system_ram_resources() ?
+
+Not sure. add_system_ram_resources would need the original memblock
+table, which is overwritten in wii_memory_fixups, if I read the code
+correctly.
+
+If a proper solution doesn't take an overwhelming amount of work, I'd
+prefer a proper solution.
+
+
+Thanks,
+Jonathan Neusch=C3=A4fer
+
+--n5tgjbf2wsepvrep
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAABAgAGBQJaZ2TMAAoJEAgwRJqO81/b6P8P/2PFc+LvG2SE+jjBkkkikVEx
+Q27V5EieuGFEovgphDam8xDGVHC63KjH7PhjaxiFW6WU6fY7mV0zWw0SeFYX4amu
+85CI3UrBEyUhfN/Xq6ZyP6ua3U6AoJ3Hmm/vZ/be7UDYpF4QGq2UPR4JV0s/HQi9
+PPUm4QAgN1XGsXdlkOTTuLu12nOqIQ5N1J2bqoZZ2/vxqbFxStTlorNFSqPvW4up
+wzVcsbAE39A8eeFWCKFftcYnrRD0zHtLcj+9ERgs/DWmSL5x9w4lduS0lIfLjJ2A
+DV7KLjCXc2VvM06TZzIb3bZqdGR90M/2ixbDWtkUTtATt12G5WQ+V6yQtZ8o6r41
+gGQ4+AAYojHU9mclui2DXzan8aaJVmNqpgpf1BPvu0zN5fAwnvQTwybtIXwq9nLJ
+adta96ympBAHZiVpDrZMMG74jfqcv7EJimv5VPdzhuclIJQ8+qW4fn65FmWsJDsT
+98CV5oDS1OkM2p8w8AZOEa85KC5sGaSWMQCa2DeJ/jvnZ9iVQDmAqpfYNl2ohQT+
+y3ogKgZ5YHgibINEN0865NeQkKlxHAynQLRfzXvIW1tg0e67ZTe9FxwpbMcyBdN9
+IwIXxCLuKO1c6i5euFNjrfv5NnAQID3ESGKvj580p7CNGxI+RkcY6588cwvTmAfM
+2rRFPDVXTriiAGuxYVI8
+=c+mt
+-----END PGP SIGNATURE-----
+
+--n5tgjbf2wsepvrep--
