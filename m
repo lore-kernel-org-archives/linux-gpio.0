@@ -1,93 +1,70 @@
-From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: Re: [PATCH v2 1/6] resource: Extend the PPC32 reserved memory hack
-Date: Tue, 23 Jan 2018 17:37:39 +0100
-Message-ID: <20180123163739.2sxhzavghzgbjw4c@latitude>
-References: <20180122050411.32460-1-j.neuschaefer@gmx.net>
- <20180122050411.32460-2-j.neuschaefer@gmx.net>
- <871sigwx41.fsf@concordia.ellerman.id.au>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
+ bits_per_mux != 0
+Date: Tue, 23 Jan 2018 09:45:19 -0800
+Message-ID: <20180123174519.GF4180@atomide.com>
+References: <1516575793-30526-1-git-send-email-david@lechnology.com>
+ <CAHp75VdkShHhxL+3PyaPEC2Dyr8aWoEH8CQk+bEJ2WD4i6ojHg@mail.gmail.com>
+ <d1426fbc-bc82-89cd-d08d-242b16d2c99d@lechnology.com>
+ <CAHp75VetRjLioS1zAubZshggKTiWJ-KJ+HjTSkoK=6LVP6SY2g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="n5tgjbf2wsepvrep"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <871sigwx41.fsf@concordia.ellerman.id.au>
+In-Reply-To: <CAHp75VetRjLioS1zAubZshggKTiWJ-KJ+HjTSkoK=6LVP6SY2g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>, Brijesh Singh <brijesh.singh@amd.com>, devicetree@vger.kernel.org, Albert Herranz <albert_herranz@yahoo.es>, linux-gpio@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>, linuxppc-dev@lists.ozlabs.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: David Lechner <david@lechnology.com>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
+* Andy Shevchenko <andy.shevchenko@gmail.com> [180123 09:25]:
+> On Mon, Jan 22, 2018 at 7:06 PM, David Lechner <david@lechnology.com> wrote:
+> > On 01/22/2018 08:49 AM, Andy Shevchenko wrote:
+> >> On Mon, Jan 22, 2018 at 1:03 AM, David Lechner <david@lechnology.com>
+> >> wrote:
+> 
+> >>> Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure
+> >>> multiple pins of different modules")
+> 
+> >> One line?
+> 
+> > One line is more important that wrapping to 75 chars?
+> 
+> It's *special* line, i.e. tag. Tag per line is a rule I know, did I
+> miss any new change to that?
 
---n5tgjbf2wsepvrep
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think the rule for merge commits is to try to limit them to 75
+characters for git log.
 
-On Tue, Jan 23, 2018 at 11:58:06PM +1100, Michael Ellerman wrote:
-> Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net> writes:
->=20
-> > On the Nintendo Wii, there are two ranges of physical memory, and MMIO
-> > in between, but Linux on ppc32 doesn't support discontiguous memory.
-> > Therefore a hack was introduced in commit c5df7f775148 ("powerpc: allow
-> > ioremap within reserved memory regions") and commit de32400dd26e ("wii:
-> > use both mem1 and mem2 as ram"):
+> >>> +                       byte_num = (pcs->bits_per_pin * pin) /
+> >>> BITS_PER_BYTE;
+> >>> +                       offset = (byte_num / mux_bytes) * mux_bytes;
+> >>> +                       pin_shift = pin % (pcs->width /
+> >>> pcs->bits_per_pin) *
+> >>> +                                   pcs->bits_per_pin;
+> 
+> >> Sounds like playing around pretty well defined macro and functions,
+> >> e.g. DIV_ROUND_UP(), round_up().
+> 
+> > I admit, I just copied existing code (which may be a reason to leave this
+> > the
+> > way it is).
+> 
+> Ah, fair enough.
+> 
+> >  But, I only see once place to do this:
 > >
-> >  - Treat the area from the start of the first memory area (MEM1) to the
-> >    end of the second (MEM2) as one big memory area, but mark the part
-> >    that doesn't belong to MEM1 or MEM2 as reserved.
-> >  - Only on the Wii, allow ioremap to be used on reserved memory.
+> >         offset = round_down(byte_num, mux_bytes);
 > >
-> > This hack, however, doesn't account for the "resource"-based API in
-> > kernel/resource.c, because __request_region performs its own checks.
-> >
-> > Extend the hack to kernel/resource.c, to allow more drivers to allocate
-> > their MMIO regions on the Wii.
->=20
-> Hi Jonathan,
->=20
-> Sorry but I can't merge a hack like this in generic code.
+> > Did I miss another?
+> 
+> I meant that you may use macros to make code cleaner. Though, taking
+> above into consideration, it would be done as a separate patch later.
 
-Makes sense.
+Yeah makes sense to me to do them separately. It would be good to
+get Haojian's ack or tested-by on this one, I don't think I have
+hardware where I can test the GPIO features with this driver.
 
-> Has anyone looked at adding proper discontig mem support to PPC32?
+Regards,
 
-I'm not aware of any such effort.
-
-Do you have any pointer on how to implement discontiguous memory
-support? CONFIG_ARCH_SPARSEMEM_ENABLE seems relevant.
-
-> Or can we punch a hole in the resource in the right place? Maybe from
-> add_system_ram_resources() ?
-
-Not sure. add_system_ram_resources would need the original memblock
-table, which is overwritten in wii_memory_fixups, if I read the code
-correctly.
-
-If a proper solution doesn't take an overwhelming amount of work, I'd
-prefer a proper solution.
-
-
-Thanks,
-Jonathan Neusch=C3=A4fer
-
---n5tgjbf2wsepvrep
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAABAgAGBQJaZ2TMAAoJEAgwRJqO81/b6P8P/2PFc+LvG2SE+jjBkkkikVEx
-Q27V5EieuGFEovgphDam8xDGVHC63KjH7PhjaxiFW6WU6fY7mV0zWw0SeFYX4amu
-85CI3UrBEyUhfN/Xq6ZyP6ua3U6AoJ3Hmm/vZ/be7UDYpF4QGq2UPR4JV0s/HQi9
-PPUm4QAgN1XGsXdlkOTTuLu12nOqIQ5N1J2bqoZZ2/vxqbFxStTlorNFSqPvW4up
-wzVcsbAE39A8eeFWCKFftcYnrRD0zHtLcj+9ERgs/DWmSL5x9w4lduS0lIfLjJ2A
-DV7KLjCXc2VvM06TZzIb3bZqdGR90M/2ixbDWtkUTtATt12G5WQ+V6yQtZ8o6r41
-gGQ4+AAYojHU9mclui2DXzan8aaJVmNqpgpf1BPvu0zN5fAwnvQTwybtIXwq9nLJ
-adta96ympBAHZiVpDrZMMG74jfqcv7EJimv5VPdzhuclIJQ8+qW4fn65FmWsJDsT
-98CV5oDS1OkM2p8w8AZOEa85KC5sGaSWMQCa2DeJ/jvnZ9iVQDmAqpfYNl2ohQT+
-y3ogKgZ5YHgibINEN0865NeQkKlxHAynQLRfzXvIW1tg0e67ZTe9FxwpbMcyBdN9
-IwIXxCLuKO1c6i5euFNjrfv5NnAQID3ESGKvj580p7CNGxI+RkcY6588cwvTmAfM
-2rRFPDVXTriiAGuxYVI8
-=c+mt
------END PGP SIGNATURE-----
-
---n5tgjbf2wsepvrep--
+Tony
