@@ -1,42 +1,59 @@
-From: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
-Subject: [PATCH] gpiolib: friendly debug information for consumer
-Date: Mon, 22 Jan 2018 21:28:37 -0800
-Message-ID: <1516685317-12867-1-git-send-email-dongsheng.wang@hxt-semitech.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
+ bits_per_mux != 0
+Date: Tue, 23 Jan 2018 11:25:05 +0200
+Message-ID: <CAHp75VetRjLioS1zAubZshggKTiWJ-KJ+HjTSkoK=6LVP6SY2g@mail.gmail.com>
+References: <1516575793-30526-1-git-send-email-david@lechnology.com>
+ <CAHp75VdkShHhxL+3PyaPEC2Dyr8aWoEH8CQk+bEJ2WD4i6ojHg@mail.gmail.com> <d1426fbc-bc82-89cd-d08d-242b16d2c99d@lechnology.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:35391
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750756AbeAWF3I (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 23 Jan 2018 00:29:08 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <d1426fbc-bc82-89cd-d08d-242b16d2c99d@lechnology.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Lechner <david@lechnology.com>
+Cc: linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: treding@nvidia.com, grygorii.strashko@ti.com, linux-gpio@vger.kernel.org, Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
 
-mdiobus always try to get "reset" consumer, but not all platforms
-have this capability. "failed" makes observer confuse when a
-consumer can not find.
+On Mon, Jan 22, 2018 at 7:06 PM, David Lechner <david@lechnology.com> wrote:
+> On 01/22/2018 08:49 AM, Andy Shevchenko wrote:
+>> On Mon, Jan 22, 2018 at 1:03 AM, David Lechner <david@lechnology.com>
+>> wrote:
 
-Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
----
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>>> Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure
+>>> multiple pins of different modules")
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 14532d9..1f98ea6 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3630,7 +3630,7 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 	}
- 
- 	if (IS_ERR(desc)) {
--		dev_dbg(dev, "lookup for GPIO %s failed\n", con_id);
-+		dev_dbg(dev, "Can not detect GPIO consumer %s\n", con_id);
- 		return desc;
- 	}
- 
+>> One line?
+
+> One line is more important that wrapping to 75 chars?
+
+It's *special* line, i.e. tag. Tag per line is a rule I know, did I
+miss any new change to that?
+
+>>> +                       byte_num = (pcs->bits_per_pin * pin) /
+>>> BITS_PER_BYTE;
+>>> +                       offset = (byte_num / mux_bytes) * mux_bytes;
+>>> +                       pin_shift = pin % (pcs->width /
+>>> pcs->bits_per_pin) *
+>>> +                                   pcs->bits_per_pin;
+
+>> Sounds like playing around pretty well defined macro and functions,
+>> e.g. DIV_ROUND_UP(), round_up().
+
+> I admit, I just copied existing code (which may be a reason to leave this
+> the
+> way it is).
+
+Ah, fair enough.
+
+>  But, I only see once place to do this:
+>
+>         offset = round_down(byte_num, mux_bytes);
+>
+> Did I miss another?
+
+I meant that you may use macros to make code cleaner. Though, taking
+above into consideration, it would be done as a separate patch later.
+
 -- 
-2.7.4
-
+With Best Regards,
+Andy Shevchenko
