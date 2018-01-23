@@ -1,82 +1,57 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 Subject: Re: [RFC] libgpiod public API reviews needed
-Date: Tue, 23 Jan 2018 16:05:16 +0100
-Message-ID: <CAMRc=MfQacFHbbsOgkEqp_iUTN+z3L+oYNbCSn2AfGyXdp2Exg@mail.gmail.com>
+Date: Tue, 23 Jan 2018 16:14:21 +0100
+Message-ID: <CAMRc=Mc2f7RAoYE3-0MbxUC=1eua0wYjGqd-R+PMwDzLXxcS3Q@mail.gmail.com>
 References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
- <20180123141540.GJ3055@rfolt0960.corp.atmel.com>
+ <CACRpkdb9JRsL1UFZ0+ipPmhYjd01Gy8+dL7yQ2RTkHJJdhf20w@mail.gmail.com>
+ <CAMRc=MdgntKcwO9ub3XOT6=hFaTZj_rT9O0SpWv=ANm4xRpttw@mail.gmail.com>
+ <CAK8P3a1JeOREOXWz+BBurs3odtDTGEUnpotbLEZEOsX7YUNfeA@mail.gmail.com>
+ <CACRpkdbJUOvNDwM=wZw5iLwPAf-D+i27E9JRzV=Gr0mnZbX3kg@mail.gmail.com>
+ <CAK8P3a3Y4Coj9Y5NT5KsQLpSkTqCDDY6B3sU199uvhoPb9GEYw@mail.gmail.com>
+ <CAMRc=MfbQ7d8xrooS7sqDPU-EAfhFJx57t4yqRY-zQ=7gYuHbQ@mail.gmail.com> <CAK8P3a1MSToyMTnqN1bVvzwK92CdDvAnJCZctbSgu8iM8t3KAQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f170.google.com ([74.125.82.170]:37520 "EHLO
-        mail-ot0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751353AbeAWPFR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Jan 2018 10:05:17 -0500
-Received: by mail-ot0-f170.google.com with SMTP id a24so657081otd.4
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Jan 2018 07:05:17 -0800 (PST)
-In-Reply-To: <20180123141540.GJ3055@rfolt0960.corp.atmel.com>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:42337 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750960AbeAWPOW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Jan 2018 10:14:22 -0500
+Received: by mail-oi0-f47.google.com with SMTP id c8so542579oiy.9
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Jan 2018 07:14:22 -0800 (PST)
+In-Reply-To: <CAK8P3a1MSToyMTnqN1bVvzwK92CdDvAnJCZctbSgu8iM8t3KAQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
 
-2018-01-23 15:15 GMT+01:00 Ludovic Desroches <ludovic.desroches@microchip.com>:
-> Hi,
+2018-01-22 12:12 GMT+01:00 Arnd Bergmann <arnd@arndb.de>:
+> On Mon, Jan 22, 2018 at 12:02 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> 2018-01-22 10:25 GMT+01:00 Arnd Bergmann <arnd@arndb.de>:
+>>>
+>>> - on x86, the structures are incompatible between 32-bit and 64-bit
+>>>   user space, as the former has no padding.
+>>
+>> Is this really an issue? Do distros really ship the same bytecode for
+>> 32 and 64 bit architecures? I have never run into such problems
+>> despite having used different python bindings for C libraries (I'm not
+>> sure however how many of them dealt with any visible C structs).
 >
-> On Fri, Jan 19, 2018 at 02:28:40PM +0100, Bartosz Golaszewski wrote:
->> Hi,
->>
->> I would like to release libgpiod v1.0 soon (preferably before FOSDEM
->> 2018). The first version (v0.x series) was written in a matter of two
->> weeks and the API was not well designed. Since v0.3 release I've been
->> working on redesigning the public API to make it simplier and more
->> useful.
->>
->> I want to commit to a stable interface for the library starting from
->> v1.0 but it would be great if I could get some reviews first - it's
->> basically only about reviewing a single public header: include/gpiod.h
->> in which all public symbols are documented. Any implementation details
->> can always be changed later.
->>
->> The most prominent changes since 0.3 include:
->> - removal of custom error handling in favor of errnos
->> - merge of two separate interfaces for event requests and regular line requests
->> - redesign of the simple API
->> - addition of a bunch of helpers for line requests
->> - redesign of the iterator API
->> - making the use of prefixes more consistent
->> - renaming of symbols all over the place
->> - and various minor tweaks
->>
->> As far as usefulness goes - the user space tools that are included all
->> use this API and it looks pretty clean.
->>
->> The project is hosted at kernel.org:
->>
->>     https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
->>
->> and the code that needs review is on the master branch.
->>
->> Thanks in advance to anyone who'll find the time to take a look.
->>
->
-> Thanks for your work, I am using your library and I am trying to promote it.
->
-> Some people were confused concerning the naming when requesting line(s)
-> as output. 'init_val(s)' may be better than 'default_val(s)'.
->
-> The callback for gpiod_simple_set_value(_multiple) is optional, you may mention
-> it. Concerning the multiple variant, I would enforce that the callback
-> is called when ALL the values are set.
-> I don't see the added value of this callback. What's the difference with
-> executing it depending on gpiod_simple_set_value(_multiple) return value?
+> It's a huge issue, yes. You should be able to run an 32-bit distro
+> or just a standalone 32-bit binary with a 64-bit kernel. This driver
+> is otherwise written carefully to allow that, and it will work on all
+> other architectures AFAICT, just not on x86.
 >
 
-It exists to allow to execute some code or pause the execution while
-the device file of the gpiochip is open and the lines are requested.
-You can take a look at src/tools/gpioset.c to see how it's used in an
-actual program.
+Besides using struct timespec, I have other structs in gpiod.h which
+would pose problems for ctypes-based python bindings - for example
+struct gpiod_line_request_config which contains a pointer (C string).
+If instead of using ctypes, I'd just use python's C extension modules,
+is there any other trap caused by different data layout between 32 and
+64 bit architectures that I should be aware of?
 
-For other hints: they make sense, I'll add them soon.
+Also: if python bindings are the only victim of that - I'm ok with
+timespec. It's up to bindings to provide a correct interface after
+all, isn't it?
 
-Thanks,
-Bartosz
+Best regards,
+Bartosz Golaszewski
