@@ -1,73 +1,31 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [RFC] libgpiod public API reviews needed
-Date: Thu, 25 Jan 2018 17:29:02 +0100
-Message-ID: <CAMRc=MdxDy==CyzpL41FuZYp4smOv-wygMOXVj=9CQ=U+Ry7Ww@mail.gmail.com>
-References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
- <20180123141540.GJ3055@rfolt0960.corp.atmel.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 3/3] pinctrl: qcom: Don't allow protected pins to be
+ requested
+Date: Thu, 25 Jan 2018 14:48:42 -0600
+Message-ID: <dcbc067c-4baf-8814-a8a1-582a4dd3e500@codeaurora.org>
+References: <20180110015848.11480-1-sboyd@codeaurora.org>
+ <20180110015848.11480-4-sboyd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:45153 "EHLO
-        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750783AbeAYQ3D (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Jan 2018 11:29:03 -0500
-Received: by mail-oi0-f52.google.com with SMTP id a28so5603023oiy.12
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Jan 2018 08:29:03 -0800 (PST)
-In-Reply-To: <20180123141540.GJ3055@rfolt0960.corp.atmel.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:54536 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751171AbeAYUsp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Jan 2018 15:48:45 -0500
+In-Reply-To: <20180110015848.11480-4-sboyd@codeaurora.org>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
+To: Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-2018-01-23 15:15 GMT+01:00 Ludovic Desroches <ludovic.desroches@microchip.com>:
-> Hi,
->
-> On Fri, Jan 19, 2018 at 02:28:40PM +0100, Bartosz Golaszewski wrote:
->> Hi,
->>
->> I would like to release libgpiod v1.0 soon (preferably before FOSDEM
->> 2018). The first version (v0.x series) was written in a matter of two
->> weeks and the API was not well designed. Since v0.3 release I've been
->> working on redesigning the public API to make it simplier and more
->> useful.
->>
->> I want to commit to a stable interface for the library starting from
->> v1.0 but it would be great if I could get some reviews first - it's
->> basically only about reviewing a single public header: include/gpiod.h
->> in which all public symbols are documented. Any implementation details
->> can always be changed later.
->>
->> The most prominent changes since 0.3 include:
->> - removal of custom error handling in favor of errnos
->> - merge of two separate interfaces for event requests and regular line requests
->> - redesign of the simple API
->> - addition of a bunch of helpers for line requests
->> - redesign of the iterator API
->> - making the use of prefixes more consistent
->> - renaming of symbols all over the place
->> - and various minor tweaks
->>
->> As far as usefulness goes - the user space tools that are included all
->> use this API and it looks pretty clean.
->>
->> The project is hosted at kernel.org:
->>
->>     https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
->>
->> and the code that needs review is on the master branch.
->>
->> Thanks in advance to anyone who'll find the time to take a look.
->>
->
-> Thanks for your work, I am using your library and I am trying to promote it.
->
-> Some people were confused concerning the naming when requesting line(s)
-> as output. 'init_val(s)' may be better than 'default_val(s)'.
->
+On 01/09/2018 07:58 PM, Stephen Boyd wrote:
+> +static int msm_pinmux_request(struct pinctrl_dev *pctldev, unsigned offset)
 
-Now I'm seeing that default_val(s) is the name used both within the
-kernel and in the linux user API. I'll leave it like this then to not
-confuse users.
+"unsigned int", instead of just "unsigned"?
 
-Thanks,
-Bartosz
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
