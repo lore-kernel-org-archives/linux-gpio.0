@@ -1,109 +1,85 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9
- SoC
-Date: Thu, 25 Jan 2018 16:35:20 +0100
-Message-ID: <20180125153520.lxcfvh3yvi36uiux@flea.lan>
-References: <20180119231735.61504-1-icenowy@aosc.io>
- <20180122121435.bpayxk4uzfqbhqse@flea.lan>
- <14593819.uISRktVE4V@ice-x220i>
+From: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9 SoC
+Date: Thu, 25 Jan 2018 23:38:04 +0800
+Message-ID: <2A78FC75-61C0-4317-A7A1-6E1E42098C07@aosc.io>
+References: <20180119231735.61504-1-icenowy@aosc.io> <20180122121435.bpayxk4uzfqbhqse@flea.lan> <14593819.uISRktVE4V@ice-x220i> <20180125153520.lxcfvh3yvi36uiux@flea.lan>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rwdinujenvvsyeha"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <14593819.uISRktVE4V@ice-x220i>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:51873 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750769AbeAYPik (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 25 Jan 2018 10:38:40 -0500
+In-Reply-To: <20180125153520.lxcfvh3yvi36uiux@flea.lan>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-sunxi@googlegroups.com, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
 
 
---rwdinujenvvsyeha
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+于 2018年1月25日 GMT+08:00 下午11:35:20, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
+>Hi,
+>
+>On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
+>> 在 2018年1月22日星期一 CST 下午8:14:35，Maxime Ripard 写道：
+>> > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
+>> > > This is the RFC initial patchset for the "new" Allwinner SUNIV
+>ARM9 SoC.
+>> > > 
+>> > > The same die is packaged differently, come with different
+>co-packaged
+>> > > DRAM or shipped with different SDK; and then made many model
+>names: F23,
+>> > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These
+>SoCs all
+>> > > share a common feature set and are packaged similarly (eLQFP128
+>for SoCs
+>> > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
+>> > > functionality hidden on the QFN88 models (except DRAM interface
+>not
+>> > > exported), it's not clever to differentiate them. So I will use
+>suniv as
+>> > > common name of all these SoCs.
+>> > 
+>> > Where is that suniv prefix coming from?
+>> 
+>> The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis
+>SDK and 
+>> "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
+>
+>Do you have a link to that BSP?
 
-On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
-> =E5=9C=A8 2018=E5=B9=B41=E6=9C=8822=E6=97=A5=E6=98=9F=E6=9C=9F=E4=B8=80 C=
-ST =E4=B8=8B=E5=8D=888:14:35=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
-=9A
-> > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
-> > > This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9 S=
-oC.
-> > >=20
-> > > The same die is packaged differently, come with different co-packaged
-> > > DRAM or shipped with different SDK; and then made many model names: F=
-23,
-> > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs a=
-ll
-> > > share a common feature set and are packaged similarly (eLQFP128 for S=
-oCs
-> > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
-> > > functionality hidden on the QFN88 models (except DRAM interface not
-> > > exported), it's not clever to differentiate them. So I will use suniv=
- as
-> > > common name of all these SoCs.
-> >=20
-> > Where is that suniv prefix coming from?
->=20
-> The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis SDK =
-and=20
-> "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
+I have it on the Baidu Pan. Is it acceptable?
 
-Do you have a link to that BSP?
+>
+>> > You should really answer two questions here:
+>> >   - Are you able to predict whether you'll find an SoC part of that
+>> >     family in the future that derives a bit and will need a
+>compatible
+>> >     of its own?
+>> >   - Are you able to predict which quirks we'll need along the way
+>to
+>> >     support all the SoCs you've listed there?
+>> > 
+>> > If you can't answer yes to both these questions, with a 100%
+>> > certainty, then you'll need a SoC name in the compatible.
+>> > 
+>> > Which doesn't prevent you from sharing as much as possible the DT
+>like
+>> > we did between the A10s and the A13 for example.
+>> 
+>> So the suniv-f1c100s.dtsi will still be kept empty and all
+>peripherals known 
+>> should go through suniv.dtsi.
+>
+>Sorry if I wasn't really clear. You can totally keep the current DT
+>structure if that makes sense (and judging by what you're saying, it
+>does.), but the compatibles should have the SoC name in it.
 
-> > You should really answer two questions here:
-> >   - Are you able to predict whether you'll find an SoC part of that
-> >     family in the future that derives a bit and will need a compatible
-> >     of its own?
-> >   - Are you able to predict which quirks we'll need along the way to
-> >     support all the SoCs you've listed there?
-> >=20
-> > If you can't answer yes to both these questions, with a 100%
-> > certainty, then you'll need a SoC name in the compatible.
-> >=20
-> > Which doesn't prevent you from sharing as much as possible the DT like
-> > we did between the A10s and the A13 for example.
->=20
-> So the suniv-f1c100s.dtsi will still be kept empty and all peripherals kn=
-own=20
-> should go through suniv.dtsi.
+Okay.
 
-Sorry if I wasn't really clear. You can totally keep the current DT
-structure if that makes sense (and judging by what you're saying, it
-does.), but the compatibles should have the SoC name in it.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---rwdinujenvvsyeha
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlpp+TcACgkQ0rTAlCFN
-r3QHxw//YmXyxVNuYtAPjBx08jzNik0jFayt0j1hWPc1AG8pCj0k4uty6Lk+h3lh
-TKhn8gExV8c1nL+D7gWXFk8XZ4PQHGjd0HCYQEQ+USZ4eZ9wOLhDY3OXLm8ofeAg
-4h3WAlOPOBMzr/M2N5lrwBFG/dAA57fKNdfu8UOnOcvexDiJm6fQNq4OFhvKQRrS
-UiCYhFmPo9ixQH0GQSkq3u2Uj+xwaR9J0xY2YqpSbMPLurFqyIZPI0RrOrHbrQMl
-SrK/ivrtzw80aswJGRslEGkedAXfaI33t4cpTLg0nLUyTwRXHA2xEXOQD1QRJc84
-vbPmHMx+rabz7gpOCip2PySJUgiyuByfoRp/a9Wc44si6il45uCiKni5v2q8klF3
-BBZojuMYF5LgUB61fJHLxuyJfnivHEH2pYHKwXh0NuVU4+vJznJF4SrSRASlA9lo
-ag2vebJTH7wNitKRue6VaexcWP9BUSi9Cv7EpBwQiEDiOCTCXhtAMu6KPNYpPYo+
-ci377QGj396pFb/7FIm63zGepRymM+muv4WrdxL0xdEvCr1CDcBjz9hmwcT5Ifz1
-/BRrDtgvYRDmlKTj0X+It+nZ/0R7JpHrat6iXtZEEu4GzkSviWYiB6NIXq2MJd3O
-kNCknMYtsktl5xL2gwmAGV1ibj88lQgVMYIdtF4SZLa+jdQsHzw=
-=GfbL
------END PGP SIGNATURE-----
-
---rwdinujenvvsyeha--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>Maxime
