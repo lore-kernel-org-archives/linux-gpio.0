@@ -1,85 +1,73 @@
-From: Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9 SoC
-Date: Thu, 25 Jan 2018 23:38:04 +0800
-Message-ID: <2A78FC75-61C0-4317-A7A1-6E1E42098C07@aosc.io>
-References: <20180119231735.61504-1-icenowy@aosc.io> <20180122121435.bpayxk4uzfqbhqse@flea.lan> <14593819.uISRktVE4V@ice-x220i> <20180125153520.lxcfvh3yvi36uiux@flea.lan>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [RFC] libgpiod public API reviews needed
+Date: Thu, 25 Jan 2018 17:29:02 +0100
+Message-ID: <CAMRc=MdxDy==CyzpL41FuZYp4smOv-wygMOXVj=9CQ=U+Ry7Ww@mail.gmail.com>
+References: <CAMRc=Md09CAQMS=5b7EUeh5AOjJ-zzbnETb_V+RdsxxafVxPdA@mail.gmail.com>
+ <20180123141540.GJ3055@rfolt0960.corp.atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51873 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750769AbeAYPik (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 25 Jan 2018 10:38:40 -0500
-In-Reply-To: <20180125153520.lxcfvh3yvi36uiux@flea.lan>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:45153 "EHLO
+        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750783AbeAYQ3D (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Jan 2018 11:29:03 -0500
+Received: by mail-oi0-f52.google.com with SMTP id a28so5603023oiy.12
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Jan 2018 08:29:03 -0800 (PST)
+In-Reply-To: <20180123141540.GJ3055@rfolt0960.corp.atmel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-sunxi@googlegroups.com, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
+To: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>
 
-
-
-于 2018年1月25日 GMT+08:00 下午11:35:20, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
->Hi,
+2018-01-23 15:15 GMT+01:00 Ludovic Desroches <ludovic.desroches@microchip.com>:
+> Hi,
 >
->On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
->> 在 2018年1月22日星期一 CST 下午8:14:35，Maxime Ripard 写道：
->> > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
->> > > This is the RFC initial patchset for the "new" Allwinner SUNIV
->ARM9 SoC.
->> > > 
->> > > The same die is packaged differently, come with different
->co-packaged
->> > > DRAM or shipped with different SDK; and then made many model
->names: F23,
->> > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These
->SoCs all
->> > > share a common feature set and are packaged similarly (eLQFP128
->for SoCs
->> > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
->> > > functionality hidden on the QFN88 models (except DRAM interface
->not
->> > > exported), it's not clever to differentiate them. So I will use
->suniv as
->> > > common name of all these SoCs.
->> > 
->> > Where is that suniv prefix coming from?
->> 
->> The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis
->SDK and 
->> "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
+> On Fri, Jan 19, 2018 at 02:28:40PM +0100, Bartosz Golaszewski wrote:
+>> Hi,
+>>
+>> I would like to release libgpiod v1.0 soon (preferably before FOSDEM
+>> 2018). The first version (v0.x series) was written in a matter of two
+>> weeks and the API was not well designed. Since v0.3 release I've been
+>> working on redesigning the public API to make it simplier and more
+>> useful.
+>>
+>> I want to commit to a stable interface for the library starting from
+>> v1.0 but it would be great if I could get some reviews first - it's
+>> basically only about reviewing a single public header: include/gpiod.h
+>> in which all public symbols are documented. Any implementation details
+>> can always be changed later.
+>>
+>> The most prominent changes since 0.3 include:
+>> - removal of custom error handling in favor of errnos
+>> - merge of two separate interfaces for event requests and regular line requests
+>> - redesign of the simple API
+>> - addition of a bunch of helpers for line requests
+>> - redesign of the iterator API
+>> - making the use of prefixes more consistent
+>> - renaming of symbols all over the place
+>> - and various minor tweaks
+>>
+>> As far as usefulness goes - the user space tools that are included all
+>> use this API and it looks pretty clean.
+>>
+>> The project is hosted at kernel.org:
+>>
+>>     https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
+>>
+>> and the code that needs review is on the master branch.
+>>
+>> Thanks in advance to anyone who'll find the time to take a look.
+>>
 >
->Do you have a link to that BSP?
-
-I have it on the Baidu Pan. Is it acceptable?
-
+> Thanks for your work, I am using your library and I am trying to promote it.
 >
->> > You should really answer two questions here:
->> >   - Are you able to predict whether you'll find an SoC part of that
->> >     family in the future that derives a bit and will need a
->compatible
->> >     of its own?
->> >   - Are you able to predict which quirks we'll need along the way
->to
->> >     support all the SoCs you've listed there?
->> > 
->> > If you can't answer yes to both these questions, with a 100%
->> > certainty, then you'll need a SoC name in the compatible.
->> > 
->> > Which doesn't prevent you from sharing as much as possible the DT
->like
->> > we did between the A10s and the A13 for example.
->> 
->> So the suniv-f1c100s.dtsi will still be kept empty and all
->peripherals known 
->> should go through suniv.dtsi.
+> Some people were confused concerning the naming when requesting line(s)
+> as output. 'init_val(s)' may be better than 'default_val(s)'.
 >
->Sorry if I wasn't really clear. You can totally keep the current DT
->structure if that makes sense (and judging by what you're saying, it
->does.), but the compatibles should have the SoC name in it.
 
-Okay.
+Now I'm seeing that default_val(s) is the name used both within the
+kernel and in the linux user API. I'll leave it like this then to not
+confuse users.
 
->
->Maxime
+Thanks,
+Bartosz
