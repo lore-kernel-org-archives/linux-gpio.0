@@ -1,80 +1,76 @@
-From: Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9 SoC
-Date: Sat, 27 Jan 2018 04:57:33 +0800
-Message-ID: <3527360.oZpfb5Pa1p@ice-x220i>
-References: <20180119231735.61504-1-icenowy@aosc.io> <14593819.uISRktVE4V@ice-x220i> <20180125153520.lxcfvh3yvi36uiux@flea.lan>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH] pinctrl: msm: allow the gpio base to be configurable
+Date: Fri, 26 Jan 2018 23:13:53 +0100
+Message-ID: <CAMRc=McDzELTddEXnKtsE7jG4r5ROodhbjh=QSjVDtLHE0KSPA@mail.gmail.com>
+References: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
+ <CACRpkda6FLfUhqOPqJfCHm1PHOWg=CY=wOCDyrd78eMx+-zrZw@mail.gmail.com> <5bcf9545-37ee-18b5-33d9-7ce3da9b0048@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:40073 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751256AbeAZU5o (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 26 Jan 2018 15:57:44 -0500
-In-Reply-To: <20180125153520.lxcfvh3yvi36uiux@flea.lan>
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:33037 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751375AbeAZWNy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jan 2018 17:13:54 -0500
+Received: by mail-ot0-f195.google.com with SMTP id d7so1712310oti.0
+        for <linux-gpio@vger.kernel.org>; Fri, 26 Jan 2018 14:13:54 -0800 (PST)
+In-Reply-To: <5bcf9545-37ee-18b5-33d9-7ce3da9b0048@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-sunxi@googlegroups.com, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
 
-在 2018年1月25日星期四 CST 下午11:35:20，Maxime Ripard 写道：
-> Hi,
-> 
-> On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
-> > 在 2018年1月22日星期一 CST 下午8:14:35，Maxime Ripard 写道：
-> > 
-> > > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
-> > > > This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9
-> > > > SoC.
-> > > > 
-> > > > The same die is packaged differently, come with different co-packaged
-> > > > DRAM or shipped with different SDK; and then made many model names:
-> > > > F23,
-> > > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs
-> > > > all
-> > > > share a common feature set and are packaged similarly (eLQFP128 for
-> > > > SoCs
-> > > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
-> > > > functionality hidden on the QFN88 models (except DRAM interface not
-> > > > exported), it's not clever to differentiate them. So I will use suniv
-> > > > as
-> > > > common name of all these SoCs.
-> > > 
-> > > Where is that suniv prefix coming from?
-> > 
-> > The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis SDK
-> > and "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
-> 
-> Do you have a link to that BSP?
+2018-01-26 14:16 GMT+01:00 Timur Tabi <timur@codeaurora.org>:
+> On 1/26/18 7:01 AM, Linus Walleij wrote:
+>>
+>> This is a feature not a bug. It encourages people not to
+>> depend on the global GPIO numberspace.
+>>
+>> Just set it to -1.
+>
+>
+> If I change it to -1, then I think I'm going to break every existing MSM
+> platform that depends on the base address being 0, because then every MSM
+> driver will have a non-zero base, and none of the existing drivers register
+> more than one GPIO device.
+>
+> So how about this:
+>
+>         static int base = 0;
+>
+>         chip->base = base;
+>         base = -1;
+>
+> This way, existing code works as before.  If any driver registers two GPIO
+> devices, the first one will get a base of 0, and the second one will get
+> some other base.
+>
+>>> gpiochip_find_base: found new base at 437
+>>
+>> (...)
+>>>
+>>> gpiochip_find_base: found new base at 362
+>>
+>> These are awesome bases, just beautiful. Use this.
+>>
+>> If you don't like seeing GPIO base numbers like this: use things
+>> like the chardev and the tools in tools/gpio or libgpiod when
+>> developing, and you will never see them. They should not make
+>> a difference anyway.
+>
+>
+> Can you tell me more about the chardev?  I've always been using "echo X >
+> /sys/class/gpio/export", so I guess that's not the right way to do things.
+>
 
-https://pan.baidu.com/s/1rar5YtI
+Hi Timur,
 
-There's Melis (F1C100s) and Linux (F1C600) BSP.
+take a look at the in-project documentation[1] and read the article[2]
+about libgpiod. That should get you started.
 
-> 
-> > > You should really answer two questions here:
-> > >   - Are you able to predict whether you'll find an SoC part of that
-> > >   
-> > >     family in the future that derives a bit and will need a compatible
-> > >     of its own?
-> > >   
-> > >   - Are you able to predict which quirks we'll need along the way to
-> > >   
-> > >     support all the SoCs you've listed there?
-> > > 
-> > > If you can't answer yes to both these questions, with a 100%
-> > > certainty, then you'll need a SoC name in the compatible.
-> > > 
-> > > Which doesn't prevent you from sharing as much as possible the DT like
-> > > we did between the A10s and the A13 for example.
-> > 
-> > So the suniv-f1c100s.dtsi will still be kept empty and all peripherals
-> > known should go through suniv.dtsi.
-> 
-> Sorry if I wasn't really clear. You can totally keep the current DT
-> structure if that makes sense (and judging by what you're saying, it
-> does.), but the compatibles should have the SoC name in it.
-> 
-> Maxime
+Let me know if anything's not clear.
 
+Thanks,
+Bartosz
 
+[1] https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
+[2] https://www.cnx-software.com/2017/11/03/learn-more-about-linuxs-new-gpio-user-space-subsystem-libgpiod/
