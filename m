@@ -1,66 +1,56 @@
-From: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] gpiolib-of: Support 'reserved-gpio-ranges'
- property
-Date: Fri, 26 Jan 2018 11:35:45 +0200
-Message-ID: <1516959345.7000.1281.camel@linux.intel.com>
-References: <20180126011400.2191-1-sboyd@codeaurora.org>
-         <20180126011400.2191-3-sboyd@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: msm: allow the gpio base to be configurable
+Date: Fri, 26 Jan 2018 14:01:39 +0100
+Message-ID: <CACRpkda6FLfUhqOPqJfCHm1PHOWg=CY=wOCDyrd78eMx+-zrZw@mail.gmail.com>
+References: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180126011400.2191-3-sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Timur Tabi <timur-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f53.google.com ([209.85.214.53]:38663 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751234AbeAZNBk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jan 2018 08:01:40 -0500
+Received: by mail-it0-f53.google.com with SMTP id w14so1620279itc.3
+        for <linux-gpio@vger.kernel.org>; Fri, 26 Jan 2018 05:01:40 -0800 (PST)
+In-Reply-To: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
 
-On Thu, 2018-01-25 at 17:13 -0800, Stephen Boyd wrote:
-> Some qcom platforms make some GPIOs or pins unavailable for use
-> by non-secure operating systems, and thus reading or writing the
-> registers for those pins will cause access control issues.  Add
-> support for a DT property to describe the set of GPIOs that are
-> available for use so that higher level OSes are able to know what
-> pins to avoid reading/writing.
-> 
-> For now, we plumb this into the gpiochip irq APIs so that
-> GPIO/pinctrl drivers can use the gpiochip_irqchip_irq_valid() to
-> test validity of GPIOs.
+Hi Timur,
 
+thanks for the patch!
 
-> +static void of_gpiochip_init_irq_valid_mask(struct gpio_chip *chip)
-> +{
+On Thu, Jan 25, 2018 at 10:20 PM, Timur Tabi <timur@codeaurora.org> wrote:
 
-> +	int len, i;
-> +	u32 start, count;
-> +	struct device_node *np = chip->of_node;
+> Add an integer to the msm_pinctrl_soc_data struct that pinctrl-msm
+> client drivers can use to specify the gpio base.  This is useful
+> if the client driver wants to register multiple TLMM devices, because
+> each one needs a distinct base.
 
-Perhaps reversed tree style? (In the following function as well)
+Sorry, but NACK.
 
-> +	len = of_property_count_u32_elems(np,  "reserved-gpio-
-> ranges");
-> 
+> pinctrl-msm currently sets the base to 0, which ensures that GPIOs
+> of the first TLMM are numbered 0..n-1.  It could specify -1 as the
+> base, which would tell gpiolib to choose a unique base, but this
+> has the side-effect of choosing a non-zero base for all TLMMs:
 
-> +	for (i = 0; i < len; i += 2) {
-> +		of_property_read_u32_index(np, "reserved-gpio-
-> ranges",
-> +					   i, &start);
-> +		of_property_read_u32_index(np, "reserved-gpio-
-> ranges",
-> +					   i + 1, &count);
+This is a feature not a bug. It encourages people not to
+depend on the global GPIO numberspace.
 
-of_find_property() + of_prop_next_u32() ?
+Just set it to -1.
 
-> +	if (size > 0 && size % 2 == 0)
-> +		gpiochip->irq.need_valid_mask = true;
+> gpiochip_find_base: found new base at 437
+(...)
+> gpiochip_find_base: found new base at 362
 
- ffs(size) >= 2 ?
+These are awesome bases, just beautiful. Use this.
 
+If you don't like seeing GPIO base numbers like this: use things
+like the chardev and the tools in tools/gpio or libgpiod when
+developing, and you will never see them. They should not make
+a difference anyway.
 
--- 
-Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Intel Finland Oy
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
