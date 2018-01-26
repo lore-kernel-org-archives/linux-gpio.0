@@ -1,56 +1,51 @@
 From: =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>
-Subject: [PATCH] gpio: serial: max310x: Use HW type for gpio_chip's label
-Date: Fri, 26 Jan 2018 20:02:00 +0100
-Message-ID: <b2421132df00569baa90af8f2d19ad75242e8c48.1516996724.git.jan.kundrat@cesnet.cz>
+Subject: [PATCH 0/4] Improvements for MCP23Sxx chips
+Date: Fri, 26 Jan 2018 21:11:03 +0100
+Message-ID: <cover.1516997103.git.jan.kundrat@cesnet.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from office2.cesnet.cz ([195.113.144.244]:60176 "EHLO
+Received: from office2.cesnet.cz ([195.113.144.244]:32802 "EHLO
         office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751212AbeAZT7o (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jan 2018 14:59:44 -0500
+        with ESMTP id S1751734AbeAZUNE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jan 2018 15:13:04 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: linux-serial@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Shiyan <shc_work@mail.ru>
+Cc: linux-spi@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Phil Reid <preid@electromag.com.au>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-Some debugging tools (/sys/kernel/debug/gpio, `lsgpio`) use the
-gpio_chip's label for displaying an additional context. Right now, the
-information duplicates stuff which is already available from the
-parent's device. This is how e.g. `lsgpio`'s output looks like:
+a) Open-Drain output of the IRQ lane (see inside for possible caveats).
+b) Improvements for multi-instances on the same SPI CS.
 
-  GPIO chip: gpiochip2, "spi1.2", 16 GPIO lines
+This chip is "special" because it supports several "instances" sharing
+the same SPI CS lane. Each chip has three HW pins for specifying an
+internal address. The first byte of each SPI transaction then
+distinguishes which chip we're talking to. So far, so good -- that's
+something that the driver already supports.
 
-Comparing the output of other GPIO expanders that I have available:
+The actual implementation simply instantiates several regmap and pinctrl
+instances sharing the same parent (the spi/spiX.Y dev). That leads to
+clashes as soon as more HW chips are present because of naming clashes
+within debugfs.
 
-  gpiochip4: GPIOs 464-479, parent: spi/spi1.1, mcp23s17, can sleep:
-  gpiochip5: GPIOs 448-463, parent: i2c/0-0020, pca9555, can sleep:
-  gpiochip2: GPIOs 496-511, parent: spi/spi1.2, spi1.2, can sleep:
+Fixing this for regmap is pretty straightforward. The patch which
+implements something similar for the pinctrl subsystem is a bit more
+involved because it touches the pinctrl core. The resulting names are
+ugly and the `strcmp` in there is largely a hack in order to not force
+even more ugliness to the existing chips.
 
-This patch ensures that the type of the real HW device is shown instead
-of duplicating the SPI path:
+Jan Kundrát (4):
+  pinctrl: mcp23s08: IRQ behavior for open-drain interrupts
+  pinctrl: mcp23s08: spi: Fix regmap debugfs entries
+  pinctrl: mcp23s08: spi: Add HW address to gpio_chip.label
+  pinctrl: mcp23s08: spi: Fix duplicate pinctrl debugfs entries
 
-  gpiochip2: GPIOs 496-511, parent: spi/spi1.2, MAX14830, can sleep:
+ .../bindings/pinctrl/pinctrl-mcp23s08.txt          |   4 +
+ drivers/pinctrl/core.c                             |  18 ++-
+ drivers/pinctrl/pinctrl-mcp23s08.c                 | 131 +++++++++++++++------
+ 3 files changed, 114 insertions(+), 39 deletions(-)
 
-Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
----
- drivers/tty/serial/max310x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index 39f635812077..efe55a1a0615 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -1318,7 +1318,7 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
- 	/* Setup GPIO cotroller */
- 	s->gpio.owner		= THIS_MODULE;
- 	s->gpio.parent		= dev;
--	s->gpio.label		= dev_name(dev);
-+	s->gpio.label		= devtype->name;
- 	s->gpio.direction_input	= max310x_gpio_direction_input;
- 	s->gpio.get		= max310x_gpio_get;
- 	s->gpio.direction_output= max310x_gpio_direction_output;
 -- 
 2.14.3
 
