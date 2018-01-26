@@ -1,76 +1,80 @@
-From: =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>
-Subject: [PATCH 3/4] pinctrl: mcp23s08: spi: Add HW address to gpio_chip.label
-Date: Fri, 26 Jan 2018 20:16:47 +0100
-Message-ID: <03c5ea4d98804e4ea6b0927e5bf103106e438142.1516997103.git.jan.kundrat@cesnet.cz>
-References: <cover.1516997103.git.jan.kundrat@cesnet.cz>
+From: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9 SoC
+Date: Sat, 27 Jan 2018 04:57:33 +0800
+Message-ID: <3527360.oZpfb5Pa1p@ice-x220i>
+References: <20180119231735.61504-1-icenowy@aosc.io> <14593819.uISRktVE4V@ice-x220i> <20180125153520.lxcfvh3yvi36uiux@flea.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from office2.cesnet.cz ([195.113.144.244]:32868 "EHLO
-        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752118AbeAZUN2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jan 2018 15:13:28 -0500
-In-Reply-To: <cover.1516997103.git.jan.kundrat@cesnet.cz>
+Received: from hermes.aosc.io ([199.195.250.187]:40073 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751256AbeAZU5o (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 26 Jan 2018 15:57:44 -0500
+In-Reply-To: <20180125153520.lxcfvh3yvi36uiux@flea.lan>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-spi@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Phil Reid <preid@electromag.com.au>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-sunxi@googlegroups.com, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
 
-When several devices are sharing one hardware SPI CS, there is no visual
-clue in `lsgpio` or in /sys/kernel/debug/gpio about which one is which
-one. Stuff depends on the enumeration order, and therefore lower chip
-addresses always go first, but that's just an implementation detail.
-This change includes the device-specific address in the debug output:
+在 2018年1月25日星期四 CST 下午11:35:20，Maxime Ripard 写道：
+> Hi,
+> 
+> On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
+> > 在 2018年1月22日星期一 CST 下午8:14:35，Maxime Ripard 写道：
+> > 
+> > > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
+> > > > This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9
+> > > > SoC.
+> > > > 
+> > > > The same die is packaged differently, come with different co-packaged
+> > > > DRAM or shipped with different SDK; and then made many model names:
+> > > > F23,
+> > > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs
+> > > > all
+> > > > share a common feature set and are packaged similarly (eLQFP128 for
+> > > > SoCs
+> > > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
+> > > > functionality hidden on the QFN88 models (except DRAM interface not
+> > > > exported), it's not clever to differentiate them. So I will use suniv
+> > > > as
+> > > > common name of all these SoCs.
+> > > 
+> > > Where is that suniv prefix coming from?
+> > 
+> > The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis SDK
+> > and "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
+> 
+> Do you have a link to that BSP?
 
-  gpiochip4: GPIOs 464-479, parent: spi/spi1.1, mcp23s17.2, can sleep:
-  gpiochip3: GPIOs 480-495, parent: spi/spi1.1, mcp23s17.1, can sleep:
+https://pan.baidu.com/s/1rar5YtI
 
-Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
----
- drivers/pinctrl/pinctrl-mcp23s08.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+There's Melis (F1C100s) and Linux (F1C600) BSP.
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 8dc758bacdd1..c76c9d4b26c9 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -789,6 +789,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 	int status, ret;
- 	bool mirror = false;
- 	struct regmap_config *one_regmap_config = NULL;
-+	int raw_chip_address = (addr & ~0x40) >> 1;
- 
- 	mutex_init(&mcp->lock);
- 
-@@ -817,7 +818,8 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 					sizeof(struct regmap_config), GFP_KERNEL);
- 			mcp->reg_shift = 0;
- 			mcp->chip.ngpio = 8;
--			mcp->chip.label = "mcp23s08";
-+			mcp->chip.label = devm_kasprintf(dev, GFP_KERNEL,
-+					"mcp23s08.%d", raw_chip_address);
- 			break;
- 		case MCP_TYPE_S17:
- 			one_regmap_config =
-@@ -825,13 +827,14 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 					sizeof(struct regmap_config), GFP_KERNEL);
- 			mcp->reg_shift = 1;
- 			mcp->chip.ngpio = 16;
--			mcp->chip.label = "mcp23s17";
-+			mcp->chip.label = devm_kasprintf(dev, GFP_KERNEL,
-+					"mcp23s17.%d", raw_chip_address);
- 			break;
- 		}
- 		if (!one_regmap_config)
- 			return -ENOMEM;
- 
--		one_regmap_config->name = devm_kasprintf(dev, GFP_KERNEL, "%d", (addr & ~0x40) >> 1);
-+		one_regmap_config->name = devm_kasprintf(dev, GFP_KERNEL, "%d", raw_chip_address);
- 		mcp->regmap = devm_regmap_init(dev, &mcp23sxx_spi_regmap, mcp,
- 					       one_regmap_config);
- 		break;
--- 
-2.14.3
+> 
+> > > You should really answer two questions here:
+> > >   - Are you able to predict whether you'll find an SoC part of that
+> > >   
+> > >     family in the future that derives a bit and will need a compatible
+> > >     of its own?
+> > >   
+> > >   - Are you able to predict which quirks we'll need along the way to
+> > >   
+> > >     support all the SoCs you've listed there?
+> > > 
+> > > If you can't answer yes to both these questions, with a 100%
+> > > certainty, then you'll need a SoC name in the compatible.
+> > > 
+> > > Which doesn't prevent you from sharing as much as possible the DT like
+> > > we did between the A10s and the A13 for example.
+> > 
+> > So the suniv-f1c100s.dtsi will still be kept empty and all peripherals
+> > known should go through suniv.dtsi.
+> 
+> Sorry if I wasn't really clear. You can totally keep the current DT
+> structure if that makes sense (and judging by what you're saying, it
+> does.), but the compatibles should have the SoC name in it.
+> 
+> Maxime
 
 
