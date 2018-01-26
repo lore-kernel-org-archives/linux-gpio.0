@@ -1,73 +1,57 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [RFC PATCH 2/2] gpio: provide a consumer when requesting a gpio
-Date: Fri, 26 Jan 2018 19:13:32 +0200
-Message-ID: <CAHp75Vfe_Zf1bqOEmTprxiy=o0ROUnj4F5aZKP7=q3CjiXT5oA@mail.gmail.com>
-References: <20180115162407.6314-1-ludovic.desroches@microchip.com>
- <20180115162407.6314-3-ludovic.desroches@microchip.com> <CACRpkdbsYyHRz826K0QA=Y7Dvf_sm714o5601KBD7Zo4+1hrQA@mail.gmail.com>
- <20180118152228.GX2989@rfolt0960.corp.atmel.com> <20180124130705.GN3055@rfolt0960.corp.atmel.com>
- <CAHp75VeuX8kGumtiu6iBhJ+AL+Ug3dm5Pb_tQ8YYYU9SH+QSZA@mail.gmail.com> <20180126073213.GW3055@rfolt0960.corp.atmel.com>
+From: =?UTF-8?q?Jan=20Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>
+Subject: [PATCH] gpio: serial: max310x: Use HW type for gpio_chip's label
+Date: Fri, 26 Jan 2018 20:02:00 +0100
+Message-ID: <b2421132df00569baa90af8f2d19ad75242e8c48.1516996724.git.jan.kundrat@cesnet.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180126073213.GW3055@rfolt0960.corp.atmel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from office2.cesnet.cz ([195.113.144.244]:60176 "EHLO
+        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751212AbeAZT7o (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jan 2018 14:59:44 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linux-serial@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Shiyan <shc_work@mail.ru>
 
-On Fri, Jan 26, 2018 at 9:32 AM, Ludovic Desroches
-<ludovic.desroches@microchip.com> wrote:
-> On Wed, Jan 24, 2018 at 05:42:15PM +0200, Andy Shevchenko wrote:
->> On Wed, Jan 24, 2018 at 3:07 PM, Ludovic Desroches
->> <ludovic.desroches@microchip.com> wrote:
->> > On Thu, Jan 18, 2018 at 04:22:28PM +0100, Ludovic Desroches wrote:
->> >> On Thu, Jan 18, 2018 at 11:30:00AM +0100, Linus Walleij wrote:
+Some debugging tools (/sys/kernel/debug/gpio, `lsgpio`) use the
+gpio_chip's label for displaying an additional context. Right now, the
+information duplicates stuff which is already available from the
+parent's device. This is how e.g. `lsgpio`'s output looks like:
 
->> >> > Can't we just look up the associated gpio_chip from the GPIO range,
->> >> > and in case the pin is connected between the pin controller and
->> >> > the GPIO chip, then we allow the gpiochip to also take a
->> >> > reference?
->>
->> How do you find my proposal about introducing ownership level (not
->> requested yet; exclusive; shared)?
+  GPIO chip: gpiochip2, "spi1.2", 16 GPIO lines
 
-> Yes but I don't see how I can fix my issue with these levels. In my
-> case, I need an exclusive ownership at device level not at pin level. In
-> reality, it is at pin level but I am in this situation because my pin
-> controler was introduced as non strict and also because I need to set
-> the configuration of the pin which is going to be used as a GPIO.
->
-> If the ownership is exclusive, pinmuxing coming from pinctrl-default
-> will be accepted but the GPIO request will fail even if it comes from the
-> same device.
+Comparing the output of other GPIO expanders that I have available:
 
-The problem here is to declare a right consumer of the resource.
+  gpiochip4: GPIOs 464-479, parent: spi/spi1.1, mcp23s17, can sleep:
+  gpiochip5: GPIOs 448-463, parent: i2c/0-0020, pca9555, can sleep:
+  gpiochip2: GPIOs 496-511, parent: spi/spi1.2, spi1.2, can sleep:
 
-My understanding that consumer at the end is device or device(s):
+This patch ensures that the type of the real HW device is shown instead
+of duplicating the SPI path:
 
-none: resource is free to acquire
-exclusive: certain device has access to the resource (pin)
-shared: several devices may access to the resource
+  gpiochip2: GPIOs 496-511, parent: spi/spi1.2, MAX14830, can sleep:
 
-In both cases couple of caveats:
-- power management has a special access level to the resource on
-behalf of the owner(s)
-- it can have some flags, like 'locked', which means no more owners
-can be changed / added, but still possible to free resource by all
-owners to go to state 'none'
+Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
+---
+ drivers/tty/serial/max310x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> If the ownership is shared then, pinmuxing coming from pinctrl-default
-> will be accepted but a GPIO request from another device will be accepted
-> too.
->
-> Both situations are incorrect in my case.
-
-Yes, since the ownership design is based on subsystem rather consumer device.
-
-> Let me know if I have not well understood your proposal. My concern is
-> to get out of this situation without breaking current DTs.
-
-See above, hope it clarifies a bit.
-
+diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
+index 39f635812077..efe55a1a0615 100644
+--- a/drivers/tty/serial/max310x.c
++++ b/drivers/tty/serial/max310x.c
+@@ -1318,7 +1318,7 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
+ 	/* Setup GPIO cotroller */
+ 	s->gpio.owner		= THIS_MODULE;
+ 	s->gpio.parent		= dev;
+-	s->gpio.label		= dev_name(dev);
++	s->gpio.label		= devtype->name;
+ 	s->gpio.direction_input	= max310x_gpio_direction_input;
+ 	s->gpio.get		= max310x_gpio_get;
+ 	s->gpio.direction_output= max310x_gpio_direction_output;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.14.3
+
+
