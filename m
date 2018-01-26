@@ -1,56 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Timur Tabi <timur@codeaurora.org>
 Subject: Re: [PATCH] pinctrl: msm: allow the gpio base to be configurable
-Date: Fri, 26 Jan 2018 14:01:39 +0100
-Message-ID: <CACRpkda6FLfUhqOPqJfCHm1PHOWg=CY=wOCDyrd78eMx+-zrZw@mail.gmail.com>
+Date: Fri, 26 Jan 2018 07:16:51 -0600
+Message-ID: <5bcf9545-37ee-18b5-33d9-7ce3da9b0048@codeaurora.org>
 References: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
+ <CACRpkda6FLfUhqOPqJfCHm1PHOWg=CY=wOCDyrd78eMx+-zrZw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f53.google.com ([209.85.214.53]:38663 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751234AbeAZNBk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jan 2018 08:01:40 -0500
-Received: by mail-it0-f53.google.com with SMTP id w14so1620279itc.3
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Jan 2018 05:01:40 -0800 (PST)
-In-Reply-To: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:60336 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751377AbeAZNQy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jan 2018 08:16:54 -0500
+In-Reply-To: <CACRpkda6FLfUhqOPqJfCHm1PHOWg=CY=wOCDyrd78eMx+-zrZw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
 
-Hi Timur,
+On 1/26/18 7:01 AM, Linus Walleij wrote:
+> This is a feature not a bug. It encourages people not to
+> depend on the global GPIO numberspace.
+> 
+> Just set it to -1.
 
-thanks for the patch!
+If I change it to -1, then I think I'm going to break every existing MSM 
+platform that depends on the base address being 0, because then every 
+MSM driver will have a non-zero base, and none of the existing drivers 
+register more than one GPIO device.
 
-On Thu, Jan 25, 2018 at 10:20 PM, Timur Tabi <timur@codeaurora.org> wrote:
+So how about this:
 
-> Add an integer to the msm_pinctrl_soc_data struct that pinctrl-msm
-> client drivers can use to specify the gpio base.  This is useful
-> if the client driver wants to register multiple TLMM devices, because
-> each one needs a distinct base.
+	static int base = 0;
 
-Sorry, but NACK.
+	chip->base = base;
+	base = -1;
 
-> pinctrl-msm currently sets the base to 0, which ensures that GPIOs
-> of the first TLMM are numbered 0..n-1.  It could specify -1 as the
-> base, which would tell gpiolib to choose a unique base, but this
-> has the side-effect of choosing a non-zero base for all TLMMs:
+This way, existing code works as before.  If any driver registers two 
+GPIO devices, the first one will get a base of 0, and the second one 
+will get some other base.
 
-This is a feature not a bug. It encourages people not to
-depend on the global GPIO numberspace.
+>> gpiochip_find_base: found new base at 437
+> (...)
+>> gpiochip_find_base: found new base at 362
+> These are awesome bases, just beautiful. Use this.
+> 
+> If you don't like seeing GPIO base numbers like this: use things
+> like the chardev and the tools in tools/gpio or libgpiod when
+> developing, and you will never see them. They should not make
+> a difference anyway.
 
-Just set it to -1.
+Can you tell me more about the chardev?  I've always been using "echo X 
+ > /sys/class/gpio/export", so I guess that's not the right way to do 
+things.
 
-> gpiochip_find_base: found new base at 437
-(...)
-> gpiochip_find_base: found new base at 362
-
-These are awesome bases, just beautiful. Use this.
-
-If you don't like seeing GPIO base numbers like this: use things
-like the chardev and the tools in tools/gpio or libgpiod when
-developing, and you will never see them. They should not make
-a difference anyway.
-
-Yours,
-Linus Walleij
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
