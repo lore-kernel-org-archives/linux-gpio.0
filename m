@@ -1,92 +1,178 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9
- SoC
-Date: Fri, 26 Jan 2018 15:43:34 +0100
-Message-ID: <20180126144334.27hengoucfipdsdj@flea.lan>
-References: <20180119231735.61504-1-icenowy@aosc.io>
- <20180122121435.bpayxk4uzfqbhqse@flea.lan>
- <14593819.uISRktVE4V@ice-x220i>
- <20180125153520.lxcfvh3yvi36uiux@flea.lan>
- <2A78FC75-61C0-4317-A7A1-6E1E42098C07@aosc.io>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH/RFT v3] gpio: gpio-rcar: Support S2RAM
+Date: Fri, 26 Jan 2018 16:31:15 +0100
+Message-ID: <CAMuHMdUd9f6+f4KrkRNzGm9JHhHmLC3Nm3JaL-uiL0KmKv7B-Q@mail.gmail.com>
+References: <1516040426-15507-1-git-send-email-ykaneko0929@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dmxe64kbyzacmbba"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2A78FC75-61C0-4317-A7A1-6E1E42098C07@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-sunxi@googlegroups.com, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34783 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751422AbeAZPbR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jan 2018 10:31:17 -0500
+In-Reply-To: <1516040426-15507-1-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
+Hi Kaneko-san,
 
---dmxe64kbyzacmbba
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jan 15, 2018 at 7:20 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Hien Dang <hien.dang.eb@renesas.com>
+>
+> This patch adds an implementation that saves and restores the state of
+> GPIO configuration on suspend and resume.
+>
+> Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [Modify structure of the bank info to simplify a saving registers]
+> [Remove DEV_PM_OPS macro]
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+>
+> This patch is based on the for-next branch of linux-gpio tree.
+>
+> v2 [Yoshihiro Kaneko]
+> * Modify structure of the bank info as suggested by Geert Uytterhoeven
+>
+> v3 [Yoshihiro Kaneko]
+> * Remove DEV_PM_OPS macro as suggested by Vladimir Zapolskiy
 
-On Thu, Jan 25, 2018 at 11:38:04PM +0800, Icenowy Zheng wrote:
-> >On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
-> >> =E5=9C=A8 2018=E5=B9=B41=E6=9C=8822=E6=97=A5=E6=98=9F=E6=9C=9F=E4=B8=
-=80 CST =E4=B8=8B=E5=8D=888:14:35=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=
-=EF=BC=9A
-> >> > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
-> >> > > This is the RFC initial patchset for the "new" Allwinner SUNIV
-> >ARM9 SoC.
-> >> > >=20
-> >> > > The same die is packaged differently, come with different
-> >co-packaged
-> >> > > DRAM or shipped with different SDK; and then made many model
-> >names: F23,
-> >> > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These
-> >SoCs all
-> >> > > share a common feature set and are packaged similarly (eLQFP128
-> >for SoCs
-> >> > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
-> >> > > functionality hidden on the QFN88 models (except DRAM interface
-> >not
-> >> > > exported), it's not clever to differentiate them. So I will use
-> >suniv as
-> >> > > common name of all these SoCs.
-> >> >=20
-> >> > Where is that suniv prefix coming from?
-> >>=20
-> >> The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis
-> >SDK and=20
-> >> "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
-> >
-> >Do you have a link to that BSP?
->=20
-> I have it on the Baidu Pan. Is it acceptable?
+Thanks for the updates!
 
-Yep, it's not crazy fast but it works :)
+It looks like not much is left from the original patches...
 
-Thanks!
-Maxime
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -31,6 +31,16 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/slab.h>
+>
+> +struct gpio_rcar_bank_info {
+> +       u32 iointsel;
+> +       u32 inoutsel;
+> +       u32 outdt;
+> +       u32 active_high_rising_edge;
+> +       u32 level_trigger;
+> +       u32 both;
+> +       u32 intmsk;
+> +};
+> +
+>  struct gpio_rcar_priv {
+>         void __iomem *base;
+>         spinlock_t lock;
+> @@ -41,6 +51,7 @@ struct gpio_rcar_priv {
+>         unsigned int irq_parent;
+>         bool has_both_edge_trigger;
+>         bool needs_clk;
+> +       struct gpio_rcar_bank_info bank_info;
+>  };
+>
+>  #define IOINTSEL 0x00  /* General IO/Interrupt Switching Register */
+> @@ -531,11 +542,65 @@ static int gpio_rcar_remove(struct platform_device *pdev)
+>         return 0;
+>  }
+>
+> +#ifdef CONFIG_PM_SLEEP
+> +static int gpio_rcar_suspend(struct device *dev)
+> +{
+> +       struct gpio_rcar_priv *p = dev_get_drvdata(dev);
+> +
+> +       p->bank_info.iointsel = gpio_rcar_read(p, IOINTSEL);
+> +       p->bank_info.inoutsel = gpio_rcar_read(p, INOUTSEL);
+> +       p->bank_info.outdt = gpio_rcar_read(p, OUTDT);
+> +       p->bank_info.intmsk = gpio_rcar_read(p, INTMSK);
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Given you just store values read from the hardware registers, why
+not name all fields below according to the registers' names, like you did
+for the above?
+Especially for active_high_rising_edge and level_trigger, as the semantics
+are inverted, compared to the POSNEG resp. EDGLEVEL registers.
 
---dmxe64kbyzacmbba
-Content-Type: application/pgp-signature; name="signature.asc"
+> +       p->bank_info.active_high_rising_edge = gpio_rcar_read(p, POSNEG);
+> +       p->bank_info.level_trigger = gpio_rcar_read(p, EDGLEVEL);
+> +       p->bank_info.both = gpio_rcar_read(p, BOTHEDGE);
 
------BEGIN PGP SIGNATURE-----
+R-Car Gen1 does not have the BOTHEDGE.
+Hence it should be read only if p->has_both_edge_trigger is true;
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlprPpUACgkQ0rTAlCFN
-r3Te3A//by+3RTruCSPLFpcPSZkk8x6w/M/34Ao5l4Nrk/WB8TSMVXBxpcbAe8FT
-kDPVHkyiP1wWQ+sFVGC9DRoa68WuydIBtY1qeK64Ym1nrNPS0spXsCIiDzapPqPi
-OG+TG7KfeUXHbKS5AYzfRywY9b8m5lUj0ns9eTIyqa358C7jkcsBBZUJ3LKDtPib
-yMP27S6S9qvbu3KI8AsYpvcrCaPVVn99QY1IADVzqAn+dd45yoeM8kZwNI+hhI8n
-J5/TaVM6g+WMOjarbehNKDHORMYZkYA+/T0qEnIojAjHEqyWvQtuvNlZrTyBd3kr
-Migky2LZJ6q+YRcU8lWag/kMDFakp9xw+zu9yJe/zKpI6W47EF/NCn9aMFo81TPC
-Zhb7EwRhWqbjXHaevcFzkgGTjO7fkUpkSJDQzCROHwjl/hFgP1uel5AaNNQ5zPkg
-hJaSsV1jdgJp8JCZHvbpkDGlKdx6JjZPzTKnqQw/EvfM06w5JkZgAE3UdeXkklJu
-sPX5wi27s2PBjquzobC1Mt86v65cX+uWNzkZ1AaIc+C3Dk6776AcK/1suW7yBV+v
-bCdcH219g//ol6pVkfpNacDxahYFYHER+QyJyuJqtpZrixiNUWt/XvDgy2+eynjO
-7sr6KGJoall4nDPsMuGxDCe4VpcMhotNqln3ckh+KTSZ9DN46tg=
-=qWiE
------END PGP SIGNATURE-----
+However, do we need to save/restore the configuration on all supported SoCs?
+Shouldn't it depend on PSCI, like is done in drivers/pinctrl/sh-pfc/core.c
+and drivers/clk/renesas/renesas-cpg-mssr.c?
 
---dmxe64kbyzacmbba--
+> +
+> +       return 0;
+> +}
+> +
+> +static int gpio_rcar_resume(struct device *dev)
+> +{
+> +       struct gpio_rcar_priv *p = dev_get_drvdata(dev);
+> +       int offset;
+
+unsigned int
+
+> +       u32 mask;
+> +
+> +       for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
+> +               mask = BIT(offset);
+> +               /* I/O pin */
+> +               if (!(p->bank_info.iointsel & mask)) {
+> +                       if (p->bank_info.inoutsel & mask)
+> +                               gpio_rcar_direction_output(
+> +                                       &p->gpio_chip, offset,
+> +                                       !!(p->bank_info.outdt & mask));
+> +                       else
+> +                               gpio_rcar_direction_input(&p->gpio_chip,
+> +                                                         offset);
+> +               /* Interrupt pin */
+
+The comment above is not properly indented, and should be moved below
+the "else" statement.
+
+> +               } else {
+> +                       gpio_rcar_config_interrupt_input_mode(
+> +                               p,
+> +                               offset,
+> +                               !(p->bank_info.active_high_rising_edge & mask),
+> +                               !!(p->bank_info.level_trigger & mask),
+
+This logic seems to be inverted, shouldn't it be
+
+        !(p->bank_info.level_trigger & mask),
+
+?
+
+> +                               !!(p->bank_info.both & mask));
+> +
+> +                       if (p->bank_info.intmsk & mask)
+> +                               gpio_rcar_write(p, MSKCLR, mask);
+> +               }
+> +       }
+> +
+> +       return 0;
+> +}
+> +#endif /* CONFIG_PM_SLEEP*/
+> +
+> +static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops, gpio_rcar_suspend, gpio_rcar_resume);
+> +
+>  static struct platform_driver gpio_rcar_device_driver = {
+>         .probe          = gpio_rcar_probe,
+>         .remove         = gpio_rcar_remove,
+>         .driver         = {
+>                 .name   = "gpio_rcar",
+> +               .pm     = &gpio_rcar_pm_ops,
+>                 .of_match_table = of_match_ptr(gpio_rcar_of_table),
+>         }
+>  };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
