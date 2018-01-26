@@ -1,160 +1,112 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 3/3] pinctrl: qcom: Don't allow protected pins to be requested
-Date: Thu, 25 Jan 2018 17:14:00 -0800
-Message-ID: <20180126011400.2191-4-sboyd@codeaurora.org>
-References: <20180126011400.2191-1-sboyd@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180126011400.2191-1-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Timur Tabi <timur@codeaurora.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, devicetree@vger.kernel.org
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: Re: [RFC PATCH 2/2] gpio: provide a consumer when requesting a gpio
+Date: Fri, 26 Jan 2018 08:32:13 +0100
+Message-ID: <20180126073213.GW3055@rfolt0960.corp.atmel.com>
+References: <20180115162407.6314-1-ludovic.desroches@microchip.com>
+ <20180115162407.6314-3-ludovic.desroches@microchip.com>
+ <CACRpkdbsYyHRz826K0QA=Y7Dvf_sm714o5601KBD7Zo4+1hrQA@mail.gmail.com>
+ <20180118152228.GX2989@rfolt0960.corp.atmel.com>
+ <20180124130705.GN3055@rfolt0960.corp.atmel.com>
+ <CAHp75VeuX8kGumtiu6iBhJ+AL+Ug3dm5Pb_tQ8YYYU9SH+QSZA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:25332 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751421AbeAZHc0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jan 2018 02:32:26 -0500
+Content-Disposition: inline
+In-Reply-To: <CAHp75VeuX8kGumtiu6iBhJ+AL+Ug3dm5Pb_tQ8YYYU9SH+QSZA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Some qcom platforms make some GPIOs or pins unavailable for use
-by non-secure operating systems, and thus reading or writing the
-registers for those pins will cause access control issues and
-reset the device. With a DT/ACPI property to describe the set of
-pins that are available for use, parse the available pins and set
-the irq valid bits for gpiolib to know what to consider 'valid'.
-This should avoid any issues with gpiolib. Furthermore, implement
-the pinmux_ops::request function so that pinmux can also make
-sure to not use pins that are unavailable.
+On Wed, Jan 24, 2018 at 05:42:15PM +0200, Andy Shevchenko wrote:
+> On Wed, Jan 24, 2018 at 3:07 PM, Ludovic Desroches
+> <ludovic.desroches@microchip.com> wrote:
+> > On Thu, Jan 18, 2018 at 04:22:28PM +0100, Ludovic Desroches wrote:
+> >> On Thu, Jan 18, 2018 at 11:30:00AM +0100, Linus Walleij wrote:
+> >> > On Mon, Jan 15, 2018 at 5:24 PM, Ludovic Desroches
+> >> > <ludovic.desroches@microchip.com> wrote:
+> 
+> >> > I think we need to think over what is a good way to share ownership
+> >> > of a pin.
+> >> >
+> >> > Russell pointed me to a similar problem incidentally and I briefly looked
+> >> > into it: there are cases when several devices may need to hold the
+> >> > same pin.
+> >> >
+> >> > Can't we just look up the associated gpio_chip from the GPIO range,
+> >> > and in case the pin is connected between the pin controller and
+> >> > the GPIO chip, then we allow the gpiochip to also take a
+> >> > reference?
+> 
+> How do you find my proposal about introducing ownership level (not
+> requested yet; exclusive; shared)?
+> 
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 69 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 65 insertions(+), 4 deletions(-)
+Yes but I don't see how I can fix my issue with these levels. In my
+case, I need an exclusive ownership at device level not at pin level. In
+reality, it is at pin level but I am in this situation because my pin
+controler was introduced as non strict and also because I need to set
+the configuration of the pin which is going to be used as a GPIO.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 495432f3341b..c7901def5f2c 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -105,6 +105,17 @@ static const struct pinctrl_ops msm_pinctrl_ops = {
- 	.dt_free_map		= pinctrl_utils_free_map,
- };
- 
-+static int msm_pinmux_request(struct pinctrl_dev *pctldev, unsigned offset)
-+{
-+	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-+	struct gpio_chip *chip = &pctrl->chip;
-+
-+	if (gpiochip_irqchip_irq_valid(chip, offset))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
- static int msm_get_functions_count(struct pinctrl_dev *pctldev)
- {
- 	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-@@ -166,6 +177,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
- }
- 
- static const struct pinmux_ops msm_pinmux_ops = {
-+	.request		= msm_pinmux_request,
- 	.get_functions_count	= msm_get_functions_count,
- 	.get_function_name	= msm_get_function_name,
- 	.get_function_groups	= msm_get_function_groups,
-@@ -506,6 +518,9 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 		"pull up"
- 	};
- 
-+	if (!gpiochip_irqchip_irq_valid(chip, offset))
-+		return;
-+
- 	g = &pctrl->soc->groups[offset];
- 	ctl_reg = readl(pctrl->regs + g->ctl_reg);
- 
-@@ -516,7 +531,7 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 
- 	seq_printf(s, " %-8s: %-3s %d", g->name, is_out ? "out" : "in", func);
- 	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
--	seq_printf(s, " %s", pulls[pull]);
-+	seq_printf(s, " %s\n", pulls[pull]);
- }
- 
- static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
-@@ -524,10 +539,8 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	unsigned gpio = chip->base;
- 	unsigned i;
- 
--	for (i = 0; i < chip->ngpio; i++, gpio++) {
-+	for (i = 0; i < chip->ngpio; i++, gpio++)
- 		msm_gpio_dbg_show_one(s, NULL, chip, i, gpio);
--		seq_puts(s, "\n");
--	}
- }
- 
- #else
-@@ -808,6 +821,46 @@ static void msm_gpio_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+static int msm_gpio_init_irq_valid_mask(struct gpio_chip *chip,
-+					struct msm_pinctrl *pctrl)
-+{
-+	int ret;
-+	unsigned int len, i;
-+	unsigned int max_gpios = pctrl->soc->ngpios;
-+
-+	/* The number of GPIOs in the ACPI tables */
-+	ret = device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0);
-+	if (ret > 0 && ret < max_gpios) {
-+		u16 *tmp;
-+
-+		len = ret;
-+		tmp = kmalloc_array(len, sizeof(tmp[0]), GFP_KERNEL);
-+		if (!tmp)
-+			return -ENOMEM;
-+
-+		ret = device_property_read_u16_array(pctrl->dev, "gpios", tmp,
-+						     len);
-+		if (ret < 0) {
-+			dev_err(pctrl->dev, "could not read list of GPIOs\n");
-+			kfree(tmp);
-+			return ret;
-+		}
-+
-+		bitmap_zero(chip->irq.valid_mask, max_gpios);
-+		for (i = 0; i < len; i++)
-+			set_bit(tmp[i], chip->irq.valid_mask);
-+
-+		return 0;
-+	}
-+
-+	return 0;
-+}
-+
-+static bool msm_gpio_needs_irq_valid_mask(struct msm_pinctrl *pctrl)
-+{
-+	return device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0) > 0;
-+}
-+
- static int msm_gpio_init(struct msm_pinctrl *pctrl)
- {
- 	struct gpio_chip *chip;
-@@ -824,6 +877,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	chip->parent = pctrl->dev;
- 	chip->owner = THIS_MODULE;
- 	chip->of_node = pctrl->dev->of_node;
-+	chip->irq.need_valid_mask = msm_gpio_needs_irq_valid_mask(pctrl);
- 
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
-@@ -831,6 +885,13 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 		return ret;
- 	}
- 
-+	ret = msm_gpio_init_irq_valid_mask(chip, pctrl);
-+	if (ret) {
-+		dev_err(pctrl->dev, "Failed to setup irq valid bits\n");
-+		gpiochip_remove(&pctrl->chip);
-+		return ret;
-+	}
-+
- 	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
- 	if (ret) {
- 		dev_err(pctrl->dev, "Failed to add pin range\n");
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+If the ownership is exclusive, pinmuxing coming from pinctrl-default
+will be accepted but the GPIO request will fail even if it comes from the
+same device.
+
+If the ownership is shared then, pinmuxing coming from pinctrl-default
+will be accepted but a GPIO request from another device will be accepted
+too.
+
+Both situations are incorrect in my case.
+
+Let me know if I have not well understood your proposal. My concern is
+to get out of this situation without breaking current DTs.
+
+Regards
+
+Ludovic
+
+> >> It's the probably the way to go, it was Maxime's proposal and Andy seems
+> >> to agree this solution.
+> 
+> Confirm with caveat that this is a fix for subset of cases.
+> 
+> > If pin_request() is called with gpio_range not NULL, it means that the
+> > requests comes from a GPIO chip and the pin controller handles this pin.
+> > In this case, I would say the pin is connected between the pin
+> > controller and the GPIO chip. Is my assumption right?
+> >
+> > I am not sure it will fit all the cases:
+> 
+> I think it doesn't cover cases when you have UART + UART + GPIO (I
+> posted early a use case example).
+> 
+> But at least it doesn't move things in a wrong direction.
+> 
+> > - case 1: device A requests the pin (pinctrl-default state) and mux it
+> >   as a GPIO. Later,it requests the pin as a GPIO (gpiolib). This 'weird'
+> >   situation happens because some strict pin controllers were not declared
+> >   as strict and/or pinconf is needed.
+> >
+> > - case 2: device A requests the pin (pinctrl-default state). Device B
+> >   requests the pin as a GPIO (gpiolib).
+> >
+> > In case 1, pin_request must not return an error. In case 2, pin_request
+> > must return an error even if the pin is connected between the pin
+> > controller and the GPIO chip.
+> 
+> For these cases looks OK to me.
+> 
+> >> > I.e. in that case you just allow gpio_owner to proceed and take the
+> >> > pin just like with a non-strict controller.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
