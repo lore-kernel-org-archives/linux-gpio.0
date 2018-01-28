@@ -1,133 +1,95 @@
-From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: Re: [PATCH v2 1/6] resource: Extend the PPC32 reserved memory hack
-Date: Sat, 27 Jan 2018 09:00:34 +0100
-Message-ID: <20180127080034.byqfvrwyuibrc4ii@latitude>
-References: <20180122050411.32460-1-j.neuschaefer@gmx.net>
- <20180122050411.32460-2-j.neuschaefer@gmx.net>
- <871sigwx41.fsf@concordia.ellerman.id.au>
- <20180123163739.2sxhzavghzgbjw4c@latitude>
- <87po60uk1y.fsf@concordia.ellerman.id.au>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 3/6] gpio: Add GPIO driver for Nintendo Wii
+Date: Sun, 28 Jan 2018 19:31:58 +0200
+Message-ID: <CAHp75VcWshngZFuUp4hzYdD43HF7TZ1sRE3Dh+HckB5do1=gGw@mail.gmail.com>
+References: <20180122050411.32460-1-j.neuschaefer@gmx.net> <20180122050411.32460-4-j.neuschaefer@gmx.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cvkbmej4xuklj5rx"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.20]:64008 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752038AbeA0IGQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 27 Jan 2018 03:06:16 -0500
-Content-Disposition: inline
-In-Reply-To: <87po60uk1y.fsf@concordia.ellerman.id.au>
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:35080 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751901AbeA1RcA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Jan 2018 12:32:00 -0500
+In-Reply-To: <20180122050411.32460-4-j.neuschaefer@gmx.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>, Brijesh Singh <brijesh.singh@amd.com>, devicetree@vger.kernel.org, Albert Herranz <albert_herranz@yahoo.es>, linux-gpio@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>, linuxppc-dev@lists.ozlabs.org
+To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" <linuxppc-dev@lists.ozlabs.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Albert Herranz <albert_herranz@yahoo.es>, Segher Boessenkool <segher@kernel.crashing.org>, Linus Walleij <linus.walleij@linaro.org>
+
+On Mon, Jan 22, 2018 at 7:04 AM, Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
+
+Style issues below.
+
+> +#define HW_GPIO_OWNER          0x3c
+> +
+> +
+> +struct hlwd_gpio {
+
+No need extra empty line in between.
+
+> +       struct gpio_chip gpioc;
+> +       void __iomem *regs;
+> +       struct device *dev;
+> +};
+> +
+> +static int hlwd_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct hlwd_gpio *hlwd;
+> +       struct resource *regs_resource;
+> +       u32 ngpios;
+> +       int res;
+> +
+> +       hlwd =3D devm_kzalloc(&pdev->dev, sizeof(*hlwd), GFP_KERNEL);
+> +       if (!hlwd)
+> +               return -ENOMEM;
+> +
+
+> +       /* Save the struct device pointer so dev_info, etc. can be used. =
+*/
+
+Useless.
+
+> +       hlwd->dev =3D &pdev->dev;
+> +
+
+> +       regs_resource =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+
+> +       if (IS_ERR(regs_resource))
+> +               return PTR_ERR(regs_resource);
+> +
+
+This is redundant. Below does it for ya.
+
+> +       hlwd->regs =3D devm_ioremap_resource(&pdev->dev, regs_resource);
+> +       if (IS_ERR(hlwd->regs))
+> +               return PTR_ERR(hlwd->regs);
 
 
---cvkbmej4xuklj5rx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +       res =3D bgpio_init(&hlwd->gpioc, &pdev->dev, 4,
+> +                       hlwd->regs + HW_GPIOB_IN, hlwd->regs + HW_GPIOB_O=
+UT,
+> +                       NULL, hlwd->regs + HW_GPIOB_DIR, NULL,
+> +                       BGPIOF_BIG_ENDIAN_BYTE_ORDER);
 
-On Wed, Jan 24, 2018 at 12:23:05PM +1100, Michael Ellerman wrote:
-> Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net> writes:
-[...]
-> > Do you have any pointer on how to implement discontiguous memory
-> > support? CONFIG_ARCH_SPARSEMEM_ENABLE seems relevant.
->=20
-> I'm not really sure what the key impediment to it working is.
->=20
-> You don't need to go all the way to SPARSEMEM, there is DISCONTIGMEM
-> which IIUI is quite a bit simpler.
->=20
-> I'd actually be interested to know what happens (ie. breaks) if you just
-> add the two memblocks and leave the hole in between. Is it the generic
-> code that breaks or is it something in the powerpc code? If it's the
-> later maybe we can do a small fix/hack to work around that.
+> +
 
-Ok, I did some experimentation.
+Remove this extra line.
 
-First, I made wii_memory_fixups return early, before actually doing
-anything[1].
+> +       if (res < 0) {
+> +               dev_warn(hlwd->dev, "bgpio_init failed: %d\n", res);
+> +               return res;
+> +       }
 
-[    0.000000] __ioremap(): phys addr 0xc003000 is RAM lr flipper_pic_init
-[    0.000000] flipper-pic: controller at 0x0c003000 mapped to 0x  (null)
-[    0.000000] Unable to handle kernel paging request for data at address 0=
-x00000004
+> +       if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios))
+> +               ngpios =3D 32;
 
-* __ioremap_caller detects overlap with RAM like this: p < virt_to_phys(hig=
-h_memory)
-* flipper_pic_init gets NULL from ioremap, but doesn't check for NULL
+A nit: I would rather go with
+res =3D of_property_read(...);
+if (res)
+  ngpios =3D 32;
 
-
-Then I hacked up __ioremap_caller to use memblock_is_map_memory[2],
-because it considers memblocks correctly. The result was that the system
-boots further, but then enters the sleep mode where the power LED shines
-yellow. In this mode the ARM runs but the PPC doesn't. The same thing
-would happen if GPIO 3 ("DC_DC"[3]) was pulled low. These are the last few
-lines:
-
-[    0.770324] io scheduler mq-deadline registered
-[    0.772472] io scheduler kyber registered
-
-I don't know what exactly is triggering this effect.
-
-
-Thanks for your help,
-Jonathan Neusch=C3=A4fer
-
-
-[1]: diff --git a/arch/powerpc/platforms/embedded6xx/wii.c b/arch/powerpc/p=
-latforms/embedded6xx/wii.c
-index 6e6db1e16d71..cddd5606a63d 100644
---- a/arch/powerpc/platforms/embedded6xx/wii.c
-+++ b/arch/powerpc/platforms/embedded6xx/wii.c
-@@ -81,6 +81,9 @@ void __init wii_memory_fixups(void)
- 	BUG_ON(memblock.memory.cnt !=3D 2);
- 	BUG_ON(!page_aligned(p[0].base) || !page_aligned(p[1].base));
-=20
-+	/* don't fix the memory map */
-+	return;
-+
- 	/* trim unaligned tail */
- 	memblock_remove(ALIGN(p[1].base + p[1].size, PAGE_SIZE),
- 			(phys_addr_t)ULLONG_MAX);
-[2]: diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32=
-=2Ec
-index f6c7f54c0515..bff581003c50 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -154,8 +154,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, =
-unsigned long flags,
- 	 * Don't allow anybody to remap normal RAM that we're using.
- 	 * mem_init() sets high_memory so only do the check after that.
- 	 */
--	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
--	    !(__allow_ioremap_reserved && memblock_is_region_reserved(p, size))) {
-+	if (slab_is_available() && memblock_is_map_memory(p)) {
- 		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
- 		       (unsigned long long)p, __builtin_return_address(0));
- 		return NULL;
-[3]: http://wiibrew.org/wiki/Hardware/Hollywood_GPIOs
-
---cvkbmej4xuklj5rx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAABAgAGBQJabDGZAAoJEAgwRJqO81/bUDwP/0zSjBoJc6bov8ArZwTX4q0M
-lcC7g3UkeHHknFDG6fn2KmoleDlgGA8IVNIQ57MZQLwTQJ2lE3MjmZm7GzmIjTWV
-OWLLDujiky4eAJ6uoOSqlWZkdsbolOYZXFjKqhujDdRFSVaJjeS+v+/cjh3vl1d4
-N7x7uX2DDtjb+hI6aM6xYup2d9nRh5sIkgExDM2vXpViTz1dGNpMphavT6qrb6D+
-8H9cWvZLxPtl7tXnegPU+q/zVcnE1wPSg+Ze6xfbfqx26VvM/W5zXBoF6hn8aZUD
-Z9xbqHUbGqqlktfp5yGFQ9XXH/Cd5FiorMeazzbWCoN+/ASb1xBjb31zYk5NTeTW
-e5tt8UwvIFe+2FCdnjMNxFTytglH8bs3jrzGITd8J+jS/ytSt1QClIqSZpbkxzUB
-1TgzEAD25p5+JbN/17Tq7W3lJq6LDMgqZ3QUrC6j5ezRAAvdmNa1+l4mC04roVmV
-Scnyto/z8enWuIqoIdsim7kDIy4TfnxlRax25br3vs8Qtg/pm7yqal0guy8IHT1q
-FwQGWcSE5veQbbVjeTIFpKY31n/cc6jZE2BlJfJYiQIW3/GzGQbWhgFNmcgXZFzW
-fmwOFDXyDRSX+bFdppkixxtrQ/Rx7r391PVR3I3Jjb0xdJz4eHoZ4cGJ/3cFJf5u
-dkakBfc17OLRfPE0aoiy
-=2fto
------END PGP SIGNATURE-----
-
---cvkbmej4xuklj5rx--
+--=20
+With Best Regards,
+Andy Shevchenko
