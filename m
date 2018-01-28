@@ -1,95 +1,45 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 3/6] gpio: Add GPIO driver for Nintendo Wii
-Date: Sun, 28 Jan 2018 19:31:58 +0200
-Message-ID: <CAHp75VcWshngZFuUp4hzYdD43HF7TZ1sRE3Dh+HckB5do1=gGw@mail.gmail.com>
-References: <20180122050411.32460-1-j.neuschaefer@gmx.net> <20180122050411.32460-4-j.neuschaefer@gmx.net>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: msm: allow the gpio base to be configurable
+Date: Sun, 28 Jan 2018 15:23:10 -0800
+Message-ID: <20180128232310.GA12728@builder>
+References: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:35080 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbeA1RcA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Jan 2018 12:32:00 -0500
-In-Reply-To: <20180122050411.32460-4-j.neuschaefer@gmx.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" <linuxppc-dev@lists.ozlabs.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Albert Herranz <albert_herranz@yahoo.es>, Segher Boessenkool <segher@kernel.crashing.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, Jan 22, 2018 at 7:04 AM, Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
+On Thu 25 Jan 13:20 PST 2018, Timur Tabi wrote:
 
-Style issues below.
+> Add an integer to the msm_pinctrl_soc_data struct that pinctrl-msm
+> client drivers can use to specify the gpio base.  This is useful
+> if the client driver wants to register multiple TLMM devices, because
+> each one needs a distinct base.
+> 
+> pinctrl-msm currently sets the base to 0, which ensures that GPIOs
+> of the first TLMM are numbered 0..n-1.  It could specify -1 as the
+> base, which would tell gpiolib to choose a unique base, but this
+> has the side-effect of choosing a non-zero base for all TLMMs:
 
-> +#define HW_GPIO_OWNER          0x3c
-> +
-> +
-> +struct hlwd_gpio {
+What platform has multiple TLMMs?
 
-No need extra empty line in between.
+[..]
 
-> +       struct gpio_chip gpioc;
-> +       void __iomem *regs;
-> +       struct device *dev;
-> +};
-> +
-> +static int hlwd_gpio_probe(struct platform_device *pdev)
-> +{
-> +       struct hlwd_gpio *hlwd;
-> +       struct resource *regs_resource;
-> +       u32 ngpios;
-> +       int res;
-> +
-> +       hlwd =3D devm_kzalloc(&pdev->dev, sizeof(*hlwd), GFP_KERNEL);
-> +       if (!hlwd)
-> +               return -ENOMEM;
-> +
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index b7b6849625ec..4dc76e15bd14 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -901,7 +901,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+>  		return -EINVAL;
+>  
+>  	chip = &pctrl->chip;
+> -	chip->base = 0;
 
-> +       /* Save the struct device pointer so dev_info, etc. can be used. =
-*/
+My bad, this should have been -1.
 
-Useless.
-
-> +       hlwd->dev =3D &pdev->dev;
-> +
-
-> +       regs_resource =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-
-> +       if (IS_ERR(regs_resource))
-> +               return PTR_ERR(regs_resource);
-> +
-
-This is redundant. Below does it for ya.
-
-> +       hlwd->regs =3D devm_ioremap_resource(&pdev->dev, regs_resource);
-> +       if (IS_ERR(hlwd->regs))
-> +               return PTR_ERR(hlwd->regs);
-
-
-> +       res =3D bgpio_init(&hlwd->gpioc, &pdev->dev, 4,
-> +                       hlwd->regs + HW_GPIOB_IN, hlwd->regs + HW_GPIOB_O=
-UT,
-> +                       NULL, hlwd->regs + HW_GPIOB_DIR, NULL,
-> +                       BGPIOF_BIG_ENDIAN_BYTE_ORDER);
-
-> +
-
-Remove this extra line.
-
-> +       if (res < 0) {
-> +               dev_warn(hlwd->dev, "bgpio_init failed: %d\n", res);
-> +               return res;
-> +       }
-
-> +       if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios))
-> +               ngpios =3D 32;
-
-A nit: I would rather go with
-res =3D of_property_read(...);
-if (res)
-  ngpios =3D 32;
-
---=20
-With Best Regards,
-Andy Shevchenko
+Regards,
+Bjorn
