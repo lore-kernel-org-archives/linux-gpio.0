@@ -1,45 +1,46 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Timur Tabi <timur@codeaurora.org>
 Subject: Re: [PATCH] pinctrl: msm: allow the gpio base to be configurable
-Date: Sun, 28 Jan 2018 15:23:10 -0800
-Message-ID: <20180128232310.GA12728@builder>
+Date: Sun, 28 Jan 2018 17:29:59 -0600
+Message-ID: <042b6cea-38f7-a660-0059-5f24fc7db9eb@codeaurora.org>
 References: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
+ <20180128232310.GA12728@builder>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
+In-Reply-To: <20180128232310.GA12728@builder>
+Content-Language: en-US
 Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu 25 Jan 13:20 PST 2018, Timur Tabi wrote:
-
-> Add an integer to the msm_pinctrl_soc_data struct that pinctrl-msm
-> client drivers can use to specify the gpio base.  This is useful
-> if the client driver wants to register multiple TLMM devices, because
-> each one needs a distinct base.
+On 1/28/18 5:23 PM, Bjorn Andersson wrote:
+> What platform has multiple TLMMs?
 > 
-> pinctrl-msm currently sets the base to 0, which ensures that GPIOs
-> of the first TLMM are numbered 0..n-1.  It could specify -1 as the
-> base, which would tell gpiolib to choose a unique base, but this
-> has the side-effect of choosing a non-zero base for all TLMMs:
+> [..]
 
-What platform has multiple TLMMs?
+An upcoming one.
 
-[..]
+>> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+>> index b7b6849625ec..4dc76e15bd14 100644
+>> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+>> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+>> @@ -901,7 +901,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+>>   		return -EINVAL;
+>>   
+>>   	chip = &pctrl->chip;
+>> -	chip->base = 0;
 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index b7b6849625ec..4dc76e15bd14 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -901,7 +901,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
->  		return -EINVAL;
->  
->  	chip = &pctrl->chip;
-> -	chip->base = 0;
+> My bad, this should have been -1.
 
-My bad, this should have been -1.
+Perhaps, but it's been 0 for a very long time, so I don't want to break 
+any existing platforms by suddenly relocating all GPIOs across all 
+Qualcomm platforms.
 
-Regards,
-Bjorn
+What do you think about my other idea?
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
