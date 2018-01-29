@@ -1,71 +1,81 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: sharing IRQ when IRQ is always enabled
-Date: Mon, 29 Jan 2018 09:21:53 +0800
-Message-ID: <3c11e860-39f1-6a8b-4235-9580d3812cd2@electromag.com.au>
-References: <7594fad0-00c3-5dc6-c095-908e8a03c31a@radiodata.biz>
- <519fc4da-3baa-195a-b046-2799b2609a53@radiodata.biz>
+From: Andrew Cooks <andrew.cooks@opengear.com>
+Subject: Re: [PATCH] gpio-pca953x: fall back to byte-at-a-time for 24-bit io
+Date: Mon, 29 Jan 2018 14:11:35 +1000
+Message-ID: <0f82783e-3f78-34dd-4f80-8e21328f9c91@opengear.com>
+References: <1512440242-8983-1-git-send-email-andrew.cooks@opengear.com>
+ <CAHp75Vcpdh36yjXCCOQthYKdY3vPi5EDrqFWauyv9WDgjcZPYQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy3.45ru.net.au ([203.30.46.155]:56776 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753233AbeA2BVy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Jan 2018 20:21:54 -0500
-In-Reply-To: <519fc4da-3baa-195a-b046-2799b2609a53@radiodata.biz>
-Content-Language: en-AU
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHp75Vcpdh36yjXCCOQthYKdY3vPi5EDrqFWauyv9WDgjcZPYQ@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, platypus-sw@opengear.com, Jean Delvare <jdelvare@suse.de>, linux-i2c@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Raphael Lisicki <rlisicki@radiodata.biz>, linux-gpio@vger.kernel.org
 
-G'day Raphael,
+Hi Andy
 
-On 22/01/2018 23:14, Raphael Lisicki wrote:
-> Hello everybody,
+On 29/12/17 19:44, Andy Shevchenko wrote:
+> On Tue, Dec 5, 2017 at 4:17 AM, Andrew Cooks <andrew.cooks@opengear.com> wrote:
+>> Using TCA6424A with i2c-piix4 bus driver requires byte-at-a-time IO,
+>> because the i2c-piix4 driver (and probably some SMBus controllers) don't
+>> support I2C_SMBUS_I2C_BLOCK_DATA.
 > 
-> I am having trouble to use the I2C port expander NXP PCA9539 as an IRQ source on a board where two of them share the same Interrupt line.
-> 
-> When the PCA9539 starts, interrupts are already enabled. There is no way to disable interrupts on this chip. This means that both chips pull down the interrupt 
-> line. When the driver gets instantiated for the first chip, the interrupt line is enabled and an interrupt caused. This causes the interrupt handler for the 
-> first chip to be called, but this does not reset the interrupt coming from the second chip. Its handler is not being called as it is still not installed. This 
-> means that the interrupt line will be considered stuck and disabled subsequently.
-> 
-> My device-tree part is as follows:
-> 
-> 
->          pca9539: pca9539@74 {
->              compatible = "nxp,pca9539";
->              reg = <0x74>;
->              gpio-controller;
->              #gpio-cells = <2>;
->              interrupt-controller;
->              interrupt-parent = <&pioE>;
->              interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
->          };
-> 
->          pca9539_1: pca9539@75 {
->              compatible = "nxp,pca9539";
->              reg = <0x75>;
->              gpio-controller;
->              #gpio-cells = <2>;
->              interrupt-controller;
->              interrupt-parent = <&pioE>;
->              interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
->          };
-> 
-> I think I need to delay the activation of the interrupt source until both interrupt handlers have been installed. I have read the code that installs the 
-> interrupt handler and it seems that there is no way yet to do so, right?
-> 
-> Is there any other way I might be able to use the IRQ functionality with this port expander and a shared IRQ line? Any pointers?
-> 
->I've ran into this problem before myself. As far as I could determine there was no way to delay the enabling of the irq.
-There's probably enough information in the dt to determine this by searching for all the devices using that irq.
+> Why not to fix piix4 for now?
 
-An approach would be to create an intermediary irq chip device. (Something that models an AND /OR gate for example)
-The driver for which could be setup to delay registering the irq until all irq sources have registered.
+The piix4 driver applies to so many chips and has been around for such a long time, that I don't know if this kind of change is safe to make. Do you think it's safe to assume that all the implementations that use this driver can handle the 3byte block writes?
 
-This would keep the code separate for the core irq library I think...
+I've added Jean to the CC list to get the piix4 maintainer's perspective.
 
--- 
-Regards
-Phil Reid
+> 
+>>  static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+>>  {
+>> +       int ret, i;
+>>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+>>
+>> -       return i2c_smbus_write_i2c_block_data(chip->client,
+>> +       if (i2c_check_functionality(chip->client->adapter,
+>> +                                   I2C_FUNC_SMBUS_WRITE_I2C_BLOCK)) {
+>> +               return i2c_smbus_write_i2c_block_data(chip->client,
+>>                                               (reg << bank_shift) | REG_ADDR_AI,
+>>                                               NBANK(chip), val);
+> 
+>> +       } else {
+> 
+> Redundant and makes useless indentation level below.
+
+Thanks, will fix this.
+
+> 
+>> +               for (i = 0; i < NBANK(chip); i++) {
+>> +                       ret = i2c_smbus_write_byte_data(chip->client,
+>> +                                                       (reg << 1) + i, val[i]);
+>> +                       if (ret < 0)
+>> +                               return ret;
+>> +               }
+>> +               return ret;
+>> +       }
+>>  }
+>>
+>>  static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+>> @@ -249,7 +261,7 @@ static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+>>  {
+>>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+>>
+>> -       return i2c_smbus_read_i2c_block_data(chip->client,
+>> +       return i2c_smbus_read_i2c_block_data_or_emulated(chip->client,
+>>                                              (reg << bank_shift) | REG_ADDR_AI,
+>>                                              NBANK(chip), val);
+> 
+> Don't we have a counter part for writing?
+> 
+> Perhaps, it might be another option.
+> 
+
+Again, I don't know if it's safe to assume that the i2c controllers can do this and would appreciate comments.
+
+Thanks for your review!
+
+a.
