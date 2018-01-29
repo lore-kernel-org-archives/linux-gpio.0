@@ -1,65 +1,36 @@
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] pinctrl: msm: allow the gpio base to be configurable
-Date: Sun, 28 Jan 2018 16:51:30 -0800
-Message-ID: <20180129005129.GB12728@builder>
-References: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
- <20180128232310.GA12728@builder>
- <042b6cea-38f7-a660-0059-5f24fc7db9eb@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <042b6cea-38f7-a660-0059-5f24fc7db9eb@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: msm: Use dynamic GPIO numbering
+Date: Sun, 28 Jan 2018 16:59:48 -0800
+Message-ID: <20180129005948.7714-1-bjorn.andersson@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Timur Tabi <timur@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun 28 Jan 15:29 PST 2018, Timur Tabi wrote:
+The base of the TLMM gpiochip should not be statically defined as 0, fix
+this to not artificially restrict the existence of multiple pinctrl-msm
+devices.
 
-> On 1/28/18 5:23 PM, Bjorn Andersson wrote:
-> > What platform has multiple TLMMs?
-> > 
-> > [..]
-> 
-> An upcoming one.
-> 
+Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
+Reported-by: Timur Tabi <timur@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cool :)
-
-> > > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> > > index b7b6849625ec..4dc76e15bd14 100644
-> > > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> > > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> > > @@ -901,7 +901,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
-> > >   		return -EINVAL;
-> > >   	chip = &pctrl->chip;
-> > > -	chip->base = 0;
-> 
-> > My bad, this should have been -1.
-> 
-> Perhaps, but it's been 0 for a very long time, so I don't want to break any
-> existing platforms by suddenly relocating all GPIOs across all Qualcomm
-> platforms.
-> 
-
-Yeah, I see that I got this wrong when I wrote the driver 4 years ago...
-
-There should be no in-kernel users depending on these numbers being hard
-coded, so anyone depending on these numbers starting at 0 would be user
-space - doing so incorrectly.
-
-> What do you think about my other idea?
-> 
-
-With static numbering of gpios you end up having cross-instance and
-cross-driver tweaks to make things fit the number space. In particular
-when you combine different gpio chips in different ways for different
-devices this becomes a mess.
-
-That's why the idea of static gpio numbering was abandoned a long long
-time ago. So while it does solve an immediate problem for you it is
-proven not to be the right solution in the long run...
-
-Regards,
-Bjorn
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 495432f3341b..95e5c5ea40af 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -818,7 +818,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+ 		return -EINVAL;
+ 
+ 	chip = &pctrl->chip;
+-	chip->base = 0;
++	chip->base = -1;
+ 	chip->ngpio = ngpio;
+ 	chip->label = dev_name(pctrl->dev);
+ 	chip->parent = pctrl->dev;
+-- 
+2.15.0
