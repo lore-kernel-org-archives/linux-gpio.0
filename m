@@ -1,55 +1,43 @@
-From: =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
-Subject: Re: [PATCH 1/4] pinctrl: mcp23s08: IRQ behavior for open-drain =?iso-8859-1?Q?interrupts?=
-Date: Mon, 29 Jan 2018 11:27:52 +0100
-Message-ID: <77ac8e65-1742-4e0e-9f96-8445de92c6c6@cesnet.cz>
-References: <cover.1516997103.git.jan.kundrat@cesnet.cz>
- <9e78a4a697c8d4d3028ea8780bd925471b49af3c.1516997103.git.jan.kundrat@cesnet.cz>
- <621e8caf-3591-9748-dcdd-7ae8f7222e80@electromag.com.au>
+From: Raphael Lisicki <rlisicki@radiodata.biz>
+Subject: Re: sharing IRQ when IRQ is always enabled
+Date: Mon, 29 Jan 2018 14:38:06 +0100
+Message-ID: <bc29c7bf-4dca-d835-3c1d-d703206ca449@radiodata.biz>
+References: <7594fad0-00c3-5dc6-c095-908e8a03c31a@radiodata.biz>
+ <519fc4da-3baa-195a-b046-2799b2609a53@radiodata.biz>
+ <3c11e860-39f1-6a8b-4235-9580d3812cd2@electromag.com.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from office2.cesnet.cz ([195.113.144.244]:41508 "EHLO
-        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750913AbeA2K15 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jan 2018 05:27:57 -0500
-In-Reply-To: <621e8caf-3591-9748-dcdd-7ae8f7222e80@electromag.com.au>
+Received: from smtp.radiodata.biz ([78.47.114.250]:40089 "EHLO
+        smtp.radiodata.biz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751822AbeA2NiP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jan 2018 08:38:15 -0500
+In-Reply-To: <3c11e860-39f1-6a8b-4235-9580d3812cd2@electromag.com.au>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Phil Reid <preid@electromag.com.au>
-Cc: linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Phil Reid <preid@electromag.com.au>, linux-gpio@vger.kernel.org
 
-> I submitted a patch for this in November, But haven't followed=20
-> up on the last review as yet.
-> See: https://patchwork.ozlabs.org/cover/839923/
+Hallo Phil, thank you for your answer.
 
-Hi Phil, that looks nice. Sorry for duplicating your work. I would have=20
-sworn I haven't seen your patch, but I *think* I actually read that IRQ=20
-polarity discussion. Strange, perhaps I just forgot that it was about=20
-MCP23xxx.
 
-> I used exactly the same dt in my first propsal. But you'll see=20
-> form the discussions that series
-> This needs to be the standard 'drive-open-drain' flag
+On 29.01.2018 02:21, Phil Reid wrote:
+> I've ran into this problem before myself. As far as I could determine 
+> there was no way to delay the enabling of the irq.
+Did you solve the issue at that time? If so, how?
 
-I wasn't aware of that one.
+> There's probably enough information in the dt to determine this by 
+> searching for all the devices using that irq.
+>
+> An approach would be to create an intermediary irq chip device. 
+> (Something that models an AND /OR gate for example)
+> The driver for which could be setup to delay registering the irq until 
+> all irq sources have registered.
+>
+> This would keep the code separate for the core irq library I think... 
+This proxy sounds like an interesting idea. I will try to see what can 
+be done in this regard.
 
-> The original code does the same thing.
-> open drain is active-low.
-> Sharing can also be achieved by AND / OR gates with push-pull drivers.
-> So no need to treat that differently.
-
-That's a good point. I agree that decoupling the irq-controller's=20
-configuration from this chip's IRQ output lane configuration (and hence=20
-moving the IRQ_SHARED etc to the DT) makes sense.
-
-My change also writes to the MCP_IOCON unconditionally. For example, the=20
-old code would fail if "something" configured the chip for irq-open-drain=20
-before the kernel got a chance to run.
-
-Will you have time to re-spin the series anytime soon? I can help if you'd=20=
-
-like to.
-
-Cheers,
-Jan
+Best regards
+Raphael
