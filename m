@@ -1,81 +1,55 @@
-From: Andrew Cooks <andrew.cooks@opengear.com>
-Subject: Re: [PATCH] gpio-pca953x: fall back to byte-at-a-time for 24-bit io
-Date: Mon, 29 Jan 2018 14:11:35 +1000
-Message-ID: <0f82783e-3f78-34dd-4f80-8e21328f9c91@opengear.com>
-References: <1512440242-8983-1-git-send-email-andrew.cooks@opengear.com>
- <CAHp75Vcpdh36yjXCCOQthYKdY3vPi5EDrqFWauyv9WDgjcZPYQ@mail.gmail.com>
+From: =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
+Subject: Re: [PATCH 1/4] pinctrl: mcp23s08: IRQ behavior for open-drain =?iso-8859-1?Q?interrupts?=
+Date: Mon, 29 Jan 2018 11:27:52 +0100
+Message-ID: <77ac8e65-1742-4e0e-9f96-8445de92c6c6@cesnet.cz>
+References: <cover.1516997103.git.jan.kundrat@cesnet.cz>
+ <9e78a4a697c8d4d3028ea8780bd925471b49af3c.1516997103.git.jan.kundrat@cesnet.cz>
+ <621e8caf-3591-9748-dcdd-7ae8f7222e80@electromag.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vcpdh36yjXCCOQthYKdY3vPi5EDrqFWauyv9WDgjcZPYQ@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, platypus-sw@opengear.com, Jean Delvare <jdelvare@suse.de>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from office2.cesnet.cz ([195.113.144.244]:41508 "EHLO
+        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750913AbeA2K15 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jan 2018 05:27:57 -0500
+In-Reply-To: <621e8caf-3591-9748-dcdd-7ae8f7222e80@electromag.com.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Phil Reid <preid@electromag.com.au>
+Cc: linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-Hi Andy
+> I submitted a patch for this in November, But haven't followed=20
+> up on the last review as yet.
+> See: https://patchwork.ozlabs.org/cover/839923/
 
-On 29/12/17 19:44, Andy Shevchenko wrote:
-> On Tue, Dec 5, 2017 at 4:17 AM, Andrew Cooks <andrew.cooks@opengear.com> wrote:
->> Using TCA6424A with i2c-piix4 bus driver requires byte-at-a-time IO,
->> because the i2c-piix4 driver (and probably some SMBus controllers) don't
->> support I2C_SMBUS_I2C_BLOCK_DATA.
-> 
-> Why not to fix piix4 for now?
+Hi Phil, that looks nice. Sorry for duplicating your work. I would have=20
+sworn I haven't seen your patch, but I *think* I actually read that IRQ=20
+polarity discussion. Strange, perhaps I just forgot that it was about=20
+MCP23xxx.
 
-The piix4 driver applies to so many chips and has been around for such a long time, that I don't know if this kind of change is safe to make. Do you think it's safe to assume that all the implementations that use this driver can handle the 3byte block writes?
+> I used exactly the same dt in my first propsal. But you'll see=20
+> form the discussions that series
+> This needs to be the standard 'drive-open-drain' flag
 
-I've added Jean to the CC list to get the piix4 maintainer's perspective.
+I wasn't aware of that one.
 
-> 
->>  static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
->>  {
->> +       int ret, i;
->>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
->>
->> -       return i2c_smbus_write_i2c_block_data(chip->client,
->> +       if (i2c_check_functionality(chip->client->adapter,
->> +                                   I2C_FUNC_SMBUS_WRITE_I2C_BLOCK)) {
->> +               return i2c_smbus_write_i2c_block_data(chip->client,
->>                                               (reg << bank_shift) | REG_ADDR_AI,
->>                                               NBANK(chip), val);
-> 
->> +       } else {
-> 
-> Redundant and makes useless indentation level below.
+> The original code does the same thing.
+> open drain is active-low.
+> Sharing can also be achieved by AND / OR gates with push-pull drivers.
+> So no need to treat that differently.
 
-Thanks, will fix this.
+That's a good point. I agree that decoupling the irq-controller's=20
+configuration from this chip's IRQ output lane configuration (and hence=20
+moving the IRQ_SHARED etc to the DT) makes sense.
 
-> 
->> +               for (i = 0; i < NBANK(chip); i++) {
->> +                       ret = i2c_smbus_write_byte_data(chip->client,
->> +                                                       (reg << 1) + i, val[i]);
->> +                       if (ret < 0)
->> +                               return ret;
->> +               }
->> +               return ret;
->> +       }
->>  }
->>
->>  static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
->> @@ -249,7 +261,7 @@ static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
->>  {
->>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
->>
->> -       return i2c_smbus_read_i2c_block_data(chip->client,
->> +       return i2c_smbus_read_i2c_block_data_or_emulated(chip->client,
->>                                              (reg << bank_shift) | REG_ADDR_AI,
->>                                              NBANK(chip), val);
-> 
-> Don't we have a counter part for writing?
-> 
-> Perhaps, it might be another option.
-> 
+My change also writes to the MCP_IOCON unconditionally. For example, the=20
+old code would fail if "something" configured the chip for irq-open-drain=20
+before the kernel got a chance to run.
 
-Again, I don't know if it's safe to assume that the i2c controllers can do this and would appreciate comments.
+Will you have time to re-spin the series anytime soon? I can help if you'd=20=
 
-Thanks for your review!
+like to.
 
-a.
+Cheers,
+Jan
