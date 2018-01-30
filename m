@@ -1,65 +1,61 @@
-From: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
-Subject: Re: [PATCH 1/4] pinctrl: mcp23s08: IRQ behavior for open-drain
- interrupts
-Date: Tue, 30 Jan 2018 10:24:15 +0800
-Message-ID: <f32083de-bf9b-5db3-61b5-bd7d1369f008@electromag.com.au>
-References: <cover.1516997103.git.jan.kundrat@cesnet.cz>
- <9e78a4a697c8d4d3028ea8780bd925471b49af3c.1516997103.git.jan.kundrat@cesnet.cz>
- <621e8caf-3591-9748-dcdd-7ae8f7222e80@electromag.com.au>
- <77ac8e65-1742-4e0e-9f96-8445de92c6c6@cesnet.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <77ac8e65-1742-4e0e-9f96-8445de92c6c6-xoNZbkdr4U2lVyrhU4qvOw@public.gmane.org>
-Content-Language: en-AU
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?Q?Jan_Kundr=c3=a1t?= <jan.kundrat-xoNZbkdr4U2lVyrhU4qvOw@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sebastian Reichel <sebastian.reichel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+From: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 1/2] dt-bindings: gpio: Add Spreadtrum GPIO controller documentation
+Date: Tue, 30 Jan 2018 20:07:42 +0800
+Message-ID: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 29/01/2018 18:27, Jan Kundrát wrote:
->> I submitted a patch for this in November, But haven't followed up on the last review as yet.
->> See: https://patchwork.ozlabs.org/cover/839923/
-> 
-> Hi Phil, that looks nice. Sorry for duplicating your work. I would have sworn I haven't seen your patch, but I *think* I actually read that IRQ polarity 
-> discussion. Strange, perhaps I just forgot that it was about MCP23xxx.
-> 
->> I used exactly the same dt in my first propsal. But you'll see form the discussions that series
->> This needs to be the standard 'drive-open-drain' flag
-> 
-> I wasn't aware of that one.
-> 
->> The original code does the same thing.
->> open drain is active-low.
->> Sharing can also be achieved by AND / OR gates with push-pull drivers.
->> So no need to treat that differently.
-> 
-> That's a good point. I agree that decoupling the irq-controller's configuration from this chip's IRQ output lane configuration (and hence moving the IRQ_SHARED 
-> etc to the DT) makes sense.
-> 
-> My change also writes to the MCP_IOCON unconditionally. For example, the old code would fail if "something" configured the chip for irq-open-drain before the 
-> kernel got a chance to run.
-Yeah I don't like that conditional logic for setting the config.
-Tricky to change without potentially breaking something as you say.
-But if you don't want mirror set and something is setting it before hand then things are broken.
+This patch adds the device tree bindings for the Spreadtrum
+GPIO controller. The gpios will be supported by the GPIO
+generic library.
 
+Signed-off-by: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+ .../devicetree/bindings/gpio/gpio-sprd.txt         |   28 ++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sprd.txt
 
-> 
-> Will you have time to re-spin the series anytime soon? I can help if you'd like to.
-> 
-
-I'll try and respin the open drain bit in the next week or so.
-The other part of my series is a little more work I think.
-
-Gives me some motivation to have a look at it.
-
-
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+new file mode 100644
+index 0000000..eca97d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+@@ -0,0 +1,28 @@
++Spreadtrum GPIO controller bindings
++
++The controller's registers are organized as sets of sixteen 16-bit
++registers with each set controlling a bank of up to 16 pins. A single
++interrupt is shared for all of the banks handled by the controller.
++
++Required properties:
++- compatible: Should be "sprd,sc9860-gpio".
++- reg: Define the base and range of the I/O address space containing
++the GPIO controller registers.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be <2>. The first cell is the gpio number and
++the second cell is used to specify optional parameters.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be <2>. Specifies the number of cells needed
++to encode interrupt source.
++- interrupts: Should be the port interrupt shared by all the gpios.
++
++Example:
++	ap_gpio: gpio@40280000 {
++		compatible = "sprd,sc9860-gpio";
++		reg = <0 0x40280000 0 0x1000>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
++	};
 -- 
-Regards
-Phil Reid
+1.7.9.5
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
