@@ -1,68 +1,57 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC PATCH 0/9] initial support for "suniv" Allwinner new ARM9
- SoC
-Date: Mon, 29 Jan 2018 13:48:40 -0600
-Message-ID: <20180129194840.fcwlre3wmikphg2f@rob-hp-laptop>
-References: <20180119231735.61504-1-icenowy@aosc.io>
- <20180122121435.bpayxk4uzfqbhqse@flea.lan>
- <14593819.uISRktVE4V@ice-x220i>
- <20180125153520.lxcfvh3yvi36uiux@flea.lan>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: sharing IRQ when IRQ is always enabled
+Date: Tue, 30 Jan 2018 09:41:46 +0800
+Message-ID: <5df9768e-ba03-4823-6ee7-f4053214ab2e@electromag.com.au>
+References: <7594fad0-00c3-5dc6-c095-908e8a03c31a@radiodata.biz>
+ <519fc4da-3baa-195a-b046-2799b2609a53@radiodata.biz>
+ <3c11e860-39f1-6a8b-4235-9580d3812cd2@electromag.com.au>
+ <bc29c7bf-4dca-d835-3c1d-d703206ca449@radiodata.biz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180125153520.lxcfvh3yvi36uiux@flea.lan>
-Sender: linux-clk-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-sunxi@googlegroups.com, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anchovy2.45ru.net.au ([203.30.46.146]:34554 "EHLO
+        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752440AbeA3Bls (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jan 2018 20:41:48 -0500
+In-Reply-To: <bc29c7bf-4dca-d835-3c1d-d703206ca449@radiodata.biz>
+Content-Language: en-AU
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Raphael Lisicki <rlisicki@radiodata.biz>, linux-gpio@vger.kernel.org
 
-On Thu, Jan 25, 2018 at 04:35:20PM +0100, Maxime Ripard wrote:
-> Hi,
+On 29/01/2018 21:38, Raphael Lisicki wrote:
+> Hallo Phil, thank you for your answer.
 > 
-> On Wed, Jan 24, 2018 at 09:10:34PM +0800, Icenowy Zheng wrote:
-> > 在 2018年1月22日星期一 CST 下午8:14:35，Maxime Ripard 写道：
-> > > On Sat, Jan 20, 2018 at 07:17:26AM +0800, Icenowy Zheng wrote:
-> > > > This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9 SoC.
-> > > > 
-> > > > The same die is packaged differently, come with different co-packaged
-> > > > DRAM or shipped with different SDK; and then made many model names: F23,
-> > > > F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs all
-> > > > share a common feature set and are packaged similarly (eLQFP128 for SoCs
-> > > > without co-packaged DRAM, QFN88 for with DRAM). As their's no
-> > > > functionality hidden on the QFN88 models (except DRAM interface not
-> > > > exported), it's not clever to differentiate them. So I will use suniv as
-> > > > common name of all these SoCs.
-> > > 
-> > > Where is that suniv prefix coming from?
-> > 
-> > The BSP (Melis and Linux). (e.g. "libs/suniv" directory of the Melis SDK and 
-> > "arch/arm/boot/dts/sunivw1p1.dtsi" in the Linux SDK)
 > 
-> Do you have a link to that BSP?
-> 
-> > > You should really answer two questions here:
-> > >   - Are you able to predict whether you'll find an SoC part of that
-> > >     family in the future that derives a bit and will need a compatible
-> > >     of its own?
-> > >   - Are you able to predict which quirks we'll need along the way to
-> > >     support all the SoCs you've listed there?
-> > > 
-> > > If you can't answer yes to both these questions, with a 100%
-> > > certainty, then you'll need a SoC name in the compatible.
-> > > 
-> > > Which doesn't prevent you from sharing as much as possible the DT like
-> > > we did between the A10s and the A13 for example.
-> > 
-> > So the suniv-f1c100s.dtsi will still be kept empty and all peripherals known 
-> > should go through suniv.dtsi.
-> 
-> Sorry if I wasn't really clear. You can totally keep the current DT
-> structure if that makes sense (and judging by what you're saying, it
-> does.), but the compatibles should have the SoC name in it.
+> On 29.01.2018 02:21, Phil Reid wrote:
+>> I've ran into this problem before myself. As far as I could determine there was no way to delay the enabling of the irq.
+> Did you solve the issue at that time? If so, how?
 
-In case it's not clear, the compatible strings and any new bindings need 
-to be documented.
+In a ound about way.
+My hardware had the irqs connected to a pca9543 i2c mux that ANDs the irq together.
+The device can tell you which irq is active but can not mask them.
+The irq source was an SMBus alert on each i2c segment. So I modified the i2c core to register smb alert handlers.
+And had the mux driver delay registering its irq until all bus segments had been created.
 
-Rob
+Had some other hardware using the pca gpio with irq tied together. Fortunately hardware was only at 1st prototype.
+So I changed the hardware once I'd found this problem :) USed mcp23 series gpio's instead.
+
+> 
+>> There's probably enough information in the dt to determine this by searching for all the devices using that irq.
+>>
+>> An approach would be to create an intermediary irq chip device. (Something that models an AND /OR gate for example)
+>> The driver for which could be setup to delay registering the irq until all irq sources have registered.
+>>
+>> This would keep the code separate for the core irq library I think... 
+> This proxy sounds like an interesting idea. I will try to see what can be done in this regard.
+
+Something like this would solve a number of problems.
+The was a previous discussion in regards one of my patches (around nov last year) for the mcp23s08 driver irq to
+create something to model an inverter on the irq line.
+Something configurable with X lines and possibility to invert inputs would be generic.
+Just haven't got to it as yet.
+
+-- 
+Regards
+Phil Reid
