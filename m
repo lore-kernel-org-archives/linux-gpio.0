@@ -1,41 +1,146 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v2 0/5] Change ISA_BUS_API dependency to selection
-Date: Tue, 30 Jan 2018 21:22:05 -0500
-Message-ID: <20180131022151.GA14668@sophia>
-References: <cover.1514578085.git.vilhelm.gray@gmail.com>
- <CACRpkdbBA0DX22ZGSkQxi+euTSROPzsmLTvSPwY8peg6+7igFQ@mail.gmail.com>
+From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: Re: [PATCH v2 3/6] gpio: Add GPIO driver for Nintendo Wii
+Date: Wed, 31 Jan 2018 09:37:17 +0100
+Message-ID: <20180131083717.xhwaepwd6qxeqncv@latitude>
+References: <20180122050411.32460-1-j.neuschaefer@gmx.net>
+ <20180122050411.32460-4-j.neuschaefer@gmx.net>
+ <CAHp75VcWshngZFuUp4hzYdD43HF7TZ1sRE3Dh+HckB5do1=gGw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="4afc2a2wktuivren"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:44370 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753035AbeAaCWb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jan 2018 21:22:31 -0500
+Received: from mout.gmx.net ([212.227.17.21]:60558 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752006AbeAaIh1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 31 Jan 2018 03:37:27 -0500
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbBA0DX22ZGSkQxi+euTSROPzsmLTvSPwY8peg6+7igFQ@mail.gmail.com>
+In-Reply-To: <CAHp75VcWshngZFuUp4hzYdD43HF7TZ1sRE3Dh+HckB5do1=gGw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, LINUXWATCHDOG <linux-watchdog@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" <linuxppc-dev@lists.ozlabs.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Albert Herranz <albert_herranz@yahoo.es>, Segher Boessenkool <segher@kernel.crashing.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On Tue, Jan 02, 2018 at 10:29:30AM +0100, Linus Walleij wrote:
->On Fri, Dec 29, 2017 at 9:13 PM, William Breathitt Gray
-><vilhelm.gray@gmail.com> wrote:
->
->> Linus, please pickup this entire patchset through your GPIO subsystem
->> tree; a recursive dependency error is present if these patches are
->> cherry-picked (see https://lkml.org/lkml/2017/12/26/235), so they should
->> be merged together in the same tree.
->
->OK I just need a bunch of ACKs so giving subsystem maintainers some
->days to come back on this.
->
->Yours,
->Linus Walleij
 
-Hi Linus,
+--4afc2a2wktuivren
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Do you have any objections to picking up this patchset now; or would you
-prefer to wait for some more input from the other maintainers?
+Hi,
 
-William Breathitt Gray
+On Sun, Jan 28, 2018 at 07:31:58PM +0200, Andy Shevchenko wrote:
+> On Mon, Jan 22, 2018 at 7:04 AM, Jonathan Neusch=C3=A4fer
+> <j.neuschaefer@gmx.net> wrote:
+>=20
+> Style issues below.
+>=20
+> > +#define HW_GPIO_OWNER          0x3c
+> > +
+> > +
+> > +struct hlwd_gpio {
+>=20
+> No need extra empty line in between.
+
+Ok.
+
+> > +       struct gpio_chip gpioc;
+> > +       void __iomem *regs;
+> > +       struct device *dev;
+> > +};
+> > +
+> > +static int hlwd_gpio_probe(struct platform_device *pdev)
+> > +{
+> > +       struct hlwd_gpio *hlwd;
+> > +       struct resource *regs_resource;
+> > +       u32 ngpios;
+> > +       int res;
+> > +
+> > +       hlwd =3D devm_kzalloc(&pdev->dev, sizeof(*hlwd), GFP_KERNEL);
+> > +       if (!hlwd)
+> > +               return -ENOMEM;
+> > +
+>=20
+> > +       /* Save the struct device pointer so dev_info, etc. can be used=
+=2E */
+>=20
+> Useless.
+
+Ok
+
+> > +       hlwd->dev =3D &pdev->dev;
+> > +
+>=20
+> > +       regs_resource =3D platform_get_resource(pdev, IORESOURCE_MEM, 0=
+);
+>=20
+> > +       if (IS_ERR(regs_resource))
+> > +               return PTR_ERR(regs_resource);
+> > +
+>=20
+> This is redundant. Below does it for ya.
+
+devm_ioremap_resource does not check if the resource argument is a
+negative error (which is what I'm trying to catch in the above code).
+But it seems that platform_get_resource can't return a negative error,
+so you're right. Thanks.
+
+>=20
+> > +       hlwd->regs =3D devm_ioremap_resource(&pdev->dev, regs_resource);
+> > +       if (IS_ERR(hlwd->regs))
+> > +               return PTR_ERR(hlwd->regs);
+>=20
+>=20
+> > +       res =3D bgpio_init(&hlwd->gpioc, &pdev->dev, 4,
+> > +                       hlwd->regs + HW_GPIOB_IN, hlwd->regs + HW_GPIOB=
+_OUT,
+> > +                       NULL, hlwd->regs + HW_GPIOB_DIR, NULL,
+> > +                       BGPIOF_BIG_ENDIAN_BYTE_ORDER);
+>=20
+> > +
+>=20
+> Remove this extra line.
+
+Ok.
+
+>=20
+> > +       if (res < 0) {
+> > +               dev_warn(hlwd->dev, "bgpio_init failed: %d\n", res);
+> > +               return res;
+> > +       }
+>=20
+> > +       if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios))
+> > +               ngpios =3D 32;
+>=20
+> A nit: I would rather go with
+> res =3D of_property_read(...);
+> if (res)
+>   ngpios =3D 32;
+
+Ok, I have no strong opinion on this, so I'll do what you suggest.
+
+
+Thanks,
+Jonathan Neusch=C3=A4fer
+
+--4afc2a2wktuivren
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAABAgAGBQJacYAtAAoJEAgwRJqO81/bVJgQAL1/2rgESM4tkvX4NJOLl1yv
+g01sSRRpfTSazmyCfLillW1n+cYVx2PVG0RWtwWUIqFUjqhQvkLETQGAhL2OUaWW
+1K3UmpGnlJy2Yp/lqunk5VVKUt8N5CAxl3uABoiq9voryacDoA5qC7YoOwaGvpAl
+6xGdL9HtHsRgziuSJrSl+bszeZnI2Q1k740t9TSwl14xGwUre3xjSDiXERlRupOM
+yQq6WvS/RsWkpW+AaYqMGacSuozT0dR3zIVGOGTc/onCNkDKLSasbzyY2/qmyx79
+zWINWza/AJnqWTuIZcUJPiODvYzBy9pg3l9hFJxrYwTpknbSC1vwFF9s3lh2Q9LI
+isyl5u/UKu1nuuSetNF7FHBMKooVakWKPyS1fJ4LDSv3qgSxWkqTC6PbYKsdgy4B
+oR7wy59l2hZLoShrpuF0ftTYeZ20Y7iBHG4o/Zu9PYBrKCS/sSLPBASV5ClfTyyd
+WrRmw84ovfMMLuYjoyumAaLCUzBurpt5VHjkKtIpkrNtc8TEoZvMqW5mjLeRD8Rg
+LMWfXi9jY8CAPsGfMU87jrd2Pdf1+QEOsROiFWIC7XpGs5wASEWySCI1+nylJkBE
+GKg3NVdIbHU1XdPH6LKXAwjpr/yUtqYCHF8dmzDtHCenf6VXETaZ5qq7HpdAzyGT
+21yVh2djBZ2XNXaucN+I
+=K7YI
+-----END PGP SIGNATURE-----
+
+--4afc2a2wktuivren--
