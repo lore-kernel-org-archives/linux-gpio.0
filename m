@@ -1,42 +1,41 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
-Date: Wed, 31 Jan 2018 10:01:59 +0800
-Message-ID: <CAMz4kuL9r+97_rDihgKD_TyNaDQ3aCk7go6e4mB24QOpovFYJg@mail.gmail.com>
-References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
- <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
- <CAHp75Vcig869pUQ5yK1b=GpXinhYkpw1q29OVKSs_7EqP4Hknw@mail.gmail.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v2 0/5] Change ISA_BUS_API dependency to selection
+Date: Tue, 30 Jan 2018 21:22:05 -0500
+Message-ID: <20180131022151.GA14668@sophia>
+References: <cover.1514578085.git.vilhelm.gray@gmail.com>
+ <CACRpkdbBA0DX22ZGSkQxi+euTSROPzsmLTvSPwY8peg6+7igFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vcig869pUQ5yK1b=GpXinhYkpw1q29OVKSs_7EqP4Hknw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:44370 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753035AbeAaCWb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jan 2018 21:22:31 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbBA0DX22ZGSkQxi+euTSROPzsmLTvSPwY8peg6+7igFQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, LINUXWATCHDOG <linux-watchdog@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Andy,
+On Tue, Jan 02, 2018 at 10:29:30AM +0100, Linus Walleij wrote:
+>On Fri, Dec 29, 2017 at 9:13 PM, William Breathitt Gray
+><vilhelm.gray@gmail.com> wrote:
+>
+>> Linus, please pickup this entire patchset through your GPIO subsystem
+>> tree; a recursive dependency error is present if these patches are
+>> cherry-picked (see https://lkml.org/lkml/2017/12/26/235), so they should
+>> be merged together in the same tree.
+>
+>OK I just need a bunch of ACKs so giving subsystem maintainers some
+>days to come back on this.
+>
+>Yours,
+>Linus Walleij
 
-On 31 January 2018 at 00:48, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> On Tue, Jan 30, 2018 at 2:07 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
->> each group contains 16 GPIOs. Each GPIO can set input/output and has
->> the interrupt capability.
->
->> +config GPIO_SPRD
->
->> +       bool "Spreadtrum GPIO support"
->
-> Either you have to put tristate here, or remove all redundant
-> module_*() and MODULE_*() macros.
+Hi Linus,
 
-I will remove module_*() and MODULE_*() macros in next version. Thanks
-for your comments.
+Do you have any objections to picking up this patchset now; or would you
+prefer to wait for some more input from the other maintainers?
 
->
-> Other than that looks fine to me, FWIW:
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->
-
--- 
-Baolin.wang
-Best Regards
+William Breathitt Gray
