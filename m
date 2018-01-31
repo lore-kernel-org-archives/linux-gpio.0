@@ -1,146 +1,43 @@
-From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: Re: [PATCH v2 3/6] gpio: Add GPIO driver for Nintendo Wii
-Date: Wed, 31 Jan 2018 09:37:17 +0100
-Message-ID: <20180131083717.xhwaepwd6qxeqncv@latitude>
-References: <20180122050411.32460-1-j.neuschaefer@gmx.net>
- <20180122050411.32460-4-j.neuschaefer@gmx.net>
- <CAHp75VcWshngZFuUp4hzYdD43HF7TZ1sRE3Dh+HckB5do1=gGw@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
+Date: Wed, 31 Jan 2018 16:23:35 +0200
+Message-ID: <CAHp75VcYQMYNmW9-MkOKA5TWV2JgNfqnUB22s1qB4Z0ZZbTG2g@mail.gmail.com>
+References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
+ <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
+ <CAHp75Vcig869pUQ5yK1b=GpXinhYkpw1q29OVKSs_7EqP4Hknw@mail.gmail.com> <CAMz4kuL9r+97_rDihgKD_TyNaDQ3aCk7go6e4mB24QOpovFYJg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4afc2a2wktuivren"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.21]:60558 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752006AbeAaIh1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 31 Jan 2018 03:37:27 -0500
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcWshngZFuUp4hzYdD43HF7TZ1sRE3Dh+HckB5do1=gGw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAMz4kuL9r+97_rDihgKD_TyNaDQ3aCk7go6e4mB24QOpovFYJg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" <linuxppc-dev@lists.ozlabs.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Albert Herranz <albert_herranz@yahoo.es>, Segher Boessenkool <segher@kernel.crashing.org>, Linus Walleij <linus.walleij@linaro.org>
 
+On Wed, Jan 31, 2018 at 4:01 AM, Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On 31 January 2018 at 00:48, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> On Tue, Jan 30, 2018 at 2:07 PM, Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>>> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
+>>> each group contains 16 GPIOs. Each GPIO can set input/output and has
+>>> the interrupt capability.
+>>
+>>> +config GPIO_SPRD
+>>
+>>> +       bool "Spreadtrum GPIO support"
+>>
+>> Either you have to put tristate here, or remove all redundant
+>> module_*() and MODULE_*() macros.
+>
+> I will remove module_*() and MODULE_*() macros in next version. Thanks
+> for your comments.
 
---4afc2a2wktuivren
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In that case you need to explain why driver can't be module. (And
+don't forget to replace module.h with init.h).
 
-Hi,
-
-On Sun, Jan 28, 2018 at 07:31:58PM +0200, Andy Shevchenko wrote:
-> On Mon, Jan 22, 2018 at 7:04 AM, Jonathan Neusch=C3=A4fer
-> <j.neuschaefer@gmx.net> wrote:
->=20
-> Style issues below.
->=20
-> > +#define HW_GPIO_OWNER          0x3c
-> > +
-> > +
-> > +struct hlwd_gpio {
->=20
-> No need extra empty line in between.
-
-Ok.
-
-> > +       struct gpio_chip gpioc;
-> > +       void __iomem *regs;
-> > +       struct device *dev;
-> > +};
-> > +
-> > +static int hlwd_gpio_probe(struct platform_device *pdev)
-> > +{
-> > +       struct hlwd_gpio *hlwd;
-> > +       struct resource *regs_resource;
-> > +       u32 ngpios;
-> > +       int res;
-> > +
-> > +       hlwd =3D devm_kzalloc(&pdev->dev, sizeof(*hlwd), GFP_KERNEL);
-> > +       if (!hlwd)
-> > +               return -ENOMEM;
-> > +
->=20
-> > +       /* Save the struct device pointer so dev_info, etc. can be used=
-=2E */
->=20
-> Useless.
-
-Ok
-
-> > +       hlwd->dev =3D &pdev->dev;
-> > +
->=20
-> > +       regs_resource =3D platform_get_resource(pdev, IORESOURCE_MEM, 0=
-);
->=20
-> > +       if (IS_ERR(regs_resource))
-> > +               return PTR_ERR(regs_resource);
-> > +
->=20
-> This is redundant. Below does it for ya.
-
-devm_ioremap_resource does not check if the resource argument is a
-negative error (which is what I'm trying to catch in the above code).
-But it seems that platform_get_resource can't return a negative error,
-so you're right. Thanks.
-
->=20
-> > +       hlwd->regs =3D devm_ioremap_resource(&pdev->dev, regs_resource);
-> > +       if (IS_ERR(hlwd->regs))
-> > +               return PTR_ERR(hlwd->regs);
->=20
->=20
-> > +       res =3D bgpio_init(&hlwd->gpioc, &pdev->dev, 4,
-> > +                       hlwd->regs + HW_GPIOB_IN, hlwd->regs + HW_GPIOB=
-_OUT,
-> > +                       NULL, hlwd->regs + HW_GPIOB_DIR, NULL,
-> > +                       BGPIOF_BIG_ENDIAN_BYTE_ORDER);
->=20
-> > +
->=20
-> Remove this extra line.
-
-Ok.
-
->=20
-> > +       if (res < 0) {
-> > +               dev_warn(hlwd->dev, "bgpio_init failed: %d\n", res);
-> > +               return res;
-> > +       }
->=20
-> > +       if (of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpios))
-> > +               ngpios =3D 32;
->=20
-> A nit: I would rather go with
-> res =3D of_property_read(...);
-> if (res)
->   ngpios =3D 32;
-
-Ok, I have no strong opinion on this, so I'll do what you suggest.
-
-
-Thanks,
-Jonathan Neusch=C3=A4fer
-
---4afc2a2wktuivren
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAABAgAGBQJacYAtAAoJEAgwRJqO81/bVJgQAL1/2rgESM4tkvX4NJOLl1yv
-g01sSRRpfTSazmyCfLillW1n+cYVx2PVG0RWtwWUIqFUjqhQvkLETQGAhL2OUaWW
-1K3UmpGnlJy2Yp/lqunk5VVKUt8N5CAxl3uABoiq9voryacDoA5qC7YoOwaGvpAl
-6xGdL9HtHsRgziuSJrSl+bszeZnI2Q1k740t9TSwl14xGwUre3xjSDiXERlRupOM
-yQq6WvS/RsWkpW+AaYqMGacSuozT0dR3zIVGOGTc/onCNkDKLSasbzyY2/qmyx79
-zWINWza/AJnqWTuIZcUJPiODvYzBy9pg3l9hFJxrYwTpknbSC1vwFF9s3lh2Q9LI
-isyl5u/UKu1nuuSetNF7FHBMKooVakWKPyS1fJ4LDSv3qgSxWkqTC6PbYKsdgy4B
-oR7wy59l2hZLoShrpuF0ftTYeZ20Y7iBHG4o/Zu9PYBrKCS/sSLPBASV5ClfTyyd
-WrRmw84ovfMMLuYjoyumAaLCUzBurpt5VHjkKtIpkrNtc8TEoZvMqW5mjLeRD8Rg
-LMWfXi9jY8CAPsGfMU87jrd2Pdf1+QEOsROiFWIC7XpGs5wASEWySCI1+nylJkBE
-GKg3NVdIbHU1XdPH6LKXAwjpr/yUtqYCHF8dmzDtHCenf6VXETaZ5qq7HpdAzyGT
-21yVh2djBZ2XNXaucN+I
-=K7YI
------END PGP SIGNATURE-----
-
---4afc2a2wktuivren--
+-- 
+With Best Regards,
+Andy Shevchenko
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
