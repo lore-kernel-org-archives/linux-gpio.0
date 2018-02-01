@@ -1,186 +1,109 @@
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
 Subject: Re: [PATCH 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
-Date: Thu, 1 Feb 2018 13:17:53 +0100
-Message-ID: <20180201121753.GB690@gmail.com>
+Date: Thu, 1 Feb 2018 13:22:30 +0100
+Message-ID: <20180201122230.GC690@gmail.com>
 References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
  <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
+ <CAHp75Vcig869pUQ5yK1b=GpXinhYkpw1q29OVKSs_7EqP4Hknw@mail.gmail.com>
+ <CAMz4kuL9r+97_rDihgKD_TyNaDQ3aCk7go6e4mB24QOpovFYJg@mail.gmail.com>
+ <CAHp75VcYQMYNmW9-MkOKA5TWV2JgNfqnUB22s1qB4Z0ZZbTG2g@mail.gmail.com>
+ <CAMz4kuLO=zRqg72=7dC2fLHyVcEOcsU0PqiZM8XEYC3TGT1fYA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
+        protocol="application/pgp-signature"; boundary="xo44VMWPx7vlQ2+2"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:37750 "EHLO
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:37064 "EHLO
         mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751949AbeBAMR6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Feb 2018 07:17:58 -0500
+        with ESMTP id S1752453AbeBAMWf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Feb 2018 07:22:35 -0500
 Content-Disposition: inline
-In-Reply-To: <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
+In-Reply-To: <CAMz4kuLO=zRqg72=7dC2fLHyVcEOcsU0PqiZM8XEYC3TGT1fYA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Baolin Wang <baolin.wang@linaro.org>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 
 
---ZoaI/ZTpAVc4A5k6
+--xo44VMWPx7vlQ2+2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Baolin,
-
-On Tue, Jan 30, 2018 at 08:07:43PM +0800, Baolin Wang wrote:
-> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
-> each group contains 16 GPIOs. Each GPIO can set input/output and has
-> the interrupt capability.
+On Thu, Feb 01, 2018 at 11:08:46AM +0800, Baolin Wang wrote:
+> On 31 January 2018 at 22:23, Andy Shevchenko <andy.shevchenko@gmail.com> =
+wrote:
+> > On Wed, Jan 31, 2018 at 4:01 AM, Baolin Wang <baolin.wang@linaro.org> w=
+rote:
+> >> On 31 January 2018 at 00:48, Andy Shevchenko <andy.shevchenko@gmail.co=
+m> wrote:
+> >>> On Tue, Jan 30, 2018 at 2:07 PM, Baolin Wang <baolin.wang@linaro.org>=
+ wrote:
+> >>>> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
+> >>>> each group contains 16 GPIOs. Each GPIO can set input/output and has
+> >>>> the interrupt capability.
+> >>>
+> >>>> +config GPIO_SPRD
+> >>>
+> >>>> +       bool "Spreadtrum GPIO support"
+> >>>
+> >>> Either you have to put tristate here, or remove all redundant
+> >>> module_*() and MODULE_*() macros.
+> >>
+> >> I will remove module_*() and MODULE_*() macros in next version. Thanks
+> >> for your comments.
+> >
+> > In that case you need to explain why driver can't be module. (And
+> > don't forget to replace module.h with init.h).
 >=20
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
-> diff --git a/drivers/gpio/gpio-sprd.c b/drivers/gpio/gpio-sprd.c
-> new file mode 100644
-> index 0000000..af59b9f
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-sprd.c
-> @@ -0,0 +1,301 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 Spreadtrum Communications Inc.
-> + * Copyright (c) 2018 Linaro Ltd.
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/spinlock.h>
-> +
-> +/* GPIO registers definition */
-> +#define SPRD_GPIO_DATA		0x0
-> +#define SPRD_GPIO_DMSK		0x4
-> +#define SPRD_GPIO_DIR		0x8
-> +#define SPRD_GPIO_IS		0xc
-> +#define SPRD_GPIO_IBE		0x10
-> +#define SPRD_GPIO_IEV		0x14
-> +#define SPRD_GPIO_IE		0x18
-> +#define SPRD_GPIO_RIS		0x1c
-> +#define SPRD_GPIO_MIS		0x20
-> +#define SPRD_GPIO_IC		0x24
-> +#define SPRD_GPIO_INEN		0x28
-> +
-> +/* We have 16 groups GPIOs and each group contain 16 GPIOs */
-> +#define SPRD_GPIO_GROUP_NR	16
-> +#define SPRD_GPIO_NR		256
-> +#define SPRD_GPIO_GROUP_SIZE	0x80
-> +#define SPRD_GPIO_GROUP_MASK	GENMASK(15, 0)
-> +#define SPRD_GPIO_BIT(x)	((x) & (SPRD_GPIO_GROUP_NR - 1))
-> +
-> +struct sprd_gpio {
-> +	struct gpio_chip chip;
-> +	void __iomem *base;
-> +	spinlock_t lock;
-> +	int irq;
-> +};
-> +
-> +static inline void __iomem *sprd_gpio_group_base(struct sprd_gpio *sprd_=
-gpio,
-> +						 unsigned int group)
-> +{
-> +	return sprd_gpio->base + SPRD_GPIO_GROUP_SIZE * group;
-> +}
-> +
-> +static void sprd_gpio_update(struct gpio_chip *chip, unsigned int offset,
-> +			     unsigned int reg, unsigned int val)
-> +{
-> +	struct sprd_gpio *sprd_gpio =3D gpiochip_get_data(chip);
-> +	void __iomem *base =3D sprd_gpio_group_base(sprd_gpio,
-> +						  offset / SPRD_GPIO_GROUP_NR);
-> +	u32 shift =3D SPRD_GPIO_BIT(offset);
-> +	unsigned long flags;
-> +	u32 orig, tmp;
-> +
-> +	spin_lock_irqsave(&sprd_gpio->lock, flags);
-> +	orig =3D readl_relaxed(base + reg);
-> +
-> +	tmp =3D (orig & ~BIT(shift)) | (val << shift);
-> +	writel_relaxed(tmp, base + reg);
-> +	spin_unlock_irqrestore(&sprd_gpio->lock, flags);
-> +}
-> +
-> +static int sprd_gpio_read(struct gpio_chip *chip, unsigned int offset,
-> +			  unsigned int reg)
-> +{
-> +	struct sprd_gpio *sprd_gpio =3D gpiochip_get_data(chip);
-> +	void __iomem *base =3D sprd_gpio_group_base(sprd_gpio,
-> +						  offset / SPRD_GPIO_GROUP_NR);
-> +	u32 value =3D readl_relaxed(base + reg) & SPRD_GPIO_GROUP_MASK;
-> +	u32 shift =3D SPRD_GPIO_BIT(offset);
-> +
-> +	return !!(value & BIT(shift));
-> +}
-> +
-> +static int sprd_gpio_request(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +	sprd_gpio_update(chip, offset, SPRD_GPIO_DMSK, 1);
-> +	return 0;
-> +}
+> After more investigation, I found most GPIO dependencies can be
+> deferred to probe. So I will change the GPIO driver to module level
+> and change bool to tristate in next version.
 
-Better to change the function to void since the return value is not
-valueable.
+Then you could replace
 
-> +
-> +static void sprd_gpio_free(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +	sprd_gpio_update(chip, offset, SPRD_GPIO_DMSK, 0);
-> +}
-> +
-> +static int sprd_gpio_direction_input(struct gpio_chip *chip,
-> +				     unsigned int offset)
-> +{
-> +	sprd_gpio_update(chip, offset, SPRD_GPIO_DIR, 0);
-> +	sprd_gpio_update(chip, offset, SPRD_GPIO_INEN, 1);
-> +	return 0;
-> +}
++static int __init sprd_gpio_init(void)
++{
++       return platform_driver_register(&sprd_gpio_driver);
++}
++subsys_initcall(sprd_gpio_init);
++
++static void __exit sprd_gpio_exit(void)
++{
++       platform_driver_unregister(&sprd_gpio_driver);
++}
++module_exit(sprd_gpio_exit);
 
-Same here
+with
+
+module_platform_driver(sprd_gpio_driver);
+
+>=20
+> --=20
+> Baolin.wang
+> Best Regards
 
 
-> +
-> +static int sprd_gpio_direction_output(struct gpio_chip *chip,
-> +				      unsigned int offset, int value)
-> +{
-> +	sprd_gpio_update(chip, offset, SPRD_GPIO_DIR, 1);
-> +	sprd_gpio_update(chip, offset, SPRD_GPIO_INEN, 0);
-> +	sprd_gpio_update(chip, offset, SPRD_GPIO_DATA, value);
-> +	return 0;
-> +}
-
-and here.
-
-
-Thanks,
+Best regards
 Marcus Folkesson
 
-
-
-
---ZoaI/ZTpAVc4A5k6
+--xo44VMWPx7vlQ2+2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAlpzBWwACgkQiIBOb1ld
-UjIGng/9HW0QXWylsPPRhKII4zxA72gXQIwh7QPstYT+6pnfNc/zR0VMvPXGBA3X
-v8wS05JvKmQWmQDd9ZJHGw0m2PtYeJ3RybVsdqvXuYu8Tq6rZ/lolcoI1ljvzGIH
-z0vBaCHt4BP0jkVeiz2mtLBQoYaUBvbhOb/Kv5EYVz1Lffpn7Srmq4+cxcmwj6TH
-mbkCcMZ+E+ve7XFNl9Z0kjTQ9VNycur3etsITNoM/JeeuiHthDPwqvpX2s1QLcqC
-qZGoQbL1el4xvOr9m5y/9vqUAUjrAwAR46kbm4RdyPoUWDa5qdQYJNsot2Fb2Fqy
-MQL1K+tz/XrMt9mLmnY6dKvOwfLneZpCFtcceUqvfOUu+THZwAa32AoHIz60V8+o
-QN3gZTrBcIVvc3JNmQj6+rEbxpzDmh9YjJl6CpOin8VgyYUrt/F1p4D2HVvsT9VO
-/q8PF6ArsYrmJ41pdCltbP9HflJpMofTgC3r4OrKniG8YlvVGZz2qwnlmtJsQ45I
-MbCjPPF82A1F85r7zUIN0kxIpeQpb89lU9C97toUMzMsCxYt5IpBWSY1MqsRg2Qb
-BDeqwYpt/L0M/zRMVCcBtWe8x5DOgmQ0wVd6qxSrtApYWG9IlfqClEBD5enp7RJT
-3godEJ7c3lP5H3U8MvziMwIqd9LmFWOcz80cqfxe4yqbBzIHFTo=
-=yquO
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAlpzBoAACgkQiIBOb1ld
+UjLDLg//bbOVj4bi8CfryAT76NKZCO7XNQPOyt+ZgwrJKFJKCAMWvEj2cj54/Adp
+S7TdKbFRsXsD0mQXMJDpO4AbP+lkoLaEe88N0CkN4v6x+lxRAJUYXSeyLDjWY6pJ
+8L5GAufoNHp8PQunaxJzWetVbtrX6EaT7TTPU4Ogjy8oXM6DefxQj5wnCs5m2Xcw
+0VhjgMEi1lmrd3cN1cTPeQ3wMiwmms3UJmgt3vo3z4swSPfNLeBtYHeTKp3BwE3p
+JDHfPgVZ6sUNX2MD4XbmMiV0irG2t4l46mwc+77KfTmy+D3LSOQUi6JDMBw17WiB
+ywaqf7z0Fa8S/IVyaV6JZ/acM07barxax1a/g48xQdmGQ0LveiA+pr8Hq/TrRueM
+MAki2Ew68SGuOhC7/ZgsbfH1Q8wtwSNYO3HeSmxkdDjyspMjPp/pv0T/9EikKlI/
+s00SNyBfd2YsLqc5sAZy1ZQ11yEGmZ+ldCIvHhw83OQq6XAdiT+O08i8wICp6XcA
+c5esJCQj74STPRGqKcMJBs/duPyrKtKv7yycSPUY+RXQrcRztvAxB8FIgIpgi48B
+x8pN59yAjdazI1aPZdUA+3RAaENFR3ZmMH2X3LMkUvSy27tG3Qv/8pXNfsfMg3ic
+qjqOWpJAn9oaDKu46RTEsHRJzClPuPBXH30CXacJHxr4RIAaOdw=
+=6kpr
 -----END PGP SIGNATURE-----
 
---ZoaI/ZTpAVc4A5k6--
+--xo44VMWPx7vlQ2+2--
