@@ -1,86 +1,186 @@
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: Re: [PATCH] pinctrl: at91-pio4: add support for drive-strength
- property
-Date: Thu, 1 Feb 2018 10:50:21 +0100
-Message-ID: <20180201095021.GA2580@rfolt0960.corp.atmel.com>
-References: <20180118160208.16461-1-ludovic.desroches@microchip.com>
- <CACRpkdanweSmHd_M+feHauEHtvKSW+-W=djb186BFdbxTf20Jg@mail.gmail.com>
- <20180129190130.qjej6hmudszzbfdz@rob-hp-laptop>
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: Re: [PATCH 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
+Date: Thu, 1 Feb 2018 13:17:53 +0100
+Message-ID: <20180201121753.GB690@gmail.com>
+References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
+ <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:37750 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751949AbeBAMR6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Feb 2018 07:17:58 -0500
 Content-Disposition: inline
-In-Reply-To: <20180129190130.qjej6hmudszzbfdz@rob-hp-laptop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org
 
-On Mon, Jan 29, 2018 at 01:01:30PM -0600, Rob Herring wrote:
-> On Mon, Jan 22, 2018 at 09:37:38AM +0100, Linus Walleij wrote:
-> > On Thu, Jan 18, 2018 at 5:02 PM, Ludovic Desroches
-> > <ludovic.desroches@microchip.com> wrote:
-> > 
-> > > Add support for the drive-strength property. Usually its value is
-> > > expressed in mA. Since the numeric value depends on VDDIOP voltage,
-> > > the controller uses low, medium and high to define the drive-strengh.
-> > 
-> > Aha I see. That's complex. It certainly results in a certain mA drive
-> > strength in the end, but what you're saying is that this is not usually
-> > what we configure.
-> > 
-> > > The PIO controller accepts two values for the low drive: 0 or 1. Most
-> > > of the time, we don't care about the drive strength, there is no need
-> > > to change it, so 0 is considered as the default value.
-> > 
-> > Do you mean default value as in "whatever the hardware was set
-> > up as at boot time"?
-> > 
-> > > The low-drive
-> > > value won't be advertised through pinconf-pins file excepted if it
-> > 
-> > except?
-> > 
-> > > has been set explicitly in the device tree ie if its value is
-> > > different from 0.
-> > >
-> > > Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> > 
-> > OK I think I get it.
-> > 
-> > >  Optional properties:
-> > >  - GENERIC_PINCONFIG: generic pinconfig options to use, bias-disable,
-> > > -bias-pull-down, bias-pull-up, drive-open-drain, input-schmitt-enable,
-> > > -input-debounce, output-low, output-high.
-> > > +bias-pull-down, bias-pull-up, drive-open-drain, drive-strength,
-> > > +input-schmitt-enable, input-debounce, output-low, output-high.
-> > (...)
-> > > +                       drive-strength = <ATMEL_PIO_DRVSTR_LO>;
-> > 
-> > So you say you support this argument and it will be something like
-> > 
-> > include/dt-bindings/pinctrl/at91.h:#define ATMEL_PIO_DRVSTR_LO  1
-> > include/dt-bindings/pinctrl/at91.h:#define ATMEL_PIO_DRVSTR_ME  2
-> > include/dt-bindings/pinctrl/at91.h:#define ATMEL_PIO_DRVSTR_HI  3
-> > 
-> > But the definition if generic drive strength is actually in mA.
-> 
-> Yes, and the reason we put unit suffixes on properties is to avoid 
-> differing units.
->  
-> > I think it is OK to deviate from stating it in mA, but you should
-> > write this in the DT bindings so people do not get confused.
-> 
-> I don't think it is okay. If "drive-strength" doesn't work, then use 
-> a vendor specific property ("atmel,drive-strength"). Of course, I might 
-> forget this in the next version and tell you to use a standard property 
-> in mA. 
 
-Ok, so I am going to send the next version! The purpose is to keep using the
-generic pinconf parsing function.
-If I need to use "atmel,drive-strength" property, I assume I could
-manage it with custom_params, isn't it?
+--ZoaI/ZTpAVc4A5k6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards
+Hi Baolin,
 
-Ludovic
+On Tue, Jan 30, 2018 at 08:07:43PM +0800, Baolin Wang wrote:
+> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
+> each group contains 16 GPIOs. Each GPIO can set input/output and has
+> the interrupt capability.
+>=20
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+> diff --git a/drivers/gpio/gpio-sprd.c b/drivers/gpio/gpio-sprd.c
+> new file mode 100644
+> index 0000000..af59b9f
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-sprd.c
+> @@ -0,0 +1,301 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018 Spreadtrum Communications Inc.
+> + * Copyright (c) 2018 Linaro Ltd.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +
+> +/* GPIO registers definition */
+> +#define SPRD_GPIO_DATA		0x0
+> +#define SPRD_GPIO_DMSK		0x4
+> +#define SPRD_GPIO_DIR		0x8
+> +#define SPRD_GPIO_IS		0xc
+> +#define SPRD_GPIO_IBE		0x10
+> +#define SPRD_GPIO_IEV		0x14
+> +#define SPRD_GPIO_IE		0x18
+> +#define SPRD_GPIO_RIS		0x1c
+> +#define SPRD_GPIO_MIS		0x20
+> +#define SPRD_GPIO_IC		0x24
+> +#define SPRD_GPIO_INEN		0x28
+> +
+> +/* We have 16 groups GPIOs and each group contain 16 GPIOs */
+> +#define SPRD_GPIO_GROUP_NR	16
+> +#define SPRD_GPIO_NR		256
+> +#define SPRD_GPIO_GROUP_SIZE	0x80
+> +#define SPRD_GPIO_GROUP_MASK	GENMASK(15, 0)
+> +#define SPRD_GPIO_BIT(x)	((x) & (SPRD_GPIO_GROUP_NR - 1))
+> +
+> +struct sprd_gpio {
+> +	struct gpio_chip chip;
+> +	void __iomem *base;
+> +	spinlock_t lock;
+> +	int irq;
+> +};
+> +
+> +static inline void __iomem *sprd_gpio_group_base(struct sprd_gpio *sprd_=
+gpio,
+> +						 unsigned int group)
+> +{
+> +	return sprd_gpio->base + SPRD_GPIO_GROUP_SIZE * group;
+> +}
+> +
+> +static void sprd_gpio_update(struct gpio_chip *chip, unsigned int offset,
+> +			     unsigned int reg, unsigned int val)
+> +{
+> +	struct sprd_gpio *sprd_gpio =3D gpiochip_get_data(chip);
+> +	void __iomem *base =3D sprd_gpio_group_base(sprd_gpio,
+> +						  offset / SPRD_GPIO_GROUP_NR);
+> +	u32 shift =3D SPRD_GPIO_BIT(offset);
+> +	unsigned long flags;
+> +	u32 orig, tmp;
+> +
+> +	spin_lock_irqsave(&sprd_gpio->lock, flags);
+> +	orig =3D readl_relaxed(base + reg);
+> +
+> +	tmp =3D (orig & ~BIT(shift)) | (val << shift);
+> +	writel_relaxed(tmp, base + reg);
+> +	spin_unlock_irqrestore(&sprd_gpio->lock, flags);
+> +}
+> +
+> +static int sprd_gpio_read(struct gpio_chip *chip, unsigned int offset,
+> +			  unsigned int reg)
+> +{
+> +	struct sprd_gpio *sprd_gpio =3D gpiochip_get_data(chip);
+> +	void __iomem *base =3D sprd_gpio_group_base(sprd_gpio,
+> +						  offset / SPRD_GPIO_GROUP_NR);
+> +	u32 value =3D readl_relaxed(base + reg) & SPRD_GPIO_GROUP_MASK;
+> +	u32 shift =3D SPRD_GPIO_BIT(offset);
+> +
+> +	return !!(value & BIT(shift));
+> +}
+> +
+> +static int sprd_gpio_request(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	sprd_gpio_update(chip, offset, SPRD_GPIO_DMSK, 1);
+> +	return 0;
+> +}
+
+Better to change the function to void since the return value is not
+valueable.
+
+> +
+> +static void sprd_gpio_free(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	sprd_gpio_update(chip, offset, SPRD_GPIO_DMSK, 0);
+> +}
+> +
+> +static int sprd_gpio_direction_input(struct gpio_chip *chip,
+> +				     unsigned int offset)
+> +{
+> +	sprd_gpio_update(chip, offset, SPRD_GPIO_DIR, 0);
+> +	sprd_gpio_update(chip, offset, SPRD_GPIO_INEN, 1);
+> +	return 0;
+> +}
+
+Same here
+
+
+> +
+> +static int sprd_gpio_direction_output(struct gpio_chip *chip,
+> +				      unsigned int offset, int value)
+> +{
+> +	sprd_gpio_update(chip, offset, SPRD_GPIO_DIR, 1);
+> +	sprd_gpio_update(chip, offset, SPRD_GPIO_INEN, 0);
+> +	sprd_gpio_update(chip, offset, SPRD_GPIO_DATA, value);
+> +	return 0;
+> +}
+
+and here.
+
+
+Thanks,
+Marcus Folkesson
+
+
+
+
+--ZoaI/ZTpAVc4A5k6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAlpzBWwACgkQiIBOb1ld
+UjIGng/9HW0QXWylsPPRhKII4zxA72gXQIwh7QPstYT+6pnfNc/zR0VMvPXGBA3X
+v8wS05JvKmQWmQDd9ZJHGw0m2PtYeJ3RybVsdqvXuYu8Tq6rZ/lolcoI1ljvzGIH
+z0vBaCHt4BP0jkVeiz2mtLBQoYaUBvbhOb/Kv5EYVz1Lffpn7Srmq4+cxcmwj6TH
+mbkCcMZ+E+ve7XFNl9Z0kjTQ9VNycur3etsITNoM/JeeuiHthDPwqvpX2s1QLcqC
+qZGoQbL1el4xvOr9m5y/9vqUAUjrAwAR46kbm4RdyPoUWDa5qdQYJNsot2Fb2Fqy
+MQL1K+tz/XrMt9mLmnY6dKvOwfLneZpCFtcceUqvfOUu+THZwAa32AoHIz60V8+o
+QN3gZTrBcIVvc3JNmQj6+rEbxpzDmh9YjJl6CpOin8VgyYUrt/F1p4D2HVvsT9VO
+/q8PF6ArsYrmJ41pdCltbP9HflJpMofTgC3r4OrKniG8YlvVGZz2qwnlmtJsQ45I
+MbCjPPF82A1F85r7zUIN0kxIpeQpb89lU9C97toUMzMsCxYt5IpBWSY1MqsRg2Qb
+BDeqwYpt/L0M/zRMVCcBtWe8x5DOgmQ0wVd6qxSrtApYWG9IlfqClEBD5enp7RJT
+3godEJ7c3lP5H3U8MvziMwIqd9LmFWOcz80cqfxe4yqbBzIHFTo=
+=yquO
+-----END PGP SIGNATURE-----
+
+--ZoaI/ZTpAVc4A5k6--
