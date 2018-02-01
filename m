@@ -1,43 +1,66 @@
-From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
-Date: Wed, 31 Jan 2018 16:23:35 +0200
-Message-ID: <CAHp75VcYQMYNmW9-MkOKA5TWV2JgNfqnUB22s1qB4Z0ZZbTG2g@mail.gmail.com>
-References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
- <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
- <CAHp75Vcig869pUQ5yK1b=GpXinhYkpw1q29OVKSs_7EqP4Hknw@mail.gmail.com> <CAMz4kuL9r+97_rDihgKD_TyNaDQ3aCk7go6e4mB24QOpovFYJg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMz4kuL9r+97_rDihgKD_TyNaDQ3aCk7go6e4mB24QOpovFYJg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH v2 1/2] dt-bindings: gpio: Add Spreadtrum GPIO controller documentation
+Date: Thu,  1 Feb 2018 11:04:31 +0800
+Message-ID: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517453568.git.baolin.wang@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45807 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751163AbeBADFr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Jan 2018 22:05:47 -0500
+Received: by mail-pl0-f66.google.com with SMTP id p5so2408306plo.12
+        for <linux-gpio@vger.kernel.org>; Wed, 31 Jan 2018 19:05:47 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org
 
-On Wed, Jan 31, 2018 at 4:01 AM, Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On 31 January 2018 at 00:48, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> On Tue, Jan 30, 2018 at 2:07 PM, Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->>> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
->>> each group contains 16 GPIOs. Each GPIO can set input/output and has
->>> the interrupt capability.
->>
->>> +config GPIO_SPRD
->>
->>> +       bool "Spreadtrum GPIO support"
->>
->> Either you have to put tristate here, or remove all redundant
->> module_*() and MODULE_*() macros.
->
-> I will remove module_*() and MODULE_*() macros in next version. Thanks
-> for your comments.
+This patch adds the device tree bindings for the Spreadtrum
+GPIO controller. The gpios will be supported by the GPIO
+generic library.
 
-In that case you need to explain why driver can't be module. (And
-don't forget to replace module.h with init.h).
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes since v1:
+ - No updates.
+---
+ .../devicetree/bindings/gpio/gpio-sprd.txt         |   28 ++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sprd.txt
 
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+new file mode 100644
+index 0000000..eca97d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+@@ -0,0 +1,28 @@
++Spreadtrum GPIO controller bindings
++
++The controller's registers are organized as sets of sixteen 16-bit
++registers with each set controlling a bank of up to 16 pins. A single
++interrupt is shared for all of the banks handled by the controller.
++
++Required properties:
++- compatible: Should be "sprd,sc9860-gpio".
++- reg: Define the base and range of the I/O address space containing
++the GPIO controller registers.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be <2>. The first cell is the gpio number and
++the second cell is used to specify optional parameters.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be <2>. Specifies the number of cells needed
++to encode interrupt source.
++- interrupts: Should be the port interrupt shared by all the gpios.
++
++Example:
++	ap_gpio: gpio@40280000 {
++		compatible = "sprd,sc9860-gpio";
++		reg = <0 0x40280000 0 0x1000>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
++	};
 -- 
-With Best Regards,
-Andy Shevchenko
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.9.5
+
