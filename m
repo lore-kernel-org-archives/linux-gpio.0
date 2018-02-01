@@ -1,70 +1,87 @@
-From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
-Date: Thu, 1 Feb 2018 17:31:54 +0200
-Message-ID: <CAHp75VdYjz6f2wBXsTL1kf5z-jcM68sMhtmkdgJM+TiPZb=gww@mail.gmail.com>
-References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517453568.git.baolin.wang@linaro.org>
- <62ceed73b65399099ccd76fe6b7331bcd253b027.1517453569.git.baolin.wang@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <62ceed73b65399099ccd76fe6b7331bcd253b027.1517453569.git.baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: [PATCH v2 2/3] pinctrl: imx: allow to configure SION with generic pinconf
+Date: Thu,  1 Feb 2018 18:49:22 +0100
+Message-ID: <20180201174923.7385-2-l.stach@pengutronix.de>
+References: <20180201174923.7385-1-l.stach@pengutronix.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53007 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751567AbeBARt1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Feb 2018 12:49:27 -0500
+In-Reply-To: <20180201174923.7385-1-l.stach@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, "A . s . Dong" <aisheng.dong@nxp.com>, linux-imx@nxp.com, kernel@pengutronix.de, patchwork-lst@pengutronix.de
 
-On Thu, Feb 1, 2018 at 5:04 AM, Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
-> each group contains 16 GPIOs. Each GPIO can set input/output and has
-> the interrupt capability.
+The SION bit force enables the input buffer, overriding the configuration
+driven by the muxed module. It is not located in the pad config register,
+but in the mux register and thus needs special handling.
 
-Just noticed couple of more improvements you can do.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+v2: new patch in v2
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 19 +++++++------------
+ drivers/pinctrl/freescale/pinctrl-imx.h |  4 ++++
+ 2 files changed, 11 insertions(+), 12 deletions(-)
 
-> +       case IRQ_TYPE_EDGE_RISING:
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 1);
-> +               irq_set_handler_locked(data, handle_edge_irq);
-> +               break;
-> +       case IRQ_TYPE_EDGE_FALLING:
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 0);
-> +               irq_set_handler_locked(data, handle_edge_irq);
-> +               break;
-> +       case IRQ_TYPE_EDGE_BOTH:
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 0);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 1);
-> +               irq_set_handler_locked(data, handle_edge_irq);
-> +               break;
-> +       case IRQ_TYPE_LEVEL_HIGH:
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 1);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 1);
-> +               irq_set_handler_locked(data, handle_level_irq);
-> +               break;
-> +       case IRQ_TYPE_LEVEL_LOW:
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IS, 1);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IBE, 0);
-> +               sprd_gpio_update(chip, offset, SPRD_GPIO_IEV, 0);
-> +               irq_set_handler_locked(data, handle_level_irq);
-> +               break;
-> +       default:
-> +               return -EINVAL;
-
-I guess you can use fallthrough and reduce some lines, but I have no
-strong opinion which will look better.
-
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       sprd_gpio->base = devm_ioremap_nocache(&pdev->dev, res->start,
-> +                                              resource_size(res));
-
-Didn't notice before, why not to simple call devm_ioremap_resource() ?
-
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 24aaddd760a0..c976ffe7d47b 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -31,10 +31,6 @@
+ #include "../pinmux.h"
+ #include "pinctrl-imx.h"
+ 
+-/* The bits in CONFIG cell defined in binding doc*/
+-#define IMX_NO_PAD_CTL	0x80000000	/* no pin config need */
+-#define IMX_PAD_SION 0x40000000		/* set SION */
+-
+ static inline const struct group_desc *imx_pinctrl_find_group_by_name(
+ 				struct pinctrl_dev *pctldev,
+ 				const char *name)
+@@ -509,18 +505,17 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
+ 		pin->mux_mode = be32_to_cpu(*list++);
+ 		pin->input_val = be32_to_cpu(*list++);
+ 
+-		if (info->generic_pinconf) {
++		if (info->generic_pinconf)
+ 			/* generic pin config decoded */
+ 			pin->config = config;
+-		} else {
++		else
+ 			/* legacy pin config read from devicetree */
+-			config = be32_to_cpu(*list++);
++			pin->config = be32_to_cpu(*list++);
+ 
+-			/* SION bit is in mux register */
+-			if (config & IMX_PAD_SION)
+-				pin->mux_mode |= IOMUXC_CONFIG_SION;
+-			pin->config = config & ~IMX_PAD_SION;
+-		}
++		/* SION bit is in mux register */
++		if (pin->config & IMX_PAD_SION)
++			pin->mux_mode |= IOMUXC_CONFIG_SION;
++		pin->config = pin->config & ~IMX_PAD_SION;
+ 
+ 		dev_dbg(ipctl->dev, "%s: 0x%x 0x%08lx", info->pins[pin_id].name,
+ 				pin->mux_mode, pin->config);
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
+index 038e8c0e5b96..8e74ddc9cd8a 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.h
++++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+@@ -18,6 +18,10 @@
+ #include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/pinctrl/pinmux.h>
+ 
++/* The bits in CONFIG cell defined in binding doc*/
++#define IMX_NO_PAD_CTL	0x80000000	/* no pin config need */
++#define IMX_PAD_SION 0x40000000		/* set SION */
++
+ struct platform_device;
+ 
+ extern struct pinmux_ops imx_pmx_ops;
 -- 
-With Best Regards,
-Andy Shevchenko
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.15.1
+
