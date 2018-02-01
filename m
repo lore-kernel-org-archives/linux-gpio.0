@@ -1,7 +1,7 @@
-From: Baolin Wang <baolin.wang@linaro.org>
+From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
-Date: Thu, 1 Feb 2018 20:26:59 +0800
-Message-ID: <CAMz4ku+J7RwkthJn9TbYCuVYWnUyD8sCLs892G_SO=vWxr2ddA@mail.gmail.com>
+Date: Thu, 1 Feb 2018 17:12:50 +0200
+Message-ID: <CAHp75VdrSC6dePsebN36v4iigDa9o3996cm3Wu27CrAZBeSLgg@mail.gmail.com>
 References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang@linaro.org>
  <cccc1addb9c0cc541b676dbad005ec341d12d165.1517313987.git.baolin.wang@linaro.org>
  <CAHp75Vcig869pUQ5yK1b=GpXinhYkpw1q29OVKSs_7EqP4Hknw@mail.gmail.com>
@@ -10,62 +10,30 @@ References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517313987.git.baolin.wang
  <CAMz4kuLO=zRqg72=7dC2fLHyVcEOcsU0PqiZM8XEYC3TGT1fYA@mail.gmail.com> <20180201122230.GC690@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180201122230.GC690@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180201122230.GC690-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcus Folkesson <marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 1 February 2018 at 20:22, Marcus Folkesson
-<marcus.folkesson@gmail.com> wrote:
+On Thu, Feb 1, 2018 at 2:22 PM, Marcus Folkesson
+<marcus.folkesson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 > On Thu, Feb 01, 2018 at 11:08:46AM +0800, Baolin Wang wrote:
->> On 31 January 2018 at 22:23, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->> > On Wed, Jan 31, 2018 at 4:01 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> >> On 31 January 2018 at 00:48, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->> >>> On Tue, Jan 30, 2018 at 2:07 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> >>>> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
->> >>>> each group contains 16 GPIOs. Each GPIO can set input/output and has
->> >>>> the interrupt capability.
->> >>>
->> >>>> +config GPIO_SPRD
->> >>>
->> >>>> +       bool "Spreadtrum GPIO support"
->> >>>
->> >>> Either you have to put tristate here, or remove all redundant
->> >>> module_*() and MODULE_*() macros.
->> >>
->> >> I will remove module_*() and MODULE_*() macros in next version. Thanks
->> >> for your comments.
->> >
->> > In that case you need to explain why driver can't be module. (And
->> > don't forget to replace module.h with init.h).
->>
->> After more investigation, I found most GPIO dependencies can be
->> deferred to probe. So I will change the GPIO driver to module level
->> and change bool to tristate in next version.
->
+
 > Then you could replace
->
-> +static int __init sprd_gpio_init(void)
-> +{
-> +       return platform_driver_register(&sprd_gpio_driver);
-> +}
+
 > +subsys_initcall(sprd_gpio_init);
-> +
-> +static void __exit sprd_gpio_exit(void)
-> +{
-> +       platform_driver_unregister(&sprd_gpio_driver);
-> +}
-> +module_exit(sprd_gpio_exit);
->
-> with
->
+
 > module_platform_driver(sprd_gpio_driver);
 
-Yes, I already did this in V2 patch set, you can refer to the V2 patch
-set. Thanks.
+It's not an equivalent when built-in
+
 
 -- 
-Baolin.wang
-Best Regards
+With Best Regards,
+Andy Shevchenko
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
