@@ -1,70 +1,83 @@
 From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: [GIT PULL] pin control bulk changes for v4.16
-Date: Fri, 2 Feb 2018 14:56:51 -0800
-Message-ID: <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
+Date: Fri, 2 Feb 2018 16:44:14 -0800
+Message-ID: <CA+55aFztiKehjo7OQQFboAEfe_BrxJQG_5wxak2a_GdNBEFiMw@mail.gmail.com>
 References: <CACRpkdaTv4NBrRXeJE6dVi4W88+LZdsTCSzTHi0vdcKMW3Qfmw@mail.gmail.com>
+ <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="94eb2c1fd3acef0154056444200f"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34797 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751468AbeBBW4x (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Feb 2018 17:56:53 -0500
-In-Reply-To: <CACRpkdaTv4NBrRXeJE6dVi4W88+LZdsTCSzTHi0vdcKMW3Qfmw@mail.gmail.com>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:34125 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750773AbeBCAoR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Feb 2018 19:44:17 -0500
+In-Reply-To: <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 
-On Fri, Feb 2, 2018 at 5:28 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+--94eb2c1fd3acef0154056444200f
+Content-Type: text/plain; charset="UTF-8"
+
+On Fri, Feb 2, 2018 at 2:56 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> here is the big slew of changes in pin control for the v4.16 cycle.
+> so I would really prefer to speed up recompiles and just generally try
+> to avoid horrible header file inclusion by doing the same thing in
+> <linux/device.h>, adding just that
+>
+>     struct dev_pin_info;
+>
+> declaration, and removing the <linux/pinctrl/devinfo.h> include.
 
-So I pulled this, and then was surprised by how *everything* got
-rebuilt even though it only touched pinctl files.
+It turns out that some pinctl users seem to depend on this broken
+situation., with at least
 
-The reason for that seems to be that the pinctl pull got me this:
+  drivers/pinctrl/core.c
+  drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
+  drivers/pinctrl/pinctrl-ocelot.c
+  drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
 
-   include/linux/pinctrl/devinfo.h                    |    2 +
+expecting to magically get some of the pinctrl function declarations
+not through some pinctrl header file, but just from <linux/device.h>.
 
-and in include/linux/device.h we have
+Adding that include to <linux/pinctrl/pinctrl.h> would seem to make
+those happy and make 'allmodconfig' build for me.
 
-  #include <linux/pinctrl/devinfo.h>
+But I'm only testing x86-64. Can somebody test at least arm too?
 
-so pretty much *every* driver ends up depending on that silly two-line change.
+Stupid patch attached. I don't know how much this helps the insane
+dependency hell for <linux/pinctrl/devinfo.h>, but it's bound to help
+_some_.
 
-I *think* that the only reason that happens is because of this:
+Comments?
 
-  #ifdef CONFIG_PINCTRL
-          struct dev_pin_info     *pins;
-  #endif
+             Linus
 
-and honestly, that could be trivially done by just having a forward
-declaration, replacing the pinctrl/devinfo.h header include entirely.
+--94eb2c1fd3acef0154056444200f
+Content-Type: text/plain; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jd6msgxc0
 
-Ironically, that two-line change to pinctrl/devinfo.h was a forward
-declaration in the exact reverse direction:
-
-    +struct device;
-    +
-
-so I would really prefer to speed up recompiles and just generally try
-to avoid horrible header file inclusion by doing the same thing in
-<linux/device.h>, adding just that
-
-    struct dev_pin_info;
-
-declaration, and removing the <linux/pinctrl/devinfo.h> include.
-
-Hmm?
-
-I also wonder if there are any automated tools that try to find these
-kinds of crazy things. I suspect a lot of our build times is the poor
-compiler just reading and parsing header files over and over again,
-and a lot of them are probably not needed.
-
-A year ago, Ingo did patches limit some of the header file issues for
-the core headers (<linux/sched.h> in particular). Maybe he had
-tooling? Ingo?
-
-                  Linus
+IGluY2x1ZGUvbGludXgvZGV2aWNlLmggICAgICAgICAgfCAyICstCiBpbmNsdWRlL2xpbnV4L3Bp
+bmN0cmwvcGluY3RybC5oIHwgMSArCiAyIGZpbGVzIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwg
+MSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZGV2aWNlLmggYi9pbmNs
+dWRlL2xpbnV4L2RldmljZS5oCmluZGV4IGY2NDlmYzBjMjU3MS4uYjA5MzQwNWVkNTI1IDEwMDY0
+NAotLS0gYS9pbmNsdWRlL2xpbnV4L2RldmljZS5oCisrKyBiL2luY2x1ZGUvbGludXgvZGV2aWNl
+LmgKQEAgLTIwLDcgKzIwLDYgQEAKICNpbmNsdWRlIDxsaW51eC9jb21waWxlci5oPgogI2luY2x1
+ZGUgPGxpbnV4L3R5cGVzLmg+CiAjaW5jbHVkZSA8bGludXgvbXV0ZXguaD4KLSNpbmNsdWRlIDxs
+aW51eC9waW5jdHJsL2RldmluZm8uaD4KICNpbmNsdWRlIDxsaW51eC9wbS5oPgogI2luY2x1ZGUg
+PGxpbnV4L2F0b21pYy5oPgogI2luY2x1ZGUgPGxpbnV4L3JhdGVsaW1pdC5oPgpAQCAtNDEsNiAr
+NDAsNyBAQCBzdHJ1Y3QgZndub2RlX2hhbmRsZTsKIHN0cnVjdCBpb21tdV9vcHM7CiBzdHJ1Y3Qg
+aW9tbXVfZ3JvdXA7CiBzdHJ1Y3QgaW9tbXVfZndzcGVjOworc3RydWN0IGRldl9waW5faW5mbzsK
+IAogc3RydWN0IGJ1c19hdHRyaWJ1dGUgewogCXN0cnVjdCBhdHRyaWJ1dGUJYXR0cjsKZGlmZiAt
+LWdpdCBhL2luY2x1ZGUvbGludXgvcGluY3RybC9waW5jdHJsLmggYi9pbmNsdWRlL2xpbnV4L3Bp
+bmN0cmwvcGluY3RybC5oCmluZGV4IDVlNDUzODVjNWJkYy4uOGY1ZGJiODQ1NDdhIDEwMDY0NAot
+LS0gYS9pbmNsdWRlL2xpbnV4L3BpbmN0cmwvcGluY3RybC5oCisrKyBiL2luY2x1ZGUvbGludXgv
+cGluY3RybC9waW5jdHJsLmgKQEAgLTE4LDYgKzE4LDcgQEAKICNpbmNsdWRlIDxsaW51eC9saXN0
+Lmg+CiAjaW5jbHVkZSA8bGludXgvc2VxX2ZpbGUuaD4KICNpbmNsdWRlIDxsaW51eC9waW5jdHJs
+L3BpbmN0cmwtc3RhdGUuaD4KKyNpbmNsdWRlIDxsaW51eC9waW5jdHJsL2RldmluZm8uaD4KIAog
+c3RydWN0IGRldmljZTsKIHN0cnVjdCBwaW5jdHJsX2RldjsK
+--94eb2c1fd3acef0154056444200f--
