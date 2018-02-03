@@ -1,83 +1,45 @@
 From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: [GIT PULL] pin control bulk changes for v4.16
-Date: Fri, 2 Feb 2018 16:44:14 -0800
-Message-ID: <CA+55aFztiKehjo7OQQFboAEfe_BrxJQG_5wxak2a_GdNBEFiMw@mail.gmail.com>
+Date: Fri, 2 Feb 2018 16:51:05 -0800
+Message-ID: <CA+55aFzhp2QW9JeMwV6=W4skf0CW6E+Zg4K90n3Bo+yZmz485Q@mail.gmail.com>
 References: <CACRpkdaTv4NBrRXeJE6dVi4W88+LZdsTCSzTHi0vdcKMW3Qfmw@mail.gmail.com>
- <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
+ <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com> <CA+55aFztiKehjo7OQQFboAEfe_BrxJQG_5wxak2a_GdNBEFiMw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="94eb2c1fd3acef0154056444200f"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34125 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750773AbeBCAoR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Feb 2018 19:44:17 -0500
-In-Reply-To: <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34207 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752097AbeBCAvG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Feb 2018 19:51:06 -0500
+In-Reply-To: <CA+55aFztiKehjo7OQQFboAEfe_BrxJQG_5wxak2a_GdNBEFiMw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 
---94eb2c1fd3acef0154056444200f
-Content-Type: text/plain; charset="UTF-8"
-
-On Fri, Feb 2, 2018 at 2:56 PM, Linus Torvalds
+On Fri, Feb 2, 2018 at 4:44 PM, Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> so I would really prefer to speed up recompiles and just generally try
-> to avoid horrible header file inclusion by doing the same thing in
-> <linux/device.h>, adding just that
->
->     struct dev_pin_info;
->
-> declaration, and removing the <linux/pinctrl/devinfo.h> include.
+> Stupid patch attached. I don't know how much this helps the insane
+> dependency hell for <linux/pinctrl/devinfo.h>, but it's bound to help
+> _some_.
 
-It turns out that some pinctl users seem to depend on this broken
-situation., with at least
+Testing it, that patch definitely cuts down on recompiles after
 
-  drivers/pinctrl/core.c
-  drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-  drivers/pinctrl/pinctrl-ocelot.c
-  drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+     touch include/linux/pinctrl/devinfo.h
 
-expecting to magically get some of the pinctrl function declarations
-not through some pinctrl header file, but just from <linux/device.h>.
+a lot.
 
-Adding that include to <linux/pinctrl/pinctrl.h> would seem to make
-those happy and make 'allmodconfig' build for me.
+It still ends up rebuilding a fair amount of odd drivers, but now the
+files it rebuilds at least make _some_ sense.
 
-But I'm only testing x86-64. Can somebody test at least arm too?
+It used to really rebuild just about everything (because pretty much
+everything includes <linux/device.h>). Now it rebuilds various snd/soc
+files,gpio stuff and mmc/mfc stuff.
 
-Stupid patch attached. I don't know how much this helps the insane
-dependency hell for <linux/pinctrl/devinfo.h>, but it's bound to help
-_some_.
+I'm sure it could be improved upon still, but I think this is already
+a fairly noticeable improvement.
 
-Comments?
+One odd header include down. Ten million to go.
 
              Linus
-
---94eb2c1fd3acef0154056444200f
-Content-Type: text/plain; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jd6msgxc0
-
-IGluY2x1ZGUvbGludXgvZGV2aWNlLmggICAgICAgICAgfCAyICstCiBpbmNsdWRlL2xpbnV4L3Bp
-bmN0cmwvcGluY3RybC5oIHwgMSArCiAyIGZpbGVzIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwg
-MSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZGV2aWNlLmggYi9pbmNs
-dWRlL2xpbnV4L2RldmljZS5oCmluZGV4IGY2NDlmYzBjMjU3MS4uYjA5MzQwNWVkNTI1IDEwMDY0
-NAotLS0gYS9pbmNsdWRlL2xpbnV4L2RldmljZS5oCisrKyBiL2luY2x1ZGUvbGludXgvZGV2aWNl
-LmgKQEAgLTIwLDcgKzIwLDYgQEAKICNpbmNsdWRlIDxsaW51eC9jb21waWxlci5oPgogI2luY2x1
-ZGUgPGxpbnV4L3R5cGVzLmg+CiAjaW5jbHVkZSA8bGludXgvbXV0ZXguaD4KLSNpbmNsdWRlIDxs
-aW51eC9waW5jdHJsL2RldmluZm8uaD4KICNpbmNsdWRlIDxsaW51eC9wbS5oPgogI2luY2x1ZGUg
-PGxpbnV4L2F0b21pYy5oPgogI2luY2x1ZGUgPGxpbnV4L3JhdGVsaW1pdC5oPgpAQCAtNDEsNiAr
-NDAsNyBAQCBzdHJ1Y3QgZndub2RlX2hhbmRsZTsKIHN0cnVjdCBpb21tdV9vcHM7CiBzdHJ1Y3Qg
-aW9tbXVfZ3JvdXA7CiBzdHJ1Y3QgaW9tbXVfZndzcGVjOworc3RydWN0IGRldl9waW5faW5mbzsK
-IAogc3RydWN0IGJ1c19hdHRyaWJ1dGUgewogCXN0cnVjdCBhdHRyaWJ1dGUJYXR0cjsKZGlmZiAt
-LWdpdCBhL2luY2x1ZGUvbGludXgvcGluY3RybC9waW5jdHJsLmggYi9pbmNsdWRlL2xpbnV4L3Bp
-bmN0cmwvcGluY3RybC5oCmluZGV4IDVlNDUzODVjNWJkYy4uOGY1ZGJiODQ1NDdhIDEwMDY0NAot
-LS0gYS9pbmNsdWRlL2xpbnV4L3BpbmN0cmwvcGluY3RybC5oCisrKyBiL2luY2x1ZGUvbGludXgv
-cGluY3RybC9waW5jdHJsLmgKQEAgLTE4LDYgKzE4LDcgQEAKICNpbmNsdWRlIDxsaW51eC9saXN0
-Lmg+CiAjaW5jbHVkZSA8bGludXgvc2VxX2ZpbGUuaD4KICNpbmNsdWRlIDxsaW51eC9waW5jdHJs
-L3BpbmN0cmwtc3RhdGUuaD4KKyNpbmNsdWRlIDxsaW51eC9waW5jdHJsL2RldmluZm8uaD4KIAog
-c3RydWN0IGRldmljZTsKIHN0cnVjdCBwaW5jdHJsX2RldjsK
---94eb2c1fd3acef0154056444200f--
