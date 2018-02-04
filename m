@@ -1,225 +1,138 @@
-From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Subject: [PATCH v2 5/6] arm64: allwinner: h6: add the basical
- Allwinner H6 DTSI file
-Date: Sat,  3 Feb 2018 23:49:41 +0800
-Message-ID: <20180203154942.63566-6-icenowy@aosc.io>
-References: <20180203154942.63566-1-icenowy@aosc.io>
-Reply-To: icenowy-h8G6r0blFSE@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDS6XAN6ZADRBBFV27JQKGQEYVRHQEY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20180203154942.63566-1-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Subject: [PATCH/RFT v4] gpio: gpio-rcar: Support S2RAM
+Date: Mon,  5 Feb 2018 04:15:02 +0900
+Message-ID: <1517771702-16984-1-git-send-email-ykaneko0929@gmail.com>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with its
-memory map fully reworked and some high-speed peripherals (PCIe, USB
-3.0) introduced.
+From: Hien Dang <hien.dang.eb@renesas.com>
 
-This commit adds the basical DTSI file of it, including the clock
-support and UART support.
+This patch adds an implementation that saves and restores the state of
+GPIO configuration on suspend and resume.
 
-Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[Modify structure of the bank info to simplify a saving registers]
+[Remove DEV_PM_OPS macro]
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
-Changes in v2:
-- Add APB1 clock as PIO's APB clock.
-- Switched to SPDX license identifier.
 
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 178 +++++++++++++++++++++++++++
- 1 file changed, 178 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+This patch is based on the for-next branch of linux-gpio tree.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-new file mode 100644
-index 000000000000..d4697bb42496
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -0,0 +1,178 @@
-+/*
-+ * Copyright (C) 2017 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/sun50i-h6-ccu.h>
-+#include <dt-bindings/reset/sun50i-h6-ccu.h>
-+
-+/ {
-+	interrupt-parent = <&gic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <0>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu1: cpu@1 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <1>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu2: cpu@2 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu3: cpu@3 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <3>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	iosc: internal-osc-clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <16000000>;
-+		clock-accuracy = <300000000>;
-+		clock-output-names = "iosc";
-+	};
-+
-+	osc24M: osc24M_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "osc24M";
-+	};
-+
-+	osc32k: osc32k_clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		clock-output-names = "osc32k";
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+			     <GIC_PPI 14
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+			     <GIC_PPI 11
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+			     <GIC_PPI 10
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ccu: clock@3001000 {
-+			compatible = "allwinner,sun50i-h6-ccu";
-+			reg = <0x03001000 0x1000>;
-+			clocks = <&osc24M>, <&osc32k>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		gic: interrupt-controller@3021000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x03021000 0x1000>,
-+			      <0x03022000 0x2000>,
-+			      <0x03024000 0x2000>,
-+			      <0x03026000 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+		};
-+
-+		pio: pinctrl@300b000 {
-+			compatible = "allwinner,sun50i-h6-pinctrl";
-+			reg = <0x0300b000 0x400>;
-+			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_APB1>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
-+			gpio-controller;
-+			#gpio-cells = <3>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+
-+			uart0_ph_pins: uart0-ph {
-+				pins = "PH0", "PH1";
-+				function = "uart0";
-+			};
-+		};
-+
-+		uart0: serial@5000000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x05000000 0x400>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART0>;
-+			resets = <&ccu RST_BUS_UART0>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@5000400 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x05000400 0x400>;
-+			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART1>;
-+			resets = <&ccu RST_BUS_UART1>;
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@5000800 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x05000800 0x400>;
-+			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART2>;
-+			resets = <&ccu RST_BUS_UART2>;
-+			status = "disabled";
-+		};
-+
-+		uart3: serial@5000c00 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x05000c00 0x400>;
-+			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART3>;
-+			resets = <&ccu RST_BUS_UART3>;
-+			status = "disabled";
-+		};
-+	};
+v2 [Yoshihiro Kaneko]
+* Modify structure of the bank info as suggested by Geert Uytterhoeven
+
+v3 [Yoshihiro Kaneko]
+* Remove DEV_PM_OPS macro as suggested by Vladimir Zapolskiy
+
+v4 [Yoshihiro Kaneko]
+* As suggested by Geert Uytterhoeven
+  - make the name of all members of gpio_rcar_bank_info accord with the
+    name of the registers
+  - fix type of the 'offset' variable in unsigned int
+  - fix the inverted logic in gpio_rcar_resume()
+
+ drivers/gpio/gpio-rcar.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index e76de57..e5b0dbe 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -31,6 +31,16 @@
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
+ 
++struct gpio_rcar_bank_info {
++	u32 iointsel;
++	u32 inoutsel;
++	u32 outdt;
++	u32 posneg;
++	u32 edglevel;
++	u32 bothedge;
++	u32 intmsk;
 +};
++
+ struct gpio_rcar_priv {
+ 	void __iomem *base;
+ 	spinlock_t lock;
+@@ -41,6 +51,7 @@ struct gpio_rcar_priv {
+ 	unsigned int irq_parent;
+ 	bool has_both_edge_trigger;
+ 	bool needs_clk;
++	struct gpio_rcar_bank_info bank_info;
+ };
+ 
+ #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
+@@ -531,11 +542,66 @@ static int gpio_rcar_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int gpio_rcar_suspend(struct device *dev)
++{
++	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
++
++	p->bank_info.iointsel = gpio_rcar_read(p, IOINTSEL);
++	p->bank_info.inoutsel = gpio_rcar_read(p, INOUTSEL);
++	p->bank_info.outdt = gpio_rcar_read(p, OUTDT);
++	p->bank_info.intmsk = gpio_rcar_read(p, INTMSK);
++	p->bank_info.posneg = gpio_rcar_read(p, POSNEG);
++	p->bank_info.edglevel = gpio_rcar_read(p, EDGLEVEL);
++	if (p->has_both_edge_trigger)
++		p->bank_info.bothedge = gpio_rcar_read(p, BOTHEDGE);
++
++	return 0;
++}
++
++static int gpio_rcar_resume(struct device *dev)
++{
++	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
++	unsigned int offset;
++	u32 mask;
++
++	for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
++		mask = BIT(offset);
++		/* I/O pin */
++		if (!(p->bank_info.iointsel & mask)) {
++			if (p->bank_info.inoutsel & mask)
++				gpio_rcar_direction_output(
++					&p->gpio_chip, offset,
++					!!(p->bank_info.outdt & mask));
++			else
++				gpio_rcar_direction_input(&p->gpio_chip,
++							  offset);
++		} else {
++			/* Interrupt pin */
++			gpio_rcar_config_interrupt_input_mode(
++				p,
++				offset,
++				!(p->bank_info.posneg & mask),
++				!(p->bank_info.edglevel & mask),
++				!!(p->bank_info.bothedge & mask));
++
++			if (p->bank_info.intmsk & mask)
++				gpio_rcar_write(p, MSKCLR, mask);
++		}
++	}
++
++	return 0;
++}
++#endif /* CONFIG_PM_SLEEP*/
++
++static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops, gpio_rcar_suspend, gpio_rcar_resume);
++
+ static struct platform_driver gpio_rcar_device_driver = {
+ 	.probe		= gpio_rcar_probe,
+ 	.remove		= gpio_rcar_remove,
+ 	.driver		= {
+ 		.name	= "gpio_rcar",
++		.pm     = &gpio_rcar_pm_ops,
+ 		.of_match_table = of_match_ptr(gpio_rcar_of_table),
+ 	}
+ };
 -- 
-2.15.1
+1.9.1
