@@ -1,30 +1,86 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Subject: RE: [GIT PULL] pin control bulk changes for v4.16
-Date: Mon, 5 Feb 2018 10:09:36 +0000
-Message-ID: <b82adbc32e4444debb947582d3a8291c@AcuMS.aculab.com>
-References: <CACRpkdaTv4NBrRXeJE6dVi4W88+LZdsTCSzTHi0vdcKMW3Qfmw@mail.gmail.com>
- <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: add binding for i.MX8MQ IOMUXC
+Date: Mon, 05 Feb 2018 11:09:11 +0100
+Message-ID: <1517825351.3175.3.camel@pengutronix.de>
+References: <20180201174923.7385-1-l.stach@pengutronix.de>
+         <20180205060918.vm3q6ludepvqcuxm@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180205060918.vm3q6ludepvqcuxm@rob-hp-laptop>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "A . s . Dong" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>, linux-imx-3arQi8VN3Tc@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, patchwork-lst-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDIgRmVicnVhcnkgMjAxOCAyMjo1Nw0KLi4u
-DQo+IEkgYWxzbyB3b25kZXIgaWYgdGhlcmUgYXJlIGFueSBhdXRvbWF0ZWQgdG9vbHMgdGhhdCB0
-cnkgdG8gZmluZCB0aGVzZQ0KPiBraW5kcyBvZiBjcmF6eSB0aGluZ3MuIEkgc3VzcGVjdCBhIGxv
-dCBvZiBvdXIgYnVpbGQgdGltZXMgaXMgdGhlIHBvb3INCj4gY29tcGlsZXIganVzdCByZWFkaW5n
-IGFuZCBwYXJzaW5nIGhlYWRlciBmaWxlcyBvdmVyIGFuZCBvdmVyIGFnYWluLA0KPiBhbmQgYSBs
-b3Qgb2YgdGhlbSBhcmUgcHJvYmFibHkgbm90IG5lZWRlZC4NCg0KSSd2ZSBjb3VudGVkIHN5c3Rl
-bSBjYWxscyBkdXJpbmcgYSBOZXRCU0Qga2VybmVsIGJ1aWxkLCBJIGltYWdpbmUgTGludXggaXMN
-Cm11Y2ggdGhlIHNhbWUuDQpNb3N0IG9mIHRoZSBjYWxscyB3ZXJlIG9wZW4oKSwgYW5kIG1vc3Qg
-b2YgdGhvc2UgZmFpbGluZyBvcGVucy4NCkkgc3VzcGVjdGVkIHRoYXQgbW9zdCBjYW1lIGZyb20g
-c2VhcmNoaW5nIHRoZSAtSSBwYXRoIHRvIGZpbmQgaGVhZGVycy4NCkJ1aWxkIG92ZXIgTkZTIGFu
-ZCB0aGUgY29zdCBpcyBldmVuIG1vcmUgc2lnbmlmaWNhbnQgKGV2ZXJ5IGRpcmVjdG9yeQ0KbmFt
-ZSBpbiB0aGUgcGF0aCAodXNlZCB0bykgcmVxdWlyZSBhbiBORlMgbWVzc2FnZSBleGNoYW5nZSku
-DQoNCglEYXZpZA0KDQo=
+Am Montag, den 05.02.2018, 00:09 -0600 schrieb Rob Herring:
+> On Thu, Feb 01, 2018 at 06:49:21PM +0100, Lucas Stach wrote:
+> > This adds the binding for the i.MX8MQ pin controller, in the same
+> > fashion as earlier i.MX SoCs.
+> > 
+> > > > Signed-off-by: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> > ---
+> > v2: switch to generic pinconf properties
+> > ---
+> >  .../bindings/pinctrl/fsl,imx8mq-pinctrl.txt        | 39 ++++++++++++++++++++++
+> >  1 file changed, 39 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+> > new file mode 100644
+> > index 000000000000..5c5d2d835d05
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+> > @@ -0,0 +1,39 @@
+> > +* Freescale IMX8MQ IOMUX Controller
+> > +
+> > +Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
+> > +for common binding part and usage.
+> > +
+> > +=== Pin Controller Node ===
+> > +
+> > +Required properties:
+> > +- compatible: "fsl,imx8mq-iomuxc"
+> > +- reg: Must contain the base physical address and size of the iomuxc registers.
+> > +
+> > +=== Pin Configuration Node ===
+> > +Required properties:
+> > +- pinmux: Array of integersy, representing a group of pins mux setting.
+> > > > +	The format is pinmux = <PIN_FUNC_ID>, PIN_FUNC_ID is a pin working on
+> > > > +	a specific function.
+> > +
+> > > > +	Refer to imx8mq-pinfunc.h in device tree source folder for all available
+> > > > +	imx8mq PIN_FUNC_ID.
+> > +
+> > +Optional Properties:
+> > +- drive-strength		Integer: controls Drive Strength
+> 
+> I thought drive-strength is supposed to be be in mA. We should not have 
+> differing units in common properties. 
+> 
+> There was an Atmel binding the other day that this came up.
+
+I know it's in the common binding, but it's going to be very hard to
+support. The drive-strength in mA really depends on external loading of
+the pin and the pin voltage, at least for the most widespread
+controllers that only switch between resistors, instead of driving the
+pin by a current regulator.
+So we would need much more information, which doesn't really seem
+practical.
+
+I would much prefer if we just remove unit from the common binding and
+let the drivers define it in a way that fits their hardware
+description.
+
+It's the same thing with the slew-rate really, but the common binding
+didn't make the mistake to define a single unit there, with many
+pincontrollers being really vague about how fast the slew really is,
+but some may actually define it in uS or whatever else makes sense.
+
+Regards,
+Lucas
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
