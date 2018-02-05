@@ -1,83 +1,87 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] net: mediatek: Explicitly include pinctrl headers
-Date: Mon, 5 Feb 2018 20:08:58 +0100
-Message-ID: <20180205190858.GA22699@ulmo>
-References: <20180205124750.19305-1-thierry.reding@gmail.com>
- <20180205125436.24005-1-thierry.reding@gmail.com>
- <CA+55aFy--bQRDZEUsBfiWhyP+Of3+s4zEcKo1T8cCoAMXBrwsw@mail.gmail.com>
- <20180205175906.GA8237@ulmo>
- <CACRpkdYrG6=qwJgOTW2ccyq-UBSOkH+EBBui54PtGqJF7CMRDw@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [GIT PULL] pin control bulk changes for v4.16
+Date: Mon, 5 Feb 2018 14:08:51 -0500
+Message-ID: <20180205190851.GD20138@windriver.com>
+References: <CACRpkdaTv4NBrRXeJE6dVi4W88+LZdsTCSzTHi0vdcKMW3Qfmw@mail.gmail.com>
+ <CA+55aFzMBptQt-QHMR0MM9MA3=1rxcf8ca5qHxrf4Mm0ZobE_A@mail.gmail.com>
+ <CA+55aFztiKehjo7OQQFboAEfe_BrxJQG_5wxak2a_GdNBEFiMw@mail.gmail.com>
+ <CA+55aFzhp2QW9JeMwV6=W4skf0CW6E+Zg4K90n3Bo+yZmz485Q@mail.gmail.com>
+ <CACRpkdZGABVtdF1HWHfx-5JPyaEhtt+Q_sjM=bkJu6cZ5WfPCA@mail.gmail.com>
+ <alpine.DEB.2.20.1802051023540.3292@hadrien>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:39608 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753769AbeBETJF (ORCPT
+Received: from mail.windriver.com ([147.11.1.11]:45999 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753780AbeBETJF (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Feb 2018 14:09:05 -0500
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYrG6=qwJgOTW2ccyq-UBSOkH+EBBui54PtGqJF7CMRDw@mail.gmail.com>
+In-Reply-To: <alpine.DEB.2.20.1802051023540.3292@hadrien>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-gpio@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
 
+[Re: [GIT PULL] pin control bulk changes for v4.16] On 05/02/2018 (Mon 10:27) Julia Lawall wrote:
 
---gBBFr7Ir9EOA20Yy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> 
+> 
+> On Mon, 5 Feb 2018, Linus Walleij wrote:
+> 
 
-On Mon, Feb 05, 2018 at 08:02:40PM +0100, Linus Walleij wrote:
-> On Mon, Feb 5, 2018 at 6:59 PM, Thierry Reding <thierry.reding@gmail.com>=
- wrote:
->=20
-> > Anyway, I think going with the pinctrl/devinfo.h include only is fine
-> > for now. If it turns out that the Mediatek ethernet and Rockchip LVDS
-> > drivers can just omit the bits fiddling with struct dev_pin_info, we can
-> > swap out the pinctrl/devinfo.h include for pinctrl/consumer.h at that
-> > time.
+[...]
+
 > >
-> > LinusW: what are your thoughts on the struct dev_pin_info usage by these
-> > drivers? Does their code seem redundant to you, too?
->=20
-> I don't think they should use struct dev_pin_info at all,
-> that thing is for the device core only.
->=20
-> I like to think that <linux/pinctrl/consumer.h> is for drivers that
-> explicitly grab and control pin control states so this driver should
-> only include <linux/pinctrl/consumer.h>.
->=20
-> Torvalds: can you do it like that instead? Either way will
-> make the compile work again, we can also tidy it up later.
-> (i.e. I will grep for includes of pinctrl/dev_info.h and replace
-> it with consumer.h) at some point.
+> > Another thing that comes to mind was Paul Gortmaker's tedious
+> > work to remove #include <linux/module.h> from drivers that cannot
+> > be built as modules that happened in the last few months. 
 
-That won't work, unfortunately, because these drivers actually try to
-dereference pointers to struct dev_pin_info and hence need that include
-for the structure's definition. Those are the only two drivers I can see
-that access this structure directly (other than the device core).
+I also took aim at headers including giant headers ; see below.
 
-Thierry
+[...]
 
---gBBFr7Ir9EOA20Yy
-Content-Type: application/pgp-signature; name="signature.asc"
+> Could you explain more?  Is the point that you want to remove an include
+> but it has one declaration that you need, and so you want to bring it down
+> into the .c file?  Would the need for that actually indicate that the
+> include file is designed incorrectly?
 
------BEGIN PGP SIGNATURE-----
+I put a bit of an explanation in this commit:
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlp4q8gACgkQ3SOs138+
-s6GGvxAAsjt1fXB20kn8sxaZdlc3k6zxoxCyig77hTSS/NTeQfhziXbCrciRbGE7
-XjpWUkyWiJy/gSdW89tVbe4y4hbGlNjXf3hUqwI8CxFLH7HiVT/iNq0gIbPTspcb
-glqgG4vsIywLxSd062zjmPajQmGX/VR91ssbEjZIzlVTMfvKWIohX/GLaRiSx6gB
-HkD8yocJpB2ZnwrFLd1nXOKSVE6ALTK0hf3zk4SLJpqAjhM7F1wVLihsjqVjmh8I
-u3L1Cd62YEyWPBmruU9nB4RBjfrA00boKt6t3VRiSRUViyR4M5qVkg/BZ97syp/q
-V4gbbZ6M4ZaFg+QRuNQCEEhYg2iq8lLmTyWpxDM4PdHMFzxXx6a6tmNjtOMmvf8D
-NryeqiVETkPTexA2INK+J3O7/sYspdx4EXTuR34Bc1zhTFhkSjO9mqAboVHvvcX8
-e13kjtuopOumJbQzBLkpHSY7fJOIpZEhyctL17embWAmzm6GWFvdGNpdb1rB2GIP
-KvL/ZZP45q8UJ8m8G7P2DojCdGOZKPARkoRm0nn1tA7E0j/nlYZ7KzAORoZIFgvR
-Fbnvu0mwoi8B0i5W77PkMpcyuzeZJsCEZYaolFaRYdgVebJVJqz4Y5y2dktz8Zo2
-8Xte4GCsxGkvzi0OKQnS3+z7yJXsVTlz/L4E6duAGwZUMpLv/DY=
-=0Cf3
------END PGP SIGNATURE-----
+commit d47529b2e9fe0ec2eb1f072afad8849f52e385c4
+Author: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date:   Mon Sep 12 18:16:31 2016 -0400
 
---gBBFr7Ir9EOA20Yy--
+    gpio: don't include module.h in shared driver header
+    
+    Most shared headers in include/linux don't need to know what the
+    internals of a struct module are; all they care about is that it
+    is a struct and hence they may require a pointer to one.
+    
+    The advantage in this is that module.h is including a lot of stuff
+    itself, and an otherwise empty C file that just contains module.h
+    will result in ~750kB from CPP (compared to say 12kB from init.h)
+    
+    So we have approximately 50 instances of "struct module;" in the
+    various include/linux headers already that help us keep module.h
+    out of other headers; here we do the same for gpio.
+    
+    Cc: Linus Walleij <linus.walleij@linaro.org>
+    Cc: Alexandre Courbot <gnurou@gmail.com>
+    Cc: linux-gpio@vger.kernel.org
+    Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+I'm sure I've got more of these type of commits sitting around locally,
+unfortunately there have been other "interesting" things going on in the
+linux world in the last month that have prevented me from touching any
+of them.  :-/
+
+Paul.
+--
+
+> 
+> Can one assume that each include is self contained, ie it includes the
+> things that it needs and does not rely on the .c file having included
+> other things beforehand?
+> 
+> julia
