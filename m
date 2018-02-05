@@ -1,138 +1,64 @@
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: [PATCH/RFT v4] gpio: gpio-rcar: Support S2RAM
-Date: Mon,  5 Feb 2018 04:15:02 +0900
-Message-ID: <1517771702-16984-1-git-send-email-ykaneko0929@gmail.com>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org
+From: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v3 1/2] dt-bindings: gpio: Add Spreadtrum GPIO controller documentation
+Date: Mon,  5 Feb 2018 09:55:10 +0800
+Message-ID: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517795460.git.baolin.wang@linaro.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Hien Dang <hien.dang.eb@renesas.com>
+This patch adds the device tree bindings for the Spreadtrum
+GPIO controller. The gpios will be supported by the GPIO
+generic library.
 
-This patch adds an implementation that saves and restores the state of
-GPIO configuration on suspend and resume.
-
-Signed-off-by: Hien Dang <hien.dang.eb@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Modify structure of the bank info to simplify a saving registers]
-[Remove DEV_PM_OPS macro]
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
+Changes since v1:
+ - No updates.
+---
+ .../devicetree/bindings/gpio/gpio-sprd.txt         |   28 ++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sprd.txt
 
-This patch is based on the for-next branch of linux-gpio tree.
-
-v2 [Yoshihiro Kaneko]
-* Modify structure of the bank info as suggested by Geert Uytterhoeven
-
-v3 [Yoshihiro Kaneko]
-* Remove DEV_PM_OPS macro as suggested by Vladimir Zapolskiy
-
-v4 [Yoshihiro Kaneko]
-* As suggested by Geert Uytterhoeven
-  - make the name of all members of gpio_rcar_bank_info accord with the
-    name of the registers
-  - fix type of the 'offset' variable in unsigned int
-  - fix the inverted logic in gpio_rcar_resume()
-
- drivers/gpio/gpio-rcar.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
-
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index e76de57..e5b0dbe 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -31,6 +31,16 @@
- #include <linux/spinlock.h>
- #include <linux/slab.h>
- 
-+struct gpio_rcar_bank_info {
-+	u32 iointsel;
-+	u32 inoutsel;
-+	u32 outdt;
-+	u32 posneg;
-+	u32 edglevel;
-+	u32 bothedge;
-+	u32 intmsk;
-+};
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+new file mode 100644
+index 0000000..eca97d4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-sprd.txt
+@@ -0,0 +1,28 @@
++Spreadtrum GPIO controller bindings
 +
- struct gpio_rcar_priv {
- 	void __iomem *base;
- 	spinlock_t lock;
-@@ -41,6 +51,7 @@ struct gpio_rcar_priv {
- 	unsigned int irq_parent;
- 	bool has_both_edge_trigger;
- 	bool needs_clk;
-+	struct gpio_rcar_bank_info bank_info;
- };
- 
- #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
-@@ -531,11 +542,66 @@ static int gpio_rcar_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int gpio_rcar_suspend(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
++The controller's registers are organized as sets of sixteen 16-bit
++registers with each set controlling a bank of up to 16 pins. A single
++interrupt is shared for all of the banks handled by the controller.
 +
-+	p->bank_info.iointsel = gpio_rcar_read(p, IOINTSEL);
-+	p->bank_info.inoutsel = gpio_rcar_read(p, INOUTSEL);
-+	p->bank_info.outdt = gpio_rcar_read(p, OUTDT);
-+	p->bank_info.intmsk = gpio_rcar_read(p, INTMSK);
-+	p->bank_info.posneg = gpio_rcar_read(p, POSNEG);
-+	p->bank_info.edglevel = gpio_rcar_read(p, EDGLEVEL);
-+	if (p->has_both_edge_trigger)
-+		p->bank_info.bothedge = gpio_rcar_read(p, BOTHEDGE);
++Required properties:
++- compatible: Should be "sprd,sc9860-gpio".
++- reg: Define the base and range of the I/O address space containing
++the GPIO controller registers.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be <2>. The first cell is the gpio number and
++the second cell is used to specify optional parameters.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be <2>. Specifies the number of cells needed
++to encode interrupt source.
++- interrupts: Should be the port interrupt shared by all the gpios.
 +
-+	return 0;
-+}
-+
-+static int gpio_rcar_resume(struct device *dev)
-+{
-+	struct gpio_rcar_priv *p = dev_get_drvdata(dev);
-+	unsigned int offset;
-+	u32 mask;
-+
-+	for (offset = 0; offset < p->gpio_chip.ngpio; offset++) {
-+		mask = BIT(offset);
-+		/* I/O pin */
-+		if (!(p->bank_info.iointsel & mask)) {
-+			if (p->bank_info.inoutsel & mask)
-+				gpio_rcar_direction_output(
-+					&p->gpio_chip, offset,
-+					!!(p->bank_info.outdt & mask));
-+			else
-+				gpio_rcar_direction_input(&p->gpio_chip,
-+							  offset);
-+		} else {
-+			/* Interrupt pin */
-+			gpio_rcar_config_interrupt_input_mode(
-+				p,
-+				offset,
-+				!(p->bank_info.posneg & mask),
-+				!(p->bank_info.edglevel & mask),
-+				!!(p->bank_info.bothedge & mask));
-+
-+			if (p->bank_info.intmsk & mask)
-+				gpio_rcar_write(p, MSKCLR, mask);
-+		}
-+	}
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM_SLEEP*/
-+
-+static SIMPLE_DEV_PM_OPS(gpio_rcar_pm_ops, gpio_rcar_suspend, gpio_rcar_resume);
-+
- static struct platform_driver gpio_rcar_device_driver = {
- 	.probe		= gpio_rcar_probe,
- 	.remove		= gpio_rcar_remove,
- 	.driver		= {
- 		.name	= "gpio_rcar",
-+		.pm     = &gpio_rcar_pm_ops,
- 		.of_match_table = of_match_ptr(gpio_rcar_of_table),
- 	}
- };
++Example:
++	ap_gpio: gpio@40280000 {
++		compatible = "sprd,sc9860-gpio";
++		reg = <0 0x40280000 0 0x1000>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
++	};
 -- 
-1.9.1
+1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
