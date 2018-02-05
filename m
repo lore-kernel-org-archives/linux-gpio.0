@@ -1,68 +1,58 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: add binding for i.MX8MQ IOMUXC
-Date: Tue, 6 Feb 2018 00:13:49 +0100
-Message-ID: <CACRpkdanb3XocUpmTaFTh-vsApucX0PzuqRg_fA2ORUFtrVGJA@mail.gmail.com>
-References: <20180201174923.7385-1-l.stach@pengutronix.de> <20180205060918.vm3q6ludepvqcuxm@rob-hp-laptop>
- <1517825351.3175.3.camel@pengutronix.de>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: Add irq_enable callback for msm gpio
+Date: Mon, 5 Feb 2018 15:41:20 -0800
+Message-ID: <20180205234120.GG9465@builder>
+References: <1516626208-5655-1-git-send-email-sramana@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1517825351.3175.3.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "A . s . Dong" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>, linux-imx-3arQi8VN3Tc@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, patchwork-lst-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1516626208-5655-1-git-send-email-sramana@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Srinivas Ramana <sramana@codeaurora.org>
+Cc: linus.walleij@linaro.org, timur@codeaurora.org, sboyd@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 5, 2018 at 11:09 AM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+On Mon 22 Jan 05:03 PST 2018, Srinivas Ramana wrote:
+> +static void msm_gpio_irq_enable(struct irq_data *d)
+> +{
+> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> +	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
+> +	const struct msm_pingroup *g;
+> +	unsigned long flags;
+> +	u32 val;
+> +
+> +	g = &pctrl->soc->groups[d->hwirq];
+> +
+> +	raw_spin_lock_irqsave(&pctrl->lock, flags);
+> +
+> +	/*
+> +	 * clear the interrupt status bit before unmask to avoid
+> +	 * any erroneous interrupts that would have got latched
+> +	 * when the intterupt is not in use.
+> +	 */
+> +	val = readl(pctrl->regs + g->intr_status_reg);
+> +	val &= ~BIT(g->intr_status_bit);
+> +	writel(val, pctrl->regs + g->intr_status_reg);
+> +
+> +	val = readl(pctrl->regs + g->intr_cfg_reg);
+> +	val |= BIT(g->intr_enable_bit);
+> +	writel(val, pctrl->regs + g->intr_cfg_reg);
+> +
+> +	set_bit(d->hwirq, pctrl->enabled_irqs);
+> +
+> +	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> +}
 
->> > +Optional Properties:
->> > +- drive-strength           Integer: controls Drive Strength
->>
->> I thought drive-strength is supposed to be be in mA. We should not have
->> differing units in common properties.
->>
->> There was an Atmel binding the other day that this came up.
->
-> I know it's in the common binding, but it's going to be very hard to
-> support. The drive-strength in mA really depends on external loading of
-> the pin and the pin voltage, at least for the most widespread
-> controllers that only switch between resistors, instead of driving the
-> pin by a current regulator.
 
-How does this circuit really look? Can you sketch something so
-we understand what is going on electronically here?
+Hi Srinivas,
 
-The way I imagine most drive strength out there works is by simply
-connection more MOS-totempoles after each other and each of them
-has a production-technology-related max output current like 4mA, so
-by putting two in a series yoy double that to 8 mA.
+This makes sense, but I would prefer if you extract this code into a
+common:
 
-Is that what you mean with "current regulator"?
+static void __msm_gpio_irq_unmask(struct msm_pinctrl *pctrl, bool status_clear)
 
-If you mean rather "output impedance", that is something else and
-something we need a new (generic) property for. I never saw that
-before, really.
+which you call from the two callbacks.
 
-> I would much prefer if we just remove unit from the common binding and
-> let the drivers define it in a way that fits their hardware
-> description.
-
-Yeah but is this really the same thing even ...
-
-> It's the same thing with the slew-rate really, but the common binding
-> didn't make the mistake to define a single unit there, with many
-> pincontrollers being really vague about how fast the slew really is,
-> but some may actually define it in uS or whatever else makes sense.
-
-I agree with that. Also for skewrate and output time delays
-(skew delay).
-
-It's very unclear how cell libraries really implement this.
-But with drive strength I thought we knew it ...
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+Bjorn
