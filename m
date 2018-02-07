@@ -1,51 +1,36 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] gpio: serial: max310x: Use HW type for gpio_chip's label
-Date: Wed, 7 Feb 2018 06:23:51 -0800
-Message-ID: <20180207142351.GC29606@kroah.com>
-References: <b2421132df00569baa90af8f2d19ad75242e8c48.1516996724.git.jan.kundrat@cesnet.cz>
- <CACRpkdaCGmsyFGZm+2t7Vnptvi2PwFRXbq28iepDgYO0LRiUWQ@mail.gmail.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH] pinctrl: msm: allow the gpio base to be configurable
+Date: Wed, 7 Feb 2018 08:50:35 -0600
+Message-ID: <38f2a1d3-7736-6100-0fd1-4b7bcb648de8@codeaurora.org>
+References: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
+ <20180128232310.GA12728@builder>
+ <042b6cea-38f7-a660-0059-5f24fc7db9eb@codeaurora.org>
+ <20180129005129.GB12728@builder>
+ <CACRpkdaa0Ovb0kbE6J0vy4UJYv5fn6X2289pkX3b+HBze5FRJg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37564 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754031AbeBGOXw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Feb 2018 09:23:52 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaCGmsyFGZm+2t7Vnptvi2PwFRXbq28iepDgYO0LRiUWQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaa0Ovb0kbE6J0vy4UJYv5fn6X2289pkX3b+HBze5FRJg@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
 
-On Wed, Feb 07, 2018 at 02:36:33PM +0100, Linus Walleij wrote:
-> On Fri, Jan 26, 2018 at 8:02 PM, Jan Kundrát <jan.kundrat@cesnet.cz> wrote:
-> 
-> > Some debugging tools (/sys/kernel/debug/gpio, `lsgpio`) use the
-> > gpio_chip's label for displaying an additional context. Right now, the
-> > information duplicates stuff which is already available from the
-> > parent's device. This is how e.g. `lsgpio`'s output looks like:
-> >
-> >   GPIO chip: gpiochip2, "spi1.2", 16 GPIO lines
-> >
-> > Comparing the output of other GPIO expanders that I have available:
-> >
-> >   gpiochip4: GPIOs 464-479, parent: spi/spi1.1, mcp23s17, can sleep:
-> >   gpiochip5: GPIOs 448-463, parent: i2c/0-0020, pca9555, can sleep:
-> >   gpiochip2: GPIOs 496-511, parent: spi/spi1.2, spi1.2, can sleep:
-> >
-> > This patch ensures that the type of the real HW device is shown instead
-> > of duplicating the SPI path:
-> >
-> >   gpiochip2: GPIOs 496-511, parent: spi/spi1.2, MAX14830, can sleep:
-> >
-> > Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
-> 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Greg, pls apply this to your TTY tree.
+On 2/7/18 7:19 AM, Linus Walleij wrote:
+> if (tlmm_has_only_one_instance)
+>     base = 0;
+> else
+>     base = -1;
 
-Ok, let me wait until 4.16-rc1 is out first :)
+This is effectively what my patch does.  The first instance gets 0.  The 
+second instance, if it exists, gets -1.
 
-greg k-h
+When the first instance is registered, there's no way to know whether 
+there will be a second instance.
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
