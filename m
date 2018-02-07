@@ -1,49 +1,55 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: friendly debug information for consumer
-Date: Wed, 7 Feb 2018 14:04:07 +0100
-Message-ID: <CACRpkdY+oF3atnuXZE2h_sdbiX5LMWZwvNEpJDvUuf0kx2pxPA@mail.gmail.com>
-References: <1516685317-12867-1-git-send-email-dongsheng.wang@hxt-semitech.com>
+Subject: Re: [PATCH] pinctrl: msm: allow the gpio base to be configurable
+Date: Wed, 7 Feb 2018 14:19:50 +0100
+Message-ID: <CACRpkdaa0Ovb0kbE6J0vy4UJYv5fn6X2289pkX3b+HBze5FRJg@mail.gmail.com>
+References: <1516915209-28295-1-git-send-email-timur@codeaurora.org>
+ <20180128232310.GA12728@builder> <042b6cea-38f7-a660-0059-5f24fc7db9eb@codeaurora.org>
+ <20180129005129.GB12728@builder>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:40068 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753630AbeBGNEI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Feb 2018 08:04:08 -0500
-Received: by mail-it0-f49.google.com with SMTP id 196so2138142iti.5
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Feb 2018 05:04:08 -0800 (PST)
-In-Reply-To: <1516685317-12867-1-git-send-email-dongsheng.wang@hxt-semitech.com>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:42588 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753796AbeBGNTv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Feb 2018 08:19:51 -0500
+Received: by mail-io0-f195.google.com with SMTP id 25so1967532ioj.9
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Feb 2018 05:19:51 -0800 (PST)
+In-Reply-To: <20180129005129.GB12728@builder>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
-Cc: Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Timur Tabi <timur@codeaurora.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 
-Hi Wang,
+On Mon, Jan 29, 2018 at 1:51 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 
-thank you for your patch!
-
-On Tue, Jan 23, 2018 at 6:28 AM, Wang Dongsheng
-<dongsheng.wang@hxt-semitech.com> wrote:
-
-> mdiobus always try to get "reset" consumer, but not all platforms
-> have this capability. "failed" makes observer confuse when a
-> consumer can not find.
+>> > My bad, this should have been -1.
+>>
+>> Perhaps, but it's been 0 for a very long time, so I don't want to break any
+>> existing platforms by suddenly relocating all GPIOs across all Qualcomm
+>> platforms.
+>>
 >
-> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+> Yeah, I see that I got this wrong when I wrote the driver 4 years ago...
+>
+> There should be no in-kernel users depending on these numbers being hard
+> coded, so anyone depending on these numbers starting at 0 would be user
+> space - doing so incorrectly.
 
-But the message is correct?
+There is a good point in what Tmur is saying here. We never break
+userspace, if we can avoid it.
 
-> -               dev_dbg(dev, "lookup for GPIO %s failed\n", con_id);
+If there is a real problem with setting this base to -1 then I suggest
 
-This is happening.
+if (tlmm_has_only_one_instance)
+   base = 0;
+else
+   base = -1;
 
-I would be more inclined to agree if it was dev_err() but this is
-not even info, it is debug info.
+Especially for an upcoming platform we can start with a clean slate,
+it certainly does not have any legacy userspace.
 
-> +               dev_dbg(dev, "Can not detect GPIO consumer %s\n", con_id);
-
-This is not about any "detection", it is about looking something
-up.
+If no problems are detected, let's just use -1.
 
 Yours,
 Linus Walleij
