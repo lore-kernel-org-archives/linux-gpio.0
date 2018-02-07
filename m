@@ -1,50 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: serial: max310x: Use HW type for gpio_chip's label
-Date: Wed, 7 Feb 2018 14:36:33 +0100
-Message-ID: <CACRpkdaCGmsyFGZm+2t7Vnptvi2PwFRXbq28iepDgYO0LRiUWQ@mail.gmail.com>
-References: <b2421132df00569baa90af8f2d19ad75242e8c48.1516996724.git.jan.kundrat@cesnet.cz>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/4] pinctrl: mcp23s08: spi: Fix regmap debugfs entries
+Date: Wed, 7 Feb 2018 14:43:02 +0100
+Message-ID: <CACRpkdaj2+2bfPX2R-fx8V-VAD2M=+nT+AW9PBM00da9rKOQ5g@mail.gmail.com>
+References: <cover.1516997103.git.jan.kundrat@cesnet.cz> <de8fbb7902652b5a512f67e2ee0813571e9d2372.1516997103.git.jan.kundrat@cesnet.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54621 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754011AbeBGNge (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Feb 2018 08:36:34 -0500
-Received: by mail-it0-f65.google.com with SMTP id k131so2277398ith.4
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Feb 2018 05:36:34 -0800 (PST)
-In-Reply-To: <b2421132df00569baa90af8f2d19ad75242e8c48.1516996724.git.jan.kundrat@cesnet.cz>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <de8fbb7902652b5a512f67e2ee0813571e9d2372.1516997103.git.jan.kundrat-xoNZbkdr4U2lVyrhU4qvOw@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?SmFuIEt1bmRyw6F0?= <jan.kundrat-xoNZbkdr4U2lVyrhU4qvOw@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>, Sebastian Reichel <sebastian.reichel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?SmFuIEt1bmRyw6F0?= <jan.kundrat@cesnet.cz>
-Cc: linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Shiyan <shc_work@mail.ru>
 
-On Fri, Jan 26, 2018 at 8:02 PM, Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz> w=
+On Thu, Jan 25, 2018 at 6:29 PM, Jan Kundr=C3=A1t <jan.kundrat-xoNZbkdr4U2lVyrhU4qvOw@public.gmane.org> w=
 rote:
 
-> Some debugging tools (/sys/kernel/debug/gpio, `lsgpio`) use the
-> gpio_chip's label for displaying an additional context. Right now, the
-> information duplicates stuff which is already available from the
-> parent's device. This is how e.g. `lsgpio`'s output looks like:
+> The SPI version of this chip allows several devices to be present on the
+> same SPI bus via a local address. If this is in action and if the kernel
+> has debugfs, however, the code attempts to create duplicate entries for
+> the regmap's debugfs:
 >
->   GPIO chip: gpiochip2, "spi1.2", 16 GPIO lines
+>   mcp23s08 spi1.1: Failed to create debugfs directory
 >
-> Comparing the output of other GPIO expanders that I have available:
+> This patch simply assigns a local name matching the device logical
+> address to the `struct regmap_config`.
 >
->   gpiochip4: GPIOs 464-479, parent: spi/spi1.1, mcp23s17, can sleep:
->   gpiochip5: GPIOs 448-463, parent: i2c/0-0020, pca9555, can sleep:
->   gpiochip2: GPIOs 496-511, parent: spi/spi1.2, spi1.2, can sleep:
+> No changes are needed for MCP23S18 because that device does not support
+> any logical addressing. Similarly, I2C devices do not need any action,
+> either, because they are already different in their I2C address.
 >
-> This patch ensures that the type of the real HW device is shown instead
-> of duplicating the SPI path:
+> A similar problem is present for the pinctrl debugfs instance, but that
+> one is not addressed by this patch.
 >
->   gpiochip2: GPIOs 496-511, parent: spi/spi1.2, MAX14830, can sleep:
->
-> Signed-off-by: Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz>
+> Signed-off-by: Jan Kundr=C3=A1t <jan.kundrat-xoNZbkdr4U2lVyrhU4qvOw@public.gmane.org>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+This looks good and straight-forward.
 
-Greg, pls apply this to your TTY tree.
+Patch applied for v4.17.
+
+Hope it doesn't clash with Phil et al's parallel developments.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
