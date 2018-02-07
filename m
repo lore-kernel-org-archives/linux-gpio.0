@@ -1,39 +1,44 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [ANNOUNCE] libgpiod v1.0
-Date: Wed, 7 Feb 2018 16:52:20 +0100
-Message-ID: <CAMRc=MeEMu8cm=6F_7GEgGcJZgavYnsum+BuriOP1B8bkYbWAQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:41048 "EHLO
-        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932180AbeBGPwV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Feb 2018 10:52:21 -0500
-Received: by mail-oi0-f50.google.com with SMTP id m83so988666oik.8
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Feb 2018 07:52:21 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+Subject: [PATCH v4 4/5] ARM: dts: bcm2835: make the firmware node into a bus
+Date: Wed,  7 Feb 2018 20:35:25 +0200
+Message-ID: <eb4fc74047a6b2ed7a7c0aef687f7440eae056f5.1517923836.git.baruch@tkos.co.il>
+References: <cover.1517923836.git.baruch@tkos.co.il>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1517923836.git.baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: SZ Lin <sz.lin@moxa.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Linus Walleij <linus.walleij@linaro.org>
 
-libgpiod v1.0 has been released and is available at kernel.org[1][2].
+This allows adding devices for which the firmware exposes control interface
+via the mailbox. An example of such device is the GPIO expander.
 
-I eventually decided to keep struct timespec in the public API as I
-will probably not use ctypes for python bindings anyway since there
-are more structures in there that would require careful mapping on
-different architectures. Instead I'll go with hand crafting C
-extension modules. It is also always possible to add new routines
-which would use a different timestamp format.
+Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+---
+v4: New patch in this series
+---
+ arch/arm/boot/dts/bcm2835-rpi.dtsi | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I've included other remarks from recent reviews.
+diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+index e36c392a2b8f..0198bd46ef7c 100644
+--- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
++++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+@@ -18,7 +18,9 @@
+ 
+ 	soc {
+ 		firmware: firmware {
+-			compatible = "raspberrypi,bcm2835-firmware";
++			compatible = "raspberrypi,bcm2835-firmware", "simple-bus";
++			#address-cells = <0>;
++			#size-cells = <0>;
+ 			mboxes = <&mailbox>;
+ 		};
+ 
+-- 
+2.15.1
 
-A brief summary of changes since 0.3.2 is available in the NEWS file.
-As mentioned previously: this is a major release and the public
-interface is not comaptible with the 0.x.y series. The command-line
-tools however work pretty much the same.
-
-Best regards,
-Bartosz Golaszewski
-
-[1] https://www.kernel.org/pub/software/libs/libgpiod/
-[2] https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
