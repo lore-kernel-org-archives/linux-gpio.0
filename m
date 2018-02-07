@@ -1,103 +1,219 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 1/6] pinctrl: sunxi: support pin controllers with
- holes among IRQ banks
-Date: Wed, 7 Feb 2018 09:51:46 +0100
-Message-ID: <20180207085146.dvgwkdjq7ybhohwh@flea>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH v2 4/6] clk: sunxi-ng: add support for the Allwinner H6
+ CCU
+Date: Wed, 7 Feb 2018 10:02:10 +0100
+Message-ID: <20180207090210.jlxleeh32tojvzp5@flea>
 References: <20180203154942.63566-1-icenowy@aosc.io>
- <20180203154942.63566-2-icenowy@aosc.io>
+ <20180203154942.63566-5-icenowy@aosc.io>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ux2zf7yiedaeoze7"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="ek2ibnckyiva23fq"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180203154942.63566-2-icenowy-h8G6r0blFSE@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20180203154942.63566-5-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
 List-Id: linux-gpio@vger.kernel.org
 
 
---ux2zf7yiedaeoze7
+--ek2ibnckyiva23fq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Sat, Feb 03, 2018 at 11:49:37PM +0800, Icenowy Zheng wrote:
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunx=
-i/pinctrl-sunxi.h
-> index 11b128f54ed2..fae732c8c548 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> @@ -110,7 +110,7 @@ struct sunxi_pinctrl_desc {
->  	int				npins;
->  	unsigned			pin_base;
->  	unsigned			irq_banks;
-> -	unsigned			irq_bank_base;
-> +	const unsigned int		*irq_bank_map;
->  	bool				irq_read_needs_mux;
->  	bool				disable_strict_mode;
->  };
-> @@ -263,12 +263,21 @@ static inline u32 sunxi_pull_offset(u16 pin)
->  	return pin_num * PULL_PINS_BITS;
->  }
-> =20
-> -static inline u32 sunxi_irq_cfg_reg(u16 irq, unsigned bank_base)
-> +static inline u32 sunxi_irq_hw_bank_num(u8 bank, const unsigned int *ban=
-k_map)
-> +{
-> +	if (!bank_map)
-> +		return bank;
-> +	else
-> +		return bank_map[bank];
-> +}
+On Sat, Feb 03, 2018 at 11:49:40PM +0800, Icenowy Zheng wrote:
+> +	/* Force the output divider of video PLLs to 0 */
+> +	for (i =3D 0; i < ARRAY_SIZE(pll_video_regs); i++) {
+> +		val =3D readl(reg + pll_video_regs[i]);
+> +		val &=3D ~BIT(0);
+> +		writel(val, reg + pll_video_regs[i]);
+> +	}
 
-=46rom a function API PoV, I guess it would make more sense and be
-cleaner to simply pass the sunxi_pinctrl_desc structure (as the first
-argument) and have the function there read that structure and act upon
-it.
+Why?
 
-Giving it just a blank pointer, without any size indication, and
-either dereferencing it without any boundary check, or changing the
-behaviour based on whether it's null or not seems pretty fragile.
+> +	/* Force OHCI 12M clock sources to 00 (12MHz divided from 48MHz) */
+> +	for (i =3D 0; i < ARRAY_SIZE(usb2_clk_regs); i++) {
+> +		val =3D readl(reg + usb2_clk_regs[i]);
+> +		val &=3D ~GENMASK(25, 24);
+> +		writel (val, reg + usb2_clk_regs[i]);
+> +	}
 
-I guess you could do it in two patches. One to change the function
-prototypes to call the sunxi_irq_cfg_reg function (and all its caller)
-to have the prototype (struct sunxi_pinctrl_desc *desc, u16 irq).
+Why?
 
-And then in a later patch change the behaviour to introduce the map.
+> +	/*
+> +	 * Force the post-divider of pll-video to 8 and the output divider
+> +	 * of it to 1.
+> +	 */
+> +	val =3D readl(reg + SUN50I_H6_PLL_AUDIO_REG);
+> +	val &=3D ~(GENMASK(21, 16) | BIT(0));
+> +	writel(val | (7 << 16), reg + SUN50I_H6_PLL_AUDIO_REG);
 
-Thanks!
-Maxime
+Why?
+> diff --git a/include/dt-bindings/clock/sun50i-h6-ccu.h b/include/dt-bindi=
+ngs/clock/sun50i-h6-ccu.h
+> new file mode 100644
+> index 000000000000..f7ddb241012c
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/sun50i-h6-ccu.h
+> @@ -0,0 +1,125 @@
+> +/*
+> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_SUN50I_H6_H_
+> +#define _DT_BINDINGS_CLK_SUN50I_H6_H_
+> +
+> +#define CLK_PLL_PERIPH0		3
+
+Why is that needed?
+
+> +
+> +#define CLK_CPUX		21
+> +
+> +#define CLK_APB1		26
+
+Same thing here
+
+> +
+> +#define CLK_DE			29
+> +#define CLK_BUS_DE		30
+> +#define CLK_DEINTERLACE		31
+> +#define CLK_BUS_DEINTERLACE	32
+> +#define CLK_GPU			33
+> +#define CLK_BUS_GPU		34
+> +#define CLK_CE			35
+> +#define CLK_BUS_CE		36
+> +#define CLK_VE			37
+> +#define CLK_BUS_VE		38
+> +#define CLK_EMCE		39
+> +#define CLK_BUS_EMCE		40
+> +#define CLK_VP9			41
+> +#define CLK_BUS_VP9		42
+> +#define CLK_BUS_DMA		43
+> +#define CLK_BUS_MSGBOX		44
+> +#define CLK_BUS_SPINLOCK	45
+> +#define CLK_BUS_HSTIMER		46
+> +#define CLK_AVS			47
+> +#define CLK_BUS_DBG		48
+> +#define CLK_BUS_PSI		49
+> +#define CLK_BUS_PWM		50
+> +#define CLK_BUS_IOMMU		51
+> +
+> +#define CLK_MBUS_DMA		53
+> +#define CLK_MBUS_VE		54
+> +#define CLK_MBUS_CE		55
+> +#define CLK_MBUS_TS		56
+> +#define CLK_MBUS_NAND		57
+> +#define CLK_MBUS_CSI		58
+> +#define CLK_MBUS_DEINTERLACE	59
+> +
+> +#define CLK_NAND0		61
+> +#define CLK_NAND1		62
+> +#define CLK_BUS_NAND		63
+> +#define CLK_MMC0		64
+> +#define CLK_MMC1		65
+> +#define CLK_MMC2		66
+> +#define CLK_BUS_MMC0		67
+> +#define CLK_BUS_MMC1		68
+> +#define CLK_BUS_MMC2		69
+> +#define CLK_BUS_UART0		70
+> +#define CLK_BUS_UART1		71
+> +#define CLK_BUS_UART2		72
+> +#define CLK_BUS_UART3		73
+> +#define CLK_BUS_I2C0		74
+> +#define CLK_BUS_I2C1		75
+> +#define CLK_BUS_I2C2		76
+> +#define CLK_BUS_I2C3		77
+> +#define CLK_BUS_SCR0		78
+> +#define CLK_BUS_SCR1		79
+> +#define CLK_SPI0		80
+> +#define CLK_SPI1		81
+> +#define CLK_BUS_SPI0		82
+> +#define CLK_BUS_SPI1		83
+> +#define CLK_BUS_EMAC		84
+> +#define CLK_TS			85
+> +#define CLK_BUS_TS		86
+> +#define CLK_IR_TX		87
+> +#define CLK_BUS_IR_TX		88
+> +#define CLK_BUS_THS		89
+> +#define CLK_I2S3		90
+> +#define CLK_I2S0		91
+> +#define CLK_I2S1		92
+> +#define CLK_I2S2		93
+> +#define CLK_BUS_I2S0		94
+> +#define CLK_BUS_I2S1		95
+> +#define CLK_BUS_I2S2		96
+> +#define CLK_BUS_I2S3		97
+> +#define CLK_SPDIF		98
+> +#define CLK_BUS_SPDIF		99
+> +#define CLK_DMIC		100
+> +#define CLK_BUS_DMIC		101
+> +#define CLK_AUDIO_HUB		102
+> +#define CLK_BUS_AUDIO_HUB	103
+> +#define CLK_USB_OHCI0		104
+> +#define CLK_USB_PHY0		105
+> +#define CLK_USB_PHY1		106
+> +#define CLK_USB_OHCI3		107
+> +#define CLK_USB_PHY3		108
+> +#define CLK_USB_HSIC_12M	109
+> +#define CLK_USB_HSIC		110
+> +#define CLK_BUS_OHCI0		111
+> +#define CLK_BUS_OHCI3		112
+> +#define CLK_BUS_EHCI0		113
+> +#define CLK_BUS_XHCI		114
+> +#define CLK_BUS_EHCI3		115
+> +#define CLK_BUS_OTG		116
+> +#define CLK_PCIE_REF_100M	117
+> +#define CLK_PCIE_REF		118
+> +#define CLK_PCIE_REF_OUT	119
+> +#define CLK_PCIE_MAXI		120
+> +#define CLK_PCIE_AUX		121
+
+Dito.
+
+> +#define CLK_BUS_PCIE		122
+> +#define CLK_HDMI		123
+> +#define CLK_HDMI_CEC		124
+> +#define CLK_BUS_HDMI		125
+> +#define CLK_BUS_TCON_TOP	126
+
+Ditto.
+
+Remember, you should only expose here the clocks that devices are
+going to use, and remove as much intermediate clocks as possible.
+
+If you're unsure, keep them out of the dt-binding include, we can
+always move one to the dt-binding header, while the other way isn't
+possible.
 
 --=20
 Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 http://bootlin.com
 
---ux2zf7yiedaeoze7
+--ek2ibnckyiva23fq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp6viEACgkQ0rTAlCFN
-r3QE9g//ca+2HfiXxwPgoIsFYBi5mDXgmveHQPbG+0OGbEA9sJFInAqTTlEbyfdS
-bzoSBq8YM/TybROB+0TWDu/WIdF51XIuHRFHXUyLbGziqYql9zcWg4vgLpirtgTj
-Yg2LsMLjyOSOmYB+WlDMg0PejNmopPYCmlHj5cw9Scm7wnbdrKO3DQH+QRev/IsW
-YCgdc7pCFpmUvbBDprO0AVfFyBTqXJfVaHdkE8X++JdJ22YvhjA4yN2VKNLUUdK9
-2AuXN8JIzJr/QZS5ihjlmvTyRx+s064is2L+2SuezEuZuOyXxI+GSTfLgmoqQDxV
-udp1rBSXTOtKudBwOSukjIVZT8Dro+h+S9vD0wN6n46fCHxc8XecEUHxwu3JRgOK
-lmzd3tcEItrbrZ+yP8XwHdDKNQIduHjnPCGbsuu+WuEGV2+ZhgHUbcJtk8HrJm+g
-/jQUiqNuqck1pLnfvJ/AhMQCR5bm+0PXGlBzxdfARbJjocAO7//kx80PS9sQRnx6
-eXyZLq+vrEB9Zp9BfCO/2FT4iZ1oe3HL5+OW1yzlXFVjQHqyMz2YWGnGHveg0evQ
-FMAj4/fe3Zf505eWZWb67YkBOujRpzKbT2f8hzvgV2hcUNEu0h52i0f0DGpWO9Ik
-Aatui+23xqmOvt6clPDRWSoxcWUFdvUGz6UXwyX6ThsEEEhz8a0=
-=z/dS
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp6wJEACgkQ0rTAlCFN
+r3SSCA/8DUiffOmpHWiWLHyCnCz1knDR7p2cZBffal3DuqLXDwhL5Iv0FDtt1IvH
+3JfxZFbaWo/DYuhvTHGF4T+t0uvlrYjMV9bEPU/swqVxMPJun7mYjKokjILoKv2r
+kRaUoiMd48LYJSW6+1eXq66jGhmB005g4ShBXsOcoYtMRnA0tJvF/fcU53ZZ2Jwv
+ZwcLoBzAjcbwZjWeHLT3QzaKykTFlWJbuksl+9juiWMoQ6jqvwUxcig2lwQO3jq+
+oe+PDJ8kLTkfIDwexp65TqrRHMxjeK9qJ9wZ2I9ZiA/BOr6DQ6wCGqVrge93keA5
+AIO3DZYdERCYgwN08YrCz+nTosgpSz+BSJi11mNDwp+MaUI7zITindO50lpBHLPr
+xAXwBry02MgRzo9wlFFGTpb7DKZqiMNPLPdFn8+Dt0CbywR5kXC3TtjqZDUjaZBX
+sPpRDhlLYJUSlNfU22+KdJyXHa3P6+2as9W5hlquqakJ79vl1pgO3i7pXcVaJnmu
+17PTCz1nzkdYa6ek18YGmhxrQuF6g6Z+SsDbeGWUZ15FnRuAM5UUsKKQeGvx+rN8
+KsxUv486D7WWBZMfQrX6p7d2XYipe4O7uiyfIcTvxm2bFyKixhIMt63kUW9WOh3Z
+vZmJ914oo0DSN1TfZPZrwoVRaxBEjuUZ3WJEdJjWDhrs3y0dGpM=
+=I3QC
 -----END PGP SIGNATURE-----
 
---ux2zf7yiedaeoze7--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--ek2ibnckyiva23fq--
