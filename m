@@ -1,219 +1,181 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH v2 4/6] clk: sunxi-ng: add support for the Allwinner H6
- CCU
-Date: Wed, 7 Feb 2018 10:02:10 +0100
-Message-ID: <20180207090210.jlxleeh32tojvzp5@flea>
-References: <20180203154942.63566-1-icenowy@aosc.io>
- <20180203154942.63566-5-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: add binding for i.MX8MQ IOMUXC
+Date: Wed, 7 Feb 2018 10:09:20 +0100
+Message-ID: <CACRpkdYy43E5H=tRAf+YDvAY1RDTJ34nHSmqCXEn9xaknbLKZQ@mail.gmail.com>
+References: <20180201174923.7385-1-l.stach@pengutronix.de> <20180205060918.vm3q6ludepvqcuxm@rob-hp-laptop>
+ <1517825351.3175.3.camel@pengutronix.de> <CACRpkdanb3XocUpmTaFTh-vsApucX0PzuqRg_fA2ORUFtrVGJA@mail.gmail.com>
+ <1517914394.3175.21.camel@pengutronix.de> <CACRpkdbuGOrm=y=yPpsrkckk8+uKGxv6J9WGw9y=yiGcmbqn+w@mail.gmail.com>
+ <1517932068.3175.27.camel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ek2ibnckyiva23fq"
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180203154942.63566-5-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1517932068.3175.27.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "A . s . Dong" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>, linux-imx-3arQi8VN3Tc@public.gmane.org, Gary Bisson <gary.bisson-Q5RJGjKts06CY9SHAMCTRUEOCMrvLtNR@public.gmane.org>, Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, patchwork-lst-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
+On Tue, Feb 6, 2018 at 4:47 PM, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
 
---ek2ibnckyiva23fq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> To be fully honest I'm a bit annoyed with the pinctrl framework making
+> things (IMHO) unnecessarily complex, for what is basically a pretty
+> easy task.
 
-Hi,
+My ambition is to make things readable, understandable and
+maintainable. In generic terms, incorporating a bunch of knowledge
+of the electronics that really happen into the stuff we encode in
+the kernel.
 
-On Sat, Feb 03, 2018 at 11:49:40PM +0800, Icenowy Zheng wrote:
-> +	/* Force the output divider of video PLLs to 0 */
-> +	for (i =3D 0; i < ARRAY_SIZE(pll_video_regs); i++) {
-> +		val =3D readl(reg + pll_video_regs[i]);
-> +		val &=3D ~BIT(0);
-> +		writel(val, reg + pll_video_regs[i]);
-> +	}
+I guess it varies a bit on what goal one has.
 
-Why?
+If the goal is "ship product with upstream kernel really fast now"
+then things like pinctrl-single.c where we just hammer magic values
+into registers, make sense. OMAP developers had no idea whatsoever
+what their ASIC people or cell library authors were doing so they
+just threw in the towel. HiSilicon also use this. Intels ambition was
+to use ACPI BIOS to handle all pin control and route around the kernel
+altogether, but that is not working out so well for them I think.
 
-> +	/* Force OHCI 12M clock sources to 00 (12MHz divided from 48MHz) */
-> +	for (i =3D 0; i < ARRAY_SIZE(usb2_clk_regs); i++) {
-> +		val =3D readl(reg + usb2_clk_regs[i]);
-> +		val &=3D ~GENMASK(25, 24);
-> +		writel (val, reg + usb2_clk_regs[i]);
-> +	}
+All of them are approaches to avoid putting the hairy details into the
+kernel, just poke some magic values into some magic registers
+and be happy.
 
-Why?
+So i.MX could have been like that, but then I guess you need to take
+legacy into account and discuss with the other i.MX driver authors
+about how they really wanted and want to do things.
 
-> +	/*
-> +	 * Force the post-divider of pll-video to 8 and the output divider
-> +	 * of it to 1.
-> +	 */
-> +	val =3D readl(reg + SUN50I_H6_PLL_AUDIO_REG);
-> +	val &=3D ~(GENMASK(21, 16) | BIT(0));
-> +	writel(val | (7 << 16), reg + SUN50I_H6_PLL_AUDIO_REG);
+Their current silence wrt this mailchain is actually becoming a
+problem, and the problem is that discussing with you falls upwards
+to me as subsystem maintainer. Which sucks. I prefer that people
+who know this hardware discuss amongst themselves how they
+want things to work.
 
-Why?
-> diff --git a/include/dt-bindings/clock/sun50i-h6-ccu.h b/include/dt-bindi=
-ngs/clock/sun50i-h6-ccu.h
-> new file mode 100644
-> index 000000000000..f7ddb241012c
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sun50i-h6-ccu.h
-> @@ -0,0 +1,125 @@
-> +/*
-> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-> + *
-> + * SPDX-License-Identifier: (GPL-2.0+ or MIT)
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_SUN50I_H6_H_
-> +#define _DT_BINDINGS_CLK_SUN50I_H6_H_
-> +
-> +#define CLK_PLL_PERIPH0		3
+Surely Sascha must have an opinion? It means much to me
+what he wants to do. I take it you guys are colleagues?
 
-Why is that needed?
+> Pengutronix is mostly contracted by customers of NXP to enable
+> stuff in mainline. So I'm not working on this in my spare time, but I
+> still have to deal with the fact that I can only get the information
+> from the reference manual, NXP downstream BSPs and the occasional
+> helpful NXP employee.
 
-> +
-> +#define CLK_CPUX		21
-> +
-> +#define CLK_APB1		26
+Hm I see, this seems like a bit of crappy position to be in when
+you just want to ask someone in hardware how things really work.
 
-Same thing here
+But we have Freescale i.MX maintainers on the inside of the company
+now NXP (soon Qualcomm? soon Broadcom?).
 
-> +
-> +#define CLK_DE			29
-> +#define CLK_BUS_DE		30
-> +#define CLK_DEINTERLACE		31
-> +#define CLK_BUS_DEINTERLACE	32
-> +#define CLK_GPU			33
-> +#define CLK_BUS_GPU		34
-> +#define CLK_CE			35
-> +#define CLK_BUS_CE		36
-> +#define CLK_VE			37
-> +#define CLK_BUS_VE		38
-> +#define CLK_EMCE		39
-> +#define CLK_BUS_EMCE		40
-> +#define CLK_VP9			41
-> +#define CLK_BUS_VP9		42
-> +#define CLK_BUS_DMA		43
-> +#define CLK_BUS_MSGBOX		44
-> +#define CLK_BUS_SPINLOCK	45
-> +#define CLK_BUS_HSTIMER		46
-> +#define CLK_AVS			47
-> +#define CLK_BUS_DBG		48
-> +#define CLK_BUS_PSI		49
-> +#define CLK_BUS_PWM		50
-> +#define CLK_BUS_IOMMU		51
-> +
-> +#define CLK_MBUS_DMA		53
-> +#define CLK_MBUS_VE		54
-> +#define CLK_MBUS_CE		55
-> +#define CLK_MBUS_TS		56
-> +#define CLK_MBUS_NAND		57
-> +#define CLK_MBUS_CSI		58
-> +#define CLK_MBUS_DEINTERLACE	59
-> +
-> +#define CLK_NAND0		61
-> +#define CLK_NAND1		62
-> +#define CLK_BUS_NAND		63
-> +#define CLK_MMC0		64
-> +#define CLK_MMC1		65
-> +#define CLK_MMC2		66
-> +#define CLK_BUS_MMC0		67
-> +#define CLK_BUS_MMC1		68
-> +#define CLK_BUS_MMC2		69
-> +#define CLK_BUS_UART0		70
-> +#define CLK_BUS_UART1		71
-> +#define CLK_BUS_UART2		72
-> +#define CLK_BUS_UART3		73
-> +#define CLK_BUS_I2C0		74
-> +#define CLK_BUS_I2C1		75
-> +#define CLK_BUS_I2C2		76
-> +#define CLK_BUS_I2C3		77
-> +#define CLK_BUS_SCR0		78
-> +#define CLK_BUS_SCR1		79
-> +#define CLK_SPI0		80
-> +#define CLK_SPI1		81
-> +#define CLK_BUS_SPI0		82
-> +#define CLK_BUS_SPI1		83
-> +#define CLK_BUS_EMAC		84
-> +#define CLK_TS			85
-> +#define CLK_BUS_TS		86
-> +#define CLK_IR_TX		87
-> +#define CLK_BUS_IR_TX		88
-> +#define CLK_BUS_THS		89
-> +#define CLK_I2S3		90
-> +#define CLK_I2S0		91
-> +#define CLK_I2S1		92
-> +#define CLK_I2S2		93
-> +#define CLK_BUS_I2S0		94
-> +#define CLK_BUS_I2S1		95
-> +#define CLK_BUS_I2S2		96
-> +#define CLK_BUS_I2S3		97
-> +#define CLK_SPDIF		98
-> +#define CLK_BUS_SPDIF		99
-> +#define CLK_DMIC		100
-> +#define CLK_BUS_DMIC		101
-> +#define CLK_AUDIO_HUB		102
-> +#define CLK_BUS_AUDIO_HUB	103
-> +#define CLK_USB_OHCI0		104
-> +#define CLK_USB_PHY0		105
-> +#define CLK_USB_PHY1		106
-> +#define CLK_USB_OHCI3		107
-> +#define CLK_USB_PHY3		108
-> +#define CLK_USB_HSIC_12M	109
-> +#define CLK_USB_HSIC		110
-> +#define CLK_BUS_OHCI0		111
-> +#define CLK_BUS_OHCI3		112
-> +#define CLK_BUS_EHCI0		113
-> +#define CLK_BUS_XHCI		114
-> +#define CLK_BUS_EHCI3		115
-> +#define CLK_BUS_OTG		116
-> +#define CLK_PCIE_REF_100M	117
-> +#define CLK_PCIE_REF		118
-> +#define CLK_PCIE_REF_OUT	119
-> +#define CLK_PCIE_MAXI		120
-> +#define CLK_PCIE_AUX		121
+Hell this mail is even going to linux-imx-3arQi8VN3Tc@public.gmane.org, what do they do
+with it? Put it in a mailbox and never read it?
 
-Dito.
+Surely someone on the inside must be able to provide some details.
 
-> +#define CLK_BUS_PCIE		122
-> +#define CLK_HDMI		123
-> +#define CLK_HDMI_CEC		124
-> +#define CLK_BUS_HDMI		125
-> +#define CLK_BUS_TCON_TOP	126
+> Also even if we were inside of NXP, pad cells are usually something
+> that chip makers buy or get from the Fab design library. So probably
+> even they don't know what's inside exactly.
 
-Ditto.
+Yeah that is what I call "throw over the wall engineering".
+It's not good, if NXP works with information brick walls like that it is
+not any good for them, because it is not any good for their customers.
 
-Remember, you should only expose here the clocks that devices are
-going to use, and remove as much intermediate clocks as possible.
+Not something you or I can fix though...
 
-If you're unsure, keep them out of the dt-binding include, we can
-always move one to the dt-binding header, while the other way isn't
-possible.
+> What usually happens is that hardware (I'm talking about board/system
+> here) designers start by reading the reference manual and hardware
+> design guide and work with that. They come up with all the necessary
+> configuration in the terms of the manual.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Sometimes half-guessing and a bit of trial-and-error right?
 
---ek2ibnckyiva23fq
-Content-Type: application/pgp-signature; name="signature.asc"
+> After that they or someone else has to translate this into DT. Things
+> get confusing when the reference manual and the DT binding disagree
+> about the used terms.
 
------BEGIN PGP SIGNATURE-----
+I see.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp6wJEACgkQ0rTAlCFN
-r3SSCA/8DUiffOmpHWiWLHyCnCz1knDR7p2cZBffal3DuqLXDwhL5Iv0FDtt1IvH
-3JfxZFbaWo/DYuhvTHGF4T+t0uvlrYjMV9bEPU/swqVxMPJun7mYjKokjILoKv2r
-kRaUoiMd48LYJSW6+1eXq66jGhmB005g4ShBXsOcoYtMRnA0tJvF/fcU53ZZ2Jwv
-ZwcLoBzAjcbwZjWeHLT3QzaKykTFlWJbuksl+9juiWMoQ6jqvwUxcig2lwQO3jq+
-oe+PDJ8kLTkfIDwexp65TqrRHMxjeK9qJ9wZ2I9ZiA/BOr6DQ6wCGqVrge93keA5
-AIO3DZYdERCYgwN08YrCz+nTosgpSz+BSJi11mNDwp+MaUI7zITindO50lpBHLPr
-xAXwBry02MgRzo9wlFFGTpb7DKZqiMNPLPdFn8+Dt0CbywR5kXC3TtjqZDUjaZBX
-sPpRDhlLYJUSlNfU22+KdJyXHa3P6+2as9W5hlquqakJ79vl1pgO3i7pXcVaJnmu
-17PTCz1nzkdYa6ek18YGmhxrQuF6g6Z+SsDbeGWUZ15FnRuAM5UUsKKQeGvx+rN8
-KsxUv486D7WWBZMfQrX6p7d2XYipe4O7uiyfIcTvxm2bFyKixhIMt63kUW9WOh3Z
-vZmJ914oo0DSN1TfZPZrwoVRaxBEjuUZ3WJEdJjWDhrs3y0dGpM=
-=I3QC
------END PGP SIGNATURE-----
+>> If you want something to match the specific hardware
+>> manual from NXP and you don't want it to be translated
+>> into the units of the DT binding, then I think it is better
+>> to use something prefixed "nxp,*".
+>
+>> That clearly indicates that this is some NXP oddity that
+>> we don't really understand.
+>
+> I'm not keen on using the common padctrl stuff, which already bloats
+> the DT description compared to i.MX6,
 
---ek2ibnckyiva23fq--
+This you need to discuss with the generic i.MX driver maintainers.
+They are the maintainers of drivers/pinctrl/freescale/* after all.
+
+They never put an entry in MAINTAINERS though, but I
+always regarded these as the pinctrl maintainers for i.MX:
+
+ARM/FREESCALE IMX / MXC ARM ARCHITECTURE
+M:      Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+M:      Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+R:      Fabio Estevam <fabio.estevam-3arQi8VN3Tc@public.gmane.org>
+
+On top of this, Dong Aisheng, Gary Bisson and
+Vladimir Zapolskiy has made major contributions.
+
+It's a little ecosystem on its own, not really to be discussed
+by just you and me. I wonder where the rest of the voices are,
+I hope not silenced by organizational stress after the NXP
+merger...
+
+> and then again need to introduce
+> custom properties. That's just worst of both worlds, verbose DT to use
+> the common stuff, mixed with special properties, only valid on this
+> single controller.
+
+No matter how much you dislike it, it is what e.g. Qualcomm is
+doing. (Who might soon be one and the same as NXP I hear.)
+
+> If you insist I guess I'm fine with compromising on an "output-
+> impedance" common property, but then this just makes things harder for
+> everyone involved, as the impedance even seems to vary slightly with
+> the used pad voltage. So to not get into a combinatorial explosion, we
+> would need to describe this property as somethings like "output
+> impedance at 3.3v)", at least on this specific hardware.
+
+Hm, should it me "nxp,drive-strength" then, as it is just some
+magic value? I guess "nxp,magic-drive-strength" is not going to
+cut it :D
+
+Also maybe we should use the old "freescale,*" notation for legacy
+reasons... I don't know. This Vendor prefix seems less stable
+than the chipsets.
+
+> Or we could agree that drive-strength property could be described in
+> some unit that makes sense on each controller. mA for hardware
+> described with some fabled ideal load matching, Ohms for hardware that
+> models it this way with maximum drive strength at the point of best
+> load matching.
+
+I am not like stubbornly against. I just want some discussion here,
+it would be nice to know the opinion of the i.MX maintainers.
+
+> In the end this is about mapping 3 hardware bits to a DT description...
+
+Pleas don't think about it like "can't we just do this real simple
+thing now, just merge this and stop being an ass".
+
+Things just poking three bits can look very simple, like in so
+many BSPs:
+
+volatile unsigned long *foo;
+
+foo = (unsigned long *) 0xfec0be00;
+*foo &= ~0x700;
+*foo |= 0x200; /* do the magic */
+
+But this is not helpful for developers or maintainers. That is IMHO
+why we have the frameworks and all the DT standardization in
+the first place, exactly so we understand what we are doing.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
