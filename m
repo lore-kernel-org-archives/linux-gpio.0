@@ -1,40 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: msm: Use dynamic GPIO numbering
-Date: Wed, 7 Feb 2018 14:52:05 +0100
-Message-ID: <CACRpkdb0OWQzeJZ7K1bXrdNPwu0GhygW1p04Xoyf9WjTg7+=BQ@mail.gmail.com>
-References: <20180129005948.7714-1-bjorn.andersson@linaro.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] gpio: serial: max310x: Use HW type for gpio_chip's label
+Date: Wed, 7 Feb 2018 06:23:51 -0800
+Message-ID: <20180207142351.GC29606@kroah.com>
+References: <b2421132df00569baa90af8f2d19ad75242e8c48.1516996724.git.jan.kundrat@cesnet.cz>
+ <CACRpkdaCGmsyFGZm+2t7Vnptvi2PwFRXbq28iepDgYO0LRiUWQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:42011 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754011AbeBGNwH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Feb 2018 08:52:07 -0500
-Received: by mail-io0-f194.google.com with SMTP id 25so2062123ioj.9
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Feb 2018 05:52:06 -0800 (PST)
-In-Reply-To: <20180129005948.7714-1-bjorn.andersson@linaro.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37564 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754031AbeBGOXw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Feb 2018 09:23:52 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaCGmsyFGZm+2t7Vnptvi2PwFRXbq28iepDgYO0LRiUWQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Timur Tabi <timur@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
 
-On Mon, Jan 29, 2018 at 1:59 AM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
+On Wed, Feb 07, 2018 at 02:36:33PM +0100, Linus Walleij wrote:
+> On Fri, Jan 26, 2018 at 8:02 PM, Jan Kundrát <jan.kundrat@cesnet.cz> wrote:
+> 
+> > Some debugging tools (/sys/kernel/debug/gpio, `lsgpio`) use the
+> > gpio_chip's label for displaying an additional context. Right now, the
+> > information duplicates stuff which is already available from the
+> > parent's device. This is how e.g. `lsgpio`'s output looks like:
+> >
+> >   GPIO chip: gpiochip2, "spi1.2", 16 GPIO lines
+> >
+> > Comparing the output of other GPIO expanders that I have available:
+> >
+> >   gpiochip4: GPIOs 464-479, parent: spi/spi1.1, mcp23s17, can sleep:
+> >   gpiochip5: GPIOs 448-463, parent: i2c/0-0020, pca9555, can sleep:
+> >   gpiochip2: GPIOs 496-511, parent: spi/spi1.2, spi1.2, can sleep:
+> >
+> > This patch ensures that the type of the real HW device is shown instead
+> > of duplicating the SPI path:
+> >
+> >   gpiochip2: GPIOs 496-511, parent: spi/spi1.2, MAX14830, can sleep:
+> >
+> > Signed-off-by: Jan Kundrát <jan.kundrat@cesnet.cz>
+> 
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Greg, pls apply this to your TTY tree.
 
-> The base of the TLMM gpiochip should not be statically defined as 0, fix
-> this to not artificially restrict the existence of multiple pinctrl-msm
-> devices.
->
-> Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
-> Reported-by: Timur Tabi <timur@codeaurora.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Ok, let me wait until 4.16-rc1 is out first :)
 
-OK I put this in devel for v4.17, let's see if something explodes
-in linux-next else we can go with this.
-
-Otherwise we need something that conserves base 0 for singular
-TLMM drivers and make it -1 for newer platforms with several
-instances.
-
-Yours,
-Linus Walleij
+greg k-h
