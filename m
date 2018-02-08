@@ -1,40 +1,86 @@
 From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: gpio: Add Spreadtrum GPIO controller documentation
-Date: Thu, 8 Feb 2018 14:07:56 +0800
-Message-ID: <CAMz4ku+5ojNr8y_zKBgKtLxon9++M6xCZ=7NzjeStesZ0Y8oGg@mail.gmail.com>
-References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517795460.git.baolin.wang@linaro.org>
- <20180207211918.whcxq2not7elokae@rob-hp-laptop>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180207211918.whcxq2not7elokae@rob-hp-laptop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: gpio: Add Spreadtrum EIC controller documentation
+Date: Thu,  8 Feb 2018 16:01:42 +0800
+Message-ID: <e89b91042abbbcf04cb39a3350af000cc411eee1.1518076643.git.baolin.wang@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:45769 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbeBHICL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Feb 2018 03:02:11 -0500
+Received: by mail-pg0-f66.google.com with SMTP id m136so1346446pga.12
+        for <linux-gpio@vger.kernel.org>; Thu, 08 Feb 2018 00:02:11 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org, andy.shevchenko@gmail.com
 
-Hi Rob,
+This patch adds the device tree bindings for the Spreadtrum EIC
+controller. The EIC can be recognized as one special type of GPIO,
+which can only be used as input.
 
-On 8 February 2018 at 05:19, Rob Herring <robh@kernel.org> wrote:
-> On Mon, Feb 05, 2018 at 09:55:10AM +0800, Baolin Wang wrote:
->> This patch adds the device tree bindings for the Spreadtrum
->> GPIO controller. The gpios will be supported by the GPIO
->> generic library.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->> Changes since v1:
->>  - No updates.
->> ---
->>  .../devicetree/bindings/gpio/gpio-sprd.txt         |   28 ++++++++++++++++++++
->>  1 file changed, 28 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sprd.txt
->
-> Please add acks/reviews when posting new versions.
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |   51 ++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
 
-Yes, I always do that. But you acked my V2 after I already send out
-the V3. Anyway thanks for your reviewed-tag.
-
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+new file mode 100644
+index 0000000..34f194f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+@@ -0,0 +1,51 @@
++Spreadtrum EIC controller bindings
++
++The EIC is the abbreviation of external interrupt controller, which
++is only can be used as input mode. The EIC controller includes 4
++sub-modules: EIC-Debounce, EIC-Latch, EIC-Async, EIC-Sync.
++
++The EIC-debounce sub-module provides up to 8 source input signal
++connection. A debounce machanism is used to capture input signal's
++stable status (ms grade) and a single-trigger mechanism is introduced
++into this sub-module to enhance the input event detection reliability.
++In addition, this sub-module's clock can be shut-off automatically to
++reduce power dissipation. The debounce range is from 1ms to 4s with
++the step of 1ms. If the input signal is shorter than 1ms, it will be
++omitted as this sub-module.
++
++The EIC-latch sub-module is used to latch some special input signal
++and send interrupts to MCU core, and it can provide up to 8 latch
++source input signal connection.
++
++The EIC-async sub-module uses 32k clock to capture short signal (us
++grade) to generate interrupt to MCU by level or edge trigger.
++
++The EIC-sync is similar with GPIO's input function.
++
++Required properties:
++- compatible: Should be one of the following:
++  "sprd,sc9860-eic-debounce",
++  "sprd,sc9860-eic-latch",
++  "sprd,sc9860-eic-async",
++  "sprd,sc9860-eic-sync",
++  "sprd,sc27xx-eic-debounce".
++- reg: Define the base and range of the I/O address space containing
++  the GPIO controller registers.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be <2>. The first cell is the gpio number and
++  the second cell is used to specify optional parameters.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be <2>. Specifies the number of cells needed
++  to encode interrupt source.
++- interrupts: Should be the port interrupt shared by all the gpios.
++
++Example:
++	eic_debounce: eic@40210000 {
++		compatible = "sprd,sc9860-eic-debounce";
++		reg = <0 0x40210000 0 0x80>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++	};
 -- 
-Baolin.wang
-Best Regards
+1.7.9.5
+
