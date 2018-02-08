@@ -1,51 +1,48 @@
-From: =?utf-8?B?U1ogTGluICjmnpfkuIrmmbop?= <SZ.Lin@moxa.com>
-Subject: RE: [ANNOUNCE] libgpiod v1.0
-Date: Thu, 8 Feb 2018 16:30:21 +0000
-Message-ID: <5942081F7727964D830FC876E62CA8560119E23097@MHQMBX02.moxa.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [ANNOUNCE] libgpiod v1.0
+Date: Thu, 8 Feb 2018 18:22:10 +0100
+Message-ID: <CAMRc=Me-0YCiU36pG8HBjYtonJ9ubNFTgTcLS2AU_xcCLwU2OQ@mail.gmail.com>
 References: <CAMRc=MeEMu8cm=6F_7GEgGcJZgavYnsum+BuriOP1B8bkYbWAQ@mail.gmail.com>
+ <5942081F7727964D830FC876E62CA8560119E23097@MHQMBX02.moxa.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mhqcas02.moxa.com ([59.124.42.181]:56042 "EHLO mhqmail.moxa.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751706AbeBHQfs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 8 Feb 2018 11:35:48 -0500
-In-Reply-To: <CAMRc=MeEMu8cm=6F_7GEgGcJZgavYnsum+BuriOP1B8bkYbWAQ@mail.gmail.com>
-Content-Language: zh-TW
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:41105 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751988AbeBHRWL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Feb 2018 12:22:11 -0500
+Received: by mail-oi0-f45.google.com with SMTP id m83so4040284oik.8
+        for <linux-gpio@vger.kernel.org>; Thu, 08 Feb 2018 09:22:11 -0800 (PST)
+In-Reply-To: <5942081F7727964D830FC876E62CA8560119E23097@MHQMBX02.moxa.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Clemens Gruber <clemens.gruber@pqgruber.com>, Linus Walleij <linus.walleij@linaro.org>
+To: =?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?= <SZ.Lin@moxa.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Clemens Gruber <clemens.gruber@pqgruber.com>, Linus Walleij <linus.walleij@linaro.org>
 
-SGksDQoNClRoYW5rIHlvdSBmb3IgeW91ciBncmVhdCBlZmZvcnRzISANCg0KQnkgdGhlIHdheSwg
-dGhlIHRhcmJhbGwgaW4gWzFdIGlzIG5vdCBjb25zaXN0ZW5jZSB3aXRoIFsyXS4gRm9yIGV4YW1w
-bGUsIHRoZSBEb3h5ZmlsZSBmaWxlIGlzIG5vdCBleGlzdGVkIGluIFsxXSBidXQgaW4gWzJdIGFu
-ZCBtNCBmb2xkZXIgaXMgZXhpc3RlZCBpbiBbMV0gYnV0IG5vdCBpbiBbMl0uDQpXb3VsZCB5b3Ug
-cGxlYXNlIGhhdmUgYSBsb29rIGF0IHRoaXM/DQoNCg0KWzFdIGh0dHBzOi8vd3d3Lmtlcm5lbC5v
-cmcvcHViL3NvZnR3YXJlL2xpYnMvbGliZ3Bpb2QvbGliZ3Bpb2QtMS4wLnRhci5neg0KWzJdIGh0
-dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saWJzL2xpYmdwaW9kL2xpYmdwaW9kLmdpdC90
-YWcvP2g9djEuMA0KDQpCZXN0IHJlZ2FyZHMsIA0KDQpTWiBMaW4NCg0KDQoNCj4gLS0tLS1Pcmln
-aW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQmFydG9zeiBHb2xhc3pld3NraSBbbWFpbHRvOmJy
-Z2xAYmdkZXYucGxdDQo+IFNlbnQ6IFdlZG5lc2RheSwgRmVicnVhcnkgMDcsIDIwMTggMTE6NTIg
-UE0NCj4gVG86IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnDQo+IENjOiBTWiBMaW4gKOael+S4
-iuaZuikgPFNaLkxpbkBtb3hhLmNvbT47IENsZW1lbnMgR3J1YmVyDQo+IDxjbGVtZW5zLmdydWJl
-ckBwcWdydWJlci5jb20+OyBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+
-DQo+IFN1YmplY3Q6IFtBTk5PVU5DRV0gbGliZ3Bpb2QgdjEuMA0KPiANCj4gbGliZ3Bpb2QgdjEu
-MCBoYXMgYmVlbiByZWxlYXNlZCBhbmQgaXMgYXZhaWxhYmxlIGF0IGtlcm5lbC5vcmdbMV1bMl0u
-DQo+IA0KPiBJIGV2ZW50dWFsbHkgZGVjaWRlZCB0byBrZWVwIHN0cnVjdCB0aW1lc3BlYyBpbiB0
-aGUgcHVibGljIEFQSSBhcyBJIHdpbGwgcHJvYmFibHkgbm90IHVzZQ0KPiBjdHlwZXMgZm9yIHB5
-dGhvbiBiaW5kaW5ncyBhbnl3YXkgc2luY2UgdGhlcmUgYXJlIG1vcmUgc3RydWN0dXJlcyBpbiB0
-aGVyZSB0aGF0IHdvdWxkDQo+IHJlcXVpcmUgY2FyZWZ1bCBtYXBwaW5nIG9uIGRpZmZlcmVudCBh
-cmNoaXRlY3R1cmVzLiBJbnN0ZWFkIEknbGwgZ28gd2l0aCBoYW5kIGNyYWZ0aW5nIEMNCj4gZXh0
-ZW5zaW9uIG1vZHVsZXMuIEl0IGlzIGFsc28gYWx3YXlzIHBvc3NpYmxlIHRvIGFkZCBuZXcgcm91
-dGluZXMgd2hpY2ggd291bGQgdXNlIGENCj4gZGlmZmVyZW50IHRpbWVzdGFtcCBmb3JtYXQuDQo+
-IA0KPiBJJ3ZlIGluY2x1ZGVkIG90aGVyIHJlbWFya3MgZnJvbSByZWNlbnQgcmV2aWV3cy4NCj4g
-DQo+IEEgYnJpZWYgc3VtbWFyeSBvZiBjaGFuZ2VzIHNpbmNlIDAuMy4yIGlzIGF2YWlsYWJsZSBp
-biB0aGUgTkVXUyBmaWxlLg0KPiBBcyBtZW50aW9uZWQgcHJldmlvdXNseTogdGhpcyBpcyBhIG1h
-am9yIHJlbGVhc2UgYW5kIHRoZSBwdWJsaWMgaW50ZXJmYWNlIGlzIG5vdCBjb21hcHRpYmxlDQo+
-IHdpdGggdGhlIDAueC55IHNlcmllcy4gVGhlIGNvbW1hbmQtbGluZSB0b29scyBob3dldmVyIHdv
-cmsgcHJldHR5IG11Y2ggdGhlIHNhbWUuDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IEJhcnRvc3og
-R29sYXN6ZXdza2kNCj4gDQo+IFsxXSBodHRwczovL3d3dy5rZXJuZWwub3JnL3B1Yi9zb2Z0d2Fy
-ZS9saWJzL2xpYmdwaW9kLw0KPiBbMl0gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xp
-YnMvbGliZ3Bpb2QvbGliZ3Bpb2QuZ2l0Lw0K
+2018-02-08 17:30 GMT+01:00 SZ Lin (=E6=9E=97=E4=B8=8A=E6=99=BA) <SZ.Lin@mox=
+a.com>:
+> Hi,
+>
+> Thank you for your great efforts!
+>
+> By the way, the tarball in [1] is not consistence with [2]. For example, =
+the Doxyfile file is not existed in [1] but in [2] and m4 folder is existed=
+ in [1] but not in [2].
+> Would you please have a look at this?
+>
+>
+> [1] https://www.kernel.org/pub/software/libs/libgpiod/libgpiod-1.0.tar.gz
+> [2] https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/tag/?h=3Dv1=
+.0
+>
+> Best regards,
+>
+> SZ Lin
+>
+
+That's a bug in the build files - Doxygen is not included in the dist
+package. Thanks for spotting that, I'll fix it.
+
+Best regards,
+Bartosz Golaszewski
