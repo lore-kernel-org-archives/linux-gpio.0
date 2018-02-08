@@ -1,68 +1,34 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH] gpio-pca953x: fall back to byte-at-a-time for 24-bit io
-Date: Thu, 8 Feb 2018 13:10:50 +0100
-Message-ID: <20180208131050.7c26717d@endymion>
-References: <1512440242-8983-1-git-send-email-andrew.cooks@opengear.com>
-        <CAHp75Vcpdh36yjXCCOQthYKdY3vPi5EDrqFWauyv9WDgjcZPYQ@mail.gmail.com>
-        <0f82783e-3f78-34dd-4f80-8e21328f9c91@opengear.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [ANNOUNCE] libgpiod v1.0
+Date: Thu, 8 Feb 2018 15:12:12 +0100
+Message-ID: <CACRpkdbnX0_eJBXM9kWv-xrtpWOLP_8u_2h=UArvGTvjnvC+HA@mail.gmail.com>
+References: <CAMRc=MeEMu8cm=6F_7GEgGcJZgavYnsum+BuriOP1B8bkYbWAQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0f82783e-3f78-34dd-4f80-8e21328f9c91@opengear.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Cooks <andrew.cooks@opengear.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, platypus-sw@opengear.com, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f172.google.com ([209.85.223.172]:46255 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbeBHOMO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Feb 2018 09:12:14 -0500
+Received: by mail-io0-f172.google.com with SMTP id f34so5883175ioi.13
+        for <linux-gpio@vger.kernel.org>; Thu, 08 Feb 2018 06:12:14 -0800 (PST)
+In-Reply-To: <CAMRc=MeEMu8cm=6F_7GEgGcJZgavYnsum+BuriOP1B8bkYbWAQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, SZ Lin <sz.lin@moxa.com>, Clemens Gruber <clemens.gruber@pqgruber.com>
 
-On Mon, 29 Jan 2018 14:11:35 +1000, Andrew Cooks wrote:
-> On 29/12/17 19:44, Andy Shevchenko wrote:
-> > On Tue, Dec 5, 2017 at 4:17 AM, Andrew Cooks <andrew.cooks@opengear.com> wrote:  
-> >> Using TCA6424A with i2c-piix4 bus driver requires byte-at-a-time IO,
-> >> because the i2c-piix4 driver (and probably some SMBus controllers) don't
-> >> support I2C_SMBUS_I2C_BLOCK_DATA.  
-> > 
-> > Why not to fix piix4 for now?  
-> 
-> The piix4 driver applies to so many chips and has been around for such a long time, that I don't know if this kind of change is safe to make. Do you think it's safe to assume that all the implementations that use this driver can handle the 3byte block writes?
-> 
-> I've added Jean to the CC list to get the piix4 maintainer's perspective.
+On Wed, Feb 7, 2018 at 4:52 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-This is a hardware limitation, not a driver deficiency. The original
-Intel PIIX4 SMBus implementation did not support I2C Block transfers,
-only SMBus Block transfers. I2C Block transfer support was added by
-Intel to the 82801 (ICH5) only.
+> libgpiod v1.0 has been released and is available at kernel.org[1][2].
 
-I have checked the few AMD datasheets I have here and it doesn't seem
-that AMD implemented I2C Block transfers support either.
+Congratulations, and thanks for doing this!
 
-> >> @@ -249,7 +261,7 @@ static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
-> >>  {
-> >>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-> >>
-> >> -       return i2c_smbus_read_i2c_block_data(chip->client,
-> >> +       return i2c_smbus_read_i2c_block_data_or_emulated(chip->client,
-> >>                                              (reg << bank_shift) | REG_ADDR_AI,
-> >>                                              NBANK(chip), val);  
-> > 
-> > Don't we have a counter part for writing?
-> > 
-> > Perhaps, it might be another option.
-> 
-> Again, I don't know if it's safe to assume that the i2c controllers can do this and would appreciate comments.
-> 
-> Thanks for your review!
+The API looks very nice to me, sure there is some stuff around the
+events we may need to polish, but we are very fine for now, and this
+thing is already a million times better than the old sysfs ABI.
 
-I would be very cautious with
-i2c_smbus_read_i2c_block_data_or_emulated(). There are no official
-semantics attached to I2C transfers, each device can have its own
-idea of how it should react to a given transfer.
-i2c_smbus_read_i2c_block_data_or_emulated() was implemented with
-EEPROMs in mind and there is absolutely no guarantee that the
-"emulation" will do the right thing. Before calling it, you must check
-all the code paths in i2c_smbus_read_i2c_block_data_or_emulated() and
-ensure that all will do the right thing for your device.
+I hope it will be picked up by many consumers!
 
--- 
-Jean Delvare
-SUSE L3 Support
+Yours,
+Linus Walleij
