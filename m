@@ -1,34 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [ANNOUNCE] libgpiod v1.0
-Date: Thu, 8 Feb 2018 15:12:12 +0100
-Message-ID: <CACRpkdbnX0_eJBXM9kWv-xrtpWOLP_8u_2h=UArvGTvjnvC+HA@mail.gmail.com>
-References: <CAMRc=MeEMu8cm=6F_7GEgGcJZgavYnsum+BuriOP1B8bkYbWAQ@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] pinctrl: ocelot: make function ocelot_pinctrl_probe static
+Date: Thu,  8 Feb 2018 14:24:37 +0000
+Message-ID: <20180208142437.11217-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f172.google.com ([209.85.223.172]:46255 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbeBHOMO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Feb 2018 09:12:14 -0500
-Received: by mail-io0-f172.google.com with SMTP id f34so5883175ioi.13
-        for <linux-gpio@vger.kernel.org>; Thu, 08 Feb 2018 06:12:14 -0800 (PST)
-In-Reply-To: <CAMRc=MeEMu8cm=6F_7GEgGcJZgavYnsum+BuriOP1B8bkYbWAQ@mail.gmail.com>
+Received: from youngberry.canonical.com ([91.189.89.112]:40071 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751153AbeBHO0s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Feb 2018 09:26:48 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, SZ Lin <sz.lin@moxa.com>, Clemens Gruber <clemens.gruber@pqgruber.com>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Feb 7, 2018 at 4:52 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> libgpiod v1.0 has been released and is available at kernel.org[1][2].
+The function ocelot_pinctrl_probe is local to the source and does not
+need to be in global scope, so make it static.
 
-Congratulations, and thanks for doing this!
+Cleans up sparse warning:
+drivers/pinctrl/pinctrl-ocelot.c:465:5: warning: symbol
+'ocelot_pinctrl_probe' was not declared. Should it be static?
 
-The API looks very nice to me, sure there is some stuff around the
-events we may need to polish, but we are very fine for now, and this
-thing is already a million times better than the old sysfs ABI.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/pinctrl-ocelot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I hope it will be picked up by many consumers!
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index 01a50d969111..a9423238471e 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -462,7 +462,7 @@ static const struct of_device_id ocelot_pinctrl_of_match[] = {
+ 	{},
+ };
+ 
+-int ocelot_pinctrl_probe(struct platform_device *pdev)
++static int ocelot_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct ocelot_pinctrl *info;
+-- 
+2.15.1
 
-Yours,
-Linus Walleij
