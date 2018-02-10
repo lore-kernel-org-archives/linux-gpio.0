@@ -1,72 +1,34 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 2/3] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
-Date: Sat, 10 Feb 2018 17:35:01 +0100
-Message-ID: <11171053.oOJPuGlHoK@phil>
-References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be> <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] GPIO-Timberdale: Adjustments for timbgpio_probe()
+Date: Sat, 10 Feb 2018 21:31:24 +0100
+Message-ID: <da77f86c-a366-0a0f-10fd-9b7cfd879391@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:51918 "EHLO gloria.sntech.de"
+Received: from mout.web.de ([212.227.15.4]:47715 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750934AbeBJQfO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 10 Feb 2018 11:35:14 -0500
-In-Reply-To: <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+        id S1751182AbeBJUba (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 10 Feb 2018 15:31:30 -0500
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Geert,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Feb 2018 21:28:29 +0100
 
-Am Freitag, 19. Januar 2018, 16:18:20 CET schrieb Geert Uytterhoeven:
-> As of_clk_get_parent_count() returns zero on failure, while
-> of_count_phandle_with_args() might return a negative error code, this
-> also fixes the issue of possibly using a negative number in the
-> allocation below.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/soc/rockchip/pm_domains.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
-> index 5c342167b9db7a16..9936038d38771784 100644
-> --- a/drivers/soc/rockchip/pm_domains.c
-> +++ b/drivers/soc/rockchip/pm_domains.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of_address.h>
->  #include <linux/of_platform.h>
->  #include <linux/clk.h>
-> +#include <linux/clk-provider.h>
+Two update suggestions were taken into account
+from static source code analysis.
 
-not wanting to be to nitpicky, but clk-provider.h seems that it should be
-used from drivers exposing clocks to the system, not from clock users.
+Markus Elfring (2):
+  Delete an error message for a failed memory allocation
+  Improve a size determination
 
-I just remember that in the past clk maintainers tried to keep their
-layering intact, so I've included them for clarification.
+ drivers/gpio/gpio-timberdale.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Mike, Stephen: the power-domain driver of Rockchip socs needs
-to toggle all clocks of domain peripherals when turning a domain
-on or off, so has a variable list of clocks in the clocks property in dt.
-Hence the of_count_... call which could be replaced with
-of_clk_get_parent_count to not open-code this.
-
-
-Heiko
-
->  #include <linux/regmap.h>
->  #include <linux/mfd/syscon.h>
->  #include <dt-bindings/power/rk3288-power.h>
-> @@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
->  		return -EINVAL;
->  	}
->  
-> -	clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
-> +	clk_cnt = of_clk_get_parent_count(node);
->  	pd = devm_kzalloc(pmu->dev,
->  			  sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
->  			  GFP_KERNEL);
-> 
-
+-- 
+2.16.1
 
