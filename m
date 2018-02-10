@@ -1,34 +1,48 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/2] GPIO-Timberdale: Adjustments for timbgpio_probe()
-Date: Sat, 10 Feb 2018 21:31:24 +0100
-Message-ID: <da77f86c-a366-0a0f-10fd-9b7cfd879391@users.sourceforge.net>
+Subject: [PATCH 1/2] gpio: timberdale: Delete an error message for a failed
+ memory allocation in timbgpio_probe()
+Date: Sat, 10 Feb 2018 21:32:35 +0100
+Message-ID: <758bf4e7-5beb-dbf6-54ed-6c691a56bbee@users.sourceforge.net>
+References: <da77f86c-a366-0a0f-10fd-9b7cfd879391@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:47715 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751182AbeBJUba (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 10 Feb 2018 15:31:30 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <da77f86c-a366-0a0f-10fd-9b7cfd879391@users.sourceforge.net>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 10 Feb 2018 21:28:29 +0100
+Date: Sat, 10 Feb 2018 21:09:08 +0100
 
-Two update suggestions were taken into account
-from static source code analysis.
+Omit an extra message for a memory allocation failure in this function.
 
-Markus Elfring (2):
-  Delete an error message for a failed memory allocation
-  Improve a size determination
+This issue was detected by using the Coccinelle software.
 
- drivers/gpio/gpio-timberdale.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-timberdale.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
+index 181f86ce00cd..ff155e437210 100644
+--- a/drivers/gpio/gpio-timberdale.c
++++ b/drivers/gpio/gpio-timberdale.c
+@@ -239,10 +239,9 @@ static int timbgpio_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	tgpio = devm_kzalloc(dev, sizeof(struct timbgpio), GFP_KERNEL);
+-	if (!tgpio) {
+-		dev_err(dev, "Memory alloc failed\n");
++	if (!tgpio)
+ 		return -EINVAL;
+-	}
++
+ 	tgpio->irq_base = pdata->irq_base;
+ 
+ 	spin_lock_init(&tgpio->lock);
 -- 
 2.16.1
-
