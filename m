@@ -1,109 +1,72 @@
-From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: Re: [PATCH v3 2/4] gpio: Add GPIO driver for Nintendo Wii
-Date: Fri, 9 Feb 2018 17:58:58 +0100
-Message-ID: <20180209165858.ebm7ed7f4b5uakju@latitude>
-References: <20180209120732.17863-1-j.neuschaefer@gmx.net>
- <20180209120732.17863-3-j.neuschaefer@gmx.net>
- <CAHp75Vf=Z7DTMvbacLN+E-hScBD3ZNpnf6Ch+5xm=JNbX2cbVg@mail.gmail.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 2/3] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
+Date: Sat, 10 Feb 2018 17:35:01 +0100
+Message-ID: <11171053.oOJPuGlHoK@phil>
+References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be> <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="i7quqgrx7stws5lv"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vf=Z7DTMvbacLN+E-hScBD3ZNpnf6Ch+5xm=JNbX2cbVg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joel Stanley <joel@jms.id.au>, "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" <linuxppc-dev@lists.ozlabs.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Albert Herranz <albert_herranz@yahoo.es>, Segher Boessenkool <segher@kernel.crashing.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:51918 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750934AbeBJQfO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 10 Feb 2018 11:35:14 -0500
+In-Reply-To: <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
+
+Hi Geert,
+
+Am Freitag, 19. Januar 2018, 16:18:20 CET schrieb Geert Uytterhoeven:
+> As of_clk_get_parent_count() returns zero on failure, while
+> of_count_phandle_with_args() might return a negative error code, this
+> also fixes the issue of possibly using a negative number in the
+> allocation below.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/soc/rockchip/pm_domains.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+> index 5c342167b9db7a16..9936038d38771784 100644
+> --- a/drivers/soc/rockchip/pm_domains.c
+> +++ b/drivers/soc/rockchip/pm_domains.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+
+not wanting to be to nitpicky, but clk-provider.h seems that it should be
+used from drivers exposing clocks to the system, not from clock users.
+
+I just remember that in the past clk maintainers tried to keep their
+layering intact, so I've included them for clarification.
+
+Mike, Stephen: the power-domain driver of Rockchip socs needs
+to toggle all clocks of domain peripherals when turning a domain
+on or off, so has a variable list of clocks in the clocks property in dt.
+Hence the of_count_... call which could be replaced with
+of_clk_get_parent_count to not open-code this.
 
 
---i7quqgrx7stws5lv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Heiko
 
-On Fri, Feb 09, 2018 at 05:30:55PM +0200, Andy Shevchenko wrote:
-> On Fri, Feb 9, 2018 at 2:07 PM, Jonathan Neusch=C3=A4fer
-> <j.neuschaefer@gmx.net> wrote:
-> > The Nintendo Wii's chipset (called "Hollywood") has a GPIO controller
-> > that supports a configurable number of pins (up to 32), interrupts, and
-> > some special mechanisms to share the controller between the system's
-> > security processor (an ARM926) and the PowerPC CPU. Pin multiplexing is
-> > not supported.
-> >
-> > This patch adds a basic driver for this GPIO controller. Interrupt
-> > support will come in a later patch.
-> >
-> > This patch is based on code developed by Albert Herranz and the GameCube
-> > Linux Team, file arch/powerpc/platforms/embedded6xx/hlwd-gpio.c,
-> > available at https://github.com/DeltaResero/GC-Wii-Linux-Kernels, but
-> > has grown quite dissimilar.
-> >
->=20
-> Fine to me, though one comment below.
-> In any case,
->=20
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-Thank you.
+>  #include <linux/regmap.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <dt-bindings/power/rk3288-power.h>
+> @@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+>  		return -EINVAL;
+>  	}
+>  
+> -	clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
+> +	clk_cnt = of_clk_get_parent_count(node);
+>  	pd = devm_kzalloc(pmu->dev,
+>  			  sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
+>  			  GFP_KERNEL);
+> 
 
 
-[...]
-> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> > index d6a8e851ad13..47606dfe06cc 100644
-> > --- a/drivers/gpio/Kconfig
-> > +++ b/drivers/gpio/Kconfig
-> > @@ -229,6 +229,15 @@ config GPIO_GRGPIO
-> >           Select this to support Aeroflex Gaisler GRGPIO cores from the=
- GRLIB
-> >           VHDL IP core library.
-> >
-> > +config GPIO_HLWD
-> > +       tristate "Nintendo Wii (Hollywood) GPIO"
->=20
-> > +       depends on OF_GPIO
->=20
-> You may get rid of it if...
-
-[ Even if this driver isn't switched to the unified device property API,
-  I think "depends on OF" would be enough here, because it doesn't use
-  the code that's guarded by CONFIG_OF_GPIO (gpiolib-of.c), but this
-  applies to other drivers (e.g. gpio-aspeed, gpio-bcm-kona) as well, so
-  this would ideally be a bigger cleanup patch. ]
-
-
-> > +       res =3D of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpi=
-os);
->=20
-> ...if you switch to unified device property API.
-
-I don't think this change is worth making, unless/until the of_property
-API is deprecated. I'm rather sure this GPIO controller won't appear in
-an ACPI-based system.
-
-
-Thanks,
-Jonathan Neusch=C3=A4fer
-
---i7quqgrx7stws5lv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAABAgAGBQJafdNLAAoJEAgwRJqO81/bixcQAIr1riJeusqVnVSqFoRF5AnI
-E5rzLIjuyrWdakM/xRDFvHhKJs2CVNVWyzxsPefEfdYZjPx7jxy9g2ZC0fOR8MRd
-F26NvxC6+x5piXsGXixyWdveWSe5ePsp041xQylW/6J8c9rWN6/H2K0PFaig/oEC
-eRuzu3Ow4G4m6PHYDeiorz7CHZGKYF9bCqPxSXhJRL1GWv2eahlB6MHe+fnSxI/3
-YogJGou88lMQryAG2zLy2JUuXMFR2wcixjso8Np9VwqQiTIWTr+ONqhMDx/P7rfB
-IU1PW027x/571T7dC40jDrtGERe7IPtGtqx86qnO71cczBJFla6Hu8Tjdirs+haZ
-+0AeTpshCXNEG2Hnb1FML9LzO5bMwTqMWFsF8loek4XtJR9/ZJ/xmLk6ieE1ShWD
-+yjjgPpMoqeGFaCZkwzITFZ9XbUV51nuElSLWbwFjagUAzWx48G5/2iml6coFlCA
-a4Z17JNZw9ue68es/nakJiwPiUpA7/73Ck8JzIq4AIXdW+Aiz8H72rnudqCX6qZ5
-ccBbhW2VgAtSE7RYQqK6i6q09Y1RzheUqTwhcDIQ+kGAhWeGCG02mzOHcyUYPUGG
-tsBoqPTeqibSkmo4ZMYTKDacXFq5MYdTZ5M/rxz+sXxLKVYFzNJwHbzvogCXom2G
-6YvcnxSVm0mft+2eLQqs
-=SLYv
------END PGP SIGNATURE-----
-
---i7quqgrx7stws5lv--
