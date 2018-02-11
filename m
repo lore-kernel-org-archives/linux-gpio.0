@@ -1,28 +1,45 @@
-From: =?UTF-8?B?0JLQsNGB0LjQu9C40Lkg0JDQuNGC0L7Qsg==?=
-        <smile.vasily@gmail.com>
-Subject: [libgpiod] pull_up and pull_down resistors
-Date: Sun, 11 Feb 2018 23:15:10 +0300
-Message-ID: <CAH_Y6Mbf+f_=OVBhdfi18FMwDyHY6OyVOE56Fybt0XV42gftRQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] gpio-intel-mid: Delete an error message for a failed memory
+ allocation in intel_gpio_probe()
+Date: Sun, 11 Feb 2018 22:04:07 +0100
+Message-ID: <0ea6dba4-0c52-4c9c-ae7e-d80c2f3d50f3@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:39015 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753732AbeBKUPM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Feb 2018 15:15:12 -0500
-Received: by mail-lf0-f45.google.com with SMTP id h78so10641549lfg.6
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Feb 2018 12:15:11 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, David Cohen <david.a.cohen@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
 
-Hi, many thanks for your work!
-I got libgpiood working on orange pi one board
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Feb 2018 21:56:42 +0100
 
-I have a question about pull_up and pull_down conmmands when line is
-in input directions.
+Omit an extra message for a memory allocation failure in this function.
 
-I don`t found anything in your code about pull_up_down commands(
-please tell something about it
+This issue was detected by using the Coccinelle software.
 
-regards!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/gpio/gpio-intel-mid.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
+index 629575ea46a0..028d64c2cb1e 100644
+--- a/drivers/gpio/gpio-intel-mid.c
++++ b/drivers/gpio/gpio-intel-mid.c
+@@ -361,10 +361,8 @@ static int intel_gpio_probe(struct pci_dev *pdev,
+ 	pcim_iounmap_regions(pdev, 1 << 1);
+ 
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(&pdev->dev, "can't allocate chip data\n");
++	if (!priv)
+ 		return -ENOMEM;
+-	}
+ 
+ 	priv->reg_base = pcim_iomap_table(pdev)[0];
+ 	priv->chip.label = dev_name(&pdev->dev);
+-- 
+2.16.1
