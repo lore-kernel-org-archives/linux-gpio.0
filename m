@@ -1,17 +1,17 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: [PATCH] gpio: include consumer header in gpiolib.h
-Date: Mon, 12 Feb 2018 11:09:38 +0100
-Message-ID: <20180212100938.7405-1-linus.walleij@linaro.org>
+Date: Mon, 12 Feb 2018 11:11:15 +0100
+Message-ID: <20180212101115.7836-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43431 "EHLO
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43655 "EHLO
         mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932913AbeBLKJn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Feb 2018 05:09:43 -0500
-Received: by mail-lf0-f68.google.com with SMTP id q69so1828455lfi.10
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Feb 2018 02:09:42 -0800 (PST)
+        with ESMTP id S932630AbeBLKLU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Feb 2018 05:11:20 -0500
+Received: by mail-lf0-f68.google.com with SMTP id q69so1834607lfi.10
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Feb 2018 02:11:19 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Hoan Tran <hotran@apm.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 
 We are forward-declaring enum gpiod_flags, but this is not referenced
