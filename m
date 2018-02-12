@@ -1,7 +1,7 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 17/21] regulator: core: Only support passing enable GPIO descriptors
-Date: Mon, 12 Feb 2018 14:17:13 +0100
-Message-ID: <20180212131717.27193-18-linus.walleij@linaro.org>
+Subject: [PATCH 21/21] regulator: gpio: Simplify probe path
+Date: Mon, 12 Feb 2018 14:17:17 +0100
+Message-ID: <20180212131717.27193-22-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
@@ -10,126 +10,149 @@ To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Now that we changed all providers to pass descriptors into the core
-for enable GPIOs instead of a global GPIO number, delete the support
-for passing GPIO numbers in, and we get a cleanup and size reduction
-in the core, and from a GPIO point of view we use the modern, cleaner
-interface.
+Use devm_* managed device resources and create a local
+struct device *dev variable to simplify the code inside
+probe().
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/regulator/core.c         | 32 ++++++--------------------------
- include/linux/regulator/driver.h | 10 +---------
- 2 files changed, 7 insertions(+), 35 deletions(-)
+ drivers/regulator/gpio-regulator.c | 60 +++++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 4549b93b0ff9..fc5346d23fd7 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -23,7 +23,6 @@
- #include <linux/mutex.h>
- #include <linux/suspend.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/of.h>
- #include <linux/regmap.h>
-@@ -1935,35 +1934,19 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index aecdd3f211ba..38a283252aaf 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -228,27 +228,28 @@ static struct regulator_ops gpio_regulator_current_ops = {
+ 
+ static int gpio_regulator_probe(struct platform_device *pdev)
  {
- 	struct regulator_enable_gpio *pin;
- 	struct gpio_desc *gpiod;
--	int ret;
+-	struct gpio_regulator_config *config = dev_get_platdata(&pdev->dev);
+-	struct device_node *np = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
++	struct gpio_regulator_config *config = dev_get_platdata(dev);
++	struct device_node *np = dev->of_node;
+ 	struct gpio_regulator_data *drvdata;
+ 	struct regulator_config cfg = { };
+ 	enum gpiod_flags gflags;
+ 	int ptr, ret, state, i;
  
--	if (config->ena_gpiod)
--		gpiod = config->ena_gpiod;
--	else
--		gpiod = gpio_to_desc(config->ena_gpio);
-+	gpiod = config->ena_gpiod;
- 
- 	list_for_each_entry(pin, &regulator_ena_gpio_list, list) {
- 		if (pin->gpiod == gpiod) {
--			rdev_dbg(rdev, "GPIO %d is already used\n",
--				config->ena_gpio);
-+			rdev_dbg(rdev, "GPIO is already used\n");
- 			goto update_ena_gpio_to_rdev;
- 		}
- 	}
- 
--	if (!config->ena_gpiod) {
--		ret = gpio_request_one(config->ena_gpio,
--				       GPIOF_DIR_OUT | config->ena_gpio_flags,
--				       rdev_get_name(rdev));
--		if (ret)
--			return ret;
--	}
--
- 	pin = kzalloc(sizeof(struct regulator_enable_gpio), GFP_KERNEL);
--	if (pin == NULL) {
--		if (!config->ena_gpiod)
--			gpio_free(config->ena_gpio);
-+	if (pin == NULL)
+-	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_regulator_data),
++	drvdata = devm_kzalloc(dev, sizeof(struct gpio_regulator_data),
+ 			       GFP_KERNEL);
+ 	if (drvdata == NULL)
  		return -ENOMEM;
+ 
+ 	if (np) {
+-		config = of_get_gpio_regulator_config(&pdev->dev, np,
++		config = of_get_gpio_regulator_config(dev, np,
+ 						      &drvdata->desc);
+ 		if (IS_ERR(config))
+ 			return PTR_ERR(config);
+ 	}
+ 
+ 	for (i = 0; i < config->ngpios; i++) {
+-		drvdata->gpiods[i] = devm_gpiod_get_index(&pdev->dev,
++		drvdata->gpiods[i] = devm_gpiod_get_index(dev,
+ 							  NULL,
+ 							  i,
+ 							  config->gflags[i]);
+@@ -257,21 +258,20 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	}
+ 	drvdata->nr_gpios = config->ngpios;
+ 
+-	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
++	drvdata->desc.name = devm_kstrdup(dev, config->supply_name, GFP_KERNEL);
+ 	if (drvdata->desc.name == NULL) {
+-		dev_err(&pdev->dev, "Failed to allocate supply name\n");
+-		ret = -ENOMEM;
+-		goto err;
++		dev_err(dev, "Failed to allocate supply name\n");
++		return -ENOMEM;
+ 	}
+ 
+-	drvdata->states = kmemdup(config->states,
+-				  config->nr_states *
+-					 sizeof(struct gpio_regulator_state),
+-				  GFP_KERNEL);
++	drvdata->states = devm_kmemdup(dev,
++				       config->states,
++				       config->nr_states *
++				       sizeof(struct gpio_regulator_state),
++				       GFP_KERNEL);
+ 	if (drvdata->states == NULL) {
+-		dev_err(&pdev->dev, "Failed to allocate state data\n");
+-		ret = -ENOMEM;
+-		goto err_name;
++		dev_err(dev, "Failed to allocate state data\n");
++		return -ENOMEM;
+ 	}
+ 	drvdata->nr_states = config->nr_states;
+ 
+@@ -290,9 +290,8 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 		drvdata->desc.ops = &gpio_regulator_current_ops;
+ 		break;
+ 	default:
+-		dev_err(&pdev->dev, "No regulator type set\n");
+-		ret = -EINVAL;
+-		goto err_memstate;
++		dev_err(dev, "No regulator type set\n");
++		return -EINVAL;
+ 	}
+ 
+ 	/* build initial state from gpio init data. */
+@@ -303,7 +302,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	}
+ 	drvdata->state = state;
+ 
+-	cfg.dev = &pdev->dev;
++	cfg.dev = dev;
+ 	cfg.init_data = config->init_data;
+ 	cfg.driver_data = drvdata;
+ 	cfg.of_node = np;
+@@ -317,29 +316,20 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	else
+ 		gflags = GPIOD_OUT_LOW;
+ 
+-	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "enable", gflags);
+-	if (IS_ERR(cfg.ena_gpiod)) {
+-		ret = PTR_ERR(cfg.ena_gpiod);
+-		goto err_memstate;
 -	}
++	cfg.ena_gpiod = devm_gpiod_get_optional(dev, "enable", gflags);
++	if (IS_ERR(cfg.ena_gpiod))
++		return PTR_ERR(cfg.ena_gpiod);
  
- 	pin->gpiod = gpiod;
- 	pin->ena_gpio_invert = config->ena_gpio_invert;
-@@ -1987,7 +1970,6 @@ static void regulator_ena_gpio_free(struct regulator_dev *rdev)
- 		if (pin->gpiod == rdev->ena_pin->gpiod) {
- 			if (pin->request_count <= 1) {
- 				pin->request_count = 0;
--				gpiod_put(pin->gpiod);
- 				list_del(&pin->list);
- 				kfree(pin);
- 				rdev->ena_pin = NULL;
-@@ -4160,15 +4142,13 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 			goto clean;
+ 	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
+ 	if (IS_ERR(drvdata->dev)) {
+ 		ret = PTR_ERR(drvdata->dev);
+-		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+-		goto err_memstate;
++		dev_err(dev, "Failed to register regulator: %d\n", ret);
++		return ret;
  	}
  
--	if (config->ena_gpiod ||
--	    ((config->ena_gpio || config->ena_gpio_initialized) &&
--	     gpio_is_valid(config->ena_gpio))) {
-+	if (config->ena_gpiod) {
- 		mutex_lock(&regulator_list_mutex);
- 		ret = regulator_ena_gpio_request(rdev, config);
- 		mutex_unlock(&regulator_list_mutex);
- 		if (ret != 0) {
--			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
--				 config->ena_gpio, ret);
-+			rdev_err(rdev, "Failed to request enable GPIO: %d\n",
-+				 ret);
- 			goto clean;
- 		}
- 	}
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 4fc96cb8e5d7..8900c230c899 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -384,13 +384,8 @@ struct regulator_desc {
-  *           NULL).
-  * @regmap: regmap to use for core regmap helpers if dev_get_regmap() is
-  *          insufficient.
-- * @ena_gpio_initialized: GPIO controlling regulator enable was properly
-- *                        initialized, meaning that >= 0 is a valid gpio
-- *                        identifier and < 0 is a non existent gpio.
-- * @ena_gpio: GPIO controlling regulator enable.
-- * @ena_gpiod: GPIO descriptor controlling regulator enable.
-+ * @ena_gpiod: GPIO controlling regulator enable.
-  * @ena_gpio_invert: Sense for GPIO enable control.
-- * @ena_gpio_flags: Flags to use when calling gpio_request_one()
-  */
- struct regulator_config {
- 	struct device *dev;
-@@ -399,11 +394,8 @@ struct regulator_config {
- 	struct device_node *of_node;
- 	struct regmap *regmap;
+ 	platform_set_drvdata(pdev, drvdata);
  
--	bool ena_gpio_initialized;
--	int ena_gpio;
- 	struct gpio_desc *ena_gpiod;
- 	unsigned int ena_gpio_invert:1;
--	unsigned int ena_gpio_flags;
- };
+ 	return 0;
+-
+-err_memstate:
+-	kfree(drvdata->states);
+-err_name:
+-	kfree(drvdata->desc.name);
+-err:
+-	return ret;
+ }
  
- /*
+ static int gpio_regulator_remove(struct platform_device *pdev)
+@@ -347,8 +337,6 @@ static int gpio_regulator_remove(struct platform_device *pdev)
+ 	struct gpio_regulator_data *drvdata = platform_get_drvdata(pdev);
+ 
+ 	regulator_unregister(drvdata->dev);
+-	kfree(drvdata->states);
+-	kfree(drvdata->desc.name);
+ 
+ 	return 0;
+ }
 -- 
 2.14.3
