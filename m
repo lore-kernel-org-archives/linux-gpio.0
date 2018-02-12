@@ -1,66 +1,60 @@
-From: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Subject: [PATCH] selftests/gpio: Makefile deletes unnecessary files
-Date: Mon, 12 Feb 2018 10:28:29 +0100
-Message-ID: <20180212092829.33790-1-tmricht@linux.vnet.ibm.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60148 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933230AbeBLJ27 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 12 Feb 2018 04:28:59 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1C9Sjil132657
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Feb 2018 04:28:59 -0500
-Received: from e06smtp10.uk.ibm.com (e06smtp10.uk.ibm.com [195.75.94.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2g30fv6ukx-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Feb 2018 04:28:58 -0500
-Received: from localhost
-        by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-gpio@vger.kernel.org> from <tmricht@linux.vnet.ibm.com>;
-        Mon, 12 Feb 2018 09:28:50 -0000
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] gpio: merrifield: Delete an error message for a failed
+ memory allocation in mrfld_gpio_probe()
+Date: Mon, 12 Feb 2018 12:08:23 +0200
+Message-ID: <1518430103.22495.252.camel@linux.intel.com>
+References: <d73420c9-60ee-ab28-e881-299441815afc@users.sourceforge.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <d73420c9-60ee-ab28-e881-299441815afc@users.sourceforge.net>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, brgl@bgdev.pl, bamvor.zhangjian@linaro.org
-Cc: brueckner@linux.vnet.ibm.com, Thomas Richter <tmricht@linux.vnet.ibm.com>
 
-The Makefile in selftests/gpio deletes several files
-(../gpio*) which do not exist at all in directory selftests.
-Instead they are located in directory
-linux/tools/gpio/ and are built when the gpio test case is
-built (in case they do not already exist).
-Since they are located outside the selftests tree, do not
-delete them.
+On Sun, 2018-02-11 at 13:42 +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 11 Feb 2018 13:30:14 +0100
+> 
+> Omit an extra message for a memory allocation failure in this
+> function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
 
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
----
- tools/testing/selftests/gpio/Makefile | 6 ------
- 1 file changed, 6 deletions(-)
+Linus, I have no strong opinion here, so, up to you to decide.
 
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 1bbb47565c55..91a834f6af7b 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -3,11 +3,6 @@
- TEST_PROGS := gpio-mockup.sh
- TEST_FILES := gpio-mockup-sysfs.sh $(BINARIES)
- BINARIES := gpio-mockup-chardev
--EXTRA_PROGS := ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
--EXTRA_DIRS := ../gpioinclude/
--EXTRA_OBJS := ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
--EXTRA_OBJS += ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpio-in.o
--EXTRA_OBJS += ../gpiolsgpio.o
- 
- include ../lib.mk
- 
-@@ -15,7 +10,6 @@ all: $(BINARIES)
- 
- override define CLEAN
- 	$(RM) $(BINARIES) $(EXTRA_PROGS) $(EXTRA_OBJS)
--	$(RM) -r $(EXTRA_DIRS)
- endef
- 
- CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+If you decide this patch to go, 
+
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpio/gpio-merrifield.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-
+> merrifield.c
+> index dd67a31ac337..eec21122299e 100644
+> --- a/drivers/gpio/gpio-merrifield.c
+> +++ b/drivers/gpio/gpio-merrifield.c
+> @@ -408,10 +408,8 @@ static int mrfld_gpio_probe(struct pci_dev *pdev,
+> const struct pci_device_id *id
+>  	pcim_iounmap_regions(pdev, BIT(1));
+>  
+>  	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> -	if (!priv) {
+> -		dev_err(&pdev->dev, "can't allocate chip data\n");
+> +	if (!priv)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	priv->dev = &pdev->dev;
+>  	priv->reg_base = pcim_iomap_table(pdev)[0];
+
 -- 
-2.14.3
-
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
