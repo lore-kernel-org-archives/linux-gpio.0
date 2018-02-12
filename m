@@ -1,180 +1,190 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 10/21] regulator: lp8788-ldo: Pass descriptor instead of
- GPIO number
-Date: Mon, 12 Feb 2018 14:59:08 +0000
-Message-ID: <20180212145908.fil3dtrdzlycy4ea@dell>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 02/21] regulator: fixed: Convert to use GPIO descriptor
+ only
+Date: Mon, 12 Feb 2018 17:13:31 +0200
+Message-ID: <1518448411.22495.286.camel@linux.intel.com>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
- <20180212131717.27193-11-linus.walleij@linaro.org>
+         <20180212131717.27193-3-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180212131717.27193-11-linus.walleij@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Milo Kim <milo.kim@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:22211 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751176AbeBLPNh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 12 Feb 2018 10:13:37 -0500
+In-Reply-To: <20180212131717.27193-3-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Haojian Zhuang <haojian.zhuang@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>, Mike Rapoport <mike@compulab.co.il>, Robert Jarzmik <robert.jarzmik@free.fr>, Philipp Zabel <philipp.zabel@gmail.com>, Daniel Mack <zonque@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Mon, 12 Feb 2018, Linus Walleij wrote:
-
-> Instead of passing a global GPIO number, pass a descriptor looked
-> up with the standard devm_gpiod_get_index_optional() call.
+On Mon, 2018-02-12 at 14:16 +0100, Linus Walleij wrote:
+> As we augmented the regulator core to accept a GPIO descriptor instead
+> of a GPIO number, we can augment the fixed GPIO regulator to look up
+> and pass that descriptor directly from device tree or board GPIO
+> descriptor look up tables.
 > 
-> This driver has supported passing a LDO enable GPIO for years,
-> yet this facility has never been put to use in the upstream kernel.
-> If someone desires to put in place GPIO control for the LDOs,
-> this can be done by adding a GPIO descriptor table in the MFD
-> nexus in drivers/mfd/lp8788.c for the LDO device when spawning the
-> MFD children, or using a board file.
+> Some boards just auto-enumerate their fixed regulator platform devices
+> and I have assumed they get names like "fixed-regulator.0" but it's
+> pretty hard to guess this. I need some testing from board maintainers
+> to
+> be sure. Other boards are straight forward, using just plain
+> "fixed-regulator" (ID -1) or "fixed-regulator.1" hammering down the
+> device ID.
 > 
-> Cc: Milo Kim <milo.kim@ti.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Lee: would be nice if you could ACK this smallish patch to
-> the MFD header.
-
-Fine, but any sign of a conflict and I'll need a PR.
-
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
-> ---
->  drivers/regulator/lp8788-ldo.c | 32 ++++++++++++++++----------------
->  include/linux/mfd/lp8788.h     | 16 ----------------
->  2 files changed, 16 insertions(+), 32 deletions(-)
+> The OMAP didn't have proper label names on its GPIO chips so I have
+> fixed
+> this with a separate patch to the GPIO tree.
 > 
-> diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
-> index cbfd35873575..f2347474a106 100644
-> --- a/drivers/regulator/lp8788-ldo.c
-> +++ b/drivers/regulator/lp8788-ldo.c
-> @@ -16,7 +16,7 @@
->  #include <linux/err.h>
->  #include <linux/platform_device.h>
->  #include <linux/regulator/driver.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/mfd/lp8788.h>
->  
->  /* register address */
-> @@ -85,8 +85,6 @@
->  #define LP8788_STARTUP_TIME_S		3
->  
->  #define ENABLE_TIME_USEC		32
-> -#define ENABLE				GPIOF_OUT_INIT_HIGH
-> -#define DISABLE				GPIOF_OUT_INIT_LOW
->  
->  enum lp8788_ldo_id {
->  	DLDO1,
-> @@ -117,7 +115,7 @@ struct lp8788_ldo {
->  	struct lp8788 *lp;
->  	struct regulator_desc *desc;
->  	struct regulator_dev *regulator;
-> -	struct lp8788_ldo_enable_pin *en_pin;
-> +	struct gpio_desc *ena_gpiod;
+> It seems the da9055 and da9211 has never got around to actually
+> passing
+> any enable gpio into its platform data (not the in-tree code anyway)
+> so we
+> can just decide to simply pass a descriptor instead.
+> 
+> The fixed GPIO-controlled regulator in mach-pxa/ezx.c was confusingly
+> named
+> "*_dummy_supply_device" while it is a very real device backed by a
+> GPIO
+> line. There is nothing dummy about it at all, so I renamed it with the
+> infix *_regulator_* as part of this patch set.
+> 
+> For the patch hunk hitting arch/blackfin I would say I do not expect
+> testing, review or ACKs anymore so if it works, it works.
+> 
+> The hunk hitting the x86 BCM43xx driver is especially tricky as the
+> number
+> comes out of SFI which is a mystery to me. I definately need someone
+> to
+> look at this. (Hi Andy.)
+
+Hi, Linus!
+
+Nice patch, though I have comments below.
+
+> --- a/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
+> +++ b/arch/x86/platform/intel-mid/device_libs/platform_bcm43xx.c
+
+> @@ -43,7 +43,6 @@ static struct fixed_voltage_config bcm43xx_vmmc = {
+>  	 * real voltage and signaling are still 1.8V.
+>  	 */
+>  	.microvolts		= 2000000,		/* 1.8V
+> */
+> -	.gpio			= -EINVAL,
+>  	.startup_delay		= 250 * 1000,		/*
+> 250ms */
+>  	.enable_high		= 1,			/*
+> active high */
+>  	.enabled_at_boot	= 0,			/*
+> disabled at boot */
+> @@ -58,11 +57,25 @@ static struct platform_device
+> bcm43xx_vmmc_regulator = {
+>  	},
 >  };
 >  
->  /* DLDO 1, 2, 3, 9 voltage table */
-> @@ -469,7 +467,6 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
->  					enum lp8788_ldo_id id)
->  {
->  	struct lp8788 *lp = ldo->lp;
-> -	struct lp8788_platform_data *pdata = lp->pdata;
->  	enum lp8788_ext_ldo_en_id enable_id;
->  	u8 en_mask[] = {
->  		[EN_ALDO1]   = LP8788_EN_SEL_ALDO1_M,
-> @@ -504,11 +501,18 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
->  		return 0;
->  	}
->  
-> -	/* if no platform data for ldo pin, then set default enable mode */
-> -	if (!pdata || !pdata->ldo_pin || !pdata->ldo_pin[enable_id])
-> +	/* FIXME: check default mode for GPIO here: high or low? */
-> +	ldo->ena_gpiod = devm_gpiod_get_index_optional(&pdev->dev,
-> +						       "enable",
-> +						       enable_id,
-> +						       GPIOD_OUT_HIGH);
-> +	if (IS_ERR(ldo->ena_gpiod))
-> +		return PTR_ERR(ldo->ena_gpiod);
+> +static struct gpiod_lookup_table bcm43xx_vmmc_gpio_table = {
+> +	.dev_id	= "reg-fixed-voltage.0",
+
+I'm not sure this will be always like this.
+We have DEVID_AUTO, which theoretically can be anything.
+
+Okay, it looks like we have only one static regulator for now for Intel
+MID. Though it's fragile if anything will change in the future (quite
+unlikely).
+
+> +	.table	= {
+
+> +		/* CHECKME: is this the correct PCI address for the
+> GPIO controller? */
+
+Yes.
+
+> +		GPIO_LOOKUP("0000:00:0c.0", -1, "enable",
+> GPIO_ACTIVE_LOW),
+
+> +		{ },
+
+Terminator should terminate even at compile time, right?
+
+Simple
+
+{}
+
+looks better to me.
+
+> +	},
+> +};
 > +
-> +	/* if no GPIO for ldo pin, then set default enable mode */
-> +	if (!ldo->ena_gpiod)
->  		goto set_default_ldo_enable_mode;
+>  static int __init bcm43xx_regulator_register(void)
+>  {
+> +	struct gpiod_lookup_table *table = &bcm43xx_vmmc_gpio_table;
+> +	struct gpiod_lookup *lookup = table->table;
+>  	int ret;
 >  
-> -	ldo->en_pin = pdata->ldo_pin[enable_id];
->  	return 0;
->  
->  set_default_ldo_enable_mode:
-> @@ -533,10 +537,8 @@ static int lp8788_dldo_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> -	if (ldo->en_pin) {
-> -		cfg.ena_gpio = ldo->en_pin->gpio;
-> -		cfg.ena_gpio_flags = ldo->en_pin->init_state;
-> -	}
-> +	if (ldo->ena_gpiod)
-> +		cfg.ena_gpiod = ldo->ena_gpiod;
->  
->  	cfg.dev = pdev->dev.parent;
->  	cfg.init_data = lp->pdata ? lp->pdata->dldo_data[id] : NULL;
-> @@ -582,10 +584,8 @@ static int lp8788_aldo_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> -	if (ldo->en_pin) {
-> -		cfg.ena_gpio = ldo->en_pin->gpio;
-> -		cfg.ena_gpio_flags = ldo->en_pin->init_state;
-> -	}
-> +	if (ldo->ena_gpiod)
-> +		cfg.ena_gpiod = ldo->ena_gpiod;
->  
->  	cfg.dev = pdev->dev.parent;
->  	cfg.init_data = lp->pdata ? lp->pdata->aldo_data[id] : NULL;
-> diff --git a/include/linux/mfd/lp8788.h b/include/linux/mfd/lp8788.h
-> index 786bf6679a28..2010e0de3e34 100644
-> --- a/include/linux/mfd/lp8788.h
-> +++ b/include/linux/mfd/lp8788.h
-> @@ -181,20 +181,6 @@ struct lp8788_buck2_dvs {
->  	enum lp8788_dvs_sel vsel;
->  };
->  
-> -/*
-> - * struct lp8788_ldo_enable_pin
-> - *
-> - *   Basically, all LDOs are enabled through the I2C commands.
-> - *   But ALDO 1 ~ 5, 7, DLDO 7, 9, 11 can be enabled by external gpio pins.
-> - *
-> - * @gpio         : gpio number which is used for enabling ldos
-> - * @init_state   : initial gpio state (ex. GPIOF_OUT_INIT_LOW)
-> - */
-> -struct lp8788_ldo_enable_pin {
-> -	int gpio;
-> -	int init_state;
-> -};
-> -
->  /*
->   * struct lp8788_chg_param
->   * @addr         : charging control register address (range : 0x11 ~ 0x1C)
-> @@ -288,7 +274,6 @@ struct lp8788_vib_platform_data {
->   * @aldo_data    : regulator initial data for analog ldo
->   * @buck1_dvs    : gpio configurations for buck1 dvs
->   * @buck2_dvs    : gpio configurations for buck2 dvs
-> - * @ldo_pin      : gpio configurations for enabling LDOs
->   * @chg_pdata    : platform data for charger driver
->   * @alarm_sel    : rtc alarm selection (1 or 2)
->   * @bl_pdata     : configurable data for backlight driver
-> @@ -306,7 +291,6 @@ struct lp8788_platform_data {
->  	struct regulator_init_data *aldo_data[LP8788_NUM_ALDOS];
->  	struct lp8788_buck1_dvs *buck1_dvs;
->  	struct lp8788_buck2_dvs *buck2_dvs;
-> -	struct lp8788_ldo_enable_pin *ldo_pin[EN_LDOS_MAX];
->  
->  	/* charger */
->  	struct lp8788_charger_platform_data *chg_pdata;
+> -	bcm43xx_vmmc.gpio =
+> get_gpio_by_name(WLAN_SFI_GPIO_ENABLE_NAME);
+
+> +	/* FIXME: convert SFI layer to use GPIO descriptors
+> internally */
+
+We already discussed this few years ago and decide not to do anything
+WRT SFI. It should just die.
+
+> +	lookup[0].chip_hwnum =
+> get_gpio_by_name(WLAN_SFI_GPIO_ENABLE_NAME);
+> +	gpiod_add_lookup_table(table);
+
+
+
+> --- a/drivers/regulator/fixed.c
+> +++ b/drivers/regulator/fixed.c
+
+
+>  	cfg.ena_gpio_invert = !config->enable_high;
+
+>  	if (config->enabled_at_boot) {
+>  		if (config->enable_high)
+> -			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
+> +			gflags = GPIOD_OUT_HIGH;
+>  		else
+> -			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
+> +			gflags = GPIOD_OUT_LOW;
+>  	} else {
+>  		if (config->enable_high)
+> -			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
+> +			gflags = GPIOD_OUT_LOW;
+>  		else
+> -			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
+> +			gflags = GPIOD_OUT_HIGH;
+>  	}
+
+Just a side note: It might make sense to split this to some kind of
+generic helper, like:
+
+static inline enum gpiod_flags gpiod_flags_output(bool value, bool
+invert)
+{
+...
+}
+
+> +	if (config->gpio_is_open_drain) {
+> +		if (gflags == GPIOD_OUT_HIGH)
+> +			gflags = GPIOD_OUT_HIGH_OPEN_DRAIN;
+> +		else
+> +			gflags = GPIOD_OUT_LOW_OPEN_DRAIN;
+> +	}
+> +
+
+> +	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, NULL,
+> gflags);
+
+Shouldn't we be a little bit more stricter here, i.e. require "enable"
+name?
+
+> +	if (IS_ERR(cfg.ena_gpiod))
+> +		return PTR_ERR(cfg.ena_gpiod);
 
 -- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
