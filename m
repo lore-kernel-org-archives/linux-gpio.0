@@ -1,88 +1,196 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 19/21] regulator: fixed/gpio: Update device tree bindings
-Date: Mon, 12 Feb 2018 14:17:15 +0100
-Message-ID: <20180212131717.27193-20-linus.walleij@linaro.org>
+Subject: [PATCH 03/21] regulator: gpio: Get enable GPIO using GPIO descriptor
+Date: Mon, 12 Feb 2018 14:16:59 +0100
+Message-ID: <20180212131717.27193-4-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43135 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935340AbeBLNSL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Feb 2018 08:18:11 -0500
-Received: by mail-lf0-f65.google.com with SMTP id q69so2535529lfi.10
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Feb 2018 05:18:10 -0800 (PST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Philipp Zabel <philipp.zabel@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
-Deprecate the open drain binding for fixed regulator and indicate
-that we prefer this to be passed in the GPIO phandle flags.
+We augment the GPIO regulator to get the *enable* regulator
+GPIO line (not the other lines) using a descriptor rather than
+a global number.
 
-Clarify that the line inversion semantics for fixed and GPIO
-regulators completely overrides the active low flags in the
-phandle flags.
+We then pass this into the regulator core which has been
+prepared to hande enable descriptors in a separate patch.
 
-Unfortunately this can not be changed to prefer that we pass
-the flags in the phandle: the bindings have been specified and
-deployed such that the presence/absence of this flag and only
-that controls the line inversion semantics. The crucial semantic
-is that the absence of the flag means the core will assume
-the line is active low, which in GPIO terms is an exception,
-as GPIO lines are normally assumed to be active high.
+Switch over the two boardfiles using this facility and clean
+up so we only pass descriptors around.
 
-This special device tree semantic cannot be changed without
-introducing a whole new compatible string for the fixed and
-GPIO regulators, so we just contain the situation.
-
-Cc: devicetree@vger.kernel.org
+Cc: Philipp Zabel <philipp.zabel@gmail.com> # HX4700/Magician maintainer
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../devicetree/bindings/regulator/fixed-regulator.txt       | 13 +++++++++++--
- .../devicetree/bindings/regulator/gpio-regulator.txt        |  4 ++++
- 2 files changed, 15 insertions(+), 2 deletions(-)
+ arch/arm/mach-pxa/hx4700.c               | 12 +++++++++++-
+ arch/arm/mach-pxa/magician.c             | 11 ++++++++++-
+ drivers/regulator/gpio-regulator.c       | 23 +++++++++++------------
+ include/linux/regulator/gpio-regulator.h |  3 ---
+ 4 files changed, 32 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.txt b/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-index 4fae41d54798..60ce9cb8f891 100644
---- a/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-@@ -7,10 +7,19 @@ Optional properties:
- - gpio: gpio to use for enable control
- - startup-delay-us: startup time in microseconds
- - enable-active-high: Polarity of GPIO is Active high
--If this property is missing, the default assumed is Active low.
-+  If this property is missing, the default assumed is Active low.
-+  If the phandle flags to the GPIO handle also flag the line as active
-+  low or high, that will be ignored for fixed regulators and the
-+  presence or absence of this flag solely controls the inversion
-+  semantics.
-+-vin-supply: Input supply name.
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index e2e7f247a645..6717a10180eb 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -20,6 +20,7 @@
+ #include <linux/delay.h>
+ #include <linux/fb.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/machine.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/input.h>
+ #include <linux/input/navpoint.h>
+@@ -711,7 +712,6 @@ static struct gpio_regulator_state bq24022_states[] = {
+ static struct gpio_regulator_config bq24022_info = {
+ 	.supply_name = "bq24022",
+ 
+-	.enable_gpio = GPIO72_HX4700_BQ24022_nCHARGE_EN,
+ 	.enable_high = 0,
+ 	.enabled_at_boot = 0,
+ 
+@@ -733,6 +733,15 @@ static struct platform_device bq24022 = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table bq24022_gpiod_table = {
++	.dev_id = "gpio-regulator",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa", GPIO72_HX4700_BQ24022_nCHARGE_EN,
++			    "enable", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
 +
-+Deprecated properties:
- - gpio-open-drain: GPIO is open drain type.
-   If this property is missing then default assumption is false.
---vin-supply: Input supply name.
-+  Do not use this property in new device trees: instead use the
-+  phandle flag to indicate to the GPIO provider that the line
-+  should be handled as open drain.
+ /*
+  * StrataFlash
+  */
+@@ -875,6 +884,7 @@ static void __init hx4700_init(void)
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
  
- Any property defined as part of the core regulator
- binding, defined in regulator.txt, can also be used.
-diff --git a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-index dd1ed789728e..06f5cb4af052 100644
---- a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-@@ -12,6 +12,10 @@ Optional properties:
- 			  defualt is LOW if nothing is specified.
- - startup-delay-us	: Startup time in microseconds.
- - enable-active-high	: Polarity of GPIO is active high (default is low).
-+			  If the phandle flags to the GPIO handle also flag the line as
-+			  active low or high, that will be ignored for fixed regulators
-+			  and the presence or absence of this flag solely controls the
-+			  inversion semantics.
- - regulator-type	: Specifies what is being regulated, must be either
- 			  "voltage" or "current", defaults to voltage.
++	gpiod_add_lookup_table(&bq24022_gpiod_table);
+ 	platform_add_devices(devices, ARRAY_SIZE(devices));
+ 	pwm_add_table(hx4700_pwm_lookup, ARRAY_SIZE(hx4700_pwm_lookup));
  
+diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+index 14c0f80bc9e7..9a5bda3ea194 100644
+--- a/arch/arm/mach-pxa/magician.c
++++ b/arch/arm/mach-pxa/magician.c
+@@ -657,7 +657,6 @@ static struct gpio_regulator_state bq24022_states[] = {
+ static struct gpio_regulator_config bq24022_info = {
+ 	.supply_name		= "bq24022",
+ 
+-	.enable_gpio		= GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
+ 	.enable_high		= 0,
+ 	.enabled_at_boot	= 1,
+ 
+@@ -679,6 +678,15 @@ static struct platform_device bq24022 = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table bq24022_gpiod_table = {
++	.dev_id = "gpio-regulator",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa", GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
++			    "enable", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ /*
+  * fixed regulator for ads7846
+  */
+@@ -1007,6 +1015,7 @@ static void __init magician_init(void)
+ 	regulator_register_always_on(0, "power", pwm_backlight_supply,
+ 		ARRAY_SIZE(pwm_backlight_supply), 5000000);
+ 
++	gpiod_add_lookup_table(&bq24022_gpiod_table);
+ 	platform_add_devices(ARRAY_AND_SIZE(devices));
+ }
+ 
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index 0fce06acfaec..172ca4c578b2 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -31,6 +31,7 @@
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/regulator/gpio-regulator.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
+@@ -161,10 +162,6 @@ of_get_gpio_regulator_config(struct device *dev, struct device_node *np,
+ 
+ 	of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
+ 
+-	config->enable_gpio = of_get_named_gpio(np, "enable-gpio", 0);
+-	if (config->enable_gpio < 0 && config->enable_gpio != -ENOENT)
+-		return ERR_PTR(config->enable_gpio);
+-
+ 	/* Fetch GPIOs. - optional property*/
+ 	ret = of_gpio_count(np);
+ 	if ((ret < 0) && (ret != -ENOENT))
+@@ -254,6 +251,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct gpio_regulator_data *drvdata;
+ 	struct regulator_config cfg = { };
++	enum gpiod_flags gflags;
+ 	int ptr, ret, state;
+ 
+ 	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_regulator_data),
+@@ -340,21 +338,22 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	cfg.driver_data = drvdata;
+ 	cfg.of_node = np;
+ 
+-	if (gpio_is_valid(config->enable_gpio)) {
+-		cfg.ena_gpio = config->enable_gpio;
+-		cfg.ena_gpio_initialized = true;
+-	}
+ 	cfg.ena_gpio_invert = !config->enable_high;
+ 	if (config->enabled_at_boot) {
+ 		if (config->enable_high)
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
++			gflags = GPIOD_OUT_HIGH;
+ 		else
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
++			gflags = GPIOD_OUT_LOW;
+ 	} else {
+ 		if (config->enable_high)
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
++			gflags = GPIOD_OUT_LOW;
+ 		else
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
++			gflags = GPIOD_OUT_HIGH;
++	}
++	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "enable", gflags);
++	if (IS_ERR(cfg.ena_gpiod)) {
++		ret = PTR_ERR(cfg.ena_gpiod);
++		goto err_stategpio;
+ 	}
+ 
+ 	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
+diff --git a/include/linux/regulator/gpio-regulator.h b/include/linux/regulator/gpio-regulator.h
+index 19fbd267406d..536cab86f2d5 100644
+--- a/include/linux/regulator/gpio-regulator.h
++++ b/include/linux/regulator/gpio-regulator.h
+@@ -44,8 +44,6 @@ struct gpio_regulator_state {
+ /**
+  * struct gpio_regulator_config - config structure
+  * @supply_name:	Name of the regulator supply
+- * @enable_gpio:	GPIO to use for enable control
+- *			set to -EINVAL if not used
+  * @enable_high:	Polarity of enable GPIO
+  *			1 = Active high, 0 = Active low
+  * @enabled_at_boot:	Whether regulator has been enabled at
+@@ -69,7 +67,6 @@ struct gpio_regulator_state {
+ struct gpio_regulator_config {
+ 	const char *supply_name;
+ 
+-	int enable_gpio;
+ 	unsigned enable_high:1;
+ 	unsigned enabled_at_boot:1;
+ 	unsigned startup_delay;
 -- 
 2.14.3
-
