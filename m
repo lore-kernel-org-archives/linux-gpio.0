@@ -1,110 +1,173 @@
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2 6/6] arm64: allwinner: h6: add support
- for Pine H64 board
-Date: Sun, 11 Feb 2018 23:26:51 +0000
-Message-ID: <3705fc05-f1ec-a6ee-d204-d1f8f0916069@arm.com>
-References: <20180203154942.63566-1-icenowy@aosc.io>
- <20180203154942.63566-7-icenowy@aosc.io>
-Reply-To: andre.przywara-5wv7dgnIgG8@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDNZNK75ZIKRBVVCQPKAKGQES4DKLPI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20180203154942.63566-7-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: icenowy-h8G6r0blFSE@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 2/3] extcon: gpio: Move platform data into state container
+Date: Mon, 12 Feb 2018 09:53:13 +0100
+Message-ID: <20180212085314.23014-2-linus.walleij@linaro.org>
+References: <20180212085314.23014-1-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37257 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933172AbeBLIxW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Feb 2018 03:53:22 -0500
+Received: by mail-lf0-f68.google.com with SMTP id f137so19396918lfe.4
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Feb 2018 00:53:21 -0800 (PST)
+In-Reply-To: <20180212085314.23014-1-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mike Lockwood <lockwood@google.com>, Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linus.walleij@linaro.org>
 
-Hi,
+This moves the platform data settings from the platform data
+struct and into the state container, saving some unnecessary
+references and simplifying things a bit.
 
-On 03/02/18 15:49, Icenowy Zheng wrote:
-> Pine H64 is an Allwinner H6-based SBC from Pine64, with the following
-> features:
-> 
-> - 1GiB/2GiB/4GiB LPDDR3 DRAM (in 4GiB situation only 3GiB is
-> accessible)
-> - AXP805 PMIC
-> - Raspberry-Pi-compatible GPIO header, "Euler" GPIO header (not
-> compatible with the "Euler" on Pine A64) and "Expansion" pin header
-> - 2 USB 2.0 ports and 1 USB 3.0 ports
-> - Audio jack
-> - MicroSD slot and eMMC module slot
-> - on-board SPI NOR flash
-> - 1Gbps Ethernet port (via RTL8211E PHY)
-> - HDMI port
-> 
-> Adds initial support for it, including the UART on the Expansion pin
-> header.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/extcon/extcon-gpio.c | 56 ++++++++++++++++++++------------------------
+ 1 file changed, 26 insertions(+), 30 deletions(-)
 
-I booted this to the point where the kernel complained about the missing
-rootfs, also with an initrd to the prompt. So:
+diff --git a/drivers/extcon/extcon-gpio.c b/drivers/extcon/extcon-gpio.c
+index 5f88f36cc54e..1d180f717fdf 100644
+--- a/drivers/extcon/extcon-gpio.c
++++ b/drivers/extcon/extcon-gpio.c
+@@ -29,7 +29,13 @@
+ #include <linux/workqueue.h>
+ 
+ /**
+- * struct gpio_extcon_pdata - A simple GPIO-controlled extcon device.
++ * struct gpio_extcon_data - A simple GPIO-controlled extcon device state container.
++ * @edev:		Extcon device.
++ * @irq:		Interrupt line for the external connector.
++ * @work:		Work fired by the interrupt.
++ * @debounce_jiffies:	Number of jiffies to wait for the GPIO to stabilize, from the debounce
++ *			value.
++ * @id_gpiod:		GPIO descriptor for this external connector.
+  * @extcon_id:		The unique id of specific external connector.
+  * @gpio:		Corresponding GPIO.
+  * @gpio_active_low:	Boolean describing whether gpio active state is 1 or 0
+@@ -40,23 +46,18 @@
+  * @check_on_resume:	Boolean describing whether to check the state of gpio
+  *			while resuming from sleep.
+  */
+-struct gpio_extcon_pdata {
+-	unsigned int extcon_id;
+-	unsigned gpio;
+-	bool gpio_active_low;
+-	unsigned long debounce;
+-	unsigned long irq_flags;
+-	bool check_on_resume;
+-};
+-
+ struct gpio_extcon_data {
+ 	struct extcon_dev *edev;
+ 	int irq;
+ 	struct delayed_work work;
+ 	unsigned long debounce_jiffies;
+-
+ 	struct gpio_desc *id_gpiod;
+-	struct gpio_extcon_pdata *pdata;
++	unsigned int extcon_id;
++	unsigned gpio;
++	bool gpio_active_low;
++	unsigned long debounce;
++	unsigned long irq_flags;
++	bool check_on_resume;
+ };
+ 
+ static void gpio_extcon_work(struct work_struct *work)
+@@ -67,10 +68,10 @@ static void gpio_extcon_work(struct work_struct *work)
+ 			     work);
+ 
+ 	state = gpiod_get_value_cansleep(data->id_gpiod);
+-	if (data->pdata->gpio_active_low)
++	if (data->gpio_active_low)
+ 		state = !state;
+ 
+-	extcon_set_state_sync(data->edev, data->pdata->extcon_id, state);
++	extcon_set_state_sync(data->edev, data->extcon_id, state);
+ }
+ 
+ static irqreturn_t gpio_irq_handler(int irq, void *dev_id)
+@@ -84,24 +85,23 @@ static irqreturn_t gpio_irq_handler(int irq, void *dev_id)
+ 
+ static int gpio_extcon_init(struct device *dev, struct gpio_extcon_data *data)
+ {
+-	struct gpio_extcon_pdata *pdata = data->pdata;
+ 	int ret;
+ 
+-	ret = devm_gpio_request_one(dev, pdata->gpio, GPIOF_DIR_IN,
++	ret = devm_gpio_request_one(dev, data->gpio, GPIOF_DIR_IN,
+ 				dev_name(dev));
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	data->id_gpiod = gpio_to_desc(pdata->gpio);
++	data->id_gpiod = gpio_to_desc(data->gpio);
+ 	if (!data->id_gpiod)
+ 		return -EINVAL;
+ 
+-	if (pdata->debounce) {
++	if (data->debounce) {
+ 		ret = gpiod_set_debounce(data->id_gpiod,
+-					pdata->debounce * 1000);
++					 data->debounce * 1000);
+ 		if (ret < 0)
+ 			data->debounce_jiffies =
+-				msecs_to_jiffies(pdata->debounce);
++				msecs_to_jiffies(data->debounce);
+ 	}
+ 
+ 	data->irq = gpiod_to_irq(data->id_gpiod);
+@@ -113,20 +113,16 @@ static int gpio_extcon_init(struct device *dev, struct gpio_extcon_data *data)
+ 
+ static int gpio_extcon_probe(struct platform_device *pdev)
+ {
+-	struct gpio_extcon_pdata *pdata = dev_get_platdata(&pdev->dev);
+ 	struct gpio_extcon_data *data;
+ 	int ret;
+ 
+-	if (!pdata)
+-		return -EBUSY;
+-	if (!pdata->irq_flags || pdata->extcon_id > EXTCON_NONE)
+-		return -EINVAL;
+-
+ 	data = devm_kzalloc(&pdev->dev, sizeof(struct gpio_extcon_data),
+ 				   GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+-	data->pdata = pdata;
++
++	if (!data->irq_flags || data->extcon_id > EXTCON_NONE)
++		return -EINVAL;
+ 
+ 	/* Initialize the gpio */
+ 	ret = gpio_extcon_init(&pdev->dev, data);
+@@ -134,7 +130,7 @@ static int gpio_extcon_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	/* Allocate the memory of extcon devie and register extcon device */
+-	data->edev = devm_extcon_dev_allocate(&pdev->dev, &pdata->extcon_id);
++	data->edev = devm_extcon_dev_allocate(&pdev->dev, &data->extcon_id);
+ 	if (IS_ERR(data->edev)) {
+ 		dev_err(&pdev->dev, "failed to allocate extcon device\n");
+ 		return -ENOMEM;
+@@ -151,7 +147,7 @@ static int gpio_extcon_probe(struct platform_device *pdev)
+ 	 * is attached or detached.
+ 	 */
+ 	ret = devm_request_any_context_irq(&pdev->dev, data->irq,
+-					gpio_irq_handler, pdata->irq_flags,
++					gpio_irq_handler, data->irq_flags,
+ 					pdev->name, data);
+ 	if (ret < 0)
+ 		return ret;
+@@ -178,7 +174,7 @@ static int gpio_extcon_resume(struct device *dev)
+ 	struct gpio_extcon_data *data;
+ 
+ 	data = dev_get_drvdata(dev);
+-	if (data->pdata->check_on_resume)
++	if (data->check_on_resume)
+ 		queue_delayed_work(system_power_efficient_wq,
+ 			&data->work, data->debounce_jiffies);
+ 
+-- 
+2.14.3
 
-Reviewed-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Tested-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-
-Thanks!
-Andre.
-
-> ---
-> Changes in v2:
-> - Switch to SPDX license identifier.
-> 
->  arch/arm64/boot/dts/allwinner/Makefile             |  1 +
->  .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 30 ++++++++++++++++++++++
->  2 files changed, 31 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-> index f505227b0250..addf245226f6 100644
-> --- a/arch/arm64/boot/dts/allwinner/Makefile
-> +++ b/arch/arm64/boot/dts/allwinner/Makefile
-> @@ -10,3 +10,4 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
->  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
-> +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-> new file mode 100644
-> index 000000000000..dc850a1c0885
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-> @@ -0,0 +1,30 @@
-> +/*
-> + * Copyright (c) 2017 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> + *
-> + * SPDX-License-Identifier: (GPL-2.0+ or MIT)
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sun50i-h6.dtsi"
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +
-> +/ {
-> +	model = "Pine H64";
-> +	compatible = "pine64,pine-h64", "allwinner,sun50i-h6";
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +};
-> +
-> +&uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart0_ph_pins>;
-> +	status = "okay";
-> +};
-> 
