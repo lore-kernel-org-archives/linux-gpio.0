@@ -1,88 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/3] spi: spi-gpio: Delete references to non-GENERIC_BITBANG
-Date: Mon, 12 Feb 2018 13:45:31 +0100
-Message-ID: <20180212124532.25776-3-linus.walleij@linaro.org>
-References: <20180212124532.25776-1-linus.walleij@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [libgpiod] pull_up and pull_down resistors
+Date: Mon, 12 Feb 2018 14:11:51 +0100
+Message-ID: <CAMRc=Mf2rmt7X62VJohjFzaH_sBvMaYRGuoK_QTgzKD71a58Kw@mail.gmail.com>
+References: <CAH_Y6Mbf+f_=OVBhdfi18FMwDyHY6OyVOE56Fybt0XV42gftRQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34405 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934685AbeBLMpr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Feb 2018 07:45:47 -0500
-Received: by mail-lf0-f67.google.com with SMTP id k19so20277240lfj.1
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Feb 2018 04:45:47 -0800 (PST)
-In-Reply-To: <20180212124532.25776-1-linus.walleij@linaro.org>
+Received: from mail-ot0-f181.google.com ([74.125.82.181]:45869 "EHLO
+        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933166AbeBLNLw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Feb 2018 08:11:52 -0500
+Received: by mail-ot0-f181.google.com with SMTP id 73so13926812oti.12
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Feb 2018 05:11:52 -0800 (PST)
+In-Reply-To: <CAH_Y6Mbf+f_=OVBhdfi18FMwDyHY6OyVOE56Fybt0XV42gftRQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: =?UTF-8?B?0JLQsNGB0LjQu9C40Lkg0JDQuNGC0L7Qsg==?= <smile.vasily@gmail.com>
+Cc: linux-gpio@vger.kernel.org
 
-The non-generic bitbang was a feature where a platform could optimize
-SPI bit-banging by inlining the routines to hammer GPIO lines into
-the GPIO bitbanging driver as direct register writes using a custom
-set of GPIO library calls.
+2018-02-11 21:15 GMT+01:00 =D0=92=D0=B0=D1=81=D0=B8=D0=BB=D0=B8=D0=B9 =D0=
+=90=D0=B8=D1=82=D0=BE=D0=B2 <smile.vasily@gmail.com>:
+> Hi, many thanks for your work!
+> I got libgpiood working on orange pi one board
+>
+> I have a question about pull_up and pull_down conmmands when line is
+> in input directions.
+>
+> I don`t found anything in your code about pull_up_down commands(
+> please tell something about it
+>
 
-It does not work with multiplatform concepts, violates everything
-about how GPIO is made generic and is just generally a bad idea,
-even on legacy system. Also there is no single user in the entire
-kernel (for good reasons).
+The library only supports features that are exposed by the kernel over
+the chardev interface. What is your use case exactly?
 
-Delete the remnants of this optimization.
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/spi/spi-gpio.c | 28 ----------------------------
- 1 file changed, 28 deletions(-)
-
-diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
-index b85a93cad44a..2e5f092813f1 100644
---- a/drivers/spi/spi-gpio.c
-+++ b/drivers/spi/spi-gpio.c
-@@ -53,34 +53,8 @@ struct spi_gpio {
- 
- /*----------------------------------------------------------------------*/
- 
--/*
-- * Because the overhead of going through four GPIO procedure calls
-- * per transferred bit can make performance a problem, this code
-- * is set up so that you can use it in either of two ways:
-- *
-- *   - The slow generic way:  set up platform_data to hold the GPIO
-- *     numbers used for MISO/MOSI/SCK, and issue procedure calls for
-- *     each of them.  This driver can handle several such busses.
-- *
-- *   - The quicker inlined way:  only helps with platform GPIO code
-- *     that inlines operations for constant GPIOs.  This can give
-- *     you tight (fast!) inner loops, but each such bus needs a
-- *     new driver.  You'll define a new C file, with Makefile and
-- *     Kconfig support; the C code can be a total of six lines:
-- *
-- *		#define DRIVER_NAME	"myboard_spi2"
-- *		#define	SPI_MISO_GPIO	119
-- *		#define	SPI_MOSI_GPIO	120
-- *		#define	SPI_SCK_GPIO	121
-- *		#define	SPI_N_CHIPSEL	4
-- *		#include "spi-gpio.c"
-- */
--
- #ifndef DRIVER_NAME
- #define DRIVER_NAME	"spi_gpio"
--
--#define GENERIC_BITBANG	/* vs tight inlines */
--
- #endif
- 
- /*----------------------------------------------------------------------*/
-@@ -362,10 +336,8 @@ static int spi_gpio_probe(struct platform_device *pdev)
- 		use_of = 1;
- 
- 	pdata = dev_get_platdata(&pdev->dev);
--#ifdef GENERIC_BITBANG
- 	if (!pdata || (!use_of && !pdata->num_chipselect))
- 		return -ENODEV;
--#endif
- 
- 	master = spi_alloc_master(&pdev->dev, sizeof(*spi_gpio));
- 	if (!master)
--- 
-2.14.3
-
+Best regards,
+Bartosz Golaszewski
