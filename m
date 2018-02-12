@@ -1,57 +1,75 @@
-From: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] gpio: tegra: Convert to use DEFINE_SHOW_ATTRIBUTE macro
-Date: Mon, 12 Feb 2018 22:01:57 +0800
-Message-ID: <20180212140157.27023-1-axel.lin@ingics.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+From: Philippe Ombredanne <pombredanne-od1rfyK75/E@public.gmane.org>
+Subject: Re: [PATCH 2/6] mfd: Add ST Multi-Function eXpander core driver
+Date: Mon, 12 Feb 2018 15:15:39 +0100
+Message-ID: <CAOFm3uH+DLcOqiSV0z0N6JnmSk+JfTF3bfkC0_2kdFT-eDMr8A@mail.gmail.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+ <1518100057-23234-3-git-send-email-amelie.delaunay@st.com> <20180212120600.5cghrzz4jqvvkgz6@dell>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180212120600.5cghrzz4jqvvkgz6@dell>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Amelie Delaunay <amelie.delaunay-qxv4g6HH51o@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>, Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+Amelie,
 
-Signed-off-by: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpio/gpio-tegra.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+On Mon, Feb 12, 2018 at 1:06 PM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Thu, 08 Feb 2018, Amelie Delaunay wrote:
+>
+>> ST Multi-Function eXpander (MFX) is a slave controller using I2C
+>> for communication with the main MCU. Main features are:
+>> - 16 fast GPIOs individually configurable in input/output
+>> - 8 alternate GPIOs individually configurable in input/output
+>> - Main MCU IDD measurement
+>> - Resistive touchscreen controller
+>>
+>> Only GPIO expander (16 fast GPIOs + 8 alternate) feature is
+>> supported for the moment.
+>>
+>> Signed-off-by: Amelie Delaunay <amelie.delaunay-qxv4g6HH51o@public.gmane.org>
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 02fa8fe2292a..94396caaca75 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -506,7 +506,7 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
- 
--static int dbg_gpio_show(struct seq_file *s, void *unused)
-+static int tegra_dbg_gpio_show(struct seq_file *s, void *unused)
- {
- 	struct tegra_gpio_info *tgi = s->private;
- 	unsigned int i, j;
-@@ -530,22 +530,12 @@ static int dbg_gpio_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--static int dbg_gpio_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, dbg_gpio_show, inode->i_private);
--}
--
--static const struct file_operations debug_fops = {
--	.open		= dbg_gpio_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(tegra_dbg_gpio);
- 
- static void tegra_gpio_debuginit(struct tegra_gpio_info *tgi)
- {
- 	(void) debugfs_create_file("tegra_gpio", 0444,
--					NULL, tgi, &debug_fops);
-+				   NULL, tgi, &tegra_dbg_gpio_fops);
- }
- 
- #else
+<snip>
+
+>> --- /dev/null
+>> +++ b/drivers/mfd/st-mfx.c
+>> @@ -0,0 +1,526 @@
+>> +/*
+>> + * STMicroelectronics Multi-Function eXpander (ST-MFX) Core Driver
+>> + *
+>> + * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
+>> + * Author(s): Amelie Delaunay <amelie.delaunay-qxv4g6HH51o@public.gmane.org> for STMicroelectronics.
+>
+> You don't need to put "for STMicroelectronics".  This was something we
+> made up when submitting from a different (!st.com) email address.
+>
+>> + * License terms: GPL V2.0.
+>> + *
+>> + * st-mfx Core Driver is free software; you can redistribute it and/or modify it
+>> + * under the terms of the GNU General Public License version 2 as published by
+>> + * the Free Software Foundation.
+>> + *
+>> + * st-mfx Core Driver is distributed in the hope that it will be useful, but
+>> + * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+>> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+>> + * details.
+>> + *
+>> + * You should have received a copy of the GNU General Public License along with
+>> + * st-mfx Core Driver. If not, see <http://www.gnu.org/licenses/>.
+>
+> You should be able to use the short version of the licensing
+> agreement.  Also, please grep for "SPDX".
+
+You can check the doc for the (fairly new) way to remove legalese
+boilerplate at Documentation/process/license-rules.rst or [1]
+It helps keep the focus on the code and less on licensing!
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst
 -- 
-2.14.1
+Cordially
+Philippe Ombredanne
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
