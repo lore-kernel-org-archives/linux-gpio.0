@@ -1,93 +1,98 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 1/2] gpio: dwapb: Use "stride" rather than "size" for register distance
-Date: Mon, 12 Feb 2018 11:11:24 +0100
-Message-ID: <20180212101125.7890-1-linus.walleij@linaro.org>
+Subject: [PATCH 2/2] gpio: dwapb: Call directly into the gpiochip to read value
+Date: Mon, 12 Feb 2018 11:11:25 +0100
+Message-ID: <20180212101125.7890-2-linus.walleij@linaro.org>
+References: <20180212101125.7890-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42946 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933650AbeBLKLb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Feb 2018 05:11:31 -0500
-Received: by mail-lf0-f68.google.com with SMTP id w10so6903181lfc.9
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Feb 2018 02:11:30 -0800 (PST)
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:42951 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751176AbeBLKLd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Feb 2018 05:11:33 -0500
+Received: by mail-lf0-f67.google.com with SMTP id w10so6903323lfc.9
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Feb 2018 02:11:32 -0800 (PST)
+In-Reply-To: <20180212101125.7890-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Hoan Tran <hotran@apm.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 
-This terminology is more precise. Also cut the stride calculation
-in the preprocessor, it confuses more than it helps when reading
-the driver.
+We were going out through the (legacy) gpio API to read the value
+of a line to set up polarity inversion. This is abusive. Do something
+less abusive by looking up the actual struct gpio_chip *
+instance and calling .get() directly on it.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-dwapb.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/gpio/gpio-dwapb.c | 37 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 30 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 6730c6642ce3..677988f21369 100644
+index 677988f21369..b0704a883513 100644
 --- a/drivers/gpio/gpio-dwapb.c
 +++ b/drivers/gpio/gpio-dwapb.c
-@@ -53,9 +53,9 @@
- #define GPIO_EXT_PORTD		0x5c
+@@ -9,8 +9,6 @@
+  */
+ #include <linux/acpi.h>
+ #include <linux/gpio/driver.h>
+-/* FIXME: for gpio_get_value(), replace this with direct register read */
+-#include <linux/gpio.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+@@ -153,16 +151,40 @@ static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+ 	return irq_find_mapping(gpio->domain, offset);
+ }
  
- #define DWAPB_MAX_PORTS		4
--#define GPIO_EXT_PORT_SIZE	(GPIO_EXT_PORTB - GPIO_EXT_PORTA)
--#define GPIO_SWPORT_DR_SIZE	(GPIO_SWPORTB_DR - GPIO_SWPORTA_DR)
--#define GPIO_SWPORT_DDR_SIZE	(GPIO_SWPORTB_DDR - GPIO_SWPORTA_DDR)
-+#define GPIO_EXT_PORT_STRIDE	0x04 /* register stride 32 bits */
-+#define GPIO_SWPORT_DR_STRIDE	0x0c /* register stride 3*32 bits */
-+#define GPIO_SWPORT_DDR_STRIDE	0x0c /* register stride 3*32 bits */
++static struct dwapb_gpio_port *dwapb_offs_to_port(struct dwapb_gpio *gpio, unsigned int offs)
++{
++	struct dwapb_gpio_port *port;
++	int i;
++
++	for (i = 0; i < gpio->nr_ports; i++) {
++		port = &gpio->ports[i];
++		if (port->idx == offs / 32)
++			return port;
++	}
++
++	return NULL;
++}
++
+ static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
+ {
+-	u32 v = dwapb_read(gpio, GPIO_INT_POLARITY);
++	struct dwapb_gpio_port *port = dwapb_offs_to_port(gpio, offs);
++	struct gpio_chip *gc;
++	u32 pol;
++	int val;
++
++	if (!port)
++		return;
++	gc = &port->gc;
  
- #define GPIO_REG_OFFSET_V2	1
+-	if (gpio_get_value(gpio->ports[0].gc.base + offs))
+-		v &= ~BIT(offs);
++	pol = dwapb_read(gpio, GPIO_INT_POLARITY);
++	/* Just read the current value right out of the data register */
++	val = gc->get(gc, offs % 32);
++	if (val)
++		pol &= ~BIT(offs);
+ 	else
+-		v |= BIT(offs);
++		pol |= BIT(offs);
  
-@@ -476,10 +476,10 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 		return -ENOMEM;
- #endif
+-	dwapb_write(gpio, GPIO_INT_POLARITY, v);
++	dwapb_write(gpio, GPIO_INT_POLARITY, pol);
+ }
  
--	dat = gpio->regs + GPIO_EXT_PORTA + (pp->idx * GPIO_EXT_PORT_SIZE);
--	set = gpio->regs + GPIO_SWPORTA_DR + (pp->idx * GPIO_SWPORT_DR_SIZE);
-+	dat = gpio->regs + GPIO_EXT_PORTA + (pp->idx * GPIO_EXT_PORT_STRIDE);
-+	set = gpio->regs + GPIO_SWPORTA_DR + (pp->idx * GPIO_SWPORT_DR_STRIDE);
+ static u32 dwapb_do_irq(struct dwapb_gpio *gpio)
+@@ -481,6 +503,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
  	dirout = gpio->regs + GPIO_SWPORTA_DDR +
--		(pp->idx * GPIO_SWPORT_DDR_SIZE);
-+		(pp->idx * GPIO_SWPORT_DDR_STRIDE);
+ 		(pp->idx * GPIO_SWPORT_DDR_STRIDE);
  
++	/* This registers 32 GPIO lines per port */
  	err = bgpio_init(&port->gc, gpio->dev, 4, dat, set, NULL, dirout,
  			 NULL, 0);
-@@ -710,13 +710,13 @@ static int dwapb_gpio_suspend(struct device *dev)
- 
- 		BUG_ON(!ctx);
- 
--		offset = GPIO_SWPORTA_DDR + idx * GPIO_SWPORT_DDR_SIZE;
-+		offset = GPIO_SWPORTA_DDR + idx * GPIO_SWPORT_DDR_STRIDE;
- 		ctx->dir = dwapb_read(gpio, offset);
- 
--		offset = GPIO_SWPORTA_DR + idx * GPIO_SWPORT_DR_SIZE;
-+		offset = GPIO_SWPORTA_DR + idx * GPIO_SWPORT_DR_STRIDE;
- 		ctx->data = dwapb_read(gpio, offset);
- 
--		offset = GPIO_EXT_PORTA + idx * GPIO_EXT_PORT_SIZE;
-+		offset = GPIO_EXT_PORTA + idx * GPIO_EXT_PORT_STRIDE;
- 		ctx->ext = dwapb_read(gpio, offset);
- 
- 		/* Only port A can provide interrupts */
-@@ -753,13 +753,13 @@ static int dwapb_gpio_resume(struct device *dev)
- 
- 		BUG_ON(!ctx);
- 
--		offset = GPIO_SWPORTA_DR + idx * GPIO_SWPORT_DR_SIZE;
-+		offset = GPIO_SWPORTA_DR + idx * GPIO_SWPORT_DR_STRIDE;
- 		dwapb_write(gpio, offset, ctx->data);
- 
--		offset = GPIO_SWPORTA_DDR + idx * GPIO_SWPORT_DDR_SIZE;
-+		offset = GPIO_SWPORTA_DDR + idx * GPIO_SWPORT_DDR_STRIDE;
- 		dwapb_write(gpio, offset, ctx->dir);
- 
--		offset = GPIO_EXT_PORTA + idx * GPIO_EXT_PORT_SIZE;
-+		offset = GPIO_EXT_PORTA + idx * GPIO_EXT_PORT_STRIDE;
- 		dwapb_write(gpio, offset, ctx->ext);
- 
- 		/* Only port A can provide interrupts */
+ 	if (err) {
 -- 
 2.14.3
 
