@@ -1,111 +1,132 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 08/21] regulator: max77686: Pass descriptor instead of
- GPIO number
-Date: Mon, 12 Feb 2018 14:37:11 +0100
-Message-ID: <CAJKOXPdUUD_ht=S6Koee_mE+6X+7XMzQs+FTGEhVgc+_LbpMkQ@mail.gmail.com>
-References: <20180212131717.27193-1-linus.walleij@linaro.org> <20180212131717.27193-9-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 2/3] irqchip/renesas-irqc: Use wakeup_path i.s.o. explicit clock handling
+Date: Mon, 12 Feb 2018 14:55:12 +0100
+Message-ID: <1518443713-1835-3-git-send-email-geert+renesas@glider.be>
+References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:50050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932944AbeBLNhO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 12 Feb 2018 08:37:14 -0500
-In-Reply-To: <20180212131717.27193-9-linus.walleij@linaro.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:33024 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934669AbeBLNzZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Feb 2018 08:55:25 -0500
+In-Reply-To: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Mon, Feb 12, 2018 at 2:17 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> Instead of passing a global GPIO number, pass a descriptor looked
-> up from the device tree configuration node.
->
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/regulator/max77686-regulator.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
-> index c301f3733475..5ebd06f47e6a 100644
-> --- a/drivers/regulator/max77686-regulator.c
-> +++ b/drivers/regulator/max77686-regulator.c
-> @@ -25,8 +25,7 @@
->  #include <linux/kernel.h>
->  #include <linux/bug.h>
->  #include <linux/err.h>
-> -#include <linux/gpio.h>
-> -#include <linux/of_gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/platform_device.h>
->  #include <linux/regulator/driver.h>
-> @@ -90,6 +89,7 @@ enum max77686_ramp_rate {
->  };
->
->  struct max77686_data {
-> +       struct device *dev;
->         DECLARE_BITMAP(gpio_enabled, MAX77686_REGULATORS);
->
->         /* Array indexed by regulator id */
-> @@ -269,16 +269,20 @@ static int max77686_of_parse_cb(struct device_node *np,
->         case MAX77686_BUCK8:
->         case MAX77686_BUCK9:
->         case MAX77686_LDO20 ... MAX77686_LDO22:
-> -               config->ena_gpio = of_get_named_gpio(np,
-> -                                       "maxim,ena-gpios", 0);
-> -               config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
-> -               config->ena_gpio_initialized = true;
-> +               config->ena_gpiod = devm_gpiod_get_from_of_node(max77686->dev,
-> +                                                               np,
-> +                                                               "maxim,ena",
-> +                                                               0,
-> +                                                               GPIOD_OUT_HIGH,
-> +                                                               "max77686-LDO");
+Since commit 6f46aedb9c85873b ("irqchip: renesas-irqc: Add wake-up
+support"), when an IRQ is used for wakeup, the INTC
+block's module clock is manually kept running during system suspend, to
+make sure the device stays active.
 
-This is also for bucks so how about naming it "max77686-regulator"?
+However, this explicit clock handling is merely a workaround for a
+failure to properly communicate wakeup information to the device core.
 
-> +               if (IS_ERR(config->ena_gpiod))
-> +                       return PTR_ERR(config->ena_gpiod);
+Instead, set the device's power.wakeup_path field, to indicate this
+device is part of the wakeup path.  Depending on the PM Domain's
+active_wakeup configuration, the genpd core code will keep the device
+enabled (and the clock running) during system suspend when needed.
+This allows for the removal of all explicit clock handling code from the
+driver.
 
-This is not equivalent (although I did not look at previous patches in
-the series). In case of of_get_named_gpio() failure, old code would
-just set ena_gpio to invalid value and the ena-gpio method would not
-be used. All other init data from Device Tree would be parsed.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Revert to v1, as WAKEUP_PATH didn't make it,
+  - Use an atomic_t instead of a boolean flag, as the boolean tracked
+    only the status of the last configured GPIO, while multiple
+    interrupt pins on the same interrupt controller may be involved with
+    wake-up,
+  - Use new helper device_set_wakeup_path(),
+  - Drop checks for CONFIG_PM_SLEEP, as device_set_wakeup_path() is
+    always available, unlike dev_pm_info.wakeup_path,
+  - Mark irqc_suspend() __maybe_unused,
+  - Drop RFC state, now the dependencies are upstream.
 
-In new code, failure of devm_gpiod_get_from_of_node() would cause
-error of entire regulator_of_get_init_data() therefore using default
-driver's init data.
+v2 (sent by Ulf Hanson):
+  - Convert to use the WAKEUP_PATH driver PM flag (Ulf).
+---
+ drivers/irqchip/irq-renesas-irqc.c | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
 
-This is not a huge difference in practice because both are result of
-bad DT. However discarding entire init data on one property error
-seems quite drastic.
-On the other hand, what would happen on PROBE_DEFER?
+diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
+index 52304b139aa46a60..a4f11124024dcf32 100644
+--- a/drivers/irqchip/irq-renesas-irqc.c
++++ b/drivers/irqchip/irq-renesas-irqc.c
+@@ -17,7 +17,6 @@
+  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
+-#include <linux/clk.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+@@ -64,7 +63,7 @@ struct irqc_priv {
+ 	struct platform_device *pdev;
+ 	struct irq_chip_generic *gc;
+ 	struct irq_domain *irq_domain;
+-	struct clk *clk;
++	atomic_t wakeup_path;
+ };
+ 
+ static struct irqc_priv *irq_data_to_priv(struct irq_data *data)
+@@ -111,14 +110,10 @@ static int irqc_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	int hw_irq = irqd_to_hwirq(d);
+ 
+ 	irq_set_irq_wake(p->irq[hw_irq].requested_irq, on);
+-
+-	if (!p->clk)
+-		return 0;
+-
+ 	if (on)
+-		clk_enable(p->clk);
++		atomic_inc(&p->wakeup_path);
+ 	else
+-		clk_disable(p->clk);
++		atomic_dec(&p->wakeup_path);
+ 
+ 	return 0;
+ }
+@@ -159,12 +154,6 @@ static int irqc_probe(struct platform_device *pdev)
+ 	p->pdev = pdev;
+ 	platform_set_drvdata(pdev, p);
+ 
+-	p->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(p->clk)) {
+-		dev_warn(&pdev->dev, "unable to get clock\n");
+-		p->clk = NULL;
+-	}
+-
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+@@ -276,6 +265,18 @@ static int irqc_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int __maybe_unused irqc_suspend(struct device *dev)
++{
++	struct irqc_priv *p = dev_get_drvdata(dev);
++
++	if (atomic_read(&p->wakeup_path))
++		device_set_wakeup_path(dev);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(irqc_pm_ops, irqc_suspend, NULL);
++
+ static const struct of_device_id irqc_dt_ids[] = {
+ 	{ .compatible = "renesas,irqc", },
+ 	{},
+@@ -288,6 +289,7 @@ static struct platform_driver irqc_device_driver = {
+ 	.driver		= {
+ 		.name	= "renesas_irqc",
+ 		.of_match_table	= irqc_dt_ids,
++		.pm	= &irqc_pm_ops,
+ 	}
+ };
+ 
+-- 
+2.7.4
 
-Best regards,
-Krzysztof
-
->                 break;
->         default:
->                 return 0;
->         }
->
-> -       if (gpio_is_valid(config->ena_gpio)) {
-> +       if (config->ena_gpiod) {
->                 set_bit(desc->id, max77686->gpio_enabled);
->
->                 return regmap_update_bits(config->regmap, desc->enable_reg,
-> @@ -521,6 +525,7 @@ static int max77686_pmic_probe(struct platform_device *pdev)
->         if (!max77686)
->                 return -ENOMEM;
->
-> +       max77686->dev = &pdev->dev;
->         config.dev = iodev->dev;
->         config.regmap = iodev->regmap;
->         config.driver_data = max77686;
-> --
-> 2.14.3
->
