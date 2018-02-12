@@ -1,84 +1,124 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 09/21] regulator: lm363x: Pass descriptor instead of GPIO number
-Date: Mon, 12 Feb 2018 14:17:05 +0100
-Message-ID: <20180212131717.27193-10-linus.walleij@linaro.org>
+Subject: [PATCH 14/21] regulator: s5m8767: Pass descriptor instead of GPIO number
+Date: Mon, 12 Feb 2018 14:17:10 +0100
+Message-ID: <20180212131717.27193-15-linus.walleij@linaro.org>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180212131717.27193-1-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Milo Kim <milo.kim@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Instead of passing a global GPIO number, pass a descriptor looked
-up with the standard devm_gpiod_get_index_optional() call.
+Instead of passing a global GPIO number for the enable GPIO, pass
+a descriptor looked up from the device tree node for the
+regulator.
 
-Cc: Milo Kim <milo.kim@ti.com>
+This regulator supports passing platform data, but enable/sleep
+regulators are looked up from the device tree exclusively, so
+we can need not touch other files.
+
+Cc: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/regulator/lm363x-regulator.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Lee: would be nice if you could ACK this smallish patch to
+the MFD header.
+---
+ drivers/regulator/s5m8767.c      | 26 +++++++++++++++-----------
+ include/linux/mfd/samsung/core.h |  4 +++-
+ 2 files changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
-index ce5f7d9ad475..b615a413ca9f 100644
---- a/drivers/regulator/lm363x-regulator.c
-+++ b/drivers/regulator/lm363x-regulator.c
-@@ -16,7 +16,7 @@
- #include <linux/mfd/ti-lmu-register.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_gpio.h>
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 4836947e1521..b8443a360646 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/err.h>
+ #include <linux/of_gpio.h>
 +#include <linux/gpio/consumer.h>
+ #include <linux/module.h>
  #include <linux/platform_device.h>
  #include <linux/regulator/driver.h>
- #include <linux/regulator/of_regulator.h>
-@@ -219,7 +219,7 @@ static const struct regulator_desc lm363x_regulator_desc[] = {
- 	},
- };
- 
--static int lm363x_regulator_of_get_enable_gpio(struct device_node *np, int id)
-+static struct gpio_desc *lm363x_regulator_of_get_enable_gpio(struct device *dev, int id)
- {
- 	/*
- 	 * Check LCM_EN1/2_GPIO is configured.
-@@ -227,11 +227,11 @@ static int lm363x_regulator_of_get_enable_gpio(struct device_node *np, int id)
- 	 */
- 	switch (id) {
- 	case LM3632_LDO_POS:
--		return of_get_named_gpio(np, "enable-gpios", 0);
-+		return devm_gpiod_get_index_optional(dev, "enable", 0, GPIOD_OUT_LOW);
- 	case LM3632_LDO_NEG:
--		return of_get_named_gpio(np, "enable-gpios", 1);
-+		return devm_gpiod_get_index_optional(dev, "enable", 1, GPIOD_OUT_LOW);
- 	default:
--		return -EINVAL;
-+		return NULL;
+@@ -459,15 +460,14 @@ static void s5m8767_regulator_config_ext_control(struct s5m8767_info *s5m8767,
+ 		return;
  	}
+ 
+-	if (!gpio_is_valid(rdata->ext_control_gpio)) {
++	if (!rdata->ext_control_gpiod) {
+ 		dev_warn(s5m8767->dev,
+ 				"ext-control for %s: GPIO not valid, ignoring\n",
+-				rdata->reg_node->name);
++			 rdata->reg_node->name);
+ 		return;
+ 	}
+ 
+-	config->ena_gpio = rdata->ext_control_gpio;
+-	config->ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
++	config->ena_gpiod = rdata->ext_control_gpiod;
  }
  
-@@ -243,7 +243,8 @@ static int lm363x_regulator_probe(struct platform_device *pdev)
- 	struct regulator_dev *rdev;
- 	struct device *dev = &pdev->dev;
- 	int id = pdev->id;
--	int ret, ena_gpio;
-+	struct gpio_desc *gpiod;
-+	int ret;
+ /*
+@@ -577,8 +577,14 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 			continue;
+ 		}
  
- 	cfg.dev = dev;
- 	cfg.regmap = regmap;
-@@ -252,10 +253,9 @@ static int lm363x_regulator_probe(struct platform_device *pdev)
- 	 * LM3632 LDOs can be controlled by external pin.
- 	 * Register update is required if the pin is used.
- 	 */
--	ena_gpio = lm363x_regulator_of_get_enable_gpio(dev->of_node, id);
--	if (gpio_is_valid(ena_gpio)) {
--		cfg.ena_gpio = ena_gpio;
--		cfg.ena_gpio_flags = GPIOF_OUT_INIT_LOW;
-+	gpiod = lm363x_regulator_of_get_enable_gpio(dev, id);
-+	if (gpiod) {
-+		cfg.ena_gpiod = gpiod;
+-		rdata->ext_control_gpio = of_get_named_gpio(reg_np,
+-			"s5m8767,pmic-ext-control-gpios", 0);
++		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
++								       reg_np,
++								       "s5m8767,pmic-ext-control-gpios",
++								       0,
++								       GPIOD_OUT_HIGH,
++								       "s5m8767");
++		if (IS_ERR(rdata->ext_control_gpiod))
++			return PTR_ERR(rdata->ext_control_gpiod);
  
- 		ret = regmap_update_bits(regmap, LM3632_REG_BIAS_CONFIG,
- 					 LM3632_EXT_EN_MASK,
+ 		rdata->id = i;
+ 		rdata->initdata = of_get_regulator_init_data(
+@@ -954,10 +960,8 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ 		config.driver_data = s5m8767;
+ 		config.regmap = iodev->regmap_pmic;
+ 		config.of_node = pdata->regulators[i].reg_node;
+-		config.ena_gpio = -EINVAL;
+-		config.ena_gpio_flags = 0;
+-		config.ena_gpio_initialized = true;
+-		if (gpio_is_valid(pdata->regulators[i].ext_control_gpio))
++		config.ena_gpiod = NULL;
++		if (pdata->regulators[i].ext_control_gpiod)
+ 			s5m8767_regulator_config_ext_control(s5m8767,
+ 					&pdata->regulators[i], &config);
+ 
+@@ -970,7 +974,7 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ 			return ret;
+ 		}
+ 
+-		if (gpio_is_valid(pdata->regulators[i].ext_control_gpio)) {
++		if (pdata->regulators[i].ext_control_gpiod) {
+ 			ret = s5m8767_enable_ext_control(s5m8767, rdev);
+ 			if (ret < 0) {
+ 				dev_err(s5m8767->dev,
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index 5a23dd4df432..28f4ae76271d 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -39,6 +39,8 @@
+ #define STEP_12_5_MV		12500
+ #define STEP_6_25_MV		6250
+ 
++struct gpio_desc;
++
+ enum sec_device_type {
+ 	S5M8751X,
+ 	S5M8763X,
+@@ -151,7 +153,7 @@ struct sec_regulator_data {
+ 	int				id;
+ 	struct regulator_init_data	*initdata;
+ 	struct device_node		*reg_node;
+-	int				ext_control_gpio;
++	struct gpio_desc		*ext_control_gpiod;
+ };
+ 
+ /*
 -- 
 2.14.3
