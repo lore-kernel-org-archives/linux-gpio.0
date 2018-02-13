@@ -1,64 +1,98 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] gpio-intel-mid: Delete an error message for a failed
- memory allocation in intel_gpio_probe()
-Date: Tue, 13 Feb 2018 20:45:45 +0200
-Message-ID: <CAHp75Ve+Yifx4YO2Fbn+Ui4pGPpx0xSutSVjLVN9nVq6aOQyjg@mail.gmail.com>
-References: <0ea6dba4-0c52-4c9c-ae7e-d80c2f3d50f3@users.sourceforge.net>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 2/5] dt-bindings: gpio: add raspberry pi GPIO expander
+ binding
+Date: Tue, 13 Feb 2018 17:20:07 -0600
+Message-ID: <20180213232007.ieme6rjxgc7vidbw@rob-hp-laptop>
+References: <cover.1517923836.git.baruch@tkos.co.il>
+ <214ff3856c430b8045b63b25d83733b77054dfab.1517923836.git.baruch@tkos.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:34020 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965415AbeBMSpq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Feb 2018 13:45:46 -0500
-In-Reply-To: <0ea6dba4-0c52-4c9c-ae7e-d80c2f3d50f3@users.sourceforge.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <214ff3856c430b8045b63b25d83733b77054dfab.1517923836.git.baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, David Cohen <david.a.cohen@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, Feb 11, 2018 at 11:04 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 11 Feb 2018 21:56:42 +0100
->
-> Omit an extra message for a memory allocation failure in this function.
->
-> This issue was detected by using the Coccinelle software.
->
-
-Linus, same comment as previously.
-If you are OK with the change, take my
-
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+On Wed, Feb 07, 2018 at 08:35:23PM +0200, Baruch Siach wrote:
+> The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware over
+> I2C. The firmware mailbox interface allows the ARM core to control the
+> GPIO lines.
+> 
+> Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
 > ---
->  drivers/gpio/gpio-intel-mid.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
-> index 629575ea46a0..028d64c2cb1e 100644
-> --- a/drivers/gpio/gpio-intel-mid.c
-> +++ b/drivers/gpio/gpio-intel-mid.c
-> @@ -361,10 +361,8 @@ static int intel_gpio_probe(struct pci_dev *pdev,
->         pcim_iounmap_regions(pdev, 1 << 1);
->
->         priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> -       if (!priv) {
-> -               dev_err(&pdev->dev, "can't allocate chip data\n");
-> +       if (!priv)
->                 return -ENOMEM;
-> -       }
->
->         priv->reg_base = pcim_iomap_table(pdev)[0];
->         priv->chip.label = dev_name(&pdev->dev);
-> --
-> 2.16.1
->
+> v4:
+>   * Move the example gpio node under the firmware node
+>   * Rename gpio node name to plain 'gpio'
+> 
+> v3:
+>   * Rename node name.
+> 
+> v2:
+>   * Rename compatible string to raspberrypi,firmware-gpio
+> ---
+>  .../bindings/gpio/raspberrypi,firmware-gpio.txt    | 29 ++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt b/Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
+> new file mode 100644
+> index 000000000000..30326528faa9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
+> @@ -0,0 +1,29 @@
+> +Raspberry Pi GPIO expander
+> +
+> +The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware. The
+> +firmware exposes a mailbox interface that allows the ARM core to control the
+> +GPIO lines on the expander.
+> +
+> +Required properties:
+> +
+> +- compatible : Should be "raspberrypi,firmware-gpio"
+> +- gpio-controller : Marks the device node as a gpio controller
+> +- #gpio-cells : Should be two.  The first cell is the pin number, and
+> +  the second cell is used to specify the gpio polarity:
+> +  0 = active high
+> +  1 = active low
+> +- firmware : Reference to the RPi firmware device node
 
+This is the parent node. You don't need it.
 
+> +
+> +Example:
+> +
+> +firmware: firmware {
+> +	compatible = "raspberrypi,bcm2835-firmware";
+> +	mboxes = <&mailbox>;
 
--- 
-With Best Regards,
-Andy Shevchenko
+No, sorry. /firmware is the container of firmware nodes. So 
+something like this:
+
+firmware {
+	rpi-firmware {
+		compatible = "raspberrypi,bcm2835-firmware";
+		mboxes = <&mailbox>;
+		gpio {
+		 compatible = "raspberrypi,firmware-gpio";
+
+		};
+	};
+};
+
+> +
+> +	expgpio: gpio {
+> +		 compatible = "raspberrypi,firmware-gpio";
+> +		 gpio-controller;
+> +		 #gpio-cells = <2>;
+> +		 firmware = <&firmware>;
+> +	 };
+> +};
+> -- 
+> 2.15.1
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
