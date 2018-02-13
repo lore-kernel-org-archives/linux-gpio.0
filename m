@@ -1,45 +1,64 @@
 From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH 05/21] regulator: arizona-ldo1: Look up a descriptor and
- pass to the core
-Date: Tue, 13 Feb 2018 11:06:31 +0000
-Message-ID: <20180213110631.o3zn5bifvypofsyg@localhost.localdomain>
+Subject: Re: [PATCH 16/21] regulator: wm8994: Pass descriptor instead of GPIO
+ number
+Date: Tue, 13 Feb 2018 11:11:47 +0000
+Message-ID: <20180213111147.kr4kecqbhmcoq6w2@localhost.localdomain>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
- <20180212131717.27193-6-linus.walleij@linaro.org>
+ <20180212131717.27193-17-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:52136 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934079AbeBMLGg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:06:36 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180212131717.27193-6-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+In-Reply-To: <20180212131717.27193-17-linus.walleij@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Lee Jones <lee.jones@linaro.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 02:17:01PM +0100, Linus Walleij wrote:
-> Instead of passing a global GPIO number, pass a descriptor looked
-> up with the standard devm_gpiod_get_optional() call.
+On Mon, Feb 12, 2018 at 02:17:12PM +0100, Linus Walleij wrote:
+> Instead of passing a global GPIO number for the enable GPIO, pass
+> a descriptor looked up from the device tree node or the board file
+> decriptor table for the regulator.
 > 
-> We have augmented the GPIO core to look up the regulator special
-> GPIO "wlf,ldoena" in a separate patch.
+> There is a single board file passing the GPIOs for LDO1 and LDO2
+> through platform data, so augment this to pass descriptors
+> associated with the i2c device as well.
 > 
 > Cc: patches@opensource.cirrus.com
-> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  drivers/regulator/arizona-ldo1.c       | 19 ++++++-------------
->  include/linux/regulator/arizona-ldo1.h |  3 ---
->  2 files changed, 6 insertions(+), 16 deletions(-)
+> Lee: this patch is touching the MFD core driver for WM8994,
+> but as with all other patches we just change the regulator
+> parts. Would be nice if you could ACK it.
+> ---
+>  arch/arm/mach-s3c64xx/mach-crag6410-module.c | 18 ++++++++++++++++--
+>  drivers/mfd/wm8994-core.c                    |  9 ---------
+>  drivers/regulator/wm8994-regulator.c         | 19 +++++++++++--------
+>  include/linux/mfd/wm8994/pdata.h             |  3 ---
+>  4 files changed, 27 insertions(+), 22 deletions(-)
 > 
+> +static struct gpiod_lookup_table wm8994_gpiod_table = {
+> +	.dev_id = "i2c-wm8958", /* I2C device name */
+> +	.table = {
+> +		GPIO_LOOKUP("GPION", 6,
+> +			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
+> +		GPIO_LOOKUP("GPION", 4,
+> +			    "wlf,ldo2ena", GPIO_ACTIVE_HIGH),
+> +		{ },
+>  	},
+>  };
+>  
+> @@ -366,6 +379,7 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
+>  					    rev == gf_mods[i].rev))
+>  			break;
+>  
+> +	gpiod_add_lookup_table(&wm8994_gpiod_table);
 
-Does this patch not also need to update the hookups in
-arch/arm/mach-s3c64xx/mach-crag6410-module.c? There is
-wm5102_reva_pdata and wm5102_pdata both of which use the ldoena
-you are removing here?
+Would it be nicer to add this as a new member of gf_mods and
+register it inside the loop? Since eventually we will need tables
+for wm5102, wm8994, wm2200, wm8996, wm5100 and wm0010.
 
 Thanks,
 Charles
