@@ -1,96 +1,104 @@
 From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 2/5] dt-bindings: gpio: add raspberry pi GPIO expander
- binding
-Date: Tue, 13 Feb 2018 17:20:07 -0600
-Message-ID: <20180213232007.ieme6rjxgc7vidbw@rob-hp-laptop>
-References: <cover.1517923836.git.baruch@tkos.co.il>
- <214ff3856c430b8045b63b25d83733b77054dfab.1517923836.git.baruch@tkos.co.il>
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: Add Spreadtrum EIC controller
+ documentation
+Date: Tue, 13 Feb 2018 17:39:45 -0600
+Message-ID: <20180213233945.55mfqpydfxmimak2@rob-hp-laptop>
+References: <e89b91042abbbcf04cb39a3350af000cc411eee1.1518076643.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <214ff3856c430b8045b63b25d83733b77054dfab.1517923836.git.baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+In-Reply-To: <e89b91042abbbcf04cb39a3350af000cc411eee1.1518076643.git.baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dave Stevenson <dave.stevenson-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 07, 2018 at 08:35:23PM +0200, Baruch Siach wrote:
-> The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware over
-> I2C. The firmware mailbox interface allows the ARM core to control the
-> GPIO lines.
+On Thu, Feb 08, 2018 at 04:01:42PM +0800, Baolin Wang wrote:
+> This patch adds the device tree bindings for the Spreadtrum EIC
+> controller. The EIC can be recognized as one special type of GPIO,
+> which can only be used as input.
 > 
-> Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+> Signed-off-by: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 > ---
-> v4:
->   * Move the example gpio node under the firmware node
->   * Rename gpio node name to plain 'gpio'
+>  .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |   51 ++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
 > 
-> v3:
->   * Rename node name.
-> 
-> v2:
->   * Rename compatible string to raspberrypi,firmware-gpio
-> ---
->  .../bindings/gpio/raspberrypi,firmware-gpio.txt    | 29 ++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt b/Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
 > new file mode 100644
-> index 000000000000..30326528faa9
+> index 0000000..34f194f
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
-> @@ -0,0 +1,29 @@
-> +Raspberry Pi GPIO expander
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+> @@ -0,0 +1,51 @@
+> +Spreadtrum EIC controller bindings
 > +
-> +The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware. The
-> +firmware exposes a mailbox interface that allows the ARM core to control the
-> +GPIO lines on the expander.
+> +The EIC is the abbreviation of external interrupt controller, which
+> +is only can be used as input mode. The EIC controller includes 4
+> +sub-modules: EIC-Debounce, EIC-Latch, EIC-Async, EIC-Sync.
+> +
+> +The EIC-debounce sub-module provides up to 8 source input signal
+> +connection. A debounce machanism is used to capture input signal's
+> +stable status (ms grade) and a single-trigger mechanism is introduced
+> +into this sub-module to enhance the input event detection reliability.
+> +In addition, this sub-module's clock can be shut-off automatically to
+> +reduce power dissipation. The debounce range is from 1ms to 4s with
+> +the step of 1ms. If the input signal is shorter than 1ms, it will be
+> +omitted as this sub-module.
+> +
+> +The EIC-latch sub-module is used to latch some special input signal
+> +and send interrupts to MCU core, and it can provide up to 8 latch
+> +source input signal connection.
+> +
+> +The EIC-async sub-module uses 32k clock to capture short signal (us
+> +grade) to generate interrupt to MCU by level or edge trigger.
+> +
+> +The EIC-sync is similar with GPIO's input function.
 > +
 > +Required properties:
-> +
-> +- compatible : Should be "raspberrypi,firmware-gpio"
-> +- gpio-controller : Marks the device node as a gpio controller
-> +- #gpio-cells : Should be two.  The first cell is the pin number, and
-> +  the second cell is used to specify the gpio polarity:
-> +  0 = active high
-> +  1 = active low
-> +- firmware : Reference to the RPi firmware device node
+> +- compatible: Should be one of the following:
+> +  "sprd,sc9860-eic-debounce",
+> +  "sprd,sc9860-eic-latch",
+> +  "sprd,sc9860-eic-async",
+> +  "sprd,sc9860-eic-sync",
+> +  "sprd,sc27xx-eic-debounce".
+> +- reg: Define the base and range of the I/O address space containing
+> +  the GPIO controller registers.
+> +- gpio-controller: Marks the device node as a GPIO controller.
 
-This is the parent node. You don't need it.
+Why a gpio controller? Do you read the input pin state?
 
+> +- #gpio-cells: Should be <2>. The first cell is the gpio number and
+> +  the second cell is used to specify optional parameters.
+> +- interrupt-controller: Marks the device node as an interrupt controller.
+> +- #interrupt-cells: Should be <2>. Specifies the number of cells needed
+> +  to encode interrupt source.
+> +- interrupts: Should be the port interrupt shared by all the gpios.
 > +
 > +Example:
-> +
-> +firmware: firmware {
-> +	compatible = "raspberrypi,bcm2835-firmware";
-> +	mboxes = <&mailbox>;
+> +	eic_debounce: eic@40210000 {
 
-No, sorry. /firmware is the container of firmware nodes. So 
-something like this:
+interrupt-controller@...
 
-firmware {
-	rpi-firmware {
-		compatible = "raspberrypi,bcm2835-firmware";
-		mboxes = <&mailbox>;
-		gpio {
-		 compatible = "raspberrypi,firmware-gpio";
+Or (if this remains a gpio controller)
 
-		};
-	};
-};
+gpio@...
 
-> +
-> +	expgpio: gpio {
-> +		 compatible = "raspberrypi,firmware-gpio";
-> +		 gpio-controller;
-> +		 #gpio-cells = <2>;
-> +		 firmware = <&firmware>;
-> +	 };
-> +};
+> +		compatible = "sprd,sc9860-eic-debounce";
+> +		reg = <0 0x40210000 0 0x80>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
+
+The example doesn't seem to match your description of the block or 
+blocks. You talk about a bunch of sub modules and then there's just this 
+one node?
+
+> +	};
 > -- 
-> 2.15.1
+> 1.7.9.5
 > 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
