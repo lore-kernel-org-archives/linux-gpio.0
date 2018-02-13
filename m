@@ -1,140 +1,400 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] dt-bindings: gpio: Add Spreadtrum EIC controller documentation
-Date: Tue, 13 Feb 2018 09:28:17 +0100
-Message-ID: <CACRpkdY1WDOr=BO-h4Us8k9n2d4cXHgBOAHTbUO5ggAoS3-dfA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] gpio: Add Spreadtrum EIC driver support
+Date: Tue, 13 Feb 2018 10:18:08 +0100
+Message-ID: <CACRpkdado5dzaRUJ0YZuCW_bPPeXr3V1k9YGS3_-Wm0U_G9NFQ@mail.gmail.com>
 References: <e89b91042abbbcf04cb39a3350af000cc411eee1.1518076643.git.baolin.wang@linaro.org>
+ <b8df099671d55de8a2f754d7598a62a9176413dd.1518076643.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e89b91042abbbcf04cb39a3350af000cc411eee1.1518076643.git.baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35956 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934542AbeBMJSK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Feb 2018 04:18:10 -0500
+Received: by mail-it0-f68.google.com with SMTP id n206so10033871itg.1
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Feb 2018 01:18:10 -0800 (PST)
+In-Reply-To: <b8df099671d55de8a2f754d7598a62a9176413dd.1518076643.git.baolin.wang@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Baolin Wang <baolin.wang@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Hi Baolin!
+Hi Baolin,
 
-Thank you for your patch.
+thank you for your patch!
 
-On Thu, Feb 8, 2018 at 9:01 AM, Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+On Thu, Feb 8, 2018 at 9:01 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
 
-> This patch adds the device tree bindings for the Spreadtrum EIC
-> controller. The EIC can be recognized as one special type of GPIO,
+> The Spreadtrum platform has 2 EIC controllers, one is in digital chip and
+> another one is in PMIC. The digital-chip EIC controller has 4 sub-modules:
+> debounce EIC, latch EIC, async EIC and sync EIC, each sub-module can has
+> multiple groups and each group contains 8 EICs. The PMIC EIC controller has
+> only one debounce EIC sub-module.
 
-s/recognized as one/seen as a/g
+OK it seems they are at different memory addresses and totally
+separate instances then. I start to understand!
 
-> which can only be used as input.
+> Each EIC can only be used as input mode, and has the capability to trigger
+> interrupts when detecting input signals.
 >
-> Signed-off-by: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> +config GPIO_EIC_SPRD
+> +       tristate "Spreadtrum EIC support"
+> +       depends on ARCH_SPRD || COMPILE_TEST
 
-> +The EIC is the abbreviation of external interrupt controller, which
-> +is only can be used as input mode. The EIC controller includes 4
+depend on OF_GPIO
 
-can be used only in input mode.
+> +       select GPIOLIB_IRQCHIP
+> +       help
+> +         Say yes here to support Spreadtrum EIC device.
 
-> +sub-modules: EIC-Debounce, EIC-Latch, EIC-Async, EIC-Sync.
+> +/* EIC registers definition */
 
-Are they four sub-modules that are always synthesized into the
-silicon at the same time, or do you mean that when producing the
-hardware, the designer will choose one of these four types (it looks
-like that from the example).
+Aha I see so the register map is different depending on which
+type is synthesized.
+
+> +#define SPRD_EIC_DBNC_DATA             0x0
+> +#define SPRD_EIC_DBNC_DMSK             0x4
+> +#define SPRD_EIC_DBNC_IEV              0x14
+> +#define SPRD_EIC_DBNC_IE               0x18
+> +#define SPRD_EIC_DBNC_RIS              0x1c
+> +#define SPRD_EIC_DBNC_MIS              0x20
+> +#define SPRD_EIC_DBNC_IC               0x24
+> +#define SPRD_EIC_DBNC_TRIG             0x28
+> +#define SPRD_EIC_DBNC_CTRL0            0x40
+> +#define SPRD_EIC_DBNC_CTRL1            0x44
+> +#define SPRD_EIC_DBNC_CTRL2            0x48
+> +#define SPRD_EIC_DBNC_CTRL3            0x4c
+> +#define SPRD_EIC_DBNC_CTRL4            0x50
+> +#define SPRD_EIC_DBNC_CTRL5            0x54
+> +#define SPRD_EIC_DBNC_CTRL6            0x58
+> +#define SPRD_EIC_DBNC_CTRL7            0x5c
+
+It looks from the code below that register 0x40 thru 0x5c
+are actually present on all the variants, not just the
+debounce DBNC variant.
+
+This is strange, then they should not be named
+with the *_DBNC_* infix but instead something
+neutral like SPRD_CTRL0 0x40 etc.
+
+> +#define SPRD_EIC_LATCH_INTEN           0x0
+> +#define SPRD_EIC_LATCH_INTRAW          0x4
+> +#define SPRD_EIC_LATCH_INTMSK          0x8
+> +#define SPRD_EIC_LATCH_INTCLR          0xc
+> +#define SPRD_EIC_LATCH_INTPOL          0x10
+> +#define SPRD_EIC_LATCH_INTMODE         0x14
+> +
+> +#define SPRD_EIC_ASYNC_INTIE           0x0
+> +#define SPRD_EIC_ASYNC_INTRAW          0x4
+> +#define SPRD_EIC_ASYNC_INTMSK          0x8
+> +#define SPRD_EIC_ASYNC_INTCLR          0xc
+> +#define SPRD_EIC_ASYNC_INTMODE         0x10
+> +#define SPRD_EIC_ASYNC_INTBOTH         0x14
+> +#define SPRD_EIC_ASYNC_INTPOL          0x18
+> +#define SPRD_EIC_ASYNC_DATA            0x1c
+> +
+> +#define SPRD_EIC_SYNC_INTIE            0x0
+> +#define SPRD_EIC_SYNC_INTRAW           0x4
+> +#define SPRD_EIC_SYNC_INTMSK           0x8
+> +#define SPRD_EIC_SYNC_INTCLR           0xc
+> +#define SPRD_EIC_SYNC_INTMODE          0x10
+> +#define SPRD_EIC_SYNC_INTBOTH          0x14
+> +#define SPRD_EIC_SYNC_INTPOL           0x18
+> +#define SPRD_EIC_SYNC_DATA             0x1c
+> +
+> +/*
+> + * The digital-chip EIC controller can support maximum 3 groups, and each group
+> + * contains 8 EICs.
+> + */
+> +#define SPRD_EIC_MAX_GROUP             3
+> +#define SPRD_EIC_PER_GROUP_NR          8
+> +#define SPRD_EIC_DATA_MASK             GENMASK(7, 0)
+> +#define SPRD_EIC_BIT(x)                        ((x) & (SPRD_EIC_PER_GROUP_NR - 1))
+
+Here the comments from the other spreadtrum driver
+applied. (Banks instead of groups)
+
+> +/*
+> + * The PMIC EIC controller only has one group, and each group now can contain
+> + * 16 EICs.
+> + */
+> +#define SPRD_PMIC_EIC_PER_GROUP_NR     16
+
+How can it have 16 groups if it has only one group? I don't understand...
+
+> +#define SPRD_PMIC_EIC_DATA_MASK                GENMASK(15, 0)
+> +#define SPRD_PMIC_EIC_BIT(x)           ((x) & (SPRD_PMIC_EIC_PER_GROUP_NR - 1))
+> +#define SPRD_PMIC_EIC_CACHE_NR_REGS    (SPRD_EIC_DBNC_TRIG + 0x4)
+> +
+> +#define SPRD_EIC_DBNC_MASK             GENMASK(11, 0)
+> +
+> +/*
+> + * The Spreadtrum EIC (external interrupt controller) can only be used
+> + * as input mode to generate interrupts if detecting input signals.
+> + *
+> + * The Spreadtrum platform has two EIC controllers, one EIC controller
+> + * is in digital-chip, another one is in PMIC. There are some differences
+> + * between this two EIC controllers. The digital-chip EIC controller
+> + * includes 4 sub-modules: debounce EIC, latch EIC, async EIC and sync EIC,
+> + * but the PMIC EIC controller only has one debounce EIC sub-module.
+> + *
+> + * The debounce EIC is used to capture input signal's stable status
+> + * (ms grade) and a single-trigger mechanism is introduced into this
+> + * sub-module to enhance the input event detection reliability. The
+> + * debounce range is from 1ms to 4s with the step of 1ms.
+> + *
+> + * The latch EIC is used to latch some special input signal and send
+> + * interrupts to MCU core.
+> + *
+> + * The async EIC uses 32k clock to capture short signal (us grade)
+> + * to generate interrupt to MCU by level or edge trigger.
+> + *
+> + * The sync EIC is similar with GPIO's input function.
+
+Same text as in the DT binding, so since I had a lot of comments on
+spelling and grammar, re-copy-and-paste after fixing up the binding
+please.
+
+> +enum sprd_eic_type {
+> +       SPRD_EIC_DEBOUNCE,
+> +       SPRD_EIC_LATCH,
+> +       SPRD_EIC_ASYNC,
+> +       SPRD_EIC_SYNC,
+> +       SPRD_EIC_PMIC_DEBOUNCE,
+> +       SPRD_EIC_MAX,
+> +};
+
+OK good
+
+> +struct sprd_eic {
+> +       struct gpio_chip chip;
+> +       struct irq_chip intc;
+> +       void __iomem *base[SPRD_EIC_MAX_GROUP];
+> +       struct regmap *map;
+> +       u32 map_base;
+> +       u8 reg[SPRD_PMIC_EIC_CACHE_NR_REGS];
+> +       enum sprd_eic_type type;
+> +       spinlock_t lock;
+> +       struct mutex buslock;
+> +       int irq;
+> +};
+
+This might need some kerneldoc. The regmap is not evident.
+
+> +struct sprd_eic_data {
+> +       enum sprd_eic_type type;
+> +       u32 num_eics;
+> +};
+
+Maybe name it sprd_eic_variant_data so it is clear that this is a
+data container for the variants. Maybe add some kerneldoc to make
+it clear?
+
+> +static const char *sprd_eic_label_name[SPRD_EIC_MAX] = {
+> +       "eic-debounce", "eic-latch", "eic-async",
+> +       "eic-sync", "eic-pmic-debounce",
+> +};
+> +
+> +static const struct sprd_eic_data sc9860_eic_dbnc_data = {
+> +       .type = SPRD_EIC_DEBOUNCE,
+> +       .num_eics = 8,
+> +};
+> +
+> +static const struct sprd_eic_data sc9860_eic_latch_data = {
+> +       .type = SPRD_EIC_LATCH,
+> +       .num_eics = 8,
+> +};
+> +
+> +static const struct sprd_eic_data sc9860_eic_async_data = {
+> +       .type = SPRD_EIC_ASYNC,
+> +       .num_eics = 8,
+> +};
+> +
+> +static const struct sprd_eic_data sc9860_eic_sync_data = {
+> +       .type = SPRD_EIC_SYNC,
+> +       .num_eics = 8,
+> +};
+> +
+> +static const struct sprd_eic_data pmic_eic_dbnc_data = {
+> +       .type = SPRD_EIC_PMIC_DEBOUNCE,
+> +       .num_eics = 16,
+> +};
+
+Makes sense.
+
+> +static inline void __iomem *sprd_eic_group_base(struct sprd_eic *sprd_eic,
+> +                                               unsigned int group)
+> +{
+> +       if (group >= SPRD_EIC_MAX_GROUP)
+> +               return NULL;
+> +
+> +       return sprd_eic->base[group];
+> +}
+
+Same comment as the other driver, maybe just use offset as parameter
+to this instead of group?
+
+Maybe rename sprd_eic_offset_base()?
+
+> +static void sprd_eic_update(struct gpio_chip *chip, unsigned int offset,
+> +                           unsigned int reg, unsigned int val)
+> +{
+> +       struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
+> +       u32 shift;
+> +
+> +       if (sprd_eic->type == SPRD_EIC_PMIC_DEBOUNCE) {
+> +               shift = SPRD_PMIC_EIC_BIT(offset);
+> +
+> +               regmap_update_bits(sprd_eic->map, sprd_eic->map_base + reg,
+> +                                  BIT(shift), val << shift);
+
+So since everything about the PMIC debounce is handled separately
+since it goes through regmap, I think maybe you should
+simply make that its own driver to make this driver cleaner?
+
+> +       } else {
+> +               void __iomem *base = sprd_eic_group_base(sprd_eic,
+> +                                               offset / SPRD_EIC_PER_GROUP_NR);
+> +               unsigned long flags;
+> +               u32 orig, tmp;
+> +
+> +               shift = SPRD_EIC_BIT(offset);
+> +
+> +               spin_lock_irqsave(&sprd_eic->lock, flags);
+> +               orig = readl_relaxed(base + reg);
+> +
+> +               tmp = (orig & ~BIT(shift)) | (val << shift);
+> +               writel_relaxed(tmp, base + reg);
+> +               spin_unlock_irqrestore(&sprd_eic->lock, flags);
+> +       }
+
+On this read-modify-write algoritm I have the same comments
+as on the other driver.
+
+> +static int sprd_eic_request(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       sprd_eic_update(chip, offset, SPRD_EIC_DBNC_DMSK, 1);
+> +       return 0;
+> +}
+> +
+> +static void sprd_eic_free(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       sprd_eic_update(chip, offset, SPRD_EIC_DBNC_DMSK, 0);
+> +}
+> +
+> +static int sprd_eic_get(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
+> +}
+> +
+> +static int sprd_eic_direction_input(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       /* EICs are always input, nothing need to do here. */
+> +       return 0;
+> +}
+
+Implement sprd_eic_direction_output() as well and make it
+return -EIO every time. So setting as output fails.
 
 > +
-> +The EIC-debounce sub-module provides up to 8 source input signal
-> +connection.
+> +static void sprd_eic_set(struct gpio_chip *chip, unsigned int offset, int value)
+> +{
+> +       /* EICs are always input, nothing need to do here. */
+> +}
 
-connections.
+So only the debounce version really supports GPIO read.
 
-> A debounce machanism is used to
+And for the other versions, all you really do is use gpiolib to
+get an irqchip in a convenient way?
 
-mechanism
+I'm not so sure about this.
 
-> capture input signal's
+I think it is more appropriate to just have a GPIO driver for
+the first variant in that case, and then put the support
+for the remaining variants into drivers/irqchip/* since
+they can only do IRQ.
 
-capture the input signals'
+If they are supposed to be present in drivers/gpio/* they should
+at least be able to read a value, SPRD_EIC_LATCH_INTRAW
+etc if nothing else. Else I think it is a real bad fit for those.
 
-(note plural signals genitive)
+But then comes the fact that it seems all of them have
+debounce. So I'm a bit confused. The irqchips don't have
+debounce, so in that case it makes a bit of sense.
 
-> +stable status (ms grade)
+But again: you can't really use the debounce properties from
+the irqchip side, and then I think the right thing to do is
+to use drivers/irqchip, and add debouncing support to
+the irqchip infrastructure so you can use it directly on the
+irqchip.
 
-is that millisecond resolution you mean?
+> +static int sprd_eic_set_debounce(struct gpio_chip *chip, unsigned int offset,
+> +                                unsigned int debounce)
+> +{
+> +       struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
+> +       u32 shift, reg, value;
+> +
+> +       if (sprd_eic->type == SPRD_EIC_PMIC_DEBOUNCE) {
+> +               int ret;
+> +
+> +               shift = SPRD_PMIC_EIC_BIT(offset);
+> +               reg = SPRD_EIC_DBNC_CTRL0 + shift * 0x4;
+> +               ret = regmap_read(sprd_eic->map, sprd_eic->map_base + reg,
+> +                                 &value);
+> +               if (ret)
+> +                       return ret;
+> +
+> +               value &= ~SPRD_EIC_DBNC_MASK;
+> +               value |= debounce / 1000;
+> +               ret = regmap_write(sprd_eic->map, sprd_eic->map_base + reg,
+> +                                  value);
+> +               if (ret)
+> +                       return ret;
 
-> and a single-trigger mechanism is introduced
-> +into this sub-module to enhance the input event detection reliability.
-> +In addition, this sub-module's clock can be shut-off automatically to
+This illustrated I think again why the PMIC should have its
+own driver.
 
-no dash in "shut off"
+> +       } else {
+> +               void __iomem *base = sprd_eic_group_base(sprd_eic,
+> +                                               offset / SPRD_EIC_PER_GROUP_NR);
+> +
+> +               shift = SPRD_EIC_BIT(offset);
+> +               reg = SPRD_EIC_DBNC_CTRL0 + shift * 0x4;
+> +               value = readl_relaxed(base + reg) & ~SPRD_EIC_DBNC_MASK;
+> +
+> +               value |= debounce / 1000;
+> +               writel_relaxed(value, base + reg);
+> +       }
 
-> +reduce power dissipation. The debounce range is from 1ms to 4s with
-> +the step of 1ms.
+So these variants, also those which are not named *DEBOUNCE
+still has a debounce register?
 
-a step size of
+That is pretty confusing.
 
-> If the input signal is shorter than 1ms, it will be
-> +omitted as this sub-module.
+> +static int sprd_eic_set_config(struct gpio_chip *chip, unsigned int offset,
+> +                              unsigned long config)
+> +{
+> +       unsigned long param = pinconf_to_config_param(config);
+> +       u32 arg = pinconf_to_config_argument(config);
+> +
+> +       if (param == PIN_CONFIG_INPUT_DEBOUNCE)
+> +               return sprd_eic_set_debounce(chip, offset, arg);
 
-I don't understand the last part, do you mean the signal will be ignored
-if it is asserted for less than 1 ms?
+So this is supported on *all* variants?
 
-> +The EIC-latch sub-module is used to latch some special input signal
+Does this mean that you have a number of "gpios" which
+can only handle interrupts, have debounce but you can never
+read the value from them?
 
-signals (plural)
+Apart from these design questions it looks all right,
+but we really need to think about if this should rather be,
+at least partially, inside drivers/irqchip.
 
-What is special about them?
-
-> +and send interrupts to MCU core, and it can provide up to 8 latch
-> +source input signal connection.
-
-connections (plural)
-
-> +The EIC-async sub-module uses 32k clock
-
-a 32kHz clock
-
-> to capture short signal
-
-to capture the short signal
-
-> +(us grade)
-
-Do you mean "microsecond granularity"?
-
-> to generate interrupt to MCU by level or edge trigger.
-
-What is MCU? I think you can just omit it, it could be integrated
-elsewhere.
-
-> +The EIC-sync is similar with GPIO's input function.
-
-Do you mean that the EIC-sync module is a synchronized signal input
-register? Please write that.
-
-> +Required properties:
-> +- compatible: Should be one of the following:
-> +  "sprd,sc9860-eic-debounce",
-> +  "sprd,sc9860-eic-latch",
-> +  "sprd,sc9860-eic-async",
-> +  "sprd,sc9860-eic-sync",
-> +  "sprd,sc27xx-eic-debounce".
-
-So it looks like there is one at the time, so in the SC9860
-all four modules exist, but at different addresses?
-
-(...)
-> +Example:
-> +       eic_debounce: eic@40210000 {
-> +               compatible = "sprd,sc9860-eic-debounce";
-> +               reg = <0 0x40210000 0 0x80>;
-
-So does this mean that this is a debounced-only EIC?
-
-There are latch, async and sync versions somewhere else in
-memory? Or there could be? And they are never say debounce
-and latch at the same time? Etc?
+I understand it is convenient to use the infrastructure inside
+drivers/gpio/* but if it means things that are not even GPIO
+start to be implemented as "GPIO" then we are a victim of
+our own success.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
