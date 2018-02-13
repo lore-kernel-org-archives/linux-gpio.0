@@ -1,56 +1,26 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH] gpio: Handle deferred probing in of_find_gpio() properly
-Date: Tue, 13 Feb 2018 14:08:14 +0800
-Message-ID: <20180213060814.18165-1-wens@csie.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: gpio: Add Spreadtrum GPIO controller documentation
+Date: Tue, 13 Feb 2018 08:36:54 +0100
+Message-ID: <CACRpkdbq-D8ZU5jMVLZq56j7L5-vHSmbgYd24g8VkD8bLrc2mQ@mail.gmail.com>
+References: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517795460.git.baolin.wang@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2834309f69a1ec37b84a33f153a3d0b90336bcc6.1517795460.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-of_get_named_gpiod_flags() used directly in of_find_gpio() or indirectly
-through of_find_spi_gpio() or of_find_regulator_gpio() can return
--EPROBE_DEFER. This gets overwritten by the subsequent of_find_*_gpio()
-calls.
+On Mon, Feb 5, 2018 at 2:55 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
 
-This patch fixes this by trying of_find_spi_gpio() or
-of_find_regulator_gpio() only if deferred probing was not requested by
-the previous of_get_named_gpiod_flags() call.
+> This patch adds the device tree bindings for the Spreadtrum
+> GPIO controller. The gpios will be supported by the GPIO
+> generic library.
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-Fixes: 6a537d48461d ("gpio: of: Support regulator nonstandard GPIO properties")
-Fixes: c85823390215 ("gpio: of: Support SPI nonstandard GPIO properties")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
+Patch applied with Rob's ACK from v2.
 
-Hi Linus,
-
-Fresh fix for 4.16. I'm probably not the only one finding devices using
-gpios not working anymore. In my case it was pwrseq-mmc-simple probing
-before pinctrl/gpio, not being able to get the gpio, and then just
-consider the gpio missing instead of deferring. This in turn caused my
-SDIO WiFi to not work.
-
----
- drivers/gpio/gpiolib-of.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 564bb7a31da4..edad176a210a 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -246,11 +246,11 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- 	}
- 
- 	/* Special handling for SPI GPIOs if used */
--	if (IS_ERR(desc))
-+	if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER)
- 		desc = of_find_spi_gpio(dev, con_id, &of_flags);
- 
- 	/* Special handling for regulator GPIOs if used */
--	if (IS_ERR(desc))
-+	if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER)
- 		desc = of_find_regulator_gpio(dev, con_id, &of_flags);
- 
- 	if (IS_ERR(desc))
--- 
-2.16.1
+Yours,
+Linus Walleij
