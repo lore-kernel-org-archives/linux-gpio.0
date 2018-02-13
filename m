@@ -1,47 +1,49 @@
 From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH 05/21] regulator: arizona-ldo1: Look up a descriptor and
- pass to the core
-Date: Tue, 13 Feb 2018 11:51:22 +0000
-Message-ID: <20180213115122.vihjpyfzx3c52oqx@localhost.localdomain>
+Subject: Re: [PATCH 16/21] regulator: wm8994: Pass descriptor instead of GPIO
+ number
+Date: Tue, 13 Feb 2018 11:52:59 +0000
+Message-ID: <20180213115259.wxicurh4rvkp6lwe@localhost.localdomain>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
- <20180212131717.27193-6-linus.walleij@linaro.org>
+ <20180212131717.27193-17-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37412 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934336AbeBMLv1 (ORCPT
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:55888 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934231AbeBMMA3 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:51:27 -0500
+        Tue, 13 Feb 2018 07:00:29 -0500
 Content-Disposition: inline
-In-Reply-To: <20180212131717.27193-6-linus.walleij@linaro.org>
+In-Reply-To: <20180212131717.27193-17-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Lee Jones <lee.jones@linaro.org>
 
-On Mon, Feb 12, 2018 at 02:17:01PM +0100, Linus Walleij wrote:
-> Instead of passing a global GPIO number, pass a descriptor looked
-> up with the standard devm_gpiod_get_optional() call.
+On Mon, Feb 12, 2018 at 02:17:12PM +0100, Linus Walleij wrote:
+> Instead of passing a global GPIO number for the enable GPIO, pass
+> a descriptor looked up from the device tree node or the board file
+> decriptor table for the regulator.
 > 
-> We have augmented the GPIO core to look up the regulator special
-> GPIO "wlf,ldoena" in a separate patch.
+> There is a single board file passing the GPIOs for LDO1 and LDO2
+> through platform data, so augment this to pass descriptors
+> associated with the i2c device as well.
 > 
 > Cc: patches@opensource.cirrus.com
-> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
-> -	config.ena_gpio = pdata->ldoena;
-> +	/* We assume that high output = regulator off */
-> +	config.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "wlf,ldoena",
-> +						   GPIOD_OUT_HIGH);
-> +	if (IS_ERR(config.ena_gpiod))
-> +		return PTR_ERR(config.ena_gpiod);
+> +	/* Look up LDO enable GPIO from the parent device node */
+> +	gpiod = devm_gpiod_get_optional(pdev->dev.parent,
+> +					id ? "wlf,ldo2ena" : "wlf,ldo1ena",
+> +					GPIOD_OUT_LOW);
+> +	if (IS_ERR(gpiod))
+> +		return PTR_ERR(gpiod);
+> +	config.ena_gpiod = gpiod;
 
-Also looking at this more you will need to you
-devm_gpio_get_from_of_node here since the device tree binding is
-for wlf,ldoena not wlf,ldoena-gpio. So this patch currently
-breaks the binding.
+Likewise here the DT bindings for these parts have no -gpio
+suffix on them so this will break the DT case.
 
 Thanks,
 Charles
