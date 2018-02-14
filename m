@@ -1,149 +1,61 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] pinctrl: Re-use DEFINE_SHOW_ATTRIBUTE() macro
-Date: Wed, 14 Feb 2018 17:44:12 +0200
-Message-ID: <20180214154412.53016-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:43146 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031624AbeBNPoP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 14 Feb 2018 10:44:15 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/3] spi: spi-gpio: Delete references to
+ non-GENERIC_BITBANG
+Date: Wed, 14 Feb 2018 16:01:22 +0000
+Message-ID: <20180214160122.GE12658@sirena.org.uk>
+References: <20180212124532.25776-1-linus.walleij@linaro.org>
+ <20180212124532.25776-3-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sfyO1m2EN8ZOtJL6"
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20180212124532.25776-3-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-...instead of open coding file operations followed by custom ->open()
-callbacks per each attribute.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/core.c | 78 ++++----------------------------------------------
- 1 file changed, 6 insertions(+), 72 deletions(-)
+--sfyO1m2EN8ZOtJL6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index d2b0329bc98a..3ae7bbf36b53 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1586,6 +1586,7 @@ static int pinctrl_pins_show(struct seq_file *s, void *what)
- 
- 	return 0;
- }
-+DEFINE_SHOW_ATTRIBUTE(pinctrl_pins);
- 
- static int pinctrl_groups_show(struct seq_file *s, void *what)
- {
-@@ -1631,6 +1632,7 @@ static int pinctrl_groups_show(struct seq_file *s, void *what)
- 
- 	return 0;
- }
-+DEFINE_SHOW_ATTRIBUTE(pinctrl_groups);
- 
- static int pinctrl_gpioranges_show(struct seq_file *s, void *what)
- {
-@@ -1664,6 +1666,7 @@ static int pinctrl_gpioranges_show(struct seq_file *s, void *what)
- 
- 	return 0;
- }
-+DEFINE_SHOW_ATTRIBUTE(pinctrl_gpioranges);
- 
- static int pinctrl_devices_show(struct seq_file *s, void *what)
- {
-@@ -1690,6 +1693,7 @@ static int pinctrl_devices_show(struct seq_file *s, void *what)
- 
- 	return 0;
- }
-+DEFINE_SHOW_ATTRIBUTE(pinctrl_devices);
- 
- static inline const char *map_type(enum pinctrl_map_type type)
- {
-@@ -1743,6 +1747,7 @@ static int pinctrl_maps_show(struct seq_file *s, void *what)
- 
- 	return 0;
- }
-+DEFINE_SHOW_ATTRIBUTE(pinctrl_maps);
- 
- static int pinctrl_show(struct seq_file *s, void *what)
- {
-@@ -1788,78 +1793,7 @@ static int pinctrl_show(struct seq_file *s, void *what)
- 
- 	return 0;
- }
--
--static int pinctrl_pins_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, pinctrl_pins_show, inode->i_private);
--}
--
--static int pinctrl_groups_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, pinctrl_groups_show, inode->i_private);
--}
--
--static int pinctrl_gpioranges_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, pinctrl_gpioranges_show, inode->i_private);
--}
--
--static int pinctrl_devices_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, pinctrl_devices_show, NULL);
--}
--
--static int pinctrl_maps_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, pinctrl_maps_show, NULL);
--}
--
--static int pinctrl_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, pinctrl_show, NULL);
--}
--
--static const struct file_operations pinctrl_pins_ops = {
--	.open		= pinctrl_pins_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
--static const struct file_operations pinctrl_groups_ops = {
--	.open		= pinctrl_groups_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
--static const struct file_operations pinctrl_gpioranges_ops = {
--	.open		= pinctrl_gpioranges_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
--static const struct file_operations pinctrl_devices_ops = {
--	.open		= pinctrl_devices_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
--static const struct file_operations pinctrl_maps_ops = {
--	.open		= pinctrl_maps_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
--static const struct file_operations pinctrl_ops = {
--	.open		= pinctrl_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(pinctrl);
- 
- static struct dentry *debugfs_root;
- 
--- 
-2.15.1
+On Mon, Feb 12, 2018 at 01:45:31PM +0100, Linus Walleij wrote:
 
+> The non-generic bitbang was a feature where a platform could optimize
+> SPI bit-banging by inlining the routines to hammer GPIO lines into
+> the GPIO bitbanging driver as direct register writes using a custom
+> set of GPIO library calls.
+
+> It does not work with multiplatform concepts, violates everything
+> about how GPIO is made generic and is just generally a bad idea,
+> even on legacy system. Also there is no single user in the entire
+> kernel (for good reasons).
+
+It's not expected that users should go upstream and it doesn't seem
+helpful to delete without replacement.  The original idea was to allow
+things like setting multiple GPIOs at once if there were calls for that,
+now that gpiolib has support for that we should at least convert to it
+before removing the hook.
+
+--sfyO1m2EN8ZOtJL6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqEXVEACgkQJNaLcl1U
+h9B0GQf/SclSl4u89MHim7or/YsyKmVANnwm7Wi33AaeengZLvej110/Qh3eSN/3
+u67oUIhL/am/pORVE46vSQKwUF6mBoBrwqsGZh0Lb+yZVT8ghouY7kdGJRURNKT+
+CeRAJAzC/Akcp+H5Q12IVpJivE+8eB84z7IY1gkxSthUqqNg9Gc1qUTzjYzprMym
+M12rZf3J8EY9ZT7qQpwrBoVPBPDeU4ZZpfc3VnrBiQkyyFrXJ+BxEYloy9v6jn0z
+VQdKVezOZ+IwtRYKm7UTklJPGt6hXLALqvJRpTmmj/oSPmTHkCeTVh5WBuJVlldL
+s5ukK55Tj4Oe8cwkZN86IRUmdctYIg==
+=XOp8
+-----END PGP SIGNATURE-----
+
+--sfyO1m2EN8ZOtJL6--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
