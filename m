@@ -1,174 +1,54 @@
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH 1/8] pinctrl: sh-pfc: r8a77995: Add DU support
-Date: Thu, 15 Feb 2018 12:32:51 +0000
-Message-ID: <9ac40731-eb13-4727-864d-0e3b7059b9f8@ideasonboard.com>
-References: <1518683903-10681-1-git-send-email-kbingham@kernel.org>
- <1518683903-10681-2-git-send-email-kbingham@kernel.org>
+From: Michal Schorm <mschorm@redhat.com>
+Subject: [libgpiod] Braswell GPIO newbie question
+Date: Thu, 15 Feb 2018 15:06:17 +0100
+Message-ID: <CALC7GWzP5Z7iQP_6zR9CWPgsD+QswDchBqnnX+p8THTOv8ukFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1518683903-10681-2-git-send-email-kbingham@kernel.org>
-Content-Language: en-GB
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Kieran Bingham <kbingham@kernel.org>, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon Horman <horms@verge.net.au>, geert@glider.be, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:46908 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032283AbeBOOGj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Feb 2018 09:06:39 -0500
+Received: by mail-lf0-f67.google.com with SMTP id q194so34200987lfe.13
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Feb 2018 06:06:39 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-This patch duplicates work performed by Ulrich.
+Hello,
 
-Please consider this patch dropped, and no need for review.
+I got myself an UDOO development board with x86_64 processor, running
+Fedora 27, and trying to work with GPIO.
+Fedora don't use the 'sysfs' kernel module anymore, which makes it
+nearly impossible to google *any* help.
 
-(especially the obvious error in the pin-values)
+However, I was able to finish a C code, that worked with GPIO with linux/gpio.h
+https://github.com/FaramosCZ/UDOO/blob/gpio/gpio_3.c
 
-Oh well - it was a fun exercise to go through :-)
+It looks like it does the job, even 'libgpiod' tools confirm.
+
+However one problem remains.
+I have zero idea, which physical pin is referenced by which chip and
+line in the system.
+
+Here's the best reference for the board and Braswell GPIO pinout:
+https://www.udoo.org/docs-x86/Hardware_Reference/Pinout_Braswell.html
+
+Here's my call for help on the UDOO project forum:
+https://www.udoo.org/forum/threads/gpio-on-fedora-27.11288/
+
+Since you are the author / maintainer of the new kernel gpio module,
+I'm reaching to you for help.
+
+Let's say, I just want to light up a LED on pins 36 & 37, one with
+'0', other with '1' set. (Yeah, 1,8V not much for LED, but it could be
+visible)
+How can I do that?
+What should I know? learn?
 
 --
-Regards
 
-Kieran
-
-On 15/02/18 08:38, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> Provide pin control support for the DU parallel RGB output signals.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
->  drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 101 ++++++++++++++++++++++++++++++++++
->  1 file changed, 101 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-> index a4927b78a17b..277b0d6972f7 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-> @@ -1114,6 +1114,87 @@ static const unsigned int canfd1_data_mux[] = {
->  	CANFD1_TX_MARK, CANFD1_RX_MARK,
->  };
->  
-> +/* - DU --------------------------------------------------------------------- */
-> +static const unsigned int du_rgb666_pins[] = {
-> +	/* R[7:2], G[7:2], B[7:2] */
-> +	RCAR_GP_PIN(1, 23), RCAR_GP_PIN(1, 22), RCAR_GP_PIN(1, 21),
-> +	RCAR_GP_PIN(1, 20), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-> +	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
-> +	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 11), RCAR_GP_PIN(1, 10),
-> +	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
-> +	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
-> +};
-> +static const unsigned int du_rgb666_mux[] = {
-> +	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
-> +	DU_DR3_MARK, DU_DR2_MARK,
-> +	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
-> +	DU_DG3_MARK, DU_DG2_MARK,
-> +	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
-> +	DU_DB3_MARK, DU_DB2_MARK,
-> +};
-> +static const unsigned int du_rgb888_pins[] = {
-> +	/* R[7:0], G[7:0], B[7:0] */
-> +	RCAR_GP_PIN(1, 23), RCAR_GP_PIN(1, 22), RCAR_GP_PIN(1, 21),
-> +	RCAR_GP_PIN(1, 20), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-> +	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 16),
-> +	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
-> +	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 11), RCAR_GP_PIN(1, 10),
-> +	RCAR_GP_PIN(1, 9),  RCAR_GP_PIN(1, 8),
-> +	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
-> +	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
-> +	RCAR_GP_PIN(1, 1),  RCAR_GP_PIN(1, 0),
-> +};
-> +static const unsigned int du_rgb888_mux[] = {
-> +	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
-> +	DU_DR3_MARK, DU_DR2_MARK, DU_DR1_MARK, DU_DR0_MARK,
-> +	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
-> +	DU_DG3_MARK, DU_DG2_MARK, DU_DG1_MARK, DU_DG0_MARK,
-> +	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
-> +	DU_DB3_MARK, DU_DB2_MARK, DU_DB1_MARK, DU_DB0_MARK,
-> +};
-> +static const unsigned int du_dotclkout0_pins[] = {
-> +	/* CLKOUT */
-> +	RCAR_GP_PIN(1, 24),
-> +};
-> +static const unsigned int du_dotclkout0_mux[] = {
-> +	DU_DOTCLKOUT0_MARK
-> +};
-> +static const unsigned int du_sync_pins[] = {
-> +	/* HSYNC, VSYNC */
-> +	RCAR_GP_PIN(1, 25), RCAR_GP_PIN(1, 26),
-> +};
-> +static const unsigned int du_sync_mux[] = {
-> +	DU_HSYNC_MARK, DU_VSYNC_MARK
-> +};
-> +static const unsigned int du_disp_pins[] = {
-> +	/* DISP */
-> +	RCAR_GP_PIN(2, 1),
-> +};
-> +static const unsigned int du_disp_mux[] = {
-> +	DU_DISP_MARK,
-> +};
-> +static const unsigned int du_dotclkin1_pins[] = {
-> +	/* DOTCLKOUT0 */
-> +	RCAR_GP_PIN(1, 28),
-> +};
-> +static const unsigned int du_dotclkin1_mux[] = {
-> +	DU_DOTCLKIN1_MARK,
-> +};
-> +static const unsigned int du_disp_cde_pins[] = {
-> +	/* DISP/CDE */
-> +	RCAR_GP_PIN(1, 28),
-> +};
-> +static const unsigned int du_disp_cde_mux[] = {
-> +	DU_DISP_CDE_MARK,
-> +};
-> +static const unsigned int du_cde_pins[] = {
-> +	/* CDE */
-> +	RCAR_GP_PIN(1, 29),
-> +};
-> +static const unsigned int du_cde_mux[] = {
-> +	DU_CDE_MARK,
-> +};
-> +
->  /* - I2C -------------------------------------------------------------------- */
->  static const unsigned int i2c0_pins[] = {
->  	/* SCL, SDA */
-> @@ -1568,6 +1649,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
->  	SH_PFC_PIN_GROUP(can_clk),
->  	SH_PFC_PIN_GROUP(canfd0_data),
->  	SH_PFC_PIN_GROUP(canfd1_data),
-> +	SH_PFC_PIN_GROUP(du_rgb666),
-> +	SH_PFC_PIN_GROUP(du_rgb888),
-> +	SH_PFC_PIN_GROUP(du_dotclkout0),
-> +	SH_PFC_PIN_GROUP(du_sync),
-> +	SH_PFC_PIN_GROUP(du_disp),
-> +	SH_PFC_PIN_GROUP(du_dotclkin1),
-> +	SH_PFC_PIN_GROUP(du_disp_cde),
-> +	SH_PFC_PIN_GROUP(du_cde),
->  	SH_PFC_PIN_GROUP(i2c0),
->  	SH_PFC_PIN_GROUP(i2c1),
->  	SH_PFC_PIN_GROUP(i2c2_a),
-> @@ -1664,6 +1753,17 @@ static const char * const canfd1_groups[] = {
->  	"canfd1_data",
->  };
->  
-> +static const char * const du_groups[] = {
-> +	"du_rgb666",
-> +	"du_rgb888",
-> +	"du_dotclk_out_0",
-> +	"du_sync",
-> +	"du_disp",
-> +	"du_dotclk_in_1",
-> +	"du_disp_cde",
-> +	"du_cde",
-> +};
-> +
->  static const char * const i2c0_groups[] = {
->  	"i2c0",
->  };
-> @@ -1779,6 +1879,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
->  	SH_PFC_FUNCTION(can_clk),
->  	SH_PFC_FUNCTION(canfd0),
->  	SH_PFC_FUNCTION(canfd1),
-> +	SH_PFC_FUNCTION(du),
->  	SH_PFC_FUNCTION(i2c0),
->  	SH_PFC_FUNCTION(i2c1),
->  	SH_PFC_FUNCTION(i2c2),
-> 
+Michal Schorm
+Associate Software Engineer
+Core Services - Databases Team
+Red Hat
