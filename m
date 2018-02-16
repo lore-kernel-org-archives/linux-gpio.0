@@ -1,150 +1,60 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: core: Support passing an initialized GPIO enable descriptor" to the regulator tree
-Date: Fri, 16 Feb 2018 17:12:24 +0000
-Message-ID: <E1emjYe-00085Z-7c@debutante>
-References: <20180212131717.27193-2-linus.walleij@linaro.org>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: [PATCH] pinctrl/amd: add get_direction handler
+Date: Fri, 16 Feb 2018 12:12:43 -0700
+Message-ID: <20180216191243.129130-1-djkurtz@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180212131717.27193-2-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.orglinux-kernel@vger.kernel.org
+Cc: Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The patch
+On boot, gpiochip_add_data() initializes the FLAG_IS_OUT bit in
+desc->flags iff its gpio_chip does not have ->direction_input() handler,
+else it is initialized to 0, which implies the GPIO is an "input".
 
-   regulator: core: Support passing an initialized GPIO enable descriptor
+Later, the sysfs "direction" handler will use gpiod_get_direction() to
+get the current direction, but if no ->get_direction() handler is
+installed, the result will just be the current (initial) value of flags,
+which will always be OUT irregardless of the initial register value.
 
-has been applied to the regulator tree at
+Add a get_direction() handler to pinctrl-amd to fix this and always
+provide the correct value for direction.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e45e290a882e2c0dc8ebb7dd21c66a8209d8e3a5 Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 12 Feb 2018 14:16:57 +0100
-Subject: [PATCH] regulator: core: Support passing an initialized GPIO enable
- descriptor
-
-We are currently passing a GPIO number from the global GPIO numberspace
-into the regulator core for handling enable GPIOs. This is not good
-since it ties into the global GPIO numberspace and uses gpio_to_desc()
-to overcome this.
-
-Start supporting passing an already initialized GPIO descriptor to the
-core instead: leaf drivers pick their descriptors, associated directly
-with the device node (or from ACPI or from a board descriptor table)
-and use that directly without any roundtrip over the global GPIO
-numberspace.
-
-This looks messy since it adds a bunch of extra code in the core, but
-at the end of the patch series we will delete the handling of the GPIO
-number and only deal with descriptors so things end up neat.
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 ---
- drivers/regulator/core.c         | 25 ++++++++++++++++---------
- include/linux/regulator/driver.h |  3 +++
- 2 files changed, 19 insertions(+), 9 deletions(-)
+ drivers/pinctrl/pinctrl-amd.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index dd4708c58480..4549b93b0ff9 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1937,7 +1937,10 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
- 	struct gpio_desc *gpiod;
- 	int ret;
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 61d830c2bc17..281b700fe7e9 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -40,6 +40,19 @@
+ #include "pinctrl-utils.h"
+ #include "pinctrl-amd.h"
  
--	gpiod = gpio_to_desc(config->ena_gpio);
-+	if (config->ena_gpiod)
-+		gpiod = config->ena_gpiod;
-+	else
-+		gpiod = gpio_to_desc(config->ena_gpio);
++static int amd_gpio_get_direction(struct gpio_chip *gc, unsigned offset)
++{
++	unsigned long flags;
++	u32 pin_reg;
++	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
++
++	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
++	pin_reg = readl(gpio_dev->base + offset * 4);
++	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
++
++	return !(pin_reg & BIT(OUTPUT_ENABLE_OFF));
++}
++
+ static int amd_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
+ {
+ 	unsigned long flags;
+@@ -845,6 +858,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
+ #endif
  
- 	list_for_each_entry(pin, &regulator_ena_gpio_list, list) {
- 		if (pin->gpiod == gpiod) {
-@@ -1947,15 +1950,18 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
- 		}
- 	}
- 
--	ret = gpio_request_one(config->ena_gpio,
--				GPIOF_DIR_OUT | config->ena_gpio_flags,
--				rdev_get_name(rdev));
--	if (ret)
--		return ret;
-+	if (!config->ena_gpiod) {
-+		ret = gpio_request_one(config->ena_gpio,
-+				       GPIOF_DIR_OUT | config->ena_gpio_flags,
-+				       rdev_get_name(rdev));
-+		if (ret)
-+			return ret;
-+	}
- 
- 	pin = kzalloc(sizeof(struct regulator_enable_gpio), GFP_KERNEL);
- 	if (pin == NULL) {
--		gpio_free(config->ena_gpio);
-+		if (!config->ena_gpiod)
-+			gpio_free(config->ena_gpio);
- 		return -ENOMEM;
- 	}
- 
-@@ -4154,8 +4160,9 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 			goto clean;
- 	}
- 
--	if ((config->ena_gpio || config->ena_gpio_initialized) &&
--	    gpio_is_valid(config->ena_gpio)) {
-+	if (config->ena_gpiod ||
-+	    ((config->ena_gpio || config->ena_gpio_initialized) &&
-+	     gpio_is_valid(config->ena_gpio))) {
- 		mutex_lock(&regulator_list_mutex);
- 		ret = regulator_ena_gpio_request(rdev, config);
- 		mutex_unlock(&regulator_list_mutex);
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 4c00486b7a78..4fc96cb8e5d7 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -19,6 +19,7 @@
- #include <linux/notifier.h>
- #include <linux/regulator/consumer.h>
- 
-+struct gpio_desc;
- struct regmap;
- struct regulator_dev;
- struct regulator_config;
-@@ -387,6 +388,7 @@ struct regulator_desc {
-  *                        initialized, meaning that >= 0 is a valid gpio
-  *                        identifier and < 0 is a non existent gpio.
-  * @ena_gpio: GPIO controlling regulator enable.
-+ * @ena_gpiod: GPIO descriptor controlling regulator enable.
-  * @ena_gpio_invert: Sense for GPIO enable control.
-  * @ena_gpio_flags: Flags to use when calling gpio_request_one()
-  */
-@@ -399,6 +401,7 @@ struct regulator_config {
- 
- 	bool ena_gpio_initialized;
- 	int ena_gpio;
-+	struct gpio_desc *ena_gpiod;
- 	unsigned int ena_gpio_invert:1;
- 	unsigned int ena_gpio_flags;
- };
+ 	gpio_dev->pdev = pdev;
++	gpio_dev->gc.get_direction	= amd_gpio_get_direction;
+ 	gpio_dev->gc.direction_input	= amd_gpio_direction_input;
+ 	gpio_dev->gc.direction_output	= amd_gpio_direction_output;
+ 	gpio_dev->gc.get			= amd_gpio_get_value;
 -- 
-2.16.1
+2.16.1.291.g4437f3f132-goog
