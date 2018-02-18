@@ -1,16 +1,16 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 2/3] soc: rockchip: power-domain: Use
- of_clk_get_parent_count() instead of open coding
-Date: Sun, 18 Feb 2018 11:09:25 -0800
-Message-ID: <CAEG3pNCioW_FVXj3-j4KC_yO6ZYGXQB_eanHWSb9NUE9kYsWag@mail.gmail.com>
-References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
- <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
- <11171053.oOJPuGlHoK@phil>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: Add ST Multi-Function eXpander
+ driver
+Date: Sun, 18 Feb 2018 17:19:38 -0600
+Message-ID: <20180218231938.goeht7tomfkab6uu@rob-hp-laptop>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+ <1518100057-23234-2-git-send-email-amelie.delaunay@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <11171053.oOJPuGlHoK@phil>
+Content-Disposition: inline
+In-Reply-To: <1518100057-23234-2-git-send-email-amelie.delaunay@st.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,84 +20,97 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd <sboyd@codeaurora.org>,
- Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Heiko, Geert,
+On Thu, Feb 08, 2018 at 03:27:32PM +0100, Amelie Delaunay wrote:
+> This patch adds documentation of device tree bindings for the
+> STMicroelectronics Multi-Function eXpander (MFX).
+> 
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/st-mfx.txt | 51 ++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/st-mfx.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/st-mfx.txt b/Documentation/devicetree/bindings/mfd/st-mfx.txt
+> new file mode 100644
+> index 0000000..423d800
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/st-mfx.txt
+> @@ -0,0 +1,51 @@
+> +STMicroelectronics Multi-Function eXpander
+> +
+> +ST Multi-Function eXpander (MFX) is a slave controller using I2C for
+> +communication with the main MCU. Its main features are gpio expansion, main
+> +MCU IDD measurement (IDD is the amount of current that flows through VDD)
+> +and resistive touchscreen controller.
 
-On Sat, Feb 10, 2018 at 8:35 AM, Heiko Stuebner <heiko@sntech.de> wrote:
-> Hi Geert,
->
-> Am Freitag, 19. Januar 2018, 16:18:20 CET schrieb Geert Uytterhoeven:
->> As of_clk_get_parent_count() returns zero on failure, while
->> of_count_phandle_with_args() might return a negative error code, this
->> also fixes the issue of possibly using a negative number in the
->> allocation below.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->>  drivers/soc/rockchip/pm_domains.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
->> index 5c342167b9db7a16..9936038d38771784 100644
->> --- a/drivers/soc/rockchip/pm_domains.c
->> +++ b/drivers/soc/rockchip/pm_domains.c
->> @@ -16,6 +16,7 @@
->>  #include <linux/of_address.h>
->>  #include <linux/of_platform.h>
->>  #include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->
-> not wanting to be to nitpicky, but clk-provider.h seems that it should be
-> used from drivers exposing clocks to the system, not from clock users.
->
-> I just remember that in the past clk maintainers tried to keep their
-> layering intact, so I've included them for clarification.
->
-> Mike, Stephen: the power-domain driver of Rockchip socs needs
-> to toggle all clocks of domain peripherals when turning a domain
-> on or off, so has a variable list of clocks in the clocks property in dt.
-> Hence the of_count_... call which could be replaced with
-> of_clk_get_parent_count to not open-code this.
+You don't have to implement all the drivers now, but please completely 
+describe the device. As is, there is no reason to have a child GPIO 
+node.
 
-Moving of_clk_get_parent_count to clk.h seems reasonable to me. It's
-more of an of-specific helper than a provider-specific helper.
+> +
+> +Required properties:
+> +- compatible: must be "st,mfx"
 
-Anyone up to submit a patch so that this one doesn't need to include
-clk-provider.h?
+Kind of generic. Only 1 single version ever?
 
-Regards,
-Mike
+> +- reg: I2C address of the device
+> +- interrupts: interrupt triggered by MFX_IRQ_OUT signal
+> +- interrupt-parent: interrupt controller MFX is connected to
+> +- interrupt-controller: marks the device as an interrupt controller
+> +- #interrupt-cells: should be <1>, index of the interrupt within the
+> +  controller, in accordance with the "one cell" variant of
+> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
+> +
+> +Optional nodes:
+> +
+> +* GPIO eXpander
+> +MFX provides 16 programmable GPIOs, and it is also possible to recover 8
+> +alternate GPIOs if the main functions are not used (touchscreen controller and
+> +IDD measurement not enabled).
+> +
+> +Required properties:
+> +- compatible : must be "st,mfx-gpio"
+> +- interrupt-parent : must be <&mfx>
 
->
->
-> Heiko
->
->>  #include <linux/regmap.h>
->>  #include <linux/mfd/syscon.h>
->>  #include <dt-bindings/power/rk3288-power.h>
->> @@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
->>               return -EINVAL;
->>       }
->>
->> -     clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
->> +     clk_cnt = of_clk_get_parent_count(node);
->>       pd = devm_kzalloc(pmu->dev,
->>                         sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
->>                         GFP_KERNEL);
->>
->
->
+Not necessary. A parent node with 'interrupt-controller' property is the 
+interrupt's parent.
 
+> +- interrupts = must be <0>
+> +- gpio-controller: marks the device node as a GPIO controller
+> +- #gpio-cells: should be <2>, the first cell is the GPIO offset on this GPIO
+> +  controller, the second cell is the gpio flags in accordance with
+> +  <dt-bindings/gpio/st-mfx-gpio.h>.
 
+Custom flags? Use standard flags.
 
--- 
-Michael Turquette
-CEO
-BayLibre - At the Heart of Embedded Linux
-http://baylibre.com/
+DT binding headers should be part of this patch.
+
+> +
+> +Example:
+> +
+> +	mfx: mfx@42 {
+> +		compatible = "st,mfx";
+> +		reg = <0x42>;
+> +		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
+> +		interrupt-parent = <&gpioi>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +
+> +		mfxgpio: mfx_gpio {
+
+gpio {
+
+> +			compatible = "st,mfx-gpio";
+> +			interrupt-parent = <&mfx>;
+> +			interrupts = <0>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +		};
+> +	};
+> -- 
+> 2.7.4
+> 
