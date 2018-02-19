@@ -1,12 +1,16 @@
-From: David Lechner <david@lechnology.com>
-Subject: [PATCH v2] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
- bits_per_mux != 0
-Date: Mon, 19 Feb 2018 15:57:07 -0600
-Message-ID: <1519077427-30165-1-git-send-email-david@lechnology.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 05/10] dt-bindings: gpio: Add gpio nodes for Actions S900
+ SoC
+Date: Mon, 19 Feb 2018 14:35:23 -0600
+Message-ID: <20180219203523.rhvbnym7oomzahwi@rob-hp-laptop>
+References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
+ <20180217204433.3095-6-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180217204433.3095-6-manivannan.sadhasivam@linaro.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,61 +20,43 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, David Lechner <david@lechnology.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, linux-kernel@vger.kernel.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: devicetree@vger.kernel.org, daniel.thompson@linaro.org, linus.walleij@linaro.org, liuwei@actions-semi.com, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, mp-cs@actions-semi.com, 96boards@ucrobotics.com, afaerber@suse.de, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-This fixes pcs_request_gpio() in the pinctrl-single driver when
-bits_per_mux != 0. It appears this was overlooked when the multiple
-pins per register feature was added.
+On Sun, Feb 18, 2018 at 02:14:28AM +0530, Manivannan Sadhasivam wrote:
+> Add gpio nodes for Actions Semi S900 SoC.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  .../devicetree/bindings/gpio/actions,owl-gpio.txt         | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+> new file mode 100644
+> index 000000000000..4cd4cb7bfd1b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+> @@ -0,0 +1,15 @@
+> +* Actions Semi OWL GPIO controller bindings
+> +
+> +- compatible      : Should be "actions,s900-gpio"
+> +- reg             : Address and range of the GPIO controller registers.
+> +- gpio-controller : Marks the device node as a GPIO controller.
+> +- #gpio-cells     : Should be <2>. The first cell is the gpio number and
+> +                    the second cell is used to specify optional parameters.
 
-Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
-Signed-off-by: David Lechner <david@lechnology.com>
----
+Doesn't do interrupts?
 
-v2 changes:
-- don't wrap Fixes: line in commit message since it is a special machine-
-  readable line.
-
-There was some discussion in v1 about using DIV_ROUND_UP(), etc. macros, but
-the consensus was to leave it as-is since it matches existing code and that
-macros can be introduced in another patch.
-
- drivers/pinctrl/pinctrl-single.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index cec7537..a7c5eb3 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -391,9 +391,25 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
- 			|| pin < frange->offset)
- 			continue;
- 		mux_bytes = pcs->width / BITS_PER_BYTE;
--		data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
--		data |= frange->gpiofunc;
--		pcs->write(data, pcs->base + pin * mux_bytes);
-+
-+		if (pcs->bits_per_mux) {
-+			int byte_num, offset, pin_shift;
-+
-+			byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
-+			offset = (byte_num / mux_bytes) * mux_bytes;
-+			pin_shift = pin % (pcs->width / pcs->bits_per_pin) *
-+				    pcs->bits_per_pin;
-+
-+			data = pcs->read(pcs->base + offset);
-+			data &= ~(pcs->fmask << pin_shift);
-+			data |= frange->gpiofunc << pin_shift;
-+			pcs->write(data, pcs->base + offset);
-+		} else {
-+			data = pcs->read(pcs->base + pin * mux_bytes);
-+			data &= ~pcs->fmask;
-+			data |= frange->gpiofunc;
-+			pcs->write(data, pcs->base + pin * mux_bytes);
-+		}
- 		break;
- 	}
- 	return 0;
--- 
-2.7.4
+> +
+> +Example:
+> +       gpio: gpio@e01b0000 {
+> +               compatible = "actions,s900-gpio";
+> +               reg = <0x0 0xe01b0000 0x0 0x1000>;
+> +               gpio-controller;
+> +               #gpio-cells = <2>;
+> +       };
+> -- 
+> 2.14.1
+> 
