@@ -1,14 +1,12 @@
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Subject: Re: [PATCH 04/10] pinctrl: actions: Add Actions S900 pinctrl driver
-Date: Tue, 20 Feb 2018 08:53:22 +0100
-Message-ID: <CAOFm3uF=n+_TJUAuXh-KihA6gprJaLMiH+y6b3y-5QpcGqGNtg@mail.gmail.com>
-References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
- <20180217204433.3095-5-manivannan.sadhasivam@linaro.org>
+From: David Lechner <david@lechnology.com>
+Subject: [PATCH v2] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
+ bits_per_mux != 0
+Date: Mon, 19 Feb 2018 15:57:07 -0600
+Message-ID: <1519077427-30165-1-git-send-email-david@lechnology.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180217204433.3095-5-manivannan.sadhasivam@linaro.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,40 +16,61 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, liuwei@actions-semi.com, LKML <linux-kernel@vger.kernel.org>, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, David Lechner <david@lechnology.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Dear Manivannan,
+This fixes pcs_request_gpio() in the pinctrl-single driver when
+bits_per_mux != 0. It appears this was overlooked when the multiple
+pins per register feature was added.
 
-On Sat, Feb 17, 2018 at 9:44 PM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> Add pinctrl driver for Actions Semi S900 SoC. The driver supports
-> pinctrl, pinmux and pinconf functionalities through a range of registers
-> common to both gpio driver and pinctrl driver.
->
-> Pinmux functionality is available only for the pin groups while the
-> pinconf functionality is available for both pin groups and individual
-> pins.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
+v2 changes:
+- don't wrap Fixes: line in commit message since it is a special machine-
+  readable line.
 
-<snip>
+There was some discussion in v1 about using DIV_ROUND_UP(), etc. macros, but
+the consensus was to leave it as-is since it matches existing code and that
+macros can be introduced in another patch.
 
+ drivers/pinctrl/pinctrl-single.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-> --- /dev/null
-> +++ b/drivers/pinctrl/actions/pinctrl-s900.c
-> @@ -0,0 +1,2536 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-
-<snip>
-
-> +MODULE_LICENSE("GPL v2");
-
-This does not match your license above. Per module.h "GPL v2" means
-GPL-2.0 where you license above GPL-2.0+ means or later
-
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index cec7537..a7c5eb3 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -391,9 +391,25 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
+ 			|| pin < frange->offset)
+ 			continue;
+ 		mux_bytes = pcs->width / BITS_PER_BYTE;
+-		data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
+-		data |= frange->gpiofunc;
+-		pcs->write(data, pcs->base + pin * mux_bytes);
++
++		if (pcs->bits_per_mux) {
++			int byte_num, offset, pin_shift;
++
++			byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
++			offset = (byte_num / mux_bytes) * mux_bytes;
++			pin_shift = pin % (pcs->width / pcs->bits_per_pin) *
++				    pcs->bits_per_pin;
++
++			data = pcs->read(pcs->base + offset);
++			data &= ~(pcs->fmask << pin_shift);
++			data |= frange->gpiofunc << pin_shift;
++			pcs->write(data, pcs->base + offset);
++		} else {
++			data = pcs->read(pcs->base + pin * mux_bytes);
++			data &= ~pcs->fmask;
++			data |= frange->gpiofunc;
++			pcs->write(data, pcs->base + pin * mux_bytes);
++		}
+ 		break;
+ 	}
+ 	return 0;
 -- 
-Cordially
-Philippe Ombredanne
+2.7.4
