@@ -1,17 +1,15 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 2/5] dt-bindings: gpio: add raspberry pi GPIO expander
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v5 2/5] dt-bindings: gpio: add raspberry pi GPIO expander
  binding
-Date: Tue, 20 Feb 2018 07:39:58 -0600
-Message-ID: <CAL_JsqLdyH+hzv=aRn_szQ6=h3aB1dP9swG-+Q73nZDH3mPF3w@mail.gmail.com>
-References: <cover.1517923836.git.baruch@tkos.co.il>
- <214ff3856c430b8045b63b25d83733b77054dfab.1517923836.git.baruch@tkos.co.il>
- <20180213232007.ieme6rjxgc7vidbw@rob-hp-laptop>
- <20180220073427.vaxp5wkygs6pwaxi@tarshish>
+Date: Tue, 20 Feb 2018 07:40:36 -0600
+Message-ID: <CAL_JsqJW43q1rmSKa4joNj7=XpFScts2prXsHSpUjWWj3fOPdw@mail.gmail.com>
+References: <cover.1519128054.git.baruch@tkos.co.il>
+ <f400b48cbcd8a138c39d4e8f63d6c1f569090dcc.1519128054.git.baruch@tkos.co.il>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180220073427.vaxp5wkygs6pwaxi@tarshish>
+In-Reply-To: <f400b48cbcd8a138c39d4e8f63d6c1f569090dcc.1519128054.git.baruch@tkos.co.il>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -25,72 +23,29 @@ To: Baruch Siach <baruch@tkos.co.il>
 Cc: Stefan Wahren <stefan.wahren@i2se.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Eric Anholt <eric@anholt.net>, Michael Zoran <mzoran@crowfest.net>, "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, Dave Stevenson <dave.stevenson@raspberrypi.org>, Frank Rowand <frowand.list@gmail.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 1:34 AM, Baruch Siach <baruch@tkos.co.il> wrote:
-> Hi Rob,
+On Tue, Feb 20, 2018 at 6:19 AM, Baruch Siach <baruch@tkos.co.il> wrote:
+> The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware over
+> I2C. The firmware mailbox interface allows the ARM core to control the
+> GPIO lines.
 >
-> Thanks again for reviewing.
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+> v5:
+>   * Remove the 'firmware' property
+>   * Note that the gpio node is a child of the firmware node
 >
-> On Tue, Feb 13, 2018 at 05:20:07PM -0600, Rob Herring wrote:
->> On Wed, Feb 07, 2018 at 08:35:23PM +0200, Baruch Siach wrote:
->> > +Raspberry Pi GPIO expander
->> > +
->> > +The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware. The
->> > +firmware exposes a mailbox interface that allows the ARM core to control the
->> > +GPIO lines on the expander.
->> > +
->> > +Required properties:
->> > +
->> > +- compatible : Should be "raspberrypi,firmware-gpio"
->> > +- gpio-controller : Marks the device node as a gpio controller
->> > +- #gpio-cells : Should be two.  The first cell is the pin number, and
->> > +  the second cell is used to specify the gpio polarity:
->> > +  0 = active high
->> > +  1 = active low
->> > +- firmware : Reference to the RPi firmware device node
->>
->> This is the parent node. You don't need it.
+> v4:
+>   * Move the example gpio node under the firmware node
+>   * Rename gpio node name to plain 'gpio'
 >
-> OK. I guess of_get_parent() will do the trick.
+> v3:
+>   * Rename node name.
 >
->> > +Example:
->> > +
->> > +firmware: firmware {
->> > +   compatible = "raspberrypi,bcm2835-firmware";
->> > +   mboxes = <&mailbox>;
->>
->> No, sorry. /firmware is the container of firmware nodes. So
->> something like this:
->>
->> firmware {
->>       rpi-firmware {
->>               compatible = "raspberrypi,bcm2835-firmware";
->>               mboxes = <&mailbox>;
->>               gpio {
->>                compatible = "raspberrypi,firmware-gpio";
->>
->>               };
->>       };
->> };
->
-> This is the hierarchy we currently have at arch/arm/boot/dts/bcm2835-rpi.dtsi:
->
-> / {
->         soc {
->                 firmware: firmware {
->                         compatible = "raspberrypi,bcm2835-firmware";
->                         mboxes = <&mailbox>;
->                 };
->         };
-> };
->
-> Are you suggesting to add another container between 'soc' and 'firmware'? Or
-> is it the 'firmware' node name that we need to change to 'rpi-firmware'?
+> v2:
+>   * Rename compatible string to raspberrypi,firmware-gpio
+> ---
+>  .../bindings/gpio/raspberrypi,firmware-gpio.txt    | 30 ++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/raspberrypi,firmware-gpio.txt
 
-Ah, I guess RPi missed following putting its firmware node under a
-/firmware node rather than under /soc. We try to put all firmware
-interfaces (you can have more than one) under /firmware. So just as I
-wrote out. But you don't need to change that for this.
-
-Just noting this is a child of "raspberrypi,bcm2835-firmware" is enough.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
