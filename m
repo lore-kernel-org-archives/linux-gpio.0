@@ -1,14 +1,17 @@
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Subject: Re: [PATCH 08/10] gpio: Add gpio driver for Actions OWL S900 SoC
-Date: Tue, 20 Feb 2018 08:55:57 +0100
-Message-ID: <CAOFm3uEYhMxMz5QHDhOtpzEsrwJPrOdqLbGWTqveuNMtR_FVWA@mail.gmail.com>
-References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
- <20180217204433.3095-9-manivannan.sadhasivam@linaro.org>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH v4 2/5] dt-bindings: gpio: add raspberry pi GPIO expander
+ binding
+Date: Tue, 20 Feb 2018 09:34:27 +0200
+Message-ID: <20180220073427.vaxp5wkygs6pwaxi@tarshish>
+References: <cover.1517923836.git.baruch@tkos.co.il>
+ <214ff3856c430b8045b63b25d83733b77054dfab.1517923836.git.baruch@tkos.co.il>
+ <20180213232007.ieme6rjxgc7vidbw@rob-hp-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180217204433.3095-9-manivannan.sadhasivam@linaro.org>
+Content-Disposition: inline
+In-Reply-To: <20180213232007.ieme6rjxgc7vidbw@rob-hp-laptop>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,37 +21,83 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, liuwei@actions-semi.com, LKML <linux-kernel@vger.kernel.org>, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Eric Anholt <eric@anholt.net>, Michael Zoran <mzoran@crowfest.net>, linux-rpi-kernel@lists.infradead.org, Dave Stevenson <dave.stevenson@raspberrypi.org>, Frank Rowand <frowand.list@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Manivannan,
+Hi Rob,
 
-On Sat, Feb 17, 2018 at 9:44 PM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
-> controlling the gpio shares the same register range with pinctrl block.
->
-> GPIO registers are organized as 6 banks and each bank controls the
-> maximum of 32 gpios.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Thanks again for reviewing.
 
-<snip>
+On Tue, Feb 13, 2018 at 05:20:07PM -0600, Rob Herring wrote:
+> On Wed, Feb 07, 2018 at 08:35:23PM +0200, Baruch Siach wrote:
+> > +Raspberry Pi GPIO expander
+> > +
+> > +The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware. The
+> > +firmware exposes a mailbox interface that allows the ARM core to control the
+> > +GPIO lines on the expander.
+> > +
+> > +Required properties:
+> > +
+> > +- compatible : Should be "raspberrypi,firmware-gpio"
+> > +- gpio-controller : Marks the device node as a gpio controller
+> > +- #gpio-cells : Should be two.  The first cell is the pin number, and
+> > +  the second cell is used to specify the gpio polarity:
+> > +  0 = active high
+> > +  1 = active low
+> > +- firmware : Reference to the RPi firmware device node
+> 
+> This is the parent node. You don't need it.
 
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-owl.c
-> @@ -0,0 +1,258 @@
-> +// SPDX-License-Identifier: GPL-2.0+
+OK. I guess of_get_parent() will do the trick.
 
-<snip>
+> > +Example:
+> > +
+> > +firmware: firmware {
+> > +	compatible = "raspberrypi,bcm2835-firmware";
+> > +	mboxes = <&mailbox>;
+> 
+> No, sorry. /firmware is the container of firmware nodes. So 
+> something like this:
+> 
+> firmware {
+> 	rpi-firmware {
+> 		compatible = "raspberrypi,bcm2835-firmware";
+> 		mboxes = <&mailbox>;
+> 		gpio {
+> 		 compatible = "raspberrypi,firmware-gpio";
+> 
+> 		};
+> 	};
+> };
 
-> +MODULE_LICENSE("GPL v2");
+This is the hierarchy we currently have at arch/arm/boot/dts/bcm2835-rpi.dtsi:
 
-Please sync this with your SPDX id above. nodule.h has the doc on the
-meaning of MODULE_LICENSE macros.
-Here you have stated a combo of GPL-2.0 and GPL-2.0 or later
+/ {
+        soc {
+                firmware: firmware {
+                        compatible = "raspberrypi,bcm2835-firmware";
+                        mboxes = <&mailbox>;
+                };
+        };
+};
+
+
+Are you suggesting to add another container between 'soc' and 'firmware'? Or 
+is it the 'firmware' node name that we need to change to 'rpi-firmware'?
+
+> > +
+> > +	expgpio: gpio {
+> > +		 compatible = "raspberrypi,firmware-gpio";
+> > +		 gpio-controller;
+> > +		 #gpio-cells = <2>;
+> > +		 firmware = <&firmware>;
+> > +	 };
+> > +};
+
+baruch
 
 -- 
-Cordially
-Philippe Ombredanne
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
