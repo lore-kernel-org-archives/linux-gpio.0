@@ -1,13 +1,14 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH v5 5/5] ARM: dts: bcm2837-rpi-3-b: add GPIO expander
-Date: Tue, 20 Feb 2018 14:19:35 +0200
-Message-ID: <a6d59692dc4847e0b1639a26542e28c95ad5240f.1519128054.git.baruch@tkos.co.il>
-References: <cover.1519128054.git.baruch@tkos.co.il>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
+ bits_per_mux != 0
+Date: Tue, 20 Feb 2018 14:56:33 +0200
+Message-ID: <CAHp75VeR2LG-qAzQs2048K3pyfRkz7OKioHDNyU8bVAPsgy8ew@mail.gmail.com>
+References: <1519077427-30165-1-git-send-email-david@lechnology.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1519128054.git.baruch@tkos.co.il>
+In-Reply-To: <1519077427-30165-1-git-send-email-david@lechnology.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,61 +18,85 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Dave Stevenson <dave.stevenson@raspberrypi.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Cc: devicetree@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, linux-gpio@vger.kernel.org, Michael Zoran <mzoran@crowfest.net>, Rob Herring <robh+dt@kernel.org>, linux-rpi-kernel@lists.infradead.org, Frank Rowand <frowand.list@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: David Lechner <david@lechnology.com>
+Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add a description of the RPi3 GPIO expander that the VC4 firmware controls.
+On Mon, Feb 19, 2018 at 11:57 PM, David Lechner <david@lechnology.com> wrote:
+> This fixes pcs_request_gpio() in the pinctrl-single driver when
+> bits_per_mux != 0. It appears this was overlooked when the multiple
+> pins per register feature was added.
+>
+> Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+>
+> v2 changes:
+> - don't wrap Fixes: line in commit message since it is a special machine-
+>   readable line.
+>
+> There was some discussion in v1 about using DIV_ROUND_UP(), etc. macros, but
+> the consensus was to leave it as-is since it matches existing code and that
+> macros can be introduced in another patch.
+>
+>  drivers/pinctrl/pinctrl-single.c | 22 +++++++++++++++++++---
+>  1 file changed, 19 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+> index cec7537..a7c5eb3 100644
+> --- a/drivers/pinctrl/pinctrl-single.c
+> +++ b/drivers/pinctrl/pinctrl-single.c
+> @@ -391,9 +391,25 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
+>                         || pin < frange->offset)
+>                         continue;
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
-v5:
-  * Drop the 'firmware' property
+>                 mux_bytes = pcs->width / BITS_PER_BYTE;
+> -               data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
+> -               data |= frange->gpiofunc;
+> -               pcs->write(data, pcs->base + pin * mux_bytes);
+> +
+> +               if (pcs->bits_per_mux) {
+> +                       int byte_num, offset, pin_shift;
+> +
+> +                       byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
+> +                       offset = (byte_num / mux_bytes) * mux_bytes;
+> +                       pin_shift = pin % (pcs->width / pcs->bits_per_pin) *
+> +                                   pcs->bits_per_pin;
+> +
+> +                       data = pcs->read(pcs->base + offset);
+> +                       data &= ~(pcs->fmask << pin_shift);
+> +                       data |= frange->gpiofunc << pin_shift;
+> +                       pcs->write(data, pcs->base + offset);
+> +               } else {
 
-v4:
-  * Move the gpio node under the firmware node
-  * Rename the gpio node to plain 'gpio'
-  * Add Stefan's ack
+> +                       data = pcs->read(pcs->base + pin * mux_bytes);
+> +                       data &= ~pcs->fmask;
+> +                       data |= frange->gpiofunc;
+> +                       pcs->write(data, pcs->base + pin * mux_bytes);
 
-v3:
-  * List GPIO names one per line.
+Just an idea, you may leave this almost untouched and do calculate
+pin_shift and offset in condition, like
 
-v2:
-  * Move GPIO expander node out of the soc container
-  * Rename compatible string
-  * Add gpio-line-names property
----
- arch/arm/boot/dts/bcm2837-rpi-3-b.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+if (...) {
+ pin_shift = ...
+ offset = ...
+} else {
+ pin_shift = 0;
+ offset = pin * mux_bytes;
+}
 
-diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
-index 3e4ed7c5b0b3..0b31d995a066 100644
---- a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
-+++ b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
-@@ -25,6 +25,23 @@
- 	};
- };
- 
-+&firmware {
-+	expgpio: gpio {
-+		compatible = "raspberrypi,firmware-gpio";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names = "BT_ON",
-+				  "WL_ON",
-+				  "STATUS_LED",
-+				  "LAN_RUN",
-+				  "HPD_N",
-+				  "CAM_GPIO0",
-+				  "CAM_GPIO1",
-+				  "PWR_LOW_N";
-+		status = "okay";
-+	};
-+};
-+
- /* uart0 communicates with the BT module */
- &uart0 {
- 	pinctrl-names = "default";
+                       data = pcs->read(pcs->base + offset);
+                       data &= ~(pcs->fmask << pin_shift);
+                       data |= frange->gpiofunc << pin_shift;
+                       pcs->write(data, pcs->base + offset);
+
+It's also possible to split to two changes, where first introduces
+that variables and their default values (see 'else' branch) and second
+one introduces an if branch override.
+
+> +               }
+>                 break;
+
 -- 
-2.16.1
+With Best Regards,
+Andy Shevchenko
