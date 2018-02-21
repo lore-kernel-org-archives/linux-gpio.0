@@ -1,13 +1,18 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 08/10] gpio: Add gpio driver for Actions OWL S900 SoC
-Date: Wed, 21 Feb 2018 21:30:42 +0530
-Message-ID: <20180221160044.15089-9-manivannan.sadhasivam@linaro.org>
-References: <20180221160044.15089-1-manivannan.sadhasivam@linaro.org>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH 05/10] dt-bindings: gpio: Add gpio nodes for Actions S900
+ SoC
+Date: Wed, 21 Feb 2018 19:05:57 +0100
+Message-ID: <ac193690-220e-4160-5dd5-6ddeaea4d5d0@suse.de>
+References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
+ <20180217204433.3095-6-manivannan.sadhasivam@linaro.org>
+ <20180219203523.rhvbnym7oomzahwi@rob-hp-laptop>
+ <20180221145821.bhoxjndibp3bqfxi@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180221160044.15089-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180221145821.bhoxjndibp3bqfxi@linaro.org>
+Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,279 +22,40 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc: devicetree@vger.kernel.org, daniel.thompson@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, liuwei@actions-semi.com, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, mp-cs@actions-semi.com, 96boards@ucrobotics.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-arm-kernel@lists.infradead.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, daniel.thompson@linaro.org, linus.walleij@linaro.org, liuwei@actions-semi.com, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, mp-cs@actions-semi.com, 96boards@ucrobotics.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
-controlling the gpio shares the same register range with pinctrl block.
-
-GPIO registers are organized as 6 banks and each bank controls the
-maximum of 32 gpios.
-
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/gpio/Kconfig    |   8 ++
- drivers/gpio/Makefile   |   1 +
- drivers/gpio/gpio-owl.c | 219 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 228 insertions(+)
- create mode 100644 drivers/gpio/gpio-owl.c
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 8dbb2280538d..09ceb98e2434 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -364,6 +364,14 @@ config GPIO_OMAP
- 	help
- 	  Say yes here to enable GPIO support for TI OMAP SoCs.
- 
-+config GPIO_OWL
-+	tristate "Actions OWL GPIO support"
-+	default ARCH_ACTIONS
-+	depends on ARCH_ACTIONS || COMPILE_TEST
-+	depends on OF_GPIO
-+	help
-+	  Say yes here to enable GPIO support for Actions OWL SoCs.
-+
- config GPIO_PL061
- 	bool "PrimeCell PL061 GPIO support"
- 	depends on ARM_AMBA
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index cccb0d40846c..b2bb11d4675f 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -91,6 +91,7 @@ obj-$(CONFIG_GPIO_MXC)		+= gpio-mxc.o
- obj-$(CONFIG_GPIO_MXS)		+= gpio-mxs.o
- obj-$(CONFIG_GPIO_OCTEON)	+= gpio-octeon.o
- obj-$(CONFIG_GPIO_OMAP)		+= gpio-omap.o
-+obj-$(CONFIG_GPIO_OWL)		+= gpio-owl.o
- obj-$(CONFIG_GPIO_PCA953X)	+= gpio-pca953x.o
- obj-$(CONFIG_GPIO_PCF857X)	+= gpio-pcf857x.o
- obj-$(CONFIG_GPIO_PCH)		+= gpio-pch.o
-diff --git a/drivers/gpio/gpio-owl.c b/drivers/gpio/gpio-owl.c
-new file mode 100644
-index 000000000000..0464c08e0422
---- /dev/null
-+++ b/drivers/gpio/gpio-owl.c
-@@ -0,0 +1,219 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * OWL SoC's GPIO driver
-+ *
-+ * Copyright (c) 2018 Linaro Ltd.
-+ * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#define GPIO_OUTEN	0x0000
-+#define GPIO_INEN	0x0004
-+#define GPIO_DAT	0x0008
-+
-+#define OWL_GPIO_PORT_A 0
-+#define OWL_GPIO_PORT_B 1
-+#define OWL_GPIO_PORT_C 2
-+#define OWL_GPIO_PORT_D 3
-+#define OWL_GPIO_PORT_E 4
-+#define OWL_GPIO_PORT_F 5
-+
-+struct owl_gpio_port {
-+	const char *name;
-+	unsigned int offset;
-+	unsigned int pins;
-+};
-+
-+struct owl_gpio {
-+	struct gpio_chip gpio;
-+	const struct owl_gpio_port *port;
-+	void __iomem *base;
-+	int id;
-+};
-+
-+static void owl_gpio_set_reg(void __iomem *base, unsigned int pin, int flag)
-+{
-+	u32 val;
-+
-+	if (flag) {
-+		val = readl(base);
-+		val |= BIT(pin);
-+		writel(val, base);
-+	} else {
-+		val = readl(base);
-+		val &= ~BIT(pin);
-+		writel(val, base);
-+	}
-+}
-+
-+static int owl_gpio_request(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct owl_gpio *gpio = gpiochip_get_data(chip);
-+	const struct owl_gpio_port *port = gpio->port;
-+	void __iomem *gpio_base = gpio->base + port->offset;
-+
-+	/*
-+	 * GPIOs have higher priority over other modules, so either setting
-+	 * them as OUT or IN is sufficient
-+	 */
-+	owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, true);
-+
-+	return 0;
-+}
-+
-+static void owl_gpio_free(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct owl_gpio *gpio = gpiochip_get_data(chip);
-+	const struct owl_gpio_port *port = gpio->port;
-+	void __iomem *gpio_base = gpio->base + port->offset;
-+
-+	/* disable gpio output */
-+	owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, false);
-+
-+	/* disable gpio input */
-+	owl_gpio_set_reg(gpio_base + GPIO_INEN, offset, false);
-+}
-+
-+static int owl_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct owl_gpio *gpio = gpiochip_get_data(chip);
-+	const struct owl_gpio_port *port = gpio->port;
-+	void __iomem *gpio_base = gpio->base + port->offset;
-+	u32 val;
-+
-+	val = readl(gpio_base + GPIO_DAT);
-+
-+	return !!(val & BIT(offset));
-+}
-+
-+static void owl_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
-+{
-+	struct owl_gpio *gpio = gpiochip_get_data(chip);
-+	const struct owl_gpio_port *port = gpio->port;
-+	void __iomem *gpio_base = gpio->base + port->offset;
-+	u32 val;
-+
-+	val = readl(gpio_base + GPIO_DAT);
-+
-+	if (value)
-+		val |= BIT(offset);
-+	else
-+		val &= ~BIT(offset);
-+
-+	writel(val, gpio_base + GPIO_DAT);
-+}
-+
-+static int owl_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct owl_gpio *gpio = gpiochip_get_data(chip);
-+	const struct owl_gpio_port *port = gpio->port;
-+	void __iomem *gpio_base = gpio->base + port->offset;
-+
-+	owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, false);
-+	owl_gpio_set_reg(gpio_base + GPIO_INEN, offset, true);
-+
-+	return 0;
-+}
-+
-+static int owl_gpio_direction_output(struct gpio_chip *chip,
-+				unsigned int offset, int value)
-+{
-+	struct owl_gpio *gpio = gpiochip_get_data(chip);
-+	const struct owl_gpio_port *port = gpio->port;
-+	void __iomem *gpio_base = gpio->base + port->offset;
-+
-+	owl_gpio_set_reg(gpio_base + GPIO_INEN, offset, false);
-+	owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, true);
-+	owl_gpio_set(chip, offset, value);
-+
-+	return 0;
-+}
-+
-+#define OWL_GPIO_PORT(port, base, count)		\
-+	[OWL_GPIO_PORT_##port] = {			\
-+		.name = #port,				\
-+		.offset = base,				\
-+		.pins = count,				\
-+	}
-+
-+static const struct owl_gpio_port s900_gpio_ports[] = {
-+	OWL_GPIO_PORT(A, 0x0000, 32),
-+	OWL_GPIO_PORT(B, 0x000C, 32),
-+	OWL_GPIO_PORT(C, 0x0018, 12),
-+	OWL_GPIO_PORT(D, 0x0024, 30),
-+	OWL_GPIO_PORT(E, 0x0030, 32),
-+	OWL_GPIO_PORT(F, 0x00F0, 8),
-+};
-+
-+static int owl_gpio_probe(struct platform_device *pdev)
-+{
-+	struct owl_gpio *gpio;
-+	const struct owl_gpio_port *port;
-+	int ret;
-+
-+	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-+	if (!gpio)
-+		return -ENOMEM;
-+
-+	gpio->base = of_iomap(pdev->dev.of_node, 0);
-+	if (IS_ERR(gpio->base))
-+		return PTR_ERR(gpio->base);
-+
-+	gpio->id = of_alias_get_id(pdev->dev.of_node, "gpio");
-+	if (gpio->id < 0)
-+		return gpio->id;
-+
-+	port = &s900_gpio_ports[gpio->id];
-+
-+	gpio->gpio.request = owl_gpio_request;
-+	gpio->gpio.free = owl_gpio_free;
-+	gpio->gpio.get = owl_gpio_get;
-+	gpio->gpio.set = owl_gpio_set;
-+	gpio->gpio.direction_input = owl_gpio_direction_input;
-+	gpio->gpio.direction_output = owl_gpio_direction_output;
-+
-+	gpio->gpio.base = -1;
-+	gpio->gpio.parent = &pdev->dev;
-+	gpio->gpio.label = port->name;
-+	gpio->gpio.ngpio = port->pins;
-+
-+	gpio->port = port;
-+
-+	platform_set_drvdata(pdev, gpio);
-+
-+	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->gpio, gpio);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register gpiochip\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id owl_gpio_of_match[] = {
-+	{ .compatible = "actions,s900-gpio", },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, owl_gpio_of_match);
-+
-+static struct platform_driver owl_gpio_driver = {
-+	.driver		= {
-+		.name	= "owl-gpio",
-+		.of_match_table = owl_gpio_of_match,
-+	},
-+	.probe		= owl_gpio_probe,
-+};
-+module_platform_driver(owl_gpio_driver);
-+
-+MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
-+MODULE_DESCRIPTION("Actions Semi OWL SoCs GPIO driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.1
+QW0gMjEuMDIuMjAxOCB1bSAxNTo1OCBzY2hyaWViIE1hbml2YW5uYW4gU2FkaGFzaXZhbToKPiBI
+aSBSb2IsCj4gT24gTW9uLCBGZWIgMTksIDIwMTggYXQgMDI6MzU6MjNQTSAtMDYwMCwgUm9iIEhl
+cnJpbmcgd3JvdGU6Cj4+IE9uIFN1biwgRmViIDE4LCAyMDE4IGF0IDAyOjE0OjI4QU0gKzA1MzAs
+IE1hbml2YW5uYW4gU2FkaGFzaXZhbSB3cm90ZToKPj4+IEFkZCBncGlvIG5vZGVzIGZvciBBY3Rp
+b25zIFNlbWkgUzkwMCBTb0MuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogTWFuaXZhbm5hbiBTYWRo
+YXNpdmFtIDxtYW5pdmFubmFuLnNhZGhhc2l2YW1AbGluYXJvLm9yZz4KPj4+IC0tLQo+Pj4gIC4u
+Li9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vYWN0aW9ucyxvd2wtZ3Bpby50eHQgICAgICAgICB8
+IDE1ICsrKysrKysrKysrKysrKwo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCsp
+Cj4+PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy9ncGlvL2FjdGlvbnMsb3dsLWdwaW8udHh0Cj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2FjdGlvbnMsb3dsLWdwaW8udHh0IGIvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vYWN0aW9ucyxvd2wtZ3Bpby50eHQK
+Pj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+PiBpbmRleCAwMDAwMDAwMDAwMDAuLjRjZDRjYjdi
+ZmQxYgo+Pj4gLS0tIC9kZXYvbnVsbAo+Pj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL2dwaW8vYWN0aW9ucyxvd2wtZ3Bpby50eHQKPj4+IEBAIC0wLDAgKzEsMTUgQEAK
+Pj4+ICsqIEFjdGlvbnMgU2VtaSBPV0wgR1BJTyBjb250cm9sbGVyIGJpbmRpbmdzCj4+PiArCj4+
+PiArLSBjb21wYXRpYmxlICAgICAgOiBTaG91bGQgYmUgImFjdGlvbnMsczkwMC1ncGlvIgo+Pj4g
+Ky0gcmVnICAgICAgICAgICAgIDogQWRkcmVzcyBhbmQgcmFuZ2Ugb2YgdGhlIEdQSU8gY29udHJv
+bGxlciByZWdpc3RlcnMuCj4+PiArLSBncGlvLWNvbnRyb2xsZXIgOiBNYXJrcyB0aGUgZGV2aWNl
+IG5vZGUgYXMgYSBHUElPIGNvbnRyb2xsZXIuCj4+PiArLSAjZ3Bpby1jZWxscyAgICAgOiBTaG91
+bGQgYmUgPDI+LiBUaGUgZmlyc3QgY2VsbCBpcyB0aGUgZ3BpbyBudW1iZXIgYW5kCj4+PiArICAg
+ICAgICAgICAgICAgICAgICB0aGUgc2Vjb25kIGNlbGwgaXMgdXNlZCB0byBzcGVjaWZ5IG9wdGlv
+bmFsIHBhcmFtZXRlcnMuCj4+Cj4+IERvZXNuJ3QgZG8gaW50ZXJydXB0cz8KPj4KPiBJbnRlcnJ1
+cHQgc3VwcG9ydCB3aWxsIGJlIGFkZGVkIG9uY2UgdGhpcyBiYXNlIGRyaXZlciBnZXRzIGluLgo+
+IE9uZSBzdGVwIGF0IGEgdGltZSA7LSkKClJvYiByZWplY3RlZCB0aGF0IHN0ZXAtYnktc3RlcCBh
+cHByb2FjaCBmb3IgbXkgUkRBIE1pY3JvIGJpbmRpbmdzLCB3aGljaAppcyB3aHkgaXQgaXMgY3Vy
+cmVudGx5IHN0dWNrLiA7KQoKUmVnYXJkcywKQW5kcmVhcwoKLS0gClNVU0UgTGludXggR21iSCwg
+TWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJnLCBHZXJtYW55CkdGOiBGZWxpeCBJbWVuZMO2
+cmZmZXIsIEphbmUgU21pdGhhcmQsIEdyYWhhbSBOb3J0b24KSFJCIDIxMjg0IChBRyBOw7xybmJl
+cmcpCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51
+eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVh
+ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1h
+cm0ta2VybmVsCg==
