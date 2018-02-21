@@ -1,14 +1,16 @@
-From: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
-Subject: [PATCH 2/2] ARM: pinctrl: stm32: Optimizes and enhances stm32gpio
- irqchip
-Date: Wed, 21 Feb 2018 14:50:27 +0100
-Message-ID: <1519221027-4028-3-git-send-email-radoslaw.pietrzyk@gmail.com>
-References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 08/10] gpio: Add gpio driver for Actions OWL S900 SoC
+Date: Wed, 21 Feb 2018 20:25:26 +0530
+Message-ID: <20180221145526.6kr7kx5dwg5lzyvg@linaro.org>
+References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
+ <20180217204433.3095-9-manivannan.sadhasivam@linaro.org>
+ <CAOFm3uEYhMxMz5QHDhOtpzEsrwJPrOdqLbGWTqveuNMtR_FVWA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <CAOFm3uEYhMxMz5QHDhOtpzEsrwJPrOdqLbGWTqveuNMtR_FVWA@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,33 +20,43 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, liuwei@actions-semi.com, LKML <linux-kernel@vger.kernel.org>, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-	- removes unneeded irq_chip.irq_eoi callback
-	- adds irq_chip.irq_set_wake callback for possible
-	in the future GPIO wakeup
+Hi Philippe,
+On Tue, Feb 20, 2018 at 08:55:57AM +0100, Philippe Ombredanne wrote:
+> Manivannan,
+> 
+> On Sat, Feb 17, 2018 at 9:44 PM, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> > Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
+> > controlling the gpio shares the same register range with pinctrl block.
+> >
+> > GPIO registers are organized as 6 banks and each bank controls the
+> > maximum of 32 gpios.
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> <snip>
+> 
+> > --- /dev/null
+> > +++ b/drivers/gpio/gpio-owl.c
+> > @@ -0,0 +1,258 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> 
+> <snip>
+> 
+> > +MODULE_LICENSE("GPL v2");
+> 
+> Please sync this with your SPDX id above. nodule.h has the doc on the
+> meaning of MODULE_LICENSE macros.
+> Here you have stated a combo of GPL-2.0 and GPL-2.0 or later
+> 
+Sorry. It should be MODULE_LICENSE("GPL"). Will get it fixed in next revision.
 
-Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
----
- drivers/pinctrl/stm32/pinctrl-stm32.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 617df16..5b1740d 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -268,10 +268,10 @@ static void stm32_gpio_irq_release_resources(struct irq_data *irq_data)
- 
- static struct irq_chip stm32_gpio_irq_chip = {
- 	.name           = "stm32gpio",
--	.irq_eoi	= irq_chip_eoi_parent,
- 	.irq_mask       = irq_chip_mask_parent,
- 	.irq_unmask     = irq_chip_unmask_parent,
- 	.irq_set_type   = irq_chip_set_type_parent,
-+	.irq_set_wake   = irq_chip_set_wake_parent,
- 	.irq_request_resources = stm32_gpio_irq_request_resources,
- 	.irq_release_resources = stm32_gpio_irq_release_resources,
- };
--- 
-1.9.1
+Thanks,
+Mani
+> -- 
+> Cordially
+> Philippe Ombredanne
