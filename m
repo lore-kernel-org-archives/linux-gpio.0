@@ -1,8 +1,8 @@
 From: Alexandre Torgue <alexandre.torgue@st.com>
 Subject: Re: [PATCH 2/2] ARM: pinctrl: stm32: Optimizes and enhances stm32gpio
  irqchip
-Date: Wed, 21 Feb 2018 16:11:22 +0100
-Message-ID: <c7b7066a-001a-4a4f-d68b-e143ede411a5@st.com>
+Date: Wed, 21 Feb 2018 16:12:28 +0100
+Message-ID: <ef3296cf-f0ed-e7a8-2b90-17defbf157db@st.com>
 References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
  <1519221027-4028-3-git-send-email-radoslaw.pietrzyk@gmail.com>
 Mime-Version: 1.0
@@ -23,7 +23,7 @@ Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead
 To: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Radoslaw,
+Maybe you could remove ARM from commit header.
 
 On 02/21/2018 02:50 PM, Radoslaw Pietrzyk wrote:
 > 	- removes unneeded irq_chip.irq_eoi callback
@@ -48,11 +48,6 @@ On 02/21/2018 02:50 PM, Radoslaw Pietrzyk wrote:
 >   	.irq_unmask     = irq_chip_unmask_parent,
 >   	.irq_set_type   = irq_chip_set_type_parent,
 > +	.irq_set_wake   = irq_chip_set_wake_parent,
-Thanks, this one was in my backlog.
-
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-
-
 >   	.irq_request_resources = stm32_gpio_irq_request_resources,
 >   	.irq_release_resources = stm32_gpio_irq_release_resources,
 >   };
