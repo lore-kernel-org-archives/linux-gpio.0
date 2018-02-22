@@ -1,97 +1,140 @@
-From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: Re: [PATCH v3 2/4] gpio: Add GPIO driver for Nintendo Wii
-Date: Thu, 22 Feb 2018 14:08:31 +0100
-Message-ID: <20180222130831.hxhvdfyfpz4j4j5t@latitude>
-References: <20180209120732.17863-1-j.neuschaefer@gmx.net>
- <20180209120732.17863-3-j.neuschaefer@gmx.net>
- <CACRpkdZKLm2owgVu7-f80dOdQDzQKCbO2Vvh3QHfOpEzndMxxg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/6] mfd: Add ST Multi-Function eXpander core driver
+Date: Thu, 22 Feb 2018 14:44:14 +0100
+Message-ID: <CACRpkdbcEv3PyqjhzteKhx9pDfoJntKReVT2kBNY+-HSpaXh2A@mail.gmail.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+ <1518100057-23234-3-git-send-email-amelie.delaunay@st.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature"; boundary="2silb4ycf5a2su42"
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZKLm2owgVu7-f80dOdQDzQKCbO2Vvh3QHfOpEzndMxxg@mail.gmail.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Albert Herranz <albert_herranz@yahoo.es>, Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Joel Stanley <joel@jms.id.au>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1518100057-23234-3-git-send-email-amelie.delaunay@st.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Alexandre Torgue <alexandre.torgue@st.com>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Lee Jones <lee.jones@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Thu, Feb 8, 2018 at 3:27 PM, Amelie Delaunay <amelie.delaunay@st.com> wrote:
 
---2silb4ycf5a2su42
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for working on this complex expander driver.
+It is a bit daunting. Sorry if there are lots of comments and
+considerations, but it reflects the complexity of the hardware.
 
-On Thu, Feb 22, 2018 at 01:57:07PM +0100, Linus Walleij wrote:
-> On Fri, Feb 9, 2018 at 1:07 PM, Jonathan Neusch=C3=A4fer
-> <j.neuschaefer@gmx.net> wrote:
->=20
-> > The Nintendo Wii's chipset (called "Hollywood") has a GPIO controller
-> > that supports a configurable number of pins (up to 32), interrupts, and
-> > some special mechanisms to share the controller between the system's
-> > security processor (an ARM926) and the PowerPC CPU. Pin multiplexing is
-> > not supported.
-> >
-> > This patch adds a basic driver for this GPIO controller. Interrupt
-> > support will come in a later patch.
-> >
-> > This patch is based on code developed by Albert Herranz and the GameCube
-> > Linux Team, file arch/powerpc/platforms/embedded6xx/hlwd-gpio.c,
-> > available at https://github.com/DeltaResero/GC-Wii-Linux-Kernels, but
-> > has grown quite dissimilar.
-> >
-> > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> > Cc: Albert Herranz <albert_herranz@yahoo.es>
-> > Cc: Segher Boessenkool <segher@kernel.crashing.org>
-> > <---
-> >
-> > v3:
-> > - Do some style cleanups, as suggest by Andy Shevchenko
->=20
-> Patch applied to the GPIO tree for v4.17 with all the review tags.
->=20
-> I just folded the changelog into the commit message, for new
-> drivers it is sometimes useful to keep these around in
-> git actually.
->=20
-> If any further changes are needed we can just patch on top
-> of this.
->=20
-> It's a very pretty driver, good work!
+> +enum mfx_block {
+> +       MFX_BLOCK_GPIO          = BIT(0),
+> +       MFX_BLOCK_TS            = BIT(1),
+> +       MFX_BLOCK_IDD           = BIT(2),
+> +       MFX_BLOCK_ALTGPIO       = BIT(3),
+> +};
 
-Thanks! :-)
+This looks suspiciously similar to this:
 
+enum stmpe_block {
+        STMPE_BLOCK_GPIO        = 1 << 0,
+        STMPE_BLOCK_KEYPAD      = 1 << 1,
+        STMPE_BLOCK_TOUCHSCREEN = 1 << 2,
+        STMPE_BLOCK_ADC         = 1 << 3,
+        STMPE_BLOCK_PWM         = 1 << 4,
+        STMPE_BLOCK_ROTATOR     = 1 << 5,
+};
 
-Jonathan Neusch=C3=A4fer
+Apparently the same hardware designers are involved.
 
---2silb4ycf5a2su42
-Content-Type: application/pgp-signature; name="signature.asc"
+> +int mfx_reg_write(struct mfx *mfx, u8 reg, u8 data);
+> +int mfx_reg_read(struct mfx *mfx, u8 reg);
+> +int mfx_block_read(struct mfx *mfx, u8 reg, u8 length, u8 *values);
+> +int mfx_block_write(struct mfx *mfx, u8 reg, u8 length, const u8 *values);
+> +int mfx_set_bits(struct mfx *mfx, u8 reg, u8 mask, u8 val);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Do you need this? Can't you just use regmap and pass
+around a struct regmap *map to access registers?
 
-iQIcBAABAgAGBQJajsDGAAoJEAgwRJqO81/bEuEQAKyDSerRX42NnNKQtZyCS+1I
-qYrcXBOLLdKa2ZOpNI9BxxalgJEJeJrRRpylu/sxbRsn+Kxbg1J5GVXf85c41wzs
-YHQqe9PXXBYFnJKO3119HXt4OE3sfjfEU7AZ/trKzy3VklKuDif+lvicexBZaPFP
-E/HIYWcMk7iCs817KOwau+SwXQwQe2wNOmCboG4dqTXvwWKGKEofOc3TlSYDmglc
-1ccOrr5/QEpEWj917tFO5jkGJt8kouHzzyEKw/tUD+IPd3xA0hbIi1dz3+qWIcXJ
-6AtQo6yDFYfLXhKev5QbR4Sq0EXzXrnlf0DebR4jksHgM1rnZu2Tog5udKmU8r0U
-DPjvwsm539LYYTKGgV1cAkawOwLFT8QpyFgD5k1zUszMbayLjffWKG9iGrJAwWYs
-ivB7DZwEPuem14FkJeUufrsGIG4mxq0MoXwP2JeH/GqWZi8mvH8xdIM93lhpms62
-x+dU8qipsKOoao3j3F2GA07WwF4220JIFxtOJIuHVVlw5Cq4rOak94GRj4MeJEO3
-USQ3bSoL549ZUrTTWPmzDSzigd/yVPt4vF9AMbYuVyWp1KXONEAEZOJiuncQt8vq
-TzYKW8xPSD+fz+a45kW4UBWgmPx8u9udIXYUP8xCEO7mfsGLr0ZJSxfOqqkA7J12
-E4SJS0ORWpGggYhec6zA
-=xJG3
------END PGP SIGNATURE-----
+You don't necessarily need to use the default I2C regmap
+(like, e.g. drivers/mfd/stw481x.c) but even if a more
+complex access pattern is used to read/write registers
+I am pretty sure you can use regmap for it.
 
---2silb4ycf5a2su42--
+> +int mfx_enable(struct mfx *mfx, unsigned int blocks);
+> +int mfx_disable(struct mfx *mfx, unsigned int blocks);
+
+This is similar to
+extern int stmpe_enable(struct stmpe *stmpe, unsigned int blocks);
+extern int stmpe_disable(struct stmpe *stmpe, unsigned int blocks);
+
+So again I am suspicious about duplication of driver code.
+
+It even looks a bit like this driver started as a copy of
+the STMPE driver, which is not a good sign. It might be
+that it was copied from there because the hardware is
+actually very similar.
+
+> +/* General */
+> +#define MFX_REG_CHIP_ID                        0x00 /* R */
+> +#define MFX_REG_FW_VERSION_MSB         0x01 /* R */
+> +#define MFX_REG_FW_VERSION_LSB         0x02 /* R */
+> +#define MFX_REG_SYS_CTRL               0x40 /* RW */
+
+The STMPE driver defines enumerated registers in
+include/linux/mfd/stmpe.h
+then assign each variant using the model specifics in
+drivers/mfd/stmpe.h
+
+This doesn't seem super much different.
+
+Even if the old STMPE driver may be a bad fit, is is better
+to improve that (e.g. migrate it to use regmap and rewrite the
+stmpe-gpio.c driver to use pin control) and use also for this
+driver, or write a new driver from scratch like this?
+
+I'm not so sure.
+
+I do know that developers not always like to take out old
+hardware and old development boards and start hacking
+away before they can get some nice new hardware going
+but I am worried that this may be one of those cases where
+a serious cleanup of the aging STMPE driver may be a
+first necessary step.
+
+> +/* IRQ output management */
+> +#define MFX_REG_IRQ_OUT_PIN            0x41 /* RW */
+> +#define MFX_REG_IRQ_SRC_EN             0x42 /* RW */
+> +#define MFX_REG_IRQ_PENDING            0x08 /* R */
+> +#define MFX_REG_IRQ_ACK                        0x44 /* RW */
+
+Very similar to STMPE it seems.
+
+> +/* MFX_REG_SYS_CTRL bitfields */
+> +#define MFX_REG_SYS_CTRL_GPIO_EN       BIT(0)
+> +#define MFX_REG_SYS_CTRL_TS_EN         BIT(1)
+> +#define MFX_REG_SYS_CTRL_IDD_EN                BIT(2)
+> +#define MFX_REG_SYS_CTRL_ALTGPIO_EN    BIT(3)
+
+I guess these blocks works the same as with STMPE,
+that you can only use one of them at the time?
+
+What is altgpio?
+
+> +/* MFX_REG_IRQ_OUT_PIN bitfields */
+> +#define MFX_REG_IRQ_OUT_PIN_TYPE       BIT(0) /* 0-OD 1-PP */
+> +#define MFX_REG_IRQ_OUT_PIN_POL                BIT(1) /* 0-active LOW 1-active HIGH */
+
+I have not read the patch yet. But just for notice:
+This output IRQ type needs to be handled as well.
+
+Check the code in
+drivers/iio/common/st_sensors/st_sensors_trigger.c
+
+To see how you can detect the properties of an IRQ
+to set the right polarity, and handling of open drain
+IRQ lines.
+
+Yours,
+Linus Walleij
