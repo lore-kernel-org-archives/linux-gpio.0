@@ -1,17 +1,17 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 05/10] dt-bindings: gpio: Add gpio nodes for Actions S900
- SoC
-Date: Wed, 21 Feb 2018 17:52:23 -0600
-Message-ID: <CAL_JsqK+586zyvsZ0b9i+x78V5NDnAput6Ygfw0qFXu=B-hb9g@mail.gmail.com>
-References: <20180217204433.3095-1-manivannan.sadhasivam@linaro.org>
- <20180217204433.3095-6-manivannan.sadhasivam@linaro.org>
- <20180219203523.rhvbnym7oomzahwi@rob-hp-laptop>
- <20180221145821.bhoxjndibp3bqfxi@linaro.org>
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: Add ST Multi-Function eXpander
+ driver
+Date: Wed, 21 Feb 2018 18:06:42 -0600
+Message-ID: <CAL_JsqJdqd9rpSy9Vra4tjGcAWMLyiXmEmquCUDn8dTXj1YWGQ@mail.gmail.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+ <1518100057-23234-2-git-send-email-amelie.delaunay@st.com>
+ <20180218231938.goeht7tomfkab6uu@rob-hp-laptop>
+ <b08ab2cd-d6a0-b5da-e33e-ad150370776b@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180221145821.bhoxjndibp3bqfxi@linaro.org>
+In-Reply-To: <b08ab2cd-d6a0-b5da-e33e-ad150370776b@st.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,44 +21,101 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-gpio@vger.kernel.org, mp-cs@actions-semi.com, 96boards@ucrobotics.com, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+To: Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre TORGUE <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 8:58 AM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> Hi Rob,
-> On Mon, Feb 19, 2018 at 02:35:23PM -0600, Rob Herring wrote:
->> On Sun, Feb 18, 2018 at 02:14:28AM +0530, Manivannan Sadhasivam wrote:
->> > Add gpio nodes for Actions Semi S900 SoC.
->> >
->> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->> > ---
->> >  .../devicetree/bindings/gpio/actions,owl-gpio.txt         | 15 +++++++++++++++
->> >  1 file changed, 15 insertions(+)
->> >  create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
->> >
->> > diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
->> > new file mode 100644
->> > index 000000000000..4cd4cb7bfd1b
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
->> > @@ -0,0 +1,15 @@
->> > +* Actions Semi OWL GPIO controller bindings
->> > +
->> > +- compatible      : Should be "actions,s900-gpio"
->> > +- reg             : Address and range of the GPIO controller registers.
->> > +- gpio-controller : Marks the device node as a GPIO controller.
->> > +- #gpio-cells     : Should be <2>. The first cell is the gpio number and
->> > +                    the second cell is used to specify optional parameters.
+On Mon, Feb 19, 2018 at 9:59 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
+>
+>
+> On 02/19/2018 12:19 AM, Rob Herring wrote:
+>> On Thu, Feb 08, 2018 at 03:27:32PM +0100, Amelie Delaunay wrote:
+>>> This patch adds documentation of device tree bindings for the
+>>> STMicroelectronics Multi-Function eXpander (MFX).
+>>>
+>>> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/mfd/st-mfx.txt | 51 ++++++++++++++++++++++++
+>>>   1 file changed, 51 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/mfd/st-mfx.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mfd/st-mfx.txt b/Documentation/devicetree/bindings/mfd/st-mfx.txt
+>>> new file mode 100644
+>>> index 0000000..423d800
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/mfd/st-mfx.txt
+>>> @@ -0,0 +1,51 @@
+>>> +STMicroelectronics Multi-Function eXpander
+>>> +
+>>> +ST Multi-Function eXpander (MFX) is a slave controller using I2C for
+>>> +communication with the main MCU. Its main features are gpio expansion, main
+>>> +MCU IDD measurement (IDD is the amount of current that flows through VDD)
+>>> +and resistive touchscreen controller.
 >>
->> Doesn't do interrupts?
+>> You don't have to implement all the drivers now, but please completely
+>> describe the device. As is, there is no reason to have a child GPIO
+>> node.
 >>
-> Interrupt support will be added once this base driver gets in.
-> One step at a time ;-)
+> The MFD driver will be abandoned as only GPIO part is used. I'll send a
+> V2 soon.
+>>> +
+>>> +Required properties:
+>>> +- compatible: must be "st,mfx"
+>>
+>> Kind of generic. Only 1 single version ever?
+>>
+> "st-mfx" compatible will disappear in V2 (we keep only GPIO driver). MFX
+> version can be read in MFX FW_VERSION register. So do I keep
+> "st,mfx-gpio" compatible or you want to see mfx version ?
 
-Binding are separate from the driver. Drivers can evolve, but h/w
-doesn't (for a given piece of Si). It is not a high bar to list
-#interrupt-cells and interrupt-controller.
+That sounds a bit worrying. The other functions will *never* get
+accessed? The DT should reflect the h/w including any future needs,
+not just what you have a driver for today.
 
-Rob
+>>> +- reg: I2C address of the device
+>>> +- interrupts: interrupt triggered by MFX_IRQ_OUT signal
+>>> +- interrupt-parent: interrupt controller MFX is connected to
+>>> +- interrupt-controller: marks the device as an interrupt controller
+>>> +- #interrupt-cells: should be <1>, index of the interrupt within the
+>>> +  controller, in accordance with the "one cell" variant of
+>>> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
+>>> +
+>>> +Optional nodes:
+>>> +
+>>> +* GPIO eXpander
+>>> +MFX provides 16 programmable GPIOs, and it is also possible to recover 8
+>>> +alternate GPIOs if the main functions are not used (touchscreen controller and
+>>> +IDD measurement not enabled).
+>>> +
+>>> +Required properties:
+>>> +- compatible : must be "st,mfx-gpio"
+>>> +- interrupt-parent : must be <&mfx>
+>>
+>> Not necessary. A parent node with 'interrupt-controller' property is the
+>> interrupt's parent.
+>>
+> I will keep it in mind.
+>>> +- interrupts = must be <0>
+>>> +- gpio-controller: marks the device node as a GPIO controller
+>>> +- #gpio-cells: should be <2>, the first cell is the GPIO offset on this GPIO
+>>> +  controller, the second cell is the gpio flags in accordance with
+>>> +  <dt-bindings/gpio/st-mfx-gpio.h>.
+>>
+>> Custom flags? Use standard flags.
+>>
+>> DT binding headers should be part of this patch.
+>>
+> Custom flags because MFX GPIOs have several types:
+> - Output open drain with internal pull-up resistor
+> - Output open drain without internal pull-up resistor
+> - Output push pull without internal pull resistor
+> - Input with internal pull-up resistor
+> - Input with internal pull-down resistor
+> - Input floating
+> - Input analog.
+> Standard flags don't have pull up or down information. That's why I am
+> using custom flags, they overloads standard flags.
+
+I'll leave this one to Linus to comment on.
+
+> I will add DT bindings header in this patch V2.
