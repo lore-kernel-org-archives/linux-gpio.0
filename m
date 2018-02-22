@@ -1,17 +1,15 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/6] dt-bindings: mfd: Add ST Multi-Function eXpander
- driver
-Date: Wed, 21 Feb 2018 18:06:42 -0600
-Message-ID: <CAL_JsqJdqd9rpSy9Vra4tjGcAWMLyiXmEmquCUDn8dTXj1YWGQ@mail.gmail.com>
-References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
- <1518100057-23234-2-git-send-email-amelie.delaunay@st.com>
- <20180218231938.goeht7tomfkab6uu@rob-hp-laptop>
- <b08ab2cd-d6a0-b5da-e33e-ad150370776b@st.com>
+From: Ludovic BARRE <ludovic.barre@st.com>
+Subject: Re: [1/2] ARM: irqchip: stm32: Optimizes and cleans up stm32-exti
+ irq_domain
+Date: Thu, 22 Feb 2018 11:55:47 +0100
+Message-ID: <d007f880-0509-e30c-4c28-94117d2f8037@st.com>
+References: <1519221027-4028-2-git-send-email-radoslaw.pietrzyk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <b08ab2cd-d6a0-b5da-e33e-ad150370776b@st.com>
+In-Reply-To: <1519221027-4028-2-git-send-email-radoslaw.pietrzyk@gmail.com>
+Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,101 +19,91 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Amelie DELAUNAY <amelie.delaunay@st.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre TORGUE <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: radek <radoslaw.pietrzyk@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 9:59 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
->
->
-> On 02/19/2018 12:19 AM, Rob Herring wrote:
->> On Thu, Feb 08, 2018 at 03:27:32PM +0100, Amelie Delaunay wrote:
->>> This patch adds documentation of device tree bindings for the
->>> STMicroelectronics Multi-Function eXpander (MFX).
->>>
->>> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
->>> ---
->>>   Documentation/devicetree/bindings/mfd/st-mfx.txt | 51 ++++++++++++++++++++++++
->>>   1 file changed, 51 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/mfd/st-mfx.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/mfd/st-mfx.txt b/Documentation/devicetree/bindings/mfd/st-mfx.txt
->>> new file mode 100644
->>> index 0000000..423d800
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/mfd/st-mfx.txt
->>> @@ -0,0 +1,51 @@
->>> +STMicroelectronics Multi-Function eXpander
->>> +
->>> +ST Multi-Function eXpander (MFX) is a slave controller using I2C for
->>> +communication with the main MCU. Its main features are gpio expansion, main
->>> +MCU IDD measurement (IDD is the amount of current that flows through VDD)
->>> +and resistive touchscreen controller.
->>
->> You don't have to implement all the drivers now, but please completely
->> describe the device. As is, there is no reason to have a child GPIO
->> node.
->>
-> The MFD driver will be abandoned as only GPIO part is used. I'll send a
-> V2 soon.
->>> +
->>> +Required properties:
->>> +- compatible: must be "st,mfx"
->>
->> Kind of generic. Only 1 single version ever?
->>
-> "st-mfx" compatible will disappear in V2 (we keep only GPIO driver). MFX
-> version can be read in MFX FW_VERSION register. So do I keep
-> "st,mfx-gpio" compatible or you want to see mfx version ?
+Hi Radek
 
-That sounds a bit worrying. The other functions will *never* get
-accessed? The DT should reflect the h/w including any future needs,
-not just what you have a driver for today.
+I've tested your change on stm32h743i-eval.dts board
+and gpio-keys tests are not functional.
+No interrupt occurs when we push or release button
+(cat /proc/interrupt).
 
->>> +- reg: I2C address of the device
->>> +- interrupts: interrupt triggered by MFX_IRQ_OUT signal
->>> +- interrupt-parent: interrupt controller MFX is connected to
->>> +- interrupt-controller: marks the device as an interrupt controller
->>> +- #interrupt-cells: should be <1>, index of the interrupt within the
->>> +  controller, in accordance with the "one cell" variant of
->>> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
->>> +
->>> +Optional nodes:
->>> +
->>> +* GPIO eXpander
->>> +MFX provides 16 programmable GPIOs, and it is also possible to recover 8
->>> +alternate GPIOs if the main functions are not used (touchscreen controller and
->>> +IDD measurement not enabled).
->>> +
->>> +Required properties:
->>> +- compatible : must be "st,mfx-gpio"
->>> +- interrupt-parent : must be <&mfx>
->>
->> Not necessary. A parent node with 'interrupt-controller' property is the
->> interrupt's parent.
->>
-> I will keep it in mind.
->>> +- interrupts = must be <0>
->>> +- gpio-controller: marks the device node as a GPIO controller
->>> +- #gpio-cells: should be <2>, the first cell is the GPIO offset on this GPIO
->>> +  controller, the second cell is the gpio flags in accordance with
->>> +  <dt-bindings/gpio/st-mfx-gpio.h>.
->>
->> Custom flags? Use standard flags.
->>
->> DT binding headers should be part of this patch.
->>
-> Custom flags because MFX GPIOs have several types:
-> - Output open drain with internal pull-up resistor
-> - Output open drain without internal pull-up resistor
-> - Output push pull without internal pull resistor
-> - Input with internal pull-up resistor
-> - Input with internal pull-down resistor
-> - Input floating
-> - Input analog.
-> Standard flags don't have pull up or down information. That's why I am
-> using custom flags, they overloads standard flags.
+Board: stm32h743i-eval.dts
+Test description: gpio-keys (gpioc 13 => exti 13), with gpio or 
+interrupt property.
 
-I'll leave this one to Linus to comment on.
+comment below
 
-> I will add DT bindings header in this patch V2.
+On 02/21/2018 02:50 PM, radek wrote:
+> - allocates generic chip with handle_simple_irq
+> 	which simplifies irq_domain_ops.alloc callback
+> 	- removes ack register from generic chip which is not used for
+> 	handle_simple_irq as acking is done in a chained handler
+> 	- removes unneeded irq_domain_ops.xlate callback
+> 
+> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+> ---
+>   drivers/irqchip/irq-stm32-exti.c | 10 +---------
+>   1 file changed, 1 insertion(+), 9 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
+> index 36f0fbe..42e74e3 100644
+> --- a/drivers/irqchip/irq-stm32-exti.c
+> +++ b/drivers/irqchip/irq-stm32-exti.c
+> @@ -176,16 +176,12 @@ static int stm32_irq_set_wake(struct irq_data *data, unsigned int on)
+>   static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
+>   			    unsigned int nr_irqs, void *data)
+>   {
+> -	struct irq_chip_generic *gc;
+>   	struct irq_fwspec *fwspec = data;
+>   	irq_hw_number_t hwirq;
+>   
+>   	hwirq = fwspec->param[0];
+> -	gc = irq_get_domain_generic_chip(d, hwirq);
+>   
+>   	irq_map_generic_chip(d, virq, hwirq);
+> -	irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
+> -			    handle_simple_irq, NULL, NULL);
+>   
+>   	return 0;
+>   }
+> @@ -200,7 +196,6 @@ static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
+>   
+>   struct irq_domain_ops irq_exti_domain_ops = {
+>   	.map	= irq_map_generic_chip,
+> -	.xlate	= irq_domain_xlate_onetwocell,
+>   	.alloc  = stm32_exti_alloc,
+>   	.free	= stm32_exti_free,
+>   };
+> @@ -231,7 +226,7 @@ __init stm32_exti_init(const struct stm32_exti_bank **stm32_exti_banks,
+>   	}
+>   
+>   	ret = irq_alloc_domain_generic_chips(domain, IRQS_PER_BANK, 1, "exti",
+> -					     handle_edge_irq, clr, 0, 0);
+> +					     handle_simple_irq, clr, 0, 0);
+
+EXTI hardware block is trigged on pulse event rising or failing edge.
+Why do you change to handle_simple_irq ?
+
+>   	if (ret) {
+>   		pr_err("%pOF: Could not allocate generic interrupt chip.\n",
+>   			node);
+> @@ -246,13 +241,10 @@ __init stm32_exti_init(const struct stm32_exti_bank **stm32_exti_banks,
+>   
+>   		gc->reg_base = base;
+>   		gc->chip_types->type = IRQ_TYPE_EDGE_BOTH;
+> -		gc->chip_types->chip.irq_ack = irq_gc_ack_set_bit;
+>   		gc->chip_types->chip.irq_mask = irq_gc_mask_clr_bit;
+>   		gc->chip_types->chip.irq_unmask = irq_gc_mask_set_bit;
+>   		gc->chip_types->chip.irq_set_type = stm32_irq_set_type;
+>   		gc->chip_types->chip.irq_set_wake = stm32_irq_set_wake;
+> -		gc->chip_types->regs.ack = stm32_bank->pr_ofst;
+> -		gc->chip_types->regs.mask = stm32_bank->imr_ofst;
+>   		gc->private = (void *)stm32_bank;
+>   
+>   		/* Determine number of irqs supported */
+> 
+
+BR
+Ludo
