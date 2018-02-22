@@ -1,18 +1,18 @@
 From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Subject: Re: [PATCH 3/6] gpio: Add GPIO support for the ST Multi-Function
- eXpander
-Date: Thu, 22 Feb 2018 15:33:31 +0000
-Message-ID: <2440a092-507d-bc39-6ed6-4a4ee094da7a@st.com>
+Subject: Re: [PATCH 4/6] ARM: dts: stm32: add MFX support on I2C1 on
+ stm32746g-eval
+Date: Thu, 22 Feb 2018 15:34:28 +0000
+Message-ID: <9d66c639-7f3e-86f3-e744-237b4be31d09@st.com>
 References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
- <1518100057-23234-4-git-send-email-amelie.delaunay@st.com>
- <CACRpkdaeFXuB1Qv-vqNpf4pHsAysiYh03_gfNoRdHBh1pN_Amw@mail.gmail.com>
+ <1518100057-23234-5-git-send-email-amelie.delaunay@st.com>
+ <CACRpkdZFrRXEBW6KnqZ=h_7BxYn-RaAzhP4ovwC_DQSbAGZCVw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdaeFXuB1Qv-vqNpf4pHsAysiYh03_gfNoRdHBh1pN_Amw@mail.gmail.com>
+In-Reply-To: <CACRpkdZFrRXEBW6KnqZ=h_7BxYn-RaAzhP4ovwC_DQSbAGZCVw@mail.gmail.com>
 Content-Language: en-US
-Content-ID: <E024ED14A7477541AA91EDA73DF3AA9A@st.com>
+Content-ID: <7A4D238C51BDB04293015EAAD0F3A6F8@st.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -29,26 +29,40 @@ List-Id: linux-gpio@vger.kernel.org
 
 
 
-On 02/22/2018 02:47 PM, Linus Walleij wrote:
+On 02/22/2018 02:54 PM, Linus Walleij wrote:
 > On Thu, Feb 8, 2018 at 3:27 PM, Amelie Delaunay <amelie.delaunay@st.com> wrote:
 > 
->> ST Multi-Function eXpander (MFX) can be used as GPIO expander.
->> It has 16 fast GPIOs and can have 8 extra alternate GPIOs
->> when other MFX features are not enabled.
+>> MFX is used as gpio expander on stm32746g-eval.
 >>
 >> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 > 
-> As mentioned I think this driver needs to:
+> (...)
+>> +       mfx: mfx@42 {
+>> +               compatible = "st,mfx";
+>> +               reg = <0x42>;
+>> +               interrupts = <8 1>;
+>> +               interrupt-parent = <&gpioi>;
+>> +               interrupt-controller;
+>> +               #interrupt-cells = <1>;
+>> +
+>> +               mfxgpio: mfx_gpio {
+>> +                       compatible = "st,mfx-gpio";
+>> +                       interrupts = <0>;
+>> +                       interrupt-parent = <&mfx>;
+>> +                       gpio-controller;
+>> +                       #gpio-cells = <2>;
 > 
-> - Move to drivers/pinctrl/pinctrl-stmfx.c similar to the sx150x controller.
-> - Pass a regmap around instead of the custom accessor functions.
+> So I think this node should contain some pin config states
+> that can  be referenced by the drivers to set up push/pull
+> etc. Probably it can use just standard pin config properties
+> like sx150x.
+> 
 
-I study this right now!
-Thanks,
+I will check that point.
+
+Regards,
 Amelie
 
-> - Maybe refactor and reuse STMPE infrastructure
-> 
 > Yours,
 > Linus Walleij
 > 
