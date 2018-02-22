@@ -1,63 +1,86 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 2/4] gpio: Add GPIO driver for Nintendo Wii
-Date: Thu, 22 Feb 2018 13:57:07 +0100
-Message-ID: <CACRpkdZKLm2owgVu7-f80dOdQDzQKCbO2Vvh3QHfOpEzndMxxg@mail.gmail.com>
-References: <20180209120732.17863-1-j.neuschaefer@gmx.net>
- <20180209120732.17863-3-j.neuschaefer@gmx.net>
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: Add ST Multi-Function eXpander
+ driver
+Date: Thu, 22 Feb 2018 14:22:44 +0100
+Message-ID: <CACRpkdYfHgjAu=By-4pbtpYrbBjRLGEKJhzXobnM6RFYYgjaRw@mail.gmail.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+ <1518100057-23234-2-git-send-email-amelie.delaunay@st.com>
+ <20180218231938.goeht7tomfkab6uu@rob-hp-laptop>
+ <b08ab2cd-d6a0-b5da-e33e-ad150370776b@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <20180209120732.17863-3-j.neuschaefer@gmx.net>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Albert Herranz <albert_herranz@yahoo.es>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Joel Stanley <joel@jms.id.au>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <b08ab2cd-d6a0-b5da-e33e-ad150370776b@st.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, Alexandre TORGUE <alexandre.torgue@st.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 9, 2018 at 1:07 PM, Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
+On Mon, Feb 19, 2018 at 4:59 PM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
+> On 02/19/2018 12:19 AM, Rob Herring wrote:
+>> On Thu, Feb 08, 2018 at 03:27:32PM +0100, Amelie Delaunay wrote:
 
-> The Nintendo Wii's chipset (called "Hollywood") has a GPIO controller
-> that supports a configurable number of pins (up to 32), interrupts, and
-> some special mechanisms to share the controller between the system's
-> security processor (an ARM926) and the PowerPC CPU. Pin multiplexing is
-> not supported.
->
-> This patch adds a basic driver for this GPIO controller. Interrupt
-> support will come in a later patch.
->
-> This patch is based on code developed by Albert Herranz and the GameCube
-> Linux Team, file arch/powerpc/platforms/embedded6xx/hlwd-gpio.c,
-> available at https://github.com/DeltaResero/GC-Wii-Linux-Kernels, but
-> has grown quite dissimilar.
->
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> Cc: Albert Herranz <albert_herranz@yahoo.es>
-> Cc: Segher Boessenkool <segher@kernel.crashing.org>
-> <---
->
-> v3:
-> - Do some style cleanups, as suggest by Andy Shevchenko
+>>> +- interrupts = must be <0>
+>>> +- gpio-controller: marks the device node as a GPIO controller
+>>> +- #gpio-cells: should be <2>, the first cell is the GPIO offset on this GPIO
+>>> +  controller, the second cell is the gpio flags in accordance with
+>>> +  <dt-bindings/gpio/st-mfx-gpio.h>.
+>>
+>> Custom flags? Use standard flags.
+>>
+>> DT binding headers should be part of this patch.
+>>
+> Custom flags because MFX GPIOs have several types:
+> - Output open drain with internal pull-up resistor
+> - Output open drain without internal pull-up resistor
+> - Output push pull without internal pull resistor
+> - Input with internal pull-up resistor
+> - Input with internal pull-down resistor
+> - Input floating
+> - Input analog.
+> Standard flags don't have pull up or down information. That's why I am
+> using custom flags, they overloads standard flags.
 
-Patch applied to the GPIO tree for v4.17 with all the review tags.
+This is because pull up/down and tristate/high z (floating)
+also known as PIN_CONFIG_BIAS_HIGH_IMPEDANCE,
+is controlled by the pin control subsystem, not GPIO.
 
-I just folded the changelog into the commit message, for new
-drivers it is sometimes useful to keep these around in
-git actually.
+If your hardware does even more pin control (like multiplexing)
+then I suggest that you create a pin control driver back-end for
+this and put the resulting driver in drivers/pinctrl.
 
-If any further changes are needed we can just patch on top
-of this.
+Some recent additions of expanders in drivers/pinctrl makes
+for great inspiration for this work. See for example:
+drivers/pinctrl/pinctrl-sx150x.c
+drivers/pinctrl/pinctrl-mcp23s08.c
 
-It's a very pretty driver, good work!
+These are both combined pin control and GPIO drivers that
+we moved from drivers/gpio because we concluded that they
+do more than just GPIO. The GPIO lines are matches to
+pins using the GPIO ranges from the call to
+gpiochip_add_pin_range() and using gpiochip_generic_config()
+as the gpiochip .set_config() callback.
+
+It has been discussed to expose subsets of pin config to
+GPIO. Indeed, we already handle open drain/source and
+debounce by simply calling into the pin control back-end
+or handling it directly in the GPIO driver using the standard
+pin config properties.
+
+I am reluctant about this, I think the split of responsibilities
+is pretty nice.
+
+I'd recommend looking at the sx150x pin control driver and
+check if you can maybe take this direction with the patch?
 
 Yours,
 Linus Walleij
