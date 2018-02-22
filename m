@@ -1,67 +1,63 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/6] dt-bindings: mfd: Add ST Multi-Function eXpander
- driver
-Date: Thu, 22 Feb 2018 14:11:26 +0100
-Message-ID: <CACRpkdZxJhntgHwgsg=P98i0aGnXSQ2rXO16H0U=cJ+sBbF27g@mail.gmail.com>
-References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
- <1518100057-23234-2-git-send-email-amelie.delaunay@st.com>
+Subject: Re: [PATCH v3 2/4] gpio: Add GPIO driver for Nintendo Wii
+Date: Thu, 22 Feb 2018 13:57:07 +0100
+Message-ID: <CACRpkdZKLm2owgVu7-f80dOdQDzQKCbO2Vvh3QHfOpEzndMxxg@mail.gmail.com>
+References: <20180209120732.17863-1-j.neuschaefer@gmx.net>
+ <20180209120732.17863-3-j.neuschaefer@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1518100057-23234-2-git-send-email-amelie.delaunay@st.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Alexandre Torgue <alexandre.torgue@st.com>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Lee Jones <lee.jones@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <20180209120732.17863-3-j.neuschaefer@gmx.net>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Albert Herranz <albert_herranz@yahoo.es>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Joel Stanley <joel@jms.id.au>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 8, 2018 at 3:27 PM, Amelie Delaunay <amelie.delaunay@st.com> wrote:
+On Fri, Feb 9, 2018 at 1:07 PM, Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
 
-> +Required properties:
-> +- compatible: must be "st,mfx"
+> The Nintendo Wii's chipset (called "Hollywood") has a GPIO controller
+> that supports a configurable number of pins (up to 32), interrupts, and
+> some special mechanisms to share the controller between the system's
+> security processor (an ARM926) and the PowerPC CPU. Pin multiplexing is
+> not supported.
+>
+> This patch adds a basic driver for this GPIO controller. Interrupt
+> support will come in a later patch.
+>
+> This patch is based on code developed by Albert Herranz and the GameCube
+> Linux Team, file arch/powerpc/platforms/embedded6xx/hlwd-gpio.c,
+> available at https://github.com/DeltaResero/GC-Wii-Linux-Kernels, but
+> has grown quite dissimilar.
+>
+> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> Cc: Albert Herranz <albert_herranz@yahoo.es>
+> Cc: Segher Boessenkool <segher@kernel.crashing.org>
+> <---
+>
+> v3:
+> - Do some style cleanups, as suggest by Andy Shevchenko
 
-I bet this should be more specific. Tomorrow there will be a new
-version of this expander and then we will wish that we used
-a more specific compatible for the first one.
+Patch applied to the GPIO tree for v4.17 with all the review tags.
 
-Does this chip have any kind of product number on it?
+I just folded the changelog into the commit message, for new
+drivers it is sometimes useful to keep these around in
+git actually.
 
-Else I would be tempted to use the compatible "st,mfx-0000"
-or something, indicating it is the first of its kind.
+If any further changes are needed we can just patch on top
+of this.
 
-> +- reg: I2C address of the device
-> +- interrupts: interrupt triggered by MFX_IRQ_OUT signal
-> +- interrupt-parent: interrupt controller MFX is connected to
-> +- interrupt-controller: marks the device as an interrupt controller
-> +- #interrupt-cells: should be <1>, index of the interrupt within the
-> +  controller, in accordance with the "one cell" variant of
-> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
-
-Seems fine.
-
-> +Optional nodes:
-> +
-> +* GPIO eXpander
-> +MFX provides 16 programmable GPIOs, and it is also possible to recover 8
-> +alternate GPIOs if the main functions are not used (touchscreen controller and
-> +IDD measurement not enabled).
-
-Apparenly Rob thinks this should go elsewhere.
-
-> +- gpio-controller: marks the device node as a GPIO controller
-> +- #gpio-cells: should be <2>, the first cell is the GPIO offset on this GPIO
-> +  controller, the second cell is the gpio flags in accordance with
-> +  <dt-bindings/gpio/st-mfx-gpio.h>.
-
-Let's discuss these extra GPIO flag bindings separately.
+It's a very pretty driver, good work!
 
 Yours,
 Linus Walleij
