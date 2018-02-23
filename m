@@ -1,14 +1,17 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH v3 2/7] pinctrl: sunxi: support pin controllers with
- holes among IRQ banks
-Date: Fri, 23 Feb 2018 16:18:21 +0100
-Message-ID: <20180223151821.gqn66roldejpowzu@flea.lan>
-References: <20180223122552.58049-1-icenowy@aosc.io>
- <20180223122552.58049-3-icenowy@aosc.io>
+From: Ludovic BARRE <ludovic.barre@st.com>
+Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
+ irq_domain
+Date: Fri, 23 Feb 2018 16:46:51 +0100
+Message-ID: <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
+References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
+ <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0685803566576682428=="
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180223122552.58049-3-icenowy@aosc.io>
+In-Reply-To: <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
+Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,161 +21,93 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+hi Radoslaw
 
---===============0685803566576682428==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hzki2yhvhouadvwv"
-Content-Disposition: inline
+The gpio-keys tests it's now functional on H7, great.
+However the gpio-key test only the bank1 (like stm32f429).
+Like the H7 introduce the multi-bank management,
+we must perform complementary test.
 
+comment below about ack in handler
 
---hzki2yhvhouadvwv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Feb 23, 2018 at 08:25:47PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
-> GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5. This
-> situation cannot be processed with the current pinctrl IRQ code, as it
-> only expects a offset to all IRQ banks.
->=20
-> Update the code to use a logical IRQ bank to hardware IRQ bank map, so
-> the new situation in H6 main pin controller can be processed. The old
-> special situation which uses a constant offset (on A33 and V3s, both
-> with a offset of 1) can be also processed with the new code.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+On 02/23/2018 09:31 AM, Radoslaw Pietrzyk wrote:
+> - discards setting handle_simple_irq handler for hierarchy interrupts
+> - removes acking in chained irq handler as this is done by
+> irq_chip itself inside handle_edge_irq
+> - removes unneeded irq_domain_ops.xlate callback
+> 
+> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
 > ---
-> Changes in v3:
-> - change for the refactor in the new PATCH 1.
->=20
-> No changes in v2.
->=20
->  drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c |  4 +++-
->  drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c |  4 +++-
->  drivers/pinctrl/sunxi/pinctrl-sunxi.h     | 29 +++++++++++++++++--------=
-----
->  3 files changed, 23 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c b/drivers/pinctrl/=
-sunxi/pinctrl-sun8i-a33.c
-> index da387211a75e..f043afa1aac5 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-> @@ -481,11 +481,13 @@ static const struct sunxi_desc_pin sun8i_a33_pins[]=
- =3D {
->  		  SUNXI_FUNCTION(0x3, "uart3")),	/* CTS */
->  };
-> =20
-> +static const unsigned int sun8i_a33_pinctrl_irq_bank_map[] =3D { 1, 2 };
-> +
->  static const struct sunxi_pinctrl_desc sun8i_a33_pinctrl_data =3D {
->  	.pins =3D sun8i_a33_pins,
->  	.npins =3D ARRAY_SIZE(sun8i_a33_pins),
->  	.irq_banks =3D 2,
-> -	.irq_bank_base =3D 1,
-> +	.irq_bank_map =3D sun8i_a33_pinctrl_irq_bank_map,
->  	.disable_strict_mode =3D true,
->  };
-> =20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c b/drivers/pinctrl/=
-sunxi/pinctrl-sun8i-v3s.c
-> index 496ba34e1f5f..6704ce8e5e3d 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-> @@ -293,11 +293,13 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[]=
- =3D {
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 5)),	/* PG_EINT5 */
->  };
-> =20
-> +static const unsigned int sun8i_v3s_pinctrl_irq_bank_map[] =3D { 1, 2 };
-> +
->  static const struct sunxi_pinctrl_desc sun8i_v3s_pinctrl_data =3D {
->  	.pins =3D sun8i_v3s_pins,
->  	.npins =3D ARRAY_SIZE(sun8i_v3s_pins),
->  	.irq_banks =3D 2,
-> -	.irq_bank_base =3D 1,
-> +	.irq_bank_map =3D sun8i_v3s_pinctrl_irq_bank_map,
->  	.irq_read_needs_mux =3D true
->  };
-> =20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunx=
-i/pinctrl-sunxi.h
-> index 909ca1504b61..36502cbef6c2 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> @@ -110,7 +110,7 @@ struct sunxi_pinctrl_desc {
->  	int				npins;
->  	unsigned			pin_base;
->  	unsigned			irq_banks;
-> -	unsigned			irq_bank_base;
-> +	const unsigned int		*irq_bank_map;
->  	bool				irq_read_needs_mux;
->  	bool				disable_strict_mode;
->  };
-> @@ -263,14 +263,23 @@ static inline u32 sunxi_pull_offset(u16 pin)
->  	return pin_num * PULL_PINS_BITS;
->  }
-> =20
-> +static inline u32 sunxi_irq_hw_bank_num(u8 bank,
-> +					const struct sunxi_pinctrl_desc *desc)
-> +{
-> +	if (!desc->irq_bank_map)
-> +		return bank;
-> +	else
-> +		return desc->irq_bank_map[bank];
-> +}
-> +
+>   drivers/irqchip/irq-stm32-exti.c | 13 -------------
+>   1 file changed, 13 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
+> index 36f0fbe..8013a87 100644
+> --- a/drivers/irqchip/irq-stm32-exti.c
+> +++ b/drivers/irqchip/irq-stm32-exti.c
+> @@ -79,13 +79,6 @@ static unsigned long stm32_exti_pending(struct irq_chip_generic *gc)
+>   	return irq_reg_readl(gc, stm32_bank->pr_ofst);
+>   }
+>   
+> -static void stm32_exti_irq_ack(struct irq_chip_generic *gc, u32 mask)
+> -{
+> -	const struct stm32_exti_bank *stm32_bank = gc->private;
+> -
+> -	irq_reg_writel(gc, mask, stm32_bank->pr_ofst);
+> -}
+> -
+>   static void stm32_irq_handler(struct irq_desc *desc)
+>   {
+>   	struct irq_domain *domain = irq_desc_get_handler_data(desc);
+> @@ -106,7 +99,6 @@ static void stm32_irq_handler(struct irq_desc *desc)
+>   			for_each_set_bit(n, &pending, IRQS_PER_BANK) {
+>   				virq = irq_find_mapping(domain, irq_base + n);
+>   				generic_handle_irq(virq);
+> -				stm32_exti_irq_ack(gc, BIT(n));
 
-Same remark about the order of the argument, and I would have split
-this patch in two, one to introduce the new function (but still using
-the irq_bank_base), and then a second patch to introduce the
-irq_bank_map.
+the while loop " while ((pending = " has been introduce while original
+upstream of this driver in V2 to V3
+https://patchwork.ozlabs.org/patch/604190/
+https://patchwork.ozlabs.org/patch/665242/
 
-Looks good otherwise, thanks!
-Maxime
+the "ack" is needed to acknowledge the irq which are handled and which 
+is not the original irq for which we enter.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>   			}
+>   		}
+>   	}
+> @@ -176,16 +168,12 @@ static int stm32_irq_set_wake(struct irq_data *data, unsigned int on)
+>   static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
+>   			    unsigned int nr_irqs, void *data)
+>   {
+> -	struct irq_chip_generic *gc;
+>   	struct irq_fwspec *fwspec = data;
+>   	irq_hw_number_t hwirq;
+>   
+>   	hwirq = fwspec->param[0];
+> -	gc = irq_get_domain_generic_chip(d, hwirq);
+>   
+>   	irq_map_generic_chip(d, virq, hwirq);
+> -	irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
+> -			    handle_simple_irq, NULL, NULL);
 
---hzki2yhvhouadvwv
-Content-Type: application/pgp-signature; name="signature.asc"
+I see if it is not disturb the multi-bank.
 
------BEGIN PGP SIGNATURE-----
+>   
+>   	return 0;
+>   }
+> @@ -200,7 +188,6 @@ static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
+>   
+>   struct irq_domain_ops irq_exti_domain_ops = {
+>   	.map	= irq_map_generic_chip,
+> -	.xlate	= irq_domain_xlate_onetwocell,
+>   	.alloc  = stm32_exti_alloc,
+>   	.free	= stm32_exti_free,
+>   };
+> 
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqQML0ACgkQ0rTAlCFN
-r3TOoA/+IJr26dnmK1zjBiaE2I3eHpmYqrmmV7BmcTV3zEUAp0U/bCenYecTaG6C
-L6ck25pgYSYk1MJQf2JsOxK7YIUp+5dytqBmHq2JgUsgGam1OrESDMuPkJJXjiha
-I/6Fqunaa9Sa5gWjRAI426SL/9xe0gGz2Bf0d46MjycxgZlgrsxhLxDKEKASju7q
-ViGnN5uZNle6Y88+84FRIYH/wMl1CFAWjGoVQbiss1UVPQapatqBhcnxSgUIVRd2
-fbbc4As+/KgrN8CXZYY1vOmDF+PsGzDSngdZ4Sz+wKy5KMvZBTCplBCwl3+YkFJF
-9h96wlLWIbK7JnL1NxRRir+e7kWRHgEstXF4Qz5LDTwnAEkprTaFdd9nmHhJzgIf
-2Y44TpMIzhzCFA+rJG7hIJEWRCd4ZU726xLiJluqsKgTLz3S2DWFpn9ZAjVwRtXj
-kTON+NtvCiB+sdoRVeQlq2V6VExk0HJsntSo8CKlX0IynFCyDyRxZgx21zkj/bDN
-Oh5n24gGnqhZmArvCibeEKUOgzOEIkSLyrQbx28eOzgKGf28dH+xmUUpMFZqhzC8
-hkv8ylzeYayFqQWgbCnuWGuvQqLyiOEJIQu2DIBA4LUTvL0gs3mFtqaFE4IASGd8
-ZI2TMjJacm8bH0hMlzTANBDdvg67cr04wPDQYPjoiRrevTU4K58=
-=GXP9
------END PGP SIGNATURE-----
-
---hzki2yhvhouadvwv--
-
-
---===============0685803566576682428==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============0685803566576682428==--
+BR
+Ludo
