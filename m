@@ -1,18 +1,16 @@
-From: Ludovic BARRE <ludovic.barre@st.com>
-Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
- irq_domain
-Date: Fri, 23 Feb 2018 17:16:36 +0100
-Message-ID: <73fbc744-872a-8a69-8bf4-a46d7f5b6636@st.com>
-References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
- <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: Add a reserved-gpio-ranges
+ property
+Date: Fri, 23 Feb 2018 08:37:14 -0800
+Message-ID: <20180223163714.GM93895@bjorns-mbp-2.lan>
+References: <20180126011400.2191-1-sboyd@codeaurora.org>
+ <20180126011400.2191-2-sboyd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180126011400.2191-2-sboyd@codeaurora.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,71 +20,60 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Timur Tabi <timur@codeaurora.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-CgpPbiAwMi8yMy8yMDE4IDA0OjQ2IFBNLCBMdWRvdmljIEJBUlJFIHdyb3RlOgo+IGhpIFJhZG9z
-bGF3Cj4gCj4gVGhlIGdwaW8ta2V5cyB0ZXN0cyBpdCdzIG5vdyBmdW5jdGlvbmFsIG9uIEg3LCBn
-cmVhdC4KPiBIb3dldmVyIHRoZSBncGlvLWtleSB0ZXN0IG9ubHkgdGhlIGJhbmsxIChsaWtlIHN0
-bTMyZjQyOSkuCj4gTGlrZSB0aGUgSDcgaW50cm9kdWNlIHRoZSBtdWx0aS1iYW5rIG1hbmFnZW1l
-bnQsCj4gd2UgbXVzdCBwZXJmb3JtIGNvbXBsZW1lbnRhcnkgdGVzdC4KPiAKPiBjb21tZW50IGJl
-bG93IGFib3V0IGFjayBpbiBoYW5kbGVyCj4gCj4gT24gMDIvMjMvMjAxOCAwOTozMSBBTSwgUmFk
-b3NsYXcgUGlldHJ6eWsgd3JvdGU6Cj4+IC0gZGlzY2FyZHMgc2V0dGluZyBoYW5kbGVfc2ltcGxl
-X2lycSBoYW5kbGVyIGZvciBoaWVyYXJjaHkgaW50ZXJydXB0cwo+PiAtIHJlbW92ZXMgYWNraW5n
-IGluIGNoYWluZWQgaXJxIGhhbmRsZXIgYXMgdGhpcyBpcyBkb25lIGJ5Cj4+IGlycV9jaGlwIGl0
-c2VsZiBpbnNpZGUgaGFuZGxlX2VkZ2VfaXJxCj4+IC0gcmVtb3ZlcyB1bm5lZWRlZCBpcnFfZG9t
-YWluX29wcy54bGF0ZSBjYWxsYmFjawo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBSYWRvc2xhdyBQaWV0
-cnp5ayA8cmFkb3NsYXcucGlldHJ6eWtAZ21haWwuY29tPgo+PiAtLS0KPj4gwqAgZHJpdmVycy9p
-cnFjaGlwL2lycS1zdG0zMi1leHRpLmMgfCAxMyAtLS0tLS0tLS0tLS0tCj4+IMKgIDEgZmlsZSBj
-aGFuZ2VkLCAxMyBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaXJxY2hp
-cC9pcnEtc3RtMzItZXh0aS5jIAo+PiBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtc3RtMzItZXh0aS5j
-Cj4+IGluZGV4IDM2ZjBmYmUuLjgwMTNhODcgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvaXJxY2hp
-cC9pcnEtc3RtMzItZXh0aS5jCj4+ICsrKyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtc3RtMzItZXh0
-aS5jCj4+IEBAIC03OSwxMyArNzksNiBAQCBzdGF0aWMgdW5zaWduZWQgbG9uZyBzdG0zMl9leHRp
-X3BlbmRpbmcoc3RydWN0IAo+PiBpcnFfY2hpcF9nZW5lcmljICpnYykKPj4gwqDCoMKgwqDCoCBy
-ZXR1cm4gaXJxX3JlZ19yZWFkbChnYywgc3RtMzJfYmFuay0+cHJfb2ZzdCk7Cj4+IMKgIH0KPj4g
-LXN0YXRpYyB2b2lkIHN0bTMyX2V4dGlfaXJxX2FjayhzdHJ1Y3QgaXJxX2NoaXBfZ2VuZXJpYyAq
-Z2MsIHUzMiBtYXNrKQo+PiAtewo+PiAtwqDCoMKgIGNvbnN0IHN0cnVjdCBzdG0zMl9leHRpX2Jh
-bmsgKnN0bTMyX2JhbmsgPSBnYy0+cHJpdmF0ZTsKPj4gLQo+PiAtwqDCoMKgIGlycV9yZWdfd3Jp
-dGVsKGdjLCBtYXNrLCBzdG0zMl9iYW5rLT5wcl9vZnN0KTsKPj4gLX0KPj4gLQo+PiDCoCBzdGF0
-aWMgdm9pZCBzdG0zMl9pcnFfaGFuZGxlcihzdHJ1Y3QgaXJxX2Rlc2MgKmRlc2MpCj4+IMKgIHsK
-Pj4gwqDCoMKgwqDCoCBzdHJ1Y3QgaXJxX2RvbWFpbiAqZG9tYWluID0gaXJxX2Rlc2NfZ2V0X2hh
-bmRsZXJfZGF0YShkZXNjKTsKPj4gQEAgLTEwNiw3ICs5OSw2IEBAIHN0YXRpYyB2b2lkIHN0bTMy
-X2lycV9oYW5kbGVyKHN0cnVjdCBpcnFfZGVzYyAqZGVzYykKPj4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgZm9yX2VhY2hfc2V0X2JpdChuLCAmcGVuZGluZywgSVJRU19QRVJfQkFOSykgewo+
-PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHZpcnEgPSBpcnFfZmluZF9tYXBw
-aW5nKGRvbWFpbiwgaXJxX2Jhc2UgKyBuKTsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBnZW5lcmljX2hhbmRsZV9pcnEodmlycSk7Cj4+IC3CoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgc3RtMzJfZXh0aV9pcnFfYWNrKGdjLCBCSVQobikpOwo+IAo+IHRoZSB3aGls
-ZSBsb29wICIgd2hpbGUgKChwZW5kaW5nID0gIiBoYXMgYmVlbiBpbnRyb2R1Y2Ugd2hpbGUgb3Jp
-Z2luYWwKPiB1cHN0cmVhbSBvZiB0aGlzIGRyaXZlciBpbiBWMiB0byBWMwo+IGh0dHBzOi8vcGF0
-Y2h3b3JrLm96bGFicy5vcmcvcGF0Y2gvNjA0MTkwLwo+IGh0dHBzOi8vcGF0Y2h3b3JrLm96bGFi
-cy5vcmcvcGF0Y2gvNjY1MjQyLwo+IAo+IHRoZSAiYWNrIiBpcyBuZWVkZWQgdG8gYWNrbm93bGVk
-Z2UgdGhlIGlycSB3aGljaCBhcmUgaGFuZGxlZCBhbmQgd2hpY2ggCj4gaXMgbm90IHRoZSBvcmln
-aW5hbCBpcnEgZm9yIHdoaWNoIHdlIGVudGVyLgo+IAo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCB9Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCB9Cj4+IMKgwqDCoMKgwqAgfQo+PiBAQCAtMTc2
-LDE2ICsxNjgsMTIgQEAgc3RhdGljIGludCBzdG0zMl9pcnFfc2V0X3dha2Uoc3RydWN0IGlycV9k
-YXRhIAo+PiAqZGF0YSwgdW5zaWduZWQgaW50IG9uKQo+PiDCoCBzdGF0aWMgaW50IHN0bTMyX2V4
-dGlfYWxsb2Moc3RydWN0IGlycV9kb21haW4gKmQsIHVuc2lnbmVkIGludCB2aXJxLAo+PiDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGludCBucl9pcnFzLCB2b2lk
-ICpkYXRhKQo+PiDCoCB7Cj4+IC3CoMKgwqAgc3RydWN0IGlycV9jaGlwX2dlbmVyaWMgKmdjOwo+
-PiDCoMKgwqDCoMKgIHN0cnVjdCBpcnFfZndzcGVjICpmd3NwZWMgPSBkYXRhOwo+PiDCoMKgwqDC
-oMKgIGlycV9od19udW1iZXJfdCBod2lycTsKPj4gwqDCoMKgwqDCoCBod2lycSA9IGZ3c3BlYy0+
-cGFyYW1bMF07Cj4+IC3CoMKgwqAgZ2MgPSBpcnFfZ2V0X2RvbWFpbl9nZW5lcmljX2NoaXAoZCwg
-aHdpcnEpOwo+PiDCoMKgwqDCoMKgIGlycV9tYXBfZ2VuZXJpY19jaGlwKGQsIHZpcnEsIGh3aXJx
-KTsKPj4gLcKgwqDCoCBpcnFfZG9tYWluX3NldF9pbmZvKGQsIHZpcnEsIGh3aXJxLCAmZ2MtPmNo
-aXBfdHlwZXMtPmNoaXAsIGdjLAo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGhh
-bmRsZV9zaW1wbGVfaXJxLCBOVUxMLCBOVUxMKTsKPiAKPiBJIHNlZSBpZiBpdCBpcyBub3QgZGlz
-dHVyYiB0aGUgbXVsdGktYmFuay4KCnlvdSBhcmUgcmlnaHQsIG5vcm1hbGx5IGlycV9kb21haW5f
-c2V0X2luZm8gaXMgYWxyZWFkeSBzZXQgaW4KaXJxX21hcF9nZW5lcmljX2NoaXAuCgo+IAo+PiDC
-oMKgwqDCoMKgIHJldHVybiAwOwo+PiDCoCB9Cj4+IEBAIC0yMDAsNyArMTg4LDYgQEAgc3RhdGlj
-IHZvaWQgc3RtMzJfZXh0aV9mcmVlKHN0cnVjdCBpcnFfZG9tYWluICpkLCAKPj4gdW5zaWduZWQg
-aW50IHZpcnEsCj4+IMKgIHN0cnVjdCBpcnFfZG9tYWluX29wcyBpcnFfZXh0aV9kb21haW5fb3Bz
-ID0gewo+PiDCoMKgwqDCoMKgIC5tYXDCoMKgwqAgPSBpcnFfbWFwX2dlbmVyaWNfY2hpcCwKPj4g
-LcKgwqDCoCAueGxhdGXCoMKgwqAgPSBpcnFfZG9tYWluX3hsYXRlX29uZXR3b2NlbGwsCj4+IMKg
-wqDCoMKgwqAgLmFsbG9jwqAgPSBzdG0zMl9leHRpX2FsbG9jLAo+PiDCoMKgwqDCoMKgIC5mcmVl
-wqDCoMKgID0gc3RtMzJfZXh0aV9mcmVlLAo+PiDCoCB9Owo+Pgo+IAo+IEJSCj4gTHVkbwoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtl
-cm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0
-dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5l
-bAo=
+On Thu 25 Jan 17:13 PST 2018, Stephen Boyd wrote:
+
++ Rob
+
+> Some qcom platforms make some GPIOs or pins unavailable for use
+> by non-secure operating systems, and thus reading or writing the
+> registers for those pins will cause access control issues.
+> Introduce a DT property to describe the set of GPIOs that are
+> available for use so that higher level OSes are able to know what
+> pins to avoid reading/writing.
+> 
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Cc: <devicetree@vger.kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio.txt | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+> index b5de08e3b1a2..c22b56680fc8 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -151,9 +151,9 @@ in a lot of designs, some using all 32 bits, some using 18 and some using
+>  first 18 GPIOs, at local offset 0 .. 17, are in use.
+>  
+>  If these GPIOs do not happen to be the first N GPIOs at offset 0...N-1, an
+> -additional bitmask is needed to specify which GPIOs are actually in use,
+> -and which are dummies. The bindings for this case has not yet been
+> -specified, but should be specified if/when such hardware appears.
+> +additional set of tuples is needed to specify which GPIOs are unusable, with
+> +the reserved-gpio-ranges binding. This property indicates the start and size
+> +of the GPIOs that can't be used.
+>  
+>  Optionally, a GPIO controller may have a "gpio-line-names" property. This is
+>  an array of strings defining the names of the GPIO lines going out of the
+> @@ -178,6 +178,7 @@ gpio-controller@00000000 {
+>  	gpio-controller;
+>  	#gpio-cells = <2>;
+>  	ngpios = <18>;
+> +	reserved-gpio-ranges = <0 4>, <12 2>;
+>  	gpio-line-names = "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LED R",
+>  		"LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
+>  		"Row A", "Row B", "Row C", "Row D", "NMI button",
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
