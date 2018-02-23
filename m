@@ -1,16 +1,16 @@
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: Add a reserved-gpio-ranges
- property
-Date: Fri, 23 Feb 2018 08:37:14 -0800
-Message-ID: <20180223163714.GM93895@bjorns-mbp-2.lan>
+Subject: Re: [PATCH v2 0/3] Support qcom pinctrl protected pins
+Date: Fri, 23 Feb 2018 08:54:55 -0800
+Message-ID: <20180223165455.GN93895@bjorns-mbp-2.lan>
 References: <20180126011400.2191-1-sboyd@codeaurora.org>
- <20180126011400.2191-2-sboyd@codeaurora.org>
+ <94a7bd07-8ad5-7ab1-20ab-a02fe2476efd@codeaurora.org>
+ <CACRpkdbgz9PnyLgsn_grsGHbVnak54aOKhetsqfvag5wJNm7=g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20180126011400.2191-2-sboyd@codeaurora.org>
+In-Reply-To: <CACRpkdbgz9PnyLgsn_grsGHbVnak54aOKhetsqfvag5wJNm7=g@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,60 +20,38 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Timur Tabi <timur@codeaurora.org>, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu 25 Jan 17:13 PST 2018, Stephen Boyd wrote:
+On Fri 23 Feb 06:22 PST 2018, Linus Walleij wrote:
 
-+ Rob
-
-> Some qcom platforms make some GPIOs or pins unavailable for use
-> by non-secure operating systems, and thus reading or writing the
-> registers for those pins will cause access control issues.
-> Introduce a DT property to describe the set of GPIOs that are
-> available for use so that higher level OSes are able to know what
-> pins to avoid reading/writing.
+> On Tue, Feb 20, 2018 at 5:45 PM, Timur Tabi <timur@codeaurora.org> wrote:
+> > On 01/25/2018 07:13 PM, Stephen Boyd wrote:
+> >>
+> >> This patchset proposes a solution to describing the valid
+> >> pins for a pin controller in a semi-generic way so that qcom
+> >> platforms can expose the pins that are really available.
+> >>
+> >> Typically, this has been done by having drivers and firmware
+> >> descriptions only use pins they know they have access to, and that
+> >> still works now because we no longer read the pin direction at
+> >> boot. But there are still some userspace drivers and debugfs facilities
+> >> that don't know what pins are available and attempt to read everything
+> >> they can. On qcom platforms, this may lead to a system hang, which isn't
+> >> very nice behavior, even if root is the only user that can trigger it.
+> >
+> > Any progress on this patch set?  Stephen no longer works for Qualcomm, so I
+> > don't know what the next step is, and I really want this feature in 4.17
+> > (we've missed so many merge windows already).
 > 
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Cc: <devicetree@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> I depend on Bjorn as maintainer of the pin control driver to ACK
+> the solution he likes.
+> 
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+I haven't found the time to review the reuse of the irq valid mask or
+the effort needed to replace this, other than that I think the series
+looks good.
 
 Regards,
 Bjorn
-
-> ---
->  Documentation/devicetree/bindings/gpio/gpio.txt | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-> index b5de08e3b1a2..c22b56680fc8 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-> @@ -151,9 +151,9 @@ in a lot of designs, some using all 32 bits, some using 18 and some using
->  first 18 GPIOs, at local offset 0 .. 17, are in use.
->  
->  If these GPIOs do not happen to be the first N GPIOs at offset 0...N-1, an
-> -additional bitmask is needed to specify which GPIOs are actually in use,
-> -and which are dummies. The bindings for this case has not yet been
-> -specified, but should be specified if/when such hardware appears.
-> +additional set of tuples is needed to specify which GPIOs are unusable, with
-> +the reserved-gpio-ranges binding. This property indicates the start and size
-> +of the GPIOs that can't be used.
->  
->  Optionally, a GPIO controller may have a "gpio-line-names" property. This is
->  an array of strings defining the names of the GPIO lines going out of the
-> @@ -178,6 +178,7 @@ gpio-controller@00000000 {
->  	gpio-controller;
->  	#gpio-cells = <2>;
->  	ngpios = <18>;
-> +	reserved-gpio-ranges = <0 4>, <12 2>;
->  	gpio-line-names = "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LED R",
->  		"LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
->  		"Row A", "Row B", "Row C", "Row D", "NMI button",
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
