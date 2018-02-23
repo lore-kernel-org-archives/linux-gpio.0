@@ -1,16 +1,17 @@
 From: Ludovic BARRE <ludovic.barre@st.com>
 Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
  irq_domain
-Date: Fri, 23 Feb 2018 16:46:51 +0100
-Message-ID: <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
+Date: Fri, 23 Feb 2018 17:16:36 +0100
+Message-ID: <73fbc744-872a-8a69-8bf4-a46d7f5b6636@st.com>
 References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
  <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
  <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
+In-Reply-To: <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -24,90 +25,68 @@ Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead
 To: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-hi Radoslaw
-
-The gpio-keys tests it's now functional on H7, great.
-However the gpio-key test only the bank1 (like stm32f429).
-Like the H7 introduce the multi-bank management,
-we must perform complementary test.
-
-comment below about ack in handler
-
-On 02/23/2018 09:31 AM, Radoslaw Pietrzyk wrote:
-> - discards setting handle_simple_irq handler for hierarchy interrupts
-> - removes acking in chained irq handler as this is done by
-> irq_chip itself inside handle_edge_irq
-> - removes unneeded irq_domain_ops.xlate callback
-> 
-> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
-> ---
->   drivers/irqchip/irq-stm32-exti.c | 13 -------------
->   1 file changed, 13 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
-> index 36f0fbe..8013a87 100644
-> --- a/drivers/irqchip/irq-stm32-exti.c
-> +++ b/drivers/irqchip/irq-stm32-exti.c
-> @@ -79,13 +79,6 @@ static unsigned long stm32_exti_pending(struct irq_chip_generic *gc)
->   	return irq_reg_readl(gc, stm32_bank->pr_ofst);
->   }
->   
-> -static void stm32_exti_irq_ack(struct irq_chip_generic *gc, u32 mask)
-> -{
-> -	const struct stm32_exti_bank *stm32_bank = gc->private;
-> -
-> -	irq_reg_writel(gc, mask, stm32_bank->pr_ofst);
-> -}
-> -
->   static void stm32_irq_handler(struct irq_desc *desc)
->   {
->   	struct irq_domain *domain = irq_desc_get_handler_data(desc);
-> @@ -106,7 +99,6 @@ static void stm32_irq_handler(struct irq_desc *desc)
->   			for_each_set_bit(n, &pending, IRQS_PER_BANK) {
->   				virq = irq_find_mapping(domain, irq_base + n);
->   				generic_handle_irq(virq);
-> -				stm32_exti_irq_ack(gc, BIT(n));
-
-the while loop " while ((pending = " has been introduce while original
-upstream of this driver in V2 to V3
-https://patchwork.ozlabs.org/patch/604190/
-https://patchwork.ozlabs.org/patch/665242/
-
-the "ack" is needed to acknowledge the irq which are handled and which 
-is not the original irq for which we enter.
-
->   			}
->   		}
->   	}
-> @@ -176,16 +168,12 @@ static int stm32_irq_set_wake(struct irq_data *data, unsigned int on)
->   static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
->   			    unsigned int nr_irqs, void *data)
->   {
-> -	struct irq_chip_generic *gc;
->   	struct irq_fwspec *fwspec = data;
->   	irq_hw_number_t hwirq;
->   
->   	hwirq = fwspec->param[0];
-> -	gc = irq_get_domain_generic_chip(d, hwirq);
->   
->   	irq_map_generic_chip(d, virq, hwirq);
-> -	irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
-> -			    handle_simple_irq, NULL, NULL);
-
-I see if it is not disturb the multi-bank.
-
->   
->   	return 0;
->   }
-> @@ -200,7 +188,6 @@ static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
->   
->   struct irq_domain_ops irq_exti_domain_ops = {
->   	.map	= irq_map_generic_chip,
-> -	.xlate	= irq_domain_xlate_onetwocell,
->   	.alloc  = stm32_exti_alloc,
->   	.free	= stm32_exti_free,
->   };
-> 
-
-BR
-Ludo
+CgpPbiAwMi8yMy8yMDE4IDA0OjQ2IFBNLCBMdWRvdmljIEJBUlJFIHdyb3RlOgo+IGhpIFJhZG9z
+bGF3Cj4gCj4gVGhlIGdwaW8ta2V5cyB0ZXN0cyBpdCdzIG5vdyBmdW5jdGlvbmFsIG9uIEg3LCBn
+cmVhdC4KPiBIb3dldmVyIHRoZSBncGlvLWtleSB0ZXN0IG9ubHkgdGhlIGJhbmsxIChsaWtlIHN0
+bTMyZjQyOSkuCj4gTGlrZSB0aGUgSDcgaW50cm9kdWNlIHRoZSBtdWx0aS1iYW5rIG1hbmFnZW1l
+bnQsCj4gd2UgbXVzdCBwZXJmb3JtIGNvbXBsZW1lbnRhcnkgdGVzdC4KPiAKPiBjb21tZW50IGJl
+bG93IGFib3V0IGFjayBpbiBoYW5kbGVyCj4gCj4gT24gMDIvMjMvMjAxOCAwOTozMSBBTSwgUmFk
+b3NsYXcgUGlldHJ6eWsgd3JvdGU6Cj4+IC0gZGlzY2FyZHMgc2V0dGluZyBoYW5kbGVfc2ltcGxl
+X2lycSBoYW5kbGVyIGZvciBoaWVyYXJjaHkgaW50ZXJydXB0cwo+PiAtIHJlbW92ZXMgYWNraW5n
+IGluIGNoYWluZWQgaXJxIGhhbmRsZXIgYXMgdGhpcyBpcyBkb25lIGJ5Cj4+IGlycV9jaGlwIGl0
+c2VsZiBpbnNpZGUgaGFuZGxlX2VkZ2VfaXJxCj4+IC0gcmVtb3ZlcyB1bm5lZWRlZCBpcnFfZG9t
+YWluX29wcy54bGF0ZSBjYWxsYmFjawo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBSYWRvc2xhdyBQaWV0
+cnp5ayA8cmFkb3NsYXcucGlldHJ6eWtAZ21haWwuY29tPgo+PiAtLS0KPj4gwqAgZHJpdmVycy9p
+cnFjaGlwL2lycS1zdG0zMi1leHRpLmMgfCAxMyAtLS0tLS0tLS0tLS0tCj4+IMKgIDEgZmlsZSBj
+aGFuZ2VkLCAxMyBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaXJxY2hp
+cC9pcnEtc3RtMzItZXh0aS5jIAo+PiBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtc3RtMzItZXh0aS5j
+Cj4+IGluZGV4IDM2ZjBmYmUuLjgwMTNhODcgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvaXJxY2hp
+cC9pcnEtc3RtMzItZXh0aS5jCj4+ICsrKyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtc3RtMzItZXh0
+aS5jCj4+IEBAIC03OSwxMyArNzksNiBAQCBzdGF0aWMgdW5zaWduZWQgbG9uZyBzdG0zMl9leHRp
+X3BlbmRpbmcoc3RydWN0IAo+PiBpcnFfY2hpcF9nZW5lcmljICpnYykKPj4gwqDCoMKgwqDCoCBy
+ZXR1cm4gaXJxX3JlZ19yZWFkbChnYywgc3RtMzJfYmFuay0+cHJfb2ZzdCk7Cj4+IMKgIH0KPj4g
+LXN0YXRpYyB2b2lkIHN0bTMyX2V4dGlfaXJxX2FjayhzdHJ1Y3QgaXJxX2NoaXBfZ2VuZXJpYyAq
+Z2MsIHUzMiBtYXNrKQo+PiAtewo+PiAtwqDCoMKgIGNvbnN0IHN0cnVjdCBzdG0zMl9leHRpX2Jh
+bmsgKnN0bTMyX2JhbmsgPSBnYy0+cHJpdmF0ZTsKPj4gLQo+PiAtwqDCoMKgIGlycV9yZWdfd3Jp
+dGVsKGdjLCBtYXNrLCBzdG0zMl9iYW5rLT5wcl9vZnN0KTsKPj4gLX0KPj4gLQo+PiDCoCBzdGF0
+aWMgdm9pZCBzdG0zMl9pcnFfaGFuZGxlcihzdHJ1Y3QgaXJxX2Rlc2MgKmRlc2MpCj4+IMKgIHsK
+Pj4gwqDCoMKgwqDCoCBzdHJ1Y3QgaXJxX2RvbWFpbiAqZG9tYWluID0gaXJxX2Rlc2NfZ2V0X2hh
+bmRsZXJfZGF0YShkZXNjKTsKPj4gQEAgLTEwNiw3ICs5OSw2IEBAIHN0YXRpYyB2b2lkIHN0bTMy
+X2lycV9oYW5kbGVyKHN0cnVjdCBpcnFfZGVzYyAqZGVzYykKPj4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgZm9yX2VhY2hfc2V0X2JpdChuLCAmcGVuZGluZywgSVJRU19QRVJfQkFOSykgewo+
+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHZpcnEgPSBpcnFfZmluZF9tYXBw
+aW5nKGRvbWFpbiwgaXJxX2Jhc2UgKyBuKTsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBnZW5lcmljX2hhbmRsZV9pcnEodmlycSk7Cj4+IC3CoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgc3RtMzJfZXh0aV9pcnFfYWNrKGdjLCBCSVQobikpOwo+IAo+IHRoZSB3aGls
+ZSBsb29wICIgd2hpbGUgKChwZW5kaW5nID0gIiBoYXMgYmVlbiBpbnRyb2R1Y2Ugd2hpbGUgb3Jp
+Z2luYWwKPiB1cHN0cmVhbSBvZiB0aGlzIGRyaXZlciBpbiBWMiB0byBWMwo+IGh0dHBzOi8vcGF0
+Y2h3b3JrLm96bGFicy5vcmcvcGF0Y2gvNjA0MTkwLwo+IGh0dHBzOi8vcGF0Y2h3b3JrLm96bGFi
+cy5vcmcvcGF0Y2gvNjY1MjQyLwo+IAo+IHRoZSAiYWNrIiBpcyBuZWVkZWQgdG8gYWNrbm93bGVk
+Z2UgdGhlIGlycSB3aGljaCBhcmUgaGFuZGxlZCBhbmQgd2hpY2ggCj4gaXMgbm90IHRoZSBvcmln
+aW5hbCBpcnEgZm9yIHdoaWNoIHdlIGVudGVyLgo+IAo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCB9Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCB9Cj4+IMKgwqDCoMKgwqAgfQo+PiBAQCAtMTc2
+LDE2ICsxNjgsMTIgQEAgc3RhdGljIGludCBzdG0zMl9pcnFfc2V0X3dha2Uoc3RydWN0IGlycV9k
+YXRhIAo+PiAqZGF0YSwgdW5zaWduZWQgaW50IG9uKQo+PiDCoCBzdGF0aWMgaW50IHN0bTMyX2V4
+dGlfYWxsb2Moc3RydWN0IGlycV9kb21haW4gKmQsIHVuc2lnbmVkIGludCB2aXJxLAo+PiDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGludCBucl9pcnFzLCB2b2lk
+ICpkYXRhKQo+PiDCoCB7Cj4+IC3CoMKgwqAgc3RydWN0IGlycV9jaGlwX2dlbmVyaWMgKmdjOwo+
+PiDCoMKgwqDCoMKgIHN0cnVjdCBpcnFfZndzcGVjICpmd3NwZWMgPSBkYXRhOwo+PiDCoMKgwqDC
+oMKgIGlycV9od19udW1iZXJfdCBod2lycTsKPj4gwqDCoMKgwqDCoCBod2lycSA9IGZ3c3BlYy0+
+cGFyYW1bMF07Cj4+IC3CoMKgwqAgZ2MgPSBpcnFfZ2V0X2RvbWFpbl9nZW5lcmljX2NoaXAoZCwg
+aHdpcnEpOwo+PiDCoMKgwqDCoMKgIGlycV9tYXBfZ2VuZXJpY19jaGlwKGQsIHZpcnEsIGh3aXJx
+KTsKPj4gLcKgwqDCoCBpcnFfZG9tYWluX3NldF9pbmZvKGQsIHZpcnEsIGh3aXJxLCAmZ2MtPmNo
+aXBfdHlwZXMtPmNoaXAsIGdjLAo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGhh
+bmRsZV9zaW1wbGVfaXJxLCBOVUxMLCBOVUxMKTsKPiAKPiBJIHNlZSBpZiBpdCBpcyBub3QgZGlz
+dHVyYiB0aGUgbXVsdGktYmFuay4KCnlvdSBhcmUgcmlnaHQsIG5vcm1hbGx5IGlycV9kb21haW5f
+c2V0X2luZm8gaXMgYWxyZWFkeSBzZXQgaW4KaXJxX21hcF9nZW5lcmljX2NoaXAuCgo+IAo+PiDC
+oMKgwqDCoMKgIHJldHVybiAwOwo+PiDCoCB9Cj4+IEBAIC0yMDAsNyArMTg4LDYgQEAgc3RhdGlj
+IHZvaWQgc3RtMzJfZXh0aV9mcmVlKHN0cnVjdCBpcnFfZG9tYWluICpkLCAKPj4gdW5zaWduZWQg
+aW50IHZpcnEsCj4+IMKgIHN0cnVjdCBpcnFfZG9tYWluX29wcyBpcnFfZXh0aV9kb21haW5fb3Bz
+ID0gewo+PiDCoMKgwqDCoMKgIC5tYXDCoMKgwqAgPSBpcnFfbWFwX2dlbmVyaWNfY2hpcCwKPj4g
+LcKgwqDCoCAueGxhdGXCoMKgwqAgPSBpcnFfZG9tYWluX3hsYXRlX29uZXR3b2NlbGwsCj4+IMKg
+wqDCoMKgwqAgLmFsbG9jwqAgPSBzdG0zMl9leHRpX2FsbG9jLAo+PiDCoMKgwqDCoMKgIC5mcmVl
+wqDCoMKgID0gc3RtMzJfZXh0aV9mcmVlLAo+PiDCoCB9Owo+Pgo+IAo+IEJSCj4gTHVkbwoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtl
+cm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0
+dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5l
+bAo=
