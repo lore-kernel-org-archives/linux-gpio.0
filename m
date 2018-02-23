@@ -1,14 +1,14 @@
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH v3 1/7] pinctrl: sunxi: refactor irq related register
- function to have desc
-Date: Fri, 23 Feb 2018 16:16:39 +0100
-Message-ID: <20180223151639.wru7b67byksefxpk@flea.lan>
-References: <20180223122552.58049-1-icenowy@aosc.io>
- <20180223122552.58049-2-icenowy@aosc.io>
+Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner
+ H6 DTSI file
+Date: Fri, 23 Feb 2018 16:20:38 +0100
+Message-ID: <20180223152038.2bflylwa6vj4gzfj@flea.lan>
+References: <20180223123555.64009-6-icenowy@aosc.io>
+ <20180223123555.64009-7-icenowy@aosc.io>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============9218263006879346022=="
+Content-Type: multipart/mixed; boundary="===============2156292381715828893=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180223122552.58049-2-icenowy@aosc.io>
+In-Reply-To: <20180223123555.64009-7-icenowy@aosc.io>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -23,47 +23,125 @@ Cc: devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-
 List-Id: linux-gpio@vger.kernel.org
 
 
---===============9218263006879346022==
+--===============2156292381715828893==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="d5vslvnq23qzf7rm"
+	protocol="application/pgp-signature"; boundary="l2fdrnpsmitlpdua"
 Content-Disposition: inline
 
 
---d5vslvnq23qzf7rm
+--l2fdrnpsmitlpdua
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Fri, Feb 23, 2018 at 08:25:46PM +0800, Icenowy Zheng wrote:
-> As the new H6 SoC has holes in the IRQ registers, refactor the IRQ
-> related register function for getting the full pinctrl desc structure.
+On Fri, Feb 23, 2018 at 08:35:54PM +0800, Icenowy Zheng wrote:
+> Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with its
+> memory map fully reworked and some high-speed peripherals (PCIe, USB
+> 3.0) introduced.
+>=20
+> This commit adds the basical DTSI file of it, including the clock
+> support and UART support.
 >=20
 > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 > ---
-> New patch in v3.
+> Changes in v3:
+> - SPDX license identifier fix.
 >=20
->  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 18 ++++++++----------
->  drivers/pinctrl/sunxi/pinctrl-sunxi.h | 29 +++++++++++++++++++++--------
->  2 files changed, 29 insertions(+), 18 deletions(-)
+> Changes in v2:
+> - Add APB1 clock as PIO's APB clock.
+> - Switched to SPDX license identifier.
 >=20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunx=
-i/pinctrl-sunxi.c
-> index 341312d66512..31bd99f7df50 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -835,7 +835,7 @@ static void sunxi_pinctrl_irq_release_resources(struc=
-t irq_data *d)
->  static int sunxi_pinctrl_irq_set_type(struct irq_data *d, unsigned int t=
-ype)
->  {
->  	struct sunxi_pinctrl *pctl =3D irq_data_get_irq_chip_data(d);
-> -	u32 reg =3D sunxi_irq_cfg_reg(d->hwirq, pctl->desc->irq_bank_base);
-> +	u32 reg =3D sunxi_irq_cfg_reg(d->hwirq, pctl->desc);
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 177 +++++++++++++++++++++=
+++++++
+>  1 file changed, 177 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/bo=
+ot/dts/allwinner/sun50i-h6.dtsi
+> new file mode 100644
+> index 000000000000..4a6236bd9778
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> @@ -0,0 +1,177 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> +/*
+> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/sun50i-h6-ccu.h>
+> +#include <dt-bindings/reset/sun50i-h6-ccu.h>
+> +
+> +/ {
+> +	interrupt-parent =3D <&gic>;
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <1>;
+> +
+> +	cpus {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		cpu0: cpu@0 {
+> +			compatible =3D "arm,cortex-a53", "arm,armv8";
+> +			device_type =3D "cpu";
+> +			reg =3D <0>;
+> +			enable-method =3D "psci";
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			compatible =3D "arm,cortex-a53", "arm,armv8";
+> +			device_type =3D "cpu";
+> +			reg =3D <1>;
+> +			enable-method =3D "psci";
+> +		};
+> +
+> +		cpu2: cpu@2 {
+> +			compatible =3D "arm,cortex-a53", "arm,armv8";
+> +			device_type =3D "cpu";
+> +			reg =3D <2>;
+> +			enable-method =3D "psci";
+> +		};
+> +
+> +		cpu3: cpu@3 {
+> +			compatible =3D "arm,cortex-a53", "arm,armv8";
+> +			device_type =3D "cpu";
+> +			reg =3D <3>;
+> +			enable-method =3D "psci";
+> +		};
+> +	};
+> +
+> +	iosc: internal-osc-clk {
+> +		#clock-cells =3D <0>;
+> +		compatible =3D "fixed-clock";
+> +		clock-frequency =3D <16000000>;
+> +		clock-accuracy =3D <300000000>;
+> +		clock-output-names =3D "iosc";
+> +	};
 
-That's better, but it makes more sense to have the desc as the first
-argument.
+You're not using it anywhere
+
+> +	osc24M: osc24M_clk {
+> +		#clock-cells =3D <0>;
+> +		compatible =3D "fixed-clock";
+> +		clock-frequency =3D <24000000>;
+> +		clock-output-names =3D "osc24M";
+> +	};
+> +
+> +	osc32k: osc32k_clk {
+> +		#clock-cells =3D <0>;
+> +		compatible =3D "fixed-clock";
+> +		clock-frequency =3D <32768>;
+> +		clock-output-names =3D "osc32k";
+> +	};
+> +
+> +	psci {
+> +		compatible =3D "arm,psci-0.2";
+> +		method =3D "smc";
+> +	};
+
+Is it needed? The bootloader should fill it with whatever version it
+has, shouldn't it?
 
 Thanks!
 Maxime
@@ -73,30 +151,30 @@ Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---d5vslvnq23qzf7rm
+--l2fdrnpsmitlpdua
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqQMFYACgkQ0rTAlCFN
-r3QTOA/9Fy72LvYP4pol6xWqxteUbvn45KolMI2tOMVh9aTvs5CyZzrljAIkcCwn
-R9yR2J4HKWDD0nucHpO/1DomqAhmKo2DF7oFj/r71E/K6uirySM6Dqh7rMmqFN0p
-fwZlBEGbz2WZk1U9HtDfKc9XJuu2+z3bYiysxyla0cQmAScSnkNSTDfQtoMt8G9R
-E7JhenAdANX7c+s1Iq0IJVD42foOWnodh+/Qcg/rWKxG2+FjrhfdZow2BwakvFbv
-FV3UyqaZKyn8SjUycgW117qn/OZIGPG5/cD6LqdY0M+rzzpahG58JNNCNykzahiv
-ajdQEynL0+lS03Nx42Cm4S6jnZyd1e1jlGeoA3ew9Ii4+3Nj9fTswch6Y8r2UUh3
-Nw0lb7E9YAAH9wCpxDToC91ZXQTIS9Kb1bK4bmoc6skLXyJRJu90dF7AskTh3Sda
-YjSwkJ8LP/aKxQsArUEdTdiMoZRkkE4fyZGMGSFyUfCmdv8rrl7Gh0iQTQv5xcEH
-fVAiACoHy5nGwqIbrUguMqreMuxOt1XvzFggvyYprPhnI0Q7QFPJjjU1kypL6rfP
-6P44C7/4W8b1ZT5SUhRFBsi2eti3JGbytr+xYQ1PoaHrK0SE/Mlw2NKr9IT5LOUY
-km9Vq31bp5fYjWIaT8PV1DDVWmbx8lfLbBjS+w+cdo9utBjmmDQ=
-=Y8jB
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqQMUUACgkQ0rTAlCFN
+r3TVHRAAk/zurzZNX92aYYFuKKrNaIZVtlQ3TjMUrhpHWREtUKOY6Eqww5ymSq/A
+lMJMDtBPP4cUMWqGfhJsOevAqzfpEVzta4QoIhUo44TclVAOVegBbDwEFemWsfg7
+S1RzpeAXmW2rNvbHdqp519L97tHZQTxZ1aPsyGDGcnMDOyej6moAPjj+im5istOW
++rPlNSqd6Wa5/ZUoEJUJn/5U6R8sKvZNPgxdl3YlXWHlNNkzkJ36KaEu6vykwhV6
+6GgHdoVuTcWU/XtnNjIsC3j5GfQxOvGXBtvhKcnZowo1Vxt+p2Gb3bDkHtqjbLUy
+tNrFFxUTKZK0F06Ct/+cgm6N6SkFsu8WHlp7Ak4zP6uUvMHS+5FlycRCI49gmp05
+HkXbHndRnRJvSc+MKj6qjBhpceFzBtbViD2iUL3SEsQi1j+v75t6mZiHo7nFVbT6
+oPLAF/89ZFjO6XyfmMIEc0nVRr1UvEXo6XuOlByvXv2/ttcZQlHK62ruqjuiK1dE
+4bHknI2POiMi8/3AJkUwhS+g8h6KGhmTUyUR1cy99CSagRsnbe4Wd/YOsFFDeSAp
+LT5mvFcWSPUIrlYSfmxa98NFXi6DH7PL/+5m7IVjUzz1IfXBTR+rZ6zGoR1yko3o
+gn2hMHXn/YRQaewgp6zhorbffutDGzM+Wb+nYwMWCmQVe3YC7Og=
+=xle5
 -----END PGP SIGNATURE-----
 
---d5vslvnq23qzf7rm--
+--l2fdrnpsmitlpdua--
 
 
---===============9218263006879346022==
+--===============2156292381715828893==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -107,4 +185,4 @@ linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
---===============9218263006879346022==--
+--===============2156292381715828893==--
