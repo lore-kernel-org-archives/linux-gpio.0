@@ -1,124 +1,103 @@
-From: =?UTF-8?Q?Rados=C5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
-Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
- irq_domain
-Date: Fri, 23 Feb 2018 18:37:04 +0100
-Message-ID: <CAFvLkMTzaFODziZC3fFGYu+F=RuMBx5tFgA1q2UFSk4KyfuU5A@mail.gmail.com>
-References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
- <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
+From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Subject: [PATCH] pinctrl/rockchip: Don't call pinctrl_force_* for nothing
+Date: Sat, 24 Feb 2018 20:07:31 +0000
+Message-ID: <20180224200732.6116-1-marc.zyngier@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ludovic BARRE <ludovic.barre@st.com>
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, open list <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>, "moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Alexandre Torgue <alexandre.torgue@st.com>
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-I don't fully get it to be honest. If interrupt is pending it must
-have been enabled (unmasked) and requires to be handled acked. It will
-be acked by irq_chip.irq_ack handler within the edge handler.
-Therefore this additional acking is meaningless.
+The rockchip pinctl driver calls pinctrl_force_default and
+pinctrl_force_sleep on suspend resume, but seems to expect
+that the outcome of these calls will be that nothing happens,
+as the core code checks whether we're already in the right
+state or not.
 
-2018-02-23 16:46 GMT+01:00 Ludovic BARRE <ludovic.barre@st.com>:
-> hi Radoslaw
->
-> The gpio-keys tests it's now functional on H7, great.
-> However the gpio-key test only the bank1 (like stm32f429).
-> Like the H7 introduce the multi-bank management,
-> we must perform complementary test.
->
-> comment below about ack in handler
->
->
-> On 02/23/2018 09:31 AM, Radoslaw Pietrzyk wrote:
->>
->> - discards setting handle_simple_irq handler for hierarchy interrupts
->> - removes acking in chained irq handler as this is done by
->> irq_chip itself inside handle_edge_irq
->> - removes unneeded irq_domain_ops.xlate callback
->>
->> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
->> ---
->>   drivers/irqchip/irq-stm32-exti.c | 13 -------------
->>   1 file changed, 13 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-stm32-exti.c
->> b/drivers/irqchip/irq-stm32-exti.c
->> index 36f0fbe..8013a87 100644
->> --- a/drivers/irqchip/irq-stm32-exti.c
->> +++ b/drivers/irqchip/irq-stm32-exti.c
->> @@ -79,13 +79,6 @@ static unsigned long stm32_exti_pending(struct
->> irq_chip_generic *gc)
->>         return irq_reg_readl(gc, stm32_bank->pr_ofst);
->>   }
->>   -static void stm32_exti_irq_ack(struct irq_chip_generic *gc, u32 mask)
->> -{
->> -       const struct stm32_exti_bank *stm32_bank = gc->private;
->> -
->> -       irq_reg_writel(gc, mask, stm32_bank->pr_ofst);
->> -}
->> -
->>   static void stm32_irq_handler(struct irq_desc *desc)
->>   {
->>         struct irq_domain *domain = irq_desc_get_handler_data(desc);
->> @@ -106,7 +99,6 @@ static void stm32_irq_handler(struct irq_desc *desc)
->>                         for_each_set_bit(n, &pending, IRQS_PER_BANK) {
->>                                 virq = irq_find_mapping(domain, irq_base +
->> n);
->>                                 generic_handle_irq(virq);
->> -                               stm32_exti_irq_ack(gc, BIT(n));
->
->
-> the while loop " while ((pending = " has been introduce while original
-> upstream of this driver in V2 to V3
-> https://patchwork.ozlabs.org/patch/604190/
-> https://patchwork.ozlabs.org/patch/665242/
->
-> the "ack" is needed to acknowledge the irq which are handled and which is
-> not the original irq for which we enter.
->
->>                         }
->>                 }
->>         }
->> @@ -176,16 +168,12 @@ static int stm32_irq_set_wake(struct irq_data *data,
->> unsigned int on)
->>   static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
->>                             unsigned int nr_irqs, void *data)
->>   {
->> -       struct irq_chip_generic *gc;
->>         struct irq_fwspec *fwspec = data;
->>         irq_hw_number_t hwirq;
->>         hwirq = fwspec->param[0];
->> -       gc = irq_get_domain_generic_chip(d, hwirq);
->>         irq_map_generic_chip(d, virq, hwirq);
->> -       irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
->> -                           handle_simple_irq, NULL, NULL);
->
->
-> I see if it is not disturb the multi-bank.
->
->>         return 0;
->>   }
->> @@ -200,7 +188,6 @@ static void stm32_exti_free(struct irq_domain *d,
->> unsigned int virq,
->>     struct irq_domain_ops irq_exti_domain_ops = {
->>         .map    = irq_map_generic_chip,
->> -       .xlate  = irq_domain_xlate_onetwocell,
->>         .alloc  = stm32_exti_alloc,
->>         .free   = stm32_exti_free,
->>   };
->>
->
-> BR
-> Ludo
+Or at least, that was what the core code was doing until
+981ed1bfbc ("pinctrl: Really force states during suspend/resume"),
+which gives the "force" qualifier its actual meaning.
+
+In turn, this breaks suspend/resume on the rk3399. So let's
+change the rockchip code to do what it should have done from
+the very begining, which is exactly *nothing*.
+
+We take this opportunity to tidy-up the RK3288 GPIO6_C6 mux
+resume workaround, making it symetrical to the suspend path.
+
+Tested on a rk3399-based kevin Chromebook.
+
+Fixes: 9198f509c888 ("pinctrl: rockchip: add suspend/resume functions")
+Signed-off-by: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-rockchip.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 3924779f5578..a3a503e684dc 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -3114,22 +3114,18 @@ static u32 rk3288_grf_gpio6c_iomux;
+ static int __maybe_unused rockchip_pinctrl_suspend(struct device *dev)
+ {
+ 	struct rockchip_pinctrl *info = dev_get_drvdata(dev);
+-	int ret = pinctrl_force_sleep(info->pctl_dev);
+-
+-	if (ret)
+-		return ret;
+ 
+ 	/*
+ 	 * RK3288 GPIO6_C6 mux would be modified by Maskrom when resume, so save
+ 	 * the setting here, and restore it at resume.
+ 	 */
+ 	if (info->ctrl->type == RK3288) {
++		int ret;
++
+ 		ret = regmap_read(info->regmap_base, RK3288_GRF_GPIO6C_IOMUX,
+ 				  &rk3288_grf_gpio6c_iomux);
+-		if (ret) {
+-			pinctrl_force_default(info->pctl_dev);
++		if (ret)
+ 			return ret;
+-		}
+ 	}
+ 
+ 	return 0;
+@@ -3138,14 +3134,18 @@ static int __maybe_unused rockchip_pinctrl_suspend(struct device *dev)
+ static int __maybe_unused rockchip_pinctrl_resume(struct device *dev)
+ {
+ 	struct rockchip_pinctrl *info = dev_get_drvdata(dev);
+-	int ret = regmap_write(info->regmap_base, RK3288_GRF_GPIO6C_IOMUX,
+-			       rk3288_grf_gpio6c_iomux |
+-			       GPIO6C6_SEL_WRITE_ENABLE);
+ 
+-	if (ret)
+-		return ret;
++	if (info->ctrl->type == RK3288) {
++		int ret;
+ 
+-	return pinctrl_force_default(info->pctl_dev);
++		ret = regmap_write(info->regmap_base, RK3288_GRF_GPIO6C_IOMUX,
++				   rk3288_grf_gpio6c_iomux |
++				   GPIO6C6_SEL_WRITE_ENABLE);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
+ }
+ 
+ static SIMPLE_DEV_PM_OPS(rockchip_pinctrl_dev_pm_ops, rockchip_pinctrl_suspend,
+-- 
+2.14.2
