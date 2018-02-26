@@ -1,29 +1,82 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] Revert "gpio: winbond: fix ISA_BUS_API dependency"
-Date: Mon, 26 Feb 2018 11:28:32 +0100
-Message-ID: <CACRpkdbZ30G1wBOpLR7JxLjBKU1ozd8d8upVbymfiEb0q-ibqA@mail.gmail.com>
-References: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 3/3] gpio: Add Spreadtrum PMIC EIC driver support
+Date: Mon, 26 Feb 2018 14:02:41 +0200
+Message-ID: <CAHp75VeJiqp74LrsETHTwxd5iaOObRX5bdYXz=rYeHm-4KbgHA@mail.gmail.com>
+References: <334505d3a13a73ad347427b408ed581832434289.1519468782.git.baolin.wang@linaro.org>
+ <f4a2fefb4c3179e7598dbc8141a661833200b922.1519468782.git.baolin.wang@linaro.org>
+ <CAHp75VdvLDEmNs-YUFYf+Og18kaU6j6zAxXc1w31X2vw26ACHQ@mail.gmail.com> <CAMz4kuJ+BmWnSFFvE91Ric-Wm6tzxs_a5UWMx82tPj_ZVvC4tw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
+In-Reply-To: <CAMz4kuJ+BmWnSFFvE91Ric-Wm6tzxs_a5UWMx82tPj_ZVvC4tw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Guenter Roeck <linux@roeck-us.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 3:55 PM, Maciej S. Szmigiero
-<mail@maciej.szmigiero.name> wrote:
+On Mon, Feb 26, 2018 at 5:01 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+> On 25 February 2018 at 20:19, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>> On Sat, Feb 24, 2018 at 12:44 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
 
-> This reverts commit 92a8046c9d952a2a7d21dfcd3afadc72a0bc0f72.
+>>> +static int sprd_pmic_eic_direction_input(struct gpio_chip *chip,
+>>> +                                        unsigned int offset)
+>>> +{
+>>> +       /* EICs are always input, nothing need to do here. */
+>>> +       return 0;
+>>> +}
+>>> +
+>>> +static void sprd_pmic_eic_set(struct gpio_chip *chip, unsigned int offset,
+>>> +                             int value)
+>>> +{
+>>> +       /* EICs are always input, nothing need to do here. */
+>>> +}
+>>
+>> Remove both.
+>>
+>> Look at what GPIO core does.
 >
-> Now that the patch series changing ISA_BUS_API dependency to selection
-> was merged this reversion will do the same for gpio-winbond driver to
-> make it consistent with other ISA bus gpio drivers.
+> I've checked the GPIO core, we need the
+> sprd_pmic_eic_direction_input() returns 0, since user can set GPIOD_IN
+> flag when requesting one GPIO, otherwise it will return errors.
+
+Right. I thought it depends on presence of direction_output().
+
+> We also need one dummy sprd_pmic_eic_set() when setting debounce for
+> one GPIO, otherwise it will return errors.
+
+This is pretty much a "feature" of GPIO framework. It shouldn't
+require ->set() by logic if there is no output facility.
+OK.
+
+>>> +       for (n = 0; n < chip->ngpio; n++) {
+>>> +               if (!(BIT(n) & val))
+>>
+>> for_each_set_bit().
+>>
+>> At some point you may need just to go across lib/ in the kernel and
+>> see what we have there.
 >
-> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+> I've considered the for_each_set_bit(), it need one 'unsigned long'
+> type parameter, but we get the value from regmap is 'u32' type. So we
+> need one extra conversion from 'u32' to 'unsigned long' like:
+>
+> unsigned long reg = val;
+>
+> for_each_set_bit(n, &reg, chip->ngpio) {
+>         .......
+> }
+>
+> If you like this conversion, then I can change to use
+> for_each_set_bit(). Thanks.
 
-Patch applied.
+Wouldn't it work like
 
-Yours,
-Linus Walleij
+unsigned long val;
+
+...regmap_read(..., &val);
+
+?
+
+-- 
+With Best Regards,
+Andy Shevchenko
