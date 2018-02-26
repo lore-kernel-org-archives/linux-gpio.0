@@ -1,74 +1,50 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner
- H6 DTSI file
-Date: Mon, 26 Feb 2018 10:26:45 +0100
-Message-ID: <20180226092645.xghkmfowenzlbm42@flea.lan>
-References: <20180223123555.64009-6-icenowy@aosc.io>
- <20180223123555.64009-7-icenowy@aosc.io>
- <20180223152038.2bflylwa6vj4gzfj@flea.lan>
- <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for v4.16
+Date: Mon, 26 Feb 2018 10:36:00 +0100
+Message-ID: <CACRpkdYGQUynZJu+4-Bj=TzL5=C4qt2cYav__9aHSnwD2NERDA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z6o7m63bqzv2zod7"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Linus,
 
---z6o7m63bqzv2zod7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+two fixes to GPIO, both by nice colleagues fixing my mistakes.
+Please pull it in!
 
-On Fri, Feb 23, 2018 at 11:22:06PM +0800, Icenowy Zheng wrote:
-> >> +	psci {
-> >> +		compatible =3D "arm,psci-0.2";
-> >> +		method =3D "smc";
-> >> +	};
-> >
-> >Is it needed? The bootloader should fill it with whatever version it
-> >has, shouldn't it?
->=20
-> But we now use ATF rather than U-Boot PSCI. U-Boot will not fill ATF
-> info.
->=20
-> See A64/H5 device trees.
+Linus Walleij
 
-So if the PSCI version implemented in ATF ever changes, we would have
-to update all the DT everywhere, but only if you're running the new
-version?
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-Sigh.
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
-Maxime
+are available in the Git repository at:
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.16-2
 
---z6o7m63bqzv2zod7
-Content-Type: application/pgp-signature; name="signature.asc"
+for you to fetch changes up to c2b3eec47c1b2161adbc70676f1422e6f56aaa32:
 
------BEGIN PGP SIGNATURE-----
+  gpio: Handle deferred probing in of_find_gpio() properly (2018-02-21
+09:37:34 +0100)
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqT0tQACgkQ0rTAlCFN
-r3TLwg/+Nz8rd3gYDqm5pcrYPGIJN0H61KEsqx/iB8F9FplnrLVH79Y2LXuehDAD
-OFNpmoWWZMXoRePjL/rpoA6/EfXeBddtks+IyMgAHQgBWqDjHgAvq0IV7NUAQ0hb
-AfcIVhDAposY/s8e0BmANAdxLZESlQkZE2kqZEgQ8nr1yDVHam4iALk0gp4DTwef
-U0aDUttzBlHmGZmcEVRuxh2CoPualNFBmav4+GLR/8UdzK/yu64bJHaVan19M9R7
-mGQ8JcU5GJgdFzWFrECgOCsgT5scQqEnve9PxA0w7NYqvP6yCPqTLQ0B58xPl92p
-CEgJqbogmdhE5a9/Mv+G1NXnJlUHFtJkQ030tMRAj6sA247wPnowW5uFnPYi35xc
-CfFrlG+IzcFYDdPy3wfhyHPfGn7o9yxZMNchlseLywyM4uBwf8wjds3nKNeP0Y0m
-NH8ZJK8PKQ+LXfj7Ihu4VSpmH64zkYSQwqMbjFFvuJXGsnBPqqS/Ok+ZzXKjgh1r
-/8grCvGLfKL/r/9/VCYFx0/oGh23oicUBkYLFAsYcDb3lOA0TO+03pqtdXARshaO
-QTbdqBi9Iz90Y3lxOfbpRMG90RvonBeUh9GpeRXKfxL5mD4M5vGh7lD3a2Jojek4
-mj2++whGyo3wLYsFirdAqeA4b0oGSJffC3vpSjzz1OW7U9MhJXA=
-=8ds1
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+GPIO fixes for the v4.16 kernel:
 
---z6o7m63bqzv2zod7--
+- Two patches fixing up my mistakes with device tree properties
+  compatible for SPI and regulators. Nice to smoke this out for
+  v4.16 though, when we actually use it in v4.17 it will be
+  in nice shape.
+
+----------------------------------------------------------------
+Chen-Yu Tsai (1):
+      gpio: Handle deferred probing in of_find_gpio() properly
+
+Maxime Ripard (1):
+      gpiolib: Keep returning EPROBE_DEFER when we should
+
+ drivers/gpio/gpiolib-of.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
