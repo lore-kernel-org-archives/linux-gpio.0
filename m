@@ -1,35 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: Keep returning EPROBE_DEFER when we should
-Date: Mon, 26 Feb 2018 11:24:35 +0100
-Message-ID: <CACRpkdb1=H-KqZyB50k9gUSUJXtGqeYA8w05Q_P8Jod-2wmWpg@mail.gmail.com>
-References: <20180221081100.17662-1-maxime.ripard@bootlin.com>
- <CACRpkdYkT7TJrhyQoJr=ZK7w8+KY=_fgjrJeaZCsLHA_6WbZbg@mail.gmail.com> <20180221091623.4accxa2qglmo3scl@flea.lan>
+Subject: Re: [PATCH] Revert "gpio: winbond: fix ISA_BUS_API dependency"
+Date: Mon, 26 Feb 2018 11:28:32 +0100
+Message-ID: <CACRpkdbZ30G1wBOpLR7JxLjBKU1ozd8d8upVbymfiEb0q-ibqA@mail.gmail.com>
+References: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180221091623.4accxa2qglmo3scl@flea.lan>
+In-Reply-To: <9a55e8b3-bf34-d8a4-f5a6-01e86374f42f@maciej.szmigiero.name>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Guenter Roeck <linux@roeck-us.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 10:16 AM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Wed, Feb 21, 2018 at 09:17:15AM +0100, Linus Walleij wrote:
->> On Wed, Feb 21, 2018 at 9:11 AM, Maxime Ripard
->> <maxime.ripard@bootlin.com> wrote:
->>
-> This is slightly embarrassing, but that patch doesn't actually fix
-> anything. I tried to be smart and rework it to look nicer, and
-> obviously failed.
->
-> Can you squash
-> http://code.bulix.org/z1vkt1-286673
->
-> in the commit?
+On Fri, Feb 23, 2018 at 3:55 PM, Maciej S. Szmigiero
+<mail@maciej.szmigiero.name> wrote:
 
-This site is down. Can you send a new version of the patch or
-just reply with the change inline here?
+> This reverts commit 92a8046c9d952a2a7d21dfcd3afadc72a0bc0f72.
+>
+> Now that the patch series changing ISA_BUS_API dependency to selection
+> was merged this reversion will do the same for gpio-winbond driver to
+> make it consistent with other ISA bus gpio drivers.
+>
+> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+
+Patch applied.
 
 Yours,
 Linus Walleij
