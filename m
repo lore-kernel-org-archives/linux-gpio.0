@@ -1,52 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL] GPIO fixes for v4.16
-Date: Mon, 26 Feb 2018 10:54:43 +0100
-Message-ID: <CACRpkdYdnHqU6gujqLhX1xqPJQWBNUuLQwicpVVLqs5AeYeMMw@mail.gmail.com>
-References: <CACRpkdYGQUynZJu+4-Bj=TzL5=C4qt2cYav__9aHSnwD2NERDA@mail.gmail.com>
- <20180226094630.c4yh4fyfjdeurqo7@flea.lan>
+Subject: Re: [PATCH] gpiolib: Keep returning EPROBE_DEFER when we should
+Date: Mon, 26 Feb 2018 11:24:35 +0100
+Message-ID: <CACRpkdb1=H-KqZyB50k9gUSUJXtGqeYA8w05Q_P8Jod-2wmWpg@mail.gmail.com>
+References: <20180221081100.17662-1-maxime.ripard@bootlin.com>
+ <CACRpkdYkT7TJrhyQoJr=ZK7w8+KY=_fgjrJeaZCsLHA_6WbZbg@mail.gmail.com> <20180221091623.4accxa2qglmo3scl@flea.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180226094630.c4yh4fyfjdeurqo7@flea.lan>
+In-Reply-To: <20180221091623.4accxa2qglmo3scl@flea.lan>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 10:46 AM, Maxime Ripard
+On Wed, Feb 21, 2018 at 10:16 AM, Maxime Ripard
 <maxime.ripard@bootlin.com> wrote:
-> On Mon, Feb 26, 2018 at 10:36:00AM +0100, Linus Walleij wrote:
->> Hi Linus,
+> On Wed, Feb 21, 2018 at 09:17:15AM +0100, Linus Walleij wrote:
+>> On Wed, Feb 21, 2018 at 9:11 AM, Maxime Ripard
+>> <maxime.ripard@bootlin.com> wrote:
 >>
-
->> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
->>
->>   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
->>
->> are available in the Git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
->> tags/gpio-v4.16-2
->>
->> for you to fetch changes up to c2b3eec47c1b2161adbc70676f1422e6f56aaa32:
->>
->>   gpio: Handle deferred probing in of_find_gpio() properly (2018-02-21
->> 09:37:34 +0100)
->>
->> ----------------------------------------------------------------
->> GPIO fixes for the v4.16 kernel:
->>
->> - Two patches fixing up my mistakes with device tree properties
->>   compatible for SPI and regulators. Nice to smoke this out for
->>   v4.16 though, when we actually use it in v4.17 it will be
->>   in nice shape.
+> This is slightly embarrassing, but that patch doesn't actually fix
+> anything. I tried to be smart and rework it to look nicer, and
+> obviously failed.
 >
-> As I told you as an answer to my patch, it still needs to be amended
-> in order to work as expected. The one queued in the PR doesn't work.
+> Can you squash
+> http://code.bulix.org/z1vkt1-286673
+>
+> in the commit?
 
-Sorry I must have missed it :(
-
-Torvalds: hold your horses. New pull request(s) coming.
+This site is down. Can you send a new version of the patch or
+just reply with the change inline here?
 
 Yours,
 Linus Walleij
