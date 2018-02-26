@@ -1,65 +1,191 @@
-From: Samuel Holland <samuel-RkNLwX/CsU9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the
- basical Allwinner H6 DTSI file
-Date: Mon, 26 Feb 2018 09:54:01 -0600
-Message-ID: <b9bc5944-b9e3-91d7-8012-c87a2b2d17fa@sholland.org>
-References: <20180223123555.64009-6-icenowy@aosc.io>
- <20180223123555.64009-7-icenowy@aosc.io>
- <20180223152038.2bflylwa6vj4gzfj@flea.lan>
- <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
- <20180226092645.xghkmfowenzlbm42@flea.lan>
-Reply-To: samuel-RkNLwX/CsU9g9hUCZPvPmw@public.gmane.org
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: Re: [PATCH v8 3/9] mfd: madera: Add common support for Cirrus Logic
+ Madera codecs
+Date: Mon, 26 Feb 2018 17:06:40 +0000
+Message-ID: <c59653aa-c55a-52ea-98f6-292f70f97b25@opensource.cirrus.com>
+References: <20180226130558.7634-1-rf@opensource.cirrus.com>
+ <20180226130558.7634-4-rf@opensource.cirrus.com>
+ <CAHp75VdQtLKfSR5fhxxGJfa0j8h-vKT3YLDRTt0Khxe1UKzknw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDA2PU6QWEARBH632DKAKGQE4U6LVAI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20180226092645.xghkmfowenzlbm42-ZC1Zs529Oq4@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHp75VdQtLKfSR5fhxxGJfa0j8h-vKT3YLDRTt0Khxe1UKzknw@mail.gmail.com>
 Content-Language: en-US
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 02/26/18 03:26, Maxime Ripard wrote:
-> On Fri, Feb 23, 2018 at 11:22:06PM +0800, Icenowy Zheng wrote:
->>>> +	psci {
->>>> +		compatible = "arm,psci-0.2";
->>>> +		method = "smc";
->>>> +	};
->>>
->>> Is it needed? The bootloader should fill it with whatever version it
->>> has, shouldn't it?
+On 26/02/18 14:11, Andy Shevchenko wrote:
+> On Mon, Feb 26, 2018 at 3:05 PM, Richard Fitzgerald
+> <rf@opensource.cirrus.com> wrote:
+>> This adds the generic core support for Cirrus Logic "Madera" class codecs.
+>> These are complex audio codec SoCs with a variety of digital and analogue
+>> I/O, onboard audio processing and DSPs, and other features.
 >>
->> But we now use ATF rather than U-Boot PSCI. U-Boot will not fill ATF
->> info.
->>
->> See A64/H5 device trees.
+>> These codecs are all based off a common set of hardware IP so can be
+>> supported by a core of common code (with a few minor device-to-device
+>> variations).
 > 
-> So if the PSCI version implemented in ATF ever changes, we would have
-> to update all the DT everywhere, but only if you're running the new
-> version?
+> 
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by the
+>> + * Free Software Foundation; version 2.
+> 
+> This is redundant.
+> 
 
-Yes but no. PSCI 1.0 is generally backward compatible with PSCI 0.2. In fact,
-the Linux driver treats them exactly the same:
+Ditto my other reply. Our legal team want these lines.
 
-        { .compatible = "arm,psci-0.2", .data = psci_0_2_init},
-        { .compatible = "arm,psci-1.0", .data = psci_0_2_init},
+>> +static void madera_enable_hard_reset(struct madera *madera)
+>> +{
+>> +       if (madera->reset_gpio)
+> 
+> if (!...)
+>   return
+> 
 
-For the H6, however, the oldest ATF source available (which I believe was the
-one in use during bringup) is based on mainline 1.4, and is already at PSCI
-version 1.1:
+Could do but why bother? For such a trivial function, in my opinion
 
-[    0.000000] psci: probing for conduit method from DT.
-[    0.000000] psci: PSCIv1.1 detected in firmware.
-[    0.000000] psci: Using standard PSCI v0.2 function IDs
-[    0.000000] psci: MIGRATE_INFO_TYPE not supported.
+static void madera_enable_hard_reset(struct madera *madera)
+{
+	if (madera->reset_gpio)
+		gpiod_set_value_cansleep(madera->reset_gpio, 0);
+}
 
-So we could go ahead and bump the compatible to "arm,psci-1.0".
+is simpler and more readable than
 
-Thanks,
-Samuel
+static void madera_enable_hard_reset(struct madera *madera)
+{
+	if (!madera->reset_gpio)
+		return;
+
+	gpiod_set_value_cansleep(madera->reset_gpio, 0);
+}
+
+>> +               gpiod_set_value_cansleep(madera->reset_gpio, 0);
+>> +}
+>> +
+>> +static void madera_disable_hard_reset(struct madera *madera)
+>> +{
+>> +       if (madera->reset_gpio) {
+> 
+> Ditto.
+> 
+
+As above, yes it would work the other way but I think for such a simple
+implementation the way I have written it is more readable.
+
+>> +               gpiod_set_value_cansleep(madera->reset_gpio, 1);
+>> +               usleep_range(1000, 2000);
+>> +       }
+>> +}
+>> +
+> 
+>> +#ifdef CONFIG_PM
+> 
+> __maybe_unused
+> 
+> 
+>> +const struct dev_pm_ops madera_pm_ops = {
+>> +       SET_RUNTIME_PM_OPS(madera_runtime_suspend,
+>> +                          madera_runtime_resume,
+>> +                          NULL)
+>> +};
+> 
+> There is a macro helper for this I believe.
+
+Not for a dev_pm_ops that only has runtime pm.
+If you're thinking of UNIVERSAL_DEV_PM_OPS that would set the same
+functions as handlers for system suspend, which we don't want to do
+for the reasons given in the comment describing UNIVERSAL_DEV_PM_OPS.
+
+> 
+>> +const struct of_device_id madera_of_match[] = {
+>> +       { .compatible = "cirrus,cs47l35", .data = (void *)CS47L35 },
+>> +       { .compatible = "cirrus,cs47l85", .data = (void *)CS47L85 },
+>> +       { .compatible = "cirrus,cs47l90", .data = (void *)CS47L90 },
+>> +       { .compatible = "cirrus,cs47l91", .data = (void *)CS47L91 },
+>> +       { .compatible = "cirrus,wm1840", .data = (void *)WM1840 },
+> 
+>> +       {},
+> 
+> No comma.
+> 
+
+Seems to be personal preference. Both ways are used in the kernel and
+we've always used this style so I'll leave it to Lee to decide.
+
+>> +};
+> 
+> 
+>> +               ret = devm_gpio_request_one(madera->dev,
+>> +                                           madera->pdata.reset,
+>> +                                           GPIOF_DIR_OUT | GPIOF_INIT_LOW,
+>> +                                           "madera reset");
+>> +               if (!ret)
+>> +                       madera->reset_gpio = gpio_to_desc(madera->pdata.reset);
+> 
+> Why? What's wrong with descriptors?
+> 
+
+This is what I mean by code going stale when it's acked but then never
+gets merged. Some time ago there was a reason (which I forget).
+
+>> +       dev_set_drvdata(madera->dev, madera);
+> ...
+>> +       if (dev_get_platdata(madera->dev))
+> 
+> What this dance for?
+> 
+
+Are you perhaps thinking the second line is dev_get_drvdata()?
+dev_get_platdata() gets a pointer to any pdata, so not related
+to dev_set_drvdata().
+
+>> +       ret = mfd_add_devices(madera->dev, PLATFORM_DEVID_NONE,
+>> +                             mfd_devs, n_devs,
+>> +                             NULL, 0, NULL);
+> 
+> devm_?
+> 
+
+I can try it and see. It's scary because we can depend on our
+children but maybe devm_mfd_add_devices() is safe.
+
+>> +       if (i2c->dev.of_node) {
+>> +               of_id = of_match_device(madera_of_match, &i2c->dev);
+>> +               if (of_id)
+>> +                       type = (unsigned long)of_id->data;
+>> +       } else {
+>> +               type = id->driver_data;
+>> +       }
+> 
+>> +       if (spi->dev.of_node) {
+>> +               of_id = of_match_device(madera_of_match, &spi->dev);
+>> +               if (of_id)
+>> +                       type = (unsigned long)of_id->data;
+> 
+> There is a helper to get match data.
+> 
+>> +       } else {
+>> +               type = id->driver_data;
+>> +       }
+> 
+>> +struct madera_irqchip_pdata;
+>> +struct madera_codec_pdata;
+> 
+> 
+> Why do you need platform data in new code?
+> 
+
+Answered in a comment in another patch. We care about allowing people
+to use our chips with systems that don't use devicetree/acpi. There
+are also many out-of-tree systems.
+
+>> + * @reset:         GPIO controlling /RESET (0 = none)
+> 
+> Shouldn't be descriptor?
+> 
