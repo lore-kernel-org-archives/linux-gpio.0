@@ -1,46 +1,93 @@
-From: Patrice CHOTARD <patrice.chotard@st.com>
-Subject: Re: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on
- stm32F769
-Date: Mon, 26 Feb 2018 08:41:13 +0000
-Message-ID: <fb3b26e8-0102-122b-1386-68a661139706@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
- <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: pwm: binding allwinner sun8i.
+Date: Mon, 26 Feb 2018 09:44:33 +0100
+Message-ID: <20180226084433.jcahdixnz63jo34m@flea.lan>
+References: <20180225135045.GA14508@arx-s1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rzg4gjmtenrchmoq"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
-Content-Language: en-US
-Content-ID: <A88FDEF8E44142408AB72F0919C1903F@st.com>
+Content-Disposition: inline
+In-Reply-To: <20180225135045.GA14508@arx-s1>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre TORGUE <alexandre.torgue@st.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: hao_zhang <hao5781286@gmail.com>
+Cc: thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, wens@csie.org, Claudiu.Beznea@microchip.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgU3RlcGhlbiwgTWljaGFlbA0KDQpJdCdzIGEgZ2VudGxlIHJlbWluZGVyIGFzIHRoaXMgcGF0
-Y2ggaXMgcHJlc2VudCBvbiBtYWlsaW5nIGxpc3QgYW5kIA0KYWNrZWQtYnkgc2luY2UgMDEvMTIv
-MjAxOA0KDQpUaGFua3MNCg0KUGF0cmljZQ0KDQpPbiAwMS8xNi8yMDE4IDAxOjMwIFBNLCBwYXRy
-aWNlLmNob3RhcmRAc3QuY29tIHdyb3RlOg0KPiBGcm9tOiBQYXRyaWNlIENob3RhcmQgPHBhdHJp
-Y2UuY2hvdGFyZEBzdC5jb20+DQo+IA0KPiBTVE0zMkY3NjkgaGFzIDIgU0RNTUMgcG9ydCwgYWRk
-IGNsb2NrIGVudHJ5IGZvciB0aGUgc2Vjb25kIG9uZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFs
-ZXhhbmRyZSBUT1JHVUUgPGFsZXhhbmRyZS50b3JndWVAc3QuY29tPg0KPiBTaWduZWQtb2ZmLWJ5
-OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+IEFja2VkLWJ5OiBT
-dGVwaGVuIEJveWQgPHNib3lkQGNvZGVhdXJvcmEub3JnPg0KPiAtLS0NCj4gDQo+IHYyIF8gQWRk
-IEFja2VkLWJ5DQo+IA0KPiAgIGRyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMgfCAzICsrLQ0KPiAg
-IDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstc3RtMzJmNC5jIGIvZHJpdmVycy9jbGsvY2xrLXN0
-bTMyZjQuYw0KPiBpbmRleCA5NmM2YjZiLi44ZjhhMTc4IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
-L2Nsay9jbGstc3RtMzJmNC5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMNCj4g
-QEAgLTI4Miw2ICsyODIsNyBAQCBzdHJ1Y3Qgc3RtMzJmNF9nYXRlX2RhdGEgew0KPiAgIA0KPiAg
-IAl7IFNUTTMyRjRfUkNDX0FQQjJFTlIsICAwLAkidGltMSIsCQkiYXBiMl9tdWwiIH0sDQo+ICAg
-CXsgU1RNMzJGNF9SQ0NfQVBCMkVOUiwgIDEsCSJ0aW04IiwJCSJhcGIyX211bCIgfSwNCj4gKwl7
-IFNUTTMyRjRfUkNDX0FQQjJFTlIsICA3LAkic2RtbWMyIiwJInNkbXV4IiAgICB9LA0KPiAgIAl7
-IFNUTTMyRjRfUkNDX0FQQjJFTlIsICA4LAkiYWRjMSIsCQkiYXBiMl9kaXYiIH0sDQo+ICAgCXsg
-U1RNMzJGNF9SQ0NfQVBCMkVOUiwgIDksCSJhZGMyIiwJCSJhcGIyX2RpdiIgfSwNCj4gICAJeyBT
-VE0zMkY0X1JDQ19BUEIyRU5SLCAxMCwJImFkYzMiLAkJImFwYjJfZGl2IiB9LA0KPiBAQCAtMzE1
-LDcgKzMxNiw3IEBAIHN0cnVjdCBzdG0zMmY0X2dhdGVfZGF0YSB7DQo+ICAgDQo+ICAgc3RhdGlj
-IGNvbnN0IHU2NCBzdG0zMmY3NDZfZ2F0ZV9tYXBbTUFYX0dBVEVfTUFQXSA9IHsgMHgwMDAwMDBm
-MTdlZjQxN2ZmdWxsLA0KPiAgIAkJCQkJCSAgICAgIDB4MDAwMDAwMDAwMDAwMDAwM3VsbCwNCj4g
-LQkJCQkJCSAgICAgIDB4MDRmNzdmMDMzZTAxYzlmZnVsbCB9Ow0KPiArCQkJCQkJICAgICAgMHgw
-NGY3N2Y4MzNlMDFjOWZmdWxsIH07DQo+ICAgDQo+ICAgc3RhdGljIGNvbnN0IHU2NCAqc3RtMzJm
-NF9nYXRlX21hcDsNCj4gICANCj4g
+
+--rzg4gjmtenrchmoq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Sun, Feb 25, 2018 at 09:50:45PM +0800, hao_zhang wrote:
+> This patch adds allwinner sun8i pwm binding documents.
+>=20
+> Signed-off-by: hao_zhang <hao5781286@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-sun8i.txt | 18 +++++++++++++++=
++++
+>  1 file changed, 18 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt b/Docume=
+ntation/devicetree/bindings/pwm/pwm-sun8i.txt
+> new file mode 100644
+> index 0000000..e8c48be
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
+> @@ -0,0 +1,18 @@
+> +Allwinner sun8i R40/V40/T3 SoC PWM controller
+> +
+> +Required properties:
+> +  - compatible: should be one of:
+> +    - "allwinner,sun8i-r40-pwm"
+> +  - reg: physical base address and length of the controller's registers
+> +  - #pwm-cells: should be 3. See pwm.txt in this directory for a descrip=
+tion of
+> +    the cells format.
+> +  - clocks: From common clock binding, handle to the parent clock.
+> +
+> +Example:
+> +
+> +pwm: pwm@1c23400 {
+> +	     compatible =3D "allwinner,sun8i-pwm";
+
+The compatible you have here isn't the one documented.
+
+> +	     reg =3D <0x01c23400 0x154>;
+
+And the size isn't correct, even though that doesn't really make any
+difference here.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rzg4gjmtenrchmoq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqTyPAACgkQ0rTAlCFN
+r3TyaQ/9GikdziVYAKqwaqJ5Ak1H9bU3XgtLpJ3uYTelfB0Zcq1sTY50v0Iw24+U
+FtXspyouhbrOe5RTHQYIVLyXrXvI65Ufo3oCVKGtS27txUB6FpVkkuRZCUD9Jgbv
+BvMGteYfADuOv+COxonHuuRNTvbxP8ZaMRpgFUhwKzVEKmBucUP/yAB9xyiznori
+dlm0VCIIHp/G6HL0FWuCLC1f/AzSw3vtQvbtvfx8CnmT9HDXxLTjO20WiNpUeCEM
+NhqY93sNBr8UAH1wLRBh3fFcwgOxI9e7+1fs3WKxY2gNinZsVFO3c2kvPQBxwrpj
+qqYxE+0qc6Y49CyWCx+4VuWgytDo3vDavkhm0sopgihd8GDeA6kUQpK0COpSV8LE
+h4OrOaBkNfsZBQgIdWtJGeaWZCEjuaDqMZnyJ+ZKkvzJZERWC2gRgNqilxqssT1W
+OLMz3MQMnxQExGe9iPScxDteYPFlcTEiJd+z3pSsHBX2B4OTSLS+bdW/mSyIHazP
+L5GUNTe6M271WczTHCbg89/n5fBvpIJTOYwlk/pUgNgl85eLAVAWY0p9ultCmH+Y
+cuUzzWA5kR1dm3tSBX+kK3ndiaFyn/h3w0bVpbwOBoC9tKnJqic0KmDRjMG5FcMt
+biOpZ6ahEeXj3j7X6VOVcUGKEUXnnN7AfVrPj4jweeacWRZGKeM=
+=naAz
+-----END PGP SIGNATURE-----
+
+--rzg4gjmtenrchmoq--
