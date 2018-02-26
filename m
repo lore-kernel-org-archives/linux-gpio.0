@@ -1,191 +1,164 @@
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
 Subject: Re: [PATCH v8 3/9] mfd: madera: Add common support for Cirrus Logic
  Madera codecs
-Date: Mon, 26 Feb 2018 17:06:40 +0000
-Message-ID: <c59653aa-c55a-52ea-98f6-292f70f97b25@opensource.cirrus.com>
+Date: Mon, 26 Feb 2018 19:19:21 +0200
+Message-ID: <CAHp75Vea8dbDrpYg3sJ+maQT+V+pBA2RyGSpLc+=m1WYWC1+FQ@mail.gmail.com>
 References: <20180226130558.7634-1-rf@opensource.cirrus.com>
- <20180226130558.7634-4-rf@opensource.cirrus.com>
- <CAHp75VdQtLKfSR5fhxxGJfa0j8h-vKT3YLDRTt0Khxe1UKzknw@mail.gmail.com>
+ <20180226130558.7634-4-rf@opensource.cirrus.com> <CAHp75VdQtLKfSR5fhxxGJfa0j8h-vKT3YLDRTt0Khxe1UKzknw@mail.gmail.com>
+ <c59653aa-c55a-52ea-98f6-292f70f97b25@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdQtLKfSR5fhxxGJfa0j8h-vKT3YLDRTt0Khxe1UKzknw@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <c59653aa-c55a-52ea-98f6-292f70f97b25@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
 Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 26/02/18 14:11, Andy Shevchenko wrote:
-> On Mon, Feb 26, 2018 at 3:05 PM, Richard Fitzgerald
-> <rf@opensource.cirrus.com> wrote:
->> This adds the generic core support for Cirrus Logic "Madera" class codecs.
->> These are complex audio codec SoCs with a variety of digital and analogue
->> I/O, onboard audio processing and DSPs, and other features.
+On Mon, Feb 26, 2018 at 7:06 PM, Richard Fitzgerald
+<rf@opensource.cirrus.com> wrote:
+> On 26/02/18 14:11, Andy Shevchenko wrote:
+>> On Mon, Feb 26, 2018 at 3:05 PM, Richard Fitzgerald
+>> <rf@opensource.cirrus.com> wrote:
+
+>>> +static void madera_enable_hard_reset(struct madera *madera)
+>>> +{
+>>> +       if (madera->reset_gpio)
 >>
->> These codecs are all based off a common set of hardware IP so can be
->> supported by a core of common code (with a few minor device-to-device
->> variations).
-> 
-> 
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by the
->> + * Free Software Foundation; version 2.
-> 
-> This is redundant.
-> 
+>>
+>> if (!...)
+>>   return
+>>
+>
+> Could do but why bother? For such a trivial function, in my opinion
+>
+> static void madera_enable_hard_reset(struct madera *madera)
+> {
+>         if (madera->reset_gpio)
+>                 gpiod_set_value_cansleep(madera->reset_gpio, 0);
+> }
+>
+> is simpler and more readable than
+>
+> static void madera_enable_hard_reset(struct madera *madera)
+> {
+>         if (!madera->reset_gpio)
+>                 return;
+>
+>         gpiod_set_value_cansleep(madera->reset_gpio, 0);
+> }
 
-Ditto my other reply. Our legal team want these lines.
+The rationale is that if someone wants to add more code you will not
+need to take care of deeper indentation and potentially split lines.
 
->> +static void madera_enable_hard_reset(struct madera *madera)
->> +{
->> +       if (madera->reset_gpio)
-> 
-> if (!...)
->   return
-> 
+>
+>>> +               gpiod_set_value_cansleep(madera->reset_gpio, 0);
+>>> +}
+>>> +
+>>> +static void madera_disable_hard_reset(struct madera *madera)
+>>> +{
+>>> +       if (madera->reset_gpio) {
+>>
+>>
+>> Ditto.
+>>
+>
+> As above, yes it would work the other way but I think for such a simple
+> implementation the way I have written it is more readable.
 
-Could do but why bother? For such a trivial function, in my opinion
+I have different opinion, but yes. It's more matter of taste with
+rationale above (perhaps never happen to this code).
 
-static void madera_enable_hard_reset(struct madera *madera)
-{
-	if (madera->reset_gpio)
-		gpiod_set_value_cansleep(madera->reset_gpio, 0);
-}
+>>> +               gpiod_set_value_cansleep(madera->reset_gpio, 1);
+>>> +               usleep_range(1000, 2000);
+>>> +       }
+>>> +}
 
-is simpler and more readable than
+>>> +const struct of_device_id madera_of_match[] = {
+>>> +       { .compatible = "cirrus,cs47l35", .data = (void *)CS47L35 },
+>>> +       { .compatible = "cirrus,cs47l85", .data = (void *)CS47L85 },
+>>> +       { .compatible = "cirrus,cs47l90", .data = (void *)CS47L90 },
+>>> +       { .compatible = "cirrus,cs47l91", .data = (void *)CS47L91 },
+>>> +       { .compatible = "cirrus,wm1840", .data = (void *)WM1840 },
+>>
+>>
+>>> +       {},
+>>
+>>
+>> No comma.
+>>
+>
+> Seems to be personal preference. Both ways are used in the kernel and
+> we've always used this style so I'll leave it to Lee to decide.
 
-static void madera_enable_hard_reset(struct madera *madera)
-{
-	if (!madera->reset_gpio)
-		return;
+This is not.
+The rationale is pretty obvious, terminator must terminate. With cheap
+price (no comma), we just prevent some potential weird cases (bad
+patch application for example, or not very careful contributor) where
+entry goes after. Compiler will fail.
 
-	gpiod_set_value_cansleep(madera->reset_gpio, 0);
-}
+>
+>>> +};
 
->> +               gpiod_set_value_cansleep(madera->reset_gpio, 0);
->> +}
->> +
->> +static void madera_disable_hard_reset(struct madera *madera)
->> +{
->> +       if (madera->reset_gpio) {
-> 
-> Ditto.
-> 
+>>> +               ret = devm_gpio_request_one(madera->dev,
+>>> +                                           madera->pdata.reset,
+>>> +                                           GPIOF_DIR_OUT |
+>>> GPIOF_INIT_LOW,
+>>> +                                           "madera reset");
+>>> +               if (!ret)
+>>> +                       madera->reset_gpio =
+>>> gpio_to_desc(madera->pdata.reset);
+>>
+>>
+>> Why? What's wrong with descriptors?
 
-As above, yes it would work the other way but I think for such a simple
-implementation the way I have written it is more readable.
+> This is what I mean by code going stale when it's acked but then never
+> gets merged. Some time ago there was a reason (which I forget).
 
->> +               gpiod_set_value_cansleep(madera->reset_gpio, 1);
->> +               usleep_range(1000, 2000);
->> +       }
->> +}
->> +
-> 
->> +#ifdef CONFIG_PM
-> 
-> __maybe_unused
-> 
-> 
->> +const struct dev_pm_ops madera_pm_ops = {
->> +       SET_RUNTIME_PM_OPS(madera_runtime_suspend,
->> +                          madera_runtime_resume,
->> +                          NULL)
->> +};
-> 
-> There is a macro helper for this I believe.
+So, can we switch to descriptors?
 
-Not for a dev_pm_ops that only has runtime pm.
-If you're thinking of UNIVERSAL_DEV_PM_OPS that would set the same
-functions as handlers for system suspend, which we don't want to do
-for the reasons given in the comment describing UNIVERSAL_DEV_PM_OPS.
+>>> +       dev_set_drvdata(madera->dev, madera);
+>>> +       if (dev_get_platdata(madera->dev))
+>>
+>>
+>> What this dance for?
+>>
+>
+> Are you perhaps thinking the second line is dev_get_drvdata()?
+> dev_get_platdata() gets a pointer to any pdata, so not related
+> to dev_set_drvdata().
 
-> 
->> +const struct of_device_id madera_of_match[] = {
->> +       { .compatible = "cirrus,cs47l35", .data = (void *)CS47L35 },
->> +       { .compatible = "cirrus,cs47l85", .data = (void *)CS47L85 },
->> +       { .compatible = "cirrus,cs47l90", .data = (void *)CS47L90 },
->> +       { .compatible = "cirrus,cs47l91", .data = (void *)CS47L91 },
->> +       { .compatible = "cirrus,wm1840", .data = (void *)WM1840 },
-> 
->> +       {},
-> 
-> No comma.
-> 
+Indeed.
 
-Seems to be personal preference. Both ways are used in the kernel and
-we've always used this style so I'll leave it to Lee to decide.
+>>> +       ret = mfd_add_devices(madera->dev, PLATFORM_DEVID_NONE,
+>>> +                             mfd_devs, n_devs,
+>>> +                             NULL, 0, NULL);
+>>
+>>
+>> devm_?
+>>
+>
+> I can try it and see. It's scary because we can depend on our
+> children but maybe devm_mfd_add_devices() is safe.
 
->> +};
-> 
-> 
->> +               ret = devm_gpio_request_one(madera->dev,
->> +                                           madera->pdata.reset,
->> +                                           GPIOF_DIR_OUT | GPIOF_INIT_LOW,
->> +                                           "madera reset");
->> +               if (!ret)
->> +                       madera->reset_gpio = gpio_to_desc(madera->pdata.reset);
-> 
-> Why? What's wrong with descriptors?
-> 
+It will fail in the same way. It does nothing more, than keeping a
+pointer to release function and its data.
 
-This is what I mean by code going stale when it's acked but then never
-gets merged. Some time ago there was a reason (which I forget).
+>>> +struct madera_irqchip_pdata;
+>>> +struct madera_codec_pdata;
 
->> +       dev_set_drvdata(madera->dev, madera);
-> ...
->> +       if (dev_get_platdata(madera->dev))
-> 
-> What this dance for?
-> 
+>> Why do you need platform data in new code?
 
-Are you perhaps thinking the second line is dev_get_drvdata()?
-dev_get_platdata() gets a pointer to any pdata, so not related
-to dev_set_drvdata().
+> Answered in a comment in another patch. We care about allowing people
+> to use our chips with systems that don't use devicetree/acpi. There
+> are also many out-of-tree systems.
 
->> +       ret = mfd_add_devices(madera->dev, PLATFORM_DEVID_NONE,
->> +                             mfd_devs, n_devs,
->> +                             NULL, 0, NULL);
-> 
-> devm_?
-> 
+a) we don't care about out of tree much;
+b) there are other means to provide date w/o using platform data:
+ - unified device property API (including built-in device properties)
+ - bunch of lookup tables GPIO, regulator, PWM, etc
+ - fwnode graph for more complex cases with device dependencies
 
-I can try it and see. It's scary because we can depend on our
-children but maybe devm_mfd_add_devices() is safe.
-
->> +       if (i2c->dev.of_node) {
->> +               of_id = of_match_device(madera_of_match, &i2c->dev);
->> +               if (of_id)
->> +                       type = (unsigned long)of_id->data;
->> +       } else {
->> +               type = id->driver_data;
->> +       }
-> 
->> +       if (spi->dev.of_node) {
->> +               of_id = of_match_device(madera_of_match, &spi->dev);
->> +               if (of_id)
->> +                       type = (unsigned long)of_id->data;
-> 
-> There is a helper to get match data.
-> 
->> +       } else {
->> +               type = id->driver_data;
->> +       }
-> 
->> +struct madera_irqchip_pdata;
->> +struct madera_codec_pdata;
-> 
-> 
-> Why do you need platform data in new code?
-> 
-
-Answered in a comment in another patch. We care about allowing people
-to use our chips with systems that don't use devicetree/acpi. There
-are also many out-of-tree systems.
-
->> + * @reset:         GPIO controlling /RESET (0 = none)
-> 
-> Shouldn't be descriptor?
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
