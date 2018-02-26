@@ -1,59 +1,46 @@
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: [PATCH v2 2/4] arm64: dts: mt2712: add pintcrl device node.
-Date: Mon, 26 Feb 2018 16:34:00 +0800
-Message-ID: <1519634042-12063-3-git-send-email-zhiyong.tao@mediatek.com>
-References: <1519634042-12063-1-git-send-email-zhiyong.tao@mediatek.com>
+From: Patrice CHOTARD <patrice.chotard@st.com>
+Subject: Re: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on
+ stm32F769
+Date: Mon, 26 Feb 2018 08:41:13 +0000
+Message-ID: <fb3b26e8-0102-122b-1386-68a661139706@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+ <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1519634042-12063-1-git-send-email-zhiyong.tao@mediatek.com>
+In-Reply-To: <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
+Content-Language: en-US
+Content-ID: <A88FDEF8E44142408AB72F0919C1903F@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, matthias.bgg@gmail.com
-Cc: srv_heupstream@mediatek.com, liguo.zhang@mediatek.com, yingjoe.chen@mediatek.com, hongkun.cao@mediatek.com, biao.huang@mediatek.com, yt.shen@mediatek.com, hongzhou.yang@mediatek.com, erin.lo@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>
+To: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre TORGUE <alexandre.torgue@st.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds pintcrl device node for mt2712.
-
-Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-index d7688bc..fb3b051 100644
---- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/power/mt2712-power.h>
-+#include "mt2712-pinfunc.h"
- 
- / {
- 	compatible = "mediatek,mt2712";
-@@ -258,6 +259,23 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	syscfg_pctl_a: syscfg_pctl_a@10005000 {
-+		compatible = "mediatek,mt2712-pctl-a-syscfg", "syscon";
-+		reg = <0 0x10005000 0 0x1000>;
-+	};
-+
-+	pio: pinctrl@10005000 {
-+		compatible = "mediatek,mt2712-pinctrl";
-+		reg = <0 0x1000b000 0 0x1000>;
-+		mediatek,pctl-regmap = <&syscfg_pctl_a>;
-+		pins-are-numbered;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
- 	scpsys: scpsys@10006000 {
- 		compatible = "mediatek,mt2712-scpsys", "syscon";
- 		#power-domain-cells = <1>;
--- 
-1.9.1
+SGkgU3RlcGhlbiwgTWljaGFlbA0KDQpJdCdzIGEgZ2VudGxlIHJlbWluZGVyIGFzIHRoaXMgcGF0
+Y2ggaXMgcHJlc2VudCBvbiBtYWlsaW5nIGxpc3QgYW5kIA0KYWNrZWQtYnkgc2luY2UgMDEvMTIv
+MjAxOA0KDQpUaGFua3MNCg0KUGF0cmljZQ0KDQpPbiAwMS8xNi8yMDE4IDAxOjMwIFBNLCBwYXRy
+aWNlLmNob3RhcmRAc3QuY29tIHdyb3RlOg0KPiBGcm9tOiBQYXRyaWNlIENob3RhcmQgPHBhdHJp
+Y2UuY2hvdGFyZEBzdC5jb20+DQo+IA0KPiBTVE0zMkY3NjkgaGFzIDIgU0RNTUMgcG9ydCwgYWRk
+IGNsb2NrIGVudHJ5IGZvciB0aGUgc2Vjb25kIG9uZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFs
+ZXhhbmRyZSBUT1JHVUUgPGFsZXhhbmRyZS50b3JndWVAc3QuY29tPg0KPiBTaWduZWQtb2ZmLWJ5
+OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+IEFja2VkLWJ5OiBT
+dGVwaGVuIEJveWQgPHNib3lkQGNvZGVhdXJvcmEub3JnPg0KPiAtLS0NCj4gDQo+IHYyIF8gQWRk
+IEFja2VkLWJ5DQo+IA0KPiAgIGRyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMgfCAzICsrLQ0KPiAg
+IDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstc3RtMzJmNC5jIGIvZHJpdmVycy9jbGsvY2xrLXN0
+bTMyZjQuYw0KPiBpbmRleCA5NmM2YjZiLi44ZjhhMTc4IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
+L2Nsay9jbGstc3RtMzJmNC5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMNCj4g
+QEAgLTI4Miw2ICsyODIsNyBAQCBzdHJ1Y3Qgc3RtMzJmNF9nYXRlX2RhdGEgew0KPiAgIA0KPiAg
+IAl7IFNUTTMyRjRfUkNDX0FQQjJFTlIsICAwLAkidGltMSIsCQkiYXBiMl9tdWwiIH0sDQo+ICAg
+CXsgU1RNMzJGNF9SQ0NfQVBCMkVOUiwgIDEsCSJ0aW04IiwJCSJhcGIyX211bCIgfSwNCj4gKwl7
+IFNUTTMyRjRfUkNDX0FQQjJFTlIsICA3LAkic2RtbWMyIiwJInNkbXV4IiAgICB9LA0KPiAgIAl7
+IFNUTTMyRjRfUkNDX0FQQjJFTlIsICA4LAkiYWRjMSIsCQkiYXBiMl9kaXYiIH0sDQo+ICAgCXsg
+U1RNMzJGNF9SQ0NfQVBCMkVOUiwgIDksCSJhZGMyIiwJCSJhcGIyX2RpdiIgfSwNCj4gICAJeyBT
+VE0zMkY0X1JDQ19BUEIyRU5SLCAxMCwJImFkYzMiLAkJImFwYjJfZGl2IiB9LA0KPiBAQCAtMzE1
+LDcgKzMxNiw3IEBAIHN0cnVjdCBzdG0zMmY0X2dhdGVfZGF0YSB7DQo+ICAgDQo+ICAgc3RhdGlj
+IGNvbnN0IHU2NCBzdG0zMmY3NDZfZ2F0ZV9tYXBbTUFYX0dBVEVfTUFQXSA9IHsgMHgwMDAwMDBm
+MTdlZjQxN2ZmdWxsLA0KPiAgIAkJCQkJCSAgICAgIDB4MDAwMDAwMDAwMDAwMDAwM3VsbCwNCj4g
+LQkJCQkJCSAgICAgIDB4MDRmNzdmMDMzZTAxYzlmZnVsbCB9Ow0KPiArCQkJCQkJICAgICAgMHgw
+NGY3N2Y4MzNlMDFjOWZmdWxsIH07DQo+ICAgDQo+ICAgc3RhdGljIGNvbnN0IHU2NCAqc3RtMzJm
+NF9nYXRlX21hcDsNCj4gICANCj4g
