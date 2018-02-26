@@ -1,105 +1,133 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH] gpiolib: Keep returning EPROBE_DEFER when we should
-Date: Mon, 26 Feb 2018 14:05:29 +0100
-Message-ID: <20180226130529.ljgnerrz72wyy6mm@flea.lan>
-References: <20180221081100.17662-1-maxime.ripard@bootlin.com>
- <CACRpkdYkT7TJrhyQoJr=ZK7w8+KY=_fgjrJeaZCsLHA_6WbZbg@mail.gmail.com>
- <20180221091623.4accxa2qglmo3scl@flea.lan>
- <CACRpkdb1=H-KqZyB50k9gUSUJXtGqeYA8w05Q_P8Jod-2wmWpg@mail.gmail.com>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: [PATCH v8 7/9] pinctrl: madera: Add DT bindings for Cirrus Logic Madera codecs
+Date: Mon, 26 Feb 2018 13:05:56 +0000
+Message-ID: <20180226130558.7634-8-rf@opensource.cirrus.com>
+References: <20180226130558.7634-1-rf@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ayq5bpsw2tdwuotn"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb1=H-KqZyB50k9gUSUJXtGqeYA8w05Q_P8Jod-2wmWpg@mail.gmail.com>
+In-Reply-To: <20180226130558.7634-1-rf@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: lee.jones@linaro.org, linus.walleij@linaro.org, andy.shevchenko@gmail.com, robh+dt@kernel.org
+Cc: patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Fitzgerald <rf@opensource.cirrus.com>
 List-Id: linux-gpio@vger.kernel.org
 
+This is the binding description of the pinctrl driver for Cirrus Logic
+Madera codecs. The binding uses the generic pinctrl binding so  the main
+purpose here is to describe the device-specific names for groups and
+functions.
 
---ayq5bpsw2tdwuotn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/pinctrl/cirrus,madera-pinctrl.txt     | 99 ++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
 
-On Mon, Feb 26, 2018 at 11:24:35AM +0100, Linus Walleij wrote:
-> On Wed, Feb 21, 2018 at 10:16 AM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Wed, Feb 21, 2018 at 09:17:15AM +0100, Linus Walleij wrote:
-> >> On Wed, Feb 21, 2018 at 9:11 AM, Maxime Ripard
-> >> <maxime.ripard@bootlin.com> wrote:
-> >>
-> > This is slightly embarrassing, but that patch doesn't actually fix
-> > anything. I tried to be smart and rework it to look nicer, and
-> > obviously failed.
-> >
-> > Can you squash
-> > http://code.bulix.org/z1vkt1-286673
-> >
-> > in the commit?
->=20
-> This site is down.
-
-Sorry :/
-
-> Can you send a new version of the patch or just reply with the
-> change inline here?
-
-Here it is:
-
----------8<----------------
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index c92847ff5d0a..ae70f679459c 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -241,8 +241,6 @@ struct gpio_desc *of_find_gpio(struct device *dev, cons=
-t char *con_id,
-=20
-                desc =3D of_get_named_gpiod_flags(dev->of_node, prop_name, =
-idx,
-                                                &of_flags);
--               if (!IS_ERR(desc) || (PTR_ERR(desc) !=3D -ENOENT))
--                       break;
-=20
-                /*
-                 * -EPROBE_DEFER in our case means that we found a
-@@ -256,6 +254,9 @@ struct gpio_desc *of_find_gpio(struct device *dev, cons=
-t char *con_id,
-                 */
-                if (IS_ERR(desc) && PTR_ERR(desc) =3D=3D -EPROBE_DEFER)
-                        return desc;
+diff --git a/Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
+new file mode 100644
+index 000000000000..b0e36cf0d289
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
+@@ -0,0 +1,99 @@
++Cirrus Logic Madera class audio codecs pinctrl driver
 +
-+               if (!IS_ERR(desc) || (PTR_ERR(desc) !=3D -ENOENT))
-+                       break;
-        }
-=20
-        /* Special handling for SPI GPIOs if used */
-----------8<-----------------
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ayq5bpsw2tdwuotn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqUBhgACgkQ0rTAlCFN
-r3RmHg//QtBiGBcZm3VElyPxlMMMHfg6bMuBoBBOAp48TY0sfy0yq/8m+IoBPRwP
-TM7FPwsTK70JeDAmR1USGUSbTM1sfh2CvHDB58Xzsv25yVyOgHtKz+RxU29ubAyC
-CT1OwrGOb9DOTtgd2k8k9+mU7Xsg+dmv5mf/kucmVe6xKZ5un9gAGC/vs103zTwG
-+zVCmIRKpnCMEEf4AXpJAsSWLZiRVNLW+ktSCyVPz5rguMFd5pFo9di7FDcoWPIq
-qrzMu1juz5HAAdYpsT52yY5LETdJmerUFffyQsnvC7/2rgxSsQ0XDaxxhbF2VmQA
-HRYz0Mz6BiHToxGlxpm+3C+9o4URJ6kH5nhoVNbEUTKun0lwyig6dpyP6uWWcI0S
-kI/qMNuJyyDgv39+MeBjRvrOISXH20yqcyvGKQfesz2z53Ymgiz3Cr7L0HVU5jjN
-zyhJtQkauO/cocqsn5FU4CUgdQEYAmobXZ8lpoGzGGZ6/zqgnPD/UZDZf7EDQJFf
-SmyTMdUnNsRR3SKALsDS4pJJ78lcHTiUQ5ni+aLjWnelVIXIEOaIWfwfL3oArh4n
-6Cwnyvy0kL20Q6SuTnV+tqGJrH0ILWXsGiYOWFY4iApFH3tlxKzeX8Cpmc/KB1cD
-Cj54zv6PECi3kd1lOPlNjTJk/77JQ6L2gXnNg4wsRbePOc8hEvk=
-=OyxW
------END PGP SIGNATURE-----
-
---ayq5bpsw2tdwuotn--
++The Cirrus Logic Madera codecs provide a number of GPIO functions for
++interfacing to external hardware and to provide logic outputs to other devices.
++Certain groups of GPIO pins also have an alternate function, normally as an
++audio interface.
++
++The set of available GPIOs, functions and alternate function groups differs
++between codecs so refer to the datasheet for the codec for further information
++on what is supported on that device.
++
++The properties for this driver exist within the parent MFD driver node.
++
++See also
++  the core bindings for the parent MFD driver:
++    Documentation/devicetree/bindings/mfd/madera.txt
++
++  the generic pinmix bindings:
++    Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
++
++Required properties of parent mfd node:
++  - pinctrl-names : must be "default"
++  - pinctrl-0 : a phandle to the node containing the subnodes containing default
++      configurations
++
++Required subnodes:
++  One subnode is required to contain the default settings. It contains an
++  arbitrary number of configuration subnodes, one for each group or pin
++  configuration you want to apply as a default.
++
++Required properties of configuration subnodes:
++  - groups : name of one pin group to configure. One of:
++	aif1, aif2, aif3, aif4, mif1, mif2, mif3, pdmspk1, pdmspk2,
++	dmic4, dmic5, dmic6,
++	gpio1, gpio2, ..., gpio40
++    The gpioN groups select the single pin of this name for configuration
++
++Optional properties of configuration subnodes:
++  Any configuration option not explicitly listed in the dts will be left at
++  chip default setting.
++
++  - function : name of function to assign to this group. One of:
++	aif1, aif2, aif3, aif4, mif1, mif2, mif3, pdmspk1, pdmspk2,
++	dmic3, dmic4, dmic5, dmic6,
++	io, dsp-gpio, irq1, irq2,
++	fll1-clk, fll1-lock, fll2-clk, fll2-lock, fll3-clk, fll3-lock,
++	fllao-clk, fllao-lock,
++	opclk, opclk-async, pwm1, pwm2, spdif,
++	asrc1-in1-lock, asrc1-in2-lock, asrc2-in1-lock, asrc2-in2-lock,
++	spkl-short-circuit, spkr-short-circuit, spk-shutdown,
++	spk-overheat-shutdown, spk-overheat-warn,
++	timer1-sts, timer2-sts, timer3-sts, timer4-sts, timer5-sts, timer6-sts,
++	timer7-sts, timer8-sts,
++	log1-fifo-ne, log2-fifo-ne, log3-fifo-ne, log4-fifo-ne, log5-fifo-ne,
++	log6-fifo-ne, log7-fifo-ne, log8-fifo-ne,
++
++  - bias-disable : disable pull-up and pull-down
++  - bias-bus-hold : enable buskeeper
++  - bias-pull-up : output is pulled-up
++  - bias-pull-down : output is pulled-down
++  - drive-push-pull : CMOS output
++  - drive-open-drain : open-drain output
++  - drive-strength : drive strength in mA. Valid values are 4 or 8
++  - input-schmitt-enable : enable schmitt-trigger mode
++  - input-schmitt-disable : disable schmitt-trigger mode
++  - input-debounce : A value of 0 disables debounce, a value !=0 enables
++	debounce
++  - output-low : set the pin to output mode with low level
++  - output-high : set the pin to output mode with high level
++
++Example:
++
++cs47l85@0 {
++	compatible = "cirrus,cs47l85";
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&cs47l85_defaults>;
++
++	cs47l85_defaults: cs47l85-gpio-defaults {
++		aif1 {
++			groups = "aif1";
++			function = "aif1";
++			bias-bus-hold;
++		};
++
++		aif2 {
++			groups = "aif2";
++			function = "aif2";
++			bias-bus-hold;
++		};
++
++		opclk {
++			groups = "gpio1";
++			function = "opclk";
++			bias-pull-up;
++			drive-strength = <8>;
++		};
++	};
++};
+-- 
+2.11.0
