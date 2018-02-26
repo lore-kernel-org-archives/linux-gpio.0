@@ -1,18 +1,16 @@
 From: Ludovic BARRE <ludovic.barre@st.com>
-Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
- irq_domain
-Date: Mon, 26 Feb 2018 16:23:48 +0100
-Message-ID: <6ad0c9aa-ad22-05f8-8f8c-6a947eb335ae@st.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: stm32: Optimizes and enhances stm32gpio
+ irqchip
+Date: Mon, 26 Feb 2018 16:25:37 +0100
+Message-ID: <83f7cbec-05f6-a937-a848-bd533bb1001a@st.com>
 References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
  <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <a6dca941-c887-3066-9290-be7590ab8f9b@st.com>
- <CAFvLkMTzaFODziZC3fFGYu+F=RuMBx5tFgA1q2UFSk4KyfuU5A@mail.gmail.com>
+ <c648235f538b030e7f349e286661fd00894d5316.1519374248.git.radoslaw.pietrzyk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAFvLkMTzaFODziZC3fFGYu+F=RuMBx5tFgA1q2UFSk4KyfuU5A@mail.gmail.com>
+In-Reply-To: <c648235f538b030e7f349e286661fd00894d5316.1519374248.git.radoslaw.pietrzyk@gmail.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -23,80 +21,43 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?Q?Rados=c5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, open list <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>, "moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Alexandre Torgue <alexandre.torgue@st.com>
+To: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-aGkgUmFkb3PFgmF3CgpPbiAwMi8yMy8yMDE4IDA2OjM3IFBNLCBSYWRvc8WCYXcgUGlldHJ6eWsg
-d3JvdGU6Cj4gSSBkb24ndCBmdWxseSBnZXQgaXQgdG8gYmUgaG9uZXN0LiBJZiBpbnRlcnJ1cHQg
-aXMgcGVuZGluZyBpdCBtdXN0Cj4gaGF2ZSBiZWVuIGVuYWJsZWQgKHVubWFza2VkKSBhbmQgcmVx
-dWlyZXMgdG8gYmUgaGFuZGxlZCBhY2tlZC4gSXQgd2lsbAo+IGJlIGFja2VkIGJ5IGlycV9jaGlw
-LmlycV9hY2sgaGFuZGxlciB3aXRoaW4gdGhlIGVkZ2UgaGFuZGxlci4KPiBUaGVyZWZvcmUgdGhp
-cyBhZGRpdGlvbmFsIGFja2luZyBpcyBtZWFuaW5nbGVzcy4KPiAKClNvcnJ5LCBJIGRpZCBub3Qg
-c2VlIG1vZGlmaWNhdGlvbiBpbiBwaW5jdHJsLXN0bTMyLmMuClNvIGl0J3Mgb2sgZm9yIG1lCgpB
-Y2tlZC1ieTogTHVkb3ZpYyBCYXJyZSA8bHVkb3ZpYy5iYXJyZUBzdC5jb20+ClRlc3RlZC1ieTog
-THVkb3ZpYyBCYXJyZSA8bHVkb3ZpYy5iYXJyZUBzdC5jb20+CgpCUgpMdWRvCj4gMjAxOC0wMi0y
-MyAxNjo0NiBHTVQrMDE6MDAgTHVkb3ZpYyBCQVJSRSA8bHVkb3ZpYy5iYXJyZUBzdC5jb20+Ogo+
-PiBoaSBSYWRvc2xhdwo+Pgo+PiBUaGUgZ3Bpby1rZXlzIHRlc3RzIGl0J3Mgbm93IGZ1bmN0aW9u
-YWwgb24gSDcsIGdyZWF0Lgo+PiBIb3dldmVyIHRoZSBncGlvLWtleSB0ZXN0IG9ubHkgdGhlIGJh
-bmsxIChsaWtlIHN0bTMyZjQyOSkuCj4+IExpa2UgdGhlIEg3IGludHJvZHVjZSB0aGUgbXVsdGkt
-YmFuayBtYW5hZ2VtZW50LAo+PiB3ZSBtdXN0IHBlcmZvcm0gY29tcGxlbWVudGFyeSB0ZXN0Lgo+
-Pgo+PiBjb21tZW50IGJlbG93IGFib3V0IGFjayBpbiBoYW5kbGVyCj4+Cj4+Cj4+IE9uIDAyLzIz
-LzIwMTggMDk6MzEgQU0sIFJhZG9zbGF3IFBpZXRyenlrIHdyb3RlOgo+Pj4KPj4+IC0gZGlzY2Fy
-ZHMgc2V0dGluZyBoYW5kbGVfc2ltcGxlX2lycSBoYW5kbGVyIGZvciBoaWVyYXJjaHkgaW50ZXJy
-dXB0cwo+Pj4gLSByZW1vdmVzIGFja2luZyBpbiBjaGFpbmVkIGlycSBoYW5kbGVyIGFzIHRoaXMg
-aXMgZG9uZSBieQo+Pj4gaXJxX2NoaXAgaXRzZWxmIGluc2lkZSBoYW5kbGVfZWRnZV9pcnEKPj4+
-IC0gcmVtb3ZlcyB1bm5lZWRlZCBpcnFfZG9tYWluX29wcy54bGF0ZSBjYWxsYmFjawo+Pj4KPj4+
-IFNpZ25lZC1vZmYtYnk6IFJhZG9zbGF3IFBpZXRyenlrIDxyYWRvc2xhdy5waWV0cnp5a0BnbWFp
-bC5jb20+Cj4+PiAtLS0KPj4+ICAgIGRyaXZlcnMvaXJxY2hpcC9pcnEtc3RtMzItZXh0aS5jIHwg
-MTMgLS0tLS0tLS0tLS0tLQo+Pj4gICAgMSBmaWxlIGNoYW5nZWQsIDEzIGRlbGV0aW9ucygtKQo+
-Pj4KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLXN0bTMyLWV4dGkuYwo+Pj4g
-Yi9kcml2ZXJzL2lycWNoaXAvaXJxLXN0bTMyLWV4dGkuYwo+Pj4gaW5kZXggMzZmMGZiZS4uODAx
-M2E4NyAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEtc3RtMzItZXh0aS5jCj4+
-PiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJxLXN0bTMyLWV4dGkuYwo+Pj4gQEAgLTc5LDEzICs3
-OSw2IEBAIHN0YXRpYyB1bnNpZ25lZCBsb25nIHN0bTMyX2V4dGlfcGVuZGluZyhzdHJ1Y3QKPj4+
-IGlycV9jaGlwX2dlbmVyaWMgKmdjKQo+Pj4gICAgICAgICAgcmV0dXJuIGlycV9yZWdfcmVhZGwo
-Z2MsIHN0bTMyX2JhbmstPnByX29mc3QpOwo+Pj4gICAgfQo+Pj4gICAgLXN0YXRpYyB2b2lkIHN0
-bTMyX2V4dGlfaXJxX2FjayhzdHJ1Y3QgaXJxX2NoaXBfZ2VuZXJpYyAqZ2MsIHUzMiBtYXNrKQo+
-Pj4gLXsKPj4+IC0gICAgICAgY29uc3Qgc3RydWN0IHN0bTMyX2V4dGlfYmFuayAqc3RtMzJfYmFu
-ayA9IGdjLT5wcml2YXRlOwo+Pj4gLQo+Pj4gLSAgICAgICBpcnFfcmVnX3dyaXRlbChnYywgbWFz
-aywgc3RtMzJfYmFuay0+cHJfb2ZzdCk7Cj4+PiAtfQo+Pj4gLQo+Pj4gICAgc3RhdGljIHZvaWQg
-c3RtMzJfaXJxX2hhbmRsZXIoc3RydWN0IGlycV9kZXNjICpkZXNjKQo+Pj4gICAgewo+Pj4gICAg
-ICAgICAgc3RydWN0IGlycV9kb21haW4gKmRvbWFpbiA9IGlycV9kZXNjX2dldF9oYW5kbGVyX2Rh
-dGEoZGVzYyk7Cj4+PiBAQCAtMTA2LDcgKzk5LDYgQEAgc3RhdGljIHZvaWQgc3RtMzJfaXJxX2hh
-bmRsZXIoc3RydWN0IGlycV9kZXNjICpkZXNjKQo+Pj4gICAgICAgICAgICAgICAgICAgICAgICAg
-IGZvcl9lYWNoX3NldF9iaXQobiwgJnBlbmRpbmcsIElSUVNfUEVSX0JBTkspIHsKPj4+ICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHZpcnEgPSBpcnFfZmluZF9tYXBwaW5nKGRvbWFp
-biwgaXJxX2Jhc2UgKwo+Pj4gbik7Cj4+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBnZW5lcmljX2hhbmRsZV9pcnEodmlycSk7Cj4+PiAtICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHN0bTMyX2V4dGlfaXJxX2FjayhnYywgQklUKG4pKTsKPj4KPj4KPj4gdGhlIHdoaWxl
-IGxvb3AgIiB3aGlsZSAoKHBlbmRpbmcgPSAiIGhhcyBiZWVuIGludHJvZHVjZSB3aGlsZSBvcmln
-aW5hbAo+PiB1cHN0cmVhbSBvZiB0aGlzIGRyaXZlciBpbiBWMiB0byBWMwo+PiBodHRwczovL3Bh
-dGNod29yay5vemxhYnMub3JnL3BhdGNoLzYwNDE5MC8KPj4gaHR0cHM6Ly9wYXRjaHdvcmsub3ps
-YWJzLm9yZy9wYXRjaC82NjUyNDIvCj4+Cj4+IHRoZSAiYWNrIiBpcyBuZWVkZWQgdG8gYWNrbm93
-bGVkZ2UgdGhlIGlycSB3aGljaCBhcmUgaGFuZGxlZCBhbmQgd2hpY2ggaXMKPj4gbm90IHRoZSBv
-cmlnaW5hbCBpcnEgZm9yIHdoaWNoIHdlIGVudGVyLgo+Pgo+Pj4gICAgICAgICAgICAgICAgICAg
-ICAgICAgIH0KPj4+ICAgICAgICAgICAgICAgICAgfQo+Pj4gICAgICAgICAgfQo+Pj4gQEAgLTE3
-NiwxNiArMTY4LDEyIEBAIHN0YXRpYyBpbnQgc3RtMzJfaXJxX3NldF93YWtlKHN0cnVjdCBpcnFf
-ZGF0YSAqZGF0YSwKPj4+IHVuc2lnbmVkIGludCBvbikKPj4+ICAgIHN0YXRpYyBpbnQgc3RtMzJf
-ZXh0aV9hbGxvYyhzdHJ1Y3QgaXJxX2RvbWFpbiAqZCwgdW5zaWduZWQgaW50IHZpcnEsCj4+PiAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBucl9pcnFzLCB2b2lkICpk
-YXRhKQo+Pj4gICAgewo+Pj4gLSAgICAgICBzdHJ1Y3QgaXJxX2NoaXBfZ2VuZXJpYyAqZ2M7Cj4+
-PiAgICAgICAgICBzdHJ1Y3QgaXJxX2Z3c3BlYyAqZndzcGVjID0gZGF0YTsKPj4+ICAgICAgICAg
-IGlycV9od19udW1iZXJfdCBod2lycTsKPj4+ICAgICAgICAgIGh3aXJxID0gZndzcGVjLT5wYXJh
-bVswXTsKPj4+IC0gICAgICAgZ2MgPSBpcnFfZ2V0X2RvbWFpbl9nZW5lcmljX2NoaXAoZCwgaHdp
-cnEpOwo+Pj4gICAgICAgICAgaXJxX21hcF9nZW5lcmljX2NoaXAoZCwgdmlycSwgaHdpcnEpOwo+
-Pj4gLSAgICAgICBpcnFfZG9tYWluX3NldF9pbmZvKGQsIHZpcnEsIGh3aXJxLCAmZ2MtPmNoaXBf
-dHlwZXMtPmNoaXAsIGdjLAo+Pj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgIGhhbmRsZV9z
-aW1wbGVfaXJxLCBOVUxMLCBOVUxMKTsKPj4KPj4KPj4gSSBzZWUgaWYgaXQgaXMgbm90IGRpc3R1
-cmIgdGhlIG11bHRpLWJhbmsuCj4+Cj4+PiAgICAgICAgICByZXR1cm4gMDsKPj4+ICAgIH0KPj4+
-IEBAIC0yMDAsNyArMTg4LDYgQEAgc3RhdGljIHZvaWQgc3RtMzJfZXh0aV9mcmVlKHN0cnVjdCBp
-cnFfZG9tYWluICpkLAo+Pj4gdW5zaWduZWQgaW50IHZpcnEsCj4+PiAgICAgIHN0cnVjdCBpcnFf
-ZG9tYWluX29wcyBpcnFfZXh0aV9kb21haW5fb3BzID0gewo+Pj4gICAgICAgICAgLm1hcCAgICA9
-IGlycV9tYXBfZ2VuZXJpY19jaGlwLAo+Pj4gLSAgICAgICAueGxhdGUgID0gaXJxX2RvbWFpbl94
-bGF0ZV9vbmV0d29jZWxsLAo+Pj4gICAgICAgICAgLmFsbG9jICA9IHN0bTMyX2V4dGlfYWxsb2Ms
-Cj4+PiAgICAgICAgICAuZnJlZSAgID0gc3RtMzJfZXh0aV9mcmVlLAo+Pj4gICAgfTsKPj4+Cj4+
-Cj4+IEJSCj4+IEx1ZG8KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlz
-dHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2xpbnV4LWFybS1rZXJuZWwK
+hi Radoslaw
+
+Reviewed-by: Ludovic Barre <ludovic.barre@st.com>
+Tested-by: Ludovic Barre <ludovic.barre@st.com>
+
+BR
+Ludo
+
+On 02/23/2018 09:31 AM, Radoslaw Pietrzyk wrote:
+> - removes unneeded irq_chip.irq_eoi callback
+> - adds irq_chip.irq_set_wake callback for possible
+> in the future GPIO wakeup
+> - adds irq_chip.irq_ack callback
+> 
+> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+> ---
+>   drivers/pinctrl/stm32/pinctrl-stm32.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> index 617df16..6cbcff4 100644
+> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> @@ -268,10 +268,11 @@ static void stm32_gpio_irq_release_resources(struct irq_data *irq_data)
+>   
+>   static struct irq_chip stm32_gpio_irq_chip = {
+>   	.name           = "stm32gpio",
+> -	.irq_eoi	= irq_chip_eoi_parent,
+> +	.irq_ack       = irq_chip_ack_parent,
+>   	.irq_mask       = irq_chip_mask_parent,
+>   	.irq_unmask     = irq_chip_unmask_parent,
+>   	.irq_set_type   = irq_chip_set_type_parent,
+> +	.irq_set_wake   = irq_chip_set_wake_parent,
+>   	.irq_request_resources = stm32_gpio_irq_request_resources,
+>   	.irq_release_resources = stm32_gpio_irq_release_resources,
+>   };
+> 
