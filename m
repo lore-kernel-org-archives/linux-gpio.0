@@ -1,63 +1,45 @@
-From: Ludovic BARRE <ludovic.barre@st.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: stm32: Optimizes and enhances stm32gpio
- irqchip
-Date: Mon, 26 Feb 2018 16:25:37 +0100
-Message-ID: <83f7cbec-05f6-a937-a848-bd533bb1001a@st.com>
-References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
- <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <c648235f538b030e7f349e286661fd00894d5316.1519374248.git.radoslaw.pietrzyk@gmail.com>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: Re: [PATCH v8 3/9] mfd: madera: Add common support for Cirrus Logic
+ Madera codecs
+Date: Mon, 26 Feb 2018 15:36:56 +0000
+Message-ID: <d541ca7e-5e02-a7e5-07c5-38fdebbbc014@opensource.cirrus.com>
+References: <20180226130558.7634-1-rf@opensource.cirrus.com>
+ <20180226130558.7634-4-rf@opensource.cirrus.com>
+ <CAOMZO5DEiwUBsMWfR-a6UgEkEeXvWqXPFAf0pPcwpeJY540xGg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <c648235f538b030e7f349e286661fd00894d5316.1519374248.git.radoslaw.pietrzyk@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOMZO5DEiwUBsMWfR-a6UgEkEeXvWqXPFAf0pPcwpeJY540xGg@mail.gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-hi Radoslaw
-
-Reviewed-by: Ludovic Barre <ludovic.barre@st.com>
-Tested-by: Ludovic Barre <ludovic.barre@st.com>
-
-BR
-Ludo
-
-On 02/23/2018 09:31 AM, Radoslaw Pietrzyk wrote:
-> - removes unneeded irq_chip.irq_eoi callback
-> - adds irq_chip.irq_set_wake callback for possible
-> in the future GPIO wakeup
-> - adds irq_chip.irq_ack callback
+On 26/02/18 13:58, Fabio Estevam wrote:
+> On Mon, Feb 26, 2018 at 10:05 AM, Richard Fitzgerald
+> <rf@opensource.cirrus.com> wrote:
 > 
-> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
-> ---
->   drivers/pinctrl/stm32/pinctrl-stm32.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+>> --- /dev/null
+>> +++ b/drivers/mfd/madera-core.c
+>> @@ -0,0 +1,602 @@
+>> +// SPDX-License-Identifier: GPL-2.0
 > 
-> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> index 617df16..6cbcff4 100644
-> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> @@ -268,10 +268,11 @@ static void stm32_gpio_irq_release_resources(struct irq_data *irq_data)
->   
->   static struct irq_chip stm32_gpio_irq_chip = {
->   	.name           = "stm32gpio",
-> -	.irq_eoi	= irq_chip_eoi_parent,
-> +	.irq_ack       = irq_chip_ack_parent,
->   	.irq_mask       = irq_chip_mask_parent,
->   	.irq_unmask     = irq_chip_unmask_parent,
->   	.irq_set_type   = irq_chip_set_type_parent,
-> +	.irq_set_wake   = irq_chip_set_wake_parent,
->   	.irq_request_resources = stm32_gpio_irq_request_resources,
->   	.irq_release_resources = stm32_gpio_irq_release_resources,
->   };
+> As you use SPDX line here....
 > 
+>> +/*
+>> + * Core MFD support for Cirrus Logic Madera codecs
+>> + *
+>> + * Copyright (C) 2015-2018 Cirrus Logic
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by the
+>> + * Free Software Foundation; version 2.
+> 
+> You can remove this paragraph.
+> 
+> Same applies to the other places of this series.
+> 
+
+Our legal team says no, these lines should stay.
