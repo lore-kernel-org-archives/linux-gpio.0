@@ -1,87 +1,49 @@
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH v2 4/4] ARM: PWM: add allwinner sun8i pwm support.
-Date: Mon, 26 Feb 2018 10:00:38 +0100
-Message-ID: <20180226090038.etk5q4pd4rl5dvf6@flea.lan>
-References: <20180225135308.GA14561@arx-s1>
+Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner
+ H6 DTSI file
+Date: Mon, 26 Feb 2018 10:26:45 +0100
+Message-ID: <20180226092645.xghkmfowenzlbm42@flea.lan>
+References: <20180223123555.64009-6-icenowy@aosc.io>
+ <20180223123555.64009-7-icenowy@aosc.io>
+ <20180223152038.2bflylwa6vj4gzfj@flea.lan>
+ <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5412464591013981586=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180225135308.GA14561@arx-s1>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: hao_zhang <hao5781286@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com, linux@armlinux.org.uk, robh+dt@kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, wens@csie.org, thierry.reding@gmail.com, Claudiu.Beznea@microchip.com, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z6o7m63bqzv2zod7"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
 List-Id: linux-gpio@vger.kernel.org
 
 
---===============5412464591013981586==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qll7qxses6t7myt2"
-Content-Disposition: inline
-
-
---qll7qxses6t7myt2
+--z6o7m63bqzv2zod7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Feb 23, 2018 at 11:22:06PM +0800, Icenowy Zheng wrote:
+> >> +	psci {
+> >> +		compatible =3D "arm,psci-0.2";
+> >> +		method =3D "smc";
+> >> +	};
+> >
+> >Is it needed? The bootloader should fill it with whatever version it
+> >has, shouldn't it?
+>=20
+> But we now use ATF rather than U-Boot PSCI. U-Boot will not fill ATF
+> info.
+>=20
+> See A64/H5 device trees.
 
-Thanks for respinning this serie. It looks mostly good, but you still
-have a quite significant number of checkpatch (--strict) warnings that
-you should address.
+So if the PSCI version implemented in ATF ever changes, we would have
+to update all the DT everywhere, but only if you're running the new
+version?
 
-On Sun, Feb 25, 2018 at 09:53:08PM +0800, hao_zhang wrote:
-> +#define CAPTURE_IRQ_ENABLE_REG	0x0010
-> +#define CFIE(ch)	BIT(ch << 1 + 1)
-> +#define CRIE(ch)	BIT(ch << 1)
+Sigh.
 
-You should also put your argument between parentheses here (and in all
-your other macros).
-
-> +static const u16 div_m_table[] =3D {
-> +	1,
-> +	2,
-> +	4,
-> +	8,
-> +	16,
-> +	32,
-> +	64,
-> +	128,
-> +	256
-> +};
-
-If this is just a power of two, you can use either the power of two /
-ilog2 to switch back and forth, instead of using that table.
-
-> +static int sun8i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> +		struct pwm_state *state)
-> +{
-> +	int ret;
-> +	struct sun8i_pwm_chip *sun8i_pwm =3D to_sun8i_pwm_chip(chip);
-> +	struct pwm_state cstate;
-> +
-> +	pwm_get_state(pwm, &cstate);
-> +	if (!cstate.enabled) {
-> +		ret =3D clk_prepare_enable(sun8i_pwm->clk);
-> +		if (ret) {
-> +			dev_err(chip->dev, "Failed to enable PWM clock\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	spin_lock(&sun8i_pwm->ctrl_lock);
-
-What do you need that spinlock for? Can you use a mutex instead?
-
-Thanks!
 Maxime
 
 --=20
@@ -89,38 +51,24 @@ Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---qll7qxses6t7myt2
+--z6o7m63bqzv2zod7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqTzLUACgkQ0rTAlCFN
-r3SqOg//bo7m7IUR7oYaiZbqV2DycgSB6AAogE2/r1a6VnXdnqndUd/7wd0OPG0C
-lxdFSuONBYUgz0nrl7gobSCN59TMN4b2IFVW547jvjxZ95s5D8otpujTFTQes2kx
-ss37r7SCClQvmtr8H3uJYiIzt7NGRVT+/XUGSthHGVBZmkgHdpWfDboiDFyko3ZU
-bC4lofM2UoOOAsfHns9AZE+9BiXhZ7/sT7q19Msmd4zcC8xv5Su6b1zZAkSHvI1J
-9kay0dUMzI37/1XqR6xAMWQeMybK4sO9+OKnSYYmID7NKrTGdTA0G0rUsLOa+QTf
-ycMkUYJoq6ddxejrpNzHrkTuhJ9FGGZEoYtDT4gpH9LWC96/8Asq3VIrX/Gxg8uM
-6DjYa4ehkGxBMZ74wyBDxn71w9Pv1OlIgbg/AtvDt4QcvVMI6cF+yy8Qnj0YSu3w
-If9eybVDcdBUEp6d+xT0eq/JOJ2sqxRsIRwrXSiaVc9379yeO0EpJsT1bXF7P5zw
-fHhCYfUByrvOEDE+Ql/0LCn2y6FyrHQ6jc4kuEpf9ZdqDw6On4WQFardROmkeN87
-ThtGBKNX5n4fb1rLA/qgVlQp1vt2ULGRkiBjklMbxglIlbiyTSZmM+m+UfZJSmtV
-4qvUCB7rzWd3SveRbF1fm/XNXpjFTfwxaBdBRtjuEHcTK4u+s3E=
-=LwIi
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqT0tQACgkQ0rTAlCFN
+r3TLwg/+Nz8rd3gYDqm5pcrYPGIJN0H61KEsqx/iB8F9FplnrLVH79Y2LXuehDAD
+OFNpmoWWZMXoRePjL/rpoA6/EfXeBddtks+IyMgAHQgBWqDjHgAvq0IV7NUAQ0hb
+AfcIVhDAposY/s8e0BmANAdxLZESlQkZE2kqZEgQ8nr1yDVHam4iALk0gp4DTwef
+U0aDUttzBlHmGZmcEVRuxh2CoPualNFBmav4+GLR/8UdzK/yu64bJHaVan19M9R7
+mGQ8JcU5GJgdFzWFrECgOCsgT5scQqEnve9PxA0w7NYqvP6yCPqTLQ0B58xPl92p
+CEgJqbogmdhE5a9/Mv+G1NXnJlUHFtJkQ030tMRAj6sA247wPnowW5uFnPYi35xc
+CfFrlG+IzcFYDdPy3wfhyHPfGn7o9yxZMNchlseLywyM4uBwf8wjds3nKNeP0Y0m
+NH8ZJK8PKQ+LXfj7Ihu4VSpmH64zkYSQwqMbjFFvuJXGsnBPqqS/Ok+ZzXKjgh1r
+/8grCvGLfKL/r/9/VCYFx0/oGh23oicUBkYLFAsYcDb3lOA0TO+03pqtdXARshaO
+QTbdqBi9Iz90Y3lxOfbpRMG90RvonBeUh9GpeRXKfxL5mD4M5vGh7lD3a2Jojek4
+mj2++whGyo3wLYsFirdAqeA4b0oGSJffC3vpSjzz1OW7U9MhJXA=
+=8ds1
 -----END PGP SIGNATURE-----
 
---qll7qxses6t7myt2--
-
-
---===============5412464591013981586==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============5412464591013981586==--
+--z6o7m63bqzv2zod7--
