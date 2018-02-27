@@ -1,49 +1,50 @@
-From: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] pinctrl/rockchip: Don't call pinctrl_force_* for nothing
-Date: Mon, 26 Feb 2018 19:37:38 -0800
-Message-ID: <A60B94B7-5A04-476E-A752-3CB990390D19@gmail.com>
-References: <20180224200732.6116-1-marc.zyngier@arm.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH v3 00/14] Add MMCI support for STM32F SoCs family
+Date: Tue, 27 Feb 2018 14:25:34 +0100
+Message-ID: <c4f78733-2544-6cef-97e5-fedcc23de404@st.com>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20180224200732.6116-1-marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: patrice.chotard@st.com, Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On February 24, 2018 12:07:31 PM PST, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org> wrote:
->The rockchip pinctl driver calls pinctrl_force_default and
->pinctrl_force_sleep on suspend resume, but seems to expect
->that the outcome of these calls will be that nothing happens,
->as the core code checks whether we're already in the right
->state or not.
->
->Or at least, that was what the core code was doing until
->981ed1bfbc ("pinctrl: Really force states during suspend/resume"),
->which gives the "force" qualifier its actual meaning.
->
->In turn, this breaks suspend/resume on the rk3399. So let's
->change the rockchip code to do what it should have done from
->the very begining, which is exactly *nothing*.
->
->We take this opportunity to tidy-up the RK3288 GPIO6_C6 mux
->resume workaround, making it symetrical to the suspend path.
->
->Tested on a rk3399-based kevin Chromebook.
+Hi Patrice,
 
-Glad you are not reverting the changes I did, but I can't comment whether this is the right think to do on such a Chromebook, FWIW:
+On 01/18/2018 03:34 PM, patrice.chotard@st.com wrote:
+> From: Patrice Chotard <patrice.chotard@st.com>
+> 
+> This series reworks patches submitted one year ago by Andrea Merello [1]
+> but without succeed to merged it.
+> 
+> STM32F4 and STM32F7 SoCs families embeds a variant of the ARM PrimeCell
+> PL18x SD host controller, for which the mmci driver exists.
+> This series adds support for these SoCs to the mmci driver.
+> 
+> As other variants, this one need some specific quirks, that this
+> series address.
+> 
+> This series has been tested on following boards :
+> 	_ stm32f429-eval
+> 	_ stm32f469-disco
+> 	_ stm32f746-eval
+> 	_ stm32f769-disco
+> 
+> DT update for stm32f7 pinctrl, stm32f746-eval and stm32f769-disco boards
+> will be sent later to avoid conflict with pending stm32f7 series [1] which
+> is not yet merged on kernel mainline.
+> 
+> [1] https://www.spinics.net/lists/linux-mmc/msg41616.html
+> [2] https://patchwork.kernel.org/patch/10104447/
+>
+...
 
-Reviewed-by: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Patches 6 to 13 (DT/SoC/configs) applied on stm32-next.
 
--- 
-Florian
+Thanks
+Alex
