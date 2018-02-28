@@ -1,108 +1,129 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 00/10] Add Actions Semi S900 pinctrl and gpio support
-Date: Wed, 28 Feb 2018 23:53:31 +0530
-Message-ID: <20180228182331.65bnk2cp2fpgry5p@linaro.org>
-References: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v3 04/10] pinctrl: actions: Add Actions S900 pinctrl driver
+Date: Wed, 28 Feb 2018 20:36:53 +0200
+Message-ID: <CAHp75VchzV9SZb4g0fVP9aoKb7actsehXm8c4wsvVGASgkOc+w@mail.gmail.com>
+References: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org> <20180228181432.26847-5-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180228181432.26847-5-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 11:18:56PM +0530, Manivannan Sadhasivam wrote:
-> This patchset adds pinctrl and gpio support for Actions Semi S900 SoC.
-> Pinctrl and gpio subsystems share the common set of register range but
-> implemented as individual drivers for making it less complex.
-> 
-> Pinmux functions are only accessible for pin groups while pinconf
-> parameters are available for both pin groups and individual pins.
-> 
-> gpio-line-names has been added for the Bubblegum-96 board matching the
-> 96Boards CE specification v1.0.
-> 
-> Both pinctrl and gpio drivers are verified using the Bubblegum-96 board.
-> 
-> This patchset depends on the clock driver which is still under review:
-> https://lkml.org/lkml/2018/2/9/831
-> 
-> There is also S500 pinctrl and gpio driver developed by Andreas Farber
-> independently to this patchset.
-> https://github.com/afaerber/linux/commits/bg96-next
-> 
-> If this patchseries seems to be good enough to add base OWL pinctrl and
-> gpio support. Then, we may decide on adding S500 support on top of this later
-> by reusing the pinctrl definitions from Andreas.
-> 
-> Thanks,
-> Mani
+On Wed, Feb 28, 2018 at 8:14 PM, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+> Add pinctrl driver for Actions Semi S900 SoC. The driver supports
+> pinctrl, pinmux and pinconf functionalities through a range of registers
+> common to both gpio driver and pinctrl driver.
 >
+> Pinmux functionality is available only for the pin groups while the
+> pinconf functionality is available for both pin groups and individual
+> pins.
 
-Please ignore this patchset. This one came out without version tag. Sent a new
-patch series with correct version.
+> +static int owl_set_mux(struct pinctrl_dev *pctrldev,
+> +                               unsigned int function,
+> +                               unsigned int group)
+> +{
 
-Sorry for the inconvenience!
+> +       mfpval = readl(pctrl->base + g->mfpctl_reg);
+> +       mfpval &= ~mask;
+> +       mfpval |= val;
+> +       writel(mfpval, pctrl->base + g->mfpctl_reg);
 
-Regards,
-Mani 
-> Changes in v3:
-> 
-> * Simplified owl_gpio_set_reg() with _relaxed functions
-> * Added interrupt controller properties to gpio node bindings as suggested
->   by Rob
-> * Minor code cleanups
-> 
-> Changes in v2:
-> 
-> * Implemented each GPIO bank as its own gpio-controller
-> * Added gpio-ranges property
-> * Modified pin group to follow pad names instead of register names
-> * Incorporated review comments from Andy
-> * Incorporated review comments from Andreas
-> * Fixed the MODULE_LICENSE with respect to SPDX tag
-> * Added Reviewed by tag from Rob for pinctrl binding
-> 
-> Manivannan Sadhasivam (10):
->   dt-bindings: pinctrl: Add bindings for Actions S900 SoC
->   arm64: dts: actions: Add pinctrl node for S900
->   arm64: actions: Enable PINCTRL in platforms Kconfig
->   pinctrl: actions: Add Actions S900 pinctrl driver
->   dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
->   arm64: dts: actions: Add S900 gpio nodes
->   arm64: dts: actions: Add gpio line names to Bubblegum-96 board
->   gpio: Add gpio driver for Actions OWL S900 SoC
->   MAINTAINERS: Add reviewer for ACTIONS platforms
->   MAINTAINERS: Add Actions Semi S900 pinctrl and gpio entries
-> 
->  .../devicetree/bindings/gpio/actions,owl-gpio.txt  |   95 +
->  .../bindings/pinctrl/actions,s900-pinctrl.txt      |  178 ++
->  MAINTAINERS                                        |    5 +
->  arch/arm64/Kconfig.platforms                       |    1 +
->  arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |  201 ++
->  arch/arm64/boot/dts/actions/s900.dtsi              |   54 +
->  drivers/gpio/Kconfig                               |    8 +
->  drivers/gpio/Makefile                              |    1 +
->  drivers/gpio/gpio-owl.c                            |  218 ++
->  drivers/pinctrl/Kconfig                            |    1 +
->  drivers/pinctrl/Makefile                           |    1 +
->  drivers/pinctrl/actions/Kconfig                    |   12 +
->  drivers/pinctrl/actions/Makefile                   |    2 +
->  drivers/pinctrl/actions/pinctrl-owl.c              |  571 +++++
->  drivers/pinctrl/actions/pinctrl-owl.h              |  142 ++
->  drivers/pinctrl/actions/pinctrl-s900.c             | 2505 ++++++++++++++++++++
->  16 files changed, 3995 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
->  create mode 100644 drivers/gpio/gpio-owl.c
->  create mode 100644 drivers/pinctrl/actions/Kconfig
->  create mode 100644 drivers/pinctrl/actions/Makefile
->  create mode 100644 drivers/pinctrl/actions/pinctrl-owl.c
->  create mode 100644 drivers/pinctrl/actions/pinctrl-owl.h
->  create mode 100644 drivers/pinctrl/actions/pinctrl-s900.c
-> 
-> -- 
-> 2.14.1
-> 
+This is called owl_update_bits().
+
+> +static int owl_pin_config_set(struct pinctrl_dev *pctrldev,
+> +                               unsigned int pin,
+> +                               unsigned long *configs,
+> +                               unsigned int num_configs)
+> +{
+
+> +       int ret = 0;
+
+Redundant assignment?
+
+> +               mask = (1 << width) - 1;
+> +               mask = mask << bit;
+> +               tmp = readl(pctrl->base + reg);
+> +               tmp &= ~mask;
+> +               tmp |= arg << bit;
+> +               writel(tmp, pctrl->base + reg);
+
+This is called owl_update_bits().
+
+> +}
+
+> +static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
+> +                               unsigned int param,
+> +                               u32 *arg)
+> +{
+
+> +       case PIN_CONFIG_SLEW_RATE:
+> +               if (*arg)
+> +                       *arg = 1;
+> +               else
+> +                       *arg = 0;
+
+Doesn't slew rate allow a non-binary value?
+
+> +       return 0;
+> +}
+> +
+> +static int owl_group_config_get(struct pinctrl_dev *pctrldev,
+> +                               unsigned int group,
+> +                               unsigned long *config)
+> +{
+> +       int ret = 0;
+
+Redundant assignment.
+
+> +}
+
+> +static int owl_group_config_set(struct pinctrl_dev *pctrldev,
+> +                               unsigned int group,
+> +                               unsigned long *configs,
+> +                               unsigned int num_configs)
+> +{
+> +       int ret = 0;
+
+Redundant assignment, see below.
+
+> +               mask = (1 << width) - 1;
+> +               mask = mask << bit;
+> +               tmp = readl(pctrl->base + reg);
+> +               tmp &= ~mask;
+> +               tmp |= arg << bit;
+> +               writel(tmp, pctrl->base + reg);
+
+This is called owl_update_bits().
+
+> +       return ret;
+
+return 0; ?
+
+> +}
+
+> +int owl_pinctrl_probe(struct platform_device *pdev,
+> +                               struct owl_pinctrl_soc_data *soc_data)
+> +{
+
+> +       clk_prepare_enable(pctrl->clk);
+
+This can fail.
+
+> +}
+
+> +static const struct of_device_id s900_pinctrl_of_match[] = {
+> +       { .compatible = "actions,s900-pinctrl", },
+
+> +       { },
+
+No comma needed.
+
+> +};
+
+-- 
+With Best Regards,
+Andy Shevchenko
