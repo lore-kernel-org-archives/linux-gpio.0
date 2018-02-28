@@ -1,134 +1,93 @@
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 05/10] dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
-Date: Wed, 28 Feb 2018 23:19:01 +0530
-Message-ID: <20180228174906.22721-6-manivannan.sadhasivam@linaro.org>
-References: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Subject: [PATCH v3 00/10] Add Actions Semi S900 pinctrl and gpio support
+Date: Wed, 28 Feb 2018 23:44:22 +0530
+Message-ID: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc: devicetree@vger.kernel.org, daniel.thompson@linaro.org, manivannanece23@gmail.com, hzhang@ucrobotics.com, bdong@ucrobotics.com, liuwei@actions-semi.com, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, mp-cs@actions-semi.com, 96boards@ucrobotics.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add gpio nodes for Actions Semi S900 SoC.
+This patchset adds pinctrl and gpio support for Actions Semi S900 SoC.
+Pinctrl and gpio subsystems share the common set of register range but
+implemented as individual drivers for making it less complex.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- .../devicetree/bindings/gpio/actions,owl-gpio.txt  | 95 ++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
+Pinmux functions are only accessible for pin groups while pinconf
+parameters are available for both pin groups and individual pins.
+
+gpio-line-names has been added for the Bubblegum-96 board matching the
+96Boards CE specification v1.0.
+
+Both pinctrl and gpio drivers are verified using the Bubblegum-96 board.
+
+This patchset depends on the clock driver which is still under review:
+https://lkml.org/lkml/2018/2/9/831
+
+There is also S500 pinctrl and gpio driver developed by Andreas Farber
+independently to this patchset.
+https://github.com/afaerber/linux/commits/bg96-next
+
+If this patchseries seems to be good enough to add base OWL pinctrl and
+gpio support. Then, we may decide on adding S500 support on top of this later
+by reusing the pinctrl definitions from Andreas.
+
+Thanks,
+Mani
+
+Changes in v3:
+
+* Simplified owl_gpio_set_reg() with _relaxed functions
+* Added interrupt controller properties to gpio node bindings as suggested
+  by Rob
+* Minor code cleanups
+
+Changes in v2:
+
+* Implemented each GPIO bank as its own gpio-controller
+* Added gpio-ranges property
+* Modified pin group to follow pad names instead of register names
+* Incorporated review comments from Andy
+* Incorporated review comments from Andreas
+* Fixed the MODULE_LICENSE with respect to SPDX tag
+* Added Reviewed by tag from Rob for pinctrl binding
+
+Manivannan Sadhasivam (10):
+  dt-bindings: pinctrl: Add bindings for Actions S900 SoC
+  arm64: dts: actions: Add pinctrl node for S900
+  arm64: actions: Enable PINCTRL in platforms Kconfig
+  pinctrl: actions: Add Actions S900 pinctrl driver
+  dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
+  arm64: dts: actions: Add S900 gpio nodes
+  arm64: dts: actions: Add gpio line names to Bubblegum-96 board
+  gpio: Add gpio driver for Actions OWL S900 SoC
+  MAINTAINERS: Add reviewer for ACTIONS platforms
+  MAINTAINERS: Add Actions Semi S900 pinctrl and gpio entries
+
+ .../devicetree/bindings/gpio/actions,owl-gpio.txt  |   95 +
+ .../bindings/pinctrl/actions,s900-pinctrl.txt      |  178 ++
+ MAINTAINERS                                        |    5 +
+ arch/arm64/Kconfig.platforms                       |    1 +
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |  201 ++
+ arch/arm64/boot/dts/actions/s900.dtsi              |   54 +
+ drivers/gpio/Kconfig                               |    8 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-owl.c                            |  218 ++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/actions/Kconfig                    |   12 +
+ drivers/pinctrl/actions/Makefile                   |    2 +
+ drivers/pinctrl/actions/pinctrl-owl.c              |  571 +++++
+ drivers/pinctrl/actions/pinctrl-owl.h              |  142 ++
+ drivers/pinctrl/actions/pinctrl-s900.c             | 2505 ++++++++++++++++++++
+ 16 files changed, 3995 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+ create mode 100644 drivers/gpio/gpio-owl.c
+ create mode 100644 drivers/pinctrl/actions/Kconfig
+ create mode 100644 drivers/pinctrl/actions/Makefile
+ create mode 100644 drivers/pinctrl/actions/pinctrl-owl.c
+ create mode 100644 drivers/pinctrl/actions/pinctrl-owl.h
+ create mode 100644 drivers/pinctrl/actions/pinctrl-s900.c
 
-diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-new file mode 100644
-index 000000000000..d2939ca6cfaf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-@@ -0,0 +1,95 @@
-+* Actions Semi OWL GPIO controller bindings
-+
-+The GPIOs are organized as individual banks/ports with variable number
-+of GPIOs. Each bank is represented as an individual GPIO controller.
-+
-+Required properties:
-+- compatible            : Should be "actions,s900-gpio"
-+- reg                   : Address and range of the GPIO controller registers.
-+- gpio-controller       : Marks the device node as a GPIO controller.
-+- #gpio-cells           : Should be <2>. The first cell is the gpio number
-+                          and the second cell is used to specify optional
-+                          parameters.
-+- interrupt-controller  : Marks the device node as an interrupt controller.
-+- #interrupt-cells      : Specifies the number of cells needed to encode an
-+                          interrupt.  Shall be set to 2.  The first cell
-+                          defines the interrupt number, the second encodes
-+                          the trigger flags described in
-+                          bindings/interrupt-controller/interrupts.txt
-+
-+Optional properties:
-+- gpio-ranges           : Mapping between GPIO and pinctrl
-+
-+Note: Each GPIO port should have an alias correctly numbered in "aliases"
-+node.
-+
-+Examples:
-+
-+aliases {
-+        gpio0 = &gpioa;
-+        gpio1 = &gpiob;
-+        gpio2 = &gpioc;
-+        gpio3 = &gpiod;
-+        gpio4 = &gpioe;
-+        gpio5 = &gpiof;
-+};
-+
-+       gpioa: gpioa@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 0 32>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpiob: gpiob@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 32 32>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpioc: gpioc@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 64 12>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpiod: gpiod@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 76 30>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpioe: gpioe@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 106 32>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
-+
-+       gpiof: gpiof@e01b0000 {
-+               compatible = "actions,s900-gpio";
-+               reg = <0x0 0xe01b0000 0x0 0x1000>;
-+               gpio-controller;
-+               #gpio-cells = <2>;
-+               gpio-ranges = <&pinctrl 0 138 8>;
-+               interrupt-controller;
-+               #interrupt-cells = <2>;
-+       };
 -- 
 2.14.1
