@@ -1,55 +1,56 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] gpio: raspberrypi-ext: fix firmware dependency
-Date: Wed, 28 Feb 2018 14:48:08 +0100
-Message-ID: <20180228134822.2194009-1-arnd@arndb.de>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: [PATCH] pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
+Date: Wed, 28 Feb 2018 15:53:06 +0000
+Message-ID: <20180228155306.1006-1-rf@opensource.cirrus.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, Dave Stevenson <dave.stevenson@raspberrypi.org>, Baruch Siach <baruch@tkos.co.il>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, Richard Fitzgerald <rf@opensource.cirrus.com>
 List-Id: linux-gpio@vger.kernel.org
 
-When the firmware driver is a loadable module, the gpio driver cannot be
-built-in:
+When dt_to_map_one_config() is called with a pinctrl_dev passed
+in, it should only be using this if the node being looked up
+is a hog. The code was always using the passed pinctrl_dev
+without checking whether the dt node referred to it.
 
-drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_set':
-gpio-raspberrypi-exp.c:(.text+0xb4): undefined reference to `rpi_firmware_property'
-drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get':
-gpio-raspberrypi-exp.c:(.text+0x1ec): undefined reference to `rpi_firmware_property'
-drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_direction':
-gpio-raspberrypi-exp.c:(.text+0x360): undefined reference to `rpi_firmware_property'
-drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_polarity':
-gpio-raspberrypi-exp.c:(.text+0x4d4): undefined reference to `rpi_firmware_property'
-drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_out':
-gpio-raspberrypi-exp.c:(.text+0x670): undefined reference to `rpi_firmware_property'
-drivers/gpio/gpio-raspberrypi-exp.o:gpio-raspberrypi-exp.c:(.text+0x7fc): more undefined references to `rpi_firmware_property' follow
-drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_in':
-drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_probe':
-gpio-raspberrypi-exp.c:(.text+0x93c): undefined reference to `rpi_firmware_get'
+A pin controller can have pinctrl-n dependencies on other pin
+controllers in these cases:
 
-We already have a Kconfig dependency for it, but when compile-testing, it
-is disregarded.
+- the pin controller hardware is external, for example I2C, so
+  needs other pin controller(s) to be setup to communicate with
+  the hardware device.
 
-This changes the dependency so that compile-testing is only done when the
-firmware driver is completely disabled.
+- it is a child of a composite MFD so its of_node is shared with
+  the parent MFD and other children of that MFD. Any part of that
+  MFD could have dependencies on other pin controllers.
 
-Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Because of this, dt_to_map_one_config() can't assume that if it
+has a pinctrl_dev passed in then the node it looks up must be
+a hog. It could be a reference to some other pin controller.
+
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 ---
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/devicetree.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 2ecd2adbaec6..52a8b0a6f4e1 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -126,7 +126,7 @@ config GPIO_RASPBERRYPI_EXP
- 	tristate "Raspberry Pi 3 GPIO Expander"
- 	default RASPBERRYPI_FIRMWARE
- 	depends on OF_GPIO
--	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || COMPILE_TEST
-+	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
- 	help
- 	  Turn on GPIO support for the expander on Raspberry Pi 3 boards, using
- 	  the firmware mailbox to communicate with VideoCore on BCM283x chips.
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index 1ff6c3573493..b601039d6c69 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -122,8 +122,10 @@ static int dt_to_map_one_config(struct pinctrl *p,
+ 			/* OK let's just assume this will appear later then */
+ 			return -EPROBE_DEFER;
+ 		}
+-		if (!pctldev)
+-			pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
++		/* If we're creating a hog we can use the passed pctldev */
++		if (pctldev && (np_pctldev == p->dev->of_node))
++			break;
++		pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
+ 		if (pctldev)
+ 			break;
+ 		/* Do not defer probing of hogs (circular loop) */
 -- 
-2.9.0
+2.11.0
