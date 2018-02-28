@@ -1,56 +1,93 @@
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH] pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
-Date: Wed, 28 Feb 2018 15:53:06 +0000
-Message-ID: <20180228155306.1006-1-rf@opensource.cirrus.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 00/10] Add Actions Semi S900 pinctrl and gpio support
+Date: Wed, 28 Feb 2018 23:18:56 +0530
+Message-ID: <20180228174906.22721-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, Richard Fitzgerald <rf@opensource.cirrus.com>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-When dt_to_map_one_config() is called with a pinctrl_dev passed
-in, it should only be using this if the node being looked up
-is a hog. The code was always using the passed pinctrl_dev
-without checking whether the dt node referred to it.
+This patchset adds pinctrl and gpio support for Actions Semi S900 SoC.
+Pinctrl and gpio subsystems share the common set of register range but
+implemented as individual drivers for making it less complex.
 
-A pin controller can have pinctrl-n dependencies on other pin
-controllers in these cases:
+Pinmux functions are only accessible for pin groups while pinconf
+parameters are available for both pin groups and individual pins.
 
-- the pin controller hardware is external, for example I2C, so
-  needs other pin controller(s) to be setup to communicate with
-  the hardware device.
+gpio-line-names has been added for the Bubblegum-96 board matching the
+96Boards CE specification v1.0.
 
-- it is a child of a composite MFD so its of_node is shared with
-  the parent MFD and other children of that MFD. Any part of that
-  MFD could have dependencies on other pin controllers.
+Both pinctrl and gpio drivers are verified using the Bubblegum-96 board.
 
-Because of this, dt_to_map_one_config() can't assume that if it
-has a pinctrl_dev passed in then the node it looks up must be
-a hog. It could be a reference to some other pin controller.
+This patchset depends on the clock driver which is still under review:
+https://lkml.org/lkml/2018/2/9/831
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
- drivers/pinctrl/devicetree.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+There is also S500 pinctrl and gpio driver developed by Andreas Farber
+independently to this patchset.
+https://github.com/afaerber/linux/commits/bg96-next
 
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index 1ff6c3573493..b601039d6c69 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -122,8 +122,10 @@ static int dt_to_map_one_config(struct pinctrl *p,
- 			/* OK let's just assume this will appear later then */
- 			return -EPROBE_DEFER;
- 		}
--		if (!pctldev)
--			pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
-+		/* If we're creating a hog we can use the passed pctldev */
-+		if (pctldev && (np_pctldev == p->dev->of_node))
-+			break;
-+		pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
- 		if (pctldev)
- 			break;
- 		/* Do not defer probing of hogs (circular loop) */
+If this patchseries seems to be good enough to add base OWL pinctrl and
+gpio support. Then, we may decide on adding S500 support on top of this later
+by reusing the pinctrl definitions from Andreas.
+
+Thanks,
+Mani
+
+Changes in v3:
+
+* Simplified owl_gpio_set_reg() with _relaxed functions
+* Added interrupt controller properties to gpio node bindings as suggested
+  by Rob
+* Minor code cleanups
+
+Changes in v2:
+
+* Implemented each GPIO bank as its own gpio-controller
+* Added gpio-ranges property
+* Modified pin group to follow pad names instead of register names
+* Incorporated review comments from Andy
+* Incorporated review comments from Andreas
+* Fixed the MODULE_LICENSE with respect to SPDX tag
+* Added Reviewed by tag from Rob for pinctrl binding
+
+Manivannan Sadhasivam (10):
+  dt-bindings: pinctrl: Add bindings for Actions S900 SoC
+  arm64: dts: actions: Add pinctrl node for S900
+  arm64: actions: Enable PINCTRL in platforms Kconfig
+  pinctrl: actions: Add Actions S900 pinctrl driver
+  dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
+  arm64: dts: actions: Add S900 gpio nodes
+  arm64: dts: actions: Add gpio line names to Bubblegum-96 board
+  gpio: Add gpio driver for Actions OWL S900 SoC
+  MAINTAINERS: Add reviewer for ACTIONS platforms
+  MAINTAINERS: Add Actions Semi S900 pinctrl and gpio entries
+
+ .../devicetree/bindings/gpio/actions,owl-gpio.txt  |   95 +
+ .../bindings/pinctrl/actions,s900-pinctrl.txt      |  178 ++
+ MAINTAINERS                                        |    5 +
+ arch/arm64/Kconfig.platforms                       |    1 +
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |  201 ++
+ arch/arm64/boot/dts/actions/s900.dtsi              |   54 +
+ drivers/gpio/Kconfig                               |    8 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-owl.c                            |  218 ++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/actions/Kconfig                    |   12 +
+ drivers/pinctrl/actions/Makefile                   |    2 +
+ drivers/pinctrl/actions/pinctrl-owl.c              |  571 +++++
+ drivers/pinctrl/actions/pinctrl-owl.h              |  142 ++
+ drivers/pinctrl/actions/pinctrl-s900.c             | 2505 ++++++++++++++++++++
+ 16 files changed, 3995 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+ create mode 100644 drivers/gpio/gpio-owl.c
+ create mode 100644 drivers/pinctrl/actions/Kconfig
+ create mode 100644 drivers/pinctrl/actions/Makefile
+ create mode 100644 drivers/pinctrl/actions/pinctrl-owl.c
+ create mode 100644 drivers/pinctrl/actions/pinctrl-owl.h
+ create mode 100644 drivers/pinctrl/actions/pinctrl-s900.c
+
 -- 
-2.11.0
+2.14.1
