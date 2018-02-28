@@ -1,77 +1,55 @@
-From: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the
- basical Allwinner H6 DTSI file
-Date: Wed, 28 Feb 2018 11:08:07 +0000
-Message-ID: <4c9cb1c9-922b-655e-cf31-c09b5b20d829@arm.com>
-References: <20180223123555.64009-6-icenowy@aosc.io>
- <20180223123555.64009-7-icenowy@aosc.io>
- <20180223152038.2bflylwa6vj4gzfj@flea.lan>
- <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
- <20180226092645.xghkmfowenzlbm42@flea.lan>
- <b9bc5944-b9e3-91d7-8012-c87a2b2d17fa@sholland.org>
-Reply-To: andre.przywara-5wv7dgnIgG8@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDNZNK75ZIKRBIM33LKAKGQE335WJ3Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <b9bc5944-b9e3-91d7-8012-c87a2b2d17fa-RkNLwX/CsU9g9hUCZPvPmw@public.gmane.org>
-Content-Language: en-GB
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: samuel-RkNLwX/CsU9g9hUCZPvPmw@public.gmane.org, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] gpio: raspberrypi-ext: fix firmware dependency
+Date: Wed, 28 Feb 2018 14:48:08 +0100
+Message-ID: <20180228134822.2194009-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, Dave Stevenson <dave.stevenson@raspberrypi.org>, Baruch Siach <baruch@tkos.co.il>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+When the firmware driver is a loadable module, the gpio driver cannot be
+built-in:
 
-On 26/02/18 15:54, Samuel Holland wrote:
-> On 02/26/18 03:26, Maxime Ripard wrote:
->> On Fri, Feb 23, 2018 at 11:22:06PM +0800, Icenowy Zheng wrote:
->>>>> +	psci {
->>>>> +		compatible = "arm,psci-0.2";
->>>>> +		method = "smc";
->>>>> +	};
->>>>
->>>> Is it needed? The bootloader should fill it with whatever version it
->>>> has, shouldn't it?
->>>
->>> But we now use ATF rather than U-Boot PSCI. U-Boot will not fill ATF
->>> info.
->>>
->>> See A64/H5 device trees.
->>
->> So if the PSCI version implemented in ATF ever changes, we would have
->> to update all the DT everywhere, but only if you're running the new
->> version?
-> 
-> Yes but no. PSCI 1.0 is generally backward compatible with PSCI 0.2. In fact,
-> the Linux driver treats them exactly the same:
-> 
->         { .compatible = "arm,psci-0.2", .data = psci_0_2_init},
->         { .compatible = "arm,psci-1.0", .data = psci_0_2_init},
+drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_set':
+gpio-raspberrypi-exp.c:(.text+0xb4): undefined reference to `rpi_firmware_property'
+drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get':
+gpio-raspberrypi-exp.c:(.text+0x1ec): undefined reference to `rpi_firmware_property'
+drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_direction':
+gpio-raspberrypi-exp.c:(.text+0x360): undefined reference to `rpi_firmware_property'
+drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_polarity':
+gpio-raspberrypi-exp.c:(.text+0x4d4): undefined reference to `rpi_firmware_property'
+drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_out':
+gpio-raspberrypi-exp.c:(.text+0x670): undefined reference to `rpi_firmware_property'
+drivers/gpio/gpio-raspberrypi-exp.o:gpio-raspberrypi-exp.c:(.text+0x7fc): more undefined references to `rpi_firmware_property' follow
+drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_in':
+drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_probe':
+gpio-raspberrypi-exp.c:(.text+0x93c): undefined reference to `rpi_firmware_get'
 
-Yeah, it's actually unclear why we have that new compatible name in the
-first place, since starting with PSCI v0.2 the version can be perfectly
-read using the mandatory PSCI_VERSION call. And DT aims to only cover
-things that are not discoverable.
+We already have a Kconfig dependency for it, but when compile-testing, it
+is disregarded.
 
-> For the H6, however, the oldest ATF source available (which I believe was the
-> one in use during bringup) is based on mainline 1.4, and is already at PSCI
-> version 1.1:
-> 
-> [    0.000000] psci: probing for conduit method from DT.
-> [    0.000000] psci: PSCIv1.1 detected in firmware.
-> [    0.000000] psci: Using standard PSCI v0.2 function IDs
-> [    0.000000] psci: MIGRATE_INFO_TYPE not supported.
-> 
-> So we could go ahead and bump the compatible to "arm,psci-1.0".
+This changes the dependency so that compile-testing is only done when the
+firmware driver is completely disabled.
 
-I'd rather leave it at "arm,psci-0.2", since this improves compatibility
-to other OSes or DT users.
+Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Andre.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 2ecd2adbaec6..52a8b0a6f4e1 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -126,7 +126,7 @@ config GPIO_RASPBERRYPI_EXP
+ 	tristate "Raspberry Pi 3 GPIO Expander"
+ 	default RASPBERRYPI_FIRMWARE
+ 	depends on OF_GPIO
+-	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || COMPILE_TEST
++	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
+ 	help
+ 	  Turn on GPIO support for the expander on Raspberry Pi 3 boards, using
+ 	  the firmware mailbox to communicate with VideoCore on BCM283x chips.
+-- 
+2.9.0
