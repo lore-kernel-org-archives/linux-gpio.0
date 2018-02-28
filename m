@@ -1,300 +1,90 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 08/10] gpio: Add gpio driver for Actions OWL S900 SoC
-Date: Wed, 28 Feb 2018 20:39:31 +0200
-Message-ID: <CAHp75VcA8G5gcdn+9_vU096xBa+8=8U0pJtUDObO-BrTiAbEwQ@mail.gmail.com>
-References: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org> <20180228181432.26847-9-manivannan.sadhasivam@linaro.org>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH] gpio: raspberrypi-ext: fix firmware dependency
+Date: Wed, 28 Feb 2018 23:47:25 +0200
+Message-ID: <20180228214725.ewu3zt3l2xyxtxb2@tarshish>
+References: <20180228134822.2194009-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180228181432.26847-9-manivannan.sadhasivam@linaro.org>
+Content-Disposition: inline
+In-Reply-To: <20180228134822.2194009-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stefan Wahren <stefan.wahren@i2se.com>, Dave Stevenson <dave.stevenson@raspberrypi.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 8:14 PM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
-> controlling the gpio shares the same register range with pinctrl block.
->
-> GPIO registers are organized as 6 banks and each bank controls the
-> maximum of 32 gpios.
->
+Hi Arnd,
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Thanks for the fix.
 
-P.S. Comma in terminator line is not needed.
+On Wed, Feb 28, 2018 at 02:48:08PM +0100, Arnd Bergmann wrote:
+> When the firmware driver is a loadable module, the gpio driver cannot be
+> built-in:
+> 
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_set':
+> gpio-raspberrypi-exp.c:(.text+0xb4): undefined reference to `rpi_firmware_property'
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get':
+> gpio-raspberrypi-exp.c:(.text+0x1ec): undefined reference to `rpi_firmware_property'
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_direction':
+> gpio-raspberrypi-exp.c:(.text+0x360): undefined reference to `rpi_firmware_property'
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_polarity':
+> gpio-raspberrypi-exp.c:(.text+0x4d4): undefined reference to `rpi_firmware_property'
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_out':
+> gpio-raspberrypi-exp.c:(.text+0x670): undefined reference to `rpi_firmware_property'
+> drivers/gpio/gpio-raspberrypi-exp.o:gpio-raspberrypi-exp.c:(.text+0x7fc): more undefined references to `rpi_firmware_property' follow
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_in':
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_probe':
+> gpio-raspberrypi-exp.c:(.text+0x93c): undefined reference to `rpi_firmware_get'
+> 
+> We already have a Kconfig dependency for it, but when compile-testing, it
+> is disregarded.
+> 
+> This changes the dependency so that compile-testing is only done when the
+> firmware driver is completely disabled.
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+What about the CONFIG_ARCH_BCM2835=y case? The combination of 
+CONFIG_GPIO_RASPBERRYPI_EXP=y and CONFIG_RASPBERRYPI_FIRMWARE=m is still 
+valid. Wouldn't that break the build?
+
+Isn't there a way in Kconfig to force CONFIG_GPIO_RASPBERRYPI_EXP=m when 
+CONFIG_RASPBERRYPI_FIRMWARE=m?
+
+What about 'depends on m || RASPBERRYPI_FIRMWARE=y'?
+
+Grepping around I also found this:
+
+drivers/power/supply/Kconfig:   depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+
+And this:
+
+drivers/infiniband/Kconfig:     depends on m || IPV6 != m
+
+> Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/gpio/Kconfig    |   8 ++
->  drivers/gpio/Makefile   |   1 +
->  drivers/gpio/gpio-owl.c | 218 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 227 insertions(+)
->  create mode 100644 drivers/gpio/gpio-owl.c
->
+>  drivers/gpio/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 8dbb2280538d..09ceb98e2434 100644
+> index 2ecd2adbaec6..52a8b0a6f4e1 100644
 > --- a/drivers/gpio/Kconfig
 > +++ b/drivers/gpio/Kconfig
-> @@ -364,6 +364,14 @@ config GPIO_OMAP
->         help
->           Say yes here to enable GPIO support for TI OMAP SoCs.
->
-> +config GPIO_OWL
-> +       tristate "Actions OWL GPIO support"
-> +       default ARCH_ACTIONS
-> +       depends on ARCH_ACTIONS || COMPILE_TEST
-> +       depends on OF_GPIO
-> +       help
-> +         Say yes here to enable GPIO support for Actions OWL SoCs.
-> +
->  config GPIO_PL061
->         bool "PrimeCell PL061 GPIO support"
->         depends on ARM_AMBA
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index cccb0d40846c..b2bb11d4675f 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -91,6 +91,7 @@ obj-$(CONFIG_GPIO_MXC)                += gpio-mxc.o
->  obj-$(CONFIG_GPIO_MXS)         += gpio-mxs.o
->  obj-$(CONFIG_GPIO_OCTEON)      += gpio-octeon.o
->  obj-$(CONFIG_GPIO_OMAP)                += gpio-omap.o
-> +obj-$(CONFIG_GPIO_OWL)         += gpio-owl.o
->  obj-$(CONFIG_GPIO_PCA953X)     += gpio-pca953x.o
->  obj-$(CONFIG_GPIO_PCF857X)     += gpio-pcf857x.o
->  obj-$(CONFIG_GPIO_PCH)         += gpio-pch.o
-> diff --git a/drivers/gpio/gpio-owl.c b/drivers/gpio/gpio-owl.c
-> new file mode 100644
-> index 000000000000..98f2e98197bc
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-owl.c
-> @@ -0,0 +1,218 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * OWL SoC's GPIO driver
-> + *
-> + * Copyright (c) 2018 Linaro Ltd.
-> + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#define GPIO_OUTEN     0x0000
-> +#define GPIO_INEN      0x0004
-> +#define GPIO_DAT       0x0008
-> +
-> +#define OWL_GPIO_PORT_A 0
-> +#define OWL_GPIO_PORT_B 1
-> +#define OWL_GPIO_PORT_C 2
-> +#define OWL_GPIO_PORT_D 3
-> +#define OWL_GPIO_PORT_E 4
-> +#define OWL_GPIO_PORT_F 5
-> +
-> +struct owl_gpio_port {
-> +       const char *name;
-> +       unsigned int offset;
-> +       unsigned int pins;
-> +};
-> +
-> +struct owl_gpio {
-> +       struct gpio_chip gpio;
-> +       const struct owl_gpio_port *port;
-> +       void __iomem *base;
-> +       int id;
-> +};
-> +
-> +static void owl_gpio_set_reg(void __iomem *base, unsigned int pin, int flag)
-> +{
-> +       u32 val;
-> +
-> +       val = readl_relaxed(base);
-> +
-> +       if (flag)
-> +               val |= BIT(pin);
-> +       else
-> +               val &= ~BIT(pin);
-> +
-> +       writel_relaxed(val, base);
-> +}
-> +
-> +static int owl_gpio_request(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
-> +       const struct owl_gpio_port *port = gpio->port;
-> +       void __iomem *gpio_base = gpio->base + port->offset;
-> +
-> +       /*
-> +        * GPIOs have higher priority over other modules, so either setting
-> +        * them as OUT or IN is sufficient
-> +        */
-> +       owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, true);
-> +
-> +       return 0;
-> +}
-> +
-> +static void owl_gpio_free(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
-> +       const struct owl_gpio_port *port = gpio->port;
-> +       void __iomem *gpio_base = gpio->base + port->offset;
-> +
-> +       /* disable gpio output */
-> +       owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, false);
-> +
-> +       /* disable gpio input */
-> +       owl_gpio_set_reg(gpio_base + GPIO_INEN, offset, false);
-> +}
-> +
-> +static int owl_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
-> +       const struct owl_gpio_port *port = gpio->port;
-> +       void __iomem *gpio_base = gpio->base + port->offset;
-> +       u32 val;
-> +
-> +       val = readl_relaxed(gpio_base + GPIO_DAT);
-> +
-> +       return !!(val & BIT(offset));
-> +}
-> +
-> +static void owl_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
-> +{
-> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
-> +       const struct owl_gpio_port *port = gpio->port;
-> +       void __iomem *gpio_base = gpio->base + port->offset;
-> +       u32 val;
-> +
-> +       val = readl_relaxed(gpio_base + GPIO_DAT);
-> +
-> +       if (value)
-> +               val |= BIT(offset);
-> +       else
-> +               val &= ~BIT(offset);
-> +
-> +       writel_relaxed(val, gpio_base + GPIO_DAT);
-> +}
-> +
-> +static int owl_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
-> +       const struct owl_gpio_port *port = gpio->port;
-> +       void __iomem *gpio_base = gpio->base + port->offset;
-> +
-> +       owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, false);
-> +       owl_gpio_set_reg(gpio_base + GPIO_INEN, offset, true);
-> +
-> +       return 0;
-> +}
-> +
-> +static int owl_gpio_direction_output(struct gpio_chip *chip,
-> +                               unsigned int offset, int value)
-> +{
-> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
-> +       const struct owl_gpio_port *port = gpio->port;
-> +       void __iomem *gpio_base = gpio->base + port->offset;
-> +
-> +       owl_gpio_set_reg(gpio_base + GPIO_INEN, offset, false);
-> +       owl_gpio_set_reg(gpio_base + GPIO_OUTEN, offset, true);
-> +       owl_gpio_set(chip, offset, value);
-> +
-> +       return 0;
-> +}
-> +
-> +#define OWL_GPIO_PORT(port, base, count)               \
-> +       [OWL_GPIO_PORT_##port] = {                      \
-> +               .name = #port,                          \
-> +               .offset = base,                         \
-> +               .pins = count,                          \
-> +       }
-> +
-> +static const struct owl_gpio_port s900_gpio_ports[] = {
-> +       OWL_GPIO_PORT(A, 0x0000, 32),
-> +       OWL_GPIO_PORT(B, 0x000C, 32),
-> +       OWL_GPIO_PORT(C, 0x0018, 12),
-> +       OWL_GPIO_PORT(D, 0x0024, 30),
-> +       OWL_GPIO_PORT(E, 0x0030, 32),
-> +       OWL_GPIO_PORT(F, 0x00F0, 8),
-> +};
-> +
-> +static int owl_gpio_probe(struct platform_device *pdev)
-> +{
-> +       struct owl_gpio *gpio;
-> +       const struct owl_gpio_port *port;
-> +       int ret;
-> +
-> +       gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-> +       if (!gpio)
-> +               return -ENOMEM;
-> +
-> +       gpio->base = of_iomap(pdev->dev.of_node, 0);
-> +       if (IS_ERR(gpio->base))
-> +               return PTR_ERR(gpio->base);
-> +
-> +       gpio->id = of_alias_get_id(pdev->dev.of_node, "gpio");
-> +       if (gpio->id < 0)
-> +               return gpio->id;
-> +
-> +       port = &s900_gpio_ports[gpio->id];
-> +
-> +       gpio->gpio.request = owl_gpio_request;
-> +       gpio->gpio.free = owl_gpio_free;
-> +       gpio->gpio.get = owl_gpio_get;
-> +       gpio->gpio.set = owl_gpio_set;
-> +       gpio->gpio.direction_input = owl_gpio_direction_input;
-> +       gpio->gpio.direction_output = owl_gpio_direction_output;
-> +
-> +       gpio->gpio.base = -1;
-> +       gpio->gpio.parent = &pdev->dev;
-> +       gpio->gpio.label = port->name;
-> +       gpio->gpio.ngpio = port->pins;
-> +
-> +       gpio->port = port;
-> +
-> +       platform_set_drvdata(pdev, gpio);
-> +
-> +       ret = devm_gpiochip_add_data(&pdev->dev, &gpio->gpio, gpio);
-> +       if (ret < 0) {
-> +               dev_err(&pdev->dev, "Failed to register gpiochip\n");
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct of_device_id owl_gpio_of_match[] = {
-> +       { .compatible = "actions,s900-gpio", },
-> +       { /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, owl_gpio_of_match);
-> +
-> +static struct platform_driver owl_gpio_driver = {
-> +       .driver         = {
-> +               .name   = "owl-gpio",
-> +               .of_match_table = owl_gpio_of_match,
-> +       },
-> +       .probe          = owl_gpio_probe,
-> +};
-> +module_platform_driver(owl_gpio_driver);
-> +
-> +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
-> +MODULE_DESCRIPTION("Actions Semi OWL SoCs GPIO driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.14.1
->
+> @@ -126,7 +126,7 @@ config GPIO_RASPBERRYPI_EXP
+>  	tristate "Raspberry Pi 3 GPIO Expander"
+>  	default RASPBERRYPI_FIRMWARE
+>  	depends on OF_GPIO
+> -	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || COMPILE_TEST
+> +	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
 
+This is really non-obvious. An inline comment here might help, IMO.
 
+>  	help
+>  	  Turn on GPIO support for the expander on Raspberry Pi 3 boards, using
+>  	  the firmware mailbox to communicate with VideoCore on BCM283x chips.
+
+baruch
 
 -- 
-With Best Regards,
-Andy Shevchenko
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
