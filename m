@@ -1,31 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: artpec-6: Add smaller groups for uarts
-Date: Thu, 1 Mar 2018 17:04:43 +0100
-Message-ID: <CACRpkdb3gDBfX+05mSBk3h4Mm-0jvHebT4LbU9p1Bw2Y0U4=tg@mail.gmail.com>
-References: <20180222132705.18314-1-niklas.cassel@axis.com>
+Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
+Date: Thu, 1 Mar 2018 17:06:47 +0100
+Message-ID: <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com>
+References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be> <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180222132705.18314-1-niklas.cassel@axis.com>
+In-Reply-To: <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Niklas Cassel <niklas.cassel@axis.com>
-Cc: Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, linux-arm-kernel@axis.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-pm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 2:27 PM, Niklas Cassel <niklas.cassel@axis.com> wrote:
+On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> From: Jesper Nilsson <jesper.nilsson@axis.com>
+> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
+> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
+> block's module clock (if exists) is manually kept running during system
+> suspend, to make sure the device stays active.
 >
-> Add group configuration for uarts that are cut down
-> variants, the standard being full, i.e. all signals,
-> flow control, i.e. rx/tx and cts/rts, and rx/tx only.
+> However, this explicit clock handling is merely a workaround for a
+> failure to properly communicate wakeup information to the device core.
 >
-> This allows us to be more precise in which pins we're
-> actually using.
+> Instead, set the device's power.wakeup_path field, to indicate this
+> device is part of the wakeup path.  Depending on the PM Domain's
+> active_wakeup configuration, the genpd core code will keep the device
+> enabled (and the clock running) during system suspend when needed.
+> This allows for the removal of all explicit clock handling code from the
+> driver.
 >
-> Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
 
-Patch applied!
+Patch applied for v4.16 fixes.
 
 Yours,
 Linus Walleij
