@@ -1,46 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung: Validate alias coming from DT
-Date: Thu, 1 Mar 2018 23:33:01 +0100
-Message-ID: <CACRpkdbAhPdpRTx0P3yvazGgRvtUMmJ-qese1LFoCqNSPuR+sw@mail.gmail.com>
-References: <20180220181751.20826-1-krzk@kernel.org>
+Subject: Re: [PATCH v2 2/2] pinctrl: stm32: Optimizes and enhances stm32gpio irqchip
+Date: Thu, 1 Mar 2018 23:41:54 +0100
+Message-ID: <CACRpkdYfbgdr9QsTudYdr8EnXgMzwqm_iP2m1ya3hQkyTBjgqQ@mail.gmail.com>
+References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
+ <cover.1519374248.git.radoslaw.pietrzyk@gmail.com> <c648235f538b030e7f349e286661fd00894d5316.1519374248.git.radoslaw.pietrzyk@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180220181751.20826-1-krzk@kernel.org>
+In-Reply-To: <c648235f538b030e7f349e286661fd00894d5316.1519374248.git.radoslaw.pietrzyk@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, stable <stable@vger.kernel.org>
+To: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Ludovic BARRE <ludovic.barre@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 7:17 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Fri, Feb 23, 2018 at 9:31 AM, Radoslaw Pietrzyk
+<radoslaw.pietrzyk@gmail.com> wrote:
 
-> Driver uses alias from Device Tree as an index of pin controller data
-> array.  In case of a wrong DTB or an out-of-tree DTB, the alias could be
-> outside of this data array leading to out-of-bounds access.
+> - removes unneeded irq_chip.irq_eoi callback
+> - adds irq_chip.irq_set_wake callback for possible
+> in the future GPIO wakeup
+> - adds irq_chip.irq_ack callback
 >
-> Depending on binary and memory layout, this could be handled properly
-> (showing error like "samsung-pinctrl 3860000.pinctrl: driver data not
-> available") or could lead to exceptions.
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: <stable@vger.kernel.org>
-> Fixes: 30574f0db1b1 ("pinctrl: add samsung pinctrl and gpiolib driver")
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> ---
->
-> Issue is present since first version of this driver so this should be
-> backported as far as possible.
->
-> Tested on Odroid HC1 (Exynos5422). Tests on S3C24xx, S3C64xx, Exynos
-> ARM64 and any other chips are highly appreciated.
->
-> Linus,
-> I can take it through samsung/pinctrl tree and later send you again as
-> pull request... or you can apply it directly as I do not have any other
-> pinctrl patches queued so far.
+> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
 
-Patch applied for fixes with all the tags.
+This v2 patch applied with Ludovic's tags.
 
 Yours,
 Linus Walleij
