@@ -1,52 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.16
-Date: Thu, 1 Mar 2018 09:25:28 +0100
-Message-ID: <CACRpkdZpVtTVuPYMhRPP1WpyraHsXoRQX9yv5yv8hmOQWJ69vw@mail.gmail.com>
+Subject: Re: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on stm32F769
+Date: Thu, 1 Mar 2018 10:12:30 +0100
+Message-ID: <CACRpkdbd-Zz-JRC-_OfKtx28OvDcf0af93pqraP=XPpAN-geVg@mail.gmail.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+ <1516105859-3525-15-git-send-email-patrice.chotard@st.com> <fb3b26e8-0102-122b-1386-68a661139706@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <fb3b26e8-0102-122b-1386-68a661139706@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>
+To: Patrice CHOTARD <patrice.chotard@st.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre TORGUE <alexandre.torgue@st.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Mon, Feb 26, 2018 at 9:41 AM, Patrice CHOTARD <patrice.chotard@st.com> wrote:
 
-two smallish pin control fixes: one actual code fix for the Meson and
-a MAINTAINERS update.
+> Hi Stephen, Michael
+>
+> It's a gentle reminder as this patch is present on mailing list and
+> acked-by since 01/12/2018
 
-Please pull it in!
+You need Stephen's new kernel.org mail address to reach him.
+(Added on TO:)
 
 Yours,
 Linus Walleij
-
-
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.16-2
-
-for you to fetch changes up to 78de41a368af26e54ba53e63629fd7f166f17cef:
-
-  MAINTAINERS: add Freescale pin controllers (2018-02-21 11:09:23 +0100)
-
-----------------------------------------------------------------
-Pin control fixes for v4.16:
-
-- Fix a pin group on the Meson.
-- Assign maintainers for Freescale/NXP pin controllers.
-
-----------------------------------------------------------------
-Stefan Agner (1):
-      MAINTAINERS: add Freescale pin controllers
-
-Yixun Lan (1):
-      pinctrl: meson-axg: adjust uart_ao_b pin group naming
-
- MAINTAINERS                               | 11 +++++++++++
- drivers/pinctrl/meson/pinctrl-meson-axg.c |  4 ++--
- 2 files changed, 13 insertions(+), 2 deletions(-)
