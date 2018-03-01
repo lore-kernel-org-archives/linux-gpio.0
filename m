@@ -1,27 +1,47 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: artpec6: add missing pin group
- uart5nocts
-Date: Thu, 1 Mar 2018 17:25:23 -0600
-Message-ID: <20180301232523.4a2fhhbjhkycv2hp@rob-hp-laptop>
-References: <20180222152247.10554-1-niklas.cassel@axis.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/3] extcon: gpio: Localize platform data
+Date: Fri, 02 Mar 2018 08:32:39 +0900
+Message-ID: <5A988D97.9080805@samsung.com>
+References: <20180212085314.23014-1-linus.walleij@linaro.org>
+        <CGME20180301091450epcas3p2a8ee4986c2f9e24c05c0132e659232bb@epcas3p2.samsung.com>
+        <CACRpkdanbnodBa335hM5DYpgeW-6pU_oB_vbbUSxR2wRS6FPsw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180222152247.10554-1-niklas.cassel@axis.com>
+In-reply-to: <CACRpkdanbnodBa335hM5DYpgeW-6pU_oB_vbbUSxR2wRS6FPsw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Niklas Cassel <niklas.cassel@axis.com>
-Cc: Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@axis.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 04:22:46PM +0100, Niklas Cassel wrote:
-> Add missing pin group uart5nocts (all pins except cts), which has been
-> supported by the artpec6 pinctrl driver since its initial submission.
-> 
-> Fixes: 00df0582eab1 ("pinctrl: Add pincontrol driver for ARTPEC-6 SoC")
-> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> ---
->  Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+Hi,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On 2018년 03월 01일 18:14, Linus Walleij wrote:
+> On Mon, Feb 12, 2018 at 9:53 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+>> Nothing in the entire kernel #includes <linux/extcon/extcon-gpio.h>
+>> so move the platform data declaration inside of the driver.
+>>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> No reply on these patches so far,
+> if you prefer I can just apply them to the GPIO
+> tree.
+
+I'm sorry for late reply. The extcon-gpio.c should be solved
+how to to get the unique id such as EXTCON_USB, EXTCON_DISP_HDMI and so on.
+As you knew, you already tried to develop it with device-tree.
+But, it is not accepted.
+
+Even if extcon-gpio.c has a problem still to get the extcon id,
+I'll apply this series. Because I don't want to remove extcon-gpio.c
+and you need to clean-up the gpio library. On later, I'll try to fix this issue.
+
+I added the 'FIXME' comment which explains the extcon_id issue
+and then applied this series.
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
