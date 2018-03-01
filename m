@@ -1,47 +1,49 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v3 01/10] dt-bindings: pinctrl: Add bindings for Actions
- S900 SoC
-Date: Thu, 1 Mar 2018 14:55:56 +0530
-Message-ID: <20180301092556.x4a5ohx3iccwsugw@linaro.org>
-References: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org>
- <20180228181432.26847-2-manivannan.sadhasivam@linaro.org>
- <CACRpkdYG_aBJ0WME7NSOdv0pV5Vh_z8GVqQ+tUFnXGA7NGVMUg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: raspberrypi-ext: fix firmware dependency
+Date: Thu, 1 Mar 2018 10:28:52 +0100
+Message-ID: <CACRpkdajRp6PKYzMyeV81tu4dZxhnEDv7cKBvSCsNOUdW24KpQ@mail.gmail.com>
+References: <20180228134822.2194009-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYG_aBJ0WME7NSOdv0pV5Vh_z8GVqQ+tUFnXGA7NGVMUg@mail.gmail.com>
+In-Reply-To: <20180228134822.2194009-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, Dave Stevenson <dave.stevenson@raspberrypi.org>, Baruch Siach <baruch@tkos.co.il>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
-On Thu, Mar 01, 2018 at 10:20:29AM +0100, Linus Walleij wrote:
-> On Wed, Feb 28, 2018 at 7:14 PM, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> 
-> > Add pinctrl bindings for Actions Semi S900 SoC
-> >
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> The previous (v2) version had Rob's Review tag, did you just forget
-> to add it or has something changed?
-> 
+On Wed, Feb 28, 2018 at 2:48 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-My bad. Slipped through the cracks.
-
-> If nothing is changed I can add his tag when applying.
+> When the firmware driver is a loadable module, the gpio driver cannot be
+> built-in:
 >
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_set':
+> gpio-raspberrypi-exp.c:(.text+0xb4): undefined reference to `rpi_firmware_property'
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get':
+> gpio-raspberrypi-exp.c:(.text+0x1ec): undefined reference to `rpi_firmware_property'
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_direction':
+> gpio-raspberrypi-exp.c:(.text+0x360): undefined reference to `rpi_firmware_property'
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_polarity':
+> gpio-raspberrypi-exp.c:(.text+0x4d4): undefined reference to `rpi_firmware_property'
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_out':
+> gpio-raspberrypi-exp.c:(.text+0x670): undefined reference to `rpi_firmware_property'
+> drivers/gpio/gpio-raspberrypi-exp.o:gpio-raspberrypi-exp.c:(.text+0x7fc): more undefined references to `rpi_firmware_property' follow
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_in':
+> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_probe':
+> gpio-raspberrypi-exp.c:(.text+0x93c): undefined reference to `rpi_firmware_get'
+>
+> We already have a Kconfig dependency for it, but when compile-testing, it
+> is disregarded.
+>
+> This changes the dependency so that compile-testing is only done when the
+> firmware driver is completely disabled.
+>
+> Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I will send out a new version of the whole series, incorporating Andy's
-pinctrl driver review.
+Baruch, are you waiting for a fixed fix or should I apply this?
 
-Also, FYI this pacthseries depends on Clock driver patchset I have submitted
-earlier. So far no reply from Stephen yet. He said that he is working on setting
-up his new environment and will begin reviewing shortly.
+It's a bit unclear from the mail chain what action I should take...
 
-Thanks,
-Mani 
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
