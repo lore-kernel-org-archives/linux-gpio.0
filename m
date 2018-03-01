@@ -1,62 +1,49 @@
-From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] pinctrl/rockchip: Don't call pinctrl_force_* for nothing
-Date: Thu, 1 Mar 2018 09:40:39 +0000
-Message-ID: <04120632-73ce-d505-b9ba-9672c2b2c515@arm.com>
-References: <20180224200732.6116-1-marc.zyngier@arm.com>
- <CACRpkdaBbH_2KiQdrE9yZfJd0c97rTr_tF7vhSA_vCJF0L_sGw@mail.gmail.com>
+From: Patrice CHOTARD <patrice.chotard@st.com>
+Subject: Re: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on stm32F769
+Date: Thu, 1 Mar 2018 09:42:20 +0000
+Message-ID: <f1cb9925-6f93-bf1f-1362-3d427bc3b909@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+ <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
+ <fb3b26e8-0102-122b-1386-68a661139706@st.com>
+ <CACRpkdbd-Zz-JRC-_OfKtx28OvDcf0af93pqraP=XPpAN-geVg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <CACRpkdaBbH_2KiQdrE9yZfJd0c97rTr_tF7vhSA_vCJF0L_sGw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-GB
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdbd-Zz-JRC-_OfKtx28OvDcf0af93pqraP=XPpAN-geVg@mail.gmail.com>
+Content-Language: en-US
+Content-ID: <F64D7FBF20EA9148B4EC11F09E9C09DC@st.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Alexandre TORGUE <alexandre.torgue@st.com>, Michael Turquette <mturquette@baylibre.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 01/03/18 09:32, Linus Walleij wrote:
-> On Sat, Feb 24, 2018 at 9:07 PM, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org> wrote:
+Hi Linus
+
+On 03/01/2018 10:12 AM, Linus Walleij wrote:
+> On Mon, Feb 26, 2018 at 9:41 AM, Patrice CHOTARD <patrice.chotard@st.com> wrote:
 > 
->> The rockchip pinctl driver calls pinctrl_force_default and
->> pinctrl_force_sleep on suspend resume, but seems to expect
->> that the outcome of these calls will be that nothing happens,
->> as the core code checks whether we're already in the right
->> state or not.
+>> Hi Stephen, Michael
 >>
->> Or at least, that was what the core code was doing until
->> 981ed1bfbc ("pinctrl: Really force states during suspend/resume"),
->> which gives the "force" qualifier its actual meaning.
->>
->> In turn, this breaks suspend/resume on the rk3399. So let's
->> change the rockchip code to do what it should have done from
->> the very begining, which is exactly *nothing*.
->>
->> We take this opportunity to tidy-up the RK3288 GPIO6_C6 mux
->> resume workaround, making it symetrical to the suspend path.
->>
->> Tested on a rk3399-based kevin Chromebook.
->>
->> Fixes: 9198f509c888 ("pinctrl: rockchip: add suspend/resume functions")
->> Signed-off-by: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+>> It's a gentle reminder as this patch is present on mailing list and
+>> acked-by since 01/12/2018
 > 
-> I assume I should drop this patch for now and that
-> Dough's long DTS patch with the long explanation was the
-> right solution to the problem?
+> You need Stephen's new kernel.org mail address to reach him.
+> (Added on TO:)
 
-Absolutely. It also appears that this patch has the potential to break
-other Rockchip systems, so let's drop it.
+Thanks !
 
-Thanks again,
+Patrice
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> 
+> Yours,
+> Linus Walleij
+> 
