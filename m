@@ -1,45 +1,174 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v3 0/3] renesas: irqchip: Use wakeup_path i.s.o. explicit
- clock handling
-Date: Thu, 1 Mar 2018 16:12:31 +0000
-Message-ID: <70c3eaa7-f103-33b0-26a0-c0c1b1b9608a@arm.com>
-References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v3 04/10] pinctrl: actions: Add Actions S900 pinctrl
+ driver
+Date: Thu, 1 Mar 2018 22:59:44 +0530
+Message-ID: <20180301172943.cuypepvflte2cynr@linaro.org>
+References: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org>
+ <20180228181432.26847-5-manivannan.sadhasivam@linaro.org>
+ <CAHp75VchzV9SZb4g0fVP9aoKb7actsehXm8c4wsvVGASgkOc+w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <CAHp75VchzV9SZb4g0fVP9aoKb7actsehXm8c4wsvVGASgkOc+w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, =?utf-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-On 12/02/18 13:55, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> If an interrupt controller in a Renesas ARM SoC is part of a Clock
-> Domain, and it is part of the wakeup path, it must be kept active during
-> system suspend.
-> 
-> Currently this is handled in all interrupt controller drivers by
-> explicitly increasing the use count of the module clock when the device
-> is part of the wakeup path.  However, this explicit clock handling is
-> merely a workaround for a failure to properly communicate wakeup
-> information to the device core.
-> 
-> Hence this series fixes the affected drivers by setting the devices'
-> power.wakeup_path fields instead, to indicate they are part of the
-> wakeup path.  Depending on the PM Domain's active_wakeup configuration,
-> the genpd core code will keep the device enabled (and the clock running)
-> during system suspend when needed.
-> 
-> Target trees:
->   - Patches 1 and 2 are meant for the irqchip tree,
-Patches queued for 4.17.
+Hi Andy,
 
-Thanks,
+On Wed, Feb 28, 2018 at 08:36:53PM +0200, Andy Shevchenko wrote:
+> On Wed, Feb 28, 2018 at 8:14 PM, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> > Add pinctrl driver for Actions Semi S900 SoC. The driver supports
+> > pinctrl, pinmux and pinconf functionalities through a range of registers
+> > common to both gpio driver and pinctrl driver.
+> >
+> > Pinmux functionality is available only for the pin groups while the
+> > pinconf functionality is available for both pin groups and individual
+> > pins.
+> 
+> > +static int owl_set_mux(struct pinctrl_dev *pctrldev,
+> > +                               unsigned int function,
+> > +                               unsigned int group)
+> > +{
+> 
+> > +       mfpval = readl(pctrl->base + g->mfpctl_reg);
+> > +       mfpval &= ~mask;
+> > +       mfpval |= val;
+> > +       writel(mfpval, pctrl->base + g->mfpctl_reg);
+> 
+> This is called owl_update_bits().
+>
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Okay. Will add a helper.
+ 
+> > +static int owl_pin_config_set(struct pinctrl_dev *pctrldev,
+> > +                               unsigned int pin,
+> > +                               unsigned long *configs,
+> > +                               unsigned int num_configs)
+> > +{
+> 
+> > +       int ret = 0;
+> 
+> Redundant assignment?
+>
+
+Ack.
+ 
+> > +               mask = (1 << width) - 1;
+> > +               mask = mask << bit;
+> > +               tmp = readl(pctrl->base + reg);
+> > +               tmp &= ~mask;
+> > +               tmp |= arg << bit;
+> > +               writel(tmp, pctrl->base + reg);
+> 
+> This is called owl_update_bits().
+>
+
+Ack.
+
+> > +}
+> 
+> > +static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
+> > +                               unsigned int param,
+> > +                               u32 *arg)
+> > +{
+> 
+> > +       case PIN_CONFIG_SLEW_RATE:
+> > +               if (*arg)
+> > +                       *arg = 1;
+> > +               else
+> > +                       *arg = 0;
+> 
+> Doesn't slew rate allow a non-binary value?
+>
+
+As stated in the binding doc, valid values for the slew rate parameter are:
+
+0 - Slow
+1 - Fast
+ 
+> > +       return 0;
+> > +}
+> > +
+> > +static int owl_group_config_get(struct pinctrl_dev *pctrldev,
+> > +                               unsigned int group,
+> > +                               unsigned long *config)
+> > +{
+> > +       int ret = 0;
+> 
+> Redundant assignment.
+> 
+
+Ack.
+
+> > +}
+> 
+> > +static int owl_group_config_set(struct pinctrl_dev *pctrldev,
+> > +                               unsigned int group,
+> > +                               unsigned long *configs,
+> > +                               unsigned int num_configs)
+> > +{
+> > +       int ret = 0;
+> 
+> Redundant assignment, see below.
+>
+
+Ack. Will return 0 directly.
+ 
+> > +               mask = (1 << width) - 1;
+> > +               mask = mask << bit;
+> > +               tmp = readl(pctrl->base + reg);
+> > +               tmp &= ~mask;
+> > +               tmp |= arg << bit;
+> > +               writel(tmp, pctrl->base + reg);
+> 
+> This is called owl_update_bits().
+>
+
+Ack.
+ 
+> > +       return ret;
+> 
+> return 0; ?
+> 
+
+Okay.
+
+> > +}
+> 
+> > +int owl_pinctrl_probe(struct platform_device *pdev,
+> > +                               struct owl_pinctrl_soc_data *soc_data)
+> > +{
+> 
+> > +       clk_prepare_enable(pctrl->clk);
+> 
+> This can fail.
+>
+
+Okay. Will add a check.
+ 
+> > +}
+> 
+> > +static const struct of_device_id s900_pinctrl_of_match[] = {
+> > +       { .compatible = "actions,s900-pinctrl", },
+> 
+> > +       { },
+> 
+> No comma needed.
+>
+
+Okay.
+
+Thanks for the review.
+
+Regards,
+Mani
+ 
+> > +};
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
