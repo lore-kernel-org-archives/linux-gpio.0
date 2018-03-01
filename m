@@ -1,103 +1,96 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH v4 2/5] dt-bindings: gpio: add raspberry pi GPIO expander
- binding
-Date: Tue, 20 Feb 2018 09:34:27 +0200
-Message-ID: <20180220073427.vaxp5wkygs6pwaxi@tarshish>
-References: <cover.1517923836.git.baruch@tkos.co.il>
- <214ff3856c430b8045b63b25d83733b77054dfab.1517923836.git.baruch@tkos.co.il>
- <20180213232007.ieme6rjxgc7vidbw@rob-hp-laptop>
+From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Subject: Re: [PATCH v2 4/4] pintcrl: support bias-disable of generic and
+ special pins simultaneously
+Date: Thu, 1 Mar 2018 11:47:52 +0800
+Message-ID: <1519876072.23198.17.camel@mhfsdcap03>
+References: <1519634042-12063-1-git-send-email-zhiyong.tao@mediatek.com>
+         <1519634042-12063-5-git-send-email-zhiyong.tao@mediatek.com>
+         <1519803217.8089.31.camel@mtkswgap22> <1519804157.23198.9.camel@mhfsdcap03>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20180213232007.ieme6rjxgc7vidbw@rob-hp-laptop>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh@kernel.org>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Eric Anholt <eric@anholt.net>, Michael Zoran <mzoran@crowfest.net>, linux-rpi-kernel@lists.infradead.org, Dave Stevenson <dave.stevenson@raspberrypi.org>, Frank Rowand <frowand.list@gmail.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1519804157.23198.9.camel@mhfsdcap03>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: robh+dt@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, matthias.bgg@gmail.com, devicetree@vger.kernel.org, hongkun.cao@mediatek.com, srv_heupstream@mediatek.com, linux-gpio@vger.kernel.org, biao.huang@mediatek.com, erin.lo@mediatek.com, liguo.zhang@mediatek.com, linux-kernel@vger.kernel.org, hongzhou.yang@mediatek.com, linux-mediatek@lists.infradead.org, yingjoe.chen@mediatek.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Rob,
+On Wed, 2018-02-28 at 15:49 +0800, Zhiyong Tao wrote:
+> On Wed, 2018-02-28 at 15:33 +0800, Sean Wang wrote:
+> > On Mon, 2018-02-26 at 16:34 +0800, Zhiyong Tao wrote:
+> > > For generic pins, parameter "arg" is 0 or 1.
+> > > For special pins, bias-disable is set by R0R1,
+> > > so we need transmited "00" to set bias-disable
+> > > When we set "bias-disable" as high-z property,
+> > > the parameter should be "MTK_PUPD_SET_R1R0_00".
+> > > 
+> > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > > ---
+> > >  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 13 +++++++++++--
+> > >  1 file changed, 11 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > > index 3cf384f..e88ba04 100644
+> > > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > > @@ -301,8 +301,17 @@ static int mtk_pconf_set_pull_select(struct mtk_pinctrl *pctl,
+> > >  	 * resistor bit, so we need this special handle.
+> > >  	 */
+> > >  	if (pctl->devdata->spec_pull_set) {
+> > > -		ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl, pin),
+> > > -			pin, pctl->devdata->port_align, isup, arg);
+> > > +		if (enable) {
+> > > +			ret = pctl->devdata->spec_pull_set(
+> > > +				mtk_get_regmap(pctl, pin), pin,
+> > > +				pctl->devdata->port_align, isup,
+> > > +				arg);
+> > > +		} else {
+> > > +			ret = pctl->devdata->spec_pull_set(
+> > > +				mtk_get_regmap(pctl, pin), pin,
+> > > +				pctl->devdata->port_align, isup,
+> > > +				MTK_PUPD_SET_R1R0_00);
+> > > +		}
+> > 
+> > 
+> > it looks like you can use as following snippet with reusing original
+> > logic and less effort on maintaining these common code (?)
+> ==> Thanks for your suggestion very much. It seems better.
+> I will change it in v3.
 
-Thanks again for reviewing.
+==>
+ Hi sean,
 
-On Tue, Feb 13, 2018 at 05:20:07PM -0600, Rob Herring wrote:
-> On Wed, Feb 07, 2018 at 08:35:23PM +0200, Baruch Siach wrote:
-> > +Raspberry Pi GPIO expander
-> > +
-> > +The Raspberry Pi 3 GPIO expander is controlled by the VC4 firmware. The
-> > +firmware exposes a mailbox interface that allows the ARM core to control the
-> > +GPIO lines on the expander.
-> > +
-> > +Required properties:
-> > +
-> > +- compatible : Should be "raspberrypi,firmware-gpio"
-> > +- gpio-controller : Marks the device node as a gpio controller
-> > +- #gpio-cells : Should be two.  The first cell is the pin number, and
-> > +  the second cell is used to specify the gpio polarity:
-> > +  0 = active high
-> > +  1 = active low
-> > +- firmware : Reference to the RPi firmware device node
+we try it in our site. we can't change like this.
+Because we will check "arg" after setting "arg = MTK_PUPD_SET_R1R0_00;".
+following snippet which check "arg" value is o or 1. If it not, which
+will print error. so we can't change like this.
+/* For generic pull config, default arg value should be 0 or 1. */
+if (arg != 0 && arg != 1) {
+	dev_err(pctl->dev, "invalid pull-up argument %d on pin %d .\n", arg,
+pin);
+	return -EINVAL;
+}
+
+Thanks.
+> > 
+> > 
+> > if (pctl->devdata->spec_pull_set) {
+> > 	+ if (!enable)
+> > 	+ 	arg = MTK_PUPD_SET_R1R0_00;
+> > 
+> > 	ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl, pin),
+> > 		pin, pctl->devdata->port_align, isup, arg);
+> > 
+> > 
+> > Also, it's better to add more comments to such kind of special path for
+> > allowing future SoCs to follow and extend more easily.
 > 
-> This is the parent node. You don't need it.
-
-OK. I guess of_get_parent() will do the trick.
-
-> > +Example:
-> > +
-> > +firmware: firmware {
-> > +	compatible = "raspberrypi,bcm2835-firmware";
-> > +	mboxes = <&mailbox>;
+> ==> Thanks for your suggestion very much. I will add more comments here.
+> > 
+> > >  		if (!ret)
+> > >  			return 0;
+> > >  	}
+> > 
+> > 
 > 
-> No, sorry. /firmware is the container of firmware nodes. So 
-> something like this:
-> 
-> firmware {
-> 	rpi-firmware {
-> 		compatible = "raspberrypi,bcm2835-firmware";
-> 		mboxes = <&mailbox>;
-> 		gpio {
-> 		 compatible = "raspberrypi,firmware-gpio";
-> 
-> 		};
-> 	};
-> };
-
-This is the hierarchy we currently have at arch/arm/boot/dts/bcm2835-rpi.dtsi:
-
-/ {
-        soc {
-                firmware: firmware {
-                        compatible = "raspberrypi,bcm2835-firmware";
-                        mboxes = <&mailbox>;
-                };
-        };
-};
-
-
-Are you suggesting to add another container between 'soc' and 'firmware'? Or 
-is it the 'firmware' node name that we need to change to 'rpi-firmware'?
-
-> > +
-> > +	expgpio: gpio {
-> > +		 compatible = "raspberrypi,firmware-gpio";
-> > +		 gpio-controller;
-> > +		 #gpio-cells = <2>;
-> > +		 firmware = <&firmware>;
-> > +	 };
-> > +};
-
-baruch
-
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
