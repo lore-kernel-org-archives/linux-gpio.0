@@ -1,19 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for v4.16 - second try
-Date: Thu, 1 Mar 2018 08:53:56 +0100
-Message-ID: <CACRpkdZxc_ubFFX6YKBWu_0jMw3AhZ=ni0aeHQmdFdok114o1Q@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v4.16
+Date: Thu, 1 Mar 2018 09:25:28 +0100
+Message-ID: <CACRpkdZpVtTVuPYMhRPP1WpyraHsXoRQX9yv5yv8hmOQWJ69vw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>
 List-Id: linux-gpio@vger.kernel.org
 
 Hi Linus,
 
-here is this pull request again, fixing up the device tree property readouts
-for the GPIOs. Last time the fix needed fixing, not I think the fix is fixed.
+two smallish pin control fixes: one actual code fix for the Meson and
+a MAINTAINERS update.
 
 Please pull it in!
 
@@ -27,26 +27,26 @@ The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.16-2
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.16-2
 
-for you to fetch changes up to ce27fb2c56db6ccfe8099343bb4afdab15e77e7b:
+for you to fetch changes up to 78de41a368af26e54ba53e63629fd7f166f17cef:
 
-  gpio: Handle deferred probing in of_find_gpio() properly (2018-02-27
-09:48:07 +0100)
-
-----------------------------------------------------------------
-GPIO fixes for v4.16:
-
-- Fix up device tree properties readout caused by my own
-  refactorings.
+  MAINTAINERS: add Freescale pin controllers (2018-02-21 11:09:23 +0100)
 
 ----------------------------------------------------------------
-Chen-Yu Tsai (1):
-      gpio: Handle deferred probing in of_find_gpio() properly
+Pin control fixes for v4.16:
 
-Maxime Ripard (1):
-      gpiolib: Keep returning EPROBE_DEFER when we should
+- Fix a pin group on the Meson.
+- Assign maintainers for Freescale/NXP pin controllers.
 
- drivers/gpio/gpiolib-of.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+----------------------------------------------------------------
+Stefan Agner (1):
+      MAINTAINERS: add Freescale pin controllers
+
+Yixun Lan (1):
+      pinctrl: meson-axg: adjust uart_ao_b pin group naming
+
+ MAINTAINERS                               | 11 +++++++++++
+ drivers/pinctrl/meson/pinctrl-meson-axg.c |  4 ++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
