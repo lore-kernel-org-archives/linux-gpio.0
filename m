@@ -1,41 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/6] Introduce STMicroelectronics MultiFunction eXpander
-Date: Thu, 1 Mar 2018 23:28:46 +0100
-Message-ID: <CACRpkdbd=n=6g+20_sn+_Q_xNpQowa_40o1uzCnRm8vnEnantQ@mail.gmail.com>
-References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
- <CACRpkdZYnQC5BusLyK5aAcA2q0NmvHu=TaLhFCfu2M0bgBcjrQ@mail.gmail.com> <276d5f97-55c2-406e-92c7-0d03c7f7a49d@st.com>
+Subject: Re: [PATCH] pinctrl: samsung: Validate alias coming from DT
+Date: Thu, 1 Mar 2018 23:33:01 +0100
+Message-ID: <CACRpkdbAhPdpRTx0P3yvazGgRvtUMmJ-qese1LFoCqNSPuR+sw@mail.gmail.com>
+References: <20180220181751.20826-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <276d5f97-55c2-406e-92c7-0d03c7f7a49d@st.com>
+In-Reply-To: <20180220181751.20826-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Amelie DELAUNAY <amelie.delaunay@st.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 4:13 PM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
+On Tue, Feb 20, 2018 at 7:17 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> ST MFX is different from STMPE as far as the HW is completely different.
-> IDD is a new feature.
-> TS management is completely different.
-> GPIO management looks like but is also rather different.
-> ST MFX counts a first level of 8 interrupts (acked by writing in the ACK
-> register), then a second level of 24 interrupts for GPIOs. GPIO IRQ can
-> be triggered on low level, falling edge, high level, rising edge. GPIO
-> IRQ have to be acked by writing in the GPI_ACK register, GPIO can be
-> output open-drain with/without internal pull-up, output push-pull, input
-> with pull-up/down, input floating or analog.
+> Driver uses alias from Device Tree as an index of pin controller data
+> array.  In case of a wrong DTB or an out-of-tree DTB, the alias could be
+> outside of this data array leading to out-of-bounds access.
+>
+> Depending on binary and memory layout, this could be handled properly
+> (showing error like "samsung-pinctrl 3860000.pinctrl: driver data not
+> available") or could lead to exceptions.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 30574f0db1b1 ("pinctrl: add samsung pinctrl and gpiolib driver")
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> ---
+>
+> Issue is present since first version of this driver so this should be
+> backported as far as possible.
+>
+> Tested on Odroid HC1 (Exynos5422). Tests on S3C24xx, S3C64xx, Exynos
+> ARM64 and any other chips are highly appreciated.
+>
+> Linus,
+> I can take it through samsung/pinctrl tree and later send you again as
+> pull request... or you can apply it directly as I do not have any other
+> pinctrl patches queued so far.
 
-Okay I am convinced that we need to model this as its own
-driver if it is as different as you say.
-
-But let's keep an eye on STMPE's approaches and what it does
-right and wrong.
-
-If I rewrote the STMPE driver today, the major changes would be
-to use regmap to pass around to subdrivers, and implement a
-combined pin control and GPIO driver, so I think those things should
-be nice to have for the next iteration.
+Patch applied for fixes with all the tags.
 
 Yours,
 Linus Walleij
