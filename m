@@ -1,43 +1,41 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 2/3] gpiolib-of: Support 'reserved-gpio-ranges' property
-Date: Thu, 01 Mar 2018 13:49:56 -0800
-Message-ID: <151994099669.240031.102662015980326125@swboyd.mtv.corp.google.com>
-References: <20180126011400.2191-1-sboyd@codeaurora.org>
- <20180126011400.2191-3-sboyd@codeaurora.org>
- <CACRpkda2_nt24pweyQTtB_9gypDJTK1NHRm1LjsinEaK-G8F_Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/6] Introduce STMicroelectronics MultiFunction eXpander
+Date: Thu, 1 Mar 2018 23:28:46 +0100
+Message-ID: <CACRpkdbd=n=6g+20_sn+_Q_xNpQowa_40o1uzCnRm8vnEnantQ@mail.gmail.com>
+References: <1518100057-23234-1-git-send-email-amelie.delaunay@st.com>
+ <CACRpkdZYnQC5BusLyK5aAcA2q0NmvHu=TaLhFCfu2M0bgBcjrQ@mail.gmail.com> <276d5f97-55c2-406e-92c7-0d03c7f7a49d@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda2_nt24pweyQTtB_9gypDJTK1NHRm1LjsinEaK-G8F_Q@mail.gmail.com>
+In-Reply-To: <276d5f97-55c2-406e-92c7-0d03c7f7a49d@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Linus Walleij (2018-02-07 05:34:19)
-> Hi Stephen,
-> 
-> nice work!
-> 
-> On Fri, Jan 26, 2018 at 2:13 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> 
-> > For now, we plumb this into the gpiochip irq APIs so that
-> > GPIO/pinctrl drivers can use the gpiochip_irqchip_irq_valid() to
-> > test validity of GPIOs.
-> 
-> But is that the right thing to do, given that we just took the
-> trouble to define a DT binding that is explicitly about
-> any GPIO, not just IRQ capable ones?
-> 
-> I am worries that the *irq* infix etc on these functions
-> will be a bit confusing.
-> 
-> Is it a lot of work to make it just generic and maybe bake it
-> into the gpio_chip so as to refuse already in
-> gpiod_request_commit() in gpiolib already?
+On Thu, Feb 22, 2018 at 4:13 PM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
 
-I don't think that it will be too much work to tweak the code to treat
-these as gpios instead of irq lines. It may end up duplicating a bit of code
-that the irq line stuff is already doing, but I'll take a stab at it and
-see how bad it comes out.
+> ST MFX is different from STMPE as far as the HW is completely different.
+> IDD is a new feature.
+> TS management is completely different.
+> GPIO management looks like but is also rather different.
+> ST MFX counts a first level of 8 interrupts (acked by writing in the ACK
+> register), then a second level of 24 interrupts for GPIOs. GPIO IRQ can
+> be triggered on low level, falling edge, high level, rising edge. GPIO
+> IRQ have to be acked by writing in the GPI_ACK register, GPIO can be
+> output open-drain with/without internal pull-up, output push-pull, input
+> with pull-up/down, input floating or analog.
+
+Okay I am convinced that we need to model this as its own
+driver if it is as different as you say.
+
+But let's keep an eye on STMPE's approaches and what it does
+right and wrong.
+
+If I rewrote the STMPE driver today, the major changes would be
+to use regmap to pass around to subdrivers, and implement a
+combined pin control and GPIO driver, so I think those things should
+be nice to have for the next iteration.
+
+Yours,
+Linus Walleij
