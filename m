@@ -1,64 +1,62 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v3 01/10] dt-bindings: pinctrl: Add bindings for Actions
- S900 SoC
-Date: Thu, 1 Mar 2018 16:03:34 +0530
-Message-ID: <20180301103334.jjyxiimsjs4d33nv@linaro.org>
-References: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org>
- <20180228181432.26847-2-manivannan.sadhasivam@linaro.org>
- <CACRpkdYG_aBJ0WME7NSOdv0pV5Vh_z8GVqQ+tUFnXGA7NGVMUg@mail.gmail.com>
- <20180301092556.x4a5ohx3iccwsugw@linaro.org>
- <20180301102300.z2abpg4ao62dibgm@oak.lan>
+From: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+Subject: [PATCH] pinctrl: sunxi: always look for apb block
+Date: Thu,  1 Mar 2018 11:37:01 +0000
+Message-ID: <20180301113701.8888-1-andre.przywara@arm.com>
+Reply-To: andre.przywara-5wv7dgnIgG8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180301102300.z2abpg4ao62dibgm@oak.lan>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBDNZNK75ZIKRB3WL37KAKGQE2IKTUDI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Daniel,
+The Allwinner pinctrl device tree binding suggests that a clock named
+"apb" would drive the pin controller IP. However (for legacy reasons) we
+rely on this clock actually being the first clock defined.
+Since named clocks can be in any order, let's explicitly check for a
+clock called "apb" first, then revert to using the first (and only!)
+clock to keep compatibility with older DTs.
 
-On Thu, Mar 01, 2018 at 10:23:00AM +0000, Daniel Thompson wrote:
-> On Thu, Mar 01, 2018 at 02:55:56PM +0530, Manivannan Sadhasivam wrote:
-> > Hi Linus,
-> > On Thu, Mar 01, 2018 at 10:20:29AM +0100, Linus Walleij wrote:
-> > > On Wed, Feb 28, 2018 at 7:14 PM, Manivannan Sadhasivam
-> > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > 
-> > > > Add pinctrl bindings for Actions Semi S900 SoC
-> > > >
-> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > 
-> > > The previous (v2) version had Rob's Review tag, did you just forget
-> > > to add it or has something changed?
-> > > 
-> > 
-> > My bad. Slipped through the cracks.
-> > 
-> > > If nothing is changed I can add his tag when applying.
-> > >
-> > 
-> > I will send out a new version of the whole series, incorporating Andy's
-> > pinctrl driver review.
-> > 
-> > Also, FYI this pacthseries depends on Clock driver patchset I have submitted
-> > earlier. So far no reply from Stephen yet. He said that he is working on setting
-> > up his new environment and will begin reviewing shortly.
-> 
-> Is the dependancy at runtime (driver is not functional without clocks) or compile
-> time (driver cannot build without other patchset landing)?
->
+Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-There is no build time dependency only runtime dependency. Driver is pretty
-much useless without clock driver.
-
-Also, there will be merge conflicts when this series gets applied independently.
-Since there is no build time dependency, if Linus decides to apply it now, I
-can generate a new independent patchset.
-
-Thanks,
-Mani 
-> 
-> Daniel.
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 4b6cb25bc796..897ba13e6a03 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -1360,10 +1360,21 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+ 			goto gpiochip_error;
+ 	}
+ 
+-	clk = devm_clk_get(&pdev->dev, NULL);
++	clk = devm_clk_get(&pdev->dev, "apb");
+ 	if (IS_ERR(clk)) {
+-		ret = PTR_ERR(clk);
+-		goto gpiochip_error;
++		/*
++		 * If no "apb" clock can be found, try the first one, which
++		 * must be the only one defined.
++		 */
++		if (PTR_ERR(clk) == -ENOENT &&
++		    of_count_phandle_with_args(node, "clocks",
++					       "#clock-cells") == 1)
++			clk = devm_clk_get(&pdev->dev, NULL);
++
++		if (IS_ERR(clk)) {
++			ret = PTR_ERR(clk);
++			goto gpiochip_error;
++		}
+ 	}
+ 
+ 	ret = clk_prepare_enable(clk);
+-- 
+2.14.1
