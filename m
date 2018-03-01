@@ -1,119 +1,102 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH] gpio: raspberrypi-ext: fix firmware dependency
-Date: Thu, 1 Mar 2018 11:20:50 +0200
-Message-ID: <20180301092050.4yzfjmhvpwmhwzdn@tarshish>
-References: <20180228134822.2194009-1-arnd@arndb.de>
- <20180228214725.ewu3zt3l2xyxtxb2@tarshish>
- <CAK8P3a0nQmCk-qZEuEU2p6w6NNztLnk9UkejsVW=V5bvxXG3rQ@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [linux-sunxi] [PATCH v2 1/4] dt-bindings: pwm: binding allwinner
+ sun8i.
+Date: Thu, 1 Mar 2018 10:26:46 +0100
+Message-ID: <20180301092646.44rxuwui2ssiar4u@flea>
+References: <20180225135045.GA14508@arx-s1>
+ <56645bca-9f4a-3191-72d8-32b60ebbc26e@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dtiwzdbgltohjq4r"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a0nQmCk-qZEuEU2p6w6NNztLnk9UkejsVW=V5bvxXG3rQ@mail.gmail.com>
+In-Reply-To: <56645bca-9f4a-3191-72d8-32b60ebbc26e@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stefan Wahren <stefan.wahren@i2se.com>, Dave Stevenson <dave.stevenson@raspberrypi.org>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: =?utf-8?B?QW5kcsOp?= Przywara <andre.przywara@arm.com>
+Cc: hao5781286@gmail.com, thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, wens@csie.org, Claudiu.Beznea@microchip.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Arnd,
 
-On Wed, Feb 28, 2018 at 11:08:54PM +0100, Arnd Bergmann wrote:
-> On Wed, Feb 28, 2018 at 10:47 PM, Baruch Siach <baruch@tkos.co.il> wrote:
-> > Thanks for the fix.
-> >
-> > On Wed, Feb 28, 2018 at 02:48:08PM +0100, Arnd Bergmann wrote:
-> >> When the firmware driver is a loadable module, the gpio driver cannot be
-> >> built-in:
-> >>
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_set':
-> >> gpio-raspberrypi-exp.c:(.text+0xb4): undefined reference to `rpi_firmware_property'
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get':
-> >> gpio-raspberrypi-exp.c:(.text+0x1ec): undefined reference to `rpi_firmware_property'
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_direction':
-> >> gpio-raspberrypi-exp.c:(.text+0x360): undefined reference to `rpi_firmware_property'
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_polarity':
-> >> gpio-raspberrypi-exp.c:(.text+0x4d4): undefined reference to `rpi_firmware_property'
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_out':
-> >> gpio-raspberrypi-exp.c:(.text+0x670): undefined reference to `rpi_firmware_property'
-> >> drivers/gpio/gpio-raspberrypi-exp.o:gpio-raspberrypi-exp.c:(.text+0x7fc): more undefined references to `rpi_firmware_property' follow
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_in':
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_probe':
-> >> gpio-raspberrypi-exp.c:(.text+0x93c): undefined reference to `rpi_firmware_get'
-> >>
-> >> We already have a Kconfig dependency for it, but when compile-testing, it
-> >> is disregarded.
-> >>
-> >> This changes the dependency so that compile-testing is only done when the
-> >> firmware driver is completely disabled.
-> >
-> > What about the CONFIG_ARCH_BCM2835=y case? The combination of
-> > CONFIG_GPIO_RASPBERRYPI_EXP=y and CONFIG_RASPBERRYPI_FIRMWARE=m is still
-> > valid. Wouldn't that break the build?
-> >
-> > Isn't there a way in Kconfig to force CONFIG_GPIO_RASPBERRYPI_EXP=m when
-> > CONFIG_RASPBERRYPI_FIRMWARE=m?
-> 
-> The problem I ran into only happens with CONFIG_ARCH_BCM2835=y to
-> start with. My fix handles that case correctly, it forces
-> CONFIG_GPIO_RASPBERRYPI_EXP to be either 'n' or 'm'
-> when CONFIG_RASPBERRYPI_FIRMWARE=m.
+--dtiwzdbgltohjq4r
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the explanation.
+Hi,
 
-> > What about 'depends on m || RASPBERRYPI_FIRMWARE=y'?
-> 
-> That would be (slightly) wrong, it would force CONFIG_GPIO_RASPBERRYPI_EXP
-> to be 'm' even if RASPBERRYPI_FIRMWARE=n.
-> 
-> > Grepping around I also found this:
-> >
-> > drivers/power/supply/Kconfig:   depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
-> 
-> That is what I did here as well, except the !RASPBERRYPI_FIRMWARE
-> only applies for COMPILE_TEST.
-> 
-> > And this:
-> >
-> > drivers/infiniband/Kconfig:     depends on m || IPV6 != m
-> 
-> This is a less common way to express it. The idiomatic
-> Kconfig expression here would be 'depends on IPV6 || !IPV6'.
+On Wed, Feb 28, 2018 at 01:51:59AM +0000, Andr=E9 Przywara wrote:
+> On 25/02/18 13:50, hao_zhang wrote:
+> > This patch adds allwinner sun8i pwm binding documents.
+> >=20
+> > Signed-off-by: hao_zhang <hao5781286@gmail.com>
+> > ---
+> >  Documentation/devicetree/bindings/pwm/pwm-sun8i.txt | 18 +++++++++++++=
++++++
+> >  1 file changed, 18 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt b/Docu=
+mentation/devicetree/bindings/pwm/pwm-sun8i.txt
+> > new file mode 100644
+> > index 0000000..e8c48be
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
+> > @@ -0,0 +1,18 @@
+> > +Allwinner sun8i R40/V40/T3 SoC PWM controller
+> > +
+> > +Required properties:
+> > +  - compatible: should be one of:
+> > +    - "allwinner,sun8i-r40-pwm"
+> > +  - reg: physical base address and length of the controller's registers
+> > +  - #pwm-cells: should be 3. See pwm.txt in this directory for a descr=
+iption of
+> > +    the cells format.
+> > +  - clocks: From common clock binding, handle to the parent clock.
+>=20
+> The manual tells me that there are two possible clock sources (24 MHz
+> OSC and APB1), with actually two bits for encoding the mux source,
+> allowing for two more potential clock sources.
+> So can we extend this description to provide up to four clocks, with a
+> clock-names property telling the driver how this maps to the mux value?
+> Either we use clock names matching the clocks mentioned in the manual:
+> 	clocks =3D <&osc24M>, <&ccu CLK_APB1>;
+> 	clock-names =3D "osc", "apb1";
+> or we encode the mux values in the clock-names:
+> 	clock-names =3D "mux-0", "mux-1";
 
-I find this way much easier to understand. Without the comment I would never 
-have guessed what 'USB_GADGET || !USB_GADGET' actually means. And indeed no 
-comment is needed in the infiniband case.
+I'd prefer the former.
 
-> >> Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
-> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >> ---
-> >>  drivers/gpio/Kconfig | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> >> index 2ecd2adbaec6..52a8b0a6f4e1 100644
-> >> --- a/drivers/gpio/Kconfig
-> >> +++ b/drivers/gpio/Kconfig
-> >> @@ -126,7 +126,7 @@ config GPIO_RASPBERRYPI_EXP
-> >>       tristate "Raspberry Pi 3 GPIO Expander"
-> >>       default RASPBERRYPI_FIRMWARE
-> >>       depends on OF_GPIO
-> >> -     depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || COMPILE_TEST
-> >> +     depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
-> >
-> > This is really non-obvious. An inline comment here might help, IMO.
-> 
-> How about
-> 
->        # RASPBERRYPI_FIRMWARE is only available for ARCH_BCM2835, but we want to
->        # allow compile-testing when it is disabled
-> 
-> ?
+> Don't know what's more widely used in those cases, the latter seems to
+> be more future-proof.
 
-The module vs built-in aspect is missing. That is the non-obvious part.
+Not really, nothing prevents the next generation to have three bits,
+or even 32 bits to do the muxing :)
 
-baruch
+Maxime
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--dtiwzdbgltohjq4r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqXx1UACgkQ0rTAlCFN
+r3SzDA/+PXFChqP0apbpYbna3qlRQMoRUMhWdpYY5FNXrE6+rp0zvrIFRaM1GkXp
+RVAcYhGjFJkWUPz8ydKVsWf6CFfwCP1OAEFP63LpXWDZG7CDfFxTdXwdsdEnBlL5
+f9VwZnZnWU+pq8xH1GSqrz55VQJmEOUJIsrknoMb/jP7IiFwTcn1zij3pUVDgj01
+mtRn/23JVxcWA1gYuT8LmmY6mftmwG+Oo0T2jQwnaasxsknNnQpbNOflj00L49RE
+e4tOA6pVXjYAlLCQEAVzp0uS7TTs6MJXCeuK7yzfE5yY2Pigo+1lPQIl/shGUz9r
+ZmhtCt6QuGnpDEg4WDBrjUL7FtPMazsxAwocoY2TCRGi1dUzwqh8KoHl3HAPIt75
+LpK9Qmm2LEpFvClIRzUIeFaFSkovSIWmPBePD3mQ1vw/6Euce9/R/t4MpRQHy5VQ
+JVAbSPFhomjPRh8n0WQau6x/X2sOC59Ici/oehO1qxQBlHfdX2Nd1e3WnghrJzz/
+wWA678qpqe5saLFrt5jS+fWJSLY9E38IVqgu3xpeFwnRGOfJMALOViCVFQUu7cjZ
+VbGUApsK4siERQNziR3dw8I+OOPSoe/pyw8LWu1fv6/1C7cvR7aKPvgXtbHoRN9d
+CvzZQ3+CqCl+bkHToTpf3L5/ZomQcChAm2w1rGtxR++dQx2wrqU=
+=AruB
+-----END PGP SIGNATURE-----
+
+--dtiwzdbgltohjq4r--
