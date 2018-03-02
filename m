@@ -1,36 +1,45 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH] gpio: raspberrypi-exp: explain Kconfig dependency
-Date: Fri,  2 Mar 2018 11:47:01 +0200
-Message-ID: <3c3b8755d186b1f762081ee18efb718886814e51.1519984021.git.baruch@tkos.co.il>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 2/3] gpio: Add Spreadtrum EIC driver support
+Date: Fri, 2 Mar 2018 10:53:00 +0100
+Message-ID: <CACRpkdY8hcNYASBFJewVfpiukT+AAR-5WZb0uaJws0B025+GJw@mail.gmail.com>
+References: <334505d3a13a73ad347427b408ed581832434289.1519468782.git.baolin.wang@linaro.org>
+ <2e9852f21fcc6213bdb1cef0c473b9d002ad5670.1519468782.git.baolin.wang@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2e9852f21fcc6213bdb1cef0c473b9d002ad5670.1519468782.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, Dave Stevenson <dave.stevenson@raspberrypi.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, Arnd Bergmann <arnd@arndb.de>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Commit 7ed915059c3001 (gpio: raspberrypi-ext: fix firmware dependency)
-fixed the Kconfig dependency to ensure that gpio-raspberrypi-exp is not
-built-in when the firmware is a module. But the Kconfig syntax for doing
-so is cryptic. Add a comment to make it a little easier.
+On Sat, Feb 24, 2018 at 11:44 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
- drivers/gpio/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+> The Spreadtrum digital-chip EIC controller has 4 sub-modules: debounce EIC,
+> latch EIC, async EIC and sync EIC, and each sub-module can has multiple
+> banks and each bank contains 8 EICs.
+>
+> Each EIC can only be used as input mode, and has the capability to trigger
+> interrupts when detecting input signals.
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+> Changes since v1:
+>  - Add OF_GPIO dependency.
+>  - Fix some typos and grammar issues.
+>  - Simplify the sprd_eic_update() and sprd_eic_read().
+>  - Rename 'sprd_eic_data' to 'sprd_eic_variant_data'.
+>  - Rename sprd_eic_group_base() to sprd_eic_offset_base().
+>  - Split the PMIC EIC support into one separate driver.
+>  - Return -EIO for sprd_eic_direction_input().
+>  - Other optimization.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 52a8b0a6f4e1..1bb25c1ff2d8 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -126,6 +126,8 @@ config GPIO_RASPBERRYPI_EXP
- 	tristate "Raspberry Pi 3 GPIO Expander"
- 	default RASPBERRYPI_FIRMWARE
- 	depends on OF_GPIO
-+	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
-+	# happen when COMPILE_TEST=y, hence the added !RASPBERRYPI_FIRMWARE.
- 	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
- 	help
- 	  Turn on GPIO support for the expander on Raspberry Pi 3 boards, using
--- 
-2.16.1
+This is looking nice!
+
+I guess we agreed with the input maintainer that what
+needs to happen is to implement edge trigger emulation
+for all variants in the driver, test it with the keys and
+then we should be done.
+
+Yours,
+Linus Walleij
