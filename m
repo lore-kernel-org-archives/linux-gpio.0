@@ -1,85 +1,27 @@
-From: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: sunxi: always look for apb block
-Date: Fri, 2 Mar 2018 10:07:52 +0000
-Message-ID: <3c781379-0b67-85ed-fbe5-6aa5df585897@arm.com>
-References: <20180301113701.8888-1-andre.przywara@arm.com>
- <20180301114855.s7rbk7wiealepqrf@flea>
-Reply-To: andre.przywara-5wv7dgnIgG8@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: core: Add missing EXPORT on pinctrl_register_mappings
+Date: Fri, 2 Mar 2018 11:07:27 +0100
+Message-ID: <CACRpkdaxiUGO42Sk9608LwQ=W6-+_z32TdsRThFeK7ZTtHnzYA@mail.gmail.com>
+References: <20180223134352.32612-1-rf@opensource.cirrus.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDNZNK75ZIKRBAWF4TKAKGQECWGJDSQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20180301114855.s7rbk7wiealepqrf@flea>
-Content-Language: en-GB
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180223134352.32612-1-rf@opensource.cirrus.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@opensource.cirrus.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Maxime,
+On Fri, Feb 23, 2018 at 2:43 PM, Richard Fitzgerald
+<rf@opensource.cirrus.com> wrote:
 
-On 01/03/18 11:48, Maxime Ripard wrote:
-> Hi,
-> 
-> On Thu, Mar 01, 2018 at 11:37:01AM +0000, Andre Przywara wrote:
->> The Allwinner pinctrl device tree binding suggests that a clock named
->> "apb" would drive the pin controller IP. However (for legacy reasons) we
->> rely on this clock actually being the first clock defined.
->> Since named clocks can be in any order, let's explicitly check for a
->> clock called "apb" first, then revert to using the first (and only!)
->> clock to keep compatibility with older DTs.
->>
->> Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
->> ---
->>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 17 ++++++++++++++---
->>  1 file changed, 14 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> index 4b6cb25bc796..897ba13e6a03 100644
->> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> @@ -1360,10 +1360,21 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
->>  			goto gpiochip_error;
->>  	}
->>  
->> -	clk = devm_clk_get(&pdev->dev, NULL);
->> +	clk = devm_clk_get(&pdev->dev, "apb");
->>  	if (IS_ERR(clk)) {
->> -		ret = PTR_ERR(clk);
->> -		goto gpiochip_error;
->> +		/*
->> +		 * If no "apb" clock can be found, try the first one, which
->> +		 * must be the only one defined.
->> +		 */
->> +		if (PTR_ERR(clk) == -ENOENT &&
->> +		    of_count_phandle_with_args(node, "clocks",
->> +					       "#clock-cells") == 1)
->> +			clk = devm_clk_get(&pdev->dev, NULL);
->> +
->> +		if (IS_ERR(clk)) {
->> +			ret = PTR_ERR(clk);
->> +			goto gpiochip_error;
->> +		}
-> 
-> I guess this can be made slightly less convoluted using something like
+> Systems that don't have devicetree need pinctrl_register_mappings.
+> It should be EXPORT_SYMBOL_GPL so that it can be called from
+> pinctrl drivers built as modules.
+>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 
-                           ^^^^^^^^ that's a slight understatement
+Patch applied.
 
-> 
-> ret = of_count_phandle_with_args(node, "clocks", "#clock-cells");
-> clk = devm_clk_get(&pdev->dev, ret == 1 ? NULL : "apb");
-
-Pah, that's just embarrassing.
-I guess I will need to back your Kickstarter now to buy me out of this.
-
-Will send v2 after testing tonight.
-
-Thanks a lot for having a look!
-
-Cheers,
-Andre.
+Yours,
+Linus Walleij
