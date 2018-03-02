@@ -1,46 +1,60 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 2/2] ARM: pinctrl: stm32: Optimizes and enhances stm32gpio
- irqchip
-Date: Fri, 2 Mar 2018 09:14:41 +0100
-Message-ID: <3526aa4e-a7cb-4108-5449-d77ae5e355ba@st.com>
-References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
- <1519221027-4028-3-git-send-email-radoslaw.pietrzyk@gmail.com>
- <CACRpkdbmmx7y3xJOOy0Dx62tMonkCgZeVzKYzr1B362QZe0fsA@mail.gmail.com>
- <CAFvLkMRRWZKqChFu+7yEDURtM_ZmmB1RMjj8yUwTZndiwySckA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
+Date: Fri, 2 Mar 2018 09:20:45 +0100
+Message-ID: <CAMuHMdUGga9j6FKwKt+jO=kGvJ2+_znkFmfgmYx-_h5oTTs3pw@mail.gmail.com>
+References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+ <1518443713-1835-4-git-send-email-geert+renesas@glider.be> <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAFvLkMRRWZKqChFu+7yEDURtM_ZmmB1RMjj8yUwTZndiwySckA@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?Q?Rados=c5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgUmFkb3NsYXcgYW5kIExpbnVzLAoKCk9uIDAzLzAxLzIwMTggMTA6MjQgUE0sIFJhZG9zxYJh
-dyBQaWV0cnp5ayB3cm90ZToKPiBJIGRvbid0IGtub3cgaWYgQWxleGFuZHJlIGFncmVlcyBidXQg
-SXQgbWlnaHQgYmUgYmV0dGVyIHRvIHRha2UgdjIKPiB3aGVyZSBpcnFfYWNrIGlzIGFkZGVkLgoK
-ClNvcnJ5IExpbnVzLCBJIGFncmVlIHdpdGggUm9kb3NsYXcsIHlvdSBuZWVkIHRvIHRha2UgVjIg
-YXMgc3RtMzItZXh0aSAKcGF0Y2ggaXMgbGlua2VkIHRvIHBpbmN0cmwgdjIgcGF0Y2guIEkgZ29u
-bmEgYWRkIG15IGFja2VkLWJ5LgoKUmVnYXJkcwpBbGV4Cgo+IAo+IDIwMTgtMDMtMDEgMjI6MDQg
-R01UKzAxOjAwIExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz46Cj4+IE9u
-IFdlZCwgRmViIDIxLCAyMDE4IGF0IDI6NTAgUE0sIFJhZG9zbGF3IFBpZXRyenlrCj4+IDxyYWRv
-c2xhdy5waWV0cnp5a0BnbWFpbC5jb20+IHdyb3RlOgo+Pgo+Pj4gICAgICAgICAgLSByZW1vdmVz
-IHVubmVlZGVkIGlycV9jaGlwLmlycV9lb2kgY2FsbGJhY2sKPj4+ICAgICAgICAgIC0gYWRkcyBp
-cnFfY2hpcC5pcnFfc2V0X3dha2UgY2FsbGJhY2sgZm9yIHBvc3NpYmxlCj4+PiAgICAgICAgICBp
-biB0aGUgZnV0dXJlIEdQSU8gd2FrZXVwCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogUmFkb3NsYXcg
-UGlldHJ6eWsgPHJhZG9zbGF3LnBpZXRyenlrQGdtYWlsLmNvbT4KPj4KPj4gUGF0Y2ggYXBwbGll
-ZCB3aXRoIEFsZXhhbmRyZSdzIEFDSywgc3RyaXBwaW5nIEFSTSBmcm9tIHRoZQo+PiBjb21taXQg
-bWVzc2FnZSwgdGhhbmtzIQo+Pgo+PiBZb3VycywKPj4gTGludXMgV2FsbGVpagoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBt
-YWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9s
-aXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+Hi Linus,
+
+On Thu, Mar 1, 2018 at 5:06 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>
+>> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
+>> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
+>> block's module clock (if exists) is manually kept running during system
+>> suspend, to make sure the device stays active.
+>>
+>> However, this explicit clock handling is merely a workaround for a
+>> failure to properly communicate wakeup information to the device core.
+>>
+>> Instead, set the device's power.wakeup_path field, to indicate this
+>> device is part of the wakeup path.  Depending on the PM Domain's
+>> active_wakeup configuration, the genpd core code will keep the device
+>> enabled (and the clock running) during system suspend when needed.
+>> This allows for the removal of all explicit clock handling code from the
+>> driver.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> v3:
+>
+> Patch applied for v4.16 fixes.
+
+Are you aware this conflicts with commit 51750fb167a05468 ("gpio: gpio-rcar:
+Support S2RAM") in gpio/for-next?
+
+You can find the resolution in
+https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/tree/drivers/gpio/gpio-rcar.c?h=renesas-drivers-2018-02-28-v4.16-rc3
+
+If there's anything else I can do, just ask!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
