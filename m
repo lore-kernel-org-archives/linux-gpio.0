@@ -1,41 +1,36 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 0/7] Initial Allwinner H6 support
-Date: Fri, 2 Mar 2018 09:51:56 +0100
-Message-ID: <CACRpkdYtTLV1R+LpPp8J8uGX9f7sFXOkPuH8du0zz_v=FZHMBw@mail.gmail.com>
-References: <20180223122552.58049-1-icenowy@aosc.io>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBLNB4TKAKGQEUR6A32I-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20180223122552.58049-1-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: [PATCH] gpio: raspberrypi-exp: explain Kconfig dependency
+Date: Fri,  2 Mar 2018 11:47:01 +0200
+Message-ID: <3c3b8755d186b1f762081ee18efb718886814e51.1519984021.git.baruch@tkos.co.il>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, Dave Stevenson <dave.stevenson@raspberrypi.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 1:25 PM, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org> wrote:
+Commit 7ed915059c3001 (gpio: raspberrypi-ext: fix firmware dependency)
+fixed the Kconfig dependency to ensure that gpio-raspberrypi-exp is not
+built-in when the firmware is a module. But the Kconfig syntax for doing
+so is cryptic. Add a comment to make it a little easier.
 
-> This patchset adds initial support for the Allwinner H6 SoC.
->
-> It's quite different from earlier Allwinner SoCs. For example, the
-> memory map is refactored, and the CCU is rearranged. It's also the first
-> Allwinner SoC with PCI Express interface, and the second one with USB
-> 3.0 (the first one is A80).
->
-> This patchset adds the most basical support for it, including the main pin
-> controller, the main CCU and the basical device tree.
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ drivers/gpio/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-It seems the pin control part is more or less finished, I will
-apply it after v4 if Maxime provides ACKs for it.
-
-Is it fine to merge the pinctrl drivers/* portions in isolation from the
-rest?
-
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 52a8b0a6f4e1..1bb25c1ff2d8 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -126,6 +126,8 @@ config GPIO_RASPBERRYPI_EXP
+ 	tristate "Raspberry Pi 3 GPIO Expander"
+ 	default RASPBERRYPI_FIRMWARE
+ 	depends on OF_GPIO
++	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
++	# happen when COMPILE_TEST=y, hence the added !RASPBERRYPI_FIRMWARE.
+ 	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
+ 	help
+ 	  Turn on GPIO support for the expander on Raspberry Pi 3 boards, using
+-- 
+2.16.1
