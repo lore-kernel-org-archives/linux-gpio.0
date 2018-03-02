@@ -1,60 +1,57 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
-Date: Fri, 2 Mar 2018 09:20:45 +0100
-Message-ID: <CAMuHMdUGga9j6FKwKt+jO=kGvJ2+_znkFmfgmYx-_h5oTTs3pw@mail.gmail.com>
-References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
- <1518443713-1835-4-git-send-email-geert+renesas@glider.be> <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com>
+From: =?UTF-8?Q?Rados=C5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: pinctrl: stm32: Optimizes and enhances stm32gpio irqchip
+Date: Fri, 2 Mar 2018 09:37:21 +0100
+Message-ID: <CAFvLkMTN1NrdrT9aQjVmDtUNkwXbB0hEaPzE8Es1Axsch=BYzQ@mail.gmail.com>
+References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
+ <1519221027-4028-3-git-send-email-radoslaw.pietrzyk@gmail.com>
+ <CACRpkdbmmx7y3xJOOy0Dx62tMonkCgZeVzKYzr1B362QZe0fsA@mail.gmail.com>
+ <CAFvLkMRRWZKqChFu+7yEDURtM_ZmmB1RMjj8yUwTZndiwySckA@mail.gmail.com> <3526aa4e-a7cb-4108-5449-d77ae5e355ba@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com>
+In-Reply-To: <3526aa4e-a7cb-4108-5449-d77ae5e355ba@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Linus responded in v2 mail thread that he's gonna take it instead of v1.
 
-On Thu, Mar 1, 2018 at 5:06 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+2018-03-02 9:14 GMT+01:00 Alexandre Torgue <alexandre.torgue@st.com>:
+> Hi Radoslaw and Linus,
 >
->> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
->> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
->> block's module clock (if exists) is manually kept running during system
->> suspend, to make sure the device stays active.
->>
->> However, this explicit clock handling is merely a workaround for a
->> failure to properly communicate wakeup information to the device core.
->>
->> Instead, set the device's power.wakeup_path field, to indicate this
->> device is part of the wakeup path.  Depending on the PM Domain's
->> active_wakeup configuration, the genpd core code will keep the device
->> enabled (and the clock running) during system suspend when needed.
->> This allows for the removal of all explicit clock handling code from the
->> driver.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> v3:
 >
-> Patch applied for v4.16 fixes.
-
-Are you aware this conflicts with commit 51750fb167a05468 ("gpio: gpio-rcar:
-Support S2RAM") in gpio/for-next?
-
-You can find the resolution in
-https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/tree/drivers/gpio/gpio-rcar.c?h=renesas-drivers-2018-02-28-v4.16-rc3
-
-If there's anything else I can do, just ask!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> On 03/01/2018 10:24 PM, Rados=C5=82aw Pietrzyk wrote:
+>>
+>> I don't know if Alexandre agrees but It might be better to take v2
+>> where irq_ack is added.
+>
+>
+>
+> Sorry Linus, I agree with Rodoslaw, you need to take V2 as stm32-exti pat=
+ch
+> is linked to pinctrl v2 patch. I gonna add my acked-by.
+>
+> Regards
+> Alex
+>
+>
+>>
+>> 2018-03-01 22:04 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
+>>>
+>>> On Wed, Feb 21, 2018 at 2:50 PM, Radoslaw Pietrzyk
+>>> <radoslaw.pietrzyk@gmail.com> wrote:
+>>>
+>>>>          - removes unneeded irq_chip.irq_eoi callback
+>>>>          - adds irq_chip.irq_set_wake callback for possible
+>>>>          in the future GPIO wakeup
+>>>>
+>>>> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+>>>
+>>>
+>>> Patch applied with Alexandre's ACK, stripping ARM from the
+>>> commit message, thanks!
+>>>
+>>> Yours,
+>>> Linus Walleij
