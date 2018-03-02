@@ -1,34 +1,85 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 2/2] gpio: Add GPIO driver for Spreadtrum SC9860 platform
-Date: Fri, 2 Mar 2018 11:02:31 +0100
-Message-ID: <CACRpkda+ofJEj7symPF7Lv6ZvtHT_WpYH86eSWr5b0wVmyOdow@mail.gmail.com>
-References: <c2db9b3b5c611cadfbe5ea97327be7ee5981fa54.1519437750.git.baolin.wang@linaro.org>
- <af608ebae52f1abf413c1c4bc131744408d00f07.1519437750.git.baolin.wang@linaro.org>
+From: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: sunxi: always look for apb block
+Date: Fri, 2 Mar 2018 10:07:52 +0000
+Message-ID: <3c781379-0b67-85ed-fbe5-6aa5df585897@arm.com>
+References: <20180301113701.8888-1-andre.przywara@arm.com>
+ <20180301114855.s7rbk7wiealepqrf@flea>
+Reply-To: andre.przywara-5wv7dgnIgG8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <af608ebae52f1abf413c1c4bc131744408d00f07.1519437750.git.baolin.wang@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Return-path: <linux-sunxi+bncBDNZNK75ZIKRBAWF4TKAKGQECWGJDSQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20180301114855.s7rbk7wiealepqrf@flea>
+Content-Language: en-GB
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Feb 24, 2018 at 3:07 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+Hi Maxime,
 
-> The Spreadtrum SC9860 platform GPIO controller contains 16 groups and
-> each group contains 16 GPIOs. Each GPIO can set input/output and has
-> the interrupt capability.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
-> Changes since v4:
->  - Convert handle_simple_irq() to handle_bad_irq().
->  - Remove redundant comma.
+On 01/03/18 11:48, Maxime Ripard wrote:
+> Hi,
+> 
+> On Thu, Mar 01, 2018 at 11:37:01AM +0000, Andre Przywara wrote:
+>> The Allwinner pinctrl device tree binding suggests that a clock named
+>> "apb" would drive the pin controller IP. However (for legacy reasons) we
+>> rely on this clock actually being the first clock defined.
+>> Since named clocks can be in any order, let's explicitly check for a
+>> clock called "apb" first, then revert to using the first (and only!)
+>> clock to keep compatibility with older DTs.
+>>
+>> Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+>> ---
+>>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 17 ++++++++++++++---
+>>  1 file changed, 14 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>> index 4b6cb25bc796..897ba13e6a03 100644
+>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>> @@ -1360,10 +1360,21 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+>>  			goto gpiochip_error;
+>>  	}
+>>  
+>> -	clk = devm_clk_get(&pdev->dev, NULL);
+>> +	clk = devm_clk_get(&pdev->dev, "apb");
+>>  	if (IS_ERR(clk)) {
+>> -		ret = PTR_ERR(clk);
+>> -		goto gpiochip_error;
+>> +		/*
+>> +		 * If no "apb" clock can be found, try the first one, which
+>> +		 * must be the only one defined.
+>> +		 */
+>> +		if (PTR_ERR(clk) == -ENOENT &&
+>> +		    of_count_phandle_with_args(node, "clocks",
+>> +					       "#clock-cells") == 1)
+>> +			clk = devm_clk_get(&pdev->dev, NULL);
+>> +
+>> +		if (IS_ERR(clk)) {
+>> +			ret = PTR_ERR(clk);
+>> +			goto gpiochip_error;
+>> +		}
+> 
+> I guess this can be made slightly less convoluted using something like
 
-Patch applied!
+                           ^^^^^^^^ that's a slight understatement
 
-OK we're done with this driver, now we just need to fix the rest :D
+> 
+> ret = of_count_phandle_with_args(node, "clocks", "#clock-cells");
+> clk = devm_clk_get(&pdev->dev, ret == 1 ? NULL : "apb");
 
-Yours,
-Linus Walleij
+Pah, that's just embarrassing.
+I guess I will need to back your Kickstarter now to buy me out of this.
+
+Will send v2 after testing tonight.
+
+Thanks a lot for having a look!
+
+Cheers,
+Andre.
