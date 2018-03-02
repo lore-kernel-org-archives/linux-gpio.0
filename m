@@ -1,57 +1,49 @@
-From: =?UTF-8?Q?Rados=C5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: pinctrl: stm32: Optimizes and enhances stm32gpio irqchip
-Date: Fri, 2 Mar 2018 09:37:21 +0100
-Message-ID: <CAFvLkMTN1NrdrT9aQjVmDtUNkwXbB0hEaPzE8Es1Axsch=BYzQ@mail.gmail.com>
-References: <1519221027-4028-1-git-send-email-radoslaw.pietrzyk@gmail.com>
- <1519221027-4028-3-git-send-email-radoslaw.pietrzyk@gmail.com>
- <CACRpkdbmmx7y3xJOOy0Dx62tMonkCgZeVzKYzr1B362QZe0fsA@mail.gmail.com>
- <CAFvLkMRRWZKqChFu+7yEDURtM_ZmmB1RMjj8yUwTZndiwySckA@mail.gmail.com> <3526aa4e-a7cb-4108-5449-d77ae5e355ba@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
+Date: Fri, 2 Mar 2018 09:42:54 +0100
+Message-ID: <CACRpkdYc1Ovvhwze37-uJJL+5YG5kHuW9rgDSbfhxLRP30aPWg@mail.gmail.com>
+References: <20180228155306.1006-1-rf@opensource.cirrus.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3526aa4e-a7cb-4108-5449-d77ae5e355ba@st.com>
+In-Reply-To: <20180228155306.1006-1-rf@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@opensource.cirrus.com
 List-Id: linux-gpio@vger.kernel.org
 
-Linus responded in v2 mail thread that he's gonna take it instead of v1.
+On Wed, Feb 28, 2018 at 4:53 PM, Richard Fitzgerald
+<rf@opensource.cirrus.com> wrote:
 
-2018-03-02 9:14 GMT+01:00 Alexandre Torgue <alexandre.torgue@st.com>:
-> Hi Radoslaw and Linus,
+> When dt_to_map_one_config() is called with a pinctrl_dev passed
+> in, it should only be using this if the node being looked up
+> is a hog. The code was always using the passed pinctrl_dev
+> without checking whether the dt node referred to it.
 >
+> A pin controller can have pinctrl-n dependencies on other pin
+> controllers in these cases:
 >
-> On 03/01/2018 10:24 PM, Rados=C5=82aw Pietrzyk wrote:
->>
->> I don't know if Alexandre agrees but It might be better to take v2
->> where irq_ack is added.
+> - the pin controller hardware is external, for example I2C, so
+>   needs other pin controller(s) to be setup to communicate with
+>   the hardware device.
 >
+> - it is a child of a composite MFD so its of_node is shared with
+>   the parent MFD and other children of that MFD. Any part of that
+>   MFD could have dependencies on other pin controllers.
 >
+> Because of this, dt_to_map_one_config() can't assume that if it
+> has a pinctrl_dev passed in then the node it looks up must be
+> a hog. It could be a reference to some other pin controller.
 >
-> Sorry Linus, I agree with Rodoslaw, you need to take V2 as stm32-exti pat=
-ch
-> is linked to pinctrl v2 patch. I gonna add my acked-by.
->
-> Regards
-> Alex
->
->
->>
->> 2018-03-01 22:04 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
->>>
->>> On Wed, Feb 21, 2018 at 2:50 PM, Radoslaw Pietrzyk
->>> <radoslaw.pietrzyk@gmail.com> wrote:
->>>
->>>>          - removes unneeded irq_chip.irq_eoi callback
->>>>          - adds irq_chip.irq_set_wake callback for possible
->>>>          in the future GPIO wakeup
->>>>
->>>> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
->>>
->>>
->>> Patch applied with Alexandre's ACK, stripping ARM from the
->>> commit message, thanks!
->>>
->>> Yours,
->>> Linus Walleij
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+
+Seems correct. Also the code is a little more clear
+after the patch.
+
+Patch applied.
+
+It'd be nice to see some testing of this, I hope linux-next is a good
+testing ground.
+
+Yours,
+Linus Walleij
