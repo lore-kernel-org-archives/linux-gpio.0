@@ -1,404 +1,89 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH v3 3/3] gpio: Add Spreadtrum PMIC EIC driver support
-Date: Mon,  5 Mar 2018 10:56:52 +0800
-Message-ID: <c84c05b6619a17848a11335f881f42153a4e51c0.1520218279.git.baolin.wang@linaro.org>
-References: <787c9f115db06390549bfee366b7f70faf312286.1520218279.git.baolin.wang@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <787c9f115db06390549bfee366b7f70faf312286.1520218279.git.baolin.wang@linaro.org>
-In-Reply-To: <787c9f115db06390549bfee366b7f70faf312286.1520218279.git.baolin.wang@linaro.org>
-References: <787c9f115db06390549bfee366b7f70faf312286.1520218279.git.baolin.wang@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org, andy.shevchenko@gmail.com
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH v2] pinctrl: sunxi: always look for apb block
+Date: Mon, 5 Mar 2018 08:27:20 +0100
+Message-ID: <20180305072720.bzqb2vkizbcxh7me@flea.lan>
+References: <20180303122554.20984-1-andre.przywara@arm.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============7331565477751626407=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180303122554.20984-1-andre.przywara@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-The Spreadtrum PMIC EIC controller contains only one bank of debounce EIC,
-and this bank contains 16 EICs. Each EIC can only be used as input mode,
-as well as supporting the debounce and the capability to trigger interrupts
-when detecting input signals.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes since v2:
- - Fix coding style issue.
- - Fix possible overflow.
- - Use for_each_set_bit().
+--===============7331565477751626407==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ftzkrapqzuwdb2ze"
+Content-Disposition: inline
 
-Changes since v1:
- - New patch.
----
- drivers/gpio/Kconfig              |    8 +
- drivers/gpio/Makefile             |    1 +
- drivers/gpio/gpio-pmic-eic-sprd.c |  330 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 339 insertions(+)
- create mode 100644 drivers/gpio/gpio-pmic-eic-sprd.c
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index c937407..f642314 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -380,6 +380,14 @@ config GPIO_PL061
- 	help
- 	  Say yes here to support the PrimeCell PL061 GPIO device
- 
-+config GPIO_PMIC_EIC_SPRD
-+	tristate "Spreadtrum PMIC EIC support"
-+	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-+	depends on OF_GPIO
-+	select GPIOLIB_IRQCHIP
-+	help
-+	  Say yes here to support Spreadtrum PMIC EIC device.
-+
- config GPIO_PXA
- 	bool "PXA GPIO support"
- 	depends on ARCH_PXA || ARCH_MMP
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 66eaa9e..50ba64b 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -99,6 +99,7 @@ obj-$(CONFIG_GPIO_PCI_IDIO_16)	+= gpio-pci-idio-16.o
- obj-$(CONFIG_GPIO_PCIE_IDIO_24)	+= gpio-pcie-idio-24.o
- obj-$(CONFIG_GPIO_PISOSR)	+= gpio-pisosr.o
- obj-$(CONFIG_GPIO_PL061)	+= gpio-pl061.o
-+obj-$(CONFIG_GPIO_PMIC_EIC_SPRD)	+= gpio-pmic-eic-sprd.o
- obj-$(CONFIG_GPIO_PXA)		+= gpio-pxa.o
- obj-$(CONFIG_GPIO_RC5T583)	+= gpio-rc5t583.o
- obj-$(CONFIG_GPIO_RDC321X)	+= gpio-rdc321x.o
-diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
-new file mode 100644
-index 0000000..66d68d9
---- /dev/null
-+++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-@@ -0,0 +1,330 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Spreadtrum Communications Inc.
-+ * Copyright (C) 2018 Linaro Ltd.
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+/* EIC registers definition */
-+#define SPRD_PMIC_EIC_DATA		0x0
-+#define SPRD_PMIC_EIC_DMSK		0x4
-+#define SPRD_PMIC_EIC_IEV		0x14
-+#define SPRD_PMIC_EIC_IE		0x18
-+#define SPRD_PMIC_EIC_RIS		0x1c
-+#define SPRD_PMIC_EIC_MIS		0x20
-+#define SPRD_PMIC_EIC_IC		0x24
-+#define SPRD_PMIC_EIC_TRIG		0x28
-+#define SPRD_PMIC_EIC_CTRL0		0x40
-+
-+/*
-+ * The PMIC EIC controller only has one bank, and each bank now can contain
-+ * 16 EICs.
-+ */
-+#define SPRD_PMIC_EIC_PER_BANK_NR	16
-+#define SPRD_PMIC_EIC_NR		SPRD_PMIC_EIC_PER_BANK_NR
-+#define SPRD_PMIC_EIC_DATA_MASK		GENMASK(15, 0)
-+#define SPRD_PMIC_EIC_BIT(x)		((x) & (SPRD_PMIC_EIC_PER_BANK_NR - 1))
-+#define SPRD_PMIC_EIC_DBNC_MASK		GENMASK(11, 0)
-+
-+/*
-+ * These registers are modified under the irq bus lock and cached to avoid
-+ * unnecessary writes in bus_sync_unlock.
-+ */
-+enum {
-+	REG_IEV,
-+	REG_IE,
-+	REG_TRIG,
-+	CACHE_NR_REGS
-+};
-+
-+/**
-+ * struct sprd_pmic_eic - PMIC EIC controller
-+ * @chip: the gpio_chip structure.
-+ * @intc: the irq_chip structure.
-+ * @regmap: the regmap from the parent device.
-+ * @offset: the EIC controller's offset address of the PMIC.
-+ * @reg: the array to cache the EIC registers.
-+ * @buslock: for bus lock/sync and unlock.
-+ * @irq: the interrupt number of the PMIC EIC conteroller.
-+ */
-+struct sprd_pmic_eic {
-+	struct gpio_chip chip;
-+	struct irq_chip intc;
-+	struct regmap *map;
-+	u32 offset;
-+	u8 reg[CACHE_NR_REGS];
-+	struct mutex buslock;
-+	int irq;
-+};
-+
-+static void sprd_pmic_eic_update(struct gpio_chip *chip, unsigned int offset,
-+				 u16 reg, unsigned int val)
-+{
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 shift = SPRD_PMIC_EIC_BIT(offset);
-+
-+	regmap_update_bits(pmic_eic->map, pmic_eic->offset + reg,
-+			   BIT(shift), val << shift);
-+}
-+
-+static int sprd_pmic_eic_read(struct gpio_chip *chip, unsigned int offset,
-+			      u16 reg)
-+{
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 value;
-+	int ret;
-+
-+	ret = regmap_read(pmic_eic->map, pmic_eic->offset + reg, &value);
-+	if (ret)
-+		return ret;
-+
-+	return !!(value & BIT(SPRD_PMIC_EIC_BIT(offset)));
-+}
-+
-+static int sprd_pmic_eic_request(struct gpio_chip *chip, unsigned int offset)
-+{
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_DMSK, 1);
-+	return 0;
-+}
-+
-+static void sprd_pmic_eic_free(struct gpio_chip *chip, unsigned int offset)
-+{
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_DMSK, 0);
-+}
-+
-+static int sprd_pmic_eic_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	return sprd_pmic_eic_read(chip, offset, SPRD_PMIC_EIC_DATA);
-+}
-+
-+static int sprd_pmic_eic_direction_input(struct gpio_chip *chip,
-+					 unsigned int offset)
-+{
-+	/* EICs are always input, nothing need to do here. */
-+	return 0;
-+}
-+
-+static void sprd_pmic_eic_set(struct gpio_chip *chip, unsigned int offset,
-+			      int value)
-+{
-+	/* EICs are always input, nothing need to do here. */
-+}
-+
-+static int sprd_pmic_eic_set_debounce(struct gpio_chip *chip,
-+				      unsigned int offset,
-+				      unsigned int debounce)
-+{
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 reg, value;
-+	int ret;
-+
-+	reg = SPRD_PMIC_EIC_CTRL0 + SPRD_PMIC_EIC_BIT(offset) * 0x4;
-+	ret = regmap_read(pmic_eic->map, pmic_eic->offset + reg, &value);
-+	if (ret)
-+		return ret;
-+
-+	value &= ~SPRD_PMIC_EIC_DBNC_MASK;
-+	value |= (debounce / 1000) & SPRD_PMIC_EIC_DBNC_MASK;
-+	return regmap_write(pmic_eic->map, pmic_eic->offset + reg, value);
-+}
-+
-+static int sprd_pmic_eic_set_config(struct gpio_chip *chip, unsigned int offset,
-+				    unsigned long config)
-+{
-+	unsigned long param = pinconf_to_config_param(config);
-+	u32 arg = pinconf_to_config_argument(config);
-+
-+	if (param == PIN_CONFIG_INPUT_DEBOUNCE)
-+		return sprd_pmic_eic_set_debounce(chip, offset, arg);
-+
-+	return -ENOTSUPP;
-+}
-+
-+static void sprd_pmic_eic_irq_mask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	pmic_eic->reg[REG_IE] = 0;
-+	pmic_eic->reg[REG_TRIG] = 0;
-+}
-+
-+static void sprd_pmic_eic_irq_unmask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	pmic_eic->reg[REG_IE] = 1;
-+	pmic_eic->reg[REG_TRIG] = 1;
-+}
-+
-+static int sprd_pmic_eic_irq_set_type(struct irq_data *data,
-+				      unsigned int flow_type)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	switch (flow_type) {
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		pmic_eic->reg[REG_IEV] = 1;
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		pmic_eic->reg[REG_IEV] = 0;
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
-+static void sprd_pmic_eic_bus_lock(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	mutex_lock(&pmic_eic->buslock);
-+}
-+
-+static void sprd_pmic_eic_bus_sync_unlock(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 offset = irqd_to_hwirq(data);
-+
-+	/* Set irq type */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV,
-+			     pmic_eic->reg[REG_IEV]);
-+	/* Set irq unmask */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IE,
-+			     pmic_eic->reg[REG_IE]);
-+	/* Generate trigger start pulse for debounce EIC */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_TRIG,
-+			     pmic_eic->reg[REG_TRIG]);
-+
-+	mutex_unlock(&pmic_eic->buslock);
-+}
-+
-+static irqreturn_t sprd_pmic_eic_irq_handler(int irq, void *data)
-+{
-+	struct sprd_pmic_eic *pmic_eic = data;
-+	struct gpio_chip *chip = &pmic_eic->chip;
-+	unsigned long status;
-+	u32 n, girq, val;
-+	int ret;
-+
-+	ret = regmap_read(pmic_eic->map, pmic_eic->offset + SPRD_PMIC_EIC_MIS,
-+			  &val);
-+	if (ret)
-+		return IRQ_RETVAL(ret);
-+
-+	status = val & SPRD_PMIC_EIC_DATA_MASK;
-+
-+	for_each_set_bit(n, &status, chip->ngpio) {
-+		/* Clear the interrupt */
-+		sprd_pmic_eic_update(chip, n, SPRD_PMIC_EIC_IC, 1);
-+
-+		girq = irq_find_mapping(chip->irq.domain, n);
-+		handle_nested_irq(girq);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int sprd_pmic_eic_probe(struct platform_device *pdev)
-+{
-+	struct gpio_irq_chip *irq;
-+	struct sprd_pmic_eic *pmic_eic;
-+	int ret;
-+
-+	pmic_eic = devm_kzalloc(&pdev->dev, sizeof(*pmic_eic), GFP_KERNEL);
-+	if (!pmic_eic)
-+		return -ENOMEM;
-+
-+	mutex_init(&pmic_eic->buslock);
-+
-+	pmic_eic->irq = platform_get_irq(pdev, 0);
-+	if (pmic_eic->irq < 0) {
-+		dev_err(&pdev->dev, "Failed to get PMIC EIC interrupt.\n");
-+		return pmic_eic->irq;
-+	}
-+
-+	pmic_eic->map = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!pmic_eic->map)
-+		return -ENODEV;
-+
-+	ret = of_property_read_u32(pdev->dev.of_node, "reg", &pmic_eic->offset);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to get PMIC EIC base address.\n");
-+		return ret;
-+	}
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, pmic_eic->irq, NULL,
-+					sprd_pmic_eic_irq_handler,
-+					IRQF_TRIGGER_LOW |
-+					IRQF_ONESHOT | IRQF_NO_SUSPEND,
-+					dev_name(&pdev->dev), pmic_eic);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to request PMIC EIC IRQ.\n");
-+		return ret;
-+	}
-+
-+	pmic_eic->chip.label = dev_name(&pdev->dev);
-+	pmic_eic->chip.ngpio = SPRD_PMIC_EIC_NR;
-+	pmic_eic->chip.base = -1;
-+	pmic_eic->chip.parent = &pdev->dev;
-+	pmic_eic->chip.of_node = pdev->dev.of_node;
-+	pmic_eic->chip.direction_input = sprd_pmic_eic_direction_input;
-+	pmic_eic->chip.request = sprd_pmic_eic_request;
-+	pmic_eic->chip.free = sprd_pmic_eic_free;
-+	pmic_eic->chip.set_config = sprd_pmic_eic_set_config;
-+	pmic_eic->chip.set = sprd_pmic_eic_set;
-+	pmic_eic->chip.get = sprd_pmic_eic_get;
-+
-+	pmic_eic->intc.name = dev_name(&pdev->dev);
-+	pmic_eic->intc.irq_mask = sprd_pmic_eic_irq_mask;
-+	pmic_eic->intc.irq_unmask = sprd_pmic_eic_irq_unmask;
-+	pmic_eic->intc.irq_set_type = sprd_pmic_eic_irq_set_type;
-+	pmic_eic->intc.irq_bus_lock = sprd_pmic_eic_bus_lock;
-+	pmic_eic->intc.irq_bus_sync_unlock = sprd_pmic_eic_bus_sync_unlock;
-+	pmic_eic->intc.flags = IRQCHIP_SKIP_SET_WAKE;
-+
-+	irq = &pmic_eic->chip.irq;
-+	irq->chip = &pmic_eic->intc;
-+	irq->threaded = true;
-+
-+	ret = devm_gpiochip_add_data(&pdev->dev, &pmic_eic->chip, pmic_eic);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Could not register gpiochip %d.\n", ret);
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, pmic_eic);
-+	return 0;
-+}
-+
-+static const struct of_device_id sprd_pmic_eic_of_match[] = {
-+	{ .compatible = "sprd,sc27xx-eic", },
-+	{ /* end of list */ }
-+};
-+MODULE_DEVICE_TABLE(of, sprd_pmic_eic_of_match);
-+
-+static struct platform_driver sprd_pmic_eic_driver = {
-+	.probe = sprd_pmic_eic_probe,
-+	.driver = {
-+		.name = "sprd-pmic-eic",
-+		.of_match_table	= sprd_pmic_eic_of_match,
-+	},
-+};
-+
-+module_platform_driver(sprd_pmic_eic_driver);
-+
-+MODULE_DESCRIPTION("Spreadtrum PMIC EIC driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.7.9.5
+--ftzkrapqzuwdb2ze
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Mar 03, 2018 at 12:25:54PM +0000, Andre Przywara wrote:
+> The Allwinner pinctrl device tree binding suggests that a clock named
+> "apb" would drive the pin controller IP. However (for legacy reasons) we
+> rely on this clock actually being the first clock defined.
+> Since named clocks can be in any order, let's explicitly check for a
+> clock called "apb" if there is more than one clock referenced.
+>=20
+> Kudo to Maxime for suggesting this much more elegant approach.
+>=20
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ftzkrapqzuwdb2ze
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqc8VcACgkQ0rTAlCFN
+r3R39Q//STY5tKzhScBlqthN7Ccf1mkvZXanoPzf1JWBJXC14z5AMux+bT9XtnoF
+5qtCve0sGo0gFXFpJKiWNPAY+gQI8XotoWJ6VW8mgyXYSjYWRVssD6PvHDyx4Grr
+kKtXQL513l9qdvn/rEwd+/sguBCeqkg5vb+TuEZYSwBqsUFva7MIsRer1YEKFsUB
+rlIq8mLC/vZt/L4kpgRLceWpWB7IEXI8xt7BEDcUM1gu4xCSVCfWWwQ7aqfVIypn
+BR6/HP2ztfyKGqzL8Tk+u6hqNwqhXa5D15phxpZbZU1Xw73JS2t/Eu9Q63pefdCX
+r5Z8KfDe+QdYCeUYDr6R3xX5W91L7Og2yLBrJ/Uj/jgYG6TtTNf/y0rR4Znsi+6d
+HEowOPDNP2nl8dADrkhkze52qYtc/pk+egeL8zygF1i2JpoUeSfdMPX2vMfSnZXx
+xQRZ6XtieXZerwE3kw9qSdW5284JhRjbxfB5ewkSNd/eT4iLDWT5Q8O0JcEzTqkD
+o+EJpXpt2XBi8q5t9yHjbBh3kpZJ29s4SFaEsBZ/Fcd9vnlRhtm/0SdtrHkt+OXq
+mO6XzKAQklUkO06Q0RHOTYBg04fFzueifLvd6kVMDPJ5IlEbBue/5kny/KXgE2k7
+odpQSWmvIoyG66Fen7ewwx8sF1WrHwd1nTF3B3T0EazX4rdYBLA=
+=L6ku
+-----END PGP SIGNATURE-----
+
+--ftzkrapqzuwdb2ze--
+
+
+--===============7331565477751626407==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============7331565477751626407==--
