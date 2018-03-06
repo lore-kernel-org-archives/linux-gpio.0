@@ -1,54 +1,41 @@
-From: Javier Arteaga <javier@emutex.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 Subject: Re: [PATCH] pinctrl: intel: Implement intel_gpio_get_direction
  callback
-Date: Tue, 6 Mar 2018 15:29:06 +0000
-Message-ID: <44e5cabd-c772-9fb6-52a4-887ba3c98fcc@emutex.com>
+Date: Tue, 6 Mar 2018 20:06:13 +0200
+Message-ID: <20180306180613.GA22205@lahna.fi.intel.com>
 References: <20180306134213.16898-1-javier@emutex.com>
  <3585081b-70af-5c31-08c0-84e96b6055bc@emutex.com>
  <1520348165.10722.438.camel@linux.intel.com>
- <1520348368.10722.440.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1520348368.10722.440.camel@linux.intel.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1520348165.10722.438.camel@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Javier Arteaga <javier@emutex.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 06/03/2018 14:59, Andy Shevchenko wrote:
-> On Tue, 2018-03-06 at 16:56 +0200, Andy Shevchenko wrote:
->> On Tue, 2018-03-06 at 14:31 +0000, Javier Arteaga wrote:
+On Tue, Mar 06, 2018 at 04:56:05PM +0200, Andy Shevchenko wrote:
+> On Tue, 2018-03-06 at 14:31 +0000, Javier Arteaga wrote:
+> > (Fix Andy's Cc: - apologies)
+> > 
+> > On 06/03/2018 13:42, Javier Arteaga wrote:
+> > > Allows querying GPIO direction from the pad config register.
+> > > If the pad is not in GPIO mode, return an error.
+> > > 
+> > > Signed-off-by: Javier Arteaga <javier@emutex.com>
+> > > ---
+> > > This is needed by the drivers for the UP Squared board, an APL-based
+> > > platform. (For now, these drivers are out-of-tree.)
+> > > 
+> > > An earlier version of this patch was reviewed some time ago by Andy
+> > > Shevchenko outside of the mailing lists:
+> > > <https://github.com/emutex/ubilinux-kernel/commit/708a776f2ffd1b1c>
+> > > 
 > 
->>>> +static int intel_gpio_get_direction(struct gpio_chip *chip,
->>>> unsigned int offset)
->>>> +{
+> Yes, this one look good!
 > 
->>>> +	if (padcfg0 & PADCFG0_PMODE_MASK)
->>>> +		return -EINVAL;
->>
->> Actually we might return direction of GPIO function while pin is in
->> some
->> other mode, though it would probably make not much sense in practice.
-> 
-> One more though, this is a call back for GPIO function anyway, so, above
-> condition should never happen. I think it's safe to remove it
-> completely.
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-The story behind that check is likely *not* a valid usecase: the current
-iteration of the UP board drivers use gpiod_get_direction() *while*
-requesting GPIOs to mirror SoC GPIO config on the on-board FPGA. So the
-direction doesn't make sense for pins set to function mode.
-
-As per your other feedback that driver should be reworked anyway -
-that's not a reason to keep the check. I just thought it's a bit more
-defensive, and saw there's some precedent of doing this:
-
-    f002d07c56c7 ("gpio: tegra: Implement gpio_get_direction callback")
-
-That being said I don't have a strong argument either way :)
-I'll resend if you still feel it's unnecessary.
-
-Thanks for reviewing!
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
