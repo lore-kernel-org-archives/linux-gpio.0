@@ -1,92 +1,64 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: stm32: add 'depends on HAS_IOMEM' to fix unmet
- dependency
-Date: Tue,  6 Mar 2018 20:15:56 +0900
-Message-ID: <1520334956-9900-1-git-send-email-yamada.masahiro@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Alexandre Torgue <alexandre.torgue@st.com>, Arnd Bergmann <arnd@arndb.de>, Patrice CHOTARD <patrice.chotard@st.com>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Ludovic Barre <ludovic.barre@st.com>
+From: Javier Arteaga <javier@emutex.com>
+Subject: [PATCH] pinctrl: intel: Implement intel_gpio_get_direction callback
+Date: Tue,  6 Mar 2018 13:42:13 +0000
+Message-ID: <20180306134213.16898-1-javier@emutex.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Arteaga <javier@emutex.com>
 List-Id: linux-gpio@vger.kernel.org
 
-These configs select MFD_SYSCON, but do not depend on HAS_IOMEM.
+Allows querying GPIO direction from the pad config register.
+If the pad is not in GPIO mode, return an error.
 
-Compile testing on architecture without HAS_IOMEM causes "unmet
-direct dependencies" in Kconfig phase.
-
-Detected by "make ARCH=score allyesconfig".
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Javier Arteaga <javier@emutex.com>
 ---
+This is needed by the drivers for the UP Squared board, an APL-based
+platform. (For now, these drivers are out-of-tree.)
 
-Arnd Bergmann and I discussed how to fix unmet dependency of MFD_SYSCON.
-https://lkml.org/lkml/2018/2/27/284
+An earlier version of this patch was reviewed some time ago by Andy
+Shevchenko outside of the mailing lists:
+<https://github.com/emutex/ubilinux-kernel/commit/708a776f2ffd1b1c>
 
-We agreed to add 'depends on HAS_IOMEM' to drivers causing
-unmet dependency.
+ drivers/pinctrl/intel/pinctrl-intel.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-
- drivers/pinctrl/stm32/Kconfig | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/stm32/Kconfig b/drivers/pinctrl/stm32/Kconfig
-index 1c4e00b2..cd3936e 100644
---- a/drivers/pinctrl/stm32/Kconfig
-+++ b/drivers/pinctrl/stm32/Kconfig
-@@ -11,37 +11,37 @@ config PINCTRL_STM32
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 96e73e30204e..1e24a6b8a64e 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -788,6 +788,24 @@ static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+ }
  
- config PINCTRL_STM32F429
- 	bool "STMicroelectronics STM32F429 pin control" if COMPILE_TEST && !MACH_STM32F429
--	depends on OF
-+	depends on OF && HAS_IOMEM
- 	default MACH_STM32F429
- 	select PINCTRL_STM32
- 
- config PINCTRL_STM32F469
- 	bool "STMicroelectronics STM32F469 pin control" if COMPILE_TEST && !MACH_STM32F469
--	depends on OF
-+	depends on OF && HAS_IOMEM
- 	default MACH_STM32F469
- 	select PINCTRL_STM32
- 
- config PINCTRL_STM32F746
- 	bool "STMicroelectronics STM32F746 pin control" if COMPILE_TEST && !MACH_STM32F746
--	depends on OF
-+	depends on OF && HAS_IOMEM
- 	default MACH_STM32F746
- 	select PINCTRL_STM32
- 
- config PINCTRL_STM32F769
- 	bool "STMicroelectronics STM32F769 pin control" if COMPILE_TEST && !MACH_STM32F769
--	depends on OF
-+	depends on OF && HAS_IOMEM
- 	default MACH_STM32F769
- 	select PINCTRL_STM32
- 
- config PINCTRL_STM32H743
- 	bool "STMicroelectronics STM32H743 pin control" if COMPILE_TEST && !MACH_STM32H743
--	depends on OF
-+	depends on OF && HAS_IOMEM
- 	default MACH_STM32H743
- 	select PINCTRL_STM32
- 
- config PINCTRL_STM32MP157
- 	bool "STMicroelectronics STM32MP157 pin control" if COMPILE_TEST && !MACH_STM32MP157
--	depends on OF
-+	depends on OF && HAS_IOMEM
- 	default MACH_STM32MP157
- 	select PINCTRL_STM32
- endif
++static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
++{
++	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
++	void __iomem *reg;
++	u32 padcfg0;
++
++	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
++	if (!reg)
++		return -EINVAL;
++
++	padcfg0 = readl(reg);
++
++	if (padcfg0 & PADCFG0_PMODE_MASK)
++		return -EINVAL;
++
++	return !!(padcfg0 & PADCFG0_GPIOTXDIS);
++}
++
+ static int intel_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ {
+ 	return pinctrl_gpio_direction_input(chip->base + offset);
+@@ -804,6 +822,7 @@ static const struct gpio_chip intel_gpio_chip = {
+ 	.owner = THIS_MODULE,
+ 	.request = gpiochip_generic_request,
+ 	.free = gpiochip_generic_free,
++	.get_direction = intel_gpio_get_direction,
+ 	.direction_input = intel_gpio_direction_input,
+ 	.direction_output = intel_gpio_direction_output,
+ 	.get = intel_gpio_get,
 -- 
-2.7.4
+2.16.2
