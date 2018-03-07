@@ -1,41 +1,35 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: Implement intel_gpio_get_direction
- callback
-Date: Tue, 6 Mar 2018 20:06:13 +0200
-Message-ID: <20180306180613.GA22205@lahna.fi.intel.com>
-References: <20180306134213.16898-1-javier@emutex.com>
- <3585081b-70af-5c31-08c0-84e96b6055bc@emutex.com>
- <1520348165.10722.438.camel@linux.intel.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/3] mfd: Update to SPDX license identifier
+Date: Wed, 7 Mar 2018 15:30:27 +0000
+Message-ID: <20180307153027.o6rp3777g3nk6q6b@dell>
+References: <1519170849-28802-1-git-send-email-rajmohan.mani@intel.com>
+ <1519170849-28802-2-git-send-email-rajmohan.mani@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1520348165.10722.438.camel@linux.intel.com>
+In-Reply-To: <1519170849-28802-2-git-send-email-rajmohan.mani@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Javier Arteaga <javier@emutex.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rajmohan Mani <rajmohan.mani@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Andy Shevchenko <andy@infradead.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 04:56:05PM +0200, Andy Shevchenko wrote:
-> On Tue, 2018-03-06 at 14:31 +0000, Javier Arteaga wrote:
-> > (Fix Andy's Cc: - apologies)
-> > 
-> > On 06/03/2018 13:42, Javier Arteaga wrote:
-> > > Allows querying GPIO direction from the pad config register.
-> > > If the pad is not in GPIO mode, return an error.
-> > > 
-> > > Signed-off-by: Javier Arteaga <javier@emutex.com>
-> > > ---
-> > > This is needed by the drivers for the UP Squared board, an APL-based
-> > > platform. (For now, these drivers are out-of-tree.)
-> > > 
-> > > An earlier version of this patch was reviewed some time ago by Andy
-> > > Shevchenko outside of the mailing lists:
-> > > <https://github.com/emutex/ubilinux-kernel/commit/708a776f2ffd1b1c>
-> > > 
-> 
-> Yes, this one look good!
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Tue, 20 Feb 2018, Rajmohan Mani wrote:
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Remove the GPL v2 license boilerplate and update with
+> the SPDX license identifier.
+> 
+> Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+> ---
+>  drivers/mfd/tps68470.c       | 10 +---------
+>  include/linux/mfd/tps68470.h | 17 +++--------------
+>  2 files changed, 4 insertions(+), 23 deletions(-)
+
+Applied, thanks.
+
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
