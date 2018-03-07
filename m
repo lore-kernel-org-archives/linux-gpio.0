@@ -1,161 +1,51 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v4 05/10] dt-bindings: gpio: Add gpio nodes for Actions
- S900 SoC
-Date: Thu, 8 Mar 2018 01:35:43 +0530
-Message-ID: <20180307200543.scpqbh7rb635b7c3@linaro.org>
-References: <20180302035045.14660-1-manivannan.sadhasivam@linaro.org>
- <20180302035045.14660-6-manivannan.sadhasivam@linaro.org>
- <20180307195233.bstixvrmwo4ozino@rob-hp-laptop>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 00/13] Remove metag architecture
+Date: Wed, 7 Mar 2018 22:24:23 +0100
+Message-ID: <CAK8P3a2qV5n57f7=FC0nYZWfeXCVaOaK4R_7Wr74p3ZMyuwJNQ@mail.gmail.com>
+References: <20180221233825.10024-1-jhogan@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180307195233.bstixvrmwo4ozino@rob-hp-laptop>
+In-Reply-To: <20180221233825.10024-1-jhogan@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: linus.walleij@linaro.org, afaerber@suse.de, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
+To: James Hogan <jhogan@kernel.org>
+Cc: "open list:METAG ARCHITECTURE" <linux-metag@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Linus Walleij <linus.walleij@linaro.org>, Wim
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Rob,
-
-Thanks for the review.
-
-On Wed, Mar 07, 2018 at 01:52:33PM -0600, Rob Herring wrote:
-> On Fri, Mar 02, 2018 at 09:20:40AM +0530, Manivannan Sadhasivam wrote:
-> > Add gpio nodes for Actions Semi S900 SoC.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  .../devicetree/bindings/gpio/actions,owl-gpio.txt  | 95 ++++++++++++++++++++++
-> >  1 file changed, 95 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-> > new file mode 100644
-> > index 000000000000..d2939ca6cfaf
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-> > @@ -0,0 +1,95 @@
-> > +* Actions Semi OWL GPIO controller bindings
-> > +
-> > +The GPIOs are organized as individual banks/ports with variable number
-> > +of GPIOs. Each bank is represented as an individual GPIO controller.
-> > +
-> > +Required properties:
-> > +- compatible            : Should be "actions,s900-gpio"
-> > +- reg                   : Address and range of the GPIO controller registers.
-> > +- gpio-controller       : Marks the device node as a GPIO controller.
-> > +- #gpio-cells           : Should be <2>. The first cell is the gpio number
-> > +                          and the second cell is used to specify optional
-> > +                          parameters.
-> > +- interrupt-controller  : Marks the device node as an interrupt controller.
-> > +- #interrupt-cells      : Specifies the number of cells needed to encode an
-> > +                          interrupt.  Shall be set to 2.  The first cell
-> > +                          defines the interrupt number, the second encodes
-> > +                          the trigger flags described in
-> > +                          bindings/interrupt-controller/interrupts.txt
-> > +
-> > +Optional properties:
-> > +- gpio-ranges           : Mapping between GPIO and pinctrl
-> > +
-> > +Note: Each GPIO port should have an alias correctly numbered in "aliases"
-> > +node.
-> 
-> Why? Please don't use aliases for gpios.
-> 
-
-Okay.
-
-> > +
-> > +Examples:
-> > +
-> > +aliases {
-> > +        gpio0 = &gpioa;
-> > +        gpio1 = &gpiob;
-> > +        gpio2 = &gpioc;
-> > +        gpio3 = &gpiod;
-> > +        gpio4 = &gpioe;
-> > +        gpio5 = &gpiof;
-> > +};
-> > +
-> > +       gpioa: gpioa@e01b0000 {
-> 
-> Use generic node names (gpio).
+On Thu, Feb 22, 2018 at 12:38 AM, James Hogan <jhogan@kernel.org> wrote:
+> These patches remove the metag architecture and tightly dependent
+> drivers from the kernel. With the 4.16 kernel the ancient gcc 4.2.4
+> based metag toolchain we have been using is hitting compiler bugs, so
+> now seems a good time to drop it altogether.
 >
-
-Okay. But how about the label? Should it be gpioa... or gpio1...
-In datasheet, the registers are named from gpioa to gpiof.
- 
-> > +               compatible = "actions,s900-gpio";
-> > +               reg = <0x0 0xe01b0000 0x0 0x1000>;
-> > +               gpio-controller;
-> > +               #gpio-cells = <2>;
-> > +               gpio-ranges = <&pinctrl 0 0 32>;
-> > +               interrupt-controller;
-> > +               #interrupt-cells = <2>;
-> > +       };
-> > +
-> > +       gpiob: gpiob@e01b0000 {
-> 
-> Ah, but your are duplicating addresses here which you shouldn't do 
-> either. These should be all one node if you can avoid overlapping.
+> Quoting from patch 1:
 >
+> The earliest Meta architecture port of Linux I have a record of was an
+> import of a Meta port of Linux v2.4.1 in February 2004, which was worked
+> on significantly over the next few years by Graham Whaley, Will Newton,
+> Matt Fleming, myself and others.
+>
+> Eventually the port was merged into mainline in v3.9 in March 2013, not
+> long after Imagination Technologies bought MIPS Technologies and shifted
+> its CPU focus over to the MIPS architecture.
+>
+> As a result, though the port was maintained for a while, kept on life
+> support for a while longer, and useful for testing a few specific
+> drivers for which I don't have ready access to the equivalent MIPS
+> hardware, it is now essentially dead with no users.
+>
+> It is also stuck using an out-of-tree toolchain based on GCC 4.2.4 which
+> is no longer maintained, now struggles to build modern kernels due to
+> toolchain bugs, and doesn't itself build with a modern GCC. The latest
+> buildroot port is still using an old uClibc snapshot which is no longer
+> served, and the latest uClibc doesn't build with GCC 4.2.4.
+>
+> So lets call it a day and drop the Meta architecture port from the
+> kernel. RIP Meta.
 
-Hmmm. Okay. Then I can use the sub address for all nodes. But having a single
-node doesn't makes sense here since each bank has its own interrupt
-domain and somewhat resembles an individual controller.
+I've pulled it into my asm-generic tree now, which is also part of linux-next,
+and followed up with patches removing frv, m32r, score, unicore32
+and blackfin. I have not removed the device drivers yet, but I'm working
+on that.
 
-Thanks,
-Mani
-
-> > +               compatible = "actions,s900-gpio";
-> > +               reg = <0x0 0xe01b0000 0x0 0x1000>;
-> > +               gpio-controller;
-> > +               #gpio-cells = <2>;
-> > +               gpio-ranges = <&pinctrl 0 32 32>;
-> > +               interrupt-controller;
-> > +               #interrupt-cells = <2>;
-> > +       };
-> > +
-> > +       gpioc: gpioc@e01b0000 {
-> > +               compatible = "actions,s900-gpio";
-> > +               reg = <0x0 0xe01b0000 0x0 0x1000>;
-> > +               gpio-controller;
-> > +               #gpio-cells = <2>;
-> > +               gpio-ranges = <&pinctrl 0 64 12>;
-> > +               interrupt-controller;
-> > +               #interrupt-cells = <2>;
-> > +       };
-> > +
-> > +       gpiod: gpiod@e01b0000 {
-> > +               compatible = "actions,s900-gpio";
-> > +               reg = <0x0 0xe01b0000 0x0 0x1000>;
-> > +               gpio-controller;
-> > +               #gpio-cells = <2>;
-> > +               gpio-ranges = <&pinctrl 0 76 30>;
-> > +               interrupt-controller;
-> > +               #interrupt-cells = <2>;
-> > +       };
-> > +
-> > +       gpioe: gpioe@e01b0000 {
-> > +               compatible = "actions,s900-gpio";
-> > +               reg = <0x0 0xe01b0000 0x0 0x1000>;
-> > +               gpio-controller;
-> > +               #gpio-cells = <2>;
-> > +               gpio-ranges = <&pinctrl 0 106 32>;
-> > +               interrupt-controller;
-> > +               #interrupt-cells = <2>;
-> > +       };
-> > +
-> > +       gpiof: gpiof@e01b0000 {
-> > +               compatible = "actions,s900-gpio";
-> > +               reg = <0x0 0xe01b0000 0x0 0x1000>;
-> > +               gpio-controller;
-> > +               #gpio-cells = <2>;
-> > +               gpio-ranges = <&pinctrl 0 138 8>;
-> > +               interrupt-controller;
-> > +               #interrupt-cells = <2>;
-> > +       };
-> > -- 
-> > 2.14.1
-> > 
+       Arnd
