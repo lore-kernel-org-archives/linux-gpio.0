@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH 2/8] Documentation: driver-api: Move gpio.rst to gpio/index.rst
-Date: Fri,  9 Mar 2018 00:40:18 +0100
-Message-ID: <20180308234024.24145-3-j.neuschaefer@gmx.net>
+Subject: [PATCH 1/8] MAINTAINERS: GPIO: Add Documentation/driver-api/gpio/
+Date: Fri,  9 Mar 2018 00:40:17 +0100
+Message-ID: <20180308234024.24145-2-j.neuschaefer@gmx.net>
 References: <20180308234024.24145-1-j.neuschaefer@gmx.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -10,35 +10,28 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180308234024.24145-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Vinod Koul <vinod.koul@intel.com>, Sanyog Kale <sanyog.r.kale@intel.com>, Sagar Dharia <sdharia@codeaurora.org>, Thierry Reding <treding@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, "David S. Miller" <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-To make space for more files in the GPIO section, create a
-Documentation/driver-api/gpio/ directory.
+Steer patches to Documentation/driver-api/gpio/ into the right
+direction.
 
 Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 ---
- Documentation/driver-api/{gpio.rst => gpio/index.rst} | 0
- Documentation/driver-api/index.rst                    | 2 +-
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename Documentation/driver-api/{gpio.rst => gpio/index.rst} (100%)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/driver-api/gpio.rst b/Documentation/driver-api/gpio/index.rst
-similarity index 100%
-rename from Documentation/driver-api/gpio.rst
-rename to Documentation/driver-api/gpio/index.rst
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index 62d056471c0d..9b54fb99d9ca 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -45,7 +45,7 @@ available subsections can be seen below.
-    uio-howto
-    firmware/index
-    pinctl
--   gpio
-+   gpio/index
-    misc_devices
-    dmaengine/index
-    slimbus
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d6a89d31e4a4..313c0907020c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6029,6 +6029,7 @@ L:	linux-gpio@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/gpio/
++F:	Documentation/driver-api/gpio/
+ F:	Documentation/gpio/
+ F:	Documentation/ABI/testing/gpio-cdev
+ F:	Documentation/ABI/obsolete/sysfs-gpio
 -- 
 2.16.1
