@@ -1,52 +1,57 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] gpio: dwapb: Add support for a bus clock
-Date: Fri,  9 Mar 2018 10:34:11 +0000
-Message-ID: <1520591651-4565-1-git-send-email-phil.edworthy@renesas.com>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 0/8] Move most GPIO documentation to driver-api/gpio/
+ and ReST
+Date: Fri, 9 Mar 2018 10:41:20 -0700
+Message-ID: <20180309104120.40244f8a@lwn.net>
+References: <20180308234024.24145-1-j.neuschaefer@gmx.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180308234024.24145-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hoan Tran <hotran@apm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Michel Pollet <michel.pollet@bp.renesas.com>
+To: Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Michel Pollet <michel.pollet@bp.renesas.com>
+On Fri,  9 Mar 2018 00:40:16 +0100
+Jonathan Neuschäfer <j.neuschaefer@gmx.net> wrote:
 
-Enable specified clocks from DTS, if any.
+> The aim of this patchset is to move the GPIO subsystem's documentation
+> under Documentation/driver-api/gpio/ such that it is picked up by Sphinx
+> and compiled into HTML. I moved everything except for sysfs.txt, because
+> this file describes the legacy sysfs ABI, and doesn't seem to serve much
+> (non-historical) purpose anymore.
+> 
+> There are still some rough edges:
+> 
+> * I think the API documentation (kernel-doc) should be moved out of
+>   index.rst into more appropriate files.
+> * The headings are arguably wrong, because driver.rst, consumer.rst,
+>   etc. use the "document title" style, even though they are part of the
+>   GPIO chapter. But the resulting TOC tree is consistent, and I did not
+>   want to change almost all headings.
+> * Some of the files could use more :c:func:`...` references and general
+>   ReST polish.
+> 
+> But I don't want to make this patchset too large.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- drivers/gpio/gpio-dwapb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+[For future reference, if you're going to CC me on most of a patch series,
+I'd really rather get the whole thing so I don't have to go looking for
+it.]
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index b0704a8..56c58b5 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -27,6 +27,7 @@
- #include <linux/spinlock.h>
- #include <linux/platform_data/gpio-dwapb.h>
- #include <linux/slab.h>
-+#include <linux/clk.h>
- 
- #include "gpiolib.h"
- 
-@@ -637,6 +638,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- 	int err;
- 	struct device *dev = &pdev->dev;
- 	struct dwapb_platform_data *pdata = dev_get_platdata(dev);
-+	struct clk *clk;
- 
- 	if (!pdata) {
- 		pdata = dwapb_gpio_get_pdata(dev);
-@@ -670,6 +672,10 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(gpio->regs))
- 		return PTR_ERR(gpio->regs);
- 
-+	clk = devm_clk_get(&pdev->dev, NULL);
-+	if (!IS_ERR(clk) && clk_prepare_enable(clk))
-+		dev_info(&pdev->dev, "no clock source\n");
-+
- 	gpio->flags = 0;
- 	if (dev->of_node) {
- 		const struct of_device_id *of_devid;
--- 
-2.7.4
+>From a quick look, it seems like a reasonable RST conversion to me.  I do
+wonder if sysfs.txt should just be removed, since it documents something
+we don't want people to use at this point?  Historical purposes are well
+served by the repository history.
+
+I'd say changing the headings is worthwhile if it produces a better
+result.  OTOH I'd be wary of adding too much "polish"; we really want to
+retain the readability of the plain-text files.
+
+Anyway, I'm happy to take these through the docs tree or see them go via
+GPIO; Linus, what's your preference?
+
+Thanks,
+
+jon
