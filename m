@@ -1,40 +1,52 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v5 9/9] MAINTAINERS: Add Actions Semi S900 pinctrl and gpio entries
-Date: Fri,  9 Mar 2018 10:43:45 +0530
-Message-ID: <20180309051345.1011-10-manivannan.sadhasivam@linaro.org>
-References: <20180309051345.1011-1-manivannan.sadhasivam@linaro.org>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH] gpio: dwapb: Add support for a bus clock
+Date: Fri,  9 Mar 2018 10:34:11 +0000
+Message-ID: <1520591651-4565-1-git-send-email-phil.edworthy@renesas.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180309051345.1011-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Hoan Tran <hotran@apm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Michel Pollet <michel.pollet@bp.renesas.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Add S900 pinctrl and gpio entries under ARCH_ACTIONS
+From: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Enable specified clocks from DTS, if any.
+
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- MAINTAINERS | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpio/gpio-dwapb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 640dabc4c311..d63793ee545e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1125,10 +1125,14 @@ F:	arch/arm/mach-actions/
- F:	arch/arm/boot/dts/owl-*
- F:	arch/arm64/boot/dts/actions/
- F:	drivers/clocksource/owl-*
-+F:	drivers/gpio/gpio-owl.c
-+F:	drivers/pinctrl/actions/*
- F:	drivers/soc/actions/
- F:	include/dt-bindings/power/owl-*
- F:	include/linux/soc/actions/
- F:	Documentation/devicetree/bindings/arm/actions.txt
-+F:	Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-+F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
- F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
- F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index b0704a8..56c58b5 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -27,6 +27,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/platform_data/gpio-dwapb.h>
+ #include <linux/slab.h>
++#include <linux/clk.h>
  
+ #include "gpiolib.h"
+ 
+@@ -637,6 +638,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	int err;
+ 	struct device *dev = &pdev->dev;
+ 	struct dwapb_platform_data *pdata = dev_get_platdata(dev);
++	struct clk *clk;
+ 
+ 	if (!pdata) {
+ 		pdata = dwapb_gpio_get_pdata(dev);
+@@ -670,6 +672,10 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gpio->regs))
+ 		return PTR_ERR(gpio->regs);
+ 
++	clk = devm_clk_get(&pdev->dev, NULL);
++	if (!IS_ERR(clk) && clk_prepare_enable(clk))
++		dev_info(&pdev->dev, "no clock source\n");
++
+ 	gpio->flags = 0;
+ 	if (dev->of_node) {
+ 		const struct of_device_id *of_devid;
 -- 
-2.14.1
+2.7.4
