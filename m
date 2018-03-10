@@ -1,96 +1,59 @@
-From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: Re: [PATCH 0/8] Move most GPIO documentation to driver-api/gpio/ and
- ReST
-Date: Sat, 10 Mar 2018 14:29:52 +0100
-Message-ID: <20180310132952.7rm3wmcr3ynrrxvf@latitude>
-References: <20180308234024.24145-1-j.neuschaefer@gmx.net>
- <CACRpkda=5i-j=W8+yosF9WiZRKFF=iRC-djja7MJE+k6b1xtaQ@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v5 7/9] gpio: Add gpio driver for Actions OWL S900 SoC
+Date: Sat, 10 Mar 2018 20:41:00 +0200
+Message-ID: <CAHp75Vdecdw-Qp_cdfCTUcMFQtFosUhgNKehHHJfPTNM9FrrBA@mail.gmail.com>
+References: <20180309051345.1011-1-manivannan.sadhasivam@linaro.org> <20180309051345.1011-8-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vi4r2vd4bf5bnzeo"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkda=5i-j=W8+yosF9WiZRKFF=iRC-djja7MJE+k6b1xtaQ@mail.gmail.com>
+In-Reply-To: <20180309051345.1011-8-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
+On Fri, Mar 9, 2018 at 7:13 AM, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+> Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
+> controlling the gpio shares the same register range with pinctrl block.
+>
+> GPIO registers are organized as 6 banks and each bank controls the
+> maximum of 32 gpios.
 
---vi4r2vd4bf5bnzeo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +static void owl_gpio_set_reg(void __iomem *base, unsigned int pin, int flag)
+> +{
+> +       u32 val;
+> +
+> +       val = readl_relaxed(base);
+> +
+> +       if (flag)
+> +               val |= BIT(pin);
+> +       else
+> +               val &= ~BIT(pin);
+> +
+> +       writel_relaxed(val, base);
+> +}
 
-On Sat, Mar 10, 2018 at 12:50:46PM +0100, Linus Walleij wrote:
-> On Fri, Mar 9, 2018 at 12:40 AM, Jonathan Neusch=C3=A4fer
-> <j.neuschaefer@gmx.net> wrote:
->=20
-> > The aim of this patchset is to move the GPIO subsystem's documentation
-> > under Documentation/driver-api/gpio/ such that it is picked up by Sphinx
-> > and compiled into HTML.
->=20
-> Awesome!
->=20
-> > I moved everything except for sysfs.txt, because
-> > this file describes the legacy sysfs ABI, and doesn't seem to serve much
-> > (non-historical) purpose anymore.
-> >
-> > There are still some rough edges:
-> >
-> > * I think the API documentation (kernel-doc) should be moved out of
-> >   index.rst into more appropriate files.
-> > * The headings are arguably wrong, because driver.rst, consumer.rst,
-> >   etc. use the "document title" style, even though they are part of the
-> >   GPIO chapter. But the resulting TOC tree is consistent, and I did not
-> >   want to change almost all headings.
-> > * Some of the files could use more :c:func:`...` references and general
-> >   ReST polish.
-> >
-> > But I don't want to make this patchset too large.
->=20
-> It's fine, we take it one step at a time.
->=20
-> On Fri, Mar 09, 2018 at 10:41:20AM -0700, Jonathan Corbet wrote:
->=20
-> > Anyway, I'm happy to take these through the docs tree or see them go via
-> > GPIO; Linus, what's your preference?
->=20
-> I might have some doc patches that could collide so I can take them.
->=20
-> I take it there will be a v2?
+The name is confusing. It's not exclusively set, it's an update.
 
-Not necessarily, but if I need to rebase on a different branch, or on
-future linux-next, I'll do that. (Or if some other issue is found.)
+> +static void owl_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
+> +{
+> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
+> +       u32 val;
+> +
+> +       val = readl_relaxed(gpio->base + GPIO_DAT);
+> +
+> +       if (value)
+> +               val |= BIT(offset);
+> +       else
+> +               val &= ~BIT(offset);
+> +
+> +       writel_relaxed(val, gpio->base + GPIO_DAT);
 
-I thought that patch 8/8 currently requires commit 93db446a424c ("mtd:
-nand: move raw NAND related code to the raw/ subdir"), which is in next
-through Boris Brezillon's nand tree, but this isn't true. The patchset
-(currently) applies to both v4.16-rc4 and next, AFAICS.
+Forgot to replace?
 
+> +}
 
-Thanks,
-Jonathan Neusch=C3=A4fer
-
---vi4r2vd4bf5bnzeo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAABAgAGBQJao93DAAoJEAgwRJqO81/bvT4P/2aQLu+d/XOm0MX2UtM4bjvF
-AhpJ23O/U9XGRVaQOBByV4LZXmNd10I71KTJujpXMI8D+NrlWgC9RyTObEJhC706
-l2ULk8b54Zq+yNVimLGaG/k4UE/w/rCI4VE8gBb2yGy9AUsu1RrF+1Yebiyz4GYg
-SA7z7tUsZVgIvCtO66DliRYf2HrbIsJZfpq59uXvZu5QIgxARJ8JTUE8eIWJH3n9
-gg5X5fd5URNZx0moDN86RWGrRY7kFNhrda8D5TCbrFT+MAP7mhNKq0PQLdKqYeod
-jhDosUyaO7ja3ONIUP3P/Wj+Be76+ytnbhhhrVoFh+n1i4iARE+5B5sV+PWohbE/
-9bkE3Jl+df4RWxe3Hq3qmhJkN7bibCWo4IVAIGdWXX3e1m76DUqqwo5ka2sU6SQD
-xc9dBUDfCIitmr9qRd47OEml1ttiseupH1iqbctHFgQn18Wrx/48TaxUp154BKUb
-T03rOYo+V8pyp3pjopvxhz9w84cAGLD+ozWhqH/MOXOs6vuCkfNNoTLiO/Y1F+VQ
-wHSuGDIR2KM+/6QUdEViEL+kJ8dGAJcWONCKUwaVnzMBnjLdv3ceb4Yq9IqOgtYV
-mv6yvHGcaf1SOKJzl/yKvath/cgjMa4aPzIvFhENjFrEIa1Y22ojeqKiYC+rC1/K
-Rna/d5nDHrYKgp+3+NT+
-=of2O
------END PGP SIGNATURE-----
-
---vi4r2vd4bf5bnzeo--
+-- 
+With Best Regards,
+Andy Shevchenko
