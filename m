@@ -1,59 +1,45 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v5 7/9] gpio: Add gpio driver for Actions OWL S900 SoC
-Date: Sat, 10 Mar 2018 20:41:00 +0200
-Message-ID: <CAHp75Vdecdw-Qp_cdfCTUcMFQtFosUhgNKehHHJfPTNM9FrrBA@mail.gmail.com>
-References: <20180309051345.1011-1-manivannan.sadhasivam@linaro.org> <20180309051345.1011-8-manivannan.sadhasivam@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for v4.16
+Date: Sun, 11 Mar 2018 11:06:22 +0100
+Message-ID: <CACRpkdZvwWmh7NqcoM9bgTxnLECv5thLavyCAS7jPv87DF0ZTA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180309051345.1011-8-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 7:13 AM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
-> controlling the gpio shares the same register range with pinctrl block.
->
-> GPIO registers are organized as 6 banks and each bank controls the
-> maximum of 32 gpios.
+Hi Linus,
 
-> +static void owl_gpio_set_reg(void __iomem *base, unsigned int pin, int flag)
-> +{
-> +       u32 val;
-> +
-> +       val = readl_relaxed(base);
-> +
-> +       if (flag)
-> +               val |= BIT(pin);
-> +       else
-> +               val &= ~BIT(pin);
-> +
-> +       writel_relaxed(val, base);
-> +}
+here is a singular fix for v4.16 and the Renesas RCAR driver.
 
-The name is confusing. It's not exclusively set, it's an update.
+Please pull it in!
 
-> +static void owl_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
-> +{
-> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
-> +       u32 val;
-> +
-> +       val = readl_relaxed(gpio->base + GPIO_DAT);
-> +
-> +       if (value)
-> +               val |= BIT(offset);
-> +       else
-> +               val &= ~BIT(offset);
-> +
-> +       writel_relaxed(val, gpio->base + GPIO_DAT);
+Yours,
+Linus Walleij
 
-Forgot to replace?
+The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
 
-> +}
+  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
 
--- 
-With Best Regards,
-Andy Shevchenko
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.16-3
+
+for you to fetch changes up to 9ac79ba9c77d8595157bbdc4327919f8ee062426:
+
+  gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
+(2018-03-05 09:01:21 +0100)
+
+----------------------------------------------------------------
+This is a single GPIO fix for the v4.16 series affecting the
+Renesas driver, and fixes wakeup from external stuff.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
+
+ drivers/gpio/gpio-rcar.c | 38 ++++++++++++++++----------------------
+ 1 file changed, 16 insertions(+), 22 deletions(-)
