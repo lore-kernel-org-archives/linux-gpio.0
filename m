@@ -1,72 +1,54 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH 1/4] gpio: Remove VLA from gpiolib
-Date: Mon, 12 Mar 2018 16:00:36 +0100
-Message-ID: <a758ce3f-fed7-2ecf-94c5-ba133ea75bde@rasmusvillemoes.dk>
-References: <20180310001021.6437-1-labbott@redhat.com>
- <20180310001021.6437-2-labbott@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: [PATCH] pinctrl/amd: poll InterruptEnable bits in enable_irq
+Date: Mon, 12 Mar 2018 10:45:30 -0600
+Message-ID: <20180312164530.215524-1-djkurtz@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180310001021.6437-2-labbott@redhat.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Lukas Wunner <lukas@wunner.de>, Mathias Duckeck <m.duckeck@kunbus.de>, Nandor Han <nandor.han@ge.com>, Semi Malinen <semi.malinen@ge.com>, Patrice Chotard <patrice.chotard@st.com>
+Cc: adurbin@chromium.org, Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2018-03-10 01:10, Laura Abbott wrote:
->  		/* collect all inputs belonging to the same chip */
->  		first = i;
-> -		memset(mask, 0, sizeof(mask));
-> +		memset(mask, 0, sizeof(*mask));
+In certain cases interrupt enablement will be delayed relative to when
+the InterruptEnable bits are written.  One example of this is when
+a GPIO's "debounce" logice is first enabled.  After enabling debounce,
+there is a 900 us "warm up" period during which InterruptEnable[0]
+(bit 11) will read as 0 despite being written 1.  During this time
+InterruptSts will not be updated, nor will interrupts be delivered, even
+if the GPIO's interrupt configuration has been written to the register.
 
-see below
+To work around this delay, poll the InterruptEnable bits after setting
+them to ensure interrupts have truly been enabled in hardware before
+returning from the irq_enable handler.
 
-> @@ -2887,14 +2909,30 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
->  
->  	while (i < array_size) {
->  		struct gpio_chip *chip = desc_array[i]->gdev->chip;
-> -		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
-> -		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-> +		unsigned long *mask;
-> +		unsigned long *bits;
->  		int count = 0;
->  
-> +		mask = kmalloc_array(BITS_TO_LONGS(chip->ngpio),
-> +				sizeof(*mask),
-> +				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> +
-> +		if (!mask)
-> +			return;
-> +
-> +		bits = kmalloc_array(BITS_TO_LONGS(chip->ngpio),
-> +				sizeof(*bits),
-> +				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> +
-> +		if (!bits) {
-> +			kfree(mask);
-> +			return;
-> +		}
-> +
->  		if (!can_sleep)
->  			WARN_ON(chip->can_sleep);
->  
-> -		memset(mask, 0, sizeof(mask));
-> +		memset(mask, 0, sizeof(*mask));
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+---
+ drivers/pinctrl/pinctrl-amd.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Hm, it seems you're now only clearing the first word of mask, not the
-entire allocation. Why not just use kcalloc() instead of kmalloc_array
-to have it automatically cleared?
-
-Other random thoughts: maybe two allocations for each loop iteration is
-a bit much. Maybe do a first pass over the array and collect the maximal
-chip->ngpio, do the memory allocation and freeing outside the loop (then
-you'd of course need to preserve the memset() with appropriate length
-computed). And maybe even just do one allocation, making bits point at
-the second half.
-
-Does the set function need to be updated to return an int to be able to
-inform the caller that memory allocation failed?
-
-Rasmus
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index dae184c4b962..af8ef485fbe7 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -348,12 +348,21 @@ static void amd_gpio_irq_enable(struct irq_data *d)
+ 	unsigned long flags;
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
++	u32 mask = BIT(INTERRUPT_ENABLE_OFF) | BIT(INTERRUPT_MASK_OFF);
+ 
+ 	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+ 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
+ 	pin_reg |= BIT(INTERRUPT_ENABLE_OFF);
+ 	pin_reg |= BIT(INTERRUPT_MASK_OFF);
+ 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
++	/*
++	 * When debounce logic is enabled it takes ~900 us before interrupts
++	 * can be enabled.  During this "debounce warm up" period the
++	 * "INTERRUPT_ENABLE" bit will read as 0. Poll the bit here until it
++	 * reads back as 1, signaling that interrupts are now enabled.
++	 */
++	while ((readl(gpio_dev->base + (d->hwirq)*4) & mask) != mask)
++		continue;
+ 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+ }
+ 
+-- 
+2.16.2.660.g709887971b-goog
