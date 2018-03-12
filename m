@@ -1,54 +1,92 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: [PATCH] pinctrl/amd: poll InterruptEnable bits in enable_irq
-Date: Mon, 12 Mar 2018 10:45:30 -0600
-Message-ID: <20180312164530.215524-1-djkurtz@chromium.org>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v2] gpio: dwapb: Add support for a bus clock
+Date: Mon, 12 Mar 2018 18:30:56 +0000
+Message-ID: <1520879456-14777-1-git-send-email-phil.edworthy@renesas.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: adurbin@chromium.org, Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Hoan Tran <hotran@apm.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>
 List-Id: linux-gpio@vger.kernel.org
 
-In certain cases interrupt enablement will be delayed relative to when
-the InterruptEnable bits are written.  One example of this is when
-a GPIO's "debounce" logice is first enabled.  After enabling debounce,
-there is a 900 us "warm up" period during which InterruptEnable[0]
-(bit 11) will read as 0 despite being written 1.  During this time
-InterruptSts will not be updated, nor will interrupts be delivered, even
-if the GPIO's interrupt configuration has been written to the register.
+Enable an optional bus clock provided by DT.
 
-To work around this delay, poll the InterruptEnable bits after setting
-them to ensure interrupts have truly been enabled in hardware before
-returning from the irq_enable handler.
-
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- drivers/pinctrl/pinctrl-amd.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+v2:
+ - Fix include order.
+ - Use a clock name.
+ - Check errors from clk_prepare_enable()
+ - Add calls to enable/disable the clock in PM
+---
+ drivers/gpio/gpio-dwapb.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index dae184c4b962..af8ef485fbe7 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -348,12 +348,21 @@ static void amd_gpio_irq_enable(struct irq_data *d)
- 	unsigned long flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
-+	u32 mask = BIT(INTERRUPT_ENABLE_OFF) | BIT(INTERRUPT_MASK_OFF);
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index b0704a8..226977f 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -8,8 +8,9 @@
+  * All enquiries to support@picochip.com
+  */
+ #include <linux/acpi.h>
+-#include <linux/gpio/driver.h>
++#include <linux/clk.h>
+ #include <linux/err.h>
++#include <linux/gpio/driver.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -98,6 +99,7 @@ struct dwapb_gpio {
+ 	struct irq_domain	*domain;
+ 	unsigned int		flags;
+ 	struct reset_control	*rst;
++	struct clk		*clk;
+ };
  
- 	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
- 	pin_reg |= BIT(INTERRUPT_ENABLE_OFF);
- 	pin_reg |= BIT(INTERRUPT_MASK_OFF);
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
-+	/*
-+	 * When debounce logic is enabled it takes ~900 us before interrupts
-+	 * can be enabled.  During this "debounce warm up" period the
-+	 * "INTERRUPT_ENABLE" bit will read as 0. Poll the bit here until it
-+	 * reads back as 1, signaling that interrupts are now enabled.
-+	 */
-+	while ((readl(gpio_dev->base + (d->hwirq)*4) & mask) != mask)
-+		continue;
- 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+ static inline u32 gpio_reg_v2_convert(unsigned int offset)
+@@ -670,6 +672,16 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gpio->regs))
+ 		return PTR_ERR(gpio->regs);
+ 
++	/* Optional bus clock */
++	gpio->clk = devm_clk_get(&pdev->dev, "bus");
++	if (!IS_ERR(gpio->clk)) {
++		err = clk_prepare_enable(gpio->clk);
++		if (err) {
++			dev_info(&pdev->dev, "Cannot enable clock\n");
++			return err;
++		}
++	}
++
+ 	gpio->flags = 0;
+ 	if (dev->of_node) {
+ 		const struct of_device_id *of_devid;
+@@ -712,6 +724,7 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
+ 	dwapb_gpio_unregister(gpio);
+ 	dwapb_irq_teardown(gpio);
+ 	reset_control_assert(gpio->rst);
++	clk_disable_unprepare(gpio->clk);
+ 
+ 	return 0;
+ }
+@@ -757,6 +770,8 @@ static int dwapb_gpio_suspend(struct device *dev)
+ 	}
+ 	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+ 
++	clk_disable_unprepare(gpio->clk);
++
+ 	return 0;
  }
  
+@@ -768,6 +783,9 @@ static int dwapb_gpio_resume(struct device *dev)
+ 	unsigned long flags;
+ 	int i;
+ 
++	if (!IS_ERR(gpio->clk))
++		clk_prepare_enable(gpio->clk);
++
+ 	spin_lock_irqsave(&gc->bgpio_lock, flags);
+ 	for (i = 0; i < gpio->nr_ports; i++) {
+ 		unsigned int offset;
 -- 
-2.16.2.660.g709887971b-goog
+2.7.4
