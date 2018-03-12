@@ -1,83 +1,83 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 8/8] gpio: ws16c48: Implement get_multiple callback
-Date: Mon, 12 Mar 2018 16:50:32 -0400
-Message-ID: <1776078694b1f68535fd9d0051dcaa992413ea60.1520886945.git.vilhelm.gray@gmail.com>
-References: <cover.1520886945.git.vilhelm.gray@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1520886945.git.vilhelm.gray@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 2/3] soc: rockchip: power-domain: Use
+ of_clk_get_parent_count() instead of open coding
+Date: Mon, 12 Mar 2018 15:32:25 -0700
+Message-ID: <152089394512.147033.16036395348488651030@swboyd.mtv.corp.google.com>
+References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
+ <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+ <11171053.oOJPuGlHoK@phil>
+ <CAEG3pNCioW_FVXj3-j4KC_yO6ZYGXQB_eanHWSb9NUE9kYsWag@mail.gmail.com>
+ <CAMuHMdVsb+5T-DYfF9v6ANhVxhRk6_r+XPA34mW7Q=90HnitAA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAMuHMdVsb+5T-DYfF9v6ANhVxhRk6_r+XPA34mW7Q=90HnitAA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Michael Turquette <mturquette@baylibre.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Geert Uytterhoeven <geert+renesas@glider.be>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Jonathan Hunter <jonathanh@nvidia.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd <sboyd@codeaurora.org>,
+ Emilio Lopez <emilio@elopez.com.ar>,
+ Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The WinSystems WS16C48 device provides 48 lines of digital I/O accessed
-via six 8-bit ports. Since eight input lines are acquired on a single
-port input read, the WS16C48 GPIO driver may improve multiple input
-reads by utilizing a get_multiple callback. This patch implements the
-ws16c48_gpio_get_multiple function which serves as the respective
-get_multiple callback.
+Quoting Geert Uytterhoeven (2018-03-02 05:15:35)
+> Hi Mike,
+> 
+> On Sun, Feb 18, 2018 at 8:09 PM, Michael Turquette
+> <mturquette@baylibre.com> wrote:
+> > Moving of_clk_get_parent_count to clk.h seems reasonable to me. It's
+> > more of an of-specific helper than a provider-specific helper.
+> >
+> > Anyone up to submit a patch so that this one doesn't need to include
+> > clk-provider.h?
+> 
+> I gave it a try.
+> Just moving of_clk_get_parent_count() from clk-provider.h to clk.h causes
+> breakage, as half of the clock providers using of_clk_get_parent_count()
+> do not include <linux/clk.h>:
+> 
+>     drivers/clk/at91/clk-generated.c
+>     drivers/clk/at91/clk-main.c
+>     drivers/clk/at91/clk-master.c
+>     drivers/clk/at91/clk-programmable.c
+>     drivers/clk/at91/clk-slow.c
+>     drivers/clk/at91/clk-smd.c
+>     drivers/clk/at91/clk-usb.c
+>     drivers/clk/at91/sckc.c
+>     drivers/clk/clk-axi-clkgen.c
+>     drivers/clk/clk-gpio.c
+>     drivers/clk/clk-hsdk-pll.c
+>     drivers/clk/h8300/clk-div.c
+>     drivers/clk/h8300/clk-h8s2678.c
+>     drivers/clk/renesas/clk-div6.c
+>     drivers/clk/ti/composite.c
+>     drivers/clk/ti/gate.c
+>     drivers/clk/ti/mux.c
+> 
+> So our options are:
+>   1. Add #include <linux/clk.h> to each of the above,
+>   2. Add #include <linux/clk.h> to <linux/clk-provider.h>,
+>   3. Do nothing, i.e. users of of_clk_get_parent_count () need to
+>       #include <linux/clk-provider.h>, cfr. this patch series.
+> 
+> Any preference? Any option I'm missing?
+> 
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-ws16c48.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+#2 is a definite no.
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index 746648244bf3..6d911f8e92c1 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -129,6 +129,44 @@ static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return !!(port_state & mask);
- }
- 
-+static int ws16c48_gpio_get_multiple(struct gpio_chip *chip,
-+	unsigned long *mask, unsigned long *bits)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-+	unsigned int i;
-+	const unsigned int gpio_reg_size = 8;
-+	unsigned int bit_word_offset;
-+	unsigned int bits_mask;
-+	const unsigned long reg_mask = GENMASK(gpio_reg_size, 0);
-+	unsigned int in_port;
-+	unsigned long port_state;
-+
-+	/* clear bits array to a clean slate */
-+	for (i = 0; i < chip->ngpio; i += BITS_PER_LONG)
-+		bits[i / BITS_PER_LONG] = 0;
-+
-+	/* get bits are evaluated a gpio register size at a time */
-+	for (i = 0; i < chip->ngpio; i += gpio_reg_size) {
-+		bit_word_offset = i % BITS_PER_LONG;
-+		bits_mask = mask[BIT_WORD(i)] & (reg_mask << bit_word_offset);
-+		if (!bits_mask) {
-+			/* no get bits in this register so skip to next one */
-+			continue;
-+		}
-+
-+		/* compute input port offset */
-+		in_port = i / gpio_reg_size;
-+
-+		/* get input bits */
-+		port_state = inb(ws16c48gpio->base + in_port);
-+
-+		/* store acquired bits */
-+		bits[BIT_WORD(i)] |= port_state << bit_word_offset;
-+	}
-+
-+	return 0;
-+}
-+
- static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-@@ -383,6 +421,7 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
- 	ws16c48gpio->chip.direction_input = ws16c48_gpio_direction_input;
- 	ws16c48gpio->chip.direction_output = ws16c48_gpio_direction_output;
- 	ws16c48gpio->chip.get = ws16c48_gpio_get;
-+	ws16c48gpio->chip.get_multiple = ws16c48_gpio_get_multiple;
- 	ws16c48gpio->chip.set = ws16c48_gpio_set;
- 	ws16c48gpio->chip.set_multiple = ws16c48_gpio_set_multiple;
- 	ws16c48gpio->base = base[id];
--- 
-2.16.2
+How about option #4? Move of_clk_get_parent_count() and
+of_clk_get_parent_name() to a new include/linux/of_clk.h, include that
+in clk-provider.h, and then have non-clk provider drivers include that
+file? After that, we can also move of_clk_init() into this new file, and
+then non-provider arch code can call of_clk_init() without including the
+provider APIs. I'd also like to get rid of the include of linux/of.h in
+clk-provider.h, but that's a ways away.
