@@ -1,42 +1,72 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] gpio: dwapb: Add support for a bus clock
-Date: Mon, 12 Mar 2018 15:58:02 +0200
-Message-ID: <CAHp75VcxH=UQoc5oMjTMHZvCqmYths5LPTVVzY-ntC+r3ivguQ@mail.gmail.com>
-References: <1520591651-4565-1-git-send-email-phil.edworthy@renesas.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH 1/4] gpio: Remove VLA from gpiolib
+Date: Mon, 12 Mar 2018 16:00:36 +0100
+Message-ID: <a758ce3f-fed7-2ecf-94c5-ba133ea75bde@rasmusvillemoes.dk>
+References: <20180310001021.6437-1-labbott@redhat.com>
+ <20180310001021.6437-2-labbott@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1520591651-4565-1-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <20180310001021.6437-2-labbott@redhat.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michel Pollet <michel.pollet@bp.renesas.com>
+To: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Lukas Wunner <lukas@wunner.de>, Mathias Duckeck <m.duckeck@kunbus.de>, Nandor Han <nandor.han@ge.com>, Semi Malinen <semi.malinen@ge.com>, Patrice Chotard <patrice.chotard@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 12:34 PM, Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> From: Michel Pollet <michel.pollet@bp.renesas.com>
->
-> Enable specified clocks from DTS, if any.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+On 2018-03-10 01:10, Laura Abbott wrote:
+>  		/* collect all inputs belonging to the same chip */
+>  		first = i;
+> -		memset(mask, 0, sizeof(mask));
+> +		memset(mask, 0, sizeof(*mask));
 
->  #include <linux/spinlock.h>
->  #include <linux/platform_data/gpio-dwapb.h>
->  #include <linux/slab.h>
-> +#include <linux/clk.h>
+see below
 
-Keep in order.
+> @@ -2887,14 +2909,30 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+>  
+>  	while (i < array_size) {
+>  		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+> -		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+> -		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+> +		unsigned long *mask;
+> +		unsigned long *bits;
+>  		int count = 0;
+>  
+> +		mask = kmalloc_array(BITS_TO_LONGS(chip->ngpio),
+> +				sizeof(*mask),
+> +				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> +
+> +		if (!mask)
+> +			return;
+> +
+> +		bits = kmalloc_array(BITS_TO_LONGS(chip->ngpio),
+> +				sizeof(*bits),
+> +				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> +
+> +		if (!bits) {
+> +			kfree(mask);
+> +			return;
+> +		}
+> +
+>  		if (!can_sleep)
+>  			WARN_ON(chip->can_sleep);
+>  
+> -		memset(mask, 0, sizeof(mask));
+> +		memset(mask, 0, sizeof(*mask));
 
+Hm, it seems you're now only clearing the first word of mask, not the
+entire allocation. Why not just use kcalloc() instead of kmalloc_array
+to have it automatically cleared?
 
-> +       clk = devm_clk_get(&pdev->dev, NULL);
-> +       if (!IS_ERR(clk) && clk_prepare_enable(clk))
-> +               dev_info(&pdev->dev, "no clock source\n");
+Other random thoughts: maybe two allocations for each loop iteration is
+a bit much. Maybe do a first pass over the array and collect the maximal
+chip->ngpio, do the memory allocation and freeing outside the loop (then
+you'd of course need to preserve the memset() with appropriate length
+computed). And maybe even just do one allocation, making bits point at
+the second half.
 
-First of all, it shadows any error from clk_prepare_enable(), second,
-it misses the clock name.
-Next, I don't see how you managed the clock during PM and / or
-->remove() operation.
+Does the set function need to be updated to return an int to be able to
+inform the caller that memory allocation failed?
 
--- 
-With Best Regards,
-Andy Shevchenko
+Rasmus
