@@ -1,66 +1,42 @@
-From: Nandor Han <nandor.han@ge.com>
-Subject: Re: EXT: [PATCH 3/4] gpio: Remove VLA from xra1403 driver
-Date: Mon, 12 Mar 2018 08:06:00 +0200
-Message-ID: <2ba65a3e-3bc9-d709-caf9-f0c512d718a3@ge.com>
-References: <20180310001021.6437-1-labbott@redhat.com>
- <20180310001021.6437-4-labbott@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] gpio: dwapb: Add support for a bus clock
+Date: Mon, 12 Mar 2018 15:58:02 +0200
+Message-ID: <CAHp75VcxH=UQoc5oMjTMHZvCqmYths5LPTVVzY-ntC+r3ivguQ@mail.gmail.com>
+References: <1520591651-4565-1-git-send-email-phil.edworthy@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180310001021.6437-4-labbott@redhat.com>
-Content-Language: en-US
+In-Reply-To: <1520591651-4565-1-git-send-email-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Semi Malinen <semi.malinen@ge.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michel Pollet <michel.pollet@bp.renesas.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 10/03/18 02:10, Laura Abbott wrote:
-> 
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621)
-> 
-> This patch replaces a VLA with an appropriate call to kmalloc_array.
-> 
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
+On Fri, Mar 9, 2018 at 12:34 PM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> From: Michel Pollet <michel.pollet@bp.renesas.com>
+>
+> Enable specified clocks from DTS, if any.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-This looks good to me.
-Reviewed-by: Nandor Han <nandor.han@ge.com>
+>  #include <linux/spinlock.h>
+>  #include <linux/platform_data/gpio-dwapb.h>
+>  #include <linux/slab.h>
+> +#include <linux/clk.h>
 
-Nandor
+Keep in order.
 
->   drivers/gpio/gpio-xra1403.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-xra1403.c b/drivers/gpio/gpio-xra1403.c
-> index 0230e4b7a2fb..8d4c8e99b251 100644
-> --- a/drivers/gpio/gpio-xra1403.c
-> +++ b/drivers/gpio/gpio-xra1403.c
-> @@ -126,11 +126,16 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
->   {
->   	int reg;
->   	struct xra1403 *xra = gpiochip_get_data(chip);
-> -	int value[xra1403_regmap_cfg.max_register];
-> +	int *value;
->   	int i;
->   	unsigned int gcr;
->   	unsigned int gsr;
->   
-> +	value = kmalloc_array(xra1403_regmap_cfg.max_register, sizeof(*value),
-> +				GFP_KERNEL);
-> +	if (!value)
-> +		return;
-> +
->   	seq_puts(s, "xra reg:");
->   	for (reg = 0; reg <= xra1403_regmap_cfg.max_register; reg++)
->   		seq_printf(s, " %2.2x", reg);
-> @@ -154,6 +159,7 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
->   			   (gcr & BIT(i)) ? "in" : "out",
->   			   (gsr & BIT(i)) ? "hi" : "lo");
->   	}
-> +	kfree(value);
->   }
->   #else
->   #define xra1403_dbg_show NULL
-> 
+
+> +       clk = devm_clk_get(&pdev->dev, NULL);
+> +       if (!IS_ERR(clk) && clk_prepare_enable(clk))
+> +               dev_info(&pdev->dev, "no clock source\n");
+
+First of all, it shadows any error from clk_prepare_enable(), second,
+it misses the clock name.
+Next, I don't see how you managed the clock during PM and / or
+->remove() operation.
+
+-- 
+With Best Regards,
+Andy Shevchenko
