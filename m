@@ -1,40 +1,74 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524
- and pcal9555a
-Date: Tue, 13 Mar 2018 18:56:16 +0200
-Message-ID: <CAHp75Ve8Y2AOm36KwuVUhssLR7Q82KS1SzB1tcKw57_LdqkKhQ@mail.gmail.com>
-References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH 3/8] gpio: pci-idio-16: Implement get_multiple callback
+Date: Tue, 13 Mar 2018 16:20:27 -0400
+Message-ID: <20180313202027.GA14944@sophia>
+References: <cover.1520886945.git.vilhelm.gray@gmail.com>
+ <e6a13288c45f824ba23ee8d1410cf0bf9c55fe60.1520886945.git.vilhelm.gray@gmail.com>
+ <CAHp75Vf9+=rie5oqmAp7yW3_AirGuvBtxGS=6y9UBHzjpvD9ww@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vf9+=rie5oqmAp7yW3_AirGuvBtxGS=6y9UBHzjpvD9ww@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 1:00 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> The Pyra-Handheld originally used the tca6424 but recently we have
-> replaced it by the pin and package compatible pcal6524. So let's
-> add this to the bindings and the driver.
+On Tue, Mar 13, 2018 at 06:04:33PM +0200, Andy Shevchenko wrote:
+>On Mon, Mar 12, 2018 at 10:49 PM, William Breathitt Gray
+><vilhelm.gray@gmail.com> wrote:
 >
-> And while we are at it, the pcal9555a does not have a compatible entry
-> either but is already supported by the device id table.
+>> +static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
+>> +       unsigned long *mask, unsigned long *bits)
+>> +{
+>
+>
+>> +       /* clear bits array to a clean slate */
+>> +       for (i = 0; i < chip->ngpio; i += BITS_PER_LONG)
+>> +               bits[i / BITS_PER_LONG] = 0;
+>
+>bitmap_clear() or bitmap_zero()
 
+bitmap_zero() would be perfect for this situation. I'll submit a version
+2 of this patchset with this change for the various drivers herein.
 
-> +       { "pcal6524", 24 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
->         { "pcal9555a", 16 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
+>
+>> +       /* get bits are evaluated a gpio register size at a time */
+>> +       for (i = 0; i < chip->ngpio; i += gpio_reg_size) {
+>> +               bit_word_offset = i % BITS_PER_LONG;
+>> +               bits_mask = mask[BIT_WORD(i)] & (reg_mask << bit_word_offset);
+>> +               if (!bits_mask) {
+>> +                       /* no get bits in this register so skip to next one */
+>> +                       continue;
+>> +               }
+>
+>for_each_set_bit() ?
+>
+>> +               /* store acquired bits */
+>> +               bits[BIT_WORD(i)] |= port_state << bit_word_offset;
+>
+>__set_bit()
+>__clear_bit()
 
-So, from your description I can get that PCA_PCAL is redundant for
-6524. Is it correct? What does L means in the model code?
-Perhaps we need to rename PCA_PCAL to be more specific?
+I'm not sure for_each_set_bit() and __set_bit()/__clear_bit() would be
+good for this particular situation since I'm working with the entire
+register word (8 bits for this specific device) at a time.
 
+Since I know each register word is 8-bits, I can make 8-bit jumps and
+skips rather than evaluating each bit individually. Similarly, it seems
+more efficient to store the input 8 bits at a time rather than breaking
+it up to individual bits.
 
-> +       { .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT), },
-> +       { .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT), },
+However, I do see how all these inline bitwise operations could make it
+difficult to follow the code, so perhaps I can break it up across more
+lines so that the logic of the loop becomes easier to read.
 
-Other way around, you missed PCA_PCAL in the second case.
+William Breathitt Gray
 
--- 
-With Best Regards,
-Andy Shevchenko
+>
+>We have bitmap API for *ages*. Is it too hard to check?
+>
+>-- 
+>With Best Regards,
+>Andy Shevchenko
