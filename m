@@ -1,110 +1,77 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2] gpio: dwapb: Add support for a bus clock
-Date: Tue, 13 Mar 2018 18:35:32 +0200
-Message-ID: <CAHp75Vfj-=fity+ibx8GDVf+vN7oPAUAzSGVBW=AVeSXhb3_Rw@mail.gmail.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: RE: [PATCH v2] gpio: dwapb: Add support for a bus clock
+Date: Tue, 13 Mar 2018 16:42:35 +0000
+Message-ID: <HK2PR0601MB1393163460D31B07FF347D59F5D20@HK2PR0601MB1393.apcprd06.prod.outlook.com>
 References: <1520879456-14777-1-git-send-email-phil.edworthy@renesas.com>
+ <CAHp75Vfj-=fity+ibx8GDVf+vN7oPAUAzSGVBW=AVeSXhb3_Rw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1520879456-14777-1-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <CAHp75Vfj-=fity+ibx8GDVf+vN7oPAUAzSGVBW=AVeSXhb3_Rw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 8:30 PM, Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> Enable an optional bus clock provided by DT.
-
-FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-(Assuming it has been tested on clock-less cases)
-
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
-> v2:
->  - Fix include order.
->  - Use a clock name.
->  - Check errors from clk_prepare_enable()
->  - Add calls to enable/disable the clock in PM
-> ---
->  drivers/gpio/gpio-dwapb.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index b0704a8..226977f 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -8,8 +8,9 @@
->   * All enquiries to support@picochip.com
->   */
->  #include <linux/acpi.h>
-> -#include <linux/gpio/driver.h>
-> +#include <linux/clk.h>
->  #include <linux/err.h>
-> +#include <linux/gpio/driver.h>
->  #include <linux/init.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
-> @@ -98,6 +99,7 @@ struct dwapb_gpio {
->         struct irq_domain       *domain;
->         unsigned int            flags;
->         struct reset_control    *rst;
-> +       struct clk              *clk;
->  };
->
->  static inline u32 gpio_reg_v2_convert(unsigned int offset)
-> @@ -670,6 +672,16 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
->         if (IS_ERR(gpio->regs))
->                 return PTR_ERR(gpio->regs);
->
-> +       /* Optional bus clock */
-> +       gpio->clk = devm_clk_get(&pdev->dev, "bus");
-> +       if (!IS_ERR(gpio->clk)) {
-> +               err = clk_prepare_enable(gpio->clk);
-> +               if (err) {
-> +                       dev_info(&pdev->dev, "Cannot enable clock\n");
-> +                       return err;
-> +               }
-> +       }
-> +
->         gpio->flags = 0;
->         if (dev->of_node) {
->                 const struct of_device_id *of_devid;
-> @@ -712,6 +724,7 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
->         dwapb_gpio_unregister(gpio);
->         dwapb_irq_teardown(gpio);
->         reset_control_assert(gpio->rst);
-> +       clk_disable_unprepare(gpio->clk);
->
->         return 0;
->  }
-> @@ -757,6 +770,8 @@ static int dwapb_gpio_suspend(struct device *dev)
->         }
->         spin_unlock_irqrestore(&gc->bgpio_lock, flags);
->
-> +       clk_disable_unprepare(gpio->clk);
-> +
->         return 0;
->  }
->
-> @@ -768,6 +783,9 @@ static int dwapb_gpio_resume(struct device *dev)
->         unsigned long flags;
->         int i;
->
-> +       if (!IS_ERR(gpio->clk))
-> +               clk_prepare_enable(gpio->clk);
-> +
->         spin_lock_irqsave(&gc->bgpio_lock, flags);
->         for (i = 0; i < gpio->nr_ports; i++) {
->                 unsigned int offset;
-> --
-> 2.7.4
->
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+SGkgQW5keSwNCg0KT24gMTMgTWFyY2ggMjAxOCAxNjozNiwgQW5keSBTaGV2Y2hlbmtvIHdyb3Rl
+Og0KPiBPbiBNb24sIE1hciAxMiwgMjAxOCBhdCA4OjMwIFBNLCBQaGlsIEVkd29ydGh5DQo+IDxw
+aGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBFbmFibGUgYW4gb3B0aW9uYWwg
+YnVzIGNsb2NrIHByb3ZpZGVkIGJ5IERULg0KPiANCj4gRldJVywNCj4gUmV2aWV3ZWQtYnk6IEFu
+ZHkgU2hldmNoZW5rbyA8YW5keS5zaGV2Y2hlbmtvQGdtYWlsLmNvbT4NClRoYW5rcyENCiANCj4g
+KEFzc3VtaW5nIGl0IGhhcyBiZWVuIHRlc3RlZCBvbiBjbG9jay1sZXNzIGNhc2VzKQ0KSSBoYWNr
+ZWQgdG9nZXRoZXIgYSB0ZXN0IHdoZXJlIHRoZSBidXMgY2xvY2sgZm9yIHRoZSBkZXZpY2UgSSBo
+YXZlDQppcyBhbHdheXMgb24sIGFuZCB0aGUgY2xvY2sgZm9yIHRoaXMgZHJpdmVyIGlzIG5vdCBw
+cmVzZW50IGluIHRoZSBEVEIuDQpXaGlsc3Qgbm90IGlkZWFsLCBpdCBkb2VzIHRlc3QgdGhlIGNs
+b2NrLWxlc3MgY2FzZS4NCg0KVGhhbmtzDQpQaGlsDQogDQo+ID4gU2lnbmVkLW9mZi1ieTogUGhp
+bCBFZHdvcnRoeSA8cGhpbC5lZHdvcnRoeUByZW5lc2FzLmNvbT4NCj4gPiAtLS0NCj4gPiB2MjoN
+Cj4gPiAgLSBGaXggaW5jbHVkZSBvcmRlci4NCj4gPiAgLSBVc2UgYSBjbG9jayBuYW1lLg0KPiA+
+ICAtIENoZWNrIGVycm9ycyBmcm9tIGNsa19wcmVwYXJlX2VuYWJsZSgpDQo+ID4gIC0gQWRkIGNh
+bGxzIHRvIGVuYWJsZS9kaXNhYmxlIHRoZSBjbG9jayBpbiBQTQ0KPiA+IC0tLQ0KPiA+ICBkcml2
+ZXJzL2dwaW8vZ3Bpby1kd2FwYi5jIHwgMjAgKysrKysrKysrKysrKysrKysrKy0NCj4gPiAgMSBm
+aWxlIGNoYW5nZWQsIDE5IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwaW8vZ3Bpby1kd2FwYi5jIGIvZHJpdmVycy9ncGlvL2dwaW8t
+ZHdhcGIuYw0KPiA+IGluZGV4IGIwNzA0YTguLjIyNjk3N2YgMTAwNjQ0DQo+ID4gLS0tIGEvZHJp
+dmVycy9ncGlvL2dwaW8tZHdhcGIuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3Bpby9ncGlvLWR3YXBi
+LmMNCj4gPiBAQCAtOCw4ICs4LDkgQEANCj4gPiAgICogQWxsIGVucXVpcmllcyB0byBzdXBwb3J0
+QHBpY29jaGlwLmNvbQ0KPiA+ICAgKi8NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2FjcGkuaD4NCj4g
+PiAtI2luY2x1ZGUgPGxpbnV4L2dwaW8vZHJpdmVyLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9j
+bGsuaD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2Vyci5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgv
+Z3Bpby9kcml2ZXIuaD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2luaXQuaD4NCj4gPiAgI2luY2x1
+ZGUgPGxpbnV4L2ludGVycnVwdC5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvaW8uaD4NCj4gPiBA
+QCAtOTgsNiArOTksNyBAQCBzdHJ1Y3QgZHdhcGJfZ3BpbyB7DQo+ID4gICAgICAgICBzdHJ1Y3Qg
+aXJxX2RvbWFpbiAgICAgICAqZG9tYWluOw0KPiA+ICAgICAgICAgdW5zaWduZWQgaW50ICAgICAg
+ICAgICAgZmxhZ3M7DQo+ID4gICAgICAgICBzdHJ1Y3QgcmVzZXRfY29udHJvbCAgICAqcnN0Ow0K
+PiA+ICsgICAgICAgc3RydWN0IGNsayAgICAgICAgICAgICAgKmNsazsNCj4gPiAgfTsNCj4gPg0K
+PiA+ICBzdGF0aWMgaW5saW5lIHUzMiBncGlvX3JlZ192Ml9jb252ZXJ0KHVuc2lnbmVkIGludCBv
+ZmZzZXQpIEBAIC02NzAsNg0KPiA+ICs2NzIsMTYgQEAgc3RhdGljIGludCBkd2FwYl9ncGlvX3By
+b2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gICAgICAgICBpZiAoSVNfRVJS
+KGdwaW8tPnJlZ3MpKQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gUFRSX0VSUihncGlvLT5y
+ZWdzKTsNCj4gPg0KPiA+ICsgICAgICAgLyogT3B0aW9uYWwgYnVzIGNsb2NrICovDQo+ID4gKyAg
+ICAgICBncGlvLT5jbGsgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgImJ1cyIpOw0KPiA+ICsg
+ICAgICAgaWYgKCFJU19FUlIoZ3Bpby0+Y2xrKSkgew0KPiA+ICsgICAgICAgICAgICAgICBlcnIg
+PSBjbGtfcHJlcGFyZV9lbmFibGUoZ3Bpby0+Y2xrKTsNCj4gPiArICAgICAgICAgICAgICAgaWYg
+KGVycikgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGRldl9pbmZvKCZwZGV2LT5kZXYs
+ICJDYW5ub3QgZW5hYmxlIGNsb2NrXG4iKTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBy
+ZXR1cm4gZXJyOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gKyAgICAgICB9DQo+ID4gKw0K
+PiA+ICAgICAgICAgZ3Bpby0+ZmxhZ3MgPSAwOw0KPiA+ICAgICAgICAgaWYgKGRldi0+b2Zfbm9k
+ZSkgew0KPiA+ICAgICAgICAgICAgICAgICBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkICpvZl9k
+ZXZpZDsgQEAgLTcxMiw2ICs3MjQsNw0KPiA+IEBAIHN0YXRpYyBpbnQgZHdhcGJfZ3Bpb19yZW1v
+dmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPiAgICAgICAgIGR3YXBiX2dwaW9f
+dW5yZWdpc3RlcihncGlvKTsNCj4gPiAgICAgICAgIGR3YXBiX2lycV90ZWFyZG93bihncGlvKTsN
+Cj4gPiAgICAgICAgIHJlc2V0X2NvbnRyb2xfYXNzZXJ0KGdwaW8tPnJzdCk7DQo+ID4gKyAgICAg
+ICBjbGtfZGlzYWJsZV91bnByZXBhcmUoZ3Bpby0+Y2xrKTsNCj4gPg0KPiA+ICAgICAgICAgcmV0
+dXJuIDA7DQo+ID4gIH0NCj4gPiBAQCAtNzU3LDYgKzc3MCw4IEBAIHN0YXRpYyBpbnQgZHdhcGJf
+Z3Bpb19zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gPiAgICAgICAgIH0NCj4gPiAgICAg
+ICAgIHNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmdjLT5iZ3Bpb19sb2NrLCBmbGFncyk7DQo+ID4N
+Cj4gPiArICAgICAgIGNsa19kaXNhYmxlX3VucHJlcGFyZShncGlvLT5jbGspOw0KPiA+ICsNCj4g
+PiAgICAgICAgIHJldHVybiAwOw0KPiA+ICB9DQo+ID4NCj4gPiBAQCAtNzY4LDYgKzc4Myw5IEBA
+IHN0YXRpYyBpbnQgZHdhcGJfZ3Bpb19yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQ0KPiA+ICAg
+ICAgICAgdW5zaWduZWQgbG9uZyBmbGFnczsNCj4gPiAgICAgICAgIGludCBpOw0KPiA+DQo+ID4g
+KyAgICAgICBpZiAoIUlTX0VSUihncGlvLT5jbGspKQ0KPiA+ICsgICAgICAgICAgICAgICBjbGtf
+cHJlcGFyZV9lbmFibGUoZ3Bpby0+Y2xrKTsNCj4gPiArDQo+ID4gICAgICAgICBzcGluX2xvY2tf
+aXJxc2F2ZSgmZ2MtPmJncGlvX2xvY2ssIGZsYWdzKTsNCj4gPiAgICAgICAgIGZvciAoaSA9IDA7
+IGkgPCBncGlvLT5ucl9wb3J0czsgaSsrKSB7DQo+ID4gICAgICAgICAgICAgICAgIHVuc2lnbmVk
+IGludCBvZmZzZXQ7DQo+ID4gLS0NCj4gPiAyLjcuNA0KPiA+DQo+IA0KPiANCj4gDQo+IC0tDQo+
+IFdpdGggQmVzdCBSZWdhcmRzLA0KPiBBbmR5IFNoZXZjaGVua28NCg==
