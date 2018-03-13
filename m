@@ -1,58 +1,65 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH 1/4] gpio: Remove VLA from gpiolib
-Date: Tue, 13 Mar 2018 08:23:22 +0100
-Message-ID: <a55d544e-0b0c-1a5a-b474-d31eb338e8ee@rasmusvillemoes.dk>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: [PATCH 4/4] gpio: Remove VLA from stmpe driver
+Date: Tue, 13 Mar 2018 17:13:06 +0800
+Message-ID: <9175611d-049d-ec28-0716-e45fccfd579f@electromag.com.au>
 References: <20180310001021.6437-1-labbott@redhat.com>
- <20180310001021.6437-2-labbott@redhat.com>
- <a758ce3f-fed7-2ecf-94c5-ba133ea75bde@rasmusvillemoes.dk>
- <301ecaf7-62a4-14af-3a5b-7bd76a49c4f6@redhat.com>
+ <20180310001021.6437-5-labbott@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <301ecaf7-62a4-14af-3a5b-7bd76a49c4f6@redhat.com>
-Content-Language: en-US
+In-Reply-To: <20180310001021.6437-5-labbott@redhat.com>
+Content-Language: en-AU
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Lukas Wunner <lukas@wunner.de>, Mathias Duckeck <m.duckeck@kunbus.de>, Nandor Han <nandor.han@ge.com>, Semi Malinen <semi.malinen@ge.com>, Patrice Chotard <patrice.chotard@st.com>
+To: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-On 2018-03-13 00:40, Laura Abbott wrote:
-> On 03/12/2018 08:00 AM, Rasmus Villemoes wrote:
->>
->> Hm, it seems you're now only clearing the first word of mask, not the
->> entire allocation. Why not just use kcalloc() instead of kmalloc_array
->> to have it automatically cleared?
+On 10/03/2018 08:10, Laura Abbott wrote:
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621)
 > 
-> Bleh, I didn't think through that carefully. I'll just switch
-> to kcalloc, especially since it calls kmalloc_array.
+> This patch replaces a VLA with an appropriate call to kmalloc_array.
 > 
->> Other random thoughts: maybe two allocations for each loop iteration is
->> a bit much. Maybe do a first pass over the array and collect the maximal
->> chip->ngpio, do the memory allocation and freeing outside the loop (then
->> you'd of course need to preserve the memset() with appropriate length
->> computed). And maybe even just do one allocation, making bits point at
->> the second half.
->>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+>   drivers/gpio/gpio-stmpe.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> I was trying to make minimal changes and match the existing code.
-
-Well, textually you may be making the minimal changes (though the error
-handling adds some "boilerplate" kfree()s etc.), but semantically adding
-two kmallocs in a loop could be a big deal. Dunno, maybe in practice all
-the gpios (almost always) belong to the same chip, so there's only one
-iteration through the loop anyway.
-
-> Is this likely to be an actual hot path to optimize?
-
-No idea, it was just a drive-by comment, so also...
-
->> Does the set function need to be updated to return an int to be able to
->> inform the caller that memory allocation failed?
+> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+> index f8d7d1cd8488..b7854850bcdb 100644
+> --- a/drivers/gpio/gpio-stmpe.c
+> +++ b/drivers/gpio/gpio-stmpe.c
+> @@ -369,10 +369,14 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+>   	struct stmpe *stmpe = stmpe_gpio->stmpe;
+>   	u8 statmsbreg;
+>   	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
+> -	u8 status[num_banks];
+> +	u8 *status;
+>   	int ret;
+>   	int i;
+>   
+> +	status = kmalloc_array(num_banks, sizeof(*status), GFP_ATOMIC);
+> +	if (!status)
+> +		return IRQ_NONE;
+> +
+>   	/*
+>   	 * the stmpe_block_read() call below, imposes to set statmsbreg
+>   	 * with the register located at the lowest address. As STMPE1600
+> @@ -424,6 +428,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+>   		}
+>   	}
+>   
+> +	kfree(status);
+>   	return IRQ_HANDLED;
+>   }
+>   
 > 
-> That would involve changing the public API. I don't have a problem
-> doing so if that's what you want.
 
-... I don't "want" anything, that'll be for the gpio maintainers to decide.
+Doing this in an irq handler seems wrong.
+Perhaps better if a buffer is pre-allocated in stmpe_gpio
 
-Rasmus
+
+-- 
+Regards
+Phil Reid
