@@ -1,77 +1,40 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: RE: [PATCH v2] gpio: dwapb: Add support for a bus clock
-Date: Tue, 13 Mar 2018 16:42:35 +0000
-Message-ID: <HK2PR0601MB1393163460D31B07FF347D59F5D20@HK2PR0601MB1393.apcprd06.prod.outlook.com>
-References: <1520879456-14777-1-git-send-email-phil.edworthy@renesas.com>
- <CAHp75Vfj-=fity+ibx8GDVf+vN7oPAUAzSGVBW=AVeSXhb3_Rw@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524
+ and pcal9555a
+Date: Tue, 13 Mar 2018 18:56:16 +0200
+Message-ID: <CAHp75Ve8Y2AOm36KwuVUhssLR7Q82KS1SzB1tcKw57_LdqkKhQ@mail.gmail.com>
+References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vfj-=fity+ibx8GDVf+vN7oPAUAzSGVBW=AVeSXhb3_Rw@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, letux-kernel@openphoenux.org, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgQW5keSwNCg0KT24gMTMgTWFyY2ggMjAxOCAxNjozNiwgQW5keSBTaGV2Y2hlbmtvIHdyb3Rl
-Og0KPiBPbiBNb24sIE1hciAxMiwgMjAxOCBhdCA4OjMwIFBNLCBQaGlsIEVkd29ydGh5DQo+IDxw
-aGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBFbmFibGUgYW4gb3B0aW9uYWwg
-YnVzIGNsb2NrIHByb3ZpZGVkIGJ5IERULg0KPiANCj4gRldJVywNCj4gUmV2aWV3ZWQtYnk6IEFu
-ZHkgU2hldmNoZW5rbyA8YW5keS5zaGV2Y2hlbmtvQGdtYWlsLmNvbT4NClRoYW5rcyENCiANCj4g
-KEFzc3VtaW5nIGl0IGhhcyBiZWVuIHRlc3RlZCBvbiBjbG9jay1sZXNzIGNhc2VzKQ0KSSBoYWNr
-ZWQgdG9nZXRoZXIgYSB0ZXN0IHdoZXJlIHRoZSBidXMgY2xvY2sgZm9yIHRoZSBkZXZpY2UgSSBo
-YXZlDQppcyBhbHdheXMgb24sIGFuZCB0aGUgY2xvY2sgZm9yIHRoaXMgZHJpdmVyIGlzIG5vdCBw
-cmVzZW50IGluIHRoZSBEVEIuDQpXaGlsc3Qgbm90IGlkZWFsLCBpdCBkb2VzIHRlc3QgdGhlIGNs
-b2NrLWxlc3MgY2FzZS4NCg0KVGhhbmtzDQpQaGlsDQogDQo+ID4gU2lnbmVkLW9mZi1ieTogUGhp
-bCBFZHdvcnRoeSA8cGhpbC5lZHdvcnRoeUByZW5lc2FzLmNvbT4NCj4gPiAtLS0NCj4gPiB2MjoN
-Cj4gPiAgLSBGaXggaW5jbHVkZSBvcmRlci4NCj4gPiAgLSBVc2UgYSBjbG9jayBuYW1lLg0KPiA+
-ICAtIENoZWNrIGVycm9ycyBmcm9tIGNsa19wcmVwYXJlX2VuYWJsZSgpDQo+ID4gIC0gQWRkIGNh
-bGxzIHRvIGVuYWJsZS9kaXNhYmxlIHRoZSBjbG9jayBpbiBQTQ0KPiA+IC0tLQ0KPiA+ICBkcml2
-ZXJzL2dwaW8vZ3Bpby1kd2FwYi5jIHwgMjAgKysrKysrKysrKysrKysrKysrKy0NCj4gPiAgMSBm
-aWxlIGNoYW5nZWQsIDE5IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwaW8vZ3Bpby1kd2FwYi5jIGIvZHJpdmVycy9ncGlvL2dwaW8t
-ZHdhcGIuYw0KPiA+IGluZGV4IGIwNzA0YTguLjIyNjk3N2YgMTAwNjQ0DQo+ID4gLS0tIGEvZHJp
-dmVycy9ncGlvL2dwaW8tZHdhcGIuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3Bpby9ncGlvLWR3YXBi
-LmMNCj4gPiBAQCAtOCw4ICs4LDkgQEANCj4gPiAgICogQWxsIGVucXVpcmllcyB0byBzdXBwb3J0
-QHBpY29jaGlwLmNvbQ0KPiA+ICAgKi8NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2FjcGkuaD4NCj4g
-PiAtI2luY2x1ZGUgPGxpbnV4L2dwaW8vZHJpdmVyLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9j
-bGsuaD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2Vyci5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgv
-Z3Bpby9kcml2ZXIuaD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2luaXQuaD4NCj4gPiAgI2luY2x1
-ZGUgPGxpbnV4L2ludGVycnVwdC5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvaW8uaD4NCj4gPiBA
-QCAtOTgsNiArOTksNyBAQCBzdHJ1Y3QgZHdhcGJfZ3BpbyB7DQo+ID4gICAgICAgICBzdHJ1Y3Qg
-aXJxX2RvbWFpbiAgICAgICAqZG9tYWluOw0KPiA+ICAgICAgICAgdW5zaWduZWQgaW50ICAgICAg
-ICAgICAgZmxhZ3M7DQo+ID4gICAgICAgICBzdHJ1Y3QgcmVzZXRfY29udHJvbCAgICAqcnN0Ow0K
-PiA+ICsgICAgICAgc3RydWN0IGNsayAgICAgICAgICAgICAgKmNsazsNCj4gPiAgfTsNCj4gPg0K
-PiA+ICBzdGF0aWMgaW5saW5lIHUzMiBncGlvX3JlZ192Ml9jb252ZXJ0KHVuc2lnbmVkIGludCBv
-ZmZzZXQpIEBAIC02NzAsNg0KPiA+ICs2NzIsMTYgQEAgc3RhdGljIGludCBkd2FwYl9ncGlvX3By
-b2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gICAgICAgICBpZiAoSVNfRVJS
-KGdwaW8tPnJlZ3MpKQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gUFRSX0VSUihncGlvLT5y
-ZWdzKTsNCj4gPg0KPiA+ICsgICAgICAgLyogT3B0aW9uYWwgYnVzIGNsb2NrICovDQo+ID4gKyAg
-ICAgICBncGlvLT5jbGsgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgImJ1cyIpOw0KPiA+ICsg
-ICAgICAgaWYgKCFJU19FUlIoZ3Bpby0+Y2xrKSkgew0KPiA+ICsgICAgICAgICAgICAgICBlcnIg
-PSBjbGtfcHJlcGFyZV9lbmFibGUoZ3Bpby0+Y2xrKTsNCj4gPiArICAgICAgICAgICAgICAgaWYg
-KGVycikgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGRldl9pbmZvKCZwZGV2LT5kZXYs
-ICJDYW5ub3QgZW5hYmxlIGNsb2NrXG4iKTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBy
-ZXR1cm4gZXJyOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gKyAgICAgICB9DQo+ID4gKw0K
-PiA+ICAgICAgICAgZ3Bpby0+ZmxhZ3MgPSAwOw0KPiA+ICAgICAgICAgaWYgKGRldi0+b2Zfbm9k
-ZSkgew0KPiA+ICAgICAgICAgICAgICAgICBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkICpvZl9k
-ZXZpZDsgQEAgLTcxMiw2ICs3MjQsNw0KPiA+IEBAIHN0YXRpYyBpbnQgZHdhcGJfZ3Bpb19yZW1v
-dmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPiAgICAgICAgIGR3YXBiX2dwaW9f
-dW5yZWdpc3RlcihncGlvKTsNCj4gPiAgICAgICAgIGR3YXBiX2lycV90ZWFyZG93bihncGlvKTsN
-Cj4gPiAgICAgICAgIHJlc2V0X2NvbnRyb2xfYXNzZXJ0KGdwaW8tPnJzdCk7DQo+ID4gKyAgICAg
-ICBjbGtfZGlzYWJsZV91bnByZXBhcmUoZ3Bpby0+Y2xrKTsNCj4gPg0KPiA+ICAgICAgICAgcmV0
-dXJuIDA7DQo+ID4gIH0NCj4gPiBAQCAtNzU3LDYgKzc3MCw4IEBAIHN0YXRpYyBpbnQgZHdhcGJf
-Z3Bpb19zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gPiAgICAgICAgIH0NCj4gPiAgICAg
-ICAgIHNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmdjLT5iZ3Bpb19sb2NrLCBmbGFncyk7DQo+ID4N
-Cj4gPiArICAgICAgIGNsa19kaXNhYmxlX3VucHJlcGFyZShncGlvLT5jbGspOw0KPiA+ICsNCj4g
-PiAgICAgICAgIHJldHVybiAwOw0KPiA+ICB9DQo+ID4NCj4gPiBAQCAtNzY4LDYgKzc4Myw5IEBA
-IHN0YXRpYyBpbnQgZHdhcGJfZ3Bpb19yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQ0KPiA+ICAg
-ICAgICAgdW5zaWduZWQgbG9uZyBmbGFnczsNCj4gPiAgICAgICAgIGludCBpOw0KPiA+DQo+ID4g
-KyAgICAgICBpZiAoIUlTX0VSUihncGlvLT5jbGspKQ0KPiA+ICsgICAgICAgICAgICAgICBjbGtf
-cHJlcGFyZV9lbmFibGUoZ3Bpby0+Y2xrKTsNCj4gPiArDQo+ID4gICAgICAgICBzcGluX2xvY2tf
-aXJxc2F2ZSgmZ2MtPmJncGlvX2xvY2ssIGZsYWdzKTsNCj4gPiAgICAgICAgIGZvciAoaSA9IDA7
-IGkgPCBncGlvLT5ucl9wb3J0czsgaSsrKSB7DQo+ID4gICAgICAgICAgICAgICAgIHVuc2lnbmVk
-IGludCBvZmZzZXQ7DQo+ID4gLS0NCj4gPiAyLjcuNA0KPiA+DQo+IA0KPiANCj4gDQo+IC0tDQo+
-IFdpdGggQmVzdCBSZWdhcmRzLA0KPiBBbmR5IFNoZXZjaGVua28NCg==
+On Sat, Mar 10, 2018 at 1:00 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> The Pyra-Handheld originally used the tca6424 but recently we have
+> replaced it by the pin and package compatible pcal6524. So let's
+> add this to the bindings and the driver.
+>
+> And while we are at it, the pcal9555a does not have a compatible entry
+> either but is already supported by the device id table.
+
+
+> +       { "pcal6524", 24 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
+>         { "pcal9555a", 16 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
+
+So, from your description I can get that PCA_PCAL is redundant for
+6524. Is it correct? What does L means in the model code?
+Perhaps we need to rename PCA_PCAL to be more specific?
+
+
+> +       { .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT), },
+> +       { .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT), },
+
+Other way around, you missed PCA_PCAL in the second case.
+
+-- 
+With Best Regards,
+Andy Shevchenko
