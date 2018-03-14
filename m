@@ -1,102 +1,50 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 25/47] pinctrl: remove adi2/blackfin drivers
-Date: Wed, 14 Mar 2018 16:35:38 +0100
-Message-ID: <20180314153603.3127932-26-arnd@arndb.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 00/47] arch-removal: device drivers
+Date: Wed, 14 Mar 2018 23:45:54 +0100
+Message-ID: <CAJZ5v0jsoxWRiwPOCJH6AAz-MiccOuicD8peCevLRMbTfc7LEg@mail.gmail.com>
 References: <20180314153603.3127932-1-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
 In-Reply-To: <20180314153603.3127932-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "open list:ULTRA-WIDEBAND (UWB) SUBSYSTEM:" <linux-usb@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, linux-iio@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, alexandre.belloni@bootlin.com, linux-ide@vger.kernel.org, netdev <netdev@vger.kernel.org>, linux-mtd@lists.infradead.org, linux-i2c <linux-i2c@vger.kernel.org>, linux-rtc@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Herbert Xu <herbert@gondor.apana.org.au>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-mmc <linux-mmc@vger.kernel.org>, shli@kernel.org, wg@grandegger.com, linux-crypto@vger.kernel.org, Linux PWM List <linux-pwm@vger.kernel.org>, linux-watchdog@vger.k
 List-Id: linux-gpio@vger.kernel.org
 
-The blackfin architecture is getting removed, so these are
-now obsolete.
+On Wed, Mar 14, 2018 at 4:35 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> Hi driver maintainers,
+>
+> I just posted one series with the removal of eight architectures,
+> see https://lkml.org/lkml/2018/3/14/505 for details, or
+> https://lwn.net/Articles/748074/ for more background.
+>
+> These are the device drivers that go along with them. I have already
+> picked up the drivers for arch/metag/ into my tree, they were reviewed
+> earlier.
+>
+> Please let me know if you have any concerns with the patch, or if you
+> prefer to pick up the patches in your respective trees.  I created
+> the patches with 'git format-patch -D', so they will not apply without
+> manually removing those files.
+>
+> For anything else, I'd keep the removal patches in my asm-generic tree
+> and will send a pull request for 4.17 along with the actual arch removal.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/Kconfig                    |   19 -
- drivers/pinctrl/Makefile                   |    3 -
- drivers/pinctrl/pinctrl-adi2-bf54x.c       |  588 ---------------
- drivers/pinctrl/pinctrl-adi2-bf60x.c       |  517 -------------
- drivers/pinctrl/pinctrl-adi2.c             | 1114 ----------------------------
- drivers/pinctrl/pinctrl-adi2.h             |   75 --
- include/linux/platform_data/pinctrl-adi2.h |   40 -
- 7 files changed, 2356 deletions(-)
- delete mode 100644 drivers/pinctrl/pinctrl-adi2-bf54x.c
- delete mode 100644 drivers/pinctrl/pinctrl-adi2-bf60x.c
- delete mode 100644 drivers/pinctrl/pinctrl-adi2.c
- delete mode 100644 drivers/pinctrl/pinctrl-adi2.h
- delete mode 100644 include/linux/platform_data/pinctrl-adi2.h
+Please include the cpufreq patches into that and you can add ACKs from
+me on them if that helps.
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index f5ef8201c09f..01fe8e0455a0 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -30,17 +30,6 @@ config DEBUG_PINCTRL
- 	help
- 	  Say Y here to add some extra checks and diagnostics to PINCTRL calls.
- 
--config PINCTRL_ADI2
--	bool "ADI pin controller driver"
--	depends on (BF54x || BF60x)
--	depends on !GPIO_ADI
--	select PINMUX
--	select IRQ_DOMAIN
--	help
--	  This is the pin controller and gpio driver for ADI BF54x, BF60x and
--	  future processors. This option is selected automatically when specific
--	  machine and arch are selected to build.
--
- config PINCTRL_ARTPEC6
-         bool "Axis ARTPEC-6 pin controller driver"
-         depends on MACH_ARTPEC6
-@@ -77,14 +66,6 @@ config PINCTRL_AXP209
- 	  selected.
- 	  Say yes to enable pinctrl and GPIO support for the AXP209 PMIC
- 
--config PINCTRL_BF54x
--	def_bool y if BF54x
--	select PINCTRL_ADI2
--
--config PINCTRL_BF60x
--	def_bool y if BF60x
--	select PINCTRL_ADI2
--
- config PINCTRL_AT91
- 	bool "AT91 pinctrl driver"
- 	depends on OF
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 6255546735ff..657332b121fb 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -8,12 +8,9 @@ obj-$(CONFIG_PINMUX)		+= pinmux.o
- obj-$(CONFIG_PINCONF)		+= pinconf.o
- obj-$(CONFIG_OF)		+= devicetree.o
- obj-$(CONFIG_GENERIC_PINCONF)	+= pinconf-generic.o
--obj-$(CONFIG_PINCTRL_ADI2)	+= pinctrl-adi2.o
- obj-$(CONFIG_PINCTRL_ARTPEC6)	+= pinctrl-artpec6.o
- obj-$(CONFIG_PINCTRL_AS3722)	+= pinctrl-as3722.o
- obj-$(CONFIG_PINCTRL_AXP209)	+= pinctrl-axp209.o
--obj-$(CONFIG_PINCTRL_BF54x)	+= pinctrl-adi2-bf54x.o
--obj-$(CONFIG_PINCTRL_BF60x)	+= pinctrl-adi2-bf60x.o
- obj-$(CONFIG_PINCTRL_AT91)	+= pinctrl-at91.o
- obj-$(CONFIG_PINCTRL_AT91PIO4)	+= pinctrl-at91-pio4.o
- obj-$(CONFIG_PINCTRL_AMD)	+= pinctrl-amd.o
-diff --git a/drivers/pinctrl/pinctrl-adi2-bf54x.c b/drivers/pinctrl/pinctrl-adi2-bf54x.c
-deleted file mode 100644
-index 008a29e92e56..000000000000
-diff --git a/drivers/pinctrl/pinctrl-adi2-bf60x.c b/drivers/pinctrl/pinctrl-adi2-bf60x.c
-deleted file mode 100644
-index fcfa00821f12..000000000000
-diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
-deleted file mode 100644
-index 094a451db2a2..000000000000
-diff --git a/drivers/pinctrl/pinctrl-adi2.h b/drivers/pinctrl/pinctrl-adi2.h
-deleted file mode 100644
-index 3ca29738213f..000000000000
-diff --git a/include/linux/platform_data/pinctrl-adi2.h b/include/linux/platform_data/pinctrl-adi2.h
-deleted file mode 100644
-index 8f91300617ec..000000000000
--- 
-2.9.0
+Thanks!
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
