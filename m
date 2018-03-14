@@ -1,82 +1,94 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH 4/4] gpio: Remove VLA from stmpe driver
-Date: Wed, 14 Mar 2018 10:55:29 +0800
-Message-ID: <9ffedffb-5dd1-a67a-7266-eb480b07a384@electromag.com.au>
-References: <20180310001021.6437-1-labbott@redhat.com>
- <20180310001021.6437-5-labbott@redhat.com>
- <9175611d-049d-ec28-0716-e45fccfd579f@electromag.com.au>
- <4e64bbae-e91b-f0c5-ff79-3dde8fbe2119@redhat.com>
- <d37dbce5-43ca-b70a-41da-5ccfc673d3ac@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH] pinctrl: uniphier: add PXs2 Audio in/out pin-mux settings
+Date: Wed, 14 Mar 2018 14:11:37 +0900
+Message-ID: <20180314051137.6091-1-suzuki.katsuhiro@socionext.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d37dbce5-43ca-b70a-41da-5ccfc673d3ac@redhat.com>
-Content-Language: en-AU
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-arm-kernel@lists.infradead.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 14/03/2018 09:16, Laura Abbott wrote:
-> On 03/13/2018 05:18 PM, Laura Abbott wrote:
->> On 03/13/2018 02:13 AM, Phil Reid wrote:
->>> On 10/03/2018 08:10, Laura Abbott wrote:
->>>> The new challenge is to remove VLAs from the kernel
->>>> (see https://lkml.org/lkml/2018/3/7/621)
->>>>
->>>> This patch replaces a VLA with an appropriate call to kmalloc_array.
->>>>
->>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>>> ---
->>>>   drivers/gpio/gpio-stmpe.c | 7 ++++++-
->>>>   1 file changed, 6 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
->>>> index f8d7d1cd8488..b7854850bcdb 100644
->>>> --- a/drivers/gpio/gpio-stmpe.c
->>>> +++ b/drivers/gpio/gpio-stmpe.c
->>>> @@ -369,10 +369,14 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->>>>       struct stmpe *stmpe = stmpe_gpio->stmpe;
->>>>       u8 statmsbreg;
->>>>       int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
->>>> -    u8 status[num_banks];
->>>> +    u8 *status;
->>>>       int ret;
->>>>       int i;
->>>> +    status = kmalloc_array(num_banks, sizeof(*status), GFP_ATOMIC);
->>>> +    if (!status)
->>>> +        return IRQ_NONE;
->>>> +
->>>>       /*
->>>>        * the stmpe_block_read() call below, imposes to set statmsbreg
->>>>        * with the register located at the lowest address. As STMPE1600
->>>> @@ -424,6 +428,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->>>>           }
->>>>       }
->>>> +    kfree(status);
->>>>       return IRQ_HANDLED;
->>>>   }
->>>>
->>>
->>> Doing this in an irq handler seems wrong.
->>> Perhaps better if a buffer is pre-allocated in stmpe_gpio
->>
->> Sure, I can pre-allocate the buffer in the probe.
-> 
-> Actually I wonder if there would be concurrency problems if we
-> tried to pre-allocate a global buffer. But the IRQ handler
-> calls stmpe_block_read which takes a mutex to sleep so I think
-> doing the (small) kmalloc should be fine and I can change it to
-> a GFP_KERNEL.
-> 
-I'm no expert on this driver, but I wouldn't think there'd be any concurrency
-problem if the buffer is only used by the irq handler.
-It should never get called concurrently for the same device.
+The UniPhier PXs2 SoC audio core use following 25 pins:
+  ain1    : 2ch I2S input : AI1ADCCK, AI1BCK, AI1D0, AI1LRCK
+  ain2    : 8ch I2S input : AI2ADCCK, AI2BCK, AI2D[0-3], AI2LRCK
+  ainiec1 : S/PDIF input  : XIRQ17 (for AO1IEC)
+  aout2   : 8ch I2S output: AO2BCK, AO2D0, AO2DACCK, AO2LRCK
+                            PORT226, 227, 230 (for AO2D[1-3])
+  aout3   : 2ch I2S output: AO3BCK, AO3DMIX, AO3DACCK, AO3LRCK
+  aoutiec1: S/PDIF output : PORT132(for AO1IEC)
+  aoutiec2: S/PDIF output : AO2IEC
 
-As to the impact, I'll admit I've really got no idea how much potential overhead a
-kmalloc has compared to a mutex for the linux kernel.
-Just a general rule of thumb, that memory allocations are usually expensive.
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c | 35 ++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+index c0ef40ae99a7..f0a4cfc00160 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+@@ -728,6 +728,20 @@ static const struct pinctrl_pin_desc uniphier_pxs2_pins[] = {
+ 			     234, UNIPHIER_PIN_PULL_DOWN),
+ };
+ 
++static const unsigned ain1_pins[] = {161, 162, 173, 174};
++static const int ain1_muxvals[] = {8, 8, 8, 8};
++static const unsigned ain2_pins[] = {98, 99, 100, 101, 102, 103, 104};
++static const int ain2_muxvals[] = {8, 8, 8, 8, 8, 8, 8};
++static const unsigned ainiec1_pins[] = {91};
++static const int ainiec1_muxvals[] = {11};
++static const unsigned aout2_pins[] = {175, 176, 177, 178, 183, 184, 185};
++static const int aout2_muxvals[] = {8, 8, 8, 8, 9, 9, 9};
++static const unsigned aout3_pins[] = {105, 106, 107, 108};
++static const int aout3_muxvals[] = {8, 8, 8, 8};
++static const unsigned aoutiec1_pins[] = {95};
++static const int aoutiec1_muxvals[] = {11};
++static const unsigned aoutiec2_pins[] = {97};
++static const int aoutiec2_muxvals[] = {8};
+ static const unsigned emmc_pins[] = {36, 37, 38, 39, 40, 41, 42};
+ static const int emmc_muxvals[] = {9, 9, 9, 9, 9, 9, 9};
+ static const unsigned emmc_dat8_pins[] = {43, 44, 45, 46};
+@@ -824,6 +838,13 @@ static const unsigned int gpio_range1_pins[] = {
+ };
+ 
+ static const struct uniphier_pinctrl_group uniphier_pxs2_groups[] = {
++	UNIPHIER_PINCTRL_GROUP(ain1),
++	UNIPHIER_PINCTRL_GROUP(ain2),
++	UNIPHIER_PINCTRL_GROUP(ainiec1),
++	UNIPHIER_PINCTRL_GROUP(aout2),
++	UNIPHIER_PINCTRL_GROUP(aout3),
++	UNIPHIER_PINCTRL_GROUP(aoutiec1),
++	UNIPHIER_PINCTRL_GROUP(aoutiec2),
+ 	UNIPHIER_PINCTRL_GROUP(emmc),
+ 	UNIPHIER_PINCTRL_GROUP(emmc_dat8),
+ 	UNIPHIER_PINCTRL_GROUP(ether_mii),
+@@ -854,6 +875,13 @@ static const struct uniphier_pinctrl_group uniphier_pxs2_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP_GPIO(gpio_range1),
+ };
+ 
++static const char * const ain1_groups[] = {"ain1"};
++static const char * const ain2_groups[] = {"ain2"};
++static const char * const ainiec1_groups[] = {"ainiec1"};
++static const char * const aout2_groups[] = {"aout2"};
++static const char * const aout3_groups[] = {"aout3"};
++static const char * const aoutiec1_groups[] = {"aoutiec1"};
++static const char * const aoutiec2_groups[] = {"aoutiec2"};
+ static const char * const emmc_groups[] = {"emmc", "emmc_dat8"};
+ static const char * const ether_mii_groups[] = {"ether_mii"};
+ static const char * const ether_rgmii_groups[] = {"ether_rgmii"};
+@@ -878,6 +906,13 @@ static const char * const usb2_groups[] = {"usb2"};
+ static const char * const usb3_groups[] = {"usb3"};
+ 
+ static const struct uniphier_pinmux_function uniphier_pxs2_functions[] = {
++	UNIPHIER_PINMUX_FUNCTION(ain1),
++	UNIPHIER_PINMUX_FUNCTION(ain2),
++	UNIPHIER_PINMUX_FUNCTION(ainiec1),
++	UNIPHIER_PINMUX_FUNCTION(aout2),
++	UNIPHIER_PINMUX_FUNCTION(aout3),
++	UNIPHIER_PINMUX_FUNCTION(aoutiec1),
++	UNIPHIER_PINMUX_FUNCTION(aoutiec2),
+ 	UNIPHIER_PINMUX_FUNCTION(emmc),
+ 	UNIPHIER_PINMUX_FUNCTION(ether_mii),
+ 	UNIPHIER_PINMUX_FUNCTION(ether_rgmii),
 -- 
-Regards
-Phil Reid
+2.16.1
