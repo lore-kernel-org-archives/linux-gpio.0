@@ -1,52 +1,77 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 3/3] ACPI / PMIC: Update to SPDX license identifier
-Date: Wed, 14 Mar 2018 12:39:31 +0100
-Message-ID: <29263549.3mTuWCYWkj@aspire.rjw.lan>
-References: <1519170849-28802-1-git-send-email-rajmohan.mani@intel.com> <1519170849-28802-4-git-send-email-rajmohan.mani@intel.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
+ irq_domain
+Date: Wed, 14 Mar 2018 12:04:50 +0000
+Message-ID: <118e66b4-3137-7af5-b93d-b1949fad575c@arm.com>
+References: <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <alpine.DEB.2.21.1802230938510.11168@nanos.tec.linutronix.de>
+ <a709e416-4024-f804-b2ff-ae6c2171a7c8@arm.com>
+ <CAFvLkMSZjgFMAe0VRc0AEpG89BgXkfMb9+ivJ8V+PFighOoDRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1519170849-28802-4-git-send-email-rajmohan.mani@intel.com>
+In-Reply-To: <CAFvLkMSZjgFMAe0VRc0AEpG89BgXkfMb9+ivJ8V+PFighOoDRA@mail.gmail.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rajmohan Mani <rajmohan.mani@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Len Brown <lenb@kernel.org>, Andy Shevchenko <andy@infradead.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: =?UTF-8?Q?Rados=c5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Ludovic BARRE <ludovic.barre@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wednesday, February 21, 2018 12:54:09 AM CET Rajmohan Mani wrote:
-> Remove the GPL v2 license boilerplate and update with
-> the SPDX license identifier.
+On 14/03/18 11:46, Radosław Pietrzyk wrote:
+> Hi Marc,
+> We had a quite fruitful discussion in this mail thread regarding this
+> topic and Ludovic acked it so recently I have asked Thomas if he still
+> needs this v3 patch with detailed explanation especially as v2 version
+> of stm32-gpio patch has been already taken by Linus. However if you
+> require I can resend v3 of this patch only with this detailed explanation.
+
+That'd be useful. The changelog is the only thing that will be left from
+this discussion, so it'd better be complete and accurate. If you quickly
+send a v3 for this single patch, I'll queue it right away.
+
+Thanks,
+
+	M.
+
 > 
-> Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
-> ---
->  drivers/acpi/pmic/tps68470_pmic.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
+> 2018-03-14 12:09 GMT+01:00 Marc Zyngier <marc.zyngier@arm.com
+> <mailto:marc.zyngier@arm.com>>:
 > 
-> diff --git a/drivers/acpi/pmic/tps68470_pmic.c b/drivers/acpi/pmic/tps68470_pmic.c
-> index 7f3c567..a083de5 100644
-> --- a/drivers/acpi/pmic/tps68470_pmic.c
-> +++ b/drivers/acpi/pmic/tps68470_pmic.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * TI TPS68470 PMIC operation region driver
->   *
-> @@ -5,15 +6,6 @@
->   *
->   * Author: Rajmohan Mani <rajmohan.mani@intel.com>
->   *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License version
-> - * 2 as published by the Free Software Foundation.
-> - *
-> - * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> - * kind, whether express or implied; without even the implied warranty
-> - * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
->   * Based on drivers/acpi/pmic/intel_pmic* drivers
->   */
->  
+>     Radoslaw,
+> 
+>     On 23/02/18 08:42, Thomas Gleixner wrote:
+>     > Radoslaw,
+>     >
+>     > On Fri, 23 Feb 2018, Radoslaw Pietrzyk wrote:
+>     >
+>     >> - discards setting handle_simple_irq handler for hierarchy interrupts
+>     >> - removes acking in chained irq handler as this is done by
+>     >> irq_chip itself inside handle_edge_irq
+>     >> - removes unneeded irq_domain_ops.xlate callback
+>     >
+>     > if that's all functionally correct, then this is a nice cleanup. Though
+>     > from the above changelog its hard to tell because it merily tells WHAT the
+>     > patch does, but not WHY. The WHY is the important information for a
+>     > reviewer who is not familiar with the particular piece of code/hardware.
+>     >
+>     > Can you please amend the changelog with proper explanations why a
+>     > particular piece of code is not needed or has to be changed to something
+>     > else?
+> 
+>     Any update on this? I'd like to queue this for 4.17, but Thomas'
+>     comments should be addressed before that happens. Ca you please respin a
+>     version with a better change log and the various review tags?
+> 
+>     Thanks,
+> 
+>             M.
+>     --
+>     Jazz is not dead. It just smells funny...
+> 
 > 
 
-Applied, thanks!
+
+-- 
+Jazz is not dead. It just smells funny...
