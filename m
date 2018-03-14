@@ -1,76 +1,66 @@
-From: Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests/*/Makefile: stop calling headers_install
-Date: Tue, 13 Mar 2018 22:48:33 +0100
-Message-ID: <20180313214833.14645-1-anders.roxell@linaro.org>
+From: Laura Abbott <labbott@redhat.com>
+Subject: Re: [PATCH 4/4] gpio: Remove VLA from stmpe driver
+Date: Tue, 13 Mar 2018 17:18:22 -0700
+Message-ID: <4e64bbae-e91b-f0c5-ff79-3dde8fbe2119@redhat.com>
+References: <20180310001021.6437-1-labbott@redhat.com>
+ <20180310001021.6437-5-labbott@redhat.com>
+ <9175611d-049d-ec28-0716-e45fccfd579f@electromag.com.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <9175611d-049d-ec28-0716-e45fccfd579f@electromag.com.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: shuah@kernel.org, bamv2005@gmail.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>
+To: Phil Reid <preid@electromag.com.au>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-Various tests should not call headers_install. Adding headers_install
-as a prereq before building kselftests.
+On 03/13/2018 02:13 AM, Phil Reid wrote:
+> On 10/03/2018 08:10, Laura Abbott wrote:
+>> The new challenge is to remove VLAs from the kernel
+>> (see https://lkml.org/lkml/2018/3/7/621)
+>>
+>> This patch replaces a VLA with an appropriate call to kmalloc_array.
+>>
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>> ---
+>>   drivers/gpio/gpio-stmpe.c | 7 ++++++-
+>>   1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+>> index f8d7d1cd8488..b7854850bcdb 100644
+>> --- a/drivers/gpio/gpio-stmpe.c
+>> +++ b/drivers/gpio/gpio-stmpe.c
+>> @@ -369,10 +369,14 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+>>       struct stmpe *stmpe = stmpe_gpio->stmpe;
+>>       u8 statmsbreg;
+>>       int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
+>> -    u8 status[num_banks];
+>> +    u8 *status;
+>>       int ret;
+>>       int i;
+>> +    status = kmalloc_array(num_banks, sizeof(*status), GFP_ATOMIC);
+>> +    if (!status)
+>> +        return IRQ_NONE;
+>> +
+>>       /*
+>>        * the stmpe_block_read() call below, imposes to set statmsbreg
+>>        * with the register located at the lowest address. As STMPE1600
+>> @@ -424,6 +428,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+>>           }
+>>       }
+>> +    kfree(status);
+>>       return IRQ_HANDLED;
+>>   }
+>>
+> 
+> Doing this in an irq handler seems wrong.
+> Perhaps better if a buffer is pre-allocated in stmpe_gpio
+> 
+> 
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- tools/testing/selftests/Makefile      | 5 ++++-
- tools/testing/selftests/gpio/Makefile | 6 +-----
- tools/testing/selftests/vm/Makefile   | 4 ----
- 3 files changed, 5 insertions(+), 10 deletions(-)
+Sure, I can pre-allocate the buffer in the probe.
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 2d73f7f0b180..5b8553654d6b 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -74,13 +74,16 @@ endif
- export KSFT_TAP_LEVEL=`echo 1`
- 
- export BUILD
--all:
-+all: headers_install
- 	@for TARGET in $(TARGETS); do		\
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
- 		mkdir $$BUILD_TARGET  -p;	\
- 		make OUTPUT=$$BUILD_TARGET -C $$TARGET;\
- 	done;
- 
-+headers_install:
-+	make -C ../../.. headers_install
-+
- run_tests: all
- 	@for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 1bbb47565c55..9ef4d751268b 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -21,11 +21,7 @@ endef
- CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
- LDLIBS += -lmount -I/usr/include/libmount
- 
--$(BINARIES): ../../../gpio/gpio-utils.o ../../../../usr/include/linux/gpio.h
-+$(BINARIES): ../../../gpio/gpio-utils.o
- 
- ../../../gpio/gpio-utils.o:
- 	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
--
--../../../../usr/include/linux/gpio.h:
--	make -C ../../../.. headers_install INSTALL_HDR_PATH=$(shell pwd)/../../../../usr/
--
-diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-index fdefa2295ddc..58759454b1d0 100644
---- a/tools/testing/selftests/vm/Makefile
-+++ b/tools/testing/selftests/vm/Makefile
-@@ -25,10 +25,6 @@ TEST_PROGS := run_vmtests
- 
- include ../lib.mk
- 
--$(OUTPUT)/userfaultfd: ../../../../usr/include/linux/kernel.h
- $(OUTPUT)/userfaultfd: LDLIBS += -lpthread
- 
- $(OUTPUT)/mlock-random-test: LDLIBS += -lcap
--
--../../../../usr/include/linux/kernel.h:
--	make -C ../../../.. headers_install
--- 
-2.11.0
+Thanks,
+Laura
