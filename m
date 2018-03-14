@@ -1,77 +1,110 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
- irq_domain
-Date: Wed, 14 Mar 2018 12:04:50 +0000
-Message-ID: <118e66b4-3137-7af5-b93d-b1949fad575c@arm.com>
-References: <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <alpine.DEB.2.21.1802230938510.11168@nanos.tec.linutronix.de>
- <a709e416-4024-f804-b2ff-ae6c2171a7c8@arm.com>
- <CAFvLkMSZjgFMAe0VRc0AEpG89BgXkfMb9+ivJ8V+PFighOoDRA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524 and pcal9555a
+Date: Wed, 14 Mar 2018 13:39:30 +0100
+Message-ID: <0BF8A237-1EB9-465A-9A7C-75163F093F18@goldelico.com>
+References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com> <CAHp75Ve8Y2AOm36KwuVUhssLR7Q82KS1SzB1tcKw57_LdqkKhQ@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFvLkMSZjgFMAe0VRc0AEpG89BgXkfMb9+ivJ8V+PFighOoDRA@mail.gmail.com>
-Content-Language: en-GB
+In-Reply-To: <CAHp75Ve8Y2AOm36KwuVUhssLR7Q82KS1SzB1tcKw57_LdqkKhQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Rados=c5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Ludovic BARRE <ludovic.barre@st.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Yong Li <yong.b.li@intel.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, letux-kernel@openphoenux.org, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
-On 14/03/18 11:46, Radosław Pietrzyk wrote:
-> Hi Marc,
-> We had a quite fruitful discussion in this mail thread regarding this
-> topic and Ludovic acked it so recently I have asked Thomas if he still
-> needs this v3 patch with detailed explanation especially as v2 version
-> of stm32-gpio patch has been already taken by Linus. However if you
-> require I can resend v3 of this patch only with this detailed explanation.
+Hi Andy,
 
-That'd be useful. The changelog is the only thing that will be left from
-this discussion, so it'd better be complete and accurate. If you quickly
-send a v3 for this single patch, I'll queue it right away.
+> Am 13.03.2018 um 17:56 schrieb Andy Shevchenko =
+<andy.shevchenko@gmail.com>:
+>=20
+> On Sat, Mar 10, 2018 at 1:00 PM, H. Nikolaus Schaller =
+<hns@goldelico.com> wrote:
+>> The Pyra-Handheld originally used the tca6424 but recently we have
+>> replaced it by the pin and package compatible pcal6524. So let's
+>> add this to the bindings and the driver.
+>>=20
+>> And while we are at it, the pcal9555a does not have a compatible =
+entry
+>> either but is already supported by the device id table.
+>=20
+>=20
+>> +       { "pcal6524", 24 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
+>>        { "pcal9555a", 16 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
+>=20
+> So, from your description I can get that PCA_PCAL is redundant for
+> 6524. Is it correct?
 
-Thanks,
+We might not be using all features of the 6524 and therefore our test
+coverage is not 100%. So I would not draw the conclusion that PCA_PCAL
+is *not* needed. The data sheet should tell.
 
-	M.
+> What does L means in the model code?
 
-> 
-> 2018-03-14 12:09 GMT+01:00 Marc Zyngier <marc.zyngier@arm.com
-> <mailto:marc.zyngier@arm.com>>:
-> 
->     Radoslaw,
-> 
->     On 23/02/18 08:42, Thomas Gleixner wrote:
->     > Radoslaw,
->     >
->     > On Fri, 23 Feb 2018, Radoslaw Pietrzyk wrote:
->     >
->     >> - discards setting handle_simple_irq handler for hierarchy interrupts
->     >> - removes acking in chained irq handler as this is done by
->     >> irq_chip itself inside handle_edge_irq
->     >> - removes unneeded irq_domain_ops.xlate callback
->     >
->     > if that's all functionally correct, then this is a nice cleanup. Though
->     > from the above changelog its hard to tell because it merily tells WHAT the
->     > patch does, but not WHY. The WHY is the important information for a
->     > reviewer who is not familiar with the particular piece of code/hardware.
->     >
->     > Can you please amend the changelog with proper explanations why a
->     > particular piece of code is not needed or has to be changed to something
->     > else?
-> 
->     Any update on this? I'd like to queue this for 4.17, but Thomas'
->     comments should be addressed before that happens. Ca you please respin a
->     version with a better change log and the various review tags?
-> 
->     Thanks,
-> 
->             M.
->     --
->     Jazz is not dead. It just smells funny...
-> 
-> 
+Good question. The data sheets don't tell. But 6424 and 6524 are not =
+identical
+from register set and overall functions, although quite similar.
+Only for pin and package.
 
+As far as I understand the 6524 (and all PCAL) have additional interrupt
+latch mechanisms and registers so that it is possible to disable each
+I/O pin individually as an interrupt while for the 6424 they are always
+enabled. Maybe this is the "L" designator.
 
--- 
-Jazz is not dead. It just smells funny...
+But we aren't using interrupts yet.
+
+> Perhaps we need to rename PCA_PCAL to be more specific?
+
+My assumption is that it should be there for all PCAL variants,
+but I think the original author who introduced this constant should =
+know.
+
+Hm. git blame tells that you have introduced it :) But this seems to
+be a false alarm because you have just changed formatting.
+
+It was introduced by
+
+commit 44896beae605b93f2232301befccb7ef42953198
+Author: Yong Li <yong.b.li@intel.com>
+Date:   Thu Apr 7 12:56:32 2016 +0800
+
+    gpio: pca953x: add PCAL9535 interrupt support for Galileo Gen2
+   =20
+    Galileo Gen2 board uses the PCAL9535 as the GPIO expansion,
+    it is different from PCA9535 and includes interrupt mask/status =
+registers,
+    The current driver does not support the interrupt registers =
+configuration,
+    it causes some gpio pins cannot trigger interrupt events,
+    this patch fix this issue.
+   =20
+    The original patch was submitted by
+    Josef Ahmad <josef.ahmad@linux.intel.com>
+    =
+http://git.yoctoproject.org/cgit/cgit.cgi/meta-intel-quark/tree/recipes-ke=
+rnel/linux/files/0015-Quark-GPIO-1-2-quark.patch
+   =20
+    Signed-off-by: Yong Li <yong.b.li@intel.com>
+    Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+>=20
+>=20
+>> +       { .compatible =3D "nxp,pcal6524", .data =3D OF_953X(24, =
+PCA_INT), },
+>> +       { .compatible =3D "nxp,pcal9555a", .data =3D OF_953X(16, =
+PCA_INT), },
+>=20
+> Other way around, you missed PCA_PCAL in the second case.
+
+Ah, ok. It wasn't clear how these flag relate to the i2c table because =
+they
+are hidden by a macro here. I'd assume that PCA_PCAL is missing for =
+both.
+
+So it might be that we run the pcal6524 in non-PCAL mode because we use =
+DT.
+I can do a test as soon as I have access to the hardware.=20
+
+BR and thanks,
+Nikolaus
