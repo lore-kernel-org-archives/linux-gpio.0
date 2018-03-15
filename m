@@ -1,58 +1,31 @@
-From: Laura Abbott <labbott@redhat.com>
-Subject: [PATCHv2 3/4] gpio: Remove VLA from xra1403 driver
-Date: Thu, 15 Mar 2018 11:00:29 -0700
-Message-ID: <20180315180030.20001-4-labbott@redhat.com>
-References: <20180315180030.20001-1-labbott@redhat.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on stm32F769
+Date: Thu, 15 Mar 2018 14:24:03 -0700
+Message-ID: <152114904300.111154.16697790469167766472@swboyd.mtv.corp.google.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+ <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
+ <fb3b26e8-0102-122b-1386-68a661139706@st.com>
+ <CACRpkdbd-Zz-JRC-_OfKtx28OvDcf0af93pqraP=XPpAN-geVg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180315180030.20001-1-labbott@redhat.com>
+In-Reply-To: <CACRpkdbd-Zz-JRC-_OfKtx28OvDcf0af93pqraP=XPpAN-geVg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Nandor Han <nandor.han@ge.com>
-Cc: Laura Abbott <labbott@redhat.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+To: Linus Walleij <linus.walleij@linaro.org>, Patrice CHOTARD <patrice.chotard@st.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Alexandre TORGUE <alexandre.torgue@st.com>, Michael Turquette <mturquette@baylibre.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
+Quoting Linus Walleij (2018-03-01 01:12:30)
+> On Mon, Feb 26, 2018 at 9:41 AM, Patrice CHOTARD <patrice.chotard@st.com> wrote:
+> 
+> > Hi Stephen, Michael
+> >
+> > It's a gentle reminder as this patch is present on mailing list and
+> > acked-by since 01/12/2018
+> 
+> You need Stephen's new kernel.org mail address to reach him.
+> (Added on TO:)
+> 
 
-The new challenge is to remove VLAs from the kernel
-(see https://lkml.org/lkml/2018/3/7/621)
-
-This patch replaces a VLA with an appropriate call to kmalloc_array.
-
-Reviewed-by: Nandor Han <nandor.han@ge.com>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-v3: Add reviwed-by
----
- drivers/gpio/gpio-xra1403.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-xra1403.c b/drivers/gpio/gpio-xra1403.c
-index 0230e4b7a2fb..8d4c8e99b251 100644
---- a/drivers/gpio/gpio-xra1403.c
-+++ b/drivers/gpio/gpio-xra1403.c
-@@ -126,11 +126,16 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- {
- 	int reg;
- 	struct xra1403 *xra = gpiochip_get_data(chip);
--	int value[xra1403_regmap_cfg.max_register];
-+	int *value;
- 	int i;
- 	unsigned int gcr;
- 	unsigned int gsr;
- 
-+	value = kmalloc_array(xra1403_regmap_cfg.max_register, sizeof(*value),
-+				GFP_KERNEL);
-+	if (!value)
-+		return;
-+
- 	seq_puts(s, "xra reg:");
- 	for (reg = 0; reg <= xra1403_regmap_cfg.max_register; reg++)
- 		seq_printf(s, " %2.2x", reg);
-@@ -154,6 +159,7 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 			   (gcr & BIT(i)) ? "in" : "out",
- 			   (gsr & BIT(i)) ? "hi" : "lo");
- 	}
-+	kfree(value);
- }
- #else
- #define xra1403_dbg_show NULL
--- 
-2.14.3
+Thanks. Both work now after I've setup filters to catch everything.
