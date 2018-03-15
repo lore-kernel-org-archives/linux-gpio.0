@@ -1,7 +1,7 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2 5/8] gpio: 104-dio-48e: Implement get_multiple callback
-Date: Thu, 15 Mar 2018 11:53:05 -0400
-Message-ID: <d31637cb701ecf556515539fd40e7098e0c99bfd.1521128287.git.vilhelm.gray@gmail.com>
+Subject: [PATCH v2 6/8] gpio: 104-idi-48: Implement get_multiple callback
+Date: Thu, 15 Mar 2018 11:53:17 -0400
+Message-ID: <5ec68441ce758b17c21264a1a1bb5ab98b5263e8.1521128287.git.vilhelm.gray@gmail.com>
 References: <cover.1521128287.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1521128287.git.vilhelm.gray@gmail.com>
@@ -10,31 +10,30 @@ To: linus.walleij@linaro.org
 Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The ACCES I/O 104-DIO-48E series of devices contain two Programmable
-Peripheral Interface (PPI) chips of type 82C55, which each feature three
-8-bit ports of I/O. Since eight input lines are acquired on a single
-port input read, the 104-DIO-48E GPIO driver may improve multiple input
-reads by utilizing a get_multiple callback. This patch implements the
-dio48e_gpio_get_multiple function which serves as the respective
-get_multiple callback.
+The ACCES I/O 104-IDI-48 series of devices provides 48
+optically-isolated inputs accessed via six 8-bit ports. Since eight
+input lines are acquired on a single port input read, the 104-IDI-48
+GPIO driver may improve multiple input reads by utilizing a get_multiple
+callback. This patch implements the idi_48_gpio_get_multiple function
+which serves as the respective get_multiple callback.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-104-dio-48e.c | 46 +++++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-104-idi-48.c | 46 ++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 46 insertions(+)
 
-diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
-index bab3b94c5cbc..537b436c6e7f 100644
---- a/drivers/gpio/gpio-104-dio-48e.c
-+++ b/drivers/gpio/gpio-104-dio-48e.c
-@@ -182,6 +182,51 @@ static int dio48e_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return !!(port_state & mask);
+diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+index add859d59766..1beb6b0591ee 100644
+--- a/drivers/gpio/gpio-104-idi-48.c
++++ b/drivers/gpio/gpio-104-idi-48.c
+@@ -88,6 +88,51 @@ static int idi_48_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	return 0;
  }
  
-+static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
++static int idi_48_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
 +	unsigned long *bits)
 +{
-+	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
++	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
 +	size_t i;
 +	const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
 +	const unsigned int gpio_reg_size = 8;
@@ -67,7 +66,7 @@ index bab3b94c5cbc..537b436c6e7f 100644
 +		}
 +
 +		/* read bits from current gpio port */
-+		port_state = inb(dio48egpio->base + ports[i]);
++		port_state = inb(idi48egpio->base + ports[i]);
 +
 +		/* store acquired bits at respective bits array offset */
 +		bits[word_index] |= port_state << word_offset;
@@ -76,16 +75,16 @@ index bab3b94c5cbc..537b436c6e7f 100644
 +	return 0;
 +}
 +
- static void dio48e_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ static void idi_48_irq_ack(struct irq_data *data)
  {
- 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
-@@ -384,6 +429,7 @@ static int dio48e_probe(struct device *dev, unsigned int id)
- 	dio48egpio->chip.direction_input = dio48e_gpio_direction_input;
- 	dio48egpio->chip.direction_output = dio48e_gpio_direction_output;
- 	dio48egpio->chip.get = dio48e_gpio_get;
-+	dio48egpio->chip.get_multiple = dio48e_gpio_get_multiple;
- 	dio48egpio->chip.set = dio48e_gpio_set;
- 	dio48egpio->chip.set_multiple = dio48e_gpio_set_multiple;
- 	dio48egpio->base = base[id];
+ }
+@@ -256,6 +301,7 @@ static int idi_48_probe(struct device *dev, unsigned int id)
+ 	idi48gpio->chip.get_direction = idi_48_gpio_get_direction;
+ 	idi48gpio->chip.direction_input = idi_48_gpio_direction_input;
+ 	idi48gpio->chip.get = idi_48_gpio_get;
++	idi48gpio->chip.get_multiple = idi_48_gpio_get_multiple;
+ 	idi48gpio->base = base[id];
+ 
+ 	raw_spin_lock_init(&idi48gpio->lock);
 -- 
 2.16.2
