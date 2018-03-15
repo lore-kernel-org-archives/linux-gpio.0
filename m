@@ -1,7 +1,7 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2 6/8] gpio: 104-idi-48: Implement get_multiple callback
-Date: Thu, 15 Mar 2018 11:53:17 -0400
-Message-ID: <5ec68441ce758b17c21264a1a1bb5ab98b5263e8.1521128287.git.vilhelm.gray@gmail.com>
+Subject: [PATCH v2 7/8] gpio: gpio-mm: Implement get_multiple callback
+Date: Thu, 15 Mar 2018 11:53:28 -0400
+Message-ID: <cd5458f1d3fedd67b01110a2919106be86c60ea4.1521128287.git.vilhelm.gray@gmail.com>
 References: <cover.1521128287.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1521128287.git.vilhelm.gray@gmail.com>
@@ -10,30 +10,30 @@ To: linus.walleij@linaro.org
 Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The ACCES I/O 104-IDI-48 series of devices provides 48
-optically-isolated inputs accessed via six 8-bit ports. Since eight
-input lines are acquired on a single port input read, the 104-IDI-48
-GPIO driver may improve multiple input reads by utilizing a get_multiple
-callback. This patch implements the idi_48_gpio_get_multiple function
-which serves as the respective get_multiple callback.
+The Diamond Systems GPIO-MM series of devices contain two 82C55A
+devices, which each feature three 8-bit ports of I/O. Since eight input
+lines are acquired on a single port input read, the GPIO-MM GPIO driver
+may improve multiple input reads by utilizing a get_multiple callback.
+This patch implements the gpiomm_gpio_get_multiple function which serves
+as the respective get_multiple callback.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-104-idi-48.c | 46 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-gpio-mm.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 46 insertions(+)
 
-diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
-index add859d59766..1beb6b0591ee 100644
---- a/drivers/gpio/gpio-104-idi-48.c
-+++ b/drivers/gpio/gpio-104-idi-48.c
-@@ -88,6 +88,51 @@ static int idi_48_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return 0;
+diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
+index 11ade5b288f8..d9be9ebe41cf 100644
+--- a/drivers/gpio/gpio-gpio-mm.c
++++ b/drivers/gpio/gpio-gpio-mm.c
+@@ -171,6 +171,51 @@ static int gpiomm_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	return !!(port_state & mask);
  }
  
-+static int idi_48_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
++static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
 +	unsigned long *bits)
 +{
-+	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
++	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
 +	size_t i;
 +	const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
 +	const unsigned int gpio_reg_size = 8;
@@ -66,7 +66,7 @@ index add859d59766..1beb6b0591ee 100644
 +		}
 +
 +		/* read bits from current gpio port */
-+		port_state = inb(idi48egpio->base + ports[i]);
++		port_state = inb(gpiommgpio->base + ports[i]);
 +
 +		/* store acquired bits at respective bits array offset */
 +		bits[word_index] |= port_state << word_offset;
@@ -75,16 +75,16 @@ index add859d59766..1beb6b0591ee 100644
 +	return 0;
 +}
 +
- static void idi_48_irq_ack(struct irq_data *data)
+ static void gpiomm_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	int value)
  {
- }
-@@ -256,6 +301,7 @@ static int idi_48_probe(struct device *dev, unsigned int id)
- 	idi48gpio->chip.get_direction = idi_48_gpio_get_direction;
- 	idi48gpio->chip.direction_input = idi_48_gpio_direction_input;
- 	idi48gpio->chip.get = idi_48_gpio_get;
-+	idi48gpio->chip.get_multiple = idi_48_gpio_get_multiple;
- 	idi48gpio->base = base[id];
- 
- 	raw_spin_lock_init(&idi48gpio->lock);
+@@ -268,6 +313,7 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
+ 	gpiommgpio->chip.direction_input = gpiomm_gpio_direction_input;
+ 	gpiommgpio->chip.direction_output = gpiomm_gpio_direction_output;
+ 	gpiommgpio->chip.get = gpiomm_gpio_get;
++	gpiommgpio->chip.get_multiple = gpiomm_gpio_get_multiple;
+ 	gpiommgpio->chip.set = gpiomm_gpio_set;
+ 	gpiommgpio->chip.set_multiple = gpiomm_gpio_set_multiple;
+ 	gpiommgpio->base = base[id];
 -- 
 2.16.2
