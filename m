@@ -1,90 +1,35 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2 8/8] gpio: ws16c48: Implement get_multiple callback
-Date: Thu, 15 Mar 2018 11:53:39 -0400
-Message-ID: <78fd4e6464713068ba9292ba8ef5d9227cdd294c.1521128287.git.vilhelm.gray@gmail.com>
-References: <cover.1521128287.git.vilhelm.gray@gmail.com>
+From: Laura Abbott <labbott@redhat.com>
+Subject: [PATCHv2 0/4] VLA removal from the gpio subsystem
+Date: Thu, 15 Mar 2018 11:00:26 -0700
+Message-ID: <20180315180030.20001-1-labbott@redhat.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1521128287.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Nandor Han <nandor.han@ge.com>, Patrice Chotard <patrice.chotard@st.com>
+Cc: Laura Abbott <labbott@redhat.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Mathias Duckeck <m.duckeck@kunbus.de>
 List-Id: linux-gpio@vger.kernel.org
 
-The WinSystems WS16C48 device provides 48 lines of digital I/O accessed
-via six 8-bit ports. Since eight input lines are acquired on a single
-port input read, the WS16C48 GPIO driver may improve multiple input
-reads by utilizing a get_multiple callback. This patch implements the
-ws16c48_gpio_get_multiple function which serves as the respective
-get_multiple callback.
+Hi,
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-ws16c48.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+This is v2 of the series to remove VLAs from the kernel. This is mostly
+to collect some of the feedback I've gotten so far, more detailed
+descriptions are in the individual patches.
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index 746648244bf3..9f2e7d0b48f9 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -129,6 +129,51 @@ static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return !!(port_state & mask);
- }
- 
-+static int ws16c48_gpio_get_multiple(struct gpio_chip *chip,
-+	unsigned long *mask, unsigned long *bits)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-+	const unsigned int gpio_reg_size = 8;
-+	size_t i;
-+	const size_t num_ports = chip->ngpio / gpio_reg_size;
-+	unsigned int bits_offset;
-+	size_t word_index;
-+	unsigned int word_offset;
-+	unsigned long mask_word;
-+	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
-+	unsigned long port_state;
-+
-+	/* clear bits array to a clean slate */
-+	bitmap_zero(bits, chip->ngpio);
-+
-+	/* get bits are evaluated a gpio port register at a time */
-+	for (i = 0; i < num_ports; i++) {
-+		/* gpio offset in bits array */
-+		bits_offset = i * gpio_reg_size;
-+
-+		/* word index for bits array */
-+		word_index = BIT_WORD(bits_offset);
-+
-+		/* gpio offset within current word of bits array */
-+		word_offset = bits_offset % BITS_PER_LONG;
-+
-+		/* mask of get bits for current gpio within current word */
-+		word_mask = mask[word_index] & (port_mask << word_offset);
-+		if (!word_mask) {
-+			/* no get bits in this port so skip to next one */
-+			continue;
-+		}
-+
-+		/* read bits from current gpio port */
-+		port_state = inb(ws16c48gpio->base + i);
-+
-+		/* store acquired bits at respective bits array offset */
-+		bits[word_index] |= port_state << word_offset;
-+	}
-+
-+	return 0;
-+}
-+
- static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-@@ -383,6 +428,7 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
- 	ws16c48gpio->chip.direction_input = ws16c48_gpio_direction_input;
- 	ws16c48gpio->chip.direction_output = ws16c48_gpio_direction_output;
- 	ws16c48gpio->chip.get = ws16c48_gpio_get;
-+	ws16c48gpio->chip.get_multiple = ws16c48_gpio_get_multiple;
- 	ws16c48gpio->chip.set = ws16c48_gpio_set;
- 	ws16c48gpio->chip.set_multiple = ws16c48_gpio_set_multiple;
- 	ws16c48gpio->base = base[id];
+Thanks,
+Laura
+
+Laura Abbott (4):
+  gpio: Remove VLA from gpiolib
+  gpio: Remove VLA from MAX3191X driver
+  gpio: Remove VLA from xra1403 driver
+  gpio: Remove VLA from stmpe driver
+
+ drivers/gpio/gpio-max3191x.c  |  7 +++-
+ drivers/gpio/gpio-stmpe.c     |  7 +++-
+ drivers/gpio/gpio-xra1403.c   |  8 ++++-
+ drivers/gpio/gpiolib.c        | 78 ++++++++++++++++++++++++++++++++++---------
+ drivers/gpio/gpiolib.h        |  2 +-
+ include/linux/gpio/consumer.h |  8 +++--
+ 6 files changed, 87 insertions(+), 23 deletions(-)
+
 -- 
-2.16.2
+2.14.3
