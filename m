@@ -1,51 +1,57 @@
 From: Laura Abbott <labbott@redhat.com>
-Subject: [PATCHv2 2/4] gpio: Remove VLA from MAX3191X driver
-Date: Thu, 15 Mar 2018 11:00:28 -0700
-Message-ID: <20180315180030.20001-3-labbott@redhat.com>
+Subject: [PATCHv2 4/4] gpio: Remove VLA from stmpe driver
+Date: Thu, 15 Mar 2018 11:00:30 -0700
+Message-ID: <20180315180030.20001-5-labbott@redhat.com>
 References: <20180315180030.20001-1-labbott@redhat.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180315180030.20001-1-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>
-Cc: Laura Abbott <labbott@redhat.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Mathias Duckeck <m.duckeck@kunbus.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>
+Cc: Laura Abbott <labbott@redhat.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
-
 
 The new challenge is to remove VLAs from the kernel
 (see https://lkml.org/lkml/2018/3/7/621)
 
-This patch replaces several a VLA with an appropriate call to
-kmalloc_array.
+This patch replaces a VLA with an appropriate call to kmalloc_array.
 
 Signed-off-by: Laura Abbott <labbott@redhat.com>
 ---
-v2: No changes
+v2: Switch to GFP_KERNEL. There was some discussion about if we should
+be doing the allocation at all but given a) the allocation is pretty
+small and b) we can possibly take a mutex in a called function I think
+this is fine.
 ---
- drivers/gpio/gpio-max3191x.c | 7 ++++++-
+ drivers/gpio/gpio-stmpe.c | 7 ++++++-
  1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-max3191x.c b/drivers/gpio/gpio-max3191x.c
-index f74b1072e84b..b5b9cb1fda50 100644
---- a/drivers/gpio/gpio-max3191x.c
-+++ b/drivers/gpio/gpio-max3191x.c
-@@ -315,12 +315,17 @@ static void gpiod_set_array_single_value_cansleep(unsigned int ndescs,
- 						  struct gpio_desc **desc,
- 						  int value)
- {
--	int i, values[ndescs];
-+	int i, *values;
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index f8d7d1cd8488..c2bb20ace6f5 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -369,10 +369,14 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+ 	struct stmpe *stmpe = stmpe_gpio->stmpe;
+ 	u8 statmsbreg;
+ 	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
+-	u8 status[num_banks];
++	u8 *status;
+ 	int ret;
+ 	int i;
+ 
++	status = kmalloc_array(num_banks, sizeof(*status), GFP_KERNEL);
++	if (!status)
++		return IRQ_NONE;
 +
-+	values = kmalloc_array(ndescs, sizeof(*values), GFP_KERNEL);
-+	if (!values)
-+		return;
+ 	/*
+ 	 * the stmpe_block_read() call below, imposes to set statmsbreg
+ 	 * with the register located at the lowest address. As STMPE1600
+@@ -424,6 +428,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+ 		}
+ 	}
  
- 	for (i = 0; i < ndescs; i++)
- 		values[i] = value;
- 
- 	gpiod_set_array_value_cansleep(ndescs, desc, values);
-+	kfree(values);
++	kfree(status);
+ 	return IRQ_HANDLED;
  }
  
- static struct gpio_descs *devm_gpiod_get_array_optional_count(
 -- 
 2.14.3
