@@ -1,98 +1,71 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v3 8/8] gpio: ws16c48: Implement get_multiple callback
-Date: Sat, 17 Mar 2018 11:52:01 -0400
-Message-ID: <6fce3d38ec4ea09923780db68de6e0091b7c7bdf.1521301345.git.vilhelm.gray@gmail.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v3 1/8] iio: stx104: Implement get_multiple callback
+Date: Sat, 17 Mar 2018 18:22:48 +0000
+Message-ID: <20180317182248.28fc9cbb@archlinux>
 References: <cover.1521301345.git.vilhelm.gray@gmail.com>
+        <14a09900bf4642495ebe4072b9eb02769dbc4c5e.1521301345.git.vilhelm.gray@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1521301345.git.vilhelm.gray@gmail.com>
+In-Reply-To: <14a09900bf4642495ebe4072b9eb02769dbc4c5e.1521301345.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: linus.walleij@linaro.org, andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
 List-Id: linux-gpio@vger.kernel.org
 
-The WinSystems WS16C48 device provides 48 lines of digital I/O accessed
-via six 8-bit ports. Since eight input lines are acquired on a single
-port input read, the WS16C48 GPIO driver may improve multiple input
-reads by utilizing a get_multiple callback. This patch implements the
-ws16c48_gpio_get_multiple function which serves as the respective
-get_multiple callback.
+On Sat, 17 Mar 2018 11:49:56 -0400
+William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-ws16c48.c | 47 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+> The Apex Embedded Systems STX104 series of devices provides 4 TTL
+> compatible lines of inputs accessed via a single 4-bit port. Since four
+> input lines are acquired on a single port input read, the STX104 GPIO
+> driver may improve multiple input reads by utilizing a get_multiple
+> callback. This patch implements the stx104_gpio_get_multiple function
+> which serves as the respective get_multiple callback.
+> 
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Hartmut Knaack <knaack.h@gmx.de>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+This one is simple so applied to the togreg branch of iio.git and pushed
+out as testing for the autobuilders to play with it.
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index 746648244bf3..10525367aa6f 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -11,6 +11,7 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  * General Public License for more details.
-  */
-+#include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/errno.h>
-@@ -129,6 +130,51 @@ static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return !!(port_state & mask);
- }
- 
-+static int ws16c48_gpio_get_multiple(struct gpio_chip *chip,
-+	unsigned long *mask, unsigned long *bits)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-+	const unsigned int gpio_reg_size = 8;
-+	size_t i;
-+	const size_t num_ports = chip->ngpio / gpio_reg_size;
-+	unsigned int bits_offset;
-+	size_t word_index;
-+	unsigned int word_offset;
-+	unsigned long word_mask;
-+	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
-+	unsigned long port_state;
-+
-+	/* clear bits array to a clean slate */
-+	bitmap_zero(bits, chip->ngpio);
-+
-+	/* get bits are evaluated a gpio port register at a time */
-+	for (i = 0; i < num_ports; i++) {
-+		/* gpio offset in bits array */
-+		bits_offset = i * gpio_reg_size;
-+
-+		/* word index for bits array */
-+		word_index = BIT_WORD(bits_offset);
-+
-+		/* gpio offset within current word of bits array */
-+		word_offset = bits_offset % BITS_PER_LONG;
-+
-+		/* mask of get bits for current gpio within current word */
-+		word_mask = mask[word_index] & (port_mask << word_offset);
-+		if (!word_mask) {
-+			/* no get bits in this port so skip to next one */
-+			continue;
-+		}
-+
-+		/* read bits from current gpio port */
-+		port_state = inb(ws16c48gpio->base + i);
-+
-+		/* store acquired bits at respective bits array offset */
-+		bits[word_index] |= port_state << word_offset;
-+	}
-+
-+	return 0;
-+}
-+
- static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-@@ -383,6 +429,7 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
- 	ws16c48gpio->chip.direction_input = ws16c48_gpio_direction_input;
- 	ws16c48gpio->chip.direction_output = ws16c48_gpio_direction_output;
- 	ws16c48gpio->chip.get = ws16c48_gpio_get;
-+	ws16c48gpio->chip.get_multiple = ws16c48_gpio_get_multiple;
- 	ws16c48gpio->chip.set = ws16c48_gpio_set;
- 	ws16c48gpio->chip.set_multiple = ws16c48_gpio_set_multiple;
- 	ws16c48gpio->base = base[id];
--- 
-2.16.2
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/adc/stx104.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/stx104.c b/drivers/iio/adc/stx104.c
+> index 17b021f33180..0662ca199eb0 100644
+> --- a/drivers/iio/adc/stx104.c
+> +++ b/drivers/iio/adc/stx104.c
+> @@ -233,6 +233,16 @@ static int stx104_gpio_get(struct gpio_chip *chip, unsigned int offset)
+>  	return !!(inb(stx104gpio->base) & BIT(offset));
+>  }
+>  
+> +static int stx104_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+> +	unsigned long *bits)
+> +{
+> +	struct stx104_gpio *const stx104gpio = gpiochip_get_data(chip);
+> +
+> +	*bits = inb(stx104gpio->base);
+> +
+> +	return 0;
+> +}
+> +
+>  static void stx104_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>  	int value)
+>  {
+> @@ -342,6 +352,7 @@ static int stx104_probe(struct device *dev, unsigned int id)
+>  	stx104gpio->chip.direction_input = stx104_gpio_direction_input;
+>  	stx104gpio->chip.direction_output = stx104_gpio_direction_output;
+>  	stx104gpio->chip.get = stx104_gpio_get;
+> +	stx104gpio->chip.get_multiple = stx104_gpio_get_multiple;
+>  	stx104gpio->chip.set = stx104_gpio_set;
+>  	stx104gpio->chip.set_multiple = stx104_gpio_set_multiple;
+>  	stx104gpio->base = base[id] + 3;
