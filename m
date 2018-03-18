@@ -1,76 +1,58 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH v4 0/9] Initial Allwinner H6 support
-Date: Sun, 18 Mar 2018 21:17:44 +0100
-Message-ID: <20180318201744.dw6hnm2vdybaunev@flea>
-References: <20180316140215.28663-1-icenowy@aosc.io>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH 1/4] gpio: Remove VLA from gpiolib
+Date: Sun, 18 Mar 2018 21:34:12 +0100
+Message-ID: <0f17eb05-c183-bec9-0076-5ddd00d70f15@rasmusvillemoes.dk>
+References: <20180310001021.6437-1-labbott@redhat.com>
+ <20180310001021.6437-2-labbott@redhat.com>
+ <a758ce3f-fed7-2ecf-94c5-ba133ea75bde@rasmusvillemoes.dk>
+ <20180317082509.GA2579@wunner.de> <20180318142327.GA23761@wunner.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tmlmlksbckghjpky"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180316140215.28663-1-icenowy@aosc.io>
+In-Reply-To: <20180318142327.GA23761@wunner.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+To: Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Mathias Duckeck <m.duckeck@kunbus.de>, Nandor Han <nandor.han@ge.com>, Semi Malinen <semi.malinen@ge.com>, Patrice Chotard <patrice.chotard@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
+On 2018-03-18 15:23, Lukas Wunner wrote:
+>>>
+>>> Other random thoughts: maybe two allocations for each loop iteration is
+>>> a bit much. Maybe do a first pass over the array and collect the maximal
+>>> chip->ngpio, do the memory allocation and freeing outside the loop (then
+>>> you'd of course need to preserve the memset() with appropriate length
+>>> computed). And maybe even just do one allocation, making bits point at
+>>> the second half.
+>>
+>> I think those are great ideas because the function is kind of a hotpath
+>> and usage of VLAs was motivated by the desire to make it fast.
+>>
+>> I'd go one step further and store the maximum ngpio of all registered
+>> chips in a global variable (and update it in gpiochip_add_data_with_key()),
+>> then allocate 2 * max_ngpio once before entering the loop (as you've
+>> suggested).  That would avoid the first pass to determine the maximum
+>> chip->ngpio.  In most systems max_ngpio will be < 64, so one or two
+>> unsigned longs depending on the arch's bitness.
+> 
+> Actually, scratch that.  If ngpio is usually smallish, we can just
+> allocate reasonably sized space for mask and bits on the stack,
 
---tmlmlksbckghjpky
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes.
 
-On Fri, Mar 16, 2018 at 10:02:06PM +0800, Icenowy Zheng wrote:
-> This patchset adds initial support for the Allwinner H6 SoC.
->=20
-> It's quite different from earlier Allwinner SoCs. For example, the
-> memory map is refactored, and the CCU is rearranged. It's also the first
-> Allwinner SoC with PCI Express interface (although the implementation
-> of the PCI Express controller is broken), and the second one with USB
-> 3.0 (the first one is A80).
->=20
-> This patchset adds the most basical support for it, including the main pin
-> controller, the main CCU and the basical device tree.
->=20
-> Icenowy Zheng (9):
->   pinctrl: sunxi: refactor irq related register function to have desc
->   pinctrl: sunxi: introduce IRQ bank conversion function
->   pinctrl: sunxi: change irq_bank_base to irq_bank_map
->   pinctrl: sunxi: add support for the Allwinner H6 main pin controller
->   clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
->   dt-bindings: add device tree binding for Allwinner H6 main CCU
->   clk: sunxi-ng: add support for the Allwinner H6 CCU
->   arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
->   arm64: allwinner: h6: add support for Pine H64 board
+> and fall back to the kcalloc slowpath only if chip->ngpio exceeds
+> that limit.
 
-Applied the !pinctrl patches.
+Well, I'd suggest not adding that fallback code now, but simply add a
+check in gpiochip_add_data_with_key to ensure ngpio is sane (and refuse
+to register the chip otherwise), at least if we know that every
+currently supported/known chip is covered by the 256 (?). That keeps the
+code simple and fast, and then if somebody has a chip with 40000 gpio
+lines, we can add a fallback path. Or we could consider alternative
+solutions, to avoid a 10000 byte GFP_ATOMIC allocation (maybe hang a
+pre-allocation off the gpio_chip; that's only two more bits per
+descriptor, and there's already a whole gpio_desc for each - but not
+sure about the locking in that case).
 
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---tmlmlksbckghjpky
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlquyWcACgkQ0rTAlCFN
-r3R5iQ//bdp8lhaNBuMZFxAbN3vcM/xITs97YdleOWxkVMgmqXdZn9QOwXrR1aMi
-he6sdzERuVONxtn9Iku1PCFr+fW8wx+Ew+4j0ZYkqnZQiq0xG4W7U4jI5LfGwfps
-R4zuX0Re6pd3rsl0sm92jmrACRZCp1TgWMK9KfEXKG+HzitJFGraBNSw6GV87/FY
-g7Ncn3aF68oTcwQY5n3mu3DbmCD9F/UW46Ne1bdpUY0g6faKVuVu7nWreiiZSEO9
-+LpVaUO/r0XwH85aMK3x4O3uer+8zeIQYqyHTlF33Ij4BaHRH6wHVwG3qSDsMtwU
-ea2Xbogr/KplxSLGsPqfc5GkHXsaWkaMzE1qG+69hM/SEwjloQt+tPsiIZJdsFBG
-2t4wojcPNSaBVslx+knVCS1G8++uisTGEs3Dych8wHZ7sSS6EC8OoALmZnEGS/Vc
-B3PrAgXYa8PNtgEB6dti8BOs6qKl8fdxsYQZUlrgqPoWDZfTsEFAS/p0tAkZXI2O
-fC4oba8JyOqI+hzSfRkn215CfKow4Szu9ixjULhyCUAnJ2UldTYqGXSIoOnOQ0K9
-tM4BZlQViWs7z6g/YVhIkmjYAzQAichm5vbYeyfIdXa575AUUwr0GC+daJTE9HU/
-LkV0KBwosK1yZPzCc2oH+jBSXQTzuVn4fQ7LQ/Qy7gff2MNvhaY=
-=0d+I
------END PGP SIGNATURE-----
-
---tmlmlksbckghjpky--
+Rasmus
