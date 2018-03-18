@@ -1,32 +1,38 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524
- and pcal9555a
-Date: Sun, 18 Mar 2018 07:48:26 -0500
-Message-ID: <20180317234320.ahqlhzjzxco7xnyb@rob-hp-laptop>
-References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 6/9] dt-bindings: add device tree binding
+ for Allwinner H6 main CCU
+Date: Sun, 18 Mar 2018 07:52:57 -0500
+Message-ID: <20180318033523.kxtlewiwtboebtqe@rob-hp-laptop>
+References: <20180316140215.28663-1-icenowy@aosc.io>
+ <20180316140215.28663-7-icenowy@aosc.io>
+Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBDJIP47K7MERBLGCXHKQKGQEVSVVNOY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Content-Disposition: inline
-In-Reply-To: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+In-Reply-To: <20180316140215.28663-7-icenowy-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 12:00:01PM +0100, H. Nikolaus Schaller wrote:
-> The Pyra-Handheld originally used the tca6424 but recently we have
-> replaced it by the pin and package compatible pcal6524. So let's
-> add this to the bindings and the driver.
+On Fri, Mar 16, 2018 at 10:02:12PM +0800, Icenowy Zheng wrote:
+> The Allwinner H6 main CCU uses the internal oscillator of the SoC, which
+> is different with old SoCs' main CCU.
 > 
-> And while we are at it, the pcal9555a does not have a compatible entry
-> either but is already supported by the device id table.
+> Add device tree binding for the Allwinner H6 main CCU.
 > 
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
 > ---
->  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 2 ++
+> Extracted in v4.
+> 
+>  Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-
->  drivers/gpio/gpio-pca953x.c                             | 4 ++++
->  2 files changed, 6 insertions(+)
+Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
