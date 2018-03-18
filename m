@@ -1,38 +1,88 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 6/9] dt-bindings: add device tree binding
- for Allwinner H6 main CCU
-Date: Sun, 18 Mar 2018 07:52:57 -0500
-Message-ID: <20180318033523.kxtlewiwtboebtqe@rob-hp-laptop>
-References: <20180316140215.28663-1-icenowy@aosc.io>
- <20180316140215.28663-7-icenowy@aosc.io>
-Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 4/9] dt-bindings: gpio: Add gpio nodes for Actions
+ S900 SoC
+Date: Sun, 18 Mar 2018 07:53:04 -0500
+Message-ID: <20180318125304.3i3kqzcefhv5iusv@rob-hp-laptop>
+References: <20180309051345.1011-1-manivannan.sadhasivam@linaro.org>
+ <20180309051345.1011-5-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDJIP47K7MERBLGCXHKQKGQEVSVVNOY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180316140215.28663-7-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20180309051345.1011-5-manivannan.sadhasivam@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linus.walleij@linaro.org, afaerber@suse.de, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 10:02:12PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 main CCU uses the internal oscillator of the SoC, which
-> is different with old SoCs' main CCU.
+On Fri, Mar 09, 2018 at 10:43:40AM +0530, Manivannan Sadhasivam wrote:
+> Add gpio nodes for Actions Semi S900 SoC.
 > 
-> Add device tree binding for the Allwinner H6 main CCU.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
-> Extracted in v4.
+>  .../devicetree/bindings/gpio/actions,owl-gpio.txt  | 90 ++++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
 > 
->  Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+> diff --git a/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+> new file mode 100644
+> index 000000000000..ad7d32ce2abe
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+> @@ -0,0 +1,90 @@
+> +* Actions Semi OWL GPIO controller bindings
+> +
+> +The GPIOs are organized as individual banks/ports with variable number
+> +of GPIOs. Each bank is represented as an individual GPIO controller.
+> +
+> +Required properties:
+> +- compatible            : Should be "actions,s900-gpio"
+> +- reg                   : Address and range of the GPIO controller registers.
+> +- gpio-controller       : Marks the device node as a GPIO controller.
+> +- #gpio-cells           : Should be <2>. The first cell is the gpio number
+> +                          and the second cell is used to specify optional
+> +                          parameters.
+> +- ngpios                : Specifies the number of GPIO lines.
+> +- interrupt-controller  : Marks the device node as an interrupt controller.
+> +- #interrupt-cells      : Specifies the number of cells needed to encode an
+> +                          interrupt.  Shall be set to 2.  The first cell
+> +                          defines the interrupt number, the second encodes
+> +                          the trigger flags described in
+> +                          bindings/interrupt-controller/interrupts.txt
+> +
+> +Optional properties:
+> +- gpio-ranges           : Mapping between GPIO and pinctrl
+> +
+> +Examples:
+> +
+> +       gpioa: gpio@e01b0000 {
+> +               compatible = "actions,s900-gpio";
+> +               reg = <0x0 0xe01b0000 0x0 0x1000>;
+> +               gpio-controller;
+> +               #gpio-cells = <2>;
+> +               gpio-ranges = <&pinctrl 0 0 32>;
+> +               ngpios = <32>;
 
-Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+This is only needed if the number of gpios is reduced for some reason 
+such as not pinned out. IOW, 32 is implied because that's the size of 
+each bank.
+
+> +               interrupt-controller;
+> +               #interrupt-cells = <2>;
+> +       };
+> +
+> +       gpiob: gpio@e01b000c {
+> +               compatible = "actions,s900-gpio";
+> +               reg = <0x0 0xe01b000c 0x0 0x1000>;
+
+Due to the sizes, these are still overlapping.
+
+Rob
+
+> +               gpio-controller;
+> +               #gpio-cells = <2>;
+> +               gpio-ranges = <&pinctrl 0 32 32>;
+> +               ngpios = <32>;
+> +               interrupt-controller;
+> +               #interrupt-cells = <2>;
+> +       };
