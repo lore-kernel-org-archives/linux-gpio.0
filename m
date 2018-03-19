@@ -1,69 +1,72 @@
-From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Subject: Re: [PATCH v4 0/9] Initial Allwinner H6 support
-Date: Mon, 19 Mar 2018 09:28:23 +0800
-Message-ID: <F40271A8-3782-4A69-8C40-3909EB296C66@aosc.io>
-References: <20180316140215.28663-1-icenowy@aosc.io> <20180318201744.dw6hnm2vdybaunev@flea>
-Reply-To: icenowy-h8G6r0blFSE@public.gmane.org
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: [PATCHv2 4/4] gpio: Remove VLA from stmpe driver
+Date: Mon, 19 Mar 2018 09:29:59 +0800
+Message-ID: <21a2e869-62fb-75ef-ae7b-a27e136696f7@electromag.com.au>
+References: <20180315180030.20001-1-labbott@redhat.com>
+ <20180315180030.20001-5-labbott@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBDS6XAN6ZADRBSVEXTKQKGQECOABCOA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20180318201744.dw6hnm2vdybaunev@flea>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180315180030.20001-5-labbott@redhat.com>
+Content-Language: en-AU
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
+On 16/03/2018 02:00, Laura Abbott wrote:
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621)
+> 
+> This patch replaces a VLA with an appropriate call to kmalloc_array.
+> 
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> v2: Switch to GFP_KERNEL. There was some discussion about if we should
+> be doing the allocation at all but given a) the allocation is pretty
+> small and b) we can possibly take a mutex in a called function I think
+> this is fine.
+
+I still think it's a bad idea. It's simple to preallocate the buffer.
+But it's up to the maintainer.
 
 
-=E4=BA=8E 2018=E5=B9=B43=E6=9C=8819=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=884:=
-17:44, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org> =E5=86=99=E5=88=B0:
->On Fri, Mar 16, 2018 at 10:02:06PM +0800, Icenowy Zheng wrote:
->> This patchset adds initial support for the Allwinner H6 SoC.
->>=20
->> It's quite different from earlier Allwinner SoCs. For example, the
->> memory map is refactored, and the CCU is rearranged. It's also the
->first
->> Allwinner SoC with PCI Express interface (although the implementation
->> of the PCI Express controller is broken), and the second one with USB
->> 3.0 (the first one is A80).
->>=20
->> This patchset adds the most basical support for it, including the
->main pin
->> controller, the main CCU and the basical device tree.
->>=20
->> Icenowy Zheng (9):
->>   pinctrl: sunxi: refactor irq related register function to have desc
->>   pinctrl: sunxi: introduce IRQ bank conversion function
->>   pinctrl: sunxi: change irq_bank_base to irq_bank_map
->>   pinctrl: sunxi: add support for the Allwinner H6 main pin
->controller
->>   clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
->>   dt-bindings: add device tree binding for Allwinner H6 main CCU
->>   clk: sunxi-ng: add support for the Allwinner H6 CCU
->>   arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
->>   arm64: allwinner: h6: add support for Pine H64 board
->
->Applied the !pinctrl patches.
+> ---
+>   drivers/gpio/gpio-stmpe.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+> index f8d7d1cd8488..c2bb20ace6f5 100644
+> --- a/drivers/gpio/gpio-stmpe.c
+> +++ b/drivers/gpio/gpio-stmpe.c
+> @@ -369,10 +369,14 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+>   	struct stmpe *stmpe = stmpe_gpio->stmpe;
+>   	u8 statmsbreg;
+>   	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
+> -	u8 status[num_banks];
+> +	u8 *status;
+>   	int ret;
+>   	int i;
+>   
+> +	status = kmalloc_array(num_banks, sizeof(*status), GFP_KERNEL);
+> +	if (!status)
+> +		return IRQ_NONE;
+> +
+>   	/*
+>   	 * the stmpe_block_read() call below, imposes to set statmsbreg
+>   	 * with the register located at the lowest address. As STMPE1600
+> @@ -424,6 +428,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+>   		}
+>   	}
+>   
+> +	kfree(status);
+>   	return IRQ_HANDLED;
+>   }
+>   
+> 
 
-Oops, one clock (CLK_HDMI_SLOW) is missing in the CCU
-driver, as Jernej pointed out.
 
-Should I send a patch that fix it?
-
->
->Thanks!
->Maxime
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+-- 
+Regards
+Phil Reid
