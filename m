@@ -1,58 +1,69 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH 1/4] gpio: Remove VLA from gpiolib
-Date: Sun, 18 Mar 2018 21:34:12 +0100
-Message-ID: <0f17eb05-c183-bec9-0076-5ddd00d70f15@rasmusvillemoes.dk>
-References: <20180310001021.6437-1-labbott@redhat.com>
- <20180310001021.6437-2-labbott@redhat.com>
- <a758ce3f-fed7-2ecf-94c5-ba133ea75bde@rasmusvillemoes.dk>
- <20180317082509.GA2579@wunner.de> <20180318142327.GA23761@wunner.de>
+From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Subject: Re: [PATCH v4 0/9] Initial Allwinner H6 support
+Date: Mon, 19 Mar 2018 09:28:23 +0800
+Message-ID: <F40271A8-3782-4A69-8C40-3909EB296C66@aosc.io>
+References: <20180316140215.28663-1-icenowy@aosc.io> <20180318201744.dw6hnm2vdybaunev@flea>
+Reply-To: icenowy-h8G6r0blFSE@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180318142327.GA23761@wunner.de>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Mathias Duckeck <m.duckeck@kunbus.de>, Nandor Han <nandor.han@ge.com>, Semi Malinen <semi.malinen@ge.com>, Patrice Chotard <patrice.chotard@st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBDS6XAN6ZADRBSVEXTKQKGQECOABCOA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20180318201744.dw6hnm2vdybaunev@flea>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 2018-03-18 15:23, Lukas Wunner wrote:
->>>
->>> Other random thoughts: maybe two allocations for each loop iteration is
->>> a bit much. Maybe do a first pass over the array and collect the maximal
->>> chip->ngpio, do the memory allocation and freeing outside the loop (then
->>> you'd of course need to preserve the memset() with appropriate length
->>> computed). And maybe even just do one allocation, making bits point at
->>> the second half.
->>
->> I think those are great ideas because the function is kind of a hotpath
->> and usage of VLAs was motivated by the desire to make it fast.
->>
->> I'd go one step further and store the maximum ngpio of all registered
->> chips in a global variable (and update it in gpiochip_add_data_with_key()),
->> then allocate 2 * max_ngpio once before entering the loop (as you've
->> suggested).  That would avoid the first pass to determine the maximum
->> chip->ngpio.  In most systems max_ngpio will be < 64, so one or two
->> unsigned longs depending on the arch's bitness.
-> 
-> Actually, scratch that.  If ngpio is usually smallish, we can just
-> allocate reasonably sized space for mask and bits on the stack,
 
-Yes.
 
-> and fall back to the kcalloc slowpath only if chip->ngpio exceeds
-> that limit.
+=E4=BA=8E 2018=E5=B9=B43=E6=9C=8819=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=884:=
+17:44, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org> =E5=86=99=E5=88=B0:
+>On Fri, Mar 16, 2018 at 10:02:06PM +0800, Icenowy Zheng wrote:
+>> This patchset adds initial support for the Allwinner H6 SoC.
+>>=20
+>> It's quite different from earlier Allwinner SoCs. For example, the
+>> memory map is refactored, and the CCU is rearranged. It's also the
+>first
+>> Allwinner SoC with PCI Express interface (although the implementation
+>> of the PCI Express controller is broken), and the second one with USB
+>> 3.0 (the first one is A80).
+>>=20
+>> This patchset adds the most basical support for it, including the
+>main pin
+>> controller, the main CCU and the basical device tree.
+>>=20
+>> Icenowy Zheng (9):
+>>   pinctrl: sunxi: refactor irq related register function to have desc
+>>   pinctrl: sunxi: introduce IRQ bank conversion function
+>>   pinctrl: sunxi: change irq_bank_base to irq_bank_map
+>>   pinctrl: sunxi: add support for the Allwinner H6 main pin
+>controller
+>>   clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
+>>   dt-bindings: add device tree binding for Allwinner H6 main CCU
+>>   clk: sunxi-ng: add support for the Allwinner H6 CCU
+>>   arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
+>>   arm64: allwinner: h6: add support for Pine H64 board
+>
+>Applied the !pinctrl patches.
 
-Well, I'd suggest not adding that fallback code now, but simply add a
-check in gpiochip_add_data_with_key to ensure ngpio is sane (and refuse
-to register the chip otherwise), at least if we know that every
-currently supported/known chip is covered by the 256 (?). That keeps the
-code simple and fast, and then if somebody has a chip with 40000 gpio
-lines, we can add a fallback path. Or we could consider alternative
-solutions, to avoid a 10000 byte GFP_ATOMIC allocation (maybe hang a
-pre-allocation off the gpio_chip; that's only two more bits per
-descriptor, and there's already a whole gpio_desc for each - but not
-sure about the locking in that case).
+Oops, one clock (CLK_HDMI_SLOW) is missing in the CCU
+driver, as Jernej pointed out.
 
-Rasmus
+Should I send a patch that fix it?
+
+>
+>Thanks!
+>Maxime
+
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
