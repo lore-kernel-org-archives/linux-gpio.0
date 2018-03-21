@@ -1,84 +1,97 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Use after free with pinctrl_enable() and devm_pinctrl_register_and_init()
-Date: Wed, 21 Mar 2018 16:43:26 +0100
-Message-ID: <CAMuHMdW+OzGYK7zj+-jWmZwMcve7=C5gGamgH9jmdgqJ7NC7Vg@mail.gmail.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v3 2/8] gpio: 104-idio-16: Implement get_multiple callback
+Date: Wed, 21 Mar 2018 12:04:50 -0400
+Message-ID: <20180321160450.GA21405@sophia>
+References: <cover.1521301345.git.vilhelm.gray@gmail.com>
+ <486eb9bad0440ed305a78d9fc990728cbeb7d43e.1521301345.git.vilhelm.gray@gmail.com>
+ <CAHp75VcdimgN3u5O5zye2=pXvCkWuZzCf3e0wOQozQoKz7W8yA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHp75VcdimgN3u5O5zye2=pXvCkWuZzCf3e0wOQozQoKz7W8yA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus, Tony,
+On Wed, Mar 21, 2018 at 05:32:03PM +0200, Andy Shevchenko wrote:
+>On Sat, Mar 17, 2018 at 5:50 PM, William Breathitt Gray
+><vilhelm.gray@gmail.com> wrote:
+>> The ACCES I/O 104-IDIO-16 series of devices provides 16
+>> optically-isolated digital inputs accessed via two 8-bit ports. Since
+>> eight input lines are acquired on a single port input read, the
+>> 104-IDIO-16 GPIO driver may improve multiple input reads by utilizing a
+>> get_multiple callback. This patch implements the
+>> idio_16_gpio_get_multiple function which serves as the respective
+>> get_multiple callback.
+>
+>> +static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
+>> +       unsigned long *mask, unsigned long *bits)
+>> +{
+>> +       struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
+>> +
+>> +       *bits = 0;
+>
+>> +       if (*mask & 0xFF0000)
+>
+>GENMASK(23, 16) ?
+>
+>> +               *bits |= (unsigned long)inb(idio16gpio->base + 1) << 16;
+>
+>Do you need casting?
+>
+>> +       if (*mask & 0xFF000000)
+>
+>GENMASK(31, 24) ?
+>
+>Alternative (and for above):
+>
+>(*mask >> 24) & 0xff
+>
+>(*mask >> 16) & 0xff
 
-If claiming hogs failed, pinctrl_enable() frees the pctldev, and
-destroys its mutex.
+That's a good suggestion since GENMASK would be useful in making it
+clear which bits we are actually checking; the literal bitmasks such as
+0xFF000000 can be difficult to read at a glance. I'll incorporate
+GENMASK into a version 4 release of this patch.
 
-However, if the pin controller is registered using
-devm_pinctrl_register_and_init(), device resource management will call
-pinctrl_unregister() later.  This will access the destroyed pctldev,
-which may crash the system.
+>
+>
+>> +               *bits |= (unsigned long)inb(idio16gpio->base + 5) << 24;
+>
+>Do you need casting?
 
-With poisoning enabled (CONFIG_DEBUG_SLAB=y), the crash is imminent:
+The inb function returns a u8, which is typically a typedef of an
+unsigned char. Since u8 only guaranteed a range of 8 bits, we require a
+cast to unsigned long to guarantee that the left shifted value stays
+intact as a 32-bit unsigned value rather than wrap around an 8-bit
+unsigned range.
 
-    sh-pfc e6050000.pin-controller: function 'foo' not supported
-    sh-pfc e6050000.pin-controller: invalid function a in map table
-    sh-pfc e6050000.pin-controller: error claiming hogs: -22
-    sh-pfc e6050000.pin-controller: could not claim hogs: -22
-    Unhandled fault: alignment exception (0x001) at 0x6b6b6c2f
-    pgd = 581794e0
-    [6b6b6c2f] *pgd=00000000
-    Internal error: : 1 [#1] SMP ARM
-    Modules linked in:
-    CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-4.16.0-rc5-kzm9g-00484-gb3469948b11d02a0-dirty #1043
-    Hardware name: Generic SH73A0 (Flattened Device Tree)
-    PC is at __lock_acquire+0xd8/0x1bf0
-    LR is at lock_acquire+0x98/0xb8
-    pc : [<c016fc84>]    lr : [<c0171f80>]    psr: 20000093
-    sp : df441be8  ip : df441c80  fp : 00000000
-    r10: 00000000  r9 : 00000001  r8 : 00000000
-    r7 : 00000000  r6 : c1084170  r5 : df5586e8  r4 : df43e040
-    r3 : 6b6b6c2f  r2 : 6b6b6b6b  r1 : 00000000  r0 : 6b6b6b6b
-    Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
-    Control: 10c5387d  Table: 4000404a  DAC: 00000051
-    Process swapper/0 (pid: 1, stack limit = 0x2557051f)
-    Stack: (0xdf441be8 to 0xdf442000)
-    ...
-    [<c016fc84>] (__lock_acquire) from [<c0171f80>] (lock_acquire+0x98/0xb8)
-    [<c0171f80>] (lock_acquire) from [<c0598888>] (__mutex_lock+0x7c/0x9ec)
-    [<c0598888>] (__mutex_lock) from [<c0599210>] (mutex_lock_nested+0x18/0x20)
-    [<c0599210>] (mutex_lock_nested) from [<c034cd18>]
-(pinctrl_unregister+0x48/0x158)
-    [<c034cd18>] (pinctrl_unregister) from [<c03b3f30>]
-(release_nodes+0x218/0x25c)
-    [<c03b3f30>] (release_nodes) from [<c03b08ac>]
-(driver_probe_device+0x200/0x318)
-    [<c03b08ac>] (driver_probe_device) from [<c03aedd8>]
-(bus_for_each_drv+0x90/0xb8)
+William Breathitt Gray
 
-My first idea was to add a !devres_find(pctldev->dev, devm_pinctrl_dev_release,
-NULL, NULL) check to the error path of pinctrl_enable(), which seems
-to work(TM).
-
-However, that's still not 100% correct and sufficient:
-  - pinctrl_unregister() will do some cleanup (pinctrldev_list and debugfs) that
-    should not be done,
-  - When using pinctrl_register() or devm_pinctrl_register(), and
-    pinctrl_enable() fails, all other cleanup done in pinctrl_unregister()
-    never happens.
-
-Thoughts?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+>> +
+>> +       return 0;
+>> +}
+>> +
+>>  static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+>>  {
+>>         struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
+>> @@ -244,6 +258,7 @@ static int idio_16_probe(struct device *dev, unsigned int id)
+>>         idio16gpio->chip.direction_input = idio_16_gpio_direction_input;
+>>         idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
+>>         idio16gpio->chip.get = idio_16_gpio_get;
+>> +       idio16gpio->chip.get_multiple = idio_16_gpio_get_multiple;
+>>         idio16gpio->chip.set = idio_16_gpio_set;
+>>         idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
+>>         idio16gpio->base = base[id];
+>> --
+>> 2.16.2
+>>
+>
+>
+>
+>-- 
+>With Best Regards,
+>Andy Shevchenko
