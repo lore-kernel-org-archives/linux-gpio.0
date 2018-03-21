@@ -1,97 +1,56 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v3 2/8] gpio: 104-idio-16: Implement get_multiple callback
-Date: Wed, 21 Mar 2018 12:04:50 -0400
-Message-ID: <20180321160450.GA21405@sophia>
-References: <cover.1521301345.git.vilhelm.gray@gmail.com>
- <486eb9bad0440ed305a78d9fc990728cbeb7d43e.1521301345.git.vilhelm.gray@gmail.com>
- <CAHp75VcdimgN3u5O5zye2=pXvCkWuZzCf3e0wOQozQoKz7W8yA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: [PATCH v3 1/3] dt-bindings: gpio: Add a gpio-reserved-ranges property
+Date: Wed, 21 Mar 2018 09:58:46 -0700
+Message-ID: <20180321165848.89751-2-swboyd@chromium.org>
+References: <20180321165848.89751-1-swboyd@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcdimgN3u5O5zye2=pXvCkWuZzCf3e0wOQozQoKz7W8yA@mail.gmail.com>
+In-Reply-To: <20180321165848.89751-1-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 05:32:03PM +0200, Andy Shevchenko wrote:
->On Sat, Mar 17, 2018 at 5:50 PM, William Breathitt Gray
-><vilhelm.gray@gmail.com> wrote:
->> The ACCES I/O 104-IDIO-16 series of devices provides 16
->> optically-isolated digital inputs accessed via two 8-bit ports. Since
->> eight input lines are acquired on a single port input read, the
->> 104-IDIO-16 GPIO driver may improve multiple input reads by utilizing a
->> get_multiple callback. This patch implements the
->> idio_16_gpio_get_multiple function which serves as the respective
->> get_multiple callback.
->
->> +static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
->> +       unsigned long *mask, unsigned long *bits)
->> +{
->> +       struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
->> +
->> +       *bits = 0;
->
->> +       if (*mask & 0xFF0000)
->
->GENMASK(23, 16) ?
->
->> +               *bits |= (unsigned long)inb(idio16gpio->base + 1) << 16;
->
->Do you need casting?
->
->> +       if (*mask & 0xFF000000)
->
->GENMASK(31, 24) ?
->
->Alternative (and for above):
->
->(*mask >> 24) & 0xff
->
->(*mask >> 16) & 0xff
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-That's a good suggestion since GENMASK would be useful in making it
-clear which bits we are actually checking; the literal bitmasks such as
-0xFF000000 can be difficult to read at a glance. I'll incorporate
-GENMASK into a version 4 release of this patch.
+Some qcom platforms make some GPIOs or pins unavailable for use
+by non-secure operating systems, and thus reading or writing the
+registers for those pins will cause access control issues.
+Introduce a DT property to describe the set of GPIOs that are
+available for use so that higher level OSes are able to know what
+pins to avoid reading/writing.
 
->
->
->> +               *bits |= (unsigned long)inb(idio16gpio->base + 5) << 24;
->
->Do you need casting?
+Cc: Grant Likely <grant.likely@secretlab.ca>
+Cc: <devicetree@vger.kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ Documentation/devicetree/bindings/gpio/gpio.txt | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-The inb function returns a u8, which is typically a typedef of an
-unsigned char. Since u8 only guaranteed a range of 8 bits, we require a
-cast to unsigned long to guarantee that the left shifted value stays
-intact as a 32-bit unsigned value rather than wrap around an 8-bit
-unsigned range.
-
-William Breathitt Gray
-
->
->> +
->> +       return 0;
->> +}
->> +
->>  static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
->>  {
->>         struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
->> @@ -244,6 +258,7 @@ static int idio_16_probe(struct device *dev, unsigned int id)
->>         idio16gpio->chip.direction_input = idio_16_gpio_direction_input;
->>         idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
->>         idio16gpio->chip.get = idio_16_gpio_get;
->> +       idio16gpio->chip.get_multiple = idio_16_gpio_get_multiple;
->>         idio16gpio->chip.set = idio_16_gpio_set;
->>         idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
->>         idio16gpio->base = base[id];
->> --
->> 2.16.2
->>
->
->
->
->-- 
->With Best Regards,
->Andy Shevchenko
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index b5de08e3b1a2..a7c31de29362 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -151,9 +151,9 @@ in a lot of designs, some using all 32 bits, some using 18 and some using
+ first 18 GPIOs, at local offset 0 .. 17, are in use.
+ 
+ If these GPIOs do not happen to be the first N GPIOs at offset 0...N-1, an
+-additional bitmask is needed to specify which GPIOs are actually in use,
+-and which are dummies. The bindings for this case has not yet been
+-specified, but should be specified if/when such hardware appears.
++additional set of tuples is needed to specify which GPIOs are unusable, with
++the gpio-reserved-ranges binding. This property indicates the start and size
++of the GPIOs that can't be used.
+ 
+ Optionally, a GPIO controller may have a "gpio-line-names" property. This is
+ an array of strings defining the names of the GPIO lines going out of the
+@@ -178,6 +178,7 @@ gpio-controller@00000000 {
+ 	gpio-controller;
+ 	#gpio-cells = <2>;
+ 	ngpios = <18>;
++	gpio-reserved-ranges = <0 4>, <12 2>;
+ 	gpio-line-names = "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LED R",
+ 		"LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
+ 		"Row A", "Row B", "Row C", "Row D", "NMI button",
+-- 
+Sent by a computer through tubes
