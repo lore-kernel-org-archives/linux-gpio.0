@@ -1,197 +1,102 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v3 2/3] gpiolib: Support 'gpio-reserved-ranges' property
-Date: Wed, 21 Mar 2018 09:58:47 -0700
-Message-ID: <20180321165848.89751-3-swboyd@chromium.org>
-References: <20180321165848.89751-1-swboyd@chromium.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: Use after free with pinctrl_enable() and
+ devm_pinctrl_register_and_init()
+Date: Wed, 21 Mar 2018 10:07:01 -0700
+Message-ID: <20180321170701.GD5799@atomide.com>
+References: <CAMuHMdW+OzGYK7zj+-jWmZwMcve7=C5gGamgH9jmdgqJ7NC7Vg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180321165848.89751-1-swboyd@chromium.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW+OzGYK7zj+-jWmZwMcve7=C5gGamgH9jmdgqJ7NC7Vg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+* Geert Uytterhoeven <geert@linux-m68k.org> [180321 15:44]:
+> Hi Linus, Tony,
+> 
+> If claiming hogs failed, pinctrl_enable() frees the pctldev, and
+> destroys its mutex.
 
-Some qcom platforms make some GPIOs or pins unavailable for use by
-non-secure operating systems, and thus reading or writing the registers
-for those pins will cause access control issues. Add support for a DT
-property to describe the set of GPIOs that are available for use so that
-higher level OSes are able to know what pins to avoid reading/writing.
-Non-DT platforms can add support by directly updating the
-chip->valid_mask.
+Hmm so is something also left dangling at this point?
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/gpio/gpiolib-of.c   | 24 ++++++++++++++++++
- drivers/gpio/gpiolib.c      | 50 +++++++++++++++++++++++++++++++++++++
- include/linux/gpio/driver.h | 16 ++++++++++++
- 3 files changed, 90 insertions(+)
+> However, if the pin controller is registered using
+> devm_pinctrl_register_and_init(), device resource management will call
+> pinctrl_unregister() later.  This will access the destroyed pctldev,
+> which may crash the system.
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 84e5a9df2344..ed81d9a6316f 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -511,6 +511,28 @@ void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc)
- }
- EXPORT_SYMBOL(of_mm_gpiochip_remove);
- 
-+static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
-+{
-+	int len, i;
-+	u32 start, count;
-+	struct device_node *np = chip->of_node;
-+
-+	len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
-+	if (len < 0 || len % 2 != 0)
-+		return;
-+
-+	for (i = 0; i < len; i += 2) {
-+		of_property_read_u32_index(np, "gpio-reserved-ranges",
-+					   i, &start);
-+		of_property_read_u32_index(np, "gpio-reserved-ranges",
-+					   i + 1, &count);
-+		if (start >= chip->ngpio || start + count >= chip->ngpio)
-+			continue;
-+
-+		bitmap_clear(chip->valid_mask, start, count);
-+	}
-+};
-+
- #ifdef CONFIG_PINCTRL
- static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
- {
-@@ -615,6 +637,8 @@ int of_gpiochip_add(struct gpio_chip *chip)
- 	if (chip->of_gpio_n_cells > MAX_PHANDLE_ARGS)
- 		return -EINVAL;
- 
-+	of_gpiochip_init_valid_mask(chip);
-+
- 	status = of_gpiochip_add_pin_range(chip);
- 	if (status)
- 		return status;
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d66de67ef307..5861984774ac 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -337,6 +337,47 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
- 	return 0;
- }
- 
-+static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
-+{
-+#ifdef CONFIG_OF_GPIO
-+	int size;
-+	struct device_node *np = gpiochip->of_node;
-+
-+	size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
-+	if (size > 0 && size % 2 == 0)
-+		gpiochip->need_valid_mask = true;
-+#endif
-+
-+	if (!gpiochip->need_valid_mask)
-+		return 0;
-+
-+	gpiochip->valid_mask = kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
-+				       sizeof(long), GFP_KERNEL);
-+	if (!gpiochip->valid_mask)
-+		return -ENOMEM;
-+
-+	/* Assume by default all GPIOs are valid */
-+	bitmap_fill(gpiochip->valid_mask, gpiochip->ngpio);
-+
-+	return 0;
-+}
-+
-+static void gpiochip_free_valid_mask(struct gpio_chip *gpiochip)
-+{
-+	kfree(gpiochip->valid_mask);
-+	gpiochip->valid_mask = NULL;
-+}
-+
-+bool gpiochip_line_is_valid(const struct gpio_chip *gpiochip,
-+				unsigned int offset)
-+{
-+	/* No mask means all valid */
-+	if (likely(!gpiochip->valid_mask))
-+		return true;
-+	return test_bit(offset, gpiochip->valid_mask);
-+}
-+EXPORT_SYMBOL_GPL(gpiochip_line_is_valid);
-+
- /*
-  * GPIO line handle management
-  */
-@@ -1261,6 +1302,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	if (status)
- 		goto err_remove_from_list;
- 
-+	status = gpiochip_init_valid_mask(chip);
-+	if (status)
-+		goto err_remove_irqchip_mask;
-+
- 	status = gpiochip_add_irqchip(chip, lock_key, request_key);
- 	if (status)
- 		goto err_remove_chip;
-@@ -1290,6 +1335,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	acpi_gpiochip_remove(chip);
- 	gpiochip_free_hogs(chip);
- 	of_gpiochip_remove(chip);
-+	gpiochip_free_valid_mask(chip);
-+err_remove_irqchip_mask:
- 	gpiochip_irqchip_free_valid_mask(chip);
- err_remove_from_list:
- 	spin_lock_irqsave(&gpio_lock, flags);
-@@ -1346,6 +1393,7 @@ void gpiochip_remove(struct gpio_chip *chip)
- 	acpi_gpiochip_remove(chip);
- 	gpiochip_remove_pin_ranges(chip);
- 	of_gpiochip_remove(chip);
-+	gpiochip_free_valid_mask(chip);
- 	/*
- 	 * We accept no more calls into the driver from this point, so
- 	 * NULL the driver data pointer
-@@ -1526,6 +1574,8 @@ static void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip)
- bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gpiochip,
- 				unsigned int offset)
- {
-+	if (!gpiochip_line_is_valid(gpiochip, offset))
-+		return false;
- 	/* No mask means all valid */
- 	if (likely(!gpiochip->irq.valid_mask))
- 		return true;
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 1ba9a331ec51..5382b5183b7e 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -288,6 +288,21 @@ struct gpio_chip {
- 	struct gpio_irq_chip irq;
- #endif
- 
-+	/**
-+	 * @need_valid_mask:
-+	 *
-+	 * If set core allocates @valid_mask with all bits set to one.
-+	 */
-+	bool need_valid_mask;
-+
-+	/**
-+	 * @valid_mask:
-+	 *
-+	 * If not %NULL holds bitmask of GPIOs which are valid to be used
-+	 * from the chip.
-+	 */
-+	unsigned long *valid_mask;
-+
- #if defined(CONFIG_OF_GPIO)
- 	/*
- 	 * If CONFIG_OF is enabled, then all GPIO controllers described in the
-@@ -384,6 +399,7 @@ bool gpiochip_line_is_open_source(struct gpio_chip *chip, unsigned int offset);
- 
- /* Sleep persistence inquiry for drivers */
- bool gpiochip_line_is_persistent(struct gpio_chip *chip, unsigned int offset);
-+bool gpiochip_line_is_valid(const struct gpio_chip *chip, unsigned int offset);
- 
- /* get driver data */
- void *gpiochip_get_data(struct gpio_chip *chip);
--- 
-Sent by a computer through tubes
+Can we call pinctrl_unregister() earlier and just set
+pctldev to NULL..
+
+> With poisoning enabled (CONFIG_DEBUG_SLAB=y), the crash is imminent:
+> 
+>     sh-pfc e6050000.pin-controller: function 'foo' not supported
+>     sh-pfc e6050000.pin-controller: invalid function a in map table
+>     sh-pfc e6050000.pin-controller: error claiming hogs: -22
+>     sh-pfc e6050000.pin-controller: could not claim hogs: -22
+>     Unhandled fault: alignment exception (0x001) at 0x6b6b6c2f
+>     pgd = 581794e0
+>     [6b6b6c2f] *pgd=00000000
+>     Internal error: : 1 [#1] SMP ARM
+>     Modules linked in:
+>     CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+> 4.16.0-rc5-kzm9g-00484-gb3469948b11d02a0-dirty #1043
+>     Hardware name: Generic SH73A0 (Flattened Device Tree)
+>     PC is at __lock_acquire+0xd8/0x1bf0
+>     LR is at lock_acquire+0x98/0xb8
+>     pc : [<c016fc84>]    lr : [<c0171f80>]    psr: 20000093
+>     sp : df441be8  ip : df441c80  fp : 00000000
+>     r10: 00000000  r9 : 00000001  r8 : 00000000
+>     r7 : 00000000  r6 : c1084170  r5 : df5586e8  r4 : df43e040
+>     r3 : 6b6b6c2f  r2 : 6b6b6b6b  r1 : 00000000  r0 : 6b6b6b6b
+>     Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
+>     Control: 10c5387d  Table: 4000404a  DAC: 00000051
+>     Process swapper/0 (pid: 1, stack limit = 0x2557051f)
+>     Stack: (0xdf441be8 to 0xdf442000)
+>     ...
+>     [<c016fc84>] (__lock_acquire) from [<c0171f80>] (lock_acquire+0x98/0xb8)
+>     [<c0171f80>] (lock_acquire) from [<c0598888>] (__mutex_lock+0x7c/0x9ec)
+>     [<c0598888>] (__mutex_lock) from [<c0599210>] (mutex_lock_nested+0x18/0x20)
+>     [<c0599210>] (mutex_lock_nested) from [<c034cd18>]
+> (pinctrl_unregister+0x48/0x158)
+>     [<c034cd18>] (pinctrl_unregister) from [<c03b3f30>]
+> (release_nodes+0x218/0x25c)
+>     [<c03b3f30>] (release_nodes) from [<c03b08ac>]
+> (driver_probe_device+0x200/0x318)
+>     [<c03b08ac>] (driver_probe_device) from [<c03aedd8>]
+> (bus_for_each_drv+0x90/0xb8)
+> 
+> My first idea was to add a !devres_find(pctldev->dev, devm_pinctrl_dev_release,
+> NULL, NULL) check to the error path of pinctrl_enable(), which seems
+> to work(TM).
+> 
+> However, that's still not 100% correct and sufficient:
+>   - pinctrl_unregister() will do some cleanup (pinctrldev_list and debugfs) that
+>     should not be done,
+
+.. or maybe we could add some state flag to prevent this?
+
+Something like the following pseudo code with super long
+names maybe :)
+
+enum pinctrl_controller_state {
+     PINCTRL_STATE_NONE,
+     PINCTRL_STATE_REGISTERED,
+     PINCTRL_STATE_HOGS_CLAIMED,
+     PINCTRL_STATE_INITIALIZED,
+     PINCTRL_STATE_ENABLED,
+};
+
+>   - When using pinctrl_register() or devm_pinctrl_register(), and
+>     pinctrl_enable() fails, all other cleanup done in pinctrl_unregister()
+>     never happens.
+
+Maybe this too would get sorted out if we could call
+pinctrl_unregister() safely at any point of a failed
+controller init?
+
+Regards,
+
+Tony
