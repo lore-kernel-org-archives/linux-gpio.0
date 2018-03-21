@@ -1,45 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v8 8/9] pinctrl: madera: Add driver for Cirrus Logic
- Madera codecs
-Date: Wed, 21 Mar 2018 09:07:28 +0100
-Message-ID: <CACRpkdaV=NK_wXyjHnwRZ44MN1dgdpu9vm-S4fa9swdi04iEvQ@mail.gmail.com>
-References: <20180226130558.7634-1-rf@opensource.cirrus.com> <20180226130558.7634-9-rf@opensource.cirrus.com>
+Subject: Re: [PATCH] pinctrl: imx: fix unsigned check if nfuncs with less than
+ or equal zero
+Date: Wed, 21 Mar 2018 09:49:29 +0100
+Message-ID: <CACRpkdZYn8Ke2cXWt63LukTMa-zohToaK-UcrR3mvbCgL_M_yw@mail.gmail.com>
+References: <20180226120418.3589-1-colin.king@canonical.com> <AM3PR04MB3063FA8C1B267634A8B1A5180C10@AM3PR04MB306.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180226130558.7634-9-rf@opensource.cirrus.com>
+In-Reply-To: <AM3PR04MB3063FA8C1B267634A8B1A5180C10@AM3PR04MB306.eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Colin King <colin.king@canonical.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 2:05 PM, Richard Fitzgerald
-<rf@opensource.cirrus.com> wrote:
+On Mon, Feb 26, 2018 at 2:14 PM, A.s. Dong <aisheng.dong@nxp.com> wrote:
 
-> These codecs have a variable number of I/O lines each of which
-> is individually selectable to a wide range of possible functions.
+>> -     u32 nfuncs = 0;
+>> -     u32 i = 0;
+>> +     int nfuncs = 0;
+>> +     int i = 0;
+>>       bool flat_funcs;
+>>
 >
-> The functionality is slightly different from the traditional muxed
-> GPIO since most of the functions can be mapped to any pin (and even
-> the same function to multiple pins). Most pins have a dedicated
-> "alternate" function that is only available on that pin. The
-> alternate functions are usually a group of signals, though it is
-> not always necessary to enable the full group, depending on the
-> alternate function and how it is to be used. The mapping between
-> alternate functions and GPIO pins varies between codecs depending
-> on the number of alternate functions and available pins.
+> I saw 'i', later used, is converted to u32 unconditionally. (GCC did not complain)
+> e.g.
+> radix_tree_insert
+> imx_pinctrl_parse_functions
 >
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> There are some minor changes since LinusW last reviewed this patch but as
-> they are trivial I have carried forward Linus's Reviewed-by:
-> - SPDX license headers
-> - can now build it as a module
-> - avoided a minor checkpatch warning about an unnecessary else {} in
->     madera_get_group_name()
+> And of_get_child_count seems can't  return a minor value.
+>
+> So does something like below look better?
+>
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+> index c976ffe..4259209 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> @@ -612,7 +612,7 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
+>                 nfuncs = 1;
+>         } else {
+>                 nfuncs = of_get_child_count(np);
+> -               if (nfuncs <= 0) {
+> +               if (nfuncs == 0) {
 
-It's fine. Keep my Review tag.
+This makes more sense to me.
+
+You can have zero functions but not negative number of functions.
+
+Aisheng, can you send a patch like this? (Or is it already somewhere in
+my inbox?)
 
 Yours,
 Linus Walleij
