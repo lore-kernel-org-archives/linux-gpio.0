@@ -1,35 +1,47 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] pinctrl: ocelot: fix gpio direction
-Date: Thu, 22 Mar 2018 13:35:00 +0100
-Message-ID: <20180322123500.2379-1-alexandre.belloni@bootlin.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v4 0/7] Implement get_multiple for ACCES and PC/104 drivers
+Date: Thu, 22 Mar 2018 08:59:18 -0400
+Message-ID: <cover.1521723192.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Gregory Clement <gregory.clement@bootlin.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linus.walleij@linaro.org
+Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Bits have to be cleared in DEVCPU_GCB:GPIO:GPIO_OE for input and set for
-output. ocelot_gpio_set_direction() got it wrong and this went unnoticed
-when the driver was reworked.
+Changes in v4:
+  - Remove STX104 patch as it has been picked up through the IIO tree
+  - Utilize GENMASK for 104-IDIO-16 patch to avoid long literal bitmasks
+  - Fix off-by-one errors for port_mask initializations
+  - Add end comma to ports arrays initializations for consistency
 
-Reported-by: Gregory Clement <gregory.clement@bootlin.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/pinctrl/pinctrl-ocelot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patchset implements get_multiple callbacks for the PC104 GPIO
+drivers as well as the PCI-IDIO-16 and PCIe-IDIO-24 GPIO drivers. These
+devices all acquire the multiple input lines with a single read, so
+utilizing the get_multiple callback can provide improvement for those
+users who regularly access multiple input lines.
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index a9423238471e..b5b3547fdcb2 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -252,7 +252,7 @@ static int ocelot_gpio_set_direction(struct pinctrl_dev *pctldev,
- 	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
- 
- 	regmap_update_bits(info->map, OCELOT_GPIO_OE, BIT(pin),
--			   input ? BIT(pin) : 0);
-+			   input ? 0 : BIT(pin));
- 
- 	return 0;
- }
+While developing this patchset I noticed many of these devices make use
+of Intel 8255 compatible interfaces for their I/O. I may write a generic
+8255 GPIO driver in the future to reduce some of the redundant code I
+see pop among the drivers for these devices.
+
+William Breathitt Gray (7):
+  gpio: 104-idio-16: Implement get_multiple callback
+  gpio: pci-idio-16: Implement get_multiple callback
+  gpio: pcie-idio-24: Implement get_multiple/set_multiple callbacks
+  gpio: 104-dio-48e: Implement get_multiple callback
+  gpio: 104-idi-48: Implement get_multiple callback
+  gpio: gpio-mm: Implement get_multiple callback
+  gpio: ws16c48: Implement get_multiple callback
+
+ drivers/gpio/gpio-104-dio-48e.c  |  47 ++++++++++++++++
+ drivers/gpio/gpio-104-idi-48.c   |  47 ++++++++++++++++
+ drivers/gpio/gpio-104-idio-16.c  |  15 +++++
+ drivers/gpio/gpio-gpio-mm.c      |  47 ++++++++++++++++
+ drivers/gpio/gpio-pci-idio-16.c  |  50 +++++++++++++++++
+ drivers/gpio/gpio-pcie-idio-24.c | 117 +++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-ws16c48.c      |  47 ++++++++++++++++
+ 7 files changed, 370 insertions(+)
+
 -- 
 2.16.2
