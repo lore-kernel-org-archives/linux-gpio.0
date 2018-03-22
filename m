@@ -1,47 +1,102 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v4 0/7] Implement get_multiple for ACCES and PC/104 drivers
-Date: Thu, 22 Mar 2018 08:59:18 -0400
-Message-ID: <cover.1521723192.git.vilhelm.gray@gmail.com>
+Subject: [PATCH v4 2/7] gpio: pci-idio-16: Implement get_multiple callback
+Date: Thu, 22 Mar 2018 08:59:48 -0400
+Message-ID: <e48b8ffb2497a49492746bed4b0b4276e256e4ad.1521723192.git.vilhelm.gray@gmail.com>
+References: <cover.1521723192.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1521723192.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org
 Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Changes in v4:
-  - Remove STX104 patch as it has been picked up through the IIO tree
-  - Utilize GENMASK for 104-IDIO-16 patch to avoid long literal bitmasks
-  - Fix off-by-one errors for port_mask initializations
-  - Add end comma to ports arrays initializations for consistency
+The ACCES I/O PCI-IDIO-16 series of devices provides 16
+optically-isolated digital inputs accessed via two 8-bit ports. Since
+eight input lines are acquired on a single port input read, the
+PCI-IDIO-16 GPIO driver may improve multiple input reads by utilizing a
+get_multiple callback. This patch implements the
+idio_16_gpio_get_multiple function which serves as the respective
+get_multiple callback.
 
-This patchset implements get_multiple callbacks for the PC104 GPIO
-drivers as well as the PCI-IDIO-16 and PCIe-IDIO-24 GPIO drivers. These
-devices all acquire the multiple input lines with a single read, so
-utilizing the get_multiple callback can provide improvement for those
-users who regularly access multiple input lines.
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ drivers/gpio/gpio-pci-idio-16.c | 50 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-While developing this patchset I noticed many of these devices make use
-of Intel 8255 compatible interfaces for their I/O. I may write a generic
-8255 GPIO driver in the future to reduce some of the redundant code I
-see pop among the drivers for these devices.
-
-William Breathitt Gray (7):
-  gpio: 104-idio-16: Implement get_multiple callback
-  gpio: pci-idio-16: Implement get_multiple callback
-  gpio: pcie-idio-24: Implement get_multiple/set_multiple callbacks
-  gpio: 104-dio-48e: Implement get_multiple callback
-  gpio: 104-idi-48: Implement get_multiple callback
-  gpio: gpio-mm: Implement get_multiple callback
-  gpio: ws16c48: Implement get_multiple callback
-
- drivers/gpio/gpio-104-dio-48e.c  |  47 ++++++++++++++++
- drivers/gpio/gpio-104-idi-48.c   |  47 ++++++++++++++++
- drivers/gpio/gpio-104-idio-16.c  |  15 +++++
- drivers/gpio/gpio-gpio-mm.c      |  47 ++++++++++++++++
- drivers/gpio/gpio-pci-idio-16.c  |  50 +++++++++++++++++
- drivers/gpio/gpio-pcie-idio-24.c | 117 +++++++++++++++++++++++++++++++++++++++
- drivers/gpio/gpio-ws16c48.c      |  47 ++++++++++++++++
- 7 files changed, 370 insertions(+)
-
+diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
+index 57d1b7fbf07b..1948724d8c36 100644
+--- a/drivers/gpio/gpio-pci-idio-16.c
++++ b/drivers/gpio/gpio-pci-idio-16.c
+@@ -11,6 +11,7 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * General Public License for more details.
+  */
++#include <linux/bitmap.h>
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/errno.h>
+@@ -103,6 +104,54 @@ static int idio_16_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	return !!(ioread8(&idio16gpio->reg->in8_15) & (mask >> 24));
+ }
+ 
++static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
++	unsigned long *mask, unsigned long *bits)
++{
++	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
++	size_t i;
++	const unsigned int gpio_reg_size = 8;
++	unsigned int bits_offset;
++	size_t word_index;
++	unsigned int word_offset;
++	unsigned long word_mask;
++	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
++	unsigned long port_state;
++	u8 __iomem ports[] = {
++		idio16gpio->reg->out0_7, idio16gpio->reg->out8_15,
++		idio16gpio->reg->in0_7, idio16gpio->reg->in8_15,
++	};
++
++	/* clear bits array to a clean slate */
++	bitmap_zero(bits, chip->ngpio);
++
++	/* get bits are evaluated a gpio port register at a time */
++	for (i = 0; i < ARRAY_SIZE(ports); i++) {
++		/* gpio offset in bits array */
++		bits_offset = i * gpio_reg_size;
++
++		/* word index for bits array */
++		word_index = BIT_WORD(bits_offset);
++
++		/* gpio offset within current word of bits array */
++		word_offset = bits_offset % BITS_PER_LONG;
++
++		/* mask of get bits for current gpio within current word */
++		word_mask = mask[word_index] & (port_mask << word_offset);
++		if (!word_mask) {
++			/* no get bits in this port so skip to next one */
++			continue;
++		}
++
++		/* read bits from current gpio port */
++		port_state = ioread8(ports + i);
++
++		/* store acquired bits at respective bits array offset */
++		bits[word_index] |= port_state << word_offset;
++	}
++
++	return 0;
++}
++
+ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	int value)
+ {
+@@ -299,6 +348,7 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	idio16gpio->chip.direction_input = idio_16_gpio_direction_input;
+ 	idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
+ 	idio16gpio->chip.get = idio_16_gpio_get;
++	idio16gpio->chip.get_multiple = idio_16_gpio_get_multiple;
+ 	idio16gpio->chip.set = idio_16_gpio_set;
+ 	idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
+ 
 -- 
 2.16.2
