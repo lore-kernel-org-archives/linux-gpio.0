@@ -1,2461 +1,588 @@
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: [PATCH v4 3/5] pinctrl: add mt2712 pinctrl driver
-Date: Thu, 22 Mar 2018 10:58:41 +0800
-Message-ID: <1521687523-1604-4-git-send-email-zhiyong.tao@mediatek.com>
-References: <1521687523-1604-1-git-send-email-zhiyong.tao@mediatek.com>
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH v9 8/9] pinctrl: madera: Add driver for Cirrus Logic
+ Madera codecs
+Date: Thu, 22 Mar 2018 19:31:27 +0800
+Message-ID: <201803221928.QinIS1e5%fengguang.wu@intel.com>
+References: <20180313131904.13700-9-rf@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/mixed; boundary="fUYQa+Pmc3FrFX/N"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1521687523-1604-1-git-send-email-zhiyong.tao@mediatek.com>
+Content-Disposition: inline
+In-Reply-To: <20180313131904.13700-9-rf@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, matthias.bgg@gmail.com
-Cc: srv_heupstream@mediatek.com, liguo.zhang@mediatek.com, yingjoe.chen@mediatek.com, hongkun.cao@mediatek.com, biao.huang@mediatek.com, yt.shen@mediatek.com, hongzhou.yang@mediatek.com, erin.lo@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: kbuild-all@01.org, lee.jones@linaro.org, linus.walleij@linaro.org, andy.shevchenko@gmail.com, robh+dt@kernel.org, patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The commit includes mt2712 pinctrl driver.
 
-Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Richard,
+
+I love your patch! Yet something to improve:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v4.16-rc6 next-20180322]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Richard-Fitzgerald/mfd-madera-Add-register-definitions-for-Cirrus-Logic-Madera-codecs/20180314-211822
+config: i386-randconfig-x010-03221515 (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=i386 
+
+All errors (new ones prefixed by >>):
+
+>> drivers/pinctrl/cirrus/pinctrl-madera-core.c:561:20: error: 'pinconf_generic_dt_node_to_map_all' undeclared here (not in a function); did you mean 'pinconf_generic_params'?
+     .dt_node_to_map = pinconf_generic_dt_node_to_map_all,
+                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                       pinconf_generic_params
+
+vim +561 drivers/pinctrl/cirrus/pinctrl-madera-core.c
+
+   555	
+   556	
+   557	static const struct pinctrl_ops madera_pin_group_ops = {
+   558		.get_groups_count = madera_get_groups_count,
+   559		.get_group_name = madera_get_group_name,
+   560		.get_group_pins = madera_get_group_pins,
+ > 561		.dt_node_to_map = pinconf_generic_dt_node_to_map_all,
+   562		.dt_free_map = pinctrl_utils_free_map,
+   563	#if IS_ENABLED(CONFIG_DEBUG_FS)
+   564		.pin_dbg_show = madera_pin_dbg_show,
+   565	#endif
+   566	};
+   567	
+
 ---
- drivers/pinctrl/mediatek/Kconfig              |    7 +
- drivers/pinctrl/mediatek/Makefile             |    1 +
- drivers/pinctrl/mediatek/pinctrl-mt2712.c     |  634 +++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h | 1757 +++++++++++++++++++++++++
- 4 files changed, 2399 insertions(+)
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt2712.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 3e59874..862c5db 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -32,6 +32,13 @@ config PINCTRL_MT8127
- 	select PINCTRL_MTK
- 
- # For ARMv8 SoCs
-+config PINCTRL_MT2712
-+	bool "MediaTek MT2712 pin control"
-+	depends on OF
-+	depends on ARM64 || COMPILE_TEST
-+	default ARM64 && ARCH_MEDIATEK
-+	select PINCTRL_MTK
-+
- config PINCTRL_MT7622
- 	bool "MediaTek MT7622 pin control"
- 	depends on OF
-diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/mediatek/Makefile
-index ed7d2b2..7959e77 100644
---- a/drivers/pinctrl/mediatek/Makefile
-+++ b/drivers/pinctrl/mediatek/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_PINCTRL_MTK)	+= pinctrl-mtk-common.o
- 
- # SoC Drivers
- obj-$(CONFIG_PINCTRL_MT2701)	+= pinctrl-mt2701.o
-+obj-$(CONFIG_PINCTRL_MT2712)	+= pinctrl-mt2712.o
- obj-$(CONFIG_PINCTRL_MT8135)	+= pinctrl-mt8135.o
- obj-$(CONFIG_PINCTRL_MT8127)	+= pinctrl-mt8127.o
- obj-$(CONFIG_PINCTRL_MT7622)	+= pinctrl-mt7622.o
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt2712.c b/drivers/pinctrl/mediatek/pinctrl-mt2712.c
-new file mode 100644
-index 0000000..d14511f
---- /dev/null
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt2712.c
-@@ -0,0 +1,634 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018 MediaTek Inc.
-+ * Author: Zhiyong Tao <zhiyong.tao@mediatek.com>
-+ *
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/regmap.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <dt-bindings/pinctrl/mt65xx.h>
-+
-+#include "pinctrl-mtk-common.h"
-+#include "pinctrl-mtk-mt2712.h"
-+
-+static const struct mtk_pin_spec_pupd_set_samereg mt2712_spec_pupd[] = {
-+	MTK_PIN_PUPD_SPEC_SR(18, 0xe50, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(19, 0xe60, 12, 11, 10),
-+	MTK_PIN_PUPD_SPEC_SR(20, 0xe50, 5, 4, 3),
-+	MTK_PIN_PUPD_SPEC_SR(21, 0xe60, 15, 14, 13),
-+	MTK_PIN_PUPD_SPEC_SR(22, 0xe50, 8, 7, 6),
-+	MTK_PIN_PUPD_SPEC_SR(23, 0xe70, 2, 1, 0),
-+
-+	MTK_PIN_PUPD_SPEC_SR(30, 0xf30, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(31, 0xf30, 6, 5, 4),
-+	MTK_PIN_PUPD_SPEC_SR(32, 0xf30, 10, 9, 8),
-+	MTK_PIN_PUPD_SPEC_SR(33, 0xf30, 14, 13, 12),
-+	MTK_PIN_PUPD_SPEC_SR(34, 0xf40, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(35, 0xf40, 6, 5, 4),
-+	MTK_PIN_PUPD_SPEC_SR(36, 0xf40, 10, 9, 8),
-+	MTK_PIN_PUPD_SPEC_SR(37, 0xc40, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(38, 0xc60, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(39, 0xc60, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(40, 0xc60, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(41, 0xc60, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(42, 0xc60, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(43, 0xc60, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(44, 0xc60, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(45, 0xc60, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(46, 0xc50, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(47, 0xda0, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(48, 0xd90, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(49, 0xdf0, 14, 13, 12),
-+	MTK_PIN_PUPD_SPEC_SR(50, 0xdf0, 10, 9, 8),
-+	MTK_PIN_PUPD_SPEC_SR(51, 0xdf0, 6, 5, 4),
-+	MTK_PIN_PUPD_SPEC_SR(52, 0xdf0, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(53, 0xd50, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(54, 0xd80, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(55, 0xe00, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(56, 0xd40, 2, 1, 0),
-+
-+	MTK_PIN_PUPD_SPEC_SR(63, 0xc80, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(64, 0xdb0, 14, 13, 12),
-+	MTK_PIN_PUPD_SPEC_SR(65, 0xdb0, 6, 5, 4),
-+	MTK_PIN_PUPD_SPEC_SR(66, 0xdb0, 10, 9, 8),
-+	MTK_PIN_PUPD_SPEC_SR(67, 0xcd0, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(68, 0xdb0, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(69, 0xc90, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(70, 0xcc0, 2, 1, 0),
-+
-+	MTK_PIN_PUPD_SPEC_SR(89, 0xce0, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(90, 0xdd0, 14, 13, 12),
-+	MTK_PIN_PUPD_SPEC_SR(91, 0xdd0, 10, 9, 8),
-+	MTK_PIN_PUPD_SPEC_SR(92, 0xdd0, 6, 5, 4),
-+	MTK_PIN_PUPD_SPEC_SR(93, 0xdd0, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(94, 0xd20, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(95, 0xcf0, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(96, 0xd30, 2, 1, 0),
-+
-+	MTK_PIN_PUPD_SPEC_SR(135, 0xe50, 11, 10, 9),
-+	MTK_PIN_PUPD_SPEC_SR(136, 0xe50, 14, 13, 12),
-+	MTK_PIN_PUPD_SPEC_SR(137, 0xe70, 5, 4, 3),
-+	MTK_PIN_PUPD_SPEC_SR(138, 0xe70, 8, 7, 6),
-+	MTK_PIN_PUPD_SPEC_SR(139, 0xe70, 11, 10, 9),
-+	MTK_PIN_PUPD_SPEC_SR(140, 0xe70, 14, 13, 12),
-+	MTK_PIN_PUPD_SPEC_SR(141, 0xe60, 2, 1, 0),
-+	MTK_PIN_PUPD_SPEC_SR(142, 0xe60, 5, 4, 3)
-+};
-+
-+static int mt2712_spec_pull_set(struct regmap *regmap,
-+				unsigned int pin,
-+				unsigned char align,
-+				bool isup,
-+				unsigned int r1r0)
-+{
-+	return mtk_pctrl_spec_pull_set_samereg(regmap, mt2712_spec_pupd,
-+		ARRAY_SIZE(mt2712_spec_pupd), pin, align, isup, r1r0);
-+}
-+
-+static const struct mtk_pin_ies_smt_set mt2712_smt_set[] = {
-+	MTK_PIN_IES_SMT_SPEC(0, 3, 0x900, 2),
-+	MTK_PIN_IES_SMT_SPEC(4, 7, 0x900, 0),
-+	MTK_PIN_IES_SMT_SPEC(8, 11, 0x900, 1),
-+	MTK_PIN_IES_SMT_SPEC(12, 12, 0x8d0, 6),
-+	MTK_PIN_IES_SMT_SPEC(13, 13, 0x8d0, 7),
-+	MTK_PIN_IES_SMT_SPEC(14, 14, 0x8d0, 6),
-+	MTK_PIN_IES_SMT_SPEC(15, 15, 0x8d0, 7),
-+	MTK_PIN_IES_SMT_SPEC(18, 23, 0x8d0, 1),
-+	MTK_PIN_IES_SMT_SPEC(24, 25, 0x8d0, 2),
-+	MTK_PIN_IES_SMT_SPEC(26, 26, 0x8d0, 3),
-+	MTK_PIN_IES_SMT_SPEC(27, 27, 0x8d0, 4),
-+	MTK_PIN_IES_SMT_SPEC(28, 29, 0x8d0, 3),
-+	MTK_PIN_IES_SMT_SPEC(30, 36, 0xf50, 13),
-+	MTK_PIN_IES_SMT_SPEC(37, 37, 0xc40, 13),
-+	MTK_PIN_IES_SMT_SPEC(38, 45, 0xc60, 13),
-+	MTK_PIN_IES_SMT_SPEC(46, 46, 0xc50, 13),
-+	MTK_PIN_IES_SMT_SPEC(47, 47, 0xda0, 13),
-+	MTK_PIN_IES_SMT_SPEC(48, 48, 0xd90, 13),
-+	MTK_PIN_IES_SMT_SPEC(49, 52, 0xd60, 13),
-+	MTK_PIN_IES_SMT_SPEC(53, 53, 0xd50, 13),
-+	MTK_PIN_IES_SMT_SPEC(54, 54, 0xd80, 13),
-+	MTK_PIN_IES_SMT_SPEC(55, 55, 0xe00, 13),
-+	MTK_PIN_IES_SMT_SPEC(56, 56, 0xd40, 13),
-+	MTK_PIN_IES_SMT_SPEC(57, 62, 0x900, 3),
-+	MTK_PIN_IES_SMT_SPEC(63, 63, 0xc80, 13),
-+	MTK_PIN_IES_SMT_SPEC(64, 66, 0xca0, 13),
-+	MTK_PIN_IES_SMT_SPEC(67, 67, 0xc80, 13),
-+	MTK_PIN_IES_SMT_SPEC(68, 68, 0xca0, 13),
-+	MTK_PIN_IES_SMT_SPEC(69, 69, 0xc90, 13),
-+	MTK_PIN_IES_SMT_SPEC(70, 70, 0xc80, 13),
-+	MTK_PIN_IES_SMT_SPEC(71, 74, 0x8d0, 8),
-+	MTK_PIN_IES_SMT_SPEC(75, 77, 0x8d0, 9),
-+	MTK_PIN_IES_SMT_SPEC(78, 81, 0x8d0, 10),
-+	MTK_PIN_IES_SMT_SPEC(82, 88, 0x8d0, 9),
-+	MTK_PIN_IES_SMT_SPEC(89, 89, 0xce0, 13),
-+	MTK_PIN_IES_SMT_SPEC(90, 93, 0xd00, 13),
-+	MTK_PIN_IES_SMT_SPEC(94, 94, 0xce0, 13),
-+	MTK_PIN_IES_SMT_SPEC(95, 96, 0xcf0, 13),
-+	MTK_PIN_IES_SMT_SPEC(97, 100, 0x8d0, 11),
-+	MTK_PIN_IES_SMT_SPEC(101, 104, 0x8d0, 12),
-+	MTK_PIN_IES_SMT_SPEC(105, 105, 0x8d0, 13),
-+	MTK_PIN_IES_SMT_SPEC(106, 106, 0x8d0, 14),
-+	MTK_PIN_IES_SMT_SPEC(107, 107, 0x8d0, 15),
-+	MTK_PIN_IES_SMT_SPEC(108, 108, 0x8e0, 0),
-+	MTK_PIN_IES_SMT_SPEC(109, 109, 0x8e0, 1),
-+	MTK_PIN_IES_SMT_SPEC(110, 110, 0x8e0, 2),
-+	MTK_PIN_IES_SMT_SPEC(111, 111, 0x8d0, 13),
-+	MTK_PIN_IES_SMT_SPEC(112, 112, 0x8d0, 14),
-+	MTK_PIN_IES_SMT_SPEC(113, 113, 0x8d0, 15),
-+	MTK_PIN_IES_SMT_SPEC(114, 114, 0x8e0, 0),
-+	MTK_PIN_IES_SMT_SPEC(115, 115, 0x8e0, 1),
-+	MTK_PIN_IES_SMT_SPEC(116, 116, 0x8e0, 2),
-+	MTK_PIN_IES_SMT_SPEC(117, 117, 0x8e0, 3),
-+	MTK_PIN_IES_SMT_SPEC(118, 118, 0x8e0, 4),
-+	MTK_PIN_IES_SMT_SPEC(119, 119, 0x8e0, 5),
-+	MTK_PIN_IES_SMT_SPEC(120, 120, 0x8e0, 3),
-+	MTK_PIN_IES_SMT_SPEC(121, 121, 0x8e0, 4),
-+	MTK_PIN_IES_SMT_SPEC(122, 122, 0x8e0, 5),
-+	MTK_PIN_IES_SMT_SPEC(123, 126, 0x8e0, 6),
-+	MTK_PIN_IES_SMT_SPEC(127, 130, 0x8e0, 7),
-+	MTK_PIN_IES_SMT_SPEC(131, 134, 0x8e0, 8),
-+	MTK_PIN_IES_SMT_SPEC(135, 142, 0x8d0, 1),
-+	MTK_PIN_IES_SMT_SPEC(143, 147, 0x8e0, 9),
-+	MTK_PIN_IES_SMT_SPEC(148, 152, 0x8e0, 10),
-+	MTK_PIN_IES_SMT_SPEC(153, 156, 0x8e0, 11),
-+	MTK_PIN_IES_SMT_SPEC(157, 160, 0x8e0, 12),
-+	MTK_PIN_IES_SMT_SPEC(161, 164, 0x8e0, 13),
-+	MTK_PIN_IES_SMT_SPEC(165, 168, 0x8e0, 14),
-+	MTK_PIN_IES_SMT_SPEC(169, 170, 0x8e0, 15),
-+	MTK_PIN_IES_SMT_SPEC(171, 172, 0x8f0, 0),
-+	MTK_PIN_IES_SMT_SPEC(173, 173, 0x8f0, 1),
-+	MTK_PIN_IES_SMT_SPEC(174, 175, 0x8f0, 2),
-+	MTK_PIN_IES_SMT_SPEC(176, 176, 0x8f0, 1),
-+	MTK_PIN_IES_SMT_SPEC(177, 177, 0x8f0, 3),
-+	MTK_PIN_IES_SMT_SPEC(178, 178, 0x8f0, 4),
-+	MTK_PIN_IES_SMT_SPEC(179, 179, 0x8f0, 3),
-+	MTK_PIN_IES_SMT_SPEC(180, 180, 0x8f0, 4),
-+	MTK_PIN_IES_SMT_SPEC(181, 181, 0x8f0, 5),
-+	MTK_PIN_IES_SMT_SPEC(182, 182, 0x8f0, 6),
-+	MTK_PIN_IES_SMT_SPEC(183, 183, 0x8f0, 5),
-+	MTK_PIN_IES_SMT_SPEC(184, 184, 0x8f0, 6),
-+	MTK_PIN_IES_SMT_SPEC(185, 186, 0x8f0, 7),
-+	MTK_PIN_IES_SMT_SPEC(187, 187, 0x8f0, 8),
-+	MTK_PIN_IES_SMT_SPEC(188, 188, 0x8f0, 9),
-+	MTK_PIN_IES_SMT_SPEC(189, 189, 0x8f0, 8),
-+	MTK_PIN_IES_SMT_SPEC(190, 190, 0x8f0, 9),
-+	MTK_PIN_IES_SMT_SPEC(191, 191, 0x8f0, 10),
-+	MTK_PIN_IES_SMT_SPEC(192, 192, 0x8f0, 11),
-+	MTK_PIN_IES_SMT_SPEC(193, 194, 0x8f0, 10),
-+	MTK_PIN_IES_SMT_SPEC(195, 195, 0x8f0, 11),
-+	MTK_PIN_IES_SMT_SPEC(196, 199, 0x8f0, 12),
-+	MTK_PIN_IES_SMT_SPEC(200, 203, 0x8f0, 13),
-+	MTK_PIN_IES_SMT_SPEC(204, 206, 0x8f0, 14),
-+	MTK_PIN_IES_SMT_SPEC(207, 209, 0x8f0, 15)
-+};
-+
-+static const struct mtk_pin_ies_smt_set mt2712_ies_set[] = {
-+	MTK_PIN_IES_SMT_SPEC(0, 3, 0x8c0, 2),
-+	MTK_PIN_IES_SMT_SPEC(4, 7, 0x8c0, 0),
-+	MTK_PIN_IES_SMT_SPEC(8, 9, 0x8c0, 1),
-+	MTK_PIN_IES_SMT_SPEC(10, 11, 0x8c0, 4),
-+	MTK_PIN_IES_SMT_SPEC(12, 12, 0x890, 6),
-+	MTK_PIN_IES_SMT_SPEC(13, 13, 0x890, 7),
-+	MTK_PIN_IES_SMT_SPEC(14, 14, 0x890, 6),
-+	MTK_PIN_IES_SMT_SPEC(15, 15, 0x890, 7),
-+	MTK_PIN_IES_SMT_SPEC(18, 23, 0x890, 1),
-+	MTK_PIN_IES_SMT_SPEC(24, 25, 0x890, 2),
-+	MTK_PIN_IES_SMT_SPEC(26, 26, 0x890, 3),
-+	MTK_PIN_IES_SMT_SPEC(27, 27, 0x890, 4),
-+	MTK_PIN_IES_SMT_SPEC(28, 29, 0x890, 3),
-+	MTK_PIN_IES_SMT_SPEC(30, 36, 0xf50, 14),
-+	MTK_PIN_IES_SMT_SPEC(37, 37, 0xc40, 14),
-+	MTK_PIN_IES_SMT_SPEC(38, 45, 0xc60, 14),
-+	MTK_PIN_IES_SMT_SPEC(46, 46, 0xc50, 14),
-+	MTK_PIN_IES_SMT_SPEC(47, 47, 0xda0, 14),
-+	MTK_PIN_IES_SMT_SPEC(48, 48, 0xd90, 14),
-+	MTK_PIN_IES_SMT_SPEC(49, 52, 0xd60, 14),
-+	MTK_PIN_IES_SMT_SPEC(53, 53, 0xd50, 14),
-+	MTK_PIN_IES_SMT_SPEC(54, 54, 0xd80, 14),
-+	MTK_PIN_IES_SMT_SPEC(55, 55, 0xe00, 14),
-+	MTK_PIN_IES_SMT_SPEC(56, 56, 0xd40, 14),
-+	MTK_PIN_IES_SMT_SPEC(57, 62, 0x8c0, 3),
-+	MTK_PIN_IES_SMT_SPEC(63, 63, 0xc80, 14),
-+	MTK_PIN_IES_SMT_SPEC(64, 66, 0xca0, 14),
-+	MTK_PIN_IES_SMT_SPEC(67, 68, 0xc80, 14),
-+	MTK_PIN_IES_SMT_SPEC(69, 69, 0xc90, 14),
-+	MTK_PIN_IES_SMT_SPEC(70, 70, 0xc80, 14),
-+	MTK_PIN_IES_SMT_SPEC(71, 74, 0x890, 8),
-+	MTK_PIN_IES_SMT_SPEC(75, 77, 0x890, 9),
-+	MTK_PIN_IES_SMT_SPEC(78, 81, 0x890, 10),
-+	MTK_PIN_IES_SMT_SPEC(82, 88, 0x890, 9),
-+	MTK_PIN_IES_SMT_SPEC(89, 89, 0xce0, 14),
-+	MTK_PIN_IES_SMT_SPEC(90, 93, 0xd00, 14),
-+	MTK_PIN_IES_SMT_SPEC(94, 94, 0xce0, 14),
-+	MTK_PIN_IES_SMT_SPEC(95, 96, 0xcf0, 14),
-+	MTK_PIN_IES_SMT_SPEC(97, 100, 0x890, 11),
-+	MTK_PIN_IES_SMT_SPEC(101, 104, 0x890, 12),
-+	MTK_PIN_IES_SMT_SPEC(105, 105, 0x890, 13),
-+	MTK_PIN_IES_SMT_SPEC(106, 106, 0x890, 14),
-+	MTK_PIN_IES_SMT_SPEC(107, 107, 0x890, 15),
-+	MTK_PIN_IES_SMT_SPEC(108, 108, 0x8a0, 0),
-+	MTK_PIN_IES_SMT_SPEC(109, 109, 0x8a0, 1),
-+	MTK_PIN_IES_SMT_SPEC(110, 110, 0x8a0, 2),
-+	MTK_PIN_IES_SMT_SPEC(111, 111, 0x890, 13),
-+	MTK_PIN_IES_SMT_SPEC(112, 112, 0x890, 14),
-+	MTK_PIN_IES_SMT_SPEC(113, 113, 0x890, 15),
-+	MTK_PIN_IES_SMT_SPEC(114, 114, 0x8a0, 0),
-+	MTK_PIN_IES_SMT_SPEC(115, 115, 0x8a0, 1),
-+	MTK_PIN_IES_SMT_SPEC(116, 116, 0x8a0, 2),
-+	MTK_PIN_IES_SMT_SPEC(117, 117, 0x8a0, 3),
-+	MTK_PIN_IES_SMT_SPEC(118, 118, 0x8a0, 4),
-+	MTK_PIN_IES_SMT_SPEC(119, 119, 0x8a0, 5),
-+	MTK_PIN_IES_SMT_SPEC(120, 120, 0x8a0, 3),
-+	MTK_PIN_IES_SMT_SPEC(121, 121, 0x8a0, 4),
-+	MTK_PIN_IES_SMT_SPEC(122, 122, 0x8a0, 5),
-+	MTK_PIN_IES_SMT_SPEC(123, 126, 0x8a0, 6),
-+	MTK_PIN_IES_SMT_SPEC(127, 130, 0x8a0, 7),
-+	MTK_PIN_IES_SMT_SPEC(131, 135, 0x8a0, 8),
-+	MTK_PIN_IES_SMT_SPEC(136, 142, 0x890, 1),
-+	MTK_PIN_IES_SMT_SPEC(143, 147, 0x8a0, 9),
-+	MTK_PIN_IES_SMT_SPEC(148, 152, 0x8a0, 10),
-+	MTK_PIN_IES_SMT_SPEC(153, 156, 0x8a0, 11),
-+	MTK_PIN_IES_SMT_SPEC(157, 160, 0x8a0, 12),
-+	MTK_PIN_IES_SMT_SPEC(161, 164, 0x8a0, 13),
-+	MTK_PIN_IES_SMT_SPEC(165, 168, 0x8a0, 14),
-+	MTK_PIN_IES_SMT_SPEC(169, 170, 0x8a0, 15),
-+	MTK_PIN_IES_SMT_SPEC(171, 172, 0x8b0, 0),
-+	MTK_PIN_IES_SMT_SPEC(173, 173, 0x8b0, 1),
-+	MTK_PIN_IES_SMT_SPEC(174, 175, 0x8b0, 2),
-+	MTK_PIN_IES_SMT_SPEC(176, 176, 0x8b0, 1),
-+	MTK_PIN_IES_SMT_SPEC(177, 177, 0x8b0, 3),
-+	MTK_PIN_IES_SMT_SPEC(178, 178, 0x8b0, 4),
-+	MTK_PIN_IES_SMT_SPEC(179, 179, 0x8b0, 3),
-+	MTK_PIN_IES_SMT_SPEC(180, 180, 0x8b0, 4),
-+	MTK_PIN_IES_SMT_SPEC(181, 181, 0x8b0, 5),
-+	MTK_PIN_IES_SMT_SPEC(182, 182, 0x8b0, 6),
-+	MTK_PIN_IES_SMT_SPEC(183, 183, 0x8b0, 5),
-+	MTK_PIN_IES_SMT_SPEC(184, 184, 0x8b0, 6),
-+	MTK_PIN_IES_SMT_SPEC(185, 186, 0x8b0, 7),
-+	MTK_PIN_IES_SMT_SPEC(187, 187, 0x8b0, 8),
-+	MTK_PIN_IES_SMT_SPEC(188, 188, 0x8b0, 9),
-+	MTK_PIN_IES_SMT_SPEC(189, 189, 0x8b0, 8),
-+	MTK_PIN_IES_SMT_SPEC(190, 190, 0x8b0, 9),
-+	MTK_PIN_IES_SMT_SPEC(191, 191, 0x8b0, 10),
-+	MTK_PIN_IES_SMT_SPEC(192, 192, 0x8b0, 11),
-+	MTK_PIN_IES_SMT_SPEC(193, 194, 0x8b0, 10),
-+	MTK_PIN_IES_SMT_SPEC(195, 195, 0x8b0, 11),
-+	MTK_PIN_IES_SMT_SPEC(196, 199, 0x8b0, 12),
-+	MTK_PIN_IES_SMT_SPEC(200, 203, 0x8b0, 13),
-+	MTK_PIN_IES_SMT_SPEC(204, 206, 0x8b0, 14),
-+	MTK_PIN_IES_SMT_SPEC(207, 209, 0x8b0, 15)
-+};
-+
-+static int mt2712_ies_smt_set(struct regmap *regmap, unsigned int pin,
-+			      unsigned char align,
-+			      int value, enum pin_config_param arg)
-+{
-+	if (arg == PIN_CONFIG_INPUT_ENABLE)
-+		return mtk_pconf_spec_set_ies_smt_range(regmap, mt2712_ies_set,
-+			ARRAY_SIZE(mt2712_ies_set), pin, align, value);
-+	if (arg == PIN_CONFIG_INPUT_SCHMITT_ENABLE)
-+		return mtk_pconf_spec_set_ies_smt_range(regmap, mt2712_smt_set,
-+			ARRAY_SIZE(mt2712_smt_set), pin, align, value);
-+	return -EINVAL;
-+}
-+
-+static const struct mtk_drv_group_desc mt2712_drv_grp[] =  {
-+	/* 0E4E8SR 4/8/12/16 */
-+	MTK_DRV_GRP(4, 16, 1, 2, 4),
-+	/* 0E2E4SR  2/4/6/8 */
-+	MTK_DRV_GRP(2, 8, 1, 2, 2),
-+	/* E8E4E2  2/4/6/8/10/12/14/16 */
-+	MTK_DRV_GRP(2, 16, 0, 2, 2)
-+};
-+
-+static const struct mtk_pin_drv_grp mt2712_pin_drv[] = {
-+	MTK_PIN_DRV_GRP(0, 0xc10, 4, 0),
-+	MTK_PIN_DRV_GRP(1, 0xc10, 4, 0),
-+	MTK_PIN_DRV_GRP(2, 0xc10, 4, 0),
-+	MTK_PIN_DRV_GRP(3, 0xc10, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(4, 0xc00, 12, 0),
-+	MTK_PIN_DRV_GRP(5, 0xc00, 12, 0),
-+	MTK_PIN_DRV_GRP(6, 0xc00, 12, 0),
-+	MTK_PIN_DRV_GRP(7, 0xc00, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(8, 0xc10, 0, 0),
-+	MTK_PIN_DRV_GRP(9, 0xc10, 0, 0),
-+	MTK_PIN_DRV_GRP(10, 0xc10, 0, 0),
-+	MTK_PIN_DRV_GRP(11, 0xc10, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(12, 0xb60, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(13, 0xb60, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(14, 0xb60, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(15, 0xb60, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(18, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(19, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(20, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(21, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(22, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(23, 0xb40, 0, 1),
-+
-+	MTK_PIN_DRV_GRP(24, 0xb40, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(25, 0xb40, 8, 0),
-+
-+	MTK_PIN_DRV_GRP(26, 0xb40, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(27, 0xb50, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(28, 0xb40, 12, 0),
-+	MTK_PIN_DRV_GRP(29, 0xb40, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(30, 0xf50, 8, 2),
-+	MTK_PIN_DRV_GRP(31, 0xf50, 8, 2),
-+	MTK_PIN_DRV_GRP(32, 0xf50, 8, 2),
-+	MTK_PIN_DRV_GRP(33, 0xf50, 8, 2),
-+	MTK_PIN_DRV_GRP(34, 0xf50, 8, 2),
-+	MTK_PIN_DRV_GRP(35, 0xf50, 8, 2),
-+	MTK_PIN_DRV_GRP(36, 0xf50, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(37, 0xc40, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(38, 0xc60, 8, 2),
-+	MTK_PIN_DRV_GRP(39, 0xc60, 8, 2),
-+	MTK_PIN_DRV_GRP(40, 0xc60, 8, 2),
-+	MTK_PIN_DRV_GRP(41, 0xc60, 8, 2),
-+	MTK_PIN_DRV_GRP(42, 0xc60, 8, 2),
-+	MTK_PIN_DRV_GRP(43, 0xc60, 8, 2),
-+	MTK_PIN_DRV_GRP(44, 0xc60, 8, 2),
-+	MTK_PIN_DRV_GRP(45, 0xc60, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(46, 0xc50, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(47, 0xda0, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(48, 0xd90, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(49, 0xd60, 8, 2),
-+	MTK_PIN_DRV_GRP(50, 0xd60, 8, 2),
-+	MTK_PIN_DRV_GRP(51, 0xd60, 8, 2),
-+	MTK_PIN_DRV_GRP(52, 0xd60, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(53, 0xd50, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(54, 0xd80, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(55, 0xe00, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(56, 0xd40, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(63, 0xc80, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(64, 0xca0, 8, 2),
-+	MTK_PIN_DRV_GRP(65, 0xca0, 8, 2),
-+	MTK_PIN_DRV_GRP(66, 0xca0, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(67, 0xcd0, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(68, 0xca0, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(69, 0xc90, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(70, 0xcc0, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(71, 0xb60, 8, 1),
-+	MTK_PIN_DRV_GRP(72, 0xb60, 8, 1),
-+	MTK_PIN_DRV_GRP(73, 0xb60, 8, 1),
-+	MTK_PIN_DRV_GRP(74, 0xb60, 8, 1),
-+
-+	MTK_PIN_DRV_GRP(75, 0xb60, 12, 1),
-+	MTK_PIN_DRV_GRP(76, 0xb60, 12, 1),
-+	MTK_PIN_DRV_GRP(77, 0xb60, 12, 1),
-+
-+	MTK_PIN_DRV_GRP(78, 0xb70, 0, 1),
-+	MTK_PIN_DRV_GRP(79, 0xb70, 0, 1),
-+	MTK_PIN_DRV_GRP(80, 0xb70, 0, 1),
-+	MTK_PIN_DRV_GRP(81, 0xb70, 0, 1),
-+
-+	MTK_PIN_DRV_GRP(82, 0xb60, 12, 1),
-+	MTK_PIN_DRV_GRP(83, 0xb60, 12, 1),
-+	MTK_PIN_DRV_GRP(84, 0xb60, 12, 1),
-+	MTK_PIN_DRV_GRP(85, 0xb60, 12, 1),
-+	MTK_PIN_DRV_GRP(86, 0xb60, 12, 1),
-+	MTK_PIN_DRV_GRP(87, 0xb60, 12, 1),
-+	MTK_PIN_DRV_GRP(88, 0xb60, 12, 1),
-+
-+	MTK_PIN_DRV_GRP(89, 0xce0, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(90, 0xd00, 8, 2),
-+	MTK_PIN_DRV_GRP(91, 0xd00, 8, 2),
-+	MTK_PIN_DRV_GRP(92, 0xd00, 8, 2),
-+	MTK_PIN_DRV_GRP(93, 0xd00, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(94, 0xd20, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(95, 0xcf0, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(96, 0xd30, 8, 2),
-+
-+	MTK_PIN_DRV_GRP(97, 0xb70, 4, 0),
-+	MTK_PIN_DRV_GRP(98, 0xb70, 4, 0),
-+	MTK_PIN_DRV_GRP(99, 0xb70, 4, 0),
-+	MTK_PIN_DRV_GRP(100, 0xb70, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(101, 0xb70, 8, 0),
-+	MTK_PIN_DRV_GRP(102, 0xb70, 8, 0),
-+	MTK_PIN_DRV_GRP(103, 0xb70, 8, 0),
-+	MTK_PIN_DRV_GRP(104, 0xb70, 8, 0),
-+
-+	MTK_PIN_DRV_GRP(135, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(136, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(137, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(138, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(139, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(140, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(141, 0xb40, 0, 1),
-+	MTK_PIN_DRV_GRP(142, 0xb40, 0, 1),
-+
-+	MTK_PIN_DRV_GRP(143, 0xba0, 12, 0),
-+	MTK_PIN_DRV_GRP(144, 0xba0, 12, 0),
-+	MTK_PIN_DRV_GRP(145, 0xba0, 12, 0),
-+	MTK_PIN_DRV_GRP(146, 0xba0, 12, 0),
-+	MTK_PIN_DRV_GRP(147, 0xba0, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(148, 0xbb0, 0, 0),
-+	MTK_PIN_DRV_GRP(149, 0xbb0, 0, 0),
-+	MTK_PIN_DRV_GRP(150, 0xbb0, 0, 0),
-+	MTK_PIN_DRV_GRP(151, 0xbb0, 0, 0),
-+	MTK_PIN_DRV_GRP(152, 0xbb0, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(153, 0xbb0, 4, 0),
-+	MTK_PIN_DRV_GRP(154, 0xbb0, 4, 0),
-+	MTK_PIN_DRV_GRP(155, 0xbb0, 4, 0),
-+	MTK_PIN_DRV_GRP(156, 0xbb0, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(157, 0xbb0, 8, 0),
-+	MTK_PIN_DRV_GRP(158, 0xbb0, 8, 0),
-+	MTK_PIN_DRV_GRP(159, 0xbb0, 8, 0),
-+	MTK_PIN_DRV_GRP(160, 0xbb0, 8, 0),
-+
-+	MTK_PIN_DRV_GRP(161, 0xbb0, 12, 0),
-+	MTK_PIN_DRV_GRP(162, 0xbb0, 12, 0),
-+	MTK_PIN_DRV_GRP(163, 0xbb0, 12, 0),
-+	MTK_PIN_DRV_GRP(164, 0xbb0, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(165, 0xbc0, 0, 0),
-+	MTK_PIN_DRV_GRP(166, 0xbc0, 0, 0),
-+	MTK_PIN_DRV_GRP(167, 0xbc0, 0, 0),
-+	MTK_PIN_DRV_GRP(168, 0xbc0, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(169, 0xbc0, 4, 0),
-+	MTK_PIN_DRV_GRP(170, 0xbc0, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(171, 0xbc0, 8, 0),
-+	MTK_PIN_DRV_GRP(172, 0xbc0, 8, 0),
-+
-+	MTK_PIN_DRV_GRP(173, 0xbc0, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(174, 0xbd0, 0, 0),
-+	MTK_PIN_DRV_GRP(175, 0xbd0, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(176, 0xbc0, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(177, 0xbd0, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(178, 0xbd0, 8, 0),
-+
-+	MTK_PIN_DRV_GRP(179, 0xbd0, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(180, 0xbd0, 8, 0),
-+
-+	MTK_PIN_DRV_GRP(181, 0xbd0, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(182, 0xbe0, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(183, 0xbd0, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(184, 0xbe0, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(185, 0xbe0, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(186, 0xbe0, 8, 0),
-+
-+	MTK_PIN_DRV_GRP(187, 0xbe0, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(188, 0xbf0, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(189, 0xbe0, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(190, 0xbf0, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(191, 0xbf0, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(192, 0xbf0, 8, 0),
-+
-+	MTK_PIN_DRV_GRP(193, 0xbf0, 4, 0),
-+	MTK_PIN_DRV_GRP(194, 0xbf0, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(195, 0xbf0, 8, 0),
-+
-+	MTK_PIN_DRV_GRP(196, 0xbf0, 12, 0),
-+	MTK_PIN_DRV_GRP(197, 0xbf0, 12, 0),
-+	MTK_PIN_DRV_GRP(198, 0xbf0, 12, 0),
-+	MTK_PIN_DRV_GRP(199, 0xbf0, 12, 0),
-+
-+	MTK_PIN_DRV_GRP(200, 0xc00, 0, 0),
-+	MTK_PIN_DRV_GRP(201, 0xc00, 0, 0),
-+	MTK_PIN_DRV_GRP(202, 0xc00, 0, 0),
-+	MTK_PIN_DRV_GRP(203, 0xc00, 0, 0),
-+
-+	MTK_PIN_DRV_GRP(204, 0xc00, 4, 0),
-+	MTK_PIN_DRV_GRP(205, 0xc00, 4, 0),
-+	MTK_PIN_DRV_GRP(206, 0xc00, 4, 0),
-+
-+	MTK_PIN_DRV_GRP(207, 0xc00, 8, 0),
-+	MTK_PIN_DRV_GRP(208, 0xc00, 8, 0),
-+	MTK_PIN_DRV_GRP(209, 0xc00, 8, 0),
-+};
-+
-+static const struct mtk_pinctrl_devdata mt2712_pinctrl_data = {
-+	.pins = mtk_pins_mt2712,
-+	.npins = ARRAY_SIZE(mtk_pins_mt2712),
-+	.grp_desc = mt2712_drv_grp,
-+	.n_grp_cls = ARRAY_SIZE(mt2712_drv_grp),
-+	.pin_drv_grp = mt2712_pin_drv,
-+	.n_pin_drv_grps = ARRAY_SIZE(mt2712_pin_drv),
-+	.spec_pull_set = mt2712_spec_pull_set,
-+	.spec_ies_smt_set = mt2712_ies_smt_set,
-+	.dir_offset = 0x0000,
-+	.pullen_offset = 0x0100,
-+	.pullsel_offset = 0x0200,
-+	.dout_offset = 0x0300,
-+	.din_offset = 0x0400,
-+	.pinmux_offset = 0x0500,
-+	.type1_start = 210,
-+	.type1_end = 210,
-+	.port_shf = 4,
-+	.port_mask = 0xf,
-+	.port_align = 4,
-+	.eint_offsets = {
-+		.name = "mt2712_eint",
-+		.stat      = 0x000,
-+		.ack       = 0x040,
-+		.mask      = 0x080,
-+		.mask_set  = 0x0c0,
-+		.mask_clr  = 0x100,
-+		.sens      = 0x140,
-+		.sens_set  = 0x180,
-+		.sens_clr  = 0x1c0,
-+		.soft      = 0x200,
-+		.soft_set  = 0x240,
-+		.soft_clr  = 0x280,
-+		.pol       = 0x300,
-+		.pol_set   = 0x340,
-+		.pol_clr   = 0x380,
-+		.dom_en    = 0x400,
-+		.dbnc_ctrl = 0x500,
-+		.dbnc_set  = 0x600,
-+		.dbnc_clr  = 0x700,
-+		.port_mask = 0xf,
-+		.ports     = 8,
-+	},
-+	.ap_num = 229,
-+	.db_cnt = 40,
-+};
-+
-+static int mt2712_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return mtk_pctrl_init(pdev, &mt2712_pinctrl_data, NULL);
-+}
-+
-+static const struct of_device_id mt2712_pctrl_match[] = {
-+	{
-+		.compatible = "mediatek,mt2712-pinctrl",
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, mt2712_pctrl_match);
-+
-+static struct platform_driver mtk_pinctrl_driver = {
-+	.probe = mt2712_pinctrl_probe,
-+	.driver = {
-+		.name = "mediatek-mt2712-pinctrl",
-+		.of_match_table = mt2712_pctrl_match,
-+		.pm = &mtk_eint_pm_ops,
-+	},
-+};
-+
-+static int __init mtk_pinctrl_init(void)
-+{
-+	return platform_driver_register(&mtk_pinctrl_driver);
-+}
-+
-+arch_initcall(mtk_pinctrl_init);
-+
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h
-new file mode 100644
-index 0000000..ba2356a
---- /dev/null
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h
-@@ -0,0 +1,1757 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 MediaTek Inc.
-+ * Author: Zhiyong Tao <zhiyong.tao@mediatek.com>
-+ *
-+ */
-+#ifndef PINCTRL_MTK_MT2712_H
-+#define PINCTRL_MTK_MT2712_H
-+
-+#include <linux/pinctrl/pinctrl.h>
-+#include "pinctrl-mtk-common.h"
-+
-+static const struct mtk_desc_pin mtk_pins_mt2712[] = {
-+	MTK_PIN(PINCTRL_PIN(0, "EINT0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 6),
-+		MTK_FUNCTION(0, "GPIO0"),
-+		MTK_FUNCTION(1, "EINT0"),
-+		MTK_FUNCTION(2, "MBIST_DIAG_SCANOUT"),
-+		MTK_FUNCTION(3, "DSIA_TE"),
-+		MTK_FUNCTION(4, "DSIC_TE"),
-+		MTK_FUNCTION(5, "DIN_D3"),
-+		MTK_FUNCTION(6, "PURE_HW_PROTECT")
-+	),
-+	MTK_PIN(PINCTRL_PIN(1, "EINT1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 7),
-+		MTK_FUNCTION(0, "GPIO1"),
-+		MTK_FUNCTION(1, "EINT1"),
-+		MTK_FUNCTION(2, "IR_IN"),
-+		MTK_FUNCTION(3, "DSIB_TE"),
-+		MTK_FUNCTION(4, "DSID_TE"),
-+		MTK_FUNCTION(5, "DIN_D4")
-+	),
-+	MTK_PIN(PINCTRL_PIN(2, "EINT2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 8),
-+		MTK_FUNCTION(0, "GPIO2"),
-+		MTK_FUNCTION(1, "EINT2"),
-+		MTK_FUNCTION(2, "IR_IN"),
-+		MTK_FUNCTION(3, "LCM_RST1"),
-+		MTK_FUNCTION(5, "DIN_D5")
-+	),
-+	MTK_PIN(PINCTRL_PIN(3, "EINT3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 9),
-+		MTK_FUNCTION(0, "GPIO3"),
-+		MTK_FUNCTION(1, "EINT3"),
-+		MTK_FUNCTION(2, "IR_IN"),
-+		MTK_FUNCTION(3, "LCM_RST0"),
-+		MTK_FUNCTION(5, "DIN_D6")
-+	),
-+	MTK_PIN(PINCTRL_PIN(4, "PWM0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 10),
-+		MTK_FUNCTION(0, "GPIO4"),
-+		MTK_FUNCTION(1, "PWM0"),
-+		MTK_FUNCTION(2, "DISP0_PWM"),
-+		MTK_FUNCTION(3, "DISP1_PWM"),
-+		MTK_FUNCTION(5, "DIN_CLK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(5, "PWM1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 11),
-+		MTK_FUNCTION(0, "GPIO5"),
-+		MTK_FUNCTION(1, "PWM1"),
-+		MTK_FUNCTION(2, "DISP1_PWM"),
-+		MTK_FUNCTION(3, "DISP0_PWM"),
-+		MTK_FUNCTION(5, "DIN_VSYNC")
-+	),
-+	MTK_PIN(PINCTRL_PIN(6, "PWM2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 12),
-+		MTK_FUNCTION(0, "GPIO6"),
-+		MTK_FUNCTION(1, "PWM2"),
-+		MTK_FUNCTION(2, "DISP0_PWM"),
-+		MTK_FUNCTION(3, "DISP1_PWM"),
-+		MTK_FUNCTION(4, "DISP2_PWM"),
-+		MTK_FUNCTION(5, "DIN_HSYNC")
-+	),
-+	MTK_PIN(PINCTRL_PIN(7, "PWM3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 13),
-+		MTK_FUNCTION(0, "GPIO7"),
-+		MTK_FUNCTION(1, "PWM3"),
-+		MTK_FUNCTION(2, "DISP1_PWM"),
-+		MTK_FUNCTION(3, "DISP0_PWM"),
-+		MTK_FUNCTION(4, "LCM_RST2"),
-+		MTK_FUNCTION(5, "DIN_D0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(8, "PWM4"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 14),
-+		MTK_FUNCTION(0, "GPIO8"),
-+		MTK_FUNCTION(1, "PWM4"),
-+		MTK_FUNCTION(2, "DISP0_PWM"),
-+		MTK_FUNCTION(3, "DISP1_PWM"),
-+		MTK_FUNCTION(4, "DSIA_TE"),
-+		MTK_FUNCTION(5, "DIN_D1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(9, "PWM5"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 15),
-+		MTK_FUNCTION(0, "GPIO9"),
-+		MTK_FUNCTION(1, "PWM5"),
-+		MTK_FUNCTION(2, "DISP1_PWM"),
-+		MTK_FUNCTION(3, "DISP0_PWM"),
-+		MTK_FUNCTION(4, "DSIB_TE"),
-+		MTK_FUNCTION(5, "DIN_D2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(10, "PWM6"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 16),
-+		MTK_FUNCTION(0, "GPIO10"),
-+		MTK_FUNCTION(1, "PWM6"),
-+		MTK_FUNCTION(2, "DISP0_PWM"),
-+		MTK_FUNCTION(3, "DISP1_PWM"),
-+		MTK_FUNCTION(4, "LCM_RST0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(11, "PWM7"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 17),
-+		MTK_FUNCTION(0, "GPIO11"),
-+		MTK_FUNCTION(1, "PWM7"),
-+		MTK_FUNCTION(2, "DISP1_PWM"),
-+		MTK_FUNCTION(3, "DISP0_PWM"),
-+		MTK_FUNCTION(4, "LCM_RST1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(12, "IDDIG_P0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(1, 22),
-+		MTK_FUNCTION(0, "GPIO12"),
-+		MTK_FUNCTION(1, "IDDIG_A"),
-+		MTK_FUNCTION(5, "DIN_D7")
-+	),
-+	MTK_PIN(PINCTRL_PIN(13, "DRV_VBUS_P0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 43),
-+		MTK_FUNCTION(0, "GPIO13"),
-+		MTK_FUNCTION(1, "DRV_VBUS_A")
-+	),
-+	MTK_PIN(PINCTRL_PIN(14, "IDDIG_P1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(1, 44),
-+		MTK_FUNCTION(0, "GPIO14"),
-+		MTK_FUNCTION(1, "IDDIG_B")
-+	),
-+	MTK_PIN(PINCTRL_PIN(15, "DRV_VBUS_P1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 45),
-+		MTK_FUNCTION(0, "GPIO15"),
-+		MTK_FUNCTION(1, "DRV_VBUS_B")
-+	),
-+	MTK_PIN(PINCTRL_PIN(16, "DRV_VBUS_P2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 46),
-+		MTK_FUNCTION(0, "GPIO16"),
-+		MTK_FUNCTION(1, "DRV_VBUS_C")
-+	),
-+	MTK_PIN(PINCTRL_PIN(17, "DRV_VBUS_P3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 47),
-+		MTK_FUNCTION(0, "GPIO17"),
-+		MTK_FUNCTION(1, "DRV_VBUS_D")
-+	),
-+	MTK_PIN(PINCTRL_PIN(18, "KPROW0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 18),
-+		MTK_FUNCTION(0, "GPIO18"),
-+		MTK_FUNCTION(1, "KROW0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(19, "KPCOL0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 19),
-+		MTK_FUNCTION(0, "GPIO19"),
-+		MTK_FUNCTION(1, "KCOL0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(20, "KPROW1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 48),
-+		MTK_FUNCTION(0, "GPIO20"),
-+		MTK_FUNCTION(1, "KROW1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(21, "KPCOL1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 49),
-+		MTK_FUNCTION(0, "GPIO21"),
-+		MTK_FUNCTION(1, "KCOL1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(22, "KPROW2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 50),
-+		MTK_FUNCTION(0, "GPIO22"),
-+		MTK_FUNCTION(1, "KROW2"),
-+		MTK_FUNCTION(2, "DISP1_PWM")
-+	),
-+	MTK_PIN(PINCTRL_PIN(23, "KPCOL2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 51),
-+		MTK_FUNCTION(0, "GPIO23"),
-+		MTK_FUNCTION(1, "KCOL2"),
-+		MTK_FUNCTION(2, "DISP0_PWM")
-+	),
-+	MTK_PIN(PINCTRL_PIN(24, "CMMCLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 52),
-+		MTK_FUNCTION(0, "GPIO24"),
-+		MTK_FUNCTION(1, "CMMCLK"),
-+		MTK_FUNCTION(7, "DBG_MON_A_1_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(25, "CM2MCLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 53),
-+		MTK_FUNCTION(0, "GPIO25"),
-+		MTK_FUNCTION(1, "CM2MCLK"),
-+		MTK_FUNCTION(7, "DBG_MON_A_2_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(26, "PCM_TX"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 54),
-+		MTK_FUNCTION(0, "GPIO26"),
-+		MTK_FUNCTION(1, "PCM1_DO"),
-+		MTK_FUNCTION(2, "MRG_TX"),
-+		MTK_FUNCTION(3, "DAI_TX"),
-+		MTK_FUNCTION(4, "MRG_RX"),
-+		MTK_FUNCTION(5, "DAI_RX"),
-+		MTK_FUNCTION(6, "PCM1_DI"),
-+		MTK_FUNCTION(7, "DBG_MON_A_3_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(27, "PCM_CLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 55),
-+		MTK_FUNCTION(0, "GPIO27"),
-+		MTK_FUNCTION(1, "PCM1_CLK"),
-+		MTK_FUNCTION(2, "MRG_CLK"),
-+		MTK_FUNCTION(3, "DAI_CLK"),
-+		MTK_FUNCTION(7, "DBG_MON_A_4_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(28, "PCM_RX"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 56),
-+		MTK_FUNCTION(0, "GPIO28"),
-+		MTK_FUNCTION(1, "PCM1_DI"),
-+		MTK_FUNCTION(2, "MRG_RX"),
-+		MTK_FUNCTION(3, "DAI_RX"),
-+		MTK_FUNCTION(4, "MRG_TX"),
-+		MTK_FUNCTION(5, "DAI_TX"),
-+		MTK_FUNCTION(6, "PCM1_DO"),
-+		MTK_FUNCTION(7, "DBG_MON_A_5_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(29, "PCM_SYNC"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 57),
-+		MTK_FUNCTION(0, "GPIO29"),
-+		MTK_FUNCTION(1, "PCM1_SYNC"),
-+		MTK_FUNCTION(2, "MRG_SYNC"),
-+		MTK_FUNCTION(3, "DAI_SYNC"),
-+		MTK_FUNCTION(7, "DBG_MON_A_6_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(30, "NCEB0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 58),
-+		MTK_FUNCTION(0, "GPIO30"),
-+		MTK_FUNCTION(1, "NCEB0"),
-+		MTK_FUNCTION(2, "USB0_FT_SDA"),
-+		MTK_FUNCTION(7, "DBG_MON_A_7_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(31, "NCEB1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 59),
-+		MTK_FUNCTION(0, "GPIO31"),
-+		MTK_FUNCTION(1, "NCEB1"),
-+		MTK_FUNCTION(2, "USB1_FT_SCL"),
-+		MTK_FUNCTION(7, "DBG_MON_A_8_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(32, "NF_DQS"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 60),
-+		MTK_FUNCTION(0, "GPIO32"),
-+		MTK_FUNCTION(1, "NF_DQS"),
-+		MTK_FUNCTION(2, "USB1_FT_SDA"),
-+		MTK_FUNCTION(7, "DBG_MON_A_9_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(33, "NWEB"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 61),
-+		MTK_FUNCTION(0, "GPIO33"),
-+		MTK_FUNCTION(1, "NWEB"),
-+		MTK_FUNCTION(2, "USB2_FT_SCL"),
-+		MTK_FUNCTION(7, "DBG_MON_A_10_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(34, "NREB"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 62),
-+		MTK_FUNCTION(0, "GPIO34"),
-+		MTK_FUNCTION(1, "NREB"),
-+		MTK_FUNCTION(2, "USB2_FT_SDA"),
-+		MTK_FUNCTION(7, "DBG_MON_A_11_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(35, "NCLE"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 63),
-+		MTK_FUNCTION(0, "GPIO35"),
-+		MTK_FUNCTION(1, "NCLE"),
-+		MTK_FUNCTION(2, "USB3_FT_SCL"),
-+		MTK_FUNCTION(7, "DBG_MON_A_12_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(36, "NALE"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 64),
-+		MTK_FUNCTION(0, "GPIO36"),
-+		MTK_FUNCTION(1, "NALE"),
-+		MTK_FUNCTION(2, "USB3_FT_SDA"),
-+		MTK_FUNCTION(7, "DBG_MON_A_13_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(37, "MSDC0E_CLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO37"),
-+		MTK_FUNCTION(1, "MSDC0_CLK"),
-+		MTK_FUNCTION(2, "USB0_FT_SCL"),
-+		MTK_FUNCTION(7, "DBG_MON_A_0_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(38, "MSDC0E_DAT7"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO38"),
-+		MTK_FUNCTION(1, "MSDC0_DAT7"),
-+		MTK_FUNCTION(2, "NAND_ND7"),
-+		MTK_FUNCTION(7, "DBG_MON_A_14_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(39, "MSDC0E_DAT6"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO39"),
-+		MTK_FUNCTION(1, "MSDC0_DAT6"),
-+		MTK_FUNCTION(2, "NAND_ND6"),
-+		MTK_FUNCTION(7, "DBG_MON_A_15_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(40, "MSDC0E_DAT5"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO40"),
-+		MTK_FUNCTION(1, "MSDC0_DAT5"),
-+		MTK_FUNCTION(2, "NAND_ND5"),
-+		MTK_FUNCTION(7, "DBG_MON_A_16_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(41, "MSDC0E_DAT4"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO41"),
-+		MTK_FUNCTION(1, "MSDC0_DAT4"),
-+		MTK_FUNCTION(2, "NAND_ND4"),
-+		MTK_FUNCTION(7, "DBG_MON_A_17_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(42, "MSDC0E_DAT3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO42"),
-+		MTK_FUNCTION(1, "MSDC0_DAT3"),
-+		MTK_FUNCTION(2, "NAND_ND3"),
-+		MTK_FUNCTION(7, "DBG_MON_A_18_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(43, "MSDC0E_DAT2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO43"),
-+		MTK_FUNCTION(1, "MSDC0_DAT2"),
-+		MTK_FUNCTION(2, "NAND_ND2"),
-+		MTK_FUNCTION(7, "DBG_MON_A_19_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(44, "MSDC0E_DAT1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO44"),
-+		MTK_FUNCTION(1, "MSDC0_DAT1"),
-+		MTK_FUNCTION(2, "NAND_ND1"),
-+		MTK_FUNCTION(7, "DBG_MON_A_20_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(45, "MSDC0E_DAT0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO45"),
-+		MTK_FUNCTION(1, "MSDC0_DAT0"),
-+		MTK_FUNCTION(2, "NAND_ND0"),
-+		MTK_FUNCTION(7, "DBG_MON_A_21_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(46, "MSDC0E_CMD"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO46"),
-+		MTK_FUNCTION(1, "MSDC0_CMD"),
-+		MTK_FUNCTION(2, "NAND_NRNB"),
-+		MTK_FUNCTION(7, "DBG_MON_A_22_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(47, "MSDC0E_DSL"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
-+		MTK_FUNCTION(0, "GPIO47"),
-+		MTK_FUNCTION(1, "MSDC0_DSL"),
-+		MTK_FUNCTION(7, "DBG_MON_A_23_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(48, "MSDC0E_RSTB"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 142),
-+		MTK_FUNCTION(0, "GPIO48"),
-+		MTK_FUNCTION(1, "MSDC0_RSTB"),
-+		MTK_FUNCTION(7, "DBG_MON_A_24_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(49, "MSDC3_DAT3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 65),
-+		MTK_FUNCTION(0, "GPIO49"),
-+		MTK_FUNCTION(1, "MSDC3_DAT3"),
-+		MTK_FUNCTION(7, "DBG_MON_A_25_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(50, "MSDC3_DAT2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 66),
-+		MTK_FUNCTION(0, "GPIO50"),
-+		MTK_FUNCTION(1, "MSDC3_DAT2"),
-+		MTK_FUNCTION(7, "DBG_MON_A_26_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(51, "MSDC3_DAT1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 67),
-+		MTK_FUNCTION(0, "GPIO51"),
-+		MTK_FUNCTION(1, "MSDC3_DAT1"),
-+		MTK_FUNCTION(7, "DBG_MON_A_27_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(52, "MSDC3_DAT0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 68),
-+		MTK_FUNCTION(0, "GPIO52"),
-+		MTK_FUNCTION(1, "MSDC3_DAT0"),
-+		MTK_FUNCTION(7, "DBG_MON_A_28_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(53, "MSDC3_CMD"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 69),
-+		MTK_FUNCTION(0, "GPIO53"),
-+		MTK_FUNCTION(1, "MSDC3_CMD"),
-+		MTK_FUNCTION(7, "DBG_MON_A_29_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(54, "MSDC3_INS"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 20),
-+		MTK_FUNCTION(0, "GPIO54"),
-+		MTK_FUNCTION(1, "MSDC3_INS"),
-+		MTK_FUNCTION(7, "DBG_MON_A_30_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(55, "MSDC3_DSL"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 70),
-+		MTK_FUNCTION(0, "GPIO55"),
-+		MTK_FUNCTION(1, "MSDC3_DSL"),
-+		MTK_FUNCTION(7, "DBG_MON_A_31_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(56, "MSDC3_CLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 71),
-+		MTK_FUNCTION(0, "GPIO56"),
-+		MTK_FUNCTION(1, "MSDC3_CLK"),
-+		MTK_FUNCTION(7, "DBG_MON_A_32_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(57, "NOR_CS"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 72),
-+		MTK_FUNCTION(0, "GPIO57"),
-+		MTK_FUNCTION(1, "NOR_CS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(58, "NOR_CK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 73),
-+		MTK_FUNCTION(0, "GPIO58"),
-+		MTK_FUNCTION(1, "NOR_CK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(59, "NOR_IO0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 74),
-+		MTK_FUNCTION(0, "GPIO59"),
-+		MTK_FUNCTION(1, "NOR_IO0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(60, "NOR_IO1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 75),
-+		MTK_FUNCTION(0, "GPIO60"),
-+		MTK_FUNCTION(1, "NOR_IO1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(61, "NOR_IO2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 76),
-+		MTK_FUNCTION(0, "GPIO61"),
-+		MTK_FUNCTION(1, "NOR_IO2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(62, "NOR_IO3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 77),
-+		MTK_FUNCTION(0, "GPIO62"),
-+		MTK_FUNCTION(1, "NOR_IO3")
-+	),
-+	MTK_PIN(PINCTRL_PIN(63, "MSDC1_CLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 78),
-+		MTK_FUNCTION(0, "GPIO63"),
-+		MTK_FUNCTION(1, "MSDC1_CLK"),
-+		MTK_FUNCTION(2, "UDI_TCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(64, "MSDC1_DAT3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 79),
-+		MTK_FUNCTION(0, "GPIO64"),
-+		MTK_FUNCTION(1, "MSDC1_DAT3"),
-+		MTK_FUNCTION(2, "UDI_TDI")
-+	),
-+	MTK_PIN(PINCTRL_PIN(65, "MSDC1_DAT1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 80),
-+		MTK_FUNCTION(0, "GPIO65"),
-+		MTK_FUNCTION(1, "MSDC1_DAT1"),
-+		MTK_FUNCTION(2, "UDI_TMS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(66, "MSDC1_DAT2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 81),
-+		MTK_FUNCTION(0, "GPIO66"),
-+		MTK_FUNCTION(1, "MSDC1_DAT2"),
-+		MTK_FUNCTION(2, "UDI_TDO")
-+	),
-+	MTK_PIN(PINCTRL_PIN(67, "MSDC1_PSW"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 82),
-+		MTK_FUNCTION(0, "GPIO67"),
-+		MTK_FUNCTION(2, "UDI_NTRST")
-+	),
-+	MTK_PIN(PINCTRL_PIN(68, "MSDC1_DAT0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 83),
-+		MTK_FUNCTION(0, "GPIO68"),
-+		MTK_FUNCTION(1, "MSDC1_DAT0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(69, "MSDC1_CMD"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 84),
-+		MTK_FUNCTION(0, "GPIO69"),
-+		MTK_FUNCTION(1, "MSDC1_CMD")
-+	),
-+	MTK_PIN(PINCTRL_PIN(70, "MSDC1_INS"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 85),
-+		MTK_FUNCTION(0, "GPIO70")
-+	),
-+	MTK_PIN(PINCTRL_PIN(71, "GBE_TXD3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 86),
-+		MTK_FUNCTION(0, "GPIO71"),
-+		MTK_FUNCTION(1, "GBE_TXD3"),
-+		MTK_FUNCTION(7, "DBG_MON_B_0_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(72, "GBE_TXD2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 87),
-+		MTK_FUNCTION(0, "GPIO72"),
-+		MTK_FUNCTION(1, "GBE_TXD2"),
-+		MTK_FUNCTION(7, "DBG_MON_B_1_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(73, "GBE_TXD1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 88),
-+		MTK_FUNCTION(0, "GPIO73"),
-+		MTK_FUNCTION(1, "GBE_TXD1"),
-+		MTK_FUNCTION(7, "DBG_MON_B_2_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(74, "GBE_TXD0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 89),
-+		MTK_FUNCTION(0, "GPIO74"),
-+		MTK_FUNCTION(1, "GBE_TXD0"),
-+		MTK_FUNCTION(7, "DBG_MON_B_3_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(75, "GBE_TXC"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 90),
-+		MTK_FUNCTION(0, "GPIO75"),
-+		MTK_FUNCTION(1, "GBE_TXC"),
-+		MTK_FUNCTION(7, "DBG_MON_B_4_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(76, "GBE_TXEN"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 91),
-+		MTK_FUNCTION(0, "GPIO76"),
-+		MTK_FUNCTION(1, "GBE_TXEN"),
-+		MTK_FUNCTION(7, "DBG_MON_B_5_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(77, "GBE_TXER"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 92),
-+		MTK_FUNCTION(0, "GPIO77"),
-+		MTK_FUNCTION(1, "GBE_TXER"),
-+		MTK_FUNCTION(7, "DBG_MON_B_6_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(78, "GBE_RXD3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 93),
-+		MTK_FUNCTION(0, "GPIO78"),
-+		MTK_FUNCTION(1, "GBE_RXD3"),
-+		MTK_FUNCTION(7, "DBG_MON_B_7_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(79, "GBE_RXD2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 94),
-+		MTK_FUNCTION(0, "GPIO79"),
-+		MTK_FUNCTION(1, "GBE_RXD2"),
-+		MTK_FUNCTION(7, "DBG_MON_B_8_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(80, "GBE_RXD1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 95),
-+		MTK_FUNCTION(0, "GPIO80"),
-+		MTK_FUNCTION(1, "GBE_RXD1"),
-+		MTK_FUNCTION(7, "DBG_MON_B_9_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(81, "GBE_RXD0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 96),
-+		MTK_FUNCTION(0, "GPIO81"),
-+		MTK_FUNCTION(1, "GBE_RXD0"),
-+		MTK_FUNCTION(7, "DBG_MON_B_10_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(82, "GBE_RXDV"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 97),
-+		MTK_FUNCTION(0, "GPIO82"),
-+		MTK_FUNCTION(1, "GBE_RXDV"),
-+		MTK_FUNCTION(7, "DBG_MON_B_11_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(83, "GBE_RXER"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 98),
-+		MTK_FUNCTION(0, "GPIO83"),
-+		MTK_FUNCTION(1, "GBE_RXER"),
-+		MTK_FUNCTION(7, "DBG_MON_B_12_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(84, "GBE_RXC"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 99),
-+		MTK_FUNCTION(0, "GPIO84"),
-+		MTK_FUNCTION(1, "GBE_RXC"),
-+		MTK_FUNCTION(7, "DBG_MON_B_13_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(85, "GBE_MDC"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 100),
-+		MTK_FUNCTION(0, "GPIO85"),
-+		MTK_FUNCTION(1, "GBE_MDC"),
-+		MTK_FUNCTION(7, "DBG_MON_B_14_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(86, "GBE_MDIO"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 101),
-+		MTK_FUNCTION(0, "GPIO86"),
-+		MTK_FUNCTION(1, "GBE_MDIO"),
-+		MTK_FUNCTION(7, "DBG_MON_B_15_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(87, "GBE_COL"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 102),
-+		MTK_FUNCTION(0, "GPIO87"),
-+		MTK_FUNCTION(1, "GBE_COL"),
-+		MTK_FUNCTION(7, "DBG_MON_B_16_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(88, "GBE_INTR"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 21),
-+		MTK_FUNCTION(0, "GPIO88"),
-+		MTK_FUNCTION(1, "GBE_INTR"),
-+		MTK_FUNCTION(2, "GBE_CRS"),
-+		MTK_FUNCTION(7, "DBG_MON_B_17_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(89, "MSDC2_CLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 103),
-+		MTK_FUNCTION(0, "GPIO89"),
-+		MTK_FUNCTION(1, "MSDC2_CLK"),
-+		MTK_FUNCTION(7, "DBG_MON_B_18_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(90, "MSDC2_DAT3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 104),
-+		MTK_FUNCTION(0, "GPIO90"),
-+		MTK_FUNCTION(1, "MSDC2_DAT3"),
-+		MTK_FUNCTION(7, "DBG_MON_B_19_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(91, "MSDC2_DAT2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 105),
-+		MTK_FUNCTION(0, "GPIO91"),
-+		MTK_FUNCTION(1, "MSDC2_DAT2"),
-+		MTK_FUNCTION(7, "DBG_MON_B_20_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(92, "MSDC2_DAT1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 106),
-+		MTK_FUNCTION(0, "GPIO92"),
-+		MTK_FUNCTION(1, "MSDC2_DAT1"),
-+		MTK_FUNCTION(7, "DBG_MON_B_21_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(93, "MSDC2_DAT0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 107),
-+		MTK_FUNCTION(0, "GPIO93"),
-+		MTK_FUNCTION(1, "MSDC2_DAT0"),
-+		MTK_FUNCTION(7, "DBG_MON_B_22_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(94, "MSDC2_INS"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 108),
-+		MTK_FUNCTION(0, "GPIO94"),
-+		MTK_FUNCTION(7, "DBG_MON_B_23_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(95, "MSDC2_CMD"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 109),
-+		MTK_FUNCTION(0, "GPIO95"),
-+		MTK_FUNCTION(1, "MSDC2_CMD"),
-+		MTK_FUNCTION(7, "DBG_MON_B_24_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(96, "MSDC2_PSW"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 110),
-+		MTK_FUNCTION(0, "GPIO96"),
-+		MTK_FUNCTION(7, "DBG_MON_B_25_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(97, "URXD4"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 111),
-+		MTK_FUNCTION(0, "GPIO97"),
-+		MTK_FUNCTION(1, "URXD4"),
-+		MTK_FUNCTION(2, "UTXD4"),
-+		MTK_FUNCTION(3, "MRG_CLK"),
-+		MTK_FUNCTION(4, "PCM1_CLK"),
-+		MTK_FUNCTION(5, "I2S_IQ2_SDQB"),
-+		MTK_FUNCTION(6, "I2SO1_WS"),
-+		MTK_FUNCTION(7, "DBG_MON_B_26_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(98, "URTS4"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 112),
-+		MTK_FUNCTION(0, "GPIO98"),
-+		MTK_FUNCTION(1, "URTS4"),
-+		MTK_FUNCTION(2, "UCTS4"),
-+		MTK_FUNCTION(3, "MRG_RX"),
-+		MTK_FUNCTION(4, "PCM1_DI"),
-+		MTK_FUNCTION(5, "I2S_IQ1_SDIB"),
-+		MTK_FUNCTION(6, "I2SO1_MCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B_27_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(99, "UTXD4"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 113),
-+		MTK_FUNCTION(0, "GPIO99"),
-+		MTK_FUNCTION(1, "UTXD4"),
-+		MTK_FUNCTION(2, "URXD4"),
-+		MTK_FUNCTION(3, "MRG_SYNC"),
-+		MTK_FUNCTION(4, "PCM1_SYNC"),
-+		MTK_FUNCTION(5, "I2S_IQ0_SDQB"),
-+		MTK_FUNCTION(6, "I2SO1_BCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B_28_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(100, "UCTS4"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 114),
-+		MTK_FUNCTION(0, "GPIO100"),
-+		MTK_FUNCTION(1, "UCTS4"),
-+		MTK_FUNCTION(2, "URTS4"),
-+		MTK_FUNCTION(3, "MRG_TX"),
-+		MTK_FUNCTION(4, "PCM1_DO"),
-+		MTK_FUNCTION(5, "I2S_IQ0_SDIB"),
-+		MTK_FUNCTION(6, "I2SO1_DO"),
-+		MTK_FUNCTION(7, "DBG_MON_B_29_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(101, "URXD5"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 30),
-+		MTK_FUNCTION(0, "GPIO101"),
-+		MTK_FUNCTION(1, "URXD5"),
-+		MTK_FUNCTION(2, "UTXD5"),
-+		MTK_FUNCTION(3, "I2SO3_WS"),
-+		MTK_FUNCTION(4, "TDMIN_LRCK"),
-+		MTK_FUNCTION(6, "I2SO0_WS"),
-+		MTK_FUNCTION(7, "DBG_MON_B_30_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(102, "URTS5"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 31),
-+		MTK_FUNCTION(0, "GPIO102"),
-+		MTK_FUNCTION(1, "URTS5"),
-+		MTK_FUNCTION(2, "UCTS5"),
-+		MTK_FUNCTION(3, "I2SO3_MCK"),
-+		MTK_FUNCTION(4, "TDMIN_MCLK"),
-+		MTK_FUNCTION(5, "IR_IN"),
-+		MTK_FUNCTION(6, "I2SO0_MCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B_31_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(103, "UTXD5"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 32),
-+		MTK_FUNCTION(0, "GPIO103"),
-+		MTK_FUNCTION(1, "UTXD5"),
-+		MTK_FUNCTION(2, "URXD5"),
-+		MTK_FUNCTION(3, "I2SO3_BCK"),
-+		MTK_FUNCTION(4, "TDMIN_BCK"),
-+		MTK_FUNCTION(6, "I2SO0_BCK"),
-+		MTK_FUNCTION(7, "DBG_MON_B_32_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(104, "UCTS5"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 33),
-+		MTK_FUNCTION(0, "GPIO104"),
-+		MTK_FUNCTION(1, "UCTS5"),
-+		MTK_FUNCTION(2, "URTS5"),
-+		MTK_FUNCTION(3, "I2SO0_DO1"),
-+		MTK_FUNCTION(4, "TDMIN_DI"),
-+		MTK_FUNCTION(5, "IR_IN"),
-+		MTK_FUNCTION(6, "I2SO0_DO0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(105, "I2C_SDA0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 115),
-+		MTK_FUNCTION(0, "GPIO105"),
-+		MTK_FUNCTION(1, "SDA0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(106, "I2C_SDA1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 116),
-+		MTK_FUNCTION(0, "GPIO106"),
-+		MTK_FUNCTION(1, "SDA1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(107, "I2C_SDA2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 117),
-+		MTK_FUNCTION(0, "GPIO107"),
-+		MTK_FUNCTION(1, "SDA2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(108, "I2C_SDA3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 118),
-+		MTK_FUNCTION(0, "GPIO108"),
-+		MTK_FUNCTION(1, "SDA3")
-+	),
-+	MTK_PIN(PINCTRL_PIN(109, "I2C_SDA4"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 119),
-+		MTK_FUNCTION(0, "GPIO109"),
-+		MTK_FUNCTION(1, "SDA4")
-+	),
-+	MTK_PIN(PINCTRL_PIN(110, "I2C_SDA5"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 34),
-+		MTK_FUNCTION(0, "GPIO110"),
-+		MTK_FUNCTION(1, "SDA5")
-+	),
-+	MTK_PIN(PINCTRL_PIN(111, "I2C_SCL0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 120),
-+		MTK_FUNCTION(0, "GPIO111"),
-+		MTK_FUNCTION(1, "SCL0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(112, "I2C_SCL1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 121),
-+		MTK_FUNCTION(0, "GPIO112"),
-+		MTK_FUNCTION(1, "SCL1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(113, "I2C_SCL2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 122),
-+		MTK_FUNCTION(0, "GPIO113"),
-+		MTK_FUNCTION(1, "SCL2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(114, "I2C_SCL3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 123),
-+		MTK_FUNCTION(0, "GPIO114"),
-+		MTK_FUNCTION(1, "SCL3")
-+	),
-+	MTK_PIN(PINCTRL_PIN(115, "I2C_SCL4"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 124),
-+		MTK_FUNCTION(0, "GPIO115"),
-+		MTK_FUNCTION(1, "SCL4")
-+	),
-+	MTK_PIN(PINCTRL_PIN(116, "I2C_SCL5"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 35),
-+		MTK_FUNCTION(0, "GPIO116"),
-+		MTK_FUNCTION(1, "SCL5")
-+	),
-+	MTK_PIN(PINCTRL_PIN(117, "URXD0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 125),
-+		MTK_FUNCTION(0, "GPIO117"),
-+		MTK_FUNCTION(1, "URXD0"),
-+		MTK_FUNCTION(2, "UTXD0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(118, "URXD1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 126),
-+		MTK_FUNCTION(0, "GPIO118"),
-+		MTK_FUNCTION(1, "URXD1"),
-+		MTK_FUNCTION(2, "UTXD1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(119, "URXD2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 127),
-+		MTK_FUNCTION(0, "GPIO119"),
-+		MTK_FUNCTION(1, "URXD2"),
-+		MTK_FUNCTION(2, "UTXD2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(120, "UTXD0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 128),
-+		MTK_FUNCTION(0, "GPIO120"),
-+		MTK_FUNCTION(1, "UTXD0"),
-+		MTK_FUNCTION(2, "URXD0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(121, "UTXD1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 129),
-+		MTK_FUNCTION(0, "GPIO121"),
-+		MTK_FUNCTION(1, "UTXD1"),
-+		MTK_FUNCTION(2, "URXD1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(122, "UTXD2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 130),
-+		MTK_FUNCTION(0, "GPIO122"),
-+		MTK_FUNCTION(1, "UTXD2"),
-+		MTK_FUNCTION(2, "URXD2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(123, "URXD3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 131),
-+		MTK_FUNCTION(0, "GPIO123"),
-+		MTK_FUNCTION(1, "URXD3"),
-+		MTK_FUNCTION(2, "UTXD3"),
-+		MTK_FUNCTION(3, "PURE_HW_PROTECT")
-+	),
-+	MTK_PIN(PINCTRL_PIN(124, "UTXD3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 132),
-+		MTK_FUNCTION(0, "GPIO124"),
-+		MTK_FUNCTION(1, "UTXD3"),
-+		MTK_FUNCTION(2, "URXD3"),
-+		MTK_FUNCTION(3, "PURE_HW_PROTECT")
-+	),
-+	MTK_PIN(PINCTRL_PIN(125, "URTS3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 133),
-+		MTK_FUNCTION(0, "GPIO125"),
-+		MTK_FUNCTION(1, "URTS3"),
-+		MTK_FUNCTION(2, "UCTS3"),
-+		MTK_FUNCTION(3, "WATCH_DOG")
-+	),
-+	MTK_PIN(PINCTRL_PIN(126, "UCTS3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 134),
-+		MTK_FUNCTION(0, "GPIO126"),
-+		MTK_FUNCTION(1, "UCTS3"),
-+		MTK_FUNCTION(2, "URTS3"),
-+		MTK_FUNCTION(3, "SRCLKENA0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(127, "SPI2_CSN"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 135),
-+		MTK_FUNCTION(0, "GPIO127"),
-+		MTK_FUNCTION(1, "SPI_CS_2_"),
-+		MTK_FUNCTION(2, "SPI_CS_1_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(128, "SPI2_MO"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 136),
-+		MTK_FUNCTION(0, "GPIO128"),
-+		MTK_FUNCTION(1, "SPI_MO_2_"),
-+		MTK_FUNCTION(2, "SPI_SO_1_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(129, "SPI2_MI"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 137),
-+		MTK_FUNCTION(0, "GPIO129"),
-+		MTK_FUNCTION(1, "SPI_MI_2_"),
-+		MTK_FUNCTION(2, "SPI_SI_1_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(130, "SPI2_CK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 138),
-+		MTK_FUNCTION(0, "GPIO130"),
-+		MTK_FUNCTION(1, "SPI_CK_2_"),
-+		MTK_FUNCTION(2, "SPI_CK_1_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(131, "SPI3_CSN"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 139),
-+		MTK_FUNCTION(0, "GPIO131"),
-+		MTK_FUNCTION(1, "SPI_CS_3_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(132, "SPI3_MO"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 143),
-+		MTK_FUNCTION(0, "GPIO132"),
-+		MTK_FUNCTION(1, "SPI_MO_3_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(133, "SPI3_MI"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 144),
-+		MTK_FUNCTION(0, "GPIO133"),
-+		MTK_FUNCTION(1, "SPI_MI_3_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(134, "SPI3_CK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 145),
-+		MTK_FUNCTION(0, "GPIO134"),
-+		MTK_FUNCTION(1, "SPI_CK_3_")
-+	),
-+	MTK_PIN(PINCTRL_PIN(135, "KPROW3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 146),
-+		MTK_FUNCTION(0, "GPIO135"),
-+		MTK_FUNCTION(1, "KROW3"),
-+		MTK_FUNCTION(2, "DSIC_TE")
-+	),
-+	MTK_PIN(PINCTRL_PIN(136, "KPROW4"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 36),
-+		MTK_FUNCTION(0, "GPIO136"),
-+		MTK_FUNCTION(1, "KROW4"),
-+		MTK_FUNCTION(2, "DSID_TE")
-+	),
-+	MTK_PIN(PINCTRL_PIN(137, "KPCOL3"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 147),
-+		MTK_FUNCTION(0, "GPIO137"),
-+		MTK_FUNCTION(1, "KCOL3"),
-+		MTK_FUNCTION(2, "DISP2_PWM")
-+	),
-+	MTK_PIN(PINCTRL_PIN(138, "KPCOL4"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 37),
-+		MTK_FUNCTION(0, "GPIO138"),
-+		MTK_FUNCTION(1, "KCOL4"),
-+		MTK_FUNCTION(2, "LCM_RST2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(139, "KPCOL5"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 38),
-+		MTK_FUNCTION(0, "GPIO139"),
-+		MTK_FUNCTION(1, "KCOL5"),
-+		MTK_FUNCTION(3, "DSIA_TE"),
-+		MTK_FUNCTION(4, "PURE_HW_PROTECT")
-+	),
-+	MTK_PIN(PINCTRL_PIN(140, "KPCOL6"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 39),
-+		MTK_FUNCTION(0, "GPIO140"),
-+		MTK_FUNCTION(1, "KCOL6"),
-+		MTK_FUNCTION(2, "WATCH_DOG"),
-+		MTK_FUNCTION(3, "LCM_RST1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(141, "KPROW5"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 40),
-+		MTK_FUNCTION(0, "GPIO141"),
-+		MTK_FUNCTION(1, "KROW5"),
-+		MTK_FUNCTION(3, "LCM_RST0"),
-+		MTK_FUNCTION(4, "PURE_HW_PROTECT")
-+	),
-+	MTK_PIN(PINCTRL_PIN(142, "KPROW6"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 41),
-+		MTK_FUNCTION(0, "GPIO142"),
-+		MTK_FUNCTION(1, "KROW6"),
-+		MTK_FUNCTION(2, "SRCLKENA0"),
-+		MTK_FUNCTION(3, "DSIB_TE")
-+	),
-+	MTK_PIN(PINCTRL_PIN(143, "JTDO_ICE"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 148),
-+		MTK_FUNCTION(0, "GPIO143"),
-+		MTK_FUNCTION(1, "JTDO_ICE"),
-+		MTK_FUNCTION(3, "DFD_TDO")
-+	),
-+	MTK_PIN(PINCTRL_PIN(144, "JTCK_ICE"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 149),
-+		MTK_FUNCTION(0, "GPIO144"),
-+		MTK_FUNCTION(1, "JTCK_ICE"),
-+		MTK_FUNCTION(3, "DFD_TCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(145, "JTDI_ICE"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 150),
-+		MTK_FUNCTION(0, "GPIO145"),
-+		MTK_FUNCTION(1, "JTDI_ICE"),
-+		MTK_FUNCTION(3, "DFD_TDI")
-+	),
-+	MTK_PIN(PINCTRL_PIN(146, "JTMS_ICE"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 151),
-+		MTK_FUNCTION(0, "GPIO146"),
-+		MTK_FUNCTION(1, "JTMS_ICE"),
-+		MTK_FUNCTION(3, "DFD_TMS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(147, "JTRSTB_ICE"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 152),
-+		MTK_FUNCTION(0, "GPIO147"),
-+		MTK_FUNCTION(1, "JTRST_B_ICE"),
-+		MTK_FUNCTION(3, "DFD_NTRST")
-+	),
-+	MTK_PIN(PINCTRL_PIN(148, "GPIO148"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 153),
-+		MTK_FUNCTION(0, "GPIO148"),
-+		MTK_FUNCTION(1, "JTRSTB_CM4"),
-+		MTK_FUNCTION(3, "DFD_NTRST")
-+	),
-+	MTK_PIN(PINCTRL_PIN(149, "GPIO149"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 154),
-+		MTK_FUNCTION(0, "GPIO149"),
-+		MTK_FUNCTION(1, "JTCK_CM4"),
-+		MTK_FUNCTION(3, "DFD_TCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(150, "GPIO150"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 155),
-+		MTK_FUNCTION(0, "GPIO150"),
-+		MTK_FUNCTION(1, "JTMS_CM4"),
-+		MTK_FUNCTION(3, "DFD_TMS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(151, "GPIO151"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 156),
-+		MTK_FUNCTION(0, "GPIO151"),
-+		MTK_FUNCTION(1, "JTDI_CM4"),
-+		MTK_FUNCTION(3, "DFD_TDI")
-+	),
-+	MTK_PIN(PINCTRL_PIN(152, "GPIO152"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 157),
-+		MTK_FUNCTION(0, "GPIO152"),
-+		MTK_FUNCTION(1, "JTDO_CM4"),
-+		MTK_FUNCTION(3, "DFD_TDO")
-+	),
-+	MTK_PIN(PINCTRL_PIN(153, "SPI0_CSN"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 158),
-+		MTK_FUNCTION(0, "GPIO153"),
-+		MTK_FUNCTION(1, "SPI_CS_0_"),
-+		MTK_FUNCTION(2, "SRCLKENA0"),
-+		MTK_FUNCTION(3, "UTXD0"),
-+		MTK_FUNCTION(4, "I2SO0_DO1"),
-+		MTK_FUNCTION(6, "TDMO0_DATA1"),
-+		MTK_FUNCTION(7, "I2S_IQ2_SDQB")
-+	),
-+	MTK_PIN(PINCTRL_PIN(154, "SPI0_MI"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 159),
-+		MTK_FUNCTION(0, "GPIO154"),
-+		MTK_FUNCTION(1, "SPI_MI_0_"),
-+		MTK_FUNCTION(2, "SRCLKENA0"),
-+		MTK_FUNCTION(3, "URXD0"),
-+		MTK_FUNCTION(4, "I2SO0_DO0"),
-+		MTK_FUNCTION(5, "I2SO1_DO"),
-+		MTK_FUNCTION(6, "TDMO0_DATA"),
-+		MTK_FUNCTION(7, "I2S_IQ1_SDIB")
-+	),
-+	MTK_PIN(PINCTRL_PIN(155, "SPI0_CK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 160),
-+		MTK_FUNCTION(0, "GPIO155"),
-+		MTK_FUNCTION(1, "SPI_CK_0_"),
-+		MTK_FUNCTION(2, "SC_APBIAS_OFF"),
-+		MTK_FUNCTION(3, "UTXD1"),
-+		MTK_FUNCTION(4, "I2SO0_BCK"),
-+		MTK_FUNCTION(5, "I2SO1_BCK"),
-+		MTK_FUNCTION(6, "TDMO0_BCK"),
-+		MTK_FUNCTION(7, "I2S_IQ0_SDQB")
-+	),
-+	MTK_PIN(PINCTRL_PIN(156, "SPI0_MO"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 161),
-+		MTK_FUNCTION(0, "GPIO156"),
-+		MTK_FUNCTION(1, "SPI_MO_0_"),
-+		MTK_FUNCTION(2, "SC_APBIAS_OFF"),
-+		MTK_FUNCTION(3, "URXD1"),
-+		MTK_FUNCTION(4, "I2SO0_WS"),
-+		MTK_FUNCTION(5, "I2SO1_WS"),
-+		MTK_FUNCTION(6, "TDMO0_LRCK"),
-+		MTK_FUNCTION(7, "I2S_IQ0_SDIB")
-+	),
-+	MTK_PIN(PINCTRL_PIN(157, "SPI5_CSN"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 162),
-+		MTK_FUNCTION(0, "GPIO157"),
-+		MTK_FUNCTION(1, "SPI_CS_5_"),
-+		MTK_FUNCTION(2, "LCM_RST0"),
-+		MTK_FUNCTION(3, "UTXD2"),
-+		MTK_FUNCTION(4, "I2SO0_MCK"),
-+		MTK_FUNCTION(5, "I2SO1_MCK"),
-+		MTK_FUNCTION(6, "TDMO0_MCLK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(158, "SPI5_MI"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 163),
-+		MTK_FUNCTION(0, "GPIO158"),
-+		MTK_FUNCTION(1, "SPI_MI_5_"),
-+		MTK_FUNCTION(2, "DSIA_TE"),
-+		MTK_FUNCTION(3, "URXD2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(159, "SPI5_MO"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 164),
-+		MTK_FUNCTION(0, "GPIO159"),
-+		MTK_FUNCTION(1, "SPI_MO_5_"),
-+		MTK_FUNCTION(2, "DSIB_TE"),
-+		MTK_FUNCTION(3, "UTXD3")
-+	),
-+	MTK_PIN(PINCTRL_PIN(160, "SPI5_CK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 165),
-+		MTK_FUNCTION(0, "GPIO160"),
-+		MTK_FUNCTION(1, "SPI_CK_5_"),
-+		MTK_FUNCTION(2, "LCM_RST1"),
-+		MTK_FUNCTION(3, "URXD3")
-+	),
-+	MTK_PIN(PINCTRL_PIN(161, "SPI1_CSN"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 166),
-+		MTK_FUNCTION(0, "GPIO161"),
-+		MTK_FUNCTION(1, "SPI_CS_1_"),
-+		MTK_FUNCTION(2, "SPI_CS_4_"),
-+		MTK_FUNCTION(4, "I2S_IQ2_SDQB"),
-+		MTK_FUNCTION(5, "I2SO2_DO"),
-+		MTK_FUNCTION(6, "TDMO0_DATA1"),
-+		MTK_FUNCTION(7, "I2SO0_DO1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(162, "SPI1_SI"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 167),
-+		MTK_FUNCTION(0, "GPIO162"),
-+		MTK_FUNCTION(1, "SPI_SI_1_"),
-+		MTK_FUNCTION(2, "SPI_MI_4_"),
-+		MTK_FUNCTION(4, "I2S_IQ1_SDIB"),
-+		MTK_FUNCTION(5, "I2SO2_BCK"),
-+		MTK_FUNCTION(6, "TDMO0_DATA"),
-+		MTK_FUNCTION(7, "I2SO0_DO0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(163, "SPI1_CK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 168),
-+		MTK_FUNCTION(0, "GPIO163"),
-+		MTK_FUNCTION(1, "SPI_CK_1_"),
-+		MTK_FUNCTION(2, "SPI_CK_4_"),
-+		MTK_FUNCTION(4, "I2S_IQ0_SDQB"),
-+		MTK_FUNCTION(5, "I2SO2_WS"),
-+		MTK_FUNCTION(6, "TDMO0_BCK"),
-+		MTK_FUNCTION(7, "I2SO0_BCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(164, "SPI1_SO"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 169),
-+		MTK_FUNCTION(0, "GPIO164"),
-+		MTK_FUNCTION(1, "SPI_SO_1_"),
-+		MTK_FUNCTION(2, "SPI_MO_4_"),
-+		MTK_FUNCTION(4, "I2S_IQ0_SDIB"),
-+		MTK_FUNCTION(5, "I2SO2_MCK"),
-+		MTK_FUNCTION(6, "TDMO0_LRCK"),
-+		MTK_FUNCTION(7, "I2SO0_WS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(165, "SPI4_CSN"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 170),
-+		MTK_FUNCTION(0, "GPIO165"),
-+		MTK_FUNCTION(1, "SPI_CS_4_"),
-+		MTK_FUNCTION(2, "LCM_RST0"),
-+		MTK_FUNCTION(3, "SPI_CS_1_"),
-+		MTK_FUNCTION(4, "UTXD4"),
-+		MTK_FUNCTION(5, "I2SO1_DO"),
-+		MTK_FUNCTION(6, "TDMO0_MCLK"),
-+		MTK_FUNCTION(7, "I2SO0_MCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(166, "SPI4_MI"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 171),
-+		MTK_FUNCTION(0, "GPIO166"),
-+		MTK_FUNCTION(1, "SPI_MI_4_"),
-+		MTK_FUNCTION(2, "DSIA_TE"),
-+		MTK_FUNCTION(3, "SPI_SI_1_"),
-+		MTK_FUNCTION(4, "URXD4"),
-+		MTK_FUNCTION(5, "I2SO1_BCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(167, "SPI4_MO"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 172),
-+		MTK_FUNCTION(0, "GPIO167"),
-+		MTK_FUNCTION(1, "SPI_MO_4_"),
-+		MTK_FUNCTION(2, "DSIB_TE"),
-+		MTK_FUNCTION(3, "SPI_SO_1_"),
-+		MTK_FUNCTION(4, "UTXD5"),
-+		MTK_FUNCTION(5, "I2SO1_WS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(168, "SPI4_CK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 173),
-+		MTK_FUNCTION(0, "GPIO168"),
-+		MTK_FUNCTION(1, "SPI_CK_4_"),
-+		MTK_FUNCTION(2, "LCM_RST1"),
-+		MTK_FUNCTION(3, "SPI_CK_1_"),
-+		MTK_FUNCTION(4, "URXD5"),
-+		MTK_FUNCTION(5, "I2SO1_MCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(169, "I2SI0_DATA"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 174),
-+		MTK_FUNCTION(0, "GPIO169"),
-+		MTK_FUNCTION(1, "I2SI0_DI"),
-+		MTK_FUNCTION(2, "I2SI1_DI"),
-+		MTK_FUNCTION(3, "I2SI2_DI"),
-+		MTK_FUNCTION(4, "TDMIN_DI")
-+	),
-+	MTK_PIN(PINCTRL_PIN(170, "I2SI0_LRCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 175),
-+		MTK_FUNCTION(0, "GPIO170"),
-+		MTK_FUNCTION(1, "I2SI0_WS"),
-+		MTK_FUNCTION(2, "I2SI1_WS"),
-+		MTK_FUNCTION(3, "I2SI2_WS"),
-+		MTK_FUNCTION(4, "TDMIN_LRCK"),
-+		MTK_FUNCTION(5, "TDMO0_DATA3"),
-+		MTK_FUNCTION(6, "TDMO1_DATA3")
-+	),
-+	MTK_PIN(PINCTRL_PIN(171, "I2SI0_MCLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 176),
-+		MTK_FUNCTION(0, "GPIO171"),
-+		MTK_FUNCTION(1, "I2SI0_MCK"),
-+		MTK_FUNCTION(2, "I2SI1_MCK"),
-+		MTK_FUNCTION(3, "I2SI2_MCK"),
-+		MTK_FUNCTION(4, "TDMIN_MCLK"),
-+		MTK_FUNCTION(5, "TDMO0_DATA2"),
-+		MTK_FUNCTION(6, "TDMO1_DATA2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(172, "I2SI0_BCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 177),
-+		MTK_FUNCTION(0, "GPIO172"),
-+		MTK_FUNCTION(1, "I2SI0_BCK"),
-+		MTK_FUNCTION(2, "I2SI1_BCK"),
-+		MTK_FUNCTION(3, "I2SI2_BCK"),
-+		MTK_FUNCTION(4, "TDMIN_BCK"),
-+		MTK_FUNCTION(5, "TDMO0_DATA1"),
-+		MTK_FUNCTION(6, "TDMO1_DATA1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(173, "I2SI2_DATA"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 178),
-+		MTK_FUNCTION(0, "GPIO173"),
-+		MTK_FUNCTION(1, "I2SI2_DI"),
-+		MTK_FUNCTION(2, "I2SI0_DI"),
-+		MTK_FUNCTION(3, "I2SI1_DI"),
-+		MTK_FUNCTION(4, "PCM1_DI"),
-+		MTK_FUNCTION(5, "TDMIN_DI"),
-+		MTK_FUNCTION(6, "PCM1_DO")
-+	),
-+	MTK_PIN(PINCTRL_PIN(174, "I2SI2_MCLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 179),
-+		MTK_FUNCTION(0, "GPIO174"),
-+		MTK_FUNCTION(1, "I2SI2_MCK"),
-+		MTK_FUNCTION(2, "I2SI0_MCK"),
-+		MTK_FUNCTION(3, "I2SI1_MCK"),
-+		MTK_FUNCTION(4, "PCM1_DO"),
-+		MTK_FUNCTION(5, "TDMIN_MCLK"),
-+		MTK_FUNCTION(6, "PCM1_DI"),
-+		MTK_FUNCTION(7, "I2S_IQ2_SDQB")
-+	),
-+	MTK_PIN(PINCTRL_PIN(175, "I2SI2_BCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 180),
-+		MTK_FUNCTION(0, "GPIO175"),
-+		MTK_FUNCTION(1, "I2SI2_BCK"),
-+		MTK_FUNCTION(2, "I2SI0_BCK"),
-+		MTK_FUNCTION(3, "I2SI1_BCK"),
-+		MTK_FUNCTION(4, "PCM1_CLK"),
-+		MTK_FUNCTION(5, "TDMIN_BCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(176, "I2SI2_LRCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 181),
-+		MTK_FUNCTION(0, "GPIO176"),
-+		MTK_FUNCTION(1, "I2SI2_WS"),
-+		MTK_FUNCTION(2, "I2SI0_WS"),
-+		MTK_FUNCTION(3, "I2SI1_WS"),
-+		MTK_FUNCTION(4, "PCM1_SYNC"),
-+		MTK_FUNCTION(5, "TDMIN_LRCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(177, "I2SI1_DATA"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 182),
-+		MTK_FUNCTION(0, "GPIO177"),
-+		MTK_FUNCTION(1, "I2SI1_DI"),
-+		MTK_FUNCTION(2, "I2SI0_DI"),
-+		MTK_FUNCTION(3, "I2SI2_DI"),
-+		MTK_FUNCTION(4, "TDMIN_DI")
-+	),
-+	MTK_PIN(PINCTRL_PIN(178, "I2SI1_BCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 183),
-+		MTK_FUNCTION(0, "GPIO178"),
-+		MTK_FUNCTION(1, "I2SI1_BCK"),
-+		MTK_FUNCTION(2, "I2SI0_BCK"),
-+		MTK_FUNCTION(3, "I2SI2_BCK"),
-+		MTK_FUNCTION(4, "TDMIN_BCK"),
-+		MTK_FUNCTION(5, "TDMO0_DATA3"),
-+		MTK_FUNCTION(6, "TDMO1_DATA3")
-+	),
-+	MTK_PIN(PINCTRL_PIN(179, "I2SI1_LRCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 184),
-+		MTK_FUNCTION(0, "GPIO179"),
-+		MTK_FUNCTION(1, "I2SI1_WS"),
-+		MTK_FUNCTION(2, "I2SI0_WS"),
-+		MTK_FUNCTION(3, "I2SI2_WS"),
-+		MTK_FUNCTION(4, "TDMIN_LRCK"),
-+		MTK_FUNCTION(5, "TDMO0_DATA2"),
-+		MTK_FUNCTION(6, "TDMO1_DATA2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(180, "I2SI1_MCLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 185),
-+		MTK_FUNCTION(0, "GPIO180"),
-+		MTK_FUNCTION(1, "I2SI1_MCK"),
-+		MTK_FUNCTION(2, "I2SI0_MCK"),
-+		MTK_FUNCTION(3, "I2SI2_MCK"),
-+		MTK_FUNCTION(4, "TDMIN_MCLK"),
-+		MTK_FUNCTION(5, "TDMO0_DATA1"),
-+		MTK_FUNCTION(6, "TDMO1_DATA1"),
-+		MTK_FUNCTION(7, "I2S_IQ2_SDIB")
-+	),
-+	MTK_PIN(PINCTRL_PIN(181, "I2SO1_DATA0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 186),
-+		MTK_FUNCTION(0, "GPIO181"),
-+		MTK_FUNCTION(1, "I2SO1_DO"),
-+		MTK_FUNCTION(2, "I2SO0_DO0"),
-+		MTK_FUNCTION(3, "I2SO2_DO"),
-+		MTK_FUNCTION(4, "DAI_TX"),
-+		MTK_FUNCTION(5, "TDMIN_MCLK"),
-+		MTK_FUNCTION(7, "I2S_IQ2_SDIA")
-+	),
-+	MTK_PIN(PINCTRL_PIN(182, "I2SO1_BCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 187),
-+		MTK_FUNCTION(0, "GPIO182"),
-+		MTK_FUNCTION(1, "I2SO1_BCK"),
-+		MTK_FUNCTION(2, "I2SO0_BCK"),
-+		MTK_FUNCTION(3, "I2SO2_BCK"),
-+		MTK_FUNCTION(4, "DAI_SYNC"),
-+		MTK_FUNCTION(5, "TDMIN_BCK"),
-+		MTK_FUNCTION(6, "TDMO0_DATA3"),
-+		MTK_FUNCTION(7, "I2S_IQ2_BCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(183, "I2SO1_LRCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 188),
-+		MTK_FUNCTION(0, "GPIO183"),
-+		MTK_FUNCTION(1, "I2SO1_WS"),
-+		MTK_FUNCTION(2, "I2SO0_WS"),
-+		MTK_FUNCTION(3, "I2SO2_WS"),
-+		MTK_FUNCTION(4, "DAI_CLK"),
-+		MTK_FUNCTION(5, "TDMIN_DI"),
-+		MTK_FUNCTION(6, "TDMO0_DATA2"),
-+		MTK_FUNCTION(7, "I2S_IQ2_WS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(184, "I2SO1_MCLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 189),
-+		MTK_FUNCTION(0, "GPIO184"),
-+		MTK_FUNCTION(1, "I2SO1_MCK"),
-+		MTK_FUNCTION(2, "I2SO0_MCK"),
-+		MTK_FUNCTION(3, "I2SO2_MCK"),
-+		MTK_FUNCTION(4, "DAI_RX"),
-+		MTK_FUNCTION(5, "TDMIN_LRCK"),
-+		MTK_FUNCTION(6, "TDMO0_DATA1"),
-+		MTK_FUNCTION(7, "I2S_IQ2_SDQA")
-+	),
-+	MTK_PIN(PINCTRL_PIN(185, "AUD_EXT_CK2"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 190),
-+		MTK_FUNCTION(0, "GPIO185"),
-+		MTK_FUNCTION(1, "AUD_EXT_CK2"),
-+		MTK_FUNCTION(2, "AUD_EXT_CK1"),
-+		MTK_FUNCTION(3, "I2SO1_DO"),
-+		MTK_FUNCTION(4, "I2SI2_DI"),
-+		MTK_FUNCTION(5, "MRG_RX"),
-+		MTK_FUNCTION(6, "PCM1_DI"),
-+		MTK_FUNCTION(7, "I2S_IQ0_SDQB")
-+	),
-+	MTK_PIN(PINCTRL_PIN(186, "AUD_EXT_CK1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 191),
-+		MTK_FUNCTION(0, "GPIO186"),
-+		MTK_FUNCTION(1, "AUD_EXT_CK1"),
-+		MTK_FUNCTION(2, "AUD_EXT_CK2"),
-+		MTK_FUNCTION(3, "I2SO0_DO1"),
-+		MTK_FUNCTION(4, "I2SI1_DI"),
-+		MTK_FUNCTION(5, "MRG_TX"),
-+		MTK_FUNCTION(6, "PCM1_DO"),
-+		MTK_FUNCTION(7, "I2S_IQ0_SDIB")
-+	),
-+	MTK_PIN(PINCTRL_PIN(187, "I2SO2_BCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 192),
-+		MTK_FUNCTION(0, "GPIO187"),
-+		MTK_FUNCTION(1, "I2SO2_BCK"),
-+		MTK_FUNCTION(2, "I2SO0_BCK"),
-+		MTK_FUNCTION(3, "I2SO1_BCK"),
-+		MTK_FUNCTION(4, "PCM1_CLK"),
-+		MTK_FUNCTION(5, "MRG_SYNC"),
-+		MTK_FUNCTION(6, "TDMO1_DATA3"),
-+		MTK_FUNCTION(7, "I2S_IQ0_BCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(188, "I2SO2_LRCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 193),
-+		MTK_FUNCTION(0, "GPIO188"),
-+		MTK_FUNCTION(1, "I2SO2_WS"),
-+		MTK_FUNCTION(2, "I2SO0_WS"),
-+		MTK_FUNCTION(3, "I2SO1_WS"),
-+		MTK_FUNCTION(4, "PCM1_SYNC"),
-+		MTK_FUNCTION(5, "MRG_CLK"),
-+		MTK_FUNCTION(6, "TDMO1_DATA2"),
-+		MTK_FUNCTION(7, "I2S_IQ0_WS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(189, "I2SO2_MCLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 194),
-+		MTK_FUNCTION(0, "GPIO189"),
-+		MTK_FUNCTION(1, "I2SO2_MCK"),
-+		MTK_FUNCTION(2, "I2SO0_MCK"),
-+		MTK_FUNCTION(3, "I2SO1_MCK"),
-+		MTK_FUNCTION(4, "PCM1_DO"),
-+		MTK_FUNCTION(5, "MRG_RX"),
-+		MTK_FUNCTION(6, "TDMO1_DATA1"),
-+		MTK_FUNCTION(7, "I2S_IQ0_SDQA")
-+	),
-+	MTK_PIN(PINCTRL_PIN(190, "I2SO2_DATA0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 195),
-+		MTK_FUNCTION(0, "GPIO190"),
-+		MTK_FUNCTION(1, "I2SO2_DO"),
-+		MTK_FUNCTION(2, "I2SO0_DO0"),
-+		MTK_FUNCTION(3, "I2SO1_DO"),
-+		MTK_FUNCTION(4, "PCM1_DI"),
-+		MTK_FUNCTION(5, "MRG_TX"),
-+		MTK_FUNCTION(6, "PCM1_DO"),
-+		MTK_FUNCTION(7, "I2S_IQ0_SDIA")
-+	),
-+	MTK_PIN(PINCTRL_PIN(191, "I2SO0_DATA1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 196),
-+		MTK_FUNCTION(0, "GPIO191"),
-+		MTK_FUNCTION(1, "I2SO0_DO1"),
-+		MTK_FUNCTION(2, "I2SI0_DI"),
-+		MTK_FUNCTION(3, "I2SI1_DI"),
-+		MTK_FUNCTION(4, "I2SI2_DI"),
-+		MTK_FUNCTION(5, "DAI_TX"),
-+		MTK_FUNCTION(6, "I2S_IQ0_SDQB"),
-+		MTK_FUNCTION(7, "I2S_IQ1_SDQB")
-+	),
-+	MTK_PIN(PINCTRL_PIN(192, "I2SO0_MCLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 197),
-+		MTK_FUNCTION(0, "GPIO192"),
-+		MTK_FUNCTION(1, "I2SO0_MCK"),
-+		MTK_FUNCTION(2, "I2SO1_MCK"),
-+		MTK_FUNCTION(3, "I2SO2_MCK"),
-+		MTK_FUNCTION(4, "USB4_FT_SCL"),
-+		MTK_FUNCTION(5, "TDMO1_DATA3"),
-+		MTK_FUNCTION(6, "I2S_IQ0_SDIB"),
-+		MTK_FUNCTION(7, "I2S_IQ1_SDQA")
-+	),
-+	MTK_PIN(PINCTRL_PIN(193, "I2SO0_DATA0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 198),
-+		MTK_FUNCTION(0, "GPIO193"),
-+		MTK_FUNCTION(1, "I2SO0_DO0"),
-+		MTK_FUNCTION(2, "I2SO1_DO"),
-+		MTK_FUNCTION(3, "I2SO2_DO"),
-+		MTK_FUNCTION(4, "USB4_FT_SDA"),
-+		MTK_FUNCTION(7, "I2S_IQ1_SDIA")
-+	),
-+	MTK_PIN(PINCTRL_PIN(194, "I2SO0_LRCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 199),
-+		MTK_FUNCTION(0, "GPIO194"),
-+		MTK_FUNCTION(1, "I2SO0_WS"),
-+		MTK_FUNCTION(2, "I2SO1_WS"),
-+		MTK_FUNCTION(3, "I2SO2_WS"),
-+		MTK_FUNCTION(4, "USB5_FT_SCL"),
-+		MTK_FUNCTION(5, "TDMO1_DATA2"),
-+		MTK_FUNCTION(7, "I2S_IQ1_WS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(195, "I2SO0_BCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 200),
-+		MTK_FUNCTION(0, "GPIO195"),
-+		MTK_FUNCTION(1, "I2SO0_BCK"),
-+		MTK_FUNCTION(2, "I2SO1_BCK"),
-+		MTK_FUNCTION(3, "I2SO2_BCK"),
-+		MTK_FUNCTION(4, "USB5_FT_SDA"),
-+		MTK_FUNCTION(5, "TDMO1_DATA1"),
-+		MTK_FUNCTION(7, "I2S_IQ1_BCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(196, "TDMO1_MCLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 201),
-+		MTK_FUNCTION(0, "GPIO196"),
-+		MTK_FUNCTION(1, "TDMO1_MCLK"),
-+		MTK_FUNCTION(2, "TDMO0_MCLK"),
-+		MTK_FUNCTION(3, "TDMIN_MCLK"),
-+		MTK_FUNCTION(6, "I2SO0_DO1"),
-+		MTK_FUNCTION(7, "I2S_IQ1_SDIB")
-+	),
-+	MTK_PIN(PINCTRL_PIN(197, "TDMO1_LRCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 202),
-+		MTK_FUNCTION(0, "GPIO197"),
-+		MTK_FUNCTION(1, "TDMO1_LRCK"),
-+		MTK_FUNCTION(2, "TDMO0_LRCK"),
-+		MTK_FUNCTION(3, "TDMIN_LRCK"),
-+		MTK_FUNCTION(4, "TDMO0_DATA3"),
-+		MTK_FUNCTION(5, "TDMO1_DATA3"),
-+		MTK_FUNCTION(6, "I2SO3_MCK"),
-+		MTK_FUNCTION(7, "TDMO1_DATA2")
-+	),
-+	MTK_PIN(PINCTRL_PIN(198, "TDMO1_BCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 203),
-+		MTK_FUNCTION(0, "GPIO198"),
-+		MTK_FUNCTION(1, "TDMO1_BCK"),
-+		MTK_FUNCTION(2, "TDMO0_BCK"),
-+		MTK_FUNCTION(3, "TDMIN_BCK"),
-+		MTK_FUNCTION(4, "TDMO0_DATA2"),
-+		MTK_FUNCTION(5, "TDMO1_DATA2"),
-+		MTK_FUNCTION(6, "I2SO3_BCK"),
-+		MTK_FUNCTION(7, "TDMO1_DATA1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(199, "TDMO1_DATA"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 204),
-+		MTK_FUNCTION(0, "GPIO199"),
-+		MTK_FUNCTION(1, "TDMO1_DATA"),
-+		MTK_FUNCTION(2, "TDMO0_DATA"),
-+		MTK_FUNCTION(3, "TDMIN_DI"),
-+		MTK_FUNCTION(4, "TDMO0_DATA1"),
-+		MTK_FUNCTION(5, "TDMO1_DATA1"),
-+		MTK_FUNCTION(6, "I2SO3_WS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(200, "TDMO0_MCLK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 205),
-+		MTK_FUNCTION(0, "GPIO200"),
-+		MTK_FUNCTION(1, "TDMO0_MCLK"),
-+		MTK_FUNCTION(2, "TDMO1_MCLK"),
-+		MTK_FUNCTION(3, "PCM1_DI"),
-+		MTK_FUNCTION(4, "TDMO0_MCLK"),
-+		MTK_FUNCTION(5, "TDMO1_MCLK"),
-+		MTK_FUNCTION(6, "MRG_TX"),
-+		MTK_FUNCTION(7, "I2SO2_MCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(201, "TDMO0_LRCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 206),
-+		MTK_FUNCTION(0, "GPIO201"),
-+		MTK_FUNCTION(1, "TDMO0_LRCK"),
-+		MTK_FUNCTION(2, "TDMO1_LRCK"),
-+		MTK_FUNCTION(3, "PCM1_SYNC"),
-+		MTK_FUNCTION(4, "TDMO0_LRCK"),
-+		MTK_FUNCTION(5, "TDMO1_LRCK"),
-+		MTK_FUNCTION(6, "MRG_RX"),
-+		MTK_FUNCTION(7, "I2SO2_WS")
-+	),
-+	MTK_PIN(PINCTRL_PIN(202, "TDMO0_BCK"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 207),
-+		MTK_FUNCTION(0, "GPIO202"),
-+		MTK_FUNCTION(1, "TDMO0_BCK"),
-+		MTK_FUNCTION(2, "TDMO1_BCK"),
-+		MTK_FUNCTION(3, "PCM1_CLK"),
-+		MTK_FUNCTION(4, "TDMO0_BCK"),
-+		MTK_FUNCTION(5, "TDMO1_BCK"),
-+		MTK_FUNCTION(6, "MRG_SYNC"),
-+		MTK_FUNCTION(7, "I2SO2_BCK")
-+	),
-+	MTK_PIN(PINCTRL_PIN(203, "TDMO0_DATA"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 208),
-+		MTK_FUNCTION(0, "GPIO203"),
-+		MTK_FUNCTION(1, "TDMO0_DATA"),
-+		MTK_FUNCTION(2, "TDMO1_DATA"),
-+		MTK_FUNCTION(3, "PCM1_DO"),
-+		MTK_FUNCTION(4, "TDMO0_DATA"),
-+		MTK_FUNCTION(5, "TDMO1_DATA"),
-+		MTK_FUNCTION(6, "MRG_CLK"),
-+		MTK_FUNCTION(7, "I2SO2_DO")
-+	),
-+	MTK_PIN(PINCTRL_PIN(204, "PERSTB_P0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 209),
-+		MTK_FUNCTION(0, "GPIO204"),
-+		MTK_FUNCTION(1, "PERST_B_P0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(205, "CLKREQN_P0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 210),
-+		MTK_FUNCTION(0, "GPIO205"),
-+		MTK_FUNCTION(1, "CLKREQ_N_P0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(206, "WAKEEN_P0"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 211),
-+		MTK_FUNCTION(0, "GPIO206"),
-+		MTK_FUNCTION(1, "WAKE_EN_P0")
-+	),
-+	MTK_PIN(PINCTRL_PIN(207, "PERSTB_P1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 212),
-+		MTK_FUNCTION(0, "GPIO207"),
-+		MTK_FUNCTION(1, "PERST_B_P1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(208, "CLKREQN_P1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 213),
-+		MTK_FUNCTION(0, "GPIO208"),
-+		MTK_FUNCTION(1, "CLKREQ_N_P1")
-+	),
-+	MTK_PIN(PINCTRL_PIN(209, "WAKEEN_P1"),
-+		NULL, "mt2712",
-+		MTK_EINT_FUNCTION(0, 214),
-+		MTK_FUNCTION(0, "GPIO209"),
-+		MTK_FUNCTION(1, "WAKE_EN_P1")
-+	),
-+};
-+
-+#endif /* __PINCTRL_MTK_MT2712_H */
--- 
-1.9.1
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+G5lumzAKbveHJfH8D6m4vvMZrAEA
+
+--fUYQa+Pmc3FrFX/N--
