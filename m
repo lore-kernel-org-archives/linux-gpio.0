@@ -1,77 +1,40 @@
-From: Laura Abbott <labbott@redhat.com>
-Subject: Re: [PATCHv2 4/4] gpio: Remove VLA from stmpe driver
-Date: Thu, 22 Mar 2018 14:43:39 -0700
-Message-ID: <90e40062-cedb-be32-ab17-56136c78dbad@redhat.com>
-References: <20180315180030.20001-1-labbott@redhat.com>
- <20180315180030.20001-5-labbott@redhat.com>
- <21a2e869-62fb-75ef-ae7b-a27e136696f7@electromag.com.au>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Don't allow protected pins to be
+ requested
+Date: Thu, 22 Mar 2018 19:16:29 -0500
+Message-ID: <97380342-c3aa-5d34-7b22-f6ebbab4bafe@codeaurora.org>
+References: <20180321165848.89751-1-swboyd@chromium.org>
+ <20180321165848.89751-4-swboyd@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <21a2e869-62fb-75ef-ae7b-a27e136696f7@electromag.com.au>
+In-Reply-To: <20180321165848.89751-4-swboyd@chromium.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Reid <preid@electromag.com.au>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+To: Stephen Boyd <swboyd@chromium.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 03/18/2018 06:29 PM, Phil Reid wrote:
-> On 16/03/2018 02:00, Laura Abbott wrote:
->> The new challenge is to remove VLAs from the kernel
->> (see https://lkml.org/lkml/2018/3/7/621)
->>
->> This patch replaces a VLA with an appropriate call to kmalloc_array.
->>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->> ---
->> v2: Switch to GFP_KERNEL. There was some discussion about if we should
->> be doing the allocation at all but given a) the allocation is pretty
->> small and b) we can possibly take a mutex in a called function I think
->> this is fine.
-> 
-> I still think it's a bad idea. It's simple to preallocate the buffer.
-> But it's up to the maintainer.
-> 
+On 03/21/2018 11:58 AM, Stephen Boyd wrote:
+> +static int msm_gpio_init_valid_mask(struct gpio_chip *chip,
+> +				    struct msm_pinctrl *pctrl)
+> +{
+> +	int ret;
+> +	unsigned int len, i;
+> +	unsigned int max_gpios = pctrl->soc->ngpios;
+> +
+> +	/* The number of GPIOs in the ACPI tables */
+> +	ret = device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0);
+> +	if (ret > 0 && ret < max_gpios) {
 
-I'd feel a lot more confident about doing the global buffer with
-guidance from the maintainer. But looking at the platform data, the
-maximum number of GPIOs is 24, or 3 banks. Maybe we should just always
-stack allocate the maximum since it's fairly small.
+This needs to be ret <= max_gpios, otherwise it will fail if every GPIO 
+is available.
 
-Thanks,
-Laura
+And it should print an error message and return an error code if ret > 
+max_gpios.
 
-> 
->> ---
->>   drivers/gpio/gpio-stmpe.c | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
->> index f8d7d1cd8488..c2bb20ace6f5 100644
->> --- a/drivers/gpio/gpio-stmpe.c
->> +++ b/drivers/gpio/gpio-stmpe.c
->> @@ -369,10 +369,14 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->>       struct stmpe *stmpe = stmpe_gpio->stmpe;
->>       u8 statmsbreg;
->>       int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
->> -    u8 status[num_banks];
->> +    u8 *status;
->>       int ret;
->>       int i;
->> +    status = kmalloc_array(num_banks, sizeof(*status), GFP_KERNEL);
->> +    if (!status)
->> +        return IRQ_NONE;
->> +
->>       /*
->>        * the stmpe_block_read() call below, imposes to set statmsbreg
->>        * with the register located at the lowest address. As STMPE1600
->> @@ -424,6 +428,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->>           }
->>       }
->> +    kfree(status);
->>       return IRQ_HANDLED;
->>   }
->>
-> 
-> 
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
