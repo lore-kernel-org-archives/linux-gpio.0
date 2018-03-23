@@ -1,26 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: mtk-common: use true and false for
- boolean values
-Date: Fri, 23 Mar 2018 04:03:12 +0100
-Message-ID: <CACRpkdZdzgVmyMmzOWHr2=oS3XYejmF+sqs4pjf4PDxDkqGd4g@mail.gmail.com>
-References: <20180305234906.GA32058@embeddedgus>
+Subject: Re: [PATCH] pinctrl: stm32: add 'depends on HAS_IOMEM' to fix unmet dependency
+Date: Fri, 23 Mar 2018 04:05:23 +0100
+Message-ID: <CACRpkdYZCxX+=1-Ght1gJoyLFXk_W+3hpAn5XEWm13OnGQiCEA@mail.gmail.com>
+References: <1520334956-9900-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180305234906.GA32058@embeddedgus>
+In-Reply-To: <1520334956-9900-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Ludovic Barre <ludovic.barre@st.com>, Patrice CHOTARD <patrice.chotard@st.com>, Rob Herring <robh@kernel.org>, Alexandre Torgue <alexandre.torgue@st.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 12:49 AM, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
+On Tue, Mar 6, 2018 at 12:15 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> Assign true or false to boolean variables instead of an integer value.
+> These configs select MFD_SYSCON, but do not depend on HAS_IOMEM.
 >
-> This issue was detected with the help of Coccinelle.
+> Compile testing on architecture without HAS_IOMEM causes "unmet
+> direct dependencies" in Kconfig phase.
 >
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Detected by "make ARCH=score allyesconfig".
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
 Patch applied.
 
