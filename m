@@ -1,33 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
- bits_per_mux != 0
-Date: Fri, 23 Mar 2018 04:01:16 +0100
-Message-ID: <CACRpkdanFFwPBhkDNRTdns9cPebH3drBZNhqZLBzF78U3XdRgw@mail.gmail.com>
-References: <1519077427-30165-1-git-send-email-david@lechnology.com>
+Subject: Re: [PATCH] pinctrl: mediatek: mtk-common: use true and false for
+ boolean values
+Date: Fri, 23 Mar 2018 04:03:12 +0100
+Message-ID: <CACRpkdZdzgVmyMmzOWHr2=oS3XYejmF+sqs4pjf4PDxDkqGd4g@mail.gmail.com>
+References: <20180305234906.GA32058@embeddedgus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1519077427-30165-1-git-send-email-david@lechnology.com>
+In-Reply-To: <20180305234906.GA32058@embeddedgus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Lechner <david@lechnology.com>, Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 19, 2018 at 10:57 PM, David Lechner <david@lechnology.com> wrote:
+On Tue, Mar 6, 2018 at 12:49 AM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
 
-> This fixes pcs_request_gpio() in the pinctrl-single driver when
-> bits_per_mux != 0. It appears this was overlooked when the multiple
-> pins per register feature was added.
+> Assign true or false to boolean variables instead of an integer value.
 >
-> Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
+> This issue was detected with the help of Coccinelle.
 >
-> v2 changes:
-> - don't wrap Fixes: line in commit message since it is a special machine-
->   readable line.
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Tony/Haojian: are you OK with this change?
+Patch applied.
 
 Yours,
 Linus Walleij
