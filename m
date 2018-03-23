@@ -1,60 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
-Date: Fri, 23 Mar 2018 04:11:37 +0100
-Message-ID: <CACRpkdbMnPRXpr48WWVV58y5-wkMUsHzBua4Lyj9wh+r+YbVtA@mail.gmail.com>
-References: <20180228155306.1006-1-rf@opensource.cirrus.com>
- <CACRpkdYc1Ovvhwze37-uJJL+5YG5kHuW9rgDSbfhxLRP30aPWg@mail.gmail.com> <20180307161226.vweofwcvy6nvux5p@localhost.localdomain>
+Subject: Re: [PATCH 0/8] Move most GPIO documentation to driver-api/gpio/ and ReST
+Date: Fri, 23 Mar 2018 04:23:21 +0100
+Message-ID: <CACRpkdaCn2OnOW7GsiqeUffw4ajBo+Tw31KUyRcuLWvxx271sA@mail.gmail.com>
+References: <20180308234024.24145-1-j.neuschaefer@gmx.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180307161226.vweofwcvy6nvux5p@localhost.localdomain>
+In-Reply-To: <20180308234024.24145-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, patches@opensource.cirrus.com
+To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 5:12 PM, Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
-> On Fri, Mar 02, 2018 at 09:42:54AM +0100, Linus Walleij wrote:
->> On Wed, Feb 28, 2018 at 4:53 PM, Richard Fitzgerald
->> <rf@opensource.cirrus.com> wrote:
->>
->> > When dt_to_map_one_config() is called with a pinctrl_dev passed
->> > in, it should only be using this if the node being looked up
->> > is a hog. The code was always using the passed pinctrl_dev
->> > without checking whether the dt node referred to it.
->> >
->> > A pin controller can have pinctrl-n dependencies on other pin
->> > controllers in these cases:
->> >
->> > - the pin controller hardware is external, for example I2C, so
->> >   needs other pin controller(s) to be setup to communicate with
->> >   the hardware device.
->> >
->> > - it is a child of a composite MFD so its of_node is shared with
->> >   the parent MFD and other children of that MFD. Any part of that
->> >   MFD could have dependencies on other pin controllers.
->> >
->> > Because of this, dt_to_map_one_config() can't assume that if it
->> > has a pinctrl_dev passed in then the node it looks up must be
->> > a hog. It could be a reference to some other pin controller.
->> >
->> > Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
->>
->> Seems correct. Also the code is a little more clear
->> after the patch.
->>
->> Patch applied.
->>
->> It'd be nice to see some testing of this, I hope linux-next is a good
->> testing ground.
->>
->
-> Once we are happy on the testing front, how would you feel about
-> getting this forwarded to 4.14 stable as well?
+On Fri, Mar 9, 2018 at 12:40 AM, Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
 
-Sadly too late for me to tag as stable, but you can suggest to
-Greg to pick it up for stable individually after v4.17-rc1.
+> Jonathan Neusch=C3=A4fer (8):
+>   MAINTAINERS: GPIO: Add Documentation/driver-api/gpio/
+>   Documentation: driver-api: Move gpio.rst to gpio/index.rst
+>   Documentation: gpio: Move introduction to driver-api
+>   Documentation: gpio: Move driver documentation to driver-api
+>   Documentation: gpio: Move legacy documentation to driver-api
+>   Documentation: gpio: Move gpiod_* consumer documentation to driver-api
+>   Documentation: gpio: Move GPIO mapping documentation to driver-api
+>   Documentation: gpio: Move drivers-on-gpio.txt to driver-api
+
+I applied all 8 patches to devel for v4.17.
 
 Yours,
 Linus Walleij
