@@ -1,34 +1,40 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Don't allow protected pins to be
- requested
-Date: Fri, 23 Mar 2018 09:03:37 -0500
-Message-ID: <819014ea-d375-5830-e32f-eeba73e6fa08@codeaurora.org>
-References: <20180321165848.89751-1-swboyd@chromium.org>
- <20180321165848.89751-4-swboyd@chromium.org>
- <97380342-c3aa-5d34-7b22-f6ebbab4bafe@codeaurora.org>
- <b5dac2f7-eabb-6e09-2146-775b09d4eca8@codeaurora.org>
- <59df3700-c0bd-6ee8-eeab-6a49cb92d1db@codeaurora.org>
- <1521804875.23017.95.camel@linux.intel.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v2] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
+ bits_per_mux != 0
+Date: Fri, 23 Mar 2018 07:22:34 -0700
+Message-ID: <20180323142234.GH5799@atomide.com>
+References: <1519077427-30165-1-git-send-email-david@lechnology.com>
+ <CACRpkdanFFwPBhkDNRTdns9cPebH3drBZNhqZLBzF78U3XdRgw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1521804875.23017.95.camel@linux.intel.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <CACRpkdanFFwPBhkDNRTdns9cPebH3drBZNhqZLBzF78U3XdRgw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stephen Boyd <swboyd@chromium.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: David Lechner <david@lechnology.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 3/23/18 6:34 AM, Andy Shevchenko wrote:
-> No, it seems you missed %p vs. %px discussion.
+* Linus Walleij <linus.walleij@linaro.org> [180323 03:02]:
+> On Mon, Feb 19, 2018 at 10:57 PM, David Lechner <david@lechnology.com> wrote:
 > 
-> The pointers printed by %p nowadays are hashed values, not the original
-> ones.
+> > This fixes pcs_request_gpio() in the pinctrl-single driver when
+> > bits_per_mux != 0. It appears this was overlooked when the multiple
+> > pins per register feature was added.
+> >
+> > Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
+> > Signed-off-by: David Lechner <david@lechnology.com>
+> > ---
+> >
+> > v2 changes:
+> > - don't wrap Fixes: line in commit message since it is a special machine-
+> >   readable line.
+> 
+> Tony/Haojian: are you OK with this change?
 
-I totally forgot about that, thanks.
+No objections from me, would be good if Haojian could
+test it with his test cases though.
 
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Regards,
+
+Tony
