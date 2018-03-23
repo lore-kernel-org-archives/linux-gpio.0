@@ -1,86 +1,37 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCHv2 4/4] gpio: Remove VLA from stmpe driver
-Date: Fri, 23 Mar 2018 09:28:07 +0800
-Message-ID: <e7ec40ec-99cd-8078-3238-db024589d08b@electromag.com.au>
-References: <20180315180030.20001-1-labbott@redhat.com>
- <20180315180030.20001-5-labbott@redhat.com>
- <21a2e869-62fb-75ef-ae7b-a27e136696f7@electromag.com.au>
- <90e40062-cedb-be32-ab17-56136c78dbad@redhat.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] pinctrl: sunxi: always look for apb block
+Date: Fri, 23 Mar 2018 03:44:38 +0100
+Message-ID: <CACRpkdaCkE_hAyLm+XM2mGKrOe5iFO2gM9eTXbMVAqFKPgB6Jw@mail.gmail.com>
+References: <20180303122554.20984-1-andre.przywara@arm.com>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <90e40062-cedb-be32-ab17-56136c78dbad@redhat.com>
-Content-Language: en-AU
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBF6U2HKQKGQEJ5XZ5ZY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20180303122554.20984-1-andre.przywara-5wv7dgnIgG8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 23/03/2018 05:43, Laura Abbott wrote:
-> On 03/18/2018 06:29 PM, Phil Reid wrote:
->> On 16/03/2018 02:00, Laura Abbott wrote:
->>> The new challenge is to remove VLAs from the kernel
->>> (see https://lkml.org/lkml/2018/3/7/621)
->>>
->>> This patch replaces a VLA with an appropriate call to kmalloc_array.
->>>
->>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>> ---
->>> v2: Switch to GFP_KERNEL. There was some discussion about if we should
->>> be doing the allocation at all but given a) the allocation is pretty
->>> small and b) we can possibly take a mutex in a called function I think
->>> this is fine.
->>
->> I still think it's a bad idea. It's simple to preallocate the buffer.
->> But it's up to the maintainer.
->>
-> 
-> I'd feel a lot more confident about doing the global buffer with
-> guidance from the maintainer. But looking at the platform data, the
-> maximum number of GPIOs is 24, or 3 banks. Maybe we should just always
-> stack allocate the maximum since it's fairly small.
+On Sat, Mar 3, 2018 at 1:25 PM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
 
-That's the other way to go.
+> The Allwinner pinctrl device tree binding suggests that a clock named
+> "apb" would drive the pin controller IP. However (for legacy reasons) we
+> rely on this clock actually being the first clock defined.
+> Since named clocks can be in any order, let's explicitly check for a
+> clock called "apb" if there is more than one clock referenced.
+>
+> Kudo to Maxime for suggesting this much more elegant approach.
+>
+> Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
 
+Patch applied with Maxime's ACK.
 
->>> ---
->>>   drivers/gpio/gpio-stmpe.c | 7 ++++++-
->>>   1 file changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
->>> index f8d7d1cd8488..c2bb20ace6f5 100644
->>> --- a/drivers/gpio/gpio-stmpe.c
->>> +++ b/drivers/gpio/gpio-stmpe.c
->>> @@ -369,10 +369,14 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->>>       struct stmpe *stmpe = stmpe_gpio->stmpe;
->>>       u8 statmsbreg;
->>>       int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
->>> -    u8 status[num_banks];
->>> +    u8 *status;
->>>       int ret;
->>>       int i;
->>> +    status = kmalloc_array(num_banks, sizeof(*status), GFP_KERNEL);
->>> +    if (!status)
->>> +        return IRQ_NONE;
->>> +
->>>       /*
->>>        * the stmpe_block_read() call below, imposes to set statmsbreg
->>>        * with the register located at the lowest address. As STMPE1600
->>> @@ -424,6 +428,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->>>           }
->>>       }
->>> +    kfree(status);
->>>       return IRQ_HANDLED;
->>>   }
->>>
->>
->>
-> 
-> 
-> 
-
-
--- 
-Regards
-Phil Reid
+Yours,
+Linus Walleij
