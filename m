@@ -1,66 +1,95 @@
-From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: Re: [PATCH 0/8] Move most GPIO documentation to driver-api/gpio/ and
- ReST
-Date: Fri, 23 Mar 2018 15:24:55 +0100
-Message-ID: <20180323142455.laugwxxv2yeqwijd@latitude>
-References: <20180308234024.24145-1-j.neuschaefer@gmx.net>
- <CACRpkdaCn2OnOW7GsiqeUffw4ajBo+Tw31KUyRcuLWvxx271sA@mail.gmail.com>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Don't allow protected pins to be requested
+Date: Fri, 23 Mar 2018 09:21:47 -0700
+Message-ID: <152182210780.178046.13284917877743312593@swboyd.mtv.corp.google.com>
+References: <20180321165848.89751-1-swboyd@chromium.org>
+ <20180321165848.89751-4-swboyd@chromium.org>
+ <97380342-c3aa-5d34-7b22-f6ebbab4bafe@codeaurora.org>
+ <1521804964.23017.96.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="yzo3z6vuofhimjuf"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaCn2OnOW7GsiqeUffw4ajBo+Tw31KUyRcuLWvxx271sA@mail.gmail.com>
+In-Reply-To: <1521804964.23017.96.camel@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Timur Tabi <timur@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+Quoting Andy Shevchenko (2018-03-23 04:36:04)
+> On Thu, 2018-03-22 at 19:16 -0500, Timur Tabi wrote:
+> > On 03/21/2018 11:58 AM, Stephen Boyd wrote:
+> > > +static int msm_gpio_init_valid_mask(struct gpio_chip *chip,
+> > > +                               struct msm_pinctrl *pctrl)
+> > > +{
+> > > +   int ret;
+> > > +   unsigned int len, i;
+> > > +   unsigned int max_gpios =3D pctrl->soc->ngpios;
+> > > +
+> > > +   /* The number of GPIOs in the ACPI tables */
+> > > +   ret =3D device_property_read_u16_array(pctrl->dev, "gpios",
+> > > NULL, 0);
+> > > +   if (ret > 0 && ret < max_gpios) {
+> > =
 
---yzo3z6vuofhimjuf
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > This needs to be ret <=3D max_gpios, otherwise it will fail if every
+> > GPIO =
 
-On Fri, Mar 23, 2018 at 04:23:21AM +0100, Linus Walleij wrote:
-> On Fri, Mar 9, 2018 at 12:40 AM, Jonathan Neusch=C3=A4fer
-> <j.neuschaefer@gmx.net> wrote:
->=20
-> > Jonathan Neusch=C3=A4fer (8):
-> >   MAINTAINERS: GPIO: Add Documentation/driver-api/gpio/
-> >   Documentation: driver-api: Move gpio.rst to gpio/index.rst
-> >   Documentation: gpio: Move introduction to driver-api
-> >   Documentation: gpio: Move driver documentation to driver-api
-> >   Documentation: gpio: Move legacy documentation to driver-api
-> >   Documentation: gpio: Move gpiod_* consumer documentation to driver-api
-> >   Documentation: gpio: Move GPIO mapping documentation to driver-api
-> >   Documentation: gpio: Move drivers-on-gpio.txt to driver-api
->=20
-> I applied all 8 patches to devel for v4.17.
+> > is available.
+> > =
 
-Thanks!
+> > And it should print an error message and return an error code if ret
+> > > =
 
-Jonathan Neusch=C3=A4fer
+> > max_gpios.
+> =
 
---yzo3z6vuofhimjuf
-Content-Type: application/pgp-signature; name="signature.asc"
+> Perhaps makes sense to do the opposite condition
+> =
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> if (ret < 0 || ret > max_gpios) {
+>  ... error handling ...
+> }
+> =
 
-iQIcBAABAgAGBQJatQ4wAAoJEAgwRJqO81/bKKoP+wRy+67X3Rps/BAXk8ITW4ul
-ef5KuQZe680DSItJzekUCE3fDdGSm/hd0uvzH063cAUNEDTJfFeGENYNfmyiRP3K
-GIbXocf+RCp5N3isQ0FIKS6FNRyoINbuirwWddCmPOdOWXb9B7B8FRGNUvU3xzEq
-3glK/RfWp9/b69mXGWTz6cUQIhF1thUDG77GDolOHleCYp/8zfbI03WEU4y/7ExX
-vLOwPeXrLgMcrLD3naf2pP7ZjwvsBM3God2dUcqbbRCFLwd/jKCSqjttVA1qnV2m
-lfw7HS8OrTebQwkTC1A6o8ZLE0bbg7oiHOG1vP4yW2lUSTUJPs/0jnd30JDbmUJw
-1kfxgFiEBZ3vTG6GgxyKGcFmz61D2PGhGCgKonZVYvCckmaX0d6/M/BTdN/nWkHm
-sZpgGIUhBgXoSqseq1nDtZwBODUfAFKOK+++uey1Ioh1G4GnwWcMd15aEksiChpp
-7ZehScTj0meitKDYVE2QdLquh7w8/MCdwCjkdtTEzxH0iB2YH8SOAUJSGL6UGQ3k
-h1RCwKOVIYR6e4c1U36oe9SwvkSxk2aYvRCB9tlRfxOG+QysE4B8tNHeedgKfeGs
-6nZz2CZ8cJpVHFefg96d/ykwavsDWUKwUgbAqdzkaKgk8HucHr/w6+f6YpSdXzYc
-ebt0v1LOupCkBCh5Pssq
-=i5jw
------END PGP SIGNATURE-----
 
---yzo3z6vuofhimjuf--
+Indeed. I already rewrote it like this two days ago:
+
+static int msm_gpio_init_valid_mask(struct gpio_chip *chip,
+                                   struct msm_pinctrl *pctrl)
+{
+       int ret;
+       unsigned int len, i;
+       unsigned int max_gpios =3D pctrl->soc->ngpios;
+       u16 *tmp;
+
+       /* The number of GPIOs in the ACPI tables */
+       len =3D ret =3D device_property_read_u16_array(pctrl->dev, "gpios",
+ULL, 0);
+       if (ret < 0)
+               return 0;
+
+       if (ret > max_gpios)
+               return -EINVAL;
+
+       tmp =3D kmalloc_array(len, sizeof(*tmp), GFP_KERNEL);
+       if (!tmp)
+               return -ENOMEM;
+
+       ret =3D device_property_read_u16_array(pctrl->dev, "gpios", tmp,
+en);
+       if (ret < 0) {
+               dev_err(pctrl->dev, "could not read list of GPIOs\n");
+               goto out;
+       }
+
+       bitmap_zero(chip->valid_mask, max_gpios);
+       for (i =3D 0; i < len; i++)
+               set_bit(tmp[i], chip->valid_mask);
+
+out:
+       kfree(tmp);
+       return ret;
+}
+
+I'll send the updated patches now.
