@@ -1,63 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.16
-Date: Sat, 24 Mar 2018 17:43:25 +0100
-Message-ID: <CACRpkda9+tSc3GYZ=UPe4uTOaC0Y2zO3A1VBQQeZfkZ=Zytksg@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v3 01/11] i2c: Export of_i2c_get_board_info()
+Date: Sat, 24 Mar 2018 23:35:18 +0100
+Message-ID: <20180324223518.g5jsi5zvoxa75psy@ninjato>
+References: <20180323110020.19080-1-boris.brezillon@bootlin.com>
+ <20180323110020.19080-2-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="c5y2fzlvsrcqsj2d"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180323110020.19080-2-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
 
-here is a set of two fixes for pin control for v4.16.
+--c5y2fzlvsrcqsj2d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Details are in the signed tag as usal.
+Hi Boris,
 
-Please pull them in!
+> - rebase on v4.15-rc1
 
-Yours,
-Linus Walleij
+This code has changed a little meanwhile. Please check my for-next
+branch. Some changes are identical, some similar.
 
-The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1=
-:
+> -	info.archdata = &dev_ad;
 
-  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
+Why did you drop this?
 
-are available in the Git repository at:
+Regards,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.16-3
+   Wolfram
 
-for you to fetch changes up to 93b0beae721b3344923b4b8317e9d83b542f4ca6:
 
-  pinctrl: samsung: Validate alias coming from DT (2018-03-08 13:02:26 +010=
-0)
+--c5y2fzlvsrcqsj2d
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-Pin control fixes for v4.16:
-- One fix to the Renesas SH-PFC driver removing a duplicate clkout pin
-  which was causing crashes.
-- One fix to the Samsung driver for out of bounds exceptions.
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      pinctrl: samsung: Validate alias coming from DT
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlq20qIACgkQFA3kzBSg
+KbYuOQ//Q55O04/Ag8K+cDd7xM96TrhMguQI2QChKgKVFjYNQl9gjofsCr6+Z1NZ
+DTd8xi+J7vNUYQZyh5gJRzqQ31PaDH1CLKUKY1xvg5GEP80MyV3+cUYvz28mNgYS
+nfnbwUj2KFZcl/GdVLNg8zf3N2YOpJALkZeg/91IQQ1CPq1a4ZyO4Az2RLuJ5UMx
+gZGEPPacNHNV5VdBaOrUWYtP2TFHzaeiPrXLj1LwaHcOSrmDRoyBaXSnDTR305ow
+fB9P2lpxx/ETe3wHMk0h7UlC467qd4Im/6Rf0yM3IjOfxEXG5KZ8BsmEgLpzaa3Q
+hl/KivRMz63F+rtyniyTvFyySRplp4Yge5cX17RhnGIEGseW2MOgWCMzymm41apF
+01niaIDW4wQC4xqO9HunLEGCky9xZOxf8K3S3KiErX9XyRkphrG8DHXFkGhfg0Dk
+HNjVl9vONd/Y5pTf0gPBEkObcTUusvOGmm9HGhbbP3wHzyu2gHToCoQFV0f4yiwH
+VFKxE4WJkauSE/omX0xp6nNjdm0wA1oHUjvmwMj6pKS18Vni70yDRdWiWhh41T0f
+k4ldm6iupWPrjaFcVaJ+MgB5BE03ismMpGstvSV9+DDB7FTAQzXr4TECEpTgJlDC
+eS9G+JnJzaX1vBesKWIpvNFG1gEJKR6sEjVM0UXQVwbLH7W7Fbs=
+=A+ZD
+-----END PGP SIGNATURE-----
 
-Niklas S=C3=B6derlund (1):
-      pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT pin in pinmux_pi=
-ns[]
-
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c   | 56 +++++++++++++++++++---=
--
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 14 +++++-
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c      | 28 ++++++++++--
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c      |  7 ++-
- drivers/pinctrl/samsung/pinctrl-samsung.c      | 61 ++++++++++++++++------=
-----
- drivers/pinctrl/samsung/pinctrl-samsung.h      | 40 ++++++++++-------
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c           |  1 -
- 7 files changed, 154 insertions(+), 53 deletions(-)
+--c5y2fzlvsrcqsj2d--
