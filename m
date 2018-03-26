@@ -1,62 +1,87 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 11/11] dt-bindings: gpio: Add bindings for Cadence I3C
- gpio expander
-Date: Mon, 26 Mar 2018 13:35:53 +0200
-Message-ID: <CAMuHMdWXb+eSTG28eKRzfP3mq=KLXikOt94MGNaS+MYeiVdr3w@mail.gmail.com>
-References: <20180323110020.19080-1-boris.brezillon@bootlin.com>
- <20180323110020.19080-12-boris.brezillon@bootlin.com> <CAMuHMdX3TLmaN14gM4fTgzXwy1dgsMxCFBs_3wCFWM8rX=+8vA@mail.gmail.com>
- <20180326132526.1634946e@bbrezillon>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v4 0/7] Implement get_multiple for ACCES and PC/104
+ drivers
+Date: Mon, 26 Mar 2018 09:27:32 -0400
+Message-ID: <20180326132732.GA8889@sophia>
+References: <cover.1521723192.git.vilhelm.gray@gmail.com>
+ <CACRpkdaGO_ThdgDWGrBygO8o=EoKahZj+-NpRfZCOx49GWd87g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180326132526.1634946e@bbrezillon>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaGO_ThdgDWGrBygO8o=EoKahZj+-NpRfZCOx49GWd87g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Boris,
-
-On Mon, Mar 26, 2018 at 1:25 PM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> On Mon, 26 Mar 2018 12:12:54 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Fri, Mar 23, 2018 at 12:00 PM, Boris Brezillon
->> <boris.brezillon@bootlin.com> wrote:
->> > Document the Cadence I3C gpio expander bindings.
->> >
->> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
->>
->> Thanks for your patch!
->>
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
->>
->> > +- #interrupt-cells : Should be 2.  The first cell is the GPIO number.
->> > +  The second cell bits[3:0] is used to specify trigger type and level flags:
->> > +      1 = low-to-high edge triggered.
->> > +      2 = high-to-low edge triggered.
->> > +      3 = triggered on both edges.
->> > +      4 = active high level-sensitive.
->> > +      8 = active low level-sensitive.
->>
->> These are identical to the values in <dt-bindings/interrupt-controller/irq.h>.
->> Perhaps you can refer to those definitions?
+On Mon, Mar 26, 2018 at 10:31:41AM +0200, Linus Walleij wrote:
+>On Thu, Mar 22, 2018 at 1:59 PM, William Breathitt Gray
+><vilhelm.gray@gmail.com> wrote:
 >
-> Well, I'm not sure this is allowed since DT bindings docs are
-> supposed to be OS-agnostic and macros defined in
-> <dt-bindings/interrupt-controller/irq.h> are, AFAIK, only available to
-> Linux.
+>> Changes in v4:
+>
+>I applied the v4 patch set so we get some rotation in linux-next before
+>the merge window.
+>
+>If reviewers still find smallish issues they can certainly be fixed in follow-up
+>patches.
+>
+>> This patchset implements get_multiple callbacks for the PC104 GPIO
+>> drivers as well as the PCI-IDIO-16 and PCIe-IDIO-24 GPIO drivers. These
+>> devices all acquire the multiple input lines with a single read, so
+>> utilizing the get_multiple callback can provide improvement for those
+>> users who regularly access multiple input lines.
+>
+>Did you use the userspace chardev for some interesting experiments
+>with your set-ups?
+>
+>I tend to think of your applications as pretty interesting for industry
+>peers, and a good proof-of-concept for the userspace API.
 
-If they're under include/dt-bindings/, they're part of the DT bindings.
+I use these PC104 drivers in several semi-realtime critical
+applications, so latency has always been a big concern for me. The
+switch from sysfs file I/O to chardev ioctl had a great improvement in
+the reduction of latency, which I was very happy to utilize.
 
-Gr{oetje,eeting}s,
+Since the next big point of latency in my systems have been port I/O,
+taking advantage of the get_multiple/set_multiple functionality is my
+next goal in optimization. I have a new system coming out soon that uses
+the 104-IDI-48 for input -- it'll be interesting to see the performance
+improvements of acquiring the entire input port at a time, rather than
+every GPIO line individually.
 
-                        Geert
+>
+>> While developing this patchset I noticed many of these devices make use
+>> of Intel 8255 compatible interfaces for their I/O. I may write a generic
+>> 8255 GPIO driver in the future to reduce some of the redundant code I
+>> see pop among the drivers for these devices.
+>
+>Oh!
+>This guy?
+>https://en.wikipedia.org/wiki/Intel_8255
+>
+>Yeah that makes all kind of sense. We are living with the legacy
+>of the first PCs every day when it comes own to EISA & friends...
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+That's the one! I see this interface a lot in the GPIO devices I handle.
+It's very popular, which I believe is a testament to the popularity of
+the IBM PC.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Nowadays, most devices I encounter implement this interface in an FPGA,
+but I do occasionally come across the actual Intel 82C55 chip, such as
+on the 104-DIO-48E; it's fascinating to see this physical chip still
+popping up on circuit boards from time to time.
+
+I would like to make a generic driver for this interface that will allow
+it to be used both in the port I/O and memory I/O drivers out there.
+Since I don't want to introduce too many changes in a single patchset
+I've postponed it for now to get get_multiple support merged in for
+these drivers, but I'll hopefully have something like a gpio-i8255
+driver submitted soon enough.
+
+William Breathitt Gray
+
+>
+>Yours,
+>Linus Walleij
