@@ -1,51 +1,104 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 0/7] Implement get_multiple for ACCES and PC/104 drivers
-Date: Mon, 26 Mar 2018 10:31:41 +0200
-Message-ID: <CACRpkdaGO_ThdgDWGrBygO8o=EoKahZj+-NpRfZCOx49GWd87g@mail.gmail.com>
-References: <cover.1521723192.git.vilhelm.gray@gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4 0/5] Support qcom pinctrl protected pins
+Date: Mon, 26 Mar 2018 11:39:04 +0300
+Message-ID: <1522053544.23017.109.camel@linux.intel.com>
+References: <20180323163453.96495-1-swboyd@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1521723192.git.vilhelm.gray@gmail.com>
+In-Reply-To: <20180323163453.96495-1-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Boyd <swboyd@chromium.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 1:59 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Fri, 2018-03-23 at 09:34 -0700, Stephen Boyd wrote:
+> This patchset proposes a solution to describing the
+> valid                                                                 
+>           
+> pins for a pin controller in a generic way so that
+> qcom                                                                  
+>       
+> platforms can expose the pins that are really
+> available.                                                            
+>                 
+>                                                                       
+>                                                               
+> Typically, this has been done by having drivers and
+> firmware                                                              
+>           
+> descriptions only use pins they know they have access to, and
+> that                                                                  
+> still works now because we no longer read the pin direction
+> at                                                                    
+>   
+> boot. But there are still some userspace drivers and debugfs
+> facilities                                                            
+>  
+> that don't know what pins are available and attempt to read
+> everything                                                            
+>   
+> they can. On qcom platforms, this may lead to a system hang, which
+> isn't                                                            
+> very nice behavior, even if root is the only user that can trigger
+> it.                                                              
+>                                                                       
+>                                                               
+> The proposal is to describe the valid pins and then not allow things
+> to                                                             
+> cause problems by using the invalid pins. Obviously, the firmware
+> may                                                               
+> mess this up, so this is mostly a nice to have feature or a safety
+> net                                                              
+> so that things don't blow up
+> easily.                                                               
 
-> Changes in v4:
+FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I applied the v4 patch set so we get some rotation in linux-next before
-the merge window.
 
-If reviewers still find smallish issues they can certainly be fixed in follow-up
-patches.
+> Changes from v3:
+>  * Split out allocation of mask into subroutine
+>  * Moved that allocation to kmalloc_array()
+>  * Updated qcom driver to simplifiy ACPI logic and fix mem leak
+> 
+> Changes from v2:
+>  * Renamed binding to 'gpio-reserved-ranges'
+>  * Reworked gpiolib patch to not use irqdomains
+>  * Update qcom driver patch to use new valid_mask field
+>                                                                       
+>                                                               
+> Changes from
+> v1:                                                                   
+>                                                  
+>  * Pushed into gpiolib-of core under irq valid line
+> logic                                                                 
+>           
+>  * Fixed up qcom driver patch to free stuff properly and remove custom
+> code                                                         
+>  * Dropped export patch as it got picked
+> up                                                                    
+>                      
+>  * Renamed binding to 'reserved-gpio-ranges'   
+> 
+> 
+> Stephen Boyd (5):
+>   dt-bindings: gpio: Add a gpio-reserved-ranges property
+>   gpiolib: Extract mask allocation into subroutine
+>   gpiolib: Change bitmap allocation to kmalloc_array
+>   gpiolib: Support 'gpio-reserved-ranges' property
+>   pinctrl: qcom: Don't allow protected pins to be requested
+> 
+>  .../devicetree/bindings/gpio/gpio.txt         |  7 +-
+>  drivers/gpio/gpiolib-of.c                     | 24 +++++++
+>  drivers/gpio/gpiolib.c                        | 66 +++++++++++++++++-
+> -
+>  drivers/pinctrl/qcom/pinctrl-msm.c            | 65 +++++++++++++++++-
+>  include/linux/gpio/driver.h                   | 16 +++++
+>  5 files changed, 167 insertions(+), 11 deletions(-)
+> 
 
-> This patchset implements get_multiple callbacks for the PC104 GPIO
-> drivers as well as the PCI-IDIO-16 and PCIe-IDIO-24 GPIO drivers. These
-> devices all acquire the multiple input lines with a single read, so
-> utilizing the get_multiple callback can provide improvement for those
-> users who regularly access multiple input lines.
-
-Did you use the userspace chardev for some interesting experiments
-with your set-ups?
-
-I tend to think of your applications as pretty interesting for industry
-peers, and a good proof-of-concept for the userspace API.
-
-> While developing this patchset I noticed many of these devices make use
-> of Intel 8255 compatible interfaces for their I/O. I may write a generic
-> 8255 GPIO driver in the future to reduce some of the redundant code I
-> see pop among the drivers for these devices.
-
-Oh!
-This guy?
-https://en.wikipedia.org/wiki/Intel_8255
-
-Yeah that makes all kind of sense. We are living with the legacy
-of the first PCs every day when it comes own to EISA & friends...
-
-Yours,
-Linus Walleij
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
