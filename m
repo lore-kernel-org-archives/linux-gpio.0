@@ -1,28 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: ocelot: fix gpio direction
-Date: Mon, 26 Mar 2018 11:05:25 +0200
-Message-ID: <CACRpkdbEWdo6UNL2HSzvvszQZjYnyYTOuWQzkmqSw=CvpGYhOw@mail.gmail.com>
-References: <20180322123500.2379-1-alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH 2/4] gpio: Remove VLA from MAX3191X driver
+Date: Mon, 26 Mar 2018 11:07:57 +0200
+Message-ID: <CACRpkdaOJeEJTH8xtDzwbOjoONp=M7QvEfF_bO5pTQJ8KpnMdA@mail.gmail.com>
+References: <20180310001021.6437-1-labbott@redhat.com> <20180310001021.6437-3-labbott@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180322123500.2379-1-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180310001021.6437-3-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Gregory Clement <gregory.clement@bootlin.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Mathias Duckeck <m.duckeck@kunbus.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 1:35 PM, Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
+On Sat, Mar 10, 2018 at 1:10 AM, Laura Abbott <labbott@redhat.com> wrote:
 
-> Bits have to be cleared in DEVCPU_GCB:GPIO:GPIO_OE for input and set for
-> output. ocelot_gpio_set_direction() got it wrong and this went unnoticed
-> when the driver was reworked.
 >
-> Reported-by: Gregory Clement <gregory.clement@bootlin.com>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621)
+>
+> This patch replaces several a VLA with an appropriate call to
+> kmalloc_array.
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 
 Patch applied.
+
+It's very simple and straight-forward after all.
 
 Yours,
 Linus Walleij
