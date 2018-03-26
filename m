@@ -1,36 +1,76 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 1/5] dt-bindings: gpio: Add a gpio-reserved-ranges
- property
-Date: Mon, 26 Mar 2018 17:25:11 -0500
-Message-ID: <20180326222511.hc6tzwb7n3svum2a@rob-hp-laptop>
-References: <20180323163453.96495-1-swboyd@chromium.org>
- <20180323163453.96495-2-swboyd@chromium.org>
+Subject: Re: [PATCH v3 11/11] dt-bindings: gpio: Add bindings for Cadence I3C
+ gpio expander
+Date: Mon, 26 Mar 2018 17:25:01 -0500
+Message-ID: <20180326222501.exvvdjb6fbrtsvkv@rob-hp-laptop>
+References: <20180323110020.19080-1-boris.brezillon@bootlin.com>
+ <20180323110020.19080-12-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180323163453.96495-2-swboyd@chromium.org>
+In-Reply-To: <20180323110020.19080-12-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Nishanth Menon <nm@ti.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 09:34:49AM -0700, Stephen Boyd wrote:
-> From: Stephen Boyd <sboyd@codeaurora.org>
+On Fri, Mar 23, 2018 at 12:00:20PM +0100, Boris Brezillon wrote:
+> Document the Cadence I3C gpio expander bindings.
 > 
-> Some qcom platforms make some GPIOs or pins unavailable for use
-> by non-secure operating systems, and thus reading or writing the
-> registers for those pins will cause access control issues.
-> Introduce a DT property to describe the set of GPIOs that are
-> available for use so that higher level OSes are able to know what
-> pins to avoid reading/writing.
-> 
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Cc: <devicetree@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 > ---
->  Documentation/devicetree/bindings/gpio/gpio.txt | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+>  .../devicetree/bindings/gpio/gpio-cdns-i3c.txt     | 38 ++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt b/Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
+> new file mode 100644
+> index 000000000000..634b1f268215
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
+> @@ -0,0 +1,38 @@
+> +* Cadence I3C GPIO expander
+> +
+> +The Cadence I3C GPIO expander provides 8 GPIOs controllable over I3C.
+> +This GPIOs can be configured in output or input mode and if they are in input
+> +mode they can generate IBIs (In Band Interrupts).
+> +
+> +Required properties for GPIO node:
+> +- reg : 3 cells encoding the I3C static address (none in our case) and the I3C
+> +	Provisional ID. See Documentation/devicetree/bindings/i3c/i3c.txt for
+> +	more details.
+> +	Should be <0x0 0x392 0x0>.
+> +- gpio-controller : Marks the device node as a gpio controller.
+> +- #gpio-cells : Should be two. The first cell is the pin number and
+> +  the second cell is used to specify the gpio polarity:
+> +      0 = active high
+> +      1 = active low
+> +- interrupt-controller: Marks the device node as an interrupt controller.
+> +- #interrupt-cells : Should be 2.  The first cell is the GPIO number.
+> +  The second cell bits[3:0] is used to specify trigger type and level flags:
+> +      1 = low-to-high edge triggered.
+> +      2 = high-to-low edge triggered.
+> +      3 = triggered on both edges.
+> +      4 = active high level-sensitive.
+> +      8 = active low level-sensitive.
+> +
+> +Example:
+> +
+> +	i3c-master@xxx {
+> +		...
+> +		i3c_gpio_expander: gpio@0,1c9,0 {
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The unit address is wrong here.
+
+> +			reg = <0 0x392 0x0>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +		...
+> +	};
+> -- 
+> 2.14.1
+> 
