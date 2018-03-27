@@ -1,53 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCHv2 4/4] gpio: Remove VLA from stmpe driver
-Date: Tue, 27 Mar 2018 15:41:23 +0200
-Message-ID: <CACRpkdafSd0R1czzw8w7bB8Stbvrx6LoP7tR7BQQnB1RSKQysQ@mail.gmail.com>
-References: <20180315180030.20001-1-labbott@redhat.com> <20180315180030.20001-5-labbott@redhat.com>
- <21a2e869-62fb-75ef-ae7b-a27e136696f7@electromag.com.au> <90e40062-cedb-be32-ab17-56136c78dbad@redhat.com>
+Subject: Re: [PATCH v2] gpio: ath79: Fix potential NULL dereference in ath79_gpio_probe()
+Date: Tue, 27 Mar 2018 15:43:00 +0200
+Message-ID: <CACRpkdaqeOccK_a0foGRwLbi_ATaRrD7eA=wGcV3QUZarRfGCw@mail.gmail.com>
+References: <1521934848-5674-1-git-send-email-albeu@free.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <90e40062-cedb-be32-ab17-56136c78dbad@redhat.com>
+In-Reply-To: <1521934848-5674-1-git-send-email-albeu@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Phil Reid <preid@electromag.com.au>, Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+To: Alban Bedel <albeu@free.fr>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laura,
+On Sun, Mar 25, 2018 at 12:40 AM, Alban Bedel <albeu@free.fr> wrote:
 
-sorry for slow response :/
-
-On Thu, Mar 22, 2018 at 10:43 PM, Laura Abbott <labbott@redhat.com> wrote:
-> On 03/18/2018 06:29 PM, Phil Reid wrote:
->>
->> On 16/03/2018 02:00, Laura Abbott wrote:
->>>
->>> The new challenge is to remove VLAs from the kernel
->>> (see https://lkml.org/lkml/2018/3/7/621)
->>>
->>> This patch replaces a VLA with an appropriate call to kmalloc_array.
->>>
->>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>> ---
->>> v2: Switch to GFP_KERNEL. There was some discussion about if we should
->>> be doing the allocation at all but given a) the allocation is pretty
->>> small and b) we can possibly take a mutex in a called function I think
->>> this is fine.
->>
->>
->> I still think it's a bad idea. It's simple to preallocate the buffer.
->> But it's up to the maintainer.
->>
+> From: Wei Yongjun <weiyongjun1@huawei.com>
 >
-> I'd feel a lot more confident about doing the global buffer with
-> guidance from the maintainer. But looking at the platform data, the
-> maximum number of GPIOs is 24, or 3 banks. Maybe we should just always
-> stack allocate the maximum since it's fairly small.
+> platform_get_resource() may return NULL, add proper
+> check to avoid potential NULL dereferencing.
+>
+> This is detected by Coccinelle semantic patch.
+>
+> @@
+> expression pdev, res, n, t, e, e1, e2;
+> @@
+>
+> res = platform_get_resource(pdev, t, n);
+> + if (!res)
+> +   return -EINVAL;
+> ... when != res == NULL
+> e = devm_ioremap(e1, res->start, e2);
+>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> [albeu@free.fr: Fixed patch to apply on current tree]
+> Signed-off-by: Alban Bedel <albeu@free.fr>
 
-Either way works fine, global (in the state container struct stmpe_gpio)
-or stack allocation for 24 bits.
-
-I guess I am maintainer for this, I can test it at least.
+Patch applied.
 
 Yours,
 Linus Walleij
