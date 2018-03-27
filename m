@@ -1,44 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 0/5] Support qcom pinctrl protected pins
-Date: Tue, 27 Mar 2018 15:35:59 +0200
-Message-ID: <CACRpkdbqVNT9bchB+dFwBCuvnKaZE41YYO8Y7zyr=0-ysv5iWg@mail.gmail.com>
-References: <20180323163453.96495-1-swboyd@chromium.org>
+Subject: Re: [PATCH 1/2] pinctrl: qcom: remove static globals to allow
+ multiple TLMMs
+Date: Tue, 27 Mar 2018 15:33:02 +0200
+Message-ID: <CACRpkdZ=z7EncPykPwK+m-_qM3J2PokmkcoKsRqao_X1qx7CSg@mail.gmail.com>
+References: <1521848700-22214-1-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180323163453.96495-1-swboyd@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1521848700-22214-1-git-send-email-timur@codeaurora.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Timur Tabi <timur@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>, Stephen Boyd <swboyd@chromium.org>
+Cc: linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 5:34 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+On Sat, Mar 24, 2018 at 12:44 AM, Timur Tabi <timur@codeaurora.org> wrote:
 
-> This patchset proposes a solution to describing the valid
-> pins for a pin controller in a generic way so that qcom
-> platforms can expose the pins that are really available.
+> Two data structures are declared as static globals but are intended to
+> be per-TLMM.  Move them into the msm_pinctrl structure and initialize
+> them at runtime.
 >
-> Typically, this has been done by having drivers and firmware
-> descriptions only use pins they know they have access to, and that
-> still works now because we no longer read the pin direction at
-> boot. But there are still some userspace drivers and debugfs facilities
-> that don't know what pins are available and attempt to read everything
-> they can. On qcom platforms, this may lead to a system hang, which isn't
-> very nice behavior, even if root is the only user that can trigger it.
->
-> The proposal is to describe the valid pins and then not allow things to
-> cause problems by using the invalid pins. Obviously, the firmware may
-> mess this up, so this is mostly a nice to have feature or a safety net
-> so that things don't blow up easily.
->
-> Changes from v3:
->  * Split out allocation of mask into subroutine
->  * Moved that allocation to kmalloc_array()
->  * Updated qcom driver to simplifiy ACPI logic and fix mem leak
+> Signed-off-by: Timur Tabi <timur@codeaurora.org>
 
-As both Timur and Andy are happy with this I applied these five
-patches for v4.17 and pushed to the test farm. Let's see what
-happens!
+Waiting for a review from Stephen or Bjorn on these two
+patches.
 
 Yours,
 Linus Walleij
