@@ -1,205 +1,97 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 05/11] dt-bindings: i3c: Document core bindings
-Date: Mon, 26 Mar 2018 17:24:58 -0500
-Message-ID: <20180326071946.dtrhhxx3iwwymk73@rob-hp-laptop>
-References: <20180323110020.19080-1-boris.brezillon@bootlin.com>
- <20180323110020.19080-6-boris.brezillon@bootlin.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] pinctrl: samsung: add pin_dbg_show callback for debugfs
+Date: Tue, 27 Mar 2018 09:07:04 +0200
+Message-ID: <CAJKOXPcpb-xFUBCQMXqoTpydwcL2cw+9Omi+3uYxK9fvzxWFhQ@mail.gmail.com>
+References: <20180326152711.7780-1-parkch98@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180323110020.19080-6-boris.brezillon@bootlin.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Nishanth Menon <nm@ti.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180326152711.7780-1-parkch98@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chanho Park <parkch98@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 12:00:14PM +0100, Boris Brezillon wrote:
-> From: Boris Brezillon <boris.brezillon@free-electrons.com>
-> 
-> A new I3C subsystem has been added and a generic description has been
-> created to represent the I3C bus and the devices connected on it.
-> 
-> Document this generic representation.
-
-Mostly looks fine, a couple of clarifications below.
-
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+On Mon, Mar 26, 2018 at 5:27 PM, Chanho Park <parkch98@gmail.com> wrote:
+> This patch adds a samsung_pin_dbg_show function to implement the
+> pin_dbg_show callback function which can be used to show pin
+> confuration values. Basically, it can show pin setting values by
+> accessing the "pins" node like below:
+>
+> $ cat pins
+> pin 0 (gpy7-0)  CON(0x0) DAT(0x1) PUD(0x1) DRV(0x0) CON_PDN(0x0) PUD_PDN(0x0)
+>
+> Signed-off-by: Chanho Park <parkch98@gmail.com>
 > ---
-> Changes in v3:
-> - Rename {i2c,i3c}-scl-frequency DT prop into {i2c,i3c}-scl-hz
-> - Rework the way we expose the provisional ID and LVR information
-> - Rename dynamic-address into assigned-address
-> - Enforce the I3C master node name
-> 
-> Changes in v2:
-> - Define how to describe I3C devices in the DT and when it should be
->   used. Note that the parsing of I3C devices is not yet implemented in
->   the framework. Will be added when someone really needs it.
-> ---
->  Documentation/devicetree/bindings/i3c/i3c.txt | 140 ++++++++++++++++++++++++++
->  1 file changed, 140 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/i3c/i3c.txt b/Documentation/devicetree/bindings/i3c/i3c.txt
-> new file mode 100644
-> index 000000000000..ed858228d26b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i3c/i3c.txt
-> @@ -0,0 +1,140 @@
-> +Generic device tree bindings for I3C busses
-> +===========================================
-> +
-> +This document describes generic bindings that should be used to describe I3C
-> +busses in a device tree.
-> +
-> +Required properties
-> +-------------------
-> +
-> +- #address-cells  - should be <3>. Read more about addresses below.
-> +- #size-cells     - should be <0>.
-> +- compatible      - name of the I3C master controller driving the I3C bus
-> +
-> +For other required properties e.g. to describe register sets,
-> +clocks, etc. check the binding documentation of the specific driver.
-> +The node describing an I3C bus should be named i3c-master.
-> +
-> +Optional properties
-> +-------------------
-> +
-> +These properties may not be supported by all I3C master drivers. Each I3C
-> +master bindings should specify which of them are supported.
-> +
-> +- i3c-scl-hz: frequency of the SCL signal used for I3C transfers.
-> +	      When undefined the core sets it to 12.5MHz.
-> +
-> +- i2c-scl-hz: frequency of the SCL signal used for I2C transfers.
-> +	      When undefined, the core looks at LVR (Legacy Virtual Register)
-> +	      values of I2C devices described in the device tree to determine
-> +	      the maximum I2C frequency.
-> +
-> +I2C devices
-> +===========
-> +
-> +Each I2C device connected to the bus should be described in a subnode. All
-> +properties described in Documentation/devicetree/bindings/i2c/i2c.txt are
-> +valid here, but several new properties have been added.
-> +
-> +New constraint on existing properties:
-> +--------------------------------------
-> +- reg: contains 3 cells
-> +  + first cell : still encoding the I2C address
-> +
-> +  + second cell: should have bit 31 set to 1 signify that this is an I2C
-> +		 device. Bits 0 to 7 encode the I3C LVR (Legacy Virtual
-> +		 Register):
-> +
-> +	bit[7:5]: I2C device index. Possible values
-> +	* 0: I2C device has a 50 ns spike filter
-> +	* 1: I2C device does not have a 50 ns spike filter but supports high
-> +	     frequency on SCL
-> +	* 2: I2C device does not have a 50 ns spike filter and is not tolerant
-> +	     to high frequencies
-> +	* 3-7: reserved
-> +
-> +	bit[4]: tell whether the device operates in FM (Fast Mode) or FM+ mode
-> +	* 0: FM+ mode
-> +	* 1: FM mode
-> +
-> +	bit[3:0]: device type
-> +	* 0-15: reserved
-> +
-> +  + third cell: should be 0
-> +
-> +I3C devices
-> +===========
-> +
-> +All I3C devices are supposed to support DAA (Dynamic Address Assignment), and
-> +are thus discoverable. So, by default, I3C devices do not have to be described
-> +in the device tree.
-> +This being said, one might want to attach extra resources to these devices,
-> +and those resources may have to be described in the device tree, which in turn
-> +means we have to describe I3C devices.
-> +
-> +Another use case for describing an I3C device in the device tree is when this
-> +I3C device has a static address and we want to assign it a specific dynamic
-> +address before the DAA takes place (so that other devices on the bus can't
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 336e88d7bdb9..bdec0cbd64f1 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -279,6 +279,30 @@ static int samsung_dt_node_to_map(struct pinctrl_dev *pctldev,
+>         return 0;
+>  }
+>
+> +#ifdef CONFIG_DEBUG_FS
+> +/* Forward declaration which can be used by samsung_pin_dbg_show */
+> +static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
+> +                               unsigned long *config, bool set);
+> +static char *reg_names[] = {"CON", "DAT", "PUD", "DRV", "CON_PDN", "PUD_PDN"};
 
-static is I2C address and dynamic is an I3C address. That could be 
-clearer throughout.
+This should be static const char. Please also add an empty line here.
 
-> +take this dynamic address).
+> +static void samsung_pin_dbg_show(struct pinctrl_dev *pctldev,
+> +                               struct seq_file *s, unsigned int pin)
+> +{
+> +       enum pincfg_type cfg_type;
+> +       unsigned long config;
+> +       int ret;
 > +
-> +The I3C device should be names <device-type>@<static-address>,<i3c-pid>,
+> +       for (cfg_type = 0; cfg_type < PINCFG_TYPE_NUM; cfg_type++) {
+> +               config = PINCFG_PACK(cfg_type, 0);
+> +               ret = samsung_pinconf_rw(pctldev, pin, &config, false);
 
-s/static-address/static-i2c-address/
+Use samsung_pinconf_get().
 
-> +where device-type is describing the type of device connected on the bus
-> +(gpio-controller, sensor, ...).
-> +
-> +Required properties
-> +-------------------
-> +- reg: contains 3 cells
-> +  + first cell : encodes the I2C address. Should be 0 if the device does not
-> +		 have one (0 is not a valid I3C address).
+> +               if (ret == -EINVAL)
 
-Change here to "encodes the static I2C address". 
+if (ret < 0)
 
-0 is not a valid I2C address?
+Best regards,
+Krzysztof
 
+> +                       continue;
 > +
-> +  + second and third cells: should encode the ProvisionalID. The second cell
-> +			    contains the manufacturer ID left-shifted by 1.
-> +			    The third cell contains ORing of the part ID
-> +			    left-shifted by 16, the instance ID left-shifted
-> +			    by 12 and the extra information. This encoding is
-> +			    following the PID definition provided by the I3C
-> +			    specification.
+> +               seq_printf(s, " %s(0x%lx)", reg_names[cfg_type],
+> +                          PINCFG_UNPACK_VALUE(config));
+> +       }
+> +}
+> +#endif
 > +
-> +Optional properties
-> +-------------------
-> +- assigned-address: dynamic address to be assigned to this device. This
-> +		    property is only valid if the I3C device has a static
-> +		    address (first cell of the reg property != 0).
-> +
-> +
-> +Example:
-> +
-> +	i3c-master@d040000 {
-> +		compatible = "cdns,i3c-master";
-> +		clocks = <&coreclock>, <&i3csysclock>;
-> +		clock-names = "pclk", "sysclk";
-> +		interrupts = <3 0>;
-> +		reg = <0x0d040000 0x1000>;
-> +		#address-cells = <3>;
-> +		#size-cells = <0>;
-> +
-> +		status = "okay";
-> +		i2c-scl-frequency = <100000>;
-> +
-> +		/* I2C device. */
-> +		nunchuk: nunchuk@52 {
-> +			compatible = "nintendo,nunchuk";
-> +			reg = <0x52 0x80000010 0x0>;
-> +		};
-> +
-> +		/* I3C device with a static address. */
-> +		thermal_sensor: sensor@68,39200144004 {
-> +			reg = <0x68 0x392 0x144004>;
-> +			assigned-address = <0xa>;
-> +		};
-> +
-> +		/*
-> +		 * I3C device without a static address but requiring resources
-> +		 * described in the DT.
-> +		 */
-> +		sensor@0,39200154004 {
-> +			reg = <0x0 0x392 0x154004>;
-> +			clocks = <&clock_provider 0>;
-> +		};
-> +	};
-> +
-> -- 
+>  /* list of pinctrl callbacks for the pinctrl core */
+>  static const struct pinctrl_ops samsung_pctrl_ops = {
+>         .get_groups_count       = samsung_get_group_count,
+> @@ -286,6 +310,9 @@ static const struct pinctrl_ops samsung_pctrl_ops = {
+>         .get_group_pins         = samsung_get_group_pins,
+>         .dt_node_to_map         = samsung_dt_node_to_map,
+>         .dt_free_map            = samsung_dt_free_map,
+> +#ifdef CONFIG_DEBUG_FS
+> +       .pin_dbg_show           = samsung_pin_dbg_show,
+> +#endif
+>  };
+>
+>  /* check if the selector is a valid pin function selector */
+> --
 > 2.14.1
-> 
+>
