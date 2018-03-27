@@ -1,37 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: qcom: remove static globals to allow
- multiple TLMMs
-Date: Tue, 27 Mar 2018 15:33:02 +0200
-Message-ID: <CACRpkdZ=z7EncPykPwK+m-_qM3J2PokmkcoKsRqao_X1qx7CSg@mail.gmail.com>
-References: <1521848700-22214-1-git-send-email-timur@codeaurora.org>
+Subject: Re: [PATCHv2 4/4] gpio: Remove VLA from stmpe driver
+Date: Tue, 27 Mar 2018 15:41:23 +0200
+Message-ID: <CACRpkdafSd0R1czzw8w7bB8Stbvrx6LoP7tR7BQQnB1RSKQysQ@mail.gmail.com>
+References: <20180315180030.20001-1-labbott@redhat.com> <20180315180030.20001-5-labbott@redhat.com>
+ <21a2e869-62fb-75ef-ae7b-a27e136696f7@electromag.com.au> <90e40062-cedb-be32-ab17-56136c78dbad@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1521848700-22214-1-git-send-email-timur@codeaurora.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Timur Tabi <timur@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>, Stephen Boyd <swboyd@chromium.org>
-Cc: linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <90e40062-cedb-be32-ab17-56136c78dbad@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laura Abbott <labbott@redhat.com>
+Cc: Phil Reid <preid@electromag.com.au>, Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Mar 24, 2018 at 12:44 AM, Timur Tabi <timur@codeaurora.org> wrote:
+Hi Laura,
 
-> Two data structures are declared as static globals but are intended to
-> be per-TLMM.  Move them into the msm_pinctrl structure and initialize
-> them at runtime.
+sorry for slow response :/
+
+On Thu, Mar 22, 2018 at 10:43 PM, Laura Abbott <labbott@redhat.com> wrote:
+> On 03/18/2018 06:29 PM, Phil Reid wrote:
+>>
+>> On 16/03/2018 02:00, Laura Abbott wrote:
+>>>
+>>> The new challenge is to remove VLAs from the kernel
+>>> (see https://lkml.org/lkml/2018/3/7/621)
+>>>
+>>> This patch replaces a VLA with an appropriate call to kmalloc_array.
+>>>
+>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>>> ---
+>>> v2: Switch to GFP_KERNEL. There was some discussion about if we should
+>>> be doing the allocation at all but given a) the allocation is pretty
+>>> small and b) we can possibly take a mutex in a called function I think
+>>> this is fine.
+>>
+>>
+>> I still think it's a bad idea. It's simple to preallocate the buffer.
+>> But it's up to the maintainer.
+>>
 >
-> Signed-off-by: Timur Tabi <timur@codeaurora.org>
+> I'd feel a lot more confident about doing the global buffer with
+> guidance from the maintainer. But looking at the platform data, the
+> maximum number of GPIOs is 24, or 3 banks. Maybe we should just always
+> stack allocate the maximum since it's fairly small.
 
-Waiting for a review from Stephen or Bjorn on these two
-patches.
+Either way works fine, global (in the state container struct stmpe_gpio)
+or stack allocation for 24 bits.
+
+I guess I am maintainer for this, I can test it at least.
 
 Yours,
 Linus Walleij
