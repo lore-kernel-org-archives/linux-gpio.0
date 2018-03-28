@@ -1,45 +1,51 @@
-From: Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH 1/4] gpio: Remove VLA from gpiolib
-Date: Wed, 28 Mar 2018 05:54:55 +0200
-Message-ID: <20180328035455.GA18149@wunner.de>
-References: <20180310001021.6437-1-labbott@redhat.com>
- <20180310001021.6437-2-labbott@redhat.com>
- <a758ce3f-fed7-2ecf-94c5-ba133ea75bde@rasmusvillemoes.dk>
- <20180317082509.GA2579@wunner.de>
- <20180318142327.GA23761@wunner.de>
- <b162140d-5c71-196b-8f1f-555fd07810df@redhat.com>
+From: "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>
+Subject: Re: [PATCH] pinctrl/amd: poll InterruptEnable bits in enable_irq
+Date: Wed, 28 Mar 2018 10:49:49 +0530
+Message-ID: <a5ff2e32-662d-1c34-2ab9-16d98ffe9390@amd.com>
+References: <20180312164530.215524-1-djkurtz@chromium.org>
+ <CACRpkdaXzf=2nap2oqU0z_sTQ7XaFJGBnuk0UBE7FfNpT8mAFA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b162140d-5c71-196b-8f1f-555fd07810df@redhat.com>
+In-Reply-To: <CACRpkdaXzf=2nap2oqU0z_sTQ7XaFJGBnuk0UBE7FfNpT8mAFA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Mathias Duckeck <m.duckeck@kunbus.de>, Nandor Han <nandor.han@ge.com>, Semi Malinen <semi.malinen@ge.com>, Patrice Chotard <patrice.chotard@st.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Daniel Kurtz <djkurtz@chromium.org>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Ken Xue <Ken.Xue@amd.com>
+Cc: adurbin@chromium.org, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 05:37:18PM -0700, Laura Abbott wrote:
-> On 03/18/2018 07:23 AM, Lukas Wunner wrote:
-> > Actually, scratch that.  If ngpio is usually smallish, we can just
-> > allocate reasonably sized space for mask and bits on the stack,
-> > and fall back to the kcalloc slowpath only if chip->ngpio exceeds
-> > that limit.  Basically the below (likewise compile-tested only),
-> > this is on top of Laura's patch, could be squashed together.
-> > Let me know what you think, thanks.
-> >
+Hi
+
+On 3/26/2018 2:42 PM, Linus Walleij wrote:
+> On Mon, Mar 12, 2018 at 5:45 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
 > 
-> It seems like there's general consensus this is okay so I'm going
-> to fold it into the next version. If not, we can discuss again.
+>> In certain cases interrupt enablement will be delayed relative to when
+>> the InterruptEnable bits are written.  One example of this is when
+>> a GPIO's "debounce" logice is first enabled.  After enabling debounce,
+>> there is a 900 us "warm up" period during which InterruptEnable[0]
+>> (bit 11) will read as 0 despite being written 1.  During this time
+>> InterruptSts will not be updated, nor will interrupts be delivered, even
+>> if the GPIO's interrupt configuration has been written to the register.
+>>
+>> To work around this delay, poll the InterruptEnable bits after setting
+>> them to ensure interrupts have truly been enabled in hardware before
+>> returning from the irq_enable handler.
+>>
+>> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> 
+> Patch applied.
+> 
+> I see the AMD people were not on CC so adding them here so they can
+> say if there is any problem with the approach.
+> 
+> Daniel: maybe you should consider listing yourself as comaintainer of this
+> driver?
+> 
+> Yours,
+> Linus Walleij
+> 
 
-Yes, feel free to squash into your original patch with my S-o-b,
-keep your authorship.
+Looks good. 
 
-You may want to raise FASTPATH_NGPIO to something like 384, 448 or 512
-to accommodate for the Intel chips Andy mentioned.  It's kind of a
-"640k should be enough for everyone" thing but I'd expect the performance
-impact of the extra bytes on the stack / memsetting them to zero
-to be absolutely negligible.
-
-Thanks!
-
-Lukas
+Regards
+Nehal Shah
