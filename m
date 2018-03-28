@@ -1,62 +1,75 @@
-From: Laura Abbott <labbott@redhat.com>
-Subject: Re: [PATCH 3/4] gpio: Remove VLA from xra1403 driver
-Date: Wed, 28 Mar 2018 10:27:09 -0700
-Message-ID: <90ca44b5-52d0-be74-f36c-55d6f4a9bf25@redhat.com>
-References: <20180310001021.6437-1-labbott@redhat.com>
- <20180310001021.6437-4-labbott@redhat.com>
- <CAMuHMdUfGp_rn_fMWdOfWxPvyE1Y9oemm2piXszFTvBi9sQ5Eg@mail.gmail.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v3 05/11] dt-bindings: i3c: Document core bindings
+Date: Wed, 28 Mar 2018 19:28:07 +0200
+Message-ID: <20180328192807.174b794d@bbrezillon>
+References: <20180323110020.19080-1-boris.brezillon@bootlin.com>
+        <20180323110020.19080-6-boris.brezillon@bootlin.com>
+        <20180326071946.dtrhhxx3iwwymk73@rob-hp-laptop>
+        <20180328101922.22a7039d@bbrezillon>
+        <CAL_JsqKKf_Ob6AUvO5xgEFzSWakYDuPPzVKe4taoN1kzw3b1fQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdUfGp_rn_fMWdOfWxPvyE1Y9oemm2piXszFTvBi9sQ5Eg@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <CAL_JsqKKf_Ob6AUvO5xgEFzSWakYDuPPzVKe4taoN1kzw3b1fQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+To: Rob Herring <robh@kernel.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Nishanth Menon <nm@ti.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>
 List-Id: linux-gpio@vger.kernel.org
 
+On Wed, 28 Mar 2018 11:42:07 -0500
+Rob Herring <robh@kernel.org> wrote:
 
 
-On 03/28/2018 12:27 AM, Geert Uytterhoeven wrote:
-> Hi Laura,
+> >>  
+> >> > +where device-type is describing the type of device connected on the bus
+> >> > +(gpio-controller, sensor, ...).
+> >> > +
+> >> > +Required properties
+> >> > +-------------------
+> >> > +- reg: contains 3 cells
+> >> > +  + first cell : encodes the I2C address. Should be 0 if the device does not
+> >> > +            have one (0 is not a valid I3C address).  
+> >>
+> >> Change here to "encodes the static I2C address".
+> >>
+> >> 0 is not a valid I2C address?  
+> >
+> > According to [1] it is reserved, and it's reserved in the I3C spec
+> > anyway (see "Table 9 I3C Slave Address Restrictions" in the I3C spec).  
 > 
-> On Sat, Mar 10, 2018 at 1:10 AM, Laura Abbott <labbott@redhat.com> wrote:
->> The new challenge is to remove VLAs from the kernel
->> (see https://lkml.org/lkml/2018/3/7/621)
->>
->> This patch replaces a VLA with an appropriate call to kmalloc_array.
->>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/drivers/gpio/gpio-xra1403.c
->> +++ b/drivers/gpio/gpio-xra1403.c
->> @@ -126,11 +126,16 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
->>   {
->>          int reg;
->>          struct xra1403 *xra = gpiochip_get_data(chip);
->> -       int value[xra1403_regmap_cfg.max_register];
-> 
-> Apparently xra1403_regmap_cfg.max_register is always 0x15?
-> 
-> What about adding
-> 
->          #define XRA_LAST 15
-> 
-> at the top, and replacing both "XRA_IFR | 0x01" and
-> xra1403_regmap_cfg.max_register by XRA_LAST instead?
-> That would avoid doing yet another memory allocation over and over.
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+> Sorry, what I meant was s/I3C/I2C/. The first cell is I2C address and
+> 0 is not valid.
 
-I'm okay with making the change but I think Linus already picked
-up the patch into his gpio trees. Linus, do you want a patch on
-top of your -devel branch or should I just send a new patch?
+Okay, got it now :-).
+> 
+> >> > +
+> >> > +  + second and third cells: should encode the ProvisionalID. The second cell
+> >> > +                       contains the manufacturer ID left-shifted by 1.
+> >> > +                       The third cell contains ORing of the part ID
+> >> > +                       left-shifted by 16, the instance ID left-shifted
+> >> > +                       by 12 and the extra information. This encoding is
+> >> > +                       following the PID definition provided by the I3C
+> >> > +                       specification.  
+> >
+> > One extra question for you: should I refer to the I3C_DEV(),
+> > I3C_DEV_WITH_STATIC_ADDR() and I2C_DEV() macros in the bindings doc?
+> > And if I do, should I use them my example?  
+> 
+> Well, I don't want to see "device@I3C_DEV(...)" for unit-addresses.
 
-Thanks,
-Laura
+That wouldn't work anyway.
+
+> You can use them for reg property, but it's somewhat pointless to use
+> it in one place and not the other.
+
+Not sure I follow you. These macros have been added to ease definitions
+of reg, but you'll still have to manually define the unit-address
+manually. Are you saying I should not use them in dts files or just that
+I should not mention it in the doc. If this is the former, then patch 6
+should be dropped.
+
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
