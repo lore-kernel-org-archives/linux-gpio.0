@@ -1,51 +1,54 @@
-From: "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>
-Subject: Re: [PATCH] pinctrl/amd: poll InterruptEnable bits in enable_irq
-Date: Wed, 28 Mar 2018 10:49:49 +0530
-Message-ID: <a5ff2e32-662d-1c34-2ab9-16d98ffe9390@amd.com>
-References: <20180312164530.215524-1-djkurtz@chromium.org>
- <CACRpkdaXzf=2nap2oqU0z_sTQ7XaFJGBnuk0UBE7FfNpT8mAFA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 3/4] gpio: Remove VLA from xra1403 driver
+Date: Wed, 28 Mar 2018 09:27:22 +0200
+Message-ID: <CAMuHMdUfGp_rn_fMWdOfWxPvyE1Y9oemm2piXszFTvBi9sQ5Eg@mail.gmail.com>
+References: <20180310001021.6437-1-labbott@redhat.com> <20180310001021.6437-4-labbott@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaXzf=2nap2oqU0z_sTQ7XaFJGBnuk0UBE7FfNpT8mAFA@mail.gmail.com>
+In-Reply-To: <20180310001021.6437-4-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Daniel Kurtz <djkurtz@chromium.org>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Ken Xue <Ken.Xue@amd.com>
-Cc: adurbin@chromium.org, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Nandor Han <nandor.han@ge.com>, Semi Malinen <semi.malinen@ge.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi
+Hi Laura,
 
-On 3/26/2018 2:42 PM, Linus Walleij wrote:
-> On Mon, Mar 12, 2018 at 5:45 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
-> 
->> In certain cases interrupt enablement will be delayed relative to when
->> the InterruptEnable bits are written.  One example of this is when
->> a GPIO's "debounce" logice is first enabled.  After enabling debounce,
->> there is a 900 us "warm up" period during which InterruptEnable[0]
->> (bit 11) will read as 0 despite being written 1.  During this time
->> InterruptSts will not be updated, nor will interrupts be delivered, even
->> if the GPIO's interrupt configuration has been written to the register.
->>
->> To work around this delay, poll the InterruptEnable bits after setting
->> them to ensure interrupts have truly been enabled in hardware before
->> returning from the irq_enable handler.
->>
->> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-> 
-> Patch applied.
-> 
-> I see the AMD people were not on CC so adding them here so they can
-> say if there is any problem with the approach.
-> 
-> Daniel: maybe you should consider listing yourself as comaintainer of this
-> driver?
-> 
-> Yours,
-> Linus Walleij
-> 
+On Sat, Mar 10, 2018 at 1:10 AM, Laura Abbott <labbott@redhat.com> wrote:
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621)
+>
+> This patch replaces a VLA with an appropriate call to kmalloc_array.
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 
-Looks good. 
+Thanks for your patch!
 
-Regards
-Nehal Shah
+> --- a/drivers/gpio/gpio-xra1403.c
+> +++ b/drivers/gpio/gpio-xra1403.c
+> @@ -126,11 +126,16 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+>  {
+>         int reg;
+>         struct xra1403 *xra = gpiochip_get_data(chip);
+> -       int value[xra1403_regmap_cfg.max_register];
+
+Apparently xra1403_regmap_cfg.max_register is always 0x15?
+
+What about adding
+
+        #define XRA_LAST 15
+
+at the top, and replacing both "XRA_IFR | 0x01" and
+xra1403_regmap_cfg.max_register by XRA_LAST instead?
+That would avoid doing yet another memory allocation over and over.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
