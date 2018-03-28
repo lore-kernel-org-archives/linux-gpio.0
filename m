@@ -1,90 +1,127 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 05/11] dt-bindings: i3c: Document core bindings
-Date: Wed, 28 Mar 2018 11:42:07 -0500
-Message-ID: <CAL_JsqKKf_Ob6AUvO5xgEFzSWakYDuPPzVKe4taoN1kzw3b1fQ@mail.gmail.com>
-References: <20180323110020.19080-1-boris.brezillon@bootlin.com>
- <20180323110020.19080-6-boris.brezillon@bootlin.com> <20180326071946.dtrhhxx3iwwymk73@rob-hp-laptop>
- <20180328101922.22a7039d@bbrezillon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524 and pcal9555a
+Date: Wed, 28 Mar 2018 18:50:05 +0200
+Message-ID: <EA5887ED-9C02-4FFF-AC29-14F7D4F0B32D@goldelico.com>
+References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com> <CACRpkdYfk7P0+Ysy43HboBe0Z66vO3COXRgUGaZ7Y9sSDh+yxA@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180328101922.22a7039d@bbrezillon>
+In-Reply-To: <CACRpkdYfk7P0+Ysy43HboBe0Z66vO3COXRgUGaZ7Y9sSDh+yxA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Nishanth Menon <nm@ti.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>
+To: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Tony Lindgren <tony@atomide.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 3:19 AM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> Hi Rob,
->
-> On Mon, 26 Mar 2018 17:24:58 -0500
-> Rob Herring <robh@kernel.org> wrote:
->
->> > +
->> > +I3C devices
->> > +===========
->> > +
->> > +All I3C devices are supposed to support DAA (Dynamic Address Assignment), and
->> > +are thus discoverable. So, by default, I3C devices do not have to be described
->> > +in the device tree.
->> > +This being said, one might want to attach extra resources to these devices,
->> > +and those resources may have to be described in the device tree, which in turn
->> > +means we have to describe I3C devices.
->> > +
->> > +Another use case for describing an I3C device in the device tree is when this
->> > +I3C device has a static address and we want to assign it a specific dynamic
->> > +address before the DAA takes place (so that other devices on the bus can't
->>
->> static is I2C address and dynamic is an I3C address. That could be
->> clearer throughout.
->
-> I'll clarify that.
->
->>
->> > +take this dynamic address).
->> > +
->> > +The I3C device should be names <device-type>@<static-address>,<i3c-pid>,
->>
->> s/static-address/static-i2c-address/
->
-> Okay.
->
->>
->> > +where device-type is describing the type of device connected on the bus
->> > +(gpio-controller, sensor, ...).
->> > +
->> > +Required properties
->> > +-------------------
->> > +- reg: contains 3 cells
->> > +  + first cell : encodes the I2C address. Should be 0 if the device does not
->> > +            have one (0 is not a valid I3C address).
->>
->> Change here to "encodes the static I2C address".
->>
->> 0 is not a valid I2C address?
->
-> According to [1] it is reserved, and it's reserved in the I3C spec
-> anyway (see "Table 9 I3C Slave Address Restrictions" in the I3C spec).
+Hi Linus,
 
-Sorry, what I meant was s/I3C/I2C/. The first cell is I2C address and
-0 is not valid.
+> Am 27.03.2018 um 15:02 schrieb Linus Walleij =
+<linus.walleij@linaro.org>:
+>=20
+> On Sat, Mar 10, 2018 at 12:00 PM, H. Nikolaus Schaller
+> <hns@goldelico.com> wrote:
+>=20
+>> The Pyra-Handheld originally used the tca6424 but recently we have
+>> replaced it by the pin and package compatible pcal6524. So let's
+>> add this to the bindings and the driver.
+>>=20
+>> And while we are at it, the pcal9555a does not have a compatible =
+entry
+>> either but is already supported by the device id table.
+>>=20
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>=20
+> Patch applied with Rob's review tag.
 
->> > +
->> > +  + second and third cells: should encode the ProvisionalID. The second cell
->> > +                       contains the manufacturer ID left-shifted by 1.
->> > +                       The third cell contains ORing of the part ID
->> > +                       left-shifted by 16, the instance ID left-shifted
->> > +                       by 12 and the extra information. This encoding is
->> > +                       following the PID definition provided by the I3C
->> > +                       specification.
->
-> One extra question for you: should I refer to the I3C_DEV(),
-> I3C_DEV_WITH_STATIC_ADDR() and I2C_DEV() macros in the bindings doc?
-> And if I do, should I use them my example?
+Thanks!
 
-Well, I don't want to see "device@I3C_DEV(...)" for unit-addresses.
-You can use them for reg property, but it's somewhat pointless to use
-it in one place and not the other.
+>=20
+> If there are any further concerns from the discussion with Andy,
+> please follow up with additional patches if need be, thanks!
 
-Rob
+Yes, there will be something.
+
+But before submitting, I want to try to get interrupt handling tested.
+
+First of all I have found the board which I can use for testing.
+It has a ts3a227 as interrupt source connected to input 14 of the
+pcal6524 (instead of tca6424) which has the interrupt output
+connected to the gpio6_161 of an OMAP5.
+
+To see what happens I have added some printk to
+
+	drivers/gpio/gpio-pca953x.c
+	kernel/irq/manage.c
+	sound/soc/codecs/ts3a227e.c
+
+The result is a little puzzling. I see both drivers call
+request_threaded_irq() with flags =3D IRQF_ONESHOT | IRQF_SHARED
+and | IRQF_TRIGGER_LOW for the pcal. It seems as if the flags
+from DT are ignored here.
+
+Then strange things happen. The ts3a227e.c handler is called
+permanently. Even before interrupts are enabled in the chip,
+although I don't see any pca953x interrupt to occur. And
+so far I could neither see pca953x_irq_mask() pca953x_irq_unmask()
+nor pca953x_irq_bus_sync_unlock() pca953x_irq_bus_sync_lock()
+being called.
+
+So I'd suspect that something is wrong with setting up the
+chained interrupts and the thread is not sleeping. Maybe a bug
+in my DT but I don't know yet.
+
+Here is a shortened version of the relevant DT setup which may
+be wrong:
+
+> &omap5_pmx_core {
+> 	pinctrl-0 =3D <&pyra_other_pins>;
+>=20
+> 	pyra_other_pins: pinmux_other_gpio_pins {
+> 		pinctrl-single,pins =3D <
+> 			OMAP5_IOPAD(0x12e, PIN_INPUT_PULLUP | MUX_MODE6)	=
+/* 0x12C:[31:16]  gpio6_161 - TCA6424 active low interrupt */
+> 			>;
+> 	};
+> };
+>=20
+>=20
+> &i2c5 {
+> 	/* microphone detect */
+> 	ts3a227@3b {
+> 		compatible =3D "ti,ts3a227e";
+> 		reg =3D <0x3b>;
+> 		interrupt-parent =3D <&gpio99>;
+> 		interrupts =3D <14 IRQ_TYPE_EDGE_RISING>;
+> 		ti,micbias =3D <0>;	/* 2.1V */
+> 	};
+>=20
+> 	/* system-led and other controls */
+> 	gpio99: tca6424@22 {
+> 		compatible =3D "nxp,pcal6524";
+> 		interrupt-parent =3D <&gpio6>;
+> 		interrupts =3D <1 IRQ_TYPE_EDGE_FALLING>;	/* =
+gpio6_161 */
+> 		vcc-supply =3D <&vdds_1v8_main>;
+>=20
+> 		reg =3D <0x22>;
+> 		gpio-controller;
+> 		#gpio-cells =3D <2>;
+> 		gpio-line-names =3D
+> 			"hdmi-ct-hpd", "hdmi.ls-oe", "p02", "p03", =
+"vibra", "fault2", "p06", "p07",
+> 			"en-usb", "en-host1", "en-host2", "chg-int", =
+"p14", "p15", "mic-int", "en-modem",
+> 			"shdn-hs-amp", "chg-status+red", "green", =
+"blue", "en-esata", "fault1", "p26", "p27";
+> 	};
+> };
+
+Any hints how to debug this?
+
+Especially how pca953x_irq_bus_sync_unlock() should be called from the
+initialization of the ts3a227e driver?
+
+And what could make the ts3a227e handler being called without interrupt.
+
+BR and thanks,
+Nikolaus
