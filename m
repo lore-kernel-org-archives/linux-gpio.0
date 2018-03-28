@@ -1,88 +1,220 @@
-From: Chanho Park <parkch98@gmail.com>
-Subject: [PATCHv2] pinctrl: samsung: add pin_dbg_show callback for debugfs
-Date: Tue, 27 Mar 2018 22:58:01 +0900
-Message-ID: <20180327135801.9556-1-parkch98@gmail.com>
+From: Laura Abbott <labbott@redhat.com>
+Subject: Re: [PATCH 1/4] gpio: Remove VLA from gpiolib
+Date: Tue, 27 Mar 2018 17:37:18 -0700
+Message-ID: <b162140d-5c71-196b-8f1f-555fd07810df@redhat.com>
+References: <20180310001021.6437-1-labbott@redhat.com>
+ <20180310001021.6437-2-labbott@redhat.com>
+ <a758ce3f-fed7-2ecf-94c5-ba133ea75bde@rasmusvillemoes.dk>
+ <20180317082509.GA2579@wunner.de> <20180318142327.GA23761@wunner.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chanho Park <parkch98@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180318142327.GA23761@wunner.de>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Mathias Duckeck <m.duckeck@kunbus.de>, Nandor Han <nandor.han@ge.com>, Semi Malinen <semi.malinen@ge.com>, Patrice Chotard <patrice.chotard@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds a samsung_pin_dbg_show function to implement the
-pin_dbg_show callback function which can be used to show pin
-confuration values. Basically, it can show pin setting values by
-accessing the "pins" node like below:
+On 03/18/2018 07:23 AM, Lukas Wunner wrote:
+> On Sat, Mar 17, 2018 at 09:25:09AM +0100, Lukas Wunner wrote:
+>> On Mon, Mar 12, 2018 at 04:00:36PM +0100, Rasmus Villemoes wrote:
+>>> On 2018-03-10 01:10, Laura Abbott wrote:
+>>>> @@ -2887,14 +2909,30 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+>>>>   
+>>>>   	while (i < array_size) {
+>>>>   		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+>>>> -		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+>>>> -		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+>>>> +		unsigned long *mask;
+>>>> +		unsigned long *bits;
+>>>>   		int count = 0;
+>>>>   
+>>>> +		mask = kmalloc_array(BITS_TO_LONGS(chip->ngpio),
+>>>> +				sizeof(*mask),
+>>>> +				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+>>>> +
+>>>> +		if (!mask)
+>>>> +			return;
+>>>> +
+>>>> +		bits = kmalloc_array(BITS_TO_LONGS(chip->ngpio),
+>>>> +				sizeof(*bits),
+>>>> +				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+>>>> +
+>>>> +		if (!bits) {
+>>>> +			kfree(mask);
+>>>> +			return;
+>>>> +		}
+>>>> +
+>>>>   		if (!can_sleep)
+>>>>   			WARN_ON(chip->can_sleep);
+>>>>   
+>>>> -		memset(mask, 0, sizeof(mask));
+>>>> +		memset(mask, 0, sizeof(*mask));
+>>>
+>>> Other random thoughts: maybe two allocations for each loop iteration is
+>>> a bit much. Maybe do a first pass over the array and collect the maximal
+>>> chip->ngpio, do the memory allocation and freeing outside the loop (then
+>>> you'd of course need to preserve the memset() with appropriate length
+>>> computed). And maybe even just do one allocation, making bits point at
+>>> the second half.
+>>
+>> I think those are great ideas because the function is kind of a hotpath
+>> and usage of VLAs was motivated by the desire to make it fast.
+>>
+>> I'd go one step further and store the maximum ngpio of all registered
+>> chips in a global variable (and update it in gpiochip_add_data_with_key()),
+>> then allocate 2 * max_ngpio once before entering the loop (as you've
+>> suggested).  That would avoid the first pass to determine the maximum
+>> chip->ngpio.  In most systems max_ngpio will be < 64, so one or two
+>> unsigned longs depending on the arch's bitness.
+> 
+> Actually, scratch that.  If ngpio is usually smallish, we can just
+> allocate reasonably sized space for mask and bits on the stack,
+> and fall back to the kcalloc slowpath only if chip->ngpio exceeds
+> that limit.  Basically the below (likewise compile-tested only),
+> this is on top of Laura's patch, could be squashed together.
+> Let me know what you think, thanks.
+> 
 
-$ cat pins
-pin 0 (gpy7-0)  CON(0x0) DAT(0x1) PUD(0x1) DRV(0x0) CON_PDN(0x0) PUD_PDN(0x0)
+It seems like there's general consensus this is okay so I'm going
+to fold it into the next version. If not, we can discuss again.
 
-Signed-off-by: Chanho Park <parkch98@gmail.com>
----
-Changes from v1:
-- use samsung_pinconf_get instead of samsung_pinconf_rw
-- use "static const char * const" type declaration of reg_names
-- skip condition change
-
- drivers/pinctrl/samsung/pinctrl-samsung.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 336e88d7bdb9..618945a0fd38 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -279,6 +279,32 @@ static int samsung_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+#ifdef CONFIG_DEBUG_FS
-+/* Forward declaration which can be used by samsung_pin_dbg_show */
-+static int samsung_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
-+					unsigned long *config);
-+static const char * const reg_names[] = {"CON", "DAT", "PUD", "DRV", "CON_PDN",
-+					 "PUD_PDN"};
-+
-+static void samsung_pin_dbg_show(struct pinctrl_dev *pctldev,
-+				struct seq_file *s, unsigned int pin)
-+{
-+	enum pincfg_type cfg_type;
-+	unsigned long config;
-+	int ret;
-+
-+	for (cfg_type = 0; cfg_type < PINCFG_TYPE_NUM; cfg_type++) {
-+		config = PINCFG_PACK(cfg_type, 0);
-+		ret = samsung_pinconf_get(pctldev, pin, &config);
-+		if (ret < 0)
-+			continue;
-+
-+		seq_printf(s, " %s(0x%lx)", reg_names[cfg_type],
-+			   PINCFG_UNPACK_VALUE(config));
-+	}
-+}
-+#endif
-+
- /* list of pinctrl callbacks for the pinctrl core */
- static const struct pinctrl_ops samsung_pctrl_ops = {
- 	.get_groups_count	= samsung_get_group_count,
-@@ -286,6 +312,9 @@ static const struct pinctrl_ops samsung_pctrl_ops = {
- 	.get_group_pins		= samsung_get_group_pins,
- 	.dt_node_to_map		= samsung_dt_node_to_map,
- 	.dt_free_map		= samsung_dt_free_map,
-+#ifdef CONFIG_DEBUG_FS
-+	.pin_dbg_show		= samsung_pin_dbg_show,
-+#endif
- };
- 
- /* check if the selector is a valid pin function selector */
--- 
-2.14.1
+> -- >8 --
+> Subject: [PATCH] gpio: Add fastpath to gpiod_get/set_array_value_complex()
+> 
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> ---
+>   drivers/gpio/gpiolib.c | 76 ++++++++++++++++++++++++--------------------------
+>   1 file changed, 37 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 429bc251392b..ffc67b0b866c 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2432,6 +2432,8 @@ static int gpio_chip_get_multiple(struct gpio_chip *chip,
+>   	return -EIO;
+>   }
+>   
+> +#define FASTPATH_NGPIO 256
+> +
+>   int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>   				  unsigned int array_size,
+>   				  struct gpio_desc **desc_array,
+> @@ -2441,27 +2443,24 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>   
+>   	while (i < array_size) {
+>   		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+> -		unsigned long *mask;
+> -		unsigned long *bits;
+> +		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
+> +		unsigned long *slowpath = NULL, *mask, *bits;
+>   		int first, j, ret;
+>   
+> -		mask = kcalloc(BITS_TO_LONGS(chip->ngpio),
+> -				sizeof(*mask),
+> -				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> -
+> -		if (!mask)
+> -			return -ENOMEM;
+> -
+> -		bits = kcalloc(BITS_TO_LONGS(chip->ngpio),
+> -				sizeof(*bits),
+> -				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> -
+> -		if (!bits) {
+> -			kfree(mask);
+> -			return -ENOMEM;
+> +		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
+> +			memset(fastpath, 0, sizeof(fastpath));
+> +			mask = fastpath;
+> +			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
+> +		} else {
+> +			slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+> +					   sizeof(*slowpath),
+> +					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> +			if (!slowpath)
+> +				return -ENOMEM;
+> +			mask = slowpath;
+> +			bits = slowpath + BITS_TO_LONGS(chip->ngpio);
+>   		}
+>   
+> -
+>   		if (!can_sleep)
+>   			WARN_ON(chip->can_sleep);
+>   
+> @@ -2478,8 +2477,8 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>   
+>   		ret = gpio_chip_get_multiple(chip, mask, bits);
+>   		if (ret) {
+> -			kfree(bits);
+> -			kfree(mask);
+> +			if (slowpath)
+> +				kfree(slowpath);
+>   			return ret;
+>   		}
+>   
+> @@ -2493,8 +2492,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>   			value_array[j] = value;
+>   			trace_gpio_value(desc_to_gpio(desc), 1, value);
+>   		}
+> -		kfree(bits);
+> -		kfree(mask);
+> +
+> +		if (slowpath)
+> +			kfree(slowpath);
+>   	}
+>   	return 0;
+>   }
+> @@ -2699,24 +2699,22 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+>   
+>   	while (i < array_size) {
+>   		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+> -		unsigned long *mask;
+> -		unsigned long *bits;
+> +		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
+> +		unsigned long *slowpath = NULL, *mask, *bits;
+>   		int count = 0;
+>   
+> -		mask = kcalloc(BITS_TO_LONGS(chip->ngpio),
+> -				sizeof(*mask),
+> -				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> -
+> -		if (!mask)
+> -			return -ENOMEM;
+> -
+> -		bits = kcalloc(BITS_TO_LONGS(chip->ngpio),
+> -				sizeof(*bits),
+> -				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> -
+> -		if (!bits) {
+> -			kfree(mask);
+> -			return -ENOMEM;
+> +		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
+> +			memset(fastpath, 0, sizeof(fastpath));
+> +			mask = fastpath;
+> +			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
+> +		} else {
+> +			slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+> +					   sizeof(*slowpath),
+> +					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> +			if (!slowpath)
+> +				return -ENOMEM;
+> +			mask = slowpath;
+> +			bits = slowpath + BITS_TO_LONGS(chip->ngpio);
+>   		}
+>   
+>   		if (!can_sleep)
+> @@ -2753,8 +2751,8 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+>   		if (count != 0)
+>   			gpio_chip_set_multiple(chip, mask, bits);
+>   
+> -		kfree(mask);
+> -		kfree(bits);
+> +		if (slowpath)
+> +			kfree(slowpath);
+>   	}
+>   	return 0;
+>   }
+> 
