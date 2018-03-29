@@ -1,61 +1,150 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH] gpioib: do not free unrequested descriptors
-Date: Thu, 29 Mar 2018 13:29:12 -0500
-Message-ID: <1522348152-15024-1-git-send-email-timur@codeaurora.org>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, stable@vger.kernel.org
-Cc: timur@codeaurora.org
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524 and pcal9555a
+Date: Thu, 29 Mar 2018 21:29:51 +0200
+Message-ID: <281D9C45-537A-4804-A9FA-6816E0FCAD27@goldelico.com>
+References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com> <CACRpkdYfk7P0+Ysy43HboBe0Z66vO3COXRgUGaZ7Y9sSDh+yxA@mail.gmail.com> <EA5887ED-9C02-4FFF-AC29-14F7D4F0B32D@goldelico.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <EA5887ED-9C02-4FFF-AC29-14F7D4F0B32D@goldelico.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Tony Lindgren <tony@atomide.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, kernel@pyra-handheld.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
 List-Id: linux-gpio@vger.kernel.org
 
-If the main loop in linehandle_create() encounters an error, it
-unwinds completely by freeing all previously requested GPIO
-descriptors.  However, if the error occurs in the beginning of
-the loop before that GPIO is requested, then the exit code
-attempts to free a null descriptor.  If extrachecks is enabled,
-gpiod_free() triggers a WARN_ON.
+Hi,
 
-Instead, keep a separate count of legitimate GPIOs so that only
-those are freed.
+> Am 28.03.2018 um 18:50 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
+>=20
+> Hi Linus,
+>=20
+>> Am 27.03.2018 um 15:02 schrieb Linus Walleij =
+<linus.walleij@linaro.org>:
+>>=20
+>> On Sat, Mar 10, 2018 at 12:00 PM, H. Nikolaus Schaller
+>> <hns@goldelico.com> wrote:
+>>=20
+>>> The Pyra-Handheld originally used the tca6424 but recently we have
+>>> replaced it by the pin and package compatible pcal6524. So let's
+>>> add this to the bindings and the driver.
+>>>=20
+>>> And while we are at it, the pcal9555a does not have a compatible =
+entry
+>>> either but is already supported by the device id table.
+>>>=20
+>>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>>=20
+>> Patch applied with Rob's review tag.
+>=20
+> Thanks!
+>=20
+>>=20
+>> If there are any further concerns from the discussion with Andy,
+>> please follow up with additional patches if need be, thanks!
+>=20
+> Yes, there will be something.
+>=20
+> But before submitting, I want to try to get interrupt handling tested.
+>=20
+> First of all I have found the board which I can use for testing.
+> It has a ts3a227 as interrupt source connected to input 14 of the
+> pcal6524 (instead of tca6424) which has the interrupt output
+> connected to the gpio6_161 of an OMAP5.
+>=20
+> To see what happens I have added some printk to
+>=20
+> 	drivers/gpio/gpio-pca953x.c
+> 	kernel/irq/manage.c
+> 	sound/soc/codecs/ts3a227e.c
+>=20
+> The result is a little puzzling. I see both drivers call
+> request_threaded_irq() with flags =3D IRQF_ONESHOT | IRQF_SHARED
+> and | IRQF_TRIGGER_LOW for the pcal. It seems as if the flags
+> from DT are ignored here.
+>=20
+> Then strange things happen. The ts3a227e.c handler is called
+> permanently. Even before interrupts are enabled in the chip,
+> although I don't see any pca953x interrupt to occur. And
+> so far I could neither see pca953x_irq_mask() pca953x_irq_unmask()
+> nor pca953x_irq_bus_sync_unlock() pca953x_irq_bus_sync_lock()
+> being called.
 
-Cc: stable@vger.kernel.org
-Fixes: d7c51b47ac11 ("gpio: userspace ABI for reading/writing GPIO lines")
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
----
- drivers/gpio/gpiolib.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+I have solved this issue.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 43aeb07343ec..d07771797707 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -497,7 +497,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
- 	struct gpiohandle_request handlereq;
- 	struct linehandle_state *lh;
- 	struct file *file;
--	int fd, i, ret;
-+	int fd, i, count = 0, ret;
- 	u32 lflags;
- 
- 	if (copy_from_user(&handlereq, ip, sizeof(handlereq)))
-@@ -558,6 +558,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
- 		if (ret)
- 			goto out_free_descs;
- 		lh->descs[i] = desc;
-+		count = i;
- 
- 		if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
- 			set_bit(FLAG_ACTIVE_LOW, &desc->flags);
-@@ -628,7 +629,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
- out_put_unused_fd:
- 	put_unused_fd(fd);
- out_free_descs:
--	for (; i >= 0; i--)
-+	for (i = 0; i < count; i++)
- 		gpiod_free(lh->descs[i]);
- 	kfree(lh->label);
- out_free_lh:
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+I had assumed that it is sufficient to refer to the pcal6524 phandle
+as interrupt-parent.
+
+But it turns out that the chip has to be marked in the DT
+as an interrupt-controller.
+
+The result without this seems to have been that the omap-gpio irq
+was delivered to the ts3a227 driver which is not able to remove the
+irq at the gpio.
+
+>=20
+> So I'd suspect that something is wrong with setting up the
+> chained interrupts and the thread is not sleeping. Maybe a bug
+> in my DT but I don't know yet.
+>=20
+> Here is a shortened version of the relevant DT setup which may
+> be wrong:
+>=20
+>>=20
+>> 	/* system-led and other controls */
+>> 	gpio99: tca6424@22 {
+>> 		compatible =3D "nxp,pcal6524";
+>> 		interrupt-parent =3D <&gpio6>;
+>> 		interrupts =3D <1 IRQ_TYPE_EDGE_FALLING>;	/* =
+gpio6_161 */
+>> 		vcc-supply =3D <&vdds_1v8_main>;
+
+		interrupt-controller;
+		#interrupt-cells =3D <2>;
+
+>>=20
+>> 		reg =3D <0x22>;
+>> 		gpio-controller;
+>> 		#gpio-cells =3D <2>;
+>> 		gpio-line-names =3D
+>> 			"hdmi-ct-hpd", "hdmi.ls-oe", "p02", "p03", =
+"vibra", "fault2", "p06", "p07",
+>> 			"en-usb", "en-host1", "en-host2", "chg-int", =
+"p14", "p15", "mic-int", "en-modem",
+>> 			"shdn-hs-amp", "chg-status+red", "green", =
+"blue", "en-esata", "fault1", "p26", "p27";
+>> 	};
+>> };
+>=20
+> And what could make the ts3a227e handler being called without =
+interrupt.
+
+Now this seems to work, the ts3a227e interrupt flooding has stopped
+and pca953x_irq_bus_sync_unlock() is called as expected.
+
+I think I'll include a patch for the pca953x bindings documentation
+to better point this out, maybe with example.
+
+Another issue I have fixed is that the pcal6524 has 4 registers per
+bank while the pcal9555a has only 2. This is encoded in the address
+constants for the new "L"-registers and has to be taken care of in
+pca953x_read_regs_24() and pca953x_write_regs_24().
+
+But I still have another problem:
+
+[    4.808823] pca953x 4-0022: irq 186: unsupported type 8
+[    4.814303] genirq: Setting trigger mode 8 for irq 186 failed =
+(pca953x_irq_set_type+0x0/0xa8)
+
+This comes from =
+https://elixir.bootlin.com/linux/v4.16-rc7/source/sound/soc/codecs/ts3a227=
+e.c#L314
+
+It appears that the pca953x driver/interrupt-controller can't handle
+IRQF_TRIGGER_LOW, but that is hard coded into the ts3a227 driver.
+
+Anyone with knowledge and help about this issue?
+
+BR and thanks,
+Nikolaus
