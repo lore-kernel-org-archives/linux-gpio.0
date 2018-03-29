@@ -1,44 +1,61 @@
-From: Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCHv3] gpio: Remove VLA from gpiolib
-Date: Thu, 29 Mar 2018 16:25:33 +0200
-Message-ID: <20180329142533.GA15478@wunner.de>
-References: <20180328181809.24505-1-labbott@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180328181809.24505-1-labbott@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: [PATCH] gpioib: do not free unrequested descriptors
+Date: Thu, 29 Mar 2018 13:29:12 -0500
+Message-ID: <1522348152-15024-1-git-send-email-timur@codeaurora.org>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, stable@vger.kernel.org
+Cc: timur@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 11:18:09AM -0700, Laura Abbott wrote:
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621) to eventually
-> turn on -Wvla.
-> 
-> Using a kmalloc array is the easy way to fix this but kmalloc is still
-> more expensive than stack allocation. Introduce a fast path with a
-> fixed size stack array to cover most chip with gpios below some fixed
-> amount. The slow path dynamically allocates an array to cover those
-> chips with a large number of gpios.
-> 
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v3: Split out from the series since patches have been picked up
-> independently. Fold in patch from Lukas Wunner to introduce slow/fast
-> paths. I took his suggestions to go with 384 as the maximum number of
-> gpios. Also fixed one 0-day bot issue where I forgot to change the
-> return type.
+If the main loop in linehandle_create() encounters an error, it
+unwinds completely by freeing all previously requested GPIO
+descriptors.  However, if the error occurs in the beginning of
+the loop before that GPIO is requested, then the exit code
+attempts to free a null descriptor.  If extrachecks is enabled,
+gpiod_free() triggers a WARN_ON.
 
-I've just given this a whirl with gpio-hammer and it works nicely, so FWIW:
+Instead, keep a separate count of legitimate GPIOs so that only
+those are freed.
 
-Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+Cc: stable@vger.kernel.org
+Fixes: d7c51b47ac11 ("gpio: userspace ABI for reading/writing GPIO lines")
+Signed-off-by: Timur Tabi <timur@codeaurora.org>
+---
+ drivers/gpio/gpiolib.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks a lot for doing this Laura, and most of all thanks for the
-proverbial "dogged persistence and patience"!
-(https://lwn.net/Articles/697029/)
-
-Lukas
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 43aeb07343ec..d07771797707 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -497,7 +497,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+ 	struct gpiohandle_request handlereq;
+ 	struct linehandle_state *lh;
+ 	struct file *file;
+-	int fd, i, ret;
++	int fd, i, count = 0, ret;
+ 	u32 lflags;
+ 
+ 	if (copy_from_user(&handlereq, ip, sizeof(handlereq)))
+@@ -558,6 +558,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+ 		if (ret)
+ 			goto out_free_descs;
+ 		lh->descs[i] = desc;
++		count = i;
+ 
+ 		if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
+ 			set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+@@ -628,7 +629,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+ out_put_unused_fd:
+ 	put_unused_fd(fd);
+ out_free_descs:
+-	for (; i >= 0; i--)
++	for (i = 0; i < count; i++)
+ 		gpiod_free(lh->descs[i]);
+ 	kfree(lh->label);
+ out_free_lh:
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
