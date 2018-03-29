@@ -1,74 +1,94 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH v3] gpio: Remove VLA from stmpe driver
-Date: Thu, 29 Mar 2018 08:07:05 +0800
-Message-ID: <e676f8fc-e619-ac7e-a5e0-8682197c7b9b@electromag.com.au>
-References: <20180328175957.23904-1-labbott@redhat.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: msm: fix gpio-hog related boot issues
+Date: Wed, 28 Mar 2018 17:27:23 -0700
+Message-ID: <20180329002723.GD18510@minitux>
+References: <20180328180705.29147-1-chunkeey@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180328175957.23904-1-labbott@redhat.com>
-Content-Language: en-AU
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180328180705.29147-1-chunkeey@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Christian Lamparter <chunkeey@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 29/03/2018 01:59, Laura Abbott wrote:
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621)
-> 
-> The number of GPIOs on the supported chips is fairly small
-> so stack allocate to a known upper bound and spit out a warning
-> if any new chips have more gpios.
-> 
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v3: Split this off from the rest of the series since some of the
-> patches had been picked up. Switched to just hardcoding an upper
-> bound for the stack array since it's only a few extra bytes
-> of stack space.
-> ---
->   drivers/gpio/gpio-stmpe.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-> index f8d7d1cd8488..8d6a5a7e612d 100644
-> --- a/drivers/gpio/gpio-stmpe.c
-> +++ b/drivers/gpio/gpio-stmpe.c
-> @@ -363,13 +363,15 @@ static struct irq_chip stmpe_gpio_irq_chip = {
->   	.irq_set_type		= stmpe_gpio_irq_set_type,
->   };
->   
-> +#define MAX_GPIOS 24
-> +
->   static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
->   {
->   	struct stmpe_gpio *stmpe_gpio = dev;
->   	struct stmpe *stmpe = stmpe_gpio->stmpe;
->   	u8 statmsbreg;
->   	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
-> -	u8 status[num_banks];
-> +	u8 status[DIV_ROUND_UP(MAX_GPIOS, 8)];
->   	int ret;
->   	int i;
->   
-> @@ -434,6 +436,11 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
->   	struct stmpe_gpio *stmpe_gpio;
->   	int ret, irq;
->   
-> +	if (stmpe->num_gpios > MAX_GPIOS) {
-> +		dev_err(&pdev->dev, "Need to increase maximum GPIO number\n");
-> +		return -EINVAL;
-> +	}
-> +
->   	stmpe_gpio = kzalloc(sizeof(*stmpe_gpio), GFP_KERNEL);
->   	if (!stmpe_gpio)
->   		return -ENOMEM;
-> 
-FWIW
-Reviewed-by: Phil Reid <preid@electromag.com.au>
+On Wed 28 Mar 11:07 PDT 2018, Christian Lamparter wrote:
 
--- 
-Regards
-Phil Reid
+> Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
+> Setting up any gpio-hog in the device-tree for his device would
+> "kill the bootup completely":
+> 
+> | [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
+> | [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
+> | [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
+> | [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
+> | [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
+> | [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
+> | [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
+> 
+> This was also verified on a RT-AC58U (IPQ4018) which would
+> no longer boot, if a gpio-hog was specified. (Tried forcing
+> the USB LED PIN (GPIO0) to high.).
+> 
+
+It's quite clear that this is a generic issue with the msm pinctrl
+driver.
+
+For the cases where I've been in need of static configuration of
+certain pins I've simply made the pinctrl node itself have a pinctrl-0
+that refer to a state that I want to hold. This has worked well and I
+didn't even know about the gpio-hog property.
+
+[..]
+> diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+> index 3ca96e361878..17ad9cbd9f8c 100644
+> --- a/arch/arm/boot/dts/qcom-apq8064.dtsi
+> +++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+> @@ -327,6 +327,7 @@
+>  			reg = <0x800000 0x4000>;
+>  
+>  			gpio-controller;
+> +			gpio-ranges = <&tlmm_pinmux 0 0 90>;
+
+This seems reasonable.
+
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+[..]
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 495432f3341b..f2580bbba741 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -831,13 +831,6 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+>  		return ret;
+>  	}
+>  
+> -	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
+> -	if (ret) {
+> -		dev_err(pctrl->dev, "Failed to add pin range\n");
+> -		gpiochip_remove(&pctrl->chip);
+> -		return ret;
+> -	}
+> -
+
+But, this will break backwards compatibility with existing DTBs and I
+don't see how this would work with the ACPI based platforms using this
+driver.
+
+
+Iirc this driver follows the same pattern as several other pinctrl
+drivers providing gpios, how are they handling this?
+
+Regards,
+Bjorn
