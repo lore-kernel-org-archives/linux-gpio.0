@@ -1,42 +1,44 @@
-From: Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH] pinctrl: msm: fix gpio-hog related boot issues
-Date: Thu, 29 Mar 2018 16:05:47 +0200
-Message-ID: <3460672.7sj45fLQN6@debian64>
-References: <20180328180705.29147-1-chunkeey@gmail.com>
- <20180329002723.GD18510@minitux> <5240033.8XEdSWCWGL@debian64>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCHv3] gpio: Remove VLA from gpiolib
+Date: Thu, 29 Mar 2018 16:25:33 +0200
+Message-ID: <20180329142533.GA15478@wunner.de>
+References: <20180328181809.24505-1-labbott@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5240033.8XEdSWCWGL@debian64>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180328181809.24505-1-labbott@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laura Abbott <labbott@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu 29 Mar 2018 14:23:35 CEST Christian Lamparter wrote:
-> Ok I see, I was aware of ACPI but not that a pinctrl-msm based driver is
-> using it. Well, I thinks is possible to use is_acpi_device_node() or 
-> !is_of_node() to detect whenever we are dealing with a OF or not:
+On Wed, Mar 28, 2018 at 11:18:09AM -0700, Laura Abbott wrote:
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+> turn on -Wvla.
 > 
-> would it be ok to do something like this?
+> Using a kmalloc array is the easy way to fix this but kmalloc is still
+> more expensive than stack allocation. Introduce a fast path with a
+> fixed size stack array to cover most chip with gpios below some fixed
+> amount. The slow path dynamically allocates an array to cover those
+> chips with a large number of gpios.
 > 
-> |       if (!is_of_node(chip->of_node)) {
-oops, this should be:
-			if (!is_of_node(pctrl->dev->fwnode)) {
-> |					/*
-> |					 * (lengthy note about gpiochip_add_pin_range and OF with
-> |					 * reference to Documentation/devicetree/bindings/gpio/gpio.txt
-> |					 * - TBD)
-> |					 */
-> |					ret = gpiochip_add_pin_range(&pctrl->chip,
-> |					[...]
-> |		}
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> v3: Split out from the series since patches have been picked up
+> independently. Fold in patch from Lukas Wunner to introduce slow/fast
+> paths. I took his suggestions to go with 384 as the maximum number of
+> gpios. Also fixed one 0-day bot issue where I forgot to change the
+> return type.
+
+I've just given this a whirl with gpio-hammer and it works nicely, so FWIW:
+
+Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+
+Thanks a lot for doing this Laura, and most of all thanks for the
+proverbial "dogged persistence and patience"!
+(https://lwn.net/Articles/697029/)
+
+Lukas
