@@ -1,52 +1,65 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH v4 04/10] dt-bindings: i3c: Document core bindings
-Date: Fri, 30 Mar 2018 09:59:02 +0200
-Message-ID: <20180330095902.00f75106@bbrezillon>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
-        <20180330074751.25987-5-boris.brezillon@bootlin.com>
-        <CAMuHMdW-MhzaW-bWL25Y+--UHxLB+Mm5+SmhwA+PiezUEg0Ycw@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCHv3] gpio: Remove VLA from gpiolib
+Date: Fri, 30 Mar 2018 17:33:55 +0300
+Message-ID: <CAHp75VdZOiJgzt3nhdeqwTXC=jsbndLWOV3eF_XmgFU-eHjYSg@mail.gmail.com>
+References: <20180328181809.24505-1-labbott@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdW-MhzaW-bWL25Y+--UHxLB+Mm5+SmhwA+PiezUEg0Ycw@mail.gmail.com>
+In-Reply-To: <20180328181809.24505-1-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ij>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 30 Mar 2018 09:55:22 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Wed, Mar 28, 2018 at 9:18 PM, Laura Abbott <labbott@redhat.com> wrote:
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+> turn on -Wvla.
+>
+> Using a kmalloc array is the easy way to fix this but kmalloc is still
+> more expensive than stack allocation. Introduce a fast path with a
+> fixed size stack array to cover most chip with gpios below some fixed
+> amount. The slow path dynamically allocates an array to cover those
+> chips with a large number of gpios.
 
-> Hi Boris,
-> 
-> On Fri, Mar 30, 2018 at 9:47 AM, Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
-> > A new I3C subsystem has been added and a generic description has been
-> > created to represent the I3C bus and the devices connected on it.
-> >
-> > Document this generic representation.
-> >
-> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > ---
-> > Changes in v4:
-> > - Clarify the fact that static address == I3C address and dynamic  
-> 
-> static address == I2C address?
+> +               ret = gpiod_set_array_value_complex(false,
+>                                               true,
+>                                               lh->numdescs,
+>                                               lh->descs,
+>                                               vals);
+> +               if (ret)
+> +                       return ret;
+> +
+>                 return 0;
 
-hehe, indeed.
+Can't we
 
-> 
-> >   address == I3C address  
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+return gpiod_set_array_value_complex(); ?
 
 
+> +                       slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+> +                                          sizeof(*slowpath),
+> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+
+
+> +                       if (slowpath)
+> +                               kfree(slowpath);
+
+> +               if (slowpath)
+> +                       kfree(slowpath);
+
+Since slowpath is a pointer, conditionals above are redundant.
+
+> +                       slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+> +                                          sizeof(*slowpath),
+> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+
+> +               if (slowpath)
+> +                       kfree(slowpath);
+
+Ditto.
 
 -- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+With Best Regards,
+Andy Shevchenko
