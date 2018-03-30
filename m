@@ -1,64 +1,90 @@
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCHv3] gpio: Remove VLA from gpiolib
-Date: Fri, 30 Mar 2018 17:33:55 +0300
-Message-ID: <CAHp75VdZOiJgzt3nhdeqwTXC=jsbndLWOV3eF_XmgFU-eHjYSg@mail.gmail.com>
-References: <20180328181809.24505-1-labbott@redhat.com>
+Subject: Re: [PATCH v6 7/9] gpio: Add gpio driver for Actions OWL S900 SoC
+Date: Sat, 31 Mar 2018 00:04:11 +0300
+Message-ID: <CAHp75VeGv04CA3f1pRDi35DsbRgrdj86TBUBZ3J+27T822cOqw@mail.gmail.com>
+References: <20180328174703.19778-1-manivannan.sadhasivam@linaro.org> <20180328174703.19778-8-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180328181809.24505-1-labbott@redhat.com>
+In-Reply-To: <20180328174703.19778-8-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 9:18 PM, Laura Abbott <labbott@redhat.com> wrote:
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621) to eventually
-> turn on -Wvla.
+On Wed, Mar 28, 2018 at 8:47 PM, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+> Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
+> controlling the gpio shares the same register range with pinctrl block.
 >
-> Using a kmalloc array is the easy way to fix this but kmalloc is still
-> more expensive than stack allocation. Introduce a fast path with a
-> fixed size stack array to cover most chip with gpios below some fixed
-> amount. The slow path dynamically allocates an array to cover those
-> chips with a large number of gpios.
+> GPIO registers are organized as 6 banks and each bank controls the
+> maximum of 32 gpios.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> +               ret = gpiod_set_array_value_complex(false,
->                                               true,
->                                               lh->numdescs,
->                                               lh->descs,
->                                               vals);
-> +               if (ret)
-> +                       return ret;
+> +static void owl_gpio_update_reg(void __iomem *base, unsigned int pin, int flag)
+> +{
+> +       u32 val;
 > +
->                 return 0;
+> +       val = readl_relaxed(base);
+> +
+> +       if (flag)
+> +               val |= BIT(pin);
+> +       else
+> +               val &= ~BIT(pin);
+> +
+> +       writel_relaxed(val, base);
+> +}
 
-Can't we
+Hmm... Just realized that this driver misses locking.
 
-return gpiod_set_array_value_complex(); ?
+Something like
+owl_gpio_update_reg_locked()
+{
+ spin_lock();
+ owl_gpio_update_reg();
+ spin_unlock();
+}
 
+> +
+> +static int owl_gpio_request(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
+> +
+> +       /*
+> +        * GPIOs have higher priority over other modules, so either setting
+> +        * them as OUT or IN is sufficient
+> +        */
+> +       owl_gpio_update_reg(gpio->base + GPIO_OUTEN, offset, true);
 
-> +                       slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
-> +                                          sizeof(*slowpath),
-> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+...to use in such cases.
 
+> +
+> +       return 0;
+> +}
+> +
+> +static void owl_gpio_free(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct owl_gpio *gpio = gpiochip_get_data(chip);
+> +
+> +       /* disable gpio output */
+> +       owl_gpio_update_reg(gpio->base + GPIO_OUTEN, offset, false);
+> +
+> +       /* disable gpio input */
+> +       owl_gpio_update_reg(gpio->base + GPIO_INEN, offset, false);
 
-> +                       if (slowpath)
-> +                               kfree(slowpath);
+...or
 
-> +               if (slowpath)
-> +                       kfree(slowpath);
+spin_lock();
+owl_gpio_update_reg();
+owl_gpio_update_reg();
+spin_unlock();
 
-Since slowpath is a pointer, conditionals above are redundant.
+...in this and similar cases.
 
-> +                       slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
-> +                                          sizeof(*slowpath),
-> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> +}
 
-> +               if (slowpath)
-> +                       kfree(slowpath);
-
-Ditto.
 
 -- 
 With Best Regards,
