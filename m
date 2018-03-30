@@ -1,118 +1,314 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 2/2] gpio: pmic_eic: Add edge trigger emulation for PMIC EIC
-Date: Fri, 30 Mar 2018 15:02:38 +0800
-Message-ID: <7bac44aef748c61863fd9651ef3c52b4e51c511a.1522392153.git.baolin.wang@linaro.org>
-References: <bdaaa8823cc3aef44352ee867fb6274278f2a2a9.1522392153.git.baolin.wang@linaro.org>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH v4 02/10] docs: driver-api: Add I3C documentation
+Date: Fri, 30 Mar 2018 09:47:43 +0200
+Message-ID: <20180330074751.25987-3-boris.brezillon@bootlin.com>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <bdaaa8823cc3aef44352ee867fb6274278f2a2a9.1522392153.git.baolin.wang@linaro.org>
-In-Reply-To: <bdaaa8823cc3aef44352ee867fb6274278f2a2a9.1522392153.git.baolin.wang@linaro.org>
-References: <bdaaa8823cc3aef44352ee867fb6274278f2a2a9.1522392153.git.baolin.wang@linaro.org>
+In-Reply-To: <20180330074751.25987-1-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: andy.shevchenko@gmail.com, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, baolin.wang@linaro.org
+To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vitor Soares <Vitor.Soares@synopsys.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Linus
 List-Id: linux-gpio@vger.kernel.org
 
-This patch will toggle the EIC level to emulate the edge trigger to
-support PMIC EIC egdge trigger function, which is required by gpio-keys
-driver.
+Add the I3C documentation describing the protocol, the master driver API
+and the device driver API.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 ---
- drivers/gpio/gpio-pmic-eic-sprd.c |   58 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 56 insertions(+), 2 deletions(-)
+Changes in v2:
+- Moved out of patch "i3c: Add core I3C infrastructure"
+- Add link to the I3C spec
+- Move rst files in Documentation/driver-api/i3c/
+---
+ Documentation/driver-api/i3c/conf.py               |  10 +
+ Documentation/driver-api/i3c/device-driver-api.rst |   7 +
+ Documentation/driver-api/i3c/index.rst             |   9 +
+ Documentation/driver-api/i3c/master-driver-api.rst |   8 +
+ Documentation/driver-api/i3c/protocol.rst          | 201 +++++++++++++++++++++
+ Documentation/driver-api/index.rst                 |   1 +
+ 6 files changed, 236 insertions(+)
+ create mode 100644 Documentation/driver-api/i3c/conf.py
+ create mode 100644 Documentation/driver-api/i3c/device-driver-api.rst
+ create mode 100644 Documentation/driver-api/i3c/index.rst
+ create mode 100644 Documentation/driver-api/i3c/master-driver-api.rst
+ create mode 100644 Documentation/driver-api/i3c/protocol.rst
 
-diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
-index 66d68d9..29e044f 100644
---- a/drivers/gpio/gpio-pmic-eic-sprd.c
-+++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-@@ -178,6 +178,14 @@ static int sprd_pmic_eic_irq_set_type(struct irq_data *data,
- 	case IRQ_TYPE_LEVEL_LOW:
- 		pmic_eic->reg[REG_IEV] = 0;
- 		break;
-+	case IRQ_TYPE_EDGE_RISING:
-+	case IRQ_TYPE_EDGE_FALLING:
-+	case IRQ_TYPE_EDGE_BOTH:
-+		/*
-+		 * Will set the trigger level according to current EIC level
-+		 * in irq_bus_sync_unlock() interface, so here nothing to do.
-+		 */
-+		break;
- 	default:
- 		return -ENOTSUPP;
- 	}
-@@ -197,11 +205,22 @@ static void sprd_pmic_eic_bus_sync_unlock(struct irq_data *data)
- {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
- 	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 trigger = irqd_get_trigger_type(data);
- 	u32 offset = irqd_to_hwirq(data);
-+	int state;
- 
- 	/* Set irq type */
--	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV,
--			     pmic_eic->reg[REG_IEV]);
-+	if (trigger & IRQ_TYPE_EDGE_BOTH) {
-+		state = sprd_pmic_eic_get(chip, offset);
-+		if (state)
-+			sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV, 0);
-+		else
-+			sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV, 1);
-+	} else {
-+		sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV,
-+				     pmic_eic->reg[REG_IEV]);
-+	}
+diff --git a/Documentation/driver-api/i3c/conf.py b/Documentation/driver-api/i3c/conf.py
+new file mode 100644
+index 000000000000..5a20832d59a7
+--- /dev/null
++++ b/Documentation/driver-api/i3c/conf.py
+@@ -0,0 +1,10 @@
++# -*- coding: utf-8; mode: python -*-
 +
- 	/* Set irq unmask */
- 	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IE,
- 			     pmic_eic->reg[REG_IE]);
-@@ -212,6 +231,35 @@ static void sprd_pmic_eic_bus_sync_unlock(struct irq_data *data)
- 	mutex_unlock(&pmic_eic->buslock);
- }
- 
-+static void sprd_pmic_eic_toggle_trigger(struct gpio_chip *chip,
-+					 unsigned int irq, unsigned int offset)
-+{
-+	u32 trigger = irq_get_trigger_type(irq);
-+	int state, post_state;
++project = "Linux I3C Subsystem"
 +
-+	if (!(trigger & IRQ_TYPE_EDGE_BOTH))
-+		return;
++tags.add("subproject")
 +
-+	state = sprd_pmic_eic_get(chip, offset);
-+retry:
-+	if (state)
-+		sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV, 0);
-+	else
-+		sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV, 1);
++latex_documents = [
++    ('index', 'i3c.tex', project,
++     'The kernel development community', 'manual'),
++]
+diff --git a/Documentation/driver-api/i3c/device-driver-api.rst b/Documentation/driver-api/i3c/device-driver-api.rst
+new file mode 100644
+index 000000000000..63c843f148a6
+--- /dev/null
++++ b/Documentation/driver-api/i3c/device-driver-api.rst
+@@ -0,0 +1,7 @@
++=====================
++I3C device driver API
++=====================
 +
-+	post_state = sprd_pmic_eic_get(chip, offset);
-+	if (state != post_state) {
-+		dev_warn(chip->parent, "PMIC EIC level was changed.\n");
-+		state = post_state;
-+		goto retry;
-+	}
++.. kernel-doc:: include/linux/i3c/device.h
 +
-+	/* Set irq unmask */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IE, 1);
-+	/* Generate trigger start pulse for debounce EIC */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_TRIG, 1);
-+}
++.. kernel-doc:: drivers/i3c/device.c
+diff --git a/Documentation/driver-api/i3c/index.rst b/Documentation/driver-api/i3c/index.rst
+new file mode 100644
+index 000000000000..9c439220439d
+--- /dev/null
++++ b/Documentation/driver-api/i3c/index.rst
+@@ -0,0 +1,9 @@
++=============
++I3C subsystem
++=============
 +
- static irqreturn_t sprd_pmic_eic_irq_handler(int irq, void *data)
- {
- 	struct sprd_pmic_eic *pmic_eic = data;
-@@ -233,6 +281,12 @@ static irqreturn_t sprd_pmic_eic_irq_handler(int irq, void *data)
- 
- 		girq = irq_find_mapping(chip->irq.domain, n);
- 		handle_nested_irq(girq);
++.. toctree::
 +
-+		/*
-+		 * The PMIC EIC can only support level trigger, so we can
-+		 * toggle the level trigger to emulate the edge trigger.
-+		 */
-+		sprd_pmic_eic_toggle_trigger(chip, girq, n);
- 	}
- 
- 	return IRQ_HANDLED;
++   protocol
++   device-driver-api
++   master-driver-api
+diff --git a/Documentation/driver-api/i3c/master-driver-api.rst b/Documentation/driver-api/i3c/master-driver-api.rst
+new file mode 100644
+index 000000000000..017e7711cdf7
+--- /dev/null
++++ b/Documentation/driver-api/i3c/master-driver-api.rst
+@@ -0,0 +1,8 @@
++================================
++I3C master controller driver API
++================================
++
++.. kernel-doc:: drivers/i3c/master.c
++
++.. kernel-doc:: include/linux/i3c/master.h
++
+diff --git a/Documentation/driver-api/i3c/protocol.rst b/Documentation/driver-api/i3c/protocol.rst
+new file mode 100644
+index 000000000000..9c704d596ae3
+--- /dev/null
++++ b/Documentation/driver-api/i3c/protocol.rst
+@@ -0,0 +1,201 @@
++============
++I3C protocol
++============
++
++Disclaimer
++==========
++
++This chapter will focus on aspects that matter to software developers. For
++everything hardware related (like how things are transmitted on the bus, how
++collisions are prevented, ...) please have a look at the I3C specification.
++
++This document is just a brief introduction to the I3C protocol and the concepts
++it brings on the table. If you need more information, please refer to the MIPI
++I3C specification (can be downloaded here
++http://resources.mipi.org/mipi-i3c-v1-download).
++
++Introduction
++============
++
++The I3C (pronounced 'eye-three-see') is a MIPI standardized protocol designed
++to overcome I2C limitations (limited speed, external signals needed for
++interrupts, no automatic detection of the devices connected to the bus, ...)
++while remaining power-efficient.
++
++I3C Bus
++=======
++
++An I3C bus is made of several I3C devices and possibly some I2C devices as
++well, but let's focus on I3C devices for now.
++
++An I3C device on the I3C bus can have one of the following roles:
++
++* Master: the device is driving the bus. It's the one in charge of initiating
++  transactions or deciding who is allowed to talk on the bus (slave generated
++  events are possible in I3C, see below).
++* Slave: the device acts as a slave, and is not able to send frames to another
++  slave on the bus. The device can still send events to the master on
++  its own initiative if the master allowed it.
++
++I3C is a multi-master protocol, so there might be several masters on a bus,
++though only one device can act as a master at a given time. In order to gain
++bus ownership, a master has to follow a specific procedure.
++
++Each device on the I3C bus has to be assigned a dynamic address to be able to
++communicate. Until this is done, the device should only respond to a limited
++set of commands. If it has a static address (also called legacy I2C address),
++the device can reply to I2C transfers.
++
++In addition to these per-device addresses, the protocol defines a broadcast
++address in order to address all devices on the bus.
++
++Once a dynamic address has been assigned to a device, this address will be used
++for any direct communication with the device. Note that even after being
++assigned a dynamic address, the device should still process broadcast messages.
++
++I3C Device discovery
++====================
++
++The I3C protocol defines a mechanism to automatically discover devices present
++on the bus, their capabilities and the functionalities they provide. In this
++regard I3C is closer to a discoverable bus like USB than it is to I2C or SPI.
++
++The discovery mechanism is called DAA (Dynamic Address Assignment), because it
++not only discovers devices but also assigns them a dynamic address.
++
++During DAA, each I3C device reports 3 important things:
++
++* BCR: Bus Characteristic Register. This 8-bit register describes the device bus
++  related capabilities
++* DCR: Device Characteristic Register. This 8-bit register describes the
++  functionalities provided by the device
++* Provisional ID: A 48-bit unique identifier. On a given bus there should be no
++  Provisional ID collision, otherwise the discovery mechanism may fail.
++
++I3C slave events
++================
++
++The I3C protocol allows slaves to generate events on their own, and thus allows
++them to take temporary control of the bus.
++
++This mechanism is called IBI for In Band Interrupts, and as stated in the name,
++it allows devices to generate interrupts without requiring an external signal.
++
++During DAA, each device on the bus has been assigned an address, and this
++address will serve as a priority identifier to determine who wins if 2 different
++devices are generating an interrupt at the same moment on the bus (the lower the
++dynamic address the higher the priority).
++
++Masters are allowed to inhibit interrupts if they want to. This inhibition
++request can be broadcasted (applies to all devices) or sent to a specific
++device.
++
++I3C Hot-Join
++============
++
++The Hot-Join mechanism is similart to USB hotplug. This mechanism allows
++slaves to join the bus after it has been initialized by the master.
++
++This covers the following use cases:
++
++* the device is not powered when the bus is probed
++* the device is hotplugged on the bus through an extension board
++
++This mechanism is relying on slave events to inform the master that a new
++device joined the bus and is waiting for a dynamic address.
++
++The master is then free to address the request as it wishes: ignore it or
++assign a dynamic address to the slave.
++
++I3C transfer types
++==================
++
++If you omit SMBus (which is just a standardization on how to access registers
++exposed by I2C devices), I2C has only one transfer type.
++
++I3C defines 3 different classes of transfer in addition to I2C transfers which
++are here for backward compatibility with I2C devices.
++
++I3C CCC commands
++----------------
++
++CCC (Common Command Code) commands are meant to be used for anything that is
++related to bus management and all features that are common to a set of devices.
++
++CCC commands contain an 8-bit CCC id describing the command that is executed.
++The MSB of this id specifies whether this is a broadcast command (bit7 = 0) or a
++unicast one (bit7 = 1).
++
++The command ID can be followed by a payload. Depending on the command, this
++payload is either sent by the master sending the command (write CCC command),
++or sent by the slave receiving the command (read CCC command). Of course, read
++accesses only apply to unicast commands.
++Note that, when sending a CCC command to a specific device, the device address
++is passed in the first byte of the payload.
++
++The payload length is not explicitly passed on the bus, and should be extracted
++from the CCC id.
++
++Note that vendors can use a dedicated range of CCC ids for their own commands
++(0x61-0x7f and 0xe0-0xef).
++
++I3C Private SDR transfers
++-------------------------
++
++Private SDR (Single Data Rate) transfers should be used for anything that is
++device specific and does not require high transfer speed.
++
++It is the equivalent of I2C transfers but in the I3C world. Each transfer is
++passed the device address (dynamic address assigned during DAA), a payload
++and a direction.
++
++The only difference with I2C is that the transfer is much faster (typical SCL
++frequency is 12.5MHz).
++
++I3C HDR commands
++----------------
++
++HDR commands should be used for anything that is device specific and requires
++high transfer speed.
++
++The first thing attached to an HDR command is the HDR mode. There are currently
++3 different modes defined by the I3C specification (refer to the specification
++for more details):
++
++* HDR-DDR: Double Data Rate mode
++* HDR-TSP: Ternary Symbol Pure. Only usable on busses with no I2C devices
++* HDR-TSL: Ternary Symbol Legacy. Usable on busses with I2C devices
++
++When sending an HDR command, the whole bus has to enter HDR mode, which is done
++using a broadcast CCC command.
++Once the bus has entered a specific HDR mode, the master sends the HDR command.
++An HDR command is made of:
++
++* one 16-bits command word
++* N 16-bits data words
++
++Those words may be wrapped with specific preambles/post-ambles which depend on
++the chosen HDR mode and are detailed here (see the specification for more
++details).
++
++The 16-bits command word is made of:
++
++* bit[15]: direction bit, read is 1 write is 0
++* bit[14:8]: command code. Identifies the command being executed, the amount of
++  data words and their meaning
++* bit[7:1]: I3C address of the device this command is addressed to
++* bit[0]: reserved/parity-bit
++
++Backward compatibility with I2C devices
++=======================================
++
++The I3C protocol has been designed to be backward compatible with I2C devices.
++This backward compatibility allows one to connect a mix of I2C and I3C devices
++on the same bus, though, in order to be really efficient, I2C devices should
++be equipped with 50 ns spike filters.
++
++I2C devices can't be discovered like I3C ones and have to be statically
++declared. In order to let the master know what these devices are capable of
++(both in terms of bus related limitations and functionalities), the software
++has to provide some information, which is done through the LVR (Legacy I2C
++Virtual Register).
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index e9b41b1634f3..2563a4e19e08 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -30,6 +30,7 @@ available subsections can be seen below.
+    pci
+    spi
+    i2c
++   i3c/index
+    hsi
+    edac
+    scsi
 -- 
-1.7.9.5
+2.14.1
