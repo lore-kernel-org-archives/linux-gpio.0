@@ -1,14 +1,16 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: msm: fix gpio-hog related boot issues
-Date: Mon, 2 Apr 2018 08:04:47 -0700
-Message-ID: <20180402150447.GH510@tuxbook-pro>
-References: <20180402121005.10080-1-chunkeey@gmail.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 1/2] pinctrl: qcom: remove static globals to allow
+ multiple TLMMs
+Date: Mon, 2 Apr 2018 15:52:45 -0500
+Message-ID: <5133ffa9-0033-249d-ea46-b8972b6e07ac@codeaurora.org>
+References: <1521848700-22214-1-git-send-email-timur@codeaurora.org>
+ <CACRpkdZ=z7EncPykPwK+m-_qM3J2PokmkcoKsRqao_X1qx7CSg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20180402121005.10080-1-chunkeey@gmail.com>
+In-Reply-To: <CACRpkdZ=z7EncPykPwK+m-_qM3J2PokmkcoKsRqao_X1qx7CSg@mail.gmail.com>
+Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,64 +20,24 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Christian Lamparter <chunkeey@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
+To: Stephen Boyd <sboyd@kernel.org>, Stephen Boyd <swboyd@chromium.org>
+Cc: linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon 02 Apr 05:10 PDT 2018, Christian Lamparter wrote:
+On 03/27/2018 08:33 AM, Linus Walleij wrote:
+>> Two data structures are declared as static globals but are intended to
+>> be per-TLMM.  Move them into the msm_pinctrl structure and initialize
+>> them at runtime.
+>>
+>> Signed-off-by: Timur Tabi <timur@codeaurora.org>
 
-[..]
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index 0a6f7952bbb1..18511e782cbd 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -530,6 +530,7 @@
->  			reg = <0x01010000 0x300000>;
->  			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
-> +			gpio-ranges = <&msmgpio 0 0 150>;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 495432f3341b..258fa357d946 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -831,11 +831,22 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
->  		return ret;
->  	}
->  
-> -	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
-> -	if (ret) {
-> -		dev_err(pctrl->dev, "Failed to add pin range\n");
-> -		gpiochip_remove(&pctrl->chip);
-> -		return ret;
-> +	if (!is_of_node(pctrl->dev->fwnode)) {
+> Waiting for a review from Stephen or Bjorn on these two
+> patches.
 
-Afaict this still means that if I boot this kernel with yesterday's dtb
-(without gpio-ranges) I will not get any gpios. This isn't okay. 
+Stephen? Bjorn?  I really hope I don't miss the 4.17 release.  I've been 
+working on these patches for months.
 
-@Linus, I count 24 callers of gpiochip_add_pin_range(). Is this
-suggestion reasonable?
-
-Can we make gpiochip_add_pin_range() check if there's already a
-gpio-range and return ok in some way?
-
-> +		/*
-> +		 * gpiochip_add_pin_range() is meant for platforms that
-> +		 * don't support DT. All DT platforms should just add
-> +		 * the gpio-ranges property to the pinctrl device node.
-> +		 *
-> +		 * See Documentation/devicetree/bindings/gpio/gpio.txt .
-> +		 */
-> +		ret = gpiochip_add_pin_range(&pctrl->chip,
-> +			dev_name(pctrl->dev), 0, 0, chip->ngpio);
-> +
-> +		if (ret) {
-> +			dev_err(pctrl->dev, "Failed to add pin range\n");
-> +			gpiochip_remove(&pctrl->chip);
-> +			return ret;
-> +		}
-
-Regards,
-Bjorn
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
