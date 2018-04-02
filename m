@@ -1,35 +1,75 @@
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Subject: Re: [v3, 1/4] powerpc: wii: Explicitly configure GPIO owner for poweroff pin
-Date: Sun,  1 Apr 2018 01:03:45 +1100 (AEDT)
-Message-ID: <40D0Zr5ldZz9s2b@ozlabs.org>
-References: <20180209120732.17863-2-j.neuschaefer@gmx.net>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH] gpio: fix ifnullfree.cocci warnings
+Date: Mon, 2 Apr 2018 10:31:50 +0200
+Message-ID: <20180402083150.GA8013@wunner.de>
+References: <alpine.DEB.2.20.1803300829580.2870@hadrien>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180209120732.17863-2-j.neuschaefer@gmx.net>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1803300829580.2870@hadrien>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, linux-gpio@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Joel Stanley <joel@jms.id.au>, linuxppc-dev@lists.ozlabs.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, kbuild-all@01.org, Kees Cook <keescook@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 2018-02-09 at 12:07:28 UTC, =?utf-8?q?Jonathan_Neusch=C3=A4fer?= wrote:
-> The Hollywood chipset's GPIO controller has two sets of registers: One
-> for access by the PowerPC CPU, and one for access by the ARM coprocessor
-> (but both are accessible from the PPC because the memory firewall
-> (AHBPROT) is usually disabled when booting Linux, today).
+On Fri, Mar 30, 2018 at 08:32:56AM +0200, Julia Lawall wrote:
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2774,8 +2773,7 @@ int gpiod_get_array_value_complex(bool r
+>  			trace_gpio_value(desc_to_gpio(desc), 1, value);
+>  		}
 > 
-> The wii_power_off function currently assumes that the poweroff GPIO pin
-> is configured for use via the ARM side, but the upcoming GPIO driver
-> configures all pins for use via the PPC side, breaking poweroff.
+> -		if (slowpath)
+> -			kfree(slowpath);
+> +		kfree(slowpath);
+>  	}
+>  	return 0;
+>  }
+> @@ -3020,8 +3018,7 @@ int gpiod_set_array_value_complex(bool r
+>  		if (count != 0)
+>  			gpio_chip_set_multiple(chip, mask, bits);
 > 
-> Configure the owner register explicitly in wii_power_off to make
-> wii_power_off work with and without the new GPIO driver.
-> 
-> I think the Wii can be switched to the generic gpio-poweroff driver,
-> after the GPIO driver is merged.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+> -		if (slowpath)
+> -			kfree(slowpath);
+> +		kfree(slowpath);
+>  	}
+>  	return 0;
+>  }
 
-Patches 1, 3 and 4 applied to powerpc next, thanks.
+The problem I see here is that kfree may not be in L1 cache,
+and in that case checking for non-NULL locally in this function
+should actually be cheaper.
 
-https://git.kernel.org/powerpc/c/9cbaaec1cf0c9f4861c4c1dd65f3ed
+Note that kfree() need only be called in the slowpath, which
+is the *unlikely* case.  Letting the branch predictor assume
+that kfree() is not called is the right thing to do here.
 
-cheers
+The function is a hot path, on the Revolution Pi open source PLCs
+we're calling it every 250 usec to poll digital inputs and update
+digital outputs.
+
+Would "if (unlikely(slowpath))" be sufficient to make coccinelle
+happy?  That's what I'd suggest then.
+
+Otherwise "if (unlikely(chip->ngpio > FASTPATH_NGPIO))" could be used,
+though that might be minimally slower due to the pointer chasing.
+
+
+> @@ -2758,8 +2758,7 @@ int gpiod_get_array_value_complex(bool r
+> 
+>  		ret = gpio_chip_get_multiple(chip, mask, bits);
+>  		if (ret) {
+> -			if (slowpath)
+> -				kfree(slowpath);
+> +			kfree(slowpath);
+>  			return ret;
+>  		}
+> 
+
+This particular change on the other hand is fine because the kfree()
+is occurring in an error path, which we'll normally not enter anyway.
+
+Thanks,
+
+Lukas
