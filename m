@@ -1,40 +1,76 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 9/9] MAINTAINERS: Add Actions Semi S900 pinctrl and gpio entries
-Date: Wed,  4 Apr 2018 22:52:58 +0530
-Message-ID: <20180404172258.7678-10-manivannan.sadhasivam@linaro.org>
-References: <20180404172258.7678-1-manivannan.sadhasivam@linaro.org>
+From: Laura Abbott <labbott@redhat.com>
+Subject: Re: [PATCHv3] gpio: Remove VLA from gpiolib
+Date: Wed, 4 Apr 2018 11:31:41 -0700
+Message-ID: <2c191bd2-9df5-ecc1-1bf3-5ad19bea9138@redhat.com>
+References: <20180328181809.24505-1-labbott@redhat.com>
+ <CAHp75VdZOiJgzt3nhdeqwTXC=jsbndLWOV3eF_XmgFU-eHjYSg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180404172258.7678-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <CAHp75VdZOiJgzt3nhdeqwTXC=jsbndLWOV3eF_XmgFU-eHjYSg@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>
 List-Id: linux-gpio@vger.kernel.org
 
-Add S900 pinctrl and gpio entries under ARCH_ACTIONS
+On 03/30/2018 07:33 AM, Andy Shevchenko wrote:
+> On Wed, Mar 28, 2018 at 9:18 PM, Laura Abbott <labbott@redhat.com> wrote:
+>> The new challenge is to remove VLAs from the kernel
+>> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+>> turn on -Wvla.
+>>
+>> Using a kmalloc array is the easy way to fix this but kmalloc is still
+>> more expensive than stack allocation. Introduce a fast path with a
+>> fixed size stack array to cover most chip with gpios below some fixed
+>> amount. The slow path dynamically allocates an array to cover those
+>> chips with a large number of gpios.
+> 
+>> +               ret = gpiod_set_array_value_complex(false,
+>>                                                true,
+>>                                                lh->numdescs,
+>>                                                lh->descs,
+>>                                                vals);
+>> +               if (ret)
+>> +                       return ret;
+>> +
+>>                  return 0;
+> 
+> Can't we
+> 
+> return gpiod_set_array_value_complex(); ?
+> 
+> 
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 4 ++++
- 1 file changed, 4 insertions(+)
+Yeah I'll clean that up for v4.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 640dabc4c311..d63793ee545e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1125,10 +1125,14 @@ F:	arch/arm/mach-actions/
- F:	arch/arm/boot/dts/owl-*
- F:	arch/arm64/boot/dts/actions/
- F:	drivers/clocksource/owl-*
-+F:	drivers/gpio/gpio-owl.c
-+F:	drivers/pinctrl/actions/*
- F:	drivers/soc/actions/
- F:	include/dt-bindings/power/owl-*
- F:	include/linux/soc/actions/
- F:	Documentation/devicetree/bindings/arm/actions.txt
-+F:	Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
-+F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
- F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
- F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
- 
--- 
-2.14.1
+>> +                       slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+>> +                                          sizeof(*slowpath),
+>> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> 
+> 
+>> +                       if (slowpath)
+>> +                               kfree(slowpath);
+> 
+>> +               if (slowpath)
+>> +                       kfree(slowpath);
+> 
+> Since slowpath is a pointer, conditionals above are redundant.
+> 
+>> +                       slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+>> +                                          sizeof(*slowpath),
+>> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> 
+>> +               if (slowpath)
+>> +                       kfree(slowpath);
+> 
+> Ditto.
+> 
+
+This was caught by a coccinelle script via 0-day but I think the request
+was to not do it. I'll add a comment explaining why we are going against
+style.
+
+Thanks,
+Laura
