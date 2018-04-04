@@ -1,66 +1,71 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4] gpio: Remove VLA from xra1403 driver
-Date: Wed, 4 Apr 2018 14:53:42 +0200
-Message-ID: <CACRpkdbVAr62X9FrkS5cVpfpr+vgvnwmRfy0zKM=Vo=E+LjA9Q@mail.gmail.com>
-References: <20180310001021.6437-1-labbott@redhat.com> <20180310001021.6437-4-labbott@redhat.com>
- <CAMuHMdUfGp_rn_fMWdOfWxPvyE1Y9oemm2piXszFTvBi9sQ5Eg@mail.gmail.com> <90ca44b5-52d0-be74-f36c-55d6f4a9bf25@redhat.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [GIT PULL] Bulk GPIO changes for v4.17
+Date: Wed, 4 Apr 2018 09:21:21 -0400
+Message-ID: <20180404132121.GA28103@sophia>
+References: <CACRpkdaKWTAz=VLz9W8wWwQEvOLLw4jPWcAKrjJ+KW5FK5ZvMw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <90ca44b5-52d0-be74-f36c-55d6f4a9bf25@redhat.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaKWTAz=VLz9W8wWwQEvOLLw4jPWcAKrjJ+KW5FK5ZvMw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <keescook@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 7:27 PM, Laura Abbott <labbott@redhat.com> wrote:
-> On 03/28/2018 12:27 AM, Geert Uytterhoeven wrote:
->>
->> Hi Laura,
->>
->> On Sat, Mar 10, 2018 at 1:10 AM, Laura Abbott <labbott@redhat.com> wrote:
->>>
->>> The new challenge is to remove VLAs from the kernel
->>> (see https://lkml.org/lkml/2018/3/7/621)
->>>
->>> This patch replaces a VLA with an appropriate call to kmalloc_array.
->>>
->>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>
->>
->> Thanks for your patch!
->>
->>> --- a/drivers/gpio/gpio-xra1403.c
->>> +++ b/drivers/gpio/gpio-xra1403.c
->>> @@ -126,11 +126,16 @@ static void xra1403_dbg_show(struct seq_file *s,
->>> struct gpio_chip *chip)
->>>   {
->>>          int reg;
->>>          struct xra1403 *xra = gpiochip_get_data(chip);
->>> -       int value[xra1403_regmap_cfg.max_register];
->>
->>
->> Apparently xra1403_regmap_cfg.max_register is always 0x15?
->>
->> What about adding
->>
->>          #define XRA_LAST 15
->>
->> at the top, and replacing both "XRA_IFR | 0x01" and
->> xra1403_regmap_cfg.max_register by XRA_LAST instead?
->> That would avoid doing yet another memory allocation over and over.
->>
->> Gr{oetje,eeting}s,
->>
->>                          Geert
->>
->
-> I'm okay with making the change but I think Linus already picked
-> up the patch into his gpio trees. Linus, do you want a patch on
-> top of your -devel branch or should I just send a new patch?
+On Wed, Apr 04, 2018 at 01:19:29PM +0200, Linus Walleij wrote:
+>- There is a series of ISA_BUS_API changes that ended up
+>  getting queued in my tree. Most of them have proper ACKs
+>  and they have been tested throughly in linux-next.
+>  These patches finally split ISA_BUS and ISA_BUS_API
+>  apart as I understand it, as there are devices using
+>  port-mapped I/O but not strictly speaking using any ISA
+>  bus. So the ISA_BUS and the ISA_BUS_API are two
+>  things. The most notable effect of ISA_BUS_API is that
+>  it compiles drivers/base/isa.c so that we get device driver
+>  core infrastructure for these devices. The ISA bus was merged
+>  in 2006 (a5117ba7da37) and was used for sound cards and
+>  watchdog, but only recently William started
+>  to use it for his industrial data acquisition cards and he's found
+>  a bit of problems that are now (hopefully) finally fixed up.
+>  Any questions: William Breathitt Gray is on the CC for this
+>  pull request to answer them.
 
-Yeah a patch on top is fine, I sent my pull request to Torvalds
-today so we can take this as a fix for the -rc cycle simply.
+Some background on the impetus and rationale of the ISA_BUS_API Kconfig
+changes:
 
-Yours,
-Linus Walleij
+During submission of the Winbond GPIO driver (a0d65009411c), an attempt
+to select ISA_BUS_API revealed a recursive dependency bug:
+https://lkml.org/lkml/2017/12/26/235
+
+The recursive dependency could be avoided if ISA_BUS_API was selected by
+drivers where needed rather than depended on. A select semantic makes
+sense as well for these drivers because ISA_BUS_API is simply used to
+compile the drivers/base/isa.c file, which is just a thin wrapper to
+allow these ISA-style I/O port drivers to fit the device driver model.
+
+ISA_BUS_API is decoupled from the ISA_BUS so that it can be selected
+independent of the legacy ISA_BUS drivers, which do not necessary make
+use of drivers/base/isa.c functionality. Thus there is a clean
+separation between the modern drivers for ISA-style devices which select
+ISA_BUS_API, and the legacy drivers for true ISA cards which utilize the
+legacy ISA_BUS Kconfig option.
+
+The reason these changes are coming in through the GPIO tree is to avoid
+a similar recursive dependency error if the STX104 IIO driver attempts
+to select ISA_BUS_API separate from the other patches (due to its
+GPIOLIB selection): https://lkml.org/lkml/2017/12/29/384
+
+These updates missed the last merge window, so the Winbond GPIO driver
+was merged in at that time with a "depends on ISA_BUS_API" line patch to
+pacify the recursive dependency error. Now that these updates were
+picked up in the GPIO tree, the revert patch was merged to revert the
+"depends on ISA_BUS_API" line to the originally intended
+"select ISA_BUS_API" line.
+
+Finally, an explicit EXPERT dependency is added to the PC104 Kconfig
+option to keep the PC/104 drivers masked as they have been -- the
+PC/104 interface is somewhat niche and unlikely to be a concern for
+regular users, so let's keep it tucked away.
+
+William Breathitt Gray
