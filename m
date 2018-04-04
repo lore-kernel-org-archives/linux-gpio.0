@@ -1,76 +1,42 @@
-From: Laura Abbott <labbott@redhat.com>
-Subject: Re: [PATCHv3] gpio: Remove VLA from gpiolib
-Date: Wed, 4 Apr 2018 11:31:41 -0700
-Message-ID: <2c191bd2-9df5-ecc1-1bf3-5ad19bea9138@redhat.com>
-References: <20180328181809.24505-1-labbott@redhat.com>
- <CAHp75VdZOiJgzt3nhdeqwTXC=jsbndLWOV3eF_XmgFU-eHjYSg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v2 1/5] gpio: pca953x: set the PCA_PCAL flag also when matching by DT
+Date: Wed,  4 Apr 2018 21:00:20 +0200
+Message-ID: <077c220b9ce1853ed725d85244165d05bff75b36.1522868422.git.hns@goldelico.com>
+References: <cover.1522868422.git.hns@goldelico.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdZOiJgzt3nhdeqwTXC=jsbndLWOV3eF_XmgFU-eHjYSg@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <cover.1522868422.git.hns@goldelico.com>
+In-Reply-To: <cover.1522868422.git.hns@goldelico.com>
+References: <cover.1522868422.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: galak@codeaurora.org, andy.shevchenko@gmail.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org, kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 03/30/2018 07:33 AM, Andy Shevchenko wrote:
-> On Wed, Mar 28, 2018 at 9:18 PM, Laura Abbott <labbott@redhat.com> wrote:
->> The new challenge is to remove VLAs from the kernel
->> (see https://lkml.org/lkml/2018/3/7/621) to eventually
->> turn on -Wvla.
->>
->> Using a kmalloc array is the easy way to fix this but kmalloc is still
->> more expensive than stack allocation. Introduce a fast path with a
->> fixed size stack array to cover most chip with gpios below some fixed
->> amount. The slow path dynamically allocates an array to cover those
->> chips with a large number of gpios.
-> 
->> +               ret = gpiod_set_array_value_complex(false,
->>                                                true,
->>                                                lh->numdescs,
->>                                                lh->descs,
->>                                                vals);
->> +               if (ret)
->> +                       return ret;
->> +
->>                  return 0;
-> 
-> Can't we
-> 
-> return gpiod_set_array_value_complex(); ?
-> 
-> 
+The of_device_table is missing the PCA_PCAL flag so the
+pcal6524 would be operated in tca6424 compatibility mode which
+does not handle the new interrupt mask registers.
 
-Yeah I'll clean that up for v4.
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ drivers/gpio/gpio-pca953x.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
->> +                       slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
->> +                                          sizeof(*slowpath),
->> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> 
-> 
->> +                       if (slowpath)
->> +                               kfree(slowpath);
-> 
->> +               if (slowpath)
->> +                       kfree(slowpath);
-> 
-> Since slowpath is a pointer, conditionals above are redundant.
-> 
->> +                       slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
->> +                                          sizeof(*slowpath),
->> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> 
->> +               if (slowpath)
->> +                       kfree(slowpath);
-> 
-> Ditto.
-> 
-
-This was caught by a coccinelle script via 0-day but I think the request
-was to not do it. I'll add a comment explaining why we are going against
-style.
-
-Thanks,
-Laura
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index d2ead4b1cf61..4a075619b93e 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -936,8 +936,10 @@ static const struct of_device_id pca953x_dt_ids[] = {
+ 	{ .compatible = "nxp,pca9575", .data = OF_957X(16, PCA_INT), },
+ 	{ .compatible = "nxp,pca9698", .data = OF_953X(40, 0), },
+ 
+-	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT), },
+-	{ .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT), },
++	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT |
++							    PCA_PCAL), },
++	{ .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT |
++							     PCA_PCAL), },
+ 
+ 	{ .compatible = "maxim,max7310", .data = OF_953X( 8, 0), },
+ 	{ .compatible = "maxim,max7312", .data = OF_953X(16, PCA_INT), },
+-- 
+2.12.2
