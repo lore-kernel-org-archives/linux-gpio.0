@@ -1,59 +1,134 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH] gpio: 104-dio-48e: make array 'ports' static, shrinks
- object size
-Date: Thu, 5 Apr 2018 08:19:06 -0400
-Message-ID: <20180405121906.GA6274@sophia>
-References: <20180405120012.7671-1-colin.king@canonical.com>
+From: Christian Lamparter <chunkeey@gmail.com>
+Subject: Re: [PATCH v2] pinctrl: msm: fix gpio-hog related boot issues
+Date: Thu, 05 Apr 2018 18:35:24 +0200
+Message-ID: <2820412.JxDUeWI2ec@debian64>
+References: <20180402121005.10080-1-chunkeey@gmail.com>
+ <20180402150447.GH510@tuxbook-pro>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180405120012.7671-1-colin.king@canonical.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180402150447.GH510@tuxbook-pro>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 01:00:12PM +0100, Colin King wrote:
->From: Colin Ian King <colin.king@canonical.com>
->
->Don't populate the const read-only array 'ports' on the stack but instead
->make it static. Makes the object code smaller by over 100 buytes:
->
->Before:
->   text	   data	    bss	    dec	    hex	filename
->  10959	   4952	    832	  16743	   4167	drivers/gpio/gpio-104-dio-48e.o
->
->After:
->   text	   data	    bss	    dec	    hex	filename
->  10790	   5008	    832	  16630	   40f6	drivers/gpio/gpio-104-dio-48e.o
->
->(gcc version 7.2.0 x86_64)
->
->Signed-off-by: Colin Ian King <colin.king@canonical.com>
->---
-> drivers/gpio/gpio-104-dio-48e.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
->index 31e22c93e844..9c4e07fcb74b 100644
->--- a/drivers/gpio/gpio-104-dio-48e.c
->+++ b/drivers/gpio/gpio-104-dio-48e.c
->@@ -188,7 +188,7 @@ static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-> {
-> 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
-> 	size_t i;
->-	const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
->+	static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
-> 	const unsigned int gpio_reg_size = 8;
-> 	unsigned int bits_offset;
-> 	size_t word_index;
->-- 
->2.15.1
->
+On Montag, 2. April 2018 17:04:47 CEST Bjorn Andersson wrote:
+> On Mon 02 Apr 05:10 PDT 2018, Christian Lamparter wrote:
+> > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> > index 495432f3341b..258fa357d946 100644
+> > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> > @@ -831,11 +831,22 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+> >  		return ret;
+> >  	}
+> >  
+> > -	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
+> > -	if (ret) {
+> > -		dev_err(pctrl->dev, "Failed to add pin range\n");
+> > -		gpiochip_remove(&pctrl->chip);
+> > -		return ret;
+> > +	if (!is_of_node(pctrl->dev->fwnode)) {
+> 
+> Afaict this still means that if I boot this kernel with yesterday's dtb
+> (without gpio-ranges) I will not get any gpios. This isn't okay. 
+Ok, fair point. I drop this chunk.
+ 
+> @Linus, I count 24 callers of gpiochip_add_pin_range(). Is this
+> suggestion reasonable?
+> 
+> Can we make gpiochip_add_pin_range() check if there's already a
+> gpio-range and return ok in some way?
 
-If this makes gpio-104-dio-48e.o smaller, then it may be worthwhile to
-apply similar changes to gpio-104-idi-48.c and gpio-gpio-mm.c which have
-similar get_multiple callback implementations.
+Looks like Linus is currently really busy updating the gemini
+target (a lot of work went into it) for OpenWrt.
+<https://lists.openwrt.org/pipermail/openwrt-devel/2018-April/043752.html>
+(Kinda funny, because I do help to maintain the apm821xx and the new 
+ipq40xx target over there.)
 
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+In any case, I implemented your suggestion and it does look reasonable.
+The gpiolib already uses the gpio_offset as an ID of some sorts. For
+now I went with a simple ID value check, but this could be extended to
+a range/intersection check if necessary. But then again, let's not
+overengineer it. Comments are welcome, I'll wait around till sometime
+next week before I post v3.
+
+Regards,
+Christian
+---
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d66de67ef307..21c0f88e1159 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2013,6 +2013,19 @@ int gpiochip_generic_config(struct gpio_chip *chip, unsigned offset,
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_generic_config);
+ 
++static struct gpio_pin_range *gpiochip_find_by_id(struct gpio_chip *chip,
++						  unsigned int id)
++{
++	struct gpio_pin_range *pin_range;
++	struct gpio_device *gdev = chip->gpiodev;
++
++	list_for_each_entry(pin_range, &gdev->pin_ranges, node) {
++		if (pin_range->range.id == id)
++			return pin_range;
++	}
++	return NULL;
++}
++
+ #ifdef CONFIG_PINCTRL
+ 
+ /**
+@@ -2030,6 +2043,20 @@ int gpiochip_add_pingroup_range(struct gpio_chip *chip,
+ 	struct gpio_device *gdev = chip->gpiodev;
+ 	int ret;
+ 
++	/*
++	 * look if a GPIO range with the same ID has already been registered.
++	 * For pinctrls that are set up through devicetree, the GPIO Range
++	 * might be already set by the the gpio-ranges property.
++	 * (see Documentation/devicetree/bindings/gpio/gpio.txt)
++	 */
++	pin_range = gpiochip_find_by_id(chip, gpio_offset);
++	if (pin_range) {
++		chip_dbg(chip, "found existing GPIO range %d->%d - skipping\n",
++				gpio_offset,
++				gpio_offset + pin_range->range.npins - 1);
++		return 0;
++	}
++
+ 	pin_range = kzalloc(sizeof(*pin_range), GFP_KERNEL);
+ 	if (!pin_range) {
+ 		chip_err(chip, "failed to allocate pin ranges\n");
+@@ -2083,6 +2110,20 @@ int gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+ 	struct gpio_device *gdev = chip->gpiodev;
+ 	int ret;
+ 
++	/*
++	 * look if a GPIO range with the same ID has already been registered.
++	 * For pinctrls that are set up through devicetree, the GPIO Range
++	 * might be already set by the the gpio-ranges property.
++	 * (see Documentation/devicetree/bindings/gpio/gpio.txt)
++	 */
++	pin_range = gpiochip_find_by_id(chip, gpio_offset);
++	if (pin_range) {
++		chip_dbg(chip, "found existing GPIO range %d->%d - skipping\n",
++			 gpio_offset,
++			 gpio_offset + pin_range->range.npins - 1);
++		return 0;
++	}
++
+ 	pin_range = kzalloc(sizeof(*pin_range), GFP_KERNEL);
+ 	if (!pin_range) {
+ 		chip_err(chip, "failed to allocate pin ranges\n");
+---
