@@ -1,76 +1,85 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCHv3] gpio: Remove VLA from gpiolib
-Date: Thu, 5 Apr 2018 09:41:03 +0200
-Message-ID: <e359dc22-ee4c-4ca8-c953-df7d6a4b4062@rasmusvillemoes.dk>
-References: <20180328181809.24505-1-labbott@redhat.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: RE: [PATCH] gpio: dwapb: Add support for 32 interrupts
+Date: Thu, 5 Apr 2018 09:42:46 +0000
+Message-ID: <TY1PR01MB1769064C77AE3E5ABA4993DAF5BB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+ <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180328181809.24505-1-labbott@redhat.com>
+In-Reply-To: <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michel Pollet <michel.pollet@bp.renesas.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2018-03-28 20:18, Laura Abbott wrote:
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621) to eventually
-> turn on -Wvla.
-> 
-> Using a kmalloc array is the easy way to fix this but kmalloc is still
-> more expensive than stack allocation. Introduce a fast path with a
-> fixed size stack array to cover most chip with gpios below some fixed
-> amount. The slow path dynamically allocates an array to cover those
-> chips with a large number of gpios.
-> 
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v3: Split out from the series since patches have been picked up
-> independently. Fold in patch from Lukas Wunner to introduce slow/fast
-> paths. I took his suggestions to go with 384 as the maximum number of
-> gpios. Also fixed one 0-day bot issue where I forgot to change the
-> return type.
->  
->  	while (i < array_size) {
->  		struct gpio_chip *chip = desc_array[i]->gdev->chip;
-> -		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
-> -		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-> +		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-> +		unsigned long *slowpath = NULL, *mask, *bits;
->  		int first, j, ret;
->  
-> +		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-> +			memset(fastpath, 0, sizeof(fastpath));
-> +			mask = fastpath;
-> +			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
-> +		} else {
-> +			slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
-> +					   sizeof(*slowpath),
-> +					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> +			if (!slowpath)
-> +				return -ENOMEM;
-> +			mask = slowpath;
-> +			bits = slowpath + BITS_TO_LONGS(chip->ngpio);
-> +		}
-> +
-
-To avoid the static analysis complaints about the "if (slowpath)
-kfree(slowpath)" pattern, I'd suggest getting rid of the slowpath
-variable and simply assign the kcalloc directly to mask. Then the
-condition becomes "if (mask != fastpath) kfree(mask)". A comment won't
-silence subsequenct coccicheck runs, and unfortunately probably won't
-prevent certain individuals from sending auto-generated patches.
-
-Maybe also pull out the "bits = mask + BITS_TO_LONGS(chip->ngpio)" to
-the common path.
-
-Another thing: Maybe a pr_warn or at least a pr_info would be in order
-when a gpio chip with > FASTPATH_NGPIO lines is registered? And if that
-triggers for a lot of different SoCs, one could consider changing it to
-a CONFIG_ thing, or just bumping it to 512 if that would seem to cover
-all the reports.
-
-Rasmus
+SGkgQW5keSwNCg0KT24gMzAgTWFyY2ggMjAxOCAyMjoyNiBBbmR5IFNoZXZjaGVua28gd3JvdGU6
+DQo+IE9uIFdlZCwgTWFyIDI4LCAyMDE4IGF0IDU6MjIgUE0sIFBoaWwgRWR3b3J0aHkgd3JvdGU6
+DQo+ID4gVGhlIERlc2lnbldhcmUgR1BJTyBJUCBjYW4gYmUgY29uZmlndXJlZCBmb3IgZWl0aGVy
+IDEgb3IgMzINCj4gPiBpbnRlcnJ1cHRzLA0KPiANCj4gMSB0byAzMiwgb3IganVzdCBhIGNob2lj
+ZSBiZXR3ZWVuIHR3bz8NCkp1c3QgYSBjaG9pY2Ugb2YgMSBvciAzMi4NCk5vdGUgdGhhdCBieSAn
+Y29uZmlndXJlZCcgSSBhbSB0YWxraW5nIGFib3V0IHRoZSBoYXJkd2FyZSBiZWluZyBjb25maWd1
+cmVkIGluDQpSVEwgcHJpb3IgdG8gbWFudWZhY3R1cmluZyBhIGRldmljZS4gT25jZSBtYWRlLCB5
+b3UgY2Fubm90IGNoYW5nZSBpdC4NClRoaXMgY29uZmlndXJhdGlvbiBhZmZlY3RzIHRoZSBudW1i
+ZXIgb2Ygb3V0cHV0IGludGVycnVwdCBzaWduYWxzIGZyb20gdGhlIEdQSU8NCkNvbnRyb2xsZXIg
+YmxvY2sgdGhhdCBhcmUgY29ubmVjdGVkIHRvIGFuIGludGVycnVwdCBjb250cm9sbGVyLg0KDQo+
+ID4gYnV0IHRoZSBkcml2ZXIgY3VycmVudGx5IG9ubHkgc3VwcG9ydHMgMSBpbnRlcnJ1cHQuIFNl
+ZSB0aGUgRGVzaWduV2FyZQ0KPiA+IERXX2FwYl9ncGlvIERhdGFib29rIGRlc2NyaXB0aW9uIG9m
+IHRoZSAnR1BJT19JTlRSX0lPJyBwYXJhbWV0ZXIuDQo+IA0KPiBXaWxsIHNlZSBhZnRlciBob2xp
+ZGF5IGFuZCBwZXJoYXBzIG1ha2UgbW9yZSBjb21tZW50cy4gSGVyZSBpcyBqdXN0IGEgYnJpZWYN
+Cj4gcmV2aWV3Lg0KPiANCj4gPiArLSBpbnRlcnJ1cHRzIDogVGhlIGludGVycnVwdHMgdG8gdGhl
+IHBhcmVudCBjb250cm9sbGVyIHJhaXNlZCB3aGVuDQo+ID4gK0dQSU9zDQo+ID4gKyAgZ2VuZXJh
+dGUgdGhlIGludGVycnVwdHMuIElmIHRoZSBjb250cm9sbGVyIHByb3ZpZGVzIG9uZSBjb21iaW5l
+ZA0KPiA+ICtpbnRlcnJ1cHQNCj4gPiArICBmb3IgYWxsIEdQSU9zLCBzcGVjaWZ5IGEgc2luZ2xl
+IGludGVycnVwdC4gSWYgdGhlIGNvbnRyb2xsZXINCj4gPiArcHJvdmlkZXMgb25lDQo+ID4gKyAg
+aW50ZXJydXB0IGZvciBlYWNoIEdQSU8sIHByb3ZpZGUgYSBsaXN0IG9mIGludGVycnVwdHMgdGhh
+dA0KPiA+ICtjb3JyZXNwb25kIHRvIGVhY2gNCj4gPiArICBvZiB0aGUgR1BJTyBwaW5zLiBXaGVu
+IHNwZWNpZnlpbmcgbXVsdGlwbGUgaW50ZXJydXB0cywgaWYgYW55IG9mDQo+ID4gK3RoZSBHUElP
+cyBhcmUNCj4gPiArICBub3QgY29ubmVjdGVkIHRvIGFuIGludGVycnVwdCwgdXNlIHRoZSBpbnRl
+cnJ1cHQtbWFzayBwcm9wZXJ0eS4NCj4gPiArLSBpbnRlcnJ1cHQtbWFzayA6IGEgMzItYml0IGJp
+dCBtYXNrIHRoYXQgc3BlY2lmaWVzIHdoaWNoIGludGVycnVwdHMNCj4gPiAraW4gdGhlIGxpc3QN
+Cj4gPiArICBvZiBpbnRlcnJ1cHRzIGlzIHZhbGlkLCBiaXQgaXMgMSBmb3IgYSB2YWxpZCBpcnEu
+DQo+IA0KPiBTbywgYnV0IHdoeSBvbmUgd2lsbCBuZWVkIHRoYXQgaW4gcHJhY3RpY2U/IEdQSU8g
+ZHJpdmVyIHVzdWFsbHkgcHJvdmlkZXMgYSBwaW4NCj4gYmFzZWQgSVJRIGNoaXAgd2hpY2ggbWFw
+cyBlYWNoIHBpbiB0byB0aGUgY29ycmVzcG9uZGluZyBvZmZzZXQgaW5zaWRlDQo+IHNwZWNpZmlj
+IElSUSBkb21haW4uDQpPbiBhbiBBUk0gZGV2aWNlIHdlIGhhdmUgdGhpcyBHUElPIGJsb2NrIGNv
+bm5lY3RlZCB0byB0aGUgR0lDIGludGVycnVwdA0KY29udHJvbGxlciwgaS5lLiB0aGUgU3lub3Bz
+eXMgR1BJTyBjb250cm9sbGVyIGludGVycnVwdHMgY2FuKiBoYXZlIGEgMSB0byAxDQptYXBwaW5n
+IHRvIHRoZSBHSUMgaW50ZXJydXB0cy4gQXQgdGhlIG1vbWVudCwgdGhlIEdQSU8gZHJpdmVyIG9u
+bHkgYWxsb3dzIGENCnNpbmdsZSBpcnEgc2lnbmFsIHRvIHNwZWNpZmllZC4NCiogdGhpcyBpcyBu
+b3Qgc3RyaWN0bHkgYWNjdXJhdGUgb24gdGhlIGRldmljZSBJIGFtIHdvcmtpbmcgb24sIHRoZXJl
+IGlzIGFub3RoZXINCmJsb2NrIG9mIElQIGJldHdlZW4gdGhlIHR3bywgYnV0IHRoYXQgZG9lc24n
+dCBtYXR0ZXIgaW4gdGhpcyBjYXNlLg0KDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgc3Ry
+dWN0IGRldmljZV9ub2RlICpucCA9IHRvX29mX25vZGUoZndub2RlKTsNCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICB1MzIgaXJxX21hc2sgPSAweEZGRkZGRkZGOw0KPiANCj4gV2h5PyBTaG91
+bGRuJ3QgaXQgYmUgZGVwZW5kZW50IHRvIHRoZSBhbW91bnQgb2YgYWN0dWFsIHBpbnMgLyBwb3J0
+cz8NCj4gSW50ZWwgUXVhcmsgaGFzIG9ubHkgOCBBRkFJUi4NCkl0J3MganVzdCBhIGRlZmF1bHQg
+d2hpY2ggY2FuIGJlIG92ZXJyaWRkZW4gdmlhIGRldmljZSB0cmVlLg0KRm9yIFF1YXJrLCBzaW5j
+ZSB5b3UgY3VycmVudGx5IG9ubHkgdXNlIGEgc2luZ2xlIGlycSwgSSBndWVzcyB0aGUgSFcgd2Fz
+DQpjb25maWd1cmVkIHRoYXQgd2F5LiBJbiB3aGljaCBjYXNlLCB5b3Ugd291bGRuJ3QgdXNlIGFu
+eSBvZiB0aGlzLg0KDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgaW50IGo7DQo+ID4gKw0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIC8qIE9wdGlvbmFsIGlycSBtYXNrICovDQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgZndub2RlX3Byb3BlcnR5X3JlYWRfdTMyKGZ3bm9kZSwN
+Cj4gPiArICJpbnRlcnJ1cHQtbWFzayIsICZpcnFfbWFzayk7DQo+ID4gKw0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIC8qDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICogVGhlIElQ
+IGhhcyBjb25maWd1cmF0aW9uIG9wdGlvbnMgdG8gYWxsb3cgYSBzaW5nbGUNCj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgKiBjb21iaW5lZCBpbnRlcnJ1cHQgb3Igb25lIHBlciBncGlvLiBJ
+ZiBvbmUgcGVyIGdwaW8sDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICogc29tZSBtaWdo
+dCBub3QgYmUgdXNlZC4NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgKi8NCj4gDQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgZm9yIChqID0gMDsgaiA8IHBwLT5uZ3BpbzsgaisrKSB7
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoaXJxX21hc2sgJiBCSVQo
+aikpIHsNCj4gDQo+IGZvcl9lYWNoX3NldF9iaXQoKSBpcyBpbiBrZXJuZWwgZm9yIGFnZXMhDQpU
+aGVyZSdzIGxvdCBvZiBzdHVmZiBpbiB0aGUga2VybmVsIGZvciBhZ2VzIHRoYXQgSSBjYW4ndCBy
+ZW1lbWJlciENCkknbGwgZml4IHRoaXMgOikNCg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBwcC0+aXJxW2pdID0gaXJxX29mX3BhcnNlX2FuZF9tYXAobnAsIGop
+Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAocHAtPmly
+cVtqXSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBwcC0+aGFzX2lycSA9IHRydWU7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICB9DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiANCj4gDQo+IFNvLCBvbiB0aGUg
+Zmlyc3QgZ2xhbmNlIHRoZSBwYXRjaCBsb29rcyBlaXRoZXIgc3VwZXJmbHVvdXMgb3IgdGFraW5n
+IHdyb25nDQo+IGFwcHJvYWNoLiBQbGVhc2UsIGVsYWJvcmF0ZSBtb3JlIHdoeSBpdCdzIGRvbmUg
+aW4gdGhpcyB3YXkgYW5kIHdoYXQgdGhlDQo+IGNhc2UgZm9yIGFsbCB0aGlzIGluIHByYWN0aWNl
+Lg0KSG9wZWZ1bGx5IEkgaGF2ZSBleHBsYWluZWQgaXQgYSBiaXQgYmV0dGVyIGFib3ZlLg0KDQpU
+aGFua3MgZm9yIHlvdXIgY29tbWVudHMNClBoaWwNCg==
