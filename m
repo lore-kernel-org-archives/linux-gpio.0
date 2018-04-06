@@ -1,134 +1,50 @@
-From: Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH v2] pinctrl: msm: fix gpio-hog related boot issues
-Date: Thu, 05 Apr 2018 18:35:24 +0200
-Message-ID: <2820412.JxDUeWI2ec@debian64>
-References: <20180402121005.10080-1-chunkeey@gmail.com>
- <20180402150447.GH510@tuxbook-pro>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio: dwapb: Add support for 32 interrupts
+Date: Fri, 6 Apr 2018 11:57:19 +0200
+Message-ID: <CAMuHMdX34f1pDCVqNV43_qtzqZ-fruOcUsUN_Ysz4ihJwe-56A@mail.gmail.com>
+References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+ <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com> <TY1PR01MB1769064C77AE3E5ABA4993DAF5BB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180402150447.GH510@tuxbook-pro>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <TY1PR01MB1769064C77AE3E5ABA4993DAF5BB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michel Pollet <michel.pollet@bp.renesas.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Montag, 2. April 2018 17:04:47 CEST Bjorn Andersson wrote:
-> On Mon 02 Apr 05:10 PDT 2018, Christian Lamparter wrote:
-> > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> > index 495432f3341b..258fa357d946 100644
-> > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> > @@ -831,11 +831,22 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
-> >  		return ret;
-> >  	}
-> >  
-> > -	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
-> > -	if (ret) {
-> > -		dev_err(pctrl->dev, "Failed to add pin range\n");
-> > -		gpiochip_remove(&pctrl->chip);
-> > -		return ret;
-> > +	if (!is_of_node(pctrl->dev->fwnode)) {
-> 
-> Afaict this still means that if I boot this kernel with yesterday's dtb
-> (without gpio-ranges) I will not get any gpios. This isn't okay. 
-Ok, fair point. I drop this chunk.
- 
-> @Linus, I count 24 callers of gpiochip_add_pin_range(). Is this
-> suggestion reasonable?
-> 
-> Can we make gpiochip_add_pin_range() check if there's already a
-> gpio-range and return ok in some way?
+Hi Phil,
 
-Looks like Linus is currently really busy updating the gemini
-target (a lot of work went into it) for OpenWrt.
-<https://lists.openwrt.org/pipermail/openwrt-devel/2018-April/043752.html>
-(Kinda funny, because I do help to maintain the apm821xx and the new 
-ipq40xx target over there.)
+On Thu, Apr 5, 2018 at 11:42 AM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> On 30 March 2018 22:26 Andy Shevchenko wrote:
+>> On Wed, Mar 28, 2018 at 5:22 PM, Phil Edworthy wrote:
+>> > The DesignWare GPIO IP can be configured for either 1 or 32
+>> > interrupts,
+>>
+>> 1 to 32, or just a choice between two?
+> Just a choice of 1 or 32.
+> Note that by 'configured' I am talking about the hardware being configured in
+> RTL prior to manufacturing a device. Once made, you cannot change it.
+> This configuration affects the number of output interrupt signals from the GPIO
+> Controller block that are connected to an interrupt controller.
 
-In any case, I implemented your suggestion and it does look reasonable.
-The gpiolib already uses the gpio_offset as an ID of some sorts. For
-now I went with a simple ID value check, but this could be extended to
-a range/intersection check if necessary. But then again, let's not
-overengineer it. Comments are welcome, I'll wait around till sometime
-next week before I post v3.
+Differentiating between different versions of an IP block using DT properties
+is usually a bad idea, for several reasons:
+  - What if you discover another difference later?
+  - You cannot add differentiating properties retroactively, because
+of backwards
+     compatibility with old DTBS.
 
-Regards,
-Christian
----
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d66de67ef307..21c0f88e1159 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2013,6 +2013,19 @@ int gpiochip_generic_config(struct gpio_chip *chip, unsigned offset,
- }
- EXPORT_SYMBOL_GPL(gpiochip_generic_config);
- 
-+static struct gpio_pin_range *gpiochip_find_by_id(struct gpio_chip *chip,
-+						  unsigned int id)
-+{
-+	struct gpio_pin_range *pin_range;
-+	struct gpio_device *gdev = chip->gpiodev;
-+
-+	list_for_each_entry(pin_range, &gdev->pin_ranges, node) {
-+		if (pin_range->range.id == id)
-+			return pin_range;
-+	}
-+	return NULL;
-+}
-+
- #ifdef CONFIG_PINCTRL
- 
- /**
-@@ -2030,6 +2043,20 @@ int gpiochip_add_pingroup_range(struct gpio_chip *chip,
- 	struct gpio_device *gdev = chip->gpiodev;
- 	int ret;
- 
-+	/*
-+	 * look if a GPIO range with the same ID has already been registered.
-+	 * For pinctrls that are set up through devicetree, the GPIO Range
-+	 * might be already set by the the gpio-ranges property.
-+	 * (see Documentation/devicetree/bindings/gpio/gpio.txt)
-+	 */
-+	pin_range = gpiochip_find_by_id(chip, gpio_offset);
-+	if (pin_range) {
-+		chip_dbg(chip, "found existing GPIO range %d->%d - skipping\n",
-+				gpio_offset,
-+				gpio_offset + pin_range->range.npins - 1);
-+		return 0;
-+	}
-+
- 	pin_range = kzalloc(sizeof(*pin_range), GFP_KERNEL);
- 	if (!pin_range) {
- 		chip_err(chip, "failed to allocate pin ranges\n");
-@@ -2083,6 +2110,20 @@ int gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- 	struct gpio_device *gdev = chip->gpiodev;
- 	int ret;
- 
-+	/*
-+	 * look if a GPIO range with the same ID has already been registered.
-+	 * For pinctrls that are set up through devicetree, the GPIO Range
-+	 * might be already set by the the gpio-ranges property.
-+	 * (see Documentation/devicetree/bindings/gpio/gpio.txt)
-+	 */
-+	pin_range = gpiochip_find_by_id(chip, gpio_offset);
-+	if (pin_range) {
-+		chip_dbg(chip, "found existing GPIO range %d->%d - skipping\n",
-+			 gpio_offset,
-+			 gpio_offset + pin_range->range.npins - 1);
-+		return 0;
-+	}
-+
- 	pin_range = kzalloc(sizeof(*pin_range), GFP_KERNEL);
- 	if (!pin_range) {
- 		chip_err(chip, "failed to allocate pin ranges\n");
----
+Hence I think you should introduce a new compatible value instead.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
