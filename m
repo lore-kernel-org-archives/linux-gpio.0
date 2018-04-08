@@ -1,48 +1,83 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH 2/2] pinctrl: qcom: qdf2xxx: add support for new ACPI HID
- QCOM8002
-Date: Sat, 07 Apr 2018 05:33:00 -0700
-Message-ID: <152310438008.180276.15989327938738839272@swboyd.mtv.corp.google.com>
-References: <1521848700-22214-1-git-send-email-timur@codeaurora.org>
- <1521848700-22214-2-git-send-email-timur@codeaurora.org>
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH] pinctrl/samsung: Correct EINTG banks order
+Date: Sun,  8 Apr 2018 20:07:47 +0200
+Message-ID: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1521848700-22214-2-git-send-email-timur@codeaurora.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: timur@codeaurora.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: tomasz.figa@gmail.com, krzk@kernel.org, s.nawrocki@samsung.com
+Cc: linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, pawel.mikolaj.chmiel@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Timur Tabi (2018-03-23 16:45:00)
-> Newer versions of the firmware for the Qualcomm Datacenter Technologies
-> QDF2400 restricts access to a subset of the GPIOs on the TLMM.  To
-> prevent older kernels from accidentally accessing the restricted GPIOs,
-> we change the ACPI HID for the TLMM block from QCOM8001 to QCOM8002,
-> and introduce a new property "gpios".  This property is an array of
-> specific GPIOs that are accessible.  When an older kernel boots on
-> newer (restricted) firmware, it will fail to probe.
-> 
-> To implement the sparse GPIO map, we register all of the GPIOs, but
-> fill in the data only for available GPIOs.  This ensures that the driver
-> cannot accidentally access an unavailable GPIO.
-> 
-> The pinctrl-msm driver also scans the "gpios" property to determine
-> which pins are available, and ensure that only those can be registered.
-> 
-> Support for QCOM8001 is removed as there is no longer any firmware that
-> implements it.
-> 
-> Signed-off-by: Timur Tabi <timur@codeaurora.org>
-> ---
+All banks with GPIO interrupts should be at beginning
+of bank array and without any other types of banks between them.
+This order is expected by exynos_eint_gpio_irq, when doing
+interrupt group to bank translation.
+Otherwise, kernel NULL pointer dereference would happen
+when trying to handle interrupt, due to wrong bank being looked up.
+Observed on s5pv210, when trying to handle gpj0 interrupt,
+where kernel was mapping it to gpi bank.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+index 90c2744..de4ab07 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+@@ -105,12 +105,12 @@ static const struct samsung_pin_bank_data s5pv210_pin_bank[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x1c0, "gpg1", 0x38),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x1e0, "gpg2", 0x3c),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x200, "gpg3", 0x40),
+-	EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpi"),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x240, "gpj0", 0x44),
+ 	EXYNOS_PIN_BANK_EINTG(6, 0x260, "gpj1", 0x48),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x280, "gpj2", 0x4c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x2a0, "gpj3", 0x50),
+ 	EXYNOS_PIN_BANK_EINTG(5, 0x2c0, "gpj4", 0x54),
++	EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpi"),
+ 	EXYNOS_PIN_BANK_EINTN(8, 0x2e0, "mp01"),
+ 	EXYNOS_PIN_BANK_EINTN(4, 0x300, "mp02"),
+ 	EXYNOS_PIN_BANK_EINTN(8, 0x320, "mp03"),
+@@ -158,9 +158,6 @@ static const struct samsung_pin_bank_data exynos3250_pin_banks0[] __initconst =
+ 
+ /* pin banks of exynos3250 pin-controller 1 */
+ static const struct samsung_pin_bank_data exynos3250_pin_banks1[] __initconst = {
+-	EXYNOS_PIN_BANK_EINTN(8, 0x120, "gpe0"),
+-	EXYNOS_PIN_BANK_EINTN(8, 0x140, "gpe1"),
+-	EXYNOS_PIN_BANK_EINTN(3, 0x180, "gpe2"),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1", 0x0c),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2", 0x10),
+@@ -170,6 +167,9 @@ static const struct samsung_pin_bank_data exynos3250_pin_banks1[] __initconst =
+ 	EXYNOS_PIN_BANK_EINTG(5, 0x2a0, "gpm2", 0x2c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x2c0, "gpm3", 0x30),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x2e0, "gpm4", 0x34),
++	EXYNOS_PIN_BANK_EINTN(8, 0x120, "gpe0"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x140, "gpe1"),
++	EXYNOS_PIN_BANK_EINTN(3, 0x180, "gpe2"),
+ 	EXYNOS_PIN_BANK_EINTW(8, 0xc00, "gpx0", 0x00),
+ 	EXYNOS_PIN_BANK_EINTW(8, 0xc20, "gpx1", 0x04),
+ 	EXYNOS_PIN_BANK_EINTW(8, 0xc40, "gpx2", 0x08),
+@@ -630,7 +630,6 @@ static const struct samsung_pin_bank_data exynos5410_pin_banks0[] __initconst =
+ 	EXYNOS_PIN_BANK_EINTG(4, 0x100, "gpc3", 0x20),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x120, "gpc1", 0x24),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x140, "gpc2", 0x28),
+-	EXYNOS_PIN_BANK_EINTN(2, 0x160, "gpm5"),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpd1", 0x2c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x1A0, "gpe0", 0x30),
+ 	EXYNOS_PIN_BANK_EINTG(2, 0x1C0, "gpe1", 0x34),
+@@ -641,6 +640,7 @@ static const struct samsung_pin_bank_data exynos5410_pin_banks0[] __initconst =
+ 	EXYNOS_PIN_BANK_EINTG(2, 0x260, "gpg2", 0x48),
+ 	EXYNOS_PIN_BANK_EINTG(4, 0x280, "gph0", 0x4c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x2A0, "gph1", 0x50),
++	EXYNOS_PIN_BANK_EINTN(2, 0x160, "gpm5"),
+ 	EXYNOS_PIN_BANK_EINTN(8, 0x2C0, "gpm7"),
+ 	EXYNOS_PIN_BANK_EINTN(6, 0x2E0, "gpy0"),
+ 	EXYNOS_PIN_BANK_EINTN(4, 0x300, "gpy1"),
+-- 
+2.7.4
