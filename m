@@ -1,82 +1,165 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
-Date: Mon, 9 Apr 2018 12:20:49 +0900
-Message-ID: <CA+Ln22HAkE55HDEQD2H2ixTzDOhjmZ6=vT0+SKZDyDUq2c35zA@mail.gmail.com>
-References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH] pinctrl: meson: axg: add tdm pins
+Date: Mon,  9 Apr 2018 16:54:29 +0200
+Message-ID: <20180409145429.16619-1-jbrunet@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Pawel,
+Add the information related to the tdm pins of the A113D SoC
 
-2018-04-09 3:07 GMT+09:00 Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com=
->:
-> All banks with GPIO interrupts should be at beginning
-> of bank array and without any other types of banks between them.
-> This order is expected by exynos_eint_gpio_irq, when doing
-> interrupt group to bank translation.
-> Otherwise, kernel NULL pointer dereference would happen
-> when trying to handle interrupt, due to wrong bank being looked up.
-> Observed on s5pv210, when trying to handle gpj0 interrupt,
-> where kernel was mapping it to gpi bank.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson-axg.c | 107 ++++++++++++++++++++++++++++++
+ 1 file changed, 107 insertions(+)
 
-Thanks for the patch! Looks like it might be fixing quite an ugly bug indee=
-d.
-
-Just one comment for exynos3250 change below.
-
->
-> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinct=
-rl/samsung/pinctrl-exynos-arm.c
-> index 90c2744..de4ab07 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> @@ -105,12 +105,12 @@ static const struct samsung_pin_bank_data s5pv210_p=
-in_bank[] __initconst =3D {
->         EXYNOS_PIN_BANK_EINTG(7, 0x1c0, "gpg1", 0x38),
->         EXYNOS_PIN_BANK_EINTG(7, 0x1e0, "gpg2", 0x3c),
->         EXYNOS_PIN_BANK_EINTG(7, 0x200, "gpg3", 0x40),
-> -       EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpi"),
->         EXYNOS_PIN_BANK_EINTG(8, 0x240, "gpj0", 0x44),
->         EXYNOS_PIN_BANK_EINTG(6, 0x260, "gpj1", 0x48),
->         EXYNOS_PIN_BANK_EINTG(8, 0x280, "gpj2", 0x4c),
->         EXYNOS_PIN_BANK_EINTG(8, 0x2a0, "gpj3", 0x50),
->         EXYNOS_PIN_BANK_EINTG(5, 0x2c0, "gpj4", 0x54),
-> +       EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpi"),
->         EXYNOS_PIN_BANK_EINTN(8, 0x2e0, "mp01"),
->         EXYNOS_PIN_BANK_EINTN(4, 0x300, "mp02"),
->         EXYNOS_PIN_BANK_EINTN(8, 0x320, "mp03"),
-> @@ -158,9 +158,6 @@ static const struct samsung_pin_bank_data exynos3250_=
-pin_banks0[] __initconst =3D
->
->  /* pin banks of exynos3250 pin-controller 1 */
->  static const struct samsung_pin_bank_data exynos3250_pin_banks1[] __init=
-const =3D {
-> -       EXYNOS_PIN_BANK_EINTN(8, 0x120, "gpe0"),
-> -       EXYNOS_PIN_BANK_EINTN(8, 0x140, "gpe1"),
-> -       EXYNOS_PIN_BANK_EINTN(3, 0x180, "gpe2"),
->         EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
-
-It looks like gpk0 starts with eint_offset =3D 0x08. Depending on what
-the SVC register returns on this SoC, it might be group 0, which would
-be fine, but also group 2, which would require this bank to be at
-exynos3250_pin_banks1[2]... (or changing the way group is translated
-to bank pointer, e.g. by subtracting (eint_offset / 4) from the group
-number.
-
-Sylwester, would you be able to check which group number is returned
-for GPK0 bank in SVC register on Exynos 3250?
-
-Best regards,
-Tomasz
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+index 4b91ff74779b..11dc23fde6d5 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+@@ -312,6 +312,47 @@ static const unsigned int pdm_din1_pins[] = {GPIOA_16};
+ static const unsigned int pdm_din2_pins[] = {GPIOA_17};
+ static const unsigned int pdm_din3_pins[] = {GPIOA_18};
+ 
++/* mclk */
++static const unsigned int mclk_c_pins[] = {GPIOA_0};
++static const unsigned int mclk_b_pins[] = {GPIOA_1};
++
++/* tdm */
++static const unsigned int tdma_sclk_pins[] = {GPIOX_12};
++static const unsigned int tdma_sclk_slv_pins[] = {GPIOX_12};
++static const unsigned int tdma_fs_pins[] = {GPIOX_13};
++static const unsigned int tdma_fs_slv_pins[] = {GPIOX_13};
++static const unsigned int tdma_din0_pins[] = {GPIOX_14};
++static const unsigned int tdma_dout0_x14_pins[] = {GPIOX_14};
++static const unsigned int tdma_dout0_x15_pins[] = {GPIOX_15};
++static const unsigned int tdma_dout1_pins[] = {GPIOX_15};
++static const unsigned int tdma_din1_pins[] = {GPIOX_15};
++
++static const unsigned int tdmc_sclk_pins[] = {GPIOA_2};
++static const unsigned int tdmc_sclk_slv_pins[] = {GPIOA_2};
++static const unsigned int tdmc_fs_pins[] = {GPIOA_3};
++static const unsigned int tdmc_fs_slv_pins[] = {GPIOA_3};
++static const unsigned int tdmc_din0_pins[] = {GPIOA_4};
++static const unsigned int tdmc_dout0_pins[] = {GPIOA_4};
++static const unsigned int tdmc_din1_pins[] = {GPIOA_5};
++static const unsigned int tdmc_dout1_pins[] = {GPIOA_5};
++static const unsigned int tdmc_din2_pins[] = {GPIOA_6};
++static const unsigned int tdmc_dout2_pins[] = {GPIOA_6};
++static const unsigned int tdmc_din3_pins[] = {GPIOA_7};
++static const unsigned int tdmc_dout3_pins[] = {GPIOA_7};
++
++static const unsigned int tdmb_sclk_pins[] = {GPIOA_8};
++static const unsigned int tdmb_sclk_slv_pins[] = {GPIOA_8};
++static const unsigned int tdmb_fs_pins[] = {GPIOA_9};
++static const unsigned int tdmb_fs_slv_pins[] = {GPIOA_9};
++static const unsigned int tdmb_din0_pins[] = {GPIOA_10};
++static const unsigned int tdmb_dout0_pins[] = {GPIOA_10};
++static const unsigned int tdmb_din1_pins[] = {GPIOA_11};
++static const unsigned int tdmb_dout1_pins[] = {GPIOA_11};
++static const unsigned int tdmb_din2_pins[] = {GPIOA_12};
++static const unsigned int tdmb_dout2_pins[] = {GPIOA_12};
++static const unsigned int tdmb_din3_pins[] = {GPIOA_13};
++static const unsigned int tdmb_dout3_pins[] = {GPIOA_13};
++
+ static struct meson_pmx_group meson_axg_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOZ_0),
+ 	GPIO_GROUP(GPIOZ_1),
+@@ -495,6 +536,15 @@ static struct meson_pmx_group meson_axg_periphs_groups[] = {
+ 	GROUP(eth_rx_dv_x, 4),
+ 	GROUP(eth_mdio_x, 4),
+ 	GROUP(eth_mdc_x, 4),
++	GROUP(tdma_sclk, 1),
++	GROUP(tdma_sclk_slv, 2),
++	GROUP(tdma_fs, 1),
++	GROUP(tdma_fs_slv, 2),
++	GROUP(tdma_din0, 1),
++	GROUP(tdma_dout0_x14, 2),
++	GROUP(tdma_dout0_x15, 1),
++	GROUP(tdma_dout1, 2),
++	GROUP(tdma_din1, 3),
+ 
+ 	/* bank GPIOY */
+ 	GROUP(eth_txd0_y, 1),
+@@ -544,6 +594,32 @@ static struct meson_pmx_group meson_axg_periphs_groups[] = {
+ 	GROUP(pdm_din1, 1),
+ 	GROUP(pdm_din2, 1),
+ 	GROUP(pdm_din3, 1),
++	GROUP(mclk_c, 1),
++	GROUP(mclk_b, 1),
++	GROUP(tdmc_sclk, 1),
++	GROUP(tdmc_sclk_slv, 2),
++	GROUP(tdmc_fs, 1),
++	GROUP(tdmc_fs_slv, 2),
++	GROUP(tdmc_din0, 2),
++	GROUP(tdmc_dout0, 1),
++	GROUP(tdmc_din1, 2),
++	GROUP(tdmc_dout1, 1),
++	GROUP(tdmc_din2, 2),
++	GROUP(tdmc_dout2, 1),
++	GROUP(tdmc_din3, 2),
++	GROUP(tdmc_dout3, 1),
++	GROUP(tdmb_sclk, 1),
++	GROUP(tdmb_sclk_slv, 2),
++	GROUP(tdmb_fs, 1),
++	GROUP(tdmb_fs_slv, 2),
++	GROUP(tdmb_din0, 2),
++	GROUP(tdmb_dout0, 1),
++	GROUP(tdmb_din1, 2),
++	GROUP(tdmb_dout1, 1),
++	GROUP(tdmb_din2, 2),
++	GROUP(tdmb_dout2, 1),
++	GROUP(tdmb_din3, 2),
++	GROUP(tdmb_dout3, 1),
+ };
+ 
+ /* uart_ao_a */
+@@ -845,6 +921,32 @@ static const char * const jtag_ao_groups[] = {
+ 	"jtag_ao_tdi", "jtag_ao_tdo", "jtag_ao_clk", "jtag_ao_tms",
+ };
+ 
++static const char * const mclk_c_groups[] = {
++	"mclk_c",
++};
++
++static const char * const mclk_b_groups[] = {
++	"mclk_b",
++};
++
++static const char * const tdma_groups[] = {
++	"tdma_sclk", "tdma_sclk_slv", "tdma_fs", "tdma_fs_slv",
++	"tdma_din0", "tdma_dout0_x14", "tdma_dout0_x15", "tdma_dout1",
++	"tdma_din1",
++};
++
++static const char * const tdmc_groups[] = {
++	"tdmc_sclk", "tdmc_sclk_slv", "tdmc_fs", "tdmc_fs_slv",
++	"tdmc_din0", "tdmc_dout0", "tdmc_din1",	"tdmc_dout1",
++	"tdmc_din2", "tdmc_dout2", "tdmc_din3",	"tdmc_dout3",
++};
++
++static const char * const tdmb_groups[] = {
++	"tdmb_sclk", "tdmb_sclk_slv", "tdmb_fs", "tdmb_fs_slv",
++	"tdmb_din0", "tdmb_dout0", "tdmb_din1",	"tdmb_dout1",
++	"tdmb_din2", "tdmb_dout2", "tdmb_din3",	"tdmb_dout3",
++};
++
+ static struct meson_pmx_func meson_axg_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+@@ -870,6 +972,11 @@ static struct meson_pmx_func meson_axg_periphs_functions[] = {
+ 	FUNCTION(spdif_in),
+ 	FUNCTION(jtag_ee),
+ 	FUNCTION(pdm),
++	FUNCTION(mclk_b),
++	FUNCTION(mclk_c),
++	FUNCTION(tdma),
++	FUNCTION(tdmb),
++	FUNCTION(tdmc),
+ };
+ 
+ static struct meson_pmx_func meson_axg_aobus_functions[] = {
+-- 
+2.14.3
