@@ -1,31 +1,76 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 10/10] dt-bindings: gpio: Add bindings for Cadence I3C
- gpio expander
-Date: Mon, 9 Apr 2018 15:26:10 -0500
-Message-ID: <20180409202610.2ckwi4ekswiaumym@rob-hp-laptop>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
- <20180330074751.25987-11-boris.brezillon@bootlin.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Laura Abbott <labbott@redhat.com>
+Subject: [PATCH] gpio: xra1403: Switch to a fixed upper bound for registers
+Date: Mon,  9 Apr 2018 14:07:17 -0700
+Message-ID: <20180409210717.3852-1-labbott@redhat.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180330074751.25987-11-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeau>
+To: Nandor Han <nandor.han@ge.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <keescook@chromium.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Laura Abbott <labbott@redhat.com>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 09:47:51AM +0200, Boris Brezillon wrote:
-> Document the Cadence I3C gpio expander bindings.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> ---
-> Changes in v4:
-> - Use GPIO_ and IRQ_TYPE_ macros instead of raw numbers
-> - Fix the unit-address in the example
-> ---
->  .../devicetree/bindings/gpio/gpio-cdns-i3c.txt     | 39 ++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
+Geert Uytterhoeven pointed out that the number of register was a
+fixed upper bound so there's no need to use a dynamically allocated
+array in place of a VLA. Use the defined upper bound.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ drivers/gpio/gpio-xra1403.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpio/gpio-xra1403.c b/drivers/gpio/gpio-xra1403.c
+index 8d4c8e99b251..8711a7907568 100644
+--- a/drivers/gpio/gpio-xra1403.c
++++ b/drivers/gpio/gpio-xra1403.c
+@@ -39,6 +39,7 @@
+ #define XRA_REIR  0x10 /* Input Rising Edge Interrupt Enable */
+ #define XRA_FEIR  0x12 /* Input Falling Edge Interrupt Enable */
+ #define XRA_IFR   0x14 /* Input Filter Enable/Disable */
++#define XRA_LAST  0x15 /* Bounds */
+ 
+ struct xra1403 {
+ 	struct gpio_chip  chip;
+@@ -50,7 +51,7 @@ static const struct regmap_config xra1403_regmap_cfg = {
+ 		.pad_bits = 1,
+ 		.val_bits = 8,
+ 
+-		.max_register = XRA_IFR | 0x01,
++		.max_register = XRA_LAST,
+ };
+ 
+ static unsigned int to_reg(unsigned int reg, unsigned int offset)
+@@ -126,21 +127,16 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ {
+ 	int reg;
+ 	struct xra1403 *xra = gpiochip_get_data(chip);
+-	int *value;
++	int value[XRA_LAST];
+ 	int i;
+ 	unsigned int gcr;
+ 	unsigned int gsr;
+ 
+-	value = kmalloc_array(xra1403_regmap_cfg.max_register, sizeof(*value),
+-				GFP_KERNEL);
+-	if (!value)
+-		return;
+-
+ 	seq_puts(s, "xra reg:");
+-	for (reg = 0; reg <= xra1403_regmap_cfg.max_register; reg++)
++	for (reg = 0; reg <= XRA_LAST; reg++)
+ 		seq_printf(s, " %2.2x", reg);
+ 	seq_puts(s, "\n  value:");
+-	for (reg = 0; reg < xra1403_regmap_cfg.max_register; reg++) {
++	for (reg = 0; reg < XRA_LAST; reg++) {
+ 		regmap_read(xra->regmap, reg, &value[reg]);
+ 		seq_printf(s, " %2.2x", value[reg]);
+ 	}
+@@ -159,7 +155,6 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 			   (gcr & BIT(i)) ? "in" : "out",
+ 			   (gsr & BIT(i)) ? "hi" : "lo");
+ 	}
+-	kfree(value);
+ }
+ #else
+ #define xra1403_dbg_show NULL
+-- 
+2.14.3
