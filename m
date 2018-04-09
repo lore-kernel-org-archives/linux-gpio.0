@@ -1,71 +1,45 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] gpio: dwapb: Add support for 32 interrupts
-Date: Mon, 9 Apr 2018 14:20:13 -0500
-Message-ID: <20180409192013.5rytwgoixtyraow3@rob-hp-laptop>
-References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+Subject: Re: [PATCH v4 04/10] dt-bindings: i3c: Document core bindings
+Date: Mon, 9 Apr 2018 15:24:26 -0500
+Message-ID: <20180409202426.grl62ydysfse27ly@rob-hp-laptop>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+ <20180330074751.25987-5-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <20180330074751.25987-5-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Michel Pollet <michel.pollet@bp.renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeau>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 03:22:30PM +0100, Phil Edworthy wrote:
-> The DesignWare GPIO IP can be configured for either 1 or 32 interrupts,
-> but the driver currently only supports 1 interrupt. See the DesignWare
-> DW_apb_gpio Databook description of the 'GPIO_INTR_IO' parameter.
-
-Someday h/w designers will realize this does nothing to optimize 
-interrupt handling...
-
-> This change allows the driver to work with up to 32 interrupts, it will
-> get as many interrupts as specified in the DT 'interrupts' property.
-> It doesn't do anything clever with the different interrupts, it just calls
-> the same handler used for single interrupt hardware.
+On Fri, Mar 30, 2018 at 09:47:45AM +0200, Boris Brezillon wrote:
+> A new I3C subsystem has been added and a generic description has been
+> created to represent the I3C bus and the devices connected on it.
 > 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
-> Note: There are a few lines over 80 chars, but this is just guidance, right?
->       Especially as there are already some lines over 80 chars.
-
-Code, yes, but not for paragraphs of text in DT bindings.
-
-> ---
->  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   | 10 ++++-
->  drivers/gpio/gpio-dwapb.c                          | 44 +++++++++++++++++-----
->  include/linux/platform_data/gpio-dwapb.h           |  3 +-
->  3 files changed, 45 insertions(+), 12 deletions(-)
+> Document this generic representation.
 > 
-> diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> index 4a75da7..e343581 100644
-> --- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> @@ -26,8 +26,14 @@ controller.
->    the second encodes the triger flags encoded as described in
->    Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
->  - interrupt-parent : The parent interrupt controller.
-> -- interrupts : The interrupt to the parent controller raised when GPIOs
-> -  generate the interrupts.
-> +- interrupts : The interrupts to the parent controller raised when GPIOs
-> +  generate the interrupts. If the controller provides one combined interrupt
-> +  for all GPIOs, specify a single interrupt. If the controller provides one
-> +  interrupt for each GPIO, provide a list of interrupts that correspond to each
-> +  of the GPIO pins. When specifying multiple interrupts, if any of the GPIOs are
-> +  not connected to an interrupt, use the interrupt-mask property.
-> +- interrupt-mask : a 32-bit bit mask that specifies which interrupts in the list
-> +  of interrupts is valid, bit is 1 for a valid irq.
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> ---
+> Changes in v4:
+> - Clarify the fact that static address == I3C address and dynamic
+>   address == I3C address
+> - Use i2c-scl-hz in the example
+> 
+> Changes in v3:
+> - Rename {i2c,i3c}-scl-frequency DT prop into {i2c,i3c}-scl-hz
+> - Rework the way we expose the provisional ID and LVR information
+> - Rename dynamic-address into assigned-address
+> - Enforce the I3C master node name
+> 
+> Changes in v2:
+> - Define how to describe I3C devices in the DT and when it should be
+>   used. Note that the parsing of I3C devices is not yet implemented in
+>   the framework. Will be added when someone really needs it.
+> ---
+>  Documentation/devicetree/bindings/i3c/i3c.txt | 140 ++++++++++++++++++++++++++
+>  1 file changed, 140 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
 
-This is not a standard property and would need a vendor prefix. However, 
-I'd prefer you just skip any not connected interrupts with an invalid 
-interrupt number. Then the GPIO number is the index into "interrupts".
-
->  - snps,nr-gpios : The number of pins in the port, a single cell.
-
-This BTW should be deprecated to use "nr-gpios" instead, but that's 
-another patch.
-
->  - resets : Reset line for the controller.
->  
+Reviewed-by: Rob Herring <robh@kernel.org>
