@@ -1,46 +1,38 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
-Date: Tue, 10 Apr 2018 09:06:26 +0200
-Message-ID: <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
-References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio: xra1403: Switch to a fixed upper bound for registers
+Date: Tue, 10 Apr 2018 10:08:56 +0200
+Message-ID: <CAMuHMdVnXc+SrUEteb-v4Kb9FtXJcaWmdK63-oTK0f2KxBThsQ@mail.gmail.com>
+References: <20180409210717.3852-1-labbott@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <20180409210717.3852-1-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Nandor Han <nandor.han@ge.com>, Kees Cook <keescook@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
-<pawel.mikolaj.chmiel@gmail.com> wrote:
-> All banks with GPIO interrupts should be at beginning
-> of bank array and without any other types of banks between them.
-> This order is expected by exynos_eint_gpio_irq, when doing
-> interrupt group to bank translation.
-> Otherwise, kernel NULL pointer dereference would happen
-> when trying to handle interrupt, due to wrong bank being looked up.
-> Observed on s5pv210, when trying to handle gpj0 interrupt,
-> where kernel was mapping it to gpi bank.
+Hi Laura,
 
-Thanks for the patch. The issue looks real although one thing was
-missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
-Marek Szyprowski):
+On Mon, Apr 9, 2018 at 11:07 PM, Laura Abbott <labbott@redhat.com> wrote:
+> Geert Uytterhoeven pointed out that the number of register was a
+> fixed upper bound so there's no need to use a dynamically allocated
+> array in place of a VLA. Use the defined upper bound.
+>
+> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 
-0x0 - EINT_23 - gpk0
-0x1 - EINT_24 - gpk1
-0x2 - EINT_25 - gpk2
-0x4 - EINT_27 - gpl0
-0x7 - EINT_8 - gpm0
+Thanks for your patch!
 
-Maybe this should be done differently - to remove such hidden
-requirement entirely in favor of another parameter of
-EXYNOS_PIN_BANK_EINTG argument? Anyway if such hidden requirement
-stays, then please document it in the source code (it maybe next to
-PIN order... or next macro... or also in exynos_eint_gpio_irq()).
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Beside that please add cc-stable and appropriate fixes tag,
+Gr{oetje,eeting}s,
 
-Best regards,
-Krzysztof
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
