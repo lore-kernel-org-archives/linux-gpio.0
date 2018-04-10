@@ -1,210 +1,58 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH] gpiolib: add hogs support for machine code
-Date: Tue, 10 Apr 2018 14:40:29 +0200
-Message-ID: <20180410124029.2915-1-brgl@bgdev.pl>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 5/5] pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
+Date: Tue, 10 Apr 2018 14:51:41 +0200
+Message-ID: <1523364701-15383-6-git-send-email-geert+renesas@glider.be>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-Board files constitute a significant part of the users of the legacy
-GPIO framework. In many cases they only export a line and set its
-desired value. We could use GPIO hogs for that like we do for DT and
-ACPI but there's no support for that in machine code.
+A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
+Use of_clk_get_parent_count() instead of open coding"), replace it.
 
-This patch proposes to extend the machine.h API with support for
-registering hog tables in board files.
+of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
+instead of <linux/clk-provider.h>.
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/driver-api/gpio/board.rst | 16 ++++++
- drivers/gpio/gpiolib.c                  | 67 +++++++++++++++++++++++++
- include/linux/gpio/machine.h            | 31 ++++++++++++
- 3 files changed, 114 insertions(+)
+This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
+<linux/of_clk.h>".
 
-diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driver-api/gpio/board.rst
-index 25d62b2e9fd0..2c112553df84 100644
---- a/Documentation/driver-api/gpio/board.rst
-+++ b/Documentation/driver-api/gpio/board.rst
-@@ -177,3 +177,19 @@ mapping and is thus transparent to GPIO consumers.
+v2:
+  - New.
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 020d6d84639ca002..25e80a5370ca02f6 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -12,12 +12,12 @@
  
- A set of functions such as gpiod_set_value() is available to work with
- the new descriptor-oriented interface.
-+
-+Boards using platform data can also hog GPIO lines by defining GPIO hog tables.
-+
-+.. code-block:: c
-+
-+        struct gpiod_hog gpio_hog_table[] = {
-+                GPIO_HOG("gpio.0", 10, "foo", GPIO_ACTIVE_LOW, GPIOD_OUT_HIGH),
-+                { }
-+        };
-+
-+And the table can be added to the board code as follows::
-+
-+        gpiod_add_hogs(gpio_hog_table);
-+
-+The line will be hogged as soon as the gpiochip is created or - in case the
-+chip was created earlier - when the hog table is registered.
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 43aeb07343ec..547adc149b62 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -71,6 +71,9 @@ static DEFINE_MUTEX(gpio_lookup_lock);
- static LIST_HEAD(gpio_lookup_list);
- LIST_HEAD(gpio_devices);
+ #include <linux/io.h>
+ #include <linux/clk.h>
+-#include <linux/clk-provider.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/export.h>
+ #include <linux/of.h>
++#include <linux/of_clk.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/of_irq.h>
+@@ -1361,7 +1361,7 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+ 			goto gpiochip_error;
+ 	}
  
-+static DEFINE_MUTEX(gpio_machine_hogs_mutex);
-+static LIST_HEAD(gpio_machine_hogs);
-+
- static void gpiochip_free_hogs(struct gpio_chip *chip);
- static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
- 				struct lock_class_key *lock_key,
-@@ -1171,6 +1174,41 @@ static int gpiochip_setup_dev(struct gpio_device *gdev)
- 	return status;
- }
- 
-+static void gpiochip_machine_hog(struct gpio_chip *chip, struct gpiod_hog *hog)
-+{
-+	struct gpio_desc *desc;
-+	int rv;
-+
-+	desc = gpiochip_get_desc(chip, hog->chip_hwnum);
-+	if (IS_ERR(desc)) {
-+		pr_err("%s: unable to get GPIO desc: %ld\n",
-+		       __func__, PTR_ERR(desc));
-+		return;
-+	}
-+
-+	if (desc->flags & FLAG_IS_HOGGED)
-+		return;
-+
-+	rv = gpiod_hog(desc, hog->line_name, hog->lflags, hog->dflags);
-+	if (rv)
-+		pr_err("%s: unable to hog GPIO line (%s:%u): %d\n",
-+		       __func__, chip->label, hog->chip_hwnum, rv);
-+}
-+
-+static void machine_gpiochip_add(struct gpio_chip *chip)
-+{
-+	struct gpiod_hog *hog;
-+
-+	mutex_lock(&gpio_machine_hogs_mutex);
-+
-+	list_for_each_entry(hog, &gpio_machine_hogs, list) {
-+		if (!strcmp(chip->label, hog->chip_label))
-+			gpiochip_machine_hog(chip, hog);
-+	}
-+
-+	mutex_unlock(&gpio_machine_hogs_mutex);
-+}
-+
- static void gpiochip_setup_devs(void)
- {
- 	struct gpio_device *gdev;
-@@ -1326,6 +1364,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 
- 	acpi_gpiochip_add(chip);
- 
-+	machine_gpiochip_add(chip);
-+
- 	/*
- 	 * By first adding the chardev, and then adding the device,
- 	 * we get a device node entry in sysfs under
-@@ -3462,6 +3502,33 @@ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
- }
- EXPORT_SYMBOL_GPL(gpiod_remove_lookup_table);
- 
-+/**
-+ * gpiod_add_hogs() - register a set of GPIO hogs from machine code
-+ * @hogs: table of gpio hog entries with a zeroed sentinel at the end
-+ */
-+void gpiod_add_hogs(struct gpiod_hog *hogs)
-+{
-+	struct gpio_chip *chip;
-+	struct gpiod_hog *hog;
-+
-+	mutex_lock(&gpio_machine_hogs_mutex);
-+
-+	for (hog = &hogs[0]; hog->chip_label; hog++) {
-+		list_add_tail(&hog->list, &gpio_machine_hogs);
-+
-+		/*
-+		 * The chip may have been registered earlier, so check if it
-+		 * exists and, if so, try to hog the line now.
-+		 */
-+		chip = find_chip_by_name(hog->chip_label);
-+		if (chip)
-+			gpiochip_machine_hog(chip, hog);
-+	}
-+
-+	mutex_unlock(&gpio_machine_hogs_mutex);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_add_hogs);
-+
- static struct gpiod_lookup_table *gpiod_find_lookup_table(struct device *dev)
- {
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
-diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
-index b2f2dc638463..517957d6b168 100644
---- a/include/linux/gpio/machine.h
-+++ b/include/linux/gpio/machine.h
-@@ -39,6 +39,23 @@ struct gpiod_lookup_table {
- 	struct gpiod_lookup table[];
- };
- 
-+/**
-+ * struct gpiod_hog - GPIO line hog table
-+ * @chip_label: name of the chip the GPIO belongs to
-+ * @chip_hwnum: hardware number (i.e. relative to the chip) of the GPIO
-+ * @line_name: consumer name for the hogged line
-+ * @lflags: mask of GPIO lookup flags
-+ * @dflags: GPIO flags used to specify the direction and value
-+ */
-+struct gpiod_hog {
-+	struct list_head list;
-+	const char *chip_label;
-+	u16 chip_hwnum;
-+	const char *line_name;
-+	enum gpio_lookup_flags lflags;
-+	enum gpiod_flags dflags;
-+};
-+
- /*
-  * Simple definition of a single GPIO under a con_id
-  */
-@@ -59,10 +76,23 @@ struct gpiod_lookup_table {
- 	.flags = _flags,                                                  \
- }
- 
-+/*
-+ * Simple definition of a single GPIO hog in an array.
-+ */
-+#define GPIO_HOG(_chip_label, _chip_hwnum, _line_name, _lflags, _dflags)  \
-+{                                                                         \
-+	.chip_label = _chip_label,                                        \
-+	.chip_hwnum = _chip_hwnum,                                        \
-+	.line_name = _line_name,                                          \
-+	.lflags = _lflags,                                                \
-+	.dflags = _dflags,                                                \
-+}
-+
- #ifdef CONFIG_GPIOLIB
- void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
- void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n);
- void gpiod_remove_lookup_table(struct gpiod_lookup_table *table);
-+void gpiod_add_hogs(struct gpiod_hog *hogs);
- #else
- static inline
- void gpiod_add_lookup_table(struct gpiod_lookup_table *table) {}
-@@ -70,6 +100,7 @@ static inline
- void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n) {}
- static inline
- void gpiod_remove_lookup_table(struct gpiod_lookup_table *table) {}
-+static inline void gpiod_add_hogs(struct gpiod_hog *hogs) {}
- #endif
- 
- #endif /* __LINUX_GPIO_MACHINE_H */
+-	ret = of_count_phandle_with_args(node, "clocks", "#clock-cells");
++	ret = of_clk_get_parent_count(node);
+ 	clk = devm_clk_get(&pdev->dev, ret == 1 ? NULL : "apb");
+ 	if (IS_ERR(clk)) {
+ 		ret = PTR_ERR(clk);
 -- 
-2.17.0
+2.7.4
