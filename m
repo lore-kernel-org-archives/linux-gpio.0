@@ -1,63 +1,210 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
-Date: Tue, 10 Apr 2018 17:38:29 +0900
-Message-ID: <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com>
-References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] gpiolib: add hogs support for machine code
+Date: Tue, 10 Apr 2018 14:40:29 +0200
+Message-ID: <20180410124029.2915-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Sun, Apr 8, 2018 at 8:07 PM, Pawe=C5=82 Chmiel
-> <pawel.mikolaj.chmiel@gmail.com> wrote:
->> All banks with GPIO interrupts should be at beginning
->> of bank array and without any other types of banks between them.
->> This order is expected by exynos_eint_gpio_irq, when doing
->> interrupt group to bank translation.
->> Otherwise, kernel NULL pointer dereference would happen
->> when trying to handle interrupt, due to wrong bank being looked up.
->> Observed on s5pv210, when trying to handle gpj0 interrupt,
->> where kernel was mapping it to gpi bank.
->
-> Thanks for the patch. The issue looks real although one thing was
-> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
-> Marek Szyprowski):
->
-> 0x0 - EINT_23 - gpk0
-> 0x1 - EINT_24 - gpk1
-> 0x2 - EINT_25 - gpk2
-> 0x4 - EINT_27 - gpl0
-> 0x7 - EINT_8 - gpm0
->
-> Maybe this should be done differently - to remove such hidden
-> requirement entirely in favor of another parameter of
-> EXYNOS_PIN_BANK_EINTG argument?
+Board files constitute a significant part of the users of the legacy
+GPIO framework. In many cases they only export a line and set its
+desired value. We could use GPIO hogs for that like we do for DT and
+ACPI but there's no support for that in machine code.
 
-Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
-a simple swap of bank order in the arrays should be okay.
+This patch proposes to extend the machine.h API with support for
+registering hog tables in board files.
 
-We might also need to have some fixes on 4x12, because I noticed that
-in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
-gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
-eint_offset equal to 0x08 (not 0).
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ Documentation/driver-api/gpio/board.rst | 16 ++++++
+ drivers/gpio/gpiolib.c                  | 67 +++++++++++++++++++++++++
+ include/linux/gpio/machine.h            | 31 ++++++++++++
+ 3 files changed, 114 insertions(+)
 
-> Anyway if such hidden requirement
-> stays, then please document it in the source code (it maybe next to
-> PIN order... or next macro... or also in exynos_eint_gpio_irq()).
->
-> Beside that please add cc-stable and appropriate fixes tag,
-
-Agreed. Probably the only safe way of documenting this is to put it
-inside each bank array, so that when someone creates a copy/paste for
-new SoC, the comment is clearly visible... Perhaps something like:
-
-/* Must start with EINTG banks, ordered by EINT group number. */
-
-Best regards,
-Tomasz
+diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driver-api/gpio/board.rst
+index 25d62b2e9fd0..2c112553df84 100644
+--- a/Documentation/driver-api/gpio/board.rst
++++ b/Documentation/driver-api/gpio/board.rst
+@@ -177,3 +177,19 @@ mapping and is thus transparent to GPIO consumers.
+ 
+ A set of functions such as gpiod_set_value() is available to work with
+ the new descriptor-oriented interface.
++
++Boards using platform data can also hog GPIO lines by defining GPIO hog tables.
++
++.. code-block:: c
++
++        struct gpiod_hog gpio_hog_table[] = {
++                GPIO_HOG("gpio.0", 10, "foo", GPIO_ACTIVE_LOW, GPIOD_OUT_HIGH),
++                { }
++        };
++
++And the table can be added to the board code as follows::
++
++        gpiod_add_hogs(gpio_hog_table);
++
++The line will be hogged as soon as the gpiochip is created or - in case the
++chip was created earlier - when the hog table is registered.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 43aeb07343ec..547adc149b62 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -71,6 +71,9 @@ static DEFINE_MUTEX(gpio_lookup_lock);
+ static LIST_HEAD(gpio_lookup_list);
+ LIST_HEAD(gpio_devices);
+ 
++static DEFINE_MUTEX(gpio_machine_hogs_mutex);
++static LIST_HEAD(gpio_machine_hogs);
++
+ static void gpiochip_free_hogs(struct gpio_chip *chip);
+ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
+ 				struct lock_class_key *lock_key,
+@@ -1171,6 +1174,41 @@ static int gpiochip_setup_dev(struct gpio_device *gdev)
+ 	return status;
+ }
+ 
++static void gpiochip_machine_hog(struct gpio_chip *chip, struct gpiod_hog *hog)
++{
++	struct gpio_desc *desc;
++	int rv;
++
++	desc = gpiochip_get_desc(chip, hog->chip_hwnum);
++	if (IS_ERR(desc)) {
++		pr_err("%s: unable to get GPIO desc: %ld\n",
++		       __func__, PTR_ERR(desc));
++		return;
++	}
++
++	if (desc->flags & FLAG_IS_HOGGED)
++		return;
++
++	rv = gpiod_hog(desc, hog->line_name, hog->lflags, hog->dflags);
++	if (rv)
++		pr_err("%s: unable to hog GPIO line (%s:%u): %d\n",
++		       __func__, chip->label, hog->chip_hwnum, rv);
++}
++
++static void machine_gpiochip_add(struct gpio_chip *chip)
++{
++	struct gpiod_hog *hog;
++
++	mutex_lock(&gpio_machine_hogs_mutex);
++
++	list_for_each_entry(hog, &gpio_machine_hogs, list) {
++		if (!strcmp(chip->label, hog->chip_label))
++			gpiochip_machine_hog(chip, hog);
++	}
++
++	mutex_unlock(&gpio_machine_hogs_mutex);
++}
++
+ static void gpiochip_setup_devs(void)
+ {
+ 	struct gpio_device *gdev;
+@@ -1326,6 +1364,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 
+ 	acpi_gpiochip_add(chip);
+ 
++	machine_gpiochip_add(chip);
++
+ 	/*
+ 	 * By first adding the chardev, and then adding the device,
+ 	 * we get a device node entry in sysfs under
+@@ -3462,6 +3502,33 @@ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
+ }
+ EXPORT_SYMBOL_GPL(gpiod_remove_lookup_table);
+ 
++/**
++ * gpiod_add_hogs() - register a set of GPIO hogs from machine code
++ * @hogs: table of gpio hog entries with a zeroed sentinel at the end
++ */
++void gpiod_add_hogs(struct gpiod_hog *hogs)
++{
++	struct gpio_chip *chip;
++	struct gpiod_hog *hog;
++
++	mutex_lock(&gpio_machine_hogs_mutex);
++
++	for (hog = &hogs[0]; hog->chip_label; hog++) {
++		list_add_tail(&hog->list, &gpio_machine_hogs);
++
++		/*
++		 * The chip may have been registered earlier, so check if it
++		 * exists and, if so, try to hog the line now.
++		 */
++		chip = find_chip_by_name(hog->chip_label);
++		if (chip)
++			gpiochip_machine_hog(chip, hog);
++	}
++
++	mutex_unlock(&gpio_machine_hogs_mutex);
++}
++EXPORT_SYMBOL_GPL(gpiod_add_hogs);
++
+ static struct gpiod_lookup_table *gpiod_find_lookup_table(struct device *dev)
+ {
+ 	const char *dev_id = dev ? dev_name(dev) : NULL;
+diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
+index b2f2dc638463..517957d6b168 100644
+--- a/include/linux/gpio/machine.h
++++ b/include/linux/gpio/machine.h
+@@ -39,6 +39,23 @@ struct gpiod_lookup_table {
+ 	struct gpiod_lookup table[];
+ };
+ 
++/**
++ * struct gpiod_hog - GPIO line hog table
++ * @chip_label: name of the chip the GPIO belongs to
++ * @chip_hwnum: hardware number (i.e. relative to the chip) of the GPIO
++ * @line_name: consumer name for the hogged line
++ * @lflags: mask of GPIO lookup flags
++ * @dflags: GPIO flags used to specify the direction and value
++ */
++struct gpiod_hog {
++	struct list_head list;
++	const char *chip_label;
++	u16 chip_hwnum;
++	const char *line_name;
++	enum gpio_lookup_flags lflags;
++	enum gpiod_flags dflags;
++};
++
+ /*
+  * Simple definition of a single GPIO under a con_id
+  */
+@@ -59,10 +76,23 @@ struct gpiod_lookup_table {
+ 	.flags = _flags,                                                  \
+ }
+ 
++/*
++ * Simple definition of a single GPIO hog in an array.
++ */
++#define GPIO_HOG(_chip_label, _chip_hwnum, _line_name, _lflags, _dflags)  \
++{                                                                         \
++	.chip_label = _chip_label,                                        \
++	.chip_hwnum = _chip_hwnum,                                        \
++	.line_name = _line_name,                                          \
++	.lflags = _lflags,                                                \
++	.dflags = _dflags,                                                \
++}
++
+ #ifdef CONFIG_GPIOLIB
+ void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
+ void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n);
+ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table);
++void gpiod_add_hogs(struct gpiod_hog *hogs);
+ #else
+ static inline
+ void gpiod_add_lookup_table(struct gpiod_lookup_table *table) {}
+@@ -70,6 +100,7 @@ static inline
+ void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n) {}
+ static inline
+ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table) {}
++static inline void gpiod_add_hogs(struct gpiod_hog *hogs) {}
+ #endif
+ 
+ #endif /* __LINUX_GPIO_MACHINE_H */
+-- 
+2.17.0
