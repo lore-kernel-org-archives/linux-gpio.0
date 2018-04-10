@@ -1,38 +1,63 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: xra1403: Switch to a fixed upper bound for registers
-Date: Tue, 10 Apr 2018 10:08:56 +0200
-Message-ID: <CAMuHMdVnXc+SrUEteb-v4Kb9FtXJcaWmdK63-oTK0f2KxBThsQ@mail.gmail.com>
-References: <20180409210717.3852-1-labbott@redhat.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
+Date: Tue, 10 Apr 2018 17:38:29 +0900
+Message-ID: <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com>
+References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180409210717.3852-1-labbott@redhat.com>
+In-Reply-To: <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Nandor Han <nandor.han@ge.com>, Kees Cook <keescook@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+To: Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laura,
-
-On Mon, Apr 9, 2018 at 11:07 PM, Laura Abbott <labbott@redhat.com> wrote:
-> Geert Uytterhoeven pointed out that the number of register was a
-> fixed upper bound so there's no need to use a dynamically allocated
-> array in place of a VLA. Use the defined upper bound.
+2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+> On Sun, Apr 8, 2018 at 8:07 PM, Pawe=C5=82 Chmiel
+> <pawel.mikolaj.chmiel@gmail.com> wrote:
+>> All banks with GPIO interrupts should be at beginning
+>> of bank array and without any other types of banks between them.
+>> This order is expected by exynos_eint_gpio_irq, when doing
+>> interrupt group to bank translation.
+>> Otherwise, kernel NULL pointer dereference would happen
+>> when trying to handle interrupt, due to wrong bank being looked up.
+>> Observed on s5pv210, when trying to handle gpj0 interrupt,
+>> where kernel was mapping it to gpi bank.
 >
-> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> Thanks for the patch. The issue looks real although one thing was
+> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
+> Marek Szyprowski):
+>
+> 0x0 - EINT_23 - gpk0
+> 0x1 - EINT_24 - gpk1
+> 0x2 - EINT_25 - gpk2
+> 0x4 - EINT_27 - gpl0
+> 0x7 - EINT_8 - gpm0
+>
+> Maybe this should be done differently - to remove such hidden
+> requirement entirely in favor of another parameter of
+> EXYNOS_PIN_BANK_EINTG argument?
 
-Thanks for your patch!
+Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
+a simple swap of bank order in the arrays should be okay.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+We might also need to have some fixes on 4x12, because I noticed that
+in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
+gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
+eint_offset equal to 0x08 (not 0).
 
-Gr{oetje,eeting}s,
+> Anyway if such hidden requirement
+> stays, then please document it in the source code (it maybe next to
+> PIN order... or next macro... or also in exynos_eint_gpio_irq()).
+>
+> Beside that please add cc-stable and appropriate fixes tag,
 
-                        Geert
+Agreed. Probably the only safe way of documenting this is to put it
+inside each bank array, so that when someone creates a copy/paste for
+new SoC, the comment is clearly visible... Perhaps something like:
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+/* Must start with EINTG banks, ordered by EINT group number. */
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Tomasz
