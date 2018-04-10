@@ -1,72 +1,215 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v3 4/4] DTS: Bindings: pca953x: add example how to use interrupt-controller and gpio-controller
-Date: Tue, 10 Apr 2018 18:07:04 +0200
-Message-ID: <95fa67c09ef009675f6989662b657b6c8b9ac839.1523376423.git.hns@goldelico.com>
-References: <cover.1523376423.git.hns@goldelico.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2] gpiolib: add hogs support for machine code
+Date: Tue, 10 Apr 2018 22:30:28 +0200
+Message-ID: <20180410203028.11412-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1523376423.git.hns@goldelico.com>
-In-Reply-To: <cover.1523376423.git.hns@goldelico.com>
-References: <cover.1523376423.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: galak@codeaurora.org, andy.shevchenko@gmail.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org, kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-It is not completely obvious that these are required and
-how to use them. So we provide a tested example.
+Board files constitute a significant part of the users of the legacy
+GPIO framework. In many cases they only export a line and set its
+desired value. We could use GPIO hogs for that like we do for DT and
+ACPI but there's no support for that in machine code.
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+This patch proposes to extend the machine.h API with support for
+registering hog tables in board files.
+
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- .../devicetree/bindings/gpio/gpio-pca953x.txt      | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+v1 -> v2:
+- kbuild bot complains about enum gpiod_flags having incomplete type
+  although it builds fine for me locally: change the type of dflags
+  to int
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-index 6a7cddb187c1..88f228665507 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-@@ -31,6 +31,10 @@ Required properties:
- 	ti,tca9554
- 	onnn,pca9654
- 	exar,xra1202
-+ - gpio-controller: if used as gpio expander.
-+ - #gpio-cells: if used as gpio expander.
-+ - interrupt-controller: if to be used as interrupt expander.
-+ - #interrupt-cells: if to be used as interrupt expander.
+ Documentation/driver-api/gpio/board.rst | 16 ++++++
+ drivers/gpio/gpiolib.c                  | 67 +++++++++++++++++++++++++
+ include/linux/gpio/machine.h            | 31 ++++++++++++
+ 3 files changed, 114 insertions(+)
+
+diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driver-api/gpio/board.rst
+index 25d62b2e9fd0..2c112553df84 100644
+--- a/Documentation/driver-api/gpio/board.rst
++++ b/Documentation/driver-api/gpio/board.rst
+@@ -177,3 +177,19 @@ mapping and is thus transparent to GPIO consumers.
  
- Optional properties:
-  - reset-gpios: GPIO specification for the RESET input. This is an
-@@ -48,3 +52,32 @@ Example:
- 		interrupt-parent = <&gpio3>;
- 		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
- 	};
+ A set of functions such as gpiod_set_value() is available to work with
+ the new descriptor-oriented interface.
 +
++Boards using platform data can also hog GPIO lines by defining GPIO hog tables.
 +
-+Example with Interrupts:
++.. code-block:: c
 +
++        struct gpiod_hog gpio_hog_table[] = {
++                GPIO_HOG("gpio.0", 10, "foo", GPIO_ACTIVE_LOW, GPIOD_OUT_HIGH),
++                { }
++        };
 +
-+	gpio99: gpio@22 {
-+		compatible = "nxp,pcal6524";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;	/* gpio6_161 */
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		vcc-supply = <&vdds_1v8_main>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names =
-+			"hdmi-ct-hpd", "hdmi.ls-oe", "p02", "p03", "vibra", "fault2", "p06", "p07",
-+			"en-usb", "en-host1", "en-host2", "chg-int", "p14", "p15", "mic-int", "en-modem",
-+			"shdn-hs-amp", "chg-status+red", "green", "blue", "en-esata", "fault1", "p26", "p27";
-+	};
++And the table can be added to the board code as follows::
 +
-+	ts3a227@3b {
-+		compatible = "ti,ts3a227e";
-+		reg = <0x3b>;
-+		interrupt-parent = <&gpio99>;
-+		interrupts = <14 IRQ_TYPE_EDGE_RISING>;
-+		ti,micbias = <0>;	/* 2.1V */
-+	};
++        gpiod_add_hogs(gpio_hog_table);
 +
++The line will be hogged as soon as the gpiochip is created or - in case the
++chip was created earlier - when the hog table is registered.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 43aeb07343ec..547adc149b62 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -71,6 +71,9 @@ static DEFINE_MUTEX(gpio_lookup_lock);
+ static LIST_HEAD(gpio_lookup_list);
+ LIST_HEAD(gpio_devices);
+ 
++static DEFINE_MUTEX(gpio_machine_hogs_mutex);
++static LIST_HEAD(gpio_machine_hogs);
++
+ static void gpiochip_free_hogs(struct gpio_chip *chip);
+ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
+ 				struct lock_class_key *lock_key,
+@@ -1171,6 +1174,41 @@ static int gpiochip_setup_dev(struct gpio_device *gdev)
+ 	return status;
+ }
+ 
++static void gpiochip_machine_hog(struct gpio_chip *chip, struct gpiod_hog *hog)
++{
++	struct gpio_desc *desc;
++	int rv;
++
++	desc = gpiochip_get_desc(chip, hog->chip_hwnum);
++	if (IS_ERR(desc)) {
++		pr_err("%s: unable to get GPIO desc: %ld\n",
++		       __func__, PTR_ERR(desc));
++		return;
++	}
++
++	if (desc->flags & FLAG_IS_HOGGED)
++		return;
++
++	rv = gpiod_hog(desc, hog->line_name, hog->lflags, hog->dflags);
++	if (rv)
++		pr_err("%s: unable to hog GPIO line (%s:%u): %d\n",
++		       __func__, chip->label, hog->chip_hwnum, rv);
++}
++
++static void machine_gpiochip_add(struct gpio_chip *chip)
++{
++	struct gpiod_hog *hog;
++
++	mutex_lock(&gpio_machine_hogs_mutex);
++
++	list_for_each_entry(hog, &gpio_machine_hogs, list) {
++		if (!strcmp(chip->label, hog->chip_label))
++			gpiochip_machine_hog(chip, hog);
++	}
++
++	mutex_unlock(&gpio_machine_hogs_mutex);
++}
++
+ static void gpiochip_setup_devs(void)
+ {
+ 	struct gpio_device *gdev;
+@@ -1326,6 +1364,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 
+ 	acpi_gpiochip_add(chip);
+ 
++	machine_gpiochip_add(chip);
++
+ 	/*
+ 	 * By first adding the chardev, and then adding the device,
+ 	 * we get a device node entry in sysfs under
+@@ -3462,6 +3502,33 @@ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
+ }
+ EXPORT_SYMBOL_GPL(gpiod_remove_lookup_table);
+ 
++/**
++ * gpiod_add_hogs() - register a set of GPIO hogs from machine code
++ * @hogs: table of gpio hog entries with a zeroed sentinel at the end
++ */
++void gpiod_add_hogs(struct gpiod_hog *hogs)
++{
++	struct gpio_chip *chip;
++	struct gpiod_hog *hog;
++
++	mutex_lock(&gpio_machine_hogs_mutex);
++
++	for (hog = &hogs[0]; hog->chip_label; hog++) {
++		list_add_tail(&hog->list, &gpio_machine_hogs);
++
++		/*
++		 * The chip may have been registered earlier, so check if it
++		 * exists and, if so, try to hog the line now.
++		 */
++		chip = find_chip_by_name(hog->chip_label);
++		if (chip)
++			gpiochip_machine_hog(chip, hog);
++	}
++
++	mutex_unlock(&gpio_machine_hogs_mutex);
++}
++EXPORT_SYMBOL_GPL(gpiod_add_hogs);
++
+ static struct gpiod_lookup_table *gpiod_find_lookup_table(struct device *dev)
+ {
+ 	const char *dev_id = dev ? dev_name(dev) : NULL;
+diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
+index b2f2dc638463..daa44eac9241 100644
+--- a/include/linux/gpio/machine.h
++++ b/include/linux/gpio/machine.h
+@@ -39,6 +39,23 @@ struct gpiod_lookup_table {
+ 	struct gpiod_lookup table[];
+ };
+ 
++/**
++ * struct gpiod_hog - GPIO line hog table
++ * @chip_label: name of the chip the GPIO belongs to
++ * @chip_hwnum: hardware number (i.e. relative to the chip) of the GPIO
++ * @line_name: consumer name for the hogged line
++ * @lflags: mask of GPIO lookup flags
++ * @dflags: GPIO flags used to specify the direction and value
++ */
++struct gpiod_hog {
++	struct list_head list;
++	const char *chip_label;
++	u16 chip_hwnum;
++	const char *line_name;
++	enum gpio_lookup_flags lflags;
++	int dflags;
++};
++
+ /*
+  * Simple definition of a single GPIO under a con_id
+  */
+@@ -59,10 +76,23 @@ struct gpiod_lookup_table {
+ 	.flags = _flags,                                                  \
+ }
+ 
++/*
++ * Simple definition of a single GPIO hog in an array.
++ */
++#define GPIO_HOG(_chip_label, _chip_hwnum, _line_name, _lflags, _dflags)  \
++{                                                                         \
++	.chip_label = _chip_label,                                        \
++	.chip_hwnum = _chip_hwnum,                                        \
++	.line_name = _line_name,                                          \
++	.lflags = _lflags,                                                \
++	.dflags = _dflags,                                                \
++}
++
+ #ifdef CONFIG_GPIOLIB
+ void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
+ void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n);
+ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table);
++void gpiod_add_hogs(struct gpiod_hog *hogs);
+ #else
+ static inline
+ void gpiod_add_lookup_table(struct gpiod_lookup_table *table) {}
+@@ -70,6 +100,7 @@ static inline
+ void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n) {}
+ static inline
+ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table) {}
++static inline void gpiod_add_hogs(struct gpiod_hog *hogs) {}
+ #endif
+ 
+ #endif /* __LINUX_GPIO_MACHINE_H */
 -- 
-2.12.2
+2.17.0
