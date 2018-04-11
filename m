@@ -1,63 +1,87 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 4/5] soc/tegra: pmc: Use of_clk_get_parent_count()
- instead of open coding
-Date: Wed, 11 Apr 2018 10:07:47 +0100
-Message-ID: <a96706de-f680-7ef2-53fd-d2cf07b6061b@nvidia.com>
-References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
- <1523364701-15383-5-git-send-email-geert+renesas@glider.be>
+From: Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH 5/5] ARM: dts: stm32: add joystick support on stm32746g-eval
+Date: Wed, 11 Apr 2018 11:47:05 +0200
+Message-ID: <1523440025-18077-6-git-send-email-amelie.delaunay@st.com>
+References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1523364701-15383-5-git-send-email-geert+renesas@glider.be>
-Content-Language: en-US
+In-Reply-To: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Lee Jones <lee.jones@linaro.org>, Amelie Delaunay <amelie.delaunay@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
+The joystick (B3) on stm32746g-eval uses gpios on STMFX gpio expander.
+These gpios need a pin configuration (push-pull and bias-pull-up),
+described under stmfxpinctrl node.
 
-On 10/04/18 13:51, Geert Uytterhoeven wrote:
-> As of_clk_get_parent_count() returns zero on failure, while
-> of_count_phandle_with_args() might return a negative error code, this
-> also fixes the issue of possibly using a very big number in the
-> allocation below.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
-> <linux/of_clk.h>".
-> 
-> v2:
->   - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
-> ---
->  drivers/soc/tegra/pmc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index d9fcdb592b3966a5..d8cb48a4b8eb1b78 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -31,6 +31,7 @@
->  #include <linux/iopoll.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_clk.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
-> @@ -725,7 +726,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
->  	unsigned int i, count;
->  	int err;
->  
-> -	count = of_count_phandle_with_args(np, "clocks", "#clock-cells");
-> +	count = of_clk_get_parent_count(np);
->  	if (count == 0)
->  		return -ENODEV;
->  
-> 
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ arch/arm/boot/dts/stm32746g-eval.dts | 44 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
+diff --git a/arch/arm/boot/dts/stm32746g-eval.dts b/arch/arm/boot/dts/stm32746g-eval.dts
+index fd03f54..ee9ec55 100644
+--- a/arch/arm/boot/dts/stm32746g-eval.dts
++++ b/arch/arm/boot/dts/stm32746g-eval.dts
+@@ -90,6 +90,44 @@
+ 		};
+ 	};
+ 
++	joystick {
++		compatible = "gpio-keys";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-0 = <&joystick_pins>;
++		pinctrl-names = "default";
++		button@0 {
++			label = "JoySel";
++			linux,code = <KEY_ENTER>;
++			interrupt-parent = <&stmfxgpio>;
++			interrupts = <0 2>;
++		};
++		button@1 {
++			label = "JoyDown";
++			linux,code = <KEY_DOWN>;
++			interrupt-parent = <&stmfxgpio>;
++			interrupts = <1 2>;
++		};
++		button@2 {
++			label = "JoyLeft";
++			linux,code = <KEY_LEFT>;
++			interrupt-parent = <&stmfxgpio>;
++			interrupts = <2 2>;
++		};
++		button@3 {
++			label = "JoyRight";
++			linux,code = <KEY_RIGHT>;
++			interrupt-parent = <&stmfxgpio>;
++			interrupts = <3 2>;
++		};
++		button@4 {
++			label = "JoyUp";
++			linux,code = <KEY_UP>;
++			interrupt-parent = <&stmfxgpio>;
++			interrupts = <4 2>;
++		};
++	};
++
+ 	usbotg_hs_phy: usb-phy {
+ 		#phy-cells = <0>;
+ 		compatible = "usb-nop-xceiv";
+@@ -127,6 +165,12 @@
+ 			interrupt-controller;
+ 			status = "okay";
+ 		};
++
++		joystick_pins: joystick@0 {
++			pins = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4";
++			drive-push-pull;
++			bias-pull-up;
++		};
+ 	};
+ };
+ 
+-- 
+2.7.4
