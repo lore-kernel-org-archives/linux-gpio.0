@@ -1,42 +1,47 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH] gpio: zynq: Setup chip->base based on alias ID
-Date: Wed, 11 Apr 2018 15:55:01 +0200
-Message-ID: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCHv4] gpio: Remove VLA from gpiolib
+Date: Wed, 11 Apr 2018 17:03:00 +0200
+Message-ID: <20180411150300.GA32719@wunner.de>
+References: <20180411010352.17929-1-labbott@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180411010352.17929-1-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu
-Cc: Steffen Trumtrar <s.trumtrar@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, linux-gpio@vger.kernel.org, Rob Herring <robherring2@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Laura Abbott <labbott@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-In past Xilinx gpio-zynq driver was setting up gpio chip->base as 0
-which was chagned to autodetection when driver was upstreamed. Older
-systems, which were using this old version, setup SW stack which expects
-zynq gpio base as 0 and right now there is no way how to set this up.
+On Tue, Apr 10, 2018 at 06:03:52PM -0700, Laura Abbott wrote:
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -61,6 +61,11 @@ static struct bus_type gpio_bus_type = {
+>  	.name = "gpio",
+>  };
+>  
+> +/*
+> + * Number of GPIOs to use for the fast path in set array
+> + */
+> +#define FASTPATH_NGPIO 256
 
-The patch is adding an option to setup chip->base based on aliases which
-is something what some other drivers are doing too.
-It means when gpio0 alias is setup then chip->base is 0. When gpio alias
-is not setup gpiochip_find_base() set it up properly which is current
-behavior.
+Hm, this has regressed from 384 back to 256 since v3.
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
 
- drivers/gpio/gpio-zynq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> @@ -2653,6 +2661,7 @@ static int gpio_chip_get_multiple(struct gpio_chip *chip,
+>  	return -EIO;
+>  }
+>  
+> +
+>  int gpiod_get_array_value_complex(bool raw, bool can_sleep,
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 23bb10576def..412cb5f31a9b 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -831,7 +831,7 @@ static int zynq_gpio_probe(struct platform_device *pdev)
- 	chip->free = zynq_gpio_free;
- 	chip->direction_input = zynq_gpio_dir_in;
- 	chip->direction_output = zynq_gpio_dir_out;
--	chip->base = -1;
-+	chip->base = of_alias_get_id(pdev->dev.of_node, "gpio");
- 	chip->ngpio = gpio->p_data->ngpio;
- 
- 	/* Retrieve GPIO clock */
--- 
-2.17.0
+Spurious newline.  (In v3 this was the place where FASTPATH_NGPIO was
+defined, this is a leftover from when you moved it further up.)
+
+I've given this another quick test with gpio-hammer and it worked fine,
+so this is still
+Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+
+Thanks a lot!
+
+Lukas
