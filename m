@@ -1,44 +1,61 @@
-From: Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH 4/5] ARM: dts: stm32: add orange and blue leds on stm32746g-eval
-Date: Wed, 11 Apr 2018 11:47:04 +0200
-Message-ID: <1523440025-18077-5-git-send-email-amelie.delaunay@st.com>
-References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
+Date: Wed, 11 Apr 2018 11:52:44 +0200
+Message-ID: <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
+References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+ <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
+ <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com> <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
+In-Reply-To: <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Lee Jones <lee.jones@linaro.org>, Amelie Delaunay <amelie.delaunay@st.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Orange (LD2) and blue (LD4) leds on stm32746g-eval are connected on
-STMFX gpio expander, offset 17 and 19.
+On Wed, Apr 11, 2018 at 10:36 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> 2018-04-10 17:38 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
+>> 2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+>>> On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
+>>> <pawel.mikolaj.chmiel@gmail.com> wrote:
+>>>> All banks with GPIO interrupts should be at beginning
+>>>> of bank array and without any other types of banks between them.
+>>>> This order is expected by exynos_eint_gpio_irq, when doing
+>>>> interrupt group to bank translation.
+>>>> Otherwise, kernel NULL pointer dereference would happen
+>>>> when trying to handle interrupt, due to wrong bank being looked up.
+>>>> Observed on s5pv210, when trying to handle gpj0 interrupt,
+>>>> where kernel was mapping it to gpi bank.
+>>>
+>>> Thanks for the patch. The issue looks real although one thing was
+>>> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
+>>> Marek Szyprowski):
+>>>
+>>> 0x0 - EINT_23 - gpk0
+>>> 0x1 - EINT_24 - gpk1
+>>> 0x2 - EINT_25 - gpk2
+>>> 0x4 - EINT_27 - gpl0
+>>> 0x7 - EINT_8 - gpm0
+>>>
+>>> Maybe this should be done differently - to remove such hidden
+>>> requirement entirely in favor of another parameter of
+>>> EXYNOS_PIN_BANK_EINTG argument?
+>>
+>> Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
+>> a simple swap of bank order in the arrays should be okay.
+>>
+>> We might also need to have some fixes on 4x12, because I noticed that
+>> in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
+>> gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
+>> eint_offset equal to 0x08 (not 0).
+>
+> To close the loop, after talking offline and checking the
+> documentation, Exynos4x12 is fine, because the group numbers in SVC
+> register actually match what is defined in bank arrays.
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- arch/arm/boot/dts/stm32746g-eval.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+Great! Thanks for checking.
 
-diff --git a/arch/arm/boot/dts/stm32746g-eval.dts b/arch/arm/boot/dts/stm32746g-eval.dts
-index bd9a33d..fd03f54 100644
---- a/arch/arm/boot/dts/stm32746g-eval.dts
-+++ b/arch/arm/boot/dts/stm32746g-eval.dts
-@@ -67,9 +67,15 @@
- 			gpios = <&gpiof 10 1>;
- 			linux,default-trigger = "heartbeat";
- 		};
-+		orange {
-+			gpios = <&stmfxgpio 17 1>;
-+		};
- 		red {
- 			gpios = <&gpiob 7 1>;
- 		};
-+		blue {
-+			gpios = <&stmfxgpio 19 1>;
-+		};
- 	};
- 
- 	gpio_keys {
--- 
-2.7.4
+Best regards,
+Krzysztof
