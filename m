@@ -1,105 +1,49 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 3/9] pinctrl: actions: Add Actions S900 pinctrl driver
-Date: Thu, 12 Apr 2018 14:29:01 +0200
-Message-ID: <CACRpkdbizcaB-EfK_5k-=5GsoMJrtNoE2HBdiZOmA62NnPsZBA@mail.gmail.com>
-References: <20180404172258.7678-1-manivannan.sadhasivam@linaro.org>
- <20180404172258.7678-4-manivannan.sadhasivam@linaro.org> <CACRpkdZPOSDenSORGVLPuJKPP_iE97mZLXHJLcF2kH5wKPw=tg@mail.gmail.com>
- <94aceb15-63a5-44a3-d0bc-f56adebc27d5@suse.de>
+Subject: Re: [PATCH] pinctrl: msm: fix gpio-hog related boot issues
+Date: Thu, 12 Apr 2018 14:48:56 +0200
+Message-ID: <CACRpkdacDjzF=CR59by8Zd44wJD12Sr5FSTd=Ph_eSH2QYZudA@mail.gmail.com>
+References: <20180328180705.29147-1-chunkeey@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <94aceb15-63a5-44a3-d0bc-f56adebc27d5@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh+dt@kernel.org>, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180328180705.29147-1-chunkeey@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Christian Lamparter <chunkeey@gmail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 2:10 PM, Andreas F=C3=A4rber <afaerber@suse.de> wro=
-te:
-> Am 12.04.2018 um 11:04 schrieb Linus Walleij:
->> On Wed, Apr 4, 2018 at 7:22 PM, Manivannan Sadhasivam
->> <manivannan.sadhasivam@linaro.org> wrote:
->>
->>> Add pinctrl driver for Actions Semi S900 SoC. The driver supports
->>> pinctrl, pinmux and pinconf functionalities through a range of register=
-s
->>> common to both gpio driver and pinctrl driver.
->>>
->>> Pinmux functionality is available only for the pin groups while the
->>> pinconf functionality is available for both pin groups and individual
->>> pins.
->>>
->>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->>
->> Patch applied for v4.18
->>
->> GOOD WORK!
->>
->> We really need to get this in so that Andreas can work on S500
->> patches with this as a base.
->
-> No, I refused to do that. If his patches get merged, Mani offered that
-> he will take care of rebasing/rewriting S500 part.
-
-OK then.
-
->> If any review comments still remain they can surely be addressed
->> with incremental improvement patches.
->
-> My biggest problem was/is that Mani designed his structs totally
-> different from mine, with no explanation why or how they correlate.
-
-This kind of clashes happen all the time because of parallel work.
-As much as we all hate to reimplement stuff just because
-coordination is not perfect, it still invariably happens, it's just
-a natural flaw to the way asynchronous development without
-project managers work.
-
-But what is important to keep in mind is that there is no bad
-intent from anyone here, you are both enthusiastic contributors
-and let's keep this friendly.
-
-If Manivannan has already offered to update your patch, that's
-great.
-
-If you feel any kind of annoyance or aggression toward another
-contributor, then I have a big problem as maintainer, and that
-problem is hard to solve, scary to deal with and extremely
-exhausting and diverting attention from important technical work,
-so please help me as much as you can NOT to give me this
-particular problem.
-
-> Also I had protested against him defining fake pins for the drive
-> strength. Since I did not have time to review the newer patches yet,
-> please make sure that this is addressed _before_ merging. Changing the
-> binding after the fact is a problem!
-
-This is more of a technical issue and a bit of philosophical
-debate on how to partition the hardware so as to be represented
-in the binding.
-
-Let's discuss it. Surely Manivannan can augment his DT
-bindings if there is a problem.
-
-With that in mind, I have a softer stance that some DT
-fundamentalists out there: I do not consider the DT binding as
-etched in stone because it was merged to the kernel tree. I
-see the stone-etching as something that happens when a
-mass-produced system is deployed with a DTB file
-using these bindings in its boot partition. When sold to
-end users.
-
-That means that these bindings can still be augmented
-as long as we are in prototype stage, and if we are just
-talking about hobbyist work using attached device trees
-or booting off media with DTB as a separate target image
-but copied from the kernel tree, we can always augment
-them.
-
-I guess some will disagree with me on this stance.
-But those are my principles.
-If you don't like them, I have others. :D
-
-Yours,
-Linus Walleij
+T24gV2VkLCBNYXIgMjgsIDIwMTggYXQgODowNyBQTSwgQ2hyaXN0aWFuIExhbXBhcnRlciA8Y2h1
+bmtlZXlAZ21haWwuY29tPiB3cm90ZToKCj4gVGhpcyBwYXRjaCBmaXhlcyB0aGUgaXNzdWUgYnkg
+YWRkaW5nIHRoZSAiZ3Bpby1yYW5nZXMiIHByb3BlcnR5Cj4gdG8gdGhlIHBpbmN0cmwgZGV2aWNl
+IG5vZGUgb2YgYWxsIHVwc3RyZWFtIFFjb20gU29DLCBzbyB0aGUKPiByYW5nZXMgYXJlIGFkZGVk
+IGJ5IG9mX2dwaW9jaGlwX2FkZF9waW5fcmFuZ2UoKSwgd2hpY2ggaXMKPiBjYWxsZWQgYnkgb2Zf
+Z3Bpb2NoaXBfYWRkKCkgYmVmb3JlIHRoZSBjYWxsIHRvCj4gb2ZfZ3Bpb2NoaXBfc2Nhbl9ncGlv
+cygpIGhhcHBlbnMuZ3Bpb2NoaXBfYWRkX3Bpbl9yYW5nZSgpIGlzIGxvbmdlcgo+IG5lZWRlZCBh
+bmQgcmVtb3ZlZCAodG8gcHJldmVudCBhZGRpbmcgdGhlIHNhbWUgZW50cnkgdG8gdGhlCj4gcGlu
+Y3RybGRldl9saXN0IHR3aWNlKS4KClRoYXQncyBwcmV0dHkgbmVhdCEKCj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgZ3Bpby1jb250cm9sbGVyOwo+ICsgICAgICAgICAgICAgICAgICAgICAgIGdw
+aW8tcmFuZ2VzID0gPCZ0bG1tX3Bpbm11eCAwIDAgOTA+OwoKbmljZSEKCj4gLSAgICAgICByZXQg
+PSBncGlvY2hpcF9hZGRfcGluX3JhbmdlKCZwY3RybC0+Y2hpcCwgZGV2X25hbWUocGN0cmwtPmRl
+diksIDAsIDAsIGNoaXAtPm5ncGlvKTsKPiAtICAgICAgIGlmIChyZXQpIHsKPiAtICAgICAgICAg
+ICAgICAgZGV2X2VycihwY3RybC0+ZGV2LCAiRmFpbGVkIHRvIGFkZCBwaW4gcmFuZ2VcbiIpOwo+
+IC0gICAgICAgICAgICAgICBncGlvY2hpcF9yZW1vdmUoJnBjdHJsLT5jaGlwKTsKPiAtICAgICAg
+ICAgICAgICAgcmV0dXJuIHJldDsKPiAtICAgICAgIH0KCklmIHlvdSBpbnN0ZWFkIG9mIGRlbGV0
+ZWluZyB0aGlzLCBqdXN0IHdyYXAgaXQgaW5zaWRlCnNvbWV0aGluZyBsaWtlOgoKaWYgKCFvZl9w
+cm9wZXJ0eV9yZWFkX2Jvb2wobnAsICJncGlvLXJhbmdlcyIpIHsKICAoLi4uKQp9CgpZb3Ugd2ls
+bCBzdGF5IGNvbXBhdGlibGUgd2l0aCBlbGRlciBkZXZpY2UgdHJlZXMsIHNvbHZpbmcgQmrDtnJu
+cwppc3N1ZS4gWW91IHdpbGwgb25seSBiZSBhZGRpbmcgaG9ncyB0byBuZXdlciBkZXZpY2UgdHJl
+ZXMgd2l0aAp0aGUgcmFuZ2VzIGRlZmluZWQgYW55d2F5LgoKQmUgZ2VuZXJlb3VzIHdpdGggY29t
+bWVudHMgaW4gdGhlIGNvZGUgaWYgeW91IGNob29zZSB0aGlzCmFwcHJvYWNoIHNvIGV2ZXJ5b25l
+IHJlYWxpemUgd2hhdCBpcyBnb2luZyBvbi4KCllvdXJzLApMaW51cyBXYWxsZWlqCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVs
+IG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDov
+L2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
