@@ -1,60 +1,65 @@
 From: Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH] pinctrl: msm: fix gpio-hog related boot issues
-Date: Thu, 12 Apr 2018 21:05:59 +0200
-Message-ID: <3015969.TLpigVpPJ0@debian64>
-References: <20180328180705.29147-1-chunkeey@gmail.com>
- <CACRpkdacDjzF=CR59by8Zd44wJD12Sr5FSTd=Ph_eSH2QYZudA@mail.gmail.com>
+Subject: Re: [PATCH v2] gpiolib: add hogs support for machine code
+Date: Thu, 12 Apr 2018 22:00:07 +0200
+Message-ID: <17720832.6ELUnVt0BR@debian64>
+References: <20180410203028.11412-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdacDjzF=CR59by8Zd44wJD12Sr5FSTd=Ph_eSH2QYZudA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180410203028.11412-1-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Donnerstag, 12. April 2018 14:48:56 CEST Linus Walleij wrote:
-> On Wed, Mar 28, 2018 at 8:07 PM, Christian Lamparter <chunkeey@gmail.com>=
- wrote:
-> =
+On Dienstag, 10. April 2018 22:30:28 CEST Bartosz Golaszewski wrote:
+> Board files constitute a significant part of the users of the legacy
+> GPIO framework. In many cases they only export a line and set its
+> desired value. We could use GPIO hogs for that like we do for DT and
+> ACPI but there's no support for that in machine code.
+> 
+> This patch proposes to extend the machine.h API with support for
+> registering hog tables in board files.
+> 
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> ---
+> @@ -1326,6 +1364,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>  
+>  	acpi_gpiochip_add(chip);
+>  
+> +	machine_gpiochip_add(chip);
+> +
+>  	/*
+>  	 * By first adding the chardev, and then adding the device,
+>  	 * we get a device node entry in sysfs under
+> @@ -3462,6 +3502,33 @@ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
 
-> > -       ret =3D gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->de=
-v), 0, 0, chip->ngpio);
-> > -       if (ret) {
-> > -               dev_err(pctrl->dev, "Failed to add pin range\n");
-> > -               gpiochip_remove(&pctrl->chip);
-> > -               return ret;
-> > -       }
-> =
+I think I see the same problem right here in regards to pinctrls
+and gpiohogs that have with DeviceTree:
+<https://patchwork.kernel.org/patch/10313767/>
 
-> If you instead of deleteing this, just wrap it inside
-> something like:
-> =
+The problem is that unlike native gpio-controllers, pinctrls need 
+to have a "pin/gpio range" defined before any gpio-hogs can be added.
 
-> if (!of_property_read_bool(np, "gpio-ranges") {
->   (...)
-> }
-> =
+If this is not the case the generic pinctrl_gpio_reguest() [0] will
+fail with -EPROBE_DEFER at this point. (see the call chain in the
+"pinctrl: msm: fix gpio-hog related boot issueslogin register" mail
+starting from gpiod_hog).
 
-> You will stay compatible with elder device trees, solving Bj=F6rns
-> issue. You will only be adding hogs to newer device trees with
-> the ranges defined anyway.
-> =
+And now the crux of the matter is that currently in order for pinctrl
+drivers to register the range they have to call gpiochip_add_pin_range() [1]. 
+But they only can do it after the gpiochip_add_data_with_key() [2], since
+this function initializes the pin_ranges list [3].
 
-> Be genereous with comments in the code if you choose this
-> approach so everyone realize what is going on.
-Thank you for your insightful advice. I just sent out v4 which
-goes the of_property_read_bool route. Let's wait and see what
-kbuilt-bot has to say.
+So what will happen is that you'll get an
+"gpiochip_machine_hog: unable to hog GPIO line $LABEL $GPIONR -517" error
+for every single gpio-hog and wonder why :(.
 
-Best Regards,
+Regards,
 Christian
+
+[0] <https://elixir.bootlin.com/linux/v4.16.2/source/drivers/pinctrl/core.c#L743>
+[1] <https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib.c#L2078>
+[2] <https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib.c#L1136>
+[3] <https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib.c#L1253>
