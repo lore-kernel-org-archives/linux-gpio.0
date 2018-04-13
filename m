@@ -1,135 +1,47 @@
-From: Laura Abbott <labbott@redhat.com>
-Subject: Re: [PATCHv4] gpio: Remove VLA from gpiolib
-Date: Fri, 13 Apr 2018 14:10:22 -0700
-Message-ID: <0aea6c90-ba94-708c-5cad-836c50dadfe6@redhat.com>
-References: <20180411010352.17929-1-labbott@redhat.com>
- <CACRpkdb04=5eHW3xR-qmY6UzOUcAC35mV4eDgHaFn9nQEL_eEw@mail.gmail.com>
- <c618af81-2dbb-1aff-212a-e87e56caa7eb@electromag.com.au>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
+Date: Fri, 13 Apr 2018 16:16:44 -0500
+Message-ID: <20180413211644.wd7lrl4phqtshpzp@rob-hp-laptop>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+ <1523364701-15383-2-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c618af81-2dbb-1aff-212a-e87e56caa7eb@electromag.com.au>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1523364701-15383-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Reid <preid@electromag.com.au>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 04/12/2018 05:39 PM, Phil Reid wrote:
-> On 12/04/2018 16:38, Linus Walleij wrote:
->> On Wed, Apr 11, 2018 at 3:03 AM, Laura Abbott <labbott@redhat.com> wrote:
->>
->>> The new challenge is to remove VLAs from the kernel
->>> (see https://lkml.org/lkml/2018/3/7/621) to eventually
->>> turn on -Wvla.
->>>
->>> Using a kmalloc array is the easy way to fix this but kmalloc is still
->>> more expensive than stack allocation. Introduce a fast path with a
->>> fixed size stack array to cover most chip with gpios below some fixed
->>> amount. The slow path dynamically allocates an array to cover those
->>> chips with a large number of gpios.
->>>
->>> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
->>> Signed-off-by: Lukas Wunner <lukas@wunner.de>
->>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>> ---
->>> v4: Changed some local variables to avoid coccinelle warnings. Added a
->>> warning if the number of GPIOs exceeds the current fast path define.
->>>
->>> Lukas, I kept your Tested-by because the changes were pretty minimal.
->>> Let me know if you want to run the tests again.
->>
->> This patch is starting to look really good.
->>
->>> +/*
->>> + * Number of GPIOs to use for the fast path in set array
->>> + */
->>> +#define FASTPATH_NGPIO 256
->>
->> There is still some comment about this.
->>
->> And now that I am also tryint to think I wonder about it, we
->> have a global ARCH_NR_GPIOS that is typically 512.
->> Some archs set it up.
->>
->> This define is something of an abomination, in the ARM
->> case it comes from arch/arm/include/asm/gpio.h
->> where #define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
->> where the latter is a Kconfig option that is mostly 512 for
->> most ARM systems.
->>
->> Well, ARM looks like this:
->>
->> config ARCH_NR_GPIO
->>          int
->>          default 2048 if ARCH_SOCFPGA
->>          default 1024 if ARCH_BRCMSTB || ARCH_SHMOBILE || ARCH_TEGRA || \
->>                  ARCH_ZYNQ
->>          default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 || \
->>                  SOC_DRA7XX || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
->>          default 416 if ARCH_SUNXI
->>          default 392 if ARCH_U8500
->>          default 352 if ARCH_VT8500
->>          default 288 if ARCH_ROCKCHIP
->>          default 264 if MACH_H4700
->>          default 0
->>          help
->>            Maximum number of GPIOs in the system.
->>
->>            If unsure, leave the default value.
->>
->> So if FASTPATH_NGPIO should be anything else than
->> ARCH_NR_GPIO this has to be established somewhere
->> as a floor or half or something, but I would just set it as
->> the same as ARCH_NR_GPIOS...
->>
->> The main reason this define exist is for this function
->> from <linux/gpio/consumer.h>:
->>
->> /* Convert between the old gpio_ and new gpiod_ interfaces */
->> struct gpio_desc *gpio_to_desc(unsigned gpio);
->>
->> Nowadays that fact is a bit obscured since the variable is
->> only used when assigning the base (in the global GPIO
->> number space, which is what we want to get rid of but
->> sigh) in gpiochip_find_base() where it attempts to place
->> a newly allocated gpiochip in the higher region of this
->> numberspace since the embedded SoC GPIO base tends
->> to be 0, on old platforms.
->>
->> So I don't know about this.
->>
->> Can't we just use ARCH_NR_GPIOS?
->>
->> Very few systems have more than 512 assigned global
->> GPIO numbers and those are FPGA experimental machines.
->>
->> In the long run obviously I want to get rid of these defines
->> altogether and only allocate GPIO descriptos dynamically
->> so as you see I am reluctant to add new numberspace weirdness
->> around here.
-> Isn't that for total GPIO's in the system?
-> And the arrays just need to cater for max per chip?
->  From what I can understand of the code which is admittedly limited.
+On Tue, Apr 10, 2018 at 02:51:37PM +0200, Geert Uytterhoeven wrote:
+> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
+> limited to clock providers.
 > 
+> Hence move these helpers into their own header file, so callers that are
+> not clock providers no longer have to include <linux/clk-provider.h>.
 > 
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - New.
+> 
+> I have't added an SPDX-License-Identifier line, as
+> <linux/clk-provider.h> also doesn't have one yet.
 
-Yeah the switch back to 256 was a mistake on my end (I think I
-grabbed an incorrect version for my base). ARCH_NR_GPIOs
-is the total number in the system which may be multiple
-chips so yes we would be possibly allocating more space
-than necessary.
+Should that matter?
 
-unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)]
+> 
+> Other candidates to be moved here later?
+>   - of_clk_get(),
+>   - of_clk_get_by_name(),
+>   - of_clk_get_from_provider().
+> ---
+>  include/linux/clk-provider.h | 14 +-------------
+>  include/linux/of_clk.h       | 29 +++++++++++++++++++++++++++++
 
-unsigned long fastpath[2 * BITS_TO_LONGS(512)]
-unsigned long fastpath[2 * DIV_ROUND_UP(512, 8 * sizeof(long))]
+Please update MAINTAINERS so I am not the maintainer. :)
 
-so we end up with 128 bytes on the stack total assuming I
-can do math correctly. I think this a fairly reasonable
-amount though, even if we are over-estimating if there are
-multiple chips.
-
-Thanks,
-Laura
+>  2 files changed, 30 insertions(+), 13 deletions(-)
+>  create mode 100644 include/linux/of_clk.h
