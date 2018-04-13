@@ -1,65 +1,120 @@
-From: Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH v2] gpiolib: add hogs support for machine code
-Date: Thu, 12 Apr 2018 22:00:07 +0200
-Message-ID: <17720832.6ELUnVt0BR@debian64>
-References: <20180410203028.11412-1-brgl@bgdev.pl>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: [PATCHv4] gpio: Remove VLA from gpiolib
+Date: Fri, 13 Apr 2018 08:39:06 +0800
+Message-ID: <c618af81-2dbb-1aff-212a-e87e56caa7eb@electromag.com.au>
+References: <20180411010352.17929-1-labbott@redhat.com>
+ <CACRpkdb04=5eHW3xR-qmY6UzOUcAC35mV4eDgHaFn9nQEL_eEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180410203028.11412-1-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-hardening-return-12983-glkh-kernel-hardening=m.gmane.org@lists.openwall.com>
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+In-Reply-To: <CACRpkdb04=5eHW3xR-qmY6UzOUcAC35mV4eDgHaFn9nQEL_eEw@mail.gmail.com>
+Content-Language: en-AU
+To: Linus Walleij <linus.walleij@linaro.org>, Laura Abbott <labbott@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Dienstag, 10. April 2018 22:30:28 CEST Bartosz Golaszewski wrote:
-> Board files constitute a significant part of the users of the legacy
-> GPIO framework. In many cases they only export a line and set its
-> desired value. We could use GPIO hogs for that like we do for DT and
-> ACPI but there's no support for that in machine code.
+On 12/04/2018 16:38, Linus Walleij wrote:
+> On Wed, Apr 11, 2018 at 3:03 AM, Laura Abbott <labbott@redhat.com> wrote:
 > 
-> This patch proposes to extend the machine.h API with support for
-> registering hog tables in board files.
+>> The new challenge is to remove VLAs from the kernel
+>> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+>> turn on -Wvla.
+>>
+>> Using a kmalloc array is the easy way to fix this but kmalloc is still
+>> more expensive than stack allocation. Introduce a fast path with a
+>> fixed size stack array to cover most chip with gpios below some fixed
+>> amount. The slow path dynamically allocates an array to cover those
+>> chips with a large number of gpios.
+>>
+>> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+>> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>> ---
+>> v4: Changed some local variables to avoid coccinelle warnings. Added a
+>> warning if the number of GPIOs exceeds the current fast path define.
+>>
+>> Lukas, I kept your Tested-by because the changes were pretty minimal.
+>> Let me know if you want to run the tests again.
 > 
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
-> @@ -1326,6 +1364,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->  
->  	acpi_gpiochip_add(chip);
->  
-> +	machine_gpiochip_add(chip);
-> +
->  	/*
->  	 * By first adding the chardev, and then adding the device,
->  	 * we get a device node entry in sysfs under
-> @@ -3462,6 +3502,33 @@ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
+> This patch is starting to look really good.
+> 
+>> +/*
+>> + * Number of GPIOs to use for the fast path in set array
+>> + */
+>> +#define FASTPATH_NGPIO 256
+> 
+> There is still some comment about this.
+> 
+> And now that I am also tryint to think I wonder about it, we
+> have a global ARCH_NR_GPIOS that is typically 512.
+> Some archs set it up.
+> 
+> This define is something of an abomination, in the ARM
+> case it comes from arch/arm/include/asm/gpio.h
+> where #define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
+> where the latter is a Kconfig option that is mostly 512 for
+> most ARM systems.
+> 
+> Well, ARM looks like this:
+> 
+> config ARCH_NR_GPIO
+>          int
+>          default 2048 if ARCH_SOCFPGA
+>          default 1024 if ARCH_BRCMSTB || ARCH_SHMOBILE || ARCH_TEGRA || \
+>                  ARCH_ZYNQ
+>          default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 || \
+>                  SOC_DRA7XX || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
+>          default 416 if ARCH_SUNXI
+>          default 392 if ARCH_U8500
+>          default 352 if ARCH_VT8500
+>          default 288 if ARCH_ROCKCHIP
+>          default 264 if MACH_H4700
+>          default 0
+>          help
+>            Maximum number of GPIOs in the system.
+> 
+>            If unsure, leave the default value.
+> 
+> So if FASTPATH_NGPIO should be anything else than
+> ARCH_NR_GPIO this has to be established somewhere
+> as a floor or half or something, but I would just set it as
+> the same as ARCH_NR_GPIOS...
+> 
+> The main reason this define exist is for this function
+> from <linux/gpio/consumer.h>:
+> 
+> /* Convert between the old gpio_ and new gpiod_ interfaces */
+> struct gpio_desc *gpio_to_desc(unsigned gpio);
+> 
+> Nowadays that fact is a bit obscured since the variable is
+> only used when assigning the base (in the global GPIO
+> number space, which is what we want to get rid of but
+> sigh) in gpiochip_find_base() where it attempts to place
+> a newly allocated gpiochip in the higher region of this
+> numberspace since the embedded SoC GPIO base tends
+> to be 0, on old platforms.
+> 
+> So I don't know about this.
+> 
+> Can't we just use ARCH_NR_GPIOS?
+> 
+> Very few systems have more than 512 assigned global
+> GPIO numbers and those are FPGA experimental machines.
+> 
+> In the long run obviously I want to get rid of these defines
+> altogether and only allocate GPIO descriptos dynamically
+> so as you see I am reluctant to add new numberspace weirdness
+> around here.
+Isn't that for total GPIO's in the system?
+And the arrays just need to cater for max per chip?
+ From what I can understand of the code which is admittedly limited.
 
-I think I see the same problem right here in regards to pinctrls
-and gpiohogs that have with DeviceTree:
-<https://patchwork.kernel.org/patch/10313767/>
 
-The problem is that unlike native gpio-controllers, pinctrls need 
-to have a "pin/gpio range" defined before any gpio-hogs can be added.
-
-If this is not the case the generic pinctrl_gpio_reguest() [0] will
-fail with -EPROBE_DEFER at this point. (see the call chain in the
-"pinctrl: msm: fix gpio-hog related boot issueslogin register" mail
-starting from gpiod_hog).
-
-And now the crux of the matter is that currently in order for pinctrl
-drivers to register the range they have to call gpiochip_add_pin_range() [1]. 
-But they only can do it after the gpiochip_add_data_with_key() [2], since
-this function initializes the pin_ranges list [3].
-
-So what will happen is that you'll get an
-"gpiochip_machine_hog: unable to hog GPIO line $LABEL $GPIONR -517" error
-for every single gpio-hog and wonder why :(.
-
-Regards,
-Christian
-
-[0] <https://elixir.bootlin.com/linux/v4.16.2/source/drivers/pinctrl/core.c#L743>
-[1] <https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib.c#L2078>
-[2] <https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib.c#L1136>
-[3] <https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib.c#L1253>
+-- 
+Regards
+Phil Reid
