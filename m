@@ -1,88 +1,135 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: RE: [PATCH v3] gpio: dwapb: Add support for 1 interrupt per port A
- GPIO
-Date: Fri, 13 Apr 2018 16:47:30 +0000
-Message-ID: <TY1PR01MB1769DB39F986BEADEF61F8C9F5B30@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1523609472-4481-1-git-send-email-phil.edworthy@renesas.com>
- <CAFHUOYziPaZC-Zcb7rXqC9p24H+CU4wK4NQShQkYLgH7c5mVwA@mail.gmail.com>
+From: Laura Abbott <labbott@redhat.com>
+Subject: Re: [PATCHv4] gpio: Remove VLA from gpiolib
+Date: Fri, 13 Apr 2018 14:10:22 -0700
+Message-ID: <0aea6c90-ba94-708c-5cad-836c50dadfe6@redhat.com>
+References: <20180411010352.17929-1-labbott@redhat.com>
+ <CACRpkdb04=5eHW3xR-qmY6UzOUcAC35mV4eDgHaFn9nQEL_eEw@mail.gmail.com>
+ <c618af81-2dbb-1aff-212a-e87e56caa7eb@electromag.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFHUOYziPaZC-Zcb7rXqC9p24H+CU4wK4NQShQkYLgH7c5mVwA@mail.gmail.com>
+In-Reply-To: <c618af81-2dbb-1aff-212a-e87e56caa7eb@electromag.com.au>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hoan Tran <hotran@apm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Michel Pollet <michel.pollet@bp.renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Devicetree List <devicetree@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: Phil Reid <preid@electromag.com.au>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgSG9hbiwNCg0KT24gMTMgQXByaWwgMjAxOCAxNzozNyBIb2FuIFRyYW4gd3JvdGU6DQo+IE9u
-IEZyaSwgQXByIDEzLCAyMDE4IGF0IDE6NTEgQU0sIFBoaWwgRWR3b3J0aHkgd3JvdGU6DQo+ID4g
-VGhlIERlc2lnbldhcmUgR1BJTyBJUCBjYW4gYmUgY29uZmlndXJlZCBmb3IgZWl0aGVyIDEgaW50
-ZXJydXB0IG9yIDENCj4gPiBwZXIgR1BJTyBpbiBwb3J0IEEsIGJ1dCB0aGUgZHJpdmVyIGN1cnJl
-bnRseSBvbmx5IHN1cHBvcnRzIDEgaW50ZXJydXB0Lg0KPiA+IFNlZSB0aGUgRGVzaWduV2FyZSBE
-V19hcGJfZ3BpbyBEYXRhYm9vayBkZXNjcmlwdGlvbiBvZiB0aGUNCj4gPiAnR1BJT19JTlRSX0lP
-JyBwYXJhbWV0ZXIuDQo+ID4NCj4gPiBUaGlzIGNoYW5nZSBhbGxvd3MgdGhlIGRyaXZlciB0byB3
-b3JrIHdpdGggdXAgdG8gMzIgaW50ZXJydXB0cywgaXQNCj4gPiB3aWxsIGdldCBhcyBtYW55IGlu
-dGVycnVwdHMgYXMgc3BlY2lmaWVkIGluIHRoZSBEVCAnaW50ZXJydXB0cycgcHJvcGVydHkuDQo+
-ID4gSXQgZG9lc24ndCBkbyBhbnl0aGluZyBjbGV2ZXIgd2l0aCB0aGUgZGlmZmVyZW50IGludGVy
-cnVwdHMsIGl0IGp1c3QNCj4gPiBjYWxscyB0aGUgc2FtZSBoYW5kbGVyIHVzZWQgZm9yIHNpbmds
-ZSBpbnRlcnJ1cHQgaGFyZHdhcmUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQaGlsIEVkd29y
-dGh5IDxwaGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+IE9uZSBwb2ludCB0
-byBtZW50aW9uIGlzIHRoYXQgSSBoYXZlIG1hZGUgaXQgcG9zc2libGUgZm9yIHVzZXJzIHRvIGhh
-dmUNCj4gPiB1bmNvbm5jdGVkIGludGVycnVwdHMgYnkgc3BlY2lmeWluZyBob2xlcyBpbiB0aGUg
-bGlzdCBvZiBpbnRlcnJ1cHRzLg0KPiA+IFRoaXMgaXMgZG9uZSBieSBzdXBwb3J0aW5nIHRoZSBp
-bnRlcnJ1cHRzLWV4dGVuZGVkIERUIHByb3AuDQo+ID4gSG93ZXZlciwgSSBoYXZlIG5vIHVzZSBm
-b3IgdGhpcyBhbmQgaGFkIHRvIGhhY2sgc29tZSB0ZXN0IGNhc2UgZm9yIHRoaXMuDQo+ID4gUGVy
-aGFwcyB0aGUgZHJpdmVyIHNob3VsZCBzdXBwb3J0IDEgaW50ZXJydXB0IG9yIGFsbCBHUElPYSBh
-cyBpbnRlcnJ1cHRzPw0KPiA+DQo+ID4gdjM6DQo+ID4gIC0gUm9sbGVkIG1mZDogaW50ZWxfcXVh
-cmtfaTJjX2dwaW8gZml4IGludG8gdGhpcyBwYXRjaCB0byBhdm9pZA0KPiA+IGJpc2VjdCBwcm9i
-bGVtcw0KPiA+IHYyOg0KPiA+ICAtIFJlcGxhY2VkIGludGVycnVwdC1tYXNrIERUIHByb3Agd2l0
-aCBzdXBwb3J0IGZvciB0aGUgaW50ZXJydXB0cy0NCj4gZXh0ZW5kZWQNCj4gPiAgICBwcm9wLiBU
-aGlzIG1lYW5zIHJlcGxhY2luZyB0aGUgY2FsbCB0byBpcnFfb2ZfcGFyc2VfYW5kX21hcCgpIHdp
-dGggY2FsbHMNCj4gPiAgICB0byBvZl9pcnFfcGFyc2Vfb25lKCkgYW5kIGlycV9jcmVhdGVfb2Zf
-bWFwcGluZygpLg0KPiA+DQo+ID4gTm90ZTogVGhlcmUgYXJlIGEgZmV3ICpjb2RlKiBsaW5lcyBv
-dmVyIDgwIGNoYXJzLCBidXQgdGhpcyBpcyBqdXN0IGd1aWRhbmNlLA0KPiA+ICAgIHJpZ2h0PyBF
-c3BlY2lhbGx5IGFzIHRoZXJlIGFyZSBhbHJlYWR5IHNvbWUgbGluZXMgb3ZlciA4MCBjaGFycy4N
-Cj4gPiAtLS0NCltzbmlwXQ0KDQo+ID4gLSAgICAgICAgICAgICAgIGlmIChoYXNfYWNwaV9jb21w
-YW5pb24oZGV2KSAmJiBwcC0+aWR4ID09IDApDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAg
-cHAtPmlycSA9IHBsYXRmb3JtX2dldF9pcnEodG9fcGxhdGZvcm1fZGV2aWNlKGRldiksIDApOw0K
-PiA+ICsgICAgICAgICAgICAgICBpZiAoaGFzX2FjcGlfY29tcGFuaW9uKGRldikgJiYgcHAtPmlk
-eCA9PSAwKSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcHAtPmlycVswXSA9IHBsYXRm
-b3JtX2dldF9pcnEodG9fcGxhdGZvcm1fZGV2aWNlKGRldiksIDApOw0KPiA+ICsgICAgICAgICAg
-ICAgICAgICAgICAgIGlmIChwcC0+aXJxWzBdKQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgcHAtPmhhc19pcnEgPSB0cnVlOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+IA0K
-PiBJdCBkb2Vzbid0IHdvcmsgZm9yIEFDUEkuIENvdWxkIHlvdSBkbyB0aGUgc2FtZSBsb2dpYyBm
-b3IgQUNQST8NCkkgZG9u4oCZdCBoYXZlIGFjY2VzcyB0byBhbnkgZGV2aWNlIHRoYXQgd2FzIGJh
-a2VkIChpLmUuIGZhYmJlZCkgd2l0aCBtdWx0aXBsZQ0Kb3V0cHV0IGludGVycnVwdHMgZnJvbSB0
-aGUgU3lub3BzeXMgR1BJTyBibG9ja3MgYW5kIHVzZSBBQ1BJLiBJIGRvbid0DQprbm93IGlmIGFu
-eSBzdWNoIGRldmljZSBleGlzdHMuDQoNCkkgd291bGQgcHJlZmVyIG5vdCB3cml0aW5nIGNvZGUg
-dGhhdCBjYW4gYmUgdGVzdGVkIGVhc2lseS4gSSBjYW5ub3QgZXZlbg0KdGVzdCB0aGUgY3VycmVu
-dCwgYWxiZWl0IHNtYWxsLCBjaGFuZ2VzIHRvIHRoZSBJbnRlbCBRdWFyayBNRkQuDQoNClJlZ2Fy
-ZHMNClBoaWwNCg0KPiBUaGFua3MNCj4gSG9hbg0KPiANCj4gPg0KPiA+ICAgICAgICAgICAgICAg
-ICBwcC0+aXJxX3NoYXJlZCAgPSBmYWxzZTsNCj4gPiAgICAgICAgICAgICAgICAgcHAtPmdwaW9f
-YmFzZSAgID0gLTE7DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWZkL2ludGVsX3F1YXJrX2ky
-Y19ncGlvLmMNCj4gPiBiL2RyaXZlcnMvbWZkL2ludGVsX3F1YXJrX2kyY19ncGlvLmMNCj4gPiBp
-bmRleCA5MGUzNWRlLi41YmRkYjg0IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbWZkL2ludGVs
-X3F1YXJrX2kyY19ncGlvLmMNCj4gPiArKysgYi9kcml2ZXJzL21mZC9pbnRlbF9xdWFya19pMmNf
-Z3Bpby5jDQo+ID4gQEAgLTIzMyw3ICsyMzMsOCBAQCBzdGF0aWMgaW50IGludGVsX3F1YXJrX2dw
-aW9fc2V0dXAoc3RydWN0IHBjaV9kZXYNCj4gKnBkZXYsIHN0cnVjdCBtZmRfY2VsbCAqY2VsbCkN
-Cj4gPiAgICAgICAgIHBkYXRhLT5wcm9wZXJ0aWVzLT5pZHggICAgICAgICAgPSAwOw0KPiA+ICAg
-ICAgICAgcGRhdGEtPnByb3BlcnRpZXMtPm5ncGlvICAgICAgICA9IElOVEVMX1FVQVJLX01GRF9O
-R1BJTzsNCj4gPiAgICAgICAgIHBkYXRhLT5wcm9wZXJ0aWVzLT5ncGlvX2Jhc2UgICAgPSBJTlRF
-TF9RVUFSS19NRkRfR1BJT19CQVNFOw0KPiA+IC0gICAgICAgcGRhdGEtPnByb3BlcnRpZXMtPmly
-cSAgICAgICAgICA9IHBkZXYtPmlycTsNCj4gPiArICAgICAgIHBkYXRhLT5wcm9wZXJ0aWVzLT5p
-cnFbMF0gICAgICAgPSBwZGV2LT5pcnE7DQo+ID4gKyAgICAgICBwZGF0YS0+cHJvcGVydGllcy0+
-aGFzX2lycSAgICAgID0gdHJ1ZTsNCj4gPiAgICAgICAgIHBkYXRhLT5wcm9wZXJ0aWVzLT5pcnFf
-c2hhcmVkICAgPSB0cnVlOw0KPiA+DQo+ID4gICAgICAgICBjZWxsLT5wbGF0Zm9ybV9kYXRhID0g
-cGRhdGE7DQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvcGxhdGZvcm1fZGF0YS9ncGlv
-LWR3YXBiLmgNCj4gPiBiL2luY2x1ZGUvbGludXgvcGxhdGZvcm1fZGF0YS9ncGlvLWR3YXBiLmgN
-Cj4gPiBpbmRleCAyZGM3ZjRhLi41YTUyZDY5IDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvbGlu
-dXgvcGxhdGZvcm1fZGF0YS9ncGlvLWR3YXBiLmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L3Bs
-YXRmb3JtX2RhdGEvZ3Bpby1kd2FwYi5oDQo+ID4gQEAgLTE5LDcgKzE5LDggQEAgc3RydWN0IGR3
-YXBiX3BvcnRfcHJvcGVydHkgew0KPiA+ICAgICAgICAgdW5zaWduZWQgaW50ICAgIGlkeDsNCj4g
-PiAgICAgICAgIHVuc2lnbmVkIGludCAgICBuZ3BpbzsNCj4gPiAgICAgICAgIHVuc2lnbmVkIGlu
-dCAgICBncGlvX2Jhc2U7DQo+ID4gLSAgICAgICB1bnNpZ25lZCBpbnQgICAgaXJxOw0KPiA+ICsg
-ICAgICAgdW5zaWduZWQgaW50ICAgIGlycVszMl07DQo+ID4gKyAgICAgICBib29sICAgICAgICAg
-ICAgaGFzX2lycTsNCj4gPiAgICAgICAgIGJvb2wgICAgICAgICAgICBpcnFfc2hhcmVkOw0KPiA+
-ICB9Ow0KPiA+DQo+ID4gLS0NCj4gPiAyLjcuNA0KPiA+DQo=
+On 04/12/2018 05:39 PM, Phil Reid wrote:
+> On 12/04/2018 16:38, Linus Walleij wrote:
+>> On Wed, Apr 11, 2018 at 3:03 AM, Laura Abbott <labbott@redhat.com> wrote:
+>>
+>>> The new challenge is to remove VLAs from the kernel
+>>> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+>>> turn on -Wvla.
+>>>
+>>> Using a kmalloc array is the easy way to fix this but kmalloc is still
+>>> more expensive than stack allocation. Introduce a fast path with a
+>>> fixed size stack array to cover most chip with gpios below some fixed
+>>> amount. The slow path dynamically allocates an array to cover those
+>>> chips with a large number of gpios.
+>>>
+>>> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+>>> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>>> ---
+>>> v4: Changed some local variables to avoid coccinelle warnings. Added a
+>>> warning if the number of GPIOs exceeds the current fast path define.
+>>>
+>>> Lukas, I kept your Tested-by because the changes were pretty minimal.
+>>> Let me know if you want to run the tests again.
+>>
+>> This patch is starting to look really good.
+>>
+>>> +/*
+>>> + * Number of GPIOs to use for the fast path in set array
+>>> + */
+>>> +#define FASTPATH_NGPIO 256
+>>
+>> There is still some comment about this.
+>>
+>> And now that I am also tryint to think I wonder about it, we
+>> have a global ARCH_NR_GPIOS that is typically 512.
+>> Some archs set it up.
+>>
+>> This define is something of an abomination, in the ARM
+>> case it comes from arch/arm/include/asm/gpio.h
+>> where #define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
+>> where the latter is a Kconfig option that is mostly 512 for
+>> most ARM systems.
+>>
+>> Well, ARM looks like this:
+>>
+>> config ARCH_NR_GPIO
+>>          int
+>>          default 2048 if ARCH_SOCFPGA
+>>          default 1024 if ARCH_BRCMSTB || ARCH_SHMOBILE || ARCH_TEGRA || \
+>>                  ARCH_ZYNQ
+>>          default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 || \
+>>                  SOC_DRA7XX || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
+>>          default 416 if ARCH_SUNXI
+>>          default 392 if ARCH_U8500
+>>          default 352 if ARCH_VT8500
+>>          default 288 if ARCH_ROCKCHIP
+>>          default 264 if MACH_H4700
+>>          default 0
+>>          help
+>>            Maximum number of GPIOs in the system.
+>>
+>>            If unsure, leave the default value.
+>>
+>> So if FASTPATH_NGPIO should be anything else than
+>> ARCH_NR_GPIO this has to be established somewhere
+>> as a floor or half or something, but I would just set it as
+>> the same as ARCH_NR_GPIOS...
+>>
+>> The main reason this define exist is for this function
+>> from <linux/gpio/consumer.h>:
+>>
+>> /* Convert between the old gpio_ and new gpiod_ interfaces */
+>> struct gpio_desc *gpio_to_desc(unsigned gpio);
+>>
+>> Nowadays that fact is a bit obscured since the variable is
+>> only used when assigning the base (in the global GPIO
+>> number space, which is what we want to get rid of but
+>> sigh) in gpiochip_find_base() where it attempts to place
+>> a newly allocated gpiochip in the higher region of this
+>> numberspace since the embedded SoC GPIO base tends
+>> to be 0, on old platforms.
+>>
+>> So I don't know about this.
+>>
+>> Can't we just use ARCH_NR_GPIOS?
+>>
+>> Very few systems have more than 512 assigned global
+>> GPIO numbers and those are FPGA experimental machines.
+>>
+>> In the long run obviously I want to get rid of these defines
+>> altogether and only allocate GPIO descriptos dynamically
+>> so as you see I am reluctant to add new numberspace weirdness
+>> around here.
+> Isn't that for total GPIO's in the system?
+> And the arrays just need to cater for max per chip?
+>  From what I can understand of the code which is admittedly limited.
+> 
+> 
+
+Yeah the switch back to 256 was a mistake on my end (I think I
+grabbed an incorrect version for my base). ARCH_NR_GPIOs
+is the total number in the system which may be multiple
+chips so yes we would be possibly allocating more space
+than necessary.
+
+unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)]
+
+unsigned long fastpath[2 * BITS_TO_LONGS(512)]
+unsigned long fastpath[2 * DIV_ROUND_UP(512, 8 * sizeof(long))]
+
+so we end up with 128 bytes on the stack total assuming I
+can do math correctly. I think this a fairly reasonable
+amount though, even if we are over-estimating if there are
+multiple chips.
+
+Thanks,
+Laura
