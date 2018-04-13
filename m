@@ -1,120 +1,31 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCHv4] gpio: Remove VLA from gpiolib
-Date: Fri, 13 Apr 2018 08:39:06 +0800
-Message-ID: <c618af81-2dbb-1aff-212a-e87e56caa7eb@electromag.com.au>
-References: <20180411010352.17929-1-labbott@redhat.com>
- <CACRpkdb04=5eHW3xR-qmY6UzOUcAC35mV4eDgHaFn9nQEL_eEw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <kernel-hardening-return-12983-glkh-kernel-hardening=m.gmane.org@lists.openwall.com>
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-In-Reply-To: <CACRpkdb04=5eHW3xR-qmY6UzOUcAC35mV4eDgHaFn9nQEL_eEw@mail.gmail.com>
-Content-Language: en-AU
-To: Linus Walleij <linus.walleij@linaro.org>, Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v2 0/2] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+Date: Fri, 13 Apr 2018 09:08:18 +0100
+Message-ID: <1523606900-2332-1-git-send-email-phil.edworthy@renesas.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Michel Pollet <michel.pollet@bp.renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 12/04/2018 16:38, Linus Walleij wrote:
-> On Wed, Apr 11, 2018 at 3:03 AM, Laura Abbott <labbott@redhat.com> wrote:
-> 
->> The new challenge is to remove VLAs from the kernel
->> (see https://lkml.org/lkml/2018/3/7/621) to eventually
->> turn on -Wvla.
->>
->> Using a kmalloc array is the easy way to fix this but kmalloc is still
->> more expensive than stack allocation. Introduce a fast path with a
->> fixed size stack array to cover most chip with gpios below some fixed
->> amount. The slow path dynamically allocates an array to cover those
->> chips with a large number of gpios.
->>
->> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
->> Signed-off-by: Lukas Wunner <lukas@wunner.de>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->> ---
->> v4: Changed some local variables to avoid coccinelle warnings. Added a
->> warning if the number of GPIOs exceeds the current fast path define.
->>
->> Lukas, I kept your Tested-by because the changes were pretty minimal.
->> Let me know if you want to run the tests again.
-> 
-> This patch is starting to look really good.
-> 
->> +/*
->> + * Number of GPIOs to use for the fast path in set array
->> + */
->> +#define FASTPATH_NGPIO 256
-> 
-> There is still some comment about this.
-> 
-> And now that I am also tryint to think I wonder about it, we
-> have a global ARCH_NR_GPIOS that is typically 512.
-> Some archs set it up.
-> 
-> This define is something of an abomination, in the ARM
-> case it comes from arch/arm/include/asm/gpio.h
-> where #define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
-> where the latter is a Kconfig option that is mostly 512 for
-> most ARM systems.
-> 
-> Well, ARM looks like this:
-> 
-> config ARCH_NR_GPIO
->          int
->          default 2048 if ARCH_SOCFPGA
->          default 1024 if ARCH_BRCMSTB || ARCH_SHMOBILE || ARCH_TEGRA || \
->                  ARCH_ZYNQ
->          default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 || \
->                  SOC_DRA7XX || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
->          default 416 if ARCH_SUNXI
->          default 392 if ARCH_U8500
->          default 352 if ARCH_VT8500
->          default 288 if ARCH_ROCKCHIP
->          default 264 if MACH_H4700
->          default 0
->          help
->            Maximum number of GPIOs in the system.
-> 
->            If unsure, leave the default value.
-> 
-> So if FASTPATH_NGPIO should be anything else than
-> ARCH_NR_GPIO this has to be established somewhere
-> as a floor or half or something, but I would just set it as
-> the same as ARCH_NR_GPIOS...
-> 
-> The main reason this define exist is for this function
-> from <linux/gpio/consumer.h>:
-> 
-> /* Convert between the old gpio_ and new gpiod_ interfaces */
-> struct gpio_desc *gpio_to_desc(unsigned gpio);
-> 
-> Nowadays that fact is a bit obscured since the variable is
-> only used when assigning the base (in the global GPIO
-> number space, which is what we want to get rid of but
-> sigh) in gpiochip_find_base() where it attempts to place
-> a newly allocated gpiochip in the higher region of this
-> numberspace since the embedded SoC GPIO base tends
-> to be 0, on old platforms.
-> 
-> So I don't know about this.
-> 
-> Can't we just use ARCH_NR_GPIOS?
-> 
-> Very few systems have more than 512 assigned global
-> GPIO numbers and those are FPGA experimental machines.
-> 
-> In the long run obviously I want to get rid of these defines
-> altogether and only allocate GPIO descriptos dynamically
-> so as you see I am reluctant to add new numberspace weirdness
-> around here.
-Isn't that for total GPIO's in the system?
-And the arrays just need to cater for max per chip?
- From what I can understand of the code which is admittedly limited.
+All details about the change is in patch 0001. patch 0002 fixes up other users
+of 'struct dwapb_port_property'.
 
+One point to mention is that I have made it possible for users to have
+unconncted interrupts by specifying holes in the list of interrupts. This is
+done by supporting the interrupts-extended DT prop.
+However, I have no use for this and had to hack some test case for this.
+Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+
+Phil Edworthy (2):
+  gpio: dwapb: Add support for 1 interrupt per port A GPIO
+  mfd: intel_quark_i2c_gpio: Update Synopsys GPIO interrupts
+
+ .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 ++++-
+ drivers/gpio/gpio-dwapb.c                          | 43 +++++++++++++++++-----
+ drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
+ include/linux/platform_data/gpio-dwapb.h           |  3 +-
+ 4 files changed, 45 insertions(+), 13 deletions(-)
 
 -- 
-Regards
-Phil Reid
+2.7.4
