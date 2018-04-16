@@ -1,47 +1,35 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: gpio: Add support for r8a77965
-Date: Mon, 16 Apr 2018 10:20:09 -0500
-Message-ID: <20180416152009.gf3rnpuork2lbcfa@rob-hp-laptop>
-References: <1523886904-14449-1-git-send-email-jacopo+renesas@jmondi.org>
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 0/2] pinctrl/samsung: Fix incorrect EINTG banks order
+Date: Mon, 16 Apr 2018 17:52:44 +0200
+Message-ID: <1523893966-8884-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1523886904-14449-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: linus.walleij@linaro.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: tomasz.figa@gmail.com, krzk@kernel.org, s.nawrocki@samsung.com
+Cc: linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 03:55:04PM +0200, Jacopo Mondi wrote:
-> Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+This patch series compose of 2 patches.
 
-You missed Simon's and my R-by's on v2.
+First patch, fixing incorrect order of banks for s5pv210 and exynos5410
 
-> 
-> Renesas R-Car M3-N support has been merged for v4.17.
-> Document the missing device tree bindings.
-> 
-> ---
->  Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> index 9474138..f2af897 100644
-> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> @@ -14,6 +14,7 @@ Required Properties:
->      - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
->      - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
->      - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
-> +    - "renesas,gpio-r8a77965": for R8A77965 (R-Car M3-N) compatible GPIO controller.
->      - "renesas,gpio-r8a77970": for R8A77970 (R-Car V3M) compatible GPIO controller.
->      - "renesas,gpio-r8a77995": for R8A77995 (R-Car D3) compatible GPIO controller.
->      - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
-> --
-> 2.7.4
-> 
+Second patch, documenting required order of banks
+
+Changes from v1:
+  - Limit changes to s5pv210 and Exynos5410. Exynos3250 will be handled later.
+  - Added cc stable
+  - Added fixes tag
+  - Add patch with comments to all banks documenting required order.
+
+Paweł Chmiel (2):
+  pinctrl/samsung: Correct EINTG banks order
+  pinctrl/samsung: Document required order of banks
+
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c   | 30 ++++++++++++++++++++++++--
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 20 +++++++++++++++++
+ 2 files changed, 48 insertions(+), 2 deletions(-)
+
+-- 
+2.7.4
