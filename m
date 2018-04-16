@@ -1,107 +1,37 @@
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Subject: Re: [PATCH v4] pinctrl: msm: fix gpio-hog related boot issues
-Date: Mon, 16 Apr 2018 13:50:26 +0200
-Message-ID: <1662515.4UeQ9r5Xdv@bentobox>
-References: <20180412190138.12372-1-chunkeey@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8230085406943062932=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180412190138.12372-1-chunkeey@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Christian Lamparter <chunkeey@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [PATCH] dt-bindings: gpio: Add support for r8a77965
+Date: Mon, 16 Apr 2018 15:55:04 +0200
+Message-ID: <1523886904-14449-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
---===============8230085406943062932==
-Content-Type: multipart/signed; boundary="nextPart4223788.DlfLbA2zPg"; micalg="pgp-sha512"; protocol="application/pgp-signature"
+Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
 
---nextPart4223788.DlfLbA2zPg
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 
-On Donnerstag, 12. April 2018 21:01:38 CEST Christian Lamparter wrote:
-> Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
-> Setting up any gpio-hog in the device-tree for his device would
-> "kill the bootup completely":
-> 
-> | [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-> | [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
-> | [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
-> | [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
-> | [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
-> | [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-> | [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
-> 
-> This was also verified on a RT-AC58U (IPQ4018) which would
-> no longer boot, if a gpio-hog was specified. (Tried forcing
-> the USB LED PIN (GPIO0) to high.).
-[...]
+Renesas R-Car M3-N support has been merged for v4.17.
+Document the missing device tree bindings.
 
-Sorry that I was so silent while you did all the work. I have applied your 
-patch and now I see a 
+---
+ Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-   [    0.020619] GPIO line 58 (enable USB2 power) hogged as output/low
-
-when adding following node directly to the pinctrl
-
-	enable-usb-power {
-		gpio-hog;
-		gpios = <58 GPIO_ACTIVE_HIGH>;
-		output-low;
-		line-name = "enable USB2 power";
-	};
-
-(this looks at the first glance like it is deactivating USB by setting it to 
-low but GPIO_ACTIVE_LOW would switch the meaning of output-low for gpio-hogs 
-and the GPIO must really set to signal level low to enable USB)
-
-Tested-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-
-Thanks,
-	Sven
---nextPart4223788.DlfLbA2zPg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlrUjgIACgkQXYcKB8Em
-e0YpOw//Wk8sjiOV37iXxnLcjss2SeSeRVGzu+LedIO1D5Xna/OpuDbx3PP9Tbdj
-daxEAz2TUq2li35VtaAbgSc5QghV2Hfg6W7dUig4jl/LKYBFXQku1F7Cg2W09WDJ
-ZBT9OFEnUFX5vIxqEkTSgd4B2sgmJ/kBs5SrtXsN6qk2J8j4w5T37nJm1Z9m9+et
-O4B+QevCYXcxVBlp8PzYCJcIRjV8vn25yQwtKPORWLRELQaMBX5L9h5o5vx9LyeB
-IhbdsPPbagwthaY3czI2ISUVc+jHXh0OTSeQf2CgMmpfuoQwRWi8WjEvkb/CnVUC
-gJN5UT9/hJNwbAwOAfNzR0F/gwdPNEgGdmJrT0ztQ1XSVtKT8ux4GAumAnB+UAfd
-2Wis9BZm2sdfLbulub1LotuSTl9NANoumsd2D4R26CrqwZur0LpLoNsYrpiGdpIH
-RDPulg5zAmoyp9XLhLJDcUmHVFvJnObZgJ+IVQE09ovwJbdi4gLvUsQLj9REI3q6
-jA6pZf6LQbseRYK41Dby72bZUyAKBDe6xiPDOs8BsdfQoqvgwlPAbg69sMSYVSHF
-RD+IDuaAzLPVYdadFanB2M7C4b6Y43WKAi/ewd/xwZFzuAUc7xSjcvnCMJMph/TR
-XP6jN28SSVBXAS6JzwzURdGe8ispzi9ZS+DEINR6nQcpTT7tjhA=
-=/65K
------END PGP SIGNATURE-----
-
---nextPart4223788.DlfLbA2zPg--
-
-
-
---===============8230085406943062932==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============8230085406943062932==--
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+index 9474138..f2af897 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
++++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+@@ -14,6 +14,7 @@ Required Properties:
+     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
+     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
+     - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
++    - "renesas,gpio-r8a77965": for R8A77965 (R-Car M3-N) compatible GPIO controller.
+     - "renesas,gpio-r8a77970": for R8A77970 (R-Car V3M) compatible GPIO controller.
+     - "renesas,gpio-r8a77995": for R8A77995 (R-Car D3) compatible GPIO controller.
+     - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
+--
+2.7.4
