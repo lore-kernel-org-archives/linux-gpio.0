@@ -1,151 +1,42 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: eic: Add edge trigger emulation for EIC
-Date: Mon, 16 Apr 2018 16:18:06 +0800
-Message-ID: <CAMz4kuKdLEN6MNeyoBjR7NMhG-YJ9qBMZ5U1iYi623Z_1JXbpQ@mail.gmail.com>
-References: <bdaaa8823cc3aef44352ee867fb6274278f2a2a9.1522392153.git.baolin.wang@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 3/3] backlight: pwm_bl: don't use GPIOF_* with
+ gpiod_get_direction
+Date: Mon, 16 Apr 2018 10:11:06 +0100
+Message-ID: <20180416091106.lg7nesbqvfeehuzq@dell>
+References: <20180114210711.13863-1-wsa+renesas@sang-engineering.com>
+ <20180114210711.13863-4-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <bdaaa8823cc3aef44352ee867fb6274278f2a2a9.1522392153.git.baolin.wang@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Mark Brown <broonie@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Baolin Wang <baolin.wang@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20180114210711.13863-4-wsa+renesas@sang-engineering.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-pwm@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
-
-On 30 March 2018 at 15:02, Baolin Wang <baolin.wang@linaro.org> wrote:
-> The Spreadtrum debounce EIC and latch EIC can not support edge trigger,
-> but most GPIO users (like gpio-key driver) only use the edge trigger,
-> thus the EIC driver need add some support to emulate the edge trigger
-> to satisfy this requirement.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-
-Any comments for this patch set? Thanks.
-
-> ---
->  drivers/gpio/gpio-eic-sprd.c |   73 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
-> index de7dd93..e0d6a0a 100644
-> --- a/drivers/gpio/gpio-eic-sprd.c
-> +++ b/drivers/gpio/gpio-eic-sprd.c
-> @@ -300,6 +300,7 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
->         struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
->         struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
->         u32 offset = irqd_to_hwirq(data);
-> +       int state;
->
->         switch (sprd_eic->type) {
->         case SPRD_EIC_DEBOUNCE:
-> @@ -310,6 +311,17 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
->                 case IRQ_TYPE_LEVEL_LOW:
->                         sprd_eic_update(chip, offset, SPRD_EIC_DBNC_IEV, 0);
->                         break;
-> +               case IRQ_TYPE_EDGE_RISING:
-> +               case IRQ_TYPE_EDGE_FALLING:
-> +               case IRQ_TYPE_EDGE_BOTH:
-> +                       state = sprd_eic_get(chip, offset);
-> +                       if (state)
-> +                               sprd_eic_update(chip, offset,
-> +                                               SPRD_EIC_DBNC_IEV, 0);
-> +                       else
-> +                               sprd_eic_update(chip, offset,
-> +                                               SPRD_EIC_DBNC_IEV, 1);
-> +                       break;
->                 default:
->                         return -ENOTSUPP;
->                 }
-> @@ -324,6 +336,17 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
->                 case IRQ_TYPE_LEVEL_LOW:
->                         sprd_eic_update(chip, offset, SPRD_EIC_LATCH_INTPOL, 1);
->                         break;
-> +               case IRQ_TYPE_EDGE_RISING:
-> +               case IRQ_TYPE_EDGE_FALLING:
-> +               case IRQ_TYPE_EDGE_BOTH:
-> +                       state = sprd_eic_get(chip, offset);
-> +                       if (state)
-> +                               sprd_eic_update(chip, offset,
-> +                                               SPRD_EIC_LATCH_INTPOL, 0);
-> +                       else
-> +                               sprd_eic_update(chip, offset,
-> +                                               SPRD_EIC_LATCH_INTPOL, 1);
-> +                       break;
->                 default:
->                         return -ENOTSUPP;
->                 }
-> @@ -405,6 +428,55 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
->         return 0;
->  }
->
-> +static void sprd_eic_toggle_trigger(struct gpio_chip *chip, unsigned int irq,
-> +                                   unsigned int offset)
-> +{
-> +       struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
-> +       struct irq_data *data = irq_get_irq_data(irq);
-> +       u32 trigger = irqd_get_trigger_type(data);
-> +       int state, post_state;
-> +
-> +       /*
-> +        * The debounce EIC and latch EIC can only support level trigger, so we
-> +        * can toggle the level trigger to emulate the edge trigger.
-> +        */
-> +       if ((sprd_eic->type != SPRD_EIC_DEBOUNCE &&
-> +            sprd_eic->type != SPRD_EIC_LATCH) ||
-> +           !(trigger & IRQ_TYPE_EDGE_BOTH))
-> +               return;
-> +
-> +       sprd_eic_irq_mask(data);
-> +       state = sprd_eic_get(chip, offset);
-> +
-> +retry:
-> +       switch (sprd_eic->type) {
-> +       case SPRD_EIC_DEBOUNCE:
-> +               if (state)
-> +                       sprd_eic_update(chip, offset, SPRD_EIC_DBNC_IEV, 0);
-> +               else
-> +                       sprd_eic_update(chip, offset, SPRD_EIC_DBNC_IEV, 1);
-> +               break;
-> +       case SPRD_EIC_LATCH:
-> +               if (state)
-> +                       sprd_eic_update(chip, offset, SPRD_EIC_LATCH_INTPOL, 0);
-> +               else
-> +                       sprd_eic_update(chip, offset, SPRD_EIC_LATCH_INTPOL, 1);
-> +               break;
-> +       default:
-> +               sprd_eic_irq_unmask(data);
-> +               return;
-> +       }
-> +
-> +       post_state = sprd_eic_get(chip, offset);
-> +       if (state != post_state) {
-> +               dev_warn(chip->parent, "EIC level was changed.\n");
-> +               state = post_state;
-> +               goto retry;
-> +       }
-> +
-> +       sprd_eic_irq_unmask(data);
-> +}
-> +
->  static int sprd_eic_match_chip_by_type(struct gpio_chip *chip, void *data)
->  {
->         enum sprd_eic_type type = *(enum sprd_eic_type *)data;
-> @@ -448,6 +520,7 @@ static void sprd_eic_handle_one_type(struct gpio_chip *chip)
->                                         bank * SPRD_EIC_PER_BANK_NR + n);
->
->                         generic_handle_irq(girq);
-> +                       sprd_eic_toggle_trigger(chip, girq, n);
->                 }
->         }
->  }
-> --
-> 1.7.9.5
->
-
-
-
--- 
-Baolin.wang
-Best Regards
+T24gU3VuLCAxNCBKYW4gMjAxOCwgV29sZnJhbSBTYW5nIHdyb3RlOgoKPiBUaGUgZG9jdW1lbnRh
+dGlvbiB3YXMgd3JvbmcsIGdwaW9kX2dldF9kaXJlY3Rpb24oKSByZXR1cm5zIDAvMSBpbnN0ZWFk
+Cj4gb2YgdGhlIEdQSU9GXyogZmxhZ3MuIFRoZSBkb2NzIHdlcmUgZml4ZWQgd2l0aCBjb21taXQg
+OTRmYzczMDk0YWJlNDcKPiAoImdwaW86IGNvcnJlY3QgZG9jcyBhYm91dCByZXR1cm4gdmFsdWUg
+b2YgZ3Bpb2RfZ2V0X2RpcmVjdGlvbiIpLiBOb3csCj4gZml4IHRoaXMgdXNlciAodW50aWwgYSBi
+ZXR0ZXIsIHN5c3RlbS13aWRlIHNvbHV0aW9uIGlzIGluIHBsYWNlKS4KPiAKPiBTaWduZWQtb2Zm
+LWJ5OiBXb2xmcmFtIFNhbmcgPHdzYStyZW5lc2FzQHNhbmctZW5naW5lZXJpbmcuY29tPgo+IC0t
+LQo+IE9ubHkgYnVpbGQgdGVzdGVkIQo+IAo+ICBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wd21f
+YmwuYyB8IDYgKysrLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVs
+ZXRpb25zKC0pCgpBcHBsaWVkIHdpdGggRGFuaWVsIGFuZCBTaW1vbidzIEFja3MuCgotLSAKTGVl
+IEpvbmVzIFvmnY7nkLzmlq9dCkxpbmFybyBTZXJ2aWNlcyBUZWNobmljYWwgTGVhZApMaW5hcm8u
+b3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKRm9sbG93IExpbmFybzog
+RmFjZWJvb2sgfCBUd2l0dGVyIHwgQmxvZwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
