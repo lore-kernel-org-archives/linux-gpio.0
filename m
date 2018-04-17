@@ -1,49 +1,36 @@
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: Re: [PATCH v9 7/9] pinctrl: madera: Add DT bindings for Cirrus Logic
- Madera codecs
-Date: Tue, 17 Apr 2018 09:53:04 +0100
-Message-ID: <bc752fb8-8f2f-70bc-e786-221eb39c618b@opensource.cirrus.com>
-References: <20180313131904.13700-1-rf@opensource.cirrus.com>
- <20180313131904.13700-8-rf@opensource.cirrus.com>
- <CACRpkdZspUbmCk7OwA-rva6zd89TZXt45t5mFes0feuRyOUp9w@mail.gmail.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Subject: [PATCH] pinctrl: meson-axg: fix the range of aobus bank
+Date: Tue, 17 Apr 2018 17:08:24 +0000
+Message-ID: <20180417170824.18670-1-yixun.lan@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZspUbmCk7OwA-rva6zd89TZXt45t5mFes0feuRyOUp9w@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 27/03/18 12:29, Linus Walleij wrote:
-> On Tue, Mar 13, 2018 at 2:19 PM, Richard Fitzgerald
-> <rf@opensource.cirrus.com> wrote:
-> 
->> This is the binding description of the pinctrl driver for Cirrus Logic
->> Madera codecs. The binding uses the generic pinctrl binding so  the main
->> purpose here is to describe the device-specific names for groups and
->> functions.
->>
->> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
->> Acked-by: Rob Herring <robh@kernel.org>
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I can also just apply this if you want, as it has no dependencies to
-> anything else. I just assume you want to keep it together with the
-> rest of this complex series.
-> 
-> Yours,
-> Linus Walleij
-> 
+The GPIOAO bank is range from GPIOAO_0 to GPIOAO_13.
 
-Linus,
+Fixes: 83c566806a68 ("pinctrl: meson-axg: Add new pinctrl driver for Meson AXG SoC")
+Reported-by: Xingyu Chen <xingyu.chen@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson-axg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What is your opinion of the i.MX6 pinctrl failure after my bugfix patch
-for the hogs?
-If you would want to revert my patch I would need to change this pinctrl
-driver so it has its own child node as a workaround to the hog bug.
-
-Or do you think it is more likely a bug in the i.MX6 pinctrl driver?
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+index 4b91ff74779b..99a6ceac8e53 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+@@ -898,7 +898,7 @@ static struct meson_bank meson_axg_periphs_banks[] = {
+ 
+ static struct meson_bank meson_axg_aobus_banks[] = {
+ 	/*   name    first      last      irq	pullen  pull    dir     out     in  */
+-	BANK("AO",   GPIOAO_0,  GPIOAO_9, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
++	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
+ };
+ 
+ static struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
+-- 
+2.17.0
