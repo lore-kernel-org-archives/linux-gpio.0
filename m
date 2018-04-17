@@ -1,38 +1,30 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 2/2] pinctrl/samsung: Document required order of banks
-Date: Tue, 17 Apr 2018 11:14:22 +0900
-Message-ID: <CA+Ln22Hgn5VmeUAdcmHi64-HdRqpuGBBN9uUzmFTOBatagzXeg@mail.gmail.com>
-References: <1523893966-8884-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <1523893966-8884-3-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v2 2/5] ARM: timer-sp: Use of_clk_get_parent_count()
+ instead of open coding
+Date: Tue, 17 Apr 2018 10:50:20 +0200
+Message-ID: <20180417085020.GA7214@mai>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+ <1523364701-15383-3-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1523893966-8884-3-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <1523364701-15383-3-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-2018-04-17 0:52 GMT+09:00 Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com=
->:
-> This patch documents requirement coming from the way
-> exynos_eint_gpio_irq() is working now, which expects
-> EINTG banks to be at the beginning of the bank arrays.
->
-> Cc: stable@vger.kernel.org
-
-Probably no need for this one to go to stable, but either is fine for me.
-
-> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+On Tue, Apr 10, 2018 at 02:51:38PM +0200, Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/pinctrl/samsung/pinctrl-exynos-arm.c   | 26 ++++++++++++++++++++=
-++++++
->  drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 20 ++++++++++++++++++++
->  2 files changed, 46 insertions(+)
+> This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
+> <linux/of_clk.h>".
+> 
+> v2:
+>   - of_clk_get_parent_count() was moved to <linux/of_clk.h>,
+>   - Dropped RFC, as a dummy is now available in the !CONFIG_COMMON_CLK
+>     case.
+> ---
 
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Thanks for the patch!
-
-Best regards,
-Tomasz
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
