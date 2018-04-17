@@ -1,139 +1,70 @@
 From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH v10 2/9] mfd: madera: Add DT bindings for Cirrus Logic Madera codecs
-Date: Tue, 17 Apr 2018 15:29:08 +0100
-Message-ID: <20180417142915.15772-3-rf@opensource.cirrus.com>
-References: <20180417142915.15772-1-rf@opensource.cirrus.com>
+Subject: Re: [REGRESSION][BISECTED] i.MX6 pinctrl hogs stopped working
+Date: Tue, 17 Apr 2018 09:50:21 +0100
+Message-ID: <88a3855d-db5f-9086-2901-2360d0cd26ec@opensource.cirrus.com>
+References: <8b07e30a-7dd1-7923-dc50-b84f0e43e9e9@nextfour.com>
+ <1d3c6099-3b33-d5dd-e12b-903586dc79f3@opensource.cirrus.com>
+ <950ec4db-4121-2faf-b6fd-5fcabef91e90@nextfour.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180417142915.15772-1-rf@opensource.cirrus.com>
+In-Reply-To: <950ec4db-4121-2faf-b6fd-5fcabef91e90@nextfour.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, linus.walleij@linaro.org, andy.shevchenko@gmail.com, robh+dt@kernel.org
-Cc: patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>, linus.walleij@linaro.org
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com
 List-Id: linux-gpio@vger.kernel.org
 
-Specification of the bindings for the parent MFD driver component
-of the Cirrus Logic Madera codec drivers.
+On 10/04/18 19:33, Mika Penttilä wrote:
+> 
+> 
+> On 10.04.2018 13:21, Richard Fitzgerald wrote:
+>> On 04/04/18 06:33, Mika Penttilä wrote:
+>>> Hi!
+>>>
+>>> Reverting this made the hogs on a i.MX6 board work again. :
+>>>
+>>>
+>>> commit b89405b6102fcc3746f43697b826028caa94c823
+>>> Author: Richard Fitzgerald <rf@opensource.cirrus.com>
+>>> Date:   Wed Feb 28 15:53:06 2018 +0000
+>>>
+>>>       pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
+>>>
+>>>
+>>>
+>>> --Mika
+>>>
+>>
+>> I think you should check whether the bug is with the i.MX6 driver
+>> relying on the previous buggy behaviour of pinctrl. I haven't got
+>> i.MX6 hardware to test myself.
+>>
+>> The bug I fixed in that patch was that when pinctrl is probing a
+>> pinctrl driver it would try to apply all the pinctrl settings
+>> listed in a dt node to the pinctrl driver it is probing instead
+>> of the pinctrl drivers they actually refer to. This was a bug
+>> introduced by an earlier patch (which unfortunately I forgot to
+>> include a fixes line reference to)
+>>
+>>    pinctrl: core: Use delayed work for hogs
+>>
+>> So if a pinctrl driver "A" had a dependency on another pinctrl
+>> driver "B" those dependencies wouldn't be properly created because
+>> all the "B" pinctrl DT entries would be attempted against "A"
+>> instead of "B". This caused failures if a pinctrl driver had a
+>> dependency on another pinctrl driver, of if creating a pinctrl
+>> driver that is a child of an MFD and that MFD has dependencies
+>> on another pinctrl driver.
+>>
+> 
+> Hard to say, but the kernel/dts has worked ok for 3+ years, from 3.17 until 4.17-rc. Nothing fancy, just normal hogs, in two groups.
+> Can send you relevant pieces of DT if interested.
+> 
+> --Mika
+> 
 
-Note that although the interrupt controller and GPIO are child
-drivers their required bindings are trivial, mandatory, and exist
-within the parent MFD node so are documented here.
-
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- Documentation/devicetree/bindings/mfd/madera.txt | 102 +++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
-
-diff --git a/Documentation/devicetree/bindings/mfd/madera.txt b/Documentation/devicetree/bindings/mfd/madera.txt
-new file mode 100644
-index 000000000000..db3266088386
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/madera.txt
-@@ -0,0 +1,102 @@
-+Cirrus Logic Madera class audio codecs Multi-Functional Device
-+
-+These devices are audio SoCs with extensive digital capabilities and a range
-+of analogue I/O.
-+
-+See also the child driver bindings in:
-+bindings/pinctrl/cirrus,madera-pinctrl.txt
-+bindings/regulator/arizona-regulator.txt
-+bindings/sound/madera.txt
-+
-+Required properties:
-+
-+  - compatible : One of the following chip-specific strings:
-+        "cirrus,cs47l35"
-+        "cirrus,cs47l85"
-+        "cirrus,cs47l90"
-+        "cirrus,cs47l91"
-+        "cirrus,wm1840"
-+
-+  - reg : I2C slave address when connected using I2C, chip select number when
-+    using SPI.
-+
-+  - DCVDD-supply : Power supply for the device as defined in
-+    bindings/regulator/regulator.txt
-+    Mandatory on CS47L35, CS47L90, CS47L91
-+    Optional on CS47L85, WM1840
-+
-+  - AVDD-supply, DBVDD1-supply, DBVDD2-supply, CPVDD1-supply, CPVDD2-supply :
-+    Power supplies for the device
-+
-+  - DBVDD3-supply, DBVDD4-supply : Power supplies for the device
-+    (CS47L85, CS47L90, CS47L91, WM1840)
-+
-+  - SPKVDDL-supply, SPKVDDR-supply : Power supplies for the device
-+    (CS47L85, WM1840)
-+
-+  - SPKVDD-supply : Power supply for the device
-+    (CS47L35)
-+
-+  - interrupt-controller : Indicates that this device is an interrupt controller
-+
-+  - #interrupt-cells: the number of cells to describe an IRQ, must be 2.
-+    The first cell is the IRQ number.
-+    The second cell is the flags, encoded as the trigger masks from
-+    bindings/interrupt-controller/interrupts.txt
-+
-+  - gpio-controller : Indicates this device is a GPIO controller.
-+
-+  - #gpio-cells : Must be 2. The first cell is the pin number. The second cell
-+    is reserved for future use and must be zero
-+
-+  - interrupt-parent : The parent interrupt controller.
-+
-+  - interrupts : The interrupt line the /IRQ signal for the device is
-+    connected to.
-+
-+Optional properties:
-+
-+  - MICVDD-supply : Power supply, only need to be specified if
-+    powered externally
-+
-+  - reset-gpios : One entry specifying the GPIO controlling /RESET.
-+    As defined in bindings/gpio.txt.
-+    Although optional, it is strongly recommended to use a hardware reset
-+
-+  - MICBIASx : Initial data for the MICBIAS regulators, as covered in
-+    Documentation/devicetree/bindings/regulator/regulator.txt.
-+    One for each MICBIAS generator (MICBIAS1, MICBIAS2, ...)
-+    (all codecs)
-+
-+    One for each output pin (MICBIAS1A, MIBCIAS1B, MICBIAS2A, ...)
-+    (all except CS47L85, WM1840)
-+
-+    The following following additional property is supported for the generator
-+    nodes:
-+      - cirrus,ext-cap : Set to 1 if the MICBIAS has external decoupling
-+        capacitors attached.
-+
-+Optional child nodes:
-+    micvdd : Node containing initialization data for the micvdd regulator
-+    See bindings/regulator/arizona-regulator.txt
-+
-+    ldo1 : Node containing initialization data for the LDO1 regulator
-+    See bindings/regulator/arizona-regulator.txt
-+    (cs47l85, wm1840)
-+
-+Example:
-+
-+cs47l85@0 {
-+	compatible = "cirrus,cs47l85";
-+	reg = <0>;
-+
-+	reset-gpios = <&gpio 0>;
-+
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+	interrupts = <&host_irq1>;
-+	interrupt-parent = <&gic>;
-+
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+};
--- 
-2.11.0
+Tell me where in the kernel tree the the dts files and the source for
+the pinctrl driver that uses them and which dts node, and I will look
+at what the driver is doing.
