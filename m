@@ -1,67 +1,35 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4] gpio: dwapb: Add support for 1 interrupt per port A
- GPIO
-Date: Wed, 18 Apr 2018 09:13:13 +0100
-Message-ID: <20180418081313.dqxdtjqmw4z27uny@dell>
-References: <1523968977-4241-1-git-send-email-phil.edworthy@renesas.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH 0/2] Fix port memory offsets for IDIO series drivers
+Date: Wed, 18 Apr 2018 08:52:39 -0400
+Message-ID: <cover.1524000042.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1523968977-4241-1-git-send-email-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Michel Pollet <michel.pollet@bp.renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 17 Apr 2018, Phil Edworthy wrote:
+The GPIO PCI-IDIO-16 and PCIE-IDIO-24 drivers utilize the ioread8 and
+iowrite8 functions to interact with their devices' respective I/O
+registers. To simplify the get_multiple/set_multiple callbacks, a local
+array 'ports' is used to hold the memory address offsets of the
+respective device I/O registers.
 
-> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
-> per GPIO in port A, but the driver currently only supports 1 interrupt.
-> See the DesignWare DW_apb_gpio Databook description of the
-> 'GPIO_INTR_IO' parameter.
-> 
-> This change allows the driver to work with up to 32 interrupts, it will
-> get as many interrupts as specified in the DT 'interrupts' property.
-> It doesn't do anything clever with the different interrupts, it just calls
-> the same handler used for single interrupt hardware.
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
-> One point to mention is that I have made it possible for users to have
-> unconncted interrupts by specifying holes in the list of interrupts. This is
-> done by supporting the interrupts-extended DT prop.
-> However, I have no use for this and had to hack some test case for this.
-> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
-> 
-> v4:
->  - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
-> v3:
->  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
-> v2:
->  - Replaced interrupt-mask DT prop with support for the interrupts-extended
->    prop. This means replacing the call to irq_of_parse_and_map() with calls
->    to of_irq_parse_one() and irq_create_of_mapping().
-> 
-> Note: There are a few *code* lines over 80 chars, but this is just guidance,
->    right? Especially as there are already some lines over 80 chars.
-> 
-> snps:gpio fix
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
->  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 +++--
->  drivers/gpio/gpio-dwapb.c                          | 42 +++++++++++++++++-----
->  drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
+Currently the get_multiple callback in the GPIO PCI-IDIO-16 driver, and
+the get_multiple/set_multiple callbacks in the GPIO PCIE-IDIO-24 driver,
+incorrectly pass the memory address of the local 'ports' array elements
+to the respective ioread8/iowrite8 functions when they should instead
+pass the necessary device I/O register memory offset. This patch fixes
+this error by supplying the correct intended memory addresses to these
+functions.
 
-If Linus, is happy with the GPIO implementation, then the changes in
-MFD look fine:
+William Breathitt Gray (2):
+  gpio: pci-idio-16: Fix port memory offset for get_multiple callback
+  gpio: pcie-idio-24: Fix port memory offset for
+    get_multiple/set_multiple callbacks
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+ drivers/gpio/gpio-pci-idio-16.c  |  8 ++++----
+ drivers/gpio/gpio-pcie-idio-24.c | 20 ++++++++++----------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.16.2
