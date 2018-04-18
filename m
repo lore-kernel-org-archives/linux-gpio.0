@@ -1,77 +1,55 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 2/2] gpio: pcie-idio-24: Fix port memory offset for get_multiple/set_multiple callbacks
-Date: Wed, 18 Apr 2018 08:53:21 -0400
-Message-ID: <00c65eb82280318e6d50f0c54fab4efd708beafa.1524000042.git.vilhelm.gray@gmail.com>
-References: <cover.1524000042.git.vilhelm.gray@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 4/5] soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
+Date: Wed, 18 Apr 2018 16:50:04 +0200
+Message-ID: <1524063005-1716-5-git-send-email-geert+renesas@glider.be>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1524000042.git.vilhelm.gray@gmail.com>
+In-Reply-To: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-The ioread8/iowrite8 functions expect a memory offset argument. This
-patch fixes the ports array to provide the memory addresses of the
-respective device I/O registers.
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a very big number in the
+allocation below.
 
-Fixes: ca37081595a2 ("gpio: pcie-idio-24: Implement get_multiple/set_multiple callbacks")
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/gpio/gpio-pcie-idio-24.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
+<linux/of_clk.h>".
 
-diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
-index 835607ecf658..3e77c2a9a9fd 100644
---- a/drivers/gpio/gpio-pcie-idio-24.c
-+++ b/drivers/gpio/gpio-pcie-idio-24.c
-@@ -206,10 +206,10 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- 	unsigned long word_mask;
- 	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
- 	unsigned long port_state;
--	u8 __iomem ports[] = {
--		idio24gpio->reg->out0_7, idio24gpio->reg->out8_15,
--		idio24gpio->reg->out16_23, idio24gpio->reg->in0_7,
--		idio24gpio->reg->in8_15, idio24gpio->reg->in16_23,
-+	void __iomem *ports[] = {
-+		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
-+		&idio24gpio->reg->out16_23, &idio24gpio->reg->in0_7,
-+		&idio24gpio->reg->in8_15, &idio24gpio->reg->in16_23,
- 	};
- 	const unsigned long out_mode_mask = BIT(1);
+v3:
+  - Add Acked-by,
+
+v2:
+  - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
+---
+ drivers/soc/tegra/pmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index d9fcdb592b3966a5..d8cb48a4b8eb1b78 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -31,6 +31,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_clk.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+@@ -725,7 +726,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+ 	unsigned int i, count;
+ 	int err;
  
-@@ -236,7 +236,7 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
+-	count = of_count_phandle_with_args(np, "clocks", "#clock-cells");
++	count = of_clk_get_parent_count(np);
+ 	if (count == 0)
+ 		return -ENODEV;
  
- 		/* read bits from current gpio port (port 6 is TTL GPIO) */
- 		if (i < 6)
--			port_state = ioread8(ports + i);
-+			port_state = ioread8(ports[i]);
- 		else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask)
- 			port_state = ioread8(&idio24gpio->reg->ttl_out0_7);
- 		else
-@@ -301,9 +301,9 @@ static void idio_24_gpio_set_multiple(struct gpio_chip *chip,
- 	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
- 	unsigned long flags;
- 	unsigned int out_state;
--	u8 __iomem ports[] = {
--		idio24gpio->reg->out0_7, idio24gpio->reg->out8_15,
--		idio24gpio->reg->out16_23
-+	void __iomem *ports[] = {
-+		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
-+		&idio24gpio->reg->out16_23
- 	};
- 	const unsigned long out_mode_mask = BIT(1);
- 	const unsigned int ttl_offset = 48;
-@@ -327,9 +327,9 @@ static void idio_24_gpio_set_multiple(struct gpio_chip *chip,
- 		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
- 
- 		/* process output lines */
--		out_state = ioread8(ports + i) & ~gpio_mask;
-+		out_state = ioread8(ports[i]) & ~gpio_mask;
- 		out_state |= (*bits >> bits_offset) & gpio_mask;
--		iowrite8(out_state, ports + i);
-+		iowrite8(out_state, ports[i]);
- 
- 		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
- 	}
 -- 
-2.16.2
+2.7.4
