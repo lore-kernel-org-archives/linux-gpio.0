@@ -1,88 +1,53 @@
-From: Ludovic BARRE <ludovic.barre@st.com>
-Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
- irq_domain
-Date: Thu, 19 Apr 2018 15:24:56 +0200
-Message-ID: <ef86e131-ffb4-b883-b9ca-1e670d960d3e@st.com>
-References: <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
- <alpine.DEB.2.21.1802230938510.11168@nanos.tec.linutronix.de>
- <a709e416-4024-f804-b2ff-ae6c2171a7c8@arm.com>
- <CAFvLkMSZjgFMAe0VRc0AEpG89BgXkfMb9+ivJ8V+PFighOoDRA@mail.gmail.com>
- <118e66b4-3137-7af5-b93d-b1949fad575c@arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 05/21] regulator: arizona-ldo1: Look up a descriptor and
+ pass to the core
+Date: Thu, 19 Apr 2018 15:43:22 +0200
+Message-ID: <CACRpkdbOfycfGD-13OTEk7xT5FqLQsvcHrN-mn-vgjQ93cPHyQ@mail.gmail.com>
+References: <20180212131717.27193-1-linus.walleij@linaro.org>
+ <20180212131717.27193-6-linus.walleij@linaro.org> <20180213110631.o3zn5bifvypofsyg@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <118e66b4-3137-7af5-b93d-b1949fad575c@arm.com>
-Content-Language: en-US
+In-Reply-To: <20180213110631.o3zn5bifvypofsyg@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>, =?UTF-8?Q?Rados=c5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, patches@opensource.cirrus.com, Richard Fitzgerald <rf@opensource.cirrus.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Radoslaw
+On Tue, Feb 13, 2018 at 12:06 PM, Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+> On Mon, Feb 12, 2018 at 02:17:01PM +0100, Linus Walleij wrote:
+>> Instead of passing a global GPIO number, pass a descriptor looked
+>> up with the standard devm_gpiod_get_optional() call.
+>>
+>> We have augmented the GPIO core to look up the regulator special
+>> GPIO "wlf,ldoena" in a separate patch.
+>>
+>> Cc: patches@opensource.cirrus.com
+>> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>>  drivers/regulator/arizona-ldo1.c       | 19 ++++++-------------
+>>  include/linux/regulator/arizona-ldo1.h |  3 ---
+>>  2 files changed, 6 insertions(+), 16 deletions(-)
+>>
+>
+> Does this patch not also need to update the hookups in
+> arch/arm/mach-s3c64xx/mach-crag6410-module.c? There is
+> wm5102_reva_pdata and wm5102_pdata both of which use the ldoena
+> you are removing here?
 
-I preparing a patch serie which add support of stm32mp1.
-Would you like, I add your patch (with commit message updated)
-in my serie?
-patch:
--irqchip: stm32: Optimizes and cleans up stm32-exti irq_domain
+OK fixed this!
 
-BR
-Ludo
+> Also looking at this more you will need to you
+> devm_gpio_get_from_of_node here since the device tree binding is
+> for wlf,ldoena not wlf,ldoena-gpio. So this patch currently
+> breaks the binding.
 
-On 03/14/2018 01:04 PM, Marc Zyngier wrote:
-> On 14/03/18 11:46, Radosław Pietrzyk wrote:
->> Hi Marc,
->> We had a quite fruitful discussion in this mail thread regarding this
->> topic and Ludovic acked it so recently I have asked Thomas if he still
->> needs this v3 patch with detailed explanation especially as v2 version
->> of stm32-gpio patch has been already taken by Linus. However if you
->> require I can resend v3 of this patch only with this detailed explanation.
-> 
-> That'd be useful. The changelog is the only thing that will be left from
-> this discussion, so it'd better be complete and accurate. If you quickly
-> send a v3 for this single patch, I'll queue it right away.
-> 
-> Thanks,
-> 
-> 	M.
-> 
->>
->> 2018-03-14 12:09 GMT+01:00 Marc Zyngier <marc.zyngier@arm.com
->> <mailto:marc.zyngier@arm.com>>:
->>
->>      Radoslaw,
->>
->>      On 23/02/18 08:42, Thomas Gleixner wrote:
->>      > Radoslaw,
->>      >
->>      > On Fri, 23 Feb 2018, Radoslaw Pietrzyk wrote:
->>      >
->>      >> - discards setting handle_simple_irq handler for hierarchy interrupts
->>      >> - removes acking in chained irq handler as this is done by
->>      >> irq_chip itself inside handle_edge_irq
->>      >> - removes unneeded irq_domain_ops.xlate callback
->>      >
->>      > if that's all functionally correct, then this is a nice cleanup. Though
->>      > from the above changelog its hard to tell because it merily tells WHAT the
->>      > patch does, but not WHY. The WHY is the important information for a
->>      > reviewer who is not familiar with the particular piece of code/hardware.
->>      >
->>      > Can you please amend the changelog with proper explanations why a
->>      > particular piece of code is not needed or has to be changed to something
->>      > else?
->>
->>      Any update on this? I'd like to queue this for 4.17, but Thomas'
->>      comments should be addressed before that happens. Ca you please respin a
->>      version with a better change log and the various review tags?
->>
->>      Thanks,
->>
->>              M.
->>      --
->>      Jazz is not dead. It just smells funny...
->>
->>
-> 
-> 
+Actually not, because I fixed that in  the special quirk patch
+6a537d48461d
+"gpio: of: Support regulator nonstandard GPIO properties"
+as mentioned in the commit message. (Will clarify.)
+
+Yours,
+Linus Walleij
