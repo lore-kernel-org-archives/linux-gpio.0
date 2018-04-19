@@ -1,74 +1,84 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 38/61] pinctrl: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:08 +0200
-Message-ID: <20180419140641.27926-39-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: [PATCH] ARM: s3c64xx: Tidy up handling of regulator GPIO lookups
+Date: Thu, 19 Apr 2018 16:01:19 +0100
+Message-ID: <20180419150119.5yhf3uupdolg3cnv@localhost.localdomain>
+References: <20180212131717.27193-1-linus.walleij@linaro.org>
+ <20180212131717.27193-17-linus.walleij@linaro.org>
+ <20180213111147.kr4kecqbhmcoq6w2@localhost.localdomain>
+ <CACRpkdZVoYsdWy6GwnnSfaSc2_wycEse3JswqufqDoz=GFb5FQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZVoYsdWy6GwnnSfaSc2_wycEse3JswqufqDoz=GFb5FQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Linus Walleij <linus.walleij@linaro.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, patches@opensource.cirrus.com, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Rather than unconditionally registering the GPIO lookup table only do so
+for devices that require it.
+
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
 
-Build tested only. buildbot is happy. Please apply individually.
+Do you have any objections to the following?
 
- drivers/pinctrl/pinctrl-amd.c       | 6 ++----
- drivers/pinctrl/pinctrl-at91-pio4.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+If we are lucky I might be able to find time to test these early
+next week. Well at least there is reasonable chance I can test
+the 5102 stuff when you resend, not sure I have a device to
+test the wm1277 but will have a look. Also I haven't run up
+Cragganmore in a little while so might depend a little on how
+much people have broken it since last I did :-)
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 04ae139671c8..c2c7067b0660 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -777,8 +777,7 @@ static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
+Thanks,
+Charles
+
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index a4db97f156d78..883907fb38e28 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -316,6 +316,8 @@ static const struct {
+ 	int num_i2c_devs;
+ 	const struct spi_board_info *spi_devs;
+ 	int num_spi_devs;
++
++	struct gpiod_lookup_table *gpiod_table;
+ } gf_mods[] = {
+ 	{ .id = 0x01, .rev = 0xff, .name = "1250-EV1 Springbank" },
+ 	{ .id = 0x02, .rev = 0xff, .name = "1251-EV1 Jura" },
+@@ -350,7 +352,8 @@ static const struct {
+ 	  .i2c_devs = wm1255_devs, .num_i2c_devs = ARRAY_SIZE(wm1255_devs) },
+ 	{ .id = 0x3c, .rev = 0xff, .name = "1273-EV1 Longmorn" },
+ 	{ .id = 0x3d, .rev = 0xff, .name = "1277-EV1 Littlemill",
+-	  .i2c_devs = wm1277_devs, .num_i2c_devs = ARRAY_SIZE(wm1277_devs) },
++	  .i2c_devs = wm1277_devs, .num_i2c_devs = ARRAY_SIZE(wm1277_devs),
++	  .gpiod_table = &wm8994_gpiod_table },
+ 	{ .id = 0x3e, .rev = 0, .name = "WM5102-6271-EV1-CS127 Amrut",
+ 	  .spi_devs = wm5102_reva_spi_devs,
+ 	  .num_spi_devs = ARRAY_SIZE(wm5102_reva_spi_devs) },
+@@ -379,7 +382,6 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
+ 					    rev == gf_mods[i].rev))
+ 			break;
  
- static int amd_gpio_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
-+	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
- 	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
- 	int i;
+-	gpiod_add_lookup_table(&wm8994_gpiod_table);
+ 	if (i < ARRAY_SIZE(gf_mods)) {
+ 		dev_info(&i2c->dev, "%s revision %d\n",
+ 			 gf_mods[i].name, rev + 1);
+@@ -393,6 +395,9 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
  
-@@ -796,8 +795,7 @@ static int amd_gpio_suspend(struct device *dev)
- 
- static int amd_gpio_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
-+	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
- 	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
- 	int i;
- 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 4b57a13758a4..7065068f73f5 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -831,8 +831,7 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
- 
- static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-+	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
- 	int i, j;
- 
- 	/*
-@@ -860,8 +859,7 @@ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
- 
- static int __maybe_unused atmel_pctrl_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-+	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
- 	int i, j;
- 
- 	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
+ 		spi_register_board_info(gf_mods[i].spi_devs,
+ 					gf_mods[i].num_spi_devs);
++
++		if (gf_mods[i].gpiod_table)
++			gpiod_add_lookup_table(gf_mods[i].gpiod_table);
+ 	} else {
+ 		dev_warn(&i2c->dev, "Unknown module ID 0x%x revision %d\n",
+ 			 id, rev + 1);
 -- 
 2.11.0
