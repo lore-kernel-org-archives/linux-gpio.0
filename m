@@ -1,13 +1,13 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 39/61] pinctrl: intel: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:09 +0200
-Message-ID: <20180419140641.27926-40-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 38/61] pinctrl: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:06:08 +0200
+Message-ID: <20180419140641.27926-39-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Linus Walleij <linus.walleij@linaro.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
 We should get drvdata from struct device directly. Going via
@@ -18,82 +18,57 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- drivers/pinctrl/intel/pinctrl-baytrail.c   | 6 ++----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 6 ++----
- drivers/pinctrl/intel/pinctrl-intel.c      | 6 ++----
- 3 files changed, 6 insertions(+), 12 deletions(-)
+ drivers/pinctrl/pinctrl-amd.c       | 6 ++----
+ drivers/pinctrl/pinctrl-at91-pio4.c | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 6b52ea1440a6..71dadf8081af 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -1848,8 +1848,7 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int byt_gpio_suspend(struct device *dev)
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 04ae139671c8..c2c7067b0660 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -777,8 +777,7 @@ static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
+ 
+ static int amd_gpio_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+	struct byt_gpio *vg = dev_get_drvdata(dev);
+-	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
++	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
+ 	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
  	int i;
  
- 	for (i = 0; i < vg->soc_data->npins; i++) {
-@@ -1877,8 +1876,7 @@ static int byt_gpio_suspend(struct device *dev)
+@@ -796,8 +795,7 @@ static int amd_gpio_suspend(struct device *dev)
  
- static int byt_gpio_resume(struct device *dev)
+ static int amd_gpio_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+	struct byt_gpio *vg = dev_get_drvdata(dev);
+-	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
++	struct amd_gpio *gpio_dev = dev_get_drvdata(dev);
+ 	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
  	int i;
  
- 	for (i = 0; i < vg->soc_data->npins; i++) {
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index b1ae1618fefe..dd9b2554548f 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1752,8 +1752,7 @@ static int chv_pinctrl_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int chv_pinctrl_suspend_noirq(struct device *dev)
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index 4b57a13758a4..7065068f73f5 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -831,8 +831,7 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
+ 
+ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
-+	struct chv_pinctrl *pctrl = dev_get_drvdata(dev);
- 	unsigned long flags;
- 	int i;
+-	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
++	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
+ 	int i, j;
  
-@@ -1786,8 +1785,7 @@ static int chv_pinctrl_suspend_noirq(struct device *dev)
+ 	/*
+@@ -860,8 +859,7 @@ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
  
- static int chv_pinctrl_resume_noirq(struct device *dev)
+ static int __maybe_unused atmel_pctrl_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
-+	struct chv_pinctrl *pctrl = dev_get_drvdata(dev);
- 	unsigned long flags;
- 	int i;
+-	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
++	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
+ 	int i, j;
  
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 1e24a6b8a64e..04a052292619 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -1409,8 +1409,7 @@ static bool intel_pinctrl_should_save(struct intel_pinctrl *pctrl, unsigned pin)
- 
- int intel_pinctrl_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct intel_pinctrl *pctrl = platform_get_drvdata(pdev);
-+	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
- 	struct intel_community_context *communities;
- 	struct intel_pad_context *pads;
- 	int i;
-@@ -1471,8 +1470,7 @@ static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
- 
- int intel_pinctrl_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct intel_pinctrl *pctrl = platform_get_drvdata(pdev);
-+	struct intel_pinctrl *pctrl = dev_get_drvdata(dev);
- 	const struct intel_community_context *communities;
- 	const struct intel_pad_context *pads;
- 	int i;
+ 	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
 -- 
 2.11.0
