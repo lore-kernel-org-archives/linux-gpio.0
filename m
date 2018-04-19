@@ -1,84 +1,47 @@
 From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: [PATCH] ARM: s3c64xx: Tidy up handling of regulator GPIO lookups
-Date: Thu, 19 Apr 2018 16:01:19 +0100
-Message-ID: <20180419150119.5yhf3uupdolg3cnv@localhost.localdomain>
+Subject: Re: [PATCH 05/21] regulator: arizona-ldo1: Look up a descriptor and
+ pass to the core
+Date: Thu, 19 Apr 2018 16:02:13 +0100
+Message-ID: <20180419150213.kzcl5ghpzkt2kkgk@localhost.localdomain>
 References: <20180212131717.27193-1-linus.walleij@linaro.org>
- <20180212131717.27193-17-linus.walleij@linaro.org>
- <20180213111147.kr4kecqbhmcoq6w2@localhost.localdomain>
- <CACRpkdZVoYsdWy6GwnnSfaSc2_wycEse3JswqufqDoz=GFb5FQ@mail.gmail.com>
+ <20180212131717.27193-6-linus.walleij@linaro.org>
+ <20180213110631.o3zn5bifvypofsyg@localhost.localdomain>
+ <CACRpkdbOfycfGD-13OTEk7xT5FqLQsvcHrN-mn-vgjQ93cPHyQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZVoYsdWy6GwnnSfaSc2_wycEse3JswqufqDoz=GFb5FQ@mail.gmail.com>
+In-Reply-To: <CACRpkdbOfycfGD-13OTEk7xT5FqLQsvcHrN-mn-vgjQ93cPHyQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, patches@opensource.cirrus.com, Lee Jones <lee.jones@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, patches@opensource.cirrus.com, Richard Fitzgerald <rf@opensource.cirrus.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+On Thu, Apr 19, 2018 at 03:43:22PM +0200, Linus Walleij wrote:
+> On Tue, Feb 13, 2018 at 12:06 PM, Charles Keepax
+> <ckeepax@opensource.cirrus.com> wrote:
+> > On Mon, Feb 12, 2018 at 02:17:01PM +0100, Linus Walleij wrote:
+> >> Instead of passing a global GPIO number, pass a descriptor looked
+> >> up with the standard devm_gpiod_get_optional() call.
+> >>
+> >> We have augmented the GPIO core to look up the regulator special
+> >> GPIO "wlf,ldoena" in a separate patch.
+> >>
+> >> Cc: patches@opensource.cirrus.com
+> >> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> >> ---
+> > Also looking at this more you will need to you
+> > devm_gpio_get_from_of_node here since the device tree binding is
+> > for wlf,ldoena not wlf,ldoena-gpio. So this patch currently
+> > breaks the binding.
+> 
+> Actually not, because I fixed that in  the special quirk patch
+> 6a537d48461d
+> "gpio: of: Support regulator nonstandard GPIO properties"
+> as mentioned in the commit message. (Will clarify.)
 
-Rather than unconditionally registering the GPIO lookup table only do so
-for devices that require it.
-
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
-
-Do you have any objections to the following?
-
-If we are lucky I might be able to find time to test these early
-next week. Well at least there is reasonable chance I can test
-the 5102 stuff when you resend, not sure I have a device to
-test the wm1277 but will have a look. Also I haven't run up
-Cragganmore in a little while so might depend a little on how
-much people have broken it since last I did :-)
+Apologies my bad should have spotted that in the commit message.
 
 Thanks,
 Charles
-
- arch/arm/mach-s3c64xx/mach-crag6410-module.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-index a4db97f156d78..883907fb38e28 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-@@ -316,6 +316,8 @@ static const struct {
- 	int num_i2c_devs;
- 	const struct spi_board_info *spi_devs;
- 	int num_spi_devs;
-+
-+	struct gpiod_lookup_table *gpiod_table;
- } gf_mods[] = {
- 	{ .id = 0x01, .rev = 0xff, .name = "1250-EV1 Springbank" },
- 	{ .id = 0x02, .rev = 0xff, .name = "1251-EV1 Jura" },
-@@ -350,7 +352,8 @@ static const struct {
- 	  .i2c_devs = wm1255_devs, .num_i2c_devs = ARRAY_SIZE(wm1255_devs) },
- 	{ .id = 0x3c, .rev = 0xff, .name = "1273-EV1 Longmorn" },
- 	{ .id = 0x3d, .rev = 0xff, .name = "1277-EV1 Littlemill",
--	  .i2c_devs = wm1277_devs, .num_i2c_devs = ARRAY_SIZE(wm1277_devs) },
-+	  .i2c_devs = wm1277_devs, .num_i2c_devs = ARRAY_SIZE(wm1277_devs),
-+	  .gpiod_table = &wm8994_gpiod_table },
- 	{ .id = 0x3e, .rev = 0, .name = "WM5102-6271-EV1-CS127 Amrut",
- 	  .spi_devs = wm5102_reva_spi_devs,
- 	  .num_spi_devs = ARRAY_SIZE(wm5102_reva_spi_devs) },
-@@ -379,7 +382,6 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
- 					    rev == gf_mods[i].rev))
- 			break;
- 
--	gpiod_add_lookup_table(&wm8994_gpiod_table);
- 	if (i < ARRAY_SIZE(gf_mods)) {
- 		dev_info(&i2c->dev, "%s revision %d\n",
- 			 gf_mods[i].name, rev + 1);
-@@ -393,6 +395,9 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
- 
- 		spi_register_board_info(gf_mods[i].spi_devs,
- 					gf_mods[i].num_spi_devs);
-+
-+		if (gf_mods[i].gpiod_table)
-+			gpiod_add_lookup_table(gf_mods[i].gpiod_table);
- 	} else {
- 		dev_warn(&i2c->dev, "Unknown module ID 0x%x revision %d\n",
- 			 id, rev + 1);
--- 
-2.11.0
