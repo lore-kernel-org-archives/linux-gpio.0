@@ -1,42 +1,35 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH] pinctrl: meson-axg: fix the range of aobus bank
-Date: Thu, 19 Apr 2018 11:07:32 -0700
-Message-ID: <7hd0yv3w9n.fsf@baylibre.com>
-References: <20180417170824.18670-1-yixun.lan@amlogic.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
+Date: Thu, 19 Apr 2018 15:25:24 -0700
+Message-ID: <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+ <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180417170824.18670-1-yixun.lan@amlogic.com> (Yixun Lan's
-        message of "Tue, 17 Apr 2018 17:08:24 +0000")
+In-Reply-To: <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
-
-> The GPIOAO bank is range from GPIOAO_0 to GPIOAO_13.
->
-> Fixes: 83c566806a68 ("pinctrl: meson-axg: Add new pinctrl driver for Meson AXG SoC")
-> Reported-by: Xingyu Chen <xingyu.chen@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-
-Acked-by: Kevin Hilman <khilman@baylibre.com>
-
+Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
+> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
+> limited to clock providers.
+> 
+> Hence move these helpers into their own header file, so callers that are
+> not clock providers no longer have to include <linux/clk-provider.h>.
+> 
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  drivers/pinctrl/meson/pinctrl-meson-axg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-> index 4b91ff74779b..99a6ceac8e53 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-> @@ -898,7 +898,7 @@ static struct meson_bank meson_axg_periphs_banks[] = {
->  
->  static struct meson_bank meson_axg_aobus_banks[] = {
->  	/*   name    first      last      irq	pullen  pull    dir     out     in  */
-> -	BANK("AO",   GPIOAO_0,  GPIOAO_9, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
-> +	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
->  };
->  
->  static struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
+> v3:
+>   - Add Reviewed-by,
+>   - Add SPDX-License-Identifier,
+>   - Add to clock section in MAINTAINERS (note that Rob is still listed
+>     as a maintainer, too, due to the include/linux/of*.h catch-all
+>     rule),
+
+Can you X: out this file so Rob is happy? Or that doesn't work?
