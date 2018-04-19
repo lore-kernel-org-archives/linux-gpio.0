@@ -1,61 +1,88 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 02/21] regulator: fixed: Convert to use GPIO descriptor only
-Date: Thu, 19 Apr 2018 14:36:00 +0200
-Message-ID: <CACRpkdYXx-nbSFEasioGHTzoOo2-nJ0whk-UVMgqYNNJuoT8bA@mail.gmail.com>
-References: <20180212131717.27193-1-linus.walleij@linaro.org>
- <20180212131717.27193-3-linus.walleij@linaro.org> <1518448411.22495.286.camel@linux.intel.com>
+From: Ludovic BARRE <ludovic.barre@st.com>
+Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
+ irq_domain
+Date: Thu, 19 Apr 2018 15:24:56 +0200
+Message-ID: <ef86e131-ffb4-b883-b9ca-1e670d960d3e@st.com>
+References: <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <alpine.DEB.2.21.1802230938510.11168@nanos.tec.linutronix.de>
+ <a709e416-4024-f804-b2ff-ae6c2171a7c8@arm.com>
+ <CAFvLkMSZjgFMAe0VRc0AEpG89BgXkfMb9+ivJ8V+PFighOoDRA@mail.gmail.com>
+ <118e66b4-3137-7af5-b93d-b1949fad575c@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1518448411.22495.286.camel@linux.intel.com>
+In-Reply-To: <118e66b4-3137-7af5-b93d-b1949fad575c@arm.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Haojian Zhuang <haojian.zhuang@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>, Mike Rapoport <mike@compulab.co.il>, Robert Jarzmik <robert.jarzmik@free.fr>, Philipp Zabel <philipp.zabel@gmail.com>, Daniel Mack <zonque@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Marc Zyngier <marc.zyngier@arm.com>, =?UTF-8?Q?Rados=c5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 4:13 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+Hi Radoslaw
 
->> +static struct gpiod_lookup_table bcm43xx_vmmc_gpio_table = {
->> +     .dev_id = "reg-fixed-voltage.0",
->
-> I'm not sure this will be always like this.
-> We have DEVID_AUTO, which theoretically can be anything.
->
-> Okay, it looks like we have only one static regulator for now for Intel
-> MID. Though it's fragile if anything will change in the future (quite
-> unlikely).
+I preparing a patch serie which add support of stm32mp1.
+Would you like, I add your patch (with commit message updated)
+in my serie?
+patch:
+-irqchip: stm32: Optimizes and cleans up stm32-exti irq_domain
 
-OK let's hope this doesn't blow up in our face :/
-Then I have to think of something.
+BR
+Ludo
 
->> +     cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, NULL,
->> gflags);
->
-> Shouldn't we be a little bit more stricter here, i.e. require "enable"
-> name?
-
-It sadly won't work.
-
-The reason is the way the regulator device tree bindings look,
-specifying just:
-
-Optional properties:
-- gpio: gpio to use for enable control
-- startup-delay-us: startup time in microseconds
-- enable-active-high: Polarity of GPIO is Active high
-If this property is missing, the default assumed is Active low.
-- gpio-open-drain: GPIO is open drain type.
-  If this property is missing then default assumption is false.
--vin-supply: Input supply name.
-
-Not "enable-gpios" as we would write it today.
-
-So it has to retrieve the first (and only) GPIO.
-
-This is another of those historical artifacts, I have tried to
-contain some of them, but I don't know if I can do much
-about this one :/
-
-Yours,
-Linus Walleij
+On 03/14/2018 01:04 PM, Marc Zyngier wrote:
+> On 14/03/18 11:46, Radosław Pietrzyk wrote:
+>> Hi Marc,
+>> We had a quite fruitful discussion in this mail thread regarding this
+>> topic and Ludovic acked it so recently I have asked Thomas if he still
+>> needs this v3 patch with detailed explanation especially as v2 version
+>> of stm32-gpio patch has been already taken by Linus. However if you
+>> require I can resend v3 of this patch only with this detailed explanation.
+> 
+> That'd be useful. The changelog is the only thing that will be left from
+> this discussion, so it'd better be complete and accurate. If you quickly
+> send a v3 for this single patch, I'll queue it right away.
+> 
+> Thanks,
+> 
+> 	M.
+> 
+>>
+>> 2018-03-14 12:09 GMT+01:00 Marc Zyngier <marc.zyngier@arm.com
+>> <mailto:marc.zyngier@arm.com>>:
+>>
+>>      Radoslaw,
+>>
+>>      On 23/02/18 08:42, Thomas Gleixner wrote:
+>>      > Radoslaw,
+>>      >
+>>      > On Fri, 23 Feb 2018, Radoslaw Pietrzyk wrote:
+>>      >
+>>      >> - discards setting handle_simple_irq handler for hierarchy interrupts
+>>      >> - removes acking in chained irq handler as this is done by
+>>      >> irq_chip itself inside handle_edge_irq
+>>      >> - removes unneeded irq_domain_ops.xlate callback
+>>      >
+>>      > if that's all functionally correct, then this is a nice cleanup. Though
+>>      > from the above changelog its hard to tell because it merily tells WHAT the
+>>      > patch does, but not WHY. The WHY is the important information for a
+>>      > reviewer who is not familiar with the particular piece of code/hardware.
+>>      >
+>>      > Can you please amend the changelog with proper explanations why a
+>>      > particular piece of code is not needed or has to be changed to something
+>>      > else?
+>>
+>>      Any update on this? I'd like to queue this for 4.17, but Thomas'
+>>      comments should be addressed before that happens. Ca you please respin a
+>>      version with a better change log and the various review tags?
+>>
+>>      Thanks,
+>>
+>>              M.
+>>      --
+>>      Jazz is not dead. It just smells funny...
+>>
+>>
+> 
+> 
