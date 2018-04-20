@@ -1,173 +1,127 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Date: Fri, 20 Apr 2018 09:20:00 +0200
-Message-ID: <34f4679f-d306-073b-eae0-28c9e8965780@xilinx.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCHv5] gpio: Remove VLA from gpiolib
+Date: Fri, 20 Apr 2018 11:02:04 +0200
+Message-ID: <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
+References: <20180413212427.18261-1-labbott@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
+In-Reply-To: <20180413212427.18261-1-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michal Simek <michal.simek@xilinx.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Laura Abbott <labbott@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Wolfram,
+Hi Laura,
 
-On 19.4.2018 16:05, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/gpio/gpio-dwapb.c     |  6 ++----
->  drivers/gpio/gpio-lynxpoint.c |  3 +--
->  drivers/gpio/gpio-omap.c      | 12 ++++--------
->  drivers/gpio/gpio-tegra.c     |  6 ++----
->  drivers/gpio/gpio-zynq.c      |  6 ++----
->  5 files changed, 11 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 226977f78482..caaabb79e31f 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -732,8 +732,7 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
->  #ifdef CONFIG_PM_SLEEP
->  static int dwapb_gpio_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
->  	struct gpio_chip *gc	= &gpio->ports[0].gc;
->  	unsigned long flags;
->  	int i;
-> @@ -777,8 +776,7 @@ static int dwapb_gpio_suspend(struct device *dev)
->  
->  static int dwapb_gpio_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct dwapb_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
->  	struct gpio_chip *gc	= &gpio->ports[0].gc;
->  	unsigned long flags;
->  	int i;
-> diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
-> index 1e557b10d73e..55fa33b7209f 100644
-> --- a/drivers/gpio/gpio-lynxpoint.c
-> +++ b/drivers/gpio/gpio-lynxpoint.c
-> @@ -408,8 +408,7 @@ static int lp_gpio_runtime_resume(struct device *dev)
->  
->  static int lp_gpio_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct lp_gpio *lg = platform_get_drvdata(pdev);
-> +	struct lp_gpio *lg = dev_get_drvdata(dev);
->  	unsigned long reg;
->  	int i;
->  
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 35971a341c40..b4f8a048a2a1 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -856,8 +856,7 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
->  
->  static int omap_mpuio_suspend_noirq(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct gpio_bank	*bank = platform_get_drvdata(pdev);
-> +	struct gpio_bank	*bank = dev_get_drvdata(dev);
->  	void __iomem		*mask_reg = bank->base +
->  					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
->  	unsigned long		flags;
-> @@ -871,8 +870,7 @@ static int omap_mpuio_suspend_noirq(struct device *dev)
->  
->  static int omap_mpuio_resume_noirq(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct gpio_bank	*bank = platform_get_drvdata(pdev);
-> +	struct gpio_bank	*bank = dev_get_drvdata(dev);
->  	void __iomem		*mask_reg = bank->base +
->  					OMAP_MPUIO_GPIO_MASKIT / bank->stride;
->  	unsigned long		flags;
-> @@ -1284,8 +1282,7 @@ static void omap_gpio_restore_context(struct gpio_bank *bank);
->  
->  static int omap_gpio_runtime_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct gpio_bank *bank = platform_get_drvdata(pdev);
-> +	struct gpio_bank *bank = dev_get_drvdata(dev);
->  	u32 l1 = 0, l2 = 0;
->  	unsigned long flags;
->  	u32 wake_low, wake_hi;
-> @@ -1352,8 +1349,7 @@ static void omap_gpio_init_context(struct gpio_bank *p);
->  
->  static int omap_gpio_runtime_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct gpio_bank *bank = platform_get_drvdata(pdev);
-> +	struct gpio_bank *bank = dev_get_drvdata(dev);
->  	u32 l = 0, gen, gen0, gen1;
->  	unsigned long flags;
->  	int c;
-> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> index 94396caaca75..04c963f03b68 100644
-> --- a/drivers/gpio/gpio-tegra.c
-> +++ b/drivers/gpio/gpio-tegra.c
-> @@ -403,8 +403,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
->  #ifdef CONFIG_PM_SLEEP
->  static int tegra_gpio_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
-> +	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
->  	unsigned long flags;
->  	unsigned int b, p;
->  
-> @@ -443,8 +442,7 @@ static int tegra_gpio_resume(struct device *dev)
->  
->  static int tegra_gpio_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
-> +	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
->  	unsigned long flags;
->  	unsigned int b, p;
->  
-> diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-> index 75ee877e5cd5..49534241bb1e 100644
-> --- a/drivers/gpio/gpio-zynq.c
-> +++ b/drivers/gpio/gpio-zynq.c
-> @@ -697,8 +697,7 @@ static int __maybe_unused zynq_gpio_resume(struct device *dev)
->  
->  static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct zynq_gpio *gpio = dev_get_drvdata(dev);
->  
->  	clk_disable_unprepare(gpio->clk);
->  
-> @@ -707,8 +706,7 @@ static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
->  
->  static int __maybe_unused zynq_gpio_runtime_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
-> +	struct zynq_gpio *gpio = dev_get_drvdata(dev);
->  
->  	return clk_prepare_enable(gpio->clk);
+Thanks for your patch!
+
+On Fri, Apr 13, 2018 at 11:24 PM, Laura Abbott <labbott@redhat.com> wrote:
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+> turn on -Wvla.
+>
+> Using a kmalloc array is the easy way to fix this but kmalloc is still
+> more expensive than stack allocation. Introduce a fast path with a
+> fixed size stack array to cover most chip with gpios below some fixed
+> amount. The slow path dynamically allocates an array to cover those
+> chips with a large number of gpios.
+
+Blindly replacing VLAs by allocated arrays is IMHO not such a good solution.
+On the largest systems, NR_GPIOS is 2048, so that makes 2 arrays of 256
+bytes. That's an uppper limit, and assumes they are all on the same gpiochip,
+which they probably aren't.
+
+Still, 2 x 256 bytes is a lot, so I agree it should be fixed.
+
+So, wouldn't it make more sense to not allocate memory, but just process
+the request in chunks (say, at most 128 gpios per chunk, i.e. 2 x
+16 bytes)? The code already caters for handling chunks due to not all gpios
+belonging to the same gpiochip. That will probably also be faster than
+allocating memory, which is the main idea behind this API.
+
+> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+
+> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>                 goto err_free_descs;
+>         }
+>
+> +       if (chip->ngpio > FASTPATH_NGPIO)
+> +               chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
+> +               chip->ngpio, FASTPATH_NGPIO);
+
+FWIW, can this warning be triggered from userspace?
+
+> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>
+>         while (i < array_size) {
+>                 struct gpio_chip *chip = desc_array[i]->gdev->chip;
+> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+
+Hence just use a fixed size here...
+
+> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
+> +               unsigned long *mask, *bits;
+>                 int first, j, ret;
+>
+> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
+> +                       memset(fastpath, 0, sizeof(fastpath));
+> +                       mask = fastpath;
+> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
+> +               } else {
+> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+> +                                          sizeof(*mask),
+> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> +                       if (!mask)
+> +                               return -ENOMEM;
+> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
+> +               }
+> +
+>                 if (!can_sleep)
+>                         WARN_ON(chip->can_sleep);
+>
+>                 /* collect all inputs belonging to the same chip */
+>                 first = i;
+> -               memset(mask, 0, sizeof(mask));
+>                 do {
+>                         const struct gpio_desc *desc = desc_array[i];
+>                         int hwgpio = gpio_chip_hwgpio(desc);
+
+Out-of-context, the code does:
+
+|                       __set_bit(hwgpio, mask);
+|                       i++;
+|                 } while ((i < array_size) &&
+
+... and change this limit to "(i < min(array_size, first +
+ARRAY_SIZE(mask) * BITS_PER_BYTE))"
+
+|                         (desc_array[i]->gdev->chip == chip));
+
+... and you're done?
+
+> @@ -2878,7 +2904,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
+>         }
 >  }
-> 
+>
+> -void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+> +int gpiod_set_array_value_complex(bool raw, bool can_sleep,
 
-There are two more occurences in this gpio-zynq driver.
-zynq_gpio_resume, zynq_gpio_suspend. It wasn't detected because these
-two lines are not together. But the same change can be applied for them too.
+Same here.
 
-Thanks,
-Michal
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
