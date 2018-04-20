@@ -1,59 +1,127 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
-Date: Fri, 20 Apr 2018 08:28:28 +0200
-Message-ID: <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-2-git-send-email-geert+renesas@glider.be> <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+From: Ludovic BARRE <ludovic.barre@st.com>
+Subject: Re: [PATCH v2 1/2] irqchip: stm32: Optimizes and cleans up stm32-exti
+ irq_domain
+Date: Fri, 20 Apr 2018 09:18:28 +0200
+Message-ID: <4c8eda6d-a4b0-8c9c-19c2-c5ee334ff3ba@st.com>
+References: <cover.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <6491f248c6748f21a2acf310e186d2be4f9b4e4c.1519374248.git.radoslaw.pietrzyk@gmail.com>
+ <alpine.DEB.2.21.1802230938510.11168@nanos.tec.linutronix.de>
+ <a709e416-4024-f804-b2ff-ae6c2171a7c8@arm.com>
+ <CAFvLkMSZjgFMAe0VRc0AEpG89BgXkfMb9+ivJ8V+PFighOoDRA@mail.gmail.com>
+ <118e66b4-3137-7af5-b93d-b1949fad575c@arm.com>
+ <ef86e131-ffb4-b883-b9ca-1e670d960d3e@st.com>
+ <CAFvLkMQv3AajhFaRxsBt+UzdGFeix_FA-0mhtYqwMo2x0zgrnA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+In-Reply-To: <CAFvLkMQv3AajhFaRxsBt+UzdGFeix_FA-0mhtYqwMo2x0zgrnA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-tegra@vger.kernel.org, open list:OPEN FIRMWARE AND FLATTENE
+To: =?UTF-8?Q?Rados=c5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Stephen, Rob,
+ok, So I include your patch in my serie
+- irqchip: stm32: Optimizes and cleans up stm32-exti irq_domain
 
-On Fri, Apr 20, 2018 at 12:25 AM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
->> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
->> limited to clock providers.
->>
->> Hence move these helpers into their own header file, so callers that are
->> not clock providers no longer have to include <linux/clk-provider.h>.
->>
->> Suggested-by: Stephen Boyd <sboyd@kernel.org>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
->> ---
->> v3:
->>   - Add Reviewed-by,
->>   - Add SPDX-License-Identifier,
->>   - Add to clock section in MAINTAINERS (note that Rob is still listed
->>     as a maintainer, too, due to the include/linux/of*.h catch-all
->>     rule),
->
-> Can you X: out this file so Rob is happy? Or that doesn't work?
+BR
+Ludo
 
-I guess that should work.
-
-My point here is that due to the catch-all rule, he's listed as maintainer
-for of_{dma,gpio,irq,iommu,mdio,net,pci} too, which are all helpers for
-other subsystems. Perhaps these should be X'd-out too?
-Or is it OK without X-ing them out, as the clock maintainers are now shown, too?
-
-Rob: What's your preference?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+On 04/19/2018 10:03 PM, Radosław Pietrzyk wrote:
+> Sure, I don't mind. I didn't have time to resend v3 with more verbose 
+> description.
+> 
+> 2018-04-19 15:24 GMT+02:00 Ludovic BARRE <ludovic.barre@st.com 
+> <mailto:ludovic.barre@st.com>>:
+> 
+>     Hi Radoslaw
+> 
+>     I preparing a patch serie which add support of stm32mp1.
+>     Would you like, I add your patch (with commit message updated)
+>     in my serie?
+>     patch:
+>     -irqchip: stm32: Optimizes and cleans up stm32-exti irq_domain
+> 
+>     BR
+>     Ludo
+> 
+> 
+>     On 03/14/2018 01:04 PM, Marc Zyngier wrote:
+> 
+>         On 14/03/18 11:46, Radosław Pietrzyk wrote:
+> 
+>             Hi Marc,
+>             We had a quite fruitful discussion in this mail thread
+>             regarding this
+>             topic and Ludovic acked it so recently I have asked Thomas
+>             if he still
+>             needs this v3 patch with detailed explanation especially as
+>             v2 version
+>             of stm32-gpio patch has been already taken by Linus. However
+>             if you
+>             require I can resend v3 of this patch only with this
+>             detailed explanation.
+> 
+> 
+>         That'd be useful. The changelog is the only thing that will be
+>         left from
+>         this discussion, so it'd better be complete and accurate. If you
+>         quickly
+>         send a v3 for this single patch, I'll queue it right away.
+> 
+>         Thanks,
+> 
+>                  M.
+> 
+> 
+>             2018-03-14 12:09 GMT+01:00 Marc Zyngier
+>             <marc.zyngier@arm.com <mailto:marc.zyngier@arm.com>
+>             <mailto:marc.zyngier@arm.com <mailto:marc.zyngier@arm.com>>>:
+> 
+>                   Radoslaw,
+> 
+>                   On 23/02/18 08:42, Thomas Gleixner wrote:
+>                   > Radoslaw,
+>                   >
+>                   > On Fri, 23 Feb 2018, Radoslaw Pietrzyk wrote:
+>                   >
+>                   >> - discards setting handle_simple_irq handler for
+>             hierarchy interrupts
+>                   >> - removes acking in chained irq handler as this is
+>             done by
+>                   >> irq_chip itself inside handle_edge_irq
+>                   >> - removes unneeded irq_domain_ops.xlate callback
+>                   >
+>                   > if that's all functionally correct, then this is a
+>             nice cleanup. Though
+>                   > from the above changelog its hard to tell because it
+>             merily tells WHAT the
+>                   > patch does, but not WHY. The WHY is the important
+>             information for a
+>                   > reviewer who is not familiar with the particular
+>             piece of code/hardware.
+>                   >
+>                   > Can you please amend the changelog with proper
+>             explanations why a
+>                   > particular piece of code is not needed or has to be
+>             changed to something
+>                   > else?
+> 
+>                   Any update on this? I'd like to queue this for 4.17,
+>             but Thomas'
+>                   comments should be addressed before that happens. Ca
+>             you please respin a
+>                   version with a better change log and the various
+>             review tags?
+> 
+>                   Thanks,
+> 
+>                           M.
+>                   --
+>                   Jazz is not dead. It just smells funny...
+> 
+> 
+> 
+> 
+> 
