@@ -1,127 +1,36 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCHv5] gpio: Remove VLA from gpiolib
-Date: Fri, 20 Apr 2018 11:02:04 +0200
-Message-ID: <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
-References: <20180413212427.18261-1-labbott@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH] gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop
+Date: Fri, 20 Apr 2018 09:50:20 -0400
+Message-ID: <20180420135020.23423-1-vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180413212427.18261-1-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laura,
+The PCIe-IDIO-24 features 8 bits of TTL GPIO which may be configured for
+output or input. This patch fixes an off-by-one error in the loop
+conditional for the get_multiple callback so that the TTL GPIO are
+handled.
 
-Thanks for your patch!
+Fixes: ca37081595a2 ("gpio: pcie-idio-24: Implement get_multiple/set_multiple callbacks")
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ drivers/gpio/gpio-pcie-idio-24.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, Apr 13, 2018 at 11:24 PM, Laura Abbott <labbott@redhat.com> wrote:
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621) to eventually
-> turn on -Wvla.
->
-> Using a kmalloc array is the easy way to fix this but kmalloc is still
-> more expensive than stack allocation. Introduce a fast path with a
-> fixed size stack array to cover most chip with gpios below some fixed
-> amount. The slow path dynamically allocates an array to cover those
-> chips with a large number of gpios.
-
-Blindly replacing VLAs by allocated arrays is IMHO not such a good solution.
-On the largest systems, NR_GPIOS is 2048, so that makes 2 arrays of 256
-bytes. That's an uppper limit, and assumes they are all on the same gpiochip,
-which they probably aren't.
-
-Still, 2 x 256 bytes is a lot, so I agree it should be fixed.
-
-So, wouldn't it make more sense to not allocate memory, but just process
-the request in chunks (say, at most 128 gpios per chunk, i.e. 2 x
-16 bytes)? The code already caters for handling chunks due to not all gpios
-belonging to the same gpiochip. That will probably also be faster than
-allocating memory, which is the main idea behind this API.
-
-> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-
-> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->                 goto err_free_descs;
->         }
->
-> +       if (chip->ngpio > FASTPATH_NGPIO)
-> +               chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
-> +               chip->ngpio, FASTPATH_NGPIO);
-
-FWIW, can this warning be triggered from userspace?
-
-> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->
->         while (i < array_size) {
->                 struct gpio_chip *chip = desc_array[i]->gdev->chip;
-> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
-> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-
-Hence just use a fixed size here...
-
-> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-> +               unsigned long *mask, *bits;
->                 int first, j, ret;
->
-> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-> +                       memset(fastpath, 0, sizeof(fastpath));
-> +                       mask = fastpath;
-> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
-> +               } else {
-> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
-> +                                          sizeof(*mask),
-> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> +                       if (!mask)
-> +                               return -ENOMEM;
-> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
-> +               }
-> +
->                 if (!can_sleep)
->                         WARN_ON(chip->can_sleep);
->
->                 /* collect all inputs belonging to the same chip */
->                 first = i;
-> -               memset(mask, 0, sizeof(mask));
->                 do {
->                         const struct gpio_desc *desc = desc_array[i];
->                         int hwgpio = gpio_chip_hwgpio(desc);
-
-Out-of-context, the code does:
-
-|                       __set_bit(hwgpio, mask);
-|                       i++;
-|                 } while ((i < array_size) &&
-
-... and change this limit to "(i < min(array_size, first +
-ARRAY_SIZE(mask) * BITS_PER_BYTE))"
-
-|                         (desc_array[i]->gdev->chip == chip));
-
-... and you're done?
-
-> @@ -2878,7 +2904,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
->         }
->  }
->
-> -void gpiod_set_array_value_complex(bool raw, bool can_sleep,
-> +int gpiod_set_array_value_complex(bool raw, bool can_sleep,
-
-Same here.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
+index 835607ecf658..32bcbd9a52aa 100644
+--- a/drivers/gpio/gpio-pcie-idio-24.c
++++ b/drivers/gpio/gpio-pcie-idio-24.c
+@@ -217,7 +217,7 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
+ 	bitmap_zero(bits, chip->ngpio);
+ 
+ 	/* get bits are evaluated a gpio port register at a time */
+-	for (i = 0; i < ARRAY_SIZE(ports); i++) {
++	for (i = 0; i < ARRAY_SIZE(ports) + 1; i++) {
+ 		/* gpio offset in bits array */
+ 		bits_offset = i * gpio_reg_size;
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.16.2
