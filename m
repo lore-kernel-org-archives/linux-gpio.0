@@ -1,36 +1,66 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH] gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop
-Date: Fri, 20 Apr 2018 09:50:20 -0400
-Message-ID: <20180420135020.23423-1-vilhelm.gray@gmail.com>
+From: Javier Arteaga <javier@emutex.com>
+Subject: [RFC PATCH 0/3] UP Squared board drivers
+Date: Sat, 21 Apr 2018 09:30:05 +0100
+Message-ID: <20180421083008.27411-1-javier@emutex.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Javier Arteaga <javier@emutex.com>, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The PCIe-IDIO-24 features 8 bits of TTL GPIO which may be configured for
-output or input. This patch fixes an off-by-one error in the loop
-conditional for the get_multiple callback so that the TTL GPIO are
-handled.
+Hi all,
 
-Fixes: ca37081595a2 ("gpio: pcie-idio-24: Implement get_multiple/set_multiple callbacks")
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-pcie-idio-24.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series adds platform support for AAEON's UP Squared, a x86 SBC
+based on Apollo Lake [1]. Specifically, it enables control for the board
+pin headers and for the LEDs, as both of these features are only
+available behind a FPGA-based platform controller.
 
-diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
-index 835607ecf658..32bcbd9a52aa 100644
---- a/drivers/gpio/gpio-pcie-idio-24.c
-+++ b/drivers/gpio/gpio-pcie-idio-24.c
-@@ -217,7 +217,7 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- 	bitmap_zero(bits, chip->ngpio);
- 
- 	/* get bits are evaluated a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports); i++) {
-+	for (i = 0; i < ARRAY_SIZE(ports) + 1; i++) {
- 		/* gpio offset in bits array */
- 		bits_offset = i * gpio_reg_size;
- 
+This is structured around a MFD driver that provides a regmap interface
+to that platform controller to each MFD cell.
+
+The series is carved out from an out-of-tree support patchset, initially
+written by Dan O'Donovan for the original UP Board [2] and then extended
+through the past year to support new entries in the lineup (UP Board, UP
+Squared and UP Core) [3].
+
+Here we only submit support for UP Squared to simplify review. Still,
+the driver is designed so that it can easily gain support for the other
+boards.
+
+Questions:
+
+* Is MFD the right fit for the platform controller?
+  The intention here is to encapsulate the custom GPIO-bitbanged control
+  protocol by sharing the regmap between the drivers.
+
+* Is our use of two chained pinctrls (in patch 3/3) valid?
+
+Thank you!
+
+[1]: http://www.up-board.org/upsquared/specifications-up2/
+[2]: https://lkml.kernel.org/r/1467648434-29080-1-git-send-email-dan@emutex.com
+[3]: https://github.com/emutex/ubilinux-kernel/commits/upboard-4.9
+
+Javier Arteaga (3):
+  mfd: upboard: Add UP2 platform controller driver
+  leds: upboard: Add LED support
+  pinctrl: upboard: Add pinctrl and gpio driver
+
+ drivers/leds/Kconfig              |  10 +
+ drivers/leds/Makefile             |   1 +
+ drivers/leds/leds-upboard.c       |  87 +++++
+ drivers/mfd/Kconfig               |  17 +
+ drivers/mfd/Makefile              |   1 +
+ drivers/mfd/upboard.c             | 273 ++++++++++++++++
+ drivers/pinctrl/Kconfig           |  13 +
+ drivers/pinctrl/Makefile          |   1 +
+ drivers/pinctrl/pinctrl-upboard.c | 523 ++++++++++++++++++++++++++++++
+ include/linux/mfd/upboard.h       |  70 ++++
+ 10 files changed, 996 insertions(+)
+ create mode 100644 drivers/leds/leds-upboard.c
+ create mode 100644 drivers/mfd/upboard.c
+ create mode 100644 drivers/pinctrl/pinctrl-upboard.c
+ create mode 100644 include/linux/mfd/upboard.h
+
 -- 
-2.16.2
+2.17.0
