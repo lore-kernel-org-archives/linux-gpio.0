@@ -1,204 +1,231 @@
-From: Javier Arteaga <javier@emutex.com>
-Subject: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
-Date: Sat, 21 Apr 2018 09:50:08 +0100
-Message-ID: <20180421085009.28773-3-javier@emutex.com>
-References: <20180421085009.28773-1-javier@emutex.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180421085009.28773-1-javier@emutex.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: Javier Arteaga <javier@emutex.com>, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH] pinctrl: armada-37xx: add suspend/resume support
+Date: Sat, 21 Apr 2018 16:17:31 +0200
+Message-ID: <20180421141731.25556-1-miquel.raynal@bootlin.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Gregory Clement <gregory.clement@bootlin.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Ken Ma <make@marvell.com>, Antoine Tenart <antoine.tenart@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Allow userspace to use the on-board LEDs as "upboard:<color>:".
+From: Ken Ma <make@marvell.com>
 
-Signed-off-by: Javier Arteaga <javier@emutex.com>
+Add suspend/resume hooks in pinctrl driver to handle S2RAM operations.
+
+Beyond the traditional register save/restore operations, these hooks
+also keep the GPIOs used for both-edge IRQ synchronized between their
+level (low/high) and expected IRQ polarity (falling/rising edge).
+
+Since pinctrl is an infrastructure module, its resume should be issued
+prior to other IO drivers. The pinctrl PM is registered as syscore
+level to make sure of it. A postcore initcall is added to register
+syscore operation. Because of the use of such syscore_ops, the
+suspend/resume hooks do not have access to a device pointer, and thus
+need to use a global list in order to keep track of the probed devices
+for which registers have to be saved/restored.
+
+Signed-off-by: Ken Ma <make@marvell.com>
+Reviewed-by: Victor Gu <xigu@marvell.com>
+[miquel.raynal@bootlin.com: updated the coding style, re-wrote the
+comments and the commit message]
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/leds/Kconfig        | 10 +++++
- drivers/leds/Makefile       |  1 +
- drivers/leds/leds-upboard.c | 87 +++++++++++++++++++++++++++++++++++++
- drivers/mfd/upboard.c       | 19 ++++++++
- include/linux/mfd/upboard.h |  5 +++
- 5 files changed, 122 insertions(+)
- create mode 100644 drivers/leds/leds-upboard.c
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 137 ++++++++++++++++++++++++++++
+ 1 file changed, 137 insertions(+)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 2c896c0e69e1..2e77b46f2802 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -722,6 +722,16 @@ config LEDS_NIC78BX
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called leds-nic78bx.
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 5b63248c8209..b47b6145f08e 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -23,6 +23,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
++#include <linux/syscore_ops.h>
  
-+config LEDS_UPBOARD
-+	tristate "LED support for the UP Squared"
-+	depends on LEDS_CLASS
-+	depends on MFD_UPBOARD
-+	help
-+	  This option enables support for the LEDs on the UP Squared board.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called leds-upboard.
-+
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
+ #include "../pinctrl-utils.h"
  
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 91eca81cae82..4008e2061e1f 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -76,6 +76,7 @@ obj-$(CONFIG_LEDS_MLXREG)		+= leds-mlxreg.o
- obj-$(CONFIG_LEDS_NIC78BX)		+= leds-nic78bx.o
- obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
- obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
-+obj-$(CONFIG_LEDS_UPBOARD)		+= leds-upboard.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
-new file mode 100644
-index 000000000000..e9d7a1fbcde4
---- /dev/null
-+++ b/drivers/leds/leds-upboard.c
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * UP Board LED driver
-+ *
-+ * Copyright (c) 2018, Emutex Ltd.
-+ *
-+ * Author: Javier Arteaga <javier@emutex.com>
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/leds.h>
-+#include <linux/mfd/upboard.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+struct upboard_led {
-+	struct regmap_field *field;
-+	struct led_classdev cdev;
-+};
-+
-+static enum led_brightness upboard_led_brightness_get(struct led_classdev *cdev)
-+{
-+	struct upboard_led *led = container_of(cdev, struct upboard_led, cdev);
-+	int brightness = 0;
-+
-+	regmap_field_read(led->field, &brightness);
-+
-+	return brightness;
-+};
-+
-+static void upboard_led_brightness_set(struct led_classdev *cdev,
-+				       enum led_brightness brightness)
-+{
-+	struct upboard_led *led = container_of(cdev, struct upboard_led, cdev);
-+
-+	regmap_field_write(led->field, brightness != LED_OFF);
-+};
-+
-+static int __init upboard_led_probe(struct platform_device *pdev)
-+{
-+	struct upboard_led_data * const pdata = pdev->dev.platform_data;
-+	struct upboard *upboard;
-+	struct upboard_led *led;
-+	struct reg_field conf = {
-+		.reg = UPBOARD_REG_FUNC_EN0,
-+	};
-+
-+	if (!pdev->dev.parent)
-+		return -EINVAL;
-+
-+	upboard = dev_get_drvdata(pdev->dev.parent);
-+	if (!upboard || !pdata)
-+		return -EINVAL;
-+
-+	led = devm_kzalloc(&pdev->dev, sizeof(*led), GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	conf.lsb = pdata->id;
-+	conf.msb = pdata->id;
-+	led->field = devm_regmap_field_alloc(&pdev->dev, upboard->regmap, conf);
-+	if (IS_ERR(led->field))
-+		return PTR_ERR(led->field);
-+
-+	led->cdev.brightness_get = upboard_led_brightness_get;
-+	led->cdev.brightness_set = upboard_led_brightness_set;
-+	led->cdev.name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "upboard:%s:",
-+					pdata->color);
-+	if (!led->cdev.name)
-+		return -ENOMEM;
-+
-+	return devm_led_classdev_register(&pdev->dev, &led->cdev);
-+};
-+
-+static struct platform_driver upboard_led_driver = {
-+	.driver = {
-+		.name = "upboard-led",
-+	},
-+};
-+
-+module_platform_driver_probe(upboard_led_driver, upboard_led_probe);
-+
-+MODULE_ALIAS("platform:upboard-led");
-+MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
-+MODULE_DESCRIPTION("UP Board LED driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/mfd/upboard.c b/drivers/mfd/upboard.c
-index 8bae450cb83d..6e4767e4dc41 100644
---- a/drivers/mfd/upboard.c
-+++ b/drivers/mfd/upboard.c
-@@ -79,6 +79,14 @@ struct upboard_data {
- 	size_t ncells;
+@@ -80,7 +81,22 @@ struct armada_37xx_pmx_func {
+ 	unsigned int		ngroups;
  };
  
-+#define UPBOARD_LED_CELL(led_data, n)                   \
-+	{                                               \
-+		.name = "upboard-led",                  \
-+		.id = (n),                              \
-+		.platform_data = &led_data[(n)],        \
-+		.pdata_size = sizeof(*(led_data)),      \
++#if defined(CONFIG_PM)
++struct armada_37xx_pm_state {
++	u32 out_en_l;
++	u32 out_en_h;
++	u32 out_val_l;
++	u32 out_val_h;
++	u32 irq_en_l;
++	u32 irq_en_h;
++	u32 irq_pol_l;
++	u32 irq_pol_h;
++	u32 selection;
++};
++#endif /* CONFIG_PM */
++
+ struct armada_37xx_pinctrl {
++	struct list_head		node;
+ 	struct regmap			*regmap;
+ 	void __iomem			*base;
+ 	const struct armada_37xx_pin_data	*data;
+@@ -94,6 +110,9 @@ struct armada_37xx_pinctrl {
+ 	unsigned int			ngroups;
+ 	struct armada_37xx_pmx_func	*funcs;
+ 	unsigned int			nfuncs;
++#if defined(CONFIG_PM)
++	struct armada_37xx_pm_state	pm;
++#endif /* CONFIG_PM */
+ };
+ 
+ #define PIN_GRP(_name, _start, _nr, _mask, _func1, _func2)	\
+@@ -149,6 +168,9 @@ struct armada_37xx_pinctrl {
+ 		.funcs = {_f1, _f2}			\
+ 	}
+ 
++/* Global list of devices (struct armada_37xx_pinctrl) */
++static LIST_HEAD(device_list);
++
+ static struct armada_37xx_pin_group armada_37xx_nb_groups[] = {
+ 	PIN_GRP_GPIO("jtag", 20, 5, BIT(0), "jtag"),
+ 	PIN_GRP_GPIO("sdio0", 8, 3, BIT(1), "sdio"),
+@@ -1049,6 +1071,9 @@ static int __init armada_37xx_pinctrl_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, info);
+ 
++	/* Add to the global list */
++	list_add_tail(&info->node, &device_list);
++
+ 	return 0;
+ }
+ 
+@@ -1059,5 +1084,117 @@ static struct platform_driver armada_37xx_pinctrl_driver = {
+ 	},
+ };
+ 
++#if defined(CONFIG_PM)
++static int armada_3700_pinctrl_suspend(void)
++{
++	struct armada_37xx_pinctrl *info;
++
++	list_for_each_entry(info, &device_list, node) {
++		/* Save GPIO state */
++		regmap_read(info->regmap, OUTPUT_EN, &info->pm.out_en_l);
++		regmap_read(info->regmap, OUTPUT_EN + sizeof(u32),
++			    &info->pm.out_en_h);
++		regmap_read(info->regmap, OUTPUT_VAL, &info->pm.out_val_l);
++		regmap_read(info->regmap, OUTPUT_VAL + sizeof(u32),
++			    &info->pm.out_val_h);
++
++		info->pm.irq_en_l = readl(info->base + IRQ_EN);
++		info->pm.irq_en_h = readl(info->base + IRQ_EN + sizeof(u32));
++		info->pm.irq_pol_l = readl(info->base + IRQ_POL);
++		info->pm.irq_pol_h = readl(info->base + IRQ_POL + sizeof(u32));
++
++		/* Save pinctrl state */
++		regmap_read(info->regmap, SELECTION, &info->pm.selection);
 +	}
 +
- /* UP Squared */
- 
- static const struct regmap_range upboard_up2_readable_ranges[] = {
-@@ -116,7 +124,18 @@ static const struct regmap_config upboard_up2_regmap_config = {
- 	.wr_table = &upboard_up2_writable_table,
- };
- 
-+static struct upboard_led_data upboard_up2_led_data[] = {
-+	{ .id = 0, .color = "blue" },
-+	{ .id = 1, .color = "yellow" },
-+	{ .id = 2, .color = "green" },
-+	{ .id = 3, .color = "red" },
++	return 0;
++}
++
++static void armada_3700_pinctrl_resume(void)
++{
++	struct armada_37xx_pinctrl *info;
++	struct gpio_chip *gc;
++	struct irq_domain *d;
++	int i;
++
++	list_for_each_entry(info, &device_list, node) {
++		/* Restore GPIO state */
++		regmap_write(info->regmap, OUTPUT_EN, info->pm.out_en_l);
++		regmap_write(info->regmap, OUTPUT_EN + sizeof(u32),
++			     info->pm.out_en_h);
++		regmap_write(info->regmap, OUTPUT_VAL, info->pm.out_val_l);
++		regmap_write(info->regmap, OUTPUT_VAL + sizeof(u32),
++			     info->pm.out_val_h);
++
++		/*
++		 * Input levels may change during suspend, which is not
++		 * monitored at that time. GPIOs used for both-edge IRQs may not
++		 * be synchronized anymore with their polarities (rising/falling
++		 * edge) and must be re-configured manually.
++		 */
++		gc = &info->gpio_chip;
++		d = gc->irq.domain;
++		for (i = 0; i < gc->ngpio; i++) {
++			u32 irq_bit = BIT(i % GPIO_PER_REG);
++			u32 mask, *irq_pol, input_reg, virq, type, level;
++
++			if (i < GPIO_PER_REG) {
++				mask = info->pm.irq_en_l;
++				irq_pol = &info->pm.irq_pol_l;
++				input_reg = INPUT_VAL;
++			} else {
++				mask = info->pm.irq_en_h;
++				irq_pol = &info->pm.irq_pol_h;
++				input_reg = INPUT_VAL + sizeof(u32);
++			}
++
++			if (!(mask & irq_bit))
++				continue;
++
++			virq = irq_find_mapping(d, i);
++			type = irq_get_trigger_type(virq);
++
++			/*
++			 * Synchronize level and polarity for both-edge irqs:
++			 *     - a high input level expects a falling edge,
++			 *     - a low input level exepects a rising edge.
++			 */
++			if ((type & IRQ_TYPE_SENSE_MASK) ==
++			    IRQ_TYPE_EDGE_BOTH) {
++				regmap_read(info->regmap, input_reg, &level);
++				if ((*irq_pol ^ level) & irq_bit)
++					*irq_pol ^= irq_bit;
++			}
++		}
++
++		writel(info->pm.irq_en_l, info->base + IRQ_EN);
++		writel(info->pm.irq_en_h, info->base + IRQ_EN + sizeof(u32));
++		writel(info->pm.irq_pol_l, info->base + IRQ_POL);
++		writel(info->pm.irq_pol_h, info->base + IRQ_POL + sizeof(u32));
++
++		/* Restore pinctrl state */
++		regmap_write(info->regmap, SELECTION, info->pm.selection);
++	}
++}
++
++static struct syscore_ops armada_3700_pinctrl_syscore_ops = {
++	.suspend = armada_3700_pinctrl_suspend,
++	.resume = armada_3700_pinctrl_resume,
 +};
 +
- static const struct mfd_cell upboard_up2_mfd_cells[] = {
-+	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
-+	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
-+	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
-+	UPBOARD_LED_CELL(upboard_up2_led_data, 3),
- };
- 
- static const struct upboard_data upboard_up2_data = {
-diff --git a/include/linux/mfd/upboard.h b/include/linux/mfd/upboard.h
-index d9dd214f4d29..eed68caa23ce 100644
---- a/include/linux/mfd/upboard.h
-+++ b/include/linux/mfd/upboard.h
-@@ -62,4 +62,9 @@ struct upboard {
- 	struct gpio_desc *dataout_gpio;
- };
- 
-+struct upboard_led_data {
-+	unsigned int id;
-+	const char *color;
-+};
++static int __init armada_3700_pinctrl_pm_init(void)
++{
++	/*
++	 * Register syscore ops for save/restore of registers across suspend.
++	 * It's important to ensure that this driver is running at an earlier
++	 * initcall level than any arch-specific init calls.
++	 */
++	register_syscore_ops(&armada_3700_pinctrl_syscore_ops);
++	return 0;
++}
 +
- #endif /*  __LINUX_MFD_UPBOARD_H */
++postcore_initcall(armada_3700_pinctrl_pm_init);
++#endif /* CONFIG_PM */
++
+ builtin_platform_driver_probe(armada_37xx_pinctrl_driver,
+ 			      armada_37xx_pinctrl_probe);
 -- 
-2.17.0
+2.14.1
