@@ -1,29 +1,57 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC 00/10] ARM: Remove support for Exynos5440
-Date: Tue, 24 Apr 2018 23:12:15 +0200
-Message-ID: <CAK8P3a1Az9acSZwdhPz+Gwy6nSL=WAB6-z6Cq9m=nPLzF240_A@mail.gmail.com>
-References: <20180424203239.21885-1-krzk@kernel.org> <CAK8P3a2CZU1CYFt0fdVSFFnj2Wg=mUcC=yuWAW7zDO0u2Q2dUQ@mail.gmail.com>
- <20180424205636.cdp4czq6hhs5gu5a@kozik-lap>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Lack of suspend/resume/shutdown ordering between GPIO providers and
+ consumers
+Date: Tue, 24 Apr 2018 15:58:50 -0700
+Message-ID: <dc0c15eb-3dab-f512-aed6-045528fcec2c@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180424205636.cdp4czq6hhs5gu5a@kozik-lap>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Greg
+To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, dmitry.torokhov@gmail.com, jeffy.chen@rock-chips.com, enric.balletbo@collabora.com, josephl@nvidia.com, opendmb@gmail.com, rjw@rjwysocki.net
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 10:56 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Tue, Apr 24, 2018 at 10:50:58PM +0200, Arnd Bergmann wrote:
->> On Tue, Apr 24, 2018 at 10:32 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> The only dependency is through Kconfig symbol (SOC_EXYNOS5440).  After
-> applying 10/10, which removes SOC_EXYNOS5440, some automatic code
-> testers can complain about non-existing Kconfig option.  That's not big
-> issue because all this will go away so indeed we could take everything
-> in one release.
+Hi Linus, Rafael, all
 
-Right, I wouldn't worry about that. Kbuild itself doesn't warn about missing
-symbols, so this is only for helpful automated checks that tell us that there
-is still some pending work.
+Our GPIO controller driver: gpio-brcmstb.c has a shutdown callback which
+gets invoked when the system is brought into poweroff aka S5. So far so
+good, except that we also wish to use gpio_keys.c as a possible wake-up
+source, so we may have a number of GPIO pins declared as gpio-keys that
+allow the system to wake-up from deep slumber.
 
-       Arnd
+Recently we noticed that we could easily get into a state where
+gpio-brcmstb.c::brcmstb_gpio_shutdown() gets called first, and then
+gpio_keys.c::gpio_keys_suspend() gets called later, which is too late to
+have the enable_irq_wake() call do anything sensible since we have
+suspend its parent interrupt controller before. This is completely
+expected unfortunately because these two drivers are both platform
+device instances with no connection to one another except via Device
+Tree and the use of the GPIOLIB APIs.
+
+First solution is to make sure that gpio-keys nodes are declared in
+Device Tree *before* the GPIO controller. This works because Device Tree
+nodes are probed in the order in which they are declared in Device Tree
+and that directly influences the order in which platform devices are
+created. Problem with that is that this is easy to miss and it may not
+work with overlays, kexec reconstructing DT etc. etc.
+
+Another possible solution would be have the GPIO controller nodes have
+the GPIO consumers nodes such as gpio-keys, gpio-leds etc., and that
+would allow the Linux device driver model to create an appropriate
+child/parent relationship. This would unfortunately require Device Tree
+changes everywhere to make that consistent, and it would be a special
+case, because not all GPIO consumers are eligible as child nodes of
+their parent GPIO controller, there are plenty of other consumers that
+are not suitable for being moved under a parent GPIO controller node.
+This would also mean that we need to "probe" GPIO controller nodes to
+populate their child nodes (e.g: of_platform_bus_populate).
+
+I am thinking a more generic solution might involve some more complex
+tracking of the provider <-> consumer, but there is room for breakage.
+
+Do you have any idea how to best solve that?
+
+Thanks!
+-- 
+Florian
