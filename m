@@ -1,35 +1,75 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [RFC 03/10] cpufreq: exynos: Remove support for Exynos5440
-Date: Wed, 25 Apr 2018 08:18:24 +0530
-Message-ID: <20180425024824.7ej2sz5jlbiuqeqh@vireshk-i7>
-References: <20180424203239.21885-1-krzk@kernel.org>
- <20180424203239.21885-4-krzk@kernel.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
+Date: Wed, 25 Apr 2018 08:41:33 +0200
+Message-ID: <20180425064133.GC5352@amd>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <20180421085009.28773-3-javier@emutex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="yVhtmJPUSI46BTXb"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180424203239.21885-4-krzk@kernel.org>
+In-Reply-To: <20180421085009.28773-3-javier@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Javier Arteaga <javier@emutex.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 24-04-18, 22:32, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../bindings/cpufreq/cpufreq-exynos5440.txt        |  28 --
->  drivers/cpufreq/Kconfig.arm                        |  14 -
->  drivers/cpufreq/Makefile                           |   1 -
->  drivers/cpufreq/exynos5440-cpufreq.c               | 452 ---------------------
->  4 files changed, 495 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
->  delete mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+--yVhtmJPUSI46BTXb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-viresh
+On Sat 2018-04-21 09:50:08, Javier Arteaga wrote:
+> Allow userspace to use the on-board LEDs as "upboard:<color>:".
+>=20
+> Signed-off-by: Javier Arteaga <javier@emutex.com>
+
+> +static enum led_brightness upboard_led_brightness_get(struct led_classde=
+v *cdev)
+> +{
+> +	struct upboard_led *led =3D container_of(cdev, struct upboard_led, cdev=
+);
+> +	int brightness =3D 0;
+> +
+> +	regmap_field_read(led->field, &brightness);
+> +
+> +	return brightness;
+> +};
+
+I'm slightly confused here. Is each led controlled by single bit?
+
+> +static void upboard_led_brightness_set(struct led_classdev *cdev,
+> +				       enum led_brightness brightness)
+> +{
+> +	struct upboard_led *led =3D container_of(cdev, struct upboard_led, cdev=
+);
+> +
+> +	regmap_field_write(led->field, brightness !=3D LED_OFF);
+> +};
+
+What is going on with ";" at end of function? We don't do that.
+
+If it is single bit, max_brightness should be one, and !=3D LED_OFF test
+should not be needed.
+
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--yVhtmJPUSI46BTXb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrgIx0ACgkQMOfwapXb+vLP/wCeObvNSVSgW6bpxoY4s1PqXv3B
+N8YAn3vU/1h/+9wsoQPYbjsRBWnpWLnG
+=8EzT
+-----END PGP SIGNATURE-----
+
+--yVhtmJPUSI46BTXb--
