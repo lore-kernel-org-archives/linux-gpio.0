@@ -1,47 +1,28 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [RFC PATCH RESEND 0/3] UP Squared board drivers
-Date: Wed, 25 Apr 2018 12:53:55 +0300
-Message-ID: <20180425095355.GM2173@lahna.fi.intel.com>
-References: <20180421085009.28773-1-javier@emutex.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [RFC 09/10] usb: host: exynos: Remove support for Exynos5440
+Date: Wed, 25 Apr 2018 14:04:07 +0200
+Message-ID: <20180425120407.GA6582@kroah.com>
+References: <20180424203239.21885-1-krzk@kernel.org>
+ <20180424203239.21885-10-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180421085009.28773-1-javier@emutex.com>
+In-Reply-To: <20180424203239.21885-10-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Arteaga <javier@emutex.com>
-Cc: linux-kernel@vger.kernel.org, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern <stern@rowland.harvard.edu>linu
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Apr 21, 2018 at 09:50:06AM +0100, Javier Arteaga wrote:
-> [linux-kernel correctly Cc'd on the series now. Sorry for the noise.]
+On Tue, Apr 24, 2018 at 10:32:38PM +0200, Krzysztof Kozlowski wrote:
+> The Exynos5440 is not actively developed, there are no development
+> boards available and probably there are no real products with it.
+> Remove wide-tree support for Exynos5440.
 > 
-> Hi all,
-> 
-> This series adds platform support for AAEON's UP Squared, a x86 SBC
-> based on Apollo Lake [1]. Specifically, it enables control for the board
-> pin headers and for the LEDs, as both of these features are only
-> available behind a FPGA-based platform controller.
-> 
-> This is structured around a MFD driver that provides a regmap interface
-> to that platform controller to each MFD cell.
-> 
-> The series is carved out from an out-of-tree support patchset, initially
-> written by Dan O'Donovan for the original UP Board [2] and then extended
-> through the past year to support new entries in the lineup (UP Board, UP
-> Squared and UP Core) [3].
-> 
-> Here we only submit support for UP Squared to simplify review. Still,
-> the driver is designed so that it can easily gain support for the other
-> boards.
-> 
-> Questions:
-> 
-> * Is MFD the right fit for the platform controller?
->   The intention here is to encapsulate the custom GPIO-bitbanged control
->   protocol by sharing the regmap between the drivers.
-> 
-> * Is our use of two chained pinctrls (in patch 3/3) valid?
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/usb/host/ehci-exynos.c | 7 -------
+>  drivers/usb/host/ohci-exynos.c | 6 ------
+>  2 files changed, 13 deletions(-)
 
-There are few minor comments but other than that, to me this looks like
-a reasonable approach.
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
