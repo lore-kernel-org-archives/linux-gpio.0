@@ -1,164 +1,79 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [RFC PATCH RESEND 3/3] pinctrl: upboard: Add UP2 pinctrl and
- gpio driver
-Date: Wed, 25 Apr 2018 19:49:12 +0300
-Message-ID: <1524674952.21176.610.camel@linux.intel.com>
-References: <20180421085009.28773-1-javier@emutex.com>
-         <20180421085009.28773-4-javier@emutex.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [Letux-kernel] [PATCH v3 2/4] gpio: pca953x: add register definitions for pcal6524 and fix address calculation
+Date: Wed, 25 Apr 2018 20:05:36 +0200
+Message-ID: <65085C47-CDA8-4F8C-8307-C145F21F7D19@goldelico.com>
+References: <cover.1523376423.git.hns@goldelico.com> <0e9bea79eae7504e61fabdb4a0311f8fdc2f6b25.1523376423.git.hns@goldelico.com> <CAHp75VfYk1tSJ9PUshDvY2RaYrc+wR+hyrK8Ck1oQSUXPr-0fQ@mail.gmail.com> <EDF7FA02-C79C-4ADF-A10C-F8C4DBFE5158@goldelico.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180421085009.28773-4-javier@emutex.com>
+In-Reply-To: <EDF7FA02-C79C-4ADF-A10C-F8C4DBFE5158@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Arteaga <javier@emutex.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Dan O'Donovan <dan@emutex.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, kernel@pyra-handheld.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, 2018-04-21 at 09:50 +0100, Javier Arteaga wrote:
-> The UP2 board features a Raspberry Pi compatible pin header (HAT) and
-> a
-> board-specific expansion connector (EXHAT). Both expose assorted
-> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or
-> other
-> on-board devices (ADC, FPGA IP blocks...).
-> 
-> These lines are routed through an on-board FPGA. The platform
-> controller
-> in its stock firmware provides register fields to change:
-> 
-> - Line enable (FPGA pins enabled / high impedance)
-> - Line direction (SoC driven / FPGA driven)
-> 
-> To enable using SoC GPIOs on the pin header, this arrangement requires
-> both configuring the platform controller, and updating the SoC pad
-> registers in sync.
-> 
-> Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
-> lines for the header pins. When these are requested, the driver
-> propagates this request to the backend SoC pinctrl/GPIO driver by
-> grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
-> mapping for this is retrieved via ACPI properties.
-> 
-> 
+Hi Andy,
 
-> For reference, here's the relevant ASL from the UP2 platform
-> controller.
+> Am 11.04.2018 um 07:00 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
+>=20
+> Hi Andy,
+>=20
+>> Am 10.04.2018 um 20:06 schrieb Andy Shevchenko =
+<andy.shevchenko@gmail.com>:
+>>=20
+>> On Tue, Apr 10, 2018 at 7:07 PM, H. Nikolaus Schaller =
+<hns@goldelico.com> wrote:
+>>> PCAL chips ("L" seems to stand for "latched") have additional
+>>> registers starting at address 0x40 to control the latches,
+>>> interrupt mask, pull-up and pull down etc.
+>>>=20
+>>> The constants are so far defined in a way that they fit for
+>>> the pcal9555a when shifted by the number of banks, i.e. multiplied
+>>> by 2.
+>>>=20
+>>> Now the pcal6524 has 3 banks which means the relative offset
+>>> must be multiplied by 4 which gives a wrong result if not done
+>>> carefully, since the base offset is already included in the offset.
+>>>=20
+>>> For the basic registers shared with all pca93xx/tca64xx chips
+>>> there is no such offset.
+>>>=20
+>>> Therefore, we add code to adjust the register number for exended
+>>> registers to the 24 bit accessor functions.
+>>>=20
+>>> And we add additional register offset constants (not yet used by
+>>> the driver code) which are specific to the pcal6524.
+>>>=20
+>>=20
+>> First of all, as I said, please split this to two patches. Don't mix =
+the things.
+>=20
+> Ok. Queued for v4.
+>=20
+>>=20
+>>=20
+>>> +       /* adjust register address for pcal6524 */
+>>> +       if (reg >=3D PCAL953X_OUT_STRENGTH)
+>>> +               reg -=3D PCAL953X_OUT_STRENGTH >> 1;
+>>> +
+>>=20
+>> Give me some days to think about it.
 
-It should be in Documentation file or in commit message.
+Any news on this?
 
+I am waiting for your advice before submitting v4 (with pending updates =
+for the other patches).
 
->  static const struct mfd_cell upboard_up2_mfd_cells[] = {
-> +	{ .name = "upboard-pinctrl" },
+> No problem. I'll wait with v4.
+>=20
+> The only alternative I would see is to add new accessor function
+> pointers for the extended registers and have 0x00 based offsets,
+> but that is IMHO more ugly.
+>=20
+> BR and thanks,
+> Nikolaus
 
-I guess it should be 3 lines.
-
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
-
-...and honestly I would not use this macro and put 4 cells explicitly
-here.
-
-> +static int upboard_gpio_request_enable(struct pinctrl_dev *pctldev,
-> +				       struct pinctrl_gpio_range
-> *range,
-> +				       unsigned int pin)
-> +{
-> +	const struct pin_desc * const pd = pin_desc_get(pctldev,
-> pin);
-> +	const struct upboard_pin *p;
-> +	int ret;
-> +
-
-> +	if (!pd)
-> +		return -EINVAL;
-
-When it's possible?
-
-> +	p = pd->drv_data;
-
-> +	return 0;
-> +};
-
-> +	if (!pd)
-> +		return -EINVAL;
-
-Ditto.
-
-> +	struct upboard_pinctrl *pctrl =
-> +		container_of(gc, struct upboard_pinctrl, chip);
-
-Do define and use to_upboard_pinctrl().
-
-> +	if (offset + 1 > pctrl->nsoc_gpios || !pctrl-
-> >soc_gpios[offset])
-> +		return ERR_PTR(-ENODEV);
-
-When this is a case?
-
-> +static int upboard_gpio_get_direction(struct gpio_chip *gc, unsigned
-> int offset)
-> +{
-> +	struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc,
-> offset);
-> +
-
-Split above to definition and assignment pieces. Put assignment
-immediately before condition.
-
-> +	if (IS_ERR(desc))
-> +		return PTR_ERR(desc);
-
-
-> +
-> +	return gpiod_get_direction(desc);
-> +}
-
-> +static struct regmap_field * __init upboard_field_alloc(struct device
-> *dev,
-> +							struct regmap
-> *regmap,
-> +							unsigned int
-> base,
-> +							unsigned int
-> number)
-
-You should really understand what __init means and when it's appropriate
-to use it.
-
-> +static int __init upboard_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	struct acpi_device * const adev = ACPI_COMPANION(&pdev->dev);
-
-Huh, const in that place? Why?
-
-> +	if (!pdev->dev.parent)
-> +		return -EINVAL;
-> +
-> +	upboard = dev_get_drvdata(pdev->dev.parent);
-> +	if (!upboard)
-> +		return -EINVAL;
-
-Same comment as per LED driver.
-
-> +	if (strcmp(acpi_device_hid(adev), "AANT0F01"))
-> +		return -ENODEV;
-
-Huh?
-
-> +		((struct pinctrl_pin_desc *)pd)->drv_data = pin;
-
-What is that?! I mean ugly casting.
-
-> +	}
-
-> +}
-
-> +MODULE_LICENSE("GPL");
-
-License mismatch.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+BR and thanks,
+Nikolaus
