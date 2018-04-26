@@ -1,45 +1,41 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2] gpiolib: add hogs support for machine code
-Date: Thu, 26 Apr 2018 18:42:52 +0200
-Message-ID: <CAMRc=Me2YD49VkwENwFmRUHGDYzPc_80b6uABUvi7_QeeoMrrQ@mail.gmail.com>
-References: <20180410203028.11412-1-brgl@bgdev.pl> <CACRpkda+K3-=sPpJO90rjW0=+bsQ1uYT6E9Hp+G+-OEyTpc=fg@mail.gmail.com>
+Subject: Re: [PATCH] gpioib: do not free unrequested descriptors
+Date: Thu, 26 Apr 2018 18:44:36 +0200
+Message-ID: <CAMRc=Mey7adAwUuYtcDXmvL3gBNzxQ6kg+fQ1WYRtmgMSZ0UMg@mail.gmail.com>
+References: <1522348152-15024-1-git-send-email-timur@codeaurora.org> <CACRpkdb=PqqJLC72DWE1ynu6f5cwB99zG=ECW3dpX0t3cF9Wbg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda+K3-=sPpJO90rjW0=+bsQ1uYT6E9Hp+G+-OEyTpc=fg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdb=PqqJLC72DWE1ynu6f5cwB99zG=ECW3dpX0t3cF9Wbg@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-doc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Timur Tabi <timur@codeaurora.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-2018-04-26 14:07 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Apr 10, 2018 at 10:30 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+2018-04-26 11:17 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Thu, Mar 29, 2018 at 8:29 PM, Timur Tabi <timur@codeaurora.org> wrote:
 >
->> Board files constitute a significant part of the users of the legacy
->> GPIO framework. In many cases they only export a line and set its
->> desired value. We could use GPIO hogs for that like we do for DT and
->> ACPI but there's no support for that in machine code.
+>> If the main loop in linehandle_create() encounters an error, it
+>> unwinds completely by freeing all previously requested GPIO
+>> descriptors.  However, if the error occurs in the beginning of
+>> the loop before that GPIO is requested, then the exit code
+>> attempts to free a null descriptor.  If extrachecks is enabled,
+>> gpiod_free() triggers a WARN_ON.
 >>
->> This patch proposes to extend the machine.h API with support for
->> registering hog tables in board files.
+>> Instead, keep a separate count of legitimate GPIOs so that only
+>> those are freed.
 >>
->> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
->> ---
->> v1 -> v2:
->> - kbuild bot complains about enum gpiod_flags having incomplete type
->>   although it builds fine for me locally: change the type of dflags
->>   to int
+>> Cc: stable@vger.kernel.org
+>> Fixes: d7c51b47ac11 ("gpio: userspace ABI for reading/writing GPIO lines")
+>> Signed-off-by: Timur Tabi <timur@codeaurora.org>
 >
-> I like the idea and thinking behind this patch, so patch applied.
+> Patch applied for fixes.
 >
-> It's a bit of code to carry, so if it doesn't see any use, I will simply
-> revert it :)
+> Bartosz, can you have a quick look at this? Did you run into the
+> problem at any point?
 >
-> But I bet you intend to follow up with some machine patches
-> and then it is immediately worth it.
 
-Yes, I'll be submitting patches removing the legacy gpio calls for
-boards in mach-davinci.
+I have never seen this issue, but the patch looks correct to me.
 
 Thanks,
 Bartosz
