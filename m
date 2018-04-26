@@ -1,78 +1,53 @@
-From: Javier Arteaga <javier@emutex.com>
-Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
-Date: Thu, 26 Apr 2018 14:03:54 +0100
-Message-ID: <20180426130354.4kidtdwcsxtn5f2g@localhost>
-References: <20180421085009.28773-1-javier@emutex.com>
- <20180421085009.28773-3-javier@emutex.com>
- <20180426073314.g2ccjjkx6vgbknhm@dell>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
+Date: Thu, 26 Apr 2018 15:08:24 +0200
+Message-ID: <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
+References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180426073314.g2ccjjkx6vgbknhm@dell>
+In-Reply-To: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Lee,
+On Wed, Apr 11, 2018 at 3:55 PM, Michal Simek <michal.simek@xilinx.com> wrote:
 
-On Thu, Apr 26, 2018 at 08:34:05AM +0100, Lee Jones wrote:
-> >  drivers/mfd/upboard.c       | 19 ++++++++
-> 
-> This change needs to be placed into a separate patch.
+Thanks for your patch!
 
-OK. I'll do ("add driver" -> "add cell") pairs of patches then.
+> In past Xilinx gpio-zynq driver was setting up gpio chip->base as 0
+> which was chagned to autodetection when driver was upstreamed. Older
+> systems, which were using this old version, setup SW stack which expects
+> zynq gpio base as 0 and right now there is no way how to set this up.
+>
+> The patch is adding an option to setup chip->base based on aliases which
+> is something what some other drivers are doing too.
+> It means when gpio0 alias is setup then chip->base is 0. When gpio alias
+> is not setup gpiochip_find_base() set it up properly which is current
+> behavior.
+>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 
-> > +#define UPBOARD_LED_CELL(led_data, n)                   \
-> > +	{                                               \
-> > +		.name = "upboard-led",                  \
-> > +		.id = (n),                              \
-> > +		.platform_data = &led_data[(n)],        \
-> > +		.pdata_size = sizeof(*(led_data)),      \
-> > +	}
-> > +
-> 
-> There is a subsystem-level MACRO currently being reviewed on the list.
-> 
-> Just use the full format in your structs for now.
+In general, we stopped any controlling of the GPIO base.
 
-Will do.
+Also this use would have to be OK with the DT maintainers
+as I never saw this use of alias before.
 
-> >  /* UP Squared */
-> >  
-> >  static const struct regmap_range upboard_up2_readable_ranges[] = {
-> > @@ -116,7 +124,18 @@ static const struct regmap_config upboard_up2_regmap_config = {
-> >  	.wr_table = &upboard_up2_writable_table,
-> >  };
-> >  
-> > +static struct upboard_led_data upboard_up2_led_data[] = {
-> > +	{ .id = 0, .color = "blue" },
-> > +	{ .id = 1, .color = "yellow" },
-> > +	{ .id = 2, .color = "green" },
-> > +	{ .id = 3, .color = "red" },
-> > +};
-> 
-> How is this data used?
-> 
-> Does it ever change, from board to board?
+Please describe the use case for this.
 
-This provides indexes into the LED control register, so the leds driver
-knows which regmap bits to flip, and maps them to color names, so it can
-name the led devices accordingly. The mapping does change for each board
-(UP1 has 3 LEDs, UP Core depends on the carrier board).
+The only use case which I can think about is userspace sysfs
+and then I would really like to know why these userspace
+users cannot use the character device that is nowadays
+supported by libgpiod and there is even patches for some
+IoT libraries to use it. The character device makes the
+GPIO Linux "base" irrelevant for userspace.
 
-> > +struct upboard_led_data {
-> > +	unsigned int id;
-> > +	const char *color;
-> > +};
-> 
-> If this is going to stick around, which I'm not sure it should, you
-> need to document it (using kerneldoc format), since 'id' is quite
-> ambiguous.
+GPIO sysfs is deprecated and moved to the obsolete ABI.
 
-True, it's not very clear. Would it help here to also pass the regmap
-explicitly as platform_data (instead of leds-upboard getting to the
-regmap through parent driver drvdata)?
+If there are legacy applications that use this I would have
+to consider it, but since this has been -1 since the driver
+was merged I find that unlikely.
 
-Thanks for your review!
+Yours,
+Linus Walleij
