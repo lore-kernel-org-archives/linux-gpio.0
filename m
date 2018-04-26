@@ -1,173 +1,85 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH] pinctrl: meson: axg: add tdm pins
-Date: Thu, 26 Apr 2018 10:32:55 +0200
-Message-ID: <fc4e195e-095a-c04c-8ff8-37fadc22ab21@baylibre.com>
-References: <20180409145429.16619-1-jbrunet@baylibre.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 09/10] gpio: Add a driver for Cadence I3C GPIO expander
+Date: Thu, 26 Apr 2018 10:44:26 +0200
+Message-ID: <CACRpkdY_7mi8GPiopZ9Yg4Y0-AV_SriZe=1yN5is6eH6FUm6Qg@mail.gmail.com>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com> <20180330074751.25987-10-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180409145429.16619-1-jbrunet@baylibre.com>
-Content-Language: en-US
+In-Reply-To: <20180330074751.25987-10-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion>
 List-Id: linux-gpio@vger.kernel.org
 
-On 09/04/2018 16:54, Jerome Brunet wrote:
-> Add the information related to the tdm pins of the A113D SoC
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/pinctrl/meson/pinctrl-meson-axg.c | 107 ++++++++++++++++++++++++++++++
->  1 file changed, 107 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-> index 4b91ff74779b..11dc23fde6d5 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-> @@ -312,6 +312,47 @@ static const unsigned int pdm_din1_pins[] = {GPIOA_16};
->  static const unsigned int pdm_din2_pins[] = {GPIOA_17};
->  static const unsigned int pdm_din3_pins[] = {GPIOA_18};
->  
-> +/* mclk */
-> +static const unsigned int mclk_c_pins[] = {GPIOA_0};
-> +static const unsigned int mclk_b_pins[] = {GPIOA_1};
-> +
-> +/* tdm */
-> +static const unsigned int tdma_sclk_pins[] = {GPIOX_12};
-> +static const unsigned int tdma_sclk_slv_pins[] = {GPIOX_12};
-> +static const unsigned int tdma_fs_pins[] = {GPIOX_13};
-> +static const unsigned int tdma_fs_slv_pins[] = {GPIOX_13};
-> +static const unsigned int tdma_din0_pins[] = {GPIOX_14};
-> +static const unsigned int tdma_dout0_x14_pins[] = {GPIOX_14};
-> +static const unsigned int tdma_dout0_x15_pins[] = {GPIOX_15};
-> +static const unsigned int tdma_dout1_pins[] = {GPIOX_15};
-> +static const unsigned int tdma_din1_pins[] = {GPIOX_15};
-> +
-> +static const unsigned int tdmc_sclk_pins[] = {GPIOA_2};
-> +static const unsigned int tdmc_sclk_slv_pins[] = {GPIOA_2};
-> +static const unsigned int tdmc_fs_pins[] = {GPIOA_3};
-> +static const unsigned int tdmc_fs_slv_pins[] = {GPIOA_3};
-> +static const unsigned int tdmc_din0_pins[] = {GPIOA_4};
-> +static const unsigned int tdmc_dout0_pins[] = {GPIOA_4};
-> +static const unsigned int tdmc_din1_pins[] = {GPIOA_5};
-> +static const unsigned int tdmc_dout1_pins[] = {GPIOA_5};
-> +static const unsigned int tdmc_din2_pins[] = {GPIOA_6};
-> +static const unsigned int tdmc_dout2_pins[] = {GPIOA_6};
-> +static const unsigned int tdmc_din3_pins[] = {GPIOA_7};
-> +static const unsigned int tdmc_dout3_pins[] = {GPIOA_7};
-> +
-> +static const unsigned int tdmb_sclk_pins[] = {GPIOA_8};
-> +static const unsigned int tdmb_sclk_slv_pins[] = {GPIOA_8};
-> +static const unsigned int tdmb_fs_pins[] = {GPIOA_9};
-> +static const unsigned int tdmb_fs_slv_pins[] = {GPIOA_9};
-> +static const unsigned int tdmb_din0_pins[] = {GPIOA_10};
-> +static const unsigned int tdmb_dout0_pins[] = {GPIOA_10};
-> +static const unsigned int tdmb_din1_pins[] = {GPIOA_11};
-> +static const unsigned int tdmb_dout1_pins[] = {GPIOA_11};
-> +static const unsigned int tdmb_din2_pins[] = {GPIOA_12};
-> +static const unsigned int tdmb_dout2_pins[] = {GPIOA_12};
-> +static const unsigned int tdmb_din3_pins[] = {GPIOA_13};
-> +static const unsigned int tdmb_dout3_pins[] = {GPIOA_13};
-> +
->  static struct meson_pmx_group meson_axg_periphs_groups[] = {
->  	GPIO_GROUP(GPIOZ_0),
->  	GPIO_GROUP(GPIOZ_1),
-> @@ -495,6 +536,15 @@ static struct meson_pmx_group meson_axg_periphs_groups[] = {
->  	GROUP(eth_rx_dv_x, 4),
->  	GROUP(eth_mdio_x, 4),
->  	GROUP(eth_mdc_x, 4),
-> +	GROUP(tdma_sclk, 1),
-> +	GROUP(tdma_sclk_slv, 2),
-> +	GROUP(tdma_fs, 1),
-> +	GROUP(tdma_fs_slv, 2),
-> +	GROUP(tdma_din0, 1),
-> +	GROUP(tdma_dout0_x14, 2),
-> +	GROUP(tdma_dout0_x15, 1),
-> +	GROUP(tdma_dout1, 2),
-> +	GROUP(tdma_din1, 3),
->  
->  	/* bank GPIOY */
->  	GROUP(eth_txd0_y, 1),
-> @@ -544,6 +594,32 @@ static struct meson_pmx_group meson_axg_periphs_groups[] = {
->  	GROUP(pdm_din1, 1),
->  	GROUP(pdm_din2, 1),
->  	GROUP(pdm_din3, 1),
-> +	GROUP(mclk_c, 1),
-> +	GROUP(mclk_b, 1),
-> +	GROUP(tdmc_sclk, 1),
-> +	GROUP(tdmc_sclk_slv, 2),
-> +	GROUP(tdmc_fs, 1),
-> +	GROUP(tdmc_fs_slv, 2),
-> +	GROUP(tdmc_din0, 2),
-> +	GROUP(tdmc_dout0, 1),
-> +	GROUP(tdmc_din1, 2),
-> +	GROUP(tdmc_dout1, 1),
-> +	GROUP(tdmc_din2, 2),
-> +	GROUP(tdmc_dout2, 1),
-> +	GROUP(tdmc_din3, 2),
-> +	GROUP(tdmc_dout3, 1),
-> +	GROUP(tdmb_sclk, 1),
-> +	GROUP(tdmb_sclk_slv, 2),
-> +	GROUP(tdmb_fs, 1),
-> +	GROUP(tdmb_fs_slv, 2),
-> +	GROUP(tdmb_din0, 2),
-> +	GROUP(tdmb_dout0, 1),
-> +	GROUP(tdmb_din1, 2),
-> +	GROUP(tdmb_dout1, 1),
-> +	GROUP(tdmb_din2, 2),
-> +	GROUP(tdmb_dout2, 1),
-> +	GROUP(tdmb_din3, 2),
-> +	GROUP(tdmb_dout3, 1),
->  };
->  
->  /* uart_ao_a */
-> @@ -845,6 +921,32 @@ static const char * const jtag_ao_groups[] = {
->  	"jtag_ao_tdi", "jtag_ao_tdo", "jtag_ao_clk", "jtag_ao_tms",
->  };
->  
-> +static const char * const mclk_c_groups[] = {
-> +	"mclk_c",
-> +};
-> +
-> +static const char * const mclk_b_groups[] = {
-> +	"mclk_b",
-> +};
-> +
-> +static const char * const tdma_groups[] = {
-> +	"tdma_sclk", "tdma_sclk_slv", "tdma_fs", "tdma_fs_slv",
-> +	"tdma_din0", "tdma_dout0_x14", "tdma_dout0_x15", "tdma_dout1",
-> +	"tdma_din1",
-> +};
-> +
-> +static const char * const tdmc_groups[] = {
-> +	"tdmc_sclk", "tdmc_sclk_slv", "tdmc_fs", "tdmc_fs_slv",
-> +	"tdmc_din0", "tdmc_dout0", "tdmc_din1",	"tdmc_dout1",
-> +	"tdmc_din2", "tdmc_dout2", "tdmc_din3",	"tdmc_dout3",
-> +};
-> +
-> +static const char * const tdmb_groups[] = {
-> +	"tdmb_sclk", "tdmb_sclk_slv", "tdmb_fs", "tdmb_fs_slv",
-> +	"tdmb_din0", "tdmb_dout0", "tdmb_din1",	"tdmb_dout1",
-> +	"tdmb_din2", "tdmb_dout2", "tdmb_din3",	"tdmb_dout3",
-> +};
-> +
->  static struct meson_pmx_func meson_axg_periphs_functions[] = {
->  	FUNCTION(gpio_periphs),
->  	FUNCTION(emmc),
-> @@ -870,6 +972,11 @@ static struct meson_pmx_func meson_axg_periphs_functions[] = {
->  	FUNCTION(spdif_in),
->  	FUNCTION(jtag_ee),
->  	FUNCTION(pdm),
-> +	FUNCTION(mclk_b),
-> +	FUNCTION(mclk_c),
-> +	FUNCTION(tdma),
-> +	FUNCTION(tdmb),
-> +	FUNCTION(tdmc),
->  };
->  
->  static struct meson_pmx_func meson_axg_aobus_functions[] = {
-> 
+On Fri, Mar 30, 2018 at 9:47 AM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+> Add a driver for Cadence I3C GPIO expander.
+>
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+
+This is pretty much OK, and I don't want to raise the bar
+even higher for you to get this code into the kernel, so:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+The following is an observation for future improvement:
+
+> +static int cdns_i3c_gpio_read_reg(struct cdns_i3c_gpio *gpioc, u8 reg,
+> +                                 u8 *val)
+> +{
+> +       struct i3c_priv_xfer xfers[] = {
+> +               {
+> +                       .len = sizeof(reg),
+> +                       .data.out = &reg,
+> +               },
+> +               {
+> +                       .rnw = true,
+> +                       .len = sizeof(*val),
+> +                       .data.in = val,
+> +               },
+> +       };
+> +
+> +       return i3c_device_do_priv_xfers(gpioc->i3cdev, xfers,
+> +                                       ARRAY_SIZE(xfers));
+> +}
+> +
+> +static int cdns_i3c_gpio_write_reg(struct cdns_i3c_gpio *gpioc, u8 reg,
+> +                                  u8 val)
+> +{
+> +       struct i3c_priv_xfer xfers[] = {
+> +               {
+> +                       .len = sizeof(reg),
+> +                       .data.out = &reg,
+> +               },
+> +               {
+> +                       .len = sizeof(val),
+> +                       .data.out = &val,
+> +               },
+> +       };
+> +
+> +       return i3c_device_do_priv_xfers(gpioc->i3cdev, xfers,
+> +                                       ARRAY_SIZE(xfers));
+> +}
+
+This is starting to resemble
+drivers/base/regmap/regmap-i2c.c
+
+Maybe we should very quickly add regmap-i3c.c as this
+infrastructre has had a great positive effect on may kernel
+subsystems.
+
+> +static int cdns_i3c_gpio_get_direction(struct gpio_chip *g, unsigned offset)
+> +{
+> +       struct cdns_i3c_gpio *gpioc = gpioc_to_cdns_gpioc(g);
+> +
+> +       return gpioc->dir & BIT(offset);
+
+I would:
+
+return !!(gpioc->dir & BIT(offset));
+
+So you clamp it to bit 0.
+
+Yours,
+Linus Walleij
