@@ -1,60 +1,44 @@
-From: Javier Arteaga <javier@emutex.com>
-Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
-Date: Thu, 26 Apr 2018 13:49:22 +0100
-Message-ID: <20180426124922.haddppocljgnj2ei@localhost>
-References: <20180421085009.28773-1-javier@emutex.com>
- <20180421085009.28773-3-javier@emutex.com>
- <1524672945.21176.594.camel@linux.intel.com>
- <20180426023441.f2a7337sjlyd6xhf@localhost>
- <1524729349.21176.614.camel@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl bindings
+Date: Thu, 26 Apr 2018 14:49:44 +0200
+Message-ID: <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
+References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
+ <1523440025-18077-2-git-send-email-amelie.delaunay@st.com> <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1524729349.21176.614.camel@linux.intel.com>
+In-Reply-To: <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan O'Donovan <dan@emutex.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Amelie Delaunay <amelie.delaunay@st.com>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Thanks Andy for these pointers :)
+On Mon, Apr 16, 2018 at 8:19 PM, Rob Herring <robh@kernel.org> wrote:
+> On Wed, Apr 11, 2018 at 11:47:01AM +0200, Amelie Delaunay wrote:
+>> This patch adds documentation of device tree bindings for the
+>> STMicroelectronics Multi-Function eXpander (STMFX) GPIO expander.
+>>
+>> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 
-On Thu, Apr 26, 2018 at 10:55:49AM +0300, Andy Shevchenko wrote:
-> On Thu, 2018-04-26 at 03:34 +0100, Javier Arteaga wrote:
-> > My understanding was that in this context, __init allows this probe()
-> > to
-> > be dropped from memory after module load.
-> > 
-> > What am I doing wrong there?
-> 
-> Just give another thought about it. The keyword(s) here is(are): time to
-> live of the objects in question. It's good to get knowing what unbind-
-> bind means (for built-in drivers).
+>> +     stmfxpinctrl: stmfx@42 {
+>> +             compatible = "st,stmfx-0300";
+>> +             reg = <0x42>;
+>> +             interrupt-parent = <&gpioi>;
+>> +             interrupts = <8 IRQ_TYPE_EDGE_RISING>;
+>> +             vdd-supply = <&v3v3>;
+>> +             status = "okay";
+>
+> Don't show status in examples.
+>
+>> +
+>> +             stmfxgpio: gpio {
+>
+> Why does this need to be a sub node? Are there functions beyond GPIO?
 
-So this is the bit that I _believed_ applied to the platform drivers for
-these MFD-registered devices (from driver-model/platform.txt):
+Amelie can answer to whether there are, I suspect there
+are and in the review of patch 2 I suggest a MFD parent
+and parent/child spawning of a MFD child for the GPIO
+and pin control device.
 
-  Or, in common situations where the device is known not to be hot-pluggable,
-  the probe() routine can live in an init section to reduce the driver's
-  runtime memory footprint:
-
-  	int platform_driver_probe(struct platform_driver *drv,
-  			  int (*probe)(struct platform_device *))
-
-I'm thinking my misunderstanding probably stems from assuming that these
-leds/pinctrl drivers will always find all devices registered at init
-time. Can't say I've validated that assumption - I just didn't see
-anything obviously blowing up in my tests so far :)
-
-I'll keep reading and test out a few more things so I fully understand.
-Until then, I've taken out __init annotations from next version.
-
-> > > Don't use direct dereference to platform_data.
-> > 
-> > Sorry, I don't understand this one. What's the alternative?
-> 
-> See other drivers how they do that stuff. Hint: check inline functions
-> in include/linux/device.h.
-
-I wasn't looking at the right other drivers :)
-I'll use the dev_get_platdata() wrapper going forwards.
+Yours,
+Linus Walleij
