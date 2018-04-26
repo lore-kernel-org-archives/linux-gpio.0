@@ -1,39 +1,90 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 5/5] pinctrl: sunxi: Use of_clk_get_parent_count()
- instead of open coding
-Date: Thu, 26 Apr 2018 13:57:58 +0200
-Message-ID: <CACRpkdYdkb0WRLr55dT1ZbgjCy6d+xj0tbhf6OnXMuM5ktJ9xQ@mail.gmail.com>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be> <1524063005-1716-6-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH v4] pinctrl: msm: fix gpio-hog related boot issues
+Date: Thu, 26 Apr 2018 14:03:45 +0200
+Message-ID: <CACRpkdZPEHvnQdwh5Uu5kwqK7yVGTaw_cZR+GOzsG9pg4oEktA@mail.gmail.com>
+References: <20180412190138.12372-1-chunkeey@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1524063005-1716-6-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-tegra@vger.kernel.org, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180412190138.12372-1-chunkeey@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Christian Lamparter <chunkeey@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 4:50 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Thu, Apr 12, 2018 at 9:01 PM, Christian Lamparter <chunkeey@gmail.com> wrote:
 
-> A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
-> Use of_clk_get_parent_count() instead of open coding"), replace it.
+> Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
+> Setting up any gpio-hog in the device-tree for his device would
+> "kill the bootup completely":
 >
-> of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
-> instead of <linux/clk-provider.h>.
+> | [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
+> | [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
+> | [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
+> | [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
+> | [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
+> | [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
+> | [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
-> This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
-> <linux/of_clk.h>".
+> This was also verified on a RT-AC58U (IPQ4018) which would
+> no longer boot, if a gpio-hog was specified. (Tried forcing
+> the USB LED PIN (GPIO0) to high.).
 >
-> v3:
->   - Add Acked-by,
+> The problem is that Pinctrl+GPIO registration is currently
+> peformed in the following order in pinctrl-msm.c:
+>         1. pinctrl_register()
+>         2. gpiochip_add()
+>         3. gpiochip_add_pin_range()
+>
+> The actual error code -517 == -EPROBE_DEFER is coming from
+> pinctrl_get_device_gpio_range(), which is called through:
+>         gpiochip_add
+>             of_gpiochip_add
+>                 of_gpiochip_scan_gpios
+>                     gpiod_hog
+>                         gpiochip_request_own_desc
+>                             __gpiod_request
+>                                 chip->request
+>                                     gpiochip_generic_request
+>                                        pinctrl_gpio_request
+>                                           pinctrl_get_device_gpio_range
+>
+> pinctrl_get_device_gpio_range() is unable to find any valid
+> pin ranges, since nothing has been added to the pinctrldev_list yet.
+> so the range can't be found, and the operation fails with -EPROBE_DEFER.
+>
+> This patch fixes the issue by adding the "gpio-ranges" property to
+> the pinctrl device node of all upstream Qcom SoC. The pin ranges are
+> then added by the gpio core.
+>
+> In order to remain compatible with older, existing DTs (and ACPI)
+> a check for the "gpio-ranges" property has been added to
+> msm_gpio_init(). This prevents the driver of adding the same entry
+> to the pinctrldev_list twice.
+>
+> Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+This patch looks VERY good to me.
 
-Please merge this through the clk tree.
+I am fine in merging it into pin control including the ranges
+fixes.
+
+I need Andy's and Bjorn's ACKs on it though!
+
+Can you guys provide that?
+
+It might be that Andy want the DTS changes separately to avoid
+any collisions, so I'm fine with splitting it as well.
 
 Yours,
 Linus Walleij
