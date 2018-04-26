@@ -1,38 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: mcp23s08: Clarify gpiospec flags
- cell usage
-Date: Fri, 27 Apr 2018 00:48:36 +0200
-Message-ID: <CACRpkdYsiDhNcOwRnza1UjQ_wSfewS05nTHO0fiyuAnEMAM4Pw@mail.gmail.com>
-References: <20180411214257.14902-1-rjpdasilva@gmail.com>
+Subject: Re: [PATCH 1/2] gpio: pci-idio-16: Fix port memory offset for
+ get_multiple callback
+Date: Fri, 27 Apr 2018 00:55:44 +0200
+Message-ID: <CACRpkdbExtqVRXd2VAhMbBj=VK5V9F-igNyYZuLQkBvGuwsaPQ@mail.gmail.com>
+References: <cover.1524000042.git.vilhelm.gray@gmail.com> <8d1e6c1c2b04815928fab78e1e2984b18ae516f4.1524000042.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180411214257.14902-1-rjpdasilva@gmail.com>
+In-Reply-To: <8d1e6c1c2b04815928fab78e1e2984b18ae516f4.1524000042.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Silva <rjpdasilva@gmail.com>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 11:42 PM, Ricardo Silva <rjpdasilva@gmail.com> wrote:
+On Wed, Apr 18, 2018 at 2:53 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-> The pinctrl-mcp23s08 driver doesn't provide a specific gpiospec
-> of_xlate() function, causing the gpiolib-of's of_gpio_simple_xlate()
-> function to be used instead, which takes the gpiospec's second cell as
-> the flags specifier according to 'include/dt-bindings/gpio/gpio.h'.
+> The ioread8 function expects a memory offset argument. This patch fixes
+> the ports array to provide the memory addresses of the respective device
+> I/O registers.
 >
-> The pinctrl-mcp23s08 bindings document was mentioning that the flags
-> were unused, which is not accurate because values in that second cell
-> are indeed used by the gpiolib-of's of_gpio_simple_xlate() for
-> configuring the gpio (e.g. its polarity).
->
-> This way, replace the "flags currently unused" reference in the
-> dt-bindings document with references to the appropriate files specifying
-> the possible flag values and gpiospec description.
->
-> CC: devicetree@vger.kernel.org
-> Signed-off-by: Ricardo Silva <rjpdasilva@gmail.com>
+> Fixes: 810ebfc5efca ("gpio: pci-idio-16: Implement get_multiple callback")
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-Patch applied with Rob's review tag.
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
