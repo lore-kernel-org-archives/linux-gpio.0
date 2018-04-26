@@ -1,27 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/2] pinctrl/samsung: Correct EINTG banks order
-Date: Fri, 27 Apr 2018 01:04:14 +0200
-Message-ID: <CACRpkdabT-rZ19=5JjbzzchB5eBQL7jCOBHAJ0QH0PkpRUEqBQ@mail.gmail.com>
-References: <1523893966-8884-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <1523893966-8884-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <CA+Ln22E17WK2GA_6-AXZu9Z+Q_Nb86xO6npZvrCc21ciYwHt8w@mail.gmail.com> <CAJKOXPdoJV_3BucTjJ0xxd6cc6PYy3W0L8e_emmDmwZnhgXqvA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdoJV_3BucTjJ0xxd6cc6PYy3W0L8e_emmDmwZnhgXqvA@mail.gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Date: Fri, 27 Apr 2018 02:58:15 +0300
+Message-ID: <20180426235818.10018-2-digetx@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 5:47 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
+a parent. Add these dividers in order to be able to provide that parent
+option.
 
-> I fixed this, re-wrapped commit for 72-column and applied to my tree.
->
-> Linus,
-> I'll send them to you in pull request for next release cycle.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-OK waiting for that.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 0ee56dd04cec..16cf4108f2ff 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -26,6 +26,8 @@
+ #include "clk.h"
+ #include "clk-id.h"
+ 
++#define MISC_CLK_ENB 0x48
++
+ #define OSC_CTRL 0x50
+ #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+ #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+@@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
+ 				    periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_PEX] = clk;
+ 
++	/* cdev1 OSC divider */
++	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
++			     0, clk_base + MISC_CLK_ENB, 20, 2,
++			     CLK_DIVIDER_POWER_OF_TWO, NULL);
++
++	/* cdev2 OSC divider */
++	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
++			     0, clk_base + MISC_CLK_ENB, 22, 2,
++			     CLK_DIVIDER_POWER_OF_TWO, NULL);
++
+ 	/* cdev1 */
+ 	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
+ 	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
+-- 
+2.17.0
