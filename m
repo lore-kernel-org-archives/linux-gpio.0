@@ -1,165 +1,45 @@
-From: Javier Arteaga <javier@emutex.com>
-Subject: Re: [RFC PATCH RESEND 3/3] pinctrl: upboard: Add UP2 pinctrl and
- gpio driver
-Date: Thu, 26 Apr 2018 03:38:36 +0100
-Message-ID: <20180426023836.udbeoocp76tsv7vu@localhost>
-References: <20180421085009.28773-1-javier@emutex.com>
- <20180421085009.28773-4-javier@emutex.com>
- <1524674952.21176.610.camel@linux.intel.com>
+From: andi@etezian.org
+Subject: Re: [RFC 01/10] ARM: dts: exynos: Remove Exynos5440
+Date: Thu, 26 Apr 2018 13:31:11 +0900
+Message-ID: <66d27b987846172e290cbc587b9909ac@etezian.org>
+References: <20180424203239.21885-1-krzk@kernel.org>
+ <20180424203239.21885-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1524674952.21176.610.camel@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Dan O'Donovan <dan@emutex.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180424203239.21885-2-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-ide@vger.kernel.org, linux-i2c@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Jaehoon Chung <jh80.chung@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Olof Johansson <olof@lixom.net>, Zhang Rui <rui.zhang@intel.com>, Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Eduardo Valentin <edubezval@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Rob
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 07:49:12PM +0300, Andy Shevchenko wrote:
-> > For reference, here's the relevant ASL from the UP2 platform
-> > controller.
+Hi Krzysztof,
+
+On 25.04.2018 05:32, Krzysztof Kozlowski wrote:
+> The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
+> server platforms but it did not make it to the market really.  There 
+> are
+> no development boards with it and probably there are no real products
+> neither.  The development for Exynos5440 ended in 2013 and since then
+> the platform is in maintenance mode.
 > 
-> It should be in Documentation file or in commit message.
-
-Perfect, I just wasn't sure whether dumping ASL this way would be
-acceptable in commit history. In that case, I think I prefer the commit
-body over keeping a Documentation/ file elsewhere that's easy to miss.
-
-> >  static const struct mfd_cell upboard_up2_mfd_cells[] = {
-> > +	{ .name = "upboard-pinctrl" },
+> Remove all Device Tree sources for Exynos5440, as first step of removal
+> of the platform to simplify the code and drivers.
 > 
-> I guess it should be 3 lines.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> 
-> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
-> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
-> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
-> 
-> ...and honestly I would not use this macro and put 4 cells explicitly
-> here.
+makes sense, please feel free to add:
 
-The idea was to avoid repeating .platform_data + .pdata_size over and
-over as there's a few LEDs per board, but explicit is good too.
+Reviewed-by: Andi Shyti <andi@etezian.org>
 
-May just go with your suggestion as that seems to be more popular than
-macros in other mfd drivers.
-
-> > +static int upboard_gpio_request_enable(struct pinctrl_dev *pctldev,
-> > +				       struct pinctrl_gpio_range
-> > *range,
-> > +				       unsigned int pin)
-> > +{
-> > +	const struct pin_desc * const pd = pin_desc_get(pctldev,
-> > pin);
-> > +	const struct upboard_pin *p;
-> > +	int ret;
-> > +
-> 
-> > +	if (!pd)
-> > +		return -EINVAL;
-> 
-> When it's possible?
-
-Just reread pin_request() from pinctrl core. You're right, it isn't.
-I'll take out the check.
-
-> > +	if (!pd)
-> > +		return -EINVAL;
-> 
-> Ditto.
-
-As above.
-
-> 
-> > +	struct upboard_pinctrl *pctrl =
-> > +		container_of(gc, struct upboard_pinctrl, chip);
-> 
-> Do define and use to_upboard_pinctrl().
-
-Will do.
-
-> > +	if (offset + 1 > pctrl->nsoc_gpios || !pctrl-
-> > >soc_gpios[offset])
-> > +		return ERR_PTR(-ENODEV);
-> 
-> When this is a case?
-
-Another unnecessary check if gpiolib already guarantees valid inputs.
-
-> > +static int upboard_gpio_get_direction(struct gpio_chip *gc, unsigned
-> > int offset)
-> > +{
-> > +	struct gpio_desc *desc = upboard_offset_to_soc_gpio(gc,
-> > offset);
-> > +
-> 
-> Split above to definition and assignment pieces. Put assignment
-> immediately before condition.
-> 
-> > +	if (IS_ERR(desc))
-> > +		return PTR_ERR(desc);
-
-I'll do that.
-
-> > +static struct regmap_field * __init upboard_field_alloc(struct device
-> > *dev,
-> > +							struct regmap
-> > *regmap,
-> > +							unsigned int
-> > base,
-> > +							unsigned int
-> > number)
-> 
-> You should really understand what __init means and when it's appropriate
-> to use it.
-
-As in the other email: the intention was to drop probe() and funcs only
-used on module init, but I appear to have misunderstood something here.
-
-> > +static int __init upboard_pinctrl_probe(struct platform_device *pdev)
-> > +{
-> > +	struct acpi_device * const adev = ACPI_COMPANION(&pdev->dev);
-> 
-> Huh, const in that place? Why?
-
-You're right, it isn't a usual pattern. Dropped.
-
-> > +	if (!pdev->dev.parent)
-> > +		return -EINVAL;
-> > +
-> > +	upboard = dev_get_drvdata(pdev->dev.parent);
-> > +	if (!upboard)
-> > +		return -EINVAL;
-> 
-> Same comment as per LED driver.
-
-I'll address that too.
-
-> > +	if (strcmp(acpi_device_hid(adev), "AANT0F01"))
-> > +		return -ENODEV;
-> 
-> Huh?
-
-Ugh, this is left over from a bit of code that selected the right
-pinctrl_desc* for each UP HID. Of course, it doesn't make sense now.
-
-I'll take that out.
-
-> > +		((struct pinctrl_pin_desc *)pd)->drv_data = pin;
-> 
-> What is that?! I mean ugly casting.
-
-I agree, it's an eyesore. The intention was to drop const from
-pinctrl_desc->pins as we're replacing the pins' drv_data on init.
-
-It does look like I'm going at this the wrong way though. I'll take
-another stab at it (pointers welcome of course).
-
-> > +MODULE_LICENSE("GPL");
-> 
-> License mismatch.
-
-Will fix.
-
-Thanks again for your time Andy! I really appreciate your help :)
+Thanks,
+Andi
