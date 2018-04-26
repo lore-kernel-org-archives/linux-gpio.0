@@ -1,90 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4] pinctrl: msm: fix gpio-hog related boot issues
-Date: Thu, 26 Apr 2018 14:03:45 +0200
-Message-ID: <CACRpkdZPEHvnQdwh5Uu5kwqK7yVGTaw_cZR+GOzsG9pg4oEktA@mail.gmail.com>
-References: <20180412190138.12372-1-chunkeey@gmail.com>
+Subject: Re: [PATCH v2] gpiolib: add hogs support for machine code
+Date: Thu, 26 Apr 2018 14:07:20 +0200
+Message-ID: <CACRpkda+K3-=sPpJO90rjW0=+bsQ1uYT6E9Hp+G+-OEyTpc=fg@mail.gmail.com>
+References: <20180410203028.11412-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180412190138.12372-1-chunkeey@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Christian Lamparter <chunkeey@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>
-Cc: David Brown <david.brown@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180410203028.11412-1-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Jonathan Corbet <corbet@lwn.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-doc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 9:01 PM, Christian Lamparter <chunkeey@gmail.com> wrote:
+On Tue, Apr 10, 2018 at 10:30 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
-> Setting up any gpio-hog in the device-tree for his device would
-> "kill the bootup completely":
+> Board files constitute a significant part of the users of the legacy
+> GPIO framework. In many cases they only export a line and set its
+> desired value. We could use GPIO hogs for that like we do for DT and
+> ACPI but there's no support for that in machine code.
 >
-> | [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-> | [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
-> | [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
-> | [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
-> | [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
-> | [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-> | [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
+> This patch proposes to extend the machine.h API with support for
+> registering hog tables in board files.
 >
-> This was also verified on a RT-AC58U (IPQ4018) which would
-> no longer boot, if a gpio-hog was specified. (Tried forcing
-> the USB LED PIN (GPIO0) to high.).
->
-> The problem is that Pinctrl+GPIO registration is currently
-> peformed in the following order in pinctrl-msm.c:
->         1. pinctrl_register()
->         2. gpiochip_add()
->         3. gpiochip_add_pin_range()
->
-> The actual error code -517 == -EPROBE_DEFER is coming from
-> pinctrl_get_device_gpio_range(), which is called through:
->         gpiochip_add
->             of_gpiochip_add
->                 of_gpiochip_scan_gpios
->                     gpiod_hog
->                         gpiochip_request_own_desc
->                             __gpiod_request
->                                 chip->request
->                                     gpiochip_generic_request
->                                        pinctrl_gpio_request
->                                           pinctrl_get_device_gpio_range
->
-> pinctrl_get_device_gpio_range() is unable to find any valid
-> pin ranges, since nothing has been added to the pinctrldev_list yet.
-> so the range can't be found, and the operation fails with -EPROBE_DEFER.
->
-> This patch fixes the issue by adding the "gpio-ranges" property to
-> the pinctrl device node of all upstream Qcom SoC. The pin ranges are
-> then added by the gpio core.
->
-> In order to remain compatible with older, existing DTs (and ACPI)
-> a check for the "gpio-ranges" property has been added to
-> msm_gpio_init(). This prevents the driver of adding the same entry
-> to the pinctrldev_list twice.
->
-> Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> ---
+> v1 -> v2:
+> - kbuild bot complains about enum gpiod_flags having incomplete type
+>   although it builds fine for me locally: change the type of dflags
+>   to int
 
-This patch looks VERY good to me.
+I like the idea and thinking behind this patch, so patch applied.
 
-I am fine in merging it into pin control including the ranges
-fixes.
+It's a bit of code to carry, so if it doesn't see any use, I will simply
+revert it :)
 
-I need Andy's and Bjorn's ACKs on it though!
-
-Can you guys provide that?
-
-It might be that Andy want the DTS changes separately to avoid
-any collisions, so I'm fine with splitting it as well.
+But I bet you intend to follow up with some machine patches
+and then it is immediately worth it.
 
 Yours,
 Linus Walleij
