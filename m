@@ -1,47 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: make several const arrays static, shrinks object size
-Date: Fri, 27 Apr 2018 01:03:12 +0200
-Message-ID: <CACRpkdYq-xLFXi8vLkbSsnaAboJjS5rDVWPHeNRdo=FrmsagaQ@mail.gmail.com>
-References: <20180418172634.14734-1-colin.king@canonical.com>
+Subject: Re: [PATCH v2 1/2] pinctrl/samsung: Correct EINTG banks order
+Date: Fri, 27 Apr 2018 01:04:14 +0200
+Message-ID: <CACRpkdabT-rZ19=5JjbzzchB5eBQL7jCOBHAJ0QH0PkpRUEqBQ@mail.gmail.com>
+References: <1523893966-8884-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+ <1523893966-8884-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+ <CA+Ln22E17WK2GA_6-AXZu9Z+Q_Nb86xO6npZvrCc21ciYwHt8w@mail.gmail.com> <CAJKOXPdoJV_3BucTjJ0xxd6cc6PYy3W0L8e_emmDmwZnhgXqvA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180418172634.14734-1-colin.king@canonical.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPdoJV_3BucTjJ0xxd6cc6PYy3W0L8e_emmDmwZnhgXqvA@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 7:26 PM, Colin King <colin.king@canonical.com> wrote:
+On Wed, Apr 18, 2018 at 5:47 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
+> I fixed this, re-wrapped commit for 72-column and applied to my tree.
 >
-> Don't populate the const read-only arrays 'port' on the stack but
-> instead make them static. Makes the object code smaller:
->
-> Before:
->   text    data     bss     dec    hex filename
->   8542    4088     672   13302   33f6 drivers/gpio/gpio-gpio-mm.o
->  10959    4952     832   16743   4167 drivers/gpio/gpio-104-dio-48e.o
->   9022    5064    1408   15494   3c86 drivers/gpio/gpio-104-idi-48.o
->
-> After:
->   text    data     bss     dec    hex filename
->   8372    4144     672   13188   3384 drivers/gpio/gpio-gpio-mm.o
->  10790    5008     832   16630   40f6 drivers/gpio/gpio-104-dio-48e.o
->   8853    5152    1408   15413   3c35 linux/drivers/gpio/gpio-104-idi-48.o
->
-> (gcc version 7.2.0 x86_64)
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Linus,
+> I'll send them to you in pull request for next release cycle.
 
-I had already applied some part of the patch.
-
-Dropped patches to one file for this reason.
-
-Please check the result.
-
-Patch applied!
+OK waiting for that.
 
 Yours,
 Linus Walleij
