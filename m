@@ -1,82 +1,45 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
-Date: Thu, 26 Apr 2018 15:35:26 +0200
-Message-ID: <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
-References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
- <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
+From: Javier Arteaga <javier@emutex.com>
+Subject: Re: [RFC PATCH RESEND 3/3] pinctrl: upboard: Add UP2 pinctrl and
+ gpio driver
+Date: Thu, 26 Apr 2018 14:36:53 +0100
+Message-ID: <20180426133653.4yhjv6uuaox7vt7m@localhost>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <20180421085009.28773-4-javier@emutex.com>
+ <20180426065028.fvdf7ke5va2kacmv@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180426065028.fvdf7ke5va2kacmv@dell>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
-
-On 26.4.2018 15:08, Linus Walleij wrote:
-> On Wed, Apr 11, 2018 at 3:55 PM, Michal Simek <michal.simek@xilinx.com> wrote:
+On Thu, Apr 26, 2018 at 07:50:28AM +0100, Lee Jones wrote:
+> >  static const struct mfd_cell upboard_up2_mfd_cells[] = {
+> > +	{ .name = "upboard-pinctrl" },
+> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
+> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
+> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
 > 
-> Thanks for your patch!
+> Please made this a separate patch.
 > 
->> In past Xilinx gpio-zynq driver was setting up gpio chip->base as 0
->> which was chagned to autodetection when driver was upstreamed. Older
->> systems, which were using this old version, setup SW stack which expects
->> zynq gpio base as 0 and right now there is no way how to set this up.
->>
->> The patch is adding an option to setup chip->base based on aliases which
->> is something what some other drivers are doing too.
->> It means when gpio0 alias is setup then chip->base is 0. When gpio alias
->> is not setup gpiochip_find_base() set it up properly which is current
->> behavior.
->>
->> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> 
-> In general, we stopped any controlling of the GPIO base.
+> There aren't any build dependencies between the files.
 
-I know.
+Will do.
 
-> 
-> Also this use would have to be OK with the DT maintainers
-> as I never saw this use of alias before.
+I have one further question about MFD in this patch too - should I keep
+passing regmap into the driver via dev_get_drvdata(pdev->dev.parent),
+or is explicit platform_data preferable?
 
-If you grep gpio drivers you will see that these gpio-zx, gpio-mvebu,
-gpio-mxc, gpio-mxs, gpio-vf610 are using that.
+Andy suggested platform_data allows more flexibility on the parent
+device side (although I can't see upboard-pinctrl being used other than
+as a child of the upboard driver).
 
-> 
-> Please describe the use case for this.
-> 
-> The only use case which I can think about is userspace sysfs
-> and then I would really like to know why these userspace
-> users cannot use the character device that is nowadays
-> supported by libgpiod and there is even patches for some
-> IoT libraries to use it. The character device makes the
-> GPIO Linux "base" irrelevant for userspace.
-> 
-> GPIO sysfs is deprecated and moved to the obsolete ABI.
-> 
-> If there are legacy applications that use this I would have
-> to consider it, but since this has been -1 since the driver
-> was merged I find that unlikely.
+I went with parent drvdata simply because that's what I found in other
+MFD drivers and material [1].
 
-Yes, it is about legacy application which I have seen recently and there
-is no source code for application calls it because board vendor doesn't
-provide it.
+Thank you!
 
-You are right that -1 was used from the beginning in mainline but
-unfortunately this driver was in vendor tree for a while and it uses 0
-there.
-
-In upstreaming this was changed to -1 but customers have a lot of code
-which developed against vendor tree and they want to use
-latest&greatest. And without this they are not able to run that
-applications.
-
-I found that this logic is already in 5 drivers in mainline that's why I
-send this patch to be +1.
-
-Thanks,
-Michal
+[1]: http://events17.linuxfoundation.org/sites/events/files/slides/belloni-mfd-regmap-syscon_0.pdf
