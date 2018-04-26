@@ -1,105 +1,34 @@
-From: Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH v2] pinctrl: msm: fix gpio-hog related boot issues
-Date: Thu, 26 Apr 2018 23:47:30 +0200
-Message-ID: <3524410.JrO1DEFpQ1@debian64>
-References: <20180402121005.10080-1-chunkeey@gmail.com>
- <2820412.JxDUeWI2ec@debian64>
- <CACRpkda6nD_nb7D1s7KHX3CxzmAw3qzdEe6m+V+TbaZ5gaZhaA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] dt-bindings: gpio: Add support for r8a77965
+Date: Fri, 27 Apr 2018 00:46:23 +0200
+Message-ID: <CACRpkdYy9kabXXmA7RwqDCMv-z0QSSMfQa7agp4aaBfoxO=QOA@mail.gmail.com>
+References: <1523904956-18239-1-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkda6nD_nb7D1s7KHX3CxzmAw3qzdEe6m+V+TbaZ5gaZhaA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1523904956-18239-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 26, 2018 11:12:21 CEST Linus Walleij wrote:
-> On Thu, Apr 5, 2018 at 6:35 PM, Christian Lamparter wrote:
-> > On Montag, 2. April 2018 17:04:47 CEST Bjorn Andersson wrote:
-> >> @Linus, I count 24 callers of gpiochip_add_pin_range(). Is this
-> >> suggestion reasonable?
-> >>
-> >> Can we make gpiochip_add_pin_range() check if there's already a
-> >> gpio-range and return ok in some way?
-> 
-> I think I replied in some other mail that I think we need to
-> be backwards compatible and it's not too hard to do
-> both. (Correct me if I'm wrong.)
-I think so too, I looked around and found that the nvidia pinctrl was
-doing something similar with of_find_property():
-<https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/pinctrl/tegra/pinctrl-tegra.c#L652>
-|	has_prop = of_find_property(np, "gpio-ranges", NULL);
+On Mon, Apr 16, 2018 at 8:55 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
 
-However this looks kinda funny, since "has_prob" is declared as a bool
-and of_find_property() returns a pointer to a "struct property"....
-Tell you what: If nobody beats me to it, I'll sent a patch for this after
-the pinctrl-msm's gpio-hog has been dealt with. :)
+> Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>
+> Renesas R-Car M3-N support has been merged for v4.17.
+> Document the missing device tree bindings.
+>
+> v1 -> v2:
+> - Add Simon and Rob Reviewed-by tags
 
-> > Looks like Linus is currently really busy updating the gemini
-> > target (a lot of work went into it) for OpenWrt.
-> > <https://lists.openwrt.org/pipermail/openwrt-devel/2018-April/043752.html>
-> > (Kinda funny, because I do help to maintain the apm821xx and the new
-> > ipq40xx target over there.)
-> 
-> Yeah it was more of a hobby, partly research for a lecture
-> on maintaining old ARM systems and all dangerous aftermarket
-> devices that is littering the world.
-> 
-> Since I have noticed that the adoption of OpenWRT/LEDE goes
-> far beyond routers and it is one of the most prevalent
-> distributions that is existing in the IoT of darkness on the
-> planet being the most deployed OS for bitcoin mining and
-> being picked up for functional safety (such as automotive)
-> because of its minimalist userspace.
-> 
-> I'm still amazed by the weirdness of our business.
-I think I can add something to this thought as well. Albeit, it's a
-more traditional, less zany story.
+Patch applied.
 
-I started with the apm821xx (a PowerPC 464 derivative SoC) back
-in 2015-2016 because of the wide availabilty of cheap (as low as $5 ~ $10)
-secondhand enterprise accesspoints like the Cisco Meraki MR24
-<https://openwrt.org/toh/meraki/mr24>. 
-
-What happen was that cooperations ditched all the outdated 802.11n
-devices and upgraded to the shiny new wave1 802.11ac gear. Now, the
-old 802.11n devices still worked perfectly fine but the firmware on
-the device requires the user to have a valid subscription to a 
-"Meraki Cloud License".
-
-And as you can probably guess: The License is sold as a yearly subscription
-starting from $150 for a single device. So, these devices became practically
-e-waste since nobody in their right mind would buy a used device and then
-fork over the ~$150 fee per annum.
-
-The MR24 craze is mostly over by now. You can still find a few. However
-some listings are now selling them with OpenWrt/LEDE for ~$40.
-
-And obviously, this cycle will continue on, but now with the old wave1
-802.11ac gear that gets replaced. In fact this business has spawned
-companies that are actively working on supporting "old" enterprise gear
-via their own OpenWrt/LEDE derivatives.
-
-> > In any case, I implemented your suggestion and it does look reasonable.
-> > The gpiolib already uses the gpio_offset as an ID of some sorts. For
-> > now I went with a simple ID value check, but this could be extended to
-> > a range/intersection check if necessary. But then again, let's not
-> > overengineer it. Comments are welcome, I'll wait around till sometime
-> > next week before I post v3.
-> 
-> I'm going through my mailbox now, sorry for delays in feedback
-> and review :(
-I see you skipped v3 and replied to v4.
-
-Best Regards,
-Christian Lamparter
+Yours,
+Linus Walleij
