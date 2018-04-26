@@ -1,30 +1,75 @@
-From: andi@etezian.org
-Subject: Re: [RFC 08/10] spi: s3c64xx: samsung: Remove support for Exynos5440
-Date: Thu, 26 Apr 2018 13:35:03 +0900
-Message-ID: <f47ea49afb9301d33383143056ed11a7@etezian.org>
-References: <20180424203239.21885-1-krzk@kernel.org>
- <20180424203239.21885-9-krzk@kernel.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RFC PATCH RESEND 3/3] pinctrl: upboard: Add UP2 pinctrl and
+ gpio driver
+Date: Thu, 26 Apr 2018 07:50:28 +0100
+Message-ID: <20180426065028.fvdf7ke5va2kacmv@dell>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <20180421085009.28773-4-javier@emutex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180424203239.21885-9-krzk@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180421085009.28773-4-javier@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfou>
+To: Javier Arteaga <javier@emutex.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Krzysztof,
+On Sat, 21 Apr 2018, Javier Arteaga wrote:
 
-On 25.04.2018 05:32, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
+> The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
+> board-specific expansion connector (EXHAT). Both expose assorted
+> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
+> on-board devices (ADC, FPGA IP blocks...).
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> These lines are routed through an on-board FPGA. The platform controller
+> in its stock firmware provides register fields to change:
+> 
+> - Line enable (FPGA pins enabled / high impedance)
+> - Line direction (SoC driven / FPGA driven)
+> 
+> To enable using SoC GPIOs on the pin header, this arrangement requires
+> both configuring the platform controller, and updating the SoC pad
+> registers in sync.
+> 
+> Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
+> lines for the header pins. When these are requested, the driver
+> propagates this request to the backend SoC pinctrl/GPIO driver by
+> grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
+> mapping for this is retrieved via ACPI properties.
+> 
+> Signed-off-by: Javier Arteaga <javier@emutex.com>
+> ---
 
-Reviewed-by: Andi Shyti <andi@etezian.org>
+[...]
+> 
+>  drivers/mfd/upboard.c             |   1 +
+>  drivers/pinctrl/Kconfig           |  13 +
+>  drivers/pinctrl/Makefile          |   1 +
+>  drivers/pinctrl/pinctrl-upboard.c | 523 ++++++++++++++++++++++++++++++
+>  4 files changed, 538 insertions(+)
+>  create mode 100644 drivers/pinctrl/pinctrl-upboard.c
+> 
+> diff --git a/drivers/mfd/upboard.c b/drivers/mfd/upboard.c
+> index 6e4767e4dc41..35111981dfdf 100644
+> --- a/drivers/mfd/upboard.c
+> +++ b/drivers/mfd/upboard.c
+> @@ -132,6 +132,7 @@ static struct upboard_led_data upboard_up2_led_data[] = {
+>  };
+>  
+>  static const struct mfd_cell upboard_up2_mfd_cells[] = {
+> +	{ .name = "upboard-pinctrl" },
+>  	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
+>  	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
+>  	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
 
-Thanks,
-Andi
+Please made this a separate patch.
+
+There aren't any build dependencies between the files.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
