@@ -1,105 +1,198 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: Lack of suspend/resume/shutdown ordering between GPIO providers and consumers
-Date: Wed, 25 Apr 2018 23:35:10 +0200
-Message-ID: <3827893.QJdhME6hrl@aspire.rjw.lan>
-References: <dc0c15eb-3dab-f512-aed6-045528fcec2c@gmail.com> <b562c5e3-7073-1b86-6f1f-1d2a5712b28b@ti.com> <aecab723-be30-91ba-3fd5-cb61243e572f@ti.com>
+From: Javier Arteaga <javier@emutex.com>
+Subject: Re: [RFC PATCH RESEND 1/3] mfd: upboard: Add UP2 platform controller
+ driver
+Date: Thu, 26 Apr 2018 03:33:37 +0100
+Message-ID: <20180426023337.u2d6azqcjmjsur5c@localhost>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <20180421085009.28773-2-javier@emutex.com>
+ <1524671850.21176.585.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <aecab723-be30-91ba-3fd5-cb61243e572f@ti.com>
+Content-Disposition: inline
+In-Reply-To: <1524671850.21176.585.camel@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, dmitry.torokhov@gmail.com, jeffy.chen@rock-chips.com, enric.balletbo@collabora.com, josephl@nvidia.com, opendmb@gmail.com
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Dan O'Donovan <dan@emutex.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wednesday, April 25, 2018 9:29:59 PM CEST Grygorii Strashko wrote:
-> 
-> On 04/25/2018 02:10 PM, Grygorii Strashko wrote:
-> > 
-> > 
-> > On 04/25/2018 01:57 PM, Florian Fainelli wrote:
-> >> On 04/25/2018 11:47 AM, Grygorii Strashko wrote:
-> >>>
-> >>>
-> >>> On 04/25/2018 01:29 PM, Florian Fainelli wrote:
-> >>>> On 04/25/2018 11:06 AM, Grygorii Strashko wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 04/24/2018 05:58 PM, Florian Fainelli wrote:
-> >>>>>> Hi Linus, Rafael, all
-> >>>>>>
-> >>>>>> Our GPIO controller driver: gpio-brcmstb.c has a shutdown callback
-> >>>>>> which
-> >>>>>> gets invoked when the system is brought into poweroff aka S5. So far so
-> >>>>>> good, except that we also wish to use gpio_keys.c as a possible wake-up
-> >>>>>> source, so we may have a number of GPIO pins declared as gpio-keys that
-> >>>>>> allow the system to wake-up from deep slumber.
-> >>>>>>
-> >>>>>> Recently we noticed that we could easily get into a state where
-> >>>>>> gpio-brcmstb.c::brcmstb_gpio_shutdown() gets called first, and then
-> >>>>>> gpio_keys.c::gpio_keys_suspend() gets called later, which is too
-> >>>>>> late to
-> >>>>>> have the enable_irq_wake() call do anything sensible since we have
-> >>>>>> suspend its parent interrupt controller before. This is completely
-> >>>>>> expected unfortunately because these two drivers are both platform
-> >>>>>> device instances with no connection to one another except via Device
-> >>>>>> Tree and the use of the GPIOLIB APIs.
-> >>>>>
-> >>>>> You can take a look at device_link_add() and Co.
-> >>>>
-> >>>> OK, though that requires a struct device references, so while I could
-> >>>> certainly resolve the device_node -> struct device that corresponds to
-> >>>> the GPIO provider , that poses a number of issues:
-> >>>>
-> >>>> - not all struct device_node have a corresponding struct device
-> >>>> reference (e.g: clock providers, interrupt controllers, and possibly
-> >>>> other custom drivers), though in this case, they most likely do have one
-> >>>>
-> >>>> - resolving a struct device associated with a struct device_node is
-> >>>> often done in a "bus" specific way, e.g: of_find_device_by_node(), so if
-> >>>> the GPIO provider is e.g: i2c_device, pci_device etc. etc. this might
-> >>>> not work that easily
-> >>>>
-> >>>> I think this is what Dmitry just indicated in his email as well.
-> >>>>
-> >>>>>
-> >>>>> But it's little bit unclear what exactly you have issue with:
-> >>>>> - shutdown
-> >>>>> - suspend
-> >>>>>
-> >>>>> above are different (at least as it was before) and gpio-brcmstb.c
-> >>>>>     brcmstb_gpio_shutdown() should not be called as part of suspend !?
-> >>>>> may be you mean brcmstb_gpio_suspend?
-> >>>>
-> >>>> The issue exists with shutdown (through the use of "poweroff"), that is
-> >>>> confirmed, but I cannot see how it does not exist with any suspend state
-> >>>> as well, for the same reason that the ordering is not strictly enforced.
-> >>>
-> >>> Sry, but it still required some clarification :( - poweroff calls
-> >>> device_shutdown() which, in turn, should not call .suspend(), so
-> >>> how have you got both .shutdown() and .suspend() callbacks called during
-> >>> poweroff? Am I missing smth?
-> >>
-> >> You are missing me telling you the whole story, sorry I got confused,
-> >> but you are absolutely right these are separate lists and on
-> >> poweroff/shutdown only ->shutdown() is called. What I had missed in the
-> >> report I was submitted was that there was a .shutdown() callback being
-> >> added to gpio_keys.c, which of course, because it's an Android based
-> >> project is not in the upstream Linux kernel.
-> >>
-> >> The problem does remain valid though AFAICT. Thanks Grygorii!
-> >>
-> > 
-> > Thanks. But that means you should not see this problem :(
-> > There is devices_kset_move_last() call in really_probe() which moves probed dev
-> > at the end of kset, and gpio_keys should never be probed before gpio-brcmstb because
-> > both devm_fwnode_get_gpiod_from_child() and devm_gpio_request_one() expected to return
-> > -EPROBE_DEFER otherwise.
-> > 
-> > Theoretically issue still might happen with suspend.
-> > 
-> 
-> FYI https://lkml.org/lkml/2015/9/10/218
+Hi Andy,
 
-And also https://patchwork.kernel.org/patch/10334661/
+First off, many thanks for your thorough review! Replies inline.
+
+On Wed, Apr 25, 2018 at 06:57:30PM +0300, Andy Shevchenko wrote:
+> > +config MFD_UPBOARD
+> > +	tristate "UP Squared"
+> > +	depends on ACPI
+> > +	depends on GPIOLIB
+> > +	select MFD_CORE
+> > +	select REGMAP
+> > +	help
+> > +	  If you say yes here you get support for the platform
+> > controller
+> > +	  of the UP Squared single-board computer.
+> > +
+> > +	  This driver provides common support for accessing the
+> > device,
+> > +	  additional drivers must be enabled in order to use the
+> > +	  functionality of the device.
+> > +
+> > +	  This driver can also be built as a module. If so, the
+> > module
+> > +	  will be called upboard.
+> 
+> "upboard"
+
+The module name in quotes reads better to me too, but the majority of
+Kconfig entries do it this way, looks like:
+
+linux $ rg 'module will be called [^"]' | wc -l
+1275
+linux $ rg 'module will be called "' | wc -l
+5
+
+> > +static int upboard_read(void *context, unsigned int reg, unsigned int
+> > *val)
+> Can't you rewrite this like
+> 
+> for (addr) {
+>  strobe(0)
+>  data(x)
+>  strobe(1)
+> }
+> 
+> for (register) {
+>  strobe(0)
+>  val = data(x)
+>  strobe(1)
+> }
+> 
+> val &= BIT(register_size);
+> strobe(0)
+> 
+> ?
+
+> > +static int upboard_write(void *context, unsigned int reg, unsigned
+> > int val)
+> Similar here:
+> 
+> for (addr) {
+>  strobe(0)
+>  data(x)
+>  strobe(1)
+> }
+> 
+> for (register) {
+>  strobe(0)
+>  data(x)
+>  strobe(1)
+> }
+> 
+> strobe(0)
+> strobe(1)
+> 
+> ?
+
+> Moreover these two functions have duplications, i.e.
+> 
+> static ... upboard_clear()
+> {
+>  clear(0)
+>  clear(1)
+> }
+> 
+> static ... upboard_set_address()
+> {
+>  for (addr) {
+>   ...
+>  }
+> }
+
+I'll look into making these R/W functions more compact.
+
+> Additional question is about spi-bitbang and i2c-gpio. Can one of them
+> be utilized here? Why not?
+
+i2c-gpio would be closest, but unfortunately this isn't quite I2C:
+
+- two in/out GPIOs instead of a single SDA line,
+- R/W sequence start is signaled from yet _another_ line,
+- ACK implicit in last rising edge of the address instead of an ACK pulse,
+- etc...
+
+Probably should explain this in a comment too.
+
+> > +static int upboard_init_gpio(struct upboard *upboard)
+> > +{
+> > +	struct gpio_desc *enable_gpio;
+> > +
+> > +	enable_gpio = devm_gpiod_get(upboard->dev, "enable",
+> > GPIOD_OUT_LOW);
+> > +	if (IS_ERR(enable_gpio))
+> > +		return PTR_ERR(enable_gpio);
+> 
+> > +	gpiod_set_value(enable_gpio, 1);
+> 
+> When do you disable it? Why not?
+
+enable = 0/1 sets all FPGA pins for FPGA-routed lines Hi-Z/active. It's
+probably safer to set enable = 0 on unload.
+
+I'll go over this again (and add comments in any case).
+
+> > +static int upboard_check_supported(struct upboard *upboard)
+> > +{
+> 
+> > +	const unsigned int AAEON_MANUFACTURER_ID = 0x01;
+> > +	const unsigned int SUPPORTED_FW_MAJOR = 0x0;
+> 
+> Why to hide here instead of putting at the top of file as defined
+> constants?
+
+No strong reason. I'll move them to the top.
+
+> > +	build = (firmware_id >> 12) & 0xf;
+> > +	major = (firmware_id >> 8) & 0xf;
+> > +	minor = (firmware_id >> 4) & 0xf;
+> 
+> > +	patch = firmware_id & 0xf;
+> 
+> For style purposes you can use
+> (firmware >> 0) & 0xf here
+
+Sure, why not.
+
+> > +static int upboard_probe(struct platform_device *pdev)
+> > +{
+> > +	struct upboard *upboard;
+> > +	const struct acpi_device_id *id;
+> > +	const struct upboard_data *upboard_data;
+> > +	int ret;
+> 
+> > +	id = acpi_match_device(upboard_acpi_match, &pdev->dev);
+> > +	if (!id)
+> > +		return -ENODEV;
+> > +
+> > +	upboard_data = (const struct upboard_data *) id->driver_data;
+> 
+> Use new API for that.
+
+Will do.
+
+> > +MODULE_LICENSE("GPL");
+> 
+> License mismatch.
+
+True, it should read "GPL v2". I'll update these.
+
+> > +#define UPBOARD_ADDRESS_SIZE  7
+> > +#define UPBOARD_REGISTER_SIZE 16
+> 
+> > +#define UPBOARD_READ_FLAG     BIT(UPBOARD_ADDRESS_SIZE)
+> 
+> It's not clear why this one is defined in this way.
+> Comment is needed.
+
+It means that the RW flag comes after the last bit of the address, like
+in I2C. I'll likely drop this #define and make this clearer next
+iteration.
