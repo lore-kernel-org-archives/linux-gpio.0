@@ -1,52 +1,180 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: add hogs support for machine code
-Date: Thu, 26 Apr 2018 14:13:40 +0200
-Message-ID: <CACRpkdbFGXGqjtcyXLmgL=kYFkfR9_s9McrNU1-=bTO7-Wgs0w@mail.gmail.com>
-References: <20180410203028.11412-1-brgl@bgdev.pl> <17720832.6ELUnVt0BR@debian64>
+Subject: Re: [PATCH 2/5] pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver
+Date: Thu, 26 Apr 2018 14:48:13 +0200
+Message-ID: <CACRpkdb-=QU74-MZxMdB6QPqMLZr97WxN80iyOoTFqXPicL75w@mail.gmail.com>
+References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com> <1523440025-18077-3-git-send-email-amelie.delaunay@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <17720832.6ELUnVt0BR@debian64>
+In-Reply-To: <1523440025-18077-3-git-send-email-amelie.delaunay@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Lamparter <chunkeey@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-doc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 10:00 PM, Christian Lamparter
-<chunkeey@gmail.com> wrote:
+On Wed, Apr 11, 2018 at 11:47 AM, Amelie Delaunay
+<amelie.delaunay@st.com> wrote:
 
-> The problem is that unlike native gpio-controllers, pinctrls need
-> to have a "pin/gpio range" defined before any gpio-hogs can be added.
+Hi Amelie, thanks for your patch!
 
-Indeed. But the primary use case (correct me if I am wrong Bartosz)
-is to clean up old boardfile code.
+> This patch adds pinctrl/GPIO driver for STMicroelectronics
+> Multi-Function eXpander (STMFX) GPIO expander.
+> STMFX is an I2C slave controller, offering up to 24 GPIOs.
+> The driver relies on generic pin config interface to configure the GPIOs.
+>
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 
-Old boardfiles belong to equally old boards. They very often do not
-have pin control, just GPIO, and they very often have custom code
-that just issue gpio_get(), gpio_* etc to set up hogs.
+This is looking very good.
 
-So this will be able to replace all such boilerplate with some
-hog table for each boardfile and be done with it.
+The overall architecture of this patch set is excellent.
 
-I.e. they have only drivers/gpio/gpio-foo.c and no pin control
-driver in 9 cases out of 10. Cases do exist where they use
-pin control with board files. Those are rare. But they will have
-problems.
+I have only one major question about whether this should be
+a MFD parent and GPIO-pinctrl-child split driver, see below.
 
-Some machine descriptor tables are used on modern archs
-and the most prominent is x86 Intel. However the Intel pin control
-driver is one of those that (IIRC) will actually survive this (i.e. it
-doesn not have this bug). They are not even using DT, they
-use ACPI.
+> +config PINCTRL_STMFX
+> +       tristate "STMicroelectronics STMFX I2C GPIO expander pinctrl driver"
+> +       depends on GPIOLIB && I2C=y
+> +       select GENERIC_PINCONF
+> +       select GPIOLIB_IRQCHIP
+> +       select REGMAP_I2C
 
-> So what will happen is that you'll get an
-> "gpiochip_machine_hog: unable to hog GPIO line $LABEL $GPIONR -517" error
-> for every single gpio-hog and wonder why :(.
+Thanks for using all the helpers, it makes the code very small and
+consistent and easy to review and maintain.
 
-Hm maybe we can simply improbe the error messages so
-people realize they have to go and fix their pin control driver(s)?
+> +#include <linux/bitfield.h>
+> +#include <linux/gpio.h>
 
-OK maybe a bit whimsical comment from me here... :/
+Please just use:
+ #include <linux/gpio/driver.h>
+
+> +static void stmfx_gpio_irq_toggle_trigger(struct stmfx_pinctrl *pctl,
+> +                                         unsigned int offset)
+> +{
+> +       u32 reg = get_reg(offset);
+> +       u32 mask = get_mask(offset);
+> +       int val;
+> +
+> +       if (!(pctl->irq_toggle_edge[reg] & mask))
+> +               return;
+> +
+> +       val = stmfx_gpio_get(&pctl->gpio_chip, offset);
+> +       if (val < 0)
+> +               return;
+> +
+> +       if (val) {
+> +               pctl->irq_gpi_type[reg] &= mask;
+> +               regmap_write_bits(pctl->regmap, STMFX_REG_IRQ_GPI_TYPE + reg,
+> +                                 get_mask(offset), 0);
+> +
+> +       } else {
+> +               pctl->irq_gpi_type[reg] |= mask;
+> +               regmap_write_bits(pctl->regmap, STMFX_REG_IRQ_GPI_TYPE + reg,
+> +                                 get_mask(offset), get_mask(offset));
+> +       }
+> +}
+
+We had a bit of discussion about edge trigger emulation on the
+mailing list. Strange that these HW engineers didn't think of this,
+I thought it was widely known that double-edge trigger (not just one
+or the other) is needed in contemporary GPIO HW.
+
+> +       if (!of_find_property(np, "gpio-ranges", NULL)) {
+> +               ret = gpiochip_add_pin_range(&pctl->gpio_chip,
+> +                                            dev_name(pctl->dev),
+> +                                            0, 0, pctl->pctl_desc.npins);
+> +               if (ret)
+> +                       return ret;
+
+Do you really need to support DTBs without gpio-ranges?
+
+I.e. can't you just print an error and exit if there is no range?
+
+I think other drivers has this handling because of older
+DT bindings and trees drifting around.
+
+> +static const struct regmap_config stmfx_regmap_config = {
+> +       .reg_bits = 8,
+> +       .val_bits = 8,
+> +};
+
+This can probably be improved in the future.
+Or are there really exactly 255 registers?
+
+> +static int stmfx_probe(struct i2c_client *client,
+> +                      const struct i2c_device_id *id)
+> +{
+> +       struct device_node *np = client->dev.of_node, *child;
+> +       struct stmfx *stmfx;
+> +       int ret;
+> +
+> +       stmfx = devm_kzalloc(&client->dev, sizeof(*stmfx), GFP_KERNEL);
+> +       if (!stmfx)
+> +               return -ENOMEM;
+> +
+> +       i2c_set_clientdata(client, stmfx);
+> +
+> +       stmfx->dev = &client->dev;
+> +
+> +       stmfx->regmap = devm_regmap_init_i2c(client, &stmfx_regmap_config);
+> +       if (IS_ERR(stmfx->regmap)) {
+> +               ret = PTR_ERR(stmfx->regmap);
+> +               dev_err(stmfx->dev,
+> +                       "Failed to allocate register map: %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       ret = stmfx_chip_init(stmfx, client);
+> +       if (ret) {
+> +               if (ret == -ETIMEDOUT)
+> +                       return -EPROBE_DEFER;
+> +               return ret;
+> +       }
+> +
+> +       stmfx->irq = client->irq;
+> +       ret = stmfx_irq_init(stmfx);
+> +       if (ret)
+> +               return ret;
+> +
+> +       for_each_available_child_of_node(np, child) {
+> +               if (of_property_read_bool(child, "gpio-controller")) {
+> +                       ret = stmfx_gpio_init(stmfx, child);
+> +                       if (ret)
+> +                               goto err;
+> +               }
+> +       }
+
+Hm so you do not use a MFD driver for the core of the driver?
+
+Instead this driver becomes the core driver?
+
+I guess it is fine as long as the chip is only doing GPIO
+and pin control. If the chip has more abilities (such as PWM,
+LED...) then the core should be an MFD driver that spawns
+GPIO/pinctrl driver as a child, then this child looks up the
+regmap from the parent MFD driver.
+
+See for example how the simple STw481x driver does things:
+drivers/mfd/stw481x.c
+drivers/regulator/stw481x-vmmc.c
+
+This MFD has no GPIO/pin control but it illustrates a simple
+parent/child instantiation with an MFD core driver.
+
+It has this DTS entry:
+
+                stw4811@2d {
+                        compatible = "st,stw4811";
+                        reg = <0x2d>;
+                        vmmc_regulator: vmmc {
+                                compatible = "st,stw481x-vmmc";
+                                regulator-name = "VMMC";
+                                regulator-min-microvolt = <1800000>;
+                                regulator-max-microvolt = <3300000>;
+                        };
+                };
+
+The MFD driver matches and spawns the VMMC child
+then that driver mathes to the vmmc node.
 
 Yours,
 Linus Walleij
