@@ -1,120 +1,118 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 2/4] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Date: Fri, 27 Apr 2018 02:58:16 +0300
-Message-ID: <20180426235818.10018-3-digetx@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH 1/2] pinctrl: uniphier: add LD20 MPEG2-TS I/O pin-mux settings
+Date: Fri, 27 Apr 2018 09:38:43 +0900
+Message-ID: <20180427003844.3937-1-suzuki.katsuhiro@socionext.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-arm-kernel@lists.infradead.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-that main clk-controller driver could get an actual parent clock for the
-CDEV1/2 clocks.
+The MPEG2-TS input/output core both accepts serial TS and parallel TS.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+The serial TS interface uses following pins:
+  hscin0_s : HS0DOUT[0-3]
+  hscin1_s : HS0DOUT[4-7]
+  hscin2_s : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN0
+  hscin3_s : HS1DIN[2-5]
+  hscout0_s: HS0DOUT[0-3]
+  hscout1_s: HS0DOUT[4-7]
+
+And the parallel TS interface uses following pins:
+  hscin0_p : HS0BCLKIN, HS0SYNCIN, HS0VALIN, HS0DIN[0-7]
+  hscin1_p : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN[0-7]
+  hscout0_p: HS0BCLKOUT, HS0SYNCOUT, HS0VALOUT, HS0DOUT[0-7]
+
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
- drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
- drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
- 3 files changed, 40 insertions(+), 12 deletions(-)
+ .../pinctrl/uniphier/pinctrl-uniphier-ld20.c  | 54 +++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 72c718e66ebb..49c7c1499bc3 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -33,17 +33,6 @@
- #include "../pinctrl-utils.h"
- #include "pinctrl-tegra.h"
- 
--struct tegra_pmx {
--	struct device *dev;
--	struct pinctrl_dev *pctl;
--
--	const struct tegra_pinctrl_soc_data *soc;
--	const char **group_pins;
--
--	int nbanks;
--	void __iomem **regs;
--};
--
- static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
- {
- 	return readl(pmx->regs[bank] + reg);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index 33b17cb1471e..aa33c20766c4 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -16,6 +16,17 @@
- #ifndef __PINMUX_TEGRA_H__
- #define __PINMUX_TEGRA_H__
- 
-+struct tegra_pmx {
-+	struct device *dev;
-+	struct pinctrl_dev *pctl;
-+
-+	const struct tegra_pinctrl_soc_data *soc;
-+	const char **group_pins;
-+
-+	int nbanks;
-+	void __iomem **regs;
-+};
-+
- enum tegra_pinconf_param {
- 	/* argument: tegra_pinconf_pull */
- 	TEGRA_PINCONF_PARAM_PULL,
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-index 7e38ee9bae78..f31e39d797f9 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-@@ -19,6 +19,7 @@
-  * more details.
-  */
- 
-+#include <linux/clk-provider.h>
- #include <linux/init.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -2231,9 +2232,36 @@ static const struct tegra_pinctrl_soc_data tegra20_pinctrl = {
- 	.drvtype_in_mux = false,
- };
- 
-+static const char *cdev1_parents[4] = {
-+	"cdev1_osc_div", "pll_a_out0", "pll_m_out1", "audio",
-+};
-+
-+static const char *cdev2_parents[4] = {
-+	"cdev2_osc_div", "hclk", "pclk", "pll_p_out4",
-+};
-+
-+static void tegra20_pinctrl_register_clock_muxes(struct platform_device *pdev)
-+{
-+	struct tegra_pmx *pmx = platform_get_drvdata(pdev);
-+
-+	clk_register_mux(NULL, "cdev1_mux", cdev1_parents, 4, 0,
-+			 pmx->regs[1] + 0x8, 2, 2, CLK_MUX_READ_ONLY, NULL);
-+
-+	clk_register_mux(NULL, "cdev2_mux", cdev2_parents, 4, 0,
-+			 pmx->regs[1] + 0x8, 4, 2, CLK_MUX_READ_ONLY, NULL);
-+}
-+
- static int tegra20_pinctrl_probe(struct platform_device *pdev)
- {
--	return tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
-+	int err;
-+
-+	err = tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
-+	if (err)
-+		return err;
-+
-+	tegra20_pinctrl_register_clock_muxes(pdev);
-+
-+	return 0;
- }
- 
- static const struct of_device_id tegra20_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+index bf8f0c3bea5e..6528c13ea4bd 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+@@ -566,6 +566,33 @@ static const int ether_rgmii_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ static const unsigned ether_rmii_pins[] = {30, 31, 32, 33, 34, 35, 36, 37, 39,
+ 					   41, 42, 45};
+ static const int ether_rmii_muxvals[] = {0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
++static const unsigned hscin0_ci_pins[] = {102, 103, 104, 105, 106, 107, 108,
++					    109, 110, 111, 112};
++static const int hscin0_ci_muxvals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
++static const unsigned hscin0_p_pins[] = {102, 103, 104, 105, 106, 107, 108, 109,
++					 110, 111, 112};
++static const int hscin0_p_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned hscin1_p_pins[] = {124, 125, 126, 127, 128, 129, 130, 131,
++					 132, 133, 134};
++static const int hscin1_p_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned hscin0_s_pins[] = {116, 117, 118, 119};
++static const int hscin0_s_muxvals[] = {3, 3, 3, 3};
++static const unsigned hscin1_s_pins[] = {120, 121, 122, 123};
++static const int hscin1_s_muxvals[] = {3, 3, 3, 3};
++static const unsigned hscin2_s_pins[] = {124, 125, 126, 127};
++static const int hscin2_s_muxvals[] = {3, 3, 3, 3};
++static const unsigned hscin3_s_pins[] = {129, 130, 131, 132};
++static const int hscin3_s_muxvals[] = {3, 3, 3, 3};
++static const unsigned hscout0_ci_pins[] = {113, 114, 115, 116, 117, 118, 119,
++					   120, 121, 122, 123};
++static const int hscout0_ci_muxvals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
++static const unsigned hscout0_p_pins[] = {113, 114, 115, 116, 117, 118, 119,
++					  120, 121, 122, 123};
++static const int hscout0_p_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned hscout0_s_pins[] = {116, 117, 118, 119};
++static const int hscout0_s_muxvals[] = {4, 4, 4, 4};
++static const unsigned hscout1_s_pins[] = {120, 121, 122, 123};
++static const int hscout1_s_muxvals[] = {4, 4, 4, 4};
+ static const unsigned i2c0_pins[] = {63, 64};
+ static const int i2c0_muxvals[] = {0, 0};
+ static const unsigned i2c1_pins[] = {65, 66};
+@@ -641,6 +668,17 @@ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(emmc_dat8),
+ 	UNIPHIER_PINCTRL_GROUP(ether_rgmii),
+ 	UNIPHIER_PINCTRL_GROUP(ether_rmii),
++	UNIPHIER_PINCTRL_GROUP(hscin0_ci),
++	UNIPHIER_PINCTRL_GROUP(hscin0_p),
++	UNIPHIER_PINCTRL_GROUP(hscin1_p),
++	UNIPHIER_PINCTRL_GROUP(hscin0_s),
++	UNIPHIER_PINCTRL_GROUP(hscin1_s),
++	UNIPHIER_PINCTRL_GROUP(hscin2_s),
++	UNIPHIER_PINCTRL_GROUP(hscin3_s),
++	UNIPHIER_PINCTRL_GROUP(hscout0_ci),
++	UNIPHIER_PINCTRL_GROUP(hscout0_p),
++	UNIPHIER_PINCTRL_GROUP(hscout0_s),
++	UNIPHIER_PINCTRL_GROUP(hscout1_s),
+ 	UNIPHIER_PINCTRL_GROUP(i2c0),
+ 	UNIPHIER_PINCTRL_GROUP(i2c1),
+ 	UNIPHIER_PINCTRL_GROUP(i2c3),
+@@ -668,6 +706,16 @@ static const char * const aoutiec1_groups[] = {"aoutiec1"};
+ static const char * const emmc_groups[] = {"emmc", "emmc_dat8"};
+ static const char * const ether_rgmii_groups[] = {"ether_rgmii"};
+ static const char * const ether_rmii_groups[] = {"ether_rmii"};
++static const char * const hscin0_groups[] = {"hscin0_s",
++					     "hscin0_p",
++					     "hscout0_ci"};
++static const char * const hscin1_groups[] = {"hscin1_s", "hscin0_p"};
++static const char * const hscin2_groups[] = {"hscin2_s"};
++static const char * const hscin3_groups[] = {"hscin3_s"};
++static const char * const hscout0_groups[] = {"hscout0_s",
++					      "hscout0_p",
++					      "hscout0_ci"};
++static const char * const hscout1_groups[] = {"hscout1_s"};
+ static const char * const i2c0_groups[] = {"i2c0"};
+ static const char * const i2c1_groups[] = {"i2c1"};
+ static const char * const i2c3_groups[] = {"i2c3"};
+@@ -691,6 +739,12 @@ static const struct uniphier_pinmux_function uniphier_ld20_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(emmc),
+ 	UNIPHIER_PINMUX_FUNCTION(ether_rgmii),
+ 	UNIPHIER_PINMUX_FUNCTION(ether_rmii),
++	UNIPHIER_PINMUX_FUNCTION(hscin0),
++	UNIPHIER_PINMUX_FUNCTION(hscin1),
++	UNIPHIER_PINMUX_FUNCTION(hscin2),
++	UNIPHIER_PINMUX_FUNCTION(hscin3),
++	UNIPHIER_PINMUX_FUNCTION(hscout0),
++	UNIPHIER_PINMUX_FUNCTION(hscout1),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c0),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c1),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c3),
 -- 
 2.17.0
