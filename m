@@ -1,78 +1,56 @@
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: Re: [REGRESSION][BISECTED] i.MX6 pinctrl hogs stopped working
-Date: Fri, 27 Apr 2018 10:13:21 +0100
-Message-ID: <87088f1f-9d2e-1966-ddd5-eb2780a3d2dd@opensource.cirrus.com>
-References: <8b07e30a-7dd1-7923-dc50-b84f0e43e9e9@nextfour.com>
- <1d3c6099-3b33-d5dd-e12b-903586dc79f3@opensource.cirrus.com>
- <950ec4db-4121-2faf-b6fd-5fcabef91e90@nextfour.com>
- <88a3855d-db5f-9086-2901-2360d0cd26ec@opensource.cirrus.com>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
+Date: Fri, 27 Apr 2018 14:30:41 +0200
+Message-ID: <4032338.O1BXeabcRj@ax5200p>
+References: <20180426235818.10018-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <88a3855d-db5f-9086-2901-2360d0cd26ec@opensource.cirrus.com>
-Content-Language: en-US
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>, linus.walleij@linaro.org
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 17/04/18 09:50, Richard Fitzgerald wrote:
-> On 10/04/18 19:33, Mika Penttilä wrote:
->>
->>
->> On 10.04.2018 13:21, Richard Fitzgerald wrote:
->>> On 04/04/18 06:33, Mika Penttilä wrote:
->>>> Hi!
->>>>
->>>> Reverting this made the hogs on a i.MX6 board work again. :
->>>>
->>>>
->>>> commit b89405b6102fcc3746f43697b826028caa94c823
->>>> Author: Richard Fitzgerald <rf@opensource.cirrus.com>
->>>> Date:   Wed Feb 28 15:53:06 2018 +0000
->>>>
->>>>       pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
->>>>
->>>>
->>>>
->>>> --Mika
->>>>
->>>
->>> I think you should check whether the bug is with the i.MX6 driver
->>> relying on the previous buggy behaviour of pinctrl. I haven't got
->>> i.MX6 hardware to test myself.
->>>
->>> The bug I fixed in that patch was that when pinctrl is probing a
->>> pinctrl driver it would try to apply all the pinctrl settings
->>> listed in a dt node to the pinctrl driver it is probing instead
->>> of the pinctrl drivers they actually refer to. This was a bug
->>> introduced by an earlier patch (which unfortunately I forgot to
->>> include a fixes line reference to)
->>>
->>>    pinctrl: core: Use delayed work for hogs
->>>
->>> So if a pinctrl driver "A" had a dependency on another pinctrl
->>> driver "B" those dependencies wouldn't be properly created because
->>> all the "B" pinctrl DT entries would be attempted against "A"
->>> instead of "B". This caused failures if a pinctrl driver had a
->>> dependency on another pinctrl driver, of if creating a pinctrl
->>> driver that is a child of an MFD and that MFD has dependencies
->>> on another pinctrl driver.
->>>
->>
->> Hard to say, but the kernel/dts has worked ok for 3+ years, from 3.17 
->> until 4.17-rc. Nothing fancy, just normal hogs, in two groups.
->> Can send you relevant pieces of DT if interested.
->>
->> --Mika
->>
+Hi Dmitry,
+
+Am Freitag, 27. April 2018, 01:58:14 CEST schrieb Dmitry Osipenko:
+> Hello,
 > 
-> Tell me where in the kernel tree the the dts files and the source for
-> the pinctrl driver that uses them and which dts node, and I will look
-> at what the driver is doing.
+> This series of patches fixes ULPI USB on Tegra20. The original problem
+> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+> with the USB for the devices that have CDEV2 being enabled by bootloader.
+> The patch got into the kernel and later Marc Dietrich found that USB
+> stopped working on the "paz00" Tegra20 board. After a bit of discussion
+> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+> driver was setting CDEV2's parent incorrectly. The parent clock is actually
+> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
+> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+> suggestion), and then setting these clock muxes as parents for the CDEV1/2
+> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since
+> CDEV2 (aka MCLK2) is the actual clock source for "ulpi-link".
+> 
+> Dmitry Osipenko (4):
+>   clk: tegra20: Add DEV1/DEV2 OSC dividers
+>   pinctrl: tegra20: Provide CDEV1/2 clock muxes
+>   clk: tegra20: Set correct parents for CDEV1/2 clocks
+>   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+> 
+>  arch/arm/boot/dts/tegra20.dtsi          |  2 +-
+>  drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
+>  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+>  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+>  5 files changed, 55 insertions(+), 17 deletions(-)
 
-Hi,
+Thanks for taking a look at this!
 
-Sorry, I have been very busy and haven't had time to look at the i.MX6
-driver yet.
+Series is:
+
+Tested-by: Marc Dietrich <marvin24@gmx.de>
+
+Marc
