@@ -1,117 +1,52 @@
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 02/11] pinctrl: sh-pfc: r8a77965: Add DU RGB output pins,
- groups and functions
-Date: Fri, 27 Apr 2018 17:57:13 +0100
-Message-ID: <20180427165722.19445-3-kieran.bingham+renesas@ideasonboard.com>
-References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 0/6] pinctrl: imx: add imx8qxp pinctrl support
+Date: Sat, 28 Apr 2018 03:01:47 +0800
+Message-ID: <1524855713-15527-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, dri-devel@lists.freedesktop.org
-Cc: "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org
+Cc: aisheng.dong@nxp.com, dongas86@gmail.com, linus.walleij@linaro.org, stefan@agner.ch, linux-imx@nxp.com, kernel@pengutronix.de, fabio.estevam@nxp.com, shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-VGhpcyBwYXRjaCBhZGRzIHBpbnMsIGdyb3VwcyBhbmQgZnVuY3Rpb25zIGZvciBwYXJhbGxlbCBS
-R0Igb3V0cHV0CnNpZ25hbHMgZnJvbSBEVS4gVGhlIEhETUkgYW5kIFRDT04gcGlucyBhcmUgYWRk
-ZWQgdG8gc2VwYXJhdGUgZ3JvdXBzLgoKQmFzZWQgb24gYSBzaW1pbGFyIHBhdGNoIG9mIHRoZSBS
-OEE3Nzk2IFBGQyBkcml2ZXIgYnkgTmlrbGFzIFPDtmRlcmx1bmQKPG5pa2xhcy5zb2Rlcmx1bmQr
-cmVuZXNhc0ByYWduYXRlY2guc2U+LgoKU2lnbmVkLW9mZi1ieTogVGFrZXNoaSBLaWhhcmEgPHRh
-a2VzaGkua2loYXJhLmRmQHJlbmVzYXMuY29tPgpbS2llcmFuOiBSZWJhc2Ugb24gdG9wIG9mIHRy
-ZWVdClNpZ25lZC1vZmYtYnk6IEtpZXJhbiBCaW5naGFtIDxraWVyYW4uYmluZ2hhbStyZW5lc2Fz
-QGlkZWFzb25ib2FyZC5jb20+ClJldmlld2VkLWJ5OiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50
-LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Ci0tLQogZHJpdmVycy9waW5jdHJsL3NoLXBmYy9w
-ZmMtcjhhNzc5NjUuYyB8IDExNiArKysrKysrKysrKysrKysrKysrKysrKysrKwogMSBmaWxlIGNo
-YW5nZWQsIDExNiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3No
-LXBmYy9wZmMtcjhhNzc5NjUuYyBiL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZjLXI4YTc3OTY1
-LmMKaW5kZXggMzc3MWIyZDEwZjM5Li5mNWEzN2QzZWE3NTMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
-cGluY3RybC9zaC1wZmMvcGZjLXI4YTc3OTY1LmMKKysrIGIvZHJpdmVycy9waW5jdHJsL3NoLXBm
-Yy9wZmMtcjhhNzc5NjUuYwpAQCAtMTY2Miw2ICsxNjYyLDEwMiBAQCBzdGF0aWMgY29uc3QgdW5z
-aWduZWQgaW50IGF2Yl9hdnRwX2NhcHR1cmVfYl9tdXhbXSA9IHsKIAlBVkJfQVZUUF9DQVBUVVJF
-X0JfTUFSSywKIH07CiAKKy8qIC0gRFUgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tICovCitzdGF0aWMgY29uc3QgdW5z
-aWduZWQgaW50IGR1X3JnYjY2Nl9waW5zW10gPSB7CisJLyogUls3OjJdLCBHWzc6Ml0sIEJbNzoy
-XSAqLworCVJDQVJfR1BfUElOKDAsIDE1KSwgUkNBUl9HUF9QSU4oMCwgMTQpLCBSQ0FSX0dQX1BJ
-TigwLCAxMyksCisJUkNBUl9HUF9QSU4oMCwgMTIpLCBSQ0FSX0dQX1BJTigwLCAxMSksIFJDQVJf
-R1BfUElOKDAsIDEwKSwKKwlSQ0FSX0dQX1BJTigxLCAxNSksIFJDQVJfR1BfUElOKDEsIDE0KSwg
-UkNBUl9HUF9QSU4oMSwgMTMpLAorCVJDQVJfR1BfUElOKDEsIDEyKSwgUkNBUl9HUF9QSU4oMSwg
-MTkpLCBSQ0FSX0dQX1BJTigxLCAxOCksCisJUkNBUl9HUF9QSU4oMSwgNyksICBSQ0FSX0dQX1BJ
-TigxLCA2KSwgIFJDQVJfR1BfUElOKDEsIDUpLAorCVJDQVJfR1BfUElOKDEsIDQpLCAgUkNBUl9H
-UF9QSU4oMSwgMyksICBSQ0FSX0dQX1BJTigxLCAyKSwKK307CisKK3N0YXRpYyBjb25zdCB1bnNp
-Z25lZCBpbnQgZHVfcmdiNjY2X211eFtdID0geworCURVX0RSN19NQVJLLCBEVV9EUjZfTUFSSywg
-RFVfRFI1X01BUkssIERVX0RSNF9NQVJLLAorCURVX0RSM19NQVJLLCBEVV9EUjJfTUFSSywKKwlE
-VV9ERzdfTUFSSywgRFVfREc2X01BUkssIERVX0RHNV9NQVJLLCBEVV9ERzRfTUFSSywKKwlEVV9E
-RzNfTUFSSywgRFVfREcyX01BUkssCisJRFVfREI3X01BUkssIERVX0RCNl9NQVJLLCBEVV9EQjVf
-TUFSSywgRFVfREI0X01BUkssCisJRFVfREIzX01BUkssIERVX0RCMl9NQVJLLAorfTsKKworc3Rh
-dGljIGNvbnN0IHVuc2lnbmVkIGludCBkdV9yZ2I4ODhfcGluc1tdID0geworCS8qIFJbNzowXSwg
-R1s3OjBdLCBCWzc6MF0gKi8KKwlSQ0FSX0dQX1BJTigwLCAxNSksIFJDQVJfR1BfUElOKDAsIDE0
-KSwgUkNBUl9HUF9QSU4oMCwgMTMpLAorCVJDQVJfR1BfUElOKDAsIDEyKSwgUkNBUl9HUF9QSU4o
-MCwgMTEpLCBSQ0FSX0dQX1BJTigwLCAxMCksCisJUkNBUl9HUF9QSU4oMCwgOSksICBSQ0FSX0dQ
-X1BJTigwLCA4KSwKKwlSQ0FSX0dQX1BJTigxLCAxNSksIFJDQVJfR1BfUElOKDEsIDE0KSwgUkNB
-Ul9HUF9QSU4oMSwgMTMpLAorCVJDQVJfR1BfUElOKDEsIDEyKSwgUkNBUl9HUF9QSU4oMSwgMTkp
-LCBSQ0FSX0dQX1BJTigxLCAxOCksCisJUkNBUl9HUF9QSU4oMSwgMTcpLCBSQ0FSX0dQX1BJTigx
-LCAxNiksCisJUkNBUl9HUF9QSU4oMSwgNyksICBSQ0FSX0dQX1BJTigxLCA2KSwgIFJDQVJfR1Bf
-UElOKDEsIDUpLAorCVJDQVJfR1BfUElOKDEsIDQpLCAgUkNBUl9HUF9QSU4oMSwgMyksICBSQ0FS
-X0dQX1BJTigxLCAyKSwKKwlSQ0FSX0dQX1BJTigxLCAxKSwgIFJDQVJfR1BfUElOKDEsIDApLAor
-fTsKKworc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBkdV9yZ2I4ODhfbXV4W10gPSB7CisJRFVf
-RFI3X01BUkssIERVX0RSNl9NQVJLLCBEVV9EUjVfTUFSSywgRFVfRFI0X01BUkssCisJRFVfRFIz
-X01BUkssIERVX0RSMl9NQVJLLCBEVV9EUjFfTUFSSywgRFVfRFIwX01BUkssCisJRFVfREc3X01B
-UkssIERVX0RHNl9NQVJLLCBEVV9ERzVfTUFSSywgRFVfREc0X01BUkssCisJRFVfREczX01BUkss
-IERVX0RHMl9NQVJLLCBEVV9ERzFfTUFSSywgRFVfREcwX01BUkssCisJRFVfREI3X01BUkssIERV
-X0RCNl9NQVJLLCBEVV9EQjVfTUFSSywgRFVfREI0X01BUkssCisJRFVfREIzX01BUkssIERVX0RC
-Ml9NQVJLLCBEVV9EQjFfTUFSSywgRFVfREIwX01BUkssCit9OworCitzdGF0aWMgY29uc3QgdW5z
-aWduZWQgaW50IGR1X2Nsa19vdXRfMF9waW5zW10gPSB7CisJLyogQ0xLT1VUICovCisJUkNBUl9H
-UF9QSU4oMSwgMjcpLAorfTsKKworc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBkdV9jbGtfb3V0
-XzBfbXV4W10gPSB7CisJRFVfRE9UQ0xLT1VUMF9NQVJLCit9OworCitzdGF0aWMgY29uc3QgdW5z
-aWduZWQgaW50IGR1X2Nsa19vdXRfMV9waW5zW10gPSB7CisJLyogQ0xLT1VUICovCisJUkNBUl9H
-UF9QSU4oMiwgMyksCit9OworCitzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50IGR1X2Nsa19vdXRf
-MV9tdXhbXSA9IHsKKwlEVV9ET1RDTEtPVVQxX01BUksKK307CisKK3N0YXRpYyBjb25zdCB1bnNp
-Z25lZCBpbnQgZHVfc3luY19waW5zW10gPSB7CisJLyogRVhWU1lOQy9WU1lOQywgRVhIU1lOQy9I
-U1lOQyAqLworCVJDQVJfR1BfUElOKDIsIDUpLCBSQ0FSX0dQX1BJTigyLCA0KSwKK307CisKK3N0
-YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgZHVfc3luY19tdXhbXSA9IHsKKwlEVV9FWFZTWU5DX0RV
-X1ZTWU5DX01BUkssIERVX0VYSFNZTkNfRFVfSFNZTkNfTUFSSworfTsKKworc3RhdGljIGNvbnN0
-IHVuc2lnbmVkIGludCBkdV9vZGRmX3BpbnNbXSA9IHsKKwkvKiBFWERJU1AvRVhPRERGL0VYQ0RF
-ICovCisJUkNBUl9HUF9QSU4oMiwgMiksCit9OworCitzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50
-IGR1X29kZGZfbXV4W10gPSB7CisJRFVfRVhPRERGX0RVX09EREZfRElTUF9DREVfTUFSSywKK307
-CisKK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgZHVfY2RlX3BpbnNbXSA9IHsKKwkvKiBDREUg
-Ki8KKwlSQ0FSX0dQX1BJTigyLCAwKSwKK307CisKK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQg
-ZHVfY2RlX211eFtdID0geworCURVX0NERV9NQVJLLAorfTsKKworc3RhdGljIGNvbnN0IHVuc2ln
-bmVkIGludCBkdV9kaXNwX3BpbnNbXSA9IHsKKwkvKiBESVNQICovCisJUkNBUl9HUF9QSU4oMiwg
-MSksCit9OworCitzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50IGR1X2Rpc3BfbXV4W10gPSB7CisJ
-RFVfRElTUF9NQVJLLAorfTsKKwogLyogLSBJTlRDLUVYIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gKi8KIHN0YXRpYyBjb25z
-dCB1bnNpZ25lZCBpbnQgaW50Y19leF9pcnEwX3BpbnNbXSA9IHsKIAkvKiBJUlEwICovCkBAIC0y
-NzU2LDYgKzI4NTIsMTQgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBzaF9wZmNfcGluX2dyb3VwIHBp
-bm11eF9ncm91cHNbXSA9IHsKIAlTSF9QRkNfUElOX0dST1VQKGF2Yl9hdnRwX2NhcHR1cmVfYSks
-CiAJU0hfUEZDX1BJTl9HUk9VUChhdmJfYXZ0cF9tYXRjaF9iKSwKIAlTSF9QRkNfUElOX0dST1VQ
-KGF2Yl9hdnRwX2NhcHR1cmVfYiksCisJU0hfUEZDX1BJTl9HUk9VUChkdV9yZ2I2NjYpLAorCVNI
-X1BGQ19QSU5fR1JPVVAoZHVfcmdiODg4KSwKKwlTSF9QRkNfUElOX0dST1VQKGR1X2Nsa19vdXRf
-MCksCisJU0hfUEZDX1BJTl9HUk9VUChkdV9jbGtfb3V0XzEpLAorCVNIX1BGQ19QSU5fR1JPVVAo
-ZHVfc3luYyksCisJU0hfUEZDX1BJTl9HUk9VUChkdV9vZGRmKSwKKwlTSF9QRkNfUElOX0dST1VQ
-KGR1X2NkZSksCisJU0hfUEZDX1BJTl9HUk9VUChkdV9kaXNwKSwKIAlTSF9QRkNfUElOX0dST1VQ
-KGludGNfZXhfaXJxMCksCiAJU0hfUEZDX1BJTl9HUk9VUChpbnRjX2V4X2lycTEpLAogCVNIX1BG
-Q19QSU5fR1JPVVAoaW50Y19leF9pcnEyKSwKQEAgLTI5MjIsNiArMzAyNiwxNyBAQCBzdGF0aWMg
-Y29uc3QgY2hhciAqIGNvbnN0IGF2Yl9ncm91cHNbXSA9IHsKIAkiYXZiX2F2dHBfY2FwdHVyZV9i
-IiwKIH07CiAKK3N0YXRpYyBjb25zdCBjaGFyICogY29uc3QgZHVfZ3JvdXBzW10gPSB7CisJImR1
-X3JnYjY2NiIsCisJImR1X3JnYjg4OCIsCisJImR1X2Nsa19vdXRfMCIsCisJImR1X2Nsa19vdXRf
-MSIsCisJImR1X3N5bmMiLAorCSJkdV9vZGRmIiwKKwkiZHVfY2RlIiwKKwkiZHVfZGlzcCIsCit9
-OworCiBzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IGludGNfZXhfZ3JvdXBzW10gPSB7CiAJImlu
-dGNfZXhfaXJxMCIsCiAJImludGNfZXhfaXJxMSIsCkBAIC0zMTM5LDYgKzMyNTQsNyBAQCBzdGF0
-aWMgY29uc3QgY2hhciAqIGNvbnN0IHVzYjMwX2dyb3Vwc1tdID0gewogCiBzdGF0aWMgY29uc3Qg
-c3RydWN0IHNoX3BmY19mdW5jdGlvbiBwaW5tdXhfZnVuY3Rpb25zW10gPSB7CiAJU0hfUEZDX0ZV
-TkNUSU9OKGF2YiksCisJU0hfUEZDX0ZVTkNUSU9OKGR1KSwKIAlTSF9QRkNfRlVOQ1RJT04oaW50
-Y19leCksCiAJU0hfUEZDX0ZVTkNUSU9OKG1zaW9mMCksCiAJU0hfUEZDX0ZVTkNUSU9OKG1zaW9m
-MSksCi0tIAoyLjE3LjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+This patch series adds i.MX8QXP pinctrl support which is based
+on the pad service provided by SCU firmware.
+It depends on SCU APIs patch set.
+
+The first three are minor preparation cleanups.
+
+Dong Aisheng (6):
+  pinctrl: imx: fix unsigned check if nfuncs with less than or equal
+    zero
+  pinctrl: pinctrl-imx: improve the code comments of PIN_FUNC_ID
+  pinctrl: imx: use seq_puts() instead of seq_printf()
+  pinctrl: fsl: add scu based pinctrl support
+  dt-bindings: pinctrl: add imx8qxp pinctrl binding doc
+  pinctrl: imx: add imx8qxp driver
+
+ .../bindings/pinctrl/fsl,imx8qxp-pinctrl.txt       |  39 ++
+ drivers/pinctrl/freescale/Kconfig                  |  11 +
+ drivers/pinctrl/freescale/Makefile                 |   2 +
+ drivers/pinctrl/freescale/pinctrl-imx.c            | 421 +++++++-----
+ drivers/pinctrl/freescale/pinctrl-imx.h            |  40 +-
+ drivers/pinctrl/freescale/pinctrl-imx8qxp.c        | 232 +++++++
+ drivers/pinctrl/freescale/pinctrl-scu.c            |  84 +++
+ include/dt-bindings/pinctrl/pads-imx8qxp.h         | 751 +++++++++++++++++++++
+ 8 files changed, 1412 insertions(+), 168 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8qxp-pinctrl.txt
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imx8qxp.c
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-scu.c
+ create mode 100644 include/dt-bindings/pinctrl/pads-imx8qxp.h
+
+-- 
+2.7.4
