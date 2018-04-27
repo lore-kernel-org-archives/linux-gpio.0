@@ -1,10 +1,10 @@
 From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH 2/2] pinctrl: uniphier: add LD11 MPEG2-TS I/O pin-mux settings
-Date: Fri, 27 Apr 2018 09:38:44 +0900
-Message-ID: <20180427003844.3937-2-suzuki.katsuhiro@socionext.com>
-References: <20180427003844.3937-1-suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v2 2/2] pinctrl: uniphier: add LD11 MPEG2-TS I/O pin-mux settings
+Date: Fri, 27 Apr 2018 10:49:05 +0900
+Message-ID: <20180427014905.19520-2-suzuki.katsuhiro@socionext.com>
+References: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180427003844.3937-1-suzuki.katsuhiro@socionext.com>
+In-Reply-To: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-arm-kernel@lists.infradead.org
 Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
@@ -25,12 +25,22 @@ And the parallel TS interface uses following pins:
   hscout0_p: HS0BCLKOUT, HS0SYNCOUT, HS0VALOUT, HS0DOUT[0-7]
 
 Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+
+---
+
+Changes in v2:
+
+  - Fix indent
+  - Sort alphabetically
+  - Fix wrong grouping
+    - Fix hsc'out'0_ci -> hsc'in'0_ci of hscin0 group
+    - Fix hscin'0'_s -> hscin'1'_s of hscin1 group
 ---
  .../pinctrl/uniphier/pinctrl-uniphier-ld11.c  | 49 +++++++++++++++++++
  1 file changed, 49 insertions(+)
 
 diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-index 0976fbfecd50..5b5864efb514 100644
+index 0976fbfecd50..58825f68b58b 100644
 --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
 +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
 @@ -481,6 +481,31 @@ static const int emmc_dat8_muxvals[] = {0, 0, 0, 0};
@@ -38,16 +48,16 @@ index 0976fbfecd50..5b5864efb514 100644
  					   16, 17};
  static const int ether_rmii_muxvals[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
 +static const unsigned hscin0_ci_pins[] = {102, 103, 104, 105, 106, 107, 108,
-+					    109, 110, 111, 112};
++					  109, 110, 111, 112};
 +static const int hscin0_ci_muxvals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 +static const unsigned hscin0_p_pins[] = {102, 103, 104, 105, 106, 107, 108, 109,
 +					 110, 111, 112};
 +static const int hscin0_p_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned hscin0_s_pins[] = {116, 117, 118, 119};
++static const int hscin0_s_muxvals[] = {3, 3, 3, 3};
 +static const unsigned hscin1_p_pins[] = {124, 125, 126, 127, 128, 129, 130, 131,
 +					 132, 133, 134};
 +static const int hscin1_p_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-+static const unsigned hscin0_s_pins[] = {116, 117, 118, 119};
-+static const int hscin0_s_muxvals[] = {3, 3, 3, 3};
 +static const unsigned hscin1_s_pins[] = {120, 121, 122, 123};
 +static const int hscin1_s_muxvals[] = {3, 3, 3, 3};
 +static const unsigned hscin2_s_pins[] = {124, 125, 126, 127};
@@ -71,8 +81,8 @@ index 0976fbfecd50..5b5864efb514 100644
  	UNIPHIER_PINCTRL_GROUP(ether_rmii),
 +	UNIPHIER_PINCTRL_GROUP(hscin0_ci),
 +	UNIPHIER_PINCTRL_GROUP(hscin0_p),
-+	UNIPHIER_PINCTRL_GROUP(hscin1_p),
 +	UNIPHIER_PINCTRL_GROUP(hscin0_s),
++	UNIPHIER_PINCTRL_GROUP(hscin1_p),
 +	UNIPHIER_PINCTRL_GROUP(hscin1_s),
 +	UNIPHIER_PINCTRL_GROUP(hscin2_s),
 +	UNIPHIER_PINCTRL_GROUP(hscout0_ci),
@@ -86,14 +96,14 @@ index 0976fbfecd50..5b5864efb514 100644
  static const char * const aoutiec1_groups[] = {"aoutiec1"};
  static const char * const emmc_groups[] = {"emmc", "emmc_dat8"};
  static const char * const ether_rmii_groups[] = {"ether_rmii"};
-+static const char * const hscin0_groups[] = {"hscin0_s",
++static const char * const hscin0_groups[] = {"hscin0_ci",
 +					     "hscin0_p",
-+					     "hscout0_ci"};
-+static const char * const hscin1_groups[] = {"hscin1_s", "hscin0_p"};
++					     "hscin0_s"};
++static const char * const hscin1_groups[] = {"hscin1_p", "hscin1_s"};
 +static const char * const hscin2_groups[] = {"hscin2_s"};
-+static const char * const hscout0_groups[] = {"hscout0_s",
++static const char * const hscout0_groups[] = {"hscout0_ci",
 +					      "hscout0_p",
-+					      "hscout0_ci"};
++					      "hscout0_s"};
 +static const char * const hscout1_groups[] = {"hscout1_s"};
  static const char * const i2c0_groups[] = {"i2c0"};
  static const char * const i2c1_groups[] = {"i2c1"};
