@@ -1,51 +1,78 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
-Date: Fri, 27 Apr 2018 08:38:43 +0100
-Message-ID: <20180427073843.ljeswd5tn6z3z4wc@dell>
-References: <20180421085009.28773-1-javier@emutex.com>
- <20180421085009.28773-3-javier@emutex.com>
- <20180426073314.g2ccjjkx6vgbknhm@dell>
- <20180426130354.4kidtdwcsxtn5f2g@localhost>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: Re: [REGRESSION][BISECTED] i.MX6 pinctrl hogs stopped working
+Date: Fri, 27 Apr 2018 10:13:21 +0100
+Message-ID: <87088f1f-9d2e-1966-ddd5-eb2780a3d2dd@opensource.cirrus.com>
+References: <8b07e30a-7dd1-7923-dc50-b84f0e43e9e9@nextfour.com>
+ <1d3c6099-3b33-d5dd-e12b-903586dc79f3@opensource.cirrus.com>
+ <950ec4db-4121-2faf-b6fd-5fcabef91e90@nextfour.com>
+ <88a3855d-db5f-9086-2901-2360d0cd26ec@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180426130354.4kidtdwcsxtn5f2g@localhost>
+In-Reply-To: <88a3855d-db5f-9086-2901-2360d0cd26ec@opensource.cirrus.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Arteaga <javier@emutex.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan O'Donovan <dan@emutex.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>, linus.walleij@linaro.org
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 26 Apr 2018, Javier Arteaga wrote:
-
-[...]
-
-> > >  static const struct regmap_range upboard_up2_readable_ranges[] = {
-> > > @@ -116,7 +124,18 @@ static const struct regmap_config upboard_up2_regmap_config = {
-> > >  	.wr_table = &upboard_up2_writable_table,
-> > >  };
-> > >  
-> > > +static struct upboard_led_data upboard_up2_led_data[] = {
-> > > +	{ .id = 0, .color = "blue" },
-> > > +	{ .id = 1, .color = "yellow" },
-> > > +	{ .id = 2, .color = "green" },
-> > > +	{ .id = 3, .color = "red" },
-> > > +};
-> > 
-> > How is this data used?
-> > 
-> > Does it ever change, from board to board?
+On 17/04/18 09:50, Richard Fitzgerald wrote:
+> On 10/04/18 19:33, Mika Penttilä wrote:
+>>
+>>
+>> On 10.04.2018 13:21, Richard Fitzgerald wrote:
+>>> On 04/04/18 06:33, Mika Penttilä wrote:
+>>>> Hi!
+>>>>
+>>>> Reverting this made the hogs on a i.MX6 board work again. :
+>>>>
+>>>>
+>>>> commit b89405b6102fcc3746f43697b826028caa94c823
+>>>> Author: Richard Fitzgerald <rf@opensource.cirrus.com>
+>>>> Date:   Wed Feb 28 15:53:06 2018 +0000
+>>>>
+>>>>       pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
+>>>>
+>>>>
+>>>>
+>>>> --Mika
+>>>>
+>>>
+>>> I think you should check whether the bug is with the i.MX6 driver
+>>> relying on the previous buggy behaviour of pinctrl. I haven't got
+>>> i.MX6 hardware to test myself.
+>>>
+>>> The bug I fixed in that patch was that when pinctrl is probing a
+>>> pinctrl driver it would try to apply all the pinctrl settings
+>>> listed in a dt node to the pinctrl driver it is probing instead
+>>> of the pinctrl drivers they actually refer to. This was a bug
+>>> introduced by an earlier patch (which unfortunately I forgot to
+>>> include a fixes line reference to)
+>>>
+>>>    pinctrl: core: Use delayed work for hogs
+>>>
+>>> So if a pinctrl driver "A" had a dependency on another pinctrl
+>>> driver "B" those dependencies wouldn't be properly created because
+>>> all the "B" pinctrl DT entries would be attempted against "A"
+>>> instead of "B". This caused failures if a pinctrl driver had a
+>>> dependency on another pinctrl driver, of if creating a pinctrl
+>>> driver that is a child of an MFD and that MFD has dependencies
+>>> on another pinctrl driver.
+>>>
+>>
+>> Hard to say, but the kernel/dts has worked ok for 3+ years, from 3.17 
+>> until 4.17-rc. Nothing fancy, just normal hogs, in two groups.
+>> Can send you relevant pieces of DT if interested.
+>>
+>> --Mika
+>>
 > 
-> This provides indexes into the LED control register, so the leds driver
-> knows which regmap bits to flip, and maps them to color names, so it can
-> name the led devices accordingly. The mapping does change for each board
-> (UP1 has 3 LEDs, UP Core depends on the carrier board).
+> Tell me where in the kernel tree the the dts files and the source for
+> the pinctrl driver that uses them and which dts node, and I will look
+> at what the driver is doing.
 
-I think this information should live in the driver which consumes it.
+Hi,
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Sorry, I have been very busy and haven't had time to look at the i.MX6
+driver yet.
