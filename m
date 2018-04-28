@@ -1,54 +1,86 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [RFC 05/10] i2c: s3c2410: Remove support for Exynos5440
-Date: Sat, 28 Apr 2018 14:44:07 +0200
-Message-ID: <20180428124407.bpc47bo7ojebahpz@ninjato>
-References: <20180424203239.21885-1-krzk@kernel.org>
- <20180424203239.21885-6-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2ub5o5uu6wk62jsg"
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [PATCH v4 1/7] gpio: pca953x: convert register constants to hex
+Date: Sat, 28 Apr 2018 18:30:03 +0200
+Message-ID: <A499CDE2-0DCD-4189-808B-EAAF6C03F9F4@goldelico.com>
+References: <cover.1524764101.git.hns@goldelico.com> <cover.1524764101.git.hns@goldelico.com> <ee6da590a6053f190393d5e64d06b44fab886ecd.1524764101.git.hns@goldelico.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180424203239.21885-6-krzk@kernel.org>
+In-Reply-To: <ee6da590a6053f190393d5e64d06b44fab886ecd.1524764101.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Greg
+To: galak@codeaurora.org, andy.shevchenko@gmail.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
 
---2ub5o5uu6wk62jsg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Am 26.04.2018 um 19:34 schrieb H. Nikolaus Schaller <hns@goldelico.com>:
+> 
+> which makes it easier to match them with the data sheets.
+> 
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+> drivers/gpio/gpio-pca953x.c | 32 ++++++++++++++++----------------
+> 1 file changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index d02964983b5b..bd0593afdae3 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -25,25 +25,25 @@
+> 
+> #include <asm/unaligned.h>
+> 
+> -#define PCA953X_INPUT		0
+> -#define PCA953X_OUTPUT		1
+> -#define PCA953X_INVERT		2
+> -#define PCA953X_DIRECTION	3
+> +#define PCA953X_INPUT		0x00
+> +#define PCA953X_OUTPUT		0x01
+> +#define PCA953X_INVERT		0x02
+> +#define PCA953X_DIRECTION	0x03
+> 
+> #define REG_ADDR_AI		0x80
+> 
+> -#define PCA957X_IN		0
+> -#define PCA957X_INVRT		1
+> -#define PCA957X_BKEN		2
+> -#define PCA957X_PUPD		3
+> -#define PCA957X_CFG		4
+> -#define PCA957X_OUT		5
+> -#define PCA957X_MSK		6
+> -#define PCA957X_INTS		7
+> -
+> -#define PCAL953X_IN_LATCH	34
+> -#define PCAL953X_INT_MASK	37
+> -#define PCAL953X_INT_STAT	38
+> +#define PCA957X_IN		0x00
+> +#define PCA957X_INVRT		0x01
+> +#define PCA957X_BKEN		0x02
+> +#define PCA957X_PUPD		0x03
+> +#define PCA957X_CFG		0x04
+> +#define PCA957X_OUT		0x05
+> +#define PCA957X_MSK		0x06
+> +#define PCA957X_INTS		0x07
+> +
+> +#define PCAL953X_IN_LATCH	0x22
+> +#define PCAL953X_PULL_EN	0x23
+> +#define PCAL953X_PULL_SEL	0x24
 
-On Tue, Apr 24, 2018 at 10:32:34PM +0200, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+oops, just spotted a bug above.
 
-Applied to for-next, thanks!
+Here, we should update the registers PCAL953X_INT_MASK and
+PCAL953X_INT_STAT. And add PCAL953X_PULL_EN and PCAL953X_PULL_SEL
+in the next patch.
 
+Sorry. I will send an update for the patch set.
 
---2ub5o5uu6wk62jsg
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> #define PCA_GPIO_MASK		0x00FF
+> #define PCA_INT			0x0100
+> -- 
+> 2.12.2
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrkbJcACgkQFA3kzBSg
-KbY0oBAAp5AZ22Iwc3g476LI/homGu6AP+TvzJ14ZHvvKXmBhKLST+eTqjibgy8y
-ezyaVsMGoTAqZXpFAoPhMWB/ktsDNOM6QhshTyAR5EI634GhnTZ8j5quAXYwgPsL
-Iugkw/DxGYGz+0iaPwvd7L4OnCHpufRomudIkx7wO5IObmbuFIAYiAvZIp6873Hq
-UFWUlW4k67D+BcoYc+uVcvTteewzffXS/qyRim6TF4Xg2FKTPp9KRUjmL86xLHvl
-FXDKa4djARTZz+HD0aQ27aOuv+g7yxLS9mfL4wSckymohGCtmDhHI6xdw3hyCDwM
-yPElg4JICJDm4EuDjzYdYrcZlFjsXeuHN3RGaJfIRFnIhwC/CxiUnwtMosGCuWSK
-BDU+esBF7qEXxherzLPJEJVPYW1z3XqLphkxoJ8Ma/9DpLDmItGythWIuMblLHWP
-jWpb3DOgATifO3ZLkyNEp/6m4GMEZN29Xc81BLRgy+NMzaNPofgSflzW1QAHz8H8
-qMtjIHp9zH9h4jn7LoUng1AsEBs4AW/xv5Bul8l4FhrfjSpzTCfb1+kF7QKAr8IW
-0xuLrzW3GSd1/WC7BTnQMDD41d8sgd8YL8RyfFBYsst0L0TXvhgWLCLt7M40X42q
-pUXIKPw/t0MR4uIsD8nQ9ZnWhb4chO2pzGSMabmZQDLeZQvGRBI=
-=ObTl
------END PGP SIGNATURE-----
-
---2ub5o5uu6wk62jsg--
+BR,
+Nikolaus
