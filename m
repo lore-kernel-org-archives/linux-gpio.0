@@ -1,41 +1,38 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v5 3/7] gpio: pca953x: add more register definitions for pcal6524
-Date: Sat, 28 Apr 2018 18:31:33 +0200
-Message-ID: <3cb7c78f496ec9933288b7aac7b4ee9c55d9037d.1524933096.git.hns@goldelico.com>
-References: <cover.1524933096.git.hns@goldelico.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v4 03/10] i3c: Add sysfs ABI spec
+Date: Sun, 29 Apr 2018 15:37:00 +0200
+Message-ID: <20180429133700.GD28913@kroah.com>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+ <20180330074751.25987-4-boris.brezillon@bootlin.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
-In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
-References: <cover.1524933096.git.hns@goldelico.com>
+Content-Disposition: inline
+In-Reply-To: <20180330074751.25987-4-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: galak@codeaurora.org, andy.shevchenko@gmail.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org, kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>devi
 List-Id: linux-gpio@vger.kernel.org
 
-The pcal6524 has another set of registers to fine control
-the interrupt handling.
+On Fri, Mar 30, 2018 at 09:47:44AM +0200, Boris Brezillon wrote:
+> Document sysfs files/directories/symlinks exposed by the I3C subsystem.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> ---
+> Changes in v2:
+> - new patch
+> ---
+>  Documentation/ABI/testing/sysfs-bus-i3c | 95 +++++++++++++++++++++++++++++++++
+>  1 file changed, 95 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-i3c b/Documentation/ABI/testing/sysfs-bus-i3c
+> new file mode 100644
+> index 000000000000..5e88cc093e0e
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-i3c
+> @@ -0,0 +1,95 @@
+> +What:		/sys/bus/i3c/devices/i3c-<bus-id>
+> +KernelVersion:  4.16
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/gpio/gpio-pca953x.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index fecd0e0aba93..2b667166e855 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -49,6 +49,12 @@
- #define PCAL953X_INT_STAT	0x26
- #define PCAL953X_OUT_CONF	0x27
- 
-+#define PCAL6524_INT_EDGE	0x28
-+#define PCAL6524_INT_CLR	0x2a
-+#define PCAL6524_IN_STATUS	0x2b
-+#define PCAL6524_OUT_INDCONF	0x2c
-+#define PCAL6524_DEBOUNCE	0x2d
-+
- #define PCA_GPIO_MASK		0x00FF
- #define PCA_INT			0x0100
- #define PCA_PCAL		0x0200
--- 
-2.12.2
+Wrong kernel versions :)
