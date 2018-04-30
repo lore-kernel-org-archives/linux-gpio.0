@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 10/12] gpio: ts4900: Use of_device_get_match_data()
-Date: Mon, 30 Apr 2018 09:38:17 +0200
-Message-ID: <20180430073819.31827-10-thierry.reding@gmail.com>
+Subject: [PATCH 08/12] gpio: pxa: Use of_device_get_match_data()
+Date: Mon, 30 Apr 2018 09:38:15 +0200
+Message-ID: <20180430073819.31827-8-thierry.reding@gmail.com>
 References: <20180430073819.31827-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180430073819.31827-1-thierry.reding@gmail.com>
@@ -16,37 +16,29 @@ Use of_device_get_match_data() instead of open-coding it.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpio-ts4900.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/gpio/gpio-pxa.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
-index 5bd21725e604..1da8d0586329 100644
---- a/drivers/gpio/gpio-ts4900.c
-+++ b/drivers/gpio/gpio-ts4900.c
-@@ -128,15 +128,10 @@ MODULE_DEVICE_TABLE(of, ts4900_gpio_of_match_table);
- static int ts4900_gpio_probe(struct i2c_client *client,
- 			const struct i2c_device_id *id)
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index f480fb896963..3c1f65bc0fa8 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -579,15 +579,9 @@ static int pxa_gpio_probe_dt(struct platform_device *pdev,
+ 			     struct pxa_gpio_chip *pchip)
  {
--	const struct of_device_id *match;
- 	struct ts4900_gpio_priv *priv;
- 	u32 ngpio;
- 	int ret;
+ 	int nr_gpios;
+-	const struct of_device_id *of_id =
+-				of_match_device(pxa_gpio_dt_ids, &pdev->dev);
+ 	const struct pxa_gpio_id *gpio_id;
  
--	match = of_match_device(ts4900_gpio_of_match_table, &client->dev);
--	if (!match)
--		return -EINVAL;
--
- 	if (of_property_read_u32(client->dev.of_node, "ngpios", &ngpio))
- 		ngpio = DEFAULT_PIN_NUMBER;
+-	if (!of_id || !of_id->data) {
+-		dev_err(&pdev->dev, "Failed to find gpio controller\n");
+-		return -EFAULT;
+-	}
+-	gpio_id = of_id->data;
++	gpio_id = of_device_get_match_data(&pdev->dev);
+ 	gpio_type = gpio_id->type;
  
-@@ -148,7 +143,7 @@ static int ts4900_gpio_probe(struct i2c_client *client,
- 	priv->gpio_chip.label = "ts4900-gpio";
- 	priv->gpio_chip.ngpio = ngpio;
- 	priv->gpio_chip.parent = &client->dev;
--	priv->input_bit = (uintptr_t)match->data;
-+	priv->input_bit = (uintptr_t)of_device_get_match_data(&client->dev);
- 
- 	priv->regmap = devm_regmap_init_i2c(client, &ts4900_regmap_config);
- 	if (IS_ERR(priv->regmap)) {
+ 	nr_gpios = gpio_id->gpio_nums;
 -- 
 2.17.0
