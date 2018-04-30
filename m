@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 09/12] gpio: syscon: Use of_device_get_match_data()
-Date: Mon, 30 Apr 2018 09:38:16 +0200
-Message-ID: <20180430073819.31827-9-thierry.reding@gmail.com>
+Subject: [PATCH 11/12] gpio: vf610: Use of_device_get_match_data()
+Date: Mon, 30 Apr 2018 09:38:18 +0200
+Message-ID: <20180430073819.31827-11-thierry.reding@gmail.com>
 References: <20180430073819.31827-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180430073819.31827-1-thierry.reding@gmail.com>
@@ -16,34 +16,30 @@ Use of_device_get_match_data() instead of open-coding it.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpio-syscon.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/gpio/gpio-vf610.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-index 537cec7583fc..2512acd99027 100644
---- a/drivers/gpio/gpio-syscon.c
-+++ b/drivers/gpio/gpio-syscon.c
-@@ -182,20 +182,15 @@ MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
- static int syscon_gpio_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	const struct of_device_id *of_id;
- 	struct syscon_gpio_priv *priv;
- 	struct device_node *np = dev->of_node;
- 	int ret;
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index 4610cc2938ad..d4ad6d0e02a2 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -254,8 +254,6 @@ static struct irq_chip vf610_gpio_irq_chip = {
  
--	of_id = of_match_device(syscon_gpio_ids, dev);
--	if (!of_id)
--		return -ENODEV;
--
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
+ static int vf610_gpio_probe(struct platform_device *pdev)
+ {
+-	const struct of_device_id *of_id = of_match_device(vf610_gpio_dt_ids,
+-							   &pdev->dev);
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct vf610_gpio_port *port;
+@@ -267,7 +265,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	if (!port)
  		return -ENOMEM;
  
--	priv->data = of_id->data;
-+	priv->data = of_device_get_match_data(dev);
- 
- 	if (priv->data->compatible) {
- 		priv->syscon = syscon_regmap_lookup_by_compatible(
+-	port->sdata = of_id->data;
++	port->sdata = of_device_get_match_data(dev);
+ 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	port->base = devm_ioremap_resource(dev, iores);
+ 	if (IS_ERR(port->base))
 -- 
 2.17.0
