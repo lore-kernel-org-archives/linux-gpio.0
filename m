@@ -1,47 +1,64 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v3 5/5] pinctrl: sunxi: Use of_clk_get_parent_count()
- instead of open coding
-Date: Mon, 30 Apr 2018 15:46:30 +0200
-Message-ID: <20180430134630.GF11457@mai>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-6-git-send-email-geert+renesas@glider.be>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH][next][V2] pinctrl: actions: fix missing break in
+ PIN_CONFIG_DRIVE_STRENGTH case.
+Date: Mon, 30 Apr 2018 19:21:49 +0530
+Message-ID: <20180430135149.mn4ywt6i73ocoobk@linaro.org>
+References: <20180430132259.9938-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1524063005-1716-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20180430132259.9938-1-colin.king@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 04:50:05PM +0200, Geert Uytterhoeven wrote:
-> A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
-> Use of_clk_get_parent_count() instead of open coding"), replace it.
+On Mon, Apr 30, 2018 at 02:22:59PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
-> instead of <linux/clk-provider.h>.
+> There is a missing break in case PIN_CONFIG_DRIVE_STRENGTH leading to
+> a fall-through to the PIN_CONFIG_SLEW_RATE case that performs different
+> checks against *arg. This looks like an unintentional missing break so
+> add in the break.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> Detected by CoverityScan, CID#1468456, 1468459 ("Missing break in switch")
+>
+
+Thanks for fixing!
+ 
+> Fixes: 513d7a2f7e0f ("pinctrl: actions: Add Actions S900 pinctrl driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> 
+
+Thanks,
+Mani
+
 > ---
-> This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
-> <linux/of_clk.h>".
+>  drivers/pinctrl/actions/pinctrl-owl.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> v3:
->   - Add Acked-by,
+> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+> index 928b40f71a3c..ee090697b1e9 100644
+> --- a/drivers/pinctrl/actions/pinctrl-owl.c
+> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
+> @@ -406,6 +406,7 @@ static int owl_group_pinconf_arg2val(const struct owl_pingroup *g,
+>  		default:
+>  			return -EINVAL;
+>  		}
+> +		break;
+>  	case PIN_CONFIG_SLEW_RATE:
+>  		if (*arg)
+>  			*arg = OWL_PINCONF_SLEW_FAST;
+> @@ -441,6 +442,7 @@ static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
+>  		default:
+>  			return -EINVAL;
+>  		}
+> +		break;
+>  	case PIN_CONFIG_SLEW_RATE:
+>  		if (*arg)
+>  			*arg = 1;
+> -- 
+> 2.17.0
 > 
-> v2:
->   - New.
-> ---
-
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
--- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
