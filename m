@@ -1,74 +1,54 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Date: Mon, 30 Apr 2018 11:29:47 +0200
-Message-ID: <20180430092947.GC2270@ulmo>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v4 00/10] Add the I3C subsystem
+Date: Mon, 30 Apr 2018 11:37:50 +0200
+Message-ID: <20180430113750.002d384f@bbrezillon>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+        <20180423193814.5c8ca75a@bbrezillon>
+        <20180423175646.GA23210@kroah.com>
+        <20180429133642.GC28913@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+In-Reply-To: <20180429133642.GC28913@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Michal Simek <michal.simek@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vitor
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Greg,
 
---9Ek0hoCL9XbhcSqy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, 29 Apr 2018 15:36:42 +0200
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
-> On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
-> > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
-> >>
-> >> We should get drvdata from struct device directly. Going via
-> >> platform_device is an unneeded step back and forth.
-> >>
-> >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >> ---
-> >>
-> >> Build tested only. buildbot is happy. Please apply individually.
-> >
-> >
-> > for gpio-omap.c:
-> > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
->=20
-> Hm I only see the responses not the actual patch, I guess I will find it
-> sooner or later.
->=20
-> Wolfram: if I don't find it, poke me with something sharp so I get to app=
-ly it.
+> On Mon, Apr 23, 2018 at 07:56:46PM +0200, Greg Kroah-Hartman wrote:
+> > On Mon, Apr 23, 2018 at 07:38:14PM +0200, Boris Brezillon wrote:  
+> > > Hi,
+> > > 
+> > > On Fri, 30 Mar 2018 09:47:41 +0200
+> > > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> > >   
+> > > > This patch series is a proposal for a new I3C subsystem.  
+> > > 
+> > > This v4 has been sent almost a month ago and I didn't get any feedback
+> > > so far apart from Rob's R-b. Greg, is there any chance we can get these
+> > > patches merged in 4.18? If not, could you tell me what should be
+> > > addressed/improved/reworked?  
+> > 
+> > I'll look over it later this week, thanks.  
+> 
+> At first glance, it would be great to have at least one other
+> reviewed-by or signed-off-by on the main code here.  I don't want to be
+> the only one to have to review it :)
 
-I had the same problem, turned out this got classified as spam by Google
-for some reason. Maybe try your spam folder?
+I understand. Arnd, Wolfram, any chance you could spend some time
+reviewing this patch series? I know Arnd is in vacation for the next few
+weeks, so I don't expect him to be able to do that immediately. Also,
+Wolfram stated that he didn't have time to review the series in details
+when I submitted the v1, I don't know if things have changed since then.
 
-Thierry
+Anyway, I'll keep searching for people to review the code.
 
---9Ek0hoCL9XbhcSqy
-Content-Type: application/pgp-signature; name="signature.asc"
+Regards,
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm4gsACgkQ3SOs138+
-s6E+/Q/9EjphqdxUrnsFSD+/mR1PWKT+wgaYut4Zt8pP0aPfTRABNwbDutpCoz/w
-PTdquuAzoziVhHWLZFYyqEfug3/gB/4rHfl9UspVMirZlLjL/CJCGag79Df2oENl
-C6Q43ql8C5GfosbgL17xjZ5YkboZbPWmbaiODae3XOTRc3EDwCPiw1yn5xFiQxRG
-h16gu6kwhXDoipAXN5ljenWF2QkL1av5/7lY01n6NVtIOMg5ercIfx50NofCPpoi
-eniMXrWziPcryMq2u8e6rZKERXq+iZAMfZSr9s+NDsVrESPDkRM2PiCtRtCKH34g
-UYKK1pG7BikpaQmZKmBllMQ3fPKzsWVdhirioYwv5igTBJ4egwgmnjdjhHq8MOOd
-TV1YAjxFen0gAUTCo2MPUEvN3khqUY3xi0dnOgZOF64Q6D+ZHGltdCZcB5PdL2xE
-qLJ2CDGPxCk9fWI2oCVsZXjzc9T4l06baKF2dcxLdTyoCgB4ru3R4eV7V2CuRnnu
-/0IqZ1wRTWH9GW2VrmD+/CWJqSgknhWRwBVPQaZT87hfWMZC7xmRqAC+cK/OdBX/
-uadYQvwvLJBc3BsjtljiqzvvV8FwoXlhkVt0OPIARKCnBJtenbJfOMwewdVKjvVW
-42PBcd6qBelFBrohpOO3eQ967KJG+Z8c/NkrZ6t0JF8i4GaBT4o=
-=odoW
------END PGP SIGNATURE-----
-
---9Ek0hoCL9XbhcSqy--
+Boris
