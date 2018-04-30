@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 06/12] gpio: palmas: Use of_device_get_match_data()
-Date: Mon, 30 Apr 2018 09:38:13 +0200
-Message-ID: <20180430073819.31827-6-thierry.reding@gmail.com>
+Subject: [PATCH 09/12] gpio: syscon: Use of_device_get_match_data()
+Date: Mon, 30 Apr 2018 09:38:16 +0200
+Message-ID: <20180430073819.31827-9-thierry.reding@gmail.com>
 References: <20180430073819.31827-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180430073819.31827-1-thierry.reding@gmail.com>
@@ -16,27 +16,34 @@ Use of_device_get_match_data() instead of open-coding it.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpio-palmas.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/gpio/gpio-syscon.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
-index 3d818195e351..ceb2fef2c8ae 100644
---- a/drivers/gpio/gpio-palmas.c
-+++ b/drivers/gpio/gpio-palmas.c
-@@ -159,13 +159,9 @@ static int palmas_gpio_probe(struct platform_device *pdev)
- 	struct palmas_platform_data *palmas_pdata;
- 	struct palmas_gpio *palmas_gpio;
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 537cec7583fc..2512acd99027 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -182,20 +182,15 @@ MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
+ static int syscon_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	const struct of_device_id *of_id;
+ 	struct syscon_gpio_priv *priv;
+ 	struct device_node *np = dev->of_node;
  	int ret;
--	const struct of_device_id *match;
- 	const struct palmas_device_data *dev_data;
  
--	match = of_match_device(of_palmas_gpio_match, &pdev->dev);
--	if (!match)
+-	of_id = of_match_device(syscon_gpio_ids, dev);
+-	if (!of_id)
 -		return -ENODEV;
--	dev_data = match->data;
-+	dev_data = of_device_get_match_data(&pdev->dev);
- 	if (!dev_data)
- 		dev_data = &palmas_dev_data;
+-
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
  
+-	priv->data = of_id->data;
++	priv->data = of_device_get_match_data(dev);
+ 
+ 	if (priv->data->compatible) {
+ 		priv->syscon = syscon_regmap_lookup_by_compatible(
 -- 
 2.17.0
