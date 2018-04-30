@@ -1,105 +1,64 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
-Date: Mon, 30 Apr 2018 13:28:04 +0200
-Message-ID: <20180430112804.GA5770@ulmo>
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180430094821.GC2476@ulmo>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH][next] pinctrl: actions: make s900_functions, s900_padinfo and s900_pads static
+Date: Mon, 30 Apr 2018 14:04:34 +0100
+Message-ID: <20180430130434.1361-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180430094821.GC2476@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---bp/iNruPH9dso1Pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+s900_functions, s900_padinfo and s900_pads are local to the source and do
+not need to be in global scope, so make them static.
 
-On Mon, Apr 30, 2018 at 11:48:21AM +0200, Thierry Reding wrote:
-> On Fri, Apr 27, 2018 at 02:58:14AM +0300, Dmitry Osipenko wrote:
-> > Hello,
-> >=20
-> > This series of patches fixes ULPI USB on Tegra20. The original problem
-> > was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
-> > incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
-> > that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
-> > with the USB for the devices that have CDEV2 being enabled by bootloade=
-r.
-> > The patch got into the kernel and later Marc Dietrich found that USB
-> > stopped working on the "paz00" Tegra20 board. After a bit of discussion
-> > was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
-> > driver was setting CDEV2's parent incorrectly. The parent clock is actu=
-ally
-> > determined by the pinmuxing config of CDEV2 pingroup. This patchset fix=
-es
-> > the parent of CDEV2 clock by making Tegra's pinctrl driver a clock prov=
-ider,
-> > providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
-> > suggestion), and then setting these clock muxes as parents for the CDEV=
-1/2
-> > clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since =
-CDEV2
-> > (aka MCLK2) is the actual clock source for "ulpi-link".
-> >=20
-> > Dmitry Osipenko (4):
-> >   clk: tegra20: Add DEV1/DEV2 OSC dividers
-> >   pinctrl: tegra20: Provide CDEV1/2 clock muxes
-> >   clk: tegra20: Set correct parents for CDEV1/2 clocks
-> >   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
-> >=20
-> >  arch/arm/boot/dts/tegra20.dtsi          |  2 +-
-> >  drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
-> >  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
-> >  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
-> >  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
-> >  5 files changed, 55 insertions(+), 17 deletions(-)
->=20
-> Stephen, Michael, Linus,
->=20
-> as far as I can tell there aren't any build dependencies between the
-> above, so technically these could all be merged through the individual
-> trees. There's a runtime dependency from patch 2 on patch 1 and from
-> patch 3 on patch 2, though I don't think they will cause any actual
-> failures at runtime.
->=20
-> But I can also pick this up into the Tegra tree and send out pull
-> requests to you for v4.18 (at around v4.17-rc6), if that's what you
-> prefer.
+Cleans up sparse warnings:
+drivers/pinctrl/actions/pinctrl-s900.c:1445:30: warning: symbol
+'s900_functions' was not declared. Should it be static?
+drivers/pinctrl/actions/pinctrl-s900.c:1664:20: warning: symbol
+'s900_padinfo' was not declared. Should it be static?
+drivers/pinctrl/actions/pinctrl-s900.c:207:31: warning: symbol
+'s900_pads' was not declared. Should it be static?
 
-Marc just pointed out to me on IRC that this fixes a regression that was
-introduced in v4.17-rc1.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/actions/pinctrl-s900.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Can you guys pick this up into your -fixes branches? Again, I volunteer
-to collect these into a separate branch and submit via ARM SoC (the DTS
-patch is crucial in enabling the fix) with your Acked-bys if that's the
-preferred option.
-
-Thierry
-
---bp/iNruPH9dso1Pn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm/cEACgkQ3SOs138+
-s6GwGhAAsBYMU6OfkVDBMYaVoDuMn0nzGwKlLnJ4idXGkoSPlVevGYqVM+mmBpoQ
-Ep57Ctbq5cbs5i+4uS1dUI1pZfv7cHUsxABicSPSsvj86lh9fXepI5o9NMDJLIt+
-C+xQ8IQnwCKWrn5sDQ6yhFKrA41lIkXEyoYZgGhotyxMZx9f+YA6xv/a/0Bp7nA+
-EHEfu5wF+0hyQI1KDEkWpBxE9C/ptgz0c9Uc1joD5CTXdoZRmbyycDwfgBvL6vJY
-WQv/y1iNsNNbSCynHnbhx9RvWBSEV61lfaZohjoI6Je5YOgj7I17ujbVSR7tHGAd
-JRQ5jY1yi88t/SGaot+1ZzyjBhAHlCCm6SPZRwGnKe2BNyvVr3CW1pFDgJa+M9dn
-6gjz0qxJV4eZvauHIBoqlpVKTN4UFYyjVRkyvi57iJiX9Vn5eEX+I3HnbMUTbHvD
-DBJJJODc9maE8Sr0kMn4PSabYi6HLyJEKSqYSGgDT852Sc9S2vq9428eGVDJEgx7
-DUnG3xgxRjmSFVr25zLQhUE5du2hNce9ZDSYQQ+g2fqa4wcFN2C0eVdkmD9cqbVh
-juoPUkoXb32338MH+E46rfwT8J1jhCLb0IT7Cdis6dI57JzMVgAZMH25viUwygc9
-2bG6mEfUVi9nF35raMTGadHb2AyABkousQcgOjdcs6VAfAKPk18=
-=LwJ4
------END PGP SIGNATURE-----
-
---bp/iNruPH9dso1Pn--
+diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
+index 49a04e224ee6..08d93f8fc086 100644
+--- a/drivers/pinctrl/actions/pinctrl-s900.c
++++ b/drivers/pinctrl/actions/pinctrl-s900.c
+@@ -204,7 +204,7 @@
+ #define NUM_PADS		(_PIN(3) + 1)
+ 
+ /* Pad names as specified in datasheet */
+-const struct pinctrl_pin_desc s900_pads[] = {
++static const struct pinctrl_pin_desc s900_pads[] = {
+ 	PINCTRL_PIN(ETH_TXD0, "eth_txd0"),
+ 	PINCTRL_PIN(ETH_TXD1, "eth_txd1"),
+ 	PINCTRL_PIN(ETH_TXEN, "eth_txen"),
+@@ -1442,7 +1442,7 @@ static const char * const sirq2_groups[] = {
+ 		.ngroups = ARRAY_SIZE(fname##_groups),	\
+ 	}
+ 
+-const struct owl_pinmux_func s900_functions[] = {
++static const struct owl_pinmux_func s900_functions[] = {
+ 	[S900_MUX_ERAM] = FUNCTION(eram),
+ 	[S900_MUX_ETH_RMII] = FUNCTION(eth_rmii),
+ 	[S900_MUX_ETH_SMII] = FUNCTION(eth_smii),
+@@ -1661,7 +1661,7 @@ static PAD_ST_CONF(I2S_MCLK0, 1, 0, 1);
+ 	}
+ 
+ /* Pad info table */
+-struct owl_padinfo s900_padinfo[NUM_PADS] = {
++static struct owl_padinfo s900_padinfo[NUM_PADS] = {
+ 	[ETH_TXD0] = PAD_INFO_ST(ETH_TXD0),
+ 	[ETH_TXD1] = PAD_INFO_ST(ETH_TXD1),
+ 	[ETH_TXEN] = PAD_INFO_ST(ETH_TXEN),
+-- 
+2.17.0
