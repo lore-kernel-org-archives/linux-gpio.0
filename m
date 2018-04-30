@@ -1,40 +1,55 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v4 00/10] Add the I3C subsystem
-Date: Sun, 29 Apr 2018 15:36:42 +0200
-Message-ID: <20180429133642.GC28913@kroah.com>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
- <20180423193814.5c8ca75a@bbrezillon>
- <20180423175646.GA23210@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 01/12] gpio: 74xx-mmio: Use of_device_get_match_data()
+Date: Mon, 30 Apr 2018 09:38:08 +0200
+Message-ID: <20180430073819.31827-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180423175646.GA23210@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>devi
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 07:56:46PM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Apr 23, 2018 at 07:38:14PM +0200, Boris Brezillon wrote:
-> > Hi,
-> > 
-> > On Fri, 30 Mar 2018 09:47:41 +0200
-> > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> > 
-> > > This patch series is a proposal for a new I3C subsystem.
-> > 
-> > This v4 has been sent almost a month ago and I didn't get any feedback
-> > so far apart from Rob's R-b. Greg, is there any chance we can get these
-> > patches merged in 4.18? If not, could you tell me what should be
-> > addressed/improved/reworked?
-> 
-> I'll look over it later this week, thanks.
+From: Thierry Reding <treding@nvidia.com>
 
-At first glance, it would be great to have at least one other
-reviewed-by or signed-off-by on the main code here.  I don't want to be
-the only one to have to review it :)
+Use of_device_get_match_data() instead of open-coding it.
 
-thanks,
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpio-74xx-mmio.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-greg k-h
+diff --git a/drivers/gpio/gpio-74xx-mmio.c b/drivers/gpio/gpio-74xx-mmio.c
+index 0475e8ec96d0..49616ec815ee 100644
+--- a/drivers/gpio/gpio-74xx-mmio.c
++++ b/drivers/gpio/gpio-74xx-mmio.c
+@@ -105,27 +105,22 @@ static int mmio_74xx_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 
+ static int mmio_74xx_gpio_probe(struct platform_device *pdev)
+ {
+-	const struct of_device_id *of_id;
+ 	struct mmio_74xx_gpio_priv *priv;
+ 	struct resource *res;
+ 	void __iomem *dat;
+ 	int err;
+ 
+-	of_id = of_match_device(mmio_74xx_gpio_ids, &pdev->dev);
+-	if (!of_id)
+-		return -ENODEV;
+-
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
++	priv->flags = (uintptr_t)of_device_get_match_data(&pdev->dev);
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dat = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(dat))
+ 		return PTR_ERR(dat);
+ 
+-	priv->flags = (uintptr_t) of_id->data;
+-
+ 	err = bgpio_init(&priv->gc, &pdev->dev,
+ 			 DIV_ROUND_UP(MMIO_74XX_BIT_CNT(priv->flags), 8),
+ 			 dat, NULL, NULL, NULL, NULL, 0);
+-- 
+2.17.0
