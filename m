@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 12/12] gpio: xlp: Use of_device_get_match_data()
-Date: Mon, 30 Apr 2018 09:38:19 +0200
-Message-ID: <20180430073819.31827-12-thierry.reding@gmail.com>
+Subject: [PATCH 10/12] gpio: ts4900: Use of_device_get_match_data()
+Date: Mon, 30 Apr 2018 09:38:17 +0200
+Message-ID: <20180430073819.31827-10-thierry.reding@gmail.com>
 References: <20180430073819.31827-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180430073819.31827-1-thierry.reding@gmail.com>
@@ -16,28 +16,37 @@ Use of_device_get_match_data() instead of open-coding it.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpio-xlp.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/gpio/gpio-ts4900.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/gpio/gpio-xlp.c b/drivers/gpio/gpio-xlp.c
-index e74bd43a6974..8e4275eaa7d7 100644
---- a/drivers/gpio/gpio-xlp.c
-+++ b/drivers/gpio/gpio-xlp.c
-@@ -322,14 +322,7 @@ static int xlp_gpio_probe(struct platform_device *pdev)
- 		return irq;
+diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
+index 5bd21725e604..1da8d0586329 100644
+--- a/drivers/gpio/gpio-ts4900.c
++++ b/drivers/gpio/gpio-ts4900.c
+@@ -128,15 +128,10 @@ MODULE_DEVICE_TABLE(of, ts4900_gpio_of_match_table);
+ static int ts4900_gpio_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *id)
+ {
+-	const struct of_device_id *match;
+ 	struct ts4900_gpio_priv *priv;
+ 	u32 ngpio;
+ 	int ret;
  
- 	if (pdev->dev.of_node) {
--		const struct of_device_id *of_id;
+-	match = of_match_device(ts4900_gpio_of_match_table, &client->dev);
+-	if (!match)
+-		return -EINVAL;
 -
--		of_id = of_match_device(xlp_gpio_of_ids, &pdev->dev);
--		if (!of_id) {
--			dev_err(&pdev->dev, "Unable to match OF ID\n");
--			return -ENODEV;
--		}
--		soc_type = (uintptr_t) of_id->data;
-+		soc_type = (uintptr_t)of_device_get_match_data(&pdev->dev);
- 	} else {
- 		const struct acpi_device_id *acpi_id;
+ 	if (of_property_read_u32(client->dev.of_node, "ngpios", &ngpio))
+ 		ngpio = DEFAULT_PIN_NUMBER;
  
+@@ -148,7 +143,7 @@ static int ts4900_gpio_probe(struct i2c_client *client,
+ 	priv->gpio_chip.label = "ts4900-gpio";
+ 	priv->gpio_chip.ngpio = ngpio;
+ 	priv->gpio_chip.parent = &client->dev;
+-	priv->input_bit = (uintptr_t)match->data;
++	priv->input_bit = (uintptr_t)of_device_get_match_data(&client->dev);
+ 
+ 	priv->regmap = devm_regmap_init_i2c(client, &ts4900_regmap_config);
+ 	if (IS_ERR(priv->regmap)) {
 -- 
 2.17.0
