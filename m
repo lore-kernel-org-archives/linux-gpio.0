@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 08/12] gpio: pxa: Use of_device_get_match_data()
-Date: Mon, 30 Apr 2018 09:38:15 +0200
-Message-ID: <20180430073819.31827-8-thierry.reding@gmail.com>
+Subject: [PATCH 07/12] gpio: pca953x: Use of_device_get_match_data()
+Date: Mon, 30 Apr 2018 09:38:14 +0200
+Message-ID: <20180430073819.31827-7-thierry.reding@gmail.com>
 References: <20180430073819.31827-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180430073819.31827-1-thierry.reding@gmail.com>
@@ -16,29 +16,30 @@ Use of_device_get_match_data() instead of open-coding it.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpio-pxa.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index f480fb896963..3c1f65bc0fa8 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -579,15 +579,9 @@ static int pxa_gpio_probe_dt(struct platform_device *pdev,
- 			     struct pxa_gpio_chip *pchip)
- {
- 	int nr_gpios;
--	const struct of_device_id *of_id =
--				of_match_device(pxa_gpio_dt_ids, &pdev->dev);
- 	const struct pxa_gpio_id *gpio_id;
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index d2ead4b1cf61..9a06b8a4f5be 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -810,13 +810,11 @@ static int pca953x_probe(struct i2c_client *client,
+ 		chip->driver_data = i2c_id->driver_data;
+ 	} else {
+ 		const struct acpi_device_id *acpi_id;
+-		const struct of_device_id *match;
++		struct device *dev = &client->dev;
  
--	if (!of_id || !of_id->data) {
--		dev_err(&pdev->dev, "Failed to find gpio controller\n");
--		return -EFAULT;
--	}
--	gpio_id = of_id->data;
-+	gpio_id = of_device_get_match_data(&pdev->dev);
- 	gpio_type = gpio_id->type;
- 
- 	nr_gpios = gpio_id->gpio_nums;
+-		match = of_match_device(pca953x_dt_ids, &client->dev);
+-		if (match) {
+-			chip->driver_data = (int)(uintptr_t)match->data;
+-		} else {
+-			acpi_id = acpi_match_device(pca953x_acpi_ids, &client->dev);
++		chip->driver_data = (uintptr_t)of_device_get_match_data(dev);
++		if (!chip->driver_data) {
++			acpi_id = acpi_match_device(pca953x_acpi_ids, dev);
+ 			if (!acpi_id) {
+ 				ret = -ENODEV;
+ 				goto err_exit;
 -- 
 2.17.0
