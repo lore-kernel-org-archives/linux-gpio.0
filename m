@@ -1,65 +1,29 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-Date: Mon, 30 Apr 2018 10:48:54 +0300
-Message-ID: <20180430074854.GM6835@tbergstrom-lnx.Nvidia.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180426235818.10018-2-digetx@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop
+Date: Mon, 30 Apr 2018 10:48:52 +0200
+Message-ID: <CACRpkdZo6wDP7fcA_x1=4mY2TtespprJ=pkTpLL2QUF7Mcv==w@mail.gmail.com>
+References: <20180420135020.23423-1-vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180426235818.10018-2-digetx@gmail.com>
+In-Reply-To: <20180420135020.23423-1-vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 02:58:15AM +0300, Dmitry Osipenko wrote:
-> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
-> a parent. Add these dividers in order to be able to provide that parent
-> option.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index 0ee56dd04cec..16cf4108f2ff 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -26,6 +26,8 @@
->  #include "clk.h"
->  #include "clk-id.h"
->  
-> +#define MISC_CLK_ENB 0x48
-> +
->  #define OSC_CTRL 0x50
->  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
->  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
-> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
->  				    periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_PEX] = clk;
->  
-> +	/* cdev1 OSC divider */
-> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
-> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
-> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +
+On Fri, Apr 20, 2018 at 3:50 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-I don't know if this divider can be changed glitchlessly so to be safe,
-I would mark this readonly, so add the CLK_DIVIDER_READ_ONLY flag.
+> The PCIe-IDIO-24 features 8 bits of TTL GPIO which may be configured for
+> output or input. This patch fixes an off-by-one error in the loop
+> conditional for the get_multiple callback so that the TTL GPIO are
+> handled.
+>
+> Fixes: ca37081595a2 ("gpio: pcie-idio-24: Implement get_multiple/set_multiple callbacks")
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-> +	/* cdev2 OSC divider */
-> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
-> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +
->  	/* cdev1 */
->  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
->  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
-> -- 
-> 2.17.0
-> 
+Patch applied for fixes.
 
-Peter.
+Yours,
+Linus Walleij
