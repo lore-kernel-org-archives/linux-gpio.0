@@ -1,64 +1,80 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH][next][V2] pinctrl: actions: fix missing break in
- PIN_CONFIG_DRIVE_STRENGTH case.
-Date: Mon, 30 Apr 2018 19:21:49 +0530
-Message-ID: <20180430135149.mn4ywt6i73ocoobk@linaro.org>
-References: <20180430132259.9938-1-colin.king@canonical.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: Re: [PATCH] pinctrl: armada-37xx: add suspend/resume support
+Date: Mon, 30 Apr 2018 15:49:16 +0200
+Message-ID: <87a7tkby8z.fsf@bootlin.com>
+References: <20180421141731.25556-1-miquel.raynal@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180430132259.9938-1-colin.king@canonical.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180421141731.25556-1-miquel.raynal@bootlin.com> (Miquel
+ Raynal's message of "Sat, 21 Apr 2018 16:17:31 +0200")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Ken Ma <make@marvell.com>, Jason Cooper <jason@lakedaemon.net>, Antoine Tenart <antoine.tenart@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 02:22:59PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a missing break in case PIN_CONFIG_DRIVE_STRENGTH leading to
-> a fall-through to the PIN_CONFIG_SLEW_RATE case that performs different
-> checks against *arg. This looks like an unintentional missing break so
-> add in the break.
-> 
-> Detected by CoverityScan, CID#1468456, 1468459 ("Missing break in switch")
->
-
-Thanks for fixing!
+Hi Miquel,
  
-> Fixes: 513d7a2f7e0f ("pinctrl: actions: Add Actions S900 pinctrl driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+ On sam., avril 21 2018, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> 
+> From: Ken Ma <make@marvell.com>
+>
+> Add suspend/resume hooks in pinctrl driver to handle S2RAM operations.
+>
+> Beyond the traditional register save/restore operations, these hooks
+> also keep the GPIOs used for both-edge IRQ synchronized between their
+> level (low/high) and expected IRQ polarity (falling/rising edge).
+>
+> Since pinctrl is an infrastructure module, its resume should be issued
+> prior to other IO drivers. The pinctrl PM is registered as syscore
+> level to make sure of it. A postcore initcall is added to register
+> syscore operation. Because of the use of such syscore_ops, the
+> suspend/resume hooks do not have access to a device pointer, and thus
+> need to use a global list in order to keep track of the probed devices
+> for which registers have to be saved/restored.
 
-Thanks,
-Mani
+Did you consider to use SET_LATE_SYSTEM_SLEEP_PM_OPS ?
 
-> ---
->  drivers/pinctrl/actions/pinctrl-owl.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-> index 928b40f71a3c..ee090697b1e9 100644
-> --- a/drivers/pinctrl/actions/pinctrl-owl.c
-> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
-> @@ -406,6 +406,7 @@ static int owl_group_pinconf_arg2val(const struct owl_pingroup *g,
->  		default:
->  			return -EINVAL;
->  		}
-> +		break;
->  	case PIN_CONFIG_SLEW_RATE:
->  		if (*arg)
->  			*arg = OWL_PINCONF_SLEW_FAST;
-> @@ -441,6 +442,7 @@ static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
->  		default:
->  			return -EINVAL;
->  		}
-> +		break;
->  	case PIN_CONFIG_SLEW_RATE:
->  		if (*arg)
->  			*arg = 1;
-> -- 
-> 2.17.0
-> 
+[...]
+
+> +#if defined(CONFIG_PM)
+> +static int armada_3700_pinctrl_suspend(void)
+> +{
+> +	struct armada_37xx_pinctrl *info;
+> +
+> +	list_for_each_entry(info, &device_list, node) {
+> +		/* Save GPIO state */
+> +		regmap_read(info->regmap, OUTPUT_EN, &info->pm.out_en_l);
+> +		regmap_read(info->regmap, OUTPUT_EN + sizeof(u32),
+> +			    &info->pm.out_en_h);
+> +		regmap_read(info->regmap, OUTPUT_VAL, &info->pm.out_val_l);
+> +		regmap_read(info->regmap, OUTPUT_VAL + sizeof(u32),
+> +			    &info->pm.out_val_h);
+> +
+> +		info->pm.irq_en_l = readl(info->base + IRQ_EN);
+> +		info->pm.irq_en_h = readl(info->base + IRQ_EN + sizeof(u32));
+> +		info->pm.irq_pol_l = readl(info->base + IRQ_POL);
+> +		info->pm.irq_pol_h = readl(info->base + IRQ_POL + sizeof(u32));
+> +
+> +		/* Save pinctrl state */
+> +		regmap_read(info->regmap, SELECTION, &info->pm.selection);
+
+I thought there was an API with regmap which allow to save all the
+register in one call. If it is the case it woudl be nice to use it.
+
+
+Gregory
+
+-- 
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
