@@ -1,54 +1,92 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH v4 00/10] Add the I3C subsystem
-Date: Mon, 30 Apr 2018 11:37:50 +0200
-Message-ID: <20180430113750.002d384f@bbrezillon>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
-        <20180423193814.5c8ca75a@bbrezillon>
-        <20180423175646.GA23210@kroah.com>
-        <20180429133642.GC28913@kroah.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
+Date: Mon, 30 Apr 2018 11:48:21 +0200
+Message-ID: <20180430094821.GC2476@ulmo>
+References: <20180426235818.10018-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/e2eDi0V/xtL+Mc8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180429133642.GC28913@kroah.com>
+Content-Disposition: inline
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vitor
+To: Dmitry Osipenko <digetx@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Greg,
 
-On Sun, 29 Apr 2018 15:36:42 +0200
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+--/e2eDi0V/xtL+Mc8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, Apr 23, 2018 at 07:56:46PM +0200, Greg Kroah-Hartman wrote:
-> > On Mon, Apr 23, 2018 at 07:38:14PM +0200, Boris Brezillon wrote:  
-> > > Hi,
-> > > 
-> > > On Fri, 30 Mar 2018 09:47:41 +0200
-> > > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> > >   
-> > > > This patch series is a proposal for a new I3C subsystem.  
-> > > 
-> > > This v4 has been sent almost a month ago and I didn't get any feedback
-> > > so far apart from Rob's R-b. Greg, is there any chance we can get these
-> > > patches merged in 4.18? If not, could you tell me what should be
-> > > addressed/improved/reworked?  
-> > 
-> > I'll look over it later this week, thanks.  
-> 
-> At first glance, it would be great to have at least one other
-> reviewed-by or signed-off-by on the main code here.  I don't want to be
-> the only one to have to review it :)
+On Fri, Apr 27, 2018 at 02:58:14AM +0300, Dmitry Osipenko wrote:
+> Hello,
+>=20
+> This series of patches fixes ULPI USB on Tegra20. The original problem
+> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+> with the USB for the devices that have CDEV2 being enabled by bootloader.
+> The patch got into the kernel and later Marc Dietrich found that USB
+> stopped working on the "paz00" Tegra20 board. After a bit of discussion
+> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+> driver was setting CDEV2's parent incorrectly. The parent clock is actual=
+ly
+> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provid=
+er,
+> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+> suggestion), and then setting these clock muxes as parents for the CDEV1/2
+> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CD=
+EV2
+> (aka MCLK2) is the actual clock source for "ulpi-link".
+>=20
+> Dmitry Osipenko (4):
+>   clk: tegra20: Add DEV1/DEV2 OSC dividers
+>   pinctrl: tegra20: Provide CDEV1/2 clock muxes
+>   clk: tegra20: Set correct parents for CDEV1/2 clocks
+>   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+>=20
+>  arch/arm/boot/dts/tegra20.dtsi          |  2 +-
+>  drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
+>  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+>  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+>  5 files changed, 55 insertions(+), 17 deletions(-)
 
-I understand. Arnd, Wolfram, any chance you could spend some time
-reviewing this patch series? I know Arnd is in vacation for the next few
-weeks, so I don't expect him to be able to do that immediately. Also,
-Wolfram stated that he didn't have time to review the series in details
-when I submitted the v1, I don't know if things have changed since then.
+Stephen, Michael, Linus,
 
-Anyway, I'll keep searching for people to review the code.
+as far as I can tell there aren't any build dependencies between the
+above, so technically these could all be merged through the individual
+trees. There's a runtime dependency from patch 2 on patch 1 and from
+patch 3 on patch 2, though I don't think they will cause any actual
+failures at runtime.
 
-Regards,
+But I can also pick this up into the Tegra tree and send out pull
+requests to you for v4.18 (at around v4.17-rc6), if that's what you
+prefer.
 
-Boris
+Thierry
+
+--/e2eDi0V/xtL+Mc8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm5mUACgkQ3SOs138+
+s6HYZA/+Jd9SEUtBU37s8HSilhhRW0RMjH2s3kCNHRU7mK0Ub6nPk8VlHhdzn7z5
+emLliMzIBxoLYlaf/msP04X2O6vtQaAlN2WBMmQxIRTHZLgSgMozxMRoimI4hAAB
+7pNnWisHeukGD4lsmyCvObCy2vvYay8PljgTaGe9128WkQSJQxk29sqnzQ58vnb9
+4c7dsmJ0ZXCfWAWhXnC5EJXdq0Ojhro44Vywh8XR1+TghIKwbrxjE5IzzGVD3Ydw
+iEhJe3IP5Hy3awb74nnpYUDyFTHcxBpBNIqQ7cedI9xDwfoGJ+etpit0YsMU2aVF
+AuhpeVUYSH3L0ZwdeMrh/KOgVuWkqP8BrPmDNxrtIBs+ZwSri6+01fv2f1MI0aCM
+UcLny3r0x/+plRyeLVcb0z22QQ/eYDYMrKODF/6pIP5nUls12M+RjE/GRfeQwCmY
+EvZ38fWMnCAmC9WqWaoB++kG7EZf1bCjL1lIGboBmb9MNLqWhG3EioLXKzgwl/Kj
+0xZpf1dy070UJhovG4ZB83IU3UUBzo7NaLKGaQkDHwp+gJiCPlaGSfsa0ne8cOcG
+7Yk3jzyRNrBE/OgeWG/9XuDYUL+6wuRG/Wgpxs6vURFXFJHxMTSeHSKe8iGgipij
+l0MvB6r3nGHV2tIi+494Sa5gd4cRqqx8nm9ywOOGHL3ThIdHOUo=
+=qn1g
+-----END PGP SIGNATURE-----
+
+--/e2eDi0V/xtL+Mc8--
