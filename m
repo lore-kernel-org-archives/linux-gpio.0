@@ -1,7 +1,7 @@
 From: Colin King <colin.king@canonical.com>
-Subject: [PATCH][next] pinctrl: actions: make s900_functions, s900_padinfo and s900_pads static
-Date: Mon, 30 Apr 2018 14:04:34 +0100
-Message-ID: <20180430130434.1361-1-colin.king@canonical.com>
+Subject: [PATCH][next] pinctrl: actions: fix missing break in PIN_CONFIG_DRIVE_STRENGTH case.
+Date: Mon, 30 Apr 2018 14:14:20 +0100
+Message-ID: <20180430131420.6155-1-colin.king@canonical.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -13,52 +13,30 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-s900_functions, s900_padinfo and s900_pads are local to the source and do
-not need to be in global scope, so make them static.
+There is a missing break in case PIN_CONFIG_DRIVE_STRENGTH leading to
+a fall-through to the PIN_CONFIG_SLEW_RATE case that performs different
+checks against *arg. This looks like an unintentional missing break so
+add in the break.
 
-Cleans up sparse warnings:
-drivers/pinctrl/actions/pinctrl-s900.c:1445:30: warning: symbol
-'s900_functions' was not declared. Should it be static?
-drivers/pinctrl/actions/pinctrl-s900.c:1664:20: warning: symbol
-'s900_padinfo' was not declared. Should it be static?
-drivers/pinctrl/actions/pinctrl-s900.c:207:31: warning: symbol
-'s900_pads' was not declared. Should it be static?
+Detected by CoverityScan, CID#1468459 ("Missing break in switch")
 
+Fixes: 513d7a2f7e0f ("pinctrl: actions: Add Actions S900 pinctrl driver")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/pinctrl/actions/pinctrl-s900.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/actions/pinctrl-owl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
-index 49a04e224ee6..08d93f8fc086 100644
---- a/drivers/pinctrl/actions/pinctrl-s900.c
-+++ b/drivers/pinctrl/actions/pinctrl-s900.c
-@@ -204,7 +204,7 @@
- #define NUM_PADS		(_PIN(3) + 1)
- 
- /* Pad names as specified in datasheet */
--const struct pinctrl_pin_desc s900_pads[] = {
-+static const struct pinctrl_pin_desc s900_pads[] = {
- 	PINCTRL_PIN(ETH_TXD0, "eth_txd0"),
- 	PINCTRL_PIN(ETH_TXD1, "eth_txd1"),
- 	PINCTRL_PIN(ETH_TXEN, "eth_txen"),
-@@ -1442,7 +1442,7 @@ static const char * const sirq2_groups[] = {
- 		.ngroups = ARRAY_SIZE(fname##_groups),	\
- 	}
- 
--const struct owl_pinmux_func s900_functions[] = {
-+static const struct owl_pinmux_func s900_functions[] = {
- 	[S900_MUX_ERAM] = FUNCTION(eram),
- 	[S900_MUX_ETH_RMII] = FUNCTION(eth_rmii),
- 	[S900_MUX_ETH_SMII] = FUNCTION(eth_smii),
-@@ -1661,7 +1661,7 @@ static PAD_ST_CONF(I2S_MCLK0, 1, 0, 1);
- 	}
- 
- /* Pad info table */
--struct owl_padinfo s900_padinfo[NUM_PADS] = {
-+static struct owl_padinfo s900_padinfo[NUM_PADS] = {
- 	[ETH_TXD0] = PAD_INFO_ST(ETH_TXD0),
- 	[ETH_TXD1] = PAD_INFO_ST(ETH_TXD1),
- 	[ETH_TXEN] = PAD_INFO_ST(ETH_TXEN),
+diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+index 928b40f71a3c..d15abb97821e 100644
+--- a/drivers/pinctrl/actions/pinctrl-owl.c
++++ b/drivers/pinctrl/actions/pinctrl-owl.c
+@@ -441,6 +441,7 @@ static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
+ 		default:
+ 			return -EINVAL;
+ 		}
++		break;
+ 	case PIN_CONFIG_SLEW_RATE:
+ 		if (*arg)
+ 			*arg = 1;
 -- 
 2.17.0
