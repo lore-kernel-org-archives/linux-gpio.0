@@ -1,66 +1,43 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH][next] pinctrl: actions: Fix Kconfig dependency and help
- text
-Date: Mon, 30 Apr 2018 21:23:46 -0700
-Message-ID: <92d58976-7fe4-517e-95e9-b4255ecb390c@infradead.org>
-References: <20180501030047.305-1-manivannan.sadhasivam@linaro.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC 01/10] ARM: dts: exynos: Remove Exynos5440
+Date: Tue, 1 May 2018 09:07:25 -0500
+Message-ID: <20180501140725.GA25487@rob-hp-laptop>
+References: <20180424203239.21885-1-krzk@kernel.org>
+ <20180424203239.21885-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180501030047.305-1-manivannan.sadhasivam@linaro.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180424203239.21885-2-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linus.walleij@linaro.org, afaerber@suse.de, sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfounda>
 List-Id: linux-gpio@vger.kernel.org
 
-On 04/30/2018 08:00 PM, Manivannan Sadhasivam wrote:
-> 1. Fix Kconfig dependency for Actions Semi S900 pinctrl driver which
-> generates below warning in x86:
+On Tue, Apr 24, 2018 at 10:32:30PM +0200, Krzysztof Kozlowski wrote:
+> The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
+> server platforms but it did not make it to the market really.  There are
+> no development boards with it and probably there are no real products
+> neither.  The development for Exynos5440 ended in 2013 and since then
+> the platform is in maintenance mode.
 > 
-> WARNING: unmet direct dependencies detected for PINCTRL_OWL
->   Depends on [n]: PINCTRL [=y] && (ARCH_ACTIONS || COMPILE_TEST [=n]) && OF [=n]
->   Selected by [y]:
->   - PINCTRL_S900 [=y] && PINCTRL [=y]
+> Remove all Device Tree sources for Exynos5440, as first step of removal
+> of the platform to simplify the code and drivers.
 > 
-> 2. Add help text for OWL pinctrl driver
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/pinctrl/actions/Kconfig | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/actions/Kconfig b/drivers/pinctrl/actions/Kconfig
-> index 1c7309c90f0d..ede97cdbbc12 100644
-> --- a/drivers/pinctrl/actions/Kconfig
-> +++ b/drivers/pinctrl/actions/Kconfig
-> @@ -1,12 +1,14 @@
->  config PINCTRL_OWL
-> -	bool
-> +	bool "Actions Semi OWL pinctrl driver"
->  	depends on (ARCH_ACTIONS || COMPILE_TEST) && OF
->  	select PINMUX
->  	select PINCONF
->  	select GENERIC_PINCONF
-> +	help
-> +	  Say Y here to enable Actions Semi OWL pinctrl driver
->  
->  config PINCTRL_S900
->  	bool "Actions Semi S900 pinctrl driver"
-> -	select PINCTRL_OWL
-> +	depends on PINCTRL_OWL
->  	help
->  	  Say Y here to enable Actions Semi S900 pinctrl driver
-> 
+>  .../bindings/arm/samsung/samsung-boards.txt        |   2 -
+>  arch/arm/boot/dts/Makefile                         |   2 -
+>  arch/arm/boot/dts/exynos5440-sd5v1.dts             |  42 ---
+>  arch/arm/boot/dts/exynos5440-ssdk5440.dts          |  81 -----
+>  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  20 --
+>  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  21 --
+>  arch/arm/boot/dts/exynos5440.dtsi                  | 355 ---------------------
+>  7 files changed, 523 deletions(-)
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-sd5v1.dts
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-ssdk5440.dts
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
+>  delete mode 100644 arch/arm/boot/dts/exynos5440.dtsi
 
-
--- 
-~Randy
+Reviewed-by: Rob Herring <robh@kernel.org>
