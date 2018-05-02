@@ -1,33 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH][next] pinctrl: actions: Fix Kconfig dependency and help text
-Date: Wed, 2 May 2018 13:49:18 +0200
-Message-ID: <CACRpkdbvMSJf5C8cymsRnQts9AX3VrDbSszL0ak6=JcYP7q1NA@mail.gmail.com>
-References: <20180501030047.305-1-manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v2] gpiolib: add hogs support for machine code
+Date: Wed, 2 May 2018 13:51:09 +0200
+Message-ID: <CACRpkdbbCKkzCq1S86OTwjrZ4SQFFPAg92qgbzt2U2QaqEwZaw@mail.gmail.com>
+References: <20180410203028.11412-1-brgl@bgdev.pl> <CACRpkda+K3-=sPpJO90rjW0=+bsQ1uYT6E9Hp+G+-OEyTpc=fg@mail.gmail.com>
+ <CAMRc=Me2YD49VkwENwFmRUHGDYzPc_80b6uABUvi7_QeeoMrrQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180501030047.305-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <CAMRc=Me2YD49VkwENwFmRUHGDYzPc_80b6uABUvi7_QeeoMrrQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Jonathan Corbet <corbet@lwn.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-doc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 1, 2018 at 5:00 AM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On Thu, Apr 26, 2018 at 6:42 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> 2018-04-26 14:07 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
+>> On Tue, Apr 10, 2018 at 10:30 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>
+>>> Board files constitute a significant part of the users of the legacy
+>>> GPIO framework. In many cases they only export a line and set its
+>>> desired value. We could use GPIO hogs for that like we do for DT and
+>>> ACPI but there's no support for that in machine code.
+>>>
+>>> This patch proposes to extend the machine.h API with support for
+>>> registering hog tables in board files.
+>>>
+>>> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+>>> ---
+>>> v1 -> v2:
+>>> - kbuild bot complains about enum gpiod_flags having incomplete type
+>>>   although it builds fine for me locally: change the type of dflags
+>>>   to int
+>>
+>> I like the idea and thinking behind this patch, so patch applied.
+>>
+>> It's a bit of code to carry, so if it doesn't see any use, I will simply
+>> revert it :)
+>>
+>> But I bet you intend to follow up with some machine patches
+>> and then it is immediately worth it.
+>
+> Yes, I'll be submitting patches removing the legacy gpio calls for
+> boards in mach-davinci.
 
-> 1. Fix Kconfig dependency for Actions Semi S900 pinctrl driver which
-> generates below warning in x86:
->
-> WARNING: unmet direct dependencies detected for PINCTRL_OWL
->   Depends on [n]: PINCTRL [=y] && (ARCH_ACTIONS || COMPILE_TEST [=n]) && OF [=n]
->   Selected by [y]:
->   - PINCTRL_S900 [=y] && PINCTRL [=y]
->
-> 2. Add help text for OWL pinctrl driver
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Awesome, thanks!
 
-Patch applied with Randy's tags.
+(I guess they should all be converted to device tree though, hope that
+will happen...)
 
 Yours,
 Linus Walleij
