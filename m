@@ -1,67 +1,49 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
-Date: Wed, 2 May 2018 12:15:48 +0200
-Message-ID: <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com>
-References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
- <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
- <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
- <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v4 03/10] i3c: Add sysfs ABI spec
+Date: Wed, 2 May 2018 04:10:46 -0700
+Message-ID: <20180502111046.GA22091@kroah.com>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+ <20180330074751.25987-4-boris.brezillon@bootlin.com>
+ <20180429133700.GD28913@kroah.com>
+ <CAMuHMdUe=zauTS7BQXyTvMbmc-AsEVdWN0gG_3Ejg3E4T-xFXQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUe=zauTS7BQXyTvMbmc-AsEVdWN0gG_3Ejg3E4T-xFXQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2.5.2018 12:10, Linus Walleij wrote:
-> On Thu, Apr 26, 2018 at 3:35 PM, Michal Simek <michal.simek@xilinx.com> wrote:
+On Wed, May 02, 2018 at 11:47:49AM +0200, Geert Uytterhoeven wrote:
+> Hi Greg,
 > 
->>> The only use case which I can think about is userspace sysfs
->>> and then I would really like to know why these userspace
->>> users cannot use the character device that is nowadays
->>> supported by libgpiod and there is even patches for some
->>> IoT libraries to use it. The character device makes the
->>> GPIO Linux "base" irrelevant for userspace.
->>>
->>> GPIO sysfs is deprecated and moved to the obsolete ABI.
->>>
->>> If there are legacy applications that use this I would have
->>> to consider it, but since this has been -1 since the driver
->>> was merged I find that unlikely.
->>
->> Yes, it is about legacy application which I have seen recently and there
->> is no source code for application calls it because board vendor doesn't
->> provide it.
->>
->> You are right that -1 was used from the beginning in mainline but
->> unfortunately this driver was in vendor tree for a while and it uses 0
->> there.
->>
->> In upstreaming this was changed to -1 but customers have a lot of code
->> which developed against vendor tree and they want to use
->> latest&greatest. And without this they are not able to run that
->> applications.
->>
->> I found that this logic is already in 5 drivers in mainline that's why I
->> send this patch to be +1.
+> On Sun, Apr 29, 2018 at 3:37 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Fri, Mar 30, 2018 at 09:47:44AM +0200, Boris Brezillon wrote:
+> >> Document sysfs files/directories/symlinks exposed by the I3C subsystem.
+> >>
+> >> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> >> ---
+> >> Changes in v2:
+> >> - new patch
+> >> ---
+> >>  Documentation/ABI/testing/sysfs-bus-i3c | 95 +++++++++++++++++++++++++++++++++
+> >>  1 file changed, 95 insertions(+)
+> >>  create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
+> >>
+> >> diff --git a/Documentation/ABI/testing/sysfs-bus-i3c b/Documentation/ABI/testing/sysfs-bus-i3c
+> >> new file mode 100644
+> >> index 000000000000..5e88cc093e0e
+> >> --- /dev/null
+> >> +++ b/Documentation/ABI/testing/sysfs-bus-i3c
+> >> @@ -0,0 +1,95 @@
+> >> +What:                /sys/bus/i3c/devices/i3c-<bus-id>
+> >> +KernelVersion:  4.16
+> >
+> > Wrong kernel versions :)
 > 
-> I see.
-> 
-> Sadly comaptibility with out-of-tree driver code is none of our
-> (community) business.
-> 
-> We do pay a lot of effort not to break the ABI to userspace, but
-> it needs to be an ABI coming from the mainline kernel, not from
-> a vendor tree.
-> 
-> So to the mainline kernel this is no regression.
+> Do you update these when backporting to stable? ;-)
 
-I understand your statement. On the other hand it is feature which was
-permitted in past for some drivers and this is +1.
-
-Thanks,
-Michal
+I'm not adding new features/subsystems to stable :)
