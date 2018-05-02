@@ -1,65 +1,53 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
-Date: Wed, 02 May 2018 16:55:17 +0300
-Message-ID: <1525269317.21176.625.camel@linux.intel.com>
-References: <20180421085009.28773-1-javier@emutex.com>
-         <20180421085009.28773-3-javier@emutex.com>
-         <1524672945.21176.594.camel@linux.intel.com>
-         <20180426023441.f2a7337sjlyd6xhf@localhost>
-         <1524729349.21176.614.camel@linux.intel.com>
-         <20180426124922.haddppocljgnj2ei@localhost>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
+Date: Wed, 2 May 2018 15:56:05 +0200
+Message-ID: <CACRpkdaNJzW+LO97oxavzYJwfkj0xu7wxTNRaGiaKm98ON5JMA@mail.gmail.com>
+References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
+ <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
+ <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com> <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
+ <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com> <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
+ <60652f48-2a98-414b-5cff-25890a6da37f@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180426124922.haddppocljgnj2ei@localhost>
+In-Reply-To: <60652f48-2a98-414b-5cff-25890a6da37f@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Arteaga <javier@emutex.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan O'Donovan <dan@emutex.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 2018-04-26 at 13:49 +0100, Javier Arteaga wrote:
-> On Thu, Apr 26, 2018 at 10:55:49AM +0300, Andy Shevchenko wrote:
-> > On Thu, 2018-04-26 at 03:34 +0100, Javier Arteaga wrote:
-> > > My understanding was that in this context, __init allows this
-> > > probe()
-> > > to
-> > > be dropped from memory after module load.
-> > > 
-> > > What am I doing wrong there?
-> > 
-> > Just give another thought about it. The keyword(s) here is(are):
-> > time to
-> > live of the objects in question. It's good to get knowing what
-> > unbind-
-> > bind means (for built-in drivers).
-> 
-> So this is the bit that I _believed_ applied to the platform drivers
-> for
-> these MFD-registered devices (from driver-model/platform.txt):
-> 
->   Or, in common situations where the device is known not to be hot-
-> pluggable,
->   the probe() routine can live in an init section to reduce the
-> driver's
->   runtime memory footprint:
-> 
->   	int platform_driver_probe(struct platform_driver *drv,
->   			  int (*probe)(struct platform_device *))
-> 
-> I'm thinking my misunderstanding probably stems from assuming that
-> these
-> leds/pinctrl drivers will always find all devices registered at init
-> time. Can't say I've validated that assumption - I just didn't see
-> anything obviously blowing up in my tests so far :)
-> 
-> I'll keep reading and test out a few more things so I fully
-> understand.
-> Until then, I've taken out __init annotations from next version.
+On Wed, May 2, 2018 at 3:41 PM, Michal Simek <michal.simek@xilinx.com> wrote:
 
-Just do one small test. Try to unbind the (built-in) driver and bind it
-back. Would it work? Would kernel survive this?
+> If you don't want this patch I understand that and it will become just
+> another soc vendor patch out of mainline.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+I don't really know what to do, so that is why I'm discussing.
+
+It's one of those gray areas.
+
+>From one point of view there is the purist stance that we should
+only support what the mainline tree does, and be strict and
+consistent so we don't accumulate to many nasty hacks.
+
+On the other hand, it is completely possible that all users of this
+particular driver actually must have this patch, and then I just
+push them to use a deviant vendor tree for no good reason.
+
+Would it be possible that I apply the patch, and somehow also
+establish some understanding with all users of the Xilinx
+platform that whatever legacy applications are out there
+must start to migrate towards using the character device so
+this reliance on the numberspace doesn't stick around forever?
+
+For example can we make a patch to some systems like
+arch/arm/boot/dts/zynq-*.dts
+adding proper GPIO line names to these device trees, such
+as was made in e.g. commit f6b1674d570aa1
+"arm64: dts: qcom: sbc: Name GPIO lines"
+
+After all that is what I strive for as maintainer, as the IETF
+motto says:
+"rough consensus and running code"
+
+Yours,
+Linus Walleij
