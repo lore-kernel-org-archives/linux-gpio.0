@@ -1,65 +1,52 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v5 4/7] gpio: pca953x: define masks for addressing common
- and extended registers
-Date: Wed, 2 May 2018 15:29:29 +0300
-Message-ID: <CAHp75Ve37aARbNZ8qu5W9C-fFG5Kf9GRE_VR4aRLFpX61zviyg@mail.gmail.com>
-References: <cover.1524933096.git.hns@goldelico.com> <3df974ea890116d759844e56362dc0786388869a.1524933096.git.hns@goldelico.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/6] pinctrl: fsl: add scu based pinctrl support
+Date: Wed, 2 May 2018 14:29:04 +0200
+Message-ID: <CACRpkdbiPQ8h_0cD5nkG21wQSq5FrcdNXK1AvE-AP7kWy3yUqw@mail.gmail.com>
+References: <1524855713-15527-1-git-send-email-aisheng.dong@nxp.com>
+ <1524855713-15527-5-git-send-email-aisheng.dong@nxp.com>
+ <CACRpkdY5zSNYvXD3icbO+4R7Mc7TDhHCoUU0gikE6A+=ZFA=Kg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3df974ea890116d759844e56362dc0786388869a.1524933096.git.hns@goldelico.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdY5zSNYvXD3icbO+4R7Mc7TDhHCoUU0gikE6A+=ZFA=Kg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: Dong Aisheng <dongas86@gmail.com>, Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Apr 28, 2018 at 7:31 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> These mask bits are to be used to map the extended register
-> addreseses (which are defined for an unsupported 8-bit pcal chip)
-> to 16 and 24 bit chips (pcal6524).
+On Wed, May 2, 2018 at 2:27 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Apr 27, 2018 at 9:01 PM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
 >
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
->  drivers/gpio/gpio-pca953x.c | 3 +++
->  1 file changed, 3 insertions(+)
+>> Some i.MX SoCs (e.g. MX8QXP and MX8QM) contain a system controller
+>> that is responsible for controlling the pad setting of the IPs that
+>> are present. Communication between the host processor running an OS
+>> and the system controller happens through a SCU protocol.
+>> This patch adds SCU protocol based pinctrl drivers.
+>>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Shawn Guo <shawnguo@kernel.org>
+>> Cc: Fabio Estevam <festevam@gmail.com>
+>> Cc: Stefan Agner <stefan@agner.ch>
+>> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+>> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 >
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index 2b667166e855..fc863faa3ce4 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -56,6 +56,9 @@
->  #define PCAL6524_DEBOUNCE      0x2d
->
->  #define PCA_GPIO_MASK          0x00FF
+> Patch applied.
 
-+ empty line (the above is about contents, not addresses)
+Bah on second thought holding this back since I see thyere are
+some discussions about the bindings in the next patch.
 
-> +#define PCAL_GPIO_MASK         GENMASK(4, 0)
-> +#define PCAL_PINCTRL_MASK      (~PCAL_GPIO_MASK)
+Anyway, it's nice if the other maintainers would like to get involved.
 
-I'm not sure which would be better here
+Dong: you only need to resend patches 4.5.6 next time.
 
-1) to follow existing style
-0x1F
-0xE0
-
-2) to use GENMASK() in both definitions
-
-3) as it in this patch.
-
-
-Whatever Linus prefers.
-
-> +
->  #define PCA_INT                        0x0100
->  #define PCA_PCAL               0x0200
->  #define PCA_LATCH_INT (PCA_PCAL | PCA_INT)
-> --
-> 2.12.2
->
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
