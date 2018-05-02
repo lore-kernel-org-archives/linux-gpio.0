@@ -1,59 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
-Date: Wed, 2 May 2018 12:10:32 +0200
-Message-ID: <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
-References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
- <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com> <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
+Subject: Re: [PATCH v5] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+Date: Wed, 2 May 2018 12:12:48 +0200
+Message-ID: <CACRpkdYP=jxDVV9Z9HdCWQisgYHmm8WN0RZR6b_yOwytWY9Lgw@mail.gmail.com>
+References: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
+In-Reply-To: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Hoan Tran <hotran@apm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Michel Pollet <michel.pollet@bp.renesas.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 3:35 PM, Michal Simek <michal.simek@xilinx.com> wrote:
+On Thu, Apr 26, 2018 at 6:19 PM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
 
->> The only use case which I can think about is userspace sysfs
->> and then I would really like to know why these userspace
->> users cannot use the character device that is nowadays
->> supported by libgpiod and there is even patches for some
->> IoT libraries to use it. The character device makes the
->> GPIO Linux "base" irrelevant for userspace.
->>
->> GPIO sysfs is deprecated and moved to the obsolete ABI.
->>
->> If there are legacy applications that use this I would have
->> to consider it, but since this has been -1 since the driver
->> was merged I find that unlikely.
+> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> per GPIO in port A, but the driver currently only supports 1 interrupt.
+> See the DesignWare DW_apb_gpio Databook description of the
+> 'GPIO_INTR_IO' parameter.
 >
-> Yes, it is about legacy application which I have seen recently and there
-> is no source code for application calls it because board vendor doesn't
-> provide it.
+> This change allows the driver to work with up to 32 interrupts, it will
+> get as many interrupts as specified in the DT 'interrupts' property.
+> It doesn't do anything clever with the different interrupts, it just calls
+> the same handler used for single interrupt hardware.
 >
-> You are right that -1 was used from the beginning in mainline but
-> unfortunately this driver was in vendor tree for a while and it uses 0
-> there.
+> ACPI companion code provided by Hoan Tran <hotran@apm.com>. This was tested
+> on X-Gene by Hoan.
 >
-> In upstreaming this was changed to -1 but customers have a lot of code
-> which developed against vendor tree and they want to use
-> latest&greatest. And without this they are not able to run that
-> applications.
->
-> I found that this logic is already in 5 drivers in mainline that's why I
-> send this patch to be +1.
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 
-I see.
-
-Sadly comaptibility with out-of-tree driver code is none of our
-(community) business.
-
-We do pay a lot of effort not to break the ABI to userspace, but
-it needs to be an ABI coming from the mainline kernel, not from
-a vendor tree.
-
-So to the mainline kernel this is no regression.
+Patch applied for v4.18 with Hoan's ACK.
 
 Yours,
 Linus Walleij
