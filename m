@@ -1,76 +1,65 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
-Date: Wed, 2 May 2018 15:41:12 +0200
-Message-ID: <60652f48-2a98-414b-5cff-25890a6da37f@xilinx.com>
-References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
- <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
- <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
- <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
- <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com>
- <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
+Date: Wed, 02 May 2018 16:55:17 +0300
+Message-ID: <1525269317.21176.625.camel@linux.intel.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+         <20180421085009.28773-3-javier@emutex.com>
+         <1524672945.21176.594.camel@linux.intel.com>
+         <20180426023441.f2a7337sjlyd6xhf@localhost>
+         <1524729349.21176.614.camel@linux.intel.com>
+         <20180426124922.haddppocljgnj2ei@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20180426124922.haddppocljgnj2ei@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Javier Arteaga <javier@emutex.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Dan O'Donovan <dan@emutex.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 2.5.2018 15:01, Linus Walleij wrote:
-> On Wed, May 2, 2018 at 12:15 PM, Michal Simek <michal.simek@xilinx.com> wrote:
->> On 2.5.2018 12:10, Linus Walleij wrote:
->>> On Thu, Apr 26, 2018 at 3:35 PM, Michal Simek <michal.simek@xilinx.com> wrote:
+On Thu, 2018-04-26 at 13:49 +0100, Javier Arteaga wrote:
+> On Thu, Apr 26, 2018 at 10:55:49AM +0300, Andy Shevchenko wrote:
+> > On Thu, 2018-04-26 at 03:34 +0100, Javier Arteaga wrote:
+> > > My understanding was that in this context, __init allows this
+> > > probe()
+> > > to
+> > > be dropped from memory after module load.
+> > > 
+> > > What am I doing wrong there?
+> > 
+> > Just give another thought about it. The keyword(s) here is(are):
+> > time to
+> > live of the objects in question. It's good to get knowing what
+> > unbind-
+> > bind means (for built-in drivers).
 > 
->>>> Yes, it is about legacy application which I have seen recently and there
->>>> is no source code for application calls it because board vendor doesn't
->>>> provide it.
->>>>
->>>> You are right that -1 was used from the beginning in mainline but
->>>> unfortunately this driver was in vendor tree for a while and it uses 0
->>>> there.
->>>>
->>>> In upstreaming this was changed to -1 but customers have a lot of code
->>>> which developed against vendor tree and they want to use
->>>> latest&greatest. And without this they are not able to run that
->>>> applications.
->>>>
->>>> I found that this logic is already in 5 drivers in mainline that's why I
->>>> send this patch to be +1.
->>>
->>> I see.
->>>
->>> Sadly comaptibility with out-of-tree driver code is none of our
->>> (community) business.
->>>
->>> We do pay a lot of effort not to break the ABI to userspace, but
->>> it needs to be an ABI coming from the mainline kernel, not from
->>> a vendor tree.
->>>
->>> So to the mainline kernel this is no regression.
->>
->> I understand your statement. On the other hand it is feature which was
->> permitted in past for some drivers and this is +1.
+> So this is the bit that I _believed_ applied to the platform drivers
+> for
+> these MFD-registered devices (from driver-model/platform.txt):
 > 
-> But was it permitted because of breaking out of tree code?
+>   Or, in common situations where the device is known not to be hot-
+> pluggable,
+>   the probe() routine can live in an init section to reduce the
+> driver's
+>   runtime memory footprint:
+> 
+>   	int platform_driver_probe(struct platform_driver *drv,
+>   			  int (*probe)(struct platform_device *))
+> 
+> I'm thinking my misunderstanding probably stems from assuming that
+> these
+> leds/pinctrl drivers will always find all devices registered at init
+> time. Can't say I've validated that assumption - I just didn't see
+> anything obviously blowing up in my tests so far :)
+> 
+> I'll keep reading and test out a few more things so I fully
+> understand.
+> Until then, I've taken out __init annotations from next version.
 
-You know how soc vendors are working. We need to develop code out of
-mainline for certain time because we can't share details before.
+Just do one small test. Try to unbind the (built-in) driver and bind it
+back. Would it work? Would kernel survive this?
 
-When we get permission to upstream code a lot of application code is
-done already with certain expectation.
-
-Soren has sent this driver with using -1 for autodetection even at that
-time Xilinx gpio driver had 0 there.
-
-This patch is not breaking any current functionality and there is no any
-gpio alias in zynq/zynqmp too. And from my point of view the usage of
-gpio alias is similar to others aliases present in DTS file.
-
-If you don't want this patch I understand that and it will become just
-another soc vendor patch out of mainline.
-
-Thanks,
-Michal
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
