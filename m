@@ -1,15 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/6] pinctrl: pinctrl-imx: improve the code comments of
- PIN_FUNC_ID
-Date: Wed, 2 May 2018 14:23:11 +0200
-Message-ID: <CACRpkdbHU49+3Dq6CQaYZc+JYQ+4OPgT4iwJ4=ucV=oQWNEgeA@mail.gmail.com>
+Subject: Re: [PATCH 3/6] pinctrl: imx: use seq_puts() instead of seq_printf()
+Date: Wed, 2 May 2018 14:24:13 +0200
+Message-ID: <CACRpkdZ-GkW5KR=7CdT2RTb1VRpr1bpmf_HNZKu0m5f0DVaWaw@mail.gmail.com>
 References: <1524855713-15527-1-git-send-email-aisheng.dong@nxp.com>
- <1524855713-15527-3-git-send-email-aisheng.dong@nxp.com>
+ <1524855713-15527-4-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1524855713-15527-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1524855713-15527-4-git-send-email-aisheng.dong@nxp.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -25,10 +24,15 @@ List-Id: linux-gpio@vger.kernel.org
 
 On Fri, Apr 27, 2018 at 9:01 PM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
 
-> The current code comments of PIN_FUNC_ID actually is not true for
-> SHARE_MUX_CONF_REG case which should be a 4 u32 PIN_FUNC_ID.
-> Fix the comments and re-org it a bit for better extendibility
-> as we may add a different size for SCU based PIN_FUNC_ID later.
+> For a constant format without additional arguments, use seq_puts()
+> instead of seq_printf(). Also, it fixes the following checkpatch
+> warning.
+>
+> WARNING: Prefer seq_puts to seq_printf
+> +               seq_printf(s, "N/A");
+>
+> WARNING: Prefer seq_puts to seq_printf
+> +       seq_printf(s, "\n");
 >
 > Cc: Linus Walleij <linus.walleij@linaro.org>
 > Cc: Shawn Guo <shawnguo@kernel.org>
