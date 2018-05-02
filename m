@@ -1,34 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
-Date: Wed, 2 May 2018 14:58:25 +0200
-Message-ID: <CACRpkdbp7mZKQPuUqYNYc121oYrkbUm=tKGKm15-VKUvGwEvdg@mail.gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com> <20180430094821.GC2476@ulmo>
- <20180430112804.GA5770@ulmo>
+Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
+Date: Wed, 2 May 2018 15:01:24 +0200
+Message-ID: <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
+References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
+ <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
+ <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com> <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
+ <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180430112804.GA5770@ulmo>
+In-Reply-To: <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 1:28 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
+On Wed, May 2, 2018 at 12:15 PM, Michal Simek <michal.simek@xilinx.com> wrote:
+> On 2.5.2018 12:10, Linus Walleij wrote:
+>> On Thu, Apr 26, 2018 at 3:35 PM, Michal Simek <michal.simek@xilinx.com> wrote:
 
-> Marc just pointed out to me on IRC that this fixes a regression that was
-> introduced in v4.17-rc1.
+>>> Yes, it is about legacy application which I have seen recently and there
+>>> is no source code for application calls it because board vendor doesn't
+>>> provide it.
+>>>
+>>> You are right that -1 was used from the beginning in mainline but
+>>> unfortunately this driver was in vendor tree for a while and it uses 0
+>>> there.
+>>>
+>>> In upstreaming this was changed to -1 but customers have a lot of code
+>>> which developed against vendor tree and they want to use
+>>> latest&greatest. And without this they are not able to run that
+>>> applications.
+>>>
+>>> I found that this logic is already in 5 drivers in mainline that's why I
+>>> send this patch to be +1.
+>>
+>> I see.
+>>
+>> Sadly comaptibility with out-of-tree driver code is none of our
+>> (community) business.
+>>
+>> We do pay a lot of effort not to break the ABI to userspace, but
+>> it needs to be an ABI coming from the mainline kernel, not from
+>> a vendor tree.
+>>
+>> So to the mainline kernel this is no regression.
 >
-> Can you guys pick this up into your -fixes branches?
+> I understand your statement. On the other hand it is feature which was
+> permitted in past for some drivers and this is +1.
 
-OK I will pick mine independently to my fixes.
+But was it permitted because of breaking out of tree code?
 
-> Again, I volunteer
-> to collect these into a separate branch and submit via ARM SoC (the DTS
-> patch is crucial in enabling the fix) with your Acked-bys if that's the
-> preferred option.
-
-No need for me at least.
+I know people have done questionable things in the past, but
+two wrongs does not make one right.
 
 Yours,
 Linus Walleij
