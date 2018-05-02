@@ -1,52 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: add hogs support for machine code
-Date: Wed, 2 May 2018 13:51:09 +0200
-Message-ID: <CACRpkdbbCKkzCq1S86OTwjrZ4SQFFPAg92qgbzt2U2QaqEwZaw@mail.gmail.com>
-References: <20180410203028.11412-1-brgl@bgdev.pl> <CACRpkda+K3-=sPpJO90rjW0=+bsQ1uYT6E9Hp+G+-OEyTpc=fg@mail.gmail.com>
- <CAMRc=Me2YD49VkwENwFmRUHGDYzPc_80b6uABUvi7_QeeoMrrQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/7] pcal6524 extensions and fixes for pca953x driver
+Date: Wed, 2 May 2018 13:53:49 +0200
+Message-ID: <CACRpkdZPqMMUMbMq5BSD2FpqVojvVKukEh4KR-TW4do_G+DLDg@mail.gmail.com>
+References: <cover.1524933096.git.hns@goldelico.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=Me2YD49VkwENwFmRUHGDYzPc_80b6uABUvi7_QeeoMrrQ@mail.gmail.com>
+In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Jonathan Corbet <corbet@lwn.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-doc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Kumar Gala <galak@codeaurora.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 6:42 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> 2018-04-26 14:07 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
->> On Tue, Apr 10, 2018 at 10:30 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>
->>> Board files constitute a significant part of the users of the legacy
->>> GPIO framework. In many cases they only export a line and set its
->>> desired value. We could use GPIO hogs for that like we do for DT and
->>> ACPI but there's no support for that in machine code.
->>>
->>> This patch proposes to extend the machine.h API with support for
->>> registering hog tables in board files.
->>>
->>> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
->>> ---
->>> v1 -> v2:
->>> - kbuild bot complains about enum gpiod_flags having incomplete type
->>>   although it builds fine for me locally: change the type of dflags
->>>   to int
->>
->> I like the idea and thinking behind this patch, so patch applied.
->>
->> It's a bit of code to carry, so if it doesn't see any use, I will simply
->> revert it :)
->>
->> But I bet you intend to follow up with some machine patches
->> and then it is immediately worth it.
->
-> Yes, I'll be submitting patches removing the legacy gpio calls for
-> boards in mach-davinci.
+On Sat, Apr 28, 2018 at 6:31 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
 
-Awesome, thanks!
+> V5:
+> * fix wrong split up between patches 1/7and 2/7.
 
-(I guess they should all be converted to device tree though, hope that
-will happen...)
+v5 is looking really nice, giving reviewers a chance to ACK
+etc before applying, but will probably apply it anyways in a
+few days.
+
+Nice work on this series!
 
 Yours,
 Linus Walleij
