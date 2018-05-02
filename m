@@ -1,98 +1,77 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
-Date: Wed, 2 May 2018 16:19:35 +0200
-Message-ID: <57e4bbdd-1e30-0352-f758-998b64a6b77f@xilinx.com>
-References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
- <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
- <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
- <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
- <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com>
- <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
- <60652f48-2a98-414b-5cff-25890a6da37f@xilinx.com>
- <CACRpkdaNJzW+LO97oxavzYJwfkj0xu7wxTNRaGiaKm98ON5JMA@mail.gmail.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH 4/6] pinctrl: fsl: add scu based pinctrl support
+Date: Wed, 2 May 2018 17:05:07 +0200
+Message-ID: <20180502150507.pdqcrhsx3fkh3yof@pengutronix.de>
+References: <1524855713-15527-1-git-send-email-aisheng.dong@nxp.com>
+ <1524855713-15527-5-git-send-email-aisheng.dong@nxp.com>
+ <CACRpkdY5zSNYvXD3icbO+4R7Mc7TDhHCoUU0gikE6A+=ZFA=Kg@mail.gmail.com>
+ <CACRpkdbiPQ8h_0cD5nkG21wQSq5FrcdNXK1AvE-AP7kWy3yUqw@mail.gmail.com>
+ <20180502123638.qgolj3h6ycbx6aas@pengutronix.de>
+ <CACRpkdbgi6f2famHA_QUb0zZY7rF3QqbDzcfS_X=czcRJGMMyg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaNJzW+LO97oxavzYJwfkj0xu7wxTNRaGiaKm98ON5JMA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbgi6f2famHA_QUb0zZY7rF3QqbDzcfS_X=czcRJGMMyg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Dong Aisheng <dongas86@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Fabio Estevam <festevam@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2.5.2018 15:56, Linus Walleij wrote:
-> On Wed, May 2, 2018 at 3:41 PM, Michal Simek <michal.simek@xilinx.com> wrote:
+On Wed, May 02, 2018 at 03:03:04PM +0200, Linus Walleij wrote:
+> On Wed, May 2, 2018 at 2:36 PM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> > Hi Linus,
+> >
+> > On Wed, May 02, 2018 at 02:29:04PM +0200, Linus Walleij wrote:
+> >> On Wed, May 2, 2018 at 2:27 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> >> > On Fri, Apr 27, 2018 at 9:01 PM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
+> >> >
+> >> >> Some i.MX SoCs (e.g. MX8QXP and MX8QM) contain a system controller
+> >> >> that is responsible for controlling the pad setting of the IPs that
+> >> >> are present. Communication between the host processor running an OS
+> >> >> and the system controller happens through a SCU protocol.
+> >> >> This patch adds SCU protocol based pinctrl drivers.
+> >> >>
+> >> >> Cc: Linus Walleij <linus.walleij@linaro.org>
+> >> >> Cc: Shawn Guo <shawnguo@kernel.org>
+> >> >> Cc: Fabio Estevam <festevam@gmail.com>
+> >> >> Cc: Stefan Agner <stefan@agner.ch>
+> >> >> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> >> >> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> >> >
+> >> > Patch applied.
+> >>
+> >> Bah on second thought holding this back since I see thyere are
+> >> some discussions about the bindings in the next patch.
+> >
+> > Also note that this patch depends on the SCU base support posted elsewhere
+> > as Dong mentioned in his introductory mail.
 > 
->> If you don't want this patch I understand that and it will become just
->> another soc vendor patch out of mainline.
-> 
-> I don't really know what to do, so that is why I'm discussing.
+> Aha is that a compile-time dependence?
 
-me too. It is also interesting that I have met with the case with
-zynq/zynqmp gpio driver and not gpio-xilinx.c which can have a lot of
-instances.
-
-> 
-> It's one of those gray areas.
-> 
-> From one point of view there is the purist stance that we should
-> only support what the mainline tree does, and be strict and
-> consistent so we don't accumulate to many nasty hacks.
-
-Also this expect that the first patch does everything right which is not
-truth all the time.
-
-> 
-> On the other hand, it is completely possible that all users of this
-> particular driver actually must have this patch, and then I just
-> push them to use a deviant vendor tree for no good reason.
-> 
-> Would it be possible that I apply the patch, and somehow also
-> establish some understanding with all users of the Xilinx
-> platform that whatever legacy applications are out there
-> must start to migrate towards using the character device so
-> this reliance on the numberspace doesn't stick around forever?
-
-When someone contacts me for asking guidance for gpio I am telling them
-not to use legacy sysfs interface and use libgpiod. Last one was a week
-ago in connection to Ultra96 and libmraa.
-
-But even chardev is not supported there now.
-https://github.com/intel-iot-devkit/mraa/issues/713
+Yes.
 
 > 
-> For example can we make a patch to some systems like
-> arch/arm/boot/dts/zynq-*.dts
-> adding proper GPIO line names to these device trees, such
-> as was made in e.g. commit f6b1674d570aa1
-> "arm64: dts: qcom: sbc: Name GPIO lines"
+> I guess it would be better if it is one big series if it is supposed
+> to be merged in one big series.
 
-If you take a look at
-arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-which is Ultra96 board gpio-line-names are filled there for the whole PS
-part. Definitely take a look and let know if you find out any issue there.
+The SCU is a coprocessor that provides pinctrl, clk, power domain and
+other misc stuff, so posting this as multiple series should be the way
+to go.
 
-zynq/zynqmp gpio controller contains PS pins (hard part) and PL pins
-coming to logic.
+Sascha
 
-I can't describe PL gpio pins because it can be whatever even I have
-done that for one fixed hw design.
-
-Interesting part on that sha1 you shared is how "NC" pin is described.
-
-gpio pin 35 I have on zcu100 as "" but it should be maybe TP_PAD which
-is really just a pad on real board. And the rest of "" gpio names are
-connected to PL.
-
-I am happy to take a look at existing platforms and use gpio-line-names
-there. For example arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-I use in tca6416_u97 and u61 comments instead of this property.
-
-> 
-> After all that is what I strive for as maintainer, as the IETF
-> motto says:
-> "rough consensus and running code"
-
-Thanks,
-Michal
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
