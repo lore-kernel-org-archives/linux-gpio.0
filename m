@@ -1,50 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/6] pinctrl: fsl: add scu based pinctrl support
-Date: Wed, 2 May 2018 14:27:02 +0200
-Message-ID: <CACRpkdY5zSNYvXD3icbO+4R7Mc7TDhHCoUU0gikE6A+=ZFA=Kg@mail.gmail.com>
-References: <1524855713-15527-1-git-send-email-aisheng.dong@nxp.com>
- <1524855713-15527-5-git-send-email-aisheng.dong@nxp.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v5 5/7] gpio: pca953x: fix address calculation for pcal6524
+Date: Wed, 2 May 2018 15:28:11 +0300
+Message-ID: <CAHp75VfD4gYesEw2n4JMycmr=qcAtqSkAAjwCViJZRYC6kVUVg@mail.gmail.com>
+References: <cover.1524933096.git.hns@goldelico.com> <aaac818909d71523726094b1dfacc03e756874e9.1524933096.git.hns@goldelico.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1524855713-15527-5-git-send-email-aisheng.dong@nxp.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: Dong Aisheng <dongas86@gmail.com>, Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <aaac818909d71523726094b1dfacc03e756874e9.1524933096.git.hns@goldelico.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 9:01 PM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
-
-> Some i.MX SoCs (e.g. MX8QXP and MX8QM) contain a system controller
-> that is responsible for controlling the pad setting of the IPs that
-> are present. Communication between the host processor running an OS
-> and the system controller happens through a SCU protocol.
-> This patch adds SCU protocol based pinctrl drivers.
+On Sat, Apr 28, 2018 at 7:31 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> The register constants are so far defined in a way that they fit
+> for the pcal9555a when shifted by the number of banks, i.e. are
+> multiplied by 2 in the accessor function.
 >
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Now, the pcal6524 has 3 banks which means the relative offset
+> is multiplied by 4 for the standard registers.
+>
+> Simply applying the bit shift to the extended registers gives
+> a wrong result, since the base offset is already included in
+> the offset.
+>
+> Therefore, we add code to the 24 bit accessor functions to
+> adjust the register number for these exended registers.
+>
 
-Patch applied.
+Suggested-by ?
 
-There was some controversy about i.MX pin control some time
-back so I hope there is no annoyance from the other maintainers
-that I just merge stuff from one maintainer.
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+>  drivers/gpio/gpio-pca953x.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index fc863faa3ce4..4194495a7990 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -221,9 +221,11 @@ static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+>  static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+>  {
+>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> +       int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+> +       int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+>
+>         return i2c_smbus_write_i2c_block_data(chip->client,
+> -                                             (reg << bank_shift) | REG_ADDR_AI,
+> +                                             pinctrl | addr | REG_ADDR_AI,
+>                                               NBANK(chip), val);
+>  }
+>
+> @@ -263,9 +265,11 @@ static int pca953x_read_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+>  static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+>  {
+>         int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> +       int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+> +       int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+>
+>         return i2c_smbus_read_i2c_block_data(chip->client,
+> -                                            (reg << bank_shift) | REG_ADDR_AI,
+> +                                            pinctrl | addr | REG_ADDR_AI,
+>                                              NBANK(chip), val);
+>  }
+>
+> --
+> 2.12.2
+>
 
-If you don't like the patches you can always tell me to drop
-them.
 
-Yours,
-Linus Walleij
+
+-- 
+With Best Regards,
+Andy Shevchenko
