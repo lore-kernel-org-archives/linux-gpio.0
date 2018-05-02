@@ -1,54 +1,24 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v4 03/10] i3c: Add sysfs ABI spec
-Date: Wed, 2 May 2018 11:47:49 +0200
-Message-ID: <CAMuHMdUe=zauTS7BQXyTvMbmc-AsEVdWN0gG_3Ejg3E4T-xFXQ@mail.gmail.com>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
- <20180330074751.25987-4-boris.brezillon@bootlin.com> <20180429133700.GD28913@kroah.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: meson: axg: add tdm pins
+Date: Wed, 2 May 2018 12:04:11 +0200
+Message-ID: <CACRpkdap3EXSf11nhx10dFcvmKnXz+UvHJ_tzkK2tYJrK5Daww@mail.gmail.com>
+References: <20180409145429.16619-1-jbrunet@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180429133700.GD28913@kroah.com>
+In-Reply-To: <20180409145429.16619-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Greg,
+On Mon, Apr 9, 2018 at 4:54 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-On Sun, Apr 29, 2018 at 3:37 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Fri, Mar 30, 2018 at 09:47:44AM +0200, Boris Brezillon wrote:
->> Document sysfs files/directories/symlinks exposed by the I3C subsystem.
->>
->> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
->> ---
->> Changes in v2:
->> - new patch
->> ---
->>  Documentation/ABI/testing/sysfs-bus-i3c | 95 +++++++++++++++++++++++++++++++++
->>  1 file changed, 95 insertions(+)
->>  create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
->>
->> diff --git a/Documentation/ABI/testing/sysfs-bus-i3c b/Documentation/ABI/testing/sysfs-bus-i3c
->> new file mode 100644
->> index 000000000000..5e88cc093e0e
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-bus-i3c
->> @@ -0,0 +1,95 @@
->> +What:                /sys/bus/i3c/devices/i3c-<bus-id>
->> +KernelVersion:  4.16
+> Add the information related to the tdm pins of the A113D SoC
 >
-> Wrong kernel versions :)
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Do you update these when backporting to stable? ;-)
+Patch applied with Neil's review tag.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
