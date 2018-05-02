@@ -1,41 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] pinctrl: uniphier: add LD11 MPEG2-TS I/O pin-mux settings
-Date: Wed, 2 May 2018 14:18:41 +0200
-Message-ID: <CACRpkdaoN1SBeadam6V6re64WyEvm7s6TOA+m38t3CDj16MU8Q@mail.gmail.com>
-References: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com> <20180427014905.19520-2-suzuki.katsuhiro@socionext.com>
+Subject: Re: [PATCH 1/6] pinctrl: imx: fix unsigned check if nfuncs with less
+ than or equal zero
+Date: Wed, 2 May 2018 14:22:22 +0200
+Message-ID: <CACRpkdbSxGE57vCHkViKTx920LgDb+MJLuxXUXN1pBtdBFCMrA@mail.gmail.com>
+References: <1524855713-15527-1-git-send-email-aisheng.dong@nxp.com>
+ <1524855713-15527-2-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180427014905.19520-2-suzuki.katsuhiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1524855713-15527-2-git-send-email-aisheng.dong@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: Dong Aisheng <dongas86@gmail.com>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 3:49 AM, Katsuhiro Suzuki
-<suzuki.katsuhiro@socionext.com> wrote:
+On Fri, Apr 27, 2018 at 9:01 PM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
 
-> The MPEG2-TS input/output core both accepts serial TS and parallel TS.
+> The unsigned integer nfuncs is being error checked with a value less
+> or equal to zero; this is always false if of_get_child_count returns a
+> -ve for an error condition since nfuncs is not signed. Fix this by
+> making variables nfuncs and i signed integers.
 >
-> The serial TS interface uses following pins:
->   hscin0_s : HS0DOUT[0-3]
->   hscin1_s : HS0DOUT[4-7]
->   hscin2_s : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN0
->   hscout0_s: HS0DOUT[0-3]
->   hscout1_s: HS0DOUT[4-7]
+> Detected with Coccinelle:
+> drivers/pinctrl/freescale/pinctrl-imx.c:620:6-12: WARNING: Unsigned
+> expression compared with zero: nfuncs <= 0
 >
-> And the parallel TS interface uses following pins:
->   hscin0_p : HS0BCLKIN, HS0SYNCIN, HS0VALIN, HS0DIN[0-7]
->   hscin1_p : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN[0-7]
->   hscout0_p: HS0BCLKOUT, HS0SYNCOUT, HS0VALOUT, HS0DOUT[0-7]
->
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
->
-> ---
->
-> Changes in v2:
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Reported-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-This v2 version applied with Masahiro's ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
