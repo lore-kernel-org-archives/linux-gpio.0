@@ -1,52 +1,77 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/6] pinctrl: fsl: add scu based pinctrl support
-Date: Wed, 2 May 2018 14:29:04 +0200
-Message-ID: <CACRpkdbiPQ8h_0cD5nkG21wQSq5FrcdNXK1AvE-AP7kWy3yUqw@mail.gmail.com>
-References: <1524855713-15527-1-git-send-email-aisheng.dong@nxp.com>
- <1524855713-15527-5-git-send-email-aisheng.dong@nxp.com>
- <CACRpkdY5zSNYvXD3icbO+4R7Mc7TDhHCoUU0gikE6A+=ZFA=Kg@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v5 0/7] pcal6524 extensions and fixes for pca953x driver
+Date: Wed, 2 May 2018 15:32:07 +0300
+Message-ID: <CAHp75VfA84FWyymRz6_53soEoLNAPP9YpsR3Vzkf6EJWLLTw=g@mail.gmail.com>
+References: <cover.1524933096.git.hns@goldelico.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdY5zSNYvXD3icbO+4R7Mc7TDhHCoUU0gikE6A+=ZFA=Kg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: Dong Aisheng <dongas86@gmail.com>, Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 2, 2018 at 2:27 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Apr 27, 2018 at 9:01 PM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
+On Sat, Apr 28, 2018 at 7:31 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> V5:
+> * fix wrong split up between patches 1/7and 2/7.
 >
->> Some i.MX SoCs (e.g. MX8QXP and MX8QM) contain a system controller
->> that is responsible for controlling the pad setting of the IPs that
->> are present. Communication between the host processor running an OS
->> and the system controller happens through a SCU protocol.
->> This patch adds SCU protocol based pinctrl drivers.
->>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Shawn Guo <shawnguo@kernel.org>
->> Cc: Fabio Estevam <festevam@gmail.com>
->> Cc: Stefan Agner <stefan@agner.ch>
->> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
->> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> 2018-04-26 19:35:07: V4:
+> * introduced PCA_LATCH_INT constant to make of_table more
+>   readable (suggested by Andy Shevchenko)
+> * converted all register constants to hex in a separate
+>   patch (suggested by Andy Shevchenko)
+> * separated additional pcal953x and pcal6524 register
+>   definitions into separate patches (suggested by Andy Shevchenko)
+> * made special pcal6524 address adjustment more readable
+>   (suggested by Andy Shevchenko)
+> * moved gpio-controller and interrupt-controller to the
+>   "required" section (reviewed by Rob Herring)
 >
-> Patch applied.
+> 2018-04-10 18:07:07: V3:
+> * add Reported-by: and Reviewed-by:
+> * fix wording for bindings description and example
+> * convert all register offsets to hex
+> * omit the LEVEL-IRQ RFC/hack commit
+>
+> 2018-04-04 21:00:27: V2:
+> * added PCA_PCAL flags if matched through of-table
+> * fix address calculation for extended PCAL6524 registers
+> * hack to map LEVEL_LOW to EDGE_FALLING to be able to
+>   test in combination with ts3a227e driver
+> * improve description of bindings for optional vcc-supply
+>   and interrupt-controller;
+>
+> 2018-03-10 09:32:53: no initial description
+>
 
-Bah on second thought holding this back since I see thyere are
-some discussions about the bindings in the next patch.
+After addressing comments for two patches,
 
-Anyway, it's nice if the other maintainers would like to get involved.
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Dong: you only need to resend patches 4.5.6 next time.
+for patches 1-5.
 
-Yours,
-Linus Walleij
+> H. Nikolaus Schaller (7):
+>   gpio: pca953x: convert register constants to hex
+>   gpio: pca953x: add more register definitions for pcal953x
+>   gpio: pca953x: add more register definitions for pcal6524
+>   gpio: pca953x: define masks for addressing common and extended
+>     registers
+>   gpio: pca953x: fix address calculation for pcal6524
+>   DTS: Bindings: pca953x add an optional vcc-supply property
+>   DTS: Bindings: pca953x: add example how to use interrupt-controller
+>     and gpio-controller
+>
+>  .../devicetree/bindings/gpio/gpio-pca953x.txt      | 34 ++++++++++++++
+>  drivers/gpio/gpio-pca953x.c                        | 53 ++++++++++++++--------
+>  2 files changed, 69 insertions(+), 18 deletions(-)
+>
+> --
+> 2.12.2
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
