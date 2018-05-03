@@ -1,23 +1,11 @@
 From: Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: [PATCH] pinctrl: rockchip: Disable interrupt when changing it's
- capability
-Date: Thu,  3 May 2018 14:13:57 +0800
-Message-ID: <20180503061357.5697-1-jeffy.chen@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Subject: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when changing it's capability
+Date: Thu,  3 May 2018 14:55:53 +0800
+Message-ID: <20180503065553.7762-1-jeffy.chen@rock-chips.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Jeffy Chen <jeffy.chen@rock-chips.com>, linux-gpio@vger.kernel.org, briannorris@google.com, linux-arm-kernel@lists.infradead.org
+Cc: briannorris@google.com, heiko@sntech.de, Jeffy Chen <jeffy.chen@rock-chips.com>, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
 We saw spurious irq when changing irq's trigger type, for example
@@ -29,7 +17,7 @@ or level-sensitive interrupts, and interrupt polarity should be
 completed prior to enabling the interrupts on Port A in order to prevent
 spurious glitches on the interrupt lines to the interrupt controller."
 
-Reported-by: Brian Norris <computersforpeace@gmail.com>
+Reported-by: Brian Norris <briannorris@google.com>
 Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 ---
 
