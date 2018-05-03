@@ -1,92 +1,67 @@
-From: Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH v2] pinctrl: msm: fix gpio-hog related boot issues
-Date: Thu, 03 May 2018 19:43:37 +0200
-Message-ID: <2265923.XhyVMjVhWR@debian64>
-References: <20180402121005.10080-1-chunkeey@gmail.com>
- <3524410.JrO1DEFpQ1@debian64>
- <CACRpkdaEYFerKQa4QRCFEg2TOrdbnF6SfVZ9chLpmCxSUNcZBw@mail.gmail.com>
+From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Subject: [PATCH 0/7] Allwinner H6 R_{PIO,INTC,I2C} support
+Date: Fri,  4 May 2018 02:38:40 +0800
+Message-ID: <20180503183847.11046-1-icenowy@aosc.io>
+Reply-To: icenowy-h8G6r0blFSE@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdaEYFerKQa4QRCFEg2TOrdbnF6SfVZ9chLpmCxSUNcZBw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: David Brown <david.brown@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBDS6XAN6ZADRB7VOVXLQKGQEZYNY6UA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mittwoch, 2. Mai 2018 14:14:39 CEST Linus Walleij wrote:
-> On Thu, Apr 26, 2018 at 11:47 PM, Christian Lamparter
-> <chunkeey@gmail.com> wrote:
-> > On Thu, Apr 26, 2018 11:12:21 CEST Linus Walleij wrote:
-> 
-> >> I think I replied in some other mail that I think we need to
-> >> be backwards compatible and it's not too hard to do
-> >> both. (Correct me if I'm wrong.)
-> >
-> > I think so too, I looked around and found that the nvidia pinctrl was
-> > doing something similar with of_find_property():
-> > <https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/pinctrl/tegra/pinctrl-tegra.c#L652>
-> > |       has_prop = of_find_property(np, "gpio-ranges", NULL);
-> >
-> > However this looks kinda funny, since "has_prob" is declared as a bool
-> > and of_find_property() returns a pointer to a "struct property"....
-> > Tell you what: If nobody beats me to it, I'll sent a patch for this after
-> > the pinctrl-msm's gpio-hog has been dealt with. :)
-> 
-> Yeah the nVidia driver is one of the oldest and also at the time
-> DT was kind of new. I haven't heard from Stephen for a while
-> but I bet he will pop up, else check with Laxman, he's got
-> a good grip on nVidia pinctrl+GPIO as well.
-All in good time. 
+This patchset adds support for Allwinner H6's R_{PIO,INTC,I2C}
+peripherals. They are in the "CPUS" power domain, powered by VDD-CPUS
+rather than VDD-SYS.
 
-But first @Bjorn and @Andy or @David can you please look and
-review v4 "pinctrl: msm: fix gpio-hog related boot issues"
-<https://patchwork.kernel.org/patch/10339129/>
+R_PIO controls the PL/PM GPIO banks, R_INTC controls NMI, and R_I2C
+controls the I2C at PL0/1.
 
-Thanks.
+A PCF8563 RTC is attached on R_I2C on Pine H64, which is added to the
+device tree. An AXP805 (a variation of AXP806 with different default
+value customization) is attached on the bus too, however as its driver
+currently lacks self-work mode support, it will be activated in another
+patchset.
 
-> > The MR24 craze is mostly over by now. You can still find a few. However
-> > some listings are now selling them with OpenWrt/LEDE for ~$40.
-> >
-> > And obviously, this cycle will continue on, but now with the old wave1
-> > 802.11ac gear that gets replaced. In fact this business has spawned
-> > companies that are actively working on supporting "old" enterprise gear
-> > via their own OpenWrt/LEDE derivatives.
-> 
-> Haha that is just awesome :D
-> I hope they salvage a lot of them.
-Yes, I'm aware of that some of them where put to good use in the
-Personal Telco Projec (501(c)(3) non-profit organization in Portland, Oregon):
-<https://personaltelco.net/wiki/PersonalTelco>
-And they have been somewhat vocal about it too:
-<https://groups.google.com/forum/#!msg/ptp-general/RZ-VjKFonVo/cQgnGn2wAgAJ>
-"The MR24 is a dual-band 802.11n 3x3 MIMO access point with a single 
-ethernet port.  They are "last-gen" devices, and are starting to show up 
-on ebay at reasonable prices as Meraki's deep-pocket cloud-management 
-enterprise users are beginning to "upgrade" to 802.11ac gear.  Note that 
-802.11n in this case means a fully-open-source driver (ath9k).  802.11ac 
-drivers involve firmware blobs across the board.  You don't get 
-super-wide 5GHz channels, but you get freedom. "
+In order to support R_{PIO,I2C}, a PRCM CCU driver is introduced. As the
+PRCM clock part is totally different with older SoCs (from A31 to H5),
+the driver for H6 is a new one, not reusing the old code.
 
-;)
+Icenowy Zheng (7):
+  clk: sunxi-ng: add support for H6 PRCM CCU
+  arm64: allwinner: h6: add PRCM CCU device node
+  pinctrl: sunxi: add support for H6 R_PIO pin controller
+  arm64: allwinner: h6: add node for R_PIO pin controller
+  arm64: allwinner: h6: add R_INTC interrupt controller
+  arm64: allwinner: h6: add R_I2C controller
+  arm64: allwinner: h6: add PCF8563 RTC on Pine H64 board
 
-By the way, it gets even weirder. In the past (and to this day) Meraki has
-given away their current crop of enterprise APs via their
-"Free AP for IT Professionals" <https://meraki.cisco.com/tc/freeap> program.
-Of course, the main idea probably was to get them all "hooked/sold" on their
-cloud-management firmware. Because of course that "Free AP" is intended to be
-only good for the lifespan of included the 3-year license. However, 
-"IT Professionals" do have their own mind and that's why there is some
-continued interest in making alternative firmwares for these devices.
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   3 +-
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+ .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      |  10 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi       |  52 ++++++
+ drivers/clk/sunxi-ng/Kconfig                       |   5 +
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c             | 207 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h             |  19 ++
+ drivers/pinctrl/sunxi/Kconfig                      |   4 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c        | 128 +++++++++++++
+ include/dt-bindings/clock/sun50i-h6-r-ccu.h        |  24 +++
+ include/dt-bindings/reset/sun50i-h6-r-ccu.h        |  17 ++
+ 13 files changed, 471 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c
+ create mode 100644 include/dt-bindings/clock/sun50i-h6-r-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-h6-r-ccu.h
 
-Best Regards,
-Christian
+-- 
+2.15.1
