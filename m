@@ -1,46 +1,42 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-Date: Thu, 3 May 2018 15:35:12 +0300
-Message-ID: <31fab61c-951f-244b-f965-70e034f23e7e@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180426235818.10018-2-digetx@gmail.com>
- <1524832404.6979.9.camel@ziswiler.com>
- <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
- <1524834018.6979.13.camel@ziswiler.com>
- <7c4e96ea-8bcf-1643-1b0f-29dc85b62b7b@gmail.com>
- <440e71db-cd0b-c4d8-eb24-ac8ebec9ae75@gmail.com>
- <1525350612.5836.6.camel@ziswiler.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] gpio: ge: Fix build warning
+Date: Thu,  3 May 2018 14:46:24 +0200
+Message-ID: <20180503124624.14461-1-thierry.reding@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1525350612.5836.6.camel@ziswiler.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 03.05.2018 15:30, Marcel Ziswiler wrote:
-> On Thu, 2018-05-03 at 15:02 +0300, Dmitry Osipenko wrote:
->> ...
->>> Marcel, you previously mentioned that reverting of your DT patch
->>> works for the
->>> Colibri now. Does that reverting also work for the 4.17 kernel? If
->>> yes, I may
->>> add stable tag to the revert-patch to get back paz00 working with
->>> 4.17. If it's
->>> not working, we should figure out why pll_p_out4 is getting
->>> disabled as it
->>> should be a distinct issue.
->>
->> Oh, I just found that Thierry already asked to get this patches
->> included into
->> 4.17. Anyway would be nice to know if a sole DT revert works with
->> 4.17 for you.
-> 
-> Yes, 4.17.0-rc3 with just 4c9a27a6c66d4427f3cba4019d4ba738fe99fa87
-> reverted works fine as well.
+From: Thierry Reding <treding@nvidia.com>
 
-Okay, thank you very much. So pll_p_out4 disabling was either an intermediate
-issue that got fixed or it is masked by something else now.
+Casting a pointer to u16 can produce a compiler warning such as this:
+
+    drivers/gpio/gpio-ge.c: In function 'gef_gpio_probe':
+    drivers/gpio/gpio-ge.c:83:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+        gc->ngpio = (u16)of_device_get_match_data(&pdev->dev);
+                    ^
+
+Cast the pointer through a uintptr_t to avoid the warning.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpio-ge.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-ge.c b/drivers/gpio/gpio-ge.c
+index 4c43562434cf..636952769bc8 100644
+--- a/drivers/gpio/gpio-ge.c
++++ b/drivers/gpio/gpio-ge.c
+@@ -80,7 +80,7 @@ static int __init gef_gpio_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	gc->base = -1;
+-	gc->ngpio = (u16)of_device_get_match_data(&pdev->dev);
++	gc->ngpio = (u16)(uintptr_t)of_device_get_match_data(&pdev->dev);
+ 	gc->of_gpio_n_cells = 2;
+ 	gc->of_node = pdev->dev.of_node;
+ 
+-- 
+2.17.0
