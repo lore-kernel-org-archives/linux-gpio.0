@@ -1,11 +1,15 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] pinctrl: armada-37xx: Convert to use match_string() helper
-Date: Thu,  3 May 2018 20:26:42 +0300
-Message-ID: <20180503172642.21031-1-andriy.shevchenko@linux.intel.com>
+From: Christian Lamparter <chunkeey@gmail.com>
+Subject: Re: [PATCH v2] pinctrl: msm: fix gpio-hog related boot issues
+Date: Thu, 03 May 2018 19:43:37 +0200
+Message-ID: <2265923.XhyVMjVhWR@debian64>
+References: <20180402121005.10080-1-chunkeey@gmail.com>
+ <3524410.JrO1DEFpQ1@debian64>
+ <CACRpkdaEYFerKQa4QRCFEg2TOrdbnF6SfVZ9chLpmCxSUNcZBw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdaEYFerKQa4QRCFEg2TOrdbnF6SfVZ9chLpmCxSUNcZBw@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -15,72 +19,74 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: David Brown <david.brown@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The new helper returns index of the matching string in an array.
-We are going to use it here.
+On Mittwoch, 2. Mai 2018 14:14:39 CEST Linus Walleij wrote:
+> On Thu, Apr 26, 2018 at 11:47 PM, Christian Lamparter
+> <chunkeey@gmail.com> wrote:
+> > On Thu, Apr 26, 2018 11:12:21 CEST Linus Walleij wrote:
+> 
+> >> I think I replied in some other mail that I think we need to
+> >> be backwards compatible and it's not too hard to do
+> >> both. (Correct me if I'm wrong.)
+> >
+> > I think so too, I looked around and found that the nvidia pinctrl was
+> > doing something similar with of_find_property():
+> > <https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/pinctrl/tegra/pinctrl-tegra.c#L652>
+> > |       has_prop = of_find_property(np, "gpio-ranges", NULL);
+> >
+> > However this looks kinda funny, since "has_prob" is declared as a bool
+> > and of_find_property() returns a pointer to a "struct property"....
+> > Tell you what: If nobody beats me to it, I'll sent a patch for this after
+> > the pinctrl-msm's gpio-hog has been dealt with. :)
+> 
+> Yeah the nVidia driver is one of the oldest and also at the time
+> DT was kind of new. I haven't heard from Stephen for a while
+> but I bet he will pop up, else check with Laxman, he's got
+> a good grip on nVidia pinctrl+GPIO as well.
+All in good time. 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 29 ++++++---------------
- 1 file changed, 8 insertions(+), 21 deletions(-)
+But first @Bjorn and @Andy or @David can you please look and
+review v4 "pinctrl: msm: fix gpio-hog related boot issues"
+<https://patchwork.kernel.org/patch/10339129/>
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index 5b63248c8209..0f1eafba0ded 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -214,18 +214,6 @@ static inline void armada_37xx_update_reg(unsigned int *reg,
- 	}
- }
- 
--static int armada_37xx_get_func_reg(struct armada_37xx_pin_group *grp,
--				    const char *func)
--{
--	int f;
--
--	for (f = 0; (f < NB_FUNCS) && grp->funcs[f]; f++)
--		if (!strcmp(grp->funcs[f], func))
--			return f;
--
--	return -ENOTSUPP;
--}
--
- static struct armada_37xx_pin_group *armada_37xx_find_next_grp_by_pin(
- 	struct armada_37xx_pinctrl *info, int pin, int *grp)
- {
-@@ -344,10 +332,9 @@ static int armada_37xx_pmx_set_by_name(struct pinctrl_dev *pctldev,
- 	dev_dbg(info->dev, "enable function %s group %s\n",
- 		name, grp->name);
- 
--	func = armada_37xx_get_func_reg(grp, name);
--
-+	func = match_string(grp->funcs, NB_FUNCS, name);
- 	if (func < 0)
--		return func;
-+		return -ENOTSUPP;
- 
- 	val = grp->val[func];
- 
-@@ -932,12 +919,12 @@ static int armada_37xx_fill_func(struct armada_37xx_pinctrl *info)
- 			struct armada_37xx_pin_group *gp = &info->groups[g];
- 			int f;
- 
--			for (f = 0; (f < NB_FUNCS) && gp->funcs[f]; f++) {
--				if (strcmp(gp->funcs[f], name) == 0) {
--					*groups = gp->name;
--					groups++;
--				}
--			}
-+			f = match_string(gp->funcs, NB_FUNCS, name);
-+			if (f < 0)
-+				continue;
-+
-+			*groups = gp->name;
-+			groups++;
- 		}
- 	}
- 	return 0;
--- 
-2.17.0
+Thanks.
+
+> > The MR24 craze is mostly over by now. You can still find a few. However
+> > some listings are now selling them with OpenWrt/LEDE for ~$40.
+> >
+> > And obviously, this cycle will continue on, but now with the old wave1
+> > 802.11ac gear that gets replaced. In fact this business has spawned
+> > companies that are actively working on supporting "old" enterprise gear
+> > via their own OpenWrt/LEDE derivatives.
+> 
+> Haha that is just awesome :D
+> I hope they salvage a lot of them.
+Yes, I'm aware of that some of them where put to good use in the
+Personal Telco Projec (501(c)(3) non-profit organization in Portland, Oregon):
+<https://personaltelco.net/wiki/PersonalTelco>
+And they have been somewhat vocal about it too:
+<https://groups.google.com/forum/#!msg/ptp-general/RZ-VjKFonVo/cQgnGn2wAgAJ>
+"The MR24 is a dual-band 802.11n 3x3 MIMO access point with a single 
+ethernet port.  They are "last-gen" devices, and are starting to show up 
+on ebay at reasonable prices as Meraki's deep-pocket cloud-management 
+enterprise users are beginning to "upgrade" to 802.11ac gear.  Note that 
+802.11n in this case means a fully-open-source driver (ath9k).  802.11ac 
+drivers involve firmware blobs across the board.  You don't get 
+super-wide 5GHz channels, but you get freedom. "
+
+;)
+
+By the way, it gets even weirder. In the past (and to this day) Meraki has
+given away their current crop of enterprise APs via their
+"Free AP for IT Professionals" <https://meraki.cisco.com/tc/freeap> program.
+Of course, the main idea probably was to get them all "hooked/sold" on their
+cloud-management firmware. Because of course that "Free AP" is intended to be
+only good for the lifespan of included the 3-year license. However, 
+"IT Professionals" do have their own mind and that's why there is some
+continued interest in making alternative firmwares for these devices.
+
+Best Regards,
+Christian
