@@ -1,114 +1,110 @@
-From: Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH] pinctrl: rockchip: Add set_config callback support for gpiolib
-Date: Thu,  3 May 2018 16:04:42 +0800
-Message-ID: <1525334682-222918-1-git-send-email-shawn.lin@rock-chips.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Date: Thu, 3 May 2018 14:59:26 +0300
+Message-ID: <7c4e96ea-8bcf-1643-1b0f-29dc85b62b7b@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+ <20180426235818.10018-2-digetx@gmail.com>
+ <1524832404.6979.9.camel@ziswiler.com>
+ <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
+ <1524834018.6979.13.camel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1524834018.6979.13.camel@ziswiler.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Could only support PIN_CONFIG_INPUT_DEBOUNCE now as the HW block
-is too simple to support others. But even wrt. debounce capability,
-it now could only support very limited period of time to satisfy the
-real usecase. But still be useful to enable the crippled HW debounce
-to prevent any spurious glitches from waking up the system if the
-gpio is conguired as wakeup interrupt source.
+On 27.04.2018 16:00, Marcel Ziswiler wrote:
+> On Fri, 2018-04-27 at 15:54 +0300, Dmitry Osipenko wrote:
+>> Hi Marcel,
+>>
+>> On 27.04.2018 15:33,  Ziswiler wrote:
+>>> Hi Dmitry
+>>>
+>>> Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around
+>>> e.g.
+>>> DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
+>>>
+>>> On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
+>>>> CDEV1/CDEV2 clocks could have corresponding oscillator clock
+>>>> divider
+>>>> as
+>>>> a parent. Add these dividers in order to be able to provide that
+>>>> parent
+>>>> option.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+>>>>  1 file changed, 12 insertions(+)
+>>>>
+>>>> diff --git a/drivers/clk/tegra/clk-tegra20.c
+>>>> b/drivers/clk/tegra/clk-
+>>>> tegra20.c
+>>>> index 0ee56dd04cec..16cf4108f2ff 100644
+>>>> --- a/drivers/clk/tegra/clk-tegra20.c
+>>>> +++ b/drivers/clk/tegra/clk-tegra20.c
+>>>> @@ -26,6 +26,8 @@
+>>>>  #include "clk.h"
+>>>>  #include "clk-id.h"
+>>>>  
+>>>> +#define MISC_CLK_ENB 0x48
+>>>> +
+>>>>  #define OSC_CTRL 0x50
+>>>>  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+>>>>  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+>>>> @@ -831,6 +833,16 @@ static void __init
+>>>> tegra20_periph_clk_init(void)
+>>>>  				    periph_clk_enb_refcnt);
+>>>>  	clks[TEGRA20_CLK_PEX] = clk;
+>>>>  
+>>>> +	/* cdev1 OSC divider */
+>>>> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
+>>>> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+>>>
+>>> So it would be:
+>>>
+>>> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+>>>
+>>>> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+>>>> +
+>>>> +	/* cdev2 OSC divider */
+>>>> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
+>>>> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+>>>
+>>> And:
+>>>
+>>> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+>>>
+>>>> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+>>>> +
+>>>>  	/* cdev1 */
+>>>>  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL,
+>>>> 0,
+>>>> 26000000);
+>>>>  	clk = tegra_clk_register_periph_gate("cdev1",
+>>>> "cdev1_fixed",
+>>>> 0,
+>>
+>> Indeed, good catch! I'll wait for more comments and then re-spin
+>> patchset with
+>> the fix. Thank you.
+> 
+> You are very welcome. Thank you!
+> 
+> Other than that it all looks proper and works fine at least in the
+> configuration we use on Colibri T20. So you may add my reviewed and
+> tested bys to the whole series:
+> 
+> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
 
-Signed-off-by: Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
----
-Hi Linus,
-
-This patch comes from our early discussion of debounce of cd-gpios for sd card
-that I pointed out that rockchip's platform lacks HW debounce support, but I
-think it's overkilled. It does have HW debounce but not really useful as the
-debounce period is toooo short and almost fixed. But something is better than
-nothing, so I'd like to enable it for filtering glitches, since cd-gpios for
-sd card is allow to configured as wakeup source. ;)
-
- drivers/pinctrl/pinctrl-rockchip.c | 52 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 3924779..14e80de 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -2555,6 +2555,57 @@ static int rockchip_gpio_direction_output(struct gpio_chip *gc,
- 	return pinctrl_gpio_direction_output(gc->base + offset);
- }
- 
-+static void rockchip_gpio_set_debounce(struct gpio_chip *gc,
-+				       unsigned int offset, bool enable)
-+{
-+	struct rockchip_pin_bank *bank = gpiochip_get_data(gc);
-+	void __iomem *reg = bank->reg_base + GPIO_DEBOUNCE;
-+	unsigned long flags;
-+	u32 data;
-+
-+	clk_enable(bank->clk);
-+	raw_spin_lock_irqsave(&bank->slock, flags);
-+
-+	data = readl(reg);
-+	if (enable)
-+		data |= BIT(offset);
-+	else
-+		data &= ~BIT(offset);
-+	writel(data, reg);
-+
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
-+	clk_disable(bank->clk);
-+}
-+
-+/*
-+ * gpiolib set_config callback function. The setting of the pin
-+ * mux function as 'gpio output' will be handled by the pinctrl subsystem
-+ * interface.
-+ */
-+static int rockchip_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-+				  unsigned long config)
-+{
-+	enum pin_config_param param = pinconf_to_config_param(config);
-+
-+	switch (param) {
-+	case PIN_CONFIG_INPUT_DEBOUNCE:
-+		rockchip_gpio_set_debounce(gc, offset, true);
-+		/*
-+		 * Rockchip's gpio could only support up to one period
-+		 * of the debounce clock(pclk), which is far away from
-+		 * satisftying the requirement, as pclk is usually near
-+		 * 100MHz shared by all peripherals. So the fact is it
-+		 * has crippled debounce capability could only be useful
-+		 * to prevent any spurious glitches from waking up the system
-+		 * if the gpio is conguired as wakeup interrupt source. Let's
-+		 * still return -ENOTSUPP as before, to make sure the caller
-+		 * of gpiod_set_debounce won't change its behaviour.
-+		 */
-+	default:
-+		return -ENOTSUPP;
-+	}
-+}
-+
- /*
-  * gpiolib gpio_to_irq callback function. Creates a mapping between a GPIO pin
-  * and a virtual IRQ, if not already present.
-@@ -2580,6 +2631,7 @@ static int rockchip_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
- 	.get_direction	= rockchip_gpio_get_direction,
- 	.direction_input = rockchip_gpio_direction_input,
- 	.direction_output = rockchip_gpio_direction_output,
-+	.set_config = rockchip_gpio_set_config,
- 	.to_irq = rockchip_gpio_to_irq,
- 	.owner = THIS_MODULE,
- };
--- 
-1.9.1
+Marcel, you previously mentioned that reverting of your DT patch works for the
+Colibri now. Does that reverting also work for the 4.17 kernel? If yes, I may
+add stable tag to the revert-patch to get back paz00 working with 4.17. If it's
+not working, we should figure out why pll_p_out4 is getting disabled as it
+should be a distinct issue.
