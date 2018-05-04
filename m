@@ -1,57 +1,63 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: [PATCH v5 4/7] gpio: pca953x: define masks for addressing common and extended registers
-Date: Fri, 4 May 2018 09:33:57 +0200
-Message-ID: <71415CEC-6763-4658-A0C4-7AD4E3C1746D@goldelico.com>
-References: <cover.1524933096.git.hns@goldelico.com> <3df974ea890116d759844e56362dc0786388869a.1524933096.git.hns@goldelico.com> <CAHp75Ve37aARbNZ8qu5W9C-fFG5Kf9GRE_VR4aRLFpX61zviyg@mail.gmail.com> <FA9DBCAF-2EA5-4317-BBA3-E2D6A9EAC5D4@goldelico.com>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <FA9DBCAF-2EA5-4317-BBA3-E2D6A9EAC5D4@goldelico.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, kernel@pyra-handheld.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v2] pinctrl: msm: fix gpio-hog related boot issues
+Date: Fri, 4 May 2018 14:34:05 +0530
+Message-ID: <044eab94-fd5f-884f-8e60-047c40344aad@nvidia.com>
+References: <20180402121005.10080-1-chunkeey@gmail.com>
+ <3524410.JrO1DEFpQ1@debian64>
+ <CACRpkdaEYFerKQa4QRCFEg2TOrdbnF6SfVZ9chLpmCxSUNcZBw@mail.gmail.com>
+ <2265923.XhyVMjVhWR@debian64>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <2265923.XhyVMjVhWR@debian64>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Christian Lamparter <chunkeey@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
 
-> Am 02.05.2018 um 14:36 schrieb H. Nikolaus Schaller =
-<hns@goldelico.com>:
->=20
->=20
->> Am 02.05.2018 um 14:29 schrieb Andy Shevchenko =
-<andy.shevchenko@gmail.com>:
->>=20
->> On Sat, Apr 28, 2018 at 7:31 PM, H. Nikolaus Schaller =
-<hns@goldelico.com> wrote:
->>> These mask bits are to be used to map the extended register
->>> addreseses (which are defined for an unsupported 8-bit pcal chip)
->>> to 16 and 24 bit chips (pcal6524).
->>>=20
 
->>>=20
->>> +#define PCAL_GPIO_MASK         GENMASK(4, 0)
->>> +#define PCAL_PINCTRL_MASK      (~PCAL_GPIO_MASK)
->>=20
->> I'm not sure which would be better here
->>=20
->> 1) to follow existing style
->> 0x1F
->> 0xE0
->>=20
->> 2) to use GENMASK() in both definitions
->>=20
->> 3) as it in this patch.
->>=20
->>=20
->> Whatever Linus prefers.
->=20
-> Ok, waiting for his suggestion.
+On Thursday 03 May 2018 11:13 PM, Christian Lamparter wrote:
+> On Mittwoch, 2. Mai 2018 14:14:39 CEST Linus Walleij wrote:
+>> On Thu, Apr 26, 2018 at 11:47 PM, Christian Lamparter
+>> <chunkeey@gmail.com> wrote:
+>>> On Thu, Apr 26, 2018 11:12:21 CEST Linus Walleij wrote:
+>>>> I think I replied in some other mail that I think we need to
+>>>> be backwards compatible and it's not too hard to do
+>>>> both. (Correct me if I'm wrong.)
+>>> I think so too, I looked around and found that the nvidia pinctrl was
+>>> doing something similar with of_find_property():
+>>> <https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/pinctrl/tegra/pinctrl-tegra.c#L652>
+>>> |       has_prop = of_find_property(np, "gpio-ranges", NULL);
+>>>
+>>> However this looks kinda funny, since "has_prob" is declared as a bool
+>>> and of_find_property() returns a pointer to a "struct property"....
+>>> Tell you what: If nobody beats me to it, I'll sent a patch for this after
+>>> the pinctrl-msm's gpio-hog has been dealt with. :)
+>> Yeah the nVidia driver is one of the oldest and also at the time
+>> DT was kind of new. I haven't heard from Stephen for a while
+>> but I bet he will pop up, else check with Laxman, he's got
+>> a good grip on nVidia pinctrl+GPIO as well.
+> All in good time.
+>
+> But first @Bjorn and @Andy or @David can you please look and
+> review v4 "pinctrl: msm: fix gpio-hog related boot issues"
+> <https://patchwork.kernel.org/patch/10339129/>
 
-Any advice if we should change or keep this?
+Agree with the patch as by adding gpio-ranges, we add the gpio range 
+part of gpiochip_add(), called by 
+of_gpiochip_add()->of_gpiochip_add_pin_range(). and so does not need to 
+explicitly call of the gpiochip_add_pin_range().
 
-(Please do not merge before I submit a v6 because there are
-some more suggested-by and reviewed-by).
+Please add ack in above patch.
 
-BR and thanks,
-Nikolaus
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
