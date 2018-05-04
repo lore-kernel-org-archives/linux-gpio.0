@@ -1,63 +1,71 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH v2] pinctrl: msm: fix gpio-hog related boot issues
-Date: Fri, 4 May 2018 14:34:05 +0530
-Message-ID: <044eab94-fd5f-884f-8e60-047c40344aad@nvidia.com>
-References: <20180402121005.10080-1-chunkeey@gmail.com>
- <3524410.JrO1DEFpQ1@debian64>
- <CACRpkdaEYFerKQa4QRCFEg2TOrdbnF6SfVZ9chLpmCxSUNcZBw@mail.gmail.com>
- <2265923.XhyVMjVhWR@debian64>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 4/4] ARM: dts: tegra20: Revert "Fix ULPI regression on
+ Tegra20"
+Date: Fri, 4 May 2018 12:40:51 +0200
+Message-ID: <20180504104051.GL13459@ulmo>
+References: <20180503225537.20748-1-digetx@gmail.com>
+ <20180503225537.20748-6-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <2265923.XhyVMjVhWR@debian64>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Christian Lamparter <chunkeey@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7l042bGvurpep9Wg"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180503225537.20748-6-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 
+--7l042bGvurpep9Wg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday 03 May 2018 11:13 PM, Christian Lamparter wrote:
-> On Mittwoch, 2. Mai 2018 14:14:39 CEST Linus Walleij wrote:
->> On Thu, Apr 26, 2018 at 11:47 PM, Christian Lamparter
->> <chunkeey@gmail.com> wrote:
->>> On Thu, Apr 26, 2018 11:12:21 CEST Linus Walleij wrote:
->>>> I think I replied in some other mail that I think we need to
->>>> be backwards compatible and it's not too hard to do
->>>> both. (Correct me if I'm wrong.)
->>> I think so too, I looked around and found that the nvidia pinctrl was
->>> doing something similar with of_find_property():
->>> <https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/pinctrl/tegra/pinctrl-tegra.c#L652>
->>> |       has_prop = of_find_property(np, "gpio-ranges", NULL);
->>>
->>> However this looks kinda funny, since "has_prob" is declared as a bool
->>> and of_find_property() returns a pointer to a "struct property"....
->>> Tell you what: If nobody beats me to it, I'll sent a patch for this after
->>> the pinctrl-msm's gpio-hog has been dealt with. :)
->> Yeah the nVidia driver is one of the oldest and also at the time
->> DT was kind of new. I haven't heard from Stephen for a while
->> but I bet he will pop up, else check with Laxman, he's got
->> a good grip on nVidia pinctrl+GPIO as well.
-> All in good time.
->
-> But first @Bjorn and @Andy or @David can you please look and
-> review v4 "pinctrl: msm: fix gpio-hog related boot issues"
-> <https://patchwork.kernel.org/patch/10339129/>
+On Fri, May 04, 2018 at 01:55:37AM +0300, Dmitry Osipenko wrote:
+> Commit 4c9a27a6c66d ("ARM: tegra: Fix ULPI regression on Tegra20") changed
+> "ulpi-link" clock from CDEV2 to PLL_P_OUT4. Turned out that PLL_P_OUT4 is
+> the parent of CDEV2 clock and original clock setup of "ulpi-link" was
+> correct. The reverted patch was fixing USB for one board and broke the
+> other, now Tegra's clk driver correctly sets parent for the CDEV2 clock
+> and hence patch could be reverted safely, restoring USB for all of the
+> boards.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marc Dietrich <marvin24@gmx.de>
+> ---
+>  arch/arm/boot/dts/tegra20.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Agree with the patch as by adding gpio-ranges, we add the gpio range 
-part of gpiochip_add(), called by 
-of_gpiochip_add()->of_gpiochip_add_pin_range(). and so does not need to 
-explicitly call of the gpiochip_add_pin_range().
+Is it still true that this patch alone fixes the known regression? I'm
+just asking because the remainder of the series, even though it sounds
+to be the right thing to do, is fairly big for a fix against v4.17.
 
-Please add ack in above patch.
+So if this alone fixes the regression I think it'd be best to queue it
+up for v4.17 and get the rest of the patches into v4.18.
 
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+Thierry
+
+--7l042bGvurpep9Wg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrsOLEACgkQ3SOs138+
+s6EGSA//eqg+XTznoksvEILxLT2d1DeiOijjzlYVUPKMTriI8Ss7hdg4Sc1HHjVW
+uCBgY+csl//d1RQ2kB+HgrCb8iJ2t/j7KdgLCScI9tlZQZrlciP/SIpxGoSeGa7u
+Xd46KKucNtuE5MEZLWHA6NpVx+b5EBIRCudTWCy5y31oGMGqqAMnQp9NHGL6/p8N
+5C3bRUPZA5w385aPjngGUoZrvKV8GPuLEPi1OHh5wp7rNax8aC75boNK8U3b1I0S
+LIgxJATJdEvSOvBOETfzQz/jXFHH2Q6rJuteu9TF1vzcnaBqRFKv1YTwcmxQM8Lk
+2Ie4rPwvFfd6yY9a7LVvBf/4TGJ01cqhsgFysnKW+4mKWlCKT2VACFFwYaTlYhDb
+M+9guQA6BsocY1ID1MaEiP5+0hCma/qA0n4vlKJwslFAKTUOlTJ4iwlwP/xilCsc
+hIcA671e0N2YYFGRSKFISOWTzEbGB2BD1uGRghwxXRN116+6skwqF9ES44OuoyYD
+s9/8byqPo2m0umKYtGz/KkVM1AvAAWyrmBdpAqtCHLQjk+zJDNloJ3eF1iWikBfm
+9GIDxf2ojxEp6rtA5x3JN+JXBNJQwiZuwB25HBBI8u5/afuFkM/fP59jrtJOQLI8
+3nqNWlQqxgKiP1PPCu2zg34DJwd+R/+7ginkV08T7xyvDrJNRuM=
+=KvsY
+-----END PGP SIGNATURE-----
+
+--7l042bGvurpep9Wg--
