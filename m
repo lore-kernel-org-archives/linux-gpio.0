@@ -1,55 +1,75 @@
-From: Grigoryev Denis <grigoryev@fastwel.ru>
-Subject: [PATCH] gpio: pca953x: Clear irq trigger type on irq shutdown
-Date: Fri, 4 May 2018 16:53:18 +0000
-Message-ID: <no_message-id@ru>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [RESEND PATCH] pinctrl: qcom: fix wrong pull status display for no_keeper SoC
+Date: Fri,  4 May 2018 16:57:28 -0700
+Message-ID: <20180504235728.805-1-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Grigoryev Denis <grigoryev@fastwel.ru>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The driver stores the result of irq_set_type() in the internal variables
-irq_trig_raise and irq_trig_fall, which later are used to determine
-the GPIOs that must be re-configured as input. These variables retain their
-value between gpiolib's  export / unexport, resulting in an incorrect
-state in some cases. The corresponding bits in the variables
-irq_trig_raise and irq_trig_fall should be cleared in irq_shutdown().
+From: Clément Péron <peron.clem@gmail.com>
 
-Signed-off-by: Denis Grigoryev <grigoryev@fastwel.ru>
+DebugFS strings about pin pull status for no_keeper SoC are wrong
+
+Fix this by adding a different string array for no_keeper SoC
+
+Signed-off-by: Clément Péron <peron.clem@gmail.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/gpio/gpio-pca953x.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index d2ead4b..b41be8c 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -522,6 +522,15 @@ static int pca953x_irq_set_type(struct irq_data *d, unsigned int type)
- 	return 0;
+Hi Linus,
+
+Forwarding this patch which was posted to linux-arm-msm@ only. LGTM, please apply.
+
+@Clémen, please use ./scripts/get_maintaine.pl to find appropriate recipients
+for future patches.
+
+Regards,
+Bjorn
+
+ drivers/pinctrl/qcom/pinctrl-msm.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index fa4e94fedb8c..c3c77b86eff7 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -504,13 +504,19 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
+ 	int pull;
+ 	u32 ctl_reg;
+ 
+-	static const char * const pulls[] = {
++	static const char * const pulls_keeper[] = {
+ 		"no pull",
+ 		"pull down",
+ 		"keeper",
+ 		"pull up"
+ 	};
+ 
++	static const char * const pulls_no_keeper[] = {
++		"no pull",
++		"pull down",
++		"pull up",
++	};
++
+ 	if (!gpiochip_line_is_valid(chip, offset))
+ 		return;
+ 
+@@ -524,7 +530,10 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
+ 
+ 	seq_printf(s, " %-8s: %-3s %d", g->name, is_out ? "out" : "in", func);
+ 	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
+-	seq_printf(s, " %s", pulls[pull]);
++	if (pctrl->soc->pull_no_keeper)
++		seq_printf(s, " %s", pulls_no_keeper[pull]);
++	else
++		seq_printf(s, " %s", pulls_keeper[pull]);
+ 	seq_puts(s, "\n");
  }
  
-+static void pca953x_irq_shutdown(struct irq_data *d)
-+{
-+	struct pca953x_chip *chip = irq_data_get_irq_chip_data(d);
-+	u8 mask = 1 << (d->hwirq % BANK_SZ);
-+
-+	chip->irq_trig_raise[d->hwirq / BANK_SZ] &= ~mask;
-+	chip->irq_trig_fall[d->hwirq / BANK_SZ] &= ~mask;
-+}
-+
- static struct irq_chip pca953x_irq_chip = {
- 	.name			= "pca953x",
- 	.irq_mask		= pca953x_irq_mask,
-@@ -529,6 +538,7 @@ static struct irq_chip pca953x_irq_chip = {
- 	.irq_bus_lock		= pca953x_irq_bus_lock,
- 	.irq_bus_sync_unlock	= pca953x_irq_bus_sync_unlock,
- 	.irq_set_type		= pca953x_irq_set_type,
-+	.irq_shutdown		= pca953x_irq_shutdown,
- };
- 
- static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
 -- 
-2.7.4
+2.17.0
