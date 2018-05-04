@@ -1,47 +1,55 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 6/7] arm64: allwinner: h6: add R_I2C controller
-Date: Fri, 4 May 2018 17:12:06 +0200
-Message-ID: <20180504151206.c6oi7vtaskg4sbys@flea>
-References: <20180503183847.11046-1-icenowy@aosc.io>
- <20180503183847.11046-7-icenowy@aosc.io>
-Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
+From: Grigoryev Denis <grigoryev@fastwel.ru>
+Subject: [PATCH] gpio: pca953x: Clear irq trigger type on irq shutdown
+Date: Fri, 4 May 2018 16:53:18 +0000
+Message-ID: <no_message-id@ru>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="e4pavb2hql2yh5gb"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBR7QWHLQKGQERXRLOII-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20180503183847.11046-7-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Grigoryev Denis <grigoryev@fastwel.ru>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+The driver stores the result of irq_set_type() in the internal variables
+irq_trig_raise and irq_trig_fall, which later are used to determine
+the GPIOs that must be re-configured as input. These variables retain their
+value between gpiolib's  export / unexport, resulting in an incorrect
+state in some cases. The corresponding bits in the variables
+irq_trig_raise and irq_trig_fall should be cleared in irq_shutdown().
 
---e4pavb2hql2yh5gb
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+Signed-off-by: Denis Grigoryev <grigoryev@fastwel.ru>
+---
+ drivers/gpio/gpio-pca953x.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-On Fri, May 04, 2018 at 02:38:46AM +0800, Icenowy Zheng wrote:
-> Allwinner H6 SoC has a R_I2C controller wired to the PL0/PL1 pins, which
-> are used in the reference design to connect AXP805 PMIC.
-> 
-> Add support for it.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-
-Dropped the headers (that should have been in your previous patch to
-maintain the bisectability) and changed for indices, and applied.
-
-Maxime
-
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index d2ead4b..b41be8c 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -522,6 +522,15 @@ static int pca953x_irq_set_type(struct irq_data *d, unsigned int type)
+ 	return 0;
+ }
+ 
++static void pca953x_irq_shutdown(struct irq_data *d)
++{
++	struct pca953x_chip *chip = irq_data_get_irq_chip_data(d);
++	u8 mask = 1 << (d->hwirq % BANK_SZ);
++
++	chip->irq_trig_raise[d->hwirq / BANK_SZ] &= ~mask;
++	chip->irq_trig_fall[d->hwirq / BANK_SZ] &= ~mask;
++}
++
+ static struct irq_chip pca953x_irq_chip = {
+ 	.name			= "pca953x",
+ 	.irq_mask		= pca953x_irq_mask,
+@@ -529,6 +538,7 @@ static struct irq_chip pca953x_irq_chip = {
+ 	.irq_bus_lock		= pca953x_irq_bus_lock,
+ 	.irq_bus_sync_unlock	= pca953x_irq_bus_sync_unlock,
+ 	.irq_set_type		= pca953x_irq_set_type,
++	.irq_shutdown		= pca953x_irq_shutdown,
+ };
+ 
+ static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
 -- 
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
---e4pavb2hql2yh5gb--
+2.7.4
