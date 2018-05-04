@@ -1,35 +1,57 @@
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 1/2] pinctrl: mvebu: update use "nand" function for "rb" pin
-Date: Fri,  4 May 2018 15:06:37 +1200
-Message-ID: <20180504030638.31521-1-chris.packham@alliedtelesis.co.nz>
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [PATCH v5 4/7] gpio: pca953x: define masks for addressing common and extended registers
+Date: Fri, 4 May 2018 09:33:57 +0200
+Message-ID: <71415CEC-6763-4658-A0C4-7AD4E3C1746D@goldelico.com>
+References: <cover.1524933096.git.hns@goldelico.com> <3df974ea890116d759844e56362dc0786388869a.1524933096.git.hns@goldelico.com> <CAHp75Ve37aARbNZ8qu5W9C-fFG5Kf9GRE_VR4aRLFpX61zviyg@mail.gmail.com> <FA9DBCAF-2EA5-4317-BBA3-E2D6A9EAC5D4@goldelico.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <FA9DBCAF-2EA5-4317-BBA3-E2D6A9EAC5D4@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: andrew@lunn.ch, gregory.clement@bootlin.com, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, kernel@pyra-handheld.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The Armada 98dx3236 SoCs don't have a different MPP sel value for nand
-specific pins so "dev" was technically correct. But all the other Armada
-SoCs use "nand" in their dts and the pin is specific to the nand
-interface so use "nand" for the function name.
+Hi Linus,
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
- drivers/pinctrl/mvebu/pinctrl-armada-xp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Am 02.05.2018 um 14:36 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
+>=20
+>=20
+>> Am 02.05.2018 um 14:29 schrieb Andy Shevchenko =
+<andy.shevchenko@gmail.com>:
+>>=20
+>> On Sat, Apr 28, 2018 at 7:31 PM, H. Nikolaus Schaller =
+<hns@goldelico.com> wrote:
+>>> These mask bits are to be used to map the extended register
+>>> addreseses (which are defined for an unsupported 8-bit pcal chip)
+>>> to 16 and 24 bit chips (pcal6524).
+>>>=20
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-index b854f1ee5de5..28b199796fae 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-@@ -431,7 +431,7 @@ static struct mvebu_mpp_mode mv98dx3236_mpp_modes[] = {
- 	MPP_MODE(19,
- 		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
- 		 MPP_VAR_FUNCTION(0x3, "uart1", "rxd",       V_98DX3236_PLUS),
--		 MPP_VAR_FUNCTION(0x4, "dev", "rb",          V_98DX3236_PLUS)),
-+		 MPP_VAR_FUNCTION(0x4, "nand", "rb",         V_98DX3236_PLUS)),
- 	MPP_MODE(20,
- 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
- 		 MPP_VAR_FUNCTION(0x4, "dev", "we0",         V_98DX3236_PLUS)),
--- 
-2.17.0
+>>>=20
+>>> +#define PCAL_GPIO_MASK         GENMASK(4, 0)
+>>> +#define PCAL_PINCTRL_MASK      (~PCAL_GPIO_MASK)
+>>=20
+>> I'm not sure which would be better here
+>>=20
+>> 1) to follow existing style
+>> 0x1F
+>> 0xE0
+>>=20
+>> 2) to use GENMASK() in both definitions
+>>=20
+>> 3) as it in this patch.
+>>=20
+>>=20
+>> Whatever Linus prefers.
+>=20
+> Ok, waiting for his suggestion.
+
+Any advice if we should change or keep this?
+
+(Please do not merge before I submit a v6 because there are
+some more suggested-by and reviewed-by).
+
+BR and thanks,
+Nikolaus
