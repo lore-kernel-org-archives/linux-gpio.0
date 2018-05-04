@@ -1,128 +1,35 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Date: Fri,  4 May 2018 01:55:34 +0300
-Message-ID: <20180503225537.20748-3-digetx@gmail.com>
-References: <20180503225537.20748-1-digetx@gmail.com>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 1/2] pinctrl: mvebu: update use "nand" function for "rb" pin
+Date: Fri,  4 May 2018 15:06:37 +1200
+Message-ID: <20180504030638.31521-1-chris.packham@alliedtelesis.co.nz>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180503225537.20748-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: andrew@lunn.ch, gregory.clement@bootlin.com, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-that main clk-controller driver could get an actual parent clock for the
-CDEV1/2 clocks.
+The Armada 98dx3236 SoCs don't have a different MPP sel value for nand
+specific pins so "dev" was technically correct. But all the other Armada
+SoCs use "nand" in their dts and the pin is specific to the nand
+interface so use "nand" for the function name.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
-Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-Tested-by: Marc Dietrich <marvin24@gmx.de>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2: This patch is factored out from the v1 clk/DT series so that it could be
-    applied separately.
-
- drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
- drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
- drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
- 3 files changed, 40 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 72c718e66ebb..49c7c1499bc3 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -33,17 +33,6 @@
- #include "../pinctrl-utils.h"
- #include "pinctrl-tegra.h"
- 
--struct tegra_pmx {
--	struct device *dev;
--	struct pinctrl_dev *pctl;
--
--	const struct tegra_pinctrl_soc_data *soc;
--	const char **group_pins;
--
--	int nbanks;
--	void __iomem **regs;
--};
--
- static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
- {
- 	return readl(pmx->regs[bank] + reg);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index 33b17cb1471e..aa33c20766c4 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -16,6 +16,17 @@
- #ifndef __PINMUX_TEGRA_H__
- #define __PINMUX_TEGRA_H__
- 
-+struct tegra_pmx {
-+	struct device *dev;
-+	struct pinctrl_dev *pctl;
-+
-+	const struct tegra_pinctrl_soc_data *soc;
-+	const char **group_pins;
-+
-+	int nbanks;
-+	void __iomem **regs;
-+};
-+
- enum tegra_pinconf_param {
- 	/* argument: tegra_pinconf_pull */
- 	TEGRA_PINCONF_PARAM_PULL,
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-index 7e38ee9bae78..b6dd939d32cc 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-@@ -19,6 +19,7 @@
-  * more details.
-  */
- 
-+#include <linux/clk-provider.h>
- #include <linux/init.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -2231,9 +2232,36 @@ static const struct tegra_pinctrl_soc_data tegra20_pinctrl = {
- 	.drvtype_in_mux = false,
- };
- 
-+static const char *cdev1_parents[] = {
-+	"dev1_osc_div", "pll_a_out0", "pll_m_out1", "audio",
-+};
-+
-+static const char *cdev2_parents[] = {
-+	"dev2_osc_div", "hclk", "pclk", "pll_p_out4",
-+};
-+
-+static void tegra20_pinctrl_register_clock_muxes(struct platform_device *pdev)
-+{
-+	struct tegra_pmx *pmx = platform_get_drvdata(pdev);
-+
-+	clk_register_mux(NULL, "cdev1_mux", cdev1_parents, 4, 0,
-+			 pmx->regs[1] + 0x8, 2, 2, CLK_MUX_READ_ONLY, NULL);
-+
-+	clk_register_mux(NULL, "cdev2_mux", cdev2_parents, 4, 0,
-+			 pmx->regs[1] + 0x8, 4, 2, CLK_MUX_READ_ONLY, NULL);
-+}
-+
- static int tegra20_pinctrl_probe(struct platform_device *pdev)
- {
--	return tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
-+	int err;
-+
-+	err = tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
-+	if (err)
-+		return err;
-+
-+	tegra20_pinctrl_register_clock_muxes(pdev);
-+
-+	return 0;
- }
- 
- static const struct of_device_id tegra20_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+index b854f1ee5de5..28b199796fae 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+@@ -431,7 +431,7 @@ static struct mvebu_mpp_mode mv98dx3236_mpp_modes[] = {
+ 	MPP_MODE(19,
+ 		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
+ 		 MPP_VAR_FUNCTION(0x3, "uart1", "rxd",       V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x4, "dev", "rb",          V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "nand", "rb",         V_98DX3236_PLUS)),
+ 	MPP_MODE(20,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+ 		 MPP_VAR_FUNCTION(0x4, "dev", "we0",         V_98DX3236_PLUS)),
 -- 
 2.17.0
