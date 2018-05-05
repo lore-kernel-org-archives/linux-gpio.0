@@ -1,75 +1,76 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [RESEND PATCH] pinctrl: qcom: fix wrong pull status display for no_keeper SoC
-Date: Fri,  4 May 2018 16:57:28 -0700
-Message-ID: <20180504235728.805-1-bjorn.andersson@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+Subject: [PATCH 10/24] selftests: gpio: return Kselftest Skip code for skipped tests
+Date: Fri,  4 May 2018 19:13:14 -0600
+Message-ID: <20180505011328.32078-10-shuah@kernel.org>
+References: <20180505011328.32078-1-shuah@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180505011328.32078-1-shuah@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: shuah@kernel.org, bamv2005@gmail.com, brgl@bgdev.pl
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Clément Péron <peron.clem@gmail.com>
+When gpio test is skipped because of unmet dependencies and/or
+unsupported configuration, it exits with error which is treated as
+a fail by the Kselftest framework. This leads to false negative
+result even when the test could not be run.
 
-DebugFS strings about pin pull status for no_keeper SoC are wrong
+Change it to return kselftest skip code when a test gets skipped to
+clearly report that the test could not be run.
 
-Fix this by adding a different string array for no_keeper SoC
+Kselftest framework SKIP code is 4 and the framework prints appropriate
+messages to indicate that the test is skipped.
 
-Signed-off-by: Clément Péron <peron.clem@gmail.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 ---
+ tools/testing/selftests/gpio/gpio-mockup.sh | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Hi Linus,
-
-Forwarding this patch which was posted to linux-arm-msm@ only. LGTM, please apply.
-
-@Clémen, please use ./scripts/get_maintaine.pl to find appropriate recipients
-for future patches.
-
-Regards,
-Bjorn
-
- drivers/pinctrl/qcom/pinctrl-msm.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index fa4e94fedb8c..c3c77b86eff7 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -504,13 +504,19 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 	int pull;
- 	u32 ctl_reg;
+diff --git a/tools/testing/selftests/gpio/gpio-mockup.sh b/tools/testing/selftests/gpio/gpio-mockup.sh
+index 183fb932edbd..7f35b9880485 100755
+--- a/tools/testing/selftests/gpio/gpio-mockup.sh
++++ b/tools/testing/selftests/gpio/gpio-mockup.sh
+@@ -2,10 +2,11 @@
+ # SPDX-License-Identifier: GPL-2.0
  
--	static const char * const pulls[] = {
-+	static const char * const pulls_keeper[] = {
- 		"no pull",
- 		"pull down",
- 		"keeper",
- 		"pull up"
- 	};
+ #exit status
+-#1: run as non-root user
++#1: Internal error
+ #2: sysfs/debugfs not mount
+ #3: insert module fail when gpio-mockup is a module.
+-#4: other reason.
++#4: Skip test including run as non-root user.
++#5: other reason.
  
-+	static const char * const pulls_no_keeper[] = {
-+		"no pull",
-+		"pull down",
-+		"pull up",
-+	};
+ SYSFS=
+ GPIO_SYSFS=
+@@ -15,6 +16,9 @@ GPIO_DEBUGFS=
+ dev_type=
+ module=
+ 
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
 +
- 	if (!gpiochip_line_is_valid(chip, offset))
- 		return;
- 
-@@ -524,7 +530,10 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 
- 	seq_printf(s, " %-8s: %-3s %d", g->name, is_out ? "out" : "in", func);
- 	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
--	seq_printf(s, " %s", pulls[pull]);
-+	if (pctrl->soc->pull_no_keeper)
-+		seq_printf(s, " %s", pulls_no_keeper[pull]);
-+	else
-+		seq_printf(s, " %s", pulls_keeper[pull]);
- 	seq_puts(s, "\n");
+ usage()
+ {
+ 	echo "Usage:"
+@@ -34,7 +38,7 @@ prerequisite()
+ 	msg="skip all tests:"
+ 	if [ $UID != 0 ]; then
+ 		echo $msg must be run as root >&2
+-		exit 1
++		exit $ksft_skip
+ 	fi
+ 	SYSFS=`mount -t sysfs | head -1 | awk '{ print $3 }'`
+ 	if [ ! -d "$SYSFS" ]; then
+@@ -73,7 +77,7 @@ remove_module()
+ die()
+ {
+ 	remove_module
+-	exit 4
++	exit 5
  }
  
+ test_chips()
 -- 
-2.17.0
+2.14.1
