@@ -1,76 +1,47 @@
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Subject: [PATCH 10/24] selftests: gpio: return Kselftest Skip code for skipped tests
-Date: Fri,  4 May 2018 19:13:14 -0600
-Message-ID: <20180505011328.32078-10-shuah@kernel.org>
-References: <20180505011328.32078-1-shuah@kernel.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v5 5/7] gpio: pca953x: fix address calculation for pcal6524
+Date: Sat, 5 May 2018 13:29:55 +0300
+Message-ID: <CAHp75Vfqcezf-WKuAamVJLDLdNStJCb0X7hB1+45TctM-iDUUQ@mail.gmail.com>
+References: <cover.1524933096.git.hns@goldelico.com> <aaac818909d71523726094b1dfacc03e756874e9.1524933096.git.hns@goldelico.com>
+ <CAHp75VfD4gYesEw2n4JMycmr=qcAtqSkAAjwCViJZRYC6kVUVg@mail.gmail.com>
+ <4F016FCD-04B0-4EE1-A9F4-5A182DD437EF@goldelico.com> <14D3FF3C-0F70-4F72-B381-318B61B944CA@goldelico.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180505011328.32078-1-shuah@kernel.org>
+In-Reply-To: <14D3FF3C-0F70-4F72-B381-318B61B944CA@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: shuah@kernel.org, bamv2005@gmail.com, brgl@bgdev.pl
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, kernel@pyra-handheld.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
 List-Id: linux-gpio@vger.kernel.org
 
-When gpio test is skipped because of unmet dependencies and/or
-unsupported configuration, it exits with error which is treated as
-a fail by the Kselftest framework. This leads to false negative
-result even when the test could not be run.
+On Fri, May 4, 2018 at 10:30 AM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+>> Am 02.05.2018 um 14:35 schrieb H. Nikolaus Schaller <hns@goldelico.com>:
 
-Change it to return kselftest skip code when a test gets skipped to
-clearly report that the test could not be run.
+>>> Suggested-by ?
+>>
+>> Detecting that we need to adjust the registers generally was from me,
+>> but your suggestion of an improved formula should of course be mentioned
+>> and appreciated!
+>>
+>> I'll think about a good formulation for v6.
+>
+> Would the following commit message be ok for you?
 
-Kselftest framework SKIP code is 4 and the framework prints appropriate
-messages to indicate that the test is skipped.
+Yes, it's perfect.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
----
- tools/testing/selftests/gpio/gpio-mockup.sh | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> ...
+>
+> Therefore, we have to add code to the 24 bit accessor functions
+> that adjusts the register number for these exended registers.
+>
+> The formula finally used was developed and proposed by
+> Andy Shevchenko <andy.shevchenko@gmail.com>.
+>
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 
-diff --git a/tools/testing/selftests/gpio/gpio-mockup.sh b/tools/testing/selftests/gpio/gpio-mockup.sh
-index 183fb932edbd..7f35b9880485 100755
---- a/tools/testing/selftests/gpio/gpio-mockup.sh
-+++ b/tools/testing/selftests/gpio/gpio-mockup.sh
-@@ -2,10 +2,11 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- #exit status
--#1: run as non-root user
-+#1: Internal error
- #2: sysfs/debugfs not mount
- #3: insert module fail when gpio-mockup is a module.
--#4: other reason.
-+#4: Skip test including run as non-root user.
-+#5: other reason.
- 
- SYSFS=
- GPIO_SYSFS=
-@@ -15,6 +16,9 @@ GPIO_DEBUGFS=
- dev_type=
- module=
- 
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
- usage()
- {
- 	echo "Usage:"
-@@ -34,7 +38,7 @@ prerequisite()
- 	msg="skip all tests:"
- 	if [ $UID != 0 ]; then
- 		echo $msg must be run as root >&2
--		exit 1
-+		exit $ksft_skip
- 	fi
- 	SYSFS=`mount -t sysfs | head -1 | awk '{ print $3 }'`
- 	if [ ! -d "$SYSFS" ]; then
-@@ -73,7 +77,7 @@ remove_module()
- die()
- {
- 	remove_module
--	exit 4
-+	exit 5
- }
- 
- test_chips()
+
 -- 
-2.14.1
+With Best Regards,
+Andy Shevchenko
