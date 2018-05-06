@@ -1,101 +1,96 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v5] gpio: dwapb: Add support for 1 interrupt per port A GPIO
-Date: Sat, 5 May 2018 13:48:59 +0300
-Message-ID: <CAHp75Vc3qBOYjUAgxZCkpXAdg=ueM2KApPynPdpkEmOoMR7sQQ@mail.gmail.com>
-References: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 0/4] Restore ULPI USB on Tegra20
+Date: Sun, 6 May 2018 15:01:57 +0300
+Message-ID: <ca6ec165-9d63-69cd-27a1-051c1be9f35a@gmail.com>
+References: <20180503225537.20748-1-digetx@gmail.com>
+ <1525440829.6296.22.camel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1525440829.6296.22.camel@ziswiler.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Marcel Ziswiler <marcel@ziswiler.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 7:19 PM, Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-
-Sotty fo a late response. Consider follow up fixes for below.
-
->         if (!pp->irq_shared) {
-> +               int i;
-> +
-> +               for (i = 0; i < pp->ngpio; i++) {
-> +                       if (pp->irq[i])
-> +                               irq_set_chained_handler_and_data(pp->irq[i],
-> +                                               dwapb_irq_handler, gpio);
-> +               }
->         } else {
->                 /*
->                  * Request a shared IRQ since where MFD would have devices
->                  * using the same irq pin
->                  */
-> +               err = devm_request_irq(gpio->dev, pp->irq[0],
->                                        dwapb_irq_handler_mfd,
->                                        IRQF_SHARED, "gpio-dwapb-mfd", gpio);
-
-> +       if (pp->has_irq)
->                 dwapb_configure_irqs(gpio, port, pp);
-
-I would rather make irq array a type of signed int and move
-conditional into the function to test per IRQ based.
-
->         /* Add GPIO-signaled ACPI event support */
-> +       if (pp->has_irq)
->                 acpi_gpiochip_request_interrupts(&port->gc);
-
-Perhaps something similar.
-
->                 if (dev->of_node && pp->idx == 0 &&
->                         fwnode_property_read_bool(fwnode,
->                                                   "interrupt-controller")) {
-
-> +                       struct device_node *np = to_of_node(fwnode);
-> +                       unsigned int j;
-> +
-> +                       /*
-> +                        * The IP has configuration options to allow a single
-> +                        * combined interrupt or one per gpio. If one per gpio,
-> +                        * some might not be used.
-> +                        */
-> +                       for (j = 0; j < pp->ngpio; j++) {
-> +                               int irq = of_irq_get(np, j);
-> +                               if (irq < 0)
-> +                                       continue;
-> +
-> +                               pp->irq[j] = irq;
-> +                               pp->has_irq = true;
-> +                       }
-
-for (...)
- pp->irq = of_irq_get();
-
->                 }
-
-> +               if (has_acpi_companion(dev) && pp->idx == 0) {
-> +                       unsigned int j;
-> +
-> +                       for (j = 0; j < pp->ngpio; j++) {
-> +                               pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
-> +                               if (pp->irq[j])
-> +                                       pp->has_irq = true;
-> +                       }
-
-Ditto.
-Moreover you have a bug here. See my proposal at the top of this message.
-
-And now even better to ask, why platform_get_irq() wouldn't work for DT case?
-
-> +
-> +                       if (!pp->has_irq)
->                                 dev_warn(dev, "no irq for port%d\n", pp->idx);
-
-This could be issued in the actual function which will try to allocate
-IRQs (perhaps on debug level)
-
-
-P.S. Just think about it, perhaps you find even better solutions.
-
--- 
-With Best Regards,
-Andy Shevchenko
+On 04.05.2018 16:33, Marcel Ziswiler wrote:
+> Hi Dmitry
+> 
+> On Fri, 2018-05-04 at 01:55 +0300, Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> This series of patches fixes ULPI USB on Tegra20. The original
+>> problem
+>> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+>> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+>> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+>> with the USB for the devices that have CDEV2 being enabled by
+>> bootloader.
+>> The patch got into the kernel and later Marc Dietrich found that USB
+>> stopped working on the "paz00" Tegra20 board. After a bit of
+>> discussion
+>> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and
+>> clock
+>> driver was setting CDEV2's parent incorrectly. The parent clock is
+>> actually
+>> determined by the pinmuxing config of CDEV2 pingroup. This patchset
+>> fixes
+>> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock
+>> provider,
+>> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+>> suggestion), and then setting these clock muxes as parents for the
+>> CDEV1/2
+>> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted
+>> since CDEV2
+>> (aka MCLK2) is the actual clock source for "ulpi-link".
+>>
+>> Changelog:
+>>
+>> v2:
+>> 	- Added new patch "Add quirk for getting CDEV1/2 clocks",
+>> assuring
+>> 	  that clk user won't get CDEV1/2 clocks until parent clk muxes
+>> 	  are available, i.e. resolves potential issue with CDEV-user
+>> driver
+>> 	  vs pinctrl driver probe order.
+>>
+>> 	- Factored out "pinctrl" patch from the patchset as was
+>> requested by
+>> 	  Linus Walleij.
+>>
+>> 	- Addressed v1 review comments: fixed swapped DEV1/2 clk div
+>> bits,
+>> 	  made DEV1/2 divs read-only, etc minor changes.
+>>
+>> Dmitry Osipenko (4):
+>>   clk: tegra20: Add DEV1/DEV2 OSC dividers
+>>   clk: tegra20: Correct parents of CDEV1/2 clocks
+>>   clk: tegra: Add quirk for getting CDEV1/2 clocks
+>>   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+>>
+>>  arch/arm/boot/dts/tegra20.dtsi  |  2 +-
+>>  drivers/clk/tegra/clk-tegra20.c | 20 +++++++++++++++----
+>>  drivers/clk/tegra/clk.c         | 34
+>> ++++++++++++++++++++++++++++++++-
+>>  3 files changed, 50 insertions(+), 6 deletions(-)
+> 
+> Beautiful (;-p).
+> 
+> root@colibri-t20:~# cat /sys/kernel/debug/clk/clk_summary | grep -E
+> 'pll_p_out4|cdev2'
+>           pll_p_out4_div              1        1        0    24000000  
+>         0 0  
+>              pll_p_out4               2        2        0    24000000  
+>         0 0  
+>                 cdev2_mux             1        1        0    24000000  
+>         0 0  
+>                    cdev2              1        1        0    24000000  
+>         0 0  
+> 
+> You may add my reviewed and tested bys to the remaining patches as
+> well.
+> 
+> Thanks!
+Awesome, thank you!
