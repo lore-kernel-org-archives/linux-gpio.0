@@ -1,43 +1,116 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 3/7] pinctrl: sunxi: add support for H6
- R_PIO pin controller
-Date: Mon, 7 May 2018 16:05:30 -0500
-Message-ID: <20180507210530.GA8285@rob-hp-laptop>
-References: <20180503183847.11046-1-icenowy@aosc.io>
- <20180503183847.11046-4-icenowy@aosc.io>
-Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Brian Norris <briannorris@chromium.org>
+Subject: Re: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when
+ changing it's capability
+Date: Mon, 7 May 2018 15:15:12 -0700
+Message-ID: <20180507221511.GA6448@rodete-desktop-imager.corp.google.com>
+References: <20180503065553.7762-1-jeffy.chen@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDJIP47K7MERBHH7YLLQKGQESEACU4A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180503183847.11046-4-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20180503065553.7762-1-jeffy.chen@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: linux-kernel@vger.kernel.org, heiko@sntech.de, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Doug Anderson <dianders@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, May 04, 2018 at 02:38:43AM +0800, Icenowy Zheng wrote:
-> Allwinner H6 SoC has a R_PIO pin controller like other Allwinner SoCs,
-> which controls the PL and PM pin banks.
++ Doug
+
+Hi Jeffy,
+
+On Thu, May 03, 2018 at 02:55:53PM +0800, Jeffy Chen wrote:
+> We saw spurious irq when changing irq's trigger type, for example
+> setting gpio-keys's wakeup irq trigger type.
 > 
-> Add support for it.
+> And according to the TRM:
+> "Programming the GPIO registers for interrupt capability, edge-sensitive
+> or level-sensitive interrupts, and interrupt polarity should be
+> completed prior to enabling the interrupts on Port A in order to prevent
+> spurious glitches on the interrupt lines to the interrupt controller."
 > 
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> Reported-by: Brian Norris <briannorris@google.com>
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 > ---
->  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+> 
+>  drivers/pinctrl/pinctrl-rockchip.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index 3924779f55785..7ff45ec8330d1 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -2727,9 +2727,19 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/**
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+The typical multiline comment style is to use only 1 asterisk -- 2
+asterisks usually denote something more formal, like kerneldoc.
 
-In the future, please split bindings to separate patches.
+> +	 * According to the TRM, we should keep irq disabled during programming
+> +	 * interrupt capability to prevent spurious glitches on the interrupt
+> +	 * lines to the interrupt controller.
+> +	 */
 
->  drivers/pinctrl/sunxi/Kconfig                      |   4 +
->  drivers/pinctrl/sunxi/Makefile                     |   1 +
->  drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c        | 128 +++++++++++++++++++++
->  4 files changed, 134 insertions(+)
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c
+It's also worth noting that this case may come up in
+rockchip_irq_demux() for EDGE_BOTH triggers:
+
+		/*
+		 * Triggering IRQ on both rising and falling edge
+		 * needs manual intervention.
+		 */
+		if (bank->toggle_edge_mode & BIT(irq)) {
+...
+				polarity = readl_relaxed(bank->reg_base +
+							 GPIO_INT_POLARITY);
+				if (data & BIT(irq))
+					polarity &= ~BIT(irq);
+				else
+					polarity |= BIT(irq);
+				writel(polarity,
+				       bank->reg_base + GPIO_INT_POLARITY);
+
+AIUI, this case is not actually a problem, because this polarity
+reconfiguration happens before we call generic_handle_irq(), so the
+extra spurious interrupt is handled and cleared after this point. But it
+seems like this should be noted somewhere in either the commit message,
+the code comments, or both.
+
+On the other hand...this also implies there may be a race condition
+there, where we might lose an interrupt if there is an edge between the
+re-configuration of the polarity in rockchip_irq_demux() and the
+clearing/handling of the interrupt (handle_edge_irq() ->
+chip->irq_ack()). If we have an edge between there, then we might ack
+it, but leave the polarity such that we aren't ready for the next
+(inverted) edge.
+
+I'm not 100% sure about the above, so it might be good to verify it. But
+I also expect this means there's really no way to 100% reliably
+implement both-edge trigger types on hardware like this that doesn't
+directly implement it. So I'm not sure what we'd do with that knowledge.
+
+> +	data = readl(bank->reg_base + GPIO_INTEN);
+> +	writel_relaxed(data & ~mask, gc->reg_base + GPIO_INTEN);
+
+Not sure if this is a needless optimization: but couldn't you only
+disable the interrupt (and make the level and polarity changes) only if
+the level or polarity are actually changing? For example, it's possible
+to end up here when changing from EDGE_BOTH to EDGE_RISING, but we might
+not actually program a new value.
+
+Brian
+
+> +
+>  	writel_relaxed(level, gc->reg_base + GPIO_INTTYPE_LEVEL);
+>  	writel_relaxed(polarity, gc->reg_base + GPIO_INT_POLARITY);
+>  
+> +	writel_relaxed(data, gc->reg_base + GPIO_INTEN);
+> +
+>  	irq_gc_unlock(gc);
+>  	raw_spin_unlock_irqrestore(&bank->slock, flags);
+>  	clk_disable(bank->clk);
+> -- 
+> 2.11.0
+> 
+> 
