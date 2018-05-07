@@ -1,171 +1,43 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 7/7] gpio: pcie-idio-24: Utilize for_each_set_port_word macro
-Date: Mon,  7 May 2018 11:36:54 -0400
-Message-ID: <8467a738e42fcbbe3da0a23d5bccd61b47b561c6.1525704095.git.vilhelm.gray@gmail.com>
-References: <cover.1525704095.git.vilhelm.gray@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1525704095.git.vilhelm.gray@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/7] pinctrl: sunxi: add support for H6
+ R_PIO pin controller
+Date: Mon, 7 May 2018 16:05:30 -0500
+Message-ID: <20180507210530.GA8285@rob-hp-laptop>
+References: <20180503183847.11046-1-icenowy@aosc.io>
+ <20180503183847.11046-4-icenowy@aosc.io>
+Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBDJIP47K7MERBHH7YLLQKGQESEACU4A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20180503183847.11046-4-icenowy-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Replace boilerplate code in get_multiple/set_multiple callbacks with
-for_each_set_port_word macro to simplify code and improve clarity.
+On Fri, May 04, 2018 at 02:38:43AM +0800, Icenowy Zheng wrote:
+> Allwinner H6 SoC has a R_PIO pin controller like other Allwinner SoCs,
+> which controls the PL and PM pin banks.
+> 
+> Add support for it.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> ---
+>  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-pcie-idio-24.c | 102 +++++++++++--------------------
- 1 file changed, 36 insertions(+), 66 deletions(-)
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
-index f953541e7890..a0c81724ce4d 100644
---- a/drivers/gpio/gpio-pcie-idio-24.c
-+++ b/drivers/gpio/gpio-pcie-idio-24.c
-@@ -199,41 +199,21 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
- 	size_t i;
--	const unsigned int gpio_reg_size = 8;
--	unsigned int bits_offset;
--	size_t word_index;
--	unsigned int word_offset;
--	unsigned long word_mask;
--	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
--	unsigned long port_state;
-+	size_t word;
-+	unsigned int offset;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23, &idio24gpio->reg->in0_7,
- 		&idio24gpio->reg->in8_15, &idio24gpio->reg->in16_23,
- 	};
-+	const size_t num_ports = ARRAY_SIZE(ports) + 1;
-+	unsigned long port_state;
- 	const unsigned long out_mode_mask = BIT(1);
- 
- 	/* clear bits array to a clean slate */
- 	bitmap_zero(bits, chip->ngpio);
- 
--	/* get bits are evaluated a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports) + 1; i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* word index for bits array */
--		word_index = BIT_WORD(bits_offset);
--
--		/* gpio offset within current word of bits array */
--		word_offset = bits_offset % BITS_PER_LONG;
--
--		/* mask of get bits for current gpio within current word */
--		word_mask = mask[word_index] & (port_mask << word_offset);
--		if (!word_mask) {
--			/* no get bits in this port so skip to next one */
--			continue;
--		}
--
-+	for_each_set_port_word(i, word, offset, mask, num_ports, 8) {
- 		/* read bits from current gpio port (port 6 is TTL GPIO) */
- 		if (i < 6)
- 			port_state = ioread8(ports[i]);
-@@ -243,7 +223,7 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- 			port_state = ioread8(&idio24gpio->reg->ttl_in0_7);
- 
- 		/* store acquired bits at respective bits array offset */
--		bits[word_index] |= port_state << word_offset;
-+		bits[word] |= port_state << offset;
- 	}
- 
- 	return 0;
-@@ -295,58 +275,48 @@ static void idio_24_gpio_set_multiple(struct gpio_chip *chip,
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
- 	size_t i;
--	unsigned long bits_offset;
--	unsigned long gpio_mask;
--	const unsigned int gpio_reg_size = 8;
--	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
--	unsigned long flags;
--	unsigned int out_state;
-+	size_t word;
-+	unsigned int offset;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23
- 	};
-+	const size_t num_ports = ARRAY_SIZE(ports) + 1;
-+	unsigned int iomask;
-+	unsigned int bitmask;
-+	unsigned long flags;
- 	const unsigned long out_mode_mask = BIT(1);
--	const unsigned int ttl_offset = 48;
--	const size_t ttl_i = BIT_WORD(ttl_offset);
--	const unsigned int word_offset = ttl_offset % BITS_PER_LONG;
--	const unsigned long ttl_mask = (mask[ttl_i] >> word_offset) & port_mask;
--	const unsigned long ttl_bits = (bits[ttl_i] >> word_offset) & ttl_mask;
--
--	/* set bits are processed a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports); i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* check if any set bits for current port */
--		gpio_mask = (*mask >> bits_offset) & port_mask;
--		if (!gpio_mask) {
--			/* no set bits for this port so move on to next port */
-+	unsigned int out_state;
-+
-+	for_each_set_port_word(i, word, offset, mask, num_ports, 8) {
-+		iomask = mask[word] >> offset;
-+		bitmask = iomask & (bits[word] >> offset);
-+
-+		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+
-+		/* read bits from current gpio port (port 6 is TTL GPIO) */
-+		if (i < 6) {
-+			out_state = ioread8(ports[i]) & ~iomask;
-+		} else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask) {
-+			out_state = ioread8(&idio24gpio->reg->ttl_out0_7);
-+		} else {
-+			/* skip TTL GPIO if set for input */
-+			raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
- 			continue;
- 		}
- 
--		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+		/* set requested bit states */
-+		out_state &= ~iomask;
-+		out_state |= bitmask;
- 
--		/* process output lines */
--		out_state = ioread8(ports[i]) & ~gpio_mask;
--		out_state |= (*bits >> bits_offset) & gpio_mask;
--		iowrite8(out_state, ports[i]);
-+		/* write bits for current gpio port (port 6 is TTL GPIO) */
-+		if (i < 6)
-+			iowrite8(out_state, ports[i]);
-+		else
-+			iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
- 
- 		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
- 	}
--
--	/* check if setting TTL lines and if they are in output mode */
--	if (!ttl_mask || !(ioread8(&idio24gpio->reg->ctl) & out_mode_mask))
--		return;
--
--	/* handle TTL output */
--	raw_spin_lock_irqsave(&idio24gpio->lock, flags);
--
--	/* process output lines */
--	out_state = ioread8(&idio24gpio->reg->ttl_out0_7) & ~ttl_mask;
--	out_state |= ttl_bits;
--	iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
--
--	raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
- }
- 
- static void idio_24_irq_ack(struct irq_data *data)
--- 
-2.17.0
+In the future, please split bindings to separate patches.
+
+>  drivers/pinctrl/sunxi/Kconfig                      |   4 +
+>  drivers/pinctrl/sunxi/Makefile                     |   1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c        | 128 +++++++++++++++++++++
+>  4 files changed, 134 insertions(+)
+>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c
