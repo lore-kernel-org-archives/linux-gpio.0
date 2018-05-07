@@ -1,46 +1,69 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Subject: [PATCH -next] gpio: Fix return value check in owl_gpio_probe()
-Date: Mon, 7 May 2018 01:40:24 +0000
-Message-ID: <1525657224-88189-1-git-send-email-weiyongjun1@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linus.walleij@linaro.org, afaerber@suse.de, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH] pinctrl: mvebu: use correct MPP sel value for dev pins
+Date: Mon,  7 May 2018 14:25:55 +1200
+Message-ID: <20180507022555.31645-1-chris.packham@alliedtelesis.co.nz>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: gregory.clement@bootlin.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Chris Packham <chris.packham@alliedtelesis.co.nz>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-In case of error, the function of_iomap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+The "dev" function is selected with the value 0x4 not 0x01.
 
-Fixes: d3654d38809c ("gpio: Add gpio driver for Actions OWL S900 SoC")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Fixes: commit d7ae8f8dee7f ("pinctrl: mvebu: pinctrl driver for 98DX3236 SoC")
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
- drivers/gpio/gpio-owl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpio/gpio-owl.c b/drivers/gpio/gpio-owl.c
-index 3546362..f35e80f 100644
---- a/drivers/gpio/gpio-owl.c
-+++ b/drivers/gpio/gpio-owl.c
-@@ -128,8 +128,8 @@ static int owl_gpio_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	gpio->base = of_iomap(dev->of_node, 0);
--	if (IS_ERR(gpio->base))
--		return PTR_ERR(gpio->base);
-+	if (!gpio->base)
-+		return -ENOMEM;
- 
- 	/*
- 	 * Get the number of gpio's for this bank. If none specified,
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+index 28b199796fae..5e828468e43d 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+@@ -437,34 +437,34 @@ static struct mvebu_mpp_mode mv98dx3236_mpp_modes[] = {
+ 		 MPP_VAR_FUNCTION(0x4, "dev", "we0",         V_98DX3236_PLUS)),
+ 	MPP_MODE(21,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x1, "dev", "ad0",         V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad0",         V_98DX3236_PLUS)),
+ 	MPP_MODE(22,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x1, "dev", "ad1",         V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad1",         V_98DX3236_PLUS)),
+ 	MPP_MODE(23,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x1, "dev", "ad2",         V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad2",         V_98DX3236_PLUS)),
+ 	MPP_MODE(24,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x1, "dev", "ad3",         V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad3",         V_98DX3236_PLUS)),
+ 	MPP_MODE(25,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x1, "dev", "ad4",         V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad4",         V_98DX3236_PLUS)),
+ 	MPP_MODE(26,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x1, "dev", "ad5",         V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad5",         V_98DX3236_PLUS)),
+ 	MPP_MODE(27,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x1, "dev", "ad6",         V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad6",         V_98DX3236_PLUS)),
+ 	MPP_MODE(28,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x1, "dev", "ad7",         V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad7",         V_98DX3236_PLUS)),
+ 	MPP_MODE(29,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x1, "dev", "a0",          V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "dev", "a0",          V_98DX3236_PLUS)),
+ 	MPP_MODE(30,
+ 		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+-		 MPP_VAR_FUNCTION(0x1, "dev", "a1",          V_98DX3236_PLUS)),
++		 MPP_VAR_FUNCTION(0x4, "dev", "a1",          V_98DX3236_PLUS)),
+ 	MPP_MODE(31,
+ 		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
+ 		 MPP_VAR_FUNCTION(0x1, "slv_smi", "mdc",     V_98DX3236_PLUS),
+-- 
+2.17.0
