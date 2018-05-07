@@ -1,65 +1,77 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH -next v2] gpio: owl: Fix return value check in
- owl_gpio_probe()
-Date: Mon, 7 May 2018 11:51:16 +0530
-Message-ID: <20180507062116.xddlxqywmqkpkavv@mani>
-References: <1525657224-88189-1-git-send-email-weiyongjun1@huawei.com>
- <1525674356-39189-1-git-send-email-weiyongjun1@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1525674356-39189-1-git-send-email-weiyongjun1@huawei.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, kernel-janitors@vger.kernel.org, afaerber@suse.de, linux-arm-kernel@lists.infradead.org
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH 0/7] Introduce the for_each_set_port_word macro
+Date: Mon,  7 May 2018 11:35:02 -0400
+Message-ID: <cover.1525704095.git.vilhelm.gray@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 07, 2018 at 06:25:56AM +0000, Wei Yongjun wrote:
-> In case of error, the function of_iomap() returns NULL pointer not
-> ERR_PTR(). The IS_ERR() test in the return value check should be
-> replaced with NULL test.
-> 
-> Fixes: d3654d38809c ("gpio: Add gpio driver for Actions OWL S900 SoC")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> 
+This patchset introduces the for_each_set_port_word macro and utilizes
+it in several GPIO drivers. The for_each_set_port_word macro facilitates
+a for-loop syntax that iterates over entire groups of set bits at a
+time.
 
-Thanks,
-Mani
+For example, suppose you would like to iterate over a 16-bit integer 4
+bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+represents the current 4-bit group:
 
-> ---
-> v1 -> v2: return -ENXIO instead of -ENOMEM
-> ---
->  drivers/gpio/gpio-owl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-owl.c b/drivers/gpio/gpio-owl.c
-> index 3546362..f35e80f 100644
-> --- a/drivers/gpio/gpio-owl.c
-> +++ b/drivers/gpio/gpio-owl.c
-> @@ -128,8 +128,8 @@ static int owl_gpio_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	gpio->base = of_iomap(dev->of_node, 0);
-> -	if (IS_ERR(gpio->base))
-> -		return PTR_ERR(gpio->base);
-> +	if (!gpio->base)
-> +		return -ENXIO;
->  
->  	/*
->  	 * Get the number of gpio's for this bank. If none specified,
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+    Example:        1011 1110 0000 1111
+    First loop:     1011 1110 0000 XXXX
+    Second loop:    1011 XXXX 0000 1111
+    Third loop:     XXXX 1110 0000 1111
+
+Each iteration of the loop returns the next 4-bit group that has at
+least one set bit.
+
+The for_each_set_port_word macro has six parameters:
+
+    * port_word: set to current port word index for the iteration
+    * word_index: set to current bitmap word index for the iteration
+    * word_offset: bits offset of the found port word in the bitmap word
+    * bits: bitmap to search within
+    * size: bitmap size in number of port words
+    * port_size: port word size in number of bits
+
+The port_size argument can be an arbitrary number of bits and is not
+required to be a multiple of 2.
+
+I've called the group of bits a "port word" which may be a confusing
+naming convention; I was afraid calling that them a "group" may be too
+vague. Should a different name be chosen; what would you suggest?
+
+This patchset was rebased on top of the following three commits:
+
+    * aaf96e51de11 ("gpio: pci-idio-16: Fix port memory offset for get_multiple callback")
+    * 304440aa96c6 ("gpio: pcie-idio-24: Fix port memory offset for get_multiple/set_multiple callbacks")
+    * e026646c178d ("gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop")
+
+William Breathitt Gray
+
+William Breathitt Gray (7):
+  bitops: Introduce the for_each_set_port_word macro
+  gpio: 104-dio-48e: Utilize for_each_set_port_word macro
+  gpio: 104-idi-48: Utilize for_each_set_port_word macro
+  gpio: gpio-mm: Utilize for_each_set_port_word macro
+  gpio: ws16c48: Utilize for_each_set_port_word macro
+  gpio: pci-idio-16: Utilize for_each_set_port_word macro
+  gpio: pcie-idio-24: Utilize for_each_set_port_word macro
+
+ drivers/gpio/gpio-104-dio-48e.c   |  67 +++++---------------
+ drivers/gpio/gpio-104-idi-48.c    |  32 ++--------
+ drivers/gpio/gpio-gpio-mm.c       |  67 +++++---------------
+ drivers/gpio/gpio-pci-idio-16.c   |  67 ++++++--------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 102 +++++++++++-------------------
+ drivers/gpio/gpio-ws16c48.c       |  66 +++++--------------
+ include/asm-generic/bitops/find.h |  24 +++++++
+ include/linux/bitops.h            |   9 +++
+ lib/find_bit.c                    |  28 ++++++++
+ 9 files changed, 170 insertions(+), 292 deletions(-)
+
+-- 
+2.17.0
