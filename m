@@ -1,62 +1,66 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.17 take one
-Date: Tue, 8 May 2018 15:30:45 +0200
-Message-ID: <CACRpkdYnfUZ7_KhMw675tkdNY5DnKwNk=r+a1yYrBT9EGg4KVw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v3 0/4] Restore ULPI USB on Tegra20
+Date: Tue,  8 May 2018 19:26:02 +0300
+Message-ID: <20180508162607.3500-1-digetx@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Hello,
 
-here are some three pin control fixes, the Intel fixes are the most serious
-and important things I had queued since it affects a large portion of
-deployed Chromebooks.
+This series of patches fixes ULPI USB on Tegra20. The original problem
+was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+with the USB for the devices that have CDEV2 being enabled by bootloader.
+The patch got into the kernel and later Marc Dietrich found that USB
+stopped working on the "paz00" Tegra20 board. After a bit of discussion
+was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+driver was setting CDEV2's parent incorrectly. The parent clock is actually
+determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
+providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+suggestion), and then setting these clock muxes as parents for the CDEV1/2
+clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CDEV2
+(aka MCLK2) is the actual clock source for "ulpi-link".
 
-Please pull it in, some details are in the signed tag and individula commits.
+Changelog:
 
-Again, this should have been sent earlier, sorry :(
+v3:
+	- Use clk DT ID's instead of comparing clk names and make
+	  custom of_src_onecell_get specific to Tegra20 clk provider
+	  in the "Add quirk for getting CDEV1/2 clocks on Tegra20" patch
+	  as was suggested by Peter De Schrijver for v2.
 
-Yours,
-Linus Walleij
+v2:
+	- Added new patch "Add quirk for getting CDEV1/2 clocks", assuring
+	  that clk user won't get CDEV1/2 clocks until parent clk muxes
+	  are available, i.e. resolves potential issue with CDEV-user driver
+	  vs pinctrl driver probe order.
 
+	- Factored out "pinctrl" patch from the patchset as was requested by
+	  Linus Walleij.
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+	- Addressed v1 review comments: fixed swapped DEV1/2 clk div bits,
+	  made DEV1/2 divs read-only, etc minor changes.
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+Dmitry Osipenko (4):
+  clk: tegra20: Add DEV1/DEV2 OSC dividers
+  clk: tegra20: Correct parents of CDEV1/2 clocks
+  clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
+  ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
 
-are available in the Git repository at:
+ arch/arm/boot/dts/tegra20.dtsi   |  2 +-
+ drivers/clk/tegra/clk-tegra114.c |  2 +-
+ drivers/clk/tegra/clk-tegra124.c |  2 +-
+ drivers/clk/tegra/clk-tegra20.c  | 52 +++++++++++++++++++++++++++++---
+ drivers/clk/tegra/clk-tegra210.c |  2 +-
+ drivers/clk/tegra/clk-tegra30.c  |  2 +-
+ drivers/clk/tegra/clk.c          |  5 +--
+ drivers/clk/tegra/clk.h          |  2 +-
+ 8 files changed, 56 insertions(+), 13 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.17-2
-
-for you to fetch changes up to c41eb2c7f93531b8ea689b1e2bfe7e6b884a7213:
-
-  pinctrl: sunrisepoint: Align GPIO number space with Windows
-(2018-05-02 14:36:00 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for v4.17:
-
-- Two major fixes for the Intel Cherryview and Sunrisepoint
-  pin controllers, adjusting numberspaces so that they do
-  get aligned with various messed-up numbers encoded into
-  the BIOS.
-
-- A fix for the Meson driver GPIO pin range.
-
-----------------------------------------------------------------
-Mika Westerberg (2):
-      pinctrl: cherryview: Associate IRQ descriptors to irqdomain
-      pinctrl: sunrisepoint: Align GPIO number space with Windows
-
-Yixun Lan (1):
-      pinctrl: meson-axg: fix the range of aobus bank
-
- drivers/pinctrl/intel/pinctrl-cherryview.c   | 16 +++++++---
- drivers/pinctrl/intel/pinctrl-sunrisepoint.c | 45 ++++++++++++++++++++++++++--
- drivers/pinctrl/meson/pinctrl-meson-axg.c    |  2 +-
- 3 files changed, 55 insertions(+), 8 deletions(-)
+-- 
+2.17.0
