@@ -1,85 +1,91 @@
-From: JeffyChen <jeffy.chen@rock-chips.com>
-Subject: Re: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when changing
- it's capability
-Date: Tue, 08 May 2018 10:56:48 +0800
-Message-ID: <5AF111F0.3030409@rock-chips.com>
-References: <20180503065553.7762-1-jeffy.chen@rock-chips.com> <20180507221511.GA6448@rodete-desktop-imager.corp.google.com> <5AF0FF18.1050905@rock-chips.com> <20180508015623.GA61455@rodete-desktop-imager.corp.google.com> <5AF10C10.1070003@rock-chips.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 3/4] clk: tegra: Add quirk for getting CDEV1/2 clocks
+Date: Tue, 8 May 2018 13:54:31 +0300
+Message-ID: <20180508105431.GS6835@tbergstrom-lnx.Nvidia.com>
+References: <20180503225537.20748-1-digetx@gmail.com>
+ <20180503225537.20748-5-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5AF10C10.1070003@rock-chips.com>
+Content-Disposition: inline
+In-Reply-To: <20180503225537.20748-5-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Norris <briannorris@chromium.org>
-Cc: linux-kernel@vger.kernel.org, heiko@sntech.de, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Doug Anderson <dianders@chromium.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Brian,
+On Fri, May 04, 2018 at 01:55:36AM +0300, Dmitry Osipenko wrote:
+> CDEV1 and CDEV2 clocks are a bit special case, their parent clock is
+> created by the pinctrl driver. It should be possible for clk user to
+> request these clocks before pinctrl driver got probed and hence user will
+> get an orphaned clock. That might be undesirable because user expects
+> parent clock to be enabled by the child, so let's return EPROBE_DEFER
+> until parent clock appear.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/tegra/clk.c | 34 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+> index ba923f0d5953..04cbe7e9eff3 100644
+> --- a/drivers/clk/tegra/clk.c
+> +++ b/drivers/clk/tegra/clk.c
+> @@ -298,6 +298,38 @@ static struct reset_controller_dev rst_ctlr = {
+>  	.of_reset_n_cells = 1,
+>  };
+>  
+> +static struct clk *tegra_of_clk_src_onecell_get(struct of_phandle_args *clkspec,
+> +						void *data)
+> +{
+> +	struct clk_hw *parent_hw;
+> +	struct clk_hw *hw;
+> +	struct clk *clk;
+> +	const char *name;
+> +
+> +	clk = of_clk_src_onecell_get(clkspec, data);
+> +	if (IS_ERR(clk))
+> +		return clk;
+> +
+> +	name = __clk_get_name(clk);
+> +
+> +	/*
+> +	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
+> +	 * clock is created by the pinctrl driver. It is possible for clk user
+> +	 * to request these clocks before pinctrl driver got probed and hence
+> +	 * user will get an orphaned clock. That might be undesirable because
+> +	 * user may expect parent clock to be enabled by the child.
+> +	 */
+> +	if (!strcmp(name, "cdev1") || !strcmp(name, "cdev2")) {
+> +		hw = __clk_get_hw(clk);
+> +
+> +		parent_hw = clk_hw_get_parent(hw);
+> +		if (!parent_hw)
+> +			return ERR_PTR(-EPROBE_DEFER);
+> +	}
+> +
+> +	return clk;
+> +}
+> +
 
-On 05/08/2018 10:31 AM, JeffyChen wrote:
-> Hi Brian,
->
-> On 05/08/2018 09:56 AM, Brian Norris wrote:
->> On Tue, May 08, 2018 at 09:36:24AM +0800, Jeffy Chen wrote:
->>> On 05/08/2018 06:15 AM, Brian Norris wrote:
->>>> On the other hand...this also implies there may be a race condition
->>>> there, where we might lose an interrupt if there is an edge between the
->>>> re-configuration of the polarity in rockchip_irq_demux() and the
->>>> clearing/handling of the interrupt (handle_edge_irq() ->
->>>> chip->irq_ack()). If we have an edge between there, then we might ack
->>>> it, but leave the polarity such that we aren't ready for the next
->>>> (inverted) edge.
->>>
->>> if let me guess, the unexpected irq we saw is the hardware trying to
->>> avoid
->>> losing irq? for example, we set a EDGE_RISING, and the hardware saw
->>> the gpio
->>> is already high, then though it might lost an irq, so fake one for safe?
->>
->> I won't pretend to know what the IC designers were doing, but I don't
->> think that would resolve the problem I'm talking about. The sequence is
->> something like:
->> 1. EDGE_BOTH IRQ occurs (e.g., low to high)
->> 2. reconfigure polarity in rockchip_irq_demux() (polarity=low)
->> 3. continue to handle_edge_irq()
->> 4. another HW edge occurs (e.g., high to low)
->> 5. handle_edge_irq() (from 3) acks (clears) IRQ (before a subsequent
->>     rockchip_irq_demux() gets a chance to run and flip the polarity)
->> ...
->>
->> Now the polarity is still low, but the next trigger should be a
->> low-to-high edge.
->
-> oops, i see the problem.
->
-> so what if we do these:
-> 1/ edge irq triggered
-> 2/ read gpio level
-> 3/ handle irq(ack irq)
-> 4/ toggle edge mode(with a while gpio level check)
->
-> if the gpio changed in 2/ -> 3/, the 4/ will trigger an irq when writing
-> GPIO_INT_POLARITY(which is what we are trying to avoid in the set_type
-> case)
->
-> but this would not work if i'm wrong about how the HW fake an irq when
-> changing POLARITY...
->
->
-> or maybe we could just check the gpio status again after
-> handle_edge_irq, and correct the polarity in this case
+Rather than retrieving the struct clk * and comparing the names, you can use
+the DT ID in  clkspec->args[0] and compare against TEGRA20_CLK_CDEV1 and
+TEGRA20_CLK_CDEV2.
 
-i saw the pinctrl-msm.c do this in the ack(),
+Peter.
 
-and also at the end of set_type(), which might avoid another race in the 
-set_type()
-
->
->>
->>> i'll try to confirm it with IC guys.
->>
->> Brian
->>
->>
->>
->
+>  void __init tegra_add_of_provider(struct device_node *np)
+>  {
+>  	int i;
+> @@ -314,7 +346,7 @@ void __init tegra_add_of_provider(struct device_node *np)
+>  
+>  	clk_data.clks = clks;
+>  	clk_data.clk_num = clk_num;
+> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+> +	of_clk_add_provider(np, tegra_of_clk_src_onecell_get, &clk_data);
+>  
+>  	rst_ctlr.of_node = np;
+>  	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
+> -- 
+> 2.17.0
+> 
