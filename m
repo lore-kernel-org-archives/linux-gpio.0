@@ -1,32 +1,91 @@
-From: djw@t-chip.com.cn
-Subject: [PATCH v0 0/2] Add sdmmc UHS support to ROC-RK3328-CC board
-Date: Tue,  8 May 2018 10:48:22 +0800
-Message-ID: <1525747704-8537-1-git-send-email-djw@t-chip.com.cn>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-rockchip@lists.infradead.org
-Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>, devicetree@vger.kernel.org, David Wu <david.wu@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Liang Chen <cl@rock-chips.com>, William Wu <william.wu@rock-chips.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Rocky Hao <rocky.hao@rock-chips.com>, Will Deacon <will.deacon@arm.com>, Joseph Chen <chenjh@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>
+From: djw-Efosm3t9Qi2Pt1CcHtbs0g@public.gmane.org
+Subject: [PATCH v0 1/2] gpio: syscon: Add gpio-syscon for rk3328
+Date: Tue,  8 May 2018 10:48:23 +0800
+Message-ID: <1525747704-8537-2-git-send-email-djw@t-chip.com.cn>
+References: <1525747704-8537-1-git-send-email-djw@t-chip.com.cn>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1525747704-8537-1-git-send-email-djw-Efosm3t9Qi2Pt1CcHtbs0g@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wayne Chou <zxf-Efosm3t9Qi2Pt1CcHtbs0g@public.gmane.org>, Levin Du <djw-Efosm3t9Qi2Pt1CcHtbs0g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Levin Du <djw@t-chip.com.cn>
+From: Levin Du <djw-Efosm3t9Qi2Pt1CcHtbs0g@public.gmane.org>
 
-Hi all,
+In Rockchip RK3328 Soc, there's a output only gpio pin labeled
+`gpiomut_pmuio_iout`, which can be set by bit[1] of GRF_SOC_CON10.
+(bit[0] controls the enable state of the pin and defaults to enabled.)
 
-This is an attemp to add sdmmc UHS support to the ROC-RK3328-CC board.
+This pin is used by the roc-rk3328-cc board to switch sdmmc io signal
+voltage between 1.8V and 3.3V, which is essential to the SD card UHS
+support.
 
-It adds a new compatible `rockchip,rk3328-gpio-syscon10` to the gpio-syscon
-driver,  so that a new gpio controller named `gpio_syscon10` can be defined
-and used in the regulator-gpio. This regulator controls the signal voltage of the
-sdmmc. It is essential for UHS support which requires 1.8V signal voltage.
+Signed-off-by: Levin Du <djw-Efosm3t9Qi2Pt1CcHtbs0g@public.gmane.org>
+---
 
+ drivers/gpio/gpio-syscon.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Levin Du (2):
-  gpio: syscon: Add gpio-syscon for rk3328
-  arm64: dts: rockchip: Add sdmmc UHS support for roc-rk3328-cc
-
- arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts | 36 ++++++++++++++++++++++++++
- drivers/gpio/gpio-syscon.c                     | 32 +++++++++++++++++++++++
- 2 files changed, 68 insertions(+)
-
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 537cec7..b69f65f 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -135,6 +135,34 @@ static const struct syscon_gpio_data clps711x_mctrl_gpio = {
+ 	.dat_bit_offset	= 0x40 * 8 + 8,
+ };
+ 
++static void rockchip_gpio_set(struct gpio_chip *chip, unsigned int offset,
++			      int val)
++{
++	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
++	unsigned int offs;
++	u8 bit;
++	u32 data;
++	int ret;
++
++	offs = priv->dreg_offset + priv->data->dat_bit_offset + offset;
++	bit = offs % SYSCON_REG_BITS;
++	data = (val ? BIT(bit) : 0) | BIT(bit + 16);
++	ret = regmap_write(priv->syscon,
++			   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
++			   data);
++	if (ret < 0)
++		dev_err(chip->parent, "gpio write failed ret(%d)\n", ret);
++}
++
++static const struct syscon_gpio_data rk3328_gpio_syscon10 = {
++	/* Rockchip RK3328 GRF_SOC_CON10 Bits 0-1 */
++	.compatible	= "rockchip,rk3328-grf",
++	.flags		= GPIO_SYSCON_FEAT_OUT,
++	.bit_count	= 2,
++	.dat_bit_offset	= 0x0428 * 8,
++	.set		= rockchip_gpio_set,
++};
++
+ #define KEYSTONE_LOCK_BIT BIT(0)
+ 
+ static void keystone_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+@@ -175,6 +203,10 @@ static const struct of_device_id syscon_gpio_ids[] = {
+ 		.compatible	= "ti,keystone-dsp-gpio",
+ 		.data		= &keystone_dsp_gpio,
+ 	},
++	{
++		.compatible	= "rockchip,rk3328-gpio-syscon10",
++		.data		= &rk3328_gpio_syscon10,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
 -- 
 2.7.4
