@@ -1,91 +1,149 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v2 3/4] clk: tegra: Add quirk for getting CDEV1/2 clocks
-Date: Tue, 8 May 2018 13:54:31 +0300
-Message-ID: <20180508105431.GS6835@tbergstrom-lnx.Nvidia.com>
-References: <20180503225537.20748-1-digetx@gmail.com>
- <20180503225537.20748-5-digetx@gmail.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v0 1/2] gpio: syscon: Add gpio-syscon for rk3328
+Date: Tue, 08 May 2018 13:49:46 +0200
+Message-ID: <2356128.gufDZceMBS@phil>
+References: <1525747704-8537-1-git-send-email-djw@t-chip.com.cn> <1525747704-8537-2-git-send-email-djw@t-chip.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/mixed; boundary="nextPart2893046.DzjenlKqZX"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180503225537.20748-5-digetx@gmail.com>
+In-Reply-To: <1525747704-8537-2-git-send-email-djw@t-chip.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-rockchip@lists.infradead.org
+Cc: djw@t-chip.com.cn, linux-gpio@vger.kernel.org, Wayne Chou <zxf@t-chip.com.cn>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, May 04, 2018 at 01:55:36AM +0300, Dmitry Osipenko wrote:
-> CDEV1 and CDEV2 clocks are a bit special case, their parent clock is
-> created by the pinctrl driver. It should be possible for clk user to
-> request these clocks before pinctrl driver got probed and hence user will
-> get an orphaned clock. That might be undesirable because user expects
-> parent clock to be enabled by the child, so let's return EPROBE_DEFER
-> until parent clock appear.
+This is a multi-part message in MIME format.
+
+--nextPart2893046.DzjenlKqZX
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+
+Hi Levin,
+
+Am Dienstag, 8. Mai 2018, 04:48:23 CEST schrieb djw@t-chip.com.cn:
+> From: Levin Du <djw@t-chip.com.cn>
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> In Rockchip RK3328 Soc, there's a output only gpio pin labeled
+> `gpiomut_pmuio_iout`, which can be set by bit[1] of GRF_SOC_CON10.
+> (bit[0] controls the enable state of the pin and defaults to enabled.)
+> 
+> This pin is used by the roc-rk3328-cc board to switch sdmmc io signal
+> voltage between 1.8V and 3.3V, which is essential to the SD card UHS
+> support.
+> 
+> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+
+Thanks for investigating that special pin.
+
+Please also add a devicetree-binding document under
+Documentation/devicetree/bindings/gpio.
+
+And I do have some more suggestions below.
+
+
 > ---
->  drivers/clk/tegra/clk.c | 34 +++++++++++++++++++++++++++++++++-
->  1 file changed, 33 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> index ba923f0d5953..04cbe7e9eff3 100644
-> --- a/drivers/clk/tegra/clk.c
-> +++ b/drivers/clk/tegra/clk.c
-> @@ -298,6 +298,38 @@ static struct reset_controller_dev rst_ctlr = {
->  	.of_reset_n_cells = 1,
+>  drivers/gpio/gpio-syscon.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+> index 537cec7..b69f65f 100644
+> --- a/drivers/gpio/gpio-syscon.c
+> +++ b/drivers/gpio/gpio-syscon.c
+> @@ -135,6 +135,34 @@ static const struct syscon_gpio_data clps711x_mctrl_gpio = {
+>  	.dat_bit_offset	= 0x40 * 8 + 8,
 >  };
 >  
-> +static struct clk *tegra_of_clk_src_onecell_get(struct of_phandle_args *clkspec,
-> +						void *data)
+> +static void rockchip_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> +			      int val)
 > +{
-> +	struct clk_hw *parent_hw;
-> +	struct clk_hw *hw;
-> +	struct clk *clk;
-> +	const char *name;
+> +	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
+> +	unsigned int offs;
+> +	u8 bit;
+> +	u32 data;
+> +	int ret;
 > +
-> +	clk = of_clk_src_onecell_get(clkspec, data);
-> +	if (IS_ERR(clk))
-> +		return clk;
-> +
-> +	name = __clk_get_name(clk);
-> +
-> +	/*
-> +	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
-> +	 * clock is created by the pinctrl driver. It is possible for clk user
-> +	 * to request these clocks before pinctrl driver got probed and hence
-> +	 * user will get an orphaned clock. That might be undesirable because
-> +	 * user may expect parent clock to be enabled by the child.
-> +	 */
-> +	if (!strcmp(name, "cdev1") || !strcmp(name, "cdev2")) {
-> +		hw = __clk_get_hw(clk);
-> +
-> +		parent_hw = clk_hw_get_parent(hw);
-> +		if (!parent_hw)
-> +			return ERR_PTR(-EPROBE_DEFER);
-> +	}
-> +
-> +	return clk;
+> +	offs = priv->dreg_offset + priv->data->dat_bit_offset + offset;
+> +	bit = offs % SYSCON_REG_BITS;
+> +	data = (val ? BIT(bit) : 0) | BIT(bit + 16);
+> +	ret = regmap_write(priv->syscon,
+> +			   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
+> +			   data);
+> +	if (ret < 0)
+> +		dev_err(chip->parent, "gpio write failed ret(%d)\n", ret);
 > +}
 > +
+> +static const struct syscon_gpio_data rk3328_gpio_syscon10 = {
+> +	/* Rockchip RK3328 GRF_SOC_CON10 Bits 0-1 */
+> +	.compatible	= "rockchip,rk3328-grf",
 
-Rather than retrieving the struct clk * and comparing the names, you can use
-the DT ID in  clkspec->args[0] and compare against TEGRA20_CLK_CDEV1 and
-TEGRA20_CLK_CDEV2.
+please drop the compatible above, include the attached patch before
+this one and follow the things I'll will outline in the devicetree patch
+shortly :-)
 
-Peter.
+Patch for getting the syscon frome the parent is compile-tested only
+so please double-check that I didn't mess up anything.
 
->  void __init tegra_add_of_provider(struct device_node *np)
->  {
->  	int i;
-> @@ -314,7 +346,7 @@ void __init tegra_add_of_provider(struct device_node *np)
+
+> +	.flags		= GPIO_SYSCON_FEAT_OUT,
+> +	.bit_count	= 2,
+> +	.dat_bit_offset	= 0x0428 * 8,
+> +	.set		= rockchip_gpio_set,
+> +};
+> +
+>  #define KEYSTONE_LOCK_BIT BIT(0)
 >  
->  	clk_data.clks = clks;
->  	clk_data.clk_num = clk_num;
-> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> +	of_clk_add_provider(np, tegra_of_clk_src_onecell_get, &clk_data);
->  
->  	rst_ctlr.of_node = np;
->  	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
-> -- 
-> 2.17.0
-> 
+>  static void keystone_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+> @@ -175,6 +203,10 @@ static const struct of_device_id syscon_gpio_ids[] = {
+>  		.compatible	= "ti,keystone-dsp-gpio",
+>  		.data		= &keystone_dsp_gpio,
+>  	},
+> +	{
+> +		.compatible	= "rockchip,rk3328-gpio-syscon10",
+
+rockchip,rk3328-gpio-mute [the naming from the TRM] could
+be a more suitable naming?
+
+
+Heiko
+--nextPart2893046.DzjenlKqZX
+Content-Disposition: attachment; filename="0001-gpio-syscon-allow-fetching-syscon-from-parent-node.patch"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/x-patch; charset="UTF-8"; name="0001-gpio-syscon-allow-fetching-syscon-from-parent-node.patch"
+
+>From 8894fdd9fc4ad90abec32336cc2e528d49abf887 Mon Sep 17 00:00:00 2001
+From: Heiko Stuebner <heiko@sntech.de>
+Date: Tue, 8 May 2018 13:33:37 +0200
+Subject: [PATCH] gpio: syscon: allow fetching syscon from parent node
+
+Syscon nodes can be a simple-mfd and the syscon-users then be declared
+as children of this node. That way the parent-child structure can be
+better represented for devices that are fully embedded in the syscon.
+
+Therefore allow getting the syscon from the parent if neither
+a special compatible nor a gpio,syscon-dev property is defined.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/gpio/gpio-syscon.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 537cec7583fc..7325b864f52a 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -205,6 +205,8 @@ static int syscon_gpio_probe(struct platform_device *pdev)
+ 	} else {
+ 		priv->syscon =
+ 			syscon_regmap_lookup_by_phandle(np, "gpio,syscon-dev");
++		if (IS_ERR(priv->syscon) && np->parent)
++			priv->syscon = syscon_node_to_regmap(np->parent);
+ 		if (IS_ERR(priv->syscon))
+ 			return PTR_ERR(priv->syscon);
+ 
+-- 
+2.16.2
+
+
+--nextPart2893046.DzjenlKqZX--
