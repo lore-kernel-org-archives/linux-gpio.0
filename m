@@ -1,76 +1,88 @@
-From: Doug Anderson <dianders@chromium.org>
+From: JeffyChen <jeffy.chen@rock-chips.com>
 Subject: Re: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when changing
  it's capability
-Date: Tue, 8 May 2018 12:46:25 -0700
-Message-ID: <CAD=FV=W_v+aoNT09k-2exVABTFzOp0heY-XWcLi95uPisZhiGQ@mail.gmail.com>
-References: <20180503065553.7762-1-jeffy.chen@rock-chips.com>
- <20180507221511.GA6448@rodete-desktop-imager.corp.google.com>
- <5AF0FF18.1050905@rock-chips.com> <20180508015623.GA61455@rodete-desktop-imager.corp.google.com>
+Date: Wed, 09 May 2018 10:21:34 +0800
+Message-ID: <5AF25B2E.8080901@rock-chips.com>
+References: <20180503065553.7762-1-jeffy.chen@rock-chips.com> <20180507221511.GA6448@rodete-desktop-imager.corp.google.com> <5AF0FF18.1050905@rock-chips.com> <20180508015623.GA61455@rodete-desktop-imager.corp.google.com> <CAD=FV=W_v+aoNT09k-2exVABTFzOp0heY-XWcLi95uPisZhiGQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180508015623.GA61455@rodete-desktop-imager.corp.google.com>
+In-Reply-To: <CAD=FV=W_v+aoNT09k-2exVABTFzOp0heY-XWcLi95uPisZhiGQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Norris <briannorris@chromium.org>
-Cc: JeffyChen <jeffy.chen@rock-chips.com>, LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Doug Anderson <dianders@chromium.org>, Brian Norris <briannorris@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+Hi Doug,
 
-On Mon, May 7, 2018 at 6:56 PM, Brian Norris <briannorris@chromium.org> wrote:
-> On Tue, May 08, 2018 at 09:36:24AM +0800, Jeffy Chen wrote:
->> On 05/08/2018 06:15 AM, Brian Norris wrote:
->> > On the other hand...this also implies there may be a race condition
->> > there, where we might lose an interrupt if there is an edge between the
->> > re-configuration of the polarity in rockchip_irq_demux() and the
->> > clearing/handling of the interrupt (handle_edge_irq() ->
->> > chip->irq_ack()). If we have an edge between there, then we might ack
->> > it, but leave the polarity such that we aren't ready for the next
->> > (inverted) edge.
->>
->> if let me guess, the unexpected irq we saw is the hardware trying to avoid
->> losing irq? for example, we set a EDGE_RISING, and the hardware saw the gpio
->> is already high, then though it might lost an irq, so fake one for safe?
+On 05/09/2018 03:46 AM, Doug Anderson wrote:
+> One note is that in the case Brian points at (where we need to
+> simulate EDGE_BOTH by swapping edges) we purposely ignored the TRM and
+> we needed to do that to avoid losing interrupts.  For details, see
+> commit 53b1bfc76df2 ("pinctrl: rockchip: Avoid losing interrupts when
+> supporting both edges").  We did this because:
 >
-> I won't pretend to know what the IC designers were doing, but I don't
-> think that would resolve the problem I'm talking about. The sequence is
-> something like:
-> 1. EDGE_BOTH IRQ occurs (e.g., low to high)
-> 2. reconfigure polarity in rockchip_irq_demux() (polarity=low)
-> 3. continue to handle_edge_irq()
-> 4. another HW edge occurs (e.g., high to low)
-> 5. handle_edge_irq() (from 3) acks (clears) IRQ (before a subsequent
->    rockchip_irq_demux() gets a chance to run and flip the polarity)
-> ...
+> 1. We believed that the IP block in Rockchip SoCs has nearly the same
+> logic as "gpio-dwapb.c" and that's what "gpio-dwapb.c" did.
 >
-> Now the polarity is still low, but the next trigger should be a
-> low-to-high edge.
+
+hmm, but i saw the gpio-dwapb.c actually toggle trigger after handle 
+irq, which might avoid the race Brian mentioned:
++               generic_handle_irq(gpio_irq);
++               irq_status &= ~BIT(hwirq);
++
++               if ((irq_get_trigger_type(gpio_irq) & IRQ_TYPE_SENSE_MASK)
++                       == IRQ_TYPE_EDGE_BOTH)
++                       dwapb_toggle_trigger(gpio, hwirq);
+
+
+and i also saw ./qcom/pinctrl-msm.c do the 
+toggle(msm_gpio_update_dual_edge_pos) at the end of 
+msm_gpio_irq_set_type and msm_gpio_irq_ack, that seems can avoid the 
+polarity races too.
+
+> 2. We were actually losing real interrupts and this was the only way
+> we could figure out how to fix it.
 >
->> i'll try to confirm it with IC guys.
+> When I tested that back in the day I was fairly convinced that we
+> weren't losing any interrupts in the EDGE_BOTH case after my fix, but
+> I certainly could have messed up.
+>
+>
+> For the EDGE_BOTH case it was important not to lose an interrupt
+> because, as you guys are talking about, we could end up configured the
+> wrong way.  I think in your case where you're just picking one
+> polarity losing an interrupt shouldn't matter since it's undefined
+> exactly if an edge happens while you're in the middle of executing
+> rockchip_irq_set_type().  Is that right?
 
-One note is that in the case Brian points at (where we need to
-simulate EDGE_BOTH by swapping edges) we purposely ignored the TRM and
-we needed to do that to avoid losing interrupts.  For details, see
-commit 53b1bfc76df2 ("pinctrl: rockchip: Avoid losing interrupts when
-supporting both edges").  We did this because:
+right, so we now have 2 cases: rockchip_irq_demux/ rockchip_irq_set_type
 
-1. We believed that the IP block in Rockchip SoCs has nearly the same
-logic as "gpio-dwapb.c" and that's what "gpio-dwapb.c" did.
+if i'm right about the spurious irq(only happen when set rising for a 
+high gpio, or set falling for a low gpio), then:
 
-2. We were actually losing real interrupts and this was the only way
-we could figure out how to fix it.
+1/ rockchip_irq_demux
+it's important to not losing irqs in this case, maybe we can
 
-When I tested that back in the day I was fairly convinced that we
-weren't losing any interrupts in the EDGE_BOTH case after my fix, but
-I certainly could have messed up.
+a) ack irq
+b) update polarity for edge both irq
+
+we don't need to disable irq in b), since we would not hit the spurious 
+irq cases here(always check gpio level to toggle it)
 
 
-For the EDGE_BOTH case it was important not to lose an interrupt
-because, as you guys are talking about, we could end up configured the
-wrong way.  I think in your case where you're just picking one
-polarity losing an interrupt shouldn't matter since it's undefined
-exactly if an edge happens while you're in the middle of executing
-rockchip_irq_set_type().  Is that right?
+2/ rockchip_irq_set_type
+it's important to not having spurious irqs
 
+so we can disable irq during changing polarity only in these case:
+((rising && gpio is heigh) || (falling && gpio is low))
 
--Doug
+i'm still confirming the spurious irq with IC guys.
+
+>
+>
+> -Doug
+>
+>
+>
