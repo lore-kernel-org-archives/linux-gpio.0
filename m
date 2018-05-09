@@ -1,167 +1,114 @@
-From: JeffyChen <jeffy.chen@rock-chips.com>
-Subject: Re: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when changing
- it's capability
-Date: Wed, 09 May 2018 14:41:28 +0800
-Message-ID: <5AF29818.2010705@rock-chips.com>
-References: <20180503065553.7762-1-jeffy.chen@rock-chips.com> <20180507221511.GA6448@rodete-desktop-imager.corp.google.com> <5AF0FF18.1050905@rock-chips.com> <20180508015623.GA61455@rodete-desktop-imager.corp.google.com> <CAD=FV=W_v+aoNT09k-2exVABTFzOp0heY-XWcLi95uPisZhiGQ@mail.gmail.com> <5AF25B2E.8080901@rock-chips.com> <CAD=FV=WZ+2MNbe341M7OQD11+RxaJuzdM6zMnXYB4dka74K1hQ@mail.gmail.com>
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
+ bindings
+Date: Wed, 9 May 2018 07:31:31 +0000
+Message-ID: <124c557b-d6c0-5734-5992-af15b527cbe4@st.com>
+References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
+ <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
+ <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=WZ+2MNbe341M7OQD11+RxaJuzdM6zMnXYB4dka74K1hQ@mail.gmail.com>
+In-Reply-To: <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
+Content-Language: en-US
+Content-ID: <0CAA554B401A6644A093DE9AEF268EB6@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>, LKML <linux-kernel@vger.kernel.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Doug,
-
-Thanks for your reply :)
-
-On 05/09/2018 01:18 PM, Doug Anderson wrote:
->> >
->> >
->> >right, so we now have 2 cases: rockchip_irq_demux/ rockchip_irq_set_type
->> >
->> >if i'm right about the spurious irq(only happen when set rising for a high
->> >gpio, or set falling for a low gpio), then:
->> >
->> >1/ rockchip_irq_demux
->> >it's important to not losing irqs in this case, maybe we can
->> >
->> >a) ack irq
->> >b) update polarity for edge both irq
->> >
->> >we don't need to disable irq in b), since we would not hit the spurious irq
->> >cases here(always check gpio level to toggle it)
-> Unless you have some sort of proof that rockchip_irq_demux(), I would
-> take it as an example of something that works.  I remember stress
-> testing the heck out of it.  Do you have some evidence that it's not
-> working?  I think Brian was simply speculating that there might be a
-> race here, but I don't think anyone has shown it have they?  Looking
-> back at my notes, the thing I really made sure to stress was that we
-> never got into a situation where we were losing an edge (AKA we were
-> never configured to look for a falling edge when the line was already
-> low).  I'm not sure I confirmed that we never got an extra interrupt.
->
-> I'm at home right now and I can't add prints and poke at things, but
-> as I understand it for edge interrupts the usual flow to make sure
-> interrupts aren't ever lost is:
->
-> 1. See that the interrupt went off
-> 2. Ack it (clear it)
-> 3. Call the interrupt handler
->
-> ...presumably in this case rockchip_irq_demux() is called after step
-> #2 (but I don't know if it's called before or after step #3).  If the
-> line is toggling like crazy while the 3 steps are going on, it's OK if
-> the interrupt handler is called more than once.  In general this could
-> be considered expected.  That's why you Ack before handling--any extra
-> edges that come in any time after the interrupt handler starts (even
-> after the very first instruction) need to cause the interrupt handler
-> to get called again.
->
-> This is different than Brian's understanding since he seemed to think
-> the Ack was happening later.  If you're in front of something where
-> you can add printouts, maybe you can tell us.  I tried to look through
-> the code and it was too twisted for me to be sure.
-
-i think the current edge both irq flow for rk3399 would be:
-gic_handle_irq //irq-gic-v3.c
-   handle_domain_irq
-     rockchip_irq_demux //pinctrl-rockchip.c
-       toggle polarity
-       generic_handle_irq
-         handle_edge_irq //kernel/irq
-           irq_ack
-           handle_irq_event
-             action->handler
-
-so i think the race might actually exist (maybe we can add some delay 
-after toggle polarity to confirm)
-
-
-BTW, checking other drivers, there're quite a few using this kind of 
-toggle edge for edge both, and they go different ways:
-
-1/ toggle it in ack():
-mediatek/pinctrl-mtk-common.c
-gpio-ingenic.c
-gpio-ep93xx.c
-
-2/ toggle it before handle_irq:
-pinctrl-rockchip.c
-pinctrl-armada-37xx.c
-gpio-ath79.c
-gpio-mxs.c
-gpio-omap.c
-gpio-mvebu.c
-
-3/ toggle it after handle_irq:
-gpio-dwapb.c
-gpio-pmic-eic-sprd.c
-
-
-would it make sense to support this kind of emulate edge both irq in 
-some core codes?
-
->
->
->> >2/ rockchip_irq_set_type
->> >it's important to not having spurious irqs
->> >
->> >so we can disable irq during changing polarity only in these case:
->> >((rising && gpio is heigh) || (falling && gpio is low))
->> >
->> >i'm still confirming the spurious irq with IC guys.
-> Hmmm, thinking about all this more, I'm curious how callers expect
-> this to work.  Certainly things are undefined if you have the
-> following situation:
->
-> Start: rising edge trigger, line is actually high
-> Request: change to falling edge trigger
-> Line falls during the request
->
-> In that case it's OK to throw the interrupt away because it can be
-> argued that the line could have fallen before the request actually
-> took place.  ...but it seems like there could be situations where the
-> user wouldn't expect interrupts to be thrown away by a call to
-> irq_set_type().  In other words:
->
-> Start: rising edge trigger, line is actually high
-> Request: change to falling edge trigger
-> Line falls, rises, and falls during the request
->
-> ...in that case you'd expect that some sort of interrupt would have
-> gone off and not be thrown away.  No matter what instant in time the
-> request actually took place it should have caught an edge, right?
->
->
-> Said another way: As a client of irq_set_type() I'd expect it to not
-> throw away interrupts, but I'd expect that the change in type would be
-> atomic.  That is: if the interrupt came in before the type change in
-> type applied then it should trigger with the old rules.  If the
-> interrupt came in after the type change then it should trigger with
-> the new rules.
->
->
-> I would be tempted to confirm your testing and just clear the spurious
-> interrupts that you're aware of.  AKA: if there's no interrupt pending
-> and you change the type to "IRQ_TYPE_EDGE_RISING" or
-> "IRQ_TYPE_EDGE_FALLING" then you should clear the interrupt.  It's
-> still racy, but I guess it's the best you can do unless IC guys come
-> up with something better.
->
-
-hmmm, right, clear the spurious irq seems to be a better way, will try 
-to do it in the next version.
->
->
-> Anyway, it's past my bedtime.  Hopefully some of the above made sense.
-> I'm sure you'll tell me if it didn't or if I said something
-> stupid/wrong.:-P
->
-> -Doug
->
->
->
+DQoNCk9uIDA0LzE2LzIwMTggMDg6MTkgUE0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBPbiBXZWQs
+IEFwciAxMSwgMjAxOCBhdCAxMTo0NzowMUFNICswMjAwLCBBbWVsaWUgRGVsYXVuYXkgd3JvdGU6
+DQo+PiBUaGlzIHBhdGNoIGFkZHMgZG9jdW1lbnRhdGlvbiBvZiBkZXZpY2UgdHJlZSBiaW5kaW5n
+cyBmb3IgdGhlDQo+PiBTVE1pY3JvZWxlY3Ryb25pY3MgTXVsdGktRnVuY3Rpb24gZVhwYW5kZXIg
+KFNUTUZYKSBHUElPIGV4cGFuZGVyLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEFtZWxpZSBEZWxh
+dW5heSA8YW1lbGllLmRlbGF1bmF5QHN0LmNvbT4NCj4+IC0tLQ0KPj4gICAuLi4vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9waW5jdHJsL3BpbmN0cmwtc3RtZngudHh0ICB8IDExOCArKysrKysrKysrKysr
+KysrKysrKysNCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDExOCBpbnNlcnRpb25zKCspDQo+PiAgIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3Ry
+bC9waW5jdHJsLXN0bWZ4LnR4dA0KPj4NCj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9waW5jdHJsLXN0bWZ4LnR4dCBiL0RvY3VtZW50YXRp
+b24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL3BpbmN0cmwtc3RtZngudHh0DQo+PiBuZXcg
+ZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMC4uNGQ4OTQxZGUNCj4+IC0tLSAvZGV2
+L251bGwNCj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJs
+L3BpbmN0cmwtc3RtZngudHh0DQo+PiBAQCAtMCwwICsxLDExOCBAQA0KPj4gK1NUTWljcm9lbGVj
+dHJvbmljcyBNdWx0aS1GdW5jdGlvbiBlWHBhbmRlciAoU1RNRlgpIEdQSU8gZXhwYW5kZXIgYmlu
+ZGluZ3MNCj4+ICsNCj4+ICtTVCBNdWx0aS1GdW5jdGlvbiBlWHBhbmRlciAoU1RNRlgpIGlzIGEg
+c2xhdmUgY29udHJvbGxlciB1c2luZyBJMkMgZm9yDQo+PiArY29tbXVuaWNhdGlvbiB3aXRoIHRo
+ZSBtYWluIE1DVS4gSXQgb2ZmZXJzIHVwIHRvIDI0IEdQSU9zIGV4cGFuc2lvbi4NCj4+ICsNCj4+
+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPj4gKy0gY29tcGF0aWJsZTogc2hvdWxkIGJlICJzdCxz
+dG1meC0wMzAwIi4NCj4+ICstIHJlZzogSTJDIHNsYXZlIGFkZHJlc3Mgb2YgdGhlIGRldmljZS4N
+Cj4+ICstIGludGVycnVwdC1wYXJlbnQ6IHBoYW5kbGUgb2YgdGhlIFNUTUZYIHBhcmVudCBpbnRl
+cnJ1cHQgY29udHJvbGxlci4NCj4+ICstIGludGVycnV0cHM6IGludGVycnVwdCBzcGVjaWZpZXIg
+dHJpZ2dlcmVkIGJ5IE1GWF9JUlFfT1VUIHNpZ25hbC4NCj4+ICsNCj4+ICtPcHRpb25hbCBwcm9w
+ZXJ0eToNCj4gDQo+IHMvcHJvcGVydHkvcHJvcGVydGllcy8NCj4gDQo+PiArLSBkcml2ZS1vcGVu
+LWRyYWluOiBjb25maWd1cmUgTUZYX0lSUV9PVVQgYXMgb3BlbiBkcmFpbi4NCj4+ICstIHZkZC1z
+dXBwbHk6IHBoYW5kbGUgb2YgdGhlIHJlZ3VsYXRvciBzdXBwbHlpbmcgU1RNRlguDQo+PiArDQo+
+PiArUmVxdWlyZWQgcHJvcGVydGllcyBmb3IgZ3BpbyBjb250cm9sbGVyIHN1Yi1ub2RlOg0KPj4g
+Ky0gI2dwaW8tY2VsbHM6IHNob3VsZCBiZSA8Mj4sIHRoZSBmaXJzdCBjZWxsIGlzIHRoZSBHUElP
+IG51bWJlciBhbmQgdGhlIHNlY29uZA0KPj4gKyAgY2VsbCBpcyB0aGUgZ3BpbyBmbGFncyBpbiBh
+Y2NvcmRhbmNlIHdpdGggPGR0LWJpbmRpbmdzL2dwaW8vZ3Bpby5oPi4NCj4+ICstIGdwaW8tY29u
+dHJvbGxlcjogbWFya3MgdGhlIGRldmljZSBhcyBhIEdQSU8gY29udHJvbGxlci4NCj4+ICtQbGVh
+c2UgcmVmZXIgdG8gLi4vZ3Bpby9ncGlvLnR4dC4NCj4+ICsNCj4+ICtPcHRpb25hbCBwcm9wZXJ0
+aWVzIGZvciBncGlvIGNvbnRyb2xsZXIgc3ViLW5vZGU6DQo+PiArLSAjaW50ZXJydXB0LWNlbGxz
+OiBzaG91bGQgYmUgPDI+LCB0aGUgZmlyc3QgY2VsbCBpcyB0aGUgR1BJTyBudW1iZXIgYW5kIHRo
+ZQ0KPj4gKyAgc2Vjb25kIGNlbGwgaXMgdGhlIGludGVycnVwdCBmbGFncyBpbiBhY2NvcmRhbmNl
+IHdpdGgNCj4+ICsgIDxkdC1iaW5kaW5ncy9pbnRlcnJ1cHQtY29udHJvbGxlci9pcnEuaD4uDQo+
+PiArLSBpbnRlcnJ1cHQtY29udHJvbGxlcjogbWFya3MgdGhlIGRldmljZSBhcyBhbiBpbnRlcnJ1
+cHQgY29udHJvbGxlci4NCj4+ICsNCj4+ICtQbGVhc2UgcmVmZXIgdG8gcGluY3RybC1iaW5kaW5n
+cy50eHQgZm9yIHBpbiBjb25maWd1cmF0aW9uLg0KPj4gKw0KPj4gK1JlcXVpcmVkIHByb3BlcnRp
+ZXMgZm9yIHBpbiBjb25maWd1cmF0aW9uIHN1Yi1ub2RlczoNCj4+ICstIHBpbnM6IGxpc3Qgb2Yg
+cGlucyB0byB3aGljaCB0aGUgY29uZmlndXJhdGlvbiBhcHBsaWVzLg0KPj4gKw0KPj4gK09wdGlv
+bmFsIHByb3BlcnRpZXMgZm9yIHBpbiBjb25maWd1cmF0aW9uIHN1Yi1ub2RlcyAocGluY29uZi1n
+ZW5lcmljIG9uZXMpOg0KPj4gKy0gYmlhcy1kaXNhYmxlOiBkaXNhYmxlIGFueSBiaWFzIG9uIHRo
+ZSBwaW4uDQo+PiArLSBiaWFzLXB1bGwtdXA6IHRoZSBwaW4gd2lsbCBiZSBwdWxsZWQgdXAuDQo+
+PiArLSBiaWFzLXB1bGwtcGluLWRlZmF1bHQ6IHVzZSB0aGUgcGluLWRlZmF1bHQgcHVsbCBzdGF0
+ZS4NCj4+ICstIGJpYXMtcHVsbC1kb3duOiB0aGUgcGluIHdpbGwgYmUgcHVsbGVkIGRvd24uDQo+
+PiArLSBkcml2ZS1vcGVuLWRyYWluOiB0aGUgcGluIHdpbGwgYmUgZHJpdmVuIHdpdGggb3BlbiBk
+cmFpbi4NCj4+ICstIGRyaXZlLXB1c2gtcHVsbDogdGhlIHBpbiB3aWxsIGJlIGRyaXZlbiBhY3Rp
+dmVseSBoaWdoIGFuZCBsb3cuDQo+PiArLSBvdXRwdXQtaGlnaDogdGhlIHBpbiB3aWxsIGJlIGNv
+bmZpZ3VyZWQgYXMgYW4gb3V0cHV0IGRyaXZpbmcgaGlnaCBsZXZlbC4NCj4+ICstIG91dHB1dC1s
+b3c6IHRoZSBwaW4gd2lsbCBiZSBjb25maWd1cmVkIGFzIGFuIG91dHB1dCBkcml2aW5nIGxvdyBs
+ZXZlbC4NCj4+ICsNCj4+ICtOb3RlIHRoYXQgU1RNRlggcGluc1sxNTowXSBhcmUgY2FsbGVkICJn
+cGlvWzE1OjBdIiwgYW5kIFNUTUZYIHBpbnNbMjM6MTZdIGFyZQ0KPj4gK2NhbGxlZCAiYWdwaW9b
+NzowXSIuIEV4YW1wbGUsIHRvIHJlZmVyIHRvIHBpbiAxOCBvZiBTVE1GWCwgdXNlICJhZ3BpbzIi
+Lg0KPj4gKw0KPj4gK0V4YW1wbGU6DQo+PiArDQo+PiArCXN0bWZ4cGluY3RybDogc3RtZnhANDIg
+ew0KPj4gKwkJY29tcGF0aWJsZSA9ICJzdCxzdG1meC0wMzAwIjsNCj4+ICsJCXJlZyA9IDwweDQy
+PjsNCj4+ICsJCWludGVycnVwdC1wYXJlbnQgPSA8JmdwaW9pPjsNCj4+ICsJCWludGVycnVwdHMg
+PSA8OCBJUlFfVFlQRV9FREdFX1JJU0lORz47DQo+PiArCQl2ZGQtc3VwcGx5ID0gPCZ2M3YzPjsN
+Cj4+ICsJCXN0YXR1cyA9ICJva2F5IjsNCj4gDQo+IERvbid0IHNob3cgc3RhdHVzIGluIGV4YW1w
+bGVzLg0KPiANCg0KSSdsbCBmaXggaXQuDQoNCj4+ICsNCj4+ICsJCXN0bWZ4Z3BpbzogZ3BpbyB7
+DQo+IA0KPiBXaHkgZG9lcyB0aGlzIG5lZWQgdG8gYmUgYSBzdWIgbm9kZT8gQXJlIHRoZXJlIGZ1
+bmN0aW9ucyBiZXlvbmQgR1BJTz8NCj4gDQoNCkknbGwgYWRkcmVzcyB0aGlzIHBvaW50IGluIG15
+IHJlc3BvbnNlIHRvIExpbnVzLg0KDQo+PiArCQkJI2dwaW8tY2VsbHMgPSA8Mj47DQo+PiArCQkJ
+I2ludGVycnVwdC1jZWxscyA9IDwyPjsNCj4+ICsJCQlncGlvLWNvbnRyb2xsZXI7DQo+PiArCQkJ
+aW50ZXJydXB0LWNvbnRyb2xsZXI7DQo+PiArCQkJc3RhdHVzID0gIm9rYXkiOw0KPj4gKwkJfTsN
+Cj4+ICsNCj4+ICsJCWpveXN0aWNrX3BpbnM6IGpveXN0aWNrQDAgew0KPiANCj4gQSB1bml0LWFk
+ZHJlc3Mgd2l0aG91dCBhIHJlZyBwcm9wIGlzIG5vdCB2YWxpZC4NCj4gDQoNCk9LLCBJJ2xsIHJl
+cGxhY2UgaXQgYnkgJ2pveXN0aWNrX3BpbnM6IGpveXN0aWNrLTAnLg0KDQo+PiArCQkJcGlucyA9
+ICJncGlvMCIsICJncGlvMSIsICJncGlvMiIsICJncGlvMyIsICJncGlvNCI7DQo+PiArCQkJZHJp
+dmUtcHVzaC1wdWxsOw0KPj4gKwkJCWJpYXMtcHVsbC1kb3duOw0KPj4gKwkJfTsNCj4+ICsJfTsN
+Cj4+ICsNCj4+ICsJam95c3RpY2sgew0KPj4gKwkJY29tcGF0aWJsZSA9ICJncGlvLWtleXMiOw0K
+Pj4gKwkJI2FkZHJlc3MtY2VsbHMgPSA8MT47DQo+PiArCQkjc2l6ZS1jZWxscyA9IDwwPjsNCj4+
+ICsJCXBpbmN0cmwtMCA9IDwmam95c3RpY2tfcGlucz47DQo+PiArCQlwaW5jdHJsLW5hbWVzID0g
+ImRlZmF1bHQiOw0KPj4gKwkJYnV0dG9uQDAgew0KPj4gKwkJCWxhYmVsID0gIkpveVNlbCI7DQo+
+PiArCQkJbGludXgsY29kZSA9IDxLRVlfRU5URVI+Ow0KPj4gKwkJCWludGVycnVwdC1wYXJlbnQg
+PSA8JnN0bWZ4Z3Bpbz47DQo+PiArCQkJaW50ZXJydXB0cyA9IDwwIElSUV9UWVBFX0VER0VfUklT
+SU5HPjsNCj4+ICsJCX07DQo+PiArCQlidXR0b25AMSB7DQo+PiArCQkJbGFiZWwgPSAiSm95RG93
+biI7DQo+PiArCQkJbGludXgsY29kZSA9IDxLRVlfRE9XTj47DQo+PiArCQkJaW50ZXJydXB0LXBh
+cmVudCA9IDwmc3RtZnhncGlvPjsNCj4+ICsJCQlpbnRlcnJ1cHRzID0gPDEgSVJRX1RZUEVfRURH
+RV9SSVNJTkc+Ow0KPj4gKwkJfTsNCj4+ICsJCWJ1dHRvbkAyIHsNCj4+ICsJCQlsYWJlbCA9ICJK
+b3lMZWZ0IjsNCj4+ICsJCQlsaW51eCxjb2RlID0gPEtFWV9MRUZUPjsNCj4+ICsJCQlpbnRlcnJ1
+cHQtcGFyZW50ID0gPCZzdG1meGdwaW8+Ow0KPj4gKwkJCWludGVycnVwdHMgPSA8MiBJUlFfVFlQ
+RV9FREdFX1JJU0lORz47DQo+PiArCQl9Ow0KPj4gKwkJYnV0dG9uQDMgew0KPj4gKwkJCWxhYmVs
+ID0gIkpveVJpZ2h0IjsNCj4+ICsJCQlsaW51eCxjb2RlID0gPEtFWV9SSUdIVD47DQo+PiArCQkJ
+aW50ZXJydXB0LXBhcmVudCA9IDwmc3RtZnhncGlvPjsNCj4+ICsJCQlpbnRlcnJ1cHRzID0gPDMg
+SVJRX1RZUEVfRURHRV9SSVNJTkc+Ow0KPj4gKwkJfTsNCj4+ICsJCWJ1dHRvbkA0IHsNCj4+ICsJ
+CQlsYWJlbCA9ICJKb3lVcCI7DQo+PiArCQkJbGludXgsY29kZSA9IDxLRVlfVVA+Ow0KPj4gKwkJ
+CWludGVycnVwdC1wYXJlbnQgPSA8JnN0bWZ4Z3Bpbz47DQo+PiArCQkJaW50ZXJydXB0cyA9IDw0
+IElSUV9UWVBFX0VER0VfUklTSU5HPjsNCj4+ICsJCX07DQo+PiArCX07DQo+PiArDQo+PiArCWxl
+ZHMgew0KPj4gKwkJY29tcGF0aWJsZSA9ICJncGlvLWxlZHMiOw0KPj4gKwkJb3JhbmdlIHsNCj4+
+ICsJCQlncGlvcyA9IDwmc3RtZnhncGlvIDE3IDE+Ow0KPj4gKwkJfTsNCj4+ICsNCj4+ICsJCWJs
+dWUgew0KPj4gKwkJCWdwaW9zID0gPCZzdG1meGdwaW8gMTkgMT47DQo+PiArCQl9Ow0KPj4gKwl9
+DQo+PiAtLSANCj4+IDIuNy40DQo+Pg0KDQpUaGFua3MsDQpBbWVsaWU=
