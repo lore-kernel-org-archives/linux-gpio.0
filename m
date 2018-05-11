@@ -1,181 +1,209 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v3 3/4] clk: tegra: Add quirk for getting CDEV1/2 clocks
- on Tegra20
-Date: Fri, 11 May 2018 10:57:54 +0300
-Message-ID: <20180511075754.GW6835@tbergstrom-lnx.Nvidia.com>
-References: <20180508162607.3500-1-digetx@gmail.com>
- <20180508162607.3500-5-digetx@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+Date: Fri, 11 May 2018 09:31:37 +0100
+Message-ID: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180508162607.3500-5-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 08, 2018 at 07:26:06PM +0300, Dmitry Osipenko wrote:
-> CDEV1 and CDEV2 clocks are a bit special case, their parent clock is
-> created by the pinctrl driver. It should be possible for clk user to
-> request these clocks before pinctrl driver got probed and hence user will
-> get an orphaned clock. That might be undesirable because user may expect
-> parent clock to be enabled by the child, so let's return -EPROBE_DEFER
-> till parent clock appears.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+per GPIO in port A, but the driver currently only supports 1 interrupt.
+See the DesignWare DW_apb_gpio Databook description of the
+'GPIO_INTR_IO' parameter.
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>                                                                                                     
+This change allows the driver to work with up to 32 interrupts, it will
+get as many interrupts as specified in the DT 'interrupts' property.
+It doesn't do anything clever with the different interrupts, it just calls
+the same handler used for single interrupt hardware.
 
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
+One point to mention is that I have made it possible for users to have
+unconnected interrupts by specifying holes in the list of interrupts. This is
+done by supporting the interrupts-extended DT prop.
+However, I have no use for this and had to hack some test case for this.
+Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
 
-> ---
->  drivers/clk/tegra/clk-tegra114.c |  2 +-
->  drivers/clk/tegra/clk-tegra124.c |  2 +-
->  drivers/clk/tegra/clk-tegra20.c  | 32 +++++++++++++++++++++++++++++++-
->  drivers/clk/tegra/clk-tegra210.c |  2 +-
->  drivers/clk/tegra/clk-tegra30.c  |  2 +-
->  drivers/clk/tegra/clk.c          |  5 +++--
->  drivers/clk/tegra/clk.h          |  2 +-
->  7 files changed, 39 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-> index 5d5a22d529f5..1824f014202b 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -1367,7 +1367,7 @@ static void __init tegra114_clock_init(struct device_node *np)
->  	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
->  					&pll_x_params);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra_clk_apply_init_table = tegra114_clock_apply_init_table;
-> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-> index 50088e976611..0c69c7970950 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -1479,7 +1479,7 @@ static void __init tegra124_132_clock_init_post(struct device_node *np)
->  				  &pll_x_params);
->  	tegra_init_special_resets(1, tegra124_reset_assert,
->  				  tegra124_reset_deassert);
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  
->  	clks[TEGRA124_CLK_EMC] = tegra_clk_register_emc(clk_base, np,
->  							&emc_lock);
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index 636500a98561..cc857d4d4a86 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -1089,6 +1089,36 @@ static const struct of_device_id pmc_match[] __initconst = {
->  	{ },
->  };
->  
-> +static struct clk *tegra20_clk_src_onecell_get(struct of_phandle_args *clkspec,
-> +					       void *data)
-> +{
-> +	struct clk_hw *parent_hw;
-> +	struct clk_hw *hw;
-> +	struct clk *clk;
-> +
-> +	clk = of_clk_src_onecell_get(clkspec, data);
-> +	if (IS_ERR(clk))
-> +		return clk;
-> +
-> +	/*
-> +	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
-> +	 * clock is created by the pinctrl driver. It is possible for clk user
-> +	 * to request these clocks before pinctrl driver got probed and hence
-> +	 * user will get an orphaned clock. That might be undesirable because
-> +	 * user may expect parent clock to be enabled by the child.
-> +	 */
-> +	if (clkspec->args[0] == TEGRA20_CLK_CDEV1 ||
-> +	    clkspec->args[0] == TEGRA20_CLK_CDEV2) {
-> +		hw = __clk_get_hw(clk);
-> +
-> +		parent_hw = clk_hw_get_parent(hw);
-> +		if (!parent_hw)
-> +			return ERR_PTR(-EPROBE_DEFER);
-> +	}
-> +
-> +	return clk;
-> +}
-> +
->  static void __init tegra20_clock_init(struct device_node *np)
->  {
->  	struct device_node *node;
-> @@ -1127,7 +1157,7 @@ static void __init tegra20_clock_init(struct device_node *np)
->  
->  	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA20_CLK_CLK_MAX);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, tegra20_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra_clk_apply_init_table = tegra20_clock_apply_init_table;
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 9fb5d51ccce4..5435d01c636a 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -3567,7 +3567,7 @@ static void __init tegra210_clock_init(struct device_node *np)
->  	tegra_init_special_resets(2, tegra210_reset_assert,
->  				  tegra210_reset_deassert);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra210_mbist_clk_init();
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> index b316dfb6f6c7..acfe661b2ae7 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -1349,7 +1349,7 @@ static void __init tegra30_clock_init(struct device_node *np)
->  
->  	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA30_CLK_CLK_MAX);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra_clk_apply_init_table = tegra30_clock_apply_init_table;
-> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> index ba923f0d5953..593d76a114f9 100644
-> --- a/drivers/clk/tegra/clk.c
-> +++ b/drivers/clk/tegra/clk.c
-> @@ -298,7 +298,8 @@ static struct reset_controller_dev rst_ctlr = {
->  	.of_reset_n_cells = 1,
->  };
->  
-> -void __init tegra_add_of_provider(struct device_node *np)
-> +void __init tegra_add_of_provider(struct device_node *np,
-> +				  void *clk_src_onecell_get)
->  {
->  	int i;
->  
-> @@ -314,7 +315,7 @@ void __init tegra_add_of_provider(struct device_node *np)
->  
->  	clk_data.clks = clks;
->  	clk_data.clk_num = clk_num;
-> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> +	of_clk_add_provider(np, clk_src_onecell_get, &clk_data);
->  
->  	rst_ctlr.of_node = np;
->  	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index ba7e20e6a82b..e1f88463b600 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -763,7 +763,7 @@ struct clk **tegra_clk_init(void __iomem *clk_base, int num, int periph_banks);
->  
->  struct clk **tegra_lookup_dt_id(int clk_id, struct tegra_clk *tegra_clk);
->  
-> -void tegra_add_of_provider(struct device_node *np);
-> +void tegra_add_of_provider(struct device_node *np, void *clk_src_onecell_get);
->  void tegra_register_devclks(struct tegra_devclk *dev_clks, int num);
->  
->  void tegra_audio_clk_init(void __iomem *clk_base,
-> -- 
-> 2.17.0
-> 
+v6:
+ - Treat DT and ACPI the same as much as possible. Note that we can't use
+   platform_get_irq() to get the DT interrupts as they are in the port
+   sub-node and hence do not have an associated platform device.
+v5:
+ - Rolled ACPI companion code provided by Hoan Tran into this patch.
+v4:
+ - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
+v3:
+ - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
+v2:
+ - Replaced interrupt-mask DT prop with support for the interrupts-extended
+   prop. This means replacing the call to irq_of_parse_and_map() with calls
+   to of_irq_parse_one() and irq_create_of_mapping().
+---
+ .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 +++-
+ drivers/gpio/gpio-dwapb.c                          | 49 +++++++++++++++-------
+ drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
+ include/linux/platform_data/gpio-dwapb.h           |  3 +-
+ 4 files changed, 45 insertions(+), 19 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+index 4a75da7..3c1118b 100644
+--- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+@@ -26,8 +26,13 @@ controller.
+   the second encodes the triger flags encoded as described in
+   Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+ - interrupt-parent : The parent interrupt controller.
+-- interrupts : The interrupt to the parent controller raised when GPIOs
+-  generate the interrupts.
++- interrupts : The interrupts to the parent controller raised when GPIOs
++  generate the interrupts. If the controller provides one combined interrupt
++  for all GPIOs, specify a single interrupt. If the controller provides one
++  interrupt for each GPIO, provide a list of interrupts that correspond to each
++  of the GPIO pins. When specifying multiple interrupts, if any are unconnected,
++  use the interrupts-extended property to specify the interrupts and set the
++  interrupt controller handle for unused interrupts to 0.
+ - snps,nr-gpios : The number of pins in the port, a single cell.
+ - resets : Reset line for the controller.
+ 
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 226977f..15b4154 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -441,14 +441,19 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 	irq_gc->chip_types[1].handler = handle_edge_irq;
+ 
+ 	if (!pp->irq_shared) {
+-		irq_set_chained_handler_and_data(pp->irq, dwapb_irq_handler,
+-						 gpio);
++		int i;
++
++		for (i = 0; i < pp->ngpio; i++) {
++			if (pp->irq[i] >= 0)
++				irq_set_chained_handler_and_data(pp->irq[i],
++						dwapb_irq_handler, gpio);
++		}
+ 	} else {
+ 		/*
+ 		 * Request a shared IRQ since where MFD would have devices
+ 		 * using the same irq pin
+ 		 */
+-		err = devm_request_irq(gpio->dev, pp->irq,
++		err = devm_request_irq(gpio->dev, pp->irq[0],
+ 				       dwapb_irq_handler_mfd,
+ 				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
+ 		if (err) {
+@@ -524,7 +529,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+ 	if (pp->idx == 0)
+ 		port->gc.set_config = dwapb_gpio_set_config;
+ 
+-	if (pp->irq)
++	if (pp->has_irq)
+ 		dwapb_configure_irqs(gpio, port, pp);
+ 
+ 	err = gpiochip_add_data(&port->gc, port);
+@@ -535,7 +540,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+ 		port->is_registered = true;
+ 
+ 	/* Add GPIO-signaled ACPI event support */
+-	if (pp->irq)
++	if (pp->has_irq)
+ 		acpi_gpiochip_request_interrupts(&port->gc);
+ 
+ 	return err;
+@@ -557,7 +562,7 @@ dwapb_gpio_get_pdata(struct device *dev)
+ 	struct dwapb_platform_data *pdata;
+ 	struct dwapb_port_property *pp;
+ 	int nports;
+-	int i;
++	int i, j;
+ 
+ 	nports = device_get_child_node_count(dev);
+ 	if (nports == 0)
+@@ -575,6 +580,8 @@ dwapb_gpio_get_pdata(struct device *dev)
+ 
+ 	i = 0;
+ 	device_for_each_child_node(dev, fwnode)  {
++		struct device_node *np = NULL;
++
+ 		pp = &pdata->properties[i++];
+ 		pp->fwnode = fwnode;
+ 
+@@ -594,23 +601,35 @@ dwapb_gpio_get_pdata(struct device *dev)
+ 			pp->ngpio = 32;
+ 		}
+ 
++		pp->irq_shared	= false;
++		pp->gpio_base	= -1;
++
+ 		/*
+ 		 * Only port A can provide interrupts in all configurations of
+ 		 * the IP.
+ 		 */
+-		if (dev->of_node && pp->idx == 0 &&
+-			fwnode_property_read_bool(fwnode,
++		if (pp->idx != 0)
++			continue;
++
++		if (dev->of_node && fwnode_property_read_bool(fwnode,
+ 						  "interrupt-controller")) {
+-			pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
+-			if (!pp->irq)
+-				dev_warn(dev, "no irq for port%d\n", pp->idx);
++			np = to_of_node(fwnode);
+ 		}
+ 
+-		if (has_acpi_companion(dev) && pp->idx == 0)
+-			pp->irq = platform_get_irq(to_platform_device(dev), 0);
++		for (j = 0; j < pp->ngpio; j++) {
++			pp->irq[j] = -ENXIO;
+ 
+-		pp->irq_shared	= false;
+-		pp->gpio_base	= -1;
++			if (np)
++				pp->irq[j] = of_irq_get(np, j);
++			else if (has_acpi_companion(dev))
++				pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
++
++			if (pp->irq[j] >= 0)
++				pp->has_irq = true;
++		}
++
++		if (!pp->has_irq)
++			dev_warn(dev, "no irq for port%d\n", pp->idx);
+ 	}
+ 
+ 	return pdata;
+diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
+index 90e35de..5bddb84 100644
+--- a/drivers/mfd/intel_quark_i2c_gpio.c
++++ b/drivers/mfd/intel_quark_i2c_gpio.c
+@@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
+ 	pdata->properties->idx		= 0;
+ 	pdata->properties->ngpio	= INTEL_QUARK_MFD_NGPIO;
+ 	pdata->properties->gpio_base	= INTEL_QUARK_MFD_GPIO_BASE;
+-	pdata->properties->irq		= pdev->irq;
++	pdata->properties->irq[0]	= pdev->irq;
++	pdata->properties->has_irq	= true;
+ 	pdata->properties->irq_shared	= true;
+ 
+ 	cell->platform_data = pdata;
+diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
+index 2dc7f4a..419cfac 100644
+--- a/include/linux/platform_data/gpio-dwapb.h
++++ b/include/linux/platform_data/gpio-dwapb.h
+@@ -19,7 +19,8 @@ struct dwapb_port_property {
+ 	unsigned int	idx;
+ 	unsigned int	ngpio;
+ 	unsigned int	gpio_base;
+-	unsigned int	irq;
++	int		irq[32];
++	bool		has_irq;
+ 	bool		irq_shared;
+ };
+ 
+-- 
+2.7.4
