@@ -1,53 +1,136 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 1/7] bitops: Introduce the for_each_set_port_word macro
-Date: Mon, 14 May 2018 20:08:06 +0300
-Message-ID: <CAHp75VdRksnTB_Bq_3-V7h_Dd=woj9=998DsVih-MtQo2hUbaw@mail.gmail.com>
-References: <cover.1525785532.git.vilhelm.gray@gmail.com> <c919f6c2ff54a29114bd5e566997f11e5ebf29c3.1525785532.git.vilhelm.gray@gmail.com>
- <CAHp75VdBL-K2H9tXAG2wPefCdpv913dbJOvvEkOXE7r=+2+NYQ@mail.gmail.com> <20180514130438.GB20325@sophia>
+From: Laura Abbott <labbott@redhat.com>
+Subject: Re: [PATCHv5] gpio: Remove VLA from gpiolib
+Date: Mon, 14 May 2018 15:49:21 -0700
+Message-ID: <067d073f-556c-9df0-37f8-fd63fcdc7eb9@redhat.com>
+References: <20180413212427.18261-1-labbott@redhat.com>
+ <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180514130438.GB20325@sophia>
+In-Reply-To: <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 14, 2018 at 4:04 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
-> On Sun, May 13, 2018 at 06:06:42PM +0300, Andy Shevchenko wrote:
->>On Tue, May 8, 2018 at 4:26 PM, William Breathitt Gray
->><vilhelm.gray@gmail.com> wrote:
->>> This macro iterates for each group of bits (port word) with set bits,
->>> within a bitmap memory region. For each iteration, "port_word" is set to
->>> the found port word index, "word_index" is set to the word index of the
->>> bitmap containing the found port word, and "word_offset" is set to the
->>> bit offset of the found port word within the respective bitmap word.
+On 04/20/2018 02:02 AM, Geert Uytterhoeven wrote:
+> Hi Laura,
+> 
+> Thanks for your patch!
+> 
+> On Fri, Apr 13, 2018 at 11:24 PM, Laura Abbott <labbott@redhat.com> wrote:
+>> The new challenge is to remove VLAs from the kernel
+>> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+>> turn on -Wvla.
 >>
->>Isn't that idea we discussed some time ago?
->
-> That's right, I found the time to implement the macro suggestion you
-> made during the get_multiple/set_multiple patchset for the PC104 GPIO
-> drivers a while ago.
+>> Using a kmalloc array is the easy way to fix this but kmalloc is still
+>> more expensive than stack allocation. Introduce a fast path with a
+>> fixed size stack array to cover most chip with gpios below some fixed
+>> amount. The slow path dynamically allocates an array to cover those
+>> chips with a large number of gpios.
+> 
+> Blindly replacing VLAs by allocated arrays is IMHO not such a good solution.
+> On the largest systems, NR_GPIOS is 2048, so that makes 2 arrays of 256
+> bytes. That's an uppper limit, and assumes they are all on the same gpiochip,
+> which they probably aren't.
+> 
+> Still, 2 x 256 bytes is a lot, so I agree it should be fixed.
+> 
+> So, wouldn't it make more sense to not allocate memory, but just process
+> the request in chunks (say, at most 128 gpios per chunk, i.e. 2 x
+> 16 bytes)? The code already caters for handling chunks due to not all gpios
+> belonging to the same gpiochip. That will probably also be faster than
+> allocating memory, which is the main idea behind this API.
+> 
+>> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+>> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> 
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+> 
+>> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>>                  goto err_free_descs;
+>>          }
+>>
+>> +       if (chip->ngpio > FASTPATH_NGPIO)
+>> +               chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
+>> +               chip->ngpio, FASTPATH_NGPIO);
+> 
+> FWIW, can this warning be triggered from userspace?
+> 
+>> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>>
+>>          while (i < array_size) {
+>>                  struct gpio_chip *chip = desc_array[i]->gdev->chip;
+>> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+>> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+> 
+> Hence just use a fixed size here...
+> 
+>> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
+>> +               unsigned long *mask, *bits;
+>>                  int first, j, ret;
+>>
+>> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
+>> +                       memset(fastpath, 0, sizeof(fastpath));
+>> +                       mask = fastpath;
+>> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
+>> +               } else {
+>> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+>> +                                          sizeof(*mask),
+>> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+>> +                       if (!mask)
+>> +                               return -ENOMEM;
+>> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
+>> +               }
+>> +
+>>                  if (!can_sleep)
+>>                          WARN_ON(chip->can_sleep);
+>>
+>>                  /* collect all inputs belonging to the same chip */
+>>                  first = i;
+>> -               memset(mask, 0, sizeof(mask));
+>>                  do {
+>>                          const struct gpio_desc *desc = desc_array[i];
+>>                          int hwgpio = gpio_chip_hwgpio(desc);
+> 
+> Out-of-context, the code does:
+> 
+> |                       __set_bit(hwgpio, mask);
+> |                       i++;
+> |                 } while ((i < array_size) &&
+> 
+> ... and change this limit to "(i < min(array_size, first +
+> ARRAY_SIZE(mask) * BITS_PER_BYTE))"
+> 
+> |                         (desc_array[i]->gdev->chip == chip));
+> 
+> ... and you're done?
+> 
+I don't think this approach will work since gpio_chip_{get,set}_multiple
+expect to be working on arrays for the entire chip. There doesn't seem
+to be a nice way to work on a subset of GPIOs without defeating the point
+of the multiple API.
 
-So, if you find it appropriate, please add Suggested-by.
+is 2*256 = 512 bytes really too much stack space? I guess we could
+switch to a Kconfig to allow for better bounds.
 
-> This macro greatly simplifies the callback function implementations in
-> those drivers and reduces the repeated code that kept appearing among
-> those drivers. Hopefully it can be useful for other drivers as well.
+Thanks,
+Laura
 
-Yes, I like the idea!
-
->>In any case, part "port" is too specific for a generic function like
->>this. Please, get rid of it completely. No-one knows what port means
->>here. Just makes a lot of confusion.
->
-> Okay, I'll come up with a better name and submit a version 3 of this
-> patchset.
-
-I also forgot to mention that kernel-doc should accompany function
-definition (in *.c), and not a declaration (in *.h).
-
--- 
-With Best Regards,
-Andy Shevchenko
+>> @@ -2878,7 +2904,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
+>>          }
+>>   }
+>>
+>> -void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+>> +int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+> 
+> Same here.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
