@@ -1,43 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] ARM: s3c64xx: Tidy up handling of regulator GPIO lookups
-Date: Mon, 14 May 2018 07:54:22 +0200
-Message-ID: <CACRpkdahS9VGvRKKedfgAqa8zpDj3ASGa3atwtF=BY794ne5tw@mail.gmail.com>
-References: <20180212131717.27193-1-linus.walleij@linaro.org>
- <20180212131717.27193-17-linus.walleij@linaro.org> <20180213111147.kr4kecqbhmcoq6w2@localhost.localdomain>
- <CACRpkdZVoYsdWy6GwnnSfaSc2_wycEse3JswqufqDoz=GFb5FQ@mail.gmail.com> <20180419150119.5yhf3uupdolg3cnv@localhost.localdomain>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: Re: [PATCH 1/2] pinctrl: mvebu: update use "nand" function for "rb" pin
+Date: Mon, 14 May 2018 13:49:17 +0200
+Message-ID: <87r2me31aa.fsf@bootlin.com>
+References: <20180504030638.31521-1-chris.packham@alliedtelesis.co.nz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180419150119.5yhf3uupdolg3cnv@localhost.localdomain>
+In-Reply-To: <20180504030638.31521-1-chris.packham@alliedtelesis.co.nz> (Chris
+        Packham's message of "Fri, 4 May 2018 15:06:37 +1200")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, patches@opensource.cirrus.com, Lee Jones <lee.jones@linaro.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: andrew@lunn.ch, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 5:01 PM, Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
+Hi Chris,
+ 
+ On ven., mai 04 2018, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 
-> From: Charles Keepax <ckeepax@opensource.cirrus.com>
+> The Armada 98dx3236 SoCs don't have a different MPP sel value for nand
+> specific pins so "dev" was technically correct. But all the other Armada
+> SoCs use "nand" in their dts and the pin is specific to the nand
+> interface so use "nand" for the function name.
 >
-> Rather than unconditionally registering the GPIO lookup table only do so
-> for devices that require it.
->
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+
+Thanks,
+
+Gregory
 > ---
+>  drivers/pinctrl/mvebu/pinctrl-armada-xp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Do you have any objections to the following?
+> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+> index b854f1ee5de5..28b199796fae 100644
+> --- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+> @@ -431,7 +431,7 @@ static struct mvebu_mpp_mode mv98dx3236_mpp_modes[] = {
+>  	MPP_MODE(19,
+>  		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
+>  		 MPP_VAR_FUNCTION(0x3, "uart1", "rxd",       V_98DX3236_PLUS),
+> -		 MPP_VAR_FUNCTION(0x4, "dev", "rb",          V_98DX3236_PLUS)),
+> +		 MPP_VAR_FUNCTION(0x4, "nand", "rb",         V_98DX3236_PLUS)),
+>  	MPP_MODE(20,
+>  		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+>  		 MPP_VAR_FUNCTION(0x4, "dev", "we0",         V_98DX3236_PLUS)),
+> -- 
+> 2.17.0
 >
-> If we are lucky I might be able to find time to test these early
-> next week. Well at least there is reasonable chance I can test
-> the 5102 stuff when you resend, not sure I have a device to
-> test the wm1277 but will have a look. Also I haven't run up
-> Cragganmore in a little while so might depend a little on how
-> much people have broken it since last I did :-)
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-I folded this in on top of my series, also adding the table entries
-for wm5102 and wm5102 reva.
-
-Sorry for the delay, I was sidetracked...
-
-Yours,
-Linus Walleij
+-- 
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
