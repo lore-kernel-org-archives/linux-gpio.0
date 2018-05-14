@@ -1,298 +1,116 @@
-From: David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH] pinctrl: rockchip: Add pinctrl support for PX30
-Date: Mon, 14 May 2018 19:59:51 +0800
-Message-ID: <1526299191-1140-1-git-send-email-david.wu@rock-chips.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v2 0/7] Introduce the for_each_set_port_word macro
+Date: Mon, 14 May 2018 08:57:54 -0400
+Message-ID: <20180514125743.GA20325@sophia>
+References: <cover.1525785532.git.vilhelm.gray@gmail.com>
+ <CAHp75Vf8TLhj07VKeDdvzqHvViHqgRkd6=n2hZR_yY7in52SHA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vf8TLhj07VKeDdvzqHvViHqgRkd6=n2hZR_yY7in52SHA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-There are 4 banks (GPIO0 ~ GPIO3), bank0 is in PD_PMU
-subsystem, bank1/bank2/bank3 are in PD_BUS subsystem.
+On Sun, May 13, 2018 at 06:11:45PM +0300, Andy Shevchenko wrote:
+>On Tue, May 8, 2018 at 4:26 PM, William Breathitt Gray
+><vilhelm.gray@gmail.com> wrote:
+>
+>> While adding GPIO get_multiple/set_multiple callback support for various
+>> drivers, I noticed a pattern of looping manifesting that would be useful
+>> standardized as a macro.
+>>
+>> This patchset introduces the for_each_set_port_word macro and utilizes
+>> it in several GPIO drivers. The for_each_set_port_word macro facilitates
+>> a for-loop syntax that iterates over entire groups of set bits at a
+>> time.
+>>
+>> For example, suppose you would like to iterate over a 16-bit integer 4
+>> bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+>> represents the current 4-bit group:
+>>
+>>     Example:        1011 1110 0000 1111
+>>     First loop:     1011 1110 0000 XXXX
+>
+>>     Second loop:    1011 XXXX 0000 1111
+>
+>8-bit itteration. Is it correct?
 
-Signed-off-by: David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
----
- .../bindings/pinctrl/rockchip,pinctrl.txt          |   1 +
- drivers/pinctrl/pinctrl-rockchip.c                 | 194 +++++++++++++++++++++
- 2 files changed, 195 insertions(+)
+This case is 4-bit iteration for the sake of example, but the idea is
+to have the for_each_set_port_word macro to be capable of 8-bit
+iteration, as well as any other number of bits, as specified by the
+port_size parameter.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-index a01a3b8..0919db2 100644
---- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-@@ -20,6 +20,7 @@ defined as gpio sub-nodes of the pinmux controller.
- 
- Required properties for iomux controller:
-   - compatible: should be
-+		"rockchip,px30-pinctrl":    for Rockchip PX30
- 		"rockchip,rv1108-pinctrl":  for Rockchip RV1108
- 		"rockchip,rk2928-pinctrl":  for Rockchip RK2928
- 		"rockchip,rk3066a-pinctrl": for Rockchip RK3066a
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 3924779..88d4077 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -59,6 +59,7 @@
- #define GPIO_LS_SYNC		0x60
- 
- enum rockchip_pinctrl_type {
-+	PX30,
- 	RV1108,
- 	RK2928,
- 	RK3066B,
-@@ -701,6 +702,66 @@ static void rockchip_get_recalced_mux(struct rockchip_pin_bank *bank, int pin,
- 	*bit = data->bit;
- }
- 
-+static struct rockchip_mux_route_data px30_mux_route_data[] = {
-+	{
-+		/* cif-d2m0 */
-+		.bank_num = 2,
-+		.pin = 0,
-+		.func = 1,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 7),
-+	}, {
-+		/* cif-d2m1 */
-+		.bank_num = 3,
-+		.pin = 3,
-+		.func = 3,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 7) | BIT(7),
-+	}, {
-+		/* pdm-m0 */
-+		.bank_num = 3,
-+		.pin = 22,
-+		.func = 2,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 8),
-+	}, {
-+		/* pdm-m1 */
-+		.bank_num = 2,
-+		.pin = 22,
-+		.func = 1,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 8) | BIT(8),
-+	}, {
-+		/* uart2-rxm0 */
-+		.bank_num = 1,
-+		.pin = 27,
-+		.func = 2,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 10),
-+	}, {
-+		/* uart2-rxm1 */
-+		.bank_num = 2,
-+		.pin = 14,
-+		.func = 2,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 10) | BIT(10),
-+	}, {
-+		/* uart3-rxm0 */
-+		.bank_num = 0,
-+		.pin = 17,
-+		.func = 2,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 9),
-+	}, {
-+		/* uart3-rxm1 */
-+		.bank_num = 1,
-+		.pin = 15,
-+		.func = 2,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 9) | BIT(9),
-+	},
-+};
-+
- static struct rockchip_mux_route_data rk3128_mux_route_data[] = {
- 	{
- 		/* spi-0 */
-@@ -1202,6 +1263,97 @@ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
- 	return ret;
- }
- 
-+#define PX30_PULL_PMU_OFFSET		0x10
-+#define PX30_PULL_GRF_OFFSET		0x60
-+#define PX30_PULL_BITS_PER_PIN		2
-+#define PX30_PULL_PINS_PER_REG		8
-+#define PX30_PULL_BANK_STRIDE		16
-+
-+static void px30_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
-+				       int pin_num, struct regmap **regmap,
-+				       int *reg, u8 *bit)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+
-+	/* The first 32 pins of the first bank are located in PMU */
-+	if (bank->bank_num == 0) {
-+		*regmap = info->regmap_pmu;
-+		*reg = PX30_PULL_PMU_OFFSET;
-+	} else {
-+		*regmap = info->regmap_base;
-+		*reg = PX30_PULL_GRF_OFFSET;
-+
-+		/* correct the offset, as we're starting with the 2nd bank */
-+		*reg -= 0x10;
-+		*reg += bank->bank_num * PX30_PULL_BANK_STRIDE;
-+	}
-+
-+	*reg += ((pin_num / PX30_PULL_PINS_PER_REG) * 4);
-+	*bit = (pin_num % PX30_PULL_PINS_PER_REG);
-+	*bit *= PX30_PULL_BITS_PER_PIN;
-+}
-+
-+#define PX30_DRV_PMU_OFFSET		0x20
-+#define PX30_DRV_GRF_OFFSET		0xf0
-+#define PX30_DRV_BITS_PER_PIN		2
-+#define PX30_DRV_PINS_PER_REG		8
-+#define PX30_DRV_BANK_STRIDE		16
-+
-+static void px30_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
-+				      int pin_num, struct regmap **regmap,
-+				      int *reg, u8 *bit)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+
-+	/* The first 32 pins of the first bank are located in PMU */
-+	if (bank->bank_num == 0) {
-+		*regmap = info->regmap_pmu;
-+		*reg = PX30_DRV_PMU_OFFSET;
-+	} else {
-+		*regmap = info->regmap_base;
-+		*reg = PX30_DRV_GRF_OFFSET;
-+
-+		/* correct the offset, as we're starting with the 2nd bank */
-+		*reg -= 0x10;
-+		*reg += bank->bank_num * PX30_DRV_BANK_STRIDE;
-+	}
-+
-+	*reg += ((pin_num / PX30_DRV_PINS_PER_REG) * 4);
-+	*bit = (pin_num % PX30_DRV_PINS_PER_REG);
-+	*bit *= PX30_DRV_BITS_PER_PIN;
-+}
-+
-+#define PX30_SCHMITT_PMU_OFFSET			0x38
-+#define PX30_SCHMITT_GRF_OFFSET			0xc0
-+#define PX30_SCHMITT_PINS_PER_PMU_REG		16
-+#define PX30_SCHMITT_BANK_STRIDE		16
-+#define PX30_SCHMITT_PINS_PER_GRF_REG		8
-+
-+static int px30_calc_schmitt_reg_and_bit(struct rockchip_pin_bank *bank,
-+					 int pin_num,
-+					 struct regmap **regmap,
-+					 int *reg, u8 *bit)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+	int pins_per_reg;
-+
-+	if (bank->bank_num == 0) {
-+		*regmap = info->regmap_pmu;
-+		*reg = PX30_SCHMITT_PMU_OFFSET;
-+		pins_per_reg = PX30_SCHMITT_PINS_PER_PMU_REG;
-+	} else {
-+		*regmap = info->regmap_base;
-+		*reg = PX30_SCHMITT_GRF_OFFSET;
-+		pins_per_reg = PX30_SCHMITT_PINS_PER_GRF_REG;
-+		*reg += (bank->bank_num  - 1) * PX30_SCHMITT_BANK_STRIDE;
-+	}
-+
-+	*reg += ((pin_num / pins_per_reg) * 4);
-+	*bit = pin_num % pins_per_reg;
-+
-+	return 0;
-+}
-+
- #define RV1108_PULL_PMU_OFFSET		0x10
- #define RV1108_PULL_OFFSET		0x110
- #define RV1108_PULL_PINS_PER_REG	8
-@@ -1798,6 +1950,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
- 		return !(data & BIT(bit))
- 				? PIN_CONFIG_BIAS_PULL_PIN_DEFAULT
- 				: PIN_CONFIG_BIAS_DISABLE;
-+	case PX30:
- 	case RV1108:
- 	case RK3188:
- 	case RK3288:
-@@ -1841,6 +1994,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 			data |= BIT(bit);
- 		ret = regmap_write(regmap, reg, data);
- 		break;
-+	case PX30:
- 	case RV1108:
- 	case RK3188:
- 	case RK3288:
-@@ -2103,6 +2257,7 @@ static bool rockchip_pinconf_pull_valid(struct rockchip_pin_ctrl *ctrl,
- 					pull == PIN_CONFIG_BIAS_DISABLE);
- 	case RK3066B:
- 		return pull ? false : true;
-+	case PX30:
- 	case RV1108:
- 	case RK3188:
- 	case RK3288:
-@@ -3237,6 +3392,43 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static struct rockchip_pin_bank px30_pin_banks[] = {
-+	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", IOMUX_SOURCE_PMU,
-+					     IOMUX_SOURCE_PMU,
-+					     IOMUX_SOURCE_PMU,
-+					     IOMUX_SOURCE_PMU
-+			    ),
-+	PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT
-+			    ),
-+	PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT
-+			    ),
-+	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3", IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT
-+			    ),
-+};
-+
-+static struct rockchip_pin_ctrl px30_pin_ctrl = {
-+		.pin_banks		= px30_pin_banks,
-+		.nr_banks		= ARRAY_SIZE(px30_pin_banks),
-+		.label			= "PX30-GPIO",
-+		.type			= PX30,
-+		.grf_mux_offset		= 0x0,
-+		.pmu_mux_offset		= 0x0,
-+		.iomux_routes		= px30_mux_route_data,
-+		.niomux_routes		= ARRAY_SIZE(px30_mux_route_data),
-+		.pull_calc_reg		= px30_calc_pull_reg_and_bit,
-+		.drv_calc_reg		= px30_calc_drv_reg_and_bit,
-+		.schmitt_calc_reg	= px30_calc_schmitt_reg_and_bit,
-+};
-+
- static struct rockchip_pin_bank rv1108_pin_banks[] = {
- 	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", IOMUX_SOURCE_PMU,
- 					     IOMUX_SOURCE_PMU,
-@@ -3545,6 +3737,8 @@ static struct rockchip_pin_ctrl rk3399_pin_ctrl = {
- };
- 
- static const struct of_device_id rockchip_pinctrl_dt_match[] = {
-+	{ .compatible = "rockchip,px30-pinctrl",
-+		.data = &px30_pin_ctrl },
- 	{ .compatible = "rockchip,rv1108-pinctrl",
- 		.data = &rv1108_pin_ctrl },
- 	{ .compatible = "rockchip,rk2928-pinctrl",
--- 
-2.7.4
+>
+>>     Third loop:     XXXX 1110 0000 1111
+>
+>Looking at the example above I highly recommend to introduce some test
+>cases for your helper function.
+>
+>Consider extending lib/test_bitmap.c for this purpose.
+
+That's a good idea. I'll add in some test cases to lib/test_bitmap.c to
+help check the implementation of these functions and macro.
+
+William Breathitt Gray
+
+>
+>>
+>> Each iteration of the loop returns the next 4-bit group that has at
+>> least one set bit.
+>>
+>> The for_each_set_port_word macro has six parameters:
+>>
+>>     * port_word: set to current port word index for the iteration
+>>     * word_index: set to current bitmap word index for the iteration
+>>     * word_offset: bits offset of the found port word in the bitmap word
+>>     * bits: bitmap to search within
+>>     * size: bitmap size in number of port words
+>>     * port_size: port word size in number of bits
+>>
+>> The port_size argument can be an arbitrary number of bits and is not
+>> required to be a multiple of 2.
+>>
+>> I've called the group of bits a "port word" which may be a confusing
+>> naming convention; I was afraid calling that them a "group" may be too
+>> vague. Should a different name be chosen; what would you suggest?
+>>
+>> This patchset was rebased on top of the following three commits:
+>>
+>>     * commit aaf96e51de11 ("gpio: pci-idio-16: Fix port memory offset for get_multiple callback")
+>>     * commit 304440aa96c6 ("gpio: pcie-idio-24: Fix port memory offset for get_multiple/set_multiple callbacks")
+>>     * commit e026646c178d ("gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop")
+>>
+>> William Breathitt Gray
+>>
+>> William Breathitt Gray (7):
+>>   bitops: Introduce the for_each_set_port_word macro
+>>   gpio: 104-dio-48e: Utilize for_each_set_port_word macro
+>>   gpio: 104-idi-48: Utilize for_each_set_port_word macro
+>>   gpio: gpio-mm: Utilize for_each_set_port_word macro
+>>   gpio: ws16c48: Utilize for_each_set_port_word macro
+>>   gpio: pci-idio-16: Utilize for_each_set_port_word macro
+>>   gpio: pcie-idio-24: Utilize for_each_set_port_word macro
+>>
+>>  drivers/gpio/gpio-104-dio-48e.c   |  67 +++++---------------
+>>  drivers/gpio/gpio-104-idi-48.c    |  32 ++--------
+>>  drivers/gpio/gpio-gpio-mm.c       |  67 +++++---------------
+>>  drivers/gpio/gpio-pci-idio-16.c   |  67 ++++++--------------
+>>  drivers/gpio/gpio-pcie-idio-24.c  | 102 +++++++++++-------------------
+>>  drivers/gpio/gpio-ws16c48.c       |  66 +++++--------------
+>>  include/asm-generic/bitops/find.h |  26 ++++++++
+>>  include/linux/bitops.h            |   9 +++
+>>  lib/find_bit.c                    |  28 ++++++++
+>>  9 files changed, 172 insertions(+), 292 deletions(-)
+>>
+>> --
+>> 2.17.0
+>>
+>
+>
+>
+>-- 
+>With Best Regards,
+>Andy Shevchenko
