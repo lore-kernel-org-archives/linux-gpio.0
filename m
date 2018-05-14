@@ -1,101 +1,43 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 0/7] Introduce the for_each_set_port_word macro
-Date: Sun, 13 May 2018 18:11:45 +0300
-Message-ID: <CAHp75Vf8TLhj07VKeDdvzqHvViHqgRkd6=n2hZR_yY7in52SHA@mail.gmail.com>
-References: <cover.1525785532.git.vilhelm.gray@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] ARM: s3c64xx: Tidy up handling of regulator GPIO lookups
+Date: Mon, 14 May 2018 07:54:22 +0200
+Message-ID: <CACRpkdahS9VGvRKKedfgAqa8zpDj3ASGa3atwtF=BY794ne5tw@mail.gmail.com>
+References: <20180212131717.27193-1-linus.walleij@linaro.org>
+ <20180212131717.27193-17-linus.walleij@linaro.org> <20180213111147.kr4kecqbhmcoq6w2@localhost.localdomain>
+ <CACRpkdZVoYsdWy6GwnnSfaSc2_wycEse3JswqufqDoz=GFb5FQ@mail.gmail.com> <20180419150119.5yhf3uupdolg3cnv@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1525785532.git.vilhelm.gray@gmail.com>
+In-Reply-To: <20180419150119.5yhf3uupdolg3cnv@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, patches@opensource.cirrus.com, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 8, 2018 at 4:26 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Thu, Apr 19, 2018 at 5:01 PM, Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 
-> While adding GPIO get_multiple/set_multiple callback support for various
-> drivers, I noticed a pattern of looping manifesting that would be useful
-> standardized as a macro.
+> From: Charles Keepax <ckeepax@opensource.cirrus.com>
 >
-> This patchset introduces the for_each_set_port_word macro and utilizes
-> it in several GPIO drivers. The for_each_set_port_word macro facilitates
-> a for-loop syntax that iterates over entire groups of set bits at a
-> time.
+> Rather than unconditionally registering the GPIO lookup table only do so
+> for devices that require it.
 >
-> For example, suppose you would like to iterate over a 16-bit integer 4
-> bits at a time, skipping over 4-bit groups with no set bit, where XXXX
-> represents the current 4-bit group:
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> ---
 >
->     Example:        1011 1110 0000 1111
->     First loop:     1011 1110 0000 XXXX
+> Do you have any objections to the following?
+>
+> If we are lucky I might be able to find time to test these early
+> next week. Well at least there is reasonable chance I can test
+> the 5102 stuff when you resend, not sure I have a device to
+> test the wm1277 but will have a look. Also I haven't run up
+> Cragganmore in a little while so might depend a little on how
+> much people have broken it since last I did :-)
 
->     Second loop:    1011 XXXX 0000 1111
+I folded this in on top of my series, also adding the table entries
+for wm5102 and wm5102 reva.
 
-8-bit itteration. Is it correct?
+Sorry for the delay, I was sidetracked...
 
->     Third loop:     XXXX 1110 0000 1111
-
-Looking at the example above I highly recommend to introduce some test
-cases for your helper function.
-
-Consider extending lib/test_bitmap.c for this purpose.
-
->
-> Each iteration of the loop returns the next 4-bit group that has at
-> least one set bit.
->
-> The for_each_set_port_word macro has six parameters:
->
->     * port_word: set to current port word index for the iteration
->     * word_index: set to current bitmap word index for the iteration
->     * word_offset: bits offset of the found port word in the bitmap word
->     * bits: bitmap to search within
->     * size: bitmap size in number of port words
->     * port_size: port word size in number of bits
->
-> The port_size argument can be an arbitrary number of bits and is not
-> required to be a multiple of 2.
->
-> I've called the group of bits a "port word" which may be a confusing
-> naming convention; I was afraid calling that them a "group" may be too
-> vague. Should a different name be chosen; what would you suggest?
->
-> This patchset was rebased on top of the following three commits:
->
->     * commit aaf96e51de11 ("gpio: pci-idio-16: Fix port memory offset for get_multiple callback")
->     * commit 304440aa96c6 ("gpio: pcie-idio-24: Fix port memory offset for get_multiple/set_multiple callbacks")
->     * commit e026646c178d ("gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop")
->
-> William Breathitt Gray
->
-> William Breathitt Gray (7):
->   bitops: Introduce the for_each_set_port_word macro
->   gpio: 104-dio-48e: Utilize for_each_set_port_word macro
->   gpio: 104-idi-48: Utilize for_each_set_port_word macro
->   gpio: gpio-mm: Utilize for_each_set_port_word macro
->   gpio: ws16c48: Utilize for_each_set_port_word macro
->   gpio: pci-idio-16: Utilize for_each_set_port_word macro
->   gpio: pcie-idio-24: Utilize for_each_set_port_word macro
->
->  drivers/gpio/gpio-104-dio-48e.c   |  67 +++++---------------
->  drivers/gpio/gpio-104-idi-48.c    |  32 ++--------
->  drivers/gpio/gpio-gpio-mm.c       |  67 +++++---------------
->  drivers/gpio/gpio-pci-idio-16.c   |  67 ++++++--------------
->  drivers/gpio/gpio-pcie-idio-24.c  | 102 +++++++++++-------------------
->  drivers/gpio/gpio-ws16c48.c       |  66 +++++--------------
->  include/asm-generic/bitops/find.h |  26 ++++++++
->  include/linux/bitops.h            |   9 +++
->  lib/find_bit.c                    |  28 ++++++++
->  9 files changed, 172 insertions(+), 292 deletions(-)
->
-> --
-> 2.17.0
->
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
