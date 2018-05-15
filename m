@@ -1,171 +1,83 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v3 8/8] gpio: pcie-idio-24: Utilize for_each_set_clump macro
-Date: Tue, 15 May 2018 11:51:22 -0400
-Message-ID: <9b9004a4b7f0aba33a7deac3d400d5499153d217.1526397764.git.vilhelm.gray@gmail.com>
-References: <cover.1526397764.git.vilhelm.gray@gmail.com>
+Subject: [PATCH v4 0/8] Introduce the for_each_set_clump macro
+Date: Tue, 15 May 2018 12:22:13 -0400
+Message-ID: <cover.1526400945.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1526397764.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org
 Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Replace verbose implementation in get_multiple/set_multiple callbacks
-with for_each_set_clump macro to simplify code and improve clarity.
+Changes in v4:
+  - Fix bitmap_set arguments (last parameter is nbits not endbit)
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-pcie-idio-24.c | 102 +++++++++++--------------------
- 1 file changed, 36 insertions(+), 66 deletions(-)
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
 
-diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
-index f953541e7890..b4d300338a05 100644
---- a/drivers/gpio/gpio-pcie-idio-24.c
-+++ b/drivers/gpio/gpio-pcie-idio-24.c
-@@ -199,41 +199,21 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
- 	size_t i;
--	const unsigned int gpio_reg_size = 8;
--	unsigned int bits_offset;
--	size_t word_index;
--	unsigned int word_offset;
--	unsigned long word_mask;
--	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
--	unsigned long port_state;
-+	size_t word;
-+	unsigned int offset;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23, &idio24gpio->reg->in0_7,
- 		&idio24gpio->reg->in8_15, &idio24gpio->reg->in16_23,
- 	};
-+	const size_t num_ports = ARRAY_SIZE(ports) + 1;
-+	unsigned long port_state;
- 	const unsigned long out_mode_mask = BIT(1);
- 
- 	/* clear bits array to a clean slate */
- 	bitmap_zero(bits, chip->ngpio);
- 
--	/* get bits are evaluated a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports) + 1; i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* word index for bits array */
--		word_index = BIT_WORD(bits_offset);
--
--		/* gpio offset within current word of bits array */
--		word_offset = bits_offset % BITS_PER_LONG;
--
--		/* mask of get bits for current gpio within current word */
--		word_mask = mask[word_index] & (port_mask << word_offset);
--		if (!word_mask) {
--			/* no get bits in this port so skip to next one */
--			continue;
--		}
--
-+	for_each_set_clump(i, word, offset, mask, num_ports, 8) {
- 		/* read bits from current gpio port (port 6 is TTL GPIO) */
- 		if (i < 6)
- 			port_state = ioread8(ports[i]);
-@@ -243,7 +223,7 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- 			port_state = ioread8(&idio24gpio->reg->ttl_in0_7);
- 
- 		/* store acquired bits at respective bits array offset */
--		bits[word_index] |= port_state << word_offset;
-+		bits[word] |= port_state << offset;
- 	}
- 
- 	return 0;
-@@ -295,58 +275,48 @@ static void idio_24_gpio_set_multiple(struct gpio_chip *chip,
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
- 	size_t i;
--	unsigned long bits_offset;
--	unsigned long gpio_mask;
--	const unsigned int gpio_reg_size = 8;
--	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
--	unsigned long flags;
--	unsigned int out_state;
-+	size_t word;
-+	unsigned int offset;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23
- 	};
-+	const size_t num_ports = ARRAY_SIZE(ports) + 1;
-+	unsigned int iomask;
-+	unsigned int bitmask;
-+	unsigned long flags;
- 	const unsigned long out_mode_mask = BIT(1);
--	const unsigned int ttl_offset = 48;
--	const size_t ttl_i = BIT_WORD(ttl_offset);
--	const unsigned int word_offset = ttl_offset % BITS_PER_LONG;
--	const unsigned long ttl_mask = (mask[ttl_i] >> word_offset) & port_mask;
--	const unsigned long ttl_bits = (bits[ttl_i] >> word_offset) & ttl_mask;
--
--	/* set bits are processed a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports); i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* check if any set bits for current port */
--		gpio_mask = (*mask >> bits_offset) & port_mask;
--		if (!gpio_mask) {
--			/* no set bits for this port so move on to next port */
-+	unsigned int out_state;
-+
-+	for_each_set_clump(i, word, offset, mask, num_ports, 8) {
-+		iomask = mask[word] >> offset;
-+		bitmask = iomask & (bits[word] >> offset);
-+
-+		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+
-+		/* read bits from current gpio port (port 6 is TTL GPIO) */
-+		if (i < 6) {
-+			out_state = ioread8(ports[i]) & ~iomask;
-+		} else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask) {
-+			out_state = ioread8(&idio24gpio->reg->ttl_out0_7);
-+		} else {
-+			/* skip TTL GPIO if set for input */
-+			raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
- 			continue;
- 		}
- 
--		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+		/* set requested bit states */
-+		out_state &= ~iomask;
-+		out_state |= bitmask;
- 
--		/* process output lines */
--		out_state = ioread8(ports[i]) & ~gpio_mask;
--		out_state |= (*bits >> bits_offset) & gpio_mask;
--		iowrite8(out_state, ports[i]);
-+		/* write bits for current gpio port (port 6 is TTL GPIO) */
-+		if (i < 6)
-+			iowrite8(out_state, ports[i]);
-+		else
-+			iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
- 
- 		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
- 	}
--
--	/* check if setting TTL lines and if they are in output mode */
--	if (!ttl_mask || !(ioread8(&idio24gpio->reg->ctl) & out_mode_mask))
--		return;
--
--	/* handle TTL output */
--	raw_spin_lock_irqsave(&idio24gpio->lock, flags);
--
--	/* process output lines */
--	out_state = ioread8(&idio24gpio->reg->ttl_out0_7) & ~ttl_mask;
--	out_state |= ttl_bits;
--	iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
--
--	raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
- }
- 
- static void idio_24_irq_ack(struct irq_data *data)
+This patchset introduces the for_each_set_clump macro and utilizes it in
+several GPIO drivers. The for_each_set_clump macro facilitates a
+for-loop syntax that iterates over entire groups of set bits at a time.
+
+For example, suppose you would like to iterate over a 16-bit integer 4
+bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+represents the current 4-bit group:
+
+    Example:        1011 1110 0000 1111
+    First loop:     1011 1110 0000 XXXX
+    Second loop:    1011 XXXX 0000 1111
+    Third loop:     XXXX 1110 0000 1111
+
+Each iteration of the loop returns the next 4-bit group that has at
+least one set bit.
+
+The for_each_set_clump macro has six parameters:
+
+    * clump: set to current clump index for the iteration
+    * index: set to current bitmap word index for the iteration
+    * offset: bits offset of the found clump in the bitmap word
+    * bits: bitmap to search within
+    * size: bitmap size in number of clumps
+    * clump_size: clump size in number of bits
+
+The clump_size argument can be an arbitrary number of bits and is not
+required to be a multiple of 2.
+
+This patchset was rebased on top of the following three commits:
+
+    * commit aaf96e51de11 ("gpio: pci-idio-16: Fix port memory offset for get_multiple callback")
+    * commit 304440aa96c6 ("gpio: pcie-idio-24: Fix port memory offset for get_multiple/set_multiple callbacks")
+    * commit e026646c178d ("gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop")
+
+When I implemented the test_for_each_set_clump function, I used
+bitmap_set to set the expected bitmap for the test. This method of
+setting bits only segments at a time was rather tedious and error-prone;
+is there a better way to accomplish what I did (set a bitmap after a
+DECLARE_BITMAP)?
+
+William Breathitt Gray
+
+William Breathitt Gray (8):
+  bitops: Introduce the for_each_set_clump macro
+  lib/test_bitmap.c: Add for_each_set_clump test cases
+  gpio: 104-dio-48e: Utilize for_each_set_clump macro
+  gpio: 104-idi-48: Utilize for_each_set_clump macro
+  gpio: gpio-mm: Utilize for_each_set_clump macro
+  gpio: ws16c48: Utilize for_each_set_clump macro
+  gpio: pci-idio-16: Utilize for_each_set_clump macro
+  gpio: pcie-idio-24: Utilize for_each_set_clump macro
+
+ drivers/gpio/gpio-104-dio-48e.c   |  67 +++++---------------
+ drivers/gpio/gpio-104-idi-48.c    |  32 ++--------
+ drivers/gpio/gpio-gpio-mm.c       |  67 +++++---------------
+ drivers/gpio/gpio-pci-idio-16.c   |  67 ++++++--------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 102 +++++++++++-------------------
+ drivers/gpio/gpio-ws16c48.c       |  66 +++++--------------
+ include/asm-generic/bitops/find.h |   9 +++
+ include/linux/bitops.h            |   7 ++
+ lib/find_bit.c                    |  40 ++++++++++++
+ lib/test_bitmap.c                 |  71 +++++++++++++++++++++
+ 10 files changed, 236 insertions(+), 292 deletions(-)
+
 -- 
 2.17.0
