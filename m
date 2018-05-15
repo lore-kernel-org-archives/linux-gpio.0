@@ -1,83 +1,37 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A
- GPIO
-Date: Tue, 15 May 2018 09:42:42 +0200
-Message-ID: <20180515074241.kgvjbhrgw2dbec6o@verge.net.au>
-References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 11/11] docs: fix broken references with multiple hints
+Date: Tue, 15 May 2018 12:28:46 +0200
+Message-ID: <9091975.Ce87WTtYpq@amdc3058>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+ <CGME20180509131942epcas2p3b11ff686acaa5e3d9afedef1a2a03aa7@epcas2p3.samsung.com>
+ <63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-fbdev@vger.kernel.org, linux-usb@vger.kernel.org, Linux Doc Mailing List <linux-doc@vger.kernel.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Harry Wei <harryxiyou@gmail.com>, devel@driverdev.osuosl.org, Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>, Ingo Molnar <mingo@redhat.com>, linux-input@vger.kernel.org, Roy Pledge <Roy.Pledge@nxp.com>, "Serge E. Hallyn" <serge@hallyn.com>, devicetree@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, Benjamin Tissoires <benjamin.tissoires@>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, May 11, 2018 at 09:31:37AM +0100, Phil Edworthy wrote:
-> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
-> per GPIO in port A, but the driver currently only supports 1 interrupt.
-> See the DesignWare DW_apb_gpio Databook description of the
-> 'GPIO_INTR_IO' parameter.
-> 
-> This change allows the driver to work with up to 32 interrupts, it will
-> get as many interrupts as specified in the DT 'interrupts' property.
-> It doesn't do anything clever with the different interrupts, it just calls
-> the same handler used for single interrupt hardware.
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> ---
-> One point to mention is that I have made it possible for users to have
-> unconnected interrupts by specifying holes in the list of interrupts. This is
-> done by supporting the interrupts-extended DT prop.
-> However, I have no use for this and had to hack some test case for this.
-> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
-> 
-> v6:
->  - Treat DT and ACPI the same as much as possible. Note that we can't use
->    platform_get_irq() to get the DT interrupts as they are in the port
->    sub-node and hence do not have an associated platform device.
-> v5:
->  - Rolled ACPI companion code provided by Hoan Tran into this patch.
-> v4:
->  - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
-> v3:
->  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
-> v2:
->  - Replaced interrupt-mask DT prop with support for the interrupts-extended
->    prop. This means replacing the call to irq_of_parse_and_map() with calls
->    to of_irq_parse_one() and irq_create_of_mapping().
-> ---
->  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 +++-
->  drivers/gpio/gpio-dwapb.c                          | 49 +++++++++++++++-------
->  drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
->  include/linux/platform_data/gpio-dwapb.h           |  3 +-
->  4 files changed, 45 insertions(+), 19 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> index 4a75da7..3c1118b 100644
-> --- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> @@ -26,8 +26,13 @@ controller.
->    the second encodes the triger flags encoded as described in
->    Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
->  - interrupt-parent : The parent interrupt controller.
-> -- interrupts : The interrupt to the parent controller raised when GPIOs
-> -  generate the interrupts.
-> +- interrupts : The interrupts to the parent controller raised when GPIOs
-> +  generate the interrupts. If the controller provides one combined interrupt
-> +  for all GPIOs, specify a single interrupt. If the controller provides one
-> +  interrupt for each GPIO, provide a list of interrupts that correspond to each
-> +  of the GPIO pins. When specifying multiple interrupts, if any are unconnected,
-> +  use the interrupts-extended property to specify the interrupts and set the
-> +  interrupt controller handle for unused interrupts to 0.
->  - snps,nr-gpios : The number of pins in the port, a single cell.
->  - resets : Reset line for the controller.
-
-An enhanced example might be helpful.
-
-That not withstanding:
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+T24gV2VkbmVzZGF5LCBNYXkgMDksIDIwMTggMTA6MTg6NTQgQU0gTWF1cm8gQ2FydmFsaG8gQ2hl
+aGFiIHdyb3RlOgo+IFRoZSBzY3JpcHQ6Cj4gCS4vc2NyaXB0cy9kb2N1bWVudGF0aW9uLWZpbGUt
+cmVmLWNoZWNrIC0tZml4LXJzdAo+IAo+IEdpdmVzIG11bHRpcGxlIGhpbnRzIGZvciBicm9rZW4g
+cmVmZXJlbmNlcyBvbiBzb21lIGZpbGVzLgo+IE1hbnVhbGx5IHVzZSB0aGUgb25lIHRoYXQgYXBw
+bGllcyBmb3Igc29tZSBmaWxlcy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBNYXVybyBDYXJ2YWxobyBD
+aGVoYWIgPG1jaGVoYWIrc2Ftc3VuZ0BrZXJuZWwub3JnPgoKQWNrZWQtYnk6IEJhcnRsb21pZWog
+Wm9sbmllcmtpZXdpY3ogPGIuem9sbmllcmtpZUBzYW1zdW5nLmNvbT4gIyBmb3IgZmJkZXYgcGFy
+dAoKQmVzdCByZWdhcmRzLAotLQpCYXJ0bG9taWVqIFpvbG5pZXJraWV3aWN6ClNhbXN1bmcgUiZE
+IEluc3RpdHV0ZSBQb2xhbmQKU2Ftc3VuZyBFbGVjdHJvbmljcwoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
