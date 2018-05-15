@@ -1,156 +1,83 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCHv5] gpio: Remove VLA from gpiolib
-Date: Tue, 15 May 2018 15:30:09 +0800
-Message-ID: <0f48484b-9c01-b79b-5b2b-e0da1b312ebc@electromag.com.au>
-References: <20180413212427.18261-1-labbott@redhat.com>
- <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
- <067d073f-556c-9df0-37f8-fd63fcdc7eb9@redhat.com>
- <CAMuHMdX2LrSRuk-H__HLHJkoNWc1u-seTsR63dzFsXLLOwypGg@mail.gmail.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Date: Tue, 15 May 2018 09:42:42 +0200
+Message-ID: <20180515074241.kgvjbhrgw2dbec6o@verge.net.au>
+References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdX2LrSRuk-H__HLHJkoNWc1u-seTsR63dzFsXLLOwypGg@mail.gmail.com>
-Content-Language: en-AU
+Content-Disposition: inline
+In-Reply-To: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Laura Abbott <labbott@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 15/05/2018 15:10, Geert Uytterhoeven wrote:
-> Hi Laura,
+On Fri, May 11, 2018 at 09:31:37AM +0100, Phil Edworthy wrote:
+> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> per GPIO in port A, but the driver currently only supports 1 interrupt.
+> See the DesignWare DW_apb_gpio Databook description of the
+> 'GPIO_INTR_IO' parameter.
 > 
-> On Tue, May 15, 2018 at 12:49 AM, Laura Abbott <labbott@redhat.com> wrote:
->> On 04/20/2018 02:02 AM, Geert Uytterhoeven wrote:
->>> On Fri, Apr 13, 2018 at 11:24 PM, Laura Abbott <labbott@redhat.com> wrote:
->>>> The new challenge is to remove VLAs from the kernel
->>>> (see https://lkml.org/lkml/2018/3/7/621) to eventually
->>>> turn on -Wvla.
->>>>
->>>> Using a kmalloc array is the easy way to fix this but kmalloc is still
->>>> more expensive than stack allocation. Introduce a fast path with a
->>>> fixed size stack array to cover most chip with gpios below some fixed
->>>> amount. The slow path dynamically allocates an array to cover those
->>>> chips with a large number of gpios.
->>>
->>>
->>> Blindly replacing VLAs by allocated arrays is IMHO not such a good
->>> solution.
->>> On the largest systems, NR_GPIOS is 2048, so that makes 2 arrays of 256
->>> bytes. That's an uppper limit, and assumes they are all on the same
->>> gpiochip,
->>> which they probably aren't.
->>>
->>> Still, 2 x 256 bytes is a lot, so I agree it should be fixed.
->>>
->>> So, wouldn't it make more sense to not allocate memory, but just process
->>> the request in chunks (say, at most 128 gpios per chunk, i.e. 2 x
->>> 16 bytes)? The code already caters for handling chunks due to not all
->>> gpios
->>> belonging to the same gpiochip. That will probably also be faster than
->>> allocating memory, which is the main idea behind this API.
->>>
->>>> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
->>>> Signed-off-by: Lukas Wunner <lukas@wunner.de>
->>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>>
->>>
->>>> --- a/drivers/gpio/gpiolib.c
->>>> +++ b/drivers/gpio/gpiolib.c
->>>
->>>
->>>> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip
->>>> *chip, void *data,
->>>>                   goto err_free_descs;
->>>>           }
->>>>
->>>> +       if (chip->ngpio > FASTPATH_NGPIO)
->>>> +               chip_warn(chip, "line cnt %d is greater than fast path
->>>> cnt %d\n",
->>>> +               chip->ngpio, FASTPATH_NGPIO);
->>>
->>>
->>> FWIW, can this warning be triggered from userspace?
->>>
->>>> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool
->>>> can_sleep,
->>>>
->>>>           while (i < array_size) {
->>>>                   struct gpio_chip *chip = desc_array[i]->gdev->chip;
->>>> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
->>>> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
->>>
->>>
->>> Hence just use a fixed size here...
->>>
->>>> +               unsigned long fastpath[2 *
->>>> BITS_TO_LONGS(FASTPATH_NGPIO)];
->>>> +               unsigned long *mask, *bits;
->>>>                   int first, j, ret;
->>>>
->>>> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
->>>> +                       memset(fastpath, 0, sizeof(fastpath));
->>>> +                       mask = fastpath;
->>>> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
->>>> +               } else {
->>>> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
->>>> +                                          sizeof(*mask),
->>>> +                                          can_sleep ? GFP_KERNEL :
->>>> GFP_ATOMIC);
->>>> +                       if (!mask)
->>>> +                               return -ENOMEM;
->>>> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
->>>> +               }
->>>> +
->>>>                   if (!can_sleep)
->>>>                           WARN_ON(chip->can_sleep);
->>>>
->>>>                   /* collect all inputs belonging to the same chip */
->>>>                   first = i;
->>>> -               memset(mask, 0, sizeof(mask));
->>>>                   do {
->>>>                           const struct gpio_desc *desc = desc_array[i];
->>>>                           int hwgpio = gpio_chip_hwgpio(desc);
->>>
->>>
->>> Out-of-context, the code does:
->>>
->>> |                       __set_bit(hwgpio, mask);
->>> |                       i++;
->>> |                 } while ((i < array_size) &&
->>>
->>> ... and change this limit to "(i < min(array_size, first +
->>> ARRAY_SIZE(mask) * BITS_PER_BYTE))"
->>>
->>> |                         (desc_array[i]->gdev->chip == chip));
->>>
->>> ... and you're done?
->>>
->> I don't think this approach will work since gpio_chip_{get,set}_multiple
->> expect to be working on arrays for the entire chip. There doesn't seem
->> to be a nice way to work on a subset of GPIOs without defeating the point
->> of the multiple API.
+> This change allows the driver to work with up to 32 interrupts, it will
+> get as many interrupts as specified in the DT 'interrupts' property.
+> It doesn't do anything clever with the different interrupts, it just calls
+> the same handler used for single interrupt hardware.
 > 
-> You're right, sorry for missing that.
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> ---
+> One point to mention is that I have made it possible for users to have
+> unconnected interrupts by specifying holes in the list of interrupts. This is
+> done by supporting the interrupts-extended DT prop.
+> However, I have no use for this and had to hack some test case for this.
+> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
 > 
->> is 2*256 = 512 bytes really too much stack space? I guess we could
->> switch to a Kconfig to allow for better bounds.
+> v6:
+>  - Treat DT and ACPI the same as much as possible. Note that we can't use
+>    platform_get_irq() to get the DT interrupts as they are in the port
+>    sub-node and hence do not have an associated platform device.
+> v5:
+>  - Rolled ACPI companion code provided by Hoan Tran into this patch.
+> v4:
+>  - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
+> v3:
+>  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
+> v2:
+>  - Replaced interrupt-mask DT prop with support for the interrupts-extended
+>    prop. This means replacing the call to irq_of_parse_and_map() with calls
+>    to of_irq_parse_one() and irq_create_of_mapping().
+> ---
+>  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 +++-
+>  drivers/gpio/gpio-dwapb.c                          | 49 +++++++++++++++-------
+>  drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
+>  include/linux/platform_data/gpio-dwapb.h           |  3 +-
+>  4 files changed, 45 insertions(+), 19 deletions(-)
 > 
-> That's a good question.
-> 
-> As long as a VLA is used, it's probably fine, as chip->ngpio is quite small.
-> If you would change it to an array that can accommodate NR_GPIOS bits, you
-> have to start caring about recursion (e.g. gpio-74x164 driven from spi-gpio,
-> where I can extend the chain to increase the level of recursion arbitrarily).
-> 
+> diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> index 4a75da7..3c1118b 100644
+> --- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> @@ -26,8 +26,13 @@ controller.
+>    the second encodes the triger flags encoded as described in
+>    Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+>  - interrupt-parent : The parent interrupt controller.
+> -- interrupts : The interrupt to the parent controller raised when GPIOs
+> -  generate the interrupts.
+> +- interrupts : The interrupts to the parent controller raised when GPIOs
+> +  generate the interrupts. If the controller provides one combined interrupt
+> +  for all GPIOs, specify a single interrupt. If the controller provides one
+> +  interrupt for each GPIO, provide a list of interrupts that correspond to each
+> +  of the GPIO pins. When specifying multiple interrupts, if any are unconnected,
+> +  use the interrupts-extended property to specify the interrupts and set the
+> +  interrupt controller handle for unused interrupts to 0.
+>  - snps,nr-gpios : The number of pins in the port, a single cell.
+>  - resets : Reset line for the controller.
 
-I think a config option for FASTPATH_NGPIO is preferable.
+An enhanced example might be helpful.
 
-As I've mentioned ARCH_NR_GPIOS is much greater than any chip->ngpio on
-my platform.
-It's at least one order of magnitude, almost 2.
+That not withstanding:
 
-
--- 
-Regards
-Phil Reid
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
