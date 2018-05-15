@@ -1,100 +1,72 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
-Date: Tue, 15 May 2018 15:26:40 +0200
-Message-ID: <8b344d48-592d-8be8-bea0-e29b3e8469a1@xilinx.com>
-References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
- <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
- <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
- <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
- <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com>
- <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
- <60652f48-2a98-414b-5cff-25890a6da37f@xilinx.com>
- <CACRpkdaNJzW+LO97oxavzYJwfkj0xu7wxTNRaGiaKm98ON5JMA@mail.gmail.com>
- <57e4bbdd-1e30-0352-f758-998b64a6b77f@xilinx.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v2 11/11] docs: fix broken references with multiple hints
+Date: Tue, 15 May 2018 10:52:28 -0400
+Message-ID: <20180515105228.4ac2df94@gandalf.local.home>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+ <63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57e4bbdd-1e30-0352-f758-998b64a6b77f@xilinx.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Simek <michal.simek@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <63a4f8a93f9115475bc184d0f37d076c9b9c75ff.1525870886.git.mchehab+samsung@kernel.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-fbdev@vger.kernel.org, linux-usb@vger.kernel.org, Linux Doc Mailing List <linux-doc@vger.kernel.org>, David Airlie <airlied@linux.ie>, Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, Harry Wei <harryxiyou@gmail.com>, devel@driverdev.osuosl.org, Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>, Ingo Molnar <mingo@redhat.com>, linux-input@vger.kernel.org, Roy Pledge <Roy.Pledge@nxp.com>, devicetree@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jiri Kosina <jikos@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, Benjamin
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Wed,  9 May 2018 10:18:54 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-On 2.5.2018 16:19, Michal Simek wrote:
-> On 2.5.2018 15:56, Linus Walleij wrote:
->> On Wed, May 2, 2018 at 3:41 PM, Michal Simek <michal.simek@xilinx.com> wrote:
->>
->>> If you don't want this patch I understand that and it will become just
->>> another soc vendor patch out of mainline.
->>
->> I don't really know what to do, so that is why I'm discussing.
-> 
-> me too. It is also interesting that I have met with the case with
-> zynq/zynqmp gpio driver and not gpio-xilinx.c which can have a lot of
-> instances.
-> 
->>
->> It's one of those gray areas.
->>
->> From one point of view there is the purist stance that we should
->> only support what the mainline tree does, and be strict and
->> consistent so we don't accumulate to many nasty hacks.
-> 
-> Also this expect that the first patch does everything right which is not
-> truth all the time.
-> 
->>
->> On the other hand, it is completely possible that all users of this
->> particular driver actually must have this patch, and then I just
->> push them to use a deviant vendor tree for no good reason.
->>
->> Would it be possible that I apply the patch, and somehow also
->> establish some understanding with all users of the Xilinx
->> platform that whatever legacy applications are out there
->> must start to migrate towards using the character device so
->> this reliance on the numberspace doesn't stick around forever?
-> 
-> When someone contacts me for asking guidance for gpio I am telling them
-> not to use legacy sysfs interface and use libgpiod. Last one was a week
-> ago in connection to Ultra96 and libmraa.
-> 
-> But even chardev is not supported there now.
-> https://github.com/intel-iot-devkit/mraa/issues/713
-> 
->>
->> For example can we make a patch to some systems like
->> arch/arm/boot/dts/zynq-*.dts
->> adding proper GPIO line names to these device trees, such
->> as was made in e.g. commit f6b1674d570aa1
->> "arm64: dts: qcom: sbc: Name GPIO lines"
-> 
-> If you take a look at
-> arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> which is Ultra96 board gpio-line-names are filled there for the whole PS
-> part. Definitely take a look and let know if you find out any issue there.
-> 
-> zynq/zynqmp gpio controller contains PS pins (hard part) and PL pins
-> coming to logic.
-> 
-> I can't describe PL gpio pins because it can be whatever even I have
-> done that for one fixed hw design.
-> 
-> Interesting part on that sha1 you shared is how "NC" pin is described.
-> 
-> gpio pin 35 I have on zcu100 as "" but it should be maybe TP_PAD which
-> is really just a pad on real board. And the rest of "" gpio names are
-> connected to PL.
-> 
-> I am happy to take a look at existing platforms and use gpio-line-names
-> there. For example arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-> I use in tca6416_u97 and u61 comments instead of this property.
-> 
 
-Have you done any decision about this patch?
+> diff --git a/Documentation/trace/events.rst b/Documentation/trace/events.rst
+> index 7b6b1236ec2e..c292117b83a9 100644
+> --- a/Documentation/trace/events.rst
+> +++ b/Documentation/trace/events.rst
+> @@ -8,7 +8,7 @@ Event Tracing
+>  1. Introduction
+>  ===============
+>  
+> -Tracepoints (see Documentation/trace/tracepoints.txt) can be used
+> +Tracepoints (see Documentation/trace/tracepoints.rst) can be used
+>  without creating custom kernel modules to register probe functions
+>  using the event tracing infrastructure.
+>  
+> diff --git a/Documentation/trace/tracepoint-analysis.rst b/Documentation/trace/tracepoint-analysis.rst
+> index b0c9c21f129d..716326b9f152 100644
+> --- a/Documentation/trace/tracepoint-analysis.rst
+> +++ b/Documentation/trace/tracepoint-analysis.rst
+> @@ -6,7 +6,7 @@ Notes on Analysing Behaviour Using Events and Tracepoints
+>  1. Introduction
+>  ===============
+>  
+> -Tracepoints (see Documentation/trace/tracepoints.txt) can be used without
+> +Tracepoints (see Documentation/trace/tracepoints.rst) can be used without
+>  creating custom kernel modules to register probe functions using the event
+>  tracing infrastructure.
+>  
 
-Thanks,
-Michal
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index c94f466d57ef..19a690b559ca 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -4,7 +4,7 @@
+>  /*
+>   * Kernel Tracepoint API.
+>   *
+> - * See Documentation/trace/tracepoints.txt.
+> + * See Documentation/trace/tracepoints.rst.
+>   *
+>   * Copyright (C) 2008-2014 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>   *
+
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
