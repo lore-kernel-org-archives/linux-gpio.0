@@ -1,54 +1,60 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: [PATCH v5 0/7] pcal6524 extensions and fixes for pca953x driver
-Date: Wed, 16 May 2018 16:37:23 +0200
-Message-ID: <9213FFC0-3C2B-447D-AA2C-55D7F93CFA27@goldelico.com>
-References: <cover.1524933096.git.hns@goldelico.com> <CACRpkdbk0rNZ3cUN_noqVtNYgDrydGtCCn2fk7yqVRPoroYqpA@mail.gmail.com> <6AA622D1-DA8C-4C58-8EAE-555989E69149@goldelico.com> <CACRpkda_nrL8HQL3y+tvHKff+5zKykd3Ym1waEm=JC1tFQbbcw@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
+ bindings
+Date: Wed, 16 May 2018 15:01:10 +0000
+Message-ID: <b9005dd8-8214-ceab-0f88-ff1a51b44e34@st.com>
+References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
+ <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
+ <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
+ <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
+ <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
+ <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda_nrL8HQL3y+tvHKff+5zKykd3Ym1waEm=JC1tFQbbcw@mail.gmail.com>
+In-Reply-To: <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
+Content-Language: en-US
+Content-ID: <E48E5DD0B59E9B4983E70FFD62A551BB@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kumar Gala <galak@codeaurora.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+To: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-
-> Am 16.05.2018 um 16:31 schrieb Linus Walleij =
-<linus.walleij@linaro.org>:
->=20
-> On Wed, May 16, 2018 at 3:32 PM, H. Nikolaus Schaller =
-<hns@goldelico.com> wrote:
->>> Am 16.05.2018 um 13:53 schrieb Linus Walleij =
-<linus.walleij@linaro.org>:
->>> On Sat, Apr 28, 2018 at 6:31 PM, H. Nikolaus Schaller =
-<hns@goldelico.com> wrote:
->>>=20
->>>> V5:
->>>> * fix wrong split up between patches 1/7and 2/7.
->>>=20
->>> I applied patches 1, 2, 3 so we get some movement on the patch
->>> set and not too much for you to rebase.
->>=20
->> thanks!
->>=20
->> Well, I already had edited the commit messages for resending...
->>=20
->>>=20
->>> It's fine to just resend the rest next time.
->>=20
->> There is only one point open before resending:
->>=20
->> what is the preferred style to be used for PCAL_GPIO_MASK?
->>=20
->> * GENMASK(4, 0)
->> * or 0x1f
->=20
-> No strong opinion... sorry. Whatever you & the other driver
-> contributors are most convenient with.
-
-Ok, then let's keep the GENMASK(4, 0) since nobody did complain
-about it.
-
-BR and thanks,
-Nikolaus=
+DQoNCk9uIDA1LzE2LzIwMTggMDQ6MjAgUE0sIExpbnVzIFdhbGxlaWogd3JvdGU6DQo+IE9uIFdl
+ZCwgTWF5IDksIDIwMTggYXQgOTo1NiBBTSwgQW1lbGllIERFTEFVTkFZIDxhbWVsaWUuZGVsYXVu
+YXlAc3QuY29tPiB3cm90ZToNCj4gDQo+PiBJbmRlZWQsIHN0bWZ4IGhhcyBvdGhlciBmdW5jdGlv
+bnMgdGhhbiBHUElPLiBCdXQsIGFmdGVyIGNvbW1lbnRzIGRvbmUNCj4+IGhlcmU6IFsxXSBhbmQg
+dGhlcmU6IFsyXSwgaXQgaGFzIGJlZW4gZGVjaWRlZCB0byBtb3ZlIE1GRCBwYXJlbnQvR1BJTw0K
+Pj4gY2hpbGQgZHJpdmVycyBpbnRvIGEgc2luZ2xlIFBJTkNUUkwvR1BJTyBkcml2ZXIgYmVjYXVz
+ZSBvZiB0aGUgZm9sbG93aW5nDQo+PiByZWFzb25zOg0KPj4gLSBPdGhlciBzdG1meCBmdW5jdGlv
+bnMgKElERCBtZWFzdXJlbWVudCBhbmQgVG91Y2hTY3JlZW4gY29udHJvbGxlcikgYXJlDQo+PiBu
+b3QgdXNlZCBvbiBhbnkgb2YgdGhlIGJvYXJkcyB1c2luZyBhbiBzdG1meCBhbmQgc3VwcG9ydGVk
+IGJ5IExpbnV4LCBzbw0KPj4gbm8gd2F5IHRvIHRlc3QgdGhlc2UgZnVuY3Rpb25zLCBhbmQgbm8g
+bmVlZCB0byBtYWludGFpbiB0aGVtIHdoaWxlIHRoZXkNCj4+IGFyZSBub3QgYmVpbmcgdXNlZC4N
+Cj4+IC0gQnV0LCBpbiB0aGUgY2FzZSBhIG5ldyBib2FyZCB3aWxsIHVzZSBtb3JlIHRoYW4gR1BJ
+TyBmdW5jdGlvbiBvbg0KPj4gc3RtZngsIHRoZSBhY3R1YWwgaW1wbGVtZW50YXRpb24gYWxsb3cg
+dG8gZWFzaWx5IGV4dHJhY3QgY29tbW9uIGluaXQNCj4+IHBhcnQgb2Ygc3RtZnggYW5kIHB1dCBp
+dCBpbiBhbiBNRkQgZHJpdmVyLg0KPj4NCj4+IFNvIEkgY291bGQgcmVtb3ZlIGdwaW8gc3ViLW5v
+ZGUgYW5kIHB1dCBpdHMgY29udGVudHMgaW4gc3RtZnggbm9kZSBhbmQNCj4+IGtlZXAgc2luZ2xl
+IFBJTkNUUkwvR1BJTyBkcml2ZXIgZm9yIHRoZSB0aW1lIGJlaW5nLg0KPj4gUGxlYXNlIGFkdmlz
+ZSwNCj4gDQo+IEkgd291bGQgbm9ybWFsbHkgYWR2aWNlIHRvIHVzZSB0aGUgcmlnaHQgbW9kZWxp
+bmcgZnJvbSB0aGUgc3RhcnQsIGNyZWF0ZQ0KPiB0aGUgTUZEIGRyaXZlciBhbmQgc3Bhd24gdGhl
+IGRldmljZXMgZnJvbSB0aGVyZS4gSXQgaXMgY29uZnVzaW5nDQo+IGlmIHRoZSBsYXlvdXQgb2Yg
+dGhlIGRyaXZlcihzKSBkb2Vzbid0IHJlYWxseSBtYXRjaCB0aGUgbGF5b3V0IG9mIHRoZQ0KPiBo
+YXJkd2FyZS4NCj4gDQo+IEkgdW5kZXJzdGFuZCB0aGF0IGl0IGlzIGEgcGFpbiB0byB3cml0ZSBu
+ZXcgTUZEIGRyaXZlcnMgdG8gZ2V0IHlvdXINCj4gdGhpbmdzIGdvaW5nIGFuZCBpdCB3b3VsZCBi
+ZSAibmljZSB0byBnZXQgdGhpcyB3b3JraW5nIHJlYWxseSBxdWljaw0KPiBub3ciIGJ1dCBpbiBt
+eSBleHBlcmllbmNlIGl0IGlzIGJldHRlciB0byBkbyBpdCByaWdodCBmcm9tIHRoZSBzdGFydC4N
+Cj4gDQoNCkhpIExpbnVzLA0KDQpUaGFua3MgZm9yIHlvdXIgYWR2aWNlLiBJIHVuZGVyc3RhbmQg
+dGhlIHBvaW50Lg0KU28sIHRoZSByaWdodCBtb2RlbGluZyB3b3VsZCBiZSB0bzoNCi0gY3JlYXRl
+IGFuIE1GRCBkcml2ZXIgd2l0aCB0aGUgY29tbW9uIGluaXQgcGFydCBvZiBzdG1meA0KLSByZW1v
+dmUgYWxsIGNvbW1vbiBpbml0IHBhcnQgb2Ygc3RtZngtcGluY3RybCBkcml2ZXIgYW5kIGtlZXAg
+b25seSBhbGwgDQpncGlvL3BpbmN0cmwgZnVuY3Rpb25zLg0KDQpJIHdpbGwgbm90IGRldmVsb3Ag
+dGhlIG90aGVyIHN0bWZ4IGZ1bmN0aW9ucyAoSUREIG1lYXN1cmVtZW50IGRyaXZlciBhbmQgDQpU
+b3VjaFNjcmVlbiBjb250cm9sbGVyIGRyaXZlcikgYmVjYXVzZSwgYXMgZXhwbGFpbmVkIGVhbGll
+ciwgdGhleSBhcmUgDQpub3QgdXNlZCBvbiBhbnkgb2YgdGhlIGJvYXJkcyB1c2luZyBhbiBzdG1m
+eCBhbmQgc3VwcG9ydGVkIGJ5IExpbnV4LCBzbyANCm5vIHdheSB0byB0ZXN0IHRoZXNlIGZ1bmN0
+aW9ucywgYW5kIG5vIG5lZWQgdG8gbWFpbnRhaW4gdGhlbSB3aGlsZSB0aGV5IA0KYXJlIG5vdCBi
+ZWluZyB1c2VkLg0KDQpMZWUsIGFyZSB5b3UgT0sgd2l0aCB0aGF0ID8NCg0KUmVnYXJkcywNCkFt
+ZWxpZQ==
