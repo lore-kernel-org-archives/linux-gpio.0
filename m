@@ -1,45 +1,53 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: [PATCH v5 0/7] pcal6524 extensions and fixes for pca953x driver
-Date: Wed, 16 May 2018 15:32:19 +0200
-Message-ID: <6AA622D1-DA8C-4C58-8EAE-555989E69149@goldelico.com>
-References: <cover.1524933096.git.hns@goldelico.com> <CACRpkdbk0rNZ3cUN_noqVtNYgDrydGtCCn2fk7yqVRPoroYqpA@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 0/8] Introduce the for_each_set_clump macro
+Date: Wed, 16 May 2018 16:03:51 +0200
+Message-ID: <CACRpkdbRH-Bz3BoczD+YmaSGqtoeCwtvGj4dGm8PKRKYFXTdKA@mail.gmail.com>
+References: <cover.1526400945.git.vilhelm.gray@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbk0rNZ3cUN_noqVtNYgDrydGtCCn2fk7yqVRPoroYqpA@mail.gmail.com>
+In-Reply-To: <cover.1526400945.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kumar Gala <galak@codeaurora.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+On Tue, May 15, 2018 at 6:22 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-> Am 16.05.2018 um 13:53 schrieb Linus Walleij =
-<linus.walleij@linaro.org>:
->=20
-> On Sat, Apr 28, 2018 at 6:31 PM, H. Nikolaus Schaller =
-<hns@goldelico.com> wrote:
->=20
->> V5:
->> * fix wrong split up between patches 1/7and 2/7.
->=20
-> I applied patches 1, 2, 3 so we get some movement on the patch
-> set and not too much for you to rebase.
+> For example, suppose you would like to iterate over a 16-bit integer 4
+> bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+> represents the current 4-bit group:
+>
+>     Example:        1011 1110 0000 1111
+>     First loop:     1011 1110 0000 XXXX
+>     Second loop:    1011 XXXX 0000 1111
+>     Third loop:     XXXX 1110 0000 1111
+>
+> Each iteration of the loop returns the next 4-bit group that has at
+> least one set bit.
+>
+> The for_each_set_clump macro has six parameters:
+>
+>     * clump: set to current clump index for the iteration
+>     * index: set to current bitmap word index for the iteration
+>     * offset: bits offset of the found clump in the bitmap word
+>     * bits: bitmap to search within
+>     * size: bitmap size in number of clumps
+>     * clump_size: clump size in number of bits
+>
+> The clump_size argument can be an arbitrary number of bits and is not
+> required to be a multiple of 2.
 
-thanks!
+I must say I'm impressed. Very nice arithmetics going on there.
 
-Well, I already had edited the commit messages for resending...
+If I can get some ACK for the bitops patch I'd be happy to merge
+it all through the GPIO tree. The users are pretty clear cut.
 
->=20
-> It's fine to just resend the rest next time.
+BTW: if I could, I would pull out Donald Knuth's "The Art of Computer
+Programming vol 4A" chapter 7.1.3 "Bitwise Tricks and Techniques"
+to see what he has to say about the subject, but I don't have
+that book as it turns out.
 
-There is only one point open before resending:
-
-what is the preferred style to be used for PCAL_GPIO_MASK?
-
-* GENMASK(4, 0)
-* or 0x1f
-
-BR,
-Nikolaus
+Yours,
+Linus Walleij
