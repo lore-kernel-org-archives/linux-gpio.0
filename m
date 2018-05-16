@@ -1,62 +1,144 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v4 0/8] Introduce the for_each_set_clump macro
-Date: Wed, 16 May 2018 23:08:28 +0300
-Message-ID: <CAHp75VcGuJ0+qzUZZW=1VSeXmf_rht0tJvCH+yBsXPZz0z8qHA@mail.gmail.com>
-References: <cover.1526400945.git.vilhelm.gray@gmail.com> <CACRpkdbRH-Bz3BoczD+YmaSGqtoeCwtvGj4dGm8PKRKYFXTdKA@mail.gmail.com>
+From: Christian Lamparter <chunkeey@gmail.com>
+Subject: Re: [PATCH v4] pinctrl: msm: fix gpio-hog related boot issues
+Date: Wed, 16 May 2018 22:29:48 +0200
+Message-ID: <3220588.XpgAMh8mx0@debian64>
+References: <20180412190138.12372-1-chunkeey@gmail.com>
+ <CACRpkdZPEHvnQdwh5Uu5kwqK7yVGTaw_cZR+GOzsG9pg4oEktA@mail.gmail.com>
+ <152648467672.210890.17814748620132622851@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbRH-Bz3BoczD+YmaSGqtoeCwtvGj4dGm8PKRKYFXTdKA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <152648467672.210890.17814748620132622851@swboyd.mtv.corp.google.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 16, 2018 at 5:03 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, May 15, 2018 at 6:22 PM, William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
->
->> For example, suppose you would like to iterate over a 16-bit integer 4
->> bits at a time, skipping over 4-bit groups with no set bit, where XXXX
->> represents the current 4-bit group:
->>
->>     Example:        1011 1110 0000 1111
->>     First loop:     1011 1110 0000 XXXX
->>     Second loop:    1011 XXXX 0000 1111
->>     Third loop:     XXXX 1110 0000 1111
->>
->> Each iteration of the loop returns the next 4-bit group that has at
->> least one set bit.
->>
->> The for_each_set_clump macro has six parameters:
->>
->>     * clump: set to current clump index for the iteration
->>     * index: set to current bitmap word index for the iteration
->>     * offset: bits offset of the found clump in the bitmap word
->>     * bits: bitmap to search within
->>     * size: bitmap size in number of clumps
->>     * clump_size: clump size in number of bits
->>
->> The clump_size argument can be an arbitrary number of bits and is not
->> required to be a multiple of 2.
->
-> I must say I'm impressed. Very nice arithmetics going on there.
->
-> If I can get some ACK for the bitops patch I'd be happy to merge
-> it all through the GPIO tree. The users are pretty clear cut.
+On Wednesday, May 16, 2018 5:31:16 PM CEST Stephen Boyd wrote:
+> Quoting Linus Walleij (2018-04-26 05:03:45)
+> > On Thu, Apr 12, 2018 at 9:01 PM, Christian Lamparter <chunkeey@gmail.com> wrote:
+> > 
+> > > Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
+> > > Setting up any gpio-hog in the device-tree for his device would
+> > > "kill the bootup completely":
+> > >
+> > > | [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
+> > > | [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
+> > > | [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
+> > > | [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
+> > > | [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
+> > > | [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
+> > > | [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
+> > >
+> > > This was also verified on a RT-AC58U (IPQ4018) which would
+> > > no longer boot, if a gpio-hog was specified. (Tried forcing
+> > > the USB LED PIN (GPIO0) to high.).
+> > >
+> > > The problem is that Pinctrl+GPIO registration is currently
+> > > peformed in the following order in pinctrl-msm.c:
+> > >         1. pinctrl_register()
+> > >         2. gpiochip_add()
+> > >         3. gpiochip_add_pin_range()
+> > >
+> > > The actual error code -517 == -EPROBE_DEFER is coming from
+> > > pinctrl_get_device_gpio_range(), which is called through:
+> > >         gpiochip_add
+> > >             of_gpiochip_add
+> > >                 of_gpiochip_scan_gpios
+> > >                     gpiod_hog
+> > >                         gpiochip_request_own_desc
+> > >                             __gpiod_request
+> > >                                 chip->request
+> > >                                     gpiochip_generic_request
+> > >                                        pinctrl_gpio_request
+> > >                                           pinctrl_get_device_gpio_range
+> > >
+> > > pinctrl_get_device_gpio_range() is unable to find any valid
+> > > pin ranges, since nothing has been added to the pinctrldev_list yet.
+> > > so the range can't be found, and the operation fails with -EPROBE_DEFER.
+> > >
+> > > This patch fixes the issue by adding the "gpio-ranges" property to
+> > > the pinctrl device node of all upstream Qcom SoC. The pin ranges are
+> > > then added by the gpio core.
+> > >
+> > > In order to remain compatible with older, existing DTs (and ACPI)
+> > > a check for the "gpio-ranges" property has been added to
+> > > msm_gpio_init(). This prevents the driver of adding the same entry
+> > > to the pinctrldev_list twice.
+> > >
+> > > Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+> > > Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+> > 
+> > This patch looks VERY good to me.
+> > 
+> 
+> Why can't we register the gpiochip and tell it about the pin ranges in
+> one API call instead of adding the chip and then adding the ranges? It
+> doesn't look right to have to go and update all the DT nodes to list
+> this information that is already known in the driver because the kernel
+> implementation can't handle the order of operations correctly.
+The problem is that gpiochip_add_pin_range() was not intended for
+DT-based pinctrls... but it got used anyway.
 
-Give me also some time to go through proposed API, I think it might
-have needed more alignment with existing find_* and for_* helpers.
+This topic came up in an earlier post:
+"Re: pinctrl: qcom: ipq4019: Use of gpio-hog's" [0] (you must have gotten
+this mail too, since you are on the Cc.) which links to a ML thread titled
+"Re: [GIT PULL] SPEAr pinctrl updates for v-3.5" 
 
-> BTW: if I could, I would pull out Donald Knuth's "The Art of Computer
-> Programming vol 4A" chapter 7.1.3 "Bitwise Tricks and Techniques"
-> to see what he has to say about the subject, but I don't have
-> that book as it turns out.
+For your convenience: (this post is from 2012-09-03 - so it's 5-6 years
+old by now and it looks like it predates even the DT pinctrl-msm driver.
+(Not entirely sure?))
+<http://thread.gmane.org/gmane.linux.ports.arm.kernel/184943>
+|[...]
+|But I want two similar function named:
+|
+|gpiochip_add_pin_range();
+|gpiochip_remove_pin_range();
+|
+|*that can be used for platforms that doesn't support DT.*
+|
+|For example I'd like to convert over some of my existing
+|drivers that do not have DT support to do this thing instead
+|of registering ranges from the pin controller...
 
-I can also add the Standford collection of bit algos here:
+I think you must have come across similar issues with the
+"gpio-reserved-ranges" property you recently added. Because
+from what I can glimpse from the
+"[2/3] dt-bindings: pinctrl: Add a ngpios-ranges property" 
+<https://patchwork.kernel.org/patch/10153785/> series.
+The gpio-reserved-ranges property would also need to be added
+to existing products (msm8996) as well, right?
+("I stuck this inside msm8996, but maybe it can go somewhere more generic?")
 
-https://graphics.stanford.edu/~seander/bithacks.html
+> Furthermore, it looks like this becomes a silent requirement to add the
+> gpio-ranges property into the DT so that hogs work, but none of the
+> bindings have been updated in this patch to indicate that.
+The pinctrl-msm.c driver will fallback to using gpiochip_add_pin_range(),
+if the gpio-ranges property is not present. So all existing and compiled 
+devicetree binaries files will remain compatible.
 
--- 
-With Best Regards,
-Andy Shevchenko
+As for adding the gpio-ranges to the dt binding text files under
+Documentation/devicetree/bindings/pinctrl/: Sure. No problem. I can add
+them too :).
+
+But I do have a question: Should I also include the missing declaration
+of the gpio-reserved-ranges properties too? (I can make the patches over
+the long weekend. If I hear nothing from anyone, I'll post them on Monday).
+
+(Also, it looks like the nvidia tegra pinctrl-driver has the gpio-ranges
+property in the DTS, but not in the binding documentation. I'll add
+that to the nvidia pile.)
+
+Thanks,
+Christian
+
+[0] <https://www.spinics.net/lists/linux-arm-msm/msg34833.html>
