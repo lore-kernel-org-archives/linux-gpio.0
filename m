@@ -1,37 +1,85 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] gpio: Fix return value check in owl_gpio_probe()
-Date: Wed, 16 May 2018 14:55:41 +0200
-Message-ID: <CACRpkdbO+At1=4BBV-QrPXzDP-3P9UBmpKvdeJ6ivLo_FD+mKg@mail.gmail.com>
-References: <1525657224-88189-1-git-send-email-weiyongjun1@huawei.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] gpio: pca953x: Clear irq trigger type on irq shutdown
+Date: Wed, 16 May 2018 16:14:00 +0300
+Message-ID: <354db10f9a239e04087ba7cf7d731d3fbe2ec066.camel@linux.intel.com>
+References: <no_message-id@ru>
+         <CACRpkdbn_8WUQ8oqn2+M6KpEEogLTMMqbJrp-d2=HEkjJ-XtDQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1525657224-88189-1-git-send-email-weiyongjun1@huawei.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbn_8WUQ8oqn2+M6KpEEogLTMMqbJrp-d2=HEkjJ-XtDQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Grigoryev Denis <grigoryev@fastwel.ru>, "H. Nikolaus Schaller" <hns@goldelico.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Steve Longerbeam <slongerbeam@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 7, 2018 at 3:40 AM, Wei Yongjun <weiyongjun1@huawei.com> wrote:
+On Wed, 2018-05-16 at 14:51 +0200, Linus Walleij wrote:
+> On Fri, May 4, 2018 at 6:53 PM, Grigoryev Denis <grigoryev@fastwel.ru>
+> wrote:
+> 
 
-> In case of error, the function of_iomap() returns NULL pointer not
-> ERR_PTR(). The IS_ERR() test in the return value check should be
-> replaced with NULL test.
->
-> Fixes: d3654d38809c ("gpio: Add gpio driver for Actions OWL S900 SoC")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+If it's full context below, the patch looks good enough to me (assuming
+it works and doesn't break things on other chips like PCAL variants).
 
-We dropped this driver from the GPIO tree in favor of an extended
-pin control driver.
+Though, I didn't read the code carefully (not enough time this week).
+Thus, FWIW, 
 
-Yours,
-Linus Walleij
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+with above caveats in mind.
+
+> > The driver stores the result of irq_set_type() in the internal
+> > variables
+> > irq_trig_raise and irq_trig_fall, which later are used to determine
+> > the GPIOs that must be re-configured as input. These variables
+> > retain their
+> > value between gpiolib's  export / unexport, resulting in an
+> > incorrect
+> > state in some cases. The corresponding bits in the variables
+> > irq_trig_raise and irq_trig_fall should be cleared in
+> > irq_shutdown().
+> > 
+> > Signed-off-by: Denis Grigoryev <grigoryev@fastwel.ru>
+> > ---
+> >  drivers/gpio/gpio-pca953x.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-
+> > pca953x.c
+> > index d2ead4b..b41be8c 100644
+> > --- a/drivers/gpio/gpio-pca953x.c
+> > +++ b/drivers/gpio/gpio-pca953x.c
+> > @@ -522,6 +522,15 @@ static int pca953x_irq_set_type(struct irq_data
+> > *d, unsigned int type)
+> >         return 0;
+> >  }
+> > 
+> > +static void pca953x_irq_shutdown(struct irq_data *d)
+> > +{
+> > +       struct pca953x_chip *chip = irq_data_get_irq_chip_data(d);
+> > +       u8 mask = 1 << (d->hwirq % BANK_SZ);
+> > +
+> > +       chip->irq_trig_raise[d->hwirq / BANK_SZ] &= ~mask;
+> > +       chip->irq_trig_fall[d->hwirq / BANK_SZ] &= ~mask;
+> > +}
+> > +
+> >  static struct irq_chip pca953x_irq_chip = {
+> >         .name                   = "pca953x",
+> >         .irq_mask               = pca953x_irq_mask,
+> > @@ -529,6 +538,7 @@ static struct irq_chip pca953x_irq_chip = {
+> >         .irq_bus_lock           = pca953x_irq_bus_lock,
+> >         .irq_bus_sync_unlock    = pca953x_irq_bus_sync_unlock,
+> >         .irq_set_type           = pca953x_irq_set_type,
+> > +       .irq_shutdown           = pca953x_irq_shutdown,
+> >  };
+> 
+> This driver has a big set of users, so putting some maintainers
+> in the loop so we can get some patch review.
+> 
+> Yours,
+> Linus Walleij
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
