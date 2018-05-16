@@ -1,46 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl bindings
-Date: Wed, 16 May 2018 16:20:35 +0200
-Message-ID: <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
-References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
- <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
- <20180416181940.4b5z4svbde3ompij@rob-hp-laptop> <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
- <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
+Subject: Re: [PATCH 1/2] pinctrl: nand: meson-gxbb: fix missing data pins
+Date: Wed, 16 May 2018 16:23:39 +0200
+Message-ID: <CACRpkdZeUxNOxHSC1AYoR6TG0DUsXt3p9m-SWDaQDyAooNYUyQ@mail.gmail.com>
+References: <20180509220827.22286-1-yixun.lan@amlogic.com> <20180509220827.22286-2-yixun.lan@amlogic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
+In-Reply-To: <20180509220827.22286-2-yixun.lan@amlogic.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Amelie DELAUNAY <amelie.delaunay@st.com>
-Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Lee Jones <lee.jones@linaro.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Jerome Brunet <jbrunet@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>, Liang Yang <liang.yang@amlogic.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 9, 2018 at 9:56 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
+On Thu, May 10, 2018 at 12:08 AM, Yixun Lan <yixun.lan@amlogic.com> wrote:
 
-> Indeed, stmfx has other functions than GPIO. But, after comments done
-> here: [1] and there: [2], it has been decided to move MFD parent/GPIO
-> child drivers into a single PINCTRL/GPIO driver because of the following
-> reasons:
-> - Other stmfx functions (IDD measurement and TouchScreen controller) are
-> not used on any of the boards using an stmfx and supported by Linux, so
-> no way to test these functions, and no need to maintain them while they
-> are not being used.
-> - But, in the case a new board will use more than GPIO function on
-> stmfx, the actual implementation allow to easily extract common init
-> part of stmfx and put it in an MFD driver.
+> The data pin 0-7 of the NAND controller are actually missing from
+> the nand pinctrl group, so we fix it here.
 >
-> So I could remove gpio sub-node and put its contents in stmfx node and
-> keep single PINCTRL/GPIO driver for the time being.
-> Please advise,
+> Fixes: cd1e3b01c7d3 ("pinctrl: amlogic: gxbb: add nand pins")
+> Reported-by: Liang Yang <liang.yang@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 
-I would normally advice to use the right modeling from the start, create
-the MFD driver and spawn the devices from there. It is confusing
-if the layout of the driver(s) doesn't really match the layout of the
-hardware.
-
-I understand that it is a pain to write new MFD drivers to get your
-things going and it would be "nice to get this working really quick
-now" but in my experience it is better to do it right from the start.
+Patch applied.
 
 Yours,
 Linus Walleij
