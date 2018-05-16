@@ -1,28 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mvebu: use correct MPP sel value for dev pins
-Date: Wed, 16 May 2018 14:55:00 +0200
-Message-ID: <CACRpkdbAaMrHJ8TjJTtNyVtoOSRAEf2Z8gRthFH0ze4RyybBag@mail.gmail.com>
-References: <20180507022555.31645-1-chris.packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH -next] gpio: Fix return value check in owl_gpio_probe()
+Date: Wed, 16 May 2018 14:55:41 +0200
+Message-ID: <CACRpkdbO+At1=4BBV-QrPXzDP-3P9UBmpKvdeJ6ivLo_FD+mKg@mail.gmail.com>
+References: <1525657224-88189-1-git-send-email-weiyongjun1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180507022555.31645-1-chris.packham@alliedtelesis.co.nz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: Gregory Clement <gregory.clement@bootlin.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1525657224-88189-1-git-send-email-weiyongjun1@huawei.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 7, 2018 at 4:25 AM, Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
+On Mon, May 7, 2018 at 3:40 AM, Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-> The "dev" function is selected with the value 0x4 not 0x01.
+> In case of error, the function of_iomap() returns NULL pointer not
+> ERR_PTR(). The IS_ERR() test in the return value check should be
+> replaced with NULL test.
 >
-> Fixes: commit d7ae8f8dee7f ("pinctrl: mvebu: pinctrl driver for 98DX3236 SoC")
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Fixes: d3654d38809c ("gpio: Add gpio driver for Actions OWL S900 SoC")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Patch applied.
-
-Does it need to go into fixes? Stable?
+We dropped this driver from the GPIO tree in favor of an extended
+pin control driver.
 
 Yours,
 Linus Walleij
