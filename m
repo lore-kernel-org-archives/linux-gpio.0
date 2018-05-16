@@ -1,85 +1,45 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] gpio: pca953x: Clear irq trigger type on irq shutdown
-Date: Wed, 16 May 2018 16:14:00 +0300
-Message-ID: <354db10f9a239e04087ba7cf7d731d3fbe2ec066.camel@linux.intel.com>
-References: <no_message-id@ru>
-         <CACRpkdbn_8WUQ8oqn2+M6KpEEogLTMMqbJrp-d2=HEkjJ-XtDQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [PATCH v5 0/7] pcal6524 extensions and fixes for pca953x driver
+Date: Wed, 16 May 2018 15:32:19 +0200
+Message-ID: <6AA622D1-DA8C-4C58-8EAE-555989E69149@goldelico.com>
+References: <cover.1524933096.git.hns@goldelico.com> <CACRpkdbk0rNZ3cUN_noqVtNYgDrydGtCCn2fk7yqVRPoroYqpA@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbn_8WUQ8oqn2+M6KpEEogLTMMqbJrp-d2=HEkjJ-XtDQ@mail.gmail.com>
+In-Reply-To: <CACRpkdbk0rNZ3cUN_noqVtNYgDrydGtCCn2fk7yqVRPoroYqpA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Grigoryev Denis <grigoryev@fastwel.ru>, "H. Nikolaus Schaller" <hns@goldelico.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Steve Longerbeam <slongerbeam@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kumar Gala <galak@codeaurora.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 2018-05-16 at 14:51 +0200, Linus Walleij wrote:
-> On Fri, May 4, 2018 at 6:53 PM, Grigoryev Denis <grigoryev@fastwel.ru>
-> wrote:
-> 
+Hi,
 
-If it's full context below, the patch looks good enough to me (assuming
-it works and doesn't break things on other chips like PCAL variants).
+> Am 16.05.2018 um 13:53 schrieb Linus Walleij =
+<linus.walleij@linaro.org>:
+>=20
+> On Sat, Apr 28, 2018 at 6:31 PM, H. Nikolaus Schaller =
+<hns@goldelico.com> wrote:
+>=20
+>> V5:
+>> * fix wrong split up between patches 1/7and 2/7.
+>=20
+> I applied patches 1, 2, 3 so we get some movement on the patch
+> set and not too much for you to rebase.
 
-Though, I didn't read the code carefully (not enough time this week).
-Thus, FWIW, 
+thanks!
 
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Well, I already had edited the commit messages for resending...
 
-with above caveats in mind.
+>=20
+> It's fine to just resend the rest next time.
 
-> > The driver stores the result of irq_set_type() in the internal
-> > variables
-> > irq_trig_raise and irq_trig_fall, which later are used to determine
-> > the GPIOs that must be re-configured as input. These variables
-> > retain their
-> > value between gpiolib's  export / unexport, resulting in an
-> > incorrect
-> > state in some cases. The corresponding bits in the variables
-> > irq_trig_raise and irq_trig_fall should be cleared in
-> > irq_shutdown().
-> > 
-> > Signed-off-by: Denis Grigoryev <grigoryev@fastwel.ru>
-> > ---
-> >  drivers/gpio/gpio-pca953x.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-
-> > pca953x.c
-> > index d2ead4b..b41be8c 100644
-> > --- a/drivers/gpio/gpio-pca953x.c
-> > +++ b/drivers/gpio/gpio-pca953x.c
-> > @@ -522,6 +522,15 @@ static int pca953x_irq_set_type(struct irq_data
-> > *d, unsigned int type)
-> >         return 0;
-> >  }
-> > 
-> > +static void pca953x_irq_shutdown(struct irq_data *d)
-> > +{
-> > +       struct pca953x_chip *chip = irq_data_get_irq_chip_data(d);
-> > +       u8 mask = 1 << (d->hwirq % BANK_SZ);
-> > +
-> > +       chip->irq_trig_raise[d->hwirq / BANK_SZ] &= ~mask;
-> > +       chip->irq_trig_fall[d->hwirq / BANK_SZ] &= ~mask;
-> > +}
-> > +
-> >  static struct irq_chip pca953x_irq_chip = {
-> >         .name                   = "pca953x",
-> >         .irq_mask               = pca953x_irq_mask,
-> > @@ -529,6 +538,7 @@ static struct irq_chip pca953x_irq_chip = {
-> >         .irq_bus_lock           = pca953x_irq_bus_lock,
-> >         .irq_bus_sync_unlock    = pca953x_irq_bus_sync_unlock,
-> >         .irq_set_type           = pca953x_irq_set_type,
-> > +       .irq_shutdown           = pca953x_irq_shutdown,
-> >  };
-> 
-> This driver has a big set of users, so putting some maintainers
-> in the loop so we can get some patch review.
-> 
-> Yours,
-> Linus Walleij
+There is only one point open before resending:
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+what is the preferred style to be used for PCAL_GPIO_MASK?
+
+* GENMASK(4, 0)
+* or 0x1f
+
+BR,
+Nikolaus
