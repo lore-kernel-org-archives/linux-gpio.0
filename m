@@ -1,36 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Date: Wed, 16 May 2018 14:23:23 +0200
-Message-ID: <CACRpkdbykxwHvQgfFnihOHy1hsM7ZWHtCYGCNb49MbNkKWz6Hg@mail.gmail.com>
-References: <20180503225537.20748-1-digetx@gmail.com> <20180503225537.20748-3-digetx@gmail.com>
+Subject: Re: [PATCH v4] pinctrl: msm: fix gpio-hog related boot issues
+Date: Wed, 16 May 2018 14:28:17 +0200
+Message-ID: <CACRpkdbND_LWJmoH9yPQ2ruorM8CRWVk2S0nd1GCChZ=fuz_Eg@mail.gmail.com>
+References: <20180412190138.12372-1-chunkeey@gmail.com>
+ <CACRpkdZPEHvnQdwh5Uu5kwqK7yVGTaw_cZR+GOzsG9pg4oEktA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180503225537.20748-3-digetx@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdZPEHvnQdwh5Uu5kwqK7yVGTaw_cZR+GOzsG9pg4oEktA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Christian Lamparter <chunkeey@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, May 4, 2018 at 12:55 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
-
-> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-> that main clk-controller driver could get an actual parent clock for the
-> CDEV1/2 clocks.
+On Thu, Apr 26, 2018 at 2:03 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Apr 12, 2018 at 9:01 PM, Christian Lamparter <chunkeey@gmail.com> wrote:
 >
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marc Dietrich <marvin24@gmx.de>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
+>> Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
+>> Setting up any gpio-hog in the device-tree for his device would
+>> "kill the bootup completely":
+(...)
+>> Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+>> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
 >
-> v2: This patch is factored out from the v1 clk/DT series so that it could be
->     applied separately.
+> This patch looks VERY good to me.
+>
+> I am fine in merging it into pin control including the ranges
+> fixes.
+>
+> I need Andy's and Bjorn's ACKs on it though!
+>
+> Can you guys provide that?
 
-Patch applied unless Stephen W protests.
-Please include swarren on future patches to this driver.
+Hm? Andy, Bjorn?
+
+Seems you guys are a bit snowed under.
+
+I guess I have to just apply it at some point and see what
+happens...
 
 Yours,
 Linus Walleij
