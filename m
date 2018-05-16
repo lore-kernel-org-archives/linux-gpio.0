@@ -1,37 +1,75 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
-Date: Tue, 15 May 2018 13:26:04 -0700
-Message-ID: <152641596420.237094.12177504626636253047@swboyd.mtv.corp.google.com>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
- <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH 1/2] arm: mach-omap2: pdata-quirks: Add a quirk function to
+ convey off mode state
+Date: Wed, 16 May 2018 11:10:29 +0530
+Message-ID: <1526449230-27618-2-git-send-email-j-keerthy@ti.com>
+References: <1526449230-27618-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, Eric Paris <eparis@parisplace.org>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-clk@vger.kernel.org, James Morris <jmorris@namei.org>, Alan Stern <stern@rowland.harvard.edu>, xen-devel@lists.xenproject.org, Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Antoine Jacquet <royale@zerezo.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>, linux-crypto@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, alsa-devel@alsa-project.org, David Airlie <airlied@linux.ie>, Max Filippov <jcmvbkbc@gmail.com>, Harry Wei <harryxiyou@gmail.com>, selinux@tycho.nsa.gov
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1526449230-27618-1-git-send-email-j-keerthy@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: tony@atomide.com
+Cc: j-keerthy@ti.com, linus.walleij@linaro.org, t-kristo@ti.com, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-UXVvdGluZyBNYXVybyBDYXJ2YWxobyBDaGVoYWIgKDIwMTgtMDUtMDkgMDY6MTg6NTIpCj4gQXMg
-d2UgbW92ZSBzdHVmZiBhcm91bmQsIHNvbWUgZG9jIHJlZmVyZW5jZXMgYXJlIGJyb2tlbi4gRml4
-IHNvbWUgb2YKPiB0aGVtIHZpYSB0aGlzIHNjcmlwdDoKPiAgICAgICAgIC4vc2NyaXB0cy9kb2N1
-bWVudGF0aW9uLWZpbGUtcmVmLWNoZWNrIC0tZml4LXJzdAo+IAo+IE1hbnVhbGx5IGNoZWNrZWQg
-aWYgdGhlIHByb2R1Y2VkIHJlc3VsdCBpcyB2YWxpZCwgcmVtb3ZpbmcgYSBmZXcKPiBmYWxzZS1w
-b3NpdGl2ZXMuCj4gCj4gU2lnbmVkLW9mZi1ieTogTWF1cm8gQ2FydmFsaG8gQ2hlaGFiIDxtY2hl
-aGFiK3NhbXN1bmdAa2VybmVsLm9yZz4KPiAtLS0KCj4gIGRyaXZlcnMvY2xrL2Nsay5jICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICB8ICA0ICsrLS0KPiAgZHJpdmVycy9jbGsvaW5nZW5pYy9j
-Z3UuaCAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0KCkFja2VkLWJ5OiBTdGVwaGVuIEJveWQg
-PHNib3lkQGtlcm5lbC5vcmc+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Add a quirk function to convey off mode state. This can be used
+to perform additional save/restore during off mode.
+
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ arch/arm/mach-omap2/pdata-quirks.c           | 6 ++++++
+ include/linux/platform_data/pinctrl-single.h | 1 +
+ 2 files changed, 7 insertions(+)
+
+diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+index 7f02743..f2e16e3 100644
+--- a/arch/arm/mach-omap2/pdata-quirks.c
++++ b/arch/arm/mach-omap2/pdata-quirks.c
+@@ -35,6 +35,7 @@
+ #include "omap-secure.h"
+ #include "soc.h"
+ #include "hsmmc.h"
++#include "pm.h"
+ 
+ static struct omap_hsmmc_platform_data __maybe_unused mmc_pdata[2];
+ 
+@@ -489,12 +490,17 @@ static int ti_sysc_shutdown_module(struct device *dev,
+ 	.shutdown_module = ti_sysc_shutdown_module,
+ };
+ 
++int context_may_be_lost(void)
++{
++	return enable_off_mode;
++}
+ static struct pcs_pdata pcs_pdata;
+ 
+ void omap_pcs_legacy_init(int irq, void (*rearm)(void))
+ {
+ 	pcs_pdata.irq = irq;
+ 	pcs_pdata.rearm = rearm;
++	pcs_pdata.context_may_be_lost = context_may_be_lost;
+ }
+ 
+ /*
+diff --git a/include/linux/platform_data/pinctrl-single.h b/include/linux/platform_data/pinctrl-single.h
+index 1cf36fd..f07c1f2 100644
+--- a/include/linux/platform_data/pinctrl-single.h
++++ b/include/linux/platform_data/pinctrl-single.h
+@@ -10,4 +10,5 @@
+ struct pcs_pdata {
+ 	int irq;
+ 	void (*rearm)(void);
++	int (*context_may_be_lost)(void);
+ };
+-- 
+1.9.1
