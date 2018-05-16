@@ -1,35 +1,36 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 3/7] pinctrl: sunxi: add support for H6
- R_PIO pin controller
-Date: Wed, 16 May 2018 14:20:06 +0200
-Message-ID: <CACRpkdY2HXmn8iez3LhVUPQKcxwxRW1t18jWj0PbQi6=wFf_2Q@mail.gmail.com>
-References: <20180503183847.11046-1-icenowy@aosc.io> <20180503183847.11046-4-icenowy@aosc.io>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: tegra20: Provide CDEV1/2 clock muxes
+Date: Wed, 16 May 2018 14:23:23 +0200
+Message-ID: <CACRpkdbykxwHvQgfFnihOHy1hsM7ZWHtCYGCNb49MbNkKWz6Hg@mail.gmail.com>
+References: <20180503225537.20748-1-digetx@gmail.com> <20180503225537.20748-3-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDE6RCFOWIARB6GD6DLQKGQEIHWHVSY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20180503183847.11046-4-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180503225537.20748-3-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 3, 2018 at 8:38 PM, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org> wrote:
+On Fri, May 4, 2018 at 12:55 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
 
-> Allwinner H6 SoC has a R_PIO pin controller like other Allwinner SoCs,
-> which controls the PL and PM pin banks.
+> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
+> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
+> that main clk-controller driver could get an actual parent clock for the
+> CDEV1/2 clocks.
 >
-> Add support for it.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marc Dietrich <marvin24@gmx.de>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
 >
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> v2: This patch is factored out from the v1 clk/DT series so that it could be
+>     applied separately.
 
-Patch applied with the ACKs.
+Patch applied unless Stephen W protests.
+Please include swarren on future patches to this driver.
 
 Yours,
 Linus Walleij
