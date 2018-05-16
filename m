@@ -1,60 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pca953x: Clear irq trigger type on irq shutdown
-Date: Wed, 16 May 2018 14:51:16 +0200
-Message-ID: <CACRpkdbn_8WUQ8oqn2+M6KpEEogLTMMqbJrp-d2=HEkjJ-XtDQ@mail.gmail.com>
-References: <no_message-id@ru>
+Subject: Re: [RESEND PATCH] pinctrl: qcom: fix wrong pull status display for
+ no_keeper SoC
+Date: Wed, 16 May 2018 14:52:34 +0200
+Message-ID: <CACRpkdZebX=6_g2fV7=i=WveNN75KhGP4BJE5c_6qUP4-rEJMg@mail.gmail.com>
+References: <20180504235728.805-1-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <no_message-id@ru>
+In-Reply-To: <20180504235728.805-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Grigoryev Denis <grigoryev@fastwel.ru>, "H. Nikolaus Schaller" <hns@goldelico.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Steve Longerbeam <slongerbeam@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>, linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, May 4, 2018 at 6:53 PM, Grigoryev Denis <grigoryev@fastwel.ru> wrote:
+On Sat, May 5, 2018 at 1:57 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 
-> The driver stores the result of irq_set_type() in the internal variables
-> irq_trig_raise and irq_trig_fall, which later are used to determine
-> the GPIOs that must be re-configured as input. These variables retain their
-> value between gpiolib's  export / unexport, resulting in an incorrect
-> state in some cases. The corresponding bits in the variables
-> irq_trig_raise and irq_trig_fall should be cleared in irq_shutdown().
+> From: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
 >
-> Signed-off-by: Denis Grigoryev <grigoryev@fastwel.ru>
+> DebugFS strings about pin pull status for no_keeper SoC are wrong
+>
+> Fix this by adding a different string array for no_keeper SoC
+>
+> Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  drivers/gpio/gpio-pca953x.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
 >
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index d2ead4b..b41be8c 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -522,6 +522,15 @@ static int pca953x_irq_set_type(struct irq_data *d, unsigned int type)
->         return 0;
->  }
+> Hi Linus,
 >
-> +static void pca953x_irq_shutdown(struct irq_data *d)
-> +{
-> +       struct pca953x_chip *chip = irq_data_get_irq_chip_data(d);
-> +       u8 mask = 1 << (d->hwirq % BANK_SZ);
-> +
-> +       chip->irq_trig_raise[d->hwirq / BANK_SZ] &= ~mask;
-> +       chip->irq_trig_fall[d->hwirq / BANK_SZ] &= ~mask;
-> +}
-> +
->  static struct irq_chip pca953x_irq_chip = {
->         .name                   = "pca953x",
->         .irq_mask               = pca953x_irq_mask,
-> @@ -529,6 +538,7 @@ static struct irq_chip pca953x_irq_chip = {
->         .irq_bus_lock           = pca953x_irq_bus_lock,
->         .irq_bus_sync_unlock    = pca953x_irq_bus_sync_unlock,
->         .irq_set_type           = pca953x_irq_set_type,
-> +       .irq_shutdown           = pca953x_irq_shutdown,
->  };
+> Forwarding this patch which was posted to linux-arm-msm@ only. LGTM, plea=
+se apply.
 
-This driver has a big set of users, so putting some maintainers
-in the loop so we can get some patch review.
+Patch applied.
 
 Yours,
 Linus Walleij
