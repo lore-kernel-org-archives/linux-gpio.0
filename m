@@ -1,158 +1,36 @@
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Subject: [PATCH] pinctrl: berlin: switch to SPDX license identifier
-Date: Wed, 16 May 2018 15:33:37 +0800
-Message-ID: <20180516153337.79763417@xhacker.debian>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
+Date: Wed, 16 May 2018 10:09:15 +0100
+Message-ID: <20180516090915.GZ20410@imbe.wolfsonmicro.main>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+ <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <xen-devel-bounces@lists.xenproject.org>
+Content-Disposition: inline
+In-Reply-To: <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
+List-Unsubscribe: <https://lists.xenproject.org/mailman/options/xen-devel>,
+ <mailto:xen-devel-request@lists.xenproject.org?subject=unsubscribe>
+List-Post: <mailto:xen-devel@lists.xenproject.org>
+List-Help: <mailto:xen-devel-request@lists.xenproject.org?subject=help>
+List-Subscribe: <https://lists.xenproject.org/mailman/listinfo/xen-devel>,
+ <mailto:xen-devel-request@lists.xenproject.org?subject=subscribe>
+Errors-To: xen-devel-bounces@lists.xenproject.org
+Sender: "Xen-devel" <xen-devel-bounces@lists.xenproject.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, Eric Paris <eparis@parisplace.org>, linux-clk@vger.kernel.org, James Morris <jmorris@namei.org>, Alan Stern <stern@rowland.harvard.edu>, xen-devel@lists.xenproject.org, Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>, Sean Paul <seanpaul@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Antoine Jacquet <royale@zerezo.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>, linux-crypto@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, alsa-devel@alsa-project.org, Linux Doc Mailing List <linux-doc@vger.kernel.org>, David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo@pa>
 List-Id: linux-gpio@vger.kernel.org
 
-Use the appropriate SPDX license identifier in the berlin pinctrl
-driver source file and drop the previous license text.
-
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
----
- drivers/pinctrl/berlin/berlin-bg2.c   |  5 +----
- drivers/pinctrl/berlin/berlin-bg2cd.c |  5 +----
- drivers/pinctrl/berlin/berlin-bg2q.c  |  5 +----
- drivers/pinctrl/berlin/berlin-bg4ct.c | 13 +------------
- drivers/pinctrl/berlin/berlin.c       |  5 +----
- drivers/pinctrl/berlin/berlin.h       |  5 +----
- 6 files changed, 6 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/pinctrl/berlin/berlin-bg2.c b/drivers/pinctrl/berlin/b=
-erlin-bg2.c
-index bf2e17d0d6e4..acbd413340e8 100644
---- a/drivers/pinctrl/berlin/berlin-bg2.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Berlin BG2 pinctrl driver.
-  *
-  * Copyright (C) 2014 Marvell Technology Group Ltd.
-  *
-  * Antoine T=C3=A9nart <antoine.tenart@free-electrons.com>
-- *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2. This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
-=20
- #include <linux/init.h>
-diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c b/drivers/pinctrl/berlin=
-/berlin-bg2cd.c
-index 9bee7bd1650f..c0f5d86d5d01 100644
---- a/drivers/pinctrl/berlin/berlin-bg2cd.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Berlin BG2CD pinctrl driver.
-  *
-  * Copyright (C) 2014 Marvell Technology Group Ltd.
-  *
-  * Antoine T=C3=A9nart <antoine.tenart@free-electrons.com>
-- *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2. This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
-=20
- #include <linux/init.h>
-diff --git a/drivers/pinctrl/berlin/berlin-bg2q.c b/drivers/pinctrl/berlin/=
-berlin-bg2q.c
-index eee6763f114c..20a3216ede07 100644
---- a/drivers/pinctrl/berlin/berlin-bg2q.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2q.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Berlin BG2Q pinctrl driver
-  *
-  * Copyright (C) 2014 Marvell Technology Group Ltd.
-  *
-  * Antoine T=C3=A9nart <antoine.tenart@free-electrons.com>
-- *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2. This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
-=20
- #include <linux/init.h>
-diff --git a/drivers/pinctrl/berlin/berlin-bg4ct.c b/drivers/pinctrl/berlin=
-/berlin-bg4ct.c
-index e6740656ee7c..6a7fe929a68b 100644
---- a/drivers/pinctrl/berlin/berlin-bg4ct.c
-+++ b/drivers/pinctrl/berlin/berlin-bg4ct.c
-@@ -1,21 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell berlin4ct pinctrl driver
-  *
-  * Copyright (C) 2015 Marvell Technology Group Ltd.
-  *
-  * Author: Jisheng Zhang <jszhang@marvell.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License f=
-or
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along=
- with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
-=20
- #include <linux/init.h>
-diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berli=
-n.c
-index cc3bd2efafe3..a620a8e8fa78 100644
---- a/drivers/pinctrl/berlin/berlin.c
-+++ b/drivers/pinctrl/berlin/berlin.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Berlin SoC pinctrl core driver
-  *
-  * Copyright (C) 2014 Marvell Technology Group Ltd.
-  *
-  * Antoine T=C3=A9nart <antoine.tenart@free-electrons.com>
-- *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2. This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
-=20
- #include <linux/io.h>
-diff --git a/drivers/pinctrl/berlin/berlin.h b/drivers/pinctrl/berlin/berli=
-n.h
-index e9b30f95b03e..d7787754d1ed 100644
---- a/drivers/pinctrl/berlin/berlin.h
-+++ b/drivers/pinctrl/berlin/berlin.h
-@@ -1,13 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Marvell Berlin SoC pinctrl driver.
-  *
-  * Copyright (C) 2014 Marvell Technology Group Ltd.
-  *
-  * Antoine T=C3=A9nart <antoine.tenart@free-electrons.com>
-- *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2. This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
-=20
- #ifndef __PINCTRL_BERLIN_H
---=20
-2.17.0
+T24gV2VkLCBNYXkgMDksIDIwMTggYXQgMTA6MTg6NTJBTSAtMDMwMCwgTWF1cm8gQ2FydmFsaG8g
+Q2hlaGFiIHdyb3RlOgo+IEFzIHdlIG1vdmUgc3R1ZmYgYXJvdW5kLCBzb21lIGRvYyByZWZlcmVu
+Y2VzIGFyZSBicm9rZW4uIEZpeCBzb21lIG9mCj4gdGhlbSB2aWEgdGhpcyBzY3JpcHQ6Cj4gCS4v
+c2NyaXB0cy9kb2N1bWVudGF0aW9uLWZpbGUtcmVmLWNoZWNrIC0tZml4LXJzdAo+IAo+IE1hbnVh
+bGx5IGNoZWNrZWQgaWYgdGhlIHByb2R1Y2VkIHJlc3VsdCBpcyB2YWxpZCwgcmVtb3ZpbmcgYSBm
+ZXcKPiBmYWxzZS1wb3NpdGl2ZXMuCj4gCj4gU2lnbmVkLW9mZi1ieTogTWF1cm8gQ2FydmFsaG8g
+Q2hlaGFiIDxtY2hlaGFiK3NhbXN1bmdAa2VybmVsLm9yZz4KPiAtLS0KPiAgZHJpdmVycy9pbnB1
+dC90b3VjaHNjcmVlbi93bTk3eHgtY29yZS5jICAgICAgIHwgIDIgKy0KCkFja2VkLWJ5OiBDaGFy
+bGVzIEtlZXBheCA8Y2tlZXBheEBvcGVuc291cmNlLndvbGZzb25taWNyby5jb20+CgpUaGFua3Ms
+CkNoYXJsZXMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+Clhlbi1kZXZlbCBtYWlsaW5nIGxpc3QKWGVuLWRldmVsQGxpc3RzLnhlbnByb2plY3Qub3JnCmh0
+dHBzOi8vbGlzdHMueGVucHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby94ZW4tZGV2ZWw=
