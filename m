@@ -1,45 +1,46 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Date: Wed, 16 May 2018 17:05:30 +0300
-Message-ID: <a5015143-ef1d-4eb1-5651-346dae82d42e@gmail.com>
-References: <20180503225537.20748-1-digetx@gmail.com>
- <20180503225537.20748-3-digetx@gmail.com>
- <CACRpkdbykxwHvQgfFnihOHy1hsM7ZWHtCYGCNb49MbNkKWz6Hg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl bindings
+Date: Wed, 16 May 2018 16:20:35 +0200
+Message-ID: <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
+References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
+ <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
+ <20180416181940.4b5z4svbde3ompij@rob-hp-laptop> <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
+ <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbykxwHvQgfFnihOHy1hsM7ZWHtCYGCNb49MbNkKWz6Hg@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk <linux-clk@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 16.05.2018 15:23, Linus Walleij wrote:
-> On Fri, May 4, 2018 at 12:55 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
-> 
->> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
->> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
->> that main clk-controller driver could get an actual parent clock for the
->> CDEV1/2 clocks.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
->> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
->> Tested-by: Marc Dietrich <marvin24@gmx.de>
->> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->> ---
->>
->> v2: This patch is factored out from the v1 clk/DT series so that it could be
->>     applied separately.
-> 
-> Patch applied unless Stephen W protests.
-> Please include swarren on future patches to this driver.
+On Wed, May 9, 2018 at 9:56 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
 
-I think previously get_maintainer script suggested driver authors, probably it
-changed sometime ago. I'm pretty sure that Stephen follows the linux-tegra ML
-(Stephen, are you?) and would have jumped into the thread if there was anything
-wrong in the patch, though indeed won't hurt to ping him for this patch explicitly.
+> Indeed, stmfx has other functions than GPIO. But, after comments done
+> here: [1] and there: [2], it has been decided to move MFD parent/GPIO
+> child drivers into a single PINCTRL/GPIO driver because of the following
+> reasons:
+> - Other stmfx functions (IDD measurement and TouchScreen controller) are
+> not used on any of the boards using an stmfx and supported by Linux, so
+> no way to test these functions, and no need to maintain them while they
+> are not being used.
+> - But, in the case a new board will use more than GPIO function on
+> stmfx, the actual implementation allow to easily extract common init
+> part of stmfx and put it in an MFD driver.
+>
+> So I could remove gpio sub-node and put its contents in stmfx node and
+> keep single PINCTRL/GPIO driver for the time being.
+> Please advise,
 
-Stephen, please let me know if you disagree with anything in this patch.
+I would normally advice to use the right modeling from the start, create
+the MFD driver and spawn the devices from there. It is confusing
+if the layout of the driver(s) doesn't really match the layout of the
+hardware.
+
+I understand that it is a pain to write new MFD drivers to get your
+things going and it would be "nice to get this working really quick
+now" but in my experience it is better to do it right from the start.
+
+Yours,
+Linus Walleij
