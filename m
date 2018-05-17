@@ -1,41 +1,96 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v7 2/3] gpio: pca953x: define masks for addressing common and extended registers
-Date: Thu, 17 May 2018 06:59:48 +0200
-Message-ID: <2fe132b534a4b1ca717932e78cc3cdae5aacba0d.1526533188.git.hns@goldelico.com>
-References: <cover.1526533188.git.hns@goldelico.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Date: Thu, 17 May 2018 07:25:00 +0100
+Message-ID: <20180517062500.GJ5130@dell>
+References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
+ <F70CFA9C-2059-432E-BFD3-3FA6CB618795@amperecomputing.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1526533188.git.hns@goldelico.com>
-In-Reply-To: <cover.1526533188.git.hns@goldelico.com>
-References: <cover.1526533188.git.hns@goldelico.com>
+Content-Disposition: inline
+In-Reply-To: <F70CFA9C-2059-432E-BFD3-3FA6CB618795@amperecomputing.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: galak@codeaurora.org, andy.shevchenko@gmail.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org, kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Hoan Tran <hoan.tran@amperecomputing.com>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Michel Pollet <michel.pollet@bp.renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-These mask bits are to be used to map the extended register
-addreseses (which are defined for an unsupported 8-bit pcal chip)
-to 16 and 24 bit chips (pcal6524).
+On Wed, 16 May 2018, Hoan Tran wrote:
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/gpio/gpio-pca953x.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> Hi Phil,
+> 
+> ﻿On 5/11/18, 1:31 AM, "Phil Edworthy" <phil.edworthy@renesas.com> wrote:
+> 
+>     The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+>     per GPIO in port A, but the driver currently only supports 1 interrupt.
+>     See the DesignWare DW_apb_gpio Databook description of the
+>     'GPIO_INTR_IO' parameter.
+>     
+>     This change allows the driver to work with up to 32 interrupts, it will
+>     get as many interrupts as specified in the DT 'interrupts' property.
+>     It doesn't do anything clever with the different interrupts, it just calls
+>     the same handler used for single interrupt hardware.
+>     
+>     Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+>     Reviewed-by: Rob Herring <robh@kernel.org>
+>     Acked-by: Lee Jones <lee.jones@linaro.org>
+>     ---
+>     One point to mention is that I have made it possible for users to have
+>     unconnected interrupts by specifying holes in the list of interrupts. This is
+>     done by supporting the interrupts-extended DT prop.
+>     However, I have no use for this and had to hack some test case for this.
+>     Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+>     
+>     v6:
+>      - Treat DT and ACPI the same as much as possible. Note that we can't use
+>        platform_get_irq() to get the DT interrupts as they are in the port
+>        sub-node and hence do not have an associated platform device.
+>     v5:
+>      - Rolled ACPI companion code provided by Hoan Tran into this patch.
+>     v4:
+>      - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
+>     v3:
+>      - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
+>     v2:
+>      - Replaced interrupt-mask DT prop with support for the interrupts-extended
+>        prop. This means replacing the call to irq_of_parse_and_map() with calls
+>        to of_irq_parse_one() and irq_create_of_mapping().
+>     ---
+>      .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 +++-
+>      drivers/gpio/gpio-dwapb.c                          | 49 +++++++++++++++-------
+>      drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
+>      include/linux/platform_data/gpio-dwapb.h           |  3 +-
+>      4 files changed, 45 insertions(+), 19 deletions(-)
+>     
+>     diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+>     index 4a75da7..3c1118b 100644
+>     --- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+>     +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+>     @@ -26,8 +26,13 @@ controller.
+>        the second encodes the triger flags encoded as described in
+>        Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+>      - interrupt-parent : The parent interrupt controller.
+>     -- interrupts : The interrupt to the parent controller raised when GPIOs
+>     -  generate the interrupts.
+>     +- interrupts : The interrupts to the parent controller raised when GPIOs
+>     +  generate the interrupts. If the controller provides one combined interrupt
+>     +  for all GPIOs, specify a single interrupt. If the controller provides one
+>     +  interrupt for each GPIO, provide a list of interrupts that correspond to each
+>     +  of the GPIO pins. When specifying multiple interrupts, if any are unconnected,
+>     +  use the interrupts-extended property to specify the interrupts and set the
+>     +  interrupt controller handle for unused interrupts to 0.
+>      - snps,nr-gpios : The number of pins in the port, a single cell.
+>      - resets : Reset line for the controller.
+>      
+> Acked-by: Hoan Tran <hoan.tran@amperecomputing.com>
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 2b667166e855..c682921d7019 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -56,6 +56,10 @@
- #define PCAL6524_DEBOUNCE	0x2d
- 
- #define PCA_GPIO_MASK		0x00FF
-+
-+#define PCAL_GPIO_MASK		0x1f
-+#define PCAL_PINCTRL_MASK	0xe0
-+
- #define PCA_INT			0x0100
- #define PCA_PCAL		0x0200
- #define PCA_LATCH_INT (PCA_PCAL | PCA_INT)
+Well that's new.  I've never seen a mailer reply like that before.
+
+Which mailer are you using?  Might be worth sorting that out.
+
 -- 
-2.12.2
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
