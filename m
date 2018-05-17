@@ -1,117 +1,123 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v4] pinctrl: msm: fix gpio-hog related boot issues
-Date: Wed, 16 May 2018 23:56:05 -0700
-Message-ID: <152654016566.210890.15719083257170941464@swboyd.mtv.corp.google.com>
-References: <20180412190138.12372-1-chunkeey@gmail.com>
- <CACRpkdZPEHvnQdwh5Uu5kwqK7yVGTaw_cZR+GOzsG9pg4oEktA@mail.gmail.com>
- <152648467672.210890.17814748620132622851@swboyd.mtv.corp.google.com>
- <3220588.XpgAMh8mx0@debian64>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCHv6] gpio: Remove VLA from gpiolib
+Date: Thu, 17 May 2018 09:58:26 +0200
+Message-ID: <CAMuHMdXiopVBM+N+wYMY6JP7_sOJ2nncNkhpFq+aMc0pdfPtrQ@mail.gmail.com>
+References: <20180517000027.26639-1-labbott@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <3220588.XpgAMh8mx0@debian64>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Christian Lamparter <chunkeey@gmail.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180517000027.26639-1-labbott@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laura Abbott <labbott@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Phil Reid <preid@electromag.com.au>
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Christian Lamparter (2018-05-16 13:29:48)
-> On Wednesday, May 16, 2018 5:31:16 PM CEST Stephen Boyd wrote:
-> > Why can't we register the gpiochip and tell it about the pin ranges in
-> > one API call instead of adding the chip and then adding the ranges? It
-> > doesn't look right to have to go and update all the DT nodes to list
-> > this information that is already known in the driver because the kernel
-> > implementation can't handle the order of operations correctly.
-> The problem is that gpiochip_add_pin_range() was not intended for
-> DT-based pinctrls... but it got used anyway.
+Hi Laura,
 
-Are there more users of this on DT based systems? A quick grep shows a
-couple more potential failures, like the qcom based SPMI gpio controllers
-and a mediatek one.
+On Thu, May 17, 2018 at 2:00 AM, Laura Abbott <labbott@redhat.com> wrote:
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+> turn on -Wvla.
+>
+> Using a kmalloc array is the easy way to fix this but kmalloc is still
+> more expensive than stack allocation. Introduce a fast path with a
+> fixed size stack array to cover most chip with gpios below some fixed
+> amount. The slow path dynamically allocates an array to cover those
+> chips with a large number of gpios.
+>
+> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 
-It's almost like we should print a huge WARN_ON() if gpio_chip::of_node
-is non-NULL and gpochip_add_pin_range() is called. But that probably
-would be noisy and can't be fixed on older DT blobs. It may also be good
-to bail out of that function if the node pointer exists and the property
-is there in the node so that we don't have to go update each driver for
-the backwards compat mode like was done in this patch. Plus the function
-should get some sort of comment that calling it is not useful on DT
-based platforms so this is all documented.
+Thanks for your patch!
 
-In general, I'm just asking for this to be made much more obvious that
-it's wrong to do and more clearly documented.
+> Also to other points: I don't think the warning should be triggerable
+> from userspace, it should only happen on probe. I also think only
+> memsetting half the array is more likely to be error prone. We can
+> change it if there is significant overhead.
 
-> 
-> This topic came up in an earlier post:
-> "Re: pinctrl: qcom: ipq4019: Use of gpio-hog's" [0] (you must have gotten
-> this mail too, since you are on the Cc.) which links to a ML thread titled
-> "Re: [GIT PULL] SPEAr pinctrl updates for v-3.5" 
+With the default of 512, that's a memset of 128 bytes. Not so insignificant
+on embedded 32 bit.
 
-I get quite a bit of email as you can tell.
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -22,6 +22,16 @@ menuconfig GPIOLIB
+>
+>  if GPIOLIB
+>
+> +config GPIOLIB_FASTPATH_LIMIT
+> +       int "Maximum number of GPIOs for fast path"
+> +       default 512
 
-> 
-> For your convenience: (this post is from 2012-09-03 - so it's 5-6 years
-> old by now and it looks like it predates even the DT pinctrl-msm driver.
-> (Not entirely sure?))
-> <http://thread.gmane.org/gmane.linux.ports.arm.kernel/184943>
-> |[...]
-> |But I want two similar function named:
-> |
-> |gpiochip_add_pin_range();
-> |gpiochip_remove_pin_range();
-> |
-> |*that can be used for platforms that doesn't support DT.*
-> |
-> |For example I'd like to convert over some of my existing
-> |drivers that do not have DT support to do this thing instead
-> |of registering ranges from the pin controller...
-> 
-> I think you must have come across similar issues with the
-> "gpio-reserved-ranges" property you recently added. Because
-> from what I can glimpse from the
-> "[2/3] dt-bindings: pinctrl: Add a ngpios-ranges property" 
-> <https://patchwork.kernel.org/patch/10153785/> series.
-> The gpio-reserved-ranges property would also need to be added
-> to existing products (msm8996) as well, right?
-> ("I stuck this inside msm8996, but maybe it can go somewhere more generic?")
+I think you need a range here.  Else someone will pick a too large value,
+causing stack overflow.
 
-The gpio-reserved-ranges only affects some SoCs. It should be added to
-the bindings on whatever chips are affected by those firmware quirks as
-optional properties. It would be great if you could add it to the ones
-that may need it. My guess is that it only matters for the pin
-controllers that spread out each pin into a big range of I/O memory
-because otherwise pins aren't locked away from non-secure systems.
+512 (128 bytes for each recursion level) sounds like a safe maximum to me.
 
-> 
-> > Furthermore, it looks like this becomes a silent requirement to add the
-> > gpio-ranges property into the DT so that hogs work, but none of the
-> > bindings have been updated in this patch to indicate that.
-> The pinctrl-msm.c driver will fallback to using gpiochip_add_pin_range(),
-> if the gpio-ranges property is not present. So all existing and compiled 
-> devicetree binaries files will remain compatible.
+> +       help
+> +          This adjusts the point at which certain APIs will switch from
+> +          using a statically allocated fixed size buffer to a dynamically
 
-That's good.
+The fast path doesn't use a statically allocated buffer (it cannot, due to
+recursion), but a buffer on the stack. I think you need to make that very
+clear in the help text, as this has the potential of causing random crashes.
 
-> 
-> As for adding the gpio-ranges to the dt binding text files under
-> Documentation/devicetree/bindings/pinctrl/: Sure. No problem. I can add
-> them too :).
+> +          allocated buffer. This is a trade-off in stackspace vs. speed.
+> +          You shouldn't need to change this unless you really need to
+> +          optimize one of those two.
 
-Great!
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
 
-> 
-> But I do have a question: Should I also include the missing declaration
-> of the gpio-reserved-ranges properties too? (I can make the patches over
-> the long weekend. If I hear nothing from anyone, I'll post them on Monday).
+> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>                 goto err_free_descs;
+>         }
+>
+> +       if (chip->ngpio > FASTPATH_NGPIO)
+> +               chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
 
-Sure. Do you have the list of pinctrl devices that may need the
-gpio-reserved-ranges property?
+%u (twice)
+
+> +               chip->ngpio, FASTPATH_NGPIO);
+> +
+>         gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
+>         if (!gdev->label) {
+>                 status = -ENOMEM;
+> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>
+>         while (i < array_size) {
+>                 struct gpio_chip *chip = desc_array[i]->gdev->chip;
+> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
+> +               unsigned long *mask, *bits;
+>                 int first, j, ret;
+>
+> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
+> +                       memset(fastpath, 0, sizeof(fastpath));
+> +                       mask = fastpath;
+> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
+> +               } else {
+> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+> +                                          sizeof(*mask),
+> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+> +                       if (!mask)
+> +                               return -ENOMEM;
+> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
+> +               }
+
+The assignment to bits could be made common, and moved out of the if/else.
+
+Likewise for the memset, which means you would usually clear a single word
+again, instead of 128 bytes (or more).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
