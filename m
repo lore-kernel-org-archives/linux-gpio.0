@@ -1,80 +1,117 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
- bindings
-Date: Thu, 17 May 2018 07:36:40 +0100
-Message-ID: <20180517063640.GK5130@dell>
-References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
- <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
- <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
- <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
- <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
- <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
- <b9005dd8-8214-ceab-0f88-ff1a51b44e34@st.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v4] pinctrl: msm: fix gpio-hog related boot issues
+Date: Wed, 16 May 2018 23:56:05 -0700
+Message-ID: <152654016566.210890.15719083257170941464@swboyd.mtv.corp.google.com>
+References: <20180412190138.12372-1-chunkeey@gmail.com>
+ <CACRpkdZPEHvnQdwh5Uu5kwqK7yVGTaw_cZR+GOzsG9pg4oEktA@mail.gmail.com>
+ <152648467672.210890.17814748620132622851@swboyd.mtv.corp.google.com>
+ <3220588.XpgAMh8mx0@debian64>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b9005dd8-8214-ceab-0f88-ff1a51b44e34@st.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amelie DELAUNAY <amelie.delaunay@st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <3220588.XpgAMh8mx0@debian64>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Christian Lamparter <chunkeey@gmail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 16 May 2018, Amelie DELAUNAY wrote:
+Quoting Christian Lamparter (2018-05-16 13:29:48)
+> On Wednesday, May 16, 2018 5:31:16 PM CEST Stephen Boyd wrote:
+> > Why can't we register the gpiochip and tell it about the pin ranges in
+> > one API call instead of adding the chip and then adding the ranges? It
+> > doesn't look right to have to go and update all the DT nodes to list
+> > this information that is already known in the driver because the kernel
+> > implementation can't handle the order of operations correctly.
+> The problem is that gpiochip_add_pin_range() was not intended for
+> DT-based pinctrls... but it got used anyway.
+
+Are there more users of this on DT based systems? A quick grep shows a
+couple more potential failures, like the qcom based SPMI gpio controllers
+and a mediatek one.
+
+It's almost like we should print a huge WARN_ON() if gpio_chip::of_node
+is non-NULL and gpochip_add_pin_range() is called. But that probably
+would be noisy and can't be fixed on older DT blobs. It may also be good
+to bail out of that function if the node pointer exists and the property
+is there in the node so that we don't have to go update each driver for
+the backwards compat mode like was done in this patch. Plus the function
+should get some sort of comment that calling it is not useful on DT
+based platforms so this is all documented.
+
+In general, I'm just asking for this to be made much more obvious that
+it's wrong to do and more clearly documented.
 
 > 
-> 
-> On 05/16/2018 04:20 PM, Linus Walleij wrote:
-> > On Wed, May 9, 2018 at 9:56 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
-> > 
-> >> Indeed, stmfx has other functions than GPIO. But, after comments done
-> >> here: [1] and there: [2], it has been decided to move MFD parent/GPIO
-> >> child drivers into a single PINCTRL/GPIO driver because of the following
-> >> reasons:
-> >> - Other stmfx functions (IDD measurement and TouchScreen controller) are
-> >> not used on any of the boards using an stmfx and supported by Linux, so
-> >> no way to test these functions, and no need to maintain them while they
-> >> are not being used.
-> >> - But, in the case a new board will use more than GPIO function on
-> >> stmfx, the actual implementation allow to easily extract common init
-> >> part of stmfx and put it in an MFD driver.
-> >>
-> >> So I could remove gpio sub-node and put its contents in stmfx node and
-> >> keep single PINCTRL/GPIO driver for the time being.
-> >> Please advise,
-> > 
-> > I would normally advice to use the right modeling from the start, create
-> > the MFD driver and spawn the devices from there. It is confusing
-> > if the layout of the driver(s) doesn't really match the layout of the
-> > hardware.
-> > 
-> > I understand that it is a pain to write new MFD drivers to get your
-> > things going and it would be "nice to get this working really quick
-> > now" but in my experience it is better to do it right from the start.
-> > 
-> 
-> Hi Linus,
-> 
-> Thanks for your advice. I understand the point.
-> So, the right modeling would be to:
-> - create an MFD driver with the common init part of stmfx
-> - remove all common init part of stmfx-pinctrl driver and keep only all 
-> gpio/pinctrl functions.
-> 
-> I will not develop the other stmfx functions (IDD measurement driver and 
-> TouchScreen controller driver) because, as explained ealier, they are 
-> not used on any of the boards using an stmfx and supported by Linux, so 
-> no way to test these functions, and no need to maintain them while they 
-> are not being used.
-> 
-> Lee, are you OK with that ?
+> This topic came up in an earlier post:
+> "Re: pinctrl: qcom: ipq4019: Use of gpio-hog's" [0] (you must have gotten
+> this mail too, since you are on the Cc.) which links to a ML thread titled
+> "Re: [GIT PULL] SPEAr pinctrl updates for v-3.5" 
 
-I missed a lot of this conversation I think, but from what I've read,
-it sounds fine.
+I get quite a bit of email as you can tell.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> 
+> For your convenience: (this post is from 2012-09-03 - so it's 5-6 years
+> old by now and it looks like it predates even the DT pinctrl-msm driver.
+> (Not entirely sure?))
+> <http://thread.gmane.org/gmane.linux.ports.arm.kernel/184943>
+> |[...]
+> |But I want two similar function named:
+> |
+> |gpiochip_add_pin_range();
+> |gpiochip_remove_pin_range();
+> |
+> |*that can be used for platforms that doesn't support DT.*
+> |
+> |For example I'd like to convert over some of my existing
+> |drivers that do not have DT support to do this thing instead
+> |of registering ranges from the pin controller...
+> 
+> I think you must have come across similar issues with the
+> "gpio-reserved-ranges" property you recently added. Because
+> from what I can glimpse from the
+> "[2/3] dt-bindings: pinctrl: Add a ngpios-ranges property" 
+> <https://patchwork.kernel.org/patch/10153785/> series.
+> The gpio-reserved-ranges property would also need to be added
+> to existing products (msm8996) as well, right?
+> ("I stuck this inside msm8996, but maybe it can go somewhere more generic?")
+
+The gpio-reserved-ranges only affects some SoCs. It should be added to
+the bindings on whatever chips are affected by those firmware quirks as
+optional properties. It would be great if you could add it to the ones
+that may need it. My guess is that it only matters for the pin
+controllers that spread out each pin into a big range of I/O memory
+because otherwise pins aren't locked away from non-secure systems.
+
+> 
+> > Furthermore, it looks like this becomes a silent requirement to add the
+> > gpio-ranges property into the DT so that hogs work, but none of the
+> > bindings have been updated in this patch to indicate that.
+> The pinctrl-msm.c driver will fallback to using gpiochip_add_pin_range(),
+> if the gpio-ranges property is not present. So all existing and compiled 
+> devicetree binaries files will remain compatible.
+
+That's good.
+
+> 
+> As for adding the gpio-ranges to the dt binding text files under
+> Documentation/devicetree/bindings/pinctrl/: Sure. No problem. I can add
+> them too :).
+
+Great!
+
+> 
+> But I do have a question: Should I also include the missing declaration
+> of the gpio-reserved-ranges properties too? (I can make the patches over
+> the long weekend. If I hear nothing from anyone, I'll post them on Monday).
+
+Sure. Do you have the list of pinctrl devices that may need the
+gpio-reserved-ranges property?
