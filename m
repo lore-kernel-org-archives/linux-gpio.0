@@ -1,107 +1,102 @@
-From: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 4/4] ARM: PWM: add allwinner sun8i pwm support.
-Date: Thu, 17 May 2018 22:48:58 +0800
-Message-ID: <CAJeuY79ObkssY_=SLG==7xZri10P3yWFhXC3=CUVrdQ+7cBoHA@mail.gmail.com>
-References: <20180225135308.GA14561@arx-s1> <20180226090038.etk5q4pd4rl5dvf6@flea.lan>
- <CAJeuY7-Dz1u9J8GMu=OdzJ2cJUnE3wEobJoQz6RV-ibjBjoW4A@mail.gmail.com> <20180515111711.l2g4vgsal7yr6dbr@flea>
-Reply-To: hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Hoan Tran <hoan.tran@amperecomputing.com>
+Subject: Re: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Date: Thu, 17 May 2018 16:46:56 +0000
+Message-ID: <AA01D623-B3ED-446C-B7C4-37856A185A4B@amperecomputing.com>
+References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
+ <F70CFA9C-2059-432E-BFD3-3FA6CB618795@amperecomputing.com>
+ <20180517062500.GJ5130@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBDKITZOARQMBBW5M63LQKGQEUHUIJ7A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20180515111711.l2g4vgsal7yr6dbr@flea>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Claudiu Beznea <Claudiu.Beznea-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180517062500.GJ5130@dell>
+Content-Language: en-US
+Content-ID: <1DA4FC1A17BBE84EA2C437747D7171E6@prod.exchangelabs.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Michel Pollet <michel.pollet@bp.renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-2018-05-15 19:17 GMT+08:00 Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>:
-> Hi,
->
-> On Mon, May 14, 2018 at 10:45:44PM +0800, Hao Zhang wrote:
->> 2018-02-26 17:00 GMT+08:00 Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>:
->> > Thanks for respinning this serie. It looks mostly good, but you still
->> > have a quite significant number of checkpatch (--strict) warnings that
->> > you should address.
->>
->> Thanks for reviews :) ,i'm sorry for that, it will be fixed next
->> time.  and, besides, in what situation were the checkpatch warning
->> can be ignore=EF=BC=9F
->
-> The only one that can be reasonably be ignored is the long line
-> warning, and only if complying to the limit would make it less easy to
-> understand.
->
->> >
->> > On Sun, Feb 25, 2018 at 09:53:08PM +0800, hao_zhang wrote:
->> >> +#define CAPTURE_IRQ_ENABLE_REG       0x0010
->> >> +#define CFIE(ch)     BIT(ch << 1 + 1)
->> >> +#define CRIE(ch)     BIT(ch << 1)
->> >
->> > You should also put your argument between parentheses here (and in all
->> > your other macros).
->>
->> Do you mean like this ?
->> #define CFIE(ch)     BIT((ch) << 1 + 1)
->> #define CRIE(ch)     BIT((ch) << 1)
->
-> Yep, exactly. Otherwise, if you do something like CRIE(1 + 1), the
-> result will be BIT(1 + 1 << 1), which will expand to 3, instead of 4.
->
-> Also, CFIE looks a bit weird here, is it the offset that is
-> incremented, or the value? You should probably have parentheses to
-> make it explicit.
-
-The vallue,
-BIT(((ch) << 1) + 1) It seem not very nice...
-
-uhmm...
-In CAPTURE_IRQ_ENABLE_REG odd number is CFIE, even number is CRIE
-each channel has one CFIE and CRIE.
-
-we can also describe like this:
-#define CFIE(ch)     BIT((ch) * 2 + 1)
-#define CRIE(ch)     BIT((ch) * 2)
-
->
->> >
->> >> +static const u16 div_m_table[] =3D {
->> >> +     1,
->> >> +     2,
->> >> +     4,
->> >> +     8,
->> >> +     16,
->> >> +     32,
->> >> +     64,
->> >> +     128,
->> >> +     256
->> >> +};
->> >
->> > If this is just a power of two, you can use either the power of two /
->> > ilog2 to switch back and forth, instead of using that table.
->>
->> I think using table is more explicit and extended...
->
-> If you didn't have a simple mapping between the register values and
-> the divider value, then yeah, sure. But it's not the case here.
->
-> Thanks!
-> Maxime
->
-> --
-> Maxime Ripard, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+SGkgTGVlLA0KDQrvu79PbiA1LzE2LzE4LCAxMToyNSBQTSwgIkxlZSBKb25lcyIgPGxlZS5qb25l
+c0BsaW5hcm8ub3JnPiB3cm90ZToNCg0KICAgIE9uIFdlZCwgMTYgTWF5IDIwMTgsIEhvYW4gVHJh
+biB3cm90ZToNCiAgICANCiAgICA+IEhpIFBoaWwsDQogICAgPiANCiAgICA+IE9uIDUvMTEvMTgs
+IDE6MzEgQU0sICJQaGlsIEVkd29ydGh5IiA8cGhpbC5lZHdvcnRoeUByZW5lc2FzLmNvbT4gd3Jv
+dGU6DQogICAgPiANCiAgICA+ICAgICBUaGUgRGVzaWduV2FyZSBHUElPIElQIGNhbiBiZSBjb25m
+aWd1cmVkIGZvciBlaXRoZXIgMSBpbnRlcnJ1cHQgb3IgMQ0KICAgID4gICAgIHBlciBHUElPIGlu
+IHBvcnQgQSwgYnV0IHRoZSBkcml2ZXIgY3VycmVudGx5IG9ubHkgc3VwcG9ydHMgMSBpbnRlcnJ1
+cHQuDQogICAgPiAgICAgU2VlIHRoZSBEZXNpZ25XYXJlIERXX2FwYl9ncGlvIERhdGFib29rIGRl
+c2NyaXB0aW9uIG9mIHRoZQ0KICAgID4gICAgICdHUElPX0lOVFJfSU8nIHBhcmFtZXRlci4NCiAg
+ICA+ICAgICANCiAgICA+ICAgICBUaGlzIGNoYW5nZSBhbGxvd3MgdGhlIGRyaXZlciB0byB3b3Jr
+IHdpdGggdXAgdG8gMzIgaW50ZXJydXB0cywgaXQgd2lsbA0KICAgID4gICAgIGdldCBhcyBtYW55
+IGludGVycnVwdHMgYXMgc3BlY2lmaWVkIGluIHRoZSBEVCAnaW50ZXJydXB0cycgcHJvcGVydHku
+DQogICAgPiAgICAgSXQgZG9lc24ndCBkbyBhbnl0aGluZyBjbGV2ZXIgd2l0aCB0aGUgZGlmZmVy
+ZW50IGludGVycnVwdHMsIGl0IGp1c3QgY2FsbHMNCiAgICA+ICAgICB0aGUgc2FtZSBoYW5kbGVy
+IHVzZWQgZm9yIHNpbmdsZSBpbnRlcnJ1cHQgaGFyZHdhcmUuDQogICAgPiAgICAgDQogICAgPiAg
+ICAgU2lnbmVkLW9mZi1ieTogUGhpbCBFZHdvcnRoeSA8cGhpbC5lZHdvcnRoeUByZW5lc2FzLmNv
+bT4NCiAgICA+ICAgICBSZXZpZXdlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4N
+CiAgICA+ICAgICBBY2tlZC1ieTogTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4NCiAg
+ICA+ICAgICAtLS0NCiAgICA+ICAgICBPbmUgcG9pbnQgdG8gbWVudGlvbiBpcyB0aGF0IEkgaGF2
+ZSBtYWRlIGl0IHBvc3NpYmxlIGZvciB1c2VycyB0byBoYXZlDQogICAgPiAgICAgdW5jb25uZWN0
+ZWQgaW50ZXJydXB0cyBieSBzcGVjaWZ5aW5nIGhvbGVzIGluIHRoZSBsaXN0IG9mIGludGVycnVw
+dHMuIFRoaXMgaXMNCiAgICA+ICAgICBkb25lIGJ5IHN1cHBvcnRpbmcgdGhlIGludGVycnVwdHMt
+ZXh0ZW5kZWQgRFQgcHJvcC4NCiAgICA+ICAgICBIb3dldmVyLCBJIGhhdmUgbm8gdXNlIGZvciB0
+aGlzIGFuZCBoYWQgdG8gaGFjayBzb21lIHRlc3QgY2FzZSBmb3IgdGhpcy4NCiAgICA+ICAgICBQ
+ZXJoYXBzIHRoZSBkcml2ZXIgc2hvdWxkIHN1cHBvcnQgMSBpbnRlcnJ1cHQgb3IgYWxsIEdQSU9h
+IGFzIGludGVycnVwdHM/DQogICAgPiAgICAgDQogICAgPiAgICAgdjY6DQogICAgPiAgICAgIC0g
+VHJlYXQgRFQgYW5kIEFDUEkgdGhlIHNhbWUgYXMgbXVjaCBhcyBwb3NzaWJsZS4gTm90ZSB0aGF0
+IHdlIGNhbid0IHVzZQ0KICAgID4gICAgICAgIHBsYXRmb3JtX2dldF9pcnEoKSB0byBnZXQgdGhl
+IERUIGludGVycnVwdHMgYXMgdGhleSBhcmUgaW4gdGhlIHBvcnQNCiAgICA+ICAgICAgICBzdWIt
+bm9kZSBhbmQgaGVuY2UgZG8gbm90IGhhdmUgYW4gYXNzb2NpYXRlZCBwbGF0Zm9ybSBkZXZpY2Uu
+DQogICAgPiAgICAgdjU6DQogICAgPiAgICAgIC0gUm9sbGVkIEFDUEkgY29tcGFuaW9uIGNvZGUg
+cHJvdmlkZWQgYnkgSG9hbiBUcmFuIGludG8gdGhpcyBwYXRjaC4NCiAgICA+ICAgICB2NDoNCiAg
+ICA+ICAgICAgLSBVc2Ugb2ZfaXJxX2dldCgpIGluc3RlYWQgb2Ygb2ZfaXJxX3BhcnNlX29uZSgp
+K2lycV9jcmVhdGVfb2ZfbWFwcGluZygpDQogICAgPiAgICAgdjM6DQogICAgPiAgICAgIC0gUm9s
+bGVkIG1mZDogaW50ZWxfcXVhcmtfaTJjX2dwaW8gZml4IGludG8gdGhpcyBwYXRjaCB0byBhdm9p
+ZCBiaXNlY3QgcHJvYmxlbXMNCiAgICA+ICAgICB2MjoNCiAgICA+ICAgICAgLSBSZXBsYWNlZCBp
+bnRlcnJ1cHQtbWFzayBEVCBwcm9wIHdpdGggc3VwcG9ydCBmb3IgdGhlIGludGVycnVwdHMtZXh0
+ZW5kZWQNCiAgICA+ICAgICAgICBwcm9wLiBUaGlzIG1lYW5zIHJlcGxhY2luZyB0aGUgY2FsbCB0
+byBpcnFfb2ZfcGFyc2VfYW5kX21hcCgpIHdpdGggY2FsbHMNCiAgICA+ICAgICAgICB0byBvZl9p
+cnFfcGFyc2Vfb25lKCkgYW5kIGlycV9jcmVhdGVfb2ZfbWFwcGluZygpLg0KICAgID4gICAgIC0t
+LQ0KICAgID4gICAgICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL3NucHMtZHdhcGItZ3Bp
+by50eHQgICB8ICA5ICsrKy0NCiAgICA+ICAgICAgZHJpdmVycy9ncGlvL2dwaW8tZHdhcGIuYyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgfCA0OSArKysrKysrKysrKysrKystLS0tLS0tDQogICAg
+PiAgICAgIGRyaXZlcnMvbWZkL2ludGVsX3F1YXJrX2kyY19ncGlvLmMgICAgICAgICAgICAgICAg
+IHwgIDMgKy0NCiAgICA+ICAgICAgaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL2dwaW8tZHdh
+cGIuaCAgICAgICAgICAgfCAgMyArLQ0KICAgID4gICAgICA0IGZpbGVzIGNoYW5nZWQsIDQ1IGlu
+c2VydGlvbnMoKyksIDE5IGRlbGV0aW9ucygtKQ0KICAgID4gICAgIA0KICAgID4gICAgIGRpZmYg
+LS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9zbnBzLWR3YXBi
+LWdwaW8udHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vc25wcy1k
+d2FwYi1ncGlvLnR4dA0KICAgID4gICAgIGluZGV4IDRhNzVkYTcuLjNjMTExOGIgMTAwNjQ0DQog
+ICAgPiAgICAgLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vc25w
+cy1kd2FwYi1ncGlvLnR4dA0KICAgID4gICAgICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9ncGlvL3NucHMtZHdhcGItZ3Bpby50eHQNCiAgICA+ICAgICBAQCAtMjYsOCAr
+MjYsMTMgQEAgY29udHJvbGxlci4NCiAgICA+ICAgICAgICB0aGUgc2Vjb25kIGVuY29kZXMgdGhl
+IHRyaWdlciBmbGFncyBlbmNvZGVkIGFzIGRlc2NyaWJlZCBpbg0KICAgID4gICAgICAgIERvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pbnRlcnJ1cHQtY29udHJvbGxlci9pbnRlcnJ1
+cHRzLnR4dA0KICAgID4gICAgICAtIGludGVycnVwdC1wYXJlbnQgOiBUaGUgcGFyZW50IGludGVy
+cnVwdCBjb250cm9sbGVyLg0KICAgID4gICAgIC0tIGludGVycnVwdHMgOiBUaGUgaW50ZXJydXB0
+IHRvIHRoZSBwYXJlbnQgY29udHJvbGxlciByYWlzZWQgd2hlbiBHUElPcw0KICAgID4gICAgIC0g
+IGdlbmVyYXRlIHRoZSBpbnRlcnJ1cHRzLg0KICAgID4gICAgICstIGludGVycnVwdHMgOiBUaGUg
+aW50ZXJydXB0cyB0byB0aGUgcGFyZW50IGNvbnRyb2xsZXIgcmFpc2VkIHdoZW4gR1BJT3MNCiAg
+ICA+ICAgICArICBnZW5lcmF0ZSB0aGUgaW50ZXJydXB0cy4gSWYgdGhlIGNvbnRyb2xsZXIgcHJv
+dmlkZXMgb25lIGNvbWJpbmVkIGludGVycnVwdA0KICAgID4gICAgICsgIGZvciBhbGwgR1BJT3Ms
+IHNwZWNpZnkgYSBzaW5nbGUgaW50ZXJydXB0LiBJZiB0aGUgY29udHJvbGxlciBwcm92aWRlcyBv
+bmUNCiAgICA+ICAgICArICBpbnRlcnJ1cHQgZm9yIGVhY2ggR1BJTywgcHJvdmlkZSBhIGxpc3Qg
+b2YgaW50ZXJydXB0cyB0aGF0IGNvcnJlc3BvbmQgdG8gZWFjaA0KICAgID4gICAgICsgIG9mIHRo
+ZSBHUElPIHBpbnMuIFdoZW4gc3BlY2lmeWluZyBtdWx0aXBsZSBpbnRlcnJ1cHRzLCBpZiBhbnkg
+YXJlIHVuY29ubmVjdGVkLA0KICAgID4gICAgICsgIHVzZSB0aGUgaW50ZXJydXB0cy1leHRlbmRl
+ZCBwcm9wZXJ0eSB0byBzcGVjaWZ5IHRoZSBpbnRlcnJ1cHRzIGFuZCBzZXQgdGhlDQogICAgPiAg
+ICAgKyAgaW50ZXJydXB0IGNvbnRyb2xsZXIgaGFuZGxlIGZvciB1bnVzZWQgaW50ZXJydXB0cyB0
+byAwLg0KICAgID4gICAgICAtIHNucHMsbnItZ3Bpb3MgOiBUaGUgbnVtYmVyIG9mIHBpbnMgaW4g
+dGhlIHBvcnQsIGEgc2luZ2xlIGNlbGwuDQogICAgPiAgICAgIC0gcmVzZXRzIDogUmVzZXQgbGlu
+ZSBmb3IgdGhlIGNvbnRyb2xsZXIuDQogICAgPiAgICAgIA0KICAgID4gQWNrZWQtYnk6IEhvYW4g
+VHJhbiA8aG9hbi50cmFuQGFtcGVyZWNvbXB1dGluZy5jb20+DQogICAgDQogICAgV2VsbCB0aGF0
+J3MgbmV3LiAgSSd2ZSBuZXZlciBzZWVuIGEgbWFpbGVyIHJlcGx5IGxpa2UgdGhhdCBiZWZvcmUu
+DQogICAgDQogICAgV2hpY2ggbWFpbGVyIGFyZSB5b3UgdXNpbmc/ICBNaWdodCBiZSB3b3J0aCBz
+b3J0aW5nIHRoYXQgb3V0Lg0KDQpZZXMsIGl0IGxvb2tzIGxpa2UgbXkgbmV3IGVtYWlsIGZyb20g
+b3V0bG9vayBkb2VzIG5vdCBoYXZlIHRoZSBjb3JyZWN0IGZvcm1hdC4gV2l0aCBteSBvbGQgb25l
+LCBpdCB3b3JrcyBjb3JyZWN0bHkuDQoNClRoYW5rcw0KSG9hbg0KICAgIA0KICAgIC0tIA0KICAg
+IExlZSBKb25lcyBb5p2O55C85pavXQ0KICAgIExpbmFybyBTZXJ2aWNlcyBUZWNobmljYWwgTGVh
+ZA0KICAgIExpbmFyby5vcmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29Dcw0K
+ICAgIEZvbGxvdyBMaW5hcm86IEZhY2Vib29rIHwgVHdpdHRlciB8IEJsb2cNCiAgICANCg0K
