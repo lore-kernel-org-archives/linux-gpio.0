@@ -1,102 +1,184 @@
-From: Hoan Tran <hoan.tran@amperecomputing.com>
-Subject: Re: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A
- GPIO
-Date: Thu, 17 May 2018 16:46:56 +0000
-Message-ID: <AA01D623-B3ED-446C-B7C4-37856A185A4B@amperecomputing.com>
-References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
- <F70CFA9C-2059-432E-BFD3-3FA6CB618795@amperecomputing.com>
- <20180517062500.GJ5130@dell>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: s2mps11: Pass descriptor instead of GPIO number" to the regulator tree
+Date: Thu, 17 May 2018 17:41:35 +0100 (BST)
+Message-ID: <20180517164135.98F9344007E@finisterre.ee.mobilebroadband>
+References: <20180212131717.27193-14-linus.walleij@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180517062500.GJ5130@dell>
-Content-Language: en-US
-Content-ID: <1DA4FC1A17BBE84EA2C437747D7171E6@prod.exchangelabs.com>
+In-Reply-To: <20180212131717.27193-14-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Michel Pollet <michel.pollet@bp.renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.orgKrzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgTGVlLA0KDQrvu79PbiA1LzE2LzE4LCAxMToyNSBQTSwgIkxlZSBKb25lcyIgPGxlZS5qb25l
-c0BsaW5hcm8ub3JnPiB3cm90ZToNCg0KICAgIE9uIFdlZCwgMTYgTWF5IDIwMTgsIEhvYW4gVHJh
-biB3cm90ZToNCiAgICANCiAgICA+IEhpIFBoaWwsDQogICAgPiANCiAgICA+IE9uIDUvMTEvMTgs
-IDE6MzEgQU0sICJQaGlsIEVkd29ydGh5IiA8cGhpbC5lZHdvcnRoeUByZW5lc2FzLmNvbT4gd3Jv
-dGU6DQogICAgPiANCiAgICA+ICAgICBUaGUgRGVzaWduV2FyZSBHUElPIElQIGNhbiBiZSBjb25m
-aWd1cmVkIGZvciBlaXRoZXIgMSBpbnRlcnJ1cHQgb3IgMQ0KICAgID4gICAgIHBlciBHUElPIGlu
-IHBvcnQgQSwgYnV0IHRoZSBkcml2ZXIgY3VycmVudGx5IG9ubHkgc3VwcG9ydHMgMSBpbnRlcnJ1
-cHQuDQogICAgPiAgICAgU2VlIHRoZSBEZXNpZ25XYXJlIERXX2FwYl9ncGlvIERhdGFib29rIGRl
-c2NyaXB0aW9uIG9mIHRoZQ0KICAgID4gICAgICdHUElPX0lOVFJfSU8nIHBhcmFtZXRlci4NCiAg
-ICA+ICAgICANCiAgICA+ICAgICBUaGlzIGNoYW5nZSBhbGxvd3MgdGhlIGRyaXZlciB0byB3b3Jr
-IHdpdGggdXAgdG8gMzIgaW50ZXJydXB0cywgaXQgd2lsbA0KICAgID4gICAgIGdldCBhcyBtYW55
-IGludGVycnVwdHMgYXMgc3BlY2lmaWVkIGluIHRoZSBEVCAnaW50ZXJydXB0cycgcHJvcGVydHku
-DQogICAgPiAgICAgSXQgZG9lc24ndCBkbyBhbnl0aGluZyBjbGV2ZXIgd2l0aCB0aGUgZGlmZmVy
-ZW50IGludGVycnVwdHMsIGl0IGp1c3QgY2FsbHMNCiAgICA+ICAgICB0aGUgc2FtZSBoYW5kbGVy
-IHVzZWQgZm9yIHNpbmdsZSBpbnRlcnJ1cHQgaGFyZHdhcmUuDQogICAgPiAgICAgDQogICAgPiAg
-ICAgU2lnbmVkLW9mZi1ieTogUGhpbCBFZHdvcnRoeSA8cGhpbC5lZHdvcnRoeUByZW5lc2FzLmNv
-bT4NCiAgICA+ICAgICBSZXZpZXdlZC1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4N
-CiAgICA+ICAgICBBY2tlZC1ieTogTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4NCiAg
-ICA+ICAgICAtLS0NCiAgICA+ICAgICBPbmUgcG9pbnQgdG8gbWVudGlvbiBpcyB0aGF0IEkgaGF2
-ZSBtYWRlIGl0IHBvc3NpYmxlIGZvciB1c2VycyB0byBoYXZlDQogICAgPiAgICAgdW5jb25uZWN0
-ZWQgaW50ZXJydXB0cyBieSBzcGVjaWZ5aW5nIGhvbGVzIGluIHRoZSBsaXN0IG9mIGludGVycnVw
-dHMuIFRoaXMgaXMNCiAgICA+ICAgICBkb25lIGJ5IHN1cHBvcnRpbmcgdGhlIGludGVycnVwdHMt
-ZXh0ZW5kZWQgRFQgcHJvcC4NCiAgICA+ICAgICBIb3dldmVyLCBJIGhhdmUgbm8gdXNlIGZvciB0
-aGlzIGFuZCBoYWQgdG8gaGFjayBzb21lIHRlc3QgY2FzZSBmb3IgdGhpcy4NCiAgICA+ICAgICBQ
-ZXJoYXBzIHRoZSBkcml2ZXIgc2hvdWxkIHN1cHBvcnQgMSBpbnRlcnJ1cHQgb3IgYWxsIEdQSU9h
-IGFzIGludGVycnVwdHM/DQogICAgPiAgICAgDQogICAgPiAgICAgdjY6DQogICAgPiAgICAgIC0g
-VHJlYXQgRFQgYW5kIEFDUEkgdGhlIHNhbWUgYXMgbXVjaCBhcyBwb3NzaWJsZS4gTm90ZSB0aGF0
-IHdlIGNhbid0IHVzZQ0KICAgID4gICAgICAgIHBsYXRmb3JtX2dldF9pcnEoKSB0byBnZXQgdGhl
-IERUIGludGVycnVwdHMgYXMgdGhleSBhcmUgaW4gdGhlIHBvcnQNCiAgICA+ICAgICAgICBzdWIt
-bm9kZSBhbmQgaGVuY2UgZG8gbm90IGhhdmUgYW4gYXNzb2NpYXRlZCBwbGF0Zm9ybSBkZXZpY2Uu
-DQogICAgPiAgICAgdjU6DQogICAgPiAgICAgIC0gUm9sbGVkIEFDUEkgY29tcGFuaW9uIGNvZGUg
-cHJvdmlkZWQgYnkgSG9hbiBUcmFuIGludG8gdGhpcyBwYXRjaC4NCiAgICA+ICAgICB2NDoNCiAg
-ICA+ICAgICAgLSBVc2Ugb2ZfaXJxX2dldCgpIGluc3RlYWQgb2Ygb2ZfaXJxX3BhcnNlX29uZSgp
-K2lycV9jcmVhdGVfb2ZfbWFwcGluZygpDQogICAgPiAgICAgdjM6DQogICAgPiAgICAgIC0gUm9s
-bGVkIG1mZDogaW50ZWxfcXVhcmtfaTJjX2dwaW8gZml4IGludG8gdGhpcyBwYXRjaCB0byBhdm9p
-ZCBiaXNlY3QgcHJvYmxlbXMNCiAgICA+ICAgICB2MjoNCiAgICA+ICAgICAgLSBSZXBsYWNlZCBp
-bnRlcnJ1cHQtbWFzayBEVCBwcm9wIHdpdGggc3VwcG9ydCBmb3IgdGhlIGludGVycnVwdHMtZXh0
-ZW5kZWQNCiAgICA+ICAgICAgICBwcm9wLiBUaGlzIG1lYW5zIHJlcGxhY2luZyB0aGUgY2FsbCB0
-byBpcnFfb2ZfcGFyc2VfYW5kX21hcCgpIHdpdGggY2FsbHMNCiAgICA+ICAgICAgICB0byBvZl9p
-cnFfcGFyc2Vfb25lKCkgYW5kIGlycV9jcmVhdGVfb2ZfbWFwcGluZygpLg0KICAgID4gICAgIC0t
-LQ0KICAgID4gICAgICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL3NucHMtZHdhcGItZ3Bp
-by50eHQgICB8ICA5ICsrKy0NCiAgICA+ICAgICAgZHJpdmVycy9ncGlvL2dwaW8tZHdhcGIuYyAg
-ICAgICAgICAgICAgICAgICAgICAgICAgfCA0OSArKysrKysrKysrKysrKystLS0tLS0tDQogICAg
-PiAgICAgIGRyaXZlcnMvbWZkL2ludGVsX3F1YXJrX2kyY19ncGlvLmMgICAgICAgICAgICAgICAg
-IHwgIDMgKy0NCiAgICA+ICAgICAgaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL2dwaW8tZHdh
-cGIuaCAgICAgICAgICAgfCAgMyArLQ0KICAgID4gICAgICA0IGZpbGVzIGNoYW5nZWQsIDQ1IGlu
-c2VydGlvbnMoKyksIDE5IGRlbGV0aW9ucygtKQ0KICAgID4gICAgIA0KICAgID4gICAgIGRpZmYg
-LS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9zbnBzLWR3YXBi
-LWdwaW8udHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vc25wcy1k
-d2FwYi1ncGlvLnR4dA0KICAgID4gICAgIGluZGV4IDRhNzVkYTcuLjNjMTExOGIgMTAwNjQ0DQog
-ICAgPiAgICAgLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vc25w
-cy1kd2FwYi1ncGlvLnR4dA0KICAgID4gICAgICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9ncGlvL3NucHMtZHdhcGItZ3Bpby50eHQNCiAgICA+ICAgICBAQCAtMjYsOCAr
-MjYsMTMgQEAgY29udHJvbGxlci4NCiAgICA+ICAgICAgICB0aGUgc2Vjb25kIGVuY29kZXMgdGhl
-IHRyaWdlciBmbGFncyBlbmNvZGVkIGFzIGRlc2NyaWJlZCBpbg0KICAgID4gICAgICAgIERvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pbnRlcnJ1cHQtY29udHJvbGxlci9pbnRlcnJ1
-cHRzLnR4dA0KICAgID4gICAgICAtIGludGVycnVwdC1wYXJlbnQgOiBUaGUgcGFyZW50IGludGVy
-cnVwdCBjb250cm9sbGVyLg0KICAgID4gICAgIC0tIGludGVycnVwdHMgOiBUaGUgaW50ZXJydXB0
-IHRvIHRoZSBwYXJlbnQgY29udHJvbGxlciByYWlzZWQgd2hlbiBHUElPcw0KICAgID4gICAgIC0g
-IGdlbmVyYXRlIHRoZSBpbnRlcnJ1cHRzLg0KICAgID4gICAgICstIGludGVycnVwdHMgOiBUaGUg
-aW50ZXJydXB0cyB0byB0aGUgcGFyZW50IGNvbnRyb2xsZXIgcmFpc2VkIHdoZW4gR1BJT3MNCiAg
-ICA+ICAgICArICBnZW5lcmF0ZSB0aGUgaW50ZXJydXB0cy4gSWYgdGhlIGNvbnRyb2xsZXIgcHJv
-dmlkZXMgb25lIGNvbWJpbmVkIGludGVycnVwdA0KICAgID4gICAgICsgIGZvciBhbGwgR1BJT3Ms
-IHNwZWNpZnkgYSBzaW5nbGUgaW50ZXJydXB0LiBJZiB0aGUgY29udHJvbGxlciBwcm92aWRlcyBv
-bmUNCiAgICA+ICAgICArICBpbnRlcnJ1cHQgZm9yIGVhY2ggR1BJTywgcHJvdmlkZSBhIGxpc3Qg
-b2YgaW50ZXJydXB0cyB0aGF0IGNvcnJlc3BvbmQgdG8gZWFjaA0KICAgID4gICAgICsgIG9mIHRo
-ZSBHUElPIHBpbnMuIFdoZW4gc3BlY2lmeWluZyBtdWx0aXBsZSBpbnRlcnJ1cHRzLCBpZiBhbnkg
-YXJlIHVuY29ubmVjdGVkLA0KICAgID4gICAgICsgIHVzZSB0aGUgaW50ZXJydXB0cy1leHRlbmRl
-ZCBwcm9wZXJ0eSB0byBzcGVjaWZ5IHRoZSBpbnRlcnJ1cHRzIGFuZCBzZXQgdGhlDQogICAgPiAg
-ICAgKyAgaW50ZXJydXB0IGNvbnRyb2xsZXIgaGFuZGxlIGZvciB1bnVzZWQgaW50ZXJydXB0cyB0
-byAwLg0KICAgID4gICAgICAtIHNucHMsbnItZ3Bpb3MgOiBUaGUgbnVtYmVyIG9mIHBpbnMgaW4g
-dGhlIHBvcnQsIGEgc2luZ2xlIGNlbGwuDQogICAgPiAgICAgIC0gcmVzZXRzIDogUmVzZXQgbGlu
-ZSBmb3IgdGhlIGNvbnRyb2xsZXIuDQogICAgPiAgICAgIA0KICAgID4gQWNrZWQtYnk6IEhvYW4g
-VHJhbiA8aG9hbi50cmFuQGFtcGVyZWNvbXB1dGluZy5jb20+DQogICAgDQogICAgV2VsbCB0aGF0
-J3MgbmV3LiAgSSd2ZSBuZXZlciBzZWVuIGEgbWFpbGVyIHJlcGx5IGxpa2UgdGhhdCBiZWZvcmUu
-DQogICAgDQogICAgV2hpY2ggbWFpbGVyIGFyZSB5b3UgdXNpbmc/ICBNaWdodCBiZSB3b3J0aCBz
-b3J0aW5nIHRoYXQgb3V0Lg0KDQpZZXMsIGl0IGxvb2tzIGxpa2UgbXkgbmV3IGVtYWlsIGZyb20g
-b3V0bG9vayBkb2VzIG5vdCBoYXZlIHRoZSBjb3JyZWN0IGZvcm1hdC4gV2l0aCBteSBvbGQgb25l
-LCBpdCB3b3JrcyBjb3JyZWN0bHkuDQoNClRoYW5rcw0KSG9hbg0KICAgIA0KICAgIC0tIA0KICAg
-IExlZSBKb25lcyBb5p2O55C85pavXQ0KICAgIExpbmFybyBTZXJ2aWNlcyBUZWNobmljYWwgTGVh
-ZA0KICAgIExpbmFyby5vcmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29Dcw0K
-ICAgIEZvbGxvdyBMaW5hcm86IEZhY2Vib29rIHwgVHdpdHRlciB8IEJsb2cNCiAgICANCg0K
+The patch
+
+   regulator: s2mps11: Pass descriptor instead of GPIO number
+
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 0369e02b75e6381f892e3bd45f1d8d6330d855fb Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 14 May 2018 10:06:31 +0200
+Subject: [PATCH] regulator: s2mps11: Pass descriptor instead of GPIO number
+
+Instead of passing a global GPIO number for the enable GPIO, pass
+a descriptor looked up with the standard devm_gpiod_get_optional()
+call.
+
+This regulator supports passing platform data, but enable/sleep
+regulators are looked up from the device tree exclusively, so
+we can need not touch other files.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/s2mps11.c | 46 ++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 7726b874e539..9a1dca26362e 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -18,7 +18,7 @@
+ 
+ #include <linux/bug.h>
+ #include <linux/err.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -27,7 +27,6 @@
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/regulator/of_regulator.h>
+-#include <linux/of_gpio.h>
+ #include <linux/mfd/samsung/core.h>
+ #include <linux/mfd/samsung/s2mps11.h>
+ #include <linux/mfd/samsung/s2mps13.h>
+@@ -57,7 +56,7 @@ struct s2mps11_info {
+ 	 * Array (size: number of regulators) with GPIO-s for external
+ 	 * sleep control.
+ 	 */
+-	int *ext_control_gpio;
++	struct gpio_desc **ext_control_gpiod;
+ };
+ 
+ static int get_ramp_delay(int ramp_delay)
+@@ -524,7 +523,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
+ 	case S2MPS14X:
+ 		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
+ 			val = S2MPS14_ENABLE_SUSPEND;
+-		else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
++		else if (s2mps11->ext_control_gpiod[rdev_get_id(rdev)])
+ 			val = S2MPS14_ENABLE_EXT_CONTROL;
+ 		else
+ 			val = rdev->desc->enable_mask;
+@@ -818,7 +817,7 @@ static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
+ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 		struct of_regulator_match *rdata, struct s2mps11_info *s2mps11)
+ {
+-	int *gpio = s2mps11->ext_control_gpio;
++	struct gpio_desc **gpio = s2mps11->ext_control_gpiod;
+ 	unsigned int i;
+ 	unsigned int valid_regulators[3] = { S2MPS14_LDO10, S2MPS14_LDO11,
+ 		S2MPS14_LDO12 };
+@@ -829,11 +828,20 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 		if (!rdata[reg].init_data || !rdata[reg].of_node)
+ 			continue;
+ 
+-		gpio[reg] = of_get_named_gpio(rdata[reg].of_node,
+-				"samsung,ext-control-gpios", 0);
+-		if (gpio_is_valid(gpio[reg]))
+-			dev_dbg(&pdev->dev, "Using GPIO %d for ext-control over %d/%s\n",
+-					gpio[reg], reg, rdata[reg].name);
++		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
++							rdata[reg].of_node,
++							"samsung,ext-control-gpios",
++							0,
++							GPIOD_OUT_HIGH,
++							"s2mps11-LDO");
++		if (IS_ERR(gpio[reg])) {
++			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
++				reg, rdata[reg].name);
++			continue;
++		}
++		if (gpio[reg])
++			dev_dbg(&pdev->dev, "Using GPIO for ext-control over %d/%s\n",
++				reg, rdata[reg].name);
+ 	}
+ }
+ 
+@@ -1139,17 +1147,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	s2mps11->ext_control_gpio = devm_kmalloc(&pdev->dev,
+-			sizeof(*s2mps11->ext_control_gpio) * rdev_num,
++	s2mps11->ext_control_gpiod = devm_kmalloc(&pdev->dev,
++			sizeof(*s2mps11->ext_control_gpiod) * rdev_num,
+ 			GFP_KERNEL);
+-	if (!s2mps11->ext_control_gpio)
++	if (!s2mps11->ext_control_gpiod)
+ 		return -ENOMEM;
+-	/*
+-	 * 0 is a valid GPIO so initialize all GPIO-s to negative value
+-	 * to indicate that external control won't be used for this regulator.
+-	 */
+-	for (i = 0; i < rdev_num; i++)
+-		s2mps11->ext_control_gpio[i] = -EINVAL;
+ 
+ 	if (!iodev->dev->of_node) {
+ 		if (iodev->pdata) {
+@@ -1179,8 +1181,6 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 	config.dev = &pdev->dev;
+ 	config.regmap = iodev->regmap_pmic;
+ 	config.driver_data = s2mps11;
+-	config.ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
+-	config.ena_gpio_initialized = true;
+ 	for (i = 0; i < rdev_num; i++) {
+ 		struct regulator_dev *regulator;
+ 
+@@ -1191,7 +1191,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 			config.init_data = rdata[i].init_data;
+ 			config.of_node = rdata[i].of_node;
+ 		}
+-		config.ena_gpio = s2mps11->ext_control_gpio[i];
++		config.ena_gpiod = s2mps11->ext_control_gpiod[i];
+ 
+ 		regulator = devm_regulator_register(&pdev->dev,
+ 						&regulators[i], &config);
+@@ -1202,7 +1202,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 			goto out;
+ 		}
+ 
+-		if (gpio_is_valid(s2mps11->ext_control_gpio[i])) {
++		if (s2mps11->ext_control_gpiod[i]) {
+ 			ret = s2mps14_pmic_enable_ext_control(s2mps11,
+ 					regulator);
+ 			if (ret < 0) {
+-- 
+2.17.0
