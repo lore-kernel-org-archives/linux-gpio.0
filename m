@@ -1,166 +1,310 @@
-From: Hoan Tran <hoan.tran@amperecomputing.com>
-Subject: Re: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A
- GPIO
-Date: Wed, 16 May 2018 21:40:42 +0000
-Message-ID: <F70CFA9C-2059-432E-BFD3-3FA6CB618795@amperecomputing.com>
-References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Laura Abbott <labbott@redhat.com>
+Subject: [PATCHv6] gpio: Remove VLA from gpiolib
+Date: Wed, 16 May 2018 17:00:27 -0700
+Message-ID: <20180517000027.26639-1-labbott@redhat.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
-Content-Language: en-US
-Content-ID: <AC9631F61DD19147B0D1A3F5AD4E1A36@prod.exchangelabs.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hoan Tran <hoan.tran@amperecomputing.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Laura Abbott <labbott@redhat.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, Phil Reid <preid@electromag.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgUGhpbCwNCg0K77u/T24gNS8xMS8xOCwgMTozMSBBTSwgIlBoaWwgRWR3b3J0aHkiIDxwaGls
-LmVkd29ydGh5QHJlbmVzYXMuY29tPiB3cm90ZToNCg0KICAgIFRoZSBEZXNpZ25XYXJlIEdQSU8g
-SVAgY2FuIGJlIGNvbmZpZ3VyZWQgZm9yIGVpdGhlciAxIGludGVycnVwdCBvciAxDQogICAgcGVy
-IEdQSU8gaW4gcG9ydCBBLCBidXQgdGhlIGRyaXZlciBjdXJyZW50bHkgb25seSBzdXBwb3J0cyAx
-IGludGVycnVwdC4NCiAgICBTZWUgdGhlIERlc2lnbldhcmUgRFdfYXBiX2dwaW8gRGF0YWJvb2sg
-ZGVzY3JpcHRpb24gb2YgdGhlDQogICAgJ0dQSU9fSU5UUl9JTycgcGFyYW1ldGVyLg0KICAgIA0K
-ICAgIFRoaXMgY2hhbmdlIGFsbG93cyB0aGUgZHJpdmVyIHRvIHdvcmsgd2l0aCB1cCB0byAzMiBp
-bnRlcnJ1cHRzLCBpdCB3aWxsDQogICAgZ2V0IGFzIG1hbnkgaW50ZXJydXB0cyBhcyBzcGVjaWZp
-ZWQgaW4gdGhlIERUICdpbnRlcnJ1cHRzJyBwcm9wZXJ0eS4NCiAgICBJdCBkb2Vzbid0IGRvIGFu
-eXRoaW5nIGNsZXZlciB3aXRoIHRoZSBkaWZmZXJlbnQgaW50ZXJydXB0cywgaXQganVzdCBjYWxs
-cw0KICAgIHRoZSBzYW1lIGhhbmRsZXIgdXNlZCBmb3Igc2luZ2xlIGludGVycnVwdCBoYXJkd2Fy
-ZS4NCiAgICANCiAgICBTaWduZWQtb2ZmLWJ5OiBQaGlsIEVkd29ydGh5IDxwaGlsLmVkd29ydGh5
-QHJlbmVzYXMuY29tPg0KICAgIFJldmlld2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwu
-b3JnPg0KICAgIEFja2VkLWJ5OiBMZWUgSm9uZXMgPGxlZS5qb25lc0BsaW5hcm8ub3JnPg0KICAg
-IC0tLQ0KICAgIE9uZSBwb2ludCB0byBtZW50aW9uIGlzIHRoYXQgSSBoYXZlIG1hZGUgaXQgcG9z
-c2libGUgZm9yIHVzZXJzIHRvIGhhdmUNCiAgICB1bmNvbm5lY3RlZCBpbnRlcnJ1cHRzIGJ5IHNw
-ZWNpZnlpbmcgaG9sZXMgaW4gdGhlIGxpc3Qgb2YgaW50ZXJydXB0cy4gVGhpcyBpcw0KICAgIGRv
-bmUgYnkgc3VwcG9ydGluZyB0aGUgaW50ZXJydXB0cy1leHRlbmRlZCBEVCBwcm9wLg0KICAgIEhv
-d2V2ZXIsIEkgaGF2ZSBubyB1c2UgZm9yIHRoaXMgYW5kIGhhZCB0byBoYWNrIHNvbWUgdGVzdCBj
-YXNlIGZvciB0aGlzLg0KICAgIFBlcmhhcHMgdGhlIGRyaXZlciBzaG91bGQgc3VwcG9ydCAxIGlu
-dGVycnVwdCBvciBhbGwgR1BJT2EgYXMgaW50ZXJydXB0cz8NCiAgICANCiAgICB2NjoNCiAgICAg
-LSBUcmVhdCBEVCBhbmQgQUNQSSB0aGUgc2FtZSBhcyBtdWNoIGFzIHBvc3NpYmxlLiBOb3RlIHRo
-YXQgd2UgY2FuJ3QgdXNlDQogICAgICAgcGxhdGZvcm1fZ2V0X2lycSgpIHRvIGdldCB0aGUgRFQg
-aW50ZXJydXB0cyBhcyB0aGV5IGFyZSBpbiB0aGUgcG9ydA0KICAgICAgIHN1Yi1ub2RlIGFuZCBo
-ZW5jZSBkbyBub3QgaGF2ZSBhbiBhc3NvY2lhdGVkIHBsYXRmb3JtIGRldmljZS4NCiAgICB2NToN
-CiAgICAgLSBSb2xsZWQgQUNQSSBjb21wYW5pb24gY29kZSBwcm92aWRlZCBieSBIb2FuIFRyYW4g
-aW50byB0aGlzIHBhdGNoLg0KICAgIHY0Og0KICAgICAtIFVzZSBvZl9pcnFfZ2V0KCkgaW5zdGVh
-ZCBvZiBvZl9pcnFfcGFyc2Vfb25lKCkraXJxX2NyZWF0ZV9vZl9tYXBwaW5nKCkNCiAgICB2MzoN
-CiAgICAgLSBSb2xsZWQgbWZkOiBpbnRlbF9xdWFya19pMmNfZ3BpbyBmaXggaW50byB0aGlzIHBh
-dGNoIHRvIGF2b2lkIGJpc2VjdCBwcm9ibGVtcw0KICAgIHYyOg0KICAgICAtIFJlcGxhY2VkIGlu
-dGVycnVwdC1tYXNrIERUIHByb3Agd2l0aCBzdXBwb3J0IGZvciB0aGUgaW50ZXJydXB0cy1leHRl
-bmRlZA0KICAgICAgIHByb3AuIFRoaXMgbWVhbnMgcmVwbGFjaW5nIHRoZSBjYWxsIHRvIGlycV9v
-Zl9wYXJzZV9hbmRfbWFwKCkgd2l0aCBjYWxscw0KICAgICAgIHRvIG9mX2lycV9wYXJzZV9vbmUo
-KSBhbmQgaXJxX2NyZWF0ZV9vZl9tYXBwaW5nKCkuDQogICAgLS0tDQogICAgIC4uLi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2dwaW8vc25wcy1kd2FwYi1ncGlvLnR4dCAgIHwgIDkgKysrLQ0KICAgICBk
-cml2ZXJzL2dwaW8vZ3Bpby1kd2FwYi5jICAgICAgICAgICAgICAgICAgICAgICAgICB8IDQ5ICsr
-KysrKysrKysrKysrKy0tLS0tLS0NCiAgICAgZHJpdmVycy9tZmQvaW50ZWxfcXVhcmtfaTJjX2dw
-aW8uYyAgICAgICAgICAgICAgICAgfCAgMyArLQ0KICAgICBpbmNsdWRlL2xpbnV4L3BsYXRmb3Jt
-X2RhdGEvZ3Bpby1kd2FwYi5oICAgICAgICAgICB8ICAzICstDQogICAgIDQgZmlsZXMgY2hhbmdl
-ZCwgNDUgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0pDQogICAgDQogICAgZGlmZiAtLWdp
-dCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL3NucHMtZHdhcGItZ3Bp
-by50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9zbnBzLWR3YXBi
-LWdwaW8udHh0DQogICAgaW5kZXggNGE3NWRhNy4uM2MxMTE4YiAxMDA2NDQNCiAgICAtLS0gYS9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9zbnBzLWR3YXBiLWdwaW8udHh0
-DQogICAgKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vc25wcy1k
-d2FwYi1ncGlvLnR4dA0KICAgIEBAIC0yNiw4ICsyNiwxMyBAQCBjb250cm9sbGVyLg0KICAgICAg
-IHRoZSBzZWNvbmQgZW5jb2RlcyB0aGUgdHJpZ2VyIGZsYWdzIGVuY29kZWQgYXMgZGVzY3JpYmVk
-IGluDQogICAgICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2ludGVycnVwdC1j
-b250cm9sbGVyL2ludGVycnVwdHMudHh0DQogICAgIC0gaW50ZXJydXB0LXBhcmVudCA6IFRoZSBw
-YXJlbnQgaW50ZXJydXB0IGNvbnRyb2xsZXIuDQogICAgLS0gaW50ZXJydXB0cyA6IFRoZSBpbnRl
-cnJ1cHQgdG8gdGhlIHBhcmVudCBjb250cm9sbGVyIHJhaXNlZCB3aGVuIEdQSU9zDQogICAgLSAg
-Z2VuZXJhdGUgdGhlIGludGVycnVwdHMuDQogICAgKy0gaW50ZXJydXB0cyA6IFRoZSBpbnRlcnJ1
-cHRzIHRvIHRoZSBwYXJlbnQgY29udHJvbGxlciByYWlzZWQgd2hlbiBHUElPcw0KICAgICsgIGdl
-bmVyYXRlIHRoZSBpbnRlcnJ1cHRzLiBJZiB0aGUgY29udHJvbGxlciBwcm92aWRlcyBvbmUgY29t
-YmluZWQgaW50ZXJydXB0DQogICAgKyAgZm9yIGFsbCBHUElPcywgc3BlY2lmeSBhIHNpbmdsZSBp
-bnRlcnJ1cHQuIElmIHRoZSBjb250cm9sbGVyIHByb3ZpZGVzIG9uZQ0KICAgICsgIGludGVycnVw
-dCBmb3IgZWFjaCBHUElPLCBwcm92aWRlIGEgbGlzdCBvZiBpbnRlcnJ1cHRzIHRoYXQgY29ycmVz
-cG9uZCB0byBlYWNoDQogICAgKyAgb2YgdGhlIEdQSU8gcGlucy4gV2hlbiBzcGVjaWZ5aW5nIG11
-bHRpcGxlIGludGVycnVwdHMsIGlmIGFueSBhcmUgdW5jb25uZWN0ZWQsDQogICAgKyAgdXNlIHRo
-ZSBpbnRlcnJ1cHRzLWV4dGVuZGVkIHByb3BlcnR5IHRvIHNwZWNpZnkgdGhlIGludGVycnVwdHMg
-YW5kIHNldCB0aGUNCiAgICArICBpbnRlcnJ1cHQgY29udHJvbGxlciBoYW5kbGUgZm9yIHVudXNl
-ZCBpbnRlcnJ1cHRzIHRvIDAuDQogICAgIC0gc25wcyxuci1ncGlvcyA6IFRoZSBudW1iZXIgb2Yg
-cGlucyBpbiB0aGUgcG9ydCwgYSBzaW5nbGUgY2VsbC4NCiAgICAgLSByZXNldHMgOiBSZXNldCBs
-aW5lIGZvciB0aGUgY29udHJvbGxlci4NCiAgICAgDQogICAgZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3Bpby9ncGlvLWR3YXBiLmMgYi9kcml2ZXJzL2dwaW8vZ3Bpby1kd2FwYi5jDQogICAgaW5kZXgg
-MjI2OTc3Zi4uMTViNDE1NCAxMDA2NDQNCiAgICAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1kd2Fw
-Yi5jDQogICAgKysrIGIvZHJpdmVycy9ncGlvL2dwaW8tZHdhcGIuYw0KICAgIEBAIC00NDEsMTQg
-KzQ0MSwxOSBAQCBzdGF0aWMgdm9pZCBkd2FwYl9jb25maWd1cmVfaXJxcyhzdHJ1Y3QgZHdhcGJf
-Z3BpbyAqZ3BpbywNCiAgICAgCWlycV9nYy0+Y2hpcF90eXBlc1sxXS5oYW5kbGVyID0gaGFuZGxl
-X2VkZ2VfaXJxOw0KICAgICANCiAgICAgCWlmICghcHAtPmlycV9zaGFyZWQpIHsNCiAgICAtCQlp
-cnFfc2V0X2NoYWluZWRfaGFuZGxlcl9hbmRfZGF0YShwcC0+aXJxLCBkd2FwYl9pcnFfaGFuZGxl
-ciwNCiAgICAtCQkJCQkJIGdwaW8pOw0KICAgICsJCWludCBpOw0KICAgICsNCiAgICArCQlmb3Ig
-KGkgPSAwOyBpIDwgcHAtPm5ncGlvOyBpKyspIHsNCiAgICArCQkJaWYgKHBwLT5pcnFbaV0gPj0g
-MCkNCiAgICArCQkJCWlycV9zZXRfY2hhaW5lZF9oYW5kbGVyX2FuZF9kYXRhKHBwLT5pcnFbaV0s
-DQogICAgKwkJCQkJCWR3YXBiX2lycV9oYW5kbGVyLCBncGlvKTsNCiAgICArCQl9DQogICAgIAl9
-IGVsc2Ugew0KICAgICAJCS8qDQogICAgIAkJICogUmVxdWVzdCBhIHNoYXJlZCBJUlEgc2luY2Ug
-d2hlcmUgTUZEIHdvdWxkIGhhdmUgZGV2aWNlcw0KICAgICAJCSAqIHVzaW5nIHRoZSBzYW1lIGly
-cSBwaW4NCiAgICAgCQkgKi8NCiAgICAtCQllcnIgPSBkZXZtX3JlcXVlc3RfaXJxKGdwaW8tPmRl
-diwgcHAtPmlycSwNCiAgICArCQllcnIgPSBkZXZtX3JlcXVlc3RfaXJxKGdwaW8tPmRldiwgcHAt
-PmlycVswXSwNCiAgICAgCQkJCSAgICAgICBkd2FwYl9pcnFfaGFuZGxlcl9tZmQsDQogICAgIAkJ
-CQkgICAgICAgSVJRRl9TSEFSRUQsICJncGlvLWR3YXBiLW1mZCIsIGdwaW8pOw0KICAgICAJCWlm
-IChlcnIpIHsNCiAgICBAQCAtNTI0LDcgKzUyOSw3IEBAIHN0YXRpYyBpbnQgZHdhcGJfZ3Bpb19h
-ZGRfcG9ydChzdHJ1Y3QgZHdhcGJfZ3BpbyAqZ3BpbywNCiAgICAgCWlmIChwcC0+aWR4ID09IDAp
-DQogICAgIAkJcG9ydC0+Z2Muc2V0X2NvbmZpZyA9IGR3YXBiX2dwaW9fc2V0X2NvbmZpZzsNCiAg
-ICAgDQogICAgLQlpZiAocHAtPmlycSkNCiAgICArCWlmIChwcC0+aGFzX2lycSkNCiAgICAgCQlk
-d2FwYl9jb25maWd1cmVfaXJxcyhncGlvLCBwb3J0LCBwcCk7DQogICAgIA0KICAgICAJZXJyID0g
-Z3Bpb2NoaXBfYWRkX2RhdGEoJnBvcnQtPmdjLCBwb3J0KTsNCiAgICBAQCAtNTM1LDcgKzU0MCw3
-IEBAIHN0YXRpYyBpbnQgZHdhcGJfZ3Bpb19hZGRfcG9ydChzdHJ1Y3QgZHdhcGJfZ3BpbyAqZ3Bp
-bywNCiAgICAgCQlwb3J0LT5pc19yZWdpc3RlcmVkID0gdHJ1ZTsNCiAgICAgDQogICAgIAkvKiBB
-ZGQgR1BJTy1zaWduYWxlZCBBQ1BJIGV2ZW50IHN1cHBvcnQgKi8NCiAgICAtCWlmIChwcC0+aXJx
-KQ0KICAgICsJaWYgKHBwLT5oYXNfaXJxKQ0KICAgICAJCWFjcGlfZ3Bpb2NoaXBfcmVxdWVzdF9p
-bnRlcnJ1cHRzKCZwb3J0LT5nYyk7DQogICAgIA0KICAgICAJcmV0dXJuIGVycjsNCiAgICBAQCAt
-NTU3LDcgKzU2Miw3IEBAIGR3YXBiX2dwaW9fZ2V0X3BkYXRhKHN0cnVjdCBkZXZpY2UgKmRldikN
-CiAgICAgCXN0cnVjdCBkd2FwYl9wbGF0Zm9ybV9kYXRhICpwZGF0YTsNCiAgICAgCXN0cnVjdCBk
-d2FwYl9wb3J0X3Byb3BlcnR5ICpwcDsNCiAgICAgCWludCBucG9ydHM7DQogICAgLQlpbnQgaTsN
-CiAgICArCWludCBpLCBqOw0KICAgICANCiAgICAgCW5wb3J0cyA9IGRldmljZV9nZXRfY2hpbGRf
-bm9kZV9jb3VudChkZXYpOw0KICAgICAJaWYgKG5wb3J0cyA9PSAwKQ0KICAgIEBAIC01NzUsNiAr
-NTgwLDggQEAgZHdhcGJfZ3Bpb19nZXRfcGRhdGEoc3RydWN0IGRldmljZSAqZGV2KQ0KICAgICAN
-CiAgICAgCWkgPSAwOw0KICAgICAJZGV2aWNlX2Zvcl9lYWNoX2NoaWxkX25vZGUoZGV2LCBmd25v
-ZGUpICB7DQogICAgKwkJc3RydWN0IGRldmljZV9ub2RlICpucCA9IE5VTEw7DQogICAgKw0KICAg
-ICAJCXBwID0gJnBkYXRhLT5wcm9wZXJ0aWVzW2krK107DQogICAgIAkJcHAtPmZ3bm9kZSA9IGZ3
-bm9kZTsNCiAgICAgDQogICAgQEAgLTU5NCwyMyArNjAxLDM1IEBAIGR3YXBiX2dwaW9fZ2V0X3Bk
-YXRhKHN0cnVjdCBkZXZpY2UgKmRldikNCiAgICAgCQkJcHAtPm5ncGlvID0gMzI7DQogICAgIAkJ
-fQ0KICAgICANCiAgICArCQlwcC0+aXJxX3NoYXJlZAk9IGZhbHNlOw0KICAgICsJCXBwLT5ncGlv
-X2Jhc2UJPSAtMTsNCiAgICArDQogICAgIAkJLyoNCiAgICAgCQkgKiBPbmx5IHBvcnQgQSBjYW4g
-cHJvdmlkZSBpbnRlcnJ1cHRzIGluIGFsbCBjb25maWd1cmF0aW9ucyBvZg0KICAgICAJCSAqIHRo
-ZSBJUC4NCiAgICAgCQkgKi8NCiAgICAtCQlpZiAoZGV2LT5vZl9ub2RlICYmIHBwLT5pZHggPT0g
-MCAmJg0KICAgIC0JCQlmd25vZGVfcHJvcGVydHlfcmVhZF9ib29sKGZ3bm9kZSwNCiAgICArCQlp
-ZiAocHAtPmlkeCAhPSAwKQ0KICAgICsJCQljb250aW51ZTsNCiAgICArDQogICAgKwkJaWYgKGRl
-di0+b2Zfbm9kZSAmJiBmd25vZGVfcHJvcGVydHlfcmVhZF9ib29sKGZ3bm9kZSwNCiAgICAgCQkJ
-CQkJICAiaW50ZXJydXB0LWNvbnRyb2xsZXIiKSkgew0KICAgIC0JCQlwcC0+aXJxID0gaXJxX29m
-X3BhcnNlX2FuZF9tYXAodG9fb2Zfbm9kZShmd25vZGUpLCAwKTsNCiAgICAtCQkJaWYgKCFwcC0+
-aXJxKQ0KICAgIC0JCQkJZGV2X3dhcm4oZGV2LCAibm8gaXJxIGZvciBwb3J0JWRcbiIsIHBwLT5p
-ZHgpOw0KICAgICsJCQlucCA9IHRvX29mX25vZGUoZndub2RlKTsNCiAgICAgCQl9DQogICAgIA0K
-ICAgIC0JCWlmIChoYXNfYWNwaV9jb21wYW5pb24oZGV2KSAmJiBwcC0+aWR4ID09IDApDQogICAg
-LQkJCXBwLT5pcnEgPSBwbGF0Zm9ybV9nZXRfaXJxKHRvX3BsYXRmb3JtX2RldmljZShkZXYpLCAw
-KTsNCiAgICArCQlmb3IgKGogPSAwOyBqIDwgcHAtPm5ncGlvOyBqKyspIHsNCiAgICArCQkJcHAt
-PmlycVtqXSA9IC1FTlhJTzsNCiAgICAgDQogICAgLQkJcHAtPmlycV9zaGFyZWQJPSBmYWxzZTsN
-CiAgICAtCQlwcC0+Z3Bpb19iYXNlCT0gLTE7DQogICAgKwkJCWlmIChucCkNCiAgICArCQkJCXBw
-LT5pcnFbal0gPSBvZl9pcnFfZ2V0KG5wLCBqKTsNCiAgICArCQkJZWxzZSBpZiAoaGFzX2FjcGlf
-Y29tcGFuaW9uKGRldikpDQogICAgKwkJCQlwcC0+aXJxW2pdID0gcGxhdGZvcm1fZ2V0X2lycSh0
-b19wbGF0Zm9ybV9kZXZpY2UoZGV2KSwgaik7DQogICAgKw0KICAgICsJCQlpZiAocHAtPmlycVtq
-XSA+PSAwKQ0KICAgICsJCQkJcHAtPmhhc19pcnEgPSB0cnVlOw0KICAgICsJCX0NCiAgICArDQog
-ICAgKwkJaWYgKCFwcC0+aGFzX2lycSkNCiAgICArCQkJZGV2X3dhcm4oZGV2LCAibm8gaXJxIGZv
-ciBwb3J0JWRcbiIsIHBwLT5pZHgpOw0KICAgICAJfQ0KICAgICANCiAgICAgCXJldHVybiBwZGF0
-YTsNCiAgICBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvaW50ZWxfcXVhcmtfaTJjX2dwaW8uYyBi
-L2RyaXZlcnMvbWZkL2ludGVsX3F1YXJrX2kyY19ncGlvLmMNCiAgICBpbmRleCA5MGUzNWRlLi41
-YmRkYjg0IDEwMDY0NA0KICAgIC0tLSBhL2RyaXZlcnMvbWZkL2ludGVsX3F1YXJrX2kyY19ncGlv
-LmMNCiAgICArKysgYi9kcml2ZXJzL21mZC9pbnRlbF9xdWFya19pMmNfZ3Bpby5jDQogICAgQEAg
-LTIzMyw3ICsyMzMsOCBAQCBzdGF0aWMgaW50IGludGVsX3F1YXJrX2dwaW9fc2V0dXAoc3RydWN0
-IHBjaV9kZXYgKnBkZXYsIHN0cnVjdCBtZmRfY2VsbCAqY2VsbCkNCiAgICAgCXBkYXRhLT5wcm9w
-ZXJ0aWVzLT5pZHgJCT0gMDsNCiAgICAgCXBkYXRhLT5wcm9wZXJ0aWVzLT5uZ3Bpbwk9IElOVEVM
-X1FVQVJLX01GRF9OR1BJTzsNCiAgICAgCXBkYXRhLT5wcm9wZXJ0aWVzLT5ncGlvX2Jhc2UJPSBJ
-TlRFTF9RVUFSS19NRkRfR1BJT19CQVNFOw0KICAgIC0JcGRhdGEtPnByb3BlcnRpZXMtPmlycQkJ
-PSBwZGV2LT5pcnE7DQogICAgKwlwZGF0YS0+cHJvcGVydGllcy0+aXJxWzBdCT0gcGRldi0+aXJx
-Ow0KICAgICsJcGRhdGEtPnByb3BlcnRpZXMtPmhhc19pcnEJPSB0cnVlOw0KICAgICAJcGRhdGEt
-PnByb3BlcnRpZXMtPmlycV9zaGFyZWQJPSB0cnVlOw0KICAgICANCiAgICAgCWNlbGwtPnBsYXRm
-b3JtX2RhdGEgPSBwZGF0YTsNCiAgICBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9wbGF0Zm9y
-bV9kYXRhL2dwaW8tZHdhcGIuaCBiL2luY2x1ZGUvbGludXgvcGxhdGZvcm1fZGF0YS9ncGlvLWR3
-YXBiLmgNCiAgICBpbmRleCAyZGM3ZjRhLi40MTljZmFjIDEwMDY0NA0KICAgIC0tLSBhL2luY2x1
-ZGUvbGludXgvcGxhdGZvcm1fZGF0YS9ncGlvLWR3YXBiLmgNCiAgICArKysgYi9pbmNsdWRlL2xp
-bnV4L3BsYXRmb3JtX2RhdGEvZ3Bpby1kd2FwYi5oDQogICAgQEAgLTE5LDcgKzE5LDggQEAgc3Ry
-dWN0IGR3YXBiX3BvcnRfcHJvcGVydHkgew0KICAgICAJdW5zaWduZWQgaW50CWlkeDsNCiAgICAg
-CXVuc2lnbmVkIGludAluZ3BpbzsNCiAgICAgCXVuc2lnbmVkIGludAlncGlvX2Jhc2U7DQogICAg
-LQl1bnNpZ25lZCBpbnQJaXJxOw0KICAgICsJaW50CQlpcnFbMzJdOw0KICAgICsJYm9vbAkJaGFz
-X2lycTsNCiAgICAgCWJvb2wJCWlycV9zaGFyZWQ7DQogICAgIH07DQoNCkFja2VkLWJ5OiBIb2Fu
-IFRyYW4gPGhvYW4udHJhbkBhbXBlcmVjb21wdXRpbmcuY29tPg0KICAgICANCiAgICAtLSANCiAg
-ICAyLjcuNA0KICAgIA0KICAgIA0KDQo=
+The new challenge is to remove VLAs from the kernel
+(see https://lkml.org/lkml/2018/3/7/621) to eventually
+turn on -Wvla.
+
+Using a kmalloc array is the easy way to fix this but kmalloc is still
+more expensive than stack allocation. Introduce a fast path with a
+fixed size stack array to cover most chip with gpios below some fixed
+amount. The slow path dynamically allocates an array to cover those
+chips with a large number of gpios.
+
+Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+v6: Introduce a config option for setting the fast path GPIOs because
+there are too many combinations to make the arch default workable. I
+went with a default of 512 in the Kconfig.
+
+Also to other points: I don't think the warning should be triggerable
+from userspace, it should only happen on probe. I also think only
+memsetting half the array is more likely to be error prone. We can
+change it if there is significant overhead.
+---
+ drivers/gpio/Kconfig          | 10 +++++
+ drivers/gpio/gpiolib.c        | 76 +++++++++++++++++++++++++++--------
+ drivers/gpio/gpiolib.h        |  2 +-
+ include/linux/gpio/consumer.h | 10 +++--
+ 4 files changed, 76 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 68d812b38be7..2855b5c5c8ca 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -22,6 +22,16 @@ menuconfig GPIOLIB
+ 
+ if GPIOLIB
+ 
++config GPIOLIB_FASTPATH_LIMIT
++	int "Maximum number of GPIOs for fast path"
++	default 512
++	help
++	   This adjusts the point at which certain APIs will switch from
++	   using a statically allocated fixed size buffer to a dynamically
++	   allocated buffer. This is a trade-off in stackspace vs. speed.
++	   You shouldn't need to change this unless you really need to
++	   optimize one of those two.
++
+ config OF_GPIO
+ 	def_bool y
+ 	depends on OF
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d66de67ef307..f7ce546796e0 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -61,6 +61,11 @@ static struct bus_type gpio_bus_type = {
+ 	.name = "gpio",
+ };
+ 
++/*
++ * Number of GPIOs to use for the fast path in set array
++ */
++#define FASTPATH_NGPIO CONFIG_GPIOLIB_FASTPATH_LIMIT
++
+ /* gpio_lock prevents conflicts during gpio_desc[] table updates.
+  * While any GPIO is requested, its gpio_chip is not removable;
+  * each GPIO's "requested" flag serves as a lock and refcount.
+@@ -399,12 +404,11 @@ static long linehandle_ioctl(struct file *filep, unsigned int cmd,
+ 			vals[i] = !!ghd.values[i];
+ 
+ 		/* Reuse the array setting function */
+-		gpiod_set_array_value_complex(false,
++		return gpiod_set_array_value_complex(false,
+ 					      true,
+ 					      lh->numdescs,
+ 					      lh->descs,
+ 					      vals);
+-		return 0;
+ 	}
+ 	return -EINVAL;
+ }
+@@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 		goto err_free_descs;
+ 	}
+ 
++	if (chip->ngpio > FASTPATH_NGPIO)
++		chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
++		chip->ngpio, FASTPATH_NGPIO);
++
+ 	gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
+ 	if (!gdev->label) {
+ 		status = -ENOMEM;
+@@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 
+ 	while (i < array_size) {
+ 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+-		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+-		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
++		unsigned long *mask, *bits;
+ 		int first, j, ret;
+ 
++		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
++			memset(fastpath, 0, sizeof(fastpath));
++			mask = fastpath;
++			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
++		} else {
++			mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
++					   sizeof(*mask),
++					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++			if (!mask)
++				return -ENOMEM;
++			bits = mask + BITS_TO_LONGS(chip->ngpio);
++		}
++
+ 		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+ 
+ 		/* collect all inputs belonging to the same chip */
+ 		first = i;
+-		memset(mask, 0, sizeof(mask));
+ 		do {
+ 			const struct gpio_desc *desc = desc_array[i];
+ 			int hwgpio = gpio_chip_hwgpio(desc);
+@@ -2682,8 +2702,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			 (desc_array[i]->gdev->chip == chip));
+ 
+ 		ret = gpio_chip_get_multiple(chip, mask, bits);
+-		if (ret)
++		if (ret) {
++			if (mask != fastpath)
++				kfree(mask);
+ 			return ret;
++		}
+ 
+ 		for (j = first; j < i; j++) {
+ 			const struct gpio_desc *desc = desc_array[j];
+@@ -2695,6 +2718,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			value_array[j] = value;
+ 			trace_gpio_value(desc_to_gpio(desc), 1, value);
+ 		}
++
++		if (mask != fastpath)
++			kfree(mask);
+ 	}
+ 	return 0;
+ }
+@@ -2878,7 +2904,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
+ 	}
+ }
+ 
+-void gpiod_set_array_value_complex(bool raw, bool can_sleep,
++int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				   unsigned int array_size,
+ 				   struct gpio_desc **desc_array,
+ 				   int *value_array)
+@@ -2887,14 +2913,26 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 
+ 	while (i < array_size) {
+ 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+-		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+-		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
++		unsigned long *mask, *bits;
+ 		int count = 0;
+ 
++		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
++			memset(fastpath, 0, sizeof(fastpath));
++			mask = fastpath;
++			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
++		} else {
++			mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
++					   sizeof(*mask),
++					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++			if (!mask)
++				return -ENOMEM;
++			bits = mask + BITS_TO_LONGS(chip->ngpio);
++		}
++
+ 		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+ 
+-		memset(mask, 0, sizeof(mask));
+ 		do {
+ 			struct gpio_desc *desc = desc_array[i];
+ 			int hwgpio = gpio_chip_hwgpio(desc);
+@@ -2925,7 +2963,11 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 		/* push collected bits to outputs */
+ 		if (count != 0)
+ 			gpio_chip_set_multiple(chip, mask, bits);
++
++		if (mask != fastpath)
++			kfree(mask);
+ 	}
++	return 0;
+ }
+ 
+ /**
+@@ -3000,13 +3042,13 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
+  * This function should be called from contexts where we cannot sleep, and will
+  * complain if the GPIO chip functions potentially sleep.
+  */
+-void gpiod_set_raw_array_value(unsigned int array_size,
++int gpiod_set_raw_array_value(unsigned int array_size,
+ 			 struct gpio_desc **desc_array, int *value_array)
+ {
+ 	if (!desc_array)
+-		return;
+-	gpiod_set_array_value_complex(true, false, array_size, desc_array,
+-				      value_array);
++		return -EINVAL;
++	return gpiod_set_array_value_complex(true, false, array_size,
++					desc_array, value_array);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
+ 
+@@ -3326,14 +3368,14 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+  *
+  * This function is to be called from contexts that can sleep.
+  */
+-void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 					struct gpio_desc **desc_array,
+ 					int *value_array)
+ {
+ 	might_sleep_if(extra_checks);
+ 	if (!desc_array)
+-		return;
+-	gpiod_set_array_value_complex(true, true, array_size, desc_array,
++		return -EINVAL;
++	return gpiod_set_array_value_complex(true, true, array_size, desc_array,
+ 				      value_array);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value_cansleep);
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index b17ec6795c81..b64813e3876e 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -188,7 +188,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 				  unsigned int array_size,
+ 				  struct gpio_desc **desc_array,
+ 				  int *value_array);
+-void gpiod_set_array_value_complex(bool raw, bool can_sleep,
++int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				   unsigned int array_size,
+ 				   struct gpio_desc **desc_array,
+ 				   int *value_array);
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index dbd065963296..243112c7fa7d 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -116,7 +116,7 @@ int gpiod_get_raw_array_value(unsigned int array_size,
+ 			      struct gpio_desc **desc_array,
+ 			      int *value_array);
+ void gpiod_set_raw_value(struct gpio_desc *desc, int value);
+-void gpiod_set_raw_array_value(unsigned int array_size,
++int gpiod_set_raw_array_value(unsigned int array_size,
+ 			       struct gpio_desc **desc_array,
+ 			       int *value_array);
+ 
+@@ -134,7 +134,7 @@ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
+ 				       struct gpio_desc **desc_array,
+ 				       int *value_array);
+ void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
+-void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 					struct gpio_desc **desc_array,
+ 					int *value_array);
+ 
+@@ -369,12 +369,13 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_raw_array_value(unsigned int array_size,
++static inline int gpiod_set_raw_array_value(unsigned int array_size,
+ 					     struct gpio_desc **desc_array,
+ 					     int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return 0;
+ }
+ 
+ static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
+@@ -423,12 +424,13 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 						struct gpio_desc **desc_array,
+ 						int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return 0;
+ }
+ 
+ static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+-- 
+2.17.0
