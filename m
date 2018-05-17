@@ -1,168 +1,65 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH v2] pinctrl: pinctrl-single: Add functions to save and restore
- pinctrl context
-Date: Thu, 17 May 2018 10:10:21 +0530
-Message-ID: <1526532021-16387-1-git-send-email-j-keerthy@ti.com>
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v7 0/3] pcal6524 extensions and fixes for pca953x driver
+Date: Thu, 17 May 2018 06:59:46 +0200
+Message-ID: <cover.1526533188.git.hns@goldelico.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: tony@atomide.com, linus.walleij@linaro.org
-Cc: t-kristo@ti.com, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, j-keerthy@ti.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: galak@codeaurora.org, andy.shevchenko@gmail.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org, kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This adds a pair of context save/restore functions to save/restore the
-state of a set of pinctrl registers. The context is lost during rtc only
-suspend with ddr in self-refresh on am43xx. Currently the save/restore
-is being done unconditionally. This will be optimized later with a
-pdata-quirk function which will allow is to save/restore only when doing
-the rtc only mode with ddr in self refresh.
+V7:
+* replace PCAL register masks by hex constants
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
+2018-05-16 19:01:29: V6:
+* added proper attribution to the formula used for fixing the
+  pcal6524 register address (changes commit message only)
+* add back missing first patch from V2 that defines the
+  PCA_LATCH_INT constant
+* removed patches already merged
 
-Changes in v2:
+2018-04-28 18:33:42: V5:
+* fix wrong split up between patches 1/7 and 2/7.
 
-  * As this is needed only the in the suspend/resume path
-    removed the cpu_pm notifier and added the save/restore in
-    the suspend/resume calls.
-  * Saving/Restoring unconditionally at the moment. This will
-    be optimized later with the help of a pdata-quirk function.
+2018-04-26 19:35:07: V4:
+* introduced PCA_LATCH_INT constant to make of_table more
+  readable (suggested by Andy Shevchenko)
+* converted all register constants to hex in a separate
+  patch (suggested by Andy Shevchenko)
+* separated additional pcal953x and pcal6524 register
+  definitions into separate patches (suggested by Andy Shevchenko)
+* made special pcal6524 address adjustment more readable
+  (suggested by Andy Shevchenko)
+* moved gpio-controller and interrupt-controller to the
+  "required" section (reviewed by Rob Herring)
 
- drivers/pinctrl/pinctrl-single.c | 72 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 71 insertions(+), 1 deletion(-)
+2018-04-10 18:07:07: V3:
+* add Reported-by: and Reviewed-by:
+* fix wording for bindings description and example
+* convert all register offsets to hex
+* omit the LEVEL-IRQ RFC/hack commit
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index a7c5eb3..9c3c005 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -144,6 +144,7 @@ struct pcs_soc_data {
-  * struct pcs_device - pinctrl device instance
-  * @res:	resources
-  * @base:	virtual address of the controller
-+ * @saved_vals: saved values for the controller
-  * @size:	size of the ioremapped area
-  * @dev:	device entry
-  * @np:		device tree node
-@@ -172,11 +173,13 @@ struct pcs_soc_data {
- struct pcs_device {
- 	struct resource *res;
- 	void __iomem *base;
-+	void *saved_vals;
- 	unsigned size;
- 	struct device *dev;
- 	struct device_node *np;
- 	struct pinctrl_dev *pctl;
- 	unsigned flags;
-+#define PCS_CONTEXT_LOSS_OFF	(1 << 3)
- #define PCS_QUIRK_SHARED_IRQ	(1 << 2)
- #define PCS_FEAT_IRQ		(1 << 1)
- #define PCS_FEAT_PINCONF	(1 << 0)
-@@ -1576,6 +1579,67 @@ static int pcs_irq_init_chained_handler(struct pcs_device *pcs,
- }
- 
- #ifdef CONFIG_PM
-+static int pcs_save_context(struct pcs_device *pcs)
-+{
-+	int i, mux_bytes;
-+	u64 *regsl;
-+	u32 *regsw;
-+	u16 *regshw;
-+
-+	mux_bytes = pcs->width / BITS_PER_BYTE;
-+
-+	if (!pcs->saved_vals)
-+		pcs->saved_vals = devm_kzalloc(pcs->dev, pcs->size, GFP_ATOMIC);
-+
-+	switch (pcs->width) {
-+	case 64:
-+		regsl = (u64 *)pcs->saved_vals;
-+		for (i = 0; i < pcs->size / mux_bytes; i++)
-+			regsl[i] = pcs->read(pcs->base + i * mux_bytes);
-+		break;
-+	case 32:
-+		regsw = (u32 *)pcs->saved_vals;
-+		for (i = 0; i < pcs->size / mux_bytes; i++)
-+			regsw[i] = pcs->read(pcs->base + i * mux_bytes);
-+		break;
-+	case 16:
-+		regshw = (u16 *)pcs->saved_vals;
-+		for (i = 0; i < pcs->size / mux_bytes; i++)
-+			regshw[i] = pcs->read(pcs->base + i * mux_bytes);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static void pcs_restore_context(struct pcs_device *pcs)
-+{
-+	int i, mux_bytes;
-+	u64 *regsl;
-+	u32 *regsw;
-+	u16 *regshw;
-+
-+	mux_bytes = pcs->width / BITS_PER_BYTE;
-+
-+	switch (pcs->width) {
-+	case 64:
-+		regsl = (u64 *)pcs->saved_vals;
-+		for (i = 0; i < pcs->size / mux_bytes; i++)
-+			pcs->write(regsl[i], pcs->base + i * mux_bytes);
-+		break;
-+	case 32:
-+		regsw = (u32 *)pcs->saved_vals;
-+		for (i = 0; i < pcs->size / mux_bytes; i++)
-+			pcs->write(regsw[i], pcs->base + i * mux_bytes);
-+		break;
-+	case 16:
-+		regshw = (u16 *)pcs->saved_vals;
-+		for (i = 0; i < pcs->size / mux_bytes; i++)
-+			pcs->write(regshw[i], pcs->base + i * mux_bytes);
-+		break;
-+	}
-+}
-+
- static int pinctrl_single_suspend(struct platform_device *pdev,
- 					pm_message_t state)
- {
-@@ -1585,6 +1649,9 @@ static int pinctrl_single_suspend(struct platform_device *pdev,
- 	if (!pcs)
- 		return -EINVAL;
- 
-+	if (pcs->flags & PCS_CONTEXT_LOSS_OFF)
-+		pcs_save_context(pcs);
-+
- 	return pinctrl_force_sleep(pcs->pctl);
- }
- 
-@@ -1596,6 +1663,9 @@ static int pinctrl_single_resume(struct platform_device *pdev)
- 	if (!pcs)
- 		return -EINVAL;
- 
-+	if (pcs->flags & PCS_CONTEXT_LOSS_OFF)
-+		pcs_restore_context(pcs);
-+
- 	return pinctrl_force_default(pcs->pctl);
- }
- #endif
-@@ -1824,7 +1894,7 @@ static int pcs_remove(struct platform_device *pdev)
- };
- 
- static const struct pcs_soc_data pinctrl_single_am437x = {
--	.flags = PCS_QUIRK_SHARED_IRQ,
-+	.flags = PCS_QUIRK_SHARED_IRQ | PCS_CONTEXT_LOSS_OFF,
- 	.irq_enable_mask = (1 << 29),   /* OMAP_WAKEUP_EN */
- 	.irq_status_mask = (1 << 30),   /* OMAP_WAKEUP_EVENT */
- };
+2018-04-04 21:00:27: V2:
+* added PCA_PCAL flags if matched through of-table
+* fix address calculation for extended PCAL6524 registers
+* hack to map LEVEL_LOW to EDGE_FALLING to be able to
+  test in combination with ts3a227e driver
+* improve description of bindings for optional vcc-supply
+  and interrupt-controller;
+
+2018-03-10 09:32:53: no initial description
+
+H. Nikolaus Schaller (3):
+  gpio: pca953x: set the PCA_PCAL flag also when matching by DT
+  gpio: pca953x: define masks for addressing common and extended
+    registers
+  gpio: pca953x: fix address calculation for pcal6524
+
+ drivers/gpio/gpio-pca953x.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
 -- 
-1.9.1
+2.12.2
