@@ -1,123 +1,107 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCHv6] gpio: Remove VLA from gpiolib
-Date: Thu, 17 May 2018 09:58:26 +0200
-Message-ID: <CAMuHMdXiopVBM+N+wYMY6JP7_sOJ2nncNkhpFq+aMc0pdfPtrQ@mail.gmail.com>
-References: <20180517000027.26639-1-labbott@redhat.com>
+From: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 4/4] ARM: PWM: add allwinner sun8i pwm support.
+Date: Thu, 17 May 2018 22:48:58 +0800
+Message-ID: <CAJeuY79ObkssY_=SLG==7xZri10P3yWFhXC3=CUVrdQ+7cBoHA@mail.gmail.com>
+References: <20180225135308.GA14561@arx-s1> <20180226090038.etk5q4pd4rl5dvf6@flea.lan>
+ <CAJeuY7-Dz1u9J8GMu=OdzJ2cJUnE3wEobJoQz6RV-ibjBjoW4A@mail.gmail.com> <20180515111711.l2g4vgsal7yr6dbr@flea>
+Reply-To: hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180517000027.26639-1-labbott@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Phil Reid <preid@electromag.com.au>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBDKITZOARQMBBW5M63LQKGQEUHUIJ7A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20180515111711.l2g4vgsal7yr6dbr@flea>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Claudiu Beznea <Claudiu.Beznea-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laura,
-
-On Thu, May 17, 2018 at 2:00 AM, Laura Abbott <labbott@redhat.com> wrote:
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621) to eventually
-> turn on -Wvla.
+2018-05-15 19:17 GMT+08:00 Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>:
+> Hi,
 >
-> Using a kmalloc array is the easy way to fix this but kmalloc is still
-> more expensive than stack allocation. Introduce a fast path with a
-> fixed size stack array to cover most chip with gpios below some fixed
-> amount. The slow path dynamically allocates an array to cover those
-> chips with a large number of gpios.
+> On Mon, May 14, 2018 at 10:45:44PM +0800, Hao Zhang wrote:
+>> 2018-02-26 17:00 GMT+08:00 Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>:
+>> > Thanks for respinning this serie. It looks mostly good, but you still
+>> > have a quite significant number of checkpatch (--strict) warnings that
+>> > you should address.
+>>
+>> Thanks for reviews :) ,i'm sorry for that, it will be fixed next
+>> time.  and, besides, in what situation were the checkpatch warning
+>> can be ignore=EF=BC=9F
 >
-> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-
-Thanks for your patch!
-
-> Also to other points: I don't think the warning should be triggerable
-> from userspace, it should only happen on probe. I also think only
-> memsetting half the array is more likely to be error prone. We can
-> change it if there is significant overhead.
-
-With the default of 512, that's a memset of 128 bytes. Not so insignificant
-on embedded 32 bit.
-
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -22,6 +22,16 @@ menuconfig GPIOLIB
+> The only one that can be reasonably be ignored is the long line
+> warning, and only if complying to the limit would make it less easy to
+> understand.
 >
->  if GPIOLIB
+>> >
+>> > On Sun, Feb 25, 2018 at 09:53:08PM +0800, hao_zhang wrote:
+>> >> +#define CAPTURE_IRQ_ENABLE_REG       0x0010
+>> >> +#define CFIE(ch)     BIT(ch << 1 + 1)
+>> >> +#define CRIE(ch)     BIT(ch << 1)
+>> >
+>> > You should also put your argument between parentheses here (and in all
+>> > your other macros).
+>>
+>> Do you mean like this ?
+>> #define CFIE(ch)     BIT((ch) << 1 + 1)
+>> #define CRIE(ch)     BIT((ch) << 1)
 >
-> +config GPIOLIB_FASTPATH_LIMIT
-> +       int "Maximum number of GPIOs for fast path"
-> +       default 512
-
-I think you need a range here.  Else someone will pick a too large value,
-causing stack overflow.
-
-512 (128 bytes for each recursion level) sounds like a safe maximum to me.
-
-> +       help
-> +          This adjusts the point at which certain APIs will switch from
-> +          using a statically allocated fixed size buffer to a dynamically
-
-The fast path doesn't use a statically allocated buffer (it cannot, due to
-recursion), but a buffer on the stack. I think you need to make that very
-clear in the help text, as this has the potential of causing random crashes.
-
-> +          allocated buffer. This is a trade-off in stackspace vs. speed.
-> +          You shouldn't need to change this unless you really need to
-> +          optimize one of those two.
-
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-
-> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->                 goto err_free_descs;
->         }
+> Yep, exactly. Otherwise, if you do something like CRIE(1 + 1), the
+> result will be BIT(1 + 1 << 1), which will expand to 3, instead of 4.
 >
-> +       if (chip->ngpio > FASTPATH_NGPIO)
-> +               chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
+> Also, CFIE looks a bit weird here, is it the offset that is
+> incremented, or the value? You should probably have parentheses to
+> make it explicit.
 
-%u (twice)
+The vallue,
+BIT(((ch) << 1) + 1) It seem not very nice...
 
-> +               chip->ngpio, FASTPATH_NGPIO);
-> +
->         gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
->         if (!gdev->label) {
->                 status = -ENOMEM;
-> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+uhmm...
+In CAPTURE_IRQ_ENABLE_REG odd number is CFIE, even number is CRIE
+each channel has one CFIE and CRIE.
+
+we can also describe like this:
+#define CFIE(ch)     BIT((ch) * 2 + 1)
+#define CRIE(ch)     BIT((ch) * 2)
+
 >
->         while (i < array_size) {
->                 struct gpio_chip *chip = desc_array[i]->gdev->chip;
-> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
-> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-> +               unsigned long *mask, *bits;
->                 int first, j, ret;
+>> >
+>> >> +static const u16 div_m_table[] =3D {
+>> >> +     1,
+>> >> +     2,
+>> >> +     4,
+>> >> +     8,
+>> >> +     16,
+>> >> +     32,
+>> >> +     64,
+>> >> +     128,
+>> >> +     256
+>> >> +};
+>> >
+>> > If this is just a power of two, you can use either the power of two /
+>> > ilog2 to switch back and forth, instead of using that table.
+>>
+>> I think using table is more explicit and extended...
 >
-> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-> +                       memset(fastpath, 0, sizeof(fastpath));
-> +                       mask = fastpath;
-> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
-> +               } else {
-> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
-> +                                          sizeof(*mask),
-> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> +                       if (!mask)
-> +                               return -ENOMEM;
-> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
-> +               }
+> If you didn't have a simple mapping between the register values and
+> the divider value, then yeah, sure. But it's not the case here.
+>
+> Thanks!
+> Maxime
+>
+> --
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
-The assignment to bits could be made common, and moved out of the if/else.
-
-Likewise for the memset, which means you would usually clear a single word
-again, instead of 128 bytes (or more).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
