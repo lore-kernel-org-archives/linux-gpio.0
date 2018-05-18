@@ -1,87 +1,65 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v4] pinctrl: msm: fix gpio-hog related boot issues
-Date: Thu, 17 May 2018 22:18:26 -0700
-Message-ID: <20180518051826.GO14924@minitux>
-References: <20180412190138.12372-1-chunkeey@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCHv7] gpio: Remove VLA from gpiolib
+Date: Fri, 18 May 2018 08:51:09 +0200
+Message-ID: <CAMuHMdU_66+NPYQpMSLhs533YVQZnDMTUMw4vZ9rJAvkHSRkNA@mail.gmail.com>
+References: <20180517223222.8468-1-labbott@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20180412190138.12372-1-chunkeey@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Christian Lamparter <chunkeey@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180517223222.8468-1-labbott@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laura Abbott <labbott@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Phil Reid <preid@electromag.com.au>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu 12 Apr 12:01 PDT 2018, Christian Lamparter wrote:
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index 0a6f7952bbb1..18511e782cbd 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -530,6 +530,7 @@
->  			reg = <0x01010000 0x300000>;
->  			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
->  			gpio-controller;
-> +			gpio-ranges = <&msmgpio 0 0 150>;
+Hi Laura,
 
-I'm still confused to why this information is in DT at all, it feels
-like an implementation detail, not a system configuration thing.
+On Fri, May 18, 2018 at 12:32 AM, Laura Abbott <labbott@redhat.com> wrote:
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+> turn on -Wvla.
+>
+> Using a kmalloc array is the easy way to fix this but kmalloc is still
+> more expensive than stack allocation. Introduce a fast path with a
+> fixed size stack array to cover most chip with gpios below some fixed
+> amount. The slow path dynamically allocates an array to cover those
+> chips with a large number of gpios.
+>
+> Reviewed-by: Phil Reid <preid@electromag.com.au>
+> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> v7: Tweaked the Kconfig text to clarify the wording. Also fixed a few
+> other comments from Geert, including the earlier suggestion to reduce
+> the zeroing since I was wrong about that.
 
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index e7abc8ba222b..ed889553f01c 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -890,11 +890,24 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
->  		return ret;
->  	}
->  
-> -	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
-> -	if (ret) {
-> -		dev_err(pctrl->dev, "Failed to add pin range\n");
-> -		gpiochip_remove(&pctrl->chip);
-> -		return ret;
-> +	/*
-> +	 * For DeviceTree-supported systems, the gpio core checks the
-> +	 * pinctrl's device node for the "gpio-ranges" property.
-> +	 * If it is present, it takes care of adding the pin ranges
-> +	 * for the driver. In this case the driver can skip ahead.
-> +	 *
-> +	 * In order to remain compatible with older, existing DeviceTree
-> +	 * files which don't set the "gpio-ranges" property or systems that
-> +	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
-> +	 */
-> +	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
-> +		ret = gpiochip_add_pin_range(&pctrl->chip,
-> +			dev_name(pctrl->dev), 0, 0, chip->ngpio);
-> +		if (ret) {
-> +			dev_err(pctrl->dev, "Failed to add pin range\n");
-> +			gpiochip_remove(&pctrl->chip);
-> +			return ret;
-> +		}
->  	}
+Thanks for the update!
 
-The patch looks good, but I would like you to split it in DT and pinctrl
-parts, to make it less likely to collide and to allow Andy to inject the
-missing change of sdm845.dtsi (which is now in linux-next) 
+With the minor nit below resolved:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -22,6 +22,18 @@ menuconfig GPIOLIB
+>
+>  if GPIOLIB
+>
+> +config GPIOLIB_FASTPATH_LIMIT
+> +       int "Maximum number of GPIOs for fast path"
+> +       range 16 512
 
-Please split it and add my
+While you can indeed fit 2 * 16 bits in a long, a lower limit of 16 doesn't
+make much sense, as you will use 2 longs (mask + bits) anyway.
+So please increase it to 32.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Gr{oetje,eeting}s,
 
-to both patches.
+                        Geert
 
-Regards,
-Bjorn
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
