@@ -1,79 +1,101 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Date: Fri, 18 May 2018 12:39:08 +0200
-Message-ID: <20180518103908.GF5312@ulmo>
-References: <20180508162607.3500-1-digetx@gmail.com>
- <20180508162607.3500-3-digetx@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
+ bindings
+Date: Fri, 18 May 2018 14:52:37 +0100
+Message-ID: <20180518135237.GQ5130@dell>
+References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
+ <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
+ <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
+ <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
+ <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
+ <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
+ <b9005dd8-8214-ceab-0f88-ff1a51b44e34@st.com>
+ <20180517063640.GK5130@dell>
+ <28c374e6-b440-f785-b371-03fe15c8bc4b@st.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z+pzSjdB7cqptWpS"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180508162607.3500-3-digetx@gmail.com>
+In-Reply-To: <28c374e6-b440-f785-b371-03fe15c8bc4b@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Fri, 18 May 2018, Amelie DELAUNAY wrote:
 
---z+pzSjdB7cqptWpS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 05/17/2018 08:36 AM, Lee Jones wrote:
+> > On Wed, 16 May 2018, Amelie DELAUNAY wrote:
+> > 
+> >>
+> >>
+> >> On 05/16/2018 04:20 PM, Linus Walleij wrote:
+> >>> On Wed, May 9, 2018 at 9:56 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
+> >>>
+> >>>> Indeed, stmfx has other functions than GPIO. But, after comments done
+> >>>> here: [1] and there: [2], it has been decided to move MFD parent/GPIO
+> >>>> child drivers into a single PINCTRL/GPIO driver because of the following
+> >>>> reasons:
+> >>>> - Other stmfx functions (IDD measurement and TouchScreen controller) are
+> >>>> not used on any of the boards using an stmfx and supported by Linux, so
+> >>>> no way to test these functions, and no need to maintain them while they
+> >>>> are not being used.
+> >>>> - But, in the case a new board will use more than GPIO function on
+> >>>> stmfx, the actual implementation allow to easily extract common init
+> >>>> part of stmfx and put it in an MFD driver.
+> >>>>
+> >>>> So I could remove gpio sub-node and put its contents in stmfx node and
+> >>>> keep single PINCTRL/GPIO driver for the time being.
+> >>>> Please advise,
+> >>>
+> >>> I would normally advice to use the right modeling from the start, create
+> >>> the MFD driver and spawn the devices from there. It is confusing
+> >>> if the layout of the driver(s) doesn't really match the layout of the
+> >>> hardware.
+> >>>
+> >>> I understand that it is a pain to write new MFD drivers to get your
+> >>> things going and it would be "nice to get this working really quick
+> >>> now" but in my experience it is better to do it right from the start.
+> >>>
+> >>
+> >> Hi Linus,
+> >>
+> >> Thanks for your advice. I understand the point.
+> >> So, the right modeling would be to:
+> >> - create an MFD driver with the common init part of stmfx
+> >> - remove all common init part of stmfx-pinctrl driver and keep only all
+> >> gpio/pinctrl functions.
+> >>
+> >> I will not develop the other stmfx functions (IDD measurement driver and
+> >> TouchScreen controller driver) because, as explained ealier, they are
+> >> not used on any of the boards using an stmfx and supported by Linux, so
+> >> no way to test these functions, and no need to maintain them while they
+> >> are not being used.
+> >>
+> >> Lee, are you OK with that ?
+> > 
+> > I missed a lot of this conversation I think, but from what I've read,
+> > it sounds fine.
+> > 
+> 
+> I summarize the situation:
+> - I still don't have an official datasheet for STMFX device which could 
+> justify the use of an MFD driver;
+> - the MFD driver will contain the STMFX chip initialization stuff such 
+> as regmap initialization (regmap structure will be shared with the 
+> child), chip initialization, global interrupt management;
+> - there will be only one child (GPIO/PINCTRL node) for the time being.
+> 
+> So, is "MFD driver + GPIO/PINCTRL driver" the right modeling, and does 
+> it still sound fine after this summary ? :)
 
-On Tue, May 08, 2018 at 07:26:04PM +0300, Dmitry Osipenko wrote:
-> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-> that main clk-controller driver could get an actual parent clock for the
-> CDEV1/2 clocks.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marc Dietrich <marvin24@gmx.de>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->=20
-> Changelog:
->=20
-> v3:
-> 	- No change.
->=20
-> v2:
-> 	- See changelog of "Restore ULPI USB on Tegra20" v2 series.
->=20
->  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
->  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
->  3 files changed, 40 insertions(+), 12 deletions(-)
+It is starting to sound like there will only ever be one child device,
+which starts to cross the line into "this is not an MFD" (M = Multi)
+territory.
 
-Linus,
-
-were you going to pick this up for v4.18? There's a runtime dependency
-on this from some clock patches that I'd like to get into v4.18.
-
-I see I never gave my Acked-by on this particular patch, so here goes:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---z+pzSjdB7cqptWpS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+rUwACgkQ3SOs138+
-s6F4Zg/+PiE7355bzPMINxgk/9Q+qcq1ME2JselWa8MQtM5FT5RcXkLY5OlkNk9+
-Nf+1BlqOI2cEzUQK7OfB0Qi/Ev0eDaEcLyVt+R41QUkd5QH5Cf+k5/7Xc1BS6E3q
-qQjPgLPk/DGBUl3Rv97Z08x6JZsTfw/Qzubz1l9l9baCIPSrpBq6ou7T2zbG/6B8
-bh7qYQlZFieFPuFQGqKw6l28mNBqV6HWTsunBSjpbLISs/LmXSKkjEQvYuUn3PIx
-HGFoMOtHBlbCQ93/kjL/6+ZjELSJhYgcJ+x4Fy6FWLMVWkUkk3/wjitzYN3ZyS/R
-MwWfhDBuT3fuaPiFQj8ZrD+B8lCiKm5rWBeao0g8fTNzSIGfXFqCC0byS8MzN+CV
-96BbSB8zRww4+TTAIRIVXIExqsBtHmQK9b/IjOIEPQ20UD3nWiIp0B9jBgWTOrUT
-wvncljX+VoZgYWAHUhZnp5ylC5KpPv8u8PyI323DICI1PkIVi4C6YYWSgUw8oIMZ
-+t1TYLeJlcPPZ0aRTjX5kda6ivwULV/lsbebKA8cMxfWm2ufb70Bqc6Gp3I+Inzz
-aVph7jGViUNZnWWt8AO9XvXDka+Otrk8YzLn6F2pjnHoL3Dk+UykUx6kDKSTDZWT
-ep17CM2hrXFXBSVbZ1mjT9rILYKfdmwf7A2X5NLbUDKL6ATD1RU=
-=Or8C
------END PGP SIGNATURE-----
-
---z+pzSjdB7cqptWpS--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
