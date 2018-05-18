@@ -1,135 +1,87 @@
-From: djw@t-chip.com.cn
-Subject: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
-Date: Fri, 18 May 2018 11:52:05 +0800
-Message-ID: <1526615528-9707-2-git-send-email-djw@t-chip.com.cn>
-References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
- <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-rockchip@lists.infradead.org
-Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v4] pinctrl: msm: fix gpio-hog related boot issues
+Date: Thu, 17 May 2018 22:18:26 -0700
+Message-ID: <20180518051826.GO14924@minitux>
+References: <20180412190138.12372-1-chunkeey@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180412190138.12372-1-chunkeey@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Christian Lamparter <chunkeey@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Brown <david.brown@linaro.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Levin Du <djw@t-chip.com.cn>
+On Thu 12 Apr 12:01 PDT 2018, Christian Lamparter wrote:
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 0a6f7952bbb1..18511e782cbd 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -530,6 +530,7 @@
+>  			reg = <0x01010000 0x300000>;
+>  			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+>  			gpio-controller;
+> +			gpio-ranges = <&msmgpio 0 0 150>;
 
-Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
-which do not belong to the general pinctrl.
+I'm still confused to why this information is in DT at all, it feels
+like an implementation detail, not a system configuration thing.
 
-Adding gpio-syscon support makes controlling regulator or
-LED using these special pins very easy by reusing existing
-drivers, such as gpio-regulator and led-gpio.
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index e7abc8ba222b..ed889553f01c 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -890,11 +890,24 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+>  		return ret;
+>  	}
+>  
+> -	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
+> -	if (ret) {
+> -		dev_err(pctrl->dev, "Failed to add pin range\n");
+> -		gpiochip_remove(&pctrl->chip);
+> -		return ret;
+> +	/*
+> +	 * For DeviceTree-supported systems, the gpio core checks the
+> +	 * pinctrl's device node for the "gpio-ranges" property.
+> +	 * If it is present, it takes care of adding the pin ranges
+> +	 * for the driver. In this case the driver can skip ahead.
+> +	 *
+> +	 * In order to remain compatible with older, existing DeviceTree
+> +	 * files which don't set the "gpio-ranges" property or systems that
+> +	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
+> +	 */
+> +	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
+> +		ret = gpiochip_add_pin_range(&pctrl->chip,
+> +			dev_name(pctrl->dev), 0, 0, chip->ngpio);
+> +		if (ret) {
+> +			dev_err(pctrl->dev, "Failed to add pin range\n");
+> +			gpiochip_remove(&pctrl->chip);
+> +			return ret;
+> +		}
+>  	}
 
-Signed-off-by: Levin Du <djw@t-chip.com.cn>
+The patch looks good, but I would like you to split it in DT and pinctrl
+parts, to make it less likely to collide and to allow Andy to inject the
+missing change of sdm845.dtsi (which is now in linux-next) 
 
----
 
-Changes in v2:
-- Rename gpio_syscon10 to gpio_mute in doc
+Please split it and add my
 
-Changes in v1:
-- Refactured for general gpio-syscon usage for Rockchip SoCs.
-- Add doc rockchip,gpio-syscon.txt
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
- .../bindings/gpio/rockchip,gpio-syscon.txt         | 41 ++++++++++++++++++++++
- drivers/gpio/gpio-syscon.c                         | 30 ++++++++++++++++
- 2 files changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+to both patches.
 
-diff --git a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
-new file mode 100644
-index 0000000..b1b2a67
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
-@@ -0,0 +1,41 @@
-+* Rockchip GPIO support for GRF_SOC_CON registers
-+
-+Required properties:
-+- compatible: Should contain "rockchip,gpio-syscon".
-+- gpio-controller: Marks the device node as a gpio controller.
-+- #gpio-cells: Should be two. The first cell is the pin number and
-+  the second cell is used to specify the gpio polarity:
-+    0 = Active high,
-+    1 = Active low.
-+- gpio,syscon-dev: Should contain <grf_phandle syscon_offset 0>.
-+  If declared as child of the grf node, the grf_phandle can be 0.
-+
-+Example:
-+
-+1. As child of grf node:
-+
-+	grf: syscon@ff100000 {
-+		compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
-+
-+		gpio_mute: gpio-mute {
-+			compatible = "rockchip,gpio-syscon";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio,syscon-dev = <0 0x0428 0>;
-+		};
-+	};
-+
-+
-+2. Not child of grf node:
-+
-+	grf: syscon@ff100000 {
-+		compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
-+		//...
-+	};
-+
-+	gpio_mute: gpio-mute {
-+		compatible = "rockchip,gpio-syscon";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio,syscon-dev = <&grf 0x0428 0>;
-+	};
-diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-index 7325b86..e24b408 100644
---- a/drivers/gpio/gpio-syscon.c
-+++ b/drivers/gpio/gpio-syscon.c
-@@ -135,6 +135,32 @@ static const struct syscon_gpio_data clps711x_mctrl_gpio = {
- 	.dat_bit_offset	= 0x40 * 8 + 8,
- };
- 
-+static void rockchip_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			      int val)
-+{
-+	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
-+	unsigned int offs;
-+	u8 bit;
-+	u32 data;
-+	int ret;
-+
-+	offs = priv->dreg_offset + priv->data->dat_bit_offset + offset;
-+	bit = offs % SYSCON_REG_BITS;
-+	data = (val ? BIT(bit) : 0) | BIT(bit + 16);
-+	ret = regmap_write(priv->syscon,
-+			   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
-+			   data);
-+	if (ret < 0)
-+		dev_err(chip->parent, "gpio write failed ret(%d)\n", ret);
-+}
-+
-+static const struct syscon_gpio_data rockchip_gpio_syscon = {
-+	/* Rockchip GRF_SOC_CON Bits 0-15 */
-+	.flags		= GPIO_SYSCON_FEAT_OUT,
-+	.bit_count	= 16,
-+	.set		= rockchip_gpio_set,
-+};
-+
- #define KEYSTONE_LOCK_BIT BIT(0)
- 
- static void keystone_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
-@@ -175,6 +201,10 @@ static const struct of_device_id syscon_gpio_ids[] = {
- 		.compatible	= "ti,keystone-dsp-gpio",
- 		.data		= &keystone_dsp_gpio,
- 	},
-+	{
-+		.compatible	= "rockchip,gpio-syscon",
-+		.data		= &rockchip_gpio_syscon,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
--- 
-2.7.4
+Regards,
+Bjorn
