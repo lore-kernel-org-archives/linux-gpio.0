@@ -1,122 +1,95 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 4/4] ARM: PWM: add allwinner sun8i pwm support.
-Date: Fri, 18 May 2018 10:15:22 +0200
-Message-ID: <20180518081522.eiwlqy2c2twc72qs@flea>
-References: <20180225135308.GA14561@arx-s1>
- <20180226090038.etk5q4pd4rl5dvf6@flea.lan>
- <CAJeuY7-Dz1u9J8GMu=OdzJ2cJUnE3wEobJoQz6RV-ibjBjoW4A@mail.gmail.com>
- <20180515111711.l2g4vgsal7yr6dbr@flea>
- <CAJeuY79ObkssY_=SLG==7xZri10P3yWFhXC3=CUVrdQ+7cBoHA@mail.gmail.com>
-Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 0/4] Restore ULPI USB on Tegra20
+Date: Fri, 18 May 2018 12:37:33 +0200
+Message-ID: <20180518103733.GE5312@ulmo>
+References: <20180508162607.3500-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tpj24l2pqvmxxz5t"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBG4X7LLQKGQEACVSIOI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+        protocol="application/pgp-signature"; boundary="PGNNI9BzQDUtgA2J"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAJeuY79ObkssY_=SLG==7xZri10P3yWFhXC3=CUVrdQ+7cBoHA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Claudiu Beznea <Claudiu.Beznea-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20180508162607.3500-1-digetx@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 
---tpj24l2pqvmxxz5t
-Content-Type: text/plain; charset="UTF-8"
+--PGNNI9BzQDUtgA2J
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 17, 2018 at 10:48:58PM +0800, Hao Zhang wrote:
-> 2018-05-15 19:17 GMT+08:00 Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>:
-> > Hi,
-> >
-> > On Mon, May 14, 2018 at 10:45:44PM +0800, Hao Zhang wrote:
-> >> 2018-02-26 17:00 GMT+08:00 Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>:
-> >> > Thanks for respinning this serie. It looks mostly good, but you stil=
-l
-> >> > have a quite significant number of checkpatch (--strict) warnings th=
-at
-> >> > you should address.
-> >>
-> >> Thanks for reviews :) ,i'm sorry for that, it will be fixed next
-> >> time.  and, besides, in what situation were the checkpatch warning
-> >> can be ignore=EF=BC=9F
-> >
-> > The only one that can be reasonably be ignored is the long line
-> > warning, and only if complying to the limit would make it less easy to
-> > understand.
-> >
-> >> >
-> >> > On Sun, Feb 25, 2018 at 09:53:08PM +0800, hao_zhang wrote:
-> >> >> +#define CAPTURE_IRQ_ENABLE_REG       0x0010
-> >> >> +#define CFIE(ch)     BIT(ch << 1 + 1)
-> >> >> +#define CRIE(ch)     BIT(ch << 1)
-> >> >
-> >> > You should also put your argument between parentheses here (and in a=
-ll
-> >> > your other macros).
-> >>
-> >> Do you mean like this ?
-> >> #define CFIE(ch)     BIT((ch) << 1 + 1)
-> >> #define CRIE(ch)     BIT((ch) << 1)
-> >
-> > Yep, exactly. Otherwise, if you do something like CRIE(1 + 1), the
-> > result will be BIT(1 + 1 << 1), which will expand to 3, instead of 4.
-> >
-> > Also, CFIE looks a bit weird here, is it the offset that is
-> > incremented, or the value? You should probably have parentheses to
-> > make it explicit.
+On Tue, May 08, 2018 at 07:26:02PM +0300, Dmitry Osipenko wrote:
+> Hello,
 >=20
-> The vallue,
-> BIT(((ch) << 1) + 1) It seem not very nice...
+> This series of patches fixes ULPI USB on Tegra20. The original problem
+> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+> with the USB for the devices that have CDEV2 being enabled by bootloader.
+> The patch got into the kernel and later Marc Dietrich found that USB
+> stopped working on the "paz00" Tegra20 board. After a bit of discussion
+> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+> driver was setting CDEV2's parent incorrectly. The parent clock is actual=
+ly
+> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provid=
+er,
+> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+> suggestion), and then setting these clock muxes as parents for the CDEV1/2
+> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CD=
+EV2
+> (aka MCLK2) is the actual clock source for "ulpi-link".
 >=20
-> uhmm...
-> In CAPTURE_IRQ_ENABLE_REG odd number is CFIE, even number is CRIE
-> each channel has one CFIE and CRIE.
+> Changelog:
 >=20
-> we can also describe like this:
-> #define CFIE(ch)     BIT((ch) * 2 + 1)
-> #define CRIE(ch)     BIT((ch) * 2)
+> v3:
+> 	- Use clk DT ID's instead of comparing clk names and make
+> 	  custom of_src_onecell_get specific to Tegra20 clk provider
+> 	  in the "Add quirk for getting CDEV1/2 clocks on Tegra20" patch
+> 	  as was suggested by Peter De Schrijver for v2.
+>=20
+> v2:
+> 	- Added new patch "Add quirk for getting CDEV1/2 clocks", assuring
+> 	  that clk user won't get CDEV1/2 clocks until parent clk muxes
+> 	  are available, i.e. resolves potential issue with CDEV-user driver
+> 	  vs pinctrl driver probe order.
+>=20
+> 	- Factored out "pinctrl" patch from the patchset as was requested by
+> 	  Linus Walleij.
+>=20
+> 	- Addressed v1 review comments: fixed swapped DEV1/2 clk div bits,
+> 	  made DEV1/2 divs read-only, etc minor changes.
+>=20
+> Dmitry Osipenko (4):
+>   clk: tegra20: Add DEV1/DEV2 OSC dividers
+>   clk: tegra20: Correct parents of CDEV1/2 clocks
+>   clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
+>   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
 
-That works for me.
+Patches 1-3 applied, thanks.
 
-Maxime
+Thierry
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
-
---tpj24l2pqvmxxz5t
+--PGNNI9BzQDUtgA2J
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr+i5kACgkQ0rTAlCFN
-r3TAQQ/+LQG/hSPZpDRYqeSWNaIQwLG2uiGt/6GGDsa5UJn/YaPkWZ2TgsZ9nUZb
-fuqujyDzT/PKs5e8LcXlm1pVyILaKnVGW8zQsjIpG1mYkFJ16UAt7uLYxWAvHaoZ
-G9OdXBr+hpnpjbQNW2TXLyTE/H9BcjDlJ9mvOQsgrOnVZYzvi9qlpkk7GKzSTwCR
-k+StqmdoqfdGaQ/xmaNdRjYaDLi2YB1fEOPPvZYc3gSmEz6QhQFKy41LIw4eW232
-lYmutv/S2EdaajimkLRENJsfL+BZZF41VQlKrgFPzZGMjv0Tx05hqheBJK3SID9P
-z9Y65fbsqj4r+HKa7UyEV3NI+gr5UVhVB/OFCaelsE6P1Zl0gTqUXyxXHS5UyXvV
-lga7bGPDGlEtfr6g8oOPrPKUusipmyncGeZbo2GuU2k2lc0uApNTGdAjtnlNhp+G
-QiUYoQHnPJSltAsdLD4rUNyc6qISVvEGxbqvkTdSCJ2Qgtxd+fHmMNiHmMtyd9aw
-fv12TzUFjRR2ISnZHkYYQjjUBMSmvpD7DEn6xLPV9+7ZfvzCBGNNl6cen7qd590j
-vMmalYbEySaU7aS6hL4cv80ET4lfqIiqQvWXu6TO+cX+2ubkf1b8i5xyZ2n6rnxp
-4NJX1XjwH1rBj0ozeWYqGYEL3a09kpnLshL6AumloS1rX3fNUO0=
-=p0B0
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+rO0ACgkQ3SOs138+
+s6H60RAAiCLfvdhXE4xAETzkyCF5yZp9N2b/3dMIC6gxAhvXoHZqS7Ko7cgEfJL0
+o+KxTf71EdOvIOZxNNvvLI/kiZBBrqdezvVUw0JkjTdrU2cRq1RPIC61Rvcpaq9F
+Mz0pURAsunOr5GxysB710BqFU6IyYWMctOpiyRLZc0o4W6UuMagSEvG0savopXMD
+MdWvEEmBA22TT4k1RtmB4vFgaCTya8pZYy0+Zq6DdcYUBNCT/tNazpFGjZ9Na4aM
+AfBwCb64Hp1YtAEhg6dAODjy6c0cetFeE2W/8mIb44+RqFjlu/wtDwpS4Uf8BYA6
+z7TUBWdfDD/HIbkdqh/rRCNu0vsNo36GpWGb0NqUWrNvkUfyyn42VLUHK3dd0LQM
+omnVup0NIsdk6Tfi+N0iMe4qVLNP4JbW6FPvr0+wpphee8TygPVJ2H7Ijk5qjG30
+5N165HgODS0Rr9KrjM5p1iqUVBpOx1AHxmTKazYPi5QI8OTAv9DWN3FWmZr9x50E
+XlVqJA05H7m078yy0mACNwmXvumzPaYRWwt498cxiLTUHQ4tBG9jyKx5AxSpSzog
+L3q+HKx70CPhBa/Ym31In2m9Zf94DIhwmGPz+8vP5fGLfJc1xKDASy+YybUTU+NS
+tlvQ8VSCePRcJv9EkBeUNqYDS/mNGABgiWgMhjSp1oo1CDuu8XY=
+=+hZo
 -----END PGP SIGNATURE-----
 
---tpj24l2pqvmxxz5t--
+--PGNNI9BzQDUtgA2J--
