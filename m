@@ -1,57 +1,77 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] pinctrl: samsung: Stuff for v4.18
-Date: Sat, 19 May 2018 17:55:47 +0200
-Message-ID: <20180519155547.6678-1-krzk@kernel.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v7 0/3] pcal6524 extensions and fixes for pca953x driver
+Date: Sat, 19 May 2018 21:58:47 +0300
+Message-ID: <CAHp75VeEy_t-jKuTb6sgONw0Mx=iLjdgsS_wJmz88X30652hUg@mail.gmail.com>
+References: <cover.1526533188.git.hns@goldelico.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1526533188.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Thu, May 17, 2018 at 7:59 AM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> V7:
+> * replace PCAL register masks by hex constants
+>
 
-Few patches for next cycle.
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Best regards,
-Krzysztof
+> 2018-05-16 19:01:29: V6:
+> * added proper attribution to the formula used for fixing the
+>   pcal6524 register address (changes commit message only)
+> * add back missing first patch from V2 that defines the
+>   PCA_LATCH_INT constant
+> * removed patches already merged
+>
+> 2018-04-28 18:33:42: V5:
+> * fix wrong split up between patches 1/7 and 2/7.
+>
+> 2018-04-26 19:35:07: V4:
+> * introduced PCA_LATCH_INT constant to make of_table more
+>   readable (suggested by Andy Shevchenko)
+> * converted all register constants to hex in a separate
+>   patch (suggested by Andy Shevchenko)
+> * separated additional pcal953x and pcal6524 register
+>   definitions into separate patches (suggested by Andy Shevchenko)
+> * made special pcal6524 address adjustment more readable
+>   (suggested by Andy Shevchenko)
+> * moved gpio-controller and interrupt-controller to the
+>   "required" section (reviewed by Rob Herring)
+>
+> 2018-04-10 18:07:07: V3:
+> * add Reported-by: and Reviewed-by:
+> * fix wording for bindings description and example
+> * convert all register offsets to hex
+> * omit the LEVEL-IRQ RFC/hack commit
+>
+> 2018-04-04 21:00:27: V2:
+> * added PCA_PCAL flags if matched through of-table
+> * fix address calculation for extended PCAL6524 registers
+> * hack to map LEVEL_LOW to EDGE_FALLING to be able to
+>   test in combination with ts3a227e driver
+> * improve description of bindings for optional vcc-supply
+>   and interrupt-controller;
+>
+> 2018-03-10 09:32:53: no initial description
+>
+> H. Nikolaus Schaller (3):
+>   gpio: pca953x: set the PCA_PCAL flag also when matching by DT
+>   gpio: pca953x: define masks for addressing common and extended
+>     registers
+>   gpio: pca953x: fix address calculation for pcal6524
+>
+>  drivers/gpio/gpio-pca953x.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+>
+> --
+> 2.12.2
+>
 
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.18
-
-for you to fetch changes up to 0ca0557e3727951bdc44ea47bc6135b37f90338c:
-
-  pinctrl: samsung: Remove support for Exynos5440 (2018-05-02 19:08:55 +0200)
-
-----------------------------------------------------------------
-Samsung pinctrl drivers changes for v4.18
-
-1. Driver expects specific order of GPIO interrupt banks.  For S5Pv220
-   and Exynos5410 this order was not preserved so fix and document it.
-2. Remove support for Exynos5440 (tree-wide, support is dropped because
-   there are no real users of this platform, it also did not get testing
-   since long time).
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      pinctrl: samsung: Remove support for Exynos5440
-
-Paweł Chmiel (2):
-      pinctrl: samsung: Correct EINTG banks order
-      pinctrl: samsung: Document required order of banks
-
- drivers/pinctrl/samsung/Kconfig                |   10 +-
- drivers/pinctrl/samsung/Makefile               |    1 -
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c   |   30 +-
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |   20 +
- drivers/pinctrl/samsung/pinctrl-exynos5440.c   | 1005 ------------------------
- 5 files changed, 50 insertions(+), 1016 deletions(-)
- delete mode 100644 drivers/pinctrl/samsung/pinctrl-exynos5440.c
+-- 
+With Best Regards,
+Andy Shevchenko
