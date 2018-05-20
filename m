@@ -1,77 +1,56 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v7 0/3] pcal6524 extensions and fixes for pca953x driver
-Date: Sat, 19 May 2018 21:58:47 +0300
-Message-ID: <CAHp75VeEy_t-jKuTb6sgONw0Mx=iLjdgsS_wJmz88X30652hUg@mail.gmail.com>
-References: <cover.1526533188.git.hns@goldelico.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 0/5] Add gpio support for Action Semi S900 SoC
+Date: Sun, 20 May 2018 10:47:31 +0530
+Message-ID: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1526533188.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 17, 2018 at 7:59 AM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> V7:
-> * replace PCAL register masks by hex constants
->
+This patchset adds gpio support for Actions Semi S900 SoC by extending
+the pinctrl driver. There were previous patches submitted for adding a
+standalone gpio driver based on gpiolib. But later on it has been realised
+that the gpio functionality is closely tied with pinctrl subsystem for this
+OWL family processors. So, having a separate gpio driver will make it hard
+to add further functionalities in future. Hence, we decided to drop the
+previous patches below adding a standalone gpio support:
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
+arm64: dts: actions: Add S900 gpio nodes
+arm64: dts: actions: Add gpio line names to Bubblegum-96 board
+gpio: Add gpio driver for Actions OWL S900 SoC
+MAINTAINERS: Add Actions Semi S900 pinctrl and gpio entries
 
-> 2018-05-16 19:01:29: V6:
-> * added proper attribution to the formula used for fixing the
->   pcal6524 register address (changes commit message only)
-> * add back missing first patch from V2 that defines the
->   PCA_LATCH_INT constant
-> * removed patches already merged
->
-> 2018-04-28 18:33:42: V5:
-> * fix wrong split up between patches 1/7 and 2/7.
->
-> 2018-04-26 19:35:07: V4:
-> * introduced PCA_LATCH_INT constant to make of_table more
->   readable (suggested by Andy Shevchenko)
-> * converted all register constants to hex in a separate
->   patch (suggested by Andy Shevchenko)
-> * separated additional pcal953x and pcal6524 register
->   definitions into separate patches (suggested by Andy Shevchenko)
-> * made special pcal6524 address adjustment more readable
->   (suggested by Andy Shevchenko)
-> * moved gpio-controller and interrupt-controller to the
->   "required" section (reviewed by Rob Herring)
->
-> 2018-04-10 18:07:07: V3:
-> * add Reported-by: and Reviewed-by:
-> * fix wording for bindings description and example
-> * convert all register offsets to hex
-> * omit the LEVEL-IRQ RFC/hack commit
->
-> 2018-04-04 21:00:27: V2:
-> * added PCA_PCAL flags if matched through of-table
-> * fix address calculation for extended PCAL6524 registers
-> * hack to map LEVEL_LOW to EDGE_FALLING to be able to
->   test in combination with ts3a227e driver
-> * improve description of bindings for optional vcc-supply
->   and interrupt-controller;
->
-> 2018-03-10 09:32:53: no initial description
->
-> H. Nikolaus Schaller (3):
->   gpio: pca953x: set the PCA_PCAL flag also when matching by DT
->   gpio: pca953x: define masks for addressing common and extended
->     registers
->   gpio: pca953x: fix address calculation for pcal6524
->
->  drivers/gpio/gpio-pca953x.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
->
-> --
-> 2.12.2
->
+This patchset consits of incremental patches which will apply with the
+previous pinctrl series: Add Actions Semi S900 pinctrl and gpio support,
+excluding the dropped patches mentioned above.
 
+Thanks,
+Mani
 
+Changes in v2:
+
+* Removed gpiochip_add_pin_range() function and added gpio-ranges property
+  in DT.
+* Added Reviewed-by tag from Andy.
+
+Manivannan Sadhasivam (5):
+  dt-bindings: pinctrl: Add gpio bindings for Actions S900 SoC
+  arm64: dts: actions: Add gpio properties to pinctrl node for S900
+  arm64: dts: actions: Add gpio line names to Bubblegum-96 board
+  pinctrl: actions: Add gpio support for Actions S900 SoC
+  MAINTAINERS: Add Actions Semi S900 pinctrl entries
+
+ .../bindings/pinctrl/actions,s900-pinctrl.txt      |  16 ++
+ MAINTAINERS                                        |   2 +
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  | 175 ++++++++++++++++++
+ arch/arm64/boot/dts/actions/s900.dtsi              |   3 +
+ drivers/pinctrl/actions/Kconfig                    |   1 +
+ drivers/pinctrl/actions/pinctrl-owl.c              | 198 +++++++++++++++++++++
+ drivers/pinctrl/actions/pinctrl-owl.h              |  20 +++
+ drivers/pinctrl/actions/pinctrl-s900.c             |  29 ++-
+ 8 files changed, 443 insertions(+), 1 deletion(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.14.1
