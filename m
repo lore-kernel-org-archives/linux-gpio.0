@@ -1,38 +1,103 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 5/5] MAINTAINERS: Add Actions Semi S900 pinctrl entries
-Date: Sun, 20 May 2018 10:47:36 +0530
-Message-ID: <20180520051736.4842-6-manivannan.sadhasivam@linaro.org>
-References: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
+From: <sean.wang@mediatek.com>
+Subject: [PATCH v1 5/7] pinctrl: mediatek: remove unused fields in struct mtk_eint_hw
+Date: Mon, 21 May 2018 01:01:51 +0800
+Message-ID: <72462fb7aab16463a42066998ac3b4bf35ada416.1526835466.git.sean.wang@mediatek.com>
+References: <cover.1526835466.git.sean.wang@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <cover.1526835466.git.sean.wang@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, matthias.bgg@gmail.com, devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Add S900 pinctrl entries under ARCH_ACTIONS
+From: Sean Wang <sean.wang@mediatek.com>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+The .name field has been not being used in existent code logic, so
+it's better that we remove them all.
+
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/mediatek/mtk-eint.h       | 1 -
+ drivers/pinctrl/mediatek/pinctrl-mt2701.c | 1 -
+ drivers/pinctrl/mediatek/pinctrl-mt2712.c | 1 -
+ drivers/pinctrl/mediatek/pinctrl-mt8127.c | 1 -
+ drivers/pinctrl/mediatek/pinctrl-mt8135.c | 1 -
+ drivers/pinctrl/mediatek/pinctrl-mt8173.c | 1 -
+ 6 files changed, 6 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 640dabc4c311..9e1a17c9b4a7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1125,10 +1125,12 @@ F:	arch/arm/mach-actions/
- F:	arch/arm/boot/dts/owl-*
- F:	arch/arm64/boot/dts/actions/
- F:	drivers/clocksource/owl-*
-+F:	drivers/pinctrl/actions/*
- F:	drivers/soc/actions/
- F:	include/dt-bindings/power/owl-*
- F:	include/linux/soc/actions/
- F:	Documentation/devicetree/bindings/arm/actions.txt
-+F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
- F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
- F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
+index 55b4d5f..c286a9b 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.h
++++ b/drivers/pinctrl/mediatek/mtk-eint.h
+@@ -33,7 +33,6 @@ struct mtk_eint_regs {
+ };
  
+ struct mtk_eint_hw {
+-	const char	*name;
+ 	u8		port_mask;
+ 	u8		ports;
+ 	unsigned int	ap_num;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt2701.c b/drivers/pinctrl/mediatek/pinctrl-mt2701.c
+index db22250..e91c314 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt2701.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt2701.c
+@@ -532,7 +532,6 @@ static const struct mtk_pinctrl_devdata mt2701_pinctrl_data = {
+ 	.port_mask = 0x1f,
+ 	.port_align = 4,
+ 	.eint_hw = {
+-		.name = "mt2701_eint",
+ 		.port_mask = 6,
+ 		.ports     = 6,
+ 		.ap_num    = 169,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt2712.c b/drivers/pinctrl/mediatek/pinctrl-mt2712.c
+index 6e2acef..8398d55 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt2712.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt2712.c
+@@ -577,7 +577,6 @@ static const struct mtk_pinctrl_devdata mt2712_pinctrl_data = {
+ 	.port_mask = 0xf,
+ 	.port_align = 4,
+ 	.eint_hw = {
+-		.name = "mt2712_eint",
+ 		.port_mask = 0xf,
+ 		.ports     = 8,
+ 		.ap_num    = 229,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8127.c b/drivers/pinctrl/mediatek/pinctrl-mt8127.c
+index 949a235..2e4cc92 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt8127.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt8127.c
+@@ -301,7 +301,6 @@ static const struct mtk_pinctrl_devdata mt8127_pinctrl_data = {
+ 	.port_mask = 0xf,
+ 	.port_align = 4,
+ 	.eint_hw = {
+-		.name = "mt8127_eint",
+ 		.port_mask = 7,
+ 		.ports     = 6,
+ 		.ap_num    = 143,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8135.c b/drivers/pinctrl/mediatek/pinctrl-mt8135.c
+index 974a1f43..7f5edfa 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt8135.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt8135.c
+@@ -314,7 +314,6 @@ static const struct mtk_pinctrl_devdata mt8135_pinctrl_data = {
+ 	.port_mask = 0xf,
+ 	.port_align = 4,
+ 	.eint_hw = {
+-		.name = "mt8135_eint",
+ 		.port_mask = 7,
+ 		.ports     = 6,
+ 		.ap_num    = 192,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+index a836cee3..c449c9a 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+@@ -341,7 +341,6 @@ static const struct mtk_pinctrl_devdata mt8173_pinctrl_data = {
+ 	.port_mask = 0xf,
+ 	.port_align = 4,
+ 	.eint_hw = {
+-		.name = "mt8173_eint",
+ 		.port_mask = 7,
+ 		.ports     = 6,
+ 		.ap_num    = 224,
 -- 
-2.14.1
+2.7.4
