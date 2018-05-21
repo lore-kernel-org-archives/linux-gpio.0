@@ -1,324 +1,230 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCHv9] gpio: Remove VLA from gpiolib
-Date: Mon, 21 May 2018 23:34:26 +0300
-Message-ID: <CAHp75VcQNS694ZD1iQpMSNruNU=vT_p+SXcepC_noRW8TKUzcA@mail.gmail.com>
-References: <20180521175707.6653-1-labbott@redhat.com>
+From: Christian Lamparter <chunkeey@gmail.com>
+Subject: [PATCH v5 3/4] ARM: dts: qcom: add gpio-ranges property
+Date: Mon, 21 May 2018 22:57:38 +0200
+Message-ID: <0ae3376606a89bcdf3fe753a5c967f7103699e09.1526935804.git.chunkeey@gmail.com>
+References: <910e5a85a6a8020069996e2ff397c93e9c5fe18c.1526935804.git.chunkeey@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180521175707.6653-1-labbott@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Phil Reid <preid@electromag.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <910e5a85a6a8020069996e2ff397c93e9c5fe18c.1526935804.git.chunkeey@gmail.com>
+In-Reply-To: <270904bcbf03a6b6ac3150f4a7daa15aa7e97586.1526935804.git.chunkeey@gmail.com>
+References: <910e5a85a6a8020069996e2ff397c93e9c5fe18c.1526935804.git.chunkeey@gmail.com>
+ <270904bcbf03a6b6ac3150f4a7daa15aa7e97586.1526935804.git.chunkeey@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 21, 2018 at 8:57 PM, Laura Abbott <labbott@redhat.com> wrote:
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621) to eventually
-> turn on -Wvla.
->
-> Using a kmalloc array is the easy way to fix this but kmalloc is still
-> more expensive than stack allocation. Introduce a fast path with a
-> fixed size stack array to cover most chip with gpios below some fixed
-> amount. The slow path dynamically allocates an array to cover those
-> chips with a large number of gpios.
->
+This patch adds the gpio-ranges property to almost all of
+the Qualcomm ARM platforms that utilize the pinctrl-msm
+framework.
 
-LGTM
+The gpio-ranges property is part of the gpiolib subsystem.
+As a result, the binding text is available in section
+"2.1 gpio- and pin-controller interaction" of
+Documentation/devicetree/bindings/gpio/gpio.txt
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+For more information please see the patch titled:
+"pinctrl: msm: fix gpio-hog related boot issues" from
+this series.
 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Phil Reid <preid@electromag.com.au>
-> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v9: switch to bitmap_zero
-> ---
->  drivers/gpio/Kconfig          | 12 ++++++
->  drivers/gpio/gpiolib.c        | 76 +++++++++++++++++++++++++++--------
->  drivers/gpio/gpiolib.h        |  2 +-
->  include/linux/gpio/consumer.h | 10 +++--
->  4 files changed, 78 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index b960f6f35abd..71c0ab46f216 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -22,6 +22,18 @@ menuconfig GPIOLIB
->
->  if GPIOLIB
->
-> +config GPIOLIB_FASTPATH_LIMIT
-> +       int "Maximum number of GPIOs for fast path"
-> +       range 32 512
-> +       default 512
-> +       help
-> +          This adjusts the point at which certain APIs will switch from
-> +          using a stack allocated buffer to a dynamically allocated buffer.
-> +
-> +          You shouldn't need to change this unless you really need to
-> +          optimize either stack space or performance. Change this carefully
-> +          since setting an incorrect value could cause stack corruption.
-> +
->  config OF_GPIO
->         def_bool y
->         depends on OF
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index d8ccb500872f..982f19d62496 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -61,6 +61,11 @@ static struct bus_type gpio_bus_type = {
->         .name = "gpio",
->  };
->
-> +/*
-> + * Number of GPIOs to use for the fast path in set array
-> + */
-> +#define FASTPATH_NGPIO CONFIG_GPIOLIB_FASTPATH_LIMIT
-> +
->  /* gpio_lock prevents conflicts during gpio_desc[] table updates.
->   * While any GPIO is requested, its gpio_chip is not removable;
->   * each GPIO's "requested" flag serves as a lock and refcount.
-> @@ -450,12 +455,11 @@ static long linehandle_ioctl(struct file *filep, unsigned int cmd,
->                         vals[i] = !!ghd.values[i];
->
->                 /* Reuse the array setting function */
-> -               gpiod_set_array_value_complex(false,
-> +               return gpiod_set_array_value_complex(false,
->                                               true,
->                                               lh->numdescs,
->                                               lh->descs,
->                                               vals);
-> -               return 0;
->         }
->         return -EINVAL;
->  }
-> @@ -1244,6 +1248,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->                 goto err_free_descs;
->         }
->
-> +       if (chip->ngpio > FASTPATH_NGPIO)
-> +               chip_warn(chip, "line cnt %u is greater than fast path cnt %u\n",
-> +               chip->ngpio, FASTPATH_NGPIO);
-> +
->         gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
->         if (!gdev->label) {
->                 status = -ENOMEM;
-> @@ -2719,16 +2727,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->
->         while (i < array_size) {
->                 struct gpio_chip *chip = desc_array[i]->gdev->chip;
-> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
-> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-> +               unsigned long *mask, *bits;
->                 int first, j, ret;
->
-> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-> +                       mask = fastpath;
-> +               } else {
-> +                       mask = kmalloc_array(2 * BITS_TO_LONGS(chip->ngpio),
-> +                                          sizeof(*mask),
-> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> +                       if (!mask)
-> +                               return -ENOMEM;
-> +               }
-> +
-> +               bits = mask + BITS_TO_LONGS(chip->ngpio);
-> +               bitmap_zero(mask, chip->ngpio);
-> +
->                 if (!can_sleep)
->                         WARN_ON(chip->can_sleep);
->
->                 /* collect all inputs belonging to the same chip */
->                 first = i;
-> -               memset(mask, 0, sizeof(mask));
->                 do {
->                         const struct gpio_desc *desc = desc_array[i];
->                         int hwgpio = gpio_chip_hwgpio(desc);
-> @@ -2739,8 +2759,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->                          (desc_array[i]->gdev->chip == chip));
->
->                 ret = gpio_chip_get_multiple(chip, mask, bits);
-> -               if (ret)
-> +               if (ret) {
-> +                       if (mask != fastpath)
-> +                               kfree(mask);
->                         return ret;
-> +               }
->
->                 for (j = first; j < i; j++) {
->                         const struct gpio_desc *desc = desc_array[j];
-> @@ -2752,6 +2775,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->                         value_array[j] = value;
->                         trace_gpio_value(desc_to_gpio(desc), 1, value);
->                 }
-> +
-> +               if (mask != fastpath)
-> +                       kfree(mask);
->         }
->         return 0;
->  }
-> @@ -2935,7 +2961,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
->         }
->  }
->
-> -void gpiod_set_array_value_complex(bool raw, bool can_sleep,
-> +int gpiod_set_array_value_complex(bool raw, bool can_sleep,
->                                    unsigned int array_size,
->                                    struct gpio_desc **desc_array,
->                                    int *value_array)
-> @@ -2944,14 +2970,26 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
->
->         while (i < array_size) {
->                 struct gpio_chip *chip = desc_array[i]->gdev->chip;
-> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
-> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-> +               unsigned long *mask, *bits;
->                 int count = 0;
->
-> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
-> +                       mask = fastpath;
-> +               } else {
-> +                       mask = kmalloc_array(2 * BITS_TO_LONGS(chip->ngpio),
-> +                                          sizeof(*mask),
-> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
-> +                       if (!mask)
-> +                               return -ENOMEM;
-> +               }
-> +
-> +               bits = mask + BITS_TO_LONGS(chip->ngpio);
-> +               bitmap_zero(mask, chip->ngpio);
-> +
->                 if (!can_sleep)
->                         WARN_ON(chip->can_sleep);
->
-> -               memset(mask, 0, sizeof(mask));
->                 do {
->                         struct gpio_desc *desc = desc_array[i];
->                         int hwgpio = gpio_chip_hwgpio(desc);
-> @@ -2982,7 +3020,11 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
->                 /* push collected bits to outputs */
->                 if (count != 0)
->                         gpio_chip_set_multiple(chip, mask, bits);
-> +
-> +               if (mask != fastpath)
-> +                       kfree(mask);
->         }
-> +       return 0;
->  }
->
->  /**
-> @@ -3057,13 +3099,13 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
->   * This function should be called from contexts where we cannot sleep, and will
->   * complain if the GPIO chip functions potentially sleep.
->   */
-> -void gpiod_set_raw_array_value(unsigned int array_size,
-> +int gpiod_set_raw_array_value(unsigned int array_size,
->                          struct gpio_desc **desc_array, int *value_array)
->  {
->         if (!desc_array)
-> -               return;
-> -       gpiod_set_array_value_complex(true, false, array_size, desc_array,
-> -                                     value_array);
-> +               return -EINVAL;
-> +       return gpiod_set_array_value_complex(true, false, array_size,
-> +                                       desc_array, value_array);
->  }
->  EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
->
-> @@ -3383,14 +3425,14 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
->   *
->   * This function is to be called from contexts that can sleep.
->   */
-> -void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-> +int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
->                                         struct gpio_desc **desc_array,
->                                         int *value_array)
->  {
->         might_sleep_if(extra_checks);
->         if (!desc_array)
-> -               return;
-> -       gpiod_set_array_value_complex(true, true, array_size, desc_array,
-> +               return -EINVAL;
-> +       return gpiod_set_array_value_complex(true, true, array_size, desc_array,
->                                       value_array);
->  }
->  EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value_cansleep);
-> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> index ad456b6f9d8b..1a8e20363861 100644
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@ -188,7 +188,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
->                                   unsigned int array_size,
->                                   struct gpio_desc **desc_array,
->                                   int *value_array);
-> -void gpiod_set_array_value_complex(bool raw, bool can_sleep,
-> +int gpiod_set_array_value_complex(bool raw, bool can_sleep,
->                                    unsigned int array_size,
->                                    struct gpio_desc **desc_array,
->                                    int *value_array);
-> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-> index dbd065963296..243112c7fa7d 100644
-> --- a/include/linux/gpio/consumer.h
-> +++ b/include/linux/gpio/consumer.h
-> @@ -116,7 +116,7 @@ int gpiod_get_raw_array_value(unsigned int array_size,
->                               struct gpio_desc **desc_array,
->                               int *value_array);
->  void gpiod_set_raw_value(struct gpio_desc *desc, int value);
-> -void gpiod_set_raw_array_value(unsigned int array_size,
-> +int gpiod_set_raw_array_value(unsigned int array_size,
->                                struct gpio_desc **desc_array,
->                                int *value_array);
->
-> @@ -134,7 +134,7 @@ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
->                                        struct gpio_desc **desc_array,
->                                        int *value_array);
->  void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
-> -void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-> +int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
->                                         struct gpio_desc **desc_array,
->                                         int *value_array);
->
-> @@ -369,12 +369,13 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
->         /* GPIO can never have been requested */
->         WARN_ON(1);
->  }
-> -static inline void gpiod_set_raw_array_value(unsigned int array_size,
-> +static inline int gpiod_set_raw_array_value(unsigned int array_size,
->                                              struct gpio_desc **desc_array,
->                                              int *value_array)
->  {
->         /* GPIO can never have been requested */
->         WARN_ON(1);
-> +       return 0;
->  }
->
->  static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
-> @@ -423,12 +424,13 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
->         /* GPIO can never have been requested */
->         WARN_ON(1);
->  }
-> -static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-> +static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
->                                                 struct gpio_desc **desc_array,
->                                                 int *value_array)
->  {
->         /* GPIO can never have been requested */
->         WARN_ON(1);
-> +       return 0;
->  }
->
->  static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
-> --
-> 2.17.0
->
+Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Tested-by: Sven Eckelmann <sven.eckelmann@openmesh.com> [ipq4019]
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
 
+---
+To help with git bisect, the DT update patch has been intentionally
+placed after the "pinctrl: msm: fix gpio-hog related boot issues".
+Otherwise - if the order was reveresed - and bisect decides to split
+between these two patches, the gpiochip_add_pin_ranges() function
+will be executed twice with the same parameters for the same pinctrl.
+---
+ arch/arm/boot/dts/qcom-apq8064.dtsi   | 1 +
+ arch/arm/boot/dts/qcom-apq8084.dtsi   | 1 +
+ arch/arm/boot/dts/qcom-ipq4019.dtsi   | 1 +
+ arch/arm/boot/dts/qcom-ipq8064.dtsi   | 1 +
+ arch/arm/boot/dts/qcom-mdm9615.dtsi   | 1 +
+ arch/arm/boot/dts/qcom-msm8660.dtsi   | 1 +
+ arch/arm/boot/dts/qcom-msm8960.dtsi   | 1 +
+ arch/arm/boot/dts/qcom-msm8974.dtsi   | 1 +
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi | 3 ++-
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 1 +
+ arch/arm64/boot/dts/qcom/msm8992.dtsi | 1 +
+ arch/arm64/boot/dts/qcom/msm8994.dtsi | 1 +
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 1 +
+ 13 files changed, 14 insertions(+), 1 deletion(-)
 
-
+diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+index 5341a39c0392..4001eeb52f20 100644
+--- a/arch/arm/boot/dts/qcom-apq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+@@ -344,6 +344,7 @@
+ 			reg = <0x800000 0x4000>;
+ 
+ 			gpio-controller;
++			gpio-ranges = <&tlmm_pinmux 0 0 90>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
+index 0e1e98707e3f..d9481d083802 100644
+--- a/arch/arm/boot/dts/qcom-apq8084.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
+@@ -396,6 +396,7 @@
+ 			compatible = "qcom,apq8084-pinctrl";
+ 			reg = <0xfd510000 0x4000>;
+ 			gpio-controller;
++			gpio-ranges = <&tlmm 0 0 147>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+index 10d112a4078e..9a81d2da87a0 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -146,6 +146,7 @@
+ 			compatible = "qcom,ipq4019-pinctrl";
+ 			reg = <0x01000000 0x300000>;
+ 			gpio-controller;
++			gpio-ranges = <&tlmm 0 0 100>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+index 1e0a3b446f7a..26eab9a68d90 100644
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -108,6 +108,7 @@
+ 			reg = <0x800000 0x4000>;
+ 
+ 			gpio-controller;
++			gpio-ranges = <&qcom_pinmux 0 0 69>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+diff --git a/arch/arm/boot/dts/qcom-mdm9615.dtsi b/arch/arm/boot/dts/qcom-mdm9615.dtsi
+index c852b69229c9..cfdaca5f259a 100644
+--- a/arch/arm/boot/dts/qcom-mdm9615.dtsi
++++ b/arch/arm/boot/dts/qcom-mdm9615.dtsi
+@@ -128,6 +128,7 @@
+ 		msmgpio: pinctrl@800000 {
+ 			compatible = "qcom,mdm9615-pinctrl";
+ 			gpio-controller;
++			gpio-ranges = <&msmgpio 0 0 88>;
+ 			#gpio-cells = <2>;
+ 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-controller;
+diff --git a/arch/arm/boot/dts/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom-msm8660.dtsi
+index 33030f9419fe..47cf9c4ca062 100644
+--- a/arch/arm/boot/dts/qcom-msm8660.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8660.dtsi
+@@ -110,6 +110,7 @@
+ 			reg = <0x800000 0x4000>;
+ 
+ 			gpio-controller;
++			gpio-ranges = <&tlmm 0 0 173>;
+ 			#gpio-cells = <2>;
+ 			interrupts = <0 16 0x4>;
+ 			interrupt-controller;
+diff --git a/arch/arm/boot/dts/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom-msm8960.dtsi
+index 1733d8f40ab1..f6d8b1af5a8a 100644
+--- a/arch/arm/boot/dts/qcom-msm8960.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8960.dtsi
+@@ -102,6 +102,7 @@
+ 		msmgpio: pinctrl@800000 {
+ 			compatible = "qcom,msm8960-pinctrl";
+ 			gpio-controller;
++			gpio-ranges = <&msmgpio 0 0 152>;
+ 			#gpio-cells = <2>;
+ 			interrupts = <0 16 0x4>;
+ 			interrupt-controller;
+diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+index d9019a49b292..1250e071a6e2 100644
+--- a/arch/arm/boot/dts/qcom-msm8974.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
+@@ -696,6 +696,7 @@
+ 			compatible = "qcom,msm8974-pinctrl";
+ 			reg = <0xfd510000 0x4000>;
+ 			gpio-controller;
++			gpio-ranges = <&msmgpio 0 0 146>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+index 2bc5dec5614d..d2c36b467466 100644
+--- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+@@ -24,11 +24,12 @@
+ 		ranges = <0 0 0 0xffffffff>;
+ 		compatible = "simple-bus";
+ 
+-		pinctrl@1000000 {
++		tlmm: pinctrl@1000000 {
+ 			compatible = "qcom,ipq8074-pinctrl";
+ 			reg = <0x1000000 0x300000>;
+ 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
++			gpio-ranges = <&tlmm 0 0 70>;
+ 			#gpio-cells = <0x2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <0x2>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 66b318e1de80..9d5320b26188 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -326,6 +326,7 @@
+ 			reg = <0x1000000 0x300000>;
+ 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
++			gpio-ranges = <&msmgpio 0 0 122>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+index 171578747ed0..173b6bc60816 100644
+--- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+@@ -179,6 +179,7 @@
+ 			reg = <0xfd510000 0x4000>;
+ 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
++			gpio-ranges = <&msmgpio 0 0 146>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8994.dtsi b/arch/arm64/boot/dts/qcom/msm8994.dtsi
+index f33c41d01c86..68705db4696b 100644
+--- a/arch/arm64/boot/dts/qcom/msm8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8994.dtsi
+@@ -141,6 +141,7 @@
+ 			reg = <0xfd510000 0x4000>;
+ 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
++			gpio-ranges = <&msmgpio 0 0 146>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 410ae787ebb4..b9b57808fc67 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -541,6 +541,7 @@
+ 			reg = <0x01010000 0x300000>;
+ 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
++			gpio-ranges = <&msmgpio 0 0 150>;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.0
