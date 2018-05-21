@@ -1,61 +1,51 @@
-From: Anson Huang <Anson.Huang@nxp.com>
-Subject: [PATCH] gpio: mxc: add clock operation
-Date: Mon, 21 May 2018 18:06:30 +0800
-Message-ID: <1526897190-28714-1-git-send-email-Anson.Huang@nxp.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Subject: [PATCH 04/33] gpiolib-of: use match_string() helper
+Date: Mon, 21 May 2018 19:57:41 +0800
+Message-ID: <1526903890-35761-5-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: Linux-imx@nxp.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Yisheng Xie <xieyisheng1@huawei.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-i.MX6SLL has GPIO clock gates in CCM CCGR, need
-to enable them before accessing registers, add
-optional clock operation for GPIO driver.
+match_string() returns the index of an array for a matching string,
+which can be used intead of open coded variant.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- drivers/gpio/gpio-mxc.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/gpio/gpiolib-of.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 11ec722..8fc37c4 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -60,6 +60,7 @@ struct mxc_gpio_hwdata {
- struct mxc_gpio_port {
- 	struct list_head node;
- 	void __iomem *base;
-+	struct clk *clk;
- 	int irq;
- 	int irq_high;
- 	struct irq_domain *domain;
-@@ -434,6 +435,17 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	if (port->irq < 0)
- 		return port->irq;
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 586d151..9cbc898 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -202,7 +202,6 @@ static struct gpio_desc *of_find_regulator_gpio(struct device *dev, const char *
+ 	};
+ 	struct device_node *np = dev->of_node;
+ 	struct gpio_desc *desc;
+-	int i;
  
-+	/* the controller clock is optional */
-+	port->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(port->clk))
-+		port->clk = NULL;
-+
-+	err = clk_prepare_enable(port->clk);
-+	if (err) {
-+		dev_err(&pdev->dev, "Unable to enable clock.\n");
-+		return err;
-+	}
-+
- 	/* disable the interrupt and clear the status */
- 	writel(0, port->base + GPIO_IMR);
- 	writel(~0, port->base + GPIO_ISR);
-@@ -502,6 +514,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- out_irqdomain_remove:
- 	irq_domain_remove(port->domain);
- out_bgio:
-+	clk_disable_unprepare(port->clk);
- 	dev_info(&pdev->dev, "%s failed with errno %d\n", __func__, err);
- 	return err;
- }
+ 	if (!IS_ENABLED(CONFIG_REGULATOR))
+ 		return ERR_PTR(-ENOENT);
+@@ -210,11 +209,7 @@ static struct gpio_desc *of_find_regulator_gpio(struct device *dev, const char *
+ 	if (!con_id)
+ 		return ERR_PTR(-ENOENT);
+ 
+-	for (i = 0; i < ARRAY_SIZE(whitelist); i++)
+-		if (!strcmp(con_id, whitelist[i]))
+-			break;
+-
+-	if (i == ARRAY_SIZE(whitelist))
++	if (match_string(whitelist, ARRAY_SIZE(whitelist), con_id) < 0)
+ 		return ERR_PTR(-ENOENT);
+ 
+ 	desc = of_get_named_gpiod_flags(np, con_id, 0, of_flags);
 -- 
-2.7.4
+1.7.12.4
