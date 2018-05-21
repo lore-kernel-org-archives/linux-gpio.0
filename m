@@ -1,67 +1,45 @@
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Subject: [PATCH 17/33] pinctrl: armada-37xx: use match_string() helper
-Date: Mon, 21 May 2018 19:57:54 +0800
-Message-ID: <1526903890-35761-18-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+From: Laura Abbott <labbott@redhat.com>
+Subject: Re: [PATCHv8] gpio: Remove VLA from gpiolib
+Date: Mon, 21 May 2018 10:30:55 -0700
+Message-ID: <fc2fb457-57eb-d929-1061-5bc00ee218a8@redhat.com>
+References: <20180518175304.20414-1-labbott@redhat.com>
+ <CAHp75VciKgqYV_DB=h+zaVkk2+dmKJDhT02M4K8T1VGJA6KM0g@mail.gmail.com>
+ <CAMuHMdX878Vun9oCrECA+uW-ErEgzRx8Gp2wLkoLdKXR0nNKAw@mail.gmail.com>
+ <CAHp75VezhMm9R64y2A6mobQVqbLMLUKtzxQHp7uRDTBTMMzpRw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Yisheng Xie <xieyisheng1@huawei.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-hardening-return-13336-glkh-kernel-hardening=m.gmane.org@lists.openwall.com>
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+In-Reply-To: <CAHp75VezhMm9R64y2A6mobQVqbLMLUKtzxQHp7uRDTBTMMzpRw@mail.gmail.com>
+Content-Language: en-US
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Phil Reid <preid@electromag.com.au>
 List-Id: linux-gpio@vger.kernel.org
 
-match_string() returns the index of an array for a matching string,
-which can be used intead of open coded variant.
+On 05/18/2018 02:12 PM, Andy Shevchenko wrote:
+> On Sat, May 19, 2018 at 12:05 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Fri, May 18, 2018 at 10:07 PM, Andy Shevchenko
+>> <andy.shevchenko@gmail.com> wrote:
+>>> On Fri, May 18, 2018 at 8:53 PM, Laura Abbott <labbott@redhat.com> wrote:
+> 
+>>>> +               bits = mask + BITS_TO_LONGS(chip->ngpio);
+>>>> +               memset(mask, 0, BITS_TO_LONGS(chip->ngpio) * sizeof(*mask));
+>>>
+>>> Wouldn't be better
+>>>
+>>> bitmap_zero(mask, chip->ngpio);
+>>>
+>>> ?
+>>
+>> chip->ngpio is never const, so bitmap_zero() would always fall back to
+>> plain memset().
+> 
+> Yes. But it also much more readable and understandable here.
+> 
 
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@bootlin.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index 5b63248..e338327 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -214,18 +214,6 @@ static inline void armada_37xx_update_reg(unsigned int *reg,
- 	}
- }
- 
--static int armada_37xx_get_func_reg(struct armada_37xx_pin_group *grp,
--				    const char *func)
--{
--	int f;
--
--	for (f = 0; (f < NB_FUNCS) && grp->funcs[f]; f++)
--		if (!strcmp(grp->funcs[f], func))
--			return f;
--
--	return -ENOTSUPP;
--}
--
- static struct armada_37xx_pin_group *armada_37xx_find_next_grp_by_pin(
- 	struct armada_37xx_pinctrl *info, int pin, int *grp)
- {
-@@ -344,10 +332,10 @@ static int armada_37xx_pmx_set_by_name(struct pinctrl_dev *pctldev,
- 	dev_dbg(info->dev, "enable function %s group %s\n",
- 		name, grp->name);
- 
--	func = armada_37xx_get_func_reg(grp, name);
-+	func = match_string(grp->funcs, NB_FUNCS, name);
- 
- 	if (func < 0)
--		return func;
-+		return -ENOTSUPP;
- 
- 	val = grp->val[func];
- 
--- 
-1.7.12.4
+I wasn't aware of that API. I'll switch to that.
