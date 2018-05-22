@@ -1,33 +1,73 @@
-From: Anson Huang <anson.huang@nxp.com>
-Subject: RE: [PATCH V2] gpio: mxc: add clock operation
-Date: Tue, 22 May 2018 02:35:08 +0000
-Message-ID: <AM3PR04MB13157C664631DC28298B7B85F5940@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1526951717-12347-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5BJy-jEKywyN515+5W-bmA01v7sWsgDj0=5wtBCqsHSYQ@mail.gmail.com>
- <AM3PR04MB13154C4D2EF4D42A16BF19E6F5940@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5Btvr7R7Ah_=LT6yDxRkJS=bi0bHVFN9ZHi=HiKeQP4sw@mail.gmail.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+Subject: [PATCH V3] gpio: mxc: add clock operation
+Date: Tue, 22 May 2018 11:05:40 +0800
+Message-ID: <1526958340-25883-1-git-send-email-Anson.Huang@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOMZO5Btvr7R7Ah_=LT6yDxRkJS=bi0bHVFN9ZHi=HiKeQP4sw@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, dl-linux-imx <linux-imx@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linux-imx@nxp.com
 List-Id: linux-gpio@vger.kernel.org
 
-DQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3Nh
-Z2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1AZ21haWwuY29t
-XQ0KPiBTZW50OiBUdWVzZGF5LCBNYXkgMjIsIDIwMTggMTA6MzQgQU0NCj4gVG86IEFuc29uIEh1
-YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzogTGludXMgV2FsbGVpaiA8bGludXMud2Fs
-bGVpakBsaW5hcm8ub3JnPjsgZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT47DQo+IGxp
-bnV4LWdwaW9Admdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWwgPGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjJdIGdwaW86IG14YzogYWRkIGNs
-b2NrIG9wZXJhdGlvbg0KPiANCj4gSGkgQW5zb24sDQo+IA0KPiBPbiBNb24sIE1heSAyMSwgMjAx
-OCBhdCAxMToyOSBQTSwgQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+DQo+IHdyb3Rl
-Og0KPiANCj4gPiBUaGFua3MsIEkgd2lsbCByZXdvcmsgaXQgaW50byAyIHBhdGNoZXMsIHVzaW5n
-IFNQRFguDQo+IA0KPiBJIGhhdmUganVzdCBzZW50IGEgc2VyaWVzIHRoYXQgY29udmVydHMgZ3Bp
-by1teGMgYW5kIGdwaW8tbXhzIHRvIHVzZSBTUERYDQo+IGlkZW50aWZpZXIgYW5kIHB1dCB5b3Ug
-b24gQ2MuDQo+IA0KPiBZb3UgY2FuIGJhc2UgeW91ciBjaGFuZ2Ugb24gdG9wIG9mIG1pbmUuDQo+
-IA0KPiBUaGFua3MNCiANCk9LLCB0aGFua3MuDQoNCg0K
+Some i.MX SoCs have GPIO clock gates in CCM CCGR, such as
+i.MX6SLL, need to enable clocks before accessing GPIO
+registers, add optional clock operation for GPIO driver.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+changes since V2:
+	remove the copyright change, since the change is already done by
+	Fabio's patch [1/2] gpio: mxc: Switch to SPDX identifier, I redo
+	the patch on top of it.
+ drivers/gpio/gpio-mxc.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 6a9dc61..2f28299 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -7,6 +7,7 @@
+ // Authors: Daniel Mack, Juergen Beisert.
+ // Copyright (C) 2004-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+ 
++#include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+@@ -47,6 +48,7 @@ struct mxc_gpio_hwdata {
+ struct mxc_gpio_port {
+ 	struct list_head node;
+ 	void __iomem *base;
++	struct clk *clk;
+ 	int irq;
+ 	int irq_high;
+ 	struct irq_domain *domain;
+@@ -421,6 +423,17 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 	if (port->irq < 0)
+ 		return port->irq;
+ 
++	/* the controller clock is optional */
++	port->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(port->clk))
++		port->clk = NULL;
++
++	err = clk_prepare_enable(port->clk);
++	if (err) {
++		dev_err(&pdev->dev, "Unable to enable clock.\n");
++		return err;
++	}
++
+ 	/* disable the interrupt and clear the status */
+ 	writel(0, port->base + GPIO_IMR);
+ 	writel(~0, port->base + GPIO_ISR);
+@@ -489,6 +502,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ out_irqdomain_remove:
+ 	irq_domain_remove(port->domain);
+ out_bgio:
++	clk_disable_unprepare(port->clk);
+ 	dev_info(&pdev->dev, "%s failed with errno %d\n", __func__, err);
+ 	return err;
+ }
+-- 
+2.7.4
