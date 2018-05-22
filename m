@@ -1,115 +1,115 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 1/4] dt-bindings: pinctrl: qcom: add gpio-ranges,
- gpio-reserved-ranges
-Date: Tue, 22 May 2018 11:29:46 -0500
-Message-ID: <20180522162946.GA25556@rob-hp-laptop>
-References: <910e5a85a6a8020069996e2ff397c93e9c5fe18c.1526935804.git.chunkeey@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <910e5a85a6a8020069996e2ff397c93e9c5fe18c.1526935804.git.chunkeey@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Christian Lamparter <chunkeey@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, David Brown <david.brown@linaro.org>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH] gpio: rcar: Add Runtime PM handling for interrupts
+Date: Tue, 22 May 2018 17:58:15 +0100
+Message-ID: <1527008295-15516-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, Fabrizio Castro <fabrizio.castro@bp.renesas.com>, stable@vger.kernel.org, Ben Hutchings <ben.hutchings@codethink.co.uk>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 21, 2018 at 10:57:36PM +0200, Christian Lamparter wrote:
-> This patch adds the gpio-ranges and gpio-reserved-ranges property
-> definitions to the binding text files supported by the pinctrl-msm
-> driver framework.
-> 
-> gpio-ranges:
-> For DT-based platforms the pinctrl-msm framework currently relies
-> on the deprecated-for-DT gpiochip_add_pin_range() function to add
-> the range of GPIOs to be handled by the pin controller. Due to
-> interactions within gpiolib code, this causes the pinctrl-msm
-> driver to bail out (-517) during boot when a gpio-hog is declared.
-> This can be fatal and cause the system to not boot or reset
-> (for a detailed explanation and call-trace, refer to patch:
-> "pinctrl: msm: fix gpio-hog related boot issues" in this series).
-> 
-> gpio-reserved-ranges:
-> The binding has been added as a precaution since the TrustZone
-> firmware (aka QSEE), which is running as the hypervisor, might
-> have reserved certain, but undisclosed pins. Hence reading or
-> writing to the registers for those pins will cause an
-> XPU violation and this subsequently crashes the kernel.
-> 
-> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-> ---
->  .../bindings/pinctrl/qcom,apq8064-pinctrl.txt         |  6 ++++++
->  .../bindings/pinctrl/qcom,apq8084-pinctrl.txt         | 11 +++++++++++
->  .../bindings/pinctrl/qcom,ipq4019-pinctrl.txt         |  6 ++++++
->  .../bindings/pinctrl/qcom,ipq8064-pinctrl.txt         |  6 ++++++
->  .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt         | 10 ++++++++++
->  .../bindings/pinctrl/qcom,mdm9615-pinctrl.txt         | 11 +++++++++++
->  .../bindings/pinctrl/qcom,msm8660-pinctrl.txt         |  6 ++++++
->  .../bindings/pinctrl/qcom,msm8916-pinctrl.txt         | 11 +++++++++++
->  .../bindings/pinctrl/qcom,msm8960-pinctrl.txt         | 11 +++++++++++
->  .../bindings/pinctrl/qcom,msm8974-pinctrl.txt         |  6 ++++++
->  .../bindings/pinctrl/qcom,msm8994-pinctrl.txt         | 11 +++++++++++
->  .../bindings/pinctrl/qcom,msm8996-pinctrl.txt         | 11 +++++++++++
->  12 files changed, 106 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
-> index a752a4716486..7f78c6bb4e35 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
-> @@ -10,6 +10,11 @@ Required properties:
->  - #gpio-cells : Should be two.
->                  The first cell is the gpio pin number and the
->                  second cell is used for optional parameters.
-> +- gpio-ranges: Range of pins managed by the GPIO controller.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Just 'see gpio.txt' is sufficient unless you can say how many entries.
+commit b26a719bdba9aa926ceaadecc66e07623d2b8a53 upstream.
 
-> +
-> +Optional properties:
-> +
-> +- gpio-reserved-ranges: Range of pins reserved by the TrustZone TEE.
+The R-Car GPIO driver handles Runtime PM for requested GPIOs only.
 
-ditto.
+When using a GPIO purely as an interrupt source, no Runtime PM handling
+is done, and the GPIO module's clock may not be enabled.
 
->  
->  Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
->  a general description of GPIO and interrupt bindings.
-> @@ -67,6 +72,7 @@ Example:
->  
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&gsbi5_uart_default>;
-> +		gpio-ranges = <&msmgpio 0 0 90>;
->  
->  		gsbi5_uart_default: gsbi5_uart_default {
->  			mux {
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
-> index c4ea61ac56f2..362f32b945af 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
-> @@ -40,6 +40,16 @@ MSM8960 platform.
->  	Definition: must be 2. Specifying the pin number and flags, as defined
->  		    in <dt-bindings/gpio/gpio.h>
->  
-> +- gpio-ranges:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
+To fix this:
+  - Add .irq_request_resources() and .irq_release_resources() callbacks
+    to handle Runtime PM when an interrupt is requested,
+  - Add irq_bus_lock() and sync_unlock() callbacks to handle Runtime PM
+    when e.g. disabling/enabling an interrupt, or configuring the
+    interrupt type.
 
-But this is phandle with 3 cells.
+Fixes: d5c3d84657db57bd "net: phy: Avoid polling PHY with PHY_IGNORE_INTERRUPTS"
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+[fabrizio: cherry-pick to v4.4.y. Use container_of instead of
+gpiochip_get_data.]
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+Hi Greg,
 
-Still, you don't need to redefine standard properties here. Just need to 
-know optional vs. required and any constraints you can define (e.g. 
-allowed values, number of values, etc.)
+on R-Car we have found that if a GPIO is used purely as an interrupt source,
+the corresponding clock is not enabled, therefore the interrupt doesn't work.
+On Koelsch, the HDMI trasmitter node in the DT uses GPIO 3 29 for the
+interrupt line, and since gpio3 is used only for this, its clock is OFF,
+preventing the interrupt from working. This patch fixes this problem.
+Would you please consider this patch for 4.4.y?
 
+Thanks,
+Fab
 
-Same comments apply to the rest.
+ drivers/gpio/gpio-rcar.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-Rob
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 2a81224..9ba4aaa 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -200,6 +200,48 @@ static int gpio_rcar_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	return 0;
+ }
+ 
++static void gpio_rcar_irq_bus_lock(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct gpio_rcar_priv *p = container_of(gc, struct gpio_rcar_priv,
++						gpio_chip);
++
++	pm_runtime_get_sync(&p->pdev->dev);
++}
++
++static void gpio_rcar_irq_bus_sync_unlock(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct gpio_rcar_priv *p = container_of(gc, struct gpio_rcar_priv,
++						gpio_chip);
++
++	pm_runtime_put(&p->pdev->dev);
++}
++
++
++static int gpio_rcar_irq_request_resources(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct gpio_rcar_priv *p = container_of(gc, struct gpio_rcar_priv,
++						gpio_chip);
++	int error;
++
++	error = pm_runtime_get_sync(&p->pdev->dev);
++	if (error < 0)
++		return error;
++
++	return 0;
++}
++
++static void gpio_rcar_irq_release_resources(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct gpio_rcar_priv *p = container_of(gc, struct gpio_rcar_priv,
++						gpio_chip);
++
++	pm_runtime_put(&p->pdev->dev);
++}
++
+ static irqreturn_t gpio_rcar_irq_handler(int irq, void *dev_id)
+ {
+ 	struct gpio_rcar_priv *p = dev_id;
+@@ -460,6 +502,10 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	irq_chip->irq_unmask = gpio_rcar_irq_enable;
+ 	irq_chip->irq_set_type = gpio_rcar_irq_set_type;
+ 	irq_chip->irq_set_wake = gpio_rcar_irq_set_wake;
++	irq_chip->irq_bus_lock = gpio_rcar_irq_bus_lock;
++	irq_chip->irq_bus_sync_unlock = gpio_rcar_irq_bus_sync_unlock;
++	irq_chip->irq_request_resources = gpio_rcar_irq_request_resources;
++	irq_chip->irq_release_resources = gpio_rcar_irq_release_resources;
+ 	irq_chip->flags	= IRQCHIP_SET_TYPE_MASKED | IRQCHIP_MASK_ON_SUSPEND;
+ 
+ 	ret = gpiochip_add(gpio_chip);
+-- 
+2.7.4
