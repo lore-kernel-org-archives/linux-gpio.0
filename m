@@ -1,46 +1,51 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH V2] gpio: mxc: add clock operation
-Date: Mon, 21 May 2018 23:27:45 -0300
-Message-ID: <CAOMZO5BJy-jEKywyN515+5W-bmA01v7sWsgDj0=5wtBCqsHSYQ@mail.gmail.com>
+From: Anson Huang <anson.huang@nxp.com>
+Subject: RE: [PATCH V2] gpio: mxc: add clock operation
+Date: Tue, 22 May 2018 02:29:10 +0000
+Message-ID: <AM3PR04MB13154C4D2EF4D42A16BF19E6F5940@AM3PR04MB1315.eurprd04.prod.outlook.com>
 References: <1526951717-12347-1-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5BJy-jEKywyN515+5W-bmA01v7sWsgDj0=5wtBCqsHSYQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1526951717-12347-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <CAOMZO5BJy-jEKywyN515+5W-bmA01v7sWsgDj0=5wtBCqsHSYQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, NXP Linux Team <Linux-imx@nxp.com>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, dl-linux-imx <linux-imx@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Anson,
-
-On Mon, May 21, 2018 at 10:15 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> Some i.MX SoCs have GPIO clock gates in CCM CCGR, such as
-> i.MX6SLL, need to enable clocks before accessing GPIO
-> registers, add optional clock operation for GPIO driver.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> changes since V1:
->         add missing clk header;
->         remove FSF addresses in copyright to avoid check patch ERROR.
->  drivers/gpio/gpio-mxc.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-> index 11ec722..2026f94 100644
-> --- a/drivers/gpio/gpio-mxc.c
-> +++ b/drivers/gpio/gpio-mxc.c
-> @@ -14,12 +14,9 @@
->   * but WITHOUT ANY WARRANTY; without even the implied warranty of
->   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->   * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
->   */
-
-This is an unrelated change and should be part of a different patch.
-
-A patch that converts this driver to use SPDX would get rid of the FSF address.
+SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
+Z21haWwuY29tXQ0KPiBTZW50OiBUdWVzZGF5LCBNYXkgMjIsIDIwMTggMTA6MjggQU0NCj4gVG86
+IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzogTGludXMgV2FsbGVpaiA8
+bGludXMud2FsbGVpakBsaW5hcm8ub3JnPjsgZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNv
+bT47DQo+IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWwgPGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjJdIGdwaW86IG14
+YzogYWRkIGNsb2NrIG9wZXJhdGlvbg0KPiANCj4gSGkgQW5zb24sDQo+IA0KPiBPbiBNb24sIE1h
+eSAyMSwgMjAxOCBhdCAxMDoxNSBQTSwgQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+
+DQo+IHdyb3RlOg0KPiA+IFNvbWUgaS5NWCBTb0NzIGhhdmUgR1BJTyBjbG9jayBnYXRlcyBpbiBD
+Q00gQ0NHUiwgc3VjaCBhcyBpLk1YNlNMTCwNCj4gPiBuZWVkIHRvIGVuYWJsZSBjbG9ja3MgYmVm
+b3JlIGFjY2Vzc2luZyBHUElPIHJlZ2lzdGVycywgYWRkIG9wdGlvbmFsDQo+ID4gY2xvY2sgb3Bl
+cmF0aW9uIGZvciBHUElPIGRyaXZlci4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1
+YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0KPiA+IC0tLQ0KPiA+IGNoYW5nZXMgc2luY2UgVjE6
+DQo+ID4gICAgICAgICBhZGQgbWlzc2luZyBjbGsgaGVhZGVyOw0KPiA+ICAgICAgICAgcmVtb3Zl
+IEZTRiBhZGRyZXNzZXMgaW4gY29weXJpZ2h0IHRvIGF2b2lkIGNoZWNrIHBhdGNoIEVSUk9SLg0K
+PiA+ICBkcml2ZXJzL2dwaW8vZ3Bpby1teGMuYyB8IDE4ICsrKysrKysrKysrKysrLS0tLQ0KPiA+
+ICAxIGZpbGUgY2hhbmdlZCwgMTQgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4gPg0K
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwaW8vZ3Bpby1teGMuYyBiL2RyaXZlcnMvZ3Bpby9n
+cGlvLW14Yy5jIGluZGV4DQo+ID4gMTFlYzcyMi4uMjAyNmY5NCAxMDA2NDQNCj4gPiAtLS0gYS9k
+cml2ZXJzL2dwaW8vZ3Bpby1teGMuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3Bpby9ncGlvLW14Yy5j
+DQo+ID4gQEAgLTE0LDEyICsxNCw5IEBADQo+ID4gICAqIGJ1dCBXSVRIT1VUIEFOWSBXQVJSQU5U
+WTsgd2l0aG91dCBldmVuIHRoZSBpbXBsaWVkIHdhcnJhbnR5IG9mDQo+ID4gICAqIE1FUkNIQU5U
+QUJJTElUWSBvciBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRS4gIFNlZSB0aGUNCj4g
+PiAgICogR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgZm9yIG1vcmUgZGV0YWlscy4NCj4gPiAt
+ICoNCj4gPiAtICogWW91IHNob3VsZCBoYXZlIHJlY2VpdmVkIGEgY29weSBvZiB0aGUgR05VIEdl
+bmVyYWwgUHVibGljIExpY2Vuc2UNCj4gPiAtICogYWxvbmcgd2l0aCB0aGlzIHByb2dyYW07IGlm
+IG5vdCwgd3JpdGUgdG8gdGhlIEZyZWUgU29mdHdhcmUNCj4gPiAtICogRm91bmRhdGlvbiwgSW5j
+LiwgNTEgRnJhbmtsaW4gU3RyZWV0LCBGaWZ0aCBGbG9vciwgQm9zdG9uLCBNQSAgMDIxMTAtMTMw
+MSwNCj4gVVNBLg0KPiA+ICAgKi8NCj4gDQo+IFRoaXMgaXMgYW4gdW5yZWxhdGVkIGNoYW5nZSBh
+bmQgc2hvdWxkIGJlIHBhcnQgb2YgYSBkaWZmZXJlbnQgcGF0Y2guDQo+IA0KPiBBIHBhdGNoIHRo
+YXQgY29udmVydHMgdGhpcyBkcml2ZXIgdG8gdXNlIFNQRFggd291bGQgZ2V0IHJpZCBvZiB0aGUg
+RlNGIGFkZHJlc3MuDQoNClRoYW5rcywgSSB3aWxsIHJld29yayBpdCBpbnRvIDIgcGF0Y2hlcywg
+dXNpbmcgU1BEWC4NCg0KQW5zb24uDQo=
