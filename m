@@ -1,63 +1,26 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
-Date: Tue, 22 May 2018 13:02:38 -0500
-Message-ID: <20180522180238.GA7328@rob-hp-laptop>
-References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
- <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
- <1526615528-9707-2-git-send-email-djw@t-chip.com.cn>
+Subject: Re: [PATCH v2 1/5] dt-bindings: pinctrl: Add gpio bindings for
+ Actions S900 SoC
+Date: Tue, 22 May 2018 14:33:03 -0500
+Message-ID: <20180522193303.GA8957@rob-hp-laptop>
+References: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
+ <20180520051736.4842-2-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1526615528-9707-2-git-send-email-djw@t-chip.com.cn>
+In-Reply-To: <20180520051736.4842-2-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: djw@t-chip.com.cn
-Cc: linux-rockchip@lists.infradead.org, Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linus.walleij@linaro.org, afaerber@suse.de, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
-> From: Levin Du <djw@t-chip.com.cn>
+On Sun, May 20, 2018 at 10:47:32AM +0530, Manivannan Sadhasivam wrote:
+> Add gpio bindings for Actions Semi S900 SoC.
 > 
-> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
-> which do not belong to the general pinctrl.
-> 
-> Adding gpio-syscon support makes controlling regulator or
-> LED using these special pins very easy by reusing existing
-> drivers, such as gpio-regulator and led-gpio.
-> 
-> Signed-off-by: Levin Du <djw@t-chip.com.cn>
-> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
-> 
-> Changes in v2:
-> - Rename gpio_syscon10 to gpio_mute in doc
-> 
-> Changes in v1:
-> - Refactured for general gpio-syscon usage for Rockchip SoCs.
-> - Add doc rockchip,gpio-syscon.txt
-> 
->  .../bindings/gpio/rockchip,gpio-syscon.txt         | 41 ++++++++++++++++++++++
->  drivers/gpio/gpio-syscon.c                         | 30 ++++++++++++++++
->  2 files changed, 71 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
-> new file mode 100644
-> index 0000000..b1b2a67
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
-> @@ -0,0 +1,41 @@
-> +* Rockchip GPIO support for GRF_SOC_CON registers
-> +
-> +Required properties:
-> +- compatible: Should contain "rockchip,gpio-syscon".
-> +- gpio-controller: Marks the device node as a gpio controller.
-> +- #gpio-cells: Should be two. The first cell is the pin number and
-> +  the second cell is used to specify the gpio polarity:
-> +    0 = Active high,
-> +    1 = Active low.
+>  .../devicetree/bindings/pinctrl/actions,s900-pinctrl.txt | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 
-There's no need for this child node. Just make the parent node a gpio 
-controller.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
