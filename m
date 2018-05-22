@@ -1,26 +1,30 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/5] dt-bindings: pinctrl: Add gpio bindings for
- Actions S900 SoC
-Date: Tue, 22 May 2018 14:33:03 -0500
-Message-ID: <20180522193303.GA8957@rob-hp-laptop>
-References: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
- <20180520051736.4842-2-manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v1 1/7] dt-bindings: pinctrl: add external interrupt
+ support to MT7622 pinctrl
+Date: Tue, 22 May 2018 15:02:10 -0500
+Message-ID: <20180522200209.GA7801@rob-hp-laptop>
+References: <cover.1526835466.git.sean.wang@mediatek.com>
+ <3898620ef606004aaddc332591ca467f56773029.1526835466.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180520051736.4842-2-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <3898620ef606004aaddc332591ca467f56773029.1526835466.git.sean.wang@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linus.walleij@linaro.org, afaerber@suse.de, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
+To: sean.wang@mediatek.com
+Cc: mark.rutland@arm.com, linus.walleij@linaro.org, matthias.bgg@gmail.com, devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, May 20, 2018 at 10:47:32AM +0530, Manivannan Sadhasivam wrote:
-> Add gpio bindings for Actions Semi S900 SoC.
+On Mon, May 21, 2018 at 01:01:47AM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Extend the capability of MT7622 pinctrl with adding EINT so that each
+> GPIO can be used to notify CPU when a signal state is changing on the
+> line as an external interrupt.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 > ---
->  .../devicetree/bindings/pinctrl/actions,s900-pinctrl.txt | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
