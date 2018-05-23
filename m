@@ -1,54 +1,69 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: rockchip: Add set_config callback support for
- gpiolib
-Date: Wed, 23 May 2018 11:36:29 +0200
-Message-ID: <CACRpkdaGTLgE-bApn5arUFhHT_4bJMrJN1oYk5LNW3mKSUzkjQ@mail.gmail.com>
-References: <1525334682-222918-1-git-send-email-shawn.lin@rock-chips.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
+Date: Wed, 23 May 2018 12:17:09 +0200
+Message-ID: <3165bba5-31d4-2dd4-bdb3-851889595e2e@xilinx.com>
+References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
+ <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
+ <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
+ <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
+ <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com>
+ <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
+ <60652f48-2a98-414b-5cff-25890a6da37f@xilinx.com>
+ <CACRpkdaNJzW+LO97oxavzYJwfkj0xu7wxTNRaGiaKm98ON5JMA@mail.gmail.com>
+ <57e4bbdd-1e30-0352-f758-998b64a6b77f@xilinx.com>
+ <CACRpkdbCsUBMcHg+xGOQCBmhoJsqh9VjK+4pjhG5Hf6Fjzwjww@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1525334682-222918-1-git-send-email-shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbCsUBMcHg+xGOQCBmhoJsqh9VjK+4pjhG5Hf6Fjzwjww@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 3, 2018 at 10:04 AM, Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
+>> If you take a look at
+>> arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
+>> which is Ultra96 board gpio-line-names are filled there for the whole PS
+>> part. Definitely take a look and let know if you find out any issue there.
+> 
+> It looks good. I even managed to boot my Ultra96 board which
+> was sent over as price in some competition (great hardware!)
 
-> Could only support PIN_CONFIG_INPUT_DEBOUNCE now as the HW block
-> is too simple to support others. But even wrt. debounce capability,
-> it now could only support very limited period of time to satisfy the
-> real usecase. But still be useful to enable the crippled HW debounce
-> to prevent any spurious glitches from waking up the system if the
-> gpio is conguired as wakeup interrupt source.
->
-> Signed-off-by: Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-> ---
-> Hi Linus,
->
-> This patch comes from our early discussion of debounce of cd-gpios for sd card
-> that I pointed out that rockchip's platform lacks HW debounce support, but I
-> think it's overkilled. It does have HW debounce but not really useful as the
-> debounce period is toooo short and almost fixed. But something is better than
-> nothing, so I'd like to enable it for filtering glitches, since cd-gpios for
-> sd card is allow to configured as wakeup source. ;)
+Wonderful that you get hw available to be closer to issues.
+Maybe it would be worth to give you some guidance what to do with PL and
+how to add more stuff there especially in connection to GPIO.
+We have pinctrl driver in vendor tree but my colleague needs to upstream
+firmware interface first.
 
-OK with the fat comment in there it sure makes sense like this,
-so patch applied.
 
-What I want to do is to pull in the timer-based debounce emulation
-from gpio_keys.c into GPIOLIB so this callback will fall back to
-using timers to provide debounce on all platforms and not needing
-reimplementations of debounce timers all over the kernel.
+>> zynq/zynqmp gpio controller contains PS pins (hard part) and PL pins
+>> coming to logic.
+>>
+>> I can't describe PL gpio pins because it can be whatever even I have
+>> done that for one fixed hw design.
+>>
+>> Interesting part on that sha1 you shared is how "NC" pin is described.
+>>
+>> gpio pin 35 I have on zcu100 as "" but it should be maybe TP_PAD which
+>> is really just a pad on real board. And the rest of "" gpio names are
+>> connected to PL.
+> 
+> How to handle anything routed to/from programmable logic is
+> in a bit of mess right now, I understand this work isn't the
+> easiest :/
 
-Yours,
-Linus Walleij
+I am happy to discuss this to find out a way how this can be handled.
+There are several things together.
+
+On arm64 how to disable/enable access for NS software.
+
+Maybe also separate pins PS pins from PL pins. Right now all are
+together and not sure if this is ideal in sense of DT overal for
+example. Separate nodes would enable better flexibility. Also if you
+look at partial reconfiguration you can just route just part of pins
+which suggest list of gpios used there.
+
+Thanks,
+Michal
