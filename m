@@ -1,83 +1,114 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for
- pcal6524
-Date: Wed, 23 May 2018 16:06:36 +0200
-Message-ID: <20180523140635.GB27215@amd>
-References: <cover.1526533188.git.hns@goldelico.com>
- <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+Date: Wed, 23 May 2018 09:43:07 -0500
+Message-ID: <CAL_Jsq+_QEBWdxW=J4oVGWeokc-+nMzxzX_pgCayaxg-ehivfQ@mail.gmail.com>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
+ <1526615528-9707-1-git-send-email-djw@t-chip.com.cn> <1526615528-9707-2-git-send-email-djw@t-chip.com.cn>
+ <20180522180238.GA7328@rob-hp-laptop> <6ffb43dc-55a5-14eb-eb18-3a731cdaf424@t-chip.com.cn>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="WhfpMioaduB5tiZL"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
+In-Reply-To: <6ffb43dc-55a5-14eb-eb18-3a731cdaf424@t-chip.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: galak@codeaurora.org, andy.shevchenko@gmail.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+To: Levin Du <djw@t-chip.com.cn>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Tue, May 22, 2018 at 9:02 PM, Levin Du <djw@t-chip.com.cn> wrote:
+> On 2018-05-23 2:02 AM, Rob Herring wrote:
+>>
+>> On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
+>>>
+>>> From: Levin Du <djw@t-chip.com.cn>
+>>>
+>>> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
+>>> which do not belong to the general pinctrl.
+>>>
+>>> Adding gpio-syscon support makes controlling regulator or
+>>> LED using these special pins very easy by reusing existing
+>>> drivers, such as gpio-regulator and led-gpio.
+>>>
+>>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+>>>
+>>> ---
+>>>
+>>> Changes in v2:
+>>> - Rename gpio_syscon10 to gpio_mute in doc
+>>>
+>>> Changes in v1:
+>>> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+>>> - Add doc rockchip,gpio-syscon.txt
+>>>
+>>>   .../bindings/gpio/rockchip,gpio-syscon.txt         | 41
+>>> ++++++++++++++++++++++
+>>>   drivers/gpio/gpio-syscon.c                         | 30
+>>> ++++++++++++++++
+>>>   2 files changed, 71 insertions(+)
+>>>   create mode 100644
+>>> Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>>> b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>>> new file mode 100644
+>>> index 0000000..b1b2a67
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>>> @@ -0,0 +1,41 @@
+>>> +* Rockchip GPIO support for GRF_SOC_CON registers
+>>> +
+>>> +Required properties:
+>>> +- compatible: Should contain "rockchip,gpio-syscon".
+>>> +- gpio-controller: Marks the device node as a gpio controller.
+>>> +- #gpio-cells: Should be two. The first cell is the pin number and
+>>> +  the second cell is used to specify the gpio polarity:
+>>> +    0 = Active high,
+>>> +    1 = Active low.
+>>
+>> There's no need for this child node. Just make the parent node a gpio
+>> controller.
+>>
+>> Rob
+>
+> Hi Rob, it is not clear to me. Do you suggest that the grf node should be a
+> gpio controller,
+> like below?
+>
+> +    grf: syscon at ff100000 {
+> +        compatible = "rockchip,gpio-syscon", "rockchip,rk3328-grf",
+> "syscon", "simple-mfd";
 
---WhfpMioaduB5tiZL
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, but drop "rockchip,gpio-syscon" and "simple-mfd".
 
-On Thu 2018-05-17 06:59:49, H. Nikolaus Schaller wrote:
-> The register constants are so far defined in a way that they fit
-> for the pcal9555a when shifted by the number of banks, i.e. are
-> multiplied by 2 in the accessor function.
->=20
-> Now, the pcal6524 has 3 banks which means the relative offset
-> is multiplied by 4 for the standard registers.
->=20
-> Simply applying the bit shift to the extended registers gives
-> a wrong result, since the base offset is already included in
-> the offset.
->=20
-> Therefore, we have to add code to the 24 bit accessor functions
-> that=A0adjusts the register number for these exended registers.
->=20
-> The formula finally used was developed and proposed by
-> Andy Shevchenko <andy.shevchenko@gmail.com>.
->=20
-> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
->  drivers/gpio/gpio-pca953x.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index c682921d7019..4ad553f4e41f 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -222,9 +222,11 @@ static int pca957x_write_regs_16(struct pca953x_chip=
- *chip, int reg, u8 *val)
->  static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 =
-*val)
->  {
->  	int bank_shift =3D fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-> +	int addr =3D (reg & PCAL_GPIO_MASK) << bank_shift;
-> +	int pinctrl =3D (reg & PCAL_PINCTRL_MASK) << 1;
+> +        //...
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio,syscon-dev = <&grf 0x0428 0>;
 
-Is this reasonable to do on each register access? Compiler will not be
-able to optimize out fls and shifts, right?
+And drop this. It may be used in the kernel, but it is not a
+documented property.
 
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---WhfpMioaduB5tiZL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsFdWsACgkQMOfwapXb+vITrwCcDj//GiI8j4gSWTwrTovWV1af
-B5QAniiu4Ct5Fy1mqITZSjntXGb4B+4F
-=uPYg
------END PGP SIGNATURE-----
-
---WhfpMioaduB5tiZL--
+> +    };
+>
+> or just reserve the following case in the doc?
+>
+> +    grf: syscon at ff100000 {
+> +        compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
+> +        //...
+> +    };
+> +
+> +    gpio_mute: gpio-mute {
+> +        compatible = "rockchip,gpio-syscon";
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio,syscon-dev = <&grf 0x0428 0>;
+> +    };
+>
+>
+> Thanks
+> Levin
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
