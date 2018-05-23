@@ -1,20 +1,21 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
  version 1.0
-Date: Wed, 23 May 2018 07:36:51 +0300
-Message-ID: <20180523043651.GD15419@lahna.fi.intel.com>
+Date: Tue, 22 May 2018 21:46:46 -0700
+Message-ID: <4d8b3dd4-5218-8595-d840-ce8c106e5b08@roeck-us.net>
 References: <20180522204753.GA260493@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
 In-Reply-To: <20180522204753.GA260493@dtor-ws>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 22, 2018 at 01:47:53PM -0700, Dmitry Torokhov wrote:
+On 05/22/2018 01:47 PM, Dmitry Torokhov wrote:
 > As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
 > virtual interrupt numbers for keyboard/touchpad/touchscreen controllers
 > in ACPI tables, they will also update BOARD version number from 1.0
@@ -29,4 +30,52 @@ On Tue, May 22, 2018 at 01:47:53PM -0700, Dmitry Torokhov wrote:
 > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
 > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+> 
+> v1->v2:
+> 
+> - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
+> 
+> 
+>   drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> index b1ae1618fefea..44133e6846303 100644
+> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> @@ -1527,6 +1527,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>   		.matches = {
+>   			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>   			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>   		},
+>   	},
+>   	{
+> @@ -1534,6 +1535,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>   		.matches = {
+>   			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+>   			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>   		},
+>   	},
+>   	{
+> @@ -1541,6 +1543,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>   		.matches = {
+>   			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>   			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>   		},
+>   	},
+>   	{
+> @@ -1548,6 +1551,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>   		.matches = {
+>   			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>   			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>   		},
+>   	},
+>   	{}
+> 
