@@ -1,81 +1,38 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
- version 1.0
-Date: Tue, 22 May 2018 21:46:46 -0700
-Message-ID: <4d8b3dd4-5218-8595-d840-ce8c106e5b08@roeck-us.net>
-References: <20180522204753.GA260493@dtor-ws>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/5] gpio: syscon: allow fetching syscon from parent node
+Date: Wed, 23 May 2018 10:08:15 +0200
+Message-ID: <CACRpkdYsDiTWL8MkWCP55ZnB8xoxcDFDEuuqA=Ov=opi-kyc1w@mail.gmail.com>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn> <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180522204753.GA260493@dtor-ws>
-Content-Language: en-US
+In-Reply-To: <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: djw@t-chip.com.cn
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 05/22/2018 01:47 PM, Dmitry Torokhov wrote:
-> As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
-> virtual interrupt numbers for keyboard/touchpad/touchscreen controllers
-> in ACPI tables, they will also update BOARD version number from 1.0
-> to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
-> numbers on Strago boards to those that still carry older BIOSes.
-> 
-> Note that ideally not BOARD but BIOS version should have been updated.
-> However the BIOS version used by Chrome devices has format of
-> Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
-> we do not have "less than" match mode for DMI data.
-> 
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+On Fri, May 18, 2018 at 5:52 AM,  <djw@t-chip.com.cn> wrote:
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> From: Heiko Stuebner <heiko@sntech.de>
+>
+> Syscon nodes can be a simple-mfd and the syscon-users then be declared
+> as children of this node. That way the parent-child structure can be
+> better represented for devices that are fully embedded in the syscon.
+>
+> Therefore allow getting the syscon from the parent if neither
+> a special compatible nor a gpio,syscon-dev property is defined.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Levin Du <djw@t-chip.com.cn>
 > ---
-> 
-> v1->v2:
-> 
-> - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
-> 
-> 
->   drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> index b1ae1618fefea..44133e6846303 100644
-> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> @@ -1527,6 +1527,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->   		.matches = {
->   			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->   			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->   		},
->   	},
->   	{
-> @@ -1534,6 +1535,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->   		.matches = {
->   			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
->   			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->   		},
->   	},
->   	{
-> @@ -1541,6 +1543,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->   		.matches = {
->   			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->   			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->   		},
->   	},
->   	{
-> @@ -1548,6 +1551,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->   		.matches = {
->   			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->   			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->   		},
->   	},
->   	{}
-> 
+>
+> Changes in v2: None
+> Changes in v1:
+> - New: allow fetching syscon from parent node in gpio-syscon driver
+
+Regardless of what happens with the rest of the patches this
+looks sane and generally useful, so patch applied!
+
+Yours,
+Linus Walleij
