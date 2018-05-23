@@ -1,40 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for pcal6524
-Date: Wed, 23 May 2018 13:48:38 +0200
-Message-ID: <CACRpkdYfjqRaUnYXhksXANbgyn++nUAda4D1prawGU1vZ06wQg@mail.gmail.com>
-References: <cover.1526533188.git.hns@goldelico.com> <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
+Subject: Re: [PATCHv9] gpio: Remove VLA from gpiolib
+Date: Wed, 23 May 2018 14:03:02 +0200
+Message-ID: <CACRpkdZNGSd+1Z=GAC1d3sdemM_WG8KztHELtBerwAHUrUvXUA@mail.gmail.com>
+References: <20180521175707.6653-1-labbott@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
+In-Reply-To: <20180521175707.6653-1-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Kumar Gala <galak@codeaurora.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+To: Laura Abbott <labbott@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Phil Reid <preid@electromag.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 17, 2018 at 6:59 AM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+On Mon, May 21, 2018 at 7:57 PM, Laura Abbott <labbott@redhat.com> wrote:
 
-> The register constants are so far defined in a way that they fit
-> for the pcal9555a when shifted by the number of banks, i.e. are
-> multiplied by 2 in the accessor function.
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+> turn on -Wvla.
 >
-> Now, the pcal6524 has 3 banks which means the relative offset
-> is multiplied by 4 for the standard registers.
+> Using a kmalloc array is the easy way to fix this but kmalloc is still
+> more expensive than stack allocation. Introduce a fast path with a
+> fixed size stack array to cover most chip with gpios below some fixed
+> amount. The slow path dynamically allocates an array to cover those
+> chips with a large number of gpios.
 >
-> Simply applying the bit shift to the extended registers gives
-> a wrong result, since the base offset is already included in
-> the offset.
->
-> Therefore, we have to add code to the 24 bit accessor functions
-> that adjusts the register number for these exended registers.
->
-> The formula finally used was developed and proposed by
-> Andy Shevchenko <andy.shevchenko@gmail.com>.
->
-> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Phil Reid <preid@electromag.com.au>
+> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> v9: switch to bitmap_zero
 
-Patch applied.
+This v9 applied with Andy's review tag on top and pushed to
+the servers for testing!
+
+THANKS A LOT for your tireless work on this, it looks really
+really good now, and as it seems we cleaned up some other
+code on the way.
 
 Yours,
 Linus Walleij
