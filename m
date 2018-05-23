@@ -1,94 +1,25 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
- version 1.0
-Date: Wed, 23 May 2018 11:54:43 +0300
-Message-ID: <c0daaf807c557063afe8f2caaedb502ddb8e6296.camel@linux.intel.com>
-References: <20180522204753.GA260493@dtor-ws>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: rockchip: Add pinctrl support for PX30
+Date: Wed, 23 May 2018 11:11:27 +0200
+Message-ID: <CACRpkdZ1J0O6QD_N9fr1HNHwXqe6Kg4rKMimUT7SDHYTzKqfRw@mail.gmail.com>
+References: <1526299191-1140-1-git-send-email-david.wu@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180522204753.GA260493@dtor-ws>
+In-Reply-To: <1526299191-1140-1-git-send-email-david.wu@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Wu <david.wu@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Tao Huang <huangtao@rock-chips.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 2018-05-22 at 13:47 -0700, Dmitry Torokhov wrote:
-> As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
-> virtual interrupt numbers for keyboard/touchpad/touchscreen
-> controllers
-> in ACPI tables, they will also update BOARD version number from 1.0
-> to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
-> numbers on Strago boards to those that still carry older BIOSes.
-> 
-> Note that ideally not BOARD but BIOS version should have been updated.
-> However the BIOS version used by Chrome devices has format of
-> Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
-> we do not have "less than" match mode for DMI data.
-> 
+On Mon, May 14, 2018 at 1:59 PM, David Wu <david.wu@rock-chips.com> wrote:
 
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> There are 4 banks (GPIO0 ~ GPIO3), bank0 is in PD_PMU
+> subsystem, bank1/bank2/bank3 are in PD_BUS subsystem.
+>
+> Signed-off-by: David Wu <david.wu@rock-chips.com>
 
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> 
-> v1->v2:
-> 
-> - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
-> 
-> 
->  drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> index b1ae1618fefea..44133e6846303 100644
-> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> @@ -1527,6 +1527,7 @@ static const struct dmi_system_id
-> chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_FAMILY,
-> "Intel_Strago"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1534,6 +1535,7 @@ static const struct dmi_system_id
-> chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1541,6 +1543,7 @@ static const struct dmi_system_id
-> chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1548,6 +1551,7 @@ static const struct dmi_system_id
-> chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
-> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
->  		},
->  	},
->  	{}
-> -- 
-> 2.17.0.441.gb46fe60e1d-goog
-> 
-> 
+Patch applied with Heiko's review tag.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Yours,
+Linus Walleij
