@@ -1,47 +1,52 @@
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH] pinctrl: armada-37xx: Fix spurious irq management
-Date: Wed, 23 May 2018 10:44:05 +0200
-Message-ID: <20180523084405.14410-1-gregory.clement@bootlin.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@bootlin.com>, =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Terry Zhou <bjzhou@marvell.com>, stable@vger.kernel.org
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: RE: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Date: Wed, 23 May 2018 08:45:57 +0000
+Message-ID: <TY1PR01MB17696814810E9F9DA4C79989F56B0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
+ <CACRpkdZAdhAn97iWPsym_K+A8iVwa3tRacpeEu=J6C=b+xAO6g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZAdhAn97iWPsym_K+A8iVwa3tRacpeEu=J6C=b+xAO6g@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Terry Zhou <bjzhou@marvell.com>
-
-Until now, if we found spurious irq in irq_handler, we only updated the
-status in register but not the status in the code. Due to this the system
-will got stuck dues to the infinite loop
-
-[gregory.clement@bootlin.com: update comment and add fix and stable tags]
-Fixes: 30ac0d3b0702 ("pinctrl: armada-37xx: Add edge both type gpio irq support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Terry Zhou <bjzhou@marvell.com>
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index 5b63248c8209..7bef929bd7fe 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -679,12 +679,13 @@ static void armada_37xx_irq_handler(struct irq_desc *desc)
- 					writel(1 << hwirq,
- 					       info->base +
- 					       IRQ_STATUS + 4 * i);
--					continue;
-+					goto update_status;
- 				}
- 			}
- 
- 			generic_handle_irq(virq);
- 
-+update_status:
- 			/* Update status in case a new IRQ appears */
- 			spin_lock_irqsave(&info->irq_lock, flags);
- 			status = readl_relaxed(info->base +
--- 
-2.17.0
+SGkgTGludXMsDQoNCk9uIDIzIE1heSAyMDE4IDA5OjI5LCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
+PiBPbiBGcmksIE1heSAxMSwgMjAxOCBhdCAxMDozMSBBTSwgUGhpbCBFZHdvcnRoeSB3cm90ZToN
+Cj4gDQo+ID4gVGhlIERlc2lnbldhcmUgR1BJTyBJUCBjYW4gYmUgY29uZmlndXJlZCBmb3IgZWl0
+aGVyIDEgaW50ZXJydXB0IG9yIDENCj4gPiBwZXIgR1BJTyBpbiBwb3J0IEEsIGJ1dCB0aGUgZHJp
+dmVyIGN1cnJlbnRseSBvbmx5IHN1cHBvcnRzIDEgaW50ZXJydXB0Lg0KPiA+IFNlZSB0aGUgRGVz
+aWduV2FyZSBEV19hcGJfZ3BpbyBEYXRhYm9vayBkZXNjcmlwdGlvbiBvZiB0aGUNCj4gPiAnR1BJ
+T19JTlRSX0lPJyBwYXJhbWV0ZXIuDQo+ID4NCj4gPiBUaGlzIGNoYW5nZSBhbGxvd3MgdGhlIGRy
+aXZlciB0byB3b3JrIHdpdGggdXAgdG8gMzIgaW50ZXJydXB0cywgaXQNCj4gPiB3aWxsIGdldCBh
+cyBtYW55IGludGVycnVwdHMgYXMgc3BlY2lmaWVkIGluIHRoZSBEVCAnaW50ZXJydXB0cycgcHJv
+cGVydHkuDQo+ID4gSXQgZG9lc24ndCBkbyBhbnl0aGluZyBjbGV2ZXIgd2l0aCB0aGUgZGlmZmVy
+ZW50IGludGVycnVwdHMsIGl0IGp1c3QNCj4gPiBjYWxscyB0aGUgc2FtZSBoYW5kbGVyIHVzZWQg
+Zm9yIHNpbmdsZSBpbnRlcnJ1cHQgaGFyZHdhcmUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQ
+aGlsIEVkd29ydGh5IDxwaGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPg0KPiA+IFJldmlld2VkLWJ5
+OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KPiA+IEFja2VkLWJ5OiBMZWUgSm9uZXMg
+PGxlZS5qb25lc0BsaW5hcm8ub3JnPg0KPiA+IC0tLQ0KPiA+IE9uZSBwb2ludCB0byBtZW50aW9u
+IGlzIHRoYXQgSSBoYXZlIG1hZGUgaXQgcG9zc2libGUgZm9yIHVzZXJzIHRvIGhhdmUNCj4gPiB1
+bmNvbm5lY3RlZCBpbnRlcnJ1cHRzIGJ5IHNwZWNpZnlpbmcgaG9sZXMgaW4gdGhlIGxpc3Qgb2Yg
+aW50ZXJydXB0cy4NCj4gPiBUaGlzIGlzIGRvbmUgYnkgc3VwcG9ydGluZyB0aGUgaW50ZXJydXB0
+cy1leHRlbmRlZCBEVCBwcm9wLg0KPiA+IEhvd2V2ZXIsIEkgaGF2ZSBubyB1c2UgZm9yIHRoaXMg
+YW5kIGhhZCB0byBoYWNrIHNvbWUgdGVzdCBjYXNlIGZvciB0aGlzLg0KPiA+IFBlcmhhcHMgdGhl
+IGRyaXZlciBzaG91bGQgc3VwcG9ydCAxIGludGVycnVwdCBvciBhbGwgR1BJT2EgYXMgaW50ZXJy
+dXB0cz8NCj4gPg0KPiA+IHY2Og0KPiA+ICAtIFRyZWF0IERUIGFuZCBBQ1BJIHRoZSBzYW1lIGFz
+IG11Y2ggYXMgcG9zc2libGUuIE5vdGUgdGhhdCB3ZSBjYW4ndCB1c2UNCj4gPiAgICBwbGF0Zm9y
+bV9nZXRfaXJxKCkgdG8gZ2V0IHRoZSBEVCBpbnRlcnJ1cHRzIGFzIHRoZXkgYXJlIGluIHRoZSBw
+b3J0DQo+ID4gICAgc3ViLW5vZGUgYW5kIGhlbmNlIGRvIG5vdCBoYXZlIGFuIGFzc29jaWF0ZWQg
+cGxhdGZvcm0gZGV2aWNlLg0KPiANCj4gSSBhbHJlYWR5IGFwcGxpZWQgdGhpcyBwYXRjaCBpbiBz
+b21lIHZlcnNpb24sIGNhbiB5b3UgY2hlY2sgd2hhdCBpcyBpbiBteQ0KPiBkZXZlbCBicmFuY2gg
+YW5kIHNlbmQgaW5jcmVtZW50YWwgcGF0Y2hlcyBvbiB0b3AgaWYgc29tZXRoaW5nIG5lZWRzDQo+
+IGNoYW5naW5nPw0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVs
+L2dpdC9saW51c3cvbGludXgtDQo+IGdwaW8uZ2l0L2NvbW1pdC8/aD1kZXZlbCZpZD1lNmNhMjZh
+YmQzNzYwNmJhNDg2NGYyMGM4NWQzZmU0YTIxNzNiOTNmDQo+IA0KPiBTb3JyeSBmb3Igbm90IGtu
+b3dpbmcgYnkgaGVhcnQgd2hhdCB3YXMgYXBwbGllZCBvciB3aGVuLCBpdCdzIGp1c3QgdG9vIG11
+Y2gNCj4gZm9yIG1lIHNvbWV0aW1lcy4NCk5vIHByb2JsZW0sIEknbGwgc2VuZCBhIHBhdGNoIHdp
+dGggdGhlIGluY3JlbWVudGFsIGNoYW5nZXMuDQoNClRoYW5rcw0KUGhpbA0K
