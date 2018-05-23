@@ -1,79 +1,95 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
- version 1.0
-Date: Tue, 22 May 2018 13:47:53 -0700
-Message-ID: <20180522204753.GA260493@dtor-ws>
+From: Levin Du <djw@t-chip.com.cn>
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+Date: Wed, 23 May 2018 10:02:15 +0800
+Message-ID: <6ffb43dc-55a5-14eb-eb18-3a731cdaf424@t-chip.com.cn>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn>
+ <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
+ <1526615528-9707-2-git-send-email-djw@t-chip.com.cn>
+ <20180522180238.GA7328@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20180522180238.GA7328@rob-hp-laptop>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-rockchip@lists.infradead.org, Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
-virtual interrupt numbers for keyboard/touchpad/touchscreen controllers
-in ACPI tables, they will also update BOARD version number from 1.0
-to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
-numbers on Strago boards to those that still carry older BIOSes.
+On 2018-05-23 2:02 AM, Rob Herring wrote:
+> On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
+>> From: Levin Du <djw@t-chip.com.cn>
+>>
+>> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
+>> which do not belong to the general pinctrl.
+>>
+>> Adding gpio-syscon support makes controlling regulator or
+>> LED using these special pins very easy by reusing existing
+>> drivers, such as gpio-regulator and led-gpio.
+>>
+>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+>>
+>> ---
+>>
+>> Changes in v2:
+>> - Rename gpio_syscon10 to gpio_mute in doc
+>>
+>> Changes in v1:
+>> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+>> - Add doc rockchip,gpio-syscon.txt
+>>
+>>   .../bindings/gpio/rockchip,gpio-syscon.txt         | 41 ++++++++++++++++++++++
+>>   drivers/gpio/gpio-syscon.c                         | 30 ++++++++++++++++
+>>   2 files changed, 71 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>> new file mode 100644
+>> index 0000000..b1b2a67
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+>> @@ -0,0 +1,41 @@
+>> +* Rockchip GPIO support for GRF_SOC_CON registers
+>> +
+>> +Required properties:
+>> +- compatible: Should contain "rockchip,gpio-syscon".
+>> +- gpio-controller: Marks the device node as a gpio controller.
+>> +- #gpio-cells: Should be two. The first cell is the pin number and
+>> +  the second cell is used to specify the gpio polarity:
+>> +    0 = Active high,
+>> +    1 = Active low.
+> There's no need for this child node. Just make the parent node a gpio
+> controller.
+>
+> Rob
+Hi Rob, it is not clear to me. Do you suggest that the grf node should 
+be a gpio controller,
+like below?
 
-Note that ideally not BOARD but BIOS version should have been updated.
-However the BIOS version used by Chrome devices has format of
-Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
-we do not have "less than" match mode for DMI data.
++    grf: syscon at ff100000 {
++        compatible = "rockchip,gpio-syscon", "rockchip,rk3328-grf", 
+"syscon", "simple-mfd";
++        //...
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio,syscon-dev = <&grf 0x0428 0>;
++    };
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
+or just reserve the following case in the doc?
 
-v1->v2:
-
-- switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
-
-
- drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index b1ae1618fefea..44133e6846303 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1527,6 +1527,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
-+			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1534,6 +1535,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
-+			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1541,6 +1543,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
-+			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1548,6 +1551,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
-+			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
- 		},
- 	},
- 	{}
--- 
-2.17.0.441.gb46fe60e1d-goog
++    grf: syscon at ff100000 {
++        compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
++        //...
++    };
++
++    gpio_mute: gpio-mute {
++        compatible = "rockchip,gpio-syscon";
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio,syscon-dev = <&grf 0x0428 0>;
++    };
 
 
--- 
-Dmitry
+Thanks
+Levin
