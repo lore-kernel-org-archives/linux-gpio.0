@@ -1,38 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/5] gpio: syscon: allow fetching syscon from parent node
-Date: Wed, 23 May 2018 10:08:15 +0200
-Message-ID: <CACRpkdYsDiTWL8MkWCP55ZnB8xoxcDFDEuuqA=Ov=opi-kyc1w@mail.gmail.com>
-References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn> <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
+Subject: Re: [PATCH v6] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+Date: Wed, 23 May 2018 10:29:20 +0200
+Message-ID: <CACRpkdZAdhAn97iWPsym_K+A8iVwa3tRacpeEu=J6C=b+xAO6g@mail.gmail.com>
+References: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1526615528-9707-1-git-send-email-djw@t-chip.com.cn>
+In-Reply-To: <1526027497-32556-1-git-send-email-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: djw@t-chip.com.cn
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, May 18, 2018 at 5:52 AM,  <djw@t-chip.com.cn> wrote:
+On Fri, May 11, 2018 at 10:31 AM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
 
-> From: Heiko Stuebner <heiko@sntech.de>
+> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> per GPIO in port A, but the driver currently only supports 1 interrupt.
+> See the DesignWare DW_apb_gpio Databook description of the
+> 'GPIO_INTR_IO' parameter.
 >
-> Syscon nodes can be a simple-mfd and the syscon-users then be declared
-> as children of this node. That way the parent-child structure can be
-> better represented for devices that are fully embedded in the syscon.
+> This change allows the driver to work with up to 32 interrupts, it will
+> get as many interrupts as specified in the DT 'interrupts' property.
+> It doesn't do anything clever with the different interrupts, it just calls
+> the same handler used for single interrupt hardware.
 >
-> Therefore allow getting the syscon from the parent if neither
-> a special compatible nor a gpio,syscon-dev property is defined.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 > ---
+> One point to mention is that I have made it possible for users to have
+> unconnected interrupts by specifying holes in the list of interrupts. This is
+> done by supporting the interrupts-extended DT prop.
+> However, I have no use for this and had to hack some test case for this.
+> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
 >
-> Changes in v2: None
-> Changes in v1:
-> - New: allow fetching syscon from parent node in gpio-syscon driver
+> v6:
+>  - Treat DT and ACPI the same as much as possible. Note that we can't use
+>    platform_get_irq() to get the DT interrupts as they are in the port
+>    sub-node and hence do not have an associated platform device.
 
-Regardless of what happens with the rest of the patches this
-looks sane and generally useful, so patch applied!
+I already applied this patch in some version, can you check what is
+in my devel branch and send incremental patches on top if
+something needs changing?
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commit/?h=devel&id=e6ca26abd37606ba4864f20c85d3fe4a2173b93f
+
+Sorry for not knowing by heart what was applied or when, it's
+just too much for me sometimes.
 
 Yours,
 Linus Walleij
