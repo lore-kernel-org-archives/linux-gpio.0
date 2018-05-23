@@ -1,120 +1,94 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] gpio: dwapb: Rework support for 1 interrupt per port A GPIO
-Date: Wed, 23 May 2018 09:52:44 +0100
-Message-ID: <1527065564-9127-1-git-send-email-phil.edworthy@renesas.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
+ version 1.0
+Date: Wed, 23 May 2018 11:54:43 +0300
+Message-ID: <c0daaf807c557063afe8f2caaedb502ddb8e6296.camel@linux.intel.com>
+References: <20180522204753.GA260493@dtor-ws>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180522204753.GA260493@dtor-ws>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Michel Pollet <michel.pollet@bp.renesas.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Treat DT and ACPI the same as much as possible. Note that we can't use
-platform_get_irq() to get the DT interrupts as they are in the port
-sub-node and hence do not have an associated platform device.
+On Tue, 2018-05-22 at 13:47 -0700, Dmitry Torokhov wrote:
+> As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
+> virtual interrupt numbers for keyboard/touchpad/touchscreen
+> controllers
+> in ACPI tables, they will also update BOARD version number from 1.0
+> to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
+> numbers on Strago boards to those that still carry older BIOSes.
+> 
+> Note that ideally not BOARD but BIOS version should have been updated.
+> However the BIOS version used by Chrome devices has format of
+> Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
+> we do not have "less than" match mode for DMI data.
+> 
 
-This also fixes a problem introduced with error checking when calling
-platform_get_irq().
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- drivers/gpio/gpio-dwapb.c | 53 ++++++++++++++++++++---------------------------
- 1 file changed, 22 insertions(+), 31 deletions(-)
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+> 
+> v1->v2:
+> 
+> - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
+> 
+> 
+>  drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> index b1ae1618fefea..44133e6846303 100644
+> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> @@ -1527,6 +1527,7 @@ static const struct dmi_system_id
+> chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_FAMILY,
+> "Intel_Strago"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1534,6 +1535,7 @@ static const struct dmi_system_id
+> chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1541,6 +1543,7 @@ static const struct dmi_system_id
+> chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1548,6 +1551,7 @@ static const struct dmi_system_id
+> chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
+> +			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{}
+> -- 
+> 2.17.0.441.gb46fe60e1d-goog
+> 
+> 
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 7dcd06b..15b4154 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -444,7 +444,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 		int i;
- 
- 		for (i = 0; i < pp->ngpio; i++) {
--			if (pp->irq[i])
-+			if (pp->irq[i] >= 0)
- 				irq_set_chained_handler_and_data(pp->irq[i],
- 						dwapb_irq_handler, gpio);
- 		}
-@@ -562,7 +562,7 @@ dwapb_gpio_get_pdata(struct device *dev)
- 	struct dwapb_platform_data *pdata;
- 	struct dwapb_port_property *pp;
- 	int nports;
--	int i;
-+	int i, j;
- 
- 	nports = device_get_child_node_count(dev);
- 	if (nports == 0)
-@@ -580,6 +580,8 @@ dwapb_gpio_get_pdata(struct device *dev)
- 
- 	i = 0;
- 	device_for_each_child_node(dev, fwnode)  {
-+		struct device_node *np = NULL;
-+
- 		pp = &pdata->properties[i++];
- 		pp->fwnode = fwnode;
- 
-@@ -599,46 +601,35 @@ dwapb_gpio_get_pdata(struct device *dev)
- 			pp->ngpio = 32;
- 		}
- 
-+		pp->irq_shared	= false;
-+		pp->gpio_base	= -1;
-+
- 		/*
- 		 * Only port A can provide interrupts in all configurations of
- 		 * the IP.
- 		 */
--		if (dev->of_node && pp->idx == 0 &&
--			fwnode_property_read_bool(fwnode,
--						  "interrupt-controller")) {
--			struct device_node *np = to_of_node(fwnode);
--			unsigned int j;
--
--			/*
--			 * The IP has configuration options to allow a single
--			 * combined interrupt or one per gpio. If one per gpio,
--			 * some might not be used.
--			 */
--			for (j = 0; j < pp->ngpio; j++) {
--				int irq = of_irq_get(np, j);
--				if (irq < 0)
--					continue;
--
--				pp->irq[j] = irq;
--				pp->has_irq = true;
--			}
-+		if (pp->idx != 0)
-+			continue;
- 
--			if (!pp->has_irq)
--				dev_warn(dev, "no irq for port%d\n", pp->idx);
-+		if (dev->of_node && fwnode_property_read_bool(fwnode,
-+						  "interrupt-controller")) {
-+			np = to_of_node(fwnode);
- 		}
- 
--		if (has_acpi_companion(dev) && pp->idx == 0) {
--			unsigned int j;
-+		for (j = 0; j < pp->ngpio; j++) {
-+			pp->irq[j] = -ENXIO;
- 
--			for (j = 0; j < pp->ngpio; j++) {
-+			if (np)
-+				pp->irq[j] = of_irq_get(np, j);
-+			else if (has_acpi_companion(dev))
- 				pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
--				if (pp->irq[j])
--					pp->has_irq = true;
--			}
-+
-+			if (pp->irq[j] >= 0)
-+				pp->has_irq = true;
- 		}
- 
--		pp->irq_shared	= false;
--		pp->gpio_base	= -1;
-+		if (!pp->has_irq)
-+			dev_warn(dev, "no irq for port%d\n", pp->idx);
- 	}
- 
- 	return pdata;
 -- 
-2.7.4
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
