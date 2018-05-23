@@ -1,38 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 5/5] MAINTAINERS: Add Actions Semi S900 pinctrl entries
-Date: Wed, 23 May 2018 10:40:48 +0200
-Message-ID: <CACRpkdYF7a-uwye0uwn-pT9Bprj74q1-Pcbq4WLyiE+kYY4j7w@mail.gmail.com>
-References: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org> <20180520051736.4842-6-manivannan.sadhasivam@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180520051736.4842-6-manivannan.sadhasivam@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Rob Herring <robh+dt@kernel.org>, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH] pinctrl: armada-37xx: Fix spurious irq management
+Date: Wed, 23 May 2018 10:44:05 +0200
+Message-ID: <20180523084405.14410-1-gregory.clement@bootlin.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@bootlin.com>, =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Terry Zhou <bjzhou@marvell.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, May 20, 2018 at 7:17 AM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+From: Terry Zhou <bjzhou@marvell.com>
 
-> Add S900 pinctrl entries under ARCH_ACTIONS
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Until now, if we found spurious irq in irq_handler, we only updated the
+status in register but not the status in the code. Due to this the system
+will got stuck dues to the infinite loop
 
-Patch applied tentatively so we have some maintenance entry for this.
+[gregory.clement@bootlin.com: update comment and add fix and stable tags]
+Fixes: 30ac0d3b0702 ("pinctrl: armada-37xx: Add edge both type gpio irq support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Terry Zhou <bjzhou@marvell.com>
+Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Andreas expressed concerns about the driver earlier, so he might want it
-split from the platform parts and have a separate entry for the pinctrl+GPIO
-so Manivannan can maintain that part, also it makes sense to list
-Manivannan as comaintainer of ARCH_ACTIONS with this in.
-
-Andreas: how would you like to proceed?
-
-I understand that I was a bit pushy or even rude in my last message
-about the maintenance of this platform and the code structure of
-the pin control driver. I am sorry if it caused any bad feelings on your
-side :( social conflicts give me the creeps, I just try my best. Maybe
-my best isn't always what it should be.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 5b63248c8209..7bef929bd7fe 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -679,12 +679,13 @@ static void armada_37xx_irq_handler(struct irq_desc *desc)
+ 					writel(1 << hwirq,
+ 					       info->base +
+ 					       IRQ_STATUS + 4 * i);
+-					continue;
++					goto update_status;
+ 				}
+ 			}
+ 
+ 			generic_handle_irq(virq);
+ 
++update_status:
+ 			/* Update status in case a new IRQ appears */
+ 			spin_lock_irqsave(&info->irq_lock, flags);
+ 			status = readl_relaxed(info->base +
+-- 
+2.17.0
