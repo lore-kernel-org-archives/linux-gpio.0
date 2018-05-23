@@ -1,43 +1,83 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCHv9] gpio: Remove VLA from gpiolib
-Date: Wed, 23 May 2018 14:03:02 +0200
-Message-ID: <CACRpkdZNGSd+1Z=GAC1d3sdemM_WG8KztHELtBerwAHUrUvXUA@mail.gmail.com>
-References: <20180521175707.6653-1-labbott@redhat.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for
+ pcal6524
+Date: Wed, 23 May 2018 16:06:36 +0200
+Message-ID: <20180523140635.GB27215@amd>
+References: <cover.1526533188.git.hns@goldelico.com>
+ <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="WhfpMioaduB5tiZL"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180521175707.6653-1-labbott@redhat.com>
+Content-Disposition: inline
+In-Reply-To: <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com, Phil Reid <preid@electromag.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: galak@codeaurora.org, andy.shevchenko@gmail.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 21, 2018 at 7:57 PM, Laura Abbott <labbott@redhat.com> wrote:
 
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621) to eventually
-> turn on -Wvla.
->
-> Using a kmalloc array is the easy way to fix this but kmalloc is still
-> more expensive than stack allocation. Introduce a fast path with a
-> fixed size stack array to cover most chip with gpios below some fixed
-> amount. The slow path dynamically allocates an array to cover those
-> chips with a large number of gpios.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Phil Reid <preid@electromag.com.au>
-> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
+--WhfpMioaduB5tiZL
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu 2018-05-17 06:59:49, H. Nikolaus Schaller wrote:
+> The register constants are so far defined in a way that they fit
+> for the pcal9555a when shifted by the number of banks, i.e. are
+> multiplied by 2 in the accessor function.
+>=20
+> Now, the pcal6524 has 3 banks which means the relative offset
+> is multiplied by 4 for the standard registers.
+>=20
+> Simply applying the bit shift to the extended registers gives
+> a wrong result, since the base offset is already included in
+> the offset.
+>=20
+> Therefore, we have to add code to the 24 bit accessor functions
+> that=A0adjusts the register number for these exended registers.
+>=20
+> The formula finally used was developed and proposed by
+> Andy Shevchenko <andy.shevchenko@gmail.com>.
+>=20
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 > ---
-> v9: switch to bitmap_zero
+>  drivers/gpio/gpio-pca953x.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index c682921d7019..4ad553f4e41f 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -222,9 +222,11 @@ static int pca957x_write_regs_16(struct pca953x_chip=
+ *chip, int reg, u8 *val)
+>  static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 =
+*val)
+>  {
+>  	int bank_shift =3D fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> +	int addr =3D (reg & PCAL_GPIO_MASK) << bank_shift;
+> +	int pinctrl =3D (reg & PCAL_PINCTRL_MASK) << 1;
 
-This v9 applied with Andy's review tag on top and pushed to
-the servers for testing!
+Is this reasonable to do on each register access? Compiler will not be
+able to optimize out fls and shifts, right?
 
-THANKS A LOT for your tireless work on this, it looks really
-really good now, and as it seems we cleaned up some other
-code on the way.
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Yours,
-Linus Walleij
+--WhfpMioaduB5tiZL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsFdWsACgkQMOfwapXb+vITrwCcDj//GiI8j4gSWTwrTovWV1af
+B5QAniiu4Ct5Fy1mqITZSjntXGb4B+4F
+=uPYg
+-----END PGP SIGNATURE-----
+
+--WhfpMioaduB5tiZL--
