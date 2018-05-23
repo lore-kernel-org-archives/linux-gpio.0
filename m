@@ -1,42 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: pinctrl-single: Add functions to save and
- restore pinctrl context
-Date: Wed, 23 May 2018 10:30:48 +0200
-Message-ID: <CACRpkdbh6kpRaGaY7aux5L=JcgQi-pOtRxp9wsrYvrZ7ZSa3pA@mail.gmail.com>
-References: <1526532021-16387-1-git-send-email-j-keerthy@ti.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: pinctrl: Add gpio bindings for
+ Actions S900 SoC
+Date: Wed, 23 May 2018 10:33:42 +0200
+Message-ID: <CACRpkdY3cwpt=xOAOHY2oC7HrTx0hHE8ZnpC40F7y-vPwEPPfQ@mail.gmail.com>
+References: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org> <20180520051736.4842-2-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1526532021-16387-1-git-send-email-j-keerthy@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: ext Tony Lindgren <tony@atomide.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180520051736.4842-2-manivannan.sadhasivam@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 17, 2018 at 6:40 AM, Keerthy <j-keerthy@ti.com> wrote:
+On Sun, May 20, 2018 at 7:17 AM, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-> This adds a pair of context save/restore functions to save/restore the
-> state of a set of pinctrl registers. The context is lost during rtc only
-> suspend with ddr in self-refresh on am43xx. Currently the save/restore
-> is being done unconditionally. This will be optimized later with a
-> pdata-quirk function which will allow is to save/restore only when doing
-> the rtc only mode with ddr in self refresh.
+> Add gpio bindings for Actions Semi S900 SoC.
 >
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
->
-> Changes in v2:
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Patch applied with Tony's ACK.
+Patch applied with Rob's review tag.
 
 Yours,
 Linus Walleij
