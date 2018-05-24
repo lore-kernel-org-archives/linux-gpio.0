@@ -1,52 +1,144 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 3/4] ARM: dts: qcom: add gpio-ranges property
-Date: Thu, 24 May 2018 10:05:16 +0200
-Message-ID: <CACRpkdZ2QAuQDjkqERESmf7Lbr69XSaHj2JCO9hf8a6YiNP2RA@mail.gmail.com>
-References: <270904bcbf03a6b6ac3150f4a7daa15aa7e97586.1526935804.git.chunkeey@gmail.com>
- <910e5a85a6a8020069996e2ff397c93e9c5fe18c.1526935804.git.chunkeey@gmail.com>
- <0ae3376606a89bcdf3fe753a5c967f7103699e09.1526935804.git.chunkeey@gmail.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v2 2/5] gpio: syscon: Add gpio-syscon for rockchip
+Date: Thu, 24 May 2018 14:07:09 +0200
+Message-ID: <3307687.qJF5Pr3uHG@phil>
+References: <1526614328-6869-1-git-send-email-djw@t-chip.com.cn> <1685755.J6GI985WX3@diego> <CAL_Jsq+VBspzCaLD2Wy=fyC-S+LKGZbVsB+b+Etkx91ioXOCuQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <0ae3376606a89bcdf3fe753a5c967f7103699e09.1526935804.git.chunkeey@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Christian Lamparter <chunkeey@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, David Brown <david.brown@linaro.org>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL_Jsq+VBspzCaLD2Wy=fyC-S+LKGZbVsB+b+Etkx91ioXOCuQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Levin Du <djw@t-chip.com.cn>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Wayne Chou <zxf@t-chip.com.cn>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 21, 2018 at 10:57 PM, Christian Lamparter
-<chunkeey@gmail.com> wrote:
+Hi Rob,
 
-> This patch adds the gpio-ranges property to almost all of
-> the Qualcomm ARM platforms that utilize the pinctrl-msm
-> framework.
->
-> The gpio-ranges property is part of the gpiolib subsystem.
-> As a result, the binding text is available in section
-> "2.1 gpio- and pin-controller interaction" of
-> Documentation/devicetree/bindings/gpio/gpio.txt
->
-> For more information please see the patch titled:
-> "pinctrl: msm: fix gpio-hog related boot issues" from
-> this series.
->
-> Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-> Tested-by: Sven Eckelmann <sven.eckelmann@openmesh.com> [ipq4019]
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+Am Mittwoch, 23. Mai 2018, 21:53:53 CEST schrieb Rob Herring:
+> On Wed, May 23, 2018 at 10:12 AM, Heiko Stübner <heiko@sntech.de> wrote:
+> > Am Mittwoch, 23. Mai 2018, 16:43:07 CEST schrieb Rob Herring:
+> >> On Tue, May 22, 2018 at 9:02 PM, Levin Du <djw@t-chip.com.cn> wrote:
+> >> > On 2018-05-23 2:02 AM, Rob Herring wrote:
+> >> >> On Fri, May 18, 2018 at 11:52:05AM +0800, djw@t-chip.com.cn wrote:
+> >> >>> From: Levin Du <djw@t-chip.com.cn>
+> >> >>>
+> >> >>> Some GPIOs sit in the GRF_SOC_CON registers of Rockchip SoCs,
+> >> >>> which do not belong to the general pinctrl.
+> >> >>>
+> >> >>> Adding gpio-syscon support makes controlling regulator or
+> >> >>> LED using these special pins very easy by reusing existing
+> >> >>> drivers, such as gpio-regulator and led-gpio.
+> >> >>>
+> >> >>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> >> >>>
+> >> >>> ---
+> >> >>>
+> >> >>> Changes in v2:
+> >> >>> - Rename gpio_syscon10 to gpio_mute in doc
+> >> >>>
+> >> >>> Changes in v1:
+> >> >>> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+> >> >>> - Add doc rockchip,gpio-syscon.txt
+> >> >>>
+> >> >>>   .../bindings/gpio/rockchip,gpio-syscon.txt         | 41
+> >> >>>
+> >> >>> ++++++++++++++++++++++
+> >> >>>
+> >> >>>   drivers/gpio/gpio-syscon.c                         | 30
+> >> >>>
+> >> >>> ++++++++++++++++
+> >> >>>
+> >> >>>   2 files changed, 71 insertions(+)
+> >> >>>   create mode 100644
+> >> >>>
+> >> >>> Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >> >>>
+> >> >>> diff --git
+> >> >>> a/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >> >>> b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >> >>> new file mode 100644
+> >> >>> index 0000000..b1b2a67
+> >> >>> --- /dev/null
+> >> >>> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+> >> >>> @@ -0,0 +1,41 @@
+> >> >>> +* Rockchip GPIO support for GRF_SOC_CON registers
+> >> >>> +
+> >> >>> +Required properties:
+> >> >>> +- compatible: Should contain "rockchip,gpio-syscon".
+> >> >>> +- gpio-controller: Marks the device node as a gpio controller.
+> >> >>> +- #gpio-cells: Should be two. The first cell is the pin number and
+> >> >>> +  the second cell is used to specify the gpio polarity:
+> >> >>> +    0 = Active high,
+> >> >>> +    1 = Active low.
+> >> >>
+> >> >> There's no need for this child node. Just make the parent node a gpio
+> >> >> controller.
+> >> >>
+> >> >> Rob
+> >> >
+> >> > Hi Rob, it is not clear to me. Do you suggest that the grf node should be
+> >> > a
+> >> > gpio controller,
+> >> > like below?
+> >> >
+> >> > +    grf: syscon at ff100000 {
+> >> > +        compatible = "rockchip,gpio-syscon", "rockchip,rk3328-grf",
+> >> > "syscon", "simple-mfd";
+> >>
+> >> Yes, but drop "rockchip,gpio-syscon" and "simple-mfd".
+> >
+> > I would disagree quite a bit here. The grf are the "general register files",
+> > a bunch of registers used for quite a lot of things, and so it seems
+> > among other users, also a gpio-controller for some more random pins
+> > not controlled through the regular gpio controllers.
+> >
+> > For a more fully stocked grf, please see
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/rk3288.dtsi#n855
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3399.dtsi#n1338
+> >
+> > So the gpio controller should definitly also be a subnode.
+> 
+> Sigh, yes, if there are a bunch of functions needing subnodes like the
+> above, then yes that makes sense. But that's not what has been
+> presented. Please make some attempt at defining *all* the functions.
+> An actual binding would be nice, but I'll settle for just a list of
+> things. The list should have functions that have DT dependencies (like
+> clocks for phys in the above) because until you do, you don't need
+> child nodes.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+That's the problem with the Rockchip-GRF, you only realize its content
+when implementing specific features. 
 
-I guess Andy will apply this?
+Like on the rk3399 the table of the register-list of the GRF alone is 11
+pages long with the register details tables taking up another 230 pages.
+And functional description is often somewhat thin.
 
-Yours,
-Linus Walleij
+So I'm not sure I fully understand what you're asking, but in general
+we define the bindings for sub-devices when tackling these individual
+components, see for example
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=72580a49a837c2c7da83f698c00592eac41537d8
+
+which also has a real phy-driver behind it and binding against that
+subnode of the GRF simple-mfd.
+
+These are real IP blocks somewhere on the socs, with regular supplies
+like resets, clocks etc in most cases. Only their controlling registers
+got dumped into the GRF for some reason.
+
+And in retrospect it really looks like we're doing something right,
+because it seems these bindings seem quite stable over time.
+
+
+> > The gpio in question is called "mute", so I'd think the gpio-syscon driver
+> > should just define a "rockchip,rk3328-gpio-mute" compatible and contain
+> > all the register voodoo in the driver itself and not define it in the dt.
+> 
+> Is there really just one GPIO? If it has a defined function, then is
+> it really GP? Can you control direction? I know Linus W doesn't like
+> that kind of abuse of GPIO.
+
+looks like I convinced Linus that we're not abusing anything with this :-) .
+
+
+Heiko
