@@ -1,27 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: mxc: add clock operation
-Date: Thu, 24 May 2018 10:12:31 +0200
-Message-ID: <CACRpkdbYDqnroi-X7ECdcoeuALEgwB0afZZszap97D_AF725Hg@mail.gmail.com>
+From: Anson Huang <anson.huang@nxp.com>
+Subject: RE: [PATCH] gpio: mxc: add clock operation
+Date: Thu, 24 May 2018 08:16:16 +0000
+Message-ID: <AM3PR04MB1315F0E402BED6BAA943781AF56A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
 References: <1526897190-28714-1-git-send-email-Anson.Huang@nxp.com>
+ <CACRpkdbYDqnroi-X7ECdcoeuALEgwB0afZZszap97D_AF725Hg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1526897190-28714-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <CACRpkdbYDqnroi-X7ECdcoeuALEgwB0afZZszap97D_AF725Hg@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: NXP Linux Team <Linux-imx@nxp.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: dl-linux-imx <linux-imx@nxp.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 21, 2018 at 12:06 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
-
-> i.MX6SLL has GPIO clock gates in CCM CCGR, need
-> to enable them before accessing registers, add
-> optional clock operation for GPIO driver.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-
-Some warnings from the build robot, seem like a missing
-#include <linux/clk.h> or something.
-
-Yours,
-Linus Walleij
+SGksIExpbnVzDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWlsdG86bGludXMud2Fs
+bGVpakBsaW5hcm8ub3JnXQ0KPiBTZW50OiBUaHVyc2RheSwgTWF5IDI0LCAyMDE4IDQ6MTMgUE0N
+Cj4gVG86IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzogZGwtbGludXgt
+aW14IDxsaW51eC1pbXhAbnhwLmNvbT47IG9wZW4gbGlzdDpHUElPIFNVQlNZU1RFTQ0KPiA8bGlu
+dXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+
+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIGdwaW86IG14YzogYWRkIGNsb2NrIG9wZXJhdGlvbg0KPiAN
+Cj4gT24gTW9uLCBNYXkgMjEsIDIwMTggYXQgMTI6MDYgUE0sIEFuc29uIEh1YW5nIDxBbnNvbi5I
+dWFuZ0BueHAuY29tPg0KPiB3cm90ZToNCj4gDQo+ID4gaS5NWDZTTEwgaGFzIEdQSU8gY2xvY2sg
+Z2F0ZXMgaW4gQ0NNIENDR1IsIG5lZWQgdG8gZW5hYmxlIHRoZW0gYmVmb3JlDQo+ID4gYWNjZXNz
+aW5nIHJlZ2lzdGVycywgYWRkIG9wdGlvbmFsIGNsb2NrIG9wZXJhdGlvbiBmb3IgR1BJTyBkcml2
+ZXIuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhw
+LmNvbT4NCj4gDQo+IFNvbWUgd2FybmluZ3MgZnJvbSB0aGUgYnVpbGQgcm9ib3QsIHNlZW0gbGlr
+ZSBhIG1pc3NpbmcgI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KPiBvciBzb21ldGhpbmcuDQogDQpQ
+bGVhc2UgaWdub3JlIHRoaXMgcGF0Y2gsIHRoZSAiW1BBVENIIFYzXSBncGlvOiBteGM6IGFkZCBj
+bG9jayBvcGVyYXRpb24iIGlzIHRvDQpmaXggdGhpcyBidWlsZCB3YXJuaW5nLg0KDQpUaGFua3Mu
+DQoNCkFuc29uLg0KDQoNCj4gDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlqDQo=
