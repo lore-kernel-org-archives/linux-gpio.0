@@ -1,43 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
- version 1.0
-Date: Thu, 24 May 2018 10:19:55 +0200
-Message-ID: <CACRpkdabMV1Vy5dGjW-eRVxY9yAcVhukMY1RNnb7nbYc7keHGw@mail.gmail.com>
-References: <20180522204753.GA260493@dtor-ws>
+Subject: Re: [PATCH v3] gpio: Remove VLA from stmpe driver
+Date: Thu, 24 May 2018 10:23:14 +0200
+Message-ID: <CACRpkdZWtdePWwGZ=1w_8CTz3STt+cVJv7hQAigYHFi1gm6fKA@mail.gmail.com>
+References: <20180328175957.23904-1-labbott@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180522204753.GA260493@dtor-ws>
+In-Reply-To: <20180328175957.23904-1-labbott@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>, Patrice Chotard <patrice.chotard@st.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 22, 2018 at 10:47 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Wed, Mar 28, 2018 at 7:59 PM, Laura Abbott <labbott@redhat.com> wrote:
 
-> As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
-> virtual interrupt numbers for keyboard/touchpad/touchscreen controllers
-> in ACPI tables, they will also update BOARD version number from 1.0
-> to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
-> numbers on Strago boards to those that still carry older BIOSes.
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621)
 >
-> Note that ideally not BOARD but BIOS version should have been updated.
-> However the BIOS version used by Chrome devices has format of
-> Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
-> we do not have "less than" match mode for DMI data.
+> The number of GPIOs on the supported chips is fairly small
+> so stack allocate to a known upper bound and spit out a warning
+> if any new chips have more gpios.
 >
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->
-> v1->v2:
->
-> - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 
-Patch applied for fixes.
-
-Should this also be tagged for stable?
+Patch applied with the review tags!
 
 Yours,
 Linus Walleij
