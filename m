@@ -1,58 +1,177 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2] pinctrl: cherryview: limit Strago DMI workarounds to
- version 1.0
-Date: Thu, 24 May 2018 09:01:54 -0700
-Message-ID: <20180524160154.GA177107@dtor-ws>
-References: <20180522204753.GA260493@dtor-ws>
- <CACRpkdabMV1Vy5dGjW-eRVxY9yAcVhukMY1RNnb7nbYc7keHGw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: tps65090: Pass descriptor instead of GPIO number" to the regulator tree
+Date: Thu, 24 May 2018 20:13:54 +0100
+Message-ID: <E1fLvgQ-0004zs-2z@debutante>
+References: <20180212131717.27193-16-linus.walleij@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdabMV1Vy5dGjW-eRVxY9yAcVhukMY1RNnb7nbYc7keHGw@mail.gmail.com>
+In-Reply-To: <20180212131717.27193-16-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.orgLee Jones <lee.jones@linaro.org>linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+The patch
 
-On Thu, May 24, 2018 at 10:19:55AM +0200, Linus Walleij wrote:
-> On Tue, May 22, 2018 at 10:47 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> 
-> > As Google/Intel will fix the BIOS/Coreboot issues with hardcoding
-> > virtual interrupt numbers for keyboard/touchpad/touchscreen controllers
-> > in ACPI tables, they will also update BOARD version number from 1.0
-> > to 1.1. Let's limit the DMI quirks that try to preserve virtual IRQ
-> > numbers on Strago boards to those that still carry older BIOSes.
-> >
-> > Note that ideally not BOARD but BIOS version should have been updated.
-> > However the BIOS version used by Chrome devices has format of
-> > Google_BUILD.BRANCH.PATCH which is not well suited for DMI matching as
-> > we do not have "less than" match mode for DMI data.
-> >
-> > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > ---
-> >
-> > v1->v2:
-> >
-> > - switch from matching on DMI_BIOS_VERSION to DMI_BOARD_VERSION
-> 
-> Patch applied for fixes.
-> 
-> Should this also be tagged for stable?
+   regulator: tps65090: Pass descriptor instead of GPIO number
 
-No, I do not think so. The workaround being active does not cause any
-issues on boxes with updated firmware, so there is no point in trying to
-get the patch to older kernels. It is going forward that we want the
-"proper" behavior, when possible.
+has been applied to the regulator tree at
 
-Also, I am not quite sure when the new firmware version will get
-qualified for release.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-Thanks.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 3012e81446d011c1bd99812e562e2292f21060fb Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 14 May 2018 10:06:33 +0200
+Subject: [PATCH] regulator: tps65090: Pass descriptor instead of GPIO number
+
+Instead of passing a global GPIO number for the enable GPIO, pass
+a descriptor looked up from the device tree node for the
+regulator.
+
+This regulator supports passing platform data, but enable/sleep
+regulators are looked up from the device tree exclusively, so
+we can need not touch other files.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/tps65090-regulator.c | 50 ++++++++++++--------------
+ include/linux/mfd/tps65090.h           |  8 +++--
+ 2 files changed, 28 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
+index 395f35dc8cdb..2d398fa3b720 100644
+--- a/drivers/regulator/tps65090-regulator.c
++++ b/drivers/regulator/tps65090-regulator.c
+@@ -19,8 +19,8 @@
+ #include <linux/module.h>
+ #include <linux/delay.h>
+ #include <linux/init.h>
+-#include <linux/gpio.h>
+-#include <linux/of_gpio.h>
++#include <linux/of.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
+@@ -300,26 +300,6 @@ static int tps65090_regulator_disable_ext_control(
+ 	return tps65090_config_ext_control(ri, false);
+ }
+ 
+-static void tps65090_configure_regulator_config(
+-		struct tps65090_regulator_plat_data *tps_pdata,
+-		struct regulator_config *config)
+-{
+-	if (gpio_is_valid(tps_pdata->gpio)) {
+-		int gpio_flag = GPIOF_OUT_INIT_LOW;
+-
+-		if (tps_pdata->reg_init_data->constraints.always_on ||
+-				tps_pdata->reg_init_data->constraints.boot_on)
+-			gpio_flag = GPIOF_OUT_INIT_HIGH;
+-
+-		config->ena_gpio = tps_pdata->gpio;
+-		config->ena_gpio_initialized = true;
+-		config->ena_gpio_flags = gpio_flag;
+-	} else {
+-		config->ena_gpio = -EINVAL;
+-		config->ena_gpio_initialized = false;
+-	}
+-}
+-
+ #ifdef CONFIG_OF
+ static struct of_regulator_match tps65090_matches[] = {
+ 	{ .name = "dcdc1", },
+@@ -385,9 +365,26 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 		rpdata->enable_ext_control = of_property_read_bool(
+ 					tps65090_matches[idx].of_node,
+ 					"ti,enable-ext-control");
+-		if (rpdata->enable_ext_control)
+-			rpdata->gpio = of_get_named_gpio(np,
+-					"dcdc-ext-control-gpios", 0);
++		if (rpdata->enable_ext_control) {
++			enum gpiod_flags gflags;
++
++			if (ri_data->constraints.always_on ||
++			    ri_data->constraints.boot_on)
++				gflags = GPIOD_OUT_HIGH;
++			else
++				gflags = GPIOD_OUT_LOW;
++
++			rpdata->gpiod = devm_gpiod_get_from_of_node(&pdev->dev,
++								    tps65090_matches[idx].of_node,
++								    "dcdc-ext-control-gpios", 0,
++								    gflags,
++								    "tps65090");
++			if (IS_ERR(rpdata->gpiod))
++				return ERR_CAST(rpdata->gpiod);
++			if (!rpdata->gpiod)
++				dev_err(&pdev->dev,
++					"could not find DCDC external control GPIO\n");
++		}
+ 
+ 		if (of_property_read_u32(tps65090_matches[idx].of_node,
+ 					 "ti,overcurrent-wait",
+@@ -455,8 +452,7 @@ static int tps65090_regulator_probe(struct platform_device *pdev)
+ 		 */
+ 		if (tps_pdata && is_dcdc(num) && tps_pdata->reg_init_data) {
+ 			if (tps_pdata->enable_ext_control) {
+-				tps65090_configure_regulator_config(
+-						tps_pdata, &config);
++				config.ena_gpiod = tps_pdata->gpiod;
+ 				ri->desc->ops = &tps65090_ext_control_ops;
+ 			} else {
+ 				ret = tps65090_regulator_disable_ext_control(
+diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
+index 67d144b3b8f9..f05bf4a146e2 100644
+--- a/include/linux/mfd/tps65090.h
++++ b/include/linux/mfd/tps65090.h
+@@ -83,6 +83,8 @@ enum {
+ #define TPS65090_MAX_REG	TPS65090_REG_AD_OUT2
+ #define TPS65090_NUM_REGS	(TPS65090_MAX_REG + 1)
+ 
++struct gpio_desc;
++
+ struct tps65090 {
+ 	struct device		*dev;
+ 	struct regmap		*rmap;
+@@ -95,8 +97,8 @@ struct tps65090 {
+  * @reg_init_data: The regulator init data.
+  * @enable_ext_control: Enable extrenal control or not. Only available for
+  *     DCDC1, DCDC2 and DCDC3.
+- * @gpio: Gpio number if external control is enabled and controlled through
+- *     gpio.
++ * @gpiod: Gpio descriptor if external control is enabled and controlled through
++ *     gpio
+  * @overcurrent_wait_valid: True if the overcurrent_wait should be applied.
+  * @overcurrent_wait: Value to set as the overcurrent wait time.  This is the
+  *     actual bitfield value, not a time in ms (valid value are 0 - 3).
+@@ -104,7 +106,7 @@ struct tps65090 {
+ struct tps65090_regulator_plat_data {
+ 	struct regulator_init_data *reg_init_data;
+ 	bool enable_ext_control;
+-	int gpio;
++	struct gpio_desc *gpiod;
+ 	bool overcurrent_wait_valid;
+ 	int overcurrent_wait;
+ };
 -- 
-Dmitry
+2.17.0
