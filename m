@@ -1,192 +1,89 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: lp8788-ldo: Pass descriptor instead of GPIO number" to the regulator tree
-Date: Thu, 24 May 2018 20:14:14 +0100
-Message-ID: <E1fLvgk-0005nX-69@debutante>
-References: <20180212131717.27193-11-linus.walleij@linaro.org>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v2 5/5] MAINTAINERS: Add Actions Semi S900 pinctrl entries
+Date: Fri, 25 May 2018 06:12:00 +0200
+Message-ID: <25d1c303-71d7-8c38-880f-7bb0e133a876@suse.de>
+References: <20180520051736.4842-1-manivannan.sadhasivam@linaro.org>
+ <20180520051736.4842-6-manivannan.sadhasivam@linaro.org>
+ <CACRpkdYF7a-uwye0uwn-pT9Bprj74q1-Pcbq4WLyiE+kYY4j7w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180212131717.27193-11-linus.walleij@linaro.org>
+In-Reply-To: <CACRpkdYF7a-uwye0uwn-pT9Bprj74q1-Pcbq4WLyiE+kYY4j7w@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Milo Kim <milo.kim@ti.com>Lee Jones <lee.jones@linaro.org>linux-kernel@vger.kernel.org
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh+dt@kernel.org>, liuwei@actions-semi.com, 96boards@ucrobotics.com, OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS <devicetree@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>, "Thomas C. Liau" <thomas.liau@actions-semi.com>, Jeff Chen <jeff.chen@actions-semi.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The patch
+Am 23.05.2018 um 10:40 schrieb Linus Walleij:
+> On Sun, May 20, 2018 at 7:17 AM, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> 
+>> Add S900 pinctrl entries under ARCH_ACTIONS
+>>
+>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Patch applied tentatively so we have some maintenance entry for this.
+> 
+> Andreas expressed concerns about the driver earlier, so he might want it
+> split from the platform parts and have a separate entry for the pinctrl+GPIO
+> so Manivannan can maintain that part, also it makes sense to list
+> Manivannan as comaintainer of ARCH_ACTIONS with this in.
+> 
+> Andreas: how would you like to proceed?
+> 
+> I understand that I was a bit pushy or even rude in my last message
+> about the maintenance of this platform and the code structure of
+> the pin control driver. I am sorry if it caused any bad feelings on your
+> side :( social conflicts give me the creeps, I just try my best. Maybe
+> my best isn't always what it should be.
 
-   regulator: lp8788-ldo: Pass descriptor instead of GPIO number
+I fail to understand how splitting the MAINTAINERS section is going to
+help with the pinctrl conflict at hand? The problem is that instead of
+refactoring my S500 pinctrl driver to his liking, Mani has submitted a
+competing S900 pinctrl driver that you went on to merge. The human
+aspect is that merging his driver took the credit away from me having
+written the earlier pinctrl driver (based on my rtd1295 pinctrl driver).
+The practical aspect is that I can't drop my pinctrl driver from my work
+branch until there is equivalent functionality in the merged driver. I
+am lacking the time to rewrite S500 pin definitions on top of Mani's
+myself at this time, and I haven't seen S500 patches from him yet.
 
-has been applied to the regulator tree at
+Also I had been investing efforts in explaining the upstreaming process
+to Actions, last in November. I see Thomas Liau and Jeff Chen missing in
+CC and I have not seen any Reviewed-by or Acked-by from anyone at
+Actions on this and the preceding series. There are more chips than the
+one on Linaro's 96board, so I would prefer to assure that the design
+works for all. Thus I am very critical of you applying the patches
+without waiting for review by Actions.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+Other aspects are: The reason I wrote the pinctrl driver is that I
+experienced a UART TX issue on the Sparky board and was hoping a pinctrl
+driver might resolve that, but it didn't. So I still have a mix of
+boards where some are working and some are pretty unusable, without any
+clues on why.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+That said, I don't object to having a separate MAINTAINERS section for
+the pinctrl driver(s) as long as I still get CC'ed on changes. We have
+wanted to add Mani as R for Actions overall, so that would probably mean
+adding me as R to an Actions pinctrl section, to avoid syncing the paths
+between two sections. I had previously felt that it does not make sense
+to list Mani as co-maintainer (M) for Actions overall since he can't tag
+and submit from my repo. And for the record I have offered him to take
+over which he didn't want to. I still hope to find some more time to
+review and queue his SPS patches, a driver that I have designed and thus
+understand and am much happier about the incremental additions there.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+A further side note is that I had reached out about setting up an
+infradead mailing list linux-actions, but there was no response from
+David or anyone. Having an L on the section(s) would avoid messing with
+R and hand-maintained CC lists. Any help with that appreciated.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Regards,
+Andreas
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 2468f0d51548b23507ceb3bba5f4e3acaea117ba Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 14 May 2018 10:06:28 +0200
-Subject: [PATCH] regulator: lp8788-ldo: Pass descriptor instead of GPIO number
-
-Instead of passing a global GPIO number, pass a descriptor looked
-up with the standard devm_gpiod_get_index_optional() call.
-
-This driver has supported passing a LDO enable GPIO for years,
-yet this facility has never been put to use in the upstream kernel.
-If someone desires to put in place GPIO control for the LDOs,
-this can be done by adding a GPIO descriptor table in the MFD
-nexus in drivers/mfd/lp8788.c for the LDO device when spawning the
-MFD children, or using a board file.
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/lp8788-ldo.c | 32 ++++++++++++++++----------------
- include/linux/mfd/lp8788.h     | 16 ----------------
- 2 files changed, 16 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
-index cbfd35873575..f2347474a106 100644
---- a/drivers/regulator/lp8788-ldo.c
-+++ b/drivers/regulator/lp8788-ldo.c
-@@ -16,7 +16,7 @@
- #include <linux/err.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/mfd/lp8788.h>
- 
- /* register address */
-@@ -85,8 +85,6 @@
- #define LP8788_STARTUP_TIME_S		3
- 
- #define ENABLE_TIME_USEC		32
--#define ENABLE				GPIOF_OUT_INIT_HIGH
--#define DISABLE				GPIOF_OUT_INIT_LOW
- 
- enum lp8788_ldo_id {
- 	DLDO1,
-@@ -117,7 +115,7 @@ struct lp8788_ldo {
- 	struct lp8788 *lp;
- 	struct regulator_desc *desc;
- 	struct regulator_dev *regulator;
--	struct lp8788_ldo_enable_pin *en_pin;
-+	struct gpio_desc *ena_gpiod;
- };
- 
- /* DLDO 1, 2, 3, 9 voltage table */
-@@ -469,7 +467,6 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
- 					enum lp8788_ldo_id id)
- {
- 	struct lp8788 *lp = ldo->lp;
--	struct lp8788_platform_data *pdata = lp->pdata;
- 	enum lp8788_ext_ldo_en_id enable_id;
- 	u8 en_mask[] = {
- 		[EN_ALDO1]   = LP8788_EN_SEL_ALDO1_M,
-@@ -504,11 +501,18 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
- 		return 0;
- 	}
- 
--	/* if no platform data for ldo pin, then set default enable mode */
--	if (!pdata || !pdata->ldo_pin || !pdata->ldo_pin[enable_id])
-+	/* FIXME: check default mode for GPIO here: high or low? */
-+	ldo->ena_gpiod = devm_gpiod_get_index_optional(&pdev->dev,
-+						       "enable",
-+						       enable_id,
-+						       GPIOD_OUT_HIGH);
-+	if (IS_ERR(ldo->ena_gpiod))
-+		return PTR_ERR(ldo->ena_gpiod);
-+
-+	/* if no GPIO for ldo pin, then set default enable mode */
-+	if (!ldo->ena_gpiod)
- 		goto set_default_ldo_enable_mode;
- 
--	ldo->en_pin = pdata->ldo_pin[enable_id];
- 	return 0;
- 
- set_default_ldo_enable_mode:
-@@ -533,10 +537,8 @@ static int lp8788_dldo_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	if (ldo->en_pin) {
--		cfg.ena_gpio = ldo->en_pin->gpio;
--		cfg.ena_gpio_flags = ldo->en_pin->init_state;
--	}
-+	if (ldo->ena_gpiod)
-+		cfg.ena_gpiod = ldo->ena_gpiod;
- 
- 	cfg.dev = pdev->dev.parent;
- 	cfg.init_data = lp->pdata ? lp->pdata->dldo_data[id] : NULL;
-@@ -582,10 +584,8 @@ static int lp8788_aldo_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	if (ldo->en_pin) {
--		cfg.ena_gpio = ldo->en_pin->gpio;
--		cfg.ena_gpio_flags = ldo->en_pin->init_state;
--	}
-+	if (ldo->ena_gpiod)
-+		cfg.ena_gpiod = ldo->ena_gpiod;
- 
- 	cfg.dev = pdev->dev.parent;
- 	cfg.init_data = lp->pdata ? lp->pdata->aldo_data[id] : NULL;
-diff --git a/include/linux/mfd/lp8788.h b/include/linux/mfd/lp8788.h
-index 786bf6679a28..2010e0de3e34 100644
---- a/include/linux/mfd/lp8788.h
-+++ b/include/linux/mfd/lp8788.h
-@@ -181,20 +181,6 @@ struct lp8788_buck2_dvs {
- 	enum lp8788_dvs_sel vsel;
- };
- 
--/*
-- * struct lp8788_ldo_enable_pin
-- *
-- *   Basically, all LDOs are enabled through the I2C commands.
-- *   But ALDO 1 ~ 5, 7, DLDO 7, 9, 11 can be enabled by external gpio pins.
-- *
-- * @gpio         : gpio number which is used for enabling ldos
-- * @init_state   : initial gpio state (ex. GPIOF_OUT_INIT_LOW)
-- */
--struct lp8788_ldo_enable_pin {
--	int gpio;
--	int init_state;
--};
--
- /*
-  * struct lp8788_chg_param
-  * @addr         : charging control register address (range : 0x11 ~ 0x1C)
-@@ -288,7 +274,6 @@ struct lp8788_vib_platform_data {
-  * @aldo_data    : regulator initial data for analog ldo
-  * @buck1_dvs    : gpio configurations for buck1 dvs
-  * @buck2_dvs    : gpio configurations for buck2 dvs
-- * @ldo_pin      : gpio configurations for enabling LDOs
-  * @chg_pdata    : platform data for charger driver
-  * @alarm_sel    : rtc alarm selection (1 or 2)
-  * @bl_pdata     : configurable data for backlight driver
-@@ -306,7 +291,6 @@ struct lp8788_platform_data {
- 	struct regulator_init_data *aldo_data[LP8788_NUM_ALDOS];
- 	struct lp8788_buck1_dvs *buck1_dvs;
- 	struct lp8788_buck2_dvs *buck2_dvs;
--	struct lp8788_ldo_enable_pin *ldo_pin[EN_LDOS_MAX];
- 
- 	/* charger */
- 	struct lp8788_charger_platform_data *chg_pdata;
 -- 
-2.17.0
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
