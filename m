@@ -1,12 +1,24 @@
-From: Christian Lamparter <chunkeey@gmail.com>
-Subject: [PATCH v6 1/2] dt-bindings: pinctrl: qcom: add gpio-ranges,
- gpio-reserved-ranges
-Date: Mon, 28 May 2018 13:06:01 +0200
-Message-ID: <6dbaadee4bb22638a2c2e6433e8d1740884ecfd9.1527505307.git.chunkeey@gmail.com>
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
+ bindings
+Date: Mon, 28 May 2018 11:39:50 +0000
+Message-ID: <8d8b0f05-7f04-e718-7a45-148af38a03d4@st.com>
+References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
+ <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
+ <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
+ <CACRpkdYOMjjYyWQz7PK34jqUK7z5-CmH1HY6un4k8nBn7Cq8ag@mail.gmail.com>
+ <55392fe7-20d2-9447-60f9-4bd226b60195@st.com>
+ <CACRpkda2VGo0FOdR09tKiTpg66NgoWjubaHp_J3372y=a772Zg@mail.gmail.com>
+ <b9005dd8-8214-ceab-0f88-ff1a51b44e34@st.com> <20180517063640.GK5130@dell>
+ <28c374e6-b440-f785-b371-03fe15c8bc4b@st.com>
+ <CACRpkdbZ2Hr7cc5+dyPaL0CKYuy2-oosEr=UPo60+3beDCVi9A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdbZ2Hr7cc5+dyPaL0CKYuy2-oosEr=UPo60+3beDCVi9A@mail.gmail.com>
+Content-Language: en-US
+Content-ID: <064CC68FBA4EA74BAE9E208ECCC8F28D@st.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,355 +28,108 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, Alexandre TORGUE <alexandre.torgue@st.com>, "open
+ list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open
+ list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds the gpio-ranges and gpio-reserved-ranges property
-definitions to the binding text files supported by the pinctrl-msm
-driver framework.
+On 05/24/2018 09:13 AM, Linus Walleij wrote:
+> On Fri, May 18, 2018 at 9:29 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
+>> On 05/17/2018 08:36 AM, Lee Jones wrote:
+>>> On Wed, 16 May 2018, Amelie DELAUNAY wrote:
+>>>> On 05/16/2018 04:20 PM, Linus Walleij wrote:
+>>>>> On Wed, May 9, 2018 at 9:56 AM, Amelie DELAUNAY <amelie.delaunay@st.com> wrote:
+>>>>>
+>>>>>> Indeed, stmfx has other functions than GPIO. But, after comments done
+>>>>>> here: [1] and there: [2], it has been decided to move MFD parent/GPIO
+>>>>>> child drivers into a single PINCTRL/GPIO driver because of the following
+>>>>>> reasons:
+>>>>>> - Other stmfx functions (IDD measurement and TouchScreen controller) are
+>>>>>> not used on any of the boards using an stmfx and supported by Linux, so
+>>>>>> no way to test these functions, and no need to maintain them while they
+>>>>>> are not being used.
+>>>>>> - But, in the case a new board will use more than GPIO function on
+>>>>>> stmfx, the actual implementation allow to easily extract common init
+>>>>>> part of stmfx and put it in an MFD driver.
+>>>>>>
+>>>>>> So I could remove gpio sub-node and put its contents in stmfx node and
+>>>>>> keep single PINCTRL/GPIO driver for the time being.
+>>>>>> Please advise,
+>>>>>
+>>>>> I would normally advice to use the right modeling from the start, create
+>>>>> the MFD driver and spawn the devices from there. It is confusing
+>>>>> if the layout of the driver(s) doesn't really match the layout of the
+>>>>> hardware.
+>>>>>
+>>>>> I understand that it is a pain to write new MFD drivers to get your
+>>>>> things going and it would be "nice to get this working really quick
+>>>>> now" but in my experience it is better to do it right from the start.
+>>>>>
+>>>>
+>>>> Hi Linus,
+>>>>
+>>>> Thanks for your advice. I understand the point.
+>>>> So, the right modeling would be to:
+>>>> - create an MFD driver with the common init part of stmfx
+>>>> - remove all common init part of stmfx-pinctrl driver and keep only all
+>>>> gpio/pinctrl functions.
+>>>>
+>>>> I will not develop the other stmfx functions (IDD measurement driver and
+>>>> TouchScreen controller driver) because, as explained ealier, they are
+>>>> not used on any of the boards using an stmfx and supported by Linux, so
+>>>> no way to test these functions, and no need to maintain them while they
+>>>> are not being used.
+>>>>
+>>>> Lee, are you OK with that ?
+>>>
+>>> I missed a lot of this conversation I think, but from what I've read,
+>>> it sounds fine.
+>>>
+>>
+>> I summarize the situation:
+>> - I still don't have an official datasheet for STMFX device which could
+>> justify the use of an MFD driver;
+>> - the MFD driver will contain the STMFX chip initialization stuff such
+>> as regmap initialization (regmap structure will be shared with the
+>> child), chip initialization, global interrupt management;
+>> - there will be only one child (GPIO/PINCTRL node) for the time being.
+> 
+> But there will be more devices in it. And they will invariably be put
+> to use later, and there will be new versions of the chip as well, and
+> then you will be happy about doing the MFD core, which makes it
+> easy to add new variants with different subdevices.
+> 
+>> So, is "MFD driver + GPIO/PINCTRL driver" the right modeling, and does
+>> it still sound fine after this summary ? :)
+> 
+> No I think it should use an MFD core.
+> 
+> Mainly because of device tree concerns.
+> 
+> The main reason is that the device tree bindings will be different if
+> you add an MFD core later, the GPIO and pinctrl driver will
+> move to a child node, making old device trees incompatible.
+> 
+> We could have a single driver in GPIO+pin control if it is a child
+> of an MFD node in the device tree, but it doesn't make much
+> sense as the I2C device need to be probing to the MFD core.
+> 
 
-gpio-ranges:
-For DT-based platforms the pinctrl-msm framework currently relies
-on the deprecated-for-DT gpiochip_add_pin_range() function to add
-the range of GPIOs to be handled by the pin controller. Due to
-interactions within gpiolib code, this causes the pinctrl-msm
-driver to bail out (-517) during boot when a gpio-hog is declared.
-This can be fatal and cause the system to not boot or reset
-(for a detailed explanation and call-trace, refer to patch:
-"pinctrl: msm: fix gpio-hog related boot issues" in this series).
+I agree with you Linus, and that's why all STMFX chip initialization 
+stuff was decorrelated in pinctrl-stmfx. This shows that this stuff 
+needs to be in an MFD core.
 
-gpio-reserved-ranges:
-The binding has been added as a precaution since the TrustZone
-firmware (aka QSEE), which is running as the hypervisor, might
-have reserved certain, but undisclosed pins. Hence reading or
-writing to the registers for those pins will cause an
-XPU violation and this subsequently crashes the kernel.
+But as there is only one child for now (due to the reasons mentioned 
+earlier), it can suggest that it is not a Multi-Function Device.
 
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
----
- .../devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt | 6 ++++++
- .../devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt | 9 +++++++++
- .../devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt | 6 ++++++
- .../devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt | 6 ++++++
- .../devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt | 9 +++++++++
- .../devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt | 9 +++++++++
- .../devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt | 6 ++++++
- .../devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt | 9 +++++++++
- .../devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt | 9 +++++++++
- .../devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt | 6 ++++++
- .../devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt | 9 +++++++++
- .../devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt | 9 +++++++++
- 12 files changed, 93 insertions(+)
+I'm not able to target when IDD or TS functions will be required on a 
+Linux product, but it still makes sense to consider that these functions 
+will be used on a Linux product.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
-index a752a4716486..c2dbb3e8d840 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
-@@ -10,6 +10,11 @@ Required properties:
- - #gpio-cells : Should be two.
-                 The first cell is the gpio pin number and the
-                 second cell is used for optional parameters.
-+- gpio-ranges: see ../gpio/gpio.txt
-+
-+Optional properties:
-+
-+- gpio-reserved-ranges: see ../gpio/gpio.txt
- 
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
-@@ -67,6 +72,7 @@ Example:
- 
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&gsbi5_uart_default>;
-+		gpio-ranges = <&msmgpio 0 0 90>;
- 
- 		gsbi5_uart_default: gsbi5_uart_default {
- 			mux {
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
-index c4ea61ac56f2..68e93d5b7ede 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
-@@ -40,6 +40,14 @@ MSM8960 platform.
- 	Definition: must be 2. Specifying the pin number and flags, as defined
- 		    in <dt-bindings/gpio/gpio.h>
- 
-+- gpio-ranges:
-+	Usage: required
-+	Definition:  see ../gpio/gpio.txt
-+
-+- gpio-reserved-ranges:
-+	Usage: optional
-+	Definition: see ../gpio/gpio.txt
-+
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
- 
-@@ -154,6 +162,7 @@ Example:
- 
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&tlmm 0 0 147>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 		interrupts = <0 208 0>;
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
-index 93374f478b9e..991be0cd0948 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
-@@ -13,6 +13,11 @@ Required properties:
- - #gpio-cells : Should be two.
-                 The first cell is the gpio pin number and the
-                 second cell is used for optional parameters.
-+- gpio-ranges: see ../gpio/gpio.txt
-+
-+Optional properties:
-+
-+- gpio-reserved-ranges: see ../gpio/gpio.txt
- 
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
-@@ -64,6 +69,7 @@ Example:
- 
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&tlmm 0 0 100>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 		interrupts = <0 208 0>;
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt
-index 6e88e91feb11..7ed56a1b70fc 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt
-@@ -10,6 +10,11 @@ Required properties:
- - #gpio-cells : Should be two.
-                 The first cell is the gpio pin number and the
-                 second cell is used for optional parameters.
-+- gpio-ranges: see ../gpio/gpio.txt
-+
-+Optional properties:
-+
-+- gpio-reserved-ranges: see ../gpio/gpio.txt
- 
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
-@@ -67,6 +72,7 @@ Example:
- 
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&pinmux 0 0 69>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 		interrupts = <0 32 0x4>;
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
-index 407b9443629d..6dd72f8599e9 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
-@@ -40,6 +40,14 @@ IPQ8074 platform.
- 	Definition: must be 2. Specifying the pin number and flags, as defined
- 		    in <dt-bindings/gpio/gpio.h>
- 
-+- gpio-ranges:
-+	Usage: required
-+	Definition:  see ../gpio/gpio.txt
-+
-+- gpio-reserved-ranges:
-+	Usage: optional
-+	Definition: see ../gpio/gpio.txt
-+
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
- 
-@@ -148,6 +156,7 @@ Example:
- 		interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&tlmm 0 0 70>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt
-index 1b52f01ddcb7..86ecdcfc4fb8 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt
-@@ -40,6 +40,14 @@ MDM9615 platform.
- 	Definition: must be 2. Specifying the pin number and flags, as defined
- 		    in <dt-bindings/gpio/gpio.h>
- 
-+- gpio-ranges:
-+	Usage: required
-+	Definition:  see ../gpio/gpio.txt
-+
-+- gpio-reserved-ranges:
-+	Usage: optional
-+	Definition: see ../gpio/gpio.txt
-+
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
- 
-@@ -127,6 +135,7 @@ Example:
- 
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&msmgpio 0 0 88>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 		interrupts = <0 16 0x4>;
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt
-index df9a838ec5f9..cdc4787e59d2 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt
-@@ -10,6 +10,11 @@ Required properties:
- - #gpio-cells : Should be two.
-                 The first cell is the gpio pin number and the
-                 second cell is used for optional parameters.
-+- gpio-ranges: see ../gpio/gpio.txt
-+
-+Optional properties:
-+
-+- gpio-reserved-ranges: see ../gpio/gpio.txt
- 
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
-@@ -62,6 +67,7 @@ Example:
- 
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&msmgpio 0 0 173>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 		interrupts = <0 16 0x4>;
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt
-index 498caff6029e..195a7a0ef0cc 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt
-@@ -40,6 +40,14 @@ MSM8916 platform.
- 	Definition: must be 2. Specifying the pin number and flags, as defined
- 		    in <dt-bindings/gpio/gpio.h>
- 
-+- gpio-ranges:
-+	Usage: required
-+	Definition:  see ../gpio/gpio.txt
-+
-+- gpio-reserved-ranges:
-+	Usage: optional
-+	Definition: see ../gpio/gpio.txt
-+
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
- 
-@@ -162,6 +170,7 @@ Example:
- 		interrupts = <0 208 0>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&tlmm 0 0 122>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt
-index eb8d8aa41f20..5034eb6653c7 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt
-@@ -40,6 +40,14 @@ MSM8960 platform.
- 	Definition: must be 2. Specifying the pin number and flags, as defined
- 		    in <dt-bindings/gpio/gpio.h>
- 
-+- gpio-ranges:
-+	Usage: required
-+	Definition:  see ../gpio/gpio.txt
-+
-+- gpio-reserved-ranges:
-+	Usage: optional
-+	Definition: see ../gpio/gpio.txt
-+
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
- 
-@@ -156,6 +164,7 @@ Example:
- 
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&msmgpio 0 0 152>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 		interrupts = <0 16 0x4>;
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt
-index 453bd7c76d6b..c22e6c425d0b 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt
-@@ -10,6 +10,11 @@ Required properties:
- - #gpio-cells : Should be two.
-                 The first cell is the gpio pin number and the
-                 second cell is used for optional parameters.
-+- gpio-ranges: see ../gpio/gpio.txt
-+
-+Optional properties:
-+
-+- gpio-reserved-ranges: see ../gpio/gpio.txt
- 
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
-@@ -87,6 +92,7 @@ Example:
- 
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&msmgpio 0 0 146>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 		interrupts = <0 208 0>;
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
-index 13cd629f896e..f15443f6e78e 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
-@@ -42,6 +42,14 @@ MSM8994 platform.
- 	Definition: must be 2. Specifying the pin number and flags, as defined
- 		    in <dt-bindings/gpio/gpio.h>
- 
-+- gpio-ranges:
-+	Usage: required
-+	Definition:  see ../gpio/gpio.txt
-+
-+- gpio-reserved-ranges:
-+	Usage: optional
-+	Definition: see ../gpio/gpio.txt
-+
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
- 
-@@ -160,6 +168,7 @@ Example:
- 		interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&msmgpio 0 0 146>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt
-index aaf01e929eea..fa97f609fe45 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt
-@@ -40,6 +40,14 @@ MSM8996 platform.
- 	Definition: must be 2. Specifying the pin number and flags, as defined
- 		    in <dt-bindings/gpio/gpio.h>
- 
-+- gpio-ranges:
-+	Usage: required
-+	Definition:  see ../gpio/gpio.txt
-+
-+- gpio-reserved-ranges:
-+	Usage: optional
-+	Definition: see ../gpio/gpio.txt
-+
- Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
- a general description of GPIO and interrupt bindings.
- 
-@@ -180,6 +188,7 @@ Example:
- 		reg = <0x01010000 0x300000>;
- 		interrupts = <0 208 0>;
- 		gpio-controller;
-+		gpio-ranges = <&tlmm 0 0 150>;
- 		#gpio-cells = <2>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
--- 
-2.17.0
+So, I think MFD core + GPIO/pinctrl driver is the right modeling, but I 
+wanted to be sure that this is okay for everyone. I don't want to spend 
+time on something that will not be accepted due to its modeling.
+
+Regards,
+Amelie
