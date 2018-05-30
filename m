@@ -1,32 +1,44 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2] mdio-mux-gpio: Remove VLA usage
-Date: Wed, 30 May 2018 22:57:12 +0200
-Message-ID: <20180530205712.GB16286@lunn.ch>
-References: <20180530204830.GA24884@beast>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] net: ti: cpsw: include gpio/consumer.h
+Date: Wed, 30 May 2018 23:51:54 +0200
+Message-ID: <20180530215212.1151415-1-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180530204830.GA24884@beast>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Pramod Kumar <pramod.kumar@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: linux-gpio@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, Keerthy <j-keerthy@ti.com>, linux-omap@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 30, 2018 at 01:48:30PM -0700, Kees Cook wrote:
-> In the quest to remove all stack VLA usage from the kernel[1], this
-> moves the allocation into struct mdio_mux_gpio_state during probe.
-> 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> v2: allocate array as part of structure (Andrew Lunn)
+On platforms that don't always enable CONFIG_GPIOLIB, we run into
+a build failure:
 
-Hi Kees
+drivers/net/ethernet/ti/cpsw.c: In function 'cpsw_probe':
+drivers/net/ethernet/ti/cpsw.c:3006:9: error: implicit declaration of function 'devm_gpiod_get_array_optional' [-Werror=implicit-function-declaration]
+  mode = devm_gpiod_get_array_optional(&pdev->dev, "mode", GPIOD_OUT_LOW);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/ethernet/ti/cpsw.c:3006:59: error: 'GPIOD_OUT_LOW' undeclared (first use in this function); did you mean 'GPIOF_INIT_LOW'?
+  mode = devm_gpiod_get_array_optional(&pdev->dev, "mode", GPIOD_OUT_LOW);
 
-This looks much better, thanks.
+Since we cannot rely on this to be visible from gpio.h, we have to include
+gpio/consumer.h directly.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: 2652113ff043 ("net: ethernet: ti: Allow most drivers with COMPILE_TEST")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/ethernet/ti/cpsw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    Andrew
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index 643cd2d9dfb6..534596ce00d3 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -29,7 +29,7 @@
+ #include <linux/workqueue.h>
+ #include <linux/delay.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/of.h>
+ #include <linux/of_mdio.h>
+ #include <linux/of_net.h>
+-- 
+2.9.0
