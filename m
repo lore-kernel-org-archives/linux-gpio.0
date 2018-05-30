@@ -1,30 +1,90 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: davinci: fix build warning when !CONFIG_OF
-Date: Wed, 30 May 2018 09:11:36 +0200
-Message-ID: <CACRpkdaKFPp72FvOC9s7fxnmOsmNQ7xZ0O8WZi_a3+81E4mL8Q@mail.gmail.com>
-References: <20180529145101.20808-1-nsekhar@ti.com>
+From: Kees Cook <keescook@chromium.org>
+Subject: [PATCH v2] mdio-mux-gpio: Remove VLA usage
+Date: Wed, 30 May 2018 13:48:30 -0700
+Message-ID: <20180530204830.GA24884@beast>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180529145101.20808-1-nsekhar@ti.com>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Keerthy <j-keerthy@ti.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Pramod Kumar <pramod.kumar@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 29, 2018 at 4:51 PM, Sekhar Nori <nsekhar@ti.com> wrote:
+In the quest to remove all stack VLA usage from the kernel[1], this
+moves the allocation into struct mdio_mux_gpio_state during probe.
 
-> This nukes the following warning that is seen when building without
-> OF support:
->
-> drivers/gpio/gpio-davinci.c:437:25: warning: =E2=80=98keystone_gpio_get_i=
-rq_chip=E2=80=99 defined but not used [-Wunused-function]
->  static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
->                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Patch applied.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+v2: allocate array as part of structure (Andrew Lunn)
+---
+ drivers/net/phy/mdio-mux-gpio.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+index 082ffef0dec4..6b55e0ddef63 100644
+--- a/drivers/net/phy/mdio-mux-gpio.c
++++ b/drivers/net/phy/mdio-mux-gpio.c
+@@ -20,23 +20,23 @@
+ struct mdio_mux_gpio_state {
+ 	struct gpio_descs *gpios;
+ 	void *mux_handle;
++	int values[];
+ };
+ 
+ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ 				   void *data)
+ {
+ 	struct mdio_mux_gpio_state *s = data;
+-	int values[s->gpios->ndescs];
+ 	unsigned int n;
+ 
+ 	if (current_child == desired_child)
+ 		return 0;
+ 
+ 	for (n = 0; n < s->gpios->ndescs; n++)
+-		values[n] = (desired_child >> n) & 1;
++		s->values[n] = (desired_child >> n) & 1;
+ 
+ 	gpiod_set_array_value_cansleep(s->gpios->ndescs, s->gpios->desc,
+-				       values);
++				       s->values);
+ 
+ 	return 0;
+ }
+@@ -44,15 +44,21 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct mdio_mux_gpio_state *s;
++	struct gpio_descs *gpios;
+ 	int r;
+ 
+-	s = devm_kzalloc(&pdev->dev, sizeof(*s), GFP_KERNEL);
+-	if (!s)
++	gpios = gpiod_get_array(&pdev->dev, NULL, GPIOD_OUT_LOW);
++	if (IS_ERR(gpios))
++		return PTR_ERR(gpios);
++
++	s = devm_kzalloc(&pdev->dev, sizeof(*s->values) * gpios->ndescs +
++				     sizeof(*s), GFP_KERNEL);
++	if (!s) {
++		gpiod_put_array(gpios);
+ 		return -ENOMEM;
++	}
+ 
+-	s->gpios = gpiod_get_array(&pdev->dev, NULL, GPIOD_OUT_LOW);
+-	if (IS_ERR(s->gpios))
+-		return PTR_ERR(s->gpios);
++	s->gpios = gpios;
+ 
+ 	r = mdio_mux_init(&pdev->dev, pdev->dev.of_node,
+ 			  mdio_mux_gpio_switch_fn, &s->mux_handle, s, NULL);
+-- 
+2.17.0
+
+
+-- 
+Kees Cook
+Pixel Security
