@@ -1,64 +1,48 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v6 1/2] dt-bindings: pinctrl: qcom: add gpio-ranges,
- gpio-reserved-ranges
-Date: Wed, 30 May 2018 19:14:54 -0500
-Message-ID: <20180531001454.GA8422@rob-hp-laptop>
-References: <6dbaadee4bb22638a2c2e6433e8d1740884ecfd9.1527505307.git.chunkeey@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <6dbaadee4bb22638a2c2e6433e8d1740884ecfd9.1527505307.git.chunkeey@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Christian Lamparter <chunkeey@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, David Brown <david.brown@linaro.org>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
+From: djw@t-chip.com.cn
+Subject: [PATCH v3 1/5] gpio: syscon: allow fetching syscon from parent node
+Date: Thu, 31 May 2018 11:27:49 +0800
+Message-ID: <1527737273-8387-2-git-send-email-djw@t-chip.com.cn>
+References: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-rockchip@lists.infradead.org
+Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 28, 2018 at 01:06:01PM +0200, Christian Lamparter wrote:
-> This patch adds the gpio-ranges and gpio-reserved-ranges property
-> definitions to the binding text files supported by the pinctrl-msm
-> driver framework.
-> 
-> gpio-ranges:
-> For DT-based platforms the pinctrl-msm framework currently relies
-> on the deprecated-for-DT gpiochip_add_pin_range() function to add
-> the range of GPIOs to be handled by the pin controller. Due to
-> interactions within gpiolib code, this causes the pinctrl-msm
-> driver to bail out (-517) during boot when a gpio-hog is declared.
-> This can be fatal and cause the system to not boot or reset
-> (for a detailed explanation and call-trace, refer to patch:
-> "pinctrl: msm: fix gpio-hog related boot issues" in this series).
-> 
-> gpio-reserved-ranges:
-> The binding has been added as a precaution since the TrustZone
-> firmware (aka QSEE), which is running as the hypervisor, might
-> have reserved certain, but undisclosed pins. Hence reading or
-> writing to the registers for those pins will cause an
-> XPU violation and this subsequently crashes the kernel.
-> 
-> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-> ---
->  .../devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt | 6 ++++++
->  .../devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt | 9 +++++++++
->  .../devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt | 6 ++++++
->  .../devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt | 6 ++++++
->  .../devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt | 9 +++++++++
->  .../devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt | 9 +++++++++
->  .../devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt | 6 ++++++
->  .../devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt | 9 +++++++++
->  .../devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt | 9 +++++++++
->  .../devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt | 6 ++++++
->  .../devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt | 9 +++++++++
->  .../devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt | 9 +++++++++
->  12 files changed, 93 insertions(+)
+From: Heiko Stuebner <heiko@sntech.de>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Syscon nodes can be a simple-mfd and the syscon-users then be declared
+as children of this node. That way the parent-child structure can be
+better represented for devices that are fully embedded in the syscon.
+
+Therefore allow getting the syscon from the parent if neither
+a special compatible nor a gpio,syscon-dev property is defined.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Levin Du <djw@t-chip.com.cn>
+---
+
+Changes in v3: None
+Changes in v2: None
+Changes in v1:
+- New: allow fetching syscon from parent node in gpio-syscon driver
+
+ drivers/gpio/gpio-syscon.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 537cec7..7325b86 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -205,6 +205,8 @@ static int syscon_gpio_probe(struct platform_device *pdev)
+ 	} else {
+ 		priv->syscon =
+ 			syscon_regmap_lookup_by_phandle(np, "gpio,syscon-dev");
++		if (IS_ERR(priv->syscon) && np->parent)
++			priv->syscon = syscon_node_to_regmap(np->parent);
+ 		if (IS_ERR(priv->syscon))
+ 			return PTR_ERR(priv->syscon);
+ 
+-- 
+2.7.4
