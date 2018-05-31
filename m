@@ -1,65 +1,47 @@
-From: djw@t-chip.com.cn
-Subject: [PATCH v3 0/5] Add sdmmc UHS support to ROC-RK3328-CC board.
-Date: Thu, 31 May 2018 11:27:48 +0800
-Message-ID: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-rockchip@lists.infradead.org
-Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Liang Chen <cl@rock-chips.com>, Linus Walleij <linus.walleij@linaro.org>, Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, David Wu <david.wu@rock-chips.com>, Finley Xiao <finley.xiao@rock-chips.com>, William Wu <william.wu@rock-chips.com>, Rocky Hao <rocky.hao@rock-chips.com>, Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>, Sugar Zhang <sugar.zhang@rock-chips.com>, linux-kernel@vger.kernel.org, Joseph Chen <chenjh@rock-chips.com>, Mark Rutland <mark>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Subject: [PATCH -next] pinctrl: mediatek: remove redundant return value check
+ of platform_get_resource()
+Date: Thu, 31 May 2018 11:39:42 +0000
+Message-ID: <1527766782-72315-1-git-send-email-weiyongjun1@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sean Wang <sean.wang@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Levin Du <djw@t-chip.com.cn>
+Remove unneeded error handling on the result of a call
+to platform_get_resource() when the value is passed to
+devm_ioremap_resource().
 
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Hi all, this is an attemp to add sdmmc UHS support to the
-ROC-RK3328-CC board.
-
-This patch series adds a new compatible `rockchip,rk3328-gpio-mute` to
-the gpio-syscon driver for the access of the GPIO_MUTE pin in rk3328.
-
-A new gpio controller named `gpio_mute` is defined in
-rk3328.dtsi and so that all rk3328 boards has access to it.
-
-The ROC-RK3328-CC board use the new gpio <&gpio_mute 0> in
-gpio-regulator to control the signal voltage of the sdmmc.
-It is essential for UHS support which requires 1.8V signal voltage.
-
-Many thanks to the Linux people!
-
-Changes in v3:
-- Change from general gpio-syscon to specific rk3328-gpio-mute
-- Use dedicated "rockchip,rk3328-gpio-mute" driver
-- Use <&gpio_mute 0> instead of <&gpio_mute 1> to refer to the GPIO_MUTE pin.
-
-Changes in v2:
-- Rename gpio_syscon10 to gpio_mute in doc
-- Rename gpio_syscon10 to gpio_mute in rk3328.dtsi
-- Rename gpio_syscon10 to gpio_mute in rk3328-roc-cc.dts
-
-Changes in v1:
-- New: allow fetching syscon from parent node in gpio-syscon driver
-- Refactured for general gpio-syscon usage for Rockchip SoCs.
-- Add doc rockchip,gpio-syscon.txt
-- Split from V0 and add to rk3328.dtsi for general use.
-- Split from V0.
-- Split into small patches
-- Sort dts properties in sdmmc node
-
-Heiko Stuebner (1):
-  gpio: syscon: allow fetching syscon from parent node
-
-Levin Du (4):
-  gpio: syscon: rockchip: add GPIO_MUTE support for rk3328
-  arm64: dts: rockchip: Add GPIO_MUTE pin support to rk3328
-  arm64: dts: rockchip: Add io-domain to roc-rk3328-cc
-  arm64: dts: rockchip: Add sdmmc UHS support for roc-rk3328-cc
-
- .../bindings/gpio/rockchip,rk3328-gpio-mute.txt    | 28 ++++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts     | 34 ++++++++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3328.dtsi           |  7 +++++
- drivers/gpio/gpio-syscon.c                         | 33 +++++++++++++++++++++
- 4 files changed, 102 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
-
--- 
-2.7.4
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index b379969..16ff56f9 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1000,11 +1000,6 @@ static int mtk_eint_init(struct mtk_pinctrl *pctl, struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "Unable to get eint resource\n");
+-		return -ENODEV;
+-	}
+-
+ 	pctl->eint->base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(pctl->eint->base))
+ 		return PTR_ERR(pctl->eint->base);
