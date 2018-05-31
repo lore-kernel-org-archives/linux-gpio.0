@@ -1,88 +1,54 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 2/5] gpio: syscon: rockchip: add GPIO_MUTE support for rk3328
-Date: Thu, 31 May 2018 09:45:02 -0500
-Message-ID: <CAL_JsqJK4vrmLBeN_ZeGCXAyqshshL16B0KN_+8uvt+=-O9TEw@mail.gmail.com>
-References: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn> <1527737273-8387-3-git-send-email-djw@t-chip.com.cn>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PULL REQUEST] arm: Actions DT for v4.18
+Date: Thu, 31 May 2018 21:34:03 +0530
+Message-ID: <20180531160403.GA16640@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1527737273-8387-3-git-send-email-djw@t-chip.com.cn>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Levin Du <djw@t-chip.com.cn>
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+To: afaerber@suse.de
+Cc: linus.walleij@linaro.org, sboyd@kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 30, 2018 at 10:27 PM,  <djw@t-chip.com.cn> wrote:
-> From: Levin Du <djw@t-chip.com.cn>
->
-> In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec
-> mute control, can also be used for general purpose. It is manipulated by
-> the GRF_SOC_CON10 register.
->
-> Signed-off-by: Levin Du <djw@t-chip.com.cn>
->
-> ---
->
-> Changes in v3:
-> - Change from general gpio-syscon to specific rk3328-gpio-mute
->
-> Changes in v2:
-> - Rename gpio_syscon10 to gpio_mute in doc
->
-> Changes in v1:
-> - Refactured for general gpio-syscon usage for Rockchip SoCs.
-> - Add doc rockchip,gpio-syscon.txt
->
->  .../bindings/gpio/rockchip,rk3328-gpio-mute.txt    | 28 +++++++++++++++++++
->  drivers/gpio/gpio-syscon.c                         | 31 ++++++++++++++++++++++
->  2 files changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
->
-> diff --git a/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
-> new file mode 100644
-> index 0000000..10bc632
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
-> @@ -0,0 +1,28 @@
-> +Rockchip RK3328 GPIO controller dedicated for the GPIO_MUTE pin.
-> +
-> +In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec mute
-> +control, can also be used for general purpose. It is manipulated by the
-> +GRF_SOC_CON10 register.
-> +
-> +Required properties:
-> +- compatible: Should contain "rockchip,rk3328-gpio-mute".
-> +- gpio-controller: Marks the device node as a gpio controller.
-> +- #gpio-cells: Should be 2. The first cell is the pin number and
-> +  the second cell is used to specify the gpio polarity:
-> +    0 = Active high,
-> +    1 = Active low.
-> +
-> +Example:
-> +
-> +       grf: syscon@ff100000 {
-> +               compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
-> +
-> +               gpio_mute: gpio-mute {
+Hi Andreas,
 
-Node names should be generic:
+Here is the pull request for Devicetree and Maintainer changes for the Actions
+platform as suggested by Linus Walleij. Relevant drivers are already applied
+by the respective subsystem maintainers.
 
-gpio {
+Please pull it in!
 
-This also means you can't add another GPIO node in the future and
-you'll have to live with "rockchip,rk3328-gpio-mute" covering more
-than 1 GPIO if you do need to add more GPIOs.
+PS: I haven't added the SPS patches since it is not yet reviewed by you.
 
-> +                       compatible = "rockchip,rk3328-gpio-mute";
-> +                       gpio-controller;
-> +                       #gpio-cells = <2>;
-> +               };
-> +       };
-> +
-> +Note: The gpio_mute node should be declared as the child of the GRF (General
-> +Register File) node. The GPIO_MUTE pin is referred to as <&gpio_mute 0>.
+Thanks,
+Mani
 
-This is wrong because you should have 2 cells. The phandle doesn't
-count as a cell.
+The following changes since commit ee7ffc878fdedd82831df81af6ec334daff9decb:
 
-Rob
+  Add linux-next specific files for 20180530 (2018-05-30 21:42:04 +1000)
+
+are available in the git repository at:
+
+  git://git.linaro.org/people/manivannan.sadhasivam/linux.git s900-for-next
+
+for you to fetch changes up to b2a2e190e41c92e10aec8440c4207efc8abd0643:
+
+  MAINTAINERS: Add Actions Semi S900 clk entries (2018-05-31 15:17:34 +0530)
+
+----------------------------------------------------------------
+Manivannan Sadhasivam (8):
+      arm64: dts: actions: Add S900 clock management unit nodes
+      arm64: dts: actions: Source CMU clock for UART5
+      arm64: dts: actions: Add pinctrl node for S900
+      arm64: actions: Enable PINCTRL in platforms Kconfig
+      MAINTAINERS: Add reviewer for ACTIONS platforms
+      arm64: dts: actions: Add gpio properties to pinctrl node for S900
+      arm64: dts: actions: Add gpio line names to Bubblegum-96 board
+      MAINTAINERS: Add Actions Semi S900 clk entries
+
+ MAINTAINERS                                       |   3 +
+ arch/arm64/Kconfig.platforms                      |   1 +
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 183 +++++++++++++++++++++-
+ arch/arm64/boot/dts/actions/s900.dtsi             |  29 ++++
+ 4 files changed, 209 insertions(+), 7 deletions(-)
