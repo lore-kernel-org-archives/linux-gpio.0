@@ -1,54 +1,35 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PULL REQUEST] arm: Actions DT for v4.18
-Date: Thu, 31 May 2018 21:34:03 +0530
-Message-ID: <20180531160403.GA16640@linaro.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] net: ti: cpsw: include gpio/consumer.h
+Date: Thu, 31 May 2018 15:47:08 -0400 (EDT)
+Message-ID: <20180531.154708.1943762077531456815.davem@davemloft.net>
+References: <20180530215212.1151415-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20180530215212.1151415-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: afaerber@suse.de
-Cc: linus.walleij@linaro.org, sboyd@kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: arnd@arndb.de
+Cc: grygorii.strashko@ti.com, linux-gpio@vger.kernel.org, f.fainelli@gmail.com, ivan.khoronzhuk@linaro.org, j-keerthy@ti.com, linux-omap@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Andreas,
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 30 May 2018 23:51:54 +0200
 
-Here is the pull request for Devicetree and Maintainer changes for the Actions
-platform as suggested by Linus Walleij. Relevant drivers are already applied
-by the respective subsystem maintainers.
+> On platforms that don't always enable CONFIG_GPIOLIB, we run into
+> a build failure:
+> 
+> drivers/net/ethernet/ti/cpsw.c: In function 'cpsw_probe':
+> drivers/net/ethernet/ti/cpsw.c:3006:9: error: implicit declaration of function 'devm_gpiod_get_array_optional' [-Werror=implicit-function-declaration]
+>   mode = devm_gpiod_get_array_optional(&pdev->dev, "mode", GPIOD_OUT_LOW);
+>          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/net/ethernet/ti/cpsw.c:3006:59: error: 'GPIOD_OUT_LOW' undeclared (first use in this function); did you mean 'GPIOF_INIT_LOW'?
+>   mode = devm_gpiod_get_array_optional(&pdev->dev, "mode", GPIOD_OUT_LOW);
+> 
+> Since we cannot rely on this to be visible from gpio.h, we have to include
+> gpio/consumer.h directly.
+> 
+> Fixes: 2652113ff043 ("net: ethernet: ti: Allow most drivers with COMPILE_TEST")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Please pull it in!
-
-PS: I haven't added the SPS patches since it is not yet reviewed by you.
-
-Thanks,
-Mani
-
-The following changes since commit ee7ffc878fdedd82831df81af6ec334daff9decb:
-
-  Add linux-next specific files for 20180530 (2018-05-30 21:42:04 +1000)
-
-are available in the git repository at:
-
-  git://git.linaro.org/people/manivannan.sadhasivam/linux.git s900-for-next
-
-for you to fetch changes up to b2a2e190e41c92e10aec8440c4207efc8abd0643:
-
-  MAINTAINERS: Add Actions Semi S900 clk entries (2018-05-31 15:17:34 +0530)
-
-----------------------------------------------------------------
-Manivannan Sadhasivam (8):
-      arm64: dts: actions: Add S900 clock management unit nodes
-      arm64: dts: actions: Source CMU clock for UART5
-      arm64: dts: actions: Add pinctrl node for S900
-      arm64: actions: Enable PINCTRL in platforms Kconfig
-      MAINTAINERS: Add reviewer for ACTIONS platforms
-      arm64: dts: actions: Add gpio properties to pinctrl node for S900
-      arm64: dts: actions: Add gpio line names to Bubblegum-96 board
-      MAINTAINERS: Add Actions Semi S900 clk entries
-
- MAINTAINERS                                       |   3 +
- arch/arm64/Kconfig.platforms                      |   1 +
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 183 +++++++++++++++++++++-
- arch/arm64/boot/dts/actions/s900.dtsi             |  29 ++++
- 4 files changed, 209 insertions(+), 7 deletions(-)
+Applied, thanks Arnd.
