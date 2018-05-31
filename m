@@ -1,43 +1,64 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ASoC: codecs: PCM1789: include gpio/consumer.h
-Date: Wed, 30 May 2018 23:53:45 +0200
-Message-ID: <20180530215407.1196429-1-arnd@arndb.de>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v6 1/2] dt-bindings: pinctrl: qcom: add gpio-ranges,
+ gpio-reserved-ranges
+Date: Wed, 30 May 2018 19:14:54 -0500
+Message-ID: <20180531001454.GA8422@rob-hp-laptop>
+References: <6dbaadee4bb22638a2c2e6433e8d1740884ecfd9.1527505307.git.chunkeey@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <6dbaadee4bb22638a2c2e6433e8d1740884ecfd9.1527505307.git.chunkeey@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Christian Lamparter <chunkeey@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, David Brown <david.brown@linaro.org>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-V2hlbiBDT05GSUdfR1BJT0xJQiBpcyBkaXNhYmxlZCwgdGhpcyBjb2RlYyBmYWlscyB0byBidWls
-ZApiZWNhdXNlIGdwaW8vY29uc3VtZXIuaCBpcyBub3QgaW5jbHVkZWQgaW1wbGljaXRseS4KCnNv
-dW5kL3NvYy9jb2RlY3MvcGNtMTc4OS5jOiBJbiBmdW5jdGlvbiAncGNtMTc4OV9jb21tb25faW5p
-dCc6CnNvdW5kL3NvYy9jb2RlY3MvcGNtMTc4OS5jOjI0NzoxOTogZXJyb3I6IGltcGxpY2l0IGRl
-Y2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdkZXZtX2dwaW9kX2dldF9vcHRpb25hbCc7IGRpZCB5b3Ug
-bWVhbiAnZGV2bV9ncGlvX3JlcXVlc3Rfb25lJz8gWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24t
-ZGVjbGFyYXRpb25dCiAgcGNtMTc4OS0+cmVzZXQgPSBkZXZtX2dwaW9kX2dldF9vcHRpb25hbChk
-ZXYsICJyZXNldCIsIEdQSU9EX09VVF9ISUdIKTsKICAgICAgICAgICAgICAgICAgIF5+fn5+fn5+
-fn5+fn5+fn5+fn5+fn5+CgpGaXhlczogNGFlMzQwZDFiZTM2ICgiQVNvQzogY29kZWNzOiBBZGQg
-c3VwcG9ydCBmb3IgUENNMTc4OSIpClNpZ25lZC1vZmYtYnk6IEFybmQgQmVyZ21hbm4gPGFybmRA
-YXJuZGIuZGU+Ci0tLQogc291bmQvc29jL2NvZGVjcy9wY20xNzg5LmMgfCAyICstCiAxIGZpbGUg
-Y2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9zb3Vu
-ZC9zb2MvY29kZWNzL3BjbTE3ODkuYyBiL3NvdW5kL3NvYy9jb2RlY3MvcGNtMTc4OS5jCmluZGV4
-IDUwN2FjOTQxMmQ2Yy4uMjFmMTUyMTliM2FkIDEwMDY0NAotLS0gYS9zb3VuZC9zb2MvY29kZWNz
-L3BjbTE3ODkuYworKysgYi9zb3VuZC9zb2MvY29kZWNzL3BjbTE3ODkuYwpAQCAtMyw3ICszLDcg
-QEAKIC8vIENvcHlyaWdodCAoQykgMjAxOCBCb290bGluCiAvLyBNeWzDqG5lIEpvc3NlcmFuZCA8
-bXlsZW5lLmpvc3NlcmFuZEBib290bGluLmNvbT4KIAotI2luY2x1ZGUgPGxpbnV4L2dwaW8uaD4K
-KyNpbmNsdWRlIDxsaW51eC9ncGlvL2NvbnN1bWVyLmg+CiAjaW5jbHVkZSA8bGludXgvbW9kdWxl
-Lmg+CiAjaW5jbHVkZSA8bGludXgvd29ya3F1ZXVlLmg+CiAKLS0gCjIuOS4wCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpBbHNhLWRldmVsIG1haWxpbmcg
-bGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0cDovL21haWxtYW4uYWxzYS1wcm9q
-ZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
+On Mon, May 28, 2018 at 01:06:01PM +0200, Christian Lamparter wrote:
+> This patch adds the gpio-ranges and gpio-reserved-ranges property
+> definitions to the binding text files supported by the pinctrl-msm
+> driver framework.
+> 
+> gpio-ranges:
+> For DT-based platforms the pinctrl-msm framework currently relies
+> on the deprecated-for-DT gpiochip_add_pin_range() function to add
+> the range of GPIOs to be handled by the pin controller. Due to
+> interactions within gpiolib code, this causes the pinctrl-msm
+> driver to bail out (-517) during boot when a gpio-hog is declared.
+> This can be fatal and cause the system to not boot or reset
+> (for a detailed explanation and call-trace, refer to patch:
+> "pinctrl: msm: fix gpio-hog related boot issues" in this series).
+> 
+> gpio-reserved-ranges:
+> The binding has been added as a precaution since the TrustZone
+> firmware (aka QSEE), which is running as the hypervisor, might
+> have reserved certain, but undisclosed pins. Hence reading or
+> writing to the registers for those pins will cause an
+> XPU violation and this subsequently crashes the kernel.
+> 
+> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+> ---
+>  .../devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt | 6 ++++++
+>  .../devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt | 9 +++++++++
+>  .../devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt | 6 ++++++
+>  .../devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt | 6 ++++++
+>  .../devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt | 9 +++++++++
+>  .../devicetree/bindings/pinctrl/qcom,mdm9615-pinctrl.txt | 9 +++++++++
+>  .../devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt | 6 ++++++
+>  .../devicetree/bindings/pinctrl/qcom,msm8916-pinctrl.txt | 9 +++++++++
+>  .../devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.txt | 9 +++++++++
+>  .../devicetree/bindings/pinctrl/qcom,msm8974-pinctrl.txt | 6 ++++++
+>  .../devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt | 9 +++++++++
+>  .../devicetree/bindings/pinctrl/qcom,msm8996-pinctrl.txt | 9 +++++++++
+>  12 files changed, 93 insertions(+)
+
+Reviewed-by: Rob Herring <robh@kernel.org>
