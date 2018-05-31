@@ -1,47 +1,88 @@
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Subject: [PATCH -next] pinctrl: mediatek: remove redundant return value check
- of platform_get_resource()
-Date: Thu, 31 May 2018 11:39:42 +0000
-Message-ID: <1527766782-72315-1-git-send-email-weiyongjun1@huawei.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 2/5] gpio: syscon: rockchip: add GPIO_MUTE support for rk3328
+Date: Thu, 31 May 2018 09:45:02 -0500
+Message-ID: <CAL_JsqJK4vrmLBeN_ZeGCXAyqshshL16B0KN_+8uvt+=-O9TEw@mail.gmail.com>
+References: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn> <1527737273-8387-3-git-send-email-djw@t-chip.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sean Wang <sean.wang@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1527737273-8387-3-git-send-email-djw@t-chip.com.cn>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Levin Du <djw@t-chip.com.cn>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Remove unneeded error handling on the result of a call
-to platform_get_resource() when the value is passed to
-devm_ioremap_resource().
+On Wed, May 30, 2018 at 10:27 PM,  <djw@t-chip.com.cn> wrote:
+> From: Levin Du <djw@t-chip.com.cn>
+>
+> In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec
+> mute control, can also be used for general purpose. It is manipulated by
+> the GRF_SOC_CON10 register.
+>
+> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+>
+> ---
+>
+> Changes in v3:
+> - Change from general gpio-syscon to specific rk3328-gpio-mute
+>
+> Changes in v2:
+> - Rename gpio_syscon10 to gpio_mute in doc
+>
+> Changes in v1:
+> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+> - Add doc rockchip,gpio-syscon.txt
+>
+>  .../bindings/gpio/rockchip,rk3328-gpio-mute.txt    | 28 +++++++++++++++++++
+>  drivers/gpio/gpio-syscon.c                         | 31 ++++++++++++++++++++++
+>  2 files changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> new file mode 100644
+> index 0000000..10bc632
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> @@ -0,0 +1,28 @@
+> +Rockchip RK3328 GPIO controller dedicated for the GPIO_MUTE pin.
+> +
+> +In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec mute
+> +control, can also be used for general purpose. It is manipulated by the
+> +GRF_SOC_CON10 register.
+> +
+> +Required properties:
+> +- compatible: Should contain "rockchip,rk3328-gpio-mute".
+> +- gpio-controller: Marks the device node as a gpio controller.
+> +- #gpio-cells: Should be 2. The first cell is the pin number and
+> +  the second cell is used to specify the gpio polarity:
+> +    0 = Active high,
+> +    1 = Active low.
+> +
+> +Example:
+> +
+> +       grf: syscon@ff100000 {
+> +               compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
+> +
+> +               gpio_mute: gpio-mute {
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 5 -----
- 1 file changed, 5 deletions(-)
+Node names should be generic:
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index b379969..16ff56f9 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -1000,11 +1000,6 @@ static int mtk_eint_init(struct mtk_pinctrl *pctl, struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "Unable to get eint resource\n");
--		return -ENODEV;
--	}
--
- 	pctl->eint->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(pctl->eint->base))
- 		return PTR_ERR(pctl->eint->base);
+gpio {
+
+This also means you can't add another GPIO node in the future and
+you'll have to live with "rockchip,rk3328-gpio-mute" covering more
+than 1 GPIO if you do need to add more GPIOs.
+
+> +                       compatible = "rockchip,rk3328-gpio-mute";
+> +                       gpio-controller;
+> +                       #gpio-cells = <2>;
+> +               };
+> +       };
+> +
+> +Note: The gpio_mute node should be declared as the child of the GRF (General
+> +Register File) node. The GPIO_MUTE pin is referred to as <&gpio_mute 0>.
+
+This is wrong because you should have 2 cells. The phandle doesn't
+count as a cell.
+
+Rob
