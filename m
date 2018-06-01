@@ -1,108 +1,136 @@
-From: Levin <djw@t-chip.com.cn>
-Subject: Re: [PATCH v3 2/5] gpio: syscon: rockchip: add GPIO_MUTE support for
- rk3328
-Date: Fri, 1 Jun 2018 10:05:24 +0800
-Message-ID: <0d08ba26-77f2-6c42-8fb1-214aaf6085e9@t-chip.com.cn>
-References: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
- <1527737273-8387-3-git-send-email-djw@t-chip.com.cn>
- <CAL_JsqJK4vrmLBeN_ZeGCXAyqshshL16B0KN_+8uvt+=-O9TEw@mail.gmail.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Subject: [PATCH] staging: mt7621-gpio: move out of staging
+Date: Fri,  1 Jun 2018 14:02:50 +0200
+Message-ID: <1527854570-17200-1-git-send-email-sergio.paracuellos@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqJK4vrmLBeN_ZeGCXAyqshshL16B0KN_+8uvt+=-O9TEw@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Levin <djw@t-chip.com.cn>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: gregkh@linuxfoundation.org
+Cc: neil@brown.name, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, driverdev-devel@linuxdriverproject.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Rob,
+Move the mt7621-gpio driver out of staging and into mainline
 
-On 2018-05-31 10:45 PM, Rob Herring wrote:
-> On Wed, May 30, 2018 at 10:27 PM,  <djw@t-chip.com.cn> wrote:
->> From: Levin Du <djw@t-chip.com.cn>
->>
->> In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec
->> mute control, can also be used for general purpose. It is manipulated by
->> the GRF_SOC_CON10 register.
->>
->> Signed-off-by: Levin Du <djw@t-chip.com.cn>
->>
->> ---
->>
->> Changes in v3:
->> - Change from general gpio-syscon to specific rk3328-gpio-mute
->>
->> Changes in v2:
->> - Rename gpio_syscon10 to gpio_mute in doc
->>
->> Changes in v1:
->> - Refactured for general gpio-syscon usage for Rockchip SoCs.
->> - Add doc rockchip,gpio-syscon.txt
->>
->>   .../bindings/gpio/rockchip,rk3328-gpio-mute.txt    | 28 +++++++++++++++++++
->>   drivers/gpio/gpio-syscon.c                         | 31 ++++++++++++++++++++++
->>   2 files changed, 59 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
->> new file mode 100644
->> index 0000000..10bc632
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
->> @@ -0,0 +1,28 @@
->> +Rockchip RK3328 GPIO controller dedicated for the GPIO_MUTE pin.
->> +
->> +In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec mute
->> +control, can also be used for general purpose. It is manipulated by the
->> +GRF_SOC_CON10 register.
->> +
->> +Required properties:
->> +- compatible: Should contain "rockchip,rk3328-gpio-mute".
->> +- gpio-controller: Marks the device node as a gpio controller.
->> +- #gpio-cells: Should be 2. The first cell is the pin number and
->> +  the second cell is used to specify the gpio polarity:
->> +    0 = Active high,
->> +    1 = Active low.
->> +
->> +Example:
->> +
->> +       grf: syscon@ff100000 {
->> +               compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
->> +
->> +               gpio_mute: gpio-mute {
-> Node names should be generic:
->
-> gpio {
->
-> This also means you can't add another GPIO node in the future and
-> you'll have to live with "rockchip,rk3328-gpio-mute" covering more
-> than 1 GPIO if you do need to add more GPIOs.
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ .../devicetree/bindings/gpio}/mediatek,mt7621-gpio.txt             | 0
+ drivers/gpio/Kconfig                                               | 7 +++++++
+ drivers/gpio/Makefile                                              | 1 +
+ drivers/{staging/mt7621-gpio => gpio}/gpio-mt7621.c                | 0
+ drivers/staging/Kconfig                                            | 2 --
+ drivers/staging/Makefile                                           | 1 -
+ drivers/staging/mt7621-gpio/Kconfig                                | 6 ------
+ drivers/staging/mt7621-gpio/Makefile                               | 3 ---
+ drivers/staging/mt7621-gpio/TODO                                   | 3 ---
+ 9 files changed, 8 insertions(+), 15 deletions(-)
+ rename {drivers/staging/mt7621-gpio => Documentation/devicetree/bindings/gpio}/mediatek,mt7621-gpio.txt (100%)
+ rename drivers/{staging/mt7621-gpio => gpio}/gpio-mt7621.c (100%)
+ delete mode 100644 drivers/staging/mt7621-gpio/Kconfig
+ delete mode 100644 drivers/staging/mt7621-gpio/Makefile
+ delete mode 100644 drivers/staging/mt7621-gpio/TODO
 
-As the first line describes, this GPIO controller is dedicated for the 
-GPIO_MUTE pin.
-There's only one GPIO pin in the GRF_SOC_CON10 register. Therefore the 
-gpio_mute
-name is proper IMHO.
-
->> +                       compatible = "rockchip,rk3328-gpio-mute";
->> +                       gpio-controller;
->> +                       #gpio-cells = <2>;
->> +               };
->> +       };
->> +
->> +Note: The gpio_mute node should be declared as the child of the GRF (General
->> +Register File) node. The GPIO_MUTE pin is referred to as <&gpio_mute 0>.
-> This is wrong because you should have 2 cells. The phandle doesn't
-> count as a cell.
->
-> Rob
->
-Thanks for pointing that out. So it should be:
-
-    The GPIO_MUTE pin is referred to as <&gpio_mute 0 POLARITY>.
-
-
-Thanks,
-Levin
+diff --git a/drivers/staging/mt7621-gpio/mediatek,mt7621-gpio.txt b/Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.txt
+similarity index 100%
+rename from drivers/staging/mt7621-gpio/mediatek,mt7621-gpio.txt
+rename to Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.txt
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index b960f6f..280c0a0 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -347,6 +347,13 @@ config GPIO_MPC8XXX
+ 	  Say Y here if you're going to use hardware that connects to the
+ 	  MPC512x/831x/834x/837x/8572/8610/QorIQ GPIOs.
+ 
++config GPIO_MT7621
++	bool "Mediatek GPIO Support"
++	depends on SOC_MT7620 || SOC_MT7621
++	select GPIOLIB_IRQCHIP
++	help
++	  Say yes here to support the Mediatek SoC GPIO device
++
+ config GPIO_MVEBU
+ 	def_bool y
+ 	depends on PLAT_ORION || ARCH_MVEBU
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 1324c8f..03647ae 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -88,6 +88,7 @@ obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
+ obj-$(CONFIG_GPIO_MPC5200)	+= gpio-mpc5200.o
+ obj-$(CONFIG_GPIO_MPC8XXX)	+= gpio-mpc8xxx.o
+ obj-$(CONFIG_GPIO_MSIC)		+= gpio-msic.o
++obj-$(CONFIG_GPIO_MT7621)	+= gpio-mt7621.o
+ obj-$(CONFIG_GPIO_MVEBU)        += gpio-mvebu.o
+ obj-$(CONFIG_GPIO_MXC)		+= gpio-mxc.o
+ obj-$(CONFIG_GPIO_MXS)		+= gpio-mxs.o
+diff --git a/drivers/staging/mt7621-gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+similarity index 100%
+rename from drivers/staging/mt7621-gpio/gpio-mt7621.c
+rename to drivers/gpio/gpio-mt7621.c
+diff --git a/drivers/staging/Kconfig b/drivers/staging/Kconfig
+index d5926f0..3f0cbbd 100644
+--- a/drivers/staging/Kconfig
++++ b/drivers/staging/Kconfig
+@@ -120,8 +120,6 @@ source "drivers/staging/pi433/Kconfig"
+ 
+ source "drivers/staging/mt7621-pinctrl/Kconfig"
+ 
+-source "drivers/staging/mt7621-gpio/Kconfig"
+-
+ source "drivers/staging/mt7621-spi/Kconfig"
+ 
+ source "drivers/staging/mt7621-dma/Kconfig"
+diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
+index 919753c..42a1268 100644
+--- a/drivers/staging/Makefile
++++ b/drivers/staging/Makefile
+@@ -51,7 +51,6 @@ obj-$(CONFIG_DRM_VBOXVIDEO)	+= vboxvideo/
+ obj-$(CONFIG_PI433)		+= pi433/
+ obj-$(CONFIG_SOC_MT7621)	+= mt7621-pci/
+ obj-$(CONFIG_SOC_MT7621)	+= mt7621-pinctrl/
+-obj-$(CONFIG_SOC_MT7621)	+= mt7621-gpio/
+ obj-$(CONFIG_SOC_MT7621)	+= mt7621-spi/
+ obj-$(CONFIG_SOC_MT7621)	+= mt7621-dma/
+ obj-$(CONFIG_SOC_MT7621)	+= mt7621-mmc/
+diff --git a/drivers/staging/mt7621-gpio/Kconfig b/drivers/staging/mt7621-gpio/Kconfig
+deleted file mode 100644
+index c741ec3..0000000
+--- a/drivers/staging/mt7621-gpio/Kconfig
++++ /dev/null
+@@ -1,6 +0,0 @@
+-config GPIO_MT7621
+-	bool "Mediatek GPIO Support"
+-	depends on SOC_MT7620 || SOC_MT7621
+-	select ARCH_REQUIRE_GPIOLIB
+-	help
+-	  Say yes here to support the Mediatek SoC GPIO device
+diff --git a/drivers/staging/mt7621-gpio/Makefile b/drivers/staging/mt7621-gpio/Makefile
+deleted file mode 100644
+index e269ab1..0000000
+--- a/drivers/staging/mt7621-gpio/Makefile
++++ /dev/null
+@@ -1,3 +0,0 @@
+-obj-$(CONFIG_GPIO_MT7621)	+= gpio-mt7621.o
+-
+-ccflags-y += -I$(srctree)/$(src)/include
+diff --git a/drivers/staging/mt7621-gpio/TODO b/drivers/staging/mt7621-gpio/TODO
+deleted file mode 100644
+index 674930a..0000000
+--- a/drivers/staging/mt7621-gpio/TODO
++++ /dev/null
+@@ -1,3 +0,0 @@
+-- general code review and clean up
+-
+-Cc:  NeilBrown <neil@brown.name>
+-- 
+2.7.4
