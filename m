@@ -1,49 +1,43 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH] pci: qcom: include gpio/consumer.h
-Date: Mon, 4 Jun 2018 12:45:26 -0500
-Message-ID: <20180604174526.GA30381@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180530215324.1178564-1-arnd@arndb.de>
+From: Nadav Amit <namit@vmware.com>
+Subject: [PATCH] gpio: Fix wrong rounding in gpio-menz127
+Date: Mon, 4 Jun 2018 06:58:14 -0700
+Message-ID: <20180604135814.101343-1-namit@vmware.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180530215324.1178564-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stanimir Varbanov <svarbanov@mm-sol.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Amit <namit@vmware.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 30, 2018 at 11:53:06PM +0200, Arnd Bergmann wrote:
-> When CONFIG_GPIOLIB is disabled, we run into a build failure:
-> 
-> drivers/pci/dwc/pcie-qcom.c: In function 'qcom_pcie_probe':
-> drivers/pci/dwc/pcie-qcom.c:1223:16: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_regulator_get_optional'? [-Werror=implicit-function-declaration]
->   pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
-> 
-> Including gpio/consumer.h directly is the correct fix.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+men_z127_debounce() tries to round up and down, but uses functions which
+are only suitable when the divider is a power of two, which is not the
+case. Use the appropriate ones.
 
-Applied with the other Bjorn's reviewed-by to pci/host/qcom for v4.18,
-thanks!
+Found by static check. Compile tested.
 
-> ---
->  drivers/pci/dwc/pcie-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
-> index b65bbf7c284e..17df19db851e 100644
-> --- a/drivers/pci/dwc/pcie-qcom.c
-> +++ b/drivers/pci/dwc/pcie-qcom.c
-> @@ -10,7 +10,7 @@
->  
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
-> -- 
-> 2.9.0
-> 
+Fixes: f436bc2726c64 ("gpio: add driver for MEN 16Z127 GPIO controller")
+
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ drivers/gpio/gpio-menz127.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-menz127.c b/drivers/gpio/gpio-menz127.c
+index e1037582e34d..b2635326546e 100644
+--- a/drivers/gpio/gpio-menz127.c
++++ b/drivers/gpio/gpio-menz127.c
+@@ -56,9 +56,9 @@ static int men_z127_debounce(struct gpio_chip *gc, unsigned gpio,
+ 		rnd = fls(debounce) - 1;
+ 
+ 		if (rnd && (debounce & BIT(rnd - 1)))
+-			debounce = round_up(debounce, MEN_Z127_DB_MIN_US);
++			debounce = roundup(debounce, MEN_Z127_DB_MIN_US);
+ 		else
+-			debounce = round_down(debounce, MEN_Z127_DB_MIN_US);
++			debounce = rounddown(debounce, MEN_Z127_DB_MIN_US);
+ 
+ 		if (debounce > MEN_Z127_DB_MAX_US)
+ 			debounce = MEN_Z127_DB_MAX_US;
+-- 
+2.17.0
