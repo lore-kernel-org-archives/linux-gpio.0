@@ -1,28 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] staging: mt7621-gpio: move out of staging
-Date: Mon, 4 Jun 2018 12:09:38 +0300
-Message-ID: <20180601185727.jc2m4rp3qgkgkiii@mwanda>
-References: <1527854570-17200-1-git-send-email-sergio.paracuellos@gmail.com>
+From: Przemyslaw Gaj <pgaj@cadence.com>
+Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
+Date: Mon, 4 Jun 2018 09:11:25 +0000
+Message-ID: <EFF070CA-9C6C-4E9C-9CEF-45AAD02745BB@cadence.com>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+ <20180330074751.25987-2-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <1527854570-17200-1-git-send-email-sergio.paracuellos@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc: neil@brown.name, gregkh@linuxfoundation.org, linus.walleij@linaro.org, driverdev-devel@linuxdriverproject.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180330074751.25987-2-boris.brezillon@bootlin.com>
+Content-Language: en-US
+Content-ID: <7577811D7F90ED4B9CA00C0F091F817C@namprd07.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Wolfram Sang <wsa@the-dreams.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vitor Soares <Vitor.Soares@synopsys>
 List-Id: linux-gpio@vger.kernel.org
 
-Looks like a nice driver to me now.  Thanks!
-
-regards,
-dan carpenter
+SGkgQm9yaXMNCg0KSXQgbG9va3MgZ3JlYXQsIGp1c3Qgb25lIGNvbW1lbnQgdG8gREVGU0xWUyBj
+b21tYW5kOg0KDQrvu79PbiA2LzQvMTgsIDk6MzIgQU0sICJCb3JpcyBCcmV6aWxsb24iIDxib3Jp
+cy5icmV6aWxsb25AYm9vdGxpbi5jb20+IHdyb3RlOg0KDQogICAgK2ludCBpM2NfbWFzdGVyX2Rl
+ZnNsdnNfbG9ja2VkKHN0cnVjdCBpM2NfbWFzdGVyX2NvbnRyb2xsZXIgKm1hc3RlcikNCiAgICAr
+ew0KICAgICsJc3RydWN0IGkzY19jY2NfY21kX2Rlc3QgZGVzdCA9IHsNCiAgICArCQkuYWRkciA9
+IEkzQ19CUk9BRENBU1RfQUREUiwNCiAgICArCX07DQogICAgKwlzdHJ1Y3QgaTNjX2NjY19jbWQg
+Y21kID0gew0KICAgICsJCS5pZCA9IEkzQ19DQ0NfREVGU0xWUywNCiAgICArCQkuZGVzdHMgPSAm
+ZGVzdCwNCiAgICArCQkubmRlc3RzID0gMSwNCiAgICArCX07DQogICAgKwlzdHJ1Y3QgaTNjX2Nj
+Y19kZWZzbHZzICpkZWZzbHZzOw0KICAgICsJc3RydWN0IGkzY19jY2NfZGV2X2Rlc2MgKmRlc2M7
+DQogICAgKwlzdHJ1Y3QgaTNjX2RldmljZSAqaTNjZGV2Ow0KICAgICsJc3RydWN0IGkyY19kZXZp
+Y2UgKmkyY2RldjsNCiAgICArCXN0cnVjdCBpM2NfYnVzICpidXM7DQogICAgKwlib29sIHNlbmQg
+PSBmYWxzZTsNCiAgICArCWludCBuZGV2cyA9IDAsIHJldDsNCiAgICArDQogICAgKwlpZiAoIW1h
+c3RlcikNCiAgICArCQlyZXR1cm4gLUVJTlZBTDsNCiAgICArDQogICAgKwlidXMgPSBpM2NfbWFz
+dGVyX2dldF9idXMobWFzdGVyKTsNCiAgICArCWkzY19idXNfZm9yX2VhY2hfaTNjZGV2KGJ1cywg
+aTNjZGV2KSB7DQogICAgKwkJbmRldnMrKzsNCiAgICArCQlpZiAoSTNDX0JDUl9ERVZJQ0VfUk9M
+RShpM2NkZXYtPmluZm8uYmNyKSA9PSBJM0NfQkNSX0kzQ19NQVNURVIpDQogICAgKwkJCXNlbmQg
+PSB0cnVlOw0KICAgICsJfQ0KICAgICsNCiAgICArCS8qIE5vIG90aGVyIG1hc3RlciBvbiB0aGUg
+YnVzLCBza2lwIERFRlNMVlMuICovDQogICAgKwlpZiAoIXNlbmQpDQogICAgKwkJcmV0dXJuIDA7
+DQogICAgKw0KICAgICsJaTNjX2J1c19mb3JfZWFjaF9pMmNkZXYoYnVzLCBpMmNkZXYpDQogICAg
+KwkJbmRldnMrKzsNCiAgICArDQogICAgKwlkZXN0LnBheWxvYWQubGVuID0gc2l6ZW9mKCpkZWZz
+bHZzKSArDQogICAgKwkJCSAgICgobmRldnMgLSAxKSAqIHNpemVvZihzdHJ1Y3QgaTNjX2NjY19k
+ZXZfZGVzYykpOw0KICAgICsJZGVmc2x2cyA9IGt6YWxsb2MoZGVzdC5wYXlsb2FkLmxlbiwgR0ZQ
+X0tFUk5FTCk7DQogICAgKwlpZiAoIWRlZnNsdnMpDQogICAgKwkJcmV0dXJuIC1FTk9NRU07DQog
+ICAgKw0KICAgICsJZGVzdC5wYXlsb2FkLmRhdGEgPSBkZWZzbHZzOw0KICAgICsNCiAgICArCWRl
+ZnNsdnMtPmNvdW50ID0gbmRldnM7DQogICAgKwlkZWZzbHZzLT5tYXN0ZXIuYmNyID0gbWFzdGVy
+LT50aGlzLT5pbmZvLmJjcjsNCiAgICArCWRlZnNsdnMtPm1hc3Rlci5kY3IgPSBtYXN0ZXItPnRo
+aXMtPmluZm8uZGNyOw0KICAgICsJZGVmc2x2cy0+bWFzdGVyLmR5bl9hZGRyID0gbWFzdGVyLT50
+aGlzLT5pbmZvLmR5bl9hZGRyOw0KICAgICsJZGVmc2x2cy0+bWFzdGVyLnN0YXRpY19hZGRyID0g
+STNDX0JST0FEQ0FTVF9BRERSOw0KICAgICsNCiAgICArCWRlc2MgPSBkZWZzbHZzLT5zbGF2ZXM7
+DQogICAgKwlpM2NfYnVzX2Zvcl9lYWNoX2kyY2RldihidXMsIGkyY2Rldikgew0KICAgICsJCWRl
+c2MtPmx2ciA9IGkyY2Rldi0+bHZyOw0KICAgICsJCWRlc2MtPnN0YXRpY19hZGRyID0gaTJjZGV2
+LT5pbmZvLmFkZHI7DQogICAgKwkJZGVzYysrOw0KICAgICsJfQ0KICAgICsNCiAgICArCWkzY19i
+dXNfZm9yX2VhY2hfaTNjZGV2KGJ1cywgaTNjZGV2KSB7DQogICAgKwkJLyogU2tpcCB0aGUgSTND
+IGRldiByZXByZXNlbnRpbmcgdGhpcyBtYXN0ZXIuICovDQogICAgKwkJaWYgKGkzY2RldiA9PSBt
+YXN0ZXItPnRoaXMpDQogICAgKwkJCWNvbnRpbnVlOw0KICAgICsNCiAgICArCQlkZXNjLT5iY3Ig
+PSBpM2NkZXYtPmluZm8uYmNyOw0KICAgICsJCWRlc2MtPmRjciA9IGkzY2Rldi0+aW5mby5kY3I7
+DQogICAgKwkJZGVzYy0+ZHluX2FkZHIgPSBpM2NkZXYtPmluZm8uZHluX2FkZHI7DQogICAgKwkJ
+ZGVzYy0+c3RhdGljX2FkZHIgPSBpM2NkZXYtPmluZm8uc3RhdGljX2FkZHI7DQogICAgKwkJZGVz
+YysrOw0KICAgICsJfQ0KICAgICsNCiAgICArCXJldCA9IGkzY19tYXN0ZXJfc2VuZF9jY2NfY21k
+X2xvY2tlZChtYXN0ZXIsICZjbWQpOw0KICAgICsJa2ZyZWUoZGVmc2x2cyk7DQogICAgKw0KICAg
+ICsJcmV0dXJuIHJldDsNCiAgICArfQ0KDQpZb3Ugc2hvdWxkIHNoaWZ0IGFsbCB0aGUgYWRkcmVz
+c2VzIChkeW5hbWljIGFuZCBzdGF0aWMpIG9uZSBiaXQgbGVmdC4gDQpBZGRyZXNzZXMgYXJlIHN0
+b3JlZCBvbiBiaXRzIFs3OjFdLCB0aGlzIGlzIGRlc2NyaWJlZCBpbiBNSVBJIHNwZWMsIA0Kc2Vj
+dGlvbiA1LjEuOS4zLjcgRGVmaW5lIExpc3Qgb2YgU2xhdmVzIChERUZTTFZTKQ0KDQpSZWdhcmRz
+LA0KUHJ6ZW15c2xhdyBHYWoNCg0K
