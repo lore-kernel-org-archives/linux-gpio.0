@@ -1,106 +1,49 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH v4 07/10] i3c: master: Add driver for Cadence IP
-Date: Mon, 4 Jun 2018 13:26:15 +0200
-Message-ID: <20180604132615.415db91a@bbrezillon>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
-        <20180330074751.25987-8-boris.brezillon@bootlin.com>
-        <9613475C-ECAE-4AD6-9C02-55C9214A6489@cadence.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH] pci: qcom: include gpio/consumer.h
+Date: Mon, 4 Jun 2018 12:45:26 -0500
+Message-ID: <20180604174526.GA30381@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180530215324.1178564-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9613475C-ECAE-4AD6-9C02-55C9214A6489@cadence.com>
+Content-Disposition: inline
+In-Reply-To: <20180530215324.1178564-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Przemyslaw Gaj <pgaj@cadence.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stanimir Varbanov <svarbanov@mm-sol.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Przemek,
-
-On Mon, 4 Jun 2018 09:24:51 +0000
-Przemyslaw Gaj <pgaj@cadence.com> wrote:
-
-> Hi Boris,
+On Wed, May 30, 2018 at 11:53:06PM +0200, Arnd Bergmann wrote:
+> When CONFIG_GPIOLIB is disabled, we run into a build failure:
 > 
-> Few things regarding Cadence IP driver:
+> drivers/pci/dwc/pcie-qcom.c: In function 'qcom_pcie_probe':
+> drivers/pci/dwc/pcie-qcom.c:1223:16: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_regulator_get_optional'? [-Werror=implicit-function-declaration]
+>   pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
 > 
-> ﻿On 6/4/18, 9:31 AM, "Boris Brezillon" <boris.brezillon@bootlin.com> wrote:
+> Including gpio/consumer.h directly is the correct fix.
 > 
->     +static void cdns_i3c_master_handle_ibi(struct cdns_i3c_master *master,
->     +				       u32 ibir)
->     +{
->     +	struct cdns_i3c_i2c_dev_data *data;
->     +	bool data_consumed = false;
->     +	struct i3c_ibi_slot *slot;
->     +	u32 id = IBIR_SLVID(ibir);
->     +	struct i3c_device *dev;
->     +	int len, i, j;
->     +	u8 *buf;
->     +
->     +	/*
->     +	 * FIXME: maybe we should report the FIFO OVF errors to the upper
->     +	 * layer.
->     +	 */
->     +	if (id >= master->ibi.num_slots || (ibir & IBIR_ERROR))
->     +		goto out;
->     +
->     +	dev = master->ibi.slots[id];
->     +	spin_lock(&master->ibi.lock);
->     +
->     +	data = i3c_device_get_master_data(dev);
->     +	slot = i3c_generic_ibi_get_free_slot(data->ibi_pool);
->     +	if (!slot)
->     +		goto out_unlock;
->     +
->     +	buf = slot->data;
->     +
->     +	len = IBIR_XFER_BYTES(ibir);
->     +	for (i = 0; i < IBIR_XFER_BYTES(ibir); i += 4) {
->     +		u32 tmp = readl(master->regs + IBI_DATA_FIFO);
->     +
->     +		for (j = 0; j < 4 && i + j < dev->ibi->max_payload_len; j++)
->     +			buf[i + j] = tmp >> (j * 8);
->     +
->     +	}
->     +	slot->len = min_t(unsigned int, IBIR_XFER_BYTES(ibir),
->     +			  dev->ibi->max_payload_len);
->     +	i3c_master_queue_ibi(dev, slot);
->     +	data_consumed = true;
->     +
->     +out_unlock:
->     +	spin_unlock(&master->ibi.lock);
->     +
->     +out:
->     +	/* Consume data from the FIFO if it's not been done already. */
->     +	if (!data_consumed) {
->     +		for (i = 0; i < IBIR_XFER_BYTES(ibir); i += 4)
->     +			readl(master->regs + IBI_DATA_FIFO);
->     +	}
->     +}
->     
-> len variable is unneeded.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Will get rid of len.
+Applied with the other Bjorn's reviewed-by to pci/host/qcom for v4.18,
+thanks!
 
->     +
->     +	/* Device ID0 is reserved to describe this master. */
->     +	master->maxdevs = CONF_STATUS0_DEVS_NUM(val);
->     +	master->free_rr_slots = GENMASK(master->maxdevs, 1);
->     +
->     +	val = readl(master->regs + CONF_STATUS1);
->     +	master->caps.cmdfifodepth = CONF_STATUS1_CMD_DEPTH(val);
->     +	master->caps.rxfifodepth = CONF_STATUS1_RX_DEPTH(val);
->     +	master->caps.txfifodepth = CONF_STATUS1_TX_DEPTH(val);
->     +	master->caps.ibirfifodepth = 16;
+> ---
+>  drivers/pci/dwc/pcie-qcom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> IBI fifo depth is hardcoded. You can read this value from CONF_STATUS0 register.
+> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+> index b65bbf7c284e..17df19db851e 100644
+> --- a/drivers/pci/dwc/pcie-qcom.c
+> +++ b/drivers/pci/dwc/pcie-qcom.c
+> @@ -10,7 +10,7 @@
+>  
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+>  #include <linux/iopoll.h>
+> -- 
+> 2.9.0
 > 
->     +	master->caps.cmdrfifodepth = 16;
-> 
-> CMDR fifo depth is hardcoded. You can read this value from CONF_STATUS0 register also.
-
-Sure, I'll use the FIFO depth exposed in CONF_STATUS0.
-
-Thanks,
-
-Boris
