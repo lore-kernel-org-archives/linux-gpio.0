@@ -1,98 +1,52 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 3/3] pinctrl: actions: Add interrupt support for OWL S900
- SoC
-Date: Sun, 3 Jun 2018 22:27:23 +0530
-Message-ID: <20180603165723.GA14907@Mani-XPS-13-9360>
-References: <20180602165415.30956-1-manivannan.sadhasivam@linaro.org>
- <20180602165415.30956-4-manivannan.sadhasivam@linaro.org>
- <CAHp75Ve8ZCbEqnYK0KqtCHQm-EOUWRSyMzi51P+3_7brtXq6dA@mail.gmail.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pci: qcom: include gpio/consumer.h
+Date: Sun, 3 Jun 2018 18:24:55 -0700
+Message-ID: <20180604012455.GA3374@builder>
+References: <20180530215324.1178564-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAHp75Ve8ZCbEqnYK0KqtCHQm-EOUWRSyMzi51P+3_7brtXq6dA@mail.gmail.com>
+In-Reply-To: <20180530215324.1178564-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, =?utf-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>, Thomas Liau <thomas.liau@actions-semi.com>, jeff.chen@actions-semi.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stanimir Varbanov <svarbanov@mm-sol.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Andy,
+On Wed 30 May 14:53 PDT 2018, Arnd Bergmann wrote:
 
-On Sun, Jun 03, 2018 at 11:37:53AM +0300, Andy Shevchenko wrote:
-> On Sat, Jun 2, 2018 at 7:54 PM, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> > Add interrupt support for Actions Semi OWL S900 SoC.
+> When CONFIG_GPIOLIB is disabled, we run into a build failure:
 > 
-> > +       port = owl_gpio_get_port(pctrl, &gpio);
-> > +       if (WARN_ON(port == NULL))
-> > +               return;
+> drivers/pci/dwc/pcie-qcom.c: In function 'qcom_pcie_probe':
+> drivers/pci/dwc/pcie-qcom.c:1223:16: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_regulator_get_optional'? [-Werror=implicit-function-declaration]
+>   pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
 > 
-> At which circumstances the above possible?
+> Including gpio/consumer.h directly is the correct fix.
 > 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Only possible when the requested GPIO exceeds chip->ngpio. I know it is
-a kind of redundant check, but it is good to have this during development.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-> > +       port = owl_gpio_get_port(pctrl, &gpio);
-> > +       if (WARN_ON(port == NULL))
-> > +               return;
+Regards,
+Bjorn
+
+> ---
+>  drivers/pci/dwc/pcie-qcom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Ditto.
->
-
-Same as above.
-
-> > +       port = owl_gpio_get_port(pctrl, &gpio);
-> > +       if (WARN_ON(port == NULL))
-> > +               return;
-> 
-> Ditto.
->
-
-Same as above.
-
-> > +       port = owl_gpio_get_port(pctrl, &gpio);
-> > +       if (WARN_ON(port == NULL))
-> > +               return -ENODEV;
-> 
-> Ditto.
->
-
-Same as above.
-
-> 
-> > +       for (i = 0; i < chip->ngpio; i++) {
-> > +               irqno = irq_create_mapping(pctrl->domain, i);
-> > +               irq_set_chip_and_handler(irqno, &owl_gpio_irq_chip,
-> > +                                        handle_edge_irq);
-> > +               irq_set_chip_data(irqno, pctrl);
-> > +       }
-> 
-> I'm not sure the handle_edge_irq() is a correct handler here. It would
-> be handle_bad_irq() until IRQ has been requested properly.
-> No?
->
-
-Hmmm, good question. Since the handler used in irq_set_chip_and_handler
-is superseded by irq_set_chained_handler_and_data, this doesn't matter
-anyway. But I would like to hear what Linus suggests here!
-
-> > +/* GPIO TYPE Bit Definition */
-> > +#define OWL_GPIO_INT_LEVEL_HIGH                0
-> > +#define OWL_GPIO_INT_LEVEL_LOW         1
-> > +#define OWL_GPIO_INT_EDGE_RISING       2
-> > +#define OWL_GPIO_INT_EDGE_FALLING      3
-> 
-> > +#define OWL_GPIO_INT_MASK              3
-> 
-> GENMASK?
->
-
-Ack.
-
-Thanks,
-Mani
-
+> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
+> index b65bbf7c284e..17df19db851e 100644
+> --- a/drivers/pci/dwc/pcie-qcom.c
+> +++ b/drivers/pci/dwc/pcie-qcom.c
+> @@ -10,7 +10,7 @@
+>  
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+>  #include <linux/iopoll.h>
 > -- 
-> With Best Regards,
-> Andy Shevchenko
+> 2.9.0
+> 
