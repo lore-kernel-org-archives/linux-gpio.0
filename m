@@ -1,35 +1,50 @@
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Subject: Re: [PATCH] staging: mt7621-gpio: move out of staging
-Date: Tue, 5 Jun 2018 13:19:21 +0200
-Message-ID: <20180605111921.GA14280@foobar>
-References: <1527854570-17200-1-git-send-email-sergio.paracuellos@gmail.com>
- <20180601185727.jc2m4rp3qgkgkiii@mwanda>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for pcal6524
+Date: Tue, 5 Jun 2018 18:37:21 +0300
+Message-ID: <CAHp75VfxN1RZBFRK6oJ5AzCe_2ej9eYdwt96X+fJZgFy65eaFg@mail.gmail.com>
+References: <cover.1526533188.git.hns@goldelico.com> <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
+ <20180523140635.GB27215@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <20180601185727.jc2m4rp3qgkgkiii@mwanda>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: neil@brown.name, gregkh@linuxfoundation.org, linus.walleij@linaro.org, driverdev-devel@linuxdriverproject.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180523140635.GB27215@amd>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: "H. Nikolaus Schaller" <hns@goldelico.com>, Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 12:09:38PM +0300, Dan Carpenter wrote:
-> Looks like a nice driver to me now.  Thanks!
+On Wed, May 23, 2018 at 5:06 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> On Thu 2018-05-17 06:59:49, H. Nikolaus Schaller wrote:
+>> The register constants are so far defined in a way that they fit
+>> for the pcal9555a when shifted by the number of banks, i.e. are
+>> multiplied by 2 in the accessor function.
+>>
+>> Now, the pcal6524 has 3 banks which means the relative offset
+>> is multiplied by 4 for the standard registers.
+>>
+>> Simply applying the bit shift to the extended registers gives
+>> a wrong result, since the base offset is already included in
+>> the offset.
+>>
+>> Therefore, we have to add code to the 24 bit accessor functions
+>> that adjusts the register number for these exended registers.
+>>
+>> The formula finally used was developed and proposed by
+>> Andy Shevchenko <andy.shevchenko@gmail.com>.
 
-Thanks, Dan. Let's wait for feedback from gpio and device tree guys.
-> 
-> regards,
-> dan carpenter
-> 
-Best regards,
-    Sergio Paracuellos
+>>       int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+>> +     int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+>> +     int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+
+> Is this reasonable to do on each register access? Compiler will not be
+> able to optimize out fls and shifts, right?
+
+On modern CPUs fls() is one assembly command. OTOH, any proposal to do
+this better?
+
+What I can see is that bank_shift is invariant to the function, and
+maybe cached.
+
+-- 
+With Best Regards,
+Andy Shevchenko
