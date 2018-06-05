@@ -1,50 +1,197 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for pcal6524
-Date: Tue, 5 Jun 2018 18:37:21 +0300
-Message-ID: <CAHp75VfxN1RZBFRK6oJ5AzCe_2ej9eYdwt96X+fJZgFy65eaFg@mail.gmail.com>
-References: <cover.1526533188.git.hns@goldelico.com> <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
- <20180523140635.GB27215@amd>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 2/5] gpio: syscon: rockchip: add GPIO_MUTE support for
+ rk3328
+Date: Tue, 5 Jun 2018 13:58:54 -0600
+Message-ID: <20180605195854.GA16394@rob-hp-laptop>
+References: <1527737273-8387-1-git-send-email-djw@t-chip.com.cn>
+ <1527737273-8387-3-git-send-email-djw@t-chip.com.cn>
+ <CAL_JsqJK4vrmLBeN_ZeGCXAyqshshL16B0KN_+8uvt+=-O9TEw@mail.gmail.com>
+ <0d08ba26-77f2-6c42-8fb1-214aaf6085e9@t-chip.com.cn>
+ <CAL_JsqKSy4q5dfVfXbRMLa7koTWufpAt3yNdE-9mwyJ-VzVQRQ@mail.gmail.com>
+ <87zi0d8tue.fsf@t-chip.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180523140635.GB27215@amd>
+Content-Disposition: inline
+In-Reply-To: <87zi0d8tue.fsf@t-chip.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: "H. Nikolaus Schaller" <hns@goldelico.com>, Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+To: Levin Du <djw@t-chip.com.cn>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 23, 2018 at 5:06 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> On Thu 2018-05-17 06:59:49, H. Nikolaus Schaller wrote:
->> The register constants are so far defined in a way that they fit
->> for the pcal9555a when shifted by the number of banks, i.e. are
->> multiplied by 2 in the accessor function.
->>
->> Now, the pcal6524 has 3 banks which means the relative offset
->> is multiplied by 4 for the standard registers.
->>
->> Simply applying the bit shift to the extended registers gives
->> a wrong result, since the base offset is already included in
->> the offset.
->>
->> Therefore, we have to add code to the 24 bit accessor functions
->> that adjusts the register number for these exended registers.
->>
->> The formula finally used was developed and proposed by
->> Andy Shevchenko <andy.shevchenko@gmail.com>.
+On Sat, Jun 02, 2018 at 04:40:09PM +0800, Levin Du wrote:
+> 
+> Rob Herring <robh+dt@kernel.org> writes:
+> 
+> > On Thu, May 31, 2018 at 9:05 PM, Levin <djw@t-chip.com.cn> wrote:
+> > > Hi Rob,
+> > > 
+> > > 
+> > > On 2018-05-31 10:45 PM, Rob Herring wrote:
+> > > > 
+> > > > On Wed, May 30, 2018 at 10:27 PM,  <djw@t-chip.com.cn> wrote:
+> > > > > 
+> > > > > From: Levin Du <djw@t-chip.com.cn>
+> > > > > 
+> > > > > In Rockchip RK3328, the output only GPIO_MUTE pin,
+> > > > > originally for codec
+> > > > > mute control, can also be used for general purpose. It is
+> > > > > manipulated by
+> > > > > the GRF_SOC_CON10 register.
+> > > > > 
+> > > > > Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> > > > > 
+> > > > > ---
+> > > > > 
+> > > > > Changes in v3:
+> > > > > - Change from general gpio-syscon to specific
+> > > > > rk3328-gpio-mute
+> > > > > 
+> > > > > Changes in v2:
+> > > > > - Rename gpio_syscon10 to gpio_mute in doc
+> > > > > 
+> > > > > Changes in v1:
+> > > > > - Refactured for general gpio-syscon usage for Rockchip SoCs.
+> > > > > - Add doc rockchip,gpio-syscon.txt
+> > > > > 
+> > > > >   .../bindings/gpio/rockchip,rk3328-gpio-mute.txt    | 28
+> > > > > +++++++++++++++++++
+> > > > >   drivers/gpio/gpio-syscon.c                         | 31
+> > > > > ++++++++++++++++++++++
+> > > > >   2 files changed, 59 insertions(+)
+> > > > >   create mode 100644
+> > > > > Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> > > > > 
+> > > > > diff --git
+> > > > > a/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> > > > > b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> > > > > new file mode 100644
+> > > > > index 0000000..10bc632
+> > > > > --- /dev/null
+> > > > > +++
+> > > > > b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-gpio-mute.txt
+> > > > > @@ -0,0 +1,28 @@
+> > > > > +Rockchip RK3328 GPIO controller dedicated for the GPIO_MUTE
+> > > > > pin.
+> > > > > +
+> > > > > +In Rockchip RK3328, the output only GPIO_MUTE pin,
+> > > > > originally for codec
+> > > > > mute
+> > > > > +control, can also be used for general purpose. It is
+> > > > > manipulated by the
+> > > > > +GRF_SOC_CON10 register.
+> > > > > +
+> > > > > +Required properties:
+> > > > > +- compatible: Should contain "rockchip,rk3328-gpio-mute".
+> > > > > +- gpio-controller: Marks the device node as a gpio
+> > > > > controller.
+> > > > > +- #gpio-cells: Should be 2. The first cell is the pin
+> > > > > number and
+> > > > > +  the second cell is used to specify the gpio polarity:
+> > > > > +    0 = Active high,
+> > > > > +    1 = Active low.
+> > > > > +
+> > > > > +Example:
+> > > > > +
+> > > > > +       grf: syscon@ff100000 {
+> > > > > +               compatible = "rockchip,rk3328-grf", "syscon",
+> > > > > "simple-mfd";
+> > > > > +
+> > > > > +               gpio_mute: gpio-mute {
+> > > > 
+> > > > Node names should be generic:
+> > > > 
+> > > > gpio {
+> > > > 
+> > > > This also means you can't add another GPIO node in the future
+> > > > and
+> > > > you'll have to live with "rockchip,rk3328-gpio-mute" covering
+> > > > more
+> > > > than 1 GPIO if you do need to add more GPIOs.
+> > > 
+> > > 
+> > > As the first line describes, this GPIO controller is dedicated for
+> > > the
+> > > GPIO_MUTE pin.
+> > > There's only one GPIO pin in the GRF_SOC_CON10 register. Therefore
+> > > the
+> > > gpio_mute
+> > > name is proper IMHO.
+> > 
+> > It's how many GPIOs in the GRF, not this register. What I'm saying is
+> > when you come along later to add another GPIO in the GRF, you had
+> > better just add it to this same node. I'm not going to accept another
+> > GPIO controller node within the GRF. You have the cells to support
+> > more than 1, so it would only be a driver change. The compatible
+> > string would then not be ideally named at that point. But compatible
+> > strings are just unique identifiers, so it doesn't really matter what
+> > the string is.
+> > 
+> 
+> I'll try my best to introduce the situation here. The GRF, GPIO0~GPIO3
+> are register blocks in the RK3328 Soc. The GPIO0~GPIO3 contain registers
+> for GPIO operations like reading/writing data, setting direction,
+> interruption etc, which corresponds to the GPIO banks (gpio0~gpio3)
+> defined in rk3328.dtsi:
 
->>       int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
->> +     int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
->> +     int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+I'm only talking about GRF functions, not "regular" GPIOs.
 
-> Is this reasonable to do on each register access? Compiler will not be
-> able to optimize out fls and shifts, right?
+> 	pinctrl: pinctrl {
+> 		compatible = "rockchip,rk3328-pinctrl";
+> 		rockchip,grf = <&grf>;
+> 		#address-cells = <2>;
+> 		#size-cells = <2>;
+> 		ranges;
+> 
+> 		gpio0: gpio0@ff210000 {
+> 			compatible = "rockchip,gpio-bank";
+> 			reg = <0x0 0xff210000 0x0 0x100>;
+> 			interrupts = <GIC_SPI 51 			IRQ_TYPE_LEVEL_HIGH>;
+> 			clocks = <&cru PCLK_GPIO0>;
+> 
+> 			gpio-controller;
+> 			#gpio-cells = <2>;
+> 
+> 			interrupt-controller;
+> 			#interrupt-cells = <2>;
+> 		};
+> 
+> 		gpio1: gpio1@ff220000 {
+>                //...
+> 		};
+> 
+> 		gpio2: gpio2@ff230000 {
+>                //...
+> 		};
+> 
+> 		gpio3: gpio3@ff240000 {
+>                //...
+> 		};
+>         }
+> 
+> However, these general GPIO pins has multiplexed functions and their
+> pull up/down and driving strength can also be configured. These settings
+> are manipulated by the GRF registers in pinctrl driver. Quoted from the
+> TRM, the GRF has the following function:
+> 
+> - IOMUX control
+> - Control the state of GPIO in power-down mode
+> - GPIO PAD pull down and pull up control
+> - Used for common system control
+> - Used to record the system state
+> 
+> Therefore the functions of the GRF are messy and scattered in different
+> nodes. The so-called GPIO_MUTE does not belong to GPIO0~GPIO3. It is
+> manipulated by the GRF_SOC_CON10 register in the GRF block.
+> 
+> > I'm being told both "this is the only GPIO" and "the GRF has too many
+> > different functions for us to tell you what they all are". So which is
+> > it?
+> > 
+> > Rob
+> 
+> They are both true, but lack of context. See the above description.
 
-On modern CPUs fls() is one assembly command. OTOH, any proposal to do
-this better?
+What I meant was "only GPIO in GRF registers"...
 
-What I can see is that bank_shift is invariant to the function, and
-maybe cached.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Rob
