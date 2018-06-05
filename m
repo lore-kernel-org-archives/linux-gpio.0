@@ -1,25 +1,35 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v10 RESEND 1/9] mfd: madera: Add register definitions for
- Cirrus Logic Madera codecs
-Date: Tue, 5 Jun 2018 12:15:55 +0100
-Message-ID: <20180605111555.GS21163@dell>
-References: <20180521100002.11094-1-rf@opensource.cirrus.com>
- <20180521100002.11094-2-rf@opensource.cirrus.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Subject: Re: [PATCH] staging: mt7621-gpio: move out of staging
+Date: Tue, 5 Jun 2018 13:19:21 +0200
+Message-ID: <20180605111921.GA14280@foobar>
+References: <1527854570-17200-1-git-send-email-sergio.paracuellos@gmail.com>
+ <20180601185727.jc2m4rp3qgkgkiii@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
 Content-Disposition: inline
-In-Reply-To: <20180521100002.11094-2-rf@opensource.cirrus.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: linus.walleij@linaro.org, andy.shevchenko@gmail.com, robh+dt@kernel.org, patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20180601185727.jc2m4rp3qgkgkiii@mwanda>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: neil@brown.name, gregkh@linuxfoundation.org, linus.walleij@linaro.org, driverdev-devel@linuxdriverproject.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-All applied.  Thanks for bearing with.
+On Mon, Jun 04, 2018 at 12:09:38PM +0300, Dan Carpenter wrote:
+> Looks like a nice driver to me now.  Thanks!
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks, Dan. Let's wait for feedback from gpio and device tree guys.
+> 
+> regards,
+> dan carpenter
+> 
+Best regards,
+    Sergio Paracuellos
