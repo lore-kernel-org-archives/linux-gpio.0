@@ -1,94 +1,109 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for
- pcal6524
-Date: Wed, 6 Jun 2018 09:35:25 +0200
-Message-ID: <20180606073525.GA18743@amd>
-References: <cover.1526533188.git.hns@goldelico.com>
- <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
- <20180523140635.GB27215@amd>
- <CAHp75VfxN1RZBFRK6oJ5AzCe_2ej9eYdwt96X+fJZgFy65eaFg@mail.gmail.com>
- <20180605203941.GA28143@amd>
- <A639885E-0E5D-4FB0-BE51-AFF35BF4F76B@computer.org>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH 1/2] gpio: davinci: Move fetching IRQ to beginning of probe
+Date: Wed, 6 Jun 2018 14:48:53 +0530
+Message-ID: <1528276734-1483-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <A639885E-0E5D-4FB0-BE51-AFF35BF4F76B@computer.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Nikolaus Schaller" <hns@computer.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+To: linus.walleij@linaro.org
+Cc: j-keerthy@ti.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, t-kristo@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
+Currently IRQ resource fetching is done at the very end of probe.
+In case the of IRQ resource not being ready, we defer probe
+and need to revert prior changes. Hence move it to the beginning of
+the probe so as to avoid reverting.
 
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
 
-On Wed 2018-06-06 07:33:32, H. Nikolaus Schaller wrote:
-> Hi,
->=20
-> > Am 05.06.2018 um 22:39 schrieb Pavel Machek <pavel@ucw.cz>:
-> >=20
-> > On Tue 2018-06-05 18:37:21, Andy Shevchenko wrote:
-> >> On Wed, May 23, 2018 at 5:06 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> >>> On Thu 2018-05-17 06:59:49, H. Nikolaus Schaller wrote:
-> >>>> The register constants are so far defined in a way that they fit
-> >>>> for the pcal9555a when shifted by the number of banks, i.e. are
-> >>>> multiplied by 2 in the accessor function.
-> >>>>=20
-> >>>> Now, the pcal6524 has 3 banks which means the relative offset
-> >>>> is multiplied by 4 for the standard registers.
-> >>>>=20
-> >>>> Simply applying the bit shift to the extended registers gives
-> >>>> a wrong result, since the base offset is already included in
-> >>>> the offset.
-> >>>>=20
-> >>>> Therefore, we have to add code to the 24 bit accessor functions
-> >>>> that adjusts the register number for these exended registers.
-> >>>>=20
-> >>>> The formula finally used was developed and proposed by
-> >>>> Andy Shevchenko <andy.shevchenko@gmail.com>.
-> >>=20
-> >>>>      int bank_shift =3D fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-> >>>> +     int addr =3D (reg & PCAL_GPIO_MASK) << bank_shift;
-> >>>> +     int pinctrl =3D (reg & PCAL_PINCTRL_MASK) << 1;
-> >>=20
-> >>> Is this reasonable to do on each register access? Compiler will not be
-> >>> able to optimize out fls and shifts, right?
-> >>=20
-> >> On modern CPUs fls() is one assembly command. OTOH, any proposal to do
-> >> this better?
-> >>=20
-> >> What I can see is that bank_shift is invariant to the function, and
-> >> maybe cached.
-> >=20
-> > Yes, I thought that caching bank_shift might be good idea. I thought
-> > it was constant for given chip...
->=20
-> Yes, it is an f(chip), but the question that comes to my mind is if
-> optimization is worth any effort. This is an accessor method over
+Tested for GPIO Interrupts on da850-lcdk and keystone-k2g-evm boards.
 
-It will also be less ugly. Copy&pasted complex exprepsion all over the
-driver is not nice.
-									Pavel
+ drivers/gpio/gpio-davinci.c | 29 +++++++++++------------------
+ 1 file changed, 11 insertions(+), 18 deletions(-)
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---4Ckj6UjgE2iN1+kY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsXjr0ACgkQMOfwapXb+vIc1wCggj6eiSaPQ5SgwApWF99NsdKs
-vqoAoMPTlFh+Gg+YVlfFIoV6TYdftu6l
-=1hdR
------END PGP SIGNATURE-----
-
---4Ckj6UjgE2iN1+kY--
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 987126c..861f35b 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -55,7 +55,7 @@ static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
+ 	return g;
+ }
+ 
+-static int davinci_gpio_irq_setup(struct platform_device *pdev);
++static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq);
+ 
+ /*--------------------------------------------------------------------------*/
+ 
+@@ -168,7 +168,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ {
+ 	static int ctrl_num, bank_base;
+ 	int gpio, bank, ret = 0;
+-	unsigned ngpio, nbank;
++	unsigned int ngpio, nbank, bank_irq;
+ 	struct davinci_gpio_controller *chips;
+ 	struct davinci_gpio_platform_data *pdata;
+ 	struct device *dev = &pdev->dev;
+@@ -209,6 +209,12 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gpio_base))
+ 		return PTR_ERR(gpio_base);
+ 
++	bank_irq = platform_get_irq(pdev, 0);
++	if (bank_irq < 0) {
++		dev_dbg(dev, "IRQ not populated\n");
++		return bank_irq;
++	}
++
+ 	snprintf(label, MAX_LABEL_SIZE, "davinci_gpio.%d", ctrl_num++);
+ 	chips->chip.label = devm_kstrdup(dev, label, GFP_KERNEL);
+ 		if (!chips->chip.label)
+@@ -243,7 +249,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 		goto err;
+ 
+ 	platform_set_drvdata(pdev, chips);
+-	ret = davinci_gpio_irq_setup(pdev);
++	ret = davinci_gpio_irq_setup(pdev, bank_irq);
+ 	if (ret)
+ 		goto err;
+ 
+@@ -452,16 +458,15 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
+  * (dm6446) can be set appropriately for GPIOV33 pins.
+  */
+ 
+-static int davinci_gpio_irq_setup(struct platform_device *pdev)
++static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
+ {
+ 	unsigned	gpio, bank;
+ 	int		irq;
+ 	int		ret;
+ 	struct clk	*clk;
+ 	u32		binten = 0;
+-	unsigned	ngpio, bank_irq;
++	unsigned int	ngpio;
+ 	struct device *dev = &pdev->dev;
+-	struct resource	*res;
+ 	struct davinci_gpio_controller *chips = platform_get_drvdata(pdev);
+ 	struct davinci_gpio_platform_data *pdata = dev->platform_data;
+ 	struct davinci_gpio_regs __iomem *g;
+@@ -481,18 +486,6 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 		gpio_get_irq_chip = (gpio_get_irq_chip_cb_t)match->data;
+ 
+ 	ngpio = pdata->ngpio;
+-	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!res) {
+-		dev_err(dev, "Invalid IRQ resource\n");
+-		return -EBUSY;
+-	}
+-
+-	bank_irq = res->start;
+-
+-	if (!bank_irq) {
+-		dev_err(dev, "Invalid IRQ resource\n");
+-		return -ENODEV;
+-	}
+ 
+ 	clk = devm_clk_get(dev, "gpio");
+ 	if (IS_ERR(clk)) {
+-- 
+1.9.1
