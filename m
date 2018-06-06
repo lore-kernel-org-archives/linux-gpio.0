@@ -1,82 +1,45 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH][next] pinctrl: pinctrl-single: add allocation failure
- checking of saved_vals
-Date: Wed, 6 Jun 2018 19:02:03 +0300
-Message-ID: <CAHp75Vd0Djw+nDN7u=-CLEfdDGA5QTsMueOb9EZLNnCDgso5fA@mail.gmail.com>
-References: <20180606134338.4645-1-colin.king@canonical.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Rafael David Tinoco <rafael.tinoco@linaro.org>
+Subject: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT fix
+Date: Wed,  6 Jun 2018 14:44:24 -0300
+Message-ID: <20180606174424.9630-1-rafael.tinoco@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180606134338.4645-1-colin.king@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: bamv2005@gmail.com
+Cc: brgl@bgdev.pl, shuah@kernel.org, linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, rafael.tinoco@linaro.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 4:43 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently saved_vals is being allocated and there is no check for
-> failed allocation (which is more likely than normal when using
-> GFP_ATOMIC).  Fix this by checking for a failed allocation and
-> propagating this error return down the the caller chain.
->
-> Detected by CoverityScan, CID#1469841 ("Dereference null return value")
->
-> Fixes: 88a1dbdec682 ("pinctrl: pinctrl-single: Add functions to save and restore pinctrl context")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pinctrl/pinctrl-single.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-> index 9c3c00515aa0..0905ee002041 100644
-> --- a/drivers/pinctrl/pinctrl-single.c
-> +++ b/drivers/pinctrl/pinctrl-single.c
-> @@ -1588,8 +1588,11 @@ static int pcs_save_context(struct pcs_device *pcs)
->
->         mux_bytes = pcs->width / BITS_PER_BYTE;
->
-> -       if (!pcs->saved_vals)
-> +       if (!pcs->saved_vals) {
->                 pcs->saved_vals = devm_kzalloc(pcs->dev, pcs->size, GFP_ATOMIC);
+Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
+should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
+the following error occurs:
 
-> +               if (!pcs->saved_vals)
-> +                       return -ENOMEM;
+gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
+such file or directory
 
-Wouldn't make sense to move it out of the first condition?
+despite the real result of gpio_pin_test(), gpio_debugfs_get() and
+gpiotools_request_linehandle() functions.
 
-Something like
+Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+---
+ tools/testing/selftests/gpio/gpio-mockup-chardev.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-if (!foo)
- foo = ...malloc(...);
-if (!foo)
- return ...
-
-
-> +       }
->
->         switch (pcs->width) {
->         case 64:
-> @@ -1649,8 +1652,13 @@ static int pinctrl_single_suspend(struct platform_device *pdev,
->         if (!pcs)
->                 return -EINVAL;
->
-> -       if (pcs->flags & PCS_CONTEXT_LOSS_OFF)
-> -               pcs_save_context(pcs);
-> +       if (pcs->flags & PCS_CONTEXT_LOSS_OFF) {
-> +               int ret;
-> +
-> +               ret = pcs_save_context(pcs);
-> +               if (ret < 0)
-> +                       return ret;
-> +       }
->
->         return pinctrl_force_sleep(pcs->pctl);
->  }
-
-
-
+diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
+index 667e916fa7cc..f8d468f54e98 100644
+--- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
++++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
+@@ -225,10 +225,10 @@ int gpio_pin_test(struct gpiochip_info *cinfo, int line, int flag, int value)
+ 		if (flag & GPIOHANDLE_REQUEST_ACTIVE_LOW)
+ 			debugfs_value = !debugfs_value;
+ 
+-		if (!(debugfs_dir == OUT && value == debugfs_value))
++		if (!(debugfs_dir == OUT && value == debugfs_value)) {
+ 			errno = -EINVAL;
+-		ret = -errno;
+-
++			ret = -errno;
++		}
+ 	}
+ 	gpiotools_release_linehandle(fd);
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
