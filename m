@@ -1,102 +1,81 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: pinctrl-single: Avoid divisions in context
- save/restore
-Date: Thu,  7 Jun 2018 14:24:34 +0200
-Message-ID: <1528374274-26385-1-git-send-email-geert+renesas@glider.be>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH] pinctrl: devicetree: Fix pctldev pointer overwrite
+Date: Thu,  7 Jun 2018 13:51:33 -0300
+Message-ID: <1528390293-8022-1-git-send-email-festevam@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Keerthy <j-keerthy@ti.com>, Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: rf@opensource.cirrus.com, linux-gpio@vger.kernel.org, slongerbeam@gmail.com, shawnguo@kernel.org, kernel@pengutronix.de, linux-imx@nxp.com, mika.penttila@nextfour.com, Fabio Estevam <fabio.estevam@nxp.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The divisions (and multiplications) can be avoided by changing the loops
-to use increments of mux_bytes instead of 1.
-While at it, remove the unneeded casts when assigning void pointers.
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-This saves +100 bytes of kernel size on arm32/arm64.
+Commit b89405b6102f ("pinctrl: devicetree: Fix dt_to_map_one_config
+handling of hogs") causes the pinctrl hog pins to not get initialized
+on i.MX platforms leaving them with the IOMUX settings untouched.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This causes several regressions on i.MX such as:
+
+- OV5640 camera driver can not be probed anymore on imx6qdl-sabresd
+because the camera clock pin is in a pinctrl_hog group and since
+its pinctrl initialization is skipped, the camera clock is kept
+in GPIO functionality instead of CLK_CKO function.
+
+- Audio stopped working on imx6qdl-wandboard and imx53-qsb for
+the same reason.
+
+Richard Fitzgerald explains the problem:
+
+"I see the bug. If the hog node isn't a 1st level child of the pinctrl
+parent node it will go around the for(;;) loop again but on the first
+pass I overwrite pctldev with the result of
+get_pinctrl_dev_from_of_node() so it doesn't point to the pinctrl driver
+any more."
+
+Fix the issue by stashing the original pctldev so it doesn't
+get overwritten.
+
+Fixes:  b89405b6102f ("pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs")
+Cc: <stable@vger.kernel.org>
+Reported-by: Mika Penttilä <mika.penttila@nextfour.com>
+Reported-by: Steve Longerbeam <slongerbeam@gmail.com>
+Suggested-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 ---
-Compile-tested only.
+ drivers/pinctrl/devicetree.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-As the loops are now identical, the code could be made even smaller by
-moving the switch() inside the loop, at the expense of readability.
----
- drivers/pinctrl/pinctrl-single.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 9c3c00515aa0fe20..5de5dedb804928eb 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1593,19 +1593,19 @@ static int pcs_save_context(struct pcs_device *pcs)
- 
- 	switch (pcs->width) {
- 	case 64:
--		regsl = (u64 *)pcs->saved_vals;
--		for (i = 0; i < pcs->size / mux_bytes; i++)
--			regsl[i] = pcs->read(pcs->base + i * mux_bytes);
-+		regsl = pcs->saved_vals;
-+		for (i = 0; i < pcs->size; i += mux_bytes)
-+			*regsl++ = pcs->read(pcs->base + i);
- 		break;
- 	case 32:
--		regsw = (u32 *)pcs->saved_vals;
--		for (i = 0; i < pcs->size / mux_bytes; i++)
--			regsw[i] = pcs->read(pcs->base + i * mux_bytes);
-+		regsw = pcs->saved_vals;
-+		for (i = 0; i < pcs->size; i += mux_bytes)
-+			*regsw++ = pcs->read(pcs->base + i);
- 		break;
- 	case 16:
--		regshw = (u16 *)pcs->saved_vals;
--		for (i = 0; i < pcs->size / mux_bytes; i++)
--			regshw[i] = pcs->read(pcs->base + i * mux_bytes);
-+		regshw = pcs->saved_vals;
-+		for (i = 0; i < pcs->size; i += mux_bytes)
-+			*regshw++ = pcs->read(pcs->base + i);
- 		break;
- 	}
- 
-@@ -1623,19 +1623,19 @@ static void pcs_restore_context(struct pcs_device *pcs)
- 
- 	switch (pcs->width) {
- 	case 64:
--		regsl = (u64 *)pcs->saved_vals;
--		for (i = 0; i < pcs->size / mux_bytes; i++)
--			pcs->write(regsl[i], pcs->base + i * mux_bytes);
-+		regsl = pcs->saved_vals;
-+		for (i = 0; i < pcs->size; i += mux_bytes)
-+			pcs->write(*regsl++, pcs->base + i);
- 		break;
- 	case 32:
--		regsw = (u32 *)pcs->saved_vals;
--		for (i = 0; i < pcs->size / mux_bytes; i++)
--			pcs->write(regsw[i], pcs->base + i * mux_bytes);
-+		regsw = pcs->saved_vals;
-+		for (i = 0; i < pcs->size; i += mux_bytes)
-+			pcs->write(*regsw++, pcs->base + i);
- 		break;
- 	case 16:
--		regshw = (u16 *)pcs->saved_vals;
--		for (i = 0; i < pcs->size / mux_bytes; i++)
--			pcs->write(regshw[i], pcs->base + i * mux_bytes);
-+		regshw = pcs->saved_vals;
-+		for (i = 0; i < pcs->size; i += mux_bytes)
-+			pcs->write(*regshw++, pcs->base + i);
- 		break;
- 	}
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index b601039..c4aa411 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -101,10 +101,11 @@ struct pinctrl_dev *of_pinctrl_get(struct device_node *np)
  }
+ 
+ static int dt_to_map_one_config(struct pinctrl *p,
+-				struct pinctrl_dev *pctldev,
++				struct pinctrl_dev *hog_pctldev,
+ 				const char *statename,
+ 				struct device_node *np_config)
+ {
++	struct pinctrl_dev *pctldev = NULL;
+ 	struct device_node *np_pctldev;
+ 	const struct pinctrl_ops *ops;
+ 	int ret;
+@@ -123,8 +124,10 @@ static int dt_to_map_one_config(struct pinctrl *p,
+ 			return -EPROBE_DEFER;
+ 		}
+ 		/* If we're creating a hog we can use the passed pctldev */
+-		if (pctldev && (np_pctldev == p->dev->of_node))
++		if (hog_pctldev && (np_pctldev == p->dev->of_node)) {
++			pctldev = hog_pctldev;
+ 			break;
++		}
+ 		pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
+ 		if (pctldev)
+ 			break;
 -- 
 2.7.4
