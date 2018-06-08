@@ -1,36 +1,88 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH -next] pinctrl: mediatek: remove redundant return value
- check of platform_get_resource()
-Date: Fri, 8 Jun 2018 10:06:26 +0200
-Message-ID: <CACRpkdY3YOAbsXHYu3m-0LUSf0FnXS6vO4+M3+=xUS_YuaydjQ@mail.gmail.com>
-References: <1527766782-72315-1-git-send-email-weiyongjun1@huawei.com>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: Re: [PATCH] pinctrl: devicetree: Fix pctldev pointer overwrite
+Date: Fri, 8 Jun 2018 10:06:21 +0100
+Message-ID: <1f6c4ce0-9348-b229-d301-7eb0ef2f8be4@opensource.cirrus.com>
+References: <1528390293-8022-1-git-send-email-festevam@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1527766782-72315-1-git-send-email-weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-Cc: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1528390293-8022-1-git-send-email-festevam@gmail.com>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Fabio Estevam <festevam@gmail.com>, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, slongerbeam@gmail.com, shawnguo@kernel.org, kernel@pengutronix.de, linux-imx@nxp.com, mika.penttila@nextfour.com, Fabio Estevam <fabio.estevam@nxp.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 31, 2018 at 1:39 PM, Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org> wrote:
+On 07/06/18 17:51, Fabio Estevam wrote:
+> From: Fabio Estevam <fabio.estevam@nxp.com>
+> 
+> Commit b89405b6102f ("pinctrl: devicetree: Fix dt_to_map_one_config
+> handling of hogs") causes the pinctrl hog pins to not get initialized
+> on i.MX platforms leaving them with the IOMUX settings untouched.
+> 
+> This causes several regressions on i.MX such as:
+> 
+> - OV5640 camera driver can not be probed anymore on imx6qdl-sabresd
+> because the camera clock pin is in a pinctrl_hog group and since
+> its pinctrl initialization is skipped, the camera clock is kept
+> in GPIO functionality instead of CLK_CKO function.
+> 
+> - Audio stopped working on imx6qdl-wandboard and imx53-qsb for
+> the same reason.
+> 
+> Richard Fitzgerald explains the problem:
+> 
+> "I see the bug. If the hog node isn't a 1st level child of the pinctrl
+> parent node it will go around the for(;;) loop again but on the first
+> pass I overwrite pctldev with the result of
+> get_pinctrl_dev_from_of_node() so it doesn't point to the pinctrl driver
+> any more."
+> 
+> Fix the issue by stashing the original pctldev so it doesn't
+> get overwritten.
+> 
+> Fixes:  b89405b6102f ("pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs")
+> Cc: <stable@vger.kernel.org>
+> Reported-by: Mika Penttilä <mika.penttila@nextfour.com>
+> Reported-by: Steve Longerbeam <slongerbeam@gmail.com>
+> Suggested-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
+>   drivers/pinctrl/devicetree.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+> index b601039..c4aa411 100644
+> --- a/drivers/pinctrl/devicetree.c
+> +++ b/drivers/pinctrl/devicetree.c
+> @@ -101,10 +101,11 @@ struct pinctrl_dev *of_pinctrl_get(struct device_node *np)
+>   }
+>   
+>   static int dt_to_map_one_config(struct pinctrl *p,
+> -				struct pinctrl_dev *pctldev,
+> +				struct pinctrl_dev *hog_pctldev,
+>   				const char *statename,
+>   				struct device_node *np_config)
+>   {
+> +	struct pinctrl_dev *pctldev = NULL;
+>   	struct device_node *np_pctldev;
+>   	const struct pinctrl_ops *ops;
+>   	int ret;
+> @@ -123,8 +124,10 @@ static int dt_to_map_one_config(struct pinctrl *p,
+>   			return -EPROBE_DEFER;
+>   		}
+>   		/* If we're creating a hog we can use the passed pctldev */
+> -		if (pctldev && (np_pctldev == p->dev->of_node))
+> +		if (hog_pctldev && (np_pctldev == p->dev->of_node)) {
+> +			pctldev = hog_pctldev;
+>   			break;
+> +		}
+>   		pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
+>   		if (pctldev)
+>   			break;
+> 
 
-> Remove unneeded error handling on the result of a call
-> to platform_get_resource() when the value is passed to
-> devm_ioremap_resource().
->
-> Signed-off-by: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Thanks for creating this patch. Looks ok to me.
 
-Patch applied for fixes.
-
-Yours,
-Linus Walleij
+Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
