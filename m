@@ -1,88 +1,44 @@
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: Re: [PATCH] pinctrl: devicetree: Fix pctldev pointer overwrite
-Date: Fri, 8 Jun 2018 10:06:21 +0100
-Message-ID: <1f6c4ce0-9348-b229-d301-7eb0ef2f8be4@opensource.cirrus.com>
-References: <1528390293-8022-1-git-send-email-festevam@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] pinctrl: actions: Fix uninitialized error in owl_pin_config_set()
+Date: Fri,  8 Jun 2018 12:05:47 +0200
+Message-ID: <1528452347-23986-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1528390293-8022-1-git-send-email-festevam@gmail.com>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, slongerbeam@gmail.com, shawnguo@kernel.org, kernel@pengutronix.de, linux-imx@nxp.com, mika.penttila@nextfour.com, Fabio Estevam <fabio.estevam@nxp.com>, stable@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 07/06/18 17:51, Fabio Estevam wrote:
-> From: Fabio Estevam <fabio.estevam@nxp.com>
-> 
-> Commit b89405b6102f ("pinctrl: devicetree: Fix dt_to_map_one_config
-> handling of hogs") causes the pinctrl hog pins to not get initialized
-> on i.MX platforms leaving them with the IOMUX settings untouched.
-> 
-> This causes several regressions on i.MX such as:
-> 
-> - OV5640 camera driver can not be probed anymore on imx6qdl-sabresd
-> because the camera clock pin is in a pinctrl_hog group and since
-> its pinctrl initialization is skipped, the camera clock is kept
-> in GPIO functionality instead of CLK_CKO function.
-> 
-> - Audio stopped working on imx6qdl-wandboard and imx53-qsb for
-> the same reason.
-> 
-> Richard Fitzgerald explains the problem:
-> 
-> "I see the bug. If the hog node isn't a 1st level child of the pinctrl
-> parent node it will go around the for(;;) loop again but on the first
-> pass I overwrite pctldev with the result of
-> get_pinctrl_dev_from_of_node() so it doesn't point to the pinctrl driver
-> any more."
-> 
-> Fix the issue by stashing the original pctldev so it doesn't
-> get overwritten.
-> 
-> Fixes:  b89405b6102f ("pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs")
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Mika Penttilä <mika.penttila@nextfour.com>
-> Reported-by: Steve Longerbeam <slongerbeam@gmail.com>
-> Suggested-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-> ---
->   drivers/pinctrl/devicetree.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-> index b601039..c4aa411 100644
-> --- a/drivers/pinctrl/devicetree.c
-> +++ b/drivers/pinctrl/devicetree.c
-> @@ -101,10 +101,11 @@ struct pinctrl_dev *of_pinctrl_get(struct device_node *np)
->   }
->   
->   static int dt_to_map_one_config(struct pinctrl *p,
-> -				struct pinctrl_dev *pctldev,
-> +				struct pinctrl_dev *hog_pctldev,
->   				const char *statename,
->   				struct device_node *np_config)
->   {
-> +	struct pinctrl_dev *pctldev = NULL;
->   	struct device_node *np_pctldev;
->   	const struct pinctrl_ops *ops;
->   	int ret;
-> @@ -123,8 +124,10 @@ static int dt_to_map_one_config(struct pinctrl *p,
->   			return -EPROBE_DEFER;
->   		}
->   		/* If we're creating a hog we can use the passed pctldev */
-> -		if (pctldev && (np_pctldev == p->dev->of_node))
-> +		if (hog_pctldev && (np_pctldev == p->dev->of_node)) {
-> +			pctldev = hog_pctldev;
->   			break;
-> +		}
->   		pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
->   		if (pctldev)
->   			break;
-> 
+With gcc 4.1.2:
 
-Thanks for creating this patch. Looks ok to me.
+    drivers/pinctrl/actions/pinctrl-owl.c: In function ‘owl_pin_config_set’:
+    drivers/pinctrl/actions/pinctrl-owl.c:336: warning: ‘ret’ may be used uninitialized in this function
 
-Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Indeed, if num_configs is zero, the uninitialized value will be returned
+as an error code.
+
+Fix this by preinitializing it to zero.
+
+Fixes: 2242ddfbf4d699b5 ("pinctrl: actions: Add Actions S900 pinctrl driver")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/pinctrl/actions/pinctrl-owl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+index 76243caa08c630c0..b5c880b50bb371f5 100644
+--- a/drivers/pinctrl/actions/pinctrl-owl.c
++++ b/drivers/pinctrl/actions/pinctrl-owl.c
+@@ -333,7 +333,7 @@ static int owl_pin_config_set(struct pinctrl_dev *pctrldev,
+ 	unsigned long flags;
+ 	unsigned int param;
+ 	u32 reg, bit, width, arg;
+-	int ret, i;
++	int ret = 0, i;
+ 
+ 	info = &pctrl->soc->padinfo[pin];
+ 
+-- 
+2.7.4
