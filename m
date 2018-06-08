@@ -1,138 +1,73 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH 2/2] gpio: davinci: Do not assume continuous IRQ numbering
-Date: Thu, 7 Jun 2018 14:28:30 -0500
-Message-ID: <fa15890c-756e-0821-df69-302fdd451283@ti.com>
-References: <1528276734-1483-1-git-send-email-j-keerthy@ti.com>
- <1528276734-1483-2-git-send-email-j-keerthy@ti.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: RE: [PATCH] pinctrl: devicetree: Fix pctldev pointer overwrite
+Date: Fri, 8 Jun 2018 05:38:26 +0000
+Message-ID: <AM0PR04MB42119B457F667AA424C22CF7807B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1528390293-8022-1-git-send-email-festevam@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1528276734-1483-2-git-send-email-j-keerthy@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1528390293-8022-1-git-send-email-festevam@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, t-kristo@ti.com
+Sender: stable-owner@vger.kernel.org
+To: Fabio Estevam <festevam@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "slongerbeam@gmail.com" <slongerbeam@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, "mika.penttila@nextfour.com" <mika.penttila@nextfour.com>, Fabio Estevam <fabio.estevam@nxp.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-
-
-On 06/06/2018 04:18 AM, Keerthy wrote:
-> Currently the driver assumes that the interrupts are continuous
-> and does platform_get_irq only once and assumes the rest are continuous,
-> instead call platform_get_irq for all the interrupts and store them
-> in an array for later use.
-> 
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
-> 
-> Tested for GPIO Interrupts on da850-lcdk and keystone-k2g-evm boards.
-> 
->   drivers/gpio/gpio-davinci.c | 49 ++++++++++++++++++++++++++++++---------------
->   1 file changed, 33 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 861f35b..375578c 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -42,6 +42,7 @@ struct davinci_gpio_regs {
->   
->   #define BINTEN	0x8 /* GPIO Interrupt Per-Bank Enable Register */
->   #define MAX_LABEL_SIZE 20
-> +#define MAX_INT_PER_BANK 32
->   
->   static void __iomem *gpio_base;
->   static unsigned int offset_array[5] = {0x10, 0x38, 0x60, 0x88, 0xb0};
-> @@ -55,7 +56,7 @@ static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
->   	return g;
->   }
->   
-> -static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq);
-> +static int davinci_gpio_irq_setup(struct platform_device *pdev, int *bank_irq);
->   
->   /*--------------------------------------------------------------------------*/
->   
-> @@ -168,7 +169,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
->   {
->   	static int ctrl_num, bank_base;
->   	int gpio, bank, ret = 0;
-> -	unsigned ngpio, nbank, bank_irq;
-> +	unsigned int ngpio, nbank, nirq;
-> +	int bank_irq[MAX_INT_PER_BANK], i;
->   	struct davinci_gpio_controller *chips;
->   	struct davinci_gpio_platform_data *pdata;
->   	struct device *dev = &pdev->dev;
-> @@ -197,6 +199,16 @@ static int davinci_gpio_probe(struct platform_device *pdev)
->   	if (WARN_ON(ARCH_NR_GPIOS < ngpio))
->   		ngpio = ARCH_NR_GPIOS;
->   
-> +	/*
-> +	 * If there are unbanked interrupts then the number of
-> +	 * interrupts is equal to number of gpios else all are banked so
-> +	 * number of interrupts is equal to number of banks(each with 16 gpios)
-> +	 */
-> +	if (pdata->gpio_unbanked)
-> +		nirq = pdata->gpio_unbanked;
-> +	else
-> +		nirq = DIV_ROUND_UP(ngpio, 16);
-> +
->   	nbank = DIV_ROUND_UP(ngpio, 32);
->   	chips = devm_kzalloc(dev,
->   			     nbank * sizeof(struct davinci_gpio_controller),
-> @@ -209,10 +221,13 @@ static int davinci_gpio_probe(struct platform_device *pdev)
->   	if (IS_ERR(gpio_base))
->   		return PTR_ERR(gpio_base);
->   
-> -	bank_irq = platform_get_irq(pdev, 0);
-> -	if (bank_irq < 0) {
-> -		dev_dbg(dev, "IRQ not populated\n");
-> -		return bank_irq;
-> +	for (i = 0; i < nirq; i++) {
-> +		bank_irq[i] = platform_get_irq(pdev, i);
-> +		if (bank_irq[i] < 0) {
-> +			dev_info(dev, "IRQ not populated, err = %d\n",
-> +				 bank_irq[i]);
-> +			return bank_irq[i];
-> +		}
->   	}
->   
->   	snprintf(label, MAX_LABEL_SIZE, "davinci_gpio.%d", ctrl_num++);
-> @@ -458,7 +473,7 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
->    * (dm6446) can be set appropriately for GPIOV33 pins.
->    */
->   
-> -static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
-> +static int davinci_gpio_irq_setup(struct platform_device *pdev, int *bank_irq)
->   {
->   	unsigned	gpio, bank;
->   	int		irq;
-> @@ -492,6 +507,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
->   		dev_err(dev, "Error %ld getting gpio clock\n", PTR_ERR(clk));
->   		return PTR_ERR(clk);
->   	}
-> +
->   	ret = clk_prepare_enable(clk);
->   	if (ret)
->   		return ret;
-> @@ -531,12 +547,12 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
->   	if (pdata->gpio_unbanked) {
->   		/* pass "bank 0" GPIO IRQs to AINTC */
->   		chips->chip.to_irq = gpio_to_irq_unbanked;
-> -		chips->base_irq = bank_irq;
-> +		chips->base_irq = bank_irq[0];
-
-
-i think, you need to update gpio_to_irq_unbanked() also, which
-probably would require to save array of irqs.
-
-
-and gpio_irq_type_unbanked()
-
-
-
-[...]
-> 
-
--- 
-regards,
--grygorii
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWls
+dG86ZmVzdGV2YW1AZ21haWwuY29tXQ0KPiBTZW50OiBGcmlkYXksIEp1bmUgOCwgMjAxOCAxMjo1
+MiBBTQ0KPiBUbzogbGludXMud2FsbGVpakBsaW5hcm8ub3JnDQo+IENjOiByZkBvcGVuc291cmNl
+LmNpcnJ1cy5jb207IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnOw0KPiBzbG9uZ2VyYmVhbUBn
+bWFpbC5jb207IHNoYXduZ3VvQGtlcm5lbC5vcmc7IGtlcm5lbEBwZW5ndXRyb25peC5kZTsNCj4g
+ZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT47IG1pa2EucGVudHRpbGFAbmV4dGZvdXIu
+Y29tOyBGYWJpbw0KPiBFc3RldmFtIDxmYWJpby5lc3RldmFtQG54cC5jb20+OyBzdGFibGVAdmdl
+ci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSF0gcGluY3RybDogZGV2aWNldHJlZTogRml4
+IHBjdGxkZXYgcG9pbnRlciBvdmVyd3JpdGUNCj4gDQo+IEZyb206IEZhYmlvIEVzdGV2YW0gPGZh
+YmlvLmVzdGV2YW1AbnhwLmNvbT4NCj4gDQo+IENvbW1pdCBiODk0MDViNjEwMmYgKCJwaW5jdHJs
+OiBkZXZpY2V0cmVlOiBGaXggZHRfdG9fbWFwX29uZV9jb25maWcNCj4gaGFuZGxpbmcgb2YgaG9n
+cyIpIGNhdXNlcyB0aGUgcGluY3RybCBob2cgcGlucyB0byBub3QgZ2V0IGluaXRpYWxpemVkIG9u
+IGkuTVgNCj4gcGxhdGZvcm1zIGxlYXZpbmcgdGhlbSB3aXRoIHRoZSBJT01VWCBzZXR0aW5ncyB1
+bnRvdWNoZWQuDQo+IA0KPiBUaGlzIGNhdXNlcyBzZXZlcmFsIHJlZ3Jlc3Npb25zIG9uIGkuTVgg
+c3VjaCBhczoNCj4gDQo+IC0gT1Y1NjQwIGNhbWVyYSBkcml2ZXIgY2FuIG5vdCBiZSBwcm9iZWQg
+YW55bW9yZSBvbiBpbXg2cWRsLXNhYnJlc2QNCj4gYmVjYXVzZSB0aGUgY2FtZXJhIGNsb2NrIHBp
+biBpcyBpbiBhIHBpbmN0cmxfaG9nIGdyb3VwIGFuZCBzaW5jZSBpdHMgcGluY3RybA0KPiBpbml0
+aWFsaXphdGlvbiBpcyBza2lwcGVkLCB0aGUgY2FtZXJhIGNsb2NrIGlzIGtlcHQgaW4gR1BJTyBm
+dW5jdGlvbmFsaXR5IGluc3RlYWQNCj4gb2YgQ0xLX0NLTyBmdW5jdGlvbi4NCj4gDQo+IC0gQXVk
+aW8gc3RvcHBlZCB3b3JraW5nIG9uIGlteDZxZGwtd2FuZGJvYXJkIGFuZCBpbXg1My1xc2IgZm9y
+IHRoZSBzYW1lDQo+IHJlYXNvbi4NCj4gDQo+IFJpY2hhcmQgRml0emdlcmFsZCBleHBsYWlucyB0
+aGUgcHJvYmxlbToNCj4gDQo+ICJJIHNlZSB0aGUgYnVnLiBJZiB0aGUgaG9nIG5vZGUgaXNuJ3Qg
+YSAxc3QgbGV2ZWwgY2hpbGQgb2YgdGhlIHBpbmN0cmwgcGFyZW50IG5vZGUNCj4gaXQgd2lsbCBn
+byBhcm91bmQgdGhlIGZvcig7OykgbG9vcCBhZ2FpbiBidXQgb24gdGhlIGZpcnN0IHBhc3MgSSBv
+dmVyd3JpdGUgcGN0bGRldg0KPiB3aXRoIHRoZSByZXN1bHQgb2YNCj4gZ2V0X3BpbmN0cmxfZGV2
+X2Zyb21fb2Zfbm9kZSgpIHNvIGl0IGRvZXNuJ3QgcG9pbnQgdG8gdGhlIHBpbmN0cmwgZHJpdmVy
+IGFueQ0KPiBtb3JlLiINCj4gDQo+IEZpeCB0aGUgaXNzdWUgYnkgc3Rhc2hpbmcgdGhlIG9yaWdp
+bmFsIHBjdGxkZXYgc28gaXQgZG9lc24ndCBnZXQgb3ZlcndyaXR0ZW4uDQo+IA0KPiBGaXhlczog
+IGI4OTQwNWI2MTAyZiAoInBpbmN0cmw6IGRldmljZXRyZWU6IEZpeCBkdF90b19tYXBfb25lX2Nv
+bmZpZw0KPiBoYW5kbGluZyBvZiBob2dzIikNCj4gQ2M6IDxzdGFibGVAdmdlci5rZXJuZWwub3Jn
+Pg0KPiBSZXBvcnRlZC1ieTogTWlrYSBQZW50dGlsw6QgPG1pa2EucGVudHRpbGFAbmV4dGZvdXIu
+Y29tPg0KPiBSZXBvcnRlZC1ieTogU3RldmUgTG9uZ2VyYmVhbSA8c2xvbmdlcmJlYW1AZ21haWwu
+Y29tPg0KPiBTdWdnZXN0ZWQtYnk6IFJpY2hhcmQgRml0emdlcmFsZCA8cmZAb3BlbnNvdXJjZS5j
+aXJydXMuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBGYWJpbyBFc3RldmFtIDxmYWJpby5lc3RldmFt
+QG54cC5jb20+DQoNCkxvb2tzIGdvb2QgdG8gbWUuDQoNClJldmlld2VkLWJ5OiBEb25nIEFpc2hl
+bmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg0KPiAt
+LS0NCj4gIGRyaXZlcnMvcGluY3RybC9kZXZpY2V0cmVlLmMgfCA3ICsrKysrLS0NCj4gIDEgZmls
+ZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9waW5jdHJsL2RldmljZXRyZWUuYyBiL2RyaXZlcnMvcGluY3RybC9kZXZp
+Y2V0cmVlLmMgaW5kZXgNCj4gYjYwMTAzOS4uYzRhYTQxMSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
+cy9waW5jdHJsL2RldmljZXRyZWUuYw0KPiArKysgYi9kcml2ZXJzL3BpbmN0cmwvZGV2aWNldHJl
+ZS5jDQo+IEBAIC0xMDEsMTAgKzEwMSwxMSBAQCBzdHJ1Y3QgcGluY3RybF9kZXYgKm9mX3BpbmN0
+cmxfZ2V0KHN0cnVjdA0KPiBkZXZpY2Vfbm9kZSAqbnApICB9DQo+IA0KPiAgc3RhdGljIGludCBk
+dF90b19tYXBfb25lX2NvbmZpZyhzdHJ1Y3QgcGluY3RybCAqcCwNCj4gLQkJCQlzdHJ1Y3QgcGlu
+Y3RybF9kZXYgKnBjdGxkZXYsDQo+ICsJCQkJc3RydWN0IHBpbmN0cmxfZGV2ICpob2dfcGN0bGRl
+diwNCj4gIAkJCQljb25zdCBjaGFyICpzdGF0ZW5hbWUsDQo+ICAJCQkJc3RydWN0IGRldmljZV9u
+b2RlICpucF9jb25maWcpDQo+ICB7DQo+ICsJc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2ID0g
+TlVMTDsNCj4gIAlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wX3BjdGxkZXY7DQo+ICAJY29uc3Qgc3Ry
+dWN0IHBpbmN0cmxfb3BzICpvcHM7DQo+ICAJaW50IHJldDsNCj4gQEAgLTEyMyw4ICsxMjQsMTAg
+QEAgc3RhdGljIGludCBkdF90b19tYXBfb25lX2NvbmZpZyhzdHJ1Y3QgcGluY3RybCAqcCwNCj4g
+IAkJCXJldHVybiAtRVBST0JFX0RFRkVSOw0KPiAgCQl9DQo+ICAJCS8qIElmIHdlJ3JlIGNyZWF0
+aW5nIGEgaG9nIHdlIGNhbiB1c2UgdGhlIHBhc3NlZCBwY3RsZGV2ICovDQo+IC0JCWlmIChwY3Rs
+ZGV2ICYmIChucF9wY3RsZGV2ID09IHAtPmRldi0+b2Zfbm9kZSkpDQo+ICsJCWlmIChob2dfcGN0
+bGRldiAmJiAobnBfcGN0bGRldiA9PSBwLT5kZXYtPm9mX25vZGUpKSB7DQo+ICsJCQlwY3RsZGV2
+ID0gaG9nX3BjdGxkZXY7DQo+ICAJCQlicmVhazsNCj4gKwkJfQ0KPiAgCQlwY3RsZGV2ID0gZ2V0
+X3BpbmN0cmxfZGV2X2Zyb21fb2Zfbm9kZShucF9wY3RsZGV2KTsNCj4gIAkJaWYgKHBjdGxkZXYp
+DQo+ICAJCQlicmVhazsNCj4gLS0NCj4gMi43LjQNCg0K
