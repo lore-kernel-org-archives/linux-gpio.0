@@ -1,30 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Fix wrong rounding in gpio-menz127
-Date: Tue, 12 Jun 2018 10:40:22 +0200
-Message-ID: <CACRpkdbqDKAkxjY1NsUpJ=UR0MVGivUdQz+BE-7MXXjZYa04bw@mail.gmail.com>
-References: <20180604135814.101343-1-namit@vmware.com>
+Subject: Re: [PATCH 1/2] gpio: davinci: Move fetching IRQ to beginning of probe
+Date: Tue, 12 Jun 2018 15:09:11 +0200
+Message-ID: <CACRpkdbsww1m5GMJ9A8dhn5vXfjaozzb2QaZOkWATdOGg83qMQ@mail.gmail.com>
+References: <1528276734-1483-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180604135814.101343-1-namit@vmware.com>
+In-Reply-To: <1528276734-1483-1-git-send-email-j-keerthy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nadav Amit <namit@vmware.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Keerthy <j-keerthy@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 3:58 PM, Nadav Amit <namit@vmware.com> wrote:
+On Wed, Jun 6, 2018 at 11:18 AM, Keerthy <j-keerthy@ti.com> wrote:
 
-> men_z127_debounce() tries to round up and down, but uses functions which
-> are only suitable when the divider is a power of two, which is not the
-> case. Use the appropriate ones.
+> Currently IRQ resource fetching is done at the very end of probe.
+> In case the of IRQ resource not being ready, we defer probe
+> and need to revert prior changes. Hence move it to the beginning of
+> the probe so as to avoid reverting.
 >
-> Found by static check. Compile tested.
->
-> Fixes: f436bc2726c64 ("gpio: add driver for MEN 16Z127 GPIO controller")
->
-> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
 
-Applied as a non-critical fix as I have not error reports.
+Patch applied for v4.19.
 
 Yours,
 Linus Walleij
