@@ -1,58 +1,107 @@
-From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-Subject: Re: [RFC] Configure i.MX6 RGMII pad group control registers from
- device tree
-Date: Tue, 12 Jun 2018 17:09:30 +0200
-Message-ID: <5ab5c58a-dc44-d1bc-2132-8704d05bf1de@ysoft.com>
-References: <f5a01de5-fc81-52c1-c2ea-edb77ecff076@ysoft.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v3 2/2] gpio: davinci: Do not assume continuous IRQ
+ numbering
+Date: Tue, 12 Jun 2018 15:06:24 -0500
+Message-ID: <4ef40eb2-774e-925c-f4f1-5ed431ec1268@ti.com>
+References: <1528790356-15945-1-git-send-email-j-keerthy@ti.com>
+ <1528790356-15945-2-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f5a01de5-fc81-52c1-c2ea-edb77ecff076@ysoft.com>
+In-Reply-To: <1528790356-15945-2-git-send-email-j-keerthy@ti.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
-On 11.6.2018 14:36, Michal Vokáč wrote:
-> Ahoj,
+
+
+On 06/12/2018 02:59 AM, Keerthy wrote:
+> Currently the driver assumes that the interrupts are continuous
+> and does platform_get_irq only once and assumes the rest are continuous,
+> instead call platform_get_irq for all the interrupts and store them
+> in an array for later use.
 > 
-> To configure individual pad's characteristics on i.MX6 SoC a
-> fsl,pins = <PIN_FUNC_ID CONFIG> property can be used. Is there any convenient
-> way to configure the pad group control registers?
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
 > 
-> The issue is that some bits (DDR_SEL and ODT) in the individual RGMII pad
-> control registers are read-only. To tweak those parameters (signal voltage and
-> termination resistors) one need to write to the pad group control registers for
-> the whole RGMII pad group. Namely IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII and
-> IOMUXC_SW_PAD_CTL_GRP_RGMII_TERM. The group registers in general are not
-> accessible from the list in arch/arm/boot/dts/imx6dl-pinfunc.h.
+> Tested for GPIO Interrupts on da850-lcdk board.
 > 
-> I could not find any other way to change the group registers than hacking-in
-> some lines into the imx6q_init_machine(void) function in
-> arch/arm/mach-imx/mach-imx6q.c source. As I work towards upstreaming my board
-> this should be done from my device tree or solved in some universal way.
+> Changes in v3:
 > 
-> Any hints will be much appreciated.
-> Michal
+>    * Changed irqs type from unsigned to int
+> 
+> Changes in v2:
+> 
+>    * Extended the logic of using saved IRQs to unbanked IRQs
+>      as per Grygorii's suggestion.
+> 
+>   drivers/gpio/gpio-davinci.c                | 54 +++++++++++++++++++-----------
+>   include/linux/platform_data/gpio-davinci.h |  3 +-
+>   2 files changed, 36 insertions(+), 21 deletions(-)
+> 
 
-I figured out this is more "pinctrl-imx.c" than "device-tree" related
-so I am kindly adding maintainers of that file in hope somebody will
-shed some light to it.
+[...]
 
-I am diving deeper into the code and it seems there really is no generic
-option to set the i.MX6 pad group control registers from device tree.
-Or am I looking at the problem from a wrong angle?
+>   
+> @@ -383,7 +396,7 @@ static int gpio_to_irq_unbanked(struct gpio_chip *chip, unsigned offset)
+>   	 * can provide direct-mapped IRQs to AINTC (up to 32 GPIOs).
+>   	 */
+>   	if (offset < d->gpio_unbanked)
+> -		return d->base_irq + offset;
+> +		return d->irqs[offset];
 
-How should we deal with boards that need to configure some pad
-characteristics available only through the pad group control registers?
+this one seems right
 
-I also raised this question at the NXP community forum [1] and get quite
-unsatisfying answer so far. I would love to find/implement a proper
-and universal solution.
+>   	else
+>   		return -ENODEV;
+>   }
+> @@ -396,7 +409,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
+>   
+>   	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
+>   	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
+> -	mask = __gpio_mask(data->irq - d->base_irq);
+> +	mask = __gpio_mask(data->irq - d->irqs[0]);
 
-Thanks in advance for your time,
-Michal
+but this one is not. You can't do "base + offset" or "irq - base" ops
+if Irqs range is not sequential. So, in my opinion, here you need to
+convert irq to gpio bank offset (hwirq value in irq_data is not offset
+- gic specific value) which means - walk through d->irqs[x] and find
+item with d->irqs[x] == irq which will give gpio bank offset.
+Than offset can be used to build mask.
 
-[1] https://community.nxp.com/thread/477464
+>   
+>   	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+>   		return -EINVAL;
+> @@ -458,7 +471,7 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
+>    * (dm6446) can be set appropriately for GPIOV33 pins.
+>    */
+>   
+> -static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
+
+
+[...]
+
+>   #include <asm-generic/gpio.h>
+>   
+>   #define MAX_REGS_BANKS		5
+> +#define MAX_INT_PER_BANK 32
+>   
+>   struct davinci_gpio_platform_data {
+>   	u32	ngpio;
+> @@ -41,7 +42,7 @@ struct davinci_gpio_controller {
+>   	spinlock_t		lock;
+>   	void __iomem		*regs[MAX_REGS_BANKS];
+>   	int			gpio_unbanked;
+> -	unsigned int		base_irq;
+> +	int			irqs[MAX_INT_PER_BANK];
+>   	unsigned int		base;
+>   };
+>   
+> 
+
+-- 
+regards,
+-grygorii
