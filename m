@@ -1,107 +1,129 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v3 2/2] gpio: davinci: Do not assume continuous IRQ
- numbering
-Date: Tue, 12 Jun 2018 15:06:24 -0500
-Message-ID: <4ef40eb2-774e-925c-f4f1-5ed431ec1268@ti.com>
-References: <1528790356-15945-1-git-send-email-j-keerthy@ti.com>
- <1528790356-15945-2-git-send-email-j-keerthy@ti.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: document gpio-mt7621 bindings
+Date: Tue, 12 Jun 2018 14:56:38 -0600
+Message-ID: <20180612205638.GA2404@rob-hp-laptop>
+References: <1527924610-13135-1-git-send-email-sergio.paracuellos@gmail.com>
+ <1527924610-13135-3-git-send-email-sergio.paracuellos@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1528790356-15945-2-git-send-email-j-keerthy@ti.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Disposition: inline
+In-Reply-To: <1527924610-13135-3-git-send-email-sergio.paracuellos@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: devicetree@vger.kernel.org, gregkh@linuxfoundation.org, linus.walleij@linaro.org, driverdev-devel@linuxdriverproject.org, linux-gpio@vger.kernel.org, neil@brown.name
 List-Id: linux-gpio@vger.kernel.org
 
+On Sat, Jun 02, 2018 at 09:30:10AM +0200, Sergio Paracuellos wrote:
+> Add a devicetree binding documentation for the mt7621 driver.
 
+Bindings are for h/w, not a driver.
 
-On 06/12/2018 02:59 AM, Keerthy wrote:
-> Currently the driver assumes that the interrupts are continuous
-> and does platform_get_irq only once and assumes the rest are continuous,
-> instead call platform_get_irq for all the interrupts and store them
-> in an array for later use.
-> 
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> Reviewed-by: NeilBrown <neil@brown.name>
+
+Space              ^
+
 > ---
+>  .../bindings/gpio/mediatek,mt7621-gpio.txt         | 68 ++++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.txt
 > 
-> Tested for GPIO Interrupts on da850-lcdk board.
+> diff --git a/Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.txt b/Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.txt
+> new file mode 100644
+> index 0000000..30d8a02
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.txt
+> @@ -0,0 +1,68 @@
+> +Mediatek SoC GPIO controller bindings
+> +
+> +The IP core used inside these SoCs has 3 banks of 32 GPIOs each.
+> +The registers of all the banks are interwoven inside one single IO range.
+> +We load one GPIO controller instance per bank. To make this possible
+> +we support 2 types of nodes. The parent node defines the memory I/O range and
+> +has 3 children each describing a single bank. Also the GPIO controller can receive
+> +interrupts on any of the GPIOs, either edge or level. It then interrupts the CPU
+> +using GIC INT12.
+> +
+> +Required properties for the top level node:
+> +- compatible:
+> +  - "mediatek,mt7621-gpio" for Mediatek controllers
+> +- reg : Physical base address and length of the controller's registers
+> +- interrupt-parent : phandle of the parent interrupt controller.
+> +- interrupts : Interrupt specifier for the controllers interrupt.
+> +- interrupt-controller : Mark the device node as an interrupt controller.
+> +- #interrupt-cells : Should be 2. The first cell defines the interrupt number.
+> +   The second cell bits[3:0] is used to specify trigger type as follows:
+> +	- 1 = low-to-high edge triggered.
+> +	- 2 = high-to-low edge triggered.
+> +	- 4 = active high level-sensitive.
+> +	- 8 = active low level-sensitive.
+
+Just refer to the common definition.
+
+> +
+> +
+> +Required properties for the GPIO bank node:
+> +- compatible:
+> +  - "mediatek,mt7621-gpio-bank" for Mediatek banks
+> +- #gpio-cells : Should be two. The first cell is the GPIO pin number and the
+
+So interrupt numbers and gpio numbers are different? 0-95 and 3x 0-31
+
+That doesn't seem ideal.
+
+> +   second cell specifies GPIO flags, as defined in <dt-bindings/gpio/gpio.h>.
+> +   Only the GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags are supported.
+> +- gpio-controller : Marks the device node as a GPIO controller.
+> +- reg : The id of the bank that the node describes.
+
+I'd prefer to not have banks defined in DT. Do you have a variable 
+number or resources that are per bank? If not, then you don't need them.
+
+> +
+> +Example:
+> +	gpio@600 {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		compatible = "mediatek,mt7621-gpio";
+> +		reg = <0x600 0x100>;
+> +
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <GIC_SHARED 12 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +
+> +		gpio0: bank@0 {
+> +			reg = <0>;
+> +			compatible = "mediatek,mt7621-gpio-bank";
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +		};
+> +
+> +		gpio1: bank@1 {
+> +			reg = <1>;
+> +			compatible = "mediatek,mt7621-gpio-bank";
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +		};
+> +
+> +		gpio2: bank@2 {
+> +			reg = <2>;
+> +			compatible = "mediatek,mt7621-gpio-bank";
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +		};
+> +	};
+> -- 
+> 2.7.4
 > 
-> Changes in v3:
-> 
->    * Changed irqs type from unsigned to int
-> 
-> Changes in v2:
-> 
->    * Extended the logic of using saved IRQs to unbanked IRQs
->      as per Grygorii's suggestion.
-> 
->   drivers/gpio/gpio-davinci.c                | 54 +++++++++++++++++++-----------
->   include/linux/platform_data/gpio-davinci.h |  3 +-
->   2 files changed, 36 insertions(+), 21 deletions(-)
-> 
-
-[...]
-
->   
-> @@ -383,7 +396,7 @@ static int gpio_to_irq_unbanked(struct gpio_chip *chip, unsigned offset)
->   	 * can provide direct-mapped IRQs to AINTC (up to 32 GPIOs).
->   	 */
->   	if (offset < d->gpio_unbanked)
-> -		return d->base_irq + offset;
-> +		return d->irqs[offset];
-
-this one seems right
-
->   	else
->   		return -ENODEV;
->   }
-> @@ -396,7 +409,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
->   
->   	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
->   	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
-> -	mask = __gpio_mask(data->irq - d->base_irq);
-> +	mask = __gpio_mask(data->irq - d->irqs[0]);
-
-but this one is not. You can't do "base + offset" or "irq - base" ops
-if Irqs range is not sequential. So, in my opinion, here you need to
-convert irq to gpio bank offset (hwirq value in irq_data is not offset
-- gic specific value) which means - walk through d->irqs[x] and find
-item with d->irqs[x] == irq which will give gpio bank offset.
-Than offset can be used to build mask.
-
->   
->   	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
->   		return -EINVAL;
-> @@ -458,7 +471,7 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
->    * (dm6446) can be set appropriately for GPIOV33 pins.
->    */
->   
-> -static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
-
-
-[...]
-
->   #include <asm-generic/gpio.h>
->   
->   #define MAX_REGS_BANKS		5
-> +#define MAX_INT_PER_BANK 32
->   
->   struct davinci_gpio_platform_data {
->   	u32	ngpio;
-> @@ -41,7 +42,7 @@ struct davinci_gpio_controller {
->   	spinlock_t		lock;
->   	void __iomem		*regs[MAX_REGS_BANKS];
->   	int			gpio_unbanked;
-> -	unsigned int		base_irq;
-> +	int			irqs[MAX_INT_PER_BANK];
->   	unsigned int		base;
->   };
->   
-> 
-
--- 
-regards,
--grygorii
