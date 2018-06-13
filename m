@@ -1,54 +1,65 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v4 2/2] gpio: davinci: Do not assume continuous IRQ
- numbering
-Date: Wed, 13 Jun 2018 12:25:04 -0500
-Message-ID: <37cadc4b-7fc6-5909-b499-7e747a7ee1cd@ti.com>
-References: <1528861237-24254-1-git-send-email-j-keerthy@ti.com>
- <1528861237-24254-2-git-send-email-j-keerthy@ti.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: document gpio-mt7621 bindings
+Date: Wed, 13 Jun 2018 13:28:35 -0600
+Message-ID: <CAL_Jsq+0bnEmE2n-O3a7ecSXOsjTfZD3AqJDQunO6xzUF_W-=A@mail.gmail.com>
+References: <1527924610-13135-1-git-send-email-sergio.paracuellos@gmail.com>
+ <1527924610-13135-3-git-send-email-sergio.paracuellos@gmail.com>
+ <20180612205638.GA2404@rob-hp-laptop>
+ <CAMhs-H8GYut-7hopEb0Oe0DYz0sjSwcw_rQ4hzipu9LMz-zWFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1528861237-24254-2-git-send-email-j-keerthy@ti.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <CAMhs-H8GYut-7hopEb0Oe0DYz0sjSwcw_rQ4hzipu9LMz-zWFg@mail.gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, driverdev-devel@linuxdriverproject.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NeilBrown <neil@brown.name>
 List-Id: linux-gpio@vger.kernel.org
 
+On Wed, Jun 13, 2018 at 10:23 AM, Sergio Paracuellos
+<sergio.paracuellos@gmail.com> wrote:
+> Hi Rob,
+>
+> Thanks for your time in reviewing this.
+>
+> On Tue, Jun 12, 2018 at 10:56 PM, Rob Herring <robh@kernel.org> wrote:
+>> On Sat, Jun 02, 2018 at 09:30:10AM +0200, Sergio Paracuellos wrote:
+>>> Add a devicetree binding documentation for the mt7621 driver.
+>>
 
+>>> +   second cell specifies GPIO flags, as defined in <dt-bindings/gpio/gpio.h>.
+>>> +   Only the GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags are supported.
+>>> +- gpio-controller : Marks the device node as a GPIO controller.
+>>> +- reg : The id of the bank that the node describes.
+>>
+>> I'd prefer to not have banks defined in DT. Do you have a variable
+>> number or resources that are per bank? If not, then you don't need them.
+>
+> Mmmm, That's what I understood from documentation:
+>
+> "Some system-on-chips (SoCs) use the concept of GPIO banks. ...
+> Usually each such bank is
+> exposed in the device tree as an individual gpio-controller node. ..."
 
-On 06/12/2018 10:40 PM, Keerthy wrote:
-> Currently the driver assumes that the interrupts are continuous
-> and does platform_get_irq only once and assumes the rest are continuous,
-> instead call platform_get_irq for all the interrupts and store them
-> in an array for later use.
-> 
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
-> Tested for GPIO Interrupts on da850-lcdk board.
-> 
-> Changes in v4:
-> 
->    * Corrected the gpio offset calculation from irq number
->      using the lookup.
-> 
-> Changes in v3:
-> 
->    * Changed irqs type from unsigned to int
-> 
-> Changes in v2:
-> 
->    * Extended the logic of using saved IRQs to unbanked IRQs
->      as per Grygorii's suggestion.
-> 
->   drivers/gpio/gpio-davinci.c                | 63 ++++++++++++++++++++----------
->   include/linux/platform_data/gpio-davinci.h |  3 +-
->   2 files changed, 44 insertions(+), 22 deletions(-)
-> 
+This should be conditioned on being able to divide up the registers by
+bank which seems like you can't. Or there's the case like the DW GPIO
+block and the number of banks is configurable.
 
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> If this is not a good approach, could you please me point me out to a
+> device tree example where
+> the correct approach is being used?
 
--- 
-regards,
--grygorii
+I'm not sure offhand. There are lots of examples of single nodes I'm
+sure. Which ones have banks I haven't a clue. IIRC, there were some
+cases where the bank # was part of the GPIO cells, but I seem to
+recall Linus prefers not having 3 cells.
+
+Rob
