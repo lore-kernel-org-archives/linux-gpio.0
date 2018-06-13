@@ -1,127 +1,110 @@
-From: "J, KEERTHY" <j-keerthy@ti.com>
-Subject: Re: [PATCH v3 2/2] gpio: davinci: Do not assume continuous IRQ
- numbering
-Date: Wed, 13 Jun 2018 06:48:32 +0530
-Message-ID: <32d8a0c6-e9d9-bba4-3bd8-5bf882fc4b9c@ti.com>
-References: <1528790356-15945-1-git-send-email-j-keerthy@ti.com>
- <1528790356-15945-2-git-send-email-j-keerthy@ti.com>
- <4ef40eb2-774e-925c-f4f1-5ed431ec1268@ti.com>
- <af41c620-6c3c-a348-80c1-89918d0db898@ti.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH v4 1/2] gpio: davinci: Shuffle IRQ resource fetching from DT to beginning of probe
+Date: Wed, 13 Jun 2018 09:10:36 +0530
+Message-ID: <1528861237-24254-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <af41c620-6c3c-a348-80c1-89918d0db898@ti.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, grygorii.strashko@ti.com, t-kristo@ti.com, j-keerthy@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
+This is needed in case of PROBE_DEFER if IRQ resource is not yet ready.
 
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
 
-On 6/13/2018 6:36 AM, J, KEERTHY wrote:
-> 
-> 
-> On 6/13/2018 1:36 AM, Grygorii Strashko wrote:
->>
->>
->> On 06/12/2018 02:59 AM, Keerthy wrote:
->>> Currently the driver assumes that the interrupts are continuous
->>> and does platform_get_irq only once and assumes the rest are continuous,
->>> instead call platform_get_irq for all the interrupts and store them
->>> in an array for later use.
->>>
->>> Signed-off-by: Keerthy <j-keerthy@ti.com>
->>> ---
->>>
->>> Tested for GPIO Interrupts on da850-lcdk board.
->>>
->>> Changes in v3:
->>>
->>>     * Changed irqs type from unsigned to int
->>>
->>> Changes in v2:
->>>
->>>     * Extended the logic of using saved IRQs to unbanked IRQs
->>>       as per Grygorii's suggestion.
->>>
->>>    drivers/gpio/gpio-davinci.c                | 54 
->>> +++++++++++++++++++-----------
->>>    include/linux/platform_data/gpio-davinci.h |  3 +-
->>>    2 files changed, 36 insertions(+), 21 deletions(-)
->>>
->>
->> [...]
->>
->>> @@ -383,7 +396,7 @@ static int gpio_to_irq_unbanked(struct gpio_chip 
->>> *chip, unsigned offset)
->>>         * can provide direct-mapped IRQs to AINTC (up to 32 GPIOs).
->>>         */
->>>        if (offset < d->gpio_unbanked)
->>> -        return d->base_irq + offset;
->>> +        return d->irqs[offset];
->>
->> this one seems right
->>
->>>        else
->>>            return -ENODEV;
->>>    }
->>> @@ -396,7 +409,7 @@ static int gpio_irq_type_unbanked(struct irq_data 
->>> *data, unsigned trigger)
->>>        d = (struct davinci_gpio_controller 
->>> *)irq_data_get_irq_handler_data(data);
->>>        g = (struct davinci_gpio_regs __iomem *)d->regs[0];
->>> -    mask = __gpio_mask(data->irq - d->base_irq);
->>> +    mask = __gpio_mask(data->irq - d->irqs[0]);
->>
->> but this one is not. You can't do "base + offset" or "irq - base" ops
->> if Irqs range is not sequential. So, in my opinion, here you need to
->> convert irq to gpio bank offset (hwirq value in irq_data is not offset
->> - gic specific value) which means - walk through d->irqs[x] and find
->> item with d->irqs[x] == irq which will give gpio bank offset.
->> Than offset can be used to build mask.
-> 
-> Agreed.
+Tested for GPIO Interrupts on da850-lcdk board.
 
--       mask = __gpio_mask(data->irq - d->base_irq);
-+       for (i = 0; i < MAX_INT_PER_BANK; i++)
-+               if (data->irq == d->irqs[i])
-+                       break;
+Changes in v3:
+
+        Changed type of bank_irq to int from unsigned
+
+ drivers/gpio/gpio-davinci.c | 29 +++++++++++------------------
+ 1 file changed, 11 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 987126c..0ff2c0d 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -55,7 +55,7 @@ static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
+ 	return g;
+ }
+ 
+-static int davinci_gpio_irq_setup(struct platform_device *pdev);
++static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq);
+ 
+ /*--------------------------------------------------------------------------*/
+ 
+@@ -167,7 +167,7 @@ static int davinci_gpio_get(struct gpio_chip *chip, unsigned offset)
+ static int davinci_gpio_probe(struct platform_device *pdev)
+ {
+ 	static int ctrl_num, bank_base;
+-	int gpio, bank, ret = 0;
++	int gpio, bank, bank_irq, ret = 0;
+ 	unsigned ngpio, nbank;
+ 	struct davinci_gpio_controller *chips;
+ 	struct davinci_gpio_platform_data *pdata;
+@@ -209,6 +209,12 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gpio_base))
+ 		return PTR_ERR(gpio_base);
+ 
++	bank_irq = platform_get_irq(pdev, 0);
++	if (bank_irq < 0) {
++		dev_dbg(dev, "IRQ not populated\n");
++		return bank_irq;
++	}
 +
-+       if (i == MAX_INT_PER_BANK)
-+               return -EINVAL;
-+
-+       mask = __gpio_mask(i);
-
-I believe the above snippet works for non-sequential IRQs.
-
-> 
->>
->>>        if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
->>>            return -EINVAL;
->>> @@ -458,7 +471,7 @@ static struct irq_chip 
->>> *keystone_gpio_get_irq_chip(unsigned int irq)
->>>     * (dm6446) can be set appropriately for GPIOV33 pins.
->>>     */
->>> -static int davinci_gpio_irq_setup(struct platform_device *pdev, int 
->>> bank_irq)
->>
->>
->> [...]
->>
->>>    #include <asm-generic/gpio.h>
->>>    #define MAX_REGS_BANKS        5
->>> +#define MAX_INT_PER_BANK 32
->>>    struct davinci_gpio_platform_data {
->>>        u32    ngpio;
->>> @@ -41,7 +42,7 @@ struct davinci_gpio_controller {
->>>        spinlock_t        lock;
->>>        void __iomem        *regs[MAX_REGS_BANKS];
->>>        int            gpio_unbanked;
->>> -    unsigned int        base_irq;
->>> +    int            irqs[MAX_INT_PER_BANK];
->>>        unsigned int        base;
->>>    };
->>>
->>
+ 	snprintf(label, MAX_LABEL_SIZE, "davinci_gpio.%d", ctrl_num++);
+ 	chips->chip.label = devm_kstrdup(dev, label, GFP_KERNEL);
+ 		if (!chips->chip.label)
+@@ -243,7 +249,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 		goto err;
+ 
+ 	platform_set_drvdata(pdev, chips);
+-	ret = davinci_gpio_irq_setup(pdev);
++	ret = davinci_gpio_irq_setup(pdev, bank_irq);
+ 	if (ret)
+ 		goto err;
+ 
+@@ -452,16 +458,15 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
+  * (dm6446) can be set appropriately for GPIOV33 pins.
+  */
+ 
+-static int davinci_gpio_irq_setup(struct platform_device *pdev)
++static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
+ {
+ 	unsigned	gpio, bank;
+ 	int		irq;
+ 	int		ret;
+ 	struct clk	*clk;
+ 	u32		binten = 0;
+-	unsigned	ngpio, bank_irq;
++	unsigned	ngpio;
+ 	struct device *dev = &pdev->dev;
+-	struct resource	*res;
+ 	struct davinci_gpio_controller *chips = platform_get_drvdata(pdev);
+ 	struct davinci_gpio_platform_data *pdata = dev->platform_data;
+ 	struct davinci_gpio_regs __iomem *g;
+@@ -481,18 +486,6 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 		gpio_get_irq_chip = (gpio_get_irq_chip_cb_t)match->data;
+ 
+ 	ngpio = pdata->ngpio;
+-	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!res) {
+-		dev_err(dev, "Invalid IRQ resource\n");
+-		return -EBUSY;
+-	}
+-
+-	bank_irq = res->start;
+-
+-	if (!bank_irq) {
+-		dev_err(dev, "Invalid IRQ resource\n");
+-		return -ENODEV;
+-	}
+ 
+ 	clk = devm_clk_get(dev, "gpio");
+ 	if (IS_ERR(clk)) {
+-- 
+1.9.1
