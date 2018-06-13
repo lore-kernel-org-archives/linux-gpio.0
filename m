@@ -1,65 +1,63 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/2] dt-bindings: document gpio-mt7621 bindings
-Date: Wed, 13 Jun 2018 13:28:35 -0600
-Message-ID: <CAL_Jsq+0bnEmE2n-O3a7ecSXOsjTfZD3AqJDQunO6xzUF_W-=A@mail.gmail.com>
-References: <1527924610-13135-1-git-send-email-sergio.paracuellos@gmail.com>
- <1527924610-13135-3-git-send-email-sergio.paracuellos@gmail.com>
- <20180612205638.GA2404@rob-hp-laptop>
- <CAMhs-H8GYut-7hopEb0Oe0DYz0sjSwcw_rQ4hzipu9LMz-zWFg@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 04/10] Input: ams_delta_serio: Replace power GPIO with
+ regulator
+Date: Wed, 13 Jun 2018 13:51:44 -0700
+Message-ID: <20180613205144.GB62746@dtor-ws>
+References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
+ <20180609140224.32606-4-jmkrzyszt@gmail.com>
+ <20180612221724.GB38773@dtor-ws>
+ <2655614.ErW8VuCT6r@z50>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <CAMhs-H8GYut-7hopEb0Oe0DYz0sjSwcw_rQ4hzipu9LMz-zWFg@mail.gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, driverdev-devel@linuxdriverproject.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2655614.ErW8VuCT6r@z50>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, "David S . Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 10:23 AM, Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
-> Hi Rob,
->
-> Thanks for your time in reviewing this.
->
-> On Tue, Jun 12, 2018 at 10:56 PM, Rob Herring <robh@kernel.org> wrote:
->> On Sat, Jun 02, 2018 at 09:30:10AM +0200, Sergio Paracuellos wrote:
->>> Add a devicetree binding documentation for the mt7621 driver.
->>
+On Wed, Jun 13, 2018 at 03:01:05AM +0200, Janusz Krzysztofik wrote:
+> On Wednesday, June 13, 2018 12:17:24 AM CEST Dmitry Torokhov wrote:
+> > On Sat, Jun 09, 2018 at 04:02:18PM +0200, Janusz Krzysztofik wrote:
+> > > ...
+> > > +	priv->vcc = devm_regulator_get(&pdev->dev, "vcc");
+> > > +	if (IS_ERR(priv->vcc)) {
+> > > +		err = PTR_ERR(priv->vcc);
+> > > +		dev_err(&pdev->dev, "regulator request failed (%d)\n", err);
+> > > +		/* Fail softly if the regulator is not available yet */
+> > > +		if (err == -ENODEV)
+> > > +			err = -EPROBE_DEFER;
+> > 
+> > Hmm, if regulator is not ready yet, devm_regulator_get() should be
+> > returning -EPROBE_DEFER already, we should not have to convert -ENODEV
+> > to -EPROBE_DEFER...
+> 
+> Regulator is not ready because its initialization at subsys_initcall is 
+> deferred by not ready GPIO pin, that in turn is caused by gpio-mmio driver, 
+> unlike many other GPIO drivers, registered as late as at device_initcall.
+> 
+> I agree devm_regulator_get() could return -EPROBE_DEFER in this case, but I 
+> can see it does that only when of_get_regulator() indicates the regulator 
+> should exist. In non-dt case there is apparently no way to justify if it 
+> should unless its consumer supply table was already in place. For that,  
+> registration of that table would have to be independent of successful 
+> registration of the regulator itself while it's not. Maybe it should, but 
+> that's a separate topic for a separate discussion, I think.
+> 
+> > Is it because we have_full_constraints() returns false? You might need
+> > to add call to regulator_has_full_constraints() to your board file.
+> 
+> If have_full_constraints() returned true before the regulator or its consumer 
+> supply table is ready, devm_regulator_get() would happily return a dummy 
+> regulator and our keyboard would never get its power.
+> 
+> I'm afraid we have to live with that return code conversion as long as the 
+> only user of this driver is not migrated to dt.
 
->>> +   second cell specifies GPIO flags, as defined in <dt-bindings/gpio/gpio.h>.
->>> +   Only the GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags are supported.
->>> +- gpio-controller : Marks the device node as a GPIO controller.
->>> +- reg : The id of the bank that the node describes.
->>
->> I'd prefer to not have banks defined in DT. Do you have a variable
->> number or resources that are per bank? If not, then you don't need them.
->
-> Mmmm, That's what I understood from documentation:
->
-> "Some system-on-chips (SoCs) use the concept of GPIO banks. ...
-> Usually each such bank is
-> exposed in the device tree as an individual gpio-controller node. ..."
+OK, fair enough. Can you please add a comment to that effect?
 
-This should be conditioned on being able to divide up the registers by
-bank which seems like you can't. Or there's the case like the DW GPIO
-block and the number of banks is configurable.
+Thanks.
 
-> If this is not a good approach, could you please me point me out to a
-> device tree example where
-> the correct approach is being used?
-
-I'm not sure offhand. There are lots of examples of single nodes I'm
-sure. Which ones have banks I haven't a clue. IIRC, there were some
-cases where the bank # was part of the GPIO cells, but I seem to
-recall Linus prefers not having 3 cells.
-
-Rob
+-- 
+Dmitry
