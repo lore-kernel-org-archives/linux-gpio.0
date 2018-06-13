@@ -1,54 +1,111 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [PATCH 04/10] Input: ams_delta_serio: Replace power GPIO with regulator
-Date: Wed, 13 Jun 2018 03:01:05 +0200
-Message-ID: <2655614.ErW8VuCT6r@z50>
-References: <20180609140224.32606-1-jmkrzyszt@gmail.com> <20180609140224.32606-4-jmkrzyszt@gmail.com> <20180612221724.GB38773@dtor-ws>
+From: "J, KEERTHY" <j-keerthy@ti.com>
+Subject: Re: [PATCH v3 2/2] gpio: davinci: Do not assume continuous IRQ
+ numbering
+Date: Wed, 13 Jun 2018 06:36:36 +0530
+Message-ID: <af41c620-6c3c-a348-80c1-89918d0db898@ti.com>
+References: <1528790356-15945-1-git-send-email-j-keerthy@ti.com>
+ <1528790356-15945-2-git-send-email-j-keerthy@ti.com>
+ <4ef40eb2-774e-925c-f4f1-5ed431ec1268@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180612221724.GB38773@dtor-ws>
+In-Reply-To: <4ef40eb2-774e-925c-f4f1-5ed431ec1268@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, "David S . Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To: Grygorii Strashko <grygorii.strashko@ti.com>, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Wednesday, June 13, 2018 12:17:24 AM CEST Dmitry Torokhov wrote:
-> On Sat, Jun 09, 2018 at 04:02:18PM +0200, Janusz Krzysztofik wrote:
-> > ...
-> > +	priv->vcc = devm_regulator_get(&pdev->dev, "vcc");
-> > +	if (IS_ERR(priv->vcc)) {
-> > +		err = PTR_ERR(priv->vcc);
-> > +		dev_err(&pdev->dev, "regulator request failed (%d)\n", err);
-> > +		/* Fail softly if the regulator is not available yet */
-> > +		if (err == -ENODEV)
-> > +			err = -EPROBE_DEFER;
+
+
+On 6/13/2018 1:36 AM, Grygorii Strashko wrote:
 > 
-> Hmm, if regulator is not ready yet, devm_regulator_get() should be
-> returning -EPROBE_DEFER already, we should not have to convert -ENODEV
-> to -EPROBE_DEFER...
+> 
+> On 06/12/2018 02:59 AM, Keerthy wrote:
+>> Currently the driver assumes that the interrupts are continuous
+>> and does platform_get_irq only once and assumes the rest are continuous,
+>> instead call platform_get_irq for all the interrupts and store them
+>> in an array for later use.
+>>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>
+>> Tested for GPIO Interrupts on da850-lcdk board.
+>>
+>> Changes in v3:
+>>
+>>     * Changed irqs type from unsigned to int
+>>
+>> Changes in v2:
+>>
+>>     * Extended the logic of using saved IRQs to unbanked IRQs
+>>       as per Grygorii's suggestion.
+>>
+>>    drivers/gpio/gpio-davinci.c                | 54 +++++++++++++++++++-----------
+>>    include/linux/platform_data/gpio-davinci.h |  3 +-
+>>    2 files changed, 36 insertions(+), 21 deletions(-)
+>>
+> 
+> [...]
+> 
+>>    
+>> @@ -383,7 +396,7 @@ static int gpio_to_irq_unbanked(struct gpio_chip *chip, unsigned offset)
+>>    	 * can provide direct-mapped IRQs to AINTC (up to 32 GPIOs).
+>>    	 */
+>>    	if (offset < d->gpio_unbanked)
+>> -		return d->base_irq + offset;
+>> +		return d->irqs[offset];
+> 
+> this one seems right
+> 
+>>    	else
+>>    		return -ENODEV;
+>>    }
+>> @@ -396,7 +409,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
+>>    
+>>    	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
+>>    	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
+>> -	mask = __gpio_mask(data->irq - d->base_irq);
+>> +	mask = __gpio_mask(data->irq - d->irqs[0]);
+> 
+> but this one is not. You can't do "base + offset" or "irq - base" ops
+> if Irqs range is not sequential. So, in my opinion, here you need to
+> convert irq to gpio bank offset (hwirq value in irq_data is not offset
+> - gic specific value) which means - walk through d->irqs[x] and find
+> item with d->irqs[x] == irq which will give gpio bank offset.
+> Than offset can be used to build mask.
 
-Regulator is not ready because its initialization at subsys_initcall is 
-deferred by not ready GPIO pin, that in turn is caused by gpio-mmio driver, 
-unlike many other GPIO drivers, registered as late as at device_initcall.
+Agreed.
 
-I agree devm_regulator_get() could return -EPROBE_DEFER in this case, but I 
-can see it does that only when of_get_regulator() indicates the regulator 
-should exist. In non-dt case there is apparently no way to justify if it 
-should unless its consumer supply table was already in place. For that,  
-registration of that table would have to be independent of successful 
-registration of the regulator itself while it's not. Maybe it should, but 
-that's a separate topic for a separate discussion, I think.
-
-> Is it because we have_full_constraints() returns false? You might need
-> to add call to regulator_has_full_constraints() to your board file.
-
-If have_full_constraints() returned true before the regulator or its consumer 
-supply table is ready, devm_regulator_get() would happily return a dummy 
-regulator and our keyboard would never get its power.
-
-I'm afraid we have to live with that return code conversion as long as the 
-only user of this driver is not migrated to dt.
-
-Thanks,
-Janusz
+> 
+>>    
+>>    	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+>>    		return -EINVAL;
+>> @@ -458,7 +471,7 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
+>>     * (dm6446) can be set appropriately for GPIOV33 pins.
+>>     */
+>>    
+>> -static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
+> 
+> 
+> [...]
+> 
+>>    #include <asm-generic/gpio.h>
+>>    
+>>    #define MAX_REGS_BANKS		5
+>> +#define MAX_INT_PER_BANK 32
+>>    
+>>    struct davinci_gpio_platform_data {
+>>    	u32	ngpio;
+>> @@ -41,7 +42,7 @@ struct davinci_gpio_controller {
+>>    	spinlock_t		lock;
+>>    	void __iomem		*regs[MAX_REGS_BANKS];
+>>    	int			gpio_unbanked;
+>> -	unsigned int		base_irq;
+>> +	int			irqs[MAX_INT_PER_BANK];
+>>    	unsigned int		base;
+>>    };
+>>    
+>>
+> 
