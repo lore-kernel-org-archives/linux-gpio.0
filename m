@@ -1,47 +1,32 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: BUG: drivers/pinctrl/core: races in pinctrl_groups and deferred probing
-Date: Thu, 14 Jun 2018 14:12:14 +0200
-Message-ID: <FC373DE9-6D6B-40C5-ACED-C07B1B524469@goldelico.com>
-References: <F20BD6B3-D4D7-4D5D-B464-64402650BDE5@goldelico.com> <20180614120157.GE112168@atomide.com>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH v1 2/5] dt-bindings: clock: renesas,r9a06g032-pinctrl:
+ documentation
+Date: Thu, 14 Jun 2018 12:17:49 +0000
+Message-ID: <TY1PR01MB1562D22174BA4043858DFF248A7D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528974029-29617-3-git-send-email-michel.pollet@bp.renesas.com>
+ <20180614120446.GA12638@w540>
+ <OSBPR01MB2054FBD2836B478B83D96C9CD27D0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180614120157.GE112168@atomide.com>
+In-Reply-To: <OSBPR01MB2054FBD2836B478B83D96C9CD27D0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+To: Michel Pollet <michel.pollet@bp.renesas.com>, jacopo mondi <jacopo@jmondi.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Tony,
-
-> Am 14.06.2018 um 14:01 schrieb Tony Lindgren <tony@atomide.com>:
->=20
-> * H. Nikolaus Schaller <hns@goldelico.com> [180613 12:41]:
->>=20
->> Now if I look into pinctrl_generic_add_group() and =
-pinctrl_generic_get_group_name(),
->> pctldev->num_groups++ is not protected if pinctrl_generic_add_group() =
-may be called by
->> two threads in parallel for the same pctldev. Hence a second thread =
-may try to insert
->> a different node into the radix tree at the same selector index. This =
-fails but there
->> is no error check - and the second entry is completely missing (but =
-probably assumed to
->> be there).
->=20
-> Sounds like pinctrl-single.c is missing mutex around calls to
-> pinctrl_generic_add_group()?
-
-Yes, that could be. I didn't research the call path, just the one of
-devm_pinctrl_get(). That uses a mutex in
-
-=
-https://elixir.bootlin.com/linux/v4.17.1/source/drivers/pinctrl/core.c#L10=
-21
-
-Maybe a similar mutex is missing elsewhere.
-
-BR,
-Nikolaus
+T24gVGh1cnNkYXksIEp1bmUgMTQsIDIwMTgsIE1pY2hlbCBQb2xsZXQgd3JvdGU6DQo+ID4gRnJv
+bSBhIHZlcnkgc3VwZXJmaWNpYWwgbG9vayBhdCB0aGUgcHJvcG9zZWQgYmluZGluZ3MgYW5kIHBp
+bmN0cmwgZHJpdmVyLA0KPiBJDQo+ID4gd29uZGVyIGlmIHRoZSByemExIHBpbmN0cmwgZHJpdmVy
+IGNvdWxkIGJlIGV4cGFuZGVkIGFuZCByZS11c2VkLg0KPiA+IEhhdmUgeW91IGNvbnNpZGVyZWQg
+dGhhdCBiZWZvcmUgc3RhcnRpbmcgb25lIGZyb20gc2NyYXRjaD8NCj4gDQo+IFNvcnJ5IGl0J3Mg
+anVzdCB0aGUgc3RhcnQgb2YgdGhlIGRvY3VtZW50YXRpb24gd2hpY2ggSSB3cm9uZ2x5IGN1dC9w
+YXN0ZWQNCj4gLS0gdGhlDQo+IHJlc3QgaXMgY29tcGxldGVseSBkaWZmZXJlbnQ7IHRoZSBvbmx5
+IHJlYXNvbiBBMSBpcyBtZW50aW9uZWQgaGVyZSBpcyB0aGF0DQo+IEkgdXNlZA0KPiB0aGF0IGZp
+bGUgYXMgYSB0ZW1wbGF0ZSBmb3IgdGhlIGhlYWRlci9zZWN0aW9ucyBldGMuLi4gU29tZWhvdyB0
+aGUNCj4gdGl0bGUrYmx1cmINCj4gd2VudCB1bmVkaXRlZCENCg0KUGhldyENCg0KSSBjYW4ndCBz
+dGFuZCB0aGF0IHBpbmN0cmwgSFcgaW4gUlovQTEuDQoNCkkgaG9wZSBubyBvdGhlciBTb0MgZGVz
+aWduIHRlYW0gdXNlcyB0aGF0IHRoaW5nIGFnYWluLg0KDQoNCkNocmlzDQoNCg==
