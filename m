@@ -1,34 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT
- fix
-Date: Thu, 14 Jun 2018 16:42:23 +0200
-Message-ID: <CACRpkdZ82RNta7LGp4OB=6TY_q3mdqGGDedayz-C4hB9m7WG9Q@mail.gmail.com>
-References: <20180606174424.9630-1-rafael.tinoco@linaro.org>
+Subject: Re: [alsa-devel] [PATCH] ASoC: codecs: PCM1789: include gpio/consumer.h
+Date: Thu, 14 Jun 2018 16:44:38 +0200
+Message-ID: <CACRpkdb-j4E8JL10i2-AQ4_ZWRu9NrMVaGJBbXwoFxufY60HUQ@mail.gmail.com>
+References: <20180530215407.1196429-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180606174424.9630-1-rafael.tinoco@linaro.org>
+In-Reply-To: <20180530215407.1196429-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rafael David Tinoco <rafael.tinoco@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, shuah@kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kselftest@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Brown <broonie@kernel.org>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 7:44 PM, Rafael David Tinoco
-<rafael.tinoco@linaro.org> wrote:
+On Wed, May 30, 2018 at 11:53 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
-> should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
-> the following error occurs:
+> When CONFIG_GPIOLIB is disabled, this codec fails to build
+> because gpio/consumer.h is not included implicitly.
 >
-> gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
-> such file or directory
+> sound/soc/codecs/pcm1789.c: In function 'pcm1789_common_init':
+> sound/soc/codecs/pcm1789.c:247:19: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_gpio_request_one'? [-Werror=implicit-function-declaration]
+>   pcm1789->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+>                    ^~~~~~~~~~~~~~~~~~~~~~~
 >
-> despite the real result of gpio_pin_test(), gpio_debugfs_get() and
-> gpiotools_request_linehandle() functions.
->
-> Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+> Fixes: 4ae340d1be36 ("ASoC: codecs: Add support for PCM1789")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Bartosz, does this look OK to you?
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
