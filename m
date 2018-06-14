@@ -1,73 +1,38 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
-Date: Thu, 14 Jun 2018 17:15:42 +0900
-Message-ID: <20180614081541.zlxu6ga47gdg42un@ninjato>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
- <20180330074751.25987-2-boris.brezillon@bootlin.com>
- <20180614041941.4i2cadzoevujmzha@ninjato>
- <20180614090758.17180594@bbrezillon>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] gpio: davinci: Do not assume continuous IRQ numbering
+Date: Thu, 14 Jun 2018 10:29:09 +0200
+Message-ID: <CACRpkdbFyZwG4S9t3ts3wmVWioadd7NjpdMUkq-wujH=g68zvw@mail.gmail.com>
+References: <1528276734-1483-1-git-send-email-j-keerthy@ti.com> <1528276734-1483-2-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7unw2cj2dmujiusg"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180614090758.17180594@bbrezillon>
+In-Reply-To: <1528276734-1483-2-git-send-email-j-keerthy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <gala>
+To: Keerthy <j-keerthy@ti.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
+On Wed, Jun 6, 2018 at 11:18 AM, Keerthy <j-keerthy@ti.com> wrote:
 
---7unw2cj2dmujiusg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Currently the driver assumes that the interrupts are continuous
+> and does platform_get_irq only once and assumes the rest are continuous,
+> instead call platform_get_irq for all the interrupts and store them
+> in an array for later use.
+>
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
 
+Hm! Thierry has recently submitted patches to make it easier for chips with
+banked IRQs to use the GPIOLIB_IRQCHIP.
 
-> > I don't know if typical I3C transfers will be similar to I2C with
-> > usually small payloads where DMA usually makes not much sense. Yet, I
-> > think, that it might be a good idea to think about how this shall be
-> > handled with I3C right away. Maybe simply enforcing buffers to be
-> > DMA-safe. Or whatever.
-> >=20
-> > A clear rule on that might save you hazzle later.
->=20
-> I completely agree. I'll clarify that and for people to pass DMA-able
-> buffers to this struct (just as the SPI framework does). Note that we
+Please look at the code in gpio/gpio-tegra186.c and see if you can use
+his approach.
 
-Ok, cool!
+As you can see this chip is using gpiochip_irq_map/unmap in its
+domain, and manipulates struct gpio_irq_chip directly.
 
-> don't really have a way to ensure that the buffer is actually
-> DMA-safe from the core, because this notion is architecture/SoC
-> dependent.
+I think the idea is to make it possible to use GPIOLIB_IRQCHIP
+for banked IRQs but the infrastructure is not yet inside the gpiolib
+so it is a bit taped on the side right now.
 
-True, we can't ensure it at the core. Still, a documented rule will make
-it clear that everything else is considered a bug. Much better than a
-gray area you have to deal with later.
-
-Kind regards,
-
-   Wolfram
-
-
---7unw2cj2dmujiusg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsiJC0ACgkQFA3kzBSg
-KbZEnQ//dFjlQ2ROtEDcAOlzSfstcuOOulEjtSAycl1EYPFpn+G0xs/n3rHqiZmP
-wmjHmKAmqNHSAmyUSjlqCmXirzruB8Rln7eCb1OUFZSEyp2hDh3VA73xJaEdFOFF
-EgyoyN1SchNgUxeEj08r3zBDv5KFPh6dCEgIQOwFRB299v4BD6xS+O2gvzgveWGW
-oUXd8l1qeVBC25/DbnlxT0iqC/1q0U+usrR/Eu2KInztK5ug9vQ43hTkJaZ+SbiI
-cmKv0AOWAhd3wAtg5oCmFuC8tzIW07uq+RsDiRpsc6BFwKtNCAbhI3cUAy3CCI17
-5iCIqlCremt3nYLPERYwhVT10pM7j75mYqOsO7VQDsomFEyMWKxTp6DyqgIgRBJO
-EG4+9/rmHKPdbSSiWZ3GpVf/MFcdNlzRkN0+lzml5juz/SLaeyBr6Jxh5VxCzRLI
-yOnXfvPMEGFEr8E45vaoeOqpgm3cb0ivC4pgJ/buPDHiVetGAWHzF96sT3xSXYv5
-8PlJDovgHEPwuXPXvtPlpkBndzls7dKvW+Gmyz2czQphwHo+C9ww/PhpY16zSZRk
-dZbZU4V7OFmjO9bWPj1jWpLEnoYlrGMziOuX43CsCNOjSQe6oMEdXFZw5QjB2SQ1
-eSn45yFoypMWEvTZtZyP+wvHKcnYm7VxEYQWy9QAtaWzkEe1fWk=
-=x3M4
------END PGP SIGNATURE-----
-
---7unw2cj2dmujiusg--
+Yours,
+Linus Walleij
