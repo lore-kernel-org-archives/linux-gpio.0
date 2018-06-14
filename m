@@ -1,27 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 2/2] gpio: davinci: Do not assume continuous IRQ numbering
-Date: Thu, 14 Jun 2018 13:39:15 +0200
-Message-ID: <CACRpkdbBmEWPZBdKZNiGew5oZmFBgwnEyRG2bjpWZ0FjTEMjkw@mail.gmail.com>
-References: <1528861237-24254-1-git-send-email-j-keerthy@ti.com> <1528861237-24254-2-git-send-email-j-keerthy@ti.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v1 4/5] ARM: dts: Renesas R9A06G032 pinctrl node
+Date: Thu, 14 Jun 2018 14:42:32 +0300
+Message-ID: <7e9eefe0-5310-5925-3b00-b75800e6d87e@cogentembedded.com>
+References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528974029-29617-5-git-send-email-michel.pollet@bp.renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1528861237-24254-2-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1528974029-29617-5-git-send-email-michel.pollet@bp.renesas.com>
+Content-Language: en-MW
 Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Tero Kristo <t-kristo@ti.com>
+To: Michel Pollet <michel.pollet@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 5:40 AM, Keerthy <j-keerthy@ti.com> wrote:
+Hello!
 
-> Currently the driver assumes that the interrupts are continuous
-> and does platform_get_irq only once and assumes the rest are continuous,
-> instead call platform_get_irq for all the interrupts and store them
-> in an array for later use.
->
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+On 06/14/2018 02:00 PM, Michel Pollet wrote:
 
-This v4 applied with Grygorii's ACK.
+> This provides a pinctrl driver for the Renesas R9A06G032 SoC
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> ---
+>  arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+> index 3e45375..fbad039 100644
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -88,6 +88,14 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		pinctrl: pinctrl@40067000 {
 
-Yours,
-Linus Walleij
+   "pin-controller@..." please, it's looking more generic.
+
+> +			compatible = "renesas,r9a06g032-pinctrl";
+> +			reg = <0x40067000 0x1000>, <0x51000000 0x800>;
+> +			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
+> +			clock-names = "bus";
+> +			status = "okay";
+> +		};
+> +
+>  		gic: gic@44101000 {
+>  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+>  			interrupt-controller;
+
+MBR, Sergei
