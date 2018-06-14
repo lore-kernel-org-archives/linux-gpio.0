@@ -1,33 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH][next] pinctrl: pinctrl-single: add allocation failure
- checking of saved_vals
-Date: Thu, 14 Jun 2018 10:31:35 +0200
-Message-ID: <CACRpkdZEawUiEU=qP+x7gTH5Sox9gH920ef7Cw-Y5-amxr9M2A@mail.gmail.com>
-References: <20180606134338.4645-1-colin.king@canonical.com>
+Subject: Re: [PATCH] pinctrl: actions: Fix uninitialized error in owl_pin_config_set()
+Date: Thu, 14 Jun 2018 10:35:30 +0200
+Message-ID: <CACRpkdbMogW3oVv0NEX1b622H8g4k-3MtzLONhog5TKsPn5qCA@mail.gmail.com>
+References: <1528452347-23986-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180606134338.4645-1-colin.king@canonical.com>
+In-Reply-To: <1528452347-23986-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Arnd Bergmann <arnd@arndb.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 3:43 PM, Colin King <colin.king@canonical.com> wrote:
+On Fri, Jun 8, 2018 at 12:05 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
+> With gcc 4.1.2:
 >
-> Currently saved_vals is being allocated and there is no check for
-> failed allocation (which is more likely than normal when using
-> GFP_ATOMIC).  Fix this by checking for a failed allocation and
-> propagating this error return down the the caller chain.
+>     drivers/pinctrl/actions/pinctrl-owl.c: In function =E2=80=98owl_pin_c=
+onfig_set=E2=80=99:
+>     drivers/pinctrl/actions/pinctrl-owl.c:336: warning: =E2=80=98ret=E2=
+=80=99 may be used uninitialized in this function
 >
-> Detected by CoverityScan, CID#1469841 ("Dereference null return value")
+> Indeed, if num_configs is zero, the uninitialized value will be returned
+> as an error code.
 >
-> Fixes: 88a1dbdec682 ("pinctrl: pinctrl-single: Add functions to save and restore pinctrl context")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Fix this by preinitializing it to zero.
+>
+> Fixes: 2242ddfbf4d699b5 ("pinctrl: actions: Add Actions S900 pinctrl driv=
+er")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Patch applied with Johan's and Tony's ACKs.
+Patch applied with Manivannan's ACK.
 
 Yours,
 Linus Walleij
