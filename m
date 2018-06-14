@@ -1,31 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: codecs: PCM1789: include gpio/consumer.h
-Date: Thu, 14 Jun 2018 16:44:38 +0200
-Message-ID: <CACRpkdb-j4E8JL10i2-AQ4_ZWRu9NrMVaGJBbXwoFxufY60HUQ@mail.gmail.com>
-References: <20180530215407.1196429-1-arnd@arndb.de>
+Subject: Re: [PATCH 2/2] dt-bindings: document gpio-mt7621 bindings
+Date: Thu, 14 Jun 2018 16:48:23 +0200
+Message-ID: <CACRpkdYz6r8VT332_p4Ucg7r9k6EpnvBGCxeeBRgwX1LEUNEWA@mail.gmail.com>
+References: <1527924610-13135-1-git-send-email-sergio.paracuellos@gmail.com>
+ <1527924610-13135-3-git-send-email-sergio.paracuellos@gmail.com>
+ <20180612205638.GA2404@rob-hp-laptop>
+ <CAMhs-H8GYut-7hopEb0Oe0DYz0sjSwcw_rQ4hzipu9LMz-zWFg@mail.gmail.com>
+ <CAL_Jsq+0bnEmE2n-O3a7ecSXOsjTfZD3AqJDQunO6xzUF_W-=A@mail.gmail.com>
+ <CACRpkdb034f2hZkoPenTurdULeUPuqPxNVE_Mr609ngrfx4Q=g@mail.gmail.com>
+ <CAL_JsqJV70m+RXdp1yHEX64u43F57Q66b8zrOKkiz-fLiEFPBw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180530215407.1196429-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Brown <broonie@kernel.org>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <CAL_JsqJV70m+RXdp1yHEX64u43F57Q66b8zrOKkiz-fLiEFPBw@mail.gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Rob Herring <robh@kernel.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, driverdev-devel@linuxdriverproject.org, Sergio Paracuellos <sergio.paracuellos@gmail.com>, NeilBrown <neil@brown.name>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 30, 2018 at 11:53 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-
-> When CONFIG_GPIOLIB is disabled, this codec fails to build
-> because gpio/consumer.h is not included implicitly.
+On Thu, Jun 14, 2018 at 4:33 PM, Rob Herring <robh@kernel.org> wrote:
+> On Thu, Jun 14, 2018 at 8:14 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Wed, Jun 13, 2018 at 9:28 PM, Rob Herring <robh@kernel.org> wrote:
+>>
+>>>> "Some system-on-chips (SoCs) use the concept of GPIO banks. ...
+>>>> Usually each such bank is
+>>>> exposed in the device tree as an individual gpio-controller node. ..."
+>>>
+>>> This should be conditioned on being able to divide up the registers by
+>>> bank which seems like you can't. Or there's the case like the DW GPIO
+>>> block and the number of banks is configurable.
+>>
+>> If it is possible to create one device per bank I usually prefer that
+>> approach, as it also (often) makes it possible to use the
+>> generic GPIO library, i.e. the hardware abstraction start to
+>> share more with other GPIO controllers.
 >
-> sound/soc/codecs/pcm1789.c: In function 'pcm1789_common_init':
-> sound/soc/codecs/pcm1789.c:247:19: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_gpio_request_one'? [-Werror=implicit-function-declaration]
->   pcm1789->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
->                    ^~~~~~~~~~~~~~~~~~~~~~~
->
-> Fixes: 4ae340d1be36 ("ASoC: codecs: Add support for PCM1789")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> But that should be possible whether there are banks in DT or not, right?
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Possible yes, but more complex, requireing a bigger and more complex
+chunk of code to get it right. Which we don't have for Linux (I don't know
+about $OS).
+
+For 1 bank = 1 device, all callbacks etc naturally offsets to something
+like 0..31 landing in (1 << offset) which makes for a simple support library.
+
+If there is more complex calculations, more complex helper libs are
+required and maybe not even worth it, ending up with more duplicated
+or slightly-different code.
 
 Yours,
 Linus Walleij
