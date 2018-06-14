@@ -1,43 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: uniphier: set legitimate irq trigger type in
- .to_irq hook
-Date: Thu, 14 Jun 2018 16:20:01 +0200
-Message-ID: <CACRpkdYKO6BArTXzk9ms70AJrNC4kAk_ZyaNHUGJANwuBqqUtg@mail.gmail.com>
-References: <1528954065-25563-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] pinctrl: qcom: spmi-gpio: Add pm8998 and pm8005 to binding
+Date: Thu, 14 Jun 2018 16:23:00 +0200
+Message-ID: <CACRpkdYS1LQ-gfOAsG21=E_hJ1eMW54oK6bZ-rJ48J7M6FGB7g@mail.gmail.com>
+References: <20180612230604.137880-1-swboyd@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1528954065-25563-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20180612230604.137880-1-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rajendra Nayak <rnayak@codeaurora.org>, Vivek Gautam <vivek.gautam@codeaurora.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 7:27 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Wed, Jun 13, 2018 at 1:06 AM, Stephen Boyd <swboyd@chromium.org> wrote:
 
-> If a GPIO chip is a part of a hierarchy IRQ domain, there is no
-> way to specify the trigger type when gpio(d)_to_irq() allocates an
-> interrupt on-the-fly.
+> Update the binding for two more PMICs supported by the same driver.
+> While we're here, remove the duplicate pmi8994 lines because that
+> support got merged twice.
 >
-> Currently, uniphier_gpio_to_irq() sets IRQ_TYPE_NONE, but it causes
-> an error in the .alloc() hook of the parent domain.
-> (drivers/irq/irq-uniphier-aidet.c)
->
-> Even if we change irq-uniphier-aidet.c to accept the NONE type,
-> GIC complains about it since commit 83a86fbb5b56 ("irqchip/gic:
-> Loudly complain about the use of IRQ_TYPE_NONE").
->
-> Instead, use IRQ_TYPE_LEVEL_HIGH as a temporary value when an irq
-> is allocated.  irq_set_irq_type() will override it when the irq is
-> really requested.
->
-> Fixes: dbe776c2ca54 ("gpio: uniphier: add UniPhier GPIO controller driver")
-> Reported-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Tested-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> Cc: Rajendra Nayak <rnayak@codeaurora.org>
+> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Cc: <devicetree@vger.kernel.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Patch applied for fixes!
+Patch applied with the tags.
 
 Yours,
 Linus Walleij
