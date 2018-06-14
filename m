@@ -1,63 +1,80 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 04/10] Input: ams_delta_serio: Replace power GPIO with
- regulator
-Date: Wed, 13 Jun 2018 13:51:44 -0700
-Message-ID: <20180613205144.GB62746@dtor-ws>
-References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
- <20180609140224.32606-4-jmkrzyszt@gmail.com>
- <20180612221724.GB38773@dtor-ws>
- <2655614.ErW8VuCT6r@z50>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
+Date: Thu, 14 Jun 2018 13:19:42 +0900
+Message-ID: <20180614041941.4i2cadzoevujmzha@ninjato>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+ <20180330074751.25987-2-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="st33g2u2nspyzp4d"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <2655614.ErW8VuCT6r@z50>
+In-Reply-To: <20180330074751.25987-2-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, "David S . Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <gala>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 03:01:05AM +0200, Janusz Krzysztofik wrote:
-> On Wednesday, June 13, 2018 12:17:24 AM CEST Dmitry Torokhov wrote:
-> > On Sat, Jun 09, 2018 at 04:02:18PM +0200, Janusz Krzysztofik wrote:
-> > > ...
-> > > +	priv->vcc = devm_regulator_get(&pdev->dev, "vcc");
-> > > +	if (IS_ERR(priv->vcc)) {
-> > > +		err = PTR_ERR(priv->vcc);
-> > > +		dev_err(&pdev->dev, "regulator request failed (%d)\n", err);
-> > > +		/* Fail softly if the regulator is not available yet */
-> > > +		if (err == -ENODEV)
-> > > +			err = -EPROBE_DEFER;
-> > 
-> > Hmm, if regulator is not ready yet, devm_regulator_get() should be
-> > returning -EPROBE_DEFER already, we should not have to convert -ENODEV
-> > to -EPROBE_DEFER...
-> 
-> Regulator is not ready because its initialization at subsys_initcall is 
-> deferred by not ready GPIO pin, that in turn is caused by gpio-mmio driver, 
-> unlike many other GPIO drivers, registered as late as at device_initcall.
-> 
-> I agree devm_regulator_get() could return -EPROBE_DEFER in this case, but I 
-> can see it does that only when of_get_regulator() indicates the regulator 
-> should exist. In non-dt case there is apparently no way to justify if it 
-> should unless its consumer supply table was already in place. For that,  
-> registration of that table would have to be independent of successful 
-> registration of the regulator itself while it's not. Maybe it should, but 
-> that's a separate topic for a separate discussion, I think.
-> 
-> > Is it because we have_full_constraints() returns false? You might need
-> > to add call to regulator_has_full_constraints() to your board file.
-> 
-> If have_full_constraints() returned true before the regulator or its consumer 
-> supply table is ready, devm_regulator_get() would happily return a dummy 
-> regulator and our keyboard would never get its power.
-> 
-> I'm afraid we have to live with that return code conversion as long as the 
-> only user of this driver is not migrated to dt.
 
-OK, fair enough. Can you please add a comment to that effect?
+--st33g2u2nspyzp4d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks.
+Hi Boris,
 
--- 
-Dmitry
+> +/**
+> + * struct i3c_priv_xfer - I3C SDR private transfer
+> + * @rnw: encodes the transfer direction. true for a read, false for a write
+> + * @len: transfer length in bytes of the transfer
+> + * @data: input/output buffer
+> + */
+> +struct i3c_priv_xfer {
+> +	bool rnw;
+> +	u16 len;
+> +	union {
+> +		void *in;
+> +		const void *out;
+> +	} data;
+
+So, this is probably where most payloads end up?
+
+I didn't notice any sign of DMA in these patches, but given my
+experiences, DMA will come sooner or later. And in I2C, this was
+problematic because then a lot of drivers were in the wild getting their
+buffers from everywhere (stack!). We now have an opt-in approach to mark
+buffers as DMA-safe.
+
+I don't know if typical I3C transfers will be similar to I2C with
+usually small payloads where DMA usually makes not much sense. Yet, I
+think, that it might be a good idea to think about how this shall be
+handled with I3C right away. Maybe simply enforcing buffers to be
+DMA-safe. Or whatever.
+
+A clear rule on that might save you hazzle later.
+
+Regards,
+
+   Wolfram
+
+
+--st33g2u2nspyzp4d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsh7NkACgkQFA3kzBSg
+KbYaJQ//WvuZkJrJ/IluxoHlKtN048uYvkfLNZCpddYE5p7JfxrreeOyn/EMQYUX
+ftikOAIWzo93LpPAgeKqHTD6FCMgfUDfB7RWZFJeRuMLZ/cOdDbsTA0Y/1S76SEl
+LEXebvQYhHd3YJsqDDGmyhCoXGtf/1n7tEJ4ax4NdJVMx0QGXUWuAlQAs2QAzNYk
+BzDfHEIbKc9469T5naQrQIVoaJLUqLCXs2RBzRnMDr8hl7wRtMckq64U28CiTNuz
+Hu/yh7axdg0EIqy/famCHzsbfg8Z5GXig8PNEBG5fCf0vL4aMap+56siQHsP4UgV
+bQgcIPSxqWcYBy2YVU4aiaLUdSYsAs/qympVnrWwRa6Lfy1z/JxPIs+7bI6TSER4
+OlMhrTNEiyiZbP5uj4LF+JlmFwYthzxwM9/j8ae6ZMsry6nQ5VFTYyUjOSUis4bQ
+05xrq8eZ1LDI6Kex4S9kY9OaN0bDo2u8xZv5yVqvbJaJ8dsD7uul94oGJPlO2jGm
+rUErZxjH8Q3u3QeQIyyZWRZlX1dIv+feeLbjRXlPqcdQfPcjbrv98T6FsuYqttzs
+FpA6wa1kbUZCchsuaxCvZu+5ja3OkYieYJ4keQlvO3EVzGnl3b0rcrOoSktr4ONs
+yBoV6WvF7+a/c+2ldQvi3/qaVu350CbdLowLWvX5yIFWtCOSkGM=
+=ojn/
+-----END PGP SIGNATURE-----
+
+--st33g2u2nspyzp4d--
