@@ -1,53 +1,42 @@
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-Subject: [PATCH v1 5/5] ARM: dts: Renesas RZN1D-DB Board: Add UART0 pinmux node
-Date: Thu, 14 Jun 2018 12:00:21 +0100
-Message-ID: <1528974029-29617-6-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] gpio: davinci: Do not assume continuous IRQ numbering
+Date: Thu, 14 Jun 2018 13:18:36 +0200
+Message-ID: <CACRpkdYOrg2M4zcomaGu_uUGMdnajwtoD-voETp-dRvL2WJpCA@mail.gmail.com>
+References: <1528276734-1483-1-git-send-email-j-keerthy@ti.com>
+ <1528276734-1483-2-git-send-email-j-keerthy@ti.com> <CACRpkdbFyZwG4S9t3ts3wmVWioadd7NjpdMUkq-wujH=g68zvw@mail.gmail.com>
+ <711dc0a5-9099-dbc9-6f8f-f37caf69105f@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <711dc0a5-9099-dbc9-6f8f-f37caf69105f@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>, Michel Pollet <michel.pollet@bp.renesas.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This adds the necessary nodes to add pin configuration for the UART0
-of that board.
+On Thu, Jun 14, 2018 at 10:51 AM, Keerthy <j-keerthy@ti.com> wrote:
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+>> I think the idea is to make it possible to use GPIOLIB_IRQCHIP
+>> for banked IRQs but the infrastructure is not yet inside the gpiolib
+>> so it is a bit taped on the side right now.
+>
+> Okay. I will take a look at that. The key issue that this patch
+> addresses is that currently driver only calls platform_get_irq once and
+> assumes the rest are continuous which is wrong hence the key issue
+> addressed with this patch is to call platform_get_irq for each interrupt.
+>
+> The version 4 is here:
+>
+> https://patchwork.kernel.org/patch/10461537/
+>
+> I will try to follow up with generic gpiochip_irq_map/unmap once i get
+> that working. Hope that is okay?
 
-diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-index 4e57ae2..039ec2e 100644
---- a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-+++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-@@ -8,6 +8,8 @@
- 
- /dts-v1/;
- 
-+#include <dt-bindings/pinctrl/r9a06g032-pinctrl.h>
-+
- #include "r9a06g032.dtsi"
- 
- / {
-@@ -23,6 +25,17 @@
- 	};
- };
- 
-+&pinctrl {
-+	pinsuart0: pinsuart0 {
-+		renesas,rzn1-pinmux-ids = <
-+			RZN1_MUX(103, UART0_I)	/* UART0_TXD */
-+			RZN1_MUX(104, UART0_I)	/* UART0_RXD */
-+		>;
-+	};
-+};
-+
- &uart0 {
- 	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinsuart0>;
- };
--- 
-2.7.4
+Oh that's fine, I'll merge it.
+
+Just wanted you to have a look at Thierry's stuff so we can share
+more code, you're a core developer so I wanted some smart people
+to look at this.
+
+Yours,
+Linus Walleij
