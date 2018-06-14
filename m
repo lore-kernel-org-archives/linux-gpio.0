@@ -1,76 +1,63 @@
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH] pinctrl: qcom: spmi-gpio: Add pm8998 and pm8005 to
- binding
-Date: Thu, 14 Jun 2018 12:00:58 +0530
-Message-ID: <ba1d45e9-dd10-ead0-6743-74b32260d760@codeaurora.org>
-References: <20180612230604.137880-1-swboyd@chromium.org>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
+Date: Thu, 14 Jun 2018 09:07:58 +0200
+Message-ID: <20180614090758.17180594@bbrezillon>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+        <20180330074751.25987-2-boris.brezillon@bootlin.com>
+        <20180614041941.4i2cadzoevujmzha@ninjato>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180612230604.137880-1-swboyd@chromium.org>
-Content-Language: en-US
+In-Reply-To: <20180614041941.4i2cadzoevujmzha@ninjato>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <gala>
 List-Id: linux-gpio@vger.kernel.org
 
+On Thu, 14 Jun 2018 13:19:42 +0900
+Wolfram Sang <wsa@the-dreams.de> wrote:
 
+> Hi Boris,
+> 
+> > +/**
+> > + * struct i3c_priv_xfer - I3C SDR private transfer
+> > + * @rnw: encodes the transfer direction. true for a read, false for a write
+> > + * @len: transfer length in bytes of the transfer
+> > + * @data: input/output buffer
+> > + */
+> > +struct i3c_priv_xfer {
+> > +	bool rnw;
+> > +	u16 len;
+> > +	union {
+> > +		void *in;
+> > +		const void *out;
+> > +	} data;  
+> 
+> So, this is probably where most payloads end up?
+> 
+> I didn't notice any sign of DMA in these patches, but given my
+> experiences, DMA will come sooner or later. And in I2C, this was
+> problematic because then a lot of drivers were in the wild getting their
+> buffers from everywhere (stack!). We now have an opt-in approach to mark
+> buffers as DMA-safe.
+> 
+> I don't know if typical I3C transfers will be similar to I2C with
+> usually small payloads where DMA usually makes not much sense. Yet, I
+> think, that it might be a good idea to think about how this shall be
+> handled with I3C right away. Maybe simply enforcing buffers to be
+> DMA-safe. Or whatever.
+> 
+> A clear rule on that might save you hazzle later.
 
-On 6/13/2018 4:36 AM, Stephen Boyd wrote:
-> Update the binding for two more PMICs supported by the same driver.
-> While we're here, remove the duplicate pmi8994 lines because that
-> support got merged twice.
->
-> Cc: Rajendra Nayak <rnayak@codeaurora.org>
-> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: <devicetree@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->   .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt          | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> index 5c25fcb29fb5..ffd4345415f3 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> @@ -7,6 +7,7 @@ PMIC's from Qualcomm.
->   	Usage: required
->   	Value type: <string>
->   	Definition: must be one of:
-> +		    "qcom,pm8005-gpio"
->   		    "qcom,pm8018-gpio"
->   		    "qcom,pm8038-gpio"
->   		    "qcom,pm8058-gpio"
-> @@ -15,7 +16,7 @@ PMIC's from Qualcomm.
->   		    "qcom,pm8921-gpio"
->   		    "qcom,pm8941-gpio"
->   		    "qcom,pm8994-gpio"
-> -		    "qcom,pmi8994-gpio"
+I completely agree. I'll clarify that and for people to pass DMA-able
+buffers to this struct (just as the SPI framework does). Note that we
+don't really have a way to ensure that the buffer is actually
+DMA-safe from the core, because this notion is architecture/SoC
+dependent.
 
-Thanks.
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-
-BRs
-Vivek
-> +		    "qcom,pm8998-gpio"
->   		    "qcom,pma8084-gpio"
->   		    "qcom,pmi8994-gpio"
->   
-> @@ -78,6 +79,7 @@ to specify in a pin configuration subnode:
->   	Value type: <string-array>
->   	Definition: List of gpio pins affected by the properties specified in
->   		    this subnode.  Valid pins are:
-> +		    gpio1-gpio4 for pm8005
->   		    gpio1-gpio6 for pm8018
->   		    gpio1-gpio12 for pm8038
->   		    gpio1-gpio40 for pm8058
-> @@ -86,7 +88,7 @@ to specify in a pin configuration subnode:
->   		    gpio1-gpio44 for pm8921
->   		    gpio1-gpio36 for pm8941
->   		    gpio1-gpio22 for pm8994
-> -		    gpio1-gpio10 for pmi8994
-> +		    gpio1-gpio26 for pm8998
->   		    gpio1-gpio22 for pma8084
->   		    gpio1-gpio10 for pmi8994
->   
+> 
+> Regards,
+> 
+>    Wolfram
+> 
