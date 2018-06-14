@@ -1,32 +1,62 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH v1 2/5] dt-bindings: clock: renesas,r9a06g032-pinctrl:
- documentation
-Date: Thu, 14 Jun 2018 12:17:49 +0000
-Message-ID: <TY1PR01MB1562D22174BA4043858DFF248A7D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528974029-29617-3-git-send-email-michel.pollet@bp.renesas.com>
- <20180614120446.GA12638@w540>
- <OSBPR01MB2054FBD2836B478B83D96C9CD27D0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] dt-bindings: document gpio-mt7621 bindings
+Date: Thu, 14 Jun 2018 16:14:53 +0200
+Message-ID: <CACRpkdb034f2hZkoPenTurdULeUPuqPxNVE_Mr609ngrfx4Q=g@mail.gmail.com>
+References: <1527924610-13135-1-git-send-email-sergio.paracuellos@gmail.com>
+ <1527924610-13135-3-git-send-email-sergio.paracuellos@gmail.com>
+ <20180612205638.GA2404@rob-hp-laptop>
+ <CAMhs-H8GYut-7hopEb0Oe0DYz0sjSwcw_rQ4hzipu9LMz-zWFg@mail.gmail.com>
+ <CAL_Jsq+0bnEmE2n-O3a7ecSXOsjTfZD3AqJDQunO6xzUF_W-=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <OSBPR01MB2054FBD2836B478B83D96C9CD27D0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michel Pollet <michel.pollet@bp.renesas.com>, jacopo mondi <jacopo@jmondi.org>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <CAL_Jsq+0bnEmE2n-O3a7ecSXOsjTfZD3AqJDQunO6xzUF_W-=A@mail.gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Rob Herring <robh@kernel.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, driverdev-devel@linuxdriverproject.org, Sergio Paracuellos <sergio.paracuellos@gmail.com>, NeilBrown <neil@brown.name>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gVGh1cnNkYXksIEp1bmUgMTQsIDIwMTgsIE1pY2hlbCBQb2xsZXQgd3JvdGU6DQo+ID4gRnJv
-bSBhIHZlcnkgc3VwZXJmaWNpYWwgbG9vayBhdCB0aGUgcHJvcG9zZWQgYmluZGluZ3MgYW5kIHBp
-bmN0cmwgZHJpdmVyLA0KPiBJDQo+ID4gd29uZGVyIGlmIHRoZSByemExIHBpbmN0cmwgZHJpdmVy
-IGNvdWxkIGJlIGV4cGFuZGVkIGFuZCByZS11c2VkLg0KPiA+IEhhdmUgeW91IGNvbnNpZGVyZWQg
-dGhhdCBiZWZvcmUgc3RhcnRpbmcgb25lIGZyb20gc2NyYXRjaD8NCj4gDQo+IFNvcnJ5IGl0J3Mg
-anVzdCB0aGUgc3RhcnQgb2YgdGhlIGRvY3VtZW50YXRpb24gd2hpY2ggSSB3cm9uZ2x5IGN1dC9w
-YXN0ZWQNCj4gLS0gdGhlDQo+IHJlc3QgaXMgY29tcGxldGVseSBkaWZmZXJlbnQ7IHRoZSBvbmx5
-IHJlYXNvbiBBMSBpcyBtZW50aW9uZWQgaGVyZSBpcyB0aGF0DQo+IEkgdXNlZA0KPiB0aGF0IGZp
-bGUgYXMgYSB0ZW1wbGF0ZSBmb3IgdGhlIGhlYWRlci9zZWN0aW9ucyBldGMuLi4gU29tZWhvdyB0
-aGUNCj4gdGl0bGUrYmx1cmINCj4gd2VudCB1bmVkaXRlZCENCg0KUGhldyENCg0KSSBjYW4ndCBz
-dGFuZCB0aGF0IHBpbmN0cmwgSFcgaW4gUlovQTEuDQoNCkkgaG9wZSBubyBvdGhlciBTb0MgZGVz
-aWduIHRlYW0gdXNlcyB0aGF0IHRoaW5nIGFnYWluLg0KDQoNCkNocmlzDQoNCg==
+On Wed, Jun 13, 2018 at 9:28 PM, Rob Herring <robh@kernel.org> wrote:
+
+>> "Some system-on-chips (SoCs) use the concept of GPIO banks. ...
+>> Usually each such bank is
+>> exposed in the device tree as an individual gpio-controller node. ..."
+>
+> This should be conditioned on being able to divide up the registers by
+> bank which seems like you can't. Or there's the case like the DW GPIO
+> block and the number of banks is configurable.
+
+If it is possible to create one device per bank I usually prefer that
+approach, as it also (often) makes it possible to use the
+generic GPIO library, i.e. the hardware abstraction start to
+share more with other GPIO controllers.
+
+>> If this is not a good approach, could you please me point me out to a
+>> device tree example where
+>> the correct approach is being used?
+>
+> I'm not sure offhand. There are lots of examples of single nodes I'm
+> sure. Which ones have banks I haven't a clue. IIRC, there were some
+> cases where the bank # was part of the GPIO cells, but I seem to
+> recall Linus prefers not having 3 cells.
+
+I don't like 3 cells, stuff is complicated enough as it is already.
+
+Better in that case to concatenate the offsets and instead of
+having an extra cell 0, 1 and offsets 0-31, 0-31
+have two cells and offsets 0-63.
+
+My reasoning is that since it is represented by a single device
+we are indexing into that one device from 0-n.
+
+Yours,
+Linus Walleij
