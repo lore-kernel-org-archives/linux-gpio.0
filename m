@@ -1,85 +1,76 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] gpio: uniphier: set legitimate irq trigger type in
- .to_irq hook
-Date: Thu, 14 Jun 2018 14:39:37 +0900
-Message-ID: <CAK7LNASh4j2nTbemsPmQXOnCrqJ4BQ0-PnWHQsUe-qa4KzpDLA@mail.gmail.com>
-References: <1528954065-25563-1-git-send-email-yamada.masahiro@socionext.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH] pinctrl: qcom: spmi-gpio: Add pm8998 and pm8005 to
+ binding
+Date: Thu, 14 Jun 2018 12:00:58 +0530
+Message-ID: <ba1d45e9-dd10-ead0-6743-74b32260d760@codeaurora.org>
+References: <20180612230604.137880-1-swboyd@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1528954065-25563-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20180612230604.137880-1-swboyd@chromium.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>
+To: Stephen Boyd <swboyd@chromium.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-2018-06-14 14:27 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> If a GPIO chip is a part of a hierarchy IRQ domain, there is no
-> way to specify the trigger type when gpio(d)_to_irq() allocates an
-> interrupt on-the-fly.
+
+
+On 6/13/2018 4:36 AM, Stephen Boyd wrote:
+> Update the binding for two more PMICs supported by the same driver.
+> While we're here, remove the duplicate pmi8994 lines because that
+> support got merged twice.
 >
-> Currently, uniphier_gpio_to_irq() sets IRQ_TYPE_NONE, but it causes
-> an error in the .alloc() hook of the parent domain.
-> (drivers/irq/irq-uniphier-aidet.c)
->
-> Even if we change irq-uniphier-aidet.c to accept the NONE type,
-> GIC complains about it since commit 83a86fbb5b56 ("irqchip/gic:
-> Loudly complain about the use of IRQ_TYPE_NONE").
->
-> Instead, use IRQ_TYPE_LEVEL_HIGH as a temporary value when an irq
-> is allocated.  irq_set_irq_type() will override it when the irq is
-> really requested.
->
-> Fixes: dbe776c2ca54 ("gpio: uniphier: add UniPhier GPIO controller driver")
-> Reported-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Tested-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> Cc: Rajendra Nayak <rnayak@codeaurora.org>
+> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Cc: <devicetree@vger.kernel.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 > ---
-
-BTW, gpio-xgene-sb.c is also suspicious.
-https://github.com/torvalds/linux/blob/v4.17/drivers/gpio/gpio-xgene-sb.c#L136
-
-
-I do not have that hardware, but GIC will complain about NONE type
-if gpio(d)_to_irq() is used.
-
-
-
-Commit 83a86fbb5b56 ("irqchip/gic: Loudly complain about the use of
-IRQ_TYPE_NONE")
-only mentions DT cases.
-
-It is unclear how to take care of GPIO-originated IRQs.
-
-
-
-
->  drivers/gpio/gpio-uniphier.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+>   .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt          | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
-> index d3cf950..58faeb1 100644
-> --- a/drivers/gpio/gpio-uniphier.c
-> +++ b/drivers/gpio/gpio-uniphier.c
-> @@ -181,7 +181,11 @@ static int uniphier_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
->         fwspec.fwnode = of_node_to_fwnode(chip->parent->of_node);
->         fwspec.param_count = 2;
->         fwspec.param[0] = offset - UNIPHIER_GPIO_IRQ_OFFSET;
-> -       fwspec.param[1] = IRQ_TYPE_NONE;
-> +       /*
-> +        * IRQ_TYPE_NONE is rejected by the parent irq domain. Set LEVEL_HIGH
-> +        * temporarily. Anyway, ->irq_set_type() will override it later.
-> +        */
-> +       fwspec.param[1] = IRQ_TYPE_LEVEL_HIGH;
->
->         return irq_create_fwspec_mapping(&fwspec);
->  }
-> --
-> 2.7.4
->
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+> index 5c25fcb29fb5..ffd4345415f3 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+> @@ -7,6 +7,7 @@ PMIC's from Qualcomm.
+>   	Usage: required
+>   	Value type: <string>
+>   	Definition: must be one of:
+> +		    "qcom,pm8005-gpio"
+>   		    "qcom,pm8018-gpio"
+>   		    "qcom,pm8038-gpio"
+>   		    "qcom,pm8058-gpio"
+> @@ -15,7 +16,7 @@ PMIC's from Qualcomm.
+>   		    "qcom,pm8921-gpio"
+>   		    "qcom,pm8941-gpio"
+>   		    "qcom,pm8994-gpio"
+> -		    "qcom,pmi8994-gpio"
 
+Thanks.
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-
--- 
-Best Regards
-Masahiro Yamada
+BRs
+Vivek
+> +		    "qcom,pm8998-gpio"
+>   		    "qcom,pma8084-gpio"
+>   		    "qcom,pmi8994-gpio"
+>   
+> @@ -78,6 +79,7 @@ to specify in a pin configuration subnode:
+>   	Value type: <string-array>
+>   	Definition: List of gpio pins affected by the properties specified in
+>   		    this subnode.  Valid pins are:
+> +		    gpio1-gpio4 for pm8005
+>   		    gpio1-gpio6 for pm8018
+>   		    gpio1-gpio12 for pm8038
+>   		    gpio1-gpio40 for pm8058
+> @@ -86,7 +88,7 @@ to specify in a pin configuration subnode:
+>   		    gpio1-gpio44 for pm8921
+>   		    gpio1-gpio36 for pm8941
+>   		    gpio1-gpio22 for pm8994
+> -		    gpio1-gpio10 for pmi8994
+> +		    gpio1-gpio26 for pm8998
+>   		    gpio1-gpio22 for pma8084
+>   		    gpio1-gpio10 for pmi8994
+>   
