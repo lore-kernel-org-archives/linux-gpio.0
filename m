@@ -1,46 +1,71 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 22/26] devicetree: fix name of pinctrl-bindings.txt
-Date: Mon, 18 Jun 2018 06:48:13 +0100
-Message-ID: <20180618054813.GA31141@dell>
-References: <cover.1529079119.git.mchehab+samsung@kernel.org>
- <1832904c012f823958663464ac4fb249f77978b5.1529079120.git.mchehab+samsung@kernel.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [Letux-kernel] BUG: drivers/pinctrl/core: races in
+ pinctrl_groups and deferred probing
+Date: Sun, 17 Jun 2018 23:46:51 -0700
+Message-ID: <20180618064651.GL112168@atomide.com>
+References: <F20BD6B3-D4D7-4D5D-B464-64402650BDE5@goldelico.com>
+ <20180614120157.GE112168@atomide.com>
+ <FC373DE9-6D6B-40C5-ACED-C07B1B524469@goldelico.com>
+ <20180615065810.GI112168@atomide.com>
+ <20180615111318.GJ112168@atomide.com>
+ <029F115C-480E-485A-B547-9D5873925CEF@goldelico.com>
+ <4DE2E482-B0D3-4799-9E2D-74E2180B305B@goldelico.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1832904c012f823958663464ac4fb249f77978b5.1529079120.git.mchehab+samsung@kernel.org>
+In-Reply-To: <4DE2E482-B0D3-4799-9E2D-74E2180B305B@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel@pyra-handheld.com, Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 15 Jun 2018, Mauro Carvalho Chehab wrote:
+* H. Nikolaus Schaller <hns@goldelico.com> [180616 11:10]:
+> There is also good news: the selectors are now assigned in strict sequence.
+> This is a big improvement:
 
-> Rename:
-> 	pinctrl-binding.txt -> pinctrl-bindings.txt
+OK thanks for testing.
+
+> If slots 17 and 18 do not really exist (or are deleted after failed probing), there is
+> a NULL return. Which triggers the strcmp(NULL), because the strcmp is not guarded against
+> non-existing slots in the radix tree.
 > 
-> In order to match the current name of this file.
+> So a simple workaround could be:
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt | 2 +-
+> 		if (gname && !strcmp(gname, pin_group)) {
+> 
+> But I think the fundamental problem is that the same driver assigns multiple slots if
+> probing is deferred.
+> 
+> Therefore, I tried to find out more why this happens. Here are some more observations by
+> studying the code and adding a dump_stack() inside pinctrl_generic_add_group():
+> 
+> 1.  the records stored in the radix tree are allocated through devm_kzalloc() within
+>     pinctrl_generic_add_group().
+> 2.  I have not found a mechanism that removes them from the radix tree if they are
+>     devm freed which IMHO happens if the probe fails (and all devm objects are
+>     rewound).
+> 3.  I could not observe calls to pinctrl_generic_remove_group()
+> 4.  this means a stale pointer to the group_desc is still stored in the radix tree
+>     if driver probing fails
+> 5.  scanning through the radix tree for a matching gname in pinctrl_get_group_selector()
+>     accesses this stale radix tree entry.
+>     It has either been overwritten by something else - or contains a dangling pointer for
+>     group->name. This explains the randomness of the problem but that it is also repeatable
+>     to some extent. For a pure race of some 100 instructions it happens IMHO too often.
+> 6.  the pinctrl_generic_add_group() is called from create_pinctrl() through 
+>     pinctrl_dt_to_map() and pcs_dt_node_to_map(), i.e. before the pinctrl_maps_mutex
+>     is locked in create_pinctrl(). This means that pinctrl_generic_add_group() is
+>     not locked in this case.
+> 
+> I hope this helps to pinpoint and solve the remaining bugs.
 
->  Documentation/devicetree/bindings/mfd/as3722.txt              | 2 +-
+Yes sounds like that's where things still go wrong. I'll take a look
+if it makes sense to assign the selector from the pin controller
+driver instead or just ignoring the holes.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+I'll try to debug the devm issue too.
 
->  .../devicetree/bindings/mmc/microchip,sdhci-pic32.txt         | 2 +-
->  Documentation/devicetree/bindings/mmc/sdhci-st.txt            | 2 +-
->  .../devicetree/bindings/pinctrl/pinctrl-max77620.txt          | 4 ++--
->  .../devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt          | 4 ++--
->  Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt   | 4 ++--
->  .../devicetree/bindings/serial/microchip,pic32-uart.txt       | 2 +-
->  Documentation/devicetree/bindings/spi/spi-st-ssc.txt          | 2 +-
->  9 files changed, 12 insertions(+), 12 deletions(-)
+Regards,
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Tony
