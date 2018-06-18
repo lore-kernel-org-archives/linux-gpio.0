@@ -1,13 +1,12 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/3] pinctrl: msm: Really mask level interrupts to prevent latching
-Date: Mon, 18 Jun 2018 16:38:27 -0700
-Message-ID: <CAD=FV=UhfffG__41+5yeiDEdN1DYeTkXEoqasc23fb1YKg9F9Q@mail.gmail.com>
-References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-2-swboyd@chromium.org>
- <CAD=FV=WvsY_=Ko2QXvzmHOuy4O5Rh6+sRWZZOuSXyGC829ANag@mail.gmail.com> <152936452512.16708.5405608343995548468@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
+Date: Mon, 18 Jun 2018 16:54:49 -0700
+Message-ID: <CAD=FV=VpFR4hpREnWpvG2MQAONheKtNfLkyNM8-AFXMcGD7OPQ@mail.gmail.com>
+References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-3-swboyd@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <152936452512.16708.5405608343995548468@swboyd.mtv.corp.google.com>
+In-Reply-To: <20180618205255.246104-3-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Boyd <swboyd@chromium.org>
 Cc: Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -15,41 +14,56 @@ List-Id: linux-gpio@vger.kernel.org
 
 Hi,
 
-On Mon, Jun 18, 2018 at 4:28 PM, Stephen Boyd <swboyd@chromium.org> wrote:
-> Quoting Doug Anderson (2018-06-18 15:43:06)
->>
->> On Mon, Jun 18, 2018 at 1:52 PM, Stephen Boyd <swboyd@chromium.org> wrote:
->>
->> > +        */
->> > +       if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
->> > +               val &= ~BIT(g->intr_raw_status_bit);
->> > +               writel(val, pctrl->regs + g->intr_cfg_reg);
->>
->> Do you know if it's important to do a 2nd write here, or could this be
->> combined with the next writel()?
+On Mon, Jun 18, 2018 at 1:52 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+> We rely on devices to use pinmuxing configurations in DT to select the
+> GPIO function (function 0) if they're going to use the gpio in GPIO
+> mode. Let's simplify things for driver authors by implementing
+> gpio_request_enable() for this pinctrl driver to mux out the GPIO
+> function when the gpio is use from gpiolib.
 >
-> I haven't tried combining the writes. It felt safer to keep them split
-> up so that both bits don't toggle at the same time, but I don't know if
-> it actually matters.
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 3563c4394837..eacfc5b85f7f 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -176,11 +176,27 @@ static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
+>         return 0;
+>  }
+>
+> +static int msm_pinmux_request_gpio(struct pinctrl_dev *pctldev,
+> +                                  struct pinctrl_gpio_range *range,
+> +                                  unsigned offset)
+> +{
+> +       struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+> +       const struct msm_pingroup *g = &pctrl->soc->groups[offset];
+> +
+> +       /* No funcs? Probably ACPI so can't do anything here */
+> +       if (!g->nfuncs)
+> +               return 0;
 
-Maybe I'm a glutton for punishment, but I'd say go for it, unless
-someone from Qualcomm says "no way".
+Is there a reason why you'd want to return 0 instead of some sort of
+error code?  Wouldn't you want to know that this pin can't be a GPIO?
+Another non-ACPI example is sdc2 on sdm845 and it seems like you'd
+want to know if someone tried to set one of those as a GPIO.
 
-In the very least in the "unmask" case it seems pretty safe.  IMHO if
-re-enabling the "raw" status caused a glitch we'd already be hitting
-problems.  Specifically the glitch would end up getting latched
-(whee!) and then we'd unmask and see the glitch anyway.
+...oh, but I guess ufs_reset also has no funcs but it still probably
+wants to use the GPIO framework to write something.  Hrmmm...  Maybe
+check if either in_bit or out_bit is not -1?
 
-...and actually for the "mask" case it seems like you've written it
-the less-safe way anyway.  We know that masking can't cause some sort
-of glitch (since that's the old code), but I guess we don't know
-whether disabling the "raw" status could cause a glitch.  To be the
-absolutely safest you'd do the new disable of the "raw" status _after_
-the old masking.  ...but as per above I'd just go whole hog and
-combine them.  :-P
 
-As with everything I write, feel free to tell me I'm being stupid and
-I'll try to shut up.  ;-)
+> +
+> +       /* For now assume function 0 is GPIO because it always is */
+> +       return msm_pinmux_set_mux(pctldev, 0, offset);
+
+nit: should you be consistent with msm_pinmux_set_mux() and call it
+"group" instead of "offset"?  It looks like it's supposed to be the
+same thing...
 
 
 -Doug
