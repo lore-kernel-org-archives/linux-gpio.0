@@ -1,73 +1,46 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 2/5] pinctrl: pinmux: Return selector to the pinctrl driver
-Date: Sun, 17 Jun 2018 19:51:17 +0300
-Message-ID: <CAHp75Ve4BYRbFsJRiwA2D-gJzVBj7JD2dfGhHSP3NDYwhAQyMg@mail.gmail.com>
-References: <20180615111141.37184-1-tony@atomide.com> <20180615111141.37184-3-tony@atomide.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 22/26] devicetree: fix name of pinctrl-bindings.txt
+Date: Mon, 18 Jun 2018 06:48:13 +0100
+Message-ID: <20180618054813.GA31141@dell>
+References: <cover.1529079119.git.mchehab+samsung@kernel.org>
+ <1832904c012f823958663464ac4fb249f77978b5.1529079120.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180615111141.37184-3-tony@atomide.com>
+Content-Disposition: inline
+In-Reply-To: <1832904c012f823958663464ac4fb249f77978b5.1529079120.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, sean.wang@mediatek.com
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 2:15 PM Tony Lindgren <tony@atomide.com> wrote:
->
-> We must return the selector from pinmux_generic_add_function() so
-> pin controller device drivers can remove the right group if needed
-> for deferred probe for example.
->
-> Note that fixes are also needed for the pin controller drivers to
-> use the selector value.
->
-> Fixes: a76edc89b100 ("pinctrl: core: Add generic pinctrl functions for
-> managing groups")
-> Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-> Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-> Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Cc: Paul Cercueil <paul@crapouillou.net>
-> Cc: Sean Wang <sean.wang@mediatek.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+On Fri, 15 Jun 2018, Mauro Carvalho Chehab wrote:
+
+> Rename:
+> 	pinctrl-binding.txt -> pinctrl-bindings.txt
+> 
+> In order to match the current name of this file.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 > ---
->  drivers/pinctrl/pinmux.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-> --- a/drivers/pinctrl/pinmux.c
-> +++ b/drivers/pinctrl/pinmux.c
-> @@ -775,6 +775,7 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
->                                 void *data)
->  {
->         struct function_desc *function;
-> +       int selector = pctldev->num_functions;
->
->         function = devm_kzalloc(pctldev->dev, sizeof(*function), GFP_KERNEL);
->         if (!function)
-> @@ -785,12 +786,12 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
->         function->num_group_names = num_groups;
->         function->data = data;
->
-> -       radix_tree_insert(&pctldev->pin_function_tree, pctldev->num_functions,
-> +       radix_tree_insert(&pctldev->pin_function_tree, selector,
->                           function);
+>  Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt | 2 +-
 
-Same nit: One line now?
+>  Documentation/devicetree/bindings/mfd/as3722.txt              | 2 +-
 
->
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
->         pctldev->num_functions++;
->
-> -       return 0;
-> +       return selector;
->  }
->  EXPORT_SYMBOL_GPL(pinmux_generic_add_function);
->
-> --
-> 2.17.1
-
-
+>  .../devicetree/bindings/mmc/microchip,sdhci-pic32.txt         | 2 +-
+>  Documentation/devicetree/bindings/mmc/sdhci-st.txt            | 2 +-
+>  .../devicetree/bindings/pinctrl/pinctrl-max77620.txt          | 4 ++--
+>  .../devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt          | 4 ++--
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt   | 4 ++--
+>  .../devicetree/bindings/serial/microchip,pic32-uart.txt       | 2 +-
+>  Documentation/devicetree/bindings/spi/spi-st-ssc.txt          | 2 +-
+>  9 files changed, 12 insertions(+), 12 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
