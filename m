@@ -1,60 +1,41 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Mon, 18 Jun 2018 09:06:53 +0200
-Message-ID: <CAJKOXPcAVovxU2mHSbkAG0axutFbd=_92bNdd2P_CnQGmhAfCg@mail.gmail.com>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 0/5] Renesas R9A06G032 PINCTRL Driver
+Date: Mon, 18 Jun 2018 10:46:07 +0200
+Message-ID: <CACRpkdbX0R+ipasLfZi80yf2OBU0TuDT-0KoUJBvrQz3Zj6eFQ@mail.gmail.com>
+References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+In-Reply-To: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>
+To: Michel Pollet <michel.pollet@bp.renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Magnus Damm <damm+renesas@opensource.se>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 4:31 PM, Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
-> Multiple binding documents have various forms of unbalanced quotation
-> marks. Fix them.
->
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> ---
->
-> Should I split this patch so that different parts can go through differen=
-t trees?
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
->  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
->  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
->  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
->  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
->  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
->  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
->  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
->  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
->  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards=
-.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> index bdadc3da9556..6970f30a3770 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> @@ -66,7 +66,7 @@ Required root node properties:
->         - "insignal,arndale-octa" - for Exynos5420-based Insignal Arndale
->                                     Octa board.
->         - "insignal,origen"       - for Exynos4210-based Insignal Origen =
-board.
-> -       - "insignal,origen4412    - for Exynos4412-based Insignal Origen =
-board.
-> +       - "insignal,origen4412"   - for Exynos4412-based Insignal Origen =
-board.
->
+On Thu, Jun 14, 2018 at 1:00 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> *WARNING* -- this requires:
+> + R9A06G032 base patch v9
+> + R9A06G032 SMP patch v5
 
-Best regards,
-Krzysztof
+Is that required for the pin controller itself (compile-time dependence)
+or is it required to boot the system (run-time dependence)?
+
+We can merge support for pin control ahead, that's fine.
+
+> This implements the pinctrl driver for the R9A06G032.
+
+Geert Uytterhoeven and Laurent Pinchart maintains the Renesas pin
+controllers, and this one is for some reason a totally new one in
+drivers/pinctrl/pinctrl-r9a06g032.c
+
+Is it totally different from the other "great old ones" in the SuperH-PFC
+series or is there some other reason why it was done like this?
+
+Please include Geert and Laurent on subsequent postings,
+their review is pretty much required to move forward with
+this.
+
+Yours,
+Linus Walleij
