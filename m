@@ -1,99 +1,66 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 1/5] pinctrl: core: Return selector to the pinctrl driver
-Date: Tue, 19 Jun 2018 02:31:22 -0700
-Message-ID: <20180619093126.74060-2-tony@atomide.com>
-References: <20180619093126.74060-1-tony@atomide.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180619093126.74060-1-tony@atomide.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
+Date: Tue, 19 Jun 2018 11:10:48 +0100
+Message-ID: <819db945-1f89-93d3-b213-365a9704e100@nvidia.com>
+References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+Content-Language: en-US
+Sender: netdev-owner@vger.kernel.org
+To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>, devicetree@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, "David S. Miller" <davem@davemloft.net>
 List-Id: linux-gpio@vger.kernel.org
 
-We must return the selector from pinctrl_generic_add_group() so
-pin controller device drivers can remove the right group if needed
-for deferred probe for example. And we now must make sure that a
-proper name is passed so we can use it to check if the entry already
-exists.
 
-Note that fixes are also needed for the pin controller drivers to
-use the selector value.
 
-Fixes: c7059c5ac70a ("pinctrl: core: Add generic pinctrl functions
-for managing groups")
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Christ van Willegen <cvwillegen@gmail.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/pinctrl/core.c | 35 ++++++++++++++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 3 deletions(-)
+On 17/06/18 15:31, Jonathan Neuschäfer wrote:
+> Multiple binding documents have various forms of unbalanced quotation
+> marks. Fix them.
+> 
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+> ---
+> 
+> Should I split this patch so that different parts can go through different trees?
+> ---
+>  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
+>  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
+>  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
+>  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
+>  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
+>  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
+>  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
+>  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
+>  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
+>  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
+>  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
+>  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
+>  12 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -617,6 +617,26 @@ struct group_desc *pinctrl_generic_get_group(struct pinctrl_dev *pctldev,
- }
- EXPORT_SYMBOL_GPL(pinctrl_generic_get_group);
- 
-+static int pinctrl_generic_group_name_to_selector(struct pinctrl_dev *pctldev,
-+						  const char *function)
-+{
-+	const struct pinctrl_ops *ops = pctldev->desc->pctlops;
-+	int ngroups = ops->get_groups_count(pctldev);
-+	int selector = 0;
-+
-+	/* See if this pctldev has this group */
-+	while (selector < ngroups) {
-+		const char *gname = ops->get_group_name(pctldev, selector);
-+
-+		if (!strcmp(function, gname))
-+			return selector;
-+
-+		selector++;
-+	}
-+
-+	return -EINVAL;
-+}
-+
- /**
-  * pinctrl_generic_add_group() - adds a new pin group
-  * @pctldev: pin controller device
-@@ -631,6 +651,16 @@ int pinctrl_generic_add_group(struct pinctrl_dev *pctldev, const char *name,
- 			      int *pins, int num_pins, void *data)
- {
- 	struct group_desc *group;
-+	int selector;
-+
-+	if (!name)
-+		return -EINVAL;
-+
-+	selector = pinctrl_generic_group_name_to_selector(pctldev, name);
-+	if (selector >= 0)
-+		return selector;
-+
-+	selector = pctldev->num_groups;
- 
- 	group = devm_kzalloc(pctldev->dev, sizeof(*group), GFP_KERNEL);
- 	if (!group)
-@@ -641,12 +671,11 @@ int pinctrl_generic_add_group(struct pinctrl_dev *pctldev, const char *name,
- 	group->num_pins = num_pins;
- 	group->data = data;
- 
--	radix_tree_insert(&pctldev->pin_group_tree, pctldev->num_groups,
--			  group);
-+	radix_tree_insert(&pctldev->pin_group_tree, selector, group);
- 
- 	pctldev->num_groups++;
- 
--	return 0;
-+	return selector;
- }
- EXPORT_SYMBOL_GPL(pinctrl_generic_add_group);
- 
+...
+
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
+> index 1099fe0788fa..f246ccbf8838 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
+> @@ -15,7 +15,7 @@ Required properties:
+>    include "nvidia,tegra30-ictlr".	
+>  - reg : Specifies base physical address and size of the registers.
+>    Each controller must be described separately (Tegra20 has 4 of them,
+> -  whereas Tegra30 and later have 5"  
+> +  whereas Tegra30 and later have 5).
+>  - interrupt-controller : Identifies the node as an interrupt controller.
+>  - #interrupt-cells : Specifies the number of cells needed to encode an
+>    interrupt source. The value must be 3.
+
+For the above Tegra portion ...
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
 -- 
-2.17.1
+nvpublic
