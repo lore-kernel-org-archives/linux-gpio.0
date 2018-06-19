@@ -1,7 +1,7 @@
 From: Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 2/5] pinctrl: pinmux: Return selector to the pinctrl driver
-Date: Tue, 19 Jun 2018 02:31:23 -0700
-Message-ID: <20180619093126.74060-3-tony@atomide.com>
+Subject: [PATCH 5/5] pinctrl: core: Remove broken remove_last group and pinmux functions
+Date: Tue, 19 Jun 2018 02:31:26 -0700
+Message-ID: <20180619093126.74060-6-tony@atomide.com>
 References: <20180619093126.74060-1-tony@atomide.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180619093126.74060-1-tony@atomide.com>
@@ -10,17 +10,8 @@ To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-We must return the selector from pinmux_generic_add_function() so
-pin controller device drivers can remove the right group if needed
-for deferred probe for example. And we now must make sure that a
-proper name is passed so we can use it to check if the entry already
-exists.
+With no users left for these functions let's remove them.
 
-Note that fixes are also needed for the pin controller drivers to
-use the selector value.
-
-Fixes: a76edc89b100 ("pinctrl: core: Add generic pinctrl functions for
-managing groups")
 Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
 Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Christ van Willegen <cvwillegen@gmail.com>
@@ -30,51 +21,42 @@ Cc: Paul Cercueil <paul@crapouillou.net>
 Cc: Sean Wang <sean.wang@mediatek.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/pinctrl/pinmux.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/pinctrl/core.h   | 6 ------
+ drivers/pinctrl/pinmux.h | 7 -------
+ 2 files changed, 13 deletions(-)
 
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -308,7 +308,6 @@ static int pinmux_func_name_to_selector(struct pinctrl_dev *pctldev,
- 		selector++;
- 	}
+diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
+--- a/drivers/pinctrl/core.h
++++ b/drivers/pinctrl/core.h
+@@ -218,12 +218,6 @@ int pinctrl_generic_add_group(struct pinctrl_dev *pctldev, const char *name,
+ int pinctrl_generic_remove_group(struct pinctrl_dev *pctldev,
+ 				 unsigned int group_selector);
  
--	dev_err(pctldev->dev, "function '%s' not supported\n", function);
- 	return -EINVAL;
- }
+-static inline int
+-pinctrl_generic_remove_last_group(struct pinctrl_dev *pctldev)
+-{
+-	return pinctrl_generic_remove_group(pctldev, pctldev->num_groups - 1);
+-}
+-
+ #endif	/* CONFIG_GENERIC_PINCTRL_GROUPS */
  
-@@ -775,6 +774,16 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
- 				void *data)
- {
- 	struct function_desc *function;
-+	int selector;
-+
-+	if (!name)
-+		return -EINVAL;
-+
-+	selector = pinmux_func_name_to_selector(pctldev, name);
-+	if (selector >= 0)
-+		return selector;
-+
-+	selector = pctldev->num_functions;
+ struct pinctrl_dev *get_pinctrl_dev_from_devname(const char *dev_name);
+diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
+--- a/drivers/pinctrl/pinmux.h
++++ b/drivers/pinctrl/pinmux.h
+@@ -150,13 +150,6 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
+ int pinmux_generic_remove_function(struct pinctrl_dev *pctldev,
+ 				   unsigned int selector);
  
- 	function = devm_kzalloc(pctldev->dev, sizeof(*function), GFP_KERNEL);
- 	if (!function)
-@@ -785,12 +794,11 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
- 	function->num_group_names = num_groups;
- 	function->data = data;
+-static inline int
+-pinmux_generic_remove_last_function(struct pinctrl_dev *pctldev)
+-{
+-	return pinmux_generic_remove_function(pctldev,
+-					      pctldev->num_functions - 1);
+-}
+-
+ void pinmux_generic_free_functions(struct pinctrl_dev *pctldev);
  
--	radix_tree_insert(&pctldev->pin_function_tree, pctldev->num_functions,
--			  function);
-+	radix_tree_insert(&pctldev->pin_function_tree, selector, function);
- 
- 	pctldev->num_functions++;
- 
--	return 0;
-+	return selector;
- }
- EXPORT_SYMBOL_GPL(pinmux_generic_add_function);
- 
+ #else
 -- 
 2.17.1
