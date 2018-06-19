@@ -1,37 +1,35 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 3/3] pinctrl: msm: Configure interrupts as input and gpio mode
-Date: Tue, 19 Jun 2018 08:48:13 -0700
-Message-ID: <CAD=FV=VfGkOepP3KgYXZLq5esy6rWLr8zf8xiYoPOPN5vmCgGA@mail.gmail.com>
-References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-4-swboyd@chromium.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
+Date: Tue, 19 Jun 2018 11:23:07 -0700
+Message-ID: <20180619182307.GG71788@dtor-ws>
+References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180618205255.246104-4-swboyd@chromium.org>
+Content-Disposition: inline
+In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, "David S. Miller" <davem@>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+On Sun, Jun 17, 2018 at 04:31:18PM +0200, Jonathan Neuschäfer wrote:
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/hideep.txt b/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
+> index 121d9b7c79a2..1063c30d53f7 100644
+> --- a/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/hideep.txt
+> @@ -32,7 +32,7 @@ i2c@00000000 {
+>  		reg = <0x6c>;
+>  		interrupt-parent = <&gpx1>;
+>  		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+> -		vdd-supply = <&ldo15_reg>";
+> +		vdd-supply = <&ldo15_reg>;
+>  		vid-supply = <&ldo18_reg>;
+>  		reset-gpios = <&gpx1 5 0>;
+>  		touchscreen-size-x = <1080>;
 
-On Mon, Jun 18, 2018 at 1:52 PM, Stephen Boyd <swboyd@chromium.org> wrote:
-> When requesting a gpio as an interrupt, we should make sure to mux the
-> pin as the GPIO function and configure it to be an input so that various
-> functions or output signals don't affect the interrupt state of the pin.
-> So far, we've relied on pinmux configurations in DT to handle this, but
-> let's explicitly configure this in the code so that DT implementers
-> don't have to get this part right.
->
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 37 ++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-This seems like a reasonable idea to me.  I'm not a huge fan of all
-the boilerplate code copied from gpiochip_irq_reqres() and
-gpiochip_irq_relres(), but it looks like that's the way it's done at
-the moment.  Thus:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+-- 
+Dmitry
