@@ -1,30 +1,70 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Tue, 19 Jun 2018 12:49:32 -0700
-Message-ID: <f5ffdbd1-d357-fa8d-9fdb-461cf2b9ad89@gmail.com>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH 1/3] pinctrl: msm: Really mask level interrupts to prevent
+ latching
+Date: Tue, 19 Jun 2018 14:14:37 -0700
+Message-ID: <152944287756.16708.13539547406156946230@swboyd.mtv.corp.google.com>
+References: <20180618205255.246104-1-swboyd@chromium.org>
+ <20180618205255.246104-2-swboyd@chromium.org>
+ <CAD=FV=WvsY_=Ko2QXvzmHOuy4O5Rh6+sRWZZOuSXyGC829ANag@mail.gmail.com>
+ <152936452512.16708.5405608343995548468@swboyd.mtv.corp.google.com>
+ <CAD=FV=UhfffG__41+5yeiDEdN1DYeTkXEoqasc23fb1YKg9F9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
-Content-Language: en-US
+In-Reply-To: <CAD=FV=UhfffG__41+5yeiDEdN1DYeTkXEoqasc23fb1YKg9F9Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-mips@linux-mips.org, Ulf Hansson <ulf.hansson@linaro.org>, Madalin Bucur <madalin.bucur@nxp.com>, James Hogan <jhogan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, linux-input@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Jason Cooper <jason@lakedaemon.net>, linux-pm@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 06/17/2018 07:31 AM, Jonathan Neuschäfer wrote:
-> Multiple binding documents have various forms of unbalanced quotation
-> marks. Fix them.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
+Quoting Doug Anderson (2018-06-18 16:38:27)
+> Hi,
+> =
 
-[snip]
+> On Mon, Jun 18, 2018 at 4:28 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+> > Quoting Doug Anderson (2018-06-18 15:43:06)
+> >>
+> >> On Mon, Jun 18, 2018 at 1:52 PM, Stephen Boyd <swboyd@chromium.org> wr=
+ote:
+> >>
+> >> > +        */
+> >> > +       if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
+> >> > +               val &=3D ~BIT(g->intr_raw_status_bit);
+> >> > +               writel(val, pctrl->regs + g->intr_cfg_reg);
+> >>
+> >> Do you know if it's important to do a 2nd write here, or could this be
+> >> combined with the next writel()?
+> >
+> > I haven't tried combining the writes. It felt safer to keep them split
+> > up so that both bits don't toggle at the same time, but I don't know if
+> > it actually matters.
+> =
 
->  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
+> Maybe I'm a glutton for punishment, but I'd say go for it, unless
+> someone from Qualcomm says "no way".
+> =
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+> In the very least in the "unmask" case it seems pretty safe.  IMHO if
+> re-enabling the "raw" status caused a glitch we'd already be hitting
+> problems.  Specifically the glitch would end up getting latched
+> (whee!) and then we'd unmask and see the glitch anyway.
+> =
+
+> ...and actually for the "mask" case it seems like you've written it
+> the less-safe way anyway.  We know that masking can't cause some sort
+> of glitch (since that's the old code), but I guess we don't know
+> whether disabling the "raw" status could cause a glitch.  To be the
+> absolutely safest you'd do the new disable of the "raw" status _after_
+> the old masking.  ...but as per above I'd just go whole hog and
+> combine them.  :-P
+> =
+
+> As with everything I write, feel free to tell me I'm being stupid and
+> I'll try to shut up.  ;-)
+> =
+
+
+I've tested it and it seems to work by combining the writes in mask and
+unmask. I will resend it with the combination tomorrow or the next day
+in case anyone else has comments on this series.
