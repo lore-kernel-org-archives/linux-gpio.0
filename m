@@ -1,7 +1,7 @@
 From: Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 5/5] pinctrl: core: Remove broken remove_last group and pinmux functions
-Date: Tue, 19 Jun 2018 02:31:26 -0700
-Message-ID: <20180619093126.74060-6-tony@atomide.com>
+Subject: [PATCH 1/5] pinctrl: core: Return selector to the pinctrl driver
+Date: Tue, 19 Jun 2018 02:31:22 -0700
+Message-ID: <20180619093126.74060-2-tony@atomide.com>
 References: <20180619093126.74060-1-tony@atomide.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180619093126.74060-1-tony@atomide.com>
@@ -10,8 +10,17 @@ To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-With no users left for these functions let's remove them.
+We must return the selector from pinctrl_generic_add_group() so
+pin controller device drivers can remove the right group if needed
+for deferred probe for example. And we now must make sure that a
+proper name is passed so we can use it to check if the entry already
+exists.
 
+Note that fixes are also needed for the pin controller drivers to
+use the selector value.
+
+Fixes: c7059c5ac70a ("pinctrl: core: Add generic pinctrl functions
+for managing groups")
 Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
 Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Christ van Willegen <cvwillegen@gmail.com>
@@ -21,42 +30,70 @@ Cc: Paul Cercueil <paul@crapouillou.net>
 Cc: Sean Wang <sean.wang@mediatek.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/pinctrl/core.h   | 6 ------
- drivers/pinctrl/pinmux.h | 7 -------
- 2 files changed, 13 deletions(-)
+ drivers/pinctrl/core.c | 35 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 32 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
---- a/drivers/pinctrl/core.h
-+++ b/drivers/pinctrl/core.h
-@@ -218,12 +218,6 @@ int pinctrl_generic_add_group(struct pinctrl_dev *pctldev, const char *name,
- int pinctrl_generic_remove_group(struct pinctrl_dev *pctldev,
- 				 unsigned int group_selector);
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -617,6 +617,26 @@ struct group_desc *pinctrl_generic_get_group(struct pinctrl_dev *pctldev,
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_generic_get_group);
  
--static inline int
--pinctrl_generic_remove_last_group(struct pinctrl_dev *pctldev)
--{
--	return pinctrl_generic_remove_group(pctldev, pctldev->num_groups - 1);
--}
--
- #endif	/* CONFIG_GENERIC_PINCTRL_GROUPS */
++static int pinctrl_generic_group_name_to_selector(struct pinctrl_dev *pctldev,
++						  const char *function)
++{
++	const struct pinctrl_ops *ops = pctldev->desc->pctlops;
++	int ngroups = ops->get_groups_count(pctldev);
++	int selector = 0;
++
++	/* See if this pctldev has this group */
++	while (selector < ngroups) {
++		const char *gname = ops->get_group_name(pctldev, selector);
++
++		if (!strcmp(function, gname))
++			return selector;
++
++		selector++;
++	}
++
++	return -EINVAL;
++}
++
+ /**
+  * pinctrl_generic_add_group() - adds a new pin group
+  * @pctldev: pin controller device
+@@ -631,6 +651,16 @@ int pinctrl_generic_add_group(struct pinctrl_dev *pctldev, const char *name,
+ 			      int *pins, int num_pins, void *data)
+ {
+ 	struct group_desc *group;
++	int selector;
++
++	if (!name)
++		return -EINVAL;
++
++	selector = pinctrl_generic_group_name_to_selector(pctldev, name);
++	if (selector >= 0)
++		return selector;
++
++	selector = pctldev->num_groups;
  
- struct pinctrl_dev *get_pinctrl_dev_from_devname(const char *dev_name);
-diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
---- a/drivers/pinctrl/pinmux.h
-+++ b/drivers/pinctrl/pinmux.h
-@@ -150,13 +150,6 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
- int pinmux_generic_remove_function(struct pinctrl_dev *pctldev,
- 				   unsigned int selector);
+ 	group = devm_kzalloc(pctldev->dev, sizeof(*group), GFP_KERNEL);
+ 	if (!group)
+@@ -641,12 +671,11 @@ int pinctrl_generic_add_group(struct pinctrl_dev *pctldev, const char *name,
+ 	group->num_pins = num_pins;
+ 	group->data = data;
  
--static inline int
--pinmux_generic_remove_last_function(struct pinctrl_dev *pctldev)
--{
--	return pinmux_generic_remove_function(pctldev,
--					      pctldev->num_functions - 1);
--}
--
- void pinmux_generic_free_functions(struct pinctrl_dev *pctldev);
+-	radix_tree_insert(&pctldev->pin_group_tree, pctldev->num_groups,
+-			  group);
++	radix_tree_insert(&pctldev->pin_group_tree, selector, group);
  
- #else
+ 	pctldev->num_groups++;
+ 
+-	return 0;
++	return selector;
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_generic_add_group);
+ 
 -- 
 2.17.1
