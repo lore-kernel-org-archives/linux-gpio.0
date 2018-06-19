@@ -1,50 +1,37 @@
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Tue, 19 Jun 2018 12:15:08 +0100
-Message-ID: <1d775530-e250-6397-8e60-4dac8d580f7d@linaro.org>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 3/3] pinctrl: msm: Configure interrupts as input and gpio mode
+Date: Tue, 19 Jun 2018 08:48:13 -0700
+Message-ID: <CAD=FV=VfGkOepP3KgYXZLq5esy6rWLr8zf8xiYoPOPN5vmCgGA@mail.gmail.com>
+References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-4-swboyd@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-mips@linux-mips.org, Ulf Hansson <ulf.hansson@linaro.org>, Madalin Bucur <madalin.bucur@nxp.com>, James Hogan <jhogan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-samsung-soc@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Kukjin Kim <kgene@kernel.org>, linux-input@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Jason Cooper <jason@lakedaemon.net>, linux-pm@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180618205255.246104-4-swboyd@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
+Hi,
 
+On Mon, Jun 18, 2018 at 1:52 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+> When requesting a gpio as an interrupt, we should make sure to mux the
+> pin as the GPIO function and configure it to be an input so that various
+> functions or output signals don't affect the interrupt state of the pin.
+> So far, we've relied on pinmux configurations in DT to handle this, but
+> let's explicitly configure this in the code so that DT implementers
+> don't have to get this part right.
+>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.c | 37 ++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
 
-On 17/06/18 15:31, Jonathan Neuschäfer wrote:
->   example:
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt
-> index 6a4aadc4ce06..84b28dbe9f15 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt
-> +++ b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt
-> @@ -30,7 +30,7 @@ Required properties:
->   
->   			  Board connectors:
->   			  * Headset Mic
-> -			  * Secondary Mic",
-> +			  * Secondary Mic
->   			  * DMIC
->   			  * Ext Spk
->   
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8096.txt b/Documentation/devicetree/bindings/sound/qcom,apq8096.txt
-> index aa54e49fc8a2..c7600a93ab39 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,apq8096.txt
-> +++ b/Documentation/devicetree/bindings/sound/qcom,apq8096.txt
-> @@ -35,7 +35,7 @@ This binding describes the APQ8096 sound card, which uses qdsp for audio.
->   			"Digital Mic3"
->   
->   		Audio pins and MicBias on WCD9335 Codec:
-> -			"MIC_BIAS1
-> +			"MIC_BIAS1"
->   			"MIC_BIAS2"
->   			"MIC_BIAS3"
->   			"MIC_BIAS4"
+This seems like a reasonable idea to me.  I'm not a huge fan of all
+the boilerplate code copied from gpiochip_irq_reqres() and
+gpiochip_irq_relres(), but it looks like that's the way it's done at
+the moment.  Thus:
 
-for apq8016 and apq8096 parts:
-
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
