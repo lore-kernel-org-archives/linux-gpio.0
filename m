@@ -1,43 +1,27 @@
-From: Andrew Lunn <andrew@lunn.ch>
+From: David Miller <davem@davemloft.net>
 Subject: Re: [PATCH v2] mdio-mux-gpio: Remove VLA usage
-Date: Wed, 20 Jun 2018 08:32:48 +0200
-Message-ID: <20180620063248.GA9303@lunn.ch>
-References: <20180530204830.GA24884@beast>
- <20180530205712.GB16286@lunn.ch>
- <CAGXu5j+sh-gSXvGg25oN9Xsyw1W=i177=52ZXPV3OvEym6nr7g@mail.gmail.com>
+Date: Wed, 20 Jun 2018 15:37:02 +0900 (KST)
+Message-ID: <20180620.153702.722024386627396392.davem@davemloft.net>
+References: <20180530205712.GB16286@lunn.ch>
+        <CAGXu5j+sh-gSXvGg25oN9Xsyw1W=i177=52ZXPV3OvEym6nr7g@mail.gmail.com>
+        <20180620063248.GA9303@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAGXu5j+sh-gSXvGg25oN9Xsyw1W=i177=52ZXPV3OvEym6nr7g@mail.gmail.com>
+In-Reply-To: <20180620063248.GA9303@lunn.ch>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Pramod Kumar <pramod.kumar@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: andrew@lunn.ch
+Cc: keescook@chromium.org, linus.walleij@linaro.org, pramod.kumar@broadcom.com, f.fainelli@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 09:44:27PM -0700, Kees Cook wrote:
-> On Wed, May 30, 2018 at 1:57 PM, Andrew Lunn <andrew@lunn.ch> wrote:
-> > On Wed, May 30, 2018 at 01:48:30PM -0700, Kees Cook wrote:
-> >> In the quest to remove all stack VLA usage from the kernel[1], this
-> >> moves the allocation into struct mdio_mux_gpio_state during probe.
-> >>
-> >> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> >>
-> >> Signed-off-by: Kees Cook <keescook@chromium.org>
-> >> ---
-> >> v2: allocate array as part of structure (Andrew Lunn)
-> >
-> > Hi Kees
-> >
-> > This looks much better, thanks.
-> >
-> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> 
-> Thanks! Who can take this patch? Linus?
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Wed, 20 Jun 2018 08:32:48 +0200
 
-David Miller.
+> Does it cleanly apply to net-next?
 
-Does it cleanly apply to net-next?
+net-next is closed, so net-next submissions should be sent when it
+opens back up which should be some time this weekend.
 
-     Andrew
- 
+Anything not in "Under Review" state in patchwork always must
+be resubmitted at the appropriate time.
