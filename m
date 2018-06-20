@@ -1,99 +1,56 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 5/5] arm64: tegra: Add ethernet controller on Tegra194
-Date: Wed, 20 Jun 2018 15:54:06 +0300
-Message-ID: <20180620125406.11906-5-mperttunen@nvidia.com>
-References: <20180620125406.11906-1-mperttunen@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 04/26] docs: fix broken references with multiple hints
+Date: Wed, 20 Jun 2018 09:26:52 -0600
+Message-ID: <20180620152652.GA12591@rob-hp-laptop>
+References: <cover.1529079119.git.mchehab+samsung@kernel.org>
+ <75c14f6d84eef8c10787e85ddc172afebee116d6.1529079119.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180620125406.11906-1-mperttunen@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: vbhadram@nvidia.com, devicetree@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <75c14f6d84eef8c10787e85ddc172afebee116d6.1529079119.git.mchehab+samsung@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-fbdev@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, David Airlie <airlied@linux.ie>, Roy Pledge <Roy.Pledge@nxp.com>, dri-devel@lists.freedesktop.org, Benjamin Tissoires <benjamin.tissoires@redhat.com>, devel@driverdev.osuosl.org, Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>, Ingo Molnar <mingo@redhat.com>, linux-input@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>, devicetree@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jiri Kosina <jikos@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-gpio@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.orgH
 List-Id: linux-gpio@vger.kernel.org
 
-The Tegra194 contains the same ethernet controller as the Tegra186.
-Add the device tree node for it, and correspondingly the PHY node
-on the board device tree.
-
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 20 ++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi       | 22 ++++++++++++++++++++++
- 2 files changed, 42 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-index 40d688f7de1c..7f2563b78bc7 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-@@ -27,6 +27,26 @@
- 	};
- 
- 	cbb {
-+		ethernet@2490000 {
-+			status = "okay";
-+
-+			phy-reset-gpios = <&gpio TEGRA194_MAIN_GPIO(G, 5) GPIO_ACTIVE_LOW>;
-+			phy-handle = <&phy>;
-+			phy-mode = "rgmii";
-+
-+			mdio {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				phy: phy@0 {
-+					compatible = "ethernet-phy-ieee802.3-c22";
-+					reg = <0x0>;
-+					interrupt-parent = <&gpio>;
-+					interrupts = <TEGRA194_MAIN_GPIO(G, 4) IRQ_TYPE_LEVEL_LOW>;
-+				};
-+			};
-+		};
-+
- 		serial@3110000 {
- 			status = "okay";
- 		};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index abe2d688eb65..11666ceb3a24 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -35,6 +35,28 @@
- 			gpio-controller;
- 		};
- 
-+		ethernet@2490000 {
-+			compatible = "nvidia,tegra186-eqos",
-+				     "snps,dwc-qos-ethernet-4.10";
-+			reg = <0x02490000 0x10000>;
-+			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&bpmp TEGRA194_CLK_AXI_CBB>,
-+				 <&bpmp TEGRA194_CLK_EQOS_AXI>,
-+				 <&bpmp TEGRA194_CLK_EQOS_RX>,
-+				 <&bpmp TEGRA194_CLK_EQOS_TX>,
-+				 <&bpmp TEGRA194_CLK_EQOS_PTP_REF>;
-+			clock-names = "master_bus", "slave_bus", "rx", "tx", "ptp_ref";
-+			resets = <&bpmp TEGRA194_RESET_EQOS>;
-+			reset-names = "eqos";
-+			status = "disabled";
-+
-+			snps,write-requests = <1>;
-+			snps,read-requests = <3>;
-+			snps,burst-map = <0x7>;
-+			snps,txpbl = <16>;
-+			snps,rxpbl = <8>;
-+		};
-+
- 		uarta: serial@3100000 {
- 			compatible = "nvidia,tegra194-uart", "nvidia,tegra20-uart";
- 			reg = <0x03100000 0x40>;
--- 
-2.16.1
+T24gRnJpLCBKdW4gMTUsIDIwMTggYXQgMDE6MzA6MzJQTSAtMDMwMCwgTWF1cm8gQ2FydmFsaG8g
+Q2hlaGFiIHdyb3RlOgo+IFRoZSBzY3JpcHQ6Cj4gCS4vc2NyaXB0cy9kb2N1bWVudGF0aW9uLWZp
+bGUtcmVmLWNoZWNrIC0tZml4Cj4gCj4gR2l2ZXMgbXVsdGlwbGUgaGludHMgZm9yIGJyb2tlbiBy
+ZWZlcmVuY2VzIG9uIHNvbWUgZmlsZXMuCj4gTWFudWFsbHkgdXNlIHRoZSBvbmUgdGhhdCBhcHBs
+aWVzIGZvciBzb21lIGZpbGVzLgo+IAo+IEFja2VkLWJ5OiBTdGV2ZW4gUm9zdGVkdCAoVk13YXJl
+KSA8cm9zdGVkdEBnb29kbWlzLm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBNYXVybyBDYXJ2YWxobyBD
+aGVoYWIgPG1jaGVoYWIrc2Ftc3VuZ0BrZXJuZWwub3JnPgo+IC0tLQo+ICBEb2N1bWVudGF0aW9u
+L0FCSS9vYnNvbGV0ZS9zeXNmcy1ncGlvICAgICAgICAgICAgICAgICAgICAgfCAyICstCj4gIC4u
+Li9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL3RkYTk5OHgudHh0ICAgICAgICB8
+IDIgKy0KCkFja2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPgoKPiAgRG9jdW1l
+bnRhdGlvbi90cmFjZS9ldmVudHMucnN0ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMiAr
+LQo+ICBEb2N1bWVudGF0aW9uL3RyYWNlL3RyYWNlcG9pbnQtYW5hbHlzaXMucnN0ICAgICAgICAg
+ICAgICAgfCAyICstCj4gIERvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL1N1Ym1pdHRp
+bmdEcml2ZXJzICAgICAgICB8IDIgKy0KPiAgRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhf
+Q04vZ3Bpby50eHQgICAgICAgICAgICAgICAgIHwgNCArKy0tCj4gIE1BSU5UQUlORVJTICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDIgKy0KPiAgZHJpdmVy
+cy9oaWQvdXNiaGlkL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMiAr
+LQo+ICBkcml2ZXJzL2lucHV0L0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgfCA0ICsrLS0KPiAgZHJpdmVycy9pbnB1dC9qb3lzdGljay9LY29uZmlnICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHwgNCArKy0tCj4gIGRyaXZlcnMvaW5wdXQvam95c3RpY2svaWZv
+cmNlL0tjb25maWcgICAgICAgICAgICAgICAgICAgICB8IDQgKystLQo+ICBkcml2ZXJzL2lucHV0
+L3NlcmlvL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCA0ICsrLS0KPiAg
+ZHJpdmVycy9zdGFnaW5nL2ZzbC1tYy9idXMvZHBpby9kcGlvLWRyaXZlci50eHQgICAgICAgICAg
+IHwgMiArLQo+ICBkcml2ZXJzL3ZpZGVvL2ZiZGV2L3NrZWxldG9uZmIuYyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgfCA4ICsrKystLS0tCj4gIGluY2x1ZGUvbGludXgvdHJhY2Vwb2ludC5oICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDIgKy0KPiAgc2VjdXJpdHkvZGV2aWNlX2Nn
+cm91cC5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgMiArLQo+ICAxNiBmaWxl
+cyBjaGFuZ2VkLCAyNCBpbnNlcnRpb25zKCspLCAyNCBkZWxldGlvbnMoLSkKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
