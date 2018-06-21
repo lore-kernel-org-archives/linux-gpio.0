@@ -1,73 +1,78 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.18 take one
-Date: Thu, 21 Jun 2018 19:19:15 +0200
-Message-ID: <CACRpkdZP_WZ1PHWtW1bjAKa8kP08UWyt6WJ7cUxxYpfQooegEg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH v2 01/10] ARM: OMAP1: ams-delta: drop GPIO lookup table for serio device
+Date: Fri, 22 Jun 2018 00:41:19 +0200
+Message-ID: <20180621224128.17623-1-jmkrzyszt@gmail.com>
+References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180609140224.32606-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: "David S . Miller " <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+GPIO lookup table for ams-delta-serio device was introduced by commit
+0486738928bf ("ARM: OMAP1: ams-delta: add GPIO lookup tables").
+Unfortunately, a follow up patch "Input: ams_delta_serio: use GPIO
+lookup table" was not accepted by subystem maintainer who requested
+conversion of the driver to a platform driver, replacepemnt of IRQ GPIO
+pin with IRQ resource, replacement of GPIO pin providing keyboard power
+with a regulator and removal of remaining GPIO pins from the driver as
+not handled by it.
 
-some fallout in the pin control subsystem in the first
-week after the merge window, some minor fixes so I'd
-like to get it to you ASAP.
+Let's start with removal of the no longer needed GPIO lookup table from
+the board init file.
 
-Please pull it in och glad midsommar!
-Linus Walleij
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+Changelog:
+v2: rebased on v4.18-rc1, no conflicts
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+ arch/arm/mach-omap1/board-ams-delta.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.18-2
-
-for you to fetch changes up to 5f591543a937310e48baf0ee23680be09cdedfb8:
-
-  pinctrl: mt7622: fix a kernel panic when pio don't work as EINT
-controller (2018-06-18 07:55:57 +0200)
-
-----------------------------------------------------------------
-Fixes for v4.18:
-
-- Fix a serious kernel panic on the Mediatek driver with
-  the external interrupt controller.
-
-- Fix an uninitialized compiler warning in the owl
-  (actions) driver.
-
-- Allocation failure in the pinctrl-single driver.
-
-- Pointer overwrite problem in the i.MX driver.
-
-- Fix a small compiler warning.
-
-----------------------------------------------------------------
-Colin Ian King (1):
-      pinctrl: single: Add allocation failure checking of saved_vals
-
-Fabio Estevam (1):
-      pinctrl: devicetree: Fix pctldev pointer overwrite
-
-Geert Uytterhoeven (1):
-      pinctrl: actions: Fix uninitialized error in owl_pin_config_set()
-
-Sean Wang (1):
-      pinctrl: mt7622: fix a kernel panic when pio don't work as EINT controller
-
-Wei Yongjun (1):
-      pinctrl: mediatek: remove redundant return value check of
-platform_get_resource()
-
- drivers/pinctrl/actions/pinctrl-owl.c         |  2 +-
- drivers/pinctrl/devicetree.c                  |  7 +++++--
- drivers/pinctrl/mediatek/pinctrl-mt7622.c     |  6 +++++-
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c |  5 -----
- drivers/pinctrl/pinctrl-single.c              | 14 +++++++++++---
- 5 files changed, 22 insertions(+), 12 deletions(-)
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index 80f54cb54276..18e0ff437b27 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -504,20 +504,6 @@ static struct platform_device cx20442_codec_device = {
+ 	.id     = -1,
+ };
+ 
+-static struct gpiod_lookup_table ams_delta_serio_gpio_table = {
+-	.table = {
+-		GPIO_LOOKUP(OMAP_GPIO_LABEL, AMS_DELTA_GPIO_PIN_KEYBRD_DATA,
+-			    "data", 0),
+-		GPIO_LOOKUP(OMAP_GPIO_LABEL, AMS_DELTA_GPIO_PIN_KEYBRD_CLK,
+-			    "clock", 0),
+-		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_KEYBRD_PWR,
+-			    "power", 0),
+-		GPIO_LOOKUP(LATCH2_LABEL, LATCH2_PIN_KEYBRD_DATAOUT,
+-			    "dataout", 0),
+-		{ },
+-	},
+-};
+-
+ static struct platform_device *ams_delta_devices[] __initdata = {
+ 	&latch1_gpio_device,
+ 	&latch2_gpio_device,
+@@ -534,7 +520,6 @@ static struct platform_device *late_devices[] __initdata = {
+ 
+ static struct gpiod_lookup_table *ams_delta_gpio_tables[] __initdata = {
+ 	&ams_delta_audio_gpio_table,
+-	&ams_delta_serio_gpio_table,
+ };
+ 
+ static struct gpiod_lookup_table *late_gpio_tables[] __initdata = {
+@@ -580,10 +565,6 @@ static void __init ams_delta_init(void)
+ 	 */
+ 	ams_delta_audio_gpio_table.dev_id =
+ 			dev_name(&ams_delta_audio_device.dev);
+-	/*
+-	 * No device name is assigned to GPIO lookup table for serio device
+-	 * as long as serio driver is not converted to platform device driver.
+-	 */
+ 
+ 	gpiod_add_lookup_tables(ams_delta_gpio_tables,
+ 				ARRAY_SIZE(ams_delta_gpio_tables));
+-- 
+2.16.4
