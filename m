@@ -1,77 +1,73 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH 1/3] pinctrl: msm: Really mask level interrupts to prevent
- latching
-Date: Thu, 21 Jun 2018 08:14:12 -0700
-Message-ID: <152959405220.16708.279861218299564639@swboyd.mtv.corp.google.com>
-References: <20180618205255.246104-1-swboyd@chromium.org>
- <20180618205255.246104-2-swboyd@chromium.org>
- <20180620064509.GL15126@tuxbook-pro>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.18 take one
+Date: Thu, 21 Jun 2018 19:19:15 +0200
+Message-ID: <CACRpkdZP_WZ1PHWtW1bjAKa8kP08UWyt6WJ7cUxxYpfQooegEg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180620064509.GL15126@tuxbook-pro>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Doug Anderson <dianders@chromium.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Bjorn Andersson (2018-06-19 23:45:09)
-> On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
-> > @@ -647,6 +660,10 @@ static void msm_gpio_irq_unmask(struct irq_data *d)
-> >       raw_spin_lock_irqsave(&pctrl->lock, flags);
-> >  =
+Hi Linus,
 
-> >       val =3D readl(pctrl->regs + g->intr_cfg_reg);
-> > +     if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
-> > +             val |=3D BIT(g->intr_raw_status_bit);
-> > +             writel(val, pctrl->regs + g->intr_cfg_reg);
-> > +     }
-> >       val |=3D BIT(g->intr_enable_bit);
-> >       writel(val, pctrl->regs + g->intr_cfg_reg);
-> =
+some fallout in the pin control subsystem in the first
+week after the merge window, some minor fixes so I'd
+like to get it to you ASAP.
 
-> I looked at the TLMM documentation, which states that the status bit
-> should be cleared after handling the interrupt and this driver used to
-> do this.
+Please pull it in och glad midsommar!
+Linus Walleij
 
-Nice!
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
-> =
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
 
-> But Timur managed to hit the race where we lost edge triggered
-> interrupts with this behavior, so we changed it in the following commit:
-> =
+are available in the Git repository at:
 
-> a6566710adaa ("pinctrl: qcom: Don't clear status bit on irq_unmask")
-> =
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.18-2
 
-> =
+for you to fetch changes up to 5f591543a937310e48baf0ee23680be09cdedfb8:
 
-> But the reason that I had this in the driver originally is that msm-3.10
-> does this (clear status bit in unmask), so perhaps the appropriate way
-> to solve is to follow the documentation and the downstream driver and
-> ack the interrupt in unmask - but do so only for level triggered
-> interrupts?
-> =
+  pinctrl: mt7622: fix a kernel panic when pio don't work as EINT
+controller (2018-06-18 07:55:57 +0200)
 
+----------------------------------------------------------------
+Fixes for v4.18:
 
-Clearing the status bit (basically acking the gpio irq) can be done in
-unmask for level triggered interrupts. That works and as you say it's
-even documented.
+- Fix a serious kernel panic on the Mediatek driver with
+  the external interrupt controller.
 
-I didn't implement that because it felt better to prevent the status
-from latching in the hardware while the interrupt is masked. My
-understanding of irq mask semantics is that the interrupt shouldn't be
-"pending" during the time between mask and unmask and clearing the raw
-status allows us to do that properly without messing with the status bit
-on the unmask path. It also means that the ack operation really does ack
-the irq status bit and cause it to go away. I suppose there is one case
-where I'm wrong though, and that is when the irq is unmasked on irq
-startup where we don't want to see a spurious latched level interrupt
-that occurred before we booted.
+- Fix an uninitialized compiler warning in the owl
+  (actions) driver.
 
-That problem may be possible with bad bootloaders that are leaving some
-status bit latched in there, but also we would want to fix that for edge
-type interrupts too, so we would need to clear the status bit regardless
-of the level on irq startup and hope an edge isn't lost on startup.
+- Allocation failure in the pinctrl-single driver.
+
+- Pointer overwrite problem in the i.MX driver.
+
+- Fix a small compiler warning.
+
+----------------------------------------------------------------
+Colin Ian King (1):
+      pinctrl: single: Add allocation failure checking of saved_vals
+
+Fabio Estevam (1):
+      pinctrl: devicetree: Fix pctldev pointer overwrite
+
+Geert Uytterhoeven (1):
+      pinctrl: actions: Fix uninitialized error in owl_pin_config_set()
+
+Sean Wang (1):
+      pinctrl: mt7622: fix a kernel panic when pio don't work as EINT controller
+
+Wei Yongjun (1):
+      pinctrl: mediatek: remove redundant return value check of
+platform_get_resource()
+
+ drivers/pinctrl/actions/pinctrl-owl.c         |  2 +-
+ drivers/pinctrl/devicetree.c                  |  7 +++++--
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c     |  6 +++++-
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |  5 -----
+ drivers/pinctrl/pinctrl-single.c              | 14 +++++++++++---
+ 5 files changed, 22 insertions(+), 12 deletions(-)
