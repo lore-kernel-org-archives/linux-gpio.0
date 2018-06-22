@@ -1,62 +1,106 @@
-From: <sean.wang@mediatek.com>
-Subject: [PATCH 4/7] pinctrl: mt7622: stop using the deprecated pinctrl_add_gpio_range
-Date: Fri, 22 Jun 2018 11:49:07 +0800
-Message-ID: <098100772163e54fe5ca49576042edbfaf3807a5.1529639050.git.sean.wang@mediatek.com>
-References: <f222c9f488490bd86d35346e725491e1de306ace.1529639050.git.sean.wang@mediatek.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v4 09/10] gpio: Add a driver for Cadence I3C GPIO
+ expander
+Date: Fri, 22 Jun 2018 10:24:41 +0200
+Message-ID: <20180622102441.35856a50@bbrezillon>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+        <20180330074751.25987-10-boris.brezillon@bootlin.com>
+        <CACRpkdY_7mi8GPiopZ9Yg4Y0-AV_SriZe=1yN5is6eH6FUm6Qg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f222c9f488490bd86d35346e725491e1de306ace.1529639050.git.sean.wang@mediatek.com>
+In-Reply-To: <CACRpkdY_7mi8GPiopZ9Yg4Y0-AV_SriZe=1yN5is6eH6FUm6Qg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-mediatek@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>, stable@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+Hi Linus,
 
-If the pinctrl node has the gpio-ranges property, the range will be added
-by the gpio core and doesn't need to be added by the pinctrl driver.
+I realize I never replied to this review.
 
-But for keeping backward compatibility, an explicit pinctrl_add_gpio_range
-is still needed to be called when there is a missing gpio-ranges in pinctrl
-node in old dts files.
+On Thu, 26 Apr 2018 10:44:26 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Cc: stable@vger.kernel.org
-Fixes: d6ed93551320 ("pinctrl: mediatek: add pinctrl driver for MT7622 SoC")
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/pinctrl/mediatek/pinctrl-mt7622.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+> On Fri, Mar 30, 2018 at 9:47 AM, Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> 
+> > Add a driver for Cadence I3C GPIO expander.
+> >
+> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>  
+> 
+> This is pretty much OK, and I don't want to raise the bar
+> even higher for you to get this code into the kernel, so:
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-index 42155d4..055074bb 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-@@ -1508,11 +1508,20 @@ static int mtk_build_gpiochip(struct mtk_pinctrl *hw, struct device_node *np)
- 	if (ret < 0)
- 		return ret;
- 
--	ret = gpiochip_add_pin_range(chip, dev_name(hw->dev), 0, 0,
--				     chip->ngpio);
--	if (ret < 0) {
--		gpiochip_remove(chip);
--		return ret;
-+	/* Just for backward compatible for these old pinctrl nodes without
-+	 * "gpio-ranges" property. Otherwise, called directly from a
-+	 * DeviceTree-supported pinctrl driver is DEPRECATED.
-+	 * Please see Section 2.1 of
-+	 * Documentation/devicetree/bindings/gpio/gpio.txt on how to
-+	 * bind pinctrl and gpio drivers via the "gpio-ranges" property.
-+	 */
-+	if (!of_find_property(np, "gpio-ranges", NULL)) {
-+		ret = gpiochip_add_pin_range(chip, dev_name(hw->dev), 0, 0,
-+					     chip->ngpio);
-+		if (ret < 0) {
-+			gpiochip_remove(chip);
-+			return ret;
-+		}
- 	}
- 
- 	return 0;
--- 
-2.7.4
+Thanks.
+
+> 
+> The following is an observation for future improvement:
+> 
+> > +static int cdns_i3c_gpio_read_reg(struct cdns_i3c_gpio *gpioc, u8 reg,
+> > +                                 u8 *val)
+> > +{
+> > +       struct i3c_priv_xfer xfers[] = {
+> > +               {
+> > +                       .len = sizeof(reg),
+> > +                       .data.out = &reg,
+> > +               },
+> > +               {
+> > +                       .rnw = true,
+> > +                       .len = sizeof(*val),
+> > +                       .data.in = val,
+> > +               },
+> > +       };
+> > +
+> > +       return i3c_device_do_priv_xfers(gpioc->i3cdev, xfers,
+> > +                                       ARRAY_SIZE(xfers));
+> > +}
+> > +
+> > +static int cdns_i3c_gpio_write_reg(struct cdns_i3c_gpio *gpioc, u8 reg,
+> > +                                  u8 val)
+> > +{
+> > +       struct i3c_priv_xfer xfers[] = {
+> > +               {
+> > +                       .len = sizeof(reg),
+> > +                       .data.out = &reg,
+> > +               },
+> > +               {
+> > +                       .len = sizeof(val),
+> > +                       .data.out = &val,
+> > +               },
+> > +       };
+> > +
+> > +       return i3c_device_do_priv_xfers(gpioc->i3cdev, xfers,
+> > +                                       ARRAY_SIZE(xfers));
+> > +}  
+> 
+> This is starting to resemble
+> drivers/base/regmap/regmap-i2c.c
+> 
+> Maybe we should very quickly add regmap-i3c.c as this
+> infrastructre has had a great positive effect on may kernel
+> subsystems.
+
+Yes I considered that too, I was just waiting for at least one
+other user before adding this regmap-i3c implementation.
+
+> 
+> > +static int cdns_i3c_gpio_get_direction(struct gpio_chip *g, unsigned offset)
+> > +{
+> > +       struct cdns_i3c_gpio *gpioc = gpioc_to_cdns_gpioc(g);
+> > +
+> > +       return gpioc->dir & BIT(offset);  
+> 
+> I would:
+> 
+> return !!(gpioc->dir & BIT(offset));
+> 
+> So you clamp it to bit 0.
+
+Will fix that in my v5.
+
+Thanks for your review.
+
+Boris
