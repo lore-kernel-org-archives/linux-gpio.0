@@ -1,57 +1,48 @@
-From: <sean.wang@mediatek.com>
-Subject: [PATCH 2/7] pinctrl: mt7622: fix initialization sequence between eint and gpiochip
-Date: Fri, 22 Jun 2018 11:49:05 +0800
-Message-ID: <989f31608d4a85594d3805f966006e1f607ccde3.1529639050.git.sean.wang@mediatek.com>
+From: <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH 7/7] arm64: dts: mt7622: add earlycon to mt7622-rfb1 board
+Date: Fri, 22 Jun 2018 11:49:10 +0800
+Message-ID: <4a8b1000e7d8979b0c6c6f9836296b7dd382f6cd.1529639050.git.sean.wang@mediatek.com>
 References: <f222c9f488490bd86d35346e725491e1de306ace.1529639050.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f222c9f488490bd86d35346e725491e1de306ace.1529639050.git.sean.wang@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-mediatek@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <f222c9f488490bd86d35346e725491e1de306ace.1529639050.git.sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 
-Because gpichip applied in the driver must depend on mtk eint to implement
-the input data debouncing and the translation between gpio and irq, it's
-better to keep logic consistent with mtk eint being built prior to gpiochip
-being added.
+Add earlycon to mt7622-rfb1 as to know what was going on when a certain
+fault is happening at the early initialization stage.
 
-Cc: stable@vger.kernel.org
-Fixes: e6dabd38d8e7 ("pinctrl: mediatek: add EINT support to MT7622 SoC")
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 ---
- drivers/pinctrl/mediatek/pinctrl-mt7622.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-index 9ad8cb77..e9eba62 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-@@ -1713,17 +1713,17 @@ static int mtk_pinctrl_probe(struct platform_device *pdev)
- 		return err;
- 	}
+diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+index 1ff003e..a747b7b 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+@@ -18,7 +18,7 @@
+ 	compatible = "mediatek,mt7622-rfb1", "mediatek,mt7622";
  
-+	err = mtk_build_eint(hw, pdev);
-+	if (err)
-+		dev_warn(&pdev->dev,
-+			 "Failed to add EINT, but pinctrl still can work\n");
-+
- 	err = mtk_build_gpiochip(hw, pdev->dev.of_node);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to add gpio_chip\n");
- 		return err;
- 	}
+ 	chosen {
+-		bootargs = "console=ttyS0,115200n1 swiotlb=512";
++		bootargs = "earlycon=uart8250,mmio32,0x11002000 console=ttyS0,115200n1 swiotlb=512";
+ 	};
  
--	err = mtk_build_eint(hw, pdev);
--	if (err)
--		dev_warn(&pdev->dev,
--			 "Failed to add EINT, but pinctrl still can work\n");
--
- 	platform_set_drvdata(pdev, hw);
- 
- 	return 0;
+ 	cpus {
 -- 
 2.7.4
