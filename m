@@ -1,79 +1,155 @@
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [RFC] Configure i.MX6 RGMII pad group control registers from
- device tree
-Date: Sun, 24 Jun 2018 04:23:34 +0000
-Message-ID: <AM0PR04MB42111E25172F6068F937ECCB804B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <f5a01de5-fc81-52c1-c2ea-edb77ecff076@ysoft.com>
- <5ab5c58a-dc44-d1bc-2132-8704d05bf1de@ysoft.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v5 01/10] i3c: Add core I3C infrastructure
+Date: Sun, 24 Jun 2018 14:02:10 +0200
+Message-ID: <20180624140210.03416dea@bbrezillon>
+References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
+        <20180622104930.32050-2-boris.brezillon@bootlin.com>
+        <ed1add9b-ba21-d3d3-64c4-44d18af3d133@axentia.se>
+        <20180623121705.1d618c5d@bbrezillon>
+        <d6e37e99-d0d1-bd59-c1be-f462d3086a40@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5ab5c58a-dc44-d1bc-2132-8704d05bf1de@ysoft.com>
-Content-Language: en-US
+In-Reply-To: <d6e37e99-d0d1-bd59-c1be-f462d3086a40@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Duan <fugang.duan@nxp.com>, Frank Li <frank.li@nxp.com>, dl-linux-imx <linux-imx@nxp.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion>
 List-Id: linux-gpio@vger.kernel.org
 
-Q29weSBBbmR5ICYgRnJhbmssDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJv
-bTogTWljaGFsIFZva8OhxI0gW21haWx0bzptaWNoYWwudm9rYWNAeXNvZnQuY29tXQ0KPiBTZW50
-OiBUdWVzZGF5LCBKdW5lIDEyLCAyMDE4IDExOjEwIFBNDQo+IFRvOiBsaW51eC1ncGlvQHZnZXIu
-a2VybmVsLm9yZw0KPiBDYzogbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBT
-aGF3biBHdW8NCj4gPHNoYXduZ3VvQGtlcm5lbC5vcmc+OyBTYXNjaGEgSGF1ZXIgPGtlcm5lbEBw
-ZW5ndXRyb25peC5kZT47IEZhYmlvDQo+IEVzdGV2YW0gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47
-IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+Ow0KPiBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZzsgQS5zLiBEb25nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT47IEZhYmlvDQo+IEVzdGV2
-YW0gPGZlc3RldmFtQGdtYWlsLmNvbT47IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz47
-DQo+IFN0ZWZhbiBBZ25lciA8c3RlZmFuQGFnbmVyLmNoPjsgUGVuZ3V0cm9uaXggS2VybmVsIFRl
-YW0NCj4gPGtlcm5lbEBwZW5ndXRyb25peC5kZT47IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxl
-aWpAbGluYXJvLm9yZz47IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1Ympl
-Y3Q6IFJlOiBbUkZDXSBDb25maWd1cmUgaS5NWDYgUkdNSUkgcGFkIGdyb3VwIGNvbnRyb2wgcmVn
-aXN0ZXJzIGZyb20NCj4gZGV2aWNlIHRyZWUNCj4gDQo+IE9uIDExLjYuMjAxOCAxNDozNiwgTWlj
-aGFsIFZva8OhxI0gd3JvdGU6DQo+ID4gQWhvaiwNCj4gPg0KPiA+IFRvIGNvbmZpZ3VyZSBpbmRp
-dmlkdWFsIHBhZCdzIGNoYXJhY3RlcmlzdGljcyBvbiBpLk1YNiBTb0MgYSBmc2wscGlucw0KPiA+
-ID0gPFBJTl9GVU5DX0lEIENPTkZJRz4gcHJvcGVydHkgY2FuIGJlIHVzZWQuIElzIHRoZXJlIGFu
-eSBjb252ZW5pZW50DQo+ID4gd2F5IHRvIGNvbmZpZ3VyZSB0aGUgcGFkIGdyb3VwIGNvbnRyb2wg
-cmVnaXN0ZXJzPw0KPiA+DQo+ID4gVGhlIGlzc3VlIGlzIHRoYXQgc29tZSBiaXRzIChERFJfU0VM
-IGFuZCBPRFQpIGluIHRoZSBpbmRpdmlkdWFsIFJHTUlJDQo+ID4gcGFkIGNvbnRyb2wgcmVnaXN0
-ZXJzIGFyZSByZWFkLW9ubHkuIFRvIHR3ZWFrIHRob3NlIHBhcmFtZXRlcnMgKHNpZ25hbA0KPiA+
-IHZvbHRhZ2UgYW5kIHRlcm1pbmF0aW9uIHJlc2lzdG9ycykgb25lIG5lZWQgdG8gd3JpdGUgdG8g
-dGhlIHBhZCBncm91cA0KPiA+IGNvbnRyb2wgcmVnaXN0ZXJzIGZvciB0aGUgd2hvbGUgUkdNSUkg
-cGFkIGdyb3VwLiBOYW1lbHkNCj4gPiBJT01VWENfU1dfUEFEX0NUTF9HUlBfRERSX1RZUEVfUkdN
-SUkgYW5kDQo+ID4gSU9NVVhDX1NXX1BBRF9DVExfR1JQX1JHTUlJX1RFUk0uIFRoZSBncm91cCBy
-ZWdpc3RlcnMgaW4gZ2VuZXJhbA0KPiBhcmUgbm90IGFjY2Vzc2libGUgZnJvbSB0aGUgbGlzdCBp
-biBhcmNoL2FybS9ib290L2R0cy9pbXg2ZGwtcGluZnVuYy5oLg0KPiA+DQo+ID4gSSBjb3VsZCBu
-b3QgZmluZCBhbnkgb3RoZXIgd2F5IHRvIGNoYW5nZSB0aGUgZ3JvdXAgcmVnaXN0ZXJzIHRoYW4N
-Cj4gPiBoYWNraW5nLWluIHNvbWUgbGluZXMgaW50byB0aGUgaW14NnFfaW5pdF9tYWNoaW5lKHZv
-aWQpIGZ1bmN0aW9uIGluDQo+ID4gYXJjaC9hcm0vbWFjaC1pbXgvbWFjaC1pbXg2cS5jIHNvdXJj
-ZS4gQXMgSSB3b3JrIHRvd2FyZHMgdXBzdHJlYW1pbmcNCj4gPiBteSBib2FyZCB0aGlzIHNob3Vs
-ZCBiZSBkb25lIGZyb20gbXkgZGV2aWNlIHRyZWUgb3Igc29sdmVkIGluIHNvbWUNCj4gdW5pdmVy
-c2FsIHdheS4NCj4gPg0KPiA+IEFueSBoaW50cyB3aWxsIGJlIG11Y2ggYXBwcmVjaWF0ZWQuDQo+
-ID4gTWljaGFsDQo+IA0KPiBJIGZpZ3VyZWQgb3V0IHRoaXMgaXMgbW9yZSAicGluY3RybC1pbXgu
-YyIgdGhhbiAiZGV2aWNlLXRyZWUiIHJlbGF0ZWQgc28gSSBhbQ0KPiBraW5kbHkgYWRkaW5nIG1h
-aW50YWluZXJzIG9mIHRoYXQgZmlsZSBpbiBob3BlIHNvbWVib2R5IHdpbGwgc2hlZCBzb21lIGxp
-Z2h0DQo+IHRvIGl0Lg0KPiANCj4gSSBhbSBkaXZpbmcgZGVlcGVyIGludG8gdGhlIGNvZGUgYW5k
-IGl0IHNlZW1zIHRoZXJlIHJlYWxseSBpcyBubyBnZW5lcmljDQo+IG9wdGlvbiB0byBzZXQgdGhl
-IGkuTVg2IHBhZCBncm91cCBjb250cm9sIHJlZ2lzdGVycyBmcm9tIGRldmljZSB0cmVlLg0KPiBP
-ciBhbSBJIGxvb2tpbmcgYXQgdGhlIHByb2JsZW0gZnJvbSBhIHdyb25nIGFuZ2xlPw0KPiANCg0K
-WWVzLCB0aGVyZSdzIGEgZmV3IHNwZWNpYWwgcGFkIGdyb3VwIGN0cmwgcmVnaXN0ZXJzIChlLmcu
-IERSQU0gYW5kIFJHTUlJIGZvciBteDZxKQ0Kd2hpY2ggYXJlIG5vdCBhZGRlZCBJbiB0aGUgcGlu
-Y3RybCBkcml2ZXIgc3VwcG9ydC4NCg0KPiBIb3cgc2hvdWxkIHdlIGRlYWwgd2l0aCBib2FyZHMg
-dGhhdCBuZWVkIHRvIGNvbmZpZ3VyZSBzb21lIHBhZA0KPiBjaGFyYWN0ZXJpc3RpY3MgYXZhaWxh
-YmxlIG9ubHkgdGhyb3VnaCB0aGUgcGFkIGdyb3VwIGNvbnRyb2wgcmVnaXN0ZXJzPw0KPiANCg0K
-QW5keSwNCkhvdyBkbyB3ZSBoYW5kbGUgaXQgaW50ZXJuYWxseT8NCg0KPiBJIGFsc28gcmFpc2Vk
-IHRoaXMgcXVlc3Rpb24gYXQgdGhlIE5YUCBjb21tdW5pdHkgZm9ydW0gWzFdIGFuZCBnZXQgcXVp
-dGUNCj4gdW5zYXRpc2Z5aW5nIGFuc3dlciBzbyBmYXIuIEkgd291bGQgbG92ZSB0byBmaW5kL2lt
-cGxlbWVudCBhIHByb3BlciBhbmQNCj4gdW5pdmVyc2FsIHNvbHV0aW9uLg0KPiANCg0KVGhlcmUn
-cmUgcHJvYmFibHkgdHdvIHdheXMgdG8gZG8gaXQ6DQoxKSBoYW5kbGUgaXQgaW4gZmVjIGRyaXZl
-ciBieSBwYXJzaW5nIGEgc3BlY2lmaWMgcHJvcGVydHkNCjIpIEFkZCBhIG5ldyBwYWQgZ3JvdXAg
-aW50byBwaW5jdHJsIGRyaXZlciBzdXBwb3J0DQplLmcuDQpNWDZRX1BBRF9DVExfR1JQX1JHTUlJ
-X1RFUk0NCk1YNlFfUEFEX0NUTF9HUlBfRERSX1RZUEVfUkdNSUkNCg0KSSBtYXkgcHJlZmVyIHRv
-IDIpLg0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg0KPiBUaGFua3MgaW4gYWR2YW5jZSBmb3Ig
-eW91ciB0aW1lLA0KPiBNaWNoYWwNCj4gDQo+IFsxXQ0KPiBodHRwczovL2VtZWEwMS5zYWZlbGlu
-a3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJsPWh0dHBzJTNBJTJGJTJGY28NCj4gbW11bml0
-eS5ueHAuY29tJTJGdGhyZWFkJTJGNDc3NDY0JmRhdGE9MDIlN0MwMSU3Q2Fpc2hlbmcuZG9uZyU0
-DQo+IDBueHAuY29tJTdDYTNlNTQ2M2ViMDZhNDdmMTEyMTAwOGQ1ZDA3NjhhMDQlN0M2ODZlYTFk
-M2JjMmI0YzZmYTkNCj4gMmNkOTljNWMzMDE2MzUlN0MwJTdDMSU3QzYzNjY0NDEyOTkxNDE2MjQ5
-NSZzZGF0YT14cXRCUzh1WCUyQlN6cQ0KPiA1bTZ0Yk5hTHpDa0I3ZXpnSFNueXU5R1EzSzEzY1c4
-JTNEJnJlc2VydmVkPTANCg==
+On Sat, 23 Jun 2018 23:40:36 +0200
+Peter Rosin <peda@axentia.se> wrote:
+
+> On 2018-06-23 12:17, Boris Brezillon wrote:
+> > Hi Peter,
+> > 
+> > On Fri, 22 Jun 2018 23:35:34 +0200
+> > Peter Rosin <peda@axentia.se> wrote:
+> >   
+> >> On 2018-06-22 12:49, Boris Brezillon wrote:  
+> >>> Add core infrastructure to support I3C in Linux and document it.
+> >>>
+> >>> This infrastructure is not complete yet and will be extended over
+> >>> time.
+> >>>
+> >>> There are a few design choices that are worth mentioning because they
+> >>> impact the way I3C device drivers can interact with their devices:
+> >>>
+> >>> - all functions used to send I3C/I2C frames must be called in
+> >>>   non-atomic context. Mainly done this way to ease implementation, but
+> >>>   this is still open to discussion. Please let me know if you think
+> >>>   it's worth considering an asynchronous model here
+> >>> - the bus element is a separate object and is not implicitly described
+> >>>   by the master (as done in I2C). The reason is that I want to be able
+> >>>   to handle multiple master connected to the same bus and visible to
+> >>>   Linux.
+> >>>   In this situation, we should only have one instance of the device and
+> >>>   not one per master, and sharing the bus object would be part of the
+> >>>   solution to gracefully handle this case.
+> >>>   I'm not sure we will ever need to deal with multiple masters
+> >>>   controlling the same bus and exposed under Linux, but separating the
+> >>>   bus and master concept is pretty easy, hence the decision to do it
+> >>>   like that.
+> >>>   The other benefit of separating the bus and master concepts is that
+> >>>   master devices appear under the bus directory in sysfs.    
+> >>
+> >> Are bus multiplexers relevant to I3C?  
+> > 
+> > Not yet, but who knows.
+> >   
+> >> The locking needed for handling
+> >> muxes for I2C is, well, convoluted...  
+> > 
+> > Do you remember what was the problem?
+> > 
+> > Anyway, I'd really like to have basic support upstreamed before we
+> > start considering advanced use cases that do not exist yet. Don't get
+> > me wrong, I'm not against having the multiplexer/locking discussion,
+> > but it should not block inclusion of the I3C subsystem.  
+> 
+> I'm trying to avoid the unfortunate situation in I2C where there
+> are two slightly incompatible locking schemes for muxes. There's
+> probably nothing to worry about until the first I3C mux is added
+> though. But since I2C devices are supposedly compatible with I3C
+> that might be the case from day one?
+
+The I²C backward compatibility is implemented in a pretty simple way, so
+I don't think you'll have problems coming from the I3C part on this
+(unless it needs special hooks in i2c_adapter to work properly). This
+being said, if the I2C framework is already not able to properly
+handle the cases you describe below, the I3C layer won't solve
+that :-P. 
+
+> 
+> ---
+> 
+> If I read your code right, I3C client drivers will typically call
+> i3c_device_do_priv_xfer (instead of i2c_transfer/i2c_smbus_xfer)
+> and i3c_device_do_prov_xfer will grab the i3c_bus_normaluse_lock
+> during the transfer. This seems equivalent to normal use in
+> I2C with i2c_transfer/i2c_smbus_xfer.
+
+Note that the bus lock is a read/write lock which is mostly taken in
+read mode (AKA normaluse mode). The only situation where it's taken in
+write mode (AKA maintenance mode) is when a bus maintenance operation is
+done. In this case, we need to block all future transfers, because
+maintenance operations might change dynamic device addresses, which
+would make future transfers irrelevant if they were queued before the
+maintenance operation is finished. 
+
+The bus lock does not guarantee proper serialization of bus accesses.
+This task is left to the controller drivers, since this is what they
+tend to optimize (by queuing transfers at the HW level).
+
+> 
+> When muxes are thrown into the mix, you find yourself needing to
+> do more than the "real" transfer with some lock held. In I2C there
+> is an unlocked __i2c_transfer, and locking/unlocking is exposed.
+> Muxes typically grab the lock, set the mux in the appropriate
+> position, do an unlocked __i2c_transfer, optionally sets the mux
+> in some default position and then lets go of the lock. See e.g.
+> i2c/muxes/i2c-mux-pca954x.c
+> 
+> However, that is the simple case. There are also muxes that are
+> controlled with GPIO pins, and that gets hairy if the GPIO pins
+> are controlled from the same I2C bus that is muxed. The GPIO
+> driver would have to know that some GPIO pins need to use unlocked
+> I2C transfers for that to work with the above locking scheme. And
+> no GPIO driver does not want to know about that at all. I.e. you
+> have two fundamentally different requirement depending on if the
+> GPIO pins controlling the mux are controlled using the muxed bus
+> or if the pins are controlled in some completely unrelated way.
+> The latter case is probably the normal case, with the GPIO mux
+> controlled directly from some SoC pins. In the latter case you
+> also want to prevent any transfer on the bus while the GPIO pins
+> for the mux are changing, i.e. the total opposite of the former
+> case. It gets really really hairy if you have multiple levels
+> of muxes...
+> 
+> There are a some old drivers (e.g. i2c/busses/i2c-amd756-s4882.c)
+> that handles this by simply bypassing the GPIO subsystem, but
+> that is not really an option if some pins are used to mux the
+> I2C bus while some pins are used for other things.
+
+I see.
+
+> 
+> I don't know if this affects I3C before muxes are added, but I
+> suspect muxes will happen sooner rather than later, since the
+> spec mentions that the bus only support 11 devices maximum. 11
+> don't seem like a lot, and it seems likely that there will be
+> a need to have more devices somehow...
+
+I can't tell, and that's the whole problem here. How can you design a
+solution for something that does not exist yet? Fixing the I2C muxing
+logic, if it needs to be, is something I can understand. But how can you
+envision what I3C muxes (if they ever exist) will look like?
+
+> 
+> But just maybe, in order to not run into the above situation, it
+> needs to be handled right from the start with preparatory and
+> cleanup stages of each transfers, or something?
+
+How about applying this approach to I2C first and see how it flies.
+Changing the I3C framework afterwards (when I3C muxes come in)
+shouldn't be that complicated.
