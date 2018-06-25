@@ -1,575 +1,471 @@
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 5/5] i2c: Add Actions Semi OWL family S900 I2C driver
-Date: Mon, 25 Jun 2018 12:38:50 +0300
-Message-ID: <CAHp75Vf_JR6scrwnomiu62_x2idgCGH63UdMf2bhfy8VNaijXQ@mail.gmail.com>
-References: <20180623161147.15672-1-manivannan.sadhasivam@linaro.org> <20180623161147.15672-6-manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v2 3/3] pinctrl: actions: Add interrupt support for OWL
+ S900 SoC
+Date: Mon, 25 Jun 2018 12:44:26 +0300
+Message-ID: <CAHp75VdGctz_r7NnnKBGaxVvwooA+nrMpLSUzDbBNWZVXgrWAw@mail.gmail.com>
+References: <20180623045954.6729-1-manivannan.sadhasivam@linaro.org> <20180623045954.6729-4-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180623161147.15672-6-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180623045954.6729-4-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Linus Walleij <linus.walleij@linaro.org>, linux-i2c <linux-i2c@vger.kernel.org>, =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>, Thomas Liau <thomas.liau@actions-semi.com>, jeff.chen@actions-semi.com
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>, Thomas Liau <thomas.liau@actions-semi.com>, jeff.chen@actions-semi.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Jun 23, 2018 at 7:11 PM, Manivannan Sadhasivam
+On Sat, Jun 23, 2018 at 7:59 AM, Manivannan Sadhasivam
 <manivannan.sadhasivam@linaro.org> wrote:
-> Add Actions Semi OWL family S900 I2C driver.
+> Add interrupt support for Actions Semi OWL S900 SoC.
 >
+
+FWIW,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
 > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->  drivers/i2c/busses/Kconfig   |   7 +
->  drivers/i2c/busses/Makefile  |   1 +
->  drivers/i2c/busses/i2c-owl.c | 459 +++++++++++++++++++++++++++++++++++
->  3 files changed, 467 insertions(+)
->  create mode 100644 drivers/i2c/busses/i2c-owl.c
+>  drivers/pinctrl/actions/Kconfig        |   1 +
+>  drivers/pinctrl/actions/pinctrl-owl.c  | 271 ++++++++++++++++++++++++-
+>  drivers/pinctrl/actions/pinctrl-owl.h  |  22 +-
+>  drivers/pinctrl/actions/pinctrl-s900.c |  31 +--
+>  4 files changed, 307 insertions(+), 18 deletions(-)
 >
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index 4f8df2ec87b1..2062da17e33b 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -762,6 +762,13 @@ config I2C_OMAP
->           Like OMAP1510/1610/1710/5912 and OMAP242x.
->           For details see http://www.ti.com/omap.
+> diff --git a/drivers/pinctrl/actions/Kconfig b/drivers/pinctrl/actions/Kconfig
+> index 490927b4ea76..2397cb0f6011 100644
+> --- a/drivers/pinctrl/actions/Kconfig
+> +++ b/drivers/pinctrl/actions/Kconfig
+> @@ -5,6 +5,7 @@ config PINCTRL_OWL
+>         select PINCONF
+>         select GENERIC_PINCONF
+>         select GPIOLIB
+> +       select GPIOLIB_IRQCHIP
+>         help
+>           Say Y here to enable Actions Semi OWL pinctrl driver
 >
-> +config I2C_OWL
-> +       tristate "OWL I2C Controller"
-> +       depends on ARCH_ACTIONS || COMPILE_TEST
-> +       help
-> +         Say Y here if you want to use the I2C bus controller on
-> +         the Actions Semi OWL SoCs.
-> +
->  config I2C_PASEMI
->         tristate "PA Semi SMBus interface"
->         depends on PPC_PASEMI && PCI
-> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-> index 5a869144a0c5..b71618f77880 100644
-> --- a/drivers/i2c/busses/Makefile
-> +++ b/drivers/i2c/busses/Makefile
-> @@ -76,6 +76,7 @@ obj-$(CONFIG_I2C_MXS)         += i2c-mxs.o
->  obj-$(CONFIG_I2C_NOMADIK)      += i2c-nomadik.o
->  obj-$(CONFIG_I2C_OCORES)       += i2c-ocores.o
->  obj-$(CONFIG_I2C_OMAP)         += i2c-omap.o
-> +obj-$(CONFIG_I2C_OWL)          += i2c-owl.o
->  obj-$(CONFIG_I2C_PASEMI)       += i2c-pasemi.o
->  obj-$(CONFIG_I2C_PCA_PLATFORM) += i2c-pca-platform.o
->  obj-$(CONFIG_I2C_PMCMSP)       += i2c-pmcmsp.o
-> diff --git a/drivers/i2c/busses/i2c-owl.c b/drivers/i2c/busses/i2c-owl.c
-> new file mode 100644
-> index 000000000000..53100ddfb3cc
-> --- /dev/null
-> +++ b/drivers/i2c/busses/i2c-owl.c
-> @@ -0,0 +1,459 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * OWL SoC's I2C driver
-> + *
-> + * Copyright (c) 2014 Actions Semi Inc.
-> + * Author: David Liu <liuwei@actions-semi.com>
-> + *
-> + * Copyright (c) 2018 Linaro Ltd.
-> + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/io.h>
-> +
-> +/* I2C registers */
-> +#define OWL_I2C_REG_CTL                (0x0000)
-> +#define OWL_I2C_REG_CLKDIV     (0x0004)
-> +#define OWL_I2C_REG_STAT       (0x0008)
-> +#define OWL_I2C_REG_ADDR       (0x000C)
-> +#define OWL_I2C_REG_TXDAT      (0x0010)
-> +#define OWL_I2C_REG_RXDAT      (0x0014)
-> +#define OWL_I2C_REG_CMD                (0x0018)
-> +#define OWL_I2C_REG_FIFOCTL    (0x001C)
-> +#define OWL_I2C_REG_FIFOSTAT   (0x0020)
-> +#define OWL_I2C_REG_DATCNT     (0x0024)
-> +#define OWL_I2C_REG_RCNT       (0x0028)
-
-I don't understand why these have parents?
-
-> +
-> +/* I2Cx_CTL Bit Mask */
-> +#define OWL_I2C_CTL_RB         BIT(1)
-> +#define OWL_I2C_CTL_GBCC(x)    (((x) & 0x3) << 2)
-> +#define        OWL_I2C_CTL_GBCC_NONE   OWL_I2C_CTL_GBCC(0)
-> +#define        OWL_I2C_CTL_GBCC_START  OWL_I2C_CTL_GBCC(1)
-> +#define        OWL_I2C_CTL_GBCC_STOP   OWL_I2C_CTL_GBCC(2)
-> +#define        OWL_I2C_CTL_GBCC_RSTART OWL_I2C_CTL_GBCC(3)
-> +#define OWL_I2C_CTL_IRQE       BIT(5)
-> +#define OWL_I2C_CTL_EN         BIT(7)
-> +#define OWL_I2C_CTL_AE         BIT(8)
-> +#define OWL_I2C_CTL_SHSM       BIT(10)
-> +
-> +#define OWL_I2C_DIV_FACTOR(x)  ((x) & 0xff)
-> +
-> +/* I2Cx_STAT Bit Mask */
-> +#define OWL_I2C_STAT_RACK      BIT(0)
-> +#define OWL_I2C_STAT_BEB       BIT(1)
-> +#define OWL_I2C_STAT_IRQP      BIT(2)
-> +#define OWL_I2C_STAT_LAB       BIT(3)
-> +#define OWL_I2C_STAT_STPD      BIT(4)
-> +#define OWL_I2C_STAT_STAD      BIT(5)
-> +#define OWL_I2C_STAT_BBB       BIT(6)
-> +#define OWL_I2C_STAT_TCB       BIT(7)
-> +#define OWL_I2C_STAT_LBST      BIT(8)
-> +#define OWL_I2C_STAT_SAMB      BIT(9)
-> +#define OWL_I2C_STAT_SRGC      BIT(10)
-> +
-> +/* I2Cx_CMD Bit Mask */
-> +#define OWL_I2C_CMD_SBE                BIT(0)
-> +#define OWL_I2C_CMD_RBE                BIT(4)
-> +#define OWL_I2C_CMD_DE         BIT(8)
-> +#define OWL_I2C_CMD_NS         BIT(9)
-> +#define OWL_I2C_CMD_SE         BIT(10)
-> +#define OWL_I2C_CMD_MSS                BIT(11)
-> +#define OWL_I2C_CMD_WRS                BIT(12)
-> +#define OWL_I2C_CMD_SECL       BIT(15)
-> +
-> +#define OWL_I2C_CMD_AS(x)      (((x) & 0x7) << 1)
-> +#define OWL_I2C_CMD_SAS(x)     (((x) & 0x7) << 5)
-> +
-> +/* I2Cx_FIFOCTL Bit Mask */
-> +#define OWL_I2C_FIFOCTL_NIB    BIT(0)
-> +#define OWL_I2C_FIFOCTL_RFR    BIT(1)
-> +#define OWL_I2C_FIFOCTL_TFR    BIT(2)
-> +
-> +/* I2Cc_FIFOSTAT Bit Mask */
-> +#define OWL_I2C_FIFOSTAT_RNB   BIT(1)
-> +#define OWL_I2C_FIFOSTAT_RFE   BIT(2)
-> +#define OWL_I2C_FIFOSTAT_TFF   BIT(5)
-> +#define OWL_I2C_FIFOSTAT_TFD   GENMASK(23, 16)
-> +#define OWL_I2C_FIFOSTAT_RFD   GENMASK(15, 8)
-> +
-
-> +/* I2C bus timeout */
-> +#define OWL_I2C_TIMEOUT                (msecs_to_jiffies(4 * 1000))
-
-Ditto.
-
-> +
-> +#define OWL_I2C_DEFAULT_SPEED  100000
-> +#define OWL_I2C_MAX_SPEED      400000
-> +
-> +struct owl_i2c_dev {
-> +       struct i2c_adapter      adap;
-> +       struct i2c_msg          *msg;
-> +       struct completion       msg_complete;
-> +       struct clk              *clk;
-> +       void __iomem            *base;
-> +       unsigned long           clk_rate;
-> +       u32                     bus_freq;
-> +       u32                     msg_ptr;
-> +};
-> +
-> +static void owl_i2c_update_reg(void __iomem *base, unsigned int val, bool state)
+> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+> index 76243caa08c6..ce032d71dad5 100644
+> --- a/drivers/pinctrl/actions/pinctrl-owl.c
+> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/err.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/io.h>
+> +#include <linux/irq.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> @@ -45,6 +46,9 @@ struct owl_pinctrl {
+>         struct clk *clk;
+>         const struct owl_pinctrl_soc_data *soc;
+>         void __iomem *base;
+> +       struct irq_chip irq_chip;
+> +       unsigned int num_irq;
+> +       unsigned int *irq;
+>  };
+>
+>  static void owl_update_bits(void __iomem *base, u32 mask, u32 val)
+> @@ -701,10 +705,213 @@ static int owl_gpio_direction_output(struct gpio_chip *chip,
+>         return 0;
+>  }
+>
+> +static void irq_set_type(struct owl_pinctrl *pctrl, int gpio, unsigned int type)
 > +{
-> +       unsigned int regval;
+> +       const struct owl_gpio_port *port;
+> +       void __iomem *gpio_base;
+> +       unsigned long flags;
+> +       unsigned int offset, value, irq_type = 0;
 > +
-> +       regval = readl(base);
+> +       switch (type) {
+> +       case IRQ_TYPE_EDGE_BOTH:
+> +               /*
+> +                * Since the hardware doesn't support interrupts on both edges,
+> +                * emulate it in the software by setting the single edge
+> +                * interrupt and switching to the opposite edge while ACKing
+> +                * the interrupt
+> +                */
+> +               if (owl_gpio_get(&pctrl->chip, gpio))
+> +                       irq_type = OWL_GPIO_INT_EDGE_FALLING;
+> +               else
+> +                       irq_type = OWL_GPIO_INT_EDGE_RISING;
+> +               break;
 > +
-> +       if (state)
-> +               regval |= val;
+> +       case IRQ_TYPE_EDGE_RISING:
+> +               irq_type = OWL_GPIO_INT_EDGE_RISING;
+> +               break;
+> +
+> +       case IRQ_TYPE_EDGE_FALLING:
+> +               irq_type = OWL_GPIO_INT_EDGE_FALLING;
+> +               break;
+> +
+> +       case IRQ_TYPE_LEVEL_HIGH:
+> +               irq_type = OWL_GPIO_INT_LEVEL_HIGH;
+> +               break;
+> +
+> +       case IRQ_TYPE_LEVEL_LOW:
+> +               irq_type = OWL_GPIO_INT_LEVEL_LOW;
+> +               break;
+> +
+> +       default:
+> +               break;
+> +       }
+> +
+> +       port = owl_gpio_get_port(pctrl, &gpio);
+> +       if (WARN_ON(port == NULL))
+> +               return;
+> +
+> +       gpio_base = pctrl->base + port->offset;
+> +
+> +       raw_spin_lock_irqsave(&pctrl->lock, flags);
+> +
+> +       offset = (gpio < 16) ? 4 : 0;
+> +       value = readl_relaxed(gpio_base + port->intc_type + offset);
+> +       value &= ~(OWL_GPIO_INT_MASK << ((gpio % 16) * 2));
+> +       value |= irq_type << ((gpio % 16) * 2);
+> +       writel_relaxed(value, gpio_base + port->intc_type + offset);
+> +
+> +       raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> +}
+> +
+> +static void owl_gpio_irq_mask(struct irq_data *data)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+> +       struct owl_pinctrl *pctrl = gpiochip_get_data(gc);
+> +       const struct owl_gpio_port *port;
+> +       void __iomem *gpio_base;
+> +       unsigned long flags;
+> +       unsigned int gpio = data->hwirq;
+> +       u32 val;
+> +
+> +       port = owl_gpio_get_port(pctrl, &gpio);
+> +       if (WARN_ON(port == NULL))
+> +               return;
+> +
+> +       gpio_base = pctrl->base + port->offset;
+> +
+> +       raw_spin_lock_irqsave(&pctrl->lock, flags);
+> +
+> +       owl_gpio_update_reg(gpio_base + port->intc_msk, gpio, false);
+> +
+> +       /* disable port interrupt if no interrupt pending bit is active */
+> +       val = readl_relaxed(gpio_base + port->intc_msk);
+> +       if (val == 0)
+> +               owl_gpio_update_reg(gpio_base + port->intc_ctl,
+> +                                       OWL_GPIO_CTLR_ENABLE, false);
+> +
+> +       raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> +}
+> +
+> +static void owl_gpio_irq_unmask(struct irq_data *data)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+> +       struct owl_pinctrl *pctrl = gpiochip_get_data(gc);
+> +       const struct owl_gpio_port *port;
+> +       void __iomem *gpio_base;
+> +       unsigned long flags;
+> +       unsigned int gpio = data->hwirq;
+> +       u32 value;
+> +
+> +       port = owl_gpio_get_port(pctrl, &gpio);
+> +       if (WARN_ON(port == NULL))
+> +               return;
+> +
+> +       gpio_base = pctrl->base + port->offset;
+> +       raw_spin_lock_irqsave(&pctrl->lock, flags);
+> +
+> +       /* enable port interrupt */
+> +       value = readl_relaxed(gpio_base + port->intc_ctl);
+> +       value |= BIT(OWL_GPIO_CTLR_ENABLE) | BIT(OWL_GPIO_CTLR_SAMPLE_CLK_24M);
+> +       writel_relaxed(value, gpio_base + port->intc_ctl);
+> +
+> +       /* enable GPIO interrupt */
+> +       owl_gpio_update_reg(gpio_base + port->intc_msk, gpio, true);
+> +
+> +       raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> +}
+> +
+> +static void owl_gpio_irq_ack(struct irq_data *data)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+> +       struct owl_pinctrl *pctrl = gpiochip_get_data(gc);
+> +       const struct owl_gpio_port *port;
+> +       void __iomem *gpio_base;
+> +       unsigned long flags;
+> +       unsigned int gpio = data->hwirq;
+> +
+> +       /*
+> +        * Switch the interrupt edge to the opposite edge of the interrupt
+> +        * which got triggered for the case of emulating both edges
+> +        */
+> +       if (irqd_get_trigger_type(data) == IRQ_TYPE_EDGE_BOTH) {
+> +               if (owl_gpio_get(gc, gpio))
+> +                       irq_set_type(pctrl, gpio, IRQ_TYPE_EDGE_FALLING);
+> +               else
+> +                       irq_set_type(pctrl, gpio, IRQ_TYPE_EDGE_RISING);
+> +       }
+> +
+> +       port = owl_gpio_get_port(pctrl, &gpio);
+> +       if (WARN_ON(port == NULL))
+> +               return;
+> +
+> +       gpio_base = pctrl->base + port->offset;
+> +
+> +       raw_spin_lock_irqsave(&pctrl->lock, flags);
+> +
+> +       owl_gpio_update_reg(gpio_base + port->intc_ctl,
+> +                               OWL_GPIO_CTLR_PENDING, true);
+> +
+> +       raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> +}
+> +
+> +static int owl_gpio_irq_set_type(struct irq_data *data, unsigned int type)
+> +{
+> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+> +       struct owl_pinctrl *pctrl = gpiochip_get_data(gc);
+> +
+> +       if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+> +               irq_set_handler_locked(data, handle_level_irq);
 > +       else
-> +               regval &= ~val;
+> +               irq_set_handler_locked(data, handle_edge_irq);
 > +
-> +       writel(regval, base);
-> +}
-> +
-> +static void owl_i2c_reset(struct owl_i2c_dev *i2c_dev)
-> +{
-> +       unsigned int val;
-> +
-> +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
-> +                               OWL_I2C_CTL_EN, false);
-> +       mdelay(1);
-> +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
-> +                               OWL_I2C_CTL_EN, true);
-> +
-> +       /* Reset FIFO */
-> +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
-> +                               OWL_I2C_FIFOCTL_RFR | OWL_I2C_FIFOCTL_TFR,
-> +                               true);
-> +
-> +       /* Wait until FIFO reset complete */
-> +       do {
-> +               val = readl(i2c_dev->base + OWL_I2C_REG_FIFOCTL);
-> +               if (!(val & (OWL_I2C_FIFOCTL_RFR | OWL_I2C_FIFOCTL_TFR)))
-> +                       break;
-> +       } while (1);
-
-No way. Get rid of infinite loop.
-
-> +
-> +       /* Clear status registers */
-> +       writel(0, i2c_dev->base + OWL_I2C_REG_STAT);
-> +}
-> +
-> +static void owl_i2c_set_freq(struct owl_i2c_dev *i2c_dev)
-> +{
-> +       unsigned int val;
-> +
-> +       val = (i2c_dev->clk_rate + i2c_dev->bus_freq * 16 - 1) /
-> +                               (i2c_dev->bus_freq * 16);
-> +
-> +       /* Set clock divider factor */
-> +       writel(OWL_I2C_DIV_FACTOR(val), i2c_dev->base + OWL_I2C_REG_CLKDIV);
-> +}
-> +
-> +static void owl_i2c_hw_init(struct owl_i2c_dev *i2c_dev)
-> +{
-> +       /* Reset I2C controller */
-> +       owl_i2c_reset(i2c_dev);
-> +
-> +       /* Set bus frequency */
-> +       owl_i2c_set_freq(i2c_dev);
-> +}
-> +
-> +static irqreturn_t owl_i2c_interrupt(int irq, void *_dev)
-> +{
-> +       struct owl_i2c_dev *i2c_dev = _dev;
-> +       struct i2c_msg *msg = i2c_dev->msg;
-> +       unsigned int stat, fifostat;
-> +
-> +       fifostat = readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT);
-> +       if (fifostat & OWL_I2C_FIFOSTAT_RNB) {
-
-> +               dev_warn(&i2c_dev->adap.dev, "received NACK from device");
-
-And if it happens hundreds times in a row?
-
-> +               owl_i2c_reset(i2c_dev);
-> +               goto stop;
-> +       }
-> +
-> +       stat = readl(i2c_dev->base + OWL_I2C_REG_STAT);
-> +       if (stat & OWL_I2C_STAT_BEB) {
-
-> +               dev_warn(&i2c_dev->adap.dev, "bus error");
-
-Ditto.
-
-> +               owl_i2c_reset(i2c_dev);
-> +               goto stop;
-> +       }
-> +
-> +       /* Handle FIFO read */
-> +       if (msg->flags & I2C_M_RD) {
-> +               while ((readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
-> +                               OWL_I2C_FIFOSTAT_RFE) &&
-> +                               (i2c_dev->msg_ptr < msg->len)) {
-> +                       msg->buf[i2c_dev->msg_ptr++] = readl(i2c_dev->base +
-> +                                                       OWL_I2C_REG_RXDAT);
-> +               }
-> +       } else {
-> +               /* Handle the remaining bytes which were not sent */
-> +               while (!(readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
-> +                               OWL_I2C_FIFOSTAT_TFF) &&
-> +                               i2c_dev->msg_ptr < msg->len) {
-> +                       writel(msg->buf[i2c_dev->msg_ptr++], i2c_dev->base +
-> +                                                       OWL_I2C_REG_TXDAT);
-> +               }
-> +       }
-> +
-> +stop:
-> +       /* Clear pending interrupts */
-> +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_STAT,
-> +                               OWL_I2C_STAT_IRQP, true);
-> +
-> +       complete_all(&i2c_dev->msg_complete);
-> +
-> +       return IRQ_HANDLED;
-> +}
-> +
-> +static u32 owl_i2c_func(struct i2c_adapter *adap)
-> +{
-> +       return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-> +}
-> +
-> +static int owl_i2c_check_bus_busy(struct i2c_adapter *adap)
-> +{
-> +       struct owl_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
-> +       unsigned long timeout;
-> +       unsigned int val;
-> +
-> +       timeout = jiffies + OWL_I2C_TIMEOUT;
-
-> +       while (1) {
-
-Red flag!
-
-Use
-
-do {
-...
-} while (time_after(...));
-
-instead.
-
-> +               val = readl(i2c_dev->base + OWL_I2C_REG_STAT);
-> +
-> +               /* Check for Arbitration lost */
-> +               if (val & OWL_I2C_STAT_LAB) {
-> +                       val &= ~OWL_I2C_STAT_LAB;
-> +                       writel(val, i2c_dev->base + OWL_I2C_REG_STAT);
-> +                       return -EAGAIN;
-> +               }
-> +
-> +               /* Check for Bus busy */
-> +               if (!(val & OWL_I2C_STAT_BBB))
-> +                       break;
-> +
-> +               if (time_after(jiffies, timeout)) {
-> +                       dev_err(&adap->dev, "Bus busy timeout");
-> +                       return -ETIMEDOUT;
-> +               }
-> +       }
+> +       irq_set_type(pctrl, data->hwirq, type);
 > +
 > +       return 0;
 > +}
 > +
-> +static int owl_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
-> +                               int num)
+> +static void owl_gpio_irq_handler(struct irq_desc *desc)
 > +{
-> +       struct owl_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
-> +       struct i2c_msg *msg;
-> +       unsigned long time_left;
-> +       unsigned int i2c_cmd;
-> +       unsigned int addr;
-> +       int ret = 0, idx;
+> +       struct owl_pinctrl *pctrl = irq_desc_get_handler_data(desc);
+> +       struct irq_chip *chip = irq_desc_get_chip(desc);
+> +       struct irq_domain *domain = pctrl->chip.irq.domain;
+> +       unsigned int parent = irq_desc_get_irq(desc);
+> +       const struct owl_gpio_port *port;
+> +       void __iomem *base;
+> +       unsigned int pin, irq, offset = 0, i;
+> +       unsigned long pending_irq;
 > +
-> +       owl_i2c_hw_init(i2c_dev);
+> +       chained_irq_enter(chip, desc);
 > +
-> +       ret = owl_i2c_check_bus_busy(adap);
-> +       if (ret)
-> +               return ret;
+> +       for (i = 0; i < pctrl->soc->nports; i++) {
+> +               port = &pctrl->soc->ports[i];
+> +               base = pctrl->base + port->offset;
 > +
-> +       reinit_completion(&i2c_dev->msg_complete);
+> +               /* skip ports that are not associated with this irq */
+> +               if (parent != pctrl->irq[i])
+> +                       goto skip;
 > +
-> +       /* Enable I2C controller interrupt */
-> +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
-> +                               OWL_I2C_CTL_IRQE, true);
+> +               pending_irq = readl_relaxed(base + port->intc_pd);
 > +
-> +       /*
-> +        * Select: FIFO enable, Master mode, Stop enable, Data count enable,
-> +        * Send start bit
-> +        */
-> +       i2c_cmd = (OWL_I2C_CMD_SECL | OWL_I2C_CMD_MSS | OWL_I2C_CMD_SE
-> +                       | OWL_I2C_CMD_NS | OWL_I2C_CMD_DE | OWL_I2C_CMD_SBE);
+> +               for_each_set_bit(pin, &pending_irq, port->pins) {
+> +                       irq = irq_find_mapping(domain, offset + pin);
+> +                       generic_handle_irq(irq);
 > +
-> +       addr = (msgs[0].addr & 0x7f) << 1;
-> +
-> +       /* Handle repeated start condition */
-> +       if (num > 1) {
-> +               /* Set internal address length and enable repeated start */
-> +               i2c_cmd |= (OWL_I2C_CMD_AS(msgs[0].len + 1)
-> +                               | OWL_I2C_CMD_SAS(1) | OWL_I2C_CMD_RBE);
-> +
-> +               /* Write slave address */
-> +               writel(addr, i2c_dev->base + OWL_I2C_REG_TXDAT);
-> +
-> +               /* Write internal register address */
-> +               for (idx = 0; idx < msgs[0].len; idx++)
-> +                       writel(msgs[0].buf[idx], i2c_dev->base +
-> +                                               OWL_I2C_REG_TXDAT);
-> +
-> +               msg = &msgs[1];
-> +       } else {
-> +               /* Set address length */
-> +               i2c_cmd |= OWL_I2C_CMD_AS(1);
-> +               msg = &msgs[0];
-> +       }
-> +
-> +       i2c_dev->msg = msg;
-> +       i2c_dev->msg_ptr = 0;
-> +
-> +       /* Set data count for the message */
-> +       writel(msg->len, i2c_dev->base + OWL_I2C_REG_DATCNT);
-> +
-
-> +       if (msg->flags & I2C_M_RD) {
-> +               writel((addr | 1), i2c_dev->base + OWL_I2C_REG_TXDAT);
-> +       } else {
-> +               writel(addr, i2c_dev->base + OWL_I2C_REG_TXDAT);
-
-Don't we have a helper to construct 8-bit address?
-
-> +
-> +               /* Write data to FIFO */
-> +               for (idx = 0; idx < msg->len; idx++) {
-> +                       /* Check for FIFO full */
-> +                       if (readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT)
-> +                                       & OWL_I2C_FIFOSTAT_TFF)
-> +                               break;
-> +
-> +                       writel(msg->buf[idx],
-> +                                       i2c_dev->base + OWL_I2C_REG_TXDAT);
+> +                       /* clear pending interrupt */
+> +                       owl_gpio_update_reg(base + port->intc_pd, pin, true);
 > +               }
 > +
-> +               i2c_dev->msg_ptr = idx;
+> +skip:
+> +               offset += port->pins;
 > +       }
 > +
-> +       /* Ingore the NACK if needed */
-> +       if (msg->flags & I2C_M_IGNORE_NAK)
-> +               owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
-> +                               OWL_I2C_FIFOCTL_NIB, true);
-> +       else
-> +               owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
-> +                               OWL_I2C_FIFOCTL_NIB, false);
-> +
-> +       /* Start the transfer */
-> +       writel(i2c_cmd, i2c_dev->base + OWL_I2C_REG_CMD);
-> +
-> +       time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-> +                                               adap->timeout);
-> +       if (time_left == 0) {
-> +               dev_err(&adap->dev, "Transaction timed out");
-> +               /* Send stop condition and release the bus */
-> +               owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
-> +                       OWL_I2C_CTL_GBCC_STOP | OWL_I2C_CTL_RB, true);
-> +               ret = -ETIMEDOUT;
-> +       }
-> +
-> +       /* Disable I2C controller */
-> +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
-> +                               OWL_I2C_CTL_EN, false);
-> +
-> +       return i2c_dev->msg_ptr;
+> +       chained_irq_exit(chip, desc);
 > +}
 > +
-> +static const struct i2c_algorithm owl_i2c_algorithm = {
-> +       .master_xfer    = owl_i2c_master_xfer,
-> +       .functionality  = owl_i2c_func
-> +};
+>  static int owl_gpio_init(struct owl_pinctrl *pctrl)
+>  {
+>         struct gpio_chip *chip;
+> -       int ret;
+> +       struct gpio_irq_chip *gpio_irq;
+> +       int ret, i, j, offset;
+>
+>         chip = &pctrl->chip;
+>         chip->base = -1;
+> @@ -714,6 +921,35 @@ static int owl_gpio_init(struct owl_pinctrl *pctrl)
+>         chip->owner = THIS_MODULE;
+>         chip->of_node = pctrl->dev->of_node;
+>
+> +       pctrl->irq_chip.name = chip->of_node->name;
+> +       pctrl->irq_chip.irq_ack = owl_gpio_irq_ack;
+> +       pctrl->irq_chip.irq_mask = owl_gpio_irq_mask;
+> +       pctrl->irq_chip.irq_unmask = owl_gpio_irq_unmask;
+> +       pctrl->irq_chip.irq_set_type = owl_gpio_irq_set_type;
 > +
-> +static const struct i2c_adapter_quirks owl_i2c_quirks = {
-> +       .flags          = I2C_AQ_COMB | I2C_AQ_COMB_WRITE_FIRST,
-> +       .max_read_len   = 240,
-> +       .max_write_len  = 240,
-> +       .max_comb_1st_msg_len = 6,
-> +       .max_comb_2nd_msg_len = 240
-> +};
+> +       gpio_irq = &chip->irq;
+> +       gpio_irq->chip = &pctrl->irq_chip;
+> +       gpio_irq->handler = handle_simple_irq;
+> +       gpio_irq->default_type = IRQ_TYPE_NONE;
+> +       gpio_irq->parent_handler = owl_gpio_irq_handler;
+> +       gpio_irq->parent_handler_data = pctrl;
+> +       gpio_irq->num_parents = pctrl->num_irq;
+> +       gpio_irq->parents = pctrl->irq;
 > +
-> +static int owl_i2c_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct owl_i2c_dev *i2c_dev;
-> +       struct resource *res;
-> +       int ret, irq;
-> +
-> +       i2c_dev = devm_kzalloc(dev, sizeof(*i2c_dev), GFP_KERNEL);
-> +       if (!i2c_dev)
+> +       gpio_irq->map = devm_kcalloc(pctrl->dev, chip->ngpio,
+> +                               sizeof(*gpio_irq->map), GFP_KERNEL);
+> +       if (!gpio_irq->map)
 > +               return -ENOMEM;
 > +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       i2c_dev->base = devm_ioremap_resource(dev, res);
-> +       if (IS_ERR(i2c_dev->base))
-> +               return PTR_ERR(i2c_dev->base);
+> +       for (i = 0, offset = 0; i < pctrl->soc->nports; i++) {
+> +               const struct owl_gpio_port *port = &pctrl->soc->ports[i];
 > +
-> +       irq = platform_get_irq(pdev, 0);
-> +       if (irq < 0) {
-> +               dev_err(dev, "failed to get IRQ number\n");
-> +               return irq;
+> +               for (j = 0; j < port->pins; j++)
+> +                       gpio_irq->map[offset + j] = gpio_irq->parents[i];
+> +
+> +               offset += port->pins;
 > +       }
 > +
-> +       if (of_property_read_u32(dev->of_node, "clock-frequency",
-> +                                       &i2c_dev->bus_freq))
-> +               i2c_dev->bus_freq = OWL_I2C_DEFAULT_SPEED;
-> +
-> +       /* We support only frequencies of 100k and 400k for now */
-> +       if (i2c_dev->bus_freq != OWL_I2C_DEFAULT_SPEED &&
-> +                       i2c_dev->bus_freq > OWL_I2C_MAX_SPEED) {
-> +               dev_err(dev, "invalid clock-frequency %d\n", i2c_dev->bus_freq);
-> +               return -EINVAL;
+>         ret = gpiochip_add_data(&pctrl->chip, pctrl);
+>         if (ret) {
+>                 dev_err(pctrl->dev, "failed to register gpiochip\n");
+> @@ -728,7 +964,7 @@ int owl_pinctrl_probe(struct platform_device *pdev,
+>  {
+>         struct resource *res;
+>         struct owl_pinctrl *pctrl;
+> -       int ret;
+> +       int ret, i;
+>
+>         pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
+>         if (!pctrl)
+> @@ -772,14 +1008,41 @@ int owl_pinctrl_probe(struct platform_device *pdev,
+>                                         &owl_pinctrl_desc, pctrl);
+>         if (IS_ERR(pctrl->pctrldev)) {
+>                 dev_err(&pdev->dev, "could not register Actions OWL pinmux driver\n");
+> -               return PTR_ERR(pctrl->pctrldev);
+> +               ret = PTR_ERR(pctrl->pctrldev);
+> +               goto err_exit;
 > +       }
 > +
-> +       i2c_dev->clk = devm_clk_get(dev, NULL);
-> +       if (IS_ERR(i2c_dev->clk)) {
-> +               dev_err(dev, "failed to get clock\n");
-> +               return PTR_ERR(i2c_dev->clk);
+> +       ret = platform_irq_count(pdev);
+> +       if (ret < 0)
+> +               goto err_exit;
+> +
+> +       pctrl->num_irq = ret;
+> +
+> +       pctrl->irq = devm_kcalloc(&pdev->dev, pctrl->num_irq,
+> +                                       sizeof(*pctrl->irq), GFP_KERNEL);
+> +       if (!pctrl->irq) {
+> +               ret = -ENOMEM;
+> +               goto err_exit;
 > +       }
 > +
-> +       ret = clk_prepare_enable(i2c_dev->clk);
-> +       if (ret)
-> +               return ret;
+> +       for (i = 0; i < pctrl->num_irq ; i++) {
+> +               pctrl->irq[i] = platform_get_irq(pdev, i);
+> +               if (pctrl->irq[i] < 0) {
+> +                       ret = pctrl->irq[i];
+> +                       goto err_exit;
+> +               }
+>         }
+>
+>         ret = owl_gpio_init(pctrl);
+>         if (ret)
+> -               return ret;
+> +               goto err_exit;
+>
+>         platform_set_drvdata(pdev, pctrl);
+>
+>         return 0;
 > +
-> +       i2c_dev->clk_rate = clk_get_rate(i2c_dev->clk);
-> +       if (!i2c_dev->clk_rate) {
-> +               dev_err(dev, "input clock rate should not be zero\n");
-> +               ret = -EINVAL;
-> +               goto disable_clk;
-> +       }
-> +
-> +       init_completion(&i2c_dev->msg_complete);
-> +       i2c_dev->adap.owner = THIS_MODULE;
-> +       i2c_dev->adap.algo = &owl_i2c_algorithm;
-> +       i2c_dev->adap.timeout = OWL_I2C_TIMEOUT;
-> +       i2c_dev->adap.quirks = &owl_i2c_quirks;
-> +       i2c_dev->adap.dev.parent = dev;
-> +       i2c_dev->adap.dev.of_node = dev->of_node;
-> +       snprintf(i2c_dev->adap.name, sizeof(i2c_dev->adap.name),
-> +                       "%s", "OWL I2C adapter");
-> +       i2c_set_adapdata(&i2c_dev->adap, i2c_dev);
-> +
-> +       platform_set_drvdata(pdev, i2c_dev);
-> +
-> +       ret = devm_request_irq(dev, irq, owl_i2c_interrupt, 0, pdev->name,
-> +                               i2c_dev);
-> +       if (ret) {
-> +               dev_err(dev, "failed to request irq %d\n", irq);
-> +               goto disable_clk;
-> +       }
-> +
-
-> +       ret = i2c_add_adapter(&i2c_dev->adap);
-> +disable_clk:
-> +       if (ret)
-> +               clk_disable_unprepare(i2c_dev->clk);
+> +err_exit:
+> +       clk_disable_unprepare(pctrl->clk);
 > +
 > +       return ret;
-
-
-Can't we go with more usual patter, i.e.
-
-ret = ...;
-if (ret)
- goto err_handling;
-
-return 0;
-
-err_handling:
- ...
-return ret;
-
-?
-
-> +}
+>  }
+> diff --git a/drivers/pinctrl/actions/pinctrl-owl.h b/drivers/pinctrl/actions/pinctrl-owl.h
+> index 74342378937c..a724d1d406d4 100644
+> --- a/drivers/pinctrl/actions/pinctrl-owl.h
+> +++ b/drivers/pinctrl/actions/pinctrl-owl.h
+> @@ -29,6 +29,18 @@ enum owl_pinconf_drv {
+>         OWL_PINCONF_DRV_12MA,
+>  };
+>
+> +/* GPIO CTRL Bit Definition */
+> +#define OWL_GPIO_CTLR_PENDING          0
+> +#define OWL_GPIO_CTLR_ENABLE           1
+> +#define OWL_GPIO_CTLR_SAMPLE_CLK_24M   2
 > +
-> +static const struct of_device_id owl_i2c_of_match[] = {
-> +       {.compatible = "actions,s900-i2c"},
-> +       { /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, owl_i2c_of_match);
+> +/* GPIO TYPE Bit Definition */
+> +#define OWL_GPIO_INT_LEVEL_HIGH                0
+> +#define OWL_GPIO_INT_LEVEL_LOW         1
+> +#define OWL_GPIO_INT_EDGE_RISING       2
+> +#define OWL_GPIO_INT_EDGE_FALLING      3
+> +#define OWL_GPIO_INT_MASK              3
 > +
-> +static struct platform_driver owl_i2c_driver = {
-> +       .probe          = owl_i2c_probe,
-> +       .driver         = {
-> +               .name   = "owl-i2c",
-> +               .of_match_table = of_match_ptr(owl_i2c_of_match),
-> +       },
-> +};
-> +module_platform_driver(owl_i2c_driver);
-> +
-> +MODULE_AUTHOR("David Liu <liuwei@actions-semi.com>");
-> +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
-> +MODULE_DESCRIPTION("Actions Semi OWL SoCs I2C driver");
-> +MODULE_LICENSE("GPL");
+>  /**
+>   * struct owl_pullctl - Actions pad pull control register
+>   * @reg: offset to the pull control register
+> @@ -121,6 +133,10 @@ struct owl_pinmux_func {
+>   * @outen: offset of the output enable register.
+>   * @inen: offset of the input enable register.
+>   * @dat: offset of the data register.
+> + * @intc_ctl: offset of the interrupt control register.
+> + * @intc_pd: offset of the interrupt pending register.
+> + * @intc_msk: offset of the interrupt mask register.
+> + * @intc_type: offset of the interrupt type register.
+>   */
+>  struct owl_gpio_port {
+>         unsigned int offset;
+> @@ -128,6 +144,10 @@ struct owl_gpio_port {
+>         unsigned int outen;
+>         unsigned int inen;
+>         unsigned int dat;
+> +       unsigned int intc_ctl;
+> +       unsigned int intc_pd;
+> +       unsigned int intc_msk;
+> +       unsigned int intc_type;
+>  };
+>
+>  /**
+> @@ -140,7 +160,7 @@ struct owl_gpio_port {
+>   * @ngroups: number of entries in @groups.
+>   * @padinfo: array describing the pad info of this SoC.
+>   * @ngpios: number of pingroups the driver should expose as GPIOs.
+> - * @port: array describing all GPIO ports of this SoC.
+> + * @ports: array describing all GPIO ports of this SoC.
+>   * @nports: number of GPIO ports in this SoC.
+>   */
+>  struct owl_pinctrl_soc_data {
+> diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
+> index 5503c7945764..ea67b14ef93b 100644
+> --- a/drivers/pinctrl/actions/pinctrl-s900.c
+> +++ b/drivers/pinctrl/actions/pinctrl-s900.c
+> @@ -1821,22 +1821,27 @@ static struct owl_padinfo s900_padinfo[NUM_PADS] = {
+>         [SGPIO3] = PAD_INFO_PULLCTL_ST(SGPIO3)
+>  };
+>
+> -#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat)  \
+> -       [OWL_GPIO_PORT_##port] = {                              \
+> -               .offset = base,                                 \
+> -               .pins = count,                                  \
+> -               .outen = _outen,                                \
+> -               .inen = _inen,                                  \
+> -               .dat = _dat,                                    \
+> +#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat,          \
+> +                       _intc_ctl, _intc_pd, _intc_msk, _intc_type)     \
+> +       [OWL_GPIO_PORT_##port] = {                                      \
+> +               .offset = base,                                         \
+> +               .pins = count,                                          \
+> +               .outen = _outen,                                        \
+> +               .inen = _inen,                                          \
+> +               .dat = _dat,                                            \
+> +               .intc_ctl = _intc_ctl,                                  \
+> +               .intc_pd = _intc_pd,                                    \
+> +               .intc_msk = _intc_msk,                                  \
+> +               .intc_type = _intc_type,                                \
+>         }
+>
+>  static const struct owl_gpio_port s900_gpio_ports[] = {
+> -       OWL_GPIO_PORT(A, 0x0000, 32, 0x0, 0x4, 0x8),
+> -       OWL_GPIO_PORT(B, 0x000C, 32, 0x0, 0x4, 0x8),
+> -       OWL_GPIO_PORT(C, 0x0018, 12, 0x0, 0x4, 0x8),
+> -       OWL_GPIO_PORT(D, 0x0024, 30, 0x0, 0x4, 0x8),
+> -       OWL_GPIO_PORT(E, 0x0030, 32, 0x0, 0x4, 0x8),
+> -       OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8)
+> +       OWL_GPIO_PORT(A, 0x0000, 32, 0x0, 0x4, 0x8, 0x204, 0x208, 0x20C, 0x240),
+> +       OWL_GPIO_PORT(B, 0x000C, 32, 0x0, 0x4, 0x8, 0x534, 0x204, 0x208, 0x23C),
+> +       OWL_GPIO_PORT(C, 0x0018, 12, 0x0, 0x4, 0x8, 0x52C, 0x200, 0x204, 0x238),
+> +       OWL_GPIO_PORT(D, 0x0024, 30, 0x0, 0x4, 0x8, 0x524, 0x1FC, 0x200, 0x234),
+> +       OWL_GPIO_PORT(E, 0x0030, 32, 0x0, 0x4, 0x8, 0x51C, 0x1F8, 0x1FC, 0x230),
+> +       OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8, 0x460, 0x140, 0x144, 0x178)
+>  };
+>
+>  static struct owl_pinctrl_soc_data s900_pinctrl_data = {
 > --
 > 2.17.1
 >
