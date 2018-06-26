@@ -1,14 +1,11 @@
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH] pinctrl: armada-37xx: add suspend/resume support
-Date: Tue, 26 Jun 2018 15:59:04 +0200
-Message-ID: <20180626155904.1bdd5626@xps13>
-References: <20180421141731.25556-1-miquel.raynal@bootlin.com>
- <87a7tkby8z.fsf@bootlin.com>
+Subject: [PATCH v2] pinctrl: armada-37xx: add suspend/resume support
+Date: Tue, 26 Jun 2018 16:06:13 +0200
+Message-ID: <20180626140613.13908-1-miquel.raynal@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <87a7tkby8z.fsf@bootlin.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,73 +15,187 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Ken Ma <make@marvell.com>, Jason Cooper <jason@lakedaemon.net>, Antoine Tenart <antoine.tenart@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: Nadav Haklai <nadavh@marvell.com>, Antoine Tenart <antoine.tenart@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgR3JlZ29yeSwKCk9uIE1vbiwgMzAgQXByIDIwMTggMTU6NDk6MTYgKzAyMDAsIEdyZWdvcnkg
-Q0xFTUVOVAo8Z3JlZ29yeS5jbGVtZW50QGJvb3RsaW4uY29tPiB3cm90ZToKCj4gSGkgTWlxdWVs
-LAo+ICAKPiAgT24gc2FtLiwgYXZyaWwgMjEgMjAxOCwgTWlxdWVsIFJheW5hbCA8bWlxdWVsLnJh
-eW5hbEBib290bGluLmNvbT4gd3JvdGU6Cj4gCj4gPiBGcm9tOiBLZW4gTWEgPG1ha2VAbWFydmVs
-bC5jb20+Cj4gPgo+ID4gQWRkIHN1c3BlbmQvcmVzdW1lIGhvb2tzIGluIHBpbmN0cmwgZHJpdmVy
-IHRvIGhhbmRsZSBTMlJBTSBvcGVyYXRpb25zLgo+ID4KPiA+IEJleW9uZCB0aGUgdHJhZGl0aW9u
-YWwgcmVnaXN0ZXIgc2F2ZS9yZXN0b3JlIG9wZXJhdGlvbnMsIHRoZXNlIGhvb2tzCj4gPiBhbHNv
-IGtlZXAgdGhlIEdQSU9zIHVzZWQgZm9yIGJvdGgtZWRnZSBJUlEgc3luY2hyb25pemVkIGJldHdl
-ZW4gdGhlaXIKPiA+IGxldmVsIChsb3cvaGlnaCkgYW5kIGV4cGVjdGVkIElSUSBwb2xhcml0eSAo
-ZmFsbGluZy9yaXNpbmcgZWRnZSkuCj4gPgo+ID4gU2luY2UgcGluY3RybCBpcyBhbiBpbmZyYXN0
-cnVjdHVyZSBtb2R1bGUsIGl0cyByZXN1bWUgc2hvdWxkIGJlIGlzc3VlZAo+ID4gcHJpb3IgdG8g
-b3RoZXIgSU8gZHJpdmVycy4gVGhlIHBpbmN0cmwgUE0gaXMgcmVnaXN0ZXJlZCBhcyBzeXNjb3Jl
-Cj4gPiBsZXZlbCB0byBtYWtlIHN1cmUgb2YgaXQuIEEgcG9zdGNvcmUgaW5pdGNhbGwgaXMgYWRk
-ZWQgdG8gcmVnaXN0ZXIKPiA+IHN5c2NvcmUgb3BlcmF0aW9uLiBCZWNhdXNlIG9mIHRoZSB1c2Ug
-b2Ygc3VjaCBzeXNjb3JlX29wcywgdGhlCj4gPiBzdXNwZW5kL3Jlc3VtZSBob29rcyBkbyBub3Qg
-aGF2ZSBhY2Nlc3MgdG8gYSBkZXZpY2UgcG9pbnRlciwgYW5kIHRodXMKPiA+IG5lZWQgdG8gdXNl
-IGEgZ2xvYmFsIGxpc3QgaW4gb3JkZXIgdG8ga2VlcCB0cmFjayBvZiB0aGUgcHJvYmVkIGRldmlj
-ZXMKPiA+IGZvciB3aGljaCByZWdpc3RlcnMgaGF2ZSB0byBiZSBzYXZlZC9yZXN0b3JlZC4gIAo+
-IAo+IERpZCB5b3UgY29uc2lkZXIgdG8gdXNlIFNFVF9MQVRFX1NZU1RFTV9TTEVFUF9QTV9PUFMg
-PwoKSW5kZWVkLCByZWdpc3RlcmluZyBzeXNjb3JlIG9wZXJhdGlvbnMgaXMgcHJvYmFibHkgbm90
-IHRoZSByaWdodCB0aGluZwp0byBkby4gSW5zdGVhZCBvZiByZWdpc3RlcmluZyB0aGUgUE0gb3Bl
-cmF0aW9ucyB3aXRoClNFVF9MQVRFX1NZU1RFTV9TTEVFUF9QTV9PUFMgYXMgc3VnZ2VzdGVkLCBJ
-IGRlY2lkZWQgdG8ganVzdCBzZXQKc3VzcGVuZF9sYXRlIGFuZCByZXN1bWVfZWFybHkgKHdoaWNo
-IGRvIHRoZSB0cmljaykuIFVzaW5nIHRoZSBhYm92ZQptYWNybyB3b3VsZCBoYXZlIHNldCBvdGhl
-ciBob29rcyAoZWcuIGZvciBmcmVlemUgYW5kIHBvd2Vyb2ZmKSB0aGF0IEkKZG9uJ3Qgd2FudCB0
-byBiZSBzZXQuCgo+IAo+IFsuLi5dCj4gCj4gPiArI2lmIGRlZmluZWQoQ09ORklHX1BNKQo+ID4g
-K3N0YXRpYyBpbnQgYXJtYWRhXzM3MDBfcGluY3RybF9zdXNwZW5kKHZvaWQpCj4gPiArewo+ID4g
-KwlzdHJ1Y3QgYXJtYWRhXzM3eHhfcGluY3RybCAqaW5mbzsKPiA+ICsKPiA+ICsJbGlzdF9mb3Jf
-ZWFjaF9lbnRyeShpbmZvLCAmZGV2aWNlX2xpc3QsIG5vZGUpIHsKPiA+ICsJCS8qIFNhdmUgR1BJ
-TyBzdGF0ZSAqLwo+ID4gKwkJcmVnbWFwX3JlYWQoaW5mby0+cmVnbWFwLCBPVVRQVVRfRU4sICZp
-bmZvLT5wbS5vdXRfZW5fbCk7Cj4gPiArCQlyZWdtYXBfcmVhZChpbmZvLT5yZWdtYXAsIE9VVFBV
-VF9FTiArIHNpemVvZih1MzIpLAo+ID4gKwkJCSAgICAmaW5mby0+cG0ub3V0X2VuX2gpOwo+ID4g
-KwkJcmVnbWFwX3JlYWQoaW5mby0+cmVnbWFwLCBPVVRQVVRfVkFMLCAmaW5mby0+cG0ub3V0X3Zh
-bF9sKTsKPiA+ICsJCXJlZ21hcF9yZWFkKGluZm8tPnJlZ21hcCwgT1VUUFVUX1ZBTCArIHNpemVv
-Zih1MzIpLAo+ID4gKwkJCSAgICAmaW5mby0+cG0ub3V0X3ZhbF9oKTsKPiA+ICsKPiA+ICsJCWlu
-Zm8tPnBtLmlycV9lbl9sID0gcmVhZGwoaW5mby0+YmFzZSArIElSUV9FTik7Cj4gPiArCQlpbmZv
-LT5wbS5pcnFfZW5faCA9IHJlYWRsKGluZm8tPmJhc2UgKyBJUlFfRU4gKyBzaXplb2YodTMyKSk7
-Cj4gPiArCQlpbmZvLT5wbS5pcnFfcG9sX2wgPSByZWFkbChpbmZvLT5iYXNlICsgSVJRX1BPTCk7
-Cj4gPiArCQlpbmZvLT5wbS5pcnFfcG9sX2ggPSByZWFkbChpbmZvLT5iYXNlICsgSVJRX1BPTCAr
-IHNpemVvZih1MzIpKTsKPiA+ICsKPiA+ICsJCS8qIFNhdmUgcGluY3RybCBzdGF0ZSAqLwo+ID4g
-KwkJcmVnbWFwX3JlYWQoaW5mby0+cmVnbWFwLCBTRUxFQ1RJT04sICZpbmZvLT5wbS5zZWxlY3Rp
-b24pOyAgCj4gCj4gSSB0aG91Z2h0IHRoZXJlIHdhcyBhbiBBUEkgd2l0aCByZWdtYXAgd2hpY2gg
-YWxsb3cgdG8gc2F2ZSBhbGwgdGhlCj4gcmVnaXN0ZXIgaW4gb25lIGNhbGwuIElmIGl0IGlzIHRo
-ZSBjYXNlIGl0IHdvdWRsIGJlIG5pY2UgdG8gdXNlIGl0LgoKWWVzIHRoZXJlIGlzIG9uZSwgeW91
-ciBjb21tZW50IGZvcmNlZCBtZSB0byBoYXZlIGEgbG9vayBhdCBpdC4gT25jZSBhCnJlZ2NhY2hl
-IGlzIGluaXRpYWxpemVkLCB0aGUgaG9va3MgbWF5IGJlIHNocmluayB0byBzb21ldGhpbmcgbGlr
-ZToKCnN1c3BlbmQoKQp7CiAgICAgICAgLyogRmx1c2ggdGhlIHBlbmRpbmcgd3JpdGVzLCBidWZm
-ZXJpbmcgZnV0dXJlIGFjY2Vzc2VzICovCiAgICAgICAgcmVnY2FjaGVfY2FjaGVfb25seShyZWdt
-YXAsIHRydWUpOwogICAgICAgIC8qIEluZGljYXRlIHRoZSBkZXZpY2UgaGFzIGJlZW4gcmVzZXQs
-IGFsbCByZWdpc3RlcnMgc2hvdWxkIGJlCiAgICAgICAgICogc3luY2VkIG9uIHJlZ2NhY2hlX3N5
-bmMoKSwgbm90IG9ubHkgdGhvc2UgdGhhdCBtaWdodCBoYXZlCiAgICAgICAgICogIGJlZW4gd3Jp
-dHRlbiBzaW5jZSB0dXJuaW5nIHJlZ2NhY2hlIHJlYWQtb25seS4KCSAqLwogICAgICAgIHJlZ2Nh
-Y2hlX21hcmtfZGlydHkocmVnbWFwKTsKfQoKcmVzdW1lKCkKewoJLyogU3RvcCBidWZmZXJpbmcg
-Ki8KICAgICAgICByZWdjYWNoZV9jYWNoZV9vbmx5KHJlZ21hcCwgZmFsc2UpOwoJLyogU3luY2hy
-b25pemUgdGhlIHJlZ2lzdGVycyB3aXRoIHRoZWlyIHNhdmVkIHZhbHVlcyAqLwoJcmVnY2FjaGVf
-c3luYyhyZWdtYXApOwp9CgpIb3dldmVyIHRoaXMgd291bGQgYXBwbHkgb24gdGhlIHdob2xlIHN5
-c2NvbiByZWdtYXAgKHdoaWNoIGlzIGh1Z2UpLAp3aXRoIChJIHRoaW5rKSBhIGdsb2JhbCBsb2Nr
-IGFuZCB0aGUgc2F2aW5nIG9mIG1vcmUgdGhhbiAyMDAgcmVnaXN0ZXJzCndoaWxlIEkganVzdCB3
-YW50IDUgb2YgdGhlbS4gSXQgbG9va3MgYSBiaXQgb3ZlcmtpbGwgZm9yIHdoYXQgSSBuZWVkCmFu
-ZCB3b3VsZCBpbXBseSBhIGRlbGF5IHBlbmFsdHkgb24gYm90aCBzdXNwZW5kIGFuZCByZXN1bWUg
-b3BlcmF0aW9ucyBzbwpJIHRoaW5rIEkgd2lsbCBsZXQgdGhlIGNvZGUgYXMgaXMuIFBsZWFzZSBo
-YXZlIGEgbG9vayBhdCB0aGUgbmV4dAp2ZXJzaW9uLgoKVGhhbmtzIGZvciBwb2ludGluZyB0aGVz
-ZSB0d28gZmVhdHVyZXMsCk1pcXXDqGwKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1r
-ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+Add suspend/resume hooks in pinctrl driver to handle S2RAM operations.
+
+Beyond the traditional register save/restore operations, these hooks
+also keep the GPIOs used for both-edge IRQ synchronized between their
+level (low/high) and expected IRQ polarity (falling/rising edge).
+
+Since pinctrl is an infrastructure module, its resume should be issued
+prior to other IO drivers. The pinctrl PM operations are requested at
+early/late stages for this reason.
+
+Suggested-by: Ken Ma <make@marvell.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+
+Changes since v1:
+=================
+* Removed the syscore-level operations and used
+  .suspend_late/.resume_early() to give this driver more priority.
+* Created an ARMADA_37XX_DEV_PM_OPS definition to avoid a couple of
+  #if defined/#endif macros in the platform driver structure around the
+  .pm entry.
+* Removed the global node list (previously used by the syscore
+  operations, not needed anymore).
+
+
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 118 ++++++++++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
+
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 53cf800688e9..aa48b3f23c7f 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -80,6 +80,18 @@ struct armada_37xx_pmx_func {
+ 	unsigned int		ngroups;
+ };
+ 
++struct armada_37xx_pm_state {
++	u32 out_en_l;
++	u32 out_en_h;
++	u32 out_val_l;
++	u32 out_val_h;
++	u32 irq_en_l;
++	u32 irq_en_h;
++	u32 irq_pol_l;
++	u32 irq_pol_h;
++	u32 selection;
++};
++
+ struct armada_37xx_pinctrl {
+ 	struct regmap			*regmap;
+ 	void __iomem			*base;
+@@ -94,6 +106,7 @@ struct armada_37xx_pinctrl {
+ 	unsigned int			ngroups;
+ 	struct armada_37xx_pmx_func	*funcs;
+ 	unsigned int			nfuncs;
++	struct armada_37xx_pm_state	pm;
+ };
+ 
+ #define PIN_GRP(_name, _start, _nr, _mask, _func1, _func2)	\
+@@ -996,6 +1009,110 @@ static int armada_37xx_pinctrl_register(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
++#if defined(CONFIG_PM)
++static int armada_3700_pinctrl_suspend(struct device *dev)
++{
++	struct armada_37xx_pinctrl *info = dev_get_drvdata(dev);
++
++	/* Save GPIO state */
++	regmap_read(info->regmap, OUTPUT_EN, &info->pm.out_en_l);
++	regmap_read(info->regmap, OUTPUT_EN + sizeof(u32), &info->pm.out_en_h);
++	regmap_read(info->regmap, OUTPUT_VAL, &info->pm.out_val_l);
++	regmap_read(info->regmap, OUTPUT_VAL + sizeof(u32),
++		    &info->pm.out_val_h);
++
++	info->pm.irq_en_l = readl(info->base + IRQ_EN);
++	info->pm.irq_en_h = readl(info->base + IRQ_EN + sizeof(u32));
++	info->pm.irq_pol_l = readl(info->base + IRQ_POL);
++	info->pm.irq_pol_h = readl(info->base + IRQ_POL + sizeof(u32));
++
++	/* Save pinctrl state */
++	regmap_read(info->regmap, SELECTION, &info->pm.selection);
++
++	return 0;
++}
++
++static int armada_3700_pinctrl_resume(struct device *dev)
++{
++	struct armada_37xx_pinctrl *info = dev_get_drvdata(dev);
++	struct gpio_chip *gc;
++	struct irq_domain *d;
++	int i;
++
++	/* Restore GPIO state */
++	regmap_write(info->regmap, OUTPUT_EN, info->pm.out_en_l);
++	regmap_write(info->regmap, OUTPUT_EN + sizeof(u32),
++		     info->pm.out_en_h);
++	regmap_write(info->regmap, OUTPUT_VAL, info->pm.out_val_l);
++	regmap_write(info->regmap, OUTPUT_VAL + sizeof(u32),
++		     info->pm.out_val_h);
++
++	/*
++	 * Input levels may change during suspend, which is not monitored at
++	 * that time. GPIOs used for both-edge IRQs may not be synchronized
++	 * anymore with their polarities (rising/falling edge) and must be
++	 * re-configured manually.
++	 */
++	gc = &info->gpio_chip;
++	d = gc->irq.domain;
++	for (i = 0; i < gc->ngpio; i++) {
++		u32 irq_bit = BIT(i % GPIO_PER_REG);
++		u32 mask, *irq_pol, input_reg, virq, type, level;
++
++		if (i < GPIO_PER_REG) {
++			mask = info->pm.irq_en_l;
++			irq_pol = &info->pm.irq_pol_l;
++			input_reg = INPUT_VAL;
++		} else {
++			mask = info->pm.irq_en_h;
++			irq_pol = &info->pm.irq_pol_h;
++			input_reg = INPUT_VAL + sizeof(u32);
++		}
++
++		if (!(mask & irq_bit))
++			continue;
++
++		virq = irq_find_mapping(d, i);
++		type = irq_get_trigger_type(virq);
++
++		/*
++		 * Synchronize level and polarity for both-edge irqs:
++		 *     - a high input level expects a falling edge,
++		 *     - a low input level exepects a rising edge.
++		 */
++		if ((type & IRQ_TYPE_SENSE_MASK) ==
++		    IRQ_TYPE_EDGE_BOTH) {
++			regmap_read(info->regmap, input_reg, &level);
++			if ((*irq_pol ^ level) & irq_bit)
++				*irq_pol ^= irq_bit;
++		}
++	}
++
++	writel(info->pm.irq_en_l, info->base + IRQ_EN);
++	writel(info->pm.irq_en_h, info->base + IRQ_EN + sizeof(u32));
++	writel(info->pm.irq_pol_l, info->base + IRQ_POL);
++	writel(info->pm.irq_pol_h, info->base + IRQ_POL + sizeof(u32));
++
++	/* Restore pinctrl state */
++	regmap_write(info->regmap, SELECTION, info->pm.selection);
++
++	return 0;
++}
++
++/*
++ * Since pinctrl is an infrastructure module, its resume should be issued prior
++ * to other IO drivers.
++ */
++static const struct dev_pm_ops armada_3700_pinctrl_pm_ops = {
++	.suspend_late = armada_3700_pinctrl_suspend,
++	.resume_early = armada_3700_pinctrl_resume,
++};
++
++#define PINCTRL_ARMADA_37XX_DEV_PM_OPS (&armada_3700_pinctrl_pm_ops)
++#else
++#define PINCTRL_ARMADA_37XX_DEV_PM_OPS NULL
++#endif /* CONFIG_PM */
++
+ static const struct of_device_id armada_37xx_pinctrl_of_match[] = {
+ 	{
+ 		.compatible = "marvell,armada3710-sb-pinctrl",
+@@ -1049,6 +1166,7 @@ static struct platform_driver armada_37xx_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "armada-37xx-pinctrl",
+ 		.of_match_table = armada_37xx_pinctrl_of_match,
++		.pm = PINCTRL_ARMADA_37XX_DEV_PM_OPS,
+ 	},
+ };
+ 
+-- 
+2.14.1
