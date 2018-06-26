@@ -1,41 +1,86 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-Date: Tue, 26 Jun 2018 14:19:44 -0600
-Message-ID: <20180626201944.GA24678@rob-hp-laptop>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v5 09/10] gpio: Add a driver for Cadence I3C GPIO expander
+Date: Tue, 26 Jun 2018 23:44:36 +0300
+Message-ID: <CAHp75VcVvOzgOM87rSrwsCxh+WAK-z+zVCJifnY+Xeeu=cPFiA@mail.gmail.com>
+References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
+ <20180622104930.32050-10-boris.brezillon@bootlin.com> <CAHp75Vdxg49q6aQj0dDpzM4q2WnQbGoCECWR1roda7aMR+u4gg@mail.gmail.com>
+ <20180626215648.1472b96e@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
+In-Reply-To: <20180626215648.1472b96e@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc: devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>, Madalin Bucur <madalin.bucur@nxp.com>, David S. Mill
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Linux Documentation List <linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 04:31:18PM +0200, Jonathan Neuschäfer wrote:
-> Multiple binding documents have various forms of unbalanced quotation
-> marks. Fix them.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
-> 
-> Should I split this patch so that different parts can go through different trees?
+On Tue, Jun 26, 2018 at 10:56 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Tue, 26 Jun 2018 22:07:03 +0300
+> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>> On Fri, Jun 22, 2018 at 1:49 PM, Boris Brezillon
+>> <boris.brezillon@bootlin.com> wrote:
+>> > Add a driver for Cadence I3C GPIO expander.
+>> >
+>> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+>>
+>> > +       scratchbuf = kmalloc(sizeof(*scratchbuf) * 2, GFP_KERNEL);
+>>
+>> kmalloc_array() ?
+>>
+>> > +       ret = i3c_device_do_priv_xfers(gpioc->i3cdev, xfers,
+>> > +                                      ARRAY_SIZE(xfers));
+>>
+>> One line?
+>>
 
-No, I applied it. Thanks.
+>> You don't change mask here, why do you need a pointer to it?
+>
+> What are you talking about??!!! This is part of the gpio_chip interface
+> that drivers have to implement. You can't decide that mask should not be
+> a pointer. And if you actually look at the code, you'll probably see
+> that the reason we're passed a pointer here is that the GPIO chip might
+> expose more GPIOs than can be represented by an unsigned long, hence
+> the array of unsigned long.
+>
 
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
->  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
->  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
->  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
->  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
->  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
->  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
->  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
->  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
->  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
+> I'll say it here because this is not the first time I'm pissed off by
+> one of your review.
+
+Like 'I like offending people, because I think people who get offended
+should be offended.' ?
+I'm not that guy, relax.
+
+>  You seem to review everything that is posted on the LKML,
+
+That's not true.
+
+> and most of the time your reviews are superficial (focused on tiny
+> details or coding style issues). Don't you have better things to do?
+
+If your code is written using ancient style and / or API it's not good
+to start with.
+Isn't it? Otherwise, why we do introduce new internal APIs, for what purpose?
+
+On top of that you might find more interesting reviews where I pointed
+out to a memory leak or other nasty stuff. But of course you prefer
+not to norice that.
+I understand you.
+
+> I mean, I'm fine when I get such comments from people that also do
+> useful comments, but yours are most of the time useless and sometime
+> even wrong because you didn't time to look at the code in details.
+
+Calm down, please.
+You would simple ignore them. Your choice.
+
+But okay, I would try to avoid your stuff to make you happier. Sorry
+for disturbing.
+
+>> Ditto.
+
+In these two comments I'm indeed wrong.
+
+-- 
+With Best Regards,
+Andy Shevchenko
