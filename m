@@ -1,38 +1,90 @@
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 6/9] gpio.h: fix location of gpio legacy documentation
-Date: Tue, 26 Jun 2018 06:49:08 -0300
-Message-ID: <60e0372bb4d96f7795404e28d776a4600e38efe2.1530005114.git.mchehab+samsung@kernel.org>
-References: <cover.1530005114.git.mchehab+samsung@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1530005114.git.mchehab+samsung@kernel.org>
-In-Reply-To: <cover.1530005114.git.mchehab+samsung@kernel.org>
-References: <cover.1530005114.git.mchehab+samsung@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH] pinctrl: armada-37xx: add suspend/resume support
+Date: Tue, 26 Jun 2018 15:59:04 +0200
+Message-ID: <20180626155904.1bdd5626@xps13>
+References: <20180421141731.25556-1-miquel.raynal@bootlin.com>
+ <87a7tkby8z.fsf@bootlin.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <87a7tkby8z.fsf@bootlin.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Ken Ma <make@marvell.com>, Jason Cooper <jason@lakedaemon.net>, Antoine Tenart <antoine.tenart@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The location of this doc file was moved. Change its reference
-accordingly.
-
-Fixes: 7ee2c13080c9 ("Documentation: gpio: Move legacy documentation to driver-api")
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- include/linux/gpio.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 91ed23468530..39745b8bdd65 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -14,7 +14,7 @@
- 
- #include <linux/errno.h>
- 
--/* see Documentation/gpio/gpio-legacy.txt */
-+/* see Documentation/driver-api/gpio/legacy.rst */
- 
- /* make these flag values available regardless of GPIO kconfig options */
- #define GPIOF_DIR_OUT	(0 << 0)
--- 
-2.17.1
+SGkgR3JlZ29yeSwKCk9uIE1vbiwgMzAgQXByIDIwMTggMTU6NDk6MTYgKzAyMDAsIEdyZWdvcnkg
+Q0xFTUVOVAo8Z3JlZ29yeS5jbGVtZW50QGJvb3RsaW4uY29tPiB3cm90ZToKCj4gSGkgTWlxdWVs
+LAo+ICAKPiAgT24gc2FtLiwgYXZyaWwgMjEgMjAxOCwgTWlxdWVsIFJheW5hbCA8bWlxdWVsLnJh
+eW5hbEBib290bGluLmNvbT4gd3JvdGU6Cj4gCj4gPiBGcm9tOiBLZW4gTWEgPG1ha2VAbWFydmVs
+bC5jb20+Cj4gPgo+ID4gQWRkIHN1c3BlbmQvcmVzdW1lIGhvb2tzIGluIHBpbmN0cmwgZHJpdmVy
+IHRvIGhhbmRsZSBTMlJBTSBvcGVyYXRpb25zLgo+ID4KPiA+IEJleW9uZCB0aGUgdHJhZGl0aW9u
+YWwgcmVnaXN0ZXIgc2F2ZS9yZXN0b3JlIG9wZXJhdGlvbnMsIHRoZXNlIGhvb2tzCj4gPiBhbHNv
+IGtlZXAgdGhlIEdQSU9zIHVzZWQgZm9yIGJvdGgtZWRnZSBJUlEgc3luY2hyb25pemVkIGJldHdl
+ZW4gdGhlaXIKPiA+IGxldmVsIChsb3cvaGlnaCkgYW5kIGV4cGVjdGVkIElSUSBwb2xhcml0eSAo
+ZmFsbGluZy9yaXNpbmcgZWRnZSkuCj4gPgo+ID4gU2luY2UgcGluY3RybCBpcyBhbiBpbmZyYXN0
+cnVjdHVyZSBtb2R1bGUsIGl0cyByZXN1bWUgc2hvdWxkIGJlIGlzc3VlZAo+ID4gcHJpb3IgdG8g
+b3RoZXIgSU8gZHJpdmVycy4gVGhlIHBpbmN0cmwgUE0gaXMgcmVnaXN0ZXJlZCBhcyBzeXNjb3Jl
+Cj4gPiBsZXZlbCB0byBtYWtlIHN1cmUgb2YgaXQuIEEgcG9zdGNvcmUgaW5pdGNhbGwgaXMgYWRk
+ZWQgdG8gcmVnaXN0ZXIKPiA+IHN5c2NvcmUgb3BlcmF0aW9uLiBCZWNhdXNlIG9mIHRoZSB1c2Ug
+b2Ygc3VjaCBzeXNjb3JlX29wcywgdGhlCj4gPiBzdXNwZW5kL3Jlc3VtZSBob29rcyBkbyBub3Qg
+aGF2ZSBhY2Nlc3MgdG8gYSBkZXZpY2UgcG9pbnRlciwgYW5kIHRodXMKPiA+IG5lZWQgdG8gdXNl
+IGEgZ2xvYmFsIGxpc3QgaW4gb3JkZXIgdG8ga2VlcCB0cmFjayBvZiB0aGUgcHJvYmVkIGRldmlj
+ZXMKPiA+IGZvciB3aGljaCByZWdpc3RlcnMgaGF2ZSB0byBiZSBzYXZlZC9yZXN0b3JlZC4gIAo+
+IAo+IERpZCB5b3UgY29uc2lkZXIgdG8gdXNlIFNFVF9MQVRFX1NZU1RFTV9TTEVFUF9QTV9PUFMg
+PwoKSW5kZWVkLCByZWdpc3RlcmluZyBzeXNjb3JlIG9wZXJhdGlvbnMgaXMgcHJvYmFibHkgbm90
+IHRoZSByaWdodCB0aGluZwp0byBkby4gSW5zdGVhZCBvZiByZWdpc3RlcmluZyB0aGUgUE0gb3Bl
+cmF0aW9ucyB3aXRoClNFVF9MQVRFX1NZU1RFTV9TTEVFUF9QTV9PUFMgYXMgc3VnZ2VzdGVkLCBJ
+IGRlY2lkZWQgdG8ganVzdCBzZXQKc3VzcGVuZF9sYXRlIGFuZCByZXN1bWVfZWFybHkgKHdoaWNo
+IGRvIHRoZSB0cmljaykuIFVzaW5nIHRoZSBhYm92ZQptYWNybyB3b3VsZCBoYXZlIHNldCBvdGhl
+ciBob29rcyAoZWcuIGZvciBmcmVlemUgYW5kIHBvd2Vyb2ZmKSB0aGF0IEkKZG9uJ3Qgd2FudCB0
+byBiZSBzZXQuCgo+IAo+IFsuLi5dCj4gCj4gPiArI2lmIGRlZmluZWQoQ09ORklHX1BNKQo+ID4g
+K3N0YXRpYyBpbnQgYXJtYWRhXzM3MDBfcGluY3RybF9zdXNwZW5kKHZvaWQpCj4gPiArewo+ID4g
+KwlzdHJ1Y3QgYXJtYWRhXzM3eHhfcGluY3RybCAqaW5mbzsKPiA+ICsKPiA+ICsJbGlzdF9mb3Jf
+ZWFjaF9lbnRyeShpbmZvLCAmZGV2aWNlX2xpc3QsIG5vZGUpIHsKPiA+ICsJCS8qIFNhdmUgR1BJ
+TyBzdGF0ZSAqLwo+ID4gKwkJcmVnbWFwX3JlYWQoaW5mby0+cmVnbWFwLCBPVVRQVVRfRU4sICZp
+bmZvLT5wbS5vdXRfZW5fbCk7Cj4gPiArCQlyZWdtYXBfcmVhZChpbmZvLT5yZWdtYXAsIE9VVFBV
+VF9FTiArIHNpemVvZih1MzIpLAo+ID4gKwkJCSAgICAmaW5mby0+cG0ub3V0X2VuX2gpOwo+ID4g
+KwkJcmVnbWFwX3JlYWQoaW5mby0+cmVnbWFwLCBPVVRQVVRfVkFMLCAmaW5mby0+cG0ub3V0X3Zh
+bF9sKTsKPiA+ICsJCXJlZ21hcF9yZWFkKGluZm8tPnJlZ21hcCwgT1VUUFVUX1ZBTCArIHNpemVv
+Zih1MzIpLAo+ID4gKwkJCSAgICAmaW5mby0+cG0ub3V0X3ZhbF9oKTsKPiA+ICsKPiA+ICsJCWlu
+Zm8tPnBtLmlycV9lbl9sID0gcmVhZGwoaW5mby0+YmFzZSArIElSUV9FTik7Cj4gPiArCQlpbmZv
+LT5wbS5pcnFfZW5faCA9IHJlYWRsKGluZm8tPmJhc2UgKyBJUlFfRU4gKyBzaXplb2YodTMyKSk7
+Cj4gPiArCQlpbmZvLT5wbS5pcnFfcG9sX2wgPSByZWFkbChpbmZvLT5iYXNlICsgSVJRX1BPTCk7
+Cj4gPiArCQlpbmZvLT5wbS5pcnFfcG9sX2ggPSByZWFkbChpbmZvLT5iYXNlICsgSVJRX1BPTCAr
+IHNpemVvZih1MzIpKTsKPiA+ICsKPiA+ICsJCS8qIFNhdmUgcGluY3RybCBzdGF0ZSAqLwo+ID4g
+KwkJcmVnbWFwX3JlYWQoaW5mby0+cmVnbWFwLCBTRUxFQ1RJT04sICZpbmZvLT5wbS5zZWxlY3Rp
+b24pOyAgCj4gCj4gSSB0aG91Z2h0IHRoZXJlIHdhcyBhbiBBUEkgd2l0aCByZWdtYXAgd2hpY2gg
+YWxsb3cgdG8gc2F2ZSBhbGwgdGhlCj4gcmVnaXN0ZXIgaW4gb25lIGNhbGwuIElmIGl0IGlzIHRo
+ZSBjYXNlIGl0IHdvdWRsIGJlIG5pY2UgdG8gdXNlIGl0LgoKWWVzIHRoZXJlIGlzIG9uZSwgeW91
+ciBjb21tZW50IGZvcmNlZCBtZSB0byBoYXZlIGEgbG9vayBhdCBpdC4gT25jZSBhCnJlZ2NhY2hl
+IGlzIGluaXRpYWxpemVkLCB0aGUgaG9va3MgbWF5IGJlIHNocmluayB0byBzb21ldGhpbmcgbGlr
+ZToKCnN1c3BlbmQoKQp7CiAgICAgICAgLyogRmx1c2ggdGhlIHBlbmRpbmcgd3JpdGVzLCBidWZm
+ZXJpbmcgZnV0dXJlIGFjY2Vzc2VzICovCiAgICAgICAgcmVnY2FjaGVfY2FjaGVfb25seShyZWdt
+YXAsIHRydWUpOwogICAgICAgIC8qIEluZGljYXRlIHRoZSBkZXZpY2UgaGFzIGJlZW4gcmVzZXQs
+IGFsbCByZWdpc3RlcnMgc2hvdWxkIGJlCiAgICAgICAgICogc3luY2VkIG9uIHJlZ2NhY2hlX3N5
+bmMoKSwgbm90IG9ubHkgdGhvc2UgdGhhdCBtaWdodCBoYXZlCiAgICAgICAgICogIGJlZW4gd3Jp
+dHRlbiBzaW5jZSB0dXJuaW5nIHJlZ2NhY2hlIHJlYWQtb25seS4KCSAqLwogICAgICAgIHJlZ2Nh
+Y2hlX21hcmtfZGlydHkocmVnbWFwKTsKfQoKcmVzdW1lKCkKewoJLyogU3RvcCBidWZmZXJpbmcg
+Ki8KICAgICAgICByZWdjYWNoZV9jYWNoZV9vbmx5KHJlZ21hcCwgZmFsc2UpOwoJLyogU3luY2hy
+b25pemUgdGhlIHJlZ2lzdGVycyB3aXRoIHRoZWlyIHNhdmVkIHZhbHVlcyAqLwoJcmVnY2FjaGVf
+c3luYyhyZWdtYXApOwp9CgpIb3dldmVyIHRoaXMgd291bGQgYXBwbHkgb24gdGhlIHdob2xlIHN5
+c2NvbiByZWdtYXAgKHdoaWNoIGlzIGh1Z2UpLAp3aXRoIChJIHRoaW5rKSBhIGdsb2JhbCBsb2Nr
+IGFuZCB0aGUgc2F2aW5nIG9mIG1vcmUgdGhhbiAyMDAgcmVnaXN0ZXJzCndoaWxlIEkganVzdCB3
+YW50IDUgb2YgdGhlbS4gSXQgbG9va3MgYSBiaXQgb3ZlcmtpbGwgZm9yIHdoYXQgSSBuZWVkCmFu
+ZCB3b3VsZCBpbXBseSBhIGRlbGF5IHBlbmFsdHkgb24gYm90aCBzdXNwZW5kIGFuZCByZXN1bWUg
+b3BlcmF0aW9ucyBzbwpJIHRoaW5rIEkgd2lsbCBsZXQgdGhlIGNvZGUgYXMgaXMuIFBsZWFzZSBo
+YXZlIGEgbG9vayBhdCB0aGUgbmV4dAp2ZXJzaW9uLgoKVGhhbmtzIGZvciBwb2ludGluZyB0aGVz
+ZSB0d28gZmVhdHVyZXMsCk1pcXXDqGwKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1r
+ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
