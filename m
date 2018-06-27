@@ -1,35 +1,47 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/5] dt-bindings: tegra186-gpio: Add information for
- Tegra194
-Date: Wed, 27 Jun 2018 10:58:05 -0600
-Message-ID: <20180627165805.GA21522@rob-hp-laptop>
-References: <20180620125406.11906-1-mperttunen@nvidia.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 0/5] pinctrl_gpio_get_direction & ingenic fixes
+Date: Wed, 27 Jun 2018 20:18:13 +0300
+Message-ID: <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
+References: <20180627114904.10890-1-paul@crapouillou.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20180620125406.11906-1-mperttunen@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: mark.rutland@arm.com, vbhadram@nvidia.com, devicetree@vger.kernel.org, linus.walleij@linaro.org, jonathanh@nvidia.com, linux-gpio@vger.kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180627114904.10890-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 03:54:02PM +0300, Mikko Perttunen wrote:
-> The Tegra194 GPIO controller is similar to the one in Tegra186.
-> Add relevant information to the device tree binding documentation.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+On Wed, Jun 27, 2018 at 2:48 PM, Paul Cercueil <paul@crapouillou.net> wrote:
+> Hi Linus,
+>
+> Here's a set of (rather RFC) patches, to implement
+> pinctrl_gpio_get_direction(). I did that, because my gpio-ingenic driver
+> calls pinctrl_gpio_set_direction() within its gpio_chip's .set_direction
+> callback, but there was no corresponding function to implement the
+> .get_direction callback. If that's not the right way to do it, please
+> advise.
+>
+> If not merging the whole series, patch [3/5] is a real fix that should
+> go through.
+>
+> Note that it doesn't make checkpatch.pl happy, I wasn't sure whether I
+> should try to comply to checkpatch.pl or match the coding style in the
+> pinctrl subsystem, I chose the latter.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I dunno what Linus would going to say about this, but I would like to
+see a schematics for this piece of IP.
+Even if GPIO and pin muxing has only one set of buffers to indicate
+input or output (same registers in use) it's a GPIO driver business to
+get direction from GPIO part of IP.
+
+Looking into the existing code I would rather say that
+pinctrl-ingenic.c should incorporate gpio-ingenic.c as they are
+(partially) sharing same registers.
+To ->get_direction() implementation it's pretty straight forward, just
+read necessary registers in the gpio-ingenic.c directly. No need to
+have pin control or pin muxing to be involved.
+
+-- 
+With Best Regards,
+Andy Shevchenko
