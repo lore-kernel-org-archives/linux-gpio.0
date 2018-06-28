@@ -1,102 +1,82 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
-Date: Thu, 28 Jun 2018 11:45:30 -0700
-Message-ID: <CAD=FV=Xmo4p7DbOReO02JVKnykoAOz7PtnkbdwryxvpsgZCgWw@mail.gmail.com>
-References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-3-swboyd@chromium.org>
- <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
- <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com> <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 0/5] pinctrl_gpio_get_direction & ingenic fixes
+Date: Thu, 28 Jun 2018 21:11:06 +0200
+Message-ID: <1530213066.3755.0@smtp.crapouillou.net>
+References: <20180627114904.10890-1-paul@crapouillou.net>
+        <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
+In-Reply-To: <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
 
-On Thu, Jun 28, 2018 at 10:14 AM, Stephen Boyd <swboyd@chromium.org> wrote:
-> Quoting Linus Walleij (2018-06-28 07:25:46)
->> On Fri, Jun 22, 2018 at 8:29 PM Bjorn Andersson
->> <bjorn.andersson@linaro.org> wrote:
->> > On Fri 22 Jun 10:58 PDT 2018, Bjorn Andersson wrote:
->> > > On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
->> > >
->> > > > We rely on devices to use pinmuxing configurations in DT to select the
->> > > > GPIO function (function 0) if they're going to use the gpio in GPIO
->> > > > mode. Let's simplify things for driver authors by implementing
->> > > > gpio_request_enable() for this pinctrl driver to mux out the GPIO
->> > > > function when the gpio is use from gpiolib.
->> > > >
->> > > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
->> > >
->> > > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> (...)
->> > While both patch 2 and 3 are convenient ways to get around the annoyance
->> > of having to specify a pinmux state both patches then ends up relying on
->> > some default pinconf state; which I think is bad.
->
-> What default state are we relying on? The reset state of the pins? I'm
-> very confused by this statement. These last two patches are making sure
-> that when a GPIO is requested as a GPIO or IRQ, it's really in GPIO
-> mode. If this code is not in place, then we'll allow drivers to request
-> a GPIO but pinmuxing won't be called to actually mux that pin to GPIO
-> mode unless they have a DT conf for function = "gpio". That seems
-> entirely unexpected and easy to mess up.
->
->>
->> Nothing stops you from setting up a default conf in
->> this callback though.
->>
->> But admittedly this call was added for simpler hardware.
->>
->> > Further more in situations like i2c-qup (downstream), where the pins are
->> > requested as gpios in order to "bitbang" a reset this would mean that
->> > the driver has to counter the convenience; by either switching in the
->> > default pinmux at the end of probe or postponing the gpio_request() to
->> > the invocation of reset and then, after issuing the gpio_release,
->> > switching in the default pinmux explicitly again.
->>
->> That's a bigger problem. If the system is using device and GPIO
->> mode orthogonally, it'd be good to leave like this.
->>
->
-> Doesn't that driver need to explicitly mux GPIO mode vs. device mode
-> right now? So having gpio_request() do the muxing to GPIO mode and then
-> explicit muxing of the pin to device mode would be what we have after
-> this patch, while before this patch we would have mux to GPIO, request
-> GPIO (nop), mux to device. We saved an explicit pinmux call?
+Hi Andy,
 
-After reading these replies I'm slightly worried about some of the
-stuff Bjorn is worried about too.  In Bjorn's example I think that the
-"default" state of the pins is probably i2c-mode and that it might
-switch to GPIO mode only when it needs to do the special unwedge of
-the i2c port.
+Le mer. 27 juin 2018 =E0 19:18, Andy Shevchenko=20
+<andy.shevchenko@gmail.com> a =E9crit :
+> On Wed, Jun 27, 2018 at 2:48 PM, Paul Cercueil <paul@crapouillou.net>=20
+> wrote:
+>>  Hi Linus,
+>>=20
+>>  Here's a set of (rather RFC) patches, to implement
+>>  pinctrl_gpio_get_direction(). I did that, because my gpio-ingenic=20
+>> driver
+>>  calls pinctrl_gpio_set_direction() within its gpio_chip's=20
+>> .set_direction
+>>  callback, but there was no corresponding function to implement the
+>>  .get_direction callback. If that's not the right way to do it,=20
+>> please
+>>  advise.
+>>=20
+>>  If not merging the whole series, patch [3/5] is a real fix that=20
+>> should
+>>  go through.
+>>=20
+>>  Note that it doesn't make checkpatch.pl happy, I wasn't sure=20
+>> whether I
+>>  should try to comply to checkpatch.pl or match the coding style in=20
+>> the
+>>  pinctrl subsystem, I chose the latter.
+>=20
+> I dunno what Linus would going to say about this, but I would like to
+> see a schematics for this piece of IP.
 
-So maybe the i2c driver does this:
+ftp://ftp.ingenic.com/SOC/JZ4780/JZ4780_pm.pdf
 
-1. "Default" pinmux state of i2c is i2c-mode, "unwedge" pinmux state
-is gpio-mode.
+> Even if GPIO and pin muxing has only one set of buffers to indicate
+> input or output (same registers in use) it's a GPIO driver business to
+> get direction from GPIO part of IP.
 
-2. In probe, request the GPIOs for use later in case we need to
-unwedge.  Don't use them right now since we don't need to unwedge.
-Assumes pinmux state stays as "default".
+If I follow that logic it's also a GPIO driver business to set the=20
+direction
+of a GPIO, right? Truth is the pinctrl subsystem takes care of that. So=20
+why
+have "set direction" and no "get direction"?
 
-3. When you decide you need to unwedge the bus, pinmux to the special
-i2c mode and drive the pins you requested in probe.  Then pinmux back.
+> Looking into the existing code I would rather say that
+> pinctrl-ingenic.c should incorporate gpio-ingenic.c as they are
+> (partially) sharing same registers.
+> To ->get_direction() implementation it's pretty straight forward, just
+> read necessary registers in the gpio-ingenic.c directly. No need to
+> have pin control or pin muxing to be involved.
 
+Sure, it'd be pretty straightforward to do it from the GPIO driver, but=20
+I'd
+still like to hear Linus' point of view about this.
 
-...I think your patch will break this because when you request the
-GPIOs you'll have an implicit (and unexpected?) pinmux transition.
+As for merging pinctrl-ingenic.c and gpio-ingenic.c... I wouldn't=20
+disagree more,
+even if they share registers, they belong to different subsystems.=20
+Besides,
+your platform might need the pinctrl driver but not the GPIO one, or=20
+you might
+want to provide the GPIO driver as a loadable module, etc.
 
-What do you think?
-
-
-NOTE: I think even if we don't want patch #2, we might still want at
-least part of patch #3?  It feels like if you request a GPIO as an IRQ
-that it should be OK to at least automatically change it to an
-input...
-
-
--Doug
+Regards,
+-Paul
+=
