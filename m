@@ -1,51 +1,55 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
-Date: Thu, 28 Jun 2018 16:25:46 +0200
-Message-ID: <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
-References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-3-swboyd@chromium.org>
- <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
+Subject: Re: [PATCH v6 1/2] dt-bindings: pinctrl: qcom: add gpio-ranges,
+ gpio-reserved-ranges
+Date: Thu, 28 Jun 2018 16:29:45 +0200
+Message-ID: <CACRpkdaZfeEQyqK9UXWnm1_5ihc7abbVGbUmJQU8Z6SzpObM6g@mail.gmail.com>
+References: <6dbaadee4bb22638a2c2e6433e8d1740884ecfd9.1527505307.git.chunkeey@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180622183129.GD3402@tuxbook-pro>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Stephen Boyd <swboyd@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <6dbaadee4bb22638a2c2e6433e8d1740884ecfd9.1527505307.git.chunkeey@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Christian Lamparter <chunkeey@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, David Brown <david.brown@linaro.org>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 8:29 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Fri 22 Jun 10:58 PDT 2018, Bjorn Andersson wrote:
-> > On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
-> >
-> > > We rely on devices to use pinmuxing configurations in DT to select the
-> > > GPIO function (function 0) if they're going to use the gpio in GPIO
-> > > mode. Let's simplify things for driver authors by implementing
-> > > gpio_request_enable() for this pinctrl driver to mux out the GPIO
-> > > function when the gpio is use from gpiolib.
-> > >
-> > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> >
-> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-(...)
-> While both patch 2 and 3 are convenient ways to get around the annoyance
-> of having to specify a pinmux state both patches then ends up relying on
-> some default pinconf state; which I think is bad.
+On Mon, May 28, 2018 at 1:06 PM Christian Lamparter <chunkeey@gmail.com> wrote:
 
-Nothing stops you from setting up a default conf in
-this callback though.
+> This patch adds the gpio-ranges and gpio-reserved-ranges property
+> definitions to the binding text files supported by the pinctrl-msm
+> driver framework.
+>
+> gpio-ranges:
+> For DT-based platforms the pinctrl-msm framework currently relies
+> on the deprecated-for-DT gpiochip_add_pin_range() function to add
+> the range of GPIOs to be handled by the pin controller. Due to
+> interactions within gpiolib code, this causes the pinctrl-msm
+> driver to bail out (-517) during boot when a gpio-hog is declared.
+> This can be fatal and cause the system to not boot or reset
+> (for a detailed explanation and call-trace, refer to patch:
+> "pinctrl: msm: fix gpio-hog related boot issues" in this series).
+>
+> gpio-reserved-ranges:
+> The binding has been added as a precaution since the TrustZone
+> firmware (aka QSEE), which is running as the hypervisor, might
+> have reserved certain, but undisclosed pins. Hence reading or
+> writing to the registers for those pins will cause an
+> XPU violation and this subsequently crashes the kernel.
+>
+> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
 
-But admittedly this call was added for simpler hardware.
-
-> Further more in situations like i2c-qup (downstream), where the pins are
-> requested as gpios in order to "bitbang" a reset this would mean that
-> the driver has to counter the convenience; by either switching in the
-> default pinmux at the end of probe or postponing the gpio_request() to
-> the invocation of reset and then, after issuing the gpio_release,
-> switching in the default pinmux explicitly again.
-
-That's a bigger problem. If the system is using device and GPIO
-mode orthogonally, it'd be good to leave like this.
+Patch applied with Rob's review tag.
+I assume Bjorn is in on this as well as he's ACKed the main
+DTS changes.
 
 Yours,
 Linus Walleij
