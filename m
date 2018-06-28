@@ -1,40 +1,102 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 6/6] MAINTAINERS: Add entry for Actions Semi OWL I2C driver
-Date: Thu, 28 Jun 2018 23:40:42 +0530
-Message-ID: <20180628181042.2239-7-manivannan.sadhasivam@linaro.org>
-References: <20180628181042.2239-1-manivannan.sadhasivam@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
+Date: Thu, 28 Jun 2018 11:45:30 -0700
+Message-ID: <CAD=FV=Xmo4p7DbOReO02JVKnykoAOz7PtnkbdwryxvpsgZCgWw@mail.gmail.com>
+References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-3-swboyd@chromium.org>
+ <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
+ <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com> <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180628181042.2239-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
-Cc: linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add entry for Actions Semi OWL I2C driver and its binding under ARM/ACTIONS
+Hi,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, Jun 28, 2018 at 10:14 AM, Stephen Boyd <swboyd@chromium.org> wrote:
+> Quoting Linus Walleij (2018-06-28 07:25:46)
+>> On Fri, Jun 22, 2018 at 8:29 PM Bjorn Andersson
+>> <bjorn.andersson@linaro.org> wrote:
+>> > On Fri 22 Jun 10:58 PDT 2018, Bjorn Andersson wrote:
+>> > > On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
+>> > >
+>> > > > We rely on devices to use pinmuxing configurations in DT to select the
+>> > > > GPIO function (function 0) if they're going to use the gpio in GPIO
+>> > > > mode. Let's simplify things for driver authors by implementing
+>> > > > gpio_request_enable() for this pinctrl driver to mux out the GPIO
+>> > > > function when the gpio is use from gpiolib.
+>> > > >
+>> > > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> > >
+>> > > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> (...)
+>> > While both patch 2 and 3 are convenient ways to get around the annoyance
+>> > of having to specify a pinmux state both patches then ends up relying on
+>> > some default pinconf state; which I think is bad.
+>
+> What default state are we relying on? The reset state of the pins? I'm
+> very confused by this statement. These last two patches are making sure
+> that when a GPIO is requested as a GPIO or IRQ, it's really in GPIO
+> mode. If this code is not in place, then we'll allow drivers to request
+> a GPIO but pinmuxing won't be called to actually mux that pin to GPIO
+> mode unless they have a DT conf for function = "gpio". That seems
+> entirely unexpected and easy to mess up.
+>
+>>
+>> Nothing stops you from setting up a default conf in
+>> this callback though.
+>>
+>> But admittedly this call was added for simpler hardware.
+>>
+>> > Further more in situations like i2c-qup (downstream), where the pins are
+>> > requested as gpios in order to "bitbang" a reset this would mean that
+>> > the driver has to counter the convenience; by either switching in the
+>> > default pinmux at the end of probe or postponing the gpio_request() to
+>> > the invocation of reset and then, after issuing the gpio_release,
+>> > switching in the default pinmux explicitly again.
+>>
+>> That's a bigger problem. If the system is using device and GPIO
+>> mode orthogonally, it'd be good to leave like this.
+>>
+>
+> Doesn't that driver need to explicitly mux GPIO mode vs. device mode
+> right now? So having gpio_request() do the muxing to GPIO mode and then
+> explicit muxing of the pin to device mode would be what we have after
+> this patch, while before this patch we would have mux to GPIO, request
+> GPIO (nop), mux to device. We saved an explicit pinmux call?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 09b54e9ebc6f..5084c62712fa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1145,12 +1145,14 @@ F:	arch/arm/boot/dts/owl-*
- F:	arch/arm64/boot/dts/actions/
- F:	drivers/clk/actions/
- F:	drivers/clocksource/owl-*
-+F:	drivers/i2c/busses/i2c-owl.c
- F:	drivers/pinctrl/actions/*
- F:	drivers/soc/actions/
- F:	include/dt-bindings/power/owl-*
- F:	include/linux/soc/actions/
- F:	Documentation/devicetree/bindings/arm/actions.txt
- F:	Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-+F:	Documentation/devicetree/bindings/i2c/i2c-owl.txt
- F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
- F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
- F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
--- 
-2.17.1
+After reading these replies I'm slightly worried about some of the
+stuff Bjorn is worried about too.  In Bjorn's example I think that the
+"default" state of the pins is probably i2c-mode and that it might
+switch to GPIO mode only when it needs to do the special unwedge of
+the i2c port.
+
+So maybe the i2c driver does this:
+
+1. "Default" pinmux state of i2c is i2c-mode, "unwedge" pinmux state
+is gpio-mode.
+
+2. In probe, request the GPIOs for use later in case we need to
+unwedge.  Don't use them right now since we don't need to unwedge.
+Assumes pinmux state stays as "default".
+
+3. When you decide you need to unwedge the bus, pinmux to the special
+i2c mode and drive the pins you requested in probe.  Then pinmux back.
+
+
+...I think your patch will break this because when you request the
+GPIOs you'll have an implicit (and unexpected?) pinmux transition.
+
+What do you think?
+
+
+NOTE: I think even if we don't want patch #2, we might still want at
+least part of patch #3?  It feels like if you request a GPIO as an IRQ
+that it should be OK to at least automatically change it to an
+input...
+
+
+-Doug
