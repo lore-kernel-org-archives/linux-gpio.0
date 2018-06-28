@@ -1,34 +1,56 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v5 09/10] gpio: Add a driver for Cadence I3C GPIO
- expander
-Date: Wed, 27 Jun 2018 17:50:38 -0700
-Message-ID: <f5e65551fea695b533eb275bdbcf43204d515d58.camel@perches.com>
-References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
-         <20180622104930.32050-10-boris.brezillon@bootlin.com>
-         <CAHp75Vdxg49q6aQj0dDpzM4q2WnQbGoCECWR1roda7aMR+u4gg@mail.gmail.com>
-         <20180626215648.1472b96e@bbrezillon>
-         <CAHp75VcVvOzgOM87rSrwsCxh+WAK-z+zVCJifnY+Xeeu=cPFiA@mail.gmail.com>
-         <20180626234638.076fb816@bbrezillon>
-         <CAHp75VdBXj66Yd6sQHOWz19R9MUtYMSeq4j-+UidLedpfkB6mA@mail.gmail.com>
-         <20180627213617.51e10712@bbrezillon>
-         <8bf36e4025b6ec5198a668edda6bcbef3b06e97b.camel@perches.com>
-         <CAHp75Vd5ucaeOD4S76ANcOVUA=QrCpGNAmun6+ihnsOTsgtcKg@mail.gmail.com>
+From: Rafael Tinoco <rafael.tinoco@linaro.org>
+Subject: Re: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT
+ fix
+Date: Wed, 27 Jun 2018 22:15:37 -0300
+Message-ID: <CADtBP2CzQ7_ad53ZnC_5w5gmaQdSeB8VxDEtW13fZye_OGWzug@mail.gmail.com>
+References: <20180606174424.9630-1-rafael.tinoco@linaro.org> <CACRpkdZ82RNta7LGp4OB=6TY_q3mdqGGDedayz-C4hB9m7WG9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vd5ucaeOD4S76ANcOVUA=QrCpGNAmun6+ihnsOTsgtcKg@mail.gmail.com>
+In-Reply-To: <CACRpkdZ82RNta7LGp4OB=6TY_q3mdqGGDedayz-C4hB9m7WG9Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Linux Documentation List <linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>
+To: linus.walleij@linaro.org
+Cc: brgl@bgdev.pl, bamv2005@gmail.com, shuah@kernel.org, linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 2018-06-28 at 03:00 +0300, Andy Shevchenko wrote:
-> bitmap operations are working against unsigned long *. one long is
-> also a bitmap.
+Linus, Bartosz,
 
-Should only be so if declared via DECLARE_BITMAP
+This was discovered during our investigations of a functional tests
+regression/error:
 
-> So, that coccinelle scripts must be fixed accordingly.
+https://bugs.linaro.org/show_bug.cgi?id=3769
 
-We disagree about a non-existent script.
+Which turned out to be related to missing CONFIG_ARM{64}_MODULE_PLTS
+config in our builds.
+
+However, during investigations, we realized the functional test had
+the issues best described in comment:
+
+https://bugs.linaro.org/show_bug.cgi?id=3769#c3
+
+Related to errno variable being considered outside the error scope.
+
+Thank you
+Rafael
+
+On Thu, 14 Jun 2018 at 11:42, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Wed, Jun 6, 2018 at 7:44 PM, Rafael David Tinoco
+> <rafael.tinoco@linaro.org> wrote:
+>
+> > Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
+> > should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
+> > the following error occurs:
+> >
+> > gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
+> > such file or directory
+> >
+> > despite the real result of gpio_pin_test(), gpio_debugfs_get() and
+> > gpiotools_request_linehandle() functions.
+> >
+> > Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+>
+> Bartosz, does this look OK to you?
+>
+> Yours,
+> Linus Walleij
