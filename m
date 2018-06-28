@@ -1,56 +1,53 @@
-From: Rafael Tinoco <rafael.tinoco@linaro.org>
-Subject: Re: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT
- fix
-Date: Wed, 27 Jun 2018 22:15:37 -0300
-Message-ID: <CADtBP2CzQ7_ad53ZnC_5w5gmaQdSeB8VxDEtW13fZye_OGWzug@mail.gmail.com>
-References: <20180606174424.9630-1-rafael.tinoco@linaro.org> <CACRpkdZ82RNta7LGp4OB=6TY_q3mdqGGDedayz-C4hB9m7WG9Q@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v5 09/10] gpio: Add a driver for Cadence I3C GPIO expander
+Date: Thu, 28 Jun 2018 06:08:37 +0200
+Message-ID: <20180628040837.25fpjubloxo277ag@katana>
+References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
+ <20180622104930.32050-10-boris.brezillon@bootlin.com>
+ <CACRpkdYmR3+urDk6StG7s=W3=oYHB6eqs7ORdMV=-S31QtOAqQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="a3od6fvxi7bwproo"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ82RNta7LGp4OB=6TY_q3mdqGGDedayz-C4hB9m7WG9Q@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYmR3+urDk6StG7s=W3=oYHB6eqs7ORdMV=-S31QtOAqQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: brgl@bgdev.pl, bamv2005@gmail.com, shuah@kernel.org, linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, ext Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devi>
 List-Id: linux-gpio@vger.kernel.org
 
-Linus, Bartosz,
 
-This was discovered during our investigations of a functional tests
-regression/error:
+--a3od6fvxi7bwproo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-https://bugs.linaro.org/show_bug.cgi?id=3769
 
-Which turned out to be related to missing CONFIG_ARM{64}_MODULE_PLTS
-config in our builds.
+> I see there was some heat in this discussion between you
+> and Andy, and it seems to be resolved. Which is good
+> because you are both senior contributors that I value
+> a lot.
 
-However, during investigations, we realized the functional test had
-the issues best described in comment:
++1
 
-https://bugs.linaro.org/show_bug.cgi?id=3769#c3
 
-Related to errno variable being considered outside the error scope.
+--a3od6fvxi7bwproo
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thank you
-Rafael
+-----BEGIN PGP SIGNATURE-----
 
-On Thu, 14 Jun 2018 at 11:42, Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Wed, Jun 6, 2018 at 7:44 PM, Rafael David Tinoco
-> <rafael.tinoco@linaro.org> wrote:
->
-> > Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
-> > should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
-> > the following error occurs:
-> >
-> > gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
-> > such file or directory
-> >
-> > despite the real result of gpio_pin_test(), gpio_debugfs_get() and
-> > gpiotools_request_linehandle() functions.
-> >
-> > Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
->
-> Bartosz, does this look OK to you?
->
-> Yours,
-> Linus Walleij
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAls0X0EACgkQFA3kzBSg
+KbZGuQ/+JXDMJCo6XGuicpcQb6G3cvLv/h/jkSJnR61ElmXs4kSOX8DFsszrMy+Y
+YUV9Br988qAEvJPsfbcEexjBJ5y2K6A3hpTUMJY0un2s23hJECxN9bV0Il0SPInT
+i0WwHnV7fn8aM7qbza/fuYh9N/5CXQRXE1SNJjyj8pVWwHXIayNla8lBaSCnyfgF
+myyd0EmEAxaPze7O2r++K326YhZOFSrcVYT5ScqOIMt/EQd1S4xN91Qx9zTWwMAJ
+27uES5566WnNJEclmuHQFu5hGAMB2X3k3w9HbHzxUInTHgB7g2IQbuHHTjqV8ogT
+qPNXCKFwIJhz6bxYRxo5Lie+Y2a3J9W+Gu6CIIeeZHFgDUfs3svnvSbuog01LZ00
+S+ysTxsSqn0PG2kYYJwNMWPueF6/t2IGsqsCpkB/KK6x0pWkv8c3bQsAtYGDC/Uv
+JIMHJ2cE1JSrWtdUt/gnGn5yysnpim0mdV3mBlkSrwSm7PFsVjThUeEmML8+L1Fm
+Y2VY+zDeJcd639d87ZTp+e8+r9HCqz+41HTC3zE94qXZVX9ZddgcubOm2WTaf6pa
+O3TMQUrNzlLhH3eHnyTiW6PraobNIHCvv8HJ1BmOfWCFVPfa18ZtcA5xN93VYGXg
+28nCx2jumkugOZ9KVoUABGMNaXhtHHhAAbN9DQs4cX4IuJky4C0=
+=buoG
+-----END PGP SIGNATURE-----
+
+--a3od6fvxi7bwproo--
