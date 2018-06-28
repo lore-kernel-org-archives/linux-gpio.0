@@ -1,55 +1,90 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 1/2] dt-bindings: pinctrl: qcom: add gpio-ranges,
- gpio-reserved-ranges
-Date: Thu, 28 Jun 2018 16:29:45 +0200
-Message-ID: <CACRpkdaZfeEQyqK9UXWnm1_5ihc7abbVGbUmJQU8Z6SzpObM6g@mail.gmail.com>
-References: <6dbaadee4bb22638a2c2e6433e8d1740884ecfd9.1527505307.git.chunkeey@gmail.com>
+From: vitor <Vitor.Soares@synopsys.com>
+Subject: Re: [PATCH v5 01/10] i3c: Add core I3C infrastructure
+Date: Thu, 28 Jun 2018 16:38:56 +0100
+Message-ID: <088dc947-da66-cec9-44a8-0f1097690bfd@synopsys.com>
+References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
+ <20180622104930.32050-2-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <6dbaadee4bb22638a2c2e6433e8d1740884ecfd9.1527505307.git.chunkeey@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Christian Lamparter <chunkeey@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, David Brown <david.brown@linaro.org>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Sven Eckelmann <sven.eckelmann@openmesh.com>, Andy Gross <andy.gross@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180622104930.32050-2-boris.brezillon@bootlin.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vitor Soares <Vitor.Soares@synopsys.com>, Geert Uytterhoeven <geert@linux-m68k.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 28, 2018 at 1:06 PM Christian Lamparter <chunkeey@gmail.com> wrote:
+Hi Boris,
 
-> This patch adds the gpio-ranges and gpio-reserved-ranges property
-> definitions to the binding text files supported by the pinctrl-msm
-> driver framework.
->
-> gpio-ranges:
-> For DT-based platforms the pinctrl-msm framework currently relies
-> on the deprecated-for-DT gpiochip_add_pin_range() function to add
-> the range of GPIOs to be handled by the pin controller. Due to
-> interactions within gpiolib code, this causes the pinctrl-msm
-> driver to bail out (-517) during boot when a gpio-hog is declared.
-> This can be fatal and cause the system to not boot or reset
-> (for a detailed explanation and call-trace, refer to patch:
-> "pinctrl: msm: fix gpio-hog related boot issues" in this series).
->
-> gpio-reserved-ranges:
-> The binding has been added as a precaution since the TrustZone
-> firmware (aka QSEE), which is running as the hypervisor, might
-> have reserved certain, but undisclosed pins. Hence reading or
-> writing to the registers for those pins will cause an
-> XPU violation and this subsequently crashes the kernel.
->
-> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
 
-Patch applied with Rob's review tag.
-I assume Bjorn is in on this as well as he's ACKed the main
-DTS changes.
+On 22-06-2018 11:49, Boris Brezillon wrote:
+> +static int of_i3c_master_add_i3c_dev(struct i3c_master_controller *master,
+> +				     struct device_node *node, u32 *reg)
+> +{
+> +	struct i3c_device_info info = { };
+> +	enum i3c_addr_slot_status addrstatus;
+> +	struct i3c_device *i3cdev;
+> +	u32 init_dyn_addr = 0;
+> +
+> +	if (reg[0]) {
+> +		if (reg[0] > I3C_MAX_ADDR)
+> +			return -EINVAL;
+> +
+> +		addrstatus = i3c_bus_get_addr_slot_status(master->bus, reg[0]);
+> +		if (addrstatus != I3C_ADDR_SLOT_FREE)
+> +			return -EINVAL;
+> +	}
+> +
+> +	info.static_addr = reg[0];
+> +
+> +	if (!of_property_read_u32(node, "assigned-address", &init_dyn_addr)) {
+> +		if (init_dyn_addr > I3C_MAX_ADDR)
+> +			return -EINVAL;
+> +
+> +		addrstatus = i3c_bus_get_addr_slot_status(master->bus,
+> +							  init_dyn_addr);
+> +		if (addrstatus != I3C_ADDR_SLOT_FREE)
+> +			return -EINVAL;
+> +	}
+> +
+> +	info.pid = ((u64)reg[1] << 32) | reg[2];
+> +
+> +	if ((info.pid & GENMASK_ULL(63, 48)) ||
+> +	    I3C_PID_RND_LOWER_32BITS(info.pid))
+> +		return -EINVAL;
+> +
+> +	i3cdev = i3c_master_alloc_i3c_dev(master, &info, &i3c_device_type);
+> +	if (IS_ERR(i3cdev))
+> +		return PTR_ERR(i3cdev);
+> +
+> +	i3cdev->init_dyn_addr = init_dyn_addr;
+> +	i3cdev->dev.of_node = node;
+> +	list_add_tail(&i3cdev->common.node, &master->bus->devs.i3c);
+> +
+> +	return 0;
+> +}
+> +
 
-Yours,
-Linus Walleij
+I'm writing the driver for the Synopsys master and but now I getting an 
+issue.
+
+I use the "slot" of the device to do all transfers, something like you 
+use in DAA. I using the master_priv to save the "slot" per device but 
+the problem is when I call the i3c_master_add_i3c_dev_locked() to 
+retrieve the info I don't have it yet.
+
+ From my analysis this can be solve with:
+     - send PID, BCR and DCR when I call i3c_master_add_i3c_dev_locked() 
+or similar function.
+     - Pre-allocate an i3c_device -> attach it (slot data goes to 
+master_priv) -> retrieve info -> if there is already an i3c_device with 
+same PID destroy the pre-allocated one.
+     - Replace the info.dyn_address with a structure with dyn_address 
+and slot and use it in CCC structure.
+
+This is something that will need to be supported for I3C HCI spec too. 
+Do you have any suggestion?
+
+Best regards,
+Vitor Soares
