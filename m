@@ -1,74 +1,69 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
-Date: Thu, 28 Jun 2018 10:14:28 -0700
-Message-ID: <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
-References: <20180618205255.246104-1-swboyd@chromium.org>
- <20180618205255.246104-3-swboyd@chromium.org>
- <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
- <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 0/6] Add Actions Semi S900 I2C support
+Date: Thu, 28 Jun 2018 23:40:36 +0530
+Message-ID: <20180628181042.2239-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Doug Anderson <dianders@chromium.org>
+To: wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
+Cc: linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Linus Walleij (2018-06-28 07:25:46)
-> On Fri, Jun 22, 2018 at 8:29 PM Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
-> > On Fri 22 Jun 10:58 PDT 2018, Bjorn Andersson wrote:
-> > > On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
-> > >
-> > > > We rely on devices to use pinmuxing configurations in DT to select =
-the
-> > > > GPIO function (function 0) if they're going to use the gpio in GPIO
-> > > > mode. Let's simplify things for driver authors by implementing
-> > > > gpio_request_enable() for this pinctrl driver to mux out the GPIO
-> > > > function when the gpio is use from gpiolib.
-> > > >
-> > > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > >
-> > > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> (...)
-> > While both patch 2 and 3 are convenient ways to get around the annoyance
-> > of having to specify a pinmux state both patches then ends up relying on
-> > some default pinconf state; which I think is bad.
+This patchset adds I2C controller support for Actions Semi S900 SoC.
+This driver has been structured in a way such that there will be only
+one controller driver for the whole OWL family series (S500, S700 and
+S900 SoCs).
 
-What default state are we relying on? The reset state of the pins? I'm
-very confused by this statement. These last two patches are making sure
-that when a GPIO is requested as a GPIO or IRQ, it's really in GPIO
-mode. If this code is not in place, then we'll allow drivers to request
-a GPIO but pinmuxing won't be called to actually mux that pin to GPIO
-mode unless they have a DT conf for function =3D "gpio". That seems
-entirely unexpected and easy to mess up.
+There are 6 I2C controllers with separate memory mapped register space.
+The I2C controller can handle atmost two messages concatenated by a
+repeated start via its internal address feature. Hence the driver
+uses this feature for messages of length greater than 1. In those cases,
+the first message of the combined message should be a `write` with maximum
+message length 6 and the second message's maximum length should be 240 bytes.
 
-> =
+As far as the bus speed is concerned, this driver only supports
+Standard (100KHz) and High speed (400KHz) for now.
 
-> Nothing stops you from setting up a default conf in
-> this callback though.
-> =
+The pinctrl definitions are only available for I2C0, I2C1 and I2C2.
+With the mux option available only for I2C0.
 
-> But admittedly this call was added for simpler hardware.
-> =
+For Bubblegum-96 board utilizing the S900 SoC, only I2C1 and I2C2 which
+are exposed on the Low speed expansion connector are enabled.
 
-> > Further more in situations like i2c-qup (downstream), where the pins are
-> > requested as gpios in order to "bitbang" a reset this would mean that
-> > the driver has to counter the convenience; by either switching in the
-> > default pinmux at the end of probe or postponing the gpio_request() to
-> > the invocation of reset and then, after issuing the gpio_release,
-> > switching in the default pinmux explicitly again.
-> =
+Thanks,
+Mani
 
-> That's a bigger problem. If the system is using device and GPIO
-> mode orthogonally, it'd be good to leave like this.
-> =
+Changes in v2:
 
+As per Andy's review:
+* Modified infinite loops to fixed number of retries
+* Used i2c_8bit_addr_from_msg for constructing the slave address
+* Removed unnecessary parenthesis around defines
+* Modified certain dev_warn to dev_dbg
+* Modified the error handling to more generic pattern
 
-Doesn't that driver need to explicitly mux GPIO mode vs. device mode
-right now? So having gpio_request() do the muxing to GPIO mode and then
-explicit muxing of the pin to device mode would be what we have after
-this patch, while before this patch we would have mux to GPIO, request
-GPIO (nop), mux to device. We saved an explicit pinmux call?
+* Fixed the return value in owl_i2c_master_xfer
+* Added MAINTAINERS patch for I2C driver and its binding
+
+Manivannan Sadhasivam (6):
+  dt-bindings: i2c: Add binding for Actions Semi OWL I2C controller
+  arm64: dts: actions: Add Actions Semi S900 I2C controller nodes
+  arm64: dts: actions: Add pinctrl definition for S900 I2C controller
+  arm64: dts: actions: Enable I2C1 and I2C2 in Bubblegum-96 board
+  i2c: Add Actions Semi OWL family S900 I2C driver
+  MAINTAINERS: Add entry for Actions Semi OWL I2C driver
+
+ .../devicetree/bindings/i2c/i2c-owl.txt       |  27 +
+ MAINTAINERS                                   |   2 +
+ .../dts/actions/s900-bubblegum-96-pins.dtsi   |  29 ++
+ .../boot/dts/actions/s900-bubblegum-96.dts    |  11 +
+ arch/arm64/boot/dts/actions/s900.dtsi         |  60 +++
+ drivers/i2c/busses/Kconfig                    |   7 +
+ drivers/i2c/busses/Makefile                   |   1 +
+ drivers/i2c/busses/i2c-owl.c                  | 471 ++++++++++++++++++
+ 8 files changed, 608 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-owl.txt
+ create mode 100644 arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
+ create mode 100644 drivers/i2c/busses/i2c-owl.c
+
+-- 
+2.17.1
