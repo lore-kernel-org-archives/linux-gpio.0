@@ -1,42 +1,65 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: armada-37xx: add suspend/resume support
-Date: Fri, 29 Jun 2018 14:41:59 +0200
-Message-ID: <CACRpkdYjp53wi+-KxL5fgpijq-1Eoix4g91jLLVVaznvJKQezQ@mail.gmail.com>
-References: <20180626140613.13908-1-miquel.raynal@bootlin.com>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Subject: [PATCH v2 0/2] gpio: mediatek: driver for gpio chip in MT7621 SoC
+Date: Fri, 29 Jun 2018 14:43:30 +0200
+Message-ID: <1530276212-18376-1-git-send-email-sergio.paracuellos@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180626140613.13908-1-miquel.raynal@bootlin.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Antoine Tenart <antoine.tenart@bootlin.com>, Gregory Clement <gregory.clement@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: linus.walleij@linaro.org
+Cc: devicetree@vger.kernel.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, neil@brown.name
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 4:06 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+This patch series add support for gpio driver in mediatek MT7621
+SoC. This driver has been in staging for a while and after some
+cleanups cycles we consider to give it a new try to get mainlined.
 
-> Add suspend/resume hooks in pinctrl driver to handle S2RAM operations.
->
-> Beyond the traditional register save/restore operations, these hooks
-> also keep the GPIOs used for both-edge IRQ synchronized between their
-> level (low/high) and expected IRQ polarity (falling/rising edge).
->
-> Since pinctrl is an infrastructure module, its resume should be issued
-> prior to other IO drivers. The pinctrl PM operations are requested at
-> early/late stages for this reason.
->
-> Suggested-by: Ken Ma <make@marvell.com>
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Previous comments from Linus Walleij are here:
 
-Patch applied with Gregory's review tag.
+http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-June/121742.html
 
-Yours,
-Linus Walleij
+Comments from Rob Herring are here:
+
+http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-June/121974.html
+
+Changes in v2 are the ones pointed out in previous mails:
+
+ - use bgpio_init
+ - avoid custom irq_domain using IRQF_SHARED and 
+   gpiochip_set_chained_irqchip from GPIOLIB_IRQCHIP
+ - use only one node in the device tree making it simple
+ - Implement high and low level irqs
+ - avoid include gpio.h
+ - use builtin_platform_driver
+ - add COMPILE_TEST
+ - cleanups after this changes
+
+Hope this helps and thanks in advance.
+
+Best regards,
+    Sergio Paracuellos
+
+
+Sergio Paracuellos (2):
+  gpio: mediatek: add driver for MT7621
+  dt-bindings: document gpio-mt7621 bindings
+
+ .../bindings/gpio/mediatek,mt7621-gpio.txt         |  35 +++
+ drivers/gpio/Kconfig                               |   8 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-mt7621.c                         | 320 +++++++++++++++++++++
+ 4 files changed, 364 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.txt
+ create mode 100644 drivers/gpio/gpio-mt7621.c
+
+-- 
+2.7.4
