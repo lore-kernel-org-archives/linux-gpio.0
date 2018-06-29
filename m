@@ -1,53 +1,82 @@
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Subject: Re: [PATCH v2 1/2] gpio: mediatek: add driver for MT7621
-Date: Fri, 29 Jun 2018 15:51:05 +0200
-Message-ID: <CAMhs-H9NcFrTUM+9zSSObYZPvc8sqeAgomnT3RRpRgumwe8ZzQ@mail.gmail.com>
-References: <1530276212-18376-1-git-send-email-sergio.paracuellos@gmail.com>
- <1530276212-18376-2-git-send-email-sergio.paracuellos@gmail.com>
- <20180629133135.dohzidxjm5k7jkbn@mwanda>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 0/5] pinctrl_gpio_get_direction & ingenic fixes
+Date: Fri, 29 Jun 2018 18:29:45 +0300
+Message-ID: <CAHp75VfPVB6BwkL1+bGRsi03g6io0A0Cty+ykSDkYevOvq=VGA@mail.gmail.com>
+References: <20180627114904.10890-1-paul@crapouillou.net> <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
+ <1530213066.3755.0@smtp.crapouillou.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20180629133135.dohzidxjm5k7jkbn@mwanda>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, driverdev-devel@linuxdriverproject.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1530213066.3755.0@smtp.crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 3:31 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Looks pretty clean to me.  Sorry for not reviewing v1.  Smatch (private
-> devel version) points out a little bit of dead code.
+On Thu, Jun 28, 2018 at 10:11 PM, Paul Cercueil <paul@crapouillou.net> wrot=
+e:
+> Le mer. 27 juin 2018 =C3=A0 19:18, Andy Shevchenko <andy.shevchenko@gmail=
+.com> a
+> =C3=A9crit :
+>> On Wed, Jun 27, 2018 at 2:48 PM, Paul Cercueil <paul@crapouillou.net>
+>> wrote:
+
+>> I dunno what Linus would going to say about this, but I would like to
+>> see a schematics for this piece of IP.
+
+> ftp://ftp.ingenic.com/SOC/JZ4780/JZ4780_pm.pdf
+
+I'm not sure you referred to a proper document "Mobile Application
+Processor. Programming Manual"
+
+I didn't find quickly what I'm looking for. Care to point me out to
+the page number?
+Thanks!
+
+>> Even if GPIO and pin muxing has only one set of buffers to indicate
+>> input or output (same registers in use) it's a GPIO driver business to
+>> get direction from GPIO part of IP.
 >
-> drivers/staging/mt7621-gpio/gpio-mt7621.c:200 mediatek_gpio_irq_handler() warn: address of 'gpio_data->gc_map[i]' is non-NULL
-> drivers/staging/mt7621-gpio/gpio-mt7621.c:225 mediatek_gpio_irq_unmask() warn: address of 'gpio_data->gc_map[bank]' is non-NULL
-> drivers/staging/mt7621-gpio/gpio-mt7621.c:246 mediatek_gpio_irq_mask() warn: address of 'gpio_data->gc_map[bank]' is non-NULL
-> drivers/staging/mt7621-gpio/gpio-mt7621.c:266 mediatek_gpio_irq_type() warn: address of 'gpio_data->gc_map[bank]' is non-NULL
 >
-> But that's harmless and very minor.
+> If I follow that logic it's also a GPIO driver business to set the direct=
+ion
+> of a GPIO, right? Truth is the pinctrl subsystem takes care of that. So w=
+hy
+> have "set direction" and no "get direction"?
 
-That warnings should not being in the staging version. Last patch
-series was applied yesterday... Maybe you have not run against the
-updated tree?
+Because it's a pin muxing business depending on the function chosen.
 
-This patch fix them:
+It solely depends on a schematic. For the example, everyone knows that
+MOSI is out always, otherwise SPI function would not work.
+.get_direction() has useful meaning only for GPIO function. (This is
+my understanding from electrical configuration of buffers).
 
-https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/commit/?h=staging-testing&id=bfb623c5b0935a2e4b5fe86eab79a37a37b67209
+>> Looking into the existing code I would rather say that
+>> pinctrl-ingenic.c should incorporate gpio-ingenic.c as they are
+>> (partially) sharing same registers.
+>> To ->get_direction() implementation it's pretty straight forward, just
+>> read necessary registers in the gpio-ingenic.c directly. No need to
+>> have pin control or pin muxing to be involved.
 
->
-> regards,
-> dan carpenter
+> Sure, it'd be pretty straightforward to do it from the GPIO driver, but I=
+'d
+> still like to hear Linus' point of view about this.
 
-Thanks.
+Sure.
 
-Best regards,
-    Sergio Paracuellos
->
+> As for merging pinctrl-ingenic.c and gpio-ingenic.c... I wouldn't disagre=
+e
+> more,
+> even if they share registers, they belong to different subsystems. Beside=
+s,
+> your platform might need the pinctrl driver but not the GPIO one, or you
+> might
+> want to provide the GPIO driver as a loadable module, etc.
+
+It was just my observation, I'm not a maintainer of that code  nor
+author, so, up to you how to proceed.
+
+--=20
+With Best Regards,
+Andy Shevchenko
