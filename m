@@ -1,30 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 6/7] arm64: dts: mt7622: use gpio-ranges to pinctrl device
-Date: Fri, 29 Jun 2018 14:22:44 +0200
-Message-ID: <CACRpkdZta2f1OKB3E1crLH1mymq26_6vU4hF=fseRt_70EDEuA@mail.gmail.com>
-References: <f222c9f488490bd86d35346e725491e1de306ace.1529639050.git.sean.wang@mediatek.com>
- <e0483accc1e82280492a2f68a90959232ba868f6.1529639050.git.sean.wang@mediatek.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: Add gpio interrupt bindings
+ for Actions S900 SoC
+Date: Fri, 29 Jun 2018 14:27:18 +0200
+Message-ID: <CACRpkdZ1kE3Bop+8rdwJHFcV-Ss3F0LwHUA8zC7nepyxCyGEbg@mail.gmail.com>
+References: <20180623045954.6729-1-manivannan.sadhasivam@linaro.org> <20180623045954.6729-2-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e0483accc1e82280492a2f68a90959232ba868f6.1529639050.git.sean.wang@mediatek.com>
+In-Reply-To: <20180623045954.6729-2-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Daniel Thompson <daniel.thompson@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>, "Thomas C. Liau" <thomas.liau@actions-semi.com>, Jeff Chen <jeff.chen@actions-semi.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 5:49 AM <sean.wang@mediatek.com> wrote:
+On Sat, Jun 23, 2018 at 7:00 AM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-> From: Sean Wang <sean.wang@mediatek.com>
+> Add gpio interrupt bindings for Actions Semi S900 SoC.
 >
-> Using gpio-ranges property represent which GPIOs correspond to which pins
-> on MT7622 pin controllers. For details, we can see section 2.1 of
-> Documentation/devicetree/bindings/gpio/gpio.txt to know how to bind pinctrl
-> and gpio drivers via the "gpio-ranges" property.
->
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Patch applied.
 
 Yours,
 Linus Walleij
