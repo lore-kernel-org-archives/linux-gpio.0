@@ -1,413 +1,608 @@
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Subject: Re: [PATCH v2 1/2] gpio: mediatek: add driver for MT7621
-Date: Sat, 30 Jun 2018 08:12:53 +0200
-Message-ID: <CAMhs-H_hp3RcVShSWB3Ui0KycS9PZE6B9G97qv9bv4OgAcM1TQ@mail.gmail.com>
-References: <1530276212-18376-1-git-send-email-sergio.paracuellos@gmail.com>
- <1530276212-18376-2-git-send-email-sergio.paracuellos@gmail.com>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v2 5/6] i2c: Add Actions Semi OWL family S900 I2C driver
+Date: Sat, 30 Jun 2018 13:43:59 +0530
+Message-ID: <20180630081359.GA5389@Mani-XPS-13-9360>
+References: <20180628181042.2239-1-manivannan.sadhasivam@linaro.org>
+ <20180628181042.2239-6-manivannan.sadhasivam@linaro.org>
+ <58C2C9DD-44D3-4002-90E5-69D83CD93C40@axentia.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1530276212-18376-2-git-send-email-sergio.paracuellos@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, driverdev-devel@linuxdriverproject.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, NeilBrown <neil@brown.name>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <58C2C9DD-44D3-4002-90E5-69D83CD93C40@axentia.se>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter Rosin <peda@axentia.se>
+Cc: devicetree@vger.kernel.org, daniel.thompson@linaro.org, manivannanece23@gmail.com, jeff.chen@actions-semi.com, hzhang@ucrobotics.com, wsa@the-dreams.de, thomas.liau@actions-semi.com, linus.walleij@linaro.org, 96boards@ucrobotics.com, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, andy.shevchenko@gmail.com, robh+dt@kernel.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, bdong@ucrobotics.com, afaerber@suse.de, linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 2:43 PM, Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
-> Add driver support for gpio of MT7621 SoC.
+Hi Peter,
+
+Thanks for the review!
+
+On Fri, Jun 29, 2018 at 06:45:19AM +0200, Peter Rosin wrote:
+> On June 28, 2018 8:10:41 PM GMT+02:00, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> >Add Actions Semi OWL family S900 I2C driver.
+> >
+> >Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> >---
+> > drivers/i2c/busses/Kconfig   |   7 +
+> > drivers/i2c/busses/Makefile  |   1 +
+> > drivers/i2c/busses/i2c-owl.c | 471 +++++++++++++++++++++++++++++++++++
+> > 3 files changed, 479 insertions(+)
+> > create mode 100644 drivers/i2c/busses/i2c-owl.c
+> >
+> >diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> >index 4f8df2ec87b1..2062da17e33b 100644
+> >--- a/drivers/i2c/busses/Kconfig
+> >+++ b/drivers/i2c/busses/Kconfig
+> >@@ -762,6 +762,13 @@ config I2C_OMAP
+> > 	  Like OMAP1510/1610/1710/5912 and OMAP242x.
+> > 	  For details see http://www.ti.com/omap.
+> > 
+> >+config I2C_OWL
+> >+	tristate "OWL I2C Controller"
+> >+	depends on ARCH_ACTIONS || COMPILE_TEST
+> >+	help
+> >+	  Say Y here if you want to use the I2C bus controller on
+> >+	  the Actions Semi OWL SoCs.
+> >+
+> > config I2C_PASEMI
+> > 	tristate "PA Semi SMBus interface"
+> > 	depends on PPC_PASEMI && PCI
+> >diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+> >index 5a869144a0c5..b71618f77880 100644
+> >--- a/drivers/i2c/busses/Makefile
+> >+++ b/drivers/i2c/busses/Makefile
+> >@@ -76,6 +76,7 @@ obj-$(CONFIG_I2C_MXS)		+= i2c-mxs.o
+> > obj-$(CONFIG_I2C_NOMADIK)	+= i2c-nomadik.o
+> > obj-$(CONFIG_I2C_OCORES)	+= i2c-ocores.o
+> > obj-$(CONFIG_I2C_OMAP)		+= i2c-omap.o
+> >+obj-$(CONFIG_I2C_OWL)		+= i2c-owl.o
+> > obj-$(CONFIG_I2C_PASEMI)	+= i2c-pasemi.o
+> > obj-$(CONFIG_I2C_PCA_PLATFORM)	+= i2c-pca-platform.o
+> > obj-$(CONFIG_I2C_PMCMSP)	+= i2c-pmcmsp.o
+> >diff --git a/drivers/i2c/busses/i2c-owl.c
+> >b/drivers/i2c/busses/i2c-owl.c
+> >new file mode 100644
+> >index 000000000000..12320fca6755
+> >--- /dev/null
+> >+++ b/drivers/i2c/busses/i2c-owl.c
+> >@@ -0,0 +1,471 @@
+> >+// SPDX-License-Identifier: GPL-2.0+
+> >+/*
+> >+ * OWL SoC's I2C driver
+> >+ *
+> >+ * Copyright (c) 2014 Actions Semi Inc.
+> >+ * Author: David Liu <liuwei@actions-semi.com>
+> >+ *
+> >+ * Copyright (c) 2018 Linaro Ltd.
+> >+ * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> >+ */
+> >+
+> >+#include <linux/clk.h>
+> >+#include <linux/delay.h>
+> >+#include <linux/i2c.h>
+> >+#include <linux/interrupt.h>
+> >+#include <linux/module.h>
+> >+#include <linux/of_device.h>
+> >+#include <linux/io.h>
+> 
+> I would have kept this list fully sorted.
+> 
+
+Ack.
+
+> >+
+> >+/* I2C registers */
+> >+#define OWL_I2C_REG_CTL		0x0000
+> >+#define OWL_I2C_REG_CLKDIV	0x0004
+> >+#define OWL_I2C_REG_STAT	0x0008
+> >+#define OWL_I2C_REG_ADDR	0x000C
+> >+#define OWL_I2C_REG_TXDAT	0x0010
+> >+#define OWL_I2C_REG_RXDAT	0x0014
+> >+#define OWL_I2C_REG_CMD		0x0018
+> >+#define OWL_I2C_REG_FIFOCTL	0x001C
+> >+#define OWL_I2C_REG_FIFOSTAT	0x0020
+> >+#define OWL_I2C_REG_DATCNT	0x0024
+> >+#define OWL_I2C_REG_RCNT	0x0028
+> >+
+> >+/* I2Cx_CTL Bit Mask */
+> >+#define OWL_I2C_CTL_RB		BIT(1)
+> >+#define OWL_I2C_CTL_GBCC(x)	(((x) & 0x3) << 2)
+> >+#define	OWL_I2C_CTL_GBCC_NONE	OWL_I2C_CTL_GBCC(0)
+> >+#define	OWL_I2C_CTL_GBCC_START	OWL_I2C_CTL_GBCC(1)
+> >+#define	OWL_I2C_CTL_GBCC_STOP	OWL_I2C_CTL_GBCC(2)
+> >+#define	OWL_I2C_CTL_GBCC_RSTART	OWL_I2C_CTL_GBCC(3)
+> >+#define OWL_I2C_CTL_IRQE	BIT(5)
+> >+#define OWL_I2C_CTL_EN		BIT(7)
+> >+#define OWL_I2C_CTL_AE		BIT(8)
+> >+#define OWL_I2C_CTL_SHSM	BIT(10)
+> >+
+> >+#define OWL_I2C_DIV_FACTOR(x)	((x) & 0xff)
+> >+
+> >+/* I2Cx_STAT Bit Mask */
+> >+#define OWL_I2C_STAT_RACK	BIT(0)
+> >+#define OWL_I2C_STAT_BEB	BIT(1)
+> >+#define OWL_I2C_STAT_IRQP	BIT(2)
+> >+#define OWL_I2C_STAT_LAB	BIT(3)
+> >+#define OWL_I2C_STAT_STPD	BIT(4)
+> >+#define OWL_I2C_STAT_STAD	BIT(5)
+> >+#define OWL_I2C_STAT_BBB	BIT(6)
+> >+#define OWL_I2C_STAT_TCB	BIT(7)
+> >+#define OWL_I2C_STAT_LBST	BIT(8)
+> >+#define OWL_I2C_STAT_SAMB	BIT(9)
+> >+#define OWL_I2C_STAT_SRGC	BIT(10)
+> >+
+> >+/* I2Cx_CMD Bit Mask */
+> >+#define OWL_I2C_CMD_SBE		BIT(0)
+> >+#define OWL_I2C_CMD_RBE		BIT(4)
+> >+#define OWL_I2C_CMD_DE		BIT(8)
+> >+#define OWL_I2C_CMD_NS		BIT(9)
+> >+#define OWL_I2C_CMD_SE		BIT(10)
+> >+#define OWL_I2C_CMD_MSS		BIT(11)
+> >+#define OWL_I2C_CMD_WRS		BIT(12)
+> >+#define OWL_I2C_CMD_SECL	BIT(15)
+> >+
+> >+#define OWL_I2C_CMD_AS(x)	(((x) & 0x7) << 1)
+> >+#define OWL_I2C_CMD_SAS(x)	(((x) & 0x7) << 5)
+> >+
+> >+/* I2Cx_FIFOCTL Bit Mask */
+> >+#define OWL_I2C_FIFOCTL_NIB	BIT(0)
+> >+#define OWL_I2C_FIFOCTL_RFR	BIT(1)
+> >+#define OWL_I2C_FIFOCTL_TFR	BIT(2)
+> >+
+> >+/* I2Cc_FIFOSTAT Bit Mask */
+> >+#define OWL_I2C_FIFOSTAT_RNB	BIT(1)
+> >+#define OWL_I2C_FIFOSTAT_RFE	BIT(2)
+> >+#define OWL_I2C_FIFOSTAT_TFF	BIT(5)
+> >+#define OWL_I2C_FIFOSTAT_TFD	GENMASK(23, 16)
+> >+#define OWL_I2C_FIFOSTAT_RFD	GENMASK(15, 8)
+> >+
+> >+/* I2C bus timeout */
+> >+#define OWL_I2C_TIMEOUT		msecs_to_jiffies(4 * 1000)
+> >+
+> >+#define OWL_I2C_MAX_RETRIES	50
+> >+
+> >+#define OWL_I2C_DEFAULT_SPEED	100000
+> >+#define OWL_I2C_MAX_SPEED	400000
+> >+
+> >+struct owl_i2c_dev {
+> >+	struct i2c_adapter	adap;
+> >+	struct i2c_msg		*msg;
+> >+	struct completion	msg_complete;
+> >+	struct clk		*clk;
+> >+	void __iomem		*base;
+> >+	unsigned long		clk_rate;
+> >+	u32			bus_freq;
+> >+	u32			msg_ptr;
+> >+};
+> >+
+> >+static void owl_i2c_update_reg(void __iomem *base, unsigned int val,
+> >bool state)
+> 
+> Is base really a good name here? I would go with reg.
 >
-> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> ---
->  drivers/gpio/Kconfig       |   8 ++
->  drivers/gpio/Makefile      |   1 +
->  drivers/gpio/gpio-mt7621.c | 320 +++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 329 insertions(+)
->  create mode 100644 drivers/gpio/gpio-mt7621.c
 
-Hi all,
+Okay, will change it to reg.
 
-Sorry for the noise. Ignore this and v3 for now. It seems the "only
-one node" approach for the gpio in the device tree is not working
-properly.
-I thought it was but Neil points out here it was not:
-
-http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-June/122621.html
-
-We'll send v4 with all properly working.
-
-Thanks in advance and sorry again.
-
-Best regards,
-    Sergio Paracuellos
-
+> >+{
+> >+	unsigned int regval;
+> >+
+> >+	regval = readl(base);
+> >+
+> >+	if (state)
+> >+		regval |= val;
+> >+	else
+> >+		regval &= ~val;
+> >+
+> >+	writel(regval, base);
+> >+}
+> >+
+> >+static int owl_i2c_reset(struct owl_i2c_dev *i2c_dev)
+> >+{
+> >+	unsigned int val, timeout = 0;
+> >+
+> >+	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> >+				OWL_I2C_CTL_EN, false);
+> >+	mdelay(1);
+> >+	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> >+				OWL_I2C_CTL_EN, true);
+> >+
+> >+	/* Reset FIFO */
+> >+	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
+> >+				OWL_I2C_FIFOCTL_RFR | OWL_I2C_FIFOCTL_TFR,
+> >+				true);
+> >+
+> >+	/* Wait 50ms for FIFO reset complete */
+> >+	do {
+> >+		val = readl(i2c_dev->base + OWL_I2C_REG_FIFOCTL);
+> >+		if (!(val & (OWL_I2C_FIFOCTL_RFR | OWL_I2C_FIFOCTL_TFR)))
+> >+			break;
+> >+		mdelay(1);
+> >+	} while (timeout++ < OWL_I2C_MAX_RETRIES);
+> >+
+> >+	if (timeout > OWL_I2C_MAX_RETRIES) {
+> >+		dev_err(&i2c_dev->adap.dev, "FIFO reset timeout");
+> >+		return -ETIMEDOUT;
+> >+	}
+> >+
+> >+	/* Clear status registers */
+> >+	writel(0, i2c_dev->base + OWL_I2C_REG_STAT);
+> >+
+> >+	return 0;
+> >+}
+> 
+> This ..._reset function does a number of unlocked read-modify-write cycles, and it is called from an interrupt. Is that safe? What if a spurious interrupt happen?
 >
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 71c0ab4..836aa21 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -359,6 +359,14 @@ config GPIO_MPC8XXX
->           Say Y here if you're going to use hardware that connects to the
->           MPC512x/831x/834x/837x/8572/8610/QorIQ GPIOs.
->
-> +config GPIO_MT7621
-> +       bool "Mediatek MT7621 GPIO Support"
-> +       depends on SOC_MT7620 || SOC_MT7621 || COMPILE_TEST
-> +       select GPIO_GENERIC
-> +       select GPIOLIB_IRQCHIP
-> +       help
-> +         Say yes here to support the Mediatek MT7621 SoC GPIO device
-> +
->  config GPIO_MVEBU
->         def_bool y
->         depends on PLAT_ORION || ARCH_MVEBU
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index 1324c8f..b264426 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -88,6 +88,7 @@ obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
->  obj-$(CONFIG_GPIO_MPC5200)     += gpio-mpc5200.o
->  obj-$(CONFIG_GPIO_MPC8XXX)     += gpio-mpc8xxx.o
->  obj-$(CONFIG_GPIO_MSIC)                += gpio-msic.o
-> +obj-$(CONFIG_GPIO_MSIC)                += gpio-mt7621.o
->  obj-$(CONFIG_GPIO_MVEBU)        += gpio-mvebu.o
->  obj-$(CONFIG_GPIO_MXC)         += gpio-mxc.o
->  obj-$(CONFIG_GPIO_MXS)         += gpio-mxs.o
-> diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
-> new file mode 100644
-> index 0000000..281e621
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-mt7621.c
-> @@ -0,0 +1,320 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2009-2011 Gabor Juhos <juhosg@openwrt.org>
-> + * Copyright (C) 2013 John Crispin <blogic@openwrt.org>
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/spinlock.h>
-> +
-> +#define MTK_BANK_CNT   3
-> +#define MTK_BANK_WIDTH 32
-> +
-> +#define GPIO_BANK_WIDE 0x04
-> +#define GPIO_REG_CTRL  0x00
-> +#define GPIO_REG_POL   0x10
-> +#define GPIO_REG_DATA  0x20
-> +#define GPIO_REG_DSET  0x30
-> +#define GPIO_REG_DCLR  0x40
-> +#define GPIO_REG_REDGE 0x50
-> +#define GPIO_REG_FEDGE 0x60
-> +#define GPIO_REG_HLVL  0x70
-> +#define GPIO_REG_LLVL  0x80
-> +#define GPIO_REG_STAT  0x90
-> +#define GPIO_REG_EDGE  0xA0
-> +
-> +struct mtk_gc {
-> +       struct gpio_chip chip;
-> +       spinlock_t lock;
-> +       int bank;
-> +       u32 rising;
-> +       u32 falling;
-> +       u32 hlevel;
-> +       u32 llevel;
-> +};
-> +
-> +/**
-> + * struct mtk_data - state container for
-> + * data of the platform driver. It is 3
-> + * separate gpio-chip each one with its
-> + * own irq_chip.
-> + * @dev: device instance
-> + * @gpio_membase: memory base address
-> + * @gpio_irq: irq number from the device tree
-> + * @gc_map: array of the gpio chips
-> + */
-> +struct mtk_data {
-> +       struct device *dev;
-> +       void __iomem *gpio_membase;
-> +       int gpio_irq;
-> +       struct mtk_gc gc_map[MTK_BANK_CNT];
-> +};
-> +
-> +static inline struct mtk_gc *
-> +to_mediatek_gpio(struct gpio_chip *chip)
-> +{
-> +       return container_of(chip, struct mtk_gc, chip);
-> +}
-> +
-> +static inline void
-> +mtk_gpio_w32(struct mtk_gc *rg, u32 offset, u32 val)
-> +{
-> +       struct gpio_chip *gc = &rg->chip;
-> +       struct mtk_data *gpio_data = gpiochip_get_data(gc);
-> +
-> +       offset = (rg->bank * GPIO_BANK_WIDE) + offset;
-> +       gc->write_reg(gpio_data->gpio_membase + offset, val);
-> +}
-> +
-> +static inline u32
-> +mtk_gpio_r32(struct mtk_gc *rg, u32 offset)
-> +{
-> +       struct gpio_chip *gc = &rg->chip;
-> +       struct mtk_data *gpio_data = gpiochip_get_data(gc);
-> +
-> +       offset = (rg->bank * GPIO_BANK_WIDE) + offset;
-> +       return gc->read_reg(gpio_data->gpio_membase + offset);
-> +}
-> +
-> +static irqreturn_t
-> +mediatek_gpio_irq_handler(int irq, void *data)
-> +{
-> +       struct gpio_chip *gc = data;
-> +       struct mtk_gc *rg = to_mediatek_gpio(gc);
-> +       irqreturn_t ret = IRQ_NONE;
-> +       unsigned long pending;
-> +       int bit;
-> +
-> +       pending = mtk_gpio_r32(rg, GPIO_REG_STAT);
-> +
-> +       for_each_set_bit(bit, &pending, MTK_BANK_WIDTH) {
-> +               u32 map = irq_find_mapping(gc->irq.domain, bit);
-> +
-> +               generic_handle_irq(map);
-> +               mtk_gpio_w32(rg, GPIO_REG_STAT, BIT(bit));
-> +               ret |= IRQ_HANDLED;
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static void
-> +mediatek_gpio_irq_unmask(struct irq_data *d)
-> +{
-> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> +       struct mtk_gc *rg = to_mediatek_gpio(gc);
-> +       int pin = d->hwirq;
-> +       unsigned long flags;
-> +       u32 rise, fall, high, low;
-> +
-> +       spin_lock_irqsave(&rg->lock, flags);
-> +       rise = mtk_gpio_r32(rg, GPIO_REG_REDGE);
-> +       fall = mtk_gpio_r32(rg, GPIO_REG_FEDGE);
-> +       high = mtk_gpio_r32(rg, GPIO_REG_HLVL);
-> +       low = mtk_gpio_r32(rg, GPIO_REG_LLVL);
-> +       mtk_gpio_w32(rg, GPIO_REG_REDGE, rise | (BIT(pin) & rg->rising));
-> +       mtk_gpio_w32(rg, GPIO_REG_FEDGE, fall | (BIT(pin) & rg->falling));
-> +       mtk_gpio_w32(rg, GPIO_REG_HLVL, high | (BIT(pin) & rg->hlevel));
-> +       mtk_gpio_w32(rg, GPIO_REG_LLVL, low | (BIT(pin) & rg->llevel));
-> +       spin_unlock_irqrestore(&rg->lock, flags);
-> +}
-> +
-> +static void
-> +mediatek_gpio_irq_mask(struct irq_data *d)
-> +{
-> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> +       struct mtk_gc *rg = to_mediatek_gpio(gc);
-> +       int pin = d->hwirq;
-> +       unsigned long flags;
-> +       u32 rise, fall, high, low;
-> +
-> +       spin_lock_irqsave(&rg->lock, flags);
-> +       rise = mtk_gpio_r32(rg, GPIO_REG_REDGE);
-> +       fall = mtk_gpio_r32(rg, GPIO_REG_FEDGE);
-> +       high = mtk_gpio_r32(rg, GPIO_REG_HLVL);
-> +       low = mtk_gpio_r32(rg, GPIO_REG_LLVL);
-> +       mtk_gpio_w32(rg, GPIO_REG_FEDGE, fall & ~BIT(pin));
-> +       mtk_gpio_w32(rg, GPIO_REG_REDGE, rise & ~BIT(pin));
-> +       mtk_gpio_w32(rg, GPIO_REG_HLVL, high & ~BIT(pin));
-> +       mtk_gpio_w32(rg, GPIO_REG_LLVL, low & ~BIT(pin));
-> +       spin_unlock_irqrestore(&rg->lock, flags);
-> +}
-> +
-> +static int
-> +mediatek_gpio_irq_type(struct irq_data *d, unsigned int type)
-> +{
-> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> +       struct mtk_gc *rg = to_mediatek_gpio(gc);
-> +       int pin = d->hwirq;
-> +       u32 mask = BIT(pin);
-> +
-> +       if (type == IRQ_TYPE_PROBE) {
-> +               if ((rg->rising | rg->falling |
-> +                    rg->hlevel | rg->llevel) & mask)
-> +                       return 0;
-> +
-> +               type = IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING;
-> +       }
-> +
-> +       rg->rising &= ~mask;
-> +       rg->falling &= ~mask;
-> +       rg->hlevel &= ~mask;
-> +       rg->llevel &= ~mask;
-> +
-> +       switch (type & IRQ_TYPE_SENSE_MASK) {
-> +       case IRQ_TYPE_EDGE_BOTH:
-> +               rg->rising |= mask;
-> +               rg->falling |= mask;
-> +               break;
-> +       case IRQ_TYPE_EDGE_RISING:
-> +               rg->rising |= mask;
-> +               break;
-> +       case IRQ_TYPE_EDGE_FALLING:
-> +               rg->falling |= mask;
-> +               break;
-> +       case IRQ_TYPE_LEVEL_HIGH:
-> +               rg->hlevel |= mask;
-> +               break;
-> +       case IRQ_TYPE_LEVEL_LOW:
-> +               rg->llevel |= mask;
-> +               break;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static struct irq_chip mediatek_gpio_irq_chip = {
-> +       .irq_unmask             = mediatek_gpio_irq_unmask,
-> +       .irq_mask               = mediatek_gpio_irq_mask,
-> +       .irq_mask_ack           = mediatek_gpio_irq_mask,
-> +       .irq_set_type           = mediatek_gpio_irq_type,
-> +};
-> +
-> +static inline const char * const mediatek_gpio_bank_name(int bank)
-> +{
-> +       static const char * const bank_names[] = {
-> +               "mt7621-bank0", "mt7621-bank1", "mt7621-bank2",
-> +       };
-> +
-> +       return bank_names[bank];
-> +}
-> +
-> +static int
-> +mediatek_gpio_bank_probe(struct platform_device *pdev,
-> +                        struct device_node *node, int bank)
-> +{
-> +       struct mtk_data *gpio = dev_get_drvdata(&pdev->dev);
-> +       struct mtk_gc *rg;
-> +       void __iomem *dat, *set, *ctrl, *diro;
-> +       int ret;
-> +
-> +       rg = &gpio->gc_map[bank];
-> +       memset(rg, 0, sizeof(*rg));
-> +
-> +       spin_lock_init(&rg->lock);
-> +       rg->chip.of_node = node;
-> +       rg->bank = bank;
-> +       rg->chip.label = mediatek_gpio_bank_name(rg->bank);
-> +
-> +       dat = gpio->gpio_membase + GPIO_REG_DATA + (rg->bank * GPIO_BANK_WIDE);
-> +       set = gpio->gpio_membase + GPIO_REG_DSET + (rg->bank * GPIO_BANK_WIDE);
-> +       ctrl = gpio->gpio_membase + GPIO_REG_DCLR + (rg->bank * GPIO_BANK_WIDE);
-> +       diro = gpio->gpio_membase + GPIO_REG_CTRL + (rg->bank * GPIO_BANK_WIDE);
-> +
-> +       ret = bgpio_init(&rg->chip, &pdev->dev, 4,
-> +                        dat, set, ctrl, diro, NULL, 0);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "bgpio_init() failed\n");
-> +               return ret;
-> +       }
-> +
-> +       ret = devm_gpiochip_add_data(&pdev->dev, &rg->chip, gpio);
-> +       if (ret < 0) {
-> +               dev_err(&pdev->dev, "Could not register gpio %d, ret=%d\n",
-> +                       rg->chip.ngpio, ret);
-> +               return ret;
-> +       }
-> +
-> +       if (gpio->gpio_irq) {
-> +               /*
-> +                * Manually request the irq here instead of passing
-> +                * a flow-handler to gpiochip_set_chained_irqchip,
-> +                * because the irq is shared.
-> +                */
-> +               ret = devm_request_irq(&pdev->dev, gpio->gpio_irq,
-> +                                      mediatek_gpio_irq_handler, IRQF_SHARED,
-> +                                      rg->chip.label, &rg->chip);
-> +
-> +               if (ret) {
-> +                       dev_err(&pdev->dev, "Error requesting IRQ %d: %d\n",
-> +                               gpio->gpio_irq, ret);
-> +                       return ret;
-> +               }
-> +
-> +               mediatek_gpio_irq_chip.name = rg->chip.label;
-> +               ret = gpiochip_irqchip_add(&rg->chip, &mediatek_gpio_irq_chip,
-> +                                          0, handle_simple_irq, IRQ_TYPE_NONE);
-> +               if (ret) {
-> +                       dev_err(&pdev->dev, "failed to add gpiochip_irqchip\n");
-> +                       return ret;
-> +               }
-> +
-> +               gpiochip_set_chained_irqchip(&rg->chip, &mediatek_gpio_irq_chip,
-> +                                            gpio->gpio_irq, NULL);
-> +       }
-> +
-> +       /* set polarity to low for all gpios */
-> +       mtk_gpio_w32(rg, GPIO_REG_POL, 0);
-> +
-> +       dev_info(&pdev->dev, "registering %d gpios\n", rg->chip.ngpio);
-> +
-> +       return 0;
-> +}
-> +
-> +static int
-> +mediatek_gpio_probe(struct platform_device *pdev)
-> +{
-> +       struct device_node *np = pdev->dev.of_node;
-> +       struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       struct mtk_data *gpio_data;
-> +       int i;
-> +
-> +       gpio_data = devm_kzalloc(&pdev->dev, sizeof(*gpio_data), GFP_KERNEL);
-> +       if (!gpio_data)
-> +               return -ENOMEM;
-> +
-> +       gpio_data->gpio_membase = devm_ioremap_resource(&pdev->dev, res);
-> +       if (IS_ERR(gpio_data->gpio_membase))
-> +               return PTR_ERR(gpio_data->gpio_membase);
-> +
-> +       gpio_data->gpio_irq = irq_of_parse_and_map(np, 0);
-> +       gpio_data->dev = &pdev->dev;
-> +       platform_set_drvdata(pdev, gpio_data);
-> +
-> +       for (i = 0; i < MTK_BANK_CNT; i++)
-> +               mediatek_gpio_bank_probe(pdev, np, i);
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct of_device_id mediatek_gpio_match[] = {
-> +       { .compatible = "mediatek,mt7621-gpio" },
-> +       {},
-> +};
-> +MODULE_DEVICE_TABLE(of, mediatek_gpio_match);
-> +
-> +static struct platform_driver mediatek_gpio_driver = {
-> +       .probe = mediatek_gpio_probe,
-> +       .driver = {
-> +               .name = "mt7621_gpio",
-> +               .of_match_table = mediatek_gpio_match,
-> +       },
-> +};
-> +
-> +builtin_platform_driver(mediatek_gpio_driver);
-> --
-> 2.7.4
->
+
+hmmm, nice catch. I think it is safe to remove the rest function from
+the handler. Anyhow we call reset during the start of the transfer so
+it doesn't makes any difference IMO.
+
+> >+
+> >+static int owl_i2c_set_freq(struct owl_i2c_dev *i2c_dev)
+> >+{
+> >+	unsigned int val;
+> >+
+> >+	val = (i2c_dev->clk_rate + i2c_dev->bus_freq * 16 - 1) /
+> >+				(i2c_dev->bus_freq * 16);
+> >+
+> >+	/* Set clock divider factor */
+> >+	writel(OWL_I2C_DIV_FACTOR(val), i2c_dev->base + OWL_I2C_REG_CLKDIV);
+> >+
+> >+	return 0;
+> >+}
+> >+
+> >+static int owl_i2c_hw_init(struct owl_i2c_dev *i2c_dev)
+> >+{
+> >+	int ret;
+> >+
+> >+	/* Reset I2C controller */
+> >+	ret = owl_i2c_reset(i2c_dev);
+> >+	if (ret)
+> >+		return ret;
+> >+
+> >+	/* Set bus frequency */
+> >+	return owl_i2c_set_freq(i2c_dev);
+> >+}
+> >+
+> >+static irqreturn_t owl_i2c_interrupt(int irq, void *_dev)
+> >+{
+> >+	struct owl_i2c_dev *i2c_dev = _dev;
+> >+	struct i2c_msg *msg = i2c_dev->msg;
+> >+	unsigned int stat, fifostat;
+> >+
+> >+	fifostat = readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT);
+> >+	if (fifostat & OWL_I2C_FIFOSTAT_RNB) {
+> >+		dev_dbg(&i2c_dev->adap.dev, "received NACK from device");
+> >+		owl_i2c_reset(i2c_dev);
+> >+		goto stop;
+> >+	}
+> >+
+> >+	stat = readl(i2c_dev->base + OWL_I2C_REG_STAT);
+> >+	if (stat & OWL_I2C_STAT_BEB) {
+> >+		dev_dbg(&i2c_dev->adap.dev, "bus error");
+> >+		owl_i2c_reset(i2c_dev);
+> >+		goto stop;
+> >+	}
+> >+
+> >+	/* Handle FIFO read */
+> >+	if (msg->flags & I2C_M_RD) {
+> >+		while ((readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
+> >+				OWL_I2C_FIFOSTAT_RFE) &&
+> >+				(i2c_dev->msg_ptr < msg->len)) {
+> >+			msg->buf[i2c_dev->msg_ptr++] = readl(i2c_dev->base +
+> >+							OWL_I2C_REG_RXDAT);
+> >+		}
+> >+	} else {
+> >+		/* Handle the remaining bytes which were not sent */
+> >+		while (!(readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
+> >+				OWL_I2C_FIFOSTAT_TFF) &&
+> >+				i2c_dev->msg_ptr < msg->len) {
+> >+			writel(msg->buf[i2c_dev->msg_ptr++], i2c_dev->base +
+> >+							OWL_I2C_REG_TXDAT);
+> >+		}
+> >+	}
+> >+
+> >+stop:
+> >+	/* Clear pending interrupts */
+> >+	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_STAT,
+> >+				OWL_I2C_STAT_IRQP, true);
+> >+
+> >+	complete_all(&i2c_dev->msg_complete);
+> >+
+> >+	return IRQ_HANDLED;
+> >+}
+> >+
+> >+static u32 owl_i2c_func(struct i2c_adapter *adap)
+> >+{
+> >+	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+> >+}
+> >+
+> >+static int owl_i2c_check_bus_busy(struct i2c_adapter *adap)
+> >+{
+> >+	struct owl_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
+> >+	unsigned long timeout;
+> >+	unsigned int val;
+> >+
+> >+	/* Check for Arbitration lost */
+> >+	val = readl(i2c_dev->base + OWL_I2C_REG_STAT);
+> >+	if (val & OWL_I2C_STAT_LAB) {
+> >+		val &= ~OWL_I2C_STAT_LAB;
+> >+		writel(val, i2c_dev->base + OWL_I2C_REG_STAT);
+> >+		return -EAGAIN;
+> >+	}
+> >+
+> >+	/* Check for Bus busy */
+> >+	timeout = jiffies + OWL_I2C_TIMEOUT;
+> >+	while (readl(i2c_dev->base + OWL_I2C_REG_STAT) & OWL_I2C_STAT_BBB) {
+> >+		if (time_after(jiffies, timeout)) {
+> >+			dev_err(&adap->dev, "Bus busy timeout");
+> >+			return -ETIMEDOUT;
+> >+		}
+> >+	}
+> >+
+> >+	return 0;
+> >+}
+> >+
+> >+static int owl_i2c_master_xfer(struct i2c_adapter *adap, struct
+> >i2c_msg *msgs,
+> >+				int num)
+> >+{
+> >+	struct owl_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
+> >+	struct i2c_msg *msg;
+> >+	unsigned long time_left;
+> >+	unsigned int i2c_cmd;
+> >+	unsigned int addr;
+> >+	int ret = 0, idx;
+> >+
+> >+	ret = owl_i2c_hw_init(i2c_dev);
+> >+	if (ret)
+> >+		return ret;
+> >+
+> >+	ret = owl_i2c_check_bus_busy(adap);
+> >+	if (ret)
+> >+		return ret;
+> >+
+> >+	reinit_completion(&i2c_dev->msg_complete);
+> >+
+> >+	/* Enable I2C controller interrupt */
+> >+	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> >+				OWL_I2C_CTL_IRQE, true);
+> >+
+> >+	/*
+> >+	 * Select: FIFO enable, Master mode, Stop enable, Data count enable,
+> >+	 * Send start bit
+> >+	 */
+> >+	i2c_cmd = (OWL_I2C_CMD_SECL | OWL_I2C_CMD_MSS | OWL_I2C_CMD_SE
+> >+			| OWL_I2C_CMD_NS | OWL_I2C_CMD_DE | OWL_I2C_CMD_SBE);
+> >+
+> >+	/* Handle repeated start condition */
+> >+	if (num > 1) {
+> >+		/* Set internal address length and enable repeated start */
+> >+		i2c_cmd |= (OWL_I2C_CMD_AS(msgs[0].len + 1)
+> >+				| OWL_I2C_CMD_SAS(1) | OWL_I2C_CMD_RBE);
+> >+
+> >+		/* Write slave address */
+> >+		addr = i2c_8bit_addr_from_msg(&msgs[0]);
+> >+		writel(addr, i2c_dev->base + OWL_I2C_REG_TXDAT);
+> >+
+> >+		/* Write internal register address */
+> >+		for (idx = 0; idx < msgs[0].len; idx++)
+> >+			writel(msgs[0].buf[idx], i2c_dev->base +
+> >+						OWL_I2C_REG_TXDAT);
+> >+
+> >+		msg = &msgs[1];
+> >+	} else {
+> >+		/* Set address length */
+> >+		i2c_cmd |= OWL_I2C_CMD_AS(1);
+> >+		msg = &msgs[0];
+> >+	}
+> >+
+> >+	i2c_dev->msg = msg;
+> >+	i2c_dev->msg_ptr = 0;
+> >+
+> >+	/* Set data count for the message */
+> >+	writel(msg->len, i2c_dev->base + OWL_I2C_REG_DATCNT);
+> >+
+> >+	addr = i2c_8bit_addr_from_msg(msg);
+> >+	writel(addr, i2c_dev->base + OWL_I2C_REG_TXDAT);
+> >+
+> >+	if (!(msg->flags & I2C_M_RD)) {
+> >+		/* Write data to FIFO */
+> >+		for (idx = 0; idx < msg->len; idx++) {
+> >+			/* Check for FIFO full */
+> >+			if (readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT)
+> >+					& OWL_I2C_FIFOSTAT_TFF)
+> 
+> You should cleanup here, and return some error. I think? Or, why do you break out of the loop early?
+> 
+
+Actually we break the loop once the FIFO is full. Since the total
+number of messages handled (240 bytes) is greater than the FIFO depth
+(128 bytes) we handle the remaining bytes in the handler.
+
+> >+				break;
+> >+
+> >+			writel(msg->buf[idx],
+> >+					i2c_dev->base + OWL_I2C_REG_TXDAT);
+> >+		}
+> >+
+> >+		i2c_dev->msg_ptr = idx;
+> >+	}
+> >+
+> >+	/* Ignore the NACK if needed */
+> >+	if (msg->flags & I2C_M_IGNORE_NAK)
+> >+		owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
+> >+				OWL_I2C_FIFOCTL_NIB, true);
+> >+	else
+> >+		owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
+> >+				OWL_I2C_FIFOCTL_NIB, false);
+> >+
+> >+	/* Start the transfer */
+> >+	writel(i2c_cmd, i2c_dev->base + OWL_I2C_REG_CMD);
+> >+
+> >+	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
+> >+						adap->timeout);
+> >+	if (time_left == 0) {
+> >+		dev_err(&adap->dev, "Transaction timed out");
+> >+		/* Send stop condition and release the bus */
+> >+		owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> >+			OWL_I2C_CTL_GBCC_STOP | OWL_I2C_CTL_RB, true);
+> >+		ret = -ETIMEDOUT;
+> >+	}
+> >+
+> >+	/* Disable I2C controller */
+> >+	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
+> >+				OWL_I2C_CTL_EN, false);
+> >+
+> >+	return i2c_dev->msg_ptr ? num : i2c_dev->msg_ptr;
+> 
+> This is wrong. Should probably be
+> 
+>    return ret ?: num;
+> 
+
+Agree. But there is one more issue here. We may enter the handler and
+do neither read nor write for cases like i2c-detect and returning num
+for those cases will make no sense. I guess this can be handled as
+below:
+
+Let's assume ret = 0, then
+
+        if (i2c_dev->msg_ptr == msg->len)
+                ret = num;
+
+	return ret;
+
+What do you think?
+
+Thanks,
+Mani
+
+> Cheers,
+> Peter
+> 
+> >+}
+> >+
+> >+static const struct i2c_algorithm owl_i2c_algorithm = {
+> >+	.master_xfer    = owl_i2c_master_xfer,
+> >+	.functionality  = owl_i2c_func
+> >+};
+> >+
+> >+static const struct i2c_adapter_quirks owl_i2c_quirks = {
+> >+	.flags		= I2C_AQ_COMB | I2C_AQ_COMB_WRITE_FIRST,
+> >+	.max_read_len   = 240,
+> >+	.max_write_len  = 240,
+> >+	.max_comb_1st_msg_len = 6,
+> >+	.max_comb_2nd_msg_len = 240
+> >+};
+> >+
+> >+static int owl_i2c_probe(struct platform_device *pdev)
+> >+{
+> >+	struct device *dev = &pdev->dev;
+> >+	struct owl_i2c_dev *i2c_dev;
+> >+	struct resource *res;
+> >+	int ret, irq;
+> >+
+> >+	i2c_dev = devm_kzalloc(dev, sizeof(*i2c_dev), GFP_KERNEL);
+> >+	if (!i2c_dev)
+> >+		return -ENOMEM;
+> >+
+> >+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >+	i2c_dev->base = devm_ioremap_resource(dev, res);
+> >+	if (IS_ERR(i2c_dev->base))
+> >+		return PTR_ERR(i2c_dev->base);
+> >+
+> >+	irq = platform_get_irq(pdev, 0);
+> >+	if (irq < 0) {
+> >+		dev_err(dev, "failed to get IRQ number\n");
+> >+		return irq;
+> >+	}
+> >+
+> >+	if (of_property_read_u32(dev->of_node, "clock-frequency",
+> >+					&i2c_dev->bus_freq))
+> >+		i2c_dev->bus_freq = OWL_I2C_DEFAULT_SPEED;
+> >+
+> >+	/* We support only frequencies of 100k and 400k for now */
+> >+	if (i2c_dev->bus_freq != OWL_I2C_DEFAULT_SPEED &&
+> >+			i2c_dev->bus_freq > OWL_I2C_MAX_SPEED) {
+> >+		dev_err(dev, "invalid clock-frequency %d\n", i2c_dev->bus_freq);
+> >+		return -EINVAL;
+> >+	}
+> >+
+> >+	i2c_dev->clk = devm_clk_get(dev, NULL);
+> >+	if (IS_ERR(i2c_dev->clk)) {
+> >+		dev_err(dev, "failed to get clock\n");
+> >+		return PTR_ERR(i2c_dev->clk);
+> >+	}
+> >+
+> >+	ret = clk_prepare_enable(i2c_dev->clk);
+> >+	if (ret)
+> >+		return ret;
+> >+
+> >+	i2c_dev->clk_rate = clk_get_rate(i2c_dev->clk);
+> >+	if (!i2c_dev->clk_rate) {
+> >+		dev_err(dev, "input clock rate should not be zero\n");
+> >+		ret = -EINVAL;
+> >+		goto disable_clk;
+> >+	}
+> >+
+> >+	init_completion(&i2c_dev->msg_complete);
+> >+	i2c_dev->adap.owner = THIS_MODULE;
+> >+	i2c_dev->adap.algo = &owl_i2c_algorithm;
+> >+	i2c_dev->adap.timeout = OWL_I2C_TIMEOUT;
+> >+	i2c_dev->adap.quirks = &owl_i2c_quirks;
+> >+	i2c_dev->adap.dev.parent = dev;
+> >+	i2c_dev->adap.dev.of_node = dev->of_node;
+> >+	snprintf(i2c_dev->adap.name, sizeof(i2c_dev->adap.name),
+> >+			"%s", "OWL I2C adapter");
+> >+	i2c_set_adapdata(&i2c_dev->adap, i2c_dev);
+> >+
+> >+	platform_set_drvdata(pdev, i2c_dev);
+> >+
+> >+	ret = devm_request_irq(dev, irq, owl_i2c_interrupt, 0, pdev->name,
+> >+				i2c_dev);
+> >+	if (ret) {
+> >+		dev_err(dev, "failed to request irq %d\n", irq);
+> >+		goto disable_clk;
+> >+	}
+> >+
+> >+	return i2c_add_adapter(&i2c_dev->adap);
+> >+
+> >+disable_clk:
+> >+	clk_disable_unprepare(i2c_dev->clk);
+> >+
+> >+	return ret;
+> >+}
+> >+
+> >+static const struct of_device_id owl_i2c_of_match[] = {
+> >+	{.compatible = "actions,s900-i2c"},
+> >+	{ /* sentinel */ }
+> >+};
+> >+MODULE_DEVICE_TABLE(of, owl_i2c_of_match);
+> >+
+> >+static struct platform_driver owl_i2c_driver = {
+> >+	.probe		= owl_i2c_probe,
+> >+	.driver		= {
+> >+		.name	= "owl-i2c",
+> >+		.of_match_table = of_match_ptr(owl_i2c_of_match),
+> >+	},
+> >+};
+> >+module_platform_driver(owl_i2c_driver);
+> >+
+> >+MODULE_AUTHOR("David Liu <liuwei@actions-semi.com>");
+> >+MODULE_AUTHOR("Manivannan Sadhasivam
+> ><manivannan.sadhasivam@linaro.org>");
+> >+MODULE_DESCRIPTION("Actions Semi OWL SoCs I2C driver");
+> >+MODULE_LICENSE("GPL");
+> 
