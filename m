@@ -1,63 +1,121 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 5/6] i2c: Add Actions Semiconductor Owl family S900 I2C driver
-Date: Sun, 1 Jul 2018 12:11:54 +0300
-Message-ID: <CAHp75VcDK7U-x-W9-gaY9-2zAJqnawdwe5gor0ifX8iYe_p0_Q@mail.gmail.com>
-References: <20180630133330.23858-1-manivannan.sadhasivam@linaro.org>
- <20180630133330.23858-6-manivannan.sadhasivam@linaro.org> <CAHp75VcVNb51tJzKbCU3pqf0XYPCUZWpv38nfaV1711vyf2S0Q@mail.gmail.com>
- <20180701081333.GB28390@Mani-XPS-13-9360> <20180701084140.GC28390@Mani-XPS-13-9360>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 0/6] Add Actions Semiconductor Owl S900 I2C support
+Date: Sun,  1 Jul 2018 22:52:59 +0530
+Message-ID: <20180701172305.15663-1-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180701084140.GC28390@Mani-XPS-13-9360>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Linus Walleij <linus.walleij@linaro.org>, linux-i2c <linux-i2c@vger.kernel.org>, =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, hzhang@ucrobotics.com, bdong@ucrobotics.com, Mani Sadhasivam <manivannanece23@gmail.com>, Thomas Liau <thomas.liau@actions-semi.com>, jeff.chen@actions-semi.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
+Cc: devicetree@vger.kernel.org, daniel.thompson@linaro.org, manivannanece23@gmail.com, jeff.chen@actions-semi.com, hzhang@ucrobotics.com, thomas.liau@actions-semi.com, linus.walleij@linaro.org, liuwei@actions-semi.com, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, andy.shevchenko@gmail.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, bdong@ucrobotics.com, linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jul 1, 2018 at 11:41 AM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> On Sun, Jul 01, 2018 at 01:43:33PM +0530, Manivannan Sadhasivam wrote:
->> On Sun, Jul 01, 2018 at 12:11:00AM +0300, Andy Shevchenko wrote:
->> > On Sat, Jun 30, 2018 at 4:33 PM, Manivannan Sadhasivam
->> > <manivannan.sadhasivam@linaro.org> wrote:
->> > > Add Actions Semiconductor Owl family S900 I2C driver.
+This patchset adds I2C controller support for Actions Semiconductor S900 SoC.
+This driver has been structured in a way such that there will be only
+one controller driver for the whole Owl family series (S500, S700 and
+S900 SoCs).
 
->> > > +static int owl_i2c_reset(struct owl_i2c_dev *i2c_dev)
->> > > +{
->> >
->> > > +       mdelay(1);
->> >
->> > But now, since it's not used in atomic context, we may switch to
->> > usleep_range() / msleep() instead.
->> >
->>
->> okay, will use msleep()
->>
->
-> Just realised, I have to use spinlock for the entire owl_i2c_master_xfer
-> function, so can't use sleep* for delay.
->
->> > > +       owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
->> > > +                               OWL_I2C_CTL_EN, true);
->> > > +
->> >
->> > > +       /* Wait 50ms for FIFO reset complete */
->> > > +       do {
->> >
->> > > +               mdelay(1);
->> >
->> > Especially in this case it's very important.
->> >
->>
->> Okay.
->
-> Same here, but I'm not sure about the latency. What is your suggestion?
+There are 6 I2C controllers with separate memory mapped register space.
+The I2C controller can handle atmost two messages concatenated by a
+repeated start via its internal address feature. Hence the driver
+uses this feature for messages of length greater than 1. In those cases,
+the first message of the combined message should be a `write` with maximum
+message length 6 and the second message's maximum length should be 240 bytes.
 
-Look at other i2c bus drivers, check with data sheet you have, try to
-refactor / redesign code that wouldn't need to sleep so long in atomic
-context.
+As far as the bus speed is concerned, this driver only supports
+Standard (100KHz) and High speed (400KHz) for now.
 
+The pinctrl definitions are only available for I2C0, I2C1 and I2C2.
+With the mux option available only for I2C0.
+
+For Bubblegum-96 board utilizing the S900 SoC, only I2C1 and I2C2 which
+are exposed on the Low speed expansion connector are enabled.
+
+This series depends on the pinctrl patch [1] is still not merged by the
+platform maintainer Andreas but it has been reviewed by the pinctrl maintainer
+Linus Walleij. For the reference, I have queued up all reviewed dts patches
+in my tree [2] from which Andreas is picking them for 4.19.
+
+For this series, since the dts patches will go through the ARM SoC tree,
+Andreas will pick it up once it is reviewed.
+
+Thanks,
+Mani
+
+[1] https://patchwork.kernel.org/patch/10322937/
+[2] https://git.linaro.org/people/manivannan.sadhasivam/linux.git/log/?h=s900-for-next
+
+Changes in v4:
+
+As per Andy and Peter review:
+
+* Used spinlock for accessing most of the register access (only parts
+  involved sleep/long-busy-wait has been excluded)
+* Removed returning 0 and added -ENXIO if the msg_ptr not equals to
+  message length
+* Added DIV_ROUND_UP for setting clock frequency
+* Changed one non-atomic mdelay instance to usleep_range
+* Moved pinctrl definition patch before dts patch
+* Fixed the driver to support only 100KHz and 400KHz frequencies
+
+Changes in v3:
+
+As per Peter, Andy and Andreas review:
+
+* Removed owl_i2c_reset function from interrupt handler since it
+  involves the use of delays.
+* Fixed the return path in owl_i2c_master_xfer and added a note
+* Changed "base" parameter to "reg" in owl_i2c_update_reg for better
+  understandability
+* Ordered the includes in alphabetical order
+* Small changes to defines and added comma at the end of struct members
+* Removed rendundant 0 assignment in owl_i2c_master_xfer
+* Changed all OWL naming convention to Owl and also changed Actions Semi
+  naming to Actions Semiconductor
+
+Changes in v2:
+
+As per Andy's review:
+* Modified infinite loops to fixed number of retries
+* Used i2c_8bit_addr_from_msg for constructing the slave address
+* Removed unnecessary parenthesis around defines
+* Modified certain dev_warn to dev_dbg
+* Modified the error handling to more generic pattern
+
+* Fixed the return value in owl_i2c_master_xfer
+* Added MAINTAINERS patch for I2C driver and its binding
+
+Manivannan Sadhasivam (6):
+  dt-bindings: i2c: Add binding for Actions Semiconductor Owl I2C
+    controller
+  arm64: dts: actions: Add pinctrl definition for S900 I2C controller
+  arm64: dts: actions: Add Actions Semiconductor S900 I2C controller
+    nodes
+  arm64: dts: actions: Enable I2C1 and I2C2 in Bubblegum-96 board
+  i2c: Add Actions Semiconductor Owl family S900 I2C driver
+  MAINTAINERS: Add entry for Actions Semiconductor Owl I2C driver
+
+ .../devicetree/bindings/i2c/i2c-owl.txt       |  27 +
+ MAINTAINERS                                   |   2 +
+ .../dts/actions/s900-bubblegum-96-pins.dtsi   |  29 +
+ .../boot/dts/actions/s900-bubblegum-96.dts    |  11 +
+ arch/arm64/boot/dts/actions/s900.dtsi         |  60 +++
+ drivers/i2c/busses/Kconfig                    |   7 +
+ drivers/i2c/busses/Makefile                   |   1 +
+ drivers/i2c/busses/i2c-owl.c                  | 504 ++++++++++++++++++
+ 8 files changed, 641 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-owl.txt
+ create mode 100644 arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
+ create mode 100644 drivers/i2c/busses/i2c-owl.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
