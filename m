@@ -1,38 +1,126 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 0/9] Fix references for some missing documentation files
-Date: Mon, 2 Jul 2018 11:27:23 -0600
-Message-ID: <20180702112723.654d348c@lwn.net>
-References: <cover.1530005114.git.mchehab+samsung@kernel.org>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
+Date: Mon, 02 Jul 2018 10:56:49 -0700
+Message-ID: <153055420964.143105.3738779882090053054@swboyd.mtv.corp.google.com>
+References: <20180618205255.246104-1-swboyd@chromium.org>
+ <20180618205255.246104-3-swboyd@chromium.org>
+ <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
+ <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
+ <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
+ <CAD=FV=Xmo4p7DbOReO02JVKnykoAOz7PtnkbdwryxvpsgZCgWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
-In-Reply-To: <cover.1530005114.git.mchehab+samsung@kernel.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, James Morris <james.morris@microsoft.com>, kvm@vger.kernel.org, Linux Doc Mailing List <linux-doc@vger.kernel.org>, virtualization@lists.linux-foundation.org, linux-leds@vger.kernel.org, linux-scsi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, intel-wired-lan@lists.osuosl.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-gpio@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Andy Whitcroft <apw@canonical.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Changbin Du <changbin.du@intel.com>, Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@zh-kernel.org, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=Xmo4p7DbOReO02JVKnykoAOz7PtnkbdwryxvpsgZCgWw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 26 Jun 2018 06:49:02 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+Quoting Doug Anderson (2018-06-28 11:45:30)
+> Hi,
+> =
 
-> Having nothing to do while waiting for my plane to arrive while
-> returning back from Japan, I ended by writing a small series of 
-> patches meant to reduce the number of bad Documentation/* 
-> links that are detected by:
-> 	./scripts/documentation-file-ref-check
+> On Thu, Jun 28, 2018 at 10:14 AM, Stephen Boyd <swboyd@chromium.org> wrot=
+e:
+> > Quoting Linus Walleij (2018-06-28 07:25:46)
+> >> On Fri, Jun 22, 2018 at 8:29 PM Bjorn Andersson
+> >> <bjorn.andersson@linaro.org> wrote:
+> >> > On Fri 22 Jun 10:58 PDT 2018, Bjorn Andersson wrote:
+> >> > > On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
+> >> > >
+> >> > > > We rely on devices to use pinmuxing configurations in DT to sele=
+ct the
+> >> > > > GPIO function (function 0) if they're going to use the gpio in G=
+PIO
+> >> > > > mode. Let's simplify things for driver authors by implementing
+> >> > > > gpio_request_enable() for this pinctrl driver to mux out the GPIO
+> >> > > > function when the gpio is use from gpiolib.
+> >> > > >
+> >> > > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >> > >
+> >> > > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >> (...)
+> >> > While both patch 2 and 3 are convenient ways to get around the annoy=
+ance
+> >> > of having to specify a pinmux state both patches then ends up relyin=
+g on
+> >> > some default pinconf state; which I think is bad.
+> >
+> > What default state are we relying on? The reset state of the pins? I'm
+> > very confused by this statement. These last two patches are making sure
+> > that when a GPIO is requested as a GPIO or IRQ, it's really in GPIO
+> > mode. If this code is not in place, then we'll allow drivers to request
+> > a GPIO but pinmuxing won't be called to actually mux that pin to GPIO
+> > mode unless they have a DT conf for function =3D "gpio". That seems
+> > entirely unexpected and easy to mess up.
+> >
+> >>
+> >> Nothing stops you from setting up a default conf in
+> >> this callback though.
+> >>
+> >> But admittedly this call was added for simpler hardware.
+> >>
+> >> > Further more in situations like i2c-qup (downstream), where the pins=
+ are
+> >> > requested as gpios in order to "bitbang" a reset this would mean that
+> >> > the driver has to counter the convenience; by either switching in the
+> >> > default pinmux at the end of probe or postponing the gpio_request() =
+to
+> >> > the invocation of reset and then, after issuing the gpio_release,
+> >> > switching in the default pinmux explicitly again.
+> >>
+> >> That's a bigger problem. If the system is using device and GPIO
+> >> mode orthogonally, it'd be good to leave like this.
+> >>
+> >
+> > Doesn't that driver need to explicitly mux GPIO mode vs. device mode
+> > right now? So having gpio_request() do the muxing to GPIO mode and then
+> > explicit muxing of the pin to device mode would be what we have after
+> > this patch, while before this patch we would have mux to GPIO, request
+> > GPIO (nop), mux to device. We saved an explicit pinmux call?
+> =
 
-I've applied everything except the two networking patches, since I expect
-those to go through Dave's tree.
+> After reading these replies I'm slightly worried about some of the
+> stuff Bjorn is worried about too.  In Bjorn's example I think that the
+> "default" state of the pins is probably i2c-mode and that it might
+> switch to GPIO mode only when it needs to do the special unwedge of
+> the i2c port.
+> =
 
-Thanks,
+> So maybe the i2c driver does this:
+> =
 
-jon
+> 1. "Default" pinmux state of i2c is i2c-mode, "unwedge" pinmux state
+> is gpio-mode.
+> =
+
+> 2. In probe, request the GPIOs for use later in case we need to
+> unwedge.  Don't use them right now since we don't need to unwedge.
+> Assumes pinmux state stays as "default".
+> =
+
+> 3. When you decide you need to unwedge the bus, pinmux to the special
+> i2c mode and drive the pins you requested in probe.  Then pinmux back.
+> =
+
+> =
+
+> ...I think your patch will break this because when you request the
+> GPIOs you'll have an implicit (and unexpected?) pinmux transition.
+> =
+
+> What do you think?
+> =
+
+> =
+
+
+I could do with some more clarity from Linus in the "Drivers needing
+both pin control and GPIOs" section of
+Documentation/driver-api/pinctl.rst but I read that section as stating
+that the GPIO driver needs to mux the pin as a GPIO by requesting the
+pinctrl backend to do so, unless the hardware overrides the muxed
+function selection when the GPIO is used, without involving pinctrl
+software.
