@@ -1,27 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: stp-xway: Implement get callback
-Date: Mon, 2 Jul 2018 15:22:20 +0200
-Message-ID: <CACRpkdbhjPpFN_k36xDYgNKVrEg8ze8R0iHhXTPPuy5u7yWGsA@mail.gmail.com>
-References: <1530215860-25549-1-git-send-email-dev@kresin.me>
+Subject: Re: [PATCH] bindings: add clocks optional binding for imx gpio
+Date: Mon, 2 Jul 2018 15:45:39 +0200
+Message-ID: <CACRpkdbbbbO-94i-ZTSunzuUQcJ8dQpuPHBYODrvdWQyuri7yw@mail.gmail.com>
+References: <1530243004-10529-1-git-send-email-Anson.Huang@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1530215860-25549-1-git-send-email-dev@kresin.me>
+In-Reply-To: <1530243004-10529-1-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dev@kresin.me
-Cc: John Crispin <john@phrozen.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: Anson Huang <Anson.Huang@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 10:02 PM Mathias Kresin <dev@kresin.me> wrote:
+On Fri, Jun 29, 2018 at 5:34 AM Anson Huang <Anson.Huang@nxp.com> wrote:
 
-> Add an implementation to get the current GPIO state.
+> Some i.MX SoCs have GPIO clock gate in CCM, accessing
+> GPIO registers needs to enable GPIO clock gate first,
+> i.MX GPIO driver will enable clock gate if there is
+> clock property in GPIO node of dtb, add optional property
+> to i.MX GPIO binding doc.
 >
-> The callback is used by the leds-gpio driver for example, in case the
-> current LED/GPIO state should be kept during driver load.
->
-> Signed-off-by: Mathias Kresin <dev@kresin.me>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Patch applied.
+Make sense since the gpio-mxc driver already supports this :)
+
+> +Optional properties:
+> +- clocks: the clocks used by gpio bank
+
+Should the text be "the clock for clocking the GPIO silicon"
+I guess that is what it is. And singularis?
+
+Does it hurt to give the clock a name? Like the common
+"pclk" for peripheral clock or something similar that other
+i.MX silicon uses?
+
+Fabio: can we have your ACK on this too.
 
 Yours,
 Linus Walleij
