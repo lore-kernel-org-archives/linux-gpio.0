@@ -1,55 +1,49 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH][V2] pinctrl: actions: fix unsigned less than zero comparison
-Date: Mon,  2 Jul 2018 13:47:08 +0100
-Message-ID: <20180702124708.7295-1-colin.king@canonical.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v2 06/10] ARM: OMAP1: ams-delta FIQ: don't use static
+ GPIO numbers
+Date: Mon, 2 Jul 2018 05:56:23 -0700
+Message-ID: <20180702125623.GX112168@atomide.com>
+References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
+ <20180621224128.17623-1-jmkrzyszt@gmail.com>
+ <20180621224128.17623-6-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180621224128.17623-6-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, "David S . Miller " <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+* Janusz Krzysztofik <jmkrzyszt@gmail.com> [180621 22:45]:
+> --- a/arch/arm/mach-omap1/board-ams-delta.c
+> +++ b/arch/arm/mach-omap1/board-ams-delta.c
+> @@ -580,6 +580,44 @@ static struct gpiod_hog ams_delta_gpio_hogs[] = {
+>  	{},
+>  };
+>  
+> +/*
+> + * Some drivers may not use GPIO lookup tables but need to be provided
+> + * with GPIO numbers.  The same applies to GPIO based IRQ lines - some
+> + * drivers may even not use GPIO layer but expect just IRQ numbers.
+> + * We could either define GPIO lookup tables then use them on behalf
+> + * of those devices, or we can use GPIO driver level methods for
+> + * identification of GPIO and IRQ numbers. For the purpose of the latter,
+> + * defina a helper function which identifies GPIO chips by their labels.
+> + */
+> +static int gpiochip_match_by_label(struct gpio_chip *chip, void *data)
+> +{
+> +	char *label = data;
+> +
+> +	return !strcmp(label, chip->label);
+> +}
 
-The check to see if platform_get_irq failed is performed on the
-unsigned value of pctrl->irq[i] and the check is never true because
-an unsigned cannot be less than zero.  Fix this by assinging the
-signed int ret to the return of platform_get_irq and checking ret
-instead.
+I left out the duplicate gpiochip_match_by_label() above as it's already
+there from an earlier "ARM: OMAP1: ams-delta: assign LED GPIO numbers
+from descriptors". The whole series is now pushed out to
+omap-for-v4.19/omap1 and I'll merge it into my for-next soon.
 
-Detected by CoverityScan, CID#1470247 ("Unsigned comparison against 0")
+Thanks,
 
-Fixes: 6c5d0736e9c0 ("pinctrl: actions: Add interrupt support for OWL S900 SoC")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-
-V2: move pctrl->irq[i] = ret assignment below the check on ret, thanks
-to Manivannan Sadhasivam for suggesting this change.
-
----
- drivers/pinctrl/actions/pinctrl-owl.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-index 4fa9cc377b3b..24dc57fcac51 100644
---- a/drivers/pinctrl/actions/pinctrl-owl.c
-+++ b/drivers/pinctrl/actions/pinctrl-owl.c
-@@ -1026,11 +1026,10 @@ int owl_pinctrl_probe(struct platform_device *pdev,
- 	}
- 
- 	for (i = 0; i < pctrl->num_irq ; i++) {
--		pctrl->irq[i] = platform_get_irq(pdev, i);
--		if (pctrl->irq[i] < 0) {
--			ret = pctrl->irq[i];
-+		ret = platform_get_irq(pdev, i);
-+		if (ret < 0)
- 			goto err_exit;
--		}
-+		pctrl->irq[i] = ret;
- 	}
- 
- 	ret = owl_gpio_init(pctrl);
--- 
-2.17.1
+Tony
