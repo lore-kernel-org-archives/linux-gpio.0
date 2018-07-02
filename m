@@ -1,51 +1,51 @@
-From: Li Zhijian <lizhijian@cn.fujitsu.com>
-Subject: [PATCH 3/3] selftests/gpio: unset OUTPUT for build tools/gpio
-Date: Mon,  2 Jul 2018 11:53:54 +0800
-Message-ID: <1530503634-32241-4-git-send-email-lizhijian@cn.fujitsu.com>
-References: <1530503634-32241-1-git-send-email-lizhijian@cn.fujitsu.com>
- <1530503634-32241-2-git-send-email-lizhijian@cn.fujitsu.com>
- <1530503634-32241-3-git-send-email-lizhijian@cn.fujitsu.com>
+From: Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v6 0/2] pinctrl: imx: Add driver for i.MX8MQ
+Date: Mon,  2 Jul 2018 14:59:04 +0300
+Message-ID: <1530532746-619-1-git-send-email-abel.vesa@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1530503634-32241-3-git-send-email-lizhijian@cn.fujitsu.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org
-Cc: Li Zhijian <lizhijian@cn.fujitsu.com>, Bamvor Jian Zhang <bamv2005@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>, Rob Herring <robh@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-gpio@vger.kernel.org, linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-when we execute 'make' to build selftests, the TOP Makefile build gpio like:
-selftests$ make ARCH= CROSS_COMPILE= OUTPUT=/home/lizj/linux/tools/testing/selftests/gpio -C gpio
-...
-make[2]: Leaving directory '/home/lizj/linux/tools/gpio'
-gcc -O2 -g -std=gnu99 -Wall -I../../../../usr/include/gpio-mockup-chardev.c ../../../gpio/gpio-utils.o ../../../../usr/include/linux/gpio.h  -I/usr/include/libmount -I/usr/include/blkid -I/usr/include/uuid -lmount -o gpio-mockup-chardev
-gcc: error: ../../../gpio/gpio-utils.o: No such file or directory
-<builtin>: recipe for target 'gpio-mockup-chardev' failed
-make[1]: *** [gpio-mockup-chardev] Error 1
-make[1]: Leaving directory
-'/home/lizj/linux/tools/testing/selftests/gpio'
-Makefile:84: recipe for target 'all' failed
-make: *** [all] Error 2
+This is the sixth version for the patch series sent by Lucas.
 
-CC: Bamvor Jian Zhang <bamv2005@gmail.com>
-CC: Bartosz Golaszewski <brgl@bgdev.pl>
-CC: Shuah Khan <shuah@kernel.org>
-CC: linux-gpio@vger.kernel.org
-Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
----
- tools/testing/selftests/gpio/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://www.spinics.net/lists/devicetree/msg212752.html
 
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 1bbb475..e64a11c 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -24,7 +24,7 @@ LDLIBS += -lmount -I/usr/include/libmount
- $(BINARIES): ../../../gpio/gpio-utils.o ../../../../usr/include/linux/gpio.h
- 
- ../../../gpio/gpio-utils.o:
--	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
-+	make OUTPUT= ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
- 
- ../../../../usr/include/linux/gpio.h:
- 	make -C ../../../.. headers_install INSTALL_HDR_PATH=$(shell pwd)/../../../../usr/
+Fifth version can be found here:
+
+https://lkml.org/lkml/2018/6/22/501
+
+Changes since v5:
+ * implemented Rob's review comments related to bindings
+
+Changes since v4:
+ * implemented all Aisheng's review comments
+
+Changes since v3:
+ * dropped the SION generic pinconf changes
+ * added examples to the bindings doc
+
+Changes since v2:
+ * switch back to the 'fsl,pins' and hardcoded the config values
+inside the dts.
+ * updated documentation accordingly
+
+Abel Vesa (1):
+  dt-bindings: add binding for i.MX8MQ IOMUXC
+
+Lucas Stach (1):
+  pinctrl: imx: add driver for i.MX8MQ
+
+ .../bindings/pinctrl/fsl,imx8mq-pinctrl.txt        |  36 +++
+ drivers/pinctrl/freescale/Kconfig                  |   7 +
+ drivers/pinctrl/freescale/Makefile                 |   1 +
+ drivers/pinctrl/freescale/pinctrl-imx8mq.c         | 351 +++++++++++++++++++++
+ 4 files changed, 395 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imx8mq.c
+
 -- 
 2.7.4
