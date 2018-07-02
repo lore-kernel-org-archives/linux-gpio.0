@@ -1,99 +1,36 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with
- gpio_request()
-Date: Mon, 2 Jul 2018 12:09:22 -0700
-Message-ID: <20180702190922.GE2050@tuxbook-pro>
-References: <20180618205255.246104-1-swboyd@chromium.org>
- <20180618205255.246104-3-swboyd@chromium.org>
- <20180622175836.GC3402@tuxbook-pro>
- <20180622183129.GD3402@tuxbook-pro>
- <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
- <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Douglas Anderson <dianders@chromium.org>
+Subject: [PATCH 1/3] pinctrl: Document pin_config_group_get() return codes like pin_config_get()
+Date: Mon,  2 Jul 2018 15:59:37 -0700
+Message-ID: <20180702225939.109169-1-dianders@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Doug Anderson <dianders@chromium.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: iivanov@mm-sol.com, swboyd@chromium.org, Douglas Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu 28 Jun 10:14 PDT 2018, Stephen Boyd wrote:
+The pinconf_generic_dump_one() function makes the assumption that
+pin_config_group_get() should return -EINVAL and -ENOTSUPP just like
+pin_config_get() does.  Document that so it's more obvious.
 
-> Quoting Linus Walleij (2018-06-28 07:25:46)
-> > On Fri, Jun 22, 2018 at 8:29 PM Bjorn Andersson
-> > <bjorn.andersson@linaro.org> wrote:
-> > > On Fri 22 Jun 10:58 PDT 2018, Bjorn Andersson wrote:
-> > > > On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
-> > > >
-> > > > > We rely on devices to use pinmuxing configurations in DT to select the
-> > > > > GPIO function (function 0) if they're going to use the gpio in GPIO
-> > > > > mode. Let's simplify things for driver authors by implementing
-> > > > > gpio_request_enable() for this pinctrl driver to mux out the GPIO
-> > > > > function when the gpio is use from gpiolib.
-> > > > >
-> > > > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > >
-> > > > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > (...)
-> > > While both patch 2 and 3 are convenient ways to get around the annoyance
-> > > of having to specify a pinmux state both patches then ends up relying on
-> > > some default pinconf state; which I think is bad.
-> 
-> What default state are we relying on? The reset state of the pins? I'm
-> very confused by this statement. These last two patches are making sure
-> that when a GPIO is requested as a GPIO or IRQ, it's really in GPIO
-> mode.
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-Yes and this is convenient, as the TLMM is both multiplexor and gpio
-controller this is probably what people would expect. However looking at
-the downstream code people don't think this way (i.e. many drivers calls
-gpio_request() to get some sort of exclusive access to its pins - not
-to request gpio to be the muxed function).
+ include/linux/pinctrl/pinconf.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-But my concern is related to pinconf, not pinmux - automating pinmuxing
-doesn't change the fact that the systems integrator should make sure to
-configure appropriate pull properties on the pins.
-
-> If this code is not in place, then we'll allow drivers to request
-> a GPIO but pinmuxing won't be called to actually mux that pin to GPIO
-> mode unless they have a DT conf for function = "gpio". That seems
-> entirely unexpected and easy to mess up.
-> 
-
-I do agree with this, but the opposite doesn't feel crystal clear
-either.
-
-> > 
-> > Nothing stops you from setting up a default conf in
-> > this callback though.
-> > 
-> > But admittedly this call was added for simpler hardware.
-> > 
-> > > Further more in situations like i2c-qup (downstream), where the pins are
-> > > requested as gpios in order to "bitbang" a reset this would mean that
-> > > the driver has to counter the convenience; by either switching in the
-> > > default pinmux at the end of probe or postponing the gpio_request() to
-> > > the invocation of reset and then, after issuing the gpio_release,
-> > > switching in the default pinmux explicitly again.
-> > 
-> > That's a bigger problem. If the system is using device and GPIO
-> > mode orthogonally, it'd be good to leave like this.
-> > 
-> 
-> Doesn't that driver need to explicitly mux GPIO mode vs. device mode
-> right now? So having gpio_request() do the muxing to GPIO mode and then
-> explicit muxing of the pin to device mode would be what we have after
-> this patch, while before this patch we would have mux to GPIO, request
-> GPIO (nop), mux to device. We saved an explicit pinmux call?
-> 
-
-It's currently possible to call gpio_request() in the i2c driver's probe
-function and then mux when needed. With this patch you would have to
-either follow the gpio_request with a mux-to-default or defer the
-gpio_request until the point where they today would have an explicit
-mux-to-gpio.
-
-Regards,
-Bjorn
+diff --git a/include/linux/pinctrl/pinconf.h b/include/linux/pinctrl/pinconf.h
+index 09eb80f2574a..8dd85d302b90 100644
+--- a/include/linux/pinctrl/pinconf.h
++++ b/include/linux/pinctrl/pinconf.h
+@@ -28,7 +28,8 @@ struct seq_file;
+  *	is not available on this controller this should return -ENOTSUPP
+  *	and if it is available but disabled it should return -EINVAL
+  * @pin_config_set: configure an individual pin
+- * @pin_config_group_get: get configurations for an entire pin group
++ * @pin_config_group_get: get configurations for an entire pin group; should
++ *	return -ENOTSUPP and -EINVAL using the same rules as pin_config_get.
+  * @pin_config_group_set: configure all pins in a group
+  * @pin_config_dbg_parse_modify: optional debugfs to modify a pin configuration
+  * @pin_config_dbg_show: optional debugfs display hook that will provide
+-- 
+2.18.0.399.gad0ab374a1-goog
