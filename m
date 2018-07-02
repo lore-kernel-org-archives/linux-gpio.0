@@ -1,73 +1,88 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH][next] pinctrl: actions: fix unsigned less than zero
- comparison
-Date: Mon, 2 Jul 2018 17:59:49 +0530
-Message-ID: <20180702122949.GA9925@mani>
-References: <20180702121504.6731-1-colin.king@canonical.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/5] gpio: tegra186: Add support for Tegra194
+Date: Mon, 2 Jul 2018 14:38:58 +0200
+Message-ID: <20180702123858.GB13096@ulmo>
+References: <20180620125406.11906-1-mperttunen@nvidia.com>
+ <20180620125406.11906-2-mperttunen@nvidia.com>
+ <CACRpkdY899HBsj4BAtVGXj7=KLhpJmLYzKLmyDL3TcJjp8a6SA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180702121504.6731-1-colin.king@canonical.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1526628919915040303=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdY899HBsj4BAtVGXj7=KLhpJmLYzKLmyDL3TcJjp8a6SA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, vbhadram@nvidia.com, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Colin,
 
-On Mon, Jul 02, 2018 at 01:15:04PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The check to see if platform_get_irq failed is performed on the
-> unsigned value of pctrl->irq[i] and the check is never true because
-> an unsigned cannot be less than zero.  Fix this by assinging the
-> signed int ret to the return of platform_get_irq and checking ret
-> instead.
-> 
+--===============1526628919915040303==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="s/l3CgOIzMHHjg/5"
+Content-Disposition: inline
 
-Thanks for spotting!
 
-> Detected by CoverityScan, CID#1470247 ("Unsigned comparison against 0")
-> 
-> Fixes: 6c5d0736e9c0 ("pinctrl: actions: Add interrupt support for OWL S900 SoC")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pinctrl/actions/pinctrl-owl.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-> index 4fa9cc377b3b..133ce9e0000a 100644
-> --- a/drivers/pinctrl/actions/pinctrl-owl.c
-> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
-> @@ -1026,11 +1026,10 @@ int owl_pinctrl_probe(struct platform_device *pdev,
->  	}
->  
->  	for (i = 0; i < pctrl->num_irq ; i++) {
-> -		pctrl->irq[i] = platform_get_irq(pdev, i);
-> -		if (pctrl->irq[i] < 0) {
-> -			ret = pctrl->irq[i];
-> +		ret = platform_get_irq(pdev, i);
-> +		pctrl->irq[i] = ret;
+--s/l3CgOIzMHHjg/5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can we move this statement below if condition:
+On Fri, Jun 29, 2018 at 10:14:12AM +0200, Linus Walleij wrote:
+> On Wed, Jun 20, 2018 at 2:54 PM Mikko Perttunen <mperttunen@nvidia.com> w=
+rote:
+>=20
+> > Add support for the Tegra194 GPIO bank configuration.
+> >
+> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>=20
+> Patch applied as pretty straight forward.
+> I don't think Thierry would mind, in worst case I can revert
+> it.
 
-ret = platform_get_irq(pdev, i);
-if (ret < 0)
-	goto err_exit;
-pctrl->irq[i] = ret;
+Sorry for not getting back sooner, I was out sick last week. I don't
+mind at all, so for what it's worth:
 
-This looks slightly better.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thanks,
-Mani
+--s/l3CgOIzMHHjg/5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +		if (ret < 0)
->  			goto err_exit;
-> -		}
->  	}
->  
->  	ret = owl_gpio_init(pctrl);
-> -- 
-> 2.17.1
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6HOIACgkQ3SOs138+
+s6ETpRAAtPj7GyAdA6BWqvXEYaqho2D0m3pCTeDcAK4OGjV7muPV33okefYIKAfQ
+VJsRX/qH1oNa94oCcPXEqifV8XfRKfbDWJeQlmcQ/9P5GgXvf5GTkBt7CF1HZo8y
+e3AnaCbZAo0clMm+mwIq3oLWTIY+ZH79W7xPEGr19Zl7QLP1ytsr0veH7CPLNV7F
+MKAyn/nHYF6qbcZ76XWWyXd0STnqF89ajm2CdHSgOeE2z4kwYaq6AyegNVMyjidm
+1BadVAQedhCw9gjerMS93KQ0VJXdl9lqZkeePQ0ZTssogSI+M6ZOXGzEydwFPfnF
+jbSqS0x9v2cJ4StCRWN7/Sz8fPfhoTpF8T2KW72rjT9NpqqY4EfA4R6ErWSR/bjm
+hgp2ImAZ7XSa5dHIa7LKhP2UBnffdCNSVkS/Wki+t6hO/GXelKve3bwTB3HWEq3B
+6+SymZnHSKddHFMxnMqnh48FXD+2lgi0juc8I3HM69GrBkhj1Vd3HBsIX1EedHst
+f0ckAuYOajoksrPrVPZLoh0YDCOQzkEjGRRjEmCz90aM9OmRiJ9Dkvhj9Q/ejzIg
+CuHq5FlC3/iAIpHOz2qep5wrN+ccRDb9Cw9iEncMZH4SffVowtJpstWx4xJU9fc3
+b3D44b9yLbHFzQpuaTTIv8u3TogtIDn3jJPmq+oo6mt6hZ1z6tY=
+=/xor
+-----END PGP SIGNATURE-----
+
+--s/l3CgOIzMHHjg/5--
+
+
+--===============1526628919915040303==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============1526628919915040303==--
