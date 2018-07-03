@@ -1,28 +1,54 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v6 1/2] dt-bindings: add binding for i.MX8MQ IOMUXC
-Date: Tue, 3 Jul 2018 10:59:50 -0600
-Message-ID: <20180703165950.GA23752@rob-hp-laptop>
-References: <1530532746-619-1-git-send-email-abel.vesa@nxp.com>
- <1530532746-619-2-git-send-email-abel.vesa@nxp.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH] gpiolib: Defer on non-DT find_chip_by_name() failure
+Date: Tue,  3 Jul 2018 19:26:35 +0200
+Message-ID: <20180703172635.32508-1-jmkrzyszt@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1530532746-619-2-git-send-email-abel.vesa@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>, Dong Aisheng <aisheng.dong@nxp.com>, linux-gpio@vger.kernel.org, linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@linux.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 02:59:05PM +0300, Abel Vesa wrote:
-> This adds the binding for the i.MX8MQ pin controller, in the same
-> fashion as earlier i.MX SoCs.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  .../bindings/pinctrl/fsl,imx8mq-pinctrl.txt        | 36 ++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
+Avoid replication of error code conversion in non-DT GPIO consumers'
+code by returning -EPROBE_DEFER from gpiod_find() in case a chip
+identified by its label in a registered lookup table is not ready.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+See https://lkml.org/lkml/2018/5/30/176 for example case.
+
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+If accepted, please add
+	Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+if Boris doesn't mind.
+
+Thanks,
+Janusz
+
+ drivers/gpio/gpiolib.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e11a3bb03820..15dc77c80328 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3639,9 +3639,16 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
+ 		chip = find_chip_by_name(p->chip_label);
+ 
+ 		if (!chip) {
+-			dev_err(dev, "cannot find GPIO chip %s\n",
+-				p->chip_label);
+-			return ERR_PTR(-ENODEV);
++			/*
++			 * As the lookup table indicates a chip with
++			 * p->chip_label should exist, assume it may
++			 * still appear latar and let the interested
++			 * consumer be probed again or let the Deferred
++			 * Probe infrastructure handle the error.
++			 */
++			dev_warn(dev, "cannot find GPIO chip %s, deferring\n",
++				 p->chip_label);
++			return ERR_PTR(-EPROBE_DEFER);
+ 		}
+ 
+ 		if (chip->ngpio <= p->chip_hwnum) {
+-- 
+2.16.4
