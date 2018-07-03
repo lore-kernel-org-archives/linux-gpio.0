@@ -1,45 +1,28 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 23/27] devicetree: fix name of pinctrl-bindings.txt
-Date: Tue, 3 Jul 2018 08:33:47 +0100
-Message-ID: <20180703073347.GG20176@dell>
-References: <cover.1528990947.git.mchehab+samsung@kernel.org>
- <d04d47f9fba035cf9de8589a288964c636324d58.1528990947.git.mchehab+samsung@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v6 1/2] dt-bindings: add binding for i.MX8MQ IOMUXC
+Date: Tue, 3 Jul 2018 10:59:50 -0600
+Message-ID: <20180703165950.GA23752@rob-hp-laptop>
+References: <1530532746-619-1-git-send-email-abel.vesa@nxp.com>
+ <1530532746-619-2-git-send-email-abel.vesa@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <d04d47f9fba035cf9de8589a288964c636324d58.1528990947.git.mchehab+samsung@kernel.org>
+In-Reply-To: <1530532746-619-2-git-send-email-abel.vesa@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>, Dong Aisheng <aisheng.dong@nxp.com>, linux-gpio@vger.kernel.org, linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@linux.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 14 Jun 2018, Mauro Carvalho Chehab wrote:
-
-> Rename:
-> 	pinctrl-binding.txt -> pinctrl-bindings.txt
+On Mon, Jul 02, 2018 at 02:59:05PM +0300, Abel Vesa wrote:
+> This adds the binding for the i.MX8MQ pin controller, in the same
+> fashion as earlier i.MX SoCs.
 > 
-> In order to match the current name of this file.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
 > ---
->  Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt | 2 +-
->  Documentation/devicetree/bindings/mfd/as3722.txt              | 2 +-
+>  .../bindings/pinctrl/fsl,imx8mq-pinctrl.txt        | 36 ++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.txt
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
->  .../devicetree/bindings/mmc/microchip,sdhci-pic32.txt         | 2 +-
->  Documentation/devicetree/bindings/mmc/sdhci-st.txt            | 2 +-
->  .../devicetree/bindings/pinctrl/pinctrl-max77620.txt          | 4 ++--
->  .../devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt          | 4 ++--
->  Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt   | 4 ++--
->  .../devicetree/bindings/serial/microchip,pic32-uart.txt       | 2 +-
->  Documentation/devicetree/bindings/spi/spi-st-ssc.txt          | 2 +-
->  9 files changed, 12 insertions(+), 12 deletions(-)
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Reviewed-by: Rob Herring <robh@kernel.org>
