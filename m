@@ -1,64 +1,45 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH 3/3] pinctrl: qcom: spmi-gpio: Fix pmic_gpio_config_get() to be
- compliant
-Date: Mon, 02 Jul 2018 23:09:07 -0700
-Message-ID: <153059814703.143105.275831530209187562@swboyd.mtv.corp.google.com>
-References: <20180702225939.109169-1-dianders@chromium.org>
- <20180702225939.109169-3-dianders@chromium.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 23/27] devicetree: fix name of pinctrl-bindings.txt
+Date: Tue, 3 Jul 2018 08:33:47 +0100
+Message-ID: <20180703073347.GG20176@dell>
+References: <cover.1528990947.git.mchehab+samsung@kernel.org>
+ <d04d47f9fba035cf9de8589a288964c636324d58.1528990947.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180702225939.109169-3-dianders@chromium.org>
+Content-Disposition: inline
+In-Reply-To: <d04d47f9fba035cf9de8589a288964c636324d58.1528990947.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: iivanov@mm-sol.com, Douglas Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Douglas Anderson (2018-07-02 15:59:39)
-> If you do this on an sdm845 board:
->   grep "" /sys/kernel/debug/pinctrl/*spmi:pmic*/pinconf-groups
-> =
+On Thu, 14 Jun 2018, Mauro Carvalho Chehab wrote:
 
-> ...it looks like nonsense.  For every pin you see listed:
->   input bias disabled, input bias high impedance, input bias pull down, i=
-nput bias pull up, ...
-> =
+> Rename:
+> 	pinctrl-binding.txt -> pinctrl-bindings.txt
+> 
+> In order to match the current name of this file.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt | 2 +-
+>  Documentation/devicetree/bindings/mfd/as3722.txt              | 2 +-
 
-> That's because pmic_gpio_config_get() isn't complying with the rules
-> that pinconf_generic_dump_one() expects.  Specifically for boolean
-> parameters (anything with a "struct pin_config_item" where has_arg is
-> false) the function expects that the function should return its value
-> not through the "config" parameter but should return "0" if the value
-> is set and "-EINVAL" if the value isn't set.
-> =
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-> Let's fix this.
-> =
+>  .../devicetree/bindings/mmc/microchip,sdhci-pic32.txt         | 2 +-
+>  Documentation/devicetree/bindings/mmc/sdhci-st.txt            | 2 +-
+>  .../devicetree/bindings/pinctrl/pinctrl-max77620.txt          | 4 ++--
+>  .../devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt          | 4 ++--
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt   | 4 ++--
+>  .../devicetree/bindings/serial/microchip,pic32-uart.txt       | 2 +-
+>  Documentation/devicetree/bindings/spi/spi-st-ssc.txt          | 2 +-
+>  9 files changed, 12 insertions(+), 12 deletions(-)
 
-> From a quick sample of other pinctrl drivers, it appears to be
-> tradition to also return 1 through the config parameter for these
-> boolean parameters when they exist.  I'm not one to knock tradition,
-> so I'll follow tradition and return 1 in these cases.  While I'm at
-> it, I'll also continue searching for four leaf clovers, kocking on
-
-Small typo here.
-
-> wood three times, and trying not to break mirrors.
-> =
-
-> NOTE: This also fixes an apparent typo for reading
-> PIN_CONFIG_BIAS_DISABLE where the old driver was accidentally
-> using "=3D" instead of "=3D=3D" and thus was setting some internal
-> state when you tried to query PIN_CONFIG_BIAS_DISABLE.  Oops.
-
-Awesome!
-
-> =
-
-> Fixes: eadff3024472 ("pinctrl: Qualcomm SPMI PMIC GPIO pin controller dri=
-ver")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-
-We should fix the ssbi-gpio/mpp and spmi-mpp drivers too. All those
-drivers are designed on the same buggy original driver.
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
