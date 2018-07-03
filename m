@@ -1,81 +1,52 @@
-From: Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH 2/3] pinctrl: msm: Fix msm_config_group_get() to be compliant
-Date: Mon,  2 Jul 2018 15:59:38 -0700
-Message-ID: <20180702225939.109169-2-dianders@chromium.org>
-References: <20180702225939.109169-1-dianders@chromium.org>
+From: Anson Huang <anson.huang@nxp.com>
+Subject: RE: [PATCH] bindings: add clocks optional binding for imx gpio
+Date: Tue, 3 Jul 2018 01:14:11 +0000
+Message-ID: <AM3PR04MB13158C70263CB7CD5CB24173F5420@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1530243004-10529-1-git-send-email-Anson.Huang@nxp.com>
+ <CACRpkdbbbbO-94i-ZTSunzuUQcJ8dQpuPHBYODrvdWQyuri7yw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180702225939.109169-1-dianders@chromium.org>
+In-Reply-To: <CACRpkdbbbbO-94i-ZTSunzuUQcJ8dQpuPHBYODrvdWQyuri7yw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: iivanov@mm-sol.com, swboyd@chromium.org, Douglas Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-If you do this on an sdm845 board:
-  cat /sys/kernel/debug/pinctrl/3400000.pinctrl/pinconf-groups
-
-...it looks like nonsense.  For every pin you see listed:
-  input bias bus hold, input bias disabled, input bias pull down, input bias pull up
-
-That's because msm_config_group_get() isn't complying with the rules
-that pinconf_generic_dump_one() expects.  Specifically for boolean
-parameters (anything with a "struct pin_config_item" where has_arg is
-false) the function expects that the function should return its value
-not through the "config" parameter but should return "0" if the value
-is set and "-EINVAL" if the value isn't set.
-
-Let's fix this.
-
->From a quick sample of other pinctrl drivers, it appears to be
-tradition to also return 1 through the config parameter for these
-boolean parameters when they exist.  I'm not one to knock tradition,
-so I'll follow tradition and return 1 in these cases.  While I'm at
-it, I'll also continue searching for four leaf clovers, kocking on
-wood three times, and trying not to break mirrors.
-
-Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
- drivers/pinctrl/qcom/pinctrl-msm.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 0e22f52b2a19..2155a30c282b 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -250,22 +250,30 @@ static int msm_config_group_get(struct pinctrl_dev *pctldev,
- 	/* Convert register value to pinconf value */
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		arg = arg == MSM_NO_PULL;
-+		if (arg != MSM_NO_PULL)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_DOWN:
--		arg = arg == MSM_PULL_DOWN;
-+		if (arg != MSM_PULL_DOWN)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_BUS_HOLD:
- 		if (pctrl->soc->pull_no_keeper)
- 			return -ENOTSUPP;
- 
--		arg = arg == MSM_KEEPER;
-+		if (arg != MSM_KEEPER)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_UP:
- 		if (pctrl->soc->pull_no_keeper)
- 			arg = arg == MSM_PULL_UP_NO_KEEPER;
- 		else
- 			arg = arg == MSM_PULL_UP;
-+		if (!arg)
-+			return -EINVAL;
- 		break;
- 	case PIN_CONFIG_DRIVE_STRENGTH:
- 		arg = msm_regval_to_drive(arg);
--- 
-2.18.0.399.gad0ab374a1-goog
+SGksIExpbnVzDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWlsdG86bGludXMud2Fs
+bGVpakBsaW5hcm8ub3JnXQ0KPiBTZW50OiBNb25kYXksIEp1bHkgMiwgMjAxOCA5OjQ2IFBNDQo+
+IFRvOiBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT47IEZhYmlvIEVzdGV2YW0NCj4g
+PGZhYmlvLmVzdGV2YW1AbnhwLmNvbT4NCj4gQ2M6IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5l
+bC5vcmc+OyBNYXJrIFJ1dGxhbmQNCj4gPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgb3BlbiBsaXN0
+OkdQSU8gU1VCU1lTVEVNDQo+IDxsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZz47IG9wZW4gbGlz
+dDpPUEVOIEZJUk1XQVJFIEFORCBGTEFUVEVORUQNCj4gREVWSUNFIFRSRUUgQklORElOR1MgPGRl
+dmljZXRyZWVAdmdlci5rZXJuZWwub3JnPjsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
+ZzsgZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRD
+SF0gYmluZGluZ3M6IGFkZCBjbG9ja3Mgb3B0aW9uYWwgYmluZGluZyBmb3IgaW14IGdwaW8NCj4g
+DQo+IE9uIEZyaSwgSnVuIDI5LCAyMDE4IGF0IDU6MzQgQU0gQW5zb24gSHVhbmcgPEFuc29uLkh1
+YW5nQG54cC5jb20+DQo+IHdyb3RlOg0KPiANCj4gPiBTb21lIGkuTVggU29DcyBoYXZlIEdQSU8g
+Y2xvY2sgZ2F0ZSBpbiBDQ00sIGFjY2Vzc2luZyBHUElPIHJlZ2lzdGVycw0KPiA+IG5lZWRzIHRv
+IGVuYWJsZSBHUElPIGNsb2NrIGdhdGUgZmlyc3QsIGkuTVggR1BJTyBkcml2ZXIgd2lsbCBlbmFi
+bGUNCj4gPiBjbG9jayBnYXRlIGlmIHRoZXJlIGlzIGNsb2NrIHByb3BlcnR5IGluIEdQSU8gbm9k
+ZSBvZiBkdGIsIGFkZA0KPiA+IG9wdGlvbmFsIHByb3BlcnR5IHRvIGkuTVggR1BJTyBiaW5kaW5n
+IGRvYy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0Bu
+eHAuY29tPg0KPiANCj4gTWFrZSBzZW5zZSBzaW5jZSB0aGUgZ3Bpby1teGMgZHJpdmVyIGFscmVh
+ZHkgc3VwcG9ydHMgdGhpcyA6KQ0KPiANCj4gPiArT3B0aW9uYWwgcHJvcGVydGllczoNCj4gPiAr
+LSBjbG9ja3M6IHRoZSBjbG9ja3MgdXNlZCBieSBncGlvIGJhbmsNCj4gDQo+IFNob3VsZCB0aGUg
+dGV4dCBiZSAidGhlIGNsb2NrIGZvciBjbG9ja2luZyB0aGUgR1BJTyBzaWxpY29uIg0KPiBJIGd1
+ZXNzIHRoYXQgaXMgd2hhdCBpdCBpcy4gQW5kIHNpbmd1bGFyaXM/DQoNClllcywgaXQgaXMgc2lu
+Z3VsYXJpcywgSSB3aWxsIGltcHJvdmUgdGhlIHRleHQuDQoNCj4gDQo+IERvZXMgaXQgaHVydCB0
+byBnaXZlIHRoZSBjbG9jayBhIG5hbWU/IExpa2UgdGhlIGNvbW1vbiAicGNsayIgZm9yIHBlcmlw
+aGVyYWwNCj4gY2xvY2sgb3Igc29tZXRoaW5nIHNpbWlsYXIgdGhhdCBvdGhlciBpLk1YIHNpbGlj
+b24gdXNlcz8NCg0KSXQgaXMganVzdCBiZWNhdXNlIEdQSU8gb25seSBuZWVkcyBvbmUgY2xvY2ss
+IGFuZCB0aGUgZHJpdmVyIGRvZXMgTk9UIGdldCB0aGUNCmNsb2NrIHVzaW5nIGNsb2NrIG5hbWUs
+IHNvIHRoZSBHUElPIG5vZGUgaW4gZHRiIGFsc28gaGFzIG5vIGNsb2NrIG5hbWUgc3BlY2lmaWVk
+LA0KaWYgd2UgYWRkIGEgY2xvY2sgbmFtZSBoZXJlLCBkdGIgYWxzbyBuZWVkIHRvIGJlIHVwZGF0
+ZWQ/IEFuZCBJIHNhdyBvdGhlciBpLk1YDQptb2R1bGVzIHdoaWNoIGhhdmUgb25seSBvbmUgY2xv
+Y2ssIHRoZXkgYWxzbyBoYXZlIG5vIGNsb2NrIG5hbWUgc3BlY2lmaWVkLCBsaWtlIEkyQw0Kb24g
+aS5NWDZRREwsIEkgd2lsbCBzZW5kIGEgVjIgcGF0Y2ggd2l0aCB0ZXh0IGltcHJvdmVkLCB0aGFu
+a3MuDQoNCkFuc29uLg0KDQo+IA0KPiBGYWJpbzogY2FuIHdlIGhhdmUgeW91ciBBQ0sgb24gdGhp
+cyB0b28uDQo+IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0K
