@@ -1,103 +1,83 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH] pinctrl: meson: add gen_clk pins
-Date: Wed,  4 Jul 2018 18:57:24 +0200
-Message-ID: <20180704165724.3387-1-jbrunet@baylibre.com>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [PATCH] gpiolib: Defer on non-DT find_chip_by_name() failure
+Date: Wed, 04 Jul 2018 21:13:42 +0200
+Message-ID: <7058252.SGNltMTCCa@z50>
+References: <20180703172635.32508-1-jmkrzyszt@gmail.com> <20180703193141.747fa950@bbrezillon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180703193141.747fa950@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Phil Reid <preid@electromag.com.au>, Lucas Stach <l.stach@pengutronix.de>, Clemens Gruber <clemens.gruber@pqgruber.com>, Peter Rosin <peda@axentia.se>, patches@opensource.cirrus.com, linux-i2c@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Add the pinctrl configuration for gen_clk on gxbb and axg.
-gen_clk allows to output and devide several internal clocks of SoC,
-including most of the plls.
+On Tuesday, July 3, 2018 7:31:41 PM CEST Boris Brezillon wrote:
+> Hi Janusz,
+> 
+> On Tue,  3 Jul 2018 19:26:35 +0200
+> 
+> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+> > Avoid replication of error code conversion in non-DT GPIO consumers'
+> > code by returning -EPROBE_DEFER from gpiod_find() in case a chip
+> > identified by its label in a registered lookup table is not ready.
+> > 
+> > See https://lkml.org/lkml/2018/5/30/176 for example case.
+> > 
+> > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> > ---
+> > If accepted, please add
+> > 
+> > 	Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> > 
+> > if Boris doesn't mind.
+> > 
+> > Thanks,
+> > Janusz
+> > 
+> >  drivers/gpio/gpiolib.c | 13 ++++++++++---
+> >  1 file changed, 10 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > index e11a3bb03820..15dc77c80328 100644
+> > --- a/drivers/gpio/gpiolib.c
+> > +++ b/drivers/gpio/gpiolib.c
+> > @@ -3639,9 +3639,16 @@ static struct gpio_desc *gpiod_find(struct device
+> > *dev, const char *con_id,> 
+> >  		chip = find_chip_by_name(p->chip_label);
+> >  		
+> >  		if (!chip) {
+> > 
+> > -			dev_err(dev, "cannot find GPIO chip %s\n",
+> > -				p->chip_label);
+> > -			return ERR_PTR(-ENODEV);
+> > +			/*
+> > +			 * As the lookup table indicates a chip with
+> > +			 * p->chip_label should exist, assume it may
+> > +			 * still appear latar and let the interested
+> 
+> 					^ later
+> 
+> > +			 * consumer be probed again or let the Deferred
+> > +			 * Probe infrastructure handle the error.
+> > +			 */
+> > +			dev_warn(dev, "cannot find GPIO chip %s, deferring\n",
+> > +				 p->chip_label);
+> > +			return ERR_PTR(-EPROBE_DEFER);
+> > 
+> >  		}
+> >  		
+> >  		if (chip->ngpio <= p->chip_hwnum) {
+> 
+> Looks good otherwise. Let's hope we're not breaking implementations
+> testing for -ENODEV...
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson-axg.c  | 9 +++++++++
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 8 ++++++++
- 2 files changed, 17 insertions(+)
+I've reviewed them all and found two which I think may be affected:
+- drivers/mfd/arizona-core.c,
+- drivers/i2c/busses/i2c-imx.c.
+As far as I can understand the code, both depend on error != -EPROBE_DEFER in 
+order to continue in degraded mode. I'm adding their maintainers to the loop.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-index 46a0918bd284..ad502eda4afa 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-@@ -672,6 +672,9 @@ static const unsigned int jtag_ao_tdo_pins[] = {GPIOAO_4};
- static const unsigned int jtag_ao_clk_pins[] = {GPIOAO_5};
- static const unsigned int jtag_ao_tms_pins[] = {GPIOAO_7};
- 
-+/* gen_clk */
-+static const unsigned int gen_clk_ee_pins[] = {GPIOAO_13};
-+
- static struct meson_pmx_group meson_axg_aobus_groups[] = {
- 	GPIO_GROUP(GPIOAO_0),
- 	GPIO_GROUP(GPIOAO_1),
-@@ -718,6 +721,7 @@ static struct meson_pmx_group meson_axg_aobus_groups[] = {
- 	GROUP(jtag_ao_tdo, 4),
- 	GROUP(jtag_ao_clk, 4),
- 	GROUP(jtag_ao_tms, 4),
-+	GROUP(gen_clk_ee, 4),
- };
- 
- static const char * const gpio_periphs_groups[] = {
-@@ -947,6 +951,10 @@ static const char * const tdmb_groups[] = {
- 	"tdmb_din2", "tdmb_dout2", "tdmb_din3",	"tdmb_dout3",
- };
- 
-+static const char * const gen_clk_ee_groups[] = {
-+	"gen_clk_ee",
-+};
-+
- static struct meson_pmx_func meson_axg_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
-@@ -992,6 +1000,7 @@ static struct meson_pmx_func meson_axg_aobus_functions[] = {
- 	FUNCTION(pwm_ao_c),
- 	FUNCTION(pwm_ao_d),
- 	FUNCTION(jtag_ao),
-+	FUNCTION(gen_clk_ee),
- };
- 
- static struct meson_bank meson_axg_periphs_banks[] = {
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 2c97a2e07a5f..4ceb06f8a33c 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -243,6 +243,8 @@ static const unsigned int i2s_out_ch67_y_pins[]	= { GPIOY_10 };
- 
- static const unsigned int spdif_out_y_pins[]	= { GPIOY_12 };
- 
-+static const unsigned int gen_clk_out_pins[]	= { GPIOY_15 };
-+
- static const struct pinctrl_pin_desc meson_gxbb_aobus_pins[] = {
- 	MESON_PIN(GPIOAO_0),
- 	MESON_PIN(GPIOAO_1),
-@@ -453,6 +455,7 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(i2s_out_ch45_y,	1,	6),
- 	GROUP(i2s_out_ch67_y,	1,	7),
- 	GROUP(spdif_out_y,	1,	9),
-+	GROUP(gen_clk_out,	6,	15),
- 
- 	/* Bank Z */
- 	GROUP(eth_mdio,		6,	1),
-@@ -706,6 +709,10 @@ static const char * const spdif_out_groups[] = {
- 	"spdif_out_y",
- };
- 
-+static const char * const gen_clk_out_groups[] = {
-+	"gen_clk_out",
-+};
-+
- static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
- 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-@@ -790,6 +797,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(hdmi_i2c),
- 	FUNCTION(i2s_out),
- 	FUNCTION(spdif_out),
-+	FUNCTION(gen_clk_out),
- };
- 
- static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
--- 
-2.14.4
+Thanks,
+Janusz
