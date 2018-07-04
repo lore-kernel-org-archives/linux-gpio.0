@@ -1,36 +1,47 @@
-From: Yixun Lan <yixun.lan@amlogic.com>
-Subject: [PATCH 1/3] documentation: Add compatibles for Amlogic Meson G12A pin controllers
-Date: Wed, 4 Jul 2018 22:45:09 +0000
-Message-ID: <20180704224511.29350-2-yixun.lan@amlogic.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 0/3] pinctrl: meson-g12a: add pinctrl driver support
+Date: Wed, 4 Jul 2018 16:57:20 +0200
+Message-ID: <78da7e13-e80b-d714-86d0-7c5f6fc0d9f5@baylibre.com>
 References: <20180704224511.29350-1-yixun.lan@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180704224511.29350-1-yixun.lan@amlogic.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Yixun Lan <yixun.lan@amlogic.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add new compatible name for Amlogic Meson G12A pin controllers
+Hi Yixun,
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt | 2 ++
- 1 file changed, 2 insertions(+)
+On 05/07/2018 00:45, Yixun Lan wrote:
+> This patch series try to add pinctrl driver support for
+> the Meson-G12A SoC.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-index 54ecb8ab7788..82ead40311f6 100644
---- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-@@ -13,6 +13,8 @@ Required properties for the root node:
- 		      "amlogic,meson-gxl-aobus-pinctrl"
- 		      "amlogic,meson-axg-periphs-pinctrl"
- 		      "amlogic,meson-axg-aobus-pinctrl"
-+		      "amlogic,meson-g12a-periphs-pinctrl"
-+		      "amlogic,meson-g12a-aobus-pinctrl"
-  - reg: address and size of registers controlling irq functionality
- 
- === GPIO sub-nodes ===
--- 
-2.18.0
+Thanks for submitting these patches.
+
+Can you explicit this patchset with more details on the G12A SoC family ?
+It's relationship with AXG and the differences in term of pinmuxing with the other SoC families ?
+
+Why is there a GPIOE bank within the AO controller ?
+
+Thanks,
+Neil
+
+> 
+> Yixun Lan (3):
+>   documentation: Add compatibles for Amlogic Meson G12A pin controllers
+>   dt-bindings: pinctrl: meson-g12a: document pin name
+>   pinctrl: meson-g12a: add pinctrl driver support
+> 
+>  .../bindings/pinctrl/meson,pinctrl.txt        |    2 +
+>  drivers/pinctrl/meson/Kconfig                 |    6 +
+>  drivers/pinctrl/meson/Makefile                |    1 +
+>  drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 1432 +++++++++++++++++
+>  include/dt-bindings/gpio/meson-g12a-gpio.h    |  114 ++
+>  5 files changed, 1555 insertions(+)
+>  create mode 100644 drivers/pinctrl/meson/pinctrl-meson-g12a.c
+>  create mode 100644 include/dt-bindings/gpio/meson-g12a-gpio.h
+> 
