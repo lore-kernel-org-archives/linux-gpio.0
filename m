@@ -1,100 +1,77 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 1/5] pinctrl: core: Return selector to the pinctrl driver
-Date: Thu,  5 Jul 2018 02:10:14 -0700
-Message-ID: <20180705091018.60524-2-tony@atomide.com>
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [PATCHv3 0/5] pinctrl fixes for generic functions and groups
+Date: Thu, 5 Jul 2018 15:28:41 +0200
+Message-ID: <927EBDA8-8A94-4D7D-9EEF-32A02F5346BD@goldelico.com>
 References: <20180705091018.60524-1-tony@atomide.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180705091018.60524-1-tony@atomide.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, "H . Nikolaus Schaller" <hns@goldelico.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
+To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-We must return the selector from pinctrl_generic_add_group() so
-pin controller device drivers can remove the right group if needed
-for deferred probe for example. And we now must make sure that a
-proper name is passed so we can use it to check if the entry already
-exists.
+Hi Tony and Linus,
 
-Note that fixes are also needed for the pin controller drivers to
-use the selector value.
+> Am 05.07.2018 um 11:10 schrieb Tony Lindgren <tony@atomide.com>:
+> 
+> Here is a resend of fixes for a race issues for generic group and
+> functions reported by H. Nikolaus Schaller <hns@goldelico.com>.
 
-Fixes: c7059c5ac70a ("pinctrl: core: Add generic pinctrl functions
-for managing groups")
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Christ van Willegen <cvwillegen@gmail.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/pinctrl/core.c | 35 ++++++++++++++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 3 deletions(-)
+Thanks for adding me.
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -616,6 +616,26 @@ struct group_desc *pinctrl_generic_get_group(struct pinctrl_dev *pctldev,
- }
- EXPORT_SYMBOL_GPL(pinctrl_generic_get_group);
- 
-+static int pinctrl_generic_group_name_to_selector(struct pinctrl_dev *pctldev,
-+						  const char *function)
-+{
-+	const struct pinctrl_ops *ops = pctldev->desc->pctlops;
-+	int ngroups = ops->get_groups_count(pctldev);
-+	int selector = 0;
-+
-+	/* See if this pctldev has this group */
-+	while (selector < ngroups) {
-+		const char *gname = ops->get_group_name(pctldev, selector);
-+
-+		if (!strcmp(function, gname))
-+			return selector;
-+
-+		selector++;
-+	}
-+
-+	return -EINVAL;
-+}
-+
- /**
-  * pinctrl_generic_add_group() - adds a new pin group
-  * @pctldev: pin controller device
-@@ -630,6 +650,16 @@ int pinctrl_generic_add_group(struct pinctrl_dev *pctldev, const char *name,
- 			      int *pins, int num_pins, void *data)
- {
- 	struct group_desc *group;
-+	int selector;
-+
-+	if (!name)
-+		return -EINVAL;
-+
-+	selector = pinctrl_generic_group_name_to_selector(pctldev, name);
-+	if (selector >= 0)
-+		return selector;
-+
-+	selector = pctldev->num_groups;
- 
- 	group = devm_kzalloc(pctldev->dev, sizeof(*group), GFP_KERNEL);
- 	if (!group)
-@@ -640,12 +670,11 @@ int pinctrl_generic_add_group(struct pinctrl_dev *pctldev, const char *name,
- 	group->num_pins = num_pins;
- 	group->data = data;
- 
--	radix_tree_insert(&pctldev->pin_group_tree, pctldev->num_groups,
--			  group);
-+	radix_tree_insert(&pctldev->pin_group_tree, selector, group);
- 
- 	pctldev->num_groups++;
- 
--	return 0;
-+	return selector;
- }
- EXPORT_SYMBOL_GPL(pinctrl_generic_add_group);
- 
--- 
-2.17.1
+I have tested these patches on our OMAP3 based device where the problem
+was quite reproducible and testable by adding some printk. With
+these patches it seems now to be correct. Each group selector is
+assigned only once, even if driver probing fails and is redone later.
+
+Code review of the call paths has convinced us that we now have
+proper mutex around the radix tree function calls and races are
+no longer a problem.
+
+So you can add my
+
+	Tested-By: H. Nikolaus Schaller <hns@goldelico.com>
+
+BR and thanks,
+Nikolaus
+
+> 
+> Regards,
+> 
+> Tony
+> 
+> 
+> Changes since v2:
+> 
+> - Added Nikolaus to Cc as Reported-by did not do it
+> 
+> Changes since v1:
+> 
+> - Check if a function or group already exists as suggested by
+>  Andy Shevchenko
+> 
+> - Make sure we always have a valid name for functions and groups
+>  as suggested by Christ van Willegen
+> 
+> - Prettify rza1 variables as suggested by Jacopo Mondi
+> 
+> Tony Lindgren (5):
+>  pinctrl: core: Return selector to the pinctrl driver
+>  pinctrl: pinmux: Return selector to the pinctrl driver
+>  pinctrl: single: Fix group and function selector use
+>  pinctrl: rza1: Fix selector use for groups and functions
+>  pinctrl: core: Remove broken remove_last group and pinmux functions
+> 
+> drivers/pinctrl/core.c           | 35 ++++++++++--
+> drivers/pinctrl/core.h           |  6 ---
+> drivers/pinctrl/pinctrl-rza1.c   | 24 +++++----
+> drivers/pinctrl/pinctrl-single.c | 91 +++++++++++++++++++-------------
+> drivers/pinctrl/pinmux.c         | 16 ++++--
+> drivers/pinctrl/pinmux.h         |  7 ---
+> 6 files changed, 112 insertions(+), 67 deletions(-)
+> 
+> -- 
+> 2.17.1
