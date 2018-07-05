@@ -1,66 +1,38 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCHv3 0/5] pinctrl fixes for generic functions and groups
-Date: Thu, 5 Jul 2018 16:55:40 +0300
-Message-ID: <CAHp75VfR+hKW4sGifOP_UvCf6dAzM_jmZH-fZA61zjVt31iJtA@mail.gmail.com>
-References: <20180705091018.60524-1-tony@atomide.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] pinctrl: mt7622: mark expected switch fall-through
+Date: Thu, 5 Jul 2018 10:44:52 -0500
+Message-ID: <20180705154452.GA32564@embeddedor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180705091018.60524-1-tony@atomide.com>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christ van Willegen <cvwillegen@gmail.com>, "H. Nikolaus Schaller" <hns@goldelico.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
+To: Sean Wang <sean.wang@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 12:10 PM, Tony Lindgren <tony@atomide.com> wrote:
-> Here is a resend of fixes for a race issues for generic group and
-> functions reported by H. Nikolaus Schaller <hns@goldelico.com>.
->
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Warning level 2 was used: -Wimplicit-fallthrough=2
 
-I think for ACPI case we would use generic helpers, so this change is
-quite useful to not screw up with new stuff.
+Addresses-Coverity-ID: 1463284 ("Missing break in switch")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Regards,
->
-> Tony
->
->
-> Changes since v2:
->
-> - Added Nikolaus to Cc as Reported-by did not do it
->
-> Changes since v1:
->
-> - Check if a function or group already exists as suggested by
->   Andy Shevchenko
->
-> - Make sure we always have a valid name for functions and groups
->   as suggested by Christ van Willegen
->
-> - Prettify rza1 variables as suggested by Jacopo Mondi
->
-> Tony Lindgren (5):
->   pinctrl: core: Return selector to the pinctrl driver
->   pinctrl: pinmux: Return selector to the pinctrl driver
->   pinctrl: single: Fix group and function selector use
->   pinctrl: rza1: Fix selector use for groups and functions
->   pinctrl: core: Remove broken remove_last group and pinmux functions
->
->  drivers/pinctrl/core.c           | 35 ++++++++++--
->  drivers/pinctrl/core.h           |  6 ---
->  drivers/pinctrl/pinctrl-rza1.c   | 24 +++++----
->  drivers/pinctrl/pinctrl-single.c | 91 +++++++++++++++++++-------------
->  drivers/pinctrl/pinmux.c         | 16 ++++--
->  drivers/pinctrl/pinmux.h         |  7 ---
->  6 files changed, 112 insertions(+), 67 deletions(-)
->
-> --
-> 2.17.1
-
-
-
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+index 4c4740f..2411c384 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+@@ -1263,6 +1263,7 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 					       MTK_DISABLE);
+ 			if (err)
+ 				goto err;
++			/* else: fall through */
+ 		case PIN_CONFIG_INPUT_ENABLE:
+ 		case PIN_CONFIG_SLEW_RATE:
+ 			reg = (param == PIN_CONFIG_SLEW_RATE) ?
 -- 
-With Best Regards,
-Andy Shevchenko
+2.7.4
