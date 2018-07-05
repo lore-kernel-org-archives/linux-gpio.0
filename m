@@ -1,27 +1,36 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 1/6] dt-bindings: i2c: Add binding for Actions
- Semiconductor Owl I2C controller
-Date: Thu, 5 Jul 2018 15:20:04 -0600
-Message-ID: <20180705212004.GA9185@rob-hp-laptop>
-References: <20180701172305.15663-1-manivannan.sadhasivam@linaro.org>
- <20180701172305.15663-2-manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v4 2/2] dt-bindings: document gpio-mt7621 bindings
+Date: Thu, 5 Jul 2018 17:11:39 -0600
+Message-ID: <20180705231139.GA25307@rob-hp-laptop>
+References: <1530798191-25471-1-git-send-email-sergio.paracuellos@gmail.com>
+ <1530798191-25471-3-git-send-email-sergio.paracuellos@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
 Content-Disposition: inline
-In-Reply-To: <20180701172305.15663-2-manivannan.sadhasivam@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: wsa@the-dreams.de, afaerber@suse.de, linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com
+In-Reply-To: <1530798191-25471-3-git-send-email-sergio.paracuellos@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: devicetree@vger.kernel.org, gregkh@linuxfoundation.org, linus.walleij@linaro.org, driverdev-devel@linuxdriverproject.org, linux-gpio@vger.kernel.org, neil@brown.name
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jul 01, 2018 at 10:53:00PM +0530, Manivannan Sadhasivam wrote:
-> Add devicetree binding for Actions Semiconductor Owl I2C controller
+On Thu, Jul 05, 2018 at 03:43:11PM +0200, Sergio Paracuellos wrote:
+> Add a devicetree binding documentation for the mt7621 gpio.
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> Reviewed-by: NeilBrown <neil@brown.name>
 > ---
->  .../devicetree/bindings/i2c/i2c-owl.txt       | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-owl.txt
+>  .../bindings/gpio/mediatek,mt7621-gpio.txt         | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.txt
 
 Reviewed-by: Rob Herring <robh@kernel.org>
