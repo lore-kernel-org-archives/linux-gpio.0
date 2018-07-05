@@ -1,38 +1,43 @@
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] pinctrl: mt7622: mark expected switch fall-through
-Date: Thu, 5 Jul 2018 10:44:52 -0500
-Message-ID: <20180705154452.GA32564@embeddedor.com>
+Subject: [PATCH] pinctrl: baytrail: Mark expected switch fall-throughs
+Date: Thu, 5 Jul 2018 10:51:27 -0500
+Message-ID: <20180705155127.GA1458@embeddedor.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-gpio@vger.kernel.org
 
 In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 where we are expecting to fall through.
 
-Warning level 2 was used: -Wimplicit-fallthrough=2
-
-Addresses-Coverity-ID: 1463284 ("Missing break in switch")
+Addresses-Coverity-ID: 1292308 ("Missing break in switch")
+Addresses-Coverity-ID: 1292309 ("Missing break in switch")
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-mt7622.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-index 4c4740f..2411c384 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-@@ -1263,6 +1263,7 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 					       MTK_DISABLE);
- 			if (err)
- 				goto err;
-+			/* else: fall through */
- 		case PIN_CONFIG_INPUT_ENABLE:
- 		case PIN_CONFIG_SLEW_RATE:
- 			reg = (param == PIN_CONFIG_SLEW_RATE) ?
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 6b52ea1..3420e7e 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -1542,11 +1542,13 @@ static void byt_irq_unmask(struct irq_data *d)
+ 	switch (irqd_get_trigger_type(d)) {
+ 	case IRQ_TYPE_LEVEL_HIGH:
+ 		value |= BYT_TRIG_LVL;
++		/* fall through */
+ 	case IRQ_TYPE_EDGE_RISING:
+ 		value |= BYT_TRIG_POS;
+ 		break;
+ 	case IRQ_TYPE_LEVEL_LOW:
+ 		value |= BYT_TRIG_LVL;
++		/* fall through */
+ 	case IRQ_TYPE_EDGE_FALLING:
+ 		value |= BYT_TRIG_NEG;
+ 		break;
 -- 
 2.7.4
