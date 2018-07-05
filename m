@@ -1,77 +1,73 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: [PATCHv3 0/5] pinctrl fixes for generic functions and groups
-Date: Thu, 5 Jul 2018 15:28:41 +0200
-Message-ID: <927EBDA8-8A94-4D7D-9EEF-32A02F5346BD@goldelico.com>
-References: <20180705091018.60524-1-tony@atomide.com>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=us-ascii
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Subject: [PATCH v4 0/2] gpio: mediatek: driver for gpio chip in MT7621 SoC
+Date: Thu,  5 Jul 2018 15:43:09 +0200
+Message-ID: <1530798191-25471-1-git-send-email-sergio.paracuellos@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180705091018.60524-1-tony@atomide.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: linus.walleij@linaro.org
+Cc: devicetree@vger.kernel.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, neil@brown.name
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Tony and Linus,
+This patch series add support for gpio driver in mediatek MT7621
+SoC. This driver has been in staging for a while and after some
+cleanups cycles we consider to give it a new try to get mainlined.
 
-> Am 05.07.2018 um 11:10 schrieb Tony Lindgren <tony@atomide.com>:
-> 
-> Here is a resend of fixes for a race issues for generic group and
-> functions reported by H. Nikolaus Schaller <hns@goldelico.com>.
+Previous comments from Linus Walleij are here:
 
-Thanks for adding me.
+http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-June/121742.html
 
-I have tested these patches on our OMAP3 based device where the problem
-was quite reproducible and testable by adding some printk. With
-these patches it seems now to be correct. Each group selector is
-assigned only once, even if driver probing fails and is redone later.
+Comments from Rob Herring are here:
 
-Code review of the call paths has convinced us that we now have
-proper mutex around the radix tree function calls and races are
-no longer a problem.
+http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2018-June/121974.html
 
-So you can add my
+Changes in v4:
+ - Fix gpio banks naming issues
+ - Use custom xlate to be able to use only one node in DT.
+ - Add Reviewed-by: NeilBrown <neil at brown.name> to the patches.
 
-	Tested-By: H. Nikolaus Schaller <hns@goldelico.com>
+Changes in v3:
+ - Fix added Makefile entry which was wrong.
 
-BR and thanks,
-Nikolaus
+Changes in v2 are the ones pointed out in previous mails:
 
-> 
-> Regards,
-> 
-> Tony
-> 
-> 
-> Changes since v2:
-> 
-> - Added Nikolaus to Cc as Reported-by did not do it
-> 
-> Changes since v1:
-> 
-> - Check if a function or group already exists as suggested by
->  Andy Shevchenko
-> 
-> - Make sure we always have a valid name for functions and groups
->  as suggested by Christ van Willegen
-> 
-> - Prettify rza1 variables as suggested by Jacopo Mondi
-> 
-> Tony Lindgren (5):
->  pinctrl: core: Return selector to the pinctrl driver
->  pinctrl: pinmux: Return selector to the pinctrl driver
->  pinctrl: single: Fix group and function selector use
->  pinctrl: rza1: Fix selector use for groups and functions
->  pinctrl: core: Remove broken remove_last group and pinmux functions
-> 
-> drivers/pinctrl/core.c           | 35 ++++++++++--
-> drivers/pinctrl/core.h           |  6 ---
-> drivers/pinctrl/pinctrl-rza1.c   | 24 +++++----
-> drivers/pinctrl/pinctrl-single.c | 91 +++++++++++++++++++-------------
-> drivers/pinctrl/pinmux.c         | 16 ++++--
-> drivers/pinctrl/pinmux.h         |  7 ---
-> 6 files changed, 112 insertions(+), 67 deletions(-)
-> 
-> -- 
-> 2.17.1
+ - use bgpio_init
+ - avoid custom irq_domain using IRQF_SHARED and
+   gpiochip_set_chained_irqchip from GPIOLIB_IRQCHIP
+ - use only one node in the device tree making it simple
+ - Implement high and low level irqs
+ - avoid include gpio.h
+ - use builtin_platform_driver
+ - add COMPILE_TEST
+ - cleanups after this changes
+
+
+Hope this helps and thanks in advance.
+
+Best regards,
+    Sergio Paracuellos
+
+Sergio Paracuellos (2):
+  gpio: mediatek: add driver for MT7621
+  dt-bindings: document gpio-mt7621 bindings
+
+ .../bindings/gpio/mediatek,mt7621-gpio.txt         |  35 +++
+ drivers/gpio/Kconfig                               |   8 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-mt7621.c                         | 331 +++++++++++++++++++++
+ 4 files changed, 375 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/mediatek,mt7621-gpio.txt
+ create mode 100644 drivers/gpio/gpio-mt7621.c
+
+-- 
+2.7.4
