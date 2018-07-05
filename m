@@ -1,36 +1,49 @@
 From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCHv2 0/5] pinctrl fixes for generic functions and groups
-Date: Thu, 5 Jul 2018 01:57:29 -0700
-Message-ID: <20180705085729.GZ112168@atomide.com>
-References: <20180619093126.74060-1-tony@atomide.com>
- <CACRpkdaV84wai+ie1D-t=j+RiYNvKJUvjA8g-zvGhMZS2dBuEA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Subject: [PATCHv3 0/5] pinctrl fixes for generic functions and groups
+Date: Thu,  5 Jul 2018 02:10:13 -0700
+Message-ID: <20180705091018.60524-1-tony@atomide.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaV84wai+ie1D-t=j+RiYNvKJUvjA8g-zvGhMZS2dBuEA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, "H. Nikolaus Schaller" <hns@goldelico.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-* Linus Walleij <linus.walleij@linaro.org> [180628 13:57]:
-> On Tue, Jun 19, 2018 at 11:31 AM Tony Lindgren <tony@atomide.com> wrote:
-> 
-> > Here are fixes to the race issues for generic group and functions
-> > reported by H. Nikolaus Schaller <hns@goldelico.com>. I have not seen
-> > the issue here myself, so please test to see if this is sufficient.
-> 
-> It looks sane to me, it'd be great to have some Tested-by: from
-> H. Nikolaus, can we get that?
-> 
-> Else I guess I just queue them, but if I should queue them for
-> fixes it'd be great if it actually can be verified to fix something :D
-
-Looks like git did not add Reported-by to Cc or I messed up
-something as Nikolaus did not see this set. I'll resend
-these patches one more time so Nikolaus can test.
+Here is a resend of fixes for a race issues for generic group and
+functions reported by H. Nikolaus Schaller <hns@goldelico.com>.
 
 Regards,
 
 Tony
+
+
+Changes since v2:
+
+- Added Nikolaus to Cc as Reported-by did not do it
+
+Changes since v1:
+
+- Check if a function or group already exists as suggested by
+  Andy Shevchenko
+
+- Make sure we always have a valid name for functions and groups
+  as suggested by Christ van Willegen
+
+- Prettify rza1 variables as suggested by Jacopo Mondi
+
+Tony Lindgren (5):
+  pinctrl: core: Return selector to the pinctrl driver
+  pinctrl: pinmux: Return selector to the pinctrl driver
+  pinctrl: single: Fix group and function selector use
+  pinctrl: rza1: Fix selector use for groups and functions
+  pinctrl: core: Remove broken remove_last group and pinmux functions
+
+ drivers/pinctrl/core.c           | 35 ++++++++++--
+ drivers/pinctrl/core.h           |  6 ---
+ drivers/pinctrl/pinctrl-rza1.c   | 24 +++++----
+ drivers/pinctrl/pinctrl-single.c | 91 +++++++++++++++++++-------------
+ drivers/pinctrl/pinmux.c         | 16 ++++--
+ drivers/pinctrl/pinmux.h         |  7 ---
+ 6 files changed, 112 insertions(+), 67 deletions(-)
+
+-- 
+2.17.1
