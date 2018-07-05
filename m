@@ -1,83 +1,90 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [PATCH] gpiolib: Defer on non-DT find_chip_by_name() failure
-Date: Wed, 04 Jul 2018 21:13:42 +0200
-Message-ID: <7058252.SGNltMTCCa@z50>
-References: <20180703172635.32508-1-jmkrzyszt@gmail.com> <20180703193141.747fa950@bbrezillon>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Subject: Re: [PATCH 0/3] pinctrl: meson-g12a: add pinctrl driver support
+Date: Thu, 5 Jul 2018 10:52:12 +0800
+Message-ID: <886462fa-1833-a99a-a2fa-5b7dd58341fd@amlogic.com>
+References: <20180704224511.29350-1-yixun.lan@amlogic.com>
+ <78da7e13-e80b-d714-86d0-7c5f6fc0d9f5@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180703193141.747fa950@bbrezillon>
+In-Reply-To: <78da7e13-e80b-d714-86d0-7c5f6fc0d9f5@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Phil Reid <preid@electromag.com.au>, Lucas Stach <l.stach@pengutronix.de>, Clemens Gruber <clemens.gruber@pqgruber.com>, Peter Rosin <peda@axentia.se>, patches@opensource.cirrus.com, linux-i2c@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: yixun.lan@amlogic.com, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tuesday, July 3, 2018 7:31:41 PM CEST Boris Brezillon wrote:
-> Hi Janusz,
-> 
-> On Tue,  3 Jul 2018 19:26:35 +0200
-> 
-> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> > Avoid replication of error code conversion in non-DT GPIO consumers'
-> > code by returning -EPROBE_DEFER from gpiod_find() in case a chip
-> > identified by its label in a registered lookup table is not ready.
-> > 
-> > See https://lkml.org/lkml/2018/5/30/176 for example case.
-> > 
-> > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> > ---
-> > If accepted, please add
-> > 
-> > 	Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > 
-> > if Boris doesn't mind.
-> > 
-> > Thanks,
-> > Janusz
-> > 
-> >  drivers/gpio/gpiolib.c | 13 ++++++++++---
-> >  1 file changed, 10 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > index e11a3bb03820..15dc77c80328 100644
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -3639,9 +3639,16 @@ static struct gpio_desc *gpiod_find(struct device
-> > *dev, const char *con_id,> 
-> >  		chip = find_chip_by_name(p->chip_label);
-> >  		
-> >  		if (!chip) {
-> > 
-> > -			dev_err(dev, "cannot find GPIO chip %s\n",
-> > -				p->chip_label);
-> > -			return ERR_PTR(-ENODEV);
-> > +			/*
-> > +			 * As the lookup table indicates a chip with
-> > +			 * p->chip_label should exist, assume it may
-> > +			 * still appear latar and let the interested
-> 
-> 					^ later
-> 
-> > +			 * consumer be probed again or let the Deferred
-> > +			 * Probe infrastructure handle the error.
-> > +			 */
-> > +			dev_warn(dev, "cannot find GPIO chip %s, deferring\n",
-> > +				 p->chip_label);
-> > +			return ERR_PTR(-EPROBE_DEFER);
-> > 
-> >  		}
-> >  		
-> >  		if (chip->ngpio <= p->chip_hwnum) {
-> 
-> Looks good otherwise. Let's hope we're not breaking implementations
-> testing for -ENODEV...
+HI Neil
 
-I've reviewed them all and found two which I think may be affected:
-- drivers/mfd/arizona-core.c,
-- drivers/i2c/busses/i2c-imx.c.
-As far as I can understand the code, both depend on error != -EPROBE_DEFER in 
-order to continue in degraded mode. I'm adding their maintainers to the loop.
+On 07/04/18 22:57, Neil Armstrong wrote:
+> Hi Yixun,
+> 
+> On 05/07/2018 00:45, Yixun Lan wrote:
+>> This patch series try to add pinctrl driver support for
+>> the Meson-G12A SoC.
+> 
+> Thanks for submitting these patches.
+> 
+> Can you explicit this patchset with more details on the G12A SoC family ?
+> It's relationship with AXG and the differences in term of pinmuxing with the other SoC families ?
+> 
+I thought this was already discussed while we doing pinctrl driver for
+Meson-AXG SoC.
 
-Thanks,
-Janusz
+Anyway, here it is:
+
+Starting from Meson-AXG SoC, the pinctrl controller block using 4
+continues bit to specific pin mux function, while comparing to old
+generation SoC which kind of using various length bits for the pin mux
+definition. The new design would greatly simplify the software model..
+
+for detail example, one 32bit register can describe 8 pins, and each of
+them has 0-7 value to set, start from value 0 to 7.
+
+partition the register into 8 parts:
+bit[3:0]
+bit[7:4]
+bit[11:8]
+bit[15:12]
+bit[19:16]
+bit[23:20]
+bit[27:24]
+bit[31:28]
+
+
+for each value:
+value == 0, means the pin is GPIO
+value = {1, 2, ... 7 } is one of specific PIN function
+
+I could put this info into cover-letter or commit message?
+
+> Why is there a GPIOE bank within the AO controller ?
+> 
+
+It actually sit in the AO domain, although it's sounds strange from the
+naming..
+
+I'm not sure if it's good idea to append a AO suffix? since the
+documentation just use the plain GPIOE
+
+> Thanks,
+> Neil
+> 
+>>
+>> Yixun Lan (3):
+>>   documentation: Add compatibles for Amlogic Meson G12A pin controllers
+>>   dt-bindings: pinctrl: meson-g12a: document pin name
+>>   pinctrl: meson-g12a: add pinctrl driver support
+>>
+>>  .../bindings/pinctrl/meson,pinctrl.txt        |    2 +
+>>  drivers/pinctrl/meson/Kconfig                 |    6 +
+>>  drivers/pinctrl/meson/Makefile                |    1 +
+>>  drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 1432 +++++++++++++++++
+>>  include/dt-bindings/gpio/meson-g12a-gpio.h    |  114 ++
+>>  5 files changed, 1555 insertions(+)
+>>  create mode 100644 drivers/pinctrl/meson/pinctrl-meson-g12a.c
+>>  create mode 100644 include/dt-bindings/gpio/meson-g12a-gpio.h
+>>
+> 
+> .
+> 
