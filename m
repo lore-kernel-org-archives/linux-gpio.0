@@ -1,81 +1,90 @@
 From: Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 2/5] pinctrl: pinmux: Return selector to the pinctrl driver
-Date: Thu,  5 Jul 2018 02:10:15 -0700
-Message-ID: <20180705091018.60524-3-tony@atomide.com>
+Subject: [PATCH 4/5] pinctrl: rza1: Fix selector use for groups and functions
+Date: Thu,  5 Jul 2018 02:10:17 -0700
+Message-ID: <20180705091018.60524-5-tony@atomide.com>
 References: <20180705091018.60524-1-tony@atomide.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180705091018.60524-1-tony@atomide.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, "H . Nikolaus Schaller" <hns@goldelico.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, "H . Nikolaus Schaller" <hns@goldelico.com>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>
 List-Id: linux-gpio@vger.kernel.org
 
-We must return the selector from pinmux_generic_add_function() so
-pin controller device drivers can remove the right group if needed
-for deferred probe for example. And we now must make sure that a
-proper name is passed so we can use it to check if the entry already
-exists.
+We must use a mutex around the generic_add functions and save the
+function and group selector in case we need to remove them. Otherwise
+the selector use will be racy for deferred probe at least.
 
-Note that fixes are also needed for the pin controller drivers to
-use the selector value.
-
-Fixes: a76edc89b100 ("pinctrl: core: Add generic pinctrl functions for
-managing groups")
+Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
 Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
 Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Christ van Willegen <cvwillegen@gmail.com>
 Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
 Cc: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc: Paul Cercueil <paul@crapouillou.net>
 Cc: Sean Wang <sean.wang@mediatek.com>
+Acked-by: Jacopo Mondi <jacopo@jmondi.org>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/pinctrl/pinmux.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-rza1.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -307,7 +307,6 @@ static int pinmux_func_name_to_selector(struct pinctrl_dev *pctldev,
- 		selector++;
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -1006,6 +1006,7 @@ static int rza1_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	const char *grpname;
+ 	const char **fngrps;
+ 	int ret, npins;
++	int gsel, fsel;
+ 
+ 	npins = rza1_dt_node_pin_count(np);
+ 	if (npins < 0) {
+@@ -1055,18 +1056,19 @@ static int rza1_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	fngrps[0] = grpname;
+ 
+ 	mutex_lock(&rza1_pctl->mutex);
+-	ret = pinctrl_generic_add_group(pctldev, grpname, grpins, npins,
+-					NULL);
+-	if (ret) {
++	gsel = pinctrl_generic_add_group(pctldev, grpname, grpins, npins,
++					 NULL);
++	if (gsel < 0) {
+ 		mutex_unlock(&rza1_pctl->mutex);
+-		return ret;
++		return gsel;
  	}
  
--	dev_err(pctldev->dev, "function '%s' not supported\n", function);
- 	return -EINVAL;
- }
+-	ret = pinmux_generic_add_function(pctldev, grpname, fngrps, 1,
+-					  mux_confs);
+-	if (ret)
++	fsel = pinmux_generic_add_function(pctldev, grpname, fngrps, 1,
++					   mux_confs);
++	if (fsel < 0) {
++		ret = fsel;
+ 		goto remove_group;
+-	mutex_unlock(&rza1_pctl->mutex);
++	}
  
-@@ -774,6 +773,16 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
- 				void *data)
- {
- 	struct function_desc *function;
-+	int selector;
-+
-+	if (!name)
-+		return -EINVAL;
-+
-+	selector = pinmux_func_name_to_selector(pctldev, name);
-+	if (selector >= 0)
-+		return selector;
-+
-+	selector = pctldev->num_functions;
+ 	dev_info(rza1_pctl->dev, "Parsed function and group %s with %d pins\n",
+ 				 grpname, npins);
+@@ -1083,15 +1085,15 @@ static int rza1_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	(*map)->data.mux.group = np->name;
+ 	(*map)->data.mux.function = np->name;
+ 	*num_maps = 1;
++	mutex_unlock(&rza1_pctl->mutex);
  
- 	function = devm_kzalloc(pctldev->dev, sizeof(*function), GFP_KERNEL);
- 	if (!function)
-@@ -784,12 +793,11 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
- 	function->num_group_names = num_groups;
- 	function->data = data;
+ 	return 0;
  
--	radix_tree_insert(&pctldev->pin_function_tree, pctldev->num_functions,
--			  function);
-+	radix_tree_insert(&pctldev->pin_function_tree, selector, function);
+ remove_function:
+-	mutex_lock(&rza1_pctl->mutex);
+-	pinmux_generic_remove_last_function(pctldev);
++	pinmux_generic_remove_function(pctldev, fsel);
  
- 	pctldev->num_functions++;
+ remove_group:
+-	pinctrl_generic_remove_last_group(pctldev);
++	pinctrl_generic_remove_group(pctldev, gsel);
+ 	mutex_unlock(&rza1_pctl->mutex);
  
--	return 0;
-+	return selector;
- }
- EXPORT_SYMBOL_GPL(pinmux_generic_add_function);
- 
+ 	dev_info(rza1_pctl->dev, "Unable to parse function and group %s\n",
 -- 
 2.17.1
