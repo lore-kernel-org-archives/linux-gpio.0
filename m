@@ -1,49 +1,81 @@
 From: Tony Lindgren <tony@atomide.com>
-Subject: [PATCHv3 0/5] pinctrl fixes for generic functions and groups
-Date: Thu,  5 Jul 2018 02:10:13 -0700
-Message-ID: <20180705091018.60524-1-tony@atomide.com>
+Subject: [PATCH 2/5] pinctrl: pinmux: Return selector to the pinctrl driver
+Date: Thu,  5 Jul 2018 02:10:15 -0700
+Message-ID: <20180705091018.60524-3-tony@atomide.com>
+References: <20180705091018.60524-1-tony@atomide.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180705091018.60524-1-tony@atomide.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, "H. Nikolaus Schaller" <hns@goldelico.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Christ van Willegen <cvwillegen@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, "H . Nikolaus Schaller" <hns@goldelico.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Here is a resend of fixes for a race issues for generic group and
-functions reported by H. Nikolaus Schaller <hns@goldelico.com>.
+We must return the selector from pinmux_generic_add_function() so
+pin controller device drivers can remove the right group if needed
+for deferred probe for example. And we now must make sure that a
+proper name is passed so we can use it to check if the entry already
+exists.
 
-Regards,
+Note that fixes are also needed for the pin controller drivers to
+use the selector value.
 
-Tony
+Fixes: a76edc89b100 ("pinctrl: core: Add generic pinctrl functions for
+managing groups")
+Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Christ van Willegen <cvwillegen@gmail.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/pinctrl/pinmux.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-
-Changes since v2:
-
-- Added Nikolaus to Cc as Reported-by did not do it
-
-Changes since v1:
-
-- Check if a function or group already exists as suggested by
-  Andy Shevchenko
-
-- Make sure we always have a valid name for functions and groups
-  as suggested by Christ van Willegen
-
-- Prettify rza1 variables as suggested by Jacopo Mondi
-
-Tony Lindgren (5):
-  pinctrl: core: Return selector to the pinctrl driver
-  pinctrl: pinmux: Return selector to the pinctrl driver
-  pinctrl: single: Fix group and function selector use
-  pinctrl: rza1: Fix selector use for groups and functions
-  pinctrl: core: Remove broken remove_last group and pinmux functions
-
- drivers/pinctrl/core.c           | 35 ++++++++++--
- drivers/pinctrl/core.h           |  6 ---
- drivers/pinctrl/pinctrl-rza1.c   | 24 +++++----
- drivers/pinctrl/pinctrl-single.c | 91 +++++++++++++++++++-------------
- drivers/pinctrl/pinmux.c         | 16 ++++--
- drivers/pinctrl/pinmux.h         |  7 ---
- 6 files changed, 112 insertions(+), 67 deletions(-)
-
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -307,7 +307,6 @@ static int pinmux_func_name_to_selector(struct pinctrl_dev *pctldev,
+ 		selector++;
+ 	}
+ 
+-	dev_err(pctldev->dev, "function '%s' not supported\n", function);
+ 	return -EINVAL;
+ }
+ 
+@@ -774,6 +773,16 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
+ 				void *data)
+ {
+ 	struct function_desc *function;
++	int selector;
++
++	if (!name)
++		return -EINVAL;
++
++	selector = pinmux_func_name_to_selector(pctldev, name);
++	if (selector >= 0)
++		return selector;
++
++	selector = pctldev->num_functions;
+ 
+ 	function = devm_kzalloc(pctldev->dev, sizeof(*function), GFP_KERNEL);
+ 	if (!function)
+@@ -784,12 +793,11 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
+ 	function->num_group_names = num_groups;
+ 	function->data = data;
+ 
+-	radix_tree_insert(&pctldev->pin_function_tree, pctldev->num_functions,
+-			  function);
++	radix_tree_insert(&pctldev->pin_function_tree, selector, function);
+ 
+ 	pctldev->num_functions++;
+ 
+-	return 0;
++	return selector;
+ }
+ EXPORT_SYMBOL_GPL(pinmux_generic_add_function);
+ 
 -- 
 2.17.1
