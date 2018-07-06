@@ -1,121 +1,70 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
-Date: Fri, 06 Jul 2018 10:23:34 -0700
-Message-ID: <153089781482.143105.8344344693689942706@swboyd.mtv.corp.google.com>
-References: <20180618205255.246104-1-swboyd@chromium.org>
- <20180618205255.246104-3-swboyd@chromium.org>
- <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
- <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
- <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
- <20180702190922.GE2050@tuxbook-pro>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [PATCH] gpiolib: Defer on non-DT find_chip_by_name() failure
+Date: Fri, 06 Jul 2018 20:58:34 +0200
+Message-ID: <1956873.bHDVU2PRcn@z50>
+References: <20180703172635.32508-1-jmkrzyszt@gmail.com> <1579112.qQSMXVQn9s@z50> <4ecc2072-3ec3-6e9b-576f-fd05559e7634@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180702190922.GE2050@tuxbook-pro>
+In-Reply-To: <4ecc2072-3ec3-6e9b-576f-fd05559e7634@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Doug Anderson <dianders@chromium.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Boris Brezillon <boris.brezillon@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Phil Reid <preid@electromag.com.au>, Lucas Stach <l.stach@pengutronix.de>, Clemens Gruber <clemens.gruber@pqgruber.com>, Peter Rosin <peda@axentia.se>, patches@opensource.cirrus.com, linux-i2c@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Bjorn Andersson (2018-07-02 12:09:22)
-> On Thu 28 Jun 10:14 PDT 2018, Stephen Boyd wrote:
-> =
+> >> On Wed, 04 Jul 2018, Janusz Krzysztofik wrote:
+> >>> On Tuesday, July 3, 2018 7:31:41 PM CEST Boris Brezillon wrote:
+> >>>> On Tue,  3 Jul 2018 19:26:35 +0200 Janusz Krzysztofik wrote:
+> >>>>>   		chip =3D find_chip_by_name(p->chip_label);
+> >>>>>   		if (!chip) {
+> >>>>> -			dev_err(dev, "cannot find GPIO chip %s\n",
+> >>>>> -				p->chip_label);
+> >>>>> -			return ERR_PTR(-ENODEV);
+> >>>>> +			/*
+> >>>>> +			 * As the lookup table indicates a chip with
+> >>>>> +			 * p->chip_label should exist, assume it may
+> >>>>> +			 * still appear latar and let the interested
+> >>>>> +			 * consumer be probed again or let the Deferred
+> >>>>> +			 * Probe infrastructure handle the error.
+> >>>>> +			 */
+> >>>>> +			dev_warn(dev, "cannot find GPIO chip %s, deferring\n",
+> >>>>> +				 p->chip_label);
+> >>>>> +			return ERR_PTR(-EPROBE_DEFER);
+> >>>>>   		}
+> >>>>=20
+> >>>> Looks good otherwise. Let's hope we're not breaking implementations
+> >>>> testing for -ENODEV...
+> >>>=20
+> >>> I've reviewed them all and found two which I think may be affected:
+> >>> - drivers/mfd/arizona-core.c,
+> >>> - drivers/i2c/busses/i2c-imx.c.
 
-> > Quoting Linus Walleij (2018-06-28 07:25:46)
-> > > On Fri, Jun 22, 2018 at 8:29 PM Bjorn Andersson
-> > > <bjorn.andersson@linaro.org> wrote:
-> > > > On Fri 22 Jun 10:58 PDT 2018, Bjorn Andersson wrote:
-> > > > > On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
-> > > > >
-> > > > > > We rely on devices to use pinmuxing configurations in DT to sel=
-ect the
-> > > > > > GPIO function (function 0) if they're going to use the gpio in =
-GPIO
-> > > > > > mode. Let's simplify things for driver authors by implementing
-> > > > > > gpio_request_enable() for this pinctrl driver to mux out the GP=
-IO
-> > > > > > function when the gpio is use from gpiolib.
-> > > > > >
-> > > > > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > > >
-> > > > > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > (...)
-> > > > While both patch 2 and 3 are convenient ways to get around the anno=
-yance
-> > > > of having to specify a pinmux state both patches then ends up relyi=
-ng on
-> > > > some default pinconf state; which I think is bad.
-> > =
+On Thursday, July 5, 2018 7:23:46 AM CEST Uwe Kleine-K=F6nig wrote:
+> TL;DR: Either I don't understand the implication for
+> drivers/i2c/busses/i2c-imx.c or everything is fine.
+> ...
+> So if a patch changes devm_gpiod_get() to return -EPROBE_DEFER in more
+> cases that doesn't seem to hurt. Moreover TTBOMK this driver should only
+> be used by dt-machines today such that changing gpio* for non-DT users
+> shouldn't affect it.
 
-> > What default state are we relying on? The reset state of the pins? I'm
-> > very confused by this statement. These last two patches are making sure
-> > that when a GPIO is requested as a GPIO or IRQ, it's really in GPIO
-> > mode.
-> =
+On Friday, July 6, 2018 11:03:53 AM CEST Richard Fitzgerald wrote:
+> The intention is that if the DT node is missing, the Arizona driver can r=
+un
+> using only soft reset, though there are limitations in that mode.
+> This should return -ENOENT so that the Arizona driver will continue witho=
+ut
+> a GPIO.
+>=20
+> If the DT defines a GPIO it is effectively saying that this GPIO is requi=
+red
+> so it is valid for the Arizona driver never to come up if the GPIO it is
+> defined to depend on doesn't come up.
 
-> Yes and this is convenient, as the TLMM is both multiplexor and gpio
-> controller this is probably what people would expect. However looking at
-> the downstream code people don't think this way (i.e. many drivers calls
-> gpio_request() to get some sort of exclusive access to its pins - not
-> to request gpio to be the muxed function).
-> =
+Uwe, Richard, thanks for clarifications.
 
-> But my concern is related to pinconf, not pinmux - automating pinmuxing
-> doesn't change the fact that the systems integrator should make sure to
-> configure appropriate pull properties on the pins.
+I think we can assume the change is safe for all current implementations.
 
-Ok. Pinconf wouldn't change here, and I would expect system integrators
-to set pinconfs in their DTS board files like always.
-
-> =
-
-> > > =
-
-> > > Nothing stops you from setting up a default conf in
-> > > this callback though.
-> > > =
-
-> > > But admittedly this call was added for simpler hardware.
-> > > =
-
-> > > > Further more in situations like i2c-qup (downstream), where the pin=
-s are
-> > > > requested as gpios in order to "bitbang" a reset this would mean th=
-at
-> > > > the driver has to counter the convenience; by either switching in t=
-he
-> > > > default pinmux at the end of probe or postponing the gpio_request()=
- to
-> > > > the invocation of reset and then, after issuing the gpio_release,
-> > > > switching in the default pinmux explicitly again.
-> > > =
-
-> > > That's a bigger problem. If the system is using device and GPIO
-> > > mode orthogonally, it'd be good to leave like this.
-> > > =
-
-> > =
-
-> > Doesn't that driver need to explicitly mux GPIO mode vs. device mode
-> > right now? So having gpio_request() do the muxing to GPIO mode and then
-> > explicit muxing of the pin to device mode would be what we have after
-> > this patch, while before this patch we would have mux to GPIO, request
-> > GPIO (nop), mux to device. We saved an explicit pinmux call?
-> > =
-
-> =
-
-> It's currently possible to call gpio_request() in the i2c driver's probe
-> function and then mux when needed. With this patch you would have to
-> either follow the gpio_request with a mux-to-default or defer the
-> gpio_request until the point where they today would have an explicit
-> mux-to-gpio.
-> =
-
-
-Ok, got it. I don't know if we can do any better though, so the question
-is if gpio_request() muxing the pin for gpio operation is matching
-driver expectations or not. Also, see my reply to Doug here on the same
-topic. The documentation file isn't crystal clear to me. If Linus can
-clear things up a bit I think we can all get on the same page.
+Thanks,
+Janusz
