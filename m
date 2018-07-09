@@ -1,48 +1,57 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 0/3] pinctrl: meson-g12a: add pinctrl driver support
-Date: Tue, 10 Jul 2018 00:07:53 +0200
-Message-ID: <CAFBinCAVSGTWFzW6nikbnC+K9n5KRYjun9bnEp7YsKbGRHJorg@mail.gmail.com>
-References: <20180704224511.29350-1-yixun.lan@amlogic.com> <CACRpkdauMRnLpfiARG-BWkuJfArri68e9BYx56SCUxJaYWsYYA@mail.gmail.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH] gpio: aspeed: fix compile testing warning
+Date: Tue, 10 Jul 2018 09:53:24 +1000
+Message-ID: <34126dddef64a7669946c354d4dd9e2adfb3344f.camel@kernel.crashing.org>
+References: <20180709145612.4166409-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdauMRnLpfiARG-BWkuJfArri68e9BYx56SCUxJaYWsYYA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: yixun.lan@amlogic.com, carlo@caione.org, b.galvani@gmail.com, linux-gpio@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com, khilman@baylibre.com, robh@kernel.org, xingyu.chen@amlogic.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180709145612.4166409-1-arnd@arndb.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>
+Cc: linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Mon, 2018-07-09 at 16:56 +0200, Arnd Bergmann wrote:
+> Gcc cannot always see that BUG_ON(1) is guaranteed to not
+> return, so we get a warning message in some configurations:
+> 
+> drivers/gpio/gpio-aspeed.c: In function 'bank_reg':
+> drivers/gpio/gpio-aspeed.c:244:1: error: control reaches end of non-void function [-Werror=return-type]
+> 
+> Using a plain BUG() is easier here and avoids the problem.
+> 
+> Fixes: 44ddf559d579 ("gpio: aspeed: Rework register type accessors")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-On Mon, Jul 9, 2018 at 3:35 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Wed, Jul 4, 2018 at 4:48 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
-> >
-> > This patch series try to add pinctrl driver support for
-> > the Meson-G12A SoC.
-> >
-> >
-> > Yixun Lan (3):
-> >   documentation: Add compatibles for Amlogic Meson G12A pin controllers
-> >   dt-bindings: pinctrl: meson-g12a: document pin name
-> >   pinctrl: meson-g12a: add pinctrl driver support
->
-> Overall this looks good to me, could we get some review or ACKs
-> from Beniamino, Martin and/or Carlo as an indication that everything
-> seems all right before I apply the series?
-I do not have any documentation for this hardware (I'm not even sure
-if this is the successor to AXG/"the Audio SoCs" or rather a successor
-of GXL or GXM/"the OTT/STB SoCs" - I assume it's their new OTT/STB
-SoCs since G12A is mentioned here and it seems to have a GPU: [0])
+Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-I will try to have a look in the next few days and see if I can spot
-anything obvious
-not sure if Neil or Kevin have access to the documentation, so it'd be
-great if they could give feedback as well
+Linus, can you plonk that on top of the patches in that topic branch
+you created ?
 
-
-Regards
-Martin
-
-
-[0] http://openlinux.amlogic.com:8000/download/doc/Linux_BSP_Kernel4.9_Buildroot_OpenLinux_Release_Notes_V20180330.pdf
+> ---
+>  drivers/gpio/gpio-aspeed.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+> index 1e00f4045f9d..2342e154029b 100644
+> --- a/drivers/gpio/gpio-aspeed.c
+> +++ b/drivers/gpio/gpio-aspeed.c
+> @@ -240,7 +240,7 @@ static inline void __iomem *bank_reg(struct aspeed_gpio *gpio,
+>  	case reg_cmdsrc1:
+>  		return gpio->base + bank->cmdsrc_regs + GPIO_CMDSRC_1;
+>  	}
+> -	BUG_ON(1);
+> +	BUG();
+>  }
+>  
+>  #define GPIO_BANK(x)	((x) >> 5)
