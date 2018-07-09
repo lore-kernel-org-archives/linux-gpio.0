@@ -1,53 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH 0/5] pinctrl_gpio_get_direction & ingenic fixes
-Date: Mon, 9 Jul 2018 14:09:28 +0200
-Message-ID: <CACRpkdav3FV7hc20Fj=n=DaNzvSaA2uLuj8QgHwwcevDkn_6_Q@mail.gmail.com>
+Date: Mon, 9 Jul 2018 14:18:12 +0200
+Message-ID: <CACRpkdaLE-XZ08CqRdFbW3AodUHKa=CdMtfO6Lic_j--BBet-g@mail.gmail.com>
 References: <20180627114904.10890-1-paul@crapouillou.net> <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
+ <1530213066.3755.0@smtp.crapouillou.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
+In-Reply-To: <1530213066.3755.0@smtp.crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Paul Cercueil <paul@crapouillou.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi folks,
+On Thu, Jun 28, 2018 at 9:11 PM Paul Cercueil <paul@crapouillou.net> wrote:
 
-On Wed, Jun 27, 2018 at 7:18 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+> Sure, it'd be pretty straightforward to do it from the GPIO driver, but
+> I'd still like to hear Linus' point of view about this.
 
-> Even if GPIO and pin muxing has only one set of buffers to indicate
-> input or output (same registers in use) it's a GPIO driver business to
-> get direction from GPIO part of IP.
->
-> Looking into the existing code I would rather say that
-> pinctrl-ingenic.c should incorporate gpio-ingenic.c as they are
-> (partially) sharing same registers.
+I'm not sure about it, I guess it would be my second choice.
 
-Usually we only split the functionality into two drivers if the two features
-pin control and GPIO are explicitly in different hardware blocks,
-and typically not sharing the same memory range.
+> As for merging pinctrl-ingenic.c and gpio-ingenic.c... I wouldn't
+> disagree more,
+> even if they share registers, they belong to different subsystems.
 
-If these registers are intermingled and the hardware actually
-just one piece of silicon, I would suggest to try to merge the
-two drivers into a combined pin control and GPIO driver
-inside drivers/pinctrl/pinctrl-ingenic.c.
+We actually have many pin control drivers also exposing
+a GPIO chip. (Or several.) The way I see it is that we use
+two kernel APIs for the same hardware, but one hardware
+piece should still just have one driver, albeit exposing two
+interfaces.
 
-We have a few drivers like that already, good textbook
-examples of how to do this include
-drivers/pinctrl/pinctrl-sx150x.c where the two blocks are
-handled in one driver using both APIs.
+We actually also have serial ports and wireless network
+cards exposing random GPIO chips because they happen
+to have some arbitrary GPIO lines up for grabs.
 
-Paul could you have a look at if we can simply merge these
-two into one big driver? It is much more natural to write
-into the same set of registers when we do that.
+So it is not just for the pin control and GPIO usecase, it is
+for any usecase where the same hardware has something
+plus a GPIO API. Pin control with GPIO as front-end is
+special by being jitted together with the ranges though, so
+they are closer related.
 
-If you still prefer to proceed with the GPIO/pinctrl as separate
-drivers we need to look into this patch set, which I am
-a bit ambivalent about, because it makes sense but at the
-same time I want to keep GPIO and pin control business
-separate because separation of concerns is just nice.
+A good reason to keep it together in one driver is e.g. that they
+have common clocking, so otherwise two drivers are grabbing
+the same silicon clock and enabling/disabling it, runtime PM
+would be a mess if both drivers start to request prepare
+enable disable clocks at the same time etc. (I don't know
+if this applied to Ingenic.)
+
+> Besides,
+> your platform might need the pinctrl driver but not the GPIO one, or
+> you might
+> want to provide the GPIO driver as a loadable module, etc.
+
+I understand that concern. I think it's as nice with one
+loadable module for pin control and GPIO at the same
+time though, especially if the split is anyways kind
+artificial between the two APIs.
 
 Yours,
 Linus Walleij
