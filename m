@@ -1,58 +1,54 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: [PATCH] gpio: aspeed: fix compile testing warning
-Date: Mon, 09 Jul 2018 17:31:24 +0200
-Message-ID: <3652696.6JvIze6Ubc@ws-140106>
-References: <20180709145612.4166409-1-arnd@arndb.de>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
+Date: Mon, 09 Jul 2018 08:37:22 -0700
+Message-ID: <153115064295.143105.5291742668895542720@swboyd.mtv.corp.google.com>
+References: <20180618205255.246104-1-swboyd@chromium.org>
+ <20180618205255.246104-3-swboyd@chromium.org>
+ <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
+ <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
+ <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
+ <CAD=FV=Xmo4p7DbOReO02JVKnykoAOz7PtnkbdwryxvpsgZCgWw@mail.gmail.com>
+ <153055420964.143105.3738779882090053054@swboyd.mtv.corp.google.com>
+ <CACRpkdbNSNzT8tiYDXk1dc447xGqf1bV+O93hgEQdT+GcQtddA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180709145612.4166409-1-arnd@arndb.de>
+In-Reply-To: <CACRpkdbNSNzT8tiYDXk1dc447xGqf1bV+O93hgEQdT+GcQtddA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thierry Reding <treding@nvidia.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Doug Anderson <dianders@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Monday, July 9, 2018, 4:56:03 PM CEST Arnd Bergmann wrote:
-> Gcc cannot always see that BUG_ON(1) is guaranteed to not
-> return, so we get a warning message in some configurations:
-> 
-> drivers/gpio/gpio-aspeed.c: In function 'bank_reg':
-> drivers/gpio/gpio-aspeed.c:244:1: error: control reaches end of non-void
-> function [-Werror=return-type]
-> 
-> Using a plain BUG() is easier here and avoids the problem.
-> 
-> Fixes: 44ddf559d579 ("gpio: aspeed: Rework register type accessors")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpio/gpio-aspeed.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-> index 1e00f4045f9d..2342e154029b 100644
-> --- a/drivers/gpio/gpio-aspeed.c
-> +++ b/drivers/gpio/gpio-aspeed.c
-> @@ -240,7 +240,7 @@ static inline void __iomem *bank_reg(struct aspeed_gpio
-> *gpio, case reg_cmdsrc1:
->  		return gpio->base + bank->cmdsrc_regs + GPIO_CMDSRC_1;
->  	}
-> -	BUG_ON(1);
-> +	BUG();
->  }
-> 
->  #define GPIO_BANK(x)	((x) >> 5)
+Quoting Linus Walleij (2018-07-09 06:54:01)
+> On Mon, Jul 2, 2018 at 7:56 PM Stephen Boyd <swboyd@chromium.org> wrote:
+> =
 
-Is the semantic of BUG() (and BUG_ON as well) to never return? If so, then 
-just an idea: Is it possible to add some macro magic in BUG_ON(x) to fail 
-compiling if x is compile-constant? Giving a hint the passed condition always 
-fails, which indicates a problem, at least to me.
->From a short search I found this in drivers/gpu/vga/vgaarb.c L630-633:
->	if (vgadev_find(pdev) != NULL) {
->		BUG_ON(1);
->		goto fail;
->	}
-You can't fail with a BUG_ON(1) and try to do some error handling after that.
+> > I could do with some more clarity from Linus in the "Drivers needing
+> > both pin control and GPIOs" section of
+> > Documentation/driver-api/pinctl.rst but I read that section as stating
+> > that the GPIO driver needs to mux the pin as a GPIO by requesting the
+> > pinctrl backend to do so, unless the hardware overrides the muxed
+> > function selection when the GPIO is used, without involving pinctrl
+> > software.
+> =
 
-Best regards,
-Alexander
+> Yeah that text is especially terse :/
+> =
+
+> What it says (or what I meant to say) is that there is a choice
+> between letting the pin control and GPIO functionality on the
+> same pin be handled orthogonally or implementing these
+> gpio_*() callbacks into the pin control backend, but in either case
+> the two APIs must be used in sequence:
+> pin control setting comes first, second the GPIO subsystem can
+> request the GPIO line.
+> =
+
+> I'll see if I can clarify.
+> =
+
+
+Ok. Is my interpretation correct though? The fundamental question here
+is if gpio_request() should remux the GPIO for the GPIO function or if
+drivers are expected to have pinmux settings to use their pin as a GPIO.
