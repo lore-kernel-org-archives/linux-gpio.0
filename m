@@ -1,45 +1,53 @@
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Subject: Re: [PATCH v4 2/2] dt-bindings: document gpio-mt7621 bindings
-Date: Mon, 9 Jul 2018 14:02:40 +0200
-Message-ID: <20180709120240.GA2529@foobar>
-References: <1530798191-25471-1-git-send-email-sergio.paracuellos@gmail.com>
- <1530798191-25471-3-git-send-email-sergio.paracuellos@gmail.com>
- <CACRpkdaXXM6Xw__4epzkCfA_LfB05qjcsMnRBiYudBCdXMeP6Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/5] pinctrl_gpio_get_direction & ingenic fixes
+Date: Mon, 9 Jul 2018 14:09:28 +0200
+Message-ID: <CACRpkdav3FV7hc20Fj=n=DaNzvSaA2uLuj8QgHwwcevDkn_6_Q@mail.gmail.com>
+References: <20180627114904.10890-1-paul@crapouillou.net> <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaXXM6Xw__4epzkCfA_LfB05qjcsMnRBiYudBCdXMeP6Q@mail.gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, driverdev-devel@linuxdriverproject.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Paul Cercueil <paul@crapouillou.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 01:37:09PM +0200, Linus Walleij wrote:
-> On Thu, Jul 5, 2018 at 3:43 PM Sergio Paracuellos
-> <sergio.paracuellos@gmail.com> wrote:
-> 
-> > Add a devicetree binding documentation for the mt7621 gpio.
-> >
-> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> > Reviewed-by: NeilBrown <neil@brown.name>
-> 
-> Patch applied with Rob's review tag.
+Hi folks,
 
-Thanks for let me know, Linus.
+On Wed, Jun 27, 2018 at 7:18 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 
-> 
-> Yours,
-> Linus Walleij
+> Even if GPIO and pin muxing has only one set of buffers to indicate
+> input or output (same registers in use) it's a GPIO driver business to
+> get direction from GPIO part of IP.
+>
+> Looking into the existing code I would rather say that
+> pinctrl-ingenic.c should incorporate gpio-ingenic.c as they are
+> (partially) sharing same registers.
 
-Best regards,
-    Sergio Paracuellos
+Usually we only split the functionality into two drivers if the two features
+pin control and GPIO are explicitly in different hardware blocks,
+and typically not sharing the same memory range.
+
+If these registers are intermingled and the hardware actually
+just one piece of silicon, I would suggest to try to merge the
+two drivers into a combined pin control and GPIO driver
+inside drivers/pinctrl/pinctrl-ingenic.c.
+
+We have a few drivers like that already, good textbook
+examples of how to do this include
+drivers/pinctrl/pinctrl-sx150x.c where the two blocks are
+handled in one driver using both APIs.
+
+Paul could you have a look at if we can simply merge these
+two into one big driver? It is much more natural to write
+into the same set of registers when we do that.
+
+If you still prefer to proceed with the GPIO/pinctrl as separate
+drivers we need to look into this patch set, which I am
+a bit ambivalent about, because it makes sense but at the
+same time I want to keep GPIO and pin control business
+separate because separation of concerns is just nice.
+
+Yours,
+Linus Walleij
