@@ -1,40 +1,58 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT
- fix
-Date: Mon, 9 Jul 2018 17:05:57 +0200
-Message-ID: <CAMRc=McK1G74ih7fvgqzjRB=vgWPqr4WvoFm5R_0P7uvy1f=eQ@mail.gmail.com>
-References: <20180606174424.9630-1-rafael.tinoco@linaro.org> <CACRpkdZny9ixvz8=dVXfLG04_5pSoHYJa01qeB+gXqpkPCoGpA@mail.gmail.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: Re: [PATCH] gpio: aspeed: fix compile testing warning
+Date: Mon, 09 Jul 2018 17:31:24 +0200
+Message-ID: <3652696.6JvIze6Ubc@ws-140106>
+References: <20180709145612.4166409-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZny9ixvz8=dVXfLG04_5pSoHYJa01qeB+gXqpkPCoGpA@mail.gmail.com>
+In-Reply-To: <20180709145612.4166409-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rafael David Tinoco <rafael.tinoco@linaro.org>, Bamvor Jian Zhang <bamv2005@gmail.com>, shuah@kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kselftest@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thierry Reding <treding@nvidia.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-2018-07-09 16:08 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Wed, Jun 6, 2018 at 7:44 PM Rafael David Tinoco
-> <rafael.tinoco@linaro.org> wrote:
->
->> Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
->> should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
->> the following error occurs:
->>
->> gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
->> such file or directory
->>
->> despite the real result of gpio_pin_test(), gpio_debugfs_get() and
->> gpiotools_request_linehandle() functions.
->>
->> Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
->
-> Patch applied. Sorry for forgetting about it.
->
-> Yours,
-> Linus Walleij
+On Monday, July 9, 2018, 4:56:03 PM CEST Arnd Bergmann wrote:
+> Gcc cannot always see that BUG_ON(1) is guaranteed to not
+> return, so we get a warning message in some configurations:
+> 
+> drivers/gpio/gpio-aspeed.c: In function 'bank_reg':
+> drivers/gpio/gpio-aspeed.c:244:1: error: control reaches end of non-void
+> function [-Werror=return-type]
+> 
+> Using a plain BUG() is easier here and avoids the problem.
+> 
+> Fixes: 44ddf559d579 ("gpio: aspeed: Rework register type accessors")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpio/gpio-aspeed.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+> index 1e00f4045f9d..2342e154029b 100644
+> --- a/drivers/gpio/gpio-aspeed.c
+> +++ b/drivers/gpio/gpio-aspeed.c
+> @@ -240,7 +240,7 @@ static inline void __iomem *bank_reg(struct aspeed_gpio
+> *gpio, case reg_cmdsrc1:
+>  		return gpio->base + bank->cmdsrc_regs + GPIO_CMDSRC_1;
+>  	}
+> -	BUG_ON(1);
+> +	BUG();
+>  }
+> 
+>  #define GPIO_BANK(x)	((x) >> 5)
 
-Oops somehow I just now noticed it in my inbox. It's too late anyway,
-but it looks fine for me.
+Is the semantic of BUG() (and BUG_ON as well) to never return? If so, then 
+just an idea: Is it possible to add some macro magic in BUG_ON(x) to fail 
+compiling if x is compile-constant? Giving a hint the passed condition always 
+fails, which indicates a problem, at least to me.
+>From a short search I found this in drivers/gpu/vga/vgaarb.c L630-633:
+>	if (vgadev_find(pdev) != NULL) {
+>		BUG_ON(1);
+>		goto fail;
+>	}
+You can't fail with a BUG_ON(1) and try to do some error handling after that.
 
-Bart
+Best regards,
+Alexander
