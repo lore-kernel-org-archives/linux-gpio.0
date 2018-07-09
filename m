@@ -1,42 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
-Date: Mon, 9 Jul 2018 15:54:01 +0200
-Message-ID: <CACRpkdbNSNzT8tiYDXk1dc447xGqf1bV+O93hgEQdT+GcQtddA@mail.gmail.com>
-References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-3-swboyd@chromium.org>
- <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
- <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
- <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
- <CAD=FV=Xmo4p7DbOReO02JVKnykoAOz7PtnkbdwryxvpsgZCgWw@mail.gmail.com> <153055420964.143105.3738779882090053054@swboyd.mtv.corp.google.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: [PATCH] pinctrl: baytrail: Mark expected switch fall-throughs
+Date: Mon, 9 Jul 2018 08:57:07 -0500
+Message-ID: <91af218e-6b59-7536-44c8-cf9b510eb691@embeddedor.com>
+References: <20180705155127.GA1458@embeddedor.com>
+ <CACRpkdYODi2oNxqCmHtfev=NZ7S_T62B91S58kt=T84FCnnceA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <153055420964.143105.3738779882090053054@swboyd.mtv.corp.google.com>
+In-Reply-To: <CACRpkdYODi2oNxqCmHtfev=NZ7S_T62B91S58kt=T84FCnnceA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 7:56 PM Stephen Boyd <swboyd@chromium.org> wrote:
+Hi Linus,
 
-> I could do with some more clarity from Linus in the "Drivers needing
-> both pin control and GPIOs" section of
-> Documentation/driver-api/pinctl.rst but I read that section as stating
-> that the GPIO driver needs to mux the pin as a GPIO by requesting the
-> pinctrl backend to do so, unless the hardware overrides the muxed
-> function selection when the GPIO is used, without involving pinctrl
-> software.
+On 07/09/2018 08:42 AM, Linus Walleij wrote:
+> On Thu, Jul 5, 2018 at 5:51 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+> 
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Addresses-Coverity-ID: 1292308 ("Missing break in switch")
+>> Addresses-Coverity-ID: 1292309 ("Missing break in switch")
+> 
+> I hope these special tags are accepted by the community at large.
+> Has there been discussion?
+> 
 
-Yeah that text is especially terse :/
+Yes. This is information we want to keep on the changelog:
 
-What it says (or what I meant to say) is that there is a choice
-between letting the pin control and GPIO functionality on the
-same pin be handled orthogonally or implementing these
-gpio_*() callbacks into the pin control backend, but in either case
-the two APIs must be used in sequence:
-pin control setting comes first, second the GPIO subsystem can
-request the GPIO line.
+http://lkml.iu.edu/hypermail/linux/kernel/1710.3/04013.html
 
-I'll see if I can clarify.
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Patch applied with Mika's ACK.
+> 
 
-Yours,
-Linus Walleij
+Thanks
+--
+Gustavo
