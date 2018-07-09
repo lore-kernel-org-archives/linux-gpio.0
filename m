@@ -1,29 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 2/2] pinctrl: imx: add driver for i.MX8MQ
-Date: Mon, 9 Jul 2018 16:05:42 +0200
-Message-ID: <CACRpkdZKrv3Et=T7gdr3pTAt4yam2kbF7WqMh+8bq=RF2DOsZA@mail.gmail.com>
-References: <1530532746-619-1-git-send-email-abel.vesa@nxp.com> <1530532746-619-3-git-send-email-abel.vesa@nxp.com>
+Subject: Re: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT
+ fix
+Date: Mon, 9 Jul 2018 16:08:57 +0200
+Message-ID: <CACRpkdZny9ixvz8=dVXfLG04_5pSoHYJa01qeB+gXqpkPCoGpA@mail.gmail.com>
+References: <20180606174424.9630-1-rafael.tinoco@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1530532746-619-3-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <20180606174424.9630-1-rafael.tinoco@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: abel.vesa@nxp.com
-Cc: Lucas Stach <l.stach@pengutronix.de>, Rob Herring <robh@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, abelvesa@linux.com
+To: Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, shuah@kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kselftest@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 1:59 PM Abel Vesa <abel.vesa@nxp.com> wrote:
+On Wed, Jun 6, 2018 at 7:44 PM Rafael David Tinoco
+<rafael.tinoco@linaro.org> wrote:
 
-> From: Lucas Stach <l.stach@pengutronix.de>
+> Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
+> should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
+> the following error occurs:
 >
-> The i.MX8MQ pincontrol works in a similar way to the earlier i.MX SoCs.
-> This driver builds on top of the imx specific pinconf handling.
+> gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
+> such file or directory
 >
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+> despite the real result of gpio_pin_test(), gpio_debugfs_get() and
+> gpiotools_request_linehandle() functions.
+>
+> Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
 
-Patch applied.
+Patch applied. Sorry for forgetting about it.
 
 Yours,
 Linus Walleij
