@@ -1,40 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: at91-pio4: add support for drive strength
-Date: Mon, 9 Jul 2018 15:40:26 +0200
-Message-ID: <CACRpkdYyeFTsPe+pR26DCO5uOkLZu-+Nz8vDdEg47NWn4f-4Rw@mail.gmail.com>
-References: <20180629081533.31885-1-ludovic.desroches@microchip.com>
+Subject: Re: [PATCH] pinctrl: baytrail: Mark expected switch fall-throughs
+Date: Mon, 9 Jul 2018 15:42:13 +0200
+Message-ID: <CACRpkdYODi2oNxqCmHtfev=NZ7S_T62B91S58kt=T84FCnnceA@mail.gmail.com>
+References: <20180705155127.GA1458@embeddedor.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180629081533.31885-1-ludovic.desroches@microchip.com>
+In-Reply-To: <20180705155127.GA1458@embeddedor.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 10:19 AM Ludovic Desroches
-<ludovic.desroches@microchip.com> wrote:
+On Thu, Jul 5, 2018 at 5:51 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
 
-> Add support for the drive strength configuration. Usually, this value is
-> expressed in mA. Since the numeric value depends on VDDIOP voltage, a
-> value we can't retrieve at runtime, the controller uses low, medium and
-> high to define the drive strength.
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 >
-> The PIO controller accepts two values for the low drive configuration: 0
-> and 1. Most of the time, we don't care about the drive strength. So we
-> keep the default value which is 0. The drive strength is advertised
-> through the sysfs only when it has been explicitly set in the device
-> tree i.e. if its value is different from 0.
->
-> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> ---
->
-> Changes:
-> - v2: use atmel,drive-strength property instead of drive-strengh one
-> since it is not expressend in mA and there is no way to retrieve this
-> value at runtime.
+> Addresses-Coverity-ID: 1292308 ("Missing break in switch")
+> Addresses-Coverity-ID: 1292309 ("Missing break in switch")
 
-Patch applied with Rob's ACK!
+I hope these special tags are accepted by the community at large.
+Has there been discussion?
+
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+
+Patch applied with Mika's ACK.
 
 Yours,
 Linus Walleij
