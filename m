@@ -1,28 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCHv3 0/5] pinctrl fixes for generic functions and groups
-Date: Mon, 9 Jul 2018 14:59:17 +0200
-Message-ID: <CACRpkdYKTKe7c79XDtGf79sOjzDuqEWSJN1KrG2POuemP+TL+g@mail.gmail.com>
-References: <20180705091018.60524-1-tony@atomide.com>
+Subject: Re: [PATCH V2] bindings: add clocks optional binding for imx gpio
+Date: Mon, 9 Jul 2018 15:03:17 +0200
+Message-ID: <CACRpkdbE25NeZ_GuJOxSsC90Wog2LGmYuACydEUB7qx-CO2orw@mail.gmail.com>
+References: <1530580694-8649-1-git-send-email-Anson.Huang@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180705091018.60524-1-tony@atomide.com>
+In-Reply-To: <1530580694-8649-1-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: ext Tony Lindgren <tony@atomide.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, cvwillegen@gmail.com, "Dr. H. Nikolaus Schaller" <hns@goldelico.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Paul Cercueil <paul@crapouillou.net>, Sean Wang <sean.wang@mediatek.com>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 11:10 AM Tony Lindgren <tony@atomide.com> wrote:
+On Tue, Jul 3, 2018 at 3:22 AM Anson Huang <Anson.Huang@nxp.com> wrote:
 
-> Here is a resend of fixes for a race issues for generic group and
-> functions reported by H. Nikolaus Schaller <hns@goldelico.com>.
+> Some i.MX SoCs have GPIO clock gate in CCM, accessing
+> GPIO registers needs to enable GPIO clock gate first,
+> i.MX GPIO driver will enable clock gate if there is
+> clock property in GPIO node of dtb, add optional property
+> to i.MX GPIO binding doc.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-I applied these 5 for fixes (no choice I guess) will push them to the
-zeroday build for testing and then to next. Added the tags from H.
-Nikolaus and Andy on this.
-
-Should this stuff even be tagged for stable? Else I target it
-for v4.18.
+Patch applied as pretty uncontroversial.
 
 Yours,
 Linus Walleij
