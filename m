@@ -1,46 +1,59 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 1/2] gpio: mt7621: add OF_GPIO dependency
-Date: Tue, 10 Jul 2018 17:18:47 +0200
-Message-ID: <20180710151915.2282622-1-arnd@arndb.de>
+From: Evan Green <evgreen@chromium.org>
+Subject: Re: [PATCH] pinctrl: msm: Pass along set_wake failures
+Date: Tue, 10 Jul 2018 10:58:02 -0700
+Message-ID: <CAE=gft5+oOFv8y-XCtiQ8mc7gQ1FFSK0+bPk=mJu--ovLfDDJg@mail.gmail.com>
+References: <20180619234349.166190-1-evgreen@chromium.org> <20180709173022.GH2050@tuxbook-pro>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sergio Paracuellos <sergio.paracuellos@gmail.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180709173022.GH2050@tuxbook-pro>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, swboyd@chromium.org, Lina Iyer <ilina@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Compile-testing the driver fails unless OF_GPIO is enabled:
+On Mon, Jul 9, 2018 at 10:27 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> Sorry for not getting back to you in a timely manner Evan, I wanted to
+> read up more on the details of how this is supposed to work. I still
+> haven't done so, but here's my concern:
+>
+> When we power down the SoC we're no longer powering either the TLMM or
+> the GIC, so the MPM or PDC is used to waking the system on some set of
+> triggers. As such set_wake on an individual pin or irq should be routed
+> to the MPM/PDC driver, which (in the PDC case) is implemented using
+> hierarchical irq domains.
+>
+> As such I think that we shouldn't toggle the wake property of the
+> summary pin at all; i.e. the patch should remove that call rather than
+> propagating what I believe is a constant failure.
+>
+> Regards,
+> Bjorn
 
-drivers/gpio/gpio-mt7621.c: In function 'mediatek_gpio_bank_probe':
-drivers/gpio/gpio-mt7621.c:228:10: error: 'struct gpio_chip' has no member named 'of_node'
+Hi Bjorn,
+That's okay, I always feel bad pinging. Thanks for the thoughtful
+response. Stephen and I are starting to think about how wake
+interrupts should work with regard to the PDC, and we're at a place
+where we're a bit unsure of the path forward.
 
-Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Our understanding is the downstream kernel had an interrupt hierarchy
+of GIC > PDC > TLMM & everybody else. In the downstream world PDC
+acted transparently, forwarding most requests directly onto the GIC,
+but quietly handling wake interrupts as well. With the upstream PDC
+driver, the #interrupt-cells got changed to 2, and it seemed like
+folks didn't like the idea that PDC was acting transparently. Correct
+me if I'm wrong there. So now we're sort of unsure about how to wire
+in PDC. If we make everybody an interrupt child of PDC, then we lose
+the ability to specify the third GIC parameter, and we're stuck
+expressing interrupts with respect to PDC pins, which is an awkward
+mental translation. In this world, does TLMM need to do direct-connect
+stuff to get wake-able GPIO interrupts working? It would kind of have
+a foot in both worlds, with its summary interrupt as a GIC interrupt
+but the wakeable ones as parented by PDC?
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 836aa2173e44..7429b30e61b0 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -362,6 +362,7 @@ config GPIO_MPC8XXX
- config GPIO_MT7621
- 	bool "Mediatek MT7621 GPIO Support"
- 	depends on SOC_MT7620 || SOC_MT7621 || COMPILE_TEST
-+	depends on OF_GPIO
- 	select GPIO_GENERIC
- 	select GPIOLIB_IRQCHIP
- 	help
--- 
-2.9.0
+So anyway, with regard to this patch, I'm happy to create a second
+spin that simply removes this function, but for me at least it brought
+up some larger questions we've been wrestling with.
+-Evan
