@@ -1,57 +1,100 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH] gpio: aspeed: fix compile testing warning
-Date: Tue, 10 Jul 2018 09:53:24 +1000
-Message-ID: <34126dddef64a7669946c354d4dd9e2adfb3344f.camel@kernel.crashing.org>
-References: <20180709145612.4166409-1-arnd@arndb.de>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Subject: Re: [PATCH 0/3] pinctrl: meson-g12a: add pinctrl driver support
+Date: Tue, 10 Jul 2018 09:26:10 +0800
+Message-ID: <9fa17a38-236f-1d83-97fa-beb06046f023@amlogic.com>
+References: <20180704224511.29350-1-yixun.lan@amlogic.com>
+ <78da7e13-e80b-d714-86d0-7c5f6fc0d9f5@baylibre.com>
+ <886462fa-1833-a99a-a2fa-5b7dd58341fd@amlogic.com>
+ <CAFBinCCZzvn5XNiPHhYK+BxGw6J7KJxEuSXF9ZeT8cFi84FjRQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180709145612.4166409-1-arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>
-Cc: linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAFBinCCZzvn5XNiPHhYK+BxGw6J7KJxEuSXF9ZeT8cFi84FjRQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: yixun.lan@amlogic.com, Neil Armstrong <narmstrong@baylibre.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, robh@kernel.org, devicetree@vger.kernel.org, khilman@baylibre.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, carlo@caione.org, linux-amlogic@lists.infradead.org, xingyu.chen@amlogic.com, jbrunet@baylibre.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 2018-07-09 at 16:56 +0200, Arnd Bergmann wrote:
-> Gcc cannot always see that BUG_ON(1) is guaranteed to not
-> return, so we get a warning message in some configurations:
-> 
-> drivers/gpio/gpio-aspeed.c: In function 'bank_reg':
-> drivers/gpio/gpio-aspeed.c:244:1: error: control reaches end of non-void function [-Werror=return-type]
-> 
-> Using a plain BUG() is easier here and avoids the problem.
-> 
-> Fixes: 44ddf559d579 ("gpio: aspeed: Rework register type accessors")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+HI Martin:
+ thanks for your suggestion
 
-Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-
-Linus, can you plonk that on top of the patches in that topic branch
-you created ?
-
-> ---
->  drivers/gpio/gpio-aspeed.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On 07/10/18 06:02, Martin Blumenstingl wrote:
+> Hi Yixun,
 > 
-> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-> index 1e00f4045f9d..2342e154029b 100644
-> --- a/drivers/gpio/gpio-aspeed.c
-> +++ b/drivers/gpio/gpio-aspeed.c
-> @@ -240,7 +240,7 @@ static inline void __iomem *bank_reg(struct aspeed_gpio *gpio,
->  	case reg_cmdsrc1:
->  		return gpio->base + bank->cmdsrc_regs + GPIO_CMDSRC_1;
->  	}
-> -	BUG_ON(1);
-> +	BUG();
->  }
->  
->  #define GPIO_BANK(x)	((x) >> 5)
+> On Thu, Jul 5, 2018 at 4:53 AM Yixun Lan <yixun.lan@amlogic.com> wrote:
+>>
+>> HI Neil
+>>
+>> On 07/04/18 22:57, Neil Armstrong wrote:
+>>> Hi Yixun,
+>>>
+>>> On 05/07/2018 00:45, Yixun Lan wrote:
+>>>> This patch series try to add pinctrl driver support for
+>>>> the Meson-G12A SoC.
+>>>
+>>> Thanks for submitting these patches.
+>>>
+>>> Can you explicit this patchset with more details on the G12A SoC family ?
+>>> It's relationship with AXG and the differences in term of pinmuxing with the other SoC families ?
+>>>
+>> I thought this was already discussed while we doing pinctrl driver for
+>> Meson-AXG SoC.
+>>
+>> Anyway, here it is:
+>>
+>> Starting from Meson-AXG SoC, the pinctrl controller block using 4
+>> continues bit to specific pin mux function, while comparing to old
+>> generation SoC which kind of using various length bits for the pin mux
+>> definition. The new design would greatly simplify the software model..
+>>
+>> for detail example, one 32bit register can describe 8 pins, and each of
+>> them has 0-7 value to set, start from value 0 to 7.
+>>
+>> partition the register into 8 parts:
+>> bit[3:0]
+>> bit[7:4]
+>> bit[11:8]
+>> bit[15:12]
+>> bit[19:16]
+>> bit[23:20]
+>> bit[27:24]
+>> bit[31:28]
+>>
+>>
+>> for each value:
+>> value == 0, means the pin is GPIO
+>> value = {1, 2, ... 7 } is one of specific PIN function
+> OK, so AXG and G12A use the same register layout -> thus the same
+> pinmux ops are re-used
+> 
+Yes
+> 
+> 
+>> I could put this info into cover-letter or commit message?
+> if you have to resend this series anyways then it would be great if
+> you could add it to the commit description
+> 
+sure
+
+>>> Why is there a GPIOE bank within the AO controller ?
+>>>
+>>
+>> It actually sit in the AO domain, although it's sounds strange from the
+>> naming..
+>>
+>> I'm not sure if it's good idea to append a AO suffix? since the
+>> documentation just use the plain GPIOE
+> I am fine with plain GPIOE if that's what your internal documentation uses
+> it would be great if you could add a comment (or at least a note in
+> the commit message) indicating that this is how the hardware is
+> designed (initially I thought this was a bug since I have no
+> documentation for the G12A chipset)
+
+I can add a comment
+> 
+> Regards
+> Martin
+> 
+> .
+> 
