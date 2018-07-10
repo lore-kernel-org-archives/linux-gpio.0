@@ -1,68 +1,42 @@
-From: Yixun Lan <yixun.lan@amlogic.com>
-Subject: Re: [PATCH 0/3] pinctrl: meson-g12a: add pinctrl driver support
-Date: Tue, 10 Jul 2018 17:19:32 +0800
-Message-ID: <eafc9b41-597e-fa0f-5e30-95ce0b75f6fd@amlogic.com>
-References: <20180704224511.29350-1-yixun.lan@amlogic.com>
- <CACRpkdauMRnLpfiARG-BWkuJfArri68e9BYx56SCUxJaYWsYYA@mail.gmail.com>
- <CAFBinCAVSGTWFzW6nikbnC+K9n5KRYjun9bnEp7YsKbGRHJorg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v1 0/2] pinctrl: nuvoton: add driver for NPCM7xx
+Date: Tue, 10 Jul 2018 15:56:02 +0300
+Message-ID: <20180710125604.14458-1-tmaimon77@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFBinCAVSGTWFzW6nikbnC+K9n5KRYjun9bnEp7YsKbGRHJorg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linus.walleij@linaro.org
-Cc: yixun.lan@amlogic.com, carlo@caione.org, b.galvani@gmail.com, linux-gpio@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com, khilman@baylibre.com, robh@kernel.org, xingyu.chen@amlogic.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, avifishman70@gmail.com, yuenn@google.com, brendanhiggins@google.com, venture@google.com, joel@jms.id.au
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, openbmc@lists.ozlabs.org, Tomer Maimon <tmaimon77@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-HI Martin
+This patch set adds pinmux and GPIO controller for the Nuvoton
+NPCM750/730/715/705 Baseboard Management Controller (BMC).
 
-On 07/10/18 06:07, Martin Blumenstingl wrote:
-> Hi Linus,
-> 
-> On Mon, Jul 9, 2018 at 3:35 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->>
->> On Wed, Jul 4, 2018 at 4:48 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
->>>
->>> This patch series try to add pinctrl driver support for
->>> the Meson-G12A SoC.
->>>
->>>
->>> Yixun Lan (3):
->>>   documentation: Add compatibles for Amlogic Meson G12A pin controllers
->>>   dt-bindings: pinctrl: meson-g12a: document pin name
->>>   pinctrl: meson-g12a: add pinctrl driver support
->>
->> Overall this looks good to me, could we get some review or ACKs
->> from Beniamino, Martin and/or Carlo as an indication that everything
->> seems all right before I apply the series?
-> I do not have any documentation for this hardware (I'm not even sure
-> if this is the successor to AXG/"the Audio SoCs" or rather a successor
-> of GXL or GXM/"the OTT/STB SoCs" - I assume it's their new OTT/STB
-> SoCs since G12A is mentioned here and it seems to have a GPU: [0])
-> 
-yes, it's more like a new generation of OTT/STB SoCs..
+The Nuvoton BMC NPCM750/730/715/705 Pinmux functions accessible
+only for pin groups and pinconf parameters available only for 
+individual pins.
 
-> I will try to have a look in the next few days and see if I can spot
-> anything obvious
+The Nuvoton BMC NPCM750/730/715/705 has eight identical GPIO 
+modules, each module has 32 GPIO ports.
 
-generally the pinctrl IP hasn't changed, so only pinctrl data need to be
-updated (the pin mux IP is same as AXG SoC which already explain in
-another thread).
+Most of the GPIO ports are multiplexed with other system functions.
 
-> not sure if Neil or Kevin have access to the documentation, so it'd be
-> great if they could give feedback as well
-> 
-we are preparing documention to baylibre guys..
+The NPCM7xx pinctrl and GPIO driver tested on NPCM750 evaluation board.
 
-I think there is not many boards available in the public?
+Tomer Maimon (2):
+  dt-binding: pinctrl: Add NPCM7xx pinctrl and GPIO documentation
+  pinctrl: nuvoton: add NPCM7xx pinctrl and GPIO driver
 
-> 
-> Regards
-> Martin
-> 
-> 
-> [0] http://openlinux.amlogic.com:8000/download/doc/Linux_BSP_Kernel4.9_Buildroot_OpenLinux_Release_Notes_V20180330.pdf
-> 
-> .
-> 
+ .../bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt   |  216 ++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/nuvoton/Kconfig                    |   13 +
+ drivers/pinctrl/nuvoton/Makefile                   |    4 +
+ drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c          | 2086 ++++++++++++++++++++
+ 6 files changed, 2321 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
+ create mode 100644 drivers/pinctrl/nuvoton/Kconfig
+ create mode 100644 drivers/pinctrl/nuvoton/Makefile
+ create mode 100644 drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
+
+-- 
+2.14.1
