@@ -1,135 +1,68 @@
-From: Anson Huang <Anson.Huang@nxp.com>
-Subject: [PATCH] gpio: mxc: add power management support
-Date: Tue, 10 Jul 2018 15:48:41 +0800
-Message-ID: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Subject: Re: [PATCH 0/3] pinctrl: meson-g12a: add pinctrl driver support
+Date: Tue, 10 Jul 2018 17:19:32 +0800
+Message-ID: <eafc9b41-597e-fa0f-5e30-95ce0b75f6fd@amlogic.com>
+References: <20180704224511.29350-1-yixun.lan@amlogic.com>
+ <CACRpkdauMRnLpfiARG-BWkuJfArri68e9BYx56SCUxJaYWsYYA@mail.gmail.com>
+ <CAFBinCAVSGTWFzW6nikbnC+K9n5KRYjun9bnEp7YsKbGRHJorg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAFBinCAVSGTWFzW6nikbnC+K9n5KRYjun9bnEp7YsKbGRHJorg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Linux-imx@nxp.com
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linus.walleij@linaro.org
+Cc: yixun.lan@amlogic.com, carlo@caione.org, b.galvani@gmail.com, linux-gpio@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com, khilman@baylibre.com, robh@kernel.org, xingyu.chen@amlogic.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-GPIO registers could lose context on some i.MX SoCs,
-like on i.MX7D, when enter LPSR mode, the whole SoC
-will be powered off except LPSR domain, GPIO banks
-will lose context in this case, need to restore
-the context after resume from LPSR mode.
+HI Martin
 
-This patch adds GPIO save/restore for those necessary
-registers, and put the save/restore operations in noirq
-suspend/resume phase, since GPIO is fundamental module
-which could be used by other peripherals' resume phase.
+On 07/10/18 06:07, Martin Blumenstingl wrote:
+> Hi Linus,
+> 
+> On Mon, Jul 9, 2018 at 3:35 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>>
+>> On Wed, Jul 4, 2018 at 4:48 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
+>>>
+>>> This patch series try to add pinctrl driver support for
+>>> the Meson-G12A SoC.
+>>>
+>>>
+>>> Yixun Lan (3):
+>>>   documentation: Add compatibles for Amlogic Meson G12A pin controllers
+>>>   dt-bindings: pinctrl: meson-g12a: document pin name
+>>>   pinctrl: meson-g12a: add pinctrl driver support
+>>
+>> Overall this looks good to me, could we get some review or ACKs
+>> from Beniamino, Martin and/or Carlo as an indication that everything
+>> seems all right before I apply the series?
+> I do not have any documentation for this hardware (I'm not even sure
+> if this is the successor to AXG/"the Audio SoCs" or rather a successor
+> of GXL or GXM/"the OTT/STB SoCs" - I assume it's their new OTT/STB
+> SoCs since G12A is mentioned here and it seems to have a GPU: [0])
+> 
+yes, it's more like a new generation of OTT/STB SoCs..
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/gpio/gpio-mxc.c | 68 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+> I will try to have a look in the next few days and see if I can spot
+> anything obvious
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 2f28299..0fc52d8 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -45,6 +45,15 @@ struct mxc_gpio_hwdata {
- 	unsigned fall_edge;
- };
- 
-+struct mxc_gpio_reg_saved {
-+	u32 icr1;
-+	u32 icr2;
-+	u32 imr;
-+	u32 gdir;
-+	u32 edge_sel;
-+	u32 dr;
-+};
-+
- struct mxc_gpio_port {
- 	struct list_head node;
- 	void __iomem *base;
-@@ -55,6 +64,7 @@ struct mxc_gpio_port {
- 	struct gpio_chip gc;
- 	struct device *dev;
- 	u32 both_edges;
-+	struct mxc_gpio_reg_saved gpio_saved_reg;
- };
- 
- static struct mxc_gpio_hwdata imx1_imx21_gpio_hwdata = {
-@@ -497,6 +507,8 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 
- 	list_add_tail(&port->node, &mxc_gpio_ports);
- 
-+	platform_set_drvdata(pdev, port);
-+
- 	return 0;
- 
- out_irqdomain_remove:
-@@ -507,11 +519,67 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	return err;
- }
- 
-+static void mxc_gpio_save_regs(struct mxc_gpio_port *port)
-+{
-+	if (mxc_gpio_hwtype == IMX21_GPIO)
-+		return;
-+
-+	port->gpio_saved_reg.icr1 = readl(port->base + GPIO_ICR1);
-+	port->gpio_saved_reg.icr2 = readl(port->base + GPIO_ICR2);
-+	port->gpio_saved_reg.imr = readl(port->base + GPIO_IMR);
-+	port->gpio_saved_reg.gdir = readl(port->base + GPIO_GDIR);
-+	port->gpio_saved_reg.edge_sel = readl(port->base + GPIO_EDGE_SEL);
-+	port->gpio_saved_reg.dr = readl(port->base + GPIO_DR);
-+}
-+
-+static void mxc_gpio_restore_regs(struct mxc_gpio_port *port)
-+{
-+	if (mxc_gpio_hwtype == IMX21_GPIO)
-+		return;
-+
-+	writel(port->gpio_saved_reg.icr1, port->base + GPIO_ICR1);
-+	writel(port->gpio_saved_reg.icr2, port->base + GPIO_ICR2);
-+	writel(port->gpio_saved_reg.imr, port->base + GPIO_IMR);
-+	writel(port->gpio_saved_reg.gdir, port->base + GPIO_GDIR);
-+	writel(port->gpio_saved_reg.edge_sel, port->base + GPIO_EDGE_SEL);
-+	writel(port->gpio_saved_reg.dr, port->base + GPIO_DR);
-+}
-+
-+static int __maybe_unused mxc_gpio_noirq_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct mxc_gpio_port *port = platform_get_drvdata(pdev);
-+
-+	mxc_gpio_save_regs(port);
-+	clk_disable_unprepare(port->clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused mxc_gpio_noirq_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct mxc_gpio_port *port = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	ret = clk_prepare_enable(port->clk);
-+	if (ret)
-+		return ret;
-+	mxc_gpio_restore_regs(port);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops mxc_gpio_dev_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mxc_gpio_noirq_suspend, mxc_gpio_noirq_resume)
-+};
-+
- static struct platform_driver mxc_gpio_driver = {
- 	.driver		= {
- 		.name	= "gpio-mxc",
- 		.of_match_table = mxc_gpio_dt_ids,
- 		.suppress_bind_attrs = true,
-+		.pm = &mxc_gpio_dev_pm_ops,
- 	},
- 	.probe		= mxc_gpio_probe,
- 	.id_table	= mxc_gpio_devtype,
--- 
-2.7.4
+generally the pinctrl IP hasn't changed, so only pinctrl data need to be
+updated (the pin mux IP is same as AXG SoC which already explain in
+another thread).
+
+> not sure if Neil or Kevin have access to the documentation, so it'd be
+> great if they could give feedback as well
+> 
+we are preparing documention to baylibre guys..
+
+I think there is not many boards available in the public?
+
+> 
+> Regards
+> Martin
+> 
+> 
+> [0] http://openlinux.amlogic.com:8000/download/doc/Linux_BSP_Kernel4.9_Buildroot_OpenLinux_Release_Notes_V20180330.pdf
+> 
+> .
+> 
