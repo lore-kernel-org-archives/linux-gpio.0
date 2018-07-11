@@ -1,14 +1,15 @@
 From: Ray Jui <ray.jui@broadcom.com>
 Subject: Re: [PATCH -next] pinctrl: nsp: fix potential NULL dereference in
  nsp_pinmux_probe()
-Date: Wed, 11 Jul 2018 09:48:51 -0700
-Message-ID: <7b4361a5-f757-179c-57b6-44359801baad@broadcom.com>
+Date: Wed, 11 Jul 2018 09:56:13 -0700
+Message-ID: <0bd31938-7bf4-134c-18e7-cdcd12b6b370@broadcom.com>
 References: <1531312461-134547-1-git-send-email-weiyongjun1@huawei.com>
+ <7b4361a5-f757-179c-57b6-44359801baad@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1531312461-134547-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <7b4361a5-f757-179c-57b6-44359801baad@broadcom.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -23,51 +24,42 @@ To: Wei Yongjun <weiyongjun1@huawei.com>, Ray Jui <rjui@broadcom.com>, Scott Bra
 Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-
-
-On 7/11/2018 5:34 AM, Wei Yongjun wrote:
-> platform_get_resource() may fail and return NULL, so we should
-> better check it's return value to avoid a NULL pointer dereference
-> a bit later in the code.
-> 
-> This is detected by Coccinelle semantic patch.
-> 
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
-> 
-> res = platform_get_resource(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when != res == NULL
-> e = devm_ioremap_nocache(e1, res->start, e2);
-> 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
-
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-
-Change looks good to me, although the check could have been avoided if 
-'devm_ioremap_resource' is used on the next line instead of 
-'devm_ioremap_nocache', where validation of resource pointer is done.
-
-But there's probably a reason why 'devm_ioremap_nocache' was used in 
-this code here.
-
->   drivers/pinctrl/bcm/pinctrl-nsp-mux.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
-> index 5cd8166..87618a4 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
-> @@ -577,6 +577,8 @@ static int nsp_pinmux_probe(struct platform_device *pdev)
->   		return PTR_ERR(pinctrl->base0);
->   
->   	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +	if (!res)
-> +		return -EINVAL;
->   	pinctrl->base1 = devm_ioremap_nocache(&pdev->dev, res->start,
->   					      resource_size(res));
->   	if (!pinctrl->base1) {
-> 
+CgpPbiA3LzExLzIwMTggOTo0OCBBTSwgUmF5IEp1aSB3cm90ZToKPiAKPiAKPiBPbiA3LzExLzIw
+MTggNTozNCBBTSwgV2VpIFlvbmdqdW4gd3JvdGU6Cj4+IHBsYXRmb3JtX2dldF9yZXNvdXJjZSgp
+IG1heSBmYWlsIGFuZCByZXR1cm4gTlVMTCwgc28gd2Ugc2hvdWxkCj4+IGJldHRlciBjaGVjayBp
+dCdzIHJldHVybiB2YWx1ZSB0byBhdm9pZCBhIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZQo+PiBh
+IGJpdCBsYXRlciBpbiB0aGUgY29kZS4KPj4KPj4gVGhpcyBpcyBkZXRlY3RlZCBieSBDb2NjaW5l
+bGxlIHNlbWFudGljIHBhdGNoLgo+Pgo+PiBAQAo+PiBleHByZXNzaW9uIHBkZXYsIHJlcywgbiwg
+dCwgZSwgZTEsIGUyOwo+PiBAQAo+Pgo+PiByZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRl
+diwgdCwgbik7Cj4+ICsgaWYgKCFyZXMpCj4+ICvCoMKgIHJldHVybiAtRUlOVkFMOwo+PiAuLi4g
+d2hlbiAhPSByZXMgPT0gTlVMTAo+PiBlID0gZGV2bV9pb3JlbWFwX25vY2FjaGUoZTEsIHJlcy0+
+c3RhcnQsIGUyKTsKCkkgZm9yZ290IHRvIG1lbnRpb24gdGhpcyBpbiBteSBwcmV2aW91cyByZXBs
+eS4gR2l2ZW4gdGhhdCB0aGlzIGlzIGEgZml4IApmb3IgYSBwb3RlbnRpYWwgTlVMTCBwb2ludGVy
+IGRlcmVmZXJlbmNlIGFuZCB0aGVuIGEga2VybmVsIGNyYXNoIGluIHRoZSAKY2FzZSB3aGVuICdw
+bGF0Zm9ybV9nZXRfcmVzb3VyY2UnIHJldHVybnMgTlVMTCwgY2FuIHlvdSBwbGVhc2UgYWRkIHRo
+ZSAKRml4ZXMgdGFnIHNvIHRoaXMgZml4IGlzIHBpY2tlZCBieSBhbGwgTFRTIGtlcm5lbHMgdW5k
+ZXIgbWFpbnRlbmFuY2U/CgpUaGFua3MsCgpSYXkKCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IFdlaSBZ
+b25nanVuIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPgo+PiAtLS0KPiAKPiBSZXZpZXdlZC1ieTog
+UmF5IEp1aSA8cmF5Lmp1aUBicm9hZGNvbS5jb20+Cj4gCj4gQ2hhbmdlIGxvb2tzIGdvb2QgdG8g
+bWUsIGFsdGhvdWdoIHRoZSBjaGVjayBjb3VsZCBoYXZlIGJlZW4gYXZvaWRlZCBpZiAKPiAnZGV2
+bV9pb3JlbWFwX3Jlc291cmNlJyBpcyB1c2VkIG9uIHRoZSBuZXh0IGxpbmUgaW5zdGVhZCBvZiAK
+PiAnZGV2bV9pb3JlbWFwX25vY2FjaGUnLCB3aGVyZSB2YWxpZGF0aW9uIG9mIHJlc291cmNlIHBv
+aW50ZXIgaXMgZG9uZS4KPiAKPiBCdXQgdGhlcmUncyBwcm9iYWJseSBhIHJlYXNvbiB3aHkgJ2Rl
+dm1faW9yZW1hcF9ub2NhY2hlJyB3YXMgdXNlZCBpbiAKPiB0aGlzIGNvZGUgaGVyZS4KPgoKPj4g
+wqAgZHJpdmVycy9waW5jdHJsL2JjbS9waW5jdHJsLW5zcC1tdXguYyB8IDIgKysKPj4gwqAgMSBm
+aWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9w
+aW5jdHJsL2JjbS9waW5jdHJsLW5zcC1tdXguYyAKPj4gYi9kcml2ZXJzL3BpbmN0cmwvYmNtL3Bp
+bmN0cmwtbnNwLW11eC5jCj4+IGluZGV4IDVjZDgxNjYuLjg3NjE4YTQgMTAwNjQ0Cj4+IC0tLSBh
+L2RyaXZlcnMvcGluY3RybC9iY20vcGluY3RybC1uc3AtbXV4LmMKPj4gKysrIGIvZHJpdmVycy9w
+aW5jdHJsL2JjbS9waW5jdHJsLW5zcC1tdXguYwo+PiBAQCAtNTc3LDYgKzU3Nyw4IEBAIHN0YXRp
+YyBpbnQgbnNwX3Bpbm11eF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlIAo+PiAqcGRldikK
+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiBQVFJfRVJSKHBpbmN0cmwtPmJhc2UwKTsKPj4g
+wqDCoMKgwqDCoCByZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwgSU9SRVNPVVJDRV9N
+RU0sIDEpOwo+PiArwqDCoMKgIGlmICghcmVzKQo+PiArwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1F
+SU5WQUw7Cj4+IMKgwqDCoMKgwqAgcGluY3RybC0+YmFzZTEgPSBkZXZtX2lvcmVtYXBfbm9jYWNo
+ZSgmcGRldi0+ZGV2LCByZXMtPnN0YXJ0LAo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmVzb3VyY2Vfc2l6ZShyZXMpKTsKPj4gwqDCoMKg
+wqDCoCBpZiAoIXBpbmN0cmwtPmJhc2UxKSB7Cj4+CgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51
+eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
