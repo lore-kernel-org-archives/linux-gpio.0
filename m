@@ -1,268 +1,224 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v1 1/2] dt-binding: pinctrl: Add NPCM7xx pinctrl and GPIO
- documentation
-Date: Wed, 11 Jul 2018 14:40:15 -0600
-Message-ID: <20180711204015.GA28359@rob-hp-laptop>
-References: <20180710125604.14458-1-tmaimon77@gmail.com>
- <20180710125604.14458-2-tmaimon77@gmail.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
+Date: Thu, 12 Jul 2018 00:09:32 +0200
+Message-ID: <20180712000932.3b04ee9d@bbrezillon>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+        <20180330074751.25987-2-boris.brezillon@bootlin.com>
+        <CAK8P3a1aZXf2sQW2mgwJScycKPhdoOAwxRjm5cQG83513uc3fg@mail.gmail.com>
+        <20180711164120.3e32fb08@bbrezillon>
+        <CAK8P3a2EZB_tMS_47wv6M2Qpm79ZocxxhG5zLxXsBM_YjZgkyA@mail.gmail.com>
+        <20180711191212.3855bb25@bbrezillon>
+        <CAK8P3a2djk8c6STaxJC0MCkBddyOafk4WbG2LdfPf0V1EYiqmQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180710125604.14458-2-tmaimon77@gmail.com>
+In-Reply-To: <CAK8P3a2djk8c6STaxJC0MCkBddyOafk4WbG2LdfPf0V1EYiqmQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: mark.rutland@arm.com, linus.walleij@linaro.org, avifishman70@gmail.com, yuenn@google.com, brendanhiggins@google.com, venture@google.com, joel@jms.id.au, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, openbmc@lists.ozlabs.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.or>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 03:56:03PM +0300, Tomer Maimon wrote:
-> Added device tree binding documentation for Nuvoton BMC
-> NPCM750/730/715/705 pinmux and GPIO controller.
+On Wed, 11 Jul 2018 22:10:26 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
+
+> n Wed, Jul 11, 2018 at 7:12 PM, Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> > On Wed, 11 Jul 2018 17:39:56 +0200 Arnd Bergmann <arnd@arndb.de> wrote:  
+> >> On Wed, Jul 11, 2018 at 4:41 PM, Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> >>
+> >> The problem that I see is that it breaks the tree abstraction that
+> >> we use in the dtb interface, in the driver model and in sysfs.
+> >> If we need to deal with a hardware bus structure like
+> >>
+> >>               cpu
+> >>              /   \
+> >>             /     \
+> >>        platdev   platdev
+> >>            |        |
+> >>      i3c-master   i3c-master
+> >>             \      /
+> >>              \    /
+> >>             i3c-bus
+> >>              /    \
+> >>          device   device
+> >>
+> >> then that abstraction no longer holds. Clearly you could build
+> >> a system like that, and if we have to support it, the i3c infrastructure
+> >> should be prepared for it, since we wouldn't be able to retrofit
+> >> it later.  
+> >
+> > Exactly. For the DT representation I thought we could have the primary
+> > master hold the device nodes, and then have secondary masters reference
+> > the main master with a phandle (i3c-bus = <&main_i3c_master>;). For the
+> > sysfs representation, it would be the same. Only one of the master
+> > would create the i3c_bus object and the other masters would just
+> > reference it.  
 > 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  .../bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt   | 216 +++++++++++++++++++++
->  1 file changed, 216 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
+> Ok.
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
-> new file mode 100644
-> index 000000000000..3a8f62ac7619
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
-> @@ -0,0 +1,216 @@
-> +Nuvoton NPCM7XX Pin Controllers
-> +
-> +The Nuvoton BMC NPCM7XX Pin Controller multi-function routed through
-> +the multiplexing block, Each pin supports GPIO functionality (GPIOx)
-> +and multiple functions that directly connect the pin to different
-> +hardware blocks.
-> +
-> +Required properties:
-> +- #address-cells : should be 1.
-> +- #size-cells	 : should be 1.
-> +- compatible	 : "nuvoton,npcm750-pinctrl" for Poleg NPCM7XX.
-> +- ranges	 : defines mapping ranges between pin controller node (parent)
-> +			to GPIO bank node (children).
-> +
-> +=== GPIO Bank Subnode ===
-> +
-> +The NPCM7XX has 8 GPIO Banks each GPIO bank support 32 GPIO.
+> >> What would be the point of building such a system though?  
+> >
+> > This, I don't know. But as you said, if we go for a "one bus per
+> > master" representation, going back will be difficult.
+> >  
+> >> Is this for performance, failover, or something else?  
+> >
+> > No, I don't think so, especially since the mastership handover
+> > operation is not free. So keeping the same master in control is
+> > probably better in term of perfs.  
+> 
+> Right.
+> 
+> > One case I can think of is when the primary master does not have enough
+> > resources to address all devices on the bus, and let the secondary
+> > master handle all transactions targeting those devices.
+> >  
+> 
+> 
+> I've read the specification a bit more, and from what I found there,
+> it seems extremely unlikely that there was an intended use case where
+> one OS instance would control more than one master on a single bus
+> and flip them between primary and secondary mode.
+> 
+> In particular, the protocol for the handover is defined in a way that
+> intentionally avoids requiring a side channel to communicate data
+> about the slave devices, and instead the secondary master(s) get
+> informed about any changes of the topology as they happen
+> through explicit messages.
+> 
+> The description of the secondary master labels the introduction section
+> of says
+> 
+>      "I3C Smart Sensor(s) / Hub(s) / Engine(s)"
+> 
+> which sounds like some microcontroller that can act as a master of
+> some sort, rather than being part of the OS itself.
+> 
+> I can see several use cases for this, e.g.
+> 
+> * A baseboard management controller booting first, reading all
+>   the sensors and possibly loading its own OS from an i3c flash
+>   before handing off control to the main CPU of a server and
+>   no longer being a master
+> 
+> * A fan controller that occasionally wants to read temperature
+>   sensors and control fan speed, while normally being a
+>   secondary master. It periodically asks the OS to become
+>   a master to read the sensors and then immediately hands back
+>   control to the host OS as the master
+> 
+> * Two controllers inside of the same SoC, but one of them owned
+>   by ARM Trustzone firmware or the Intel equivalent, the other
+>   owned by the OS, both accessing the same slaves.
+> 
+> All of these require implementing handover between primary
+> and secondary master, but Linux would still see a hierarchical
+> bus structure, with the secondary masters looking like slave
+> devices that might request being masters during some time.
+> 
+> We may also run into the requirement that a master we probe
+> is currently the secondary master and has to probe the bus
+> by asking the current master for the available devices, and
+> then taking over.
+> 
+> >> IOW, what feature would we lose if we were to declare that
+> >> setup above invalid (and ensure you cannot represent it in DT)?  
+> >
+> > That's exactly the sort of discussion I wanted to trigger. Maybe we
+> > shouldn't care and expose this use case as if it was X different I3C
+> > buses (with all devices present on the bus being exposed X times
+> > to the system).  
+> 
+> That's probably fine for many slave devices (you could read a
+> single sensor multiple times if you iterate through all i2c sensors
+> on all buses) but might not work for others (a slave device sending
+> an interrupt to the current master for a request that was started
+> from the previous master).
+> My impression however is that this is actually a corner case that
+> we can leave to be undefined, and not prepare to handle well,
+> as long as we can deal with the interesting examples above.
 
-s/support/supports/
+Mastership handover/takeover is something I already thought about.
+Actually, that's the reason for the i3c_bus->cur_master field (so that
+the master being asked to do a transfer on the bus can request bus
+ownership it bus->cur_master != master->this->info.pid).
 
-> +
-> +Required GPIO Bank subnode-properties:
-> +- reg 			: specifies physical base address and size of the GPIO
-> +				bank registers.
-> +- gpio-controller	: Marks the device node as a GPIO controller.
-> +- #gpio-cells		: Must be <2>. The first cell is the gpio pin number
-> +				and the second cell is used for optional parameters.
-> +- interrupts		: contain the GPIO bank interrupt with flags for falling edge.
-> +- gpio-ranges		: defines the range of pins managed by the GPIO bank controller.
-> +
-> +For example, GPIO bank subnodes like the following:
-> +	gpio0: gpio@f0010000 {
+I guess this would be replaced by something simpler if we get rid of
+the i3c_bus object (just a bool i3c_master->owns_bus). 
 
-Might want to have a compatible string here. Makes it easier to iterate 
-thru gpio nodes if needed.
+> 
+> >> > The devices discovered on the bus are not directly registered to the
+> >> > device model, and I need to store them in a list to do some operations
+> >> > before exposing them. Once everything is ready to be used, I then
+> >> > iterate the list and register all not-yet-registered I3C devs.  
+> >>
+> >> Can you explain what those operations are and why we can't
+> >> register everything directly? This seems rather unconventional,
+> >> so I want to make sure it's done for a good reason.  
+> >
+> > When we start a DAA operation (used to discover all devices on the
+> > bus), we have the bus lock held in maintenance mode (AKA exclusive
+> > mode). During this DAA the controller will add all the devices it has
+> > discovered on the bus and let the core query information about those
+> > devices (PID, DCR, HDR capabilies, SDR speed limitations, ...). It
+> > might also happen that a device that had been discovered previously is
+> > re-discovered because it had lost its dynamic address (i.e. when
+> > the device had been reset but not by Linux). In this case the I3C
+> > framework does not expose a new device but instead updates the dynamic
+> > address of the device already registered to the device model, so that
+> > new transactions initiated by the I3C device driver work correctly.
+> > This is the very reason we hold the lock in exclusive mode (we want all
+> > transactions to be stopped until we have updated dynamic addresses if
+> > needed).
+> >
+> > Now, let's imagine you register the device when the bus lock is held in
+> > exclusive mode, and the ->probe() function of the I3C driver needs to
+> > do an I3C transfer => you end up with a deadlock.
+> >
+> > So what we do instead is add new devices to the i3c bus list, release
+> > the bus lock and then register all new devices.  
+> 
+> Ok, but maybe you could you put the information about those devices
+> on a local list on the stack rather than the controller? I suppose this
+> would not change the logic much, but it would slightly simplify the
+> data structures for the bus and stop others from wondering about
+> them. ;-)
 
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		reg = <0x0 0x80>;
-> +		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-> +		gpio-ranges = <&pinctrl 0 0 32>;
-> +	};
-> +
-> +=== Pin Mux Subnode ===
-> +
-> +- pin: A string containing the name of the pin
-> +	An array of strings, each string containing the name of a pin.
-> +	These pin are used for selecting pin configuration.
-> +
-> +The following are the list of pins available:
-> +	"GPIO0/IOX1DI", "GPIO1/IOX1LD",	"GPIO2/IOX1CK", "GPIO3/IOX1D0",
-> +	"GPIO4/IOX2DI/SMB1DSDA", "GPIO5/IOX2LD/SMB1DSCL", "GPIO6/IOX2CK/SMB2DSDA",
-> +	"GPIO7/IOX2D0/SMB2DSCL", "GPIO8/LKGPO1", "GPIO9/LKGPO2", "GPIO10/IOXHLD",
-> +	"GPIO11/IOXHCK", "GPIO12/GSPICK/SMB5BSCL", "GPIO13/GSPIDO/SMB5BSDA",
-> +	"GPIO14/GSPIDI/SMB5CSCL", "GPIO15/GSPICS/SMB5CSDA", "GPIO16/LKGPO0",
-> +	"GPIO17/PSPI2DI/SMB4DEN","GPIO18/PSPI2D0/SMB4BSDA", "GPIO19/PSPI2CK/SMB4BSCL",
-> +	"GPIO20/SMB4CSDA/SMB15SDA", "GPIO21/SMB4CSCL/SMB15SCL", "GPIO22/SMB4DSDA/SMB14SDA",
-> +	"GPIO23/SMB4DSCL/SMB14SCL", "GPIO24/IOXHDO", "GPIO25/IOXHDI", "GPIO26/SMB5SDA",
-> +	"GPIO27/SMB5SCL", "GPIO28/SMB4SDA", "GPIO29/SMB4SCL", "GPIO30/SMB3SDA",
-> +	"GPIO31/SMB3SCL", "GPIO32/nSPI0CS1","SPI0D2", "SPI0D3", "GPIO37/SMB3CSDA",
-> +	"GPIO38/SMB3CSCL", "GPIO39/SMB3BSDA", "GPIO40/SMB3BSCL", "GPIO41/BSPRXD",
-> +	"GPO42/BSPTXD/STRAP11", "GPIO43/RXD1/JTMS2/BU1RXD", "GPIO44/nCTS1/JTDI2/BU1CTS",
-> +	"GPIO45/nDCD1/JTDO2", "GPIO46/nDSR1/JTCK2", "GPIO47/nRI1/JCP_RDY2",
-> +	"GPIO48/TXD2/BSPTXD", "GPIO49/RXD2/BSPRXD", "GPIO50/nCTS2", "GPO51/nRTS2/STRAP2",
-> +	"GPIO52/nDCD2", "GPO53/nDTR2_BOUT2/STRAP1", "GPIO54/nDSR2", "GPIO55/nRI2",
-> +	"GPIO56/R1RXERR", "GPIO57/R1MDC", "GPIO58/R1MDIO", "GPIO59/SMB3DSDA",
-> +	"GPIO60/SMB3DSCL", "GPO61/nDTR1_BOUT1/STRAP6", "GPO62/nRTST1/STRAP5",
-> +	"GPO63/TXD1/STRAP4", "GPIO64/FANIN0", "GPIO65/FANIN1", "GPIO66/FANIN2",
-> +	"GPIO67/FANIN3", "GPIO68/FANIN4", "GPIO69/FANIN5", "GPIO70/FANIN6", "GPIO71/FANIN7",
-> +	"GPIO72/FANIN8", "GPIO73/FANIN9", "GPIO74/FANIN10", "GPIO75/FANIN11",
-> +	"GPIO76/FANIN12", "GPIO77/FANIN13","GPIO78/FANIN14", "GPIO79/FANIN15",
-> +	"GPIO80/PWM0", "GPIO81/PWM1", "GPIO82/PWM2", "GPIO83/PWM3", "GPIO84/R2TXD0",
-> +	"GPIO85/R2TXD1", "GPIO86/R2TXEN", "GPIO87/R2RXD0", "GPIO88/R2RXD1", "GPIO89/R2CRSDV",
-> +	"GPIO90/R2RXERR", "GPIO91/R2MDC", "GPIO92/R2MDIO", "GPIO93/GA20/SMB5DSCL",
-> +	"GPIO94/nKBRST/SMB5DSDA", "GPIO95/nLRESET/nESPIRST", "GPIO96/RG1TXD0",
-> +	"GPIO97/RG1TXD1", "GPIO98/RG1TXD2", "GPIO99/RG1TXD3","GPIO100/RG1TXC",
-> +	"GPIO101/RG1TXCTL", "GPIO102/RG1RXD0", "GPIO103/RG1RXD1", "GPIO104/RG1RXD2",
-> +	"GPIO105/RG1RXD3", "GPIO106/RG1RXC", "GPIO107/RG1RXCTL", "GPIO108/RG1MDC",
-> +	"GPIO109/RG1MDIO", "GPIO110/RG2TXD0/DDRV0", "GPIO111/RG2TXD1/DDRV1",
-> +	"GPIO112/RG2TXD2/DDRV2", "GPIO113/RG2TXD3/DDRV3", "GPIO114/SMB0SCL",
-> +	"GPIO115/SMB0SDA", "GPIO116/SMB1SCL", "GPIO117/SMB1SDA", "GPIO118/SMB2SCL",
-> +	"GPIO119/SMB2SDA", "GPIO120/SMB2CSDA", "GPIO121/SMB2CSCL", "GPIO122/SMB2BSDA",
-> +	"GPIO123/SMB2BSCL", "GPIO124/SMB1CSDA", "GPIO125/SMB1CSCL","GPIO126/SMB1BSDA",
-> +	"GPIO127/SMB1BSCL", "GPIO128/SMB8SCL", "GPIO129/SMB8SDA", "GPIO130/SMB9SCL",
-> +	"GPIO131/SMB9SDA", "GPIO132/SMB10SCL", "GPIO133/SMB10SDA","GPIO134/SMB11SCL",
-> +	"GPIO135/SMB11SDA", "GPIO136/SD1DT0", "GPIO137/SD1DT1", "GPIO138/SD1DT2",
-> +	"GPIO139/SD1DT3", "GPIO140/SD1CLK", "GPIO141/SD1WP", "GPIO142/SD1CMD",
-> +	"GPIO143/SD1CD/SD1PWR", "GPIO144/PWM4",	"GPIO145/PWM5",	"GPIO146/PWM6",
-> +	"GPIO147/PWM7",	"GPIO148/MMCDT4", "GPIO149/MMCDT5", "GPIO150/MMCDT6",
-> +	"GPIO151/MMCDT7", "GPIO152/MMCCLK", "GPIO153/MMCWP", "GPIO154/MMCCMD",
-> +	"GPIO155/nMMCCD/nMMCRST", "GPIO156/MMCDT0", "GPIO157/MMCDT1", "GPIO158/MMCDT2",
-> +	"GPIO159/MMCDT3", "GPIO160/CLKOUT/RNGOSCOUT", "GPIO161/nLFRAME/nESPICS",
-> +	"GPIO162/SERIRQ", "GPIO163/LCLK/ESPICLK", "GPIO164/LAD0/ESPI_IO0",
-> +	"GPIO165/LAD1/ESPI_IO1", "GPIO166/LAD2/ESPI_IO2", "GPIO167/LAD3/ESPI_IO3",
-> +	"GPIO168/nCLKRUN/nESPIALERT", "GPIO169/nSCIPME", "GPIO170/nSMI", "GPIO171/SMB6SCL",
-> +	"GPIO172/SMB6SDA", "GPIO173/SMB7SCL", "GPIO174/SMB7SDA", "GPIO175/PSPI1CK/FANIN19",
-> +	"GPIO176/PSPI1DO/FANIN18", "GPIO177/PSPI1DI/FANIN17", "GPIO178/R1TXD0",
-> +	"GPIO179/R1TXD1", "GPIO180/R1TXEN", "GPIO181/R1RXD0", "GPIO182/R1RXD1",
-> +	"GPIO183/SPI3CK", "GPO184/SPI3D0/STRAP9", "GPO185/SPI3D1/STRAP10",
-> +	"GPIO186/nSPI3CS0", "GPIO187/nSPI3CS1",	"GPIO188/SPI3D2/nSPI3CS2",
-> +	"GPIO189/SPI3D3/nSPI3CS3", "GPIO190/nPRD_SMI", "GPIO191", "GPIO192", "GPIO193/R1CRSDV",
-> +	"GPIO194/SMB0BSCL", "GPIO195/SMB0BSDA", "GPIO196/SMB0CSCL", "GPIO197/SMB0DEN",
-> +	"GPIO198/SMB0DSDA", "GPIO199/SMB0DSCL", "GPIO200/R2CK", "GPIO201/R1CK",
-> +	"GPIO202/SMB0CSDA", "GPIO203/FANIN16", "GPIO204/DDC2SCL", "GPIO205/DDC2SDA",
-> +	"GPIO206/HSYNC2", "GPIO207/VSYNC2", "GPIO208/RG2TXC/DVCK", "GPIO209/RG2TXCTL/DDRV4",
-> +	"GPIO210/RG2RXD0/DDRV5", "GPIO211/RG2RXD1/DDRV6", "GPIO212/RG2RXD2/DDRV7",
-> +	"GPIO213/RG2RXD3/DDRV8", "GPIO214/RG2RXC/DDRV9", "GPIO215/RG2RXCTL/DDRV10",
-> +	"GPIO216/RG2MDC/DDRV11", "GPIO217/RG2MDIO/DVHSYNC", "GPIO218/nWDO1",
-> +	"GPIO219/nWDO2", "GPIO220/SMB12SCL", "GPIO221/SMB12SDA", "GPIO222/SMB13SCL",
-> +	"GPIO223/SMB13SDA", "GPIO224/SPIXCK", "GPO225/SPIXD0/STRAP12", "GPO226/SPIXD1/STRAP13",
-> +	"GPIO227/nSPIXCS0", "GPIO228/nSPIXCS1",	"GPO229/SPIXD2/STRAP3", "GPIO230/SPIXD3",
-> +	"GPIO231/nCLKREQ", "GPI255/DACOSEL"
-> +
-> +Optional Properties:
-> + bias-disable, bias-pull-down, bias-pull-up, input-enable,
-> + input-disable, output-high, output-low, drive-push-pull,
-> + drive-open-drain, input-debounce, slew-rate, drive-strength
-> +
-> + slew-rate valid arguments are:
-> +				<0> - slow
-> +				<1> - fast
-> + drive-strength valid arguments are:
-> +				<2> - 2mA
-> +				<4> - 4mA
-> +				<8> - 8mA
-> +				<12> - 12mA
-> +				<16> - 16mA
-> +				<24> - 24mA
-> +
-> +For example, pinctrl might have pinmux subnodes like the following:
-> +
-> +	gpio0_iox1d1_pin: gpio0_iox1d1_pin {
-> +		pins = "GPIO0/IOX1DI";
-> +		output-high;
-> +	};
-> +	gpio0_iox1ck_pin: gpio0_iox1ck_pin {
-> +		pins = "GPIO2/IOX1CK";
-> +		output_high;
-> +	};
-> +
-> +=== Pin Group Subnode ===
-> +
-> +Required pin group subnode-properties:
-> +- groups : A string containing the name of the group to mux.
-> +- function: A string containing the name of the function to mux to the
-> +  group.
-> +
-> +The following are the list of the available groups and functions :
-> +	smb0, smb0b, smb0c, smb0d, smb0den, smb1, smb1b, smb1c, smb1d,
-> +	smb2, smb2b, smb2c, smb2d, smb3, smb3b, smb3c, smb3d, smb4, smb4b,
-> +	smb4c, smb4d, smb4den, smb5, smb5b, smb5c, smb5d, ga20kbc, smb6,
-> +	smb7, smb8, smb9, smb10, smb11, smb12, smb13, smb14, smb15, fanin0,
-> +	fanin1, fanin2, fanin3, fanin4, fanin5, fanin6, fanin7, fanin8,
-> +	fanin9, fanin10, fanin11 fanin12 fanin13, fanin14, fanin15, faninx,
-> +	pwm0, pwm1, pwm2, pwm3, pwm4, pwm5, pwm6, pwm7, rg1, rg1mdio, rg2,
-> +	rg2mdio, ddr, uart1, uart2, bmcuart0a, bmcuart0b, bmcuart1, iox1,
-> +	iox2, ioxh, gspi, mmc, mmcwp, mmccd, mmcrst, mmc8, r1, r1err, r1md,
-> +	r2, r2err, r2md, sd1, sd1pwr, wdog1, wdog2, scipme, sci, serirq,
-> +	jtag2, spix, spixcs1, pspi1, pspi2, ddc, clkreq, clkout, spi3, spi3cs1,
-> +	spi3quad, spi3cs2, spi3cs3, spi0cs1, lpc, lpcclk, espi, lkgpo0, lkgpo1,
-> +	lkgpo2, nprd_smi
-> +
-> +For example, pinctrl might have group subnodes like the following:
-> +	r1err_pins: r1err_pins {
-> +		groups = "r1err";
-> +		function = "r1err";
-> +	};
-> +	r1md_pins: r1md_pins {
-> +		groups = "r1md";
-> +		function = "r1md";
-> +	};
-> +	r1_pins: r1_pins {
-> +		groups = "r1";
-> +		function = "r1";
-> +	};
-> +
-> +Examples
-> +========
-> +pinctrl: pinctrl@0 {
+This has changed a bit in the v6 I'm about to send (probably next week).
+I now have 2 different objects which do not necessarily have the same
+lifetime:
 
-pinctrl@f0010000
+* i3c_dev_desc: an I3C device descriptor. This is the representation
+  exposed to I3C master controller drivers which usually reserve one
+  slot in the HW device table per-device on the bus. Since the same
+  device can be re-discovered with a different address, we have a short
+  period in time during which the controller will have 2
+  slots/descriptors used to control the same device, except one would
+  be inactive (any transfer to the old dynamic address would fail) and
+  the other one would be active. The core then takes care of releasing
+  the old descriptor/slot and attaching the new one to the i3c_device
+  object exposed to I3C device drivers
 
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	compatible = "nuvoton,npcm750-pinctrl", "syscon", "simple-mfd";
+* i3c_device: this is the object exposed to I3C device drivers. It's
+  lifetime is usually the same as the i3c_dev_desc it's attached to,
+  except when the device lose its dynamic address and get a new one
+  assigned. In this case we keep the same i3c_device object, but
+  dynamically re-attach it to a new i3c_dev_desc before releasing the
+  old dev desc. This way the I3C does not even see that the device
+  address has changed and can keep doing transfers to it.
 
-syscon and simple-mfd aren't documented and shouldn't be needed.
+With these 2 distinct representations, the handling on the controller
+side is greatly simplified: the core takes care of the resource
+migration steps, while it was up to the controller to do that my
+previous versions (look at the ->reattach_i3c_dev() hook in the Cadence
+driver, and I think it's even more complicated with other controllers,
+like the HCI one).
 
-> +	ranges = <0 0xf0010000 0x8000>;
-> +
-> +	gpio0: gpio@f0010000 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		reg = <0x0 0x80>;
-> +		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-> +		gpio-ranges = <&pinctrl 0 0 32>;
-> +	};
-> +
-> +	....
-> +
-> +	gpio7: gpio@f0017000 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		reg = <0x7000 0x80>;
-> +		interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
-> +		gpio-ranges = <&pinctrl 0 224 32>;
-> +	};
-> +
-> +	gpio0_iox1d1_pin: gpio0_iox1d1_pin {
+> This is a really minor point though, let's work out the problem of the
+> multiple masters first.
 
-Use '-' rather than '_' in node names.
-
-> +		pins = "GPIO0/IOX1DI";
-> +		output-high;
-> +	};
-> +
-> +	iox1_pins: iox1_pins {
-> +		groups = "iox1";
-> +		function = "iox1";
-> +	};
-> +	iox2_pins: iox2_pins {
-> +		groups = "iox2";
-> +		function = "iox2";
-> +	};
-> +
-> +	....
-> +
-> +	clkreq_pins: clkreq_pins {
-> +		groups = "clkreq";
-> +		function = "clkreq";
-> +	};
-> +};
-> \ No newline at end of file
-
-^^^
+I agree. This being said, moving to a representation where the bus is
+implicitly represented by the master_controller instance shouldn't be
+too difficult. So, if you think we should try this approach I can do
+the modifications in my v6.
