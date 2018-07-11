@@ -1,80 +1,125 @@
-From: Lina Iyer <ilina@codeaurora.org>
-Subject: Re: [PATCH] pinctrl: msm: Pass along set_wake failures
-Date: Tue, 10 Jul 2018 14:38:05 -0600
-Message-ID: <20180710203805.GA14825@codeaurora.org>
-References: <20180619234349.166190-1-evgreen@chromium.org>
- <20180709173022.GH2050@tuxbook-pro>
- <CAE=gft5+oOFv8y-XCtiQ8mc7gQ1FFSK0+bPk=mJu--ovLfDDJg@mail.gmail.com>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v4 0/6] Add Actions Semiconductor Owl S900 I2C support
+Date: Wed, 11 Jul 2018 08:15:02 +0530
+Message-ID: <20180711024502.GA4739@Mani-XPS-13-9360>
+References: <20180701172305.15663-1-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAE=gft5+oOFv8y-XCtiQ8mc7gQ1FFSK0+bPk=mJu--ovLfDDJg@mail.gmail.com>
+In-Reply-To: <20180701172305.15663-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Evan Green <evgreen@chromium.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, swboyd@chromium.org
+To: wsa@the-dreams.de, peda@axentia.se
+Cc: linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com, afaerber@suse.de
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 10 2018 at 12:53 -0600, Evan Green wrote:
->On Mon, Jul 9, 2018 at 10:27 AM Bjorn Andersson
-><bjorn.andersson@linaro.org> wrote:
->>
->> Sorry for not getting back to you in a timely manner Evan, I wanted to
->> read up more on the details of how this is supposed to work. I still
->> haven't done so, but here's my concern:
->>
->> When we power down the SoC we're no longer powering either the TLMM or
->> the GIC, so the MPM or PDC is used to waking the system on some set of
->> triggers. As such set_wake on an individual pin or irq should be routed
->> to the MPM/PDC driver, which (in the PDC case) is implemented using
->> hierarchical irq domains.
->>
->> As such I think that we shouldn't toggle the wake property of the
->> summary pin at all; i.e. the patch should remove that call rather than
->> propagating what I believe is a constant failure.
->>
->> Regards,
->> Bjorn
->
->Hi Bjorn,
->That's okay, I always feel bad pinging. Thanks for the thoughtful
->response. Stephen and I are starting to think about how wake
->interrupts should work with regard to the PDC, and we're at a place
->where we're a bit unsure of the path forward.
->
->Our understanding is the downstream kernel had an interrupt hierarchy
->of GIC > PDC > TLMM & everybody else. In the downstream world PDC
->acted transparently, forwarding most requests directly onto the GIC,
->but quietly handling wake interrupts as well. With the upstream PDC
->driver, the #interrupt-cells got changed to 2, and it seemed like
->folks didn't like the idea that PDC was acting transparently. Correct
->me if I'm wrong there. So now we're sort of unsure about how to wire
->in PDC. If we make everybody an interrupt child of PDC, then we lose
->the ability to specify the third GIC parameter, and we're stuck
->expressing interrupts with respect to PDC pins, which is an awkward
->mental translation.
-Its an unfortunate side effect of the design. Drivers will have to
-request the PDC pin for wakeup IRQs.
+On Sun, Jul 01, 2018 at 10:52:59PM +0530, Manivannan Sadhasivam wrote:
+> This patchset adds I2C controller support for Actions Semiconductor S900 SoC.
+> This driver has been structured in a way such that there will be only
+> one controller driver for the whole Owl family series (S500, S700 and
+> S900 SoCs).
+> 
+> There are 6 I2C controllers with separate memory mapped register space.
+> The I2C controller can handle atmost two messages concatenated by a
+> repeated start via its internal address feature. Hence the driver
+> uses this feature for messages of length greater than 1. In those cases,
+> the first message of the combined message should be a `write` with maximum
+> message length 6 and the second message's maximum length should be 240 bytes.
+> 
+> As far as the bus speed is concerned, this driver only supports
+> Standard (100KHz) and High speed (400KHz) for now.
+> 
+> The pinctrl definitions are only available for I2C0, I2C1 and I2C2.
+> With the mux option available only for I2C0.
+> 
+> For Bubblegum-96 board utilizing the S900 SoC, only I2C1 and I2C2 which
+> are exposed on the Low speed expansion connector are enabled.
+> 
+> This series depends on the pinctrl patch [1] is still not merged by the
+> platform maintainer Andreas but it has been reviewed by the pinctrl maintainer
+> Linus Walleij. For the reference, I have queued up all reviewed dts patches
+> in my tree [2] from which Andreas is picking them for 4.19.
+> 
+> For this series, since the dts patches will go through the ARM SoC tree,
+> Andreas will pick it up once it is reviewed.
+> 
+> Thanks,
+> Mani
+> 
+> [1] https://patchwork.kernel.org/patch/10322937/
+> [2] https://git.linaro.org/people/manivannan.sadhasivam/linux.git/log/?h=s900-for-next
+> 
 
->In this world, does TLMM need to do direct-connect
->stuff to get wake-able GPIO interrupts working? It would kind of have
->a foot in both worlds, with its summary interrupt as a GIC interrupt
->but the wakeable ones as parented by PDC?
->
-With GPIOs, I am trying to hack the TLMM driver to request a PDC pin,
-when the IRQ associated with the GPIO is requested as a wakeup
-interrupt. In that case, the TLMM driver would do the GPIO->PDC pin
-translation and request it. There is no hierarchy between TLMM and PDC.
+Hi Andy, Peter,
 
-Will try a RFC patch in a week or two.
+Just a gentle ping on this v4!
 
--- Lina
+Thanks,
+Mani
 
->So anyway, with regard to this patch, I'm happy to create a second
->spin that simply removes this function, but for me at least it brought
->up some larger questions we've been wrestling with.
->-Evan
->--
->To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Changes in v4:
+> 
+> As per Andy and Peter review:
+> 
+> * Used spinlock for accessing most of the register access (only parts
+>   involved sleep/long-busy-wait has been excluded)
+> * Removed returning 0 and added -ENXIO if the msg_ptr not equals to
+>   message length
+> * Added DIV_ROUND_UP for setting clock frequency
+> * Changed one non-atomic mdelay instance to usleep_range
+> * Moved pinctrl definition patch before dts patch
+> * Fixed the driver to support only 100KHz and 400KHz frequencies
+> 
+> Changes in v3:
+> 
+> As per Peter, Andy and Andreas review:
+> 
+> * Removed owl_i2c_reset function from interrupt handler since it
+>   involves the use of delays.
+> * Fixed the return path in owl_i2c_master_xfer and added a note
+> * Changed "base" parameter to "reg" in owl_i2c_update_reg for better
+>   understandability
+> * Ordered the includes in alphabetical order
+> * Small changes to defines and added comma at the end of struct members
+> * Removed rendundant 0 assignment in owl_i2c_master_xfer
+> * Changed all OWL naming convention to Owl and also changed Actions Semi
+>   naming to Actions Semiconductor
+> 
+> Changes in v2:
+> 
+> As per Andy's review:
+> * Modified infinite loops to fixed number of retries
+> * Used i2c_8bit_addr_from_msg for constructing the slave address
+> * Removed unnecessary parenthesis around defines
+> * Modified certain dev_warn to dev_dbg
+> * Modified the error handling to more generic pattern
+> 
+> * Fixed the return value in owl_i2c_master_xfer
+> * Added MAINTAINERS patch for I2C driver and its binding
+> 
+> Manivannan Sadhasivam (6):
+>   dt-bindings: i2c: Add binding for Actions Semiconductor Owl I2C
+>     controller
+>   arm64: dts: actions: Add pinctrl definition for S900 I2C controller
+>   arm64: dts: actions: Add Actions Semiconductor S900 I2C controller
+>     nodes
+>   arm64: dts: actions: Enable I2C1 and I2C2 in Bubblegum-96 board
+>   i2c: Add Actions Semiconductor Owl family S900 I2C driver
+>   MAINTAINERS: Add entry for Actions Semiconductor Owl I2C driver
+> 
+>  .../devicetree/bindings/i2c/i2c-owl.txt       |  27 +
+>  MAINTAINERS                                   |   2 +
+>  .../dts/actions/s900-bubblegum-96-pins.dtsi   |  29 +
+>  .../boot/dts/actions/s900-bubblegum-96.dts    |  11 +
+>  arch/arm64/boot/dts/actions/s900.dtsi         |  60 +++
+>  drivers/i2c/busses/Kconfig                    |   7 +
+>  drivers/i2c/busses/Makefile                   |   1 +
+>  drivers/i2c/busses/i2c-owl.c                  | 504 ++++++++++++++++++
+>  8 files changed, 641 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-owl.txt
+>  create mode 100644 arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
+>  create mode 100644 drivers/i2c/busses/i2c-owl.c
+> 
+> -- 
+> 2.17.1
+> 
