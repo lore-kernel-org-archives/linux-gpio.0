@@ -1,46 +1,69 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5 07/10] i3c: master: Add driver for Cadence IP
-Date: Wed, 11 Jul 2018 16:19:51 +0200
-Message-ID: <CAK8P3a1D_crzMT8-2R9bMvMuq8F58=BgHUFSq2nntRHF0sZUQg@mail.gmail.com>
-References: <20180622104930.32050-1-boris.brezillon@bootlin.com> <20180622104930.32050-8-boris.brezillon@bootlin.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: Re: [PATCH -next] pinctrl: at91-pio4: remove redundant return value
+ check of platform_get_resource()
+Date: Wed, 11 Jul 2018 16:10:04 +0200
+Message-ID: <20180711141004.cuzmomutxofw7blb@M43218.corp.atmel.com>
+References: <1531312447-134423-1-git-send-email-weiyongjun1@huawei.com>
+ <20180711130349.GP16084@piout.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180622104930.32050-8-boris.brezillon@bootlin.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.or>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180711130349.GP16084@piout.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 12:49 PM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> Add a driver for Cadence I3C master IP.
+On Wed, Jul 11, 2018 at 03:03:49PM +0200, Alexandre Belloni wrote:
+> On 11/07/2018 12:34:07+0000, Wei Yongjun wrote:
+> > Remove unneeded error handling on the result of a call
+> > to platform_get_resource() when the value is passed to
+> > devm_ioremap_resource().
+> > 
+> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> I'm not sure it is worth the effort but
 
-The driver seems very well-written and shows that the framework got that side
-of the interface right. Just one thing I noticed:
+I have the same feeling. If it's the trend:
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
-> +
-> +static void cdns_i3c_master_handle_ibi(struct cdns_i3c_master *master,
-> +                                      u32 ibir)
-
-> +
-> +       for (i = 0; i < IBIR_XFER_BYTES(ibir); i += 4) {
-> +               u32 tmp = readl(master->regs + IBI_DATA_FIFO);
-> +
-> +               for (j = 0; j < 4 && i + j < dev->ibi->max_payload_len; j++)
-> +                       buf[i + j] = tmp >> (j * 8);
-> +       }
-
-This seems to be a rather inefficient way to open-code a readsl().
-I suppose you need to handle length that is not a multiple of 4, right?
-
-Maybe do it like
-
-      size_t length = IBIR_XFER_BYTES(ibir);
-      readsl(master->regs + IBI_DATA_FIFO, buf, length & ~3);
-      if (length & 3) {
-            u32 tmp = __raw_readl(master->regs + IBI_DATA_FIFO);
-            memcpy(buf + length & ~3, length & 3);
-      }
-
-     Arnd
+> 
+> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> 
+> > ---
+> >  drivers/pinctrl/pinctrl-at91-pio4.c | 4 ----
+> >  1 file changed, 4 deletions(-)
+> > 
+> > diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+> > index 8f06197..ef7ab20 100644
+> > --- a/drivers/pinctrl/pinctrl-at91-pio4.c
+> > +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+> > @@ -971,10 +971,6 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
+> >  	atmel_pioctrl->npins = atmel_pioctrl->nbanks * ATMEL_PIO_NPINS_PER_BANK;
+> >  
+> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > -	if (!res) {
+> > -		dev_err(dev, "unable to get atmel pinctrl resource\n");
+> > -		return -EINVAL;
+> > -	}
+> >  	atmel_pioctrl->reg_base = devm_ioremap_resource(dev, res);
+> >  	if (IS_ERR(atmel_pioctrl->reg_base))
+> >  		return -EINVAL;
+> > 
+> > 
+> > 
+> 
+> -- 
+> Alexandre Belloni, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
