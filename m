@@ -1,79 +1,149 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 0/5] pinctrl_gpio_get_direction & ingenic fixes
-Date: Thu, 12 Jul 2018 01:22:12 +0200
-Message-ID: <1531351332.2021.2@smtp.crapouillou.net>
-References: <20180627114904.10890-1-paul@crapouillou.net>
-        <CAHp75Vc3QTYKp6oS6kW6EezsBbiLf9E=NBErHMbpxRU9EXMxWg@mail.gmail.com>
-        <CACRpkdav3FV7hc20Fj=n=DaNzvSaA2uLuj8QgHwwcevDkn_6_Q@mail.gmail.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
+Date: Thu, 12 Jul 2018 06:41:15 +0200
+Message-ID: <a31dc625-56bf-7a59-d9a3-2841360b864e@axentia.se>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+ <20180330074751.25987-2-boris.brezillon@bootlin.com>
+ <CAK8P3a1aZXf2sQW2mgwJScycKPhdoOAwxRjm5cQG83513uc3fg@mail.gmail.com>
+ <20180711164120.3e32fb08@bbrezillon>
+ <CAK8P3a2EZB_tMS_47wv6M2Qpm79ZocxxhG5zLxXsBM_YjZgkyA@mail.gmail.com>
+ <20180711191212.3855bb25@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdav3FV7hc20Fj=n=DaNzvSaA2uLuj8QgHwwcevDkn_6_Q@mail.gmail.com>
+In-Reply-To: <20180711191212.3855bb25@bbrezillon>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.or>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+[tried to send something like this yesterday, but it appears to have been
+lost, sorry for any duplicate]
 
+On 2018-07-11 19:12, Boris Brezillon wrote:
+> On Wed, 11 Jul 2018 17:39:56 +0200
+> Arnd Bergmann <arnd@arndb.de> wrote:
+> 
+>> On Wed, Jul 11, 2018 at 4:41 PM, Boris Brezillon
+>> <boris.brezillon@bootlin.com> wrote:
+>>> On Wed, 11 Jul 2018 16:01:56 +0200 Arnd Bergmann <arnd@arndb.de> wrote:  
+>>>>> - the bus element is a separate object and is not implicitly described
+>>>>>   by the master (as done in I2C). The reason is that I want to be able
+>>>>>   to handle multiple master connected to the same bus and visible to
+>>>>>   Linux.
+>>>>>   In this situation, we should only have one instance of the device and
+>>>>>   not one per master, and sharing the bus object would be part of the
+>>>>>   solution to gracefully handle this case.
+>>>>>   I'm not sure we will ever need to deal with multiple masters
+>>>>>   controlling the same bus and exposed under Linux, but separating the
+>>>>>   bus and master concept is pretty easy, hence the decision to do it
+>>>>>   like that.
+>>>>>   The other benefit of separating the bus and master concepts is that
+>>>>>   master devices appear under the bus directory in sysfs.  
+>>>>
+>>>> I'm not following here at all, sorry for missing prior discussion if this
+>>>> was already explained. What is the "multiple master" case? Do you
+>>>> mean multiple devices that are controlled by Linux and that each talk
+>>>> to other devices on the same bus, multiple operating systems that
+>>>> have talk to are able to own the bus with the kernel being one of
+>>>> them, a controller that controls multiple independent buses,
+>>>> or something else?  
+>>>
+>>> I mean several masters connected to the same bus and all exposed to the
+>>> same Linux instance. In this case, the question is, should we have X
+>>> I3C buses exposed (X being the number of masters) or should we only
+>>> have one?
+>>>
+>>> Having a bus represented as a separate object allows us to switch to
+>>> the "one bus : X masters" representation if we need too.  
+>> ...
+>>>>
+>>>> This feels a bit odd: so you have bus_type that can contain devices
+>>>> of three (?) different device types: i3c_device_type, i3c_master_type
+>>>> and i3c_busdev_type.
+>>>>
+>>>> Generally speaking, we don't have a lot of subsystems that even
+>>>> use device_types. I assume that the i3c_device_type for a
+>>>> device that corresponds to an endpoint on the bus, but I'm
+>>>> still confused about the other two, and why they are part of
+>>>> the same bus_type.  
+>>>
+>>> i3c_busdev is just a virtual device representing the bus itself.
+>>> i3c_master is representing the I3C master driving the bus. The reason
+>>> for having a different type here is to avoid attaching this device to a
+>>> driver but still being able to see the master controller as a device on
+>>> the bus. And finally, i3c_device are all remote devices that can be
+>>> accessed through a given i3c_master.
+>>>
+>>> This all comes from the design choice I made to represent the bus as a
+>>> separate object in order to be able to share it between different
+>>> master controllers exposed through the same Linux instance. Since
+>>> master controllers are also remote devices for other controllers, we
+>>> need to represent them.  
+>>
+>> Ok, so I think this is the most important question to resolve: do we
+>> actually need to control multiple masters on a single bus from one OS
+>> or not?
+>>
+>> The problem that I see is that it breaks the tree abstraction that
+>> we use in the dtb interface, in the driver model and in sysfs.
+>> If we need to deal with a hardware bus structure like
+>>
+>>               cpu
+>>              /   \
+>>             /     \
+>>        platdev   platdev
+>>            |        |
+>>      i3c-master   i3c-master
+>>             \      /
+>>              \    /
+>>             i3c-bus
+>>              /    \
+>>          device   device
+>>
+>> then that abstraction no longer holds. Clearly you could build
+>> a system like that, and if we have to support it, the i3c infrastructure
+>> should be prepared for it, since we wouldn't be able to retrofit
+>> it later.
+> 
+> Exactly. For the DT representation I thought we could have the primary
+> master hold the device nodes, and then have secondary masters reference
+> the main master with a phandle (i3c-bus = <&main_i3c_master>;). For the
+> sysfs representation, it would be the same. Only one of the master
+> would create the i3c_bus object and the other masters would just
+> reference it.
+> 
+>>
+>> What would be the point of building such a system though?
+> 
+> This, I don't know. But as you said, if we go for a "one bus per
+> master" representation, going back will be difficult.
+> 
+>> Is this for performance, failover, or something else?
+> 
+> No, I don't think so, especially since the mastership handover
+> operation is not free. So keeping the same master in control is
+> probably better in term of perfs.
+> 
+> One case I can think of is when the primary master does not have enough
+> resources to address all devices on the bus, and let the secondary
+> master handle all transactions targeting those devices.
+> 
+>> IOW, what feature would we lose if we were to declare that
+>> setup above invalid (and ensure you cannot represent it in DT)?
+> 
+> That's exactly the sort of discussion I wanted to trigger. Maybe we
+> shouldn't care and expose this use case as if it was X different I3C
+> buses (with all devices present on the bus being exposed X times to the
+> system).
 
-Le lun. 9 juil. 2018 =E0 14:09, Linus Walleij <linus.walleij@linaro.org>=20
-a =E9crit :
-> Hi folks,
->=20
-> On Wed, Jun 27, 2018 at 7:18 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->=20
->>  Even if GPIO and pin muxing has only one set of buffers to indicate
->>  input or output (same registers in use) it's a GPIO driver business=20
->> to
->>  get direction from GPIO part of IP.
->>=20
->>  Looking into the existing code I would rather say that
->>  pinctrl-ingenic.c should incorporate gpio-ingenic.c as they are
->>  (partially) sharing same registers.
->=20
-> Usually we only split the functionality into two drivers if the two=20
-> features
-> pin control and GPIO are explicitly in different hardware blocks,
-> and typically not sharing the same memory range.
->=20
-> If these registers are intermingled and the hardware actually
-> just one piece of silicon, I would suggest to try to merge the
-> two drivers into a combined pin control and GPIO driver
-> inside drivers/pinctrl/pinctrl-ingenic.c.
->=20
-> We have a few drivers like that already, good textbook
-> examples of how to do this include
-> drivers/pinctrl/pinctrl-sx150x.c where the two blocks are
-> handled in one driver using both APIs.
->=20
-> Paul could you have a look at if we can simply merge these
-> two into one big driver? It is much more natural to write
-> into the same set of registers when we do that.
+For I2C, this multiple masters for one bus case was retrofitted in
+the i2c-demux-pinctrl driver. It's a huge kludge with a number of
+undesirable quirks. I don't know if the circumstances for adding
+this I2C driver also applies for I3C, but it might be an argument
+in favor of the proposed extra bus object...
 
-Well I wish you had told me that when I submitted the ingenic=20
-pinctrl/gpio
-patchset :)
-
-I won't have much time before 4.19-rc1, but I can have a look after=20
-that.
-
-> If you still prefer to proceed with the GPIO/pinctrl as separate
-> drivers we need to look into this patch set, which I am
-> a bit ambivalent about, because it makes sense but at the
-> same time I want to keep GPIO and pin control business
-> separate because separation of concerns is just nice.
-
-Well I can still implement the get_direction() function in the GPIO
-driver by reading the registers instead of calling into pinctrl.
-
-I just thought it felt illogic as set_direction() does that.
-
-> Yours,
-> Linus Walleij
-
-Thanks,
--Paul
-=
+Cheers,
+Peter
