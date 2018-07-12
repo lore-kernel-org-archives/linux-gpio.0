@@ -1,31 +1,55 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH -next] pinctrl: single: Fix missing unlock on error path
-Date: Wed, 11 Jul 2018 22:26:27 -0700
-Message-ID: <20180712052627.GO99251@atomide.com>
-References: <1531312411-134133-1-git-send-email-weiyongjun1@huawei.com>
+From: <sean.wang@mediatek.com>
+Subject: [PATCH] pinctrl: mt7622: fix probe fail by misuse the selector
+Date: Thu, 12 Jul 2018 13:50:00 +0800
+Message-ID: <ddd18e427de47476722c945dc622571394192331.1531374468.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1531312411-134133-1-git-send-email-weiyongjun1@huawei.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, Haojian Zhuang <haojian.zhuang@linaro.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, linux-mediatek@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>, Kevin Hilman <khilman@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-* Wei Yongjun <weiyongjun1@huawei.com> [180711 12:27]:
-> Add the missing unlock before return from function
-> in the error handling case.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Oops yes sorry about that and thanks for fixing it:
+After the commit acf137951367 ("pinctrl: core: Return selector to the
+pinctrl driver") and the commit 47f1242d19c3 ("pinctrl: pinmux: Return
+selector to the pinctrl driver"), it's necessary to add the fixes
+needed for the pin controller drivers to use the appropriate returned
+selector for a negative error number returned in case of the fail at
+these functions. Otherwise, the driver would have a failed probe and
+that causes boot message cannot correctly output and devices fail
+to acquire their own pins.
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Fixes: acf137951367 ("pinctrl: core: Return selector to the pinctrl driver")
+Fixes: 47f1242d19c3 ("pinctrl: pinmux: Return selector to the pinctrl driver")
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+index 2411c384..6f931b8 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+@@ -1538,7 +1538,7 @@ static int mtk_build_groups(struct mtk_pinctrl *hw)
+ 		err = pinctrl_generic_add_group(hw->pctrl, group->name,
+ 						group->pins, group->num_pins,
+ 						group->data);
+-		if (err) {
++		if (err < 0) {
+ 			dev_err(hw->dev, "Failed to register group %s\n",
+ 				group->name);
+ 			return err;
+@@ -1559,7 +1559,7 @@ static int mtk_build_functions(struct mtk_pinctrl *hw)
+ 						  func->group_names,
+ 						  func->num_group_names,
+ 						  func->data);
+-		if (err) {
++		if (err < 0) {
+ 			dev_err(hw->dev, "Failed to register function %s\n",
+ 				func->name);
+ 			return err;
+-- 
+2.7.4
