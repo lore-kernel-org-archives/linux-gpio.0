@@ -1,89 +1,119 @@
-From: Evan Green <evgreen@chromium.org>
-Subject: Re: [PATCH] pinctrl: msm: Pass along set_wake failures
-Date: Thu, 12 Jul 2018 09:30:30 -0700
-Message-ID: <CAE=gft7RURCr0Lj8qO+i5EjwD25xkdqS+UB5RC_02-7FLdM1fg@mail.gmail.com>
-References: <20180619234349.166190-1-evgreen@chromium.org> <20180709173022.GH2050@tuxbook-pro>
- <CAE=gft5+oOFv8y-XCtiQ8mc7gQ1FFSK0+bPk=mJu--ovLfDDJg@mail.gmail.com> <20180710203805.GA14825@codeaurora.org>
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH] pinctrl: at91: fix deferred probing support
+Date: Thu, 12 Jul 2018 13:22:22 -0600
+Message-ID: <20180712192222.32481-1-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180710203805.GA14825@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, swboyd@chromium.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 1:38 PM Lina Iyer <ilina@codeaurora.org> wrote:
->
-> On Tue, Jul 10 2018 at 12:53 -0600, Evan Green wrote:
-> >On Mon, Jul 9, 2018 at 10:27 AM Bjorn Andersson
-> ><bjorn.andersson@linaro.org> wrote:
-> >>
-> >> Sorry for not getting back to you in a timely manner Evan, I wanted to
-> >> read up more on the details of how this is supposed to work. I still
-> >> haven't done so, but here's my concern:
-> >>
-> >> When we power down the SoC we're no longer powering either the TLMM or
-> >> the GIC, so the MPM or PDC is used to waking the system on some set of
-> >> triggers. As such set_wake on an individual pin or irq should be routed
-> >> to the MPM/PDC driver, which (in the PDC case) is implemented using
-> >> hierarchical irq domains.
-> >>
-> >> As such I think that we shouldn't toggle the wake property of the
-> >> summary pin at all; i.e. the patch should remove that call rather than
-> >> propagating what I believe is a constant failure.
-> >>
-> >> Regards,
-> >> Bjorn
-> >
-> >Hi Bjorn,
-> >That's okay, I always feel bad pinging. Thanks for the thoughtful
-> >response. Stephen and I are starting to think about how wake
-> >interrupts should work with regard to the PDC, and we're at a place
-> >where we're a bit unsure of the path forward.
-> >
-> >Our understanding is the downstream kernel had an interrupt hierarchy
-> >of GIC > PDC > TLMM & everybody else. In the downstream world PDC
-> >acted transparently, forwarding most requests directly onto the GIC,
-> >but quietly handling wake interrupts as well. With the upstream PDC
-> >driver, the #interrupt-cells got changed to 2, and it seemed like
-> >folks didn't like the idea that PDC was acting transparently. Correct
-> >me if I'm wrong there. So now we're sort of unsure about how to wire
-> >in PDC. If we make everybody an interrupt child of PDC, then we lose
-> >the ability to specify the third GIC parameter, and we're stuck
-> >expressing interrupts with respect to PDC pins, which is an awkward
-> >mental translation.
-> Its an unfortunate side effect of the design. Drivers will have to
-> request the PDC pin for wakeup IRQs.
+AT91 pinctrl deferred probing support is broken if the GPIO devices
+haven't probed first and set gpio_banks to non-zero. The later condition
+that only some GPIO devices haven't probed can't actually happen as
+either all the GPIO devices have probed first or none of them have. Plus
+the pinctrl driver has already returned -EINVAL, so it's not on the
+deferred list to retry probing.
 
-Would they use the PDC pin to request their regular interrupt, and the
-PDC would turn around and ask the GIC for them, and also enable the
-wakeup interrupt? Or would devices have some sort of separate entry
-for wakeup interrupts?
+Fix this by consolidating the checking that all GPIO devices are probed.
 
->
-> >In this world, does TLMM need to do direct-connect
-> >stuff to get wake-able GPIO interrupts working? It would kind of have
-> >a foot in both worlds, with its summary interrupt as a GIC interrupt
-> >but the wakeable ones as parented by PDC?
-> >
-> With GPIOs, I am trying to hack the TLMM driver to request a PDC pin,
-> when the IRQ associated with the GPIO is requested as a wakeup
-> interrupt. In that case, the TLMM driver would do the GPIO->PDC pin
-> translation and request it. There is no hierarchy between TLMM and PDC.
->
-> Will try a RFC patch in a week or two.
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+This is a result of trying to remove of_platform_default_populate from 
+at91 code and relying on the DT core handling populating devices. That 
+changed the probe order and broke booting.
 
-Thanks Lina. Looking forward to it. Please CC me.
+Compile tested only.
 
->
-> -- Lina
->
-> >So anyway, with regard to this patch, I'm happy to create a second
-> >spin that simply removes this function, but for me at least it brought
-> >up some larger questions we've been wrestling with.
+Rob
 
-Bjorn, Linus,
-If there's a spin of this you'd like to see, I'm happy to provide
-that. If not, that's fine too.
--Evan
+ drivers/pinctrl/pinctrl-at91.c | 36 ++++++++++++----------------------
+ 1 file changed, 13 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index 50f0ec42c637..167838901b75 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -1162,7 +1162,7 @@ static int at91_pinctrl_probe_dt(struct platform_device *pdev,
+ 				 struct at91_pinctrl *info)
+ {
+ 	int ret = 0;
+-	int i, j;
++	int i, j, ngpio_chips_enabled = 0;
+ 	uint32_t *tmp;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct device_node *child;
+@@ -1175,10 +1175,17 @@ static int at91_pinctrl_probe_dt(struct platform_device *pdev,
+ 		of_match_device(at91_pinctrl_of_match, &pdev->dev)->data;
+ 	at91_pinctrl_child_count(info, np);
+ 
+-	if (gpio_banks < 1) {
+-		dev_err(&pdev->dev, "you need to specify at least one gpio-controller\n");
+-		return -EINVAL;
+-	}
++	/*
++	 * We need all the GPIO drivers to probe FIRST, or we will not be able
++	 * to obtain references to the struct gpio_chip * for them, and we
++	 * need this to proceed.
++	 */
++	for (i = 0; i < MAX_GPIO_BANKS; i++)
++		if (gpio_chips[i])
++			ngpio_chips_enabled++;
++
++	if (ngpio_chips_enabled < info->nactive_banks)
++		return -EPROBE_DEFER;
+ 
+ 	ret = at91_pinctrl_mux_mask(info, np);
+ 	if (ret)
+@@ -1234,7 +1241,7 @@ static int at91_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct at91_pinctrl *info;
+ 	struct pinctrl_pin_desc *pdesc;
+-	int ret, i, j, k, ngpio_chips_enabled = 0;
++	int ret, i, j, k;
+ 
+ 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+ 	if (!info)
+@@ -1244,23 +1251,6 @@ static int at91_pinctrl_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	/*
+-	 * We need all the GPIO drivers to probe FIRST, or we will not be able
+-	 * to obtain references to the struct gpio_chip * for them, and we
+-	 * need this to proceed.
+-	 */
+-	for (i = 0; i < gpio_banks; i++)
+-		if (gpio_chips[i])
+-			ngpio_chips_enabled++;
+-
+-	if (ngpio_chips_enabled < info->nactive_banks) {
+-		dev_warn(&pdev->dev,
+-			 "All GPIO chips are not registered yet (%d/%d)\n",
+-			 ngpio_chips_enabled, info->nactive_banks);
+-		devm_kfree(&pdev->dev, info);
+-		return -EPROBE_DEFER;
+-	}
+-
+ 	at91_pinctrl_desc.name = dev_name(&pdev->dev);
+ 	at91_pinctrl_desc.npins = gpio_banks * MAX_NB_GPIO_PER_BANK;
+ 	at91_pinctrl_desc.pins = pdesc =
+-- 
+2.17.1
