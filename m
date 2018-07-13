@@ -1,31 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH] gpio: aspeed: fix compile testing warning
-Date: Fri, 13 Jul 2018 09:05:48 +0200
-Message-ID: <CACRpkdaMdcAnA9GWx2vJtfGtDEUzpE64g6v+tJM8NVtY=Bc_Mg@mail.gmail.com>
-References: <20180709145612.4166409-1-arnd@arndb.de>
+Date: Fri, 13 Jul 2018 09:06:54 +0200
+Message-ID: <CACRpkdaLs6CGGa99kNVvBDxwGHLg==0ygUeDaZo_QTqoKGBQag@mail.gmail.com>
+References: <20180709145612.4166409-1-arnd@arndb.de> <34126dddef64a7669946c354d4dd9e2adfb3344f.camel@kernel.crashing.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180709145612.4166409-1-arnd@arndb.de>
+In-Reply-To: <34126dddef64a7669946c354d4dd9e2adfb3344f.camel@kernel.crashing.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thierry Reding <treding@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-aspeed@lists.ozlabs.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, Thierry Reding <treding@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-aspeed@lists.ozlabs.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 4:56 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Tue, Jul 10, 2018 at 1:53 AM Benjamin Herrenschmidt
+<benh@kernel.crashing.org> wrote:
 
-> Gcc cannot always see that BUG_ON(1) is guaranteed to not
-> return, so we get a warning message in some configurations:
+> On Mon, 2018-07-09 at 16:56 +0200, Arnd Bergmann wrote:
+> > Gcc cannot always see that BUG_ON(1) is guaranteed to not
+> > return, so we get a warning message in some configurations:
+> >
+> > drivers/gpio/gpio-aspeed.c: In function 'bank_reg':
+> > drivers/gpio/gpio-aspeed.c:244:1: error: control reaches end of non-void function [-Werror=return-type]
+> >
+> > Using a plain BUG() is easier here and avoids the problem.
+> >
+> > Fixes: 44ddf559d579 ("gpio: aspeed: Rework register type accessors")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 >
-> drivers/gpio/gpio-aspeed.c: In function 'bank_reg':
-> drivers/gpio/gpio-aspeed.c:244:1: error: control reaches end of non-void function [-Werror=return-type]
+> Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 >
-> Using a plain BUG() is easier here and avoids the problem.
->
-> Fixes: 44ddf559d579 ("gpio: aspeed: Rework register type accessors")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Linus, can you plonk that on top of the patches in that topic branch
+> you created ?
 
-Patch applied with Benjamin's ACK.
+I put it on top of my devel branch where I merged in the topic
+branch.
+
+As it's a fringe thing anyways I don't think we need to recreate the
+topic branch for this.
 
 Yours,
 Linus Walleij
