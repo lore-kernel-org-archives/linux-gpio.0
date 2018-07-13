@@ -1,259 +1,137 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] pinctrl: nuvoton: add NPCM7xx pinctrl and GPIO driver
-Date: Fri, 13 Jul 2018 10:51:40 +0200
-Message-ID: <CACRpkdYOQMkA6BHtY3-NSXhyhoG7KzDg8SkqL2B6M8GQrvXgMA@mail.gmail.com>
-References: <20180712214203.114844-1-tmaimon77@gmail.com> <20180712214203.114844-3-tmaimon77@gmail.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: Re: [PATCH] pinctrl: at91: fix deferred probing support
+Date: Fri, 13 Jul 2018 11:24:39 +0200
+Message-ID: <20180713092439.3f6q6et4si2x3dle@M43218.corp.atmel.com>
+References: <20180712192222.32481-1-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180712214203.114844-3-tmaimon77@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: tmaimon77@gmail.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, avifishman70@gmail.com, yuenn@google.com, brendanhiggins@google.com, venture@google.com, Joel Stanley <joel@jms.id.au>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180712192222.32481-1-robh@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 11:42 PM Tomer Maimon <tmaimon77@gmail.com> wrote:
+On Thu, Jul 12, 2018 at 01:22:22PM -0600, Rob Herring wrote:
+> AT91 pinctrl deferred probing support is broken if the GPIO devices
+> haven't probed first and set gpio_banks to non-zero. The later condition
+> that only some GPIO devices haven't probed can't actually happen as
+> either all the GPIO devices have probed first or none of them have. Plus
+> the pinctrl driver has already returned -EINVAL, so it's not on the
+> deferred list to retry probing.
+> 
+> Fix this by consolidating the checking that all GPIO devices are probed.
+> 
+> Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com> 
 
-> Add Nuvoton BMC NPCM750/730/715/705 Pinmux and
-> GPIO controller driver.
->
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+> This is a result of trying to remove of_platform_default_populate from 
+> at91 code and relying on the DT core handling populating devices. That 
+> changed the probe order and broke booting.
+> 
+> Compile tested only.
 
-(...)
-> +++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-> @@ -0,0 +1,2089 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2016-2018 Nuvoton Technology corporation.
-> +// Copyright (c) 2016, Dell Inc
+Tested on an at91-sama5d4_xplained board, it still boots.
+
+Regards
+
+Ludovic
+
+> 
+> Rob
+> 
+>  drivers/pinctrl/pinctrl-at91.c | 36 ++++++++++++----------------------
+>  1 file changed, 13 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+> index 50f0ec42c637..167838901b75 100644
+> --- a/drivers/pinctrl/pinctrl-at91.c
+> +++ b/drivers/pinctrl/pinctrl-at91.c
+> @@ -1162,7 +1162,7 @@ static int at91_pinctrl_probe_dt(struct platform_device *pdev,
+>  				 struct at91_pinctrl *info)
+>  {
+>  	int ret = 0;
+> -	int i, j;
+> +	int i, j, ngpio_chips_enabled = 0;
+>  	uint32_t *tmp;
+>  	struct device_node *np = pdev->dev.of_node;
+>  	struct device_node *child;
+> @@ -1175,10 +1175,17 @@ static int at91_pinctrl_probe_dt(struct platform_device *pdev,
+>  		of_match_device(at91_pinctrl_of_match, &pdev->dev)->data;
+>  	at91_pinctrl_child_count(info, np);
+>  
+> -	if (gpio_banks < 1) {
+> -		dev_err(&pdev->dev, "you need to specify at least one gpio-controller\n");
+> -		return -EINVAL;
+> -	}
+> +	/*
+> +	 * We need all the GPIO drivers to probe FIRST, or we will not be able
+> +	 * to obtain references to the struct gpio_chip * for them, and we
+> +	 * need this to proceed.
+> +	 */
+> +	for (i = 0; i < MAX_GPIO_BANKS; i++)
+> +		if (gpio_chips[i])
+> +			ngpio_chips_enabled++;
 > +
-> +#include <linux/device.h>
-> +#include <linux/gpio.h>
-
-As this is a driver you should only include <linux/gpio/driver.h>
-
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/mfd/syscon.h>
-
-If you need syscon then the driver should select or depend
-on MFD_SYSCON in Kconfig.
-
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-
-Do you really need this include?
-
-> +/* Structure for register banks */
-> +struct NPCM7XX_GPIO {
-
-Can we have this lowercase? Please?
-
-> +       void __iomem            *base;
-> +       struct gpio_chip        gc;
-> +       int                     irqbase;
-> +       int                     irq;
-> +       spinlock_t              lock;
-> +       void                    *priv;
-> +       struct irq_chip         irq_chip;
-> +       u32                     pinctrl_id;
-> +};
-
-So each GPIO bank has its own gpio chip and register
-base, that is NICE! Because then it looks like you can
-select GPIO_GENERIC and use the MMIO GPIO helper
-library to handle the registers. Let's look into that
-option!
-
-> +struct NPCM7xx_pinctrl {
-> +       struct pinctrl_dev      *pctldev;
-> +       struct device           *dev;
-> +       struct NPCM7XX_GPIO     gpio_bank[NPCM7XX_GPIO_BANK_NUM];
-> +       struct irq_domain       *domain;
-
-I wonder why the pin controller needs and IRQ domain but
-I keep reading the code and I might find out...
-
-> +enum operand {
-> +       op_set,
-> +       op_getbit,
-> +       op_setbit,
-> +       op_clrbit,
-> +};
-
-This looks complicated. I suspect you can use GPIO_GENERIC
-to set/get and clear bits in the register(s).
-
-> +/* Perform locked bit operations on GPIO registers */
-> +static int gpio_bitop(struct NPCM7XX_GPIO *bank, int op, unsigned int offset,
-> +                     int reg)
-> +{
-> +       unsigned long flags;
-> +       u32 mask, val;
-> +
-> +       mask = (1L << offset);
-> +       spin_lock_irqsave(&bank->lock, flags);
-> +       switch (op) {
-> +       case op_set:
-> +               iowrite32(mask, bank->base + reg);
-> +               break;
-> +       case op_getbit:
-> +               mask &= ioread32(bank->base + reg);
-> +               break;
-> +       case op_setbit:
-> +               val = ioread32(bank->base + reg);
-> +               iowrite32(val | mask, bank->base + reg);
-> +               break;
-> +       case op_clrbit:
-> +               val = ioread32(bank->base + reg);
-> +               iowrite32(val & (~mask), bank->base + reg);
-> +               break;
-> +       }
-> +       spin_unlock_irqrestore(&bank->lock, flags);
-> +       return !!mask;
-> +}
-
-This is essentially a reimplementation of drivers/gpio/gpio-mmio.c
-(GPIO_GENERIC, also using a spinlock to protect the registers)
-so let's use that instead :)
-
-There are drivers already that reuse the spinlock inside the
-generic GPIO chip to protect their other registers like for
-IRQ registers.
-
-> +static int npcmgpio_get_direction(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct NPCM7XX_GPIO *bank = gpiochip_get_data(chip);
-> +       u32 oe, ie;
-> +
-> +       /* Get Input & Output state */
-> +       ie = gpio_bitop(bank, op_getbit, offset, NPCM7XX_GP_N_IEM);
-> +       oe = gpio_bitop(bank, op_getbit, offset, NPCM7XX_GP_N_OE);
-> +       if (ie && !oe)
-> +               return GPIOF_DIR_IN;
-> +       else if (oe && !ie)
-> +               return GPIOF_DIR_OUT;
-
-These are consumer flags and should not be used in drivers.
-Use plain 0/1 instead.
-
-Anyways the problem goes away with GPIO_GENERIC.
-
-> +static int npcmgpio_direction_input(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       return pinctrl_gpio_direction_input(offset + chip->base);
-> +}
-
-It's a bit tricksy to get this to work with GPIO_GENERIC.
-
-After calling bgpio_init() you need to overwrite the assigned
-.direction_input handler with this and then direct back to the
-one assigned by GPIO_GENERIC.
-
-Something like this:
-
-1. Add two indirection pointers to the npcm7xx_gpio state container:
-
-struct npcm7xx_gpio {
-     (...)
-      int (*direction_input)(struct gpio_chip *chip, unsigned offset);
-      int (*direction_output)(struct gpio_chip *chip, unsigned offset,
-int value);
-     (...)
-};
-
-2. Save the pointers
-
-struct npcm7xx_gpio *npcm;
-
-bgpio_init( ... register setup ...)
-npcm->direction_input = npcm->gc.direction_input;
-npcm->direction_output = npcm->gc.direction_output;
-npcm->gc.direction_input = npcmgpio_direction_input;
-npcm->gc.direction_output = npcmgpio_direction_output;
-
-3. Modify the functions like that:
-
-static int npcmgpio_direction_input(struct gpio_chip *chip, unsigned int offset)
-{
-    struct npcm7xx_gpio *npcm = gpiochip_get_data(chip);
-    int ret;
-
-    ret = pinctrl_gpio_direction_input(offset + chip->base);
-    if (ret)
-        return ret;
-    return npcm->direction_input(chip);
-}
-
-I'm sure you get the idea... if you think we can modify gpio-mmio
-to be more helpful with this, suggestions are welcome!
-
-> +/* Set GPIO to Output with initial value */
-> +static int npcmgpio_direction_output(struct gpio_chip *chip,
-> +                                    unsigned int offset, int value)
-> +{
-> +       struct NPCM7XX_GPIO *bank = gpiochip_get_data(chip);
-> +
-> +       dev_dbg(chip->parent, "gpio_direction_output: offset%d = %x\n", offset,
-> +               value);
-> +
-> +       /* Check if we're enabled as an interrupt.. */
-> +       if (gpio_bitop(bank, op_getbit, offset, NPCM7XX_GP_N_EVEN) &&
-> +           gpio_bitop(bank, op_getbit, offset, NPCM7XX_GP_N_IEM)) {
-> +               dev_dbg(chip->parent,
-> +                       "gpio_direction_output: IRQ enabled on offset%d\n",
-> +                       offset);
-> +               return -EINVAL;
-> +       }
-
-This should not be necessary as you are using GPIOLIB_IRQCHIP,
-which locks the GPIO for interrupt and disallows this to happen.
-
-> +static int npcmgpio_gpio_request(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       dev_dbg(chip->parent, "gpio_request: offset%d\n", offset);
-> +       return pinctrl_gpio_request(offset + chip->base);
-> +}
-> +
-> +static void npcmgpio_gpio_free(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       dev_dbg(chip->parent, "gpio_free: offset%d\n", offset);
-> +       pinctrl_gpio_free(offset + chip->base);
-> +}
-
-This needs the same pattern as the direction functions above, then
-you can use GPIO_GENERIC (mmio).
-
-> +static unsigned int npcmgpio_irq_startup(struct irq_data *d)
-> +{
-> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> +       unsigned int gpio = d->hwirq;
-> +
-> +       /* active-high, input, clear interrupt, enable interrupt */
-> +       dev_dbg(d->chip->parent_device, "startup: %u.%u\n", gpio, d->irq);
-> +       npcmgpio_direction_output(gc, gpio, 1);
-> +       npcmgpio_direction_input(gc, gpio);
-
-Interesting dance. So it is required to set the line to
-1 and then switch to input?
-
-> +static struct irq_chip npcmgpio_irqchip = {
-> +       .name = "NPCM7XX-GPIO-IRQ",
-> +       .irq_ack = npcmgpio_irq_ack,
-> +       .irq_unmask = npcmgpio_irq_unmask,
-> +       .irq_mask = npcmgpio_irq_mask,
-> +       .irq_set_type = npcmgpio_set_irq_type,
-> +       .irq_startup = npcmgpio_irq_startup,
-> +};
-
-This code is looking good BTW.
-
-The patch in my inbox just ends in the middle of everything, I wonder
-why :( suspect the new gmail interface I'm using.
-
-Anyways: the pointers above should keep you busy for the next
-iteration of the patch, the pin control part seems pretty straight-forward.
-
-Yours,
-Linus Walleij
+> +	if (ngpio_chips_enabled < info->nactive_banks)
+> +		return -EPROBE_DEFER;
+>  
+>  	ret = at91_pinctrl_mux_mask(info, np);
+>  	if (ret)
+> @@ -1234,7 +1241,7 @@ static int at91_pinctrl_probe(struct platform_device *pdev)
+>  {
+>  	struct at91_pinctrl *info;
+>  	struct pinctrl_pin_desc *pdesc;
+> -	int ret, i, j, k, ngpio_chips_enabled = 0;
+> +	int ret, i, j, k;
+>  
+>  	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+>  	if (!info)
+> @@ -1244,23 +1251,6 @@ static int at91_pinctrl_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	/*
+> -	 * We need all the GPIO drivers to probe FIRST, or we will not be able
+> -	 * to obtain references to the struct gpio_chip * for them, and we
+> -	 * need this to proceed.
+> -	 */
+> -	for (i = 0; i < gpio_banks; i++)
+> -		if (gpio_chips[i])
+> -			ngpio_chips_enabled++;
+> -
+> -	if (ngpio_chips_enabled < info->nactive_banks) {
+> -		dev_warn(&pdev->dev,
+> -			 "All GPIO chips are not registered yet (%d/%d)\n",
+> -			 ngpio_chips_enabled, info->nactive_banks);
+> -		devm_kfree(&pdev->dev, info);
+> -		return -EPROBE_DEFER;
+> -	}
+> -
+>  	at91_pinctrl_desc.name = dev_name(&pdev->dev);
+>  	at91_pinctrl_desc.npins = gpio_banks * MAX_NB_GPIO_PER_BANK;
+>  	at91_pinctrl_desc.pins = pdesc =
+> -- 
+> 2.17.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
