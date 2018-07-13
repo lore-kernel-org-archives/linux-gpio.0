@@ -1,39 +1,64 @@
-From: Dominique Martinet <asmadeus@codewreck.org>
-Subject: Re: [PATCH 02/18] block/aoenet: change strncpy+truncation to strlcpy
-Date: Fri, 13 Jul 2018 17:31:19 +0200
-Message-ID: <20180713153119.GC14190@nautica>
-References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
- <1531445105-18941-1-git-send-email-asmadeus@codewreck.org>
- <41bf49e3-70a5-4362-7389-55752ebc6c02@kernel.dk>
+From: Ray Jui <ray.jui@broadcom.com>
+Subject: Re: [PATCH -next] pinctrl: nsp: fix potential NULL dereference in
+ nsp_pinmux_probe()
+Date: Fri, 13 Jul 2018 09:53:29 -0700
+Message-ID: <14329d52-72bb-3594-dec3-00ab0f7ccd40@broadcom.com>
+References: <1531312461-134547-1-git-send-email-weiyongjun1@huawei.com>
+ <CACRpkdbwAJOaFay3x45gyf7rBpkPOAMbxW6FLQUvCekUKatLYA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <41bf49e3-70a5-4362-7389-55752ebc6c02@kernel.dk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: "Ed L. Cashin" <ed.cashin@acm.org>, Linus Walleij <linus.walleij@linaro.org>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdbwAJOaFay3x45gyf7rBpkPOAMbxW6FLQUvCekUKatLYA@mail.gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>, kernel-janitors@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Jens Axboe wrote on Fri, Jul 13, 2018:
-> This is a weird combination in terms of a single patch, why is
-> it patching aoe and gpiolib in one patch?
+Hi Linus,
 
-I must have failed some git add command, I didn't realize they were
-together until you pointed it out just now.
+On 7/13/2018 12:46 AM, Linus Walleij wrote:
+> On Wed, Jul 11, 2018 at 2:25 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+> 
+>> platform_get_resource() may fail and return NULL, so we should
+>> better check it's return value to avoid a NULL pointer dereference
+>> a bit later in the code.
+>>
+>> This is detected by Coccinelle semantic patch.
+>>
+>> @@
+>> expression pdev, res, n, t, e, e1, e2;
+>> @@
+>>
+>> res = platform_get_resource(pdev, t, n);
+>> + if (!res)
+>> +   return -EINVAL;
+>> ... when != res == NULL
+>> e = devm_ioremap_nocache(e1, res->start, e2);
+>>
+>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> Patch applied with Ray's ACK.
 
-This has been discussed more lengthly on the netdev side but the whole
-patch serie has been (quite) a bit too hasty; on one side I've been
-given some interesting feedback that I would not have gotten just
-sending the coccinelle patch first but I really should have waited for
-that to land first and most importantly spend more time on each
-individual patch, this was rude of me.
+Would be nice to add the following Fixes tag:
 
-I will make sure they are split in a v2, and send them individually
-(well, per big component) as self-explaining patches rather than as a
-block, once the coccinelle patch has been accepted. 
+Fixes: cc4fa83f66e9 ("pinctrl: nsp: add pinmux driver support for 
+Broadcom NSP SoC")
 
+Thanks,
 
-Thank you for the review,
--- 
-Dominique Martinet
+Ray
+
+> 
+> Yours,
+> Linus Walleij
+> 
