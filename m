@@ -1,42 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: aspeed: fix compile testing warning
-Date: Fri, 13 Jul 2018 09:06:54 +0200
-Message-ID: <CACRpkdaLs6CGGa99kNVvBDxwGHLg==0ygUeDaZo_QTqoKGBQag@mail.gmail.com>
-References: <20180709145612.4166409-1-arnd@arndb.de> <34126dddef64a7669946c354d4dd9e2adfb3344f.camel@kernel.crashing.org>
+Subject: Re: [PATCH] gpio: mxc: add power management support
+Date: Fri, 13 Jul 2018 09:11:58 +0200
+Message-ID: <CACRpkdaKQ_Lg=t3DLsvXQNLwi=BYugqNGyssEM9Hn2Ss5r-kQw@mail.gmail.com>
+References: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <34126dddef64a7669946c354d4dd9e2adfb3344f.camel@kernel.crashing.org>
+In-Reply-To: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, Thierry Reding <treding@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-aspeed@lists.ozlabs.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 1:53 AM Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
+On Tue, Jul 10, 2018 at 9:53 AM Anson Huang <Anson.Huang@nxp.com> wrote:
 
-> On Mon, 2018-07-09 at 16:56 +0200, Arnd Bergmann wrote:
-> > Gcc cannot always see that BUG_ON(1) is guaranteed to not
-> > return, so we get a warning message in some configurations:
-> >
-> > drivers/gpio/gpio-aspeed.c: In function 'bank_reg':
-> > drivers/gpio/gpio-aspeed.c:244:1: error: control reaches end of non-void function [-Werror=return-type]
-> >
-> > Using a plain BUG() is easier here and avoids the problem.
-> >
-> > Fixes: 44ddf559d579 ("gpio: aspeed: Rework register type accessors")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> GPIO registers could lose context on some i.MX SoCs,
+> like on i.MX7D, when enter LPSR mode, the whole SoC
+> will be powered off except LPSR domain, GPIO banks
+> will lose context in this case, need to restore
+> the context after resume from LPSR mode.
 >
-> Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> This patch adds GPIO save/restore for those necessary
+> registers, and put the save/restore operations in noirq
+> suspend/resume phase, since GPIO is fundamental module
+> which could be used by other peripherals' resume phase.
 >
-> Linus, can you plonk that on top of the patches in that topic branch
-> you created ?
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-I put it on top of my devel branch where I merged in the topic
-branch.
-
-As it's a fringe thing anyways I don't think we need to recreate the
-topic branch for this.
+Hoping for some review on this before applying...
+Fabio? Bartosz?
 
 Yours,
 Linus Walleij
