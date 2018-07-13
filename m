@@ -1,39 +1,28 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH] gpio: mxc: add power management support
-Date: Fri, 13 Jul 2018 09:19:37 +0200
-Message-ID: <CAMRc=McQdbZbd3GDdgi6paKFUXSJTb_3nRG3npzMQs=FEwN2ew@mail.gmail.com>
-References: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com> <CACRpkdaKQ_Lg=t3DLsvXQNLwi=BYugqNGyssEM9Hn2Ss5r-kQw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: mt7621: add OF_GPIO dependency
+Date: Fri, 13 Jul 2018 09:26:11 +0200
+Message-ID: <CACRpkdbD6D3xtR6n3oOj4wWv5AZGar71Gwiyiv8Fu89UvX_9RA@mail.gmail.com>
+References: <20180710151915.2282622-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaKQ_Lg=t3DLsvXQNLwi=BYugqNGyssEM9Hn2Ss5r-kQw@mail.gmail.com>
+In-Reply-To: <20180710151915.2282622-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-2018-07-13 9:11 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Jul 10, 2018 at 9:53 AM Anson Huang <Anson.Huang@nxp.com> wrote:
->
->> GPIO registers could lose context on some i.MX SoCs,
->> like on i.MX7D, when enter LPSR mode, the whole SoC
->> will be powered off except LPSR domain, GPIO banks
->> will lose context in this case, need to restore
->> the context after resume from LPSR mode.
->>
->> This patch adds GPIO save/restore for those necessary
->> registers, and put the save/restore operations in noirq
->> suspend/resume phase, since GPIO is fundamental module
->> which could be used by other peripherals' resume phase.
->>
->> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
->
-> Hoping for some review on this before applying...
-> Fabio? Bartosz?
->
-> Yours,
-> Linus Walleij
+On Tue, Jul 10, 2018 at 5:19 PM Arnd Bergmann <arnd@arndb.de> wrote:
 
-I'm not familiar with these SoCs but the code looks good and clean to me.
+> Compile-testing the driver fails unless OF_GPIO is enabled:
+>
+> drivers/gpio/gpio-mt7621.c: In function 'mediatek_gpio_bank_probe':
+> drivers/gpio/gpio-mt7621.c:228:10: error: 'struct gpio_chip' has no member named 'of_node'
+>
+> Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Patch applied. Sorry for taking some days.
+
+Yours,
+Linus Walleij
