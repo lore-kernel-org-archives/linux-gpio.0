@@ -1,28 +1,65 @@
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Subject: [PATCH 0/2] pinctrl: berlin: add as370 SoC support
-Date: Fri, 13 Jul 2018 17:45:08 +0800
-Message-ID: <20180713174436.4842419e@xhacker.debian>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH] pinctrl: at91: fix deferred probing support
+Date: Fri, 13 Jul 2018 11:47:17 +0200
+Message-ID: <20180713094717.GQ16084@piout.net>
+References: <20180712192222.32481-1-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20180712192222.32481-1-robh@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-This series is to add the Synaptics AS370 SoC pinctrl driver.
+Hi Rob,
 
-Jisheng Zhang (2):
-  dt-binding: pinctrl: berlin: document AS370 SoC pinctrl
-  pinctrl: berlin: add the as370 SoC pinctrl driver
+On 12/07/2018 13:22:22-0600, Rob Herring wrote:
+> AT91 pinctrl deferred probing support is broken if the GPIO devices
+> haven't probed first and set gpio_banks to non-zero. The later condition
+> that only some GPIO devices haven't probed can't actually happen as
+> either all the GPIO devices have probed first or none of them have. Plus
+> the pinctrl driver has already returned -EINVAL, so it's not on the
+> deferred list to retry probing.
+> 
+> Fix this by consolidating the checking that all GPIO devices are probed.
+> 
+> Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> This is a result of trying to remove of_platform_default_populate from 
+> at91 code and relying on the DT core handling populating devices. That 
+> changed the probe order and broke booting.
+> 
 
- .../bindings/pinctrl/berlin,pinctrl.txt       |   3 +-
- drivers/pinctrl/berlin/Kconfig                |   5 +
- drivers/pinctrl/berlin/Makefile               |   1 +
- drivers/pinctrl/berlin/pinctrl-as370.c        | 369 ++++++++++++++++++
- 4 files changed, 377 insertions(+), 1 deletion(-)
- create mode 100644 drivers/pinctrl/berlin/pinctrl-as370.c
+This solves part of the issue but when tested with the
+of_platform_default_populate removal, many drivers will fail with
+gpiod_set_value: invalid GPIO (errorpointer)
+
+or 
+
+gpiod_get_value: invalid GPIO (errorpointer)
+
+This happens both before and after the pinctrl driver probed.
+
+I didn't investigate much yet.
 
 -- 
-2.18.0
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
