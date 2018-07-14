@@ -1,39 +1,65 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] pinctrl: nsp: fix potential NULL dereference in
- nsp_pinmux_probe()
-Date: Sat, 14 Jul 2018 12:49:07 +0200
-Message-ID: <CACRpkdaSgwLhwwHEKHJfrWSHcQ+SAZPtkOreP88wtDKuMgTVcg@mail.gmail.com>
-References: <1531312461-134547-1-git-send-email-weiyongjun1@huawei.com>
- <CACRpkdbwAJOaFay3x45gyf7rBpkPOAMbxW6FLQUvCekUKatLYA@mail.gmail.com>
- <14329d52-72bb-3594-dec3-00ab0f7ccd40@broadcom.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 0/3] pinctrl: meson-g12a: add pinctrl driver support
+Date: Sat, 14 Jul 2018 16:36:15 +0200
+Message-ID: <CAFBinCDqHEh_9Gt65FHgt-4e8o1T-YZqp9_kqS1ajqqxJ1qfuw@mail.gmail.com>
+References: <20180704224511.29350-1-yixun.lan@amlogic.com> <CACRpkdauMRnLpfiARG-BWkuJfArri68e9BYx56SCUxJaYWsYYA@mail.gmail.com>
+ <CAFBinCAVSGTWFzW6nikbnC+K9n5KRYjun9bnEp7YsKbGRHJorg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <14329d52-72bb-3594-dec3-00ab0f7ccd40@broadcom.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ray Jui <ray.jui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>, kernel-janitors@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAFBinCAVSGTWFzW6nikbnC+K9n5KRYjun9bnEp7YsKbGRHJorg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: yixun.lan@amlogic.com, carlo@caione.org, b.galvani@gmail.com, linux-gpio@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com, khilman@baylibre.com, robh@kernel.org, xingyu.chen@amlogic.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 6:53 PM Ray Jui <ray.jui@broadcom.com> wrote:
-
-> > Patch applied with Ray's ACK.
+On Tue, Jul 10, 2018 at 12:07 AM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
 >
-> Would be nice to add the following Fixes tag:
+> Hi Linus,
 >
-> Fixes: cc4fa83f66e9 ("pinctrl: nsp: add pinmux driver support for
-> Broadcom NSP SoC")
+> On Mon, Jul 9, 2018 at 3:35 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
+> > On Wed, Jul 4, 2018 at 4:48 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
+> > >
+> > > This patch series try to add pinctrl driver support for
+> > > the Meson-G12A SoC.
+> > >
+> > >
+> > > Yixun Lan (3):
+> > >   documentation: Add compatibles for Amlogic Meson G12A pin controllers
+> > >   dt-bindings: pinctrl: meson-g12a: document pin name
+> > >   pinctrl: meson-g12a: add pinctrl driver support
+> >
+> > Overall this looks good to me, could we get some review or ACKs
+> > from Beniamino, Martin and/or Carlo as an indication that everything
+> > seems all right before I apply the series?
+> I do not have any documentation for this hardware (I'm not even sure
+> if this is the successor to AXG/"the Audio SoCs" or rather a successor
+> of GXL or GXM/"the OTT/STB SoCs"
+for those who are interested: according to [0] the marketing name of
+this SoC will be "A311D" - specs from the linked PDF:
+- CPU: Quad Cortex-A73 + Dual Cortex-A53 (max frequency: TBD)
+- GPU: ARM G52 MP4 (4ppc)
+- Memory: DDR3/4 LPDDR3/4
+- Video decoding: 4K H265&VP9&AVS2
+- Video Encoding: 1080P H264 H265
+- HDMI-Tx: 4K2K
+- Ethernet: 10/100M/1000M
+- AV output: CVBS
+- IP License: Dolby, DTS
 
-OK fixed it!
+W400 is the reference board for this SoC, it comes with:
+- EMMC
+- WIFI AP6398S
+- DDR 2GB
 
-Yours,
-Linus Walleij
+if I had to guess then I would say it's the successor of the GXL (or
+GXM?) family
+
+
+Regards
+Martin
+
+
+[0] http://openlinux.amlogic.com:8000/download/doc/Amlogic_A311D_Buildroot_Preview_Release_Notes_V20180706.pdf
