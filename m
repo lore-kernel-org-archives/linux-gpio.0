@@ -1,75 +1,39 @@
-From: Anson Huang <anson.huang@nxp.com>
-Subject: RE: [PATCH] gpio: mxc: add power management support
-Date: Sat, 14 Jul 2018 01:53:57 +0000
-Message-ID: <AM3PR04MB131577674FDF0BC65BEF518EF55F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5BSt4jdLWmXjNmTDAegGwtRWjbMuVAwdrnRyHWvSBuU5A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH -next] pinctrl: nsp: fix potential NULL dereference in
+ nsp_pinmux_probe()
+Date: Sat, 14 Jul 2018 12:49:07 +0200
+Message-ID: <CACRpkdaSgwLhwwHEKHJfrWSHcQ+SAZPtkOreP88wtDKuMgTVcg@mail.gmail.com>
+References: <1531312461-134547-1-git-send-email-weiyongjun1@huawei.com>
+ <CACRpkdbwAJOaFay3x45gyf7rBpkPOAMbxW6FLQUvCekUKatLYA@mail.gmail.com>
+ <14329d52-72bb-3594-dec3-00ab0f7ccd40@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOMZO5BSt4jdLWmXjNmTDAegGwtRWjbMuVAwdrnRyHWvSBuU5A@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <14329d52-72bb-3594-dec3-00ab0f7ccd40@broadcom.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>, kernel-janitors@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
-Z21haWwuY29tXQ0KPiBTZW50OiBTYXR1cmRheSwgSnVseSAxNCwgMjAxOCAyOjM0IEFNDQo+IFRv
-OiBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4NCj4gQ2M6IExpbnVzIFdhbGxlaWog
-PGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz47IG9wZW4gbGlzdDpHUElPIFNVQlNZU1RFTQ0KPiA8
-bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1rZXJuZWwgPGxpbnV4LWtlcm5lbEB2
-Z2VyLmtlcm5lbC5vcmc+Ow0KPiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPg0KPiBT
-dWJqZWN0OiBSZTogW1BBVENIXSBncGlvOiBteGM6IGFkZCBwb3dlciBtYW5hZ2VtZW50IHN1cHBv
-cnQNCj4gDQo+IEhpIEFuc29uLA0KPiANCj4gT24gVHVlLCBKdWwgMTAsIDIwMTggYXQgNDo0OCBB
-TSwgQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+IHdyb3RlOg0KPiA+IEdQSU8g
-cmVnaXN0ZXJzIGNvdWxkIGxvc2UgY29udGV4dCBvbiBzb21lIGkuTVggU29DcywgbGlrZSBvbiBp
-Lk1YN0QsDQo+ID4gd2hlbiBlbnRlciBMUFNSIG1vZGUsIHRoZSB3aG9sZSBTb0MNCj4gDQo+IEFm
-dGVyIGZ1cnRoZXIgcmV2aWV3aW5nIHRoaXMgcGF0Y2hJIGhhdmUgYSBxdWVzdGlvbjogaGVyZSB5
-b3Ugc2F5IHRoYXQgaS5NWDdEDQo+IG5lZWRzIHRvIHNhdmUgc29tZSByZWdpc3RlcnMuDQo+IA0K
-PiA+IHdpbGwgYmUgcG93ZXJlZCBvZmYgZXhjZXB0IExQU1IgZG9tYWluLCBHUElPIGJhbmtzIHdp
-bGwgbG9zZSBjb250ZXh0DQo+ID4gaW4gdGhpcyBjYXNlLCBuZWVkIHRvIHJlc3RvcmUgdGhlIGNv
-bnRleHQgYWZ0ZXIgcmVzdW1lIGZyb20gTFBTUiBtb2RlLg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBh
-ZGRzIEdQSU8gc2F2ZS9yZXN0b3JlIGZvciB0aG9zZSBuZWNlc3NhcnkgcmVnaXN0ZXJzLCBhbmQN
-Cj4gPiBwdXQgdGhlIHNhdmUvcmVzdG9yZSBvcGVyYXRpb25zIGluIG5vaXJxIHN1c3BlbmQvcmVz
-dW1lIHBoYXNlLCBzaW5jZQ0KPiA+IEdQSU8gaXMgZnVuZGFtZW50YWwgbW9kdWxlIHdoaWNoIGNv
-dWxkIGJlIHVzZWQgYnkgb3RoZXIgcGVyaXBoZXJhbHMnDQo+ID4gcmVzdW1lIHBoYXNlLg0KPiA+
-DQo+ID4gU2lnbmVkLW9mZi1ieTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+
-ID4gLS0tDQo+ID4gIGRyaXZlcnMvZ3Bpby9ncGlvLW14Yy5jIHwgNjgNCj4gPiArKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gIDEgZmlsZSBjaGFu
-Z2VkLCA2OCBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlv
-L2dwaW8tbXhjLmMgYi9kcml2ZXJzL2dwaW8vZ3Bpby1teGMuYyBpbmRleA0KPiA+IDJmMjgyOTku
-LjBmYzUyZDggMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9ncGlvL2dwaW8tbXhjLmMNCj4gPiAr
-KysgYi9kcml2ZXJzL2dwaW8vZ3Bpby1teGMuYw0KPiA+IEBAIC00NSw2ICs0NSwxNSBAQCBzdHJ1
-Y3QgbXhjX2dwaW9faHdkYXRhIHsNCj4gPiAgICAgICAgIHVuc2lnbmVkIGZhbGxfZWRnZTsNCj4g
-PiAgfTsNCj4gPg0KPiA+ICtzdHJ1Y3QgbXhjX2dwaW9fcmVnX3NhdmVkIHsNCj4gPiArICAgICAg
-IHUzMiBpY3IxOw0KPiA+ICsgICAgICAgdTMyIGljcjI7DQo+ID4gKyAgICAgICB1MzIgaW1yOw0K
-PiA+ICsgICAgICAgdTMyIGdkaXI7DQo+ID4gKyAgICAgICB1MzIgZWRnZV9zZWw7DQo+ID4gKyAg
-ICAgICB1MzIgZHI7DQo+ID4gK307DQo+ID4gKw0KPiA+ICBzdHJ1Y3QgbXhjX2dwaW9fcG9ydCB7
-DQo+ID4gICAgICAgICBzdHJ1Y3QgbGlzdF9oZWFkIG5vZGU7DQo+ID4gICAgICAgICB2b2lkIF9f
-aW9tZW0gKmJhc2U7DQo+ID4gQEAgLTU1LDYgKzY0LDcgQEAgc3RydWN0IG14Y19ncGlvX3BvcnQg
-ew0KPiA+ICAgICAgICAgc3RydWN0IGdwaW9fY2hpcCBnYzsNCj4gPiAgICAgICAgIHN0cnVjdCBk
-ZXZpY2UgKmRldjsNCj4gPiAgICAgICAgIHUzMiBib3RoX2VkZ2VzOw0KPiA+ICsgICAgICAgc3Ry
-dWN0IG14Y19ncGlvX3JlZ19zYXZlZCBncGlvX3NhdmVkX3JlZzsNCj4gPiAgfTsNCj4gPg0KPiA+
-ICBzdGF0aWMgc3RydWN0IG14Y19ncGlvX2h3ZGF0YSBpbXgxX2lteDIxX2dwaW9faHdkYXRhID0g
-eyBAQCAtNDk3LDYNCj4gPiArNTA3LDggQEAgc3RhdGljIGludCBteGNfZ3Bpb19wcm9iZShzdHJ1
-Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+DQo+ID4gICAgICAgICBsaXN0X2FkZF90YWls
-KCZwb3J0LT5ub2RlLCAmbXhjX2dwaW9fcG9ydHMpOw0KPiA+DQo+ID4gKyAgICAgICBwbGF0Zm9y
-bV9zZXRfZHJ2ZGF0YShwZGV2LCBwb3J0KTsNCj4gPiArDQo+ID4gICAgICAgICByZXR1cm4gMDsN
-Cj4gPg0KPiA+ICBvdXRfaXJxZG9tYWluX3JlbW92ZToNCj4gPiBAQCAtNTA3LDExICs1MTksNjcg
-QEAgc3RhdGljIGludCBteGNfZ3Bpb19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlDQo+ICpw
-ZGV2KQ0KPiA+ICAgICAgICAgcmV0dXJuIGVycjsNCj4gPiAgfQ0KPiA+DQo+ID4gK3N0YXRpYyB2
-b2lkIG14Y19ncGlvX3NhdmVfcmVncyhzdHJ1Y3QgbXhjX2dwaW9fcG9ydCAqcG9ydCkgew0KPiA+
-ICsgICAgICAgaWYgKG14Y19ncGlvX2h3dHlwZSA9PSBJTVgyMV9HUElPKQ0KPiA+ICsgICAgICAg
-ICAgICAgICByZXR1cm47DQo+IA0KPiBidXQgaGVyZSB5b3Ugb25seSBibG9jayBJTVgyMV9HUElP
-Lg0KPiANCj4gVGhpcyBtZWFucyB0aGF0IG14MzEvbXgzNS9teDUxL214NTMvbXg2IHdpbGwgZXhl
-Y3V0ZSB0aGlzIGNvZGUgdG9vIG5vdy4NCj4gSXMgdGhpcyBhbHdheXMgc2FmZT8NCj4gDQo+IFNo
-b3VsZG4ndCBpdCB0aGlzIHNhdmUvcmVzdG9yZSBiZSBleGVjdXRlZCBvbmx5IG9uIG14N2Q/DQo+
-IA0KPiBQbGVhc2UgY2xhcmlmeS4NCkhlcmUgYXJlIHRoZSBkZXRhaWxzLCBpLk1YN0QgTFBTUiBt
-b2RlIGFuZCBpLk1YOFFNLzhRWFAgZXRjLicgc3VzcGVuZC9yZXN1bWUNCm1heSBjYXVzZSBHUElP
-IGJhbmsgbG9zZSBwb3dlciwgc28gbmVlZCB0byBzYXZlL3Jlc3RvcmUsIGZvciBvdGhlciBpLk1Y
-IFNvQ3MsDQphbHRob3VnaCBubyBuZWVkIHRvIGRvIHNhdmUvcmVzdG9yZSwgYnV0IGRvaW5nIGl0
-IGlzIE5PVCBoYXJtZnVsLCBzbyBkbyB5b3UgdGhpbmsNCndlIHNob3VsZCBhZGQgU29DIHR5cGUg
-Y2hlY2sgaGVyZT8NCg0KQW5zb24uDQoNCg==
+On Fri, Jul 13, 2018 at 6:53 PM Ray Jui <ray.jui@broadcom.com> wrote:
+
+> > Patch applied with Ray's ACK.
+>
+> Would be nice to add the following Fixes tag:
+>
+> Fixes: cc4fa83f66e9 ("pinctrl: nsp: add pinmux driver support for
+> Broadcom NSP SoC")
+
+OK fixed it!
+
+Yours,
+Linus Walleij
