@@ -1,91 +1,75 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH] gpio: mxc: add power management support
-Date: Fri, 13 Jul 2018 15:33:34 -0300
-Message-ID: <CAOMZO5BSt4jdLWmXjNmTDAegGwtRWjbMuVAwdrnRyHWvSBuU5A@mail.gmail.com>
+From: Anson Huang <anson.huang@nxp.com>
+Subject: RE: [PATCH] gpio: mxc: add power management support
+Date: Sat, 14 Jul 2018 01:53:57 +0000
+Message-ID: <AM3PR04MB131577674FDF0BC65BEF518EF55F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
 References: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5BSt4jdLWmXjNmTDAegGwtRWjbMuVAwdrnRyHWvSBuU5A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <CAOMZO5BSt4jdLWmXjNmTDAegGwtRWjbMuVAwdrnRyHWvSBuU5A@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Anson,
-
-On Tue, Jul 10, 2018 at 4:48 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> GPIO registers could lose context on some i.MX SoCs,
-> like on i.MX7D, when enter LPSR mode, the whole SoC
-
-After further reviewing this patchI have a question: here you say that
-i.MX7D needs to save some registers.
-
-> will be powered off except LPSR domain, GPIO banks
-> will lose context in this case, need to restore
-> the context after resume from LPSR mode.
->
-> This patch adds GPIO save/restore for those necessary
-> registers, and put the save/restore operations in noirq
-> suspend/resume phase, since GPIO is fundamental module
-> which could be used by other peripherals' resume phase.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/gpio/gpio-mxc.c | 68 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 68 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-> index 2f28299..0fc52d8 100644
-> --- a/drivers/gpio/gpio-mxc.c
-> +++ b/drivers/gpio/gpio-mxc.c
-> @@ -45,6 +45,15 @@ struct mxc_gpio_hwdata {
->         unsigned fall_edge;
->  };
->
-> +struct mxc_gpio_reg_saved {
-> +       u32 icr1;
-> +       u32 icr2;
-> +       u32 imr;
-> +       u32 gdir;
-> +       u32 edge_sel;
-> +       u32 dr;
-> +};
-> +
->  struct mxc_gpio_port {
->         struct list_head node;
->         void __iomem *base;
-> @@ -55,6 +64,7 @@ struct mxc_gpio_port {
->         struct gpio_chip gc;
->         struct device *dev;
->         u32 both_edges;
-> +       struct mxc_gpio_reg_saved gpio_saved_reg;
->  };
->
->  static struct mxc_gpio_hwdata imx1_imx21_gpio_hwdata = {
-> @@ -497,6 +507,8 @@ static int mxc_gpio_probe(struct platform_device *pdev)
->
->         list_add_tail(&port->node, &mxc_gpio_ports);
->
-> +       platform_set_drvdata(pdev, port);
-> +
->         return 0;
->
->  out_irqdomain_remove:
-> @@ -507,11 +519,67 @@ static int mxc_gpio_probe(struct platform_device *pdev)
->         return err;
->  }
->
-> +static void mxc_gpio_save_regs(struct mxc_gpio_port *port)
-> +{
-> +       if (mxc_gpio_hwtype == IMX21_GPIO)
-> +               return;
-
-but here you only block IMX21_GPIO.
-
-This means that mx31/mx35/mx51/mx53/mx6 will execute this code too
-now. Is this always safe?
-
-Shouldn't it this save/restore be executed only on mx7d?
-
-Please clarify.
+SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
+Z21haWwuY29tXQ0KPiBTZW50OiBTYXR1cmRheSwgSnVseSAxNCwgMjAxOCAyOjM0IEFNDQo+IFRv
+OiBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4NCj4gQ2M6IExpbnVzIFdhbGxlaWog
+PGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz47IG9wZW4gbGlzdDpHUElPIFNVQlNZU1RFTQ0KPiA8
+bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1rZXJuZWwgPGxpbnV4LWtlcm5lbEB2
+Z2VyLmtlcm5lbC5vcmc+Ow0KPiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPg0KPiBT
+dWJqZWN0OiBSZTogW1BBVENIXSBncGlvOiBteGM6IGFkZCBwb3dlciBtYW5hZ2VtZW50IHN1cHBv
+cnQNCj4gDQo+IEhpIEFuc29uLA0KPiANCj4gT24gVHVlLCBKdWwgMTAsIDIwMTggYXQgNDo0OCBB
+TSwgQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+IHdyb3RlOg0KPiA+IEdQSU8g
+cmVnaXN0ZXJzIGNvdWxkIGxvc2UgY29udGV4dCBvbiBzb21lIGkuTVggU29DcywgbGlrZSBvbiBp
+Lk1YN0QsDQo+ID4gd2hlbiBlbnRlciBMUFNSIG1vZGUsIHRoZSB3aG9sZSBTb0MNCj4gDQo+IEFm
+dGVyIGZ1cnRoZXIgcmV2aWV3aW5nIHRoaXMgcGF0Y2hJIGhhdmUgYSBxdWVzdGlvbjogaGVyZSB5
+b3Ugc2F5IHRoYXQgaS5NWDdEDQo+IG5lZWRzIHRvIHNhdmUgc29tZSByZWdpc3RlcnMuDQo+IA0K
+PiA+IHdpbGwgYmUgcG93ZXJlZCBvZmYgZXhjZXB0IExQU1IgZG9tYWluLCBHUElPIGJhbmtzIHdp
+bGwgbG9zZSBjb250ZXh0DQo+ID4gaW4gdGhpcyBjYXNlLCBuZWVkIHRvIHJlc3RvcmUgdGhlIGNv
+bnRleHQgYWZ0ZXIgcmVzdW1lIGZyb20gTFBTUiBtb2RlLg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBh
+ZGRzIEdQSU8gc2F2ZS9yZXN0b3JlIGZvciB0aG9zZSBuZWNlc3NhcnkgcmVnaXN0ZXJzLCBhbmQN
+Cj4gPiBwdXQgdGhlIHNhdmUvcmVzdG9yZSBvcGVyYXRpb25zIGluIG5vaXJxIHN1c3BlbmQvcmVz
+dW1lIHBoYXNlLCBzaW5jZQ0KPiA+IEdQSU8gaXMgZnVuZGFtZW50YWwgbW9kdWxlIHdoaWNoIGNv
+dWxkIGJlIHVzZWQgYnkgb3RoZXIgcGVyaXBoZXJhbHMnDQo+ID4gcmVzdW1lIHBoYXNlLg0KPiA+
+DQo+ID4gU2lnbmVkLW9mZi1ieTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+
+ID4gLS0tDQo+ID4gIGRyaXZlcnMvZ3Bpby9ncGlvLW14Yy5jIHwgNjgNCj4gPiArKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gIDEgZmlsZSBjaGFu
+Z2VkLCA2OCBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlv
+L2dwaW8tbXhjLmMgYi9kcml2ZXJzL2dwaW8vZ3Bpby1teGMuYyBpbmRleA0KPiA+IDJmMjgyOTku
+LjBmYzUyZDggMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9ncGlvL2dwaW8tbXhjLmMNCj4gPiAr
+KysgYi9kcml2ZXJzL2dwaW8vZ3Bpby1teGMuYw0KPiA+IEBAIC00NSw2ICs0NSwxNSBAQCBzdHJ1
+Y3QgbXhjX2dwaW9faHdkYXRhIHsNCj4gPiAgICAgICAgIHVuc2lnbmVkIGZhbGxfZWRnZTsNCj4g
+PiAgfTsNCj4gPg0KPiA+ICtzdHJ1Y3QgbXhjX2dwaW9fcmVnX3NhdmVkIHsNCj4gPiArICAgICAg
+IHUzMiBpY3IxOw0KPiA+ICsgICAgICAgdTMyIGljcjI7DQo+ID4gKyAgICAgICB1MzIgaW1yOw0K
+PiA+ICsgICAgICAgdTMyIGdkaXI7DQo+ID4gKyAgICAgICB1MzIgZWRnZV9zZWw7DQo+ID4gKyAg
+ICAgICB1MzIgZHI7DQo+ID4gK307DQo+ID4gKw0KPiA+ICBzdHJ1Y3QgbXhjX2dwaW9fcG9ydCB7
+DQo+ID4gICAgICAgICBzdHJ1Y3QgbGlzdF9oZWFkIG5vZGU7DQo+ID4gICAgICAgICB2b2lkIF9f
+aW9tZW0gKmJhc2U7DQo+ID4gQEAgLTU1LDYgKzY0LDcgQEAgc3RydWN0IG14Y19ncGlvX3BvcnQg
+ew0KPiA+ICAgICAgICAgc3RydWN0IGdwaW9fY2hpcCBnYzsNCj4gPiAgICAgICAgIHN0cnVjdCBk
+ZXZpY2UgKmRldjsNCj4gPiAgICAgICAgIHUzMiBib3RoX2VkZ2VzOw0KPiA+ICsgICAgICAgc3Ry
+dWN0IG14Y19ncGlvX3JlZ19zYXZlZCBncGlvX3NhdmVkX3JlZzsNCj4gPiAgfTsNCj4gPg0KPiA+
+ICBzdGF0aWMgc3RydWN0IG14Y19ncGlvX2h3ZGF0YSBpbXgxX2lteDIxX2dwaW9faHdkYXRhID0g
+eyBAQCAtNDk3LDYNCj4gPiArNTA3LDggQEAgc3RhdGljIGludCBteGNfZ3Bpb19wcm9iZShzdHJ1
+Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+DQo+ID4gICAgICAgICBsaXN0X2FkZF90YWls
+KCZwb3J0LT5ub2RlLCAmbXhjX2dwaW9fcG9ydHMpOw0KPiA+DQo+ID4gKyAgICAgICBwbGF0Zm9y
+bV9zZXRfZHJ2ZGF0YShwZGV2LCBwb3J0KTsNCj4gPiArDQo+ID4gICAgICAgICByZXR1cm4gMDsN
+Cj4gPg0KPiA+ICBvdXRfaXJxZG9tYWluX3JlbW92ZToNCj4gPiBAQCAtNTA3LDExICs1MTksNjcg
+QEAgc3RhdGljIGludCBteGNfZ3Bpb19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlDQo+ICpw
+ZGV2KQ0KPiA+ICAgICAgICAgcmV0dXJuIGVycjsNCj4gPiAgfQ0KPiA+DQo+ID4gK3N0YXRpYyB2
+b2lkIG14Y19ncGlvX3NhdmVfcmVncyhzdHJ1Y3QgbXhjX2dwaW9fcG9ydCAqcG9ydCkgew0KPiA+
+ICsgICAgICAgaWYgKG14Y19ncGlvX2h3dHlwZSA9PSBJTVgyMV9HUElPKQ0KPiA+ICsgICAgICAg
+ICAgICAgICByZXR1cm47DQo+IA0KPiBidXQgaGVyZSB5b3Ugb25seSBibG9jayBJTVgyMV9HUElP
+Lg0KPiANCj4gVGhpcyBtZWFucyB0aGF0IG14MzEvbXgzNS9teDUxL214NTMvbXg2IHdpbGwgZXhl
+Y3V0ZSB0aGlzIGNvZGUgdG9vIG5vdy4NCj4gSXMgdGhpcyBhbHdheXMgc2FmZT8NCj4gDQo+IFNo
+b3VsZG4ndCBpdCB0aGlzIHNhdmUvcmVzdG9yZSBiZSBleGVjdXRlZCBvbmx5IG9uIG14N2Q/DQo+
+IA0KPiBQbGVhc2UgY2xhcmlmeS4NCkhlcmUgYXJlIHRoZSBkZXRhaWxzLCBpLk1YN0QgTFBTUiBt
+b2RlIGFuZCBpLk1YOFFNLzhRWFAgZXRjLicgc3VzcGVuZC9yZXN1bWUNCm1heSBjYXVzZSBHUElP
+IGJhbmsgbG9zZSBwb3dlciwgc28gbmVlZCB0byBzYXZlL3Jlc3RvcmUsIGZvciBvdGhlciBpLk1Y
+IFNvQ3MsDQphbHRob3VnaCBubyBuZWVkIHRvIGRvIHNhdmUvcmVzdG9yZSwgYnV0IGRvaW5nIGl0
+IGlzIE5PVCBoYXJtZnVsLCBzbyBkbyB5b3UgdGhpbmsNCndlIHNob3VsZCBhZGQgU29DIHR5cGUg
+Y2hlY2sgaGVyZT8NCg0KQW5zb24uDQoNCg==
