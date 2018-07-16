@@ -1,43 +1,26 @@
-From: Anson Huang <anson.huang@nxp.com>
-Subject: RE: [PATCH] gpio: mxc: add power management support
-Date: Mon, 16 Jul 2018 06:14:33 +0000
-Message-ID: <AM3PR04MB13153EB5ADEBCD57A7122B61F55D0@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5BSt4jdLWmXjNmTDAegGwtRWjbMuVAwdrnRyHWvSBuU5A@mail.gmail.com>
- <AM3PR04MB131577674FDF0BC65BEF518EF55F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5DCsdwXK0eftcpwzT4my30HZLR7-H2c+V=ro+_fOMAWCw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/2] gpiolib: linehandle_ioctl() tweaks
+Date: Mon, 16 Jul 2018 10:34:22 +0200
+Message-ID: <20180716083424.11157-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOMZO5DCsdwXK0eftcpwzT4my30HZLR7-H2c+V=ro+_fOMAWCw@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
-Z21haWwuY29tXQ0KPiBTZW50OiBTdW5kYXksIEp1bHkgMTUsIDIwMTggMTI6MTMgQU0NCj4gVG86
-IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzogTGludXMgV2FsbGVpaiA8
-bGludXMud2FsbGVpakBsaW5hcm8ub3JnPjsgb3BlbiBsaXN0OkdQSU8gU1VCU1lTVEVNDQo+IDxs
-aW51eC1ncGlvQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWtlcm5lbCA8bGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZz47DQo+IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+IFN1
-YmplY3Q6IFJlOiBbUEFUQ0hdIGdwaW86IG14YzogYWRkIHBvd2VyIG1hbmFnZW1lbnQgc3VwcG9y
-dA0KPiANCj4gSGkgQW5zb24sDQo+IA0KPiBPbiBGcmksIEp1bCAxMywgMjAxOCBhdCAxMDo1MyBQ
-TSwgQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+DQo+IHdyb3RlOg0KPiANCj4gPiBI
-ZXJlIGFyZSB0aGUgZGV0YWlscywgaS5NWDdEIExQU1IgbW9kZSBhbmQgaS5NWDhRTS84UVhQIGV0
-Yy4nDQo+ID4gc3VzcGVuZC9yZXN1bWUgbWF5IGNhdXNlIEdQSU8gYmFuayBsb3NlIHBvd2VyLCBz
-byBuZWVkIHRvDQo+ID4gc2F2ZS9yZXN0b3JlLCBmb3Igb3RoZXIgaS5NWCBTb0NzLCBhbHRob3Vn
-aCBubyBuZWVkIHRvIGRvDQo+ID4gc2F2ZS9yZXN0b3JlLCBidXQgZG9pbmcgaXQgaXMgTk9UIGhh
-cm1mdWwsIHNvIGRvIHlvdSB0aGluayB3ZSBzaG91bGQgYWRkIFNvQw0KPiB0eXBlIGNoZWNrIGhl
-cmU/DQo+IA0KPiBJIHRoaW5rIGl0IHdvdWxkIGJlIHNhZmVyIHRvIHJlc3RyaWN0IHRoZSBzYXZl
-L3Jlc3RvcmUgb3BlcmF0aW9ucyB0byBteDcvbXg4Lg0KPiANCj4gWW91IGNhbiBhZGQgYSBmc2ws
-aW14N2QtZ3BpbyBjb21wYXRpYmxlIGVudHJ5IGluIHRoZSBkcml2ZXIuDQo+IA0KPiBUaGFua3MN
-Ck9LLCBzaW5jZSBpLk1YN0QgaGFzIHNhbWUgR1BJTyB0eXBlIGFzIGkuTVgzNSwgdG8gbWFrZSBp
-dCBzaW1wbGUsIEkganVzdCBhZGRlZA0KYSBmbGFnIHRvIGluZGljYXRlIHdoZXRoZXIgaXQgc3Vw
-cG9ydHMgc2F2ZS9yZXN0b3JlLCBvbmx5IGkuTVg3RCBlbmFibGVzDQp0aGUgZmxhZyBub3csIHNp
-bmNlIG90aGVyIGkuTVg4IFNvQ3MnIGR0cyBpcyBOT1QgdXBzdHJlYW1lZCB5ZXQsIHNvIEkgZGlk
-IE5PVCBhZGQNCnN1cHBvcnQgZm9yIGkuTVg4IFNvQ3MsIHBsZWFzZSBoZWxwIHJldmlldyBWMiBw
-YXRjaCwgdGhhbmtzLg0KDQpBbnNvbi4gDQoNCg0K
+I noticed that - unlike sysfs - it's possible to set values of input
+lines from user space using the character device. There's actually
+even a TODO in the linehandle_ioctl() code.
+
+This is not correct so the first patches fixes that and the second
+removes a TODO that's not really needed.
+
+Bartosz Golaszewski (2):
+  gpiolib: don't allow userspace to set values of input lines
+  gpiolib: remove an unneccessary TODO
+
+ drivers/gpio/gpiolib.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
