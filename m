@@ -1,83 +1,50 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH 1/2] pinctrl: stm32: fix bank io port number
-Date: Mon, 16 Jul 2018 14:57:36 +0200
-Message-ID: <1531745857-5561-2-git-send-email-alexandre.torgue@st.com>
-References: <1531745857-5561-1-git-send-email-alexandre.torgue@st.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 6/7] arm64: dts: mt7622: use gpio-ranges to pinctrl device
+Date: Mon, 16 Jul 2018 15:36:50 +0200
+Message-ID: <76cde153-74db-101d-84a1-a0a7da679daf@gmail.com>
+References: <f222c9f488490bd86d35346e725491e1de306ace.1529639050.git.sean.wang@mediatek.com>
+ <e0483accc1e82280492a2f68a90959232ba868f6.1529639050.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531745857-5561-1-git-send-email-alexandre.torgue@st.com>
+In-Reply-To: <e0483accc1e82280492a2f68a90959232ba868f6.1529639050.git.sean.wang@mediatek.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, amelie.delaunay@st.com
+To: sean.wang@mediatek.com, linus.walleij@linaro.org, linux-mediatek@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-In case the exti line is not in line with the bank number (that is the case
-when there is an hole between two banks, for example GPIOK and then GPIOZ),
-use "st,bank-ioport" DT property to get the right exti line.
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-index 9a06e1f..60c678a 100644
---- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-@@ -55,6 +55,8 @@ Optional properties:
-    NOTE: If "gpio-ranges" is used for a gpio controller, all gpio-controller
-    have to use a "gpio-ranges" entry.
-    More details in Documentation/devicetree/bindings/gpio/gpio.txt.
-+ - st,bank-ioport: should correspond to the EXTI IOport selection (EXTI line
-+   used to select GPIOs as interrupts).
- 
- Example 1:
- #include <dt-bindings/pinctrl/stm32f429-pinfunc.h>
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index dfed609..eb6ae14 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -73,6 +73,7 @@ struct stm32_gpio_bank {
- 	struct fwnode_handle *fwnode;
- 	struct irq_domain *domain;
- 	u32 bank_nr;
-+	u32 bank_ioport_nr;
- };
- 
- struct stm32_pinctrl {
-@@ -298,7 +299,7 @@ static int stm32_gpio_domain_activate(struct irq_domain *d,
- 	struct stm32_gpio_bank *bank = d->host_data;
- 	struct stm32_pinctrl *pctl = dev_get_drvdata(bank->gpio_chip.parent);
- 
--	regmap_field_write(pctl->irqmux[irq_data->hwirq], bank->bank_nr);
-+	regmap_field_write(pctl->irqmux[irq_data->hwirq], bank->bank_ioport_nr);
- 	return 0;
- }
- 
-@@ -948,6 +949,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl,
- 	struct device_node *np)
- {
- 	struct stm32_gpio_bank *bank = &pctl->banks[pctl->nbanks];
-+	int bank_ioport_nr;
- 	struct pinctrl_gpio_range *range = &bank->range;
- 	struct of_phandle_args args;
- 	struct device *dev = pctl->dev;
-@@ -998,12 +1000,17 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl,
- 		pinctrl_add_gpio_range(pctl->pctl_dev,
- 				       &pctl->banks[bank_nr].range);
- 	}
-+
-+	if (of_property_read_u32(np, "st,bank-ioport", &bank_ioport_nr))
-+		bank_ioport_nr = bank_nr;
-+
- 	bank->gpio_chip.base = bank_nr * STM32_GPIO_PINS_PER_BANK;
- 
- 	bank->gpio_chip.ngpio = npins;
- 	bank->gpio_chip.of_node = np;
- 	bank->gpio_chip.parent = dev;
- 	bank->bank_nr = bank_nr;
-+	bank->bank_ioport_nr = bank_ioport_nr;
- 	spin_lock_init(&bank->lock);
- 
- 	/* create irq hierarchical domain */
--- 
-2.7.4
+On 22/06/18 05:49, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> Using gpio-ranges property represent which GPIOs correspond to which pins
+> on MT7622 pin controllers. For details, we can see section 2.1 of
+> Documentation/devicetree/bindings/gpio/gpio.txt to know how to bind pinctrl
+> and gpio drivers via the "gpio-ranges" property.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+
+pushed now to v4.18-next/dts64
+
+Thanks
+
+> ---
+>  arch/arm64/boot/dts/mediatek/mt7622.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> index e2c5450..50cb56c 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> @@ -291,6 +291,7 @@
+>  		reg-names = "base", "eint";
+>  		gpio-controller;
+>  		#gpio-cells = <2>;
+> +		gpio-ranges = <&pio 0 0 103>;
+>  		interrupt-controller;
+>  		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+>  		interrupt-parent = <&gic>;
+> 
