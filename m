@@ -1,26 +1,35 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 0/2] gpiolib: linehandle_ioctl() tweaks
-Date: Mon, 16 Jul 2018 10:34:22 +0200
-Message-ID: <20180716083424.11157-1-brgl@bgdev.pl>
+Subject: [PATCH 2/2] gpiolib: remove an unnecessary TODO
+Date: Mon, 16 Jul 2018 10:34:24 +0200
+Message-ID: <20180716083424.11157-3-brgl@bgdev.pl>
+References: <20180716083424.11157-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180716083424.11157-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-I noticed that - unlike sysfs - it's possible to set values of input
-lines from user space using the character device. There's actually
-even a TODO in the linehandle_ioctl() code.
+It's actually fine to read values of output lines. This was also
+allowed by the legacy sysfs interface.
 
-This is not correct so the first patches fixes that and the second
-removes a TODO that's not really needed.
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Bartosz Golaszewski (2):
-  gpiolib: don't allow userspace to set values of input lines
-  gpiolib: remove an unneccessary TODO
-
- drivers/gpio/gpiolib.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 57973524360d..19d36698574b 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -431,7 +431,7 @@ static long linehandle_ioctl(struct file *filep, unsigned int cmd,
+ 	int i;
+ 
+ 	if (cmd == GPIOHANDLE_GET_LINE_VALUES_IOCTL) {
+-		/* TODO: check if descriptors are really input */
++		/* NOTE: It's ok to read values of output lines. */
+ 		int ret = gpiod_get_array_value_complex(false,
+ 							true,
+ 							lh->numdescs,
 -- 
 2.17.1
