@@ -1,148 +1,43 @@
-From: Anson Huang <Anson.Huang@nxp.com>
-Subject: [PATCH V2] gpio: mxc: add power management support
-Date: Mon, 16 Jul 2018 14:06:26 +0800
-Message-ID: <1531721186-19417-1-git-send-email-Anson.Huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+Subject: RE: [PATCH] gpio: mxc: add power management support
+Date: Mon, 16 Jul 2018 06:14:33 +0000
+Message-ID: <AM3PR04MB13153EB5ADEBCD57A7122B61F55D0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5BSt4jdLWmXjNmTDAegGwtRWjbMuVAwdrnRyHWvSBuU5A@mail.gmail.com>
+ <AM3PR04MB131577674FDF0BC65BEF518EF55F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5DCsdwXK0eftcpwzT4my30HZLR7-H2c+V=ro+_fOMAWCw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOMZO5DCsdwXK0eftcpwzT4my30HZLR7-H2c+V=ro+_fOMAWCw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Linux-imx@nxp.com
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-GPIO registers could lose context on i.MX7D,
-when enter LPSR mode, the whole SoC will be
-powered off except LPSR domain, GPIO banks
-will lose context in this case, need to restore
-the context after resume from LPSR mode.
-
-This patch adds GPIO save/restore for those necessary
-registers, and put the save/restore operations in noirq
-suspend/resume phase, since GPIO is fundamental module
-which could be used by other peripherals' resume phase.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-changes since V1:
-	Add condition check to make it only work for i.MX7D which GPIO might lost power.
- drivers/gpio/gpio-mxc.c | 72 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
-
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 2f28299..17f2fe2 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -45,6 +45,15 @@ struct mxc_gpio_hwdata {
- 	unsigned fall_edge;
- };
- 
-+struct mxc_gpio_reg_saved {
-+	u32 icr1;
-+	u32 icr2;
-+	u32 imr;
-+	u32 gdir;
-+	u32 edge_sel;
-+	u32 dr;
-+};
-+
- struct mxc_gpio_port {
- 	struct list_head node;
- 	void __iomem *base;
-@@ -55,6 +64,8 @@ struct mxc_gpio_port {
- 	struct gpio_chip gc;
- 	struct device *dev;
- 	u32 both_edges;
-+	struct mxc_gpio_reg_saved gpio_saved_reg;
-+	bool support_power_off;
- };
- 
- static struct mxc_gpio_hwdata imx1_imx21_gpio_hwdata = {
-@@ -434,6 +445,9 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	if (of_machine_is_compatible("fsl,imx7d"))
-+		port->support_power_off = true;
-+
- 	/* disable the interrupt and clear the status */
- 	writel(0, port->base + GPIO_IMR);
- 	writel(~0, port->base + GPIO_ISR);
-@@ -497,6 +511,8 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 
- 	list_add_tail(&port->node, &mxc_gpio_ports);
- 
-+	platform_set_drvdata(pdev, port);
-+
- 	return 0;
- 
- out_irqdomain_remove:
-@@ -507,11 +523,67 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	return err;
- }
- 
-+static void mxc_gpio_save_regs(struct mxc_gpio_port *port)
-+{
-+	if (!port->support_power_off)
-+		return;
-+
-+	port->gpio_saved_reg.icr1 = readl(port->base + GPIO_ICR1);
-+	port->gpio_saved_reg.icr2 = readl(port->base + GPIO_ICR2);
-+	port->gpio_saved_reg.imr = readl(port->base + GPIO_IMR);
-+	port->gpio_saved_reg.gdir = readl(port->base + GPIO_GDIR);
-+	port->gpio_saved_reg.edge_sel = readl(port->base + GPIO_EDGE_SEL);
-+	port->gpio_saved_reg.dr = readl(port->base + GPIO_DR);
-+}
-+
-+static void mxc_gpio_restore_regs(struct mxc_gpio_port *port)
-+{
-+	if (!port->support_power_off)
-+		return;
-+
-+	writel(port->gpio_saved_reg.icr1, port->base + GPIO_ICR1);
-+	writel(port->gpio_saved_reg.icr2, port->base + GPIO_ICR2);
-+	writel(port->gpio_saved_reg.imr, port->base + GPIO_IMR);
-+	writel(port->gpio_saved_reg.gdir, port->base + GPIO_GDIR);
-+	writel(port->gpio_saved_reg.edge_sel, port->base + GPIO_EDGE_SEL);
-+	writel(port->gpio_saved_reg.dr, port->base + GPIO_DR);
-+}
-+
-+static int __maybe_unused mxc_gpio_noirq_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct mxc_gpio_port *port = platform_get_drvdata(pdev);
-+
-+	mxc_gpio_save_regs(port);
-+	clk_disable_unprepare(port->clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused mxc_gpio_noirq_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct mxc_gpio_port *port = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	ret = clk_prepare_enable(port->clk);
-+	if (ret)
-+		return ret;
-+	mxc_gpio_restore_regs(port);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops mxc_gpio_dev_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mxc_gpio_noirq_suspend, mxc_gpio_noirq_resume)
-+};
-+
- static struct platform_driver mxc_gpio_driver = {
- 	.driver		= {
- 		.name	= "gpio-mxc",
- 		.of_match_table = mxc_gpio_dt_ids,
- 		.suppress_bind_attrs = true,
-+		.pm = &mxc_gpio_dev_pm_ops,
- 	},
- 	.probe		= mxc_gpio_probe,
- 	.id_table	= mxc_gpio_devtype,
--- 
-2.7.4
+SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
+Z21haWwuY29tXQ0KPiBTZW50OiBTdW5kYXksIEp1bHkgMTUsIDIwMTggMTI6MTMgQU0NCj4gVG86
+IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzogTGludXMgV2FsbGVpaiA8
+bGludXMud2FsbGVpakBsaW5hcm8ub3JnPjsgb3BlbiBsaXN0OkdQSU8gU1VCU1lTVEVNDQo+IDxs
+aW51eC1ncGlvQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWtlcm5lbCA8bGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZz47DQo+IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+IFN1
+YmplY3Q6IFJlOiBbUEFUQ0hdIGdwaW86IG14YzogYWRkIHBvd2VyIG1hbmFnZW1lbnQgc3VwcG9y
+dA0KPiANCj4gSGkgQW5zb24sDQo+IA0KPiBPbiBGcmksIEp1bCAxMywgMjAxOCBhdCAxMDo1MyBQ
+TSwgQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+DQo+IHdyb3RlOg0KPiANCj4gPiBI
+ZXJlIGFyZSB0aGUgZGV0YWlscywgaS5NWDdEIExQU1IgbW9kZSBhbmQgaS5NWDhRTS84UVhQIGV0
+Yy4nDQo+ID4gc3VzcGVuZC9yZXN1bWUgbWF5IGNhdXNlIEdQSU8gYmFuayBsb3NlIHBvd2VyLCBz
+byBuZWVkIHRvDQo+ID4gc2F2ZS9yZXN0b3JlLCBmb3Igb3RoZXIgaS5NWCBTb0NzLCBhbHRob3Vn
+aCBubyBuZWVkIHRvIGRvDQo+ID4gc2F2ZS9yZXN0b3JlLCBidXQgZG9pbmcgaXQgaXMgTk9UIGhh
+cm1mdWwsIHNvIGRvIHlvdSB0aGluayB3ZSBzaG91bGQgYWRkIFNvQw0KPiB0eXBlIGNoZWNrIGhl
+cmU/DQo+IA0KPiBJIHRoaW5rIGl0IHdvdWxkIGJlIHNhZmVyIHRvIHJlc3RyaWN0IHRoZSBzYXZl
+L3Jlc3RvcmUgb3BlcmF0aW9ucyB0byBteDcvbXg4Lg0KPiANCj4gWW91IGNhbiBhZGQgYSBmc2ws
+aW14N2QtZ3BpbyBjb21wYXRpYmxlIGVudHJ5IGluIHRoZSBkcml2ZXIuDQo+IA0KPiBUaGFua3MN
+Ck9LLCBzaW5jZSBpLk1YN0QgaGFzIHNhbWUgR1BJTyB0eXBlIGFzIGkuTVgzNSwgdG8gbWFrZSBp
+dCBzaW1wbGUsIEkganVzdCBhZGRlZA0KYSBmbGFnIHRvIGluZGljYXRlIHdoZXRoZXIgaXQgc3Vw
+cG9ydHMgc2F2ZS9yZXN0b3JlLCBvbmx5IGkuTVg3RCBlbmFibGVzDQp0aGUgZmxhZyBub3csIHNp
+bmNlIG90aGVyIGkuTVg4IFNvQ3MnIGR0cyBpcyBOT1QgdXBzdHJlYW1lZCB5ZXQsIHNvIEkgZGlk
+IE5PVCBhZGQNCnN1cHBvcnQgZm9yIGkuTVg4IFNvQ3MsIHBsZWFzZSBoZWxwIHJldmlldyBWMiBw
+YXRjaCwgdGhhbmtzLg0KDQpBbnNvbi4gDQoNCg0K
