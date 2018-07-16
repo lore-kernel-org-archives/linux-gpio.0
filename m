@@ -1,51 +1,44 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 7/7] arm64: dts: mt7622: add earlycon to mt7622-rfb1 board
-Date: Mon, 16 Jul 2018 15:37:06 +0200
-Message-ID: <961bc8b0-cc5d-0796-0c4d-3d83b7cd96cd@gmail.com>
-References: <f222c9f488490bd86d35346e725491e1de306ace.1529639050.git.sean.wang@mediatek.com>
- <4a8b1000e7d8979b0c6c6f9836296b7dd382f6cd.1529639050.git.sean.wang@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpiolib: don't allow userspace to set values of input lines
+Date: Mon, 16 Jul 2018 15:40:44 +0200
+Message-ID: <CACRpkdaWGwhJ1D683R+7TV0JsUg-pNYZ2xm_0+16O2NgnBo+4g@mail.gmail.com>
+References: <20180716083424.11157-1-brgl@bgdev.pl> <20180716083424.11157-2-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4a8b1000e7d8979b0c6c6f9836296b7dd382f6cd.1529639050.git.sean.wang@mediatek.com>
-Content-Language: en-US
+In-Reply-To: <20180716083424.11157-2-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sean.wang@mediatek.com, linus.walleij@linaro.org, linux-mediatek@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Mon, Jul 16, 2018 at 10:34 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
+> User space can currently both read and set values of input lines using
+> the character device. This was not allowed by the old sysfs interface
+> nor is it a correct behavior.
+>
+> Check the first descriptor in the set for the OUT flag when asked to
+> set values and return -EPERM if the line is input.
+>
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 
-On 22/06/18 05:49, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Add earlycon to mt7622-rfb1 as to know what was going on when a certain
-> fault is happening at the early initialization stage.
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied! Thanks for fixing this.
 
+>         } else if (cmd == GPIOHANDLE_SET_LINE_VALUES_IOCTL) {
+> -               /* TODO: check if descriptors are really output */
 
-pushed now to v4.18-next/dts64
+I wonder what kind of lazy coder leaves this kind of garbage
+behind for others to fix up...
 
-Thanks
-Matthias
+d7c51b47ac11e (Linus Walleij           2016-04-26 10:35:29 +0200  451)
+ } else if (cmd == GPIOHANDLE_SET_LINE_VALUES_IOCTL) {
+d7c51b47ac11e (Linus Walleij           2016-04-26 10:35:29 +0200  452)
+         /* TODO: check if descriptors are really output */
+d7c51b47ac11e (Linus Walleij           2016-04-26 10:35:29 +0200  453)
+         if (copy_from_user(&ghd, ip, sizeof(ghd)))
 
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-> index 1ff003e..a747b7b 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
-> @@ -18,7 +18,7 @@
->  	compatible = "mediatek,mt7622-rfb1", "mediatek,mt7622";
->  
->  	chosen {
-> -		bootargs = "console=ttyS0,115200n1 swiotlb=512";
-> +		bootargs = "earlycon=uart8250,mmio32,0x11002000 console=ttyS0,115200n1 swiotlb=512";
->  	};
->  
->  	cpus {
-> 
+Oh that guy.
+
+Yours,
+Linus Walleij
