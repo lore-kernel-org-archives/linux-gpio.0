@@ -1,52 +1,73 @@
 From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: [PATCH 2/2] pinctrl/amd: use byte access to clear irq/wake status bits
-Date: Mon, 16 Jul 2018 18:57:19 -0600
-Message-ID: <20180717005719.258905-2-djkurtz@chromium.org>
-References: <20180717005719.258905-1-djkurtz@chromium.org>
+Subject: [PATCH] pinctrl/amd: fix gpio irq level in debugfs
+Date: Mon, 16 Jul 2018 19:07:41 -0600
+Message-ID: <20180717010742.1847-1-djkurtz@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180717005719.258905-1-djkurtz@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Ken Xue <Ken.Xue@amd.com>, Daniel Drake <drake@endlessm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Ken Xue <Ken.Xue@amd.com>, Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Commit 6afb10267c1692 ("pinctrl/amd: fix masking of GPIO interrupts")
-changed to the clearing of interrupt status bits to a RMW in a critical
-section.  This works, but is a bit overkill.
+According to the AMD BKDG, the GPIO ActiveLevel bits (10:9) map to:
+ 00 Active High
+ 01 Active Low
+ 10 Active on both edges iff LevelTrig (bit 8) == 0
+ 11 Reserved
 
-The relevant interrupt/wake status bits are in the Most Significant Byte
-of a 32-bit word.  These two are the only write-able bits in this byte.
+The current code has a bug where it interprets 00 => Active Low, and
+01 => Active High.
 
-Therefore, it should be safe to just write these bits back as a byte
-access without any additional locking.
+Fix the bug, restrict "Active on both" to just the edge trigger case, and
+refactor a bit to make the logic more readable.
 
+Change-Id: Id7775ae4cb61d193fa7fbb83967a8c5a7cdd0de6
 Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 ---
- drivers/pinctrl/pinctrl-amd.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/pinctrl/pinctrl-amd.c | 14 +++++++-------
+ drivers/pinctrl/pinctrl-amd.h |  4 ++++
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index b91db89eb9247c..52efe77ffb9991 100644
+index 04ae139671c8a8..5df5e8d64c57e7 100644
 --- a/drivers/pinctrl/pinctrl-amd.c
 +++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -558,15 +558,11 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
- 			irq = irq_find_mapping(gc->irq.domain, irqnr + i);
- 			generic_handle_irq(irq);
+@@ -247,16 +247,16 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
  
--			/* Clear interrupt.
--			 * We must read the pin register again, in case the
--			 * value was changed while executing
--			 * generic_handle_irq() above.
-+			/*
-+			 * Write-1-to-clear irq/wake status bits in MSByte.
-+			 * All other bits in this byte are read-only.
- 			 */
--			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
--			regval = readl(regs + i);
--			writel(regval, regs + i);
--			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+			writeb((regval >> 24), (u8 *)(regs + i) + 3);
- 			ret = IRQ_HANDLED;
- 		}
- 	}
+ 			if (pin_reg & BIT(INTERRUPT_ENABLE_OFF)) {
++				u8 level = (pin_reg >> ACTIVE_LEVEL_OFF) &
++						ACTIVE_LEVEL_MASK;
+ 				interrupt_enable = "interrupt is enabled|";
+ 
+-				if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF)) &&
+-				    !(pin_reg & BIT(ACTIVE_LEVEL_OFF + 1)))
+-					active_level = "Active low|";
+-				else if (pin_reg & BIT(ACTIVE_LEVEL_OFF) &&
+-					 !(pin_reg & BIT(ACTIVE_LEVEL_OFF + 1)))
++				if (level == ACTIVE_LEVEL_HIGH)
+ 					active_level = "Active high|";
+-				else if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF)) &&
+-					 pin_reg & BIT(ACTIVE_LEVEL_OFF + 1))
++				else if (level == ACTIVE_LEVEL_LOW)
++					active_level = "Active low|";
++				else if (!(pin_reg & BIT(LEVEL_TRIG_OFF)) &&
++					 level == ACTIVE_LEVEL_BOTH)
+ 					active_level = "Active on both|";
+ 				else
+ 					active_level = "Unknown Active level|";
+diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
+index 8fa453a59da5e6..22af7edfdb38e8 100644
+--- a/drivers/pinctrl/pinctrl-amd.h
++++ b/drivers/pinctrl/pinctrl-amd.h
+@@ -54,6 +54,10 @@
+ #define ACTIVE_LEVEL_MASK	0x3UL
+ #define DRV_STRENGTH_SEL_MASK	0x3UL
+ 
++#define ACTIVE_LEVEL_HIGH	0x0UL
++#define ACTIVE_LEVEL_LOW	0x1UL
++#define ACTIVE_LEVEL_BOTH	0x2UL
++
+ #define DB_TYPE_NO_DEBOUNCE               0x0UL
+ #define DB_TYPE_PRESERVE_LOW_GLITCH       0x1UL
+ #define DB_TYPE_PRESERVE_HIGH_GLITCH      0x2UL
 -- 
 2.18.0.203.gfac676dfb9-goog
