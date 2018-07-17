@@ -1,72 +1,41 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 2/2] pinctrl: stm32: add syscfg mask parameter
-Date: Tue, 17 Jul 2018 15:30:08 +0200
-Message-ID: <c698126e-3b45-b5d1-b1eb-8503a06050aa@st.com>
-References: <1531821387-29845-1-git-send-email-ludovic.Barre@st.com>
- <1531821387-29845-3-git-send-email-ludovic.Barre@st.com>
- <4acc415d-f162-67a2-57d6-0a7defda434f@st.com>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH] gpio: mxc: add power management support
+Date: Tue, 17 Jul 2018 10:43:32 -0300
+Message-ID: <CAOMZO5BrGdX3b9wcsA=3TkoGgh4H-fvghEqmhgovk-4uhYph7w@mail.gmail.com>
+References: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5BSt4jdLWmXjNmTDAegGwtRWjbMuVAwdrnRyHWvSBuU5A@mail.gmail.com>
+ <AM3PR04MB131577674FDF0BC65BEF518EF55F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5DCsdwXK0eftcpwzT4my30HZLR7-H2c+V=ro+_fOMAWCw@mail.gmail.com> <AM3PR04MB13153EB5ADEBCD57A7122B61F55D0@AM3PR04MB1315.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <4acc415d-f162-67a2-57d6-0a7defda434f@st.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ludovic BARRE <ludovic.barre@st.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <AM3PR04MB13153EB5ADEBCD57A7122B61F55D0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anson Huang <anson.huang@nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-CgpPbiAwNy8xNy8yMDE4IDAzOjExIFBNLCBMdWRvdmljIEJBUlJFIHdyb3RlOgo+IEhpCj4gCj4g
-YWRkIFJvYiwgSSBmb3Jnb3R0ZW4gcm9iJ3MgbWFpbC4KPiAKPiBPbiAwNy8xNy8yMDE4IDExOjU2
-IEFNLCBMdWRvdmljIEJhcnJlIHdyb3RlOgo+PiBGcm9tOiBMdWRvdmljIEJhcnJlIDxsdWRvdmlj
-LmJhcnJlQHN0LmNvbT4KPj4KPj4gVGhpcyBwYXRjaCBhZGRzIG1hc2sgcGFyYW1ldGVyIHRvIGRl
-ZmluZSBJUlEgbXV4IGZpZWxkLgo+PiBUaGlzIGZpZWxkIGNvdWxkIHZhcnkgZGVwZW5kIG9mIElS
-USBtdXggc2VsZWN0aW9uIHJlZ2lzdGVyLgo+PiBUbyBhdm9pZCBiYWNrd2FyZCBjb21wYXRpYmls
-aXR5LCB0aGUgZHJpdmVycyBzZXQKPj4gdGhlIGxlZ2FjeSB2YWx1ZSBieSBkZWZhdWx0Lgo+Pgo+
-PiBTaWduZWQtb2ZmLWJ5OiBMdWRvdmljIEJhcnJlIDxsdWRvdmljLmJhcnJlQHN0LmNvbT4KCkFj
-a2VkLWJ5OiBBbGV4YW5kcmUgVE9SR1VFIDxhbGV4YW5kcmUudG9yZ3VlQHN0LmNvbT4KCgo+PiAt
-LS0KPj4gwqAgZHJpdmVycy9waW5jdHJsL3N0bTMyL3BpbmN0cmwtc3RtMzIuYyB8IDE2ICsrKysr
-KysrKysrKysrLS0KPj4gwqAgMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDIgZGVs
-ZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvc3RtMzIvcGluY3Ry
-bC1zdG0zMi5jIAo+PiBiL2RyaXZlcnMvcGluY3RybC9zdG0zMi9waW5jdHJsLXN0bTMyLmMKPj4g
-aW5kZXggZGZlZDYwOS4uZjc1NjIzMiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3N0
-bTMyL3BpbmN0cmwtc3RtMzIuYwo+PiArKysgYi9kcml2ZXJzL3BpbmN0cmwvc3RtMzIvcGluY3Ry
-bC1zdG0zMi5jCj4+IEBAIC00Niw2ICs0Niw4IEBACj4+IMKgICNkZWZpbmUgU1RNMzJfR1BJT19Q
-SU5TX1BFUl9CQU5LIDE2Cj4+IMKgICNkZWZpbmUgU1RNMzJfR1BJT19JUlFfTElORcKgwqDCoMKg
-IDE2Cj4+ICsjZGVmaW5lIFNZU0NGR19JUlFNVVhfTUFTSyBHRU5NQVNLKDMsIDApCj4+ICsKPj4g
-wqAgI2RlZmluZSBncGlvX3JhbmdlX3RvX2JhbmsoY2hpcCkgXAo+PiDCoMKgwqDCoMKgwqDCoMKg
-wqAgY29udGFpbmVyX29mKGNoaXAsIHN0cnVjdCBzdG0zMl9ncGlvX2JhbmssIHJhbmdlKQo+PiBA
-QCAtMTAzMyw2ICsxMDM1LDcgQEAgc3RhdGljIGludCBzdG0zMl9wY3RybF9kdF9zZXR1cF9pcnEo
-c3RydWN0IAo+PiBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYsCj4+IMKgwqDCoMKgwqAgc3RydWN0IGRl
-dmljZSAqZGV2ID0gJnBkZXYtPmRldjsKPj4gwqDCoMKgwqDCoCBzdHJ1Y3QgcmVnbWFwICpybTsK
-Pj4gwqDCoMKgwqDCoCBpbnQgb2Zmc2V0LCByZXQsIGk7Cj4+ICvCoMKgwqAgaW50IG1hc2ssIG1h
-c2tfd2lkdGg7Cj4+IMKgwqDCoMKgwqAgcGFyZW50ID0gb2ZfaXJxX2ZpbmRfcGFyZW50KG5wKTsK
-Pj4gwqDCoMKgwqDCoCBpZiAoIXBhcmVudCkKPj4gQEAgLTEwNTIsMTIgKzEwNTUsMjEgQEAgc3Rh
-dGljIGludCBzdG0zMl9wY3RybF9kdF9zZXR1cF9pcnEoc3RydWN0IAo+PiBwbGF0Zm9ybV9kZXZp
-Y2UgKnBkZXYsCj4+IMKgwqDCoMKgwqAgaWYgKHJldCkKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJl
-dHVybiByZXQ7Cj4+ICvCoMKgwqAgcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzJfaW5kZXgobnAs
-ICJzdCxzeXNjZmciLCAyLCAmbWFzayk7Cj4+ICvCoMKgwqAgaWYgKHJldCkKPj4gK8KgwqDCoMKg
-wqDCoMKgIG1hc2sgPSBTWVNDRkdfSVJRTVVYX01BU0s7Cj4+ICsKPj4gK8KgwqDCoCBtYXNrX3dp
-ZHRoID0gZmxzKG1hc2spOwo+PiArCj4+IMKgwqDCoMKgwqAgZm9yIChpID0gMDsgaSA8IFNUTTMy
-X0dQSU9fUElOU19QRVJfQkFOSzsgaSsrKSB7Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3Qg
-cmVnX2ZpZWxkIG11eDsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIG11eC5yZWcgPSBvZmZzZXQgKyAo
-aSAvIDQpICogNDsKPj4gLcKgwqDCoMKgwqDCoMKgIG11eC5sc2IgPSAoaSAlIDQpICogNDsKPj4g
-LcKgwqDCoMKgwqDCoMKgIG11eC5tc2IgPSBtdXgubHNiICsgMzsKPj4gK8KgwqDCoMKgwqDCoMKg
-IG11eC5sc2IgPSAoaSAlIDQpICogbWFza193aWR0aDsKPj4gK8KgwqDCoMKgwqDCoMKgIG11eC5t
-c2IgPSBtdXgubHNiICsgbWFza193aWR0aCAtIDE7Cj4+ICsKPj4gK8KgwqDCoMKgwqDCoMKgIGRl
-dl9kYmcoZGV2LCAiaXJxbXV4JWQ6IHJlZzolI3gsIGxzYjolZCwgbXNiOiVkXG4iLAo+PiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCBpLCBtdXgucmVnLCBtdXgubHNiLCBtdXgubXNiKTsKPj4gwqDC
-oMKgwqDCoMKgwqDCoMKgIHBjdGwtPmlycW11eFtpXSA9IGRldm1fcmVnbWFwX2ZpZWxkX2FsbG9j
-KGRldiwgcm0sIG11eCk7Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoSVNfRVJSKHBjdGwtPmly
-cW11eFtpXSkpCj4+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
-LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9saW51eC1hcm0ta2VybmVsCg==
+Hi Anson,
+
+On Mon, Jul 16, 2018 at 3:14 AM, Anson Huang <anson.huang@nxp.com> wrote:
+
+> OK, since i.MX7D has same GPIO type as i.MX35, to make it simple, I just added
+> a flag to indicate whether it supports save/restore, only i.MX7D enables
+
+In imx7s.dtsi the gpio nodes have:
+
+compatible = "fsl,imx7d-gpio", "fsl,imx35-gpio";
+
+If you add fsl,imx7d-gpio entry in the gpio driver, then the match
+will be done against "fsl,imx7d-gpio" since it is more specific.
+
+Then in the mx8 dts you can add:
+
+compatible = "fsl,imx8m-gpio", "fsl,imx7d-gpio";
+
+and it will also match the more generic "fsl,imx7d-gpio" compatible.
+
+> the flag now, since other i.MX8 SoCs' dts is NOT upstreamed yet, so I did NOT add
+> support for i.MX8 SoCs, please help review V2 patch, thanks.
+
+I did not see the v2. Did you put me on Cc?
