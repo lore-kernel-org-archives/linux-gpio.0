@@ -1,14 +1,15 @@
 From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: add syscfg mask parameter
-Date: Tue, 17 Jul 2018 15:29:39 +0200
-Message-ID: <f78c73b4-2932-5304-d737-085b64c6f3af@st.com>
+Subject: Re: [PATCH 2/2] pinctrl: stm32: add syscfg mask parameter
+Date: Tue, 17 Jul 2018 15:30:08 +0200
+Message-ID: <c698126e-3b45-b5d1-b1eb-8503a06050aa@st.com>
 References: <1531821387-29845-1-git-send-email-ludovic.Barre@st.com>
- <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
+ <1531821387-29845-3-git-send-email-ludovic.Barre@st.com>
+ <4acc415d-f162-67a2-57d6-0a7defda434f@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
+In-Reply-To: <4acc415d-f162-67a2-57d6-0a7defda434f@st.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -19,41 +20,53 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ludovic Barre <ludovic.Barre@st.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Ludovic BARRE <ludovic.barre@st.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
 Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-
-
-On 07/17/2018 11:56 AM, Ludovic Barre wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
-> 
-> This patch adds mask parameter to define IRQ mux field.
-> This field could vary depend of IRQ mux selection register.
-> This parameter is needed if the mask is different of 0xf.
-> 
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
->   Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> index 9a06e1f..4d60119 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> @@ -39,9 +39,10 @@ Optional properties:
->    - reset:	  : Reference to the reset controller
->    - interrupt-parent: phandle of the interrupt parent to which the external
->      GPIO interrupts are forwarded to.
-> - - st,syscfg: Should be phandle/offset pair. The phandle to the syscon node
-> -   which includes IRQ mux selection register, and the offset of the IRQ mux
-> -   selection register.
-> + - st,syscfg: Should be phandle/offset/mask.
-> +	-The phandle to the syscon node which includes IRQ mux selection register.
-> +	-The offset of the IRQ mux selection register
-> +	-The field mask of IRQ mux, needed if different of 0xf.
->    - gpio-ranges: Define a dedicated mapping between a pin-controller and
->      a gpio controller. Format is <&phandle a b c> with:
->   	-(phandle): phandle of pin-controller.
-> 
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+CgpPbiAwNy8xNy8yMDE4IDAzOjExIFBNLCBMdWRvdmljIEJBUlJFIHdyb3RlOgo+IEhpCj4gCj4g
+YWRkIFJvYiwgSSBmb3Jnb3R0ZW4gcm9iJ3MgbWFpbC4KPiAKPiBPbiAwNy8xNy8yMDE4IDExOjU2
+IEFNLCBMdWRvdmljIEJhcnJlIHdyb3RlOgo+PiBGcm9tOiBMdWRvdmljIEJhcnJlIDxsdWRvdmlj
+LmJhcnJlQHN0LmNvbT4KPj4KPj4gVGhpcyBwYXRjaCBhZGRzIG1hc2sgcGFyYW1ldGVyIHRvIGRl
+ZmluZSBJUlEgbXV4IGZpZWxkLgo+PiBUaGlzIGZpZWxkIGNvdWxkIHZhcnkgZGVwZW5kIG9mIElS
+USBtdXggc2VsZWN0aW9uIHJlZ2lzdGVyLgo+PiBUbyBhdm9pZCBiYWNrd2FyZCBjb21wYXRpYmls
+aXR5LCB0aGUgZHJpdmVycyBzZXQKPj4gdGhlIGxlZ2FjeSB2YWx1ZSBieSBkZWZhdWx0Lgo+Pgo+
+PiBTaWduZWQtb2ZmLWJ5OiBMdWRvdmljIEJhcnJlIDxsdWRvdmljLmJhcnJlQHN0LmNvbT4KCkFj
+a2VkLWJ5OiBBbGV4YW5kcmUgVE9SR1VFIDxhbGV4YW5kcmUudG9yZ3VlQHN0LmNvbT4KCgo+PiAt
+LS0KPj4gwqAgZHJpdmVycy9waW5jdHJsL3N0bTMyL3BpbmN0cmwtc3RtMzIuYyB8IDE2ICsrKysr
+KysrKysrKysrLS0KPj4gwqAgMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDIgZGVs
+ZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvc3RtMzIvcGluY3Ry
+bC1zdG0zMi5jIAo+PiBiL2RyaXZlcnMvcGluY3RybC9zdG0zMi9waW5jdHJsLXN0bTMyLmMKPj4g
+aW5kZXggZGZlZDYwOS4uZjc1NjIzMiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3N0
+bTMyL3BpbmN0cmwtc3RtMzIuYwo+PiArKysgYi9kcml2ZXJzL3BpbmN0cmwvc3RtMzIvcGluY3Ry
+bC1zdG0zMi5jCj4+IEBAIC00Niw2ICs0Niw4IEBACj4+IMKgICNkZWZpbmUgU1RNMzJfR1BJT19Q
+SU5TX1BFUl9CQU5LIDE2Cj4+IMKgICNkZWZpbmUgU1RNMzJfR1BJT19JUlFfTElORcKgwqDCoMKg
+IDE2Cj4+ICsjZGVmaW5lIFNZU0NGR19JUlFNVVhfTUFTSyBHRU5NQVNLKDMsIDApCj4+ICsKPj4g
+wqAgI2RlZmluZSBncGlvX3JhbmdlX3RvX2JhbmsoY2hpcCkgXAo+PiDCoMKgwqDCoMKgwqDCoMKg
+wqAgY29udGFpbmVyX29mKGNoaXAsIHN0cnVjdCBzdG0zMl9ncGlvX2JhbmssIHJhbmdlKQo+PiBA
+QCAtMTAzMyw2ICsxMDM1LDcgQEAgc3RhdGljIGludCBzdG0zMl9wY3RybF9kdF9zZXR1cF9pcnEo
+c3RydWN0IAo+PiBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYsCj4+IMKgwqDCoMKgwqAgc3RydWN0IGRl
+dmljZSAqZGV2ID0gJnBkZXYtPmRldjsKPj4gwqDCoMKgwqDCoCBzdHJ1Y3QgcmVnbWFwICpybTsK
+Pj4gwqDCoMKgwqDCoCBpbnQgb2Zmc2V0LCByZXQsIGk7Cj4+ICvCoMKgwqAgaW50IG1hc2ssIG1h
+c2tfd2lkdGg7Cj4+IMKgwqDCoMKgwqAgcGFyZW50ID0gb2ZfaXJxX2ZpbmRfcGFyZW50KG5wKTsK
+Pj4gwqDCoMKgwqDCoCBpZiAoIXBhcmVudCkKPj4gQEAgLTEwNTIsMTIgKzEwNTUsMjEgQEAgc3Rh
+dGljIGludCBzdG0zMl9wY3RybF9kdF9zZXR1cF9pcnEoc3RydWN0IAo+PiBwbGF0Zm9ybV9kZXZp
+Y2UgKnBkZXYsCj4+IMKgwqDCoMKgwqAgaWYgKHJldCkKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJl
+dHVybiByZXQ7Cj4+ICvCoMKgwqAgcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzJfaW5kZXgobnAs
+ICJzdCxzeXNjZmciLCAyLCAmbWFzayk7Cj4+ICvCoMKgwqAgaWYgKHJldCkKPj4gK8KgwqDCoMKg
+wqDCoMKgIG1hc2sgPSBTWVNDRkdfSVJRTVVYX01BU0s7Cj4+ICsKPj4gK8KgwqDCoCBtYXNrX3dp
+ZHRoID0gZmxzKG1hc2spOwo+PiArCj4+IMKgwqDCoMKgwqAgZm9yIChpID0gMDsgaSA8IFNUTTMy
+X0dQSU9fUElOU19QRVJfQkFOSzsgaSsrKSB7Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3Qg
+cmVnX2ZpZWxkIG11eDsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIG11eC5yZWcgPSBvZmZzZXQgKyAo
+aSAvIDQpICogNDsKPj4gLcKgwqDCoMKgwqDCoMKgIG11eC5sc2IgPSAoaSAlIDQpICogNDsKPj4g
+LcKgwqDCoMKgwqDCoMKgIG11eC5tc2IgPSBtdXgubHNiICsgMzsKPj4gK8KgwqDCoMKgwqDCoMKg
+IG11eC5sc2IgPSAoaSAlIDQpICogbWFza193aWR0aDsKPj4gK8KgwqDCoMKgwqDCoMKgIG11eC5t
+c2IgPSBtdXgubHNiICsgbWFza193aWR0aCAtIDE7Cj4+ICsKPj4gK8KgwqDCoMKgwqDCoMKgIGRl
+dl9kYmcoZGV2LCAiaXJxbXV4JWQ6IHJlZzolI3gsIGxzYjolZCwgbXNiOiVkXG4iLAo+PiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBpLCBtdXgucmVnLCBtdXgubHNiLCBtdXgubXNiKTsKPj4gwqDC
+oMKgwqDCoMKgwqDCoMKgIHBjdGwtPmlycW11eFtpXSA9IGRldm1fcmVnbWFwX2ZpZWxkX2FsbG9j
+KGRldiwgcm0sIG11eCk7Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoSVNfRVJSKHBjdGwtPmly
+cW11eFtpXSkpCj4+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
+LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9saW51eC1hcm0ta2VybmVsCg==
