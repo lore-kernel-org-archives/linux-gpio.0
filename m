@@ -1,14 +1,14 @@
-From: Ludovic BARRE <ludovic.barre@st.com>
-Subject: Re: [PATCH 2/2] pinctrl: stm32: add syscfg mask parameter
-Date: Tue, 17 Jul 2018 15:11:22 +0200
-Message-ID: <4acc415d-f162-67a2-57d6-0a7defda434f@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: add syscfg mask parameter
+Date: Tue, 17 Jul 2018 15:29:39 +0200
+Message-ID: <f78c73b4-2932-5304-d737-085b64c6f3af@st.com>
 References: <1531821387-29845-1-git-send-email-ludovic.Barre@st.com>
- <1531821387-29845-3-git-send-email-ludovic.Barre@st.com>
+ <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1531821387-29845-3-git-send-email-ludovic.Barre@st.com>
+In-Reply-To: <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -19,70 +19,41 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org
+To: Ludovic Barre <ludovic.Barre@st.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi
 
-add Rob, I forgotten rob's mail.
 
 On 07/17/2018 11:56 AM, Ludovic Barre wrote:
 > From: Ludovic Barre <ludovic.barre@st.com>
 > 
 > This patch adds mask parameter to define IRQ mux field.
 > This field could vary depend of IRQ mux selection register.
-> To avoid backward compatibility, the drivers set
-> the legacy value by default.
+> This parameter is needed if the mask is different of 0xf.
 > 
 > Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 > ---
->   drivers/pinctrl/stm32/pinctrl-stm32.c | 16 ++++++++++++++--
->   1 file changed, 14 insertions(+), 2 deletions(-)
+>   Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> index dfed609..f756232 100644
-> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> @@ -46,6 +46,8 @@
->   #define STM32_GPIO_PINS_PER_BANK 16
->   #define STM32_GPIO_IRQ_LINE	 16
->   
-> +#define SYSCFG_IRQMUX_MASK GENMASK(3, 0)
-> +
->   #define gpio_range_to_bank(chip) \
->   		container_of(chip, struct stm32_gpio_bank, range)
->   
-> @@ -1033,6 +1035,7 @@ static int stm32_pctrl_dt_setup_irq(struct platform_device *pdev,
->   	struct device *dev = &pdev->dev;
->   	struct regmap *rm;
->   	int offset, ret, i;
-> +	int mask, mask_width;
->   
->   	parent = of_irq_find_parent(np);
->   	if (!parent)
-> @@ -1052,12 +1055,21 @@ static int stm32_pctrl_dt_setup_irq(struct platform_device *pdev,
->   	if (ret)
->   		return ret;
->   
-> +	ret = of_property_read_u32_index(np, "st,syscfg", 2, &mask);
-> +	if (ret)
-> +		mask = SYSCFG_IRQMUX_MASK;
-> +
-> +	mask_width = fls(mask);
-> +
->   	for (i = 0; i < STM32_GPIO_PINS_PER_BANK; i++) {
->   		struct reg_field mux;
->   
->   		mux.reg = offset + (i / 4) * 4;
-> -		mux.lsb = (i % 4) * 4;
-> -		mux.msb = mux.lsb + 3;
-> +		mux.lsb = (i % 4) * mask_width;
-> +		mux.msb = mux.lsb + mask_width - 1;
-> +
-> +		dev_dbg(dev, "irqmux%d: reg:%#x, lsb:%d, msb:%d\n",
-> +			i, mux.reg, mux.lsb, mux.msb);
->   
->   		pctl->irqmux[i] = devm_regmap_field_alloc(dev, rm, mux);
->   		if (IS_ERR(pctl->irqmux[i]))
+> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> index 9a06e1f..4d60119 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> @@ -39,9 +39,10 @@ Optional properties:
+>    - reset:	  : Reference to the reset controller
+>    - interrupt-parent: phandle of the interrupt parent to which the external
+>      GPIO interrupts are forwarded to.
+> - - st,syscfg: Should be phandle/offset pair. The phandle to the syscon node
+> -   which includes IRQ mux selection register, and the offset of the IRQ mux
+> -   selection register.
+> + - st,syscfg: Should be phandle/offset/mask.
+> +	-The phandle to the syscon node which includes IRQ mux selection register.
+> +	-The offset of the IRQ mux selection register
+> +	-The field mask of IRQ mux, needed if different of 0xf.
+>    - gpio-ranges: Define a dedicated mapping between a pin-controller and
+>      a gpio controller. Format is <&phandle a b c> with:
+>   	-(phandle): phandle of pin-controller.
 > 
+Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
