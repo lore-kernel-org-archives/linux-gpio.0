@@ -1,62 +1,55 @@
 From: Yixun Lan <yixun.lan@amlogic.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: meson-g12a: add pinctrl driver support
-Date: Tue, 17 Jul 2018 11:06:26 +0800
-Message-ID: <b7cee823-7515-c80e-0664-7f3eee94e245@amlogic.com>
-References: <20180714232754.5402-1-yixun.lan@amlogic.com>
- <20180714232754.5402-3-yixun.lan@amlogic.com>
- <1531671413.2708.223.camel@baylibre.com>
- <4182fb4b-5ddb-cde6-7508-f1f1c52a4776@amlogic.com>
- <1531734867.12853.45.camel@baylibre.com>
+Subject: Re: [PATCH 3/3] pinctrl: meson-g12a: add pinctrl driver support
+Date: Tue, 17 Jul 2018 14:55:32 +0800
+Message-ID: <19a2b2b1-42a0-9262-4271-f6d6ddef00b2@amlogic.com>
+References: <20180704224511.29350-1-yixun.lan@amlogic.com>
+ <20180704224511.29350-4-yixun.lan@amlogic.com>
+ <CAFBinCCvk_0-sZJLoa5DftYgRhpVfp8zOHZ+iOG2_DDuaeO=xA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531734867.12853.45.camel@baylibre.com>
+In-Reply-To: <CAFBinCCvk_0-sZJLoa5DftYgRhpVfp8zOHZ+iOG2_DDuaeO=xA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: yixun.lan@amlogic.com, Xingyu Chen <xingyu.chen@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: yixun.lan@amlogic.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, robh@kernel.org, Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, carlo@caione.org, linux-amlogic@lists.infradead.org, xingyu.chen@amlogic.com, jbrunet@baylibre.com
 List-Id: linux-gpio@vger.kernel.org
 
 
-HI Jerome
+HI Martin
 
+On 07/14/18 23:30, Martin Blumenstingl wrote:
+> Hi Yixun,
+> 
+> On Wed, Jul 4, 2018 at 4:50 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
+>>
+>> Add the pinctrl driver for Meson-G12A SoC which share the similar IP as
+>> the previous Meson-AXG SoC.
+> my understanding is that:
+> - AXG and G12A use the same mechanism (register layout) to configure
+> the pin controller
+> - however, the pin mapping differs between AXG and G12A (because G12A
+> has more pins in the GPIOZ bank, G12A has a GPIOH bank which AXG
+> doesn't have at all, G12A has less pins in the GPIOA and GPIOX
+>  banks than AXG and finally AXG has a GPIOY bank which G12A doesn't have)
+> 
+> maybe you can update the commit description to make it clear that
+> - "similar IP" means that the pinmux ops (register layout) are the same
+> - a new driver is needed due to the differences in the pins
+> 
+exactly! thanks for this input
 
-On 07/16/18 17:54, Jerome Brunet wrote:
-> 
->>>> +/* uart_ao_a_ee */
->>>> +static const unsigned int uart_ao_rx_a_c2_pins[]    = { GPIOC_2 };
->>>> +static const unsigned int uart_ao_tx_a_c3_pins[]    = { GPIOC_3 };
->>>
->>> Same comment as Martin about naming consistency ... drop c2 and c3 here.
->>>
->>
->> there is already uart_ao_rx_a_pins[]  uart_ao_tx_a_pins[] , see
->>
->>  794 static const unsigned int uart_ao_tx_a_pins[]           = {
->> GPIOAO_0 };
->>  795 static const unsigned int uart_ao_rx_a_pins[]           = {
->> GPIOAO_1 };
->>
->> in the G12A ASIC design, some AO device (from function perspective)
->> route the pin to EE domain, for maximize pin mux utilization.
->>
->> if you don't like this naming scheme, I could rename it into
->>   uart_ao_rx_a_ee_pins[]
->>   uart_ao_tx_a_ee_pins[]
->>
-> 
-> What we are asking when requesting consistency is to respect a scheme.
-> 
-> 1) If the pin function is available only once:
->     ${FUNCTION}_${PINFUNC}
-> 2) If the pin function is available on the several banks
->     ${FUNCTION}_${PINFUNC}_${BANK}
-> 3)  If the pin function is available on the several pins of the same bank
->     ${FUNCTION}_${PINfFUNC}_${BANK}${PINNUN}
-> 
+> I am assuming that the pin function names are taken from the
+> datasheets (as I don't have access to the datasheets of this SoC)
+> these names are slightly inconsistent, but if it's what's written in
+> the datasheet then I'm fine with it.
+> an example (there are too many places to name them all):
+> "uart_rx_ao_a" (this is for the RX line of the uart_ao_a controller)
+yes, the name is taken from the datasheet, so this chaos is actually
+coming from the datasheet..
 
-to be more accurate, I extend the syntax to
-
+as I'm writing in another thread, we are using follow syntax to do the
+naming.
 ${FUNCTION}_${DOMAIN}_${PORT}_${PINFUNC}_${BANK}${PINNUM}
 
 take " uart_ao_a_tx_c" as an example
@@ -68,264 +61,216 @@ BANK = C (may omit if only one BANK)
 PINNUM = ? (only if two more same function in one BANK)
 
 
-previous in AXG driver we follow scheme
-${FUNCTION}_${DOMAIN}_${PINFUNC}_${PORT}_${BANK}${PINNUM}
-
-which may bring confusion, since both PORT and BANK may use alphabet
-character, it's hard to tell which is PORT or BANK at first glance.
-even worse, sometimes either of PORT or BANK may be omitted..
+I'm trying to fix this in code level to make it slightly more
+consistent. and yes, we raised this issue to internal ASIC team, hope
+they can improve this in next generation SoC..
 
 
-> Either your function is uart_ao_a_ee and it is available only once then
-> you should drop  c2 and c3
-> 
-> uart_ao_a_ee_rx and uart_ao_a_ee_tx
-> 
-> or the function is uart_ao_a which is available on ao and c bank then name
-> should be 
-> 
-> uart_ao_a_rx_c, uart_ao_a_tx_c,
-> 
-we will take this way, has a note says it in the BANK-C sounds more
-accurate,
+> vs "pwm_ao_a_hiz" (this is for the "HIZ" line of the the pwm_ao_a
+> controller) -> to have a consistent naming it would either have to be
+> "uart_ao_a_rx" or "pwm_hiz_ao_a"
+indeed, we pick 'pwm_ao_a_hiz'
 
 > 
->> which mean uart_ao rx pin at port A route to EE domain's physical pin.
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> with the few notes fixed (see below):
+> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> 
+thanks
+
+>> ---
+>>  drivers/pinctrl/meson/Kconfig              |    6 +
+>>  drivers/pinctrl/meson/Makefile             |    1 +
+>>  drivers/pinctrl/meson/pinctrl-meson-g12a.c | 1432 ++++++++++++++++++++
+>>  3 files changed, 1439 insertions(+)
+>>  create mode 100644 drivers/pinctrl/meson/pinctrl-meson-g12a.c
 >>
-> 
-> [...]
-> 
+>> diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
+>> index c80951d6caff..9ab537eb78a3 100644
+>> --- a/drivers/pinctrl/meson/Kconfig
+>> +++ b/drivers/pinctrl/meson/Kconfig
+>> @@ -47,4 +47,10 @@ config PINCTRL_MESON_AXG
+>>  config PINCTRL_MESON_AXG_PMX
+>>         bool
 >>
->>>> c const unsigned int pwm_f_h_pins[]            = { GPIOH_5 };
->>>> +
->>>> +/* cec_ao_ee */
->>>> +static const unsigned int cec_ao_a_ee_pins[]                = { GPIOH_3 };
->>>> +static const unsigned int cec_ao_b_ee_pins[]                = { GPIOH_3 };
->>>
->>> Naming consistency : cec_ao_ee_a ? cec_ao_ee_b ?
->>>
->>
->> I'd prefer the original version, which mean cec_ao controller at port a
->> route to EE domain's physical pin.
->>
->> I would check this driver to see if there is inconsistency.
+>> +config PINCTRL_MESON_G12A
+>> +       bool "Meson g12a Soc pinctrl driver"
+>> +       depends on ARM64
+>> +       select PINCTRL_MESON_AXG_PMX
+>> +       default y
+>> +
+>>  endif
+>> diff --git a/drivers/pinctrl/meson/Makefile b/drivers/pinctrl/meson/Makefile
+>> index 3c6580c2d9d7..cf283f48f9d8 100644
+>> --- a/drivers/pinctrl/meson/Makefile
+>> +++ b/drivers/pinctrl/meson/Makefile
+>> @@ -6,3 +6,4 @@ obj-$(CONFIG_PINCTRL_MESON_GXBB) += pinctrl-meson-gxbb.o
+>>  obj-$(CONFIG_PINCTRL_MESON_GXL) += pinctrl-meson-gxl.o
+>>  obj-$(CONFIG_PINCTRL_MESON_AXG_PMX) += pinctrl-meson-axg-pmx.o
+>>  obj-$(CONFIG_PINCTRL_MESON_AXG) += pinctrl-meson-axg.o
+>> +obj-$(CONFIG_PINCTRL_MESON_G12A) += pinctrl-meson-g12a.o
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+>> new file mode 100644
+>> index 000000000000..2711bad5d252
+>> --- /dev/null
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+>> @@ -0,0 +1,1432 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+>> +/*
+>> + * Pin controller and GPIO driver for Amlogic Meson G12A SoC.
+>> + *
+>> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+>> + * Author: Xingyu Chen <xingyu.chen@amlogic.com>
+>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> same as with the dt-bindings patch: do we also need a "Signed-off-by"
+> from Xingyu Chen?
 > 
-> Then the function is CEC_AO not CEC_AO_EE.
+sure, will do this
+
+>> + */
+>> +
+>> +#include <dt-bindings/gpio/meson-g12a-gpio.h>
+>> +#include "pinctrl-meson.h"
+>> +#include "pinctrl-meson-axg-pmx.h"
+
+[,,.]
+>> +
+>> +/* pwm_a */
+>> +static const unsigned int pwm_a_pins[]                 = { GPIOX_6 };
+>> +
+>> +/* pwm_b */
+>> +static const unsigned int pwm_b_x7_pins[]              = { GPIOX_7 };
+>> +static const unsigned int pwm_b_x19_pins[]             = { GPIOX_19 };
+>> +
+>> +/* pwm_c */
+>> +static const unsigned int pwm_c_c4_pins[]              = { GPIOC_4 };
+> this could just be called "pwm_c_c_pins" because it appears only once
+> in the C bank (similar to iso7816_clk_c_pins above)
+> I suggest you only change this if another reviewer thinks that it's
+> worth changing it
+
+good catch!
+
+it's worth to do the change, we actually follow the rule to keep the
+name short (enough to differentiate each other)
+
 > 
-> Either the function is cec_ao_ee of cell A and B then name should be 
+>> +static const unsigned int pwm_c_x5_pins[]              = { GPIOX_5 };
+>> +static const unsigned int pwm_c_x8_pins[]              = { GPIOX_8 };
+>> +
+>> +/* pwm_d */
+>> +static const unsigned int pwm_d_x3_pins[]              = { GPIOX_3 };
+>> +static const unsigned int pwm_d_x6_pins[]              = { GPIOX_6 };
+>> +
+>> +/* pwm_e */
+>> +static const unsigned int pwm_e_pins[]                 = { GPIOX_16 };
+>> +
+>> +/* pwm_f */
+>> +static const unsigned int pwm_f_x_pins[]               = { GPIOX_7 };
+>> +static const unsigned int pwm_f_h_pins[]               = { GPIOH_5 };
+>> +
+>> +/* cec_ao_ee */
+>> +static const unsigned int cec_ao_a_ee_pins[]           = { GPIOH_3 };
+>> +static const unsigned int cec_ao_b_ee_pins[]           = { GPIOH_3 };
+> uart_ao_a_ee above uses "uart_ao_rx_a_c2_pins" instead of "uart_ao_rx_a_ee_pins"
+> I'm not sure which one is better, but it would be good if this was consistent
 > 
-> cec_ao_ee_a and cec_ao_ee_b
+as mentioned above, we try to rename to uart_ao_a_rx_c_pins and
+cec_ao_a_h_pins/cec_ao_b_h_pins here.
+
+>> +
+>> +/* jtag_b */
+>> +static const unsigned int jtag_b_tdo_pins[]            = { GPIOC_0 };
+>> +static const unsigned int jtag_b_tdi_pins[]            = { GPIOC_1 };
+>> +static const unsigned int jtag_b_clk_pins[]            = { GPIOC_4 };
+>> +static const unsigned int jtag_b_tms_pins[]            = { GPIOC_5 };
+>> +
+>> +/* bt565 */
+>> +static const unsigned int bt565_a_vs_pins[]            = { GPIOZ_0 };
+>> +static const unsigned int bt565_a_hs_pins[]            = { GPIOZ_1 };
+>> +static const unsigned int bt565_a_clk_pins[]           = { GPIOZ_3 };
+>> +static const unsigned int bt565_a_din0_pins[]          = { GPIOZ_4 };
+>> +static const unsigned int bt565_a_din1_pins[]          = { GPIOZ_5 };
+>> +static const unsigned int bt565_a_din2_pins[]          = { GPIOZ_6 };
+>> +static const unsigned int bt565_a_din3_pins[]          = { GPIOZ_7 };
+>> +static const unsigned int bt565_a_din4_pins[]          = { GPIOZ_8 };
+>> +static const unsigned int bt565_a_din5_pins[]          = { GPIOZ_9 };
+>> +static const unsigned int bt565_a_din6_pins[]          = { GPIOZ_10 };
+>> +static const unsigned int bt565_a_din7_pins[]          = { GPIOZ_11 };
+
+[...]
+
+>> +/* uart_ao_a */
+>> +static const unsigned int uart_ao_tx_a_pins[]          = { GPIOAO_0 };
+>> +static const unsigned int uart_ao_rx_a_pins[]          = { GPIOAO_1 };
+>> +static const unsigned int uart_ao_cts_a_pins[]         = { GPIOE_0 };
+>> +static const unsigned int uart_ao_rts_a_pins[]         = { GPIOE_1 };
+>> +
+>> +/* uart_ao_b */
+>> +static const unsigned int uart_ao_tx_b_2_pins[]                = { GPIOAO_2 };
+>> +static const unsigned int uart_ao_rx_b_3_pins[]                = { GPIOAO_3 };
+>> +
+>> +static const unsigned int uart_ao_tx_b_8_pins[]                = { GPIOAO_8 };
+>> +static const unsigned int uart_ao_rx_b_9_pins[]                = { GPIOAO_9 };
+>> +
+>> +static const unsigned int uart_ao_cts_b_pins[]         = { GPIOE_0 };
+>> +static const unsigned int uart_ao_rts_b_pins[]         = { GPIOE_1 };
+>> +
+>> +/* i2c_ao */
+>> +static const unsigned int i2c_ao_sck_pins[]            = { GPIOAO_2 };
+>> +static const unsigned int i2c_ao_sda_pins[]            = { GPIOAO_3 };
+>> +
+>> +static const unsigned int i2c_ao_sck_e_pins[]          = { GPIOE_0 };
+>> +static const unsigned int i2c_ao_sda_e_pins[]          = { GPIOE_1 };
+> shouldn't these two be called "...ao2..." and "...ao3..." (and so on)
+> so they match the naming of the pins in the EE controller?
 > 
-> or function is cec_ao on bank H (also available on bank ao)
-> 
-> Then name should be cec_ao_a_h, cec_ao_b_h
-> 
-Ok, we will take this way
+I'd just leave it un-changed.
+
+it's kind redundant to add another 'ao' here. give it a number is
+already enough to distinguish the pins, and if user really want to know
+the meaning they can always look into the code. we don't try to encode
+all the pin information here.
 
 
-> Please choose.
+>> +/* i2c_ao_slave */
+>> +static const unsigned int i2c_ao_slave_sck_pins[]      = { GPIOAO_2 };
+>> +static const unsigned int i2c_ao_slave_sda_pins[]      = { GPIOAO_3 };
+>> +
+>> +/* ir_in */
+>> +static const unsigned int remote_input_ao_pins[]       = { GPIOAO_5 };
+>> +
+>> +/* ir_out */
+>> +static const unsigned int remote_out_ao_pins[]         = { GPIOAO_4 };
+>> +
+>> +/* pwm_ao_a */
+>> +static const unsigned int pwm_ao_a_pins[]              = { GPIOAO_11 };
+>> +static const unsigned int pwm_ao_a_hiz_pins[]          = { GPIOAO_11 };
+>> +
+>> +/* pwm_ao_b */
+>> +static const unsigned int pwm_ao_b_pins[]              = { GPIOE_0 };
+>> +
+>> +/* pwm_ao_c */
+>> +static const unsigned int pwm_ao_c_4_pins[]            = { GPIOAO_4 };
+> should this be pwm_ao_c_ao4_pins as explained above?
 > 
->>
->>
->>>> +
->>>> +/* jtag_b */
->>>> +static const unsigned int jtag_b_tdo_pins[]         = { GPIOC_0 };
->>>> +static const unsigned int jtag_b_tdi_pins[]         = { GPIOC_1 };
->>>> +static const unsigned int jtag_b_clk_pins[]         = { GPIOC_4 };
->>>> +static const unsigned int jtag_b_tms_pins[]         = { GPIOC_5 };
->>>> +
->>>> +/* bt565 */
->>>> +static const unsigned int bt565_a_vs_pins[]         = { GPIOZ_0 };
->>>> +static const unsigned int bt565_a_hs_pins[]         = { GPIOZ_1 };
->>>> +static const unsigned int bt565_a_clk_pins[]                = { GPIOZ_3 };
->>>> +static const unsigned int bt565_a_din0_pins[]               = { GPIOZ_4 };
->>>> +static const unsigned int bt565_a_din1_pins[]               = { GPIOZ_5 };
->>>> +static const unsigned int bt565_a_din2_pins[]               = { GPIOZ_6 };
->>>> +static const unsigned int bt565_a_din3_pins[]               = { GPIOZ_7 };
->>>> +static const unsigned int bt565_a_din4_pins[]               = { GPIOZ_8 };
->>>> +static const unsigned int bt565_a_din5_pins[]               = { GPIOZ_9 };
->>>> +static const unsigned int bt565_a_din6_pins[]               = { GPIOZ_10 };
->>>> +static const unsigned int bt565_a_din7_pins[]               = { GPIOZ_11 };
->>>
->>> Why bt565_a and no bt565 only ?
->>>
->>
->> After talking to Xingyu, this naming is actually taken from the pin mux
->> documentation, it's BT565_A there.
->>
->> I'm not sure if you insist to drop the _a suffix, personally I'd just
->> leave it as it is, for better consistence with documentation.
+>> +static const unsigned int pwm_ao_c_hiz_4_pins[]                = { GPIOAO_4 };
+> do we need the "_4_" in here or is pwm_ao_c_hiz_pins sufficient?
+> I'd like someone else to give feedback on this
 > 
-> Then function name should be bt565_a
-> 
-sure, will fix this
->>
->>
->>>> +
->>>> +/* tsin_a */
->>>> +static const unsigned int tsin_a_valid_pins[]               = { GPIOX_2 };
->>>> +static const unsigned int tsin_a_sop_pins[]         = { GPIOX_1 };
->>>> +static const unsigned int tsin_a_din0_pins[]                = { GPIOX_0 };
->>>> +static const unsigned int tsin_a_clk_pins[]         = { GPIOX_3 };
->>>> +
->>>> +/* tsin_b */
->>>> +static const unsigned int tsin_b_valid_x_pins[]             = { GPIOX_9 };
->>>> +static const unsigned int tsin_b_sop_x_pins[]               = { GPIOX_8 };
->>>> +static const unsigned int tsin_b_din0_x_pins[]              = { GPIOX_10 };
->>>> +static const unsigned int tsin_b_clk_x_pins[]               = { GPIOX_11 };
->>>> +
->>>> +static const unsigned int tsin_b_valid_z_pins[]             = { GPIOZ_2 };
->>>> +static const unsigned int tsin_b_sop_z_pins[]               = { GPIOZ_3 };
->>>> +static const unsigned int tsin_b_din0_z_pins[]              = { GPIOZ_4 };
->>>> +static const unsigned int tsin_b_clk_z_pins[]               = { GPIOZ_5 };
->>>> +
->>>> +static const unsigned int tsin_b_fail_pins[]                = { GPIOZ_6 };
->>>> +static const unsigned int tsin_b_din1_pins[]                = { GPIOZ_7 };
->>>> +static const unsigned int tsin_b_din2_pins[]                = { GPIOZ_8 };
->>>> +static const unsigned int tsin_b_din3_pins[]                = { GPIOZ_9 };
->>>> +static const unsigned int tsin_b_din4_pins[]                = { GPIOZ_10 };
->>>> +static const unsigned int tsin_b_din5_pins[]                = { GPIOZ_11 };
->>>> +static const unsigned int tsin_b_din6_pins[]                = { GPIOZ_12 };
->>>> +static const unsigned int tsin_b_din7_pins[]                = { GPIOZ_13 };
->>>> +
->>>> +/* hdmitx */
->>>> +static const unsigned int hdmitx_sda_pins[]         = { GPIOH_0 };
->>>> +static const unsigned int hdmitx_sck_pins[]         = { GPIOH_1 };
->>>> +static const unsigned int hdmitx_hpd_in_pins[]              = { GPIOH_2 };
->>>> +
->>>> +/* pdm */
->>>> +static const unsigned int pdm_din0_c_pins[]         = { GPIOC_0 };
->>>> +static const unsigned int pdm_din1_c_pins[]         = { GPIOC_1 };
->>>> +static const unsigned int pdm_din2_c_pins[]         = { GPIOC_2 };
->>>> +static const unsigned int pdm_din3_c_pins[]         = { GPIOC_3 };
->>>> +static const unsigned int pdm_dclk_c_pins[]         = { GPIOC_4 };
->>>> +
->>>> +static const unsigned int pdm_din0_x_pins[]         = { GPIOX_0 };
->>>> +static const unsigned int pdm_din1_x_pins[]         = { GPIOX_1 };
->>>> +static const unsigned int pdm_din2_x_pins[]         = { GPIOX_2 };
->>>> +static const unsigned int pdm_din3_x_pins[]         = { GPIOX_3 };
->>>> +static const unsigned int pdm_dclk_x_pins[]         = { GPIOX_4 };
->>>> +
->>>> +static const unsigned int pdm_din0_z_pins[]         = { GPIOZ_2 };
->>>> +static const unsigned int pdm_din1_z_pins[]         = { GPIOZ_3 };
->>>> +static const unsigned int pdm_din2_z_pins[]         = { GPIOZ_4 };
->>>> +static const unsigned int pdm_din3_z_pins[]         = { GPIOZ_5 };
->>>> +static const unsigned int pdm_dclk_z_pins[]         = { GPIOZ_6 };
->>>> +
->>>> +static const unsigned int pdm_din0_a_pins[]         = { GPIOA_8 };
->>>> +static const unsigned int pdm_din1_a_pins[]         = { GPIOA_9 };
->>>> +static const unsigned int pdm_din2_a_pins[]         = { GPIOA_6 };
->>>> +static const unsigned int pdm_din3_a_pins[]         = { GPIOA_5 };
->>>> +static const unsigned int pdm_dclk_a_pins[]         = { GPIOA_7 };
->>>> +
->>>> +/* spdif_in */
->>>> +static const unsigned int spdif_in_h_pins[]         = { GPIOH_5 };
->>>> +static const unsigned int spdif_in_a10_pins[]               = { GPIOA_10 };
->>>> +static const unsigned int spdif_in_a12_pins[]               = { GPIOA_12 };
->>>> +
->>>> +/* spdif_out */
->>>> +static const unsigned int spdif_out_h_pins[]                = { GPIOH_4 };
->>>> +static const unsigned int spdif_out_a11_pins[]              = { GPIOA_11 };
->>>> +static const unsigned int spdif_out_a13_pins[]              = { GPIOA_13 };
->>>> +
->>>> +/* mclk0 */
->>>> +static const unsigned int mclk0_a_pins[]            = { GPIOA_0 };
->>>> +
->>>> +/* mclk1 */
->>>> +static const unsigned int mclk1_x_pins[]            = { GPIOX_5 };
->>>> +static const unsigned int mclk1_z_pins[]            = { GPIOZ_8 };
->>>> +static const unsigned int mclk1_a_pins[]            = { GPIOA_11 };
->>>> +
->>>> +/* tdma_in */
->>>> +static const unsigned int tdma_slv_sclk_pins[]              = { GPIOX_11 };
->>>> +static const unsigned int tdma_slv_fs_pins[]                = { GPIOX_10 };
->>>> +static const unsigned int tdma_din0_pins[]          = { GPIOX_9 };
->>>> +static const unsigned int tdma_din1_pins[]          = { GPIOX_8 };
->>>> +
->>>> +/* tdma_out */
->>>> +static const unsigned int tdma_sclk_pins[]          = { GPIOX_11 };
->>>> +static const unsigned int tdma_fs_pins[]            = { GPIOX_10 };
->>>> +static const unsigned int tdma_dout0_pins[]         = { GPIOX_9 };
->>>> +static const unsigned int tdma_dout1_pins[]         = { GPIOX_8 };
->>>> +
->>>> +/* tdmb_in */
->>>> +static const unsigned int tdmb_slv_sclk_pins[]              = { GPIOA_1 };
->>>> +static const unsigned int tdmb_slv_fs_pins[]                = { GPIOA_2 };
->>>
->>> tdm slave and master don't belong in a tdmin group or tdmout group.
->>> Both tdmin and tdmout use this clock. You should have only one function (tdm)
->>> and not two 
->>>
->>
->> there are a few comments relate to tdm iteam, let me rephase as
->> following, see if it's correct
->>
->> we could divide tdm funtion into four part (same in pinctrl driver):
->> a) tdm clk
->> b) tdm data out
->> c) tdm clk slv
->> d) tdm data in
->>
->> the combination can be like this from the use case perspective:
->> a + b, a + d, c + b, c + d
->>
->> so in this patch, we could write as
->> tdm_ao_b_clk_groups[]
->> tdm_ao_b_clk_slv_groups[]
->> tdm_ao_b_data_in_groups[]
->> tdm_ao_b_data_out_groups[]
->>
->> look into the pin mux documentation, the tdm_ao_b clock function is set
->> by value=5, while tdm_ao_b clock_slv functioin is set by value=6.
-> 
-> I'm sorry but I don't agree with this.
-> When you create your sound DAI driver, your going to need all the pins. They
-> provide the TDM interface function. Data input pins of the TDM without the
-> clocks are useless. PDM is exactly the same and you've done it correctly.
-> 
-> Looks how it is done in the AXG.
-> 
-oh, I think I understand this, you mean to put all pins in one group,
-then select pins & function in DT
+I will drop _4, thanks for catching this.
 
->>
->>>> +static const unsigned int tdmb_din0_pins[]          = { GPIOA_3 };
->>>> +static const unsigned int tdmb_din1_pins[]          = { GPIOA_4 };
->>>> +static const unsigned int tdmb_din2_pins[]          = { GPIOA_5 };
->>>> +static const unsigned int tdmb_din3_a_pins[]                = { GPIOA_6 };
->>>> +static const unsigned int tdmb_din3_h_pins[]                = { GPIOH_5 };
->>>> +
->>>>
+>> +static const unsigned int pwm_ao_c_6_pins[]            = { GPIOAO_6 };
+> should this be pwm_ao_c_ao6_pins as explained above?
 > 
-> [...]
+>> +
+>> +/* pwm_ao_d */
+>> +static const unsigned int pwm_ao_d_5_pins[]            = { GPIOAO_5 };
+>> +static const unsigned int pwm_ao_d_10_pins[]           = { GPIOAO_10 };
+> ..ao5... and ..ao10.. here too?
+I will just leave as it is, ditto
 > 
->>>> +
->>>> +/* uart_ao_a */
->>>> +static const unsigned int uart_ao_tx_a_pins[]               = { GPIOAO_0 };
->>>> +static const unsigned int uart_ao_rx_a_pins[]               = { GPIOAO_1 };
->>>> +static const unsigned int uart_ao_cts_a_pins[]              = { GPIOE_0 };
->>>> +static const unsigned int uart_ao_rts_a_pins[]              = { GPIOE_1 };
->>>> +
->>>
->>> consistency please: uart_ao_a_{tx,rx,cts,rts}
->>
->> I'm confused here, just checked the naming scheme, previous
->> in gxbb, gxl, we use:
->>   drivers/pinctrl/meson/pinctrl-meson-gxbb.c
->>   line 267: uart_tx_ao_a_pins[]
->>
->> in axg (code I pushed), use:
->>   drivers/pinctrl/meson/pinctrl-meson-axg.c
->>   line 225: uart_ao_tx_b_z_pins[]
->>
->> I do not against to change the naming scheme, so long as we could reach
->> a agreement first, and if we do the change, should we fix the old code?
->> (which will cause the DT change)
-> 
-> My bad. I was wrong about that one.
-> 
-
-actually, your word has some value point, see my comments about the
-naming syntax.
-
-Yixun
+>> +static const unsigned int pwm_ao_d_e_pins[]            = { GPIOE_1 };
+>> +
+>> +/* jtag_a */
+.
