@@ -1,45 +1,35 @@
-From: Ludovic Barre <ludovic.Barre@st.com>
-Subject: [PATCH 1/2] dt-bindings: pinctrl: add syscfg mask parameter
-Date: Tue, 17 Jul 2018 11:56:26 +0200
-Message-ID: <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
-References: <1531821387-29845-1-git-send-email-ludovic.Barre@st.com>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: [PATCH 2/2] pinctrl/amd: use byte access to clear irq/wake status bits
+Date: Tue, 17 Jul 2018 07:30:22 -0500
+Message-ID: <CAD8Lp446Zu=EhdzRE9pEoskMWeOHOovoAJ8qtrovEuZ2E7Z5VQ@mail.gmail.com>
+References: <20180717005719.258905-1-djkurtz@chromium.org> <20180717005719.258905-2-djkurtz@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531821387-29845-1-git-send-email-ludovic.Barre@st.com>
+In-Reply-To: <20180717005719.258905-2-djkurtz@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Ken Xue <Ken.Xue@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+On Mon, Jul 16, 2018 at 7:57 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
+> Commit 6afb10267c1692 ("pinctrl/amd: fix masking of GPIO interrupts")
+> changed to the clearing of interrupt status bits to a RMW in a critical
+> section.  This works, but is a bit overkill.
+>
+> The relevant interrupt/wake status bits are in the Most Significant Byte
+> of a 32-bit word.  These two are the only write-able bits in this byte.
 
-This patch adds mask parameter to define IRQ mux field.
-This field could vary depend of IRQ mux selection register.
-This parameter is needed if the mask is different of 0xf.
+I don't have the hardware to test this any more, and I also don't have
+any docs to double if those are really the only writable bits, but
+looking at the existing driver code it does seem to be the case.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+I think you should retain the comment noting that the value of the
+register may have changed since it was read just a few lines above
+(and hence explaining more precisely why we make the special effort
+just to modify the MSB), just in case there is further rework of this
+code in future and we end up walking into the same trap. It was one of
+those issues that took a frustratingly long time to figure out...
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-index 9a06e1f..4d60119 100644
---- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-@@ -39,9 +39,10 @@ Optional properties:
-  - reset:	  : Reference to the reset controller
-  - interrupt-parent: phandle of the interrupt parent to which the external
-    GPIO interrupts are forwarded to.
-- - st,syscfg: Should be phandle/offset pair. The phandle to the syscon node
--   which includes IRQ mux selection register, and the offset of the IRQ mux
--   selection register.
-+ - st,syscfg: Should be phandle/offset/mask.
-+	-The phandle to the syscon node which includes IRQ mux selection register.
-+	-The offset of the IRQ mux selection register
-+	-The field mask of IRQ mux, needed if different of 0xf.
-  - gpio-ranges: Define a dedicated mapping between a pin-controller and
-    a gpio controller. Format is <&phandle a b c> with:
- 	-(phandle): phandle of pin-controller.
--- 
-2.7.4
+Thanks
+Daniel
