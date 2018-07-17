@@ -1,68 +1,60 @@
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH -stable] pinctrl: sh-pfc: r8a77970: remove SH_PFC_PIN_CFG_DRIVE_STRENGTH flag
-Date: Tue, 17 Jul 2018 17:24:17 +0200
-Message-ID: <20180717152417.8535-1-niklas.soderlund+renesas@ragnatech.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: stable@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH] gpio: tegra: Fix tegra_gpio_irq_set_type()
+Date: Tue, 17 Jul 2018 19:10:38 +0300
+Message-ID: <20180717161038.21500-1-digetx@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The datasheet does not document any registers to control drive strength,
-and no drive strength registers are for this reason described for this
-SoC. The flags indicating that drive strength can be controlled are
-however set for some pins in the driver.
+Commit 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
+broke tegra_gpio_irq_set_type() because requesting of GPIO direction must
+be done after enabling GPIO function for a pin.
 
-This leads to a NULL pointer dereference when the sh-pfc core tries to
-access the struct describing the drive strength registers, for example
-when reading the sysfs file pinconf-pins.
+This patch fixes drivers probe failure like this:
 
-Fix this by removing the SH_PFC_PIN_CFG_DRIVE_STRENGTH from all pins
+ gpio gpiochip0: (tegra-gpio): gpiochip_lock_as_irq: cannot get GPIO direction
+ tegra-gpio 6000d000.gpio: unable to lock Tegra GPIO 144 as IRQ
 
-Fixes: b92ac66a1819602b ("pinctrl: sh-pfc: Add R8A77970 PFC support")
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
+Fixes: 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-tegra.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
----
-
-Hi,
-
-This is a backport of commit 550b6f7e8cf93fc2753aa01e655ed5471012ab5a
-from Linusw linux-pinctrl.git tree. It's applicable for v4.16 and v4.17.
-
-This is my first backport patch submission for stable, please let me
-know if I can improve the format of this patch commit message or subject
-in any way.
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-index b1bb7263532b3bf9..049b374aa4ae4698 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-@@ -22,12 +22,12 @@
- #include "sh_pfc.h"
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 94396caaca75..22e7c99ed69e 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -323,13 +323,6 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 		return -EINVAL;
+ 	}
  
- #define CPU_ALL_PORT(fn, sfx)						\
--	PORT_GP_CFG_22(0, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
--	PORT_GP_CFG_28(1, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
--	PORT_GP_CFG_17(2, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
--	PORT_GP_CFG_17(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
--	PORT_GP_CFG_6(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
--	PORT_GP_CFG_15(5, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH)
-+	PORT_GP_22(0, fn, sfx),	\
-+	PORT_GP_28(1, fn, sfx),	\
-+	PORT_GP_17(2, fn, sfx),	\
-+	PORT_GP_17(3, fn, sfx),	\
-+	PORT_GP_6(4, fn, sfx),	\
-+	PORT_GP_15(5, fn, sfx)
- /*
-  * F_() : just information
-  * FM() : macro for FN_xxx / xxx_MARK
+-	ret = gpiochip_lock_as_irq(&tgi->gc, gpio);
+-	if (ret) {
+-		dev_err(tgi->dev,
+-			"unable to lock Tegra GPIO %u as IRQ\n", gpio);
+-		return ret;
+-	}
+-
+ 	spin_lock_irqsave(&bank->lvl_lock[port], flags);
+ 
+ 	val = tegra_gpio_readl(tgi, GPIO_INT_LVL(tgi, gpio));
+@@ -342,6 +335,14 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	tegra_gpio_mask_write(tgi, GPIO_MSK_OE(tgi, gpio), gpio, 0);
+ 	tegra_gpio_enable(tgi, gpio);
+ 
++	ret = gpiochip_lock_as_irq(&tgi->gc, gpio);
++	if (ret) {
++		dev_err(tgi->dev,
++			"unable to lock Tegra GPIO %u as IRQ\n", gpio);
++		tegra_gpio_disable(tgi, gpio);
++		return ret;
++	}
++
+ 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+ 		irq_set_handler_locked(d, handle_level_irq);
+ 	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
 -- 
 2.18.0
