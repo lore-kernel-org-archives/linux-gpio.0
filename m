@@ -1,35 +1,60 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: Re: [PATCH 2/2] pinctrl/amd: use byte access to clear irq/wake status bits
-Date: Tue, 17 Jul 2018 07:30:22 -0500
-Message-ID: <CAD8Lp446Zu=EhdzRE9pEoskMWeOHOovoAJ8qtrovEuZ2E7Z5VQ@mail.gmail.com>
-References: <20180717005719.258905-1-djkurtz@chromium.org> <20180717005719.258905-2-djkurtz@chromium.org>
+From: Ludovic BARRE <ludovic.barre@st.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: add syscfg mask parameter
+Date: Tue, 17 Jul 2018 15:09:33 +0200
+Message-ID: <62475855-71e4-3fd1-8f92-28236fdc16fa@st.com>
+References: <1531821387-29845-1-git-send-email-ludovic.Barre@st.com>
+ <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180717005719.258905-2-djkurtz@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Ken Xue <Ken.Xue@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 7:57 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
-> Commit 6afb10267c1692 ("pinctrl/amd: fix masking of GPIO interrupts")
-> changed to the clearing of interrupt status bits to a RMW in a critical
-> section.  This works, but is a bit overkill.
->
-> The relevant interrupt/wake status bits are in the Most Significant Byte
-> of a 32-bit word.  These two are the only write-able bits in this byte.
+Hi
 
-I don't have the hardware to test this any more, and I also don't have
-any docs to double if those are really the only writable bits, but
-looking at the existing driver code it does seem to be the case.
+add Rob, I forgotten rob's mail.
 
-I think you should retain the comment noting that the value of the
-register may have changed since it was read just a few lines above
-(and hence explaining more precisely why we make the special effort
-just to modify the MSB), just in case there is further rework of this
-code in future and we end up walking into the same trap. It was one of
-those issues that took a frustratingly long time to figure out...
-
-Thanks
-Daniel
+On 07/17/2018 11:56 AM, Ludovic Barre wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
+> 
+> This patch adds mask parameter to define IRQ mux field.
+> This field could vary depend of IRQ mux selection register.
+> This parameter is needed if the mask is different of 0xf.
+> 
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> ---
+>   Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> index 9a06e1f..4d60119 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> @@ -39,9 +39,10 @@ Optional properties:
+>    - reset:	  : Reference to the reset controller
+>    - interrupt-parent: phandle of the interrupt parent to which the external
+>      GPIO interrupts are forwarded to.
+> - - st,syscfg: Should be phandle/offset pair. The phandle to the syscon node
+> -   which includes IRQ mux selection register, and the offset of the IRQ mux
+> -   selection register.
+> + - st,syscfg: Should be phandle/offset/mask.
+> +	-The phandle to the syscon node which includes IRQ mux selection register.
+> +	-The offset of the IRQ mux selection register
+> +	-The field mask of IRQ mux, needed if different of 0xf.
+>    - gpio-ranges: Define a dedicated mapping between a pin-controller and
+>      a gpio controller. Format is <&phandle a b c> with:
+>   	-(phandle): phandle of pin-controller.
+> 
