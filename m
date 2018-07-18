@@ -1,226 +1,135 @@
-From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-Subject: Re: [RFC] Configure i.MX6 RGMII pad group control registers from
- device tree
-Date: Wed, 18 Jul 2018 15:01:02 +0200
-Message-ID: <e91b9d5c-b08c-3927-0f70-b6db9bada5ab@ysoft.com>
-References: <f5a01de5-fc81-52c1-c2ea-edb77ecff076@ysoft.com>
- <5ab5c58a-dc44-d1bc-2132-8704d05bf1de@ysoft.com>
- <AM0PR04MB42111E25172F6068F937ECCB804B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM4PR0401MB2260FB90A3B243A60D027F46FF4A0@AM4PR0401MB2260.eurprd04.prod.outlook.com>
- <1f80b97c-a0ca-8fea-4454-b7bf78dffae9@ysoft.com>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v4 0/6] Add Actions Semiconductor Owl S900 I2C support
+Date: Wed, 18 Jul 2018 21:20:00 +0530
+Message-ID: <20180718155000.GA3061@Mani-XPS-13-9360>
+References: <20180701172305.15663-1-manivannan.sadhasivam@linaro.org>
+ <20180711024502.GA4739@Mani-XPS-13-9360>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1f80b97c-a0ca-8fea-4454-b7bf78dffae9@ysoft.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180711024502.GA4739@Mani-XPS-13-9360>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Duan <fugang.duan@nxp.com>, "A.s. Dong" <aisheng.dong@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Frank Li <frank.li@nxp.com>, dl-linux-imx <linux-imx@nxp.com>
+To: wsa@the-dreams.de, andy.shevchenko@gmail.com, peda@axentia.se
+Cc: linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com, afaerber@suse.de
 List-Id: linux-gpio@vger.kernel.org
 
-On 28.6.2018 15:58, Michal Vokáč wrote:
-> On 25.6.2018 04:50, Andy Duan wrote:
->>>> On 11.6.2018 14:36, Michal Vokáč wrote:
->>>>> Ahoj,
->>>>>
->>>>> To configure individual pad's characteristics on i.MX6 SoC a
->>>>> fsl,pins = <PIN_FUNC_ID CONFIG> property can be used. Is there any
->>>>> convenient way to configure the pad group control registers?
->>>>>
->>>>> The issue is that some bits (DDR_SEL and ODT) in the individual
->>>>> RGMII pad control registers are read-only. To tweak those parameters
->>>>> (signal voltage and termination resistors) one need to write to the
->>>>> pad group control registers for the whole RGMII pad group. Namely
->>>>> IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII and
->>>>> IOMUXC_SW_PAD_CTL_GRP_RGMII_TERM. The group registers in general
->>>>> are not accessible from the list in arch/arm/boot/dts/imx6dl-pinfunc.h.
->>>>>
->>>>> I could not find any other way to change the group registers than
->>>>> hacking-in some lines into the imx6q_init_machine(void) function in
->>>>> arch/arm/mach-imx/mach-imx6q.c source. As I work towards upstreaming
->>>>> my board this should be done from my device tree or solved in some
->>>>> universal way.
->>>>>
->>>>> Any hints will be much appreciated.
->>>>> Michal
->>>>
->>>> I figured out this is more "pinctrl-imx.c" than "device-tree" related
->>>> so I am kindly adding maintainers of that file in hope somebody will
->>>> shed some light to it.
->>>>
->>>> I am diving deeper into the code and it seems there really is no
->>>> generic option to set the i.MX6 pad group control registers from device
->>>> tree. Or am I looking at the problem from a wrong angle?
->>>
->>> Yes, there's a few special pad group ctrl registers (e.g. DRAM and RGMII
->>> for mx6q) which are not added In the pinctrl driver support.
+On Wed, Jul 11, 2018 at 08:15:02AM +0530, Manivannan Sadhasivam wrote:
+> On Sun, Jul 01, 2018 at 10:52:59PM +0530, Manivannan Sadhasivam wrote:
+> > This patchset adds I2C controller support for Actions Semiconductor S900 SoC.
+> > This driver has been structured in a way such that there will be only
+> > one controller driver for the whole Owl family series (S500, S700 and
+> > S900 SoCs).
+> > 
+> > There are 6 I2C controllers with separate memory mapped register space.
+> > The I2C controller can handle atmost two messages concatenated by a
+> > repeated start via its internal address feature. Hence the driver
+> > uses this feature for messages of length greater than 1. In those cases,
+> > the first message of the combined message should be a `write` with maximum
+> > message length 6 and the second message's maximum length should be 240 bytes.
+> > 
+> > As far as the bus speed is concerned, this driver only supports
+> > Standard (100KHz) and High speed (400KHz) for now.
+> > 
+> > The pinctrl definitions are only available for I2C0, I2C1 and I2C2.
+> > With the mux option available only for I2C0.
+> > 
+> > For Bubblegum-96 board utilizing the S900 SoC, only I2C1 and I2C2 which
+> > are exposed on the Low speed expansion connector are enabled.
+> > 
+> > This series depends on the pinctrl patch [1] is still not merged by the
+> > platform maintainer Andreas but it has been reviewed by the pinctrl maintainer
+> > Linus Walleij. For the reference, I have queued up all reviewed dts patches
+> > in my tree [2] from which Andreas is picking them for 4.19.
+> > 
+> > For this series, since the dts patches will go through the ARM SoC tree,
+> > Andreas will pick it up once it is reviewed.
+> > 
+> > Thanks,
+> > Mani
+> > 
+> > [1] https://patchwork.kernel.org/patch/10322937/
+> > [2] https://git.linaro.org/people/manivannan.sadhasivam/linux.git/log/?h=s900-for-next
+> > 
 > 
-> Hi Andy and Dong! Thank you very much for your comments.
+> Hi Andy, Peter,
 > 
-> I still have quite limited knowledge about the pinctrl driver and related
-> things but AFAIK it is not like that few pad group ctrl registers are not
-> supported. I do not see any support for group control registers at all.
-> And not only for the imx6q but for all the SoC variants and other SoCs as
-> well. Am I right?
+> Just a gentle ping on this v4!
 > 
->>>> How should we deal with boards that need to configure some pad
->>>> characteristics available only through the pad group control registers?
->>>
->>> Andy,
->>> How do we handle it internally?
->> No, we don't handle the pin.
->> I remembered IC owner said It seems only RGMII 2.5v need to handle the pin.
-> 
-> That is our case. I need to use 2.5V signaling at the RGMII for
-> the connected QCA8334 switch. And also to set the terminators accordingly.
-> 
->>> There're probably two ways to do it:
->>> 1) handle it in fec driver by parsing a specific property
->>> 2) Add a new pad group into pinctrl driver support e.g.
->>> MX6Q_PAD_CTL_GRP_RGMII_TERM
->>> MX6Q_PAD_CTL_GRP_DDR_TYPE_RGMII
->>>
->>> I may prefer to 2).
-> 
-> No.1 is similar to what I am doing now. I have a DT node with custom
-> compatible string and a reg property. Then I look for that compatible from
-> imx6q_enet_init() using syscon_regmap_lookup_by_compatible("fsl,imx6-rgmii-ddrtype-gpr");
-> I do not see a chance that something like this could be accepted upstream.
-> 
-> No.2 is much more complex. IMHO it is not about adding support for a new
-> pad group. It is about adding support for pad group control registers from
-> scratch.
-> 
-> I do not mind working on a proper solution. Though as I mentioned I am
-> still not very experienced in kernel internals/APIs so I will appreciate
-> some guidance along the way. It should not be as complex as
-> handling pin muxing and all the related things though.
-> 
-> What I see as a potential problem is conflict of the usage of the "pin group"
-> term. Now "pin group" is used in pinctrl core and refers to a DT node.
-> That node associates any pins that are needed for a given functionality.
-> Those pins can actually be wired to totally different IP blocks of the SoC.
-> 
-> Whereas the pad group control register typically associates and controls
-> pins that are common to one IP block.
-> 
-> So the question is how complex such implementation should be?
-> How should the binding look like?
-> What is the proper place to parse the DT and write the registers?
-> What SoCs should be supported?
-> 
-> Se bellow my very preliminary proposal how this may look like.
-> It is meant more like a background for further discussion.
-> I am really not sure if this should be strictly solved at the imx-pinctrl
-> level or if this overlaps into the pinctrl core.
-> 
-> Thanks a lot for any additional comments,
-> Michal
+> Thanks,
+> Mani
 >
 
-Ping. Any feedback would be very much welcomed!
-Michal
-  
-> diff --git a/arch/arm/boot/dts/imx6dl-pinfunc.h b/arch/arm/boot/dts/imx6dl-pinfunc.h
-> index 37e430a..eeac9e3 100644
-> --- a/arch/arm/boot/dts/imx6dl-pinfunc.h
-> +++ b/arch/arm/boot/dts/imx6dl-pinfunc.h
-> @@ -1089,4 +1089,24 @@
->   #define MX6QDL_PAD_SD4_DAT7__UART2_RX_DATA          0x35c 0x744 0x904 0x2 0x7
->   #define MX6QDL_PAD_SD4_DAT7__GPIO2_IO15             0x35c 0x744 0x000 0x5 0x0
-> 
-> +/* Pad group control registers */
-> +#define MX6QDL_PAD_CTL_GRP_B7DS           0x748
-> +#define MX6QDL_PAD_CTL_GRP_ADDDS          0x74c
-> +#define MX6QDL_PAD_CTL_GRP_DDRMODE_CTL    0x750
-> +#define MX6QDL_PAD_CTL_GRP_DDRPKE         0x754
-> +#define MX6QDL_PAD_CTL_GRP_DDRPK          0x758
-> +#define MX6QDL_PAD_CTL_GRP_DDRHYS         0x75c
-> +#define MX6QDL_PAD_CTL_GRP_DDRMODE        0x760
-> +#define MX6QDL_PAD_CTL_GRP_B0DS           0x764
-> +#define MX6QDL_PAD_CTL_GRP_DDR_TYPE_RGMII 0x768
-> +#define MX6QDL_PAD_CTL_GRP_CTLDS          0x76c
-> +#define MX6QDL_PAD_CTL_GRP_B1DS           0x770
-> +#define MX6QDL_PAD_CTL_GRP_DDR_TYPE       0x774
-> +#define MX6QDL_PAD_CTL_GRP_B2DS           0x778
-> +#define MX6QDL_PAD_CTL_GRP_B3DS           0x77c
-> +#define MX6QDL_PAD_CTL_GRP_B4DS           0x780
-> +#define MX6QDL_PAD_CTL_GRP_B5DS           0x784
-> +#define MX6QDL_PAD_CTL_GRP_RGMII_TERM     0x788
-> +#define MX6QDL_PAD_CTL_GRP_B6DS           0x78c
-> +
->   #endif /* __DTS_IMX6DL_PINFUNC_H */
-> diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-> index 15744ad..3e9d1ba 100644
-> --- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-> @@ -467,6 +467,11 @@
->                   MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL    0x1b030
->                   MX6QDL_PAD_GPIO_16__ENET_REF_CLK    0x4001b0a8
->               >;
-> +
-> +            fsl,pin-groups = <
-> +                MX6QDL_PAD_CTL_GRP_RGMII_TERM           0xC0000
-> +                MX6QDL_PAD_CTL_GRP_DDR_TYPE_RGMII       0x100
-> +            >;
->           };
-> 
->           pinctrl_gpio_keys: gpio_keysgrp {
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-> index 1c6bb15..3c42917 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> @@ -235,6 +235,8 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
->           }
->       }
-> 
-> +    /* TODO write the pad group control registers here? */
-> +
->       return 0;
->   }
-> 
-> @@ -421,6 +423,7 @@ static const struct pinconf_ops imx_pinconf_ops = {
->    *     <mux_conf_reg input_reg mux_mode input_val>
->    */
->   #define FSL_PIN_SIZE 24
-> +#define FSL_PIN_GRP_SIZE 8
->   #define FSL_PIN_SHARE_SIZE 20
-> 
->   static int imx_pinctrl_parse_groups(struct device_node *np,
-> @@ -430,6 +433,7 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
->   {
->       const struct imx_pinctrl_soc_info *info = ipctl->info;
->       int size, pin_size;
-> +    int pin_grp_size = FSL_PIN_GRP_SIZE;
->       const __be32 *list;
->       int i;
->       u32 config;
-> @@ -531,6 +539,22 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
->                   pin->mux_mode, pin->config);
->       }
-> 
-> +    /* parse the pad control group register configuration */
-> +    list = of_get_property(np, "fsl,pin-groups", &size);
-> +
-> +    /* this binding is optional so stop here if it is not used */
-> +    if (!list)
-> +        goto out;
-> +
-> +    /* we do not check return since it's safe node passed down */
-> +    if (!size || size % pin_grp_size) {
-> +        dev_err(ipctl->dev, "Invalid fsl,pin-groups property in node %pOF\n", np);
-> +        return -EINVAL;
-> +    }
-> +
-> +    /* TODO Parse the pad group register IDs and its configuration values */
-> +
-> +out:
->       return 0;
->   }
-> -- 
-> 
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hi,
+
+Any update on this patchset?
+
+Thanks,
+Mani
+
+> > Changes in v4:
+> > 
+> > As per Andy and Peter review:
+> > 
+> > * Used spinlock for accessing most of the register access (only parts
+> >   involved sleep/long-busy-wait has been excluded)
+> > * Removed returning 0 and added -ENXIO if the msg_ptr not equals to
+> >   message length
+> > * Added DIV_ROUND_UP for setting clock frequency
+> > * Changed one non-atomic mdelay instance to usleep_range
+> > * Moved pinctrl definition patch before dts patch
+> > * Fixed the driver to support only 100KHz and 400KHz frequencies
+> > 
+> > Changes in v3:
+> > 
+> > As per Peter, Andy and Andreas review:
+> > 
+> > * Removed owl_i2c_reset function from interrupt handler since it
+> >   involves the use of delays.
+> > * Fixed the return path in owl_i2c_master_xfer and added a note
+> > * Changed "base" parameter to "reg" in owl_i2c_update_reg for better
+> >   understandability
+> > * Ordered the includes in alphabetical order
+> > * Small changes to defines and added comma at the end of struct members
+> > * Removed rendundant 0 assignment in owl_i2c_master_xfer
+> > * Changed all OWL naming convention to Owl and also changed Actions Semi
+> >   naming to Actions Semiconductor
+> > 
+> > Changes in v2:
+> > 
+> > As per Andy's review:
+> > * Modified infinite loops to fixed number of retries
+> > * Used i2c_8bit_addr_from_msg for constructing the slave address
+> > * Removed unnecessary parenthesis around defines
+> > * Modified certain dev_warn to dev_dbg
+> > * Modified the error handling to more generic pattern
+> > 
+> > * Fixed the return value in owl_i2c_master_xfer
+> > * Added MAINTAINERS patch for I2C driver and its binding
+> > 
+> > Manivannan Sadhasivam (6):
+> >   dt-bindings: i2c: Add binding for Actions Semiconductor Owl I2C
+> >     controller
+> >   arm64: dts: actions: Add pinctrl definition for S900 I2C controller
+> >   arm64: dts: actions: Add Actions Semiconductor S900 I2C controller
+> >     nodes
+> >   arm64: dts: actions: Enable I2C1 and I2C2 in Bubblegum-96 board
+> >   i2c: Add Actions Semiconductor Owl family S900 I2C driver
+> >   MAINTAINERS: Add entry for Actions Semiconductor Owl I2C driver
+> > 
+> >  .../devicetree/bindings/i2c/i2c-owl.txt       |  27 +
+> >  MAINTAINERS                                   |   2 +
+> >  .../dts/actions/s900-bubblegum-96-pins.dtsi   |  29 +
+> >  .../boot/dts/actions/s900-bubblegum-96.dts    |  11 +
+> >  arch/arm64/boot/dts/actions/s900.dtsi         |  60 +++
+> >  drivers/i2c/busses/Kconfig                    |   7 +
+> >  drivers/i2c/busses/Makefile                   |   1 +
+> >  drivers/i2c/busses/i2c-owl.c                  | 504 ++++++++++++++++++
+> >  8 files changed, 641 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-owl.txt
+> >  create mode 100644 arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
+> >  create mode 100644 drivers/i2c/busses/i2c-owl.c
+> > 
+> > -- 
+> > 2.17.1
+> > 
