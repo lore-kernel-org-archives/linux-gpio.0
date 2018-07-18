@@ -1,35 +1,32 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH V3] gpio: mxc: add power management support
-Date: Tue, 17 Jul 2018 22:34:46 -0300
-Message-ID: <CAOMZO5By77kWa_yjuuzi_0=9F0VCiuAP1bxOV__74g7nmq=XVQ@mail.gmail.com>
-References: <1531877132-14280-1-git-send-email-Anson.Huang@nxp.com>
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Subject: [PATCH v2 0/2] pinctrl: berlin: add as370 SoC support
+Date: Wed, 18 Jul 2018 13:56:13 +0800
+Message-ID: <20180718135613.1c559b9c@xhacker.debian>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531877132-14280-1-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, NXP Linux Team <Linux-imx@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Anson,
+This series is to add the Synaptics AS370 SoC pinctrl driver.
 
-On Tue, Jul 17, 2018 at 10:25 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> GPIO registers could lose context on i.MX7D, when
-> enter LPSR mode, the whole SoC will be powered off
-> except LPSR domain, GPIO banks will lose context
-> in this case, need to restore the context after
-> resume from LPSR mode.
->
-> This patch adds new compatible string for i.MX7D
-> which supports GPIO power off feature in suspend,
-> and adds the GPIO save/restore operations in noirq
-> suspend/resume phase, since GPIO is fundamental
-> module which could be used by other peripherals'
-> resume phase.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+since v1:
+ - remove MODULE_DEVICE_TABLE since the driver is non-modular. Thank
+   kbuild test robot to report this issue.
 
-Looks good for me, thanks:
+Jisheng Zhang (2):
+  dt-binding: pinctrl: berlin: document AS370 SoC pinctrl
+  pinctrl: berlin: add the as370 SoC pinctrl driver
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+ .../bindings/pinctrl/berlin,pinctrl.txt       |   3 +-
+ drivers/pinctrl/berlin/Kconfig                |   5 +
+ drivers/pinctrl/berlin/Makefile               |   1 +
+ drivers/pinctrl/berlin/pinctrl-as370.c        | 368 ++++++++++++++++++
+ 4 files changed, 376 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/pinctrl/berlin/pinctrl-as370.c
+
+-- 
+2.18.0
