@@ -1,52 +1,159 @@
-From: Anson Huang <anson.huang@nxp.com>
-Subject: RE: [PATCH V2] gpio: mxc: add power management support
-Date: Wed, 18 Jul 2018 00:54:36 +0000
-Message-ID: <AM3PR04MB13159925074BB583DD83B54DF5530@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1531721186-19417-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5D9MBOwQtKVqSD8XUtDBf9RH5+soV2jreBYHZrXzLWm6A@mail.gmail.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+Subject: [PATCH V3] gpio: mxc: add power management support
+Date: Wed, 18 Jul 2018 09:25:32 +0800
+Message-ID: <1531877132-14280-1-git-send-email-Anson.Huang@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOMZO5D9MBOwQtKVqSD8XUtDBf9RH5+soV2jreBYHZrXzLWm6A@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org
+Cc: Linux-imx@nxp.com, fabio.estevam@nxp.com
 List-Id: linux-gpio@vger.kernel.org
 
-SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
-Z21haWwuY29tXQ0KPiBTZW50OiBUdWVzZGF5LCBKdWx5IDE3LCAyMDE4IDk6NTIgUE0NCj4gVG86
-IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzogTGludXMgV2FsbGVpaiA8
-bGludXMud2FsbGVpakBsaW5hcm8ub3JnPjsgb3BlbiBsaXN0OkdQSU8gU1VCU1lTVEVNDQo+IDxs
-aW51eC1ncGlvQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWtlcm5lbCA8bGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZz47DQo+IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+IFN1
-YmplY3Q6IFJlOiBbUEFUQ0ggVjJdIGdwaW86IG14YzogYWRkIHBvd2VyIG1hbmFnZW1lbnQgc3Vw
-cG9ydA0KPiANCj4gSGkgQW5zb24sDQo+IA0KPiBbTmV4dCB0aW1lIHBsZWFzZSBwdXQgdGhlIGku
-bXggbWFpbnRhaW5lcnMgb24gQ2NdDQo+IA0KPiBPbiBNb24sIEp1bCAxNiwgMjAxOCBhdCAzOjA2
-IEFNLCBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gd3JvdGU6DQo+ID4gR1BJ
-TyByZWdpc3RlcnMgY291bGQgbG9zZSBjb250ZXh0IG9uIGkuTVg3RCwgd2hlbiBlbnRlciBMUFNS
-IG1vZGUsIHRoZQ0KPiA+IHdob2xlIFNvQyB3aWxsIGJlIHBvd2VyZWQgb2ZmIGV4Y2VwdCBMUFNS
-IGRvbWFpbiwgR1BJTyBiYW5rcyB3aWxsIGxvc2UNCj4gPiBjb250ZXh0IGluIHRoaXMgY2FzZSwg
-bmVlZCB0byByZXN0b3JlIHRoZSBjb250ZXh0IGFmdGVyIHJlc3VtZSBmcm9tDQo+ID4gTFBTUiBt
-b2RlLg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBhZGRzIEdQSU8gc2F2ZS9yZXN0b3JlIGZvciB0aG9z
-ZSBuZWNlc3NhcnkgcmVnaXN0ZXJzLCBhbmQNCj4gPiBwdXQgdGhlIHNhdmUvcmVzdG9yZSBvcGVy
-YXRpb25zIGluIG5vaXJxIHN1c3BlbmQvcmVzdW1lIHBoYXNlLCBzaW5jZQ0KPiA+IEdQSU8gaXMg
-ZnVuZGFtZW50YWwgbW9kdWxlIHdoaWNoIGNvdWxkIGJlIHVzZWQgYnkgb3RoZXIgcGVyaXBoZXJh
-bHMnDQo+ID4gcmVzdW1lIHBoYXNlLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQW5zb24gSHVh
-bmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+IA0KPiA+ICBzdGF0aWMgc3RydWN0IG14Y19ncGlv
-X2h3ZGF0YSBpbXgxX2lteDIxX2dwaW9faHdkYXRhID0geyBAQCAtNDM0LDYNCj4gPiArNDQ1LDkg
-QEAgc3RhdGljIGludCBteGNfZ3Bpb19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gZXJyOw0KPiA+ICAgICAgICAgfQ0KPiA+DQo+
-ID4gKyAgICAgICBpZiAob2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJmc2wsaW14N2QiKSkNCj4g
-PiArICAgICAgICAgICAgICAgcG9ydC0+c3VwcG9ydF9wb3dlcl9vZmYgPSB0cnVlOw0KPiANCj4g
-VGhpcyBkb2VzIG5vdCBzY2FsZSB3ZWxsIGFzIHdlIG5lZWQgdG8gc3VwcG9ydCBteDggc29vbi4N
-Cj4gDQo+IExpa2UgSSByZXBsaWVkIGluIG15IGxhc3QgbWVzc2FnZSB0aGUgYmVzdCBzb2x1dGlv
-biBoZXJlIGlzIHRvIGFkZCBhDQo+ICJmc2wsaW14N2QtZ3BpbyIgY29tcGF0aWJsZSBlbnRyeSBp
-biB0aGlzIGRyaXZlci4NCj4gDQo+IFRoZW4geW91IGNhbiBzZXQgYSBmbGFnIGluIHRoZSAiZnNs
-LGlteDdkLWdwaW8iIGNhc2UgdG8gaGFuZGxlIHRoZSAncG93ZXJfb2ZmJw0KPiBmZWF0dXJlLg0K
-PiANCj4gV2l0aCB0aGlzIG1ldGhvZCB0aGVyZSB3aWxsIGJlIG5vIG5lZWQgdG8gdG91Y2ggdGhp
-cyBkcml2ZXIgYWdhaW4gZm9yIGFkZGluZw0KPiBteDggc3VwcG9ydC4NCg0KVGhhbmtzIGZvciBk
-ZXRhaWwgc3VnZ2VzdGlvbiwgSSB3aWxsIHNlbnQgYSBWMyBwYXRjaCBhY2NvcmRpbmdseS4NCg0K
-QW5zb24uDQogDQoNCg0KDQo=
+GPIO registers could lose context on i.MX7D, when
+enter LPSR mode, the whole SoC will be powered off
+except LPSR domain, GPIO banks will lose context
+in this case, need to restore the context after
+resume from LPSR mode.
+
+This patch adds new compatible string for i.MX7D
+which supports GPIO power off feature in suspend,
+and adds the GPIO save/restore operations in noirq
+suspend/resume phase, since GPIO is fundamental
+module which could be used by other peripherals'
+resume phase.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V2:
+	Add compatible string for i.MX7D GPIO using i.MX35 type GPIO data, but
+supporting power off feature in suspend.
+ drivers/gpio/gpio-mxc.c | 73 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 2f28299..995cf0b 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -45,6 +45,15 @@ struct mxc_gpio_hwdata {
+ 	unsigned fall_edge;
+ };
+ 
++struct mxc_gpio_reg_saved {
++	u32 icr1;
++	u32 icr2;
++	u32 imr;
++	u32 gdir;
++	u32 edge_sel;
++	u32 dr;
++};
++
+ struct mxc_gpio_port {
+ 	struct list_head node;
+ 	void __iomem *base;
+@@ -55,6 +64,8 @@ struct mxc_gpio_port {
+ 	struct gpio_chip gc;
+ 	struct device *dev;
+ 	u32 both_edges;
++	struct mxc_gpio_reg_saved gpio_saved_reg;
++	bool power_off;
+ };
+ 
+ static struct mxc_gpio_hwdata imx1_imx21_gpio_hwdata = {
+@@ -143,6 +154,7 @@ static const struct of_device_id mxc_gpio_dt_ids[] = {
+ 	{ .compatible = "fsl,imx21-gpio", .data = &mxc_gpio_devtype[IMX21_GPIO], },
+ 	{ .compatible = "fsl,imx31-gpio", .data = &mxc_gpio_devtype[IMX31_GPIO], },
+ 	{ .compatible = "fsl,imx35-gpio", .data = &mxc_gpio_devtype[IMX35_GPIO], },
++	{ .compatible = "fsl,imx7d-gpio", .data = &mxc_gpio_devtype[IMX35_GPIO], },
+ 	{ /* sentinel */ }
+ };
+ 
+@@ -434,6 +446,9 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	if (of_device_is_compatible(np, "fsl,imx7d-gpio"))
++		port->power_off = true;
++
+ 	/* disable the interrupt and clear the status */
+ 	writel(0, port->base + GPIO_IMR);
+ 	writel(~0, port->base + GPIO_ISR);
+@@ -497,6 +512,8 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 
+ 	list_add_tail(&port->node, &mxc_gpio_ports);
+ 
++	platform_set_drvdata(pdev, port);
++
+ 	return 0;
+ 
+ out_irqdomain_remove:
+@@ -507,11 +524,67 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
++static void mxc_gpio_save_regs(struct mxc_gpio_port *port)
++{
++	if (!port->power_off)
++		return;
++
++	port->gpio_saved_reg.icr1 = readl(port->base + GPIO_ICR1);
++	port->gpio_saved_reg.icr2 = readl(port->base + GPIO_ICR2);
++	port->gpio_saved_reg.imr = readl(port->base + GPIO_IMR);
++	port->gpio_saved_reg.gdir = readl(port->base + GPIO_GDIR);
++	port->gpio_saved_reg.edge_sel = readl(port->base + GPIO_EDGE_SEL);
++	port->gpio_saved_reg.dr = readl(port->base + GPIO_DR);
++}
++
++static void mxc_gpio_restore_regs(struct mxc_gpio_port *port)
++{
++	if (!port->power_off)
++		return;
++
++	writel(port->gpio_saved_reg.icr1, port->base + GPIO_ICR1);
++	writel(port->gpio_saved_reg.icr2, port->base + GPIO_ICR2);
++	writel(port->gpio_saved_reg.imr, port->base + GPIO_IMR);
++	writel(port->gpio_saved_reg.gdir, port->base + GPIO_GDIR);
++	writel(port->gpio_saved_reg.edge_sel, port->base + GPIO_EDGE_SEL);
++	writel(port->gpio_saved_reg.dr, port->base + GPIO_DR);
++}
++
++static int __maybe_unused mxc_gpio_noirq_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct mxc_gpio_port *port = platform_get_drvdata(pdev);
++
++	mxc_gpio_save_regs(port);
++	clk_disable_unprepare(port->clk);
++
++	return 0;
++}
++
++static int __maybe_unused mxc_gpio_noirq_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct mxc_gpio_port *port = platform_get_drvdata(pdev);
++	int ret;
++
++	ret = clk_prepare_enable(port->clk);
++	if (ret)
++		return ret;
++	mxc_gpio_restore_regs(port);
++
++	return 0;
++}
++
++static const struct dev_pm_ops mxc_gpio_dev_pm_ops = {
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mxc_gpio_noirq_suspend, mxc_gpio_noirq_resume)
++};
++
+ static struct platform_driver mxc_gpio_driver = {
+ 	.driver		= {
+ 		.name	= "gpio-mxc",
+ 		.of_match_table = mxc_gpio_dt_ids,
+ 		.suppress_bind_attrs = true,
++		.pm = &mxc_gpio_dev_pm_ops,
+ 	},
+ 	.probe		= mxc_gpio_probe,
+ 	.id_table	= mxc_gpio_devtype,
+-- 
+2.7.4
