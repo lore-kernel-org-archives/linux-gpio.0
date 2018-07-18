@@ -1,60 +1,52 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH] gpio: tegra: Fix tegra_gpio_irq_set_type()
-Date: Tue, 17 Jul 2018 19:10:38 +0300
-Message-ID: <20180717161038.21500-1-digetx@gmail.com>
+From: Anson Huang <anson.huang@nxp.com>
+Subject: RE: [PATCH V2] gpio: mxc: add power management support
+Date: Wed, 18 Jul 2018 00:54:36 +0000
+Message-ID: <AM3PR04MB13159925074BB583DD83B54DF5530@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1531721186-19417-1-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5D9MBOwQtKVqSD8XUtDBf9RH5+soV2jreBYHZrXzLWm6A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOMZO5D9MBOwQtKVqSD8XUtDBf9RH5+soV2jreBYHZrXzLWm6A@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Commit 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
-broke tegra_gpio_irq_set_type() because requesting of GPIO direction must
-be done after enabling GPIO function for a pin.
-
-This patch fixes drivers probe failure like this:
-
- gpio gpiochip0: (tegra-gpio): gpiochip_lock_as_irq: cannot get GPIO direction
- tegra-gpio 6000d000.gpio: unable to lock Tegra GPIO 144 as IRQ
-
-Fixes: 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpio/gpio-tegra.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 94396caaca75..22e7c99ed69e 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -323,13 +323,6 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 		return -EINVAL;
- 	}
- 
--	ret = gpiochip_lock_as_irq(&tgi->gc, gpio);
--	if (ret) {
--		dev_err(tgi->dev,
--			"unable to lock Tegra GPIO %u as IRQ\n", gpio);
--		return ret;
--	}
--
- 	spin_lock_irqsave(&bank->lvl_lock[port], flags);
- 
- 	val = tegra_gpio_readl(tgi, GPIO_INT_LVL(tgi, gpio));
-@@ -342,6 +335,14 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	tegra_gpio_mask_write(tgi, GPIO_MSK_OE(tgi, gpio), gpio, 0);
- 	tegra_gpio_enable(tgi, gpio);
- 
-+	ret = gpiochip_lock_as_irq(&tgi->gc, gpio);
-+	if (ret) {
-+		dev_err(tgi->dev,
-+			"unable to lock Tegra GPIO %u as IRQ\n", gpio);
-+		tegra_gpio_disable(tgi, gpio);
-+		return ret;
-+	}
-+
- 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
- 		irq_set_handler_locked(d, handle_level_irq);
- 	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
--- 
-2.18.0
+SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
+Z21haWwuY29tXQ0KPiBTZW50OiBUdWVzZGF5LCBKdWx5IDE3LCAyMDE4IDk6NTIgUE0NCj4gVG86
+IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzogTGludXMgV2FsbGVpaiA8
+bGludXMud2FsbGVpakBsaW5hcm8ub3JnPjsgb3BlbiBsaXN0OkdQSU8gU1VCU1lTVEVNDQo+IDxs
+aW51eC1ncGlvQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWtlcm5lbCA8bGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZz47DQo+IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+IFN1
+YmplY3Q6IFJlOiBbUEFUQ0ggVjJdIGdwaW86IG14YzogYWRkIHBvd2VyIG1hbmFnZW1lbnQgc3Vw
+cG9ydA0KPiANCj4gSGkgQW5zb24sDQo+IA0KPiBbTmV4dCB0aW1lIHBsZWFzZSBwdXQgdGhlIGku
+bXggbWFpbnRhaW5lcnMgb24gQ2NdDQo+IA0KPiBPbiBNb24sIEp1bCAxNiwgMjAxOCBhdCAzOjA2
+IEFNLCBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gd3JvdGU6DQo+ID4gR1BJ
+TyByZWdpc3RlcnMgY291bGQgbG9zZSBjb250ZXh0IG9uIGkuTVg3RCwgd2hlbiBlbnRlciBMUFNS
+IG1vZGUsIHRoZQ0KPiA+IHdob2xlIFNvQyB3aWxsIGJlIHBvd2VyZWQgb2ZmIGV4Y2VwdCBMUFNS
+IGRvbWFpbiwgR1BJTyBiYW5rcyB3aWxsIGxvc2UNCj4gPiBjb250ZXh0IGluIHRoaXMgY2FzZSwg
+bmVlZCB0byByZXN0b3JlIHRoZSBjb250ZXh0IGFmdGVyIHJlc3VtZSBmcm9tDQo+ID4gTFBTUiBt
+b2RlLg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBhZGRzIEdQSU8gc2F2ZS9yZXN0b3JlIGZvciB0aG9z
+ZSBuZWNlc3NhcnkgcmVnaXN0ZXJzLCBhbmQNCj4gPiBwdXQgdGhlIHNhdmUvcmVzdG9yZSBvcGVy
+YXRpb25zIGluIG5vaXJxIHN1c3BlbmQvcmVzdW1lIHBoYXNlLCBzaW5jZQ0KPiA+IEdQSU8gaXMg
+ZnVuZGFtZW50YWwgbW9kdWxlIHdoaWNoIGNvdWxkIGJlIHVzZWQgYnkgb3RoZXIgcGVyaXBoZXJh
+bHMnDQo+ID4gcmVzdW1lIHBoYXNlLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQW5zb24gSHVh
+bmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+IA0KPiA+ICBzdGF0aWMgc3RydWN0IG14Y19ncGlv
+X2h3ZGF0YSBpbXgxX2lteDIxX2dwaW9faHdkYXRhID0geyBAQCAtNDM0LDYNCj4gPiArNDQ1LDkg
+QEAgc3RhdGljIGludCBteGNfZ3Bpb19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
+KQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gZXJyOw0KPiA+ICAgICAgICAgfQ0KPiA+DQo+
+ID4gKyAgICAgICBpZiAob2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJmc2wsaW14N2QiKSkNCj4g
+PiArICAgICAgICAgICAgICAgcG9ydC0+c3VwcG9ydF9wb3dlcl9vZmYgPSB0cnVlOw0KPiANCj4g
+VGhpcyBkb2VzIG5vdCBzY2FsZSB3ZWxsIGFzIHdlIG5lZWQgdG8gc3VwcG9ydCBteDggc29vbi4N
+Cj4gDQo+IExpa2UgSSByZXBsaWVkIGluIG15IGxhc3QgbWVzc2FnZSB0aGUgYmVzdCBzb2x1dGlv
+biBoZXJlIGlzIHRvIGFkZCBhDQo+ICJmc2wsaW14N2QtZ3BpbyIgY29tcGF0aWJsZSBlbnRyeSBp
+biB0aGlzIGRyaXZlci4NCj4gDQo+IFRoZW4geW91IGNhbiBzZXQgYSBmbGFnIGluIHRoZSAiZnNs
+LGlteDdkLWdwaW8iIGNhc2UgdG8gaGFuZGxlIHRoZSAncG93ZXJfb2ZmJw0KPiBmZWF0dXJlLg0K
+PiANCj4gV2l0aCB0aGlzIG1ldGhvZCB0aGVyZSB3aWxsIGJlIG5vIG5lZWQgdG8gdG91Y2ggdGhp
+cyBkcml2ZXIgYWdhaW4gZm9yIGFkZGluZw0KPiBteDggc3VwcG9ydC4NCg0KVGhhbmtzIGZvciBk
+ZXRhaWwgc3VnZ2VzdGlvbiwgSSB3aWxsIHNlbnQgYSBWMyBwYXRjaCBhY2NvcmRpbmdseS4NCg0K
+QW5zb24uDQogDQoNCg0KDQo=
