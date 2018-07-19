@@ -1,53 +1,117 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 10/10] pinctrl: samsung: Remove legacy API for handling external wakeup interrupts mask
-Date: Thu, 19 Jul 2018 18:00:50 +0200
-Message-ID: <20180719160050.22566-11-krzk@kernel.org>
-References: <20180719160050.22566-1-krzk@kernel.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v5 0/6] Add Actions Semiconductor Owl S900 I2C support
+Date: Thu, 19 Jul 2018 23:13:59 +0530
+Message-ID: <20180719174405.7210-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180719160050.22566-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
+Cc: linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Remove the legacy, ugly API of exposing the static value of external
-wakeup interrupts mask, because all arch-machine users where converted
-to use generic implementation from pinctrl driver.
+This patchset adds I2C controller support for Actions Semiconductor S900 SoC.
+This driver has been structured in a way such that there will be only
+one controller driver for the whole Owl family series (S500, S700 and
+S900 SoCs).
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+There are 6 I2C controllers with separate memory mapped register space.
+The I2C controller can handle atmost two messages concatenated by a
+repeated start via its internal address feature. Hence the driver
+uses this feature for messages of length greater than 1. In those cases,
+the first message of the combined message should be a `write` with maximum
+message length 6 and the second message's maximum length should be 240 bytes.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 40ef14956876..eec174a65c6f 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -325,13 +325,6 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 	return ret;
- }
- 
--static u32 exynos_eint_wake_mask = 0xffffffff;
--
--u32 exynos_get_eint_wake_mask(void)
--{
--	return exynos_eint_wake_mask;
--}
--
- static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- {
- 	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
-@@ -342,10 +335,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- 	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
- 
- 	if (!on)
--		exynos_eint_wake_mask |= bit;
-+		our_chip->eint_wake_mask_value |= bit;
- 	else
--		exynos_eint_wake_mask &= ~bit;
--	our_chip->eint_wake_mask_value = exynos_eint_wake_mask;
-+		our_chip->eint_wake_mask_value &= ~bit;
- 
- 	return 0;
- }
+As far as the bus speed is concerned, this driver only supports
+Standard (100KHz) and High speed (400KHz) for now.
+
+The pinctrl definitions are only available for I2C0, I2C1 and I2C2.
+With the mux option available only for I2C0.
+
+For Bubblegum-96 board utilizing the S900 SoC, only I2C1 and I2C2 which
+are exposed on the Low speed expansion connector are enabled.
+
+This series depends on the pinctrl patch [1] is still not merged by the
+platform maintainer Andreas but it has been reviewed by the pinctrl maintainer
+Linus Walleij. For the reference, I have queued up all reviewed dts patches
+in my tree [2] from which Andreas is picking them for 4.19.
+
+For this series, since the dts patches will go through the ARM SoC tree,
+Andreas will pick it up once it is reviewed.
+
+Thanks,
+Mani
+
+[1] https://patchwork.kernel.org/patch/10322937/
+[2] https://git.linaro.org/people/manivannan.sadhasivam/linux.git/log/?h=s900-for-next
+
+Changes in v5:
+
+* Cleaned up the multi-line codes and reordered the error paths
+  as per Peter's review
+* Added Acked-by tag from Peter for driver patch
+* Added Reviewed-by tag from Rob for bindings patch
+
+Changes in v4:
+
+As per Andy and Peter review:
+
+* Used spinlock for accessing most of the register access (only parts
+  involved sleep/long-busy-wait has been excluded)
+* Removed returning 0 and added -ENXIO if the msg_ptr not equals to
+  message length
+* Added DIV_ROUND_UP for setting clock frequency
+* Changed one non-atomic mdelay instance to usleep_range
+* Moved pinctrl definition patch before dts patch
+* Fixed the driver to support only 100KHz and 400KHz frequencies
+
+Changes in v3:
+
+As per Peter, Andy and Andreas review:
+
+* Removed owl_i2c_reset function from interrupt handler since it
+  involves the use of delays.
+* Fixed the return path in owl_i2c_master_xfer and added a note
+* Changed "base" parameter to "reg" in owl_i2c_update_reg for better
+  understandability
+* Ordered the includes in alphabetical order
+* Small changes to defines and added comma at the end of struct members
+* Removed rendundant 0 assignment in owl_i2c_master_xfer
+* Changed all OWL naming convention to Owl and also changed Actions Semi
+  naming to Actions Semiconductor
+
+Changes in v2:
+
+As per Andy's review:
+* Modified infinite loops to fixed number of retries
+* Used i2c_8bit_addr_from_msg for constructing the slave address
+* Removed unnecessary parenthesis around defines
+* Modified certain dev_warn to dev_dbg
+* Modified the error handling to more generic pattern
+
+* Fixed the return value in owl_i2c_master_xfer
+* Added MAINTAINERS patch for I2C driver and its binding
+
+Manivannan Sadhasivam (6):
+  dt-bindings: i2c: Add binding for Actions Semiconductor Owl I2C
+    controller
+  arm64: dts: actions: Add pinctrl definition for S900 I2C controller
+  arm64: dts: actions: Add Actions Semiconductor S900 I2C controller
+    nodes
+  arm64: dts: actions: Enable I2C1 and I2C2 in Bubblegum-96 board
+  i2c: Add Actions Semiconductor Owl family S900 I2C driver
+  MAINTAINERS: Add entry for Actions Semiconductor Owl I2C driver
+
+ .../devicetree/bindings/i2c/i2c-owl.txt       |  27 +
+ MAINTAINERS                                   |   2 +
+ .../dts/actions/s900-bubblegum-96-pins.dtsi   |  29 +
+ .../boot/dts/actions/s900-bubblegum-96.dts    |  11 +
+ arch/arm64/boot/dts/actions/s900.dtsi         |  60 +++
+ drivers/i2c/busses/Kconfig                    |   7 +
+ drivers/i2c/busses/Makefile                   |   1 +
+ drivers/i2c/busses/i2c-owl.c                  | 495 ++++++++++++++++++
+ 8 files changed, 632 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-owl.txt
+ create mode 100644 arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
+ create mode 100644 drivers/i2c/busses/i2c-owl.c
+
 -- 
-2.14.1
+2.17.1
