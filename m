@@ -1,608 +1,447 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v5 5/6] i2c: Add Actions Semiconductor Owl family S900 I2C
- driver
-Date: Thu, 19 Jul 2018 21:47:01 +0200
-Message-ID: <d945bfe1-5f6c-4949-5098-4861f9664d02@axentia.se>
-References: <20180719174405.7210-1-manivannan.sadhasivam@linaro.org>
- <20180719174405.7210-6-manivannan.sadhasivam@linaro.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v2] pinctrl: uniphier: add spi pin-mux settings
+Date: Fri, 20 Jul 2018 13:43:33 +0900
+Message-ID: <CAK7LNAQoE7JPn3jJqTknLpngiAYAMGiHT7OgXGVMwQGYqoy5Ng@mail.gmail.com>
+References: <1531991136-1179-1-git-send-email-hayashibara.keiji@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180719174405.7210-6-manivannan.sadhasivam@linaro.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
-Cc: linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1531991136-1179-1-git-send-email-hayashibara.keiji@socionext.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2018-07-19 19:44, Manivannan Sadhasivam wrote:
-> Add Actions Semiconductor Owl family S900 I2C driver.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Acked-by: Peter Rosin <peda@axentia.se>
-
-Ooops, now I noticed some missing newlines in your dbg_* prints. That
-may produce garbled output, which is unnecessary. While at it, I also
-spotted a few more white-space nits...
-
-Have you tried the --strict option to checkpatch?
-
-Cheers,
-Peter
-
+2018-07-19 18:05 GMT+09:00 Keiji Hayashibara <hayashibara.keiji@socionext.com>:
+> From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+>
+> Add pin-mux settings for spi controller.
+>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
 > ---
->  drivers/i2c/busses/Kconfig   |   7 +
->  drivers/i2c/busses/Makefile  |   1 +
->  drivers/i2c/busses/i2c-owl.c | 495 +++++++++++++++++++++++++++++++++++
->  3 files changed, 503 insertions(+)
->  create mode 100644 drivers/i2c/busses/i2c-owl.c
-> 
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index 4f8df2ec87b1..8c8025f87ce4 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -762,6 +762,13 @@ config I2C_OMAP
->  	  Like OMAP1510/1610/1710/5912 and OMAP242x.
->  	  For details see http://www.ti.com/omap.
->  
-> +config I2C_OWL
-> +	tristate "Actions Semiconductor Owl I2C Controller"
-> +	depends on ARCH_ACTIONS || COMPILE_TEST
-> +	help
-> +	  Say Y here if you want to use the I2C bus controller on
-> +	  the Actions Semiconductor Owl SoC's.
-> +
->  config I2C_PASEMI
->  	tristate "PA Semi SMBus interface"
->  	depends on PPC_PASEMI && PCI
-> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-> index 5a869144a0c5..b71618f77880 100644
-> --- a/drivers/i2c/busses/Makefile
-> +++ b/drivers/i2c/busses/Makefile
-> @@ -76,6 +76,7 @@ obj-$(CONFIG_I2C_MXS)		+= i2c-mxs.o
->  obj-$(CONFIG_I2C_NOMADIK)	+= i2c-nomadik.o
->  obj-$(CONFIG_I2C_OCORES)	+= i2c-ocores.o
->  obj-$(CONFIG_I2C_OMAP)		+= i2c-omap.o
-> +obj-$(CONFIG_I2C_OWL)		+= i2c-owl.o
->  obj-$(CONFIG_I2C_PASEMI)	+= i2c-pasemi.o
->  obj-$(CONFIG_I2C_PCA_PLATFORM)	+= i2c-pca-platform.o
->  obj-$(CONFIG_I2C_PMCMSP)	+= i2c-pmcmsp.o
-> diff --git a/drivers/i2c/busses/i2c-owl.c b/drivers/i2c/busses/i2c-owl.c
-> new file mode 100644
-> index 000000000000..4f5836fa5022
-> --- /dev/null
-> +++ b/drivers/i2c/busses/i2c-owl.c
-> @@ -0,0 +1,495 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Actions Semiconductor Owl SoC's I2C driver
-> + *
-> + * Copyright (c) 2014 Actions Semi Inc.
-> + * Author: David Liu <liuwei@actions-semi.com>
-> + *
-> + * Copyright (c) 2018 Linaro Ltd.
-> + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +
-> +/* I2C registers */
-> +#define OWL_I2C_REG_CTL		0x0000
-> +#define OWL_I2C_REG_CLKDIV	0x0004
-> +#define OWL_I2C_REG_STAT	0x0008
-> +#define OWL_I2C_REG_ADDR	0x000C
-> +#define OWL_I2C_REG_TXDAT	0x0010
-> +#define OWL_I2C_REG_RXDAT	0x0014
-> +#define OWL_I2C_REG_CMD		0x0018
-> +#define OWL_I2C_REG_FIFOCTL	0x001C
-> +#define OWL_I2C_REG_FIFOSTAT	0x0020
-> +#define OWL_I2C_REG_DATCNT	0x0024
-> +#define OWL_I2C_REG_RCNT	0x0028
-> +
-> +/* I2Cx_CTL Bit Mask */
-> +#define OWL_I2C_CTL_RB		BIT(1)
-> +#define OWL_I2C_CTL_GBCC(x)	(((x) & 0x3) << 2)
-> +#define	OWL_I2C_CTL_GBCC_NONE	OWL_I2C_CTL_GBCC(0)
-> +#define	OWL_I2C_CTL_GBCC_START	OWL_I2C_CTL_GBCC(1)
-> +#define	OWL_I2C_CTL_GBCC_STOP	OWL_I2C_CTL_GBCC(2)
-> +#define	OWL_I2C_CTL_GBCC_RSTART	OWL_I2C_CTL_GBCC(3)
-> +#define OWL_I2C_CTL_IRQE	BIT(5)
-> +#define OWL_I2C_CTL_EN		BIT(7)
-> +#define OWL_I2C_CTL_AE		BIT(8)
-> +#define OWL_I2C_CTL_SHSM	BIT(10)
-> +
-> +#define OWL_I2C_DIV_FACTOR(x)	((x) & 0xff)
-> +
-> +/* I2Cx_STAT Bit Mask */
-> +#define OWL_I2C_STAT_RACK	BIT(0)
-> +#define OWL_I2C_STAT_BEB	BIT(1)
-> +#define OWL_I2C_STAT_IRQP	BIT(2)
-> +#define OWL_I2C_STAT_LAB	BIT(3)
-> +#define OWL_I2C_STAT_STPD	BIT(4)
-> +#define OWL_I2C_STAT_STAD	BIT(5)
-> +#define OWL_I2C_STAT_BBB	BIT(6)
-> +#define OWL_I2C_STAT_TCB	BIT(7)
-> +#define OWL_I2C_STAT_LBST	BIT(8)
-> +#define OWL_I2C_STAT_SAMB	BIT(9)
-> +#define OWL_I2C_STAT_SRGC	BIT(10)
-> +
-> +/* I2Cx_CMD Bit Mask */
-> +#define OWL_I2C_CMD_SBE		BIT(0)
-> +#define OWL_I2C_CMD_RBE		BIT(4)
-> +#define OWL_I2C_CMD_DE		BIT(8)
-> +#define OWL_I2C_CMD_NS		BIT(9)
-> +#define OWL_I2C_CMD_SE		BIT(10)
-> +#define OWL_I2C_CMD_MSS		BIT(11)
-> +#define OWL_I2C_CMD_WRS		BIT(12)
-> +#define OWL_I2C_CMD_SECL	BIT(15)
-> +
-> +#define OWL_I2C_CMD_AS(x)	(((x) & 0x7) << 1)
-> +#define OWL_I2C_CMD_SAS(x)	(((x) & 0x7) << 5)
-> +
-> +/* I2Cx_FIFOCTL Bit Mask */
-> +#define OWL_I2C_FIFOCTL_NIB	BIT(0)
-> +#define OWL_I2C_FIFOCTL_RFR	BIT(1)
-> +#define OWL_I2C_FIFOCTL_TFR	BIT(2)
-> +
-> +/* I2Cc_FIFOSTAT Bit Mask */
-> +#define OWL_I2C_FIFOSTAT_RNB	BIT(1)
-> +#define OWL_I2C_FIFOSTAT_RFE	BIT(2)
-> +#define OWL_I2C_FIFOSTAT_TFF	BIT(5)
-> +#define OWL_I2C_FIFOSTAT_TFD	GENMASK(23, 16)
-> +#define OWL_I2C_FIFOSTAT_RFD	GENMASK(15, 8)
-> +
-> +/* I2C bus timeout */
-> +#define OWL_I2C_TIMEOUT		msecs_to_jiffies(4 * 1000)
-> +
-> +#define OWL_I2C_MAX_RETRIES	50
-> +
-> +#define OWL_I2C_DEF_SPEED_HZ	100000
-> +#define OWL_I2C_MAX_SPEED_HZ	400000
-> +
-> +struct owl_i2c_dev {
-> +	struct i2c_adapter	adap;
-> +	struct i2c_msg		*msg;
-> +	struct completion	msg_complete;
-> +	struct clk		*clk;
-> +	spinlock_t		lock;
-> +	void __iomem		*base;
-> +	unsigned long		clk_rate;
-> +	u32			bus_freq;
-> +	u32			msg_ptr;
-> +};
-> +
-> +static void owl_i2c_update_reg(void __iomem *reg, unsigned int val, bool state)
-> +{
-> +	unsigned int regval;
-> +
-> +	regval = readl(reg);
-> +
-> +	if (state)
-> +		regval |= val;
-> +	else
-> +		regval &= ~val;
-> +
-> +	writel(regval, reg);
-> +}
-> +
-> +static void owl_i2c_reset(struct owl_i2c_dev *i2c_dev)
-> +{
-> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
-> +			   OWL_I2C_CTL_EN, false);
-> +	mdelay(1);
-> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
-> +			   OWL_I2C_CTL_EN, true);
-> +
-> +	/* Clear status registers */
-> +	writel(0, i2c_dev->base + OWL_I2C_REG_STAT);
-> +}
-> +
-> +static int owl_i2c_reset_fifo(struct owl_i2c_dev *i2c_dev)
-> +{
-> +	unsigned int val, timeout = 0;
-> +
-> +	/* Reset FIFO */
-> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
-> +			   OWL_I2C_FIFOCTL_RFR | OWL_I2C_FIFOCTL_TFR,
-> +			   true);
-> +
-> +	/* Wait 50ms for FIFO reset complete */
-> +	do {
-> +		val = readl(i2c_dev->base + OWL_I2C_REG_FIFOCTL);
-> +		if (!(val & (OWL_I2C_FIFOCTL_RFR | OWL_I2C_FIFOCTL_TFR)))
-> +			break;
-> +		usleep_range(500, 1000);
-> +	} while (timeout++ < OWL_I2C_MAX_RETRIES);
-> +
-> +	if (timeout > OWL_I2C_MAX_RETRIES) {
-> +		dev_err(&i2c_dev->adap.dev, "FIFO reset timeout");
 
-End with a newline.
 
-> +		return -ETIMEDOUT;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void owl_i2c_set_freq(struct owl_i2c_dev *i2c_dev)
-> +{
-> +	unsigned int val;
-> +
-> +	val = DIV_ROUND_UP(i2c_dev->clk_rate, i2c_dev->bus_freq * 16);
-> +
-> +	/* Set clock divider factor */
-> +	writel(OWL_I2C_DIV_FACTOR(val), i2c_dev->base + OWL_I2C_REG_CLKDIV);
-> +}
-> +
-> +static irqreturn_t owl_i2c_interrupt(int irq, void *_dev)
-> +{
-> +	struct owl_i2c_dev *i2c_dev = _dev;
-> +	struct i2c_msg *msg = i2c_dev->msg;
-> +	unsigned long flags;
-> +	unsigned int stat, fifostat;
-> +
-> +	spin_lock_irqsave(&i2c_dev->lock, flags);
-> +
-> +	fifostat = readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT);
-> +	if (fifostat & OWL_I2C_FIFOSTAT_RNB) {
-> +		dev_dbg(&i2c_dev->adap.dev, "received NACK from device");
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-End with a newline.
 
-> +		goto stop;
-> +	}
-> +
-> +	stat = readl(i2c_dev->base + OWL_I2C_REG_STAT);
-> +	if (stat & OWL_I2C_STAT_BEB) {
-> +		dev_dbg(&i2c_dev->adap.dev, "bus error");
 
-End with a newline.
+>  Changes since v1:
+>  - Fix build error of "pinctrl-uniphier-sld8.c".
+>
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 10 ++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 20 ++++++++++++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c  |  5 +++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c | 10 ++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 10 ++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c | 15 +++++++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c | 10 ++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c | 10 ++++++++++
+>  drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c |  5 +++++
+>  9 files changed, 95 insertions(+)
+>
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+> index 58825f6..bce533f 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+> @@ -517,6 +517,10 @@ static const int i2c4_muxvals[] = {1, 1};
+>  static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+>                                      15, 16, 17};
+>  static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {56, 57, 58, 59};
+> +static const int spi0_muxvals[] = {0, 0, 0, 0};
+> +static const unsigned spi1_pins[] = {169, 170, 171, 172};
+> +static const int spi1_muxvals[] = {1, 1, 1, 1};
+>  static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
+>                                            14, 15, 16, 17};
+>  static const int system_bus_muxvals[] = {0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+> @@ -596,6 +600,8 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(i2c3),
+>         UNIPHIER_PINCTRL_GROUP(i2c4),
+>         UNIPHIER_PINCTRL_GROUP(nand),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(uart0),
+> @@ -632,6 +638,8 @@ static const char * const i2c1_groups[] = {"i2c1"};
+>  static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const i2c4_groups[] = {"i2c4"};
+>  static const char * const nand_groups[] = {"nand"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1"};
+>  static const char * const uart0_groups[] = {"uart0"};
+> @@ -657,6 +665,8 @@ static const struct uniphier_pinmux_function uniphier_ld11_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c3),
+>         UNIPHIER_PINMUX_FUNCTION(i2c4),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+> index 9f449b3..99f06fe 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+> @@ -606,6 +606,14 @@ static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+>  static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+>  static const unsigned sd_pins[] = {10, 11, 12, 13, 14, 15, 16, 17};
+>  static const int sd_muxvals[] = {3, 3, 3, 3, 3, 3, 3, 3};  /* No SDVOLC */
+> +static const unsigned spi0_pins[] = {56, 57, 58, 59};
+> +static const int spi0_muxvals[] = {0, 0, 0, 0};
+> +static const unsigned spi1_pins[] = {169, 170, 171, 172};
+> +static const int spi1_muxvals[] = {1, 1, 1, 1};
+> +static const unsigned spi2_pins[] = {86, 87, 88, 89};
+> +static const int spi2_muxvals[] = {1, 1, 1, 1};
+> +static const unsigned spi3_pins[] = {74, 75, 76, 77};
+> +static const int spi3_muxvals[] = {1, 1, 1, 1};
+>  static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
+>                                            14, 15, 16, 17};
+>  static const int system_bus_muxvals[] = {0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+> @@ -685,6 +693,10 @@ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(i2c4),
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+> +       UNIPHIER_PINCTRL_GROUP(spi2),
+> +       UNIPHIER_PINCTRL_GROUP(spi3),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(uart0),
+> @@ -722,6 +734,10 @@ static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const i2c4_groups[] = {"i2c4"};
+>  static const char * const nand_groups[] = {"nand"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+> +static const char * const spi2_groups[] = {"spi2"};
+> +static const char * const spi3_groups[] = {"spi3"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1"};
+>  static const char * const uart0_groups[] = {"uart0"};
+> @@ -751,6 +767,10 @@ static const struct uniphier_pinmux_function uniphier_ld20_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c4),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+> +       UNIPHIER_PINMUX_FUNCTION(spi2),
+> +       UNIPHIER_PINMUX_FUNCTION(spi3),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+> index 0b10ebc..b247011 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+> @@ -576,6 +576,8 @@ static const unsigned nand_cs1_pins[] = {22, 23};
+>  static const int nand_cs1_muxvals[] = {0, 0};
+>  static const unsigned sd_pins[] = {44, 45, 46, 47, 48, 49, 50, 51, 52};
+>  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {135, 136, 137, 138};
+> +static const int spi0_muxvals[] = {12, 12, 12, 12};
+>  static const unsigned system_bus_pins[] = {16, 17, 18, 19, 20, 165, 166, 167,
+>                                            168, 169, 170, 171, 172, 173};
+>  static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1,
+> @@ -640,6 +642,7 @@ static const struct uniphier_pinctrl_group uniphier_ld4_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(nand_cs1),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs0),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+> @@ -667,6 +670,7 @@ static const char * const i2c2_groups[] = {"i2c2"};
+>  static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs0",
+>                                                  "system_bus_cs1",
+> @@ -690,6 +694,7 @@ static const struct uniphier_pinmux_function uniphier_ld4_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c3),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+> index 8e4d45fe..cb58797 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+> @@ -769,6 +769,10 @@ static const unsigned nand_cs1_pins[] = {37, 38};
+>  static const int nand_cs1_muxvals[] = {0, 0};
+>  static const unsigned sd_pins[] = {47, 48, 49, 50, 51, 52, 53, 54, 55};
+>  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {199, 200, 201, 202};
+> +static const int spi0_muxvals[] = {8, 8, 8, 8};
+> +static const unsigned spi1_pins[] = {93, 94, 95, 96};
+> +static const int spi1_muxvals[] = {1, 1, 1, 1};
+>  static const unsigned system_bus_pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+>                                            11, 12, 13};
+>  static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+> @@ -851,6 +855,8 @@ static const struct uniphier_pinctrl_group uniphier_ld6b_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(nand_cs1),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs2),
+> @@ -882,6 +888,8 @@ static const char * const i2c2_groups[] = {"i2c2"};
+>  static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1",
+>                                                  "system_bus_cs2",
+> @@ -907,6 +915,8 @@ static const struct uniphier_pinmux_function uniphier_ld6b_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c3),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+> index 24788a7..89148f8 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+> @@ -1050,6 +1050,10 @@ static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+>  static const unsigned sd1_pins[] = {319, 320, 321, 322, 323, 324, 325, 326,
+>                                     327};
+>  static const int sd1_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {199, 200, 201, 202};
+> +static const int spi0_muxvals[] = {11, 11, 11, 11};
+> +static const unsigned spi1_pins[] = {195, 196, 197, 198, 235, 238, 239};
+> +static const int spi1_muxvals[] = {11, 11, 11, 11, 11, 11, 11};
+>  static const unsigned system_bus_pins[] = {25, 26, 27, 28, 29, 30, 31, 32, 33,
+>                                            34, 35, 36, 37, 38};
+>  static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+> @@ -1138,6 +1142,8 @@ static const struct uniphier_pinctrl_group uniphier_pro4_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(nand_cs1),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+>         UNIPHIER_PINCTRL_GROUP(sd1),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs0),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+> @@ -1171,6 +1177,8 @@ static const char * const i2c6_groups[] = {"i2c6"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+>  static const char * const sd1_groups[] = {"sd1"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs0",
+>                                                  "system_bus_cs1",
+> @@ -1202,6 +1210,8 @@ static const struct uniphier_pinmux_function uniphier_pro4_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+>         UNIPHIER_PINMUX_FUNCTION(sd1),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+> index d5d5e57..d77d6b37 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+> @@ -818,6 +818,12 @@ static const unsigned nand_cs1_pins[] = {26, 27};
+>  static const int nand_cs1_muxvals[] = {0, 0};
+>  static const unsigned sd_pins[] = {250, 251, 252, 253, 254, 255, 256, 257, 258};
+>  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {120, 121, 122, 123};
+> +static const int spi0_muxvals[] = {0, 0, 0, 0};
+> +static const unsigned spi1_pins[] = {134, 139, 85, 86};
+> +static const int spi1_muxvals[] = {1, 1, 1, 1};
+> +static const unsigned spi2_pins[] = {55, 56, 57, 58, 82, 83, 84};
+> +static const int spi2_muxvals[] = {0, 0, 0, 0, 1, 1, 1};
+>  static const unsigned system_bus_pins[] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+>                                            14, 15, 16, 17};
+>  static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+> @@ -904,6 +910,9 @@ static const struct uniphier_pinctrl_group uniphier_pro5_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(i2c5c),
+>         UNIPHIER_PINCTRL_GROUP(i2c6),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+> +       UNIPHIER_PINCTRL_GROUP(spi2),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs0),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+> @@ -934,6 +943,9 @@ static const char * const i2c5_groups[] = {"i2c5", "i2c5b", "i2c5c"};
+>  static const char * const i2c6_groups[] = {"i2c6"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+> +static const char * const spi2_groups[] = {"spi2"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs0",
+>                                                  "system_bus_cs1",
+> @@ -961,6 +973,9 @@ static const struct uniphier_pinmux_function uniphier_pro5_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c6),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+> +       UNIPHIER_PINMUX_FUNCTION(spi2),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+> index 032619a..90199da 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+> @@ -778,6 +778,10 @@ static const unsigned nand_cs1_pins[] = {37, 38};
+>  static const int nand_cs1_muxvals[] = {8, 8};
+>  static const unsigned sd_pins[] = {47, 48, 49, 50, 51, 52, 53, 54, 55};
+>  static const int sd_muxvals[] = {8, 8, 8, 8, 8, 8, 8, 8, 8};
+> +static const unsigned spi0_pins[] = {199, 200, 201, 202};
+> +static const int spi0_muxvals[] = {8, 8, 8, 8};
+> +static const unsigned spi1_pins[] = {93, 94, 95, 96};
+> +static const int spi1_muxvals[] = {1, 1, 1, 1};
+>  static const unsigned system_bus_pins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+>                                            11, 12, 13};
+>  static const int system_bus_muxvals[] = {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+> @@ -861,6 +865,8 @@ static const struct uniphier_pinctrl_group uniphier_pxs2_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(nand_cs1),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(uart0),
+> @@ -897,6 +903,8 @@ static const char * const i2c5_groups[] = {"i2c5"};
+>  static const char * const i2c6_groups[] = {"i2c6"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1"};
+>  static const char * const uart0_groups[] = {"uart0", "uart0b", "uart0b_ctsrts"};
+> @@ -928,6 +936,8 @@ static const struct uniphier_pinmux_function uniphier_pxs2_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c6),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+> index 535bb2e..3b860da 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+> @@ -808,6 +808,10 @@ static const unsigned int nand_pins[] = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+>  static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+>  static const unsigned int sd_pins[] = {43, 44, 45, 46, 47, 48, 49, 50, 51};
+>  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {100, 101, 102, 103};
+> +static const int spi0_muxvals[] = {0, 0, 0, 0};
+> +static const unsigned spi1_pins[] = {112, 113, 114, 115};
+> +static const int spi1_muxvals[] = {2, 2, 2, 2};
+>  static const unsigned int system_bus_pins[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+>                                                11, 12, 13, 14};
+>  static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+> @@ -886,6 +890,8 @@ static const struct uniphier_pinctrl_group uniphier_pxs3_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(i2c3),
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+> +       UNIPHIER_PINCTRL_GROUP(spi1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(uart0),
+> @@ -913,6 +919,8 @@ static const char * const i2c2_groups[] = {"i2c2"};
+>  static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const nand_groups[] = {"nand"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+> +static const char * const spi1_groups[] = {"spi1"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1"};
+>  static const char * const uart0_groups[] = {"uart0", "uart0_ctsrts"};
+> @@ -936,6 +944,8 @@ static const struct uniphier_pinmux_function uniphier_pxs3_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c3),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+> +       UNIPHIER_PINMUX_FUNCTION(spi1),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+> index 0f921a6..f086083 100644
+> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+> @@ -504,6 +504,8 @@ static const unsigned nand_cs1_pins[] = {22, 23};
+>  static const int nand_cs1_muxvals[] = {0, 0};
+>  static const unsigned sd_pins[] = {32, 33, 34, 35, 36, 37, 38, 39, 40};
+>  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+> +static const unsigned spi0_pins[] = {118, 119, 120, 121};
+> +static const int spi0_muxvals[] = {3, 3, 3, 3};
+>  static const unsigned system_bus_pins[] = {136, 137, 138, 139, 140, 141, 142,
+>                                            143, 144, 145, 146, 147, 148, 149};
+>  static const int system_bus_muxvals[] = {-1, -1, -1, -1, -1, -1, -1, -1, -1,
+> @@ -570,6 +572,7 @@ static const struct uniphier_pinctrl_group uniphier_sld8_groups[] = {
+>         UNIPHIER_PINCTRL_GROUP(nand),
+>         UNIPHIER_PINCTRL_GROUP(nand_cs1),
+>         UNIPHIER_PINCTRL_GROUP(sd),
+> +       UNIPHIER_PINCTRL_GROUP(spi0),
+>         UNIPHIER_PINCTRL_GROUP(system_bus),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+>         UNIPHIER_PINCTRL_GROUP(system_bus_cs2),
+> @@ -598,6 +601,7 @@ static const char * const i2c2_groups[] = {"i2c2"};
+>  static const char * const i2c3_groups[] = {"i2c3"};
+>  static const char * const nand_groups[] = {"nand", "nand_cs1"};
+>  static const char * const sd_groups[] = {"sd"};
+> +static const char * const spi0_groups[] = {"spi0"};
+>  static const char * const system_bus_groups[] = {"system_bus",
+>                                                  "system_bus_cs1",
+>                                                  "system_bus_cs2",
+> @@ -622,6 +626,7 @@ static const struct uniphier_pinmux_function uniphier_sld8_functions[] = {
+>         UNIPHIER_PINMUX_FUNCTION(i2c3),
+>         UNIPHIER_PINMUX_FUNCTION(nand),
+>         UNIPHIER_PINMUX_FUNCTION(sd),
+> +       UNIPHIER_PINMUX_FUNCTION(spi0),
+>         UNIPHIER_PINMUX_FUNCTION(system_bus),
+>         UNIPHIER_PINMUX_FUNCTION(uart0),
+>         UNIPHIER_PINMUX_FUNCTION(uart1),
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-> +		goto stop;
-> +	}
-> +
-> +	/* Handle FIFO read */
-> +	if (msg->flags & I2C_M_RD) {
-> +		while ((readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
-> +			OWL_I2C_FIFOSTAT_RFE) && i2c_dev->msg_ptr < msg->len) {
-> +			msg->buf[i2c_dev->msg_ptr++] = readl(i2c_dev->base +
-> +							     OWL_I2C_REG_RXDAT);
-> +		}
-> +	} else {
-> +		/* Handle the remaining bytes which were not sent */
-> +		while (!(readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
-> +			OWL_I2C_FIFOSTAT_TFF) && i2c_dev->msg_ptr < msg->len) {
 
-Misaligned.
 
-> +			writel(msg->buf[i2c_dev->msg_ptr++],
-> +			       i2c_dev->base + OWL_I2C_REG_TXDAT);
-> +		}
-> +	}
-> +
-> +stop:
-> +	/* Clear pending interrupts */
-> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_STAT,
-> +			   OWL_I2C_STAT_IRQP, true);
-> +
-> +	complete_all(&i2c_dev->msg_complete);
-> +	spin_unlock_irqrestore(&i2c_dev->lock, flags);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static u32 owl_i2c_func(struct i2c_adapter *adap)
-> +{
-> +	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-> +}
-> +
-> +static int owl_i2c_check_bus_busy(struct i2c_adapter *adap)
-> +{
-> +	struct owl_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
-> +	unsigned long timeout;
-> +
-> +	/* Check for Bus busy */
-> +	timeout = jiffies + OWL_I2C_TIMEOUT;
-> +	while (readl(i2c_dev->base + OWL_I2C_REG_STAT) & OWL_I2C_STAT_BBB) {
-> +		if (time_after(jiffies, timeout)) {
-> +			dev_err(&adap->dev, "Bus busy timeout");
-
-End with a newline.
-
-> +			return -ETIMEDOUT;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int owl_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
-> +				int num)
-> +{
-> +	struct owl_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
-> +	struct i2c_msg *msg;
-> +	unsigned long time_left, flags;
-> +	unsigned int i2c_cmd, val;
-> +	unsigned int addr;
-> +	int ret, idx;
-> +
-> +	spin_lock_irqsave(&i2c_dev->lock, flags);
-> +
-> +	/* Reset I2C controller */
-> +	owl_i2c_reset(i2c_dev);
-> +
-> +	/* Set bus frequency */
-> +	owl_i2c_set_freq(i2c_dev);
-> +
-> +	/*
-> +	 * Spinlock should be released before calling reset FIFO and
-> +	 * bus busy check since those functions may sleep
-> +	 */
-> +	spin_unlock_irqrestore(&i2c_dev->lock, flags);
-> +
-> +	/* Reset FIFO */
-> +	ret = owl_i2c_reset_fifo(i2c_dev);
-> +	if (ret)
-> +		goto unlocked_err_exit;
-> +
-> +	/* Check for bus busy */
-> +	ret = owl_i2c_check_bus_busy(adap);
-> +	if (ret)
-> +		goto unlocked_err_exit;
-> +
-> +	spin_lock_irqsave(&i2c_dev->lock, flags);
-> +
-> +	/* Check for Arbitration lost */
-> +	val = readl(i2c_dev->base + OWL_I2C_REG_STAT);
-> +	if (val & OWL_I2C_STAT_LAB) {
-> +		val &= ~OWL_I2C_STAT_LAB;
-> +		writel(val, i2c_dev->base + OWL_I2C_REG_STAT);
-> +		ret = -EAGAIN;
-> +		goto err_exit;
-> +	}
-> +
-> +	reinit_completion(&i2c_dev->msg_complete);
-> +
-> +	/* Enable I2C controller interrupt */
-> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
-> +			   OWL_I2C_CTL_IRQE, true);
-> +
-> +	/*
-> +	 * Select: FIFO enable, Master mode, Stop enable, Data count enable,
-> +	 * Send start bit
-> +	 */
-> +	i2c_cmd = OWL_I2C_CMD_SECL | OWL_I2C_CMD_MSS | OWL_I2C_CMD_SE |
-> +		  OWL_I2C_CMD_NS | OWL_I2C_CMD_DE | OWL_I2C_CMD_SBE;
-> +
-> +	/* Handle repeated start condition */
-> +	if (num > 1) {
-> +		/* Set internal address length and enable repeated start */
-> +		i2c_cmd |= OWL_I2C_CMD_AS(msgs[0].len + 1) |
-> +			   OWL_I2C_CMD_SAS(1) | OWL_I2C_CMD_RBE;
-> +
-> +		/* Write slave address */
-> +		addr = i2c_8bit_addr_from_msg(&msgs[0]);
-> +		writel(addr, i2c_dev->base + OWL_I2C_REG_TXDAT);
-> +
-> +		/* Write internal register address */
-> +		for (idx = 0; idx < msgs[0].len; idx++)
-> +			writel(msgs[0].buf[idx], i2c_dev->base +
-> +			       OWL_I2C_REG_TXDAT);
-
-It's better to split bwtween arguments than in the middle of one.
-
-> +
-> +		msg = &msgs[1];
-> +	} else {
-> +		/* Set address length */
-> +		i2c_cmd |= OWL_I2C_CMD_AS(1);
-> +		msg = &msgs[0];
-> +	}
-> +
-> +	i2c_dev->msg = msg;
-> +	i2c_dev->msg_ptr = 0;
-> +
-> +	/* Set data count for the message */
-> +	writel(msg->len, i2c_dev->base + OWL_I2C_REG_DATCNT);
-> +
-> +	addr = i2c_8bit_addr_from_msg(msg);
-> +	writel(addr, i2c_dev->base + OWL_I2C_REG_TXDAT);
-> +
-> +	if (!(msg->flags & I2C_M_RD)) {
-> +		/* Write data to FIFO */
-> +		for (idx = 0; idx < msg->len; idx++) {
-> +			/* Check for FIFO full */
-> +			if (readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
-> +				  OWL_I2C_FIFOSTAT_TFF)
-
-Misaligned.
-
-> +				break;
-> +
-> +			writel(msg->buf[idx], i2c_dev->base +
-> +			       OWL_I2C_REG_TXDAT);
-
-Prefer splitting between arguments.
-
-> +		}
-> +
-> +		i2c_dev->msg_ptr = idx;
-> +	}
-> +
-> +	/* Ignore the NACK if needed */
-> +	if (msg->flags & I2C_M_IGNORE_NAK)
-> +		owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
-> +				   OWL_I2C_FIFOCTL_NIB, true);
-> +	else
-> +		owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_FIFOCTL,
-> +				   OWL_I2C_FIFOCTL_NIB, false);
-> +
-> +	/* Start the transfer */
-> +	writel(i2c_cmd, i2c_dev->base + OWL_I2C_REG_CMD);
-> +
-> +	spin_unlock_irqrestore(&i2c_dev->lock, flags);
-> +
-> +	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-> +						adap->timeout);
-> +
-> +	spin_lock_irqsave(&i2c_dev->lock, flags);
-> +	if (time_left == 0) {
-> +		dev_err(&adap->dev, "Transaction timed out");
-
-End with a newline.
-
-> +		/* Send stop condition and release the bus */
-> +		owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
-> +				   OWL_I2C_CTL_GBCC_STOP |
-> +				   OWL_I2C_CTL_RB, true);
-
-Prefer splitting between arguments.
-
-> +		ret = -ETIMEDOUT;
-> +		goto err_exit;
-> +	}
-> +
-> +	/*
-> +	 * Here, -ENXIO will be returned if interrupt occurred but no
-> +	 * read or write happened. Else if msg_ptr equals to message length,
-> +	 * message count will be returned.
-> +	 */
-> +	ret = i2c_dev->msg_ptr == msg->len ? num : -ENXIO;
-> +
-> +err_exit:
-> +	spin_unlock_irqrestore(&i2c_dev->lock, flags);
-> +
-> +unlocked_err_exit:
-> +	/* Disable I2C controller */
-> +	owl_i2c_update_reg(i2c_dev->base + OWL_I2C_REG_CTL,
-> +			   OWL_I2C_CTL_EN, false);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct i2c_algorithm owl_i2c_algorithm = {
-> +	.master_xfer    = owl_i2c_master_xfer,
-> +	.functionality  = owl_i2c_func,
-> +};
-> +
-> +static const struct i2c_adapter_quirks owl_i2c_quirks = {
-> +	.flags		= I2C_AQ_COMB | I2C_AQ_COMB_WRITE_FIRST,
-> +	.max_read_len   = 240,
-> +	.max_write_len  = 240,
-> +	.max_comb_1st_msg_len = 6,
-> +	.max_comb_2nd_msg_len = 240,
-> +};
-> +
-> +static int owl_i2c_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct owl_i2c_dev *i2c_dev;
-> +	struct resource *res;
-> +	int ret, irq;
-> +
-> +	i2c_dev = devm_kzalloc(dev, sizeof(*i2c_dev), GFP_KERNEL);
-> +	if (!i2c_dev)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	i2c_dev->base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(i2c_dev->base))
-> +		return PTR_ERR(i2c_dev->base);
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0) {
-> +		dev_err(dev, "failed to get IRQ number\n");
-> +		return irq;
-> +	}
-> +
-> +	if (of_property_read_u32(dev->of_node, "clock-frequency",
-> +				 &i2c_dev->bus_freq))
-> +		i2c_dev->bus_freq = OWL_I2C_DEF_SPEED_HZ;
-> +
-> +	/* We support only frequencies of 100k and 400k for now */
-> +	if (i2c_dev->bus_freq != OWL_I2C_DEF_SPEED_HZ &&
-> +			i2c_dev->bus_freq != OWL_I2C_MAX_SPEED_HZ) {
-
-Misaligned.
-
-> +		dev_err(dev, "invalid clock-frequency %d\n", i2c_dev->bus_freq);
-> +		return -EINVAL;
-> +	}
-> +
-> +	i2c_dev->clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(i2c_dev->clk)) {
-> +		dev_err(dev, "failed to get clock\n");
-> +		return PTR_ERR(i2c_dev->clk);
-> +	}
-> +
-> +	ret = clk_prepare_enable(i2c_dev->clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	i2c_dev->clk_rate = clk_get_rate(i2c_dev->clk);
-> +	if (!i2c_dev->clk_rate) {
-> +		dev_err(dev, "input clock rate should not be zero\n");
-> +		ret = -EINVAL;
-> +		goto disable_clk;
-> +	}
-> +
-> +	init_completion(&i2c_dev->msg_complete);
-> +	spin_lock_init(&i2c_dev->lock);
-> +	i2c_dev->adap.owner = THIS_MODULE;
-> +	i2c_dev->adap.algo = &owl_i2c_algorithm;
-> +	i2c_dev->adap.timeout = OWL_I2C_TIMEOUT;
-> +	i2c_dev->adap.quirks = &owl_i2c_quirks;
-> +	i2c_dev->adap.dev.parent = dev;
-> +	i2c_dev->adap.dev.of_node = dev->of_node;
-> +	snprintf(i2c_dev->adap.name, sizeof(i2c_dev->adap.name),
-> +			"%s", "OWL I2C adapter");
-
-Misaligned.
-
-> +	i2c_set_adapdata(&i2c_dev->adap, i2c_dev);
-> +
-> +	platform_set_drvdata(pdev, i2c_dev);
-> +
-> +	ret = devm_request_irq(dev, irq, owl_i2c_interrupt, 0, pdev->name,
-> +			       i2c_dev);
-> +	if (ret) {
-> +		dev_err(dev, "failed to request irq %d\n", irq);
-> +		goto disable_clk;
-> +	}
-> +
-> +	return i2c_add_adapter(&i2c_dev->adap);
-> +
-> +disable_clk:
-> +	clk_disable_unprepare(i2c_dev->clk);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id owl_i2c_of_match[] = {
-> +	{.compatible = "actions,s900-i2c"},
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, owl_i2c_of_match);
-> +
-> +static struct platform_driver owl_i2c_driver = {
-> +	.probe		= owl_i2c_probe,
-> +	.driver		= {
-> +		.name	= "owl-i2c",
-> +		.of_match_table = of_match_ptr(owl_i2c_of_match),
-> +	},
-> +};
-> +module_platform_driver(owl_i2c_driver);
-> +
-> +MODULE_AUTHOR("David Liu <liuwei@actions-semi.com>");
-> +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
-> +MODULE_DESCRIPTION("Actions Semiconductor Owl SoC's I2C driver");
-> +MODULE_LICENSE("GPL");
-> 
+-- 
+Best Regards
+Masahiro Yamada
