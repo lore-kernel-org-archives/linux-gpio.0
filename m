@@ -1,68 +1,73 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2] pinctrl: tegra: fix spelling in devicetree binding
- document
-Date: Fri, 20 Jul 2018 09:46:12 +0100
-Message-ID: <90b69bd2-e514-5b08-4b75-74e5085ec94a@nvidia.com>
-References: <20180720082258.1590-1-marcel@ziswiler.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
+Date: Fri, 20 Jul 2018 10:52:27 +0200
+Message-ID: <CAK8P3a2MP5+oFz--e+BM24D8Ahw7H_RKgN1S6wY1nQE6JL0dmw@mail.gmail.com>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180720082258.1590-1-marcel@ziswiler.com>
-Content-Language: en-US
+In-Reply-To: <20180719152930.3715-1-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel@ziswiler.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.or>
 List-Id: linux-gpio@vger.kernel.org
 
+On Thu, Jul 19, 2018 at 5:29 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
 
-On 20/07/18 09:22, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> This fixes a spelling mistake.
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
-> Changes in v2:
-> - Also fix up the one in nvidia,tegra210-pinmux.txt as suggested by Jon.
-> 
->  Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt | 2 +-
->  Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-> index ecb5c0d25218..f4d06bb0b55a 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-> @@ -17,7 +17,7 @@ Tegra124 adds the following optional properties for pin configuration subnodes.
->  The macros for options are defined in the
->  	include/dt-binding/pinctrl/pinctrl-tegra.h.
->  - nvidia,enable-input: Integer. Enable the pin's input path.
-> -		enable :TEGRA_PIN_ENABLE0 and
-> +		enable :TEGRA_PIN_ENABLE and
->  		disable or output only: TEGRA_PIN_DISABLE.
->  - nvidia,open-drain: Integer.
->  		enable: TEGRA_PIN_ENABLE.
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-> index a62d82d5fbe9..85f211436b8e 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
-> @@ -44,7 +44,7 @@ Optional subnode-properties:
->  - nvidia,tristate: Integer.
->      0: drive, 1: tristate.
->  - nvidia,enable-input: Integer. Enable the pin's input path.
-> -    enable :TEGRA_PIN_ENABLE0 and
-> +    enable :TEGRA_PIN_ENABLE and
->      disable or output only: TEGRA_PIN_DISABLE.
->  - nvidia,open-drain: Integer.
->      enable: TEGRA_PIN_ENABLE.
+> - the bus element is a separate object and is not implicitly described
+>   by the master (as done in I2C). The reason is that I want to be able
+>   to handle multiple master connected to the same bus and visible to
+>   Linux.
+>   In this situation, we should only have one instance of the device and
+>   not one per master, and sharing the bus object would be part of the
+>   solution to gracefully handle this case.
+>   I'm not sure if we will ever need to deal with multiple masters
+>   controlling the same bus and exposed under Linux, but separating the
+>   bus and master concept is pretty easy, hence the decision to do it
+>   now, just in case we need it some day.
+>   The other benefit of separating the bus and master concepts is that
+>   master devices appear under the bus directory in sysfs.
+>
+>   Discussion around the bus/master/dev representation is still ongoing,
+>   with Arnd opting for a simple approach where
+>   * the bus is implicitly represented by the master device
+>   * the master is not represented as a device under the I3C bus
+>   * only remote I3C devices are exposed and possibly duplicated if
+>     several masters controlling the same bus are exposed to the same
+>     Linux instance
+>   and Peter preferring the representation where the bus is a separate
+>   object. IIRC, Wolfram was in favor of the "bus is a separate object"
+>   too.
+>
+>   If possible, I'd like to close this discussion soon, no matter which
+>   solution is chosen.
+...
+> Missing features in this preliminary version:
+...
+> - no support for multi-master and the associated concepts (mastership
+>   handover, support for secondary masters, ...)
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Let's try to come to a conclusion to this discussion, this is the main
+show-stopper for inclusion that I see, as changing the fundamental
+design would be hard to do once we do it one way or the other,
+and the structure is exposed to user space.
 
-Thanks!
-Jon
+Peter and Wolfram, could you explain what scenario you can see that
+would require handing over ownership of a device from one i3c master
+to another i3c master when both are controlled by the same Linux
+instance?
 
--- 
-nvpublic
+To me this seems like a rather odd scenario, and supporting it
+properly requires significant complexity once we try to support the
+dynamic handover of the bus between two of our own masters.
+
+It seems more likely to me that we could deal with this case by
+requiring either that each bus is controlled by at most one master
+device in Linux, or at least that when we have two masters on
+the same bus that they each control a non-overlapping set of
+slave devices. Either way we'd be able to represent the structure
+as a normal tree in the firmware (DT or ACPI) as well as in
+sysfs.
+
+       Arnd
