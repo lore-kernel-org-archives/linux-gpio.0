@@ -1,40 +1,44 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] pinctrl: stm32: fix bank io port number
-Date: Fri, 20 Jul 2018 10:35:15 -0600
-Message-ID: <20180720163515.GA16515@rob-hp-laptop>
-References: <1531745857-5561-1-git-send-email-alexandre.torgue@st.com>
- <1531745857-5561-2-git-send-email-alexandre.torgue@st.com>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [RFC PATCH 0/8] mtd: rawnand: ams-delta: Use gpio-omap accessors for data I/O
+Date: Fri, 20 Jul 2018 19:55:42 +0200
+Message-ID: <6335220.Jscgez8sxx@z50>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180719081508.5dafebde@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1531745857-5561-2-git-send-email-alexandre.torgue@st.com>
+In-Reply-To: <20180719081508.5dafebde@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, amelie.delaunay@st.com
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 02:57:36PM +0200, Alexandre Torgue wrote:
-> In case the exti line is not in line with the bank number (that is the case
-> when there is an hole between two banks, for example GPIOK and then GPIOZ),
-> use "st,bank-ioport" DT property to get the right exti line.
-> 
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> index 9a06e1f..60c678a 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> @@ -55,6 +55,8 @@ Optional properties:
->     NOTE: If "gpio-ranges" is used for a gpio controller, all gpio-controller
->     have to use a "gpio-ranges" entry.
->     More details in Documentation/devicetree/bindings/gpio/gpio.txt.
-> + - st,bank-ioport: should correspond to the EXTI IOport selection (EXTI line
-> +   used to select GPIOs as interrupts).
+Hi Boris,
 
-ioport sounds like something else. Perhaps '-exti-line'?
+On Thursday, July 19, 2018 8:15:08 AM CEST Boris Brezillon wrote:
+> Hi Janusz,
+> 
+> On Thu, 19 Jul 2018 01:57:02 +0200
+> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+> 
+> > Implement the idea suggested by Artem Bityutskiy and Tony Lindgren
+> > described in commit b027274d2e3a ("mtd: ams-delta: fix
+> > request_mem_region() failure").
+> 
+> Thanks for doing that. I'll review the patches, but I already have a
+> extra request: can you convert this driver to ->exec_op()? It does not
+> necessarily have to be done in this patchset, but, that'd be great to
+> have one more driver converted to the new interface.
 
->  
->  Example 1:
->  #include <dt-bindings/pinctrl/stm32f429-pinfunc.h>
+OK, I'll have a look as my free time permits.
+
+> BTW, there seems to be a nand_gpio driver, maybe we should merge
+> ams-delta code into nand_gpio after it's been patched to use the GPIO
+> consumer API.
+
+nand_gpio uses a form of read()/write() on a single bidirectional register for 
+data transfer, not GPIO, and it does not make use of NRE / NWE signals.  Maybe 
+the two drivers could be merged to some extent but not entirely, I think.
+
+Thanks,
+Janusz
