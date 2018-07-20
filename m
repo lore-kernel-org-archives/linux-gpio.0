@@ -1,37 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpiolib: don't allow userspace to set values of input lines
-Date: Fri, 20 Jul 2018 22:33:48 +0200
-Message-ID: <CACRpkdayVPE9bzuDLp-WC0qA360JdFrUwgcDuDjuvjEk82ZKLQ@mail.gmail.com>
-References: <20180716083424.11157-1-brgl@bgdev.pl> <20180716083424.11157-2-brgl@bgdev.pl>
- <CACRpkdaWGwhJ1D683R+7TV0JsUg-pNYZ2xm_0+16O2NgnBo+4g@mail.gmail.com> <CAMRc=MeZX0r1khVBY72_XgyUfW=GLFG-=hUuqZHWYgCRwFkUrQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Vitor soares <Vitor.Soares@synopsys.com>
+Subject: [PATCH 0/3] Add driver for Synopsys DesignWare I3C master IP
+Date: Fri, 20 Jul 2018 21:57:49 +0100
+Message-ID: <1532120272-17157-1-git-send-email-soares@synopsys.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=MeZX0r1khVBY72_XgyUfW=GLFG-=hUuqZHWYgCRwFkUrQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: boris.brezillon@bootlin.com, wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de
+Cc: psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, Joao.Pinto@synopsys.com, Vitor.Soares@synopsys.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 4:13 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> 2018-07-16 15:40 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> > On Mon, Jul 16, 2018 at 10:34 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> >> User space can currently both read and set values of input lines using
-> >> the character device. This was not allowed by the old sysfs interface
-> >> nor is it a correct behavior.
-> >>
-> >> Check the first descriptor in the set for the OUT flag when asked to
-> >> set values and return -EPERM if the line is input.
-> >>
-> >> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> >
-> > Patch applied! Thanks for fixing this.
->
-> Thanks. Do you think we should Cc stable on that one?
+This patch series is a proposal for the I3C master driver for Synopsys IP.
+This patch is to be applied on top of I3C subsystem RFC V6 submitted
+by Boris Brezillon.
 
-Nah. It's not a regression. (Not like things that worked before
-stopped working.)
+Supported features:
+  Regular CCC commands.
+  I3C private transfers.
+  I2C transfers.
 
-Yours,
-Linus Walleij
+Missing functionalities:
+  Hot-join.
+  IBI.
+
+Vitor soares (3):
+  i3c: master: Add driver for Synopsys DesignWare IP
+  dt-bindings: i3c: Document Synopsys DesignWare I3C master bindings
+  MAINTAINERS: Add myself as the dw-i3c-master module maintainer
+
+ .../devicetree/bindings/i3c/snps,dw-i3c-master.txt |   43 +
+ MAINTAINERS                                        |    6 +
+ drivers/i3c/master/Kconfig                         |   10 +
+ drivers/i3c/master/Makefile                        |    1 +
+ drivers/i3c/master/dw-i3c-master.c                 | 1255 ++++++++++++++++++++
+ 5 files changed, 1315 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+ create mode 100644 drivers/i3c/master/dw-i3c-master.c
+
+-- 
+2.7.4
