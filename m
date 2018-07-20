@@ -1,36 +1,44 @@
 From: Marcel Ziswiler <marcel@ziswiler.com>
-Subject: [PATCH] pinctrl: tegra: fix spelling in devicetree binding document
-Date: Fri, 20 Jul 2018 09:52:35 +0200
-Message-ID: <20180720075235.18617-1-marcel@ziswiler.com>
+Subject: [PATCH] gpiolib: probe deferral error reporting
+Date: Fri, 20 Jul 2018 09:54:49 +0200
+Message-ID: <20180720075449.26711-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-This fixes a spelling mistake.
+Actually report the error code from devm_regulator_get() which may as
+well just be a probe deferral.
+
+This is e.g. what one gets upon booting a Colibri T20:
+
+gpiochip_add_data_with_key: GPIOs 0..223 (tegra-gpio) failed to register
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-index ecb5c0d25218..f4d06bb0b55a 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-@@ -17,7 +17,7 @@ Tegra124 adds the following optional properties for pin configuration subnodes.
- The macros for options are defined in the
- 	include/dt-binding/pinctrl/pinctrl-tegra.h.
- - nvidia,enable-input: Integer. Enable the pin's input path.
--		enable :TEGRA_PIN_ENABLE0 and
-+		enable :TEGRA_PIN_ENABLE and
- 		disable or output only: TEGRA_PIN_DISABLE.
- - nvidia,open-drain: Integer.
- 		enable: TEGRA_PIN_ENABLE.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 2e2a6f8db405..40c65eb1d97b 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1408,9 +1408,9 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ err_free_gdev:
+ 	ida_simple_remove(&gpio_ida, gdev->id);
+ 	/* failures here can mean systems won't boot... */
+-	pr_err("%s: GPIOs %d..%d (%s) failed to register\n", __func__,
++	pr_err("%s: GPIOs %d..%d (%s) failed to register, %d\n", __func__,
+ 	       gdev->base, gdev->base + gdev->ngpio - 1,
+-	       chip->label ? : "generic");
++	       chip->label ? : "generic", status);
+ 	kfree(gdev);
+ 	return status;
+ }
 -- 
 2.14.4
