@@ -1,43 +1,51 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [RFC PATCH 8/8] mtd: rawnand: ams-delta: Use GPIO callbacks for data I/O
-Date: Fri, 20 Jul 2018 20:38:15 +0200
-Message-ID: <2165137.iTHcPHRtIn@z50>
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180718235710.18242-9-jmkrzyszt@gmail.com> <20180719084749.25ca96a6@bbrezillon>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [RFC PATCH 0/8] mtd: rawnand: ams-delta: Use gpio-omap
+ accessors for data I/O
+Date: Fri, 20 Jul 2018 21:25:21 +0200
+Message-ID: <20180720212521.483d27a5@bbrezillon>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
+        <20180719081508.5dafebde@bbrezillon>
+        <6335220.Jscgez8sxx@z50>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180719084749.25ca96a6@bbrezillon>
+In-Reply-To: <6335220.Jscgez8sxx@z50>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thursday, July 19, 2018 8:47:49 AM CEST Boris Brezillon wrote:
-> On Thu, 19 Jul 2018 01:57:10 +0200
-> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+On Fri, 20 Jul 2018 19:55:42 +0200
+Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+
+> Hi Boris,
 > 
-> > Don't readw()/writew() data directly from/to GPIO port which is under
-> > control of gpio-omap driver, use GPIO chip callbacks instead.
+> On Thursday, July 19, 2018 8:15:08 AM CEST Boris Brezillon wrote:
+> > Hi Janusz,
 > > 
-> > Thanks to utilization of get/set_multiple() callbacks, performance
-> > degrade is minor for typical data transfers.
+> > On Thu, 19 Jul 2018 01:57:02 +0200
+> > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+> >   
+> > > Implement the idea suggested by Artem Bityutskiy and Tony Lindgren
+> > > described in commit b027274d2e3a ("mtd: ams-delta: fix
+> > > request_mem_region() failure").  
+> > 
+> > Thanks for doing that. I'll review the patches, but I already have a
+> > extra request: can you convert this driver to ->exec_op()? It does not
+> > necessarily have to be done in this patchset, but, that'd be great to
+> > have one more driver converted to the new interface.  
 > 
-> Same comment here, don't use the gpio_chip hooks directly, use the
-> consumer API instead.
+> OK, I'll have a look as my free time permits.
+> 
+> > BTW, there seems to be a nand_gpio driver, maybe we should merge
+> > ams-delta code into nand_gpio after it's been patched to use the GPIO
+> > consumer API.  
+> 
+> nand_gpio uses a form of read()/write() on a single bidirectional register for 
+> data transfer, not GPIO, and it does not make use of NRE / NWE signals.  Maybe 
+> the two drivers could be merged to some extent but not entirely, I think.
 
-I tired but performance was not acceptable.
-
-I see your point but please understand, what I'm trying to do here is not to 
-develop a shiny general purpose fully GPIO based NAND driver, I'm trying to 
-resolve issues with NAND driver for Amstrad Delta I like to play with, without 
-loosing much performance.
-
-I'm going to reconsider all possible options, not only doing data I/O over 
-GPIO inside the driver, to have the task completed.  Once done,  I can get 
-back to the GPIO based code I developed so far and create a new generic driver 
-as my free time permits, or anyone can do that if needed, the code is open 
-source after all. 
-
-Thanks,
-Janusz
+Well, yes, right now the nand-gpio driver is assuming the data bus
+is not bit-banged, but that's something we can easily add. Anyway, my
+remark was more a "nice to have" not a hard requirement. 
