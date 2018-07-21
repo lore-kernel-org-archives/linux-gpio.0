@@ -1,56 +1,114 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [PATCH 2/2] pinctrl/amd: use byte access to clear irq/wake status bits
-Date: Fri, 20 Jul 2018 17:38:17 -0600
-Message-ID: <CAGS+omDPkC=Tv7SJ91cLxrFnab_VPC3VZRAugkvAUokkkoYSTg@mail.gmail.com>
-References: <20180717005719.258905-1-djkurtz@chromium.org> <20180717005719.258905-2-djkurtz@chromium.org>
- <CAD8Lp446Zu=EhdzRE9pEoskMWeOHOovoAJ8qtrovEuZ2E7Z5VQ@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFT 00/10] pinctrl: samsung: Remove ugly hack for sharing eint_wakeup_mask
+Date: Sat, 21 Jul 2018 11:37:49 +0900
+Message-ID: <CA+Ln22HdeSTqZSfh18rewK_w-q7Xhx6r_5djkuAkbXV=pT8rgw@mail.gmail.com>
+References: <20180719160050.22566-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD8Lp446Zu=EhdzRE9pEoskMWeOHOovoAJ8qtrovEuZ2E7Z5VQ@mail.gmail.com>
+In-Reply-To: <20180719160050.22566-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: Shyam-sundar.S-k@amd.com, Nehal-bakulchandra.Shah@amd.com, Ken.Xue@amd.com, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Daniel,
+Hi Krzysztof,
 
-On Tue, Jul 17, 2018 at 6:30 AM Daniel Drake <drake@endlessm.com> wrote:
+2018=E5=B9=B47=E6=9C=8820=E6=97=A5(=E9=87=91) 1:01 Krzysztof Kozlowski <krz=
+k@kernel.org>:
 >
-> On Mon, Jul 16, 2018 at 7:57 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
-> > Commit 6afb10267c1692 ("pinctrl/amd: fix masking of GPIO interrupts")
-> > changed to the clearing of interrupt status bits to a RMW in a critical
-> > section.  This works, but is a bit overkill.
-> >
-> > The relevant interrupt/wake status bits are in the Most Significant Byte
-> > of a 32-bit word.  These two are the only write-able bits in this byte.
+> Hi All,
 >
-> I don't have the hardware to test this any more, and I also don't have
-> any docs to double if those are really the only writable bits, but
-> looking at the existing driver code it does seem to be the case.
+> Tests
+> =3D=3D=3D=3D=3D
+> This is both request for comments and requests for tests. Only basic
+> tests were done, including suspend to RAM on Odroid U3 (Exynos4412)
+> with max7768 RTC wakeup. Please kindly test it with devices capable of
+> suspending and resuming. I am mostly thinking about S5Pv210-based (Aria),
+> Trats, Trats2 and TM2 (Exynos5433). Existing platforms should not be
+> broken however changing external interrupt wakeup mask was not done
+> on Exynos5433.
 >
-> I think you should retain the comment noting that the value of the
-> register may have changed since it was read just a few lines above
-> (and hence explaining more precisely why we make the special effort
-> just to modify the MSB), just in case there is further rework of this
-> code in future and we end up walking into the same trap. It was one of
-> those issues that took a frustratingly long time to figure out...
+>
+> Description
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> The Exynos/S5Pv210 machine suspend code needs to write the external
+> interrupt mask during suspend.  The mask is controlled by pin controller
+> driver: the exynos_wkup_irq_set_wake() in IRQ chip for these wakeup
+> interrupts.
+>
+> Therefore pinctrl driver code exposed an exynos_get_eint_wake_mask()
+> function which was later used as an extern in machine code.
+>
+> This is quite ugly way of combining driver and machine code,
+> not portable triggering Sparse and GCC warnings.
+>
+>
+> This might break suspend capability S5Pv210 on with older DTBs (thus
+> breaks DTB compatibility), however:
+> 1. just "might" because in case of using older DTB, the wakeup mask
+>    will not be changed during suspend and default reset value (all
+>    interrupts non-masked) should work,
+> 2. mainline support for S5Pv210 with DTB is limited and suspend
+>    to RAM already might be broken.
 
-Sounds reasonable.  How about:
-
--                       /* Clear interrupt.
--                        * We must read the pin register again, in case the
--                        * value was changed while executing
--                        * generic_handle_irq() above.
-+                       /*
-+                        * Write-1-to-clear irq/wake status bits in MSByte.
-+                        * All other bits in this byte are read-only.
-+                        * This avoids modifying the lower 24-bits
-because they may have
-+                        *  changed while executing generic_handle_irq() above.
-                         */
-
+We probably should also add that it's highly unlikely that anyone
+using S5PV210 actually uses a standalone DTB, since those systems
+normally predated DT support in bootloaders and workarounds such as
+chainloading or appended DTB are normally used.
 
 >
-> Thanks
-> Daniel
+>
+> Dependencies
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 1. The first seven patches should be taken through one tree,
+>    preferably samsung-pinctrl,
+> 2. The DTS patch (7/10) for S5Pv210 should go into next cycle,
+> 3. The remaining patches (8-10) should go after all previous,
+>    so probably another release cycle.
+>
+>
+> Best regards,
+> Krzysztof
+>
+>
+> Krzysztof Kozlowski (10):
+>   pinctrl: samsung: Define suspend and resume callbacks for all banks
+>     and SoCs
+>   pinctrl: samsung: Document suspend and resume members
+>   pinctrl: samsung: Document hidden requirement about one external
+>     wakeup
+>   pinctrl: samsung: Add dedicated compatible for S5Pv210 wakeup
+>     interrupts
+>   ARM: exynos: Define EINT_WAKEUP_MASK registers for S5Pv210 and
+>     Exynos5433
+>   pinctrl: samsung: Write external interrupt mask
+>   ARM: dts: s5pv210: Switch to S5Pv210 specific pinctrl wakeup
+>     compatible
+>   ARM: s5pv210: Remove legacy setting of external wakeup interrupts
+>   ARM: exynos: Remove legacy setting of external wakeup interrupts
+>   pinctrl: samsung: Remove legacy API for handling external wakeup
+>     interrupts mask
+>
+>  .../bindings/pinctrl/samsung-pinctrl.txt           | 11 ++-
+>  arch/arm/boot/dts/s5pv210.dtsi                     |  2 +-
+>  arch/arm/mach-exynos/common.h                      |  2 -
+>  arch/arm/mach-exynos/suspend.c                     | 16 +++--
+>  arch/arm/mach-s5pv210/common.h                     |  1 -
+>  arch/arm/mach-s5pv210/pm.c                         | 16 +++--
+>  drivers/pinctrl/samsung/pinctrl-exynos-arm.c       | 16 +++++
+>  drivers/pinctrl/samsung/pinctrl-exynos.c           | 78 ++++++++++++++++=
++++---
+>  drivers/pinctrl/samsung/pinctrl-samsung.h          | 11 +++
+>  include/linux/soc/samsung/exynos-regs-pmu.h        |  8 ++-
+>  10 files changed, 136 insertions(+), 25 deletions(-)
+
+Looking through the series, the idea seems to be very reasonable, so:
+
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+Thanks for cleaning this up!
+
+Best regards,
+Tomasz
