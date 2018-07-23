@@ -1,40 +1,32 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 6/6] MAINTAINERS: Add entry for Actions Semiconductor Owl I2C driver
-Date: Mon, 23 Jul 2018 09:10:25 +0530
-Message-ID: <20180723034025.5763-7-manivannan.sadhasivam@linaro.org>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v6 5/6] i2c: Add Actions Semiconductor Owl family S900 I2C
+ driver
+Date: Mon, 23 Jul 2018 08:12:17 +0200
+Message-ID: <911dc259-7b30-9c6e-2c82-2f4c032b9d73@axentia.se>
 References: <20180723034025.5763-1-manivannan.sadhasivam@linaro.org>
+ <20180723034025.5763-6-manivannan.sadhasivam@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180723034025.5763-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180723034025.5763-6-manivannan.sadhasivam@linaro.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
-Cc: linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
+Cc: linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com
 List-Id: linux-gpio@vger.kernel.org
 
-Add entry for Actions Semiconductor Owl I2C driver under ARM/ACTIONS
+On 2018-07-23 05:40, Manivannan Sadhasivam wrote:
+> +		/* Handle the remaining bytes which were not sent */
+> +		while (!(readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT) &
+> +		       OWL_I2C_FIFOSTAT_TFF) && i2c_dev->msg_ptr < msg->len) {
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+You moved the OWL_ line to the left instead of right, so this is still
+misaligned and thus not helping the reader.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 09b54e9ebc6f..5084c62712fa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1145,12 +1145,14 @@ F:	arch/arm/boot/dts/owl-*
- F:	arch/arm64/boot/dts/actions/
- F:	drivers/clk/actions/
- F:	drivers/clocksource/owl-*
-+F:	drivers/i2c/busses/i2c-owl.c
- F:	drivers/pinctrl/actions/*
- F:	drivers/soc/actions/
- F:	include/dt-bindings/power/owl-*
- F:	include/linux/soc/actions/
- F:	Documentation/devicetree/bindings/arm/actions.txt
- F:	Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-+F:	Documentation/devicetree/bindings/i2c/i2c-owl.txt
- F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
- F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
- F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
--- 
-2.17.1
+Cheers,
+Peter
+
+> +			writel(msg->buf[i2c_dev->msg_ptr++],
+> +			       i2c_dev->base + OWL_I2C_REG_TXDAT);
+> +		}
