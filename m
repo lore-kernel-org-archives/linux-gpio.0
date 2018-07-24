@@ -1,104 +1,62 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH v6 00/10] Add the I3C subsystem
-Date: Tue, 24 Jul 2018 18:54:15 +0200
-Message-ID: <20180724185415.6126751e@bbrezillon>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <2ab0ab75-2df0-2714-f007-c33b25481016@axentia.se>
-        <20180720101206.tv7nsoanwo5ftnia@ninjato>
-        <CAK8P3a2Pqo5DuYBb09+w4nGWGOw+e_tZPxnA06qjNO_6Hw6NvQ@mail.gmail.com>
-        <21b269c5-a3a7-c5de-c81e-c9c9301ae13e@axentia.se>
-        <CAK8P3a1t2fhdw7HwxNkOs9o2pBECZ0ZdOysA=r2SPTWEvx76kw@mail.gmail.com>
-        <20180720151751.242d4809@bbrezillon>
-        <CAK8P3a14_6uf9VLYU0YnmFp0Q=DZBKc0cAesBh0opanGDZMFRA@mail.gmail.com>
-        <20180724162806.318a92c6@bbrezillon>
-        <CAK8P3a3YQbiiJMTHTVh63fOvtA1sa0J5Eb4z7xbnpBPwUDkqxg@mail.gmail.com>
-        <CAMuHMdXif_iufXx0Y+UJjKs9TNLfrTONoFvUSyrpkfaT0=ydRQ@mail.gmail.com>
-        <CAK8P3a0jc1k9weTNbqSJXkCSFefus9OPyU5_v5=mTFxiDd0q5Q@mail.gmail.com>
-        <CAMuHMdXJ_FGXXwNx8h0ZfskJGRWES1xLuTQpD59Vw1Smp6FTRg@mail.gmail.com>
-        <CAK8P3a17t=_o04GsowS2RnTwKKVxt8KuJtT36N=Ea-SOq7fTow@mail.gmail.com>
-        <20180724181437.1d1b27a8@bbrezillon>
-        <CAK8P3a0wcmeFKvRf7=FTNvePayc2AxniHoNkLOuzQQCt=MiLjQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFT v2 00/10] pinctrl: samsung: Remove ugly hack for sharing
+ eint_wakeup_mask
+Date: Tue, 24 Jul 2018 21:40:49 +0200
+Message-ID: <20180724194049.fpp5hi7hfy5w5mjj@kozik-lap>
+References: <CGME20180723175334epcas5p3e46820b4d356d4f1ea718ec1a6c093a6@epcas5p3.samsung.com>
+ <20180723175302.22535-1-krzk@kernel.org>
+ <20180724091816eucas1p29790b3c45492b261ff154db8056fbb88~EQ2otAHnr1142511425eucas1p2l@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a0wcmeFKvRf7=FTNvePayc2AxniHoNkLOuzQQCt=MiLjQ@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20180724091816eucas1p29790b3c45492b261ff154db8056fbb88~EQ2otAHnr1142511425eucas1p2l@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 24 Jul 2018 18:25:22 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
-
-> On Tue, Jul 24, 2018 at 6:14 PM, Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
-> > On Tue, 24 Jul 2018 17:58:29 +0200
-> > Arnd Bergmann <arnd@arndb.de> wrote:
-> >  
-> >> On Tue, Jul 24, 2018 at 5:46 PM, Geert Uytterhoeven
-> >> <geert@linux-m68k.org> wrote:  
-> >> > On Tue, Jul 24, 2018 at 5:40 PM Arnd Bergmann <arnd@arndb.de> wrote:  
-> >> >> On Tue, Jul 24, 2018 at 5:15 PM, Geert Uytterhoeven
-> >> >> <geert@linux-m68k.org> wrote:  
-> >> >> > On Tue, Jul 24, 2018 at 5:05 PM Arnd Bergmann <arnd@arndb.de> wrote:  
-> >> The second case is the one that started the discussion, and
-> >> this is where I said I'd prefer to associate each slave with at
-> >> most one master at boot time, while the current v6 patch
-> >> is prepared for having one slave be accessed alternatingly
-> >> by multiple masters using the master handover, though so
-> >> far nobody has been able to describe exactly how we'd pick
-> >> which master is active at what point,  
-> >
-> > Even if it's not yet implemented, I have everything in place to figure
-> > this out (see the ->cur_master field in the i3c_bus object). Now,
-> > what's missing is a list of possible masters attached to an i3c device
-> > so that the framework can pick the most appropriate one at runtime and
-> > initiate mastership handover if required (if the selected master is not
-> > the currently active one).
-> >
-> > The selection logic should look like this:
-> >
-> >         if (active_master supports requested feature)
-> >                 use active master
-> >         else
-> >                 pick an inactive one that has relevant caps and initiate
-> >                 mastership handover (+ update bus->cur_master)  
+On Tue, Jul 24, 2018 at 11:18:13AM +0200, Marek Szyprowski wrote:
+> Hi Krzysztof,
 > 
-> How would you deal with soft requirements like performance?
-> E.g. if you have one master that can do large transfers faster
-> through a special DMA engine, and other master that can
-> be faster for small transfers, but both support all capabilities
-> for that device, won't you need some complex logic to avoid
-> being stuck with a slow master indefinitely?
-
-True.
-
-> 
-> >> or what specific scenario
-> >> would require it.  
+> On 2018-07-23 19:52, Krzysztof Kozlowski wrote:
+> > Hi All,
 > >
-> > I think I described a scenario (masters having different
-> > capabilities all connected to the same bus), though I don't know how
-> > likely this use case is :-/.  
+> > Changes since v1
+> > ================
+> > 1. Add Tomasz's ack.
+> > 2. Reword description in patch 6/10.
+> >
+> >
+> > Tests
+> > =====
+> > This is both request for comments and requests for tests. Only basic
+> > tests were done, including suspend to RAM on Odroid U3 (Exynos4412)
+> > with max7768 RTC wakeup. Please kindly test it with devices capable of
+> > suspending and resuming. I am mostly thinking about S5Pv210-based (Aria),
+> > Trats, Trats2 and TM2 (Exynos5433). Existing platforms should not be
+> > broken however changing external interrupt wakeup mask was not done
+> > on Exynos5433.
 > 
-> I was looking for something more specific here. What (lack of)
-> capabilities could two i3c controllers have that require you to
-> use both of them for the same device, rather than picking
-> a master for each slave with the right feature set?
+> Works fine on Exynos5433 TM2 with some additional patches related to
+> suspend/resume handling of the PMU. It handles only EINT0..EINT31 pins
+> for now. Exynos5433 has more external interrupt wakeup lines: EINT32-63
+> located at banks GPF1[0..7], GPF2[0..3], GPF3[0..3], GPF4[0..7] and
+> GPF5[0..7]. They can be configured as wakeup sources in
+> EXYNOS5433_EINT_WAKEUP_MASK1 (0x062C) PMU register. Handling of them
+> can be added later when it will be really needed.
+> 
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hehe, if I had a clear answer to this question we wouldn't have this
-discussion :-). I gave you an example:
+Thanks for comments and testing. Indeed support for Exynos5433 has to be
+improved.
 
-- master A supporting IBIs but not HDR transactions
-- master B supporting HDR modes but not IBIs
+I would like to push 1-6 (which are needed for the rest) through current
+cycle so I applied them to samsung-pinctrl tree.
 
-but as I said, I'm not sure how likely this example is...
+Since anyway suspend to RAM is mostly broken nowadays... nothing more
+should pop up.
 
-The question is more, should we design things so that we can at some
-point implement a solution to support those funky setups, or should we
-just ignore it and risk breaking sysfs/DT ABI when/if we have to support
-that?
 
-This is really an open question. I initially went for the former, but
-have no objection switching to the latter.
+Best regards,
+Krzysztof
