@@ -1,60 +1,92 @@
 From: Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v2 0/3] pinctrl: msm interrupt and muxing fixes
-Date: Wed, 25 Jul 2018 15:28:57 -0700
-Message-ID: <20180725222900.33231-1-swboyd@chromium.org>
+Subject: [PATCH v2 1/3] pinctrl: msm: Really mask level interrupts to prevent latching
+Date: Wed, 25 Jul 2018 15:28:58 -0700
+Message-ID: <20180725222900.33231-2-swboyd@chromium.org>
+References: <20180725222900.33231-1-swboyd@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180725222900.33231-1-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Doug Anderson <dianders@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Here's a collection of pinctrl fixes for the qcom driver that
-make things a little smoother for DT writers while also fixing
-a problem seen with level triggered interrupts.
+The interrupt controller hardware in this pin controller has two status
+enable bits. The first "normal" status enable bit enables or disables
+the summary interrupt line being raised when a gpio interrupt triggers
+and the "raw" status enable bit allows or prevents the hardware from
+latching an interrupt into the status register for a gpio interrupt.
+Currently we just toggle the "normal" status enable bit in the mask and
+unmask ops so that the summary irq interrupt going to the CPU's
+interrupt controller doesn't trigger for the masked gpio interrupt.
 
-The first patch fixes an issue where we always see one extra level
-triggered interrupt when the interrupt triggers. The second and third
-patches make things nice for DT writers so they don't have to explicitly
-mux out pins as 'GPIO' function and as 'input' instead of output so that
-interrupts work properly and also makes sure that a gpio is muxed out
-properly to 'GPIO' function when a gpio is requested by gpiod_request()
-and friends.
+For a level triggered interrupt, the flow would be as follows: the pin
+controller sees the interrupt, latches the status into the status
+register, raises the summary irq to the CPU, summary irq handler runs
+and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
+interrupt, the interrupt handler runs, and finally unmask the interrupt.
+When the interrupt handler completes, we expect that the interrupt line
+level will go back to the deasserted state so the genirq code can unmask
+the interrupt without it triggering again.
 
-The discussion never really completed on the previous thread so I'm just
-resending these patches to restart the conversation. In the cases
-where a driver needs to do both pinctrl muxing for some non-gpio
-function and also GPIO control they'll need to explicitly mux the pins
-at the right time. If we force them to mux the pins into the function
-mode after requesting the GPIO at boot then we'll be better off because
-it will force the code to mux out the function or GPIO explicitly all
-the time.
+If we only mask the interrupt by clearing the "normal" status enable bit
+then we'll ack the interrupt but it will continue to show up as pending
+in the status register because the raw status bit is enabled, the
+hardware hasn't deasserted the line, and thus the asserted state latches
+into the status register again. When the hardware deasserts the
+interrupt the pin controller still thinks there is a pending unserviced
+level interrupt because it latched it earlier. This behavior causes
+software to see an extra interrupt for level type interrupts each time
+the interrupt is handled.
 
-We will have a case in the near future where the UART driver will want
-to mux the RX pin into GPIO mode so it can get a wakeup interrupt during
-suspend path and then swizzle the pin back into QUP/UART mode when the
-wakeup interrupt isn't necessary anymore. In this case, I imagine the
-driver will request the pin as an interrupt during probe, that will
-convert the GPIO into an irq and mux it out as a GPIO function input
-pin, disable that IRQ because it's only needed at suspend time, and then
-need to explicitly mux the device into "UART" mode before finishing
-driver probe. Then when it goes into suspend, it will need to remux the
-pin as a GPIO function input pin, enable the irq, and wait for wakeup.
-On resume, it will disable the irq and remux the pin as "UART" mode.
-
-Changes from v1:
- * Squashed the raw status bit part into the same write in unmask path
-   based on suggestion from Doug Andersson
+Let's fix this by clearing the raw status enable bit for level type
+interrupts so that the hardware stops latching the status of the
+interrupt after we ack it. We don't do this for edge type interrupts
+because it seems that toggling the raw status enable bit for edge type
+interrupts causes spurious edge interrupts.
 
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
 
-Stephen Boyd (3):
-  pinctrl: msm: Really mask level interrupts to prevent latching
-  pinctrl: msm: Mux out gpio function with gpio_request()
-  pinctrl: msm: Configure interrupts as input and gpio mode
+Changes from v1:
+ - Squashed raw_status_bit write into same write on unmask (Doug
+   Andersson)
 
- drivers/pinctrl/qcom/pinctrl-msm.c | 67 ++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-msm.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 2155a30c282b..3970dc599092 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -634,6 +634,19 @@ static void msm_gpio_irq_mask(struct irq_data *d)
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+ 	val = readl(pctrl->regs + g->intr_cfg_reg);
++	/*
++	 * Leaving the RAW_STATUS_EN bit enabled causes level interrupts that
++	 * are still asserted to re-latch after we ack them. Clear the raw
++	 * status enable bit too so the interrupt can't even latch into the
++	 * hardware while it's masked, but only do this for level interrupts
++	 * because edge interrupts have a problem with the raw status bit
++	 * toggling and causing spurious interrupts.
++	 */
++	if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
++		val &= ~BIT(g->intr_raw_status_bit);
++		writel(val, pctrl->regs + g->intr_cfg_reg);
++	}
++
+ 	val &= ~BIT(g->intr_enable_bit);
+ 	writel(val, pctrl->regs + g->intr_cfg_reg);
+ 
+@@ -655,6 +668,7 @@ static void msm_gpio_irq_unmask(struct irq_data *d)
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+ 	val = readl(pctrl->regs + g->intr_cfg_reg);
++	val |= BIT(g->intr_raw_status_bit);
+ 	val |= BIT(g->intr_enable_bit);
+ 	writel(val, pctrl->regs + g->intr_cfg_reg);
+ 
 -- 
 Sent by a computer through tubes
