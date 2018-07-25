@@ -1,26 +1,62 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-binding: pinctrl: berlin: document AS370 SoC
- pinctrl
-Date: Wed, 25 Jul 2018 10:04:09 -0600
-Message-ID: <20180725160409.GA20922@rob-hp-laptop>
-References: <20180718135613.1c559b9c@xhacker.debian>
- <20180718135709.35128a54@xhacker.debian>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] pinctrl: samsung: Stuff for v4.19
+Date: Wed, 25 Jul 2018 18:18:52 +0200
+Message-ID: <20180725161852.6963-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180718135709.35128a54@xhacker.debian>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 01:57:09PM +0800, Jisheng Zhang wrote:
-> Add as370 to existing berlin pinctrl device tree binding.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.19
+
+for you to fetch changes up to b3793159249bb091efce4b1515ce18cdfc4c6e41:
+
+  dt-bindings: pinctrl: samsung: Add SPDX license identifier (2018-07-24 21:59:17 +0200)
+
+----------------------------------------------------------------
+Samsung pinctrl drivers changes for v4.19
+
+1. Add handling of external wakeup interrupts mask inside the pin
+   controller driver.
+
+   Existing solution is spread between the driver and machine code.  The
+   machine code writes the mask but its value is taken from pin
+   controller driver.
+
+   This moves everything into pin controller driver allowing later to
+   remove the cross-subsystem interaction.  Also this is a necessary
+   step for implementing later Suspend to RAM on ARMv8 Exynos5433.
+
+2. Bring necessary suspend/resume callbacks for Exynos542x and
+   Exynos5260.
+3. Document hidden requirement about one external wakeup interrupts
+   device node.
+4. Minor documentation cleanups.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (7):
+      pinctrl: samsung: Define suspend and resume callbacks for all banks and SoCs
+      pinctrl: samsung: Document suspend and resume members
+      pinctrl: samsung: Document hidden requirement about one external wakeup
+      pinctrl: samsung: Add dedicated compatible for S5Pv210 wakeup interrupts
+      ARM: exynos: Define EINT_WAKEUP_MASK registers for S5Pv210 and Exynos5433
+      pinctrl: samsung: Write external wakeup interrupt mask
+      dt-bindings: pinctrl: samsung: Add SPDX license identifier
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           | 11 +++-
+ arch/arm/mach-exynos/suspend.c                     |  2 +-
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c       | 16 +++++
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 68 +++++++++++++++++++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.h          | 11 ++++
+ include/dt-bindings/pinctrl/samsung.h              |  7 +--
+ include/linux/soc/samsung/exynos-regs-pmu.h        |  8 ++-
+ 7 files changed, 113 insertions(+), 10 deletions(-)
