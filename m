@@ -1,56 +1,56 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 5/5] arm64: dts: actions: Add pinctrl node for Actions
- Semi S700
-Date: Fri, 27 Jul 2018 00:10:48 +0530
-Message-ID: <20180726184048.GG5220@Mani-XPS-13-9360>
-References: <20180722163601.28346-1-sravanhome@gmail.com>
- <20180722163601.28346-6-sravanhome@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v3 0/2] pinctrl: nuvoton: add driver for NPCM7xx
+Date: Fri, 27 Jul 2018 02:21:01 +0300
+Message-ID: <20180726232103.64625-1-tmaimon77@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180722163601.28346-6-sravanhome@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Saravanan Sekar <sravanhome@gmail.com>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com, thomas.liau@actions-semi.com, linux@cubietech.com
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, yuenn@google.com, venture@google.com, brendanhiggins@google.com, avifishman70@gmail.com, joel@jms.id.au
+Cc: devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+This patch set adds pinmux and GPIO controller for the Nuvoton
+NPCM750/730/715/705 Baseboard Management Controller (BMC).
 
-On Sun, Jul 22, 2018 at 06:36:01PM +0200, Saravanan Sekar wrote:
-> Add pinctrl nodes for Actions Semi S700 SoC
-> 
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> ---
->  arch/arm64/boot/dts/actions/s700.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-> index 59d29e4ca404..88edac21e03f 100644
-> --- a/arch/arm64/boot/dts/actions/s700.dtsi
-> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
-> @@ -179,5 +179,11 @@
->  			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names = "timer1";
->  		};
-> +
-> +		pinctrl: pinctrl@e01b0000 {
-> +			compatible = "actions,s700-pinctrl";
-> +			reg = <0x0 0xe01b0000 0x0 0x1000>;
-> +			clocks = <&cmu CLK_GPIO>;
-> +		};
+The Nuvoton BMC NPCM750/730/715/705 Pinmux functions accessible
+only for pin groups and pinconf parameters available only for 
+individual pins.
 
-Driver/binding/dts are inconsistent. Driver seems to support pinctrl +
-gpio + irq but there is no gpio/irq property in dts patch.
+The Nuvoton BMC NPCM750/730/715/705 has eight identical GPIO 
+modules, each module has 32 GPIO ports.
 
-Please correct it.
+Most of the GPIO ports are multiplexed with other system functions.
 
-Thanks,
-Mani
+The NPCM7xx pinctrl and GPIO driver tested on NPCM750 evaluation board.
 
->  	};
->  };
-> -- 
-> 2.18.0
-> 
+Addressed comments from:.
+ - Linus Walleij: https://www.spinics.net/lists/devicetree/msg239043.html
+ 
+Changes since version 2:
+ - Using GPIO_GENERIC (mmio).
+ - Add Kconfig MFD_SYSCON dependency.
+ - Remove unnecessary code from the direction output function.
+ - dt-binding documentation haven't changed.
+				  
+Changes since version 1:
+ - Remove Kconfig MFD_SYSCON dependency.
+ - Modify setfunc function.
+ - Modify dt-binding documentation according Rob comments.
+
+Tomer Maimon (2):
+  dt-binding: pinctrl: Add NPCM7xx pinctrl and GPIO documentation
+  pinctrl: nuvoton: add NPCM7xx pinctrl and GPIO driver
+
+ .../bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt   |  216 ++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/nuvoton/Kconfig                    |   13 +
+ drivers/pinctrl/nuvoton/Makefile                   |    4 +
+ drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c          | 2127 ++++++++++++++++++++
+ 6 files changed, 2362 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
+ create mode 100644 drivers/pinctrl/nuvoton/Kconfig
+ create mode 100644 drivers/pinctrl/nuvoton/Makefile
+ create mode 100644 drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
+
+-- 
+2.14.1
