@@ -1,42 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] gpio: mvebu: Add support for multiple PWM lines
-Date: Sun, 29 Jul 2018 22:58:16 +0200
-Message-ID: <CACRpkdbiAkt6hT+LeRXCjWDZwjeYDF-e3sckMOWqnL2rdqLDug@mail.gmail.com>
-References: <1532114623-81911-1-git-send-email-aditya@kobol.io>
+Subject: Re: [PATCH] gpio: ml-ioh: Fix buffer underwrite on probe error path
+Date: Sun, 29 Jul 2018 23:13:42 +0200
+Message-ID: <CACRpkdZ1RuSOFh8_w0Ds4sC2rpJhVEEtuo=SzVxFLk4OggM7_A@mail.gmail.com>
+References: <20180723165330.25213-1-vasilyev@ispras.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1532114623-81911-1-git-send-email-aditya@kobol.io>
+In-Reply-To: <20180723165330.25213-1-vasilyev@ispras.ru>
 Sender: linux-kernel-owner@vger.kernel.org
-To: aditya@kobol.io, Gregory CLEMENT <gregory.clement@free-electrons.com>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, Richard Genoud <richard.genoud@gmail.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, gauthier@kobol.io, alban.browaeys@gmail.com, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: vasilyev@ispras.ru
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ldv-project@linuxtesting.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hoping for some review from Gergory, Ralph or Richard who all seem
-to use this driver!
+On Mon, Jul 23, 2018 at 6:54 PM Anton Vasilyev <vasilyev@ispras.ru> wrote:
+
+> If ioh_gpio_probe() fails on devm_irq_alloc_descs() then chip may point
+> to any element of chip_save array, so reverse iteration from pointer chip
+> may become chip_save[-1] and gpiochip_remove() will operate with wrong
+> memory.
+>
+> The patch fix the error path of ioh_gpio_probe() to correctly bypass
+> chip_save array.
+>
+> Found by Linux Driver Verification project (linuxtesting.org).
+>
+> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+
+Patch applied, nice work!
 
 Yours,
 Linus Walleij
-
-On Fri, Jul 20, 2018 at 9:24 PM Aditya Prayoga <aditya@kobol.io> wrote:
->
-> Hi everyone,
->
-> Helios4, an Armada 388 based NAS SBC, provides 2 (4-pins) fan connectors.
-> The PWM pins on both connector are connected to GPIO on bank 1. Current gpio-
-> mvebu does not allow more than one PWM on the same bank.
->
-> Aditya
->
-> ---
->
-> Aditya Prayoga (2):
->   gpio: mvebu: Add support for multiple PWM lines per GPIO chip
->   gpio: mvebu: Allow to use non-default PWM counter
->
->  drivers/gpio/gpio-mvebu.c | 111 ++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 92 insertions(+), 19 deletions(-)
->
-> --
-> 2.7.4
->
