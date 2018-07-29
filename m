@@ -1,40 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl/amd: fix gpio irq level in debugfs
-Date: Sun, 29 Jul 2018 22:21:22 +0200
-Message-ID: <CACRpkdYi_Zb9T4q5i3-KcFrvZyuhuTw4Ys9zg7mk1VD5S-Myyg@mail.gmail.com>
-References: <20180717010742.1847-1-djkurtz@chromium.org>
+Subject: Re: [PATCH V3] gpio: mxc: add power management support
+Date: Sun, 29 Jul 2018 22:24:32 +0200
+Message-ID: <CACRpkda-syvCjO2U9pnZdHKnGSeDB738tcjKG31kevF=hKcKQg@mail.gmail.com>
+References: <1531877132-14280-1-git-send-email-Anson.Huang@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180717010742.1847-1-djkurtz@chromium.org>
+In-Reply-To: <1531877132-14280-1-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>, Ken Xue <Ken.Xue@amd.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 3:07 AM Daniel Kurtz <djkurtz@chromium.org> wrote:
+On Wed, Jul 18, 2018 at 3:30 AM Anson Huang <Anson.Huang@nxp.com> wrote:
 
-> According to the AMD BKDG, the GPIO ActiveLevel bits (10:9) map to:
->  00 Active High
->  01 Active Low
->  10 Active on both edges iff LevelTrig (bit 8) == 0
->  11 Reserved
+> GPIO registers could lose context on i.MX7D, when
+> enter LPSR mode, the whole SoC will be powered off
+> except LPSR domain, GPIO banks will lose context
+> in this case, need to restore the context after
+> resume from LPSR mode.
 >
-> The current code has a bug where it interprets 00 => Active Low, and
-> 01 => Active High.
+> This patch adds new compatible string for i.MX7D
+> which supports GPIO power off feature in suspend,
+> and adds the GPIO save/restore operations in noirq
+> suspend/resume phase, since GPIO is fundamental
+> module which could be used by other peripherals'
+> resume phase.
 >
-> Fix the bug, restrict "Active on both" to just the edge trigger case, and
-> refactor a bit to make the logic more readable.
->
-> Change-Id: Id7775ae4cb61d193fa7fbb83967a8c5a7cdd0de6
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-I stripped that off.
-
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-
-Patch applied!
-
-Thanks for your fixing and attention to detail!
+Patch applied with Fabio's ACK!
 
 Yours,
 Linus Walleij
