@@ -1,32 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: tegra: Fix tegra_gpio_irq_set_type()
-Date: Sun, 29 Jul 2018 22:39:30 +0200
-Message-ID: <CACRpkdbx1Zj8G0H9pKsF-+JfXBruE4_Rx3ZD5j8q3ycsNS+YOQ@mail.gmail.com>
-References: <20180717161038.21500-1-digetx@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl/amd: only handle irq if it is pending and unmasked
+Date: Sun, 29 Jul 2018 22:44:17 +0200
+Message-ID: <CACRpkdbL85B9aGAbJ4U146jsxXgDSdojEO8=y5h94edpsXwsPA@mail.gmail.com>
+References: <20180717005719.258905-1-djkurtz@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180717161038.21500-1-digetx@gmail.com>
+In-Reply-To: <20180717005719.258905-1-djkurtz@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>, Ken Xue <Ken.Xue@amd.com>, Daniel Drake <drake@endlessm.com>, Thomas Gleixner <tglx@linutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 6:12 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+On Tue, Jul 17, 2018 at 2:57 AM Daniel Kurtz <djkurtz@chromium.org> wrote:
 
-> Commit 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
-> broke tegra_gpio_irq_set_type() because requesting of GPIO direction must
-> be done after enabling GPIO function for a pin.
+> The AMD pinctrl driver demultiplexes GPIO interrupts and fires off their
+> individual handlers.
 >
-> This patch fixes drivers probe failure like this:
+> If one of these GPIO irqs is configured as a level interrupt, and its
+> downstream handler is a threaded ONESHOT interrupt, the GPIO interrupt
+> source is masked by handle_level_irq() until the eventual return of the
+> threaded irq handler.  During this time the level GPIO interrupt status
+> will still report as high until the actual gpio source is cleared - both
+> in the individual GPIO interrupt status bit (INTERRUPT_STS_OFF) and in
+> its corresponding "WAKE_INT_STATUS_REG" bit.
 >
->  gpio gpiochip0: (tegra-gpio): gpiochip_lock_as_irq: cannot get GPIO direction
->  tegra-gpio 6000d000.gpio: unable to lock Tegra GPIO 144 as IRQ
+> Thus, if another GPIO interrupt occurs during this time,
+> amd_gpio_irq_handler() will see that the (masked-and-not-yet-cleared)
+> level irq is still pending and incorrectly call its handler again.
 >
-> Fixes: 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> To fix this, have amd_gpio_irq_handler() check for both interrupts status
+> and mask before calling generic_handle_irq().
+>
+> Note: Is it possible that this bug was the source of the interrupt storm
+> on Ryzen when using chained interrupts before commit ba714a9c1dea85
+> ("pinctrl/amd: Use regular interrupt instead of chained")?
+>
+> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 
-Patch applied with Jon's tags.
+Patch applied with TGLX ACK.
 
 Yours,
 Linus Walleij
