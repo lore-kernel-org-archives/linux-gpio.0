@@ -1,28 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: uniphier: add spi pin-mux settings
-Date: Sun, 29 Jul 2018 22:47:19 +0200
-Message-ID: <CACRpkdYD6FT9k50kc4kSx_nzv91wTeBYgJ1jHVrbFDY-XMaB9w@mail.gmail.com>
-References: <1531981249-26329-1-git-send-email-hayashibara.keiji@socionext.com>
+Subject: Re: [PATCH] gpiolib: probe deferral error reporting
+Date: Sun, 29 Jul 2018 22:49:12 +0200
+Message-ID: <CACRpkdZSb--nGAR2DVfBgqmQTv=S_sBjLTfJiKHzG2GyfJ6jEw@mail.gmail.com>
+References: <20180720075449.26711-1-marcel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531981249-26329-1-git-send-email-hayashibara.keiji@socionext.com>
+In-Reply-To: <20180720075449.26711-1-marcel@ziswiler.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: hayashibara.keiji@socionext.com
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 8:21 AM Keiji Hayashibara
-<hayashibara.keiji@socionext.com> wrote:
+On Fri, Jul 20, 2018 at 9:54 AM Marcel Ziswiler <marcel@ziswiler.com> wrote:
 
-> From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 >
-> Add pin-mux settings for spi controller.
+> Actually report the error code from devm_regulator_get() which may as
+> well just be a probe deferral.
 >
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+> This is e.g. what one gets upon booting a Colibri T20:
+>
+> gpiochip_add_data_with_key: GPIOs 0..223 (tegra-gpio) failed to register
+>
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-There is some problem with the test robot, can you comment/followup?
+Makes perfect sense.
+Patch applied.
 
 Yours,
 Linus Walleij
