@@ -1,35 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V3] gpio: mxc: add power management support
-Date: Sun, 29 Jul 2018 22:24:32 +0200
-Message-ID: <CACRpkda-syvCjO2U9pnZdHKnGSeDB738tcjKG31kevF=hKcKQg@mail.gmail.com>
-References: <1531877132-14280-1-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [RFC PATCH 6/8] gpio: omap: Add get/set_multiple() callbacks
+Date: Sun, 29 Jul 2018 22:29:05 +0200
+Message-ID: <CACRpkdbH9Vu12RckQPKhGgyJnyxaQ04d5qa9srHwneP3SS6FAA@mail.gmail.com>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180718235710.18242-7-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1531877132-14280-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <20180718235710.18242-7-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, ext Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@kernel.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Mark Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 3:30 AM Anson Huang <Anson.Huang@nxp.com> wrote:
+On Thu, Jul 19, 2018 at 1:56 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-> GPIO registers could lose context on i.MX7D, when
-> enter LPSR mode, the whole SoC will be powered off
-> except LPSR domain, GPIO banks will lose context
-> in this case, need to restore the context after
-> resume from LPSR mode.
+> This should make applications utilizing whole banks work faster.
 >
-> This patch adds new compatible string for i.MX7D
-> which supports GPIO power off feature in suspend,
-> and adds the GPIO save/restore operations in noirq
-> suspend/resume phase, since GPIO is fundamental
-> module which could be used by other peripherals'
-> resume phase.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Patch applied with Fabio's ACK!
+This patch looks good to me and I have an urge to just apply it.
+
+Can we get some feedback from the maintainers?
 
 Yours,
 Linus Walleij
