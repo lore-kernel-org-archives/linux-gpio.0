@@ -1,44 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl/amd: only handle irq if it is pending and unmasked
-Date: Sun, 29 Jul 2018 22:44:17 +0200
-Message-ID: <CACRpkdbL85B9aGAbJ4U146jsxXgDSdojEO8=y5h94edpsXwsPA@mail.gmail.com>
-References: <20180717005719.258905-1-djkurtz@chromium.org>
+Subject: Re: [PATCH] pinctrl: uniphier: add spi pin-mux settings
+Date: Sun, 29 Jul 2018 22:47:19 +0200
+Message-ID: <CACRpkdYD6FT9k50kc4kSx_nzv91wTeBYgJ1jHVrbFDY-XMaB9w@mail.gmail.com>
+References: <1531981249-26329-1-git-send-email-hayashibara.keiji@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180717005719.258905-1-djkurtz@chromium.org>
+In-Reply-To: <1531981249-26329-1-git-send-email-hayashibara.keiji@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>, Ken Xue <Ken.Xue@amd.com>, Daniel Drake <drake@endlessm.com>, Thomas Gleixner <tglx@linutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: hayashibara.keiji@socionext.com
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 2:57 AM Daniel Kurtz <djkurtz@chromium.org> wrote:
+On Thu, Jul 19, 2018 at 8:21 AM Keiji Hayashibara
+<hayashibara.keiji@socionext.com> wrote:
 
-> The AMD pinctrl driver demultiplexes GPIO interrupts and fires off their
-> individual handlers.
+> From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 >
-> If one of these GPIO irqs is configured as a level interrupt, and its
-> downstream handler is a threaded ONESHOT interrupt, the GPIO interrupt
-> source is masked by handle_level_irq() until the eventual return of the
-> threaded irq handler.  During this time the level GPIO interrupt status
-> will still report as high until the actual gpio source is cleared - both
-> in the individual GPIO interrupt status bit (INTERRUPT_STS_OFF) and in
-> its corresponding "WAKE_INT_STATUS_REG" bit.
+> Add pin-mux settings for spi controller.
 >
-> Thus, if another GPIO interrupt occurs during this time,
-> amd_gpio_irq_handler() will see that the (masked-and-not-yet-cleared)
-> level irq is still pending and incorrectly call its handler again.
->
-> To fix this, have amd_gpio_irq_handler() check for both interrupts status
-> and mask before calling generic_handle_irq().
->
-> Note: Is it possible that this bug was the source of the interrupt storm
-> on Ryzen when using chained interrupts before commit ba714a9c1dea85
-> ("pinctrl/amd: Use regular interrupt instead of chained")?
->
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
 
-Patch applied with TGLX ACK.
+There is some problem with the test robot, can you comment/followup?
 
 Yours,
 Linus Walleij
