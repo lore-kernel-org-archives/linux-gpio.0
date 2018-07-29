@@ -1,34 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 7/8] mtd: rawnand: ams-delta: Check sanity of data
- GPIO resource
-Date: Sun, 29 Jul 2018 22:36:49 +0200
-Message-ID: <CACRpkdZfiCN3U57s-7hGnbO9W-=pOjt0mL0w=Jv_+5WBdkEuig@mail.gmail.com>
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180718235710.18242-8-jmkrzyszt@gmail.com>
- <20180719084447.239a1b92@bbrezillon>
+Subject: Re: [PATCH] gpio: tegra: Fix tegra_gpio_irq_set_type()
+Date: Sun, 29 Jul 2018 22:39:30 +0200
+Message-ID: <CACRpkdbx1Zj8G0H9pKsF-+JfXBruE4_Rx3ZD5j8q3ycsNS+YOQ@mail.gmail.com>
+References: <20180717161038.21500-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180719084447.239a1b92@bbrezillon>
+In-Reply-To: <20180717161038.21500-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>, =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, ext Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Mark Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 8:44 AM Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
+On Tue, Jul 17, 2018 at 6:12 PM Dmitry Osipenko <digetx@gmail.com> wrote:
 
-> I guess you'd prefer to have the pin values in a bitmap instead of an
-> array of integers. That's probably something you can discuss with
-> Linus, see if he would accept to change the prototype of
-> gpiod_get_raw_array_value().
+> Commit 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
+> broke tegra_gpio_irq_set_type() because requesting of GPIO direction must
+> be done after enabling GPIO function for a pin.
+>
+> This patch fixes drivers probe failure like this:
+>
+>  gpio gpiochip0: (tegra-gpio): gpiochip_lock_as_irq: cannot get GPIO direction
+>  tegra-gpio 6000d000.gpio: unable to lock Tegra GPIO 144 as IRQ
+>
+> Fixes: 36b312792b97 ("gpiolib: Respect error code of ->get_direction()")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-I am not so smart as to see the overall effects but if what
-you're saying is that we shouldn't have designed these functions
-and callbacks using arrays of integers (or longs) and instead
-pass bitmaps, you may be just right. It intuitively sounds better.
-But I'm not good with bitmaps.
-
-We would have to refactor the world though.
+Patch applied with Jon's tags.
 
 Yours,
 Linus Walleij
