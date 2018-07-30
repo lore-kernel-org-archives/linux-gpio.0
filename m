@@ -1,37 +1,32 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v1 1/1] gpio: mmio: add inverted direction get_set io support
-Date: Mon, 30 Jul 2018 20:14:58 +0300
-Message-ID: <CAHp75Vfr_XvDbCBgh0z6iHe8BH9t8ZN6QpP9t4HvXd10db-Hcw@mail.gmail.com>
-References: <20180730093418.124648-1-tmaimon77@gmail.com> <20180730093418.124648-2-tmaimon77@gmail.com>
+From: Paul Burton <paul.burton@mips.com>
+Subject: Re: [PATCH 1/2] MIPS: mscc: ocelot: add interrupt controller
+ properties to GPIO controller
+Date: Mon, 30 Jul 2018 10:35:22 -0700
+Message-ID: <20180730173521.fr6be2kw7irk5jbp@pburton-laptop>
+References: <20180725122621.31713-1-quentin.schulz@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180730093418.124648-2-tmaimon77@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20180725122621.31713-1-quentin.schulz@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Quentin Schulz <quentin.schulz@bootlin.com>
+Cc: alexandre.belloni@bootlin.com, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, ralf@linux-mips.org, jhogan@kernel.org, linux-gpio@vger.kernel.org, linux-mips@linux-mips.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 30, 2018 at 12:34 PM, Tomer Maimon <tmaimon77@gmail.com> wrote:
-> Add get_set_inv_dir and get_set_multiple_inv_dir I/O functions
-> to call the data register when the dirction is input and
-> set register when the direction is output.
-> the functions will linked to the I/O get functions if the user set
-> BGPIOF_INVERTED_REG_DIR flag in the bgpio initialization.
+Hi Quentin,
 
-> +       /* Make sure we first clear any bits that are zero when we read the register */
-> +       *bits &= ~*mask;
+On Wed, Jul 25, 2018 at 02:26:20PM +0200, Quentin Schulz wrote:
+> The GPIO controller also serves as an interrupt controller for events
+> on the GPIO it handles.
+> 
+> An interrupt occurs whenever a GPIO line has changed.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> ---
+>  arch/mips/boot/dts/mscc/ocelot.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Theoretically it's possible to get mask and bits longer than one long,
-and bitmap API has to be used.
-Though, it seems entire driver has been written in an assumption that
-it's never happen.
+Thanks - applied to mips-next for 4.19.
 
-> +                               gc->get_multiple =
-> +                               bgpio_get_set_multiple_inv_dir;
-
-I think you may keep it on one line.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Paul
