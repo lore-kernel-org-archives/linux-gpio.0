@@ -1,32 +1,28 @@
-From: Paul Burton <paul.burton@mips.com>
-Subject: Re: [PATCH 1/2] MIPS: mscc: ocelot: add interrupt controller
- properties to GPIO controller
-Date: Mon, 30 Jul 2018 10:35:22 -0700
-Message-ID: <20180730173521.fr6be2kw7irk5jbp@pburton-laptop>
-References: <20180725122621.31713-1-quentin.schulz@bootlin.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/2] dt-binding: pinctrl: Add NPCM7xx pinctrl and GPIO
+ documentation
+Date: Mon, 30 Jul 2018 17:08:09 -0600
+Message-ID: <20180730230809.GA20470@rob-hp-laptop>
+References: <20180730110406.132729-1-tmaimon77@gmail.com>
+ <20180730110406.132729-2-tmaimon77@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180725122621.31713-1-quentin.schulz@bootlin.com>
+In-Reply-To: <20180730110406.132729-2-tmaimon77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Quentin Schulz <quentin.schulz@bootlin.com>
-Cc: alexandre.belloni@bootlin.com, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, ralf@linux-mips.org, jhogan@kernel.org, linux-gpio@vger.kernel.org, linux-mips@linux-mips.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: linus.walleij@linaro.org, mark.rutland@arm.com, yuenn@google.com, venture@google.com, brendanhiggins@google.com, avifishman70@gmail.com, joel@jms.id.au, devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Quentin,
-
-On Wed, Jul 25, 2018 at 02:26:20PM +0200, Quentin Schulz wrote:
-> The GPIO controller also serves as an interrupt controller for events
-> on the GPIO it handles.
+On Mon, Jul 30, 2018 at 02:04:05PM +0300, Tomer Maimon wrote:
+> Added device tree binding documentation for Nuvoton BMC
+> NPCM750/730/715/705 pinmux and GPIO controller.
 > 
-> An interrupt occurs whenever a GPIO line has changed.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 > ---
->  arch/mips/boot/dts/mscc/ocelot.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt   | 216 +++++++++++++++++++++
+>  1 file changed, 216 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
 
-Thanks - applied to mips-next for 4.19.
-
-Paul
+Reviewed-by: Rob Herring <robh@kernel.org>
