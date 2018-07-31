@@ -1,29 +1,67 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 3/5] dt-bindings: pinctrl: Add bindings for Actions
- Semi S700 SoC
-Date: Mon, 30 Jul 2018 17:18:29 -0600
-Message-ID: <20180730231829.GA11190@rob-hp-laptop>
-References: <20180729182551.19383-1-sravanhome@gmail.com>
- <20180729200038.11795-1-sravanhome@gmail.com>
- <20180729200038.11795-4-sravanhome@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: djw@t-chip.com.cn
+Subject: [PATCH v4 0/4] Add sdmmc UHS support to ROC-RK3328-CC board.
+Date: Tue, 31 Jul 2018 13:59:18 +0800
+Message-ID: <1533016762-5268-1-git-send-email-djw@t-chip.com.cn>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180729200038.11795-4-sravanhome@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Saravanan Sekar <sravanhome@gmail.com>
-Cc: manivannan.sadhasivam@linaro.org, linus.walleij@linaro.org, mark.rutland@arm.com, afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com, thomas.liau@actions-semi.com, linux@cubietech.com
+To: linux-rockchip@lists.infradead.org
+Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, Simon Xue <xxm@rock-chips.com>, Liang Chen <cl@rock-chips.com>, Sugar Zhang <sugar.zhang@rock-chips.com>, Linus Walleij <linus.walleij@linaro.org>, Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, David Wu <david.wu@rock-chips.com>, Finley Xiao <finley.xiao@rock-chips.com>, Rocky Hao <rocky.hao@rock-chips.com>, Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "David S. Miller" <davem@davemloft.net>, Klaus Goger <klaus.goger@theobroma-systems.com>, linux-kernel@vger.kernel.org, Joseph Chen <chenjh@rock-chips.com>, Mark
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jul 29, 2018 at 10:00:36PM +0200, Saravanan Sekar wrote:
-> Add pinctrl and pio bindings for Actions Semi S700 SoC.
-> 
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> ---
->  .../bindings/pinctrl/actions,s700-pinctrl.txt | 170 ++++++++++++++++++
->  1 file changed, 170 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
+From: Levin Du <djw@t-chip.com.cn>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+Hi all, this is an attemp to add sdmmc UHS support to the
+ROC-RK3328-CC board.
+
+This patch series adds a new compatible `rockchip,rk3328-grf-gpio` to
+the gpio-syscon driver, which currently only support for the access of
+the GPIO_MUTE pin in RK3328. Support for HDMI pins can be added later on
+perhaps by writing a standalone driver.
+
+A new GRF GPIO controller named `grf_gpio` is defined in rk3328.dtsi so
+that all RK3328 boards has access to it.
+
+The ROC-RK3328-CC board use the new gpio <&grf_gpio 0> in gpio-regulator
+to control the signal voltage of the sdmmc. It is essential for UHS
+support which requires 1.8V signal voltage.
+
+Many thanks to the Linux people!
+
+Changes in v4:
+- Use binding of "rockchip,rk3328-grf-gpio"
+- Use <&grf_gpio 0> to refer to the GPIO_MUTE pin.
+
+Changes in v3:
+- Change from general gpio-syscon to specific rk3328-gpio-mute
+- Use dedicated "rockchip,rk3328-gpio-mute" driver
+- Use <&gpio_mute 0> instead of <&gpio_mute 1> to refer to the GPIO_MUTE pin.
+
+Changes in v2:
+- Rename gpio_syscon10 to gpio_mute in doc
+- Rename gpio_syscon10 to gpio_mute in rk3328.dtsi
+- Rename gpio_syscon10 to gpio_mute in rk3328-roc-cc.dts
+
+Changes in v1:
+- Refactured for general gpio-syscon usage for Rockchip SoCs.
+- Add doc rockchip,gpio-syscon.txt
+- Split from V0 and add to rk3328.dtsi for general use.
+- Split from V0.
+- Split into small patches
+- Sort dts properties in sdmmc node
+
+Levin Du (4):
+  gpio: syscon: rockchip: add GRF GPIO support for rk3328
+  arm64: dts: rockchip: add GRF GPIO controller to rk3328
+  arm64: dts: rockchip: add io-domain to roc-rk3328-cc
+  arm64: dts: rockchip: add sdmmc UHS support for roc-rk3328-cc
+
+ .../bindings/gpio/rockchip,rk3328-grf-gpio.txt     | 32 ++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts     | 34 ++++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi           |  6 ++++
+ drivers/gpio/gpio-syscon.c                         | 31 ++++++++++++++++++++
+ 4 files changed, 103 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.txt
+
+-- 
+2.7.4
