@@ -1,71 +1,51 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] pinctrl: berlin: fix 'pctrl->functions' allocation in berlin_pinctrl_build_state
-Date: Tue, 31 Jul 2018 22:25:01 +0800
-Message-ID: <20180731142501.21888-1-yuehaibing@huawei.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/4] gpio: syscon: rockchip: add GRF GPIO support for
+ rk3328
+Date: Tue, 31 Jul 2018 13:36:44 -0600
+Message-ID: <20180731193644.GA10459@rob-hp-laptop>
+References: <1533016762-5268-1-git-send-email-djw@t-chip.com.cn>
+ <1533016762-5268-2-git-send-email-djw@t-chip.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1533016762-5268-2-git-send-email-djw@t-chip.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, yamada.masahiro@socionext.com, keescook@chromium.org, Jisheng.Zhang@synaptics.com
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: djw@t-chip.com.cn
+Cc: linux-rockchip@lists.infradead.org, Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-fixes following Smatch static check warning:
+On Tue, Jul 31, 2018 at 01:59:19PM +0800, djw@t-chip.com.cn wrote:
+> From: Levin Du <djw@t-chip.com.cn>
+> 
+> In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec
+> mute control, can also be used for general purpose. It is manipulated by
+> the GRF_SOC_CON10 register in GRF. Aside from the GPIO_MUTE pin, the HDMI
+> pins can also be set in the same way.
+> 
+> Currently this GRF GPIO controller only supports the mute pin. If needed
+> in the future, the HDMI pins support can also be added.
+> 
+> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> 
+> ---
+> 
+> Changes in v4:
+> - Rename the GPIO binding to "rockchip,rk3328-grf-gpio"
+> 
+> Changes in v3:
+> - Change from general gpio-syscon to specific rk3328-gpio-mute
+> 
+> Changes in v2:
+> - Rename gpio_syscon10 to gpio_mute in doc
+> 
+> Changes in v1:
+> - Refactured for general gpio-syscon usage for Rockchip SoCs.
+> - Add doc rockchip,gpio-syscon.txt
+> 
+>  .../bindings/gpio/rockchip,rk3328-grf-gpio.txt     | 32 ++++++++++++++++++++++
+>  drivers/gpio/gpio-syscon.c                         | 31 +++++++++++++++++++++
+>  2 files changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.txt
 
- drivers/pinctrl/berlin/berlin.c:237 berlin_pinctrl_build_state()
- warn: passing devm_ allocated variable to kfree. 'pctrl->functions'
-
-As we will be calling krealloc() on pointer 'pctrl->functions', which means
-kfree() will be called in there, devm_kzalloc() shouldn't be used with
-the allocation in the first place.  Fix the warning by calling kcalloc()
-and managing the free procedure in error path on our own.
-
-Fixes: 3de68d331c24 ("pinctrl: berlin: add the core pinctrl driver for Marvell Berlin SoCs")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/pinctrl/berlin/berlin.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
-index d6d183e..db2afb2 100644
---- a/drivers/pinctrl/berlin/berlin.c
-+++ b/drivers/pinctrl/berlin/berlin.c
-@@ -216,10 +216,8 @@ static int berlin_pinctrl_build_state(struct platform_device *pdev)
- 	}
- 
- 	/* we will reallocate later */
--	pctrl->functions = devm_kcalloc(&pdev->dev,
--					max_functions,
--					sizeof(*pctrl->functions),
--					GFP_KERNEL);
-+	pctrl->functions = kcalloc(max_functions,
-+				   sizeof(*pctrl->functions), GFP_KERNEL);
- 	if (!pctrl->functions)
- 		return -ENOMEM;
- 
-@@ -257,8 +255,10 @@ static int berlin_pinctrl_build_state(struct platform_device *pdev)
- 				function++;
- 			}
- 
--			if (!found)
-+			if (!found) {
-+				kfree(function);
- 				return -EINVAL;
-+			}
- 
- 			if (!function->groups) {
- 				function->groups =
-@@ -267,8 +267,10 @@ static int berlin_pinctrl_build_state(struct platform_device *pdev)
- 						     sizeof(char *),
- 						     GFP_KERNEL);
- 
--				if (!function->groups)
-+				if (!function->groups) {
-+					kfree(function);
- 					return -ENOMEM;
-+				}
- 			}
- 
- 			groups = function->groups;
--- 
-2.7.0
+Reviewed-by: Rob Herring <robh@kernel.org>
