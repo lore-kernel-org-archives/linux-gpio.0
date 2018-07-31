@@ -1,133 +1,47 @@
-From: djw@t-chip.com.cn
-Subject: [PATCH v4 1/4] gpio: syscon: rockchip: add GRF GPIO support for rk3328
-Date: Tue, 31 Jul 2018 13:59:19 +0800
-Message-ID: <1533016762-5268-2-git-send-email-djw@t-chip.com.cn>
-References: <1533016762-5268-1-git-send-email-djw@t-chip.com.cn>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1533016762-5268-1-git-send-email-djw@t-chip.com.cn>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-rockchip@lists.infradead.org
-Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] pinctrl: freescale: off by one in
+ imx1_pinconf_group_dbg_show()
+Date: Tue, 31 Jul 2018 10:52:43 +0200
+Message-ID: <20180731085243.v3g3vrjrngs4ib3y@pengutronix.de>
+References: <20180713145514.r7ukvw23kcdwc3pv@kili.mountain>
+ <CACRpkdaBM1tvbL9k7ZepEgnSC00_iLOStyb9B2t2=DipVgEW_A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaBM1tvbL9k7ZepEgnSC00_iLOStyb9B2t2=DipVgEW_A@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, stable@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, kernel-janitors@vger.kernel.org, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Levin Du <djw@t-chip.com.cn>
+Hello,
 
-In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec
-mute control, can also be used for general purpose. It is manipulated by
-the GRF_SOC_CON10 register in GRF. Aside from the GPIO_MUTE pin, the HDMI
-pins can also be set in the same way.
+On Mon, Jul 30, 2018 at 05:43:43PM +0200, Linus Walleij wrote:
+> On Fri, Jul 13, 2018 at 4:55 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> 
+> > The info->groups[] array is allocated in imx1_pinctrl_parse_dt().  It
+> > has info->ngroups elements.  Thus the > here should be >= to prevent
+> > reading one element beyond the end of the array.
+> >
+> > Fixes: 30612cd90005 ("pinctrl: imx1 core driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> Patch applied.
+> 
+> I am not tagging for stable as it is debug code and does not
+> affect end users.
 
-Currently this GRF GPIO controller only supports the mute pin. If needed
-in the future, the HDMI pins support can also be added.
+Not sure this is a valid reason. Distro kernels usually enable debugfs.
+I'd say an out-of-bounds access that can only be triggered by root
+should still be fixed. I won't argue but added stable to the addressees
+of this mail to at least raise awareness.
 
-Signed-off-by: Levin Du <djw@t-chip.com.cn>
+Best regards
+Uwe
 
----
-
-Changes in v4:
-- Rename the GPIO binding to "rockchip,rk3328-grf-gpio"
-
-Changes in v3:
-- Change from general gpio-syscon to specific rk3328-gpio-mute
-
-Changes in v2:
-- Rename gpio_syscon10 to gpio_mute in doc
-
-Changes in v1:
-- Refactured for general gpio-syscon usage for Rockchip SoCs.
-- Add doc rockchip,gpio-syscon.txt
-
- .../bindings/gpio/rockchip,rk3328-grf-gpio.txt     | 32 ++++++++++++++++++++++
- drivers/gpio/gpio-syscon.c                         | 31 +++++++++++++++++++++
- 2 files changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.txt
-
-diff --git a/Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.txt b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.txt
-new file mode 100644
-index 0000000..f9231df
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/rockchip,rk3328-grf-gpio.txt
-@@ -0,0 +1,32 @@
-+Rockchip RK3328 GRF (General Register Files) GPIO controller.
-+
-+In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec mute
-+control, can also be used for general purpose. It is manipulated by the
-+GRF_SOC_CON10 register in GRF. Aside from the GPIO_MUTE pin, the HDMI pins can
-+also be set in the same way.
-+
-+Currently this GPIO controller only supports the mute pin. If needed in the
-+future, the HDMI pins support can also be added.
-+
-+Required properties:
-+- compatible: Should contain "rockchip,rk3328-grf-gpio".
-+- gpio-controller: Marks the device node as a gpio controller.
-+- #gpio-cells: Should be 2. The first cell is the pin number and
-+  the second cell is used to specify the gpio polarity:
-+    0 = Active high,
-+    1 = Active low.
-+
-+Example:
-+
-+	grf: syscon@ff100000 {
-+		compatible = "rockchip,rk3328-grf", "syscon", "simple-mfd";
-+
-+		grf_gpio: grf-gpio {
-+			compatible = "rockchip,rk3328-grf-gpio";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+		};
-+	};
-+
-+Note: The grf_gpio node should be declared as the child of the GRF (General
-+Register File) node. The GPIO_MUTE pin is referred to as <&grf_gpio 0>.
-diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-index 8b0a69c..b9b5842 100644
---- a/drivers/gpio/gpio-syscon.c
-+++ b/drivers/gpio/gpio-syscon.c
-@@ -135,6 +135,33 @@ static const struct syscon_gpio_data clps711x_mctrl_gpio = {
- 	.dat_bit_offset	= 0x40 * 8 + 8,
- };
- 
-+static void rockchip_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			      int val)
-+{
-+	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
-+	unsigned int offs;
-+	u8 bit;
-+	u32 data;
-+	int ret;
-+
-+	offs = priv->dreg_offset + priv->data->dat_bit_offset + offset;
-+	bit = offs % SYSCON_REG_BITS;
-+	data = (val ? BIT(bit) : 0) | BIT(bit + 16);
-+	ret = regmap_write(priv->syscon,
-+			   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
-+			   data);
-+	if (ret < 0)
-+		dev_err(chip->parent, "gpio write failed ret(%d)\n", ret);
-+}
-+
-+static const struct syscon_gpio_data rockchip_rk3328_gpio_mute = {
-+	/* RK3328 GPIO_MUTE is an output only pin at GRF_SOC_CON10[1] */
-+	.flags		= GPIO_SYSCON_FEAT_OUT,
-+	.bit_count	= 1,
-+	.dat_bit_offset = 0x0428 * 8 + 1,
-+	.set		= rockchip_gpio_set,
-+};
-+
- #define KEYSTONE_LOCK_BIT BIT(0)
- 
- static void keystone_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
-@@ -175,6 +202,10 @@ static const struct of_device_id syscon_gpio_ids[] = {
- 		.compatible	= "ti,keystone-dsp-gpio",
- 		.data		= &keystone_dsp_gpio,
- 	},
-+	{
-+		.compatible	= "rockchip,rk3328-grf-gpio",
-+		.data		= &rockchip_rk3328_gpio_mute,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
 -- 
-2.7.4
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
