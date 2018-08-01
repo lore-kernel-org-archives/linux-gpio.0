@@ -1,97 +1,73 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v7 5/6] i2c: Add Actions Semiconductor Owl family S900
- I2C driver
-Date: Wed, 1 Aug 2018 10:26:39 +0530
-Message-ID: <20180801045639.GB15529@Mani-XPS-13-9360>
-References: <20180726154603.5089-1-manivannan.sadhasivam@linaro.org>
- <20180726154603.5089-6-manivannan.sadhasivam@linaro.org>
- <20180731200932.n7djds2rmqhclit5@ninjato>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2] pinctrl: berlin: fix 'pctrl->functions' allocation in berlin_pinctrl_build_state
+Date: Wed, 1 Aug 2018 13:02:49 +0800
+Message-ID: <20180801050249.20084-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180731200932.n7djds2rmqhclit5@ninjato>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: robh+dt@kernel.org, afaerber@suse.de, linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com
+To: linus.walleij@linaro.org, yamada.masahiro@socionext.com, keescook@chromium.org, Jisheng.Zhang@synaptics.com
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Wolfram,
+fixes following Smatch static check warning:
 
-On Tue, Jul 31, 2018 at 10:09:32PM +0200, Wolfram Sang wrote:
-> Hi Manivannan,
-> 
-> On Thu, Jul 26, 2018 at 09:16:02PM +0530, Manivannan Sadhasivam wrote:
-> > Add Actions Semiconductor Owl family S900 I2C driver.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Acked-by: Peter Rosin <peda@axentia.se>
-> 
-> Looks mostly good already. Thanks Peter for the initial review!
-> 
+ drivers/pinctrl/berlin/berlin.c:237 berlin_pinctrl_build_state()
+ warn: passing devm_ allocated variable to kfree. 'pctrl->functions'
 
-Thanks to Andy also :)
+As we will be calling krealloc() on pointer 'pctrl->functions', which means
+kfree() will be called in there, devm_kzalloc() shouldn't be used with
+the allocation in the first place.  Fix the warning by calling kcalloc()
+and managing the free procedure in error path on our own.
 
-> > +static irqreturn_t owl_i2c_interrupt(int irq, void *_dev)
-> > +{
-> > +	struct owl_i2c_dev *i2c_dev = _dev;
-> > +	struct i2c_msg *msg = i2c_dev->msg;
-> > +	unsigned long flags;
-> > +	unsigned int stat, fifostat;
-> > +
-> > +	spin_lock_irqsave(&i2c_dev->lock, flags);
-> > +
-> > +	fifostat = readl(i2c_dev->base + OWL_I2C_REG_FIFOSTAT);
-> > +	if (fifostat & OWL_I2C_FIFOSTAT_RNB) {
-> > +		dev_dbg(&i2c_dev->adap.dev, "received NACK from device\n");
-> > +		goto stop;
-> > +	}
-> > +
-> > +	stat = readl(i2c_dev->base + OWL_I2C_REG_STAT);
-> > +	if (stat & OWL_I2C_STAT_BEB) {
-> > +		dev_dbg(&i2c_dev->adap.dev, "bus error\n");
-> > +		goto stop;
-> > +	}
-> 
-> I wonder if you can't pass back the different errors to the upper
-> layers? Like -ENXIO for NACK and -EIO for bus error? We have a
-> convention for that and it seems your HW can support it. The different
-> error codes would then maybe also make the debug outputs obsolete.
-> 
-> 
+Fixes: 3de68d331c24 ("pinctrl: berlin: add the core pinctrl driver for Marvell Berlin SoCs")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: free pctrl->functions instead of function as Jisheng Zhang suggested
+---
+ drivers/pinctrl/berlin/berlin.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-Sure, will catch the errors using an i2c_dev member and pass it to upper
-layers in owl_i2c_master_xfer.
-
-> > +	/*
-> > +	 * Here, -ENXIO will be returned if interrupt occurred but no
-> > +	 * read or write happened. Else if msg_ptr equals to message length,
-> > +	 * message count will be returned.
-> > +	 */
-> > +	ret = i2c_dev->msg_ptr == msg->len ? num : -ENXIO;
-> 
-> I'd think this kinda unusual construct could go then as well by just
-> returning the error code derived from the interrupt handler above.
-> 
-
-Makes sense! It will become:
-
-ret = i2c_dev->err < 0 ? i2c_dev->err : num;
-
-Thanks,
-Mani
-
-> > +static const struct i2c_adapter_quirks owl_i2c_quirks = {
-> > +	.flags		= I2C_AQ_COMB | I2C_AQ_COMB_WRITE_FIRST,
-> > +	.max_read_len   = 240,
-> > +	.max_write_len  = 240,
-> > +	.max_comb_1st_msg_len = 6,
-> > +	.max_comb_2nd_msg_len = 240,
-> > +};
-> 
-> Yay! Good use of the i2c_adapter_quirks struct :)
-> 
-> Regards,
-> 
->    Wolfram
-> 
+diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
+index d6d183e..b5903ff 100644
+--- a/drivers/pinctrl/berlin/berlin.c
++++ b/drivers/pinctrl/berlin/berlin.c
+@@ -216,10 +216,8 @@ static int berlin_pinctrl_build_state(struct platform_device *pdev)
+ 	}
+ 
+ 	/* we will reallocate later */
+-	pctrl->functions = devm_kcalloc(&pdev->dev,
+-					max_functions,
+-					sizeof(*pctrl->functions),
+-					GFP_KERNEL);
++	pctrl->functions = kcalloc(max_functions,
++				   sizeof(*pctrl->functions), GFP_KERNEL);
+ 	if (!pctrl->functions)
+ 		return -ENOMEM;
+ 
+@@ -257,8 +255,10 @@ static int berlin_pinctrl_build_state(struct platform_device *pdev)
+ 				function++;
+ 			}
+ 
+-			if (!found)
++			if (!found) {
++				kfree( );
+ 				return -EINVAL;
++			}
+ 
+ 			if (!function->groups) {
+ 				function->groups =
+@@ -267,8 +267,10 @@ static int berlin_pinctrl_build_state(struct platform_device *pdev)
+ 						     sizeof(char *),
+ 						     GFP_KERNEL);
+ 
+-				if (!function->groups)
++				if (!function->groups) {
++					kfree(pctrl->functions);
+ 					return -ENOMEM;
++				}
+ 			}
+ 
+ 			groups = function->groups;
+-- 
+2.7.0
