@@ -1,64 +1,37 @@
-From: Parthiban Nallathambi <pn@denx.de>
-Subject: Re: [PATCH v4 5/5] arm64: dts: actions: Add pinctrl node for Actions
- Semi S700
-Date: Wed, 1 Aug 2018 10:39:58 +0200
-Message-ID: <2e0c0f5b-40a0-4f62-756f-1377f587d9a0@denx.de>
-References: <20180731194743.13678-6-sravanhome@gmail.com>
- <201808010805.DWcXxX04%fengguang.wu@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 0/5] pinctrl: meson: Add support for TEST_N gpio
+Date: Wed,  1 Aug 2018 12:00:18 +0200
+Message-ID: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201808010805.DWcXxX04%fengguang.wu@intel.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>, Saravanan Sekar <sravanhome@gmail.com>, manivannan.sadhasivam@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc: pn@denx.de, kbuild-all@01.org, mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com, jeff.chen@actions-semi.com, thomas.liau@actions-semi.com, linux@cubietech.com
+To: khilman@baylibre.com, linus.walleij@linaro.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi All,
+The Amlogic Meson GX and AXG SoCs needs to do a Secure Monitor call to
+set the TEST_N pin direction.
+This patchset :
+- adds the Secure Monitor call
+- adds support int the pinctrl-meson common code
+- adds support for GXBB, GXL and AGX SoCs
 
-On 08/01/2018 02:45 AM, kbuild test robot wrote:
-> Hi Saravanan,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on pinctrl/devel]
-> [also build test ERROR on next-20180731]
-> [cannot apply to v4.18-rc7]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Saravanan-Sekar/pinctrl-actions-define-constructor-generic-to-Actions-Semi-SoC-s/20180801-042834
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-> config: arm64-defconfig (attached as .config)
-> compiler: aarch64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # save the attached .config to linux build tree
->          GCC_VERSION=7.2.0 make.cross ARCH=arm64
-> 
-> All errors (new ones prefixed by >>):
-> 
->>> Error: arch/arm64/boot/dts/actions/s700.dtsi:172.19-20 syntax error
->>> FATAL ERROR: Unable to parse input tree
+Neil Armstrong (5):
+  meson_sm: add TEST_N pin direction call
+  pinctrl: meson: Add support to set direction with a secure monitor
+    call
+  meson: pinctrl-gxbb: add support for TEST_N pin
+  meson: pinctrl-gxl: add support for TEST_N pin
+  meson: pinctrl-axg: add support for TEST_N pin
 
-Device tree entry in this patch depends on actions clock patch [1],
-and it is not yet merged. The above build error is because of the
-dependency.
-
-[1] https://patchwork.kernel.org/patch/10533959/
-
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+ drivers/firmware/meson/meson_sm.c          |  1 +
+ drivers/pinctrl/meson/Kconfig              |  1 +
+ drivers/pinctrl/meson/pinctrl-meson-axg.c  |  4 ++++
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c |  4 ++++
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c  |  4 ++++
+ drivers/pinctrl/meson/pinctrl-meson.c      | 31 +++++++++++++++++++++++++-----
+ drivers/pinctrl/meson/pinctrl-meson.h      | 10 +++++++++-
+ include/linux/firmware/meson/meson_sm.h    |  1 +
+ 8 files changed, 50 insertions(+), 6 deletions(-)
 
 -- 
-Thanks,
-Parthiban Nallathambi
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+2.7.4
