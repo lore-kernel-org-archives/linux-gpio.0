@@ -1,37 +1,44 @@
 From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 0/5] pinctrl: meson: Add support for TEST_N gpio
-Date: Wed,  1 Aug 2018 12:00:18 +0200
-Message-ID: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
+Subject: [PATCH 3/5] meson: pinctrl-gxbb: add support for TEST_N pin
+Date: Wed,  1 Aug 2018 12:00:21 +0200
+Message-ID: <1533117623-27856-4-git-send-email-narmstrong@baylibre.com>
+References: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: khilman@baylibre.com, linus.walleij@linaro.org
 Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The Amlogic Meson GX and AXG SoCs needs to do a Secure Monitor call to
-set the TEST_N pin direction.
-This patchset :
-- adds the Secure Monitor call
-- adds support int the pinctrl-meson common code
-- adds support for GXBB, GXL and AGX SoCs
+The Amlogic Meson GXBB SoCs needs a Secure Monitor call to set the TEST_N
+direction, add a special bank to support this pin.
 
-Neil Armstrong (5):
-  meson_sm: add TEST_N pin direction call
-  pinctrl: meson: Add support to set direction with a secure monitor
-    call
-  meson: pinctrl-gxbb: add support for TEST_N pin
-  meson: pinctrl-gxl: add support for TEST_N pin
-  meson: pinctrl-axg: add support for TEST_N pin
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/firmware/meson/meson_sm.c          |  1 +
- drivers/pinctrl/meson/Kconfig              |  1 +
- drivers/pinctrl/meson/pinctrl-meson-axg.c  |  4 ++++
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c |  4 ++++
- drivers/pinctrl/meson/pinctrl-meson-gxl.c  |  4 ++++
- drivers/pinctrl/meson/pinctrl-meson.c      | 31 +++++++++++++++++++++++++-----
- drivers/pinctrl/meson/pinctrl-meson.h      | 10 +++++++++-
- include/linux/firmware/meson/meson_sm.h    |  1 +
- 8 files changed, 50 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+index 2c97a2e0..c0954be 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+@@ -15,6 +15,7 @@
+ #include <dt-bindings/gpio/meson-gxbb-gpio.h>
+ #include "pinctrl-meson.h"
+ #include "pinctrl-meson8-pmx.h"
++#include <linux/firmware/meson/meson_sm.h>
+ 
+ static const struct pinctrl_pin_desc meson_gxbb_periphs_pins[] = {
+ 	MESON_PIN(GPIOZ_0),
+@@ -823,6 +824,9 @@ static struct meson_bank meson_gxbb_periphs_banks[] = {
+ static struct meson_bank meson_gxbb_aobus_banks[] = {
+ 	/*   name    first      last       irq    pullen  pull    dir     out     in  */
+ 	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
++	/* This PIN Direction must be set using a SMC call, so dir reg offset is the sm call */
++	BANK_SMC("TEST", GPIO_TEST_N, GPIO_TEST_N,
++					 -1, -1, 0, 30,  0, 14, SM_TEST_N_DIR, 1, 0, 31, 1, 31),
+ };
+ 
+ static struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
 -- 
 2.7.4
