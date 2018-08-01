@@ -1,45 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: freescale: off by one in imx1_pinconf_group_dbg_show()
-Date: Wed, 1 Aug 2018 23:01:28 +0200
-Message-ID: <CACRpkdYNYzqcdb33JgFCB0cHvDPddmnXJESfhQUAR3gMQG9tqA@mail.gmail.com>
-References: <20180713145514.r7ukvw23kcdwc3pv@kili.mountain>
- <CACRpkdaBM1tvbL9k7ZepEgnSC00_iLOStyb9B2t2=DipVgEW_A@mail.gmail.com> <20180731085243.v3g3vrjrngs4ib3y@pengutronix.de>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH 2/2] ARM: tegra: readd gpio-ranges properties
+Date: Thu, 02 Aug 2018 00:51:42 +0200
+Message-ID: <17f1c1b1c6d3a83dd1df130420057d3b@agner.ch>
+References: <20180726154025.13173-1-stefan@agner.ch>
+ <20180726154025.13173-2-stefan@agner.ch> <2326493.bQHeyqsldt@dimapc>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20180731085243.v3g3vrjrngs4ib3y@pengutronix.de>
-Sender: stable-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: stable <stable@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, kernel-janitors@vger.kernel.org, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2326493.bQHeyqsldt@dimapc>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linus.walleij@linaro.org, pdeschrijver@nvidia.co, marcel.ziswiler@toradex.com, keescook@chromium.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 10:52 AM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Mon, Jul 30, 2018 at 05:43:43PM +0200, Linus Walleij wrote:
-> > On Fri, Jul 13, 2018 at 4:55 PM Dan Carpenter <dan.carpenter@oracle.com=
-> wrote:
-> >
-> > > The info->groups[] array is allocated in imx1_pinctrl_parse_dt().  It
-> > > has info->ngroups elements.  Thus the > here should be >=3D to preven=
-t
-> > > reading one element beyond the end of the array.
-> > >
-> > > Fixes: 30612cd90005 ("pinctrl: imx1 core driver")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > Patch applied.
-> >
-> > I am not tagging for stable as it is debug code and does not
-> > affect end users.
->
-> Not sure this is a valid reason. Distro kernels usually enable debugfs.
-> I'd say an out-of-bounds access that can only be triggered by root
-> should still be fixed. I won't argue but added stable to the addressees
-> of this mail to at least raise awareness.
+On 01.08.2018 22:51, Dmitry Osipenko wrote:
+> On Thursday, 26 July 2018 18:40:25 MSK Stefan Agner wrote:
+>> The properties have been commented out to prevent a regression a
+>> while ago. The first regression should be resolved by
+>> commit 44af7927316e ("spi: Map SPI OF client IRQ at probe time").
+>>
+>> The second regression is probably addressed by
+>> commit 494fd7b7ad10 ("PM / core: fix deferred probe breaking suspend resume
+>> order") and/or maybe others. Readd the gpio-ranges properties to see
+>> whether regressions still get reported.
+>>
+>> This reverts commit 4f1d841475e1f6e9e32496dda11215db56f4ea73
+>> ("ARM: tegra: Comment out gpio-ranges properties").
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+> 
+> Unfortunately the second regression hasn't been addressed yet, this patch 
+> still breaks wake-up using GPIO key. BTW, better to spell "readd" as "re-add".
 
-I won't argue either, I will just tag it for stable.
-If it matters for my friends, it matters to me, so: stable it is.
+You do have the hardware and could test it?
 
-Yours,
-Linus Walleij
+Hm, that is unfortunate. I think this was the patch which should address
+the issue:
+https://lkml.org/lkml/2015/9/10/218
+
+--
+Stefan
