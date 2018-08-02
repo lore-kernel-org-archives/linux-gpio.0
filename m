@@ -1,71 +1,139 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 2/5] pinctrl: meson: Add support to set direction with a
- secure monitor call
-Date: Thu, 02 Aug 2018 13:21:23 +0200
-Message-ID: <acab5d8ab9eb871c616171c00814d1fec93af1e7.camel@baylibre.com>
-References: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
-         <1533117623-27856-3-git-send-email-narmstrong@baylibre.com>
-         <CAFBinCBcUijFGdLoQwkzioX7MF0H_gH1rbcvxG+UWc1rA2pRiQ@mail.gmail.com>
-         <d319d871-ba93-ab1d-dae4-b44916161e85@baylibre.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to
+ arch_init level
+Date: Thu, 02 Aug 2018 13:31:32 +0200
+Message-ID: <20a52a0461e32e776e526171c250551a@agner.ch>
+References: <20180802111144.12512-1-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d319d871-ba93-ab1d-dae4-b44916161e85@baylibre.com>
+In-Reply-To: <20180802111144.12512-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: khilman@baylibre.com, linus.walleij@linaro.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 2018-08-02 at 09:52 +0200, Neil Armstrong wrote:
-> On 01/08/2018 22:23, Martin Blumenstingl wrote:
-> > Hi Neil,
-> > 
-> > On Wed, Aug 1, 2018 at 12:05 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
-> > > 
-> > > The Amlogic Meson GX and AXG SoCs needs to do a Secure Monitor call to
-> > > set the TEST_N pin direction.
-> > > This patch adds a "smc" boolean to the bank structure to differentiate
-> > > the TEST_N bank and call the Secure Monitor in the _input/_output functions.
-> > > 
-> > > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> > > ---
-> > >  drivers/pinctrl/meson/Kconfig         |  1 +
-> > >  drivers/pinctrl/meson/pinctrl-meson.c | 31 ++++++++++++++++++++++++++-----
-> > >  drivers/pinctrl/meson/pinctrl-meson.h | 10 +++++++++-
-> > >  3 files changed, 36 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
-> > > index c80951d..1b90470 100644
-> > > --- a/drivers/pinctrl/meson/Kconfig
-> > > +++ b/drivers/pinctrl/meson/Kconfig
-> > > @@ -8,6 +8,7 @@ menuconfig PINCTRL_MESON
-> > >         select GPIOLIB
-> > >         select OF_GPIO
-> > >         select REGMAP_MMIO
-> > > +       select MESON_SM
-> > 
-> > I wonder why PINCTRL_MESON has to select MESON_SM - shouldn't
-> > PINCTRL_MESON_GXBB, PINCTRL_MESON_GXL and PINCTRL_MESON_AXG select it
-> > instead?
-> > selecting MESON_SM is probably no-op on Meson8 and Meson8b (which
-> > don't have the GX secure monitor), but I haven't tested it yet
+On 02.08.2018 13:11, Dmitry Osipenko wrote:
+> There is a bug in regards to deferred probing within the drivers core
+> that causes GPIO-driver to suspend after its users. The bug appears if
+> GPIO-driver probe is getting deferred, which happens after introducing
+> dependency on PINCTRL-driver for the GPIO-driver by defining "gpio-ranges"
+> property in device-tree. The bug in the drivers core is old (more than 4
+> years now) and is well known, unfortunately there is no easy fix for it.
+> The good news is that we can workaround the deferred probe issue by
+> changing GPIO / PINCTRL drivers registration order and hence by moving
+> PINCTRL driver registration to the arch_init level and GPIO to the
+> subsys_init.
 
-I'm not so sure about that. meson_sm_call() symbol is used in the common pinctrl
-code, so it should be selected when compiled even if meson8b is not going to use
-it in the end.
+A while back at least using those init lists were not well received even
+for GPIO/pinctrl drivers:
+
+https://lore.kernel.org/lkml/CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J_azOic7AA@mail.gmail.com/T/#mf0596982324a6489b5537b0531ac5aed60a316ba
+
+I still think we should make an exception for GPIO/pinctrl and use
+earlier initcalls. Platform GPIO/pinctrl drivers provide basic
+infrastructure often used by many other drivers, we want to have them
+loaded early. It avoids unnecessary EPROBE_DEFER and hence probably even
+boots faster.
+
+And in this case it even resolves real world issues.
+
+This should definitely go in, at least as a stop gap solution.
+
+Acked-by: Stefan Agner <stefan@agner.ch>
+
+--
+Stefan
+
 
 > 
-> Hi Martin, you are right !
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/pinctrl/tegra/pinctrl-tegra114.c | 7 ++++++-
+>  drivers/pinctrl/tegra/pinctrl-tegra124.c | 7 ++++++-
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c  | 7 ++++++-
+>  drivers/pinctrl/tegra/pinctrl-tegra210.c | 7 ++++++-
+>  drivers/pinctrl/tegra/pinctrl-tegra30.c  | 7 ++++++-
+>  5 files changed, 30 insertions(+), 5 deletions(-)
 > 
-> I will fix it on v2..
-> 
-> Neil
-> 
-> > 
-> > 
-> > Regards
-> > Martin
-> > 
-> 
-> 
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c
+> b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+> index 511a8774fd8d..d43c209e9c30 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+> @@ -1868,4 +1868,9 @@ static struct platform_driver tegra114_pinctrl_driver = {
+>  	},
+>  	.probe = tegra114_pinctrl_probe,
+>  };
+> -builtin_platform_driver(tegra114_pinctrl_driver);
+> +
+> +static int __init tegra114_pinctrl_init(void)
+> +{
+> +	return platform_driver_register(&tegra114_pinctrl_driver);
+> +}
+> +arch_initcall(tegra114_pinctrl_init);
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c
+> b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+> index 57e3cdcf4503..5b07a5834d15 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+> @@ -2080,4 +2080,9 @@ static struct platform_driver tegra124_pinctrl_driver = {
+>  	},
+>  	.probe = tegra124_pinctrl_probe,
+>  };
+> -builtin_platform_driver(tegra124_pinctrl_driver);
+> +
+> +static int __init tegra124_pinctrl_init(void)
+> +{
+> +	return platform_driver_register(&tegra124_pinctrl_driver);
+> +}
+> +arch_initcall(tegra124_pinctrl_init);
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c
+> b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+> index 624889ed3a9d..1fc82a9576e0 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+> @@ -2277,4 +2277,9 @@ static struct platform_driver tegra20_pinctrl_driver = {
+>  	},
+>  	.probe = tegra20_pinctrl_probe,
+>  };
+> -builtin_platform_driver(tegra20_pinctrl_driver);
+> +
+> +static int __init tegra20_pinctrl_init(void)
+> +{
+> +	return platform_driver_register(&tegra20_pinctrl_driver);
+> +}
+> +arch_initcall(tegra20_pinctrl_init);
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c
+> b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+> index 0956a1c73391..3e77f5474dd8 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+> @@ -1582,4 +1582,9 @@ static struct platform_driver tegra210_pinctrl_driver = {
+>  	},
+>  	.probe = tegra210_pinctrl_probe,
+>  };
+> -builtin_platform_driver(tegra210_pinctrl_driver);
+> +
+> +static int __init tegra210_pinctrl_init(void)
+> +{
+> +	return platform_driver_register(&tegra210_pinctrl_driver);
+> +}
+> +arch_initcall(tegra210_pinctrl_init);
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c
+> b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+> index c923ad58af84..10e617003e9c 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+> @@ -2503,4 +2503,9 @@ static struct platform_driver tegra30_pinctrl_driver = {
+>  	},
+>  	.probe = tegra30_pinctrl_probe,
+>  };
+> -builtin_platform_driver(tegra30_pinctrl_driver);
+> +
+> +static int __init tegra30_pinctrl_init(void)
+> +{
+> +	return platform_driver_register(&tegra30_pinctrl_driver);
+> +}
+> +arch_initcall(tegra30_pinctrl_init);
