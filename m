@@ -1,40 +1,71 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v1 2/2] gpio: tegra: Move driver registration to subsys_init level
-Date: Thu,  2 Aug 2018 14:11:44 +0300
-Message-ID: <20180802111144.12512-2-digetx@gmail.com>
-References: <20180802111144.12512-1-digetx@gmail.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 2/5] pinctrl: meson: Add support to set direction with a
+ secure monitor call
+Date: Thu, 02 Aug 2018 13:21:23 +0200
+Message-ID: <acab5d8ab9eb871c616171c00814d1fec93af1e7.camel@baylibre.com>
+References: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
+         <1533117623-27856-3-git-send-email-narmstrong@baylibre.com>
+         <CAFBinCBcUijFGdLoQwkzioX7MF0H_gH1rbcvxG+UWc1rA2pRiQ@mail.gmail.com>
+         <d319d871-ba93-ab1d-dae4-b44916161e85@baylibre.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180802111144.12512-1-digetx@gmail.com>
+In-Reply-To: <d319d871-ba93-ab1d-dae4-b44916161e85@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>, Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: khilman@baylibre.com, linus.walleij@linaro.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-There is a bug in regards to deferred probing within the drivers core
-that causes GPIO-driver to suspend after its users. The bug appears if
-GPIO-driver probe is getting deferred, which happens after introducing
-dependency on PINCTRL-driver for the GPIO-driver by defining "gpio-ranges"
-property in device-tree. The bug in the drivers core is old (more than 4
-years now) and is well known, unfortunately there is no easy fix for it.
-The good news is that we can workaround the deferred probe issue by
-changing GPIO / PINCTRL drivers registration order and hence by moving
-PINCTRL driver registration to the arch_init level and GPIO to the
-subsys_init.
+On Thu, 2018-08-02 at 09:52 +0200, Neil Armstrong wrote:
+> On 01/08/2018 22:23, Martin Blumenstingl wrote:
+> > Hi Neil,
+> > 
+> > On Wed, Aug 1, 2018 at 12:05 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+> > > 
+> > > The Amlogic Meson GX and AXG SoCs needs to do a Secure Monitor call to
+> > > set the TEST_N pin direction.
+> > > This patch adds a "smc" boolean to the bank structure to differentiate
+> > > the TEST_N bank and call the Secure Monitor in the _input/_output functions.
+> > > 
+> > > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> > > ---
+> > >  drivers/pinctrl/meson/Kconfig         |  1 +
+> > >  drivers/pinctrl/meson/pinctrl-meson.c | 31 ++++++++++++++++++++++++++-----
+> > >  drivers/pinctrl/meson/pinctrl-meson.h | 10 +++++++++-
+> > >  3 files changed, 36 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
+> > > index c80951d..1b90470 100644
+> > > --- a/drivers/pinctrl/meson/Kconfig
+> > > +++ b/drivers/pinctrl/meson/Kconfig
+> > > @@ -8,6 +8,7 @@ menuconfig PINCTRL_MESON
+> > >         select GPIOLIB
+> > >         select OF_GPIO
+> > >         select REGMAP_MMIO
+> > > +       select MESON_SM
+> > 
+> > I wonder why PINCTRL_MESON has to select MESON_SM - shouldn't
+> > PINCTRL_MESON_GXBB, PINCTRL_MESON_GXL and PINCTRL_MESON_AXG select it
+> > instead?
+> > selecting MESON_SM is probably no-op on Meson8 and Meson8b (which
+> > don't have the GX secure monitor), but I haven't tested it yet
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpio/gpio-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm not so sure about that. meson_sm_call() symbol is used in the common pinctrl
+code, so it should be selected when compiled even if meson8b is not going to use
+it in the end.
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 2d940785bad0..a53c77db9744 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -712,4 +712,4 @@ static int __init tegra_gpio_init(void)
- {
- 	return platform_driver_register(&tegra_gpio_driver);
- }
--postcore_initcall(tegra_gpio_init);
-+subsys_initcall(tegra_gpio_init);
--- 
-2.18.0
+> 
+> Hi Martin, you are right !
+> 
+> I will fix it on v2..
+> 
+> Neil
+> 
+> > 
+> > 
+> > Regards
+> > Martin
+> > 
+> 
+> 
