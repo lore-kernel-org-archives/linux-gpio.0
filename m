@@ -1,79 +1,68 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 2/5] pinctrl: meson: Add support to set direction with a
- secure monitor call
-Date: Fri, 3 Aug 2018 10:10:09 +0200
-Message-ID: <ff6d516d-5d3b-c80f-941b-fed41a3a9ead@baylibre.com>
-References: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com>
- <1533117623-27856-3-git-send-email-narmstrong@baylibre.com>
- <CAFBinCBcUijFGdLoQwkzioX7MF0H_gH1rbcvxG+UWc1rA2pRiQ@mail.gmail.com>
- <d319d871-ba93-ab1d-dae4-b44916161e85@baylibre.com>
- <acab5d8ab9eb871c616171c00814d1fec93af1e7.camel@baylibre.com>
- <CAFBinCAAcqiJAwBMr2_7V90beFwq9xkPBnBdKB8oPsMKXU_-HA@mail.gmail.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: Re: [PATCH 0/2] gpio: mvebu: Add support for multiple PWM lines
+Date: Fri, 03 Aug 2018 11:36:44 +0200
+Message-ID: <87sh3vbxlf.fsf@bootlin.com>
+References: <1532114623-81911-1-git-send-email-aditya@kobol.io>
+        <CACRpkdbiAkt6hT+LeRXCjWDZwjeYDF-e3sckMOWqnL2rdqLDug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFBinCAAcqiJAwBMr2_7V90beFwq9xkPBnBdKB8oPsMKXU_-HA@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <CACRpkdbiAkt6hT+LeRXCjWDZwjeYDF-e3sckMOWqnL2rdqLDug@mail.gmail.com>
+        (Linus Walleij's message of "Sun, 29 Jul 2018 22:58:16 +0200")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, jbrunet@baylibre.com
-Cc: khilman@baylibre.com, linus.walleij@linaro.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: aditya@kobol.io, Linus Walleij <linus.walleij@linaro.org>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, gauthier@kobol.io, alban.browaeys@gmail.com, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 02/08/2018 22:42, Martin Blumenstingl wrote:
-> On Thu, Aug 2, 2018 at 1:21 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+Hi Linus and Adita
+ 
+ On dim., juil. 29 2018, Linus Walleij <linus.walleij@linaro.org> wrote:
+
+> Hoping for some review from Gergory, Ralph or Richard who all seem
+> to use this driver!
+
+Would it be possible to resend the series adding me in CC?  I would
+like to comment the patches, but unfortunately it seems that I was in
+none of the mailing list where the series had been sent.
+
+I found the patches on patchwork, and started to have a look on it for
+example, in the patch "gpio: mvebu: Add support for multiple PWM lines
+per GPIO chip", I wonder why the id is stored as it was not used at all.
+
+Having the patch inlined in an email would male the review easier.
+
+Thanks,
+
+Gregory
+
+>
+> Yours,
+> Linus Walleij
+>
+> On Fri, Jul 20, 2018 at 9:24 PM Aditya Prayoga <aditya@kobol.io> wrote:
 >>
->> On Thu, 2018-08-02 at 09:52 +0200, Neil Armstrong wrote:
->>> On 01/08/2018 22:23, Martin Blumenstingl wrote:
->>>> Hi Neil,
->>>>
->>>> On Wed, Aug 1, 2018 at 12:05 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->>>>>
->>>>> The Amlogic Meson GX and AXG SoCs needs to do a Secure Monitor call to
->>>>> set the TEST_N pin direction.
->>>>> This patch adds a "smc" boolean to the bank structure to differentiate
->>>>> the TEST_N bank and call the Secure Monitor in the _input/_output functions.
->>>>>
->>>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->>>>> ---
->>>>>  drivers/pinctrl/meson/Kconfig         |  1 +
->>>>>  drivers/pinctrl/meson/pinctrl-meson.c | 31 ++++++++++++++++++++++++++-----
->>>>>  drivers/pinctrl/meson/pinctrl-meson.h | 10 +++++++++-
->>>>>  3 files changed, 36 insertions(+), 6 deletions(-)
->>>>>
->>>>> diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
->>>>> index c80951d..1b90470 100644
->>>>> --- a/drivers/pinctrl/meson/Kconfig
->>>>> +++ b/drivers/pinctrl/meson/Kconfig
->>>>> @@ -8,6 +8,7 @@ menuconfig PINCTRL_MESON
->>>>>         select GPIOLIB
->>>>>         select OF_GPIO
->>>>>         select REGMAP_MMIO
->>>>> +       select MESON_SM
->>>>
->>>> I wonder why PINCTRL_MESON has to select MESON_SM - shouldn't
->>>> PINCTRL_MESON_GXBB, PINCTRL_MESON_GXL and PINCTRL_MESON_AXG select it
->>>> instead?
->>>> selecting MESON_SM is probably no-op on Meson8 and Meson8b (which
->>>> don't have the GX secure monitor), but I haven't tested it yet
+>> Hi everyone,
 >>
->> I'm not so sure about that. meson_sm_call() symbol is used in the common pinctrl
->> code, so it should be selected when compiled even if meson8b is not going to use
->> it in the end.
-> unfortunately MESON_SM depends on ARM64_4K_PAGES so it can't be
-> enabled for the 32-bit SoCs
-> any ideas how to solve this?
+>> Helios4, an Armada 388 based NAS SBC, provides 2 (4-pins) fan connectors.
+>> The PWM pins on both connector are connected to GPIO on bank 1. Current gpio-
+>> mvebu does not allow more than one PWM on the same bank.
+>>
+>> Aditya
+>>
+>> ---
+>>
+>> Aditya Prayoga (2):
+>>   gpio: mvebu: Add support for multiple PWM lines per GPIO chip
+>>   gpio: mvebu: Allow to use non-default PWM counter
+>>
+>>  drivers/gpio/gpio-mvebu.c | 111 ++++++++++++++++++++++++++++++++++++++--------
+>>  1 file changed, 92 insertions(+), 19 deletions(-)
+>>
+>> --
+>> 2.7.4
+>>
 
-I think I'll need to wrap the meson_sm calls around a
-#if IS_ENABLED(MESON_SM)
-
-and
-select MESON_SM if ARM64
-
-in Kconfig
-
-> 
-> 
-> Regards
-> Martin
-> 
+-- 
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
