@@ -1,52 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to
- arch_init level
-Date: Fri, 3 Aug 2018 19:24:56 +0200
-Message-ID: <CACRpkda+t=0aJMSKre+U-GHN2d47pV3b_g13PcinXScP_UX5Ng@mail.gmail.com>
-References: <20180802111144.12512-1-digetx@gmail.com> <20a52a0461e32e776e526171c250551a@agner.ch>
+Subject: Re: [PATCH v3] pinctrl: berlin: fix 'pctrl->functions' allocation in berlin_pinctrl_build_state
+Date: Fri, 3 Aug 2018 19:29:11 +0200
+Message-ID: <CACRpkdZeCfOvwQ5qsHwzTD-wAyhqXMjfGbp6CGBtXdq4UifCwg@mail.gmail.com>
+References: <20180801051049.21360-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20a52a0461e32e776e526171c250551a@agner.ch>
+In-Reply-To: <20180801051049.21360-1-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Dmitry Osipenko <digetx@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: yuehaibing@huawei.com
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Kees Cook <keescook@chromium.org>, Jisheng Zhang <Jisheng.Zhang@synaptics.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Aug 2, 2018 at 1:31 PM Stefan Agner <stefan@agner.ch> wrote:
+On Wed, Aug 1, 2018 at 7:11 AM YueHaibing <yuehaibing@huawei.com> wrote:
 
-> A while back at least using those init lists were not well received even
-> for GPIO/pinctrl drivers:
+> fixes following Smatch static check warning:
 >
-> https://lore.kernel.org/lkml/CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J_azOic7AA@mail.gmail.com/T/#mf0596982324a6489b5537b0531ac5aed60a316ba
+>  drivers/pinctrl/berlin/berlin.c:237 berlin_pinctrl_build_state()
+>  warn: passing devm_ allocated variable to kfree. 'pctrl->functions'
+>
+> As we will be calling krealloc() on pointer 'pctrl->functions', which means
+> kfree() will be called in there, devm_kzalloc() shouldn't be used with
+> the allocation in the first place.  Fix the warning by calling kcalloc()
+> and managing the free procedure in error path on our own.
+>
+> Fixes: 3de68d331c24 ("pinctrl: berlin: add the core pinctrl driver for Marvell Berlin SoCs")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+> v2: free pctrl->functions instead of function as Jisheng Zhang suggested
+> v3: v2 I send a wrong patch,this is the correct patch.
 
-You shouldn't listen too much to that guy he's not trustworthy.
-
-> I still think we should make an exception for GPIO/pinctrl and use
-> earlier initcalls. Platform GPIO/pinctrl drivers provide basic
-> infrastructure often used by many other drivers, we want to have them
-> loaded early. It avoids unnecessary EPROBE_DEFER and hence probably even
-> boots faster.
-
-When we have the pin control and GPIO at different initlevels it makes me
-uneasy because I feel we have implicit init dependencies that seem more
-than a little fragile.
-
-My recent thinking has involved the component method used in DRM drivers
-such as drivers/gpu/drm/vc4/vc4_drv.c where a few different component
-subdrivers are linked together at bind time (not probe time!) into a master
-component.
-
-Rob was no big fan of this but the DRM people like it and I was thinking to
-make a try at it.
-
-This way we could at least probe and bind the pin control and GPIO drivers
-at the *same* initlevel and express the dependencies between them
-somewhat.
-
-> This should definitely go in, at least as a stop gap solution.
-
-Agreed. (And patch applied.)
+Patch applied with Jisheng's ACK!
 
 Yours,
 Linus Walleij
