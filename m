@@ -1,25 +1,25 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 6/8] gpio: omap: Add get/set_multiple() callbacks
-Date: Fri, 3 Aug 2018 18:47:27 +0200
-Message-ID: <CACRpkda8AC9Z635SWmit_RiaYbHA2TrwG-DsSg43vJ8E9Dq4GA@mail.gmail.com>
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180718235710.18242-7-jmkrzyszt@gmail.com>
+Subject: Re: [PATCH 1/5] meson_sm: add TEST_N pin direction call
+Date: Fri, 3 Aug 2018 19:06:30 +0200
+Message-ID: <CACRpkdbpe4RjCa6MnC=hvEEHJq8SAq5UAzuVKRU_rTxx_hRyDA@mail.gmail.com>
+References: <1533117623-27856-1-git-send-email-narmstrong@baylibre.com> <1533117848-28194-1-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180718235710.18242-7-jmkrzyszt@gmail.com>
+In-Reply-To: <1533117848-28194-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, ext Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Mark Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 1:56 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+On Wed, Aug 1, 2018 at 12:04 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-> This should make applications utilizing whole banks work faster.
+> The Amlogic Meson GX and AXG has a Secure Monitor call to change the
+> TEST_N pin gpio direction, add it in the supported call list.
 >
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Patch applied with Grygorii's ACK.
-No reason to delay it, if there are any problems we will just revert it.
+Looks fine to me, could we have Carlo's review on this patch?
 
 Yours,
 Linus Walleij
