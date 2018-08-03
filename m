@@ -1,32 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 1/4] gpio: syscon: rockchip: add GRF GPIO support for rk3328
-Date: Fri, 3 Aug 2018 19:13:21 +0200
-Message-ID: <CACRpkdZapWq6t772Hy0COSZ0n4+qR5sd26E9QuQ6_exNeupEXA@mail.gmail.com>
-References: <1533016762-5268-1-git-send-email-djw@t-chip.com.cn> <1533016762-5268-2-git-send-email-djw@t-chip.com.cn>
+Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to
+ arch_init level
+Date: Fri, 3 Aug 2018 19:18:43 +0200
+Message-ID: <CACRpkdas4qF51eesZ-M2+7wzp1t81qYSZSyxsmm-zAuvcaE2Pg@mail.gmail.com>
+References: <20180802111144.12512-1-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1533016762-5268-2-git-send-email-djw@t-chip.com.cn>
+In-Reply-To: <20180802111144.12512-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Levin Du <djw@t-chip.com.cn>
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Wayne Chou <zxf@t-chip.com.cn>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 8:00 AM <djw@t-chip.com.cn> wrote:
+On Thu, Aug 2, 2018 at 1:12 PM Dmitry Osipenko <digetx@gmail.com> wrote:
 
-> From: Levin Du <djw@t-chip.com.cn>
+> There is a bug in regards to deferred probing within the drivers core
+> that causes GPIO-driver to suspend after its users. The bug appears if
+> GPIO-driver probe is getting deferred, which happens after introducing
+> dependency on PINCTRL-driver for the GPIO-driver by defining "gpio-ranges"
+> property in device-tree. The bug in the drivers core is old (more than 4
+> years now) and is well known, unfortunately there is no easy fix for it.
+> The good news is that we can workaround the deferred probe issue by
+> changing GPIO / PINCTRL drivers registration order and hence by moving
+> PINCTRL driver registration to the arch_init level and GPIO to the
+> subsys_init.
 >
-> In Rockchip RK3328, the output only GPIO_MUTE pin, originally for codec
-> mute control, can also be used for general purpose. It is manipulated by
-> the GRF_SOC_CON10 register in GRF. Aside from the GPIO_MUTE pin, the HDMI
-> pins can also be set in the same way.
->
-> Currently this GRF GPIO controller only supports the mute pin. If needed
-> in the future, the HDMI pins support can also be added.
->
-> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-Patch applied with Rob's and Heiko's ACKs.
+Patch applied with Stefan's ACK.
 
 Yours,
 Linus Walleij
