@@ -1,44 +1,34 @@
-From: Richard Genoud <richard.genoud@gmail.com>
-Subject: Re: [PATCH 0/2] gpio: mvebu: Add support for multiple PWM lines
-Date: Fri, 3 Aug 2018 11:44:33 +0200
-Message-ID: <47f1a82c-d414-a3b2-94bf-b0466450703f@sorico.fr>
-References: <1532114623-81911-1-git-send-email-aditya@kobol.io>
- <CACRpkdbiAkt6hT+LeRXCjWDZwjeYDF-e3sckMOWqnL2rdqLDug@mail.gmail.com>
- <87sh3vbxlf.fsf@bootlin.com> <e50f0301-f60a-0521-7d73-dcea28721365@sorico.fr>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
+Date: Fri, 03 Aug 2018 09:08:27 -0700
+Message-ID: <bd1182e9417da5f1aa13659870e333d26c4be35a.camel@perches.com>
+References: <20180801111243.2848-1-fe@dev.tdt.de>
+         <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e50f0301-f60a-0521-7d73-dcea28721365@sorico.fr>
-Content-Language: fr
+In-Reply-To: <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@bootlin.com>, aditya@kobol.io, Linus Walleij <linus.walleij@linaro.org>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, gauthier@kobol.io, alban.browaeys@gmail.com, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, fe@dev.tdt.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 03/08/2018 11:42, Richard Genoud wrote:
-> On 03/08/2018 11:36, Gregory CLEMENT wrote:
->> Hi Linus and Adita
->>  
->>  On dim., juil. 29 2018, Linus Walleij <linus.walleij@linaro.org> wrote:
->>
->>> Hoping for some review from Gergory, Ralph or Richard who all seem
->>> to use this driver!
->>
->> Would it be possible to resend the series adding me in CC?  I would
->> like to comment the patches, but unfortunately it seems that I was in
->> none of the mailing list where the series had been sent.
->>
->> I found the patches on patchwork, and started to have a look on it for
->> example, in the patch "gpio: mvebu: Add support for multiple PWM lines
->> per GPIO chip", I wonder why the id is stored as it was not used at all.
->>
->> Having the patch inlined in an email would male the review easier.
-> Same for me :)
+On Thu, 2018-08-02 at 23:30 +0200, Linus Walleij wrote:
+> On Wed, Aug 1, 2018 at 1:12 PM Florian Eckert <fe@dev.tdt.de> wrote:
+[]
+> > +       spinlock_t lock;
 > 
+> I think checkpatch now mandates that you put in a comment
+> about what this lock is locking.
 
-Sorry, for the noise, but please use my gmail address.
+Please remember that checkpatch doesn't mandate anything.
 
-Thanks !
+Documentation/process/4.Coding.rst does have:
 
-Richard
+   Certain things should always be commented.  Uses of memory barriers should
+   be accompanied by a line explaining why the barrier is necessary.  The
+   locking rules for data structures generally need to be explained somewhere.
+
+So there should be some comment somewhere in the code
+for the spinlock.
