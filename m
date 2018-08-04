@@ -1,57 +1,85 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to arch_init level
-Date: Sat, 04 Aug 2018 17:01:48 +0300
-Message-ID: <2738202.Xfnp0pFbCN@dimapc>
-References: <20180802111144.12512-1-digetx@gmail.com> <20a52a0461e32e776e526171c250551a@agner.ch> <CACRpkda+t=0aJMSKre+U-GHN2d47pV3b_g13PcinXScP_UX5Ng@mail.gmail.com>
+From: Christian Lamparter <chunkeey@gmail.com>
+Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
+Date: Sat, 04 Aug 2018 20:22:20 +0200
+Message-ID: <1846152.TW98f23PIX@debian64>
+References: <20180801111243.2848-1-fe@dev.tdt.de> <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda+t=0aJMSKre+U-GHN2d47pV3b_g13PcinXScP_UX5Ng@mail.gmail.com>
+In-Reply-To: <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stefan Agner <stefan@agner.ch>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: fe@dev.tdt.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Friday, 3 August 2018 20:24:56 MSK Linus Walleij wrote:
-> On Thu, Aug 2, 2018 at 1:31 PM Stefan Agner <stefan@agner.ch> wrote:
-> > A while back at least using those init lists were not well received even
-> > for GPIO/pinctrl drivers:
-> > 
-> > https://lore.kernel.org/lkml/CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J_az
-> > Oic7AA@mail.gmail.com/T/#mf0596982324a6489b5537b0531ac5aed60a316ba
-> You shouldn't listen too much to that guy he's not trustworthy.
+On Thursday, August 2, 2018 11:30:00 PM CEST Linus Walleij wrote:
+> On Wed, Aug 1, 2018 at 1:12 PM Florian Eckert <fe@dev.tdt.de> wrote:
 > 
-> > I still think we should make an exception for GPIO/pinctrl and use
-> > earlier initcalls. Platform GPIO/pinctrl drivers provide basic
-> > infrastructure often used by many other drivers, we want to have them
-> > loaded early. It avoids unnecessary EPROBE_DEFER and hence probably even
-> > boots faster.
+> > Add a new device driver "gpio-apu" which will now handle the GPIOs on
+> > APU2 and APU3 devices from PC Engines.
+> >
+> > - APU2/APU3 -> front button reset support
+> > - APU3 -> SIM switch support
+> >
+> > Signed-off-by: Florian Eckert <fe@dev.tdt.de>
 > 
-> When we have the pin control and GPIO at different initlevels it makes me
-> uneasy because I feel we have implicit init dependencies that seem more
-> than a little fragile.
+> Hi Florian, thanks for the patch!
 
-Yes, it is not very good.
+There have been multiple attempts at upstreaming a gpio/pinctrl driver for
+the different APU SoC by now. The last attempt I remember took place on 
+this ML too: <https://lkml.org/lkml/2017/12/20/824>
 
-> My recent thinking has involved the component method used in DRM drivers
-> such as drivers/gpu/drm/vc4/vc4_drv.c where a few different component
-> subdrivers are linked together at bind time (not probe time!) into a master
-> component.
-> Rob was no big fan of this but the DRM people like it and I was thinking to
-> make a try at it.
-> 
-> This way we could at least probe and bind the pin control and GPIO drivers
-> at the *same* initlevel and express the dependencies between them
-> somewhat.
+But sadly most attempts stalled, because there is already a leds-apu driver 
+<https://github.com/torvalds/linux/blob/master/drivers/leds/leds-apu.c>
+(since the gpio-driver was never accepted) that will do in a pinch for the
+LEDs (which most people care about).
 
-Sounds interesting, maybe you could help to convert Tegra drivers to a such 
-method and others will follow afterwards.
+> I looped in Andy Schevchenko and Mika Westerberg who are authorities on
+> x86 platform drivers in general and GPIO and pin control in particular
+> so they can help out with the review.
+Intel helping AMD. That's nice to see ;-)
 
-> > This should definitely go in, at least as a stop gap solution.
-> 
-> Agreed. (And patch applied.)
+> I'm a bit confused whether these things are really GPIOs or just
+> switches but since they can change direction they seem to be GPIOs.
 
-The best solution will be to fix the deferred probing, it's awkward that it 
-could break suspend-resume order. Hopefully somebody with a good knowledge of 
-driver/base will manage to fix it eventually.
+Yes, it's a real gpio/pinctrl in AMDs Tech docs.
+<https://support.amd.com/TechDocs/52740_16h_Models_30h-3Fh_BKDG.pdf>
+
+Some of the pins are muxed. I.e GPIO167-170 can either be a GPIO or
+used for HD audio.
+"The HD audio controller supports up to four codecs with one AZ_SDIN
+pin from each codec. The four AZ_SDIN pins are multiplexed with
+GPIO167-170 (GPIOxA7-GPIOxAA). If a particular pin is to be used for
+HD audio functionality". There's a full table in "3.26.12.1 GPIO Registers". 
+
+
+
+
+As for the APUs. The vendor (PC Engines) happily provides
+PDFs and schematics for their boards:
+<https://www.pcengines.ch/pdf/apu1.pdf>
+<https://www.pcengines.ch/schema/apu1c.pdf>
+<https://www.pcengines.ch/pdf/apu2.pdf>
+<http://pcengines.ch/schema/apu2c.pdf>
+
+So, it's possible to repurpose several test points as additional
+GPIOs and more.
+
+Note2:
+On both boards there is also a dedicated GPIO pin header J19, but
+these pins are controlled by the SuperIO Nuvoton NCT5104D.
+
+> > +config GPIO_APU
+> > +       tristate "PC Engines APU2/APU3 GPIO support"
+> > +       depends on X86
+> > +       select GPIO_GENERIC
+> > +       help
+> > +         Say Y here to support GPIO functionality on APU2/APU3 boards
+> > +         from PC Engines.
+> > +         - APU2/APU3 -> front button reset support
+> > +         - APU3 -> SIM switch support
+Well, by design this driver will sort of clash with the leds-apu driver. 
+ 
+Regards,
+Christian
