@@ -1,88 +1,57 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-Date: Sat, 4 Aug 2018 07:33:58 +0200
-Message-ID: <20180804073358.7c5cf3a0@bbrezillon>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <20180719152930.3715-2-boris.brezillon@bootlin.com>
-        <023901d42b72$5bc329d0$13497d70$@codeaurora.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to arch_init level
+Date: Sat, 04 Aug 2018 17:01:48 +0300
+Message-ID: <2738202.Xfnp0pFbCN@dimapc>
+References: <20180802111144.12512-1-digetx@gmail.com> <20a52a0461e32e776e526171c250551a@agner.ch> <CACRpkda+t=0aJMSKre+U-GHN2d47pV3b_g13PcinXScP_UX5Ng@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <023901d42b72$5bc329d0$13497d70$@codeaurora.org>
+In-Reply-To: <CACRpkda+t=0aJMSKre+U-GHN2d47pV3b_g13PcinXScP_UX5Ng@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: mshettel@codeaurora.org
-Cc: 'Wolfram Sang' <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, 'Jonathan Corbet' <corbet@lwn.net>, linux-doc@vger.kernel.org, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Arnd Bergmann' <arnd@arndb.de>, 'Przemyslaw Sroka' <psroka@cadence.com>, 'Arkadiusz Golec' <agolec@cadence.com>, 'Alan Douglas' <adouglas@cadence.com>, 'Bartosz Folta' <bfolta@cadence.com>, 'Damian Kos' <dkos@cadence.com>, 'Alicja Jurasik-Urbaniak' <alicja@cadence.com>, 'Cyprian Wronka' <cwronka@cadence.com>, 'Suresh Punnoose' <sureshp@cadence.com>, 'Rafal Ciepiela' <rafalc@cadence.com>, 'Thomas Petazzoni' <thomas.petazzoni@bootlin.com>, 'Nishanth Menon' <nm@ti.com>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stefan Agner <stefan@agner.ch>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Mike,
-
-On Fri, 3 Aug 2018 15:38:43 -0600
-<mshettel@codeaurora.org> wrote:
-
-> > +static void
-> > +i3c_master_register_new_i3c_devs(struct i3c_master_controller *master)
-> > +{
-> > +	struct i3c_dev_desc *desc;
-> > +	int ret;
-> > +
-> > +	if (!master->init_done)
-> > +		return;
-> > +
-> > +	i3c_bus_for_each_i3cdev(master->bus, desc) {
-> > +		if (desc->dev || !desc->info.dyn_addr)
-> > +			continue;
-> > +
-> > +		desc->dev = kzalloc(sizeof(*desc->dev), GFP_KERNEL);
-> > +		if (!desc->dev)
-> > +			continue;
-> > +
-> > +		desc->dev->bus = master->bus;
-> > +		desc->dev->desc = desc;
-> > +		desc->dev->dev.parent = &master->bus->dev;
-> > +		if (desc == master->this)
-> > +			desc->dev->dev.type = &i3c_master_type;
-> > +		else
-> > +			desc->dev->dev.type = &i3c_device_type;
-> > +		desc->dev->dev.bus = &i3c_bus_type;
-> > +		desc->dev->dev.release = i3c_device_release;
-> > +		dev_set_name(&desc->dev->dev, "%d-%llx", master->bus-  
-> > >id,  
-> > +			     desc->info.pid);
-> > +
-> > +		if (desc->boardinfo)
-> > +			desc->dev->dev.of_node = desc->boardinfo-  
-> > >of_node;  
-> > +
-> > +		pr_info("%s:%i\n", __func__, __LINE__);
-> > +		if (ret)
-> > +			dev_err(master->parent,
-> > +				"Failed to add I3C device (err = %d)\n",  
-> ret);
-> > +	}
-> > +}  
+On Friday, 3 August 2018 20:24:56 MSK Linus Walleij wrote:
+> On Thu, Aug 2, 2018 at 1:31 PM Stefan Agner <stefan@agner.ch> wrote:
+> > A while back at least using those init lists were not well received even
+> > for GPIO/pinctrl drivers:
+> > 
+> > https://lore.kernel.org/lkml/CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J_az
+> > Oic7AA@mail.gmail.com/T/#mf0596982324a6489b5537b0531ac5aed60a316ba
+> You shouldn't listen too much to that guy he's not trustworthy.
 > 
-> The compiler gives a warning that "ret" may be used uninitialized in the
-> above function, which is true since "ret" is never assigned a value.  Also,
-> I wonder about the "pr_info" call here, should there be a more detailed
-> message here about the device being registered, other than the file name and
-> line number?
-
-Yes, kbuild already reported that problem. I messed up when selecting
-the lines to add to my commit and added this trace instead of
-
-		ret = device_register(&desc->dev->dev);
-
-Will be fixed in v7.
-
+> > I still think we should make an exception for GPIO/pinctrl and use
+> > earlier initcalls. Platform GPIO/pinctrl drivers provide basic
+> > infrastructure often used by many other drivers, we want to have them
+> > loaded early. It avoids unnecessary EPROBE_DEFER and hence probably even
+> > boots faster.
 > 
-> Otherwise, I have gone through the code in the process of writing the first
-> iteration of the Qualcomm I3C master driver, and overall the framework looks
-> good.  Will update with any additional feedback I have.
+> When we have the pin control and GPIO at different initlevels it makes me
+> uneasy because I feel we have implicit init dependencies that seem more
+> than a little fragile.
 
-Thanks for looking at the framework code. Your driver is in my TODO
-list.
+Yes, it is not very good.
 
-Regards,
+> My recent thinking has involved the component method used in DRM drivers
+> such as drivers/gpu/drm/vc4/vc4_drv.c where a few different component
+> subdrivers are linked together at bind time (not probe time!) into a master
+> component.
+> Rob was no big fan of this but the DRM people like it and I was thinking to
+> make a try at it.
+> 
+> This way we could at least probe and bind the pin control and GPIO drivers
+> at the *same* initlevel and express the dependencies between them
+> somewhat.
 
-Boris
+Sounds interesting, maybe you could help to convert Tegra drivers to a such 
+method and others will follow afterwards.
+
+> > This should definitely go in, at least as a stop gap solution.
+> 
+> Agreed. (And patch applied.)
+
+The best solution will be to fix the deferred probing, it's awkward that it 
+could break suspend-resume order. Hopefully somebody with a good knowledge of 
+driver/base will manage to fix it eventually.
