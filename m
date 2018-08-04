@@ -1,85 +1,54 @@
-From: Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
-Date: Sat, 04 Aug 2018 20:22:20 +0200
-Message-ID: <1846152.TW98f23PIX@debian64>
-References: <20180801111243.2848-1-fe@dev.tdt.de> <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v8 5/6] i2c: Add Actions Semiconductor Owl family S900
+ I2C driver
+Date: Sat, 4 Aug 2018 23:00:24 +0200
+Message-ID: <20180804210024.epnf3smqviqsm2jj@ninjato>
+References: <20180801180232.23680-1-manivannan.sadhasivam@linaro.org>
+ <20180801180232.23680-6-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vf523s55nlts2uct"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20180801180232.23680-6-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: fe@dev.tdt.de, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: robh+dt@kernel.org, afaerber@suse.de, linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thursday, August 2, 2018 11:30:00 PM CEST Linus Walleij wrote:
-> On Wed, Aug 1, 2018 at 1:12 PM Florian Eckert <fe@dev.tdt.de> wrote:
-> 
-> > Add a new device driver "gpio-apu" which will now handle the GPIOs on
-> > APU2 and APU3 devices from PC Engines.
-> >
-> > - APU2/APU3 -> front button reset support
-> > - APU3 -> SIM switch support
-> >
-> > Signed-off-by: Florian Eckert <fe@dev.tdt.de>
-> 
-> Hi Florian, thanks for the patch!
 
-There have been multiple attempts at upstreaming a gpio/pinctrl driver for
-the different APU SoC by now. The last attempt I remember took place on 
-this ML too: <https://lkml.org/lkml/2017/12/20/824>
+--vf523s55nlts2uct
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But sadly most attempts stalled, because there is already a leds-apu driver 
-<https://github.com/torvalds/linux/blob/master/drivers/leds/leds-apu.c>
-(since the gpio-driver was never accepted) that will do in a pinch for the
-LEDs (which most people care about).
+On Wed, Aug 01, 2018 at 11:32:31PM +0530, Manivannan Sadhasivam wrote:
+> Add Actions Semiconductor Owl family S900 I2C driver.
+>=20
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Acked-by: Peter Rosin <peda@axentia.se>
 
-> I looped in Andy Schevchenko and Mika Westerberg who are authorities on
-> x86 platform drivers in general and GPIO and pin control in particular
-> so they can help out with the review.
-Intel helping AMD. That's nice to see ;-)
-
-> I'm a bit confused whether these things are really GPIOs or just
-> switches but since they can change direction they seem to be GPIOs.
-
-Yes, it's a real gpio/pinctrl in AMDs Tech docs.
-<https://support.amd.com/TechDocs/52740_16h_Models_30h-3Fh_BKDG.pdf>
-
-Some of the pins are muxed. I.e GPIO167-170 can either be a GPIO or
-used for HD audio.
-"The HD audio controller supports up to four codecs with one AZ_SDIN
-pin from each codec. The four AZ_SDIN pins are multiplexed with
-GPIO167-170 (GPIOxA7-GPIOxAA). If a particular pin is to be used for
-HD audio functionality". There's a full table in "3.26.12.1 GPIO Registers". 
+Applied to for-next, thanks!
 
 
+--vf523s55nlts2uct
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-As for the APUs. The vendor (PC Engines) happily provides
-PDFs and schematics for their boards:
-<https://www.pcengines.ch/pdf/apu1.pdf>
-<https://www.pcengines.ch/schema/apu1c.pdf>
-<https://www.pcengines.ch/pdf/apu2.pdf>
-<http://pcengines.ch/schema/apu2c.pdf>
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltmE+gACgkQFA3kzBSg
+KbYa4g//cPkcT5fKX2mp0X2Khf0reksDtd4fbsjjVJA+PsrRTsgRxHdbJeUkmDiN
+8Aj0AWzkH4TG3Uo+vTlUB1foZFa4F1PRBtlpqXM5unqpNjVccpeo+5X6Af1xklUU
+30Yj7OXLQ2tP9VMHsbU9YH1Srs38zVXKxIp5mj7urj3tujS4rUOlX19cR5wpn89h
+rVJGyXQuO8Enjs1LnOdSZa0syIAizuxnO6HK6do0aw7Ov+RCuqAcJrgfaJNQmQh1
+t7nE5AK+Of86juERQrU1iUgZz+JvIUMfk0rcz+tHJ4wQ7byYjsrh9Y4ifeX9v63R
+uZ7NGmWjGoBr3FQL2f3EoN4gOERfHpCkuprQX+7p84w4oatIKqQn+fA7QM6l/2EW
+qRFLs5zA9N0HPO8FRXANzXve52GUA+L4p1F+FwaSDPPi9Kam3EQmwrB+jTHermOD
+Kj8aLsI7vG5UcmkLyKcVt3Qn3MjJjnTWbNsV2/nfNuGTark7G+7rFQIoy7l9BPwM
+hQ15NKQebDA3ci5wyCOYIWov5V5i/87REIhe8GVjl13a4AsbdAbgWikDStXCqi8m
+5r7ZIkG6oms1xOmkZD6kbNjHF2yjfjlqUsIIbIYMcpfEeFj0Fm+F+5mKQJP82pvq
+BXrJp/XstWHSSgAIzzTcWFYh24u6YBiNFwrSu9nKxM3zFgVIzrA=
+=Eb4a
+-----END PGP SIGNATURE-----
 
-So, it's possible to repurpose several test points as additional
-GPIOs and more.
-
-Note2:
-On both boards there is also a dedicated GPIO pin header J19, but
-these pins are controlled by the SuperIO Nuvoton NCT5104D.
-
-> > +config GPIO_APU
-> > +       tristate "PC Engines APU2/APU3 GPIO support"
-> > +       depends on X86
-> > +       select GPIO_GENERIC
-> > +       help
-> > +         Say Y here to support GPIO functionality on APU2/APU3 boards
-> > +         from PC Engines.
-> > +         - APU2/APU3 -> front button reset support
-> > +         - APU3 -> SIM switch support
-Well, by design this driver will sort of clash with the leds-apu driver. 
- 
-Regards,
-Christian
+--vf523s55nlts2uct--
