@@ -1,47 +1,54 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH RESEND 2/2] gpio: mvebu: Allow to use non-default PWM
- counter
-Date: Mon, 6 Aug 2018 15:52:57 +0200
-Message-ID: <20180806135257.GB6584@lunn.ch>
-References: <1533522556-55055-1-git-send-email-aditya@kobol.io>
- <1533522556-55055-3-git-send-email-aditya@kobol.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: tb10x: Use the right include
+Date: Mon,  6 Aug 2018 16:23:21 +0200
+Message-ID: <20180806142321.32025-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1533522556-55055-3-git-send-email-aditya@kobol.io>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Aditya Prayoga <aditya@kobol.io>
-Cc: linux-gpio@vger.kernel.org, Richard Genoud <richard.genoud@gmail.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Gauthier Provost <gauthier@kobol.io>, Alban Browaeys <alban.browaeys@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Dennis Gilmore <dennis@ausil.us>, Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
+List-Post: <mailto:linux-snps-arc@lists.infradead.org>
+List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
+Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-snps-arc@lists.infradead.org, Christian Ruppert <christian.ruppert@alitech.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 10:29:16AM +0800, Aditya Prayoga wrote:
-> On multiple PWM lines, if the other PWM counter is unused, allocate it
-> to next PWM request. The priority would be:
-> 1. Default counter assigned to the bank
-> 2. Unused counter that is assigned to other bank
-> 3. Fallback to default counter
-> 
-> For example on second bank there are three PWM request, first one would
-> use default counter (counter B), second one would try to use counter A,
-> and the third one would use counter B.
+This driver includes the legacy <linux/gpio.h> and
+<linux/of_gpio.h> but all it needs is really <linux/gpio/driver.h>.
 
-Hi Aditya
+Cc: linux-snps-arc@lists.infradead.org
+Cc: Christian Ruppert <christian.ruppert@alitech.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-tb10x.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-There are only two PWM counters for all the GPIO lines. So you cannot
-support 3 PWM requests. You have to enforce a maximum of two PWMs.
-
-When i implemented this PWM code, i only needed one PWM. So it took
-the easy option. GPIO bank 0 uses counter A, GPIO bank1 uses counter
-B. For the hardware you have, this is not sufficient, so you need to
-generalise this. Any PWM can use any counter, whatever is available
-when the PWM is requested.
-
-Rather than have a linked list of PWM, i think it would be better to
-have a static array of two mvebu_pwm structures. Index 0 uses counter
-A, index 1 uses counter B. You can then keep with the concept of
-pwm->pgiod != NULL means the counter is in use. The request() call can
-then find an unused PWM, set pwm->gpiod, and point mvchip->mvpwm to
-one of the two static instances.
-
-    Andrew
+diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
+index ac6f2a9841e5..a12cd0b5c972 100644
+--- a/drivers/gpio/gpio-tb10x.c
++++ b/drivers/gpio/gpio-tb10x.c
+@@ -22,7 +22,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/driver.h>
+ #include <linux/slab.h>
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
+@@ -30,7 +30,6 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+-#include <linux/of_gpio.h>
+ #include <linux/spinlock.h>
+ #include <linux/bitops.h>
+ #include <linux/pinctrl/consumer.h>
+-- 
+2.17.0
