@@ -1,34 +1,177 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v8 2/6] arm64: dts: actions: Add pinctrl definition for
- S900 I2C controller
-Date: Sun, 5 Aug 2018 09:11:40 +0530
-Message-ID: <20180805034140.GA6907@Mani-XPS-13-9360>
-References: <20180801180232.23680-1-manivannan.sadhasivam@linaro.org>
- <20180801180232.23680-3-manivannan.sadhasivam@linaro.org>
- <20180804210440.6fw4zrvk6lzawypc@ninjato>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Aditya Prayoga <aditya@kobol.io>
+Subject: [PATCH RESEND 2/2] gpio: mvebu: Allow to use non-default PWM counter
+Date: Mon,  6 Aug 2018 10:29:16 +0800
+Message-ID: <1533522556-55055-3-git-send-email-aditya@kobol.io>
+References: <1533522556-55055-1-git-send-email-aditya@kobol.io>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180804210440.6fw4zrvk6lzawypc@ninjato>
+In-Reply-To: <1533522556-55055-1-git-send-email-aditya@kobol.io>
 Sender: linux-kernel-owner@vger.kernel.org
-To: afaerber@suse.de
-Cc: Wolfram Sang <wsa@the-dreams.de>, robh+dt@kernel.org, linus.walleij@linaro.org, linux-i2c@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org, andy.shevchenko@gmail.com, daniel.thompson@linaro.org, amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com, thomas.liau@actions-semi.com, jeff.chen@actions-semi.com
+To: linux-gpio@vger.kernel.org
+Cc: Richard Genoud <richard.genoud@gmail.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Gauthier Provost <gauthier@kobol.io>, Alban Browaeys <alban.browaeys@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Dennis Gilmore <dennis@ausil.us>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Aditya Prayoga <aditya@kobol.io>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Aug 04, 2018 at 11:04:40PM +0200, Wolfram Sang wrote:
-> On Wed, Aug 01, 2018 at 11:32:28PM +0530, Manivannan Sadhasivam wrote:
-> > Add pinctrl definition for Actions Semiconductor S900 I2C controller.
-> > Pinctrl definitions are only available for I2C0, I2C1, and I2C2.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> Note that I don't take DTS patches, so skipping patches 2-4.
->
+On multiple PWM lines, if the other PWM counter is unused, allocate it
+to next PWM request. The priority would be:
+1. Default counter assigned to the bank
+2. Unused counter that is assigned to other bank
+3. Fallback to default counter
 
-Hi Andreas,
+For example on second bank there are three PWM request, first one would
+use default counter (counter B), second one would try to use counter A,
+and the third one would use counter B.
 
-Can you please take the DTS patches through Actions tree?
+Signed-off-by: Aditya Prayoga <aditya@kobol.io>
+---
+ drivers/gpio/gpio-mvebu.c | 58 +++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 56 insertions(+), 2 deletions(-)
 
-Thanks,
-Mani
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 0617e66..5a39478 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -92,6 +92,11 @@
+ 
+ #define MVEBU_MAX_GPIO_PER_BANK		32
+ 
++enum mvebu_pwm_counter {
++	MVEBU_PWM_COUNTER_A = 0,
++	MVEBU_PWM_COUNTER_B,
++};
++
+ struct mvebu_pwm_item {
+ 	struct gpio_desc	*gpiod;
+ 	struct pwm_device	*device;
+@@ -101,7 +106,8 @@ struct mvebu_pwm_item {
+ struct mvebu_pwm {
+ 	void __iomem		*membase;
+ 	unsigned long		 clk_rate;
+-	int	 id;
++	enum mvebu_pwm_counter	 id;
++	struct list_head	 node;
+ 	struct list_head	 pwms;
+ 	struct pwm_chip		 chip;
+ 	spinlock_t		 lock;
+@@ -113,6 +119,8 @@ struct mvebu_pwm {
+ 	u32			 blink_off_duration;
+ };
+ 
++static LIST_HEAD(mvebu_pwm_list);
++
+ struct mvebu_gpio_chip {
+ 	struct gpio_chip   chip;
+ 	struct regmap     *regs;
+@@ -601,12 +609,24 @@ static struct mvebu_pwm *to_mvebu_pwm(struct pwm_chip *chip)
+ 	return container_of(chip, struct mvebu_pwm, chip);
+ }
+ 
++static struct mvebu_pwm *mvebu_pwm_get_avail_counter(void)
++{
++	struct mvebu_pwm *counter;
++
++	list_for_each_entry(counter, &mvebu_pwm_list, node) {
++		if (list_empty(&counter->pwms))
++			return counter;
++	}
++	return NULL;
++}
++
+ static int mvebu_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+ 	struct mvebu_pwm *mvpwm = to_mvebu_pwm(chip);
+ 	struct mvebu_gpio_chip *mvchip = mvpwm->mvchip;
+ 	struct gpio_desc *desc;
+ 	struct mvebu_pwm_item *item;
++	struct mvebu_pwm *counter;
+ 	unsigned long flags;
+ 	int ret = 0;
+ 
+@@ -615,6 +635,14 @@ static int mvebu_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ 		return -ENODEV;
+ 
+ 	spin_lock_irqsave(&mvpwm->lock, flags);
++	regmap_read(mvchip->regs, GPIO_BLINK_EN_OFF + mvchip->offset,
++		    &mvchip->blink_en_reg);
++
++	if (mvchip->blink_en_reg & BIT(pwm->hwpwm)) {
++		ret = -EBUSY;
++		goto out;
++	}
++
+ 	desc = gpiochip_request_own_desc(&mvchip->chip,
+ 					 pwm->hwpwm, "mvebu-pwm");
+ 	if (IS_ERR(desc)) {
+@@ -627,10 +655,25 @@ static int mvebu_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ 		gpiochip_free_own_desc(desc);
+ 		goto out;
+ 	}
++
++	counter = mvpwm;
++	if (!list_empty(&mvpwm->pwms)) {
++		counter = mvebu_pwm_get_avail_counter();
++		if (counter)
++			pwm->chip_data = counter;
++		else
++			counter = mvpwm;
++	}
++
++	regmap_update_bits(mvchip->regs, GPIO_BLINK_CNT_SELECT_OFF +
++				mvchip->offset,	BIT(pwm->hwpwm),
++				counter->id ? BIT(pwm->hwpwm) : 0);
++	regmap_read(mvchip->regs, GPIO_BLINK_CNT_SELECT_OFF +
++			mvchip->offset, &mvpwm->blink_select);
+ 	item->gpiod = desc;
+ 	item->device = pwm;
+ 	INIT_LIST_HEAD(&item->node);
+-	list_add_tail(&item->node, &mvpwm->pwms);
++	list_add_tail(&item->node, &counter->pwms);
+ out:
+ 	spin_unlock_irqrestore(&mvpwm->lock, flags);
+ 	return ret;
+@@ -642,6 +685,9 @@ static void mvebu_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	struct mvebu_pwm_item *item, *tmp;
+ 	unsigned long flags;
+ 
++	if (pwm->chip_data)
++		mvpwm = (struct mvebu_pwm *) pwm->chip_data;
++
+ 	list_for_each_entry_safe(item, tmp, &mvpwm->pwms, node) {
+ 		if (item->device == pwm) {
+ 			spin_lock_irqsave(&mvpwm->lock, flags);
+@@ -665,6 +711,9 @@ static void mvebu_pwm_get_state(struct pwm_chip *chip,
+ 	unsigned long flags;
+ 	u32 u;
+ 
++	if (pwm->chip_data)
++		mvpwm = (struct mvebu_pwm *) pwm->chip_data;
++
+ 	spin_lock_irqsave(&mvpwm->lock, flags);
+ 
+ 	val = (unsigned long long)
+@@ -712,6 +761,9 @@ static int mvebu_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	unsigned long flags;
+ 	unsigned int on, off;
+ 
++	if (pwm->chip_data)
++		mvpwm = (struct mvebu_pwm *) pwm->chip_data;
++
+ 	val = (unsigned long long) mvpwm->clk_rate * state->duty_cycle;
+ 	do_div(val, NSEC_PER_SEC);
+ 	if (val > UINT_MAX)
+@@ -823,6 +875,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 	mvpwm->mvchip = mvchip;
+ 	mvpwm->id     = id;
+ 	INIT_LIST_HEAD(&mvpwm->pwms);
++	INIT_LIST_HEAD(&mvpwm->node);
+ 
+ 	mvpwm->membase = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(mvpwm->membase))
+@@ -846,6 +899,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 	mvpwm->chip.base = -1;
+ 
+ 	spin_lock_init(&mvpwm->lock);
++	list_add_tail(&mvpwm->node, &mvebu_pwm_list);
+ 
+ 	return pwmchip_add(&mvpwm->chip);
+ }
+-- 
+2.7.4
