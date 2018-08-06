@@ -1,96 +1,31 @@
-From: Anton Vasilyev <vasilyev@ispras.ru>
-Subject: [PATCH] pinctrl: axp209: Fix NULL pointer dereference after allocation
-Date: Mon,  6 Aug 2018 19:06:35 +0300
-Message-ID: <20180806160635.9293-1-vasilyev@ispras.ru>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] pinctrl: samsung: Remove duplicated "wakeup" in printk
+Date: Mon,  6 Aug 2018 18:33:40 +0200
+Message-ID: <20180806163340.27276-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Anton Vasilyev <vasilyev@ispras.ru>, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-There is no check that allocation in axp20x_funcs_groups_from_mask
-is successful.
-The patch adds corresponding check and return values.
+Double "wakeup" appears in printed message.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/pinctrl/pinctrl-axp209.c | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
-index a52779f33ad4..afd0b533c40a 100644
---- a/drivers/pinctrl/pinctrl-axp209.c
-+++ b/drivers/pinctrl/pinctrl-axp209.c
-@@ -316,7 +316,7 @@ static const struct pinctrl_ops axp20x_pctrl_ops = {
- 	.get_group_pins		= axp20x_group_pins,
- };
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 40ef14956876..f49ea3d92aa1 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -588,7 +588,7 @@ exynos_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
  
--static void axp20x_funcs_groups_from_mask(struct device *dev, unsigned int mask,
-+static int axp20x_funcs_groups_from_mask(struct device *dev, unsigned int mask,
- 					  unsigned int mask_len,
- 					  struct axp20x_pinctrl_function *func,
- 					  const struct pinctrl_pin_desc *pins)
-@@ -331,18 +331,22 @@ static void axp20x_funcs_groups_from_mask(struct device *dev, unsigned int mask,
- 		func->groups = devm_kcalloc(dev,
- 					    ngroups, sizeof(const char *),
- 					    GFP_KERNEL);
-+		if (!func->groups)
-+			return -ENOMEM;
- 		group = func->groups;
- 		for_each_set_bit(bit, &mask_cpy, mask_len) {
- 			*group = pins[bit].name;
- 			group++;
- 		}
- 	}
-+
-+	return 0;
- }
+ 	pmu_regs = drvdata->retention_ctrl->priv;
+ 	dev_info(drvdata->dev,
+-		 "Setting external wakeup interrupt wakeup mask: 0x%x\n",
++		 "Setting external wakeup interrupt mask: 0x%x\n",
+ 		 irq_chip->eint_wake_mask_value);
  
--static void axp20x_build_funcs_groups(struct platform_device *pdev)
-+static int axp20x_build_funcs_groups(struct platform_device *pdev)
- {
- 	struct axp20x_pctl *pctl = platform_get_drvdata(pdev);
--	int i, pin, npins = pctl->desc->npins;
-+	int i, ret, pin, npins = pctl->desc->npins;
- 
- 	pctl->funcs[AXP20X_FUNC_GPIO_OUT].name = "gpio_out";
- 	pctl->funcs[AXP20X_FUNC_GPIO_OUT].muxval = AXP20X_MUX_GPIO_OUT;
-@@ -366,13 +370,19 @@ static void axp20x_build_funcs_groups(struct platform_device *pdev)
- 			pctl->funcs[i].groups[pin] = pctl->desc->pins[pin].name;
- 	}
- 
--	axp20x_funcs_groups_from_mask(&pdev->dev, pctl->desc->ldo_mask,
-+	ret = axp20x_funcs_groups_from_mask(&pdev->dev, pctl->desc->ldo_mask,
- 				      npins, &pctl->funcs[AXP20X_FUNC_LDO],
- 				      pctl->desc->pins);
-+	if (ret)
-+		return ret;
- 
--	axp20x_funcs_groups_from_mask(&pdev->dev, pctl->desc->adc_mask,
-+	ret = axp20x_funcs_groups_from_mask(&pdev->dev, pctl->desc->adc_mask,
- 				      npins, &pctl->funcs[AXP20X_FUNC_ADC],
- 				      pctl->desc->pins);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
- }
- 
- static const struct of_device_id axp20x_pctl_match[] = {
-@@ -424,7 +434,11 @@ static int axp20x_pctl_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pctl);
- 
--	axp20x_build_funcs_groups(pdev);
-+	ret = axp20x_build_funcs_groups(pdev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to build groups\n");
-+		return ret;
-+	}
- 
- 	pctrl_desc = devm_kzalloc(&pdev->dev, sizeof(*pctrl_desc), GFP_KERNEL);
- 	if (!pctrl_desc)
+ 	regmap_write(pmu_regs, irq_chip->eint_wake_mask_reg,
 -- 
-2.18.0
+2.14.1
