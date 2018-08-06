@@ -1,75 +1,158 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Quentin Schulz <quentin.schulz@bootlin.com>
 Subject: Re: [PATCH 2/2] pinctrl: ocelot: add support for interrupt controller
-Date: Mon, 6 Aug 2018 13:06:23 +0200
-Message-ID: <CACRpkdbq2Q-J8scsuaUS0hP1x12xh0zd+RMrCp0TYB773bOAdg@mail.gmail.com>
-References: <20180725122621.31713-1-quentin.schulz@bootlin.com> <20180725122621.31713-2-quentin.schulz@bootlin.com>
+Date: Mon, 6 Aug 2018 14:10:57 +0200
+Message-ID: <20180806121057.nvlckdxrdxpopwaw@qschulz>
+References: <20180725122621.31713-1-quentin.schulz@bootlin.com>
+ <20180725122621.31713-2-quentin.schulz@bootlin.com>
+ <CACRpkdbq2Q-J8scsuaUS0hP1x12xh0zd+RMrCp0TYB773bOAdg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="spxixv56wptgjyni"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180725122621.31713-2-quentin.schulz@bootlin.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbq2Q-J8scsuaUS0hP1x12xh0zd+RMrCp0TYB773bOAdg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: quentin.schulz@bootlin.com
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com, James Hogan <jhogan@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Quentin, sorry for delays!
 
-On Wed, Jul 25, 2018 at 2:27 PM Quentin Schulz
-<quentin.schulz@bootlin.com> wrote:
+--spxixv56wptgjyni
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> This GPIO controller can serve as an interrupt controller as well on the
-> GPIOs it handles.
->
-> An interrupt is generated whenever a GPIO line changes and the
-> interrupt for this GPIO line is enabled. This means that both the
-> changes from low to high and high to low generate an interrupt.
->
-> For some use cases, it makes sense to ignore the high to low change and
-> not generate an interrupt. Such a use case is a line that is hold in a
-> level high/low manner until the event holding the line gets acked.
-> This can be achieved by making sure the interrupt on the GPIO controller
-> side gets acked and masked only after the line gets hold in its default
-> state, this is what's done with the fasteoi functions.
->
-> Only IRQ_TYPE_EDGE_BOTH and IRQ_TYPE_LEVEL_HIGH are supported for now.
->
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+Hi Linus,
 
-Patch applied, it's such a pretty and straight-forward patch.
-Also IRQ is probably very nice to have, so let's get this in and
-supported.
+On Mon, Aug 06, 2018 at 01:06:23PM +0200, Linus Walleij wrote:
+> Hi Quentin, sorry for delays!
+>=20
 
-Please consider addressing the following in follow-up patch(es):
+No worries :)
 
-> +static int ocelot_irq_set_type(struct irq_data *data, unsigned int type);
+> On Wed, Jul 25, 2018 at 2:27 PM Quentin Schulz
+> <quentin.schulz@bootlin.com> wrote:
+>=20
+> > This GPIO controller can serve as an interrupt controller as well on the
+> > GPIOs it handles.
+> >
+> > An interrupt is generated whenever a GPIO line changes and the
+> > interrupt for this GPIO line is enabled. This means that both the
+> > changes from low to high and high to low generate an interrupt.
+> >
+> > For some use cases, it makes sense to ignore the high to low change and
+> > not generate an interrupt. Such a use case is a line that is hold in a
+> > level high/low manner until the event holding the line gets acked.
+> > This can be achieved by making sure the interrupt on the GPIO controller
+> > side gets acked and masked only after the line gets hold in its default
+> > state, this is what's done with the fasteoi functions.
+> >
+> > Only IRQ_TYPE_EDGE_BOTH and IRQ_TYPE_LEVEL_HIGH are supported for now.
+> >
+> > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+>=20
+> Patch applied, it's such a pretty and straight-forward patch.
+> Also IRQ is probably very nice to have, so let's get this in and
+> supported.
+>=20
+> Please consider addressing the following in follow-up patch(es):
+>=20
+> > +static int ocelot_irq_set_type(struct irq_data *data, unsigned int typ=
+e);
+>=20
+> Can't you just move the function above so you don't have to forward-decla=
+re
+> this?
+>=20
 
-Can't you just move the function above so you don't have to forward-declare
-this?
+No I can't, not in the current implementation at least.
 
-> +static struct irq_chip ocelot_eoi_irqchip = {
-> +       .name           = "gpio",
-> +       .irq_mask       = ocelot_irq_mask,
-> +       .irq_eoi        = ocelot_irq_ack,
-> +       .irq_unmask     = ocelot_irq_unmask,
-> +       .flags          = IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED,
+In this function, I set the irq chip handler which needs one of the
+below irq_chip. As you can see, the set_type function is also defined in
+those two structures.
 
-As you see the latter part of the define is "IF_HANDLED".
+> > +static struct irq_chip ocelot_eoi_irqchip =3D {
+> > +       .name           =3D "gpio",
+> > +       .irq_mask       =3D ocelot_irq_mask,
+> > +       .irq_eoi        =3D ocelot_irq_ack,
+> > +       .irq_unmask     =3D ocelot_irq_unmask,
+> > +       .flags          =3D IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDL=
+ED,
+>=20
+> As you see the latter part of the define is "IF_HANDLED".
+>=20
+> > +       .irq_set_type   =3D ocelot_irq_set_type,
+> > +};
+> > +
+> > +static struct irq_chip ocelot_irqchip =3D {
+> > +       .name           =3D "gpio",
+> > +       .irq_mask       =3D ocelot_irq_mask,
+> > +       .irq_ack        =3D ocelot_irq_ack,
+> > +       .irq_unmask     =3D ocelot_irq_unmask,
+> > +       .irq_set_type   =3D ocelot_irq_set_type,
+> > +};
+>=20
+> Is it really neccessary to have two irqchips?
+>=20
+> Is this to separate ACK and EOI because the EOI version
+> doesn't survive an ACK?
+>=20
 
-> +       .irq_set_type   = ocelot_irq_set_type,
-> +};
-> +
-> +static struct irq_chip ocelot_irqchip = {
-> +       .name           = "gpio",
-> +       .irq_mask       = ocelot_irq_mask,
-> +       .irq_ack        = ocelot_irq_ack,
-> +       .irq_unmask     = ocelot_irq_unmask,
-> +       .irq_set_type   = ocelot_irq_set_type,
-> +};
+Let me give you a real world use case, the reason why I used EOI.
 
-Is it really neccessary to have two irqchips?
+I've a PHY interrupt line that connects to a GPIO of this controller.
+The PHY holds the line until the PHY acknowledges the reason for
+generating an interrupt. So we can say that it's a LEVEL_HIGH
+"interrupt".
 
-Is this to separate ACK and EOI because the EOI version
-doesn't survive an ACK?
+The GPIO interrupt controller generates an interruption whenever the
+GPIO line has changed (0->1 or 1->0).
 
-Yours,
-Linus Walleij
+In a "normal" use case, I'd have the PHY holding high the line, the GPIO
+controller generating an interrupt because the line has changed. We
+acknowledge the interrupt in the GPIO controller. Later, we acknowledge
+in the PHY the reason why we had to generate an "interrupt" on the PHY
+side, resulting in the line being now held low. This generates another
+interrupt on the GPIO controller side. However, only one actual
+interrupt should have been generated by the GPIO controller as there's
+only one event that resulted in an "interrupt" generation from the PHY.
+
+So, we need EOI so that the GPIO controller interrupt gets acked only
+when the PHY event is acked so that we don't receive an unexpected
+interrupt.
+
+However, we also need the common irq handler behaviour as we might want
+to have the interrupt generated for 0->1 AND 1->0 transition depending
+on the IP connected to the GPIO.
+
+I could make my use case work with EOI but I find it very specific to my
+use case and thus added the support for a more commonly found (IMHO) use
+case.
+
+I'd say that, yes, the two irqchips are needed but I may be missing
+another way to handle all that.
+
+Thanks,
+Quentin
+
+--spxixv56wptgjyni
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAltoOtEACgkQhLiadT7g
+8aNVmBAAr/UkRmpUGrarrLTJAEtdTXIWznWVXojklYEiUkpGRqt1oc2ZHwDAbFS/
+bunyihtVD9p4pM3gE5g4Hdccfq6deJrCmauhBzRXz2ULjlh0iwN9652acDhU3hsf
+nACOeo0fE40TZAx6lMw2FndeJRAop6J6wrabzLrBIKxL/DUboUfsGSLSyEN22uSi
+AAlOd4K6LPBmDVP0tLzWT/juiB6Q6vCyvyrjwNpGKT/dqCpsh0CKdtcIJk8a7DZq
+TCKZDGs4ZcJxAMyp9K+Nwi+bJqjY1MuZg9z5QYv2DUUMj7wJHbqI4iQV66xLq35P
+JtiyawfqTs2ixpvPsOtU08nPRXZbZbSxfD/inpypJJWR5IG5kE/CuBnfDNGItKKU
+B3/o1ZcHf60hc2TsWhRUoEvB0rK1LwbP3CD7MDA2Kr/GgyWBRGbJ0o96X3oP9iYn
+Ar4i6FTtMC4yQ7XlHwteCX68CgFRvCywqNSbc5q7g0Y/zU7mtnBQnggqt5cl9SSx
+7xh2+GwsEfuFPJxX0aAXq/0mBPru26nxLtU6b1yAg0SRZw3ieHiTLClS/ZEoBzHX
+THDXJVw4uzdlQSV5J7Ecaj0goeUJuWZRqgrHgd346VPD/N32HMwXGin4CUL6hveY
+uG0RC5MeBsPqrDhoVZcBd1gWjkYovT8NnLv1pHCJqP5/QNon948=
+=qNHL
+-----END PGP SIGNATURE-----
+
+--spxixv56wptgjyni--
