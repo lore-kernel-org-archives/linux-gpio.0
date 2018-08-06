@@ -1,59 +1,86 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to
- arch_init level
-Date: Mon, 06 Aug 2018 23:01:03 +0200
-Message-ID: <d5f15ea80f5cf967df247579aa4ffd7a@agner.ch>
-References: <20180802111144.12512-1-digetx@gmail.com>
- <2738202.Xfnp0pFbCN@dimapc> <e60cd1f07f7c7515c117fa3446914c7f@agner.ch>
- <2282091.6Fec9mOu3z@dimapc>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [RFC PATCH v2] mtd: rawnand: ams-delta: Use GPIO API for data I/O
+Date: Tue,  7 Aug 2018 00:29:06 +0200
+Message-ID: <20180806222918.12644-1-jmkrzyszt@gmail.com>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2282091.6Fec9mOu3z@dimapc>
+In-Reply-To: <20180718235710.18242-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, thierry.reding@gmail.com, Jon Hunter <jonathanh@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 06.08.2018 15:38, Dmitry Osipenko wrote:
-> On Monday, 6 August 2018 16:03:01 MSK Stefan Agner wrote:
->> On 04.08.2018 16:01, Dmitry Osipenko wrote:
->> > On Friday, 3 August 2018 20:24:56 MSK Linus Walleij wrote:
->> >> On Thu, Aug 2, 2018 at 1:31 PM Stefan Agner <stefan@agner.ch> wrote:
->> >> > A while back at least using those init lists were not well received
->> >> > even
->> >> > for GPIO/pinctrl drivers:
->> >> >
->> >> > https://lore.kernel.org/lkml/CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J
->> >> > _az
->> >> > Oic7AA@mail.gmail.com/T/#mf0596982324a6489b5537b0531ac5aed60a316ba
->> >>
->> >> You shouldn't listen too much to that guy he's not trustworthy.
->>
->> ;-)
->>
->> >> > I still think we should make an exception for GPIO/pinctrl and use
->> >> > earlier initcalls. Platform GPIO/pinctrl drivers provide basic
->> >> > infrastructure often used by many other drivers, we want to have them
->> >> > loaded early. It avoids unnecessary EPROBE_DEFER and hence probably
->> >> > even
->> >> > boots faster.
->> >>
->> >> When we have the pin control and GPIO at different initlevels it makes me
->> >> uneasy because I feel we have implicit init dependencies that seem more
->> >> than a little fragile.
->> >
->> > Yes, it is not very good.
->>
->> Btw, just noticed this now:
->> GPIO driver -> arch_initcall
->> pinctrl driver -> subsys_initcall
-> 
-> I'm not sure what you're talking about, it's the other way around in the 
-> patches.
+Implement the idea suggested by Artem Bityutskiy and Tony Lindgren,
+described in commit b027274d2e3a ("mtd: ams-delta: fix
+request_mem_region() failure"). Use pure GPIO API as suggested by
+Boris Brezillon.
 
-Wow, yeah sorry... That must be the heat in our office ':-)
 
---
-Stefan
+Janusz Krzysztofik (12):
+      mtd: rawnand: ams-delta: Assign mtd->dev.parent, not mtd->owner
+      mtd: rawnand: ams-delta: Use private structure
+      ARM: OMAP1: ams-delta: Provide GPIO lookup table for NAND data port
+      mtd: rawnand: ams-delta: request data port GPIO resource
+      mtd: rawnand: ams-delta: use GPIO API for data read/write
+      ARM: OMAP1: ams-delta: drop obsolete NAND resources
+      mtd: rawnand: ams-delta: Set port direction once per transfer
+      mtd: rawnand: ams-delta: Simplify pointer resolution on read/write
+      gpiolib: Identify GPIO descriptor arrays with direct mapping
+      gpiolib: Introduce bitmap get/set array API extension
+      mtd: rawnand: ams-delta: Use GPIO API bitmap extension
+      gpiolib: Add fast processing path to bitmap API functions
+
+
+Changelog:
+v2:
+[RFC PATCH v2 00/12] mtd: rawnand: ams-delta: Use GPIO API for data I/O
+- renamed from former [RFC PATCH 0/8] mtd: rawnand: ams-delta: Use
+  gpio-omap accessors for data I/O
+[RFC PATCH v2 01/12] mtd: rawnand: ams-delta: Assign mtd->dev.parent,
+			not mtd->owner
+- split out from former [RFC PATCH 1/8] on Boris request, thanks.
+[RFC PATCH v2 02/12] mtd: rawnand: ams-delta: Use private structure
+- remaining part of the former [RFC PATCH 1/8].
+[RFC PATCH v2 03/12] ARM: OMAP1: ams-delta: Provide GPIO lookup table
+			for NAND data port
+- split out from former [RFC PATCH 5/8] on Boris requesst, thanks,
+[RFC PATCH v2 04/12] mtd: rawnand: ams-delta: request data port GPIO resource
+- remaining part of the former [RFC PATCH 5/8],
+[RFC PATCH v2 05/12] mtd: rawnand: ams-delta: use GPIO API for data read/write
+- reworked from former [RFC PATCH 8/8] on Boris requesst to use pure
+  GPIO API, thanks,
+- moved up in front of former [RFC PATCH 3/8] on Boris request, thanks.
+[RFC PATCH v2 06/12] ARM: OMAP1: ams-delta: drop obsolete NAND resources
+- split out from former [RFC PATCH 8/8].
+[RFC PATCH v2 07/12] mtd: rawnand: ams-delta: Set port direction once per
+			transfer
+- reworked from former [RFC PATCH 3/8] on top of [RFC PATCH v2 05/12].
+[RFC PATCH v2 08/12] mtd: rawnand: ams-delta: Simplify pointer resolution
+			on read/write
+- reworked from former [RFC PATCH 4/8] on top of [RFC PATCH v2 08/12],
+- renamed from 'Optimize' to 'Simplify' on Boris request, thanks.
+[RFC PATCH v2 09/12] gpiolib: Identify GPIO descriptor arrays with direct
+			mapping
+- new patch.
+[RFC PATCH v2 10/12] gpiolib: Introduce bitmap get/set array API extension
+- new patch.
+[RFC PATCH v2 11/12] mtd: rawnand: ams-delta: Use GPIO API bitmap extension
+- new patch.
+[RFC PATCH v2 12/12] gpiolib: Add fast processing path to bitmap API functions
+- new patch.
+Removed from the series:
+[RFC PATCH 2/8] mtd: rawnand: ams-delta: Write protect device during probe
+- postponed on Boris request, thanks.
+[RFC PATCH 6/8] gpio: omap: Add get/set_multiple() callbacks
+- already applied by Linux in linux-gpio tree, thanks.
+[RFC PATCH 7/8] mtd: rawnand: ams-delta: Check sanity of data GPIO resource
+- most controversial one, no longer needed after switching to GPIO API.
+
+
+diffstat:
+ Documentation/driver-api/gpio/consumer.rst |   36 ++
+ arch/arm/mach-omap1/board-ams-delta.c      |   22 -
+ drivers/gpio/gpiolib.c                     |  237 +++++++++++++++++++
+ drivers/mtd/nand/raw/ams-delta.c           |  350 +++++++++++++++--------------
+ include/linux/gpio/consumer.h              |   15 +
+ 5 files changed, 485 insertions(+), 175 deletions(-)
