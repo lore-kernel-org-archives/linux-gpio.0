@@ -1,31 +1,59 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] pinctrl: samsung: Remove duplicated "wakeup" in printk
-Date: Mon,  6 Aug 2018 18:33:40 +0200
-Message-ID: <20180806163340.27276-1-krzk@kernel.org>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v1 1/2] pinctrl: tegra: Move drivers registration to
+ arch_init level
+Date: Mon, 06 Aug 2018 23:01:03 +0200
+Message-ID: <d5f15ea80f5cf967df247579aa4ffd7a@agner.ch>
+References: <20180802111144.12512-1-digetx@gmail.com>
+ <2738202.Xfnp0pFbCN@dimapc> <e60cd1f07f7c7515c117fa3446914c7f@agner.ch>
+ <2282091.6Fec9mOu3z@dimapc>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2282091.6Fec9mOu3z@dimapc>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, thierry.reding@gmail.com, Jon Hunter <jonathanh@nvidia.com>, Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Double "wakeup" appears in printed message.
+On 06.08.2018 15:38, Dmitry Osipenko wrote:
+> On Monday, 6 August 2018 16:03:01 MSK Stefan Agner wrote:
+>> On 04.08.2018 16:01, Dmitry Osipenko wrote:
+>> > On Friday, 3 August 2018 20:24:56 MSK Linus Walleij wrote:
+>> >> On Thu, Aug 2, 2018 at 1:31 PM Stefan Agner <stefan@agner.ch> wrote:
+>> >> > A while back at least using those init lists were not well received
+>> >> > even
+>> >> > for GPIO/pinctrl drivers:
+>> >> >
+>> >> > https://lore.kernel.org/lkml/CACRpkdYk0zW12qNXgOstTLmdVDYacu0Un+8quTN+J
+>> >> > _az
+>> >> > Oic7AA@mail.gmail.com/T/#mf0596982324a6489b5537b0531ac5aed60a316ba
+>> >>
+>> >> You shouldn't listen too much to that guy he's not trustworthy.
+>>
+>> ;-)
+>>
+>> >> > I still think we should make an exception for GPIO/pinctrl and use
+>> >> > earlier initcalls. Platform GPIO/pinctrl drivers provide basic
+>> >> > infrastructure often used by many other drivers, we want to have them
+>> >> > loaded early. It avoids unnecessary EPROBE_DEFER and hence probably
+>> >> > even
+>> >> > boots faster.
+>> >>
+>> >> When we have the pin control and GPIO at different initlevels it makes me
+>> >> uneasy because I feel we have implicit init dependencies that seem more
+>> >> than a little fragile.
+>> >
+>> > Yes, it is not very good.
+>>
+>> Btw, just noticed this now:
+>> GPIO driver -> arch_initcall
+>> pinctrl driver -> subsys_initcall
+> 
+> I'm not sure what you're talking about, it's the other way around in the 
+> patches.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Wow, yeah sorry... That must be the heat in our office ':-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 40ef14956876..f49ea3d92aa1 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -588,7 +588,7 @@ exynos_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
- 
- 	pmu_regs = drvdata->retention_ctrl->priv;
- 	dev_info(drvdata->dev,
--		 "Setting external wakeup interrupt wakeup mask: 0x%x\n",
-+		 "Setting external wakeup interrupt mask: 0x%x\n",
- 		 irq_chip->eint_wake_mask_value);
- 
- 	regmap_write(pmu_regs, irq_chip->eint_wake_mask_reg,
--- 
-2.14.1
+--
+Stefan
