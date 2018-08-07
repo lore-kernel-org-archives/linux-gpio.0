@@ -1,55 +1,36 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: drop meaningless pin from SD1 pin-mux of
- Pro4
-Date: Tue,  7 Aug 2018 11:49:39 +0900
-Message-ID: <1533610179-13885-1-git-send-email-yamada.masahiro@socionext.com>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: [PATCH 3/3] pinctrl: madera: Fix missing space in debugfs output
+Date: Tue, 7 Aug 2018 10:32:26 +0100
+Message-ID: <20180807093226.5624-3-rf@opensource.cirrus.com>
+References: <20180807093226.5624-1-rf@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Jassi Brar <jaswinder.singh@linaro.org>, Masami Hiramatsu <mhiramat@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180807093226.5624-1-rf@opensource.cirrus.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Richard Fitzgerald <rf@opensource.cirrus.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The pin 327 was supposed to be used as a voltage control line for the
-SD card regulator, but the SD card port1 does not support UHS-I.  It
-only supports 3.3V signaling, hence this pin is pointless.
+The SCHMITT tag was being dumped without a separating space.
 
-Just a note about the background.  At first, hardware engineers tried
-to implement the UHS for this port.  Then, they needed to shrink the
-silicon die size, and gave up the UHS, but forgot to remove the pin
-assignment.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 ---
+ drivers/pinctrl/cirrus/pinctrl-madera-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-index 24788a7..b2c1ffe 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-@@ -1047,9 +1047,8 @@ static const unsigned nand_cs1_pins[] = {131, 132};
- static const int nand_cs1_muxvals[] = {1, 1};
- static const unsigned sd_pins[] = {150, 151, 152, 153, 154, 155, 156, 157, 158};
- static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
--static const unsigned sd1_pins[] = {319, 320, 321, 322, 323, 324, 325, 326,
--				    327};
--static const int sd1_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-+static const unsigned int sd1_pins[] = {319, 320, 321, 322, 323, 324, 325, 326};
-+static const int sd1_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
- static const unsigned system_bus_pins[] = {25, 26, 27, 28, 29, 30, 31, 32, 33,
- 					   34, 35, 36, 37, 38};
- static const int system_bus_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+diff --git a/drivers/pinctrl/cirrus/pinctrl-madera-core.c b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
+index 4ba56ca5a9be..979df109e187 100644
+--- a/drivers/pinctrl/cirrus/pinctrl-madera-core.c
++++ b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
+@@ -550,7 +550,7 @@ static void __maybe_unused madera_pin_dbg_show(struct pinctrl_dev *pctldev,
+ 	seq_printf(s, " DRV=%umA", madera_pin_unmake_drv_str(priv, conf[1]));
+ 
+ 	if (conf[0] & MADERA_GP1_IP_CFG_MASK)
+-		seq_puts(s, "SCHMITT");
++		seq_puts(s, " SCHMITT");
+ }
+ 
+ 
 -- 
-2.7.4
+2.11.0
