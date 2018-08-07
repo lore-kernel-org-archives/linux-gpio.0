@@ -1,29 +1,192 @@
 From: Florian Eckert <fe@dev.tdt.de>
 Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
-Date: Tue, 07 Aug 2018 13:18:31 +0200
-Message-ID: <37e92da47c20e8c771afcdb14c5532d8@dev.tdt.de>
+Date: Tue, 07 Aug 2018 13:47:22 +0200
+Message-ID: <f1a1af620625c7d9c46e6df3eebc574b@dev.tdt.de>
 References: <20180801111243.2848-1-fe@dev.tdt.de>
- <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
- <1846152.TW98f23PIX@debian64>
+ <CAHp75VdNf8BCYEq348CQe2OUUOLdYehsr5TmBDQXXEAm59+kDg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
+Content-Type: text/plain; charset=UTF-8;
  format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1846152.TW98f23PIX@debian64>
+In-Reply-To: <CAHp75VdNf8BCYEq348CQe2OUUOLdYehsr5TmBDQXXEAm59+kDg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Lamparter <chunkeey@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Andy
+On 2018-08-03 21:08, Andy Shevchenko wrote:
+>> - APU2/APU3 -> front button reset support
+>> - APU3 -> SIM switch support
+> 
+> Good.
+> Can we see some specification for those platforms?
+> 
 
-I think this are the information you want to have.
+I think the informations from Christian Lamparter are OK?
 
-On 2018-08-04 20:22, Christian Lamparter wrote:
-> As for the APUs. The vendor (PC Engines) happily provides
-> PDFs and schematics for their boards:
-> <https://www.pcengines.ch/pdf/apu1.pdf>
-> <https://www.pcengines.ch/schema/apu1c.pdf>
-> <https://www.pcengines.ch/pdf/apu2.pdf>
-> <http://pcengines.ch/schema/apu2c.pdf>
+<https://www.pcengines.ch/pdf/apu1.pdf>
+<https://www.pcengines.ch/schema/apu1c.pdf>
+<https://www.pcengines.ch/pdf/apu2.pdf>
+<http://pcengines.ch/schema/apu2c.pdf>
+
+>> + * GNU General Public License for more details
+>> + *
+>> + * You should have received a copy of the GNU General Public License
+>> + * along with this program; if not, see 
+>> <http://www.gnu.org/licenses/>
+> 
+> SPDX, please!
+
+I have already updated my patch in my git to use this identifier.
+// SPDX-License-Identifier: GPL-2.0
+This was a hint from Linus Walleji
+
+> 
+>> + */
+> 
+>> +#include <linux/gpio.h>
+>> +#include <linux/gpio_keys.h>
+> 
+> These both looks very strange in here.
+> 
+
+On the front of the APU2/APU3 there is a SMD-push-button which is 
+connected to
+one of the GPIOs. This is used as a reset button for the system 
+(reboot/factory-reset).
+I am also not sure if this is the right place. But for the first review 
+i thought this
+will be ok.
+
+The geode, the old board from PC-Engines
+added the key gpios to this file
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/platform/geode/alix.c#n47
+mybe this is the right place too x86/platfrom/apu/apu.c?
+
+>> +#define APU_FCH_ACPI_MMIO_BASE 0xFED80000
+>> +#define APU_FCH_GPIO_BASE      (APU_FCH_ACPI_MMIO_BASE + 0x1500)
+> 
+> Wow! Can we see ACPI tables for these boards? Care to share (via some
+> file share service) output of `acpidump -o tables.dat` ?
+> 
+
+I have copied this from the leds-apu.c driver which is already upstream.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/leds/leds-apu.c#n43
+
+> 
+>> +#define APU_GPIO_BIT_WRITE     22
+>> +#define APU_GPIO_BIT_READ      16
+>> +#define APU_GPIO_BIT_DIR       23
+> 
+> WR and RD looks shorter,
+> And please keep them sorted by value.
+
+Ok will fix this.
+
+> 
+>> +#define APU_IOSIZE             sizeof(u32)
+> 
+> This is usual for x86 stuff, no need to have a definition, I think.
+
+Ok will fix this.
+
+>> +static unsigned long apu3_gpio_offset[APU3_NUM_GPIO] = {
+>> +       APU_FCH_GPIO_BASE + 89 * APU_IOSIZE, //KEY
+>> +       APU_FCH_GPIO_BASE + 90 * APU_IOSIZE, //SIM
+>> +};
+>> +static void __iomem *apu3_gpio_addr[APU3_NUM_GPIO] = {NULL, NULL};
+>> +
+> 
+>> +static int gpio_apu_get_dir (struct gpio_chip *chip, unsigned offset)
+> 
+> Style! We do not use space between func and its parameter list.
+> 
+
+OK
+
+>> +{
+>> +       u32 val;
+>> +
+>> +       spin_lock(&apu_gpio->lock);
+>> +
+> 
+>> +       val = ~ioread32(apu_gpio->addr[offset]);
+> 
+> This is unusual (I mean ~). Better to leave IO alone and do bits
+> manipulations latter on.
+
+OK
+
+> 
+>> +       val = (val >> APU_GPIO_BIT_DIR) & 1;
+> 
+> Do you need this under spin lock?
+> 
+
+No i don´t.
+Will fix this.
+Thanks
+
+>> +               apu_gpio->chip->ngpio = ARRAY_SIZE(apu2_gpio_offset);
+>> +               for( i = 0; i < ARRAY_SIZE(apu2_gpio_offset); i++) {
+>> +                       apu2_gpio_addr[i] = devm_ioremap(&pdev->dev,
+>> +                                       apu_gpio->offset[i], 
+>> apu_gpio->iosize);
+>> +                       if (!apu2_gpio_addr[i]) {
+>> +                               return -ENOMEM;
+>> +                       }
+>> +               }
+>> +       }
+> 
+> The above should be part either as callback or driver_data of DMI 
+> entries.
+
+I have copied this from the leds-apu.c driver
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/leds/leds-apu.c#n226
+
+> 
+>> +       ret = gpiochip_add(&gpio_apu_chip);
+> 
+> devm_
+> 
+
+What do you mean with "devm_"?
+
+>> +       if (ret) {
+> 
+>> +               pr_err("Adding gpiochip failed\n");
+> 
+> dev_err(), but I consider this message completely useless.
+
+Thanks will remove this too.
+
+> 
+>> +       }
+> 
+>> +
+>> +       register_gpio_keys_polled(-1, 20, ARRAY_SIZE(apu_gpio_keys), 
+>> apu_gpio_keys);
+>> +
+> 
+> Not part of this driver. Remove.
+> 
+
+As described above should this go to a file "apu.c" in the directory 
+"apu" under
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/platform
+?
+
+>> +       return ret;
+>> +}
+> 
+>> +module_init(apu_gpio_init);
+>> +module_exit(apu_gpio_exit);
+> 
+> Consider to use module_platform_driver() and accompanying data
+> structures and functions.
+
+Ok thanks will update this
+
+
+Will update my patch with your hints thanks
