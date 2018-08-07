@@ -1,41 +1,27 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
-Date: Tue, 07 Aug 2018 22:18:19 +0300
-Message-ID: <58c02aeff4285498272b0a13b8de2dc1282fded9.camel@linux.intel.com>
-References: <20180801111243.2848-1-fe@dev.tdt.de>
-         <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
-         <1846152.TW98f23PIX@debian64> <37e92da47c20e8c771afcdb14c5532d8@dev.tdt.de>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [RFC PATCH v2 01/12] mtd: rawnand: ams-delta: Assign mtd->dev.parent, not mtd->owner
+Date: Tue, 07 Aug 2018 23:55:14 +0200
+Message-ID: <5203112.3RHHgWL3HE@z50>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180806222918.12644-2-jmkrzyszt@gmail.com> <604ff0fb-07d5-9068-2f69-41198f3d9854@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <37e92da47c20e8c771afcdb14c5532d8@dev.tdt.de>
+In-Reply-To: <604ff0fb-07d5-9068-2f69-41198f3d9854@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Eckert <fe@dev.tdt.de>, Christian Lamparter <chunkeey@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 2018-08-07 at 13:18 +0200, Florian Eckert wrote:
-> Hello Andy
+Hi Marek,
+
+On Tuesday, August 7, 2018 1:54:10 AM CEST Marek Vasut wrote:
+> On 08/07/2018 12:29 AM, Janusz Krzysztofik wrote:
+> > Fix missing mtd->dev.parent assignment and drop useless mtd->owner.
 > 
-> I think this are the information you want to have.
-> 
+> You fail to explain why this fix is required.
 
-I was rather asking for something like TRM.
+OK, I'll have a look at similar patches from the past and add an explanation.
 
-By schematics, I meant a simplified GPIO buffers and pin control
-explained on hardware level.
-
-Below has nothing to do with either, unfortunately.
-
-> On 2018-08-04 20:22, Christian Lamparter wrote:
-> > As for the APUs. The vendor (PC Engines) happily provides
-> > PDFs and schematics for their boards:
-> > <https://www.pcengines.ch/pdf/apu1.pdf>
-> > <https://www.pcengines.ch/schema/apu1c.pdf>
-> > <https://www.pcengines.ch/pdf/apu2.pdf>
-> > <http://pcengines.ch/schema/apu2c.pdf>
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Thanks,
+Janusz
