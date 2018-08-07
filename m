@@ -1,38 +1,29 @@
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH 1/3] pinctrl: madera: Set is_generic
-Date: Tue, 7 Aug 2018 10:32:24 +0100
-Message-ID: <20180807093226.5624-1-rf@opensource.cirrus.com>
+From: Florian Eckert <fe@dev.tdt.de>
+Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
+Date: Tue, 07 Aug 2018 13:18:31 +0200
+Message-ID: <37e92da47c20e8c771afcdb14c5532d8@dev.tdt.de>
+References: <20180801111243.2848-1-fe@dev.tdt.de>
+ <CACRpkdbY3w-ptUOkv5TUZh+5oEGU+4BLO_6=12QecRveTSBKSQ@mail.gmail.com>
+ <1846152.TW98f23PIX@debian64>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1846152.TW98f23PIX@debian64>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.cirrus.com, Richard Fitzgerald <rf@opensource.cirrus.com>
+To: Christian Lamparter <chunkeey@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-We are using the generic pin configuration interface so
-we can set is_generic.
+Hello Andy
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
- drivers/pinctrl/cirrus/pinctrl-madera-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think this are the information you want to have.
 
-diff --git a/drivers/pinctrl/cirrus/pinctrl-madera-core.c b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-index ece41fb2848f..4f9b7e3b7cf2 100644
---- a/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-+++ b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-@@ -971,10 +971,10 @@ static int madera_pin_conf_group_set(struct pinctrl_dev *pctldev,
- }
- 
- static const struct pinconf_ops madera_pin_conf_ops = {
-+	.is_generic = true,
- 	.pin_config_get = madera_pin_conf_get,
- 	.pin_config_set = madera_pin_conf_set,
- 	.pin_config_group_set = madera_pin_conf_group_set,
--
- };
- 
- static struct pinctrl_desc madera_pin_desc = {
--- 
-2.11.0
+On 2018-08-04 20:22, Christian Lamparter wrote:
+> As for the APUs. The vendor (PC Engines) happily provides
+> PDFs and schematics for their boards:
+> <https://www.pcengines.ch/pdf/apu1.pdf>
+> <https://www.pcengines.ch/schema/apu1c.pdf>
+> <https://www.pcengines.ch/pdf/apu2.pdf>
+> <http://pcengines.ch/schema/apu2c.pdf>
