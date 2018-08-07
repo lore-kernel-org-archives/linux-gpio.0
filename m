@@ -1,48 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fix for v4.18
-Date: Tue, 7 Aug 2018 02:32:11 +0200
-Message-ID: <CACRpkdZrG-bVA5LC1FMbdzOTotU0BmZkkb7wZAesN+b7GHzv5A@mail.gmail.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Subject: [PATCH v3 0/2] pinctrl: meson-g12a: add pinctrl driver support
+Date: Tue, 7 Aug 2018 10:06:32 +0800
+Message-ID: <20180807020634.18182-1-yixun.lan@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Rob Herring <robh@kernel.org>, Xingyu Chen <xingyu.chen@amlogic.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+  This patch series try to add pinctrl driver support for
+the Meson-G12A SoC.
 
-a single ACPI GPIO thingie that is standing out.
+  The pinctrl driver for Meson-G12A SoC share the similar IP as
+the previous Meson-AXG SoC, both use same pinmux ops (register layout).
+But, a new driver is needed here due to the differences in the pins.
 
-Please pull it in! Description in the commit log.
+Changes since v2 at [2]
+ - use ${FUNCTION}_${DOMAIN}_${PORT}_${PINFUNC}_${BANK}${PINNUM}
+   to rename some pins
+ - fix tdm groups
+ - explain the similarity of pinmux between AXG and G12A - thanks Martin 
+ - collect Rob's Reviewed-by
 
-Yours,
-Linus Walleij
+Changes since v1 at [1]
+ - add Martin's Ack, Xingyu's Signed-off
+ - squash patch 1,2 (documentation & header file)
+ - explain pinctrl IP
+ - notice GPIOE located in AO bank
 
-The following changes since commit acb1872577b346bd15ab3a3f8dff780d6cca4b70:
+[1] https://lkml.kernel.org/r/20180704224511.29350-1-yixun.lan@amlogic.com
+[2] https://lkml.kernel.org/r/20180714232754.5402-1-yixun.lan@amlogic.com
 
-  Linux 4.18-rc7 (2018-07-29 14:44:52 -0700)
+Yixun Lan (2):
+  documentation: pinctrl: Add compatibles for Amlogic Meson G12A pin
+    controllers
+  pinctrl: meson-g12a: add pinctrl driver support
 
-are available in the Git repository at:
+ .../bindings/pinctrl/meson,pinctrl.txt        |    2 +
+ drivers/pinctrl/meson/Kconfig                 |    6 +
+ drivers/pinctrl/meson/Makefile                |    1 +
+ drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 1404 +++++++++++++++++
+ include/dt-bindings/gpio/meson-g12a-gpio.h    |  114 ++
+ 5 files changed, 1527 insertions(+)
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson-g12a.c
+ create mode 100644 include/dt-bindings/gpio/meson-g12a-gpio.h
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.18-3
-
-for you to fetch changes up to ca876c7483b697b498868b1f575997191b077885:
-
-  gpiolib-acpi: make sure we trigger edge events at least once on boot
-(2018-08-01 11:45:10 +0200)
-
-----------------------------------------------------------------
-GPIO fixes for v4.18:
-
-This is a single fix affecting X86 ACPI, and as such pretty important.
-It is going to stable as well and have all the high-notch x86 platform
-developers agreeing on it.
-
-----------------------------------------------------------------
-Benjamin Tissoires (1):
-      gpiolib-acpi: make sure we trigger edge events at least once on boot
-
- drivers/gpio/gpiolib-acpi.c | 56 ++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 55 insertions(+), 1 deletion(-)
+-- 
+2.18.0
