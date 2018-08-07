@@ -1,30 +1,63 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 1/2] dt-binding: pinctrl: Add NPCM7xx pinctrl and GPIO
- documentation
-Date: Tue, 7 Aug 2018 08:50:05 -0600
-Message-ID: <20180807145005.GA25679@rob-hp-laptop>
-References: <20180806152354.340380-1-tmaimon77@gmail.com>
- <20180806152354.340380-2-tmaimon77@gmail.com>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [RFC PATCH v2 09/12] gpiolib: Identify GPIO descriptor arrays with direct mapping
+Date: Tue, 07 Aug 2018 18:50:22 +0200
+Message-ID: <1793769.2WP40jSPqy@z50>
+References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180806222918.12644-10-jmkrzyszt@gmail.com> <CACRpkdZtuU6zXBz6UqprE7-31vW9-1ZabFjyzHBgWaTgmqkbbQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180806152354.340380-2-tmaimon77@gmail.com>
+In-Reply-To: <CACRpkdZtuU6zXBz6UqprE7-31vW9-1ZabFjyzHBgWaTgmqkbbQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: linus.walleij@linaro.org, mark.rutland@arm.com, yuenn@google.com, venture@google.com, brendanhiggins@google.com, avifishman70@gmail.com, joel@jms.id.au, devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Jonathan Corbet <corbet@lwn.net>, =?ISO-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Mark Vasut <marek.vasut@gmail.com>, ext Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-mtd@lists.infradead.org, linux-doc@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 06, 2018 at 06:23:53PM +0300, Tomer Maimon wrote:
-> Added device tree binding documentation for Nuvoton BMC
-> NPCM750/730/715/705 pinmux and GPIO controller.
+Hi Linus,
+
+On Tuesday, August 7, 2018 1:29:43 AM CEST Linus Walleij wrote:
+> Hi Janusz!
 > 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  .../bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt   | 216 +++++++++++++++++++++
->  1 file changed, 216 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
+> On Tue, Aug 7, 2018 at 12:29 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> 
+wrote:
+> 
+> > Certain GPIO array lookup results may map directly to GPIO pins of a
+> > single GPIO chip in hardware order.  If that condition is recognized
+> > and handled efficiently, significant performance gain of get/set array
+> > functions may be possible.
+> >
+> > While processing a request for an array of GPIO descriptors, verify if
+> > the descriptors just collected represent consecutive pins of a single
+> > GPIO chip.  Pass that information with the array to the caller so it
+> > can benefit from enhanced performance as soon as bitmap based get/set
+> > array functions which can make efficient use of that are available.
+> >
+> > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> (...)
+> >  This function returns a struct gpio_descs which contains an array of
+> > -descriptors::
+> > +descriptors.  It may also contain a valid descriptor of a single GPIO 
+chip in
+> > +case the array strictly matches pin hardware layout of the chip::
+> >
+> >         struct gpio_descs {
+> >                 unsigned int ndescs;
+> >                 struct gpio_desc *desc[];
+> > +               struct gpio_chip *chip;
+> 
+> This must be motivated: if the only purpose is to indicate to the consumer 
+that
+> all GPIOs are on the same chip, why not just have a
+> 
+> bool all_on_same_chip;
+> 
+> That you set to true if these are all on the same chip?
 
-Please add acked/reviewed-by's when posting new versions.
+My approach would probably save one or two instructions per get/set call, but 
+I'm not stuck to it and will be happy to find a better solution.
 
-Rob
+How about folding the chip descriptor inside an additional structure, private 
+to drivers, with internals not revealed to consumers?
+
+Thanks,
+Janusz
