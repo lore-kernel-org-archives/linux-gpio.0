@@ -1,39 +1,105 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [RFC PATCH v2 07/12] mtd: rawnand: ams-delta: Set port direction once per transfer
-Date: Wed, 08 Aug 2018 18:55:35 +0200
-Message-ID: <3260564.acbQT1CZaz@z50>
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com> <20180806222918.12644-8-jmkrzyszt@gmail.com> <20180807205752.32cd3e53@bbrezillon>
+From: vitor <Vitor.Soares@synopsys.com>
+Subject: Re: [PATCH 2/3] dt-bindings: i3c: Document Synopsys DesignWare I3C
+ master bindings
+Date: Wed, 8 Aug 2018 17:59:24 +0100
+Message-ID: <c00cb815-ae82-312a-213b-145537a294bd@synopsys.com>
+References: <1532120272-17157-1-git-send-email-soares@synopsys.com>
+ <1532120272-17157-3-git-send-email-soares@synopsys.com>
+ <20180725195733.GA14450@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180807205752.32cd3e53@bbrezillon>
+In-Reply-To: <20180725195733.GA14450@rob-hp-laptop>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Tony Lindgren <tony@atomide.com>, Richard Weinberger <richard@nod.at>, linux-gpio@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org
+To: Rob Herring <robh@kernel.org>, Vitor soares <Vitor.Soares@synopsys.com>
+Cc: boris.brezillon@bootlin.com, wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, Joao.Pinto@synopsys.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Boris,
+Hi Rob,
 
-On Tuesday, August 7, 2018 8:57:52 PM CEST Boris Brezillon wrote:
-> On Tue,  7 Aug 2018 00:29:13 +0200
-> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> 
-> > In its current shape, the driver sets data port direction before each
-> > byte read/write operation, even during multi-byte transfers.  Since
-> > performance of the driver is completely not acceptable on Amstrad Delta
-> > after it has been converted to GPIO bitbang, try to improve things a
-> > bit by setting the port direction only on first byte of each transfer.
-> ...
-> I'd suggest a slightly different approach where the data pins
-> direction state is stored in the the priv struct and only changed when
-> required. This way you just have to add a test in
-> ams_delta_read/write_byte().
 
-Good idea, I'm going to use it, thanks.
+On 25-07-2018 20:57, Rob Herring wrote:
+> On Fri, Jul 20, 2018 at 09:57:51PM +0100, Vitor soares wrote:
+>> This patch document Synopsys DesignWare I3C master DT bindings.
+>>
+>> Signed-off-by: Vitor soares <soares@synopsys.com>
+>> ---
+>>   .../devicetree/bindings/i3c/snps,dw-i3c-master.txt | 43 ++++++++++++++++++++++
+>>   1 file changed, 43 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+>> new file mode 100644
+>> index 0000000..7f5c8b0
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+>> @@ -0,0 +1,43 @@
+>> +Bindings for Synopsys DesignWare I3C master block
+>> +=================================================
+>> +
+>> +Required properties:
+>> +--------------------
+>> +- compatible: shall be "snps,dw-i3c-master"
+> Only one version and no version number?
+>
+> ... and an SoC specific compatible string.
 
-Once done, may I also move that one earlier in the series so that it can be 
-applied while our discussion on GPIO bitmap changes still continues?
+I'm not understanding. Can you explain?
 
-Thanks,
-Janusz
+>
+>> +- clocks: shall reference the core_clk
+>> +- clock-names: shall contain "core_clk"
+> "_clk" is redundant and *-names with a single entry is kind of
+> pointless.
+
+I will fix it for next version.
+
+>
+>> +- interrupts: the interrupt line connected to this I3C master
+>> +- reg:  Offset and length of I3C master registers
+>> +
+>> +Mandatory properties defined by the generic binding (see
+>> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
+>> +
+>> +- #address-cells: shall be set to 3
+>> +- #size-cells: shall be set to 0
+>> +
+>> +Optional properties defined by the generic binding (see
+>> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
+>> +
+>> +- i2c-scl-hz
+>> +- i3c-scl-hz
+>> +
+>> +I3C device connected on the bus follow the generic description (see
+>> +Documentation/devicetree/bindings/i3c/i3c.txt for more details).
+>> +
+>> +Example:
+>> +
+>> +	i3c-master@0x2000 {
+> Drop the '0x'
+>
+>> +		compatible = "snps,dw-i3c-master";
+>> +		#address-cells = <3>;
+>> +		#size-cells = <0>;
+>> +		reg = <0x02000 0x1000>;
+>> +		interrupts = <0>;
+>> +		clocks = <&i3cclk>;
+>> +		clock-names = "core_clk";
+>> +
+>> +		eeprom@0x57{
+>> +			compatible = "atmel,24c01";
+>> +			reg = < 0x57 0x80000010 0x0>;
+>> +			pagesize = <0x8>;
+>> +		};
+>> +	};
+>> -- 
+>> 2.7.4
+>>
+>>
+
+Thanks for your feedback.
+
+Best regards,
+Vitor Soares
