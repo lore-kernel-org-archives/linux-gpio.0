@@ -1,53 +1,65 @@
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [RFC PATCH v2 07/12] mtd: rawnand: ams-delta: Set port
- direction once per transfer
-Date: Wed, 8 Aug 2018 19:42:42 +0200
-Message-ID: <20180808194242.7540ce12@xps13>
-References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
-        <20180806222918.12644-8-jmkrzyszt@gmail.com>
-        <20180807205752.32cd3e53@bbrezillon>
-        <3260564.acbQT1CZaz@z50>
+From: Leonid Bloch <lbloch@janustech.com>
+Subject: [PATCH] gpio: it87: Add support for IT8613
+Date: Thu,  9 Aug 2018 01:26:36 +0300
+Message-ID: <20180808222636.6381-1-lbloch@janustech.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3260564.acbQT1CZaz@z50>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Tony Lindgren <tony@atomide.com>, Richard Weinberger <richard@nod.at>, linux-gpio@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Leonid Bloch <lbloch@janustech.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Janusz,
+This was tested on actual hardware and found to work fine, but currently
+the official specifications of this chip could not be obtained to
+confirm the numbers.
 
-Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote on Wed, 08 Aug 2018
-18:55:35 +0200:
+Signed-off-by: Leonid Bloch <lbloch@janustech.com>
+---
+ drivers/gpio/Kconfig     | 3 ++-
+ drivers/gpio/gpio-it87.c | 9 +++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-> Hi Boris,
-> 
-> On Tuesday, August 7, 2018 8:57:52 PM CEST Boris Brezillon wrote:
-> > On Tue,  7 Aug 2018 00:29:13 +0200
-> > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> >   
-> > > In its current shape, the driver sets data port direction before each
-> > > byte read/write operation, even during multi-byte transfers.  Since
-> > > performance of the driver is completely not acceptable on Amstrad Delta
-> > > after it has been converted to GPIO bitbang, try to improve things a
-> > > bit by setting the port direction only on first byte of each transfer.  
-> > ...
-> > I'd suggest a slightly different approach where the data pins
-> > direction state is stored in the the priv struct and only changed when
-> > required. This way you just have to add a test in
-> > ams_delta_read/write_byte().  
-> 
-> Good idea, I'm going to use it, thanks.
-> 
-> Once done, may I also move that one earlier in the series so that it can be 
-> applied while our discussion on GPIO bitmap changes still continues?
-
-I think I may answer on his behalf: yes! You can move the GPIO bitmap
-changes at the end of the series, checking that you never break the
-bisectability. Then I could apply the major changes and let us iterate
-on the GPIO bitmap stuff only.
-
-Thanks,
-Miquèl
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 71c0ab46f216..f1179599aa7e 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -684,7 +684,8 @@ config GPIO_IT87
+ 	  Say yes here to support GPIO functionality of IT87xx Super I/O chips.
+ 
+ 	  This driver is tested with ITE IT8728 and IT8732 Super I/O chips, and
+-	  supports the IT8761E, IT8620E and IT8628E Super I/O chip as well.
++	  supports the IT8761E, IT8613, IT8620E, and IT8628E Super I/O chips as
++	  well.
+ 
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called gpio_it87
+diff --git a/drivers/gpio/gpio-it87.c b/drivers/gpio/gpio-it87.c
+index 7cad14d3f127..b1fe26927e44 100644
+--- a/drivers/gpio/gpio-it87.c
++++ b/drivers/gpio/gpio-it87.c
+@@ -35,6 +35,7 @@
+ 
+ /* Chip Id numbers */
+ #define NO_DEV_ID	0xffff
++#define IT8613_ID	0x8613
+ #define IT8620_ID	0x8620
+ #define IT8628_ID	0x8628
+ #define IT8728_ID	0x8728
+@@ -306,6 +307,14 @@ static int __init it87_gpio_init(void)
+ 	it87_gpio->chip = it87_template_chip;
+ 
+ 	switch (chip_type) {
++	case IT8613_ID:
++		gpio_ba_reg = 0x62;
++		it87_gpio->io_size = 8;  /* it8613 only needs 6, use 8 for alignment */
++		it87_gpio->output_base = 0xc8;
++		it87_gpio->simple_base = 0xc0;
++		it87_gpio->simple_size = 6;
++		it87_gpio->chip.ngpio = 64;  /* has 48, use 64 for convenient calc */
++		break;
+ 	case IT8620_ID:
+ 	case IT8628_ID:
+ 		gpio_ba_reg = 0x62;
+-- 
+2.17.1
