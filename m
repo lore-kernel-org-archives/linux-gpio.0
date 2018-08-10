@@ -1,30 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] pinctrl: madera: Set is_generic
-Date: Fri, 10 Aug 2018 23:10:33 +0200
-Message-ID: <CACRpkdbNT9cs3gXQbGnKmYutbOD4u_9WLhfL+i7oFFpbWyQEHw@mail.gmail.com>
-References: <20180807093226.5624-1-rf@opensource.cirrus.com>
+Subject: Re: [PATCH] gpio: it87: add support for IT8718F Super I/O.
+Date: Fri, 10 Aug 2018 23:12:02 +0200
+Message-ID: <CACRpkdZmpTnTOSQJU4fojjCUVgsJt8Zy4__MihX4OmubF9Fdrw@mail.gmail.com>
+References: <20180808084622.26392-1-ipodovalov@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180807093226.5624-1-rf@opensource.cirrus.com>
+In-Reply-To: <20180808084622.26392-1-ipodovalov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, patches@opensource.cirrus.com
+To: ipodovalov@gmail.com
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 11:32 AM Richard Fitzgerald
-<rf@opensource.cirrus.com> wrote:
+On Wed, Aug 8, 2018 at 10:46 AM Ivan Podovalov <ipodovalov@gmail.com> wrote:
 
-> We are using the generic pin configuration interface so
-> we can set is_generic.
+> The DIO connector on the WAFER-945GSE is interfaced to GPIO ports
+> on the ITE IT8718F Super I/O chipset. From the datasheet of ITE IT8718F,
+> the GPIO interface is identical to IT8728, so just add it
+> to the same case as the other chip.
 >
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Signed-off-by: Ivan Podovalov <ipodovalov@gmail.com>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-For these patches.
-
-This is not yet in my tree, but I can apply this and the others
-after -rc1 (probably the easiest).
+Patch applied.
 
 Yours,
 Linus Walleij
