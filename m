@@ -1,28 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: axp209: Fix NULL pointer dereference after allocation
-Date: Fri, 10 Aug 2018 23:13:31 +0200
-Message-ID: <CACRpkdY1wtMN_bq+za=nhd_xYb-23g2zeA++ouwxVsJMxH5L9Q@mail.gmail.com>
-References: <20180806160635.9293-1-vasilyev@ispras.ru>
+Subject: Re: [PATCH] gpio: it87: Add support for IT8613
+Date: Fri, 10 Aug 2018 23:17:14 +0200
+Message-ID: <CACRpkdZC3Do8kq7dHHyARJs4hdTw4+ai76r4Kn45+vJ4HGduTA@mail.gmail.com>
+References: <20180808222636.6381-1-lbloch@janustech.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180806160635.9293-1-vasilyev@ispras.ru>
+In-Reply-To: <20180808222636.6381-1-lbloch@janustech.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: vasilyev@ispras.ru
-Cc: Chen-Yu Tsai <wens@csie.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ldv-project@linuxtesting.org
+To: lbloch@janustech.com
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 6, 2018 at 6:07 PM Anton Vasilyev <vasilyev@ispras.ru> wrote:
+On Thu, Aug 9, 2018 at 12:27 AM Leonid Bloch <lbloch@janustech.com> wrote:
 
-> There is no check that allocation in axp20x_funcs_groups_from_mask
-> is successful.
-> The patch adds corresponding check and return values.
+> This was tested on actual hardware and found to work fine, but currently
+> the official specifications of this chip could not be obtained to
+> confirm the numbers.
 >
-> Found by Linux Driver Verification project (linuxtesting.org).
->
-> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+> Signed-off-by: Leonid Bloch <lbloch@janustech.com>
 
-Patch applied with Chen-Yu's ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
