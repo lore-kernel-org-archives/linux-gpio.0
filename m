@@ -1,35 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: uniphier: drop meaningless pin from SD1 pin-mux
- of Pro4
-Date: Fri, 10 Aug 2018 23:08:21 +0200
-Message-ID: <CACRpkdYNEhq_3nO1OWokhuop83WAmURHmy0k=xyJRT32UFBSOQ@mail.gmail.com>
-References: <1533610179-13885-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH 1/3] pinctrl: madera: Set is_generic
+Date: Fri, 10 Aug 2018 23:10:33 +0200
+Message-ID: <CACRpkdbNT9cs3gXQbGnKmYutbOD4u_9WLhfL+i7oFFpbWyQEHw@mail.gmail.com>
+References: <20180807093226.5624-1-rf@opensource.cirrus.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1533610179-13885-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20180807093226.5624-1-rf@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, patches@opensource.cirrus.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 4:50 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Tue, Aug 7, 2018 at 11:32 AM Richard Fitzgerald
+<rf@opensource.cirrus.com> wrote:
 
-> The pin 327 was supposed to be used as a voltage control line for the
-> SD card regulator, but the SD card port1 does not support UHS-I.  It
-> only supports 3.3V signaling, hence this pin is pointless.
+> We are using the generic pin configuration interface so
+> we can set is_generic.
 >
-> Just a note about the background.  At first, hardware engineers tried
-> to implement the UHS for this port.  Then, they needed to shrink the
-> silicon die size, and gave up the UHS, but forgot to remove the pin
-> assignment.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 
-This patch does not apply against my devel branch for v4.19.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+For these patches.
 
-Please rebase and resend.
+This is not yet in my tree, but I can apply this and the others
+after -rc1 (probably the easiest).
 
 Yours,
 Linus Walleij
