@@ -1,83 +1,58 @@
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug in
- adp5588_gpio_write()
-Date: Sat, 11 Aug 2018 10:13:08 +0800
-Message-ID: <93f77ccb-a478-fd72-5012-aeba5b6c8253@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v2] pinctrl: uniphier: drop meaningless pin from SD1 pin-mux
+ of Pro4
+Date: Sat, 11 Aug 2018 11:16:13 +0900
+Message-ID: <1533953773-29424-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: michael.hennerich@analog.com, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, linux-arm-kernel@lists.infradead.org, Masahiro Yamada <yamada.masahiro@socionext.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
+The pin 327 was supposed to be used as a voltage control line for the
+SD card regulator, but the SD card port1 does not support UHS-I.  It
+only supports 3.3V signaling, hence this pin is pointless.
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+Just a note about the background.  At first, hardware engineers tried
+to implement the UHS for this port.  Then, they needed to shrink the
+silicon die size, and gave up the UHS, but forgot to remove the pin
+assignment.
 
-[FUNC] schedule_timeout
-drivers/media/platform/marvell-ccic/cafe-driver.c, 206: schedule_timeout 
-in cafe_smbus_write_data
-drivers/media/platform/marvell-ccic/cafe-driver.c, 307: 
-cafe_smbus_write_data in cafe_smbus_xfer
-drivers/i2c/i2c-core-smbus.c, 541: [FUNC_PTR]cafe_smbus_xfer in 
-i2c_smbus_xfer
-drivers/i2c/i2c-core-smbus.c, 156: i2c_smbus_xfer in 
-i2c_smbus_write_byte_data
-drivers/gpio/gpio-adp5588.c, 58: i2c_smbus_write_byte_data in 
-adp5588_gpio_write
-drivers/gpio/gpio-adp5588.c, 115: adp5588_gpio_write in 
-adp5588_gpio_direction_input
-drivers/gpio/gpio-adp5588.c, 224: adp5588_gpio_direction_input in 
-adp5588_irq_set_type
-kernel/irq/manage.c, 686: [FUNC_PTR]adp5588_irq_set_type in 
-__irq_set_trigger
-kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-[FUNC] mutex_lock_nested
-drivers/i2c/busses/i2c-cht-wc.c, 138: mutex_lock_nested in 
-cht_wc_i2c_adap_smbus_xfer
-drivers/i2c/i2c-core-smbus.c, 541: [FUNC_PTR]cht_wc_i2c_adap_smbus_xfer 
-in i2c_smbus_xfer
-drivers/i2c/i2c-core-smbus.c, 156: i2c_smbus_xfer in 
-i2c_smbus_write_byte_data
-drivers/gpio/gpio-adp5588.c, 58: i2c_smbus_write_byte_data in 
-adp5588_gpio_write
-drivers/gpio/gpio-adp5588.c, 115: adp5588_gpio_write in 
-adp5588_gpio_direction_input
-drivers/gpio/gpio-adp5588.c, 224: adp5588_gpio_direction_input in 
-adp5588_irq_set_type
-kernel/irq/manage.c, 686: [FUNC_PTR]adp5588_irq_set_type in 
-__irq_set_trigger
-kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
+Changes in v2:
+ - rebase onto linux-pinctrl/devel branch
 
-[FUNC] mutex_lock_nested
-drivers/i2c/busses/i2c-i801.c, 828: mutex_lock_nested in i801_access
-drivers/i2c/i2c-core-smbus.c, 541: [FUNC_PTR]i801_access in i2c_smbus_xfer
-drivers/i2c/i2c-core-smbus.c, 156: i2c_smbus_xfer in 
-i2c_smbus_write_byte_data
-drivers/gpio/gpio-adp5588.c, 58: i2c_smbus_write_byte_data in 
-adp5588_gpio_write
-drivers/gpio/gpio-adp5588.c, 115: adp5588_gpio_write in 
-adp5588_gpio_direction_input
-drivers/gpio/gpio-adp5588.c, 224: adp5588_gpio_direction_input in 
-adp5588_irq_set_type
-kernel/irq/manage.c, 686: [FUNC_PTR]adp5588_irq_set_type in 
-__irq_set_trigger
-kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Note that [FUNC_PTR] means a function pointer call is used.
-
-I do not find a good way to fix, so I only report.
-Maybe adp5588_gpio_direction_input() and adp5588_gpio_write() should not 
-be called in adp5588_irq_set_type().
-This is found by my static analysis tool (DSAC).
-
-
-Best wishes,
-Jia-Ju Bai
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+index 89148f8..6fca8d5 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+@@ -1047,9 +1047,8 @@ static const unsigned nand_cs1_pins[] = {131, 132};
+ static const int nand_cs1_muxvals[] = {1, 1};
+ static const unsigned sd_pins[] = {150, 151, 152, 153, 154, 155, 156, 157, 158};
+ static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+-static const unsigned sd1_pins[] = {319, 320, 321, 322, 323, 324, 325, 326,
+-				    327};
+-static const int sd1_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned int sd1_pins[] = {319, 320, 321, 322, 323, 324, 325, 326};
++static const int sd1_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0};
+ static const unsigned spi0_pins[] = {199, 200, 201, 202};
+ static const int spi0_muxvals[] = {11, 11, 11, 11};
+ static const unsigned spi1_pins[] = {195, 196, 197, 198, 235, 238, 239};
+-- 
+2.7.4
