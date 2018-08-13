@@ -1,52 +1,82 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: [BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
- in adp5588_gpio_direction_input()
-Date: Mon, 13 Aug 2018 13:08:16 +0200
-Message-ID: <09f55bb2-f178-af95-8843-ff5fd25a4eed@analog.com>
-References: <f741be3e-bc4d-9ea3-a2a7-d05fdc9cef5e@gmail.com>
-Reply-To: <michael.hennerich@analog.com>
+From: <michael.hennerich@analog.com>
+Subject: [PATCH] drivers: gpio: gpio-adp5588: Fix sleep-in-atomic-context bug
+Date: Mon, 13 Aug 2018 15:57:44 +0200
+Message-ID: <1534168664-13034-1-git-send-email-michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f741be3e-bc4d-9ea3-a2a7-d05fdc9cef5e@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jia-Ju Bai <baijiaju1990@gmail.com>, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, Michael Hennerich <michael.hennerich@analog.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 11.08.2018 04:03, Jia-Ju Bai wrote:
-> The driver may sleep with holding a spinlock.
-> 
-> The function call paths (from bottom to top) in Linux-4.16 are:
-> 
-> [FUNC] mutex_lock_nested
-> drivers/gpio/gpio-adp5588.c, 113: mutex_lock_nested in 
-> adp5588_gpio_direction_input
-> drivers/gpio/gpio-adp5588.c, 224: adp5588_gpio_direction_input in 
-> adp5588_irq_set_type
-> kernel/irq/manage.c, 686: [FUNC_PTR]adp5588_irq_set_type in 
-> __irq_set_trigger
-> kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-> kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
-> 
-> Note that [FUNC_PTR] means a function pointer call is used.
-> 
-> I do not find a good way to fix, so I only report.
-> This is found by my static analysis tool (DSAC).
-> 
+From: Michael Hennerich <michael.hennerich@analog.com>
 
-Confirmed - adp5588_irq_set_type calls are atomic context and hence must 
-not sleep. I'll move this stuff to irq_bus_sync_unlock.
+This fixes:
+[BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
+                          in adp5588_gpio_write()
+[BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
+                          in adp5588_gpio_direction_input()
 
-Patch will be provided.
+Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+---
+ drivers/gpio/gpio-adp5588.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
+index e717f8d..202d367 100644
+--- a/drivers/gpio/gpio-adp5588.c
++++ b/drivers/gpio/gpio-adp5588.c
+@@ -41,6 +41,8 @@ struct adp5588_gpio {
+ 	uint8_t int_en[3];
+ 	uint8_t irq_mask[3];
+ 	uint8_t irq_stat[3];
++	uint8_t int_input_en[3];
++	uint8_t int_lvl_cached[3];
+ };
+ 
+ static int adp5588_gpio_read(struct i2c_client *client, u8 reg)
+@@ -173,12 +175,28 @@ static void adp5588_irq_bus_sync_unlock(struct irq_data *d)
+ 	struct adp5588_gpio *dev = irq_data_get_irq_chip_data(d);
+ 	int i;
+ 
+-	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++)
++	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++) {
++		if (dev->int_input_en[i]) {
++			mutex_lock(&dev->lock);
++			dev->dir[i] &= ~dev->int_input_en[i];
++			dev->int_input_en[i] = 0;
++			adp5588_gpio_write(dev->client, GPIO_DIR1 + i,
++					   dev->dir[i]);
++			mutex_unlock(&dev->lock);
++		}
++
++		if (dev->int_lvl_cached[i] != dev->int_lvl[i]) {
++			dev->int_lvl_cached[i] = dev->int_lvl[i];
++			adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + i,
++					   dev->int_lvl[i]);
++		}
++
+ 		if (dev->int_en[i] ^ dev->irq_mask[i]) {
+ 			dev->int_en[i] = dev->irq_mask[i];
+ 			adp5588_gpio_write(dev->client, GPIO_INT_EN1 + i,
+ 					   dev->int_en[i]);
+ 		}
++	}
+ 
+ 	mutex_unlock(&dev->irq_lock);
+ }
+@@ -221,9 +239,7 @@ static int adp5588_irq_set_type(struct irq_data *d, unsigned int type)
+ 	else
+ 		return -EINVAL;
+ 
+-	adp5588_gpio_direction_input(&dev->gpio_chip, gpio);
+-	adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + bank,
+-			   dev->int_lvl[bank]);
++	dev->int_input_en[bank] |= bit;
+ 
+ 	return 0;
+ }
 -- 
-Greetings,
-Michael
-
---
-Analog Devices GmbH      Otl-Aicher Strasse 60-64      80807 München
-Sitz der Gesellschaft München, Registergericht München HRB 40368,
-Geschäftsführer: Peter Kolberg, Ali Raza Husain, Eileen Wynne
+2.7.4
