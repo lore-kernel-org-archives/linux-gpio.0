@@ -1,82 +1,56 @@
-From: <michael.hennerich@analog.com>
-Subject: [PATCH] drivers: gpio: gpio-adp5588: Fix sleep-in-atomic-context bug
-Date: Mon, 13 Aug 2018 15:57:44 +0200
-Message-ID: <1534168664-13034-1-git-send-email-michael.hennerich@analog.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: i3c: Document Synopsys DesignWare I3C
+ master bindings
+Date: Mon, 13 Aug 2018 08:15:35 -0600
+Message-ID: <CAL_JsqLMxyBtZBtzZOVN7Dx3guD7vgrGwH6E05P3d+ZFW7FOcg@mail.gmail.com>
+References: <1532120272-17157-1-git-send-email-soares@synopsys.com>
+ <1532120272-17157-3-git-send-email-soares@synopsys.com> <20180725195733.GA14450@rob-hp-laptop>
+ <c00cb815-ae82-312a-213b-145537a294bd@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c00cb815-ae82-312a-213b-145537a294bd@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, Michael Hennerich <michael.hennerich@analog.com>
+To: Vitor Soares <Vitor.Soares@synopsys.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Pawel Moll <pawel.moll@arm.com>Mark Rutland <m>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Michael Hennerich <michael.hennerich@analog.com>
+On Wed, Aug 8, 2018 at 10:59 AM vitor <Vitor.Soares@synopsys.com> wrote:
+>
+> Hi Rob,
+>
+>
+> On 25-07-2018 20:57, Rob Herring wrote:
+> > On Fri, Jul 20, 2018 at 09:57:51PM +0100, Vitor soares wrote:
+> >> This patch document Synopsys DesignWare I3C master DT bindings.
+> >>
+> >> Signed-off-by: Vitor soares <soares@synopsys.com>
+> >> ---
+> >>   .../devicetree/bindings/i3c/snps,dw-i3c-master.txt | 43 ++++++++++++++++++++++
+> >>   1 file changed, 43 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+> >> new file mode 100644
+> >> index 0000000..7f5c8b0
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+> >> @@ -0,0 +1,43 @@
+> >> +Bindings for Synopsys DesignWare I3C master block
+> >> +=================================================
+> >> +
+> >> +Required properties:
+> >> +--------------------
+> >> +- compatible: shall be "snps,dw-i3c-master"
+> > Only one version and no version number?
+> >
+> > ... and an SoC specific compatible string.
+>
+> I'm not understanding. Can you explain?
 
-This fixes:
-[BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
-                          in adp5588_gpio_write()
-[BUG] gpio: gpio-adp5588: A possible sleep-in-atomic-context bug
-                          in adp5588_gpio_direction_input()
+Add the above line to the description. Experience shows that only an
+IP vendor compatible string is not sufficient. SoC vendors integrate
+different versions, configure the IP differently and/or integrate it
+differently.
 
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
----
- drivers/gpio/gpio-adp5588.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
-index e717f8d..202d367 100644
---- a/drivers/gpio/gpio-adp5588.c
-+++ b/drivers/gpio/gpio-adp5588.c
-@@ -41,6 +41,8 @@ struct adp5588_gpio {
- 	uint8_t int_en[3];
- 	uint8_t irq_mask[3];
- 	uint8_t irq_stat[3];
-+	uint8_t int_input_en[3];
-+	uint8_t int_lvl_cached[3];
- };
- 
- static int adp5588_gpio_read(struct i2c_client *client, u8 reg)
-@@ -173,12 +175,28 @@ static void adp5588_irq_bus_sync_unlock(struct irq_data *d)
- 	struct adp5588_gpio *dev = irq_data_get_irq_chip_data(d);
- 	int i;
- 
--	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++)
-+	for (i = 0; i <= ADP5588_BANK(ADP5588_MAXGPIO); i++) {
-+		if (dev->int_input_en[i]) {
-+			mutex_lock(&dev->lock);
-+			dev->dir[i] &= ~dev->int_input_en[i];
-+			dev->int_input_en[i] = 0;
-+			adp5588_gpio_write(dev->client, GPIO_DIR1 + i,
-+					   dev->dir[i]);
-+			mutex_unlock(&dev->lock);
-+		}
-+
-+		if (dev->int_lvl_cached[i] != dev->int_lvl[i]) {
-+			dev->int_lvl_cached[i] = dev->int_lvl[i];
-+			adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + i,
-+					   dev->int_lvl[i]);
-+		}
-+
- 		if (dev->int_en[i] ^ dev->irq_mask[i]) {
- 			dev->int_en[i] = dev->irq_mask[i];
- 			adp5588_gpio_write(dev->client, GPIO_INT_EN1 + i,
- 					   dev->int_en[i]);
- 		}
-+	}
- 
- 	mutex_unlock(&dev->irq_lock);
- }
-@@ -221,9 +239,7 @@ static int adp5588_irq_set_type(struct irq_data *d, unsigned int type)
- 	else
- 		return -EINVAL;
- 
--	adp5588_gpio_direction_input(&dev->gpio_chip, gpio);
--	adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + bank,
--			   dev->int_lvl[bank]);
-+	dev->int_input_en[bank] |= bit;
- 
- 	return 0;
- }
--- 
-2.7.4
+Rob
