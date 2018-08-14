@@ -1,42 +1,73 @@
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH] dt-bindings: gpio: rcar: Add r8a774a1 (RZ/G2M) support
-Date: Tue, 14 Aug 2018 13:32:37 +0100
-Message-ID: <1534249957-15543-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
+From: justinpopo6@gmail.com
+Subject: [PATCH] gpio: brcmstb: allow 0 width GPIO banks
+Date: Tue, 14 Aug 2018 16:31:57 -0700
+Message-ID: <1534289517-1805-1-git-send-email-justinpopo6@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org
+Cc: f.fainelli@gmail.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, Justin Chen <justinpopo6@gmail.com>, gregory.0xf0@gmail.com, computersforpeace@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Document Renesas' RZ/G2M (R8A774A1) GPIO blocks compatibility within the
-relevant dt-bindings.
+From: Justin Chen <justinpopo6@gmail.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Sometimes we have empty banks within the GPIO block. This commit allows
+proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
+incrementing the bank and number of GPIOs, but not initializing them.
+This will mean a call into the non-existent GPIOs will return an error.
+
+Also remove banks and GPIO information from the dev_info print. This
+information is misleading since the incremented banks and gpio_base do
+not reflect the actual GPIOs that got initialized. We leave this
+information out since it is already printed with dev_dbg.
+
+Signed-off-by: Justin Chen <justinpopo6@gmail.com>
 ---
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-brcmstb.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 4018ee5..e82144a 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -6,6 +6,7 @@ Required Properties:
-     - "renesas,gpio-r8a7743": for R8A7743 (RZ/G1M) compatible GPIO controller.
-     - "renesas,gpio-r8a7745": for R8A7745 (RZ/G1E) compatible GPIO controller.
-     - "renesas,gpio-r8a77470": for R8A77470 (RZ/G1C) compatible GPIO controller.
-+    - "renesas,gpio-r8a774a1": for R8A774A1 (RZ/G2M) compatible GPIO controller.
-     - "renesas,gpio-r8a7778": for R8A7778 (R-Car M1) compatible GPIO controller.
-     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
-     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
-@@ -22,7 +23,7 @@ Required Properties:
-     - "renesas,gpio-r8a77995": for R8A77995 (R-Car D3) compatible GPIO controller.
-     - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
-     - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
--    - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
-+    - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 or RZ/G2 GPIO controller.
-     - "renesas,gpio-rcar": deprecated.
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index 16c7f9f..8658910 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -664,6 +664,18 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 		struct brcmstb_gpio_bank *bank;
+ 		struct gpio_chip *gc;
  
-     When compatible with the generic version nodes must list the
++		/*
++		 * If bank_width is 0, then there is an empty bank in the
++		 * register block. Special handling for this case.
++		 */
++		if (bank_width == 0) {
++			dev_dbg(dev, "Width 0 found: Empty bank @ %d\n",
++					num_banks);
++			num_banks++;
++			gpio_base += MAX_GPIO_PER_BANK;
++			continue;
++		}
++
+ 		bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
+ 		if (!bank) {
+ 			err = -ENOMEM;
+@@ -740,8 +752,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 			goto fail;
+ 	}
+ 
+-	dev_info(dev, "Registered %d banks (GPIO(s): %d-%d)\n",
+-			num_banks, priv->gpio_base, gpio_base - 1);
++	dev_info(dev, "Brcmstb GPIO registered\n");
+ 
+ 	if (priv->parent_wake_irq && need_wakeup_event)
+ 		pm_wakeup_event(dev, 0);
 -- 
 2.7.4
