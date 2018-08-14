@@ -1,100 +1,42 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 1/3] pinctrl: msm: Really mask level interrupts to
- prevent latching
-Date: Mon, 13 Aug 2018 16:53:42 -0700
-Message-ID: <CAD=FV=V8ujNN-jxOm6a_OthyQFGucbv0-1Du3BjScVPKPz-Tsw@mail.gmail.com>
-References: <20180725222900.33231-1-swboyd@chromium.org> <20180725222900.33231-2-swboyd@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH] dt-bindings: gpio: rcar: Add r8a774a1 (RZ/G2M) support
+Date: Tue, 14 Aug 2018 13:32:37 +0100
+Message-ID: <1534249957-15543-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180725222900.33231-2-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+Document Renesas' RZ/G2M (R8A774A1) GPIO blocks compatibility within the
+relevant dt-bindings.
 
-On Wed, Jul 25, 2018 at 3:28 PM, Stephen Boyd <swboyd@chromium.org> wrote:
-> The interrupt controller hardware in this pin controller has two status
-> enable bits. The first "normal" status enable bit enables or disables
-> the summary interrupt line being raised when a gpio interrupt triggers
-> and the "raw" status enable bit allows or prevents the hardware from
-> latching an interrupt into the status register for a gpio interrupt.
-> Currently we just toggle the "normal" status enable bit in the mask and
-> unmask ops so that the summary irq interrupt going to the CPU's
-> interrupt controller doesn't trigger for the masked gpio interrupt.
->
-> For a level triggered interrupt, the flow would be as follows: the pin
-> controller sees the interrupt, latches the status into the status
-> register, raises the summary irq to the CPU, summary irq handler runs
-> and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
-> interrupt, the interrupt handler runs, and finally unmask the interrupt.
-> When the interrupt handler completes, we expect that the interrupt line
-> level will go back to the deasserted state so the genirq code can unmask
-> the interrupt without it triggering again.
->
-> If we only mask the interrupt by clearing the "normal" status enable bit
-> then we'll ack the interrupt but it will continue to show up as pending
-> in the status register because the raw status bit is enabled, the
-> hardware hasn't deasserted the line, and thus the asserted state latches
-> into the status register again. When the hardware deasserts the
-> interrupt the pin controller still thinks there is a pending unserviced
-> level interrupt because it latched it earlier. This behavior causes
-> software to see an extra interrupt for level type interrupts each time
-> the interrupt is handled.
->
-> Let's fix this by clearing the raw status enable bit for level type
-> interrupts so that the hardware stops latching the status of the
-> interrupt after we ack it. We don't do this for edge type interrupts
-> because it seems that toggling the raw status enable bit for edge type
-> interrupts causes spurious edge interrupts.
->
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->
-> Changes from v1:
->  - Squashed raw_status_bit write into same write on unmask (Doug
->    Andersson)
->
->  drivers/pinctrl/qcom/pinctrl-msm.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 2155a30c282b..3970dc599092 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -634,6 +634,19 @@ static void msm_gpio_irq_mask(struct irq_data *d)
->         raw_spin_lock_irqsave(&pctrl->lock, flags);
->
->         val = readl(pctrl->regs + g->intr_cfg_reg);
-> +       /*
-> +        * Leaving the RAW_STATUS_EN bit enabled causes level interrupts that
-> +        * are still asserted to re-latch after we ack them. Clear the raw
-> +        * status enable bit too so the interrupt can't even latch into the
-> +        * hardware while it's masked, but only do this for level interrupts
-> +        * because edge interrupts have a problem with the raw status bit
-> +        * toggling and causing spurious interrupts.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-This whole "spurious interrupts" explanation still seems dodgy.  Have
-you experienced it yourself, or is this looking through some previous
-commits?  As per my comments in v1, I'd still rather the comment state
-the reason as: it's important to _not_ lose edge interrupts when
-masked.
-
-
-> +        */
-> +       if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
-> +               val &= ~BIT(g->intr_raw_status_bit);
-> +               writel(val, pctrl->regs + g->intr_cfg_reg);
-> +       }
-
-In v1 you claimed you were going to combine this with the next write
-(you said you'd combine things in both mask and unmask).  ...is there
-a reason why you didn't?  As per my comments in v1 I believe it's
-safer from a correctness point of view to combine them.
-
-
--Doug
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+index 4018ee5..e82144a 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
++++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+@@ -6,6 +6,7 @@ Required Properties:
+     - "renesas,gpio-r8a7743": for R8A7743 (RZ/G1M) compatible GPIO controller.
+     - "renesas,gpio-r8a7745": for R8A7745 (RZ/G1E) compatible GPIO controller.
+     - "renesas,gpio-r8a77470": for R8A77470 (RZ/G1C) compatible GPIO controller.
++    - "renesas,gpio-r8a774a1": for R8A774A1 (RZ/G2M) compatible GPIO controller.
+     - "renesas,gpio-r8a7778": for R8A7778 (R-Car M1) compatible GPIO controller.
+     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
+     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
+@@ -22,7 +23,7 @@ Required Properties:
+     - "renesas,gpio-r8a77995": for R8A77995 (R-Car D3) compatible GPIO controller.
+     - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
+     - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
+-    - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
++    - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 or RZ/G2 GPIO controller.
+     - "renesas,gpio-rcar": deprecated.
+ 
+     When compatible with the generic version nodes must list the
+-- 
+2.7.4
