@@ -1,65 +1,26 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] pinctrl: lpc18xx: mark expected switch fall-throughs
-Date: Wed, 15 Aug 2018 12:10:35 -0500
-Message-ID: <20180815171035.GA17360@embeddedor.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add r8a774a1 (RZ/G2M) support
+Date: Wed, 15 Aug 2018 14:13:01 -0600
+Message-ID: <20180815201301.GA27866@rob-hp-laptop>
+References: <1534249957-15543-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Joachim Eastwood <manabian@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <1534249957-15543-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Fabrizio Castro <fabrizio.castro@bp.renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Tue, 14 Aug 2018 13:32:37 +0100, Fabrizio Castro wrote:
+> Document Renesas' RZ/G2M (R8A774A1) GPIO blocks compatibility within the
+> relevant dt-bindings.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 
-Addresses-Coverity-ID: 1292308 ("Missing break in switch")
-Addresses-Coverity-ID: 1292309 ("Missing break in switch")
-Addresses-Coverity-ID: 1309546 ("Missing break in switch")
-Addresses-Coverity-ID: 1357369 ("Missing break in switch")
-Addresses-Coverity-ID: 1357389 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/pinctrl/pinctrl-lpc18xx.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
-index 190f17e..a14bc5e 100644
---- a/drivers/pinctrl/pinctrl-lpc18xx.c
-+++ b/drivers/pinctrl/pinctrl-lpc18xx.c
-@@ -844,8 +844,11 @@ static int lpc18xx_pconf_get_pin(struct pinctrl_dev *pctldev, unsigned param,
- 		*arg = (reg & LPC18XX_SCU_PIN_EHD_MASK) >> LPC18XX_SCU_PIN_EHD_POS;
- 		switch (*arg) {
- 		case 3: *arg += 5;
-+			/* fall through */
- 		case 2: *arg += 5;
-+			/* fall through */
- 		case 1: *arg += 3;
-+			/* fall through */
- 		case 0: *arg += 4;
- 		}
- 		break;
-@@ -1060,8 +1063,11 @@ static int lpc18xx_pconf_set_pin(struct pinctrl_dev *pctldev, unsigned param,
- 
- 		switch (param_val) {
- 		case 20: param_val -= 5;
-+			 /* fall through */
- 		case 14: param_val -= 5;
-+			 /* fall through */
- 		case  8: param_val -= 3;
-+			 /* fall through */
- 		case  4: param_val -= 4;
- 			 break;
- 		default:
--- 
-2.7.4
+Reviewed-by: Rob Herring <robh@kernel.org>
