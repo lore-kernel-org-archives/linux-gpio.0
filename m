@@ -1,81 +1,153 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] gpio: brcmstb: allow 0 width GPIO banks
-Date: Wed, 15 Aug 2018 17:14:05 -0700
-Message-ID: <d52fd4f0-1589-86e5-9dfd-4748bdab9bde@gmail.com>
-References: <1534289517-1805-1-git-send-email-justinpopo6@gmail.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v3 5/7] mtd: rawnand: ams-delta: Set port direction when
+ needed
+Date: Thu, 16 Aug 2018 09:30:52 +0200
+Message-ID: <20180816093052.2bcbf004@bbrezillon>
+References: <20180806222918.12644-1-jmkrzyszt@gmail.com>
+        <20180813223448.21316-1-jmkrzyszt@gmail.com>
+        <20180813223448.21316-6-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1534289517-1805-1-git-send-email-justinpopo6@gmail.com>
-Content-Language: en-US
+In-Reply-To: <20180813223448.21316-6-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: justinpopo6@gmail.com, linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com, computersforpeace@gmail.com, linus.walleij@linaro.org, gregory.0xf0@gmail.com
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 08/14/2018 04:31 PM, justinpopo6@gmail.com wrote:
-> From: Justin Chen <justinpopo6@gmail.com>
+On Tue, 14 Aug 2018 00:34:46 +0200
+Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+
+> In its current shape, the driver sets data port direction before each
+> byte read/write operation, even during multi-byte transfers.  Improve
+> performance of the driver by setting the port direction only when
+> needed.
 > 
-> Sometimes we have empty banks within the GPIO block. This commit allows
-> proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
-> incrementing the bank and number of GPIOs, but not initializing them.
-> This will mean a call into the non-existent GPIOs will return an error.
+> This optimisation will become particularly important as soon as
+> planned conversion of the driver to GPIO API for data I/O will be
+> implemented.
 > 
-> Also remove banks and GPIO information from the dev_info print. This
-> information is misleading since the incremented banks and gpio_base do
-> not reflect the actual GPIOs that got initialized. We leave this
-> information out since it is already printed with dev_dbg.
-> 
-> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 > ---
->  drivers/gpio/gpio-brcmstb.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
+>  drivers/mtd/nand/raw/ams-delta.c | 59 ++++++++++++++++++++++++++++++++--------
+>  1 file changed, 47 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-> index 16c7f9f..8658910 100644
-> --- a/drivers/gpio/gpio-brcmstb.c
-> +++ b/drivers/gpio/gpio-brcmstb.c
-> @@ -664,6 +664,18 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
->  		struct brcmstb_gpio_bank *bank;
->  		struct gpio_chip *gc;
+> diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+> index 09d6901fc94d..5f9180fe4f8b 100644
+> --- a/drivers/mtd/nand/raw/ams-delta.c
+> +++ b/drivers/mtd/nand/raw/ams-delta.c
+> @@ -45,6 +45,7 @@ struct ams_delta_nand {
+>  	struct gpio_desc	*gpiod_ale;
+>  	struct gpio_desc	*gpiod_cle;
+>  	void __iomem		*io_base;
+> +	bool			data_in;
+>  };
 >  
-> +		/*
-> +		 * If bank_width is 0, then there is an empty bank in the
-> +		 * register block. Special handling for this case.
-> +		 */
-> +		if (bank_width == 0) {
-> +			dev_dbg(dev, "Width 0 found: Empty bank @ %d\n",
-> +					num_banks);
-
-Stylistic nit: you would want the second line to be aligned at the start
-of the opening parenthesis
-
-> +			num_banks++;
-> +			gpio_base += MAX_GPIO_PER_BANK;
-> +			continue;
-> +		}
+>  /*
+> @@ -72,50 +73,83 @@ static const struct mtd_partition partition_info[] = {
+>  	  .size		=  3 * SZ_256K },
+>  };
+>  
+> -static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
+> +static void ams_delta_write_next_byte(struct mtd_info *mtd, u_char byte)
+>  {
+>  	struct nand_chip *this = mtd_to_nand(mtd);
+>  	struct ams_delta_nand *priv = nand_get_controller_data(this);
+> -	void __iomem *io_base = priv->io_base;
+>  
+> -	writew(0, io_base + OMAP_MPUIO_IO_CNTL);
+>  	writew(byte, this->IO_ADDR_W);
 > +
->  		bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
->  		if (!bank) {
->  			err = -ENOMEM;
-> @@ -740,8 +752,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
->  			goto fail;
->  	}
+>  	gpiod_set_value(priv->gpiod_nwe, 0);
+>  	ndelay(40);
+>  	gpiod_set_value(priv->gpiod_nwe, 1);
+>  }
 >  
-> -	dev_info(dev, "Registered %d banks (GPIO(s): %d-%d)\n",
-> -			num_banks, priv->gpio_base, gpio_base - 1);
-> +	dev_info(dev, "Brcmstb GPIO registered\n");
-
-Not sure if there much value in preserving that message anymore, if the
-controller is not there, nothing will show up in /sys/class/gpio, so you
-would pretty quickly find out that something went wrong?
-
+> -static u_char ams_delta_read_byte(struct mtd_info *mtd)
+> +static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
+>  {
+> -	u_char res;
+>  	struct nand_chip *this = mtd_to_nand(mtd);
+>  	struct ams_delta_nand *priv = nand_get_controller_data(this);
+>  	void __iomem *io_base = priv->io_base;
 >  
->  	if (priv->parent_wake_irq && need_wakeup_event)
->  		pm_wakeup_event(dev, 0);
-> 
+> +	if (priv->data_in) {
+> +		writew(0, io_base + OMAP_MPUIO_IO_CNTL);
+> +		priv->data_in = false;
+> +	}
+> +
+> +	ams_delta_write_next_byte(mtd, byte);
+> +}
 
+I'm not a big fan of this {read,write}_byte/next_byte() approach.
 
--- 
-Florian
+Can't we do something like:
+
+static void ams_delta_io_write(struct ams_delta_nand *priv, u8 data)
+{
+	writew(byte, priv->nand_chip.IO_ADDR_W);
+  	gpiod_set_value(priv->gpiod_nwe, 0);
+  	ndelay(40);
+  	gpiod_set_value(priv->gpiod_nwe, 1);
+}
+
+static u8 ams_delta_io_read(struct ams_delta_nand *priv)
+{
+	u8 res;
+
+  	gpiod_set_value(priv->gpiod_nre, 0);
+  	ndelay(40);
+	res = readw(priv->nand_chip.IO_ADDR_R);
+ 	gpiod_set_value(priv->gpiod_nre, 1);
+ 
+ 	return res;
+}
+
+static void ams_delta_set_io_dir(struct ams_delta_nand *priv, bool in)
+{
+	if (in == priv->data_in)
+		return;
+
+	writew(in ? ~0 : 0, priv->io_base + OMAP_MPUIO_IO_CNTL);
+	priv->data_in = in;
+}
+
+static void ams_delta_write_buf(struct mtd_info *mtd, const u8 *buf,
+				int len)
+{
+	struct nand_chip *this = mtd_to_nand(mtd);
+	struct ams_delta_nand *priv = nand_get_controller_data(this);
+	int i;
+
+	ams_delta_set_io_dir(priv, false);
+
+	for (i =0; i < len; i++)
+		ams_delta_io_write(priv, buf[i]);
+}
+
+static void ams_delta_write_byte(struct mtd_info *mtd, u8 byte)
+{
+	ams_delta_write_buf(mtd, &byte, 1);
+}
+
+static void ams_delta_read_buf(struct mtd_info *mtd, u8 *buf, int len)
+{
+	struct nand_chip *this = mtd_to_nand(mtd);
+	struct ams_delta_nand *priv = nand_get_controller_data(this);
+	int i;
+
+	ams_delta_set_io_dir(priv, true);
+
+	for (i = 0; i < len; i++)
+		buf[i] = ams_delta_io_read(priv);
+}
+
+static u8 ams_delta_read_byte(struct mtd_info *mtd)
+{
+	u8 res;
+
+	ams_delta_read_buf(mtd, &res, 1);
+
+	return res;
+}
