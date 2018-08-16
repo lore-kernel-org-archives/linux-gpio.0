@@ -1,61 +1,65 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v3 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
-Date: Thu, 16 Aug 2018 13:06:47 -0700
-Message-ID: <20180816200648.90458-3-swboyd@chromium.org>
-References: <20180816200648.90458-1-swboyd@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v3 1/3] pinctrl: msm: Really mask level interrupts to
+ prevent latching
+Date: Thu, 16 Aug 2018 13:49:41 -0700
+Message-ID: <CAD=FV=Uk9XgP+6_4x685E0yM4kS+0HkEFtML+N-nkR6DzFfchQ@mail.gmail.com>
+References: <20180816200648.90458-1-swboyd@chromium.org> <20180816200648.90458-2-swboyd@chromium.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180816200648.90458-1-swboyd@chromium.org>
+In-Reply-To: <20180816200648.90458-2-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Doug Anderson <dianders@chromium.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-We rely on devices to use pinmuxing configurations in DT to select the
-GPIO function (function 0) if they're going to use the gpio in GPIO
-mode. Let's simplify things for driver authors by implementing
-gpio_request_enable() for this pinctrl driver to mux out the GPIO
-function when the gpio is use from gpiolib.
+Hi,
 
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On Thu, Aug 16, 2018 at 1:06 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+> The interrupt controller hardware in this pin controller has two status
+> enable bits. The first "normal" status enable bit enables or disables
+> the summary interrupt line being raised when a gpio interrupt triggers
+> and the "raw" status enable bit allows or prevents the hardware from
+> latching an interrupt into the status register for a gpio interrupt.
+> Currently we just toggle the "normal" status enable bit in the mask and
+> unmask ops so that the summary irq interrupt going to the CPU's
+> interrupt controller doesn't trigger for the masked gpio interrupt.
+>
+> For a level triggered interrupt, the flow would be as follows: the pin
+> controller sees the interrupt, latches the status into the status
+> register, raises the summary irq to the CPU, summary irq handler runs
+> and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
+> interrupt, the interrupt handler runs, and finally unmask the interrupt.
+> When the interrupt handler completes, we expect that the interrupt line
+> level will go back to the deasserted state so the genirq code can unmask
+> the interrupt without it triggering again.
+>
+> If we only mask the interrupt by clearing the "normal" status enable bit
+> then we'll ack the interrupt but it will continue to show up as pending
+> in the status register because the raw status bit is enabled, the
+> hardware hasn't deasserted the line, and thus the asserted state latches
+> into the status register again. When the hardware deasserts the
+> interrupt the pin controller still thinks there is a pending unserviced
+> level interrupt because it latched it earlier. This behavior causes
+> software to see an extra interrupt for level type interrupts each time
+> the interrupt is handled.
+>
+> Let's fix this by clearing the raw status enable bit for level type
+> interrupts so that the hardware stops latching the status of the
+> interrupt after we ack it. We don't do this for edge type interrupts
+> because it seems that toggling the raw status enable bit for edge type
+> interrupts causes spurious edge interrupts.
+>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 5d72ffad32c2..793504057ad0 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -176,11 +176,27 @@ static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+static int msm_pinmux_request_gpio(struct pinctrl_dev *pctldev,
-+				   struct pinctrl_gpio_range *range,
-+				   unsigned offset)
-+{
-+	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-+	const struct msm_pingroup *g = &pctrl->soc->groups[offset];
-+
-+	/* No funcs? Probably ACPI so can't do anything here */
-+	if (!g->nfuncs)
-+		return 0;
-+
-+	/* For now assume function 0 is GPIO because it always is */
-+	return msm_pinmux_set_mux(pctldev, 0, offset);
-+}
-+
- static const struct pinmux_ops msm_pinmux_ops = {
- 	.request		= msm_pinmux_request,
- 	.get_functions_count	= msm_get_functions_count,
- 	.get_function_name	= msm_get_function_name,
- 	.get_function_groups	= msm_get_function_groups,
-+	.gpio_request_enable	= msm_pinmux_request_gpio,
- 	.set_mux		= msm_pinmux_set_mux,
- };
- 
--- 
-Sent by a computer through tubes
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+NOTE: IMO we should land this fix even if we continue to have debate
+on patch #2 and #3 since this fixes a definite problem.
+
+-Doug
