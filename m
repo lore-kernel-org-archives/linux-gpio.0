@@ -1,50 +1,81 @@
-From: David Bauer <mail@david-bauer.net>
-Subject: [PATCH] gpio: 74x164: add lines-initial-states property
-Date: Wed, 15 Aug 2018 22:18:54 +0200
-Message-ID: <20180815201855.29738-1-mail@david-bauer.net>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH] gpio: brcmstb: allow 0 width GPIO banks
+Date: Wed, 15 Aug 2018 17:14:05 -0700
+Message-ID: <d52fd4f0-1589-86e5-9dfd-4748bdab9bde@gmail.com>
+References: <1534289517-1805-1-git-send-email-justinpopo6@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1534289517-1805-1-git-send-email-justinpopo6@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: David Bauer <mail@david-bauer.net>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: justinpopo6@gmail.com, linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com, computersforpeace@gmail.com, linus.walleij@linaro.org, gregory.0xf0@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-This adds the ability to define the initial state of each output line on
-device probe.
+On 08/14/2018 04:31 PM, justinpopo6@gmail.com wrote:
+> From: Justin Chen <justinpopo6@gmail.com>
+> 
+> Sometimes we have empty banks within the GPIO block. This commit allows
+> proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
+> incrementing the bank and number of GPIOs, but not initializing them.
+> This will mean a call into the non-existent GPIOs will return an error.
+> 
+> Also remove banks and GPIO information from the dev_info print. This
+> information is misleading since the incremented banks and gpio_base do
+> not reflect the actual GPIOs that got initialized. We leave this
+> information out since it is already printed with dev_dbg.
+> 
+> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+> ---
+>  drivers/gpio/gpio-brcmstb.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+> index 16c7f9f..8658910 100644
+> --- a/drivers/gpio/gpio-brcmstb.c
+> +++ b/drivers/gpio/gpio-brcmstb.c
+> @@ -664,6 +664,18 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+>  		struct brcmstb_gpio_bank *bank;
+>  		struct gpio_chip *gc;
+>  
+> +		/*
+> +		 * If bank_width is 0, then there is an empty bank in the
+> +		 * register block. Special handling for this case.
+> +		 */
+> +		if (bank_width == 0) {
+> +			dev_dbg(dev, "Width 0 found: Empty bank @ %d\n",
+> +					num_banks);
 
-Signed-off-by: David Bauer <mail@david-bauer.net>
----
- Documentation/devicetree/bindings/gpio/gpio-74x164.txt | 5 +++++
- drivers/gpio/gpio-74x164.c                             | 3 +++
- 2 files changed, 8 insertions(+)
+Stylistic nit: you would want the second line to be aligned at the start
+of the opening parenthesis
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-74x164.txt b/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
-index 2a97553d8d76..580b18065ad3 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
-@@ -14,6 +14,11 @@ Required properties:
- 
- Optional properties:
- - enable-gpios: GPIO connected to the OE (Output Enable) pin.
-+- lines-initial-states: Bitmask that specifies the initial state of
-+  each line. When a bit is set to zero, the corresponding output line
-+  is initialized LOW. When a bit is set to one, the corresponding
-+  output line is initialized HIGH. In case this property is not
-+  defined, all lines will be initialized as LOW.
- 
- Example:
- 
-diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
-index fb7b620763a2..275310a0a538 100644
---- a/drivers/gpio/gpio-74x164.c
-+++ b/drivers/gpio/gpio-74x164.c
-@@ -150,6 +150,9 @@ static int gen_74x164_probe(struct spi_device *spi)
- 	chip->gpio_chip.parent = &spi->dev;
- 	chip->gpio_chip.owner = THIS_MODULE;
- 
-+	of_property_read_u8_array(spi->dev.of_node, "lines-initial-states",
-+				  chip->buffer, chip->registers);
-+
- 	mutex_init(&chip->lock);
- 
- 	ret = __gen_74x164_write_config(chip);
+> +			num_banks++;
+> +			gpio_base += MAX_GPIO_PER_BANK;
+> +			continue;
+> +		}
+> +
+>  		bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
+>  		if (!bank) {
+>  			err = -ENOMEM;
+> @@ -740,8 +752,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+>  			goto fail;
+>  	}
+>  
+> -	dev_info(dev, "Registered %d banks (GPIO(s): %d-%d)\n",
+> -			num_banks, priv->gpio_base, gpio_base - 1);
+> +	dev_info(dev, "Brcmstb GPIO registered\n");
+
+Not sure if there much value in preserving that message anymore, if the
+controller is not there, nothing will show up in /sys/class/gpio, so you
+would pretty quickly find out that something went wrong?
+
+>  
+>  	if (priv->parent_wake_irq && need_wakeup_event)
+>  		pm_wakeup_event(dev, 0);
+> 
+
+
 -- 
-2.18.0
+Florian
