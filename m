@@ -1,49 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: 74x164: add lines-initial-states property
-Date: Thu, 16 Aug 2018 10:11:38 +0200
-Message-ID: <CACRpkdYTxvWjLizTr8Qg-FmSPjnnU+kj2+VrUUcz5F0nkhrUrg@mail.gmail.com>
-References: <20180815201855.29738-1-mail@david-bauer.net>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: tegra: readd gpio-ranges properties
+Date: Thu, 16 Aug 2018 17:44:27 +0300
+Message-ID: <1828884.n7pPtpPvFR@dimapc>
+References: <20180726154025.13173-1-stefan@agner.ch> <2777476.ese58fB1FL@dimapc> <2268060.eSddBDDeqC@dimapc>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180815201855.29738-1-mail@david-bauer.net>
+In-Reply-To: <2268060.eSddBDDeqC@dimapc>
 Sender: linux-kernel-owner@vger.kernel.org
-To: mail@david-bauer.net
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stefan Agner <stefan@agner.ch>, thierry.reding@gmail.com
+Cc: jonathanh@nvidia.com, linus.walleij@linaro.org, pdeschrijver@nvidia.co, marcel.ziswiler@toradex.com, keescook@chromium.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi David,
+On Thursday, 2 August 2018 13:35:46 MSK Dmitry Osipenko wrote:
+> On Thursday, 2 August 2018 02:11:23 MSK Dmitry Osipenko wrote:
+> > On Thursday, 2 August 2018 01:51:42 MSK Stefan Agner wrote:
+> > > On 01.08.2018 22:51, Dmitry Osipenko wrote:
+> > > > On Thursday, 26 July 2018 18:40:25 MSK Stefan Agner wrote:
+> > > >> The properties have been commented out to prevent a regression a
+> > > >> while ago. The first regression should be resolved by
+> > > >> commit 44af7927316e ("spi: Map SPI OF client IRQ at probe time").
+> > > >> 
+> > > >> The second regression is probably addressed by
+> > > >> commit 494fd7b7ad10 ("PM / core: fix deferred probe breaking suspend
+> > > >> resume
+> > > >> order") and/or maybe others. Readd the gpio-ranges properties to see
+> > > >> whether regressions still get reported.
+> > > >> 
+> > > >> This reverts commit 4f1d841475e1f6e9e32496dda11215db56f4ea73
+> > > >> ("ARM: tegra: Comment out gpio-ranges properties").
+> > > >> 
+> > > >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > > >> ---
+> > > > 
+> > > > Unfortunately the second regression hasn't been addressed yet, this
+> > > > patch
+> > > > still breaks wake-up using GPIO key. BTW, better to spell "readd" as
+> > > > "re-add".
+> > > 
+> > > You do have the hardware and could test it?
+> > 
+> > Yes, I have.
+> > 
+> > > Hm, that is unfortunate. I think this was the patch which should address
+> > > the issue:
+> > > https://lkml.org/lkml/2015/9/10/218
+> > 
+> > I've tested the patch and it is still actual, i.e. it fixes the wake-up.
+> > Welcome back to 2015 :-)
+> 
+> Actually, the pinctrl-gpio probe order is easily fixable by reshuffling the
+> drivers registration order within the kernel. I'll send patches.
 
-On Wed, Aug 15, 2018 at 10:19 PM David Bauer <mail@david-bauer.net> wrote:
+Linus applied the GPIO / PINCTRL drivers probe-reorder patches for-next, so 
+this DT patch should be good for 4.20.
 
-> This adds the ability to define the initial state of each output line on
-> device probe.
->
-> Signed-off-by: David Bauer <mail@david-bauer.net>
-
-(...)
->  Optional properties:
->  - enable-gpios: GPIO connected to the OE (Output Enable) pin.
-> +- lines-initial-states: Bitmask that specifies the initial state of
-> +  each line. When a bit is set to zero, the corresponding output line
-> +  is initialized LOW. When a bit is set to one, the corresponding
-> +  output line is initialized HIGH. In case this property is not
-> +  defined, all lines will be initialized as LOW.
-
-This sounds like something that should be generic, and not use
-a bitmask, but offsets. It should work even if the number of
-GPIOs from the chip is > 32.
-
-Is the usecase different from hogs?
-See Documentation/devicetree/bindings/gpio.txt
-
-There has been extensive discussion about supporting initial values
-with something similar to hogs, but I haven't got anything ACKed
-by the DT maintainers so it has kind of stalled.
-
-I would make sure to both make it generic, get ACK from the DT
-mainatiners, and make sure to implement it in
-drivers/gpio/gpiolib-of.c and not locally in drivers.
-
-Yours,
-Linus Walleij
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
