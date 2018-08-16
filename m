@@ -1,56 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: GPIO consumer interface and DT
-Date: Thu, 16 Aug 2018 08:39:06 +0200
-Message-ID: <CACRpkdZ04vLKZ43TAh+OLh1hwd4tkZf9fnRf120aBBSe+-MCxg@mail.gmail.com>
-References: <20180815221102.GA4375@arek-VirtualBox>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <kernelnewbies-bounces+glkk-kernelnewbies=gmane.org@kernelnewbies.org>
-In-Reply-To: <20180815221102.GA4375@arek-VirtualBox>
-List-Unsubscribe: <https://lists.kernelnewbies.org/mailman/options/kernelnewbies>,
- <mailto:kernelnewbies-request@kernelnewbies.org?subject=unsubscribe>
-List-Archive: <http://lists.kernelnewbies.org/pipermail/kernelnewbies/>
-List-Post: <mailto:kernelnewbies@kernelnewbies.org>
-List-Help: <mailto:kernelnewbies-request@kernelnewbies.org?subject=help>
-List-Subscribe: <https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies>,
- <mailto:kernelnewbies-request@kernelnewbies.org?subject=subscribe>
-Errors-To: kernelnewbies-bounces+glkk-kernelnewbies=gmane.org@kernelnewbies.org
-To: areklis909@gmail.com
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Kernelnewbies@kernelnewbies.org
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 2/7] pinctrl: ingenic: Mark probe function as __init
+Date: Thu, 16 Aug 2018 18:35:39 +0200
+Message-ID: <20180816163544.9072-2-paul@crapouillou.net>
+References: <20180816163544.9072-1-paul@crapouillou.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180816163544.9072-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 12:11 AM Arkadiusz Lis <areklis909@gmail.com> wrote:
+By using platform_driver_probe() instead of platform_driver_register(),
+we can mark the ingenic_pinctrl_probe() function as __init.
 
-> What I learned
-> from Documentation/driver-api/gpio/board.rst is this string should be
-> equal to <function> prefix in <function>-gpios node in device tree.
-> For example: in file drivers/i2c/busses/i2c-gpio.c author gets gpio
-> descriptor with con_ids 'sda' and 'scl'. They are described in
-> Documentation/devicetree/bindings/i2c/i2c-gpio.txt as required
-> properties.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/pinctrl/pinctrl-ingenic.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-You got it right.
-
-> In my case I didn't find bindings for emxx_udc driver and I don't know
-> what string should I insert:
-> gpiod = devm_gpiod_get(udc->dev, "DT_GPIOS_NAME", GPIOD_IN); //
-> "DT_GPIOS_NAME" is a placeholder
-
-This driver is not yet converted to use device tree so there is
-no way you can know this property name before bindings are
-established.
-
-You or someone else first need to define device tree bindings
-in Documention/devicetree/bindings/usb/* somwhere, then augment
-the driver to use these bindings, including the right name for
-the GPIO line, when using the devm_gpiod_get().
-
-Pretty certainly the chosen GPIO name will be "vbus-gpios" in this
-case so you will pass "vbus" as name. But that needs to first
-be discussed by the DT bindings mailing list.
-
-I wonder how you're testing this though.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index 4bceae88d056..1d6d7c6aecfc 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -717,7 +717,7 @@ static const struct of_device_id ingenic_pinctrl_of_match[] = {
+ 	{},
+ };
+ 
+-static int ingenic_pinctrl_probe(struct platform_device *pdev)
++static int __init ingenic_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct ingenic_pinctrl *jzpc;
+@@ -837,14 +837,13 @@ static struct platform_driver ingenic_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "pinctrl-ingenic",
+ 		.of_match_table = of_match_ptr(ingenic_pinctrl_of_match),
+-		.suppress_bind_attrs = true,
+ 	},
+-	.probe = ingenic_pinctrl_probe,
+ 	.id_table = ingenic_pinctrl_ids,
+ };
+ 
+ static int __init ingenic_pinctrl_drv_register(void)
+ {
+-	return platform_driver_register(&ingenic_pinctrl_driver);
++	return platform_driver_probe(&ingenic_pinctrl_driver,
++				     ingenic_pinctrl_probe);
+ }
+ subsys_initcall(ingenic_pinctrl_drv_register);
+-- 
+2.11.0
