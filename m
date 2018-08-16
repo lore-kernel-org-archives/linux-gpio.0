@@ -1,7 +1,7 @@
 From: Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v3 3/3] pinctrl: msm: Configure interrupts as input and gpio mode
-Date: Thu, 16 Aug 2018 13:06:48 -0700
-Message-ID: <20180816200648.90458-4-swboyd@chromium.org>
+Subject: [PATCH v3 1/3] pinctrl: msm: Really mask level interrupts to prevent latching
+Date: Thu, 16 Aug 2018 13:06:46 -0700
+Message-ID: <20180816200648.90458-2-swboyd@chromium.org>
 References: <20180816200648.90458-1-swboyd@chromium.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,74 +12,88 @@ To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Doug Anderson <dianders@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
 
-When requesting a gpio as an interrupt, we should make sure to mux the
-pin as the GPIO function and configure it to be an input so that various
-functions or output signals don't affect the interrupt state of the pin.
-So far, we've relied on pinmux configurations in DT to handle this, but
-let's explicitly configure this in the code so that DT implementers
-don't have to get this part right.
+The interrupt controller hardware in this pin controller has two status
+enable bits. The first "normal" status enable bit enables or disables
+the summary interrupt line being raised when a gpio interrupt triggers
+and the "raw" status enable bit allows or prevents the hardware from
+latching an interrupt into the status register for a gpio interrupt.
+Currently we just toggle the "normal" status enable bit in the mask and
+unmask ops so that the summary irq interrupt going to the CPU's
+interrupt controller doesn't trigger for the masked gpio interrupt.
+
+For a level triggered interrupt, the flow would be as follows: the pin
+controller sees the interrupt, latches the status into the status
+register, raises the summary irq to the CPU, summary irq handler runs
+and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
+interrupt, the interrupt handler runs, and finally unmask the interrupt.
+When the interrupt handler completes, we expect that the interrupt line
+level will go back to the deasserted state so the genirq code can unmask
+the interrupt without it triggering again.
+
+If we only mask the interrupt by clearing the "normal" status enable bit
+then we'll ack the interrupt but it will continue to show up as pending
+in the status register because the raw status bit is enabled, the
+hardware hasn't deasserted the line, and thus the asserted state latches
+into the status register again. When the hardware deasserts the
+interrupt the pin controller still thinks there is a pending unserviced
+level interrupt because it latched it earlier. This behavior causes
+software to see an extra interrupt for level type interrupts each time
+the interrupt is handled.
+
+Let's fix this by clearing the raw status enable bit for level type
+interrupts so that the hardware stops latching the status of the
+interrupt after we ack it. We don't do this for edge type interrupts
+because it seems that toggling the raw status enable bit for edge type
+interrupts causes spurious edge interrupts.
 
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Doug Anderson <dianders@chromium.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c | 37 ++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-msm.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 793504057ad0..defed34d32b0 100644
+index 2155a30c282b..5d72ffad32c2 100644
 --- a/drivers/pinctrl/qcom/pinctrl-msm.c
 +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -837,6 +837,41 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
- 	return 0;
- }
+@@ -634,6 +634,29 @@ static void msm_gpio_irq_mask(struct irq_data *d)
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
  
-+static int msm_gpio_irq_reqres(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
-+	int ret;
+ 	val = readl(pctrl->regs + g->intr_cfg_reg);
++	/*
++	 * There are two bits that control interrupt forwarding to the CPU. The
++	 * RAW_STATUS_EN bit causes the level or edge sensed on the line to be
++	 * latched into the interrupt status register when the hardware detects
++	 * an irq that it's configured for (either edge for edge type or level
++	 * for level type irq). The 'non-raw' status enable bit causes the
++	 * hardware to assert the summary interrupt to the CPU if the latched
++	 * status bit is set. There's a bug though, the edge detection logic
++	 * seems to have a problem where toggling the RAW_STATUS_EN bit may
++	 * cause the status bit to latch spuriously when there isn't any edge
++	 * so we can't touch that bit for edge type irqs and we have to keep
++	 * the bit set anyway so that edges are latched while the line is masked.
++	 *
++	 * To make matters more complicated, leaving the RAW_STATUS_EN bit
++	 * enabled all the time causes level interrupts to re-latch into the
++	 * status register because the level is still present on the line after
++	 * we ack it. We clear the raw status enable bit during mask here and
++	 * set the bit on unmask so the interrupt can't latch into the hardware
++	 * while it's masked.
++	 */
++	if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK)
++		val &= ~BIT(g->intr_raw_status_bit);
 +
-+	if (!try_module_get(gc->owner))
-+		return -ENODEV;
-+
-+	ret = msm_pinmux_request_gpio(pctrl->pctrl, NULL, d->hwirq);
-+	if (ret)
-+		goto out;
-+	msm_gpio_direction_input(gc, d->hwirq);
-+
-+	if (gpiochip_lock_as_irq(gc, d->hwirq)) {
-+		dev_err(gc->parent,
-+			"unable to lock HW IRQ %lu for IRQ\n",
-+			d->hwirq);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+	return 0;
-+out:
-+	module_put(gc->owner);
-+	return ret;
-+}
-+
-+static void msm_gpio_irq_relres(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+
-+	gpiochip_unlock_as_irq(gc, d->hwirq);
-+	module_put(gc->owner);
-+}
-+
- static void msm_gpio_irq_handler(struct irq_desc *desc)
- {
- 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
-@@ -935,6 +970,8 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	pctrl->irq_chip.irq_ack = msm_gpio_irq_ack;
- 	pctrl->irq_chip.irq_set_type = msm_gpio_irq_set_type;
- 	pctrl->irq_chip.irq_set_wake = msm_gpio_irq_set_wake;
-+	pctrl->irq_chip.irq_request_resources = msm_gpio_irq_reqres;
-+	pctrl->irq_chip.irq_release_resources = msm_gpio_irq_relres;
+ 	val &= ~BIT(g->intr_enable_bit);
+ 	writel(val, pctrl->regs + g->intr_cfg_reg);
  
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
+@@ -655,6 +678,7 @@ static void msm_gpio_irq_unmask(struct irq_data *d)
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+ 	val = readl(pctrl->regs + g->intr_cfg_reg);
++	val |= BIT(g->intr_raw_status_bit);
+ 	val |= BIT(g->intr_enable_bit);
+ 	writel(val, pctrl->regs + g->intr_cfg_reg);
+ 
 -- 
 Sent by a computer through tubes
