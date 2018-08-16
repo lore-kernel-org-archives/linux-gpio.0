@@ -1,60 +1,49 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: tegra: readd gpio-ranges properties
-Date: Thu, 16 Aug 2018 17:44:27 +0300
-Message-ID: <1828884.n7pPtpPvFR@dimapc>
-References: <20180726154025.13173-1-stefan@agner.ch> <2777476.ese58fB1FL@dimapc> <2268060.eSddBDDeqC@dimapc>
+From: Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v4 0/5] Add i.MX8MQ clock driver
+Date: Thu, 16 Aug 2018 18:27:11 +0300
+Message-ID: <1534433236-8925-1-git-send-email-abel.vesa@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2268060.eSddBDDeqC@dimapc>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>, thierry.reding@gmail.com
-Cc: jonathanh@nvidia.com, linus.walleij@linaro.org, pdeschrijver@nvidia.co, marcel.ziswiler@toradex.com, keescook@chromium.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lucas Stach <l.stach@pengutronix.de>, Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Anson Huang <anson.huang@nxp.com>
+Cc: linux-gpio@vger.kernel.org, linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thursday, 2 August 2018 13:35:46 MSK Dmitry Osipenko wrote:
-> On Thursday, 2 August 2018 02:11:23 MSK Dmitry Osipenko wrote:
-> > On Thursday, 2 August 2018 01:51:42 MSK Stefan Agner wrote:
-> > > On 01.08.2018 22:51, Dmitry Osipenko wrote:
-> > > > On Thursday, 26 July 2018 18:40:25 MSK Stefan Agner wrote:
-> > > >> The properties have been commented out to prevent a regression a
-> > > >> while ago. The first regression should be resolved by
-> > > >> commit 44af7927316e ("spi: Map SPI OF client IRQ at probe time").
-> > > >> 
-> > > >> The second regression is probably addressed by
-> > > >> commit 494fd7b7ad10 ("PM / core: fix deferred probe breaking suspend
-> > > >> resume
-> > > >> order") and/or maybe others. Readd the gpio-ranges properties to see
-> > > >> whether regressions still get reported.
-> > > >> 
-> > > >> This reverts commit 4f1d841475e1f6e9e32496dda11215db56f4ea73
-> > > >> ("ARM: tegra: Comment out gpio-ranges properties").
-> > > >> 
-> > > >> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > > >> ---
-> > > > 
-> > > > Unfortunately the second regression hasn't been addressed yet, this
-> > > > patch
-> > > > still breaks wake-up using GPIO key. BTW, better to spell "readd" as
-> > > > "re-add".
-> > > 
-> > > You do have the hardware and could test it?
-> > 
-> > Yes, I have.
-> > 
-> > > Hm, that is unfortunate. I think this was the patch which should address
-> > > the issue:
-> > > https://lkml.org/lkml/2015/9/10/218
-> > 
-> > I've tested the patch and it is still actual, i.e. it fixes the wake-up.
-> > Welcome back to 2015 :-)
-> 
-> Actually, the pinctrl-gpio probe order is easily fixable by reshuffling the
-> drivers registration order within the kernel. I'll send patches.
+Third version can be found here:
 
-Linus applied the GPIO / PINCTRL drivers probe-reorder patches for-next, so 
-this DT patch should be good for 4.20.
+https://www.spinics.net/lists/arm-kernel/msg671015.html
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Changes since v3:
+ * Added a composite clock type to get rid of some complexity
+   from clk-imx8mq. This new composite clock type will also be
+   used by all the imx8 socs that will follow.
+ * Added back the reviewed-by tag.
+
+Abel Vesa (1):
+  clk: imx: add imx composite clock
+
+Lucas Stach (4):
+  dt-bindings: add binding for i.MX8MQ CCM
+  clk: imx: add fractional PLL output clock
+  clk: imx: add SCCG PLL type
+  clk: imx: add clock driver for i.MX8MQ CCM
+
+ .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
+ drivers/clk/imx/Makefile                           |   6 +-
+ drivers/clk/imx/clk-composite.c                    | 471 +++++++++++++++
+ drivers/clk/imx/clk-frac-pll.c                     | 230 ++++++++
+ drivers/clk/imx/clk-imx8mq.c                       | 631 +++++++++++++++++++++
+ drivers/clk/imx/clk-sccg-pll.c                     | 231 ++++++++
+ drivers/clk/imx/clk.h                              |  57 ++
+ include/dt-bindings/clock/imx8mq-clock.h           | 410 +++++++++++++
+ 8 files changed, 2055 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
+ create mode 100644 drivers/clk/imx/clk-composite.c
+ create mode 100644 drivers/clk/imx/clk-frac-pll.c
+ create mode 100644 drivers/clk/imx/clk-imx8mq.c
+ create mode 100644 drivers/clk/imx/clk-sccg-pll.c
+ create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
+
+-- 
+2.7.4
