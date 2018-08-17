@@ -1,65 +1,71 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 1/3] pinctrl: msm: Really mask level interrupts to
- prevent latching
-Date: Thu, 16 Aug 2018 13:49:41 -0700
-Message-ID: <CAD=FV=Uk9XgP+6_4x685E0yM4kS+0HkEFtML+N-nkR6DzFfchQ@mail.gmail.com>
-References: <20180816200648.90458-1-swboyd@chromium.org> <20180816200648.90458-2-swboyd@chromium.org>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH v4 4/5] clk: imx: add imx composite clock
+Date: Fri, 17 Aug 2018 09:25:44 +0200
+Message-ID: <20180817072544.izryvqlqpaihs7kl@pengutronix.de>
+References: <1534433236-8925-1-git-send-email-abel.vesa@nxp.com>
+ <1534433236-8925-5-git-send-email-abel.vesa@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180816200648.90458-2-swboyd@chromium.org>
+Content-Disposition: inline
+In-Reply-To: <1534433236-8925-5-git-send-email-abel.vesa@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>, Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Anson Huang <anson.huang@nxp.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@linux.com>, linux-gpio@vger.kernel.org, linux-imx@nxp.com, Pengutronix Kernel Team <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+Hi Abel,
 
-On Thu, Aug 16, 2018 at 1:06 PM, Stephen Boyd <swboyd@chromium.org> wrote:
-> The interrupt controller hardware in this pin controller has two status
-> enable bits. The first "normal" status enable bit enables or disables
-> the summary interrupt line being raised when a gpio interrupt triggers
-> and the "raw" status enable bit allows or prevents the hardware from
-> latching an interrupt into the status register for a gpio interrupt.
-> Currently we just toggle the "normal" status enable bit in the mask and
-> unmask ops so that the summary irq interrupt going to the CPU's
-> interrupt controller doesn't trigger for the masked gpio interrupt.
->
-> For a level triggered interrupt, the flow would be as follows: the pin
-> controller sees the interrupt, latches the status into the status
-> register, raises the summary irq to the CPU, summary irq handler runs
-> and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
-> interrupt, the interrupt handler runs, and finally unmask the interrupt.
-> When the interrupt handler completes, we expect that the interrupt line
-> level will go back to the deasserted state so the genirq code can unmask
-> the interrupt without it triggering again.
->
-> If we only mask the interrupt by clearing the "normal" status enable bit
-> then we'll ack the interrupt but it will continue to show up as pending
-> in the status register because the raw status bit is enabled, the
-> hardware hasn't deasserted the line, and thus the asserted state latches
-> into the status register again. When the hardware deasserts the
-> interrupt the pin controller still thinks there is a pending unserviced
-> level interrupt because it latched it earlier. This behavior causes
-> software to see an extra interrupt for level type interrupts each time
-> the interrupt is handled.
->
-> Let's fix this by clearing the raw status enable bit for level type
-> interrupts so that the hardware stops latching the status of the
-> interrupt after we ack it. We don't do this for edge type interrupts
-> because it seems that toggling the raw status enable bit for edge type
-> interrupts causes spurious edge interrupts.
->
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+On Thu, Aug 16, 2018 at 06:27:15PM +0300, Abel Vesa wrote:
+> Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
+> divider, the idea here is to combine all of those into one more complex
+> clock type, therefore moving the complexity inside the composite clock and
+> outside of the SoC specific clock driver.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 > ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+>  drivers/clk/imx/Makefile        |   1 +
+>  drivers/clk/imx/clk-composite.c | 471 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h           |   9 +
+>  3 files changed, 481 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-composite.c
+> 
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index b87513c..4fabb0a 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -3,6 +3,7 @@
+>  obj-y += \
+>  	clk.o \
+>  	clk-busy.o \
+> +	clk-composite.o \
+>  	clk-cpu.o \
+>  	clk-fixup-div.o \
+>  	clk-fixup-mux.o \
+> diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+You nearly duplicate drivers/clk/clk-composite.c. This seems necessary
+because in the hardware we have two dividers instead of a single one as
+the generic composite clock type support.
 
-NOTE: IMO we should land this fix even if we continue to have debate
-on patch #2 and #3 since this fixes a definite problem.
+Instead of duplicating the composite clk code you could create your own
+clk_ops for the divider which handles both dividers in a single
+callback. You could then use the generic composite clk.
 
--Doug
+When I made the suggestion that we should a create a composite clk I had
+assumed you'd come up with a patch which has a single private struct clk_ops
+filled in with the gate/mux/rate callbacks which are then open coded in
+your driver. I am not convinced this splitting up in three different
+(gate/mux/rate) struct clk_ops brings us anything. For example the open
+coded gate code is really trivial compared to all this boilerplate code
+we need for the generic composite clk. But maybe the maintainers have a
+different opinion?
+
+Sascha
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
