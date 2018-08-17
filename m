@@ -1,68 +1,62 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH] pinctrl: lpc18xx: mark expected switch fall-throughs
-Date: Fri, 17 Aug 2018 18:32:11 +0300
-Message-ID: <57a0c7c7-e2a2-3586-b683-f854120eeee7@mleia.com>
-References: <20180815171035.GA17360@embeddedor.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: justinpopo6@gmail.com
+Subject: [PATCH v2] gpio: brcmstb: allow 0 width GPIO banks
+Date: Fri, 17 Aug 2018 16:47:39 -0700
+Message-ID: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180815171035.GA17360@embeddedor.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Linus Walleij <linus.walleij@linaro.org>, Joachim Eastwood <manabian@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: gregory.0xf0@gmail.com, linus.walleij@linaro.org, computersforpeace@gmail.com, f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Justin Chen <justinpopo6@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 08/15/2018 08:10 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
-> 
-> Addresses-Coverity-ID: 1292308 ("Missing break in switch")
-> Addresses-Coverity-ID: 1292309 ("Missing break in switch")
-> Addresses-Coverity-ID: 1309546 ("Missing break in switch")
-> Addresses-Coverity-ID: 1357369 ("Missing break in switch")
-> Addresses-Coverity-ID: 1357389 ("Missing break in switch")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/pinctrl/pinctrl-lpc18xx.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
-> index 190f17e..a14bc5e 100644
-> --- a/drivers/pinctrl/pinctrl-lpc18xx.c
-> +++ b/drivers/pinctrl/pinctrl-lpc18xx.c
-> @@ -844,8 +844,11 @@ static int lpc18xx_pconf_get_pin(struct pinctrl_dev *pctldev, unsigned param,
->  		*arg = (reg & LPC18XX_SCU_PIN_EHD_MASK) >> LPC18XX_SCU_PIN_EHD_POS;
->  		switch (*arg) {
->  		case 3: *arg += 5;
-> +			/* fall through */
->  		case 2: *arg += 5;
-> +			/* fall through */
->  		case 1: *arg += 3;
-> +			/* fall through */
->  		case 0: *arg += 4;
->  		}
->  		break;
-> @@ -1060,8 +1063,11 @@ static int lpc18xx_pconf_set_pin(struct pinctrl_dev *pctldev, unsigned param,
->  
->  		switch (param_val) {
->  		case 20: param_val -= 5;
-> +			 /* fall through */
->  		case 14: param_val -= 5;
-> +			 /* fall through */
->  		case  8: param_val -= 3;
-> +			 /* fall through */
->  		case  4: param_val -= 4;
->  			 break;
->  		default:
-> 
+From: Justin Chen <justinpopo6@gmail.com>
 
-The code snippets are about a mind-blowing hyper-optimization, but I took
-it as a chance to verify the correctness, and there are no issues found.
+Sometimes we have empty banks within the GPIO block. This commit allows
+proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
+incrementing the bank and number of GPIOs, but not initializing them.
+This will mean a call into the non-existent GPIOs will return an error.
 
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+Also remove "GPIO registered" dev print. This information is misleading
+since the incremented banks and gpio_base do not reflect the actual GPIOs
+that get initialized. We leave this information out since it is already
+printed with dev_dbg.
 
---
-Best wishes,
-Vladimir
+Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+---
+ drivers/gpio/gpio-brcmstb.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index 16c7f9f..af936dc 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -664,6 +664,18 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 		struct brcmstb_gpio_bank *bank;
+ 		struct gpio_chip *gc;
+ 
++		/*
++		 * If bank_width is 0, then there is an empty bank in the
++		 * register block. Special handling for this case.
++		 */
++		if (bank_width == 0) {
++			dev_dbg(dev, "Width 0 found: Empty bank @ %d\n",
++				num_banks);
++			num_banks++;
++			gpio_base += MAX_GPIO_PER_BANK;
++			continue;
++		}
++
+ 		bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
+ 		if (!bank) {
+ 			err = -ENOMEM;
+@@ -740,9 +752,6 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 			goto fail;
+ 	}
+ 
+-	dev_info(dev, "Registered %d banks (GPIO(s): %d-%d)\n",
+-			num_banks, priv->gpio_base, gpio_base - 1);
+-
+ 	if (priv->parent_wake_irq && need_wakeup_event)
+ 		pm_wakeup_event(dev, 0);
+ 
+-- 
+2.7.4
