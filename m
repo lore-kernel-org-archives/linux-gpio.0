@@ -1,62 +1,36 @@
-From: justinpopo6@gmail.com
-Subject: [PATCH v2] gpio: brcmstb: allow 0 width GPIO banks
-Date: Fri, 17 Aug 2018 16:47:39 -0700
-Message-ID: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH v2] gpio: brcmstb: allow 0 width GPIO banks
+Date: Fri, 17 Aug 2018 16:49:04 -0700
+Message-ID: <a395c600-6d52-a3fb-208c-22c84004a77f@gmail.com>
+References: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: gregory.0xf0@gmail.com, linus.walleij@linaro.org, computersforpeace@gmail.com, f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Justin Chen <justinpopo6@gmail.com>
+To: justinpopo6@gmail.com, linux-gpio@vger.kernel.org
+Cc: gregory.0xf0@gmail.com, linus.walleij@linaro.org, computersforpeace@gmail.com, f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Justin Chen <justinpopo6@gmail.com>
+On 08/17/2018 04:47 PM, justinpopo6@gmail.com wrote:
+> From: Justin Chen <justinpopo6@gmail.com>
+> 
+> Sometimes we have empty banks within the GPIO block. This commit allows
+> proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
+> incrementing the bank and number of GPIOs, but not initializing them.
+> This will mean a call into the non-existent GPIOs will return an error.
+> 
+> Also remove "GPIO registered" dev print. This information is misleading
+> since the incremented banks and gpio_base do not reflect the actual GPIOs
+> that get initialized. We leave this information out since it is already
+> printed with dev_dbg.
+> 
+> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
 
-Sometimes we have empty banks within the GPIO block. This commit allows
-proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
-incrementing the bank and number of GPIOs, but not initializing them.
-This will mean a call into the non-existent GPIOs will return an error.
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Also remove "GPIO registered" dev print. This information is misleading
-since the incremented banks and gpio_base do not reflect the actual GPIOs
-that get initialized. We leave this information out since it is already
-printed with dev_dbg.
-
-Signed-off-by: Justin Chen <justinpopo6@gmail.com>
----
- drivers/gpio/gpio-brcmstb.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index 16c7f9f..af936dc 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -664,6 +664,18 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
- 		struct brcmstb_gpio_bank *bank;
- 		struct gpio_chip *gc;
- 
-+		/*
-+		 * If bank_width is 0, then there is an empty bank in the
-+		 * register block. Special handling for this case.
-+		 */
-+		if (bank_width == 0) {
-+			dev_dbg(dev, "Width 0 found: Empty bank @ %d\n",
-+				num_banks);
-+			num_banks++;
-+			gpio_base += MAX_GPIO_PER_BANK;
-+			continue;
-+		}
-+
- 		bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
- 		if (!bank) {
- 			err = -ENOMEM;
-@@ -740,9 +752,6 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
- 			goto fail;
- 	}
- 
--	dev_info(dev, "Registered %d banks (GPIO(s): %d-%d)\n",
--			num_banks, priv->gpio_base, gpio_base - 1);
--
- 	if (priv->parent_wake_irq && need_wakeup_event)
- 		pm_wakeup_event(dev, 0);
- 
--- 
-2.7.4
+Thanks Justin!
+--
+Florian
