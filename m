@@ -1,36 +1,32 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 7/7] gpio: ingenic: Remove driver
-Date: Fri, 17 Aug 2018 09:09:57 -0600
-Message-ID: <20180817150957.GE20845@rob-hp-laptop>
-References: <20180816163544.9072-1-paul@crapouillou.net>
- <20180816163544.9072-7-paul@crapouillou.net>
+Subject: Re: [PATCH] gpio: 74x164: add lines-initial-states property
+Date: Fri, 17 Aug 2018 09:10:05 -0600
+Message-ID: <20180817151005.GG20845@rob-hp-laptop>
+References: <20180815201855.29738-1-mail@david-bauer.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180816163544.9072-7-paul@crapouillou.net>
+In-Reply-To: <20180815201855.29738-1-mail@david-bauer.net>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Cc: David Bauer <mail@david-bauer.net>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 Hi, this email is from Rob's (experimental) review bot. I found a couple
 of common problems with your patch. Please see below.
 
-On Thu, 16 Aug 2018 18:35:44 +0200, Paul Cercueil wrote:
-> The pinctrl-ingenic driver is now handling the GPIO chips directly.
+On Wed, 15 Aug 2018 22:18:54 +0200, David Bauer wrote:
+> This adds the ability to define the initial state of each output line on
+> device probe.
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: David Bauer <mail@david-bauer.net>
 
 The preferred subject prefix is "dt-bindings: <binding dir>: ...".
 
 > ---
->  .../devicetree/bindings/gpio/ingenic,gpio.txt      |  46 ---
->  drivers/gpio/Kconfig                               |  11 -
->  drivers/gpio/Makefile                              |   1 -
->  drivers/gpio/gpio-ingenic.c                        | 392 ---------------------
->  4 files changed, 450 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
->  delete mode 100644 drivers/gpio/gpio-ingenic.c
+>  Documentation/devicetree/bindings/gpio/gpio-74x164.txt | 5 +++++
+>  drivers/gpio/gpio-74x164.c                             | 3 +++
+>  2 files changed, 8 insertions(+)
 > 
 
 DT bindings (including binding headers) should be a separate patch. See
