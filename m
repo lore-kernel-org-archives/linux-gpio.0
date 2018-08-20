@@ -1,32 +1,41 @@
-From: David Bauer <mail@david-bauer.net>
-Subject: Re: [PATCH] gpio: 74x164: add lines-initial-states property
-Date: Mon, 20 Aug 2018 01:55:03 +0200
-Message-ID: <1f8d8cd0-000a-ea46-2776-caee79ca6e01@david-bauer.net>
-References: <20180815201855.29738-1-mail@david-bauer.net>
- <CACRpkdYTxvWjLizTr8Qg-FmSPjnnU+kj2+VrUUcz5F0nkhrUrg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: GPIO consumer interface and DT
+Date: Mon, 20 Aug 2018 09:30:49 +0200
+Message-ID: <CACRpkdaSDK1fm9gAfnMVZxJK=QPb8G6N=KCvRcXgUmH=pKUB1g@mail.gmail.com>
+References: <20180815221102.GA4375@arek-VirtualBox>
+ <CACRpkdZ04vLKZ43TAh+OLh1hwd4tkZf9fnRf120aBBSe+-MCxg@mail.gmail.com>
+ <20180816190754.GA4505@arek-VirtualBox>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYTxvWjLizTr8Qg-FmSPjnnU+kj2+VrUUcz5F0nkhrUrg@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <kernelnewbies-bounces@kernelnewbies.org>
+In-Reply-To: <20180816190754.GA4505@arek-VirtualBox>
+List-Unsubscribe: <https://lists.kernelnewbies.org/mailman/options/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=unsubscribe>
+List-Archive: <http://lists.kernelnewbies.org/pipermail/kernelnewbies/>
+List-Post: <mailto:kernelnewbies@kernelnewbies.org>
+List-Help: <mailto:kernelnewbies-request@kernelnewbies.org?subject=help>
+List-Subscribe: <https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=subscribe>
+Errors-To: kernelnewbies-bounces@kernelnewbies.org
+To: Arek Lis <areklis909@gmail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Kernelnewbies@kernelnewbies.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Thu, Aug 16, 2018 at 9:08 PM Arkadiusz Lis <areklis909@gmail.com> wrote:
+> [Me]
+> > I wonder how you're testing this though.
+>
+> I don't have this equipment to be honest.
+> Once work is done I count on kindness of interested people who actually
+> have it and are able to test the patch on the target.
+> Is there any other way?
 
-On 8/16/18 10:11 AM, Linus Walleij wrote:
-> This sounds like something that should be generic, and not use
-> a bitmask, but offsets. It should work even if the number of
-> GPIOs from the chip is > 32.
-> 
-> Is the usecase different from hogs?
-> See Documentation/devicetree/bindings/gpio.txt
+The other way is to have the equipment.
 
-Thanks for pointing that out. Indeed for my use-case (Asserting single
-output to be high on driver probe) hogs are are sufficient solution.
+But your efforts are appreciated either way, just needs proper testing
+and that can be hard to get right remotely. (A lot of mailing back
+and forth.)
 
-Best wishes
-David
+Yours,
+Linus Walleij
