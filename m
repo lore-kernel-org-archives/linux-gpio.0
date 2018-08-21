@@ -1,214 +1,345 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [RFC RFT PATCH v4 4/4] gpiolib: Implement fast processing path in get/set array
-Date: Tue, 21 Aug 2018 01:43:41 +0200
-Message-ID: <20180820234341.5271-5-jmkrzyszt@gmail.com>
-References: <20180813223448.21316-1-jmkrzyszt@gmail.com>
- <20180820234341.5271-1-jmkrzyszt@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180820234341.5271-1-jmkrzyszt@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Kishon Vijay Abraham I <kishon@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-i2c@vger.ker
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: RE: [PATCH V5 1/5] dt-bindings: arm: fsl: add scu binding doc
+Date: Tue, 21 Aug 2018 03:00:34 +0000
+Message-ID: <AM0PR04MB4211B9113831B292110C709280310@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1534781305-4770-1-git-send-email-aisheng.dong@nxp.com>
+ <1534781305-4770-2-git-send-email-aisheng.dong@nxp.com>
+ <20180820181155.GA13901@bogus>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180820181155.GA13901@bogus>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "dongas86@gmail.com" <dongas86@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, "Rafael J.
+ Wysocki" <rjw@rjwysocki.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Certain GPIO descriptor arrays returned by gpio_get_array() may contain
-information on direct mapping of array members to pins of a single GPIO
-chip in hardware order.  In such cases, bitmaps of values can be passed
-directly from/to the chip's .get/set_multiple() callbacks without
-wasting time on iterations.
+Hi Rob,
 
-Add respective code to gpiod_get/set_array_bitmap_complex() functions.
-Pins not applicable for fast path are processed as before, skipping
-over the 'fast' ones.
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: Tuesday, August 21, 2018 2:12 AM
+> To: A.s. Dong <aisheng.dong@nxp.com>
+> Cc: linux-arm-kernel@lists.infradead.org; dongas86@gmail.com;
+> kernel@pengutronix.de; shawnguo@kernel.org; Fabio Estevam
+> <fabio.estevam@nxp.com>; dl-linux-imx <linux-imx@nxp.com>; Mark
+> Rutland <mark.rutland@arm.com>; Jassi Brar <jassisinghbrar@gmail.com>;
+> Linus Walleij <linus.walleij@linaro.org>; Stephen Boyd <sboyd@kernel.org>;
+> Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf Hansson
+> <ulf.hansson@linaro.org>; devicetree@vger.kernel.org; linux-
+> clk@vger.kernel.org; linux-gpio@vger.kernel.org; linux-pm@vger.kernel.org
+> Subject: Re: [PATCH V5 1/5] dt-bindings: arm: fsl: add scu binding doc
+> 
+> On Tue, Aug 21, 2018 at 12:08:21AM +0800, Dong Aisheng wrote:
+> > The System Controller Firmware (SCFW) is a low-level system function
+> > which runs on a dedicated Cortex-M core to provide power, clock, and
+> > resource management. It exists on some i.MX8 processors. e.g. i.MX8QM
+> > (QM, QP), and i.MX8QX (QXP, DX).
+> >
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Sascha Hauer <kernel@pengutronix.de>
+> > Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-clk@vger.kernel.org
+> > Cc: linux-gpio@vger.kernel.org
+> > Cc: linux-pm@vger.kernel.org
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > ---
+> > v4->v5:
+> >  * scu node should be under firmware node
+> >  * add pd/clk/pinctrl binding as well according to Rob's suggestion
+> >  * switch to new generic MU binding
+> >    Use 8 separate mu channels in one MU instance for SCU communication
+> > v3->v4:
+> >  * fully change to mailbox binding
+> >  * add child node description
+> > v2->v3:
+> >  * update a bit to mailbox binding
+> > v1->v2:
+> >  * remove status
+> >  * changed to mu1
+> > ---
+> >  .../devicetree/bindings/arm/freescale/fsl,scu.txt  | 179
+> > +++++++++++++++++++++
+> >  1 file changed, 179 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > new file mode 100644
+> > index 0000000..2cd7e4a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > @@ -0,0 +1,179 @@
+> > +NXP i.MX System Controller Firmware (SCFW)
+> > +--------------------------------------------------------------------
+> 
+> Think you wanted a newline here              ^?
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
- Documentation/driver-api/gpio/board.rst    | 15 ++++++
- Documentation/driver-api/gpio/consumer.rst |  8 +++
- drivers/gpio/gpiolib.c                     | 87 ++++++++++++++++++++++++++++--
- 3 files changed, 105 insertions(+), 5 deletions(-)
+Yes, of course.
+It seems to be introduced by mistake.
+Thanks for reminder.
 
-diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driver-api/gpio/board.rst
-index 2c112553df84..c66821e033c2 100644
---- a/Documentation/driver-api/gpio/board.rst
-+++ b/Documentation/driver-api/gpio/board.rst
-@@ -193,3 +193,18 @@ And the table can be added to the board code as follows::
+> 
+> > +
+> > +The System Controller Firmware (SCFW) is a low-level system function
+> > +which runs on a dedicated Cortex-M core to provide power, clock, and
+> > +resource management. It exists on some i.MX8 processors. e.g. i.MX8QM
+> > +(QM, QP), and i.MX8QX (QXP, DX).
+> > +
+> > +The AP communicates with the SC using a multi-ported MU module found
+> > +in the LSIO subsystem. The current definition of this MU module
+> > +provides
+> > +5 remote AP connections to the SC to support up to 5 execution
+> > +environments (TZ, HV, standard Linux, etc.). The SC side of this MU
+> > +module interfaces with the LSIO DSC IP bus. The SC firmware will
+> > +communicate with this MU using the MSI bus.
+> 
+> How are 5 users supported with only 4 channels defined below?
+
+There're 5 MU instances designed to be specifically communicate with
+SCU Firmware on MX8 hardware.
+
+With the new generic mu binding [1], each MU instance is abstracted
+Into 16 virtual MU channels. (4 Tx, 4 Rx, 4 Tx doorbell, 4 Rx doorbell).
+(MU has 4 pair of Tx/Rx data register which can be used to send/receive
+multi words. With new binding, each data register is abstracted into one
+MU channel, totally 8 channels for data transfer).
+
+SCU protocol is already designed to uses all data registers to send/receive
+multi words according to MU hardware reference manual. So it must
+use all channels in one MU instances with new binding.
+
+On MX8, it can be one of LSIO MU0~M4.
  
- The line will be hogged as soon as the gpiochip is created or - in case the
- chip was created earlier - when the hog table is registered.
-+
-+Arrays of pins
-+--------------
-+In addition to requesting pins belonging to a function one by one, a device may
-+also request an array of pins assigned to the function.  The way those pins are
-+mapped to the device determines if the array qualifies for fast bitmap
-+processing.  If yes, a bitmap is passed over get/set array functions directly
-+between a caller and a respective .get/set_multiple() callback of a GPIO chip.
-+
-+In order to qualify for fast bitmap processing, the pin mapping must meet the
-+following requirements:
-+- it must belong to the same chip as other 'fast' pins of the function,
-+- its index within the function must match its hardware number within the chip.
-+
-+Open drain and open source pins are excluded from fast bitmap output processing.
-diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
-index 0afd95a12b10..cf992e5ab976 100644
---- a/Documentation/driver-api/gpio/consumer.rst
-+++ b/Documentation/driver-api/gpio/consumer.rst
-@@ -388,6 +388,14 @@ array_info should be set to NULL.
- Note that for optimal performance GPIOs belonging to the same chip should be
- contiguous within the array of descriptors.
- 
-+Still better performance may be achieved if array indexes of the descriptors
-+match hardware pin numbers of a single chip.  If an array passed to a get/set
-+array function matches the one obtained from gpiod_get_array() and array_info
-+associated with the array is also passed, the function may take a fast bitmap
-+processing path, passing the value_bitmap argument directly to the respective
-+.get/set_multiple() callback of the chip.  That allows for utilization of GPIO
-+banks as data I/O ports without much loss of performance.
-+
- The return value of gpiod_get_array_value() and its variants is 0 on success
- or negative on error. Note the difference to gpiod_get_value(), which returns
- 0 or 1 on success to convey the GPIO value. With the array functions, the GPIO
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 4d26cdbdb7cf..b799a89c4c17 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2787,7 +2787,36 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				  struct gpio_array *array_info,
- 				  unsigned long *value_bitmap)
- {
--	int i = 0;
-+	int err, i = 0;
-+
-+	/*
-+	 * Validate array_info against desc_array and its size.
-+	 * It should immediately follow desc_array if both
-+	 * have been obtained from the same gpiod_get_array() call.
-+	 */
-+	if (array_info && array_info->desc == desc_array &&
-+	    array_size <= array_info->size &&
-+	    (void *)array_info == desc_array + array_info->size) {
-+		if (!can_sleep)
-+			WARN_ON(array_info->chip->can_sleep);
-+
-+		err = gpio_chip_get_multiple(array_info->chip,
-+					     array_info->get_mask,
-+					     value_bitmap);
-+		if (err)
-+			return err;
-+
-+		if (!raw && !bitmap_empty(array_info->invert_mask, array_size))
-+			bitmap_xor(value_bitmap, value_bitmap,
-+				   array_info->invert_mask, array_size);
-+
-+		if (bitmap_full(array_info->get_mask, array_size))
-+			return 0;
-+
-+		i = find_first_zero_bit(array_info->get_mask, array_size);
-+	} else {
-+		array_info = NULL;
-+	}
- 
- 	while (i < array_size) {
- 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
-@@ -2818,7 +2847,12 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			int hwgpio = gpio_chip_hwgpio(desc);
- 
- 			__set_bit(hwgpio, mask);
--			i++;
-+
-+			if (array_info)
-+				find_next_zero_bit(array_info->get_mask,
-+						   array_size, i);
-+			else
-+				i++;
- 		} while ((i < array_size) &&
- 			 (desc_array[i]->gdev->chip == chip));
- 
-@@ -2829,7 +2863,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			return ret;
- 		}
- 
--		for (j = first; j < i; j++) {
-+		for (j = first; j < i; ) {
- 			const struct gpio_desc *desc = desc_array[j];
- 			int hwgpio = gpio_chip_hwgpio(desc);
- 			int value = test_bit(hwgpio, bits);
-@@ -2838,6 +2872,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				value = !value;
- 			__assign_bit(j, value_bitmap, value);
- 			trace_gpio_value(desc_to_gpio(desc), 1, value);
-+
-+			if (array_info)
-+				find_next_zero_bit(array_info->get_mask, i, j);
-+			else
-+				j++;
- 		}
- 
- 		if (mask != fastpath)
-@@ -3039,6 +3078,32 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- {
- 	int i = 0;
- 
-+	/*
-+	 * Validate array_info against desc_array and its size.
-+	 * It should immediately follow desc_array if both
-+	 * have been obtained from the same gpiod_get_array() call.
-+	 */
-+	if (array_info && array_info->desc == desc_array &&
-+	    array_size <= array_info->size &&
-+	    (void *)array_info == desc_array + array_info->size) {
-+		if (!can_sleep)
-+			WARN_ON(array_info->chip->can_sleep);
-+
-+		if (!raw && !bitmap_empty(array_info->invert_mask, array_size))
-+			bitmap_xor(value_bitmap, value_bitmap,
-+				   array_info->invert_mask, array_size);
-+
-+		gpio_chip_set_multiple(array_info->chip, array_info->set_mask,
-+				       value_bitmap);
-+
-+		if (bitmap_full(array_info->set_mask, array_size))
-+			return 0;
-+
-+		i = find_first_zero_bit(array_info->set_mask, array_size);
-+	} else {
-+		array_info = NULL;
-+	}
-+
- 	while (i < array_size) {
- 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
- 		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
-@@ -3066,7 +3131,14 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 			int hwgpio = gpio_chip_hwgpio(desc);
- 			int value = test_bit(i, value_bitmap);
- 
--			if (!raw && test_bit(FLAG_ACTIVE_LOW, &desc->flags))
-+			/*
-+			 * Pins applicable for fast input but not for
-+			 * fast output processing may have been already
-+			 * inverted inside the fast path, skip them.
-+			 */
-+			if (!raw && !(array_info &&
-+			    test_bit(i, array_info->invert_mask)) &&
-+			    test_bit(FLAG_ACTIVE_LOW, &desc->flags))
- 				value = !value;
- 			trace_gpio_value(desc_to_gpio(desc), 0, value);
- 			/*
-@@ -3085,7 +3157,12 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 					__clear_bit(hwgpio, bits);
- 				count++;
- 			}
--			i++;
-+
-+			if (array_info)
-+				find_next_zero_bit(array_info->set_mask,
-+						   array_size, i);
-+			else
-+				i++;
- 		} while ((i < array_size) &&
- 			 (desc_array[i]->gdev->chip == chip));
- 		/* push collected bits to outputs */
--- 
-2.16.4
+[1] https://patchwork.kernel.org/patch/10554565/
+
+> 
+> > +
+> > +System Controller Device Node:
+> >
+> +=========================================================
+> ===
+> > +
+> > +The scu node with the following properties shall be under the /firmware/
+> node.
+> > +
+> > +Required properties:
+> > +-------------------
+> > +- compatible:	should be "fsl,imx-scu".
+> > +- mbox-names:	should include "tx0", "tx1", "tx2", "tx3",
+> > +			       "rx0", "rx1", "rx2", "rx3".
+> > +- mboxes:	List of phandle of 4 MU channels for tx and 4 MU channels
+> > +		for rx. All 8 MU channels must be in the same MU instance.
+> > +		Cross instances are not allowed. The MU instance can only
+> > +		be one of LSIO MU0~M4 for imx8qxp and imx8qm. Users
+> need
+> > +		to make sure use the one which is not conflict with other
+> > +		execution environments. e.g. ATF.
+> 
+> How is one supposed to know what channels are in use already?
+> 
+
+Currently it's simply predefined.
+E.g. ATF uses MU0 and u-Boot & Kernel uses MU1.
+
+> IMO, ATF should remove the channel it uses before passing the DT to the
+> next stage. 
+
+Sounds like a good idea.
+To be more specific, you mean simply marking the MU node status used in ATF
+to be "disabled" before passing to the next stage, am I understand correct?
+
+> That doesn't help if later stages get a different DT though.
+
+Doesn't help? Sorry a bit confusing...
+
+> 
+> > +		Note:
+> > +		Channel 0 must be "tx0" or "rx0".
+> > +		Channel 1 must be "tx1" or "rx1".
+> > +		Channel 2 must be "tx2" or "rx2".
+> > +		Channel 3 must be "tx3" or "rx3".
+> > +		e.g.
+> > +		mboxes = <&lsio_mu1 0 0
+> > +			  &lsio_mu1 0 1
+> > +			  &lsio_mu1 0 2
+> > +			  &lsio_mu1 0 3
+> > +			  &lsio_mu1 1 0
+> > +			  &lsio_mu1 1 1
+> > +			  &lsio_mu1 1 2
+> > +			  &lsio_mu1 1 3>;
+> > +		See Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> > +		for detailed mailbox binding.
+> > +
+> > +i.MX SCU Client Device Node:
+> >
+> +=========================================================
+> ===
+> > +
+> > +Client nodes are maintained as children of the relevant IMX-SCU device
+> node.
+> > +
+> > +Power domain bindings based on SCU Message Protocol
+> > +------------------------------------------------------------
+> > +
+> > +This binding for the SCU power domain providers uses the generic
+> > +power domain binding[2].
+> > +
+> > +Required properties:
+> > +- compatible:		Should be "fsl,scu-pd".
+> > +- #address-cells:	Should be 1.
+> > +- #size-cells:		Should be 0.
+> > +
+> > +Required properties for power domain sub nodes:
+> > +- #power-domain-cells:	Must be 0.
+> > +
+> > +Optional Properties:
+> > +- reg:			Resource ID of this power domain.
+> > +			No exist means uncontrollable by user.
+> > +			See detailed Resource ID list from:
+> > +			include/dt-bindings/power/imx-rsrc.h
+> > +- power-domains:	phandle pointing to the parent power domain.
+> > +
+> > +Clock bindings based on SCU Message Protocol
+> > +------------------------------------------------------------
+> > +
+> > +This binding uses the common clock binding[1].
+> > +
+> > +Required properties:
+> > +- compatible:		Should be "fsl,imx8qxp-clock".
+> > +- #clock-cells:		Should be 1. Contains the Clock ID value.
+> 
+> There was a recent patch adding input clocks to other i.MX CCM bindings.
+> Is that needed here?
+> 
+
+Will double check it, thanks for reminder.
+
+Regards
+Dong Aisheng
+
+> > +
+> > +The clock consumer should specify the desired clock by having the
+> > +clock ID in its "clocks" phandle cell.
+> > +
+> > +See the full list of clock IDs from:
+> > +include/dt-bindings/clock/imx8qxp-clock.h
+> > +
+> > +Pinctrl bindings based on SCU Message Protocol
+> > +------------------------------------------------------------
+> > +
+> > +This binding uses the i.MX common pinctrl binding[3].
+> > +
+> > +Required properties:
+> > +- compatible:		Should be "fsl,imx8qxp-iomuxc".
+> > +
+> > +Required properties for Pinctrl sub nodes:
+> > +- fsl,pins:		Each entry consists of 3 integers which represents
+> > +			the mux and config setting for one pin. The first 2
+> > +			integers <pin_id mux_mode> are specified using a
+> > +			PIN_FUNC_ID macro, which can be found in
+> > +			<dt-bindings/pinctrl/pads-imx8qxp.h>.
+> > +			The last integer CONFIG is the pad setting value like
+> > +			pull-up on this pin.
+> > +
+> > +			Please refer to i.MX8QXP Reference Manual for
+> detailed
+> > +			CONFIG settings.
+> > +
+> > +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > +[2] Documentation/devicetree/bindings/power/power_domain.txt
+> > +[3] Documentation/devicetree/bindings/pinctrl/fsl,imx-pinctrl.txt
+> > +
+> > +Example (imx8qxp):
+> > +-------------
+> > +lsio_mu1: mailbox@5d1c0000 {
+> > +	...
+> > +	#mbox-cells = <2>;
+> > +};
+> > +
+> > +firmware {
+> > +	scu {
+> > +		compatible = "fsl,imx-scu";
+> > +		mbox-names = "tx0", "tx1", "tx2", "tx3",
+> > +			     "rx0", "rx1", "rx2", "rx3";
+> > +		mboxes = <&lsio_mu1 0 0
+> > +			  &lsio_mu1 0 1
+> > +			  &lsio_mu1 0 2
+> > +			  &lsio_mu1 0 3
+> > +			  &lsio_mu1 1 0
+> > +			  &lsio_mu1 1 1
+> > +			  &lsio_mu1 1 2
+> > +			  &lsio_mu1 1 3>;
+> > +
+> > +		clk: clk {
+> > +			compatible = "fsl,imx8qxp-clk";
+> > +			#clock-cells = <1>;
+> > +		};
+> > +
+> > +		iomuxc {
+> > +			compatible = "fsl,imx8qxp-iomuxc";
+> > +
+> > +			pinctrl_lpuart0: lpuart0grp {
+> > +				fsl,pins = <
+> > +					SC_P_UART0_RX_ADMA_UART0_RX
+> 	0x06000020
+> > +					SC_P_UART0_TX_ADMA_UART0_TX
+> 	0x06000020
+> > +				>;
+> > +			};
+> > +			...
+> > +		};
+> > +
+> > +		imx8qx-pm {
+> > +			compatible = "fsl,scu-pd";
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +
+> > +			pd_dma: dma-power-domain {
+> > +				#power-domain-cells = <0>;
+> > +
+> > +				pd_dma_lpuart0: dma-lpuart0@57 {
+> > +					reg = <SC_R_UART_0>;
+> > +					#power-domain-cells = <0>;
+> > +					power-domains = <&pd_dma>;
+> > +				};
+> > +				...
+> > +			};
+> > +			...
+> > +		};
+> > +	};
+> > +};
+> > +
+> > +serial@5a060000 {
+> > +	...
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&pinctrl_lpuart0>;
+> > +	clocks = <&clk IMX8QXP_UART0_CLK>,
+> > +		 <&clk IMX8QXP_UART0_IPG_CLK>;
+> > +	clock-names = "per", "ipg";
+> > +	power-domains = <&pd_dma_lpuart0>;
+> > +};
+> > --
+> > 2.7.4
+> >
