@@ -1,54 +1,65 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: [PATCH v2] pinctrl/amd: use byte access to clear irq/wake status bits
-Date: Wed, 22 Aug 2018 10:57:54 -0600
-Message-ID: <20180822165754.213402-1-djkurtz@chromium.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 00/11] Reform EP93xx GPIO
+Date: Wed, 22 Aug 2018 22:41:00 +0200
+Message-ID: <20180822204111.9581-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: Shyam-sundar.S-k@amd.com, Nehal-bakulchandra.Shah@amd.com, Ken.Xue@amd.com, Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: H Hartley Sweeten <hsweeten@visionengravers.com>, Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Commit 6afb10267c1692 ("pinctrl/amd: fix masking of GPIO interrupts")
-changed to the clearing of interrupt status bits to a RMW in a critical
-section.  This works, but is a bit overkill.
+This series is a spin-off of a patch from Arnd that started to
+decouple the EP93xx GPIO driver from the code inside
+arch/arm.
 
-The relevant interrupt/wake status bits are in the Most Significant Byte
-of a 32-bit word.  These two are the only write-able bits in this byte.
+The driver needed some modernization and in the end I managed
+to convert two of the banks to use GPIOLIB_IRQCHIP and use
+a proper irqdomain.
 
-Therefore, it should be safe to just write these bits back as a byte
-access without any additional locking.
+The F bank presents a special problem that I need to think
+about, because since there is one IRQ per GPIO line it is
+essentially a hierarchical irqdomain.
 
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
----
- drivers/pinctrl/pinctrl-amd.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+This was tested on the SIM.ONE where I rigged lines on some
+of the GPIOs on a board connector. It's crude but gives
+interrupts and behave as expected before and after these
+changes, the main visible change being that the hardware
+IRQ line on each port appears in /proc/interrupts.
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 41ccc759b8b886..7698bd9f6b687c 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -558,15 +558,14 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
- 			irq = irq_find_mapping(gc->irq.domain, irqnr + i);
- 			generic_handle_irq(irq);
- 
--			/* Clear interrupt.
--			 * We must read the pin register again, in case the
-+			/*
-+			 * Write 1 to clear the irq/wake status bits in MSByte.
-+			 * All other bits in this byte are read-only.  This
-+			 * avoids modifying the lower 24-bits, in case their
- 			 * value was changed while executing
- 			 * generic_handle_irq() above.
- 			 */
--			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
--			regval = readl(regs + i);
--			writel(regval, regs + i);
--			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+			writeb((regval >> 24), (u8 *)(regs + i) + 3);
- 			ret = IRQ_HANDLED;
- 		}
- 	}
+It would be great if some EP93xx users could test this
+(especially something using bank F) so I can get it into
+shape and merge as a baseline for further refactorings.
+
+Arnd Bergmann (1):
+  ARM/gpio: ep93xx: build standalone
+
+Linus Walleij (10):
+  gpio: ep93xx: Cut down variable names
+  gpio: ep93xx: Switch to SPDX license tag
+  gpio: ep93xx: Pass around struct gpio_chip
+  gpio: ep93xx: Rename has_debounce to has_irq
+  gpio: ep93xx: Properly call the chained IRQ handler
+  gpio: ep93xx: Do not pingpong irq numbers
+  gpio: ep93xx: Use the hwirq and port
+  gpio: ep93xx: Use for_each_set_bit() in IRQ handler
+  gpio: ep93xx: Cut gpio_to_irq() usage
+  gpio: ep93xx: Switch A and B to use GPIOLIB_IRQCHIP
+
+ arch/arm/mach-ep93xx/core.c |   9 ++
+ drivers/gpio/Kconfig        |   1 +
+ drivers/gpio/gpio-ep93xx.c  | 297 +++++++++++++++++++++---------------
+ 3 files changed, 181 insertions(+), 126 deletions(-)
+
 -- 
-2.18.0.1017.ga543ac7ca45-goog
+2.17.1
