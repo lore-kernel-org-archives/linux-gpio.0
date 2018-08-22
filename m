@@ -1,76 +1,54 @@
-From: vitor <Vitor.Soares@synopsys.com>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-Date: Wed, 22 Aug 2018 17:43:34 +0100
-Message-ID: <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <20180719152930.3715-2-boris.brezillon@bootlin.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: [PATCH v2] pinctrl/amd: use byte access to clear irq/wake status bits
+Date: Wed, 22 Aug 2018 10:57:54 -0600
+Message-ID: <20180822165754.213402-1-djkurtz@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180719152930.3715-2-boris.brezillon@bootlin.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vitor Soares <Vitor.Soares@synopsys.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Daniel Drake <drake@endlessm.com>
+Cc: Shyam-sundar.S-k@amd.com, Nehal-bakulchandra.Shah@amd.com, Ken.Xue@amd.com, Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Boris,
+Commit 6afb10267c1692 ("pinctrl/amd: fix masking of GPIO interrupts")
+changed to the clearing of interrupt status bits to a RMW in a critical
+section.  This works, but is a bit overkill.
 
+The relevant interrupt/wake status bits are in the Most Significant Byte
+of a 32-bit word.  These two are the only write-able bits in this byte.
 
-On 19-07-2018 16:29, Boris Brezillon wrote:
-> +int i3c_bus_register(struct i3c_bus *i3cbus)
-> +{
-> +	struct i2c_dev_desc *desc;
-> +
-> +	i3c_bus_for_each_i2cdev(i3cbus, desc) {
-> +		switch (desc->boardinfo->lvr & I3C_LVR_I2C_INDEX_MASK) {
-> +		case I3C_LVR_I2C_INDEX(0):
-> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_FAST)
-> +				i3cbus->mode = I3C_BUS_MODE_MIXED_FAST;
-> +			break;
-> +
-> +		case I3C_LVR_I2C_INDEX(1):
-> +		case I3C_LVR_I2C_INDEX(2):
-> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_SLOW)
-> +				i3cbus->mode = I3C_BUS_MODE_MIXED_SLOW;
-> +			break;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	if (!i3cbus->scl_rate.i3c)
-> +		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
-> +
-> +	if (!i3cbus->scl_rate.i2c) {
-> +		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
-> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
-> +		else
-> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
-> +	}
-> +
-> +	/*
-> +	 * I3C/I2C frequency may have been overridden, check that user-provided
-> +	 * values are not exceeding max possible frequency.
-> +	 */
-> +	if (i3cbus->scl_rate.i3c > I3C_BUS_MAX_I3C_SCL_RATE ||
-> +	    i3cbus->scl_rate.i2c > I3C_BUS_I2C_FM_PLUS_SCL_RATE) {
-> +		return -EINVAL;
-> +	}
-> +
-> +	dev_set_name(&i3cbus->dev, "i3c-%d", i3cbus->id);
-> +
-> +	return device_add(&i3cbus->dev);
-> +}
-During the tests of the bus with i2c devices I found the i2c_dev_desc 
-objects aren't allocated before this function. This cause i3cbus->mode = 
-I3C_BUS_MODE_PURE.
+Therefore, it should be safe to just write these bits back as a byte
+access without any additional locking.
 
-I want to do something for the slave and secondary master, do you 
-already have infrastructure that you can share?
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+---
+ drivers/pinctrl/pinctrl-amd.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-
-Best regards,
-Vitor Soares
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 41ccc759b8b886..7698bd9f6b687c 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -558,15 +558,14 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
+ 			irq = irq_find_mapping(gc->irq.domain, irqnr + i);
+ 			generic_handle_irq(irq);
+ 
+-			/* Clear interrupt.
+-			 * We must read the pin register again, in case the
++			/*
++			 * Write 1 to clear the irq/wake status bits in MSByte.
++			 * All other bits in this byte are read-only.  This
++			 * avoids modifying the lower 24-bits, in case their
+ 			 * value was changed while executing
+ 			 * generic_handle_irq() above.
+ 			 */
+-			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+-			regval = readl(regs + i);
+-			writel(regval, regs + i);
+-			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
++			writeb((regval >> 24), (u8 *)(regs + i) + 3);
+ 			ret = IRQ_HANDLED;
+ 		}
+ 	}
+-- 
+2.18.0.1017.ga543ac7ca45-goog
