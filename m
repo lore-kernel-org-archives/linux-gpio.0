@@ -1,13 +1,14 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 07/11] gpio: ep93xx: Do not pingpong irq numbers
-Date: Wed, 22 Aug 2018 22:41:07 +0200
-Message-ID: <20180822204111.9581-8-linus.walleij@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 01/11] ARM/gpio: ep93xx: build standalone
+Date: Thu, 23 Aug 2018 09:36:48 +0200
+Message-ID: <CAK8P3a2xgvS4Oxfupob1LcLP3CSfKrF3K-pu05S_3tB=pD3-mA@mail.gmail.com>
 References: <20180822204111.9581-1-linus.walleij@linaro.org>
+ <20180822204111.9581-2-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180822204111.9581-1-linus.walleij@linaro.org>
+In-Reply-To: <20180822204111.9581-2-linus.walleij@linaro.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,84 +18,39 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: H Hartley Sweeten <hsweeten@visionengravers.com>, Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>, arm-soc <arm@kernel.org>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-For setting debounce config we want to write an offset in
-a per-gpiochip register, and we know which gpiochip we are
-on. Instead of a roundtrip over the IRQ number, figure out
-what port we are on for this GPIO chip, then index to the
-right register and write the value.
+On Wed, Aug 22, 2018 at 10:41 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> As a preparation for multiplatform support, this ensures
+> that the ep93xx gpio driver can be built without any of
+> the platform specific header files. We pass the IRQ numbers
+> as a resource now, and use the virtual mmio base from the
+> already existing resource, rather than relying on the
+> hardwired virtual address from the header file.
+>
+> Some numbers are now hardcoded that came from macros
+> in the past, but for all I can tell, the driver already
+> relied on the specific values.
+>
+> Cc: arm@kernel.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Arnd/other ARM SoC person:
+> Please provide an ACK for this patch so I can merge it
+> with the rest of the refactorings into the GPIO tree.
 
-This adds the ep93xx_gpio_port() that finds the port index
-from a struct gpio_chip * that we can later exploit to
-simplify more code.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-ep93xx.c | 35 +++++++++++++++++++++++------------
- 1 file changed, 23 insertions(+), 12 deletions(-)
+Did I send the patch to you, or did you find it in old archives?
 
-diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-index ce7e88df9cc5..3b235b25c028 100644
---- a/drivers/gpio/gpio-ep93xx.c
-+++ b/drivers/gpio/gpio-ep93xx.c
-@@ -68,12 +68,29 @@ static void ep93xx_gpio_update_int_params(struct ep93xx_gpio *epg, unsigned port
- 	       epg->base + int_en_register_offset[port]);
- }
- 
--static void ep93xx_gpio_int_debounce(struct ep93xx_gpio *epg,
--				     unsigned int irq, bool enable)
-+static int ep93xx_gpio_port(struct gpio_chip *gc)
- {
--	int line = irq_to_gpio(irq);
--	int port = line >> 3;
--	int port_mask = 1 << (line & 7);
-+	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
-+	int port = 0;
-+
-+	while (gc != &epg->gc[port] && port < sizeof(epg->gc))
-+		port++;
-+
-+	/* This should not happen but is there as a last safeguard */
-+	if (gc != &epg->gc[port]) {
-+		pr_crit("can't find the GPIO port\n");
-+		return 0;
-+	}
-+
-+	return port;
-+}
-+
-+static void ep93xx_gpio_int_debounce(struct gpio_chip *gc,
-+				     unsigned int offset, bool enable)
-+{
-+	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
-+	int port = ep93xx_gpio_port(gc);
-+	int port_mask = BIT(offset);
- 
- 	if (enable)
- 		gpio_int_debounce[port] |= port_mask;
-@@ -331,19 +348,13 @@ static struct ep93xx_gpio_bank ep93xx_gpio_banks[] = {
- static int ep93xx_gpio_set_config(struct gpio_chip *gc, unsigned offset,
- 				  unsigned long config)
- {
--	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
--	int gpio = gc->base + offset;
--	int irq = gpio_to_irq(gpio);
- 	u32 debounce;
- 
- 	if (pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE)
- 		return -ENOTSUPP;
- 
--	if (irq < 0)
--		return -EINVAL;
--
- 	debounce = pinconf_to_config_argument(config);
--	ep93xx_gpio_int_debounce(epg, irq, debounce ? true : false);
-+	ep93xx_gpio_int_debounce(gc, offset, debounce ? true : false);
- 
- 	return 0;
- }
--- 
-2.17.1
+Normally I'd assume that my authorship implies the Ack,
+but I guess it's ok to also explictly say that I'm ok with this
+going through your tree.
+
+       Arnd
