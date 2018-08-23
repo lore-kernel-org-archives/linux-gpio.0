@@ -1,56 +1,71 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 01/11] ARM/gpio: ep93xx: build standalone
-Date: Thu, 23 Aug 2018 09:36:48 +0200
-Message-ID: <CAK8P3a2xgvS4Oxfupob1LcLP3CSfKrF3K-pu05S_3tB=pD3-mA@mail.gmail.com>
-References: <20180822204111.9581-1-linus.walleij@linaro.org>
- <20180822204111.9581-2-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/3] pinctrl: msm: Really mask level interrupts to
+ prevent latching
+Date: Thu, 23 Aug 2018 09:57:18 +0200
+Message-ID: <CACRpkdZJ6Xa6Ge8iCkRSUek3S=LFGt710KQxotovZYgGf4qoXA@mail.gmail.com>
+References: <20180816200648.90458-1-swboyd@chromium.org> <20180816200648.90458-2-swboyd@chromium.org>
+ <CAD=FV=Uk9XgP+6_4x685E0yM4kS+0HkEFtML+N-nkR6DzFfchQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180822204111.9581-2-linus.walleij@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>, arm-soc <arm@kernel.org>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=Uk9XgP+6_4x685E0yM4kS+0HkEFtML+N-nkR6DzFfchQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Stephen Boyd <swboyd@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 10:41 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+On Thu, Aug 16, 2018 at 10:49 PM Doug Anderson <dianders@chromium.org> wrote:
+> On Thu, Aug 16, 2018 at 1:06 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+> > The interrupt controller hardware in this pin controller has two status
+> > enable bits. The first "normal" status enable bit enables or disables
+> > the summary interrupt line being raised when a gpio interrupt triggers
+> > and the "raw" status enable bit allows or prevents the hardware from
+> > latching an interrupt into the status register for a gpio interrupt.
+> > Currently we just toggle the "normal" status enable bit in the mask and
+> > unmask ops so that the summary irq interrupt going to the CPU's
+> > interrupt controller doesn't trigger for the masked gpio interrupt.
+> >
+> > For a level triggered interrupt, the flow would be as follows: the pin
+> > controller sees the interrupt, latches the status into the status
+> > register, raises the summary irq to the CPU, summary irq handler runs
+> > and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
+> > interrupt, the interrupt handler runs, and finally unmask the interrupt.
+> > When the interrupt handler completes, we expect that the interrupt line
+> > level will go back to the deasserted state so the genirq code can unmask
+> > the interrupt without it triggering again.
+> >
+> > If we only mask the interrupt by clearing the "normal" status enable bit
+> > then we'll ack the interrupt but it will continue to show up as pending
+> > in the status register because the raw status bit is enabled, the
+> > hardware hasn't deasserted the line, and thus the asserted state latches
+> > into the status register again. When the hardware deasserts the
+> > interrupt the pin controller still thinks there is a pending unserviced
+> > level interrupt because it latched it earlier. This behavior causes
+> > software to see an extra interrupt for level type interrupts each time
+> > the interrupt is handled.
+> >
+> > Let's fix this by clearing the raw status enable bit for level type
+> > interrupts so that the hardware stops latching the status of the
+> > interrupt after we ack it. We don't do this for edge type interrupts
+> > because it seems that toggling the raw status enable bit for edge type
+> > interrupts causes spurious edge interrupts.
+> >
+> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Cc: Doug Anderson <dianders@chromium.org>
+> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> > ---
+> >  drivers/pinctrl/qcom/pinctrl-msm.c | 24 ++++++++++++++++++++++++
+> >  1 file changed, 24 insertions(+)
 >
-> From: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 >
-> As a preparation for multiplatform support, this ensures
-> that the ep93xx gpio driver can be built without any of
-> the platform specific header files. We pass the IRQ numbers
-> as a resource now, and use the virtual mmio base from the
-> already existing resource, rather than relying on the
-> hardwired virtual address from the header file.
->
-> Some numbers are now hardcoded that came from macros
-> in the past, but for all I can tell, the driver already
-> relied on the specific values.
->
-> Cc: arm@kernel.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Arnd/other ARM SoC person:
-> Please provide an ACK for this patch so I can merge it
-> with the rest of the refactorings into the GPIO tree.
+> NOTE: IMO we should land this fix even if we continue to have debate
+> on patch #2 and #3 since this fixes a definite problem.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+OK makes sense, I guess I'll queue this for fixes
+once v4.19-rc1 is out.
 
-Did I send the patch to you, or did you find it in old archives?
+Would be nice to also get Bjorn's buy-in on it!
 
-Normally I'd assume that my authorship implies the Ack,
-but I guess it's ok to also explictly say that I'm ok with this
-going through your tree.
-
-       Arnd
+Yours,
+Linus Walleij
