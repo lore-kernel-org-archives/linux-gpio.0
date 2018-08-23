@@ -1,77 +1,63 @@
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH 2/2] dt-bindings: Document the Synopsys GPIO via CREG bindings
-Date: Thu, 23 Aug 2018 18:00:13 +0300
-Message-ID: <20180823150013.21837-3-Eugeniy.Paltsev@synopsys.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH 1/2] GPIO: add single-register gpio via creg driver
+Date: Thu, 23 Aug 2018 08:08:34 -0700
+Message-ID: <c5f75b43-6ef3-31e2-0366-b6c8623d3f5d@infradead.org>
 References: <20180823150013.21837-1-Eugeniy.Paltsev@synopsys.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180823150013.21837-1-Eugeniy.Paltsev@synopsys.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-snps-arc@lists.infradead.org, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Vineet Gupta <Vineet.Gupta1@synopsys.com>, Alexey Brodkin <Alexey.Brodkin@synopsys.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+ <20180823150013.21837-2-Eugeniy.Paltsev@synopsys.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180823150013.21837-2-Eugeniy.Paltsev@synopsys.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
+List-Post: <mailto:linux-snps-arc@lists.infradead.org>
+List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
+Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, linux-snps-arc@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Vineet Gupta <Vineet.Gupta1@synopsys.com>, Alexey Brodkin <Alexey.Brodkin@synopsys.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds documentation of device tree bindings for the Synopsys
-GPIO via CREG driver.
+On 08/23/2018 08:00 AM, Eugeniy Paltsev wrote:
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 71c0ab46f216..0f9cc1582cab 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -430,6 +430,15 @@ config GPIO_REG
+>  	  A 32-bit single register GPIO fixed in/out implementation.  This
+>  	  can be used to represent any register as a set of GPIO signals.
+>  
+> +config GPIO_SNPS_CREG
+> +	bool "GPIO via CREG (Control REGisers) driver"
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- .../devicetree/bindings/gpio/snps,creg-gpio.txt    | 48 ++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
+	                             REGisters)
 
-diff --git a/Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt b/Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
-new file mode 100644
-index 000000000000..2ab1b49eee7b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
-@@ -0,0 +1,48 @@
-+GPIO via CREG (Control REGisers) driver
-+
-+To control such strangely mapped MMIO outputs:
-+
-+31            11        8         7        5         0   < bit number
-+|              |        |         |        |         |
-+[   not used   | gpio-1 | shift-1 | gpio-0 | shift-0 ]   < 32 bit MMIO register
-+                   ^                  ^
-+                   |                  |
-+                   |           write 0x2 == set output to "1" (on)
-+                   |           write 0x3 == set output to "0" (off)
-+                   |
-+            write 0x1 == set output to "1" (on)
-+            write 0x4 == set output to "0" (off)
-+
-+
-+Required properties:
-+- compatible : "snps,creg-gpio"
-+- reg : Exactly one register range with length 0x4.
-+- #gpio-cells : Should be one - the pin number.
-+- gpio-controller : Marks the device node as a GPIO controller.
-+- snps,ngpios: Number of GPIO pins.
-+- snps,bit-per-line: Number of bits per each gpio line (see picture).
-+  Array the size of "snps,ngpios"
-+- snps,shift: Shift (in bits) of the each GPIO field from the previous one in
-+  register (see picture). Array the size of "snps,ngpios"
-+- snps,on-val: Value should be set in corresponding field to set
-+  output to "1" (see picture). Array the size of "snps,ngpios"
-+- snps,off-val: Value should be set in corresponding field to set
-+  output to "0" (see picture). Array the size of "snps,ngpios"
-+
-+Optional properties:
-+- snps,default-val: default output field values. Array the size of "snps,ngpios"
-+
-+Example (see picture):
-+
-+gpio: gpio@f00014b0 {
-+	compatible = "snps,creg-gpio";
-+	reg = <0xf00014b0 0x4>;
-+	gpio-controller;
-+	#gpio-cells = <1>;
-+	snps,ngpios = <2>;
-+	snps,shift = <5 1>;
-+	snps,bit-per-line = <2 3>;
-+	snps,on-val = <2 1>;
-+	snps,off-val = <3 4>;
-+	snps,default-val = <2 1>;
-+};
+> +	select OF_GPIO
+> +	help
+> +	  This driver supports GPIOs via CREG on various Synopsys SoCs.
+> +	  This is is single-register MMIO gpio driver for complex cases
+
+	  This is a                  MMIO GPIO
+
+> +	  where only several fields in register belong to GPIO and
+
+	                            in a register
+
+> +	  each GPIO owns field with different length and on/off values.
+
+maybe:
+	                 fields with different lengths
+
+> +
+>  config GPIO_SPEAR_SPICS
+>  	bool "ST SPEAr13xx SPI Chip Select as GPIO support"
+>  	depends on PLAT_SPEAR
+
+
 -- 
-2.14.4
+~Randy
