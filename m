@@ -1,71 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/3] pinctrl: msm: Really mask level interrupts to
- prevent latching
-Date: Thu, 23 Aug 2018 09:57:18 +0200
-Message-ID: <CACRpkdZJ6Xa6Ge8iCkRSUek3S=LFGt710KQxotovZYgGf4qoXA@mail.gmail.com>
-References: <20180816200648.90458-1-swboyd@chromium.org> <20180816200648.90458-2-swboyd@chromium.org>
- <CAD=FV=Uk9XgP+6_4x685E0yM4kS+0HkEFtML+N-nkR6DzFfchQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: OMAP1: ams-delta: assign MODEM IRQ from GPIO descriptor
+Date: Thu, 23 Aug 2018 12:42:27 +0200
+Message-ID: <CACRpkdb7E7cjZuYx6Cgxv2sNJmxvwqg0dNh3WpALwtnuCsezuw@mail.gmail.com>
+References: <20180820181333.2527-1-jmkrzyszt@gmail.com> <20180820181333.2527-2-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=Uk9XgP+6_4x685E0yM4kS+0HkEFtML+N-nkR6DzFfchQ@mail.gmail.com>
+In-Reply-To: <20180820181333.2527-2-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Stephen Boyd <swboyd@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: ext Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Greg KH <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-serial@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 10:49 PM Doug Anderson <dianders@chromium.org> wrote:
-> On Thu, Aug 16, 2018 at 1:06 PM, Stephen Boyd <swboyd@chromium.org> wrote:
-> > The interrupt controller hardware in this pin controller has two status
-> > enable bits. The first "normal" status enable bit enables or disables
-> > the summary interrupt line being raised when a gpio interrupt triggers
-> > and the "raw" status enable bit allows or prevents the hardware from
-> > latching an interrupt into the status register for a gpio interrupt.
-> > Currently we just toggle the "normal" status enable bit in the mask and
-> > unmask ops so that the summary irq interrupt going to the CPU's
-> > interrupt controller doesn't trigger for the masked gpio interrupt.
-> >
-> > For a level triggered interrupt, the flow would be as follows: the pin
-> > controller sees the interrupt, latches the status into the status
-> > register, raises the summary irq to the CPU, summary irq handler runs
-> > and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
-> > interrupt, the interrupt handler runs, and finally unmask the interrupt.
-> > When the interrupt handler completes, we expect that the interrupt line
-> > level will go back to the deasserted state so the genirq code can unmask
-> > the interrupt without it triggering again.
-> >
-> > If we only mask the interrupt by clearing the "normal" status enable bit
-> > then we'll ack the interrupt but it will continue to show up as pending
-> > in the status register because the raw status bit is enabled, the
-> > hardware hasn't deasserted the line, and thus the asserted state latches
-> > into the status register again. When the hardware deasserts the
-> > interrupt the pin controller still thinks there is a pending unserviced
-> > level interrupt because it latched it earlier. This behavior causes
-> > software to see an extra interrupt for level type interrupts each time
-> > the interrupt is handled.
-> >
-> > Let's fix this by clearing the raw status enable bit for level type
-> > interrupts so that the hardware stops latching the status of the
-> > interrupt after we ack it. We don't do this for edge type interrupts
-> > because it seems that toggling the raw status enable bit for edge type
-> > interrupts causes spurious edge interrupts.
-> >
-> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Cc: Doug Anderson <dianders@chromium.org>
-> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> > ---
-> >  drivers/pinctrl/qcom/pinctrl-msm.c | 24 ++++++++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
->
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
->
-> NOTE: IMO we should land this fix even if we continue to have debate
-> on patch #2 and #3 since this fixes a definite problem.
+On Mon, Aug 20, 2018 at 8:12 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-OK makes sense, I guess I'll queue this for fixes
-once v4.19-rc1 is out.
+> Don't request MODEM IRQ GPIO by its global number in
+> ams_delta_modem_init().  Instead, obtain its GPIO descriptor
+> and assign related IRQ to the MODEM.  Do that from
+> omap_gpio_deps_init(), where the chip is already looked up.  Then, in
+> ams_delta_modem_init(), just check for the IRQ number having been
+> already assigned.
+>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Would be nice to also get Bjorn's buy-in on it!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+It's a bit unorthodox to have the board files intercept and poke
+around inside the gpio_chip like the code in this file does,
+I prefer to keep it encapsulated inside the GPIO driver.
+However this is the lesser evil... if OMAP1 is ever phased
+over to device tree it will go away, until then it is just nicely
+contained.
 
 Yours,
 Linus Walleij
