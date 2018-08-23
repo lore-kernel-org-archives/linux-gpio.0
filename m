@@ -1,38 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] ARM: OMAP1: ams-delta: register MODEM device earlier
-Date: Thu, 23 Aug 2018 12:45:22 +0200
-Message-ID: <CACRpkdb5B14Z-hnqxtkE_KaAAAT0EWwC_1ogZBBzHHtBfck-jg@mail.gmail.com>
-References: <20180820181333.2527-1-jmkrzyszt@gmail.com> <20180820181333.2527-4-jmkrzyszt@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH 0/2] GPIO: add single-register gpio via creg driver
+Date: Thu, 23 Aug 2018 18:00:11 +0300
+Message-ID: <20180823150013.21837-1-Eugeniy.Paltsev@synopsys.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180820181333.2527-4-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: ext Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Greg KH <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-serial@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-snps-arc@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Vineet Gupta <Vineet.Gupta1@synopsys.com>, Alexey Brodkin <Alexey.Brodkin@synopsys.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 8:12 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+Add single-register MMIO gpio driver for complex cases where
+only several fields in register belong to GPIO and each GPIO
+owns field with different length and on/off values.
 
-> Amstrad Delta MODEM device used to be initialized at arch_initcall
-> before it was once moved to late_initcall by commit f7519d8c8290 ("ARM:
-> OMAP1: ams-delta: register latch dependent devices later"). The purpose
-> of that change was to postpone initialization of devices which depended
-> on latch2 pins until latch2 converted to GPIO device was ready.
->
-> After recent fixes to GPIO handling, it was possible to moove
-> registration of most of those device back to where they were before.
-> The same can be safely done with the MODEM device as initialization
-> of GPIO pins it depends on was moved to machine_init by preceding
-> patch.
->
-> Move registration of the MODEM device to arch_initcall_sync, not to
-> arch_initcall, so it is never exposed to potential conflictinh
-> registration order hazard against OMAP serial ports.
->
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Here is the example:
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+31            11        8         7        5         0   < bit number
+|              |        |         |        |         |
+[   not used   | gpio-1 | shift-1 | gpio-0 | shift-0 ]   < 32 bit MMIO
+                   ^                  ^
+                (3 bit)            (2 bit)
+                   |                  |
+                   |                  |
+                   |           write 0x2 == set output to "1" (on)
+                   |           write 0x3 == set output to "0" (off)
+                   |
+            write 0x1 == set output to "1" (on)
+            write 0x4 == set output to "0" (off)
 
-Yours,
-Linus Walleij
+This is different from gpio-reg, gpio-mmio and gpio-74xx-mmio:
+* They all don't support cases when GPIO output register have
+  more than one bit per GPIO line.
+* They don't support holes in MMIO register.
+* They don't support cases when GPIO lines have different on/off
+  values.
+
+This driver supports GPIOs via CREG on various Synopsys SoCs/boards.
+
+Eugeniy Paltsev (2):
+  GPIO: add single-register gpio via creg driver
+  dt-bindings: Document the Synopsys GPIO via CREG bindings
+
+ .../devicetree/bindings/gpio/snps,creg-gpio.txt    |  48 ++++
+ MAINTAINERS                                        |   6 +
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-creg-snps.c                      | 242 +++++++++++++++++++++
+ 5 files changed, 306 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
+ create mode 100644 drivers/gpio/gpio-creg-snps.c
+
+-- 
+2.14.4
