@@ -1,88 +1,65 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-Date: Fri, 24 Aug 2018 14:39:34 +0200
-Message-ID: <20180824143934.6d6b6487@bbrezillon>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <20180719152930.3715-2-boris.brezillon@bootlin.com>
-        <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH V5 1/5] dt-bindings: arm: fsl: add scu binding doc
+Date: Fri, 24 Aug 2018 15:06:58 +0530
+Message-ID: <CABb+yY1+J+=nV2gNN30KLr2YQDy_g81-dJS1DJq8NgUv7Qqcog@mail.gmail.com>
+References: <1534781305-4770-1-git-send-email-aisheng.dong@nxp.com>
+ <1534781305-4770-2-git-send-email-aisheng.dong@nxp.com>
+ <20180820181155.GA13901@bogus>
+ <AM0PR04MB4211B9113831B292110C709280310@AM0PR04MB4211.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: vitor <Vitor.Soares@synopsys.com>, linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hel>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <AM0PR04MB4211B9113831B292110C709280310@AM0PR04MB4211.eurprd04.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, ulf.hansson@linaro.org, Dong Aisheng <dongas86@gmail.com>, Devicetree List <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-gpio@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>, ", Sascha Hauer" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Vitor,
+On Tue, Aug 21, 2018 at 8:30 AM A.s. Dong <aisheng.dong@nxp.com> wrote:
+>
+> > > +
+> > > +The System Controller Firmware (SCFW) is a low-level system function
+> > > +which runs on a dedicated Cortex-M core to provide power, clock, and
+> > > +resource management. It exists on some i.MX8 processors. e.g. i.MX8QM
+> > > +(QM, QP), and i.MX8QX (QXP, DX).
+> > > +
+> > > +The AP communicates with the SC using a multi-ported MU module found
+> > > +in the LSIO subsystem. The current definition of this MU module
+> > > +provides
+> > > +5 remote AP connections to the SC to support up to 5 execution
+> > > +environments (TZ, HV, standard Linux, etc.). The SC side of this MU
+> > > +module interfaces with the LSIO DSC IP bus. The SC firmware will
+> > > +communicate with this MU using the MSI bus.
+> >
+> > How are 5 users supported with only 4 channels defined below?
+>
+> There're 5 MU instances designed to be specifically communicate with
+> SCU Firmware on MX8 hardware.
+>
+This is correct.
 
-On Wed, 22 Aug 2018 17:43:34 +0100
-vitor <Vitor.Soares@synopsys.com> wrote:
-
-> Hi Boris,
-> 
-> 
-> On 19-07-2018 16:29, Boris Brezillon wrote:
-> > +int i3c_bus_register(struct i3c_bus *i3cbus)
-> > +{
-> > +	struct i2c_dev_desc *desc;
-> > +
-> > +	i3c_bus_for_each_i2cdev(i3cbus, desc) {
-> > +		switch (desc->boardinfo->lvr & I3C_LVR_I2C_INDEX_MASK) {
-> > +		case I3C_LVR_I2C_INDEX(0):
-> > +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_FAST)
-> > +				i3cbus->mode = I3C_BUS_MODE_MIXED_FAST;
-> > +			break;
-> > +
-> > +		case I3C_LVR_I2C_INDEX(1):
-> > +		case I3C_LVR_I2C_INDEX(2):
-> > +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_SLOW)
-> > +				i3cbus->mode = I3C_BUS_MODE_MIXED_SLOW;
-> > +			break;
-> > +
-> > +		default:
-> > +			return -EINVAL;
-> > +		}
-> > +	}
-> > +
-> > +	if (!i3cbus->scl_rate.i3c)
-> > +		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
-> > +
-> > +	if (!i3cbus->scl_rate.i2c) {
-> > +		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
-> > +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
-> > +		else
-> > +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
-> > +	}
-> > +
-> > +	/*
-> > +	 * I3C/I2C frequency may have been overridden, check that user-provided
-> > +	 * values are not exceeding max possible frequency.
-> > +	 */
-> > +	if (i3cbus->scl_rate.i3c > I3C_BUS_MAX_I3C_SCL_RATE ||
-> > +	    i3cbus->scl_rate.i2c > I3C_BUS_I2C_FM_PLUS_SCL_RATE) {
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	dev_set_name(&i3cbus->dev, "i3c-%d", i3cbus->id);
-> > +
-> > +	return device_add(&i3cbus->dev);
-> > +}  
-> During the tests of the bus with i2c devices I found the i2c_dev_desc 
-> objects aren't allocated before this function. This cause i3cbus->mode = 
-> I3C_BUS_MODE_PURE.
-
-I just checked and DT parsing (+ I2C descs creation) is done before
-i3c_bus_register() is called, so we should be good. How did you declare
-your I2C devices (right now, only DT declaration is supported).
-
-> 
-> I want to do something for the slave and secondary master, do you 
-> already have infrastructure that you can share?
-
-What do you mean?
-
-Regards,
-
-Boris
+> With the new generic mu binding [1], each MU instance is abstracted
+> Into 16 virtual MU channels. (4 Tx, 4 Rx, 4 Tx doorbell, 4 Rx doorbell).
+> (MU has 4 pair of Tx/Rx data register which can be used to send/receive
+> multi words. With new binding, each data register is abstracted into one
+> MU channel, totally 8 channels for data transfer).
+>
+> SCU protocol is already designed to uses all data registers to send/receive
+> multi words according to MU hardware reference manual. So it must
+> use all channels in one MU instances with new binding.
+>
+FYI, this is incorrect.
+The 16 channels are physical and not virtual. In fact, all this is to
+avoid virtual channels.
+The physical resources required by new bindings are exactly the same
+as by old bindings. Now you use 8 physical channels instead of 1
+virtual.
