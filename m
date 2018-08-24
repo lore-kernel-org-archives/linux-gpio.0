@@ -1,40 +1,88 @@
-From: =?UTF-8?Q?Piotr_Kr=c3=b3l?= <piotr.krol@3mdeb.com>
-Subject: Re: [PATCH] gpio: Add driver for PC Engines APU2/APU3 GPIOs
-Date: Fri, 24 Aug 2018 12:56:32 +0200
-Message-ID: <dc367319-8877-83cf-42e0-e3f7e8e14a7a@3mdeb.com>
-References: <20180801111243.2848-1-fe@dev.tdt.de>
- <CAHp75VdNf8BCYEq348CQe2OUUOLdYehsr5TmBDQXXEAm59+kDg@mail.gmail.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
+Date: Fri, 24 Aug 2018 14:39:34 +0200
+Message-ID: <20180824143934.6d6b6487@bbrezillon>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+        <20180719152930.3715-2-boris.brezillon@bootlin.com>
+        <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdNf8BCYEq348CQe2OUUOLdYehsr5TmBDQXXEAm59+kDg@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Florian Eckert <fe@dev.tdt.de>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: vitor <Vitor.Soares@synopsys.com>, linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hel>
 List-Id: linux-gpio@vger.kernel.org
 
-On 08/03/2018 09:08 PM, Andy Shevchenko wrote:
+Hi Vitor,
 
-Hi Andy,
+On Wed, 22 Aug 2018 17:43:34 +0100
+vitor <Vitor.Soares@synopsys.com> wrote:
 
-(...)
-
->> +#define APU_FCH_ACPI_MMIO_BASE 0xFED80000
->> +#define APU_FCH_GPIO_BASE      (APU_FCH_ACPI_MMIO_BASE + 0x1500)
+> Hi Boris,
 > 
-> Wow! Can we see ACPI tables for these boards? Care to share (via some
-> file share service) output of `acpidump -o tables.dat` ?
+> 
+> On 19-07-2018 16:29, Boris Brezillon wrote:
+> > +int i3c_bus_register(struct i3c_bus *i3cbus)
+> > +{
+> > +	struct i2c_dev_desc *desc;
+> > +
+> > +	i3c_bus_for_each_i2cdev(i3cbus, desc) {
+> > +		switch (desc->boardinfo->lvr & I3C_LVR_I2C_INDEX_MASK) {
+> > +		case I3C_LVR_I2C_INDEX(0):
+> > +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_FAST)
+> > +				i3cbus->mode = I3C_BUS_MODE_MIXED_FAST;
+> > +			break;
+> > +
+> > +		case I3C_LVR_I2C_INDEX(1):
+> > +		case I3C_LVR_I2C_INDEX(2):
+> > +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_SLOW)
+> > +				i3cbus->mode = I3C_BUS_MODE_MIXED_SLOW;
+> > +			break;
+> > +
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +	}
+> > +
+> > +	if (!i3cbus->scl_rate.i3c)
+> > +		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
+> > +
+> > +	if (!i3cbus->scl_rate.i2c) {
+> > +		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
+> > +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
+> > +		else
+> > +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
+> > +	}
+> > +
+> > +	/*
+> > +	 * I3C/I2C frequency may have been overridden, check that user-provided
+> > +	 * values are not exceeding max possible frequency.
+> > +	 */
+> > +	if (i3cbus->scl_rate.i3c > I3C_BUS_MAX_I3C_SCL_RATE ||
+> > +	    i3cbus->scl_rate.i2c > I3C_BUS_I2C_FM_PLUS_SCL_RATE) {
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	dev_set_name(&i3cbus->dev, "i3c-%d", i3cbus->id);
+> > +
+> > +	return device_add(&i3cbus->dev);
+> > +}  
+> During the tests of the bus with i2c devices I found the i2c_dev_desc 
+> objects aren't allocated before this function. This cause i3cbus->mode = 
+> I3C_BUS_MODE_PURE.
 
-Please find acpidump [1]. FYI I'm PC Engines firmware maintainer
-(firmware is coreboot based), so I can fix required things. I'm pretty
-sure that ACPI tables are not in best shape.
+I just checked and DT parsing (+ I2C descs creation) is done before
+i3c_bus_register() is called, so we should be good. How did you declare
+your I2C devices (right now, only DT declaration is supported).
 
-[1] https://pastebin.com/2neC1Sri
+> 
+> I want to do something for the slave and secondary master, do you 
+> already have infrastructure that you can share?
 
-Best Regards,
---
-Piotr Król
-Embedded Systems Consultant
-https://3mdeb.com | @3mdeb_com
+What do you mean?
+
+Regards,
+
+Boris
