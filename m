@@ -1,66 +1,132 @@
-From: Paul Burton <paul.burton@mips.com>
-Subject: [PATCH] pinctrl: ingenic: Fix group & function error checking
-Date: Sat, 25 Aug 2018 10:53:28 -0700
-Message-ID: <20180825175328.16687-1-paul.burton@mips.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] gpio: ftgpio: Support optional silicon clock
+Date: Sun, 26 Aug 2018 13:03:21 +0200
+Message-ID: <20180826110321.17723-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Paul Burton <paul.burton@mips.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Cercueil <paul@crapouillou.net>, Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Commit a203728ac6bb ("pinctrl: core: Return selector to the pinctrl
-driver") and commit f913cfce4ee4 ("pinctrl: pinmux: Return selector to
-the pinctrl driver") modified the return values of
-pinctrl_generic_add_group() and pinmux_generic_add_function()
-respectively, but did so without updating their callers. This broke the
-pinctrl-ingenic driver, which treats non-zero return values from these
-functions as errors & fails to probe. For example on a MIPS Ci20:
+The GPIO silicon is clocked with a PCLK (peripheral clock)
+on all systems, however not all platforms model it and include
+it in e.g. the device tree, so add clock handling but make it
+optional so we bail out safely if it is e.g. always on.
 
-  pinctrl-ingenic 10010000.pin-controller: Failed to register group uart0-hwflow
-  pinctrl-ingenic: probe of 10010000.pin-controller failed with error 1
-
-Without the pinctrl driver probed, other drivers go on to fail to probe
-too & the system is unusable.
-
-Fix this by modifying the error checks to treat only negative values as
-errors, matching the commits that introduced the breakage & similar
-changes made to other drivers.
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: a203728ac6bb ("pinctrl: core: Return selector to the pinctrl driver")
-Fixes: f913cfce4ee4 ("pinctrl: pinmux: Return selector to the pinctrl driver")
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/pinctrl-ingenic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-ftgpio010.c | 35 +++++++++++++++++++++++++++++++----
+ 1 file changed, 31 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
-index 6a1b6058b991..628817c40e3b 100644
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -793,7 +793,7 @@ static int ingenic_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-ftgpio010.c b/drivers/gpio/gpio-ftgpio010.c
+index 868bf8501560..c26feab143a3 100644
+--- a/drivers/gpio/gpio-ftgpio010.c
++++ b/drivers/gpio/gpio-ftgpio010.c
+@@ -15,6 +15,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
+ #include <linux/bitops.h>
++#include <linux/clk.h>
  
- 		err = pinctrl_generic_add_group(jzpc->pctl, group->name,
- 				group->pins, group->num_pins, group->data);
--		if (err) {
-+		if (err < 0) {
- 			dev_err(dev, "Failed to register group %s\n",
- 					group->name);
- 			return err;
-@@ -806,7 +806,7 @@ static int ingenic_pinctrl_probe(struct platform_device *pdev)
- 		err = pinmux_generic_add_function(jzpc->pctl, func->name,
- 				func->group_names, func->num_group_names,
- 				func->data);
--		if (err) {
-+		if (err < 0) {
- 			dev_err(dev, "Failed to register function %s\n",
- 					func->name);
- 			return err;
+ /* GPIO registers definition */
+ #define GPIO_DATA_OUT		0x00
+@@ -40,11 +41,14 @@
+  * struct ftgpio_gpio - Gemini GPIO state container
+  * @dev: containing device for this instance
+  * @gc: gpiochip for this instance
++ * @base: remapped I/O-memory base
++ * @clk: silicon clock
+  */
+ struct ftgpio_gpio {
+ 	struct device *dev;
+ 	struct gpio_chip gc;
+ 	void __iomem *base;
++	struct clk *clk;
+ };
+ 
+ static void ftgpio_gpio_ack_irq(struct irq_data *d)
+@@ -180,6 +184,13 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
+ 	if (irq <= 0)
+ 		return irq ? irq : -EINVAL;
+ 
++	g->clk = devm_clk_get(dev, NULL);
++	if (!IS_ERR(g->clk)) {
++		ret = clk_prepare_enable(g->clk);
++		if (ret)
++			return ret;
++	}
++
+ 	ret = bgpio_init(&g->gc, dev, 4,
+ 			 g->base + GPIO_DATA_IN,
+ 			 g->base + GPIO_DATA_SET,
+@@ -189,7 +200,7 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
+ 			 0);
+ 	if (ret) {
+ 		dev_err(dev, "unable to init generic GPIO\n");
+-		return ret;
++		goto dis_clk;
+ 	}
+ 	g->gc.label = "FTGPIO010";
+ 	g->gc.base = -1;
+@@ -199,7 +210,7 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_gpiochip_add_data(dev, &g->gc, g);
+ 	if (ret)
+-		return ret;
++		goto dis_clk;
+ 
+ 	/* Disable, unmask and clear all interrupts */
+ 	writel(0x0, g->base + GPIO_INT_EN);
+@@ -211,14 +222,29 @@ static int ftgpio_gpio_probe(struct platform_device *pdev)
+ 				   IRQ_TYPE_NONE);
+ 	if (ret) {
+ 		dev_info(dev, "could not add irqchip\n");
+-		return ret;
++		goto dis_clk;
+ 	}
+ 	gpiochip_set_chained_irqchip(&g->gc, &ftgpio_gpio_irqchip,
+ 				     irq, ftgpio_gpio_irq_handler);
+ 
++	platform_set_drvdata(pdev, g);
+ 	dev_info(dev, "FTGPIO010 @%p registered\n", g->base);
+ 
+ 	return 0;
++
++dis_clk:
++	if (!IS_ERR(g->clk))
++		clk_disable_unprepare(g->clk);
++	return ret;
++}
++
++static int ftgpio_gpio_remove(struct platform_device *pdev)
++{
++	struct ftgpio_gpio *g = platform_get_drvdata(pdev);
++
++	if (!IS_ERR(g->clk))
++		clk_disable_unprepare(g->clk);
++	return 0;
+ }
+ 
+ static const struct of_device_id ftgpio_gpio_of_match[] = {
+@@ -239,6 +265,7 @@ static struct platform_driver ftgpio_gpio_driver = {
+ 		.name		= "ftgpio010-gpio",
+ 		.of_match_table = of_match_ptr(ftgpio_gpio_of_match),
+ 	},
+-	.probe	= ftgpio_gpio_probe,
++	.probe = ftgpio_gpio_probe,
++	.remove = ftgpio_gpio_remove,
+ };
+ builtin_platform_driver(ftgpio_gpio_driver);
 -- 
-2.18.0
+2.17.1
