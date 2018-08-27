@@ -1,40 +1,75 @@
-From: Srikanth K H <srikanth.h@samsung.com>
-Subject: [PATCH 1/1] Preventive patch in the pin control subsystem to handle
- NULL check.
-Date: Mon, 27 Aug 2018 14:08:59 +0530
-Message-ID: <1535359139-6264-1-git-send-email-srikanth.h@samsung.com>
-References: <CGME20180827083916epcas1p43a3fc8570269411de215254ce0ae4b37@epcas1p4.samsung.com>
+From: <sean.wang@mediatek.com>
+Subject: [PATCH 00/16] Unify MediaTek pinctrl in preparation for MT8183 and MT6765
+Date: Mon, 27 Aug 2018 18:09:59 +0800
+Message-ID: <cover.1535363951.git.sean.wang@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: srikanth.h@samsung.com
+To: linus.walleij@linaro.org, linux-mediatek@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-If the pin descriptor requested for the physical pin fails then the
-descriptor is dereferenced without checking for its validity which
-may lead to crash, hence added preventive code to check for NULL
-and accordingly dereference.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Signed-off-by: Srikanth K H <srikanth.h@samsung.com>
----
- drivers/pinctrl/pinconf.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Irregular register arrangement and their logic access from various MediaTek
+SoCs being introduced already causes pinctrl-mtk-common to bloat and became
+really hard to maintain so that the patch creates pinctrl-mtk-common-v2 based
+on the core of mt7622 pinctrl to try make the register operations to be simple.
 
-diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
-index d3fe143..576d08d 100644
---- a/drivers/pinctrl/pinconf.c
-+++ b/drivers/pinctrl/pinconf.c
-@@ -269,8 +269,9 @@ void pinconf_show_setting(struct seq_file *s,
- 	case PIN_MAP_TYPE_CONFIGS_PIN:
- 		desc = pin_desc_get(setting->pctldev,
- 				    setting->data.configs.group_or_pin);
--		seq_printf(s, "pin %s (%d)", desc->name,
--			   setting->data.configs.group_or_pin);
-+		if (desc)
-+			seq_printf(s, "pin %s (%d)", desc->name,
-+				   setting->data.configs.group_or_pin);
- 		break;
- 	case PIN_MAP_TYPE_CONFIGS_GROUP:
- 		seq_printf(s, "group %s (%d)",
+The goals pinctrl-mtk-common-v2 want to achieve are to hopefully support
+all of MediaTek SoCs, and two kinds of dt-bindings being supported,
+Linux generic pinctrl dt-binding which mt762x like to support and MediaTek
+vendor per-pin dt-binding the other SoCs support the MT8183 and MT6765 incline
+to make use of.
+
+The patch starts to refactor MT7622 pinctrl driver first with splitting
+out these portable ways from there such as table-based register operation
+and the other operations in common in the both kinds of driver.
+
+Sean Wang (16):
+  pinctrl: mediatek: add pinctrl-mtk-common-v2 for all MediaTek pinctrls
+  pinctrl: mediatek: add pinctrl-moore that implements the generic
+    pinctrl dt-bindings
+  pinctrl: mediatek: extend struct mtk_pin_field_calc to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: extend struct mtk_pin_desc to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: extend struct mtk_pin_soc to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add driving strength related support to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add drv register support to pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add pull related support to pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add advanced pull related support to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add ies register support to pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add pullen, pullsel register support to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add MT7623 pinctrl driver based on generic pinctrl
+    binding
+  pinctrl: mediatek: use pin descriptor all in pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: add multiple register bases support to
+    pinctrl-mtk-common-v2.c
+  pinctrl: mediatek: adjust error code and message when some register
+    not supported is found
+  pinctrl: mediatek: extend struct mtk_pin_desc which per-pin driver
+    depends on
+
+ drivers/pinctrl/mediatek/Kconfig                 |   25 +-
+ drivers/pinctrl/mediatek/Makefile                |    2 +
+ drivers/pinctrl/mediatek/pinctrl-moore.c         |  813 ++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-moore.h         |   57 +
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c        | 1407 ++++-----------------
+ drivers/pinctrl/mediatek/pinctrl-mt7623.c        | 1441 ++++++++++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c |  510 ++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |  281 +++++
+ 8 files changed, 3345 insertions(+), 1191 deletions(-)
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-moore.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-moore.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7623.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+
 -- 
-1.9.1
+2.7.4
