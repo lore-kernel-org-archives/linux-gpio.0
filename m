@@ -1,43 +1,53 @@
 From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: Re: [PATCH 1/2] GPIO: add single-register gpio via creg driver
-Date: Tue, 28 Aug 2018 11:04:38 +0000
-Message-ID: <1535454277.24765.1.camel@synopsys.com>
-References: <20180823150013.21837-1-Eugeniy.Paltsev@synopsys.com>
-         <20180823150013.21837-2-Eugeniy.Paltsev@synopsys.com>
-         <c5f75b43-6ef3-31e2-0366-b6c8623d3f5d@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Subject: [PATCH v2 0/2] GPIO: add single-register GPIO via CREG driver
+Date: Tue, 28 Aug 2018 14:27:19 +0300
+Message-ID: <20180828112721.28178-1-Eugeniy.Paltsev@synopsys.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c5f75b43-6ef3-31e2-0366-b6c8623d3f5d@infradead.org>
-Content-Language: en-US
-Content-ID: <E2E4A5A9F3CE234FA728D27A04B4E36C@internal.synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "rdunlap@infradead.org" <rdunlap@infradead.org>, "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
-Cc: "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+To: linux-snps-arc@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Vineet Gupta <Vineet.Gupta1@synopsys.com>, Alexey Brodkin <Alexey.Brodkin@synopsys.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgUmFuZHksDQoNCnRoYW5rcyBmb3IgY29tbWVudHMsIHdpbGwgYmUgZml4ZWQgaW4gcGF0Y2gg
-VjIuDQoNCk9uIFRodSwgMjAxOC0wOC0yMyBhdCAwODowOCAtMDcwMCwgUmFuZHkgRHVubGFwIHdy
-b3RlOg0KPiBPbiAwOC8yMy8yMDE4IDA4OjAwIEFNLCBFdWdlbml5IFBhbHRzZXYgd3JvdGU6DQo+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3Bpby9LY29uZmlnIGIvZHJpdmVycy9ncGlvL0tjb25m
-aWcNCj4gPiBpbmRleCA3MWMwYWI0NmYyMTYuLjBmOWNjMTU4MmNhYiAxMDA2NDQNCj4gPiAtLS0g
-YS9kcml2ZXJzL2dwaW8vS2NvbmZpZw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3Bpby9LY29uZmlnDQo+
-ID4gQEAgLTQzMCw2ICs0MzAsMTUgQEAgY29uZmlnIEdQSU9fUkVHDQo+ID4gIAkgIEEgMzItYml0
-IHNpbmdsZSByZWdpc3RlciBHUElPIGZpeGVkIGluL291dCBpbXBsZW1lbnRhdGlvbi4gIFRoaXMN
-Cj4gPiAgCSAgY2FuIGJlIHVzZWQgdG8gcmVwcmVzZW50IGFueSByZWdpc3RlciBhcyBhIHNldCBv
-ZiBHUElPIHNpZ25hbHMuDQo+ID4gIA0KPiA+ICtjb25maWcgR1BJT19TTlBTX0NSRUcNCj4gPiAr
-CWJvb2wgIkdQSU8gdmlhIENSRUcgKENvbnRyb2wgUkVHaXNlcnMpIGRyaXZlciINCj4gDQo+IAkg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIFJFR2lzdGVycykNCj4gDQo+ID4gKwlzZWxlY3Qg
-T0ZfR1BJTw0KPiA+ICsJaGVscA0KPiA+ICsJICBUaGlzIGRyaXZlciBzdXBwb3J0cyBHUElPcyB2
-aWEgQ1JFRyBvbiB2YXJpb3VzIFN5bm9wc3lzIFNvQ3MuDQo+ID4gKwkgIFRoaXMgaXMgaXMgc2lu
-Z2xlLXJlZ2lzdGVyIE1NSU8gZ3BpbyBkcml2ZXIgZm9yIGNvbXBsZXggY2FzZXMNCj4gDQo+IAkg
-IFRoaXMgaXMgYSAgICAgICAgICAgICAgICAgIE1NSU8gR1BJTw0KPiANCj4gPiArCSAgd2hlcmUg
-b25seSBzZXZlcmFsIGZpZWxkcyBpbiByZWdpc3RlciBiZWxvbmcgdG8gR1BJTyBhbmQNCj4gDQo+
-IAkgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW4gYSByZWdpc3Rlcg0KPiANCj4gPiArCSAg
-ZWFjaCBHUElPIG93bnMgZmllbGQgd2l0aCBkaWZmZXJlbnQgbGVuZ3RoIGFuZCBvbi9vZmYgdmFs
-dWVzLg0KPiANCj4gbWF5YmU6DQo+IAkgICAgICAgICAgICAgICAgIGZpZWxkcyB3aXRoIGRpZmZl
-cmVudCBsZW5ndGhzDQo+IA0KPiA+ICsNCj4gPiAgY29uZmlnIEdQSU9fU1BFQVJfU1BJQ1MNCj4g
-PiAgCWJvb2wgIlNUIFNQRUFyMTN4eCBTUEkgQ2hpcCBTZWxlY3QgYXMgR1BJTyBzdXBwb3J0Ig0K
-PiA+ICAJZGVwZW5kcyBvbiBQTEFUX1NQRUFSDQo+IA0KPiANCi0tIA0KIEV1Z2VuaXkgUGFsdHNl
-dg==
+Add single-register MMIO GPIO driver for complex cases where
+only several fields in register belong to GPIO lines and each GPIO line
+owns a field with different length and on/off value.
+
+Here is the example:
+
+31            11        8         7        5         0   < bit number
+|              |        |         |        |         |
+[   not used   | gpio-1 | shift-1 | gpio-0 | shift-0 ]   < 32 bit MMIO
+                   ^                  ^                     register
+                (3 bit)            (2 bit)
+                   |                  |
+                   |                  |
+                   |           write 0x2 == set output to "1" (on)
+                   |           write 0x3 == set output to "0" (off)
+                   |
+            write 0x1 == set output to "1" (on)
+            write 0x4 == set output to "0" (off)
+
+This is different from gpio-reg, gpio-mmio and gpio-74xx-mmio:
+* They all don't support cases when GPIO output register have
+  more than one bit per GPIO line.
+* They don't support holes in MMIO register.
+* They don't support cases when GPIO lines have different on/off
+  values.
+
+This driver supports GPIOs via CREG on various Synopsys SoCs/boards.
+
+Eugeniy Paltsev (2):
+  GPIO: add single-register GPIO via CREG driver
+  dt-bindings: Document the Synopsys GPIO via CREG bindings
+
+ .../devicetree/bindings/gpio/snps,creg-gpio.txt    |  49 +++++
+ MAINTAINERS                                        |   6 +
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-creg-snps.c                      | 242 +++++++++++++++++++++
+ 5 files changed, 307 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
+ create mode 100644 drivers/gpio/gpio-creg-snps.c
+
+-- 
+2.14.4
