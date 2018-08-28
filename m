@@ -1,25 +1,47 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] pinctrl: Convert to using %pOFn instead of
- device_node.name
-Date: Tue, 28 Aug 2018 08:34:30 -0700
-Message-ID: <20180828153430.GM7523@atomide.com>
-References: <20180828015252.28511-1-robh@kernel.org>
- <20180828015252.28511-40-robh@kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 1/2] GPIO: add single-register gpio via creg driver
+Date: Tue, 28 Aug 2018 11:15:47 -0700
+Message-ID: <024be088-15ff-89ed-3766-09eb64e47342@infradead.org>
+References: <20180828112721.28178-1-Eugeniy.Paltsev@synopsys.com>
+ <20180828112721.28178-2-Eugeniy.Paltsev@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180828015252.28511-40-robh@kernel.org>
+In-Reply-To: <20180828112721.28178-2-Eugeniy.Paltsev@synopsys.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Pengutronix Kernel Team <kernel@pengutronix.de>, Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Heiko Stuebner <hei>
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, linux-snps-arc@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Vineet Gupta <Vineet.Gupta1@synopsys.com>, Alexey Brodkin <Alexey.Brodkin@synopsys.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-gpio@vger.kernel.org
 
-* Rob Herring <robh@kernel.org> [180828 01:59]:
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
-...
->  drivers/pinctrl/pinctrl-single.c              | 32 +++++++++----------
->  drivers/pinctrl/ti/pinctrl-ti-iodelay.c       |  8 ++---
+Hi,
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+I don't see any updates/corrections here.  :(
+
+On 08/28/2018 04:27 AM, Eugeniy Paltsev wrote:
+
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 71c0ab46f216..0f9cc1582cab 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -430,6 +430,15 @@ config GPIO_REG
+>  	  A 32-bit single register GPIO fixed in/out implementation.  This
+>  	  can be used to represent any register as a set of GPIO signals.
+>  
+> +config GPIO_SNPS_CREG
+> +	bool "GPIO via CREG (Control REGisers) driver"
+> +	select OF_GPIO
+> +	help
+> +	  This driver supports GPIOs via CREG on various Synopsys SoCs.
+> +	  This is is single-register MMIO gpio driver for complex cases
+> +	  where only several fields in register belong to GPIO and
+> +	  each GPIO owns field with different length and on/off values.
+> +
+>  config GPIO_SPEAR_SPICS
+>  	bool "ST SPEAr13xx SPI Chip Select as GPIO support"
+>  	depends on PLAT_SPEAR
+
+
+-- 
+~Randy
