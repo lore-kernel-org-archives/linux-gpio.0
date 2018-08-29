@@ -1,66 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/11] ARM/gpio: ep93xx: build standalone
-Date: Wed, 29 Aug 2018 09:03:30 +0200
-Message-ID: <CACRpkdY26UVt5snsi5scM2y1odoByvmGu+Pd6FWRSxuH3Gr2Eg@mail.gmail.com>
-References: <20180822204111.9581-1-linus.walleij@linaro.org>
- <20180822204111.9581-2-linus.walleij@linaro.org>
- <CAK8P3a2xgvS4Oxfupob1LcLP3CSfKrF3K-pu05S_3tB=pD3-mA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] Add Actions Semi S700 pinctrl support
+Date: Wed, 29 Aug 2018 09:35:38 +0200
+Message-ID: <CACRpkda=q+LZMUN5xJ777ZGWxYRBdZTvG0naNqr5BoLnVQ1=aA@mail.gmail.com>
+References: <0180729200038.11795-1-sravanhome@gmail.com> <20180731194743.13678-1-sravanhome@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAK8P3a2xgvS4Oxfupob1LcLP3CSfKrF3K-pu05S_3tB=pD3-mA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>, arm-soc <arm@kernel.org>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180731194743.13678-1-sravanhome@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sravanhome@gmail.com
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, pn@denx.de, mp-cs@actions-semi.com, Jeff Chen <jeff.chen@actions-semi.com>, "Thomas C. Liau" <thomas.liau@actions-semi.com>, linux@cubietech.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 9:37 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wed, Aug 22, 2018 at 10:41 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> >
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > As a preparation for multiplatform support, this ensures
-> > that the ep93xx gpio driver can be built without any of
-> > the platform specific header files. We pass the IRQ numbers
-> > as a resource now, and use the virtual mmio base from the
-> > already existing resource, rather than relying on the
-> > hardwired virtual address from the header file.
-> >
-> > Some numbers are now hardcoded that came from macros
-> > in the past, but for all I can tell, the driver already
-> > relied on the specific values.
-> >
-> > Cc: arm@kernel.org
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > ---
-> > Arnd/other ARM SoC person:
-> > Please provide an ACK for this patch so I can merge it
-> > with the rest of the refactorings into the GPIO tree.
+On Tue, Jul 31, 2018 at 9:48 PM Saravanan Sekar <sravanhome@gmail.com> wrote:
+
+> This patchset adds pinctrl support for Actions Semi S700 SoC.
+> Pinmux functions are only accessible for pin groups while pinconf
+> parameters are available for both pin groups and individual pins.
 >
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> pinctrl driver is verified using the Cubieboard7.
 >
-> Did I send the patch to you, or did you find it in old archives?
+> common functionalities from s900 is moved for all Actions Semi
+> SoC's usage.
+> Common pad control configurations are moved to SoC specific
+>
+> dts entry for pinctrl depends on clock driver which is still under review:
+> https://patchwork.kernel.org/patch/10533959/
 
-You sent it at one point as we discussed modernizing EP93xx :)
+So what is the status of this patch set?
 
-I seem to finally start to get somewhere with that. Ground-up...
+I am happy to apply it once you have the right buildtime dependencies
+and Manivannan's ACK on the patch set! (Looks good to me.)
 
-> Normally I'd assume that my authorship implies the Ack,
-> but I guess it's ok to also explictly say that I'm ok with this
-> going through your tree.
+Maybe you want to rebase on v4.19-rc1 and resend as v5 before
+I do that though?
 
-It's more of a handshake with ARM SoC so you folks know
-this is going on.
-
-Thanks!
+Yours,
 Linus Walleij
