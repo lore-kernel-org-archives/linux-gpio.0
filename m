@@ -1,28 +1,25 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: dwapb: Fix error handling in dwapb_gpio_probe()
-Date: Wed, 29 Aug 2018 14:04:30 +0200
-Message-ID: <CACRpkdZuA0S7CmHu07mHz545QfDsvN62VeoPcmEwpYGuCWu1WQ@mail.gmail.com>
-References: <1535488826-30200-1-git-send-email-khoroshilov@ispras.ru>
+Subject: Re: [PATCH] pinctrl: Convert to using %pOFn instead of device_node.name
+Date: Wed, 29 Aug 2018 14:07:12 +0200
+Message-ID: <CACRpkdY-ChkLS39vz6rDUdnR7zuxfu=aD7tky__26fjMP+th1w@mail.gmail.com>
+References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-40-robh@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1535488826-30200-1-git-send-email-khoroshilov@ispras.ru>
+In-Reply-To: <20180828015252.28511-40-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Hoan Tran <hotran@apm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ldv-project@linuxtesting.org
+To: Rob Herring <robh@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Sascha Hauer <kernel@pengutronix.de>, Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 10:43 PM Alexey Khoroshilov
-<khoroshilov@ispras.ru> wrote:
+On Tue, Aug 28, 2018 at 3:55 AM Rob Herring <robh@kernel.org> wrote:
 
-> If dwapb_gpio_add_port() fails in dwapb_gpio_probe(),
-> gpio->clk is left undisabled.
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
 >
-> Found by Linux Driver Verification project (linuxtesting.org).
->
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
 
-Patch applied for fixes.
+Patch applied along with the thundering hoard of ACKs.
 
 Yours,
 Linus Walleij
