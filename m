@@ -1,31 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: lpc18xx: mark expected switch fall-throughs
-Date: Wed, 29 Aug 2018 13:47:51 +0200
-Message-ID: <CACRpkdYLWLhw-O00=Gc3FeVWt9dKFURNO2m5ic4MyjbJrGtGdA@mail.gmail.com>
-References: <20180815171035.GA17360@embeddedor.com>
+Subject: Re: [PATCH v2] pinctrl/amd: use byte access to clear irq/wake status bits
+Date: Wed, 29 Aug 2018 13:55:24 +0200
+Message-ID: <CACRpkdb7OEC8ZFNOU915aD2e=PzOk1DasmaAq-oHCeSYVrnuTQ@mail.gmail.com>
+References: <20180822165754.213402-1-djkurtz@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180815171035.GA17360@embeddedor.com>
+In-Reply-To: <20180822165754.213402-1-djkurtz@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Joachim Eastwood <manabian@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Daniel Drake <drake@endlessm.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>, Ken Xue <Ken.Xue@amd.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 7:10 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
+On Wed, Aug 22, 2018 at 6:57 PM Daniel Kurtz <djkurtz@chromium.org> wrote:
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+> Commit 6afb10267c1692 ("pinctrl/amd: fix masking of GPIO interrupts")
+> changed to the clearing of interrupt status bits to a RMW in a critical
+> section.  This works, but is a bit overkill.
 >
-> Addresses-Coverity-ID: 1292308 ("Missing break in switch")
-> Addresses-Coverity-ID: 1292309 ("Missing break in switch")
-> Addresses-Coverity-ID: 1309546 ("Missing break in switch")
-> Addresses-Coverity-ID: 1357369 ("Missing break in switch")
-> Addresses-Coverity-ID: 1357389 ("Missing break in switch")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> The relevant interrupt/wake status bits are in the Most Significant Byte
+> of a 32-bit word.  These two are the only write-able bits in this byte.
+>
+> Therefore, it should be safe to just write these bits back as a byte
+> access without any additional locking.
+>
+> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 
-Patch applied.
+The build robot is complaining about the syntax.
+Is this fixable? Maybe you already sent a new patch... I will
+see when I reach the top of my inbox.
 
 Yours,
 Linus Walleij
