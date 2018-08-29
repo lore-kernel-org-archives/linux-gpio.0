@@ -1,73 +1,109 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH] pinctrl: Convert to using %pOFn instead of device_node.name
-Date: Wed, 29 Aug 2018 10:15:20 +0800
-Message-ID: <CAGb2v64Hy-RQiXBhYrcy7FtNnqRUOhwGNZc8jko=FVrDDUH_hQ@mail.gmail.com>
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-40-robh@kernel.org>
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Subject: Re: [PATCH 02/11] gpio: ep93xx: Cut down variable names
+Date: Wed, 29 Aug 2018 07:56:45 +0200
+Message-ID: <20180829075645.a5e231052e5f7858e458c412@gmail.com>
+References: <20180822204111.9581-1-linus.walleij@linaro.org>
+ <20180822204111.9581-3-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180828015252.28511-40-robh@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, aisheng.dong@nxp.com, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, stefan@agner.ch, Sascha Hauer <kernel@pengutronix.de>, Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, gregory.clement@bootlin.com, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, alexandre.belloni@bootlin.com, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Tony Lindgren <tony@atomide.com>, Haojian
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180822204111.9581-3-linus.walleij@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: H Hartley Sweeten <hsweeten@visionengravers.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 9:55 AM Rob Herring <robh@kernel.org> wrote:
->
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Dong Aisheng <aisheng.dong@nxp.com>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Sean Wang <sean.wang@mediatek.com>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: Carlo Caione <carlo@caione.org>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Gregory Clement <gregory.clement@bootlin.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-> Cc: Patrice Chotard <patrice.chotard@st.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@st.com>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-amlogic@lists.infradead.org
-> Cc: linux-rockchip@lists.infradead.org
-> Cc: linux-omap@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Hi!
+
+On Wed, 22 Aug 2018 22:41:02 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
+
+> In order to clean up the driver I need to cut a few trees,
+> sorry, variable names, so I can see the forest, sorry driver
+> properly.
+> 
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+
 > ---
->  drivers/pinctrl/berlin/berlin.c               |  6 ++--
->  drivers/pinctrl/freescale/pinctrl-imx.c       |  7 ++--
->  drivers/pinctrl/freescale/pinctrl-imx1-core.c | 12 +++----
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |  4 +--
->  drivers/pinctrl/meson/pinctrl-meson.c         |  2 +-
->  drivers/pinctrl/mvebu/pinctrl-mvebu.c         |  4 +--
->  drivers/pinctrl/nomadik/pinctrl-nomadik.c     |  6 ++--
->  drivers/pinctrl/pinctrl-at91.c                |  8 ++---
->  drivers/pinctrl/pinctrl-lantiq.c              |  8 ++---
->  drivers/pinctrl/pinctrl-rockchip.c            |  8 ++---
->  drivers/pinctrl/pinctrl-rza1.c                |  8 ++---
->  drivers/pinctrl/pinctrl-single.c              | 32 +++++++++----------
->  drivers/pinctrl/pinctrl-st.c                  |  6 ++--
->  drivers/pinctrl/sirf/pinctrl-atlas7.c         |  4 +--
->  drivers/pinctrl/stm32/pinctrl-stm32.c         |  4 +--
->  drivers/pinctrl/sunxi/pinctrl-sunxi.c         |  8 ++---
+>  drivers/gpio/gpio-ep93xx.c | 26 +++++++++++++-------------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+> index 654525d6a9f1..3bfd0e46f7ed 100644
+> --- a/drivers/gpio/gpio-ep93xx.c
+> +++ b/drivers/gpio/gpio-ep93xx.c
+> @@ -37,7 +37,7 @@ void __iomem *ep93xx_gpio_base; /* FIXME: put this into irq_data */
+>  #define EP93XX_GPIO_LINE_MAX_IRQ 23
+>  
+>  struct ep93xx_gpio {
+> -	void __iomem		*mmio_base;
+> +	void __iomem		*base;
+>  	struct gpio_chip	gc[8];
+>  };
+>  
+> @@ -323,10 +323,10 @@ static int ep93xx_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+>  }
+>  
+>  static int ep93xx_gpio_add_bank(struct gpio_chip *gc, struct device *dev,
+> -	void __iomem *mmio_base, struct ep93xx_gpio_bank *bank)
+> +	void __iomem *base, struct ep93xx_gpio_bank *bank)
+>  {
+> -	void __iomem *data = mmio_base + bank->data;
+> -	void __iomem *dir =  mmio_base + bank->dir;
+> +	void __iomem *data = base + bank->data;
+> +	void __iomem *dir =  base + bank->dir;
+>  	int err;
+>  
+>  	err = bgpio_init(gc, dev, 1, data, NULL, NULL, dir, NULL, 0);
+> @@ -346,27 +346,27 @@ static int ep93xx_gpio_add_bank(struct gpio_chip *gc, struct device *dev,
+>  
+>  static int ep93xx_gpio_probe(struct platform_device *pdev)
+>  {
+> -	struct ep93xx_gpio *ep93xx_gpio;
+> +	struct ep93xx_gpio *epg;
+>  	struct resource *res;
+>  	int i;
+>  	struct device *dev = &pdev->dev;
+>  
+> -	ep93xx_gpio = devm_kzalloc(dev, sizeof(struct ep93xx_gpio), GFP_KERNEL);
+> -	if (!ep93xx_gpio)
+> +	epg = devm_kzalloc(dev, sizeof(*epg), GFP_KERNEL);
+> +	if (!epg)
+>  		return -ENOMEM;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	ep93xx_gpio->mmio_base = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(ep93xx_gpio->mmio_base))
+> -		return PTR_ERR(ep93xx_gpio->mmio_base);
+> -	ep93xx_gpio_base = ep93xx_gpio->mmio_base;
+> +	epg->base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(epg->base))
+> +		return PTR_ERR(epg->base);
+> +	ep93xx_gpio_base = epg->base;
+>  
+>  	for (i = 0; i < ARRAY_SIZE(ep93xx_gpio_banks); i++) {
+> -		struct gpio_chip *gc = &ep93xx_gpio->gc[i];
+> +		struct gpio_chip *gc = &epg->gc[i];
+>  		struct ep93xx_gpio_bank *bank = &ep93xx_gpio_banks[i];
+>  
+>  		if (ep93xx_gpio_add_bank(gc, &pdev->dev,
+> -					 ep93xx_gpio->mmio_base, bank))
+> +					 epg->base, bank))
+>  			dev_warn(&pdev->dev, "Unable to add gpio bank %s\n",
+>  				bank->label);
+>  	}
 
-For sunxi:
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+-- 
+Alexander Sverdlin.
