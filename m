@@ -1,62 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/3] pinctrl: msm: Really mask level interrupts to
- prevent latching
-Date: Wed, 29 Aug 2018 09:40:23 +0200
-Message-ID: <CACRpkdbGUPpwEbGqg3Q3780DiEG2fts2WRkjkuQ2kmJR1HiftA@mail.gmail.com>
-References: <20180816200648.90458-1-swboyd@chromium.org> <20180816200648.90458-2-swboyd@chromium.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v4 0/5] Add Actions Semi S700 pinctrl support
+Date: Wed, 29 Aug 2018 13:11:19 +0530
+Message-ID: <20180829074119.GA24958@Mani-XPS-13-9360>
+References: <0180729200038.11795-1-sravanhome@gmail.com>
+ <20180731194743.13678-1-sravanhome@gmail.com>
+ <CACRpkda=q+LZMUN5xJ777ZGWxYRBdZTvG0naNqr5BoLnVQ1=aA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180816200648.90458-2-swboyd@chromium.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkda=q+LZMUN5xJ777ZGWxYRBdZTvG0naNqr5BoLnVQ1=aA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Doug Anderson <dianders@chromium.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: sravanhome@gmail.com, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, pn@denx.de, mp-cs@actions-semi.com, Jeff Chen <jeff.chen@actions-semi.com>, "Thomas C. Liau" <thomas.liau@actions-semi.com>, linux@cubietech.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 10:06 PM Stephen Boyd <swboyd@chromium.org> wrote:
-
-> The interrupt controller hardware in this pin controller has two status
-> enable bits. The first "normal" status enable bit enables or disables
-> the summary interrupt line being raised when a gpio interrupt triggers
-> and the "raw" status enable bit allows or prevents the hardware from
-> latching an interrupt into the status register for a gpio interrupt.
-> Currently we just toggle the "normal" status enable bit in the mask and
-> unmask ops so that the summary irq interrupt going to the CPU's
-> interrupt controller doesn't trigger for the masked gpio interrupt.
+On Wed, Aug 29, 2018 at 09:35:38AM +0200, Linus Walleij wrote:
+> On Tue, Jul 31, 2018 at 9:48 PM Saravanan Sekar <sravanhome@gmail.com> wrote:
+> 
+> > This patchset adds pinctrl support for Actions Semi S700 SoC.
+> > Pinmux functions are only accessible for pin groups while pinconf
+> > parameters are available for both pin groups and individual pins.
+> >
+> > pinctrl driver is verified using the Cubieboard7.
+> >
+> > common functionalities from s900 is moved for all Actions Semi
+> > SoC's usage.
+> > Common pad control configurations are moved to SoC specific
+> >
+> > dts entry for pinctrl depends on clock driver which is still under review:
+> > https://patchwork.kernel.org/patch/10533959/
+> 
+> So what is the status of this patch set?
 >
-> For a level triggered interrupt, the flow would be as follows: the pin
-> controller sees the interrupt, latches the status into the status
-> register, raises the summary irq to the CPU, summary irq handler runs
-> and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
-> interrupt, the interrupt handler runs, and finally unmask the interrupt.
-> When the interrupt handler completes, we expect that the interrupt line
-> level will go back to the deasserted state so the genirq code can unmask
-> the interrupt without it triggering again.
->
-> If we only mask the interrupt by clearing the "normal" status enable bit
-> then we'll ack the interrupt but it will continue to show up as pending
-> in the status register because the raw status bit is enabled, the
-> hardware hasn't deasserted the line, and thus the asserted state latches
-> into the status register again. When the hardware deasserts the
-> interrupt the pin controller still thinks there is a pending unserviced
-> level interrupt because it latched it earlier. This behavior causes
-> software to see an extra interrupt for level type interrupts each time
-> the interrupt is handled.
->
-> Let's fix this by clearing the raw status enable bit for level type
-> interrupts so that the hardware stops latching the status of the
-> interrupt after we ack it. We don't do this for edge type interrupts
-> because it seems that toggling the raw status enable bit for edge type
-> interrupts causes spurious edge interrupts.
->
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-This patch applied for fixes with Doug and Bjorn's ACKs.
+Oops. This one slipped through the cracks...
 
-I suppose you will respin the two others and obtain buy-in from
-the same people for these.
+> I am happy to apply it once you have the right buildtime dependencies
+> and Manivannan's ACK on the patch set! (Looks good to me.)
+> 
 
-Yours,
-Linus Walleij
+Sadly mutt played its part on this patchset and 1,3 patches got
+deleted accidentally.
+
+> Maybe you want to rebase on v4.19-rc1 and resend as v5 before
+> I do that though?
+> 
+
+Parthiban,
+
+Can you please rebase and send the next iteration as Linus said. I'll take a
+look.
+
+Sorry for the late reply.
+
+Regards,
+Mani
+
+> Yours,
+> Linus Walleij
