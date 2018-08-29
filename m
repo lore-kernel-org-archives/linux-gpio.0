@@ -1,34 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl/amd: use byte access to clear irq/wake status bits
-Date: Wed, 29 Aug 2018 13:55:24 +0200
-Message-ID: <CACRpkdb7OEC8ZFNOU915aD2e=PzOk1DasmaAq-oHCeSYVrnuTQ@mail.gmail.com>
-References: <20180822165754.213402-1-djkurtz@chromium.org>
+Subject: Re: [PATCH] gpio: pxa: handle corner case of unprobed device
+Date: Wed, 29 Aug 2018 13:57:08 +0200
+Message-ID: <CACRpkdbU=87WNn1jksJitVouOQuXJsukUqCXggnD6kUjyr7Zwg@mail.gmail.com>
+References: <20180825084417.13526-1-robert.jarzmik@free.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180822165754.213402-1-djkurtz@chromium.org>
+In-Reply-To: <20180825084417.13526-1-robert.jarzmik@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Daniel Drake <drake@endlessm.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>, Ken Xue <Ken.Xue@amd.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 6:57 PM Daniel Kurtz <djkurtz@chromium.org> wrote:
+On Sat, Aug 25, 2018 at 10:44 AM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 
-> Commit 6afb10267c1692 ("pinctrl/amd: fix masking of GPIO interrupts")
-> changed to the clearing of interrupt status bits to a RMW in a critical
-> section.  This works, but is a bit overkill.
+> In the corner case where the gpio driver probe fails, for whatever
+> reason, the suspend and resume handlers will still be called as they
+> have to be registered as syscore operations. This applies as well when
+> no probe was called while the driver has been built in the kernel.
 >
-> The relevant interrupt/wake status bits are in the Most Significant Byte
-> of a 32-bit word.  These two are the only write-able bits in this byte.
+> Nicolas tracked this in :
+> https://bugzilla.kernel.org/show_bug.cgi?id=200905
 >
-> Therefore, it should be safe to just write these bits back as a byte
-> access without any additional locking.
+> Therefore, add a failsafe in these function, and test if a proper probe
+> succeeded and the driver is functional.
 >
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> Reported-by: Nicolas Chauvet <kwizart@gmail.com>
 
-The build robot is complaining about the syntax.
-Is this fixable? Maybe you already sent a new patch... I will
-see when I reach the top of my inbox.
+Patch applied.
 
 Yours,
 Linus Walleij
