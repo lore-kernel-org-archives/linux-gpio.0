@@ -1,54 +1,65 @@
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: Re: [PATCH RESEND 1/2] gpio: mvebu: Add support for multiple PWM lines per GPIO chip
-Date: Wed, 29 Aug 2018 10:13:05 +0200
-Message-ID: <87in3tk2um.fsf@bootlin.com>
-References: <1533522556-55055-1-git-send-email-aditya@kobol.io>
-        <1533522556-55055-2-git-send-email-aditya@kobol.io>
-        <CACRpkda2qXxyEj+y8DaZ-_PWcj3pBGtvVAac8qaFCnC0LTNkNA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+From: Saravanan Sekar <sravanhome@gmail.com>
+Subject: [PATCH v5 0/5] Add Actions Semi S700 pinctrl support
+Date: Wed, 29 Aug 2018 10:24:08 +0200
+Message-ID: <20180829082413.2512005-1-sravanhome@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda2qXxyEj+y8DaZ-_PWcj3pBGtvVAac8qaFCnC0LTNkNA@mail.gmail.com>
-        (Linus Walleij's message of "Wed, 29 Aug 2018 09:54:04 +0200")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: aditya@kobol.io, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Richard Genoud <richard.genoud@gmail.com>, gauthier@kobol.io, Alban Browaeys <alban.browaeys@gmail.com>, linux-pwm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dennis@ausil.us, Ralph Sennhauser <ralph.sennhauser@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+To: manivannan.sadhasivam@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com, thomas.liau@actions-semi.com, linux@cubietech.com, Saravanan Sekar <sravanhome@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
- 
- On mer., août 29 2018, Linus Walleij <linus.walleij@linaro.org> wrote:
+This patchset adds pinctrl support for Actions Semi S700 SoC.
+Pinmux functions are only accessible for pin groups while pinconf
+parameters are available for both pin groups and individual pins.
 
-> On Mon, Aug 6, 2018 at 4:31 AM Aditya Prayoga <aditya@kobol.io> wrote:
->
->> Allow more than 1 PWM request (eg. PWM fan) on the same GPIO chip.
->>
->> based on initial work on LK4.4 by Alban Browaeys.
->> URL: https://github.com/helios-4/linux-marvell/commit/743ae97
->> [Aditya Prayoga: forward port, cleanup]
->> Signed-off-by: Aditya Prayoga <aditya@kobol.io>
->
-> It would be awesome to get some feedback from the MVEBU maintainers
-> on this patch set.
+pinctrl driver is verified using the Cubieboard7.
 
-There already has been reviewed from Andrew and also from Richard who
-worked on the PWM part too. There were many questions raised, but no
-feedback yet, so for now this patch set is clearly not ready to be
-merged. We are waiting for answers and a new version.
+common functionalities from s900 is moved for all Actions Semi
+SoC's usage.
+Common pad control configurations are moved to SoC specific
 
-Gregory
+dts entry for pinctrl depends on clock driver which is still under review:
+https://patchwork.kernel.org/patch/10533959/
 
->
-> Who are most active on Marvell stuff these days? Thomas?
->
-> Likewise I'd be very grateful for a nod from the PWM maintainer that
-> this is OK with him.
->
-> Yours,
-> Linus Walleij
+Thanks,
+Saravanan
+Parthiban
+
+Changelog in v2
+- GPIO Interrupt support is added
+- Device tree entry for GPIO and Interrupt configured
+- GPIO and pinctrl define reorder, commit message findings fixed
+
+depends on owl GPIO Interrupt support
+https://patchwork.kernel.org/patch/10483477/
+
+Chnagelog in v3
+- Fixed 0-DAY bisectibility error
+
+Chnagelog in v4
+- Fixed 0-DAY sparse warnings on static declaration
+
+Chnagelog in v5
+- Rebase to mainline
+
+Saravanan Sekar (5):
+  pinctrl: actions: define constructor generic to Actions Semi SoC's
+  pinctrl: actions: define pad control configurtion to SoC specific
+  dt-bindings: pinctrl: Add bindings for Actions Semi S700 SoC
+  pinctrl: actions: Add Actions Semi S700 pinctrl driver
+  arm64: dts: actions: Add pinctrl node for Actions Semi S700
+
+ .../bindings/pinctrl/actions,s700-pinctrl.txt      |  170 ++
+ arch/arm64/boot/dts/actions/s700.dtsi              |   16 +
+ drivers/pinctrl/actions/Kconfig                    |    6 +
+ drivers/pinctrl/actions/Makefile                   |    1 +
+ drivers/pinctrl/actions/pinctrl-owl.c              |   71 +-
+ drivers/pinctrl/actions/pinctrl-owl.h              |  142 +-
+ drivers/pinctrl/actions/pinctrl-s700.c             | 1925 ++++++++++++++++++++
+ drivers/pinctrl/actions/pinctrl-s900.c             |  205 +--
+ 8 files changed, 2337 insertions(+), 199 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
+ create mode 100644 drivers/pinctrl/actions/pinctrl-s700.c
 
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.14.4
