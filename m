@@ -1,13 +1,15 @@
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Subject: Re: [PATCH 00/11] Reform EP93xx GPIO
-Date: Wed, 29 Aug 2018 08:18:02 +0200
-Message-ID: <20180829081802.d2172615b79337b7f71dc804@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 01/11] ARM/gpio: ep93xx: build standalone
+Date: Wed, 29 Aug 2018 09:03:30 +0200
+Message-ID: <CACRpkdY26UVt5snsi5scM2y1odoByvmGu+Pd6FWRSxuH3Gr2Eg@mail.gmail.com>
 References: <20180822204111.9581-1-linus.walleij@linaro.org>
+ <20180822204111.9581-2-linus.walleij@linaro.org>
+ <CAK8P3a2xgvS4Oxfupob1LcLP3CSfKrF3K-pu05S_3tB=pD3-mA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180822204111.9581-1-linus.walleij@linaro.org>
+In-Reply-To: <CAK8P3a2xgvS4Oxfupob1LcLP3CSfKrF3K-pu05S_3tB=pD3-mA@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,62 +19,48 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: H Hartley Sweeten <hsweeten@visionengravers.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>, arm-soc <arm@kernel.org>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Linus,
+On Thu, Aug 23, 2018 at 9:37 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Aug 22, 2018 at 10:41 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+> > As a preparation for multiplatform support, this ensures
+> > that the ep93xx gpio driver can be built without any of
+> > the platform specific header files. We pass the IRQ numbers
+> > as a resource now, and use the virtual mmio base from the
+> > already existing resource, rather than relying on the
+> > hardwired virtual address from the header file.
+> >
+> > Some numbers are now hardcoded that came from macros
+> > in the past, but for all I can tell, the driver already
+> > relied on the specific values.
+> >
+> > Cc: arm@kernel.org
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> > ---
+> > Arnd/other ARM SoC person:
+> > Please provide an ACK for this patch so I can merge it
+> > with the rest of the refactorings into the GPIO tree.
+>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Did I send the patch to you, or did you find it in old archives?
 
-On Wed, 22 Aug 2018 22:41:00 +0200
-Linus Walleij <linus.walleij@linaro.org> wrote:
+You sent it at one point as we discussed modernizing EP93xx :)
 
-> This series is a spin-off of a patch from Arnd that started to
-> decouple the EP93xx GPIO driver from the code inside
-> arch/arm.
-> 
-> The driver needed some modernization and in the end I managed
-> to convert two of the banks to use GPIOLIB_IRQCHIP and use
-> a proper irqdomain.
-> 
-> The F bank presents a special problem that I need to think
-> about, because since there is one IRQ per GPIO line it is
-> essentially a hierarchical irqdomain.
-> 
-> This was tested on the SIM.ONE where I rigged lines on some
-> of the GPIOs on a board connector. It's crude but gives
-> interrupts and behave as expected before and after these
-> changes, the main visible change being that the hardware
-> IRQ line on each port appears in /proc/interrupts.
-> 
-> It would be great if some EP93xx users could test this
-> (especially something using bank F) so I can get it into
-> shape and merge as a baseline for further refactorings.
+I seem to finally start to get somewhere with that. Ground-up...
 
-I've tested only the basic GPIO functionality (as my
-applications do not use IRQs as of now), but the whole
-series looks good to me:
+> Normally I'd assume that my authorship implies the Ack,
+> but I guess it's ok to also explictly say that I'm ok with this
+> going through your tree.
 
-Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+It's more of a handshake with ARM SoC so you folks know
+this is going on.
 
-> Arnd Bergmann (1):
->   ARM/gpio: ep93xx: build standalone
-> 
-> Linus Walleij (10):
->   gpio: ep93xx: Cut down variable names
->   gpio: ep93xx: Switch to SPDX license tag
->   gpio: ep93xx: Pass around struct gpio_chip
->   gpio: ep93xx: Rename has_debounce to has_irq
->   gpio: ep93xx: Properly call the chained IRQ handler
->   gpio: ep93xx: Do not pingpong irq numbers
->   gpio: ep93xx: Use the hwirq and port
->   gpio: ep93xx: Use for_each_set_bit() in IRQ handler
->   gpio: ep93xx: Cut gpio_to_irq() usage
->   gpio: ep93xx: Switch A and B to use GPIOLIB_IRQCHIP
-> 
->  arch/arm/mach-ep93xx/core.c |   9 ++
->  drivers/gpio/Kconfig        |   1 +
->  drivers/gpio/gpio-ep93xx.c  | 297 +++++++++++++++++++++---------------
->  3 files changed, 181 insertions(+), 126 deletions(-)
-
--- 
-Alexander Sverdlin.
+Thanks!
+Linus Walleij
