@@ -1,221 +1,41 @@
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: Re: [PATCH v5 1/4] gpiolib: Pass bitmaps, not integer arrays, to
- get/set array
-Date: Thu, 30 Aug 2018 13:10:59 +0200
-Message-ID: <CANiq72kJT15ELkYr2U5r4-pvGunQFLmZ5dhdZLnjmM7NWBnkNQ@mail.gmail.com>
-References: <20180820234341.5271-1-jmkrzyszt@gmail.com> <20180829204900.19390-1-jmkrzyszt@gmail.com>
- <20180829204900.19390-2-jmkrzyszt@gmail.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: Re: [PATCH v2 1/2] GPIO: add single-register gpio via creg driver
+Date: Thu, 30 Aug 2018 12:14:25 +0000
+Message-ID: <1535631219.4465.47.camel@synopsys.com>
+References: <20180828112721.28178-1-Eugeniy.Paltsev@synopsys.com>
+         <20180828112721.28178-2-Eugeniy.Paltsev@synopsys.com>
+         <024be088-15ff-89ed-3766-09eb64e47342@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180829204900.19390-2-jmkrzyszt@gmail.com>
+In-Reply-To: <024be088-15ff-89ed-3766-09eb64e47342@infradead.org>
+Content-Language: en-US
+Content-ID: <DDDFDA5BDD648947967BBC318628814F@internal.synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>, Linux
+To: "rdunlap@infradead.org" <rdunlap@infradead.org>, "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>, "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Janusz,
-
-On Wed, Aug 29, 2018 at 10:48 PM, Janusz Krzysztofik
-<jmkrzyszt@gmail.com> wrote:
-> Most users of get/set array functions iterate consecutive bits of data,
-> usually a single integer, while processing array of results obtained
-> from, or building an array of values to be passed to those functions.
-> Save time wasted on those iterations by changing the functions' API to
-> accept bitmaps.
->
-> All current users are updated as well.
->
-> More benefits from the change are expected as soon as planned support
-> for accepting/passing those bitmaps directly from/to respective GPIO
-> chip callbacks if applicable is implemented.
->
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-> Cc: Peter Korsgaard <peter.korsgaard@barco.com>
-> Cc: Peter Rosin <peda@axentia.se>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Michael Hennerich <Michael.Hennerich@analog.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  Documentation/driver-api/gpio/consumer.rst  | 22 ++++----
->  drivers/auxdisplay/hd44780.c                | 52 +++++++++--------
->  drivers/bus/ts-nbus.c                       | 19 ++-----
->  drivers/gpio/gpio-max3191x.c                | 17 +++---
->  drivers/gpio/gpiolib.c                      | 86 +++++++++++++++--------------
->  drivers/gpio/gpiolib.h                      |  4 +-
->  drivers/i2c/muxes/i2c-mux-gpio.c            |  8 +--
->  drivers/mmc/core/pwrseq_simple.c            | 13 ++---
->  drivers/mux/gpio.c                          |  9 +--
->  drivers/net/phy/mdio-mux-gpio.c             |  3 +-
->  drivers/pcmcia/soc_common.c                 | 11 ++--
->  drivers/phy/motorola/phy-mapphone-mdm6600.c | 17 +++---
->  drivers/staging/iio/adc/ad7606.c            |  9 +--
->  drivers/tty/serial/serial_mctrl_gpio.c      |  7 ++-
->  include/linux/gpio/consumer.h               | 18 +++---
->  15 files changed, 140 insertions(+), 155 deletions(-)
->
-> diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
-> index aa03f389d41d..ed68042ddccf 100644
-> --- a/Documentation/driver-api/gpio/consumer.rst
-> +++ b/Documentation/driver-api/gpio/consumer.rst
-> @@ -323,29 +323,29 @@ The following functions get or set the values of an array of GPIOs::
->
->         int gpiod_get_array_value(unsigned int array_size,
->                                   struct gpio_desc **desc_array,
-> -                                 int *value_array);
-> +                                 unsigned long *value_bitmap);
->         int gpiod_get_raw_array_value(unsigned int array_size,
->                                       struct gpio_desc **desc_array,
-> -                                     int *value_array);
-> +                                     unsigned long *value_bitmap);
->         int gpiod_get_array_value_cansleep(unsigned int array_size,
->                                            struct gpio_desc **desc_array,
-> -                                          int *value_array);
-> +                                          unsigned long *value_bitmap);
->         int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
->                                            struct gpio_desc **desc_array,
-> -                                          int *value_array);
-> +                                          unsigned long *value_bitmap);
->
->         void gpiod_set_array_value(unsigned int array_size,
->                                    struct gpio_desc **desc_array,
-> -                                  int *value_array)
-> +                                  unsigned long *value_bitmap)
->         void gpiod_set_raw_array_value(unsigned int array_size,
->                                        struct gpio_desc **desc_array,
-> -                                      int *value_array)
-> +                                      unsigned long *value_bitmap)
->         void gpiod_set_array_value_cansleep(unsigned int array_size,
->                                             struct gpio_desc **desc_array,
-> -                                           int *value_array)
-> +                                           unsigned long *value_bitmap)
->         void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
->                                                 struct gpio_desc **desc_array,
-> -                                               int *value_array)
-> +                                               unsigned long *value_bitmap)
->
->  The array can be an arbitrary set of GPIOs. The functions will try to access
->  GPIOs belonging to the same bank or chip simultaneously if supported by the
-> @@ -356,8 +356,8 @@ accessed sequentially.
->  The functions take three arguments:
->         * array_size    - the number of array elements
->         * desc_array    - an array of GPIO descriptors
-> -       * value_array   - an array to store the GPIOs' values (get) or
-> -                         an array of values to assign to the GPIOs (set)
-> +       * value_bitmap  - a bitmap to store the GPIOs' values (get) or
-> +                         a bitmap of values to assign to the GPIOs (set)
->
->  The descriptor array can be obtained using the gpiod_get_array() function
->  or one of its variants. If the group of descriptors returned by that function
-> @@ -366,7 +366,7 @@ the struct gpio_descs returned by gpiod_get_array()::
->
->         struct gpio_descs *my_gpio_descs = gpiod_get_array(...);
->         gpiod_set_array_value(my_gpio_descs->ndescs, my_gpio_descs->desc,
-> -                             my_gpio_values);
-> +                             my_gpio_value_bitmap);
->
->  It is also possible to access a completely arbitrary array of descriptors. The
->  descriptors may be obtained using any combination of gpiod_get() and
-> diff --git a/drivers/auxdisplay/hd44780.c b/drivers/auxdisplay/hd44780.c
-> index f1a42f0f1ded..bbbd6a29bf01 100644
-> --- a/drivers/auxdisplay/hd44780.c
-> +++ b/drivers/auxdisplay/hd44780.c
-> @@ -62,20 +62,19 @@ static void hd44780_strobe_gpio(struct hd44780 *hd)
->  /* write to an LCD panel register in 8 bit GPIO mode */
->  static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
->  {
-> -       int values[10]; /* for DATA[0-7], RS, RW */
-> -       unsigned int i, n;
-> +       unsigned long value_bitmap[1];  /* for DATA[0-7], RS, RW */
-
-(I read your comments in the other email)
-
-I still find this odd, but if everyone is going to have this change
-done like this, consistency is better.
-
-> +       unsigned int n;
->
-> -       for (i = 0; i < 8; i++)
-> -               values[PIN_DATA0 + i] = !!(val & BIT(i));
-> -       values[PIN_CTRL_RS] = rs;
-> +       value_bitmap[0] = val;
-> +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
->         n = 9;
->         if (hd->pins[PIN_CTRL_RW]) {
-> -               values[PIN_CTRL_RW] = 0;
-> +               __clear_bit(PIN_CTRL_RW, value_bitmap);
->                 n++;
->         }
->
->         /* Present the data to the port */
-> -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA0], values);
-> +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA0], value_bitmap);
->
->         hd44780_strobe_gpio(hd);
->  }
-> @@ -83,32 +82,31 @@ static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
->  /* write to an LCD panel register in 4 bit GPIO mode */
->  static void hd44780_write_gpio4(struct hd44780 *hd, u8 val, unsigned int rs)
->  {
-> -       int values[10]; /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
-> -       unsigned int i, n;
-> +       /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
-> +       unsigned long value_bitmap[1];
-
-Ditto.
-
-> +       unsigned int n;
->
->         /* High nibble + RS, RW */
-> -       for (i = 4; i < 8; i++)
-> -               values[PIN_DATA0 + i] = !!(val & BIT(i));
-> -       values[PIN_CTRL_RS] = rs;
-> +       value_bitmap[0] = val;
-> +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
->         n = 5;
->         if (hd->pins[PIN_CTRL_RW]) {
-> -               values[PIN_CTRL_RW] = 0;
-> +               __clear_bit(PIN_CTRL_RW, value_bitmap);
->                 n++;
->         }
-> +       value_bitmap[0] >>= PIN_DATA4;
->
->         /* Present the data to the port */
-> -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4],
-> -                                      &values[PIN_DATA4]);
-> +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4], value_bitmap);
->
->         hd44780_strobe_gpio(hd);
->
->         /* Low nibble */
-> -       for (i = 0; i < 4; i++)
-> -               values[PIN_DATA4 + i] = !!(val & BIT(i));
-> +       value_bitmap[0] &= ~((1 << PIN_DATA4) - 1);
-> +       value_bitmap[0] |= val & ~((1 << PIN_DATA4) - 1);
-
-This is still wrong! What I originally meant in my v4 review is that
-there is an extra ~ in the second line.
-
-Also, a couple of general comments:
-
- - Please review the list of CCs (I was not CC'd originally, so maybe
-there are other maintainers that aren't, either)
- - In general, the new code seems harder to read than the original one
-(but that is my impression).
-
-Thanks for your effort! :-)
-
-Cheers,
-Miguel
+T24gVHVlLCAyMDE4LTA4LTI4IGF0IDExOjE1IC0wNzAwLCBSYW5keSBEdW5sYXAgd3JvdGU6DQo+
+IEhpLA0KPiANCj4gSSBkb24ndCBzZWUgYW55IHVwZGF0ZXMvY29ycmVjdGlvbnMgaGVyZS4gIDoo
+DQoNCk15IGZhdWx0IC0gSSd2ZSBmb3Jnb3R0ZW4gdG8gcmUtZ2VuZXJhdGUgbmV3IHBhdGNoIHZp
+YSBnaXQgZm9ybWF0LXBhdGNoDQphbmQgc2VuZCB5b3UgcHJldmlvdXMgdmVyc2lvbi4NCg0KPiAN
+Cj4gT24gMDgvMjgvMjAxOCAwNDoyNyBBTSwgRXVnZW5peSBQYWx0c2V2IHdyb3RlOg0KPiANCj4g
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL0tjb25maWcgYi9kcml2ZXJzL2dwaW8vS2NvbmZp
+Zw0KPiA+IGluZGV4IDcxYzBhYjQ2ZjIxNi4uMGY5Y2MxNTgyY2FiIDEwMDY0NA0KPiA+IC0tLSBh
+L2RyaXZlcnMvZ3Bpby9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVycy9ncGlvL0tjb25maWcNCj4g
+PiBAQCAtNDMwLDYgKzQzMCwxNSBAQCBjb25maWcgR1BJT19SRUcNCj4gPiAgCSAgQSAzMi1iaXQg
+c2luZ2xlIHJlZ2lzdGVyIEdQSU8gZml4ZWQgaW4vb3V0IGltcGxlbWVudGF0aW9uLiAgVGhpcw0K
+PiA+ICAJICBjYW4gYmUgdXNlZCB0byByZXByZXNlbnQgYW55IHJlZ2lzdGVyIGFzIGEgc2V0IG9m
+IEdQSU8gc2lnbmFscy4NCj4gPiAgDQo+ID4gK2NvbmZpZyBHUElPX1NOUFNfQ1JFRw0KPiA+ICsJ
+Ym9vbCAiR1BJTyB2aWEgQ1JFRyAoQ29udHJvbCBSRUdpc2VycykgZHJpdmVyIg0KPiA+ICsJc2Vs
+ZWN0IE9GX0dQSU8NCj4gPiArCWhlbHANCj4gPiArCSAgVGhpcyBkcml2ZXIgc3VwcG9ydHMgR1BJ
+T3MgdmlhIENSRUcgb24gdmFyaW91cyBTeW5vcHN5cyBTb0NzLg0KPiA+ICsJICBUaGlzIGlzIGlz
+IHNpbmdsZS1yZWdpc3RlciBNTUlPIGdwaW8gZHJpdmVyIGZvciBjb21wbGV4IGNhc2VzDQo+ID4g
+KwkgIHdoZXJlIG9ubHkgc2V2ZXJhbCBmaWVsZHMgaW4gcmVnaXN0ZXIgYmVsb25nIHRvIEdQSU8g
+YW5kDQo+ID4gKwkgIGVhY2ggR1BJTyBvd25zIGZpZWxkIHdpdGggZGlmZmVyZW50IGxlbmd0aCBh
+bmQgb24vb2ZmIHZhbHVlcy4NCj4gPiArDQo+ID4gIGNvbmZpZyBHUElPX1NQRUFSX1NQSUNTDQo+
+ID4gIAlib29sICJTVCBTUEVBcjEzeHggU1BJIENoaXAgU2VsZWN0IGFzIEdQSU8gc3VwcG9ydCIN
+Cj4gPiAgCWRlcGVuZHMgb24gUExBVF9TUEVBUg0KPiANCj4gDQotLSANCiBFdWdlbml5IFBhbHRz
+ZXY=
