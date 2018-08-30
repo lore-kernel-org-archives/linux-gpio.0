@@ -1,26 +1,30 @@
-From: Marek Behun <marek.behun@nic.cz>
-Subject: [PATCH mfd+gpio] Request (Linus Walleij + Lee Jones)
-Date: Thu, 30 Aug 2018 16:47:43 +0200
-Message-ID: <20180830164743.63c6e27d@nic.cz>
-References: <20180830144151.13417-1-marek.behun@nic.cz>
+From: Douglas Anderson <dianders@chromium.org>
+Subject: [RFT PATCH 0/2] pinctrl: Fix two more xxx_config_get() functions to be compliant
+Date: Thu, 30 Aug 2018 08:23:37 -0700
+Message-ID: <20180830152340.242249-1-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830144151.13417-1-marek.behun@nic.cz>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "Ivan T . Ivanov" <iivanov@mm-sol.com>, Stephen Boyd <swboyd@chromium.org>, Douglas Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus and Lee,
-these two patches touch two different subsystems (mfd + gpio) and
-should be applyied one after another (the gpio part is dependant on the
-mfd part).
-The patches are based on mfd-next-4.19. I can send another copy based
-on gpio/devel.
-Could you two, Linus and Lee, work together on applying these patches?
-I don't know how this is usually solved...
-Thanks.
+I have no way to test the patches in this series, but Stephen Boyd
+pointed out the problems being fixed here when he reviewed my patch
+("pinctrl: qcom: spmi-gpio: Fix pmic_gpio_config_get() to be
+compliant").  It seemed nice to (finally) follow-up and address the
+problems that Stephen found.  Hopefully someone can test them out and
+make sure they work as advertised.
 
-Marek
+
+Douglas Anderson (2):
+  pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
+  pinctrl: spmi-mpp: Fix pmic_mpp_config_get() to be compliant
+
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c  | 19 ++++++++++------
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 28 ++++++++++++++++++------
+ 2 files changed, 33 insertions(+), 14 deletions(-)
+
+-- 
+2.19.0.rc0.228.g281dcd1b4d0-goog
