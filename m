@@ -1,107 +1,328 @@
-From: vitor <Vitor.Soares@synopsys.com>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-Date: Thu, 30 Aug 2018 14:57:36 +0100
-Message-ID: <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <20180719152930.3715-2-boris.brezillon@bootlin.com>
- <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
- <20180824143934.6d6b6487@bbrezillon>
- <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
- <20180824201600.7d80bca9@bbrezillon>
- <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
- <20180828140209.29155d00@bbrezillon>
- <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
+From: =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
+Subject: [PATCH mfd+gpio 2/2] drivers: gpio: Add support for GPIOs over Moxtet bus
+Date: Thu, 30 Aug 2018 16:41:51 +0200
+Message-ID: <20180830144151.13417-2-marek.behun@nic.cz>
+References: <20180830144151.13417-1-marek.behun@nic.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
-Content-Language: en-US
+In-Reply-To: <20180830144151.13417-1-marek.behun@nic.cz>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Przemyslaw Gaj <pgaj@cadence.com>, Boris Brezillon <boris.brezillon@bootlin.com>, vitor <Vitor.Soares@synopsys.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@>
+To: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Przemyslaw
+This adds support for interpreting the input and output bits of one
+device on Moxtet bus as GPIOs.
+This is needed for example by the SFP cage module of Turris Mox.
 
+Signed-off-by: Marek Behún <marek.behun@nic.cz>
+---
+ .../devicetree/bindings/gpio/gpio-moxtet.txt       |  31 +++
+ MAINTAINERS                                        |   1 +
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-moxtet.c                         | 209 +++++++++++++++++++++
+ 5 files changed, 251 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
+ create mode 100644 drivers/gpio/gpio-moxtet.c
 
-On 28-08-2018 13:55, Przemyslaw Gaj wrote:
-> Hi Vitor,
->
-> I have already implemented Mastership request/handover but we are waiting for Boris’s patch to be accepted and merged. Anyway, my comments below.
->
-> ﻿On 8/28/18, 2:02 PM, "Boris Brezillon" <boris.brezillon@bootlin.com> wrote:
->
->      EXTERNAL MAIL
->      
->      
->      Hi Vitor,
->      
->      On Tue, 28 Aug 2018 12:50:12 +0100
->      vitor <Vitor.Soares@synopsys.com> wrote:
->      
->      > Hi Boris,
->      >
->      > The DT Bindings say "The node describing an I3C bus should be named
->      > i3c-master.". Do you have a field for secondary master?
->
-> I think we don’t need separate field for secondary master. Main and secondary masters
-> support similar functionalities. It’s enough to have this state internally and do mastership it it's needed.
-
-Yes, you are right.
-
->
->      >
->      > On 24-08-2018 19:16, Boris Brezillon wrote:
->      > > Well, before even considering supporting secondary master registration,
->      > > we need to handle mastership handover. As for the DAA operation, it's
->      > > likely to be host specific, so we'll have to add a new hook to the
->      > > i3c_master_controller_ops struct.
->      > Do you mean when master try to delegate the bus ownership through
->      > GETACCMST? or to get the bus ownership with IBI-MR?
->      
->      I think we need to support both.
->
-> I agree.
-
-That's ok to me.
-
->      
->      >
->      > I think that could be useful to pass the ibi type on request_ibi(),
->      > there is some case where the master doesn't support IBI-MR.
->      
->      Actually, I was planning on making it completely separate from
->      regular slave IBIs. That is, the master controller driver would demux
->      the slave, MR and Hot Join IBIs, and if there's an MR request, queue a
->      mastership handover work to the workqueue (pretty much what we do for
->      Hot-Join already). Mastership handover is anyway likely to be IP
->      specific, so I don't think there's a need to make it look like a
->      regular IBI.
->
-> I think it's better to have separate function to do mastership request.
->      
->      Regarding whether IBI-MR support should be exposed to the I3C framework
->      or not depends on how much will be automated on the framework side. I
->      don't the answer yet, but that's probably something will figure out
->      along the road.
->
-> My current implementation is: when request_mastership field
-> of i3c_master_controller_ops structure is set, master driver supports mastership requests.
-> That's how I check if this is supported or not.
->      
->      Regards,
->      
->      Boris
->      
-> Regards,
-> Przemek
->
-when you say request_mastership, do you mean the current master do the 
-mastership hand-off or the secondary master request to be current master?
-
-So, per my understanding since the Main master support the hand-off of 
-the bus you accept all incoming MR, right? Or do you check all devices BCR?
-
-Best regards,
-Vitor Soares
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-moxtet.txt b/Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
+new file mode 100644
+index 000000000000..64a9a1bfd4cf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
+@@ -0,0 +1,31 @@
++Turris Mox Moxtet GPIO expander
++
++Required properties:
++ - compatible		: Should be "cznic,moxtet-gpio".
++ - gpio-controller	: Marks the device node as a GPIO controller.
++ - #gpio-cells		: Should be two. For consumer use see gpio.txt.
++ - moxtet,input-mask	: Bitmask. Those bits which correspond to input GPIOs
++			  when read from Moxtet bus should be set here.
++			  For example if bit 0 and bit 3 are input GPIO bits,
++			  this should be set to 0x9.
++			  Since there are only 4 input bits, 0xf is max value.
++ - moxtet,output-mask	: Bitmask. Those bits which correspond to output GPIOs
++			  when written to Moxtet bus should be set here.
++			  For example if bit 1 and bit 6 are output GPIO bits,
++			  this should be set to 0x41.
++			  Since there are at most 8 output bits, 0xff is max
++			  value.
++Other properties are required for a moxtet bus device, please refer to
++Documentation/devicetree/bindings/mfd/moxtet.txt.
++
++Example:
++
++	moxtet_sfp: moxtet-sfp@0 {
++		compatible = "cznic,moxtet-gpio";
++		gpio-controller;
++		#gpio-cells;
++		reg = <0>;
++		moxtet,id = <1>;
++		moxtet,input-mask = <0x7>;
++		moxtet,output-mask = <0x3>;
++	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 84e60ee83951..0ca4e5302054 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1417,6 +1417,7 @@ M:	Marek Behun <marek.behun@nic.cz>
+ W:	http://mox.turris.cz
+ S:	Maintained
+ F:	include/mfd/moxtet.h
++F:	drivers/gpio/gpio-moxtet.c
+ F:	drivers/mfd/moxtet.c
+ 
+ ARM/EBSA110 MACHINE SUPPORT
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index b8cbf5081389..2c0202aa91d0 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1055,6 +1055,15 @@ config GPIO_MAX77620
+ 	  driver also provides interrupt support for each of the gpios.
+ 	  Say yes here to enable the max77620 to be used as gpio controller.
+ 
++config GPIO_MOXTET
++	tristate "Turris Mox Moxtet bus GPIO expander"
++	depends on MFD_MOXTET
++	help
++	  Say yes here if you are building for the Turris Mox router.
++	  This is the driver needed for configuring the GPIOs via the Moxtet
++	  bus. For example the Mox module with SFP cage needs this driver
++	  so that phylink can use corresponding GPIOs.
++
+ config GPIO_MSIC
+ 	bool "Intel MSIC mixed signal gpio support"
+ 	depends on (X86 || COMPILE_TEST) && MFD_INTEL_MSIC
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 80d58c2de730..e119b3b87f1f 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -85,6 +85,7 @@ obj-$(CONFIG_GPIO_MC9S08DZ60)	+= gpio-mc9s08dz60.o
+ obj-$(CONFIG_GPIO_ML_IOH)	+= gpio-ml-ioh.o
+ obj-$(CONFIG_GPIO_MM_LANTIQ)	+= gpio-mm-lantiq.o
+ obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
++obj-$(CONFIG_GPIO_MOXTET)	+= gpio-moxtet.o
+ obj-$(CONFIG_GPIO_MPC5200)	+= gpio-mpc5200.o
+ obj-$(CONFIG_GPIO_MPC8XXX)	+= gpio-mpc8xxx.o
+ obj-$(CONFIG_GPIO_MSIC)		+= gpio-msic.o
+diff --git a/drivers/gpio/gpio-moxtet.c b/drivers/gpio/gpio-moxtet.c
+new file mode 100644
+index 000000000000..d0b50581118d
+--- /dev/null
++++ b/drivers/gpio/gpio-moxtet.c
+@@ -0,0 +1,209 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ *  Turris Mox Moxtet GPIO expander
++ *
++ *  Copyright (C) 2018 Marek Behun <marek.behun@nic.cz>
++ */
++
++#include <linux/gpio/consumer.h>
++#include <linux/gpio.h>
++#include <linux/mfd/moxtet.h>
++#include <linux/module.h>
++#include <linux/of_gpio.h>
++
++struct moxtet_gpio_chip {
++	struct device		*dev;
++	struct gpio_chip	gpio_chip;
++	u8			in_mask;
++	u8			out_mask;
++};
++
++static int moxtet_gpio_dir_mask(struct gpio_chip *gc, unsigned int offset,
++				int *dir, u8 *mask)
++{
++	struct moxtet_gpio_chip *chip = gpiochip_get_data(gc);
++	int i;
++
++	*dir = 0;
++	for (i = 0; i < 4; ++i) {
++		*mask = 1 << i;
++		if (*mask & chip->in_mask) {
++			if (offset == 0)
++				return 0;
++			--offset;
++		}
++	}
++
++	*dir = 1;
++	for (i = 0; i < 8; ++i) {
++		*mask = 1 << i;
++		if (*mask & chip->out_mask) {
++			if (offset == 0)
++				return 0;
++		}
++	}
++
++	return -EINVAL;
++}
++
++static int moxtet_gpio_get_value(struct gpio_chip *gc, unsigned int offset)
++{
++	struct moxtet_gpio_chip *chip = gpiochip_get_data(gc);
++	int ret, dir;
++	u8 mask;
++
++	if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
++		return -EINVAL;
++
++	if (dir)
++		ret = moxtet_device_written(chip->dev);
++	else
++		ret = moxtet_device_read(chip->dev);
++
++	if (ret < 0)
++		return ret;
++
++	return (ret & mask) ? 1 : 0;
++}
++
++static void moxtet_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
++				  int val)
++{
++	struct moxtet_gpio_chip *chip = gpiochip_get_data(gc);
++	int state, dir;
++	u8 mask;
++
++	if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
++		return;
++
++	/* cannot change input GPIO */
++	if (!dir)
++		return;
++
++	state = moxtet_device_written(chip->dev);
++	if (state < 0)
++		return;
++
++	if (val)
++		state |= mask;
++	else
++		state &= ~mask;
++
++	moxtet_device_write(chip->dev, state);
++}
++
++static int moxtet_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
++{
++	int dir;
++	u8 mask;
++
++	if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
++		return -EINVAL;
++
++	return dir;
++}
++
++static int moxtet_gpio_direction_input(struct gpio_chip *gc,
++				       unsigned int offset)
++{
++	int dir;
++	u8 mask;
++
++	if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
++		return -EINVAL;
++
++	if (dir)
++		return -EINVAL;
++
++	return 0;
++}
++
++static int moxtet_gpio_direction_output(struct gpio_chip *gc,
++					unsigned int offset, int val)
++{
++	int dir;
++	u8 mask;
++
++	if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
++		return -EINVAL;
++
++	if (!dir)
++		return -EINVAL;
++
++	moxtet_gpio_set_value(gc, offset, val);
++	return 0;
++}
++
++static int moxtet_gpio_probe(struct device *dev)
++{
++	struct moxtet_gpio_chip *chip;
++	struct device_node *nc = dev->of_node;
++	int ret;
++	u32 val;
++
++	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->dev = dev;
++	chip->gpio_chip.parent = dev;
++
++	ret = of_property_read_u32(nc, "moxtet,input-mask", &val);
++	if (ret < 0 || val > 0xf) {
++		dev_err(dev,
++			"%pOF has no valid 'moxtet,input-mask' property\n", nc);
++		return ret < 0 ? ret : -ERANGE;
++	}
++	chip->in_mask = val;
++
++	ret = of_property_read_u32(nc, "moxtet,output-mask", &val);
++	if (ret < 0 || val > 0xff) {
++		dev_err(dev,
++			"%pOF has no valid 'moxtet,output-mask' property\n",
++			nc);
++		return ret < 0 ? ret : -ERANGE;
++	}
++	chip->out_mask = val;
++
++	if (!chip->in_mask && !chip->out_mask) {
++		dev_err(dev, "%pOF has zero GPIOs defined\n", nc);
++		return -EINVAL;
++	}
++
++	dev_set_drvdata(dev, chip);
++
++	chip->gpio_chip.label = dev_name(dev);
++	chip->gpio_chip.get_direction = moxtet_gpio_get_direction;
++	chip->gpio_chip.direction_input = moxtet_gpio_direction_input;
++	chip->gpio_chip.direction_output = moxtet_gpio_direction_output;
++	chip->gpio_chip.get = moxtet_gpio_get_value;
++	chip->gpio_chip.set = moxtet_gpio_set_value;
++	chip->gpio_chip.base = -1;
++
++	chip->gpio_chip.ngpio = hweight8(chip->in_mask) +
++				hweight8(chip->out_mask);
++
++	chip->gpio_chip.can_sleep = true;
++	chip->gpio_chip.owner = THIS_MODULE;
++
++	return devm_gpiochip_add_data(dev, &chip->gpio_chip, chip);
++}
++
++static const struct of_device_id moxtet_gpio_dt_ids[] = {
++	{ .compatible = "cznic,moxtet-gpio" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, moxtet_gpio_dt_ids);
++
++static struct moxtet_driver moxtet_gpio_driver = {
++	.driver = {
++		.name		= "moxtet-gpio",
++		.of_match_table	= moxtet_gpio_dt_ids,
++		.probe		= moxtet_gpio_probe,
++	},
++};
++module_moxtet_driver(moxtet_gpio_driver);
++
++MODULE_AUTHOR("Marek Behun <marek.behun@nic.cz>");
++MODULE_DESCRIPTION("Turris Mox Moxtet GPIO expander");
++MODULE_LICENSE("GPL v2");
+-- 
+2.16.4
