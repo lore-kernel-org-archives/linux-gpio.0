@@ -1,42 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] Preventive patch in the pin control subsystem to
- handle NULL check.
-Date: Thu, 30 Aug 2018 11:03:23 +0200
-Message-ID: <CACRpkdZm8ZOmn0j3ksaaCjKQt+pY032JzR==9V62Lo9+N9FWVA@mail.gmail.com>
-References: <CGME20180827083916epcas1p43a3fc8570269411de215254ce0ae4b37@epcas1p4.samsung.com>
- <1535359139-6264-1-git-send-email-srikanth.h@samsung.com>
+Subject: Re: [PATCH v2] gpio: brcmstb: allow 0 width GPIO banks
+Date: Thu, 30 Aug 2018 11:05:43 +0200
+Message-ID: <CACRpkdYu8F6hzw4sHsqBbziYSQQK5Ppb+dwi1AqYZXbzAumw6w@mail.gmail.com>
+References: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1535359139-6264-1-git-send-email-srikanth.h@samsung.com>
+In-Reply-To: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: srikanth.h@samsung.com
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: justinpopo6@gmail.com
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Srikanth, thanks for your patch!
+On Sat, Aug 18, 2018 at 1:47 AM <justinpopo6@gmail.com> wrote:
 
-On Mon, Aug 27, 2018 at 10:39 AM Srikanth K H <srikanth.h@samsung.com> wrote:
+> From: Justin Chen <justinpopo6@gmail.com>
+>
+> Sometimes we have empty banks within the GPIO block. This commit allows
+> proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
+> incrementing the bank and number of GPIOs, but not initializing them.
+> This will mean a call into the non-existent GPIOs will return an error.
+>
+> Also remove "GPIO registered" dev print. This information is misleading
+> since the incremented banks and gpio_base do not reflect the actual GPIOs
+> that get initialized. We leave this information out since it is already
+> printed with dev_dbg.
+>
+> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
 
- @@ -269,8 +269,9 @@ void pinconf_show_setting(struct seq_file *s,
-
->                 desc = pin_desc_get(setting->pctldev,
->                                     setting->data.configs.group_or_pin);
-> -               seq_printf(s, "pin %s (%d)", desc->name,
-> -                          setting->data.configs.group_or_pin);
-> +               if (desc)
-> +                       seq_printf(s, "pin %s (%d)", desc->name,
-> +                                  setting->data.configs.group_or_pin);
-
-Under what circumstances do you expect this to happen?
-Did you provoke it with a real usecase during development?
-
-We do not sprinkle NULL or error handling over code that
-will not derail, and since this is in debugfs we are even more
-lax.
-
-If it annoys users (which would then be developers using
-debugfs during development), then we need to look into it.
+Patch applied with Florian's ACK.
 
 Yours,
 Linus Walleij
