@@ -1,78 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: Document the Synopsys GPIO via CREG bindings
-Date: Thu, 30 Aug 2018 10:43:42 +0200
-Message-ID: <CACRpkdbQryY-R+14GvYAEkLH+7Tr4Pvb6YohWouTwug7qEGbDA@mail.gmail.com>
-References: <20180828112721.28178-1-Eugeniy.Paltsev@synopsys.com> <20180828112721.28178-3-Eugeniy.Paltsev@synopsys.com>
+Subject: Re: [PATCH 1/1] Preventive patch in the pin control subsystem to
+ handle NULL check.
+Date: Thu, 30 Aug 2018 11:03:23 +0200
+Message-ID: <CACRpkdZm8ZOmn0j3ksaaCjKQt+pY032JzR==9V62Lo9+N9FWVA@mail.gmail.com>
+References: <CGME20180827083916epcas1p43a3fc8570269411de215254ce0ae4b37@epcas1p4.samsung.com>
+ <1535359139-6264-1-git-send-email-srikanth.h@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180828112721.28178-3-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <1535359139-6264-1-git-send-email-srikanth.h@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eugeniy.Paltsev@synopsys.com
-Cc: "open list:SYNOPSYS ARC ARCHITECTURE" <linux-snps-arc@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vineet Gupta <Vineet.Gupta1@synopsys.com>, Alexey Brodkin <Alexey.Brodkin@synopsys.com>, Rob Herring <robh+dt@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: srikanth.h@samsung.com
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 1:27 PM Eugeniy Paltsev
-<Eugeniy.Paltsev@synopsys.com> wrote:
+Hi Srikanth, thanks for your patch!
 
-> +++ b/Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
-> @@ -0,0 +1,49 @@
-> +GPIO via CREG (Control REGisers) driver
+On Mon, Aug 27, 2018 at 10:39 AM Srikanth K H <srikanth.h@samsung.com> wrote:
 
-Speling
+ @@ -269,8 +269,9 @@ void pinconf_show_setting(struct seq_file *s,
 
-Also should be "Synopsys GPIO via CREG" as this is likely just
-for Synopsys and not general purpose.
+>                 desc = pin_desc_get(setting->pctldev,
+>                                     setting->data.configs.group_or_pin);
+> -               seq_printf(s, "pin %s (%d)", desc->name,
+> -                          setting->data.configs.group_or_pin);
+> +               if (desc)
+> +                       seq_printf(s, "pin %s (%d)", desc->name,
+> +                                  setting->data.configs.group_or_pin);
 
-> +This is is single-register MMIO GPIO driver to control such strangely mapped
-> +outputs:
-> +
-> +31            11        8         7        5         0   < bit number
-> +|              |        |         |        |         |
-> +[   not used   | gpio-1 | shift-1 | gpio-0 | shift-0 ]   < 32 bit MMIO register
-> +                   ^                  ^
-> +                   |                  |
-> +                   |           write 0x2 == set output to "1" (on)
-> +                   |           write 0x3 == set output to "0" (off)
-> +                   |
-> +            write 0x1 == set output to "1" (on)
-> +            write 0x4 == set output to "0" (off)
+Under what circumstances do you expect this to happen?
+Did you provoke it with a real usecase during development?
 
-Move this documentation into the driver instead.
+We do not sprinkle NULL or error handling over code that
+will not derail, and since this is in debugfs we are even more
+lax.
 
-> +Required properties:
-> +- compatible : "snps,creg-gpio"
-> +- reg : Exactly one register range with length 0x4.
-> +- #gpio-cells : Should be one - the pin number.
-> +- gpio-controller : Marks the device node as a GPIO controller.
-
-OK
-
-> +- snps,ngpios: Number of GPIO pins.
-
-Use the existing ngpios attribute for this, see gpio.txt
-
-> +- snps,bit-per-line: Number of bits per each gpio line (see picture).
-> +  Array the size of "snps,ngpios"
-> +- snps,shift: Shift (in bits) of the each GPIO field from the previous one in
-> +  register (see picture). Array the size of "snps,ngpios"
-> +- snps,on-val: Value should be set in corresponding field to set
-> +  output to "1" (see picture). Array the size of "snps,ngpios"
-> +- snps,off-val: Value should be set in corresponding field to set
-> +  output to "0" (see picture). Array the size of "snps,ngpios"
-
-Move this into a lookup table in the driver instead, and match
-the lookup table to the compatible string. The format of the
-register is known for a certain compatible, right?
-
-> +Optional properties:
-> +- snps,default-val: default output field values. Array the size of "snps,ngpios"
-
-Default values for different lines can be achieved by hogs
-if it's OK to tie them up perpetually, else work on creating generic
-inialization values in gpio.txt and implement that in
-gpiolib-of.c for everyone. This discussion comes up from time
-to time.
+If it annoys users (which would then be developers using
+debugfs during development), then we need to look into it.
 
 Yours,
 Linus Walleij
