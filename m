@@ -1,35 +1,37 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: [PATCH 1/5] gpio: davinci: Remove unused member of davinci_gpio_controller
-Date: Fri, 31 Aug 2018 14:13:22 -0500
-Message-ID: <20180831191326.25106-1-afd@ti.com>
+From: Gregory Fong <gregory.0xf0@gmail.com>
+Subject: Re: [PATCH v2] gpio: brcmstb: allow 0 width GPIO banks
+Date: Fri, 31 Aug 2018 14:26:01 -0700
+Message-ID: <CADtm3G4yn2n_D8Kd8d9ohv1Fd6YFSyRtgrzLT=1xbcegNLMWCQ@mail.gmail.com>
+References: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1534549659-15883-1-git-send-email-justinpopo6@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+To: Justin Chen <justinpopo6@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This was added as part of the patch in the fixes below, but was
-not needed or used, remove this here.
+On Fri, Aug 17, 2018 at 4:48 PM <justinpopo6@gmail.com> wrote:
+>
+> From: Justin Chen <justinpopo6@gmail.com>
+>
+> Sometimes we have empty banks within the GPIO block. This commit allows
+> proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
+> incrementing the bank and number of GPIOs, but not initializing them.
+> This will mean a call into the non-existent GPIOs will return an error.
 
-Fixes: 8e11047b8f3c ("gpio: davinci: Add support for multiple GPIO controllers")
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- include/linux/platform_data/gpio-davinci.h | 1 -
- 1 file changed, 1 deletion(-)
+This is clearer now; thanks for rewording!
 
-diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
-index 57a5a35e0073..b8e4957e7568 100644
---- a/include/linux/platform_data/gpio-davinci.h
-+++ b/include/linux/platform_data/gpio-davinci.h
-@@ -43,7 +43,6 @@ struct davinci_gpio_controller {
- 	void __iomem		*regs[MAX_REGS_BANKS];
- 	int			gpio_unbanked;
- 	int			irqs[MAX_INT_PER_BANK];
--	unsigned int		base;
- };
- 
- /*
--- 
-2.18.0
+>
+> Also remove "GPIO registered" dev print. This information is misleading
+> since the incremented banks and gpio_base do not reflect the actual GPIOs
+> that get initialized. We leave this information out since it is already
+> printed with dev_dbg.
+>
+> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+
+Looks like I'm a bit late on the response, but in case you feel like
+adding it Linus:
+
+Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
