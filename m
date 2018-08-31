@@ -1,51 +1,34 @@
 From: Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH] pinctrl: qcom: spmi-mpp: Fix drive strength setting
-Date: Thu, 30 Aug 2018 17:58:52 -0700
-Message-ID: <20180831005852.156465-1-swboyd@chromium.org>
+Subject: Re: [RFT PATCH 1/2] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be
+ compliant
+Date: Thu, 30 Aug 2018 18:00:08 -0700
+Message-ID: <153567720861.93865.11098054819022547198@swboyd.mtv.corp.google.com>
+References: <20180830152340.242249-1-dianders@chromium.org>
+ <20180830152340.242249-2-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180830152340.242249-2-dianders@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Doug Anderson <dianders@chromium.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "Ivan T . Ivanov" <iivanov@mm-sol.com>, Douglas Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-It looks like we parse the drive strength setting here, but never
-actually write it into the hardware to update it. Parse the setting and
-then write it at the end of the pinconf setting function so that it
-actually sticks in the hardware.
+Quoting Douglas Anderson (2018-08-30 08:23:38)
+> If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
+> it looks like nonsense.
+> =
 
-Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
+> qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
+> commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
+> compliant"), but it was pointed out that ssbi-gpio has the same
+> problem.  Let's fix it there too.
+> =
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 6556dbeae65e..1793a4d05e15 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -455,7 +455,7 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			pad->dtest = arg;
- 			break;
- 		case PIN_CONFIG_DRIVE_STRENGTH:
--			arg = pad->drive_strength;
-+			pad->drive_strength = arg;
- 			break;
- 		case PMIC_MPP_CONF_AMUX_ROUTE:
- 			if (arg >= PMIC_MPP_AMUX_ROUTE_ABUS4)
-@@ -502,6 +502,10 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_SINK_CTL, pad->drive_strength);
-+	if (ret < 0)
-+		return ret;
-+
- 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
- 
- 	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
--- 
-Sent by a computer through tubes
+> Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
