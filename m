@@ -1,49 +1,59 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [RFT PATCH 2/2] pinctrl: spmi-mpp: Fix pmic_mpp_config_get() to be
- compliant
-Date: Thu, 30 Aug 2018 18:00:16 -0700
-Message-ID: <153567721669.93865.15006485526507438075@swboyd.mtv.corp.google.com>
-References: <20180830152340.242249-1-dianders@chromium.org>
- <20180830152340.242249-3-dianders@chromium.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] pinctrl: sirf: atlas7: remove set but not used
+ variables 'conf, bank'
+Date: Fri, 31 Aug 2018 02:09:06 +0000
+Message-ID: <1535681346-152447-1-git-send-email-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830152340.242249-3-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "Ivan T . Ivanov" <iivanov@mm-sol.com>, Douglas Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>, Thierry Reding <treding@nvidia.com>, Tony Lindgren <tony@atomide.com>, Rob
+ Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Grygorii
+ Strashko <grygorii.strashko@ti.com>
+Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Douglas Anderson (2018-08-30 08:23:39)
-> If you look at "pinconf-groups" in debugfs for ssbi-mpp you'll notice
-> it looks like nonsense.
-> =
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
-> qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
-> commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
-> compliant"), but it was pointed out that ssbi-mpp has the same
-> problem.  Let's fix it there too.
-> =
+drivers/pinctrl/sirf/pinctrl-atlas7.c: In function 'atlas7_pinmux_resume_noirq':
+drivers/pinctrl/sirf/pinctrl-atlas7.c:5545:6: warning:
+ variable 'bank' set but not used [-Wunused-but-set-variable]
+  u32 bank;
 
-> NOTE: in case it's helpful to someone reading this, the way to tell
-> whether to do the -EINVAL or not is to look at the PCONFDUMP for a
-> given attribute.  If the last element (has_arg) is false then you need
-> to do the -EINVAL trick.
-> =
+drivers/pinctrl/sirf/pinctrl-atlas7.c:5543:28: warning:
+ variable 'conf' set but not used [-Wunused-but-set-variable]
+  struct atlas7_pad_config *conf;
 
-> ALSO NOTE: it seems unlikely that the values returned when we try to
-> get PIN_CONFIG_BIAS_PULL_UP will actually be printed since "has_arg"
-> is false for that one, but I guess it's still fine to return different
-> values so I kept doing that.  It seems like another driver (ssbi-gpio)
-> uses a custom attribute (PM8XXX_QCOM_PULL_UP_STRENGTH) for something
-> similar so maybe a future change should do that here too.
-> =
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-> Fixes: cfb24f6ebd38 ("pinctrl: Qualcomm SPMI PMIC MPP pin controller driv=
-er")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index 1d16df1..ee1063f 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -5540,14 +5540,10 @@ static int atlas7_pinmux_resume_noirq(struct device *dev)
+ {
+ 	struct atlas7_pmx *pmx = dev_get_drvdata(dev);
+ 	struct atlas7_pad_status *status;
+-	struct atlas7_pad_config *conf;
+ 	int idx;
+-	u32 bank;
+ 
+ 	for (idx = 0; idx < pmx->pctl_desc.npins; idx++) {
+ 		/* Get this Pad's descriptor from PINCTRL */
+-		conf = &pmx->pctl_data->confs[idx];
+-		bank = atlas7_pin_to_bank(idx);
+ 		status = &pmx->sleep_data[idx];
+ 
+ 		/* Restore Function selector */
