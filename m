@@ -1,7 +1,7 @@
 From: "Andrew F. Davis" <afd@ti.com>
-Subject: [PATCH 3/5] gpio: davinci: Allocate the correct amount of memory for controller
-Date: Fri, 31 Aug 2018 14:13:24 -0500
-Message-ID: <20180831191326.25106-3-afd@ti.com>
+Subject: [PATCH 5/5] gpio: davinci: Move driver local definitions to driver
+Date: Fri, 31 Aug 2018 14:13:26 -0500
+Message-ID: <20180831191326.25106-5-afd@ti.com>
 References: <20180831191326.25106-1-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,54 +12,112 @@ To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Keerthy <j-
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Previously we created a controller structure per bank of GPIO pins. This
-has since been changed to one per controller, but the allocation size
-was not changed. Fix this here.
-
-This also leaves the variable 'nbank' unused, instead of removing it,
-move it down and use it to clean up a loop. For loops with multiple
-initializers and/or iteration expressions, especially ones that don't
-use those loop counters are quite hard to follow, fix this.
+These defines, structs and inline functions are used only internally by
+the driver, they do not belong in platform_data. Move them.
 
 Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/gpio/gpio-davinci.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-davinci.c                | 28 ++++++++++++++++++++++
+ include/linux/platform_data/gpio-davinci.h | 28 ----------------------
+ 2 files changed, 28 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 14d1729927d3..121a7948f785 100644
+index 121a7948f785..5c1564fcc24e 100644
 --- a/drivers/gpio/gpio-davinci.c
 +++ b/drivers/gpio/gpio-davinci.c
-@@ -165,7 +165,7 @@ davinci_gpio_get_pdata(struct platform_device *pdev)
+@@ -9,6 +9,7 @@
+  * the Free Software Foundation; either version 2 of the License, or
+  * (at your option) any later version.
+  */
++
+ #include <linux/gpio/driver.h>
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
+@@ -24,6 +25,12 @@
+ #include <linux/platform_device.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ #include <linux/irqchip/chained_irq.h>
++#include <linux/spinlock.h>
++
++#include <asm-generic/gpio.h>
++
++#define MAX_REGS_BANKS 5
++#define MAX_INT_PER_BANK 32
  
- static int davinci_gpio_probe(struct platform_device *pdev)
+ struct davinci_gpio_regs {
+ 	u32	dir;
+@@ -45,6 +52,27 @@ typedef struct irq_chip *(*gpio_get_irq_chip_cb_t)(unsigned int irq);
+ static void __iomem *gpio_base;
+ static unsigned int offset_array[5] = {0x10, 0x38, 0x60, 0x88, 0xb0};
+ 
++struct davinci_gpio_irq_data {
++	void __iomem			*regs;
++	struct davinci_gpio_controller	*chip;
++	int				bank_num;
++};
++
++struct davinci_gpio_controller {
++	struct gpio_chip	chip;
++	struct irq_domain	*irq_domain;
++	/* Serialize access to GPIO registers */
++	spinlock_t		lock;
++	void __iomem		*regs[MAX_REGS_BANKS];
++	int			gpio_unbanked;
++	int			irqs[MAX_INT_PER_BANK];
++};
++
++static inline u32 __gpio_mask(unsigned gpio)
++{
++	return 1 << (gpio % 32);
++}
++
+ static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
  {
--	int gpio, bank, i, ret = 0;
-+	int bank, i, ret = 0;
- 	unsigned int ngpio, nbank, nirq;
- 	struct davinci_gpio_controller *chips;
- 	struct davinci_gpio_platform_data *pdata;
-@@ -204,10 +204,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	else
- 		nirq = DIV_ROUND_UP(ngpio, 16);
+ 	struct davinci_gpio_regs __iomem *g;
+diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
+index 47695b342883..f92a47e18034 100644
+--- a/include/linux/platform_data/gpio-davinci.h
++++ b/include/linux/platform_data/gpio-davinci.h
+@@ -16,40 +16,12 @@
+ #ifndef __DAVINCI_GPIO_PLATFORM_H
+ #define __DAVINCI_GPIO_PLATFORM_H
  
--	nbank = DIV_ROUND_UP(ngpio, 32);
--	chips = devm_kcalloc(dev,
--			     nbank, sizeof(struct davinci_gpio_controller),
--			     GFP_KERNEL);
-+	chips = devm_kzalloc(dev, sizeof(*chips), GFP_KERNEL);
- 	if (!chips)
- 		return -ENOMEM;
+-#include <linux/io.h>
+-#include <linux/spinlock.h>
+-
+-#include <asm-generic/gpio.h>
+-
+-#define MAX_REGS_BANKS		5
+-#define MAX_INT_PER_BANK 32
+-
+ struct davinci_gpio_platform_data {
+ 	u32	ngpio;
+ 	u32	gpio_unbanked;
+ };
  
-@@ -247,7 +244,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+-struct davinci_gpio_irq_data {
+-	void __iomem			*regs;
+-	struct davinci_gpio_controller	*chip;
+-	int				bank_num;
+-};
+-
+-struct davinci_gpio_controller {
+-	struct gpio_chip	chip;
+-	struct irq_domain	*irq_domain;
+-	/* Serialize access to GPIO registers */
+-	spinlock_t		lock;
+-	void __iomem		*regs[MAX_REGS_BANKS];
+-	int			gpio_unbanked;
+-	int			irqs[MAX_INT_PER_BANK];
+-};
+-
+ /* Convert GPIO signal to GPIO pin number */
+ #define GPIO_TO_PIN(bank, gpio)	(16 * (bank) + (gpio))
+ 
+-static inline u32 __gpio_mask(unsigned gpio)
+-{
+-	return 1 << (gpio % 32);
+-}
  #endif
- 	spin_lock_init(&chips->lock);
- 
--	for (gpio = 0, bank = 0; gpio < ngpio; gpio += 32, bank++)
-+	nbank = DIV_ROUND_UP(ngpio, 32);
-+	for (bank = 0; bank < nbank; bank++)
- 		chips->regs[bank] = gpio_base + offset_array[bank];
- 
- 	ret = devm_gpiochip_add_data(dev, &chips->chip, chips);
 -- 
 2.18.0
