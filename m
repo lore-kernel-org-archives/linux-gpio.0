@@ -1,89 +1,132 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v6 1/4] gpiolib: Pass bitmaps, not integer arrays, to
- get/set array
-Date: Sat, 1 Sep 2018 02:23:17 +0200
-Message-ID: <47a7e66f-8635-7131-8a0c-c26cf849fd50@axentia.se>
-References: <20180829204900.19390-1-jmkrzyszt@gmail.com>
- <20180831225616.29221-1-jmkrzyszt@gmail.com>
- <20180831225616.29221-2-jmkrzyszt@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH mfd+gpio 1/2] drivers: mfd: Add support for
+ Moxtet bus
+Date: Sat, 1 Sep 2018 13:45:56 +0300
+Message-ID: <20180901104556.ldj4vftjfb5glbmz@mwanda>
+References: <20180830144151.13417-1-marek.behun@nic.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180831225616.29221-2-jmkrzyszt@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-doc@vger.kernel.org, linux-i2
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <kbuild-bounces@lists.01.org>
+Content-Disposition: inline
+In-Reply-To: <20180830144151.13417-1-marek.behun@nic.cz>
+List-Unsubscribe: <https://lists.01.org/mailman/options/kbuild>,
+ <mailto:kbuild-request@lists.01.org?subject=unsubscribe>
+List-Archive: <http://lists.01.org/pipermail/kbuild/>
+List-Post: <mailto:kbuild@lists.01.org>
+List-Help: <mailto:kbuild-request@lists.01.org?subject=help>
+List-Subscribe: <https://lists.01.org/mailman/listinfo/kbuild>,
+ <mailto:kbuild-request@lists.01.org?subject=subscribe>
+Errors-To: kbuild-bounces@lists.01.org
+Sender: "kbuild" <kbuild-bounces@lists.01.org>
+To: kbuild@01.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>, linux-gpio@vger.kernel.org, kbuild-all@01.org, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2018-09-01 00:56, Janusz Krzysztofik wrote:
-> Most users of get/set array functions iterate consecutive bits of data,
-> usually a single integer, while processing array of results obtained
-> from, or building an array of values to be passed to those functions.
-> Save time wasted on those iterations by changing the functions' API to
-> accept bitmaps.
-> 
-> All current users are updated as well.
-> 
-> More benefits from the change are expected as soon as planned support
-> for accepting/passing those bitmaps directly from/to respective GPIO
-> chip callbacks if applicable is implemented.
+Hi Marek,
 
-> diff --git a/drivers/i2c/muxes/i2c-mux-gpio.c b/drivers/i2c/muxes/i2c-mux-gpio.c
-> index 401308e3d036..e28ddc20000d 100644
-> --- a/drivers/i2c/muxes/i2c-mux-gpio.c
-> +++ b/drivers/i2c/muxes/i2c-mux-gpio.c
-> @@ -22,18 +22,16 @@ struct gpiomux {
->  	struct i2c_mux_gpio_platform_data data;
->  	unsigned gpio_base;
->  	struct gpio_desc **gpios;
-> -	int *values;
->  };
->  
->  static void i2c_mux_gpio_set(const struct gpiomux *mux, unsigned val)
->  {
-> -	int i;
-> -
-> -	for (i = 0; i < mux->data.n_gpios; i++)
-> -		mux->values[i] = (val >> i) & 1;
-> +	DECLARE_BITMAP(value_bitmap, mux->data.n_gpios);
+Thank you for the patch! Perhaps something to improve:
 
-Picking a random driver for this comment, it applies to many of them.
+url:    https://github.com/0day-ci/linux/commits/Marek-Beh-n/drivers-mfd-Ad=
+d-support-for-Moxtet-bus/20180831-031806
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd=
+-next
 
-I think this creates a VLA? Can't you, for the bit-count, just go with
-BITS_PER_TYPE(unsigned)? Or whatever is appropriate for the driver
-in question.
+smatch warnings:
+drivers/mfd/moxtet.c:267 of_register_moxtet_device() warn: passing zero to =
+'ERR_PTR'
 
-Also, I find that where you use DECLARE_BITMAP, the _bitmap suffix is
-just noise and I would very much like to zap it.
+# https://github.com/0day-ci/linux/commit/316bda5c94917aa3b0a67c3cf79cca211=
+d08138d
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 316bda5c94917aa3b0a67c3cf79cca211d08138d
+vim +/ERR_PTR +267 drivers/mfd/moxtet.c
 
-Cheers,
-Peter
+316bda5c Marek Beh=FAn 2018-08-30  213  =
 
-> +	
-> +	*value_bitmap = val;
->  
->  	gpiod_set_array_value_cansleep(mux->data.n_gpios,
-> -				       mux->gpios, mux->values);
-> +				       mux->gpios, value_bitmap);
->  }
->  
->  static int i2c_mux_gpio_select(struct i2c_mux_core *muxc, u32 chan)
-> @@ -182,15 +180,13 @@ static int i2c_mux_gpio_probe(struct platform_device *pdev)
->  		return -EPROBE_DEFER;
->  
->  	muxc = i2c_mux_alloc(parent, &pdev->dev, mux->data.n_values,
-> -			     mux->data.n_gpios * sizeof(*mux->gpios) +
-> -			     mux->data.n_gpios * sizeof(*mux->values), 0,
-> +			     mux->data.n_gpios * sizeof(*mux->gpios), 0,
->  			     i2c_mux_gpio_select, NULL);
->  	if (!muxc) {
->  		ret = -ENOMEM;
->  		goto alloc_failed;
->  	}
->  	mux->gpios = muxc->priv;
-> -	mux->values = (int *)(mux->gpios + mux->data.n_gpios);
->  	muxc->priv = mux;
->  
->  	platform_set_drvdata(pdev, muxc);
+316bda5c Marek Beh=FAn 2018-08-30  214  static struct moxtet_device *
+316bda5c Marek Beh=FAn 2018-08-30  215  of_register_moxtet_device(struct mo=
+xtet *moxtet, struct device_node *nc)
+316bda5c Marek Beh=FAn 2018-08-30  216  {
+316bda5c Marek Beh=FAn 2018-08-30  217  	struct moxtet_device *dev;
+316bda5c Marek Beh=FAn 2018-08-30  218  	u32 val;
+316bda5c Marek Beh=FAn 2018-08-30  219  	int ret;
+316bda5c Marek Beh=FAn 2018-08-30  220  =
+
+316bda5c Marek Beh=FAn 2018-08-30  221  	dev =3D moxtet_alloc_device(moxtet=
+);
+316bda5c Marek Beh=FAn 2018-08-30  222  	if (!dev) {
+316bda5c Marek Beh=FAn 2018-08-30  223  		dev_err(moxtet->dev,
+316bda5c Marek Beh=FAn 2018-08-30  224  			"Moxtet device alloc error for %=
+pOF\n", nc);
+316bda5c Marek Beh=FAn 2018-08-30  225  		return ERR_PTR(-ENOMEM);
+316bda5c Marek Beh=FAn 2018-08-30  226  	}
+316bda5c Marek Beh=FAn 2018-08-30  227  =
+
+316bda5c Marek Beh=FAn 2018-08-30  228  	ret =3D of_property_read_u32(nc, "=
+reg", &val);
+316bda5c Marek Beh=FAn 2018-08-30  229  	if (ret || val >=3D TURRIS_MOX_MAX=
+_MODULES) {
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^=
+^^^^^
+No error code set.  It means we return NULL.  Presumably it leads to a
+NULL dereference in the caller?
+
+316bda5c Marek Beh=FAn 2018-08-30  230  		dev_err(moxtet->dev, "%pOF has no=
+ valid 'reg' property (%d)\n",
+316bda5c Marek Beh=FAn 2018-08-30  231  			nc, ret);
+316bda5c Marek Beh=FAn 2018-08-30  232  		goto err_put;
+316bda5c Marek Beh=FAn 2018-08-30  233  	}
+316bda5c Marek Beh=FAn 2018-08-30  234  	dev->idx =3D val;
+316bda5c Marek Beh=FAn 2018-08-30  235  =
+
+316bda5c Marek Beh=FAn 2018-08-30  236  	ret =3D of_property_read_u32(nc, "=
+moxtet,id", &val);
+316bda5c Marek Beh=FAn 2018-08-30  237  	if (ret || val > 0xf) {
+                                                   ^^^^^^^^^
+
+316bda5c Marek Beh=FAn 2018-08-30  238  		dev_err(moxtet->dev,
+316bda5c Marek Beh=FAn 2018-08-30  239  			"%pOF has no valid 'moxtet,id' p=
+roperty (%d)\n", nc,
+316bda5c Marek Beh=FAn 2018-08-30  240  			ret);
+316bda5c Marek Beh=FAn 2018-08-30  241  		goto err_put;
+316bda5c Marek Beh=FAn 2018-08-30  242  	}
+316bda5c Marek Beh=FAn 2018-08-30  243  	dev->id =3D val;
+316bda5c Marek Beh=FAn 2018-08-30  244  =
+
+316bda5c Marek Beh=FAn 2018-08-30  245  	if (moxtet->modules[dev->idx] !=3D=
+ dev->id) {
+316bda5c Marek Beh=FAn 2018-08-30  246  		dev_err(moxtet->dev,
+316bda5c Marek Beh=FAn 2018-08-30  247  			"%pOF requested Moxtet device ID=
+ 0x%x, 0x%x found\n",
+316bda5c Marek Beh=FAn 2018-08-30  248  			nc, dev->id, moxtet->modules[dev=
+->idx]);
+316bda5c Marek Beh=FAn 2018-08-30  249  		goto err_put;
+                                                ^^^^^^^^^^^^
+
+316bda5c Marek Beh=FAn 2018-08-30  250  	}
+316bda5c Marek Beh=FAn 2018-08-30  251  =
+
+316bda5c Marek Beh=FAn 2018-08-30  252  	of_node_get(nc);
+316bda5c Marek Beh=FAn 2018-08-30  253  	dev->dev.of_node =3D nc;
+316bda5c Marek Beh=FAn 2018-08-30  254  =
+
+316bda5c Marek Beh=FAn 2018-08-30  255  	ret =3D moxtet_add_device(dev);
+316bda5c Marek Beh=FAn 2018-08-30  256  	if (ret) {
+316bda5c Marek Beh=FAn 2018-08-30  257  		dev_err(moxtet->dev,
+316bda5c Marek Beh=FAn 2018-08-30  258  			"Moxtet device register error fo=
+r %pOF\n", nc);
+316bda5c Marek Beh=FAn 2018-08-30  259  		of_node_put(nc);
+316bda5c Marek Beh=FAn 2018-08-30  260  		goto err_put;
+316bda5c Marek Beh=FAn 2018-08-30  261  	}
+316bda5c Marek Beh=FAn 2018-08-30  262  =
+
+316bda5c Marek Beh=FAn 2018-08-30  263  	return dev;
+316bda5c Marek Beh=FAn 2018-08-30  264  =
+
+316bda5c Marek Beh=FAn 2018-08-30  265  err_put:
+316bda5c Marek Beh=FAn 2018-08-30  266  	put_device(&dev->dev);
+316bda5c Marek Beh=FAn 2018-08-30 @267  	return ERR_PTR(ret);
+316bda5c Marek Beh=FAn 2018-08-30  268  }
+316bda5c Marek Beh=FAn 2018-08-30  269  =
