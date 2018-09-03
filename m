@@ -1,50 +1,63 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] gpio: fix kernel-doc notation warning for 'request_key'
-Date: Mon, 3 Sep 2018 12:55:30 -0700
-Message-ID: <e80a35c7-a9f4-46bf-7036-11375f368ba5@infradead.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: spmi-mpp: Fix drive strength setting
+Date: Mon, 3 Sep 2018 13:58:09 -0700
+Message-ID: <20180903205809.GC1437@tuxbook-pro>
+References: <20180831005852.156465-1-swboyd@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180831005852.156465-1-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Doug Anderson <dianders@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Thu 30 Aug 17:58 PDT 2018, Stephen Boyd wrote:
 
-Fix kernel-doc warning for missing struct member 'request_key':
+> It looks like we parse the drive strength setting here, but never
+> actually write it into the hardware to update it. Parse the setting and
+> then write it at the end of the pinconf setting function so that it
+> actually sticks in the hardware.
+> 
+> Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-../include/linux/gpio/driver.h:142: warning: Function parameter or member 'request_key' not described in 'gpio_irq_chip'
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Fixes: 39c3fd58952d ("kernel/irq: Extend lockdep class for request mutex")
+Regards,
+Bjorn
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
----
- include/linux/gpio/driver.h |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
---- lnx-419-rc2.orig/include/linux/gpio/driver.h
-+++ lnx-419-rc2/include/linux/gpio/driver.h
-@@ -66,9 +66,15 @@ struct gpio_irq_chip {
- 	/**
- 	 * @lock_key:
- 	 *
--	 * Per GPIO IRQ chip lockdep classes.
-+	 * Per GPIO IRQ chip lockdep class for IRQ lock.
- 	 */
- 	struct lock_class_key *lock_key;
-+
-+	/**
-+	 * @request_key:
-+	 *
-+	 * Per GPIO IRQ chip lockdep class for IRQ request.
-+	 */
- 	struct lock_class_key *request_key;
- 
- 	/**
+> ---
+>  drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+> index 6556dbeae65e..1793a4d05e15 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+> @@ -455,7 +455,7 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>  			pad->dtest = arg;
+>  			break;
+>  		case PIN_CONFIG_DRIVE_STRENGTH:
+> -			arg = pad->drive_strength;
+> +			pad->drive_strength = arg;
+>  			break;
+>  		case PMIC_MPP_CONF_AMUX_ROUTE:
+>  			if (arg >= PMIC_MPP_AMUX_ROUTE_ABUS4)
+> @@ -502,6 +502,10 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_SINK_CTL, pad->drive_strength);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
+>  
+>  	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
+> -- 
+> Sent by a computer through tubes
+> 
