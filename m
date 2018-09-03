@@ -1,159 +1,116 @@
-From: jacopo mondi <jacopo@jmondi.org>
-Subject: Re: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
-Date: Mon, 3 Sep 2018 12:33:58 +0200
-Message-ID: <20180903103358.GC20333@w540>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: RE: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
+Date: Mon, 3 Sep 2018 11:03:18 +0000
+Message-ID: <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+ <20180903103358.GC20333@w540>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="WK3l2KTTmXPVedZ6"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <20180903103358.GC20333@w540>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-
---WK3l2KTTmXPVedZ6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Phil,
-
-On Thu, Aug 30, 2018 at 02:12:52PM +0100, Phil Edworthy wrote:
-> This implements the pinctrl driver for the RZ/N1 family of devices, including
-> the R9A06G032 (RZ/N1D) device.
->
-> One area that is likely to be contentious is the use of 'virtual pins' for the
-> MDIO pinmuxing. The driver uses two pins (170 and 171) that don't exist on the
-> device to configure the MDIO source within the RZ/N1 devices. On these devices,
-> there are two Ethernet MACs, a 5-Port Switch, numerous industrial Ethernet
-> peripherals, any of which can be the MDIO source. Configuring the MDIO source
-> could be done without the virtual pins, e.g. by extending the functions to
-> cover all MDIO variants (a total of 32 additional functions), but this would
-> allow users to misconfigure individual MDIO pins, rather than assign all MDIO
-> pins to a MDIO source. The choice of how to implement this will affect the
-> DT bindings.
->
-> This series was originally written by Michel Pollet whilst at Renesas, and I
-> have taken over this work.
->
-> One point from Michel's v1 series:
-> "Note, I used renesas,rzn1-pinmux node to specify the pinmux constants,
-> and I also don't use some of the properties documented in
-> pinctrl-bindings.txt on purpose, as they are too limited for my use
-> (I need to be able to set, clear, ignore or reset level, pull up/down
-> and function as the pinmux might be set by another OS/core running
-> concurently)."
->
-
-I start by saying that I don't know this HW pin controller well, so
-I might be missing something, but as commented on the original series from
-Micheal, I still don't see why you need a custom property here...
-
-My understanding, looking at this comment and the header provided by
-patch [1/3] (include/dt-bindings/pinctrl/rzn1-pinctrl.h) is that
-basically need to control pull-up/down and the output driver strength.
-
-Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt reports
-a set of generic pin configuration properties to be applied to a pin
-configuration (and multiplexing) pin controller child node that fully
-express all (most?) of your needs.
-
-Eg. a pin configuration with pull up applied, using examples from your
-cover letter should be expressed as
-
-Your example:
-         &pinctrl {
-                 pinsuart0: pinsuart0 {
-                         renesas,rzn1-pinmux-ids = <
-                                 RZN1_MUX(103, UART0_I)  /* UART0_TXD */
-                                 RZN1_MUX_PUP(104, UART0_I)      /* UART0_RXD */
-                         >;
-                 };
-         };
-
-Using standard pinctroller bindings pin configuration properties:
-
-         &pinctrl {
-                 pinsuart0: uart0  {
-                        pinsuart_tx0 {
-                                pinmux = <103, UART0_I>;  /* UART0_TXD */
-                        };
-
-                        pinsuart_rx0 {
-                                 pinmux = <104, UART0_I>; /* UART0_RXD */
-                                 bias-pull-up;
-                        };
-                 };
-         };
-
-Is there anything I am missing? Maybe from the interaction with
-"another OS/core running concurrently" you mentioned? In this case if
-you only have to perform pin configuration (because muxing is handled
-already) things are even simpler, just use the pin configuration
-bindings, without involving muxing at all:
-
-        &pinctrl {
-                pinsuart_conf: uart0 {
-                        pins = <103, 104>;
-                        bias-pull-up;
-                 };
-         };
-
-Thanks
-  j
-
-> Patch 0003 should really be applied after patch:
->  "ARM: dts: r9a06g032: Correct UART and add all other UARTs", see
->  https://www.spinics.net/lists/arm-kernel/msg673525.html
->
-> Main changes:
-> v2:
->  - Change to generic rzn1 family driver, instead of device specific.
->  - Review comments fixed.
->  - Fix error handling during probe
->
-> Phil Edworthy (3):
->   dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
->   pinctrl: renesas: Renesas RZ/N1 pinctrl driver
->   ARM: dts: r9a06g032: Add pinctrl node
->
->  .../bindings/pinctrl/renesas,rzn1-pinctrl.txt      |  97 +++
->  arch/arm/boot/dts/r9a06g032.dtsi                   |   8 +
->  drivers/pinctrl/Kconfig                            |  10 +
->  drivers/pinctrl/Makefile                           |   1 +
->  drivers/pinctrl/pinctrl-rzn1.c                     | 844 +++++++++++++++++++++
->  include/dt-bindings/pinctrl/rzn1-pinctrl.h         | 191 +++++
->  6 files changed, 1151 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
->  create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
->  create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
->
-> --
-> 2.7.4
->
-
---WK3l2KTTmXPVedZ6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbjQ4WAAoJEHI0Bo8WoVY809sQAI2sohCacWR23p07ZrJpZVLa
-Mj+sQnALW+urUxXGXITgFyABscYBZzpbvXUhDYjwkd0MAn+GLCdG6kEJnRgZA1c9
-0E5FN8j9Bn3vdsD6xvktZ/pdcUIH9+bvunHhZCzrW4s6UHx7mtReqB1Ih8oQoi2D
-y7K1bR/1pxtHQ3VboZSs2aIhUIV8eDzk5L/ZAjgitibH7gcrafNAXJMgi+nO2ioA
-RdmzqCNaJ7smkeWrNrlbWjJ2XIJXueSuyY/7XY2sFolljFls48TVWYZG5okYHSyo
-bYDfuV2fTfGVfYy9cfvyYZpZXrbXIj9tOoPm6K6qzEnfaK76TMs0EIeFGvyw9Flu
-Ym4hQ5af7ELr03sEt/2I18T+3tZ55lPxYbeg/Uisxv39w2q6LvEScR0emuzm+IfW
-c+ucfZplP9UadQ+0UVxHFlZqPNAeXuuUly4Y4WW4EN6exXEO0ekjCSRqSm59Vdby
-l5B4PTAhpTY602WkabLxvQop9Uk1BNRlwC4sNFN1SXOqqq09bvWmhPDZx5oPKG42
-dZccD9inF70DVAmY9lk+HDN0cjfMZz8zmzlFCDwvOLYY/M7C8mIPOGAoXFOy3ivg
-OaTO79F00LPpwVN2PiuXW43X2QP0BsMIpAFVvsmOlf8Y1IOe3Ms5H4iXE2xTJZle
-HbB1RzvkUR6CH434QdzA
-=7OGs
------END PGP SIGNATURE-----
-
---WK3l2KTTmXPVedZ6--
+SGkgSmFjb3BvLA0KDQpPbiAwMyBTZXB0ZW1iZXIgMjAxOCAxMTozNCwgamFjb3BvIG1vbmRpIHdy
+b3RlOg0KPiBPbiBUaHUsIEF1ZyAzMCwgMjAxOCBhdCAwMjoxMjo1MlBNICswMTAwLCBQaGlsIEVk
+d29ydGh5IHdyb3RlOg0KPiA+IFRoaXMgaW1wbGVtZW50cyB0aGUgcGluY3RybCBkcml2ZXIgZm9y
+IHRoZSBSWi9OMSBmYW1pbHkgb2YgZGV2aWNlcywgaW5jbHVkaW5nDQo+ID4gdGhlIFI5QTA2RzAz
+MiAoUlovTjFEKSBkZXZpY2UuDQo+ID4NCj4gPiBPbmUgYXJlYSB0aGF0IGlzIGxpa2VseSB0byBi
+ZSBjb250ZW50aW91cyBpcyB0aGUgdXNlIG9mICd2aXJ0dWFsIHBpbnMnIGZvciB0aGUNCj4gPiBN
+RElPIHBpbm11eGluZy4gVGhlIGRyaXZlciB1c2VzIHR3byBwaW5zICgxNzAgYW5kIDE3MSkgdGhh
+dCBkb24ndCBleGlzdCBvbg0KPiB0aGUNCj4gPiBkZXZpY2UgdG8gY29uZmlndXJlIHRoZSBNRElP
+IHNvdXJjZSB3aXRoaW4gdGhlIFJaL04xIGRldmljZXMuIE9uIHRoZXNlDQo+IGRldmljZXMsDQo+
+ID4gdGhlcmUgYXJlIHR3byBFdGhlcm5ldCBNQUNzLCBhIDUtUG9ydCBTd2l0Y2gsIG51bWVyb3Vz
+IGluZHVzdHJpYWwNCj4gRXRoZXJuZXQNCj4gPiBwZXJpcGhlcmFscywgYW55IG9mIHdoaWNoIGNh
+biBiZSB0aGUgTURJTyBzb3VyY2UuIENvbmZpZ3VyaW5nIHRoZSBNRElPDQo+IHNvdXJjZQ0KPiA+
+IGNvdWxkIGJlIGRvbmUgd2l0aG91dCB0aGUgdmlydHVhbCBwaW5zLCBlLmcuIGJ5IGV4dGVuZGlu
+ZyB0aGUgZnVuY3Rpb25zIHRvDQo+ID4gY292ZXIgYWxsIE1ESU8gdmFyaWFudHMgKGEgdG90YWwg
+b2YgMzIgYWRkaXRpb25hbCBmdW5jdGlvbnMpLCBidXQgdGhpcyB3b3VsZA0KPiA+IGFsbG93IHVz
+ZXJzIHRvIG1pc2NvbmZpZ3VyZSBpbmRpdmlkdWFsIE1ESU8gcGlucywgcmF0aGVyIHRoYW4gYXNz
+aWduIGFsbA0KPiBNRElPDQo+ID4gcGlucyB0byBhIE1ESU8gc291cmNlLiBUaGUgY2hvaWNlIG9m
+IGhvdyB0byBpbXBsZW1lbnQgdGhpcyB3aWxsIGFmZmVjdCB0aGUNCj4gPiBEVCBiaW5kaW5ncy4N
+Cj4gPg0KPiA+IFRoaXMgc2VyaWVzIHdhcyBvcmlnaW5hbGx5IHdyaXR0ZW4gYnkgTWljaGVsIFBv
+bGxldCB3aGlsc3QgYXQgUmVuZXNhcywgYW5kIEkNCj4gPiBoYXZlIHRha2VuIG92ZXIgdGhpcyB3
+b3JrLg0KPiA+DQo+ID4gT25lIHBvaW50IGZyb20gTWljaGVsJ3MgdjEgc2VyaWVzOg0KPiA+ICJO
+b3RlLCBJIHVzZWQgcmVuZXNhcyxyem4xLXBpbm11eCBub2RlIHRvIHNwZWNpZnkgdGhlIHBpbm11
+eCBjb25zdGFudHMsDQo+ID4gYW5kIEkgYWxzbyBkb24ndCB1c2Ugc29tZSBvZiB0aGUgcHJvcGVy
+dGllcyBkb2N1bWVudGVkIGluDQo+ID4gcGluY3RybC1iaW5kaW5ncy50eHQgb24gcHVycG9zZSwg
+YXMgdGhleSBhcmUgdG9vIGxpbWl0ZWQgZm9yIG15IHVzZQ0KPiA+IChJIG5lZWQgdG8gYmUgYWJs
+ZSB0byBzZXQsIGNsZWFyLCBpZ25vcmUgb3IgcmVzZXQgbGV2ZWwsIHB1bGwgdXAvZG93bg0KPiA+
+IGFuZCBmdW5jdGlvbiBhcyB0aGUgcGlubXV4IG1pZ2h0IGJlIHNldCBieSBhbm90aGVyIE9TL2Nv
+cmUgcnVubmluZw0KPiA+IGNvbmN1cmVudGx5KS4iDQo+ID4NCj4gDQo+IEkgc3RhcnQgYnkgc2F5
+aW5nIHRoYXQgSSBkb24ndCBrbm93IHRoaXMgSFcgcGluIGNvbnRyb2xsZXIgd2VsbCwgc28NCj4g
+SSBtaWdodCBiZSBtaXNzaW5nIHNvbWV0aGluZywgYnV0IGFzIGNvbW1lbnRlZCBvbiB0aGUgb3Jp
+Z2luYWwgc2VyaWVzIGZyb20NCj4gTWljaGVhbCwgSSBzdGlsbCBkb24ndCBzZWUgd2h5IHlvdSBu
+ZWVkIGEgY3VzdG9tIHByb3BlcnR5IGhlcmUuLi4NCj4gDQo+IE15IHVuZGVyc3RhbmRpbmcsIGxv
+b2tpbmcgYXQgdGhpcyBjb21tZW50IGFuZCB0aGUgaGVhZGVyIHByb3ZpZGVkIGJ5DQo+IHBhdGNo
+IFsxLzNdIChpbmNsdWRlL2R0LWJpbmRpbmdzL3BpbmN0cmwvcnpuMS1waW5jdHJsLmgpIGlzIHRo
+YXQNCj4gYmFzaWNhbGx5IG5lZWQgdG8gY29udHJvbCBwdWxsLXVwL2Rvd24gYW5kIHRoZSBvdXRw
+dXQgZHJpdmVyIHN0cmVuZ3RoLg0KPiANCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL3BpbmN0cmwvcGluY3RybC1iaW5kaW5ncy50eHQgcmVwb3J0cw0KPiBhIHNldCBvZiBnZW5l
+cmljIHBpbiBjb25maWd1cmF0aW9uIHByb3BlcnRpZXMgdG8gYmUgYXBwbGllZCB0byBhIHBpbg0K
+PiBjb25maWd1cmF0aW9uIChhbmQgbXVsdGlwbGV4aW5nKSBwaW4gY29udHJvbGxlciBjaGlsZCBu
+b2RlIHRoYXQgZnVsbHkNCj4gZXhwcmVzcyBhbGwgKG1vc3Q/KSBvZiB5b3VyIG5lZWRzLg0KPiAN
+Cj4gRWcuIGEgcGluIGNvbmZpZ3VyYXRpb24gd2l0aCBwdWxsIHVwIGFwcGxpZWQsIHVzaW5nIGV4
+YW1wbGVzIGZyb20geW91cg0KPiBjb3ZlciBsZXR0ZXIgc2hvdWxkIGJlIGV4cHJlc3NlZCBhcw0K
+PiANCj4gWW91ciBleGFtcGxlOg0KPiAgICAgICAgICAmcGluY3RybCB7DQo+ICAgICAgICAgICAg
+ICAgICAgcGluc3VhcnQwOiBwaW5zdWFydDAgew0KPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+cmVuZXNhcyxyem4xLXBpbm11eC1pZHMgPSA8DQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIFJaTjFfTVVYKDEwMywgVUFSVDBfSSkgIC8qIFVBUlQwX1RYRCAqLw0KPiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBSWk4xX01VWF9QVVAoMTA0LCBVQVJUMF9JKSAgICAg
+IC8qIFVBUlQwX1JYRCAqLw0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgPjsNCj4gICAgICAg
+ICAgICAgICAgICB9Ow0KPiAgICAgICAgICB9Ow0KPiANCj4gVXNpbmcgc3RhbmRhcmQgcGluY3Ry
+b2xsZXIgYmluZGluZ3MgcGluIGNvbmZpZ3VyYXRpb24gcHJvcGVydGllczoNCj4gDQo+ICAgICAg
+ICAgICZwaW5jdHJsIHsNCj4gICAgICAgICAgICAgICAgICBwaW5zdWFydDA6IHVhcnQwICB7DQo+
+ICAgICAgICAgICAgICAgICAgICAgICAgIHBpbnN1YXJ0X3R4MCB7DQo+ICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgcGlubXV4ID0gPDEwMywgVUFSVDBfST47ICAvKiBVQVJUMF9UWEQg
+Ki8NCj4gICAgICAgICAgICAgICAgICAgICAgICAgfTsNCj4gDQo+ICAgICAgICAgICAgICAgICAg
+ICAgICAgIHBpbnN1YXJ0X3J4MCB7DQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHBpbm11eCA9IDwxMDQsIFVBUlQwX0k+OyAvKiBVQVJUMF9SWEQgKi8NCj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgYmlhcy1wdWxsLXVwOw0KPiAgICAgICAgICAgICAgICAgICAg
+ICAgICB9Ow0KPiAgICAgICAgICAgICAgICAgIH07DQo+ICAgICAgICAgIH07DQo+IA0KPiBJcyB0
+aGVyZSBhbnl0aGluZyBJIGFtIG1pc3Npbmc/IE1heWJlIGZyb20gdGhlIGludGVyYWN0aW9uIHdp
+dGgNCj4gImFub3RoZXIgT1MvY29yZSBydW5uaW5nIGNvbmN1cnJlbnRseSIgeW91IG1lbnRpb25l
+ZD8gSW4gdGhpcyBjYXNlIGlmDQo+IHlvdSBvbmx5IGhhdmUgdG8gcGVyZm9ybSBwaW4gY29uZmln
+dXJhdGlvbiAoYmVjYXVzZSBtdXhpbmcgaXMgaGFuZGxlZA0KPiBhbHJlYWR5KSB0aGluZ3MgYXJl
+IGV2ZW4gc2ltcGxlciwganVzdCB1c2UgdGhlIHBpbiBjb25maWd1cmF0aW9uDQo+IGJpbmRpbmdz
+LCB3aXRob3V0IGludm9sdmluZyBtdXhpbmcgYXQgYWxsOg0KPiANCj4gICAgICAgICAmcGluY3Ry
+bCB7DQo+ICAgICAgICAgICAgICAgICBwaW5zdWFydF9jb25mOiB1YXJ0MCB7DQo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgIHBpbnMgPSA8MTAzLCAxMDQ+Ow0KPiAgICAgICAgICAgICAgICAgICAg
+ICAgICBiaWFzLXB1bGwtdXA7DQo+ICAgICAgICAgICAgICAgICAgfTsNCj4gICAgICAgICAgfTsN
+Cg0KU29ycnkgSSBkaWRu4oCZdCBhZGRyZXNzIHlvdXIgcG9pbnQuDQpUaGUgb25seSByZWFzb24g
+d2Ugd2FudCB0byB1c2UgbmV3IHByb3BlcnRpZXMgaXMgc28gdGhlIGRyaXZlciBjYW4gcHJvY2Vz
+cw0KZHRzIGZpbGVzIHRoYXQgaGF2ZSBiZWVuIGdlbmVyYXRlZCBmcm9tIGFuIGV4aXN0aW5nIFBp
+bk11eCBBcHAuIFRoYXQgb3V0cHV0DQppcyB1c2VkIGJ5IFZ4V29ya3MgYXMgd2VsbCBhcyBvdXIg
+b3V0LW9mLXRyZWUgTGludXggcG9ydC4gSWYgdGhhdCBpcyBub3QgYQ0KZ29vZCBlbm91Z2ggcmVh
+c29uIHRvIGFkZCBuZXcgcHJvcGVydGllcywgdGhlbiBJIGNhbid0IHNlZSBhbnkgdGVjaG5pY2Fs
+DQpyZWFzb24gbm90IHRvIHVzZSB0aGUgZXhpc3RpbmcgYmluZGluZ3MuDQpUaGUgdXNlIHdpdGgg
+YW5vdGhlciBPUyBydW5uaW5nIG9uIGEgZGlmZmVyZW50IGNvcmUgc2hvdWxkIG5vdCBiZSBhIGJh
+cnJpZXINCmFzIGl0IG11c3Qgbm90IHVzZSB0aGUgc2FtZSBwaW5zIGFzIExpbnV4Lg0KDQpUaGFu
+a3MNClBoaWwNCg0KPiBUaGFua3MNCj4gICBqDQo+IA0KPiA+IFBhdGNoIDAwMDMgc2hvdWxkIHJl
+YWxseSBiZSBhcHBsaWVkIGFmdGVyIHBhdGNoOg0KPiA+ICAiQVJNOiBkdHM6IHI5YTA2ZzAzMjog
+Q29ycmVjdCBVQVJUIGFuZCBhZGQgYWxsIG90aGVyIFVBUlRzIiwgc2VlDQo+ID4gIGh0dHBzOi8v
+d3d3LnNwaW5pY3MubmV0L2xpc3RzL2FybS1rZXJuZWwvbXNnNjczNTI1Lmh0bWwNCj4gPg0KPiA+
+IE1haW4gY2hhbmdlczoNCj4gPiB2MjoNCj4gPiAgLSBDaGFuZ2UgdG8gZ2VuZXJpYyByem4xIGZh
+bWlseSBkcml2ZXIsIGluc3RlYWQgb2YgZGV2aWNlIHNwZWNpZmljLg0KPiA+ICAtIFJldmlldyBj
+b21tZW50cyBmaXhlZC4NCj4gPiAgLSBGaXggZXJyb3IgaGFuZGxpbmcgZHVyaW5nIHByb2JlDQo+
+ID4NCj4gPiBQaGlsIEVkd29ydGh5ICgzKToNCj4gPiAgIGR0LWJpbmRpbmdzOiBwaW5jdHJsOiBy
+ZW5lc2FzLHJ6bjEtcGluY3RybDogZG9jdW1lbnRhdGlvbg0KPiA+ICAgcGluY3RybDogcmVuZXNh
+czogUmVuZXNhcyBSWi9OMSBwaW5jdHJsIGRyaXZlcg0KPiA+ICAgQVJNOiBkdHM6IHI5YTA2ZzAz
+MjogQWRkIHBpbmN0cmwgbm9kZQ0KPiA+DQo+ID4gIC4uLi9iaW5kaW5ncy9waW5jdHJsL3JlbmVz
+YXMscnpuMS1waW5jdHJsLnR4dCAgICAgIHwgIDk3ICsrKw0KPiA+ICBhcmNoL2FybS9ib290L2R0
+cy9yOWEwNmcwMzIuZHRzaSAgICAgICAgICAgICAgICAgICB8ICAgOCArDQo+ID4gIGRyaXZlcnMv
+cGluY3RybC9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDEwICsNCj4gPiAg
+ZHJpdmVycy9waW5jdHJsL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDEg
+Kw0KPiA+ICBkcml2ZXJzL3BpbmN0cmwvcGluY3RybC1yem4xLmMgICAgICAgICAgICAgICAgICAg
+ICB8IDg0NCArKysrKysrKysrKysrKysrKysrKysNCj4gPiAgaW5jbHVkZS9kdC1iaW5kaW5ncy9w
+aW5jdHJsL3J6bjEtcGluY3RybC5oICAgICAgICAgfCAxOTEgKysrKysNCj4gPiAgNiBmaWxlcyBj
+aGFuZ2VkLCAxMTUxIGluc2VydGlvbnMoKykNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0DQo+IERv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL3JlbmVzYXMscnpuMS1waW5j
+dHJsLnR4dA0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9waW5jdHJsL3BpbmN0cmwt
+cnpuMS5jDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL3BpbmN0
+cmwvcnpuMS1waW5jdHJsLmgNCj4gPg0KPiA+IC0tDQo+ID4gMi43LjQNCj4gPg0K
