@@ -1,108 +1,160 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: RE: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
-Date: Wed, 5 Sep 2018 09:58:58 +0000
-Message-ID: <TY1PR01MB17697A2D3BCA85B3BFC1FE21F5020@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
- <20180903103358.GC20333@w540>
- <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdU-CcckKueeT5r9-jCoNr0H5KhzrAMbL4LeFta_fAqWuA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH mfd+gpio 2/2] drivers: gpio: Add support for GPIOs over
+ Moxtet bus
+Date: Wed, 5 Sep 2018 12:07:56 +0200
+Message-ID: <CACRpkdYm-qkBT-T0Zx8+eN70XcMuUkxX3oM1bs3NicvHc=_ZmQ@mail.gmail.com>
+References: <20180830144151.13417-1-marek.behun@nic.cz> <20180830144151.13417-2-marek.behun@nic.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdU-CcckKueeT5r9-jCoNr0H5KhzrAMbL4LeFta_fAqWuA@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20180830144151.13417-2-marek.behun@nic.cz>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo@jmondi.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: marek.behun@nic.cz, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIDA1IFNlcHRlbWJlciAyMDE4IDEwOjM3LCBHZWVydCBVeXR0ZXJob2V2
-ZW4gd3JvdGU6DQo+IE9uIE1vbiwgU2VwIDMsIDIwMTggYXQgMTowMyBQTSBQaGlsIEVkd29ydGh5
-IHdyb3RlOg0KPiA+IE9uIDAzIFNlcHRlbWJlciAyMDE4IDExOjM0LCBqYWNvcG8gbW9uZGkgd3Jv
-dGU6DQo+ID4gPiBPbiBUaHUsIEF1ZyAzMCwgMjAxOCBhdCAwMjoxMjo1MlBNICswMTAwLCBQaGls
-IEVkd29ydGh5IHdyb3RlOg0KPiA+ID4gPiBUaGlzIGltcGxlbWVudHMgdGhlIHBpbmN0cmwgZHJp
-dmVyIGZvciB0aGUgUlovTjEgZmFtaWx5IG9mDQo+ID4gPiA+IGRldmljZXMsIGluY2x1ZGluZyB0
-aGUgUjlBMDZHMDMyIChSWi9OMUQpIGRldmljZS4NCj4gPiA+ID4NCj4gPiA+ID4gT25lIGFyZWEg
-dGhhdCBpcyBsaWtlbHkgdG8gYmUgY29udGVudGlvdXMgaXMgdGhlIHVzZSBvZiAndmlydHVhbA0K
-PiA+ID4gPiBwaW5zJyBmb3IgdGhlIE1ESU8gcGlubXV4aW5nLiBUaGUgZHJpdmVyIHVzZXMgdHdv
-IHBpbnMgKDE3MCBhbmQNCj4gPiA+ID4gMTcxKSB0aGF0IGRvbid0IGV4aXN0IG9uDQo+ID4gPiB0
-aGUNCj4gPiA+ID4gZGV2aWNlIHRvIGNvbmZpZ3VyZSB0aGUgTURJTyBzb3VyY2Ugd2l0aGluIHRo
-ZSBSWi9OMSBkZXZpY2VzLiBPbg0KPiA+ID4gPiB0aGVzZQ0KPiA+ID4gZGV2aWNlcywNCj4gPiA+
-ID4gdGhlcmUgYXJlIHR3byBFdGhlcm5ldCBNQUNzLCBhIDUtUG9ydCBTd2l0Y2gsIG51bWVyb3Vz
-IGluZHVzdHJpYWwNCj4gPiA+IEV0aGVybmV0DQo+ID4gPiA+IHBlcmlwaGVyYWxzLCBhbnkgb2Yg
-d2hpY2ggY2FuIGJlIHRoZSBNRElPIHNvdXJjZS4gQ29uZmlndXJpbmcgdGhlDQo+ID4gPiA+IE1E
-SU8NCj4gPiA+IHNvdXJjZQ0KPiA+ID4gPiBjb3VsZCBiZSBkb25lIHdpdGhvdXQgdGhlIHZpcnR1
-YWwgcGlucywgZS5nLiBieSBleHRlbmRpbmcgdGhlDQo+ID4gPiA+IGZ1bmN0aW9ucyB0byBjb3Zl
-ciBhbGwgTURJTyB2YXJpYW50cyAoYSB0b3RhbCBvZiAzMiBhZGRpdGlvbmFsDQo+ID4gPiA+IGZ1
-bmN0aW9ucyksIGJ1dCB0aGlzIHdvdWxkIGFsbG93IHVzZXJzIHRvIG1pc2NvbmZpZ3VyZSBpbmRp
-dmlkdWFsDQo+ID4gPiA+IE1ESU8gcGlucywgcmF0aGVyIHRoYW4gYXNzaWduIGFsbA0KPiA+ID4g
-TURJTw0KPiA+ID4gPiBwaW5zIHRvIGEgTURJTyBzb3VyY2UuIFRoZSBjaG9pY2Ugb2YgaG93IHRv
-IGltcGxlbWVudCB0aGlzIHdpbGwNCj4gPiA+ID4gYWZmZWN0IHRoZSBEVCBiaW5kaW5ncy4NCj4g
-PiA+ID4NCj4gPiA+ID4gVGhpcyBzZXJpZXMgd2FzIG9yaWdpbmFsbHkgd3JpdHRlbiBieSBNaWNo
-ZWwgUG9sbGV0IHdoaWxzdCBhdA0KPiA+ID4gPiBSZW5lc2FzLCBhbmQgSSBoYXZlIHRha2VuIG92
-ZXIgdGhpcyB3b3JrLg0KPiA+ID4gPg0KPiA+ID4gPiBPbmUgcG9pbnQgZnJvbSBNaWNoZWwncyB2
-MSBzZXJpZXM6DQo+ID4gPiA+ICJOb3RlLCBJIHVzZWQgcmVuZXNhcyxyem4xLXBpbm11eCBub2Rl
-IHRvIHNwZWNpZnkgdGhlIHBpbm11eA0KPiA+ID4gPiBjb25zdGFudHMsIGFuZCBJIGFsc28gZG9u
-J3QgdXNlIHNvbWUgb2YgdGhlIHByb3BlcnRpZXMgZG9jdW1lbnRlZA0KPiA+ID4gPiBpbiBwaW5j
-dHJsLWJpbmRpbmdzLnR4dCBvbiBwdXJwb3NlLCBhcyB0aGV5IGFyZSB0b28gbGltaXRlZCBmb3Ig
-bXkNCj4gPiA+ID4gdXNlIChJIG5lZWQgdG8gYmUgYWJsZSB0byBzZXQsIGNsZWFyLCBpZ25vcmUg
-b3IgcmVzZXQgbGV2ZWwsIHB1bGwNCj4gPiA+ID4gdXAvZG93biBhbmQgZnVuY3Rpb24gYXMgdGhl
-IHBpbm11eCBtaWdodCBiZSBzZXQgYnkgYW5vdGhlciBPUy9jb3JlDQo+ID4gPiA+IHJ1bm5pbmcg
-Y29uY3VyZW50bHkpLiINCj4gPiA+ID4NCj4gPiA+DQo+ID4gPiBJIHN0YXJ0IGJ5IHNheWluZyB0
-aGF0IEkgZG9uJ3Qga25vdyB0aGlzIEhXIHBpbiBjb250cm9sbGVyIHdlbGwsIHNvDQo+ID4gPiBJ
-IG1pZ2h0IGJlIG1pc3Npbmcgc29tZXRoaW5nLCBidXQgYXMgY29tbWVudGVkIG9uIHRoZSBvcmln
-aW5hbA0KPiA+ID4gc2VyaWVzIGZyb20gTWljaGVhbCwgSSBzdGlsbCBkb24ndCBzZWUgd2h5IHlv
-dSBuZWVkIGEgY3VzdG9tIHByb3BlcnR5DQo+IGhlcmUuLi4NCj4gPiA+DQo+ID4gPiBNeSB1bmRl
-cnN0YW5kaW5nLCBsb29raW5nIGF0IHRoaXMgY29tbWVudCBhbmQgdGhlIGhlYWRlciBwcm92aWRl
-ZCBieQ0KPiA+ID4gcGF0Y2ggWzEvM10gKGluY2x1ZGUvZHQtYmluZGluZ3MvcGluY3RybC9yem4x
-LXBpbmN0cmwuaCkgaXMgdGhhdA0KPiA+ID4gYmFzaWNhbGx5IG5lZWQgdG8gY29udHJvbCBwdWxs
-LXVwL2Rvd24gYW5kIHRoZSBvdXRwdXQgZHJpdmVyIHN0cmVuZ3RoLg0KPiA+ID4NCj4gPiA+IERv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL3BpbmN0cmwtYmluZGluZ3Mu
-dHh0DQo+ID4gPiByZXBvcnRzIGEgc2V0IG9mIGdlbmVyaWMgcGluIGNvbmZpZ3VyYXRpb24gcHJv
-cGVydGllcyB0byBiZSBhcHBsaWVkDQo+ID4gPiB0byBhIHBpbiBjb25maWd1cmF0aW9uIChhbmQg
-bXVsdGlwbGV4aW5nKSBwaW4gY29udHJvbGxlciBjaGlsZCBub2RlDQo+ID4gPiB0aGF0IGZ1bGx5
-IGV4cHJlc3MgYWxsIChtb3N0Pykgb2YgeW91ciBuZWVkcy4NCj4gPiA+DQo+ID4gPiBFZy4gYSBw
-aW4gY29uZmlndXJhdGlvbiB3aXRoIHB1bGwgdXAgYXBwbGllZCwgdXNpbmcgZXhhbXBsZXMgZnJv
-bQ0KPiA+ID4geW91ciBjb3ZlciBsZXR0ZXIgc2hvdWxkIGJlIGV4cHJlc3NlZCBhcw0KPiA+ID4N
-Cj4gPiA+IFlvdXIgZXhhbXBsZToNCj4gPiA+ICAgICAgICAgICZwaW5jdHJsIHsNCj4gPiA+ICAg
-ICAgICAgICAgICAgICAgcGluc3VhcnQwOiBwaW5zdWFydDAgew0KPiA+ID4gICAgICAgICAgICAg
-ICAgICAgICAgICAgIHJlbmVzYXMscnpuMS1waW5tdXgtaWRzID0gPA0KPiA+ID4gICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgUlpOMV9NVVgoMTAzLCBVQVJUMF9JKSAgLyogVUFSVDBf
-VFhEICovDQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBSWk4xX01VWF9Q
-VVAoMTA0LCBVQVJUMF9JKSAgICAgIC8qIFVBUlQwX1JYRCAqLw0KPiA+ID4gICAgICAgICAgICAg
-ICAgICAgICAgICAgID47DQo+ID4gPiAgICAgICAgICAgICAgICAgIH07DQo+ID4gPiAgICAgICAg
-ICB9Ow0KPiA+ID4NCj4gPiA+IFVzaW5nIHN0YW5kYXJkIHBpbmN0cm9sbGVyIGJpbmRpbmdzIHBp
-biBjb25maWd1cmF0aW9uIHByb3BlcnRpZXM6DQo+ID4gPg0KPiA+ID4gICAgICAgICAgJnBpbmN0
-cmwgew0KPiA+ID4gICAgICAgICAgICAgICAgICBwaW5zdWFydDA6IHVhcnQwICB7DQo+ID4gPiAg
-ICAgICAgICAgICAgICAgICAgICAgICBwaW5zdWFydF90eDAgew0KPiA+ID4gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBwaW5tdXggPSA8MTAzLCBVQVJUMF9JPjsgIC8qIFVBUlQwX1RY
-RCAqLw0KPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgfTsNCj4gPiA+DQo+ID4gPiAgICAg
-ICAgICAgICAgICAgICAgICAgICBwaW5zdWFydF9yeDAgew0KPiA+ID4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgcGlubXV4ID0gPDEwNCwgVUFSVDBfST47IC8qIFVBUlQwX1JYRCAq
-Lw0KPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYmlhcy1wdWxsLXVwOw0K
-PiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgfTsNCj4gPiA+ICAgICAgICAgICAgICAgICAg
-fTsNCj4gPiA+ICAgICAgICAgIH07DQo+ID4gPg0KPiA+ID4gSXMgdGhlcmUgYW55dGhpbmcgSSBh
-bSBtaXNzaW5nPyBNYXliZSBmcm9tIHRoZSBpbnRlcmFjdGlvbiB3aXRoDQo+ID4gPiAiYW5vdGhl
-ciBPUy9jb3JlIHJ1bm5pbmcgY29uY3VycmVudGx5IiB5b3UgbWVudGlvbmVkPyBJbiB0aGlzIGNh
-c2UNCj4gPiA+IGlmIHlvdSBvbmx5IGhhdmUgdG8gcGVyZm9ybSBwaW4gY29uZmlndXJhdGlvbiAo
-YmVjYXVzZSBtdXhpbmcgaXMNCj4gPiA+IGhhbmRsZWQNCj4gPiA+IGFscmVhZHkpIHRoaW5ncyBh
-cmUgZXZlbiBzaW1wbGVyLCBqdXN0IHVzZSB0aGUgcGluIGNvbmZpZ3VyYXRpb24NCj4gPiA+IGJp
-bmRpbmdzLCB3aXRob3V0IGludm9sdmluZyBtdXhpbmcgYXQgYWxsOg0KPiA+ID4NCj4gPiA+ICAg
-ICAgICAgJnBpbmN0cmwgew0KPiA+ID4gICAgICAgICAgICAgICAgIHBpbnN1YXJ0X2NvbmY6IHVh
-cnQwIHsNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIHBpbnMgPSA8MTAzLCAxMDQ+Ow0K
-PiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgYmlhcy1wdWxsLXVwOw0KPiA+ID4gICAgICAg
-ICAgICAgICAgICB9Ow0KPiA+ID4gICAgICAgICAgfTsNCj4gPg0KPiA+IFNvcnJ5IEkgZGlkbuKA
-mXQgYWRkcmVzcyB5b3VyIHBvaW50Lg0KPiA+IFRoZSBvbmx5IHJlYXNvbiB3ZSB3YW50IHRvIHVz
-ZSBuZXcgcHJvcGVydGllcyBpcyBzbyB0aGUgZHJpdmVyIGNhbg0KPiA+IHByb2Nlc3MgZHRzIGZp
-bGVzIHRoYXQgaGF2ZSBiZWVuIGdlbmVyYXRlZCBmcm9tIGFuIGV4aXN0aW5nIFBpbk11eA0KPiA+
-IEFwcC4gVGhhdCBvdXRwdXQgaXMgdXNlZCBieSBWeFdvcmtzIGFzIHdlbGwgYXMgb3VyIG91dC1v
-Zi10cmVlIExpbnV4DQo+ID4gcG9ydC4gSWYgdGhhdCBpcyBub3QgYSBnb29kIGVub3VnaCByZWFz
-b24gdG8gYWRkIG5ldyBwcm9wZXJ0aWVzLCB0aGVuDQo+ID4gSSBjYW4ndCBzZWUgYW55IHRlY2hu
-aWNhbCByZWFzb24gbm90IHRvIHVzZSB0aGUgZXhpc3RpbmcgYmluZGluZ3MuDQo+ID4gVGhlIHVz
-ZSB3aXRoIGFub3RoZXIgT1MgcnVubmluZyBvbiBhIGRpZmZlcmVudCBjb3JlIHNob3VsZCBub3Qg
-YmUgYQ0KPiA+IGJhcnJpZXIgYXMgaXQgbXVzdCBub3QgdXNlIHRoZSBzYW1lIHBpbnMgYXMgTGlu
-dXguDQo+IA0KPiBIYXZlIHRoZSBWeFdvcmtzIERUIGJpbmRpbmdzIGJlZW4gc3VibWl0dGVkIGZv
-ciByZXZpZXcgdG8gdGhlIGRldmljZXRyZWUNCj4gbWFpbGluZyBsaXN0Pw0KSSdtIG5vdCBpbnZv
-bHZlZCB3aXRoIHRoZSBWeFdvcmtzIHBvcnQsIGJ1dCBJIGFtIHByZXR0eSBzdXJlIHRoYXQgdGhl
-eSBoYXZlDQpub3QgYmVlbiBzdWJtaXR0ZWQgZm9yIHJldmlldy4NCg0KVGhhbmtzDQpQaGlsDQo=
+Hi Marek!
+
+Your DT bindings patch should ideally be in a separate patch and
+must be sent to devicetree@vger.kernel.org as well.
+
+On Thu, Aug 30, 2018 at 4:44 PM Marek Beh=C3=BAn <marek.behun@nic.cz> wrote=
+:
+
+> + - moxtet,input-mask   : Bitmask. Those bits which correspond to input G=
+PIOs
+> +                         when read from Moxtet bus should be set here.
+> +                         For example if bit 0 and bit 3 are input GPIO b=
+its,
+> +                         this should be set to 0x9.
+> +                         Since there are only 4 input bits, 0xf is max v=
+alue.
+> + - moxtet,output-mask  : Bitmask. Those bits which correspond to output =
+GPIOs
+> +                         when written to Moxtet bus should be set here.
+> +                         For example if bit 1 and bit 6 are output GPIO =
+bits,
+> +                         this should be set to 0x41.
+> +                         Since there are at most 8 output bits, 0xff is =
+max
+> +                         value.
+
+Please don't do it like this. Let the consumers decide if they want
+to use a certain line as input or output.
+
+Enumerate ALL GPIOs from 0 to N and let a consumer pick
+GPIO x and then decide if it will be used as input or output.
+Re-enumerating the GPIOs presented from the chip is complicating
+things by shuffleing around the local offset (HW numbering)
+space.
+
+For GPIOs that are not usable at all, use the
+gpio-reserved-ranges =3D <> property, see gpio.txt
+
+If you want to indicate that some lines can just be used for
+input and some can just be used for output and some cannot
+be used at all, let the .set_direction_output() and
+.set_direction_input() callbacks fail for these pins with
+-EINVAL or so.
+
+If these masks cannot be derived from the compatible
+strings, then create generic bindings to mark lines
+as input-only or output-only in gpio.txt and use the
+same syntax as gpio-reserved-ranges, and handle it
+in the gpiolib just as with gpio-reserved-ranges, not
+in your local driver.
+
+For example gpio-output-only-ranges and
+gpio-input-only-ranges.
+
+But first convince us that you really need that.
+
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/gpio.h>
+
+This is a driver so only #include <linux/gpio/driver.h>
+Skip the two above.
+
+> +#include <linux/mfd/moxtet.h>
+> +#include <linux/module.h>
+> +#include <linux/of_gpio.h>
+
+You don't need this either. Delete that include.
+
+> +static int moxtet_gpio_dir_mask(struct gpio_chip *gc, unsigned int offse=
+t,
+> +                               int *dir, u8 *mask)
+> +{
+> +       struct moxtet_gpio_chip *chip =3D gpiochip_get_data(gc);
+> +       int i;
+> +
+> +       *dir =3D 0;
+> +       for (i =3D 0; i < 4; ++i) {
+> +               *mask =3D 1 << i;
+
+#include <linux/bitops.h>
+
+*mask =3D BIT(i);
+
+> +               if (*mask & chip->in_mask) {
+> +                       if (offset =3D=3D 0)
+> +                               return 0;
+> +                       --offset;
+> +               }
+> +       }
+> +
+> +       *dir =3D 1;
+> +       for (i =3D 0; i < 8; ++i) {
+> +               *mask =3D 1 << i;
+> +               if (*mask & chip->out_mask) {
+> +                       if (offset =3D=3D 0)
+> +                               return 0;
+> +               }
+> +       }
+> +
+> +       return -EINVAL;
+> +}
+
+This looks convoluted and I think will go away with my suggestion to
+cut the masks.
+
+Otherwise use primitives such as for_each_set_bit() etc.
+
+> +static int moxtet_gpio_get_value(struct gpio_chip *gc, unsigned int offs=
+et)
+> +{
+> +       struct moxtet_gpio_chip *chip =3D gpiochip_get_data(gc);
+> +       int ret, dir;
+> +       u8 mask;
+> +
+> +       if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
+> +               return -EINVAL;
+> +
+> +       if (dir)
+> +               ret =3D moxtet_device_written(chip->dev);
+> +       else
+> +               ret =3D moxtet_device_read(chip->dev);
+> +
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       return (ret & mask) ? 1 : 0;
+> +}
+> +
+> +static void moxtet_gpio_set_value(struct gpio_chip *gc, unsigned int off=
+set,
+> +                                 int val)
+> +{
+> +       struct moxtet_gpio_chip *chip =3D gpiochip_get_data(gc);
+> +       int state, dir;
+> +       u8 mask;
+> +
+> +       if (moxtet_gpio_dir_mask(gc, offset, &dir, &mask) < 0)
+> +               return;
+
+So skip this and trust the consumers to ask for the right GPIO and set
+it up.
+
+Yours,
+Linus Walleij
