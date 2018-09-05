@@ -1,33 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFT PATCH 0/2] pinctrl: Fix two more xxx_config_get() functions
- to be compliant
-Date: Wed, 5 Sep 2018 12:12:15 +0200
-Message-ID: <CACRpkdbW7NGwT=kjoo5ZEKBivg9wYSmitJVZwHz_2J24OEdfoA@mail.gmail.com>
-References: <20180830152340.242249-1-dianders@chromium.org>
+Subject: Re: [PATCH -next] pinctrl: sirf: atlas7: remove set but not used
+ variables 'conf, bank'
+Date: Wed, 5 Sep 2018 12:13:42 +0200
+Message-ID: <CACRpkdY5qurpthqB8=ek5RhD3egXbceWi0RYK1P8pboH-KcA7Q@mail.gmail.com>
+References: <1535681346-152447-1-git-send-email-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180830152340.242249-1-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1535681346-152447-1-git-send-email-yuehaibing@huawei.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: yuehaibing@huawei.com
+Cc: Rob Herring <robh@kernel.org>, Barry Song <baohua@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, ext Tony Lindgren <tony@atomide.com>, kernel-janitors@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 5:24 PM Douglas Anderson <dianders@chromium.org> wrote:
+On Fri, Aug 31, 2018 at 3:58 AM YueHaibing <yuehaibing@huawei.com> wrote:
 
-> I have no way to test the patches in this series, but Stephen Boyd
-> pointed out the problems being fixed here when he reviewed my patch
-> ("pinctrl: qcom: spmi-gpio: Fix pmic_gpio_config_get() to be
-> compliant").  It seemed nice to (finally) follow-up and address the
-> problems that Stephen found.  Hopefully someone can test them out and
-> make sure they work as advertised.
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/pinctrl/sirf/pinctrl-atlas7.c: In function 'atlas7_pinmux_resume_noirq':
+> drivers/pinctrl/sirf/pinctrl-atlas7.c:5545:6: warning:
+>  variable 'bank' set but not used [-Wunused-but-set-variable]
+>   u32 bank;
+>
+> drivers/pinctrl/sirf/pinctrl-atlas7.c:5543:28: warning:
+>  variable 'conf' set but not used [-Wunused-but-set-variable]
+>   struct atlas7_pad_config *conf;
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Both patches applied with the review tags.
-
-If people don't test RFT patches, then maybe they will test
-linux-next.
-
-So applied to devel for now.
+Patch applied.
 
 Yours,
 Linus Walleij
