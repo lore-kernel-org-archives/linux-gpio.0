@@ -1,67 +1,173 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v4 0/8] Introduce the for_each_set_clump macro
-Date: Wed, 5 Sep 2018 11:04:23 -0400
-Message-ID: <20180905150348.GA27089@sophia>
-References: <cover.1526400945.git.vilhelm.gray@gmail.com>
- <CACRpkdbRH-Bz3BoczD+YmaSGqtoeCwtvGj4dGm8PKRKYFXTdKA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH v7 00/10] Add the I3C subsystem
+Date: Wed,  5 Sep 2018 17:40:58 +0200
+Message-ID: <20180905154108.20770-1-boris.brezillon@bootlin.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbRH-Bz3BoczD+YmaSGqtoeCwtvGj4dGm8PKRKYFXTdKA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, andy.shevchenko@gmail.com, linux-arch@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vitor Soares <Vitor.Soares@synopsys.co>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 16, 2018 at 04:03:51PM +0200, Linus Walleij wrote:
->On Tue, May 15, 2018 at 6:22 PM, William Breathitt Gray
-><vilhelm.gray@gmail.com> wrote:
->
->> For example, suppose you would like to iterate over a 16-bit integer 4
->> bits at a time, skipping over 4-bit groups with no set bit, where XXXX
->> represents the current 4-bit group:
->>
->>     Example:        1011 1110 0000 1111
->>     First loop:     1011 1110 0000 XXXX
->>     Second loop:    1011 XXXX 0000 1111
->>     Third loop:     XXXX 1110 0000 1111
->>
->> Each iteration of the loop returns the next 4-bit group that has at
->> least one set bit.
->>
->> The for_each_set_clump macro has six parameters:
->>
->>     * clump: set to current clump index for the iteration
->>     * index: set to current bitmap word index for the iteration
->>     * offset: bits offset of the found clump in the bitmap word
->>     * bits: bitmap to search within
->>     * size: bitmap size in number of clumps
->>     * clump_size: clump size in number of bits
->>
->> The clump_size argument can be an arbitrary number of bits and is not
->> required to be a multiple of 2.
->
->I must say I'm impressed. Very nice arithmetics going on there.
->
->If I can get some ACK for the bitops patch I'd be happy to merge
->it all through the GPIO tree. The users are pretty clear cut.
->
->BTW: if I could, I would pull out Donald Knuth's "The Art of Computer
->Programming vol 4A" chapter 7.1.3 "Bitwise Tricks and Techniques"
->to see what he has to say about the subject, but I don't have
->that book as it turns out.
->
->Yours,
->Linus Walleij
+This patch series is adding a new subsystem to support I3C devices.
 
-Hi Linus,
+This is just adding basic features of the protocol, and new features
+will be added afterwards.
 
-I'd like to get this patchset merged, but I'm aware that we haven't yet
-received additional ACKs in the past couple months. Are there any
-changes you would like made, or should I resubmit this patchset with
-additional CCs in the hopes of some ACKs for the bitops patch?
+There are a few design choices that are worth mentioning because they
+impact the way I3C device drivers can interact with their devices:
 
-Sincerely,
+- all functions used to send I3C/I2C frames must be called in
+  non-atomic context. Mainly done this way to ease implementation, but
+  this is still open to discussion. Please let me know if you think it's
+  worth considering an asynchronous model here
+- the I3C bus and I3C master controller are now tightly coupled even
+  though they're still allocated separately. There's now a 1:1
+  relationship between these objects, and the I3C master is no longer
+  represented under the I3C bus object.
+  Arnd, let me know if you had something different in mind, and I'll
+  rework the implementation accordingly.
 
-William Breathitt Gray
+- I2C backward compatibility has been designed to be transparent to I2C
+  drivers and the I2C subsystem. The I3C master just registers an I2C
+  adapter which creates a new I2C bus. I'd say that, from a
+  representation PoV it's not ideal because what should appear as a
+  single I3C bus exposing I3C and I2C devices here appears as 2
+  different busses connected to each other through the parenting (the
+  I3C master is the parent of the I2C and I3C busses).
+  On the other hand, I don't see a better solution if we want something
+  that is not invasive.
+
+Missing features (will be added in separate patch series after initial
+support has been accepted/merged):
+- support for HDR modes (has been removed because of lack of real users)
+- no support for multi-master and the associated concepts (mastership
+  handover, support for secondary masters, ...)
+- I2C devices can only be described using DT because this is the only
+  use case I have. However, the framework can easily be extended with
+  ACPI and board info support
+- I3C slave framework. This has been completely omitted, but shouldn't
+  have a huge impact on the I3C framework because I3C slaves don't see
+  the whole bus, it's only about handling master requests and generating
+  IBIs. Some of the struct, constant and enum definitions could be
+  shared, but most of the I3C slave framework logic will be different
+
+Note that this patchset is available on the linux-i3c repo[1].
+
+Main changes between v6 and v7:
+- I3C bus/master representations have been reworked to match what other
+  subsystems are doing (master implicitly represented by the bus
+  object)
+- I3C dev registration has been fixed
+- I3C bus mode selection has been fixed
+- Calls to readsl/writesl() in the Cadence I3C master driver have been
+  fixed
+
+Main changes between v5 and v6:
+- Introduce {i3c,i2c}_dev_desc structures to better match how I3C
+  master controllers (reservation of one HW slot for each device
+  attached to the bus). With this solution, the resource migration
+  that happens when a device lose its dynamic address and is
+  re-assigned a different address is simplified on the driver side,
+  because most of it is now handled in the core (reserve a new dev
+  slot, reserve IBI resources and free all resources attached to the
+  old slot)
+- Add I3C error codes (M0 to M2) so that the core and device drivers
+  can have fine grained information on what caused an EIO error.
+
+Only minor things happened between v3 and v5 (you can go check the
+changelog in each patch for more details).
+
+Main changes between v2 and v3 are:
+- Reworked the DT bindings as suggested by Rob
+- Reworked the bus initialization step as suggested by Vitor
+- Added a driver for an I3C GPIO expander
+
+Main changes between the initial RFC and this v2 are:
+- Add a generic infrastructure to support IBIs. It's worth mentioning
+  that I tried exposing IBIs as a regular IRQs, but after several
+  attempts and a discussion with Mark Zyngier, it appeared that it was
+  not really fitting in the Linux IRQ model (the fact that you have
+  payload attached to IBIs, the fact that most of the time an IBI will
+  generate a transfer on the bus which has to be done in an atomic
+  context, ...)
+  The counterpart of this decision is the latency induced by the
+  workqueue approach, but since I don't have real use cases, I don't
+  know if this can be a problem or not. 
+- Add helpers to support Hot Join
+- Add support for IBIs and Hot Join in Cadence I3C master driver
+- Address several issues in how I was using the device model
+
+Thanks,
+
+Boris
+
+[1]https://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git/log/?h=i3c/next
+
+Boris Brezillon (10):
+  i3c: Add core I3C infrastructure
+  docs: driver-api: Add I3C documentation
+  i3c: Add sysfs ABI spec
+  dt-bindings: i3c: Document core bindings
+  dt-bindings: i3c: Add macros to help fill I3C/I2C device's reg
+    property
+  MAINTAINERS: Add myself as the I3C subsystem maintainer
+  i3c: master: Add driver for Cadence IP
+  dt-bindings: i3c: Document Cadence I3C master bindings
+  gpio: Add a driver for Cadence I3C GPIO expander
+  dt-bindings: gpio: Add bindings for Cadence I3C gpio expander
+
+ Documentation/ABI/testing/sysfs-bus-i3c            |  146 ++
+ .../devicetree/bindings/gpio/gpio-cdns-i3c.txt     |   39 +
+ .../devicetree/bindings/i3c/cdns,i3c-master.txt    |   44 +
+ Documentation/devicetree/bindings/i3c/i3c.txt      |  140 ++
+ Documentation/driver-api/i3c/device-driver-api.rst |    9 +
+ Documentation/driver-api/i3c/index.rst             |   11 +
+ Documentation/driver-api/i3c/master-driver-api.rst |   10 +
+ Documentation/driver-api/i3c/protocol.rst          |  203 ++
+ Documentation/driver-api/index.rst                 |    1 +
+ MAINTAINERS                                        |   12 +
+ drivers/Kconfig                                    |    2 +
+ drivers/Makefile                                   |    2 +-
+ drivers/gpio/Kconfig                               |   11 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-cdns-i3c.c                       |  411 ++++
+ drivers/i3c/Kconfig                                |   24 +
+ drivers/i3c/Makefile                               |    4 +
+ drivers/i3c/core.c                                 |  623 ++++++
+ drivers/i3c/device.c                               |  233 +++
+ drivers/i3c/internals.h                            |   36 +
+ drivers/i3c/master.c                               | 2074 ++++++++++++++++++++
+ drivers/i3c/master/Kconfig                         |    6 +
+ drivers/i3c/master/Makefile                        |    1 +
+ drivers/i3c/master/i3c-master-cdns.c               | 1668 ++++++++++++++++
+ include/dt-bindings/i3c/i3c.h                      |   28 +
+ include/linux/i3c/ccc.h                            |  385 ++++
+ include/linux/i3c/device.h                         |  331 ++++
+ include/linux/i3c/master.h                         |  653 ++++++
+ include/linux/mod_devicetable.h                    |   17 +
+ 29 files changed, 7124 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
+ create mode 100644 Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
+ create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
+ create mode 100644 Documentation/driver-api/i3c/device-driver-api.rst
+ create mode 100644 Documentation/driver-api/i3c/index.rst
+ create mode 100644 Documentation/driver-api/i3c/master-driver-api.rst
+ create mode 100644 Documentation/driver-api/i3c/protocol.rst
+ create mode 100644 drivers/gpio/gpio-cdns-i3c.c
+ create mode 100644 drivers/i3c/Kconfig
+ create mode 100644 drivers/i3c/Makefile
+ create mode 100644 drivers/i3c/core.c
+ create mode 100644 drivers/i3c/device.c
+ create mode 100644 drivers/i3c/internals.h
+ create mode 100644 drivers/i3c/master.c
+ create mode 100644 drivers/i3c/master/Kconfig
+ create mode 100644 drivers/i3c/master/Makefile
+ create mode 100644 drivers/i3c/master/i3c-master-cdns.c
+ create mode 100644 include/dt-bindings/i3c/i3c.h
+ create mode 100644 include/linux/i3c/ccc.h
+ create mode 100644 include/linux/i3c/device.h
+ create mode 100644 include/linux/i3c/master.h
+
+-- 
+2.14.1
