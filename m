@@ -1,88 +1,74 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH] [RFC v2] Drop all 00-INDEX files from Documentation/
-Date: Wed, 5 Sep 2018 07:42:04 -0400
-Message-ID: <CAHC9VhR7Zana3xTEj2jUGXb+hBzyh69g0rBg_p_4tkbjtCUdpw@mail.gmail.com>
-References: <1536012923-16275-1-git-send-email-henrik@austad.us>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for v4.19 take one
+Date: Wed, 5 Sep 2018 13:59:44 +0200
+Message-ID: <CACRpkdaD3aQQ6Kn6S-CCGOH2DsX5WUNBB0Jwq9P0k=O0E08MiQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1536012923-16275-1-git-send-email-henrik@austad.us>
 Sender: linux-kernel-owner@vger.kernel.org
-To: henrik@austad.us
-Cc: linux-doc@vger.kernel.org, corbet@lwn.net, bhelgaas@google.com, paulmck@linux.vnet.ibm.com, josh@joshtriplett.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com, axboe@kernel.dk, robh+dt@kernel.org, mark.rutland@arm.com, b.zolnierkie@samsung.com, linus.walleij@linaro.org, davem@davemloft.net, isdn@linux-pingi.de, yamada.masahiro@socionext.com, michal.lkml@markovi.net, peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com, ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, gregkh@linuxfoundation.org, jslaby@suse.com, broonie@kernel.o
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 3, 2018 at 6:15 PM Henrik Austad <henrik@austad.us> wrote:
-> This is a respin with a wider audience (all that get_maintainer returned)
-> and I know this spams a *lot* of people. Not sure what would be the correct
-> way, so my apologies for ruining your inbox.
->
-> The 00-INDEX files are supposed to give a summary of all files present
-> in a directory, but these files are horribly out of date and their
-> usefulness is brought into question. Often a simple "ls" would reveal
-> the same information as the filenames are generally quite descriptive as
-> a short introduction to what the file covers (it should not surprise
-> anyone what Documentation/sched/sched-design-CFS.txt covers)
->
-> A few years back it was mentioned that these files were no longer really
-> needed, and they have since then grown further out of date, so perhaps
-> it is time to just throw them out.
->
-> A short status yields the following _outdated_ 00-INDEX files, first
-> counter is files listed in 00-INDEX but missing in the directory, last
-> is files present but not listed in 00-INDEX.
->
-> List of outdated 00-INDEX:
-> Documentation: (4/10)
-> Documentation/sysctl: (0/1)
-> Documentation/timers: (1/0)
-> Documentation/blockdev: (3/1)
-> Documentation/w1/slaves: (0/1)
-> Documentation/locking: (0/1)
-> Documentation/devicetree: (0/5)
-> Documentation/power: (1/1)
-> Documentation/powerpc: (0/5)
-> Documentation/arm: (1/0)
-> Documentation/x86: (0/9)
-> Documentation/x86/x86_64: (1/1)
-> Documentation/scsi: (4/4)
-> Documentation/filesystems: (2/9)
-> Documentation/filesystems/nfs: (0/2)
-> Documentation/cgroup-v1: (0/2)
-> Documentation/kbuild: (0/4)
-> Documentation/spi: (1/0)
-> Documentation/virtual/kvm: (1/0)
-> Documentation/scheduler: (0/2)
-> Documentation/fb: (0/1)
-> Documentation/block: (0/1)
-> Documentation/networking: (6/37)
-> Documentation/vm: (1/3)
->
-> Then there are 364 subdirectories in Documentation/ with several files that
-> are missing 00-INDEX alltogether (and another 120 with a single file and no
-> 00-INDEX).
->
-> I don't really have an opinion to whether or not we /should/ have 00-INDEX,
-> but the above 00-INDEX should either be removed or be kept up to date. If
-> we should keep the files, I can try to keep them updated, but I rather not
-> if we just want to delete them anyway.
->
-> As a starting point, remove all index-files and references to 00-INDEX and
-> see where the discussion is going.
->
-> Again, sorry for the insanely wide distribution.
->
-> Signed-off-by: Henrik Austad <henrik@austad.us>
-...
-> Signed-off-by: Henrik Austad <haustad@cisco.com>
-> ---
->  Documentation/00-INDEX                  | 428 --------------------------------
-...
+Hi Linus,
 
-Looks reasonable to me, you can add my ACK for the NetLabel bits.
+here are some GPIO fixes. The ACPI stuff is probably the most
+annoying for users that get fixed this time.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+Details in the signed tag.
 
--- 
-paul moore
-www.paul-moore.com
+Please pull it in!
+
+Yours,
+Linus Walleij
+
+
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.19-2
+
+for you to fetch changes up to d49b48f088c323dbacae44dfbe56d9c985c8a2a1:
+
+  gpio: Fix crash due to registration race (2018-08-31 11:30:45 +0200)
+
+----------------------------------------------------------------
+GPIO fixes for the v4.19 cycle:
+
+- Atomic contexts, cansleep* calls and such fastpath/slopwpath
+  things.
+
+- Defer ACPI event handler registration to late_initcall()
+  so IRQs do not fire in our face before other drivers have
+  a chance to register handlers.
+
+- Race condition if a consumer requests a GPIO after
+  gpiochip_add_data_with_key() but before of_gpiochip_add()
+
+- Probe errorpath in the dwapb driver.
+
+----------------------------------------------------------------
+Alexey Khoroshilov (1):
+      gpio: dwapb: Fix error handling in dwapb_gpio_probe()
+
+Andy Shevchenko (1):
+      gpiolib: acpi: Switch to cansleep version of GPIO library call
+
+Hans de Goede (1):
+      gpiolib-acpi: Register GpioInt ACPI event handlers from a late_initcall
+
+Michael Hennerich (1):
+      gpio: adp5588: Fix sleep-in-atomic-context bug
+
+Vincent Whitchurch (1):
+      gpio: Fix crash due to registration race
+
+ drivers/gpio/gpio-adp5588.c | 24 ++++++++++---
+ drivers/gpio/gpio-dwapb.c   |  1 +
+ drivers/gpio/gpiolib-acpi.c | 86 ++++++++++++++++++++++++++-------------------
+ drivers/gpio/gpiolib-of.c   |  1 +
+ 4 files changed, 72 insertions(+), 40 deletions(-)
