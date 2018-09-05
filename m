@@ -1,2490 +1,694 @@
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: Re: [PATCH] [RFC v2] Drop all 00-INDEX files from Documentation/
-Date: Tue, 4 Sep 2018 20:56:22 +0300
-Message-ID: <20180904175621.GA27866@rapoport-lnx>
-References: <1536012923-16275-1-git-send-email-henrik@austad.us>
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH v7 1/4] gpiolib: Pass bitmaps, not integer arrays, to
+ get/set array
+Date: Wed, 5 Sep 2018 14:46:23 +0800
+Message-ID: <201809051406.YdSU6OCu%fengguang.wu@intel.com>
+References: <20180902120144.6855-2-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+Content-Type: multipart/mixed; boundary="XsQoSWH+UP9D9v3l"
+Return-path: <netdev-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1536012923-16275-1-git-send-email-henrik@austad.us>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Henrik Austad <henrik@austad.us>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-mips@linux-mips.org, linux-fbdev@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, James Hogan <jhogan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, dri-devel@lists.freedesktop.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Jan Kandziora <jjj@gmx.de>, Paul Mackerras <paulus@samba.org>, Henrik Austad <haustad@cisco.com>, Pavel Machek <pavel@ucw.cz>, "H. Peter Anvin" <hpa@zytor.com>, Evgeniy Polyakov <zbr@ioremap.net>, linux-s390@vger.kernel.org, Ian Kent <raven@themaw.net>, linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, Jonathan Corbet <corbet@lwn.net>, Helge Deller <deller@gmx.de>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, "James E.J. Bottomley" <jejb@parisc-linux.org>, Ing
+In-Reply-To: <20180902120144.6855-2-jmkrzyszt@gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: kbuild-all@01.org, Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 04, 2018 at 12:15:23AM +0200, Henrik Austad wrote:
-> This is a respin with a wider audience (all that get_maintainer returned)
-> and I know this spams a *lot* of people. Not sure what would be the correct
-> way, so my apologies for ruining your inbox.
-> 
-> The 00-INDEX files are supposed to give a summary of all files present
-> in a directory, but these files are horribly out of date and their
-> usefulness is brought into question. Often a simple "ls" would reveal
-> the same information as the filenames are generally quite descriptive as
-> a short introduction to what the file covers (it should not surprise
-> anyone what Documentation/sched/sched-design-CFS.txt covers)
-> 
-> A few years back it was mentioned that these files were no longer really
-> needed, and they have since then grown further out of date, so perhaps
-> it is time to just throw them out.
-> 
-> A short status yields the following _outdated_ 00-INDEX files, first
-> counter is files listed in 00-INDEX but missing in the directory, last
-> is files present but not listed in 00-INDEX.
-> 
-> List of outdated 00-INDEX:
-> Documentation: (4/10)
-> Documentation/sysctl: (0/1)
-> Documentation/timers: (1/0)
-> Documentation/blockdev: (3/1)
-> Documentation/w1/slaves: (0/1)
-> Documentation/locking: (0/1)
-> Documentation/devicetree: (0/5)
-> Documentation/power: (1/1)
-> Documentation/powerpc: (0/5)
-> Documentation/arm: (1/0)
-> Documentation/x86: (0/9)
-> Documentation/x86/x86_64: (1/1)
-> Documentation/scsi: (4/4)
-> Documentation/filesystems: (2/9)
-> Documentation/filesystems/nfs: (0/2)
-> Documentation/cgroup-v1: (0/2)
-> Documentation/kbuild: (0/4)
-> Documentation/spi: (1/0)
-> Documentation/virtual/kvm: (1/0)
-> Documentation/scheduler: (0/2)
-> Documentation/fb: (0/1)
-> Documentation/block: (0/1)
-> Documentation/networking: (6/37)
-> Documentation/vm: (1/3)
-> 
-> Then there are 364 subdirectories in Documentation/ with several files that
-> are missing 00-INDEX alltogether (and another 120 with a single file and no
-> 00-INDEX).
-> 
-> I don't really have an opinion to whether or not we /should/ have 00-INDEX,
-> but the above 00-INDEX should either be removed or be kept up to date. If
-> we should keep the files, I can try to keep them updated, but I rather not
-> if we just want to delete them anyway.
-> 
-> As a starting point, remove all index-files and references to 00-INDEX and
-> see where the discussion is going.
 
-For the Documentation/vm
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
- 
-> Again, sorry for the insanely wide distribution.
-> 
-> Signed-off-by: Henrik Austad <henrik@austad.us>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Josh Triplett <josh@joshtriplett.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Karsten Keil <isdn@linux-pingi.de>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Paul Burton <paul.burton@mips.com>
-> Cc: James Hogan <jhogan@kernel.org>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>
-> Cc: Helge Deller <deller@gmx.de>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: "Radim Krčmář" <rkrcmar@redhat.com>
-> Cc: Evgeniy Polyakov <zbr@ioremap.net>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: Henrik Austad <henrik@austad.us>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Ian Kent <raven@themaw.net>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Cc: Jan Kandziora <jjj@gmx.de>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-ide@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-kbuild@vger.kernel.org
-> Cc: linux-mips@linux-mips.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: linux-parisc@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-s390@vger.kernel.org
-> Cc: linux-spi@vger.kernel.org
-> Cc: kvm@vger.kernel.org
-> Signed-off-by: Henrik Austad <haustad@cisco.com>
-> ---
->  Documentation/00-INDEX                  | 428 --------------------------------
->  Documentation/PCI/00-INDEX              |  26 --
->  Documentation/RCU/00-INDEX              |  34 ---
->  Documentation/RCU/rcu.txt               |   4 -
->  Documentation/admin-guide/README.rst    |   3 +-
->  Documentation/arm/00-INDEX              |  50 ----
->  Documentation/block/00-INDEX            |  34 ---
->  Documentation/blockdev/00-INDEX         |  18 --
->  Documentation/cdrom/00-INDEX            |  11 -
->  Documentation/cgroup-v1/00-INDEX        |  26 --
->  Documentation/devicetree/00-INDEX       |  12 -
->  Documentation/fb/00-INDEX               |  75 ------
->  Documentation/filesystems/00-INDEX      | 153 ------------
->  Documentation/filesystems/nfs/00-INDEX  |  26 --
->  Documentation/fmc/00-INDEX              |  38 ---
->  Documentation/gpio/00-INDEX             |   4 -
->  Documentation/ide/00-INDEX              |  14 --
->  Documentation/ioctl/00-INDEX            |  12 -
->  Documentation/isdn/00-INDEX             |  42 ----
->  Documentation/kbuild/00-INDEX           |  14 --
->  Documentation/laptops/00-INDEX          |  16 --
->  Documentation/leds/00-INDEX             |  32 ---
->  Documentation/locking/00-INDEX          |  16 --
->  Documentation/m68k/00-INDEX             |   7 -
->  Documentation/mips/00-INDEX             |   4 -
->  Documentation/mmc/00-INDEX              |  10 -
->  Documentation/netlabel/00-INDEX         |  10 -
->  Documentation/netlabel/cipso_ipv4.txt   |  11 +-
->  Documentation/netlabel/introduction.txt |   2 +-
->  Documentation/networking/00-INDEX       | 234 -----------------
->  Documentation/parisc/00-INDEX           |   6 -
->  Documentation/power/00-INDEX            |  44 ----
->  Documentation/powerpc/00-INDEX          |  34 ---
->  Documentation/s390/00-INDEX             |  28 ---
->  Documentation/scheduler/00-INDEX        |  18 --
->  Documentation/scsi/00-INDEX             | 108 --------
->  Documentation/serial/00-INDEX           |  16 --
->  Documentation/spi/00-INDEX              |  16 --
->  Documentation/sysctl/00-INDEX           |  16 --
->  Documentation/timers/00-INDEX           |  16 --
->  Documentation/virtual/00-INDEX          |  11 -
->  Documentation/virtual/kvm/00-INDEX      |  35 ---
->  Documentation/vm/00-INDEX               |  50 ----
->  Documentation/w1/00-INDEX               |  10 -
->  Documentation/w1/masters/00-INDEX       |  12 -
->  Documentation/w1/slaves/00-INDEX        |  14 --
->  Documentation/x86/00-INDEX              |  20 --
->  Documentation/x86/x86_64/00-INDEX       |  16 --
->  README                                  |   1 -
->  scripts/check_00index.sh                |  67 -----
->  50 files changed, 8 insertions(+), 1896 deletions(-)
->  delete mode 100644 Documentation/00-INDEX
->  delete mode 100644 Documentation/PCI/00-INDEX
->  delete mode 100644 Documentation/RCU/00-INDEX
->  delete mode 100644 Documentation/arm/00-INDEX
->  delete mode 100644 Documentation/block/00-INDEX
->  delete mode 100644 Documentation/blockdev/00-INDEX
->  delete mode 100644 Documentation/cdrom/00-INDEX
->  delete mode 100644 Documentation/cgroup-v1/00-INDEX
->  delete mode 100644 Documentation/devicetree/00-INDEX
->  delete mode 100644 Documentation/fb/00-INDEX
->  delete mode 100644 Documentation/filesystems/00-INDEX
->  delete mode 100644 Documentation/filesystems/nfs/00-INDEX
->  delete mode 100644 Documentation/fmc/00-INDEX
->  delete mode 100644 Documentation/gpio/00-INDEX
->  delete mode 100644 Documentation/ide/00-INDEX
->  delete mode 100644 Documentation/ioctl/00-INDEX
->  delete mode 100644 Documentation/isdn/00-INDEX
->  delete mode 100644 Documentation/kbuild/00-INDEX
->  delete mode 100644 Documentation/laptops/00-INDEX
->  delete mode 100644 Documentation/leds/00-INDEX
->  delete mode 100644 Documentation/locking/00-INDEX
->  delete mode 100644 Documentation/m68k/00-INDEX
->  delete mode 100644 Documentation/mips/00-INDEX
->  delete mode 100644 Documentation/mmc/00-INDEX
->  delete mode 100644 Documentation/netlabel/00-INDEX
->  delete mode 100644 Documentation/networking/00-INDEX
->  delete mode 100644 Documentation/parisc/00-INDEX
->  delete mode 100644 Documentation/power/00-INDEX
->  delete mode 100644 Documentation/powerpc/00-INDEX
->  delete mode 100644 Documentation/s390/00-INDEX
->  delete mode 100644 Documentation/scheduler/00-INDEX
->  delete mode 100644 Documentation/scsi/00-INDEX
->  delete mode 100644 Documentation/serial/00-INDEX
->  delete mode 100644 Documentation/spi/00-INDEX
->  delete mode 100644 Documentation/sysctl/00-INDEX
->  delete mode 100644 Documentation/timers/00-INDEX
->  delete mode 100644 Documentation/virtual/00-INDEX
->  delete mode 100644 Documentation/virtual/kvm/00-INDEX
->  delete mode 100644 Documentation/vm/00-INDEX
->  delete mode 100644 Documentation/w1/00-INDEX
->  delete mode 100644 Documentation/w1/masters/00-INDEX
->  delete mode 100644 Documentation/w1/slaves/00-INDEX
->  delete mode 100644 Documentation/x86/00-INDEX
->  delete mode 100644 Documentation/x86/x86_64/00-INDEX
->  delete mode 100755 scripts/check_00index.sh
-> 
-> diff --git a/Documentation/00-INDEX b/Documentation/00-INDEX
-> deleted file mode 100644
-> index 2754fe8..0000000
-> --- a/Documentation/00-INDEX
-> +++ /dev/null
-> @@ -1,428 +0,0 @@
-> -
-> -This is a brief list of all the files in ./linux/Documentation and what
-> -they contain. If you add a documentation file, please list it here in
-> -alphabetical order as well, or risk being hunted down like a rabid dog.
-> -Please keep the descriptions small enough to fit on one line.
-> -							 Thanks -- Paul G.
-> -
-> -Following translations are available on the WWW:
-> -
-> -   - Japanese, maintained by the JF Project (jf@listserv.linux.or.jp), at
-> -     http://linuxjf.sourceforge.jp/
-> -
-> -00-INDEX
-> -	- this file.
-> -ABI/
-> -	- info on kernel <-> userspace ABI and relative interface stability.
-> -CodingStyle
-> -	- nothing here, just a pointer to process/coding-style.rst.
-> -DMA-API.txt
-> -	- DMA API, pci_ API & extensions for non-consistent memory machines.
-> -DMA-API-HOWTO.txt
-> -	- Dynamic DMA mapping Guide
-> -DMA-ISA-LPC.txt
-> -	- How to do DMA with ISA (and LPC) devices.
-> -DMA-attributes.txt
-> -	- listing of the various possible attributes a DMA region can have
-> -EDID/
-> -	- directory with info on customizing EDID for broken gfx/displays.
-> -IPMI.txt
-> -	- info on Linux Intelligent Platform Management Interface (IPMI) Driver.
-> -IRQ-affinity.txt
-> -	- how to select which CPU(s) handle which interrupt events on SMP.
-> -IRQ-domain.txt
-> -	- info on interrupt numbering and setting up IRQ domains.
-> -IRQ.txt
-> -	- description of what an IRQ is.
-> -Intel-IOMMU.txt
-> -	- basic info on the Intel IOMMU virtualization support.
-> -Makefile
-> -	- It's not of interest for those who aren't touching the build system.
-> -PCI/
-> -	- info related to PCI drivers.
-> -RCU/
-> -	- directory with info on RCU (read-copy update).
-> -SAK.txt
-> -	- info on Secure Attention Keys.
-> -SM501.txt
-> -	- Silicon Motion SM501 multimedia companion chip
-> -SubmittingPatches
-> -	- nothing here, just a pointer to process/coding-style.rst.
-> -accounting/
-> -	- documentation on accounting and taskstats.
-> -acpi/
-> -	- info on ACPI-specific hooks in the kernel.
-> -admin-guide/
-> -	- info related to Linux users and system admins.
-> -aoe/
-> -	- description of AoE (ATA over Ethernet) along with config examples.
-> -arm/
-> -	- directory with info about Linux on the ARM architecture.
-> -arm64/
-> -	- directory with info about Linux on the 64 bit ARM architecture.
-> -auxdisplay/
-> -	- misc. LCD driver documentation (cfag12864b, ks0108).
-> -backlight/
-> -	- directory with info on controlling backlights in flat panel displays
-> -block/
-> -	- info on the Block I/O (BIO) layer.
-> -blockdev/
-> -	- info on block devices & drivers
-> -bt8xxgpio.txt
-> -	- info on how to modify a bt8xx video card for GPIO usage.
-> -btmrvl.txt
-> -	- info on Marvell Bluetooth driver usage.
-> -bus-devices/
-> -	- directory with info on TI GPMC (General Purpose Memory Controller)
-> -bus-virt-phys-mapping.txt
-> -	- how to access I/O mapped memory from within device drivers.
-> -cdrom/
-> -	- directory with information on the CD-ROM drivers that Linux has.
-> -cgroup-v1/
-> -	- cgroups v1 features, including cpusets and memory controller.
-> -cma/
-> -	- Continuous Memory Area (CMA) debugfs interface.
-> -conf.py
-> -	- It's not of interest for those who aren't touching the build system.
-> -connector/
-> -	- docs on the netlink based userspace<->kernel space communication mod.
-> -console/
-> -	- documentation on Linux console drivers.
-> -core-api/
-> -	- documentation on kernel core components.
-> -cpu-freq/
-> -	- info on CPU frequency and voltage scaling.
-> -cpu-hotplug.txt
-> -	- document describing CPU hotplug support in the Linux kernel.
-> -cpu-load.txt
-> -	- document describing how CPU load statistics are collected.
-> -cpuidle/
-> -	- info on CPU_IDLE, CPU idle state management subsystem.
-> -cputopology.txt
-> -	- documentation on how CPU topology info is exported via sysfs.
-> -crc32.txt
-> -	- brief tutorial on CRC computation
-> -crypto/
-> -	- directory with info on the Crypto API.
-> -dcdbas.txt
-> -	- information on the Dell Systems Management Base Driver.
-> -debugging-modules.txt
-> -	- some notes on debugging modules after Linux 2.6.3.
-> -debugging-via-ohci1394.txt
-> -	- how to use firewire like a hardware debugger memory reader.
-> -dell_rbu.txt
-> -	- document demonstrating the use of the Dell Remote BIOS Update driver.
-> -dev-tools/
-> -	- directory with info on development tools for the kernel.
-> -device-mapper/
-> -	- directory with info on Device Mapper.
-> -dmaengine/
-> -	- the DMA engine and controller API guides.
-> -devicetree/
-> -	- directory with info on device tree files used by OF/PowerPC/ARM
-> -digsig.txt
-> -	-info on the Digital Signature Verification API
-> -dma-buf-sharing.txt
-> -	- the DMA Buffer Sharing API Guide
-> -docutils.conf
-> -	- nothing here. Just a configuration file for docutils.
-> -dontdiff
-> -	- file containing a list of files that should never be diff'ed.
-> -driver-api/
-> -	- the Linux driver implementer's API guide.
-> -driver-model/
-> -	- directory with info about Linux driver model.
-> -early-userspace/
-> -	- info about initramfs, klibc, and userspace early during boot.
-> -efi-stub.txt
-> -	- How to use the EFI boot stub to bypass GRUB or elilo on EFI systems.
-> -eisa.txt
-> -	- info on EISA bus support.
-> -extcon/
-> -	- directory with porting guide for Android kernel switch driver.
-> -isa.txt
-> -	- info on EISA bus support.
-> -fault-injection/
-> -	- dir with docs about the fault injection capabilities infrastructure.
-> -fb/
-> -	- directory with info on the frame buffer graphics abstraction layer.
-> -features/
-> -	- status of feature implementation on different architectures.
-> -filesystems/
-> -	- info on the vfs and the various filesystems that Linux supports.
-> -firmware_class/
-> -	- request_firmware() hotplug interface info.
-> -flexible-arrays.txt
-> -	- how to make use of flexible sized arrays in linux
-> -fmc/
-> -	- information about the FMC bus abstraction
-> -fpga/
-> -	- FPGA Manager Core.
-> -futex-requeue-pi.txt
-> -	- info on requeueing of tasks from a non-PI futex to a PI futex
-> -gcc-plugins.txt
-> -	- GCC plugin infrastructure.
-> -gpio/
-> -	- gpio related documentation
-> -gpu/
-> -	- directory with information on GPU driver developer's guide.
-> -hid/
-> -	- directory with information on human interface devices
-> -highuid.txt
-> -	- notes on the change from 16 bit to 32 bit user/group IDs.
-> -hwspinlock.txt
-> -	- hardware spinlock provides hardware assistance for synchronization
-> -timers/
-> -	- info on the timer related topics
-> -hw_random.txt
-> -	- info on Linux support for random number generator in i8xx chipsets.
-> -hwmon/
-> -	- directory with docs on various hardware monitoring drivers.
-> -i2c/
-> -	- directory with info about the I2C bus/protocol (2 wire, kHz speed).
-> -x86/i386/
-> -	- directory with info about Linux on Intel 32 bit architecture.
-> -ia64/
-> -	- directory with info about Linux on Intel 64 bit architecture.
-> -ide/
-> -	- Information regarding the Enhanced IDE drive.
-> -iio/
-> -	- info on industrial IIO configfs support.
-> -index.rst
-> -	- main index for the documentation at ReST format.
-> -infiniband/
-> -	- directory with documents concerning Linux InfiniBand support.
-> -input/
-> -	- info on Linux input device support.
-> -intel_txt.txt
-> -	- info on intel Trusted Execution Technology (intel TXT).
-> -io-mapping.txt
-> -	- description of io_mapping functions in linux/io-mapping.h
-> -io_ordering.txt
-> -	- info on ordering I/O writes to memory-mapped addresses.
-> -ioctl/
-> -	- directory with documents describing various IOCTL calls.
-> -iostats.txt
-> -	- info on I/O statistics Linux kernel provides.
-> -irqflags-tracing.txt
-> -	- how to use the irq-flags tracing feature.
-> -isapnp.txt
-> -	- info on Linux ISA Plug & Play support.
-> -isdn/
-> -	- directory with info on the Linux ISDN support, and supported cards.
-> -kbuild/
-> -	- directory with info about the kernel build process.
-> -kdump/
-> -	- directory with mini HowTo on getting the crash dump code to work.
-> -doc-guide/
-> -	- how to write and format reStructuredText kernel documentation
-> -kernel-per-CPU-kthreads.txt
-> -	- List of all per-CPU kthreads and how they introduce jitter.
-> -kobject.txt
-> -	- info of the kobject infrastructure of the Linux kernel.
-> -kprobes.txt
-> -	- documents the kernel probes debugging feature.
-> -kref.txt
-> -	- docs on adding reference counters (krefs) to kernel objects.
-> -laptops/
-> -	- directory with laptop related info and laptop driver documentation.
-> -ldm.txt
-> -	- a brief description of LDM (Windows Dynamic Disks).
-> -leds/
-> -	- directory with info about LED handling under Linux.
-> -livepatch/
-> -	- info on kernel live patching.
-> -locking/
-> -	- directory with info about kernel locking primitives
-> -lockup-watchdogs.txt
-> -	- info on soft and hard lockup detectors (aka nmi_watchdog).
-> -logo.gif
-> -	- full colour GIF image of Linux logo (penguin - Tux).
-> -logo.txt
-> -	- info on creator of above logo & site to get additional images from.
-> -lsm.txt
-> -	- Linux Security Modules: General Security Hooks for Linux
-> -lzo.txt
-> -	- kernel LZO decompressor input formats
-> -m68k/
-> -	- directory with info about Linux on Motorola 68k architecture.
-> -mailbox.txt
-> -	- How to write drivers for the common mailbox framework (IPC).
-> -md/
-> -	- directory with info about Linux Software RAID
-> -media/
-> -	- info on media drivers: uAPI, kAPI and driver documentation.
-> -memory-barriers.txt
-> -	- info on Linux kernel memory barriers.
-> -memory-devices/
-> -	- directory with info on parts like the Texas Instruments EMIF driver
-> -memory-hotplug.txt
-> -	- Hotpluggable memory support, how to use and current status.
-> -men-chameleon-bus.txt
-> -	- info on MEN chameleon bus.
-> -mic/
-> -	- Intel Many Integrated Core (MIC) architecture device driver.
-> -mips/
-> -	- directory with info about Linux on MIPS architecture.
-> -misc-devices/
-> -	- directory with info about devices using the misc dev subsystem
-> -mmc/
-> -	- directory with info about the MMC subsystem
-> -mtd/
-> -	- directory with info about memory technology devices (flash)
-> -namespaces/
-> -	- directory with various information about namespaces
-> -netlabel/
-> -	- directory with information on the NetLabel subsystem.
-> -networking/
-> -	- directory with info on various aspects of networking with Linux.
-> -nfc/
-> -	- directory relating info about Near Field Communications support.
-> -nios2/
-> -	- Linux on the Nios II architecture.
-> -nommu-mmap.txt
-> -	- documentation about no-mmu memory mapping support.
-> -numastat.txt
-> -	- info on how to read Numa policy hit/miss statistics in sysfs.
-> -ntb.txt
-> -	- info on Non-Transparent Bridge (NTB) drivers.
-> -nvdimm/
-> -	- info on non-volatile devices.
-> -nvmem/
-> -	- info on non volatile memory framework.
-> -output/
-> -	- default directory where html/LaTeX/pdf files will be written.
-> -padata.txt
-> -	- An introduction to the "padata" parallel execution API
-> -parisc/
-> -	- directory with info on using Linux on PA-RISC architecture.
-> -parport-lowlevel.txt
-> -	- description and usage of the low level parallel port functions.
-> -pcmcia/
-> -	- info on the Linux PCMCIA driver.
-> -percpu-rw-semaphore.txt
-> -	- RCU based read-write semaphore optimized for locking for reading
-> -perf/
-> -	- info about the APM X-Gene SoC Performance Monitoring Unit (PMU).
-> -phy/
-> -	- ino on Samsung USB 2.0 PHY adaptation layer.
-> -phy.txt
-> -	- Description of the generic PHY framework.
-> -pi-futex.txt
-> -	- documentation on lightweight priority inheritance futexes.
-> -pinctrl.txt
-> -	- info on pinctrl subsystem and the PINMUX/PINCONF and drivers
-> -platform/
-> -	- List of supported hardware by compal and Dell laptop.
-> -pnp.txt
-> -	- Linux Plug and Play documentation.
-> -power/
-> -	- directory with info on Linux PCI power management.
-> -powerpc/
-> -	- directory with info on using Linux with the PowerPC.
-> -prctl/
-> -	- directory with info on the priveledge control subsystem
-> -preempt-locking.txt
-> -	- info on locking under a preemptive kernel.
-> -process/
-> -	- how to work with the mainline kernel development process.
-> -pps/
-> -	- directory with information on the pulse-per-second support
-> -pti/
-> -	- directory with info on Intel MID PTI.
-> -ptp/
-> -	- directory with info on support for IEEE 1588 PTP clocks in Linux.
-> -pwm.txt
-> -	- info on the pulse width modulation driver subsystem
-> -rapidio/
-> -	- directory with info on RapidIO packet-based fabric interconnect
-> -rbtree.txt
-> -	- info on what red-black trees are and what they are for.
-> -remoteproc.txt
-> -	- info on how to handle remote processor (e.g. AMP) offloads/usage.
-> -rfkill.txt
-> -	- info on the radio frequency kill switch subsystem/support.
-> -robust-futex-ABI.txt
-> -	- documentation of the robust futex ABI.
-> -robust-futexes.txt
-> -	- a description of what robust futexes are.
-> -rpmsg.txt
-> -	- info on the Remote Processor Messaging (rpmsg) Framework
-> -rtc.txt
-> -	- notes on how to use the Real Time Clock (aka CMOS clock) driver.
-> -s390/
-> -	- directory with info on using Linux on the IBM S390.
-> -scheduler/
-> -	- directory with info on the scheduler.
-> -scsi/
-> -	- directory with info on Linux scsi support.
-> -security/
-> -	- directory that contains security-related info
-> -serial/
-> -	- directory with info on the low level serial API.
-> -sgi-ioc4.txt
-> -	- description of the SGI IOC4 PCI (multi function) device.
-> -sh/
-> -	- directory with info on porting Linux to a new architecture.
-> -smsc_ece1099.txt
-> -	-info on the smsc Keyboard Scan Expansion/GPIO Expansion device.
-> -sound/
-> -	- directory with info on sound card support.
-> -spi/
-> -	- overview of Linux kernel Serial Peripheral Interface (SPI) support.
-> -sphinx/
-> -	- no documentation here, just files required by Sphinx toolchain.
-> -sphinx-static/
-> -	- no documentation here, just files required by Sphinx toolchain.
-> -static-keys.txt
-> -	- info on how static keys allow debug code in hotpaths via patching
-> -svga.txt
-> -	- short guide on selecting video modes at boot via VGA BIOS.
-> -sync_file.txt
-> -	- Sync file API guide.
-> -sysctl/
-> -	- directory with info on the /proc/sys/* files.
-> -target/
-> -	- directory with info on generating TCM v4 fabric .ko modules
-> -tee.txt
-> -	- info on the TEE subsystem and drivers
-> -this_cpu_ops.txt
-> -	- List rationale behind and the way to use this_cpu operations.
-> -thermal/
-> -	- directory with information on managing thermal issues (CPU/temp)
-> -trace/
-> -	- directory with info on tracing technologies within linux
-> -translations/
-> -	- translations of this document from English to another language
-> -unaligned-memory-access.txt
-> -	- info on how to avoid arch breaking unaligned memory access in code.
-> -unshare.txt
-> -	- description of the Linux unshare system call.
-> -usb/
-> -	- directory with info regarding the Universal Serial Bus.
-> -vfio.txt
-> -	- info on Virtual Function I/O used in guest/hypervisor instances.
-> -video-output.txt
-> -	- sysfs class driver interface to enable/disable a video output device.
-> -virtual/
-> -	- directory with information on the various linux virtualizations.
-> -vm/
-> -	- directory with info on the Linux vm code.
-> -w1/
-> -	- directory with documents regarding the 1-wire (w1) subsystem.
-> -watchdog/
-> -	- how to auto-reboot Linux if it has "fallen and can't get up". ;-)
-> -wimax/
-> -	- directory with info about Intel Wireless Wimax Connections
-> -core-api/workqueue.rst
-> -	- information on the Concurrency Managed Workqueue implementation
-> -x86/x86_64/
-> -	- directory with info on Linux support for AMD x86-64 (Hammer) machines.
-> -xillybus.txt
-> -	- Overview and basic ui of xillybus driver
-> -xtensa/
-> -	- directory with documents relating to arch/xtensa port/implementation
-> -xz.txt
-> -	- how to make use of the XZ data compression within linux kernel
-> -zorro.txt
-> -	- info on writing drivers for Zorro bus devices found on Amigas.
-> diff --git a/Documentation/PCI/00-INDEX b/Documentation/PCI/00-INDEX
-> deleted file mode 100644
-> index 206b1d5..0000000
-> --- a/Documentation/PCI/00-INDEX
-> +++ /dev/null
-> @@ -1,26 +0,0 @@
-> -00-INDEX
-> -	- this file
-> -acpi-info.txt
-> -	- info on how PCI host bridges are represented in ACPI
-> -MSI-HOWTO.txt
-> -	- the Message Signaled Interrupts (MSI) Driver Guide HOWTO and FAQ.
-> -PCIEBUS-HOWTO.txt
-> -	- a guide describing the PCI Express Port Bus driver
-> -pci-error-recovery.txt
-> -	- info on PCI error recovery
-> -pci-iov-howto.txt
-> -	- the PCI Express I/O Virtualization HOWTO
-> -pci.txt
-> -	- info on the PCI subsystem for device driver authors
-> -pcieaer-howto.txt
-> -	- the PCI Express Advanced Error Reporting Driver Guide HOWTO
-> -endpoint/pci-endpoint.txt
-> -	- guide to add endpoint controller driver and endpoint function driver.
-> -endpoint/pci-endpoint-cfs.txt
-> -	- guide to use configfs to configure the PCI endpoint function.
-> -endpoint/pci-test-function.txt
-> -	- specification of *PCI test* function device.
-> -endpoint/pci-test-howto.txt
-> -	- userguide for PCI endpoint test function.
-> -endpoint/function/binding/
-> -	- binding documentation for PCI endpoint function
-> diff --git a/Documentation/RCU/00-INDEX b/Documentation/RCU/00-INDEX
-> deleted file mode 100644
-> index f46980c..0000000
-> --- a/Documentation/RCU/00-INDEX
-> +++ /dev/null
-> @@ -1,34 +0,0 @@
-> -00-INDEX
-> -	- This file
-> -arrayRCU.txt
-> -	- Using RCU to Protect Read-Mostly Arrays
-> -checklist.txt
-> -	- Review Checklist for RCU Patches
-> -listRCU.txt
-> -	- Using RCU to Protect Read-Mostly Linked Lists
-> -lockdep.txt
-> -	- RCU and lockdep checking
-> -lockdep-splat.txt
-> -	- RCU Lockdep splats explained.
-> -NMI-RCU.txt
-> -	- Using RCU to Protect Dynamic NMI Handlers
-> -rcu_dereference.txt
-> -	- Proper care and feeding of return values from rcu_dereference()
-> -rcubarrier.txt
-> -	- RCU and Unloadable Modules
-> -rculist_nulls.txt
-> -	- RCU list primitives for use with SLAB_TYPESAFE_BY_RCU
-> -rcuref.txt
-> -	- Reference-count design for elements of lists/arrays protected by RCU
-> -rcu.txt
-> -	- RCU Concepts
-> -RTFP.txt
-> -	- List of RCU papers (bibliography) going back to 1980.
-> -stallwarn.txt
-> -	- RCU CPU stall warnings (module parameter rcu_cpu_stall_suppress)
-> -torture.txt
-> -	- RCU Torture Test Operation (CONFIG_RCU_TORTURE_TEST)
-> -UP.txt
-> -	- RCU on Uniprocessor Systems
-> -whatisRCU.txt
-> -	- What is RCU?
-> diff --git a/Documentation/RCU/rcu.txt b/Documentation/RCU/rcu.txt
-> index 7d4ae11..721b3e4 100644
-> --- a/Documentation/RCU/rcu.txt
-> +++ b/Documentation/RCU/rcu.txt
-> @@ -87,7 +87,3 @@ o	Where can I find more information on RCU?
-> 
->  	See the RTFP.txt file in this directory.
->  	Or point your browser at http://www.rdrop.com/users/paulmck/RCU/.
-> -
-> -o	What are all these files in this directory?
-> -
-> -	See 00-INDEX for the list.
-> diff --git a/Documentation/admin-guide/README.rst b/Documentation/admin-guide/README.rst
-> index 15ea785..0797eec 100644
-> --- a/Documentation/admin-guide/README.rst
-> +++ b/Documentation/admin-guide/README.rst
-> @@ -51,8 +51,7 @@ Documentation
-> 
->   - There are various README files in the Documentation/ subdirectory:
->     these typically contain kernel-specific installation notes for some
-> -   drivers for example. See Documentation/00-INDEX for a list of what
-> -   is contained in each file.  Please read the
-> +   drivers for example. Please read the
->     :ref:`Documentation/process/changes.rst <changes>` file, as it
->     contains information about the problems, which may result by upgrading
->     your kernel.
-> diff --git a/Documentation/arm/00-INDEX b/Documentation/arm/00-INDEX
-> deleted file mode 100644
-> index b6e69fd..0000000
-> --- a/Documentation/arm/00-INDEX
-> +++ /dev/null
-> @@ -1,50 +0,0 @@
-> -00-INDEX
-> -	- this file
-> -Booting
-> -	- requirements for booting
-> -CCN.txt
-> -	- Cache Coherent Network ring-bus and perf PMU driver.
-> -Interrupts
-> -	- ARM Interrupt subsystem documentation
-> -IXP4xx
-> -	- Intel IXP4xx Network processor.
-> -Netwinder
-> -	- Netwinder specific documentation
-> -Porting
-> -       - Symbol definitions for porting Linux to a new ARM machine.
-> -Setup
-> -       - Kernel initialization parameters on ARM Linux
-> -README
-> -	- General ARM documentation
-> -SA1100/
-> -	- SA1100 documentation
-> -Samsung-S3C24XX/
-> -	- S3C24XX ARM Linux Overview
-> -SPEAr/
-> -	- ST SPEAr platform Linux Overview
-> -VFP/
-> -	- Release notes for Linux Kernel Vector Floating Point support code
-> -cluster-pm-race-avoidance.txt
-> -	- Algorithm for CPU and Cluster setup/teardown
-> -empeg/
-> -	- Ltd's Empeg MP3 Car Audio Player
-> -firmware.txt
-> -	- Secure firmware registration and calling.
-> -kernel_mode_neon.txt
-> -	- How to use NEON instructions in kernel mode
-> -kernel_user_helpers.txt
-> -	- Helper functions in kernel space made available for userspace.
-> -mem_alignment
-> -	- alignment abort handler documentation
-> -memory.txt
-> -	- description of the virtual memory layout
-> -nwfpe/
-> -	- NWFPE floating point emulator documentation
-> -swp_emulation
-> -	- SWP/SWPB emulation handler/logging description
-> -tcm.txt
-> -	- ARM Tightly Coupled Memory
-> -uefi.txt
-> -	- [U]EFI configuration and runtime services documentation
-> -vlocks.txt
-> -	- Voting locks, low-level mechanism relying on memory system atomic writes.
-> diff --git a/Documentation/block/00-INDEX b/Documentation/block/00-INDEX
-> deleted file mode 100644
-> index 8d55b4b..0000000
-> --- a/Documentation/block/00-INDEX
-> +++ /dev/null
-> @@ -1,34 +0,0 @@
-> -00-INDEX
-> -	- This file
-> -bfq-iosched.txt
-> -	- BFQ IO scheduler and its tunables
-> -biodoc.txt
-> -	- Notes on the Generic Block Layer Rewrite in Linux 2.5
-> -biovecs.txt
-> -	- Immutable biovecs and biovec iterators
-> -capability.txt
-> -	- Generic Block Device Capability (/sys/block/<device>/capability)
-> -cfq-iosched.txt
-> -	- CFQ IO scheduler tunables
-> -cmdline-partition.txt
-> -	- how to specify block device partitions on kernel command line
-> -data-integrity.txt
-> -	- Block data integrity
-> -deadline-iosched.txt
-> -	- Deadline IO scheduler tunables
-> -ioprio.txt
-> -	- Block io priorities (in CFQ scheduler)
-> -pr.txt
-> -	- Block layer support for Persistent Reservations
-> -null_blk.txt
-> -	- Null block for block-layer benchmarking.
-> -queue-sysfs.txt
-> -	- Queue's sysfs entries
-> -request.txt
-> -	- The members of struct request (in include/linux/blkdev.h)
-> -stat.txt
-> -	- Block layer statistics in /sys/block/<device>/stat
-> -switching-sched.txt
-> -	- Switching I/O schedulers at runtime
-> -writeback_cache_control.txt
-> -	- Control of volatile write back caches
-> diff --git a/Documentation/blockdev/00-INDEX b/Documentation/blockdev/00-INDEX
-> deleted file mode 100644
-> index c08df56..0000000
-> --- a/Documentation/blockdev/00-INDEX
-> +++ /dev/null
-> @@ -1,18 +0,0 @@
-> -00-INDEX
-> -	- this file
-> -README.DAC960
-> -	- info on Mylex DAC960/DAC1100 PCI RAID Controller Driver for Linux.
-> -cciss.txt
-> -	- info, major/minor #'s for Compaq's SMART Array Controllers.
-> -cpqarray.txt
-> -	- info on using Compaq's SMART2 Intelligent Disk Array Controllers.
-> -floppy.txt
-> -	- notes and driver options for the floppy disk driver.
-> -mflash.txt
-> -	- info on mGine m(g)flash driver for linux.
-> -nbd.txt
-> -	- info on a TCP implementation of a network block device.
-> -paride.txt
-> -	- information about the parallel port IDE subsystem.
-> -ramdisk.txt
-> -	- short guide on how to set up and use the RAM disk.
-> diff --git a/Documentation/cdrom/00-INDEX b/Documentation/cdrom/00-INDEX
-> deleted file mode 100644
-> index 433edf2..0000000
-> --- a/Documentation/cdrom/00-INDEX
-> +++ /dev/null
-> @@ -1,11 +0,0 @@
-> -00-INDEX
-> -	- this file (info on CD-ROMs and Linux)
-> -Makefile
-> -	- only used to generate TeX output from the documentation.
-> -cdrom-standard.tex
-> -	- LaTeX document on standardizing the CD-ROM programming interface.
-> -ide-cd
-> -	- info on setting up and using ATAPI (aka IDE) CD-ROMs.
-> -packet-writing.txt
-> -	- Info on the CDRW packet writing module
-> -
-> diff --git a/Documentation/cgroup-v1/00-INDEX b/Documentation/cgroup-v1/00-INDEX
-> deleted file mode 100644
-> index 13e0c85..0000000
-> --- a/Documentation/cgroup-v1/00-INDEX
-> +++ /dev/null
-> @@ -1,26 +0,0 @@
-> -00-INDEX
-> -	- this file
-> -blkio-controller.txt
-> -	- Description for Block IO Controller, implementation and usage details.
-> -cgroups.txt
-> -	- Control Groups definition, implementation details, examples and API.
-> -cpuacct.txt
-> -	- CPU Accounting Controller; account CPU usage for groups of tasks.
-> -cpusets.txt
-> -	- documents the cpusets feature; assign CPUs and Mem to a set of tasks.
-> -admin-guide/devices.rst
-> -	- Device Whitelist Controller; description, interface and security.
-> -freezer-subsystem.txt
-> -	- checkpointing; rationale to not use signals, interface.
-> -hugetlb.txt
-> -	- HugeTLB Controller implementation and usage details.
-> -memcg_test.txt
-> -	- Memory Resource Controller; implementation details.
-> -memory.txt
-> -	- Memory Resource Controller; design, accounting, interface, testing.
-> -net_cls.txt
-> -	- Network classifier cgroups details and usages.
-> -net_prio.txt
-> -	- Network priority cgroups details and usages.
-> -pids.txt
-> -	- Process number cgroups details and usages.
-> diff --git a/Documentation/devicetree/00-INDEX b/Documentation/devicetree/00-INDEX
-> deleted file mode 100644
-> index 8c4102c..0000000
-> --- a/Documentation/devicetree/00-INDEX
-> +++ /dev/null
-> @@ -1,12 +0,0 @@
-> -Documentation for device trees, a data structure by which bootloaders pass
-> -hardware layout to Linux in a device-independent manner, simplifying hardware
-> -probing.  This subsystem is maintained by Grant Likely
-> -<grant.likely@secretlab.ca> and has a mailing list at
-> -https://lists.ozlabs.org/listinfo/devicetree-discuss
-> -
-> -00-INDEX
-> -	- this file
-> -booting-without-of.txt
-> -	- Booting Linux without Open Firmware, describes history and format of device trees.
-> -usage-model.txt
-> -	- How Linux uses DT and what DT aims to solve.
-> \ No newline at end of file
-> diff --git a/Documentation/fb/00-INDEX b/Documentation/fb/00-INDEX
-> deleted file mode 100644
-> index fe85e7c..0000000
-> --- a/Documentation/fb/00-INDEX
-> +++ /dev/null
-> @@ -1,75 +0,0 @@
-> -Index of files in Documentation/fb.  If you think something about frame
-> -buffer devices needs an entry here, needs correction or you've written one
-> -please mail me.
-> -				    Geert Uytterhoeven <geert@linux-m68k.org>
-> -
-> -00-INDEX
-> -	- this file.
-> -api.txt
-> -	- The frame buffer API between applications and buffer devices.
-> -arkfb.txt
-> -	- info on the fbdev driver for ARK Logic chips.
-> -aty128fb.txt
-> -	- info on the ATI Rage128 frame buffer driver.
-> -cirrusfb.txt
-> -	- info on the driver for Cirrus Logic chipsets.
-> -cmap_xfbdev.txt
-> -	- an introduction to fbdev's cmap structures.
-> -deferred_io.txt
-> -	- an introduction to deferred IO.
-> -efifb.txt
-> -	- info on the EFI platform driver for Intel based Apple computers.
-> -ep93xx-fb.txt
-> -	- info on the driver for EP93xx LCD controller.
-> -fbcon.txt
-> -	- intro to and usage guide for the framebuffer console (fbcon).
-> -framebuffer.txt
-> -	- introduction to frame buffer devices.
-> -gxfb.txt
-> -	- info on the framebuffer driver for AMD Geode GX2 based processors.
-> -intel810.txt
-> -	- documentation for the Intel 810/815 framebuffer driver.
-> -intelfb.txt
-> -	- docs for Intel 830M/845G/852GM/855GM/865G/915G/945G fb driver.
-> -internals.txt
-> -	- quick overview of frame buffer device internals.
-> -lxfb.txt
-> -	- info on the framebuffer driver for AMD Geode LX based processors.
-> -matroxfb.txt
-> -	- info on the Matrox framebuffer driver for Alpha, Intel and PPC.
-> -metronomefb.txt
-> -	- info on the driver for the Metronome display controller.
-> -modedb.txt
-> -	- info on the video mode database.
-> -pvr2fb.txt
-> -	- info on the PowerVR 2 frame buffer driver.
-> -pxafb.txt
-> -	- info on the driver for the PXA25x LCD controller.
-> -s3fb.txt
-> -	- info on the fbdev driver for S3 Trio/Virge chips.
-> -sa1100fb.txt
-> -	- information about the driver for the SA-1100 LCD controller.
-> -sh7760fb.txt
-> -	- info on the SH7760/SH7763 integrated LCDC Framebuffer driver.
-> -sisfb.txt
-> -	- info on the framebuffer device driver for various SiS chips.
-> -sm501.txt
-> -	- info on the framebuffer device driver for sm501 videoframebuffer.
-> -sstfb.txt
-> -	- info on the frame buffer driver for 3dfx' Voodoo Graphics boards.
-> -tgafb.txt
-> -	- info on the TGA (DECChip 21030) frame buffer driver.
-> -tridentfb.txt
-> -	info on the framebuffer driver for some Trident chip based cards.
-> -udlfb.txt
-> -	- Driver for DisplayLink USB 2.0 chips.
-> -uvesafb.txt
-> -	- info on the userspace VESA (VBE2+ compliant) frame buffer device.
-> -vesafb.txt
-> -	- info on the VESA frame buffer device.
-> -viafb.modes
-> -	- list of modes for VIA Integration Graphic Chip.
-> -viafb.txt
-> -	- info on the VIA Integration Graphic Chip console framebuffer driver.
-> -vt8623fb.txt
-> -	- info on the fb driver for the graphics core in VIA VT8623 chipsets.
-> diff --git a/Documentation/filesystems/00-INDEX b/Documentation/filesystems/00-INDEX
-> deleted file mode 100644
-> index 0937bad..0000000
-> --- a/Documentation/filesystems/00-INDEX
-> +++ /dev/null
-> @@ -1,153 +0,0 @@
-> -00-INDEX
-> -	- this file (info on some of the filesystems supported by linux).
-> -Locking
-> -	- info on locking rules as they pertain to Linux VFS.
-> -9p.txt
-> -	- 9p (v9fs) is an implementation of the Plan 9 remote fs protocol.
-> -adfs.txt
-> -	- info and mount options for the Acorn Advanced Disc Filing System.
-> -afs.txt
-> -	- info and examples for the distributed AFS (Andrew File System) fs.
-> -affs.txt
-> -	- info and mount options for the Amiga Fast File System.
-> -autofs-mount-control.txt
-> -	- info on device control operations for autofs module.
-> -automount-support.txt
-> -	- information about filesystem automount support.
-> -befs.txt
-> -	- information about the BeOS filesystem for Linux.
-> -bfs.txt
-> -	- info for the SCO UnixWare Boot Filesystem (BFS).
-> -btrfs.txt
-> -	- info for the BTRFS filesystem.
-> -caching/
-> -	- directory containing filesystem cache documentation.
-> -ceph.txt
-> -	- info for the Ceph Distributed File System.
-> -cifs/
-> -	- directory containing CIFS filesystem documentation and example code.
-> -coda.txt
-> -	- description of the CODA filesystem.
-> -configfs/
-> -	- directory containing configfs documentation and example code.
-> -cramfs.txt
-> -	- info on the cram filesystem for small storage (ROMs etc).
-> -dax.txt
-> -	- info on avoiding the page cache for files stored on CPU-addressable
-> -	  storage devices.
-> -debugfs.txt
-> -	- info on the debugfs filesystem.
-> -devpts.txt
-> -	- info on the devpts filesystem.
-> -directory-locking
-> -	- info about the locking scheme used for directory operations.
-> -dlmfs.txt
-> -	- info on the userspace interface to the OCFS2 DLM.
-> -dnotify.txt
-> -	- info about directory notification in Linux.
-> -dnotify_test.c
-> -	- example program for dnotify.
-> -ecryptfs.txt
-> -	- docs on eCryptfs: stacked cryptographic filesystem for Linux.
-> -efivarfs.txt
-> -	- info for the efivarfs filesystem.
-> -exofs.txt
-> -	- info, usage, mount options, design about EXOFS.
-> -ext2.txt
-> -	- info, mount options and specifications for the Ext2 filesystem.
-> -ext3.txt
-> -	- info, mount options and specifications for the Ext3 filesystem.
-> -ext4.txt
-> -	- info, mount options and specifications for the Ext4 filesystem.
-> -f2fs.txt
-> -	- info and mount options for the F2FS filesystem.
-> -fiemap.txt
-> -	- info on fiemap ioctl.
-> -files.txt
-> -	- info on file management in the Linux kernel.
-> -fuse.txt
-> -	- info on the Filesystem in User SpacE including mount options.
-> -gfs2-glocks.txt
-> -	- info on the Global File System 2 - Glock internal locking rules.
-> -gfs2-uevents.txt
-> -	- info on the Global File System 2 - uevents.
-> -gfs2.txt
-> -	- info on the Global File System 2.
-> -hfs.txt
-> -	- info on the Macintosh HFS Filesystem for Linux.
-> -hfsplus.txt
-> -	- info on the Macintosh HFSPlus Filesystem for Linux.
-> -hpfs.txt
-> -	- info and mount options for the OS/2 HPFS.
-> -inotify.txt
-> -	- info on the powerful yet simple file change notification system.
-> -isofs.txt
-> -	- info and mount options for the ISO 9660 (CDROM) filesystem.
-> -jfs.txt
-> -	- info and mount options for the JFS filesystem.
-> -locks.txt
-> -	- info on file locking implementations, flock() vs. fcntl(), etc.
-> -mandatory-locking.txt
-> -	- info on the Linux implementation of Sys V mandatory file locking.
-> -nfs/
-> -	- nfs-related documentation.
-> -nilfs2.txt
-> -	- info and mount options for the NILFS2 filesystem.
-> -ntfs.txt
-> -	- info and mount options for the NTFS filesystem (Windows NT).
-> -ocfs2.txt
-> -	- info and mount options for the OCFS2 clustered filesystem.
-> -omfs.txt
-> -	- info on the Optimized MPEG FileSystem.
-> -path-lookup.txt
-> -	- info on path walking and name lookup locking.
-> -pohmelfs/
-> -	- directory containing pohmelfs filesystem documentation.
-> -porting
-> -	- various information on filesystem porting.
-> -proc.txt
-> -	- info on Linux's /proc filesystem.
-> -qnx6.txt
-> -	- info on the QNX6 filesystem.
-> -quota.txt
-> -	- info on Quota subsystem.
-> -ramfs-rootfs-initramfs.txt
-> -	- info on the 'in memory' filesystems ramfs, rootfs and initramfs.
-> -relay.txt
-> -	- info on relay, for efficient streaming from kernel to user space.
-> -romfs.txt
-> -	- description of the ROMFS filesystem.
-> -seq_file.txt
-> -	- how to use the seq_file API.
-> -sharedsubtree.txt
-> -	- a description of shared subtrees for namespaces.
-> -spufs.txt
-> -	- info and mount options for the SPU filesystem used on Cell.
-> -squashfs.txt
-> -	- info on the squashfs filesystem.
-> -sysfs-pci.txt
-> -	- info on accessing PCI device resources through sysfs.
-> -sysfs-tagging.txt
-> -	- info on sysfs tagging to avoid duplicates.
-> -sysfs.txt
-> -	- info on sysfs, a ram-based filesystem for exporting kernel objects.
-> -sysv-fs.txt
-> -	- info on the SystemV/V7/Xenix/Coherent filesystem.
-> -tmpfs.txt
-> -	- info on tmpfs, a filesystem that holds all files in virtual memory.
-> -ubifs.txt
-> -	- info on the Unsorted Block Images FileSystem.
-> -udf.txt
-> -	- info and mount options for the UDF filesystem.
-> -ufs.txt
-> -	- info on the ufs filesystem.
-> -vfat.txt
-> -	- info on using the VFAT filesystem used in Windows NT and Windows 95.
-> -vfs.txt
-> -	- overview of the Virtual File System.
-> -xfs-delayed-logging-design.txt
-> -	- info on the XFS Delayed Logging Design.
-> -xfs-self-describing-metadata.txt
-> -	- info on XFS Self Describing Metadata.
-> -xfs.txt
-> -	- info and mount options for the XFS filesystem.
-> diff --git a/Documentation/filesystems/nfs/00-INDEX b/Documentation/filesystems/nfs/00-INDEX
-> deleted file mode 100644
-> index 53f3b59..0000000
-> --- a/Documentation/filesystems/nfs/00-INDEX
-> +++ /dev/null
-> @@ -1,26 +0,0 @@
-> -00-INDEX
-> -	- this file (nfs-related documentation).
-> -Exporting
-> -	- explanation of how to make filesystems exportable.
-> -fault_injection.txt
-> -	- information for using fault injection on the server
-> -knfsd-stats.txt
-> -	- statistics which the NFS server makes available to user space.
-> -nfs.txt
-> -	- nfs client, and DNS resolution for fs_locations.
-> -nfs41-server.txt
-> -	- info on the Linux server implementation of NFSv4 minor version 1.
-> -nfs-rdma.txt
-> -	- how to install and setup the Linux NFS/RDMA client and server software
-> -nfsd-admin-interfaces.txt
-> -	- Administrative interfaces for nfsd.
-> -nfsroot.txt
-> -	- short guide on setting up a diskless box with NFS root filesystem.
-> -pnfs.txt
-> -	- short explanation of some of the internals of the pnfs client code
-> -rpc-cache.txt
-> -	- introduction to the caching mechanisms in the sunrpc layer.
-> -idmapper.txt
-> -	- information for configuring request-keys to be used by idmapper
-> -rpc-server-gss.txt
-> -	- Information on GSS authentication support in the NFS Server
-> diff --git a/Documentation/fmc/00-INDEX b/Documentation/fmc/00-INDEX
-> deleted file mode 100644
-> index 431c695..0000000
-> --- a/Documentation/fmc/00-INDEX
-> +++ /dev/null
-> @@ -1,38 +0,0 @@
-> -
-> -Documentation in this directory comes from sections of the manual we
-> -wrote for the externally-developed fmc-bus package. The complete
-> -manual as of today (2013-02) is available in PDF format at
-> -http://www.ohwr.org/projects/fmc-bus/files
-> -
-> -00-INDEX
-> -	- this file.
-> -
-> -FMC-and-SDB.txt
-> -	- What are FMC and SDB, basic concepts for this framework
-> -
-> -API.txt
-> -	- The functions that are exported by the bus driver
-> -
-> -parameters.txt
-> -	- The module parameters
-> -
-> -carrier.txt
-> -	- writing a carrier (a device)
-> -
-> -mezzanine.txt
-> -	- writing code for your mezzanine (a driver)
-> -
-> -identifiers.txt
-> -	- how identification and matching works
-> -
-> -fmc-fakedev.txt
-> -	- about drivers/fmc/fmc-fakedev.ko
-> -
-> -fmc-trivial.txt
-> -	- about drivers/fmc/fmc-trivial.ko
-> -
-> -fmc-write-eeprom.txt
-> -	- about drivers/fmc/fmc-write-eeprom.ko
-> -
-> -fmc-chardev.txt
-> -	- about drivers/fmc/fmc-chardev.ko
-> diff --git a/Documentation/gpio/00-INDEX b/Documentation/gpio/00-INDEX
-> deleted file mode 100644
-> index 17e19a6..0000000
-> --- a/Documentation/gpio/00-INDEX
-> +++ /dev/null
-> @@ -1,4 +0,0 @@
-> -00-INDEX
-> -	- This file
-> -sysfs.txt
-> -	- Information about the GPIO sysfs interface
-> diff --git a/Documentation/ide/00-INDEX b/Documentation/ide/00-INDEX
-> deleted file mode 100644
-> index 22f98ca..0000000
-> --- a/Documentation/ide/00-INDEX
-> +++ /dev/null
-> @@ -1,14 +0,0 @@
-> -00-INDEX
-> -    	- this file
-> -ChangeLog.ide-cd.1994-2004
-> -	- ide-cd changelog
-> -ChangeLog.ide-floppy.1996-2002
-> -	- ide-floppy changelog
-> -ChangeLog.ide-tape.1995-2002
-> -	- ide-tape changelog
-> -ide-tape.txt
-> -	- info on the IDE ATAPI streaming tape driver
-> -ide.txt
-> -	- important info for users of ATA devices (IDE/EIDE disks and CD-ROMS).
-> -warm-plug-howto.txt
-> -	- using sysfs to remove and add IDE devices.
-> \ No newline at end of file
-> diff --git a/Documentation/ioctl/00-INDEX b/Documentation/ioctl/00-INDEX
-> deleted file mode 100644
-> index c1a9257..0000000
-> --- a/Documentation/ioctl/00-INDEX
-> +++ /dev/null
-> @@ -1,12 +0,0 @@
-> -00-INDEX
-> -	- this file
-> -botching-up-ioctls.txt
-> -	- how to avoid botching up ioctls
-> -cdrom.txt
-> -	- summary of CDROM ioctl calls
-> -hdio.txt
-> -	- summary of HDIO_ ioctl calls
-> -ioctl-decoding.txt
-> -	- how to decode the bits of an IOCTL code
-> -ioctl-number.txt
-> -	- how to implement and register device/driver ioctl calls
-> diff --git a/Documentation/isdn/00-INDEX b/Documentation/isdn/00-INDEX
-> deleted file mode 100644
-> index 2d1889b..0000000
-> --- a/Documentation/isdn/00-INDEX
-> +++ /dev/null
-> @@ -1,42 +0,0 @@
-> -00-INDEX
-> -	- this file (info on ISDN implementation for Linux)
-> -CREDITS
-> -	- list of the kind folks that brought you this stuff.
-> -HiSax.cert
-> -	- information about the ITU approval certification of the HiSax driver.
-> -INTERFACE
-> -	- description of isdn4linux Link Level and Hardware Level interfaces.
-> -INTERFACE.fax
-> -	- description of the fax subinterface of isdn4linux.
-> -INTERFACE.CAPI
-> -	- description of kernel CAPI Link Level to Hardware Level interface.
-> -README
-> -	- general info on what you need and what to do for Linux ISDN.
-> -README.FAQ
-> -	- general info for FAQ.
-> -README.HiSax
-> -	- info on the HiSax driver which replaces the old teles.
-> -README.audio
-> -	- info for running audio over ISDN.
-> -README.avmb1
-> -	- info on driver for AVM-B1 ISDN card.
-> -README.concap
-> -	- info on "CONCAP" encapsulation protocol interface used for X.25.
-> -README.diversion
-> -	- info on module for isdn diversion services.
-> -README.fax
-> -	- info for using Fax over ISDN.
-> -README.gigaset
-> -	- info on the drivers for Siemens Gigaset ISDN adapters
-> -README.hfc-pci
-> -	- info on hfc-pci based cards.
-> -README.hysdn
-> -        - info on driver for Hypercope active HYSDN cards
-> -README.mISDN
-> -	- info on the Modular ISDN subsystem (mISDN)
-> -README.syncppp
-> -	- info on running Sync PPP over ISDN.
-> -README.x25
-> -	- info for running X.25 over ISDN.
-> -syncPPP.FAQ
-> -	- frequently asked questions about running PPP over ISDN.
-> diff --git a/Documentation/kbuild/00-INDEX b/Documentation/kbuild/00-INDEX
-> deleted file mode 100644
-> index 8c5e6aa..0000000
-> --- a/Documentation/kbuild/00-INDEX
-> +++ /dev/null
-> @@ -1,14 +0,0 @@
-> -00-INDEX
-> -	- this file: info on the kernel build process
-> -headers_install.txt
-> -	- how to export Linux headers for use by userspace
-> -kbuild.txt
-> -	- developer information on kbuild
-> -kconfig.txt
-> -	- usage help for make *config
-> -kconfig-language.txt
-> -	- specification of Config Language, the language in Kconfig files
-> -makefiles.txt
-> -	- developer information for linux kernel makefiles
-> -modules.txt
-> -	- how to build modules and to install them
-> diff --git a/Documentation/laptops/00-INDEX b/Documentation/laptops/00-INDEX
-> deleted file mode 100644
-> index 86169dc..0000000
-> --- a/Documentation/laptops/00-INDEX
-> +++ /dev/null
-> @@ -1,16 +0,0 @@
-> -00-INDEX
-> -	- This file
-> -asus-laptop.txt
-> -	- information on the Asus Laptop Extras driver.
-> -disk-shock-protection.txt
-> -	- information on hard disk shock protection.
-> -laptop-mode.txt
-> -	- how to conserve battery power using laptop-mode.
-> -sony-laptop.txt
-> -	- Sony Notebook Control Driver (SNC) Readme.
-> -sonypi.txt
-> -	- info on Linux Sony Programmable I/O Device support.
-> -thinkpad-acpi.txt
-> -	- information on the (IBM and Lenovo) ThinkPad ACPI Extras driver.
-> -toshiba_haps.txt
-> -	- information on the Toshiba HDD Active Protection Sensor driver.
-> diff --git a/Documentation/leds/00-INDEX b/Documentation/leds/00-INDEX
-> deleted file mode 100644
-> index ae626b2..0000000
-> --- a/Documentation/leds/00-INDEX
-> +++ /dev/null
-> @@ -1,32 +0,0 @@
-> -00-INDEX
-> -	- This file
-> -leds-blinkm.txt
-> -	- Driver for BlinkM LED-devices.
-> -leds-class.txt
-> -	- documents LED handling under Linux.
-> -leds-class-flash.txt
-> -	- documents flash LED handling under Linux.
-> -leds-lm3556.txt
-> -	- notes on how to use the leds-lm3556 driver.
-> -leds-lp3944.txt
-> -	- notes on how to use the leds-lp3944 driver.
-> -leds-lp5521.txt
-> -	- notes on how to use the leds-lp5521 driver.
-> -leds-lp5523.txt
-> -	- notes on how to use the leds-lp5523 driver.
-> -leds-lp5562.txt
-> -	- notes on how to use the leds-lp5562 driver.
-> -leds-lp55xx.txt
-> -	- description about lp55xx common driver.
-> -leds-lm3556.txt
-> -	- notes on how to use the leds-lm3556 driver.
-> -leds-mlxcpld.txt
-> -	- notes on how to use the leds-mlxcpld driver.
-> -ledtrig-oneshot.txt
-> -	- One-shot LED trigger for both sporadic and dense events.
-> -ledtrig-transient.txt
-> -	- LED Transient Trigger, one shot timer activation.
-> -ledtrig-usbport.txt
-> -	- notes on how to use the drivers/usb/core/ledtrig-usbport.c trigger.
-> -uleds.txt
-> -	- notes on how to use the uleds driver.
-> diff --git a/Documentation/locking/00-INDEX b/Documentation/locking/00-INDEX
-> deleted file mode 100644
-> index c256c9b..0000000
-> --- a/Documentation/locking/00-INDEX
-> +++ /dev/null
-> @@ -1,16 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -lockdep-design.txt
-> -	- documentation on the runtime locking correctness validator.
-> -lockstat.txt
-> -	- info on collecting statistics on locks (and contention).
-> -mutex-design.txt
-> -	- info on the generic mutex subsystem.
-> -rt-mutex-design.txt
-> -	- description of the RealTime mutex implementation design.
-> -rt-mutex.txt
-> -	- desc. of RT-mutex subsystem with PI (Priority Inheritance) support.
-> -spinlocks.txt
-> -	- info on using spinlocks to provide exclusive access in kernel.
-> -ww-mutex-design.txt
-> -	- Intro to Mutex wait/would deadlock handling.s
-> diff --git a/Documentation/m68k/00-INDEX b/Documentation/m68k/00-INDEX
-> deleted file mode 100644
-> index 2be8c6b..0000000
-> --- a/Documentation/m68k/00-INDEX
-> +++ /dev/null
-> @@ -1,7 +0,0 @@
-> -00-INDEX
-> -	- this file
-> -README.buddha
-> -	- Amiga Buddha and Catweasel IDE Driver
-> -kernel-options.txt
-> -	- command line options for Linux/m68k
-> -
-> diff --git a/Documentation/mips/00-INDEX b/Documentation/mips/00-INDEX
-> deleted file mode 100644
-> index 8ae9cff..0000000
-> --- a/Documentation/mips/00-INDEX
-> +++ /dev/null
-> @@ -1,4 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -AU1xxx_IDE.README
-> -	- README for MIPS AU1XXX IDE driver.
-> diff --git a/Documentation/mmc/00-INDEX b/Documentation/mmc/00-INDEX
-> deleted file mode 100644
-> index 4623bc0..0000000
-> --- a/Documentation/mmc/00-INDEX
-> +++ /dev/null
-> @@ -1,10 +0,0 @@
-> -00-INDEX
-> -        - this file
-> -mmc-dev-attrs.txt
-> -        - info on SD and MMC device attributes
-> -mmc-dev-parts.txt
-> -        - info on SD and MMC device partitions
-> -mmc-async-req.txt
-> -        - info on mmc asynchronous requests
-> -mmc-tools.txt
-> -	- info on mmc-utils tools
-> diff --git a/Documentation/netlabel/00-INDEX b/Documentation/netlabel/00-INDEX
-> deleted file mode 100644
-> index 837bf35..0000000
-> --- a/Documentation/netlabel/00-INDEX
-> +++ /dev/null
-> @@ -1,10 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -cipso_ipv4.txt
-> -	- documentation on the IPv4 CIPSO protocol engine.
-> -draft-ietf-cipso-ipsecurity-01.txt
-> -	- IETF draft of the CIPSO protocol, dated 16 July 1992.
-> -introduction.txt
-> -	- NetLabel introduction, READ THIS FIRST.
-> -lsm_interface.txt
-> -	- documentation on the NetLabel kernel security module API.
-> diff --git a/Documentation/netlabel/cipso_ipv4.txt b/Documentation/netlabel/cipso_ipv4.txt
-> index 93dacb1..a607548 100644
-> --- a/Documentation/netlabel/cipso_ipv4.txt
-> +++ b/Documentation/netlabel/cipso_ipv4.txt
-> @@ -6,11 +6,12 @@ May 17, 2006
-> 
->   * Overview
-> 
-> -The NetLabel CIPSO/IPv4 protocol engine is based on the IETF Commercial IP
-> -Security Option (CIPSO) draft from July 16, 1992.  A copy of this draft can be
-> -found in this directory, consult '00-INDEX' for the filename.  While the IETF
-> -draft never made it to an RFC standard it has become a de-facto standard for
-> -labeled networking and is used in many trusted operating systems.
-> +The NetLabel CIPSO/IPv4 protocol engine is based on the IETF Commercial
-> +IP Security Option (CIPSO) draft from July 16, 1992.  A copy of this
-> +draft can be found in this directory
-> +(draft-ietf-cipso-ipsecurity-01.txt).  While the IETF draft never made
-> +it to an RFC standard it has become a de-facto standard for labeled
-> +networking and is used in many trusted operating systems.
-> 
->   * Outbound Packet Processing
-> 
-> diff --git a/Documentation/netlabel/introduction.txt b/Documentation/netlabel/introduction.txt
-> index 5ecd8d1..3caf77b 100644
-> --- a/Documentation/netlabel/introduction.txt
-> +++ b/Documentation/netlabel/introduction.txt
-> @@ -22,7 +22,7 @@ refrain from calling the protocol engines directly, instead they should use
->  the NetLabel kernel security module API described below.
-> 
->  Detailed information about each NetLabel protocol engine can be found in this
-> -directory, consult '00-INDEX' for filenames.
-> +directory.
-> 
->   * Communication Layer
-> 
-> diff --git a/Documentation/networking/00-INDEX b/Documentation/networking/00-INDEX
-> deleted file mode 100644
-> index 02a323c..0000000
-> --- a/Documentation/networking/00-INDEX
-> +++ /dev/null
-> @@ -1,234 +0,0 @@
-> -00-INDEX
-> -	- this file
-> -3c509.txt
-> -	- information on the 3Com Etherlink III Series Ethernet cards.
-> -6pack.txt
-> -	- info on the 6pack protocol, an alternative to KISS for AX.25
-> -LICENSE.qla3xxx
-> -	- GPLv2 for QLogic Linux Networking HBA Driver
-> -LICENSE.qlge
-> -	- GPLv2 for QLogic Linux qlge NIC Driver
-> -LICENSE.qlcnic
-> -	- GPLv2 for QLogic Linux qlcnic NIC Driver
-> -PLIP.txt
-> -	- PLIP: The Parallel Line Internet Protocol device driver
-> -README.ipw2100
-> -	- README for the Intel PRO/Wireless 2100 driver.
-> -README.ipw2200
-> -	- README for the Intel PRO/Wireless 2915ABG and 2200BG driver.
-> -README.sb1000
-> -	- info on General Instrument/NextLevel SURFboard1000 cable modem.
-> -altera_tse.txt
-> -	- Altera Triple-Speed Ethernet controller.
-> -arcnet-hardware.txt
-> -	- tons of info on ARCnet, hubs, jumper settings for ARCnet cards, etc.
-> -arcnet.txt
-> -	- info on the using the ARCnet driver itself.
-> -atm.txt
-> -	- info on where to get ATM programs and support for Linux.
-> -ax25.txt
-> -	- info on using AX.25 and NET/ROM code for Linux
-> -baycom.txt
-> -	- info on the driver for Baycom style amateur radio modems
-> -bonding.txt
-> -	- Linux Ethernet Bonding Driver HOWTO: link aggregation in Linux.
-> -bridge.txt
-> -	- where to get user space programs for ethernet bridging with Linux.
-> -cdc_mbim.txt
-> -	- 3G/LTE USB modem (Mobile Broadband Interface Model)
-> -checksum-offloads.txt
-> -	- Explanation of checksum offloads; LCO, RCO
-> -cops.txt
-> -	- info on the COPS LocalTalk Linux driver
-> -cs89x0.txt
-> -	- the Crystal LAN (CS8900/20-based) Ethernet ISA adapter driver
-> -cxacru.txt
-> -	- Conexant AccessRunner USB ADSL Modem
-> -cxacru-cf.py
-> -	- Conexant AccessRunner USB ADSL Modem configuration file parser
-> -cxgb.txt
-> -	- Release Notes for the Chelsio N210 Linux device driver.
-> -dccp.txt
-> -	- the Datagram Congestion Control Protocol (DCCP) (RFC 4340..42).
-> -dctcp.txt
-> -	- DataCenter TCP congestion control
-> -de4x5.txt
-> -	- the Digital EtherWORKS DE4?? and DE5?? PCI Ethernet driver
-> -decnet.txt
-> -	- info on using the DECnet networking layer in Linux.
-> -dl2k.txt
-> -	- README for D-Link DL2000-based Gigabit Ethernet Adapters (dl2k.ko).
-> -dm9000.txt
-> -	- README for the Simtec DM9000 Network driver.
-> -dmfe.txt
-> -	- info on the Davicom DM9102(A)/DM9132/DM9801 fast ethernet driver.
-> -dns_resolver.txt
-> -	- The DNS resolver module allows kernel servies to make DNS queries.
-> -driver.txt
-> -	- Softnet driver issues.
-> -ena.txt
-> -	- info on Amazon's Elastic Network Adapter (ENA)
-> -e100.txt
-> -	- info on Intel's EtherExpress PRO/100 line of 10/100 boards
-> -e1000.txt
-> -	- info on Intel's E1000 line of gigabit ethernet boards
-> -e1000e.txt
-> -	- README for the Intel Gigabit Ethernet Driver (e1000e).
-> -eql.txt
-> -	- serial IP load balancing
-> -fib_trie.txt
-> -	- Level Compressed Trie (LC-trie) notes: a structure for routing.
-> -filter.txt
-> -	- Linux Socket Filtering
-> -fore200e.txt
-> -	- FORE Systems PCA-200E/SBA-200E ATM NIC driver info.
-> -framerelay.txt
-> -	- info on using Frame Relay/Data Link Connection Identifier (DLCI).
-> -gen_stats.txt
-> -	- Generic networking statistics for netlink users.
-> -generic-hdlc.txt
-> -	- The generic High Level Data Link Control (HDLC) layer.
-> -generic_netlink.txt
-> -	- info on Generic Netlink
-> -gianfar.txt
-> -	- Gianfar Ethernet Driver.
-> -i40e.txt
-> -	- README for the Intel Ethernet Controller XL710 Driver (i40e).
-> -i40evf.txt
-> -	- Short note on the Driver for the Intel(R) XL710 X710 Virtual Function
-> -ieee802154.txt
-> -	- Linux IEEE 802.15.4 implementation, API and drivers
-> -igb.txt
-> -	- README for the Intel Gigabit Ethernet Driver (igb).
-> -igbvf.txt
-> -	- README for the Intel Gigabit Ethernet Driver (igbvf).
-> -ip-sysctl.txt
-> -	- /proc/sys/net/ipv4/* variables
-> -ip_dynaddr.txt
-> -	- IP dynamic address hack e.g. for auto-dialup links
-> -ipddp.txt
-> -	- AppleTalk-IP Decapsulation and AppleTalk-IP Encapsulation
-> -iphase.txt
-> -	- Interphase PCI ATM (i)Chip IA Linux driver info.
-> -ipsec.txt
-> -	- Note on not compressing IPSec payload and resulting failed policy check.
-> -ipv6.txt
-> -	- Options to the ipv6 kernel module.
-> -ipvs-sysctl.txt
-> -	- Per-inode explanation of the /proc/sys/net/ipv4/vs interface.
-> -irda.txt
-> -	- where to get IrDA (infrared) utilities and info for Linux.
-> -ixgb.txt
-> -	- README for the Intel 10 Gigabit Ethernet Driver (ixgb).
-> -ixgbe.txt
-> -	- README for the Intel 10 Gigabit Ethernet Driver (ixgbe).
-> -ixgbevf.txt
-> -	- README for the Intel Virtual Function (VF) Driver (ixgbevf).
-> -l2tp.txt
-> -	- User guide to the L2TP tunnel protocol.
-> -lapb-module.txt
-> -	- programming information of the LAPB module.
-> -ltpc.txt
-> -	- the Apple or Farallon LocalTalk PC card driver
-> -mac80211-auth-assoc-deauth.txt
-> -	- authentication and association / deauth-disassoc with max80211
-> -mac80211-injection.txt
-> -	- HOWTO use packet injection with mac80211
-> -multiqueue.txt
-> -	- HOWTO for multiqueue network device support.
-> -netconsole.txt
-> -	- The network console module netconsole.ko: configuration and notes.
-> -netdev-features.txt
-> -	- Network interface features API description.
-> -netdevices.txt
-> -	- info on network device driver functions exported to the kernel.
-> -netif-msg.txt
-> -	- Design of the network interface message level setting (NETIF_MSG_*).
-> -netlink_mmap.txt
-> -	- memory mapped I/O with netlink
-> -nf_conntrack-sysctl.txt
-> -	- list of netfilter-sysctl knobs.
-> -nfc.txt
-> -	- The Linux Near Field Communication (NFS) subsystem.
-> -openvswitch.txt
-> -	- Open vSwitch developer documentation.
-> -operstates.txt
-> -	- Overview of network interface operational states.
-> -packet_mmap.txt
-> -	- User guide to memory mapped packet socket rings (PACKET_[RT]X_RING).
-> -phonet.txt
-> -	- The Phonet packet protocol used in Nokia cellular modems.
-> -phy.txt
-> -	- The PHY abstraction layer.
-> -pktgen.txt
-> -	- User guide to the kernel packet generator (pktgen.ko).
-> -policy-routing.txt
-> -	- IP policy-based routing
-> -ppp_generic.txt
-> -	- Information about the generic PPP driver.
-> -proc_net_tcp.txt
-> -	- Per inode overview of the /proc/net/tcp and /proc/net/tcp6 interfaces.
-> -radiotap-headers.txt
-> -	- Background on radiotap headers.
-> -ray_cs.txt
-> -	- Raylink Wireless LAN card driver info.
-> -rds.txt
-> -	- Background on the reliable, ordered datagram delivery method RDS.
-> -regulatory.txt
-> -	- Overview of the Linux wireless regulatory infrastructure.
-> -rxrpc.txt
-> -	- Guide to the RxRPC protocol.
-> -s2io.txt
-> -	- Release notes for Neterion Xframe I/II 10GbE driver.
-> -scaling.txt
-> -	- Explanation of network scaling techniques: RSS, RPS, RFS, aRFS, XPS.
-> -sctp.txt
-> -	- Notes on the Linux kernel implementation of the SCTP protocol.
-> -secid.txt
-> -	- Explanation of the secid member in flow structures.
-> -skfp.txt
-> -	- SysKonnect FDDI (SK-5xxx, Compaq Netelligent) driver info.
-> -smc9.txt
-> -	- the driver for SMC's 9000 series of Ethernet cards
-> -spider_net.txt
-> -	- README for the Spidernet Driver (as found in PS3 / Cell BE).
-> -stmmac.txt
-> -	- README for the STMicro Synopsys Ethernet driver.
-> -tc-actions-env-rules.txt
-> -	- rules for traffic control (tc) actions.
-> -timestamping.txt
-> -	- overview of network packet timestamping variants.
-> -tcp.txt
-> -	- short blurb on how TCP output takes place.
-> -tcp-thin.txt
-> -	- kernel tuning options for low rate 'thin' TCP streams.
-> -team.txt
-> -	- pointer to information for ethernet teaming devices.
-> -tlan.txt
-> -	- ThunderLAN (Compaq Netelligent 10/100, Olicom OC-2xxx) driver info.
-> -tproxy.txt
-> -	- Transparent proxy support user guide.
-> -tuntap.txt
-> -	- TUN/TAP device driver, allowing user space Rx/Tx of packets.
-> -udplite.txt
-> -	- UDP-Lite protocol (RFC 3828) introduction.
-> -vortex.txt
-> -	- info on using 3Com Vortex (3c590, 3c592, 3c595, 3c597) Ethernet cards.
-> -vxge.txt
-> -	- README for the Neterion X3100 PCIe Server Adapter.
-> -vxlan.txt
-> -	- Virtual extensible LAN overview
-> -x25.txt
-> -	- general info on X.25 development.
-> -x25-iface.txt
-> -	- description of the X.25 Packet Layer to LAPB device interface.
-> -xfrm_device.txt
-> -	- description of XFRM offload API
-> -xfrm_proc.txt
-> -	- description of the statistics package for XFRM.
-> -xfrm_sync.txt
-> -	- sync patches for XFRM enable migration of an SA between hosts.
-> -xfrm_sysctl.txt
-> -	- description of the XFRM configuration options.
-> -z8530drv.txt
-> -	- info about Linux driver for Z8530 based HDLC cards for AX.25
-> diff --git a/Documentation/parisc/00-INDEX b/Documentation/parisc/00-INDEX
-> deleted file mode 100644
-> index cbd0609..0000000
-> --- a/Documentation/parisc/00-INDEX
-> +++ /dev/null
-> @@ -1,6 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -debugging
-> -	- some debugging hints for real-mode code
-> -registers
-> -	- current/planned usage of registers
-> diff --git a/Documentation/power/00-INDEX b/Documentation/power/00-INDEX
-> deleted file mode 100644
-> index 7f3c2de..0000000
-> --- a/Documentation/power/00-INDEX
-> +++ /dev/null
-> @@ -1,44 +0,0 @@
-> -00-INDEX
-> -	- This file
-> -apm-acpi.txt
-> -	- basic info about the APM and ACPI support.
-> -basic-pm-debugging.txt
-> -	- Debugging suspend and resume
-> -charger-manager.txt
-> -	- Battery charger management.
-> -admin-guide/devices.rst
-> -	- How drivers interact with system-wide power management
-> -drivers-testing.txt
-> -	- Testing suspend and resume support in device drivers
-> -freezing-of-tasks.txt
-> -	- How processes and controlled during suspend
-> -interface.txt
-> -	- Power management user interface in /sys/power
-> -opp.txt
-> -	- Operating Performance Point library
-> -pci.txt
-> -	- How the PCI Subsystem Does Power Management
-> -pm_qos_interface.txt
-> -	- info on Linux PM Quality of Service interface
-> -power_supply_class.txt
-> -	- Tells userspace about battery, UPS, AC or DC power supply properties
-> -runtime_pm.txt
-> -	- Power management framework for I/O devices.
-> -s2ram.txt
-> -	- How to get suspend to ram working (and debug it when it isn't)
-> -states.txt
-> -	- System power management states
-> -suspend-and-cpuhotplug.txt
-> -	- Explains the interaction between Suspend-to-RAM (S3) and CPU hotplug
-> -swsusp-and-swap-files.txt
-> -	- Using swap files with software suspend (to disk)
-> -swsusp-dmcrypt.txt
-> -	- How to use dm-crypt and software suspend (to disk) together
-> -swsusp.txt
-> -	- Goals, implementation, and usage of software suspend (ACPI S3)
-> -tricks.txt
-> -	- How to trick software suspend (to disk) into working when it isn't
-> -userland-swsusp.txt
-> -	- Experimental implementation of software suspend in userspace
-> -video.txt
-> -	- Video issues during resume from suspend
-> diff --git a/Documentation/powerpc/00-INDEX b/Documentation/powerpc/00-INDEX
-> deleted file mode 100644
-> index 9dc845c..0000000
-> --- a/Documentation/powerpc/00-INDEX
-> +++ /dev/null
-> @@ -1,34 +0,0 @@
-> -Index of files in Documentation/powerpc.  If you think something about
-> -Linux/PPC needs an entry here, needs correction or you've written one
-> -please mail me.
-> -                                        Cort Dougan (cort@fsmlabs.com)
-> -
-> -00-INDEX
-> -	- this file
-> -bootwrapper.txt
-> -	- Information on how the powerpc kernel is wrapped for boot on various
-> -	  different platforms.
-> -cpu_features.txt
-> -	- info on how we support a variety of CPUs with minimal compile-time
-> -	options.
-> -cxl.txt
-> -	- Overview of the CXL driver.
-> -eeh-pci-error-recovery.txt
-> -	- info on PCI Bus EEH Error Recovery
-> -firmware-assisted-dump.txt
-> -	- Documentation on the firmware assisted dump mechanism "fadump".
-> -hvcs.txt
-> -	- IBM "Hypervisor Virtual Console Server" Installation Guide
-> -mpc52xx.txt
-> -	- Linux 2.6.x on MPC52xx family
-> -pmu-ebb.txt
-> -	- Description of the API for using the PMU with Event Based Branches.
-> -qe_firmware.txt
-> -	- describes the layout of firmware binaries for the Freescale QUICC
-> -	  Engine and the code that parses and uploads the microcode therein.
-> -ptrace.txt
-> -	- Information on the ptrace interfaces for hardware debug registers.
-> -transactional_memory.txt
-> -	- Overview of the Power8 transactional memory support.
-> -dscr.txt
-> -	- Overview DSCR (Data Stream Control Register) support.
-> diff --git a/Documentation/s390/00-INDEX b/Documentation/s390/00-INDEX
-> deleted file mode 100644
-> index 317f037..0000000
-> --- a/Documentation/s390/00-INDEX
-> +++ /dev/null
-> @@ -1,28 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -3270.ChangeLog
-> -	- ChangeLog for the UTS Global 3270-support patch (outdated).
-> -3270.txt
-> -	- how to use the IBM 3270 display system support.
-> -cds.txt
-> -	- s390 common device support (common I/O layer).
-> -CommonIO
-> -	- common I/O layer command line parameters, procfs and debugfs	entries
-> -config3270.sh
-> -	- example configuration for 3270 devices.
-> -DASD
-> -	- information on the DASD disk device driver.
-> -Debugging390.txt
-> -	- hints for debugging on s390 systems.
-> -driver-model.txt
-> -	- information on s390 devices and the driver model.
-> -monreader.txt
-> -	- information on accessing the z/VM monitor stream from Linux.
-> -qeth.txt
-> -	- HiperSockets Bridge Port Support.
-> -s390dbf.txt
-> -	- information on using the s390 debug feature.
-> -vfio-ccw.txt
-> -	  information on the vfio-ccw I/O subchannel driver.
-> -zfcpdump.txt
-> -	- information on the s390 SCSI dump tool.
-> diff --git a/Documentation/scheduler/00-INDEX b/Documentation/scheduler/00-INDEX
-> deleted file mode 100644
-> index eccf7ad..0000000
-> --- a/Documentation/scheduler/00-INDEX
-> +++ /dev/null
-> @@ -1,18 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -sched-arch.txt
-> -	- CPU Scheduler implementation hints for architecture specific code.
-> -sched-bwc.txt
-> -	- CFS bandwidth control overview.
-> -sched-design-CFS.txt
-> -	- goals, design and implementation of the Completely Fair Scheduler.
-> -sched-domains.txt
-> -	- information on scheduling domains.
-> -sched-nice-design.txt
-> -	- How and why the scheduler's nice levels are implemented.
-> -sched-rt-group.txt
-> -	- real-time group scheduling.
-> -sched-deadline.txt
-> -	- deadline scheduling.
-> -sched-stats.txt
-> -	- information on schedstats (Linux Scheduler Statistics).
-> diff --git a/Documentation/scsi/00-INDEX b/Documentation/scsi/00-INDEX
-> deleted file mode 100644
-> index bb4a76f..0000000
-> --- a/Documentation/scsi/00-INDEX
-> +++ /dev/null
-> @@ -1,108 +0,0 @@
-> -00-INDEX
-> -	- this file
-> -53c700.txt
-> -	- info on driver for 53c700 based adapters
-> -BusLogic.txt
-> -	- info on driver for adapters with BusLogic chips
-> -ChangeLog.1992-1997
-> -	- Changes to scsi files, if not listed elsewhere
-> -ChangeLog.arcmsr
-> -	- Changes to driver for ARECA's SATA RAID controller cards
-> -ChangeLog.ips
-> -	- IBM ServeRAID driver Changelog
-> -ChangeLog.lpfc
-> -	- Changes to lpfc driver
-> -ChangeLog.megaraid
-> -	- Changes to LSI megaraid controller.
-> -ChangeLog.megaraid_sas
-> -	- Changes to serial attached scsi version of LSI megaraid controller.
-> -ChangeLog.ncr53c8xx
-> -	- Changes to ncr53c8xx driver
-> -ChangeLog.sym53c8xx
-> -	- Changes to sym53c8xx driver
-> -ChangeLog.sym53c8xx_2
-> -	- Changes to second generation of sym53c8xx driver
-> -FlashPoint.txt
-> -	- info on driver for BusLogic FlashPoint adapters
-> -LICENSE.FlashPoint
-> -	- Licence of the Flashpoint driver
-> -LICENSE.qla2xxx
-> -	- License for QLogic Linux Fibre Channel HBA Driver firmware.
-> -LICENSE.qla4xxx
-> -	- License for QLogic Linux iSCSI HBA Driver.
-> -Mylex.txt
-> -	- info on driver for Mylex adapters
-> -NinjaSCSI.txt
-> -	- info on WorkBiT NinjaSCSI-32/32Bi driver
-> -aacraid.txt
-> -	- Driver supporting Adaptec RAID controllers
-> -advansys.txt
-> -	- List of Advansys Host Adapters
-> -aha152x.txt
-> -	- info on driver for Adaptec AHA152x based adapters
-> -aic79xx.txt
-> -	- Adaptec Ultra320 SCSI host adapters
-> -aic7xxx.txt
-> -	- info on driver for Adaptec controllers
-> -arcmsr_spec.txt
-> -	- ARECA FIRMWARE SPEC (for IOP331 adapter)
-> -bfa.txt
-> -	- Brocade FC/FCOE adapter driver.
-> -bnx2fc.txt
-> -	- FCoE hardware offload for Broadcom network interfaces.
-> -cxgb3i.txt
-> -	- Chelsio iSCSI Linux Driver
-> -dc395x.txt
-> -	- README file for the dc395x SCSI driver
-> -dpti.txt
-> -	- info on driver for DPT SmartRAID and Adaptec I2O RAID based adapters
-> -dtc3x80.txt
-> -	- info on driver for DTC 2x80 based adapters
-> -g_NCR5380.txt
-> -	- info on driver for NCR5380 and NCR53c400 based adapters
-> -hpsa.txt
-> -	- HP Smart Array Controller SCSI driver.
-> -hptiop.txt
-> -	- HIGHPOINT ROCKETRAID 3xxx RAID DRIVER
-> -libsas.txt
-> -	- Serial Attached SCSI management layer.
-> -link_power_management_policy.txt
-> -	- Link power management options.
-> -lpfc.txt
-> -	- LPFC driver release notes
-> -megaraid.txt
-> -	- Common Management Module, shared code handling ioctls for LSI drivers
-> -ncr53c8xx.txt
-> -	- info on driver for NCR53c8xx based adapters
-> -osd.txt
-> -	Object-Based Storage Device, command set introduction.
-> -osst.txt
-> -	- info on driver for OnStream SC-x0 SCSI tape
-> -ppa.txt
-> -	- info on driver for IOmega zip drive
-> -qlogicfas.txt
-> -	- info on driver for QLogic FASxxx based adapters
-> -scsi-changer.txt
-> -	- README for the SCSI media changer driver
-> -scsi-generic.txt
-> -	- info on the sg driver for generic (non-disk/CD/tape) SCSI devices.
-> -scsi-parameters.txt
-> -	- List of SCSI-parameters to pass to the kernel at module load-time.
-> -scsi.txt
-> -	- short blurb on using SCSI support as a module.
-> -scsi_mid_low_api.txt
-> -	- info on API between SCSI layer and low level drivers
-> -scsi_eh.txt
-> -	- info on SCSI midlayer error handling infrastructure
-> -scsi_fc_transport.txt
-> -	- SCSI Fiber Channel Tansport
-> -st.txt
-> -	- info on scsi tape driver
-> -sym53c500_cs.txt
-> -	- info on PCMCIA driver for Symbios Logic 53c500 based adapters
-> -sym53c8xx_2.txt
-> -	- info on second generation driver for sym53c8xx based adapters
-> -tmscsim.txt
-> -	- info on driver for AM53c974 based adapters
-> -ufs.txt
-> -	- info on Universal Flash Storage(UFS) and UFS host controller driver.
-> diff --git a/Documentation/serial/00-INDEX b/Documentation/serial/00-INDEX
-> deleted file mode 100644
-> index 8021a9f..0000000
-> --- a/Documentation/serial/00-INDEX
-> +++ /dev/null
-> @@ -1,16 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -README.cycladesZ
-> -	- info on Cyclades-Z firmware loading.
-> -driver
-> -	- intro to the low level serial driver.
-> -moxa-smartio
-> -	- file with info on installing/using Moxa multiport serial driver.
-> -n_gsm.txt
-> -	- GSM 0710 tty multiplexer howto.
-> -rocket.txt
-> -	- info on the Comtrol RocketPort multiport serial driver.
-> -serial-rs485.txt
-> -	- info about RS485 structures and support in the kernel.
-> -tty.txt
-> -	- guide to the locking policies of the tty layer.
-> diff --git a/Documentation/spi/00-INDEX b/Documentation/spi/00-INDEX
-> deleted file mode 100644
-> index 8e4bb17..0000000
-> --- a/Documentation/spi/00-INDEX
-> +++ /dev/null
-> @@ -1,16 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -butterfly
-> -	- AVR Butterfly SPI driver overview and pin configuration.
-> -ep93xx_spi
-> -	- Basic EP93xx SPI driver configuration.
-> -pxa2xx
-> -	- PXA2xx SPI master controller build by spi_message fifo wq
-> -spidev
-> -	- Intro to the userspace API for spi devices
-> -spi-lm70llp
-> -	- Connecting an LM70-LLP sensor to the kernel via the SPI subsys.
-> -spi-sc18is602
-> -	- NXP SC18IS602/603 I2C-bus to SPI bridge
-> -spi-summary
-> -	- (Linux) SPI overview. If unsure about SPI or SPI in Linux, start here.
-> diff --git a/Documentation/sysctl/00-INDEX b/Documentation/sysctl/00-INDEX
-> deleted file mode 100644
-> index 8cf5d49..0000000
-> --- a/Documentation/sysctl/00-INDEX
-> +++ /dev/null
-> @@ -1,16 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -README
-> -	- general information about /proc/sys/ sysctl files.
-> -abi.txt
-> -	- documentation for /proc/sys/abi/*.
-> -fs.txt
-> -	- documentation for /proc/sys/fs/*.
-> -kernel.txt
-> -	- documentation for /proc/sys/kernel/*.
-> -net.txt
-> -	- documentation for /proc/sys/net/*.
-> -sunrpc.txt
-> -	- documentation for /proc/sys/sunrpc/*.
-> -vm.txt
-> -	- documentation for /proc/sys/vm/*.
-> diff --git a/Documentation/timers/00-INDEX b/Documentation/timers/00-INDEX
-> deleted file mode 100644
-> index 3be05fe..0000000
-> --- a/Documentation/timers/00-INDEX
-> +++ /dev/null
-> @@ -1,16 +0,0 @@
-> -00-INDEX
-> -	- this file
-> -highres.txt
-> -	- High resolution timers and dynamic ticks design notes
-> -hpet.txt
-> -	- High Precision Event Timer Driver for Linux
-> -hrtimers.txt
-> -	- subsystem for high-resolution kernel timers
-> -NO_HZ.txt
-> -	- Summary of the different methods for the scheduler clock-interrupts management.
-> -timekeeping.txt
-> -	- Clock sources, clock events, sched_clock() and delay timer notes
-> -timers-howto.txt
-> -	- how to insert delays in the kernel the right (tm) way.
-> -timer_stats.txt
-> -	- timer usage statistics
-> diff --git a/Documentation/virtual/00-INDEX b/Documentation/virtual/00-INDEX
-> deleted file mode 100644
-> index af0d239..0000000
-> --- a/Documentation/virtual/00-INDEX
-> +++ /dev/null
-> @@ -1,11 +0,0 @@
-> -Virtualization support in the Linux kernel.
-> -
-> -00-INDEX
-> -	- this file.
-> -
-> -paravirt_ops.txt
-> -	- Describes the Linux kernel pv_ops to support different hypervisors
-> -kvm/
-> -	- Kernel Virtual Machine.  See also http://linux-kvm.org
-> -uml/
-> -	- User Mode Linux, builds/runs Linux kernel as a userspace program.
-> diff --git a/Documentation/virtual/kvm/00-INDEX b/Documentation/virtual/kvm/00-INDEX
-> deleted file mode 100644
-> index 3492458..0000000
-> --- a/Documentation/virtual/kvm/00-INDEX
-> +++ /dev/null
-> @@ -1,35 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -amd-memory-encryption.rst
-> -	- notes on AMD Secure Encrypted Virtualization feature and SEV firmware
-> -	  command description
-> -api.txt
-> -	- KVM userspace API.
-> -arm
-> -	- internal ABI between the kernel and HYP (for arm/arm64)
-> -cpuid.txt
-> -	- KVM-specific cpuid leaves (x86).
-> -devices/
-> -	- KVM_CAP_DEVICE_CTRL userspace API.
-> -halt-polling.txt
-> -	- notes on halt-polling
-> -hypercalls.txt
-> -	- KVM hypercalls.
-> -locking.txt
-> -	- notes on KVM locks.
-> -mmu.txt
-> -	- the x86 kvm shadow mmu.
-> -msr.txt
-> -	- KVM-specific MSRs (x86).
-> -nested-vmx.txt
-> -	- notes on nested virtualization for Intel x86 processors.
-> -ppc-pv.txt
-> -	- the paravirtualization interface on PowerPC.
-> -review-checklist.txt
-> -	- review checklist for KVM patches.
-> -s390-diag.txt
-> -	- Diagnose hypercall description (for IBM S/390)
-> -timekeeping.txt
-> -	- timekeeping virtualization for x86-based architectures.
-> -vcpu-requests.rst
-> -	- internal VCPU request API
-> diff --git a/Documentation/vm/00-INDEX b/Documentation/vm/00-INDEX
-> deleted file mode 100644
-> index f4a4f3e..0000000
-> --- a/Documentation/vm/00-INDEX
-> +++ /dev/null
-> @@ -1,50 +0,0 @@
-> -00-INDEX
-> -	- this file.
-> -active_mm.rst
-> -	- An explanation from Linus about tsk->active_mm vs tsk->mm.
-> -balance.rst
-> -	- various information on memory balancing.
-> -cleancache.rst
-> -	- Intro to cleancache and page-granularity victim cache.
-> -frontswap.rst
-> -	- Outline frontswap, part of the transcendent memory frontend.
-> -highmem.rst
-> -	- Outline of highmem and common issues.
-> -hmm.rst
-> -	- Documentation of heterogeneous memory management
-> -hugetlbfs_reserv.rst
-> -	- A brief overview of hugetlbfs reservation design/implementation.
-> -hwpoison.rst
-> -	- explains what hwpoison is
-> -ksm.rst
-> -	- how to use the Kernel Samepage Merging feature.
-> -mmu_notifier.rst
-> -	- a note about clearing pte/pmd and mmu notifications
-> -numa.rst
-> -	- information about NUMA specific code in the Linux vm.
-> -overcommit-accounting.rst
-> -	- description of the Linux kernels overcommit handling modes.
-> -page_frags.rst
-> -	- description of page fragments allocator
-> -page_migration.rst
-> -	- description of page migration in NUMA systems.
-> -page_owner.rst
-> -	- tracking about who allocated each page
-> -remap_file_pages.rst
-> -	- a note about remap_file_pages() system call
-> -slub.rst
-> -	- a short users guide for SLUB.
-> -split_page_table_lock.rst
-> -	- Separate per-table lock to improve scalability of the old page_table_lock.
-> -swap_numa.rst
-> -	- automatic binding of swap device to numa node
-> -transhuge.rst
-> -	- Transparent Hugepage Support, alternative way of using hugepages.
-> -unevictable-lru.rst
-> -	- Unevictable LRU infrastructure
-> -z3fold.txt
-> -	- outline of z3fold allocator for storing compressed pages
-> -zsmalloc.rst
-> -	- outline of zsmalloc allocator for storing compressed pages
-> -zswap.rst
-> -	- Intro to compressed cache for swap pages
-> diff --git a/Documentation/w1/00-INDEX b/Documentation/w1/00-INDEX
-> deleted file mode 100644
-> index cb49802..0000000
-> --- a/Documentation/w1/00-INDEX
-> +++ /dev/null
-> @@ -1,10 +0,0 @@
-> -00-INDEX
-> -	- This file
-> -slaves/
-> -	- Drivers that provide support for specific family codes.
-> -masters/
-> -	- Individual chips providing 1-wire busses.
-> -w1.generic
-> -	- The 1-wire (w1) bus
-> -w1.netlink
-> -	- Userspace communication protocol over connector [1].
-> diff --git a/Documentation/w1/masters/00-INDEX b/Documentation/w1/masters/00-INDEX
-> deleted file mode 100644
-> index 8330cf9..0000000
-> --- a/Documentation/w1/masters/00-INDEX
-> +++ /dev/null
-> @@ -1,12 +0,0 @@
-> -00-INDEX
-> -	- This file
-> -ds2482
-> -	- The Maxim/Dallas Semiconductor DS2482 provides 1-wire busses.
-> -ds2490
-> -	- The Maxim/Dallas Semiconductor DS2490 builds USB <-> W1 bridges.
-> -mxc-w1
-> -	- W1 master controller driver found on Freescale MX2/MX3 SoCs
-> -omap-hdq
-> -	- HDQ/1-wire module of TI OMAP 2430/3430.
-> -w1-gpio
-> -	- GPIO 1-wire bus master driver.
-> diff --git a/Documentation/w1/slaves/00-INDEX b/Documentation/w1/slaves/00-INDEX
-> deleted file mode 100644
-> index 68946f8..0000000
-> --- a/Documentation/w1/slaves/00-INDEX
-> +++ /dev/null
-> @@ -1,14 +0,0 @@
-> -00-INDEX
-> -	- This file
-> -w1_therm
-> -	- The Maxim/Dallas Semiconductor ds18*20 temperature sensor.
-> -w1_ds2413
-> -	- The Maxim/Dallas Semiconductor ds2413 dual channel addressable switch.
-> -w1_ds2423
-> -	- The Maxim/Dallas Semiconductor ds2423 counter device.
-> -w1_ds2438
-> -	- The Maxim/Dallas Semiconductor ds2438 smart battery monitor.
-> -w1_ds28e04
-> -	- The Maxim/Dallas Semiconductor ds28e04 eeprom.
-> -w1_ds28e17
-> -	- The Maxim/Dallas Semiconductor ds28e17 1-Wire-to-I2C Master Bridge.
-> diff --git a/Documentation/x86/00-INDEX b/Documentation/x86/00-INDEX
-> deleted file mode 100644
-> index 3bb2ee3..0000000
-> --- a/Documentation/x86/00-INDEX
-> +++ /dev/null
-> @@ -1,20 +0,0 @@
-> -00-INDEX
-> -	- this file
-> -boot.txt
-> -	- List of boot protocol versions
-> -earlyprintk.txt
-> -	- Using earlyprintk with a USB2 debug port key.
-> -entry_64.txt
-> -	- Describe (some of the) kernel entry points for x86.
-> -exception-tables.txt
-> -	- why and how Linux kernel uses exception tables on x86
-> -microcode.txt
-> -	- How to load microcode from an initrd-CPIO archive early to fix CPU issues.
-> -mtrr.txt
-> -	- how to use x86 Memory Type Range Registers to increase performance
-> -pat.txt
-> -	- Page Attribute Table intro and API
-> -usb-legacy-support.txt
-> -	- how to fix/avoid quirks when using emulated PS/2 mouse/keyboard.
-> -zero-page.txt
-> -	- layout of the first page of memory.
-> diff --git a/Documentation/x86/x86_64/00-INDEX b/Documentation/x86/x86_64/00-INDEX
-> deleted file mode 100644
-> index 92fc20a..0000000
-> --- a/Documentation/x86/x86_64/00-INDEX
-> +++ /dev/null
-> @@ -1,16 +0,0 @@
-> -00-INDEX
-> -	- This file
-> -boot-options.txt
-> -	- AMD64-specific boot options.
-> -cpu-hotplug-spec
-> -	- Firmware support for CPU hotplug under Linux/x86-64
-> -fake-numa-for-cpusets
-> -	- Using numa=fake and CPUSets for Resource Management
-> -kernel-stacks
-> -	- Context-specific per-processor interrupt stacks.
-> -machinecheck
-> -	- Configurable sysfs parameters for the x86-64 machine check code.
-> -mm.txt
-> -	- Memory layout of x86-64 (4 level page tables, 46 bits physical).
-> -uefi.txt
-> -	- Booting Linux via Unified Extensible Firmware Interface.
-> diff --git a/README b/README
-> index 2c927cc..669ac7c 100644
-> --- a/README
-> +++ b/README
-> @@ -12,7 +12,6 @@ In order to build the documentation, use ``make htmldocs`` or
-> 
->  There are various text files in the Documentation/ subdirectory,
->  several of them using the Restructured Text markup notation.
-> -See Documentation/00-INDEX for a list of what is contained in each file.
-> 
->  Please read the Documentation/process/changes.rst file, as it contains the
->  requirements for building and running the kernel, and information about
-> diff --git a/scripts/check_00index.sh b/scripts/check_00index.sh
-> deleted file mode 100755
-> index aa47f592..0000000
-> --- a/scripts/check_00index.sh
-> +++ /dev/null
-> @@ -1,67 +0,0 @@
-> -#!/bin/bash
-> -# SPDX-License-Identifier: GPL-2.0
-> -
-> -cd Documentation/
-> -
-> -# Check entries that should be removed
-> -
-> -obsolete=""
-> -for i in $(tail -n +12 00-INDEX |grep -E '^[a-zA-Z0-9]+'); do
-> -	if [ ! -e $i ]; then
-> -		obsolete="$obsolete $i"
-> -	fi
-> -done
-> -
-> -# Check directory entries that should be added
-> -search=""
-> -dir=""
-> -for i in $(find . -maxdepth 1 -type d); do
-> -	if [ "$i" != "." ]; then
-> -		new=$(echo $i|perl -ne 's,./(.*),$1/,; print $_')
-> -		search="$search $new"
-> -	fi
-> -done
-> -
-> -for i in $search; do
-> -	if [ "$(grep -P "^$i" 00-INDEX)" == "" ]; then
-> -		dir="$dir $i"
-> -	fi
-> -done
-> -
-> -# Check file entries that should be added
-> -search=""
-> -file=""
-> -for i in $(find . -maxdepth 1 -type f); do
-> -	if [ "$i" != "./.gitignore" ]; then
-> -		new=$(echo $i|perl -ne 's,./(.*),$1,; print $_')
-> -		search="$search $new"
-> -	fi
-> -done
-> -
-> -for i in $search; do
-> -	if [ "$(grep -P "^$i\$" 00-INDEX)" == "" ]; then
-> -		file="$file $i"
-> -	fi
-> -done
-> -
-> -# Output its findings
-> -
-> -echo -e "Documentation/00-INDEX check results:\n"
-> -
-> -if [ "$obsolete" != "" ]; then
-> -	echo -e "- Should remove those entries:\n\t$obsolete\n"
-> -else
-> -	echo -e "- No obsolete entries\n"
-> -fi
-> -
-> -if [ "$dir" != "" ]; then
-> -	echo -e "- Should document those directories:\n\t$dir\n"
-> -else
-> -	echo -e "- No new directories to add\n"
-> -fi
-> -
-> -if [ "$file" != "" ]; then
-> -	echo -e "- Should document those files:\n\t$file"
-> -else
-> -	echo "- No new files to add"
-> -fi
-> -- 
-> 2.7.4
-> 
+Hi Janusz,
 
--- 
-Sincerely yours,
-Mike.
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on gpio/for-next]
+[also build test ERROR on v4.19-rc2 next-20180905]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Janusz-Krzysztofik/gpiolib-Pass-bitmaps-not-integer-arrays-to-get-set-array/20180903-172834
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git for-next
+config: x86_64-randconfig-f2-201835 (attached as .config)
+compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=x86_64 
+
+All errors (new ones prefixed by >>):
+
+   drivers/phy/motorola/phy-mapphone-mdm6600.c: In function 'phy_mdm6600_cmd':
+>> drivers/phy/motorola/phy-mapphone-mdm6600.c:165:36: error: passing argument 3 of 'gpiod_set_array_value_cansleep' from incompatible pointer type [-Werror=incompatible-pointer-types]
+               ddata->cmd_gpios->desc, values);
+                                       ^~~~~~
+   In file included from drivers/phy/motorola/phy-mapphone-mdm6600.c:16:0:
+   include/linux/gpio/consumer.h:400:20: note: expected 'int *' but argument is of type 'long unsigned int *'
+    static inline void gpiod_set_array_value_cansleep(unsigned int array_size,
+                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/phy/motorola/phy-mapphone-mdm6600.c: In function 'phy_mdm6600_status':
+>> drivers/phy/motorola/phy-mapphone-mdm6600.c:184:13: error: passing argument 3 of 'gpiod_get_array_value_cansleep' from incompatible pointer type [-Werror=incompatible-pointer-types]
+                values);
+                ^~~~~~
+   In file included from drivers/phy/motorola/phy-mapphone-mdm6600.c:16:0:
+   include/linux/gpio/consumer.h:387:19: note: expected 'int *' but argument is of type 'long unsigned int *'
+    static inline int gpiod_get_array_value_cansleep(unsigned int array_size,
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+vim +/gpiod_set_array_value_cansleep +165 drivers/phy/motorola/phy-mapphone-mdm6600.c
+
+5d1ebbda0 Tony Lindgren      2018-03-08  151  
+5d1ebbda0 Tony Lindgren      2018-03-08  152  /**
+5d1ebbda0 Tony Lindgren      2018-03-08  153   * phy_mdm6600_cmd() - send a command request to mdm6600
+5d1ebbda0 Tony Lindgren      2018-03-08  154   * @ddata: device driver data
+5d1ebbda0 Tony Lindgren      2018-03-08  155   *
+5d1ebbda0 Tony Lindgren      2018-03-08  156   * Configures the three command request GPIOs to the specified value.
+5d1ebbda0 Tony Lindgren      2018-03-08  157   */
+5d1ebbda0 Tony Lindgren      2018-03-08  158  static void phy_mdm6600_cmd(struct phy_mdm6600 *ddata, int val)
+5d1ebbda0 Tony Lindgren      2018-03-08  159  {
+916010a73 Janusz Krzysztofik 2018-09-02  160  	DECLARE_BITMAP(values, PHY_MDM6600_NR_CMD_LINES);
+5d1ebbda0 Tony Lindgren      2018-03-08  161  
+916010a73 Janusz Krzysztofik 2018-09-02  162  	*values = val;
+5d1ebbda0 Tony Lindgren      2018-03-08  163  
+5d1ebbda0 Tony Lindgren      2018-03-08  164  	gpiod_set_array_value_cansleep(PHY_MDM6600_NR_CMD_LINES,
+5d1ebbda0 Tony Lindgren      2018-03-08 @165  				       ddata->cmd_gpios->desc, values);
+5d1ebbda0 Tony Lindgren      2018-03-08  166  }
+5d1ebbda0 Tony Lindgren      2018-03-08  167  
+5d1ebbda0 Tony Lindgren      2018-03-08  168  /**
+5d1ebbda0 Tony Lindgren      2018-03-08  169   * phy_mdm6600_status() - read mdm6600 status lines
+5d1ebbda0 Tony Lindgren      2018-03-08  170   * @ddata: device driver data
+5d1ebbda0 Tony Lindgren      2018-03-08  171   */
+5d1ebbda0 Tony Lindgren      2018-03-08  172  static void phy_mdm6600_status(struct work_struct *work)
+5d1ebbda0 Tony Lindgren      2018-03-08  173  {
+5d1ebbda0 Tony Lindgren      2018-03-08  174  	struct phy_mdm6600 *ddata;
+5d1ebbda0 Tony Lindgren      2018-03-08  175  	struct device *dev;
+916010a73 Janusz Krzysztofik 2018-09-02  176  	DECLARE_BITMAP(values, PHY_MDM6600_NR_STATUS_LINES);
+5d1ebbda0 Tony Lindgren      2018-03-08  177  	int error, i, val = 0;
+5d1ebbda0 Tony Lindgren      2018-03-08  178  
+5d1ebbda0 Tony Lindgren      2018-03-08  179  	ddata = container_of(work, struct phy_mdm6600, status_work.work);
+5d1ebbda0 Tony Lindgren      2018-03-08  180  	dev = ddata->dev;
+5d1ebbda0 Tony Lindgren      2018-03-08  181  
+ad5003300 Tony Lindgren      2018-05-31  182  	error = gpiod_get_array_value_cansleep(PHY_MDM6600_NR_STATUS_LINES,
+5d1ebbda0 Tony Lindgren      2018-03-08  183  					       ddata->status_gpios->desc,
+5d1ebbda0 Tony Lindgren      2018-03-08 @184  					       values);
+5d1ebbda0 Tony Lindgren      2018-03-08  185  	if (error)
+5d1ebbda0 Tony Lindgren      2018-03-08  186  		return;
+5d1ebbda0 Tony Lindgren      2018-03-08  187  
+ad5003300 Tony Lindgren      2018-05-31  188  	for (i = 0; i < PHY_MDM6600_NR_STATUS_LINES; i++) {
+916010a73 Janusz Krzysztofik 2018-09-02  189  		val |= test_bit(i, values) << i;
+5d1ebbda0 Tony Lindgren      2018-03-08  190  		dev_dbg(ddata->dev, "XXX %s: i: %i values[i]: %i val: %i\n",
+916010a73 Janusz Krzysztofik 2018-09-02  191  			__func__, i, test_bit(i, values), val);
+5d1ebbda0 Tony Lindgren      2018-03-08  192  	}
+5d1ebbda0 Tony Lindgren      2018-03-08  193  	ddata->status = val;
+5d1ebbda0 Tony Lindgren      2018-03-08  194  
+5d1ebbda0 Tony Lindgren      2018-03-08  195  	dev_info(dev, "modem status: %i %s\n",
+5d1ebbda0 Tony Lindgren      2018-03-08  196  		 ddata->status,
+5d1ebbda0 Tony Lindgren      2018-03-08  197  		 phy_mdm6600_status_name[ddata->status & 7]);
+5d1ebbda0 Tony Lindgren      2018-03-08  198  	complete(&ddata->ack);
+5d1ebbda0 Tony Lindgren      2018-03-08  199  }
+5d1ebbda0 Tony Lindgren      2018-03-08  200  
+
+:::::: The code at line 165 was first introduced by commit
+:::::: 5d1ebbda0318b1ba55eaa1fae3fd867af17b0774 phy: mapphone-mdm6600: Add USB PHY driver for MDM6600 on Droid 4
+
+:::::: TO: Tony Lindgren <tony@atomide.com>
+:::::: CC: Kishon Vijay Abraham I <kishon@ti.com>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--XsQoSWH+UP9D9v3l--
