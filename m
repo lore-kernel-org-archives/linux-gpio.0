@@ -1,81 +1,42 @@
-From: Colin Ian King <colin.king@canonical.com>
-Subject: Re: [PATCH] gpio: ep93xx: fix test for end of loop
-Date: Thu, 6 Sep 2018 16:18:44 +0100
-Message-ID: <6098ff32-7f64-38db-8937-a9d257935c97@canonical.com>
-References: <20180906133348.brzvqt53nzukn7n2@kili.mountain>
- <21c6b967-f4b5-db68-89b4-a9caa4e76fda@canonical.com>
- <20180906144838.2dtqexjqieqjdpub@mwanda>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] [RFC v2] Drop all 00-INDEX files from Documentation/
+Date: Thu, 6 Sep 2018 09:58:04 -0600
+Message-ID: <20180906095804.5ab2716f@lwn.net>
+References: <1536012923-16275-1-git-send-email-henrik@austad.us>
+ <20180904113030.GB25177@amd>
+ <20180904095908.13298b3d@gandalf.local.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180906144838.2dtqexjqieqjdpub@mwanda>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180904095908.13298b3d@gandalf.local.home>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-mips@linux-mips.org, linux-fbdev@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, James Hogan <jhogan@kernel.org>, Henrik Austad <henrik@austad.us>, Will Deacon <will.deacon@arm.com>, dri-devel@lists.freedesktop.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Jan Kandziora <jjj@gmx.de>, Paul Mackerras <paulus@samba.org>, Henrik Austad <haustad@cisco.com>, Pavel Machek <pavel@ucw.cz>, "H. Peter Anvin" <hpa@zytor.com>, Evgeniy Polyakov <zbr@ioremap.net>, linux-s390@vger.kernel.org, Ian Kent <raven@themaw.net>, linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, Michael Ellerman <mpe@ellerman.id.au>, Helge Deller <deller@gmx.de>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, "James E.J. Bottomley" <jejb@parisc-linux.org>, Ingo
 List-Id: linux-gpio@vger.kernel.org
 
-On 06/09/18 15:48, Dan Carpenter wrote:
-> On Thu, Sep 06, 2018 at 02:50:44PM +0100, Colin Ian King wrote:
->> On 06/09/18 14:33, Dan Carpenter wrote:
->>> The problem is that if port == ARRAY_SIZE() and "gc == &epg->gc[port]"
->>> then that should be treated as invalid.
->>>
->>> Fixes: fd935fc421e7 ("gpio: ep93xx: Do not pingpong irq numbers")
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
->>> index 68a416fc3141..b0699f57ddf5 100644
->>> --- a/drivers/gpio/gpio-ep93xx.c
->>> +++ b/drivers/gpio/gpio-ep93xx.c
->>> @@ -80,7 +80,7 @@ static int ep93xx_gpio_port(struct gpio_chip *gc)
->>>  		port++;
->>>  
->>>  	/* This should not happen but is there as a last safeguard */
->>> -	if (gc != &epg->gc[port]) {
->>> +	if (port == ARRAY_SIZE(epg->gc)) {
->>>  		pr_crit("can't find the GPIO port\n");
->>>  		return 0;
->>>  	}
->>>
->>
->> Good catch! I overlooked that one.
-> 
-> It's unfortunate but I don't think any of our static checkers would have
-> caught it.  You found this bug because of cppcheck, right?  I know it
-> warns about the bounds test after use.  Does it also warn about the out
-> of bounds?
-
-It can catch these, not sure how well it compares to the other tools I use.
-
-> 
-> Smatch doesn't warn about the out of bounds read because Smatch has bad
-> handling of loops.  Smatch is supposed to warn about the test after use
-> but that code is buggy.  I will investigate what's going on.
-> 
-> I have an unpublished test so Smatch does warn that the port < sizeof()
-> means that port is in terms of bytes but we're using it as an array
-> offset.  That's how I noticed this code, but it only warns about the
-> first use, so it warns about the loop but not the post-loop test.
-> 
-> I should fix Smatch's handling of loops so that we know this function
-> originally could return 0-8 and you maybe get a warning in the caller.
-> Unfortunately, I'm not sure I would have paid very much attention to a
-> warning like that because they tend to be prone to false positives.  We
-> have a lot of loops that do:
-> 
-> 	for (i = 0; i < ARRAY_SIZE(array); i++) {
-> 		if (foo <= array[i])
-> 			break;
-> 	}
-
-..yep, the are a lot of these to fix up for sure.
-
-> 
-> And the last element of the array[] is UINT_MAX so we always break.
-> It's a lot of work but not necessarily difficult work.
-> 
-> regards,
-> dan carpenter
-> 
+T24gVHVlLCA0IFNlcCAyMDE4IDA5OjU5OjA4IC0wNDAwClN0ZXZlbiBSb3N0ZWR0IDxyb3N0ZWR0
+QGdvb2RtaXMub3JnPiB3cm90ZToKCj4gT24gVHVlLCA0IFNlcCAyMDE4IDEzOjMwOjMwICswMjAw
+Cj4gUGF2ZWwgTWFjaGVrIDxwYXZlbEB1Y3cuY3o+IHdyb3RlOgo+IAo+ID4gSSdkIHNheSB0aGlz
+IGlzIHN0aWxsIHF1aXRlIHZhbHVlYWJsZSwgYW5kIGl0IG1pZ2h0IGJlIHdvcnRoIGZpeGluZywK
+PiA+IHJhdGhlciB0aGVuIHJlbW92aW5nIGNvbXBsZXRlbHkuICAKPiAKPiBJIGFncmVlLiBQZXJo
+YXBzIHdlIHNob3VsZCBoYXZlIGEgMDAtREVTQ1JJUFRJT04gZmlsZSBpbiBlYWNoCj4gZGlyZWN0
+b3J5LCBhbmQgZWFjaCBmaWxlIGNvdWxkIHN0YXJ0IHdpdGggYToKPiAKPiAgREVTQ1JJUFRJT046
+IDxvbmUgbGluZSBkZXNjcmlwdGlvbiBoZXJlPgo+IAo+IGFuZCB0aGVuIHRoZXNlIGZpbGVzIGNv
+dWxkIGJlIGdlbmVyYXRlZCBieSB0aG9zZSB0aGF0IGhhdmUgdGhlc2UgdGFncy4KCkkgcmVhbGx5
+IGRvbid0IHdhbnQgdG8gaGFjayB1cCB5ZXQgYW5vdGhlciBkb2N1bWVudGF0aW9uIHN5bnRheCBh
+bmQKcHJvY2Vzc2luZyBzY2hlbWUuICBXZSBhbHJlYWR5IGhhdmUgb25lIHRoYXQgZG9lcyBhbGwg
+b2YgdGhpcyBhbmQgbW9yZS4KVGhhdCBlbmVyZ3kgd291bGQgYmUgZmFyIGJldHRlciBzcGVudCBi
+cmluZ2luZyB0aGUgZG9jcyBpbnRvIHRoZSBSU1QKaGllcmFyY2h5LCBJTU8uCgpUaGFua3MsCgpq
+b24gICh3aG8gaXMgaW5jcmVhc2luZ2x5IGluY2xpbmVkIHRvIGFwcGx5IHRoaXMgcGF0Y2gpCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
