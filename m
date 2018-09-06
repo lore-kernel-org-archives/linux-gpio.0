@@ -1,122 +1,81 @@
-From: vitor <Vitor.Soares@synopsys.com>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-Date: Thu, 6 Sep 2018 16:17:58 +0100
-Message-ID: <5a2ed122-b56f-421b-34e0-74ef551b76b8@synopsys.com>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <20180719152930.3715-2-boris.brezillon@bootlin.com>
- <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
- <20180824143934.6d6b6487@bbrezillon>
- <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
- <20180824201600.7d80bca9@bbrezillon>
- <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
- <20180828140209.29155d00@bbrezillon>
- <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
- <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
- <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
- <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com>
- <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
- <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
- <20180906151437.4259d6fc@bbrezillon> <20180906152055.5618d235@bbrezillon>
- <a08a0f8b-395b-f956-47d1-e29e0de4aae9@synopsys.com>
- <20180906161443.0f76b246@bbrezillon>
+From: Colin Ian King <colin.king@canonical.com>
+Subject: Re: [PATCH] gpio: ep93xx: fix test for end of loop
+Date: Thu, 6 Sep 2018 16:18:44 +0100
+Message-ID: <6098ff32-7f64-38db-8937-a9d257935c97@canonical.com>
+References: <20180906133348.brzvqt53nzukn7n2@kili.mountain>
+ <21c6b967-f4b5-db68-89b4-a9caa4e76fda@canonical.com>
+ <20180906144838.2dtqexjqieqjdpub@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180906161443.0f76b246@bbrezillon>
+In-Reply-To: <20180906144838.2dtqexjqieqjdpub@mwanda>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>, vitor <Vitor.Soares@synopsys.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Przemyslaw Gaj <pgaj@cadence.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, gregkh <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Boris,
-
-
-On 06-09-2018 15:14, Boris Brezillon wrote:
-> On Thu, 6 Sep 2018 14:50:03 +0100
-> vitor <Vitor.Soares@synopsys.com> wrote:
->
->> Hi,
+On 06/09/18 15:48, Dan Carpenter wrote:
+> On Thu, Sep 06, 2018 at 02:50:44PM +0100, Colin Ian King wrote:
+>> On 06/09/18 14:33, Dan Carpenter wrote:
+>>> The problem is that if port == ARRAY_SIZE() and "gc == &epg->gc[port]"
+>>> then that should be treated as invalid.
+>>>
+>>> Fixes: fd935fc421e7 ("gpio: ep93xx: Do not pingpong irq numbers")
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>>
+>>> diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+>>> index 68a416fc3141..b0699f57ddf5 100644
+>>> --- a/drivers/gpio/gpio-ep93xx.c
+>>> +++ b/drivers/gpio/gpio-ep93xx.c
+>>> @@ -80,7 +80,7 @@ static int ep93xx_gpio_port(struct gpio_chip *gc)
+>>>  		port++;
+>>>  
+>>>  	/* This should not happen but is there as a last safeguard */
+>>> -	if (gc != &epg->gc[port]) {
+>>> +	if (port == ARRAY_SIZE(epg->gc)) {
+>>>  		pr_crit("can't find the GPIO port\n");
+>>>  		return 0;
+>>>  	}
+>>>
 >>
->>
->> On 06-09-2018 14:20, Boris Brezillon wrote:
->>> On Thu, 6 Sep 2018 15:14:37 +0200
->>> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
->>>   
->>>> On Thu, 6 Sep 2018 14:59:46 +0200
->>>> Arnd Bergmann <arnd@arndb.de> wrote:
->>>>   
->>>>> On Thu, Sep 6, 2018 at 2:43 PM Przemyslaw Gaj <pgaj@cadence.com> wrote:
->>>>>> Hi Boris, Vitor,
->>>>>>
->>>>>> This repository does not contain full kernel sources, but it should be enough to discuss mastership request feature.
->>>>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_przemekgaj_i3c-2Dlinux_commit_d54fe68a9d3e573c0c454a2c6f1afafc20142ec5&d=DwICAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=qVuU64u9x77Y0Kd0PhDK_lpxFgg6PK9PateHwjb_DY0&m=Q9DWw3KGmshGw0f5QTiffbpbESyUlPx6KmASuDBtX9Y&s=HHE_y1kyMszJvP_tSP9JkDlPYxDywBeHwkMGgCR11uI&e=
->>>>>>
->>>>>> Please keep in mind that this is initial version, but mastership works correctly. I added one property to DT to reflect relationship between masters.
->>>>>> It is possible to request mastership on demand (using sysfs. Useful in case when Linux machine is equipped only with secondary master controller) or automatically change operation mode when device driver wants to read/write something from/to device.
->>>>>>
->>>>>> I'm sure I will have to rework something because this was implemented on sources from PATCH v4. I saw that Boris released v7 yesterday :)
->>>>> Can you explain the reason for having a user space interface and DT property?
->>>>> I thought we had concluded earlier that we wouldn't need that, but it's possible
->>>>> that I missed something in the discussion since then.
->>>> I don't think the sysfs knob is needed, this being said, after thinking
->>>> a bit more about mastership handover and the secondary master case, I
->>>> think we have something important to solve.
->>>>
->>>> When a master is not in control of the bus, it gets informed of devices
->>>> present on the bus by monitoring DAA or DEFSLVS broadcast events. That
->>>> means the secondary master should populate the bus with I3C/I2C devices
->>>> on such events, but that's not enough, because DEFSLVS/DAA do not
->>>> provide all device info.Some of them (like read/write/ibi limitations)
->>>> require extra CCC commands, and, to send those CCC commands, the
->>>> secondary master must claim the bus. We could add a case where we
->>>> declare devices as partially discovered until the master acquires
->>>> ownership of the bus, but that means part of the data returned by
->>>> i3c_device_get_info() will be inaccurate, which might have an impact on
->>>> some i3c driver ->probe() functions.
->>> Hm, one possible solution would be to register partially discovered
->>> devices to the device model and let i3c_device_get_info() claim the bus
->>> and request missing data when needed. This way, if the driver needs to
->>> call i3c_device_get_info() in its probe path, it should work just fine.
->> Why don't use the i3c_master_add_i3c_dev_locked that job? It create,
->> attach and retrieve the device info.
-> When will you call i3c_master_add_i3c_dev_locked()? After receiving a
-> DEFSLVS interrupt/event? When that happens you're not in control of the
-> bus, which means you'll have to force bus ownership handover. Is this
-> really what we want?
->
-> These are not rhetorical questions, I'm really asking for your opinion
-> here.
-What I understand from last discussion was that every time that device 
-need to do something (private messages) on the bus and don't have the 
-bus control it should force ownership handover.
-If my understanding is correct this can be also applied to CCC commands.
+>> Good catch! I overlooked that one.
+> 
+> It's unfortunate but I don't think any of our static checkers would have
+> caught it.  You found this bug because of cppcheck, right?  I know it
+> warns about the bounds test after use.  Does it also warn about the out
+> of bounds?
 
->
->> This can be triggered after the secondary master receive ENEC MR until
->> them is keep in the driver memory.
-> But that means no-one will actually trigger a mastership request,
-> because devices won't be registered until all info are available. If we
-> take this path, we should have a way to explicitly trigger a mastership
-> request (sysfs knob or any other means).
-By the current flow that we have now, we enable the IBI events at the 
-end of .do_daa. At this time the main master bus is initialized with all 
-devices.
+It can catch these, not sure how well it compares to the other tools I use.
 
- From the point of view of secondary master, it first participate on DAA 
-process, next it send its info (Main master do 
-i3c_master_retrieve_dev_info()) and them receive DEFSLVS. In the stage 
-it cannot request the bus mastership it need the MR enable.
+> 
+> Smatch doesn't warn about the out of bounds read because Smatch has bad
+> handling of loops.  Smatch is supposed to warn about the test after use
+> but that code is buggy.  I will investigate what's going on.
+> 
+> I have an unpublished test so Smatch does warn that the port < sizeof()
+> means that port is in terms of bytes but we're using it as an array
+> offset.  That's how I noticed this code, but it only warns about the
+> first use, so it warns about the loop but not the post-loop test.
+> 
+> I should fix Smatch's handling of loops so that we know this function
+> originally could return 0-8 and you maybe get a warning in the caller.
+> Unfortunately, I'm not sure I would have paid very much attention to a
+> warning like that because they tend to be prone to false positives.  We
+> have a lot of loops that do:
+> 
+> 	for (i = 0; i < ARRAY_SIZE(array); i++) {
+> 		if (foo <= array[i])
+> 			break;
+> 	}
 
-So, what I would suggest is to keep DEFSLVS data in secondary master 
-driver memory . When secondary master receive the MR enable, it can get 
-the bus ownership and do i3c_master_add_i3c_dev_locked() and each device 
-in DEFSLVS command. After this step delegate the bus ownership to the 
-main master.
+..yep, the are a lot of these to fix up for sure.
 
-What do you think about this?
-
-
-Best regards,
-Vitor Soares
+> 
+> And the last element of the array[] is UINT_MAX so we always break.
+> It's a lot of work but not necessarily difficult work.
+> 
+> regards,
+> dan carpenter
+> 
