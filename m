@@ -1,71 +1,88 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] gpio: ep93xx: fix test for end of loop
-Date: Thu, 6 Sep 2018 17:48:38 +0300
-Message-ID: <20180906144838.2dtqexjqieqjdpub@mwanda>
-References: <20180906133348.brzvqt53nzukn7n2@kili.mountain>
- <21c6b967-f4b5-db68-89b4-a9caa4e76fda@canonical.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v7 01/10] i3c: Add core I3C infrastructure
+Date: Thu, 6 Sep 2018 17:15:16 +0200
+Message-ID: <CAK8P3a1OV_w5br=fkQjY-xOUa_u3j+8P2=9MRLzpQqLfWpSaBA@mail.gmail.com>
+References: <20180905154108.20770-1-boris.brezillon@bootlin.com>
+ <20180905154108.20770-2-boris.brezillon@bootlin.com> <CAK8P3a3EkwAXin=s1bak7V7xM7zqip_Q6GMpxB-b1BD931G6cA@mail.gmail.com>
+ <20180906160048.2f585e2b@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <21c6b967-f4b5-db68-89b4-a9caa4e76fda@canonical.com>
+In-Reply-To: <20180906160048.2f585e2b@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, gregkh <gregkh@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@he>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 02:50:44PM +0100, Colin Ian King wrote:
-> On 06/09/18 14:33, Dan Carpenter wrote:
-> > The problem is that if port == ARRAY_SIZE() and "gc == &epg->gc[port]"
-> > then that should be treated as invalid.
-> > 
-> > Fixes: fd935fc421e7 ("gpio: ep93xx: Do not pingpong irq numbers")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-> > index 68a416fc3141..b0699f57ddf5 100644
-> > --- a/drivers/gpio/gpio-ep93xx.c
-> > +++ b/drivers/gpio/gpio-ep93xx.c
-> > @@ -80,7 +80,7 @@ static int ep93xx_gpio_port(struct gpio_chip *gc)
-> >  		port++;
-> >  
-> >  	/* This should not happen but is there as a last safeguard */
-> > -	if (gc != &epg->gc[port]) {
-> > +	if (port == ARRAY_SIZE(epg->gc)) {
-> >  		pr_crit("can't find the GPIO port\n");
-> >  		return 0;
-> >  	}
-> > 
-> 
-> Good catch! I overlooked that one.
+On Thu, Sep 6, 2018 at 4:01 PM Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Thu, 6 Sep 2018 15:38:49 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Wed, Sep 5, 2018 at 5:41 PM Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-It's unfortunate but I don't think any of our static checkers would have
-caught it.  You found this bug because of cppcheck, right?  I know it
-warns about the bounds test after use.  Does it also warn about the out
-of bounds?
+> >
+> > > +struct i3c_bus *i3c_bus_create(struct i3c_master_controller *master)
+> > > +{
+> > > +       struct i3c_bus *i3cbus;
+> > > +       int ret;
+> > > +
+> > > +       i3cbus = kzalloc(sizeof(*i3cbus), GFP_KERNEL);
+> > > +       if (!i3cbus)
+> > > +               return ERR_PTR(-ENOMEM);
+> >
+> > I find it a bit confusing to have separate i3c_master_controller
+> > and i3c_bus structures with this version. Why not merge the
+> > two structures into one now and move the bus management
+> > into master.c?
+>
+> Yes, I considered this approach. Not sure it would make the whole code a
+> lot simpler though, and it was definitely more work on my side, so I
+> decided to delay that and wait for someone to explicitly request this
+> change ;-).
+>
+> I also like the bus/master separation in that it allows one to clearly
+> identify the properties that are bus (speed, mode, ...) related and
+> those that are master controller oriented (PID, DCR, ...).
 
-Smatch doesn't warn about the out of bounds read because Smatch has bad
-handling of loops.  Smatch is supposed to warn about the test after use
-but that code is buggy.  I will investigate what's going on.
+Maybe you could make the bus a member of the master rather
+than a pointer from it?
 
-I have an unpublished test so Smatch does warn that the port < sizeof()
-means that port is in terms of bytes but we're using it as an array
-offset.  That's how I noticed this code, but it only warns about the
-first use, so it warns about the loop but not the post-loop test.
+That would still let us avoid the separate dynamic allocations,
+and not having to worry about separate lifetime rules for the
+two, but also group the bus properties together a bit more
+as you said. It can also have code deal with the the bus object
+without including the structure definition of the master (if that
+is desirable).
 
-I should fix Smatch's handling of loops so that we know this function
-originally could return 0-8 and you maybe get a warning in the caller.
-Unfortunately, I'm not sure I would have paid very much attention to a
-warning like that because they tend to be prone to false positives.  We
-have a lot of loops that do:
+> > Since it contains an i2c_adapter, maybe a good name for the
+> > combined i3c_master_controller+i3c_bus structure would
+> > be 'i3c_adapter'?
+>
+> Hm, I'd really like to keep the name master and not adapter, just
+> because that's how it's named in the spec.
 
-	for (i = 0; i < ARRAY_SIZE(array); i++) {
-		if (foo <= array[i])
-			break;
-	}
+Fair enough.
 
-And the last element of the array[] is UINT_MAX so we always break.
-It's a lot of work but not necessarily difficult work.
+> We don't store i3c/i3c_device objects in those lists, but
+> i3c/i2c_dev_desc objects, so device_for_each_child() won't work.
+> Remember that i3c devs can be present but not registered yet, and we
+> need to have those representations somehow attached to the master/bus.
 
-regards,
-dan carpenter
+Ah right, I remember you explained that before.
+
+> Regarding the possibility of merging those 2 lists together, we could
+> do it, but I find it simpler to have them separated.
+
+Agreed. It would only make sense if we had the combined list already.
+
+> > That might help with locking
+> > and keeping the two lists synchronized, which may or
+> > may not be a problem here.
+>
+> Regarding the locking aspects. Anything touching those lists is either
+> init code (which should be serialized) or DAA related, which requires
+> the bus lock to be held in write mode (exclusive access mode). Do you
+> see any other possible race?
+
+No, nothing specific, it was just a general feeling.
+
+        Arnd
