@@ -1,54 +1,44 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v2 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date: Thu, 6 Sep 2018 11:36:28 +0200
-Message-ID: <20180906093628.e6v4pu3lpubf54e4@verge.net.au>
-References: <1535634775-19365-4-git-send-email-phil.edworthy@renesas.com>
- <201808310827.o3GAs37i%fengguang.wu@intel.com>
- <TY1PR01MB1769AF7EB0152AF03B7B77C3F50F0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] gpio: ep93xx: fix incorrect array element size check
+Date: Thu,  6 Sep 2018 12:58:30 +0100
+Message-ID: <20180906115830.19386-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB1769AF7EB0152AF03B7B77C3F50F0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 08:13:07AM +0000, Phil Edworthy wrote:
-> 
-> On 31 August 2018 01:51 kbuild test robot wrote:
-> > Hi Phil,
-> > 
-> > Thank you for the patch! Yet something to improve:
-> > 
-> > [auto build test ERROR on pinctrl/devel] [also build test ERROR on v4.19-rc1
-> > next-20180830] [if your patch is applied to the wrong git tree, please drop us
-> > a note to help improve the system]
-> > 
-> > url:    https://github.com/0day-ci/linux/commits/Phil-Edworthy/Renesas-
-> > R9A06G032-PINCTRL-Driver/20180831-050708
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-
-> > pinctrl.git devel
-> > config: arm-mvebu_v5_defconfig (attached as .config)
-> > compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-> > reproduce:
-> >         wget https://raw.githubusercontent.com/intel/lkp-
-> > tests/master/sbin/make.cross -O ~/bin/make.cross
-> >         chmod +x ~/bin/make.cross
-> >         # save the attached .config to linux build tree
-> >         GCC_VERSION=7.2.0 make.cross ARCH=arm
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> > >> Error: arch/arm/boot/dts/r9a06g032.dtsi:93.23-24 syntax error
-> >    FATAL ERROR: Unable to parse input tree
-> 
-> This error is because the patch depends on a patch from Geert:
-> "ARM: dts: r9a06g032: Use r9a06g032-sysctrl binding definitions"
-> https://patchwork.kernel.org/patch/10578707/
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks Phil,
+Currently the while loop checks for the end of the array using
+the size of egp->gc rather that the number of elements in the array,
+so fix this. Also, perform the array size check first as stylistically
+it is always good to bounds check on an array first before referencing
+the array (in this case, we're just computing the address of an
+element in an array so this is a moot point).
 
-got it. I would like to wait for the binding to be acked before
-applying this patch.
+Fixes: fd935fc421e7 ("gpio: ep93xx: Do not pingpong irq numbers")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpio/gpio-ep93xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+index 68a416fc3141..dd22ea19c3ed 100644
+--- a/drivers/gpio/gpio-ep93xx.c
++++ b/drivers/gpio/gpio-ep93xx.c
+@@ -76,7 +76,7 @@ static int ep93xx_gpio_port(struct gpio_chip *gc)
+ 	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
+ 	int port = 0;
+ 
+-	while (gc != &epg->gc[port] && port < sizeof(epg->gc))
++	while (port < ARRAY_SIZE(epg->gc) && gc != &epg->gc[port])
+ 		port++;
+ 
+ 	/* This should not happen but is there as a last safeguard */
+-- 
+2.17.1
