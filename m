@@ -1,70 +1,46 @@
-From: =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
-Subject: [PATCH v3 2/2] selftests: gpio: Fix OUTPUT directory in Makefile
-Date: Fri,  7 Sep 2018 09:34:55 -0500
-Message-ID: <1536330895-8391-2-git-send-email-daniel.diaz@linaro.org>
-References: <1536330895-8391-1-git-send-email-daniel.diaz@linaro.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 0/3] ARM: OMAP1: ams-delta: Clean up GPIO setup for MODEM
+Date: Fri, 7 Sep 2018 09:56:22 -0700
+Message-ID: <20180907165622.GI5662@atomide.com>
+References: <20180820181333.2527-1-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1536330895-8391-1-git-send-email-daniel.diaz@linaro.org>
+Content-Disposition: inline
+In-Reply-To: <20180820181333.2527-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: shuahkh@osg.samsung.com, linux-kselftest@vger.kernel.org
-Cc: linus.walleij@linaro.org, =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>, Bamvor Jian Zhang <bamv2005@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Shuah Khan <shuah@kernel.org>, "open list:GPIO MOCKUP DRIVER" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-When simply running `make' from the selftests top dir, this
-error shows up:
+* Janusz Krzysztofik <jmkrzyszt@gmail.com> [180820 11:16]:
+> 
+> Convert modem related GPIO setup from integer space to GPIO descriptors.
+> Also, restore original initialization order of the MODEM device and its
+> related GPIO pins.
+> 
+> Cleanup of MODEM relaated regulator setup is postponed while waiting for
+> upcoming conversion of fixed regulator API to GPIO descriptors.
+> 
+> 
+> Janusz Krzysztofik (3):
+>       ARM: OMAP1: ams-delta: assign MODEM IRQ from GPIO descriptor
+>       ARM: OMAP1: ams-delta: initialize latch2 pins to safe values
+>       ARM: OMAP1: ams-delta: register MODEM device earlier
 
-  cc -O2 -g -std=gnu99 -Wall -I../../../../usr/include/ -I/usr/include/libmount -I/usr/include/blkid -I/usr/include/uuid    gpio-mockup-chardev.c ../../../gpio/gpio-utils.o  -lmount -o gpio-mockup-chardev
-  cc: error: ../../../gpio/gpio-utils.o: No such file or directory
-  <builtin>: recipe for target 'gpio-mockup-chardev' failed
-  make[1]: *** [gpio-mockup-chardev] Error 1
+Janusz, can you please repost this series based on v4.19-rc1
+with Linus' acks?
 
-because the output directory is set to "selftests/gpio" and
-all binaries built from ../../../gpio/ end up there. In fact,
-they appear as, exempli gratia:
-* gpiogpio-event-mon
-* gpiogpio-hammer
-* gpioinclude/
-* gpiolsgpio
-which is wrong, as it's missing a directory separator
-somewhere.
+At least the header file has moved around now.
 
-This patch sets straight the output directory when building
-../../../gpio/ so that binaries don't cross paths.
+And as this also conflicts with your earlier patch
+"ARM: OMAP1: ams-delta: assign MODEM IRQ from GPIO descriptor"
+please repost that too in the same series.
 
-Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
----
- tools/testing/selftests/gpio/Makefile | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If you have other arch/arm/*omap*/* related patches then
+please repost those too, these are the only ones I still had
+tagged :)
 
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index a4a01ec8..4664842 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -7,7 +7,7 @@ TEST_PROGS := gpio-mockup.sh
- TEST_FILES := gpio-mockup-sysfs.sh
- TEST_PROGS_EXTENDED := gpio-mockup-chardev
- 
--GPIODIR := ../../../gpio
-+GPIODIR := $(realpath ../../../gpio)
- GPIOOBJ := gpio-utils.o
- 
- include ../lib.mk
-@@ -16,11 +16,11 @@ all: $(TEST_PROGS_EXTENDED)
- 
- override define CLEAN
- 	$(RM) $(TEST_PROGS_EXTENDED)
--	$(MAKE) -C $(GPIODIR) clean
-+	$(MAKE) -C $(GPIODIR) OUTPUT=$(GPIODIR)/ clean
- endef
- 
- $(TEST_PROGS_EXTENDED):| khdr
- $(TEST_PROGS_EXTENDED): $(GPIODIR)/$(GPIOOBJ)
- 
- $(GPIODIR)/$(GPIOOBJ):
--	$(MAKE) -C $(GPIODIR)
-+	$(MAKE) OUTPUT=$(GPIODIR)/ -C $(GPIODIR)
--- 
-2.7.4
+Regards,
+
+Tony
