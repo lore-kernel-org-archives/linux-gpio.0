@@ -1,379 +1,172 @@
-From: <sean.wang@mediatek.com>
-Subject: [PATCH v2 03/22] pinctrl: mediatek: extend struct mtk_pin_field_calc to pinctrl-mtk-common-v2.c
-Date: Sat, 8 Sep 2018 19:07:19 +0800
-Message-ID: <d43dc09d7ef45940ee14ecf546e939e39315a28f.1536404280.git.sean.wang@mediatek.com>
+From: <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v2 11/22] pinctrl: mediatek: add pullen,
+ pullsel register support to pinctrl-mtk-common-v2.c
+Date: Sat, 8 Sep 2018 19:07:27 +0800
+Message-ID: <f698dee4dcac1b5acfde7133773f7dc1e8c40583.1536404280.git.sean.wang@mediatek.com>
 References: <cover.1536404280.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1536404280.git.sean.wang@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-mediatek@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <cover.1536404280.git.sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "Ryder.Lee" <ryder.lee-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 
-This patch adds members sz_reg fixed in struct mtk_pin_field_calc
+Certain SoCs have to program an extra PULLEN, PULLSEL register to configure
+bias related function so that we add it in the existing path.
 
-- The 'fixed' is used to represent the consecutive pins share the same
-bits within the same register with the 1st pin so that it can largely
-reduce the entry size a bit.
-
-- The 'sz_reg' is used to indicate the range of bits we use in a register
-  that may vary by SoC
-
-The above changes make the code more generic and this is useful as there
-might be other existing or future chips all use the same logic to access
-their register set and then being a little more abstract could help in the
-long run.
-
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Ryder.Lee <ryder.lee-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Signed-off-by: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 ---
- drivers/pinctrl/mediatek/pinctrl-mt7622.c        | 210 ++++++++++-------------
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c |  17 +-
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |  25 +++
- 3 files changed, 126 insertions(+), 126 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 76 ++++++++++++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h | 15 +++++
+ 2 files changed, 91 insertions(+)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-index 224fc01..b9c1680 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-@@ -9,159 +9,129 @@
- #include "pinctrl-moore.h"
- 
- static const struct mtk_pin_field_calc mt7622_pin_mode_range[] = {
--	{0, 0, 0x320, 0x10, 16, 4},
--	{1, 4, 0x3a0, 0x10,  16, 4},
--	{5, 5, 0x320, 0x10,  0, 4},
--	{6, 6, 0x300, 0x10,  4, 4},
--	{7, 7, 0x300, 0x10,  4, 4},
--	{8, 9, 0x350, 0x10,  20, 4},
--	{10, 10, 0x300, 0x10, 8, 4},
--	{11, 11, 0x300, 0x10, 8, 4},
--	{12, 12, 0x300, 0x10, 8, 4},
--	{13, 13, 0x300, 0x10, 8, 4},
--	{14, 15, 0x320, 0x10, 4, 4},
--	{16, 17, 0x320, 0x10, 20, 4},
--	{18, 21, 0x310, 0x10, 16, 4},
--	{22, 22, 0x380, 0x10, 16, 4},
--	{23, 23, 0x300,	0x10, 24, 4},
--	{24, 24, 0x300, 0x10, 24, 4},
--	{25, 25, 0x300, 0x10, 12, 4},
--	{25, 25, 0x300, 0x10, 12, 4},
--	{26, 26, 0x300, 0x10, 12, 4},
--	{27, 27, 0x300, 0x10, 12, 4},
--	{28, 28, 0x300, 0x10, 12, 4},
--	{29, 29, 0x300, 0x10, 12, 4},
--	{30, 30, 0x300, 0x10, 12, 4},
--	{31, 31, 0x300, 0x10, 12, 4},
--	{32, 32, 0x300, 0x10, 12, 4},
--	{33, 33, 0x300,	0x10, 12, 4},
--	{34, 34, 0x300,	0x10, 12, 4},
--	{35, 35, 0x300,	0x10, 12, 4},
--	{36, 36, 0x300, 0x10, 12, 4},
--	{37, 37, 0x300, 0x10, 20, 4},
--	{38, 38, 0x300, 0x10, 20, 4},
--	{39, 39, 0x300, 0x10, 20, 4},
--	{40, 40, 0x300, 0x10, 20, 4},
--	{41, 41, 0x300,	0x10, 20, 4},
--	{42, 42, 0x300, 0x10, 20, 4},
--	{43, 43, 0x300,	0x10, 20, 4},
--	{44, 44, 0x300, 0x10, 20, 4},
--	{45, 46, 0x300, 0x10, 20, 4},
--	{47, 47, 0x300,	0x10, 20, 4},
--	{48, 48, 0x300, 0x10, 20, 4},
--	{49, 49, 0x300, 0x10, 20, 4},
--	{50, 50, 0x300, 0x10, 20, 4},
--	{51, 70, 0x330, 0x10, 4, 4},
--	{71, 71, 0x300, 0x10, 16, 4},
--	{72, 72, 0x300, 0x10, 16, 4},
--	{73, 76, 0x310, 0x10, 0, 4},
--	{77, 77, 0x320, 0x10, 28, 4},
--	{78, 78, 0x320, 0x10, 12, 4},
--	{79, 82, 0x3a0, 0x10, 0, 4},
--	{83, 83, 0x350,	0x10, 28, 4},
--	{84, 84, 0x330, 0x10, 0, 4},
--	{85, 90, 0x360, 0x10, 4, 4},
--	{91, 94, 0x390, 0x10, 16, 4},
--	{95, 97, 0x380, 0x10, 20, 4},
--	{98, 101, 0x390, 0x10, 0, 4},
--	{102, 102, 0x360, 0x10, 0, 4},
-+	PIN_FIELD(0, 0, 0x320, 0x10, 16, 4),
-+	PIN_FIELD(1, 4, 0x3a0, 0x10, 16, 4),
-+	PIN_FIELD(5, 5, 0x320, 0x10, 0, 4),
-+	PINS_FIELD(6, 7, 0x300, 0x10, 4, 4),
-+	PIN_FIELD(8, 9, 0x350, 0x10, 20, 4),
-+	PINS_FIELD(10, 13, 0x300, 0x10, 8, 4),
-+	PIN_FIELD(14, 15, 0x320, 0x10, 4, 4),
-+	PIN_FIELD(16, 17, 0x320, 0x10, 20, 4),
-+	PIN_FIELD(18, 21, 0x310, 0x10, 16, 4),
-+	PIN_FIELD(22, 22, 0x380, 0x10, 16, 4),
-+	PINS_FIELD(23, 24, 0x300, 0x10, 24, 4),
-+	PINS_FIELD(25, 36, 0x300, 0x10, 12, 4),
-+	PINS_FIELD(37, 50, 0x300, 0x10, 20, 4),
-+	PIN_FIELD(51, 70, 0x330, 0x10, 4, 4),
-+	PINS_FIELD(71, 72, 0x300, 0x10, 16, 4),
-+	PIN_FIELD(73, 76, 0x310, 0x10, 0, 4),
-+	PIN_FIELD(77, 77, 0x320, 0x10, 28, 4),
-+	PIN_FIELD(78, 78, 0x320, 0x10, 12, 4),
-+	PIN_FIELD(79, 82, 0x3a0, 0x10, 0, 4),
-+	PIN_FIELD(83, 83, 0x350, 0x10, 28, 4),
-+	PIN_FIELD(84, 84, 0x330, 0x10, 0, 4),
-+	PIN_FIELD(85, 90, 0x360, 0x10, 4, 4),
-+	PIN_FIELD(91, 94, 0x390, 0x10, 16, 4),
-+	PIN_FIELD(95, 97, 0x380, 0x10, 20, 4),
-+	PIN_FIELD(98, 101, 0x390, 0x10, 0, 4),
-+	PIN_FIELD(102, 102, 0x360, 0x10, 0, 4),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_dir_range[] = {
--	{0, 102, 0x0, 0x10, 0, 1},
-+	PIN_FIELD(0, 102, 0x0, 0x10, 0, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_di_range[] = {
--	{0, 102, 0x200, 0x10, 0, 1},
-+	PIN_FIELD(0, 102, 0x200, 0x10, 0, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_do_range[] = {
--	{0, 102, 0x100, 0x10, 0, 1},
-+	PIN_FIELD(0, 102, 0x100, 0x10, 0, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_sr_range[] = {
--	{0, 31, 0x910, 0x10, 0, 1},
--	{32, 50, 0xa10, 0x10, 0, 1},
--	{51, 70, 0x810, 0x10, 0, 1},
--	{71, 72, 0xb10, 0x10, 0, 1},
--	{73, 86, 0xb10, 0x10, 4, 1},
--	{87, 90, 0xc10, 0x10, 0, 1},
--	{91, 102, 0xb10, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x910, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa10, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x810, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb10, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb10, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc10, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb10, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_smt_range[] = {
--	{0, 31, 0x920, 0x10, 0, 1},
--	{32, 50, 0xa20, 0x10, 0, 1},
--	{51, 70, 0x820, 0x10, 0, 1},
--	{71, 72, 0xb20, 0x10, 0, 1},
--	{73, 86, 0xb20, 0x10, 4, 1},
--	{87, 90, 0xc20, 0x10, 0, 1},
--	{91, 102, 0xb20, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x920, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa20, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x820, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb20, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb20, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc20, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb20, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_pu_range[] = {
--	{0, 31, 0x930, 0x10, 0, 1},
--	{32, 50, 0xa30, 0x10, 0, 1},
--	{51, 70, 0x830, 0x10, 0, 1},
--	{71, 72, 0xb30, 0x10, 0, 1},
--	{73, 86, 0xb30, 0x10, 4, 1},
--	{87, 90, 0xc30, 0x10, 0, 1},
--	{91, 102, 0xb30, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x930, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa30, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x830, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb30, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb30, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc30, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb30, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_pd_range[] = {
--	{0, 31, 0x940, 0x10, 0, 1},
--	{32, 50, 0xa40, 0x10, 0, 1},
--	{51, 70, 0x840, 0x10, 0, 1},
--	{71, 72, 0xb40, 0x10, 0, 1},
--	{73, 86, 0xb40, 0x10, 4, 1},
--	{87, 90, 0xc40, 0x10, 0, 1},
--	{91, 102, 0xb40, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x940, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa40, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x840, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb40, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb40, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc40, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb40, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_e4_range[] = {
--	{0, 31, 0x960, 0x10, 0, 1},
--	{32, 50, 0xa60, 0x10, 0, 1},
--	{51, 70, 0x860, 0x10, 0, 1},
--	{71, 72, 0xb60, 0x10, 0, 1},
--	{73, 86, 0xb60, 0x10, 4, 1},
--	{87, 90, 0xc60, 0x10, 0, 1},
--	{91, 102, 0xb60, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x960, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa60, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x860, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb60, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb60, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc60, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb60, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_e8_range[] = {
--	{0, 31, 0x970, 0x10, 0, 1},
--	{32, 50, 0xa70, 0x10, 0, 1},
--	{51, 70, 0x870, 0x10, 0, 1},
--	{71, 72, 0xb70, 0x10, 0, 1},
--	{73, 86, 0xb70, 0x10, 4, 1},
--	{87, 90, 0xc70, 0x10, 0, 1},
--	{91, 102, 0xb70, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x970, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa70, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x870, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb70, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb70, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc70, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb70, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_tdsel_range[] = {
--	{0, 31, 0x980, 0x4, 0, 4},
--	{32, 50, 0xa80, 0x4, 0, 4},
--	{51, 70, 0x880, 0x4, 0, 4},
--	{71, 72, 0xb80, 0x4, 0, 4},
--	{73, 86, 0xb80, 0x4, 16, 4},
--	{87, 90, 0xc80, 0x4, 0, 4},
--	{91, 102, 0xb88, 0x4, 8, 4},
-+	PIN_FIELD(0, 31, 0x980, 0x4, 0, 4),
-+	PIN_FIELD(32, 50, 0xa80, 0x4, 0, 4),
-+	PIN_FIELD(51, 70, 0x880, 0x4, 0, 4),
-+	PIN_FIELD(71, 72, 0xb80, 0x4, 0, 4),
-+	PIN_FIELD(73, 86, 0xb80, 0x4, 16, 4),
-+	PIN_FIELD(87, 90, 0xc80, 0x4, 0, 4),
-+	PIN_FIELD(91, 102, 0xb88, 0x4, 8, 4),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_rdsel_range[] = {
--	{0, 31, 0x990, 0x4, 0, 6},
--	{32, 50, 0xa90, 0x4, 0, 6},
--	{51, 58, 0x890, 0x4, 0, 6},
--	{59, 60, 0x894, 0x4, 28, 6},
--	{61, 62, 0x894, 0x4, 16, 6},
--	{63, 66, 0x898, 0x4, 8, 6},
--	{67, 68, 0x89c, 0x4, 12, 6},
--	{69, 70, 0x89c, 0x4, 0, 6},
--	{71, 72, 0xb90, 0x4, 0, 6},
--	{73, 86, 0xb90, 0x4, 24, 6},
--	{87, 90, 0xc90, 0x4, 0, 6},
--	{91, 102, 0xb9c, 0x4, 12, 6},
-+	PIN_FIELD(0, 31, 0x990, 0x4, 0, 6),
-+	PIN_FIELD(32, 50, 0xa90, 0x4, 0, 6),
-+	PIN_FIELD(51, 58, 0x890, 0x4, 0, 6),
-+	PIN_FIELD(59, 60, 0x894, 0x4, 28, 6),
-+	PIN_FIELD(61, 62, 0x894, 0x4, 16, 6),
-+	PIN_FIELD(63, 66, 0x898, 0x4, 8, 6),
-+	PIN_FIELD(67, 68, 0x89c, 0x4, 12, 6),
-+	PIN_FIELD(69, 70, 0x89c, 0x4, 0, 6),
-+	PIN_FIELD(71, 72, 0xb90, 0x4, 0, 6),
-+	PIN_FIELD(73, 86, 0xb90, 0x4, 24, 6),
-+	PIN_FIELD(87, 90, 0xc90, 0x4, 0, 6),
-+	PIN_FIELD(91, 102, 0xb9c, 0x4, 12, 6),
- };
- 
- static const struct mtk_pin_reg_calc mt7622_reg_cals[PINCTRL_PIN_REG_MAX] = {
 diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index a74c3ff..2a16804 100644
+index e66bf49..86eefe8 100644
 --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
 +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -54,19 +54,24 @@ static int mtk_hw_pin_field_lookup(struct mtk_pinctrl *hw, int pin,
- 		return -EINVAL;
- 	}
- 
--	/* Caculated bits as the overall offset the pin is located at */
--	bits = c->s_bit + (pin - c->s_pin) * (c->x_bits);
-+	/* Calculated bits as the overall offset the pin is located at,
-+	 * if c->fixed is held, that determines the all the pins in the
-+	 * range use the same field with the s_pin.
-+	 */
-+	bits = c->fixed ? c->s_bit : c->s_bit + (pin - c->s_pin) * (c->x_bits);
- 
--	/* Fill pfd from bits and 32-bit register applied is assumed */
--	pfd->offset = c->s_addr + c->x_addrs * (bits / 32);
--	pfd->bitpos = bits % 32;
-+	/* Fill pfd from bits. For example 32-bit register applied is assumed
-+	 * when c->sz_reg is equal to 32.
-+	 */
-+	pfd->offset = c->s_addr + c->x_addrs * (bits / c->sz_reg);
-+	pfd->bitpos = bits % c->sz_reg;
- 	pfd->mask = (1 << c->x_bits) - 1;
- 
- 	/* pfd->next is used for indicating that bit wrapping-around happens
- 	 * which requires the manipulation for bit 0 starting in the next
- 	 * register to form the complete field read/write.
- 	 */
--	pfd->next = pfd->bitpos + c->x_bits - 1 > 31 ? c->x_addrs : 0;
-+	pfd->next = pfd->bitpos + c->x_bits > c->sz_reg ? c->x_addrs : 0;
- 
+@@ -190,6 +190,7 @@ int mtk_hw_get_value(struct mtk_pinctrl *hw, int pin, int field, int *value)
  	return 0;
  }
+ 
++/* Revision 0 */
+ int mtk_pinconf_bias_disable_set(struct mtk_pinctrl *hw,
+ 				 const struct mtk_pin_desc *desc)
+ {
+@@ -268,6 +269,81 @@ int mtk_pinconf_bias_get(struct mtk_pinctrl *hw,
+ 	return 0;
+ }
+ 
++/* Revision 1 */
++int mtk_pinconf_bias_disable_set_rev1(struct mtk_pinctrl *hw,
++				      const struct mtk_pin_desc *desc)
++{
++	int err;
++
++	err = mtk_hw_set_value(hw, desc->number, PINCTRL_PIN_REG_PULLEN,
++			       MTK_DISABLE);
++	if (err)
++		return err;
++
++	return 0;
++}
++
++int mtk_pinconf_bias_disable_get_rev1(struct mtk_pinctrl *hw,
++				      const struct mtk_pin_desc *desc, int *res)
++{
++	int v, err;
++
++	err = mtk_hw_get_value(hw, desc->number, PINCTRL_PIN_REG_PULLEN, &v);
++	if (err)
++		return err;
++
++	if (v == MTK_ENABLE)
++		return -EINVAL;
++
++	*res = 1;
++
++	return 0;
++}
++
++int mtk_pinconf_bias_set_rev1(struct mtk_pinctrl *hw,
++			      const struct mtk_pin_desc *desc, bool pullup)
++{
++	int err, arg;
++
++	arg = pullup ? MTK_PULLUP : MTK_PULLDOWN;
++
++	err = mtk_hw_set_value(hw, desc->number, PINCTRL_PIN_REG_PULLEN,
++			       MTK_ENABLE);
++	if (err)
++		return err;
++
++	err = mtk_hw_set_value(hw, desc->number, PINCTRL_PIN_REG_PULLSEL, arg);
++	if (err)
++		return err;
++
++	return 0;
++}
++
++int mtk_pinconf_bias_get_rev1(struct mtk_pinctrl *hw,
++			      const struct mtk_pin_desc *desc, bool pullup,
++			      int *res)
++{
++	int err, v;
++
++	err = mtk_hw_get_value(hw, desc->number, PINCTRL_PIN_REG_PULLEN, &v);
++	if (err)
++		return err;
++
++	if (v == MTK_DISABLE)
++		return -EINVAL;
++
++	err = mtk_hw_get_value(hw, desc->number, PINCTRL_PIN_REG_PULLSEL, &v);
++	if (err)
++		return err;
++
++	if (pullup ^ (v == MTK_PULLUP))
++		return -EINVAL;
++
++	*res = 1;
++
++	return 0;
++}
++
+ /* Revision 0 */
+ int mtk_pinconf_drive_set(struct mtk_pinctrl *hw,
+ 			  const struct mtk_pin_desc *desc, u32 arg)
 diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-index b7800c9..f05c802 100644
+index b01dbd8..d90788b 100644
 --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
 +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-@@ -15,6 +15,26 @@
+@@ -13,6 +13,8 @@
+ #define MTK_OUTPUT     1
  #define MTK_DISABLE    0
  #define MTK_ENABLE     1
++#define MTK_PULLDOWN   0
++#define MTK_PULLUP     1
  
-+#define PIN_FIELD_CALC(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit,	\
-+			_x_bits, _sz_reg, _fixed) {			\
-+		.s_pin = _s_pin,					\
-+		.e_pin = _e_pin,					\
-+		.s_addr = _s_addr,					\
-+		.x_addrs = _x_addrs,					\
-+		.s_bit = _s_bit,					\
-+		.x_bits = _x_bits,					\
-+		.sz_reg = _sz_reg,					\
-+		.fixed = _fixed,					\
-+	}
-+
-+#define PIN_FIELD(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit, _x_bits)	\
-+	PIN_FIELD_CALC(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit,	\
-+		       _x_bits, 32, 0)
-+
-+#define PINS_FIELD(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit, _x_bits)	\
-+	PIN_FIELD_CALC(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit,	\
-+		       _x_bits, 32, 1)
-+
- /* List these attributes which could be modified for the pin */
- enum {
- 	PINCTRL_PIN_REG_MODE,
-@@ -57,6 +77,9 @@ struct mtk_pin_field {
-  * @s_bit:		the start bit for the first register within the range
-  * @x_bits:		the bit distance between two consecutive pins within
-  *			the range
-+ * @sz_reg:		the size of bits in a register
-+ * @fixed:		the consecutive pins share the same bits with the 1st
-+ *			pin
-  */
- struct mtk_pin_field_calc {
- 	u16 s_pin;
-@@ -65,6 +88,8 @@ struct mtk_pin_field_calc {
- 	u8  x_addrs;
- 	u8  s_bit;
- 	u8  x_bits;
-+	u8  sz_reg;
-+	u8  fixed;
+ #define EINT_NA	-1
+ 
+@@ -55,6 +57,8 @@ enum {
+ 	PINCTRL_PIN_REG_R0,
+ 	PINCTRL_PIN_REG_R1,
+ 	PINCTRL_PIN_REG_IES,
++	PINCTRL_PIN_REG_PULLEN,
++	PINCTRL_PIN_REG_PULLSEL,
+ 	PINCTRL_PIN_REG_MAX,
  };
  
- /* struct mtk_pin_reg_calc - the structure that holds all ranges used to
+@@ -201,6 +205,17 @@ int mtk_pinconf_bias_get(struct mtk_pinctrl *hw,
+ 			 const struct mtk_pin_desc *desc, bool pullup,
+ 			 int *res);
+ 
++int mtk_pinconf_bias_disable_set_rev1(struct mtk_pinctrl *hw,
++				      const struct mtk_pin_desc *desc);
++int mtk_pinconf_bias_disable_get_rev1(struct mtk_pinctrl *hw,
++				      const struct mtk_pin_desc *desc,
++				      int *res);
++int mtk_pinconf_bias_set_rev1(struct mtk_pinctrl *hw,
++			      const struct mtk_pin_desc *desc, bool pullup);
++int mtk_pinconf_bias_get_rev1(struct mtk_pinctrl *hw,
++			      const struct mtk_pin_desc *desc, bool pullup,
++			      int *res);
++
+ int mtk_pinconf_drive_set(struct mtk_pinctrl *hw,
+ 			  const struct mtk_pin_desc *desc, u32 arg);
+ int mtk_pinconf_drive_get(struct mtk_pinctrl *hw,
 -- 
 2.7.4
