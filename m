@@ -1,10 +1,12 @@
 From: <sean.wang@mediatek.com>
-Subject: [PATCH v2 00/22] Unify MediaTek pinctrl in preparation for MT8183 and MT6765
-Date: Sat, 8 Sep 2018 19:07:16 +0800
-Message-ID: <cover.1536404280.git.sean.wang@mediatek.com>
+Subject: [PATCH v2 15/22] pinctrl: mediatek: adjust error code and message when some register not supported is found
+Date: Sat, 8 Sep 2018 19:07:31 +0800
+Message-ID: <2873ce93abf93d31a160c7dcbf5b3ff42c5e3886.1536404280.git.sean.wang@mediatek.com>
+References: <cover.1536404280.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1536404280.git.sean.wang@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, linux-mediatek@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>
@@ -12,95 +14,86 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-v2 and changes since v1:
+It's usual and not an error for there's some register not supported by a
+certain SoC or a pin so that in the case we have to adjust the message to
+print and the error code to get rid of unnecessary false alarm.
 
-add new patches
-* Add additional patch 17 to 22 to support MT8183 SoC
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 35 ++++++++++++------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
-update the existing patches
-* Patch 2: Removed unnecessary blank line and headers included.
-* Patch 4: Extended the size eint number can hold since it's possible more than 254 pins in certain SoC.
-* Patch 11: Added cosmetic patch and fixed an error logic on invalid condition.
-* Patch 14: Removed unused macro and given a better naming to the name of the default bases.
-
-v1:
-
-Irregular register arrangement and their logic access from various MediaTek
-SoCs being introduced already causes pinctrl-mtk-common to bloat and became
-really hard to maintain so that the patch creates pinctrl-mtk-common-v2 based
-on the core of mt7622 pinctrl to try make the register operations to be simple.
-
-The goals pinctrl-mtk-common-v2 want to achieve are to hopefully support
-all of MediaTek SoCs, and two kinds of dt-bindings being supported,
-Linux generic pinctrl dt-binding which mt762x like to support and MediaTek
-vendor per-pin dt-binding the other SoCs support the MT8183 and MT6765 incline
-to make use of.
-
-The patch starts to refactor MT7622 pinctrl driver first with splitting
-out these portable ways from there such as table-based register operation
-and the other operations in common in the both kinds of driver.
-
-Sean Wang (19):
-  pinctrl: mediatek: add pinctrl-mtk-common-v2 for all MediaTek pinctrls
-  pinctrl: mediatek: add pinctrl-moore that implements the generic
-    pinctrl dt-bindings
-  pinctrl: mediatek: extend struct mtk_pin_field_calc to
-    pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: extend struct mtk_pin_desc to
-    pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: extend struct mtk_pin_soc to
-    pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: add driving strength related support to
-    pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: add drv register support to pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: add pull related support to pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: add advanced pull related support to
-    pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: add ies register support to pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: add pullen, pullsel register support to
-    pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: add MT7623 pinctrl driver based on generic pinctrl
-    binding
-  pinctrl: mediatek: use pin descriptor all in pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: add multiple register bases support to
-    pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: adjust error code and message when some register
-    not supported is found
-  pinctrl: mediatek: extend struct mtk_pin_desc which per-pin driver
-    depends on
-  pinctrl: mediatek: extend advanced pull support in
-    pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: extend eint build to pinctrl-mtk-common-v2.c
-  pinctrl: mediatek: add eint support to MT8183 pinctrl driver
-
-Zhiyong Tao (3):
-  pinctrl: mediatek: add pinctrl-paris that implements the vendor
-    dt-bindings
-  pinctrl: mediatek: add MT8183 pinctrl driver
-  pintcrl: mediatek: add pull tweaks for I2C related pins on MT8183
-
- drivers/pinctrl/mediatek/Kconfig                 |   41 +-
- drivers/pinctrl/mediatek/Makefile                |    4 +
- drivers/pinctrl/mediatek/pinctrl-moore.c         |  689 ++++++++
- drivers/pinctrl/mediatek/pinctrl-moore.h         |   53 +
- drivers/pinctrl/mediatek/pinctrl-mt7622.c        | 1407 +++-------------
- drivers/pinctrl/mediatek/pinctrl-mt7623.c        | 1441 ++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-mt8183.c        |  544 ++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c |  670 ++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |  288 ++++
- drivers/pinctrl/mediatek/pinctrl-mtk-mt8183.h    | 1916 ++++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-paris.c         |  906 ++++++++++
- drivers/pinctrl/mediatek/pinctrl-paris.h         |   65 +
- 12 files changed, 6833 insertions(+), 1191 deletions(-)
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-moore.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-moore.h
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7623.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8183.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8183.h
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-paris.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-paris.h
-
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 18a3548..7cdd46f 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -61,12 +61,21 @@ void mtk_rmw(struct mtk_pinctrl *pctl, u8 i, u32 reg, u32 mask, u32 set)
+ 
+ static int mtk_hw_pin_field_lookup(struct mtk_pinctrl *hw,
+ 				   const struct mtk_pin_desc *desc,
+-				   const struct mtk_pin_reg_calc *rc,
+-				   struct mtk_pin_field *pfd)
++				   int field, struct mtk_pin_field *pfd)
+ {
+ 	const struct mtk_pin_field_calc *c, *e;
++	const struct mtk_pin_reg_calc *rc;
+ 	u32 bits;
+ 
++	if (hw->soc->reg_cal && hw->soc->reg_cal[field].range) {
++		rc = &hw->soc->reg_cal[field];
++	} else {
++		dev_dbg(hw->dev,
++			"Not support field %d for pin %d (%s)\n",
++			field, desc->number, desc->name);
++		return -ENOTSUPP;
++	}
++
+ 	c = rc->range;
+ 	e = c + rc->nranges;
+ 
+@@ -77,14 +86,15 @@ static int mtk_hw_pin_field_lookup(struct mtk_pinctrl *hw,
+ 	}
+ 
+ 	if (c >= e) {
+-		dev_err(hw->dev, "Out of range for pin = %d (%s)\n",
+-			desc->number, desc->name);
+-		return -EINVAL;
++		dev_dbg(hw->dev, "Not support field %d for pin = %d (%s)\n",
++			field, desc->number, desc->name);
++		return -ENOTSUPP;
+ 	}
+ 
+ 	if (c->i_base > hw->nbase - 1) {
+-		dev_err(hw->dev, "Invalid base is found for pin = %d (%s)\n",
+-			desc->number, desc->name);
++		dev_err(hw->dev,
++			"Invalid base for field %d for pin = %d (%s)\n",
++			field, desc->number, desc->name);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -116,21 +126,12 @@ static int mtk_hw_pin_field_get(struct mtk_pinctrl *hw,
+ 				const struct mtk_pin_desc *desc,
+ 				int field, struct mtk_pin_field *pfd)
+ {
+-	const struct mtk_pin_reg_calc *rc;
+-
+ 	if (field < 0 || field >= PINCTRL_PIN_REG_MAX) {
+ 		dev_err(hw->dev, "Invalid Field %d\n", field);
+ 		return -EINVAL;
+ 	}
+ 
+-	if (hw->soc->reg_cal && hw->soc->reg_cal[field].range) {
+-		rc = &hw->soc->reg_cal[field];
+-	} else {
+-		dev_err(hw->dev, "Undefined range for field %d\n", field);
+-		return -EINVAL;
+-	}
+-
+-	return mtk_hw_pin_field_lookup(hw, desc, rc, pfd);
++	return mtk_hw_pin_field_lookup(hw, desc, field, pfd);
+ }
+ 
+ static void mtk_hw_bits_part(struct mtk_pin_field *pf, int *h, int *l)
 -- 
 2.7.4
