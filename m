@@ -1,7 +1,7 @@
 From: <sean.wang@mediatek.com>
-Subject: [PATCH v2 20/22] pintcrl: mediatek: add pull tweaks for I2C related pins on MT8183
-Date: Sat, 8 Sep 2018 19:07:36 +0800
-Message-ID: <3d957d32b5b0f67548f63ae4ba7176dba9e61faa.1536404280.git.sean.wang@mediatek.com>
+Subject: [PATCH v2 22/22] pinctrl: mediatek: add eint support to MT8183 pinctrl driver
+Date: Sat, 8 Sep 2018 19:07:38 +0800
+Message-ID: <17745498577a9d4492deee861d71a135de5b8473.1536404280.git.sean.wang@mediatek.com>
 References: <cover.1536404280.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,68 +9,90 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1536404280.git.sean.wang@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, linux-mediatek@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>, Sean Wang <sean.wang@mediatek.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+From: Sean Wang <sean.wang@mediatek.com>
 
-This patch provides the advanced pull for I2C used pins on MT8183.
+Just add eint support to MT8183 pinctrl driver as usual as
+happens on the other SoCs.
 
-Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-mt8183.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/pinctrl/mediatek/pinctrl-mt8183.c |  8 ++++++++
+ drivers/pinctrl/mediatek/pinctrl-paris.c  | 22 ++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
 
 diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8183.c b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-index bd3f00b..9d5aa27 100644
+index 9d5aa27..6262fd3 100644
 --- a/drivers/pinctrl/mediatek/pinctrl-mt8183.c
 +++ b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-@@ -397,10 +397,22 @@ static const struct mtk_pin_field_calc mt8183_pin_r0_range[] = {
- 	PIN_FIELD_BASE(40, 40, 3, 0x0C0, 0x10, 20, 1),
- 	PIN_FIELD_BASE(41, 41, 3, 0x0C0, 0x10, 24, 1),
- 	PIN_FIELD_BASE(42, 42, 3, 0x0C0, 0x10, 28, 1),
-+	PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 18, 1),
-+	PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 13, 1),
-+	PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 10, 1),
-+	PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 5, 1),
-+	PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 7, 1),
-+	PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 5, 1),
-+	PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 15, 1),
-+	PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 17, 1),
- 	PIN_FIELD_BASE(91, 91, 6, 0x0C0, 0x10, 0, 1),
- 	PIN_FIELD_BASE(92, 92, 6, 0x0C0, 0x10, 4, 1),
- 	PIN_FIELD_BASE(93, 93, 6, 0x0C0, 0x10, 8, 1),
- 	PIN_FIELD_BASE(94, 94, 6, 0x0C0, 0x10, 12, 1),
-+	PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 20, 1),
-+	PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 10, 1),
-+	PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 22, 1),
-+	PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 12, 1),
- 	PIN_FIELD_BASE(122, 122, 8, 0x0C0, 0x10, 0, 1),
- 	PIN_FIELD_BASE(123, 123, 8, 0x0C0, 0x10, 4, 1),
- 	PIN_FIELD_BASE(124, 124, 8, 0x0C0, 0x10, 8, 1),
-@@ -430,10 +442,22 @@ static const struct mtk_pin_field_calc mt8183_pin_r1_range[] = {
- 	PIN_FIELD_BASE(40, 40, 3, 0x0C0, 0x10, 21, 1),
- 	PIN_FIELD_BASE(41, 41, 3, 0x0C0, 0x10, 25, 1),
- 	PIN_FIELD_BASE(42, 42, 3, 0x0C0, 0x10, 29, 1),
-+	PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 19, 1),
-+	PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 11, 1),
-+	PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 6, 1),
-+	PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 8, 1),
-+	PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 6, 1),
-+	PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 16, 1),
-+	PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 18, 1),
- 	PIN_FIELD_BASE(91, 91, 6, 0x0C0, 0x10, 1, 1),
- 	PIN_FIELD_BASE(92, 92, 6, 0x0C0, 0x10, 5, 1),
- 	PIN_FIELD_BASE(93, 93, 6, 0x0C0, 0x10, 9, 1),
- 	PIN_FIELD_BASE(94, 94, 6, 0x0C0, 0x10, 13, 1),
-+	PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 21, 1),
-+	PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 11, 1),
-+	PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 23, 1),
-+	PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 13, 1),
- 	PIN_FIELD_BASE(122, 122, 8, 0x0C0, 0x10, 1, 1),
- 	PIN_FIELD_BASE(123, 123, 8, 0x0C0, 0x10, 5, 1),
- 	PIN_FIELD_BASE(124, 124, 8, 0x0C0, 0x10, 9, 1),
+@@ -492,11 +492,19 @@ static const char * const mt8183_pinctrl_register_base_names[] = {
+ 	"iocfg6", "iocfg7", "iocfg8",
+ };
+ 
++static const struct mtk_eint_hw mt8183_eint_hw = {
++	.port_mask = 7,
++	.ports     = 6,
++	.ap_num    = 212,
++	.db_cnt    = 13,
++};
++
+ static const struct mtk_pin_soc mt8183_data = {
+ 	.reg_cal = mt8183_reg_cals,
+ 	.pins = mtk_pins_mt8183,
+ 	.npins = ARRAY_SIZE(mtk_pins_mt8183),
+ 	.ngrps = ARRAY_SIZE(mtk_pins_mt8183),
++	.eint_hw = &mt8183_eint_hw,
+ 	.gpio_m = 0,
+ 	.ies_present = true,
+ 	.base_names = mt8183_pinctrl_register_base_names,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 50d6893..9f4224f 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -718,6 +718,22 @@ static int mtk_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
+ 	return pinctrl_gpio_direction_output(chip->base + gpio);
+ }
+ 
++static int mtk_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
++{
++	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
++	const struct mtk_pin_desc *desc;
++
++	if (!hw->eint)
++		return -ENOTSUPP;
++
++	desc = (const struct mtk_pin_desc *)&hw->soc->pins[offset];
++
++	if (desc->eint.eint_n == EINT_NA)
++		return -ENOTSUPP;
++
++	return mtk_eint_find_irq(hw->eint, desc->eint.eint_n);
++}
++
+ static int mtk_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+ 			       unsigned long config)
+ {
+@@ -751,6 +767,7 @@ static int mtk_build_gpiochip(struct mtk_pinctrl *hw, struct device_node *np)
+ 	chip->direction_output	= mtk_gpio_direction_output;
+ 	chip->get		= mtk_gpio_get;
+ 	chip->set		= mtk_gpio_set;
++	chip->to_irq		= mtk_gpio_to_irq,
+ 	chip->set_config	= mtk_gpio_set_config,
+ 	chip->base		= -1;
+ 	chip->ngpio		= hw->soc->npins;
+@@ -871,6 +888,11 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev,
+ 	if (err)
+ 		return err;
+ 
++	err = mtk_build_eint(hw, pdev);
++	if (err)
++		dev_warn(&pdev->dev,
++			 "Failed to add EINT, but pinctrl still can work\n");
++
+ 	/* Build gpiochip should be after pinctrl_enable is done */
+ 	err = mtk_build_gpiochip(hw, pdev->dev.of_node);
+ 	if (err) {
 -- 
 2.7.4
