@@ -1,8 +1,8 @@
 From: <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: [PATCH v2 07/22] pinctrl: mediatek: add drv register support to
+Subject: [PATCH v2 05/22] pinctrl: mediatek: extend struct mtk_pin_soc to
  pinctrl-mtk-common-v2.c
-Date: Sat, 8 Sep 2018 19:07:23 +0800
-Message-ID: <5a7880e3885ba8a1c51ca28a0753228eeeeb9ec7.1536404280.git.sean.wang@mediatek.com>
+Date: Sat, 8 Sep 2018 19:07:21 +0800
+Message-ID: <17ff79fcf3df7c7208b6cda6f207e5e96c4d6c7e.1536404280.git.sean.wang@mediatek.com>
 References: <cover.1536404280.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -24,75 +24,74 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 
-Certain SoCs have to program DRV register to configure driving
-strength so that we add it in the existing path as an option.
+Add two parameters gpio_m and eint_m for configuring GPIO mode and EINT
+mode, they might be varying depend on SoC.
 
 Signed-off-by: Ryder.Lee <ryder.lee-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 Signed-off-by: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 ---
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 38 ++++++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |  5 ++++
- 2 files changed, 43 insertions(+)
+ drivers/pinctrl/mediatek/pinctrl-moore.c         | 4 ++--
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c        | 2 ++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h | 5 ++++-
+ 3 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 886b40e..3f09179 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -242,3 +242,41 @@ int mtk_pinconf_drive_get(struct mtk_pinctrl *hw,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
+index ba7511d..b412b65 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-moore.c
++++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
+@@ -63,7 +63,7 @@ static int mtk_pinmux_gpio_request_enable(struct pinctrl_dev *pctldev,
+ {
+ 	struct mtk_pinctrl *hw = pinctrl_dev_get_drvdata(pctldev);
  
- 	return 0;
+-	return mtk_hw_set_value(hw, pin, PINCTRL_PIN_REG_MODE, MTK_GPIO_MODE);
++	return mtk_hw_set_value(hw, pin, PINCTRL_PIN_REG_MODE, hw->soc->gpio_m);
  }
-+
-+/* Revision 1 */
-+int mtk_pinconf_drive_set_rev1(struct mtk_pinctrl *hw,
-+			       const struct mtk_pin_desc *desc, u32 arg)
-+{
-+	const struct mtk_drive_desc *tb;
-+	int err = -ENOTSUPP;
-+
-+	tb = &mtk_drive[desc->drv_n];
-+
-+	if ((arg >= tb->min && arg <= tb->max) && !(arg % tb->step)) {
-+		arg = (arg / tb->step - 1) * tb->scal;
-+
-+		err = mtk_hw_set_value(hw, desc->number, PINCTRL_PIN_REG_DRV,
-+				       arg);
-+		if (err)
-+			return err;
-+	}
-+
-+	return err;
-+}
-+
-+int mtk_pinconf_drive_get_rev1(struct mtk_pinctrl *hw,
-+			       const struct mtk_pin_desc *desc, int *val)
-+{
-+	const struct mtk_drive_desc *tb;
-+	int err, val1;
-+
-+	tb = &mtk_drive[desc->drv_n];
-+
-+	err = mtk_hw_get_value(hw, desc->number, PINCTRL_PIN_REG_DRV, &val1);
-+	if (err)
-+		return err;
-+
-+	*val = ((val1 & 0x7) / tb->scal + 1) * tb->step;
-+
-+	return 0;
-+}
+ 
+ static int mtk_pinmux_gpio_set_direction(struct pinctrl_dev *pctldev,
+@@ -580,7 +580,7 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
+ 		return err;
+ 
+ 	err = mtk_hw_set_value(hw, gpio_n, PINCTRL_PIN_REG_MODE,
+-			       MTK_GPIO_MODE);
++			       hw->soc->eint_m);
+ 	if (err)
+ 		return err;
+ 
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+index a0045bb..2fe1f27e 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+@@ -765,6 +765,8 @@ static const struct mtk_pin_soc mt7622_data = {
+ 	.funcs = mt7622_functions,
+ 	.nfuncs = ARRAY_SIZE(mt7622_functions),
+ 	.eint_hw = &mt7622_eint_hw,
++	.gpio_m	= 1,
++	.eint_m = 1,
+ };
+ 
+ static const struct of_device_id mt7622_pinctrl_of_match[] = {
 diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-index 727e5aa..cbc9a720 100644
+index a8e12ac..6041024 100644
 --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
 +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-@@ -175,4 +175,9 @@ int mtk_pinconf_drive_set(struct mtk_pinctrl *hw,
- int mtk_pinconf_drive_get(struct mtk_pinctrl *hw,
- 			  const struct mtk_pin_desc *desc, int *val);
+@@ -9,7 +9,6 @@
+ #ifndef __PINCTRL_MTK_COMMON_V2_H
+ #define __PINCTRL_MTK_COMMON_V2_H
  
-+int mtk_pinconf_drive_set_rev1(struct mtk_pinctrl *hw,
-+			       const struct mtk_pin_desc *desc, u32 arg);
-+int mtk_pinconf_drive_get_rev1(struct mtk_pinctrl *hw,
-+			       const struct mtk_pin_desc *desc, int *val);
+-#define MTK_GPIO_MODE  1
+ #define MTK_INPUT      0
+ #define MTK_OUTPUT     1
+ #define MTK_DISABLE    0
+@@ -142,6 +141,10 @@ struct mtk_pin_soc {
+ 	unsigned int			nfuncs;
+ 	const struct mtk_eint_regs	*eint_regs;
+ 	const struct mtk_eint_hw	*eint_hw;
 +
- #endif /* __PINCTRL_MTK_COMMON_V2_H */
++	/* Specific parameters per SoC */
++	u8				gpio_m;
++	u8				eint_m;
+ };
+ 
+ struct mtk_pinctrl {
 -- 
 2.7.4
