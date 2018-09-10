@@ -1,85 +1,161 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4 0/8] Introduce the for_each_set_clump macro
-Date: Mon, 10 Sep 2018 17:47:24 +0300
-Message-ID: <20180910144724.GY11447@smile.fi.intel.com>
-References: <cover.1526400945.git.vilhelm.gray@gmail.com>
- <CACRpkdbRH-Bz3BoczD+YmaSGqtoeCwtvGj4dGm8PKRKYFXTdKA@mail.gmail.com>
- <20180905150348.GA27089@sophia>
- <CACRpkdah-CSkdmpYQ_sgOFNqXMD5mMLkmRDRBszK+twPbRNLpA@mail.gmail.com>
+From: vitor <Vitor.Soares@synopsys.com>
+Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
+Date: Mon, 10 Sep 2018 17:16:54 +0100
+Message-ID: <b37a5152-d31a-7b27-f5e3-7abee68d0798@synopsys.com>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+ <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
+ <20180824143934.6d6b6487@bbrezillon>
+ <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
+ <20180824201600.7d80bca9@bbrezillon>
+ <fe839027-c4d7-4d6f-412b-5b315cbc7a39@synopsys.com>
+ <20180828140209.29155d00@bbrezillon>
+ <4DBE768F-3CDC-41BE-9CC8-E294E7277CB1@cadence.com>
+ <8abfb007-d755-36a4-5960-fddd61d04aa2@synopsys.com>
+ <3D2681D9-1ACC-42FF-9FAB-D86B3C689003@cadence.com>
+ <9584757a-e7e2-5bfe-fc2c-e9bc14ad65a8@synopsys.com>
+ <25862F03-9823-42B0-87AC-AE36D7E9C780@cadence.com>
+ <CAK8P3a3pkddD9VnogYryQKoL9Z_5qVRBXd6yr1z6CqGU692rXg@mail.gmail.com>
+ <20180906151437.4259d6fc@bbrezillon> <20180906152055.5618d235@bbrezillon>
+ <a08a0f8b-395b-f956-47d1-e29e0de4aae9@synopsys.com>
+ <20180906161443.0f76b246@bbrezillon>
+ <5a2ed122-b56f-421b-34e0-74ef551b76b8@synopsys.com>
+ <20180906180643.3b1420fc@bbrezillon>
+ <B6FB5A1F-EBE3-4A30-A27F-1051969F0E25@cadence.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdah-CSkdmpYQ_sgOFNqXMD5mMLkmRDRBszK+twPbRNLpA@mail.gmail.com>
+In-Reply-To: <B6FB5A1F-EBE3-4A30-A27F-1051969F0E25@cadence.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Przemyslaw Gaj <pgaj@cadence.com>, Boris Brezillon <boris.brezillon@bootlin.com>, vitor <Vitor.Soares@synopsys.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, gregkh <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@ke>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 09:54:47AM +0200, Linus Walleij wrote:
-> On Wed, Sep 5, 2018 at 5:04 PM William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
-> > On Wed, May 16, 2018 at 04:03:51PM +0200, Linus Walleij wrote:
-> > >On Tue, May 15, 2018 at 6:22 PM, William Breathitt Gray
-> > ><vilhelm.gray@gmail.com> wrote:
-> > >
-> > >> For example, suppose you would like to iterate over a 16-bit integer 4
-> > >> bits at a time, skipping over 4-bit groups with no set bit, where XXXX
-> > >> represents the current 4-bit group:
-> > >>
-> > >>     Example:        1011 1110 0000 1111
-> > >>     First loop:     1011 1110 0000 XXXX
-> > >>     Second loop:    1011 XXXX 0000 1111
-> > >>     Third loop:     XXXX 1110 0000 1111
-> > >>
-> > >> Each iteration of the loop returns the next 4-bit group that has at
-> > >> least one set bit.
-> > >>
-> > >> The for_each_set_clump macro has six parameters:
-> > >>
-> > >>     * clump: set to current clump index for the iteration
-> > >>     * index: set to current bitmap word index for the iteration
-> > >>     * offset: bits offset of the found clump in the bitmap word
-> > >>     * bits: bitmap to search within
-> > >>     * size: bitmap size in number of clumps
-> > >>     * clump_size: clump size in number of bits
-> > >>
-> > >> The clump_size argument can be an arbitrary number of bits and is not
-> > >> required to be a multiple of 2.
-> > >
-> > >I must say I'm impressed. Very nice arithmetics going on there.
-> > >
-> > >If I can get some ACK for the bitops patch I'd be happy to merge
-> > >it all through the GPIO tree. The users are pretty clear cut.
-> > >
-> > >BTW: if I could, I would pull out Donald Knuth's "The Art of Computer
-> > >Programming vol 4A" chapter 7.1.3 "Bitwise Tricks and Techniques"
-> > >to see what he has to say about the subject, but I don't have
-> > >that book as it turns out.
-> > >
-> > >Yours,
-> > >Linus Walleij
-> >
-> > Hi Linus,
-> >
-> > I'd like to get this patchset merged, but I'm aware that we haven't yet
-> > received additional ACKs in the past couple months. Are there any
-> > changes you would like made, or should I resubmit this patchset with
-> > additional CCs in the hopes of some ACKs for the bitops patch?
-> 
-> It seems Andy wanted some time and he had ~4 months now
-> so either he forgot it or has way too much to do.
-
-Sorry, indeed, it got piled under huge backlog I have.
-
-> 
-> I would say send this patch to Andrew Morton (the bitops patches)
-> so he can decide on it. He has the right bird's eye view on this
-> kind of things.
-
-Agreed, and please add Rasmus as well.
+Hi,
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+On 06-09-2018 17:17, Przemyslaw Gaj wrote:
+>
+> ﻿On 9/6/18, 6:07 PM, "Boris Brezillon" <boris.brezillon@bootlin.com> wrote:
+>
+>      EXTERNAL MAIL
+>      
+>      
+>      On Thu, 6 Sep 2018 16:17:58 +0100
+>      vitor <Vitor.Soares@synopsys.com> wrote:
+>      
+>      > Hi Boris,
+>      >
+>      >
+>      > On 06-09-2018 15:14, Boris Brezillon wrote:
+>      > > On Thu, 6 Sep 2018 14:50:03 +0100
+>      > > vitor <Vitor.Soares@synopsys.com> wrote:
+>      > >
+>      > >> Hi,
+>      > >>
+>      > >>
+>      > >> On 06-09-2018 14:20, Boris Brezillon wrote:
+>      > >>> On Thu, 6 Sep 2018 15:14:37 +0200
+>      > >>> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+>      > >>>
+>      > >>>> On Thu, 6 Sep 2018 14:59:46 +0200
+>      > >>>> Arnd Bergmann <arnd@arndb.de> wrote:
+>      > >>>>
+>      > >>>>> On Thu, Sep 6, 2018 at 2:43 PM Przemyslaw Gaj <pgaj@cadence.com> wrote:
+>      > >>>>>> Hi Boris, Vitor,
+>      > >>>>>>
+>      > >>>>>> This repository does not contain full kernel sources, but it should be enough to discuss mastership request feature.
+>      > >>>>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_przemekgaj_i3c-2Dlinux_commit_d54fe68a9d3e573c0c454a2c6f1afafc20142ec5&d=DwICAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=qVuU64u9x77Y0Kd0PhDK_lpxFgg6PK9PateHwjb_DY0&m=Q9DWw3KGmshGw0f5QTiffbpbESyUlPx6KmASuDBtX9Y&s=HHE_y1kyMszJvP_tSP9JkDlPYxDywBeHwkMGgCR11uI&e=
+>      > >>>>>>
+>      > >>>>>> Please keep in mind that this is initial version, but mastership works correctly. I added one property to DT to reflect relationship between masters.
+>      > >>>>>> It is possible to request mastership on demand (using sysfs. Useful in case when Linux machine is equipped only with secondary master controller) or automatically change operation mode when device driver wants to read/write something from/to device.
+>      > >>>>>>
+>      > >>>>>> I'm sure I will have to rework something because this was implemented on sources from PATCH v4. I saw that Boris released v7 yesterday :)
+>      > >>>>> Can you explain the reason for having a user space interface and DT property?
+>      > >>>>> I thought we had concluded earlier that we wouldn't need that, but it's possible
+>      > >>>>> that I missed something in the discussion since then.
+>      > >>>> I don't think the sysfs knob is needed, this being said, after thinking
+>      > >>>> a bit more about mastership handover and the secondary master case, I
+>      > >>>> think we have something important to solve.
+>      > >>>>
+>      > >>>> When a master is not in control of the bus, it gets informed of devices
+>      > >>>> present on the bus by monitoring DAA or DEFSLVS broadcast events. That
+>      > >>>> means the secondary master should populate the bus with I3C/I2C devices
+>      > >>>> on such events, but that's not enough, because DEFSLVS/DAA do not
+>      > >>>> provide all device info.Some of them (like read/write/ibi limitations)
+>      > >>>> require extra CCC commands, and, to send those CCC commands, the
+>      > >>>> secondary master must claim the bus. We could add a case where we
+>      > >>>> declare devices as partially discovered until the master acquires
+>      > >>>> ownership of the bus, but that means part of the data returned by
+>      > >>>> i3c_device_get_info() will be inaccurate, which might have an impact on
+>      > >>>> some i3c driver ->probe() functions.
+>      > >>> Hm, one possible solution would be to register partially discovered
+>      > >>> devices to the device model and let i3c_device_get_info() claim the bus
+>      > >>> and request missing data when needed. This way, if the driver needs to
+>      > >>> call i3c_device_get_info() in its probe path, it should work just fine.
+>      > >> Why don't use the i3c_master_add_i3c_dev_locked that job? It create,
+>      > >> attach and retrieve the device info.
+>      > > When will you call i3c_master_add_i3c_dev_locked()? After receiving a
+>      > > DEFSLVS interrupt/event? When that happens you're not in control of the
+>      > > bus, which means you'll have to force bus ownership handover. Is this
+>      > > really what we want?
+>      > >
+>      > > These are not rhetorical questions, I'm really asking for your opinion
+>      > > here.
+>      > What I understand from last discussion was that every time that device
+>      > need to do something (private messages) on the bus and don't have the
+>      > bus control it should force ownership handover.
+>      > If my understanding is correct this can be also applied to CCC commands.
+>      
+>      Sure, but the question is more, when do we want to do that?
+>      
+>      >
+>      > >
+>      > >> This can be triggered after the secondary master receive ENEC MR until
+>      > >> them is keep in the driver memory.
+>      > > But that means no-one will actually trigger a mastership request,
+>      > > because devices won't be registered until all info are available. If we
+>      > > take this path, we should have a way to explicitly trigger a mastership
+>      > > request (sysfs knob or any other means).
+>      > By the current flow that we have now, we enable the IBI events at the
+>      > end of .do_daa. At this time the main master bus is initialized with all
+>      > devices.
+>      >
+>      >  From the point of view of secondary master, it first participate on DAA
+>      > process, next it send its info (Main master do
+>      > i3c_master_retrieve_dev_info()) and them receive DEFSLVS. In the stage
+>      > it cannot request the bus mastership it need the MR enable.
+>      
+>      You mean the broadcast ENEC(MR) event, right? Then yes, this one is
+>      probably missing (or maybe I added it in the master controller driver,
+>      I don't remember).
+>      
+>      >
+>      > So, what I would suggest is to keep DEFSLVS data in secondary master
+>      > driver memory . When secondary master receive the MR enable, it can get
+>      > the bus ownership and do i3c_master_add_i3c_dev_locked() and each device
+>      > in DEFSLVS command. After this step delegate the bus ownership to the
+>      > main master.
+>      
+>      That's an option, indeed.
+>      
+>      >
+>      > What do you think about this?
+>      
+>      Sounds like a good start. If MR is rejected by the master, we will just
+>      keep all devices in an unregistered state. We can also add a sysfs
+>      entry to manually re-trigger this operation in case the initial one
+>      failed.
+>      
+> This everything sounds like my previous version. Enec event was missing,
+> everything was triggered manually from sysfs.
+>
+Does make sense to do the ->bus_init() only after receive the first 
+ENEC-MR event? The bus initialization assume that we already know the 
+I2C devices present on the line (bus->mode) and i3c_master_set_info only 
+have meaning if the device will act as a master otherwise it can act as 
+"slave".
+
+Best regards,
+Vitor Soares
