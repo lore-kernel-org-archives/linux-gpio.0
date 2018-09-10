@@ -1,65 +1,81 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH 2/5] gpio: davinci: Use dev name for label and automatic
- base selection
-Date: Mon, 10 Sep 2018 13:07:19 +0530
-Message-ID: <b1f74d63-c9e8-2a7f-bd13-8f5fff27fc22@ti.com>
-References: <20180831191326.25106-1-afd@ti.com>
- <20180831191326.25106-2-afd@ti.com>
- <2a02c241-ac91-1bac-380d-122858bb03c3@ti.com>
- <CACRpkdYvNeKyfRf5Et5zC4=hcu9cfDubftRFRHtrKLN-5Snd1Q@mail.gmail.com>
- <040ce524-f6e2-81a2-68db-57a645de22ea@ti.com>
- <0e199aa3-2d9d-4e7d-af23-8523722f017a@ti.com>
- <CACRpkdYcuSpfZ0=UFUOx_-5kaAtCA4=AyXmSMbfrcqjf0r_xmQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
+Date: Mon, 10 Sep 2018 09:45:44 +0200
+Message-ID: <CACRpkdaVXiE70Ux_-idKz6ovgGz1KEZ7qau-i_3FpN_q=w5npQ@mail.gmail.com>
+References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+ <20180903103358.GC20333@w540> <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <20180903112517.GE20333@w540>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYcuSpfZ0=UFUOx_-5kaAtCA4=AyXmSMbfrcqjf0r_xmQ@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20180903112517.GE20333@w540>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Keerthy <j-keerthy@ti.com>, "Andrew F. Davis" <afd@ti.com>, Kevin Hilman <khilman@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Lechner <david@lechnology.com>, Adam Ford <aford173@gmail.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: jacopo <jacopo@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Simon Horman <horms@verge.net.au>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Monday 10 September 2018 12:55 PM, Linus Walleij wrote:
-> On Sat, Sep 8, 2018 at 9:41 PM Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
->> On 09/06/2018 09:16 AM, Keerthy wrote:
-> 
->>> Okay now its numbered differently:
->>>
->>> cat /sys/class/gpio/gpiochip340/ngpio
->>> 144
->>>
->>> cat /sys/class/gpio/gpiochip272/ngpio
->>> 68
-> (...)
-> 
-> So:
-> 
->>>> Are there applications that rely on the sysfs ABI on DaVinci?
->>>>
->>>> In that case base needs to be prerseved.
->>
->> Not only base, but label also - /sys/class/gpio/gpiochip0/label, as this is
->> the way to find proper GPIO chip in sysfs using legacy GPIO ABI.
->>
->> Linus, this platform is old and most of the users do not use new ABI (chardev),
->> so we could try change this, but need to be prepared for regressions reports.
-> 
-> So what I'm trying to ask you guys is if there are applications that you
-> are aware of that use the old ABI, and who will upgrade their
-> kernels and be upset.
-> 
-> We must not break userspace, but as you know if a tree falls in the
-> forest and nobody is there to hear it, it doesn't make a sound.
-> 
-> If you're not aware of any such applications I guess we should try
-> changing this.
+On Mon, Sep 3, 2018 at 1:25 PM jacopo mondi <jacopo@jmondi.org> wrote:
+> On Mon, Sep 03, 2018 at 11:03:18AM +0000, Phil Edworthy wrote:
+> > On 03 September 2018 11:34, jacopo mondi wrote:
+> > > On Thu, Aug 30, 2018 at 02:12:52PM +0100, Phil Edworthy wrote:
+> > > > This implements the pinctrl driver for the RZ/N1 family of devices,=
+ including
+> > > > the R9A06G032 (RZ/N1D) device.
+(...)
+> > > Using standard pinctroller bindings pin configuration properties:
+> > >
+> > >          &pinctrl {
+> > >                  pinsuart0: uart0  {
+> > >                         pinsuart_tx0 {
+> > >                                 pinmux =3D <103, UART0_I>;  /* UART0_=
+TXD */
+> > >                         };
+> > >
+> > >                         pinsuart_rx0 {
+> > >                                  pinmux =3D <104, UART0_I>; /* UART0_=
+RXD */
+> > >                                  bias-pull-up;
+> > >                         };
+> > >                  };
+> > >          };
+> > >
+> > > Is there anything I am missing? Maybe from the interaction with
+> > > "another OS/core running concurrently" you mentioned? In this case if
+> > > you only have to perform pin configuration (because muxing is handled
+> > > already) things are even simpler, just use the pin configuration
+> > > bindings, without involving muxing at all:
+> > >
+> > >         &pinctrl {
+> > >                 pinsuart_conf: uart0 {
+> > >                         pins =3D <103, 104>;
+> > >                         bias-pull-up;
+> > >                  };
+> > >          };
+> >
+> > Sorry I didn=E2=80=99t address your point.
+> > The only reason we want to use new properties is so the driver can proc=
+ess
+> > dts files that have been generated from an existing PinMux App. That ou=
+tput
+> > is used by VxWorks as well as our out-of-tree Linux port. If that is no=
+t a
+> > good enough reason to add new properties, then I can't see any technica=
+l
+> > reason not to use the existing bindings.
+>
+> I see. I step back then and let this to be handled by the pinctrl
+> subsystem people and maintainer :)
 
-Personally I am not really aware of any application which relies on the
-ABI. I may have some scripts, but I can adjust them. I am also copying
-some frequent users of DaVinci in mainline for any comments from them.
+I rely on Geert Uytterhoeven and Laurent Pinchart to tell me
+what is best for Renesas.
 
-Thanks,
-Sekhar
+A good hint is that Geert will merge this driver when finished and
+send it to me, so if he's not happy it is unlikely to get merged.
+So make sure Geert is happy and I will be happy too.
+
+Geert, as I, likely rely on the DT maintainers to tell me what is
+best for DT. But with pinctrl they often pass it back to us.
+
+Yours,
+Linus Walleij
