@@ -1,45 +1,48 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
-Date: Mon, 10 Sep 2018 12:46:00 +0300
-Message-ID: <8834220.fknQf5gIhd@avalon>
-References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com> <TY1PR01MB17697A2D3BCA85B3BFC1FE21F5020@TY1PR01MB1769.jpnprd01.prod.outlook.com> <CACRpkdad=U5YACQ6k86A4BJo9-U4bC61A0kJ8kONSHu+u3BPyA@mail.gmail.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: RE: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
+Date: Mon, 10 Sep 2018 09:54:13 +0000
+Message-ID: <TY1PR01MB176944F61B503C4BCE7FD03CF5050@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
+ <20180903103358.GC20333@w540>
+ <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdU-CcckKueeT5r9-jCoNr0H5KhzrAMbL4LeFta_fAqWuA@mail.gmail.com>
+ <TY1PR01MB17697A2D3BCA85B3BFC1FE21F5020@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CACRpkdad=U5YACQ6k86A4BJo9-U4bC61A0kJ8kONSHu+u3BPyA@mail.gmail.com>
+ <CAMuHMdUX2Bq+t0yaVYsz6VzX7ZNw_gf_EHc2BuaR9bZcZ=jV7Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdad=U5YACQ6k86A4BJo9-U4bC61A0kJ8kONSHu+u3BPyA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUX2Bq+t0yaVYsz6VzX7ZNw_gf_EHc2BuaR9bZcZ=jV7Q@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>, Geert Uytterhoeven <geert@linux-m68k.org>, jacopo <jacopo@jmondi.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Simon Horman <horms@verge.net.au>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Simon Horman <horms@verge.net.au>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello,
-
-On Monday, 10 September 2018 10:48:58 EEST Linus Walleij wrote:
-> On Wed, Sep 5, 2018 at 11:59 AM Phil Edworthy wrote:
-> > On 05 September 2018 10:37, Geert Uytterhoeven wrote:
-> > > Have the VxWorks DT bindings been submitted for review to the devicetree
-> > > mailing list?
-> > 
-> > I'm not involved with the VxWorks port, but I am pretty sure that they
-> > have not been submitted for review.
-> 
-> We have had other cases where deployments on other OSes have been
-> establishing bindings (even not very pretty ones).
-
-I hardly see that as a good reason to accept the bindings blindly. If they 
-haven't been submitted for review, it's their problem, not ours. Even worse in 
-my opinion is the fact that those bindings are used by the "out-of-tree Linux 
-port". We've hammered the "upstream first" message for years if not decades, 
-if the industry still can't get it, I don't see why we should be the ones 
-suffering.
-
-No ack from me for these new bindings, sorry.
-
-> Examples include typically the Power MacIntosh and the original SPARC
-> bindings.
-
--- 
-Regards,
-
-Laurent Pinchart
+SGkgR2VlcnQsIExhdXJlbnQsDQoNCk9uIDEwIFNlcHRlbWJlciAyMDE4IDEwOjQyIEdlZXJ0IFV5
+dHRlcmhvZXZlbiB3cm90ZToNCj4gT24gTW9uLCBTZXAgMTAsIDIwMTggYXQgOTo0OSBBTSBMaW51
+cyBXYWxsZWlqICB3cm90ZToNCj4gPiBPbiBXZWQsIFNlcCA1LCAyMDE4IGF0IDExOjU5IEFNIFBo
+aWwgRWR3b3J0aHkgd3JvdGU6DQo+ID4gPiBPbiAwNSBTZXB0ZW1iZXIgMjAxOCAxMDozNywgR2Vl
+cnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiA+DQo+ID4gPiA+IEhhdmUgdGhlIFZ4V29ya3MgRFQg
+YmluZGluZ3MgYmVlbiBzdWJtaXR0ZWQgZm9yIHJldmlldyB0byB0aGUNCj4gPiA+ID4gZGV2aWNl
+dHJlZSBtYWlsaW5nIGxpc3Q/DQo+ID4NCj4gPiA+IEknbSBub3QgaW52b2x2ZWQgd2l0aCB0aGUg
+VnhXb3JrcyBwb3J0LCBidXQgSSBhbSBwcmV0dHkgc3VyZSB0aGF0DQo+ID4gPiB0aGV5IGhhdmUg
+bm90IGJlZW4gc3VibWl0dGVkIGZvciByZXZpZXcuDQo+ID4NCj4gPiBXZSBoYXZlIGhhZCBvdGhl
+ciBjYXNlcyB3aGVyZSBkZXBsb3ltZW50cyBvbiBvdGhlciBPU2VzIGhhdmUgYmVlbg0KPiA+IGVz
+dGFibGlzaGluZyBiaW5kaW5ncyAoZXZlbiBub3QgdmVyeSBwcmV0dHkgb25lcykuDQo+ID4NCj4g
+PiBFeGFtcGxlcyBpbmNsdWRlIHR5cGljYWxseSB0aGUgUG93ZXIgTWFjSW50b3NoIGFuZCB0aGUg
+b3JpZ2luYWwgU1BBUkMNCj4gPiBiaW5kaW5ncy4NCj4gDQo+IFdoaWNoIHByZWRhdGVkIEZEVCBz
+dXBwb3J0IGluIExpbnV4IGJ5IG1vcmUgdGhhbiBhIGRlY2FkZSwgd2l0aCB0aGUgbGF0dGVyDQo+
+IHByZWRhdGluZyBldmVuIHAxMjc1Pw0KPiANCj4gV2hpbGUgSSBzZWUgbWVyaXQgaW4gY29tcGF0
+aWJpbGl0eSB3aXRoIG90aGVyIGV4aXN0aW5nIE9TZXMsIEkgcHJlZmVyIG5vdCB0bw0KPiBkZXZp
+YXRlIGZyb20gc3RhbmRhcmQgRFQgYmluZGluZ3MsIGlmIHRoZXkgZXhpc3QuDQo+IA0KPiBPdmVy
+IHRpbWUsIHdlJ3ZlIGV2ZW4gbWlncmF0ZWQgZnJvbSBSZW5lc2FzLXNwZWNpZmljIERUIGJpbmRp
+bmdzIHRvDQo+IHN0YW5kYXJkIERUIGJpbmRpbmdzLCBpbiBhbHJlYWR5IHVwc3RyZWFtZWQgU29D
+IHN1cHBvcnQuDQo+IA0KPiBJZiBuZWVkZWQsIEkgZ3Vlc3MgYSBzY3JpcHQgY2FuIGJlIHdyaXR0
+ZW4gdG8gY29udmVydCBEVFMgZmlsZXMgZnJvbSB0aGUgb2xkIHRvDQo+IHRoZSBuZXcgc3ludGF4
+Pw0KDQpUaGFua3MgZm9yIHlvdXIgY29tbWVudHMsIHRoYXQgaXMgYWxzbyBteSBwcmVmZXJlbmNl
+LiBTaW5jZSBJIGhhdmUgdG8ganVnZ2xlDQplZmZvcnQgdnMuIGZlYXR1cmVzIEkgdGhvdWdodCBp
+dCBiZXN0IHRvIHNlbmQgdGhlIGRyaXZlciB3aXRoIGV4aXN0aW5nIG91dC1vZi10cmVlDQpiaW5k
+aW5ncyBmaXJzdCBqdXN0IHRvIHNlZS4NCg0KSSdsbCBtb2RpZnkgdGhlIGRyaXZlciBmb3IgdGhl
+IHN0YW5kYXJkIGJpbmRpbmdzLg0KDQpUaGFua3MNClBoaWwNCg==
