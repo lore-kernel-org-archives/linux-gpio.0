@@ -1,43 +1,54 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/3] video: fbdev: omapfb: lcd_ams_delta: use GPIO
- lookup table
-Date: Mon, 10 Sep 2018 09:15:13 +0200
-Message-ID: <CACRpkdaunjy-k+ssCxVQTHjzCqGdzn3JRHyon8uU9Q8a3d9BXg@mail.gmail.com>
-References: <20180717231448.14958-1-jmkrzyszt@gmail.com> <20180909225605.16463-1-jmkrzyszt@gmail.com>
- <20180909225605.16463-2-jmkrzyszt@gmail.com>
+Subject: Re: [PATCH 2/5] gpio: davinci: Use dev name for label and automatic
+ base selection
+Date: Mon, 10 Sep 2018 09:25:10 +0200
+Message-ID: <CACRpkdYcuSpfZ0=UFUOx_-5kaAtCA4=AyXmSMbfrcqjf0r_xmQ@mail.gmail.com>
+References: <20180831191326.25106-1-afd@ti.com> <20180831191326.25106-2-afd@ti.com>
+ <2a02c241-ac91-1bac-380d-122858bb03c3@ti.com> <CACRpkdYvNeKyfRf5Et5zC4=hcu9cfDubftRFRHtrKLN-5Snd1Q@mail.gmail.com>
+ <040ce524-f6e2-81a2-68db-57a645de22ea@ti.com> <0e199aa3-2d9d-4e7d-af23-8523722f017a@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180909225605.16463-2-jmkrzyszt@gmail.com>
+In-Reply-To: <0e199aa3-2d9d-4e7d-af23-8523722f017a@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: ext Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Boris Brezillon <boris.brezillon@bootlin.com>, =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Mark Vasut <marek.vasut@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux-OMAP <linux-omap@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Keerthy <j-keerthy@ti.com>, "Andrew F. Davis" <afd@ti.com>, "Nori, Sekhar" <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 12:55 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+On Sat, Sep 8, 2018 at 9:41 PM Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> On 09/06/2018 09:16 AM, Keerthy wrote:
 
-> Now as Amstrad Delta board - the only user of this driver - provides
-> GPIO lookup tables, switch from GPIO numbers to GPIO descriptors and
-> use the table to locate required GPIO pins.
->
-> Declare static variables for storing GPIO descriptors and replace
-> gpio_ function calls with their gpiod_ equivalents. Move GPIO lookup
-> to the driver probe function so device initialization can be deferred
-> instead of aborted if a GPIO pin is not yet available.
->
-> Pin naming used by the driver should be followed while respective GPIO
-> lookup table is initialized by a board init code.
->
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> > Okay now its numbered differently:
+> >
+> > cat /sys/class/gpio/gpiochip340/ngpio
+> > 144
+> >
+> > cat /sys/class/gpio/gpiochip272/ngpio
+> > 68
+(...)
 
-Good work as usual:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+So:
 
-FWIW I think the entire drivers/video/fbdev/omap/*
-could be pretty easy to migrate to DRM if you compare
-the simple drivers/gpu/drm/pl111 or drivers/gpu/drm/tve200
-drivers. Just inspiration! :)
+> >> Are there applications that rely on the sysfs ABI on DaVinci?
+> >>
+> >> In that case base needs to be prerseved.
+>
+> Not only base, but label also - /sys/class/gpio/gpiochip0/label, as this is
+> the way to find proper GPIO chip in sysfs using legacy GPIO ABI.
+>
+> Linus, this platform is old and most of the users do not use new ABI (chardev),
+> so we could try change this, but need to be prepared for regressions reports.
+
+So what I'm trying to ask you guys is if there are applications that you
+are aware of that use the old ABI, and who will upgrade their
+kernels and be upset.
+
+We must not break userspace, but as you know if a tree falls in the
+forest and nobody is there to hear it, it doesn't make a sound.
+
+If you're not aware of any such applications I guess we should try
+changing this.
 
 Yours,
 Linus Walleij
