@@ -1,70 +1,85 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 0/3] Renesas R9A06G032 PINCTRL Driver
-Date: Mon, 10 Sep 2018 11:58:02 +0200
-Message-ID: <CAMuHMdVcmZuY2Uh-U7R8sKjpLGTvio1-W+jJrWZMgMoM+tZ=Zg@mail.gmail.com>
-References: <1535634775-19365-1-git-send-email-phil.edworthy@renesas.com>
- <20180903103358.GC20333@w540> <TY1PR01MB17697F04004A7C8CF1D21CC1F50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdU-CcckKueeT5r9-jCoNr0H5KhzrAMbL4LeFta_fAqWuA@mail.gmail.com>
- <TY1PR01MB17697A2D3BCA85B3BFC1FE21F5020@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CACRpkdad=U5YACQ6k86A4BJo9-U4bC61A0kJ8kONSHu+u3BPyA@mail.gmail.com>
- <CAMuHMdUX2Bq+t0yaVYsz6VzX7ZNw_gf_EHc2BuaR9bZcZ=jV7Q@mail.gmail.com> <TY1PR01MB176944F61B503C4BCE7FD03CF5050@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4 0/8] Introduce the for_each_set_clump macro
+Date: Mon, 10 Sep 2018 17:47:24 +0300
+Message-ID: <20180910144724.GY11447@smile.fi.intel.com>
+References: <cover.1526400945.git.vilhelm.gray@gmail.com>
+ <CACRpkdbRH-Bz3BoczD+YmaSGqtoeCwtvGj4dGm8PKRKYFXTdKA@mail.gmail.com>
+ <20180905150348.GA27089@sophia>
+ <CACRpkdah-CSkdmpYQ_sgOFNqXMD5mMLkmRDRBszK+twPbRNLpA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <TY1PR01MB176944F61B503C4BCE7FD03CF5050@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdah-CSkdmpYQ_sgOFNqXMD5mMLkmRDRBszK+twPbRNLpA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jacopo Mondi <jacopo@jmondi.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Simon Horman <horms@verge.net.au>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Phil,
-
-On Mon, Sep 10, 2018 at 11:54 AM Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> On 10 September 2018 10:42 Geert Uytterhoeven wrote:
-> > On Mon, Sep 10, 2018 at 9:49 AM Linus Walleij  wrote:
-> > > On Wed, Sep 5, 2018 at 11:59 AM Phil Edworthy wrote:
-> > > > On 05 September 2018 10:37, Geert Uytterhoeven wrote:
+On Mon, Sep 10, 2018 at 09:54:47AM +0200, Linus Walleij wrote:
+> On Wed, Sep 5, 2018 at 5:04 PM William Breathitt Gray
+> <vilhelm.gray@gmail.com> wrote:
+> > On Wed, May 16, 2018 at 04:03:51PM +0200, Linus Walleij wrote:
+> > >On Tue, May 15, 2018 at 6:22 PM, William Breathitt Gray
+> > ><vilhelm.gray@gmail.com> wrote:
 > > >
-> > > > > Have the VxWorks DT bindings been submitted for review to the
-> > > > > devicetree mailing list?
+> > >> For example, suppose you would like to iterate over a 16-bit integer 4
+> > >> bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+> > >> represents the current 4-bit group:
+> > >>
+> > >>     Example:        1011 1110 0000 1111
+> > >>     First loop:     1011 1110 0000 XXXX
+> > >>     Second loop:    1011 XXXX 0000 1111
+> > >>     Third loop:     XXXX 1110 0000 1111
+> > >>
+> > >> Each iteration of the loop returns the next 4-bit group that has at
+> > >> least one set bit.
+> > >>
+> > >> The for_each_set_clump macro has six parameters:
+> > >>
+> > >>     * clump: set to current clump index for the iteration
+> > >>     * index: set to current bitmap word index for the iteration
+> > >>     * offset: bits offset of the found clump in the bitmap word
+> > >>     * bits: bitmap to search within
+> > >>     * size: bitmap size in number of clumps
+> > >>     * clump_size: clump size in number of bits
+> > >>
+> > >> The clump_size argument can be an arbitrary number of bits and is not
+> > >> required to be a multiple of 2.
 > > >
-> > > > I'm not involved with the VxWorks port, but I am pretty sure that
-> > > > they have not been submitted for review.
+> > >I must say I'm impressed. Very nice arithmetics going on there.
 > > >
-> > > We have had other cases where deployments on other OSes have been
-> > > establishing bindings (even not very pretty ones).
+> > >If I can get some ACK for the bitops patch I'd be happy to merge
+> > >it all through the GPIO tree. The users are pretty clear cut.
 > > >
-> > > Examples include typically the Power MacIntosh and the original SPARC
-> > > bindings.
+> > >BTW: if I could, I would pull out Donald Knuth's "The Art of Computer
+> > >Programming vol 4A" chapter 7.1.3 "Bitwise Tricks and Techniques"
+> > >to see what he has to say about the subject, but I don't have
+> > >that book as it turns out.
+> > >
+> > >Yours,
+> > >Linus Walleij
 > >
-> > Which predated FDT support in Linux by more than a decade, with the latter
-> > predating even p1275?
+> > Hi Linus,
 > >
-> > While I see merit in compatibility with other existing OSes, I prefer not to
-> > deviate from standard DT bindings, if they exist.
-> >
-> > Over time, we've even migrated from Renesas-specific DT bindings to
-> > standard DT bindings, in already upstreamed SoC support.
-> >
-> > If needed, I guess a script can be written to convert DTS files from the old to
-> > the new syntax?
->
-> Thanks for your comments, that is also my preference. Since I have to juggle
-> effort vs. features I thought it best to send the driver with existing out-of-tree
-> bindings first just to see.
->
-> I'll modify the driver for the standard bindings.
+> > I'd like to get this patchset merged, but I'm aware that we haven't yet
+> > received additional ACKs in the past couple months. Are there any
+> > changes you would like made, or should I resubmit this patchset with
+> > additional CCs in the hopes of some ACKs for the bitops patch?
+> 
+> It seems Andy wanted some time and he had ~4 months now
+> so either he forgot it or has way too much to do.
 
-Thank you, much appreciated!
+Sorry, indeed, it got piled under huge backlog I have.
 
-Gr{oetje,eeting}s,
+> 
+> I would say send this patch to Andrew Morton (the bitops patches)
+> so he can decide on it. He has the right bird's eye view on this
+> kind of things.
 
-                        Geert
+Agreed, and please add Rasmus as well.
+
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+With Best Regards,
+Andy Shevchenko
