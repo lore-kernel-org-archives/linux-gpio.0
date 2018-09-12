@@ -1,40 +1,35 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] gpio: omap: Add level wakeup handling for omap4 based SoCs
-Date: Tue, 11 Sep 2018 17:42:52 -0700
-Message-ID: <20180912004252.GH5662@atomide.com>
-References: <20180910200624.4494-1-tony@atomide.com>
- <444bae18-9737-8e13-2a0f-c08863ae1336@ti.com>
- <20180911182419.GC5662@atomide.com>
- <a10ae1a9-ed6a-468e-5a3e-8c120bab9acf@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <a10ae1a9-ed6a-468e-5a3e-8c120bab9acf@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Tero Kristo <t-kristo@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Aditya Prayoga <aditya@kobol.io>
+Subject: [PATCH v2 0/1] gpio: mvebu: Add support for multiple PWM lines
+Date: Wed, 12 Sep 2018 12:51:54 +0800
+Message-ID: <1536727915-113932-1-git-send-email-aditya@kobol.io>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Richard Genoud <richard.genoud@gmail.com>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Gauthier Provost <gauthier@kobol.io>, Dennis Gilmore <dennis@ausil.us>, Aditya Prayoga <aditya@kobol.io>
 List-Id: linux-gpio@vger.kernel.org
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [180912 00:27]:
-> Thanks Tony, but it's still not completely clear -
-> it's important to see values of CLKSTCTRL before/after idle for not working
-> case and GPIO SYSC/SYSS registers. There are some combinations which may
-> affect on this. So, if you can, pls.
 
-Sure I'll do some reg dumps for you tomorrow as I just started
-an overnight test with randomly pinging the wlan interface
-from outside to make sure it wakes up and keeps idling.
+Hi everyone,
 
-Regards,
+Helios4, an Armada 388 based NAS SBC, provides 2 (4-pins) fan connectors.
+The PWM pins on both connector are connected to GPIO on bank 1. Current
+gpio-mvebu does not allow more than one PWM on the same bank.
 
-Tony
+Aditya
+
+---
+
+Changes v1->v2:
+  * Merge/squash "[Patch 2/2] gpio: mvebu: Allow to use non-default PWM counter"
+  * Allow only two PWMs as suggested by Andrew Lunn and Richard Genoud
+
+---
+
+Aditya Prayoga (1):
+  gpio: mvebu: Add support for multiple PWM lines per GPIO chip
+
+ drivers/gpio/gpio-mvebu.c | 73 ++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 60 insertions(+), 13 deletions(-)
+
+-- 
+2.7.4
