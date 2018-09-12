@@ -1,13 +1,17 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: unexpected side effect of "gpiolib: override irq_enable/disable"
-Date: Wed, 12 Sep 2018 17:30:35 +0200
-Message-ID: <f64fcb6a-172f-45e8-af8f-f1e7bae3b4d8@xs4all.nl>
-References: <20180912145829.hzklqndjasac2ap4@M43218.corp.atmel.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: omap: Add level wakeup handling for omap4 based SoCs
+Date: Wed, 12 Sep 2018 11:08:48 -0500
+Message-ID: <2cfe2f9d-a465-0568-bf48-8dcde535ff99@ti.com>
+References: <20180910200624.4494-1-tony@atomide.com>
+ <444bae18-9737-8e13-2a0f-c08863ae1336@ti.com>
+ <20180911182419.GC5662@atomide.com>
+ <a10ae1a9-ed6a-468e-5a3e-8c120bab9acf@ti.com>
+ <20180912004252.GH5662@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180912145829.hzklqndjasac2ap4@M43218.corp.atmel.com>
+In-Reply-To: <20180912004252.GH5662@atomide.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -18,55 +22,26 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, hans.verkuil@cisco.com, linus.walleij@linaro.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+To: Tony Lindgren <tony@atomide.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Tero Kristo <t-kristo@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Ludovic,
 
-On 09/12/2018 04:58 PM, Ludovic Desroches wrote:
-> Hi,
-> 
-> Using next-20180912, my kernel hangs during the boot. Git bisect tell me
-> that the cause of my issue is the commit "gpiolib: override
-> irq_enable/disable"
-> 
-> I dug further and this patch can have some side effects. When booting, I
-> have an infinite loop when trying to enable a gpio irq. I don't know if
-> the pinctrl-at91 driver is the only one concerned or not.
-> 
-> The pattern leading to this issue is quite simple: we have several gpio
-> controllers sharing the same irq_chip structure. Installing the
-> irq_enable/irq_disable hook works well the first time. The second time,
-> since the irq_enable has been altered to use gpiochip_irq_enable,
-> this latest function will call itself again and again by calling
-> irq_enable.
-> 
-> I think it should be better to have one irq_chip structure per gpio
-> controller. I am going to do a patch for pinctrl-at91. Excepting if you
-> think it has to be solved in a different way.
-> 
-> 
-> Ludovic
-> 
 
-Can you try this patch first?
+On 09/11/2018 07:42 PM, Tony Lindgren wrote:
+> * Grygorii Strashko <grygorii.strashko@ti.com> [180912 00:27]:
+>> Thanks Tony, but it's still not completely clear -
+>> it's important to see values of CLKSTCTRL before/after idle for not working
+>> case and GPIO SYSC/SYSS registers. There are some combinations which may
+>> affect on this. So, if you can, pls.
+> 
+> Sure I'll do some reg dumps for you tomorrow as I just started
+> an overnight test with randomly pinging the wlan interface
+> from outside to make sure it wakes up and keeps idling.
 
-Thanks!
+Pls, postpone this until we finish our discussion/debugging
 
-	Hans
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
----
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index efce534a269b..e09e4e439928 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1859,6 +1859,8 @@ static void gpiochip_set_irq_hooks(struct gpio_chip *gpiochip)
- 	}
- 	if (WARN_ON(gpiochip->irq.irq_enable))
- 		return;
-+	if (irqchip->irq_enable == gpiochip_irq_enable)
-+		return;
- 	gpiochip->irq.irq_enable = irqchip->irq_enable;
- 	gpiochip->irq.irq_disable = irqchip->irq_disable;
- 	irqchip->irq_enable = gpiochip_irq_enable;
+-- 
+regards,
+-grygorii
