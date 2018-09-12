@@ -1,178 +1,85 @@
-From: Aditya Prayoga <aditya@kobol.io>
-Subject: [PATCH v2 1/1] gpio: mvebu: Add support for multiple PWM lines per GPIO chip
-Date: Wed, 12 Sep 2018 12:51:55 +0800
-Message-ID: <1536727915-113932-2-git-send-email-aditya@kobol.io>
-References: <1536727915-113932-1-git-send-email-aditya@kobol.io>
+From: Niklas Cassel <niklas.cassel@linaro.org>
+Subject: Re: [PATCH v3 0/3] pinctrl: msm interrupt and muxing fixes
+Date: Wed, 12 Sep 2018 12:34:31 +0200
+Message-ID: <20180912103431.GA27204@centauri.ideon.se>
+References: <20180816200648.90458-1-swboyd@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1536727915-113932-1-git-send-email-aditya@kobol.io>
+Content-Disposition: inline
+In-Reply-To: <20180816200648.90458-1-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Richard Genoud <richard.genoud@gmail.com>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Gauthier Provost <gauthier@kobol.io>, Dennis Gilmore <dennis@ausil.us>, Aditya Prayoga <aditya@kobol.io>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Doug Anderson <dianders@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Allow more than 1 PWM request (eg. PWM fan) on the same GPIO chip. If
-the other PWM counter is unused, allocate it to next PWM request.
-The priority would be:
-1. Default counter assigned to the bank
-2. Unused counter that is assigned to other bank
+Hello Stephen,
 
-Since there are only two PWM counters, only two PWMs supported.
+I'm getting this warning on dragonboard 820c (msm8996) when booting linux-next:
 
-Signed-off-by: Aditya Prayoga <aditya@kobol.io>
----
- drivers/gpio/gpio-mvebu.c | 73 ++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 60 insertions(+), 13 deletions(-)
+[    3.211575] WARNING: CPU: 1 PID: 1 at drivers/pinctrl/qcom/pinctrl-msm.c:164 msm_pinmux_set_mux+0xc8/0x150
+[    3.212127] l28: ramp_delay not set
+[    3.215146] Modules linked in:
+[    3.215168] CPU: 1 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-rc2-next-2018904-00004-gd8c6804d9e9b #54
+[    3.215175] Hardware name: Qualcomm Technologies, Inc. DB820c (DT)
+[    3.215184] pstate: 60400005 (nZCv daif +PAN -UAO)
+[    3.215197] pc : msm_pinmux_set_mux+0xc8/0x150
+[    3.215206] lr : msm_pinmux_set_mux+0x30/0x150
+[    3.215213] sp : ffff00000803b880
+[    3.224815] l28: 925 mV
+[    3.228149] x29: ffff00000803b880 x28: ffff00000978a22c
+[    3.228172] x27: ffff000009f22000 x26: ffff000009640764
+[    3.228193] x25: 0000000000000000
+[    3.241956] x24: ffff8000d93f5f18
+[    3.241971] x23: ffff8000d93fec18 x22: 0000000000000000
+[    3.241992] x21: ffff000009100d10 x20: 000000000000003c
+[    3.252891] x19: 000000000000000a x18: ffffffffffffffff
+[    3.252913] x17: 00000000000017c7 x16: ffff000009fdaac0
+[    3.252935] x15: ffff000009cbe1c8
+[    3.257467] l29: supplied by regulator-dummy
+[    3.261743] x14: ffff8000d85fea14
+[    3.261757] x13: ffff8000d85fea13 x12: ffff8000d9f488b0
+[    3.261778] x11: 0000000005f5e0ff x10: 0000000000000040
+[    3.267734] x9 : ffff8000d91bae18 x8 : ffff8000d981efe8
+[    3.267755] x7 : ffff8000d981f128 x6 : 000000000000000a
+[    3.267776] x5 : 0000000000000040
+[    3.273347] l29: Bringing 0uV into 2800000-2800000uV
+[    3.278323] x4 : ffffffffffffffff
+[    3.278338] x3 : 000000000000000a x2 : 00000000ffffffc6
+[    3.278359] x1 : ffff000009d3eec8 x0 : 00000000000000f3
+[    3.282026] l29: ramp_delay not set
+[    3.292566] Call trace:
+[    3.292581]  msm_pinmux_set_mux+0xc8/0x150
+[    3.292590]  msm_pinmux_request_gpio+0x5c/0x68
+[    3.292599]  pin_request+0x154/0x2c0
+[    3.292608]  pinmux_request_gpio+0x60/0xa0
+[    3.296080] l29: 2800 mV
+[    3.301503]  pinctrl_gpio_request+0x148/0x1d8
+[    3.301514]  gpiochip_generic_request+0x2c/0x38
+[    3.301523]  gpiod_request_commit+0xc4/0x1a0
+[    3.301532]  gpiod_request+0x6c/0x110
+[    3.301544]  gpiod_get_index+0x134/0x360
+[    3.322166]  devm_gpiod_get_index+0x64/0xc0
+[    3.322174]  devm_gpiod_get_optional+0x38/0x58
+[    3.322185]  qcom_pcie_probe+0xa4/0x230
+[    3.322197]  platform_drv_probe+0x58/0xa8
+[    3.322207]  really_probe+0x280/0x3d8
+[    3.322215]  driver_probe_device+0x60/0x148
+[    3.322224]  __driver_attach+0x144/0x148
+[    3.322233]  bus_for_each_dev+0x84/0xd8
+[    3.322241]  driver_attach+0x30/0x40
+[    3.322250]  bus_add_driver+0x234/0x2a8
+[    3.322258]  driver_register+0x64/0x110
+[    3.322267]  __platform_driver_register+0x54/0x60
+[    3.322279]  qcom_pcie_driver_init+0x20/0x28
+[    3.322290]  do_one_initcall+0x94/0x3f8
+[    3.322301]  kernel_init_freeable+0x47c/0x528
+[    3.322315]  kernel_init+0x18/0x110
+[    3.322323]  ret_from_fork+0x10/0x1c
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 6e02148..2d46b87 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -92,9 +92,16 @@
- 
- #define MVEBU_MAX_GPIO_PER_BANK		32
- 
-+enum mvebu_pwm_counter {
-+	MVEBU_PWM_CTRL_SET_A = 0,
-+	MVEBU_PWM_CTRL_SET_B,
-+	MVEBU_PWM_CTRL_MAX
-+};
-+
- struct mvebu_pwm {
- 	void __iomem		*membase;
- 	unsigned long		 clk_rate;
-+	enum mvebu_pwm_counter   id;
- 	struct gpio_desc	*gpiod;
- 	struct pwm_chip		 chip;
- 	spinlock_t		 lock;
-@@ -128,6 +135,8 @@ struct mvebu_gpio_chip {
- 	u32		   level_mask_regs[4];
- };
- 
-+static struct mvebu_pwm	*mvebu_pwm_list[MVEBU_PWM_CTRL_MAX];
-+
- /*
-  * Functions returning addresses of individual registers for a given
-  * GPIO controller.
-@@ -594,34 +603,59 @@ static struct mvebu_pwm *to_mvebu_pwm(struct pwm_chip *chip)
- 	return container_of(chip, struct mvebu_pwm, chip);
- }
- 
-+static struct mvebu_pwm *mvebu_pwm_get_avail_counter(void)
-+{
-+	enum mvebu_pwm_counter i;
-+
-+	for (i = MVEBU_PWM_CTRL_SET_A; i < MVEBU_PWM_CTRL_MAX; i++) {
-+		if (!mvebu_pwm_list[i]->gpiod)
-+			return mvebu_pwm_list[i];
-+	}
-+	return NULL;
-+}
-+
- static int mvebu_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- {
- 	struct mvebu_pwm *mvpwm = to_mvebu_pwm(chip);
- 	struct mvebu_gpio_chip *mvchip = mvpwm->mvchip;
- 	struct gpio_desc *desc;
-+	struct mvebu_pwm *counter;
- 	unsigned long flags;
- 	int ret = 0;
- 
- 	spin_lock_irqsave(&mvpwm->lock, flags);
- 
--	if (mvpwm->gpiod) {
--		ret = -EBUSY;
--	} else {
--		desc = gpiochip_request_own_desc(&mvchip->chip,
--						 pwm->hwpwm, "mvebu-pwm");
--		if (IS_ERR(desc)) {
--			ret = PTR_ERR(desc);
-+	counter = mvpwm;
-+	if (counter->gpiod) {
-+		counter = mvebu_pwm_get_avail_counter();
-+		if (!counter) {
-+			ret = -EBUSY;
- 			goto out;
- 		}
- 
--		ret = gpiod_direction_output(desc, 0);
--		if (ret) {
--			gpiochip_free_own_desc(desc);
--			goto out;
--		}
-+		pwm->chip_data = counter;
-+	}
- 
--		mvpwm->gpiod = desc;
-+	desc = gpiochip_request_own_desc(&mvchip->chip,
-+					 pwm->hwpwm, "mvebu-pwm");
-+	if (IS_ERR(desc)) {
-+		ret = PTR_ERR(desc);
-+		goto out;
- 	}
-+
-+	ret = gpiod_direction_output(desc, 0);
-+	if (ret) {
-+		gpiochip_free_own_desc(desc);
-+		goto out;
-+	}
-+
-+	regmap_update_bits(mvchip->regs, GPIO_BLINK_CNT_SELECT_OFF +
-+			   mvchip->offset, BIT(pwm->hwpwm),
-+			   counter->id ? BIT(pwm->hwpwm) : 0);
-+	regmap_read(mvchip->regs, GPIO_BLINK_CNT_SELECT_OFF +
-+		    mvchip->offset, &counter->blink_select);
-+
-+	counter->gpiod = desc;
- out:
- 	spin_unlock_irqrestore(&mvpwm->lock, flags);
- 	return ret;
-@@ -632,6 +666,11 @@ static void mvebu_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
- 	struct mvebu_pwm *mvpwm = to_mvebu_pwm(chip);
- 	unsigned long flags;
- 
-+	if (pwm->chip_data) {
-+		mvpwm = (struct mvebu_pwm *) pwm->chip_data;
-+		pwm->chip_data = NULL;
-+	}
-+
- 	spin_lock_irqsave(&mvpwm->lock, flags);
- 	gpiochip_free_own_desc(mvpwm->gpiod);
- 	mvpwm->gpiod = NULL;
-@@ -648,6 +687,9 @@ static void mvebu_pwm_get_state(struct pwm_chip *chip,
- 	unsigned long flags;
- 	u32 u;
- 
-+	if (pwm->chip_data)
-+		mvpwm = (struct mvebu_pwm *) pwm->chip_data;
-+
- 	spin_lock_irqsave(&mvpwm->lock, flags);
- 
- 	val = (unsigned long long)
-@@ -695,6 +737,9 @@ static int mvebu_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	unsigned long flags;
- 	unsigned int on, off;
- 
-+	if (pwm->chip_data)
-+		mvpwm = (struct mvebu_pwm *) pwm->chip_data;
-+
- 	val = (unsigned long long) mvpwm->clk_rate * state->duty_cycle;
- 	do_div(val, NSEC_PER_SEC);
- 	if (val > UINT_MAX)
-@@ -804,6 +849,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
- 		return -ENOMEM;
- 	mvchip->mvpwm = mvpwm;
- 	mvpwm->mvchip = mvchip;
-+	mvpwm->id = id;
- 
- 	mvpwm->membase = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(mvpwm->membase))
-@@ -825,6 +871,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
- 	 * region.
- 	 */
- 	mvpwm->chip.base = -1;
-+	mvebu_pwm_list[id] = mvpwm;
- 
- 	spin_lock_init(&mvpwm->lock);
- 
--- 
-2.7.4
+
+If I revert patch 2/3 and 3/3 in this series, the warning goes away.
+
+
+Kind regards,
+Niklas
