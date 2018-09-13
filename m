@@ -1,63 +1,97 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.19
-Date: Thu, 13 Sep 2018 14:13:15 +0200
-Message-ID: <CACRpkdY7m-Q54BwoKEN5a4+9fTgQ3o6qWNXT+y0bqGkG2dkBiA@mail.gmail.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: [PATCH] pinctrl: at91: don't use the same irqchip with multiple gpiochips
+Date: Thu, 13 Sep 2018 14:42:13 +0200
+Message-ID: <20180913124213.32065-1-ludovic.desroches@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, plagnioj@jcrosoft.com, linus.walleij@linaro.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, hverkuil@xs4all.nl, Ludovic Desroches <ludovic.desroches@microchip.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Sharing the same irqchip with multiple gpiochips is not a good
+practice. For instance, when installing hooks, we change the state
+of the irqchip. The initial state of the irqchip for the second
+gpiochip to register is then disrupted.
 
-here are some three pin control fixes for the v4.19 series. This subsystem
-has been unusually quiet this merge window so not much fixes appeared.
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+---
+Hi,
 
-Please pull them in!
+This patch fixes the issue encountered in linux-next because of
+"gpiolib: override irq_enable/disable". As discussed [1], the gpiolib
+can do some extra checks but sharing the same irqchip with multiple
+gpiochips is seen as a bad practice.
 
-Details in the signed tag.
+[1] https://www.spinics.net/lists/arm-kernel/msg676097.html
 
-Yours,
-Linus Walleij
+ drivers/pinctrl/pinctrl-at91.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.19-2
-
-for you to fetch changes up to 5bc5a671b1f4b3aa019264ce970d3683a9ffa761:
-
-  pinctrl: madera: Fix possible NULL pointer with pdata config
-(2018-08-29 14:02:47 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for the v4.19 kernel cycle:
-
-- A complicated IRQ fix for the MSM driver (see commit).
-
-- Fix the group/function check in the Ingenic driver.
-
-- Deal with a possible NULL pointer dereference in the Madera
-  driver.
-
-----------------------------------------------------------------
-Paul Burton (1):
-      pinctrl: ingenic: Fix group & function error checking
-
-Richard Fitzgerald (1):
-      pinctrl: madera: Fix possible NULL pointer with pdata config
-
-Stephen Boyd (1):
-      pinctrl: msm: Really mask level interrupts to prevent latching
-
- drivers/pinctrl/cirrus/pinctrl-madera-core.c |  2 +-
- drivers/pinctrl/pinctrl-ingenic.c            |  4 ++--
- drivers/pinctrl/qcom/pinctrl-msm.c           | 24 ++++++++++++++++++++++++
- 3 files changed, 27 insertions(+), 3 deletions(-)
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index cfd8239f2727..911ea0fe2a41 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -1574,16 +1574,6 @@ void at91_pinctrl_gpio_resume(void)
+ #define gpio_irq_set_wake	NULL
+ #endif /* CONFIG_PM */
+ 
+-static struct irq_chip gpio_irqchip = {
+-	.name		= "GPIO",
+-	.irq_ack	= gpio_irq_ack,
+-	.irq_disable	= gpio_irq_mask,
+-	.irq_mask	= gpio_irq_mask,
+-	.irq_unmask	= gpio_irq_unmask,
+-	/* .irq_set_type is set dynamically */
+-	.irq_set_wake	= gpio_irq_set_wake,
+-};
+-
+ static void gpio_irq_handler(struct irq_desc *desc)
+ {
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+@@ -1624,12 +1614,22 @@ static int at91_gpio_of_irq_setup(struct platform_device *pdev,
+ 	struct gpio_chip	*gpiochip_prev = NULL;
+ 	struct at91_gpio_chip   *prev = NULL;
+ 	struct irq_data		*d = irq_get_irq_data(at91_gpio->pioc_virq);
++	struct irq_chip		*gpio_irqchip;
+ 	int ret, i;
+ 
++	gpio_irqchip = devm_kzalloc(&pdev->dev, sizeof(*gpio_irqchip), GFP_KERNEL);
++	if (!gpio_irqchip)
++		return -ENOMEM;
++
+ 	at91_gpio->pioc_hwirq = irqd_to_hwirq(d);
+ 
+-	/* Setup proper .irq_set_type function */
+-	gpio_irqchip.irq_set_type = at91_gpio->ops->irq_type;
++	gpio_irqchip->name = "GPIO";
++	gpio_irqchip->irq_ack = gpio_irq_ack;
++	gpio_irqchip->irq_disable = gpio_irq_mask;
++	gpio_irqchip->irq_mask = gpio_irq_mask;
++	gpio_irqchip->irq_unmask = gpio_irq_unmask;
++	gpio_irqchip->irq_set_wake = gpio_irq_set_wake,
++	gpio_irqchip->irq_set_type = at91_gpio->ops->irq_type;
+ 
+ 	/* Disable irqs of this PIO controller */
+ 	writel_relaxed(~0, at91_gpio->regbase + PIO_IDR);
+@@ -1640,7 +1640,7 @@ static int at91_gpio_of_irq_setup(struct platform_device *pdev,
+ 	 * interrupt.
+ 	 */
+ 	ret = gpiochip_irqchip_add(&at91_gpio->chip,
+-				   &gpio_irqchip,
++				   gpio_irqchip,
+ 				   0,
+ 				   handle_edge_irq,
+ 				   IRQ_TYPE_NONE);
+@@ -1658,7 +1658,7 @@ static int at91_gpio_of_irq_setup(struct platform_device *pdev,
+ 	if (!gpiochip_prev) {
+ 		/* Then register the chain on the parent IRQ */
+ 		gpiochip_set_chained_irqchip(&at91_gpio->chip,
+-					     &gpio_irqchip,
++					     gpio_irqchip,
+ 					     at91_gpio->pioc_virq,
+ 					     gpio_irq_handler);
+ 		return 0;
+-- 
+2.12.2
