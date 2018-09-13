@@ -1,57 +1,50 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: Re: [PATCH] gpiolib: fix freeing of descriptors on error
-Date: Thu, 13 Sep 2018 21:56:08 +0200
-Message-ID: <CAPybu_1WO8jcJbKJfiyCcfTahtxqSvdvyhyYaZsog05ab+OXWw@mail.gmail.com>
-References: <20180913163541.7364-1-jim@jtan.com>
+From: Rajat Jain <rajatja@google.com>
+Subject: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
+Date: Thu, 13 Sep 2018 15:31:43 -0700
+Message-ID: <20180913223143.12664-1-rajatja@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180913163541.7364-1-jim@jtan.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jim Paris <jim@jtan.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, stable@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: rajatxjain@gmail.com, subrata.banik@intel.com, aamir.bohra@intel.com, Rajat Jain <rajatja@google.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Jim
+The Icelake does not have a community-3, and the memory resources are
+laid out in the following order in the ACPI:
 
-I have sent an identical patch 3 hours before you [1] ;)
-Seems that we are working on the same stuff.
+resource-0: community-0 registers
+resource-1: community-1 registers
+resource-2: community-2 registers
+resource-3: community-4 registers
+resource-4: community-5 registers
 
-Cheers
+(EDS also describes the communities in the above order).
 
-[1] https://www.spinics.net/lists/linux-gpio/msg32541.html
+Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
+the corresponding community registers by getting the resourse number right.
+Currently the resourse number is not correct for community 4 and 5, thus
+fix that.
 
-On Thu, Sep 13, 2018 at 6:42 PM Jim Paris <jim@jtan.com> wrote:
->
-> When the main loop in linehandle_create() encounters an error, it
-> fails to free one of the previously-requested GPIO descriptors.
-> This renders the unfreed GPIO unusable until reboot, and leaves
-> its label pointing to free'd kernel memory.
->
-> Cc: stable@vger.kernel.org
-> Fixes: ab3dbcf78f60 ("gpioib: do not free unrequested descriptors")
-> Signed-off-by: Jim Paris <jim@jtan.com>
-> ---
->  drivers/gpio/gpiolib.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index e8f8a1999393..a57300c1d649 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -571,7 +571,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
->                 if (ret)
->                         goto out_free_descs;
->                 lh->descs[i] = desc;
-> -               count = i;
-> +               count = i + 1;
->
->                 if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
->                         set_bit(FLAG_ACTIVE_LOW, &desc->flags);
-> --
-> 2.18.0
->
+Signed-off-by: Rajat Jain <rajatja@google.com>
+---
+ drivers/pinctrl/intel/pinctrl-icelake.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
+index 630b966ce081..5b4eaf7c90df 100644
+--- a/drivers/pinctrl/intel/pinctrl-icelake.c
++++ b/drivers/pinctrl/intel/pinctrl-icelake.c
+@@ -331,8 +331,8 @@ static const struct intel_padgroup icllp_community5_gpps[] = {
+ static const struct intel_community icllp_communities[] = {
+ 	ICL_COMMUNITY(0, 0, 58, icllp_community0_gpps),
+ 	ICL_COMMUNITY(1, 59, 152, icllp_community1_gpps),
+-	ICL_COMMUNITY(2, 153, 215, icllp_community4_gpps),
+-	ICL_COMMUNITY(3, 216, 240, icllp_community5_gpps),
++	ICL_COMMUNITY(3, 153, 215, icllp_community4_gpps),
++	ICL_COMMUNITY(4, 216, 240, icllp_community5_gpps),
+ };
+ 
+ static const unsigned int icllp_spi0_pins[] = { 22, 23, 24, 25, 26 };
 -- 
-Ricardo Ribalda
+2.19.0.397.gdd90340f6a-goog
