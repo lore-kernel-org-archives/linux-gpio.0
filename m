@@ -1,37 +1,47 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH] gpiolib: Free the last requested descriptor
-Date: Thu, 13 Sep 2018 15:37:04 +0200
-Message-ID: <20180913133704.15739-1-ricardo.ribalda@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Timur Tabi <timur@codeaurora.org>, stable@vger.kernel.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: unexpected side effect of "gpiolib: override irq_enable/disable"
+Date: Thu, 13 Sep 2018 16:10:02 +0200
+Message-ID: <16c89bef-1f2a-be32-5547-2e5be206cb92@xs4all.nl>
+References: <20180912145829.hzklqndjasac2ap4@M43218.corp.atmel.com>
+ <f64fcb6a-172f-45e8-af8f-f1e7bae3b4d8@xs4all.nl>
+ <20180913074742.7cdvfiosb3nyc4ui@M43218.corp.atmel.com>
+ <a6ab8cfd-f245-5607-f720-8e5b607e7136@xs4all.nl>
+ <CACRpkdaDgWckvtwik4S8WRBOA-DvOobjAPBM2_6SN4U5gw+Omg@mail.gmail.com>
+ <CACRpkdY7b42uzsk7v07=NVvmYTM_Y5U9dNwC-t5rni1EL2=C0Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdY7b42uzsk7v07=NVvmYTM_Y5U9dNwC-t5rni1EL2=C0Q@mail.gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Hans Verkuil <hans.verkuil@cisco.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The current code only frees N-1 gpios if an error occurs during
-gpiod_set_transitory, gpiod_direction_output or gpiod_direction_input.
-Leading to gpios that cannot be used by userspace nor other drivers.
+On 09/13/18 11:28, Linus Walleij wrote:
+> On Thu, Sep 13, 2018 at 11:27 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+>> I think what we should do is apply this fix, then annotate the
+>> drivers that use the same irqchip with multiple gpiochips with
+>> some
+>> FIXME: this is bad practice
+>> comments.
+> 
+> Bonus: if you can get the core to also print a little naggy
+> pr_info-level note to fix up the gpio driver, that would be great.
 
-Cc: Timur Tabi <timur@codeaurora.org>
-Cc: stable@vger.kernel.org
-Fixes: ab3dbcf78f60f46d ("gpioib: do not free unrequested descriptors)
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Let me see what I can do tomorrow. Jeez, you give 'em a hand and
+they want the whole arm! :-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e8f8a1999393..a57300c1d649 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -571,7 +571,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
- 		if (ret)
- 			goto out_free_descs;
- 		lh->descs[i] = desc;
--		count = i;
-+		count = i + 1;
- 
- 		if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
- 			set_bit(FLAG_ACTIVE_LOW, &desc->flags);
--- 
-2.18.0
+Regards,
+
+	Hans
