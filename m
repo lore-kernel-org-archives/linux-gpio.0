@@ -1,64 +1,92 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
-Date: Fri, 14 Sep 2018 10:33:18 +0300
-Message-ID: <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
-References: <20180913223143.12664-1-rajatja@google.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: unexpected side effect of "gpiolib: override irq_enable/disable"
+Date: Fri, 14 Sep 2018 10:24:56 +0200
+Message-ID: <b83a80af-84a8-5b3c-3c8d-2b1ba2d7ba83@xs4all.nl>
+References: <20180912145829.hzklqndjasac2ap4@M43218.corp.atmel.com>
+ <f64fcb6a-172f-45e8-af8f-f1e7bae3b4d8@xs4all.nl>
+ <20180913074742.7cdvfiosb3nyc4ui@M43218.corp.atmel.com>
+ <e09b80e7-9f48-b528-ca1d-c6f3e0fa3c6e@xs4all.nl>
+ <20180913090214.rgijf53aloakjuug@M43218.corp.atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180913223143.12664-1-rajatja@google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rajat Jain <rajatja@google.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, rajatxjain@gmail.com, subrata.banik@intel.com, aamir.bohra@intel.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180913090214.rgijf53aloakjuug@M43218.corp.atmel.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, hans.verkuil@cisco.com, linus.walleij@linaro.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 1:54 AM Rajat Jain <rajatja@google.com> wrote:
->
-> The Icelake does not have a community-3, and the memory resources are
-> laid out in the following order in the ACPI:
->
-> resource-0: community-0 registers
-> resource-1: community-1 registers
-> resource-2: community-2 registers
-> resource-3: community-4 registers
-> resource-4: community-5 registers
->
-> (EDS also describes the communities in the above order).
->
-> Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
-> the corresponding community registers by getting the resourse number right.
-> Currently the resourse number is not correct for community 4 and 5, thus
-> fix that.
->
+On 09/13/2018 11:02 AM, Ludovic Desroches wrote:
+> On Thu, Sep 13, 2018 at 10:42:49AM +0200, Hans Verkuil wrote:
+>> On 09/13/18 09:47, Ludovic Desroches wrote:
+>>> Hi Hans,
+>>>
+>>> On Wed, Sep 12, 2018 at 05:30:35PM +0200, Hans Verkuil wrote:
+>>>> Hi Ludovic,
+>>>>
+>>>> On 09/12/2018 04:58 PM, Ludovic Desroches wrote:
+>>>>> Hi,
+>>>>>
+>>>>> Using next-20180912, my kernel hangs during the boot. Git bisect tell me
+>>>>> that the cause of my issue is the commit "gpiolib: override
+>>>>> irq_enable/disable"
+>>>>>
+>>>>> I dug further and this patch can have some side effects. When booting, I
+>>>>> have an infinite loop when trying to enable a gpio irq. I don't know if
+>>>>> the pinctrl-at91 driver is the only one concerned or not.
+>>>>>
+>>>>> The pattern leading to this issue is quite simple: we have several gpio
+>>>>> controllers sharing the same irq_chip structure. Installing the
+>>>>> irq_enable/irq_disable hook works well the first time. The second time,
+>>>>> since the irq_enable has been altered to use gpiochip_irq_enable,
+>>>>> this latest function will call itself again and again by calling
+>>>>> irq_enable.
+>>>>>
+>>>>> I think it should be better to have one irq_chip structure per gpio
+>>>>> controller. I am going to do a patch for pinctrl-at91. Excepting if you
+>>>>> think it has to be solved in a different way.
+>>>>>
+>>>>>
+>>>>> Ludovic
+>>>>>
+>>>>
+>>>> Can you try this patch first?
+>>>
+>>> Yes it works, I also have this kind of change in mind.
+>>
+>> Good. I think this patch needs to go in regardless, since this makes it
+>> a lot more robust. My main question is whether this situation is indicative
+>> of a bad driver design, or if this is normal behavior that this code just
+>> has to support.
+>>
+>>> I am not sure which solution is the best. Of course I prefer this one as
+>>> I don't have to modify the pinctrl-at91 driver but if I have to modify
+>>> it to not share the same irq_chip structure, I'll handle it. Just let me
+>>> know.
+>>
+>> I tried to figure out where this happens exactly in this driver (sharing the
+>> same irq_chip structure), but I'm not quite sure I fully understand it. Can
+>> you point out where this happens?
+>>
+> 
+> There are 5 instances of the gpio controller (A, B, C, D, E) and they all use
+> the same irqchip since the behaviour is common.
+> 
+> When adding A as a gpiochip_irqchip (in at91_gpio_of_irq_setup()), we set the
+> hooks so:
 
-Can you share link to the ACPI dump of the tables? (you may get one by
-running `acpidump -o tables.dat`)
+Ah, now I see: gpio_irqchip is a static struct. That's the bit I missed when I
+looked at the code earlier.
 
-> Signed-off-by: Rajat Jain <rajatja@google.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-icelake.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
-> index 630b966ce081..5b4eaf7c90df 100644
-> --- a/drivers/pinctrl/intel/pinctrl-icelake.c
-> +++ b/drivers/pinctrl/intel/pinctrl-icelake.c
-> @@ -331,8 +331,8 @@ static const struct intel_padgroup icllp_community5_gpps[] = {
->  static const struct intel_community icllp_communities[] = {
->         ICL_COMMUNITY(0, 0, 58, icllp_community0_gpps),
->         ICL_COMMUNITY(1, 59, 152, icllp_community1_gpps),
-> -       ICL_COMMUNITY(2, 153, 215, icllp_community4_gpps),
-> -       ICL_COMMUNITY(3, 216, 240, icllp_community5_gpps),
-> +       ICL_COMMUNITY(3, 153, 215, icllp_community4_gpps),
-> +       ICL_COMMUNITY(4, 216, 240, icllp_community5_gpps),
->  };
->
->  static const unsigned int icllp_spi0_pins[] = { 22, 23, 24, 25, 26 };
-> --
-> 2.19.0.397.gdd90340f6a-goog
->
+Thanks,
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+	Hans
