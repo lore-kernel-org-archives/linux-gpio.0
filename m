@@ -1,41 +1,64 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH] gpiolib: Show correct direction from the beginning
-Date: Fri, 14 Sep 2018 09:08:39 +0200
-Message-ID: <20180914070839.4667-2-ricardo.ribalda@gmail.com>
-References: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
+Date: Fri, 14 Sep 2018 10:33:18 +0300
+Message-ID: <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
+References: <20180913223143.12664-1-rajatja@google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
+In-Reply-To: <20180913223143.12664-1-rajatja@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Rajat Jain <rajatja@google.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, rajatxjain@gmail.com, subrata.banik@intel.com, aamir.bohra@intel.com
 List-Id: linux-gpio@vger.kernel.org
 
-Current code assumes that the direction is input if direction_input
-function is set.
-This might not be the case on GPIOs with programmable direction.
+On Fri, Sep 14, 2018 at 1:54 AM Rajat Jain <rajatja@google.com> wrote:
+>
+> The Icelake does not have a community-3, and the memory resources are
+> laid out in the following order in the ACPI:
+>
+> resource-0: community-0 registers
+> resource-1: community-1 registers
+> resource-2: community-2 registers
+> resource-3: community-4 registers
+> resource-4: community-5 registers
+>
+> (EDS also describes the communities in the above order).
+>
+> Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
+> the corresponding community registers by getting the resourse number right.
+> Currently the resourse number is not correct for community 4 and 5, thus
+> fix that.
+>
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/gpio/gpiolib.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Can you share link to the ACPI dump of the tables? (you may get one by
+running `acpidump -o tables.dat`)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a57300c1d649..af853749e0bb 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1352,7 +1352,12 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 		 * it does, and in case chip->get_direction is not set, we may
- 		 * expose the wrong direction in sysfs.
- 		 */
--		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
-+		if (chip->get_direction)
-+			desc->flags = !chip->get_direction(chip, i) ?
-+					(1 << FLAG_IS_OUT) : 0;
-+		else
-+			desc->flags = !chip->direction_input ?
-+					(1 << FLAG_IS_OUT) : 0;
- 	}
- 
- #ifdef CONFIG_PINCTRL
+> Signed-off-by: Rajat Jain <rajatja@google.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-icelake.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
+> index 630b966ce081..5b4eaf7c90df 100644
+> --- a/drivers/pinctrl/intel/pinctrl-icelake.c
+> +++ b/drivers/pinctrl/intel/pinctrl-icelake.c
+> @@ -331,8 +331,8 @@ static const struct intel_padgroup icllp_community5_gpps[] = {
+>  static const struct intel_community icllp_communities[] = {
+>         ICL_COMMUNITY(0, 0, 58, icllp_community0_gpps),
+>         ICL_COMMUNITY(1, 59, 152, icllp_community1_gpps),
+> -       ICL_COMMUNITY(2, 153, 215, icllp_community4_gpps),
+> -       ICL_COMMUNITY(3, 216, 240, icllp_community5_gpps),
+> +       ICL_COMMUNITY(3, 153, 215, icllp_community4_gpps),
+> +       ICL_COMMUNITY(4, 216, 240, icllp_community5_gpps),
+>  };
+>
+>  static const unsigned int icllp_spi0_pins[] = { 22, 23, 24, 25, 26 };
+> --
+> 2.19.0.397.gdd90340f6a-goog
+>
+
+
 -- 
-2.18.0
+With Best Regards,
+Andy Shevchenko
