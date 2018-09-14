@@ -1,50 +1,94 @@
-From: Rajat Jain <rajatja@google.com>
-Subject: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
-Date: Thu, 13 Sep 2018 15:31:43 -0700
-Message-ID: <20180913223143.12664-1-rajatja@google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [RFC] gpiolib: Fix gpio_direction_* for single direction GPIOs
+Date: Fri, 14 Sep 2018 09:08:38 +0200
+Message-ID: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: rajatxjain@gmail.com, subrata.banik@intel.com, aamir.bohra@intel.com, Rajat Jain <rajatja@google.com>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The Icelake does not have a community-3, and the memory resources are
-laid out in the following order in the ACPI:
+GPIOs with no programmable direction are not required to implement
+direction_output nor direction_input.
 
-resource-0: community-0 registers
-resource-1: community-1 registers
-resource-2: community-2 registers
-resource-3: community-4 registers
-resource-4: community-5 registers
+If we try to set an output direction on an output-only GPIO or input
+direction on an input-only GPIO simply return 0.
 
-(EDS also describes the communities in the above order).
+This allows this single direction GPIO to be used by libgpiod.
 
-Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
-the corresponding community registers by getting the resourse number right.
-Currently the resourse number is not correct for community 4 and 5, thus
-fix that.
-
-Signed-off-by: Rajat Jain <rajatja@google.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/pinctrl/intel/pinctrl-icelake.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib.c | 36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
-index 630b966ce081..5b4eaf7c90df 100644
---- a/drivers/pinctrl/intel/pinctrl-icelake.c
-+++ b/drivers/pinctrl/intel/pinctrl-icelake.c
-@@ -331,8 +331,8 @@ static const struct intel_padgroup icllp_community5_gpps[] = {
- static const struct intel_community icllp_communities[] = {
- 	ICL_COMMUNITY(0, 0, 58, icllp_community0_gpps),
- 	ICL_COMMUNITY(1, 59, 152, icllp_community1_gpps),
--	ICL_COMMUNITY(2, 153, 215, icllp_community4_gpps),
--	ICL_COMMUNITY(3, 216, 240, icllp_community5_gpps),
-+	ICL_COMMUNITY(3, 153, 215, icllp_community4_gpps),
-+	ICL_COMMUNITY(4, 216, 240, icllp_community5_gpps),
- };
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index af853749e0bb..3c09bf70e7ab 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2517,19 +2517,27 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
+ int gpiod_direction_input(struct gpio_desc *desc)
+ {
+ 	struct gpio_chip	*chip;
+-	int			status = -EINVAL;
++	int			status = 0;
  
- static const unsigned int icllp_spi0_pins[] = { 22, 23, 24, 25, 26 };
+ 	VALIDATE_DESC(desc);
+ 	chip = desc->gdev->chip;
+ 
+-	if (!chip->get || !chip->direction_input) {
++	if (!chip->get && chip->direction_input) {
+ 		gpiod_warn(desc,
+-			"%s: missing get() or direction_input() operations\n",
++			"%s: missing get() and direction_input() operations\n",
+ 			__func__);
+ 		return -EIO;
+ 	}
+ 
+-	status = chip->direction_input(chip, gpio_chip_hwgpio(desc));
++	if (chip->direction_input) {
++		status = chip->direction_input(chip, gpio_chip_hwgpio(desc));
++	} else if (chip->get_direction &&
++		  (chip->get_direction(chip, gpio_chip_hwgpio(desc)) != 1)) {
++		gpiod_warn(desc,
++			"%s: missing direction_input() operation\n",
++			__func__);
++		return -EIO;
++	}
+ 	if (status == 0)
+ 		clear_bit(FLAG_IS_OUT, &desc->flags);
+ 
+@@ -2551,16 +2559,28 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
+ {
+ 	struct gpio_chip *gc = desc->gdev->chip;
+ 	int val = !!value;
+-	int ret;
++	int ret = 0;
+ 
+-	if (!gc->set || !gc->direction_output) {
++	if (!gc->set && !gc->direction_output) {
+ 		gpiod_warn(desc,
+-		       "%s: missing set() or direction_output() operations\n",
++		       "%s: missing set() and direction_output() operations\n",
+ 		       __func__);
+ 		return -EIO;
+ 	}
+ 
+-	ret = gc->direction_output(gc, gpio_chip_hwgpio(desc), val);
++	if (gc->direction_output) {
++		ret = gc->direction_output(gc, gpio_chip_hwgpio(desc), val);
++	} else {
++		if (gc->get_direction &&
++		    gc->get_direction(gc, gpio_chip_hwgpio(desc))) {
++			gpiod_warn(desc,
++				"%s: missing direction_output() operation\n",
++				__func__);
++			return -EIO;
++		}
++		gc->set(gc, gpio_chip_hwgpio(desc), val);
++	}
++
+ 	if (!ret)
+ 		set_bit(FLAG_IS_OUT, &desc->flags);
+ 	trace_gpio_value(desc_to_gpio(desc), 0, val);
 -- 
-2.19.0.397.gdd90340f6a-goog
+2.18.0
