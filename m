@@ -1,25 +1,50 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cannonlake: Fix gpio base for GPP-E
-Date: Mon, 17 Sep 2018 11:19:39 +0300
-Message-ID: <20180917081939.GN14465@lahna.fi.intel.com>
-References: <20180915211518.8155-1-s@sd.ai>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH] gpiolib: Free the last requested descriptor
+Date: Mon, 17 Sep 2018 12:14:17 +0200
+Message-ID: <CAPybu_3aaCyw9e4FJpu2r7QbGUVzDrjPmfo4oSue1Ncu0jkLGQ@mail.gmail.com>
+References: <20180913133704.15739-1-ricardo.ribalda@gmail.com> <CACRpkdYgC7Z79c3swKE=ZwEUfVTC+oijKOqo5HwVdXLOsTT8Mg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180915211518.8155-1-s@sd.ai>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Detheridge <s@sd.ai>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYgC7Z79c3swKE=ZwEUfVTC+oijKOqo5HwVdXLOsTT8Mg@mail.gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Timur Tabi <timur@codeaurora.org>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Sep 15, 2018 at 10:15:18PM +0100, Simon Detheridge wrote:
-> The gpio base for GPP-E was set incorrectly to 258 instead of 256,
-> preventing the touchpad working on my Tong Fang GK5CN5Z laptop.
-> 
-> Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=200787
-> Signed-off-by: Simon Detheridge <s@sd.ai>
+Hi Linus
+On Fri, Sep 14, 2018 at 10:56 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Thu, Sep 13, 2018 at 3:37 PM Ricardo Ribalda Delgado
+> <ricardo.ribalda@gmail.com> wrote:
+>
+> > The current code only frees N-1 gpios if an error occurs during
+> > gpiod_set_transitory, gpiod_direction_output or gpiod_direction_input.
+> > Leading to gpios that cannot be used by userspace nor other drivers.
+> >
+> > Cc: Timur Tabi <timur@codeaurora.org>
+> > Cc: stable@vger.kernel.org
+> > Fixes: ab3dbcf78f60f46d ("gpioib: do not free unrequested descriptors)
+> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+>
+> Patch applied for fixes with Jan's Reported-by tag.
 
-Indeed, you are correct.
+Just a heads-up
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+I haven't seem the patch on your kernel tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/refs/heads
+
+it is probably on your computer tree, but I wanted to make sure the
+patch is not lost in the wind :P
+
+Thanks!
+
+
+>
+> Yours,
+> Linus Walleij
+
+
+
+-- 
+Ricardo Ribalda
