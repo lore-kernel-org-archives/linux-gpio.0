@@ -1,48 +1,27 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v3 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date: Mon, 17 Sep 2018 17:36:09 +0100
-Message-ID: <20180917163609.30457-4-phil.edworthy@renesas.com>
-References: <20180917163609.30457-1-phil.edworthy@renesas.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [RFC/PATCH 0/5] Support children for legacy device properties
+Date: Mon, 17 Sep 2018 11:15:58 -0700
+Message-ID: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180917163609.30457-1-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Cc: linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
+The generic device properties APIs are very helpful as they allow abstracting
+away details of the platform (whether it is ACPI, device tree, or legacy board
+file), so that individual driver does not need separate code paths to support
+all variants. However there are drivers that currently can not use generic
+device properties API as they need notion of children properties, for example
+gpio_keys driver, that expects every button to be described as a sub-node of
+main device.
 
-Based on a patch originally written by Michel Pollet at Renesas.
+This patch series introduces notion of sub-nodes for static properties and ties
+it up with GPIO lookup tables so that they are usable with sub-nodes as well.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v3:
- - No changes.
-v2:
- - Add "renesas,rzn1-pinctrl" compatible fallback string
- - Register size corrected.
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Thanks.
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index eaf94976ed6d..2322268bc862 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
- 
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
-+
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
 -- 
-2.17.1
+Dmitry
