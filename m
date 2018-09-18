@@ -1,179 +1,137 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH] pinctrl: intel: Do pin translation in other GPIO operations as well
-Date: Tue, 18 Sep 2018 18:36:21 +0300
-Message-ID: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [RFC/PATCH 4/5] gpiolib: add support for fetching descriptors
+ from static properties
+Date: Tue, 18 Sep 2018 10:04:18 -0700
+Message-ID: <20180918170418.GC177805@dtor-ws>
+References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+ <20180917181603.125492-5-dmitry.torokhov@gmail.com>
+ <20180918090219.GE14465@lahna.fi.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180918090219.GE14465@lahna.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Rajat Jain <rajatja@google.com>, casey.g.bowman@intel.com, matthew.s.atwood@intel.com, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-For some reason I thought GPIOLIB handles translation from GPIO ranges
-to pinctrl pins but it turns out not to be the case. This means that
-when GPIOs operations are performed for a pin controller having a custom
-GPIO base such as Cannon Lake and Ice Lake incorrect pin number gets
-used internally.
+Hi Mika,
 
-Fix this in the same way we did for lock/unlock IRQ operations and
-translate the GPIO number to pin before using it.
+On Tue, Sep 18, 2018 at 12:02:19PM +0300, Mika Westerberg wrote:
+> Hi,
+> 
+> On Mon, Sep 17, 2018 at 11:16:02AM -0700, Dmitry Torokhov wrote:
+> > Now that static device properties understand notion of child nodes, let's
+> > teach gpiolib to tie such children and machine GPIO descriptor tables.
+> > We will continue using a single table for entire device, but instead of
+> > using connection ID as a lookup key in the GPIO descriptor table directly,
+> > we will perform additional translation: fwnode_get_named_gpiod() when
+> > dealing with property_set-backed fwnodes will try parsing string property
+> > with name matching connection ID and use result of the lookup as the key in
+> > the table:
+> > 
+> > static const struct property_entry dev_child1_props[] __initconst = {
+> > 	...
+> > 	PROPERTY_ENTRY_STRING("gpios",		"child-1-gpios"),
+> > 	{ }
+> > };
+> > 
+> > static struct gpiod_lookup_table dev_gpiod_table = {
+> > 	.dev_id = "some-device",
+> > 	.table = {
+> > 		...
+> > 		GPIO_LOOKUP_IDX("B", 1, "child-1-gpios", 1, GPIO_ACTIVE_LOW),
+> > 		...
+> > 	},
+> > };
+> 
+> I wonder if instead of passing and parsing strings (and hoping there are
+> no typos) we could get the compiler to help us bit more?
+> 
+> Something like below:
+> 
+> static const struct property_entry dev_child1_props[] __initconst = {
+>  	...
+>  	PROPERTY_ENTRY_STRING("gpios","child-1-gpios"),
+>  	{ }
+> };
+>  
+> static struct gpiod_lookup_table dev_gpiod_table = {
+>  	.dev_id = "some-device",
+>  	.table = {
+>  		...
+>  		GPIO_LOOKUP_IDX("B", 1, dev_child1_props, SIZEOF(dev_child1_props),
+> 				1, GPIO_ACTIVE_LOW),
+>  		...
+>  	},
+> };
 
-Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
-Reported-by: Rajat Jain <rajatja@google.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 111 +++++++++++++++-----------
- 1 file changed, 63 insertions(+), 48 deletions(-)
+I am not sure how that would work, as there are multiple properties in
+that child array, so we can't simply take the first entry or assume that
+all entries describe GPIOs. Here is the fuller example:
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 62b009b27eda..ec8dafc94694 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -747,13 +747,63 @@ static const struct pinctrl_desc intel_pinctrl_desc = {
- 	.owner = THIS_MODULE,
- };
- 
-+/**
-+ * intel_gpio_to_pin() - Translate from GPIO offset to pin number
-+ * @pctrl: Pinctrl structure
-+ * @offset: GPIO offset from gpiolib
-+ * @commmunity: Community is filled here if not %NULL
-+ * @padgrp: Pad group is filled here if not %NULL
-+ *
-+ * When coming through gpiolib irqchip, the GPIO offset is not
-+ * automatically translated to pinctrl pin number. This function can be
-+ * used to find out the corresponding pinctrl pin.
-+ */
-+static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned offset,
-+			     const struct intel_community **community,
-+			     const struct intel_padgroup **padgrp)
-+{
-+	int i;
-+
-+	for (i = 0; i < pctrl->ncommunities; i++) {
-+		const struct intel_community *comm = &pctrl->communities[i];
-+		int j;
-+
-+		for (j = 0; j < comm->ngpps; j++) {
-+			const struct intel_padgroup *pgrp = &comm->gpps[j];
-+
-+			if (pgrp->gpio_base < 0)
-+				continue;
-+
-+			if (offset >= pgrp->gpio_base &&
-+			    offset < pgrp->gpio_base + pgrp->size) {
-+				int pin;
-+
-+				pin = pgrp->base + offset - pgrp->gpio_base;
-+				if (community)
-+					*community = comm;
-+				if (padgrp)
-+					*padgrp = pgrp;
-+
-+				return pin;
-+			}
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
- static int intel_gpio_get(struct gpio_chip *chip, unsigned offset)
- {
- 	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
- 	void __iomem *reg;
- 	u32 padcfg0;
-+	int pin;
-+
-+	pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
-+	if (pin < 0)
-+		return -EINVAL;
- 
--	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-+	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
- 	if (!reg)
- 		return -EINVAL;
- 
-@@ -770,8 +820,13 @@ static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	unsigned long flags;
- 	void __iomem *reg;
- 	u32 padcfg0;
-+	int pin;
-+
-+	pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
-+	if (pin < 0)
-+		return;
- 
--	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-+	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
- 	if (!reg)
- 		return;
- 
-@@ -790,8 +845,13 @@ static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
- 	void __iomem *reg;
- 	u32 padcfg0;
-+	int pin;
- 
--	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-+	pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
-+	if (pin < 0)
-+		return -EINVAL;
-+
-+	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
- 	if (!reg)
- 		return -EINVAL;
- 
-@@ -827,51 +887,6 @@ static const struct gpio_chip intel_gpio_chip = {
- 	.set_config = gpiochip_generic_config,
- };
- 
--/**
-- * intel_gpio_to_pin() - Translate from GPIO offset to pin number
-- * @pctrl: Pinctrl structure
-- * @offset: GPIO offset from gpiolib
-- * @commmunity: Community is filled here if not %NULL
-- * @padgrp: Pad group is filled here if not %NULL
-- *
-- * When coming through gpiolib irqchip, the GPIO offset is not
-- * automatically translated to pinctrl pin number. This function can be
-- * used to find out the corresponding pinctrl pin.
-- */
--static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned offset,
--			     const struct intel_community **community,
--			     const struct intel_padgroup **padgrp)
--{
--	int i;
--
--	for (i = 0; i < pctrl->ncommunities; i++) {
--		const struct intel_community *comm = &pctrl->communities[i];
--		int j;
--
--		for (j = 0; j < comm->ngpps; j++) {
--			const struct intel_padgroup *pgrp = &comm->gpps[j];
--
--			if (pgrp->gpio_base < 0)
--				continue;
--
--			if (offset >= pgrp->gpio_base &&
--			    offset < pgrp->gpio_base + pgrp->size) {
--				int pin;
--
--				pin = pgrp->base + offset - pgrp->gpio_base;
--				if (community)
--					*community = comm;
--				if (padgrp)
--					*padgrp = pgrp;
--
--				return pin;
--			}
--		}
--	}
--
--	return -EINVAL;
--}
--
- static int intel_gpio_irq_reqres(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+static const struct property_entry simone_key_enter_props[] __initconst = {
+	PROPERTY_ENTRY_U32("linux,code",	KEY_ENTER),
+	PROPERTY_ENTRY_STRING("label",		"enter"),
+	PROPERTY_ENTRY_STRING("gpios",		"enter-gpios"),
+	{ }
+};
+
+static const struct property_entry simone_key_up_props[] __initconst = {
+	PROPERTY_ENTRY_U32("linux,code",	KEY_UP),
+	PROPERTY_ENTRY_STRING("label",		"up"),
+	PROPERTY_ENTRY_STRING("gpios",		"up-gpios"),
+	{ }
+};
+
+static const struct property_entry simone_key_up_props[] __initconst = {
+	PROPERTY_ENTRY_U32("linux,code",	KEY_LEFT),
+	PROPERTY_ENTRY_STRING("label",		"left"),
+	PROPERTY_ENTRY_STRING("gpios",		"left-gpios"),
+	{ }
+};
+
+static const struct property_entry simone_key_props[] __initconst = {
+	/* There are no properties at device level on this device */
+	{ }
+};
+
+static struct gpiod_lookup_table simone_keys_gpiod_table = {
+	.dev_id = "gpio-keys",
+	.table = {
+		/* Use local offsets on gpiochip/port "B" */
+		GPIO_LOOKUP_IDX("B", 0, "enter-gpios", 0, GPIO_ACTIVE_LOW),
+		GPIO_LOOKUP_IDX("B", 1, "up-gpios", 1, GPIO_ACTIVE_LOW),
+		GPIO_LOOKUP_IDX("B", 2, "left-gpios", 2, GPIO_ACTIVE_LOW),
+	},
+};
+
+static struct platform_device simone_keys_device = {
+	.name = "gpio-keys",
+	.id = -1,
+};
+
+static void __init simone_init_machine(void)
+{
+	...
+	gpiod_add_lookup_table(&simone_keys_gpiod_table);
+	device_add_properties(&simone_keys_device.dev,
+			      simone_keys_device_props);
+	device_add_child_properties(&simone_keys_device.dev,
+				    dev_fwnode(&simone_keys_device.dev),
+				    simone_key_enter_props);
+	device_add_child_properties(&simone_keys_device.dev,
+				    dev_fwnode(&simone_keys_device.dev),
+				    simone_key_up_props);
+	device_add_child_properties(&simone_keys_device.dev,
+				    dev_fwnode(&simone_keys_device.dev),
+				    simone_key_left_props);
+	platform_device_register(&simone_keys_device);
+	...
+}
+
+Thanks.
+
 -- 
-2.18.0
+Dmitry
