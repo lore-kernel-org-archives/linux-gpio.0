@@ -1,301 +1,1139 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: RE: [PATCH v3 1/3] dt-bindings: pinctrl: renesas,rzn1-pinctrl:
- documentation
-Date: Tue, 18 Sep 2018 09:44:40 +0000
-Message-ID: <TY1PR01MB1769C3B56D2D42CE3845C553F51D0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From: jacopo mondi <jacopo@jmondi.org>
+Subject: Re: [PATCH v3 2/3] pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+Date: Tue, 18 Sep 2018 12:43:30 +0200
+Message-ID: <20180918104330.GO16851@w540>
 References: <20180917163609.30457-1-phil.edworthy@renesas.com>
- <20180917163609.30457-2-phil.edworthy@renesas.com>
- <20180918092727.GN16851@w540>
+ <20180917163609.30457-3-phil.edworthy@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="tZCmRiovzb4sxAVa"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180918092727.GN16851@w540>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180917163609.30457-3-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgSmFjb3BvLA0KDQpPbiAxOCBTZXB0ZW1iZXIgMjAxOCAxMDoyNyBqYWNvcG8gbW9uZGkgd3Jv
-dGU6DQo+IEhpIFBoaWwsDQo+ICAgIHRoYW5rcyBmb3IgdGhlIHVwZGF0ZS4gVGhpcyBsb29rcyBt
-dWNoIGJldHRlciA6KQ0KPiANCj4gT24gTW9uLCBTZXAgMTcsIDIwMTggYXQgMDU6MzY6MDdQTSAr
-MDEwMCwgUGhpbCBFZHdvcnRoeSB3cm90ZToNCj4gPiBUaGUgUmVuZXNhcyBSWi9OMSBkZXZpY2Ug
-ZmFtaWx5IFBJTkNUUkwgbm9kZSBkZXNjcmlwdGlvbi4NCj4gPg0KPiA+IEJhc2VkIG9uIGEgcGF0
-Y2ggb3JpZ2luYWxseSB3cml0dGVuIGJ5IE1pY2hlbCBQb2xsZXQgYXQgUmVuZXNhcy4NCj4gPg0K
-PiA+IFNpZ25lZC1vZmYtYnk6IFBoaWwgRWR3b3J0aHkgPHBoaWwuZWR3b3J0aHlAcmVuZXNhcy5j
-b20+DQo+ID4gLS0tDQo+ID4gdjM6DQo+ID4gIC0gVXNlIHN0YW5kYXJkIGJpbmRpbmdzDQo+ID4g
-IC0gQ2hhbmdlIHRoZSB3YXkgdGhlIGZ1bmN0aW9ucyBhcmUgZGVmaW5lZCBzbyBpdCBpcyBlYXN5
-IHRvIGNoZWNrDQo+ID4gICAgYWdhaW5zdCB0aGUgaGFyZHdhcmUgbnVtYmVyaW5nLg0KPiA+ICAt
-IEFkZCBmdW5jdGlvbnMgZm9yIHRoZSBNRElPIHNvdXJjZSBwZXJpcGhlcmFsIGluc3RlYWQgb2Yg
-dXNpbmcNCj4gPiAgICB2aXJ0dWFsIHBpbnMuDQo+ID4NCj4gPiB2MjoNCj4gPiAgLSBDaGFuZ2Ug
-ZmlsZW5hbWUgdG8gZ2VuZXJpYyByem4xLCBpbnN0ZWFkIG9mIGRldmljZSBzcGVjaWZpYy4NCj4g
-PiAgLSBBZGQgInJlbmVzYXMscnpuMS1waW5jdHJsIiBjb21wYXRpYmxlIGZhbGxiYWNrIHN0cmlu
-Zy4NCj4gPiAgLSBFeGFtcGxlIHJlZ2lzdGVyIHNpemUgY29ycmVjdGVkLg0KPiA+ICAtIFR5cG9z
-IGZpeGVkLg0KPiA+ICAtIENoYW5nZXMgc3VnZ2VzdGVkIGJ5IEphY29wbyBNb25kaS4NCj4gPiAg
-LSByem4xLXBpbmN0cmwuaCBzcXVhc2hlZCBpbnRvIHRoaXMgYXMgcmVxdWVzdGVkIGJ5IFJvYiBI
-ZXJyaW5nLg0KPiA+IC0tLQ0KPiA+ICAuLi4vYmluZGluZ3MvcGluY3RybC9yZW5lc2FzLHJ6bjEt
-cGluY3RybC50eHQgfCAxMjkgKysrKysrKysrKysrKysrKw0KPiA+ICBpbmNsdWRlL2R0LWJpbmRp
-bmdzL3BpbmN0cmwvcnpuMS1waW5jdHJsLmggICAgfCAxNDEgKysrKysrKysrKysrKysrKysrDQo+
-ID4gIDIgZmlsZXMgY2hhbmdlZCwgMjcwIGluc2VydGlvbnMoKykNCj4gPiAgY3JlYXRlIG1vZGUg
-MTAwNjQ0DQo+ID4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvcmVu
-ZXNhcyxyem4xLXBpbmN0cmwudHh0DQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0
-LWJpbmRpbmdzL3BpbmN0cmwvcnpuMS1waW5jdHJsLmgNCj4gPg0KPiA+IGRpZmYgLS1naXQNCj4g
-PiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL3JlbmVzYXMscnpu
-MS1waW5jdHJsLnR4dA0KPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bp
-bmN0cmwvcmVuZXNhcyxyem4xLXBpbmN0cmwudHh0DQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQN
-Cj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLjIwMzEzMWVkOGQyYQ0KPiA+IC0tLSAvZGV2L251bGwN
-Cj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9yZW5l
-c2FzLHJ6bjEtcGluY3RybC50DQo+ID4gKysrIHh0DQo+ID4gQEAgLTAsMCArMSwxMjkgQEANCj4g
-PiArUmVuZXNhcyBSWi9OMSBTb0MgUGluY3RybCBub2RlIGRlc2NyaXB0aW9uLg0KPiA+ICsNCj4g
-PiArUGluIGNvbnRyb2xsZXIgbm9kZQ0KPiA+ICstLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gK1Jl
-cXVpcmVkIHByb3BlcnRpZXM6DQo+ID4gKy0gY29tcGF0aWJsZTogU29DLXNwZWNpZmljIGNvbXBh
-dGlibGUgc3RyaW5nICJyZW5lc2FzLDxzb2Mtc3BlY2lmaWM+LQ0KPiBwaW5jdHJsIg0KPiA+ICsg
-IGZvbGxvd2VkIGJ5ICJyZW5lc2FzLHJ6bjEtcGluY3RybCIgYXMgZmFsbGJhY2suIFRoZSBTb0Mt
-c3BlY2lmaWMNCj4gPiArY29tcGF0aWJsZQ0KPiA+ICsgIHN0cmluZ3MgbXVzdCBiZSBvbmUgb2Y6
-DQo+ID4gKwkicmVuZXNhcyxyOWEwNmcwMzItcGluY3RybCIgZm9yIFJaL04xRA0KPiA+ICsJInJl
-bmVzYXMscjlhMDZnMDMzLXBpbmN0cmwiIGZvciBSWi9OMVMNCj4gPiArLSByZWc6IEFkZHJlc3Mg
-YmFzZSBhbmQgbGVuZ3RoIG9mIHRoZSBtZW1vcnkgYXJlYSB3aGVyZSB0aGUgcGluDQo+ID4gK2Nv
-bnRyb2xsZXINCj4gPiArICBoYXJkd2FyZSBpcyBtYXBwZWQgdG8uDQo+ID4gKy0gY2xvY2tzOiBw
-aGFuZGxlcyBmb3IgdGhlIGNsb2NrLCBzZWUgdGhlIGRlc2NyaXB0aW9uIG9mIGNsb2NrLW5hbWVz
-IGJlbG93Lg0KPiA+ICstIGNsb2NrLW5hbWVzOiBDb250YWlucyB0aGUgbmFtZSBvZiB0aGUgY2xv
-Y2s6DQo+ID4gKyAgICAiYnVzIiwgdGhlIGJ1cyBjbG9jaywgc29tZXRpbWVzIGRlc2NyaWJlZCBh
-cyBwY2xrLCBmb3IgcmVnaXN0ZXIgYWNjZXNzZXMuDQo+IA0KPiBJZiB0aGF0J3MgdGhlIG9ubHkg
-Y2xvY2ssIHRoZSBjbG9jayBuYW1lIGlzIG9wdGlvbmFsLiBJZiB5b3UgZHJvcCBpdCwgdGhlbiBw
-bGVhc2UNCj4gbWVudGlvbiB0aGF0IHRoZSBvbmx5IHBoYW5kbGUgaW4gJ2Nsb2NrcycgcmVmZXJz
-IHRvIHRoZSAiYnVzIiBjbG9jay4NClRoZSBkcml2ZXIgY3VycmVudGx5IHNwZWNpZmllcyB0aGUg
-ImJ1cyIgbmFtZSB3aGVuIGNhbGxpbmcgZGV2bV9jbGtfZ2V0KCksIHNvDQp5b3UgbmVlZCB0aGUg
-Y2xvY2stbmFtZXMuDQpJZiBvdGhlciBjaGFuZ2VzIGFyZSByZXF1aXJlZCwgSSB3aWxsIGNoYW5n
-ZSB0aGUgZHJpdmVyIGFuZCB1cGRhdGUgdGhlIGJpbmRpbmcNCmRvYyBzbyB0aGV5IGFyZSBub3Qg
-bmVlZGVkLg0KDQo+ID4gKw0KPiA+ICtFeGFtcGxlOg0KPiA+ICsJcGluY3RybDogcGluLWNvbnRy
-b2xsZXJANDAwNjcwMDAgew0KPiA+ICsJICAgIGNvbXBhdGlibGUgPSAicmVuZXNhcyxyOWEwNmcw
-MzItcGluY3RybCIsICJyZW5lc2FzLHJ6bjEtcGluY3RybCI7DQo+ID4gKwkgICAgcmVnID0gPDB4
-NDAwNjcwMDAgMHgxMDAwPiwgPDB4NTEwMDAwMDAgMHg0ODA+Ow0KPiA+ICsJICAgIGNsb2NrcyA9
-IDwmc3lzY3RybCBSOUEwNkcwMzJfSENMS19QSU5DT05GSUc+Ow0KPiA+ICsJICAgIGNsb2NrLW5h
-bWVzID0gImJ1cyI7DQo+ID4gKwl9Ow0KPiA+ICsNCj4gPiArU3ViLW5vZGVzDQo+ID4gKy0tLS0t
-LS0tLQ0KPiA+ICsNCj4gPiArVGhlIGNoaWxkIG5vZGVzIG9mIHRoZSBwaW4gY29udHJvbGxlciBu
-b2RlIGRlc2NyaWJlIGEgcGluDQo+ID4gK211bHRpcGxleGluZyBmdW5jdGlvbiBvciBhIEdQSU8g
-Y29udHJvbGxlciBhbHRlcm5hdGl2ZWx5Lg0KPiA+ICsNCj4gPiArLSBQaW4gbXVsdGlwbGV4aW5n
-IHN1Yi1ub2RlczoNCj4gPiArICBBIHBpbiBtdWx0aXBsZXhpbmcgc3ViLW5vZGUgZGVzY3JpYmVz
-IGhvdyB0byBjb25maWd1cmUgYSBzZXQgb2YNCj4gPiArICAob3IgYSBzaW5nbGUpIHBpbiBpbiBz
-b21lIGRlc2lyZWQgYWx0ZXJuYXRlIGZ1bmN0aW9uIG1vZGUuDQo+ID4gKyAgQSBzaW5nbGUgc3Vi
-LW5vZGUgbWF5IGRlZmluZSBzZXZlcmFsIHBpbiBjb25maWd1cmF0aW9ucy4NCj4gPiArICBQbGVh
-c2UgcmVmZXIgdG8gcGluY3RybC1iaW5kaW5ncy50eHQgdG8gZ2V0IHRvIGtub3cgbW9yZSBvbiBn
-ZW5lcmljDQo+ID4gKyAgcGluIHByb3BlcnRpZXMgdXNhZ2UuDQo+ID4gKw0KPiA+ICsgIFRoZSBh
-bGxvd2VkIGdlbmVyaWMgZm9ybWF0cyBmb3IgYSBwaW4gbXVsdGlwbGV4aW5nIHN1Yi1ub2RlIGFy
-ZSB0aGUNCj4gPiArIGZvbGxvd2luZyBvbmVzOg0KPiA+ICsNCj4gPiArICBub2RlLTEgew0KPiA+
-ICsgICAgICBwaW5tdXggPSA8UElOX0lEX0FORF9NVVg+LCA8UElOX0lEX0FORF9NVVg+LCAuLi4g
-Ow0KPiA+ICsgICAgICBHRU5FUklDX1BJTkNPTkZJRzsNCj4gPiArICB9Ow0KPiA+ICsNCj4gPiAr
-ICBub2RlLTIgew0KPiA+ICsgICAgICBzdWItbm9kZS0xIHsNCj4gPiArICAgICAgICAgIHBpbm11
-eCA9IDxQSU5fSURfQU5EX01VWD4sIDxQSU5fSURfQU5EX01VWD4sIC4uLiA7DQo+ID4gKyAgICAg
-ICAgICBHRU5FUklDX1BJTkNPTkZJRzsNCj4gPiArICAgICAgfTsNCj4gPiArDQo+ID4gKyAgICAg
-IHN1Yi1ub2RlLTIgew0KPiA+ICsgICAgICAgICAgcGlubXV4ID0gPFBJTl9JRF9BTkRfTVVYPiwg
-PFBJTl9JRF9BTkRfTVVYPiwgLi4uIDsNCj4gPiArICAgICAgICAgIEdFTkVSSUNfUElOQ09ORklH
-Ow0KPiA+ICsgICAgICB9Ow0KPiA+ICsNCj4gPiArICAgICAgLi4uDQo+ID4gKw0KPiA+ICsgICAg
-ICBzdWItbm9kZS1uIHsNCj4gPiArICAgICAgICAgIHBpbm11eCA9IDxQSU5fSURfQU5EX01VWD4s
-IDxQSU5fSURfQU5EX01VWD4sIC4uLiA7DQo+ID4gKyAgICAgICAgICBHRU5FUklDX1BJTkNPTkZJ
-RzsNCj4gPiArICAgICAgfTsNCj4gPiArICB9Ow0KPiA+ICsNCj4gPiArICBVc2UgdGhlIHNlY29u
-ZCBmb3JtYXQgd2hlbiBwaW5zIHBhcnQgb2YgdGhlIHNhbWUgbG9naWNhbCBncm91cCBuZWVkDQo+
-ID4gKyB0byBoYXZlICBkaWZmZXJlbnQgZ2VuZXJpYyBwaW4gY29uZmlndXJhdGlvbiBmbGFncyBh
-cHBsaWVkLg0KPiA+ICsNCj4gPiArICBDbGllbnQgc3ViLW5vZGVzIHNoYWxsIHJlZmVyIHRvIHBp
-biBtdWx0aXBsZXhpbmcgc3ViLW5vZGVzIHVzaW5nDQo+ID4gKyB0aGUgcGhhbmRsZSAgb2YgdGhl
-IG1vc3QgZXh0ZXJuYWwgb25lLg0KPiA+ICsNCj4gPiArICBFZy4NCj4gPiArDQo+ID4gKyAgY2xp
-ZW50LTEgew0KPiA+ICsgICAgICAuLi4NCj4gPiArICAgICAgcGluY3RybC0wID0gPCZub2RlLTE+
-Ow0KPiA+ICsgICAgICAuLi4NCj4gPiArICB9Ow0KPiA+ICsNCj4gPiArICBjbGllbnQtMiB7DQo+
-ID4gKyAgICAgIC4uLg0KPiA+ICsgICAgICBwaW5jdHJsLTAgPSA8Jm5vZGUtMj47DQo+ID4gKyAg
-ICAgIC4uLg0KPiA+ICsgIH07DQo+ID4gKw0KPiA+ICsgIFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+
-ID4gKyAgICAtIHBpbm11eDoNCj4gPiArICAgICAgaW50ZWdlciBhcnJheSByZXByZXNlbnRpbmcg
-cGluIG51bWJlciBhbmQgcGluIG11bHRpcGxleGluZw0KPiBjb25maWd1cmF0aW9uLg0KPiA+ICsg
-ICAgICBXaGVuIGEgcGluIGhhcyB0byBiZSBjb25maWd1cmVkIGluIGFsdGVybmF0ZSBmdW5jdGlv
-biBtb2RlLCB1c2UgdGhpcw0KPiA+ICsgICAgICBwcm9wZXJ0eSB0byBpZGVudGlmeSB0aGUgcGlu
-IGJ5IGl0cyBnbG9iYWwgaW5kZXgsIGFuZCBwcm92aWRlIGl0cw0KPiA+ICsgICAgICBhbHRlcm5h
-dGUgZnVuY3Rpb24gY29uZmlndXJhdGlvbiBudW1iZXIgYWxvbmcgd2l0aCBpdC4NCj4gPiArICAg
-ICAgV2hlbiBtdWx0aXBsZSBwaW5zIGFyZSByZXF1aXJlZCB0byBiZSBjb25maWd1cmVkIGFzIHBh
-cnQgb2YgdGhlIHNhbWUNCj4gPiArICAgICAgYWx0ZXJuYXRlIGZ1bmN0aW9uIHRoZXkgc2hhbGwg
-YmUgc3BlY2lmaWVkIGFzIG1lbWJlcnMgb2YgdGhlIHNhbWUNCj4gPiArICAgICAgYXJndW1lbnQg
-bGlzdCBvZiBhIHNpbmdsZSAicGlubXV4IiBwcm9wZXJ0eS4NCj4gPiArICAgICAgSW50ZWdlcnMg
-dmFsdWVzIGluIHRoZSAicGlubXV4IiBhcmd1bWVudCBsaXN0IGFyZSBhc3NlbWJsZWQgYXM6DQo+
-ID4gKyAgICAgIChQSU4gfCBNVVhfRlVOQyA8PCA4KQ0KPiA+ICsgICAgICB3aGVyZSBQSU4gZGly
-ZWN0bHkgY29ycmVzcG9uZHMgdG8gdGhlIHBsX2dwaW8gcGluIG51bWJlciBhbmQNCj4gTVVYX0ZV
-TkMgaXMNCj4gPiArICAgICAgb25lIG9mIHRoZSBhbHRlcm5hdGUgZnVuY3Rpb24gaWRlbnRpZmll
-cnMgZGVmaW5lZCBpbjoNCj4gPiArICAgICAgPGluY2x1ZGUvZHQtYmluZGluZ3MvcGluY3RybC9y
-em4xLXBpbmN0cmwuaD4NCj4gDQo+IFlvdSBoYXZlIGEgbWFjcm8gZm9yIGFzc2VtYmxpbmcgcGlu
-IGFuZCBtdXggZnVuY3Rpb25zLCBkbyB5b3UgdGhpbmsgaXQgaXMNCj4gd29ydGggbWVudGlvbmlu
-ZyBpdCBoZXJlPw0KTm90IHN1cmUgaXTigJlzIHdvcnRoIGl0LCBpdCdzIHVzZWQgaW4gdGhlIGV4
-YW1wbGVzIGFueXdheS4NCg0KPiA+ICsgICAgICBUaGVzZSBpZGVudGlmaWVycyBjb2xsYXBzZSB0
-aGUgSU8gTXVsdGlwbGV4IENvbmZpZ3VyYXRpb24gTGV2ZWwgMSBhbmQNCj4gPiArICAgICAgTGV2
-ZWwgMiBudW1iZXJzIHRoYXQgYXJlIGRldGFpbGVkIGluIHRoZSBoYXJkd2FyZSByZWZlcmVuY2Ug
-bWFudWFsDQo+IGludG8gYQ0KPiA+ICsgICAgICBzaW5nbGUgbnVtYmVyLiBUaGUgaWRlbnRpZmll
-cnMgZm9yIExldmVsIDIgYXJlIHNpbXBseSBvZmZzZXQgYnkgMTAuDQo+ID4gKyAgICAgIEFkZGl0
-aW9uYWwgaWRlbnRpZmllcnMgYXJlIHByb3ZpZGVkIHRvIHNwZWNpZnkgdGhlIE1ESU8gc291cmNl
-DQo+IHBlcmlwaGVyYWwuDQo+IA0KPiBBcyB3ZSBkaXNjdXNzZWQgb2ZmbGluZSwgSSBkb24ndCBz
-ZWUgdGhhdCBtdWNoIHZhbHVlIGluIG1lbnRpb25pbmcgZGV0YWlscw0KPiBhYm91dCB0aGUgcGlu
-bXV4aW5nIGxldmVscywgYXMgdGhpcyBpcyBkcml2ZXIgaW50ZXJuYWwgc3R1ZmYgdGhhdCByZWZs
-ZWN0cyBvbg0KPiB3aGljaCBzZXQgb2YgcmVnaXN0ZXJzIHRvIHVzZSBkZXBlbmRpbmcgb24gdGhl
-IG11eGluZyAnbGV2ZWwnLiBJIHVuZGVyc3RhbmQNCj4gdGhvdWdoIHRoYXQgYXMgdGhlIFNvQyBt
-YW51YWwgbWVudGlvbnMgbGV2ZWxzLCB5b3UgbWF5IHdhbnQgdG8gcmVmZXIgdG8NCj4gdGhlbS4g
-VXAgdG8geW91Li4uLg0KSSdsbCBsZWF2ZSBpdCBhcyBpcyB1bmxlc3MgdGhlcmUgYXJlIG90aGVy
-IGNvbW1lbnRzLg0KDQo+ID4gKw0KPiA+ICsgIEV4YW1wbGU6DQo+ID4gKyAgQSBzZXJpYWwgY29t
-bXVuaWNhdGlvbiBpbnRlcmZhY2Ugd2l0aCBhIFRYIG91dHB1dCBwaW4gYW5kIGFuIFJYIGlucHV0
-DQo+IHBpbi4NCj4gPiArDQo+ID4gKyAgJnBpbmN0cmwgew0KPiA+ICsJcGluc191YXJ0MDogcGlu
-c191YXJ0MCB7DQo+ID4gKwkJcGlubXV4ID0gPA0KPiA+ICsJCQlSWk4xX01VWCgxMDMsIFVBUlQw
-X0kpCS8qIFVBUlQwX1RYRCAqLw0KPiA+ICsJCQlSWk4xX01VWCgxMDQsIFVBUlQwX0kpCS8qIFVB
-UlQwX1JYRCAqLw0KPiA+ICsJCT47DQo+ID4gKwl9Ow0KPiA+ICsgIH07DQo+ID4gKw0KPiA+ICsg
-IEV4YW1wbGUgMjoNCj4gPiArICBIZXJlIHdlIHNldCB0aGUgcHVsbCB1cCBvbiB0aGUgUlhEIHBp
-biBvZiB0aGUgVUFSVC4NCj4gPiArDQo+ID4gKyAgJnBpbmN0cmwgew0KPiA+ICsJcGluc191YXJ0
-MDogcGluc191YXJ0MCB7DQo+ID4gKwkJcGluc191YXJ0Nl90eCB7DQo+ID4gKwkJCXBpbm11eCA9
-IDxSWk4xX01VWCgxMDMsIFVBUlQwX0kpPjsJLyoNCj4gVUFSVDBfVFhEICovDQo+ID4gKwkJfTsN
-Cj4gPiArCQlwaW5zX3VhcnQ2X3J4IHsNCj4gPiArCQkJcGlubXV4ID0gPFJaTjFfTVVYKDEwNCwg
-VUFSVDBfSSk+OwkvKg0KPiBVQVJUMF9SWEQgKi8NCj4gPiArCQkJYmlhcy1wdWxsLXVwOw0KPiA+
-ICsJCX07DQo+ID4gKwl9Ow0KPiA+ICsgIH07DQo+IA0KPiBJIGxpa2UgdGhpcyB2ZXJzaW9uIG11
-Y2ggbW9yZS4gV2l0aCB0aG9zZSBtaW5vciBpc3N1ZXMgY2xhcmlmaWVkICh1cCB0byB5b3UgdG8N
-Cj4gZGVjaWRlIGhvdyB0byBoYW5kbGUgdGhlbSkgcGxlYXNlIGFkZCBteToNCj4gUmV2aWV3ZWQt
-Ynk6IEphY29wbyBNb25kaSA8amFjb3BvK3JlbmVzYXNAam1vbmRpLm9yZz4NCg0KTWFueSB0aGFu
-a3MgZm9yIHlvdXIgcmV2aWV3IQ0KUGhpbA0KDQoNCj4gQ2hlZXJzDQo+ICAgIGoNCj4gDQo+IA0K
-PiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2R0LWJpbmRpbmdzL3BpbmN0cmwvcnpuMS1waW5jdHJs
-LmgNCj4gPiBiL2luY2x1ZGUvZHQtYmluZGluZ3MvcGluY3RybC9yem4xLXBpbmN0cmwuaA0KPiA+
-IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMDAwMDAwLi40MDM2OWVlMzZl
-NmENCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvaW5jbHVkZS9kdC1iaW5kaW5ncy9waW5j
-dHJsL3J6bjEtcGluY3RybC5oDQo+ID4gQEAgLTAsMCArMSwxNDEgQEANCj4gPiArLyogU1BEWC1M
-aWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAgKi8NCj4gPiArLyoNCj4gPiArICogRGVmaW5lcyBt
-YWNyb3MgYW5kIGNvbnN0YW50cyBmb3IgUmVuZXNhcyBSWi9OMSBwaW4gY29udHJvbGxlciBwaW4N
-Cj4gPiArICogbXV4aW5nIGZ1bmN0aW9ucy4NCj4gPiArICovDQo+ID4gKyNpZm5kZWYgX19EVF9C
-SU5ESU5HU19SWk4xX1BJTkNUUkxfSA0KPiA+ICsjZGVmaW5lIF9fRFRfQklORElOR1NfUlpOMV9Q
-SU5DVFJMX0gNCj4gPiArDQo+ID4gKyNkZWZpbmUgUlpOMV9NVVgoX2dwaW8sIF9mdW5jKSBcDQo+
-ID4gKwkoKChSWk4xX0ZVTkNfIyNfZnVuYykgPDwgOCkgfCAoX2dwaW8pKQ0KPiA+ICsNCj4gPiAr
-LyoNCj4gPiArICogR2l2ZW4gdGhlIGRpZmZlcmVudCBsZXZlbHMgb2YgbXV4aW5nIG9uIHRoZSBT
-b0MsIGl0IHdhcyBkZWNpZGVkIHRvDQo+ID4gKyAqICdsaW5lYXJpemUnIHRoZW0gaW50byBvbmUg
-bnVtZXJpY2FsIHNwYWNlLiBTbyBtdXggbGV2ZWwgMSwgMiBhbmQNCj4gPiArdGhlIE1ESU8NCj4g
-PiArICogbXV4ZXMgYXJlIGFsbCByZXByZXNlbnRlZCBieSBvbmUgc2luZ2xlIHZhbHVlLg0KPiA+
-ICsgKg0KPiA+ICsgKiBZb3UgY2FuIGRlcml2ZSB0aGUgaGFyZHdhcmUgdmFsdWUgcHJldHR5IGVh
-c2lseSB0b28sIGFzDQo+ID4gKyAqIDAuLi45ICAgYXJlIExldmVsIDENCj4gPiArICogMTAuLi43
-MSBhcmUgTGV2ZWwgMi4gVGhlIExldmVsIDIgbXV4IHdpbGwgYmUgc2V0IHRvIHRoaXMNCj4gPiAr
-ICogICAgICAgICB2YWx1ZSAtIFJaTjFfRlVOQ19MMl9PRkZTRVQsIGFuZCB0aGUgTGV2ZWwgMSBt
-dXggd2lsbCBiZQ0KPiA+ICsgKiAgICAgICAgIHNldCBhY2NvcmRpbmdseS4NCj4gPiArICogNzIu
-Li4xMDMgYXJlIGZvciB0aGUgMiBNRElPIG11eGVzLg0KPiA+ICsgKi8NCj4gPiArI2RlZmluZSBS
-Wk4xX0ZVTkNfSElHSFoJCQkJMA0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ18wTAkJCQkxDQo+ID4g
-KyNkZWZpbmUgUlpOMV9GVU5DX0NMS19FVEhfTUlJX1JHTUlJX1JNSUkJMg0KPiA+ICsjZGVmaW5l
-IFJaTjFfRlVOQ19DTEtfRVRIX05BTkQJCQkzDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1FTUEkJ
-CQkJNA0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19TRElPCQkJCTUNCj4gPiArI2RlZmluZSBSWk4x
-X0ZVTkNfTENECQkJCTYNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfTENEX0UJCQkJNw0KPiA+ICsj
-ZGVmaW5lIFJaTjFfRlVOQ19NU0VCSU0JCQk4DQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX01TRUJJ
-UwkJCTkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfTDJfT0ZGU0VUCQkJMTAJLyogSSdtIFNwZWNp
-YWwNCj4gKi8NCj4gPiArDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX0hJR0haMQ0KPiAJKFJaTjFf
-RlVOQ19MMl9PRkZTRVQgKyAwKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19FVEhFUkNBVA0KPiAJ
-KFJaTjFfRlVOQ19MMl9PRkZTRVQgKyAxKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19TRVJDT1Mz
-DQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDIpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1NE
-SU9fRQ0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyAzKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVO
-Q19FVEhfTURJTw0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyA0KQ0KPiA+ICsjZGVmaW5lIFJa
-TjFfRlVOQ19FVEhfTURJT19FMQ0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyA1KQ0KPiA+ICsj
-ZGVmaW5lIFJaTjFfRlVOQ19VU0INCj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VUICsgNikNCj4gPiAr
-I2RlZmluZSBSWk4xX0ZVTkNfTVNFQklNX0UNCj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VUICsgNykN
-Cj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfTVNFQklTX0UNCj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VU
-ICsgOCkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfUlNWDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNF
-VCArIDkpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1JTVl9FDQo+IAkoUlpOMV9GVU5DX0wyX09G
-RlNFVCArIDEwKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19SU1ZfRTENCj4gCShSWk4xX0ZVTkNf
-TDJfT0ZGU0VUICsgMTEpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1VBUlQwX0kNCj4gCShSWk4x
-X0ZVTkNfTDJfT0ZGU0VUICsgMTIpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1VBUlQwX0lfRQ0K
-PiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyAxMykNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfVUFS
-VDFfSQ0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyAxNCkNCj4gPiArI2RlZmluZSBSWk4xX0ZV
-TkNfVUFSVDFfSV9FDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDE1KQ0KPiA+ICsjZGVmaW5l
-IFJaTjFfRlVOQ19VQVJUMl9JDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDE2KQ0KPiA+ICsj
-ZGVmaW5lIFJaTjFfRlVOQ19VQVJUMl9JX0UNCj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VUICsgMTcp
-DQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1VBUlQwDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCAr
-IDE4KQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19VQVJUMF9FDQo+IAkoUlpOMV9GVU5DX0wyX09G
-RlNFVCArIDE5KQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19VQVJUMQ0KPiAJKFJaTjFfRlVOQ19M
-Ml9PRkZTRVQgKyAyMCkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfVUFSVDFfRQ0KPiAJKFJaTjFf
-RlVOQ19MMl9PRkZTRVQgKyAyMSkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfVUFSVDINCj4gCShS
-Wk4xX0ZVTkNfTDJfT0ZGU0VUICsgMjIpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1VBUlQyX0UN
-Cj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VUICsgMjMpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1VB
-UlQzDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDI0KQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVO
-Q19VQVJUM19FDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDI1KQ0KPiA+ICsjZGVmaW5lIFJa
-TjFfRlVOQ19VQVJUNA0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyAyNikNCj4gPiArI2RlZmlu
-ZSBSWk4xX0ZVTkNfVUFSVDRfRQ0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyAyNykNCj4gPiAr
-I2RlZmluZSBSWk4xX0ZVTkNfVUFSVDUNCj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VUICsgMjgpDQo+
-ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1VBUlQ1X0UNCj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VUICsg
-MjkpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1VBUlQ2DQo+IAkoUlpOMV9GVU5DX0wyX09GRlNF
-VCArIDMwKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19VQVJUNl9FDQo+IAkoUlpOMV9GVU5DX0wy
-X09GRlNFVCArIDMxKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19VQVJUNw0KPiAJKFJaTjFfRlVO
-Q19MMl9PRkZTRVQgKyAzMikNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfVUFSVDdfRQ0KPiAJKFJa
-TjFfRlVOQ19MMl9PRkZTRVQgKyAzMykNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfU1BJMF9NDQo+
-IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDM0KQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19TUEkw
-X01fRQ0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyAzNSkNCj4gPiArI2RlZmluZSBSWk4xX0ZV
-TkNfU1BJMV9NDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDM2KQ0KPiA+ICsjZGVmaW5lIFJa
-TjFfRlVOQ19TUEkxX01fRQ0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyAzNykNCj4gPiArI2Rl
-ZmluZSBSWk4xX0ZVTkNfU1BJMl9NDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDM4KQ0KPiA+
-ICsjZGVmaW5lIFJaTjFfRlVOQ19TUEkyX01fRQ0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyAz
-OSkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfU1BJM19NDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNF
-VCArIDQwKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19TUEkzX01fRQ0KPiAJKFJaTjFfRlVOQ19M
-Ml9PRkZTRVQgKyA0MSkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfU1BJNF9TDQo+IAkoUlpOMV9G
-VU5DX0wyX09GRlNFVCArIDQyKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19TUEk0X1NfRQ0KPiAJ
-KFJaTjFfRlVOQ19MMl9PRkZTRVQgKyA0MykNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfU1BJNV9T
-DQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDQ0KQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19T
-UEk1X1NfRQ0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyA0NSkNCj4gPiArI2RlZmluZSBSWk4x
-X0ZVTkNfU0dQSU8wX00NCj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VUICsgNDYpDQo+ID4gKyNkZWZp
-bmUgUlpOMV9GVU5DX1NHUElPMV9NDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDQ3KQ0KPiA+
-ICsjZGVmaW5lIFJaTjFfRlVOQ19HUElPDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDQ4KQ0K
-PiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19DQU4NCj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VUICsgNDkp
-DQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX0kyQw0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyA1
-MCkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfU0FGRQ0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQg
-KyA1MSkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfUFRPX1BXTQ0KPiAJKFJaTjFfRlVOQ19MMl9P
-RkZTRVQgKyA1MikNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfUFRPX1BXTTENCj4gCShSWk4xX0ZV
-TkNfTDJfT0ZGU0VUICsgNTMpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1BUT19QV00yDQo+IAko
-UlpOMV9GVU5DX0wyX09GRlNFVCArIDU0KQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19QVE9fUFdN
-Mw0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyA1NSkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNf
-UFRPX1BXTTQNCj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VUICsgNTYpDQo+ID4gKyNkZWZpbmUgUlpO
-MV9GVU5DX0RFTFRBX1NJR01BDQo+IAkoUlpOMV9GVU5DX0wyX09GRlNFVCArIDU3KQ0KPiA+ICsj
-ZGVmaW5lIFJaTjFfRlVOQ19TR1BJTzJfTQ0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyA1OCkN
-Cj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfU0dQSU8zX00NCj4gCShSWk4xX0ZVTkNfTDJfT0ZGU0VU
-ICsgNTkpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX1NHUElPNF9TDQo+IAkoUlpOMV9GVU5DX0wy
-X09GRlNFVCArIDYwKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NQUNfTVRJUF9TV0lUQ0gNCj4g
-CShSWk4xX0ZVTkNfTDJfT0ZGU0VUICsgNjEpDQo+ID4gKw0KPiA+ICsjZGVmaW5lIFJaTjFfRlVO
-Q19NRElPX09GRlNFVA0KPiAJKFJaTjFfRlVOQ19MMl9PRkZTRVQgKyA2MikNCj4gPiArDQo+ID4g
-Ky8qIFRoZXNlIGFyZSBNRElPMCBwZXJpcGhlcmFscyBmb3IgdGhlIFJaTjFfRlVOQ19FVEhfTURJ
-TyBmdW5jdGlvbg0KPiAqLw0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMF9ISUdIWg0KPiAJ
-KFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDApDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX01ESU8w
-X0dNQUMwDQo+IAkoUlpOMV9GVU5DX01ESU9fT0ZGU0VUICsgMSkNCj4gPiArI2RlZmluZSBSWk4x
-X0ZVTkNfTURJTzBfR01BQzENCj4gCShSWk4xX0ZVTkNfTURJT19PRkZTRVQgKyAyKQ0KPiA+ICsj
-ZGVmaW5lIFJaTjFfRlVOQ19NRElPMF9FQ0FUDQo+IAkoUlpOMV9GVU5DX01ESU9fT0ZGU0VUICsg
-MykNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfTURJTzBfUzNfTURJTzANCj4gCShSWk4xX0ZVTkNf
-TURJT19PRkZTRVQgKyA0KQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMF9TM19NRElPMQ0K
-PiAJKFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDUpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX01E
-SU8wX0hXUlRPUw0KPiAJKFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDYpDQo+ID4gKyNkZWZpbmUg
-UlpOMV9GVU5DX01ESU8wX1NXSVRDSA0KPiAJKFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDcpDQo+
-ID4gKy8qIFRoZXNlIGFyZSBNRElPMCBwZXJpcGhlcmFscyBmb3IgdGhlIFJaTjFfRlVOQ19FVEhf
-TURJT19FMQ0KPiBmdW5jdGlvbiAqLw0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMF9FMV9I
-SUdIWg0KPiAJKFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDgpDQo+ID4gKyNkZWZpbmUgUlpOMV9G
-VU5DX01ESU8wX0UxX0dNQUMwDQo+IAkoUlpOMV9GVU5DX01ESU9fT0ZGU0VUICsgOSkNCj4gPiAr
-I2RlZmluZSBSWk4xX0ZVTkNfTURJTzBfRTFfR01BQzENCj4gCShSWk4xX0ZVTkNfTURJT19PRkZT
-RVQgKyAxMCkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfTURJTzBfRTFfRUNBVA0KPiAJKFJaTjFf
-RlVOQ19NRElPX09GRlNFVCArIDExKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMF9FMV9T
-M19NRElPMA0KPiAJKFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDEyKQ0KPiA+ICsjZGVmaW5lIFJa
-TjFfRlVOQ19NRElPMF9FMV9TM19NRElPMQ0KPiAJKFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDEz
-KQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMF9FMV9IV1JUT1MNCj4gCShSWk4xX0ZVTkNf
-TURJT19PRkZTRVQgKyAxNCkNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfTURJTzBfRTFfU1dJVENI
-DQo+IAkoUlpOMV9GVU5DX01ESU9fT0ZGU0VUICsgMTUpDQo+ID4gKw0KPiA+ICsvKiBUaGVzZSBh
-cmUgTURJTzEgcGVyaXBoZXJhbHMgZm9yIHRoZSBSWk4xX0ZVTkNfRVRIX01ESU8gZnVuY3Rpb24N
-Cj4gKi8NCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfTURJTzFfSElHSFoNCj4gCShSWk4xX0ZVTkNf
-TURJT19PRkZTRVQgKyAxNikNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfTURJTzFfR01BQzANCj4g
-CShSWk4xX0ZVTkNfTURJT19PRkZTRVQgKyAxNykNCj4gPiArI2RlZmluZSBSWk4xX0ZVTkNfTURJ
-TzFfR01BQzENCj4gCShSWk4xX0ZVTkNfTURJT19PRkZTRVQgKyAxOCkNCj4gPiArI2RlZmluZSBS
-Wk4xX0ZVTkNfTURJTzFfRUNBVA0KPiAJKFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDE5KQ0KPiA+
-ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMV9TM19NRElPMA0KPiAJKFJaTjFfRlVOQ19NRElPX09G
-RlNFVCArIDIwKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMV9TM19NRElPMQ0KPiAJKFJa
-TjFfRlVOQ19NRElPX09GRlNFVCArIDIxKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMV9I
-V1JUT1MNCj4gCShSWk4xX0ZVTkNfTURJT19PRkZTRVQgKyAyMikNCj4gPiArI2RlZmluZSBSWk4x
-X0ZVTkNfTURJTzFfU1dJVENIDQo+IAkoUlpOMV9GVU5DX01ESU9fT0ZGU0VUICsgMjMpDQo+ID4g
-Ky8qIFRoZXNlIGFyZSBNRElPMSBwZXJpcGhlcmFscyBmb3IgdGhlIFJaTjFfRlVOQ19FVEhfTURJ
-T19FMQ0KPiBmdW5jdGlvbiAqLw0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMV9FMV9ISUdI
-Wg0KPiAJKFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDI0KQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVO
-Q19NRElPMV9FMV9HTUFDMA0KPiAJKFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDI1KQ0KPiA+ICsj
-ZGVmaW5lIFJaTjFfRlVOQ19NRElPMV9FMV9HTUFDMQ0KPiAJKFJaTjFfRlVOQ19NRElPX09GRlNF
-VCArIDI2KQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMV9FMV9FQ0FUDQo+IAkoUlpOMV9G
-VU5DX01ESU9fT0ZGU0VUICsgMjcpDQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX01ESU8xX0UxX1Mz
-X01ESU8wDQo+IAkoUlpOMV9GVU5DX01ESU9fT0ZGU0VUICsgMjgpDQo+ID4gKyNkZWZpbmUgUlpO
-MV9GVU5DX01ESU8xX0UxX1MzX01ESU8xDQo+IAkoUlpOMV9GVU5DX01ESU9fT0ZGU0VUICsgMjkp
-DQo+ID4gKyNkZWZpbmUgUlpOMV9GVU5DX01ESU8xX0UxX0hXUlRPUw0KPiAJKFJaTjFfRlVOQ19N
-RElPX09GRlNFVCArIDMwKQ0KPiA+ICsjZGVmaW5lIFJaTjFfRlVOQ19NRElPMV9FMV9TV0lUQ0gN
-Cj4gCShSWk4xX0ZVTkNfTURJT19PRkZTRVQgKyAzMSkNCj4gPiArDQo+ID4gKyNkZWZpbmUgUlpO
-MV9GVU5DX01BWA0KPiAJKFJaTjFfRlVOQ19NRElPX09GRlNFVCArIDMyKQ0KPiA+ICsNCj4gPiAr
-I2VuZGlmIC8qIF9fRFRfQklORElOR1NfUlpOMV9QSU5DVFJMX0ggKi8NCj4gPiAtLQ0KPiA+IDIu
-MTcuMQ0KPiA+DQo=
+
+--tZCmRiovzb4sxAVa
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Phil,
+   thanks for the patch
+
+On Mon, Sep 17, 2018 at 05:36:08PM +0100, Phil Edworthy wrote:
+> This provides a pinctrl driver for the Renesas RZ/N1 device family.
+>
+> Based on a patch originally written by Michel Pollet at Renesas.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> v3:
+>  - Use standard DT props instead of proprietary ones.
+>  - Replace virtual pins used for MDIO muxing with extra funcs.
+>  - Use pinctrl_utils funcs to handle the maps.
+>  - Remove the dbg functions to keep things simple.
+>
+> v2:
+>  - Change filename to generic rzn1, instead of device specific.
+>  - Changed Kconfig symbol and file name to generic rzn1 family.
+>  - Added "renesas,rzn1-pinctrl" compatible fallback string
+>  - Changes suggested by Jacopo Mondi. Mainly formatting, plus:
+>    - Removed global ptr
+>    - Removed unused code accessing parent of node.
+>    - Removed check for null OF np that can't happen.
+>    - Replaced overlapping enums with #defines
+>  - Renamed some variables and symbols to clarify their use
+>  - Fix error handling during probe
+>  - Move probe from postcore_initcall to subsys_initcall to ensure
+>    drivers that require clocks get them instead of having to defer
+>    probing.
+> ---
+>  drivers/pinctrl/Kconfig        |  10 +
+>  drivers/pinctrl/Makefile       |   1 +
+>  drivers/pinctrl/pinctrl-rzn1.c | 926 +++++++++++++++++++++++++++++++++
+>  3 files changed, 937 insertions(+)
+>  create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
+>
+> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> index e86752be1f19..e524eb101384 100644
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+> @@ -195,6 +195,16 @@ config PINCTRL_RZA1
+>  	help
+>  	  This selects pinctrl driver for Renesas RZ/A1 platforms.
+>
+> +config PINCTRL_RZN1
+> +	bool "Renesas RZ/N1 pinctrl driver"
+> +	depends on OF
+> +	depends on ARCH_RZN1 || COMPILE_TEST
+> +	select GENERIC_PINCTRL_GROUPS
+> +	select GENERIC_PINMUX_FUNCTIONS
+> +	select GENERIC_PINCONF
+> +	help
+> +	  This selects pinctrl driver for Renesas RZ/N1 devices.
+> +
+>  config PINCTRL_SINGLE
+>  	tristate "One-register-per-pin type device tree based pinctrl driver"
+>  	depends on OF
+> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+> index 46ef9bd52096..d07f9a20f6ae 100644
+> --- a/drivers/pinctrl/Makefile
+> +++ b/drivers/pinctrl/Makefile
+> @@ -27,6 +27,7 @@ obj-$(CONFIG_PINCTRL_PIC32)	+= pinctrl-pic32.o
+>  obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
+>  obj-$(CONFIG_PINCTRL_ROCKCHIP)	+= pinctrl-rockchip.o
+>  obj-$(CONFIG_PINCTRL_RZA1)	+= pinctrl-rza1.o
+> +obj-$(CONFIG_PINCTRL_RZN1)	+= pinctrl-rzn1.o
+>  obj-$(CONFIG_PINCTRL_SINGLE)	+= pinctrl-single.o
+>  obj-$(CONFIG_PINCTRL_SIRF)	+= sirf/
+>  obj-$(CONFIG_PINCTRL_SX150X)	+= pinctrl-sx150x.o
+> diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
+> new file mode 100644
+> index 000000000000..8f0caa266dbb
+> --- /dev/null
+> +++ b/drivers/pinctrl/pinctrl-rzn1.c
+> @@ -0,0 +1,926 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2014-2018 Renesas Electronics Europe Limited
+> + *
+> + * Phil Edworthy <phil.edworthy@renesas.com>
+> + * Based on a driver originally written by Michel Pollet at Renesas.
+> + */
+> +
+> +#include <dt-bindings/pinctrl/rzn1-pinctrl.h>
+> +#include <linux/clk.h>
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinmux.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include "core.h"
+> +#include "pinconf.h"
+> +#include "pinctrl-utils.h"
+> +
+> +/* Field positions and masks in the pinmux registers */
+> +#define RZN1_L1_PIN_DRIVE_STRENGTH	10
+> +#define RZN1_L1_PIN_DRIVE_STRENGTH_4MA	0
+> +#define RZN1_L1_PIN_DRIVE_STRENGTH_6MA	1
+> +#define RZN1_L1_PIN_DRIVE_STRENGTH_8MA	2
+> +#define RZN1_L1_PIN_DRIVE_STRENGTH_12MA	3
+> +#define RZN1_L1_PIN_PULL		8
+> +#define RZN1_L1_PIN_PULL_NONE		0
+> +#define RZN1_L1_PIN_PULL_UP		1
+> +#define RZN1_L1_PIN_PULL_DOWN		3
+> +#define RZN1_L1_FUNCTION		0
+> +#define RZN1_L1_FUNC_MASK		0xf
+> +#define RZN1_L1_FUNCTION_L2		0xf
+> +
+> +/*
+> + * The hardware manual describes two levels of multiplexing, but it's more
+> + * logical to think of the hardware as three levels, with level 3 consisting of
+> + * the multiplexing for Ethernet MDIO signals.
+> + *
+> + * Level 1 functions go from 0 to 9, with level 1 function '15' (0xf) specifying
+> + * that level 2 functions are used instead. Level 2 has a lot more options,
+> + * going from 0 to 61. Level 3 allows selection of MDIO functions which can be
+> + * floating, or one of seven internal peripherals. Unfortunately, there are two
+> + * level 2 functions that can select MDIO, and two MDIO channels so we have four
+> + * sets of level 3 functions.
+> + *
+> + * For this driver, we've compounded the numbers together, so:
+> + *    0 to   9 is level 1
+> + *   10 to  71 is 10 + level 2 number
+> + *   72 to  79 is 72 + MDIO0 source for level 2 MDIO function.
+> + *   80 to  87 is 80 + MDIO0 source for level 2 MDIO_E1 function.
+> + *   88 to  95 is 88 + MDIO1 source for level 2 MDIO function.
+> + *   96 to 103 is 96 + MDIO1 source for level 2 MDIO_E1 function.
+> + * Examples:
+> + *  Function 28 corresponds UART0
+> + *  Function 73 corresponds to MDIO0 to GMAC0
+> + *
+> + * There are 170 configurable pins (called PL_GPIO in the datasheet).
+> + */
+> +
+> +/*
+> + * Structure detailing the HW registers on the RZ/N1 devices.
+> + * Both the Level 1 mux registers and Level 2 mux registers have the same
+> + * structure. The only difference is that Level 2 has additional MDIO registers
+> + * at the end.
+> + */
+> +struct rzn1_pinctrl_regs {
+> +	union {
+> +		u32	conf[170];
+> +		u8	pad0[0x400];
+
+Is pad0 actually used?
+
+> +	};
+> +	u32	status_protect;	/* 0x400 */
+> +	/* MDIO mux registers, level2 only */
+> +	u32	l2_mdio[2];
+> +};
+> +
+> +/**
+> + * struct rzn1_pmx_func - describes rzn1 pinmux functions
+> + * @name: the name of this specific function
+> + * @groups: corresponding pin groups
+> + * @num_groups: the number of groups
+> + */
+> +struct rzn1_pmx_func {
+> +	const char *name;
+> +	const char **groups;
+> +	unsigned int num_groups;
+> +};
+> +
+> +/**
+> + * struct rzn1_pin_group - describes an rzn1 pin group
+> + * @name: the name of this specific pin group
+> + * @func: the name of the function selected by this group
+> + * @npins: the number of pins in this group array, i.e. the number of
+> + *	elements in .pins so we can iterate over that array
+> + * @pin_ids: array of pin_ids, i.e. the value used to select the mux
+> + * @pins: array of pins. Needed due to pinctrl_ops.get_group_pins()
+> + */
+> +struct rzn1_pin_group {
+> +	const char *name;
+> +	const char *func;
+> +	unsigned int npins;
+> +	u8 *pin_ids;
+> +	u32 *pins;
+> +};
+> +
+> +struct rzn1_pinctrl {
+> +	struct device *dev;
+> +	struct clk *clk;
+> +	struct pinctrl_dev *pctl;
+> +	struct rzn1_pinctrl_regs __iomem *lev1;
+> +	struct rzn1_pinctrl_regs __iomem *lev2;
+> +	u32 lev1_protect_phys;
+> +	u32 lev2_protect_phys;
+> +	int mdio_func[2];
+> +
+> +	struct rzn1_pin_group *groups;
+> +	unsigned int ngroups;
+> +
+> +	struct rzn1_pmx_func *functions;
+> +	unsigned int nfunctions;
+> +};
+> +
+> +#define RZN1_PINS_PROP "pinmux"
+> +
+> +#define RZN1_PIN(pin) PINCTRL_PIN(pin, "pl_gpio"#pin)
+> +
+> +static const struct pinctrl_pin_desc rzn1_pins[] = {
+> +	RZN1_PIN(0), RZN1_PIN(1), RZN1_PIN(2), RZN1_PIN(3), RZN1_PIN(4),
+> +	RZN1_PIN(5), RZN1_PIN(6), RZN1_PIN(7), RZN1_PIN(8), RZN1_PIN(9),
+> +	RZN1_PIN(10), RZN1_PIN(11), RZN1_PIN(12), RZN1_PIN(13), RZN1_PIN(14),
+> +	RZN1_PIN(15), RZN1_PIN(16), RZN1_PIN(17), RZN1_PIN(18), RZN1_PIN(19),
+> +	RZN1_PIN(20), RZN1_PIN(21), RZN1_PIN(22), RZN1_PIN(23), RZN1_PIN(24),
+> +	RZN1_PIN(25), RZN1_PIN(26), RZN1_PIN(27), RZN1_PIN(28), RZN1_PIN(29),
+> +	RZN1_PIN(30), RZN1_PIN(31), RZN1_PIN(32), RZN1_PIN(33), RZN1_PIN(34),
+> +	RZN1_PIN(35), RZN1_PIN(36), RZN1_PIN(37), RZN1_PIN(38), RZN1_PIN(39),
+> +	RZN1_PIN(40), RZN1_PIN(41), RZN1_PIN(42), RZN1_PIN(43), RZN1_PIN(44),
+> +	RZN1_PIN(45), RZN1_PIN(46), RZN1_PIN(47), RZN1_PIN(48), RZN1_PIN(49),
+> +	RZN1_PIN(50), RZN1_PIN(51), RZN1_PIN(52), RZN1_PIN(53), RZN1_PIN(54),
+> +	RZN1_PIN(55), RZN1_PIN(56), RZN1_PIN(57), RZN1_PIN(58), RZN1_PIN(59),
+> +	RZN1_PIN(60), RZN1_PIN(61), RZN1_PIN(62), RZN1_PIN(63), RZN1_PIN(64),
+> +	RZN1_PIN(65), RZN1_PIN(66), RZN1_PIN(67), RZN1_PIN(68), RZN1_PIN(69),
+> +	RZN1_PIN(70), RZN1_PIN(71), RZN1_PIN(72), RZN1_PIN(73), RZN1_PIN(74),
+> +	RZN1_PIN(75), RZN1_PIN(76), RZN1_PIN(77), RZN1_PIN(78), RZN1_PIN(79),
+> +	RZN1_PIN(80), RZN1_PIN(81), RZN1_PIN(82), RZN1_PIN(83), RZN1_PIN(84),
+> +	RZN1_PIN(85), RZN1_PIN(86), RZN1_PIN(87), RZN1_PIN(88), RZN1_PIN(89),
+> +	RZN1_PIN(90), RZN1_PIN(91), RZN1_PIN(92), RZN1_PIN(93), RZN1_PIN(94),
+> +	RZN1_PIN(95), RZN1_PIN(96), RZN1_PIN(97), RZN1_PIN(98), RZN1_PIN(99),
+> +	RZN1_PIN(100), RZN1_PIN(101), RZN1_PIN(102), RZN1_PIN(103),
+> +	RZN1_PIN(104), RZN1_PIN(105), RZN1_PIN(106), RZN1_PIN(107),
+> +	RZN1_PIN(108), RZN1_PIN(109), RZN1_PIN(110), RZN1_PIN(111),
+> +	RZN1_PIN(112), RZN1_PIN(113), RZN1_PIN(114), RZN1_PIN(115),
+> +	RZN1_PIN(116), RZN1_PIN(117), RZN1_PIN(118), RZN1_PIN(119),
+> +	RZN1_PIN(120), RZN1_PIN(121), RZN1_PIN(122), RZN1_PIN(123),
+> +	RZN1_PIN(124), RZN1_PIN(125), RZN1_PIN(126), RZN1_PIN(127),
+> +	RZN1_PIN(128), RZN1_PIN(129), RZN1_PIN(130), RZN1_PIN(131),
+> +	RZN1_PIN(132), RZN1_PIN(133), RZN1_PIN(134), RZN1_PIN(135),
+> +	RZN1_PIN(136), RZN1_PIN(137), RZN1_PIN(138), RZN1_PIN(139),
+> +	RZN1_PIN(140), RZN1_PIN(141), RZN1_PIN(142), RZN1_PIN(143),
+> +	RZN1_PIN(144), RZN1_PIN(145), RZN1_PIN(146), RZN1_PIN(147),
+> +	RZN1_PIN(148), RZN1_PIN(149), RZN1_PIN(150), RZN1_PIN(151),
+> +	RZN1_PIN(152), RZN1_PIN(153), RZN1_PIN(154), RZN1_PIN(155),
+> +	RZN1_PIN(156), RZN1_PIN(157), RZN1_PIN(158), RZN1_PIN(159),
+> +	RZN1_PIN(160), RZN1_PIN(161), RZN1_PIN(162), RZN1_PIN(163),
+> +	RZN1_PIN(164), RZN1_PIN(165), RZN1_PIN(166), RZN1_PIN(167),
+> +	RZN1_PIN(168), RZN1_PIN(169),
+> +};
+> +
+> +enum {
+> +	LOCK_LEVEL1 = 0x1,
+> +	LOCK_LEVEL2 = 0x2,
+> +	LOCK_ALL = LOCK_LEVEL1 | LOCK_LEVEL2,
+
+0x03 is already (0x01 | 0x02) :)
+Not a big deal though.
+
+> +};
+> +
+> +static void rzn1_hw_set_lock(struct rzn1_pinctrl *ipctl, u8 lock, u8 value)
+> +{
+> +	/*
+> +	 * The pinmux configuration is locked by writing the physical address of
+> +	 * the status_protect register to itself. It is unlocked by writing the
+> +	 * address | 1.
+> +	 */
+> +	if (lock & LOCK_LEVEL1) {
+> +		u32 val = ipctl->lev1_protect_phys | !(value & LOCK_LEVEL1);
+> +
+> +		writel(val, &ipctl->lev1->status_protect);
+> +	}
+> +
+> +	if (lock & LOCK_LEVEL2) {
+> +		u32 val = ipctl->lev2_protect_phys | !(value & LOCK_LEVEL2);
+> +
+> +		writel(val, &ipctl->lev2->status_protect);
+> +	}
+> +}
+> +
+> +static void rzn1_pinctrl_mdio_select(struct rzn1_pinctrl *ipctl, u8 mdio,
+> +				     u32 func)
+> +{
+> +	if (ipctl->mdio_func[mdio] >= 0 && ipctl->mdio_func[mdio] != func)
+> +		dev_warn(ipctl->dev, "conflicting setting for mdio%d!\n", mdio);
+> +	ipctl->mdio_func[mdio] = func;
+> +
+> +	dev_dbg(ipctl->dev, "setting mdio%d to %d\n", mdio, func);
+> +
+> +	writel(func, &ipctl->lev2->l2_mdio[mdio]);
+> +}
+> +
+> +/*
+> + * Using a composite pin description, set the hardware pinmux registers
+> + * with the corresponding values.
+> + * Make sure to unlock write protection and reset it afterward.
+> + *
+> + * NOTE: There is no protection for potential concurrency, it is assumed these
+> + * calls are serialized already.
+> + */
+> +static int rzn1_set_hw_pin_func(struct rzn1_pinctrl *ipctl, u32 pin,
+> +				u32 pin_config, u8 use_locks)
+> +{
+> +	u32 l1_cache;
+> +	u32 l2_cache;
+> +	u32 l1;
+> +	u32 l2;
+> +
+> +	/* Level 3 MDIO multiplexing */
+> +	if (pin_config >= RZN1_FUNC_MDIO0_HIGHZ &&
+> +	    pin_config <= RZN1_FUNC_MDIO1_E1_SWITCH) {
+> +		u8 mdio_channel;
+> +		u32 mdio_func;
+> +
+> +		if (pin_config <= RZN1_FUNC_MDIO1_HIGHZ)
+> +			mdio_channel = 0;
+> +		else
+> +			mdio_channel = 1;
+> +
+> +		/* Get MDIO func, and convert the func to the level 2 number */
+> +		if (pin_config <= RZN1_FUNC_MDIO0_SWITCH) {
+> +			mdio_func = pin_config - RZN1_FUNC_MDIO0_HIGHZ;
+> +			pin_config = RZN1_FUNC_ETH_MDIO;
+> +		} else if (pin_config <= RZN1_FUNC_MDIO0_E1_SWITCH) {
+> +			mdio_func = pin_config - RZN1_FUNC_MDIO0_E1_HIGHZ;
+> +			pin_config = RZN1_FUNC_ETH_MDIO_E1;
+> +		} else if (pin_config <= RZN1_FUNC_MDIO1_SWITCH) {
+> +			mdio_func = pin_config - RZN1_FUNC_MDIO1_HIGHZ;
+> +			pin_config = RZN1_FUNC_ETH_MDIO;
+> +		} else {
+> +			mdio_func = pin_config - RZN1_FUNC_MDIO1_E1_HIGHZ;
+> +			pin_config = RZN1_FUNC_ETH_MDIO_E1;
+> +		}
+> +		rzn1_pinctrl_mdio_select(ipctl, mdio_channel, mdio_func);
+> +	}
+> +
+> +	/* Note here, we do not allow anything past the MDIO Mux values */
+> +	if (pin >= ARRAY_SIZE(ipctl->lev1->conf) ||
+> +	    pin_config >= RZN1_FUNC_MDIO0_HIGHZ)
+> +		return -EINVAL;
+> +
+> +	l1 = readl(&ipctl->lev1->conf[pin]);
+> +	l1_cache = l1;
+> +	l2 = readl(&ipctl->lev2->conf[pin]);
+> +	l2_cache = l2;
+> +
+> +	dev_dbg(ipctl->dev, "setting func for pin %d to %d\n", pin, pin_config);
+> +
+> +	if (pin_config < RZN1_FUNC_L2_OFFSET) {
+> +		l1 &= ~(RZN1_L1_FUNC_MASK << RZN1_L1_FUNCTION);
+> +		l1 |= (pin_config << RZN1_L1_FUNCTION);
+> +	} else {
+> +		l1 &= ~(RZN1_L1_FUNC_MASK << RZN1_L1_FUNCTION);
+> +		l1 |= (RZN1_L1_FUNCTION_L2 << RZN1_L1_FUNCTION);
+> +
+> +		l2 = pin_config - RZN1_FUNC_L2_OFFSET;
+> +	}
+> +
+> +	/* If either configuration changes, we update both anyway */
+> +	if (l1 != l1_cache || l2 != l2_cache) {
+> +		writel(l1, &ipctl->lev1->conf[pin]);
+> +		writel(l2, &ipctl->lev2->conf[pin]);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct rzn1_pin_group *rzn1_pinctrl_find_group_by_name(
+> +	const struct rzn1_pinctrl *ipctl, const char *name)
+> +{
+> +	const struct rzn1_pin_group *grp = NULL;
+> +	int i;
+> +
+> +	for (i = 0; i < ipctl->ngroups; i++) {
+> +		if (!strcmp(ipctl->groups[i].name, name)) {
+> +			grp = &ipctl->groups[i];
+> +			break;
+> +		}
+> +	}
+> +
+> +	return grp;
+> +}
+> +
+> +static int rzn1_get_groups_count(struct pinctrl_dev *pctldev)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	return ipctl->ngroups;
+> +}
+> +
+> +static const char *rzn1_get_group_name(struct pinctrl_dev *pctldev,
+> +				       unsigned int selector)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	return ipctl->groups[selector].name;
+> +}
+> +
+> +static int rzn1_get_group_pins(struct pinctrl_dev *pctldev,
+> +			       unsigned int selector, const unsigned int **pins,
+> +			       unsigned int *npins)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	if (selector >= ipctl->ngroups)
+> +		return -EINVAL;
+> +
+> +	*pins = ipctl->groups[selector].pins;
+> +	*npins = ipctl->groups[selector].npins;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * This function is called for each pinctl 'Function' node.
+> + * Sub-nodes can be used to describe multiple 'Groups' for the 'Function'
+> + * If there aren't any sub-nodes, the 'Group' is essentially the 'Function'.
+> + * Each 'Group' uses pinmux = <...> to detail the pins and data used to select
+> + * the functionality. Each 'Group' has optional pin configurations that apply
+> + * to all pins in the 'Group'.
+> + */
+> +static int rzn1_dt_node_to_map_one(struct pinctrl_dev *pctldev,
+> +				   struct device_node *np,
+> +				   struct pinctrl_map **map,
+> +				   unsigned int *num_maps)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +	const struct rzn1_pin_group *grp;
+> +	unsigned long *configs = NULL;
+> +	unsigned int num_configs = 0;
+> +	unsigned int reserved_maps = *num_maps;
+> +	unsigned int reserve = 1;
+> +	int ret;
+> +
+> +	dev_dbg(ipctl->dev, "processing node %pOF\n", np);
+> +
+> +	grp = rzn1_pinctrl_find_group_by_name(ipctl, np->name);
+> +	if (!grp) {
+> +		dev_err(ipctl->dev, "unable to find group for node %pOF\n", np);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Get the group's pin configuration */
+> +	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs,
+> +					      &num_configs);
+> +	if (ret < 0) {
+> +		dev_err(ipctl->dev, "%s: could not parse node property\n",
+> +			of_node_full_name(np));
+
+Why %pOF above and of_node_full_name? I would use the first, if
+nothing changed recently with OF naming.
+
+> +		return ret;
+> +	}
+> +
+> +	if (num_configs)
+> +		reserve++;
+> +
+> +	/* Increase the number of maps to cover this group */
+> +	ret = pinctrl_utils_reserve_map(pctldev, map, &reserved_maps, num_maps,
+> +					reserve);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	/* Associate the group with the function */
+> +	ret = pinctrl_utils_add_map_mux(pctldev, map, &reserved_maps, num_maps,
+> +					grp->name, grp->func);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	if (num_configs) {
+> +		/* Associate the group's pin configuration with the group */
+> +		ret = pinctrl_utils_add_map_configs(pctldev, map,
+> +				&reserved_maps, num_maps, grp->name,
+> +				configs, num_configs,
+> +				PIN_MAP_TYPE_CONFIGS_GROUP);
+> +		if (ret < 0)
+> +			goto out;
+> +	}
+> +
+> +	dev_dbg(pctldev->dev, "maps: function %s group %s (%d pins)\n",
+> +		grp->func, grp->name, grp->npins);
+> +
+> +out:
+> +	kfree(configs);
+> +	return 0;
+
+You never return error here (nit: newline before returning, here and
+in other places)
+
+> +}
+> +
+> +static int rzn1_dt_node_to_map(struct pinctrl_dev *pctldev,
+> +			       struct device_node *np,
+> +			       struct pinctrl_map **map,
+> +			       unsigned int *num_maps)
+> +{
+> +	struct device_node *child;
+> +	int ret;
+> +
+> +	*map = NULL;
+> +	*num_maps = 0;
+> +
+> +	ret = rzn1_dt_node_to_map_one(pctldev, np, map, num_maps);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	for_each_child_of_node(np, child) {
+> +		ret = rzn1_dt_node_to_map_one(pctldev, child, map, num_maps);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct pinctrl_ops rzn1_pctrl_ops = {
+> +	.get_groups_count = rzn1_get_groups_count,
+> +	.get_group_name = rzn1_get_group_name,
+> +	.get_group_pins = rzn1_get_group_pins,
+> +	.dt_node_to_map = rzn1_dt_node_to_map,
+> +	.dt_free_map = pinctrl_utils_free_map,
+> +};
+> +
+> +static int rzn1_pmx_get_funcs_count(struct pinctrl_dev *pctldev)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	return ipctl->nfunctions;
+> +}
+> +
+> +static const char *rzn1_pmx_get_func_name(struct pinctrl_dev *pctldev,
+> +					  unsigned int selector)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	return ipctl->functions[selector].name;
+> +}
+> +
+> +static int rzn1_pmx_get_groups(struct pinctrl_dev *pctldev,
+> +			       unsigned int selector,
+> +			       const char * const **groups,
+> +			       unsigned int * const num_groups)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +	*groups = ipctl->functions[selector].groups;
+> +	*num_groups = ipctl->functions[selector].num_groups;
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzn1_set_mux(struct pinctrl_dev *pctldev, unsigned int selector,
+> +			unsigned int group)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +	struct rzn1_pin_group *grp = &ipctl->groups[group];
+> +	unsigned int i, grp_pins = grp->npins;
+> +
+> +	dev_dbg(ipctl->dev, "set mux %s(%d) group %s(%d)\n",
+> +		ipctl->functions[selector].name, selector, grp->name, group);
+> +
+> +	rzn1_hw_set_lock(ipctl, LOCK_ALL, LOCK_ALL);
+> +	for (i = 0; i < grp_pins; i++)
+> +		rzn1_set_hw_pin_func(ipctl, grp->pins[i], grp->pin_ids[i], 0);
+> +	rzn1_hw_set_lock(ipctl, LOCK_ALL, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct pinmux_ops rzn1_pmx_ops = {
+> +	.get_functions_count = rzn1_pmx_get_funcs_count,
+> +	.get_function_name = rzn1_pmx_get_func_name,
+> +	.get_function_groups = rzn1_pmx_get_groups,
+> +	.set_mux = rzn1_set_mux,
+> +};
+> +
+> +static int rzn1_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
+> +			    unsigned long *config)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +	enum pin_config_param param = pinconf_to_config_param(*config);
+> +	const u32 reg_drive[4] = { 4, 6, 8, 12 };
+> +	u32 l1, l2;
+> +	u32 pull, drive, l1mux;
+> +	u32 arg = 0;
+> +
+> +	if (pin >= ARRAY_SIZE(ipctl->lev1->conf))
+> +		return -EINVAL;
+> +
+> +	l1 = readl(&ipctl->lev1->conf[pin]);
+> +
+> +	l1mux = l1 & RZN1_L1_FUNC_MASK;
+> +	pull = (l1 >> RZN1_L1_PIN_PULL) & 0x3;
+> +	drive = (l1 >> RZN1_L1_PIN_DRIVE_STRENGTH) & 0x3;
+> +
+> +	switch (param) {
+> +	case PIN_CONFIG_BIAS_PULL_UP:
+> +		if (pull == RZN1_L1_PIN_PULL_UP)
+> +			arg = 1;
+> +		break;
+> +	case PIN_CONFIG_BIAS_PULL_DOWN:
+> +		if (pull == RZN1_L1_PIN_PULL_DOWN)
+> +			arg = 1;
+> +		break;
+> +	case PIN_CONFIG_BIAS_DISABLE:
+> +		if (pull == RZN1_L1_PIN_PULL_NONE)
+> +			arg = 1;
+> +		break;
+> +	case PIN_CONFIG_DRIVE_STRENGTH:
+> +		arg = reg_drive[drive];
+> +		break;
+> +	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+> +		l2 = readl(&ipctl->lev1->conf[pin]);
+> +		if (l1mux == RZN1_FUNC_HIGHZ)
+> +			arg = 1;
+> +		if (l1mux == RZN1_L1_FUNCTION_L2 && l2 == 0)
+> +			arg = 1;
+> +		break;
+> +	default:
+> +		return -ENOTSUPP;
+> +	}
+> +
+> +	*config = pinconf_to_config_packed(param, arg);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzn1_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+> +			    unsigned long *configs, unsigned int num_configs)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +	enum pin_config_param param;
+> +	int i;
+> +	u32 arg;
+> +	u32 l1, l1_cache;
+> +	u32 drv;
+> +
+> +	if (pin >= ARRAY_SIZE(ipctl->lev1->conf))
+> +		return -EINVAL;
+> +
+> +	l1 = readl(&ipctl->lev1->conf[pin]);
+> +	l1_cache = l1;
+> +
+> +	for (i = 0; i < num_configs; i++) {
+> +		param = pinconf_to_config_param(configs[i]);
+> +		arg = pinconf_to_config_argument(configs[i]);
+> +
+> +		switch (param) {
+> +		case PIN_CONFIG_BIAS_PULL_UP:
+> +			dev_dbg(ipctl->dev, "set pin %d pull up\n", pin);
+> +			l1 &= ~(0x3 << RZN1_L1_PIN_PULL);
+> +			l1 |= (RZN1_L1_PIN_PULL_UP << RZN1_L1_PIN_PULL);
+> +			break;
+> +		case PIN_CONFIG_BIAS_PULL_DOWN:
+> +			dev_dbg(ipctl->dev, "set pin %d pull down\n", pin);
+> +			l1 &= ~(0x3 << RZN1_L1_PIN_PULL);
+> +			l1 |= (RZN1_L1_PIN_PULL_DOWN << RZN1_L1_PIN_PULL);
+> +			break;
+> +		case PIN_CONFIG_BIAS_DISABLE:
+> +			dev_dbg(ipctl->dev, "set pin %d bias off\n", pin);
+> +			l1 &= ~(0x3 << RZN1_L1_PIN_PULL);
+> +			l1 |= (RZN1_L1_PIN_PULL_NONE << RZN1_L1_PIN_PULL);
+> +			break;
+> +		case PIN_CONFIG_DRIVE_STRENGTH:
+> +			dev_dbg(ipctl->dev, "set pin %d drv %umA\n", pin, arg);
+> +			drv = 0;
+> +			switch (arg) {
+> +			case 4:
+> +				drv = RZN1_L1_PIN_DRIVE_STRENGTH_4MA;
+> +				break;
+> +			case 6:
+> +				drv = RZN1_L1_PIN_DRIVE_STRENGTH_6MA;
+> +				break;
+> +			case 8:
+> +				drv = RZN1_L1_PIN_DRIVE_STRENGTH_8MA;
+> +				break;
+> +			case 12:
+> +				drv = RZN1_L1_PIN_DRIVE_STRENGTH_12MA;
+> +				break;
+> +			default:
+> +				dev_err(ipctl->dev,
+> +					"Drive strength %umA not supported\n",
+> +					arg);
+> +				return -EINVAL;
+> +			}
+> +
+> +			l1 &= ~(0x3 << RZN1_L1_PIN_DRIVE_STRENGTH);
+> +			l1 |= (drv << RZN1_L1_PIN_DRIVE_STRENGTH);
+> +			break;
+> +
+> +		case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+> +			dev_dbg(ipctl->dev, "set pin %d High-Z\n", pin);
+> +			l1 &= ~RZN1_L1_FUNC_MASK;
+> +			l1 |= RZN1_FUNC_HIGHZ;
+> +			break;
+> +		default:
+
+I'll re-comment on bindings too, but the pinconf properties you
+support should be listed there
+
+> +			return -ENOTSUPP;
+> +		}
+> +	}
+> +
+> +	if (l1 != l1_cache) {
+> +		rzn1_hw_set_lock(ipctl, LOCK_LEVEL1, LOCK_LEVEL1);
+> +		writel(l1, &ipctl->lev1->conf[pin]);
+> +		rzn1_hw_set_lock(ipctl, LOCK_LEVEL1, 0);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzn1_pin_config_group_set(struct pinctrl_dev *pctldev,
+> +				     unsigned int selector,
+> +				     unsigned long *configs,
+> +				     unsigned int num_configs)
+> +{
+> +	struct rzn1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+> +	struct rzn1_pin_group *grp = &ipctl->groups[selector];
+> +	int ret, i;
+> +
+> +	dev_dbg(ipctl->dev, "group set %s selector:%d configs:%p/%d\n",
+> +		grp->name, selector, configs, num_configs);
+> +
+> +	for (i = 0; i < grp->npins; i++) {
+> +		unsigned int pin = grp->pins[i];
+> +
+> +		ret = rzn1_pinconf_set(pctldev, pin, configs, num_configs);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct pinconf_ops rzn1_pinconf_ops = {
+> +	.pin_config_get = rzn1_pinconf_get,
+> +	.pin_config_set = rzn1_pinconf_set,
+> +	.pin_config_group_set = rzn1_pin_config_group_set,
+
+Nit: you register a pinconf map with PIN_MAP_TYPE_CONFIGS_GROUP so the
+'pinconf_[set|get]' should never be called. Have you tested if they
+do ? (just for my better understanding of the pinctrl framework :)
+
+> +};
+> +
+> +static struct pinctrl_desc rzn1_pinctrl_desc = {
+> +	.pctlops = &rzn1_pctrl_ops,
+> +	.pmxops = &rzn1_pmx_ops,
+> +	.confops = &rzn1_pinconf_ops,
+> +	.owner = THIS_MODULE,
+> +};
+> +
+> +static int rzn1_pinctrl_parse_groups(struct device_node *np,
+> +				     struct rzn1_pin_group *grp,
+> +				     struct rzn1_pinctrl *ipctl)
+> +{
+> +	int size;
+> +	const __be32 *list;
+> +	int i;
+
+unsigned int i;
+
+It is only used in the bottom for loop afaict
+
+> +
+> +	dev_dbg(ipctl->dev, "%s: %s\n", __func__, np->name);
+> +
+> +	/* Initialise group */
+> +	grp->name = np->name;
+> +
+> +	/*
+> +	 * The binding format is
+> +	 *	pinmux = <PIN_FUNC_ID CONFIG ...>,
+> +	 * do sanity check and calculate pins number
+> +	 */
+> +	list = of_get_property(np, RZN1_PINS_PROP, &size);
+> +	if (!list) {
+> +		dev_err(ipctl->dev,
+> +			"no " RZN1_PINS_PROP " property in node %s\n",
+> +			np->full_name);
+
+Isn't it better to print out the OF node name with %pOF? Here and
+below...
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* We do not check return since it's safe node passed down */
+> +	if (!size) {
+> +		dev_err(ipctl->dev, "Invalid " RZN1_PINS_PROP " in node %s\n",
+> +			np->full_name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	grp->npins = size / sizeof(list[0]);
+> +	if (!grp->npins)
+> +		return 0;
+
+If you get here the property is there and has > 0 length
+> +
+> +	grp->pin_ids = devm_kmalloc_array(ipctl->dev,
+> +					  grp->npins, sizeof(grp->pin_ids[0]),
+> +					  GFP_KERNEL);
+> +	grp->pins = devm_kmalloc_array(ipctl->dev,
+> +				       grp->npins, sizeof(grp->pins[0]),
+> +				       GFP_KERNEL);
+> +	if (!grp->pin_ids || !grp->pins)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < grp->npins; i++) {
+> +		u32 pin_id = be32_to_cpu(*list++);
+> +
+> +		grp->pins[i] = pin_id & 0xff;
+> +		grp->pin_ids[i] = (pin_id >> 8) & 0x7f;
+> +	}
+> +
+> +	return grp->npins;
+> +}
+> +
+> +static int rzn1_pinctrl_count_function_groups(struct device_node *np)
+> +{
+> +	struct device_node *child;
+> +	int count = 0;
+> +
+> +	if (of_property_count_u32_elems(np, RZN1_PINS_PROP) > 0)
+> +		count++;
+> +
+> +	for_each_child_of_node(np, child) {
+> +		if (of_property_count_u32_elems(child, RZN1_PINS_PROP) > 0)
+> +			count++;
+> +	}
+> +
+> +	return count;
+> +}
+> +
+> +static int rzn1_pinctrl_parse_functions(struct device_node *np,
+> +					struct rzn1_pinctrl *ipctl, u32 index)
+> +{
+> +	struct device_node *child;
+> +	struct rzn1_pmx_func *func;
+> +	struct rzn1_pin_group *grp;
+> +	u32 i = 0;
+> +	int ret;
+> +
+> +	dev_dbg(ipctl->dev, "parse function(%d): %s\n", index, np->name);
+> +
+> +	func = &ipctl->functions[index];
+> +
+> +	/* Initialise function */
+> +	func->name = np->name;
+> +	func->num_groups = rzn1_pinctrl_count_function_groups(np);
+> +	dev_dbg(ipctl->dev, "function %s has %d groups\n",
+> +		np->name, func->num_groups);
+
+Maybe move this debug printout below the error check, it helps to know
+parsing went fine.
+
+> +	if (func->num_groups == 0) {
+> +		dev_err(ipctl->dev, "no groups defined in %s\n", np->full_name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	func->groups = devm_kmalloc_array(ipctl->dev,
+> +					  func->num_groups, sizeof(char *),
+> +					  GFP_KERNEL);
+> +	if (!func->groups)
+> +		return -ENOMEM;
+> +
+> +	if (of_property_count_u32_elems(np, RZN1_PINS_PROP) > 0) {
+> +		func->groups[i] = np->name;
+> +		grp = &ipctl->groups[ipctl->ngroups];
+> +		grp->func = func->name;
+> +		ret = rzn1_pinctrl_parse_groups(np, grp, ipctl);
+> +		if (ret < 0)
+> +			return ret;
+> +		if (ret > 0) {
+
+You never return grp->npins == 0; it's either error or > 0. I think
+you can drop this check.
+
+> +			i++;
+> +			ipctl->ngroups++;
+> +		}
+
+This design allows a sub-node with the following layout
+
+        n-1 {
+                pinmux = <..>;
+
+                sub-n-1 {
+                        pinmux = <..>;
+                };
+
+                sub-n-2 {
+                        pinmux = <..>;
+                };
+        };
+
+The bindings documentation only allows either this
+
+        n-1 {
+                pinmux = <..>;
+        };
+
+Or this
+        n-1 {
+                sub-n-1 {
+                        pinmux = <..>;
+                };
+
+                sub-n-2 {
+                        pinmux = <..>;
+                };
+        };
+
+So I guess it's one or the other here. What do you think?
+
+> +	}
+> +
+> +	for_each_child_of_node(np, child) {
+> +		func->groups[i] = child->name;
+> +		grp = &ipctl->groups[ipctl->ngroups];
+> +		grp->func = func->name;
+> +		ret = rzn1_pinctrl_parse_groups(child, grp, ipctl);
+> +		if (ret < 0)
+> +			return ret;
+> +		if (ret > 0) {
+> +			i++;
+> +			ipctl->ngroups++;
+> +		}
+> +	}
+> +
+> +	dev_dbg(ipctl->dev, "function %s parsed %d/%d groups\n",
+> +		np->name, i, func->num_groups);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzn1_pinctrl_probe_dt(struct platform_device *pdev,
+> +				 struct rzn1_pinctrl *ipctl)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct device_node *child;
+> +	unsigned int maxgroups = 0;
+> +	u32 nfuncs = 0;
+> +	u32 i = 0;
+> +	int ret;
+> +
+> +	nfuncs = of_get_child_count(np);
+> +	if (nfuncs <= 0) {
+> +		dev_err(&pdev->dev, "no functions defined\n");
+> +		return -EINVAL;
+> +	}
+
+Do you really want to fail if no pinmuxing sub-node is defined? I can
+think of boards which includes the SoC .dtsi but do not define (yet)
+any pinmux/conf sub-nodes. This shouldn't be an error.
+
+> +
+> +	ipctl->nfunctions = nfuncs;
+> +	ipctl->functions = devm_kmalloc_array(&pdev->dev, nfuncs,
+> +					      sizeof(*ipctl->functions),
+> +					      GFP_KERNEL);
+> +	if (!ipctl->functions)
+> +		return -ENOMEM;
+> +
+> +	ipctl->ngroups = 0;
+> +	for_each_child_of_node(np, child)
+> +		maxgroups += rzn1_pinctrl_count_function_groups(child);
+> +
+> +	ipctl->groups = devm_kmalloc_array(&pdev->dev,
+> +					   maxgroups,
+> +					   sizeof(*ipctl->groups),
+> +					   GFP_KERNEL);
+> +	if (!ipctl->groups)
+> +		return -ENOMEM;
+> +
+> +	for_each_child_of_node(np, child) {
+> +		ret = rzn1_pinctrl_parse_functions(child, ipctl, i++);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzn1_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +	struct rzn1_pinctrl *ipctl;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	/* Create state holders etc for this driver */
+> +	ipctl = devm_kzalloc(&pdev->dev, sizeof(*ipctl), GFP_KERNEL);
+> +	if (!ipctl)
+> +		return -ENOMEM;
+> +
+> +	ipctl->mdio_func[0] = -1;
+> +	ipctl->mdio_func[1] = -1;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	ipctl->lev1_protect_phys = (u32)res->start + 0x400;
+> +	ipctl->lev1 = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(ipctl->lev1))
+> +		return PTR_ERR(ipctl->lev1);
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +	ipctl->lev2_protect_phys = (u32)res->start + 0x400;
+> +	ipctl->lev2 = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(ipctl->lev2))
+> +		return PTR_ERR(ipctl->lev2);
+> +
+> +	ipctl->clk = devm_clk_get(&pdev->dev, "bus");
+> +	if (IS_ERR(ipctl->clk))
+> +		return PTR_ERR(ipctl->clk);
+> +	ret = clk_prepare_enable(ipctl->clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ipctl->dev = &pdev->dev;
+> +	rzn1_pinctrl_desc.name = dev_name(&pdev->dev);
+> +	rzn1_pinctrl_desc.pins = rzn1_pins;
+> +	rzn1_pinctrl_desc.npins = ARRAY_SIZE(rzn1_pins);
+> +
+> +	ret = rzn1_pinctrl_probe_dt(pdev, ipctl);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "fail to probe dt properties\n");
+> +		goto err_clk;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, ipctl);
+> +	ipctl->pctl = pinctrl_register(&rzn1_pinctrl_desc, &pdev->dev, ipctl);
+> +	if (!ipctl->pctl) {
+> +		dev_err(&pdev->dev, "could not register rzn1 pinctrl driver\n");
+> +		ret = -EINVAL;
+> +		goto err_clk;
+> +	}
+
+Bindings claim this is a pinctrl/gpio controller, but I don't see any
+gpio support here. I'll comment on the bindings for reference too.
+
+Thanks
+   j
+
+> +
+> +	dev_info(&pdev->dev, "probed\n");
+> +
+> +	return 0;
+> +
+> +err_clk:
+> +	clk_disable_unprepare(ipctl->clk);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rzn1_pinctrl_remove(struct platform_device *pdev)
+> +{
+> +	struct rzn1_pinctrl *ipctl = platform_get_drvdata(pdev);
+> +
+> +	clk_disable_unprepare(ipctl->clk);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id rzn1_pinctrl_match[] = {
+> +	{ .compatible = "renesas,rzn1-pinctrl", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, rzn1_pinctrl_match);
+> +
+> +static struct platform_driver rzn1_pinctrl_driver = {
+> +	.probe	= rzn1_pinctrl_probe,
+> +	.remove = rzn1_pinctrl_remove,
+> +	.driver	= {
+> +		.name		= "rzn1-pinctrl",
+> +		.owner		= THIS_MODULE,
+> +		.of_match_table	= rzn1_pinctrl_match,
+> +	},
+> +};
+> +
+> +static int __init _pinctrl_drv_register(void)
+> +{
+> +	return platform_driver_register(&rzn1_pinctrl_driver);
+> +}
+> +subsys_initcall(_pinctrl_drv_register);
+> +
+> +MODULE_AUTHOR("Phil Edworthy <phil.edworthy@renesas.com>");
+> +MODULE_DESCRIPTION("Renesas RZ/N1 pinctrl driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.17.1
+>
+
+--tZCmRiovzb4sxAVa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJboNbSAAoJEHI0Bo8WoVY8SosQALqGDv7gStDQEfbzkXvNBORW
+baW6ANAXVuNsWch4XIy2JRqknLRcIhhE4TP568DzHysW8z32O4IAUTVnWpD64Khq
+wyJo7UwNKIO+3EBo3y/HNje/svSWKzuQja+kRATgPQQmHd1mARd8334SH0v1655m
+To302NPuNaIKJebUb7xcOo1OnmlgwiGLZJCAdJZXYdiJQ9oiUmRRfiduRM1OX7fF
+H50ykBY9qxFHQespiEWpysJeEQWIWSAPpNKTqVYkFoIcyHY2RUk/ZazBSnow3+2i
+WVX3MMw0WTvYOoIoxhjA3/4W4e7J670Zwgw2cALDDzXY30rrXc+AZvvKK36Fvb1F
+/L6pyiWH21MqTPEF4eph+ABCynmXAPPzUBebsAIACME9NLRI/CLx2GDFo265gQPB
+L/pqsCIq8zJE20rguFv4GF6OD5yjZ30Jbglj/nobhIkllVgNPlQETeXCkgSwXGdW
+Xnq04rdse6X2n23XAmppLehxtNXQThDLYuC+EHMIUhSRff2tM/Cb7AY3tIox5Owb
+T1ocW5L9nHUYmEVd8sfqvlonwBPP30BJRH2qx88oFox+x10tMw7OCWcOuP72+VgE
+m25HN5Hi1P+ZrNk0xwPTcslMYSUuz++KhEp8UeLN6Yh4oK5XNxt9f20G0JiUvcXJ
+d6oNoRG9pG+wr/XKOa9f
+=AcIY
+-----END PGP SIGNATURE-----
+
+--tZCmRiovzb4sxAVa--
