@@ -1,43 +1,75 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [RFC/PATCH 0/5] Support children for legacy device properties
-Date: Tue, 18 Sep 2018 07:23:40 +0300
-Message-ID: <CAHp75VcguYVeKMLGZ-S2JTvY0omSbBpjeqGNby+SzVqUoNdQiw@mail.gmail.com>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH v7 01/10] i3c: Add core I3C infrastructure
+Date: Tue, 18 Sep 2018 09:00:02 +0200
+Message-ID: <20180918090002.2e4012e6@bbrezillon>
+References: <20180905154108.20770-1-boris.brezillon@bootlin.com>
+        <20180905154108.20770-2-boris.brezillon@bootlin.com>
+        <aa29faa0-237c-3875-64da-b93a1e87ccff@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+In-Reply-To: <aa29faa0-237c-3875-64da-b93a1e87ccff@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-input <linux-input@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: vitor <Vitor.Soares@synopsys.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 9:18 PM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->
-> The generic device properties APIs are very helpful as they allow abstracting
-> away details of the platform (whether it is ACPI, device tree, or legacy board
-> file), so that individual driver does not need separate code paths to support
-> all variants. However there are drivers that currently can not use generic
-> device properties API as they need notion of children properties, for example
-> gpio_keys driver, that expects every button to be described as a sub-node of
-> main device.
->
-> This patch series introduces notion of sub-nodes for static properties and ties
-> it up with GPIO lookup tables so that they are usable with sub-nodes as well.
+Hi Vitor,
 
-I like the idea.
-Though, I Cc'ed this to Mika and Sakari who might be interested to see
-and, perhaps, comment on it.
+Sorry for the late reply, I was not at the office last week.
 
->
-> Thanks.
->
-> --
-> Dmitry
->
+On Tue, 11 Sep 2018 11:04:07 +0100
+vitor <Vitor.Soares@synopsys.com> wrote:
 
+> Hi Boris,
+> 
+> On 05-09-2018 16:40, Boris Brezillon wrote:
+> > +i3c_master_register_new_i3c_devs(struct i3c_master_controller *master)
+> > +{
+> > +	struct i3c_dev_desc *desc;
+> > +	int ret;
+> > +
+> > +	if (!master->init_done)
+> > +		return;
+> > +  
+> If you have a hot-join and call i3c_master_do_daa this function will 
+> return without create the i3c_device.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Hm, you mean if hot-join happens when the I3C master is not yet
+registered? That shouldn't be a problem since all devices will be
+registered at the end of i3c_master_register(). Am I missing something?
+Is this a problem you actually face or just something you found out
+doing code inspection?
+
+> 
+> > +	i3c_bus_for_each_i3cdev(master->bus, desc) {
+> > +		if (desc->dev || !desc->info.dyn_addr || desc == master->this)
+> > +			continue;
+> > +
+> > +		desc->dev = kzalloc(sizeof(*desc->dev), GFP_KERNEL);
+> > +		if (!desc->dev)
+> > +			continue;
+> > +
+> > +		desc->dev->bus = master->bus;
+> > +		desc->dev->desc = desc;
+> > +		desc->dev->dev.parent = &master->bus->dev;
+> > +		desc->dev->dev.type = &i3c_device_type;
+> > +		desc->dev->dev.bus = &i3c_bus_type;
+> > +		desc->dev->dev.release = i3c_device_release;
+> > +		dev_set_name(&desc->dev->dev, "%d-%llx", master->bus->id,
+> > +			     desc->info.pid);
+> > +
+> > +		if (desc->boardinfo)
+> > +			desc->dev->dev.of_node = desc->boardinfo->of_node;
+> > +
+> > +		ret = device_register(&desc->dev->dev);
+> > +		if (ret)
+> > +			dev_err(master->parent,
+> > +				"Failed to add I3C device (err = %d)\n", ret);
+> > +	}
+> > +}
+
+Regards,
+
+Boris
