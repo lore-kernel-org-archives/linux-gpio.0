@@ -1,234 +1,65 @@
-From: Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH] pinctrl: intel: Do pin translation in other GPIO
- operations as well
-Date: Tue, 18 Sep 2018 15:14:44 -0700
-Message-ID: <CACK8Z6GfeJQSMN=m9hrFE2DFwpCNjNb57PqGiXFDD19Y=SXgnQ@mail.gmail.com>
-References: <20180918153621.71984-1-mika.westerberg@linux.intel.com> <CACK8Z6F4+N1paQTSWcomnwLpLEHoospSOT3M9bqFQZHHfWmahA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: Show correct direction from the beginning
+Date: Tue, 18 Sep 2018 15:40:10 -0700
+Message-ID: <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
+References: <20180914070839.4667-1-ricardo.ribalda@gmail.com> <20180914070839.4667-2-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACK8Z6F4+N1paQTSWcomnwLpLEHoospSOT3M9bqFQZHHfWmahA@mail.gmail.com>
+In-Reply-To: <20180914070839.4667-2-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, casey.g.bowman@intel.com, "Atwood, Matthew S" <matthew.s.atwood@intel.com>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Timur Tabi <timur@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 3:04 PM Rajat Jain <rajatja@google.com> wrote:
->
-> On Tue, Sep 18, 2018 at 8:36 AM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> >
-> > For some reason I thought GPIOLIB handles translation from GPIO ranges
-> > to pinctrl pins but it turns out not to be the case. This means that
-> > when GPIOs operations are performed for a pin controller having a custom
-> > GPIO base such as Cannon Lake and Ice Lake incorrect pin number gets
-> > used internally.
-> >
-> > Fix this in the same way we did for lock/unlock IRQ operations and
-> > translate the GPIO number to pin before using it.
-> >
-> > Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
-> > Reported-by: Rajat Jain <rajatja@google.com>
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->
-> Tested-by: Rajat Jain <rajatja@google.com>
->
-> This has fixed the issue for me.
->
-> One question, may not be related: I see this line in my logs everytime
-> I export a pin (GPIO40 = pin 16 in this case). Is that an indication
-> of a problem?
->
-> "gpio gpiochip0: Persistence not supported for GPIO 40"
->
+On Fri, Sep 14, 2018 at 12:08 AM Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
 
-
-Also consider fixing the checkpatch warning:
-
-        Errors:
-            * checkpatch.pl errors/warnings
-
-            WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
-            #48: FILE: drivers/pinctrl/intel/pinctrl-intel.c:764:
-            +static int intel_gpio_to_pin(struct intel_pinctrl *pctrl,
-unsigned offset,
-
-
-
-> Thanks,
+> Current code assumes that the direction is input if direction_input
+> function is set.
+> This might not be the case on GPIOs with programmable direction.
 >
-> Rajat
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+>  drivers/gpio/gpiolib.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 >
-> On Tue, Sep 18, 2018 at 8:36 AM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> >
-> > For some reason I thought GPIOLIB handles translation from GPIO ranges
-> > to pinctrl pins but it turns out not to be the case. This means that
-> > when GPIOs operations are performed for a pin controller having a custom
-> > GPIO base such as Cannon Lake and Ice Lake incorrect pin number gets
-> > used internally.
-> >
-> > Fix this in the same way we did for lock/unlock IRQ operations and
-> > translate the GPIO number to pin before using it.
-> >
-> > Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
-> > Reported-by: Rajat Jain <rajatja@google.com>
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > ---
-> >  drivers/pinctrl/intel/pinctrl-intel.c | 111 +++++++++++++++-----------
-> >  1 file changed, 63 insertions(+), 48 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> > index 62b009b27eda..ec8dafc94694 100644
-> > --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> > +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> > @@ -747,13 +747,63 @@ static const struct pinctrl_desc intel_pinctrl_desc = {
-> >         .owner = THIS_MODULE,
-> >  };
-> >
-> > +/**
-> > + * intel_gpio_to_pin() - Translate from GPIO offset to pin number
-> > + * @pctrl: Pinctrl structure
-> > + * @offset: GPIO offset from gpiolib
-> > + * @commmunity: Community is filled here if not %NULL
-> > + * @padgrp: Pad group is filled here if not %NULL
-> > + *
-> > + * When coming through gpiolib irqchip, the GPIO offset is not
-> > + * automatically translated to pinctrl pin number. This function can be
-> > + * used to find out the corresponding pinctrl pin.
-> > + */
-> > +static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned offset,
-> > +                            const struct intel_community **community,
-> > +                            const struct intel_padgroup **padgrp)
-> > +{
-> > +       int i;
-> > +
-> > +       for (i = 0; i < pctrl->ncommunities; i++) {
-> > +               const struct intel_community *comm = &pctrl->communities[i];
-> > +               int j;
-> > +
-> > +               for (j = 0; j < comm->ngpps; j++) {
-> > +                       const struct intel_padgroup *pgrp = &comm->gpps[j];
-> > +
-> > +                       if (pgrp->gpio_base < 0)
-> > +                               continue;
-> > +
-> > +                       if (offset >= pgrp->gpio_base &&
-> > +                           offset < pgrp->gpio_base + pgrp->size) {
-> > +                               int pin;
-> > +
-> > +                               pin = pgrp->base + offset - pgrp->gpio_base;
-> > +                               if (community)
-> > +                                       *community = comm;
-> > +                               if (padgrp)
-> > +                                       *padgrp = pgrp;
-> > +
-> > +                               return pin;
-> > +                       }
-> > +               }
-> > +       }
-> > +
-> > +       return -EINVAL;
-> > +}
-> > +
-> >  static int intel_gpio_get(struct gpio_chip *chip, unsigned offset)
-> >  {
-> >         struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
-> >         void __iomem *reg;
-> >         u32 padcfg0;
-> > +       int pin;
-> > +
-> > +       pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
-> > +       if (pin < 0)
-> > +               return -EINVAL;
-> >
-> > -       reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-> > +       reg = intel_get_padcfg(pctrl, pin, PADCFG0);
-> >         if (!reg)
-> >                 return -EINVAL;
-> >
-> > @@ -770,8 +820,13 @@ static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-> >         unsigned long flags;
-> >         void __iomem *reg;
-> >         u32 padcfg0;
-> > +       int pin;
-> > +
-> > +       pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
-> > +       if (pin < 0)
-> > +               return;
-> >
-> > -       reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-> > +       reg = intel_get_padcfg(pctrl, pin, PADCFG0);
-> >         if (!reg)
-> >                 return;
-> >
-> > @@ -790,8 +845,13 @@ static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
-> >         struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
-> >         void __iomem *reg;
-> >         u32 padcfg0;
-> > +       int pin;
-> >
-> > -       reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-> > +       pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
-> > +       if (pin < 0)
-> > +               return -EINVAL;
-> > +
-> > +       reg = intel_get_padcfg(pctrl, pin, PADCFG0);
-> >         if (!reg)
-> >                 return -EINVAL;
-> >
-> > @@ -827,51 +887,6 @@ static const struct gpio_chip intel_gpio_chip = {
-> >         .set_config = gpiochip_generic_config,
-> >  };
-> >
-> > -/**
-> > - * intel_gpio_to_pin() - Translate from GPIO offset to pin number
-> > - * @pctrl: Pinctrl structure
-> > - * @offset: GPIO offset from gpiolib
-> > - * @commmunity: Community is filled here if not %NULL
-> > - * @padgrp: Pad group is filled here if not %NULL
-> > - *
-> > - * When coming through gpiolib irqchip, the GPIO offset is not
-> > - * automatically translated to pinctrl pin number. This function can be
-> > - * used to find out the corresponding pinctrl pin.
-> > - */
-> > -static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned offset,
-> > -                            const struct intel_community **community,
-> > -                            const struct intel_padgroup **padgrp)
-> > -{
-> > -       int i;
-> > -
-> > -       for (i = 0; i < pctrl->ncommunities; i++) {
-> > -               const struct intel_community *comm = &pctrl->communities[i];
-> > -               int j;
-> > -
-> > -               for (j = 0; j < comm->ngpps; j++) {
-> > -                       const struct intel_padgroup *pgrp = &comm->gpps[j];
-> > -
-> > -                       if (pgrp->gpio_base < 0)
-> > -                               continue;
-> > -
-> > -                       if (offset >= pgrp->gpio_base &&
-> > -                           offset < pgrp->gpio_base + pgrp->size) {
-> > -                               int pin;
-> > -
-> > -                               pin = pgrp->base + offset - pgrp->gpio_base;
-> > -                               if (community)
-> > -                                       *community = comm;
-> > -                               if (padgrp)
-> > -                                       *padgrp = pgrp;
-> > -
-> > -                               return pin;
-> > -                       }
-> > -               }
-> > -       }
-> > -
-> > -       return -EINVAL;
-> > -}
-> > -
-> >  static int intel_gpio_irq_reqres(struct irq_data *d)
-> >  {
-> >         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> > --
-> > 2.18.0
-> >
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index a57300c1d649..af853749e0bb 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1352,7 +1352,12 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>                  * it does, and in case chip->get_direction is not set, we may
+>                  * expose the wrong direction in sysfs.
+>                  */
+> -               desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
+> +               if (chip->get_direction)
+> +                       desc->flags = !chip->get_direction(chip, i) ?
+> +                                       (1 << FLAG_IS_OUT) : 0;
+> +               else
+> +                       desc->flags = !chip->direction_input ?
+> +                                       (1 << FLAG_IS_OUT) : 0;
+
+We used to do this.
+
+But it breaks Qualcomm hardware.
+
+commit 1ca2a92b2a99323f666f1b669b7484df4bda05e4
+Author: Timur Tabi <timur@codeaurora.org>
+Date:   Wed Dec 20 13:10:31 2017 -0600
+
+    Revert "gpio: set up initial state from .get_direction()"
+
+    This reverts commit 72d3200061776264941be1b5a9bb8e926b3b30a5.
+
+    We cannot blindly query the direction of all GPIOs when the pins are
+    first registered.  The get_direction callback normally triggers a
+    read/write to hardware, but we shouldn't be touching the hardware for
+    an individual GPIO until after it's been properly claimed.
+
+    Signed-off-by: Timur Tabi <timur@codeaurora.org>
+    Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
