@@ -1,48 +1,49 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH 2/5] gpio: davinci: Use dev name for label and automatic
- base selection
-Date: Wed, 19 Sep 2018 09:38:08 +0530
-Message-ID: <1b1199c7-2e3a-4f65-0da4-1cbdae219537@ti.com>
-References: <20180831191326.25106-1-afd@ti.com>
- <20180831191326.25106-2-afd@ti.com>
- <CACRpkdYmYHL1vrRFeyuO6immh9ZtVPeiOo+=ZB9T=CHe1yGTxg@mail.gmail.com>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v2 00/22] Unify MediaTek pinctrl in preparation for
+ MT8183 and MT6765
+Date: Tue, 18 Sep 2018 21:37:22 -0700
+Message-ID: <20180919043722.GA14181@Mani-XPS-13-9360>
+References: <cover.1536404280.git.sean.wang@mediatek.com>
+ <CACRpkdZtVBjYGs5C7-HWEyX7f7pnCqvnRYBH=fFmLKhN4FGymA@mail.gmail.com>
+ <1537325650.572.9.camel@mtkswgap22>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYmYHL1vrRFeyuO6immh9ZtVPeiOo+=ZB9T=CHe1yGTxg@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1537325650.572.9.camel@mtkswgap22>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, "Andrew F. Davis" <afd@ti.com>
-Cc: "Nori, Sekhar" <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-
-
-On Wednesday 19 September 2018 12:56 AM, Linus Walleij wrote:
-> On Fri, Aug 31, 2018 at 12:13 PM Andrew F. Davis <afd@ti.com> wrote:
+On Wed, Sep 19, 2018 at 10:54:10AM +0800, Sean Wang wrote:
+> On Tue, 2018-09-18 at 15:07 -0700, Linus Walleij wrote:
+> > On Sat, Sep 8, 2018 at 4:07 AM <sean.wang@mediatek.com> wrote:
+> > 
+> > > v2 and changes since v1:
+> > 
+> > I had trouble applying the last patches in the series so I applied
+> > all on an immutable branch (ib-mtk) then merged that into devel
+> > and added a patch on top to fix up some GPIO includes (just sent).
+> > 
+> > Please check the result!
+> > 
 > 
->> Use dev_name to get a unique label and use -1 for a base to get our
->> selection automatically. We pull in all GPIOs per chip now so this
->> does not have the effect of out of order labels like before.
->>
->> We do these both together so we can drop all the static data in one
->> patch. This also lets us normalize the return paths as we don't need
->> any cleanup after this change.
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Sure, I'll take a look and and test on the devel branch.
 > 
-> I have tentatively applied this patch set as we seem to have rough
-> consensus that it will be OK.
+> On the top, I'll add a fix for the issue recently reported by kbuild
+> test robot about implicit declaration and a new MT6765 driver based
+> on the series.
+>
+
+Hi Sean,
+
+Do you have any plans to add support for MT6797?
+
+Thanks,
+Mani
+
+> > Yours,
+> > Linus Walleij
 > 
-> We can always pull it out or revert it if things break.
-
-Okay. If that is the case then i have already tested the entire series.
-
-Apart from gpio numbering different, i have tested toggling and
-interrupts with k2g-evm and omapl138.
-
-> 
-> Yours,
-> Linus Walleij
 > 
