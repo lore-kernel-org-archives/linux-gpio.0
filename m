@@ -1,48 +1,273 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: bcm: add Northstar driver
-Date: Wed, 19 Sep 2018 14:45:52 -0700
-Message-ID: <da0992c4-f8c8-7e3c-6d54-35a8cfdcd7bc@gmail.com>
-References: <20180919210219.21921-1-zajec5@gmail.com>
- <20180919210219.21921-2-zajec5@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180919210219.21921-2-zajec5@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, linux-arm-kernel@lists.infradead.org
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH v5] mtd: rawnand: ams-delta: use GPIO lookup table
+Date: Thu, 20 Sep 2018 00:17:29 +0200
+Message-ID: <20180919221729.21179-1-jmkrzyszt@gmail.com>
+References: <20180909225605.16463-3-jmkrzyszt@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180909225605.16463-3-jmkrzyszt@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-T24gMDkvMTkvMjAxOCAwMjowMiBQTSwgUmFmYcWCIE1pxYJlY2tpIHdyb3RlOgo+IEZyb206IFJh
-ZmHFgiBNacWCZWNraSA8cmFmYWxAbWlsZWNraS5wbD4KPiAKPiBUaGlzIGRyaXZlciBwcm92aWRl
-cyBzdXBwb3J0IGZvciBOb3J0aHN0YXIgbXV4IGNvbnRyb2xsZXIuIEl0IGRpZmZlcnMKPiBmcm9t
-IE5vcnRoc3RhciBQbHVzIG9uZSBzbyBhIG5ldyBiaW5kaW5nIGFuZCBkcml2ZXIgd2VyZSBuZWVk
-ZWQuCj4gCj4gUmlnaHQgbm93IGl0IGluY2x1ZGVzIHN1cHBvcnQgZm9yIFNQSSBwaW5zIG9ubHkg
-d2hpY2ggaXMgY2F1c2VkIGJ5IGEKPiBsYWNrIG9mIGFjY2VzcyB0byBCcm9hZGNvbSdzIGRhdGFz
-aGVldC4gU1BJIHBpbnMgaW5mbyB3YXMgZXh0cmFjdGVkIGZyb20KPiB0aGUgQnJvYWRjb20ncyBT
-REsuIE9uY2UgbW9yZSBwaW5zIGFyZSBkaXNjb3ZlcmVkIHRoZXkgY2FuIGJlIGFkZGVkIHRvCj4g
-dGhlIGRyaXZlciB3aXRob3V0IGJyZWFraW5nIGFueSBleGlzdGluZyBzZXR1cHMuCj4gCj4gU2ln
-bmVkLW9mZi1ieTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgo+IC0tLQoKW3Nu
-aXBdCgo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHBpbmN0cmxfcGluX2Rlc2MgbnNfcGluY3RybF9w
-aW5zW10gPSB7Cj4gKwl7IDAsICJzcGlfY2xrIiB9LAo+ICsJeyAxLCAic3BpX3NzIiB9LAo+ICsJ
-eyAyLCAic3BpX21vc2kiIH0sCj4gKwl7IDMsICJzcGlfbWlzbyIgfSwKPiArfTsKCkluIGNhc2Ug
-eW91IGFyZSBpbnRlcmVzdGVkLCBoZXJlIGFyZSB0aGUgYWRkaXRpb25hbCBmdW5jdGlvbnM6Cgo0
-OiBpMmNfc2NsCjU6IGkyY19zZGEKCjY6IG1kYwo3OiBtZGlvCgo4OiBwd20wCjk6IHB3bTEKMTA6
-IHB3bTIKMTE6IHB3bTMKCjEyOiB1YXJ0MV9yeAoxMzogdWFydDFfdHgKMTQ6IHVhcnQxX2N0cwox
-NTogdWFydDFfcnRzCgpPbiBCQ001MzAxMjoKCjE2OiB1YXJ0Ml9yeAoxNzogdWFydDJfdHgKMjI6
-IHNkaW9fY2FyZF9wb3dlcl9jdGwKMjM6IHNkaW9fZW5fMXA4CgpPbiBCQ001MzAxMzoKCjIxOiAy
-NU1oeiBjcnlzdGFsIG91dHB1dCBmb3IgSTJTCgpOb3QgYW4gZXhwZXJ0IG9uIHBpbmN0cmwgZHJp
-dmVycywgYnV0IGl0IGxvb2tzIHJlYXNvbmFibGUgdG8gbWUuCi0tIApGbG9yaWFuCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVs
-IG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDov
-L2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Now as Amstrad Delta board - the only user of this driver - provides
+GPIO lookup tables, switch from GPIO numbers to GPIO descriptors and
+use the table to locate required GPIO pins.
+
+Declare static variables for storing GPIO descriptors and replace
+gpio_ function calls with their gpiod_ equivalents.
+
+Pin naming used by the driver should be followed while respective GPIO
+lookup table is initialized by a board init code.
+
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+Changelog:
+v5:
+- rebased on nand/next
+- resubmitted to linux-mtd as a stand-alone patch
+
+v3 2/3:
+- series rebased on top of v4.19-rc1
+- added Acked-by: received from Miquel
+
+v2 2/3 v4:
+- fix style issue - thanks to Boris Brezillon
+- resubmitted to linux-omap in a series
+
+v3:
+- remove problematic error code conversion no longer needed if used on
+  top of commit d08605a64e67 ("ARM: OMAP1: ams-delta: move late devices
+  back to init_machine") and commit 8853daf3b4ac ("gpiolib: Defer on
+  non-DT find_chip_by_name() failure") already in linux-next - thanks
+  to Boris Brezillon
+
+v2:
+- fix handling of devm_gpiod_get_optional() return values - thanks to
+  Andy Shevchenko
+- resubmitted to linux-mtd as a stand-alone patch
+
+Originally submitted to linux-omap as "[PATCH 5/6] mtd: rawnand:
+ ams-delta: use GPIO lookup table"
+
+ drivers/mtd/nand/raw/ams-delta.c | 126 +++++++++++++++++++++------------------
+ 1 file changed, 67 insertions(+), 59 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+index 3d3786dcc5d1..a2d2dfc55984 100644
+--- a/drivers/mtd/nand/raw/ams-delta.c
++++ b/drivers/mtd/nand/raw/ams-delta.c
+@@ -20,23 +20,28 @@
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/delay.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+ #include <linux/mtd/partitions.h>
+-#include <linux/gpio.h>
+ #include <linux/platform_data/gpio-omap.h>
+ 
+ #include <asm/io.h>
+ #include <asm/sizes.h>
+ 
+-#include <mach/board-ams-delta.h>
+-
+ #include <mach/hardware.h>
+ 
+ /*
+  * MTD structure for E3 (Delta)
+  */
+ static struct mtd_info *ams_delta_mtd = NULL;
++static struct gpio_desc *gpiod_rdy;
++static struct gpio_desc *gpiod_nce;
++static struct gpio_desc *gpiod_nre;
++static struct gpio_desc *gpiod_nwp;
++static struct gpio_desc *gpiod_nwe;
++static struct gpio_desc *gpiod_ale;
++static struct gpio_desc *gpiod_cle;
+ 
+ /*
+  * Define partitions for flash devices
+@@ -69,9 +74,9 @@ static void ams_delta_write_byte(struct nand_chip *this, u_char byte)
+ 
+ 	writew(0, io_base + OMAP_MPUIO_IO_CNTL);
+ 	writew(byte, this->legacy.IO_ADDR_W);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NWE, 0);
++	gpiod_set_value(gpiod_nwe, 0);
+ 	ndelay(40);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NWE, 1);
++	gpiod_set_value(gpiod_nwe, 1);
+ }
+ 
+ static u_char ams_delta_read_byte(struct nand_chip *this)
+@@ -79,11 +84,11 @@ static u_char ams_delta_read_byte(struct nand_chip *this)
+ 	u_char res;
+ 	void __iomem *io_base = (void __iomem *)nand_get_controller_data(this);
+ 
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NRE, 0);
++	gpiod_set_value(gpiod_nre, 0);
+ 	ndelay(40);
+ 	writew(~0, io_base + OMAP_MPUIO_IO_CNTL);
+ 	res = readw(this->legacy.IO_ADDR_R);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NRE, 1);
++	gpiod_set_value(gpiod_nre, 1);
+ 
+ 	return res;
+ }
+@@ -118,12 +123,9 @@ static void ams_delta_hwcontrol(struct nand_chip *this, int cmd,
+ {
+ 
+ 	if (ctrl & NAND_CTRL_CHANGE) {
+-		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_NCE,
+-				(ctrl & NAND_NCE) == 0);
+-		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_CLE,
+-				(ctrl & NAND_CLE) != 0);
+-		gpio_set_value(AMS_DELTA_GPIO_PIN_NAND_ALE,
+-				(ctrl & NAND_ALE) != 0);
++		gpiod_set_value(gpiod_nce, !(ctrl & NAND_NCE));
++		gpiod_set_value(gpiod_cle, !!(ctrl & NAND_CLE));
++		gpiod_set_value(gpiod_ale, !!(ctrl & NAND_ALE));
+ 	}
+ 
+ 	if (cmd != NAND_CMD_NONE)
+@@ -132,41 +134,9 @@ static void ams_delta_hwcontrol(struct nand_chip *this, int cmd,
+ 
+ static int ams_delta_nand_ready(struct nand_chip *this)
+ {
+-	return gpio_get_value(AMS_DELTA_GPIO_PIN_NAND_RB);
++	return gpiod_get_value(gpiod_rdy);
+ }
+ 
+-static const struct gpio _mandatory_gpio[] = {
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NCE,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nce",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NRE,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nre",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NWP,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nwp",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_NWE,
+-		.flags	= GPIOF_OUT_INIT_HIGH,
+-		.label	= "nand_nwe",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_ALE,
+-		.flags	= GPIOF_OUT_INIT_LOW,
+-		.label	= "nand_ale",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_NAND_CLE,
+-		.flags	= GPIOF_OUT_INIT_LOW,
+-		.label	= "nand_cle",
+-	},
+-};
+ 
+ /*
+  * Main initialization routine
+@@ -214,12 +184,17 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	this->legacy.write_buf = ams_delta_write_buf;
+ 	this->legacy.read_buf = ams_delta_read_buf;
+ 	this->legacy.cmd_ctrl = ams_delta_hwcontrol;
+-	if (gpio_request(AMS_DELTA_GPIO_PIN_NAND_RB, "nand_rdy") == 0) {
+-		this->legacy.dev_ready = ams_delta_nand_ready;
+-	} else {
+-		this->legacy.dev_ready = NULL;
+-		pr_notice("Couldn't request gpio for Delta NAND ready.\n");
++
++	gpiod_rdy = devm_gpiod_get_optional(&pdev->dev, "rdy", GPIOD_IN);
++	if (IS_ERR(gpiod_rdy)) {
++		err = PTR_ERR(gpiod_rdy);
++		dev_warn(&pdev->dev, "RDY GPIO request failed (%d)\n", err);
++		goto out_mtd;
+ 	}
++
++	if (gpiod_rdy)
++		this->legacy.dev_ready = ams_delta_nand_ready;
++
+ 	/* 25 us command delay time */
+ 	this->legacy.chip_delay = 30;
+ 	this->ecc.mode = NAND_ECC_SOFT;
+@@ -228,9 +203,47 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, io_base);
+ 
+ 	/* Set chip enabled, but  */
+-	err = gpio_request_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
+-	if (err)
+-		goto out_gpio;
++	gpiod_nwp = devm_gpiod_get(&pdev->dev, "nwp", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nwp)) {
++		err = PTR_ERR(gpiod_nwp);
++		dev_err(&pdev->dev, "NWP GPIO request failed (%d)\n", err);
++		goto out_mtd;
++	}
++
++	gpiod_nce = devm_gpiod_get(&pdev->dev, "nce", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nce)) {
++		err = PTR_ERR(gpiod_nce);
++		dev_err(&pdev->dev, "NCE GPIO request failed (%d)\n", err);
++		goto out_mtd;
++	}
++
++	gpiod_nre = devm_gpiod_get(&pdev->dev, "nre", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nre)) {
++		err = PTR_ERR(gpiod_nre);
++		dev_err(&pdev->dev, "NRE GPIO request failed (%d)\n", err);
++		goto out_mtd;
++	}
++
++	gpiod_nwe = devm_gpiod_get(&pdev->dev, "nwe", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_nwe)) {
++		err = PTR_ERR(gpiod_nwe);
++		dev_err(&pdev->dev, "NWE GPIO request failed (%d)\n", err);
++		goto out_mtd;
++	}
++
++	gpiod_ale = devm_gpiod_get(&pdev->dev, "ale", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_ale)) {
++		err = PTR_ERR(gpiod_ale);
++		dev_err(&pdev->dev, "ALE GPIO request failed (%d)\n", err);
++		goto out_mtd;
++	}
++
++	gpiod_cle = devm_gpiod_get(&pdev->dev, "cle", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_cle)) {
++		err = PTR_ERR(gpiod_cle);
++		dev_err(&pdev->dev, "CLE GPIO request failed (%d)\n", err);
++		goto out_mtd;
++	}
+ 
+ 	/* Scan to find existence of the device */
+ 	err = nand_scan(this, 1);
+@@ -244,9 +257,6 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	goto out;
+ 
+  out_mtd:
+-	gpio_free_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
+-out_gpio:
+-	gpio_free(AMS_DELTA_GPIO_PIN_NAND_RB);
+ 	iounmap(io_base);
+ out_free:
+ 	kfree(this);
+@@ -264,8 +274,6 @@ static int ams_delta_cleanup(struct platform_device *pdev)
+ 	/* Release resources, unregister device */
+ 	nand_release(mtd_to_nand(ams_delta_mtd));
+ 
+-	gpio_free_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
+-	gpio_free(AMS_DELTA_GPIO_PIN_NAND_RB);
+ 	iounmap(io_base);
+ 
+ 	/* Free the MTD device structure */
+-- 
+2.16.4
