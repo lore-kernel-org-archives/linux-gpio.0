@@ -1,38 +1,36 @@
-From: Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH] pinctrl: intel: Do pin translation in other GPIO
- operations as well
-Date: Wed, 19 Sep 2018 10:35:22 -0700
-Message-ID: <CACK8Z6HCqN83rtEsV0EzSUcYdkq2Fx+QmOBrtW+ud5V4-ucCvQ@mail.gmail.com>
-References: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
- <CACK8Z6F4+N1paQTSWcomnwLpLEHoospSOT3M9bqFQZHHfWmahA@mail.gmail.com>
- <CACK8Z6GfeJQSMN=m9hrFE2DFwpCNjNb57PqGiXFDD19Y=SXgnQ@mail.gmail.com> <20180919084002.GR14465@lahna.fi.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v8 0/4] gpiolib: speed up GPIO array processing
+Date: Wed, 19 Sep 2018 11:08:57 -0700
+Message-ID: <CACRpkdbdYmsFD3XOVLWjoGsPSU4UnTKtkYm5VQxGmoeQZewWZA@mail.gmail.com>
+References: <20180902120144.6855-1-jmkrzyszt@gmail.com> <20180905215008.1649-1-jmkrzyszt@gmail.com>
+ <CACRpkdbAG1N0v-BrXruf5088L0x3XwSHbFTWOFxjHQWx0LKz5g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180919084002.GR14465@lahna.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, casey.g.bowman@intel.com, "Atwood, Matthew S" <matthew.s.atwood@intel.com>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbAG1N0v-BrXruf5088L0x3XwSHbFTWOFxjHQWx0LKz5g@mail.gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>, Sebastien Bourdelin <sebastien.bourdelin@savoirf>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 1:40 AM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Thu, Sep 13, 2018 at 2:22 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Sep 5, 2018 at 11:49 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 >
-> On Tue, Sep 18, 2018 at 03:14:44PM -0700, Rajat Jain wrote:
-> > Also consider fixing the checkpatch warning:
-> >
-> >         Errors:
-> >             * checkpatch.pl errors/warnings
-> >
-> >             WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
-> >             #48: FILE: drivers/pinctrl/intel/pinctrl-intel.c:764:
-> >             +static int intel_gpio_to_pin(struct intel_pinctrl *pctrl,
-> > unsigned offset,
+> > The goal is to boost performance of get/set array functions while
+> > processing GPIO arrays which represent pins of a signle chip in
+> > hardware order.  If resulting performance is close to PIO, GPIO API
+> > can be used for data I/O without much loss of speed.
 >
-> Right, it is currently the "convention" used in Intel pinctrl drivers so
-> I did not want to change that single entry.
+> I applied the v8 to an immutable branch and pushed to kernelorg
+> so the build servers can churn it a bit, and if it works fine
+> then we can merge this into the devel branch and also set up
+> that as something other subsystems can pull in if they need it.
 >
-> We should eventually convert the whole set of Intel pinctrl drivers to
-> use unsigned int instead of unsigned.
+> I'm really excited to merge this!
 
-OK, Thanks for the clarification.
+The branch built with no problems, and now I merged this into
+devel. If that also builds fine, I will let it hit linux-next so we can
+stabilize it for v4.20.
+
+Yours,
+Linus Walleij
