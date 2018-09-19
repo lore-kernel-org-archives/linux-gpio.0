@@ -1,42 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC/PATCH 0/5] Support children for legacy device properties
-Date: Wed, 19 Sep 2018 12:55:15 -0700
-Message-ID: <CACRpkdYAvhaH6+L8J0sdQd7vYzrAioFhUZAcu2eB6t2hRK0L9Q@mail.gmail.com>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: pinctrl: document Broadcom Northstar pin mux
+ controller
+Date: Wed, 19 Sep 2018 23:02:18 +0200
+Message-ID: <20180919210219.21921-1-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Linux Input <linux-input@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 11:16 AM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-
-> The generic device properties APIs are very helpful as they allow abstracting
-> away details of the platform (whether it is ACPI, device tree, or legacy board
-> file), so that individual driver does not need separate code paths to support
-> all variants. However there are drivers that currently can not use generic
-> device properties API as they need notion of children properties, for example
-> gpio_keys driver, that expects every button to be described as a sub-node of
-> main device.
->
-> This patch series introduces notion of sub-nodes for static properties and ties
-> it up with GPIO lookup tables so that they are usable with sub-nodes as well.
-
-This is the patch series I would have written, had I been smart enough.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-for the series.
-
-I can't test the SIM.ONE board with this until next week but the approach
-is definately what we want, not just for legacy boards, but also for any
-other non-discoverable hardware we currently poke into
-drivers/platform or arch/x86/platform etc.
-
-Yours,
-Linus Walleij
-
-Yours,
-Linus Walleij
+RnJvbTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgoKTm9ydGhzdGFyIGhhcyBt
+dXggY29udHJvbGxlciBqdXN0IGxpa2UgTm9ydGhzdGFyIFBsdXMgYW5kIE5vcnRoc3RhcjIuCkl0
+J3MgYSBiaXQgZGlmZmVyZW50IHRob3VnaCAoZGlmZmVyZW50IHJlZ2lzdGVycyAmIHBpbnMpIHNv
+IGl0IHJlcXVpcmVzCml0cyBvd24gYmluZGluZy4KCkl0J3MgbmVlZGVkIHRvIGFsbG93IG90aGVy
+IGJsb2NrIGJpbmRpbmdzIHNwZWNpZnkgcmVxdWlyZWQgbXV4IHNldHVwLgoKU2lnbmVkLW9mZi1i
+eTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgotLS0KIC4uLi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL3BpbmN0cmwvYnJjbSxucy1waW5tdXgudHh0IHwgMjkgKysrKysrKysrKysrKysr
+KysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDI5IGluc2VydGlvbnMoKykKIGNyZWF0ZSBtb2RlIDEw
+MDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9icmNtLG5zLXBp
+bm11eC50eHQKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+cGluY3RybC9icmNtLG5zLXBpbm11eC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvcGluY3RybC9icmNtLG5zLXBpbm11eC50eHQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5k
+ZXggMDAwMDAwMDAwMDAwLi4wZTkxMzcyMWFlOWUKLS0tIC9kZXYvbnVsbAorKysgYi9Eb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9icmNtLG5zLXBpbm11eC50eHQKQEAg
+LTAsMCArMSwyOSBAQAorQnJvYWRjb20gTm9ydGhzdGFyIHBpbnMgbXV4IGNvbnRyb2xsZXIKKwor
+U29tZSBvZiBOb3J0aHN0YXIgU29DcydzIHBpbnMgY2FuIGJlIHVzZWQgZm9yIHZhcmlvdXMgcHVy
+cG9zZXMgdGhhbmtzIHRvIHRoZSBtdXgKK2NvbnRyb2xsZXIuIFRoaXMgYmluZGluZyBhbGxvd3Mg
+ZGVzY3JpYmluZyBtdXggY29udHJvbGxlciBhbmQgbGlzdGluZyBhdmFpbGFibGUKK2Z1bmN0aW9u
+cy4gVGhleSBjYW4gYmUgcmVmZXJlbmNlZCBsYXRlciBieSBvdGhlciBiaW5kaW5ncyB0byBsZXQg
+c3lzdGVtCitjb25maWd1cmUgY29udHJvbGxlciBjb3JyZWN0bHkuCisKK1JlcXVpcmVkIHByb3Bl
+cnRpZXM6CistIGNvbXBhdGlibGU6IGJyY20sbnMtcGlubXV4CistIHJlZzogaW9tZW0gYWRkcmVz
+cyByYW5nZSBvZiBDUlUgKENlbnRyYWwgUmVzb3VyY2UgVW5pdCkgcGluIHJlZ2lzdGVycworLSBy
+ZWctbmFtZXM6ICJjcnVfcGluc19jb250cm9sIiAtIHRoZSBvbmx5IG5lZWRlZCAmIHN1cHBvcnRl
+ZCByZWcgcmlnaHQgbm93CisKK0xpc3Qgb2Ygc3VwcG9ydGVkIGZ1bmN0aW9ucyBhbmQgdGhlaXIg
+Z3JvdXBzOgorLSAic3BpIjogInNwaV9ncnAiCisKK0ZvciBkb2N1bWVudGF0aW9uIG9mIHN1Ym5v
+ZGVzIHNlZToKK0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL3BpbmN0
+cmwtYmluZGluZ3MudHh0CisKK0V4YW1wbGU6CisJcGluY3RybEAxODAwYzFjMCB7CisJCWNvbXBh
+dGlibGUgPSAiYnJjbSxucy1waW5tdXgiOworCQlyZWcgPSA8MHgxODAwYzFjMCAweDI0PjsKKwkJ
+cmVnLW5hbWVzID0gImNydV9waW5zX2NvbnRyb2wiOworCisJCXNwaSB7CisJCQlmdW5jdGlvbiA9
+ICJzcGkiOworCQkJZ3JvdXBzID0gInNwaV9ncnAiOworCQl9OworCX07Ci0tIAoyLjEzLjcKCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
+a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
+aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
+bmVsCg==
