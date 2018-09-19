@@ -1,81 +1,38 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
- for legacy boards
-Date: Wed, 19 Sep 2018 10:13:26 -0700
-Message-ID: <20180919171326.GB116719@dtor-ws>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
- <20180917181603.125492-3-dmitry.torokhov@gmail.com>
- <20180919151026.GB11965@kuha.fi.intel.com>
+From: Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH] pinctrl: intel: Do pin translation in other GPIO
+ operations as well
+Date: Wed, 19 Sep 2018 10:35:22 -0700
+Message-ID: <CACK8Z6HCqN83rtEsV0EzSUcYdkq2Fx+QmOBrtW+ud5V4-ucCvQ@mail.gmail.com>
+References: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
+ <CACK8Z6F4+N1paQTSWcomnwLpLEHoospSOT3M9bqFQZHHfWmahA@mail.gmail.com>
+ <CACK8Z6GfeJQSMN=m9hrFE2DFwpCNjNb57PqGiXFDD19Y=SXgnQ@mail.gmail.com> <20180919084002.GR14465@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180919151026.GB11965@kuha.fi.intel.com>
+In-Reply-To: <20180919084002.GR14465@lahna.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, casey.g.bowman@intel.com, "Atwood, Matthew S" <matthew.s.atwood@intel.com>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Heikki,
+On Wed, Sep 19, 2018 at 1:40 AM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> On Tue, Sep 18, 2018 at 03:14:44PM -0700, Rajat Jain wrote:
+> > Also consider fixing the checkpatch warning:
+> >
+> >         Errors:
+> >             * checkpatch.pl errors/warnings
+> >
+> >             WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+> >             #48: FILE: drivers/pinctrl/intel/pinctrl-intel.c:764:
+> >             +static int intel_gpio_to_pin(struct intel_pinctrl *pctrl,
+> > unsigned offset,
+>
+> Right, it is currently the "convention" used in Intel pinctrl drivers so
+> I did not want to change that single entry.
+>
+> We should eventually convert the whole set of Intel pinctrl drivers to
+> use unsigned int instead of unsigned.
 
-On Wed, Sep 19, 2018 at 06:10:26PM +0300, Heikki Krogerus wrote:
-> Hi,
-> 
-> On Mon, Sep 17, 2018 at 11:16:00AM -0700, Dmitry Torokhov wrote:
-> > Several drivers rely on having notion of sub-nodes when describing
-> > hardware, let's allow static board-defined properties also have it.
-> > 
-> > The board files will then attach properties to devices in the following
-> > fashion:
-> > 
-> > 	device_add_properties(&board_platform_device.dev,
-> > 			      main_device_props);
-> > 	device_add_child_properties(&board_platform_device.dev,
-> > 				    dev_fwnode(&board_platform_device.dev),
-> > 				    child1_device_props);
-> > 	device_add_child_properties(&board_platform_device.dev,
-> > 				    dev_fwnode(&board_platform_device.dev),
-> > 				    child2_device_props);
-> > 	...
-> > 	platform_device_register(&board_platform_device.dev);
-> > 
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > ---
-> >  drivers/base/pset_property.c | 110 +++++++++++++++++++++++++++++++----
-> >  include/linux/property.h     |   4 ++
-> >  2 files changed, 102 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/drivers/base/pset_property.c b/drivers/base/pset_property.c
-> > index 08ecc13080ae..63f2377aefe8 100644
-> > --- a/drivers/base/pset_property.c
-> > +++ b/drivers/base/pset_property.c
-> > @@ -18,6 +18,11 @@ struct property_set {
-> >  	struct device *dev;
-> >  	struct fwnode_handle fwnode;
-> >  	const struct property_entry *properties;
-> > +
-> > +	struct property_set *parent;
-> > +	/* Entry in parent->children list */
-> > +	struct list_head child_node;
-> > +	struct list_head children;
-> 
-> Add
-> 
->         const char *name;
-> 
-> and you can implement also pset_get_named_child_node().
-
-Or
-	char name[];
-
-to avoid separate allocation.
-
-Alternatively, we can add it later when we need it, and add
-device_add_named_child_properties().
-
-I'll leave it up to Rafael to decide.
-
-Thanks.
-
--- 
-Dmitry
+OK, Thanks for the clarification.
