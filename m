@@ -1,39 +1,32 @@
 From: Timur Tabi <timur@kernel.org>
 Subject: Re: [PATCH] gpiolib: Show correct direction from the beginning
-Date: Thu, 20 Sep 2018 07:25:17 -0500
-Message-ID: <ebcc344a-469a-d3c0-3e0e-cdabe046cbf3@kernel.org>
+Date: Thu, 20 Sep 2018 07:35:52 -0500
+Message-ID: <bcb79947-dfe0-e5e2-fb48-3b6992720f01@kernel.org>
 References: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
  <20180914070839.4667-2-ricardo.ribalda@gmail.com>
  <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
  <CAPybu_0iDqSn02iGLEg8Ge9EdyCCNhRVV3JgHg180qrXK+bcdw@mail.gmail.com>
  <d84ee082-f578-3ed3-32be-dbeb9562980e@kernel.org>
- <CAPybu_39xtDfoHVo2dv2GZcU5hCQYjBpU7tW2hf3vfUwbUK1mQ@mail.gmail.com>
+ <CACRpkdYGpEVG9gqPxNaOsD55k9idEfGaxOUrObbN9VZS06x5jw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPybu_39xtDfoHVo2dv2GZcU5hCQYjBpU7tW2hf3vfUwbUK1mQ@mail.gmail.com>
+In-Reply-To: <CACRpkdYGpEVG9gqPxNaOsD55k9idEfGaxOUrObbN9VZS06x5jw@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, swboyd@chromium.org, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 9/19/18 10:27 AM, Ricardo Ribalda Delgado wrote:
-> "The get_direction callback normally triggers
-> a  read/write to hardware, but we shouldn't be touching the hardware
-> for   an individual GPIO until after it's been properly claimed." is
-> an statement specific for your platform 
+On 9/20/18 12:23 AM, Linus Walleij wrote:
+> I think most gpiochips easily survives calling the .get_direction()
+> early, Qualcomm's stand out here.
+> 
+> Now that we have .valid_mask in the gpiochip could we simply just
+> add this back, resepecting valid_mask and avoid checking the
+> direction of precisely these GPIOs?
 
-That is definitely not true.
-
-> and should be fixed in your
-> driver.
-
-There is no bug in my driver.  The driver reports only a subset of the 
-GPIOs, because that's all that are available.  Attempting to access an 
-invalid GPIO generates an XPU violation.  The original code was 
-attempting to access GPIOs that the driver said don't exist.
-
-The code that we have today is the result of months of discussion, 
-negotiation, and trial-and-error.
+Can you be more specific?  One of the proposals made previously was to 
+add a check in msm_gpio_get_direction(), but that was rejected because 
+the consensus was the valid_mask checks in gpiolib are sufficient.
