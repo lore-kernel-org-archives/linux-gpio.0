@@ -1,34 +1,39 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] pinctrl: qcom: spmi-gpio: Add pms405 gpio support
-Date: Thu, 20 Sep 2018 08:30:03 -0700
-Message-ID: <153745740342.119890.12073424910838960020@swboyd.mtv.corp.google.com>
-References: <20180920014705.15144-1-bjorn.andersson@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5] mtd: rawnand: ams-delta: use GPIO lookup table
+Date: Thu, 20 Sep 2018 08:33:07 -0700
+Message-ID: <CACRpkdYcVmL=3VxfcW9O5TAGKMaEvt2sPFdHgd8w3-8XUdY6ww@mail.gmail.com>
+References: <20180909225605.16463-3-jmkrzyszt@gmail.com> <20180919221729.21179-1-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180920014705.15144-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20180919221729.21179-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, ext Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Boris Brezillon <boris.brezillon@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Mark Vasut <marek.vasut@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, linux-mtd@lists.infradead.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Bjorn Andersson (2018-09-19 18:47:05)
-> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/q=
-com/pinctrl-spmi-gpio.c
-> index a29efbe08f48..b54891998caa 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> @@ -1055,6 +1055,7 @@ static const struct of_device_id pmic_gpio_of_match=
-[] =3D {
->         { .compatible =3D "qcom,pm8994-gpio" },   /* 22 GPIO's */
->         { .compatible =3D "qcom,pmi8994-gpio" },  /* 10 GPIO's */
->         { .compatible =3D "qcom,pma8084-gpio" },  /* 22 GPIO's */
-> +       { .compatible =3D "qcom,pms405-gpio" }, /* 11 GPIO's */
+On Wed, Sep 19, 2018 at 3:17 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-I thought we didn't update the C driver, because there isn't anything to
-do here. Just make binding updates and it's all fine.
+> Now as Amstrad Delta board - the only user of this driver - provides
+> GPIO lookup tables, switch from GPIO numbers to GPIO descriptors and
+> use the table to locate required GPIO pins.
+>
+> Declare static variables for storing GPIO descriptors and replace
+> gpio_ function calls with their gpiod_ equivalents.
+>
+> Pin naming used by the driver should be followed while respective GPIO
+> lookup table is initialized by a board init code.
+>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+> Changelog:
+> v5:
+> - rebased on nand/next
+> - resubmitted to linux-mtd as a stand-alone patch
 
->         { .compatible =3D "qcom,spmi-gpio" }, /* Generic */
->         { },
->  };
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
