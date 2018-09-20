@@ -1,83 +1,136 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: Show correct direction from the beginning
-Date: Thu, 20 Sep 2018 15:43:46 -0700
-Message-ID: <CACRpkdYHJT+C+M3wBr-zR=O9DYM4uVMqprCW8gXSiTMPJhzFnQ@mail.gmail.com>
-References: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
- <20180914070839.4667-2-ricardo.ribalda@gmail.com> <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
- <CAPybu_0iDqSn02iGLEg8Ge9EdyCCNhRVV3JgHg180qrXK+bcdw@mail.gmail.com>
- <d84ee082-f578-3ed3-32be-dbeb9562980e@kernel.org> <CAPybu_39xtDfoHVo2dv2GZcU5hCQYjBpU7tW2hf3vfUwbUK1mQ@mail.gmail.com>
- <015715f7-64bc-aca6-77fe-68ddb6c938a8@kernel.org> <CAPybu_2ovB3T1fOD2gP9rM46z37WVuOuzu5FyKamfyMWoVg=yw@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 2/3] gpio: omap: Remove custom PM calls and use cpu_pm
+ instead
+Date: Thu, 20 Sep 2018 18:01:22 -0500
+Message-ID: <35a1dccf-2b15-2d61-9210-7f3893c27795@ti.com>
+References: <20180920193532.7714-1-tony@atomide.com>
+ <20180920193532.7714-3-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPybu_2ovB3T1fOD2gP9rM46z37WVuOuzu5FyKamfyMWoVg=yw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Timur Tabi <timur@tabi.org>, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180920193532.7714-3-tony@atomide.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Tero Kristo <t-kristo@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 7:14 AM Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> On Thu, Sep 20, 2018 at 2:20 PM Timur Tabi <timur@tabi.org> wrote:
 
-> > Users are expected to program the direction for every GPIO they want to
-> > use, regardless of whatever it's set to before they open it.
->
-> I do not agree that the user should program the direction of a GPIO
-> which direction cannot be used.
->
-> Also I am not talking about programming a gpio, I am talking about an
-> technician  connecting portA to portB and burning something because
-> the system provided erroneous information
 
-So what is clear is that your need, I guess in userspace, reliable
-information about the direction of the GPIOs at boot.
+On 09/20/2018 02:35 PM, Tony Lindgren wrote:
+> For a long time the gpio-omap custom PM calls have been annoying me so
+> let's replace them with cpu_pm instead. This will enable GPIO PM for
+> deeper idle states on omap4. And we can handle GPIO PM for omap2/3/4
+> in the same way.
+> 
+> Note that with this patch we are also slightly changing GPIO PM to be
+> less aggressive for omap3 and only will idle GPIO when PER context
+> may be lost.
+> 
+> For omap2, we don't need to save context and don't want to remove any
+> triggering so let's add a quirk flag for that.
+> 
+> Let's do this all in a single patch to avoid a situation where old
+> custom calls still are used with new code.
+> 
+> Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Keerthy <j-keerthy@ti.com>
+> Cc: Ladislav Michl <ladis@linux-mips.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>   arch/arm/mach-omap2/pm24xx.c            |   7 +-
+>   arch/arm/mach-omap2/pm34xx.c            |  14 +-
+>   drivers/gpio/gpio-omap.c                | 178 ++++++++++++++----------
+>   include/linux/platform_data/gpio-omap.h |  13 --
+>   4 files changed, 116 insertions(+), 96 deletions(-)
+> 
+> diff --git a/arch/arm/mach-omap2/pm24xx.c b/arch/arm/mach-omap2/pm24xx.c
+> --- a/arch/arm/mach-omap2/pm24xx.c
+> +++ b/arch/arm/mach-omap2/pm24xx.c
+> @@ -18,6 +18,7 @@
+>    * published by the Free Software Foundation.
+>    */
+>   
 
-> > Because calling that API before properly claiming the GPIO is a
-> > programming error.
->
-> Is there a place where this API is defined?. Which functions require
-> to be defined.? What is the correct order.?
+[...]
 
-There is nothing like such. We would have to establish semantics.
-I don't see a point in it, the APIs are for using and understanding,
-not for discussing API contracts. I would avoid trying to etch this
-API in stone.
+>   
+> +static int __maybe_unused omap_gpio_runtime_suspend(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct gpio_bank *bank = platform_get_drvdata(pdev);
+> +	unsigned long flags;
+> +	int error = 0;
+> +
+> +	raw_spin_lock_irqsave(&bank->lock, flags);
+> +	/* Must be idled only by CPU_CLUSTER_PM_ENTER? */
+> +	if (bank->irq_usage) {
+> +		error = -EBUSY;
 
-> > The reason why the Qualcomm driver is impacted the most is because on
-> > ACPI platforms, the GPIO map is "sparse".  That is, not every GPIO
-> > between 0 and n-1 actually exists.  So reading a GPIO that doesn't exist
-> > is invalid.
->
-> Why are we adding GPIOs that are invalid?
-> If you can figure out that a GPIO is invalid when the user claims a
-> gpio, you can also figure it out when the user asks the direction.
+Sry, I didn't get how will it work with suspend to ram?
+omap_device will call this handler and, seems, abort suspend always
+if gpio bank has gpios requested as IRQ. Am I missing smth?
 
-Right and that is what the (later introduced) valid_mask
-can do.
+> +		goto unlock;
+> +	}
+> +	omap_gpio_idle(bank, true);
+> +	bank->is_suspended = true;
+> +unlock:
+> +	raw_spin_unlock_irqrestore(&bank->lock, flags);
+> +
+> +	return error;
+> +}
+> +
+> +static int __maybe_unused omap_gpio_runtime_resume(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct gpio_bank *bank = platform_get_drvdata(pdev);
+> +	unsigned long flags;
+> +	int error = 0;
+> +
+> +	raw_spin_lock_irqsave(&bank->lock, flags);
+> +	/* Must be unidled only by CPU_CLUSTER_PM_ENTER? */
+> +	if (bank->irq_usage) {
+> +		error = -EBUSY;
+> +		goto unlock;
+> +	}
+> +	omap_gpio_unidle(bank);
+> +	bank->is_suspended = false;
+> +unlock:
+> +	raw_spin_unlock_irqrestore(&bank->lock, flags);
+> +
+> +	return error;
+> +}
+> +
+> +#ifdef CONFIG_ARCH_OMAP2PLUS
+>   static const struct dev_pm_ops gpio_pm_ops = {
+>   	SET_RUNTIME_PM_OPS(omap_gpio_runtime_suspend, omap_gpio_runtime_resume,
+>   									NULL)
+>   };
+> +#else
+> +static const struct dev_pm_ops gpio_pm_ops;
+> +#endif	/* CONFIG_ARCH_OMAP2PLUS */
+>   
+>   #if defined(CONFIG_OF)
+>   static struct omap_gpio_reg_offs omap2_gpio_regs = {
+> @@ -1774,6 +1805,11 @@ static struct omap_gpio_reg_offs omap4_gpio_regs = {
+>   	.fallingdetect =	OMAP4_GPIO_FALLINGDETECT,
+>   };
+>   
 
-Any time we call into any of the callbacks that take an offset
-we should (theoretically) check the .valid_mask if active.
+[...]
 
-Since we normally check it when requesting the GPIO, we
-can't request invalid GPIOs and normally the other callbacks
-would only get called after that, so we are fine.
-
-> > I'm not sure how to properly fix this, but I wonder if we need some kind
-> > of late-stage initialization where gpiolib scans all the GPIOs by
-> > claiming them first, reading the directions, and then releasing them.
->
-> That sounds like a good compromise. Or returning
-> -unconfigured / unknown
->
-> is also an option.
-
-I would just skip over anything asked off in the valid_mask.
-
-I feel positive of a version of this patch that respect valid_mask
-some way, as that should be safe for Qualcomms usecase.
-
-Rough consensus and running code.
-
-Yours,
-Linus Walleij
+-- 
+regards,
+-grygorii
