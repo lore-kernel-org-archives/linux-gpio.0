@@ -1,28 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: tegra: move probe to __init section
-Date: Thu, 20 Sep 2018 08:16:58 -0700
-Message-ID: <CACRpkdYZFt-FEnF86GCKqiLjFa-n3wHYLjFbvwFDWEp+AsGCZw@mail.gmail.com>
-References: <20180919012427.12439-1-stefan@agner.ch> <20180919012427.12439-2-stefan@agner.ch>
+Subject: Re: [PATCH] pinctrl: intel: Do pin translation in other GPIO
+ operations as well
+Date: Thu, 20 Sep 2018 08:26:25 -0700
+Message-ID: <CACRpkdYhpBYEY0OJA0A15Q7OOM31ogGxeaUbNNqSMpJ9af4hOA@mail.gmail.com>
+References: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180919012427.12439-2-stefan@agner.ch>
+In-Reply-To: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, rajatja@google.com, casey.g.bowman@intel.com, matthew.s.atwood@intel.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 6:24 PM Stefan Agner <stefan@agner.ch> wrote:
+On Tue, Sep 18, 2018 at 8:36 AM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-> The Tegra pinctrl drivers are always built-in. This allows to use
-> platform_driver_probe() and mark several functions as __init.
-> This allows the kernel to free about 1KiB of memory if Tegra
-> pinctrl drivers are not used.
+> For some reason I thought GPIOLIB handles translation from GPIO ranges
+> to pinctrl pins but it turns out not to be the case. This means that
+> when GPIOs operations are performed for a pin controller having a custom
+> GPIO base such as Cannon Lake and Ice Lake incorrect pin number gets
+> used internally.
 >
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Fix this in the same way we did for lock/unlock IRQ operations and
+> translate the GPIO number to pin before using it.
+>
+> Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
+> Reported-by: Rajat Jain <rajatja@google.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-It appears the test robot complains about this patch, so I'll
-wait for a v2!
+I applied this for fixes.
+
+However when merging with devel I get some a merge conflict,
+probably due to some cleanups from Andy.
+
+I tried to fix it up (just use your code) but please check the
+result.
 
 Yours,
 Linus Walleij
