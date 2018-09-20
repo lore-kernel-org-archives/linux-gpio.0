@@ -1,60 +1,45 @@
-From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: [bug report] pinctrl: mediatek: add eint support to MT8183 pinctrl
- driver
-Date: Thu, 20 Sep 2018 22:53:38 +0300
-Message-ID: <20180920195338.GA31947@mwanda>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v3 0/3] ARM: OMAP1: ams-delta: Complete driver gpiod
+ migration
+Date: Thu, 20 Sep 2018 13:58:05 -0700
+Message-ID: <20180920205805.GQ5662@atomide.com>
+References: <20180717231448.14958-1-jmkrzyszt@gmail.com>
+ <20180909225605.16463-1-jmkrzyszt@gmail.com>
+ <1794253.R1RrZXVNCJ@z50>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <1794253.R1RrZXVNCJ@z50>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, Boris Brezillon <boris.brezillon@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Sean Wang,
+* Janusz Krzysztofik <jmkrzyszt@gmail.com> [180919 18:13]:
+> On Monday, September 10, 2018 12:56:02 AM CEST Janusz Krzysztofik wrote:
+> > 
+> > This is a follow up of initial submission of a series consisted of 
+> > 6 changes, 3 of which have been already applied or reworkeed.
+> > 
+> > 
+> > Janusz Krzysztofik (3):
+> >       video: fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
+> >       mtd: rawnand: ams-delta: use GPIO lookup table
+> 
+> Hi Tony,
+> 
+> Please ignore this patch. It may no longer be possible to merged it cleanly 
+> with nand/next tree. I'll exclude it from the series, rebase on top of nand/
+> next and submit via linux-mtd.
 
-The patch 6561859b067f: "pinctrl: mediatek: add eint support to
-MT8183 pinctrl driver" from Sep 8, 2018, leads to the following
-static checker warning:
+OK sounds good to me.
 
-	drivers/pinctrl/mediatek/pinctrl-paris.c:732 mtk_gpio_to_irq()
-	warn: impossible condition '(desc->eint.eint_n == -1) => (0-u16max == (-1))'
+> That shouldn't affect the two remaining patches of the series which should 
+> still apply and merge cleanly, but I can resend them renumbered if you wish.
 
-drivers/pinctrl/mediatek/pinctrl-paris.c
-   722  static int mtk_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
-   723  {
-   724          struct mtk_pinctrl *hw = gpiochip_get_data(chip);
-   725          const struct mtk_pin_desc *desc;
-   726  
-   727          if (!hw->eint)
-   728                  return -ENOTSUPP;
-   729  
-   730          desc = (const struct mtk_pin_desc *)&hw->soc->pins[offset];
-   731  
-   732          if (desc->eint.eint_n == EINT_NA)
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Do you want to define EINT_NA as 0xffff maybe?
+Up to the mtd and fb folks as far as I'm concerned :)
 
-   733                  return -ENOTSUPP;
-   734  
-   735          return mtk_eint_find_irq(hw->eint, desc->eint.eint_n);
-   736  }
+Regards,
 
-See also:
-
-drivers/pinctrl/mediatek/pinctrl-paris.c:749 mtk_gpio_set_config() warn: impossible condition '(desc->eint.eint_n == -1) => (0-u16max == (-1))'
-drivers/pinctrl/mediatek/pinctrl-moore.c:479 mtk_gpio_to_irq() warn: impossible condition '(desc->eint.eint_n == -1) => (0-u16max == (-1))'
-drivers/pinctrl/mediatek/pinctrl-moore.c:496 mtk_gpio_set_config() warn: impossible condition '(desc->eint.eint_n == -1) => (0-u16max == (-1))'
-
-regards,
-dan carpenter
+Tony
