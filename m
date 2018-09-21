@@ -1,48 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes for
- legacy boards
-Date: Fri, 21 Sep 2018 08:36:53 -0700
-Message-ID: <CACRpkdZtM4G=4r3m6vLTms9MJFkdiOdPFucebO-Z0Kh-3ws3+g@mail.gmail.com>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
- <20180917181603.125492-3-dmitry.torokhov@gmail.com> <20180920135348.GF11965@kuha.fi.intel.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH -next] pinctrl: mediatek: paris: fix return value check in
+ mtk_paris_pinctrl_probe()
+Date: Fri, 21 Sep 2018 09:02:06 -0700
+Message-ID: <CACRpkdZ=ppVeX5-7AGkFryDwh3eHpviFu+gNsda5sKYS54FEwQ@mail.gmail.com>
+References: <1537424488-23485-1-git-send-email-weiyongjun1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180920135348.GF11965@kuha.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Linux Input <linux-input@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1537424488-23485-1-git-send-email-weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Cc: Zhiyong Tao <zhiyong.tao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 6:53 AM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
+On Wed, Sep 19, 2018 at 11:12 PM Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org> wrote:
 
-> The child nodes will change the purpose of the build-in property
-> support. Originally the goal was just to support adding of build-in
-> device properties to real firmware nodes, but things have changed
-> quite a bit from that. These child nodes are purely tied to the
-> build-in device property support, so we should be talking about adding
-> pset type child nodes to pset type parent nodes in the API:
-> fwnode_pset_add_child_node(), or something like that.
+> In case of error, the function devm_kmalloc_array() returns NULL pointer
+> not ERR_PTR(). The IS_ERR() test in the return value check should be
+> replaced with NULL test.
 >
-> I'm sorry to be a bit of pain in the butt with this. The build-in
-> property support is a hack, it always was. A useful hack, but hack
-> nevertheless. That means we need to be extra careful when expanding
-> it, like here.
+> Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
+> Signed-off-by: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 
-I dunno how we got to here, what I tried to solve and Dmitry tries
-to make more general is converting old boardfiles to use fwnode, because
-I initially tried to just support gpio descriptors from board files.
-
-If boardfiles is what you mean with "build-in property support" I don't
-know, it predates both device tree and ACPI and any other hardware
-descriptions on the ARM architecture, from the perspective of these
-systems things are fine and the hardware description languages
-are the novelty...
-
-But I guess you know because you worked with OMAP :)
-
-So there is something I don't understand here.
+Patch applied with Sean's ACK.
 
 Yours,
 Linus Walleij
