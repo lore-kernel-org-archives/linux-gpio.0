@@ -1,67 +1,62 @@
-From: Li Zhijian <lizhijian@cn.fujitsu.com>
-Subject: [PATCH] selftests/gpio: fix compiling errors
-Date: Fri, 21 Sep 2018 18:00:21 +0800
-Message-ID: <1537524021-3371-1-git-send-email-lizhijian@cn.fujitsu.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 0/9] Implement wake event support on Tegra186 and later
+Date: Fri, 21 Sep 2018 12:25:37 +0200
+Message-ID: <20180921102546.12745-1-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: shuah@kernel.org, linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Li Zhijian <lizhijian@cn.fujitsu.com>, Bamvor Jian Zhang <bamv2005@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-lizhijian@haswell-OptiPlex-9020:/home/lizj/linux/tools/testing/selftests$ make
-[...snip...]
-make ARCH=x86 CROSS_COMPILE= -C ../../../gpio
-make[2]: Entering directory '/home/lizj/linux/tools/gpio'
-[...snip...]
-make[3]: Leaving directory '/home/lizj/linux/tools/gpio'
-  LINK     /home/lizj/linux/tools/testing/selftests/gpiogpio-event-mon
-make[2]: Leaving directory '/home/lizj/linux/tools/gpio'
-gcc -O2 -g -std=gnu99 -Wall -I../../../../usr/include/ gpio-mockup-chardev.c ../../../gpio/gpio-utils.o  -lmount -I/usr/include/libmount -o gpio-mockup-chardev
-gcc: error: ../../../gpio/gpio-utils.o: No such file or directory
-<builtin>: recipe for target 'gpio-mockup-chardev' failed
-make[1]: *** [gpio-mockup-chardev] Error 1
-make[1]: Leaving directory
-'/home/lizj/linux/tools/testing/selftests/gpio'
-Makefile:85: recipe for target 'all' failed
-make: *** [all] Error 2
+From: Thierry Reding <treding@nvidia.com>
 
-in this patch
-- correct target name to $OUTPUTgpio-utils.o
-- pass OUTPUT to tools/gpio/Makefile
-- support cleanup ../gpiogpio-hammer.o
+Hi,
 
-CC: Bamvor Jian Zhang <bamv2005@gmail.com>
-CC: Bartosz Golaszewski <brgl@bgdev.pl>
-CC: Shuah Khan <shuah@kernel.org>
-CC: linux-gpio@vger.kernel.org
-Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
----
- tools/testing/selftests/gpio/Makefile | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+The following is a set of patches that allow certain interrupts to be
+used as wakeup sources on Tegra186 and later. To implement this, each
+of the GPIO controllers' IRQ domain needs to become hierarchical, and
+parented to the PMC domain. The PMC domain in turn implements a new
+IRQ domain that is a child to the GIC IRQ domain.
 
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 4665cdb..7f9354a 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -7,7 +7,7 @@ EXTRA_PROGS := ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
- EXTRA_DIRS := ../gpioinclude/
- EXTRA_OBJS := ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
- EXTRA_OBJS += ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpio-in.o
--EXTRA_OBJS += ../gpiolsgpio.o
-+EXTRA_OBJS += ../gpiolsgpio.o ../gpiogpio-hammer.o
- 
- include ../lib.mk
- 
-@@ -22,7 +22,7 @@ CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
- LDLIBS += -lmount -I/usr/include/libmount
- 
- $(BINARIES):| khdr
--$(BINARIES): ../../../gpio/gpio-utils.o
-+$(BINARIES): ../gpiogpio-utils.o
- 
--../../../gpio/gpio-utils.o:
--	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
-+../gpiogpio-utils.o:
-+	make OUTPUT=$(OUTPUT) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
+The above ensures that the interrupt chip implementation of the PMC is
+called at the correct time. The ->irq_set_type() and ->irq_set_wake()
+implementations program the PMC wake registers in a way to enable the
+given interrupts as wakeup sources.
+
+This is based on a suggestion from Thomas Gleixner that resulted from
+the following thread:
+
+	https://lkml.org/lkml/2018/9/13/1042
+
+Linus, I'm sending this as one series, but both the GPIO and PMC patches
+should be applicable separately. There are no build-time dependencies in
+the series. So once this has been duly reviewed, I think patches 1-5 can
+go through the Tegra tree, while patches 6-9 should go through the GPIO
+tree.
+
+Thierry
+
+Thierry Reding (9):
+  dt-bindings: tegra186-pmc: Add interrupt controller properties
+  soc/tegra: pmc: Add Tegra194 support
+  soc/tegra: pmc: Add wake event support
+  soc/tegra: pmc: Add initial Tegra186 wake events
+  soc/tegra: pmc: Add initial Tegra194 wake events
+  gpio: Add support for hierarchical IRQ domains
+  dt-bindings: tegra186-gpio: Add wakeup parent support
+  gpio: tegra186: Rename flow variable to type
+  gpio: tegra186: Implement wake event support
+
+ .../arm/tegra/nvidia,tegra186-pmc.txt         |   3 +
+ .../bindings/gpio/nvidia,tegra186-gpio.txt    |   7 +
+ drivers/gpio/gpio-tegra186.c                  | 109 +++++-
+ drivers/gpio/gpiolib.c                        |  15 +-
+ drivers/soc/tegra/pmc.c                       | 312 +++++++++++++++++-
+ include/linux/gpio/driver.h                   |   6 +
+ include/soc/tegra/pmc.h                       |  21 ++
+ 7 files changed, 451 insertions(+), 22 deletions(-)
+
 -- 
-2.7.4
+2.19.0
