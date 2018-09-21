@@ -1,41 +1,27 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v2] gpiolib: Show correct direction from the beginning
-Date: Fri, 21 Sep 2018 12:36:04 +0200
-Message-ID: <20180921103604.13361-2-ricardo.ribalda@gmail.com>
-References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Subject: Re: [PATCH 3/9] soc/tegra: pmc: Add wake event support
+Date: Fri, 21 Sep 2018 19:35:59 +0900
+Message-ID: <62b40f71-a731-24d5-14c9-c3bdb4305695@kapsi.fi>
+References: <20180921102546.12745-1-thierry.reding@gmail.com>
+ <20180921102546.12745-4-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+In-Reply-To: <20180921102546.12745-4-thierry.reding@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Timur Tabi <timur@codeaurora.org>, swboyd@chromium.org, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Current code assumes that the direction is input if direction_input
-function is set.
-This might not be the case on GPIOs with programmable direction.
+On 21/09/2018 19.25, Thierry Reding wrote:
+> ...
+> +	/* route wake to tier 2 (XXX conditionally enable this) */
+> +	value = readl(pmc->wake + WAKE_AOWAKE_TIER2_CTRL);
+> +	writel(0x1, pmc->wake + WAKE_AOWAKE_TIER2_CTRL);
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/gpio/gpiolib.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+This doesn't seem right
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 4b45de883ada..00c17f64d9ff 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1352,7 +1352,12 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 		 * it does, and in case chip->get_direction is not set, we may
- 		 * expose the wrong direction in sysfs.
- 		 */
--		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
-+		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
-+			desc->flags = !chip->get_direction(chip, i) ?
-+					(1 << FLAG_IS_OUT) : 0;
-+		else
-+			desc->flags = !chip->direction_input ?
-+					(1 << FLAG_IS_OUT) : 0;
- 	}
- 
- #ifdef CONFIG_PINCTRL
--- 
-2.18.0
+Cheers,
+Mikko
