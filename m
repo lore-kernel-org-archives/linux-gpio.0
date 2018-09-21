@@ -1,37 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] pinctrl: mediatek: moore: fix return value check in
- mtk_moore_pinctrl_probe()
-Date: Fri, 21 Sep 2018 09:08:59 -0700
-Message-ID: <CACRpkdbyHU6cNNd96UMuH-ck5Z0i1vFjXXm6ECtUwUDw6R8=_w@mail.gmail.com>
-References: <1537424510-23623-1-git-send-email-weiyongjun1@huawei.com>
+Subject: Re: [PATCH 1/4] pinctrl: mediatek: fix static checker warning caused
+ by EINT_NA
+Date: Fri, 21 Sep 2018 09:11:38 -0700
+Message-ID: <CACRpkdavhUsJkd262rgjk=2RdHVrdmAi+8JHGBMHEDv_w=gnVg@mail.gmail.com>
+References: <ab85fbee4d8286cbedbcc7317f89dc0d2dd83965.1537502494.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1537424510-23623-1-git-send-email-weiyongjun1@huawei.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Ryder Lee <ryder.lee@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, kernel-janitors@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <ab85fbee4d8286cbedbcc7317f89dc0d2dd83965.1537502494.git.sean.wang@mediatek.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 11:12 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+On Thu, Sep 20, 2018 at 9:07 PM <sean.wang@mediatek.com> wrote:
 
-> In case of error, the function devm_kmalloc_array() returns NULL pointer
-> not ERR_PTR(). The IS_ERR() test in the return value check should be
-> replaced with NULL test.
+> From: Sean Wang <sean.wang@mediatek.com>
 >
-> Fixes: b7d7f9eeca55 ("pinctrl: mediatek: extend struct mtk_pin_desc which per-pin driver depends on")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> EINT_NA is an u16 number, so it should be U16_MAX instead of -1
+> to fix up drivers/pinctrl/mediatek/pinctrl-paris.c:732 mtk_gpio_to_irq()
+> warn: impossible condition (desc->eint.eint_n == -1) => (0-u16max == (-1))
+>
+> Also happens in
+> drivers/pinctrl/mediatek/pinctrl-paris.c:749 mtk_gpio_set_config()
+> warn: impossible condition (desc->eint.eint_n == -1) => (0-u16max == (-1))
+>
+> drivers/pinctrl/mediatek/pinctrl-moore.c:479 mtk_gpio_to_irq()
+> warn: impossible condition (desc->eint.eint_n == -1) => (0-u16max == (-1))
+>
+> drivers/pinctrl/mediatek/pinctrl-moore.c:496 mtk_gpio_set_config()
+> warn: impossible condition '(desc->eint.eint_n == -1) => (0-u16max == (-1))
+>
+> Fixes: 6561859b067f ("pinctrl: mediatek: add eint support to MT8183 pinctrl driver")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
-Patch applied with Sean's ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
