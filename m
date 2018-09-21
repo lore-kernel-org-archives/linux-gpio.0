@@ -1,72 +1,65 @@
-From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [bug report] pinctrl: mediatek: add eint support to MT8183
- pinctrl driver
-Date: Fri, 21 Sep 2018 10:16:04 +0800
-Message-ID: <1537496164.9654.7.camel@mtkswgap22>
-References: <20180920195338.GA31947@mwanda>
+From: Sean Wang <sean.wang@mediatek.com>
+Subject: Re: [PATCH -next] pinctrl: mediatek: moore: fix return value check
+ in mtk_moore_pinctrl_probe()
+Date: Fri, 21 Sep 2018 10:01:40 +0800
+Message-ID: <1537495300.9654.2.camel@mtkswgap22>
+References: <1537424510-23623-1-git-send-email-weiyongjun1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20180920195338.GA31947@mwanda>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1537424510-23623-1-git-send-email-weiyongjun1@huawei.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: "Ryder.Lee" <ryder.lee@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+On Thu, 2018-09-20 at 06:21 +0000, Wei Yongjun wrote:
+> In case of error, the function devm_kmalloc_array() returns NULL pointer
+> not ERR_PTR(). The IS_ERR() test in the return value check should be
+> replaced with NULL test.
+> 
+> Fixes: b7d7f9eeca55 ("pinctrl: mediatek: extend struct mtk_pin_desc which per-pin driver depends on")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-On Thu, 2018-09-20 at 22:53 +0300, Dan Carpenter wrote:
-> Hello Sean Wang,
-> 
-> The patch 6561859b067f: "pinctrl: mediatek: add eint support to
-> MT8183 pinctrl driver" from Sep 8, 2018, leads to the following
-> static checker warning:
-> 
-> 	drivers/pinctrl/mediatek/pinctrl-paris.c:732 mtk_gpio_to_irq()
-> 	warn: impossible condition '(desc->eint.eint_n == -1) => (0-u16max == (-1))'
-> 
-> drivers/pinctrl/mediatek/pinctrl-paris.c
->    722  static int mtk_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
->    723  {
->    724          struct mtk_pinctrl *hw = gpiochip_get_data(chip);
->    725          const struct mtk_pin_desc *desc;
->    726  
->    727          if (!hw->eint)
->    728                  return -ENOTSUPP;
->    729  
->    730          desc = (const struct mtk_pin_desc *)&hw->soc->pins[offset];
->    731  
->    732          if (desc->eint.eint_n == EINT_NA)
->                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Do you want to define EINT_NA as 0xffff maybe?
+Acked-by: Sean Wang <sean.wang@mediatek.com>
 
-yup, it should be U16_MAX instead. I'll have a fixup later on. Really thanks for the catchup.
-
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-moore.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
->    733                  return -ENOTSUPP;
->    734  
->    735          return mtk_eint_find_irq(hw->eint, desc->eint.eint_n);
->    736  }
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
+> index c27597c..3bf5dd5 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-moore.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
+> @@ -608,8 +608,8 @@ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
+>  
+>  	hw->base = devm_kmalloc_array(&pdev->dev, hw->soc->nbase_names,
+>  				      sizeof(*hw->base), GFP_KERNEL);
+> -	if (IS_ERR(hw->base))
+> -		return PTR_ERR(hw->base);
+> +	if (!hw->base)
+> +		return -ENOMEM;
+>  
+>  	for (i = 0; i < hw->soc->nbase_names; i++) {
+>  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> @@ -629,8 +629,8 @@ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
+>  	/* Copy from internal struct mtk_pin_desc to register to the core */
+>  	pins = devm_kmalloc_array(&pdev->dev, hw->soc->npins, sizeof(*pins),
+>  				  GFP_KERNEL);
+> -	if (IS_ERR(pins))
+> -		return PTR_ERR(pins);
+> +	if (!pins)
+> +		return -ENOMEM;
+>  
+>  	for (i = 0; i < hw->soc->npins; i++) {
+>  		pins[i].number = hw->soc->pins[i].number;
 > 
-> See also:
-> 
-> drivers/pinctrl/mediatek/pinctrl-paris.c:749 mtk_gpio_set_config() warn: impossible condition '(desc->eint.eint_n == -1) => (0-u16max == (-1))'
-> drivers/pinctrl/mediatek/pinctrl-moore.c:479 mtk_gpio_to_irq() warn: impossible condition '(desc->eint.eint_n == -1) => (0-u16max == (-1))'
-> drivers/pinctrl/mediatek/pinctrl-moore.c:496 mtk_gpio_set_config() warn: impossible condition '(desc->eint.eint_n == -1) => (0-u16max == (-1))'
-> 
-> regards,
-> dan carpenter
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
