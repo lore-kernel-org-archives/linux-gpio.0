@@ -1,55 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: Show correct direction from the beginning
-Date: Fri, 21 Sep 2018 09:07:38 -0700
-Message-ID: <CACRpkdYV+A9rUZvYN_Vh3wD6Vb73qj8=SkHJCJ0ZiTWP5Ojw1A@mail.gmail.com>
-References: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
- <20180914070839.4667-2-ricardo.ribalda@gmail.com> <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
- <CAPybu_0iDqSn02iGLEg8Ge9EdyCCNhRVV3JgHg180qrXK+bcdw@mail.gmail.com>
- <d84ee082-f578-3ed3-32be-dbeb9562980e@kernel.org> <CACRpkdYGpEVG9gqPxNaOsD55k9idEfGaxOUrObbN9VZS06x5jw@mail.gmail.com>
- <bcb79947-dfe0-e5e2-fb48-3b6992720f01@kernel.org> <CACRpkdbz0hyjy5U3-xo8Oi-ojB_H3=DEwuJtmoqJTJQNiAYYaA@mail.gmail.com>
- <27c8e13a-44bf-18b5-083b-25b87d7b8605@kernel.org>
+Subject: Re: [PATCH -next] pinctrl: mediatek: moore: fix return value check in
+ mtk_moore_pinctrl_probe()
+Date: Fri, 21 Sep 2018 09:08:59 -0700
+Message-ID: <CACRpkdbyHU6cNNd96UMuH-ck5Z0i1vFjXXm6ECtUwUDw6R8=_w@mail.gmail.com>
+References: <1537424510-23623-1-git-send-email-weiyongjun1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <27c8e13a-44bf-18b5-083b-25b87d7b8605@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: timur@kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1537424510-23623-1-git-send-email-weiyongjun1@huawei.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Ryder Lee <ryder.lee@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, kernel-janitors@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 7:05 PM Timur Tabi <timur@kernel.org> wrote:
-> On 9/20/18 5:36 PM, Linus Walleij wrote:
-> > What I mean is that $SUBJECT patch might not hurt Qualcomms
-> > GPIOs (not crash the platform) if and only if it is augmented to not
-> > try to get the initial direction from lines masked off in .valid_mask
-> > if .need_valid_mask is true.
-> >
-> > Whether it makes sense semantically is a different debate, but it
-> > seems possible to reintroduce calling .get_direction() without
-> > hurting anyone.
+On Wed, Sep 19, 2018 at 11:12 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+
+> In case of error, the function devm_kmalloc_array() returns NULL pointer
+> not ERR_PTR(). The IS_ERR() test in the return value check should be
+> replaced with NULL test.
 >
-> That means that all the logic for checking valid_mask needs to be added
-> to the chip driver's .get_direction() function.  We can add that logic
-> to msm_gpio_get_direction (at one point, I had a patch that did that,
-> but it was rejected).
+> Fixes: b7d7f9eeca55 ("pinctrl: mediatek: extend struct mtk_pin_desc which per-pin driver depends on")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Nah, what is in patch v2 is better, just checking it when we need to.
-
-> My concern is: what if a driver depends on a .request call being made
-> (in order to configure muxes, for example) before touching the hardware?
-
-Hm. That is a good question.
-
-I wonder if we have that problem in practice. If this happens, maybe the
-driver needs to keep track of stuff a bit. I think if we just loop request
-over everything we could disturb other mux set-up.
-
-> I wonder if this is something that really should be handled in the
-> driver's .probe function.  The driver should collect that information
-> and pass it to add_data.
-
-I see the idea, but it seems complicated compared to just calling
-the callbacks. Let's try the v2 patch approach first.
+Patch applied with Sean's ACK.
 
 Yours,
 Linus Walleij
