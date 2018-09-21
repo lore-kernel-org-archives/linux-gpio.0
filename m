@@ -1,29 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/4] pinctrl: mediatek: add eint support to MT6765 pinctrl driver
-Date: Fri, 21 Sep 2018 09:14:21 -0700
-Message-ID: <CACRpkdZ5Un1s5qM92GsLOjW0yQTvitzi9F7WVJu87DhSckSn7Q@mail.gmail.com>
-References: <ab85fbee4d8286cbedbcc7317f89dc0d2dd83965.1537502494.git.sean.wang@mediatek.com>
- <82d47055aec8e40422eb72568e96bfbaf199d9d2.1537502494.git.sean.wang@mediatek.com>
+Subject: Re: [PATCH -next] pinctrl: sunxi: fix 'pctrl->functions' allocation
+ in sunxi_pinctrl_build_state
+Date: Fri, 21 Sep 2018 09:18:22 -0700
+Message-ID: <CACRpkdbHALf7m2uQ091dBmD9aTctzN2ym5=vZ1wFbE_ayJ-8Fw@mail.gmail.com>
+References: <20180921015941.28468-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <82d47055aec8e40422eb72568e96bfbaf199d9d2.1537502494.git.sean.wang@mediatek.com>
+In-Reply-To: <20180921015941.28468-1-yuehaibing@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, mars.cheng@mediatek.com
+To: yuehaibing@huawei.com
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 9:07 PM <sean.wang@mediatek.com> wrote:
+On Thu, Sep 20, 2018 at 7:00 PM YueHaibing <yuehaibing@huawei.com> wrote:
 
-> From: Mars Cheng <mars.cheng@mediatek.com>
+> fixes following Smatch static check warning:
 >
-> Just add eint support to MT6765 pinctrl driver as usual as
-> happens on the other SoCs.
+>  ./drivers/pinctrl/sunxi/pinctrl-sunxi.c:1112 sunxi_pinctrl_build_state()
+>  warn: passing devm_ allocated variable to kfree. 'pctrl->functions'
 >
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> As we will be calling krealloc() on pointer 'pctrl->functions', which means
+> kfree() will be called in there, devm_kzalloc() shouldn't be used with
+> the allocation in the first place.  Fix the warning by calling kcalloc()
+> and managing the free procedure in error path on our own.
+>
+> Fixes: 0e37f88d9ad8 ("ARM: sunxi: Add pinctrl driver for Allwinner SoCs")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Patch applied.
+Patch applied with Maxime's ACK.
 
 Yours,
 Linus Walleij
