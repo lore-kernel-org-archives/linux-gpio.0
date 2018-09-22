@@ -1,77 +1,68 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
- for legacy boards
-Date: Fri, 21 Sep 2018 16:33:36 -0700
-Message-ID: <20180921233336.GB44099@dtor-ws>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
- <20180917181603.125492-3-dmitry.torokhov@gmail.com>
- <20180919151026.GB11965@kuha.fi.intel.com>
- <20180919171326.GB116719@dtor-ws>
- <20180920101648.GC11965@kuha.fi.intel.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCHv2 0/3] omap gpio add level idle, cpu_pm and drop
+ runtime_irq_safe
+Date: Fri, 21 Sep 2018 22:12:52 -0500
+Message-ID: <e3dbeb73-c14e-282b-f2bb-449131d6ed33@ti.com>
+References: <20180920193532.7714-1-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180920101648.GC11965@kuha.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180920193532.7714-1-tony@atomide.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 01:16:48PM +0300, Heikki Krogerus wrote:
-> On Wed, Sep 19, 2018 at 10:13:26AM -0700, Dmitry Torokhov wrote:
-> > > > diff --git a/drivers/base/pset_property.c b/drivers/base/pset_property.c
-> > > > index 08ecc13080ae..63f2377aefe8 100644
-> > > > --- a/drivers/base/pset_property.c
-> > > > +++ b/drivers/base/pset_property.c
-> > > > @@ -18,6 +18,11 @@ struct property_set {
-> > > >  	struct device *dev;
-> > > >  	struct fwnode_handle fwnode;
-> > > >  	const struct property_entry *properties;
-> > > > +
-> > > > +	struct property_set *parent;
-> > > > +	/* Entry in parent->children list */
-> > > > +	struct list_head child_node;
-> > > > +	struct list_head children;
-> > > 
-> > > Add
-> > > 
-> > >         const char *name;
-> > > 
-> > > and you can implement also pset_get_named_child_node().
-> > 
-> > Or
-> > 	char name[];
-> > 
-> > to avoid separate allocation.
-> 
-> Let's not do that, especially if you are planning on exporting this
-> structure.
 
-Can you please elaborate why? Not using pointer saves us 4/8 bytes +
-however much memory we need for bookkeeping for the extra chunk. Given
-that majority of pset nodes are unnamed this seems wasteful.
 
-> If the name is coming from .rodata, there is no need to
-> allocate anything for the name. Check kstrdup_const().
+On 09/20/2018 02:35 PM, Tony Lindgren wrote:
+> Hi,
+> 
+> Here's v2 of the patches to add support for omap4 and later level interrupt
+> idle support, get rid of the custom pm calls, and finally after these we can
+> drop pm_runtime_irq_safe().
+> 
+> Linus, assuming people are happy with these, I'd appreciate an immutable branch
+> with these in case we run into merge conflicts for arch/arm/mach-omap2 changes.
+> 
+> Regards,
+> 
+> Tony
+> 
+> 
+> Changes since v1:
+> - Fix issue noted in v1 set and update comments accordingly
+> 
+> - Don't call pm_runtime from cpu_pm to avoid further dependencies to
+>    pm_runtime_irq_safe() as discussed offline with Grygorii
+> 
+> - Add a patch to drop pm_runtime_irq_safe() as it's no longer needed
+> 
+> Tony Lindgren (3):
+>    gpio: omap: Add level wakeup handling for omap4 based SoCs
+>    gpio: omap: Remove custom PM calls and use cpu_pm instead
+>    gpio: omap: Get rid of pm_runtime_irq_safe()
+> 
+>   arch/arm/mach-omap2/pm24xx.c            |   7 +-
+>   arch/arm/mach-omap2/pm34xx.c            |  14 +-
+>   drivers/gpio/gpio-omap.c                | 331 ++++++++++++++++--------
+>   include/linux/platform_data/gpio-omap.h |  15 +-
+>   4 files changed, 237 insertions(+), 130 deletions(-)
+> 
 
-The data is most likely coming as __initconst so we do need to copy it.
-
-> 
-> > Alternatively, we can add it later when we need it, and add
-> > device_add_named_child_properties().
-> > 
-> > I'll leave it up to Rafael to decide.
-> 
-> Fair enough.
-> 
-> 
-> Thanks,
-> 
-> -- 
-> heikki
-
-Thanks.
+Thank you
+Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
 -- 
-Dmitry
+regards,
+-grygorii
