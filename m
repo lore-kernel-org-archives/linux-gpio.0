@@ -1,68 +1,103 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCHv2 0/3] omap gpio add level idle, cpu_pm and drop
- runtime_irq_safe
-Date: Fri, 21 Sep 2018 22:12:52 -0500
-Message-ID: <e3dbeb73-c14e-282b-f2bb-449131d6ed33@ti.com>
-References: <20180920193532.7714-1-tony@atomide.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: [PATCH] pinctrl/amd: poll InterruptEnable bits in amd_gpio_irq_set_type
+Date: Sat, 22 Sep 2018 13:58:26 -0600
+Message-ID: <20180922195826.175628-1-djkurtz@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180920193532.7714-1-tony@atomide.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Drake <drake@endlessm.com>
+Cc: Shyam-sundar.S-k@amd.com, Nehal-bakulchandra.Shah@amd.com, Ken.Xue@amd.com, Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+>From the AMD BKDG, if WAKE_INT_MASTER_REG.MaskStsEn is set, a software
+write to the debounce registers of *any* gpio will block wake/interrupt
+status generation for *all* gpios for a length of time that depends on
+WAKE_INT_MASTER_REG.MaskStsLength[11:0].  During this period the Interrupt
+Delivery bit (INTERRUPT_ENABLE) will read as 0.
 
+In commit 4c1de0414a1340 ("pinctrl/amd: poll InterruptEnable bits in
+enable_irq") we tried to fix this same "gpio Interrupts are blocked
+immediately after writing debounce registers" problem, but incorrectly
+assumed it only affected the gpio whose debounce was being configured
+and not ALL gpios.
 
-On 09/20/2018 02:35 PM, Tony Lindgren wrote:
-> Hi,
-> 
-> Here's v2 of the patches to add support for omap4 and later level interrupt
-> idle support, get rid of the custom pm calls, and finally after these we can
-> drop pm_runtime_irq_safe().
-> 
-> Linus, assuming people are happy with these, I'd appreciate an immutable branch
-> with these in case we run into merge conflicts for arch/arm/mach-omap2 changes.
-> 
-> Regards,
-> 
-> Tony
-> 
-> 
-> Changes since v1:
-> - Fix issue noted in v1 set and update comments accordingly
-> 
-> - Don't call pm_runtime from cpu_pm to avoid further dependencies to
->    pm_runtime_irq_safe() as discussed offline with Grygorii
-> 
-> - Add a patch to drop pm_runtime_irq_safe() as it's no longer needed
-> 
-> Tony Lindgren (3):
->    gpio: omap: Add level wakeup handling for omap4 based SoCs
->    gpio: omap: Remove custom PM calls and use cpu_pm instead
->    gpio: omap: Get rid of pm_runtime_irq_safe()
-> 
->   arch/arm/mach-omap2/pm24xx.c            |   7 +-
->   arch/arm/mach-omap2/pm34xx.c            |  14 +-
->   drivers/gpio/gpio-omap.c                | 331 ++++++++++++++++--------
->   include/linux/platform_data/gpio-omap.h |  15 +-
->   4 files changed, 237 insertions(+), 130 deletions(-)
-> 
+To solve this for all gpios, we move the polling loop from
+amd_gpio_irq_enable() to amd_gpio_irq_set_type(), while holding the gpio
+spinlock.  This ensures that another gpio operation (e.g.
+amd_gpio_irq_unmask()) can read a temporarily disabled IRQ and
+incorrectly disable it while trying to modify some other register bits.
 
-Thank you
-Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Fixes: 4c1de0414a1340 pinctrl/amd: poll InterruptEnable bits in enable_irq
 
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+---
+ drivers/pinctrl/pinctrl-amd.c | 33 +++++++++++++++++++++++----------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index b7788140641ee2..67718b0f978d34 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -348,21 +348,12 @@ static void amd_gpio_irq_enable(struct irq_data *d)
+ 	unsigned long flags;
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+-	u32 mask = BIT(INTERRUPT_ENABLE_OFF) | BIT(INTERRUPT_MASK_OFF);
+ 
+ 	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
+ 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
+ 	pin_reg |= BIT(INTERRUPT_ENABLE_OFF);
+ 	pin_reg |= BIT(INTERRUPT_MASK_OFF);
+ 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
+-	/*
+-	 * When debounce logic is enabled it takes ~900 us before interrupts
+-	 * can be enabled.  During this "debounce warm up" period the
+-	 * "INTERRUPT_ENABLE" bit will read as 0. Poll the bit here until it
+-	 * reads back as 1, signaling that interrupts are now enabled.
+-	 */
+-	while ((readl(gpio_dev->base + (d->hwirq)*4) & mask) != mask)
+-		continue;
+ 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+ }
+ 
+@@ -426,7 +417,7 @@ static void amd_gpio_irq_eoi(struct irq_data *d)
+ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	int ret = 0;
+-	u32 pin_reg;
++	u32 pin_reg, pin_reg_irq_en, mask;
+ 	unsigned long flags, irq_flags;
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+@@ -495,6 +486,28 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	}
+ 
+ 	pin_reg |= CLR_INTR_STAT << INTERRUPT_STS_OFF;
++	/*
++	 * If WAKE_INT_MASTER_REG.MaskStsEn is set, a software write to the
++	 * debounce registers of any GPIO will block wake/interrupt status
++	 * generation for *all* GPIOs for a lenght of time that depends on
++	 * WAKE_INT_MASTER_REG.MaskStsLength[11:0].  During this period the
++	 * INTERRUPT_ENABLE bit will read as 0.
++	 *
++	 * We temporarily enable irq for the GPIO whose configuration is
++	 * changing, and then wait for it to read back as 1 to know when
++	 * debounce has settled and then disable the irq again.
++	 * We do this polling with the spinlock held to ensure other GPIO
++	 * access routines do not read an incorrect value for the irq enable
++	 * bit of other GPIOs.  We keep the GPIO masked while polling to avoid
++	 * spurious irqs, and disable the irq again after polling.
++	 */
++	mask = BIT(INTERRUPT_ENABLE_OFF);
++	pin_reg_irq_en = pin_reg;
++	pin_reg_irq_en |= mask;
++	pin_reg_irq_en &= ~BIT(INTERRUPT_MASK_OFF);
++	writel(pin_reg_irq_en, gpio_dev->base + (d->hwirq)*4);
++	while ((readl(gpio_dev->base + (d->hwirq)*4) & mask) != mask)
++		continue;
+ 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
+ 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+ 
 -- 
-regards,
--grygorii
+2.19.0.444.g18242da7ef-goog
