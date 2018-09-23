@@ -1,125 +1,171 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [PATCH v7 4/4] gpiolib: Implement fast processing path in get/set
- array
-Date: Sun, 23 Sep 2018 12:43:53 +0200
-Message-ID: <2785169.v6aIfS3K2k@z50>
-References: <20180831225616.29221-1-jmkrzyszt@gmail.com>
- <CAGfqbt7xJxGbq3oOJp9S0Sg7Z9=T6Dy52MDNWSDdsU==kPt1KQ@mail.gmail.com>
- <20180921141409eucas1p190a47e2608429870d23516ee5e75c191~Wb8z_FmwI1466414664eucas1p1F@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20180921141409eucas1p190a47e2608429870d23516ee5e75c191~Wb8z_FmwI1466414664eucas1p1F@eucas1p1.samsung.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, linux-doc@vger.kernel.org, linux-iio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Dominik Brodowski <linux@dominikbrodowski.net>, Peter Rosin <peda@axentia.se>, netdev@vger.kernel.org, linux-i2c@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, devel@driverdev.osuosl.org, Florian Fainelli <f.fainelli@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Tony Lindgren <tony@atomide.com>, Lukas Wunner <lukas@wunner.de>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Russ
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] gpio: mockup: use device properties instead of platform_data
+Date: Sun, 23 Sep 2018 13:17:27 +0200
+Message-ID: <20180923111727.10378-1-brgl@bgdev.pl>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Bamvor Jian Zhang <bamv2005@gmail.com>, Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-On Friday, September 21, 2018 4:14:06 PM CEST Marek Szyprowski wrote:
-> Hi Janusz,
-> 
-> 
-> On 2018-09-21 12:51, Janusz Krzysztofik wrote:
-> > 2018-09-21 10:18 GMT+02:00, Marek Szyprowski <m.szyprowski@samsung.com>:
-> >> On 2018-09-20 18:21, Janusz Krzysztofik wrote:
-> >>> On Thursday, September 20, 2018 5:48:22 PM CEST Janusz Krzysztofik wrote:
-> >>>> On Thursday, September 20, 2018 12:11:48 PM CEST Marek Szyprowski 
-wrote:
-> >>>>> On 2018-09-02 14:01, Janusz Krzysztofik wrote:
-> >>>>>> Certain GPIO descriptor arrays returned by gpio_get_array() may
-> >>>>>> contain
-> >>>>>> information on direct mapping of array members to pins of a single
-> >>>>>> GPIO
-> >>>>>> chip in hardware order.  In such cases, bitmaps of values can be
-> >>>>>> passed
-> >>>>>> directly from/to the chip's .get/set_multiple() callbacks without
-> >>>>>> wasting time on iterations.
-> >>>>>>
-> >>>>>> Add respective code to gpiod_get/set_array_bitmap_complex() 
-functions.
-> >>>>>> Pins not applicable for fast path are processed as before, skipping
-> >>>>>> over the 'fast' ones.
-> >>>>>>
-> >>>>>> Cc: Jonathan Corbet <corbet@lwn.net>
-> >>>>>> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> >>>>> I've just noticed that this patch landed in today's linux-next. Sadly
-> >>>>> it
-> >>>>> breaks booting of Exynos5250-based Samsung Snow Chromebook (ARM 32bit,
-> >>>>> device-tree source arch/arm/boot/dts/exynos5250-snow.dts).
-> >>>>>
-> >>>>> Booting hangs after detecting MMC cards. Reverting this patch fixes the
-> >>>>> boot. I will try later to add some debugs and investigate it further
-> >>>>> what
-> >>>>> really happens when booting hangs.
-> >>>> Hi Marek,
-> >>>>
-> >>>> Thanks for reporting. Could you please try the following fix?
-> >>> Hi again,
-> >>>
-> >>> I realized the patch was not correct, j, not i, should be updated in
-> >>> second
-> >>> hunk. Please try the following one.
-> >>>
-> >>> Thanks,
-> >>> Janusz
-> >>>
-> >>> >From a919c504850f6cb40e8e81267a3a37537f7c4fd4 Mon Sep 17 00:00:00 2001
-> >>> From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> >>> Date: Thu, 20 Sep 2018 17:37:21 +0200
-> >>> Subject: [PATCH] gpiolib: Fix bitmap index not updated
-> >>> While skipping fast path bits, bitmap index is not updated with next
-> >>> found zero bit position. Fix it.
-> >>>
-> >>> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> >> This one also doesn't help. A quick compare of logs with this version and
-> >> a working system shows, that with your patch (and fix) there are no calls
-> >> to
-> >> gpx0-2 pin (which are a part of mmc pwrseq), what causes mmc failure. If
-> >> you need any more information (what kind of logs will help?), let me 
-know.
-> > There is a debug message on array_info content available at the end of
-> > gpiod_get_array(), could you please activate it and post the message so
-> > we can understand better what is going on?
-> 
-> With debug enabled on next-20180919:
-> [    2.499153] pwrseq_simple mmc3_pwrseq: GPIO array info: chip=gpx0, 
-> size=2, get_mask=2, set_mask=2, invert_mask=2
+Some users want to introduce device tree support to the mockup driver.
+Let's make it easier by switching to using generic device properties.
+The driver stays compatible with previous use cases and after this
+conversion there'll be no need to change the way probing of mockup
+GPIO chips works.
 
-Looks good to me, i..e., in line with what one could expect.  However, ...
+Tested with libgpiod test suite.
 
-> On next-20180920 I get no this message and booting hangs.
-> 
-> Same with next-20180920 + your second fix from this thread.
-> 
-> I will try to debug this more on Monday.
-> 
-> > On the other hand, I've had a look your device-tree configuration and
-> > it looks like that specific setup won't benefit from the fast bitmap path.
-> > You have pin 2 at position 0 and pin 1 at position 1 of the array.
-> > Hence, the fast bitmap path covers only pin 1, and pin 2 is processed
-> > by the old path with apparently buggy code for skipping over fast pins.
-> >
-> > As a temporary workaround, you could try to revert the order of pins in
-> > your dts file (pin 1 at position 0, pin 2 at 1) and the mmc pwrseq code
-> > should work for you again by taking the original old path, not skipping
-> > over fast pins.  Results of such check may also help us to better
-> > understand and resolve the issue.
-> 
-> Changing the order of mmc pwrseq gpio pins fixes boot hang.
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ drivers/gpio/gpio-mockup.c | 82 ++++++++++++++++++++++++--------------
+ 1 file changed, 51 insertions(+), 31 deletions(-)
 
-Not being able to discover more coding bugs in the code modified by the series, 
-I'm wondering if the reason for the issue you are observing comes from the 
-fact both pins are no longer manipulated together within a single 
-.set_multiple() chip callback. I'm working on a fix which prevents from that.
-
-Thanks,
-Janusz
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index d66b7a768ecd..4e66bd83b76c 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -18,6 +18,7 @@
+ #include <linux/irq_sim.h>
+ #include <linux/debugfs.h>
+ #include <linux/uaccess.h>
++#include <linux/property.h>
+ 
+ #include "gpiolib.h"
+ 
+@@ -28,6 +29,8 @@
+  * of GPIO lines.
+  */
+ #define GPIO_MOCKUP_MAX_RANGES	(GPIO_MOCKUP_MAX_GC * 2)
++/* Maximum of three properties + the sentinel. */
++#define GPIO_MOCKUP_MAX_PROP	4
+ 
+ #define gpio_mockup_err(...)	pr_err(GPIO_MOCKUP_NAME ": " __VA_ARGS__)
+ 
+@@ -59,13 +62,6 @@ struct gpio_mockup_dbgfs_private {
+ 	int offset;
+ };
+ 
+-struct gpio_mockup_platform_data {
+-	int base;
+-	int ngpio;
+-	int index;
+-	bool named_lines;
+-};
+-
+ static int gpio_mockup_ranges[GPIO_MOCKUP_MAX_RANGES];
+ static int gpio_mockup_num_ranges;
+ module_param_array(gpio_mockup_ranges, int, &gpio_mockup_num_ranges, 0400);
+@@ -255,26 +251,37 @@ static int gpio_mockup_name_lines(struct device *dev,
+ 
+ static int gpio_mockup_probe(struct platform_device *pdev)
+ {
+-	struct gpio_mockup_platform_data *pdata;
+ 	struct gpio_mockup_chip *chip;
+ 	struct gpio_chip *gc;
+-	int rv, base, ngpio;
+ 	struct device *dev;
+-	char *name;
++	const char *name;
++	int rv, base;
++	u16 ngpio;
+ 
+ 	dev = &pdev->dev;
+-	pdata = dev_get_platdata(dev);
+-	base = pdata->base;
+-	ngpio = pdata->ngpio;
++
++	rv = device_property_read_u32(dev, "gpio-base", &base);
++	if (rv && rv == -ENOENT)
++		base = -1;
++
++	rv = device_property_read_u16(dev, "nr-gpios", &ngpio);
++	if (rv)
++		return rv;
++
++	rv = device_property_read_string(dev, "chip-name", &name);
++	if (rv)
++		name = NULL;
+ 
+ 	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+ 	if (!chip)
+ 		return -ENOMEM;
+ 
+-	name = devm_kasprintf(dev, GFP_KERNEL, "%s-%c",
+-			      pdev->name, pdata->index);
+-	if (!name)
+-		return -ENOMEM;
++	if (!name) {
++		name = devm_kasprintf(dev, GFP_KERNEL,
++				      "%s-%c", pdev->name, pdev->id + 'A');
++		if (!name)
++			return -ENOMEM;
++	}
+ 
+ 	gc = &chip->gc;
+ 	gc->base = base;
+@@ -295,7 +302,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	if (!chip->lines)
+ 		return -ENOMEM;
+ 
+-	if (pdata->named_lines) {
++	if (device_property_read_bool(dev, "named-gpio-lines")) {
+ 		rv = gpio_mockup_name_lines(dev, chip);
+ 		if (rv)
+ 			return rv;
+@@ -339,9 +346,11 @@ static void gpio_mockup_unregister_pdevs(void)
+ 
+ static int __init gpio_mockup_init(void)
+ {
+-	int i, num_chips, err = 0, index = 'A';
+-	struct gpio_mockup_platform_data pdata;
++	struct property_entry properties[GPIO_MOCKUP_MAX_PROP];
++	int i, prop, num_chips, err = 0, base;
++	struct platform_device_info pdevinfo;
+ 	struct platform_device *pdev;
++	u16 ngpio;
+ 
+ 	if ((gpio_mockup_num_ranges < 2) ||
+ 	    (gpio_mockup_num_ranges % 2) ||
+@@ -371,17 +380,28 @@ static int __init gpio_mockup_init(void)
+ 	}
+ 
+ 	for (i = 0; i < num_chips; i++) {
+-		pdata.index = index++;
+-		pdata.base = gpio_mockup_range_base(i);
+-		pdata.ngpio = pdata.base < 0
+-				? gpio_mockup_range_ngpio(i)
+-				: gpio_mockup_range_ngpio(i) - pdata.base;
+-		pdata.named_lines = gpio_mockup_named_lines;
+-
+-		pdev = platform_device_register_resndata(NULL,
+-							 GPIO_MOCKUP_NAME,
+-							 i, NULL, 0, &pdata,
+-							 sizeof(pdata));
++		memset(properties, 0, sizeof(properties));
++		memset(&pdevinfo, 0, sizeof(pdevinfo));
++		prop = 0;
++
++		base = gpio_mockup_range_base(i);
++		if (base >= 0)
++			properties[prop++] = PROPERTY_ENTRY_U32("gpio-base",
++								base);
++
++		ngpio = base < 0 ? gpio_mockup_range_ngpio(i)
++				 : gpio_mockup_range_ngpio(i) - base;
++		properties[prop++] = PROPERTY_ENTRY_U16("nr-gpios", ngpio);
++
++		if (gpio_mockup_named_lines)
++			properties[prop++] = PROPERTY_ENTRY_BOOL(
++						"named-gpio-lines");
++
++		pdevinfo.name = GPIO_MOCKUP_NAME;
++		pdevinfo.id = i;
++		pdevinfo.properties = properties;
++
++		pdev = platform_device_register_full(&pdevinfo);
+ 		if (IS_ERR(pdev)) {
+ 			gpio_mockup_err("error registering device");
+ 			platform_driver_unregister(&gpio_mockup_driver);
+-- 
+2.18.0
