@@ -1,120 +1,165 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
- for legacy boards
-Date: Mon, 24 Sep 2018 16:20:50 +0300
-Message-ID: <20180924132050.GK11965@kuha.fi.intel.com>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
- <20180917181603.125492-3-dmitry.torokhov@gmail.com>
- <20180920135348.GF11965@kuha.fi.intel.com>
- <20180921233119.GA44099@dtor-ws>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for
+ community-4/5
+Date: Mon, 24 Sep 2018 16:59:35 +0300
+Message-ID: <20180924135935.GP15943@smile.fi.intel.com>
+References: <20180913223143.12664-1-rajatja@google.com>
+ <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
+ <CACK8Z6FhJhhfgk1zPMv5M0oRwz=o75YOKFmU+4Wx-X9-prPnKA@mail.gmail.com>
+ <CACK8Z6GeZ+2uRsRDPfdd=i+WrdQwQgEBvEyDxQuKLygXqPp4dw@mail.gmail.com>
+ <CACK8Z6FLPVSJpPuAXZsqHV2rY2zy3L-Fvd=QPn=+Ynp3aHyhaQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180921233119.GA44099@dtor-ws>
+In-Reply-To: <CACK8Z6FLPVSJpPuAXZsqHV2rY2zy3L-Fvd=QPn=+Ynp3aHyhaQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rajat Jain <rajatja@google.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajat Jain <rajatxjain@gmail.com>, "Banik, Subrata" <subrata.banik@intel.com>, "Bohra, Aamir" <aamir.bohra@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Dmitry,
-
-On Fri, Sep 21, 2018 at 04:31:19PM -0700, Dmitry Torokhov wrote:
-> > > +	if (!parent_pset)
-> > > +		return ERR_PTR(-EINVAL);
-> > > +
-> > > +	p = pset_create_set(properties);
-> > > +	if (IS_ERR(p))
-> > > +		return ERR_CAST(p);
-> > > +
-> > > +	p->dev = dev;
-> > 
-> > That looks wrong.
-> > 
-> > I'm guessing the assumption here is that the child nodes will never be
-> > assigned to their own devices, but you can't do that. It will limit
-> > the use of the child nodes to a very small number of cases, possibly
-> > only to gpios.
+On Thu, Sep 20, 2018 at 10:19:34AM -0700, Rajat Jain wrote:
+> On Fri, Sep 14, 2018 at 2:38 PM Rajat Jain <rajatja@google.com> wrote:
+> > On Fri, Sep 14, 2018 at 2:06 PM Rajat Jain <rajatja@google.com> wrote:
+> > > On Fri, Sep 14, 2018 at 12:41 AM Andy Shevchenko
+> > > <andy.shevchenko@gmail.com> wrote:
+> > > > On Fri, Sep 14, 2018 at 1:54 AM Rajat Jain <rajatja@google.com> wrote:
+> > > > >
+> > > > > The Icelake does not have a community-3, and the memory resources are
+> > > > > laid out in the following order in the ACPI:
+> > > > >
+> > > > > resource-0: community-0 registers
+> > > > > resource-1: community-1 registers
+> > > > > resource-2: community-2 registers
+> > > > > resource-3: community-4 registers
+> > > > > resource-4: community-5 registers
+> > > > >
+> > > > > (EDS also describes the communities in the above order).
+> > > > >
+> > > > > Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
+> > > > > the corresponding community registers by getting the resourse number right.
+> > > > > Currently the resourse number is not correct for community 4 and 5, thus
+> > > > > fix that.
+> > > > >
+> > > >
+> > > > Can you share link to the ACPI dump of the tables? (you may get one by
+> > > > running `acpidump -o tables.dat`)
 > 
-> If I need to assign a node to a device I'll use device_add_properties()
-> API. device_add_child_properties() is for nodes living "below" the
-> device.
-
-device_add_properties() is not available to us before we have the
-actual struct device meant for the properties. If the child device is
-populated outside of the "boardfiles" then we have to be able to link
-it to the child node afterwards.
-
-But I took a closer look at the code and realized that you are not
-using that p->dev with the child nodes for anything, so I may be wrong
-about this. You are not actually linking the child nodes to that
-device here.
-
-> All nodes (the primary/secondary and children) would point to the owning
-> device, just for convenience.
-
-Since you don't use that for anything, then drop that line. It's only
-confusing.
-
-And besides, since we will have separate child devices for those child
-nodes, there is a small change that somebody needs to call
-device_remove_properties(child_dev). At least then that operation
-becomes safe, as it's a nop with the child pset nodes.
-
-> > I think that has to be fixed. It should not be a big deal. Just expect
-> > the child nodes to be removed separately, and add ref counting to the
-> > struct property_set handling.
+> Hello Andy,
 > 
-> Why do we need to remove them separately and what do we need refcounting
-> for?
+> Any feedback on this patch? I provided a dump of the ACPI below,
+> please let me know if you need more info.
 
-If you could remove the nodes independently, then obviously the parent
-can not be removed before the children. The ref count would be there
-to prevent that.
+Sorry it took a while (I had to get tested on our reference BIOS(es) on Ice Lake platforms we have).
+See my reply below.
 
-Though my original comment is not valid, I still think that the child
-nodes should be created and destroyed separately. Actually, I don't
-think we should be talking about child nodes in the API at all. Check
-below..
+> > > I don't have that command on my system, but I took
+> > > /sys/firmware/acpi/tables/DSDT from the system and disassembled it
+> > > using Intel disassembler (iasl -d) and here is the relevant portion
+> > > that describes the GPIO controller. The port IDs for communities can
+> > > be seen in the below output (i.e. the PCRB()):
+> >
+> > I realized PCRB() is an ACPI method defined in the same disasembly:
+> >
+> >             Method (PCRB, 1, NotSerialized)
+> >             {
+> >                 Return ((0xFD000000 + (Arg0 << 0x10)))
+> >             }
+> >
+> > >
+> > >             Device (GPIO)
+> > >             {
+> > >                 Name (_HID, "INT3455")  // _HID: Hardware ID
+> > >                 Name (_UID, Zero)  // _UID: Unique ID
+> > >                 Name (_DDN, "GPIO Controller")  // _DDN: DOS Device Name
+> > >                 Name (RBUF, ResourceTemplate ()
+> > >                 {
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y06)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y07)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y08)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y09)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y0A)
+> > >                     Interrupt (ResourceConsumer, Level, ActiveLow, Shared, ,, )
+> > >                     {
+> > >                         0x0000000E,
+> > >                     }
+> > >                 })
+> > >                 Method (_CRS, 0, NotSerialized)  // _CRS: Current
+> > > Resource Settings
+> > >                 {
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y06._BAS,
+> > > BAS0)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y06._LEN,
+> > > LEN0)  // _LEN: Length
+> > >                     BAS0 = PCRB (0x6E)
+> > >                     LEN0 = 0x00010000
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y07._BAS,
+> > > BAS1)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y07._LEN,
+> > > LEN1)  // _LEN: Length
+> > >                     BAS1 = PCRB (0x6D)
+> > >                     LEN1 = 0x00010000
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y08._BAS,
+> > > BAS2)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y08._LEN,
+> > > LEN2)  // _LEN: Length
+> > >                     BAS2 = PCRB (0x6C)
+> > >                     LEN2 = 0x00010000
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y09._BAS,
+> > > BAS4)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y09._LEN,
+> > > LEN4)  // _LEN: Length
+> > >                     BAS4 = PCRB (0x6A)
+> > >                     LEN4 = 0x00010000
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y0A._BAS,
+> > > BAS5)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y0A._LEN,
+> > > LEN5)  // _LEN: Length
+> > >                     BAS5 = PCRB (0x69)
+> > >                     LEN5 = 0x00010000
+> > >                     Return (RBUF) /* \_SB_.PCI0.GPIO.RBUF */
+> > >                 }
+> > >
+> > >                 Method (_STA, 0, NotSerialized)  // _STA: Status
+> > >                 {
+> > >                     Return (0x0F)
+> > >                 }
+> > >             }
+> > >
+> > > Please let me know if this helps, or if you need more info.
 
-> > > +	p->parent = parent_pset;
-> > > +	list_add_tail(&p->child_node, &parent_pset->children);
-> > > +
-> > > +	return &p->fwnode;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(device_add_child_properties);
-> > 
-> > The child nodes will change the purpose of the build-in property
-> > support. Originally the goal was just to support adding of build-in
-> > device properties to real firmware nodes, but things have changed
-> > quite a bit from that. These child nodes are purely tied to the
-> > build-in device property support, so we should be talking about adding
-> > pset type child nodes to pset type parent nodes in the API:
-> > fwnode_pset_add_child_node(), or something like that.
-> 
-> OK, I can change device_add_child_properties() to
-> fwnode_pset_add_child_node() if Rafael would prefer this name.
+First of all, this is pre-production chip, so, I don't think there is a bug in the driver (yet) discovered.
 
-So not even that. We should have API like this:
+Looking to the above ASL code I may conclude that is definitely is *not* from our reference BIOS.
+I have checked two versions of it and found that in both we have the following mapping:
+for LP variant: there are only 4 communities are exported
+for H variant: there are only 5 communities are exported
 
-struct fwnode_handle *
-fwnode_pset_create(struct fwnode_handle *parent, const char *name,
-                   const struct property_entry *props);
+So, I guess the problem is in ASL code you provided. It simple should not
+export that community at all.
 
-void fwnode_pset_destroy(struct fwnode_handle *fwnode);
+In case you need to do so, there are ways:
+ - contact Intel and ask for a change in reference BIOS
+ - acquire another ACPI ID for the case, or, perhaps use special constants like
+   _HRV for that purpose (also need to contact Intel while doing that)
 
-int device_add_properties(struct device *dev,
-                          const struct fwnode_handle *pset_node);
-
-void device_remove_properties(struct device *dev);
-
-So basically we separate creation of the nodes from linking them to the
-devices completely. That would give this API much better structure. It
-would scale better, for example, it would then be possible to add
-child nodes from different locations if needed.
-
-
-Thanks,
+P.S. I think EDS covers it as it present in HW, though not exported by FW.
 
 -- 
-heikki
+With Best Regards,
+Andy Shevchenko
