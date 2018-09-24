@@ -1,91 +1,125 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
- for legacy boards
-Date: Mon, 24 Sep 2018 13:20:20 +0300
-Message-ID: <20180924102020.GJ11965@kuha.fi.intel.com>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
- <20180917181603.125492-3-dmitry.torokhov@gmail.com>
- <20180920135348.GF11965@kuha.fi.intel.com>
- <CACRpkdZtM4G=4r3m6vLTms9MJFkdiOdPFucebO-Z0Kh-3ws3+g@mail.gmail.com>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [PATCH 0/2] gpiolib: Fix issues introduced by fast bitmap
+ processing path
+Date: Mon, 24 Sep 2018 13:08:11 +0200
+Message-ID: <CAGfqbt6H8u_dUokB-pg51kCj09G8Mh7wB0879nKMw5Dw83tcSg@mail.gmail.com>
+References: <2785169.v6aIfS3K2k@z50>
+ <CGME20180923235237epcas3p3aa946da71a07da1bc3cd0e8cce3473b2@epcas3p3.samsung.com>
+ <20180923235336.22148-1-jmkrzyszt@gmail.com>
+ <20180924094339eucas1p282f2f7cb627c183fe87da044edb90fa5~XTMgQ4GFs1339913399eucas1p2N@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZtM4G=4r3m6vLTms9MJFkdiOdPFucebO-Z0Kh-3ws3+g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Linux Input <linux-input@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180924094339eucas1p282f2f7cb627c183fe87da044edb90fa5~XTMgQ4GFs1339913399eucas1p2N@eucas1p2.samsung.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, linux-doc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Dominik Brodowski <linux@dominikbrodowski.net>, Peter Rosin <peda@axentia.se>, netdev@vger.kernel.org, linux-i2c@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, devel@driverdev.osuosl.org, Florian Fainelli <f.fainelli@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-iio@vger.kernel.org, Peter Korsgaard <peter.korsgaard@barco.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Hi Marek,
 
-On Fri, Sep 21, 2018 at 08:36:53AM -0700, Linus Walleij wrote:
-> On Thu, Sep 20, 2018 at 6:53 AM Heikki Krogerus
-> <heikki.krogerus@linux.intel.com> wrote:
-> 
-> > The child nodes will change the purpose of the build-in property
-> > support. Originally the goal was just to support adding of build-in
-> > device properties to real firmware nodes, but things have changed
-> > quite a bit from that. These child nodes are purely tied to the
-> > build-in device property support, so we should be talking about adding
-> > pset type child nodes to pset type parent nodes in the API:
-> > fwnode_pset_add_child_node(), or something like that.
-> >
-> > I'm sorry to be a bit of pain in the butt with this. The build-in
-> > property support is a hack, it always was. A useful hack, but hack
-> > nevertheless. That means we need to be extra careful when expanding
-> > it, like here.
-> 
-> I dunno how we got to here, what I tried to solve and Dmitry tries
-> to make more general is converting old boardfiles to use fwnode, because
-> I initially tried to just support gpio descriptors from board files.
+2018-09-24 11:43 GMT+02:00, Marek Szyprowski <m.szyprowski@samsung.com>:
+> Hi Janusz,
+>
+> On 2018-09-24 01:53, Janusz Krzysztofik wrote:
+>> While investigating possible reasons of GPIO fast bitmap processing
+>> related boot hang on Samsung Snow Chromebook, reported by Marek
+>> Szyprowski (thanks!), I've discovered one coding bug, addressed by
+>> PATCH 1/2 of this series, and one potential regression introduced at
+>> design level of the solution, hopefully fixed by PATCH 2/2.  See
+>> commit messages for details.
+>>
+>> Janusz Krzysztofik (2):
+>>        gpiolib: Fix missing updates of bitmap index
+>>        gpiolib: Fix array members of same chip processed separately
+>>
+>> The fixes should resolve the boot hang observed by Marek, however the
+>> second change excludes that particular case from fast bitmap processing
+>> and restores the old behaviour.
+>
+> I confirm, that the above 2 patches fixes boot issue on Samsung Snow
+> Chromebook with next-20180920.
+>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+>> Hence, it is possible still another
+>> issue which have had an influence on that boot hang exists in the code.
+>> In order to fully verify the fix, it would have to be tested on a
+>> platform where an array of GPIO descriptors is used which starts from
+>> at least two consecutive pins of one GPIO chip in hardware order,
+>> starting ftom 0, followed by one or more pins belonging to other
+>> chip(s).
+>>
+>> In order to verify if separate calls to .set() chip callback for each
+>> pin instead of one call to .set_multiple() is actually the reason of
+>> boot hang on Samsung Snow Chromebook, the affected driver -
+>> drivers/mmc/core/pwrseq_simple.c - would have to be temporarily
+>> modified for testing purposes so it calls gpiod_set_value() for each
+>> pin instead of gpiod_set_array_value() for all of them.  If that would
+>> also result in boot hang, we could be sure the issue was really the
+>> one addressed by the second fix.  Marek, could you please try to
+>> perform such test?
+>
+> Yes, I've just tested next-20180920 only with the first patch from this
+> patchset and the mentioned change to drivers/mmc/core/pwrseq_simple.c.
+> It boots fine, so indeed the issue is in handling of arrays of gpios.
+>
+> Just to be sure I did it right, this is my change to the mentioned file:
 
-I understand that, but what I'm trying to say is that the solution for
-the child nodes is not generic enough. I'll try to explain below.
+Yeah, that's what I had on mind.  However, I'd be more lucky if it didn't work
+for you.  Setting the pins sequentially, not simultaneously as before, was
+exactly what I hoped was the reason of the hang.
 
-> If boardfiles is what you mean with "build-in property support" I don't
-> know, it predates both device tree and ACPI and any other hardware
-> descriptions on the ARM architecture, from the perspective of these
-> systems things are fine and the hardware description languages
-> are the novelty...
+> diff --git a/drivers/mmc/core/pwrseq_simple.c
+> b/drivers/mmc/core/pwrseq_simple.c
+> index 7f882a2bb872..9397dc1f2e38 100644
+> --- a/drivers/mmc/core/pwrseq_simple.c
+> +++ b/drivers/mmc/core/pwrseq_simple.c
+> @@ -38,16 +38,11 @@ static void mmc_pwrseq_simple_set_gpios_value(struct
+> mmc_pwrseq_simple *pwrseq,
+>                                                int value)
+>   {
+>          struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
+> +       int i;
+>
+> -       if (!IS_ERR(reset_gpios)) {
+> -               DECLARE_BITMAP(values, BITS_PER_TYPE(value));
+> -               int nvalues = reset_gpios->ndescs;
+> -
+> -               values[0] = value;
+> -
+> -               gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
+> -                                              reset_gpios->info, values);
+> -       }
+> +       if (!IS_ERR(reset_gpios))
+> +               for (i = 0; i < reset_gpios->ndescs; i++)
 
-Rafael talked about "build-in properties" at one point, and I just
-started using that expression after that, but it's probable not the
-best term to describe this thing.
-
-But please note that we are not talking about only static information
-with these property sets. They can be populated dynamically as well,
-so this kind of extensions must consider and support that. On top of
-board files we need to consider things like glue and probing drivers
-and even buses in some cases.
-
-> But I guess you know because you worked with OMAP :)
-> 
-> So there is something I don't understand here.
-
-Sorry for the poor choice of words on my behalf. I guess I'm not
-explaining my point properly. Let me try again.
-
-So I'm seeing a case that this solution does not seem to be able to
-support, but ultimately it will need to do so: with USB ports we are
-going to need to be able to assign a device to the child nodes that
-represent those ports.
-
-To be honest, normally I would not care about that, and I would simply
-wait for this to go into mainline, and then propose a modification to
-it so it can also support that other case.
-
-However, this time I feel that we should not do that. The solution for
-the child nodes should be implemented so that it can support all the
-known cases from the beginning. The reason for that is because I fear
-that we'll end up having a pile of ad-hoc style solutions, each
-solving an individual problem, and a whole lot of duplicated stuff for
-these property sets. In the end we will have spaghetti with meatballs
-that nobody is able fully understand nor handle. And I really see a
-strong possibility for that to happen here.
-
+The only difference from the behaviour when the hang was occurring is now
+the order the pins are manipulated.  Maybe that matters?
+Could you please retry the same with the order of pins reversed, either in
+the .dts file or here inside this for loop?
 
 Thanks,
+Janusz
 
--- 
-heikki
+> + gpiod_set_value_cansleep(reset_gpios->desc[i], value);
+>   }
+>
+>   static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
+>
+>
+> Best regards
+> --
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+>
+>
