@@ -1,67 +1,31 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
- for legacy boards
-Date: Mon, 24 Sep 2018 10:29:53 +0300
-Message-ID: <20180924072953.GH11965@kuha.fi.intel.com>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
- <20180917181603.125492-3-dmitry.torokhov@gmail.com>
- <20180919151026.GB11965@kuha.fi.intel.com>
- <20180919171326.GB116719@dtor-ws>
- <20180920101648.GC11965@kuha.fi.intel.com>
- <20180921233336.GB44099@dtor-ws>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpiolib: Fix missing updates of bitmap index
+Date: Mon, 24 Sep 2018 10:11:23 +0200
+Message-ID: <CACRpkdZ-pcy=pBKaLUPOZ5jf2bsp2X2u6QCLCWJ1H_XdNY9wtw@mail.gmail.com>
+References: <2785169.v6aIfS3K2k@z50> <20180923235336.22148-1-jmkrzyszt@gmail.com>
+ <20180923235336.22148-2-jmkrzyszt@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180921233336.GB44099@dtor-ws>
+In-Reply-To: <20180923235336.22148-2-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>, Sebastien Bourdelin <sebastien.bourdelin@savoirf>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 04:33:36PM -0700, Dmitry Torokhov wrote:
-> On Thu, Sep 20, 2018 at 01:16:48PM +0300, Heikki Krogerus wrote:
-> > On Wed, Sep 19, 2018 at 10:13:26AM -0700, Dmitry Torokhov wrote:
-> > > > > diff --git a/drivers/base/pset_property.c b/drivers/base/pset_property.c
-> > > > > index 08ecc13080ae..63f2377aefe8 100644
-> > > > > --- a/drivers/base/pset_property.c
-> > > > > +++ b/drivers/base/pset_property.c
-> > > > > @@ -18,6 +18,11 @@ struct property_set {
-> > > > >  	struct device *dev;
-> > > > >  	struct fwnode_handle fwnode;
-> > > > >  	const struct property_entry *properties;
-> > > > > +
-> > > > > +	struct property_set *parent;
-> > > > > +	/* Entry in parent->children list */
-> > > > > +	struct list_head child_node;
-> > > > > +	struct list_head children;
-> > > > 
-> > > > Add
-> > > > 
-> > > >         const char *name;
-> > > > 
-> > > > and you can implement also pset_get_named_child_node().
-> > > 
-> > > Or
-> > > 	char name[];
-> > > 
-> > > to avoid separate allocation.
-> > 
-> > Let's not do that, especially if you are planning on exporting this
-> > structure.
-> 
-> Can you please elaborate why? Not using pointer saves us 4/8 bytes +
-> however much memory we need for bookkeeping for the extra chunk. Given
-> that majority of pset nodes are unnamed this seems wasteful.
-> 
-> > If the name is coming from .rodata, there is no need to
-> > allocate anything for the name. Check kstrdup_const().
-> 
-> The data is most likely coming as __initconst so we do need to copy it.
+On Mon, Sep 24, 2018 at 1:52 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-OK, I did not consider that. Yes, it makes sense to always copy.
+> In new code introduced by commit b17566a6b08b ("gpiolib: Implement fast
+> processing path in get/set array"), bitmap index is not updated with
+> next found zero bit position as it should while skipping over pins
+> already processed via fast bitmap path, possibly resulting in an
+> infinite loop.  Fix it.
+>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Thanks,
+Patch applied!
 
--- 
-heikki
+Thanks for working on getting this into shape!
+
+Yours,
+Linus Walleij
