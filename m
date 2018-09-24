@@ -1,99 +1,182 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 0/2] gpiolib: Fix issues introduced by fast bitmap
- processing path
-Date: Mon, 24 Sep 2018 11:43:37 +0200
-Message-ID: <20180924094339eucas1p282f2f7cb627c183fe87da044edb90fa5~XTMgQ4GFs1339913399eucas1p2N@eucas1p2.samsung.com>
-References: <2785169.v6aIfS3K2k@z50>
-        <CGME20180923235237epcas3p3aa946da71a07da1bc3cd0e8cce3473b2@epcas3p3.samsung.com>
-        <20180923235336.22148-1-jmkrzyszt@gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Subject: [PATCH V2 2/2] pinctrl: bcm: add Northstar driver
+Date: Mon, 24 Sep 2018 11:26:32 +0200
+Message-ID: <20180924092632.3788-2-zajec5@gmail.com>
+References: <20180924092632.3788-1-zajec5@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180923235336.22148-1-jmkrzyszt@gmail.com>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180924092632.3788-1-zajec5@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Janusz,
-
-On 2018-09-24 01:53, Janusz Krzysztofik wrote:
-> While investigating possible reasons of GPIO fast bitmap processing
-> related boot hang on Samsung Snow Chromebook, reported by Marek
-> Szyprowski (thanks!), I've discovered one coding bug, addressed by
-> PATCH 1/2 of this series, and one potential regression introduced at
-> design level of the solution, hopefully fixed by PATCH 2/2.  See
-> commit messages for details.
->
-> Janusz Krzysztofik (2):
->        gpiolib: Fix missing updates of bitmap index
->        gpiolib: Fix array members of same chip processed separately
->
-> The fixes should resolve the boot hang observed by Marek, however the
-> second change excludes that particular case from fast bitmap processing
-> and restores the old behaviour.
-
-I confirm, that the above 2 patches fixes boot issue on Samsung Snow
-Chromebook with next-20180920.
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-> Hence, it is possible still another
-> issue which have had an influence on that boot hang exists in the code.
-> In order to fully verify the fix, it would have to be tested on a
-> platform where an array of GPIO descriptors is used which starts from
-> at least two consecutive pins of one GPIO chip in hardware order,
-> starting ftom 0, followed by one or more pins belonging to other
-> chip(s).
->
-> In order to verify if separate calls to .set() chip callback for each
-> pin instead of one call to .set_multiple() is actually the reason of
-> boot hang on Samsung Snow Chromebook, the affected driver -
-> drivers/mmc/core/pwrseq_simple.c - would have to be temporarily
-> modified for testing purposes so it calls gpiod_set_value() for each
-> pin instead of gpiod_set_array_value() for all of them.  If that would
-> also result in boot hang, we could be sure the issue was really the
-> one addressed by the second fix.  Marek, could you please try to
-> perform such test?
-
-Yes, I've just tested next-20180920 only with the first patch from this
-patchset and the mentioned change to drivers/mmc/core/pwrseq_simple.c.
-It boots fine, so indeed the issue is in handling of arrays of gpios.
-
-Just to be sure I did it right, this is my change to the mentioned file:
-
-diff --git a/drivers/mmc/core/pwrseq_simple.c 
-b/drivers/mmc/core/pwrseq_simple.c
-index 7f882a2bb872..9397dc1f2e38 100644
---- a/drivers/mmc/core/pwrseq_simple.c
-+++ b/drivers/mmc/core/pwrseq_simple.c
-@@ -38,16 +38,11 @@ static void mmc_pwrseq_simple_set_gpios_value(struct 
-mmc_pwrseq_simple *pwrseq,
-                                               int value)
-  {
-         struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
-+       int i;
-
--       if (!IS_ERR(reset_gpios)) {
--               DECLARE_BITMAP(values, BITS_PER_TYPE(value));
--               int nvalues = reset_gpios->ndescs;
--
--               values[0] = value;
--
--               gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
--                                              reset_gpios->info, values);
--       }
-+       if (!IS_ERR(reset_gpios))
-+               for (i = 0; i < reset_gpios->ndescs; i++)
-+ gpiod_set_value_cansleep(reset_gpios->desc[i], value);
-  }
-
-  static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
-
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+RnJvbTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgoKVGhpcyBkcml2ZXIgcHJv
+dmlkZXMgc3VwcG9ydCBmb3IgTm9ydGhzdGFyIG11eCBjb250cm9sbGVyLiBJdCBkaWZmZXJzCmZy
+b20gTm9ydGhzdGFyIFBsdXMgb25lIHNvIGEgbmV3IGJpbmRpbmcgYW5kIGRyaXZlciB3ZXJlIG5l
+ZWRlZC4KClNpZ25lZC1vZmYtYnk6IFJhZmHFgiBNacWCZWNraSA8cmFmYWxAbWlsZWNraS5wbD4K
+LS0tClYyOiBEZWZpbmUgbW9yZSBwaW5zLCBncm91cHMsIGZ1bmN0aW9ucwogICAgU2ltcGxpZnkg
+bnNfcGluY3RybF9zZXRfbXV4KCkgYXMgTm9ydGhzdGFyIHVzZXMgMToxIG1hcHBpbmcKLS0tCiBk
+cml2ZXJzL3BpbmN0cmwvYmNtL0tjb25maWcgICAgICB8ICAxMyArKwogZHJpdmVycy9waW5jdHJs
+L2JjbS9NYWtlZmlsZSAgICAgfCAgIDEgKwogZHJpdmVycy9waW5jdHJsL2JjbS9waW5jdHJsLW5z
+LmMgfCAyNjIgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiAzIGZpbGVz
+IGNoYW5nZWQsIDI3NiBpbnNlcnRpb25zKCspCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9w
+aW5jdHJsL2JjbS9waW5jdHJsLW5zLmMKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvYmNt
+L0tjb25maWcgYi9kcml2ZXJzL3BpbmN0cmwvYmNtL0tjb25maWcKaW5kZXggMGYzOGQ1MWY0N2M2
+Li5jODU3NTM5OWQ2ZjcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvcGluY3RybC9iY20vS2NvbmZpZwor
+KysgYi9kcml2ZXJzL3BpbmN0cmwvYmNtL0tjb25maWcKQEAgLTczLDYgKzczLDE5IEBAIGNvbmZp
+ZyBQSU5DVFJMX0NZR05VU19NVVgKIAkgIGNvbmZpZ3VyYXRpb24sIHdpdGggdGhlIGV4Y2VwdGlv
+biB0aGF0IGNlcnRhaW4gaW5kaXZpZHVhbCBwaW5zCiAJICBjYW4gYmUgb3ZlcnJpZGRlbiB0byBH
+UElPIGZ1bmN0aW9uCiAKK2NvbmZpZyBQSU5DVFJMX05TCisJYm9vbCAiQnJvYWRjb20gTm9ydGhz
+dGFyIHBpbnMgZHJpdmVyIgorCWRlcGVuZHMgb24gT0YgJiYgKEFSQ0hfQkNNXzUzMDFYIHx8IENP
+TVBJTEVfVEVTVCkKKwlzZWxlY3QgUElOTVVYCisJc2VsZWN0IEdFTkVSSUNfUElOQ09ORgorCWRl
+ZmF1bHQgQVJDSF9CQ01fNTMwMVgKKwloZWxwCisJICBTYXkgeWVzIGhlcmUgdG8gZW5hYmxlIHRo
+ZSBCcm9hZGNvbSBOUyBTb0MgcGlucyBkcml2ZXIuCisKKwkgIFRoZSBCcm9hZGNvbSBOb3J0aHN0
+YXIgcGlucyBkcml2ZXIgc3VwcG9ydHMgbXV4aW5nIG11bHRpLXB1cnBvc2UgcGlucworCSAgdGhh
+dCBjYW4gYmUgdXNlZCBmb3IgdmFyaW91cyBmdW5jdGlvbnMgKGUuZy4gU1BJLCBJMkMsIFVBUlQp
+IGFzIHdlbGwKKwkgIGFzIEdQSU9zLgorCiBjb25maWcgUElOQ1RSTF9OU1BfR1BJTwogCWJvb2wg
+IkJyb2FkY29tIE5TUCBHUElPICh3aXRoIFBJTkNPTkYpIGRyaXZlciIKIAlkZXBlbmRzIG9uIE9G
+X0dQSU8gJiYgKEFSQ0hfQkNNX05TUCB8fCBDT01QSUxFX1RFU1QpCmRpZmYgLS1naXQgYS9kcml2
+ZXJzL3BpbmN0cmwvYmNtL01ha2VmaWxlIGIvZHJpdmVycy9waW5jdHJsL2JjbS9NYWtlZmlsZQpp
+bmRleCA4MGNlYjlkYWU5NDQuLjc5ZDVlNDlmZGQ5YSAxMDA2NDQKLS0tIGEvZHJpdmVycy9waW5j
+dHJsL2JjbS9NYWtlZmlsZQorKysgYi9kcml2ZXJzL3BpbmN0cmwvYmNtL01ha2VmaWxlCkBAIC01
+LDYgKzUsNyBAQCBvYmotJChDT05GSUdfUElOQ1RSTF9CQ00yODFYWCkJCSs9IHBpbmN0cmwtYmNt
+MjgxeHgubwogb2JqLSQoQ09ORklHX1BJTkNUUkxfQkNNMjgzNSkJCSs9IHBpbmN0cmwtYmNtMjgz
+NS5vCiBvYmotJChDT05GSUdfUElOQ1RSTF9JUFJPQ19HUElPKQkrPSBwaW5jdHJsLWlwcm9jLWdw
+aW8ubwogb2JqLSQoQ09ORklHX1BJTkNUUkxfQ1lHTlVTX01VWCkJKz0gcGluY3RybC1jeWdudXMt
+bXV4Lm8KK29iai0kKENPTkZJR19QSU5DVFJMX05TKQkJKz0gcGluY3RybC1ucy5vCiBvYmotJChD
+T05GSUdfUElOQ1RSTF9OU1BfR1BJTykJCSs9IHBpbmN0cmwtbnNwLWdwaW8ubwogb2JqLSQoQ09O
+RklHX1BJTkNUUkxfTlMyX01VWCkJCSs9IHBpbmN0cmwtbnMyLW11eC5vCiBvYmotJChDT05GSUdf
+UElOQ1RSTF9OU1BfTVVYKQkJKz0gcGluY3RybC1uc3AtbXV4Lm8KZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvcGluY3RybC9iY20vcGluY3RybC1ucy5jIGIvZHJpdmVycy9waW5jdHJsL2JjbS9waW5jdHJs
+LW5zLmMKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMDAwMDAwLi41YmQ5ZjU4MTg1
+MGUKLS0tIC9kZXYvbnVsbAorKysgYi9kcml2ZXJzL3BpbmN0cmwvYmNtL3BpbmN0cmwtbnMuYwpA
+QCAtMCwwICsxLDI2MiBAQAorLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAKKy8q
+CisgKiBDb3B5cmlnaHQgKEMpIDIwMTggUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBs
+PgorICovCisKKyNpbmNsdWRlIDxsaW51eC9lcnIuaD4KKyNpbmNsdWRlIDxsaW51eC9pby5oPgor
+I2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgorI2luY2x1ZGUgPGxpbnV4L29mLmg+CisjaW5jbHVk
+ZSA8bGludXgvcGluY3RybC9waW5jb25mLWdlbmVyaWMuaD4KKyNpbmNsdWRlIDxsaW51eC9waW5j
+dHJsL3BpbmN0cmwuaD4KKyNpbmNsdWRlIDxsaW51eC9waW5jdHJsL3Bpbm11eC5oPgorI2luY2x1
+ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgorI2luY2x1ZGUgPGxpbnV4L3NsYWIuaD4KKwor
+c3RydWN0IG5zX3BpbmN0cmwgeworCXN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldjsKKwlzdHJ1
+Y3QgZGV2aWNlICpkZXY7CisJdm9pZCBfX2lvbWVtICpiYXNlOworfTsKKworLyoKKyAqIFBpbnMK
+KyAqLworCitzdGF0aWMgY29uc3Qgc3RydWN0IHBpbmN0cmxfcGluX2Rlc2MgbnNfcGluY3RybF9w
+aW5zW10gPSB7CisJeyAwLCAic3BpX2NsayIgfSwKKwl7IDEsICJzcGlfc3MiIH0sCisJeyAyLCAi
+c3BpX21vc2kiIH0sCisJeyAzLCAic3BpX21pc28iIH0sCisJeyA0LCAiaTJjX3NjbCIgfSwKKwl7
+IDUsICJpMmNfc2RhIiB9LAorCXsgNiwgIm1kYyIgfSwKKwl7IDcsICJtZGlvIiB9LAorCXsgOCwg
+InB3bTAiIH0sCisJeyA5LCAicHdtMSIgfSwKKwl7IDEwLCAicHdtMiIgfSwKKwl7IDExLCAicHdt
+MyIgfSwKKwl7IDEyLCAidWFydDFfcngiIH0sCisJeyAxMywgInVhcnQxX3R4IiB9LAorCXsgMTQs
+ICJ1YXJ0MV9jdHMiIH0sCisJeyAxNSwgInVhcnQxX3J0cyIgfSwKK307CisKKy8qCisgKiBHcm91
+cHMKKyAqLworCitzdHJ1Y3QgbnNfcGluY3RybF9ncm91cCB7CisJY29uc3QgY2hhciAqbmFtZTsK
+Kwljb25zdCB1bnNpZ25lZCBpbnQgKnBpbnM7CisJY29uc3QgdW5zaWduZWQgaW50IG51bV9waW5z
+OworfTsKKworc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBzcGlfcGluc1tdID0geyAwLCAxLCAy
+LCAzIH07CitzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50IGkyY19waW5zW10gPSB7IDQsIDUgfTsK
+K3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgbWRpb19waW5zW10gPSB7IDYsIDcgfTsKK3N0YXRp
+YyBjb25zdCB1bnNpZ25lZCBpbnQgcHdtMF9waW5zW10gPSB7IDggfTsKK3N0YXRpYyBjb25zdCB1
+bnNpZ25lZCBpbnQgcHdtMV9waW5zW10gPSB7IDkgfTsKK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBp
+bnQgcHdtMl9waW5zW10gPSB7IDEwIH07CitzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50IHB3bTNf
+cGluc1tdID0geyAxMSB9Oworc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCB1YXJ0MV9waW5zW10g
+PSB7IDEyLCAxMywgMTQsIDE1IH07CisKKyNkZWZpbmUgTlNfR1JPVVAoX25hbWUsIF9waW5zKQkJ
+CVwKK3sJCQkJCQlcCisJLm5hbWUgPSBfbmFtZSwJCQkJXAorCS5waW5zID0gX3BpbnMsCQkJCVwK
+KwkubnVtX3BpbnMgPSBBUlJBWV9TSVpFKF9waW5zKSwJCVwKK30KKworc3RhdGljIGNvbnN0IHN0
+cnVjdCBuc19waW5jdHJsX2dyb3VwIG5zX3BpbmN0cmxfZ3JvdXBzW10gPSB7CisJTlNfR1JPVVAo
+InNwaV9ncnAiLCBzcGlfcGlucyksCisJTlNfR1JPVVAoImkyY19ncnAiLCBpMmNfcGlucyksCisJ
+TlNfR1JPVVAoIm1kaW9fZ3JwIiwgbWRpb19waW5zKSwKKwlOU19HUk9VUCgicHdtMF9ncnAiLCBw
+d20wX3BpbnMpLAorCU5TX0dST1VQKCJwd20xX2dycCIsIHB3bTFfcGlucyksCisJTlNfR1JPVVAo
+InB3bTJfZ3JwIiwgcHdtMl9waW5zKSwKKwlOU19HUk9VUCgicHdtM19ncnAiLCBwd20zX3BpbnMp
+LAorCU5TX0dST1VQKCJ1YXJ0MV9ncnAiLCB1YXJ0MV9waW5zKSwKK307CisKKy8qCisgKiBGdW5j
+dGlvbnMKKyAqLworCitzdHJ1Y3QgbnNfcGluY3RybF9mdW5jdGlvbiB7CisJY29uc3QgY2hhciAq
+bmFtZTsKKwljb25zdCBjaGFyICogY29uc3QgKmdyb3VwczsKKwljb25zdCB1bnNpZ25lZCBpbnQg
+bnVtX2dyb3VwczsKK307CisKK3N0YXRpYyBjb25zdCBjaGFyICogY29uc3Qgc3BpX2dyb3Vwc1td
+ID0geyAic3BpX2dycCIgfTsKK3N0YXRpYyBjb25zdCBjaGFyICogY29uc3QgaTJjX2dyb3Vwc1td
+ID0geyAiaTJjX2dycCIgfTsKK3N0YXRpYyBjb25zdCBjaGFyICogY29uc3QgbWRpb19ncm91cHNb
+XSA9IHsgIm1kaW9fZ3JwIiB9Oworc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBwd21fZ3JvdXBz
+W10gPSB7ICJwd20wX2dycCIsICJwd20xX2dycCIsICJwd20yX2dycCIsCisJCQkJCSAgICJwd20z
+X2dycCIgfTsKK3N0YXRpYyBjb25zdCBjaGFyICogY29uc3QgdWFydDFfZ3JvdXBzW10gPSB7ICJ1
+YXJ0MV9ncnAiIH07CisKKyNkZWZpbmUgTlNfRlVOQ1RJT04oX25hbWUsIF9ncm91cHMpCQlcCit7
+CQkJCQkJXAorCS5uYW1lID0gX25hbWUsCQkJCVwKKwkuZ3JvdXBzID0gX2dyb3VwcywJCQlcCisJ
+Lm51bV9ncm91cHMgPSBBUlJBWV9TSVpFKF9ncm91cHMpLAlcCit9CisKK3N0YXRpYyBjb25zdCBz
+dHJ1Y3QgbnNfcGluY3RybF9mdW5jdGlvbiBuc19waW5jdHJsX2Z1bmN0aW9uc1tdID0geworCU5T
+X0ZVTkNUSU9OKCJzcGkiLCBzcGlfZ3JvdXBzKSwKKwlOU19GVU5DVElPTigiaTJjIiwgaTJjX2dy
+b3VwcyksCisJTlNfRlVOQ1RJT04oIm1kaW8iLCBtZGlvX2dyb3VwcyksCisJTlNfRlVOQ1RJT04o
+InB3bSIsIHB3bV9ncm91cHMpLAorCU5TX0ZVTkNUSU9OKCJ1YXJ0MSIsIHVhcnQxX2dyb3Vwcyks
+Cit9OworCisvKgorICogR3JvdXBzIGNvZGUKKyAqLworCitzdGF0aWMgaW50IG5zX3BpbmN0cmxf
+Z2V0X2dyb3Vwc19jb3VudChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdHJsX2RldikKK3sKKwlyZXR1
+cm4gQVJSQVlfU0laRShuc19waW5jdHJsX2dyb3Vwcyk7Cit9CisKK3N0YXRpYyBjb25zdCBjaGFy
+ICpuc19waW5jdHJsX2dldF9ncm91cF9uYW1lKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0cmxfZGV2
+LAorCQkJCQkgICAgIHVuc2lnbmVkIGludCBzZWxlY3RvcikKK3sKKwlyZXR1cm4gbnNfcGluY3Ry
+bF9ncm91cHNbc2VsZWN0b3JdLm5hbWU7Cit9CisKK3N0YXRpYyBpbnQgbnNfcGluY3RybF9nZXRf
+Z3JvdXBfcGlucyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdHJsX2RldiwKKwkJCQkgICAgIHVuc2ln
+bmVkIGludCBzZWxlY3RvciwKKwkJCQkgICAgIGNvbnN0IHVuc2lnbmVkIGludCAqKnBpbnMsCisJ
+CQkJICAgICB1bnNpZ25lZCBpbnQgKm51bV9waW5zKQoreworCSpwaW5zID0gbnNfcGluY3RybF9n
+cm91cHNbc2VsZWN0b3JdLnBpbnM7CisJKm51bV9waW5zID0gbnNfcGluY3RybF9ncm91cHNbc2Vs
+ZWN0b3JdLm51bV9waW5zOworCisJcmV0dXJuIDA7Cit9CisKK3N0YXRpYyBjb25zdCBzdHJ1Y3Qg
+cGluY3RybF9vcHMgbnNfcGluY3RybF9vcHMgPSB7CisJLmdldF9ncm91cHNfY291bnQgPSBuc19w
+aW5jdHJsX2dldF9ncm91cHNfY291bnQsCisJLmdldF9ncm91cF9uYW1lID0gbnNfcGluY3RybF9n
+ZXRfZ3JvdXBfbmFtZSwKKwkuZ2V0X2dyb3VwX3BpbnMgPSBuc19waW5jdHJsX2dldF9ncm91cF9w
+aW5zLAorCS5kdF9ub2RlX3RvX21hcCA9IHBpbmNvbmZfZ2VuZXJpY19kdF9ub2RlX3RvX21hcF9n
+cm91cCwKKwkuZHRfZnJlZV9tYXAgPSBwaW5jb25mX2dlbmVyaWNfZHRfZnJlZV9tYXAsCit9Owor
+CisvKgorICogRnVuY3Rpb25zIGNvZGUKKyAqLworCitzdGF0aWMgaW50IG5zX3BpbmN0cmxfZ2V0
+X2Z1bmN0aW9uc19jb3VudChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdHJsX2RldikKK3sKKwlyZXR1
+cm4gQVJSQVlfU0laRShuc19waW5jdHJsX2Z1bmN0aW9ucyk7Cit9CisKK3N0YXRpYyBjb25zdCBj
+aGFyICpuc19waW5jdHJsX2dldF9mdW5jdGlvbl9uYW1lKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0
+cmxfZGV2LAorCQkJCQkJdW5zaWduZWQgaW50IHNlbGVjdG9yKQoreworCXJldHVybiBuc19waW5j
+dHJsX2Z1bmN0aW9uc1tzZWxlY3Rvcl0ubmFtZTsKK30KKworc3RhdGljIGludCBuc19waW5jdHJs
+X2dldF9mdW5jdGlvbl9ncm91cHMoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RybF9kZXYsCisJCQkJ
+CSAgdW5zaWduZWQgaW50IHNlbGVjdG9yLAorCQkJCQkgIGNvbnN0IGNoYXIgKiBjb25zdCAqKmdy
+b3VwcywKKwkJCQkJICB1bnNpZ25lZCAqIGNvbnN0IG51bV9ncm91cHMpCit7CisJKmdyb3VwcyA9
+IG5zX3BpbmN0cmxfZnVuY3Rpb25zW3NlbGVjdG9yXS5ncm91cHM7CisJKm51bV9ncm91cHMgPSBu
+c19waW5jdHJsX2Z1bmN0aW9uc1tzZWxlY3Rvcl0ubnVtX2dyb3VwczsKKworCXJldHVybiAwOwor
+fQorCitzdGF0aWMgaW50IG5zX3BpbmN0cmxfc2V0X211eChzdHJ1Y3QgcGluY3RybF9kZXYgKnBj
+dHJsX2RldiwKKwkJCSAgICAgIHVuc2lnbmVkIGludCBmdW5jX3NlbGVjdCwKKwkJCSAgICAgIHVu
+c2lnbmVkIGludCBncnBfc2VsZWN0KQoreworCXN0cnVjdCBuc19waW5jdHJsICpuc19waW5jdHJs
+ID0gcGluY3RybF9kZXZfZ2V0X2RydmRhdGEocGN0cmxfZGV2KTsKKwl1MzIgdW5zZXQgPSAwOwor
+CXUzMiB0bXA7CisJaW50IGk7CisKKwlmb3IgKGkgPSAwOyBpIDwgbnNfcGluY3RybF9ncm91cHNb
+Z3JwX3NlbGVjdF0ubnVtX3BpbnM7IGkrKykgeworCQlpbnQgcGluX251bWJlciA9IG5zX3BpbmN0
+cmxfZ3JvdXBzW2dycF9zZWxlY3RdLnBpbnNbaV07CisKKwkJdW5zZXQgfD0gQklUKHBpbl9udW1i
+ZXIpOworCX0KKworCXRtcCA9IHJlYWRsKG5zX3BpbmN0cmwtPmJhc2UpOworCXRtcCAmPSB+dW5z
+ZXQ7CisJd3JpdGVsKHRtcCwgbnNfcGluY3RybC0+YmFzZSk7CisKKwlyZXR1cm4gMDsKK30KKwor
+c3RhdGljIGNvbnN0IHN0cnVjdCBwaW5tdXhfb3BzIG5zX3BpbmN0cmxfcG14b3BzID0geworCS5n
+ZXRfZnVuY3Rpb25zX2NvdW50ID0gbnNfcGluY3RybF9nZXRfZnVuY3Rpb25zX2NvdW50LAorCS5n
+ZXRfZnVuY3Rpb25fbmFtZSA9IG5zX3BpbmN0cmxfZ2V0X2Z1bmN0aW9uX25hbWUsCisJLmdldF9m
+dW5jdGlvbl9ncm91cHMgPSBuc19waW5jdHJsX2dldF9mdW5jdGlvbl9ncm91cHMsCisJLnNldF9t
+dXggPSBuc19waW5jdHJsX3NldF9tdXgsCit9OworCisvKgorICogQ29udHJvbGxlciBjb2RlCisg
+Ki8KKworc3RhdGljIHN0cnVjdCBwaW5jdHJsX2Rlc2MgbnNfcGluY3RybF9kZXNjID0geworCS5u
+YW1lID0gInBpbmN0cmwtbnMiLAorCS5waW5zID0gbnNfcGluY3RybF9waW5zLAorCS5ucGlucyA9
+IEFSUkFZX1NJWkUobnNfcGluY3RybF9waW5zKSwKKwkucGN0bG9wcyA9ICZuc19waW5jdHJsX29w
+cywKKwkucG14b3BzID0gJm5zX3BpbmN0cmxfcG14b3BzLAorfTsKKworc3RhdGljIGludCBuc19w
+aW5jdHJsX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCit7CisJc3RydWN0IGRl
+dmljZSAqZGV2ID0gJnBkZXYtPmRldjsKKwlzdHJ1Y3QgbnNfcGluY3RybCAqbnNfcGluY3RybDsK
+KwlzdHJ1Y3QgcmVzb3VyY2UgKnJlczsKKworCW5zX3BpbmN0cmwgPSBkZXZtX2t6YWxsb2MoZGV2
+LCBzaXplb2YoKm5zX3BpbmN0cmwpLCBHRlBfS0VSTkVMKTsKKwlpZiAoIW5zX3BpbmN0cmwpCisJ
+CXJldHVybiAtRU5PTUVNOworCW5zX3BpbmN0cmwtPmRldiA9IGRldjsKKworCXJlcyA9IHBsYXRm
+b3JtX2dldF9yZXNvdXJjZV9ieW5hbWUocGRldiwgSU9SRVNPVVJDRV9NRU0sCisJCQkJCSAgICJj
+cnVfZ3Bpb19jb250cm9sIik7CisJbnNfcGluY3RybC0+YmFzZSA9IGRldm1faW9yZW1hcF9yZXNv
+dXJjZShkZXYsIHJlcyk7CisJaWYgKElTX0VSUihuc19waW5jdHJsLT5iYXNlKSkgeworCQlkZXZf
+ZXJyKGRldiwgIkZhaWxlZCB0byBtYXAgcGluY3RybCByZWdzXG4iKTsKKwkJcmV0dXJuIFBUUl9F
+UlIobnNfcGluY3RybC0+YmFzZSk7CisJfQorCisJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwg
+bnNfcGluY3RybCk7CisKKwluc19waW5jdHJsLT5wY3RsZGV2ID0gZGV2bV9waW5jdHJsX3JlZ2lz
+dGVyKGRldiwgJm5zX3BpbmN0cmxfZGVzYywKKwkJCQkJCSAgICBuc19waW5jdHJsKTsKKwlpZiAo
+SVNfRVJSKG5zX3BpbmN0cmwtPnBjdGxkZXYpKSB7CisJCWRldl9lcnIoZGV2LCAiRmFpbGVkIHRv
+IHJlZ2lzdGVyIHBpbmN0cmxcbiIpOworCQlyZXR1cm4gUFRSX0VSUihuc19waW5jdHJsLT5wY3Rs
+ZGV2KTsKKwl9CisKKwlyZXR1cm4gMDsKK30KKworc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZp
+Y2VfaWQgbnNfcGluY3RybF9vZl9tYXRjaF90YWJsZVtdID0geworCXsgLmNvbXBhdGlibGUgPSAi
+YnJjbSxucy1waW5tdXgiIH0sCisJeyB9Cit9OworCitzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2Ry
+aXZlciBuc19waW5jdHJsX2RyaXZlciA9IHsKKwkucHJvYmUgPSBuc19waW5jdHJsX3Byb2JlLAor
+CS5kcml2ZXIgPSB7CisJCS5uYW1lID0gIm5zLXBpbm11eCIsCisJCS5vZl9tYXRjaF90YWJsZSA9
+IG5zX3BpbmN0cmxfb2ZfbWF0Y2hfdGFibGUsCisJfSwKK307CisKK21vZHVsZV9wbGF0Zm9ybV9k
+cml2ZXIobnNfcGluY3RybF9kcml2ZXIpOworCitNT0RVTEVfQVVUSE9SKCJSYWZhxYIgTWnFgmVj
+a2kiKTsKK01PRFVMRV9MSUNFTlNFKCJHUEwgdjIiKTsKLS0gCjIuMTMuNwoKCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFp
+bGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlz
+dHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
