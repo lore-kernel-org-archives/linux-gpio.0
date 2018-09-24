@@ -1,148 +1,120 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: RE: [PATCH v4 2/3] pinctrl: renesas: Renesas RZ/N1 pinctrl driver
-Date: Mon, 24 Sep 2018 12:32:57 +0000
-Message-ID: <TY1PR01MB17692EEC3A7354D82DC2646CF5170@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <20180919142346.25468-1-phil.edworthy@renesas.com>
- <20180919142346.25468-3-phil.edworthy@renesas.com>
- <CAMuHMdWcHY6LSDK+nrhk8o3uicru1NsXYumAL5KmPc8bVAaoTA@mail.gmail.com>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
+ for legacy boards
+Date: Mon, 24 Sep 2018 16:20:50 +0300
+Message-ID: <20180924132050.GK11965@kuha.fi.intel.com>
+References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+ <20180917181603.125492-3-dmitry.torokhov@gmail.com>
+ <20180920135348.GF11965@kuha.fi.intel.com>
+ <20180921233119.GA44099@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdWcHY6LSDK+nrhk8o3uicru1NsXYumAL5KmPc8bVAaoTA@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180921233119.GA44099@dtor-ws>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIDI0IFNlcHRlbWJlciAyMDE4IDEyOjU5IEdlZXJ0IFV5dHRlcmhvZXZl
-biB3cm90ZToNCj4gT24gV2VkLCBTZXAgMTksIDIwMTggYXQgNDoyNCBQTSBQaGlsIEVkd29ydGh5
-IHdyb3RlOg0KPiA+IFRoaXMgcHJvdmlkZXMgYSBwaW5jdHJsIGRyaXZlciBmb3IgdGhlIFJlbmVz
-YXMgUlovTjEgZGV2aWNlIGZhbWlseS4NCj4gPg0KPiA+IEJhc2VkIG9uIGEgcGF0Y2ggb3JpZ2lu
-YWxseSB3cml0dGVuIGJ5IE1pY2hlbCBQb2xsZXQgYXQgUmVuZXNhcy4NCj4gPg0KPiA+IFNpZ25l
-ZC1vZmYtYnk6IFBoaWwgRWR3b3J0aHkgPHBoaWwuZWR3b3J0aHlAcmVuZXNhcy5jb20+DQo+IA0K
-PiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQo+IA0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysg
-Yi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1yem4xLmMNCj4gDQo+ID4gKy8qDQo+ID4gKyAqIFN0
-cnVjdHVyZSBkZXRhaWxpbmcgdGhlIEhXIHJlZ2lzdGVycyBvbiB0aGUgUlovTjEgZGV2aWNlcy4N
-Cj4gPiArICogQm90aCB0aGUgTGV2ZWwgMSBtdXggcmVnaXN0ZXJzIGFuZCBMZXZlbCAyIG11eCBy
-ZWdpc3RlcnMgaGF2ZSB0aGUNCj4gPiArc2FtZQ0KPiA+ICsgKiBzdHJ1Y3R1cmUuIFRoZSBvbmx5
-IGRpZmZlcmVuY2UgaXMgdGhhdCBMZXZlbCAyIGhhcyBhZGRpdGlvbmFsIE1ESU8NCj4gPiArcmVn
-aXN0ZXJzDQo+ID4gKyAqIGF0IHRoZSBlbmQuDQo+ID4gKyAqLw0KPiA+ICtzdHJ1Y3QgcnpuMV9w
-aW5jdHJsX3JlZ3Mgew0KPiA+ICsgICAgICAgdW5pb24gew0KPiA+ICsgICAgICAgICAgICAgICB1
-MzIgICAgIGNvbmZbMTcwXTsNCj4gPiArICAgICAgICAgICAgICAgdTggICAgICBwYWQwWzB4NDAw
-XTsNCj4gDQo+IFRoaXMgbG9va3MgYSBiaXQgY29uZnVzaW5nLCBhbmQgaXNuJ3QgcmVhbGx5IHBh
-ZGRpbmcsIGFzIHlvdSB1c2UgYSB1bmlvbi4NCj4gV2hhdCBhYm91dCBnZXR0aW5nIHJpZCBvZiB0
-aGUgdW5pb24sIGFuZCBtYWtpbmcgaXQgcmVhbCBwYWRkaW5nPw0KPiANCj4gICAgICAgICB1MzIg
-Y29uZlsxNzBdOw0KPiAgICAgICAgIHUzMiBwYWQwWzg2XTsNCj4gDQo+ID4gKyAgICAgICB9Ow0K
-PiA+ICsgICAgICAgdTMyICAgICBzdGF0dXNfcHJvdGVjdDsgLyogMHg0MDAgKi8NCj4gPiArICAg
-ICAgIC8qIE1ESU8gbXV4IHJlZ2lzdGVycywgbGV2ZWwyIG9ubHkgKi8NCj4gPiArICAgICAgIHUz
-MiAgICAgbDJfbWRpb1syXTsNCj4gPiArfTsNCj4gDQo+IEJUVywgd2hpbGUgdXNpbmcgYSBzdHJ1
-Y3QgaW5zdGVhZCBvZiByZWdpc3RlciBvZmZzZXQgZGVmaW5pdGlvbnMgaGFzIGl0cyBtZXJpdHMs
-DQo+IGl0IGFsc28gaGFzIGl0cyBkcmF3YmFja3MsIGxpa2UgdGhlIG5lZWQgZm9yIHRoZSAiMHg0
-MDAiIGNvbW1lbnQuDQo+IFlvdSBkb24ndCBoYXZlIHRvIGNoYW5nZSBpdCwgdGhvdWdoLg0KPiAN
-Cj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCByem4xX3Bpbl9ncm91cCAqcnpuMV9waW5jdHJsX2Zp
-bmRfZ3JvdXBfYnlfbmFtZSgNCj4gPiArICAgICAgIGNvbnN0IHN0cnVjdCByem4xX3BpbmN0cmwg
-KmlwY3RsLCBjb25zdCBjaGFyICpuYW1lKSB7DQo+ID4gKyAgICAgICBjb25zdCBzdHJ1Y3Qgcnpu
-MV9waW5fZ3JvdXAgKmdycCA9IE5VTEw7DQo+ID4gKyAgICAgICBpbnQgaTsNCj4gDQo+IHVuc2ln
-bmVkIGludCBpOw0KPiAocnpuMV9waW5jdHJsLm5ncm91cHMgaXMgdW5zaWduZWQgaW50KQ0KPiAN
-Cj4gPiArDQo+ID4gKyAgICAgICBmb3IgKGkgPSAwOyBpIDwgaXBjdGwtPm5ncm91cHM7IGkrKykg
-ew0KPiA+ICsgICAgICAgICAgICAgICBpZiAoIXN0cmNtcChpcGN0bC0+Z3JvdXBzW2ldLm5hbWUs
-IG5hbWUpKSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgZ3JwID0gJmlwY3RsLT5ncm91
-cHNbaV07DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4gKyAgICAgICAg
-ICAgICAgIH0NCj4gPiArICAgICAgIH0NCj4gPiArDQo+ID4gKyAgICAgICByZXR1cm4gZ3JwOw0K
-PiA+ICt9DQo+IA0KPiA+ICtzdGF0aWMgaW50IHJ6bjFfcGluY29uZl9zZXQoc3RydWN0IHBpbmN0
-cmxfZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBpbnQgcGluLA0KPiA+ICsgICAgICAgICAgICAgICAg
-ICAgICAgICAgICB1bnNpZ25lZCBsb25nICpjb25maWdzLCB1bnNpZ25lZCBpbnQNCj4gPiArbnVt
-X2NvbmZpZ3MpIHsNCj4gPiArICAgICAgIHN0cnVjdCByem4xX3BpbmN0cmwgKmlwY3RsID0gcGlu
-Y3RybF9kZXZfZ2V0X2RydmRhdGEocGN0bGRldik7DQo+ID4gKyAgICAgICBlbnVtIHBpbl9jb25m
-aWdfcGFyYW0gcGFyYW07DQo+ID4gKyAgICAgICBpbnQgaTsNCj4gDQo+IHVuc2lnbmVkIGludCBp
-Ow0KPiANCj4gPiArICAgICAgIHUzMiBhcmc7DQo+ID4gKyAgICAgICB1MzIgbDEsIGwxX2NhY2hl
-Ow0KPiA+ICsgICAgICAgdTMyIGRydjsNCj4gPiArDQo+ID4gKyAgICAgICBpZiAocGluID49IEFS
-UkFZX1NJWkUoaXBjdGwtPmxldjEtPmNvbmYpKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4g
-LUVJTlZBTDsNCj4gPiArDQo+ID4gKyAgICAgICBsMSA9IHJlYWRsKCZpcGN0bC0+bGV2MS0+Y29u
-ZltwaW5dKTsNCj4gPiArICAgICAgIGwxX2NhY2hlID0gbDE7DQo+ID4gKw0KPiA+ICsgICAgICAg
-Zm9yIChpID0gMDsgaSA8IG51bV9jb25maWdzOyBpKyspIHsNCj4gDQo+ID4gK3N0YXRpYyBpbnQg
-cnpuMV9waW5jb25mX2dyb3VwX2dldChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBzZWxlY3RvciwN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgbG9uZyAqY29u
-ZmlnKSB7DQo+ID4gKyAgICAgICBzdHJ1Y3QgcnpuMV9waW5jdHJsICppcGN0bCA9IHBpbmN0cmxf
-ZGV2X2dldF9kcnZkYXRhKHBjdGxkZXYpOw0KPiA+ICsgICAgICAgc3RydWN0IHJ6bjFfcGluX2dy
-b3VwICpncnAgPSAmaXBjdGwtPmdyb3Vwc1tzZWxlY3Rvcl07DQo+ID4gKyAgICAgICB1bnNpZ25l
-ZCBsb25nIG9sZCA9IDA7DQo+ID4gKyAgICAgICBpbnQgaTsNCj4gDQo+IHVuc2lnbmVkIGludCBp
-Ow0KPiANCj4gPiArDQo+ID4gKyAgICAgICBkZXZfZGJnKGlwY3RsLT5kZXYsICJncm91cCBnZXQg
-JXMgc2VsZWN0b3I6JWRcbiIsIGdycC0+bmFtZSwNCj4gPiArIHNlbGVjdG9yKTsNCj4gDQo+ICV1
-IHRvIGZvcm1hdCB1bnNpZ25lZCBpbnQuDQo+IA0KPiA+ICsNCj4gPiArICAgICAgIGZvciAoaSA9
-IDA7IGkgPCBncnAtPm5waW5zOyBpKyspIHsNCj4gDQo+ID4gK3N0YXRpYyBpbnQgcnpuMV9waW5j
-b25mX2dyb3VwX3NldChzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQo+ID4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBzZWxlY3RvciwNCj4gPiArICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgbG9uZyAqY29uZmlncywNCj4g
-PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IG51bV9jb25m
-aWdzKSB7DQo+ID4gKyAgICAgICBzdHJ1Y3QgcnpuMV9waW5jdHJsICppcGN0bCA9IHBpbmN0cmxf
-ZGV2X2dldF9kcnZkYXRhKHBjdGxkZXYpOw0KPiA+ICsgICAgICAgc3RydWN0IHJ6bjFfcGluX2dy
-b3VwICpncnAgPSAmaXBjdGwtPmdyb3Vwc1tzZWxlY3Rvcl07DQo+ID4gKyAgICAgICBpbnQgcmV0
-LCBpOw0KPiANCj4gdW5zaWduZWQgaW50IGk7DQo+IA0KPiA+ICsNCj4gPiArICAgICAgIGRldl9k
-YmcoaXBjdGwtPmRldiwgImdyb3VwIHNldCAlcyBzZWxlY3RvcjolZA0KPiA+ICsgY29uZmlnczol
-cC8lZFxuIiwNCj4gDQo+ICV1DQo+IA0KPiA+ICsgICAgICAgICAgICAgICBncnAtPm5hbWUsIHNl
-bGVjdG9yLCBjb25maWdzLCBudW1fY29uZmlncyk7DQo+ID4gKw0KPiA+ICsgICAgICAgZm9yIChp
-ID0gMDsgaSA8IGdycC0+bnBpbnM7IGkrKykgew0KPiA+ICsgICAgICAgICAgICAgICB1bnNpZ25l
-ZCBpbnQgcGluID0gZ3JwLT5waW5zW2ldOw0KPiA+ICsNCj4gPiArICAgICAgICAgICAgICAgcmV0
-ID0gcnpuMV9waW5jb25mX3NldChwY3RsZGV2LCBwaW4sIGNvbmZpZ3MsIG51bV9jb25maWdzKTsN
-Cj4gPiArICAgICAgICAgICAgICAgaWYgKHJldCkNCj4gPiArICAgICAgICAgICAgICAgICAgICAg
-ICByZXR1cm4gcmV0Ow0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiAw
-Ow0KPiA+ICt9DQo+IA0KPiANCj4gPiArc3RhdGljIGludCByem4xX3BpbmN0cmxfcGFyc2VfZnVu
-Y3Rpb25zKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIHN0cnVjdCByem4xX3BpbmN0cmwgKmlwY3RsLA0KPiA+ICt1MzIg
-aW5kZXgpDQo+IA0KPiBXaHkgdTMyIGluc3RlYWQgb2YgcGxhaW4gdW5zaWduZWQgaW50Pw0KPiAN
-Cj4gPiArew0KPiA+ICsgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpjaGlsZDsNCj4gPiArICAg
-ICAgIHN0cnVjdCByem4xX3BteF9mdW5jICpmdW5jOw0KPiA+ICsgICAgICAgc3RydWN0IHJ6bjFf
-cGluX2dyb3VwICpncnA7DQo+ID4gKyAgICAgICB1MzIgaSA9IDA7DQo+IA0KPiBXaHkgbm90IHBs
-YWluIHVuc2lnbmVkIGludD8NCj4gDQo+ID4gKyAgICAgICBpbnQgcmV0Ow0KPiA+ICsNCj4gPiAr
-ICAgICAgIGZ1bmMgPSAmaXBjdGwtPmZ1bmN0aW9uc1tpbmRleF07DQo+ID4gKw0KPiA+ICsgICAg
-ICAgLyogSW5pdGlhbGlzZSBmdW5jdGlvbiAqLw0KPiA+ICsgICAgICAgZnVuYy0+bmFtZSA9IG5w
-LT5uYW1lOw0KPiA+ICsgICAgICAgZnVuYy0+bnVtX2dyb3VwcyA9IHJ6bjFfcGluY3RybF9jb3Vu
-dF9mdW5jdGlvbl9ncm91cHMobnApOw0KPiA+ICsgICAgICAgaWYgKGZ1bmMtPm51bV9ncm91cHMg
-PT0gMCkgew0KPiA+ICsgICAgICAgICAgICAgICBkZXZfZXJyKGlwY3RsLT5kZXYsICJubyBncm91
-cHMgZGVmaW5lZCBpbiAlcE9GXG4iLCBucCk7DQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiAt
-RUlOVkFMOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsgICAgICAgZGV2X2RiZyhpcGN0bC0+ZGV2LCAi
-ZnVuY3Rpb24gJXMgaGFzICVkIGdyb3Vwc1xuIiwNCj4gPiArICAgICAgICAgICAgICAgbnAtPm5h
-bWUsIGZ1bmMtPm51bV9ncm91cHMpOw0KPiA+ICsNCj4gPiArICAgICAgIGZ1bmMtPmdyb3VwcyA9
-IGRldm1fa21hbGxvY19hcnJheShpcGN0bC0+ZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIGZ1bmMtPm51bV9ncm91cHMsIHNpemVvZihjaGFyICopLA0K
-PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdGUF9LRVJORUwp
-Ow0KPiA+ICsgICAgICAgaWYgKCFmdW5jLT5ncm91cHMpDQo+ID4gKyAgICAgICAgICAgICAgIHJl
-dHVybiAtRU5PTUVNOw0KPiA+ICsNCj4gPiArICAgICAgIGlmIChvZl9wcm9wZXJ0eV9jb3VudF91
-MzJfZWxlbXMobnAsIFJaTjFfUElOU19QUk9QKSA+IDApIHsNCj4gPiArICAgICAgICAgICAgICAg
-ZnVuYy0+Z3JvdXBzW2ldID0gbnAtPm5hbWU7DQo+ID4gKyAgICAgICAgICAgICAgIGdycCA9ICZp
-cGN0bC0+Z3JvdXBzW2lwY3RsLT5uZ3JvdXBzXTsNCj4gPiArICAgICAgICAgICAgICAgZ3JwLT5m
-dW5jID0gZnVuYy0+bmFtZTsNCj4gPiArICAgICAgICAgICAgICAgcmV0ID0gcnpuMV9waW5jdHJs
-X3BhcnNlX2dyb3VwcyhucCwgZ3JwLCBpcGN0bCk7DQo+ID4gKyAgICAgICAgICAgICAgIGlmIChy
-ZXQgPCAwKQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiByZXQ7DQo+ID4gKyAg
-ICAgICAgICAgICAgIGkrKzsNCj4gPiArICAgICAgICAgICAgICAgaXBjdGwtPm5ncm91cHMrKzsN
-Cj4gPiArICAgICAgIH0NCj4gPiArDQo+ID4gKyAgICAgICBmb3JfZWFjaF9jaGlsZF9vZl9ub2Rl
-KG5wLCBjaGlsZCkgew0KPiA+ICsgICAgICAgICAgICAgICBmdW5jLT5ncm91cHNbaV0gPSBjaGls
-ZC0+bmFtZTsNCj4gPiArICAgICAgICAgICAgICAgZ3JwID0gJmlwY3RsLT5ncm91cHNbaXBjdGwt
-Pm5ncm91cHNdOw0KPiA+ICsgICAgICAgICAgICAgICBncnAtPmZ1bmMgPSBmdW5jLT5uYW1lOw0K
-PiA+ICsgICAgICAgICAgICAgICByZXQgPSByem4xX3BpbmN0cmxfcGFyc2VfZ3JvdXBzKGNoaWxk
-LCBncnAsIGlwY3RsKTsNCj4gPiArICAgICAgICAgICAgICAgaWYgKHJldCA8IDApDQo+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiArICAgICAgICAgICAgICAgaSsr
-Ow0KPiA+ICsgICAgICAgICAgICAgICBpcGN0bC0+bmdyb3VwcysrOw0KPiA+ICsgICAgICAgfQ0K
-PiA+ICsNCj4gPiArICAgICAgIGRldl9kYmcoaXBjdGwtPmRldiwgImZ1bmN0aW9uICVzIHBhcnNl
-ZCAlZC8lZCBncm91cHNcbiIsDQo+IA0KPiAldS8ldQ0KPiANCj4gPiArICAgICAgICAgICAgICAg
-bnAtPm5hbWUsIGksIGZ1bmMtPm51bV9ncm91cHMpOw0KPiA+ICsNCj4gPiArICAgICAgIHJldHVy
-biAwOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW50IHJ6bjFfcGluY3RybF9wcm9iZV9k
-dChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIHN0cnVjdCByem4xX3BpbmN0cmwgKmlwY3RsKSB7DQo+ID4gKyAgICAgICBz
-dHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gcGRldi0+ZGV2Lm9mX25vZGU7DQo+ID4gKyAgICAgICBz
-dHJ1Y3QgZGV2aWNlX25vZGUgKmNoaWxkOw0KPiA+ICsgICAgICAgdW5zaWduZWQgaW50IG1heGdy
-b3VwcyA9IDA7DQo+ID4gKyAgICAgICB1MzIgbmZ1bmNzID0gMDsNCj4gPiArICAgICAgIHUzMiBp
-ID0gMDsNCj4gDQo+IFdoeSBub3QgcGxhaW4gdW5zaWduZWQgaW50LCBmb3IgYm90aD8NCg0KVGhh
-bmtzIGZvciB5b3VyIHJldmlldyBhbmQgY29tbWVudHMsIHlvdSBhcmUgcmlnaHQgaW4gYWxsIG9m
-IHRoZW0uDQpJJ2xsIGZpeCB0aGVtIGFuZCByZS1wb3N0Lg0KDQpUaGFua3MNClBoaWwNCg0KPiBH
-cntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+
-IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJl
-eW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwg
-Y29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNr
-ZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInBy
-b2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg==
+Hi Dmitry,
+
+On Fri, Sep 21, 2018 at 04:31:19PM -0700, Dmitry Torokhov wrote:
+> > > +	if (!parent_pset)
+> > > +		return ERR_PTR(-EINVAL);
+> > > +
+> > > +	p = pset_create_set(properties);
+> > > +	if (IS_ERR(p))
+> > > +		return ERR_CAST(p);
+> > > +
+> > > +	p->dev = dev;
+> > 
+> > That looks wrong.
+> > 
+> > I'm guessing the assumption here is that the child nodes will never be
+> > assigned to their own devices, but you can't do that. It will limit
+> > the use of the child nodes to a very small number of cases, possibly
+> > only to gpios.
+> 
+> If I need to assign a node to a device I'll use device_add_properties()
+> API. device_add_child_properties() is for nodes living "below" the
+> device.
+
+device_add_properties() is not available to us before we have the
+actual struct device meant for the properties. If the child device is
+populated outside of the "boardfiles" then we have to be able to link
+it to the child node afterwards.
+
+But I took a closer look at the code and realized that you are not
+using that p->dev with the child nodes for anything, so I may be wrong
+about this. You are not actually linking the child nodes to that
+device here.
+
+> All nodes (the primary/secondary and children) would point to the owning
+> device, just for convenience.
+
+Since you don't use that for anything, then drop that line. It's only
+confusing.
+
+And besides, since we will have separate child devices for those child
+nodes, there is a small change that somebody needs to call
+device_remove_properties(child_dev). At least then that operation
+becomes safe, as it's a nop with the child pset nodes.
+
+> > I think that has to be fixed. It should not be a big deal. Just expect
+> > the child nodes to be removed separately, and add ref counting to the
+> > struct property_set handling.
+> 
+> Why do we need to remove them separately and what do we need refcounting
+> for?
+
+If you could remove the nodes independently, then obviously the parent
+can not be removed before the children. The ref count would be there
+to prevent that.
+
+Though my original comment is not valid, I still think that the child
+nodes should be created and destroyed separately. Actually, I don't
+think we should be talking about child nodes in the API at all. Check
+below..
+
+> > > +	p->parent = parent_pset;
+> > > +	list_add_tail(&p->child_node, &parent_pset->children);
+> > > +
+> > > +	return &p->fwnode;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(device_add_child_properties);
+> > 
+> > The child nodes will change the purpose of the build-in property
+> > support. Originally the goal was just to support adding of build-in
+> > device properties to real firmware nodes, but things have changed
+> > quite a bit from that. These child nodes are purely tied to the
+> > build-in device property support, so we should be talking about adding
+> > pset type child nodes to pset type parent nodes in the API:
+> > fwnode_pset_add_child_node(), or something like that.
+> 
+> OK, I can change device_add_child_properties() to
+> fwnode_pset_add_child_node() if Rafael would prefer this name.
+
+So not even that. We should have API like this:
+
+struct fwnode_handle *
+fwnode_pset_create(struct fwnode_handle *parent, const char *name,
+                   const struct property_entry *props);
+
+void fwnode_pset_destroy(struct fwnode_handle *fwnode);
+
+int device_add_properties(struct device *dev,
+                          const struct fwnode_handle *pset_node);
+
+void device_remove_properties(struct device *dev);
+
+So basically we separate creation of the nodes from linking them to the
+devices completely. That would give this API much better structure. It
+would scale better, for example, it would then be possible to add
+child nodes from different locations if needed.
+
+
+Thanks,
+
+-- 
+heikki
