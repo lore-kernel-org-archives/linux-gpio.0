@@ -1,128 +1,191 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [PATCH 0/2] gpiolib: Fix issues introduced by fast bitmap
- processing path
-Date: Mon, 24 Sep 2018 16:18:15 +0200
-Message-ID: <CAGfqbt4n4g_24kWGPhXojooiQQOmVeq-TfYucFERXJGMci87Xw@mail.gmail.com>
-References: <2785169.v6aIfS3K2k@z50> <CGME20180923235237epcas3p3aa946da71a07da1bc3cd0e8cce3473b2@epcas3p3.samsung.com>
- <20180923235336.22148-1-jmkrzyszt@gmail.com> <20180924094339eucas1p282f2f7cb627c183fe87da044edb90fa5~XTMgQ4GFs1339913399eucas1p2N@eucas1p2.samsung.com>
- <CAGfqbt6H8u_dUokB-pg51kCj09G8Mh7wB0879nKMw5Dw83tcSg@mail.gmail.com> <20180924113859eucas1p160322f5844c771bc9c680d35de4877a3~XUxM0smXV0334103341eucas1p1s@eucas1p1.samsung.com>
+From: "Banik, Subrata" <subrata.banik@intel.com>
+Subject: RE: [PATCH] pinctrl: icelake: Fix the resource number for
+ community-4/5
+Date: Mon, 24 Sep 2018 14:50:23 +0000
+Message-ID: <70D28D5DAE32E9429B09AA8B7C84AC472C0000CB@BGSMSX106.gar.corp.intel.com>
+References: <20180913223143.12664-1-rajatja@google.com>
+ <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
+ <CACK8Z6FhJhhfgk1zPMv5M0oRwz=o75YOKFmU+4Wx-X9-prPnKA@mail.gmail.com>
+ <CACK8Z6GeZ+2uRsRDPfdd=i+WrdQwQgEBvEyDxQuKLygXqPp4dw@mail.gmail.com>
+ <CACK8Z6FLPVSJpPuAXZsqHV2rY2zy3L-Fvd=QPn=+Ynp3aHyhaQ@mail.gmail.com>
+ <20180924135935.GP15943@smile.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180924113859eucas1p160322f5844c771bc9c680d35de4877a3~XUxM0smXV0334103341eucas1p1s@eucas1p1.samsung.com>
-Sender: netdev-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180924135935.GP15943@smile.fi.intel.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Rajat Jain <rajatja@google.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajat Jain <rajatxjain@gmail.com>, "Bohra, Aamir" <aamir.bohra@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Marek,
+HI Andy,
 
-2018-09-24 13:38 GMT+02:00, Marek Szyprowski <m.szyprowski@samsung.com>:
-> Hi Janusz,
->
-> On 2018-09-24 13:08, Janusz Krzysztofik wrote:
->> 2018-09-24 11:43 GMT+02:00, Marek Szyprowski <m.szyprowski@samsung.com>:
->>> On 2018-09-24 01:53, Janusz Krzysztofik wrote:
->>>> While investigating possible reasons of GPIO fast bitmap processing
->>>> related boot hang on Samsung Snow Chromebook, reported by Marek
->>>> Szyprowski (thanks!), I've discovered one coding bug, addressed by
->>>> PATCH 1/2 of this series, and one potential regression introduced at
->>>> design level of the solution, hopefully fixed by PATCH 2/2.  See
->>>> commit messages for details.
->>>>
->>>> Janusz Krzysztofik (2):
->>>>         gpiolib: Fix missing updates of bitmap index
->>>>         gpiolib: Fix array members of same chip processed separately
->>>>
->>>> The fixes should resolve the boot hang observed by Marek, however the
->>>> second change excludes that particular case from fast bitmap processing
->>>> and restores the old behaviour.
->>> I confirm, that the above 2 patches fixes boot issue on Samsung Snow
->>> Chromebook with next-20180920.
->>>
->>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>
->>>> Hence, it is possible still another
->>>> issue which have had an influence on that boot hang exists in the code.
->>>> In order to fully verify the fix, it would have to be tested on a
->>>> platform where an array of GPIO descriptors is used which starts from
->>>> at least two consecutive pins of one GPIO chip in hardware order,
->>>> starting ftom 0, followed by one or more pins belonging to other
->>>> chip(s).
->>>>
->>>> In order to verify if separate calls to .set() chip callback for each
->>>> pin instead of one call to .set_multiple() is actually the reason of
->>>> boot hang on Samsung Snow Chromebook, the affected driver -
->>>> drivers/mmc/core/pwrseq_simple.c - would have to be temporarily
->>>> modified for testing purposes so it calls gpiod_set_value() for each
->>>> pin instead of gpiod_set_array_value() for all of them.  If that would
->>>> also result in boot hang, we could be sure the issue was really the
->>>> one addressed by the second fix.  Marek, could you please try to
->>>> perform such test?
->>> Yes, I've just tested next-20180920 only with the first patch from this
->>> patchset and the mentioned change to drivers/mmc/core/pwrseq_simple.c.
->>> It boots fine, so indeed the issue is in handling of arrays of gpios.
->>>
->>> Just to be sure I did it right, this is my change to the mentioned file:
->> Yeah, that's what I had on mind.  However, I'd be more lucky if it didn't
->> work
->> for you.  Setting the pins sequentially, not simultaneously as before,
->> was
->> exactly what I hoped was the reason of the hang.
->>
->>> diff --git a/drivers/mmc/core/pwrseq_simple.c
->>> b/drivers/mmc/core/pwrseq_simple.c
->>> index 7f882a2bb872..9397dc1f2e38 100644
->>> --- a/drivers/mmc/core/pwrseq_simple.c
->>> +++ b/drivers/mmc/core/pwrseq_simple.c
->>> @@ -38,16 +38,11 @@ static void mmc_pwrseq_simple_set_gpios_value(struct
->>> mmc_pwrseq_simple *pwrseq,
->>>                                                 int value)
->>>    {
->>>           struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
->>> +       int i;
->>>
->>> -       if (!IS_ERR(reset_gpios)) {
->>> -               DECLARE_BITMAP(values, BITS_PER_TYPE(value));
->>> -               int nvalues = reset_gpios->ndescs;
->>> -
->>> -               values[0] = value;
->>> -
->>> -               gpiod_set_array_value_cansleep(nvalues,
->>> reset_gpios->desc,
->>> -                                              reset_gpios->info,
->>> values);
->>> -       }
->>> +       if (!IS_ERR(reset_gpios))
->>> +               for (i = 0; i < reset_gpios->ndescs; i++)
->> The only difference from the behaviour when the hang was occurring is now
->> the order the pins are manipulated.  Maybe that matters?
->> Could you please retry the same with the order of pins reversed, either
->> in
->> the .dts file or here inside this for loop?
->
-> I've switched the order of pins in dts and next-20180920 + first patch +
-> above
-> change also boots fine.
+You are right that this ASL code is not same with Intel reference BIOS code because BIOS sources are different between what you are looking vs what Chrome OS is using. In Coreboot BIOS, we are more relying on EDS spec and as COM 3 is dedicated for CPU GPIO hence we are mapping, 0/1/2/4/5 (whatever present in EDS vol 1.1)
 
-Thanks for performing those tests.
-
-Since we are not able to reproduce the issue by any means other than
-using the original code introduced by fast bitmap processing changes,
-regardless of the first fix being applied or not, and we are only able to
-resolve the hangup by excluding affected use case from the fast path,
-we have to assume one or more bugs which affect mixed arrays, i.e.,
-those which apply for fast bitmap processing only in part, may still exist
-in the code introduced by the fast bitmap processing series.  I hope we
-are able to resolve it soon, before the changes reach mainline.
+We have ensured that PCR ID and offsets are correct in ASL code for respective community, I don't think anything else really matter from BIOS unless you tell me, that you are having any required that your drive code will only probe for 4 COMM for LP and 5 for ICL-H?
 
 Thanks,
-Janusz
+Subrata
 
+-----Original Message-----
+From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com] 
+Sent: Monday, September 24, 2018 7:30 PM
+To: Rajat Jain <rajatja@google.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>; Linus Walleij <linus.walleij@linaro.org>; linux-gpio@vger.kernel.org; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Rajat Jain <rajatxjain@gmail.com>; Banik, Subrata <subrata.banik@intel.com>; Bohra, Aamir <aamir.bohra@intel.com>
+Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
 
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
->
+On Thu, Sep 20, 2018 at 10:19:34AM -0700, Rajat Jain wrote:
+> On Fri, Sep 14, 2018 at 2:38 PM Rajat Jain <rajatja@google.com> wrote:
+> > On Fri, Sep 14, 2018 at 2:06 PM Rajat Jain <rajatja@google.com> wrote:
+> > > On Fri, Sep 14, 2018 at 12:41 AM Andy Shevchenko 
+> > > <andy.shevchenko@gmail.com> wrote:
+> > > > On Fri, Sep 14, 2018 at 1:54 AM Rajat Jain <rajatja@google.com> wrote:
+> > > > >
+> > > > > The Icelake does not have a community-3, and the memory 
+> > > > > resources are laid out in the following order in the ACPI:
+> > > > >
+> > > > > resource-0: community-0 registers
+> > > > > resource-1: community-1 registers
+> > > > > resource-2: community-2 registers
+> > > > > resource-3: community-4 registers
+> > > > > resource-4: community-5 registers
+> > > > >
+> > > > > (EDS also describes the communities in the above order).
+> > > > >
+> > > > > Since the pinctrl driver exposes communities 0, 1, 4, 5, it 
+> > > > > needs to get the corresponding community registers by getting the resourse number right.
+> > > > > Currently the resourse number is not correct for community 4 
+> > > > > and 5, thus fix that.
+> > > > >
+> > > >
+> > > > Can you share link to the ACPI dump of the tables? (you may get 
+> > > > one by running `acpidump -o tables.dat`)
+> 
+> Hello Andy,
+> 
+> Any feedback on this patch? I provided a dump of the ACPI below, 
+> please let me know if you need more info.
+
+Sorry it took a while (I had to get tested on our reference BIOS(es) on Ice Lake platforms we have).
+See my reply below.
+
+> > > I don't have that command on my system, but I took 
+> > > /sys/firmware/acpi/tables/DSDT from the system and disassembled it 
+> > > using Intel disassembler (iasl -d) and here is the relevant 
+> > > portion that describes the GPIO controller. The port IDs for 
+> > > communities can be seen in the below output (i.e. the PCRB()):
+> >
+> > I realized PCRB() is an ACPI method defined in the same disasembly:
+> >
+> >             Method (PCRB, 1, NotSerialized)
+> >             {
+> >                 Return ((0xFD000000 + (Arg0 << 0x10)))
+> >             }
+> >
+> > >
+> > >             Device (GPIO)
+> > >             {
+> > >                 Name (_HID, "INT3455")  // _HID: Hardware ID
+> > >                 Name (_UID, Zero)  // _UID: Unique ID
+> > >                 Name (_DDN, "GPIO Controller")  // _DDN: DOS Device Name
+> > >                 Name (RBUF, ResourceTemplate ()
+> > >                 {
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y06)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y07)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y08)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y09)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y0A)
+> > >                     Interrupt (ResourceConsumer, Level, ActiveLow, Shared, ,, )
+> > >                     {
+> > >                         0x0000000E,
+> > >                     }
+> > >                 })
+> > >                 Method (_CRS, 0, NotSerialized)  // _CRS: Current 
+> > > Resource Settings
+> > >                 {
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y06._BAS,
+> > > BAS0)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y06._LEN,
+> > > LEN0)  // _LEN: Length
+> > >                     BAS0 = PCRB (0x6E)
+> > >                     LEN0 = 0x00010000
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y07._BAS,
+> > > BAS1)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y07._LEN,
+> > > LEN1)  // _LEN: Length
+> > >                     BAS1 = PCRB (0x6D)
+> > >                     LEN1 = 0x00010000
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y08._BAS,
+> > > BAS2)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y08._LEN,
+> > > LEN2)  // _LEN: Length
+> > >                     BAS2 = PCRB (0x6C)
+> > >                     LEN2 = 0x00010000
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y09._BAS,
+> > > BAS4)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y09._LEN,
+> > > LEN4)  // _LEN: Length
+> > >                     BAS4 = PCRB (0x6A)
+> > >                     LEN4 = 0x00010000
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y0A._BAS,
+> > > BAS5)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y0A._LEN,
+> > > LEN5)  // _LEN: Length
+> > >                     BAS5 = PCRB (0x69)
+> > >                     LEN5 = 0x00010000
+> > >                     Return (RBUF) /* \_SB_.PCI0.GPIO.RBUF */
+> > >                 }
+> > >
+> > >                 Method (_STA, 0, NotSerialized)  // _STA: Status
+> > >                 {
+> > >                     Return (0x0F)
+> > >                 }
+> > >             }
+> > >
+> > > Please let me know if this helps, or if you need more info.
+
+First of all, this is pre-production chip, so, I don't think there is a bug in the driver (yet) discovered.
+
+Looking to the above ASL code I may conclude that is definitely is *not* from our reference BIOS.
+I have checked two versions of it and found that in both we have the following mapping:
+for LP variant: there are only 4 communities are exported for H variant: there are only 5 communities are exported
+
+So, I guess the problem is in ASL code you provided. It simple should not export that community at all.
+
+In case you need to do so, there are ways:
+ - contact Intel and ask for a change in reference BIOS
+ - acquire another ACPI ID for the case, or, perhaps use special constants like
+   _HRV for that purpose (also need to contact Intel while doing that)
+
+P.S. I think EDS covers it as it present in HW, though not exported by FW.
+
+--
+With Best Regards,
+Andy Shevchenko
