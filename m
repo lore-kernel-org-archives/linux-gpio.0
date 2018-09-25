@@ -1,79 +1,77 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 6/9] gpio: Add support for hierarchical IRQ domains
-Date: Tue, 25 Sep 2018 10:11:06 +0200
-Message-ID: <CACRpkdYnrf7FknvnZyFSgfT5aCrcWT4hxSnQo0UqxYfR6Fkqwg@mail.gmail.com>
-References: <20180921102546.12745-1-thierry.reding@gmail.com> <20180921102546.12745-7-thierry.reding@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
+Date: Tue, 25 Sep 2018 11:31:50 +0300
+Message-ID: <CAHp75VfUo9qd=bq48nEZGk9wRV-MyYSBCdoe60J2-cuygDf0AQ@mail.gmail.com>
+References: <20180913223143.12664-1-rajatja@google.com> <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
+ <CACK8Z6FhJhhfgk1zPMv5M0oRwz=o75YOKFmU+4Wx-X9-prPnKA@mail.gmail.com>
+ <CACK8Z6GeZ+2uRsRDPfdd=i+WrdQwQgEBvEyDxQuKLygXqPp4dw@mail.gmail.com>
+ <CACK8Z6FLPVSJpPuAXZsqHV2rY2zy3L-Fvd=QPn=+Ynp3aHyhaQ@mail.gmail.com>
+ <20180924135935.GP15943@smile.fi.intel.com> <70D28D5DAE32E9429B09AA8B7C84AC472C0000CB@BGSMSX106.gar.corp.intel.com>
+ <CACK8Z6Ej=BVThT8gSHCNZadXbLpzqKe6TmLYGkeBMmJBby1n-g@mail.gmail.com>
+ <CAHp75VdyOAzHDNr4L6Onj=Qgu2DfQxPy-j_jo2HXfyukCZRePg@mail.gmail.com> <CACK8Z6E_gnMJN+djsbA0wPmtm=GT+cGfAeFoqP=rxeeVSYHnpg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180921102546.12745-7-thierry.reding@gmail.com>
+In-Reply-To: <CACK8Z6E_gnMJN+djsbA0wPmtm=GT+cGfAeFoqP=rxeeVSYHnpg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Rajat Jain <rajatja@google.com>
+Cc: subrata.banik@intel.com, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajat Jain <rajatxjain@gmail.com>, aamir.bohra@intel.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Thierry!
+On Tue, Sep 25, 2018 at 12:32 AM Rajat Jain <rajatja@google.com> wrote:
+> On Mon, Sep 24, 2018 at 2:09 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Mon, Sep 24, 2018 at 8:04 PM Rajat Jain <rajatja@google.com> wrote:
+> > > On Mon, Sep 24, 2018 at 7:54 AM Banik, Subrata <subrata.banik@intel.com> wrote:
 
-Thanks for the patch!
+> > > > First of all, this is pre-production chip, so, I don't think there is a bug in the driver (yet) discovered.
+> > > >
+> > > > Looking to the above ASL code I may conclude that is definitely is *not* from our reference BIOS.
+> > > > I have checked two versions of it and found that in both we have the following mapping:
+> > > > for LP variant: there are only 4 communities are exported for H variant: there are only 5 communities are exported
+> > > >
+> > > > So, I guess the problem is in ASL code you provided. It simple should not export that community at all.
+> > > >
+> > > > In case you need to do so, there are ways:
+> > > >  - contact Intel and ask for a change in reference BIOS
+> > > >  - acquire another ACPI ID for the case, or, perhaps use special constants like
+> > > >    _HRV for that purpose (also need to contact Intel while doing that)
 
-I am a bit ignorant about irqdomains so I will probably need an ACK
-from some irq maintainer before I can apply this.
-
-On Fri, Sep 21, 2018 at 12:25 PM Thierry Reding
-<thierry.reding@gmail.com> wrote:
-
-> From: Thierry Reding <treding@nvidia.com>
+> > > Andy, can you please let us know in what order are the resources laid
+> > > out in your reference BIOS for the case when it exports 5 communities
+> > > (i.e. community-0-2, 4-5)?
+> >
+> > We have no hardware with such PCH to answer to this question. LP
+> > version exports only 4 communities and order of them as per existing
+> > driver.
 >
-> Hierarchical IRQ domains can be used to stack different IRQ controllers
-> on top of each other. One specific use-case where this can be useful is
-> if a power management controller has top-level controls for wakeup
-> interrupts. In such cases, the power management controller can be a
-> parent to other interrupt controllers and program additional registers
-> when an IRQ has its wake capability enabled or disabled.
+> Got it, thanks. From your response earlier:
 >
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-While I think it is really important that we start supporting hierarchical
-irqdomains in the gpiolib core, I want a more complete approach,
-so that drivers that need hierarchical handling of irqdomains
-can get the same support from gpiolib as they get for simple
-domains.
-
-> @@ -1918,7 +1918,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
->                 type = IRQ_TYPE_NONE;
->         }
+> > Looking to the above ASL code I may conclude that is definitely is *not* from our reference BIOS.
+> > I have checked two versions of it and found that in both we have the following mapping:
+> > for LP variant: there are only 4 communities are exported
+> > for H variant: there are only 5 communities are exported
 >
-> -       gpiochip->to_irq = gpiochip_to_irq;
-> +       if (!gpiochip->to_irq)
-> +               gpiochip->to_irq = gpiochip_to_irq;
+> 1) Do you know or recall, the order of communities in ACPI in the H
+> variant? Of course, this is a request for help for getting the info.
 
-So here you let the drivers override the .to_irq() function and that
-I think gets confusing as we are asking gpiolib to handle our
-irqchip.
+I can't say anything about hardware I didn't see.
+Even if BIOS code has something, it's not fully guaranteed that in
+production it will be same. Better to ask Intel BIOS team for the
+details.
 
+> 2) Trying to understand how would the kernel support both LP and H
+> variant. Is it the assumption that the H variant will have a different
+> ACPI ID than the LP variant  (i.e. not "INT3455")? Because it will
+> also have the same problem that we are seeing I think.
 
-> -       gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
-> -                                                    gpiochip->irq.first,
-> -                                                    ops, gpiochip);
-> +       if (gpiochip->irq.parent_domain)
-> +               gpiochip->irq.domain = irq_domain_add_hierarchy(gpiochip->irq.parent_domain,
-> +                                                               0, gpiochip->ngpio,
-> +                                                               np, ops, gpiochip);
-> +       else
-> +               gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
-> +                                                            gpiochip->irq.first,
-> +                                                            ops, gpiochip);
+Yes, definitely they have different IDs. You may consult with
+pinctrl-cannonlake.c driver (better from latest possible kernel
+version like v4.19-rc5) to see how it's implemented.
+Moreover, LP and H variants have different pin lists inside
+communities, so, they can't be substituted and one may consider them
+as different IPs.
 
-So this part is great: if we pass in a parent domain the core helps us
-create the hierarchy.
-
-But the stuff in .to_irq() should also be handled in the gpiolib core:
-the irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec) for
-example. That way you should not need any external .to_irq() function.
-
-I can't see if you need to pull more stuff into the core to accomplish
-that, but I think in essence the core gpiolib needs to be more helpful
-with hierarchies.
-
-Yours,
-Linus Walleij
+-- 
+With Best Regards,
+Andy Shevchenko
