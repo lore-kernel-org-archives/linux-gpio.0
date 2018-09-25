@@ -1,77 +1,72 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
-Date: Tue, 25 Sep 2018 11:31:50 +0300
-Message-ID: <CAHp75VfUo9qd=bq48nEZGk9wRV-MyYSBCdoe60J2-cuygDf0AQ@mail.gmail.com>
-References: <20180913223143.12664-1-rajatja@google.com> <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
- <CACK8Z6FhJhhfgk1zPMv5M0oRwz=o75YOKFmU+4Wx-X9-prPnKA@mail.gmail.com>
- <CACK8Z6GeZ+2uRsRDPfdd=i+WrdQwQgEBvEyDxQuKLygXqPp4dw@mail.gmail.com>
- <CACK8Z6FLPVSJpPuAXZsqHV2rY2zy3L-Fvd=QPn=+Ynp3aHyhaQ@mail.gmail.com>
- <20180924135935.GP15943@smile.fi.intel.com> <70D28D5DAE32E9429B09AA8B7C84AC472C0000CB@BGSMSX106.gar.corp.intel.com>
- <CACK8Z6Ej=BVThT8gSHCNZadXbLpzqKe6TmLYGkeBMmJBby1n-g@mail.gmail.com>
- <CAHp75VdyOAzHDNr4L6Onj=Qgu2DfQxPy-j_jo2HXfyukCZRePg@mail.gmail.com> <CACK8Z6E_gnMJN+djsbA0wPmtm=GT+cGfAeFoqP=rxeeVSYHnpg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/9] Implement wake event support on Tegra186 and later
+Date: Tue, 25 Sep 2018 10:48:39 +0200
+Message-ID: <CACRpkdbLoz+gSFa292OFNszeS6tNywpBRHyGwL9SK2u5s=UhZw@mail.gmail.com>
+References: <20180921102546.12745-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACK8Z6E_gnMJN+djsbA0wPmtm=GT+cGfAeFoqP=rxeeVSYHnpg@mail.gmail.com>
+In-Reply-To: <20180921102546.12745-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rajat Jain <rajatja@google.com>
-Cc: subrata.banik@intel.com, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rajat Jain <rajatxjain@gmail.com>, aamir.bohra@intel.com
+To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, ilina@codeaurora.org, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 12:32 AM Rajat Jain <rajatja@google.com> wrote:
-> On Mon, Sep 24, 2018 at 2:09 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Mon, Sep 24, 2018 at 8:04 PM Rajat Jain <rajatja@google.com> wrote:
-> > > On Mon, Sep 24, 2018 at 7:54 AM Banik, Subrata <subrata.banik@intel.com> wrote:
+Hi Thierry,
 
-> > > > First of all, this is pre-production chip, so, I don't think there is a bug in the driver (yet) discovered.
-> > > >
-> > > > Looking to the above ASL code I may conclude that is definitely is *not* from our reference BIOS.
-> > > > I have checked two versions of it and found that in both we have the following mapping:
-> > > > for LP variant: there are only 4 communities are exported for H variant: there are only 5 communities are exported
-> > > >
-> > > > So, I guess the problem is in ASL code you provided. It simple should not export that community at all.
-> > > >
-> > > > In case you need to do so, there are ways:
-> > > >  - contact Intel and ask for a change in reference BIOS
-> > > >  - acquire another ACPI ID for the case, or, perhaps use special constants like
-> > > >    _HRV for that purpose (also need to contact Intel while doing that)
+thanks for working on the wakeup business!
 
-> > > Andy, can you please let us know in what order are the resources laid
-> > > out in your reference BIOS for the case when it exports 5 communities
-> > > (i.e. community-0-2, 4-5)?
-> >
-> > We have no hardware with such PCH to answer to this question. LP
-> > version exports only 4 communities and order of them as per existing
-> > driver.
+This patch gets me a bit confused on our different approaches
+toward wakeups in the kernel, so I included Lina, Marc and Ulf
+to see if we can get some common understanding.
+
+On Fri, Sep 21, 2018 at 12:25 PM Thierry Reding
+<thierry.reding@gmail.com> wrote:
+
+> The following is a set of patches that allow certain interrupts to be
+> used as wakeup sources on Tegra186 and later. To implement this, each
+> of the GPIO controllers' IRQ domain needs to become hierarchical, and
+> parented to the PMC domain. The PMC domain in turn implements a new
+> IRQ domain that is a child to the GIC IRQ domain.
 >
-> Got it, thanks. From your response earlier:
+> The above ensures that the interrupt chip implementation of the PMC is
+> called at the correct time. The ->irq_set_type() and ->irq_set_wake()
+> implementations program the PMC wake registers in a way to enable the
+> given interrupts as wakeup sources.
 >
-> > Looking to the above ASL code I may conclude that is definitely is *not* from our reference BIOS.
-> > I have checked two versions of it and found that in both we have the following mapping:
-> > for LP variant: there are only 4 communities are exported
-> > for H variant: there are only 5 communities are exported
+> This is based on a suggestion from Thomas Gleixner that resulted from
+> the following thread:
 >
-> 1) Do you know or recall, the order of communities in ACPI in the H
-> variant? Of course, this is a request for help for getting the info.
+>         https://lkml.org/lkml/2018/9/13/1042
 
-I can't say anything about hardware I didn't see.
-Even if BIOS code has something, it's not fully guaranteed that in
-production it will be same. Better to ask Intel BIOS team for the
-details.
+I am not sure if you are aware about Lina's series
+"Wakeup GPIO support for SDM845 SoC"
+that is now in v3:
+https://patchwork.kernel.org/cover/10587965/
 
-> 2) Trying to understand how would the kernel support both LP and H
-> variant. Is it the assumption that the H variant will have a different
-> ACPI ID than the LP variant  (i.e. not "INT3455")? Because it will
-> also have the same problem that we are seeing I think.
+It appears to me, though I am blissfully ignorant of the
+details, that there is a relationship between this patch
+series and the other one.
 
-Yes, definitely they have different IDs. You may consult with
-pinctrl-cannonlake.c driver (better from latest possible kernel
-version like v4.19-rc5) to see how it's implemented.
-Moreover, LP and H variants have different pin lists inside
-communities, so, they can't be substituted and one may consider them
-as different IPs.
+Your approach is to insert an hiearchical PMC irq controller
+and Lina's approach is to simply put a mechanism on the
+side to inject IRQs into the GIC after sleep (IIUC).
 
--- 
-With Best Regards,
-Andy Shevchenko
+I guess your hierarchy is in response to this mail from tglx:
+https://lkml.org/lkml/2018/9/14/339
+
+So from a birds eye point of view I don't see how the Tegra
+PMC irq controller and Qualcomm's PDC power domain
+controller are conceptually different. Are you doing the same
+thing in two different ways for the same problem space
+here?
+
+Or are these hardwares so very different that they really
+warrant two different approaches to wakeups?
+
+I guess I miss a bit of hardware insight... is the key difference
+that in Qualcomm's PDC the IRQs need to be replayed/injected
+by software while Tegra's PMC will do this in hardware?
+
+Yours,
+Linus Walleij
