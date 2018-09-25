@@ -1,37 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCHv2 0/3] omap gpio add level idle,
- cpu_pm and drop runtime_irq_safe
-Date: Tue, 25 Sep 2018 08:53:01 +0200
-Message-ID: <CACRpkdao5j14OXAvL==008gnquvKpzuPwkK+vA2jTeyy9H+gcA@mail.gmail.com>
-References: <20180920193532.7714-1-tony@atomide.com>
+Subject: Re: [PATCH] gpiolib: Fix gpio_direction_* for single direction GPIOs
+Date: Tue, 25 Sep 2018 09:36:14 +0200
+Message-ID: <CACRpkdbOUgvrC7GduKj2fOo6kn1HdtODvQ22NVnxw4pV6uivhA@mail.gmail.com>
+References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20180920193532.7714-1-tony@atomide.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: ext Tony Lindgren <tony@atomide.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Timur Tabi <timur@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 9:35 PM Tony Lindgren <tony@atomide.com> wrote:
+Hi Ricardo,
 
-> Linus, assuming people are happy with these, I'd appreciate an immutable branch
-> with these in case we run into merge conflicts for arch/arm/mach-omap2 changes.
+thanks for the patch and sorry for taking time before responding.
 
-I created an immutable branch named "ib-omap" yesterday:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-omap
+On Fri, Sep 21, 2018 at 12:36 PM Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> GPIOs with no programmable direction are not required to implement
+> direction_output nor direction_input.
+>
+> If we try to set an output direction on an output-only GPIO or input
+> direction on an input-only GPIO simply return 0.
+>
+> This allows this single direction GPIO to be used by libgpiod.
+>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-It passed build tests this morning so I merged this into my "devel" branch
-for next.
+It makes perfect sense, patch applied.
+
+I'll go in and add some comments to the code so I understand it
+right as well in the future.
 
 Yours,
 Linus Walleij
