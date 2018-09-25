@@ -1,153 +1,122 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 0/9] Implement wake event support on Tegra186 and later
-Date: Tue, 25 Sep 2018 11:57:23 +0200
-Message-ID: <20180925095723.GC7097@ulmo>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 6/9] gpio: Add support for hierarchical IRQ domains
+Date: Tue, 25 Sep 2018 12:33:54 +0200
+Message-ID: <CACRpkdbOpVPB5MqgCyF5x_ENzLscz5oYEstYqwVceqeKZq2w5g@mail.gmail.com>
 References: <20180921102546.12745-1-thierry.reding@gmail.com>
- <CACRpkdbLoz+gSFa292OFNszeS6tNywpBRHyGwL9SK2u5s=UhZw@mail.gmail.com>
+ <20180921102546.12745-7-thierry.reding@gmail.com> <CACRpkdYnrf7FknvnZyFSgfT5aCrcWT4hxSnQo0UqxYfR6Fkqwg@mail.gmail.com>
+ <20180925093315.GB7097@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Clx92ZfkiYIKRjnr"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbLoz+gSFa292OFNszeS6tNywpBRHyGwL9SK2u5s=UhZw@mail.gmail.com>
+In-Reply-To: <20180925093315.GB7097@ulmo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: ilina@codeaurora.org, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+To: "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Tue, Sep 25, 2018 at 11:33 AM Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Tue, Sep 25, 2018 at 10:11:06AM +0200, Linus Walleij wrote:
 
---Clx92ZfkiYIKRjnr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > While I think it is really important that we start supporting hierarchical
+> > irqdomains in the gpiolib core, I want a more complete approach,
+> > so that drivers that need hierarchical handling of irqdomains
+> > can get the same support from gpiolib as they get for simple
+> > domains.
+(...)
+> > I can't see if you need to pull more stuff into the core to accomplish
+> > that, but I think in essence the core gpiolib needs to be more helpful
+> > with hierarchies.
+>
+> This is not as trivial as it sounds. I think we could probably provide a
+> simple helper in the core that may work for the majority of GPIO
+> controllers, and would be similar to irq_domain_xlate_twocell(). The
+> problem is that ->gpio_to_irq() effectively needs to convert the offset
+> of the pin in the GPIO controller to an IRQ specifier. If the IRQ domain
+> can use irq_domain_xlate_twocell(), that should be easy, but if it does
+> not, then we likely need a custom implementation as well.
 
-On Tue, Sep 25, 2018 at 10:48:39AM +0200, Linus Walleij wrote:
-> Hi Thierry,
->=20
-> thanks for working on the wakeup business!
->=20
-> This patch gets me a bit confused on our different approaches
-> toward wakeups in the kernel, so I included Lina, Marc and Ulf
-> to see if we can get some common understanding.
->=20
-> On Fri, Sep 21, 2018 at 12:25 PM Thierry Reding
-> <thierry.reding@gmail.com> wrote:
->=20
-> > The following is a set of patches that allow certain interrupts to be
-> > used as wakeup sources on Tegra186 and later. To implement this, each
-> > of the GPIO controllers' IRQ domain needs to become hierarchical, and
-> > parented to the PMC domain. The PMC domain in turn implements a new
-> > IRQ domain that is a child to the GIC IRQ domain.
-> >
-> > The above ensures that the interrupt chip implementation of the PMC is
-> > called at the correct time. The ->irq_set_type() and ->irq_set_wake()
-> > implementations program the PMC wake registers in a way to enable the
-> > given interrupts as wakeup sources.
-> >
-> > This is based on a suggestion from Thomas Gleixner that resulted from
-> > the following thread:
-> >
-> >         https://lkml.org/lkml/2018/9/13/1042
->=20
-> I am not sure if you are aware about Lina's series
-> "Wakeup GPIO support for SDM845 SoC"
-> that is now in v3:
-> https://patchwork.kernel.org/cover/10587965/
->=20
-> It appears to me, though I am blissfully ignorant of the
-> details, that there is a relationship between this patch
-> series and the other one.
->=20
-> Your approach is to insert an hiearchical PMC irq controller
-> and Lina's approach is to simply put a mechanism on the
-> side to inject IRQs into the GIC after sleep (IIUC).
+This sounds a lot like the "gpio-ranges" we have in the
+gpiochip DT bindings, mapping gpio offsets to pin offsets.
 
-=46rom a quick look at Lina's patches, I think it's more like adding a
-demultiplex in the TLMM. So the TLMM effectively has interrupt handlers
-for all wakeup interrupts so that when a wakeup interrupt happens, the
-GPIO interrupts can be replayed (using the interrupt status bit in the
-GPIO controller, if I'm reading things right).
+I assume that we could just introduce a cross-mapping
+array from IRQ to IRQ in struct gpio_irq_chip for the
+hierarchical irqchip? Is it any
+more complicated than an array of [(int, int)] tuples?
 
-=46rom a very high level view both seem indeed to be very similar and have
-the same goal. Both are in a partition that is always powered on and the
-goal is to enable wake up from certain interrupts. One difference I see
-is that the PMC on Tegra allows wake events to originate from sources
-other than GPIOs. For example the RTC or PMIC interrupts (at the GIC)
-can be a source for the wake event, as can a number of other special
-signals. The PDC on the other hand seems to be limited to GPIOs as wake
-events.
+I guess this is what you have in mind for twocell?
 
-Another area, more low-level, where these setups seem to be different is
-that the PMC isn't really a proper interrupt controller in itself. It is
-more of a top-level interrupt gate. If you enable a given wake event
-(that is, unmask the "interrupt"), that event will be able to
+> For example, as you may remember, the Tegra186 GPIO controller is
+> somewhat quirky in that it has a number of banks, each of which can have
+> any number of pins up to 8. However, in order to prevent users from
+> attempting to use one of the non-existent GPIOs, we resorted to
+> compacting the GPIO number space so that the GPIO specifier uses
+> basically a (bank, pin) pair that is converted into a GPIO offset. The
+> same is done for interrupt specifiers.
 
-> I guess your hierarchy is in response to this mail from tglx:
-> https://lkml.org/lkml/2018/9/14/339
+I guess this stuff is what you refer to?
 
-Yes, there was some good discussion in that thread which helped me come
-up with this solution. I think it's pretty elegant because it allows all
-of this interaction to happen almost automatically via the existing
-infrastructure. I'm not sure the same could be applied to the PDC,
-though, because of the need to manually replay the interrupt. That's not
-something I think can be done with just the simple parent/child
-relationship that we use on Tegra.
+#define TEGRA_MAIN_GPIO_PORT(port, base, count, controller)     \
+        [TEGRA_MAIN_GPIO_PORT_##port] = {                       \
+                .name = #port,                                  \
+                .offset = base,                                 \
+                .pins = count,                                  \
+                .irq = controller,                              \
+        }
 
-On the other hand, I don't think implementing something akin to Lina's
-proposal would work on Tegra because in our case the PMC doesn't
-actually raise an interrupt on wake. The hardware will simply wake up
-the system, at which point all the signals will be forwarded as normal,
-so the GPIO or GIC will see the interrupts as if they happened during
-normal runtime.
+static const struct tegra_gpio_port tegra186_main_ports[] = {
+        TEGRA_MAIN_GPIO_PORT( A, 0x2000, 7, 2),
+        TEGRA_MAIN_GPIO_PORT( B, 0x3000, 7, 3),
+        TEGRA_MAIN_GPIO_PORT( C, 0x3200, 7, 3),
+        TEGRA_MAIN_GPIO_PORT( D, 0x3400, 6, 3),
+(...)
 
-> So from a birds eye point of view I don't see how the Tegra
-> PMC irq controller and Qualcomm's PDC power domain
-> controller are conceptually different. Are you doing the same
-> thing in two different ways for the same problem space
-> here?
->=20
-> Or are these hardwares so very different that they really
-> warrant two different approaches to wakeups?
->=20
-> I guess I miss a bit of hardware insight... is the key difference
-> that in Qualcomm's PDC the IRQs need to be replayed/injected
-> by software while Tegra's PMC will do this in hardware?
+Maybe things have changed slightly.
 
-Yes, I think you're exactly right here. As I said above, I don't think
-there's a way to replay interrupts with a pure parent/child hierarchy
-because the hierarchy doesn't actually do anything at the interrupt
-handler level. You'd need to set up additional demultiplexing at that
-point to make it work, which is pretty much the equivalent of what Lina
-has proposed.
+As I see it there are some ways to go about this:
 
-On the other hand, since we don't get interrupts from the PMC for wake
-events themselves, we can't replay interrupts on Tegra. And we don't
-have to.
+1. Create one gpiochip per bank and just register the number of
+GPIOs actually accessible per bank offset from 0. This works
+if one does not insist on having one gpiochip covering all pins,
+and as long as all usable pins are stacked from offset 0..n.
+(Tegra186 doesn't do this, it is registering one chip for all.)
 
-Unfortunately, these seem to be really similar pieces of hardware but
-with just enough of a low-level difference to require completely
-different solutions.
+2. If the above cannot be met, register enough pins to cover all
+(e.g. 32 pins for a 32bit GPIO register) then mask off the
+unused pins in .valid_mask in the gpio_chip. This was fairly
+recently introduced to add ACPI support for Qualcomm, as
+there were valid, but unusable GPIO offsets, but it can be
+used to cut arbitrary holes in any range of offsets.
 
-Thierry
+3. Some driver-specific way. Which seems to be what Tegra186
+is doing.
 
---Clx92ZfkiYIKRjnr
-Content-Type: application/pgp-signature; name="signature.asc"
+Would you consider to move over to using method (2) to
+get a more linear numberspace? I.e. register 8 GPIOs/IRQs
+per port/bank and then just mask off the invalid ones?
+.valid_mask in gpio_chip can be used for the GPIOs and
+.valid_mask in the gpio_irq_chip can be used for IRQs.
 
------BEGIN PGP SIGNATURE-----
+Or do you think it is nonelegant?
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluqBn8ACgkQ3SOs138+
-s6FpFBAAhXmmvfSH0K4Das4OcJLsoXiiJcRZr6c0gKo1SX25QZVfkg3l2ZPc4Xt2
-YtlGkp7ltMqVV7RD688+NU+49kra90Fg6aKcAfJ7V1/opPZHtG5E/tPJb+lYVl/4
-pkh+sY+BVdFXjsPurLoFYwdd+dXn8n9JxxPg932ornQbqmC0HH1j5Dw5k2PyFbp/
-Uw+sdfgn8v/w2RHk1MoCfWwdgAVgbPR0AThDuC6M6WbtjRzamsOZ05fOaKz0zX+k
-OYLwJp3Q/WoUFA3TOcCGMItjY7qSoxZmUAuqn3jxd5WUnXSChf7R0W++bw/gtIIP
-1kqlYr5bief+Inmq/yK1MLAAyjtQg25Q0WO6x6UjcnISCx06QbVHMoVgJ016h9Wj
-rrHDnpfjKhqgD4pxxOCx3DeNLAfMN9/v50u7OwC5AQsDGypliEBnl5gg1iOGwhOH
-xNuQP9qwVzeKzQ3Ea4SJeya4xzkzrYDfPpqDQxTN2IKOLJBMe3lcndlvroQ4Euva
-i4oyUL81DkMgVCTrOK0JSxOBTTIZdT+lCEO8xWWwFU29mWly22f8VNtY0CmM4oP6
-qOp7+U/ovzQNVJS/A0WW4CjWsD3L8iQ8oJlrsOUbMTRRa2AO5o9q1Wc7ol/5Y8VY
-lFsyxHd+yIUob+OXF6XgdzA1UstVNtteblI892U1QxKnQBssyN4=
-=gWl/
------END PGP SIGNATURE-----
+> Since there is no 1:1 relationship between the value in the specifier
+> and the GPIO offset, we can't use irq_domain_xlate_twocell().
 
---Clx92ZfkiYIKRjnr--
+Am I right that if you switch to method (2) above this is solved
+and we get rid of the custom tegra186 xlate function == big win?
+
+> I think we can probably just implement the simple two-cell version in
+> gpiochip_to_irq() directly and leave it up to drivers that require
+> something more to override ->to_irq().
+
+And if what I assume (in my naive thinking) you can do with
+.valid_mask is correct, then you can convert tegra186 to use
+common twocell translation.
+
+Sorry for being a pest, I just have a feeling we are reinventing
+wheels here, I really want to pull as many fringe cases as
+possible into gpiolib if I can so the maintenance gets
+simpler.
+
+Yours,
+Linus Walleij
