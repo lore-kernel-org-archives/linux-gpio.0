@@ -1,64 +1,43 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v2 00/22] Unify MediaTek pinctrl in preparation for MT8183
- and MT6765
-Date: Tue, 25 Sep 2018 12:48:09 +0200
-Message-ID: <9f0a8868-a06e-d378-1008-df758b898fbe@gmail.com>
-References: <cover.1536404280.git.sean.wang@mediatek.com>
- <CACRpkdZtVBjYGs5C7-HWEyX7f7pnCqvnRYBH=fFmLKhN4FGymA@mail.gmail.com>
- <1537325650.572.9.camel@mtkswgap22> <20180919043722.GA14181@Mani-XPS-13-9360>
- <1537503761.9654.17.camel@mtkswgap22>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: generic: Avoid several implicit enum conversions
+Date: Tue, 25 Sep 2018 12:58:16 +0200
+Message-ID: <CACRpkdadODxsuae7uhwcfBBMQ-eZ8bvnV71fhDCuudbJEbhhYA@mail.gmail.com>
+References: <20180925061855.19557-1-natechancellor@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1537503761.9654.17.camel@mtkswgap22>
-Content-Language: en-US
+In-Reply-To: <20180925061855.19557-1-natechancellor@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@mediatek.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Saber Rezvani <irsaber@gmail.com>
+To: natechancellor@gmail.com
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ndesaulniers@google.com
 List-Id: linux-gpio@vger.kernel.org
 
+On Tue, Sep 25, 2018 at 8:19 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 
+> Clang warns when one enumerated type is implicitly converted to another,
+> which happens several times in the pinctrl drivers for a few reasons:
+>
+> * The PCONFDUMP macro, which sets the param member in pin_config_item.
+> * The pinconf_generic_params structure, which is used by drivers to
+>   configure their bindings, which has a param member like pin_config_item.
+> * The pinconf_to_config_packed, which takes either the generic enum
+>   pin_config_param or a specialized one.
+>
+> Drivers are allowed to extend this enumerated type because of the gap
+> betweem PIN_CONFIG_END and PIN_CONFIG_MAX. Make it clear to Clang that
+> this is allowed by changing param's type in all of these instances to
+> int so no conversion needs to happen.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/138
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-On 21/09/2018 06:22, Sean Wang wrote:
-> On Tue, 2018-09-18 at 21:37 -0700, Manivannan Sadhasivam wrote:
->> On Wed, Sep 19, 2018 at 10:54:10AM +0800, Sean Wang wrote:
->>> On Tue, 2018-09-18 at 15:07 -0700, Linus Walleij wrote:
->>>> On Sat, Sep 8, 2018 at 4:07 AM <sean.wang@mediatek.com> wrote:
->>>>
->>>>> v2 and changes since v1:
->>>>
->>>> I had trouble applying the last patches in the series so I applied
->>>> all on an immutable branch (ib-mtk) then merged that into devel
->>>> and added a patch on top to fix up some GPIO includes (just sent).
->>>>
->>>> Please check the result!
->>>>
->>>
->>> Sure, I'll take a look and and test on the devel branch.
->>>
->>> On the top, I'll add a fix for the issue recently reported by kbuild
->>> test robot about implicit declaration and a new MT6765 driver based
->>> on the series.
->>>
->>
->> Hi Sean,
->>
->> Do you have any plans to add support for MT6797?
->>
-> 
-> I personally have no the plan to add support to MT6797 because I have no
-> the device, but as I knew some of people in mediatek have interest to
-> add them by volunteers and thus there is no clear schedule. Eventually,
-> if they're really done, they would be still based on vendor binding not
-> by generic binding.
-> 
+I'm not superhappy about this because that enum is great for readability,
+even if the static syntax checker is unhappy.
 
-CCing Saber as he is working on the pinctrl for this device. Actually he as some
-questions regarding the register layout.
+If we can't have an enum here I would argue that we can just as well
+remove the enum altogether and just use #define for the config
+parameters, would you agree?
 
-Sean maybe you can bring him in contact with someone inside Mediatek who could
-help him :)
-
-Regards.
-Matthias
+Yours,
+Linus Walleij
