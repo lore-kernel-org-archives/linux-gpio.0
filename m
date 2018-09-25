@@ -1,178 +1,174 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 6/9] gpio: Add support for hierarchical IRQ domains
-Date: Tue, 25 Sep 2018 13:17:16 +0200
-Message-ID: <20180925111716.GA7925@ulmo>
-References: <20180921102546.12745-1-thierry.reding@gmail.com>
- <20180921102546.12745-7-thierry.reding@gmail.com>
- <CACRpkdYnrf7FknvnZyFSgfT5aCrcWT4hxSnQo0UqxYfR6Fkqwg@mail.gmail.com>
- <20180925093315.GB7097@ulmo>
- <CACRpkdbOpVPB5MqgCyF5x_ENzLscz5oYEstYqwVceqeKZq2w5g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2] gpio: mockup: use device properties instead of platform_data
+Date: Tue, 25 Sep 2018 13:29:46 +0200
+Message-ID: <20180925112946.30629-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbOpVPB5MqgCyF5x_ENzLscz5oYEstYqwVceqeKZq2w5g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Bamvor Jian Zhang <bamv2005@gmail.com>, Vincent Whitchurch <vincent.whitchurch@axis.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Rob Herring <robh@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
+Some users want to introduce device tree support to the mockup driver.
+Let's make it easier by switching to using generic device properties.
+The driver stays compatible with previous use cases and after this
+conversion there'll be no need to change the way probing of mockup
+GPIO chips works.
 
---yrj/dFKFPuw6o+aM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested with libgpiod test suite.
 
-On Tue, Sep 25, 2018 at 12:33:54PM +0200, Linus Walleij wrote:
-> On Tue, Sep 25, 2018 at 11:33 AM Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Tue, Sep 25, 2018 at 10:11:06AM +0200, Linus Walleij wrote:
->=20
-> > > While I think it is really important that we start supporting hierarc=
-hical
-> > > irqdomains in the gpiolib core, I want a more complete approach,
-> > > so that drivers that need hierarchical handling of irqdomains
-> > > can get the same support from gpiolib as they get for simple
-> > > domains.
-> (...)
-> > > I can't see if you need to pull more stuff into the core to accomplish
-> > > that, but I think in essence the core gpiolib needs to be more helpful
-> > > with hierarchies.
-> >
-> > This is not as trivial as it sounds. I think we could probably provide a
-> > simple helper in the core that may work for the majority of GPIO
-> > controllers, and would be similar to irq_domain_xlate_twocell(). The
-> > problem is that ->gpio_to_irq() effectively needs to convert the offset
-> > of the pin in the GPIO controller to an IRQ specifier. If the IRQ domain
-> > can use irq_domain_xlate_twocell(), that should be easy, but if it does
-> > not, then we likely need a custom implementation as well.
->=20
-> This sounds a lot like the "gpio-ranges" we have in the
-> gpiochip DT bindings, mapping gpio offsets to pin offsets.
->=20
-> I assume that we could just introduce a cross-mapping
-> array from IRQ to IRQ in struct gpio_irq_chip for the
-> hierarchical irqchip? Is it any
-> more complicated than an array of [(int, int)] tuples?
->=20
-> I guess this is what you have in mind for twocell?
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+v1 -> v2:
+- dropped an unnecessary check when reading the base gpio number property
 
-For twocell I think it would be even easier, because the IRQ specifier
-can just be reconstructed from (offset, irq_type). That's all the simple
-two-cell does, right? It's a 1:1 mapping of specifier to GPIO offset to
-IRQ offset.
+ drivers/gpio/gpio-mockup.c | 82 ++++++++++++++++++++++++--------------
+ 1 file changed, 51 insertions(+), 31 deletions(-)
 
-> > For example, as you may remember, the Tegra186 GPIO controller is
-> > somewhat quirky in that it has a number of banks, each of which can have
-> > any number of pins up to 8. However, in order to prevent users from
-> > attempting to use one of the non-existent GPIOs, we resorted to
-> > compacting the GPIO number space so that the GPIO specifier uses
-> > basically a (bank, pin) pair that is converted into a GPIO offset. The
-> > same is done for interrupt specifiers.
->=20
-> I guess this stuff is what you refer to?
->=20
-> #define TEGRA_MAIN_GPIO_PORT(port, base, count, controller)     \
->         [TEGRA_MAIN_GPIO_PORT_##port] =3D {                       \
->                 .name =3D #port,                                  \
->                 .offset =3D base,                                 \
->                 .pins =3D count,                                  \
->                 .irq =3D controller,                              \
->         }
->=20
-> static const struct tegra_gpio_port tegra186_main_ports[] =3D {
->         TEGRA_MAIN_GPIO_PORT( A, 0x2000, 7, 2),
->         TEGRA_MAIN_GPIO_PORT( B, 0x3000, 7, 3),
->         TEGRA_MAIN_GPIO_PORT( C, 0x3200, 7, 3),
->         TEGRA_MAIN_GPIO_PORT( D, 0x3400, 6, 3),
-> (...)
->=20
-> Maybe things have changed slightly.
->=20
-> As I see it there are some ways to go about this:
->=20
-> 1. Create one gpiochip per bank and just register the number of
-> GPIOs actually accessible per bank offset from 0. This works
-> if one does not insist on having one gpiochip covering all pins,
-> and as long as all usable pins are stacked from offset 0..n.
-> (Tegra186 doesn't do this, it is registering one chip for all.)
->=20
-> 2. If the above cannot be met, register enough pins to cover all
-> (e.g. 32 pins for a 32bit GPIO register) then mask off the
-> unused pins in .valid_mask in the gpio_chip. This was fairly
-> recently introduced to add ACPI support for Qualcomm, as
-> there were valid, but unusable GPIO offsets, but it can be
-> used to cut arbitrary holes in any range of offsets.
->=20
-> 3. Some driver-specific way. Which seems to be what Tegra186
-> is doing.
->=20
-> Would you consider to move over to using method (2) to
-> get a more linear numberspace? I.e. register 8 GPIOs/IRQs
-> per port/bank and then just mask off the invalid ones?
-> .valid_mask in gpio_chip can be used for the GPIOs and
-> .valid_mask in the gpio_irq_chip can be used for IRQs.
->=20
-> Or do you think it is nonelegant?
-
-This is all pretty much the same discussion that I remember we had
-earlier this year. Nothing's changed so far.
-
-Back at the time I had pointed out that we'd be wasting a lot of memory
-by registering 8 GPIOs/IRQs per bank, because on average only about 60-
-75% of the GPIOs are actually used. In addition we waste processing
-resources by having to check the GPIO offset against the valid mask
-every time we want to access a GPIO.
-
-I think that's inelegant, but from the rest of what you're saying you
-don't see it that way.
-
-> > Since there is no 1:1 relationship between the value in the specifier
-> > and the GPIO offset, we can't use irq_domain_xlate_twocell().
->=20
-> Am I right that if you switch to method (2) above this is solved
-> and we get rid of the custom tegra186 xlate function =3D=3D big win?
->=20
-> > I think we can probably just implement the simple two-cell version in
-> > gpiochip_to_irq() directly and leave it up to drivers that require
-> > something more to override ->to_irq().
->=20
-> And if what I assume (in my naive thinking) you can do with
-> .valid_mask is correct, then you can convert tegra186 to use
-> common twocell translation.
->=20
-> Sorry for being a pest, I just have a feeling we are reinventing
-> wheels here, I really want to pull as many fringe cases as
-> possible into gpiolib if I can so the maintenance gets
-> simpler.
-
-Like I said, we had this very discussion a couple of months ago, and I
-don't think I want to go through all of it again. I think, yes, I could
-make Tegra186 work with .valid_mask, even if I consider it wasteful. So
-if that's what you want, I'll go rewrite the driver so we'll never have
-to repeat this again.
-
-Thierry
-
---yrj/dFKFPuw6o+aM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluqGToACgkQ3SOs138+
-s6ERHw//XDTW9nxwCPEzsbYFKRwbfu9e7mm8/PI/iu5Gxu1K+4SMa9F++wDJ7OB/
-/NoUJU3+dzs+Gft0BqtuTuNzaLXh/J7uTo8KOmUM321oG5zsg/iYbfNDmLgTBVlP
-1gDymYvzoKgqhpEoj7dFpLk7UINeJ74mYRJGqdHIqJ2nh9MN+GLM9m/Lbi4mbv42
-g3w9/Muuv4U3tVrT1pEiBfDyTCmHwKzqP+Vj7i+t8Z2xoyR3PJBYKK4EXO4d40u7
-NnrWmudrzDnchj41GG5Ufpe/VwLtqmsiAfCXIZBMWItFDpTosc8E+6/l1Loq6YvQ
-MJd+ASxp0qteKmWXwaJPGfM4X9zT4YmM6w+hCc6thAZ+UtOCnnFAHioEobYwvODw
-0taQFrNh/iLtpX29Zrwyl1vArG9yKPtFJBD6xT3O2fU3ZVAQPZyp2kvQ62xwVToT
-1620TgkIR1OoSobvUPBsVNZetoaENV3UaRULb+Vf/yfGFHC/vmTKXIwZk1m7ELvc
-mhZH1bQFg9TAcBqt8jva5Yz0yKAoYA8wiMcMCrb2oIi80iH3wDROxaBbGH3intiV
-ju7F1tH7PHlbLbMwxfNqx96BFnsYJ6H3vP+aqohpJdgqmMKUAbnBkbuBNa8toeeQ
-vFULXxlIhIFuuD4Hfw4a3gP1BpCOQT+Nzhnq7sUf1nPA+pRKK2o=
-=+PDr
------END PGP SIGNATURE-----
-
---yrj/dFKFPuw6o+aM--
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index d66b7a768ecd..8269cffc2967 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -18,6 +18,7 @@
+ #include <linux/irq_sim.h>
+ #include <linux/debugfs.h>
+ #include <linux/uaccess.h>
++#include <linux/property.h>
+ 
+ #include "gpiolib.h"
+ 
+@@ -28,6 +29,8 @@
+  * of GPIO lines.
+  */
+ #define GPIO_MOCKUP_MAX_RANGES	(GPIO_MOCKUP_MAX_GC * 2)
++/* Maximum of three properties + the sentinel. */
++#define GPIO_MOCKUP_MAX_PROP	4
+ 
+ #define gpio_mockup_err(...)	pr_err(GPIO_MOCKUP_NAME ": " __VA_ARGS__)
+ 
+@@ -59,13 +62,6 @@ struct gpio_mockup_dbgfs_private {
+ 	int offset;
+ };
+ 
+-struct gpio_mockup_platform_data {
+-	int base;
+-	int ngpio;
+-	int index;
+-	bool named_lines;
+-};
+-
+ static int gpio_mockup_ranges[GPIO_MOCKUP_MAX_RANGES];
+ static int gpio_mockup_num_ranges;
+ module_param_array(gpio_mockup_ranges, int, &gpio_mockup_num_ranges, 0400);
+@@ -255,26 +251,37 @@ static int gpio_mockup_name_lines(struct device *dev,
+ 
+ static int gpio_mockup_probe(struct platform_device *pdev)
+ {
+-	struct gpio_mockup_platform_data *pdata;
+ 	struct gpio_mockup_chip *chip;
+ 	struct gpio_chip *gc;
+-	int rv, base, ngpio;
+ 	struct device *dev;
+-	char *name;
++	const char *name;
++	int rv, base;
++	u16 ngpio;
+ 
+ 	dev = &pdev->dev;
+-	pdata = dev_get_platdata(dev);
+-	base = pdata->base;
+-	ngpio = pdata->ngpio;
++
++	rv = device_property_read_u32(dev, "gpio-base", &base);
++	if (rv)
++		base = -1;
++
++	rv = device_property_read_u16(dev, "nr-gpios", &ngpio);
++	if (rv)
++		return rv;
++
++	rv = device_property_read_string(dev, "chip-name", &name);
++	if (rv)
++		name = NULL;
+ 
+ 	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+ 	if (!chip)
+ 		return -ENOMEM;
+ 
+-	name = devm_kasprintf(dev, GFP_KERNEL, "%s-%c",
+-			      pdev->name, pdata->index);
+-	if (!name)
+-		return -ENOMEM;
++	if (!name) {
++		name = devm_kasprintf(dev, GFP_KERNEL,
++				      "%s-%c", pdev->name, pdev->id + 'A');
++		if (!name)
++			return -ENOMEM;
++	}
+ 
+ 	gc = &chip->gc;
+ 	gc->base = base;
+@@ -295,7 +302,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	if (!chip->lines)
+ 		return -ENOMEM;
+ 
+-	if (pdata->named_lines) {
++	if (device_property_read_bool(dev, "named-gpio-lines")) {
+ 		rv = gpio_mockup_name_lines(dev, chip);
+ 		if (rv)
+ 			return rv;
+@@ -339,9 +346,11 @@ static void gpio_mockup_unregister_pdevs(void)
+ 
+ static int __init gpio_mockup_init(void)
+ {
+-	int i, num_chips, err = 0, index = 'A';
+-	struct gpio_mockup_platform_data pdata;
++	struct property_entry properties[GPIO_MOCKUP_MAX_PROP];
++	int i, prop, num_chips, err = 0, base;
++	struct platform_device_info pdevinfo;
+ 	struct platform_device *pdev;
++	u16 ngpio;
+ 
+ 	if ((gpio_mockup_num_ranges < 2) ||
+ 	    (gpio_mockup_num_ranges % 2) ||
+@@ -371,17 +380,28 @@ static int __init gpio_mockup_init(void)
+ 	}
+ 
+ 	for (i = 0; i < num_chips; i++) {
+-		pdata.index = index++;
+-		pdata.base = gpio_mockup_range_base(i);
+-		pdata.ngpio = pdata.base < 0
+-				? gpio_mockup_range_ngpio(i)
+-				: gpio_mockup_range_ngpio(i) - pdata.base;
+-		pdata.named_lines = gpio_mockup_named_lines;
+-
+-		pdev = platform_device_register_resndata(NULL,
+-							 GPIO_MOCKUP_NAME,
+-							 i, NULL, 0, &pdata,
+-							 sizeof(pdata));
++		memset(properties, 0, sizeof(properties));
++		memset(&pdevinfo, 0, sizeof(pdevinfo));
++		prop = 0;
++
++		base = gpio_mockup_range_base(i);
++		if (base >= 0)
++			properties[prop++] = PROPERTY_ENTRY_U32("gpio-base",
++								base);
++
++		ngpio = base < 0 ? gpio_mockup_range_ngpio(i)
++				 : gpio_mockup_range_ngpio(i) - base;
++		properties[prop++] = PROPERTY_ENTRY_U16("nr-gpios", ngpio);
++
++		if (gpio_mockup_named_lines)
++			properties[prop++] = PROPERTY_ENTRY_BOOL(
++						"named-gpio-lines");
++
++		pdevinfo.name = GPIO_MOCKUP_NAME;
++		pdevinfo.id = i;
++		pdevinfo.properties = properties;
++
++		pdev = platform_device_register_full(&pdevinfo);
+ 		if (IS_ERR(pdev)) {
+ 			gpio_mockup_err("error registering device");
+ 			platform_driver_unregister(&gpio_mockup_driver);
+-- 
+2.18.0
