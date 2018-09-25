@@ -1,41 +1,64 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl/amd: poll InterruptEnable bits in amd_gpio_irq_set_type
-Date: Tue, 25 Sep 2018 12:41:34 +0200
-Message-ID: <CACRpkdZrmjjQ4CQFgV9gmCzEJVwoE1850+4iMen2-sCK3xp0Eg@mail.gmail.com>
-References: <20180922195826.175628-1-djkurtz@chromium.org>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v2 00/22] Unify MediaTek pinctrl in preparation for MT8183
+ and MT6765
+Date: Tue, 25 Sep 2018 12:48:09 +0200
+Message-ID: <9f0a8868-a06e-d378-1008-df758b898fbe@gmail.com>
+References: <cover.1536404280.git.sean.wang@mediatek.com>
+ <CACRpkdZtVBjYGs5C7-HWEyX7f7pnCqvnRYBH=fFmLKhN4FGymA@mail.gmail.com>
+ <1537325650.572.9.camel@mtkswgap22> <20180919043722.GA14181@Mani-XPS-13-9360>
+ <1537503761.9654.17.camel@mtkswgap22>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180922195826.175628-1-djkurtz@chromium.org>
+In-Reply-To: <1537503761.9654.17.camel@mtkswgap22>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Daniel Drake <drake@endlessm.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>, Ken Xue <Ken.Xue@amd.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Sean Wang <sean.wang@mediatek.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Saber Rezvani <irsaber@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Sep 22, 2018 at 9:58 PM Daniel Kurtz <djkurtz@chromium.org> wrote:
 
-> From the AMD BKDG, if WAKE_INT_MASTER_REG.MaskStsEn is set, a software
-> write to the debounce registers of *any* gpio will block wake/interrupt
-> status generation for *all* gpios for a length of time that depends on
-> WAKE_INT_MASTER_REG.MaskStsLength[11:0].  During this period the Interrupt
-> Delivery bit (INTERRUPT_ENABLE) will read as 0.
->
-> In commit 4c1de0414a1340 ("pinctrl/amd: poll InterruptEnable bits in
-> enable_irq") we tried to fix this same "gpio Interrupts are blocked
-> immediately after writing debounce registers" problem, but incorrectly
-> assumed it only affected the gpio whose debounce was being configured
-> and not ALL gpios.
->
-> To solve this for all gpios, we move the polling loop from
-> amd_gpio_irq_enable() to amd_gpio_irq_set_type(), while holding the gpio
-> spinlock.  This ensures that another gpio operation (e.g.
-> amd_gpio_irq_unmask()) can read a temporarily disabled IRQ and
-> incorrectly disable it while trying to modify some other register bits.
->
-> Fixes: 4c1de0414a1340 pinctrl/amd: poll InterruptEnable bits in enable_irq
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 
-Patch applied for fixes.
+On 21/09/2018 06:22, Sean Wang wrote:
+> On Tue, 2018-09-18 at 21:37 -0700, Manivannan Sadhasivam wrote:
+>> On Wed, Sep 19, 2018 at 10:54:10AM +0800, Sean Wang wrote:
+>>> On Tue, 2018-09-18 at 15:07 -0700, Linus Walleij wrote:
+>>>> On Sat, Sep 8, 2018 at 4:07 AM <sean.wang@mediatek.com> wrote:
+>>>>
+>>>>> v2 and changes since v1:
+>>>>
+>>>> I had trouble applying the last patches in the series so I applied
+>>>> all on an immutable branch (ib-mtk) then merged that into devel
+>>>> and added a patch on top to fix up some GPIO includes (just sent).
+>>>>
+>>>> Please check the result!
+>>>>
+>>>
+>>> Sure, I'll take a look and and test on the devel branch.
+>>>
+>>> On the top, I'll add a fix for the issue recently reported by kbuild
+>>> test robot about implicit declaration and a new MT6765 driver based
+>>> on the series.
+>>>
+>>
+>> Hi Sean,
+>>
+>> Do you have any plans to add support for MT6797?
+>>
+> 
+> I personally have no the plan to add support to MT6797 because I have no
+> the device, but as I knew some of people in mediatek have interest to
+> add them by volunteers and thus there is no clear schedule. Eventually,
+> if they're really done, they would be still based on vendor binding not
+> by generic binding.
+> 
 
-Thanks!
-Linus Walleij
+CCing Saber as he is working on the pinctrl for this device. Actually he as some
+questions regarding the register layout.
+
+Sean maybe you can bring him in contact with someone inside Mediatek who could
+help him :)
+
+Regards.
+Matthias
