@@ -1,49 +1,41 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] pinctrl: paris: fix check on EINT_NA comparison
-Date: Tue, 25 Sep 2018 14:21:30 +0100
-Message-ID: <20180925132130.27044-1-colin.king@canonical.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCHv2 0/3] omap gpio add level idle, cpu_pm and drop
+ runtime_irq_safe
+Date: Tue, 25 Sep 2018 07:35:49 -0700
+Message-ID: <20180925143549.GM5662@atomide.com>
+References: <20180920193532.7714-1-tony@atomide.com>
+ <CACRpkdao5j14OXAvL==008gnquvKpzuPwkK+vA2jTeyy9H+gcA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdao5j14OXAvL==008gnquvKpzuPwkK+vA2jTeyy9H+gcA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+* Linus Walleij <linus.walleij@linaro.org> [180925 06:57]:
+> On Thu, Sep 20, 2018 at 9:35 PM Tony Lindgren <tony@atomide.com> wrote:
+> 
+> > Linus, assuming people are happy with these, I'd appreciate an immutable branch
+> > with these in case we run into merge conflicts for arch/arm/mach-omap2 changes.
+> 
+> I created an immutable branch named "ib-omap" yesterday:
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-omap
+> 
+> It passed build tests this morning so I merged this into my "devel" branch
+> for next.
 
-Currently, the check on desc->eint.eint_n == EINT_NA is always false
-because this is comparing a u16 to -1 which can never be true.  Fix
-this by casting EINT_NA to u16.
+OK thanks!
 
-Fixes: fb5fa8dc151b ("pinctrl: mediatek: extend struct mtk_pin_desc to pinctrl-mtk-common-v2.c")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/mediatek/pinctrl-paris.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index 4cf0fea30b7d..77d380145dfd 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -729,7 +729,7 @@ static int mtk_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
- 
- 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[offset];
- 
--	if (desc->eint.eint_n == EINT_NA)
-+	if (desc->eint.eint_n == (u16)EINT_NA)
- 		return -ENOTSUPP;
- 
- 	return mtk_eint_find_irq(hw->eint, desc->eint.eint_n);
-@@ -746,7 +746,7 @@ static int mtk_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
- 
- 	if (!hw->eint ||
- 	    pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE ||
--	    desc->eint.eint_n == EINT_NA)
-+	    desc->eint.eint_n == (u16)EINT_NA)
- 		return -ENOTSUPP;
- 
- 	debounce = pinconf_to_config_argument(config);
--- 
-2.17.1
+Tony
