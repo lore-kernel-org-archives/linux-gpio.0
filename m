@@ -1,48 +1,65 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2] dt-bindings: pinctrl: qcom-pmic-gpio: Add pms405 support
-Date: Mon, 24 Sep 2018 17:06:56 -0700
-Message-ID: <20180925000656.23869-1-bjorn.andersson@linaro.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] pinctrl: generic: Avoid several implicit enum conversions
+Date: Mon, 24 Sep 2018 23:18:55 -0700
+Message-ID: <20180925061855.19557-1-natechancellor@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Vinod Koul <vkoul@kernel.org>
+Clang warns when one enumerated type is implicitly converted to another,
+which happens several times in the pinctrl drivers for a few reasons:
 
-Add support for the PMS405 GPIO support to the Qualcomm PMIC GPIO
-binding.
+* The PCONFDUMP macro, which sets the param member in pin_config_item.
+* The pinconf_generic_params structure, which is used by drivers to
+  configure their bindings, which has a param member like pin_config_item.
+* The pinconf_to_config_packed, which takes either the generic enum
+  pin_config_param or a specialized one.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Drivers are allowed to extend this enumerated type because of the gap
+betweem PIN_CONFIG_END and PIN_CONFIG_MAX. Make it clear to Clang that
+this is allowed by changing param's type in all of these instances to
+int so no conversion needs to happen.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/138
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
+ include/linux/pinctrl/pinconf-generic.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Changes since v1:
-- Dropped unnecessary driver update
-- Updated subject
-
- Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-index ffd4345415f3..ab4000eab07d 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-@@ -19,6 +19,7 @@ PMIC's from Qualcomm.
- 		    "qcom,pm8998-gpio"
- 		    "qcom,pma8084-gpio"
- 		    "qcom,pmi8994-gpio"
-+		    "qcom,pms405-gpio"
+diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
+index 6c0680641108..13076ae7acfb 100644
+--- a/include/linux/pinctrl/pinconf-generic.h
++++ b/include/linux/pinctrl/pinconf-generic.h
+@@ -150,7 +150,7 @@ static inline u32 pinconf_to_config_argument(unsigned long config)
+ 	return (u32) ((config >> 8) & 0xffffffUL);
+ }
  
- 		    And must contain either "qcom,spmi-gpio" or "qcom,ssbi-gpio"
- 		    if the device is on an spmi bus or an ssbi bus respectively
-@@ -91,6 +92,7 @@ to specify in a pin configuration subnode:
- 		    gpio1-gpio26 for pm8998
- 		    gpio1-gpio22 for pma8084
- 		    gpio1-gpio10 for pmi8994
-+		    gpio1-gpio11 for pms405
+-static inline unsigned long pinconf_to_config_packed(enum pin_config_param param,
++static inline unsigned long pinconf_to_config_packed(int param,
+ 						     u32 argument)
+ {
+ 	return PIN_CONF_PACKED(param, argument);
+@@ -164,7 +164,7 @@ static inline unsigned long pinconf_to_config_packed(enum pin_config_param param
+ 	}
  
- - function:
- 	Usage: required
+ struct pin_config_item {
+-	const enum pin_config_param param;
++	const int param;
+ 	const char * const display;
+ 	const char * const format;
+ 	bool has_arg;
+@@ -180,7 +180,7 @@ struct pinctrl_map;
+ 
+ struct pinconf_generic_params {
+ 	const char * const property;
+-	enum pin_config_param param;
++	int param;
+ 	u32 default_value;
+ };
+ 
 -- 
-2.18.0
+2.19.0
