@@ -1,74 +1,80 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH] gpio: omap: switch to use irq_chip pm runtime
-Date: Tue, 25 Sep 2018 14:14:46 -0500
-Message-ID: <20180925191446.31504-1-grygorii.strashko@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH] mmc: pwrseq_simple: Fix incorrect handling of GPIO bitmap
+Date: Tue, 25 Sep 2018 21:24:33 +0200
+Message-ID: <20180925192433.1377-1-jmkrzyszt@gmail.com>
+References: <CAGfqbt4n4g_24kWGPhXojooiQQOmVeq-TfYucFERXJGMci87Xw@mail.gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGfqbt4n4g_24kWGPhXojooiQQOmVeq-TfYucFERXJGMci87Xw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The PM runtime management can be delegated from OMAP GPIO driver to the IRQ
-chip core, since commit be45beb2df69 ("genirq: Add runtime power management
-support for IRQ chips") introduces runtime power management support for IRQ
-chips.
+Commit b9762bebc633 ("gpiolib: Pass bitmaps, not integer arrays, to
+get/set array") changed the way GPIO values are passed to
+gpiod_get/set_array_value() and friends.  The updated code of
+mmc_pwrseq_simple_set_gpios_value() incorrectly uses the 'value'
+argument as a bitmap of GPIO values and assigns it directly to the
+'values' bitmap variable passed to gpiod_set_array_value_cansleep()
+instead of filling that bitmap with bits equal to the 'value' argument.
+As a result, boot hanging caused by incorrectly handled MMC device
+has been observed.
 
-Hence, drop custom PM runtime support for OMAP GPIO IRQs and switch to IRQ
-chip core PM runtime (set irq_chip->parent_device).
+As a side effect of that incorrect interpreation of the 'value'
+argument, wrong assumption is taken about the 'values' bitmap size 
+never exceding the number of bits of the 'value' argument type.
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Fix it.
+
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 ---
-Based on:
- "[PATCHv2 0/3] omap gpio add level idle, cpu_pm and drop runtime_irq_safe"
- https://www.spinics.net/lists/arm-kernel/msg677583.html
+Hi,
 
- drivers/gpio/gpio-omap.c | 23 +----------------------
- 1 file changed, 1 insertion(+), 22 deletions(-)
+I hope I've finally identified the root cause of the boot hang reported
+by Marek Szyprowski.  I've reviewed the code of other divers updated for
+the modified GPIO API and found no more issues of that kind.
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index c0d7ae7..f292796 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -860,26 +860,6 @@ static void omap_gpio_irq_shutdown(struct irq_data *d)
- 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+Marek, can you please test this fix on top of next-20180920 with the fix
+"gpiolib: Fix missing updates of bitmap index" also applied?
+
+I've assumed this fix, if tested successfully, will be merged via GPIO
+tree, hence I've selected Linus as the main recipient of this message.
+
+Thanks,
+Janusz
+
+ drivers/mmc/core/pwrseq_simple.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
+index 7f882a2bb872..ece34c734693 100644
+--- a/drivers/mmc/core/pwrseq_simple.c
++++ b/drivers/mmc/core/pwrseq_simple.c
+@@ -40,13 +40,22 @@ static void mmc_pwrseq_simple_set_gpios_value(struct mmc_pwrseq_simple *pwrseq,
+ 	struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
+ 
+ 	if (!IS_ERR(reset_gpios)) {
+-		DECLARE_BITMAP(values, BITS_PER_TYPE(value));
++		unsigned long *values;
+ 		int nvalues = reset_gpios->ndescs;
+ 
+-		values[0] = value;
++		values = bitmap_alloc(nvalues, GFP_KERNEL);
++		if (!values)
++			return;
++
++		if (value)
++			bitmap_fill(values, nvalues);
++		else
++			bitmap_zero(values, nvalues);
+ 
+ 		gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
+ 					       reset_gpios->info, values);
++
++		kfree(values);
+ 	}
  }
  
--static void omap_gpio_irq_bus_lock(struct irq_data *data)
--{
--	struct gpio_bank *bank = omap_irq_data_get_bank(data);
--
--	if (!BANK_USED(bank))
--		pm_runtime_get_sync(bank->chip.parent);
--}
--
--static void gpio_irq_bus_sync_unlock(struct irq_data *data)
--{
--	struct gpio_bank *bank = omap_irq_data_get_bank(data);
--
--	/*
--	 * If this is the last IRQ to be freed in the bank,
--	 * disable the bank module.
--	 */
--	if (!BANK_USED(bank))
--		pm_runtime_put(bank->chip.parent);
--}
--
- static void omap_gpio_ack_irq(struct irq_data *d)
- {
- 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
-@@ -1383,10 +1363,9 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 	irqc->irq_unmask = omap_gpio_unmask_irq,
- 	irqc->irq_set_type = omap_gpio_irq_type,
- 	irqc->irq_set_wake = omap_gpio_wake_enable,
--	irqc->irq_bus_lock = omap_gpio_irq_bus_lock,
--	irqc->irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
- 	irqc->name = dev_name(&pdev->dev);
- 	irqc->flags = IRQCHIP_MASK_ON_SUSPEND;
-+	irqc->parent_device = dev;
- 
- 	bank->irq = platform_get_irq(pdev, 0);
- 	if (bank->irq <= 0) {
 -- 
-2.10.5
+2.16.4
