@@ -1,41 +1,78 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCHv2 0/3] omap gpio add level idle, cpu_pm and drop
- runtime_irq_safe
-Date: Tue, 25 Sep 2018 07:35:49 -0700
-Message-ID: <20180925143549.GM5662@atomide.com>
-References: <20180920193532.7714-1-tony@atomide.com>
- <CACRpkdao5j14OXAvL==008gnquvKpzuPwkK+vA2jTeyy9H+gcA@mail.gmail.com>
+From: Marco Felsch <m.felsch@pengutronix.de>
+Subject: [PATCH 2/3] pinctrl: mcp23s08: fix irq and irqchip setup order
+Date: Tue, 25 Sep 2018 16:56:15 +0200
+Message-ID: <20180925145616.12610-3-m.felsch@pengutronix.de>
+References: <20180925145616.12610-1-m.felsch@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdao5j14OXAvL==008gnquvKpzuPwkK+vA2jTeyy9H+gcA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20180925145616.12610-1-m.felsch@pengutronix.de>
+Sender: stable-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, kernel@pengutronix.de, stable@vger.kernel.org, Dmitry Mastykin <mastichi@gmail.com>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 List-Id: linux-gpio@vger.kernel.org
 
-* Linus Walleij <linus.walleij@linaro.org> [180925 06:57]:
-> On Thu, Sep 20, 2018 at 9:35 PM Tony Lindgren <tony@atomide.com> wrote:
-> 
-> > Linus, assuming people are happy with these, I'd appreciate an immutable branch
-> > with these in case we run into merge conflicts for arch/arm/mach-omap2 changes.
-> 
-> I created an immutable branch named "ib-omap" yesterday:
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-omap
-> 
-> It passed build tests this morning so I merged this into my "devel" branch
-> for next.
+Since 'commit 02e389e63e35 ("pinctrl: mcp23s08: fix irq setup order")' the
+irq request isn't the last devm_* allocation. Without a deeper look at
+the irq and testing this isn't a good solution. Since this driver relies
+on the devm mechanism, requesting a interrupt should be the last thing
+to avoid memory corruptions during unbinding.
 
-OK thanks!
+'Commit 02e389e63e35 ("pinctrl: mcp23s08: fix irq setup order")' fixed the
+order for the interrupt-controller use case only. The
+mcp23s08_irq_setup() must be split into two to fix it for the
+interrupt-controller use case and to register the irq at last. So the
+irq will be freed first during unbind.
 
-Tony
+Cc: stable@vger.kernel.org
+Cc: Dmitry Mastykin <mastichi@gmail.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Fixes: 82039d244f87 ("pinctrl: mcp23s08: add pinconf support")
+Fixes: 02e389e63e35 ("pinctrl: mcp23s08: fix irq setup order")
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+---
+ drivers/pinctrl/pinctrl-mcp23s08.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index 472746931ea8..367b648be7c7 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -636,6 +636,14 @@ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
+ 		return err;
+ 	}
+ 
++	return 0;
++}
++
++static int mcp23s08_irqchip_setup(struct mcp23s08 *mcp)
++{
++	struct gpio_chip *chip = &mcp->chip;
++	int err;
++
+ 	err =  gpiochip_irqchip_add_nested(chip,
+ 					   &mcp23s08_irq_chip,
+ 					   0,
+@@ -908,8 +916,8 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 			goto fail;
+ 	}
+ 
+-	if (mcp->irq && mcp->irq_controller) {
+-		ret = mcp23s08_irq_setup(mcp);
++	if (mcp->irq_controller) {
++		ret = mcp23s08_irqchip_setup(mcp);
+ 		if (ret)
+ 			goto fail;
+ 	}
+@@ -941,6 +949,9 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 		goto fail;
+ 	}
+ 
++	if (mcp->irq)
++		ret = mcp23s08_irq_setup(mcp);
++
+ fail:
+ 	if (ret < 0)
+ 		dev_dbg(dev, "can't setup chip %d, --> %d\n", addr, ret);
+-- 
+2.19.0
