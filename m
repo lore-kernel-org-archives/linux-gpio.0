@@ -1,84 +1,49 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v2 00/22] Unify MediaTek pinctrl in preparation for
- MT8183 and MT6765
-Date: Tue, 25 Sep 2018 06:09:29 -0700
-Message-ID: <20180925130929.GA5189@Mani-XPS-13-9360>
-References: <cover.1536404280.git.sean.wang@mediatek.com>
- <CACRpkdZtVBjYGs5C7-HWEyX7f7pnCqvnRYBH=fFmLKhN4FGymA@mail.gmail.com>
- <1537325650.572.9.camel@mtkswgap22>
- <20180919043722.GA14181@Mani-XPS-13-9360>
- <1537503761.9654.17.camel@mtkswgap22>
- <9f0a8868-a06e-d378-1008-df758b898fbe@gmail.com>
- <20180925130700.GA4945@Mani-XPS-13-9360>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] pinctrl: paris: fix check on EINT_NA comparison
+Date: Tue, 25 Sep 2018 14:21:30 +0100
+Message-ID: <20180925132130.27044-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180925130700.GA4945@Mani-XPS-13-9360>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Sean Wang <sean.wang@mediatek.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Saber Rezvani <irsaber@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 06:07:00AM -0700, Manivannan Sadhasivam wrote:
-> On Tue, Sep 25, 2018 at 12:48:09PM +0200, Matthias Brugger wrote:
-> > 
-> > 
-> > On 21/09/2018 06:22, Sean Wang wrote:
-> > > On Tue, 2018-09-18 at 21:37 -0700, Manivannan Sadhasivam wrote:
-> > >> On Wed, Sep 19, 2018 at 10:54:10AM +0800, Sean Wang wrote:
-> > >>> On Tue, 2018-09-18 at 15:07 -0700, Linus Walleij wrote:
-> > >>>> On Sat, Sep 8, 2018 at 4:07 AM <sean.wang@mediatek.com> wrote:
-> > >>>>
-> > >>>>> v2 and changes since v1:
-> > >>>>
-> > >>>> I had trouble applying the last patches in the series so I applied
-> > >>>> all on an immutable branch (ib-mtk) then merged that into devel
-> > >>>> and added a patch on top to fix up some GPIO includes (just sent).
-> > >>>>
-> > >>>> Please check the result!
-> > >>>>
-> > >>>
-> > >>> Sure, I'll take a look and and test on the devel branch.
-> > >>>
-> > >>> On the top, I'll add a fix for the issue recently reported by kbuild
-> > >>> test robot about implicit declaration and a new MT6765 driver based
-> > >>> on the series.
-> > >>>
-> > >>
-> > >> Hi Sean,
-> > >>
-> > >> Do you have any plans to add support for MT6797?
-> > >>
-> > > 
-> > > I personally have no the plan to add support to MT6797 because I have no
-> > > the device, but as I knew some of people in mediatek have interest to
-> > > add them by volunteers and thus there is no clear schedule. Eventually,
-> > > if they're really done, they would be still based on vendor binding not
-> > > by generic binding.
-> > > 
-> > 
-> > CCing Saber as he is working on the pinctrl for this device. Actually he as some
-> > questions regarding the register layout.
-> > 
-> > Sean maybe you can bring him in contact with someone inside Mediatek who could
-> > help him :)
-> >
-> 
-> FYI. I started working on MT6797 pinctrl support but never got time to
-> finish it. You can find my initial work below. Eventhough it is based on
-> the Mediatek SDK it should be fine IMO.
-> 
-> It would be great if someone (Saber) can took and finish it. The hard
-> bit for me was lack of proper documentation :(
->
+From: Colin Ian King <colin.king@canonical.com>
 
-s/documentation/datasheet
+Currently, the check on desc->eint.eint_n == EINT_NA is always false
+because this is comparing a u16 to -1 which can never be true.  Fix
+this by casting EINT_NA to u16.
 
-> https://git.linaro.org/people/manivannan.sadhasivam/96b-common.git/log/?h=mt6797
-> 
-> Thanks,
-> Mani
-> 
-> > Regards.
-> > Matthias
+Fixes: fb5fa8dc151b ("pinctrl: mediatek: extend struct mtk_pin_desc to pinctrl-mtk-common-v2.c")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-paris.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 4cf0fea30b7d..77d380145dfd 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -729,7 +729,7 @@ static int mtk_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+ 
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[offset];
+ 
+-	if (desc->eint.eint_n == EINT_NA)
++	if (desc->eint.eint_n == (u16)EINT_NA)
+ 		return -ENOTSUPP;
+ 
+ 	return mtk_eint_find_irq(hw->eint, desc->eint.eint_n);
+@@ -746,7 +746,7 @@ static int mtk_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+ 
+ 	if (!hw->eint ||
+ 	    pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE ||
+-	    desc->eint.eint_n == EINT_NA)
++	    desc->eint.eint_n == (u16)EINT_NA)
+ 		return -ENOTSUPP;
+ 
+ 	debounce = pinconf_to_config_argument(config);
+-- 
+2.17.1
