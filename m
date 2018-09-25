@@ -1,65 +1,37 @@
-From: Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] pinctrl: generic: Avoid several implicit enum conversions
-Date: Mon, 24 Sep 2018 23:18:55 -0700
-Message-ID: <20180925061855.19557-1-natechancellor@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCHv2 0/3] omap gpio add level idle,
+ cpu_pm and drop runtime_irq_safe
+Date: Tue, 25 Sep 2018 08:53:01 +0200
+Message-ID: <CACRpkdao5j14OXAvL==008gnquvKpzuPwkK+vA2jTeyy9H+gcA@mail.gmail.com>
+References: <20180920193532.7714-1-tony@atomide.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180920193532.7714-1-tony@atomide.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: ext Tony Lindgren <tony@atomide.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Clang warns when one enumerated type is implicitly converted to another,
-which happens several times in the pinctrl drivers for a few reasons:
+On Thu, Sep 20, 2018 at 9:35 PM Tony Lindgren <tony@atomide.com> wrote:
 
-* The PCONFDUMP macro, which sets the param member in pin_config_item.
-* The pinconf_generic_params structure, which is used by drivers to
-  configure their bindings, which has a param member like pin_config_item.
-* The pinconf_to_config_packed, which takes either the generic enum
-  pin_config_param or a specialized one.
+> Linus, assuming people are happy with these, I'd appreciate an immutable branch
+> with these in case we run into merge conflicts for arch/arm/mach-omap2 changes.
 
-Drivers are allowed to extend this enumerated type because of the gap
-betweem PIN_CONFIG_END and PIN_CONFIG_MAX. Make it clear to Clang that
-this is allowed by changing param's type in all of these instances to
-int so no conversion needs to happen.
+I created an immutable branch named "ib-omap" yesterday:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-omap
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/138
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- include/linux/pinctrl/pinconf-generic.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+It passed build tests this morning so I merged this into my "devel" branch
+for next.
 
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 6c0680641108..13076ae7acfb 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -150,7 +150,7 @@ static inline u32 pinconf_to_config_argument(unsigned long config)
- 	return (u32) ((config >> 8) & 0xffffffUL);
- }
- 
--static inline unsigned long pinconf_to_config_packed(enum pin_config_param param,
-+static inline unsigned long pinconf_to_config_packed(int param,
- 						     u32 argument)
- {
- 	return PIN_CONF_PACKED(param, argument);
-@@ -164,7 +164,7 @@ static inline unsigned long pinconf_to_config_packed(enum pin_config_param param
- 	}
- 
- struct pin_config_item {
--	const enum pin_config_param param;
-+	const int param;
- 	const char * const display;
- 	const char * const format;
- 	bool has_arg;
-@@ -180,7 +180,7 @@ struct pinctrl_map;
- 
- struct pinconf_generic_params {
- 	const char * const property;
--	enum pin_config_param param;
-+	int param;
- 	u32 default_value;
- };
- 
--- 
-2.19.0
+Yours,
+Linus Walleij
