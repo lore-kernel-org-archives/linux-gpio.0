@@ -1,94 +1,61 @@
-From: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: mediatek: fix some NULL checks in probe
-Date: Thu, 27 Sep 2018 06:25:01 +0800
-Message-ID: <1538000701.30348.16.camel@mtkswgap22>
-References: <20180926104230.GC14535@mwanda>
+From: Sean Wang <sean.wang@mediatek.com>
+Subject: Re: [PATCH] pinctrl: mediatek: mark dummy helpers as 'static inline'
+Date: Thu, 27 Sep 2018 06:33:53 +0800
+Message-ID: <1538001233.30348.20.camel@mtkswgap22>
+References: <20180926193818.2481220-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20180926104230.GC14535@mwanda>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Zhiyong Tao <zhiyong.tao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180926193818.2481220-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-
 
 Hi,
 
-The same patch is already being sent and applied in [1].
-
-	Sean
-
-[1]
-http://lists.infradead.org/pipermail/linux-mediatek/2018-September/015280.html
-http://lists.infradead.org/pipermail/linux-mediatek/2018-September/015283.html
-
-
-On Wed, 2018-09-26 at 13:42 +0300, Dan Carpenter wrote:
-> The devm_kmalloc_array() function returns NULL on error, it doesn't
-> return error pointers.
+On Wed, 2018-09-26 at 21:38 +0200, Arnd Bergmann wrote:
+> mtk_eint_set_debounce and mtk_eint_find_irq are defined as stub functions
+> in a header file, but without marking them as 'static inline', we get
+> a copy for each file that includes the header:
 > 
-> Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
-> Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+> drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.o: In function `mtk_eint_set_debounce':
+> pinctrl-mtk-common-v2.c:(.text+0x134): multiple definition of `mtk_eint_set_debounce'
+> drivers/pinctrl/mediatek/pinctrl-moore.o:pinctrl-moore.c:(.text+0x7d0): first defined here
+> drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.o: In function `mtk_eint_find_irq':
+> pinctrl-mtk-common-v2.c:(.text+0x13c): multiple definition of `mtk_eint_find_irq'
 > 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-> index 4cf0fea30b7d..d2179028f134 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-> @@ -836,8 +836,8 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev,
+> Fixes: e46df235b4e6 ("pinctrl: mediatek: refactor EINT related code for all MediaTek pinctrl can fit")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+
+Thank for the fixes for that I miss to mark the two functions as 'static
+inline'. The other functions in the same header file seem fine.
+
+Acked-by: Sean Wang <sean.wang@mediatek.com>
+
+> ---
+>  drivers/pinctrl/mediatek/mtk-eint.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
+> index c286a9b940f2..48468d0fae68 100644
+> --- a/drivers/pinctrl/mediatek/mtk-eint.h
+> +++ b/drivers/pinctrl/mediatek/mtk-eint.h
+> @@ -92,13 +92,13 @@ static inline int mtk_eint_do_resume(struct mtk_eint *eint)
+>  	return -EOPNOTSUPP;
+>  }
 >  
->  	hw->base = devm_kmalloc_array(&pdev->dev, hw->soc->nbase_names,
->  				      sizeof(*hw->base), GFP_KERNEL);
-> -	if (IS_ERR(hw->base))
-> -		return PTR_ERR(hw->base);
-> +	if (!hw->base)
-> +		return -ENOMEM;
+> -int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_n,
+> +static inline int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_n,
+>  			  unsigned int debounce)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
 >  
->  	for (i = 0; i < hw->soc->nbase_names; i++) {
->  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-> @@ -863,8 +863,8 @@ int mtk_paris_pinctrl_probe(struct platform_device *pdev,
->  	/* Copy from internal struct mtk_pin_desc to register to the core */
->  	pins = devm_kmalloc_array(&pdev->dev, hw->soc->npins, sizeof(*pins),
->  				  GFP_KERNEL);
-> -	if (IS_ERR(pins))
-> -		return PTR_ERR(pins);
-> +	if (!pins)
-> +		return -ENOMEM;
->  
->  	for (i = 0; i < hw->soc->npins; i++) {
->  		pins[i].number = hw->soc->pins[i].number;
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
-> index c27597cd3931..3bf5dd552749 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-moore.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
-> @@ -608,8 +608,8 @@ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
->  
->  	hw->base = devm_kmalloc_array(&pdev->dev, hw->soc->nbase_names,
->  				      sizeof(*hw->base), GFP_KERNEL);
-> -	if (IS_ERR(hw->base))
-> -		return PTR_ERR(hw->base);
-> +	if (!hw->base)
-> +		return -ENOMEM;
->  
->  	for (i = 0; i < hw->soc->nbase_names; i++) {
->  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-> @@ -629,8 +629,8 @@ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
->  	/* Copy from internal struct mtk_pin_desc to register to the core */
->  	pins = devm_kmalloc_array(&pdev->dev, hw->soc->npins, sizeof(*pins),
->  				  GFP_KERNEL);
-> -	if (IS_ERR(pins))
-> -		return PTR_ERR(pins);
-> +	if (!pins)
-> +		return -ENOMEM;
->  
->  	for (i = 0; i < hw->soc->npins; i++) {
->  		pins[i].number = hw->soc->pins[i].number;
+> -int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n)
+> +static inline int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
