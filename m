@@ -1,239 +1,112 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v4 2/2] dt-bindings: pinctrl: qcom: Add SDM660 pinctrl
- binding
-Date: Wed, 26 Sep 2018 09:54:32 -0700
-Message-ID: <20180926165432.GC27436@tuxbook-pro>
-References: <20180925173801.3835-1-ctatlor97@gmail.com>
- <20180926162644.10039-1-ctatlor97@gmail.com>
- <20180926162644.10039-2-ctatlor97@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] gpio: omap: switch to use irq_chip pm runtime
+Date: Wed, 26 Sep 2018 10:12:00 -0700
+Message-ID: <20180926171200.GV5662@atomide.com>
+References: <20180925191446.31504-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180926162644.10039-2-ctatlor97@gmail.com>
+In-Reply-To: <20180925191446.31504-1-grygorii.strashko@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Craig Tatlor <ctatlor97@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed 26 Sep 09:26 PDT 2018, Craig Tatlor wrote:
-
-> Add the binding for the TLMM pinctrl block found in the SDM660 platform.
+* Grygorii Strashko <grygorii.strashko@ti.com> [180925 19:19]:
+> The PM runtime management can be delegated from OMAP GPIO driver to the IRQ
+> chip core, since commit be45beb2df69 ("genirq: Add runtime power management
+> support for IRQ chips") introduces runtime power management support for IRQ
+> chips.
 > 
-> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
+> Hence, drop custom PM runtime support for OMAP GPIO IRQs and switch to IRQ
+> chip core PM runtime (set irq_chip->parent_device).
 
-Thanks for the updates Craig.
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+This would be cool but looks like this patch oopses early during boot
+at least on omap3 though, maybe because BANK_USED is not for
+irqs only?
 
 Regards,
-Bjorn
 
-> ---
-> Changes from v3: 
->    Updated for tile structure
->    change irq field
-> 
->  .../bindings/pinctrl/qcom,sdm660-pinctrl.txt  | 181 ++++++++++++++++++
->  1 file changed, 181 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
-> new file mode 100644
-> index 000000000000..97e6622c0b85
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
-> @@ -0,0 +1,191 @@
-> +Qualcomm Technologies, Inc. SDM660 TLMM block
-> +
-> +This binding describes the Top Level Mode Multiplexer block found in the
-> +SDM660 platform.
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: must be "qcom,sdm660-pinctrl" or
-> +		    "qcom,sdm630-pinctrl".
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: the base address and size of the north, center and south
-> +		    TLMM tiles.
-> +
-> +- reg-names:
-> +       Usage: required
-> +       Value type: <stringlist>
-> +       Definition: names for the cells of reg, must contain "north", "center"
-> +                   and "south".
-> +
-> +- interrupts:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: should specify the TLMM summary IRQ.
-> +
-> +- interrupt-controller:
-> +	Usage: required
-> +	Value type: <none>
-> +	Definition: identifies this node as an interrupt controller
-> +
-> +- #interrupt-cells:
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: must be 2. Specifying the pin number and flags, as defined
-> +		    in <dt-bindings/interrupt-controller/irq.h>
-> +
-> +- gpio-controller:
-> +	Usage: required
-> +	Value type: <none>
-> +	Definition: identifies this node as a gpio controller
-> +
-> +- gpio-ranges:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: Specifies the mapping between gpio controller and
-> +		    pin-controller pins.
-> +
-> +- #gpio-cells:
-> +	Usage: required
-> +	Value type: <u32>
-> +	Definition: must be 2. Specifying the pin number and flags, as defined
-> +		    in <dt-bindings/gpio/gpio.h>
-> +
-> +Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
-> +a general description of GPIO and interrupt bindings.
-> +
-> +Please refer to pinctrl-bindings.txt in this directory for details of the
-> +common pinctrl bindings used by client devices, including the meaning of the
-> +phrase "pin configuration node".
-> +
-> +The pin configuration nodes act as a container for an arbitrary number of
-> +subnodes. Each of these subnodes represents some desired configuration for a
-> +pin, a group, or a list of pins or groups. This configuration can include the
-> +mux function to select on those pin(s)/group(s), and various pin configuration
-> +parameters, such as pull-up, drive strength, etc.
-> +
-> +
-> +PIN CONFIGURATION NODES:
-> +
-> +The name of each subnode is not important; all subnodes should be enumerated
-> +and processed purely based on their content.
-> +
-> +Each subnode only affects those parameters that are explicitly listed. In
-> +other words, a subnode that lists a mux function but no pin configuration
-> +parameters implies no information about any pin configuration parameters.
-> +Similarly, a pin subnode that describes a pullup parameter implies no
-> +information about e.g. the mux function.
-> +
-> +
-> +The following generic properties as defined in pinctrl-bindings.txt are valid
-> +to specify in a pin configuration subnode:
-> +
-> +- pins:
-> +	Usage: required
-> +	Value type: <string-array>
-> +	Definition: List of gpio pins affected by the properties specified in
-> +		    this subnode.  Valid pins are:
-> +		    gpio0-gpio113,
-> +		        Supports mux, bias and drive-strength
-> +		    sdc1_clk, sdc1_cmd, sdc1_data sdc2_clk, sdc2_cmd, sdc2_data sdc1_rclk,
-> +		        Supports bias and drive-strength
-> +
-> +- function:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: Specify the alternative function to be configured for the
-> +		    specified pins. Functions are only valid for gpio pins.
-> +		    Valid values are:
-> +		    adsp_ext, agera_pll, atest_char, atest_char0, atest_char1,
-> +		    atest_char2, atest_char3, atest_gpsadc0, atest_gpsadc1,
-> +		    atest_tsens, atest_tsens2, atest_usb1, atest_usb10,
-> +		    atest_usb11, atest_usb12, atest_usb13, atest_usb2,
-> +		    atest_usb20, atest_usb21, atest_usb22, atest_usb23,
-> +		    audio_ref, bimc_dte0, bimc_dte1, blsp_i2c1, blsp_i2c2,
-> +		    blsp_i2c3, blsp_i2c4, blsp_i2c5, blsp_i2c6, blsp_i2c7,
-> +		    blsp_i2c8_a, blsp_i2c8_b, blsp_spi1, blsp_spi2, blsp_spi3,
-> +		    blsp_spi3_cs1, blsp_spi3_cs2, blsp_spi4, blsp_spi5,
-> +		    blsp_spi6, blsp_spi7, blsp_spi8_a, blsp_spi8_b,
-> +		    blsp_spi8_cs1, blsp_spi8_cs2, blsp_uart1, blsp_uart2,
-> +		    blsp_uart5, blsp_uart6_a, blsp_uart6_b, blsp_uim1,
-> +		    blsp_uim2, blsp_uim5, blsp_uim6, cam_mclk, cci_async,
-> +		    cci_i2c, cri_trng, cri_trng0, cri_trng1, dbg_out, ddr_bist,
-> +		    gcc_gp1, gcc_gp2, gcc_gp3, gpio, gps_tx_a, gps_tx_b, gps_tx_c,
-> +		    isense_dbg, jitter_bist, ldo_en, ldo_update, m_voc, mdp_vsync,
-> +		    mdss_vsync0, mdss_vsync1, mdss_vsync2, mdss_vsync3, mss_lte,
-> +		    nav_pps_a, nav_pps_b, nav_pps_c, pa_indicator, phase_flag0,
-> +		    phase_flag1, phase_flag10, phase_flag11, phase_flag12,
-> +		    phase_flag13, phase_flag14, phase_flag15, phase_flag16,
-> +		    phase_flag17, phase_flag18, phase_flag19, phase_flag2,
-> +		    phase_flag20, phase_flag21, phase_flag22, phase_flag23,
-> +		    phase_flag24, phase_flag25, phase_flag26, phase_flag27,
-> +		    phase_flag28, phase_flag29, phase_flag3, phase_flag30,
-> +		    phase_flag31, phase_flag4, phase_flag5, phase_flag6,
-> +		    phase_flag7, phase_flag8, phase_flag9, pll_bypassnl,
-> +		    pll_reset, pri_mi2s, pri_mi2s_ws, prng_rosc, pwr_crypto,
-> +		    pwr_modem, pwr_nav, qdss_cti0_a, qdss_cti0_b, qdss_cti1_a,
-> +		    qdss_cti1_b, qdss_gpio, qdss_gpio0, qdss_gpio1, qdss_gpio10,
-> +		    qdss_gpio11, qdss_gpio12, qdss_gpio13, qdss_gpio14, qdss_gpio15,
-> +		    qdss_gpio2, qdss_gpio3, qdss_gpio4, qdss_gpio5, qdss_gpio6,
-> +		    qdss_gpio7, qdss_gpio8, qdss_gpio9, qlink_enable, qlink_request,
-> +		    qspi_clk, qspi_cs, qspi_data0, qspi_data1, qspi_data2,
-> +		    qspi_data3, qspi_resetn, sec_mi2s, sndwire_clk, sndwire_data,
-> +		    sp_cmu, ssc_irq, tgu_ch0, tgu_ch1, tsense_pwm1, tsense_pwm2,
-> +		    uim1_clk, uim1_data, uim1_present, uim1_reset, uim2_clk,
-> +		    uim2_data, uim2_present, uim2_reset, uim_batt, vfr_1,
-> +		    vsense_clkout, vsense_data0, vsense_data1, vsense_mode,
-> +		    wlan1_adc0, wlan1_adc1, wlan2_adc0, wlan2_adc1
-> +
-> +- bias-disable:
-> +	Usage: optional
-> +	Value type: <none>
-> +	Definition: The specified pins should be configued as no pull.
-> +
-> +- bias-pull-down:
-> +	Usage: optional
-> +	Value type: <none>
-> +	Definition: The specified pins should be configued as pull down.
-> +
-> +- bias-pull-up:
-> +	Usage: optional
-> +	Value type: <none>
-> +	Definition: The specified pins should be configued as pull up.
-> +
-> +- output-high:
-> +	Usage: optional
-> +	Value type: <none>
-> +	Definition: The specified pins are configured in output mode, driven
-> +		    high.
-> +		    Not valid for sdc pins.
-> +
-> +- output-low:
-> +	Usage: optional
-> +	Value type: <none>
-> +	Definition: The specified pins are configured in output mode, driven
-> +		    low.
-> +		    Not valid for sdc pins.
-> +
-> +- drive-strength:
-> +	Usage: optional
-> +	Value type: <u32>
-> +	Definition: Selects the drive strength for the specified pins, in mA.
-> +		    Valid values are: 2, 4, 6, 8, 10, 12, 14 and 16
-> +
-> +Example:
-> +
-> +	tlmm: pinctrl@3100000 {
-> +		compatible = "qcom,sdm660-pinctrl";
-> +		reg = <0x3100000 0x200000>,
-> +		      <0x3500000 0x200000>,
-> +		      <0x3900000 0x200000>;
-> +		reg-names = "south", "center", "north";
-> +		interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> +		gpio-controller;
-> +		gpio-ranges = <&tlmm 0 0 114>;
-> +		#gpio-cells = <2>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> -- 
-> 2.18.0
+Tony
+
+8< ---------------------
+gpio gpiochip0: (gpio-0-31): added GPIO chardev (254:0)
+gpiochip_setup_dev: registered GPIOs 0 to 31 on device: gpiochip0 (gpio-0-31)
+OMAP GPIO hardware version 2.5
+gpio gpiochip1: (gpio-32-63): added GPIO chardev (254:1)
+gpiochip_setup_dev: registered GPIOs 32 to 63 on device: gpiochip1 (gpio-32-63)
+gpio gpiochip2: (gpio-64-95): added GPIO chardev (254:2)
+gpiochip_setup_dev: registered GPIOs 64 to 95 on device: gpiochip2 (gpio-64-95)
+gpio gpiochip3: (gpio-96-127): added GPIO chardev (254:3)
+gpiochip_setup_dev: registered GPIOs 96 to 127 on device: gpiochip3 (gpio-96-127)
+gpio gpiochip4: (gpio-128-159): added GPIO chardev (254:4)
+gpiochip_setup_dev: registered GPIOs 128 to 159 on device: gpiochip4 (gpio-128-159)
+gpio gpiochip5: (gpio-160-191): added GPIO chardev (254:5)
+gpiochip_setup_dev: registered GPIOs 160 to 191 on device: gpiochip5 (gpio-160-191)
+omap-gpmc 6e000000.gpmc: GPMC revision 5.0
+gpmc_mem_init: disabling cs 0 mapped at 0x0-0x1000000
+gpiochip_find_base: found new base at 508
+gpio gpiochip6: (omap-gpmc): added GPIO chardev (254:6)
+gpiochip_setup_dev: registered GPIOs 508 to 511 on device: gpiochip6 (omap-gpmc)
+Unhandled fault: external abort on non-linefetch (0x1028) at 0xfb056028
+pgd = (ptrval)
+[fb056028] *pgd=49011452(bad)
+Internal error: : 1028 [#1] SMP ARM
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc4+ #4913
+Hardware name: Generic OMAP36xx (Flattened Device Tree)
+PC is at omap_gpio_ack_irq+0x54/0x5c
+LR is at omap_gpio_ack_irq+0x20/0x5c
+pc : [<c05bc6cc>]    lr : [<c05bc698>]    psr: 200000d3
+sp : c7103718  ip : 00000001  fp : c710372c
+r10: c72b2860  r9 : c17028b8  r8 : 00000000
+r7 : 00000000  r6 : c01c4418  r5 : 00000000  r4 : c7297414
+r3 : fb056028  r2 : 00000002  r1 : 00000028  r0 : fb056000
+Flags: nzCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment none
+Control: 10c5387d  Table: 80004019  DAC: 00000051
+Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
+...
+[<c05bc6cc>] (omap_gpio_ack_irq) from [<c01c9470>] (__irq_do_set_handler+0x1c0/0x1e4)
+[<c01c9470>] (__irq_do_set_handler) from [<c01c94ec>] (__irq_set_handler+0x58/0x88)
+[<c01c94ec>] (__irq_set_handler) from [<c01c9554>] (irq_set_chip_and_handler_name+0x38/0x3c)
+[<c01c9554>] (irq_set_chip_and_handler_name) from [<c05b3fd4>] (gpiochip_irq_map+0x94/0x13c)
+[<c05b3fd4>] (gpiochip_irq_map) from [<c01cc7e0>] (irq_domain_associate+0x80/0x1c0)
+[<c01cc7e0>] (irq_domain_associate) from [<c01cd210>] (irq_create_mapping+0x74/0xdc)
+[<c01cd210>] (irq_create_mapping) from [<c01cd904>] (irq_create_fwspec_mapping+0x15c/0x338)
+[<c01cd904>] (irq_create_fwspec_mapping) from [<c01cdb48>] (irq_create_of_mapping+0x68/0x88)
+[<c01cdb48>] (irq_create_of_mapping) from [<c07cb038>] (of_irq_get+0x74/0xc4)
+[<c07cb038>] (of_irq_get) from [<c07cb0bc>] (of_irq_to_resource+0x34/0xe8)
+[<c07cb0bc>] (of_irq_to_resource) from [<c07cb1b8>] (of_irq_to_resource_table+0x48/0x5c)
+[<c07cb1b8>] (of_irq_to_resource_table) from [<c07c625c>] (of_device_alloc+0xf8/0x294)
+[<c07c625c>] (of_device_alloc) from [<c07c6450>] (of_platform_device_create_pdata+0x58/0xc8)
+[<c07c6450>] (of_platform_device_create_pdata) from [<c07c64e0>] (of_platform_device_create+0x20/0x24)
+[<c07c64e0>] (of_platform_device_create) from [<c07d1d68>] (gpmc_probe_generic_child+0x2ec/0x990)
+[<c07d1d68>] (gpmc_probe_generic_child) from [<c07d27ec>] (gpmc_probe+0x3e0/0x5a8)
+[<c07d27ec>] (gpmc_probe) from [<c067d0e8>] (platform_drv_probe+0x58/0xa8)
+[<c067d0e8>] (platform_drv_probe) from [<c067aa44>] (really_probe+0x200/0x2cc)
+[<c067aa44>] (really_probe) from [<c067ace0>] (driver_probe_device+0x6c/0x174)
+[<c067ace0>] (driver_probe_device) from [<c067afa0>] (__device_attach_driver+0xc0/0xe4)
+[<c067afa0>] (__device_attach_driver) from [<c0678a3c>] (bus_for_each_drv+0x8c/0xd4)
+[<c0678a3c>] (bus_for_each_drv) from [<c067a7b4>] (__device_attach+0xdc/0x14c)
+[<c067a7b4>] (__device_attach) from [<c067b020>] (device_initial_probe+0x1c/0x20)
+[<c067b020>] (device_initial_probe) from [<c0679a70>] (bus_probe_device+0x98/0xa0)
+[<c0679a70>] (bus_probe_device) from [<c06762b4>] (device_add+0x364/0x628)
+[<c06762b4>] (device_add) from [<c07c5f1c>] (of_device_add+0x40/0x48)
+[<c07c5f1c>] (of_device_add) from [<c07c6494>] (of_platform_device_create_pdata+0x9c/0xc8)
+[<c07c6494>] (of_platform_device_create_pdata) from [<c07c66e4>] (of_platform_bus_create+0x1b4/0x254)
+[<c07c66e4>] (of_platform_bus_create) from [<c07c6730>] (of_platform_bus_create+0x200/0x254)
+[<c07c6730>] (of_platform_bus_create) from [<c07c68d4>] (of_platform_populate+0x6c/0xbc)
+[<c07c68d4>] (of_platform_populate) from [<c0e14284>] (pdata_quirks_init+0x7c/0xa0)
+[<c0e14284>] (pdata_quirks_init) from [<c0e13c40>] (omap_generic_init+0x1c/0x28)
+[<c0e13c40>] (omap_generic_init) from [<c0e04474>] (customize_machine+0x2c/0x38)
+[<c0e04474>] (customize_machine) from [<c0103390>] (do_one_initcall+0x90/0x398)
+[<c0103390>] (do_one_initcall) from [<c0e01494>] (kernel_init_freeable+0x478/0x558)
+[<c0e01494>] (kernel_init_freeable) from [<c09aad78>] (kernel_init+0x18/0x124)
+[<c09aad78>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+Exception stack(0xc7103fb0 to 0xc7103ff8)
+3fa0:                                     00000000 00000000 00000000 00000000
+3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+Code: e3510000 0a000001 e0803001 e5832000 (e5933000)
+---[ end trace 43f0b1bf9cbb2007 ]---
