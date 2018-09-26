@@ -1,80 +1,68 @@
-From: Rajat Jain <rajatja@google.com>
-Subject: Re: sdhci driver card-detect is broken because gpiolib can't fallback
- to _CRS?
-Date: Wed, 26 Sep 2018 12:25:40 -0700
-Message-ID: <CACK8Z6F1jkSN3KXiv+0X2uh61pBkpSMpHrdMHwLarbSAFoHMUA@mail.gmail.com>
-References: <CACK8Z6Ebo0giDifRHBg13pe_mO18vb1n0+LGMoMjkLai6X9MNg@mail.gmail.com>
- <20180926074756.GD2664@lahna.fi.intel.com> <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Subject: [PATCH V3 1/2] dt-bindings: pinctrl: document Broadcom Northstar pin
+ mux controller
+Date: Wed, 26 Sep 2018 21:31:02 +0200
+Message-ID: <20180926193103.21241-1-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Hunter, Adrian" <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, Rajat Jain <rajatxjain@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
-
-Thanks Mika and Andy for your inputs.
-
-On Wed, Sep 26, 2018 at 1:42 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Wed, Sep 26, 2018 at 10:49 AM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> >
-> > Hi,
-> >
-> > On Tue, Sep 25, 2018 at 01:54:57PM -0700, Rajat Jain wrote:
-> > > * Use con_id=NULL if it is dealing with a legacy BIOS (i.e. no _DSD
-> > > properties in the ACPI).
-> > > * Use con_id=<actual string> if it is dealing with a modern BIOS (i.e.
-> > > which provides _DSD for the <string> property)
-> >
-> > Or you can use con_id=<actual string> everywhere and supply
-> > acpi_dev_add_driver_gpios() where needed to cover cases where BIOS does
-> > not provide _DSD.
-
-This sounds like a good idea and I'd like to do this. I have some
-questions though:
-
-1) If the BIOS does provide a _DSD entry for "cd-gpio", and
-additionally driver also uses devm_acpi_dev_add_driver_gpios() to add
-one more entry for the same string "cd-gpio", which one will (should?)
-actually be returned by the gpiolib? The one in BIOS or the one that
-was added by the driver?
-
-2) Related, I'm trying to understand how can a driver use
-devm_acpi_dev_add_driver_gpios(), for *only* the case where the BIOS
-does not have a _DSD (Or should it really care)? Does the driver need
-to check for _DSD using some other ACPI call?
-
-> See also Documentation/acpi/gpio-properties.txt for
-> > more information.
->
-> Thanks, Mika. That is exactly the way how I suggested to fix and
-> actually fixed a lot of drivers already.
->
-> Run `git grep -n -w devm_acpi_dev_add_driver_gpios` to find examples.
->
-> > In case of SDHCI I think the correct way is to stick using _CRS lookup
-> > only because there typically is just one GpioInt() and I have not seen a
-> > single BIOS yet where they implement _DSD for this besides yours. If
-> > there is not way to change the BIOS implementation then I guess we just
-> > need to amend the driver to call acpi_dev_add_driver_gpios().
-
-Since we shouldn't discourage a BIOS that is trying to do the right
-thing by exposing the details in _DST, I think it would be preferable
-if we can solve this in the kernel.
-
-Thanks,
-
-Rajat
-
->
-> True.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+RnJvbTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgoKTm9ydGhzdGFyIGhhcyBt
+dXggY29udHJvbGxlciBqdXN0IGxpa2UgTm9ydGhzdGFyIFBsdXMgYW5kIE5vcnRoc3RhcjIuCkl0
+J3MgYSBiaXQgZGlmZmVyZW50IHRob3VnaCAoZGlmZmVyZW50IHJlZ2lzdGVycyAmIHBpbnMpIHNv
+IGl0IHJlcXVpcmVzCml0cyBvd24gYmluZGluZy4KCkl0J3MgbmVlZGVkIHRvIGFsbG93IG90aGVy
+IGJsb2NrIGJpbmRpbmdzIHNwZWNpZnkgcmVxdWlyZWQgbXV4IHNldHVwLgoKU2lnbmVkLW9mZi1i
+eTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgpSZXZpZXdlZC1ieTogRmxvcmlh
+biBGYWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+Ci0tLQpWMjogVXNlICJjcnVfZ3Bpb19j
+b250cm9sIgogICAgQWRkIG1vcmUgZnVuY3Rpb25zICYgZ3JvdXBzCiAgICBJbmNsdWRlIEZsb3Jp
+YW4ncyBSZXZpZXdlZC1ieQpWMzogVXNlIDMgZGlmZmVyZW50IGJpbmRpbmdzIGFzIGF2YWlsYWJs
+ZSBwaW5zIGRlcGVuZCBvbiB0aGUgY2hpcHNldC4KICAgIFN0cmluZ3MgbWF0Y2ggRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9iY20vYnJjbSxiY200NzA4LnR4dAotLS0KIC4u
+Li9iaW5kaW5ncy9waW5jdHJsL2JyY20sYmNtNDcwOC1waW5tdXgudHh0ICAgICAgIHwgNDIgKysr
+KysrKysrKysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDQyIGluc2VydGlvbnMoKykKIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3Ry
+bC9icmNtLGJjbTQ3MDgtcGlubXV4LnR4dAoKZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL2JyY20sYmNtNDcwOC1waW5tdXgudHh0IGIvRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvYnJjbSxiY200NzA4LXBpbm11eC50
+eHQKbmV3IGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMDAwMDAwLi5hZjkwNmYxOTZlOGMK
+LS0tIC9kZXYvbnVsbAorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGlu
+Y3RybC9icmNtLGJjbTQ3MDgtcGlubXV4LnR4dApAQCAtMCwwICsxLDQyIEBACitCcm9hZGNvbSBO
+b3J0aHN0YXIgcGlucyBtdXggY29udHJvbGxlcgorCitTb21lIG9mIE5vcnRoc3RhciBTb0NzJ3Mg
+cGlucyBjYW4gYmUgdXNlZCBmb3IgdmFyaW91cyBwdXJwb3NlcyB0aGFua3MgdG8gdGhlIG11eAor
+Y29udHJvbGxlci4gVGhpcyBiaW5kaW5nIGFsbG93cyBkZXNjcmliaW5nIG11eCBjb250cm9sbGVy
+IGFuZCBsaXN0aW5nIGF2YWlsYWJsZQorZnVuY3Rpb25zLiBUaGV5IGNhbiBiZSByZWZlcmVuY2Vk
+IGxhdGVyIGJ5IG90aGVyIGJpbmRpbmdzIHRvIGxldCBzeXN0ZW0KK2NvbmZpZ3VyZSBjb250cm9s
+bGVyIGNvcnJlY3RseS4KKworQSBsaXN0IG9mIHBpbnMgdmFyaWVzIGFjcm9zcyBjaGlwc2V0cyBz
+byBmZXcgYmluZGluZ3MgYXJlIGF2YWlsYWJsZS4KKworUmVxdWlyZWQgcHJvcGVydGllczoKKy0g
+Y29tcGF0aWJsZTogbXVzdCBiZSBvbmUgb2Y6CisJImJyY20sYmNtNDcwOC1waW5tdXgiCisJImJy
+Y20sYmNtNDcwOS1waW5tdXgiCisJImJyY20sYmNtNTMwMTItcGlubXV4IgorLSByZWc6IGlvbWVt
+IGFkZHJlc3MgcmFuZ2Ugb2YgQ1JVIChDZW50cmFsIFJlc291cmNlIFVuaXQpIHBpbiByZWdpc3Rl
+cnMKKy0gcmVnLW5hbWVzOiAiY3J1X2dwaW9fY29udHJvbCIgLSB0aGUgb25seSBuZWVkZWQgJiBz
+dXBwb3J0ZWQgcmVnIHJpZ2h0IG5vdworCitGdW5jdGlvbnMgYW5kIHRoZWlyIGdyb3VwcyBhdmFp
+bGFibGUgZm9yIGFsbCBjaGlwc2V0czoKKy0gInNwaSI6ICJzcGlfZ3JwIgorLSAiaTJjIjogImky
+Y19ncnAiCistICJwd20iOiAicHdtMF9ncnAiLCAicHdtMV9ncnAiLCAicHdtMl9ncnAiLCAicHdt
+M19ncnAiCistICJ1YXJ0MSI6ICJ1YXJ0MV9ncnAiCisKK0FkZGl0aW9uYWxseSBhdmFpbGFibGUg
+b24gQkNNNDcwOSBhbmQgQkNNNTMwMTI6CistICJtZGlvIjogIm1kaW9fZ3JwIgorLSAidWFydDIi
+OiAidWFydDJfZ3JwIgorLSAic2RpbyI6ICJzZGlvX3B3cl9ncnAiLCAic2Rpb18xcDh2X2dycCIK
+KworRm9yIGRvY3VtZW50YXRpb24gb2Ygc3Vibm9kZXMgc2VlOgorRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvcGluY3RybC1iaW5kaW5ncy50eHQKKworRXhhbXBsZToK
+KwlwaW5jdHJsQDE4MDBjMWMwIHsKKwkJY29tcGF0aWJsZSA9ICJicmNtLGJjbTQ3MDgtcGlubXV4
+IjsKKwkJcmVnID0gPDB4MTgwMGMxYzAgMHgyND47CisJCXJlZy1uYW1lcyA9ICJjcnVfZ3Bpb19j
+b250cm9sIjsKKworCQlzcGkgeworCQkJZnVuY3Rpb24gPSAic3BpIjsKKwkJCWdyb3VwcyA9ICJz
+cGlfZ3JwIjsKKwkJfTsKKwl9OwotLSAKMi4xMy43CgoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGlu
+dXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQu
+b3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
