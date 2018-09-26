@@ -1,61 +1,70 @@
-From: Sean Wang <sean.wang@mediatek.com>
-Subject: Re: [PATCH] pinctrl: mediatek: mark dummy helpers as 'static inline'
-Date: Thu, 27 Sep 2018 06:33:53 +0800
-Message-ID: <1538001233.30348.20.camel@mtkswgap22>
-References: <20180926193818.2481220-1-arnd@arndb.de>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/7] dt-bindings: mfd: Add ST Multi-Function eXpander
+ (STMFX) core bindings
+Date: Wed, 26 Sep 2018 17:57:54 -0500
+Message-ID: <20180926225754.GA20472@bogus>
+References: <1537363669-25991-1-git-send-email-amelie.delaunay@st.com>
+ <1537363669-25991-2-git-send-email-amelie.delaunay@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180926193818.2481220-1-arnd@arndb.de>
+Content-Disposition: inline
+In-Reply-To: <1537363669-25991-2-git-send-email-amelie.delaunay@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
-
-On Wed, 2018-09-26 at 21:38 +0200, Arnd Bergmann wrote:
-> mtk_eint_set_debounce and mtk_eint_find_irq are defined as stub functions
-> in a header file, but without marking them as 'static inline', we get
-> a copy for each file that includes the header:
+On Wed, Sep 19, 2018 at 03:27:43PM +0200, Amelie Delaunay wrote:
+> This patch adds documentation of device tree bindings for the
+> STMicroelectronics Multi-Function eXpander (STMFX) MFD core.
 > 
-> drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.o: In function `mtk_eint_set_debounce':
-> pinctrl-mtk-common-v2.c:(.text+0x134): multiple definition of `mtk_eint_set_debounce'
-> drivers/pinctrl/mediatek/pinctrl-moore.o:pinctrl-moore.c:(.text+0x7d0): first defined here
-> drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.o: In function `mtk_eint_find_irq':
-> pinctrl-mtk-common-v2.c:(.text+0x13c): multiple definition of `mtk_eint_find_irq'
-> 
-> Fixes: e46df235b4e6 ("pinctrl: mediatek: refactor EINT related code for all MediaTek pinctrl can fit")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-
-Thank for the fixes for that I miss to mark the two functions as 'static
-inline'. The other functions in the same header file seem fine.
-
-Acked-by: Sean Wang <sean.wang@mediatek.com>
-
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 > ---
->  drivers/pinctrl/mediatek/mtk-eint.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/mfd/stmfx.txt | 28 +++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
 > 
-> diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
-> index c286a9b940f2..48468d0fae68 100644
-> --- a/drivers/pinctrl/mediatek/mtk-eint.h
-> +++ b/drivers/pinctrl/mediatek/mtk-eint.h
-> @@ -92,13 +92,13 @@ static inline int mtk_eint_do_resume(struct mtk_eint *eint)
->  	return -EOPNOTSUPP;
->  }
->  
-> -int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_n,
-> +static inline int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_n,
->  			  unsigned int debounce)
->  {
->  	return -EOPNOTSUPP;
->  }
->  
-> -int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n)
-> +static inline int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n)
->  {
->  	return -EOPNOTSUPP;
->  }
+> diff --git a/Documentation/devicetree/bindings/mfd/stmfx.txt b/Documentation/devicetree/bindings/mfd/stmfx.txt
+> new file mode 100644
+> index 0000000..21cf798
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/stmfx.txt
+> @@ -0,0 +1,28 @@
+> +STMicroelectonics Multi-Function eXpander (STMFX) Core bindings
+> +
+> +ST Multi-Function eXpander (STMFX) is a slave controller using I2C for
+> +communication with the main MCU. Its main features are GPIO expansion, main
+> +MCU IDD measurement (IDD is the amount of current that flows through VDD) and
+> +resistive touchscreen controller.
+> +
+> +Required properties:
+> +- compatible: should be "st,stmfx-0300".
+> +- reg: I2C slave address of the device.
+> +- interrupt-parent: phandle of the STMFX parent interrupt controller.
+
+Drop this. It is implied and could be in the parent.
+
+> +- interrutps: interrupt specifier triggered by MFX_IRQ_OUT signal.
+
+typo
+
+> +
+> +Optional properties:
+> +- drive-open-drain: configure MFX_IRQ_OUT as open drain.
+> +- vdd-supply: phandle of the regulator supplying STMFX.
+> +
+> +Example:
+> +
+> +	stmfx: stmfx@42 {
+> +		compatible = "st,stmfx-0300";
+> +		reg = <0x42>;
+> +		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
+> +		interrupt-parent = <&gpioi>;
+> +		vdd-supply = <&v3v3>;
+> +	};
+> +
+> +Please refer to ../pinctrl/pinctrl-stmfx.txt for STMFX GPIO expander function bindings.
+> -- 
+> 2.7.4
+> 
