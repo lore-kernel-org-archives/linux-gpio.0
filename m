@@ -1,48 +1,59 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: sdhci driver card-detect is broken because gpiolib can't fallback
- to _CRS?
-Date: Wed, 26 Sep 2018 11:42:21 +0300
-Message-ID: <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
-References: <CACK8Z6Ebo0giDifRHBg13pe_mO18vb1n0+LGMoMjkLai6X9MNg@mail.gmail.com>
- <20180926074756.GD2664@lahna.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v5 0/3] Renesas R9A06G032 PINCTRL Driver
+Date: Wed, 26 Sep 2018 10:10:50 +0100
+Message-ID: <20180926091053.21255-1-phil.edworthy@renesas.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180926074756.GD2664@lahna.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Rajat Jain <rajatja@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dtor@google.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, Rajat Jain <rajatxjain@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 10:49 AM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> Hi,
->
-> On Tue, Sep 25, 2018 at 01:54:57PM -0700, Rajat Jain wrote:
-> > * Use con_id=NULL if it is dealing with a legacy BIOS (i.e. no _DSD
-> > properties in the ACPI).
-> > * Use con_id=<actual string> if it is dealing with a modern BIOS (i.e.
-> > which provides _DSD for the <string> property)
->
-> Or you can use con_id=<actual string> everywhere and supply
-> acpi_dev_add_driver_gpios() where needed to cover cases where BIOS does
-> not provide _DSD. See also Documentation/acpi/gpio-properties.txt for
-> more information.
+This implements the pinctrl driver for the RZ/N1 family of devices, including
+the R9A06G032 (RZ/N1D) device.
 
-Thanks, Mika. That is exactly the way how I suggested to fix and
-actually fixed a lot of drivers already.
+This series was originally written by Michel Pollet whilst at Renesas, and I
+have taken over this work.
 
-Run `git grep -n -w devm_acpi_dev_add_driver_gpios` to find examples.
+Main changes:
+v5:
+ - Address Jacopo's further comments
+ - Address Geert's comments
 
-> In case of SDHCI I think the correct way is to stick using _CRS lookup
-> only because there typically is just one GpioInt() and I have not seen a
-> single BIOS yet where they implement _DSD for this besides yours. If
-> there is not way to change the BIOS implementation then I guess we just
-> need to amend the driver to call acpi_dev_add_driver_gpios().
+v4:
+ - Address Jacopo's comments
+ - Add alternative way to use the pinmux prop.
+ - Remove mention of gpios.
+ - Implement pin_config_group_get()
+ - Fix function to get pin configs, i.e. return -EINVAL when disabled.
 
-True.
+v3:
+ - Use standard DT props instead of proprietary ones.
+ - Replace virtual pins used for MDIO muxing with extra funcs.
+ - Use pinctrl_utils funcs to handle the maps.
+ - Remove the dbg functions to keep things simple.
+ - Change the way the functions are defined so it is easy to check
+   against the hardware numbering.
+
+v2:
+ - Change to generic rzn1 family driver, instead of device specific.
+ - Review comments fixed.
+ - Fix error handling during probe
+
+Phil Edworthy (3):
+  dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+  pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+  ARM: dts: r9a06g032: Add pinctrl node
+
+ .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 153 +++
+ arch/arm/boot/dts/r9a06g032.dtsi              |   8 +
+ drivers/pinctrl/Kconfig                       |  10 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-rzn1.c                | 948 ++++++++++++++++++
+ include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 +++
+ 6 files changed, 1261 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
+ create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
