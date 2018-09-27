@@ -1,60 +1,22 @@
-From: Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v3 1/7] dt-bindings: mfd: Add ST Multi-Function eXpander (STMFX) core bindings
-Date: Thu, 27 Sep 2018 13:39:58 +0200
-Message-ID: <1538048404-9041-2-git-send-email-amelie.delaunay@st.com>
-References: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
+From: Timur Tabi <timur@kernel.org>
+Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
+Date: Thu, 27 Sep 2018 07:19:26 -0500
+Message-ID: <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org>
+References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+ <20180921103604.13361-2-ricardo.ribalda@gmail.com>
+ <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
+In-Reply-To: <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, Amelie Delaunay <amelie.delaunay@st.com>
+To: Stephen Boyd <swboyd@chromium.org>, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Jeffrey Hugo <jhugo@codeaurora.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds documentation of device tree bindings for the
-STMicroelectronics Multi-Function eXpander (STMFX) MFD core.
+On 9/27/18 1:51 AM, Stephen Boyd wrote:
+> Looks OK to me visually. I haven't tested it because I don't have access
+> to the locked down hardware anymore.
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- Documentation/devicetree/bindings/mfd/stmfx.txt | 28 +++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
-
-diff --git a/Documentation/devicetree/bindings/mfd/stmfx.txt b/Documentation/devicetree/bindings/mfd/stmfx.txt
-new file mode 100644
-index 0000000..f0c2f7f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/stmfx.txt
-@@ -0,0 +1,28 @@
-+STMicroelectonics Multi-Function eXpander (STMFX) Core bindings
-+
-+ST Multi-Function eXpander (STMFX) is a slave controller using I2C for
-+communication with the main MCU. Its main features are GPIO expansion, main
-+MCU IDD measurement (IDD is the amount of current that flows through VDD) and
-+resistive touchscreen controller.
-+
-+Required properties:
-+- compatible: should be "st,stmfx-0300".
-+- reg: I2C slave address of the device.
-+- interrupts: interrupt specifier triggered by MFX_IRQ_OUT signal.
-+  Please refer to ../interrupt-controller/interrupt.txt
-+
-+Optional properties:
-+- drive-open-drain: configure MFX_IRQ_OUT as open drain.
-+- vdd-supply: phandle of the regulator supplying STMFX.
-+
-+Example:
-+
-+	stmfx: stmfx@42 {
-+		compatible = "st,stmfx-0300";
-+		reg = <0x42>;
-+		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-parent = <&gpioi>;
-+		vdd-supply = <&v3v3>;
-+	};
-+
-+Please refer to ../pinctrl/pinctrl-stmfx.txt for STMFX GPIO expander function bindings.
--- 
-2.7.4
+Same here.  Please wait for Jeff Hugo to test it before applying.  Thanks.
