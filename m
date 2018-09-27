@@ -1,54 +1,50 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH] pinctrl: sprd: Move DT parsing before registering pinctrl device
-Date: Thu, 27 Sep 2018 17:15:08 +0800
-Message-ID: <07c454a686966823161ebfe1ed7c08f29032fb2c.1538039535.git.baolin.wang@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, orsonzhai@gmail.com, zhang.lyra@gmail.com
-Cc: baolin.wang@linaro.org, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
+Subject: Re: [PATCH 1/3] pinctrl: mcp23s08: fix debugfs entry for mcp23s18 =?iso-8859-1?Q?device?=
+Date: Thu, 27 Sep 2018 12:54:26 +0200
+Message-ID: <3cc5ba12-5296-4c80-8e54-eab13f43823a@cesnet.cz>
+References: <20180925145616.12610-1-m.felsch@pengutronix.de>
+ <20180925145616.12610-2-m.felsch@pengutronix.de>
+ <02d7e7b6-6dd4-1f3d-eeaa-07e38b427428@electromag.com.au>
+ <20180926094225.xpm4mkxlmkjg2d5x@pengutronix.de>
+ <252ce4f2-ccd2-2983-0a28-103801eeb21c@electromag.com.au>
+ <20180927085511.uarkv4kkou4crr3e@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20180927085511.uarkv4kkou4crr3e@pengutronix.de>
+Sender: stable-owner@vger.kernel.org
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Phil Reid <preid@electromag.com.au>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-It will be failed to select default or sleep state for pins hogged
-by the pin controller device, since we hadn't parsed pins configuration
-in device tree before registering the pin controller device. Thus
-we should move the device tree parsing function before registering
-the pin controller device.
+On =C4=8Dtvrtek 27. z=C3=A1=C5=99=C3=AD 2018 10:55:11 CEST, Marco Felsch wrot=
+e:
+> Hi Phil,
+>
+> On 18-09-27 09:45, Phil Reid wrote:
+>> On 26/09/2018 5:42 PM, Marco Felsch wrote:
+>>> On 18-09-26 07:55, Phil Reid wrote: ...
+>> G'day Marco,
+>>=20
+>> Sorry I still don't follow.
+>> I've got a mcp23s18 in one of my systems and debugfs seems to work fine.
+>>=20
+>> one_regmap_config is only used for the S08/S17 to fiddle with=20
+>> the name / label
+>
+> I know, but if I read the code correctly it shouldn't work, because in
+> your case one_regmap_config is never modified, as you told. But it is
+> initialized to NULL. This confuses me a bit.
+>
+> This tested should not be made for the MCP_TYPE_S18 case.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/pinctrl/sprd/pinctrl-sprd.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Ah, right. This means that the stable tree(s) need this follow-up patch=20
+from February, too:
 
-diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
-index 78c2f54..4537b54 100644
---- a/drivers/pinctrl/sprd/pinctrl-sprd.c
-+++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
-@@ -1059,6 +1059,12 @@ int sprd_pinctrl_core_probe(struct platform_device *pdev,
- 		return ret;
- 	}
- 
-+	ret = sprd_pinctrl_parse_dt(sprd_pctl);
-+	if (ret) {
-+		dev_err(&pdev->dev, "fail to parse dt properties\n");
-+		return ret;
-+	}
-+
- 	pin_desc = devm_kcalloc(&pdev->dev,
- 				pinctrl_info->npins,
- 				sizeof(struct pinctrl_pin_desc),
-@@ -1083,13 +1089,6 @@ int sprd_pinctrl_core_probe(struct platform_device *pdev,
- 		return PTR_ERR(sprd_pctl->pctl);
- 	}
- 
--	ret = sprd_pinctrl_parse_dt(sprd_pctl);
--	if (ret) {
--		dev_err(&pdev->dev, "fail to parse dt properties\n");
--		pinctrl_unregister(sprd_pctl->pctl);
--		return ret;
--	}
--
- 	return 0;
- }
- 
--- 
-1.7.9.5
+  https://patchwork.ozlabs.org/patch/875045/
+
+Thanks for catching this.
+
+With kind regards,
+Jan
