@@ -1,89 +1,85 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v6 1/3] dt-bindings: pinctrl: renesas,rzn1-pinctrl:
- documentation
-Date: Thu, 27 Sep 2018 11:25:36 -0500
-Message-ID: <20180927162536.GA16329@bogus>
-References: <20180927135922.12015-1-phil.edworthy@renesas.com>
- <20180927135922.12015-2-phil.edworthy@renesas.com>
- <CAMuHMdV1n9KgU+6LxY3_jHTqgL1gKs+54yY0qjnwBeQX7UdOSg@mail.gmail.com>
+From: Rajat Jain <rajatja@google.com>
+Subject: Re: sdhci driver card-detect is broken because gpiolib can't fallback
+ to _CRS?
+Date: Thu, 27 Sep 2018 10:56:39 -0700
+Message-ID: <CACK8Z6HjFy_5sv_ZRRyfRgCYMYPpuoFqmKekyi7fSLk14YpN6w@mail.gmail.com>
+References: <CACK8Z6Ebo0giDifRHBg13pe_mO18vb1n0+LGMoMjkLai6X9MNg@mail.gmail.com>
+ <20180926074756.GD2664@lahna.fi.intel.com> <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
+ <CACK8Z6F1jkSN3KXiv+0X2uh61pBkpSMpHrdMHwLarbSAFoHMUA@mail.gmail.com> <CAHp75VcQ0SviZ6vsn_5inn5oZxxj-5ZQq5bC+bXPxuF8KOa_Rg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV1n9KgU+6LxY3_jHTqgL1gKs+54yY0qjnwBeQX7UdOSg@mail.gmail.com>
+In-Reply-To: <CAHp75VcQ0SviZ6vsn_5inn5oZxxj-5ZQq5bC+bXPxuF8KOa_Rg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Rutland <mark.rutland@arm.com>, Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Hunter, Adrian" <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, Rajat Jain <rajatxjain@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 05:15:54PM +0200, Geert Uytterhoeven wrote:
-> On Thu, Sep 27, 2018 at 3:59 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> > The Renesas RZ/N1 device family PINCTRL node description.
+On Thu, Sep 27, 2018 at 12:26 AM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Wed, Sep 26, 2018 at 10:26 PM Rajat Jain <rajatja@google.com> wrote:
+> > On Wed, Sep 26, 2018 at 1:42 AM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Wed, Sep 26, 2018 at 10:49 AM Mika Westerberg
+> > > <mika.westerberg@linux.intel.com> wrote:
+>
+> > > > Or you can use con_id=<actual string> everywhere and supply
+> > > > acpi_dev_add_driver_gpios() where needed to cover cases where BIOS does
+> > > > not provide _DSD.
 > >
-> > Based on a patch originally written by Michel Pollet at Renesas.
+> > This sounds like a good idea and I'd like to do this. I have some
+> > questions though:
 > >
-> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> > v6:
-> >  - Instead of combining the pin nr and func into a single element, use
-> >    a pair of 8-bit elements.
-> 
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
-> 
-> > +- Pin multiplexing sub-nodes:
-> > +  A pin multiplexing sub-node describes how to configure a set of
-> > +  (or a single) pin in some desired alternate function mode.
-> > +  A single sub-node may define several pin configurations.
-> > +  Please refer to pinctrl-bindings.txt to get to know more on generic
-> > +  pin properties usage.
-> > +
-> > +  The allowed generic formats for a pin multiplexing sub-node are the
-> > +  following ones:
-> > +
-> > +  node-1 {
-> > +      pinmux = /bits/ 8 <PIN_NR MUX_FUNC>, <PIN_NR MUX_FUNC>, ... ;
-> > +      GENERIC_PINCONFIG;
-> > +  };
-> 
-> and
-> 
-> > +  Example:
-> > +  A serial communication interface with a TX output pin and an RX input pin.
-> > +
-> > +  &pinctrl {
-> > +       pins_uart0: pins_uart0 {
-> > +               pinmux = /bits/ 8 <
-> > +                       103 RZN1_FUNC_UART0_I   /* UART0_TXD */
-> > +                       104 RZN1_FUNC_UART0_I   /* UART0_RXD */
-> > +               >;
-> > +       };
-> > +  };
-> 
-> So the above is in response to Rob's comment on v4:
-> 
-> | > +#define RZN1_MUX(_gpio, _func) \
-> | > +       (((RZN1_FUNC_##_func) << 8) | (_gpio))
-> |
-> | I'm not a fan of token pasting and it also goes against kernel style.
-> | If every other Renesas platform is doing this, then fine. Otherwise,
-> | you can express it in pretty much the same (source) space:
-> |
-> | pinmux = <RZN1_MUX_UART0_I 104>;
-> |
-> | Yes, this is 2 cells instead of 1, but if you care about space, you
-> | can use 8 or 16 bit size.
-> 
-> I'm not so much impressed by the "/bits/ 8" part.
-> No other pinctrl bindings uses this.
-> We do have RZA1_PINMUX() and STM32_PINMUX() macros.
+> > 1) If the BIOS does provide a _DSD entry for "cd-gpio", and
+> > additionally driver also uses devm_acpi_dev_add_driver_gpios() to add
+> > one more entry for the same string "cd-gpio", which one will (should?)
+> > actually be returned by the gpiolib? The one in BIOS or the one that
+> > was added by the driver?
+>
+> Of course the one that BIOS provides. This hardcoded mapping tables is
+> a fallback for *old* BIOSes which do not have _DSD.
+>
+> > 2) Related, I'm trying to understand how can a driver use
+> > devm_acpi_dev_add_driver_gpios(), for *only* the case where the BIOS
+> > does not have a _DSD (Or should it really care)? Does the driver need
+> > to check for _DSD using some other ACPI call?
+>
+> The magic happens internally in ACPI core.
+> Whenever one calls gpiod_get() with a name on ACPI-enabled platform,
+> _DSD would be checked first.
 
-Yes, but those aren't doing token pasting which was my complaint here.
+Got it, thanks.
 
-> Rob: Is this really what you intended?
+>
+> > > See also Documentation/acpi/gpio-properties.txt for
+> > > > more information.
+>
+> > > > In case of SDHCI I think the correct way is to stick using _CRS lookup
+> > > > only because there typically is just one GpioInt() and I have not seen a
+> > > > single BIOS yet where they implement _DSD for this besides yours. If
+> > > > there is not way to change the BIOS implementation then I guess we just
+> > > > need to amend the driver to call acpi_dev_add_driver_gpios().
+> >
+> > Since we shouldn't discourage a BIOS that is trying to do the right
+> > thing by exposing the details in _DST, I think it would be preferable
+> > if we can solve this in the kernel.
+>
+> Patches are welcome, I think.
+>
+> Btw, is there any existing hardware on the market with such BIOS?
 
-Do whatever is most consistant. If you want a macro to shift fields, 
-then fine.
+Yes, all the chrome books available in the market (at least the ones
+released in last 3 years) have same ACPI layout (provide _DSD for
+card-detect). They are all working fine today because they use an
+older kernel, but if we update them to the latest kernel, this part
+will be broken.
 
-Rob
+Thanks,
+
+Rajat Jain
+
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
