@@ -1,182 +1,87 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] gpio: Propagate errors from gpiod_set_array_value_complex()
-Date: Thu, 27 Sep 2018 13:38:09 +0200
-Message-ID: <20180927113810.30721-3-geert+renesas@glider.be>
-References: <20180927113810.30721-1-geert+renesas@glider.be>
+From: Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH v3 6/7] ARM: dts: stm32: add joystick support on stm32746g-eval
+Date: Thu, 27 Sep 2018 13:40:03 +0200
+Message-ID: <1538048404-9041-7-git-send-email-amelie.delaunay@st.com>
+References: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180927113810.30721-1-geert+renesas@glider.be>
+In-Reply-To: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Laura Abbott <labbott@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, Amelie Delaunay <amelie.delaunay@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Internal helper function gpiod_set_array_value_complex() was changed to
-return an error value, but not all gpiolib callers were updated to
-propagate the new error up.
+The joystick (B3) on stm32746g-eval uses gpios on STMFX gpio expander.
+These gpios need a pin configuration (push-pull and bias-pull-up),
+described under stmfx_pinctrl node.
 
-Fixes: 3027743f83f867d8 ("gpio: Remove VLA from gpiolib")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-v2:
-  - Rebase on top of gpio array rework.
----
- Documentation/driver-api/gpio/consumer.rst | 16 ++++++------
- drivers/gpio/gpiolib.c                     | 30 ++++++++++++----------
- include/linux/gpio/consumer.h              | 28 ++++++++++----------
- 3 files changed, 39 insertions(+), 35 deletions(-)
+ arch/arm/boot/dts/stm32746g-eval.dts | 43 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
-index ba4973829faef238..5e4d8aa68913529c 100644
---- a/Documentation/driver-api/gpio/consumer.rst
-+++ b/Documentation/driver-api/gpio/consumer.rst
-@@ -340,18 +340,18 @@ The following functions get or set the values of an array of GPIOs::
- 					   struct gpio_array *array_info,
- 					   unsigned long *value_bitmap);
+diff --git a/arch/arm/boot/dts/stm32746g-eval.dts b/arch/arm/boot/dts/stm32746g-eval.dts
+index 203faf0..b86ad83 100644
+--- a/arch/arm/boot/dts/stm32746g-eval.dts
++++ b/arch/arm/boot/dts/stm32746g-eval.dts
+@@ -86,6 +86,43 @@
+ 		};
+ 	};
  
--	void gpiod_set_array_value(unsigned int array_size,
--				   struct gpio_desc **desc_array,
--				   struct gpio_array *array_info,
--				   unsigned long *value_bitmap)
-+	int gpiod_set_array_value(unsigned int array_size,
-+				  struct gpio_desc **desc_array,
-+				  struct gpio_array *array_info,
-+				  unsigned long *value_bitmap)
- 	int gpiod_set_raw_array_value(unsigned int array_size,
- 				      struct gpio_desc **desc_array,
- 				      struct gpio_array *array_info,
- 				      unsigned long *value_bitmap)
--	void gpiod_set_array_value_cansleep(unsigned int array_size,
--					    struct gpio_desc **desc_array,
--					    struct gpio_array *array_info,
--					    unsigned long *value_bitmap)
-+	int gpiod_set_array_value_cansleep(unsigned int array_size,
-+					   struct gpio_desc **desc_array,
-+					   struct gpio_array *array_info,
-+					   unsigned long *value_bitmap)
- 	int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 					       struct gpio_desc **desc_array,
- 					       struct gpio_array *array_info,
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a53d17745d210480..843a8075ac437d57 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3306,15 +3306,16 @@ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
-  * This function should be called from contexts where we cannot sleep, and will
-  * complain if the GPIO chip functions potentially sleep.
-  */
--void gpiod_set_array_value(unsigned int array_size,
--			   struct gpio_desc **desc_array,
--			   struct gpio_array *array_info,
--			   unsigned long *value_bitmap)
-+int gpiod_set_array_value(unsigned int array_size,
-+			  struct gpio_desc **desc_array,
-+			  struct gpio_array *array_info,
-+			  unsigned long *value_bitmap)
- {
- 	if (!desc_array)
--		return;
--	gpiod_set_array_value_complex(false, false, array_size, desc_array,
--				      array_info, value_bitmap);
-+		return -EINVAL;
-+	return gpiod_set_array_value_complex(false, false, array_size,
-+					     desc_array, array_info,
-+					     value_bitmap);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_array_value);
- 
-@@ -3723,16 +3724,17 @@ void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n)
-  *
-  * This function is to be called from contexts that can sleep.
-  */
--void gpiod_set_array_value_cansleep(unsigned int array_size,
--				    struct gpio_desc **desc_array,
--				    struct gpio_array *array_info,
--				    unsigned long *value_bitmap)
-+int gpiod_set_array_value_cansleep(unsigned int array_size,
-+				   struct gpio_desc **desc_array,
-+				   struct gpio_array *array_info,
-+				   unsigned long *value_bitmap)
- {
- 	might_sleep_if(extra_checks);
- 	if (!desc_array)
--		return;
--	gpiod_set_array_value_complex(false, true, array_size, desc_array,
--				      array_info, value_bitmap);
-+		return -EINVAL;
-+	return gpiod_set_array_value_complex(false, true, array_size,
-+					     desc_array, array_info,
-+					     value_bitmap);
- }
- EXPORT_SYMBOL_GPL(gpiod_set_array_value_cansleep);
- 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index d7fbe30ece849cd7..136aeca37740decf 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -117,10 +117,10 @@ int gpiod_get_array_value(unsigned int array_size,
- 			  struct gpio_array *array_info,
- 			  unsigned long *value_bitmap);
- void gpiod_set_value(struct gpio_desc *desc, int value);
--void gpiod_set_array_value(unsigned int array_size,
--			   struct gpio_desc **desc_array,
--			   struct gpio_array *array_info,
--			   unsigned long *value_bitmap);
-+int gpiod_set_array_value(unsigned int array_size,
-+			  struct gpio_desc **desc_array,
-+			  struct gpio_array *array_info,
-+			  unsigned long *value_bitmap);
- int gpiod_get_raw_value(const struct gpio_desc *desc);
- int gpiod_get_raw_array_value(unsigned int array_size,
- 			      struct gpio_desc **desc_array,
-@@ -139,10 +139,10 @@ int gpiod_get_array_value_cansleep(unsigned int array_size,
- 				   struct gpio_array *array_info,
- 				   unsigned long *value_bitmap);
- void gpiod_set_value_cansleep(struct gpio_desc *desc, int value);
--void gpiod_set_array_value_cansleep(unsigned int array_size,
--				    struct gpio_desc **desc_array,
--				    struct gpio_array *array_info,
--				    unsigned long *value_bitmap);
-+int gpiod_set_array_value_cansleep(unsigned int array_size,
-+				   struct gpio_desc **desc_array,
-+				   struct gpio_array *array_info,
-+				   unsigned long *value_bitmap);
- int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc);
- int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
- 				       struct gpio_desc **desc_array,
-@@ -361,13 +361,14 @@ static inline void gpiod_set_value(struct gpio_desc *desc, int value)
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
- }
--static inline void gpiod_set_array_value(unsigned int array_size,
--					 struct gpio_desc **desc_array,
--					 struct gpio_array *array_info,
--					 unsigned long *value_bitmap)
-+static inline int gpiod_set_array_value(unsigned int array_size,
-+					struct gpio_desc **desc_array,
-+					struct gpio_array *array_info,
-+					unsigned long *value_bitmap)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
-+	return 0;
- }
- static inline int gpiod_get_raw_value(const struct gpio_desc *desc)
- {
-@@ -419,13 +420,14 @@ static inline void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
- }
--static inline void gpiod_set_array_value_cansleep(unsigned int array_size,
-+static inline int gpiod_set_array_value_cansleep(unsigned int array_size,
- 					    struct gpio_desc **desc_array,
- 					    struct gpio_array *array_info,
- 					    unsigned long *value_bitmap)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
-+	return 0;
- }
- static inline int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
- {
++	joystick {
++		compatible = "gpio-keys";
++		#size-cells = <0>;
++		pinctrl-0 = <&joystick_pins>;
++		pinctrl-names = "default";
++		button-0 {
++			label = "JoySel";
++			linux,code = <KEY_ENTER>;
++			interrupt-parent = <&stmfx_pinctrl>;
++			interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
++		};
++		button-1 {
++			label = "JoyDown";
++			linux,code = <KEY_DOWN>;
++			interrupt-parent = <&stmfx_pinctrl>;
++			interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
++		};
++		button-2 {
++			label = "JoyLeft";
++			linux,code = <KEY_LEFT>;
++			interrupt-parent = <&stmfx_pinctrl>;
++			interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
++		};
++		button-3 {
++			label = "JoyRight";
++			linux,code = <KEY_RIGHT>;
++			interrupt-parent = <&stmfx_pinctrl>;
++			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
++		};
++		button-4 {
++			label = "JoyUp";
++			linux,code = <KEY_UP>;
++			interrupt-parent = <&stmfx_pinctrl>;
++			interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
++		};
++	};
++
+ 	usbotg_hs_phy: usb-phy {
+ 		#phy-cells = <0>;
+ 		compatible = "usb-nop-xceiv";
+@@ -129,6 +166,12 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 			gpio-ranges = <&stmfx_pinctrl 0 0 24>;
++
++			joystick_pins: joystick {
++				pins = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4";
++				drive-push-pull;
++				bias-pull-up;
++			};
+ 		};
+ 	};
+ };
 -- 
-2.17.1
+2.7.4
