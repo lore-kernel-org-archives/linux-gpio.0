@@ -1,7 +1,7 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/3] gpio: Restore indentation of continued lines
-Date: Thu, 27 Sep 2018 13:38:10 +0200
-Message-ID: <20180927113810.30721-4-geert+renesas@glider.be>
+Subject: [PATCH v2 2/3] gpio: Propagate errors from gpiod_set_array_value_complex()
+Date: Thu, 27 Sep 2018 13:38:09 +0200
+Message-ID: <20180927113810.30721-3-geert+renesas@glider.be>
 References: <20180927113810.30721-1-geert+renesas@glider.be>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180927113810.30721-1-geert+renesas@glider.be>
@@ -10,123 +10,173 @@ To: Linus Walleij <linus.walleij@linaro.org>, Laura Abbott <labbott@redhat.com>
 Cc: Jonathan Corbet <corbet@lwn.net>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
+Internal helper function gpiod_set_array_value_complex() was changed to
+return an error value, but not all gpiolib callers were updated to
+propagate the new error up.
+
 Fixes: 3027743f83f867d8 ("gpio: Remove VLA from gpiolib")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - Rebase on top of gpio array rework.
 ---
- drivers/gpio/gpiolib.c        | 20 ++++++++++----------
- drivers/gpio/gpiolib.h        |  8 ++++----
- include/linux/gpio/consumer.h | 18 +++++++++---------
- 3 files changed, 23 insertions(+), 23 deletions(-)
+ Documentation/driver-api/gpio/consumer.rst | 16 ++++++------
+ drivers/gpio/gpiolib.c                     | 30 ++++++++++++----------
+ include/linux/gpio/consumer.h              | 28 ++++++++++----------
+ 3 files changed, 39 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 843a8075ac437d57..8f2bae4c0f3ac80b 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3104,10 +3104,10 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
- }
+diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
+index ba4973829faef238..5e4d8aa68913529c 100644
+--- a/Documentation/driver-api/gpio/consumer.rst
++++ b/Documentation/driver-api/gpio/consumer.rst
+@@ -340,18 +340,18 @@ The following functions get or set the values of an array of GPIOs::
+ 					   struct gpio_array *array_info,
+ 					   unsigned long *value_bitmap);
  
- int gpiod_set_array_value_complex(bool raw, bool can_sleep,
--				   unsigned int array_size,
+-	void gpiod_set_array_value(unsigned int array_size,
 -				   struct gpio_desc **desc_array,
 -				   struct gpio_array *array_info,
 -				   unsigned long *value_bitmap)
-+				  unsigned int array_size,
++	int gpiod_set_array_value(unsigned int array_size,
 +				  struct gpio_desc **desc_array,
 +				  struct gpio_array *array_info,
 +				  unsigned long *value_bitmap)
- {
- 	int i = 0;
- 
-@@ -3282,9 +3282,9 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
+ 	int gpiod_set_raw_array_value(unsigned int array_size,
+ 				      struct gpio_desc **desc_array,
+ 				      struct gpio_array *array_info,
+ 				      unsigned long *value_bitmap)
+-	void gpiod_set_array_value_cansleep(unsigned int array_size,
+-					    struct gpio_desc **desc_array,
+-					    struct gpio_array *array_info,
+-					    unsigned long *value_bitmap)
++	int gpiod_set_array_value_cansleep(unsigned int array_size,
++					   struct gpio_desc **desc_array,
++					   struct gpio_array *array_info,
++					   unsigned long *value_bitmap)
+ 	int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 					       struct gpio_desc **desc_array,
+ 					       struct gpio_array *array_info,
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a53d17745d210480..843a8075ac437d57 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3306,15 +3306,16 @@ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
+  * This function should be called from contexts where we cannot sleep, and will
   * complain if the GPIO chip functions potentially sleep.
   */
- int gpiod_set_raw_array_value(unsigned int array_size,
--			 struct gpio_desc **desc_array,
--			 struct gpio_array *array_info,
--			 unsigned long *value_bitmap)
-+			      struct gpio_desc **desc_array,
-+			      struct gpio_array *array_info,
-+			      unsigned long *value_bitmap)
+-void gpiod_set_array_value(unsigned int array_size,
+-			   struct gpio_desc **desc_array,
+-			   struct gpio_array *array_info,
+-			   unsigned long *value_bitmap)
++int gpiod_set_array_value(unsigned int array_size,
++			  struct gpio_desc **desc_array,
++			  struct gpio_array *array_info,
++			  unsigned long *value_bitmap)
  {
  	if (!desc_array)
- 		return -EINVAL;
-@@ -3683,9 +3683,9 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+-		return;
+-	gpiod_set_array_value_complex(false, false, array_size, desc_array,
+-				      array_info, value_bitmap);
++		return -EINVAL;
++	return gpiod_set_array_value_complex(false, false, array_size,
++					     desc_array, array_info,
++					     value_bitmap);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_array_value);
+ 
+@@ -3723,16 +3724,17 @@ void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n)
+  *
   * This function is to be called from contexts that can sleep.
   */
- int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
--					struct gpio_desc **desc_array,
--					struct gpio_array *array_info,
--					unsigned long *value_bitmap)
-+				       struct gpio_desc **desc_array,
-+				       struct gpio_array *array_info,
-+				       unsigned long *value_bitmap)
+-void gpiod_set_array_value_cansleep(unsigned int array_size,
+-				    struct gpio_desc **desc_array,
+-				    struct gpio_array *array_info,
+-				    unsigned long *value_bitmap)
++int gpiod_set_array_value_cansleep(unsigned int array_size,
++				   struct gpio_desc **desc_array,
++				   struct gpio_array *array_info,
++				   unsigned long *value_bitmap)
  {
  	might_sleep_if(extra_checks);
  	if (!desc_array)
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index f23a0c6814940ca7..85b84a02ba622ea1 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -199,10 +199,10 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				  struct gpio_array *array_info,
- 				  unsigned long *value_bitmap);
- int gpiod_set_array_value_complex(bool raw, bool can_sleep,
--				   unsigned int array_size,
--				   struct gpio_desc **desc_array,
--				   struct gpio_array *array_info,
--				   unsigned long *value_bitmap);
-+				  unsigned int array_size,
-+				  struct gpio_desc **desc_array,
-+				  struct gpio_array *array_info,
-+				  unsigned long *value_bitmap);
+-		return;
+-	gpiod_set_array_value_complex(false, true, array_size, desc_array,
+-				      array_info, value_bitmap);
++		return -EINVAL;
++	return gpiod_set_array_value_complex(false, true, array_size,
++					     desc_array, array_info,
++					     value_bitmap);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_array_value_cansleep);
  
- /* This is just passed between gpiolib and devres */
- struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
 diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 136aeca37740decf..0f350616d37219a2 100644
+index d7fbe30ece849cd7..136aeca37740decf 100644
 --- a/include/linux/gpio/consumer.h
 +++ b/include/linux/gpio/consumer.h
-@@ -128,9 +128,9 @@ int gpiod_get_raw_array_value(unsigned int array_size,
- 			      unsigned long *value_bitmap);
- void gpiod_set_raw_value(struct gpio_desc *desc, int value);
- int gpiod_set_raw_array_value(unsigned int array_size,
--			       struct gpio_desc **desc_array,
--			       struct gpio_array *array_info,
--			       unsigned long *value_bitmap);
-+			      struct gpio_desc **desc_array,
-+			      struct gpio_array *array_info,
-+			      unsigned long *value_bitmap);
- 
- /* Value get/set from sleeping context */
- int gpiod_get_value_cansleep(const struct gpio_desc *desc);
-@@ -150,9 +150,9 @@ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
- 				       unsigned long *value_bitmap);
- void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
- int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
--					struct gpio_desc **desc_array,
--					struct gpio_array *array_info,
--					unsigned long *value_bitmap);
-+				       struct gpio_desc **desc_array,
-+				       struct gpio_array *array_info,
-+				       unsigned long *value_bitmap);
- 
- int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
- int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
-@@ -391,9 +391,9 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+@@ -117,10 +117,10 @@ int gpiod_get_array_value(unsigned int array_size,
+ 			  struct gpio_array *array_info,
+ 			  unsigned long *value_bitmap);
+ void gpiod_set_value(struct gpio_desc *desc, int value);
+-void gpiod_set_array_value(unsigned int array_size,
+-			   struct gpio_desc **desc_array,
+-			   struct gpio_array *array_info,
+-			   unsigned long *value_bitmap);
++int gpiod_set_array_value(unsigned int array_size,
++			  struct gpio_desc **desc_array,
++			  struct gpio_array *array_info,
++			  unsigned long *value_bitmap);
+ int gpiod_get_raw_value(const struct gpio_desc *desc);
+ int gpiod_get_raw_array_value(unsigned int array_size,
+ 			      struct gpio_desc **desc_array,
+@@ -139,10 +139,10 @@ int gpiod_get_array_value_cansleep(unsigned int array_size,
+ 				   struct gpio_array *array_info,
+ 				   unsigned long *value_bitmap);
+ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value);
+-void gpiod_set_array_value_cansleep(unsigned int array_size,
+-				    struct gpio_desc **desc_array,
+-				    struct gpio_array *array_info,
+-				    unsigned long *value_bitmap);
++int gpiod_set_array_value_cansleep(unsigned int array_size,
++				   struct gpio_desc **desc_array,
++				   struct gpio_array *array_info,
++				   unsigned long *value_bitmap);
+ int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc);
+ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
+ 				       struct gpio_desc **desc_array,
+@@ -361,13 +361,14 @@ static inline void gpiod_set_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
  	WARN_ON(1);
  }
- static inline int gpiod_set_raw_array_value(unsigned int array_size,
--					     struct gpio_desc **desc_array,
--					     struct gpio_array *array_info,
--					     unsigned long *value_bitmap)
-+					    struct gpio_desc **desc_array,
-+					    struct gpio_array *array_info,
-+					    unsigned long *value_bitmap)
+-static inline void gpiod_set_array_value(unsigned int array_size,
+-					 struct gpio_desc **desc_array,
+-					 struct gpio_array *array_info,
+-					 unsigned long *value_bitmap)
++static inline int gpiod_set_array_value(unsigned int array_size,
++					struct gpio_desc **desc_array,
++					struct gpio_array *array_info,
++					unsigned long *value_bitmap)
  {
  	/* GPIO can never have been requested */
  	WARN_ON(1);
++	return 0;
+ }
+ static inline int gpiod_get_raw_value(const struct gpio_desc *desc)
+ {
+@@ -419,13 +420,14 @@ static inline void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_array_value_cansleep(unsigned int array_size,
++static inline int gpiod_set_array_value_cansleep(unsigned int array_size,
+ 					    struct gpio_desc **desc_array,
+ 					    struct gpio_array *array_info,
+ 					    unsigned long *value_bitmap)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return 0;
+ }
+ static inline int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
+ {
 -- 
 2.17.1
