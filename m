@@ -1,38 +1,90 @@
-From: Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
-Date: Thu, 27 Sep 2018 08:34:37 -0600
-Message-ID: <73154ad3-0c53-b2e5-7fa4-f6c67bc00fdc@codeaurora.org>
-References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
- <20180921103604.13361-2-ricardo.ribalda@gmail.com>
- <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
- <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org>
- <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
- <c9c24958-a020-a6b4-5ee4-51356bf345a5@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v6 1/3] dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+Date: Thu, 27 Sep 2018 17:15:54 +0200
+Message-ID: <CAMuHMdV1n9KgU+6LxY3_jHTqgL1gKs+54yY0qjnwBeQX7UdOSg@mail.gmail.com>
+References: <20180927135922.12015-1-phil.edworthy@renesas.com> <20180927135922.12015-2-phil.edworthy@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c9c24958-a020-a6b4-5ee4-51356bf345a5@kernel.org>
-Content-Language: en-US
+In-Reply-To: <20180927135922.12015-2-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Timur Tabi <timur@kernel.org>, Stephen Boyd <swboyd@chromium.org>, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, linux-gpio@vger.kernel.org
+To: Phil Edworthy <phil.edworthy@renesas.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Rutland <mark.rutland@arm.com>, Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 9/27/2018 8:19 AM, Timur Tabi wrote:
-> On 9/27/18 9:04 AM, Jeffrey Hugo wrote:
->>
->> I guess its lucky I saw this then.
-> 
-> Did you not get this email: 
-> https://lore.kernel.org/patchwork/patch/989545/#1173771
+On Thu, Sep 27, 2018 at 3:59 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> The Renesas RZ/N1 device family PINCTRL node description.
+>
+> Based on a patch originally written by Michel Pollet at Renesas.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+> v6:
+>  - Instead of combining the pin nr and func into a single element, use
+>    a pair of 8-bit elements.
 
-Apparently I did.  I found it in my deleted items.  I must have 
-accidentally done that when sorting through my backlog after Linaro 
-Connect.  Sorry about that.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
+
+> +- Pin multiplexing sub-nodes:
+> +  A pin multiplexing sub-node describes how to configure a set of
+> +  (or a single) pin in some desired alternate function mode.
+> +  A single sub-node may define several pin configurations.
+> +  Please refer to pinctrl-bindings.txt to get to know more on generic
+> +  pin properties usage.
+> +
+> +  The allowed generic formats for a pin multiplexing sub-node are the
+> +  following ones:
+> +
+> +  node-1 {
+> +      pinmux = /bits/ 8 <PIN_NR MUX_FUNC>, <PIN_NR MUX_FUNC>, ... ;
+> +      GENERIC_PINCONFIG;
+> +  };
+
+and
+
+> +  Example:
+> +  A serial communication interface with a TX output pin and an RX input pin.
+> +
+> +  &pinctrl {
+> +       pins_uart0: pins_uart0 {
+> +               pinmux = /bits/ 8 <
+> +                       103 RZN1_FUNC_UART0_I   /* UART0_TXD */
+> +                       104 RZN1_FUNC_UART0_I   /* UART0_RXD */
+> +               >;
+> +       };
+> +  };
+
+So the above is in response to Rob's comment on v4:
+
+| > +#define RZN1_MUX(_gpio, _func) \
+| > +       (((RZN1_FUNC_##_func) << 8) | (_gpio))
+|
+| I'm not a fan of token pasting and it also goes against kernel style.
+| If every other Renesas platform is doing this, then fine. Otherwise,
+| you can express it in pretty much the same (source) space:
+|
+| pinmux = <RZN1_MUX_UART0_I 104>;
+|
+| Yes, this is 2 cells instead of 1, but if you care about space, you
+| can use 8 or 16 bit size.
+
+I'm not so much impressed by the "/bits/ 8" part.
+No other pinctrl bindings uses this.
+We do have RZA1_PINMUX() and STM32_PINMUX() macros.
+
+Rob: Is this really what you intended?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
