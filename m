@@ -1,63 +1,285 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: sdhci driver card-detect is broken because gpiolib can't fallback
- to _CRS?
-Date: Fri, 28 Sep 2018 15:13:31 +0200
-Message-ID: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
-References: <CACK8Z6Ebo0giDifRHBg13pe_mO18vb1n0+LGMoMjkLai6X9MNg@mail.gmail.com>
- <20180926074756.GD2664@lahna.fi.intel.com> <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
- <CACK8Z6F1jkSN3KXiv+0X2uh61pBkpSMpHrdMHwLarbSAFoHMUA@mail.gmail.com>
- <CAHp75VcQ0SviZ6vsn_5inn5oZxxj-5ZQq5bC+bXPxuF8KOa_Rg@mail.gmail.com>
- <CACK8Z6HjFy_5sv_ZRRyfRgCYMYPpuoFqmKekyi7fSLk14YpN6w@mail.gmail.com>
- <CACRpkdZZW_HK8uFA=iQQ88DnoR7KX2mYTbO3HMtNBLd-3GpiWQ@mail.gmail.com> <CAA93t1qYN8BAZjOY+osHzTjYthYo+HY10zvfgQ-Z8+AQ2HdFZA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v4 1/2] GPIO: add single-register GPIO via CREG driver
+Date: Fri, 28 Sep 2018 16:15:30 +0300
+Message-ID: <20180928131531.4598-1-Eugeniy.Paltsev@synopsys.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAA93t1qYN8BAZjOY+osHzTjYthYo+HY10zvfgQ-Z8+AQ2HdFZA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: rajatxjain@gmail.com
-Cc: Rajat Jain <rajatja@google.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dtor@google.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>
+To: linux-snps-arc@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Vineet Gupta <vineet.gupta1@synopsys.com>, Alexey Brodkin <alexey.brodkin@synopsys.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 2:34 PM Rajat Jain <rajatxjain@gmail.com> wrote:
+Add single-register MMIO GPIO driver for complex cases where
+only several fields in register belong to GPIO lines and each GPIO
+line owns a field with different length and on/off value.
 
-> > This is not looking good at all.
-> >
-> > Andy should we revert the patch or do you have some other
-> > quick fix in mind we could do? It seems reverting the patch
-> > could be bad for the mctrl patches IIUC, but this regression
-> > seems even more serious.
->
-> Sorry, I may have made it sound like more serious than it is. Yes,
-> what I said is true, but we (Google) does not plan to update those
-> devices to the latest kernel. That regression will only be seen by any
-> developers who try to do it on their own.
+Such CREG GPIOs are used in Synopsys AXS10x and HSDK boards.
 
-Given the number of core kernel developers using chromebooks
-and relying on them to be working as expected, these are the
-users I am most worried about, really.
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+Changes v3->v4:
+ * Cleanup 'include' section.
+ * Get rid of 'of_mm_gpio_chip' using.
+ * Get rid of custom 'creg_gpio_xlate' function.
+ * Get rid of dummy 'creg_gpio_get_direction' function.
+ * Small fixies.
 
-If only 3 users in the world can't read photos from their SD-cards
-that may sound like a small problem, but if those 3 users are
-core kernel developers reporting bugs, I as maintainer have a
-big problem. So not all users are equal, or how should I put it.
+Changes v2->v3:
+ * Move parameters into a lookup table instead of device tree.
+ * Use the ngpios attribute for instead of snps,ngpios.
 
-> Also, the commit I mentioned above was put in long time back, and I
-> think it is more reasonable to put a fix in the sdhci driver instead.
+ MAINTAINERS                   |   6 ++
+ drivers/gpio/Kconfig          |  10 +++
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-creg-snps.c | 191 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 208 insertions(+)
+ create mode 100644 drivers/gpio/gpio-creg-snps.c
 
-OK cool.
-
->  - It seems that 1 SDHCI device may support multiple slots. It was not
-> clear to me if they could share card detect interrupts, or should have
-> separate ones? Also, the driver may not really know? So should I add 1
-> or two pins using the devm_acpi_dev_add_driver_gpios().
->
-> - I was unsure what should I set the active_low to.
->
-> Given these concerns, it seemed the easiest fix to me, if we can call
-> mmc_gpiod_request_cd() twice, once with "cd" and then with NULL as a
-> fallback.
-
-That sounds like a resonable fix to me.
-
-Yours,
-Linus Walleij
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 544cac829cf4..e731f2f9648a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13734,6 +13734,12 @@ S:	Supported
+ F:	drivers/reset/reset-axs10x.c
+ F:	Documentation/devicetree/bindings/reset/snps,axs10x-reset.txt
+ 
++SYNOPSYS CREG GPIO DRIVER
++M:	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
++S:	Maintained
++F:	drivers/gpio/gpio-creg-snps.c
++F:	Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
++
+ SYNOPSYS DESIGNWARE 8250 UART DRIVER
+ R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+ S:	Maintained
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 71c0ab46f216..78155ac22b0c 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -430,6 +430,16 @@ config GPIO_REG
+ 	  A 32-bit single register GPIO fixed in/out implementation.  This
+ 	  can be used to represent any register as a set of GPIO signals.
+ 
++config GPIO_SNPS_CREG
++	bool "Synopsys GPIO via CREG (Control REGisters) driver"
++	depends on ARC || COMPILE_TEST
++	select OF_GPIO
++	help
++	  This driver supports GPIOs via CREG on various Synopsys SoCs.
++	  This is a single-register MMIO GPIO driver for complex cases
++	  where only several fields in register belong to GPIO lines and
++	  each GPIO line owns a field with different length and on/off value.
++
+ config GPIO_SPEAR_SPICS
+ 	bool "ST SPEAr13xx SPI Chip Select as GPIO support"
+ 	depends on PLAT_SPEAR
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 1324c8f966a7..993f8ad54a19 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -109,6 +109,7 @@ obj-$(CONFIG_GPIO_REG)		+= gpio-reg.o
+ obj-$(CONFIG_ARCH_SA1100)	+= gpio-sa1100.o
+ obj-$(CONFIG_GPIO_SCH)		+= gpio-sch.o
+ obj-$(CONFIG_GPIO_SCH311X)	+= gpio-sch311x.o
++obj-$(CONFIG_GPIO_SNPS_CREG)	+= gpio-creg-snps.o
+ obj-$(CONFIG_GPIO_SODAVILLE)	+= gpio-sodaville.o
+ obj-$(CONFIG_GPIO_SPEAR_SPICS)	+= gpio-spear-spics.o
+ obj-$(CONFIG_GPIO_SPRD)		+= gpio-sprd.o
+diff --git a/drivers/gpio/gpio-creg-snps.c b/drivers/gpio/gpio-creg-snps.c
+new file mode 100644
+index 000000000000..8cbc94d0d424
+--- /dev/null
++++ b/drivers/gpio/gpio-creg-snps.c
+@@ -0,0 +1,191 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Synopsys CREG (Control REGisters) GPIO driver
++//
++// Copyright (C) 2018 Synopsys
++// Author: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
++
++#include <linux/gpio/driver.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++
++#define MAX_GPIO	32
++
++struct creg_layout {
++	u8 ngpio;
++	u8 shift[MAX_GPIO];
++	u8 on[MAX_GPIO];
++	u8 off[MAX_GPIO];
++	u8 bit_per_gpio[MAX_GPIO];
++};
++
++struct creg_gpio {
++	struct gpio_chip gc;
++	void __iomem *regs;
++	spinlock_t lock;
++	const struct creg_layout *layout;
++};
++
++static void creg_gpio_set(struct gpio_chip *gc, unsigned int offset, int val)
++{
++	struct creg_gpio *hcg = gpiochip_get_data(gc);
++	const struct creg_layout *layout = hcg->layout;
++	u32 reg, reg_shift, value;
++	unsigned long flags;
++	int i;
++
++	value = val ? hcg->layout->on[offset] : hcg->layout->off[offset];
++
++	reg_shift = layout->shift[offset];
++	for (i = 0; i < offset; i++)
++		reg_shift += layout->bit_per_gpio[i] + layout->shift[i];
++
++	spin_lock_irqsave(&hcg->lock, flags);
++	reg = readl(hcg->regs);
++	reg &= ~(GENMASK(layout->bit_per_gpio[i] - 1, 0) << reg_shift);
++	reg |=  (value << reg_shift);
++	writel(reg, hcg->regs);
++	spin_unlock_irqrestore(&hcg->lock, flags);
++}
++
++static int creg_gpio_dir_out(struct gpio_chip *gc, unsigned int offset, int val)
++{
++	creg_gpio_set(gc, offset, val);
++
++	return 0;
++}
++
++static int creg_gpio_validate_pg(struct device *dev, struct creg_gpio *hcg,
++				 int i)
++{
++	const struct creg_layout *layout = hcg->layout;
++
++	if (layout->bit_per_gpio[i] < 1 || layout->bit_per_gpio[i] > 8)
++		return -EINVAL;
++
++	/* Check that on valiue fits it's placeholder */
++	if (GENMASK(31, layout->bit_per_gpio[i]) & layout->on[i])
++		return -EINVAL;
++
++	/* Check that off valiue fits it's placeholder */
++	if (GENMASK(31, layout->bit_per_gpio[i]) & layout->off[i])
++		return -EINVAL;
++
++	if (layout->on[i] == layout->off[i])
++		return -EINVAL;
++
++	return 0;
++}
++
++static int creg_gpio_validate(struct device *dev, struct creg_gpio *hcg,
++			      u32 ngpios)
++{
++	u32 reg_len = 0;
++	int i;
++
++	if (hcg->layout->ngpio < 1 || hcg->layout->ngpio > MAX_GPIO)
++		return -EINVAL;
++
++	if (ngpios < 1 || ngpios > hcg->layout->ngpio) {
++		dev_err(dev, "ngpios must be in [1:%u]\n", hcg->layout->ngpio);
++		return -EINVAL;
++	}
++
++	for (i = 0; i < hcg->layout->ngpio; i++) {
++		if (creg_gpio_validate_pg(dev, hcg, i))
++			return -EINVAL;
++
++		reg_len += hcg->layout->shift[i] + hcg->layout->bit_per_gpio[i];
++	}
++
++	/* Check that we fit in 32 bit register */
++	if (reg_len > 32)
++		return -EINVAL;
++
++	return 0;
++}
++
++static const struct creg_layout hsdk_cs_ctl = {
++	.ngpio		= 10,
++	.shift		= { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
++	.off		= { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
++	.on		= { 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
++	.bit_per_gpio	= { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
++};
++
++static const struct creg_layout axs10x_flsh_cs_ctl = {
++	.ngpio		= 1,
++	.shift		= { 0 },
++	.off		= { 1 },
++	.on		= { 3 },
++	.bit_per_gpio	= { 2 }
++};
++
++static const struct of_device_id creg_gpio_ids[] = {
++	{
++		.compatible = "snps,creg-gpio-axs10x",
++		.data = &axs10x_flsh_cs_ctl
++	}, {
++		.compatible = "snps,creg-gpio-hsdk",
++		.data = &hsdk_cs_ctl
++	}, { /* sentinel */ }
++};
++
++static int creg_gpio_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *match;
++	struct device *dev = &pdev->dev;
++	struct creg_gpio *hcg;
++	struct resource *mem;
++	u32 ngpios;
++	int ret;
++
++	hcg = devm_kzalloc(dev, sizeof(struct creg_gpio), GFP_KERNEL);
++	if (!hcg)
++		return -ENOMEM;
++
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	hcg->regs = devm_ioremap_resource(dev, mem);
++	if (IS_ERR(hcg->regs))
++		return PTR_ERR(hcg->regs);
++
++	match = of_match_node(creg_gpio_ids, pdev->dev.of_node);
++	hcg->layout = match->data;
++	if (!hcg->layout)
++		return -EINVAL;
++
++	ret = of_property_read_u32(dev->of_node, "ngpios", &ngpios);
++	if (ret)
++		return ret;
++
++	ret = creg_gpio_validate(dev, hcg, ngpios);
++	if (ret)
++		return ret;
++
++	spin_lock_init(&hcg->lock);
++
++	hcg->gc.label = dev_name(dev);
++	hcg->gc.base = -1;
++	hcg->gc.ngpio = ngpios;
++	hcg->gc.set = creg_gpio_set;
++	hcg->gc.direction_output = creg_gpio_dir_out;
++	hcg->gc.of_node = dev->of_node;
++
++	ret = devm_gpiochip_add_data(dev, &hcg->gc, hcg);
++	if (ret)
++		return ret;
++
++	dev_info(dev, "GPIO controller with %d gpios probed\n", ngpios);
++
++	return 0;
++}
++
++static struct platform_driver creg_gpio_snps_driver = {
++	.driver = {
++		.name = "snps-creg-gpio",
++		.of_match_table = creg_gpio_ids,
++	},
++	.probe  = creg_gpio_probe,
++};
++builtin_platform_driver(creg_gpio_snps_driver);
+-- 
+2.14.4
