@@ -1,58 +1,21 @@
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v4 2/2] dt-bindings: Document the Synopsys GPIO via CREG bindings
-Date: Fri, 28 Sep 2018 16:15:31 +0300
-Message-ID: <20180928131531.4598-2-Eugeniy.Paltsev@synopsys.com>
-References: <20180928131531.4598-1-Eugeniy.Paltsev@synopsys.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] gpio: omap: drop omap_gpio_list
+Date: Fri, 28 Sep 2018 09:49:48 -0700
+Message-ID: <20180928164948.GG5662@atomide.com>
+References: <20180927233844.18443-1-grygorii.strashko@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180928131531.4598-1-Eugeniy.Paltsev@synopsys.com>
+Content-Disposition: inline
+In-Reply-To: <20180927233844.18443-1-grygorii.strashko@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-snps-arc@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Vineet Gupta <vineet.gupta1@synopsys.com>, Alexey Brodkin <alexey.brodkin@synopsys.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds documentation of device tree bindings for the Synopsys
-GPIO via CREG driver.
+* Grygorii Strashko <grygorii.strashko@ti.com> [180927 23:43]:
+> omap_gpio_list is unused so drop it.
+> 
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
-Changes v3->v4:
- * Fix #gpio-cells description as driver is used generic GPIO binding.
-
-Chnages v2->v3:
- * None.
-
- .../devicetree/bindings/gpio/snps,creg-gpio.txt     | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
-
-diff --git a/Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt b/Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
-new file mode 100644
-index 000000000000..1b30812b015b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
-@@ -0,0 +1,21 @@
-+Synopsys GPIO via CREG (Control REGisters) driver
-+
-+Required properties:
-+- compatible : "snps,creg-gpio-hsdk" or "snps,creg-gpio-axs10x".
-+- reg : Exactly one register range with length 0x4.
-+- #gpio-cells : Since the generic GPIO binding is used, the
-+  amount of cells must be specified as 2. The first cell is the
-+  pin number, the second cell is used to specify optional parameters:
-+  See "gpio-specifier" in .../devicetree/bindings/gpio/gpio.txt.
-+- gpio-controller : Marks the device node as a GPIO controller.
-+- ngpios: Number of GPIO pins.
-+
-+Example:
-+
-+gpio: gpio@f00014b0 {
-+	compatible = "snps,creg-gpio-hsdk";
-+	reg = <0xf00014b0 0x4>;
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	ngpios = <2>;
-+};
--- 
-2.14.4
+Acked-by: Tony Lindgren <tony@atomide.com>
