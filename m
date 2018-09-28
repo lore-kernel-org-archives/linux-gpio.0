@@ -1,25 +1,96 @@
-From: Timur Tabi <timur@kernel.org>
-Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
-Date: Fri, 28 Sep 2018 14:22:46 -0500
-Message-ID: <CAOZdJXUUWUWHzus+3sbEXbW_q92e+SSzTQJCqCyQp6Y6_HOo3g@mail.gmail.com>
-References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
- <20180921103604.13361-2-ricardo.ribalda@gmail.com> <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
- <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org> <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
- <5aea282d-6fc9-cd70-cec4-10f28aa819b9@codeaurora.org>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH] gpio: omap: get rid of the conditional PM runtime calls
+Date: Fri, 28 Sep 2018 16:39:50 -0500
+Message-ID: <20180928213950.27415-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5aea282d-6fc9-cd70-cec4-10f28aa819b9@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jeffrey Hugo <jhugo@codeaurora.org>
-Cc: Timur Tabi <timur@kernel.org>, Stephen Boyd <swboyd@chromium.org>, lkml <linux-kernel@vger.kernel.org>, Linus <linus.walleij@linaro.org>, ricardo.ribalda@gmail.com, linux-gpio <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 2:14 PM Jeffrey Hugo <jhugo@codeaurora.org> wrote:
-> Nack.  Causes a XPU violation to the GPIO config registers.
+OMAP GPIO driver is checking !BANK_USED() used condition before calling PM
+runtime API, because of PM runtime calls in
+omap2_gpio_prepare/resume_for_idle(). It's not required any more since
+"omap gpio add level idle, cpu_pm and drop runtime_irq_safe" series [1]
+from Tony Lindgren was accepted and PM runtime management was enabled in
+IRQ chip core by commit be45beb2df69 ("genirq: Add runtime power management
+support for IRQ chips") .
 
-That doesn't surprise me at all.
+As result safely drop !BANK_USED() checks from omap_gpio_request/free(),
+omap_gpio_irq_bus_lock/unlock() and enable PM runtime management for OMAP
+GPIO IRQ chip.
 
-I believe that the problem is that gpiochip_line_is_valid() is being
-called before gpiochip_irqchip_init_valid_mask() is called, which
-means that gpiochip_line_is_valid() always returns true.
+[1] https://www.spinics.net/lists/arm-kernel/msg677583.html
+Tested-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/gpio/gpio-omap.c | 25 +++++--------------------
+ 1 file changed, 5 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 287c933..c081f39 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -702,12 +702,7 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 	struct gpio_bank *bank = gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 
+-	/*
+-	 * If this is the first gpio_request for the bank,
+-	 * enable the bank module.
+-	 */
+-	if (!BANK_USED(bank))
+-		pm_runtime_get_sync(chip->parent);
++	pm_runtime_get_sync(chip->parent);
+ 
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+ 	omap_enable_gpio_module(bank, offset);
+@@ -731,12 +726,7 @@ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
+ 	omap_disable_gpio_module(bank, offset);
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ 
+-	/*
+-	 * If this is the last gpio to be freed in the bank,
+-	 * disable the bank module.
+-	 */
+-	if (!BANK_USED(bank))
+-		pm_runtime_put(chip->parent);
++	pm_runtime_put(chip->parent);
+ }
+ 
+ /*
+@@ -862,20 +852,14 @@ static void omap_gpio_irq_bus_lock(struct irq_data *data)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(data);
+ 
+-	if (!BANK_USED(bank))
+-		pm_runtime_get_sync(bank->chip.parent);
++	pm_runtime_get_sync(bank->chip.parent);
+ }
+ 
+ static void gpio_irq_bus_sync_unlock(struct irq_data *data)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(data);
+ 
+-	/*
+-	 * If this is the last IRQ to be freed in the bank,
+-	 * disable the bank module.
+-	 */
+-	if (!BANK_USED(bank))
+-		pm_runtime_put(bank->chip.parent);
++	pm_runtime_put(bank->chip.parent);
+ }
+ 
+ static void omap_gpio_ack_irq(struct irq_data *d)
+@@ -1385,6 +1369,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 	irqc->irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
+ 	irqc->name = dev_name(&pdev->dev);
+ 	irqc->flags = IRQCHIP_MASK_ON_SUSPEND;
++	irqc->parent_device = dev;
+ 
+ 	bank->irq = platform_get_irq(pdev, 0);
+ 	if (bank->irq <= 0) {
+-- 
+2.10.5
