@@ -1,100 +1,37 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH] gpiolib: Fix incorrect use of find_next_zero_bit()
-Date: Sat, 29 Sep 2018 14:20:22 +0200
-Message-ID: <20180929122022.6825-1-jmkrzyszt@gmail.com>
-References: <20180923235336.22148-2-jmkrzyszt@gmail.com>
+From: Timur Tabi <timur@kernel.org>
+Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
+Date: Sat, 29 Sep 2018 08:21:54 -0500
+Message-ID: <9df3f61f-ac54-f5b1-6b86-db539e07c5bd@kernel.org>
+References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+ <20180921103604.13361-2-ricardo.ribalda@gmail.com>
+ <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
+ <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org>
+ <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
+ <5aea282d-6fc9-cd70-cec4-10f28aa819b9@codeaurora.org>
+ <CAOZdJXUUWUWHzus+3sbEXbW_q92e+SSzTQJCqCyQp6Y6_HOo3g@mail.gmail.com>
+ <CAPybu_3v6Y1Bs1+WQKFfdNmAFdBN6VJTDiCG1ApNVM2AWt4vjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20180923235336.22148-2-jmkrzyszt@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>, Dominik Brodowski <linux@dominikbrodowski.net>, Yegor Yefremov <yegorslists@googlemail.com>, netdev@vger.kernel.org, linux-i2c@vger.kernel.org, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Marek Szyprowski <m.szyprowski@samsung.com>, devel@driverdev.osuosl.org, Florian Fainelli <f.fainelli@gmail.com>, Peter Rosin <peda@axentia.se>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-iio@vger.kernel.org, Peter Korsgaard <peter.korsgaard@barco.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, Michael Hennerich <Michael.Hennerich@analog.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, Russ
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAPybu_3v6Y1Bs1+WQKFfdNmAFdBN6VJTDiCG1ApNVM2AWt4vjA@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: jhugo@codeaurora.org, swboyd@chromium.org, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Commit b17566a6b08b ("gpiolib: Implement fast processing path in
-get/set array"), already fixed to some extent with commit 5d581d7e8cdc
-("gpiolib: Fix missing updates of bitmap index"), introduced a new mode
-of processing bitmaps where bits applicable for fast bitmap processing
-path are supposed to be skipped while iterating bits which don't apply.
-Unfortunately, find_next_zero_bit() function supposed to skip over
-those fast bits is always called with a 'start' argument equal to an
-index of last zero bit found and returns that index value again an
-again, causing an infinite loop.
+On 9/29/18 1:23 AM, Ricardo Ribalda Delgado wrote:
+> In fact  gpiochip_init_valid_mask is called some lines after in the
+> same function. We could reorder the function. Would that work for you?
 
-Fix it by incrementing the index uncoditionally before
-find_next_zero_bit() is optionally called.
+It might.  It might break something else, though.
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
-Marek,
+> The driver breaking is upstream?
 
-Could you please test it on top of next-20180920 with "gpiolib: Fix
-missing updates of bitmap index" and optionally "mmc: pwrseq_simple:
-Fix incorrect handling of GPIO bitmap" also applied?
+Yes.
 
-Thanks,
-Janusz
+> Is it possible to access the hardware?
 
-
- drivers/gpio/gpiolib.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 6ae13e3e05f1..940b543e966d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2878,12 +2878,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 			int hwgpio = gpio_chip_hwgpio(desc);
- 
- 			__set_bit(hwgpio, mask);
-+			i++;
- 
- 			if (array_info)
- 				i = find_next_zero_bit(array_info->get_mask,
- 						       array_size, i);
--			else
--				i++;
- 		} while ((i < array_size) &&
- 			 (desc_array[i]->gdev->chip == chip));
- 
-@@ -2903,12 +2902,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				value = !value;
- 			__assign_bit(j, value_bitmap, value);
- 			trace_gpio_value(desc_to_gpio(desc), 1, value);
-+			j++;
- 
- 			if (array_info)
- 				j = find_next_zero_bit(array_info->get_mask, i,
- 						       j);
--			else
--				j++;
- 		}
- 
- 		if (mask != fastpath)
-@@ -3191,12 +3189,11 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 					__clear_bit(hwgpio, bits);
- 				count++;
- 			}
-+			i++;
- 
- 			if (array_info)
- 				i = find_next_zero_bit(array_info->set_mask,
- 						       array_size, i);
--			else
--				i++;
- 		} while ((i < array_size) &&
- 			 (desc_array[i]->gdev->chip == chip));
- 		/* push collected bits to outputs */
--- 
-2.16.4
+Linaro and some Linux OSVs should still have systems, but I usually just 
+ask Jeff to test code for me.
