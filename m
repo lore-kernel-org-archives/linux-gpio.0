@@ -1,52 +1,69 @@
-From: Niklas Cassel <niklas.cassel@linaro.org>
-Subject: Re: [PATCH v3 0/3] pinctrl: msm interrupt and muxing fixes
-Date: Mon, 1 Oct 2018 21:34:14 +0200
-Message-ID: <20181001193414.GA4441@centauri.lan>
-References: <20180816200648.90458-1-swboyd@chromium.org>
- <20180912103431.GA27204@centauri.ideon.se>
- <153841961783.119890.13486677118739554119@swboyd.mtv.corp.google.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
+Date: Mon, 1 Oct 2018 22:16:51 +0200
+Message-ID: <CACRpkdbcBrjKar4CDg+yEVuCNE3RiGD61UkPasZ35SSmSNsUBA@mail.gmail.com>
+References: <20180906122436.25610-1-linus.walleij@linaro.org> <afd78fe6a5e168cc9190afe3e27d12286e0dfafa.camel@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <153841961783.119890.13486677118739554119@swboyd.mtv.corp.google.com>
+In-Reply-To: <afd78fe6a5e168cc9190afe3e27d12286e0dfafa.camel@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Doug Anderson <dianders@chromium.org>
+To: leonard.crestez@nxp.com, John Stultz <john.stultz@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Duan <fugang.duan@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Anson Huang <anson.huang@nxp.com>, ext Tony Lindgren <tony@atomide.com>, Mike Rapoport <rppt@linux.vnet.ibm.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 11:46:57AM -0700, Stephen Boyd wrote:
-> Quoting Niklas Cassel (2018-09-12 03:34:31)
-> > Hello Stephen,
-> > 
-> > I'm getting this warning on dragonboard 820c (msm8996) when booting linux-next:
-> > 
-> > [    3.211575] WARNING: CPU: 1 PID: 1 at drivers/pinctrl/qcom/pinctrl-msm.c:164 msm_pinmux_set_mux+0xc8/0x150
-> > [    3.212127] l28: ramp_delay not set
-> 
-> Thanks for testing. I think the problem is I messed up the function 0
-> and enum 0. Can you try this patch?
+On Mon, Oct 1, 2018 at 8:53 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
 
-Hello Stephen,
+> This patch seems to break network booting on imx6sx-sdb in linux-next
+> because the enet phy regulator is not on. Reverting the patch fixes
+> boot.
 
-This patch does indeed remove the warning.
-Thanks!
+Thanks for reporting.
 
-Kind regards,
-Niklas
+John Stultz reported the same problem I'm trying to debug it.
 
-> 
-> --8<---
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 1684b2da09d5..b925b8feac95 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -188,7 +188,7 @@ static int msm_pinmux_request_gpio(struct pinctrl_dev *pctldev,
->  		return 0;
->  
->  	/* For now assume function 0 is GPIO because it always is */
-> -	return msm_pinmux_set_mux(pctldev, 0, offset);
-> +	return msm_pinmux_set_mux(pctldev, g->funcs[0], offset);
->  }
->  
->  static const struct pinmux_ops msm_pinmux_ops = {
+> Here is the regulator definition:
+>
+> reg_enet_3v3: regulator-enet-3v3 {
+>         compatible = "regulator-fixed";
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&pinctrl_enet_3v3>;
+>         regulator-name = "enet_3v3";
+>         regulator-min-microvolt = <3300000>;
+>         regulator-max-microvolt = <3300000>;
+>         gpios = <&gpio2 6 GPIO_ACTIVE_LOW>;
+> };
+
+This is a bit odd actually, the GPIO_ACTIVE_LOW flag will
+be ignored as you see:
+
+> [    0.153171] reg_fixed_voltage_probe(179): regulator-enet-3v3 call gpiod_get_optional gflags=0x7 ena_gpio_invert
+> [    0.153218] regulator-enet-3v3 GPIO handle specifies active low - ignored
+> [    0.153233] of_gpio_flags_quirks(83): regulator-enet-3v3 set active low because !enable-active-high
+
+Because regulators don't specify active high/low in the second
+cell because of legacy bindings.
+
+So this should not be in the device tree anyway, it should be
+GPIO_ACTIVE_HIGH or just 0.
+
+> That "gpio_value: 30 set 1" tracepoint is wrong, the line is set high.
+>
+> It seems that gpiod_set_value will check FLAG_ACTIVE_LOW and
+> automatically invert
+(...)
+>so maybe ena_gpio_invert should not be used if a
+> full gpiod is passed to regulator?
+(...)
+> -       cfg.ena_gpio_invert = !config->enable_high;
+
+Indeed. I will look closer so it's the right fix and provide a patch.
+
+> All these high/low inversions and flags are extremely confusing to me.
+
+Yeah it's what I'm trying to get rid of with these patches,
+this is just the first patch in a series that move inversion over
+to the GPIO library.
+
+Yours,
+Linus Walleij
