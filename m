@@ -1,49 +1,56 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v3 0/3] pinctrl: msm interrupt and muxing fixes
-Date: Mon, 01 Oct 2018 11:46:57 -0700
-Message-ID: <153841961783.119890.13486677118739554119@swboyd.mtv.corp.google.com>
-References: <20180816200648.90458-1-swboyd@chromium.org>
- <20180912103431.GA27204@centauri.ideon.se>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [PATCH v7] regulator: fixed: Convert to use GPIO descriptor only
+Date: Mon, 1 Oct 2018 18:53:37 +0000
+Message-ID: <afd78fe6a5e168cc9190afe3e27d12286e0dfafa.camel@nxp.com>
+References: <20180906122436.25610-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180912103431.GA27204@centauri.ideon.se>
+In-Reply-To: <20180906122436.25610-1-linus.walleij@linaro.org>
+Content-Language: en-US
+Content-ID: <1D77CF36BEF8DE4D8D3E1585AF76F5E0@eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Niklas Cassel <niklas.cassel@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Doug Anderson <dianders@chromium.org>
+To: "broonie@kernel.org" <broonie@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Duan <fugang.duan@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, Anson Huang <anson.huang@nxp.com>, "tony@atomide.com" <tony@atomide.com>, "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>, "jmkrzyszt@gmail.com" <jmkrzyszt@gmail.com>, "john.stultz@linaro.org" <john.stultz@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Niklas Cassel (2018-09-12 03:34:31)
-> Hello Stephen,
-> =
-
-> I'm getting this warning on dragonboard 820c (msm8996) when booting linux=
--next:
-> =
-
-> [    3.211575] WARNING: CPU: 1 PID: 1 at drivers/pinctrl/qcom/pinctrl-msm=
-.c:164 msm_pinmux_set_mux+0xc8/0x150
-> [    3.212127] l28: ramp_delay not set
-
-Thanks for testing. I think the problem is I messed up the function 0
-and enum 0. Can you try this patch?
-
---8<---
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinc=
-trl-msm.c
-index 1684b2da09d5..b925b8feac95 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -188,7 +188,7 @@ static int msm_pinmux_request_gpio(struct pinctrl_dev *=
-pctldev,
- 		return 0;
- =
-
- 	/* For now assume function 0 is GPIO because it always is */
--	return msm_pinmux_set_mux(pctldev, 0, offset);
-+	return msm_pinmux_set_mux(pctldev, g->funcs[0], offset);
- }
- =
-
- static const struct pinmux_ops msm_pinmux_ops =3D {
+SGVsbG8sDQoNClRoaXMgcGF0Y2ggc2VlbXMgdG8gYnJlYWsgbmV0d29yayBib290aW5nIG9uIGlt
+eDZzeC1zZGIgaW4gbGludXgtbmV4dA0KYmVjYXVzZSB0aGUgZW5ldCBwaHkgcmVndWxhdG9yIGlz
+IG5vdCBvbi4gUmV2ZXJ0aW5nIHRoZSBwYXRjaCBmaXhlcw0KYm9vdC4NCg0KSGVyZSBpcyB0aGUg
+cmVndWxhdG9yIGRlZmluaXRpb246DQoNCnJlZ19lbmV0XzN2MzogcmVndWxhdG9yLWVuZXQtM3Yz
+IHsNCgljb21wYXRpYmxlID0gInJlZ3VsYXRvci1maXhlZCI7DQoJcGluY3RybC1uYW1lcyA9ICJk
+ZWZhdWx0IjsNCglwaW5jdHJsLTAgPSA8JnBpbmN0cmxfZW5ldF8zdjM+Ow0KCXJlZ3VsYXRvci1u
+YW1lID0gImVuZXRfM3YzIjsNCglyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwzMzAwMDAwPjsN
+CglyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwzMzAwMDAwPjsNCglncGlvcyA9IDwmZ3BpbzIg
+NiBHUElPX0FDVElWRV9MT1c+Ow0KfTsNCg0KSGVyZSBhcmUgc29tZSBwcmludHMgd2l0aCB0aGUg
+cGF0Y2ggZW5hYmxlZDoNCg0KWyAgICAwLjE1MzE1MF0gcmVnLWZpeGVkLXZvbHRhZ2UgcmVndWxh
+dG9yLWVuZXQtM3YzOiBPVVRfSElHSCBnZmxhZ3MgMHg3DQpbICAgIDAuMTUzMTcxXSByZWdfZml4
+ZWRfdm9sdGFnZV9wcm9iZSgxNzkpOiByZWd1bGF0b3ItZW5ldC0zdjMgY2FsbCBncGlvZF9nZXRf
+b3B0aW9uYWwgZ2ZsYWdzPTB4NyBlbmFfZ3Bpb19pbnZlcnQNClsgICAgMC4xNTMyMThdIHJlZ3Vs
+YXRvci1lbmV0LTN2MyBHUElPIGhhbmRsZSBzcGVjaWZpZXMgYWN0aXZlIGxvdyAtIGlnbm9yZWQN
+ClsgICAgMC4xNTMyMzNdIG9mX2dwaW9fZmxhZ3NfcXVpcmtzKDgzKTogcmVndWxhdG9yLWVuZXQt
+M3YzIHNldCBhY3RpdmUgbG93IGJlY2F1c2UgIWVuYWJsZS1hY3RpdmUtaGlnaA0KWyAgICAwLjE1
+MzI1OF0gb2ZfZ2V0X25hbWVkX2dwaW9kX2ZsYWdzOiBwYXJzZWQgJ2dwaW9zJyBwcm9wZXJ0eSBv
+ZiBub2RlICcvcmVndWxhdG9yLWVuZXQtM3YzWzBdJyAtIHN0YXR1cyAoMCkNClsgICAgMC4xNTMz
+MTBdIGdwaW9fdmFsdWU6IDM4IHNldCAwDQpbICAgIDAuMTUzMzMyXSBncGlvX2RpcmVjdGlvbjog
+Mzggb3V0ICgwKQ0KWyAgICAwLjE1MzM2NF0gZW5ldF8zdjM6IGVuYV9ncGlvZD0ocHRydmFsKSBl
+bmFfZ3Bpbz0wIGluaXQ9MCB2YWxpZD0xDQpbICAgIDAuMTUzMzc3XSBlbmV0XzN2MzogcmVxdWVz
+dCBHUElPDQpbICAgIDAuMTUzMzkzXSBlbmV0XzN2MzogYWxyZWFkeSBoYXZlIGdwaW9kDQpbICAg
+IDAuMTUzNDIzXSBlbmV0XzN2MzogMzMwMCBtViANCi4uLg0KWyAgICAzLjg2NzgyN10gZW5ldF8z
+djM6IEdQSU8gZW5hYmxlIGNvdW50PTAgaW52PTENClsgICAgMy44NzI0MzJdIGVuZXRfM3YzOiBz
+ZXQgdmFsdWUgMA0KWyAgICAzLjg3NTc3OV0gZ3Bpb192YWx1ZTogMzggc2V0IDENCg0KVGhhdCAi
+Z3Bpb192YWx1ZTogMzAgc2V0IDEiIHRyYWNlcG9pbnQgaXMgd3JvbmcsIHRoZSBsaW5lIGlzIHNl
+dCBoaWdoLg0KDQpJdCBzZWVtcyB0aGF0IGdwaW9kX3NldF92YWx1ZSB3aWxsIGNoZWNrIEZMQUdf
+QUNUSVZFX0xPVyBhbmQNCmF1dG9tYXRpY2FsbHkgaW52ZXJ0IHNvIG1heWJlIGVuYV9ncGlvX2lu
+dmVydCBzaG91bGQgbm90IGJlIHVzZWQgaWYgYQ0KZnVsbCBncGlvZCBpcyBwYXNzZWQgdG8gcmVn
+dWxhdG9yPw0KDQotLS0gZHJpdmVycy9yZWd1bGF0b3IvZml4ZWQuYw0KKysrIGRyaXZlcnMvcmVn
+dWxhdG9yL2ZpeGVkLmMNCkBAIC0xNDYsNyArMTQ2LDYgQEAgc3RhdGljIGludCByZWdfZml4ZWRf
+dm9sdGFnZV9wcm9iZShzdHJ1Y3QNCnBsYXRmb3JtX2RldmljZSAqcGRldikNCiANCiAgICAgICAg
+ZHJ2ZGF0YS0+ZGVzYy5maXhlZF91ViA9IGNvbmZpZy0+bWljcm92b2x0czsNCiANCi0gICAgICAg
+Y2ZnLmVuYV9ncGlvX2ludmVydCA9ICFjb25maWctPmVuYWJsZV9oaWdoOw0KICAgICAgICBpZiAo
+Y29uZmlnLT5lbmFibGVkX2F0X2Jvb3QpIHsNCiAgICAgICAgICAgICAgICBpZiAoY29uZmlnLT5l
+bmFibGVfaGlnaCkNCiAgICAgICAgICAgICAgICAgICAgICAgIGdmbGFncyA9IEdQSU9EX09VVF9I
+SUdIOw0KDQpBbGwgdGhlc2UgaGlnaC9sb3cgaW52ZXJzaW9ucyBhbmQgZmxhZ3MgYXJlIGV4dHJl
+bWVseSBjb25mdXNpbmcgdG8gbWUuDQoNCkxpbmsgdG8gb3JpZ2luYWwgdGhyZWFkOiBodHRwczov
+L2xrbWwub3JnL2xrbWwvMjAxOC85LzYvNDg1DQoNCi0tDQpSZWdhcmRzLA0KTGVvbmFyZA0K
