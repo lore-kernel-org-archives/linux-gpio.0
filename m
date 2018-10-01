@@ -1,39 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: Fix incorrect use of find_next_zero_bit()
-Date: Mon, 1 Oct 2018 11:37:07 +0200
-Message-ID: <CACRpkdbxh3uoVbc1udouxKaN+sc+q_vB7oj_B8PEa4wi=wLedg@mail.gmail.com>
-References: <20180923235336.22148-2-jmkrzyszt@gmail.com> <20180929122022.6825-1-jmkrzyszt@gmail.com>
+Subject: Re: [PATCH 0/2] USB: serial: gpio line-name fix and FT232R CBUS gpio support
+Date: Mon, 1 Oct 2018 11:43:55 +0200
+Message-ID: <CACRpkdaG-S-6LfCKgxz4jdbD=kRO7q7k_8FAHqsSNBPdC07iDA@mail.gmail.com>
+References: <20180930122703.7115-1-johan@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180929122022.6825-1-jmkrzyszt@gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Peter Korsgaard <peter.korsgaard@barco.com>, Peter Rosin <peda@axentia.se>, Ulf Hansson <ulf.hansson@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, "David S. Miller" <davem@davemloft.net>, Dominik Brodowski <linux@dominikbrodowski.net>, Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald <pmeerw@pmeerw.net>, Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>, Geert Uytterhoeven <geert@linux-m68k.org>, Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>, Lukas Wunner <luka>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180930122703.7115-1-johan@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: linux-usb@vger.kernel.org, pados@pados.hu, Loic Poulain <loic.poulain@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 2:19 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+On Sun, Sep 30, 2018 at 2:29 PM Johan Hovold <johan@kernel.org> wrote:
 
-> Commit b17566a6b08b ("gpiolib: Implement fast processing path in
-> get/set array"), already fixed to some extent with commit 5d581d7e8cdc
-> ("gpiolib: Fix missing updates of bitmap index"), introduced a new mode
-> of processing bitmaps where bits applicable for fast bitmap processing
-> path are supposed to be skipped while iterating bits which don't apply.
-> Unfortunately, find_next_zero_bit() function supposed to skip over
-> those fast bits is always called with a 'start' argument equal to an
-> index of last zero bit found and returns that index value again an
-> again, causing an infinite loop.
+> Turns out gpiolib still doesn't like having non-unique line names, so
+> drop the line names from the recently added FTX cbus gpio
+> implementation before adding support also for FT232R.
+
+Oh.
+
+> Linus, we finally got around to adding gpio support for FTDI devices;
+> see commit
 >
-> Fix it by incrementing the index uncoditionally before
-> find_next_zero_bit() is optionally called.
+>         ba93cc7da896 ("USB: serial: ftdi_sio: implement GPIO support for FT-X devices")
 >
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> in my usb-next branch (and linux-next).
 
-Patch applied with Marek's Tested-by.
+This is good news, I think it's a pretty neat way for people to get
+a few inexpensive GPIOs from their serial adapters.
 
-Thanks to both of you for digging in and fixing this up!
-Now we are in good shape for the v4.20 cycle :)
+> The gpiolib warnings and inability to use the legacy sysfs interface
+> prevents us from setting the line names however as someone is bound to
+> plugin more than one of these devices at some point. I think we
+> discussed this issue with the name space and hotpluggable devices a few
+> years ago, but looks like this topic may need to be revisited.
+
+Hm I guess the right long-term fix is to allow per-gpiochip unique
+names rather than enforcing globally unique names.
+
+The idea is to make it possible for userspace to look up a GPIO
+on a chip by name, so if the gpiochip has a unique name,
+and the line name is unique on that chip it should be good
+enough.
 
 Yours,
 Linus Walleij
