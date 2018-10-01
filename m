@@ -1,61 +1,81 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v7 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date: Mon,  1 Oct 2018 14:10:26 +0100
-Message-ID: <20181001131026.14635-4-phil.edworthy@renesas.com>
-References: <20181001131026.14635-1-phil.edworthy@renesas.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
+Date: Mon, 1 Oct 2018 15:36:22 +0200
+Message-ID: <CAPybu_1P-RWCP8yjQKkFYAX11KtYGhAfASY24Q_NZ19PD09gxA@mail.gmail.com>
+References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+ <20180921103604.13361-2-ricardo.ribalda@gmail.com> <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
+ <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org> <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
+ <5aea282d-6fc9-cd70-cec4-10f28aa819b9@codeaurora.org> <CAOZdJXUUWUWHzus+3sbEXbW_q92e+SSzTQJCqCyQp6Y6_HOo3g@mail.gmail.com>
+ <D3E6F4C4-E1C4-4D88-B118-878576BF5281@gmail.com> <CACRpkdawwrpEe6AAfdaxw6OMFXkCnq0gpznk1Up5p1=Wigx_2g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181001131026.14635-1-phil.edworthy@renesas.com>
+In-Reply-To: <CACRpkdawwrpEe6AAfdaxw6OMFXkCnq0gpznk1Up5p1=Wigx_2g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Timur Tabi <timur@kernel.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
+Hi Linus
+On Mon, Oct 1, 2018 at 1:54 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Fri, Sep 28, 2018 at 9:30 PM Ricardo Ribalda Delgado
+> <ricardo.ribalda@gmail.com> wrote:
+>
+> > How do we proceed from here? Can you fix your driver somehow to
+> > init the valid mask before enabling the gpio?
+>
+> Just include a hunk to the qcom driver reordering this call
+> at the same time. No need to make it separate patches,
+> it need to be tested together anyways.
+>
+> I guess just switch the order of these two:
+>
+>         ret = gpiochip_add_data(&pctrl->chip, pctrl);
+>         if (ret) {
+>                 dev_err(pctrl->dev, "Failed register gpiochip\n");
+>                 return ret;
+>         }
+>
+>         ret = msm_gpio_init_valid_mask(chip, pctrl);
+>         if (ret) {
+>                 dev_err(pctrl->dev, "Failed to setup irq valid bits\n");
+>                 gpiochip_remove(&pctrl->chip);
+>                 return ret;
+>         }
+>
 
-Based on a patch originally written by Michel Pollet at Renesas.
+the problem is that valid_mask is not a long/integer, is a struct that
+needs to be malloced, and is malloc at gpiochip_add_data :(
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v7:
- - No changes.
+Maybe we need a callback from the driver to init that mask just after
+the allocation?
 
-v6:
- - No changes.
+A fast grep shows that the only driver using need_valid_mask (not for
+irq) is msm:
 
-v5:
- - No changes.
+ricardo@neopili:~/curro/kernel-upstream$ git grep "need_valid_mask ="
+| grep -v irq
+drivers/gpio/gpiolib.c: gpiochip->need_valid_mask = true;
+drivers/pinctrl/intel/pinctrl-cherryview.c: bool need_valid_mask =
+!dmi_check_system(chv_no_valid_mask);
+drivers/pinctrl/qcom/pinctrl-msm.c: chip->need_valid_mask =
+msm_gpio_needs_valid_mask(pctrl);
 
-v4:
- - No changes.
+so hacking something in the driver might not be a terrible idea.
 
-v3:
- - No changes.
 
-v2:
- - Add "renesas,rzn1-pinctrl" compatible fallback string
- - Register size corrected.
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index eaf94976ed6d..2322268bc862 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
- 
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
-+
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
+Also
+
+> > Do we need to make more severe changes on the core?
+>
+> Don't think so.
+>
+> Yours,
+> Linus Walleij
+
+
+
 -- 
-2.17.1
+Ricardo Ribalda
