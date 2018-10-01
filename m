@@ -1,48 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] USB: serial: gpio line-name fix and FT232R CBUS gpio support
-Date: Mon, 1 Oct 2018 11:43:55 +0200
-Message-ID: <CACRpkdaG-S-6LfCKgxz4jdbD=kRO7q7k_8FAHqsSNBPdC07iDA@mail.gmail.com>
-References: <20180930122703.7115-1-johan@kernel.org>
+Subject: Re: [PATCH v2 0/3] gpio: Fix VLA removal fallout
+Date: Mon, 1 Oct 2018 12:24:18 +0200
+Message-ID: <CACRpkdYgX6aMACDdE6yMkur9txQq1hKCMfaLj_+FTg4vg-+Mzw@mail.gmail.com>
+References: <20180927113810.30721-1-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180930122703.7115-1-johan@kernel.org>
+In-Reply-To: <20180927113810.30721-1-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: linux-usb@vger.kernel.org, pados@pados.hu, Loic Poulain <loic.poulain@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laura Abbott <labbott@redhat.com>, Jonathan Corbet <corbet@lwn.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-doc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 2:29 PM Johan Hovold <johan@kernel.org> wrote:
+On Thu, Sep 27, 2018 at 1:38 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> Turns out gpiolib still doesn't like having non-unique line names, so
-> drop the line names from the recently added FTX cbus gpio
-> implementation before adding support also for FT232R.
-
-Oh.
-
-> Linus, we finally got around to adding gpio support for FTDI devices;
-> see commit
+> This patch series fixes various (mostly harmless) issues introduced by
+> commit 3027743f83f867d8 ("gpio: Remove VLA from gpiolib").
 >
->         ba93cc7da896 ("USB: serial: ftdi_sio: implement GPIO support for FT-X devices")
+> As per the "one patch should fix one issue"-policy, this series contains 3
+> patches, although they all have the same Fixes: tag.
 >
-> in my usb-next branch (and linux-next).
+> Changes compared to v1:
+>   - Rebase on top of gpio array rework.
 
-This is good news, I think it's a pretty neat way for people to get
-a few inexpensive GPIOs from their serial adapters.
+Patches applied, thanks Geert!
 
-> The gpiolib warnings and inability to use the legacy sysfs interface
-> prevents us from setting the line names however as someone is bound to
-> plugin more than one of these devices at some point. I think we
-> discussed this issue with the name space and hotpluggable devices a few
-> years ago, but looks like this topic may need to be revisited.
+> W.r.t. propagating errors: while gpiod_set_array_value_complex() and its
+> callers can now return an error code, this is currently limited to -ENOMEM.
+> Actual failures setting a GPIO output value cannot be propagated, as
+> gpio_chip.set() still returns void.  Do you want to change that?
+> E.g. gen_74x164_set_value() can fail.
 
-Hm I guess the right long-term fix is to allow per-gpiochip unique
-names rather than enforcing globally unique names.
-
-The idea is to make it possible for userspace to look up a GPIO
-on a chip by name, so if the gpiochip has a unique name,
-and the line name is unique on that chip it should be good
-enough.
+I think we discussed it at one point and said that it's something
+we should fix some day, just nobody has got around to do it.
 
 Yours,
 Linus Walleij
