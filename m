@@ -1,66 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
-Date: Mon, 1 Oct 2018 23:20:21 +0200
-Message-ID: <CACRpkdaN5G4ephY+6BPLRF+aUrO4-sPa+2erRYrwTGwPBwu8fw@mail.gmail.com>
-References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
- <20180921103604.13361-2-ricardo.ribalda@gmail.com> <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
- <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org> <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
- <5aea282d-6fc9-cd70-cec4-10f28aa819b9@codeaurora.org> <CAOZdJXUUWUWHzus+3sbEXbW_q92e+SSzTQJCqCyQp6Y6_HOo3g@mail.gmail.com>
- <D3E6F4C4-E1C4-4D88-B118-878576BF5281@gmail.com> <CACRpkdawwrpEe6AAfdaxw6OMFXkCnq0gpznk1Up5p1=Wigx_2g@mail.gmail.com>
- <CAPybu_1P-RWCP8yjQKkFYAX11KtYGhAfASY24Q_NZ19PD09gxA@mail.gmail.com>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: [PATCH] pinctrl: msm: Actually use function 0 for gpio selection
+Date: Mon,  1 Oct 2018 14:49:05 -0700
+Message-ID: <20181001214905.12149-1-swboyd@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPybu_1P-RWCP8yjQKkFYAX11KtYGhAfASY24Q_NZ19PD09gxA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: timur@kernel.org, jhugo@codeaurora.org, Stephen Boyd <swboyd@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 3:36 PM Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> On Mon, Oct 1, 2018 at 1:54 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Fri, Sep 28, 2018 at 9:30 PM Ricardo Ribalda Delgado
-> > <ricardo.ribalda@gmail.com> wrote:
-> >
-> > > How do we proceed from here? Can you fix your driver somehow to
-> > > init the valid mask before enabling the gpio?
-> >
-> > Just include a hunk to the qcom driver reordering this call
-> > at the same time. No need to make it separate patches,
-> > it need to be tested together anyways.
-> >
-> > I guess just switch the order of these two:
-> >
-> >         ret = gpiochip_add_data(&pctrl->chip, pctrl);
-> >         if (ret) {
-> >                 dev_err(pctrl->dev, "Failed register gpiochip\n");
-> >                 return ret;
-> >         }
-> >
-> >         ret = msm_gpio_init_valid_mask(chip, pctrl);
-> >         if (ret) {
-> >                 dev_err(pctrl->dev, "Failed to setup irq valid bits\n");
-> >                 gpiochip_remove(&pctrl->chip);
-> >                 return ret;
-> >         }
-> >
->
-> the problem is that valid_mask is not a long/integer, is a struct that
-> needs to be malloced, and is malloc at gpiochip_add_data :(
+This code needs to select function #0, which is the first int in the
+array of functions, not the number 0 which may or may not be the
+function for "GPIO mode" per the enum mapping. We were getting lucky on
+SDM845, where this was tested, because the function 0 matched the enum
+value for "GPIO mode". On other platforms, e.g. MSM8996, the gpio enum
+value is the last one in the list so this code doesn't work and we see a
+warning at boot. Fix it by grabbing the first element out of the array
+of functions.
 
-I don't get it, but maybe I'm not smart enough.
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Niklas Cassel <niklas.cassel@linaro.org>
+Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+Fixes: 1de7ddb3a15c ("pinctrl: msm: Mux out gpio function with gpio_request()")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-gpiochip_add_data() doesn't allocate anything, it
-just adds a already allocated (or static!) gpio_chip
-to the gpiolib subsystem.
-
-In fact I think it is wrong to set up the mask after
-calling gpiolob_add_data(), because of exactly the
-type of problem you're seeing.
-
-Don't get confused by the &pctrl->chip
-vs just chip variables, it's just some sloppiness.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 1684b2da09d5..b925b8feac95 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -188,7 +188,7 @@ static int msm_pinmux_request_gpio(struct pinctrl_dev *pctldev,
+ 		return 0;
+ 
+ 	/* For now assume function 0 is GPIO because it always is */
+-	return msm_pinmux_set_mux(pctldev, 0, offset);
++	return msm_pinmux_set_mux(pctldev, g->funcs[0], offset);
+ }
+ 
+ static const struct pinmux_ops msm_pinmux_ops = {
+-- 
+Sent by a computer through tubes
