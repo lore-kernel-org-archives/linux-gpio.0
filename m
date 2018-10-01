@@ -1,39 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/3] gpio: Fix VLA removal fallout
-Date: Mon, 1 Oct 2018 12:24:18 +0200
-Message-ID: <CACRpkdYgX6aMACDdE6yMkur9txQq1hKCMfaLj_+FTg4vg-+Mzw@mail.gmail.com>
-References: <20180927113810.30721-1-geert+renesas@glider.be>
+Subject: Re: [PATCH] gpio: omap: get rid of the conditional PM runtime calls
+Date: Mon, 1 Oct 2018 12:29:20 +0200
+Message-ID: <CACRpkdZ-WOGqSThAPHw8LykriTnSEKZcZaL+iB5-jmaVKmN4bg@mail.gmail.com>
+References: <20180928213950.27415-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180927113810.30721-1-geert+renesas@glider.be>
+In-Reply-To: <20180928213950.27415-1-grygorii.strashko@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laura Abbott <labbott@redhat.com>, Jonathan Corbet <corbet@lwn.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-doc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: ext Tony Lindgren <tony@atomide.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 1:38 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Fri, Sep 28, 2018 at 11:39 PM Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-> This patch series fixes various (mostly harmless) issues introduced by
-> commit 3027743f83f867d8 ("gpio: Remove VLA from gpiolib").
+> OMAP GPIO driver is checking !BANK_USED() used condition before calling PM
+> runtime API, because of PM runtime calls in
+> omap2_gpio_prepare/resume_for_idle(). It's not required any more since
+> "omap gpio add level idle, cpu_pm and drop runtime_irq_safe" series [1]
+> from Tony Lindgren was accepted and PM runtime management was enabled in
+> IRQ chip core by commit be45beb2df69 ("genirq: Add runtime power management
+> support for IRQ chips") .
 >
-> As per the "one patch should fix one issue"-policy, this series contains 3
-> patches, although they all have the same Fixes: tag.
+> As result safely drop !BANK_USED() checks from omap_gpio_request/free(),
+> omap_gpio_irq_bus_lock/unlock() and enable PM runtime management for OMAP
+> GPIO IRQ chip.
 >
-> Changes compared to v1:
->   - Rebase on top of gpio array rework.
+> [1] https://www.spinics.net/lists/arm-kernel/msg677583.html
+> Tested-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Patches applied, thanks Geert!
-
-> W.r.t. propagating errors: while gpiod_set_array_value_complex() and its
-> callers can now return an error code, this is currently limited to -ENOMEM.
-> Actual failures setting a GPIO output value cannot be propagated, as
-> gpio_chip.set() still returns void.  Do you want to change that?
-> E.g. gen_74x164_set_value() can fail.
-
-I think we discussed it at one point and said that it's something
-we should fix some day, just nobody has got around to do it.
+Patch applied.
 
 Yours,
 Linus Walleij
