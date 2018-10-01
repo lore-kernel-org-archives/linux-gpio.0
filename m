@@ -1,57 +1,49 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: core: make sure strcmp() doesn't get a null parameter
-Date: Mon, 1 Oct 2018 13:46:48 +0200
-Message-ID: <CACRpkdYG6FK4h8_ZLCWkHSreZPRewEjysiMNtDV2pa4AykuHsw@mail.gmail.com>
-References: <1538212015-10374-1-git-send-email-yanjiang.jin@hxt-semitech.com> <1538212015-10374-2-git-send-email-yanjiang.jin@hxt-semitech.com>
+Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
+Date: Mon, 1 Oct 2018 13:54:15 +0200
+Message-ID: <CACRpkdawwrpEe6AAfdaxw6OMFXkCnq0gpznk1Up5p1=Wigx_2g@mail.gmail.com>
+References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+ <20180921103604.13361-2-ricardo.ribalda@gmail.com> <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
+ <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org> <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
+ <5aea282d-6fc9-cd70-cec4-10f28aa819b9@codeaurora.org> <CAOZdJXUUWUWHzus+3sbEXbW_q92e+SSzTQJCqCyQp6Y6_HOo3g@mail.gmail.com>
+ <D3E6F4C4-E1C4-4D88-B118-878576BF5281@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1538212015-10374-2-git-send-email-yanjiang.jin@hxt-semitech.com>
+In-Reply-To: <D3E6F4C4-E1C4-4D88-B118-878576BF5281@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: yanjiang.jin@hxt-semitech.com
-Cc: jinyanjiang@gmail.com, yu.zheng@hxt-semitech.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: timur@kernel.org, jhugo@codeaurora.org, Stephen Boyd <swboyd@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Sep 29, 2018 at 11:07 AM Yanjiang Jin
-<yanjiang.jin@hxt-semitech.com> wrote:
+On Fri, Sep 28, 2018 at 9:30 PM Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
 
-> Some drivers, for example, QCOM's qdf2xxx, set groups[gpio].name only
-> when gpio is valid, and leave invalid gpio names as null.
-> If we want to access the sys node "pinconf-groups",
-> pinctrl_get_group_selector() -> get_group_name() may return a null
-> pointer if group_selector is invalid, then the below Kernel panic
-> would happen since strcmp() uses this null pointer to do comparison.
->
->  Unable to handle kernel NULL pointer dereference at ss 00000000
-> el:Internal error: Oops: 9600000[ 143.080279]
-> SMP
->  CPU: 19 PID: 2493 Comm: read_all Tainted: G O
-> .aarch64 #1
->  Hardware name: HXT Semiconductor HXT REP-2 System
->  PC is at strcmp+0x18/0x154
->  LR is at pinctrl_get_group_selector+0x6c/0xe8
->  Process read_all (pid: 2493, stack limit =
->  Call trace:
->  Exception stack
->   strcmp+0x18/0x154
->   pin_config_group_get+0x64/0xd8
->   pinconf_generic_dump_one+0xd8/0x1c0
->   pinconf_generic_dump_pins+0x94/0xc8
->   pinconf_groups_show+0xb4/0x104
->   seq_read+0x178/0x464
->   full_proxy_read+0x6c/0xac
->   __vfs_read+0x58/0x178
->   vfs_read+0x94/0x164
->   SyS_read+0x60/0xc0
->   __sys_trace_return+0x0/0x4
->  --[ end trace]--
->  Kernel panic - not syncing: Fatal exception
->
-> Signed-off-by: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
+> How do we proceed from here? Can you fix your driver somehow to
+> init the valid mask before enabling the gpio?
 
-Good catch!
+Just include a hunk to the qcom driver reordering this call
+at the same time. No need to make it separate patches,
+it need to be tested together anyways.
 
-Patch applied.
+I guess just switch the order of these two:
+
+        ret = gpiochip_add_data(&pctrl->chip, pctrl);
+        if (ret) {
+                dev_err(pctrl->dev, "Failed register gpiochip\n");
+                return ret;
+        }
+
+        ret = msm_gpio_init_valid_mask(chip, pctrl);
+        if (ret) {
+                dev_err(pctrl->dev, "Failed to setup irq valid bits\n");
+                gpiochip_remove(&pctrl->chip);
+                return ret;
+        }
+
+> Do we need to make more severe changes on the core?
+
+Don't think so.
 
 Yours,
 Linus Walleij
