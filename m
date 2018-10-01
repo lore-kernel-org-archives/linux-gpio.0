@@ -1,25 +1,57 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: omap: drop omap_gpio_list
-Date: Mon, 1 Oct 2018 13:24:11 +0200
-Message-ID: <CACRpkdb=+PDA1dz=Ui0OmhwKzDvCGEBMa7aUyqfg-s84gki1SA@mail.gmail.com>
-References: <20180927233844.18443-1-grygorii.strashko@ti.com>
+Subject: Re: [PATCH] pinctrl: core: make sure strcmp() doesn't get a null parameter
+Date: Mon, 1 Oct 2018 13:46:48 +0200
+Message-ID: <CACRpkdYG6FK4h8_ZLCWkHSreZPRewEjysiMNtDV2pa4AykuHsw@mail.gmail.com>
+References: <1538212015-10374-1-git-send-email-yanjiang.jin@hxt-semitech.com> <1538212015-10374-2-git-send-email-yanjiang.jin@hxt-semitech.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180927233844.18443-1-grygorii.strashko@ti.com>
+In-Reply-To: <1538212015-10374-2-git-send-email-yanjiang.jin@hxt-semitech.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: ext Tony Lindgren <tony@atomide.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: yanjiang.jin@hxt-semitech.com
+Cc: jinyanjiang@gmail.com, yu.zheng@hxt-semitech.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 1:38 AM Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Sat, Sep 29, 2018 at 11:07 AM Yanjiang Jin
+<yanjiang.jin@hxt-semitech.com> wrote:
 
-> omap_gpio_list is unused so drop it.
+> Some drivers, for example, QCOM's qdf2xxx, set groups[gpio].name only
+> when gpio is valid, and leave invalid gpio names as null.
+> If we want to access the sys node "pinconf-groups",
+> pinctrl_get_group_selector() -> get_group_name() may return a null
+> pointer if group_selector is invalid, then the below Kernel panic
+> would happen since strcmp() uses this null pointer to do comparison.
 >
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>  Unable to handle kernel NULL pointer dereference at ss 00000000
+> el:Internal error: Oops: 9600000[ 143.080279]
+> SMP
+>  CPU: 19 PID: 2493 Comm: read_all Tainted: G O
+> .aarch64 #1
+>  Hardware name: HXT Semiconductor HXT REP-2 System
+>  PC is at strcmp+0x18/0x154
+>  LR is at pinctrl_get_group_selector+0x6c/0xe8
+>  Process read_all (pid: 2493, stack limit =
+>  Call trace:
+>  Exception stack
+>   strcmp+0x18/0x154
+>   pin_config_group_get+0x64/0xd8
+>   pinconf_generic_dump_one+0xd8/0x1c0
+>   pinconf_generic_dump_pins+0x94/0xc8
+>   pinconf_groups_show+0xb4/0x104
+>   seq_read+0x178/0x464
+>   full_proxy_read+0x6c/0xac
+>   __vfs_read+0x58/0x178
+>   vfs_read+0x94/0x164
+>   SyS_read+0x60/0xc0
+>   __sys_trace_return+0x0/0x4
+>  --[ end trace]--
+>  Kernel panic - not syncing: Fatal exception
+>
+> Signed-off-by: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
 
-Patch applied with Tony's ACK.
+Good catch!
+
+Patch applied.
 
 Yours,
 Linus Walleij
