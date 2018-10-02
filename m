@@ -1,97 +1,96 @@
-From: =?UTF-8?B?RGFuaWVsIETDrWF6?= <daniel.diaz@linaro.org>
+From: Shuah Khan <shuah@kernel.org>
 Subject: Re: [PATCH v3 1/2] selftests: gpio: restructure Makefile
-Date: Tue, 2 Oct 2018 15:48:06 -0500
-Message-ID: <CAEUSe79yNJ_2FsLsxKW6J0dfrJ2HoVvk+_NZGWHCsy_Kc0+pQw@mail.gmail.com>
+Date: Tue, 2 Oct 2018 14:55:24 -0600
+Message-ID: <aee2d946-eecb-ca39-0802-9755a01a7312@kernel.org>
 References: <1536330895-8391-1-git-send-email-daniel.diaz@linaro.org>
+ <CAEUSe79yNJ_2FsLsxKW6J0dfrJ2HoVvk+_NZGWHCsy_Kc0+pQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1536330895-8391-1-git-send-email-daniel.diaz@linaro.org>
+In-Reply-To: <CAEUSe79yNJ_2FsLsxKW6J0dfrJ2HoVvk+_NZGWHCsy_Kc0+pQw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Shuah Khan <shuahkh@osg.samsung.com>, linux-kselftest@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Fathi Boudra <fathi.boudra@linaro.org>, Bamvor Jian Zhang <bamv2005@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Shuah Khan <shuah@kernel.org>, "open list:GPIO MOCKUP DRIVER" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>, Shuah Khan <shuahkh@osg.samsung.com>, linux-kselftest@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Fathi Boudra <fathi.boudra@linaro.org>, Bamvor Jian Zhang <bamv2005@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, "open list:GPIO MOCKUP DRIVER" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello!
+On 10/02/2018 02:48 PM, Daniel Díaz wrote:
+> Hello!
+> 
+> On Fri, 7 Sep 2018 at 09:35, Daniel Díaz <daniel.diaz@linaro.org> wrote:
+>> From: Fathi Boudra <fathi.boudra@linaro.org>
+>>
+>> This patch cleans up the Makefile by restructuring a couple of
+>> things, namely:
+>> 1) change explicit paths in targets for variables
+>> 2) substitute a variable (BINARIES) for another, part of the
+>>    selftests build system (TEST_PROGS_EXTENDED)
+>> 3) proper cleaning up of the EXTRA objects
+>>
+>> The resulting Makefile is much more readable and manageable.
+>>
+>> Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
+>> Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
+>> ---
+>>  tools/testing/selftests/gpio/Makefile | 32 +++++++++++++++-----------------
+>>  1 file changed, 15 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+>> index 4665cdb..a4a01ec8 100644
+>> --- a/tools/testing/selftests/gpio/Makefile
+>> +++ b/tools/testing/selftests/gpio/Makefile
+>> @@ -1,28 +1,26 @@
+>>  # SPDX-License-Identifier: GPL-2.0
+>>
+>> +CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+>> +LDLIBS += -lmount -I/usr/include/libmount
+>> +
+>>  TEST_PROGS := gpio-mockup.sh
+>> -TEST_FILES := gpio-mockup-sysfs.sh $(BINARIES)
+>> -BINARIES := gpio-mockup-chardev
+>> -EXTRA_PROGS := ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
+>> -EXTRA_DIRS := ../gpioinclude/
+>> -EXTRA_OBJS := ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
+>> -EXTRA_OBJS += ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpio-in.o
+>> -EXTRA_OBJS += ../gpiolsgpio.o
+>> +TEST_FILES := gpio-mockup-sysfs.sh
+>> +TEST_PROGS_EXTENDED := gpio-mockup-chardev
+>> +
+>> +GPIODIR := ../../../gpio
+>> +GPIOOBJ := gpio-utils.o
+>>
+>>  include ../lib.mk
+>>
+>> -all: $(BINARIES)
+>> +all: $(TEST_PROGS_EXTENDED)
+>>
+>>  override define CLEAN
+>> -       $(RM) $(BINARIES) $(EXTRA_PROGS) $(EXTRA_OBJS)
+>> -       $(RM) -r $(EXTRA_DIRS)
+>> +       $(RM) $(TEST_PROGS_EXTENDED)
+>> +       $(MAKE) -C $(GPIODIR) clean
+>>  endef
+>>
+>> -CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+>> -LDLIBS += -lmount -I/usr/include/libmount
+>> -
+>> -$(BINARIES):| khdr
+>> -$(BINARIES): ../../../gpio/gpio-utils.o
+>> +$(TEST_PROGS_EXTENDED):| khdr
+>> +$(TEST_PROGS_EXTENDED): $(GPIODIR)/$(GPIOOBJ)
+>>
+>> -../../../gpio/gpio-utils.o:
+>> -       make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
+>> +$(GPIODIR)/$(GPIOOBJ):
+>> +       $(MAKE) -C $(GPIODIR)
+>> --
+>> 2.7.4
+> 
+> Ping on this series.
+> 
 
-On Fri, 7 Sep 2018 at 09:35, Daniel D=C3=ADaz <daniel.diaz@linaro.org> wrot=
-e:
-> From: Fathi Boudra <fathi.boudra@linaro.org>
->
-> This patch cleans up the Makefile by restructuring a couple of
-> things, namely:
-> 1) change explicit paths in targets for variables
-> 2) substitute a variable (BINARIES) for another, part of the
->    selftests build system (TEST_PROGS_EXTENDED)
-> 3) proper cleaning up of the EXTRA objects
->
-> The resulting Makefile is much more readable and manageable.
->
-> Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
-> Signed-off-by: Daniel D=C3=ADaz <daniel.diaz@linaro.org>
-> ---
->  tools/testing/selftests/gpio/Makefile | 32 +++++++++++++++--------------=
----
->  1 file changed, 15 insertions(+), 17 deletions(-)
->
-> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selfte=
-sts/gpio/Makefile
-> index 4665cdb..a4a01ec8 100644
-> --- a/tools/testing/selftests/gpio/Makefile
-> +++ b/tools/testing/selftests/gpio/Makefile
-> @@ -1,28 +1,26 @@
->  # SPDX-License-Identifier: GPL-2.0
->
-> +CFLAGS +=3D -O2 -g -std=3Dgnu99 -Wall -I../../../../usr/include/
-> +LDLIBS +=3D -lmount -I/usr/include/libmount
-> +
->  TEST_PROGS :=3D gpio-mockup.sh
-> -TEST_FILES :=3D gpio-mockup-sysfs.sh $(BINARIES)
-> -BINARIES :=3D gpio-mockup-chardev
-> -EXTRA_PROGS :=3D ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
-> -EXTRA_DIRS :=3D ../gpioinclude/
-> -EXTRA_OBJS :=3D ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
-> -EXTRA_OBJS +=3D ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpi=
-o-in.o
-> -EXTRA_OBJS +=3D ../gpiolsgpio.o
-> +TEST_FILES :=3D gpio-mockup-sysfs.sh
-> +TEST_PROGS_EXTENDED :=3D gpio-mockup-chardev
-> +
-> +GPIODIR :=3D ../../../gpio
-> +GPIOOBJ :=3D gpio-utils.o
->
->  include ../lib.mk
->
-> -all: $(BINARIES)
-> +all: $(TEST_PROGS_EXTENDED)
->
->  override define CLEAN
-> -       $(RM) $(BINARIES) $(EXTRA_PROGS) $(EXTRA_OBJS)
-> -       $(RM) -r $(EXTRA_DIRS)
-> +       $(RM) $(TEST_PROGS_EXTENDED)
-> +       $(MAKE) -C $(GPIODIR) clean
->  endef
->
-> -CFLAGS +=3D -O2 -g -std=3Dgnu99 -Wall -I../../../../usr/include/
-> -LDLIBS +=3D -lmount -I/usr/include/libmount
-> -
-> -$(BINARIES):| khdr
-> -$(BINARIES): ../../../gpio/gpio-utils.o
-> +$(TEST_PROGS_EXTENDED):| khdr
-> +$(TEST_PROGS_EXTENDED): $(GPIODIR)/$(GPIOOBJ)
->
-> -../../../gpio/gpio-utils.o:
-> -       make ARCH=3D$(ARCH) CROSS_COMPILE=3D$(CROSS_COMPILE) -C ../../../=
-gpio
-> +$(GPIODIR)/$(GPIOOBJ):
-> +       $(MAKE) -C $(GPIODIR)
-> --
-> 2.7.4
+Thanks for the ping. I will queue these up for 4.20-rc1.
 
-Ping on this series.
-
-Greetings!
-
-Daniel D=C3=ADaz
-daniel.diaz@linaro.org
+thanks,
+-- Shuah
