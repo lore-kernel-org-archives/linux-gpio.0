@@ -1,87 +1,87 @@
-From: Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: Re: [PATCH v4 3/3] gpiolib: Show correct direction from the beginning
-Date: Tue, 2 Oct 2018 09:21:22 -0600
-Message-ID: <d1bbafcb-1b6a-b137-1fd1-954c17e14836@codeaurora.org>
-References: <20181002140858.16833-1-ricardo.ribalda@gmail.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+Subject: [PATCH] ARM: dts: imx6sx-sdb: Fix enet phy regulator
+Date: Tue, 2 Oct 2018 18:37:21 +0000
+Message-ID: <1147be600733a1bcde194f7df61866019f34a531.1538504729.git.leonard.crestez@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181002140858.16833-1-ricardo.ribalda@gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Timur Tabi <timur@kernel.org>, swboyd@chromium.org, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Fabio Estevam <fabio.estevam@nxp.com>, Andy Duan <fugang.duan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On 10/2/2018 8:08 AM, Ricardo Ribalda Delgado wrote:
-> Current code assumes that the direction is input if direction_input
-> function is set.
-> This might not be the case on GPIOs with programmable direction.
-> 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Bindings for "fixed-regulator" only explicitly support "gpio" property,
+not "gpios". Fix by correcting the property name.
 
-I'll try to get this series tested on QDF2400 by the end of the week.
+The enet PHYs on imx6sx-sdb needs to be explicitly reset after a power
+cycle, handle this by adding the phy-reset-gpios property.
 
-> ---
-> Changelog v4:
-> 
-> timur@kernel.org:
-> Remove REVISIT comment
-> 
->   drivers/gpio/gpiolib.c | 27 +++++++++++++--------------
->   1 file changed, 13 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 6925196136ce..cad859fece65 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1344,20 +1344,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->   
->   	spin_unlock_irqrestore(&gpio_lock, flags);
->   
-> -	for (i = 0; i < chip->ngpio; i++) {
-> -		struct gpio_desc *desc = &gdev->descs[i];
-> -
-> -		desc->gdev = gdev;
-> -
-> -		/* REVISIT: most hardware initializes GPIOs as inputs (often
-> -		 * with pullups enabled) so power usage is minimized. Linux
-> -		 * code should set the gpio direction first thing; but until
-> -		 * it does, and in case chip->get_direction is not set, we may
-> -		 * expose the wrong direction in sysfs.
-> -		 */
-> -		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
-> -	}
-> -
->   #ifdef CONFIG_PINCTRL
->   	INIT_LIST_HEAD(&gdev->pin_ranges);
->   #endif
-> @@ -1374,6 +1360,19 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->   	if (status)
->   		goto err_remove_irqchip_mask;
->   
-> +	for (i = 0; i < chip->ngpio; i++) {
-> +		struct gpio_desc *desc = &gdev->descs[i];
-> +
-> +		desc->gdev = gdev;
-> +
-> +		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
-> +			desc->flags = !chip->get_direction(chip, i) ?
-> +					(1 << FLAG_IS_OUT) : 0;
-> +		else
-> +			desc->flags = !chip->direction_input ?
-> +					(1 << FLAG_IS_OUT) : 0;
-> +	}
-> +
->   	status = gpiochip_add_irqchip(chip, lock_key, request_key);
->   	if (status)
->   		goto err_remove_chip;
-> 
+Both phys share a single reset, a scenario similar to imx7d-sdb.
 
+This issue was exposed by commit efdfeb079cc3 ("regulator: fixed:
+Convert to use GPIO descriptor only") which causes the "gpios" property
+to also be parsed. Before that commit the "gpios" property had no
+effect and PHY reset was only handled in the bootloader.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+This fixes linux-next netboot failures previously reported here:
+ https://lore.kernel.org/patchwork/patch/982437/#1177900
+ https://lore.kernel.org/patchwork/patch/994091/#1178304
+
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+---
+ arch/arm/boot/dts/imx6sx-sdb.dtsi | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+I'm not entirely certain sharing the phy reset is OK, maybe somebody
+with more familiarity with the FEC driver can confirm? This design seems
+to be similar between multiple imx boards with dual ethernet ports.
+
+This took a surprising amount of digging.
+
+diff --git a/arch/arm/boot/dts/imx6sx-sdb.dtsi b/arch/arm/boot/dts/imx6sx-s=
+db.dtsi
+index 53b3408b5fab..1ed7a081c420 100644
+--- a/arch/arm/boot/dts/imx6sx-sdb.dtsi
++++ b/arch/arm/boot/dts/imx6sx-sdb.dtsi
+@@ -115,11 +115,11 @@
+ 		pinctrl-names =3D "default";
+ 		pinctrl-0 =3D <&pinctrl_enet_3v3>;
+ 		regulator-name =3D "enet_3v3";
+ 		regulator-min-microvolt =3D <3300000>;
+ 		regulator-max-microvolt =3D <3300000>;
+-		gpios =3D <&gpio2 6 GPIO_ACTIVE_LOW>;
++		gpio =3D <&gpio2 6 GPIO_ACTIVE_LOW>;
+ 	};
+=20
+ 	reg_pcie_gpio: regulator-pcie-gpio {
+ 		compatible =3D "regulator-fixed";
+ 		pinctrl-names =3D "default";
+@@ -178,10 +178,11 @@
+ 	pinctrl-names =3D "default";
+ 	pinctrl-0 =3D <&pinctrl_enet1>;
+ 	phy-supply =3D <&reg_enet_3v3>;
+ 	phy-mode =3D "rgmii";
+ 	phy-handle =3D <&ethphy1>;
++	phy-reset-gpios =3D <&gpio2 7 GPIO_ACTIVE_LOW>;
+ 	status =3D "okay";
+=20
+ 	mdio {
+ 		#address-cells =3D <1>;
+ 		#size-cells =3D <0>;
+@@ -371,10 +372,12 @@
+ 				MX6SX_PAD_RGMII1_RD1__ENET1_RX_DATA_1	0x3081
+ 				MX6SX_PAD_RGMII1_RD2__ENET1_RX_DATA_2	0x3081
+ 				MX6SX_PAD_RGMII1_RD3__ENET1_RX_DATA_3	0x3081
+ 				MX6SX_PAD_RGMII1_RX_CTL__ENET1_RX_EN	0x3081
+ 				MX6SX_PAD_ENET2_RX_CLK__ENET2_REF_CLK_25M	0x91
++				/* phy reset */
++				MX6SX_PAD_ENET2_CRS__GPIO2_IO_7		0x80000000
+ 			>;
+ 		};
+=20
+ 		pinctrl_enet_3v3: enet3v3grp {
+ 			fsl,pins =3D <
+--=20
+2.17.1
