@@ -1,38 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/3] gpiolib: Add init_valid_mask exported function
-Date: Tue, 2 Oct 2018 11:14:20 +0200
-Message-ID: <CACRpkdaFciX3xMw8ErRCwy79VVF6HDVkjAHi2EOtXXX_X1uVuw@mail.gmail.com>
-References: <20181002082731.20141-1-ricardo.ribalda@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v7 1/3] dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+Date: Tue, 2 Oct 2018 12:29:24 +0200
+Message-ID: <CAMuHMdWc8qfzFdFeuJgJaTgSvws_AOBu4c9o91b=4FwMDYwPnw@mail.gmail.com>
+References: <20181001131026.14635-1-phil.edworthy@renesas.com> <20181001131026.14635-2-phil.edworthy@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181002082731.20141-1-ricardo.ribalda@gmail.com>
+In-Reply-To: <20181001131026.14635-2-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Timur Tabi <timur@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, jhugo@codeaurora.org
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 2, 2018 at 10:27 AM Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
+Hi Phil,
 
-> Add a function that allows initializing the valid_mask from
-> gpiochip_add_data.
+On Mon, Oct 1, 2018 at 3:10 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> The Renesas RZ/N1 device family PINCTRL node description.
 >
-> This prevents race conditions during gpiochip initialization.
+> Based on a patch originally written by Michel Pollet at Renesas.
 >
-> If the function is not exported, then the old behaviour is respected,
-> this is, set all gpios as valid.
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+> v7:
+>  - Revert changes in v6, and just remove the token pasting
 >
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> v6:
+>  - Instead of combining the pin nr and func into a single element, use
+>    a pair of 8-bit elements.
 
-This is a very appetizing patch set.
+Thanks for the update!
 
-I think patches 1 & 2 should be applied for sure even if
-we don't apply patch 3, simply because it is way more
-elegant.
+I have replaced v5 with v7, after s/RZN1_MUX/RZN1_PINMUX/s for
+consistency with other SoC families.
 
-Looking forward to see some test on Qualcomm's hardware
-for this!
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
