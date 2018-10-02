@@ -1,46 +1,88 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH] pinctrl: msm: Actually use function 0 for gpio selection
-Date: Mon,  1 Oct 2018 14:49:05 -0700
-Message-ID: <20181001214905.12149-1-swboyd@chromium.org>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [RESEND PATCH v4 0/8] Introduce the for_each_set_clump macro
+Date: Tue,  2 Oct 2018 10:12:39 +0900
+Message-ID: <cover.1538441919.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>
+To: linus.walleij@linaro.org, akpm@linux-foundation.org
+Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This code needs to select function #0, which is the first int in the
-array of functions, not the number 0 which may or may not be the
-function for "GPIO mode" per the enum mapping. We were getting lucky on
-SDM845, where this was tested, because the function 0 matched the enum
-value for "GPIO mode". On other platforms, e.g. MSM8996, the gpio enum
-value is the last one in the list so this code doesn't work and we see a
-warning at boot. Fix it by grabbing the first element out of the array
-of functions.
+This is a resend of v4 in hopes of getting some more ACKS and a few more
+eyes on this patchset.
 
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Niklas Cassel <niklas.cassel@linaro.org>
-Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-Fixes: 1de7ddb3a15c ("pinctrl: msm: Mux out gpio function with gpio_request()")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v4:
+  - Fix bitmap_set arguments (last parameter is nbits not endbit)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 1684b2da09d5..b925b8feac95 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -188,7 +188,7 @@ static int msm_pinmux_request_gpio(struct pinctrl_dev *pctldev,
- 		return 0;
- 
- 	/* For now assume function 0 is GPIO because it always is */
--	return msm_pinmux_set_mux(pctldev, 0, offset);
-+	return msm_pinmux_set_mux(pctldev, g->funcs[0], offset);
- }
- 
- static const struct pinmux_ops msm_pinmux_ops = {
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
+
+This patchset introduces the for_each_set_clump macro and utilizes it in
+several GPIO drivers. The for_each_set_clump macro facilitates a
+for-loop syntax that iterates over entire groups of set bits at a time.
+
+For example, suppose you would like to iterate over a 16-bit integer 4
+bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+represents the current 4-bit group:
+
+    Example:        1011 1110 0000 1111
+    First loop:     1011 1110 0000 XXXX
+    Second loop:    1011 XXXX 0000 1111
+    Third loop:     XXXX 1110 0000 1111
+
+Each iteration of the loop returns the next 4-bit group that has at
+least one set bit.
+
+The for_each_set_clump macro has six parameters:
+
+    * clump: set to current clump index for the iteration
+    * index: set to current bitmap word index for the iteration
+    * offset: bits offset of the found clump in the bitmap word
+    * bits: bitmap to search within
+    * size: bitmap size in number of clumps
+    * clump_size: clump size in number of bits
+
+The clump_size argument can be an arbitrary number of bits and is not
+required to be a multiple of 2.
+
+This patchset was rebased on top of the following three commits:
+
+    * commit aaf96e51de11 ("gpio: pci-idio-16: Fix port memory offset for get_multiple callback")
+    * commit 304440aa96c6 ("gpio: pcie-idio-24: Fix port memory offset for get_multiple/set_multiple callbacks")
+    * commit e026646c178d ("gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop")
+
+When I implemented the test_for_each_set_clump function, I used
+bitmap_set to set the expected bitmap for the test. This method of
+setting bits only segments at a time was rather tedious and error-prone;
+is there a better way to accomplish what I did (set a bitmap after a
+DECLARE_BITMAP)?
+
+William Breathitt Gray
+
+William Breathitt Gray (8):
+  bitops: Introduce the for_each_set_clump macro
+  lib/test_bitmap.c: Add for_each_set_clump test cases
+  gpio: 104-dio-48e: Utilize for_each_set_clump macro
+  gpio: 104-idi-48: Utilize for_each_set_clump macro
+  gpio: gpio-mm: Utilize for_each_set_clump macro
+  gpio: ws16c48: Utilize for_each_set_clump macro
+  gpio: pci-idio-16: Utilize for_each_set_clump macro
+  gpio: pcie-idio-24: Utilize for_each_set_clump macro
+
+ drivers/gpio/gpio-104-dio-48e.c   |  67 +++++---------------
+ drivers/gpio/gpio-104-idi-48.c    |  32 ++--------
+ drivers/gpio/gpio-gpio-mm.c       |  67 +++++---------------
+ drivers/gpio/gpio-pci-idio-16.c   |  67 ++++++--------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 102 +++++++++++-------------------
+ drivers/gpio/gpio-ws16c48.c       |  66 +++++--------------
+ include/asm-generic/bitops/find.h |   9 +++
+ include/linux/bitops.h            |   7 ++
+ lib/find_bit.c                    |  40 ++++++++++++
+ lib/test_bitmap.c                 |  71 +++++++++++++++++++++
+ 10 files changed, 236 insertions(+), 292 deletions(-)
+
 -- 
-Sent by a computer through tubes
+2.19.0
