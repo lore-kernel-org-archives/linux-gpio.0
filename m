@@ -1,36 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: msm: Actually use function 0 for gpio selection
-Date: Tue, 2 Oct 2018 10:49:53 +0200
-Message-ID: <CACRpkdb-VmT4SXWWf_Gj=4U77T1x0+ggRW2-1e0De4eQdrWiDw@mail.gmail.com>
-References: <20181001214905.12149-1-swboyd@chromium.org>
+Subject: Re: [PATCH v3 1/3] gpiolib: Add init_valid_mask exported function
+Date: Tue, 2 Oct 2018 11:14:20 +0200
+Message-ID: <CACRpkdaFciX3xMw8ErRCwy79VVF6HDVkjAHi2EOtXXX_X1uVuw@mail.gmail.com>
+References: <20181002082731.20141-1-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181001214905.12149-1-swboyd@chromium.org>
+In-Reply-To: <20181002082731.20141-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Timur Tabi <timur@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, jhugo@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 1, 2018 at 11:49 PM Stephen Boyd <swboyd@chromium.org> wrote:
+On Tue, Oct 2, 2018 at 10:27 AM Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
 
-> This code needs to select function #0, which is the first int in the
-> array of functions, not the number 0 which may or may not be the
-> function for "GPIO mode" per the enum mapping. We were getting lucky on
-> SDM845, where this was tested, because the function 0 matched the enum
-> value for "GPIO mode". On other platforms, e.g. MSM8996, the gpio enum
-> value is the last one in the list so this code doesn't work and we see a
-> warning at boot. Fix it by grabbing the first element out of the array
-> of functions.
+> Add a function that allows initializing the valid_mask from
+> gpiochip_add_data.
 >
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Niklas Cassel <niklas.cassel@linaro.org>
-> Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Fixes: 1de7ddb3a15c ("pinctrl: msm: Mux out gpio function with gpio_request()")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> This prevents race conditions during gpiochip initialization.
+>
+> If the function is not exported, then the old behaviour is respected,
+> this is, set all gpios as valid.
+>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-Patch applied with all the tags.
+This is a very appetizing patch set.
+
+I think patches 1 & 2 should be applied for sure even if
+we don't apply patch 3, simply because it is way more
+elegant.
+
+Looking forward to see some test on Qualcomm's hardware
+for this!
 
 Yours,
 Linus Walleij
