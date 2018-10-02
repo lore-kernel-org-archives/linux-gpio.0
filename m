@@ -1,19 +1,19 @@
-From: Niklas Cassel <niklas.cassel@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH] pinctrl: msm: Actually use function 0 for gpio selection
-Date: Tue, 2 Oct 2018 10:47:40 +0200
-Message-ID: <20181002084740.GA5499@centauri.lan>
+Date: Tue, 2 Oct 2018 10:49:53 +0200
+Message-ID: <CACRpkdb-VmT4SXWWf_Gj=4U77T1x0+ggRW2-1e0De4eQdrWiDw@mail.gmail.com>
 References: <20181001214905.12149-1-swboyd@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
 In-Reply-To: <20181001214905.12149-1-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Boyd <swboyd@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 02:49:05PM -0700, Stephen Boyd wrote:
+On Mon, Oct 1, 2018 at 11:49 PM Stephen Boyd <swboyd@chromium.org> wrote:
+
 > This code needs to select function #0, which is the first int in the
 > array of functions, not the number 0 which may or may not be the
 > function for "GPIO mode" per the enum mapping. We were getting lucky on
@@ -22,7 +22,7 @@ On Mon, Oct 01, 2018 at 02:49:05PM -0700, Stephen Boyd wrote:
 > value is the last one in the list so this code doesn't work and we see a
 > warning at boot. Fix it by grabbing the first element out of the array
 > of functions.
-> 
+>
 > Cc: Doug Anderson <dianders@chromium.org>
 > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 > Cc: Niklas Cassel <niklas.cassel@linaro.org>
@@ -30,4 +30,7 @@ On Mon, Oct 01, 2018 at 02:49:05PM -0700, Stephen Boyd wrote:
 > Fixes: 1de7ddb3a15c ("pinctrl: msm: Mux out gpio function with gpio_request()")
 > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
+Patch applied with all the tags.
+
+Yours,
+Linus Walleij
