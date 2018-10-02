@@ -1,87 +1,38 @@
-From: Leonard Crestez <leonard.crestez@nxp.com>
-Subject: [PATCH] ARM: dts: imx6sx-sdb: Fix enet phy regulator
-Date: Tue, 2 Oct 2018 18:37:21 +0000
-Message-ID: <1147be600733a1bcde194f7df61866019f34a531.1538504729.git.leonard.crestez@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] ARM: dts: imx6sx-sdb: Fix enet phy regulator
+Date: Tue, 2 Oct 2018 21:56:39 +0200
+Message-ID: <CACRpkdajdjLUEwv8ABSBuy4dVMXqrUfxVDmu55aEiRAK877urQ@mail.gmail.com>
+References: <1147be600733a1bcde194f7df61866019f34a531.1538504729.git.leonard.crestez@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
+In-Reply-To: <1147be600733a1bcde194f7df61866019f34a531.1538504729.git.leonard.crestez@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fabio Estevam <fabio.estevam@nxp.com>, Andy Duan <fugang.duan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>
+To: Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>, Andy Duan <fugang.duan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
 
-Bindings for "fixed-regulator" only explicitly support "gpio" property,
-not "gpios". Fix by correcting the property name.
+On Tue, Oct 2, 2018 at 8:37 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
 
-The enet PHYs on imx6sx-sdb needs to be explicitly reset after a power
-cycle, handle this by adding the phy-reset-gpios property.
+> This issue was exposed by commit efdfeb079cc3 ("regulator: fixed:
+> Convert to use GPIO descriptor only") which causes the "gpios" property
+> to also be parsed. Before that commit the "gpios" property had no
+> effect and PHY reset was only handled in the bootloader.
 
-Both phys share a single reset, a scenario similar to imx7d-sdb.
+Wow that was a very interesting one.
+Turning over these stones sometimes expose the weirdest
+things.
 
-This issue was exposed by commit efdfeb079cc3 ("regulator: fixed:
-Convert to use GPIO descriptor only") which causes the "gpios" property
-to also be parsed. Before that commit the "gpios" property had no
-effect and PHY reset was only handled in the bootloader.
+This is one of the reasons why we need formal validation of
+DTS files: things look OK to the human eye and get merged
+but they are just syntactically wrong.
 
-This fixes linux-next netboot failures previously reported here:
- https://lore.kernel.org/patchwork/patch/982437/#1177900
- https://lore.kernel.org/patchwork/patch/994091/#1178304
+I guess I could hack to make "gpios" be ignored by the
+regulator GPIO quirks in gpiolib, but I take it you probably
+prefer to fix up the real issue like this.
 
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
----
- arch/arm/boot/dts/imx6sx-sdb.dtsi | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Anyways, good job!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-I'm not entirely certain sharing the phy reset is OK, maybe somebody
-with more familiarity with the FEC driver can confirm? This design seems
-to be similar between multiple imx boards with dual ethernet ports.
-
-This took a surprising amount of digging.
-
-diff --git a/arch/arm/boot/dts/imx6sx-sdb.dtsi b/arch/arm/boot/dts/imx6sx-s=
-db.dtsi
-index 53b3408b5fab..1ed7a081c420 100644
---- a/arch/arm/boot/dts/imx6sx-sdb.dtsi
-+++ b/arch/arm/boot/dts/imx6sx-sdb.dtsi
-@@ -115,11 +115,11 @@
- 		pinctrl-names =3D "default";
- 		pinctrl-0 =3D <&pinctrl_enet_3v3>;
- 		regulator-name =3D "enet_3v3";
- 		regulator-min-microvolt =3D <3300000>;
- 		regulator-max-microvolt =3D <3300000>;
--		gpios =3D <&gpio2 6 GPIO_ACTIVE_LOW>;
-+		gpio =3D <&gpio2 6 GPIO_ACTIVE_LOW>;
- 	};
-=20
- 	reg_pcie_gpio: regulator-pcie-gpio {
- 		compatible =3D "regulator-fixed";
- 		pinctrl-names =3D "default";
-@@ -178,10 +178,11 @@
- 	pinctrl-names =3D "default";
- 	pinctrl-0 =3D <&pinctrl_enet1>;
- 	phy-supply =3D <&reg_enet_3v3>;
- 	phy-mode =3D "rgmii";
- 	phy-handle =3D <&ethphy1>;
-+	phy-reset-gpios =3D <&gpio2 7 GPIO_ACTIVE_LOW>;
- 	status =3D "okay";
-=20
- 	mdio {
- 		#address-cells =3D <1>;
- 		#size-cells =3D <0>;
-@@ -371,10 +372,12 @@
- 				MX6SX_PAD_RGMII1_RD1__ENET1_RX_DATA_1	0x3081
- 				MX6SX_PAD_RGMII1_RD2__ENET1_RX_DATA_2	0x3081
- 				MX6SX_PAD_RGMII1_RD3__ENET1_RX_DATA_3	0x3081
- 				MX6SX_PAD_RGMII1_RX_CTL__ENET1_RX_EN	0x3081
- 				MX6SX_PAD_ENET2_RX_CLK__ENET2_REF_CLK_25M	0x91
-+				/* phy reset */
-+				MX6SX_PAD_ENET2_CRS__GPIO2_IO_7		0x80000000
- 			>;
- 		};
-=20
- 		pinctrl_enet_3v3: enet3v3grp {
- 			fsl,pins =3D <
---=20
-2.17.1
+Yours,
+Linus Walleij
