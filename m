@@ -1,135 +1,67 @@
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v3 2/3] pinctrl: msm: Use init_valid_mask exported function
-Date: Tue,  2 Oct 2018 10:27:30 +0200
-Message-ID: <20181002082731.20141-2-ricardo.ribalda@gmail.com>
-References: <20181002082731.20141-1-ricardo.ribalda@gmail.com>
+Subject: [PATCH v3 1/3] gpiolib: Add init_valid_mask exported function
+Date: Tue,  2 Oct 2018 10:27:29 +0200
+Message-ID: <20181002082731.20141-1-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181002082731.20141-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Timur Tabi <timur@codeaurora.org>, swboyd@chromium.org, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeffrey Hugo <jhugo@codeaurora.org>
 Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The current code produces XPU violation if get_direction is called just
-after the initialization.
+Add a function that allows initializing the valid_mask from
+gpiochip_add_data.
+
+This prevents race conditions during gpiochip initialization.
+
+If the function is not exported, then the old behaviour is respected,
+this is, set all gpios as valid.
 
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c | 79 ++++++++++++++----------------
- 1 file changed, 37 insertions(+), 42 deletions(-)
+ drivers/gpio/gpiolib.c      | 3 +++
+ include/linux/gpio/driver.h | 7 ++++++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 5d72ffad32c2..ce1ade47ea37 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -566,6 +566,42 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- #define msm_gpio_dbg_show NULL
- #endif
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e8f8a1999393..6925196136ce 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -377,6 +377,9 @@ static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
+ 	if (!gpiochip->valid_mask)
+ 		return -ENOMEM;
  
-+static int msm_gpio_init_valid_mask(struct gpio_chip *chip)
-+{
-+	struct msm_pinctrl *pctrl = gpiochip_get_data(chip);
-+	int ret;
-+	unsigned int len, i;
-+	unsigned int max_gpios = pctrl->soc->ngpios;
-+	u16 *tmp;
++	if (gpiochip->init_valid_mask)
++		return gpiochip->init_valid_mask(gpiochip);
 +
-+	/* The number of GPIOs in the ACPI tables */
-+	len = ret = device_property_read_u16_array(pctrl->dev, "gpios", NULL,
-+						   0);
-+	if (ret < 0)
-+		return 0;
-+
-+	if (ret > max_gpios)
-+		return -EINVAL;
-+
-+	tmp = kmalloc_array(len, sizeof(*tmp), GFP_KERNEL);
-+	if (!tmp)
-+		return -ENOMEM;
-+
-+	ret = device_property_read_u16_array(pctrl->dev, "gpios", tmp, len);
-+	if (ret < 0) {
-+		dev_err(pctrl->dev, "could not read list of GPIOs\n");
-+		goto out;
-+	}
-+
-+	bitmap_zero(chip->valid_mask, max_gpios);
-+	for (i = 0; i < len; i++)
-+		set_bit(tmp[i], chip->valid_mask);
-+
-+out:
-+	kfree(tmp);
-+	return ret;
-+}
-+
- static const struct gpio_chip msm_gpio_template = {
- 	.direction_input  = msm_gpio_direction_input,
- 	.direction_output = msm_gpio_direction_output,
-@@ -575,6 +611,7 @@ static const struct gpio_chip msm_gpio_template = {
- 	.request          = gpiochip_generic_request,
- 	.free             = gpiochip_generic_free,
- 	.dbg_show         = msm_gpio_dbg_show,
-+	.init_valid_mask  = msm_gpio_init_valid_mask,
- };
- 
- /* For dual-edge interrupts in software, since some hardware has no
-@@ -855,41 +892,6 @@ static void msm_gpio_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
+ 	return 0;
  }
  
--static int msm_gpio_init_valid_mask(struct gpio_chip *chip,
--				    struct msm_pinctrl *pctrl)
--{
--	int ret;
--	unsigned int len, i;
--	unsigned int max_gpios = pctrl->soc->ngpios;
--	u16 *tmp;
--
--	/* The number of GPIOs in the ACPI tables */
--	len = ret = device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0);
--	if (ret < 0)
--		return 0;
--
--	if (ret > max_gpios)
--		return -EINVAL;
--
--	tmp = kmalloc_array(len, sizeof(*tmp), GFP_KERNEL);
--	if (!tmp)
--		return -ENOMEM;
--
--	ret = device_property_read_u16_array(pctrl->dev, "gpios", tmp, len);
--	if (ret < 0) {
--		dev_err(pctrl->dev, "could not read list of GPIOs\n");
--		goto out;
--	}
--
--	bitmap_zero(chip->valid_mask, max_gpios);
--	for (i = 0; i < len; i++)
--		set_bit(tmp[i], chip->valid_mask);
--
--out:
--	kfree(tmp);
--	return ret;
--}
--
- static bool msm_gpio_needs_valid_mask(struct msm_pinctrl *pctrl)
- {
- 	return device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0) > 0;
-@@ -926,13 +928,6 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 		return ret;
- 	}
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 0ea328e71ec9..df09749269ff 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -256,6 +256,9 @@ struct gpio_chip {
  
--	ret = msm_gpio_init_valid_mask(chip, pctrl);
--	if (ret) {
--		dev_err(pctrl->dev, "Failed to setup irq valid bits\n");
--		gpiochip_remove(&pctrl->chip);
--		return ret;
--	}
--
- 	/*
- 	 * For DeviceTree-supported systems, the gpio core checks the
- 	 * pinctrl's device node for the "gpio-ranges" property.
+ 	void			(*dbg_show)(struct seq_file *s,
+ 						struct gpio_chip *chip);
++
++	int			(*init_valid_mask)(struct gpio_chip *chip);
++
+ 	int			base;
+ 	u16			ngpio;
+ 	const char		*const *names;
+@@ -294,7 +297,9 @@ struct gpio_chip {
+ 	/**
+ 	 * @need_valid_mask:
+ 	 *
+-	 * If set core allocates @valid_mask with all bits set to one.
++	 * If set core allocates @valid_mask with all its values initialized
++	 * with init_valid_mask() or set to one if init_valid_mask() is not
++	 * defined
+ 	 */
+ 	bool need_valid_mask;
+ 
 -- 
 2.19.0
