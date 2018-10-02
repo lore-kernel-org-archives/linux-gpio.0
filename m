@@ -1,96 +1,40 @@
-From: Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH v3 1/2] selftests: gpio: restructure Makefile
-Date: Tue, 2 Oct 2018 14:55:24 -0600
-Message-ID: <aee2d946-eecb-ca39-0802-9755a01a7312@kernel.org>
-References: <1536330895-8391-1-git-send-email-daniel.diaz@linaro.org>
- <CAEUSe79yNJ_2FsLsxKW6J0dfrJ2HoVvk+_NZGWHCsy_Kc0+pQw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: qcom: fix 'const' pointer handling
+Date: Tue,  2 Oct 2018 23:15:44 +0200
+Message-ID: <20181002211555.2779637-1-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAEUSe79yNJ_2FsLsxKW6J0dfrJ2HoVvk+_NZGWHCsy_Kc0+pQw@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>, Shuah Khan <shuahkh@osg.samsung.com>, linux-kselftest@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Fathi Boudra <fathi.boudra@linaro.org>, Bamvor Jian Zhang <bamv2005@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, "open list:GPIO MOCKUP DRIVER" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 10/02/2018 02:48 PM, Daniel Díaz wrote:
-> Hello!
-> 
-> On Fri, 7 Sep 2018 at 09:35, Daniel Díaz <daniel.diaz@linaro.org> wrote:
->> From: Fathi Boudra <fathi.boudra@linaro.org>
->>
->> This patch cleans up the Makefile by restructuring a couple of
->> things, namely:
->> 1) change explicit paths in targets for variables
->> 2) substitute a variable (BINARIES) for another, part of the
->>    selftests build system (TEST_PROGS_EXTENDED)
->> 3) proper cleaning up of the EXTRA objects
->>
->> The resulting Makefile is much more readable and manageable.
->>
->> Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
->> Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
->> ---
->>  tools/testing/selftests/gpio/Makefile | 32 +++++++++++++++-----------------
->>  1 file changed, 15 insertions(+), 17 deletions(-)
->>
->> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
->> index 4665cdb..a4a01ec8 100644
->> --- a/tools/testing/selftests/gpio/Makefile
->> +++ b/tools/testing/selftests/gpio/Makefile
->> @@ -1,28 +1,26 @@
->>  # SPDX-License-Identifier: GPL-2.0
->>
->> +CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
->> +LDLIBS += -lmount -I/usr/include/libmount
->> +
->>  TEST_PROGS := gpio-mockup.sh
->> -TEST_FILES := gpio-mockup-sysfs.sh $(BINARIES)
->> -BINARIES := gpio-mockup-chardev
->> -EXTRA_PROGS := ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
->> -EXTRA_DIRS := ../gpioinclude/
->> -EXTRA_OBJS := ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
->> -EXTRA_OBJS += ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpio-in.o
->> -EXTRA_OBJS += ../gpiolsgpio.o
->> +TEST_FILES := gpio-mockup-sysfs.sh
->> +TEST_PROGS_EXTENDED := gpio-mockup-chardev
->> +
->> +GPIODIR := ../../../gpio
->> +GPIOOBJ := gpio-utils.o
->>
->>  include ../lib.mk
->>
->> -all: $(BINARIES)
->> +all: $(TEST_PROGS_EXTENDED)
->>
->>  override define CLEAN
->> -       $(RM) $(BINARIES) $(EXTRA_PROGS) $(EXTRA_OBJS)
->> -       $(RM) -r $(EXTRA_DIRS)
->> +       $(RM) $(TEST_PROGS_EXTENDED)
->> +       $(MAKE) -C $(GPIODIR) clean
->>  endef
->>
->> -CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
->> -LDLIBS += -lmount -I/usr/include/libmount
->> -
->> -$(BINARIES):| khdr
->> -$(BINARIES): ../../../gpio/gpio-utils.o
->> +$(TEST_PROGS_EXTENDED):| khdr
->> +$(TEST_PROGS_EXTENDED): $(GPIODIR)/$(GPIOOBJ)
->>
->> -../../../gpio/gpio-utils.o:
->> -       make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
->> +$(GPIODIR)/$(GPIOOBJ):
->> +       $(MAKE) -C $(GPIODIR)
->> --
->> 2.7.4
-> 
-> Ping on this series.
-> 
+The 'tiles' array is initialized to a constant pointers to constant
+strings, but the declaration is only half as constant:
 
-Thanks for the ping. I will queue these up for 4.20-rc1.
+drivers/pinctrl/qcom/pinctrl-qcs404.c:1660:11: error: initialization discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+drivers/pinctrl/qcom/pinctrl-sdm660.c:1417:11: error: initialization discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
 
-thanks,
--- Shuah
+Let's make it more constant.
+
+Fixes: 22eb8301dbc1 ("pinctrl: qcom: Add qcs404 pinctrl driver")
+Fixes: a46d5e98190d ("pinctrl: qcom: Support dispersed tiles")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
+index 0ad4bc55e2e1..29172fdf5882 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.h
++++ b/drivers/pinctrl/qcom/pinctrl-msm.h
+@@ -119,7 +119,7 @@ struct msm_pinctrl_soc_data {
+ 	unsigned ngroups;
+ 	unsigned ngpios;
+ 	bool pull_no_keeper;
+-	const char **tiles;
++	const char *const *tiles;
+ 	unsigned int ntiles;
+ };
+ 
+-- 
+2.18.0
