@@ -1,55 +1,99 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [RESEND PATCH v4 3/8] gpio: 104-dio-48e: Utilize
- for_each_set_clump macro
-Date: Tue, 2 Oct 2018 09:00:45 +0200
-Message-ID: <822be05b-092b-41c2-3c31-8981acd5cb9e@rasmusvillemoes.dk>
-References: <cover.1538441919.git.vilhelm.gray@gmail.com>
- <5906381114b14d5b0359510a1d23accbd239eaa5.1538441919.git.vilhelm.gray@gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
+Date: Tue, 2 Oct 2018 09:15:26 +0200
+Message-ID: <CAPybu_33WNiCdkwgNtkiTP2PL+9ai85Z2LiMB6yqNZrV5JdmXw@mail.gmail.com>
+References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+ <20180921103604.13361-2-ricardo.ribalda@gmail.com> <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
+ <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org> <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
+ <5aea282d-6fc9-cd70-cec4-10f28aa819b9@codeaurora.org> <CAOZdJXUUWUWHzus+3sbEXbW_q92e+SSzTQJCqCyQp6Y6_HOo3g@mail.gmail.com>
+ <D3E6F4C4-E1C4-4D88-B118-878576BF5281@gmail.com> <CACRpkdawwrpEe6AAfdaxw6OMFXkCnq0gpznk1Up5p1=Wigx_2g@mail.gmail.com>
+ <CAPybu_1P-RWCP8yjQKkFYAX11KtYGhAfASY24Q_NZ19PD09gxA@mail.gmail.com> <CACRpkdaN5G4ephY+6BPLRF+aUrO4-sPa+2erRYrwTGwPBwu8fw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5906381114b14d5b0359510a1d23accbd239eaa5.1538441919.git.vilhelm.gray@gmail.com>
-Content-Language: en-US
+In-Reply-To: <CACRpkdaN5G4ephY+6BPLRF+aUrO4-sPa+2erRYrwTGwPBwu8fw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>, linus.walleij@linaro.org, akpm@linux-foundation.org
-Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Timur Tabi <timur@kernel.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2018-10-02 03:14, William Breathitt Gray wrote:
->  	/* clear bits array to a clean slate */
->  	bitmap_zero(bits, chip->ngpio);
->  
-> -	/* get bits are evaluated a gpio port register at a time */
-> -	for (i = 0; i < ARRAY_SIZE(ports); i++) {
-> -		/* gpio offset in bits array */
-> -		bits_offset = i * gpio_reg_size;
-> -
-> -		/* word index for bits array */
-> -		word_index = BIT_WORD(bits_offset);
-> -
-> -		/* gpio offset within current word of bits array */
-> -		word_offset = bits_offset % BITS_PER_LONG;
-> -
-> -		/* mask of get bits for current gpio within current word */
-> -		word_mask = mask[word_index] & (port_mask << word_offset);
-> -		if (!word_mask) {
-> -			/* no get bits in this port so skip to next one */
-> -			continue;
-> -		}
-> -
-> -		/* read bits from current gpio port */
-> +	for_each_set_clump(i, word, offset, mask, ARRAY_SIZE(ports), 8) {
->  		port_state = inb(dio48egpio->base + ports[i]);
-> -
-> -		/* store acquired bits at respective bits array offset */
-> -		bits[word_index] |= port_state << word_offset;
-> +		bits[word] |= port_state << offset;
+Hi
+On Mon, Oct 1, 2018 at 11:20 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Mon, Oct 1, 2018 at 3:36 PM Ricardo Ribalda Delgado
+> <ricardo.ribalda@gmail.com> wrote:
+> > On Mon, Oct 1, 2018 at 1:54 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > > On Fri, Sep 28, 2018 at 9:30 PM Ricardo Ribalda Delgado
+> > > <ricardo.ribalda@gmail.com> wrote:
+> > >
+> > > > How do we proceed from here? Can you fix your driver somehow to
+> > > > init the valid mask before enabling the gpio?
+> > >
+> > > Just include a hunk to the qcom driver reordering this call
+> > > at the same time. No need to make it separate patches,
+> > > it need to be tested together anyways.
+> > >
+> > > I guess just switch the order of these two:
+> > >
+> > >         ret = gpiochip_add_data(&pctrl->chip, pctrl);
+> > >         if (ret) {
+> > >                 dev_err(pctrl->dev, "Failed register gpiochip\n");
+> > >                 return ret;
+> > >         }
+> > >
+> > >         ret = msm_gpio_init_valid_mask(chip, pctrl);
+> > >         if (ret) {
+> > >                 dev_err(pctrl->dev, "Failed to setup irq valid bits\n");
+> > >                 gpiochip_remove(&pctrl->chip);
+> > >                 return ret;
+> > >         }
+> > >
+> >
+> > the problem is that valid_mask is not a long/integer, is a struct that
+> > needs to be malloced, and is malloc at gpiochip_add_data :(
+>
+> I don't get it, but maybe I'm not smart enough.
 
-Somewhat unrelated to this series, but is the existing code correct? I'd
-expect the RHS to be masked by word_mask; otherwise we might set bits in
-bits[] that were not requested? And if one does that, the !word_mask
-test is merely an optimization to avoid reading the gpios when the
-result would be ignored anyway. Perhaps no caller cares.
+Dont take my job, I am the not smart of the conversation :P
 
-Rasmus
+>
+> gpiochip_add_data() doesn't allocate anything, it
+> just adds a already allocated (or static!) gpio_chip
+> to the gpiolib subsystem.
+>
+
+Take a look to gpiochip_add_data_with_key()
+  ->gpiochip_init_valid_mask()
+       -> gpiochip->valid_mask = gpiochip_allocate_mask(gpiochip);
+
+
+
+> In fact I think it is wrong to set up the mask after
+> calling gpiolob_add_data(), because of exactly the
+> type of problem you're seeing.
+
+I agree, and I believe that the cleaner way would be to add a function
+pointer that replaces:
+
+gpiochip_allocate_mask()
+  bitmap_fill(p, chip->ngpio);
+
+with a proper initalization from the driver
+
+But as today the only driver that seems to be using valid_mask is msm,
+so perhaps a hack is something better and then when we have a second
+driver that requires it we figure out the real requirements. But it is
+definately your decision ;)
+
+
+>
+> Don't get confused by the &pctrl->chip
+> vs just chip variables, it's just some sloppiness.
+>
+> Yours,
+> Linus Walleij
+
+Thanks!
+
+-- 
+Ricardo Ribalda
