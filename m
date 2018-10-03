@@ -1,37 +1,29 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx6sx-sdb: Fix enet phy regulator
-Date: Tue, 2 Oct 2018 23:25:22 -0300
-Message-ID: <CAOMZO5BcVXZx5YKoKxCTK5uJMX8q=5uRiZsyX6sL=QcYjKkhNw@mail.gmail.com>
-References: <1147be600733a1bcde194f7df61866019f34a531.1538504729.git.leonard.crestez@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 2/2] dt-bindings: pinctrl: qcom: Add SDM660 pinctrl binding
+Date: Wed, 3 Oct 2018 08:59:01 +0200
+Message-ID: <CACRpkdaixftABqZc4+MNAteX45GtJiFmE1o29F8ZMscUeaXwtw@mail.gmail.com>
+References: <20180925173801.3835-1-ctatlor97@gmail.com> <20180926162644.10039-1-ctatlor97@gmail.com>
+ <20180926162644.10039-2-ctatlor97@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1147be600733a1bcde194f7df61866019f34a531.1538504729.git.leonard.crestez@nxp.com>
+In-Reply-To: <20180926162644.10039-2-ctatlor97@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>, Fugang Duan <fugang.duan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>
+To: Craig Tatlor <ctatlor97@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Leonard,
+On Wed, Sep 26, 2018 at 6:26 PM Craig Tatlor <ctatlor97@gmail.com> wrote:
 
-On Tue, Oct 2, 2018 at 3:42 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+> Add the binding for the TLMM pinctrl block found in the SDM660 platform.
+>
+> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
+> ---
+> Changes from v3:
+>    Updated for tile structure
+>    change irq field
 
-> @@ -371,10 +372,12 @@
->                                 MX6SX_PAD_RGMII1_RD1__ENET1_RX_DATA_1   0x3081
->                                 MX6SX_PAD_RGMII1_RD2__ENET1_RX_DATA_2   0x3081
->                                 MX6SX_PAD_RGMII1_RD3__ENET1_RX_DATA_3   0x3081
->                                 MX6SX_PAD_RGMII1_RX_CTL__ENET1_RX_EN    0x3081
->                                 MX6SX_PAD_ENET2_RX_CLK__ENET2_REF_CLK_25M       0x91
-> +                               /* phy reset */
-> +                               MX6SX_PAD_ENET2_CRS__GPIO2_IO_7         0x80000000
+This v3 applied with the ACKs.
 
-We should avoid using 0x80000000 as this relies on the bootloader
-setting the IOMUX.
-
-Please do like this insted:
-
-MX6SX_PAD_ENET2_CRS__GPIO2_IO_7         0x10b0
-
-Then you can add:
-
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Yours,
+Linus Walleij
