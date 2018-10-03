@@ -1,41 +1,73 @@
-From: Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH] ARM: dts: imx6sx-sdb: Fix enet phy regulator
-Date: Wed, 3 Oct 2018 11:49:32 +0000
-Message-ID: <234ccbfccc26701bd0b9fd9cf2ffb5ad2414adec.camel@nxp.com>
-References: <1147be600733a1bcde194f7df61866019f34a531.1538504729.git.leonard.crestez@nxp.com>
-         <CACRpkdajdjLUEwv8ABSBuy4dVMXqrUfxVDmu55aEiRAK877urQ@mail.gmail.com>
+From: Sodagudi Prasad <psodagud@codeaurora.org>
+Subject: protected pins and debugfs
+Date: Wed, 03 Oct 2018 05:38:24 -0700
+Message-ID: <9aec322678417753fe4022691f4bfdbe@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdajdjLUEwv8ABSBuy4dVMXqrUfxVDmu55aEiRAK877urQ@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <868ACE3B74A7CC49A72118AED41532BF@eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc: dl-linux-imx <linux-imx@nxp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Duan <fugang.duan@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>
+To: linus.walleij@linaro.org, sboyd@codeaurora.org, bjorn.andersson@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTEwLTAyIGF0IDIxOjU2ICswMjAwLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
-PiBPbiBUdWUsIE9jdCAyLCAyMDE4IGF0IDg6MzcgUE0gTGVvbmFyZCBDcmVzdGV6IDwNCj4gbGVv
-bmFyZC5jcmVzdGV6QG54cC5jb20+IHdyb3RlOg0KPiANCj4gPiBUaGlzIGlzc3VlIHdhcyBleHBv
-c2VkIGJ5IGNvbW1pdCBlZmRmZWIwNzljYzMgKCJyZWd1bGF0b3I6IGZpeGVkOg0KPiA+IENvbnZl
-cnQgdG8gdXNlIEdQSU8gZGVzY3JpcHRvciBvbmx5Iikgd2hpY2ggY2F1c2VzIHRoZSAiZ3Bpb3Mi
-DQo+ID4gcHJvcGVydHkNCj4gPiB0byBhbHNvIGJlIHBhcnNlZC4gQmVmb3JlIHRoYXQgY29tbWl0
-IHRoZSAiZ3Bpb3MiIHByb3BlcnR5IGhhZCBubw0KPiA+IGVmZmVjdCBhbmQgUEhZIHJlc2V0IHdh
-cyBvbmx5IGhhbmRsZWQgaW4gdGhlIGJvb3Rsb2FkZXIuDQo+IA0KPiBXb3cgdGhhdCB3YXMgYSB2
-ZXJ5IGludGVyZXN0aW5nIG9uZS4NCj4gVHVybmluZyBvdmVyIHRoZXNlIHN0b25lcyBzb21ldGlt
-ZXMgZXhwb3NlIHRoZSB3ZWlyZGVzdA0KPiB0aGluZ3MuDQo+IA0KPiBUaGlzIGlzIG9uZSBvZiB0
-aGUgcmVhc29ucyB3aHkgd2UgbmVlZCBmb3JtYWwgdmFsaWRhdGlvbiBvZg0KPiBEVFMgZmlsZXM6
-IHRoaW5ncyBsb29rIE9LIHRvIHRoZSBodW1hbiBleWUgYW5kIGdldCBtZXJnZWQNCj4gYnV0IHRo
-ZXkgYXJlIGp1c3Qgc3ludGFjdGljYWxseSB3cm9uZy4NCj4gDQo+IEkgZ3Vlc3MgSSBjb3VsZCBo
-YWNrIHRvIG1ha2UgImdwaW9zIiBiZSBpZ25vcmVkIGJ5IHRoZQ0KPiByZWd1bGF0b3IgR1BJTyBx
-dWlya3MgaW4gZ3Bpb2xpYiwgYnV0IEkgdGFrZSBpdCB5b3UgcHJvYmFibHkNCj4gcHJlZmVyIHRv
-IGZpeCB1cCB0aGUgcmVhbCBpc3N1ZSBsaWtlIHRoaXMuDQoNCk1heWJlIHlvdSBjb3VsZCBkb2N1
-bWVudCBpbiBmaXhlZC1yZWd1bGF0b3IgYmluZGluZ3MgdGhhdCBpdCBub3cNCnN1cHBvcnRzIHRo
-ZSBzdGFuZGFyZCAiZ3Bpb3MiIHByb3BlcnR5IGFzIHdlbGw/IFRoZXJlIHN0aWxsIHNlZW1zIHRv
-IGJlDQphIHJlc3RyaWN0aW9uIHRoYXQgdGhlIGxpc3QgbXVzdCBjb250YWluIGEgc2luZ2xlIGVs
-ZW1lbnQuDQoNCkFueXdheSwgd2hhdCBteSBwYXRjaCBmaXhlcyBpcyBhIGJvYXJkLXNwZWNpZmlj
-IGlzc3VlIHdoaWNoIGV4aXN0cyBldmVuDQpvdXRzaWRlIHlvdXIgcGF0Y2g6IHRoZSBlbmV0IHBo
-eSByZWd1bGF0b3IgbmV2ZXIgd29ya2VkIGFzIGV4cGVjdGVkLg0KDQotLQ0KUmVnYXJkcywNCkxl
-b25hcmQNCg==
+Hi All,
+
+This is regarding the protected pins configuration reading and printing 
+from non-secure operating systems.
+GPIO framework is checking whether pin is in use(flag FLAG_REQUESTED) or 
+not in gpiolib_dbg_show().
+
+If GPIO chip drivers are overriding the dbg_show callback, drivers are 
+not checking whether a pin is really in use or not to print 
+configuration details.
+     if (chip->dbg_show)
+                 chip->dbg_show(s, chip);
+         else
+                 gpiolib_dbg_show(s, gdev);
+
+I think, reserved-gpio-ranges solution may move the problem to dts 
+settings maintenance as they change from platform to platform.
+https://lore.kernel.org/patchwork/patch/878107/
+https://lore.kernel.org/patchwork/patch/878106/
+https://lore.kernel.org/patchwork/patch/878109/
+
+Can we use a simple/common solution like below?  It will check whether a 
+pin is in use or not before printing configuration data with the help of 
+gpiochip_is_requested().
+
+index fef0970..2ca1440 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -579,16 +579,20 @@ static void msm_gpio_dbg_show_one(struct seq_file 
+*s,
+         seq_printf(s, " %-8s: %-3s %d", g->name, is_out ? "out" : "in", 
+func);
+         seq_printf(s, " %dmA", msm_regval_to_drive(drive));
+         seq_printf(s, " %s", pulls[pull]);
++       seq_puts(s, "\n");
+  }
+
+  static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip 
+*chip)
+  {
+         unsigned gpio = chip->base;
+         unsigned i;
++       const char *label;
+
+         for (i = 0; i < chip->ngpio; i++, gpio++) {
++               label = gpiochip_is_requested(chip, i);
++               if (!label)
++                       continue;
+                 msm_gpio_dbg_show_one(s, NULL, chip, i, gpio);
+-               seq_puts(s, "\n");
+         }
+  }
+
+-Thanks, Prasad
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+Linux Foundation Collaborative Project
