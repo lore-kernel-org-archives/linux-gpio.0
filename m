@@ -1,58 +1,49 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [RESEND PATCH v4 1/8] bitops: Introduce the for_each_set_clump
- macro
-Date: Thu, 4 Oct 2018 19:36:20 +0900
-Message-ID: <20181004103620.GB4779@icarus>
-References: <cover.1538441919.git.vilhelm.gray@gmail.com>
- <f5250b9c78377e476667be1b616c86cf573b57dc.1538441919.git.vilhelm.gray@gmail.com>
- <40ecad49-2797-0d30-b52d-a2e6838dc1ab@rasmusvillemoes.dk>
- <20181002082142.GC15943@smile.fi.intel.com>
- <20181003114804.GE15943@smile.fi.intel.com>
+From: <sean.wang@mediatek.com>
+Subject: [PATCH] MAINTAINERS: update entry for Mediatek pin controller
+Date: Thu, 4 Oct 2018 19:40:38 +0800
+Message-ID: <98b17a3b47f75d4f3f17dae81a087b4163fcd857.1538652946.git.sean.wang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181003114804.GE15943@smile.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linus.walleij@linaro.org, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: linus.walleij@linaro.org, linux-mediatek@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>, Sean Wang <sean.wang@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 03, 2018 at 02:48:04PM +0300, Andy Shevchenko wrote:
-> On Tue, Oct 02, 2018 at 11:21:42AM +0300, Andy Shevchenko wrote:
-> 
-> > I would rather go with two prototypes to get()/set() a clump in the bitmap
-> > in a way when it's aligned and BITS_PER_LONG % clump_size == 0.
-> 
-> To make things much easier, restrict clump_size to the one
-> from the following set:
-> 
-> 1, 2, 4, 8, 16, 32 even on 64-bit platforms.
-> 
-> If it would be simpler solution to add 64 here (implying 32-bit platform),
-> I would vote for that.
-> 
-> For the generic case we might need something like:
-> 
-> unsigned long bitmap_get_bits(unsigned long *src, unsigned int start, unsigned int nbits)
-> {
-> 	assert(nbits > BITS_PER_LONG);
-> 
-> 	/* Something like Rasmus proposed earlier */
-> }
-> 
-> And similar to setter.
-> 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+From: Sean Wang <sean.wang@mediatek.com>
 
-I have no objections to have a simplier macro for these common clump
-sizes -- afterall, I suspect most drivers will likely use clump sizes
-that are powers of 2 anyway. It would be nice to have a more versatile
-macro though for those drivers that would benefit from odd clump sizes,
-but we can perhaps postpone that until the need arises (the GPIO drivers
-in this patchset all use a power of 2).
+Add all source files under drivers/pinctrl/mediatek for the entry and
+change the address to a permanent one since I have a personal leave
+over the next few months and the address would be suspended for a while.
 
-William Breathitt Gray
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Sean Wang <sean.wang@kernel.org>
+---
+ MAINTAINERS | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 73a692e..bc0e03a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11654,15 +11654,12 @@ S:	Maintained
+ F:	drivers/pinctrl/intel/
+ 
+ PIN CONTROLLER - MEDIATEK
+-M:	Sean Wang <sean.wang@mediatek.com>
++M:	Sean Wang <sean.wang@kernel.org>
+ L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+ F:	Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
+-F:	drivers/pinctrl/mediatek/mtk-eint.*
+-F:	drivers/pinctrl/mediatek/pinctrl-mtk-common.*
+-F:	drivers/pinctrl/mediatek/pinctrl-mt2701.c
+-F:	drivers/pinctrl/mediatek/pinctrl-mt7622.c
++F:	drivers/pinctrl/mediatek/
+ 
+ PIN CONTROLLER - QUALCOMM
+ M:	Bjorn Andersson <bjorn.andersson@linaro.org>
+-- 
+2.7.4
