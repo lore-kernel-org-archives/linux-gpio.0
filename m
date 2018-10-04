@@ -1,88 +1,68 @@
 From: Leonard Crestez <leonard.crestez@nxp.com>
-Subject: [PATCH v2] ARM: dts: imx6sx-sdb: Fix enet phy regulator
-Date: Thu, 4 Oct 2018 15:47:14 +0000
-Message-ID: <c7161f1258c7cd12093af1d8919a8a95e5e65a73.1538667700.git.leonard.crestez@nxp.com>
+Subject: Re: [PATCH v2] ARM: dts: imx6sx-sdb: Fix enet phy regulator
+Date: Thu, 4 Oct 2018 18:12:21 +0000
+Message-ID: <fb04dc8e8b3fb45485254c40c2a0342e012e7af4.camel@nxp.com>
+References: <c7161f1258c7cd12093af1d8919a8a95e5e65a73.1538667700.git.leonard.crestez@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c7161f1258c7cd12093af1d8919a8a95e5e65a73.1538667700.git.leonard.crestez@nxp.com>
 Content-Language: en-US
+Content-ID: <79C6DE619B88FF4288AFB7B768AC30A8@eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>, Andy Duan <fugang.duan@nxp.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "shawnguo@kernel.org" <shawnguo@kernel.org>, Andy Duan <fugang.duan@nxp.com>
+Cc: dl-linux-imx <linux-imx@nxp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
 
-Bindings for "fixed-regulator" only explicitly support "gpio" property,
-not "gpios". Fix by correcting the property name.
-
-The enet PHYs on imx6sx-sdb needs to be explicitly reset after a power
-cycle, handle this by adding the phy-reset-gpios property.
-
-Both phys share a single reset, a scenario similar to imx7d-sdb.
-
-This issue was exposed by commit efdfeb079cc3 ("regulator: fixed:
-Convert to use GPIO descriptor only") which causes the "gpios" property
-to also be parsed. Before that commit the "gpios" property had no
-effect, PHY reset was only handled in the the bootloader.
-
-This fixes linux-next boot failures previously reported here:
- https://lore.kernel.org/patchwork/patch/982437/#1177900
- https://lore.kernel.org/patchwork/patch/994091/#1178304
-
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-
----
- arch/arm/boot/dts/imx6sx-sdb.dtsi | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-Changes since v1:
- * Use 0x10b0 for phy reset pinctrl value (Fabio)
- * Link to v1: https://lore.kernel.org/patchwork/patch/994871/
-
-diff --git a/arch/arm/boot/dts/imx6sx-sdb.dtsi b/arch/arm/boot/dts/imx6sx-s=
-db.dtsi
-index 53b3408b5fab..29196476ce0c 100644
---- a/arch/arm/boot/dts/imx6sx-sdb.dtsi
-+++ b/arch/arm/boot/dts/imx6sx-sdb.dtsi
-@@ -115,11 +115,11 @@
- 		pinctrl-names =3D "default";
- 		pinctrl-0 =3D <&pinctrl_enet_3v3>;
- 		regulator-name =3D "enet_3v3";
- 		regulator-min-microvolt =3D <3300000>;
- 		regulator-max-microvolt =3D <3300000>;
--		gpios =3D <&gpio2 6 GPIO_ACTIVE_LOW>;
-+		gpio =3D <&gpio2 6 GPIO_ACTIVE_LOW>;
- 	};
-=20
- 	reg_pcie_gpio: regulator-pcie-gpio {
- 		compatible =3D "regulator-fixed";
- 		pinctrl-names =3D "default";
-@@ -178,10 +178,11 @@
- 	pinctrl-names =3D "default";
- 	pinctrl-0 =3D <&pinctrl_enet1>;
- 	phy-supply =3D <&reg_enet_3v3>;
- 	phy-mode =3D "rgmii";
- 	phy-handle =3D <&ethphy1>;
-+	phy-reset-gpios =3D <&gpio2 7 GPIO_ACTIVE_LOW>;
- 	status =3D "okay";
-=20
- 	mdio {
- 		#address-cells =3D <1>;
- 		#size-cells =3D <0>;
-@@ -371,10 +372,12 @@
- 				MX6SX_PAD_RGMII1_RD1__ENET1_RX_DATA_1	0x3081
- 				MX6SX_PAD_RGMII1_RD2__ENET1_RX_DATA_2	0x3081
- 				MX6SX_PAD_RGMII1_RD3__ENET1_RX_DATA_3	0x3081
- 				MX6SX_PAD_RGMII1_RX_CTL__ENET1_RX_EN	0x3081
- 				MX6SX_PAD_ENET2_RX_CLK__ENET2_REF_CLK_25M	0x91
-+				/* phy reset */
-+				MX6SX_PAD_ENET2_CRS__GPIO2_IO_7		0x10b0
- 			>;
- 		};
-=20
- 		pinctrl_enet_3v3: enet3v3grp {
- 			fsl,pins =3D <
---=20
-2.17.1
+T24gVGh1LCAyMDE4LTEwLTA0IGF0IDE1OjQ3ICswMDAwLCBMZW9uYXJkIENyZXN0ZXogd3JvdGU6
+DQo+IEJpbmRpbmdzIGZvciAiZml4ZWQtcmVndWxhdG9yIiBvbmx5IGV4cGxpY2l0bHkgc3VwcG9y
+dCAiZ3BpbyIgcHJvcGVydHksDQo+IG5vdCAiZ3Bpb3MiLiBGaXggYnkgY29ycmVjdGluZyB0aGUg
+cHJvcGVydHkgbmFtZS4NCj4gDQo+IFRoZSBlbmV0IFBIWXMgb24gaW14NnN4LXNkYiBuZWVkcyB0
+byBiZSBleHBsaWNpdGx5IHJlc2V0IGFmdGVyIGEgcG93ZXINCj4gY3ljbGUsIGhhbmRsZSB0aGlz
+IGJ5IGFkZGluZyB0aGUgcGh5LXJlc2V0LWdwaW9zIHByb3BlcnR5Lg0KPiANCj4gQm90aCBwaHlz
+IHNoYXJlIGEgc2luZ2xlIHJlc2V0LCBhIHNjZW5hcmlvIHNpbWlsYXIgdG8gaW14N2Qtc2RiLg0K
+PiANCj4gVGhpcyBpc3N1ZSB3YXMgZXhwb3NlZCBieSBjb21taXQgZWZkZmViMDc5Y2MzICgicmVn
+dWxhdG9yOiBmaXhlZDoNCj4gQ29udmVydCB0byB1c2UgR1BJTyBkZXNjcmlwdG9yIG9ubHkiKSB3
+aGljaCBjYXVzZXMgdGhlICJncGlvcyIgcHJvcGVydHkNCj4gdG8gYWxzbyBiZSBwYXJzZWQuIEJl
+Zm9yZSB0aGF0IGNvbW1pdCB0aGUgImdwaW9zIiBwcm9wZXJ0eSBoYWQgbm8NCj4gZWZmZWN0LCBQ
+SFkgcmVzZXQgd2FzIG9ubHkgaGFuZGxlZCBpbiB0aGUgdGhlIGJvb3Rsb2FkZXIuDQo+IA0KPiBU
+aGlzIGZpeGVzIGxpbnV4LW5leHQgYm9vdCBmYWlsdXJlcyBwcmV2aW91c2x5IHJlcG9ydGVkIGhl
+cmU6DQo+ICBodHRwczovL2xvcmUua2VybmVsLm9yZy9wYXRjaHdvcmsvcGF0Y2gvOTgyNDM3LyMx
+MTc3OTAwDQo+ICBodHRwczovL2xvcmUua2VybmVsLm9yZy9wYXRjaHdvcmsvcGF0Y2gvOTk0MDkx
+LyMxMTc4MzA0DQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBMZW9uYXJkIENyZXN0ZXogPGxlb25hcmQu
+Y3Jlc3RlekBueHAuY29tPg0KPiBSZXZpZXdlZC1ieTogTGludXMgV2FsbGVpaiA8bGludXMud2Fs
+bGVpakBsaW5hcm8ub3JnPg0KPiBSZXZpZXdlZC1ieTogRmFiaW8gRXN0ZXZhbSA8ZmVzdGV2YW1A
+Z21haWwuY29tPg0KDQpQbGVhc2UgaG9sZCwgdGhpcyBwYXRjaCBzdGlsbCBkb2Vzbid0IGRlYWwg
+Y29ycmVjdGx5IHdpdGggc3VzcGVuZDsgbGluaw0KbmV2ZXIgY29tZXMgYmFjayB1cC4NCg0KSXQg
+bWlnaHQgYmUgYmV0dGVyIHRvIGFwcGx5IGEgc2ltcGxlciBmaXggd2hpY2gganVzdCBrZWVwcyBy
+ZWdfZW5ldF8zdjMNCmFsd2F5cyBvbi4NCg0KPiANCj4gLS0tDQo+ICBhcmNoL2FybS9ib290L2R0
+cy9pbXg2c3gtc2RiLmR0c2kgfCA1ICsrKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRp
+b25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBDaGFuZ2VzIHNpbmNlIHYxOg0KPiAgKiBVc2Ug
+MHgxMGIwIGZvciBwaHkgcmVzZXQgcGluY3RybCB2YWx1ZSAoRmFiaW8pDQo+ICAqIExpbmsgdG8g
+djE6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNod29yay9wYXRjaC85OTQ4NzEvDQo+IA0K
+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnN4LXNkYi5kdHNpIGIvYXJjaC9h
+cm0vYm9vdC9kdHMvaW14NnN4LXNkYi5kdHNpDQo+IGluZGV4IDUzYjM0MDhiNWZhYi4uMjkxOTY0
+NzZjZTBjIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9pbXg2c3gtc2RiLmR0c2kN
+Cj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnN4LXNkYi5kdHNpDQo+IEBAIC0xMTUsMTEg
+KzExNSwxMSBAQA0KPiAgCQlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOw0KPiAgCQlwaW5jdHJs
+LTAgPSA8JnBpbmN0cmxfZW5ldF8zdjM+Ow0KPiAgCQlyZWd1bGF0b3ItbmFtZSA9ICJlbmV0XzN2
+MyI7DQo+ICAJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDMzMDAwMDA+Ow0KPiAgCQlyZWd1
+bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwzMzAwMDAwPjsNCj4gLQkJZ3Bpb3MgPSA8JmdwaW8yIDYg
+R1BJT19BQ1RJVkVfTE9XPjsNCj4gKwkJZ3BpbyA9IDwmZ3BpbzIgNiBHUElPX0FDVElWRV9MT1c+
+Ow0KPiAgCX07DQo+ICANCj4gIAlyZWdfcGNpZV9ncGlvOiByZWd1bGF0b3ItcGNpZS1ncGlvIHsN
+Cj4gIAkJY29tcGF0aWJsZSA9ICJyZWd1bGF0b3ItZml4ZWQiOw0KPiAgCQlwaW5jdHJsLW5hbWVz
+ID0gImRlZmF1bHQiOw0KPiBAQCAtMTc4LDEwICsxNzgsMTEgQEANCj4gIAlwaW5jdHJsLW5hbWVz
+ID0gImRlZmF1bHQiOw0KPiAgCXBpbmN0cmwtMCA9IDwmcGluY3RybF9lbmV0MT47DQo+ICAJcGh5
+LXN1cHBseSA9IDwmcmVnX2VuZXRfM3YzPjsNCj4gIAlwaHktbW9kZSA9ICJyZ21paSI7DQo+ICAJ
+cGh5LWhhbmRsZSA9IDwmZXRocGh5MT47DQo+ICsJcGh5LXJlc2V0LWdwaW9zID0gPCZncGlvMiA3
+IEdQSU9fQUNUSVZFX0xPVz47DQo+ICAJc3RhdHVzID0gIm9rYXkiOw0KPiAgDQo+ICAJbWRpbyB7
+DQo+ICAJCSNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiAgCQkjc2l6ZS1jZWxscyA9IDwwPjsNCj4g
+QEAgLTM3MSwxMCArMzcyLDEyIEBADQo+ICAJCQkJTVg2U1hfUEFEX1JHTUlJMV9SRDFfX0VORVQx
+X1JYX0RBVEFfMQkweDMwODENCj4gIAkJCQlNWDZTWF9QQURfUkdNSUkxX1JEMl9fRU5FVDFfUlhf
+REFUQV8yCTB4MzA4MQ0KPiAgCQkJCU1YNlNYX1BBRF9SR01JSTFfUkQzX19FTkVUMV9SWF9EQVRB
+XzMJMHgzMDgxDQo+ICAJCQkJTVg2U1hfUEFEX1JHTUlJMV9SWF9DVExfX0VORVQxX1JYX0VOCTB4
+MzA4MQ0KPiAgCQkJCU1YNlNYX1BBRF9FTkVUMl9SWF9DTEtfX0VORVQyX1JFRl9DTEtfMjVNCTB4
+OTENCj4gKwkJCQkvKiBwaHkgcmVzZXQgKi8NCj4gKwkJCQlNWDZTWF9QQURfRU5FVDJfQ1JTX19H
+UElPMl9JT183CQkweDEwYjANCj4gIAkJCT47DQo+ICAJCX07DQo+ICANCj4gIAkJcGluY3RybF9l
+bmV0XzN2MzogZW5ldDN2M2dycCB7DQo+ICAJCQlmc2wscGlucyA9IDwNCg0K
