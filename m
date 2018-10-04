@@ -1,68 +1,96 @@
-From: Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH v2] ARM: dts: imx6sx-sdb: Fix enet phy regulator
-Date: Thu, 4 Oct 2018 18:12:21 +0000
-Message-ID: <fb04dc8e8b3fb45485254c40c2a0342e012e7af4.camel@nxp.com>
-References: <c7161f1258c7cd12093af1d8919a8a95e5e65a73.1538667700.git.leonard.crestez@nxp.com>
+From: Oskari Lemmela <oskari@lemmela.net>
+Subject: [PATCH 3/4] arm64: allwinner: a64: add battery and AC power supply
+ support
+Date: Thu,  4 Oct 2018 22:34:09 +0300
+Message-ID: <20181004193410.7265-4-oskari@lemmela.net>
+References: <20181004193410.7265-1-oskari@lemmela.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c7161f1258c7cd12093af1d8919a8a95e5e65a73.1538667700.git.leonard.crestez@nxp.com>
-Content-Language: en-US
-Content-ID: <79C6DE619B88FF4288AFB7B768AC30A8@eurprd04.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "shawnguo@kernel.org" <shawnguo@kernel.org>, Andy Duan <fugang.duan@nxp.com>
-Cc: dl-linux-imx <linux-imx@nxp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181004193410.7265-1-oskari@lemmela.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Maxime Ripard <maxime.ripard@bootlin.com>, Sebastian Reichel <sre@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@free-electrons.com>, Oskari Lemmela <oskari@lemmela.net>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTEwLTA0IGF0IDE1OjQ3ICswMDAwLCBMZW9uYXJkIENyZXN0ZXogd3JvdGU6
-DQo+IEJpbmRpbmdzIGZvciAiZml4ZWQtcmVndWxhdG9yIiBvbmx5IGV4cGxpY2l0bHkgc3VwcG9y
-dCAiZ3BpbyIgcHJvcGVydHksDQo+IG5vdCAiZ3Bpb3MiLiBGaXggYnkgY29ycmVjdGluZyB0aGUg
-cHJvcGVydHkgbmFtZS4NCj4gDQo+IFRoZSBlbmV0IFBIWXMgb24gaW14NnN4LXNkYiBuZWVkcyB0
-byBiZSBleHBsaWNpdGx5IHJlc2V0IGFmdGVyIGEgcG93ZXINCj4gY3ljbGUsIGhhbmRsZSB0aGlz
-IGJ5IGFkZGluZyB0aGUgcGh5LXJlc2V0LWdwaW9zIHByb3BlcnR5Lg0KPiANCj4gQm90aCBwaHlz
-IHNoYXJlIGEgc2luZ2xlIHJlc2V0LCBhIHNjZW5hcmlvIHNpbWlsYXIgdG8gaW14N2Qtc2RiLg0K
-PiANCj4gVGhpcyBpc3N1ZSB3YXMgZXhwb3NlZCBieSBjb21taXQgZWZkZmViMDc5Y2MzICgicmVn
-dWxhdG9yOiBmaXhlZDoNCj4gQ29udmVydCB0byB1c2UgR1BJTyBkZXNjcmlwdG9yIG9ubHkiKSB3
-aGljaCBjYXVzZXMgdGhlICJncGlvcyIgcHJvcGVydHkNCj4gdG8gYWxzbyBiZSBwYXJzZWQuIEJl
-Zm9yZSB0aGF0IGNvbW1pdCB0aGUgImdwaW9zIiBwcm9wZXJ0eSBoYWQgbm8NCj4gZWZmZWN0LCBQ
-SFkgcmVzZXQgd2FzIG9ubHkgaGFuZGxlZCBpbiB0aGUgdGhlIGJvb3Rsb2FkZXIuDQo+IA0KPiBU
-aGlzIGZpeGVzIGxpbnV4LW5leHQgYm9vdCBmYWlsdXJlcyBwcmV2aW91c2x5IHJlcG9ydGVkIGhl
-cmU6DQo+ICBodHRwczovL2xvcmUua2VybmVsLm9yZy9wYXRjaHdvcmsvcGF0Y2gvOTgyNDM3LyMx
-MTc3OTAwDQo+ICBodHRwczovL2xvcmUua2VybmVsLm9yZy9wYXRjaHdvcmsvcGF0Y2gvOTk0MDkx
-LyMxMTc4MzA0DQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBMZW9uYXJkIENyZXN0ZXogPGxlb25hcmQu
-Y3Jlc3RlekBueHAuY29tPg0KPiBSZXZpZXdlZC1ieTogTGludXMgV2FsbGVpaiA8bGludXMud2Fs
-bGVpakBsaW5hcm8ub3JnPg0KPiBSZXZpZXdlZC1ieTogRmFiaW8gRXN0ZXZhbSA8ZmVzdGV2YW1A
-Z21haWwuY29tPg0KDQpQbGVhc2UgaG9sZCwgdGhpcyBwYXRjaCBzdGlsbCBkb2Vzbid0IGRlYWwg
-Y29ycmVjdGx5IHdpdGggc3VzcGVuZDsgbGluaw0KbmV2ZXIgY29tZXMgYmFjayB1cC4NCg0KSXQg
-bWlnaHQgYmUgYmV0dGVyIHRvIGFwcGx5IGEgc2ltcGxlciBmaXggd2hpY2gganVzdCBrZWVwcyBy
-ZWdfZW5ldF8zdjMNCmFsd2F5cyBvbi4NCg0KPiANCj4gLS0tDQo+ICBhcmNoL2FybS9ib290L2R0
-cy9pbXg2c3gtc2RiLmR0c2kgfCA1ICsrKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRp
-b25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBDaGFuZ2VzIHNpbmNlIHYxOg0KPiAgKiBVc2Ug
-MHgxMGIwIGZvciBwaHkgcmVzZXQgcGluY3RybCB2YWx1ZSAoRmFiaW8pDQo+ICAqIExpbmsgdG8g
-djE6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNod29yay9wYXRjaC85OTQ4NzEvDQo+IA0K
-PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnN4LXNkYi5kdHNpIGIvYXJjaC9h
-cm0vYm9vdC9kdHMvaW14NnN4LXNkYi5kdHNpDQo+IGluZGV4IDUzYjM0MDhiNWZhYi4uMjkxOTY0
-NzZjZTBjIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9pbXg2c3gtc2RiLmR0c2kN
-Cj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnN4LXNkYi5kdHNpDQo+IEBAIC0xMTUsMTEg
-KzExNSwxMSBAQA0KPiAgCQlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOw0KPiAgCQlwaW5jdHJs
-LTAgPSA8JnBpbmN0cmxfZW5ldF8zdjM+Ow0KPiAgCQlyZWd1bGF0b3ItbmFtZSA9ICJlbmV0XzN2
-MyI7DQo+ICAJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDMzMDAwMDA+Ow0KPiAgCQlyZWd1
-bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwzMzAwMDAwPjsNCj4gLQkJZ3Bpb3MgPSA8JmdwaW8yIDYg
-R1BJT19BQ1RJVkVfTE9XPjsNCj4gKwkJZ3BpbyA9IDwmZ3BpbzIgNiBHUElPX0FDVElWRV9MT1c+
-Ow0KPiAgCX07DQo+ICANCj4gIAlyZWdfcGNpZV9ncGlvOiByZWd1bGF0b3ItcGNpZS1ncGlvIHsN
-Cj4gIAkJY29tcGF0aWJsZSA9ICJyZWd1bGF0b3ItZml4ZWQiOw0KPiAgCQlwaW5jdHJsLW5hbWVz
-ID0gImRlZmF1bHQiOw0KPiBAQCAtMTc4LDEwICsxNzgsMTEgQEANCj4gIAlwaW5jdHJsLW5hbWVz
-ID0gImRlZmF1bHQiOw0KPiAgCXBpbmN0cmwtMCA9IDwmcGluY3RybF9lbmV0MT47DQo+ICAJcGh5
-LXN1cHBseSA9IDwmcmVnX2VuZXRfM3YzPjsNCj4gIAlwaHktbW9kZSA9ICJyZ21paSI7DQo+ICAJ
-cGh5LWhhbmRsZSA9IDwmZXRocGh5MT47DQo+ICsJcGh5LXJlc2V0LWdwaW9zID0gPCZncGlvMiA3
-IEdQSU9fQUNUSVZFX0xPVz47DQo+ICAJc3RhdHVzID0gIm9rYXkiOw0KPiAgDQo+ICAJbWRpbyB7
-DQo+ICAJCSNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiAgCQkjc2l6ZS1jZWxscyA9IDwwPjsNCj4g
-QEAgLTM3MSwxMCArMzcyLDEyIEBADQo+ICAJCQkJTVg2U1hfUEFEX1JHTUlJMV9SRDFfX0VORVQx
-X1JYX0RBVEFfMQkweDMwODENCj4gIAkJCQlNWDZTWF9QQURfUkdNSUkxX1JEMl9fRU5FVDFfUlhf
-REFUQV8yCTB4MzA4MQ0KPiAgCQkJCU1YNlNYX1BBRF9SR01JSTFfUkQzX19FTkVUMV9SWF9EQVRB
-XzMJMHgzMDgxDQo+ICAJCQkJTVg2U1hfUEFEX1JHTUlJMV9SWF9DVExfX0VORVQxX1JYX0VOCTB4
-MzA4MQ0KPiAgCQkJCU1YNlNYX1BBRF9FTkVUMl9SWF9DTEtfX0VORVQyX1JFRl9DTEtfMjVNCTB4
-OTENCj4gKwkJCQkvKiBwaHkgcmVzZXQgKi8NCj4gKwkJCQlNWDZTWF9QQURfRU5FVDJfQ1JTX19H
-UElPMl9JT183CQkweDEwYjANCj4gIAkJCT47DQo+ICAJCX07DQo+ICANCj4gIAkJcGluY3RybF9l
-bmV0XzN2MzogZW5ldDN2M2dycCB7DQo+ICAJCQlmc2wscGlucyA9IDwNCg0K
+Add AXP803 DT nodes for AC and battery power supplies.
+Enable AC and battery power supplies for sopine-baseboard.
+
+Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+---
+ arch/arm64/boot/dts/allwinner/axp803.dtsi     | 31 +++++++++++++++++++
+ .../allwinner/sun50i-a64-sopine-baseboard.dts |  8 +++++
+ 2 files changed, 39 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/axp803.dtsi b/arch/arm64/boot/dts/allwinner/axp803.dtsi
+index e5eae8bafc42..d23e5d1e9310 100644
+--- a/arch/arm64/boot/dts/allwinner/axp803.dtsi
++++ b/arch/arm64/boot/dts/allwinner/axp803.dtsi
+@@ -49,6 +49,37 @@
+ 	interrupt-controller;
+ 	#interrupt-cells = <1>;
+ 
++	axp_adc: adc {
++		compatible = "x-powers,axp803-adc";
++		#io-channel-cells = <1>;
++	};
++
++	axp_gpio: gpio {
++		compatible = "x-powers,axp803-gpio";
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		gpio0_ldo: gpio0-ldo {
++			pins = "GPIO0";
++			function = "ldo";
++		};
++
++		gpio1_ldo: gpio1-ldo {
++			pins = "GPIO1";
++			function = "ldo";
++		};
++	};
++
++	ac_power_supply: ac-power-supply {
++		compatible = "x-powers,axp803-ac-power-supply";
++		status = "disabled";
++	};
++
++	battery_power_supply: battery-power-supply {
++		compatible = "x-powers,axp803-battery-power-supply";
++		status = "disabled";
++	};
++
+ 	regulators {
+ 		/* Default work frequency for buck regulators */
+ 		x-powers,dcdc-freq = <3000>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+index c21f2331add6..335cf2263d19 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+@@ -69,6 +69,14 @@
+ 	};
+ };
+ 
++&ac_power_supply {
++	status = "okay";
++};
++
++&battery_power_supply {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+-- 
+2.17.1
