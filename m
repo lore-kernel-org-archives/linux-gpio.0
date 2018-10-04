@@ -1,73 +1,50 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v7 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date: Thu, 4 Oct 2018 12:18:33 +0200
-Message-ID: <20181004101833.jlopmzmyx6nkjnux@verge.net.au>
-References: <20181001131026.14635-1-phil.edworthy@renesas.com>
- <20181001131026.14635-4-phil.edworthy@renesas.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [RESEND PATCH v4 1/8] bitops: Introduce the for_each_set_clump
+ macro
+Date: Thu, 4 Oct 2018 19:30:28 +0900
+Message-ID: <20181004103028.GA4779@icarus>
+References: <cover.1538441919.git.vilhelm.gray@gmail.com>
+ <f5250b9c78377e476667be1b616c86cf573b57dc.1538441919.git.vilhelm.gray@gmail.com>
+ <40ecad49-2797-0d30-b52d-a2e6838dc1ab@rasmusvillemoes.dk>
+ <20181002082142.GC15943@smile.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181001131026.14635-4-phil.edworthy@renesas.com>
+In-Reply-To: <20181002082142.GC15943@smile.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linus.walleij@linaro.org, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 01, 2018 at 02:10:26PM +0100, Phil Edworthy wrote:
-> This provides a pinctrl driver for the Renesas R9A06G032 SoC
+On Tue, Oct 02, 2018 at 11:21:42AM +0300, Andy Shevchenko wrote:
+> On Tue, Oct 02, 2018 at 09:42:48AM +0200, Rasmus Villemoes wrote:
+> > On 2018-10-02 03:13, William Breathitt Gray wrote:
 > 
-> Based on a patch originally written by Michel Pollet at Renesas.
+> > The cover letter says
+> > 
+> >   The clump_size argument can be an arbitrary number of bits and is not
+> >   required to be a multiple of 2.
+> > 
+> > by which I assume you mean "power of 2", but either way, the above code
+> > does not seem to take into account the case where bits_offset +
+> > clump_size straddles a word boundary, so it wouldn't work for a
+> > clump_size that does not divide BITS_PER_LONG.
 > 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> E.g. 3 bits in a clump? Hmm...
+> 
+> Why would we need that? I mean some real use case?
 
-Hi Phil,
+GPIOs in hardware may be routed to devices logically in groups of I/O
+lines, yet must still be accessed via the word-sized registers on the
+operating machine.
 
-I have accepted (a slightly older posting of) this patch
-for v4.21.
+For example, suppose a GPIO card is used to control a set of shower
+devices. The card supports 4 shower devices, each device controlled by 3
+lines of I/O: enable, hot-cold selection, high-low pressure selection.
+In this case, a operating machine would still have to access the GPIO
+lines via the I/O registers (e.g. 8-bit port I/O); but with a macro
+handling a clump size of 3-bits, we can loop logically by each shower
+device which is much simpler from a driver perspective.
 
-> ---
-> v7:
->  - No changes.
-> 
-> v6:
->  - No changes.
-> 
-> v5:
->  - No changes.
-> 
-> v4:
->  - No changes.
-> 
-> v3:
->  - No changes.
-> 
-> v2:
->  - Add "renesas,rzn1-pinctrl" compatible fallback string
->  - Register size corrected.
-> ---
->  arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-> index eaf94976ed6d..2322268bc862 100644
-> --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> @@ -165,6 +165,14 @@
->  			status = "disabled";
->  		};
->  
-> +		pinctrl: pin-controller@40067000 {
-> +			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-> +			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-> +			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-> +			clock-names = "bus";
-> +			status = "okay";
-> +		};
-> +
->  		gic: gic@44101000 {
->  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
->  			interrupt-controller;
-> -- 
-> 2.17.1
-> 
+William Breathitt Gray
