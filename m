@@ -1,47 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: protected pins and debugfs
-Date: Thu, 4 Oct 2018 10:34:03 +0200
-Message-ID: <CACRpkdazxOt0E0J8D763_Mc5RVxpYTrfNgHYkMVQB+GVi1S9Hw@mail.gmail.com>
-References: <9aec322678417753fe4022691f4bfdbe@codeaurora.org>
+Subject: Re: [PATCH v8 10/10] dt-bindings: gpio: Add bindings for Cadence I3C
+ gpio expander
+Date: Thu, 4 Oct 2018 10:35:41 +0200
+Message-ID: <CACRpkdZz2eFmt-_Nx_Xp0sqsaLNE96m1qSCr1zvcAZjUNS9rsw@mail.gmail.com>
+References: <20181003132212.12619-1-boris.brezillon@bootlin.com> <20181003132212.12619-11-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9aec322678417753fe4022691f4bfdbe@codeaurora.org>
+In-Reply-To: <20181003132212.12619-11-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: psodagud@codeaurora.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, ext Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellio>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 3, 2018 at 2:38 PM Sodagudi Prasad <psodagud@codeaurora.org> wrote:
+On Wed, Oct 3, 2018 at 3:22 PM Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
 
-> This is regarding the protected pins configuration reading and printing
-> from non-secure operating systems.
-
-I do not think anyone with security in mind should have debugfs
-enabled. But maybe that is beside the point.
-
-> GPIO framework is checking whether pin is in use(flag FLAG_REQUESTED) or
-> not in gpiolib_dbg_show().
+> Document the Cadence I3C gpio expander bindings.
 >
-> If GPIO chip drivers are overriding the dbg_show callback, drivers are
-> not checking whether a pin is really in use or not to print
-> configuration details.
->      if (chip->dbg_show)
->                  chip->dbg_show(s, chip);
->          else
->                  gpiolib_dbg_show(s, gdev);
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> Changes in v8:
+> - None
 
-Ah that is right. Because some drivers can inspect all pins whether they
-are requested or not.
-
-> Can we use a simple/common solution like below?  It will check whether a
-> pin is in use or not before printing configuration data with the help of
-> gpiochip_is_requested().
-
-In the msm case I think maybe you want to inspect the valid_mask
-instead, so you display debugfs info for all pins you can inspect
-in hardware but avoid the "invalid" ones which I half-guess is used
-by ACPI in your case.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
