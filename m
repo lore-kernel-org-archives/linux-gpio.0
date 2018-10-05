@@ -1,50 +1,101 @@
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: Re: [PATCH v4 3/3] gpiolib: Show correct direction from the beginning
-Date: Fri, 5 Oct 2018 08:52:20 +0200
-Message-ID: <CAPybu_1qqdffE4K2BonCV0X_eYY+or6NSK9Bbco9A68N9aasVw@mail.gmail.com>
-References: <20181002140858.16833-1-ricardo.ribalda@gmail.com>
- <d1bbafcb-1b6a-b137-1fd1-954c17e14836@codeaurora.org> <da760bcf-4716-e685-1ce4-1dbc6eb7c272@codeaurora.org>
+Subject: [PATCH v5 1/3] gpiolib: Add init_valid_mask exported function
+Date: Fri,  5 Oct 2018 08:52:58 +0200
+Message-ID: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <da760bcf-4716-e685-1ce4-1dbc6eb7c272@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jeffrey Hugo <jhugo@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Timur Tabi <timur@kernel.org>, Stephen Boyd <swboyd@chromium.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Jeffrey Hugo <jhugo@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Timur Tabi <timur@kernel.org>, Stephen Boyd <swboyd@chromium.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi
-On Fri, Oct 5, 2018 at 12:26 AM Jeffrey Hugo <jhugo@codeaurora.org> wrote:
->
-> On 10/2/2018 9:21 AM, Jeffrey Hugo wrote:
-> > On 10/2/2018 8:08 AM, Ricardo Ribalda Delgado wrote:
-> >> Current code assumes that the direction is input if direction_input
-> >> function is set.
-> >> This might not be the case on GPIOs with programmable direction.
-> >>
-> >> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> >
-> > I'll try to get this series tested on QDF2400 by the end of the week.
->
-> 1-2/3 (v3) and 3/3 (v4) still fails.  Same issue.  Attempting to access
-> config registers for GPIO 0 when the OS is not allowed to do that.
->
+Add a function that allows initializing the valid_mask from
+gpiochip_add_data.
 
-I think that I might found the bug. if gpio-reserved-ranges was
-present the initialization was lost.
+This prevents race conditions during gpiochip initialization.
 
-Can you try with v5
+If the function is not exported, then the old behaviour is respected,
+this is, set all gpios as valid.
 
-Thanks for your help
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/gpio/gpiolib.c      | 16 ++++++++++++++--
+ include/linux/gpio/driver.h |  7 ++++++-
+ 2 files changed, 20 insertions(+), 3 deletions(-)
 
-> --
-> Jeffrey Hugo
-> Qualcomm Datacenter Technologies as an affiliate of Qualcomm
-> Technologies, Inc.
-> Qualcomm Technologies, Inc. is a member of the
-> Code Aurora Forum, a Linux Foundation Collaborative Project.
-
-
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e8f8a1999393..907019b67a58 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -359,7 +359,7 @@ static unsigned long *gpiochip_allocate_mask(struct gpio_chip *chip)
+ 	return p;
+ }
+ 
+-static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
++static int gpiochip_alloc_valid_mask(struct gpio_chip *gpiochip)
+ {
+ #ifdef CONFIG_OF_GPIO
+ 	int size;
+@@ -380,6 +380,14 @@ static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
+ 	return 0;
+ }
+ 
++static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
++{
++	if (gpiochip->init_valid_mask)
++		return gpiochip->init_valid_mask(gpiochip);
++
++	return 0;
++}
++
+ static void gpiochip_free_valid_mask(struct gpio_chip *gpiochip)
+ {
+ 	kfree(gpiochip->valid_mask);
+@@ -1367,7 +1375,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	if (status)
+ 		goto err_remove_from_list;
+ 
+-	status = gpiochip_init_valid_mask(chip);
++	status = gpiochip_alloc_valid_mask(chip);
+ 	if (status)
+ 		goto err_remove_irqchip_mask;
+ 
+@@ -1379,6 +1387,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	if (status)
+ 		goto err_remove_chip;
+ 
++	status = gpiochip_init_valid_mask(chip);
++	if (status)
++		goto err_remove_chip;
++
+ 	acpi_gpiochip_add(chip);
+ 
+ 	machine_gpiochip_add(chip);
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 0ea328e71ec9..df09749269ff 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -256,6 +256,9 @@ struct gpio_chip {
+ 
+ 	void			(*dbg_show)(struct seq_file *s,
+ 						struct gpio_chip *chip);
++
++	int			(*init_valid_mask)(struct gpio_chip *chip);
++
+ 	int			base;
+ 	u16			ngpio;
+ 	const char		*const *names;
+@@ -294,7 +297,9 @@ struct gpio_chip {
+ 	/**
+ 	 * @need_valid_mask:
+ 	 *
+-	 * If set core allocates @valid_mask with all bits set to one.
++	 * If set core allocates @valid_mask with all its values initialized
++	 * with init_valid_mask() or set to one if init_valid_mask() is not
++	 * defined
+ 	 */
+ 	bool need_valid_mask;
+ 
 -- 
-Ricardo Ribalda
+2.19.0
