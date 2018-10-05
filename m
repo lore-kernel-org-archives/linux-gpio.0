@@ -1,35 +1,59 @@
-From: Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: Re: [PATCH v4 3/3] gpiolib: Show correct direction from the beginning
-Date: Thu, 4 Oct 2018 16:26:40 -0600
-Message-ID: <da760bcf-4716-e685-1ce4-1dbc6eb7c272@codeaurora.org>
-References: <20181002140858.16833-1-ricardo.ribalda@gmail.com>
- <d1bbafcb-1b6a-b137-1fd1-954c17e14836@codeaurora.org>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH 0/4] AXP8x3 AC and battery power supply support
+Date: Fri, 5 Oct 2018 11:37:09 +0800
+Message-ID: <CAGb2v666d=aMi8u51t-=1mskCdLhifEw0iN7BWNxmQGod=F77A@mail.gmail.com>
+References: <20181004193410.7265-1-oskari@lemmela.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d1bbafcb-1b6a-b137-1fd1-954c17e14836@codeaurora.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Timur Tabi <timur@kernel.org>, swboyd@chromium.org, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181004193410.7265-1-oskari@lemmela.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: oskari@lemmela.net
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>, linux-iio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Quentin Schulz <quentin.schulz@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>, Lee Jones <lee.jones@linaro.org>, Jonathan Cameron <jic23@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 10/2/2018 9:21 AM, Jeffrey Hugo wrote:
-> On 10/2/2018 8:08 AM, Ricardo Ribalda Delgado wrote:
->> Current code assumes that the direction is input if direction_input
->> function is set.
->> This might not be the case on GPIOs with programmable direction.
->>
->> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> 
-> I'll try to get this series tested on QDF2400 by the end of the week. 
+On Fri, Oct 5, 2018 at 3:34 AM Oskari Lemmela <oskari@lemmela.net> wrote:
+>
+> AXP803 AC and battery power supply support.
+> AXP803/AXP813 AC power supply support with input current and
+> voltage limiting support.
+>
+> Oskari Lemmela (4):
+>   dt-bindings: add compatibles for AXP803 AC and battery power supplies
+>   ARM: dtsi: axp81x: add AC power supply subnode
 
-1-2/3 (v3) and 3/3 (v4) still fails.  Same issue.  Attempting to access 
-config registers for GPIO 0 when the OS is not allowed to do that.
+The prefix should be "ARM: dts: axp81x: "
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+>   arm64: allwinner: a64: add battery and AC power supply support
+
+This should be "arm64: dts: allwinner: a64: <board>: add ..."
+
+>   power: supply: add AXP803/AXP813 AC and battery power supply support
+>
+>  .../devicetree/bindings/gpio/gpio-axp209.txt  |   3 +-
+>  .../bindings/iio/adc/axp20x_adc.txt           |   3 +-
+>  .../bindings/power/supply/axp20x_ac_power.txt |   4 +
+>  .../bindings/power/supply/axp20x_battery.txt  |   1 +
+>  arch/arm/boot/dts/axp81x.dtsi                 |   5 +
+>  arch/arm64/boot/dts/allwinner/axp803.dtsi     |  31 +++
+>  .../allwinner/sun50i-a64-sopine-baseboard.dts |   8 +
+>  drivers/iio/adc/axp20x_adc.c                  |   1 +
+>  drivers/mfd/axp20x.c                          |  22 +-
+>  drivers/pinctrl/pinctrl-axp209.c              |   1 +
+>  drivers/power/supply/axp20x_ac_power.c        | 194 ++++++++++++++++++
+>  drivers/power/supply/axp20x_battery.c         |   3 +
+>  include/linux/mfd/axp20x.h                    |   1 +
+>  13 files changed, 274 insertions(+), 3 deletions(-)
+>
+> --
+> 2.17.1
+>
