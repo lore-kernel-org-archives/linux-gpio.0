@@ -1,79 +1,40 @@
-From: Li Zhijian <lizhijian@cn.fujitsu.com>
-Subject: Re: [PATCH] selftests/gpio: fix compiling errors
-Date: Sun, 7 Oct 2018 22:32:12 +0800
-Message-ID: <1372e275-d276-7982-127e-dd339ead1b67@cn.fujitsu.com>
-References: <1537524021-3371-1-git-send-email-lizhijian@cn.fujitsu.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] gpio: fix kernel-doc after devres.c file rename
+Date: Sun, 7 Oct 2018 15:57:00 -0700
+Message-ID: <ec1afc50-993c-c0d5-00e0-ab111579fca4@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1537524021-3371-1-git-send-email-lizhijian@cn.fujitsu.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: shuah@kernel.org, linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Bamvor Jian Zhang <bamv2005@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-ping
+From: Randy Dunlap <rdunlap@infradead.org>
 
+Fix gpio kernel-doc generation after rename of the devres.c file.
+Fixes these errors & warning:
 
-On 09/21/2018 06:00 PM, Li Zhijian wrote:
-> lizhijian@haswell-OptiPlex-9020:/home/lizj/linux/tools/testing/selftests$ make
-> [...snip...]
-> make ARCH=x86 CROSS_COMPILE= -C ../../../gpio
-> make[2]: Entering directory '/home/lizj/linux/tools/gpio'
-> [...snip...]
-> make[3]: Leaving directory '/home/lizj/linux/tools/gpio'
->    LINK     /home/lizj/linux/tools/testing/selftests/gpiogpio-event-mon
-> make[2]: Leaving directory '/home/lizj/linux/tools/gpio'
-> gcc -O2 -g -std=gnu99 -Wall -I../../../../usr/include/ gpio-mockup-chardev.c ../../../gpio/gpio-utils.o  -lmount -I/usr/include/libmount -o gpio-mockup-chardev
-> gcc: error: ../../../gpio/gpio-utils.o: No such file or directory
-> <builtin>: recipe for target 'gpio-mockup-chardev' failed
-> make[1]: *** [gpio-mockup-chardev] Error 1
-> make[1]: Leaving directory
-> '/home/lizj/linux/tools/testing/selftests/gpio'
-> Makefile:85: recipe for target 'all' failed
-> make: *** [all] Error 2
->
-> in this patch
-> - correct target name to $OUTPUTgpio-utils.o
-> - pass OUTPUT to tools/gpio/Makefile
-> - support cleanup ../gpiogpio-hammer.o
->
-> CC: Bamvor Jian Zhang <bamv2005@gmail.com>
-> CC: Bartosz Golaszewski <brgl@bgdev.pl>
-> CC: Shuah Khan <shuah@kernel.org>
-> CC: linux-gpio@vger.kernel.org
-> Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
-> ---
->   tools/testing/selftests/gpio/Makefile | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-> index 4665cdb..7f9354a 100644
-> --- a/tools/testing/selftests/gpio/Makefile
-> +++ b/tools/testing/selftests/gpio/Makefile
-> @@ -7,7 +7,7 @@ EXTRA_PROGS := ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
->   EXTRA_DIRS := ../gpioinclude/
->   EXTRA_OBJS := ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
->   EXTRA_OBJS += ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpio-in.o
-> -EXTRA_OBJS += ../gpiolsgpio.o
-> +EXTRA_OBJS += ../gpiolsgpio.o ../gpiogpio-hammer.o
->   
->   include ../lib.mk
->   
-> @@ -22,7 +22,7 @@ CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
->   LDLIBS += -lmount -I/usr/include/libmount
->   
->   $(BINARIES):| khdr
-> -$(BINARIES): ../../../gpio/gpio-utils.o
-> +$(BINARIES): ../gpiogpio-utils.o
->   
-> -../../../gpio/gpio-utils.o:
-> -	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
-> +../gpiogpio-utils.o:
-> +	make OUTPUT=$(OUTPUT) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
+Error: Cannot open file ../drivers/gpio/devres.c
+Error: Cannot open file ../drivers/gpio/devres.c
+WARNING: kernel-doc '../scripts/kernel-doc -rst -enable-lineno -export ../drivers/gpio/devres.c' failed with return code 2
 
--- 
-Best regards.
-Li Zhijian (8528)
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+---
+ Documentation/driver-api/gpio/index.rst |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20181005.orig/Documentation/driver-api/gpio/index.rst
++++ linux-next-20181005/Documentation/driver-api/gpio/index.rst
+@@ -38,7 +38,7 @@ Device tree support
+ Device-managed API
+ ==================
+ 
+-.. kernel-doc:: drivers/gpio/devres.c
++.. kernel-doc:: drivers/gpio/gpiolib-devres.c
+    :export:
+ 
+ sysfs helpers
