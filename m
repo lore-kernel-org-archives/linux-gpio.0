@@ -1,41 +1,44 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH 4/4] gpio: Clarify kerneldoc on gpiochip_set_chained_irqchip()
-Date: Mon,  8 Oct 2018 09:32:16 -0700
-Message-ID: <20181008163216.97436-5-swboyd@chromium.org>
-References: <20181008163216.97436-1-swboyd@chromium.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/5] Add initial pinctrl support for MT6797 SoC
+Date: Tue,  9 Oct 2018 00:44:06 +0530
+Message-ID: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181008163216.97436-1-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Evan Green <evgreen@chromium.org>, Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+To: sean.wang@mediatek.com, linus.walleij@linaro.org, matthias.bgg@gmail.com, robh+dt@kernel.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This doesn't support nested anymore, so drivers shouldn't call it with
-the handler set to NULL.
+This patchset adds initial pinctrl support for Mediatek MT6797 SoC.
+The pinctrl driver is based on the vendor binding as like MT6765 and
+implements only GPIO and pinmux functionalities.
 
-Cc: Evan Green <evgreen@chromium.org>
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/gpio/gpiolib.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The devicetree binding doc is not added because it does not exist for
+MT6765 and I'm not sure about the structure of it.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 37c6fc73b179..1729d0f698e7 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1693,8 +1693,7 @@ static void gpiochip_set_cascaded_irqchip(struct gpio_chip *gpiochip,
-  * @parent_irq: the irq number corresponding to the parent IRQ for this
-  * chained irqchip
-  * @parent_handler: the parent interrupt handler for the accumulated IRQ
-- * coming out of the gpiochip. If the interrupt is nested rather than
-- * cascaded, pass NULL in this handler argument
-+ * coming out of the gpiochip.
-  */
- void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
- 				  struct irq_chip *irqchip,
+This patchset has been tested on 96Boards MediatekX20 development board.
+
+Thanks,
+Mani
+
+Manivannan Sadhasivam (5):
+  dt-bindings: pinctrl: Add devicetree constants for MT6797 SoC
+  arm64: dts: mediatek: mt6797: Add pinctrl support
+  arm64: dts: mediatek: x20: Add pinmux support for UART1
+  pinctrl: mediatek: pinctrl-mtk-common-v2: Make eint_m u16
+  pinctrl: mediatek: Add initial pinctrl driver for MT6797 SoC
+
+ .../boot/dts/mediatek/mt6797-x20-dev.dts      |    2 +
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi      |   21 +
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6797.c     |   82 +
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |    2 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h | 2430 +++++++++++++++++
+ include/dt-bindings/pinctrl/mt6797-pinfunc.h  | 1368 ++++++++++
+ 8 files changed, 3912 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6797.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+ create mode 100644 include/dt-bindings/pinctrl/mt6797-pinfunc.h
+
 -- 
-Sent by a computer through tubes
+2.17.1
