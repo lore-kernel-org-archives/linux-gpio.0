@@ -1,40 +1,36 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] pinctrl: mediatek: select GPIOLIB
-Date: Mon,  8 Oct 2018 17:57:43 +0200
-Message-ID: <20181008155803.3322412-1-arnd@arndb.de>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: [PATCH 0/4] gpio chip cascade fixes
+Date: Mon,  8 Oct 2018 09:32:12 -0700
+Message-ID: <20181008163216.97436-1-swboyd@chromium.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>, Zhiyong Tao <zhiyong.tao@mediatek.com>, Biao Huang <biao.huang@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>, ZH Chen <zh.chen@mediatek.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Evan Green <evgreen@chromium.org>, Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Removing the linux/gpio.h include means we no longer have a declaration
-of gpiochip_lock_as_irq() when CONFIG_GPIOLIB is disabled:
+Originally this was a single patch but then I noticed some
+other things that didn't seem quite right so I added on a few
+more patches after that. The first patch is the important one
+because it fixes a bug where a stack pointer is assigned to
+the gpio_irq_chip structure and used later on when that stack
+is gone.
 
-drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_irq_request_resources':
-drivers/pinctrl/mediatek/mtk-eint.c:247:8: error: implicit declaration of function 'gpiochip_lock_as_irq'; did you mean 'spin_lock_irq'? [-Werror=implicit-function-declaration]
-drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_irq_release_resources':
-drivers/pinctrl/mediatek/mtk-eint.c:272:2: error: implicit declaration of function 'gpiochip_unlock_as_irq'; did you mean 'spin_unlock_irq'? [-Werror=implicit-function-declaration]
+Cc: Evan Green <evgreen@chromium.org>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Select it explictly instead.
+Stephen Boyd (4):
+  gpio: Assign gpio_irq_chip::parents to non-stack pointer
+  gpio: Drop parent irq assignment during cascade setup
+  gpio: Remove unused 'irqchip' argument to
+    gpiochip_set_cascaded_irqchip()
+  gpio: Clarify kerneldoc on gpiochip_set_chained_irqchip()
 
-Fixes: 1c5fb66afa2a ("pinctrl: Include <linux/gpio/driver.h> nothing else")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/mediatek/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpiolib.c      | 24 +++++-------------------
+ include/linux/gpio/driver.h |  5 +++++
+ 2 files changed, 10 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 05be5ddafec4..9d142e1da567 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -4,6 +4,7 @@ menu "MediaTek pinctrl drivers"
- config EINT_MTK
- 	bool "MediaTek External Interrupt Support"
- 	depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || COMPILE_TEST
-+	select GPIOLIB
- 	select IRQ_DOMAIN
- 
- config PINCTRL_MTK
 -- 
-2.18.0
+Sent by a computer through tubes
