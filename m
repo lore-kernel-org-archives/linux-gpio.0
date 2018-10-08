@@ -1,86 +1,55 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH 0/9] Implement wake event support on Tegra186 and later
-Date: Mon, 08 Oct 2018 00:14:53 -0700
-Message-ID: <153898289355.119890.15326986475278938009@swboyd.mtv.corp.google.com>
-References: <20180921102546.12745-1-thierry.reding@gmail.com>
- <CACRpkdbLoz+gSFa292OFNszeS6tNywpBRHyGwL9SK2u5s=UhZw@mail.gmail.com>
- <20180925095723.GC7097@ulmo> <20180925171605.GK17420@codeaurora.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v8 07/10] i3c: master: Add driver for Cadence IP
+Date: Mon, 8 Oct 2018 12:06:30 +0200
+Message-ID: <CAK8P3a21t7pQ2uYWgu2+VZZNYc+pz_w3WCL7YVUEzqqyOFLvnA@mail.gmail.com>
+References: <20181003132212.12619-1-boris.brezillon@bootlin.com> <20181003132212.12619-8-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180925171605.GK17420@codeaurora.org>
+In-Reply-To: <20181003132212.12619-8-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lina Iyer <ilina@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-msm@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, gregkh <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@he>
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Lina Iyer (2018-09-25 10:16:05)
-> Thanks Linus, for bringing this to my attention.
-> =
+On Wed, Oct 3, 2018 at 3:22 PM Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+>
+> Add a driver for Cadence I3C master IP.
+>
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> ---
 
-> Hi Thierry,
-> =
+> Changes in v7:
+> - Fix readsl/writesl() usage
+> - Add a depends on ARM || ARM64 || XTENSA to forbid selection of this
+>   driver on platforms that are not implementing readsl/writesl
 
-> On Tue, Sep 25 2018 at 03:57 -0600, Thierry Reding wrote:
-> >On Tue, Sep 25, 2018 at 10:48:39AM +0200, Linus Walleij wrote:
-> >> Hi Thierry,
-> >>
-> >> thanks for working on the wakeup business!
-> >>
-> >> This patch gets me a bit confused on our different approaches
-> >> toward wakeups in the kernel, so I included Lina, Marc and Ulf
-> >> to see if we can get some common understanding.
-> >>
-> >> On Fri, Sep 21, 2018 at 12:25 PM Thierry Reding
-> >> <thierry.reding@gmail.com> wrote:
-> >>
-> >> > The following is a set of patches that allow certain interrupts to be
-> >> > used as wakeup sources on Tegra186 and later. To implement this, each
-> >> > of the GPIO controllers' IRQ domain needs to become hierarchical, and
-> >> > parented to the PMC domain. The PMC domain in turn implements a new
-> >> > IRQ domain that is a child to the GIC IRQ domain.
-> >> >
-> >> > The above ensures that the interrupt chip implementation of the PMC =
-is
-> >> > called at the correct time. The ->irq_set_type() and ->irq_set_wake()
-> >> > implementations program the PMC wake registers in a way to enable the
-> >> > given interrupts as wakeup sources.
-> >> >
-> >> > This is based on a suggestion from Thomas Gleixner that resulted from
-> >> > the following thread:
-> >> >
-> >> >         https://lkml.org/lkml/2018/9/13/1042
-[...]
-> >
-> >Yes, there was some good discussion in that thread which helped me come
-> >up with this solution. I think it's pretty elegant because it allows all
-> >of this interaction to happen almost automatically via the existing
-> >infrastructure. I'm not sure the same could be applied to the PDC,
-> >though, because of the need to manually replay the interrupt. That's not
-> >something I think can be done with just the simple parent/child
-> >relationship that we use on Tegra.
-> >
-> I wasn't able to use the hierarchy because not all GPIOs and the summary
-> line are routed to the PDC. But I am exploring options of hierarchy as
-> well.
-> =
+Most architectures include asm-generic/io.h, which contains a generic
+implementation of readsl(). Maybe that #ifdef could be extended here?
+I remember discussing this with you not so long ago, which led to
+commit 0bbf47eab469 ("ia64: use asm-generic/io.h"). Do we have
+a list of architectures that don't include asm-generic/io.h? Maybe
+the 'depends on' could be for the set of architectures that fail here.
+
+> +static void cdns_i3c_master_rd_from_rx_fifo(struct cdns_i3c_master *master,
+> +                                           u8 *bytes, int nbytes)
+> +{
+> +       readsl(master->regs + RX_FIFO, bytes, nbytes / 4);
+> +       if (nbytes & 3) {
+> +               u32 tmp = __raw_readl(master->regs + RX_FIFO);
+> +
+> +               memcpy(bytes + (nbytes & ~3), &tmp, nbytes & 3);
+> +       }
+> +}
+
+The __raw_readl() is probably correct here (I can't think of any
+architecture on which it is not), but it still makes me feel uneasy
+about possible endianess or other issues.
+
+Maybe make this:?
+
+        readsl(master->regs + RX_FIFO, &tmp, 1);
 
 
-From=20reading this thread (and https://lkml.org/lkml/2018/9/17/756) it
-looks almost exactly the same. The only difference is that Nvidia Tegra
-does the replay in hardware whereas Qualcomm SDM845 decided to replay
-the irq in software. Either way, the gpio controller has two parent
-domains, one is wakeup capable (PDC or PMC) and the other is not (GIC)
-and some wakeup capable irqs only go through the PDC/PMC and then to the
-GIC (e.g. RTC) instead of through gpio first. And it sounds like not all
-gpios are wakeup capable in both designs.
-
-The plan to have the gpio to wakeup capable irq map live in DT for the
-PMC sounds good too. That way, the wakeup domain alloc function can
-figure things out and redirect gpios by itself while the gpio controller
-doesn't need to do anything special besides ask for wakeup to be set and
-fail if the parent can't support it.
-
-Can hierarchical irq domains entirely replace the chained irqchip code
-in gpiolib? That would be interesting.
+     Arnd
