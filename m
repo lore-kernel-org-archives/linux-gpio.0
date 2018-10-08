@@ -1,126 +1,82 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: add compatibles for AXP803 AC and
- battery power supplies
-Date: Mon, 8 Oct 2018 21:19:32 +0100
-Message-ID: <20181008211932.16a51643@archlinux>
-References: <20181004193410.7265-1-oskari@lemmela.net>
-        <20181004193410.7265-2-oskari@lemmela.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH 0/7] mfd/pinctrl: add initial support of TI DS90Ux9xx ICs
+Date: Tue,  9 Oct 2018 00:11:58 +0300
+Message-ID: <20181008211205.2900-1-vz@mleia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181004193410.7265-2-oskari@lemmela.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Oskari Lemmela <oskari@lemmela.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Sebastian Reichel <sre@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Lee Jones <lee.jones@linaro.org>, Quentin Schulz <quentin.schulz@free-electrons.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Marek Vasut <marek.vasut@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu,  4 Oct 2018 22:34:07 +0300
-Oskari Lemmela <oskari@lemmela.net> wrote:
+The published drivers describe the essential and generic parts of
+TI DS90Ux9xx series of ICs, which allow to transfer video, audio and
+control signals between FPD-Link III serializers and deserializers.
 
-> AXP803 PMIC is register compatible with AXP813.
-> 
-> AXP803/AXP813 are capable to limit input current and supply voltage.
-> 
-> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-Hi Oskari,
+The placement of TI DS90Ux9xx I2C client driver was selected to be
+drivers/mfd as the most natural location of a true MFD driver,
+apparently drivers/media/i2c is for another type of device drivers,
+also DS90Ux9xx I2C bridge subcontroller driver is placed nearby,
+because drivers/i2c for it would be an inappropriate destination
+as well. Informally the TI DS90Ux9xx ICs serve a similar function
+to SMSC/Microchip MOST, and its drivers are in drivers/staging/most,
+the final destination is unknown to me. Please feel free to advise
+a better location for the published drivers, at the moment the core
+drivers are in drivers/mfd, but I select linux-media as a mailing list.
 
-It would be better to split this up as different aspects are going
-to ideally be applied through different kernel trees.
+The published drivers instantly give a chance to test video bridge
+functionality to a TI DS90Ux9xx deserializer equipped display panel
+with the aide of Laurent's "lvds-encoder" driver by misusing it
+as a generic and transparent drm bridge with no particular LVDS
+specifics in it, for that it should be sufficient just to add the
+corresponding device node and input/output ports as children of
+a serializer connected to an application controller.
 
-I know that already got commented on for the later patch but just wanted
-to point out it applies here as well.
+While the selected scheme of IC description by a list of subdevices,
+where each one described in its own device node, works pretty well,
+it might lead to unnecessary overcomplicated description of connections
+between subdevices on serializer and deserializer sides, i.e. for
+proper description of links/connections video serializer should
+be linked to video deserializer, audio serializer should be linked
+to audio deserializer and so on, however formally there is just one
+FPD-III Link connection between two ICs.
 
-One comment inline about avoiding wildcards given the propensity of
-hardware manufacturers to confuse us on their naming schemes.
+The series of patches is rebased on top of linux-next, and there are
+more changes in the queue to provide better support of TI DS90Ux9xx ICs.
 
-Jonathan
+The introduction to the ICs and drivers can be found in my presentation
+https://schd.ws/hosted_files/ossalsjp18/8a/vzapolskiy_als2018.pdf
 
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-axp209.txt        | 3 ++-
->  Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt      | 3 ++-
->  .../devicetree/bindings/power/supply/axp20x_ac_power.txt      | 4 ++++
->  .../devicetree/bindings/power/supply/axp20x_battery.txt       | 1 +
->  4 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
-> index fc42b2caa06d..da3c0efb5e76 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
-> @@ -11,6 +11,7 @@ This driver employs the per-pin muxing pattern.
->  Required properties:
->  - compatible: Should be one of:
->  	- "x-powers,axp209-gpio"
-> +	- "x-powers,axp803-gpio"
->  	- "x-powers,axp813-gpio"
->  - #gpio-cells: Should be two. The first cell is the pin number and the
->    second is the GPIO flags.
-> @@ -67,7 +68,7 @@ GPIO0	|	gpio_in, gpio_out, ldo, adc
->  GPIO1	|	gpio_in, gpio_out, ldo, adc
->  GPIO2	|	gpio_in, gpio_out
->  
-> -axp813
-> +axp8x3
-Avoid wild cards like this.   It if far too common to have a hardware
-manufacturer not keep to what seems like an established naming convention
-and introduce something entirely different in the middle of an existing
-series of names.
+Sandeep Jain (1):
+  dt-bindings: mfd: ds90ux9xx: add description of TI DS90Ux9xx ICs
 
->  ------
->  GPIO	|	Functions
->  ------------------------
-> diff --git a/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt b/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt
-> index 7a6313913923..247616099171 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt
-> @@ -4,6 +4,7 @@ Required properties:
->    - compatible: should be one of:
->      - "x-powers,axp209-adc",
->      - "x-powers,axp221-adc",
-> +    - "x-powers,axp803-adc",
->      - "x-powers,axp813-adc",
->    - #io-channel-cells: should be 1,
->  
-> @@ -39,7 +40,7 @@ AXP22x
->   2 | batt_chrg_i
->   3 | batt_dischrg_i
->  
-> -AXP813
-> +AXP8x3
->  ------
->   0 | pmic_temp
->   1 | gpio0_v
-> diff --git a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-> index 826e8a879121..97276a71e961 100644
-> --- a/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-> +++ b/Documentation/devicetree/bindings/power/supply/axp20x_ac_power.txt
-> @@ -4,6 +4,8 @@ Required Properties:
->   - compatible: One of:
->  			"x-powers,axp202-ac-power-supply"
->  			"x-powers,axp221-ac-power-supply"
-> +			"x-powers,axp803-ac-power-supply"
-> +			"x-powers,axp813-ac-power-supply"
->  
->  This node is a subnode of the axp20x PMIC.
->  
-> @@ -13,6 +15,8 @@ reading ADC channels from the AXP20X ADC.
->  The AXP22X is only able to tell if an AC power supply is present and
->  usable.
->  
-> +The AXP8X3 is able to limit current and supply voltage
-> +
->  Example:
->  
->  &axp209 {
-> diff --git a/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt b/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
-> index 41916f69902c..780ebd7e3b84 100644
-> --- a/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
-> +++ b/Documentation/devicetree/bindings/power/supply/axp20x_battery.txt
-> @@ -4,6 +4,7 @@ Required Properties:
->   - compatible, one of:
->  			"x-powers,axp209-battery-power-supply"
->  			"x-powers,axp221-battery-power-supply"
-> +			"x-powers,axp803-battery-power-supply"
->  			"x-powers,axp813-battery-power-supply"
->  
->  This node is a subnode of its respective PMIC DT node.
+Vladimir Zapolskiy (6):
+  dt-bindings: mfd: ds90ux9xx: add description of TI DS90Ux9xx I2C bridge
+  dt-bindings: pinctrl: ds90ux9xx: add description of TI DS90Ux9xx pinmux
+  mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD driver
+  mfd: ds90ux9xx: add I2C bridge/alias and link connection driver
+  pinctrl: ds90ux9xx: add TI DS90Ux9xx pinmux and GPIO controller driver
+  MAINTAINERS: add entry for TI DS90Ux9xx FPD-Link III drivers
+
+ .../bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt  |  61 ++
+ .../devicetree/bindings/mfd/ti,ds90ux9xx.txt  |  66 ++
+ .../bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt |  83 ++
+ MAINTAINERS                                   |  10 +
+ drivers/mfd/Kconfig                           |  22 +
+ drivers/mfd/Makefile                          |   2 +
+ drivers/mfd/ds90ux9xx-core.c                  | 879 ++++++++++++++++
+ drivers/mfd/ds90ux9xx-i2c-bridge.c            | 764 ++++++++++++++
+ drivers/pinctrl/Kconfig                       |  11 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-ds90ux9xx.c           | 970 ++++++++++++++++++
+ include/linux/mfd/ds90ux9xx.h                 |  42 +
+ 12 files changed, 2911 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/ti,ds90ux9xx-pinctrl.txt
+ create mode 100644 drivers/mfd/ds90ux9xx-core.c
+ create mode 100644 drivers/mfd/ds90ux9xx-i2c-bridge.c
+ create mode 100644 drivers/pinctrl/pinctrl-ds90ux9xx.c
+ create mode 100644 include/linux/mfd/ds90ux9xx.h
+
+-- 
+2.17.1
