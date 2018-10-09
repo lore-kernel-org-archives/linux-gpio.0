@@ -1,123 +1,111 @@
-From: Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI
- DS90Ux9xx ICs
-Date: Tue, 9 Oct 2018 02:13:38 +0200
-Message-ID: <5631ac17-a1c1-af12-8b30-314880af42df@gmail.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-2-vz@mleia.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v3] ARM: dts: imx6sx-sdb: Fix enet phy regulator
+Date: Tue, 9 Oct 2018 09:09:07 +0800
+Message-ID: <20181009010905.GY3587@dragon>
+References: <c4478a98b0d2c69d58b4ba5cad3c13d73c5b387f.1539012355.git.leonard.crestez@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181008211205.2900-2-vz@mleia.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <c4478a98b0d2c69d58b4ba5cad3c13d73c5b387f.1539012355.git.leonard.crestez@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Sandeep Jain <Sandeep_Jain@mentor.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Andy Duan <fugang.duan@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 10/08/2018 11:11 PM, Vladimir Zapolskiy wrote:
-> From: Sandeep Jain <Sandeep_Jain@mentor.com>
+On Mon, Oct 08, 2018 at 03:28:01PM +0000, Leonard Crestez wrote:
+> Bindings for "fixed-regulator" only explicitly support "gpio" property,
+> not "gpios". Fix by correcting the property name.
 > 
-> The change adds device tree binding description of TI DS90Ux9xx
-> series of serializer and deserializer controllers which support video,
-> audio and control data transmission over FPD-III Link connection.
+> The enet PHYs on imx6sx-sdb needs to be explicitly reset after a power
+> cycle, this can be handled by the phy-reset-gpios property. Sadly this
+> is not handled on suspend: the fec driver turns phy-supply off but
+> doesn't assert phy-reset-gpios again on resume.
 > 
-> Signed-off-by: Sandeep Jain <Sandeep_Jain@mentor.com>
-> [vzapolskiy: various updates and corrections of secondary importance]
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> Since additional phy-level work is required to support powering off the
+> phy in suspend fix the problem by just marking the regulator as
+> "boot-on" "always-on" so that it's never turned off. This behavior is
+> equivalent to older releases.
+> 
+> Keep the phy-reset-gpios property on fec anyway because it is a correct
+> description of board design.
+> 
+> This issue was exposed by commit efdfeb079cc3 ("regulator: fixed:
+> Convert to use GPIO descriptor only") which causes the "gpios" property
+> to also be parsed. Before that commit the "gpios" property had no
+> effect, PHY reset was only handled in the the bootloader.
+> 
+> This fixes linux-next boot failures previously reported here:
+>  https://lore.kernel.org/patchwork/patch/982437/#1177900
+>  https://lore.kernel.org/patchwork/patch/994091/#1178304
+
+So this is a fix we only need to apply for 4.20-rc, right?
+
+Shawn
+
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> 
 > ---
->  .../devicetree/bindings/mfd/ti,ds90ux9xx.txt  | 66 +++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
+> I attempted to fix by asserting phy-reset-gpios on resume but apparently
+> phy fixups are still lost and need to be reapplied (not sure why/how).
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
-> new file mode 100644
-> index 000000000000..0733da88f7ef
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx.txt
-> @@ -0,0 +1,66 @@
-> +Texas Instruments DS90Ux9xx de-/serializer controllers
-> +
-> +Required properties:
-> +- compatible: Must contain a generic "ti,ds90ux9xx" value and
-> +	may contain one more specific value from the list:
-> +	"ti,ds90ub925q",
-> +	"ti,ds90uh925q",
-> +	"ti,ds90ub927q",
-> +	"ti,ds90uh927q",
-> +	"ti,ds90ub926q",
-> +	"ti,ds90uh926q",
-
-Keep the list sorted.
-
-> +	"ti,ds90ub928q",
-> +	"ti,ds90uh928q",
-> +	"ti,ds90ub940q",
-> +	"ti,ds90uh940q".
-> +
-> +Optional properties:
-> +- reg : Specifies the I2C slave address of a local de-/serializer.
-> +- power-gpios : GPIO line to control supplied power to the device.
-
-Shouldn't this be regulator phandle ?
-
-> +- ti,backward-compatible-mode : Overrides backward compatibility mode.
-> +	Possible values are "<1>" or "<0>".
-
-Make this bool , ie. present or not.
-
-> +	If "ti,backward-compatible-mode" is not mentioned, the backward
-> +	compatibility mode is not touched and given by hardware pin strapping.
-> +- ti,low-frequency-mode : Overrides low frequency mode.
-> +	Possible values are "<1>" or "<0>".
-> +	If "ti,low-frequency-mode" is not mentioned, the low frequency mode
-> +	is not touched and given by hardware pin strapping.
-> +- ti,video-map-select-msb: Sets video bridge pins to MSB mode, if it is set
-> +	MAPSEL pin value is ignored.
-> +- ti,video-map-select-lsb: Sets video bridge pins to LSB mode, if it is set
-> +	MAPSEL pin value is ignored.
-
-This needs some additional explanation, what's this about ?
-
-> +- ti,pixel-clock-edge : Selects Pixel Clock Edge.
-> +	Possible values are "<1>" or "<0>".
-> +	If "ti,pixel-clock-edge" is High <1>, output data is strobed on the
-> +	Rising edge of the PCLK. If ti,pixel-clock-edge is Low <0>, data is
-> +	strobed on the Falling edge of the PCLK.
-> +	If "ti,pixel-clock-edge" is not mentioned, the pixel clock edge
-> +	value is not touched and given by hardware pin strapping.
-> +- ti,spread-spectrum-clock-generation : Spread Sprectrum Clock Generation.
-> +	Possible values are from "<0>" to "<7>". The same value will be
-> +	written to SSC register. If "ti,spread-spectrum-clock-gen" is not
-> +	found, then SSCG will be disabled.
-> +
-> +TI DS90Ux9xx serializers and deserializer device nodes may contain a number
-> +of children device nodes to describe and enable particular subcomponents
-> +found on ICs.
-> +
-> +Example:
-> +
-> +serializer: serializer@c {
-> +	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
-> +	reg = <0xc>;
-> +	power-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>;
-> +	ti,backward-compatible-mode = <0>;
-> +	ti,low-frequency-mode = <0>;
-> +	ti,pixel-clock-edge = <0>;
-> +	...
-> +}
-> +
-> +deserializer: deserializer@3c {
-> +	compatible = "ti,ds90ub940q", "ti,ds90ux9xx";
-> +	reg = <0x3c>;
-> +	power-gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
-> +	...
-> +}
-> +
+> Changes since v2:
+>  * Mark as always-on boot-enable-on because phy power cycling is hard
+>  * Clear Reviewed-by because of large behavior change
+>  * Link to v2: https://lore.kernel.org/patchwork/patch/995520/
 > 
-
-
--- 
-Best regards,
-Marek Vasut
+> Changes since v1:
+>  * Use 0x10b0 for phy reset pinctrl value (Fabio)
+>  * Link to v1: https://lore.kernel.org/patchwork/patch/994871/
+> 
+>  arch/arm/boot/dts/imx6sx-sdb.dtsi | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/imx6sx-sdb.dtsi b/arch/arm/boot/dts/imx6sx-sdb.dtsi
+> index 53b3408b5fab..7d7d679945d2 100644
+> --- a/arch/arm/boot/dts/imx6sx-sdb.dtsi
+> +++ b/arch/arm/boot/dts/imx6sx-sdb.dtsi
+> @@ -115,11 +115,13 @@
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&pinctrl_enet_3v3>;
+>  		regulator-name = "enet_3v3";
+>  		regulator-min-microvolt = <3300000>;
+>  		regulator-max-microvolt = <3300000>;
+> -		gpios = <&gpio2 6 GPIO_ACTIVE_LOW>;
+> +		gpio = <&gpio2 6 GPIO_ACTIVE_LOW>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+>  	};
+>  
+>  	reg_pcie_gpio: regulator-pcie-gpio {
+>  		compatible = "regulator-fixed";
+>  		pinctrl-names = "default";
+> @@ -178,10 +180,11 @@
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_enet1>;
+>  	phy-supply = <&reg_enet_3v3>;
+>  	phy-mode = "rgmii";
+>  	phy-handle = <&ethphy1>;
+> +	phy-reset-gpios = <&gpio2 7 GPIO_ACTIVE_LOW>;
+>  	status = "okay";
+>  
+>  	mdio {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> @@ -371,10 +374,12 @@
+>  				MX6SX_PAD_RGMII1_RD1__ENET1_RX_DATA_1	0x3081
+>  				MX6SX_PAD_RGMII1_RD2__ENET1_RX_DATA_2	0x3081
+>  				MX6SX_PAD_RGMII1_RD3__ENET1_RX_DATA_3	0x3081
+>  				MX6SX_PAD_RGMII1_RX_CTL__ENET1_RX_EN	0x3081
+>  				MX6SX_PAD_ENET2_RX_CLK__ENET2_REF_CLK_25M	0x91
+> +				/* phy reset */
+> +				MX6SX_PAD_ENET2_CRS__GPIO2_IO_7		0x10b0
+>  			>;
+>  		};
+>  
+>  		pinctrl_enet_3v3: enet3v3grp {
+>  			fsl,pins = <
+> -- 
+> 2.17.1
+> 
