@@ -1,57 +1,43 @@
-From: Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI
- DS90Ux9xx ICs
-Date: Tue, 9 Oct 2018 23:03:49 +0200
-Message-ID: <c843687c-2897-464a-5ec8-a4f070b8e627@gmail.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-2-vz@mleia.com>
- <5631ac17-a1c1-af12-8b30-314880af42df@gmail.com>
- <4569f3e3-3812-f423-eda9-51e7a4d56a58@mleia.com>
- <d7536af1-d78f-6d20-81a0-288be1d67f25@mleia.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [PATCH v3] ARM: dts: imx6sx-sdb: Fix enet phy regulator
+Date: Tue, 9 Oct 2018 23:00:00 +0000
+Message-ID: <2e4fd39e1e2271f12f6f11fe644cad7c93d1d363.camel@nxp.com>
+References: <c4478a98b0d2c69d58b4ba5cad3c13d73c5b387f.1539012355.git.leonard.crestez@nxp.com>
+         <20181009010905.GY3587@dragon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d7536af1-d78f-6d20-81a0-288be1d67f25@mleia.com>
+In-Reply-To: <20181009010905.GY3587@dragon>
 Content-Language: en-US
+Content-ID: <5FFB843FFAAA1646B5D82CF4BC9B7891@eurprd04.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Sandeep Jain <Sandeep_Jain@mentor.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: "shawnguo@kernel.org" <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Andy Duan <fugang.duan@nxp.com>
+Cc: "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, "broonie@kernel.org" <broonie@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 10/09/2018 10:55 PM, Vladimir Zapolskiy wrote:
-> On 10/09/2018 02:11 PM, Vladimir Zapolskiy wrote:
->> Hi Marek,
->>
->> On 10/09/2018 03:13 AM, Marek Vasut wrote:
->>> On 10/08/2018 11:11 PM, Vladimir Zapolskiy wrote:
->>>> From: Sandeep Jain <Sandeep_Jain@mentor.com>
->>>>
->>>> The change adds device tree binding description of TI DS90Ux9xx
->>>> series of serializer and deserializer controllers which support video,
->>>> audio and control data transmission over FPD-III Link connection.
->>>>
-> 
-> [snip]
-> 
->>>> +Optional properties:
->>>> +- reg : Specifies the I2C slave address of a local de-/serializer.
->>>> +- power-gpios : GPIO line to control supplied power to the device.
->>>
->>> Shouldn't this be regulator phandle ?
->>
->> It could be, right. I'll ponder upon it.
->>
-> 
-> No, it can not.
-> 
-> The property describes PDB "Power-down Mode Input Pin", it is a control
-> pin with the predefined voltage, so regulator phandle is not applicable
-> here.
-
-Then the DT binding document needs updating, because this is completely
-unclear and confusing.
-
--- 
-Best regards,
-Marek Vasut
+T24gVHVlLCAyMDE4LTEwLTA5IGF0IDA5OjA5ICswODAwLCBTaGF3biBHdW8gd3JvdGU6DQo+IE9u
+IE1vbiwgT2N0IDA4LCAyMDE4IGF0IDAzOjI4OjAxUE0gKzAwMDAsIExlb25hcmQgQ3Jlc3RleiB3
+cm90ZToNCj4gPiBCaW5kaW5ncyBmb3IgImZpeGVkLXJlZ3VsYXRvciIgb25seSBleHBsaWNpdGx5
+IHN1cHBvcnQgImdwaW8iIHByb3BlcnR5LA0KPiA+IG5vdCAiZ3Bpb3MiLiBGaXggYnkgY29ycmVj
+dGluZyB0aGUgcHJvcGVydHkgbmFtZS4NCj4gPiANCj4gPiBUaGUgZW5ldCBQSFlzIG9uIGlteDZz
+eC1zZGIgbmVlZHMgdG8gYmUgZXhwbGljaXRseSByZXNldCBhZnRlciBhIHBvd2VyDQo+ID4gY3lj
+bGUsIHRoaXMgY2FuIGJlIGhhbmRsZWQgYnkgdGhlIHBoeS1yZXNldC1ncGlvcyBwcm9wZXJ0eS4g
+U2FkbHkgdGhpcw0KPiA+IGlzIG5vdCBoYW5kbGVkIG9uIHN1c3BlbmQ6IHRoZSBmZWMgZHJpdmVy
+IHR1cm5zIHBoeS1zdXBwbHkgb2ZmIGJ1dA0KPiA+IGRvZXNuJ3QgYXNzZXJ0IHBoeS1yZXNldC1n
+cGlvcyBhZ2FpbiBvbiByZXN1bWUuDQo+ID4gDQo+ID4gU2luY2UgYWRkaXRpb25hbCBwaHktbGV2
+ZWwgd29yayBpcyByZXF1aXJlZCB0byBzdXBwb3J0IHBvd2VyaW5nIG9mZiB0aGUNCj4gPiBwaHkg
+aW4gc3VzcGVuZCBmaXggdGhlIHByb2JsZW0gYnkganVzdCBtYXJraW5nIHRoZSByZWd1bGF0b3Ig
+YXMNCj4gPiAiYm9vdC1vbiIgImFsd2F5cy1vbiIgc28gdGhhdCBpdCdzIG5ldmVyIHR1cm5lZCBv
+ZmYuIFRoaXMgYmVoYXZpb3IgaXMNCj4gPiBlcXVpdmFsZW50IHRvIG9sZGVyIHJlbGVhc2VzLg0K
+PiA+IA0KPiA+IEtlZXAgdGhlIHBoeS1yZXNldC1ncGlvcyBwcm9wZXJ0eSBvbiBmZWMgYW55d2F5
+IGJlY2F1c2UgaXQgaXMgYSBjb3JyZWN0DQo+ID4gZGVzY3JpcHRpb24gb2YgYm9hcmQgZGVzaWdu
+Lg0KPiA+IA0KPiA+IFRoaXMgaXNzdWUgd2FzIGV4cG9zZWQgYnkgY29tbWl0IGVmZGZlYjA3OWNj
+MyAoInJlZ3VsYXRvcjogZml4ZWQ6DQo+ID4gQ29udmVydCB0byB1c2UgR1BJTyBkZXNjcmlwdG9y
+IG9ubHkiKSB3aGljaCBjYXVzZXMgdGhlICJncGlvcyIgcHJvcGVydHkNCj4gPiB0byBhbHNvIGJl
+IHBhcnNlZC4gQmVmb3JlIHRoYXQgY29tbWl0IHRoZSAiZ3Bpb3MiIHByb3BlcnR5IGhhZCBubw0K
+PiA+IGVmZmVjdCwgUEhZIHJlc2V0IHdhcyBvbmx5IGhhbmRsZWQgaW4gdGhlIHRoZSBib290bG9h
+ZGVyLg0KDQo+IFNvIHRoaXMgaXMgYSBmaXggd2Ugb25seSBuZWVkIHRvIGFwcGx5IGZvciA0LjIw
+LXJjLCByaWdodD8NCg0KWWVzLg0KDQpUaGlzIGlzc3VlIHdhcyBleHBvc2VkIGJ5IGdwaW8gY2hh
+bmdlcyBmb3IgNC4yMCBidXQgNC4xOSBSQ3MgYXJlIGZpbmUuDQoNCi0tDQpSZWdhcmRzLA0KTGVv
+bmFyZA0K
