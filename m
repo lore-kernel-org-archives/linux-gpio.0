@@ -1,54 +1,81 @@
-From: Sodagudi Prasad <psodagud@codeaurora.org>
-Subject: Re: protected pins and debugfs
-Date: Wed, 10 Oct 2018 12:40:41 -0700
-Message-ID: <5848ff92c1388b7d6904e88b57bbfec8@codeaurora.org>
-References: <9aec322678417753fe4022691f4bfdbe@codeaurora.org>
- <153897864285.119890.13024399324598460044@swboyd.mtv.corp.google.com>
+From: Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH] selftests/gpio: fix compiling errors
+Date: Wed, 10 Oct 2018 14:25:31 -0600
+Message-ID: <ae288c01-5350-5b95-8157-dd377e6738b1@kernel.org>
+References: <1537524021-3371-1-git-send-email-lizhijian@cn.fujitsu.com>
+ <1372e275-d276-7982-127e-dd339ead1b67@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <153897864285.119890.13024399324598460044@swboyd.mtv.corp.google.com>
+In-Reply-To: <1372e275-d276-7982-127e-dd339ead1b67@cn.fujitsu.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: bjorn.andersson@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+To: Li Zhijian <lizhijian@cn.fujitsu.com>, linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Bamvor Jian Zhang <bamv2005@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, Shuah Khan <shuah@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2018-10-07 23:04, Stephen Boyd wrote:
-> Quoting Sodagudi Prasad (2018-10-03 05:38:24)
->> 
->>          for (i = 0; i < chip->ngpio; i++, gpio++) {
->> +               label = gpiochip_is_requested(chip, i);
->> +               if (!label)
->> +                       continue;
->>                  msm_gpio_dbg_show_one(s, NULL, chip, i, gpio);
->> -               seq_puts(s, "\n");
->>          }
->>   }
->> 
-> 
-> Does something not work with the following code in
-> msm_gpio_dbg_show_one()?
+On 10/07/2018 08:32 AM, Li Zhijian wrote:
+> ping
 > 
 > 
->         if (!gpiochip_line_is_valid(chip, offset))
-> 		return;
+> On 09/21/2018 06:00 PM, Li Zhijian wrote:
+>> lizhijian@haswell-OptiPlex-9020:/home/lizj/linux/tools/testing/selftests$ make
+>> [...snip...]
+>> make ARCH=x86 CROSS_COMPILE= -C ../../../gpio
+>> make[2]: Entering directory '/home/lizj/linux/tools/gpio'
+>> [...snip...]
+>> make[3]: Leaving directory '/home/lizj/linux/tools/gpio'
+>>    LINK     /home/lizj/linux/tools/testing/selftests/gpiogpio-event-mon
+>> make[2]: Leaving directory '/home/lizj/linux/tools/gpio'
+>> gcc -O2 -g -std=gnu99 -Wall -I../../../../usr/include/ gpio-mockup-chardev.c ../../../gpio/gpio-utils.o  -lmount -I/usr/include/libmount -o gpio-mockup-chardev
+>> gcc: error: ../../../gpio/gpio-utils.o: No such file or directory
+>> <builtin>: recipe for target 'gpio-mockup-chardev' failed
+>> make[1]: *** [gpio-mockup-chardev] Error 1
+>> make[1]: Leaving directory
+>> '/home/lizj/linux/tools/testing/selftests/gpio'
+>> Makefile:85: recipe for target 'all' failed
+>> make: *** [all] Error 2
+>>
+>> in this patch
+>> - correct target name to $OUTPUTgpio-utils.o
+>> - pass OUTPUT to tools/gpio/Makefile
+>> - support cleanup ../gpiogpio-hammer.o
+>>
+>> CC: Bamvor Jian Zhang <bamv2005@gmail.com>
+>> CC: Bartosz Golaszewski <brgl@bgdev.pl>
+>> CC: Shuah Khan <shuah@kernel.org>
+>> CC: linux-gpio@vger.kernel.org
+>> Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
+>> ---
+>>   tools/testing/selftests/gpio/Makefile | 8 ++++----
+>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+>> index 4665cdb..7f9354a 100644
+>> --- a/tools/testing/selftests/gpio/Makefile
+>> +++ b/tools/testing/selftests/gpio/Makefile
+>> @@ -7,7 +7,7 @@ EXTRA_PROGS := ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
+>>   EXTRA_DIRS := ../gpioinclude/
+>>   EXTRA_OBJS := ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
+>>   EXTRA_OBJS += ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpio-in.o
+>> -EXTRA_OBJS += ../gpiolsgpio.o
+>> +EXTRA_OBJS += ../gpiolsgpio.o ../gpiogpio-hammer.o
+>>     include ../lib.mk
+>>   @@ -22,7 +22,7 @@ CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+>>   LDLIBS += -lmount -I/usr/include/libmount
+>>     $(BINARIES):| khdr
+>> -$(BINARIES): ../../../gpio/gpio-utils.o
+>> +$(BINARIES): ../gpiogpio-utils.o
+>>   -../../../gpio/gpio-utils.o:
+>> -    make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
+>> +../gpiogpio-utils.o:
+>> +    make OUTPUT=$(OUTPUT) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
+> 
+Is this still an issue in linux-kselftest next. I applied a few patches
+from Fathi Boudra
 
-Hi Stephen,
-I didnt realize that these changes are merged on tip. I was testing on 
-4.14 kernel.
+Please check and let me know if this is till an issue.
 
-https://lore.kernel.org/patchwork/patch/878107/
-https://lore.kernel.org/patchwork/patch/878106/
-https://lore.kernel.org/patchwork/patch/878109/
-
-I will add "gpio-reserved-ranges" to internal platforms and this issue 
-should not be observed.
-
--thanks, Prasad
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-Linux Foundation Collaborative Project
+thanks,
+-- Shuah
