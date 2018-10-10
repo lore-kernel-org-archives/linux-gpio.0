@@ -1,33 +1,101 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: select GPIOLIB
-Date: Wed, 10 Oct 2018 13:53:46 +0200
-Message-ID: <CACRpkdYwGyMosmwW9YkMSKs4VCet7c0itwx0jUKOXnGMkS2g9w@mail.gmail.com>
-References: <20181008155803.3322412-1-arnd@arndb.de>
+Subject: Re: [PATCH 1/4] gpio: Assign gpio_irq_chip::parents to non-stack pointer
+Date: Wed, 10 Oct 2018 14:05:18 +0200
+Message-ID: <CACRpkdaVttmazoVofRn=egUtRRLE9xTz0jnCnTkf7sQWED0v3w@mail.gmail.com>
+References: <20181008163216.97436-1-swboyd@chromium.org> <20181008163216.97436-2-swboyd@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181008155803.3322412-1-arnd@arndb.de>
+In-Reply-To: <20181008163216.97436-2-swboyd@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang <sean.wang@mediatek.com>, Zhiyong Tao <zhiyong.tao@mediatek.com>, Biao Huang <biao.huang@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>, zh.chen@mediatek.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, evgreen@chromium.org, Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 5:58 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Mon, Oct 8, 2018 at 6:32 PM Stephen Boyd <swboyd@chromium.org> wrote:
 
-> Removing the linux/gpio.h include means we no longer have a declaration
-> of gpiochip_lock_as_irq() when CONFIG_GPIOLIB is disabled:
+> gpiochip_set_cascaded_irqchip() is passed 'parent_irq' as an argument
+> and then the address of that argument is assigned to the gpio chips
+> gpio_irq_chip 'parents' pointer shortly thereafter. This can't ever
+> work, because we've just assigned some stack address to a pointer that
+> we plan to dereference later in gpiochip_irq_map(). I ran into this
+> issue with the KASAN report below when gpiochip_irq_map() tried to setup
+> the parent irq with a total junk pointer for the 'parents' array.
 >
-> drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_irq_request_resources':
-> drivers/pinctrl/mediatek/mtk-eint.c:247:8: error: implicit declaration of function 'gpiochip_lock_as_irq'; did you mean 'spin_lock_irq'? [-Werror=implicit-function-declaration]
-> drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_irq_release_resources':
-> drivers/pinctrl/mediatek/mtk-eint.c:272:2: error: implicit declaration of function 'gpiochip_unlock_as_irq'; did you mean 'spin_unlock_irq'? [-Werror=implicit-function-declaration]
+> BUG: KASAN: stack-out-of-bounds in gpiochip_irq_map+0x228/0x248
+> Read of size 4 at addr ffffffc0dde472e0 by task swapper/0/1
 >
-> Select it explictly instead.
+> CPU: 7 PID: 1 Comm: swapper/0 Not tainted 4.14.72 #34
+> Call trace:
+> [<ffffff9008093638>] dump_backtrace+0x0/0x718
+> [<ffffff9008093da4>] show_stack+0x20/0x2c
+> [<ffffff90096b9224>] __dump_stack+0x20/0x28
+> [<ffffff90096b91c8>] dump_stack+0x80/0xbc
+> [<ffffff900845a350>] print_address_description+0x70/0x238
+> [<ffffff900845a8e4>] kasan_report+0x1cc/0x260
+> [<ffffff900845aa14>] __asan_report_load4_noabort+0x2c/0x38
+> [<ffffff900897e098>] gpiochip_irq_map+0x228/0x248
+> [<ffffff900820cc08>] irq_domain_associate+0x114/0x2ec
+> [<ffffff900820d13c>] irq_create_mapping+0x120/0x234
+> [<ffffff900820da78>] irq_create_fwspec_mapping+0x4c8/0x88c
+> [<ffffff900820e2d8>] irq_create_of_mapping+0x180/0x210
+> [<ffffff900917114c>] of_irq_get+0x138/0x198
+> [<ffffff9008dc70ac>] spi_drv_probe+0x94/0x178
+> [<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
+> [<ffffff9008ca6538>] __device_attach_driver+0x148/0x20c
+> [<ffffff9008ca14cc>] bus_for_each_drv+0x120/0x188
+> [<ffffff9008ca570c>] __device_attach+0x19c/0x2dc
+> [<ffffff9008ca586c>] device_initial_probe+0x20/0x2c
+> [<ffffff9008ca18bc>] bus_probe_device+0x80/0x154
+> [<ffffff9008c9b9b4>] device_add+0x9b8/0xbdc
+> [<ffffff9008dc7640>] spi_add_device+0x1b8/0x380
+> [<ffffff9008dcbaf0>] spi_register_controller+0x111c/0x1378
+> [<ffffff9008dd6b10>] spi_geni_probe+0x4dc/0x6f8
+> [<ffffff9008cab058>] platform_drv_probe+0xdc/0x130
+> [<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
+> [<ffffff9008ca59cc>] __driver_attach+0x100/0x194
+> [<ffffff9008ca0ea8>] bus_for_each_dev+0x104/0x16c
+> [<ffffff9008ca58c0>] driver_attach+0x48/0x54
+> [<ffffff9008ca1edc>] bus_add_driver+0x274/0x498
+> [<ffffff9008ca8448>] driver_register+0x1ac/0x230
+> [<ffffff9008caaf6c>] __platform_driver_register+0xcc/0xdc
+> [<ffffff9009c4b33c>] spi_geni_driver_init+0x1c/0x24
+> [<ffffff9008084cb8>] do_one_initcall+0x240/0x3dc
+> [<ffffff9009c017d0>] kernel_init_freeable+0x378/0x468
+> [<ffffff90096e8240>] kernel_init+0x14/0x110
+> [<ffffff9008086fcc>] ret_from_fork+0x10/0x18
 >
-> Fixes: 1c5fb66afa2a ("pinctrl: Include <linux/gpio/driver.h> nothing else")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> The buggy address belongs to the page:
+> page:ffffffbf037791c0 count:0 mapcount:0 mapping:          (null) index:0x0
+> flags: 0x4000000000000000()
+> raw: 4000000000000000 0000000000000000 0000000000000000 00000000ffffffff
+> raw: ffffffbf037791e0 ffffffbf037791e0 0000000000000000 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>  ffffffc0dde47180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  ffffffc0dde47200: f1 f1 f1 f1 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f2 f2
+> >ffffffc0dde47280: f2 f2 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3
+>                                                        ^
+>  ffffffc0dde47300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  ffffffc0dde47380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>
+> Let's leave around one unsigned int in the gpio_irq_chip struct for the
+> single parent irq case and repoint the 'parents' array at it. This way
+> code is left mostly intact to setup parents and we waste an extra few
+> bytes per structure of which there should be only a handful in a system.
+>
+> Cc: Evan Green <evgreen@chromium.org>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Patch applied.
+OMG critical fix. I fixed up the thing the kbuild robot was complaining
+about with some vanilla kerneldoc and applied for fixes since it's kind
+of urgent.
+
+Please check the result.
 
 Yours,
 Linus Walleij
