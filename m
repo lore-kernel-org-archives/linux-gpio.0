@@ -1,13 +1,13 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/7] dt-bindings: pinctrl: ds90ux9xx: add description of
- TI DS90Ux9xx pinmux
-Date: Wed, 10 Oct 2018 10:45:43 +0200
-Message-ID: <CACRpkdZJMPYWHBUXohjxo12XZpLdz7OzcWRBrrkcB8YLLd5StA@mail.gmail.com>
-References: <20181008211205.2900-1-vz@mleia.com> <20181008211205.2900-4-vz@mleia.com>
+Subject: Re: [PATCH 6/7] pinctrl: ds90ux9xx: add TI DS90Ux9xx pinmux and GPIO
+ controller driver
+Date: Wed, 10 Oct 2018 11:04:41 +0200
+Message-ID: <CACRpkdbMMnXzA_j_p=nGgT1SyECrhCNRC6wWQ-+COMEkSQdPAA@mail.gmail.com>
+References: <20181008211205.2900-1-vz@mleia.com> <20181008211205.2900-7-vz@mleia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181008211205.2900-4-vz@mleia.com>
+In-Reply-To: <20181008211205.2900-7-vz@mleia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Vladimir Zapolskiy <vz@mleia.com>
 Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Vasut <marek.vasut@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Wolfram Sang <wsa@the-dreams.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-media@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
@@ -15,37 +15,70 @@ List-Id: linux-gpio@vger.kernel.org
 
 Hi Vladimir,
 
-thanks for your patch!
-
-Can we change the subject to something like "add DT bindings" rather than
-"add description" as it is more specific and makes it easier for me as
-maintainer.
+thanks for your patch! Some review comments:
 
 On Mon, Oct 8, 2018 at 11:12 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
 
 > From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 >
-> TI DS90Ux9xx de-/serializers have a capability to multiplex pin functions,
-> in particular a pin may have selectable functions of GPIO, GPIO line
-> transmitter, one of I2S lines, one of RGB24 video signal lines and so on.
->
-> The change adds a description of DS90Ux9xx pin multiplexers and GPIO
-> controllers.
+> The change adds an MFD cell driver for managing pin functions on
+> TI DS90Ux9xx de-/serializers.
 >
 > Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-(...)
-> +- gpio-ranges: Mapping to pin controller pins (as described in
-> +       Documentation/devicetree/bindings/gpio/gpio.txt)
-> +
-> +Optional properties:
-> +- ti,video-depth-18bit: Sets video bridge pins to RGB 18-bit mode.
-> +
-> +Available pins, groups and functions (reference to device datasheets):
 
-Please reference the generic binding you're using here:
-Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+Please mention in the commit that you are also adding a GPIO
+chip driver.
 
-Apart from these small nitpicks it looks very standard and good.
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+
+I prefer the simple "GPL-2.0+" here.
+
+> +#include <linux/of_gpio.h>
+
+You should not need this include. If you do, something is wrong.
+
+> +#define SER_REG_PIN_CTRL               0x12
+> +#define PIN_CTRL_RGB18                 BIT(2)
+> +#define PIN_CTRL_I2S_DATA_ISLAND       BIT(1)
+> +#define PIN_CTRL_I2S_CHANNEL_B         (BIT(0) | BIT(3))
+> +
+> +#define SER_REG_I2S_SURROUND           0x1A
+> +#define PIN_CTRL_I2S_SURR_BIT          BIT(0)
+> +
+> +#define DES_REG_INDIRECT_PASS          0x16
+> +
+> +#define OUTPUT_HIGH                    BIT(3)
+> +#define REMOTE_CONTROL                 BIT(2)
+> +#define DIR_INPUT                      BIT(1)
+> +#define ENABLE_GPIO                    BIT(0)
+> +
+> +#define GPIO_AS_INPUT                  (ENABLE_GPIO | DIR_INPUT)
+> +#define GPIO_AS_OUTPUT                 ENABLE_GPIO
+> +#define GPIO_OUTPUT_HIGH               (GPIO_AS_OUTPUT | OUTPUT_HIGH)
+> +#define GPIO_OUTPUT_LOW                        GPIO_AS_OUTPUT
+> +#define GPIO_OUTPUT_REMOTE             (GPIO_AS_OUTPUT | REMOTE_CONTROL)
+
+These have a creepily generic look, like they hit the global GPIO
+namespace without really clashing. It gets confusing when reading
+the code.
+
+Do you think you could prefix them with DS90_* or something
+so it is clear that these defines belong in this driver?
+
+> +static const struct gpio_chip ds90ux9xx_gpio_chip = {
+> +       .owner                  = THIS_MODULE,
+> +       .get                    = ds90ux9xx_gpio_get,
+> +       .set                    = ds90ux9xx_gpio_set,
+> +       .get_direction          = ds90ux9xx_gpio_get_direction,
+> +       .direction_input        = ds90ux9xx_gpio_direction_input,
+> +       .direction_output       = ds90ux9xx_gpio_direction_output,
+> +       .base                   = -1,
+> +       .can_sleep              = 1,
+
+This is bool so set it = true;
+
+Overall it's a very nice driver. It is pretty complex but pin control
+is complex so that's a fact of life.
 
 Yours,
 Linus Walleij
