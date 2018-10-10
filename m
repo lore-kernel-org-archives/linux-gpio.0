@@ -1,43 +1,41 @@
-From: Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH v3] ARM: dts: imx6sx-sdb: Fix enet phy regulator
-Date: Tue, 9 Oct 2018 23:00:00 +0000
-Message-ID: <2e4fd39e1e2271f12f6f11fe644cad7c93d1d363.camel@nxp.com>
-References: <c4478a98b0d2c69d58b4ba5cad3c13d73c5b387f.1539012355.git.leonard.crestez@nxp.com>
-         <20181009010905.GY3587@dragon>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V3 1/2] dt-bindings: pinctrl: document Broadcom Northstar
+ pin mux controller
+Date: Wed, 10 Oct 2018 09:16:26 +0200
+Message-ID: <CACRpkdb8MRQN4z=7ZMs8Y3nbUTjDSLqdFNK_AUozut726JwogA@mail.gmail.com>
+References: <20180926193103.21241-1-zajec5@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181009010905.GY3587@dragon>
-Content-Language: en-US
-Content-ID: <5FFB843FFAAA1646B5D82CF4BC9B7891@eurprd04.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "shawnguo@kernel.org" <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Andy Duan <fugang.duan@nxp.com>
-Cc: "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, "broonie@kernel.org" <broonie@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20180926193103.21241-1-zajec5@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, rafal@milecki.pl, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTEwLTA5IGF0IDA5OjA5ICswODAwLCBTaGF3biBHdW8gd3JvdGU6DQo+IE9u
-IE1vbiwgT2N0IDA4LCAyMDE4IGF0IDAzOjI4OjAxUE0gKzAwMDAsIExlb25hcmQgQ3Jlc3RleiB3
-cm90ZToNCj4gPiBCaW5kaW5ncyBmb3IgImZpeGVkLXJlZ3VsYXRvciIgb25seSBleHBsaWNpdGx5
-IHN1cHBvcnQgImdwaW8iIHByb3BlcnR5LA0KPiA+IG5vdCAiZ3Bpb3MiLiBGaXggYnkgY29ycmVj
-dGluZyB0aGUgcHJvcGVydHkgbmFtZS4NCj4gPiANCj4gPiBUaGUgZW5ldCBQSFlzIG9uIGlteDZz
-eC1zZGIgbmVlZHMgdG8gYmUgZXhwbGljaXRseSByZXNldCBhZnRlciBhIHBvd2VyDQo+ID4gY3lj
-bGUsIHRoaXMgY2FuIGJlIGhhbmRsZWQgYnkgdGhlIHBoeS1yZXNldC1ncGlvcyBwcm9wZXJ0eS4g
-U2FkbHkgdGhpcw0KPiA+IGlzIG5vdCBoYW5kbGVkIG9uIHN1c3BlbmQ6IHRoZSBmZWMgZHJpdmVy
-IHR1cm5zIHBoeS1zdXBwbHkgb2ZmIGJ1dA0KPiA+IGRvZXNuJ3QgYXNzZXJ0IHBoeS1yZXNldC1n
-cGlvcyBhZ2FpbiBvbiByZXN1bWUuDQo+ID4gDQo+ID4gU2luY2UgYWRkaXRpb25hbCBwaHktbGV2
-ZWwgd29yayBpcyByZXF1aXJlZCB0byBzdXBwb3J0IHBvd2VyaW5nIG9mZiB0aGUNCj4gPiBwaHkg
-aW4gc3VzcGVuZCBmaXggdGhlIHByb2JsZW0gYnkganVzdCBtYXJraW5nIHRoZSByZWd1bGF0b3Ig
-YXMNCj4gPiAiYm9vdC1vbiIgImFsd2F5cy1vbiIgc28gdGhhdCBpdCdzIG5ldmVyIHR1cm5lZCBv
-ZmYuIFRoaXMgYmVoYXZpb3IgaXMNCj4gPiBlcXVpdmFsZW50IHRvIG9sZGVyIHJlbGVhc2VzLg0K
-PiA+IA0KPiA+IEtlZXAgdGhlIHBoeS1yZXNldC1ncGlvcyBwcm9wZXJ0eSBvbiBmZWMgYW55d2F5
-IGJlY2F1c2UgaXQgaXMgYSBjb3JyZWN0DQo+ID4gZGVzY3JpcHRpb24gb2YgYm9hcmQgZGVzaWdu
-Lg0KPiA+IA0KPiA+IFRoaXMgaXNzdWUgd2FzIGV4cG9zZWQgYnkgY29tbWl0IGVmZGZlYjA3OWNj
-MyAoInJlZ3VsYXRvcjogZml4ZWQ6DQo+ID4gQ29udmVydCB0byB1c2UgR1BJTyBkZXNjcmlwdG9y
-IG9ubHkiKSB3aGljaCBjYXVzZXMgdGhlICJncGlvcyIgcHJvcGVydHkNCj4gPiB0byBhbHNvIGJl
-IHBhcnNlZC4gQmVmb3JlIHRoYXQgY29tbWl0IHRoZSAiZ3Bpb3MiIHByb3BlcnR5IGhhZCBubw0K
-PiA+IGVmZmVjdCwgUEhZIHJlc2V0IHdhcyBvbmx5IGhhbmRsZWQgaW4gdGhlIHRoZSBib290bG9h
-ZGVyLg0KDQo+IFNvIHRoaXMgaXMgYSBmaXggd2Ugb25seSBuZWVkIHRvIGFwcGx5IGZvciA0LjIw
-LXJjLCByaWdodD8NCg0KWWVzLg0KDQpUaGlzIGlzc3VlIHdhcyBleHBvc2VkIGJ5IGdwaW8gY2hh
-bmdlcyBmb3IgNC4yMCBidXQgNC4xOSBSQ3MgYXJlIGZpbmUuDQoNCi0tDQpSZWdhcmRzLA0KTGVv
-bmFyZA0K
+T24gV2VkLCBTZXAgMjYsIDIwMTggYXQgOTozMSBQTSBSYWZhxYIgTWnFgmVja2kgPHphamVjNUBn
+bWFpbC5jb20+IHdyb3RlOgoKPiBGcm9tOiBSYWZhxYIgTWnFgmVja2kgPHJhZmFsQG1pbGVja2ku
+cGw+Cj4KPiBOb3J0aHN0YXIgaGFzIG11eCBjb250cm9sbGVyIGp1c3QgbGlrZSBOb3J0aHN0YXIg
+UGx1cyBhbmQgTm9ydGhzdGFyMi4KPiBJdCdzIGEgYml0IGRpZmZlcmVudCB0aG91Z2ggKGRpZmZl
+cmVudCByZWdpc3RlcnMgJiBwaW5zKSBzbyBpdCByZXF1aXJlcwo+IGl0cyBvd24gYmluZGluZy4K
+Pgo+IEl0J3MgbmVlZGVkIHRvIGFsbG93IG90aGVyIGJsb2NrIGJpbmRpbmdzIHNwZWNpZnkgcmVx
+dWlyZWQgbXV4IHNldHVwLgo+Cj4gU2lnbmVkLW9mZi1ieTogUmFmYcWCIE1pxYJlY2tpIDxyYWZh
+bEBtaWxlY2tpLnBsPgo+IFJldmlld2VkLWJ5OiBGbG9yaWFuIEZhaW5lbGxpIDxmLmZhaW5lbGxp
+QGdtYWlsLmNvbT4KPiAtLS0KPiBWMjogVXNlICJjcnVfZ3Bpb19jb250cm9sIgo+ICAgICBBZGQg
+bW9yZSBmdW5jdGlvbnMgJiBncm91cHMKPiAgICAgSW5jbHVkZSBGbG9yaWFuJ3MgUmV2aWV3ZWQt
+YnkKPiBWMzogVXNlIDMgZGlmZmVyZW50IGJpbmRpbmdzIGFzIGF2YWlsYWJsZSBwaW5zIGRlcGVu
+ZCBvbiB0aGUgY2hpcHNldC4KPiAgICAgU3RyaW5ncyBtYXRjaCBEb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3MvYXJtL2JjbS9icmNtLGJjbTQ3MDgudHh0CgpQYXRjaCBhcHBsaWVkLgoK
+WW91cnMsCkxpbnVzIFdhbGxlaWoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJu
+ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
