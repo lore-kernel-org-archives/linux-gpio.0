@@ -1,43 +1,44 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: Bug introduced in the of_get_named_gpiod_flags function.
-Date: Wed, 10 Oct 2018 09:39:29 -0700
-Message-ID: <4695559c-3f80-584a-c943-37a3bd9c24a7@infradead.org>
-References: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
+From: Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH 1/4] gpio: Assign gpio_irq_chip::parents to non-stack pointer
+Date: Wed, 10 Oct 2018 10:02:27 -0700
+Message-ID: <153919094779.119890.4753836996500844280@swboyd.mtv.corp.google.com>
+References: <20181008163216.97436-1-swboyd@chromium.org>
+ <20181008163216.97436-2-swboyd@chromium.org>
+ <CACRpkdaVttmazoVofRn=egUtRRLE9xTz0jnCnTkf7sQWED0v3w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
-Content-Language: en-US
+In-Reply-To: <CACRpkdaVttmazoVofRn=egUtRRLE9xTz0jnCnTkf7sQWED0v3w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: wzab@ise.pw.edu.pl, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, evgreen@chromium.org, Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-[adding linux-gpio + Linus W.]
+Quoting Linus Walleij (2018-10-10 05:05:18)
+> On Mon, Oct 8, 2018 at 6:32 PM Stephen Boyd <swboyd@chromium.org> wrote:
+> =
 
-On 10/10/18 9:13 AM, wzab wrote:
-> Hi,
-> 
-> The function of_get_named_gpiod_flags in older versions of the kernel 
-> (up to 4.7.10 - https://elixir.bootlin.com/linux/v4.7.10/source/drivers/gpio/gpiolib-of.c#L75 )
-> contained an important workaround:
-> 
-> /* .of_xlate might decide to not fill in the flags, so clear it. */if (flags)
->    *flags = 0; Unfortunately, newer kernels do not contain it. Therefore if the
-> "xlat" function in the gpiochip driver does not set flags, (like e.g.
-> the Xilinx AXI GPIO driver: https://github.com/Xilinx/linux-xlnx/blob/c2ba891326bb472da59b6a2da29aca218d337687/drivers/gpio/gpio-xilinx.c#L262 )
-> the random, unitialized value from the stack in of_find_gpio 
-> ( https://elixir.bootlin.com/linux/v4.18.13/source/drivers/gpio/gpiolib-of.c#L228 )
-> is used, which results in random settings of e.g., OPEN DRAIN or OPEN SOURCE mode.
-> 
-> I have also reported the problem in the Xilinx forum: https://forums.xilinx.com/t5/Embedded-Linux/Bug-in-of-get-named-gpiod-flags-function-in-the-kernel-random/td-p/897695
-> 
-> With best regards,
-> Wojciech Zabolotny
-> 
-> 
-> 
+> >
+> > Let's leave around one unsigned int in the gpio_irq_chip struct for the
+> > single parent irq case and repoint the 'parents' array at it. This way
+> > code is left mostly intact to setup parents and we waste an extra few
+> > bytes per structure of which there should be only a handful in a system.
+> >
+> > Cc: Evan Green <evgreen@chromium.org>
+> > Cc: Thierry Reding <treding@nvidia.com>
+> > Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> > Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
+> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> =
+
+> OMG critical fix. I fixed up the thing the kbuild robot was complaining
+> about with some vanilla kerneldoc and applied for fixes since it's kind
+> of urgent.
+> =
+
+> Please check the result.
+> =
 
 
--- 
-~Randy
+Looks good. Thanks!
