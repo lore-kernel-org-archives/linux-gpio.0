@@ -1,45 +1,43 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v2] pinctrl: madera: Fix uninitialized
- variable bug in madera_mux_set_mux
-Date: Wed, 10 Oct 2018 17:08:01 +0100
-Message-ID: <20181010160801.GB1653@imbe.wolfsonmicro.main>
-References: <20181010151313.GA16854@embeddedor.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: Bug introduced in the of_get_named_gpiod_flags function.
+Date: Wed, 10 Oct 2018 09:39:29 -0700
+Message-ID: <4695559c-3f80-584a-c943-37a3bd9c24a7@infradead.org>
+References: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <20181010151313.GA16854@embeddedor.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Richard Fitzgerald <rf@opensource.cirrus.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: wzab@ise.pw.edu.pl, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 05:13:13PM +0200, Gustavo A. R. Silva wrote:
-> There is a potential execution path in which variable *ret* is checked
-> in an IF statement, and then its value is used to report an error at
-> line 659 without being properly initialized previously:
-> 
-> 659 if (ret)
-> 660	dev_err(priv->dev, "Failed to write to 0x%x (%d)\n", reg, ret);
-> 
-> Fix this by initializing variable *ret* to 0 in order to
-> avoid unpredictable or unintended results.
-> 
-> Addresses-Coverity-ID: 1471969 ("Uninitialized scalar variable")
-> Fixes: 218d72a77b0b ("pinctrl: madera: Add driver for Cirrus Logic Madera codecs")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
+[adding linux-gpio + Linus W.]
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+On 10/10/18 9:13 AM, wzab wrote:
+> Hi,
+> 
+> The function of_get_named_gpiod_flags in older versions of the kernel 
+> (up to 4.7.10 - https://elixir.bootlin.com/linux/v4.7.10/source/drivers/gpio/gpiolib-of.c#L75 )
+> contained an important workaround:
+> 
+> /* .of_xlate might decide to not fill in the flags, so clear it. */if (flags)
+>    *flags = 0; Unfortunately, newer kernels do not contain it. Therefore if the
+> "xlat" function in the gpiochip driver does not set flags, (like e.g.
+> the Xilinx AXI GPIO driver: https://github.com/Xilinx/linux-xlnx/blob/c2ba891326bb472da59b6a2da29aca218d337687/drivers/gpio/gpio-xilinx.c#L262 )
+> the random, unitialized value from the stack in of_find_gpio 
+> ( https://elixir.bootlin.com/linux/v4.18.13/source/drivers/gpio/gpiolib-of.c#L228 )
+> is used, which results in random settings of e.g., OPEN DRAIN or OPEN SOURCE mode.
+> 
+> I have also reported the problem in the Xilinx forum: https://forums.xilinx.com/t5/Embedded-Linux/Bug-in-of-get-named-gpiod-flags-function-in-the-kernel-random/td-p/897695
+> 
+> With best regards,
+> Wojciech Zabolotny
+> 
+> 
+> 
 
-Thanks,
-Charles
+
+-- 
+~Randy
