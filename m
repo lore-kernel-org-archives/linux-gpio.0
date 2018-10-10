@@ -1,44 +1,54 @@
-From: Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH 1/4] gpio: Assign gpio_irq_chip::parents to non-stack pointer
-Date: Wed, 10 Oct 2018 10:02:27 -0700
-Message-ID: <153919094779.119890.4753836996500844280@swboyd.mtv.corp.google.com>
-References: <20181008163216.97436-1-swboyd@chromium.org>
- <20181008163216.97436-2-swboyd@chromium.org>
- <CACRpkdaVttmazoVofRn=egUtRRLE9xTz0jnCnTkf7sQWED0v3w@mail.gmail.com>
+From: Sodagudi Prasad <psodagud@codeaurora.org>
+Subject: Re: protected pins and debugfs
+Date: Wed, 10 Oct 2018 12:40:41 -0700
+Message-ID: <5848ff92c1388b7d6904e88b57bbfec8@codeaurora.org>
+References: <9aec322678417753fe4022691f4bfdbe@codeaurora.org>
+ <153897864285.119890.13024399324598460044@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaVttmazoVofRn=egUtRRLE9xTz0jnCnTkf7sQWED0v3w@mail.gmail.com>
+In-Reply-To: <153897864285.119890.13024399324598460044@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, evgreen@chromium.org, Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: bjorn.andersson@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Linus Walleij (2018-10-10 05:05:18)
-> On Mon, Oct 8, 2018 at 6:32 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> =
+On 2018-10-07 23:04, Stephen Boyd wrote:
+> Quoting Sodagudi Prasad (2018-10-03 05:38:24)
+>> 
+>>          for (i = 0; i < chip->ngpio; i++, gpio++) {
+>> +               label = gpiochip_is_requested(chip, i);
+>> +               if (!label)
+>> +                       continue;
+>>                  msm_gpio_dbg_show_one(s, NULL, chip, i, gpio);
+>> -               seq_puts(s, "\n");
+>>          }
+>>   }
+>> 
+> 
+> Does something not work with the following code in
+> msm_gpio_dbg_show_one()?
+> 
+> 
+>         if (!gpiochip_line_is_valid(chip, offset))
+> 		return;
 
-> >
-> > Let's leave around one unsigned int in the gpio_irq_chip struct for the
-> > single parent irq case and repoint the 'parents' array at it. This way
-> > code is left mostly intact to setup parents and we waste an extra few
-> > bytes per structure of which there should be only a handful in a system.
-> >
-> > Cc: Evan Green <evgreen@chromium.org>
-> > Cc: Thierry Reding <treding@nvidia.com>
-> > Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> > Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
-> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> =
+Hi Stephen,
+I didnt realize that these changes are merged on tip. I was testing on 
+4.14 kernel.
 
-> OMG critical fix. I fixed up the thing the kbuild robot was complaining
-> about with some vanilla kerneldoc and applied for fixes since it's kind
-> of urgent.
-> =
+https://lore.kernel.org/patchwork/patch/878107/
+https://lore.kernel.org/patchwork/patch/878106/
+https://lore.kernel.org/patchwork/patch/878109/
 
-> Please check the result.
-> =
+I will add "gpio-reserved-ranges" to internal platforms and this issue 
+should not be observed.
 
+-thanks, Prasad
 
-Looks good. Thanks!
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+Linux Foundation Collaborative Project
