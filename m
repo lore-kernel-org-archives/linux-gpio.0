@@ -1,71 +1,38 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH] pinctrl: madera: Fix uninitialized
- variable issue in madera_mux_set_mux
-Date: Wed, 10 Oct 2018 15:33:40 +0100
-Message-ID: <20181010143340.GA1653@imbe.wolfsonmicro.main>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: [PATCH] pinctrl: madera: Fix uninitialized variable issue in
+ madera_mux_set_mux
+Date: Wed, 10 Oct 2018 16:58:05 +0200
+Message-ID: <69b40c51-b9db-4193-81ec-3e1970ced983@embeddedor.com>
 References: <20181010141353.GA14382@embeddedor.com>
+ <20181010143340.GA1653@imbe.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <20181010141353.GA14382@embeddedor.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Richard Fitzgerald <rf@opensource.cirrus.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181010143340.GA1653@imbe.wolfsonmicro.main>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>, Linus Walleij <linus.walleij@linaro.org>, alsa-devel@alsa-project.org, patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 04:13:53PM +0200, Gustavo A. R. Silva wrote:
-> There is a potential execution path in which variable *ret* is checked
-> in an IF statement, and then its value is used to report an error at
-> line 659 without being properly initialized previously:
-> 
-> 659 if (ret)
-> 660	dev_err(priv->dev, "Failed to write to 0x%x (%d)\n", reg, ret);
-> 
-> Fix this by initializing variable *ret* to -1.
-> 
-> Addresses-Coverity-ID: 1471969 ("Uninitialized scalar variable")
-> Fixes: 218d72a77b0b ("pinctrl: madera: Add driver for Cirrus Logic Madera codecs")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/pinctrl/cirrus/pinctrl-madera-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/cirrus/pinctrl-madera-core.c b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-> index 0266302..a99ace8 100644
-> --- a/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-> +++ b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-> @@ -608,7 +608,7 @@ static int madera_mux_set_mux(struct pinctrl_dev *pctldev,
->  	unsigned int n_chip_groups = priv->chip->n_pin_groups;
->  	const char *func_name = madera_mux_funcs[selector].name;
->  	unsigned int reg;
-> -	int i, ret;
-> +	int i, ret = -1;
->  
+Hi Charles,
 
-I don't believe this would fully address the issue since if you
-initialise ret to -1 you will still drop into the if statement
-and you will use the reg variable which should also be
-uninitialised on that code path.
+> I don't believe this would fully address the issue since if you
+> initialise ret to -1 you will still drop into the if statement
+> and you will use the reg variable which should also be
+> uninitialised on that code path.
+> 
+> Feels like initialising to 0 would probably be better anyway
+> since the code path looks like the case were you have n_pins == 0
+> and nothing really failed in that case just nothing needed to be
+> done.
+> 
 
-Feels like initialising to 0 would probably be better anyway
-since the code path looks like the case were you have n_pins == 0
-and nothing really failed in that case just nothing needed to be
-done.
+You're right. I got confused with another similar issue I fixed, recently.
 
-Thanks,
-Charles
+I'll send v2 shortly.
 
->  	dev_dbg(priv->dev, "%s selecting %u (%s) for group %u (%s)\n",
->  		__func__, selector, func_name, group,
-> -- 
-> 2.7.4
+Thanks for the feedback.
+--
+Gustavo
