@@ -1,101 +1,152 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/4] gpio: Assign gpio_irq_chip::parents to non-stack pointer
-Date: Wed, 10 Oct 2018 14:05:18 +0200
-Message-ID: <CACRpkdaVttmazoVofRn=egUtRRLE9xTz0jnCnTkf7sQWED0v3w@mail.gmail.com>
-References: <20181008163216.97436-1-swboyd@chromium.org> <20181008163216.97436-2-swboyd@chromium.org>
+Subject: Re: [RFC 4/4] gpio: sifive: Add GPIO driver for SiFive SoCs
+Date: Wed, 10 Oct 2018 14:35:19 +0200
+Message-ID: <CACRpkdaoBwqQ4V5Hm9f_G5_jrdkvjT5anhBK1_HoFTj6=cba-Q@mail.gmail.com>
+References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com> <1539111085-25502-5-git-send-email-atish.patra@wdc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181008163216.97436-2-swboyd@chromium.org>
+In-Reply-To: <1539111085-25502-5-git-send-email-atish.patra@wdc.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, evgreen@chromium.org, Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+To: atish.patra@wdc.com, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Christoph Hellwig <hch@infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 6:32 PM Stephen Boyd <swboyd@chromium.org> wrote:
+Hi Atish,
 
-> gpiochip_set_cascaded_irqchip() is passed 'parent_irq' as an argument
-> and then the address of that argument is assigned to the gpio chips
-> gpio_irq_chip 'parents' pointer shortly thereafter. This can't ever
-> work, because we've just assigned some stack address to a pointer that
-> we plan to dereference later in gpiochip_irq_map(). I ran into this
-> issue with the KASAN report below when gpiochip_irq_map() tried to setup
-> the parent irq with a total junk pointer for the 'parents' array.
->
-> BUG: KASAN: stack-out-of-bounds in gpiochip_irq_map+0x228/0x248
-> Read of size 4 at addr ffffffc0dde472e0 by task swapper/0/1
->
-> CPU: 7 PID: 1 Comm: swapper/0 Not tainted 4.14.72 #34
-> Call trace:
-> [<ffffff9008093638>] dump_backtrace+0x0/0x718
-> [<ffffff9008093da4>] show_stack+0x20/0x2c
-> [<ffffff90096b9224>] __dump_stack+0x20/0x28
-> [<ffffff90096b91c8>] dump_stack+0x80/0xbc
-> [<ffffff900845a350>] print_address_description+0x70/0x238
-> [<ffffff900845a8e4>] kasan_report+0x1cc/0x260
-> [<ffffff900845aa14>] __asan_report_load4_noabort+0x2c/0x38
-> [<ffffff900897e098>] gpiochip_irq_map+0x228/0x248
-> [<ffffff900820cc08>] irq_domain_associate+0x114/0x2ec
-> [<ffffff900820d13c>] irq_create_mapping+0x120/0x234
-> [<ffffff900820da78>] irq_create_fwspec_mapping+0x4c8/0x88c
-> [<ffffff900820e2d8>] irq_create_of_mapping+0x180/0x210
-> [<ffffff900917114c>] of_irq_get+0x138/0x198
-> [<ffffff9008dc70ac>] spi_drv_probe+0x94/0x178
-> [<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
-> [<ffffff9008ca6538>] __device_attach_driver+0x148/0x20c
-> [<ffffff9008ca14cc>] bus_for_each_drv+0x120/0x188
-> [<ffffff9008ca570c>] __device_attach+0x19c/0x2dc
-> [<ffffff9008ca586c>] device_initial_probe+0x20/0x2c
-> [<ffffff9008ca18bc>] bus_probe_device+0x80/0x154
-> [<ffffff9008c9b9b4>] device_add+0x9b8/0xbdc
-> [<ffffff9008dc7640>] spi_add_device+0x1b8/0x380
-> [<ffffff9008dcbaf0>] spi_register_controller+0x111c/0x1378
-> [<ffffff9008dd6b10>] spi_geni_probe+0x4dc/0x6f8
-> [<ffffff9008cab058>] platform_drv_probe+0xdc/0x130
-> [<ffffff9008ca5168>] driver_probe_device+0x51c/0x824
-> [<ffffff9008ca59cc>] __driver_attach+0x100/0x194
-> [<ffffff9008ca0ea8>] bus_for_each_dev+0x104/0x16c
-> [<ffffff9008ca58c0>] driver_attach+0x48/0x54
-> [<ffffff9008ca1edc>] bus_add_driver+0x274/0x498
-> [<ffffff9008ca8448>] driver_register+0x1ac/0x230
-> [<ffffff9008caaf6c>] __platform_driver_register+0xcc/0xdc
-> [<ffffff9009c4b33c>] spi_geni_driver_init+0x1c/0x24
-> [<ffffff9008084cb8>] do_one_initcall+0x240/0x3dc
-> [<ffffff9009c017d0>] kernel_init_freeable+0x378/0x468
-> [<ffffff90096e8240>] kernel_init+0x14/0x110
-> [<ffffff9008086fcc>] ret_from_fork+0x10/0x18
->
-> The buggy address belongs to the page:
-> page:ffffffbf037791c0 count:0 mapcount:0 mapping:          (null) index:0x0
-> flags: 0x4000000000000000()
-> raw: 4000000000000000 0000000000000000 0000000000000000 00000000ffffffff
-> raw: ffffffbf037791e0 ffffffbf037791e0 0000000000000000 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffffffc0dde47180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffffffc0dde47200: f1 f1 f1 f1 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f2 f2
-> >ffffffc0dde47280: f2 f2 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3
->                                                        ^
->  ffffffc0dde47300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffffffc0dde47380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->
-> Let's leave around one unsigned int in the gpio_irq_chip struct for the
-> single parent irq case and repoint the 'parents' array at it. This way
-> code is left mostly intact to setup parents and we waste an extra few
-> bytes per structure of which there should be only a handful in a system.
->
-> Cc: Evan Green <evgreen@chromium.org>
-> Cc: Thierry Reding <treding@nvidia.com>
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+thanks for your patch!
 
-OMG critical fix. I fixed up the thing the kbuild robot was complaining
-about with some vanilla kerneldoc and applied for fixes since it's kind
-of urgent.
+On Tue, Oct 9, 2018 at 8:51 PM Atish Patra <atish.patra@wdc.com> wrote:
 
-Please check the result.
+> From: "Wesley W. Terpstra" <wesley@sifive.com>
+>
+> Adds the GPIO driver for SiFive RISC-V SoCs.
+>
+> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> [Atish: Various fixes and code cleanup]
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+
+(...)
+
+> +config GPIO_SIFIVE
+> +       bool "SiFive GPIO support"
+> +       depends on OF_GPIO
+> +       select GPIOLIB_IRQCHIP
+
+I suggest to add
+select GPIO_GENERIC as per below.
+
+Maybe select REGMAP_MMIO as well.
+
+> +       help
+> +         Say yes here to support the GPIO device on SiFive SoCs.
+> +
+
+> +#include <linux/of_irq.h>
+> +#include <linux/irqchip/chained_irq.h>
+
+Do you need these two? I think <linux/gpio/driver.h>
+will bring them in for you.
+
+> +#include <linux/pinctrl/consumer.h>
+
+Are you using this?
+
+> +struct sifive_gpio {
+> +       raw_spinlock_t          lock;
+> +       void __iomem            *base;
+> +       struct gpio_chip        gc;
+> +       unsigned long           enabled;
+
+Since max GPIO is 32 why not use an u32 for this?
+
+> +       unsigned int            trigger[MAX_GPIO];
+> +       unsigned int            irq_parent[MAX_GPIO];
+> +       struct sifive_gpio      *self_ptr[MAX_GPIO];
+> +};
+> +
+> +static void sifive_assign_bit(void __iomem *ptr, unsigned int offset, int value)
+> +{
+> +       /*
+> +        * It's frustrating that we are not allowed to use the device atomics
+> +        * which are GUARANTEED to be supported by this device on RISC-V
+> +        */
+> +       u32 bit = BIT(offset), old = ioread32(ptr);
+> +
+> +       if (value)
+> +               iowrite32(old | bit, ptr);
+> +       else
+> +               iowrite32(old & ~bit, ptr);
+> +}
+
+This looks like a mask and set implementation, you are
+essentially reinventing regmap MMIO and the
+regmap_update_bits() call. Could you look into
+just using regmap MMIO in that case?
+
+If you need examples, look at gpio-mvebu.c that calls
+devm_regmap_init_mmio() for example.
+
+> +static int sifive_direction_input(struct gpio_chip *gc, unsigned int offset)
+> +static int sifive_direction_output(struct gpio_chip *gc, unsigned int offset,
+> +static int sifive_get_direction(struct gpio_chip *gc, unsigned int offset)
+> +static int sifive_get_value(struct gpio_chip *gc, unsigned int offset)
+> +static void sifive_set_value(struct gpio_chip *gc, unsigned int offset,
+
+These functions look like a typical hardware that can use
+
+GPIOLIB_GENERIC and bgpio_init() to set up the accessors.
+
+See gpio-ftgpio010.c for an example.
+
+As a bonus you will get .get/.set_multiple implemented by
+the generic GPIO.
+
+> +static void sifive_irq_enable(struct irq_data *d)
+> +static void sifive_irq_disable(struct irq_data *d)
+(...)
+> +static struct irq_chip sifive_irqchip = {
+> +       .name           = "sifive-gpio",
+> +       .irq_set_type   = sifive_irq_set_type,
+> +       .irq_mask       = sifive_irq_mask,
+> +       .irq_unmask     = sifive_irq_unmask,
+> +       .irq_enable     = sifive_irq_enable,
+> +       .irq_disable    = sifive_irq_disable,
+
+The handling of .irq_enable and .irq_disable has
+changed upstream. Please align with the new codebase
+as changed by Hans Verkuil:
+
+commit 461c1a7d4733d1dfd5c47b040cf32a5e7eefbc6c
+"gpiolib: override irq_enable/disable"
+commit 4e9439ddacea06f35acce4d374bf6bd0acf99bc8
+"gpiolib: add flag to indicate if the irq is disabled"
+
+You will need to rebase your work on the v4.20-rc1 once it is
+out. Right now the changes are on linux-next or my devel
+branch.
+
+> +       ngpio = of_irq_count(node);
+> +       if (ngpio >= MAX_GPIO) {
+> +               dev_err(dev, "Too many GPIO interrupts (max=%d)\n", MAX_GPIO);
+> +               return -ENXIO;
+> +       }
+(...)
+> +       for (gpio = 0; gpio < ngpio; ++gpio) {
+> +               irq = platform_get_irq(pdev, gpio);
+> +               if (irq < 0) {
+> +                       dev_err(dev, "invalid IRQ\n");
+> +                       gpiochip_remove(&chip->gc);
+> +                       return -ENODEV;
+> +               }
+
+This is an hierarchical IRQ so it should use an hierarchical
+irqdomain.
+
+I am discussing with Thierry to make more generic irq domains
+for hierarchical IRQ GPIOs, until then you have to look at
+gpio-thunderx.c, gpio-uniphier.c or gpio-xgene-sb.c that all
+use hierarchical IRQs.
 
 Yours,
 Linus Walleij
