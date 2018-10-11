@@ -1,99 +1,50 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
- for legacy boards
-Date: Thu, 11 Oct 2018 11:18:19 +0300
-Message-ID: <20181011081819.GB24771@kuha.fi.intel.com>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
- <20180917181603.125492-3-dmitry.torokhov@gmail.com>
- <20180920135348.GF11965@kuha.fi.intel.com>
- <20180921233119.GA44099@dtor-ws>
- <20180924132050.GK11965@kuha.fi.intel.com>
- <20180924184543.GB156847@dtor-ws>
- <20180925121927.GL11965@kuha.fi.intel.com>
- <20181005214734.GC215120@dtor-ws>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Bug introduced in the of_get_named_gpiod_flags function.
+Date: Thu, 11 Oct 2018 10:27:45 +0200
+Message-ID: <CACRpkdYQBxvHh-AfODddzc5G+BMBhUBSRXUdLVO8_99yniUYPQ@mail.gmail.com>
+References: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181005214734.GC215120@dtor-ws>
+In-Reply-To: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: wzab@ise.pw.edu.pl, Randy Dunlap <rdunlap@infradead.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Dmitry,
+Hi Wojciech,
 
-Sorry for the late reply. I decided to give this a try myself, and
-I've now prepared something (not for the gpio stuff!). I'll do a quick
-internal review round, and send it to you guys as RFC after that..
+(Thanks also Randy for forwarding this!)
 
-On Fri, Oct 05, 2018 at 02:47:34PM -0700, Dmitry Torokhov wrote:
-> Hi Heikki,
-> 
-> On Tue, Sep 25, 2018 at 03:19:27PM +0300, Heikki Krogerus wrote:
-> > On Mon, Sep 24, 2018 at 11:45:43AM -0700, Dmitry Torokhov wrote:
-> > > I think we are talking about totally different use cases and that is why
-> > > we are having hard time coming to a mutually agreeable solution. Could
-> > > you please describe in more detail what you would like to achieve,
-> > > and preferably show how it is described now with DT and/or ACPI, so that
-> > > I have a better frame of reference.
-> > 
-> > Yes, of course. Sorry.
-> > 
-> > USB ports are devices that usually the USB controller drivers register
-> > (or actually the USB core code). They are represented in both ACPI and
-> > DT as child nodes of the controller device node. The USB connector OF
-> > node is defined in file
-> > Documentation/devicetree/bindings/connector/usb-connector.txt
-> > 
-> > In short, the controller drivers will request handle to a child node
-> > that represents a port, and only after that register the actual port
-> > device.
-> > 
-> > The drivers I'm looking at currently are the USB Type-C port
-> > controller drivers and the port manager (in Greg's usb-next or
-> > linux-next):
-> > 
-> >         drivers/usb/typec/tcpm/tcpci.c
-> >         drivers/usb/typec/tcpm/fusb302.c
-> >         drivers/usb/typec/tcpm/tcpm.c
-> > 
-> > The goal is simply to get rid of the platform data as usual, and
-> > ideally so that we don't need any extra code in order to support the
-> > "legacy" platforms.
-> 
-> Are these actually used on any of the "legacy" platforms? I fetched
-> linux-next today, but I do not actually see anything in
-> drivers/usb/typec touching platform data...
+On Wed, Oct 10, 2018 at 6:32 PM wzab <wzab@ise.pw.edu.pl> wrote:
 
-It's not touching any platform data, and I would like to keep it that
-way :-). The device for fusb302 is created for example in
-drivers/platform/x86/intel_cht_int33fe.c.
+> The function of_get_named_gpiod_flags in older versions of the kernel
+> (up to 4.7.10 - https://elixir.bootlin.com/linux/v4.7.10/source/drivers/gpio/gpiolib-of.c#L75 )
+> contained an important workaround:
+>
+> /* .of_xlate might decide to not fill in the flags, so clear it. */if (flags)
+>    *flags = 0; Unfortunately, newer kernels do not contain it. Therefore if the
+> "xlat" function in the gpiochip driver does not set flags, (like e.g.
+> the Xilinx AXI GPIO driver: https://github.com/Xilinx/linux-xlnx/blob/c2ba891326bb472da59b6a2da29aca218d337687/drivers/gpio/gpio-xilinx.c#L262 )
+> the random, unitialized value from the stack in of_find_gpio
+> ( https://elixir.bootlin.com/linux/v4.18.13/source/drivers/gpio/gpiolib-of.c#L228 )
+> is used, which results in random settings of e.g., OPEN DRAIN or OPEN SOURCE mode.
+>
+> I have also reported the problem in the Xilinx forum:
+> https://forums.xilinx.com/t5/Embedded-Linux/Bug-in-of-get-named-gpiod-flags-function-in-the-kernel-random/td-p/897695
 
-The fusb302.c driver already tries to find that child node named
-"connector" (and so do the other port drivers). I'm trying to supply
-the driver that node here somehow so I can avoid quirks.
+It seems the commit removing this is:
 
-> In the context of the connector, even before we descend to child nodes
-> details, how do you propose implementing references between fwnodes?
-> Especially since the other node (in case you complementing existing
-> topology) may be ACPI or DT instance?
+commit 762c2e46c0591d207289105c8718e4adf29b2b34
+"gpio: of: remove of_gpiochip_and_xlate() and struct gg_data"
 
-The different fwnode types (ACPI, OF, etc.) must live in parallel,
-i.e. you can not have something like ACPI parent node with
-property_set children if that's what you mean. The "secondary" member
-will link the different types of fwnodes together, but they will live
-their separate lives. I'm not planning on changing that.
+But I honestly don't see a problem with it.
 
-I'm just looking for a smooth way of describing the devices in
-software when the firmware is not supplying the hardware description,
-just like you. What I really need is separation of the fwnode
-registration from device registration in those cases. For that I now
-have a proposal, and I believe my proposal will work for you as a
-baseline as well.
+You are referencing an out-of-tree driver. Use the in-tree gpio-xilinx.c
+that does not do any custom xlate and you will be fine.
 
+I looked over the driver doing custom flag translation in the kernel tree,
+and they all set flags, so this is not a problem in the upstream kernel.
 
-Thanks,
-
--- 
-heikki
+Yours,
+Linus Walleij
