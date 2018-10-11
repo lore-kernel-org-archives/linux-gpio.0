@@ -1,57 +1,40 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 3/5] clk: lochnagar: Add support for the Cirrus Logic Lochnagar
-Date: Thu, 11 Oct 2018 12:36:22 -0700
-Message-ID: <153928658292.5275.11321177725702156165@swboyd.mtv.corp.google.com>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-3-ckeepax@opensource.cirrus.com>
- <153924124658.207691.10370075148426001371@swboyd.mtv.corp.google.com>
- <20181011145422.GG25351@sirena.org.uk>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] pinctrl: rzn1: remove unnecessary unsigned integer comparison
+Date: Thu, 11 Oct 2018 22:40:42 +0200
+Message-ID: <20181011204042.GA17125@embeddedor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181011145422.GG25351@sirena.org.uk>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, lee.jones@linaro.org, linus.walleij@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Mark Brown (2018-10-11 07:54:22)
-> On Thu, Oct 11, 2018 at 12:00:46AM -0700, Stephen Boyd wrote:
-> > Quoting Charles Keepax (2018-10-08 06:25:40)
-> =
+There is no need to compare ipctl->mdio_func[mdio] with => 0, because
+such comparison is always true. Notice that *mdio_func* is of type
+u32 (32 bits, unsigned).
 
-> > > +struct lochnagar_regmap_clk {
-> > > +       unsigned int cfg_reg;
-> > > +       unsigned int ena_mask;
-> > > +       unsigned int dir_mask;
-> > > +
-> > > +       unsigned int src_reg;
-> > > +       unsigned int src_mask;
-> =
+Fix this by removing such comparison.
 
-> > Are these 32 bits or 16 bits or 8 bits? Please use a u32/u16/u8 so we
-> > know the register width.
-> =
+Addresses-Coverity-ID: 1474166 ("Unsigned compared against 0")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/pinctrl/pinctrl-rzn1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Note that regmap always uses unsigned int to represent registers
-> regardless of the underlying physical register width, this can be an
-> issue on reads since we pass the destination for the read in by address.
-> =
-
-> > > +struct lochnagar_clk_priv {
-> > > +       struct device *dev;
-> > > +       struct lochnagar *lochnagar;
-> =
-
-> > Is this used for anything besides getting the regmap? Can you get the
-> > pointer to the parent in probe and use that to get the regmap pointer
-> > from dev_get_remap() and also use the of_node of the parent to register
-> =
-
-> dev_get_regmap() is pretty expensive, I'd not advise using it in
-> anything that might approximate a fast path.  It's kind of debatable
-> when I2C gets involved but still feels wrong.
-
-I'm suggesting the regmap is acquired in probe and a pointer is stored
-here in this structure. That is not a fastpath as far as I know.
+diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
+index ce05e3a..b5650d8 100644
+--- a/drivers/pinctrl/pinctrl-rzn1.c
++++ b/drivers/pinctrl/pinctrl-rzn1.c
+@@ -195,7 +195,7 @@ static void rzn1_hw_set_lock(struct rzn1_pinctrl *ipctl, u8 lock, u8 value)
+ static void rzn1_pinctrl_mdio_select(struct rzn1_pinctrl *ipctl, int mdio,
+ 				     u32 func)
+ {
+-	if (ipctl->mdio_func[mdio] >= 0 && ipctl->mdio_func[mdio] != func)
++	if (ipctl->mdio_func[mdio] != func)
+ 		dev_warn(ipctl->dev, "conflicting setting for mdio%d!\n", mdio);
+ 	ipctl->mdio_func[mdio] = func;
+ 
+-- 
+2.7.4
