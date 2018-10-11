@@ -1,40 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: madera: Fix uninitialized variable bug in madera_mux_set_mux
-Date: Thu, 11 Oct 2018 10:40:08 +0200
-Message-ID: <CACRpkda8Fo6ubO9XuDXC9tcLWPNp_6TMf6-g9DUxdU6JXa0Veg@mail.gmail.com>
-References: <20181010151313.GA16854@embeddedor.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 4/5] pinctrl: mediatek: pinctrl-mtk-common-v2: Make eint_m
+ u16
+Date: Thu, 11 Oct 2018 11:29:27 +0200
+Message-ID: <e2df8c8a-34a1-ef32-838d-776053b1b707@gmail.com>
+References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
+ <20181008191411.32555-5-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181010151313.GA16854@embeddedor.com>
+In-Reply-To: <20181008191411.32555-5-manivannan.sadhasivam@linaro.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, patches@opensource.cirrus.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, sean.wang@mediatek.com, linus.walleij@linaro.org, robh+dt@kernel.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 10, 2018 at 5:13 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
 
-> There is a potential execution path in which variable *ret* is checked
-> in an IF statement, and then its value is used to report an error at
-> line 659 without being properly initialized previously:
->
-> 659 if (ret)
-> 660     dev_err(priv->dev, "Failed to write to 0x%x (%d)\n", reg, ret);
->
-> Fix this by initializing variable *ret* to 0 in order to
-> avoid unpredictable or unintended results.
->
-> Addresses-Coverity-ID: 1471969 ("Uninitialized scalar variable")
-> Fixes: 218d72a77b0b ("pinctrl: madera: Add driver for Cirrus Logic Madera codecs")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+
+On 08/10/2018 21:14, Manivannan Sadhasivam wrote:
+> For SoC's which lacks EINT support, U16_MAX is assigned to both eint_m
+> and eint_n through macro NO_EINT_SUPPORT. This will generate integer
+> overflow warning because eint_m is declared as u8 type. Hence modify
+> the eint_m type to u16.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
 > ---
-> Changes in v2:
->  - Initialize variable ret to 0 instead of -1. Thanks to Charles Keepax
->    for pointing this out.
->  - Update subject and commit log.
-
-Patch applied with Charles' ACK.
-
-Yours,
-Linus Walleij
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+> index 991c1c56670c..6d24522739d9 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+> @@ -154,7 +154,7 @@ struct mtk_func_desc {
+>   * @eitn_n:		the eint number for this pin
+>   */
+>  struct mtk_eint_desc {
+> -	u8 eint_m;
+> +	u16 eint_m;
+>  	u16 eint_n;
+>  };
+>  
+> 
