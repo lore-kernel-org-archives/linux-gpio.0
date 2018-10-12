@@ -1,56 +1,47 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 5/7] mfd: ds90ux9xx: add I2C bridge/alias and link
- connection driver
-Date: Fri, 12 Oct 2018 07:04:55 +0100
-Message-ID: <20181012060455.GV4939@dell>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-6-vz@mleia.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH] gpiolib: Initialize gdev field before is used
+Date: Fri, 12 Oct 2018 08:11:36 +0200
+Message-ID: <20181012061136.11421-1-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181008211205.2900-6-vz@mleia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: Vignesh R <vigneshr@ti.com>, Jeffrey Hugo <jhugo@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Timur Tabi <timur@kernel.org>, Stephen Boyd <swboyd@chromium.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
+gpio_hog depends on gdev field being initialized. This patch fixes an
+OOPs during initialization of TI's AM335x-ICEv2.
 
-> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> 
-> The change adds TI DS90Ux9xx I2C bridge/alias subdevice driver and
-> FPD Link connection handling mechanism.
-> 
-> Access to I2C devices connected to a remote de-/serializer is done in
-> a transparent way, on established link detection event such devices
-> are registered on an I2C bus, which serves a local de-/serializer IC.
-> 
-> The development of the driver was a collaborative work, the
-> contribution done by Balasubramani Vivekanandan includes:
-> * original simplistic implementation of the driver,
-> * support of implicitly specified devices in device tree,
-> * support of multiple FPD links for TI DS90Ux9xx,
-> * other kind of valuable review comments, clean-ups and fixes.
-> 
-> Also Steve Longerbeam made the following changes:
-> * clear address maps after linked device removal,
-> * disable pass-through in disconnection,
-> * qualify locked status with non-zero remote address.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> ---
->  drivers/mfd/Kconfig                |   8 +
->  drivers/mfd/Makefile               |   1 +
->  drivers/mfd/ds90ux9xx-i2c-bridge.c | 764 +++++++++++++++++++++++++++++
->  3 files changed, 773 insertions(+)
->  create mode 100644 drivers/mfd/ds90ux9xx-i2c-bridge.c
+Fixes: 3edfb7bd76bd1cba ("gpiolib: Show correct direction from the beginning")
+Tested-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/gpio/gpiolib.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Shouldn't this live in drivers/i2c?
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e016b22658ff..bcd0ef49ce97 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1349,6 +1349,9 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 
+ 	spin_unlock_irqrestore(&gpio_lock, flags);
+ 
++	for (i = 0; i < chip->ngpio; i++)
++		gdev->descs[i].gdev = gdev;
++
+ #ifdef CONFIG_PINCTRL
+ 	INIT_LIST_HEAD(&gdev->pin_ranges);
+ #endif
+@@ -1380,8 +1383,6 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	for (i = 0; i < chip->ngpio; i++) {
+ 		struct gpio_desc *desc = &gdev->descs[i];
+ 
+-		desc->gdev = gdev;
+-
+ 		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
+ 			desc->flags = !chip->get_direction(chip, i) ?
+ 					(1 << FLAG_IS_OUT) : 0;
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.19.1
