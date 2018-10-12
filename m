@@ -1,71 +1,34 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: [PATCH] pinctrl: rzn1: remove unnecessary unsigned integer
- comparison
-Date: Fri, 12 Oct 2018 11:27:57 +0200
-Message-ID: <3c7f85b1-b80d-a963-f599-587dd49d1f12@embeddedor.com>
-References: <20181011204042.GA17125@embeddedor.com>
- <CACRpkdb9b6kxgj736OmLhBvzhR26DT+bE2Y=jGaMB3411oa3yw@mail.gmail.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: REGRESSION: [PATCH v5 3/3] gpiolib: Show correct direction from
+ the beginning
+Date: Fri, 12 Oct 2018 09:34:58 +0000
+Message-ID: <1539336896.30485.15.camel@toradex.com>
+References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
+         <20181005065300.22882-3-ricardo.ribalda@gmail.com>
+         <1539334839.30485.9.camel@toradex.com>
+         <CACRpkdY89b-hy_aoBiZXX6KqyJrZd0fX9-XCGcF9XjPBy6Lwrw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb9b6kxgj736OmLhBvzhR26DT+bE2Y=jGaMB3411oa3yw@mail.gmail.com>
-Content-Language: en-GB
+In-Reply-To: <CACRpkdY89b-hy_aoBiZXX6KqyJrZd0fX9-XCGcF9XjPBy6Lwrw@mail.gmail.com>
+Content-Language: en-US
+Content-ID: <DC9C64F44777494CAE5386B9A46949F6@eurprd05.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "timur@kernel.org" <timur@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "swboyd@chromium.org" <swboyd@chromium.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "jhugo@codeaurora.org" <jhugo@codeaurora.org>, "ricardo.ribalda@gmail.com" <ricardo.ribalda@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-
-
-On 10/12/18 11:17 AM, Linus Walleij wrote:
-> Sorry for top-posting, Geert is maintainer for this driver.
-> 
-
-Oh okay.
-
-This is what I get when I run the get_maintainer scripts on the rzn1 driver:
-
-$ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback drivers/pinctrl/pinctrl-rzn1.c
-Linus Walleij <linus.walleij@linaro.org> (maintainer:PIN CONTROL SUBSYSTEM)
-linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM)
-linux-kernel@vger.kernel.org (open list)
-
-Thanks
---
-Gustavo
-
-> Yours,
-> Linus Walleij
-> 
-> On Thu, Oct 11, 2018 at 10:40 PM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->>
->> There is no need to compare ipctl->mdio_func[mdio] with => 0, because
->> such comparison is always true. Notice that *mdio_func* is of type
->> u32 (32 bits, unsigned).
->>
->> Fix this by removing such comparison.
->>
->> Addresses-Coverity-ID: 1474166 ("Unsigned compared against 0")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/pinctrl/pinctrl-rzn1.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
->> index ce05e3a..b5650d8 100644
->> --- a/drivers/pinctrl/pinctrl-rzn1.c
->> +++ b/drivers/pinctrl/pinctrl-rzn1.c
->> @@ -195,7 +195,7 @@ static void rzn1_hw_set_lock(struct rzn1_pinctrl *ipctl, u8 lock, u8 value)
->>  static void rzn1_pinctrl_mdio_select(struct rzn1_pinctrl *ipctl, int mdio,
->>                                      u32 func)
->>  {
->> -       if (ipctl->mdio_func[mdio] >= 0 && ipctl->mdio_func[mdio] != func)
->> +       if (ipctl->mdio_func[mdio] != func)
->>                 dev_warn(ipctl->dev, "conflicting setting for mdio%d!\n", mdio);
->>         ipctl->mdio_func[mdio] = func;
->>
->> --
->> 2.7.4
->>
+T24gRnJpLCAyMDE4LTEwLTEyIGF0IDExOjA4ICswMjAwLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
+PiBPbiBGcmksIE9jdCAxMiwgMjAxOCBhdCAxMTowMCBBTSBNYXJjZWwgWmlzd2lsZXINCj4gPG1h
+cmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4gd3JvdGU6DQo+ID4gT24gRnJpLCAyMDE4LTEwLTA1
+IGF0IDA4OjUzICswMjAwLCBSaWNhcmRvIFJpYmFsZGEgRGVsZ2FkbyB3cm90ZToNCj4gPiA+IEN1
+cnJlbnQgY29kZSBhc3N1bWVzIHRoYXQgdGhlIGRpcmVjdGlvbiBpcyBpbnB1dCBpZg0KPiA+ID4g
+ZGlyZWN0aW9uX2lucHV0DQo+ID4gPiBmdW5jdGlvbiBpcyBzZXQuDQo+ID4gPiBUaGlzIG1pZ2h0
+IG5vdCBiZSB0aGUgY2FzZSBvbiBHUElPcyB3aXRoIHByb2dyYW1tYWJsZSBkaXJlY3Rpb24uDQo+
+ID4gDQo+ID4gVW5mb3J0dW5hdGVseSwgdGhpcyBicmVha3MgYXQgbGVhc3QgQXBhbGlzIFQzMCBh
+bmQgQXBhbGlzIFRLMS4NCj4gPiBFbmFibGluZw0KPiA+IGVhcmx5Y29uIHJldmVhbHMgdGhlIGZv
+bGxvd2luZzoNCj4gDQo+IERvZXMgdGhpcyAoanVzdCBhcHBsaWVkKSBwYXRjaCBmaXggdGhlIGlz
+c3VlPw0KPiBodHRwczovL21hcmMuaW5mby8/bD1saW51eC1rZXJuZWwmbT0xNTM5MzI0NzA0MTIw
+MTMmdz0yDQoNClllcywgdGhhdCBjdXRzIGl0LiBUaGFua3MhDQoNCj4gWW91cnMsDQo+IExpbnVz
+IFdhbGxlaWo=
