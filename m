@@ -1,33 +1,31 @@
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: [PATCH v2] pinctrl: madera: Fix uninitialized variable bug in
- madera_mux_set_mux
-Date: Fri, 12 Oct 2018 11:04:54 +0200
-Message-ID: <21341de8-c9b2-7408-9b91-74c73cb5bc13@embeddedor.com>
-References: <20181010151313.GA16854@embeddedor.com>
- <CACRpkda8Fo6ubO9XuDXC9tcLWPNp_6TMf6-g9DUxdU6JXa0Veg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: REGRESSION: [PATCH v5 3/3] gpiolib: Show correct direction from
+ the beginning
+Date: Fri, 12 Oct 2018 11:08:50 +0200
+Message-ID: <CACRpkdY89b-hy_aoBiZXX6KqyJrZd0fX9-XCGcF9XjPBy6Lwrw@mail.gmail.com>
+References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
+ <20181005065300.22882-3-ricardo.ribalda@gmail.com> <1539334839.30485.9.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda8Fo6ubO9XuDXC9tcLWPNp_6TMf6-g9DUxdU6JXa0Veg@mail.gmail.com>
-Content-Language: en-GB
+In-Reply-To: <1539334839.30485.9.camel@toradex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, patches@opensource.cirrus.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: timur@kernel.org, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jhugo@codeaurora.org, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Fri, Oct 12, 2018 at 11:00 AM Marcel Ziswiler
+<marcel.ziswiler@toradex.com> wrote:
+> On Fri, 2018-10-05 at 08:53 +0200, Ricardo Ribalda Delgado wrote:
+> > Current code assumes that the direction is input if direction_input
+> > function is set.
+> > This might not be the case on GPIOs with programmable direction.
+>
+> Unfortunately, this breaks at least Apalis T30 and Apalis TK1. Enabling
+> earlycon reveals the following:
 
+Does this (just applied) patch fix the issue?
+https://marc.info/?l=linux-kernel&m=153932470412013&w=2
 
-On 10/11/18 10:40 AM, Linus Walleij wrote:
-
->> Changes in v2:
->>  - Initialize variable ret to 0 instead of -1. Thanks to Charles Keepax
->>    for pointing this out.
->>  - Update subject and commit log.
-> 
-> Patch applied with Charles' ACK.
-> 
-
-Thanks, Linus.
---
-Gustavo
+Yours,
+Linus Walleij
