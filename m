@@ -1,117 +1,61 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
- driver
-Date: Fri, 12 Oct 2018 09:39:24 +0100
-Message-ID: <20181012083924.GW4939@dell>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-5-vz@mleia.com>
- <20181012060314.GU4939@dell>
- <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Subject: Re: Bug introduced in the of_get_named_gpiod_flags function.
+Date: Fri, 12 Oct 2018 10:54:57 +0200
+Message-ID: <5d33d03a-5d62-c8c8-c9cc-2ccbe1b464f2@xilinx.com>
+References: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
+ <CACRpkdYQBxvHh-AfODddzc5G+BMBhUBSRXUdLVO8_99yniUYPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
+In-Reply-To: <CACRpkdYQBxvHh-AfODddzc5G+BMBhUBSRXUdLVO8_99yniUYPQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Vladimir Zapolskiy <vz@mleia.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, wzab@ise.pw.edu.pl, Randy Dunlap <rdunlap@infradead.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 12 Oct 2018, Vladimir Zapolskiy wrote:
-> On 10/12/2018 09:03 AM, Lee Jones wrote:
-> > On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
-> > 
-> >> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> >>
-> >> The change adds I2C device driver for TI DS90Ux9xx de-/serializers,
-> >> support of subdevice controllers is done in separate drivers, because
-> >> not all IC functionality may be needed in particular situations, and
-> >> this can be fine grained controlled in device tree.
-> >>
-> >> The development of the driver was a collaborative work, the
-> >> contribution done by Balasubramani Vivekanandan includes:
-> >> * original implementation of the driver based on a reference driver,
-> >> * regmap powered interrupt controller support on serializers,
-> >> * support of implicitly or improperly specified in device tree ICs,
-> >> * support of device properties and attributes: backward compatible
-> >>   mode, low frequency operation mode, spread spectrum clock generator.
-> >>
-> >> Contribution by Steve Longerbeam:
-> >> * added ds90ux9xx_read_indirect() function,
-> >> * moved number of links property and added ds90ux9xx_num_fpd_links(),
-> >> * moved and updated ds90ux9xx_get_link_status() function to core driver,
-> >> * added fpd_link_show device attribute.
-> >>
-> >> Sandeep Jain added support of pixel clock edge configuration.
-> >>
-> >> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> >> ---
-> >>  drivers/mfd/Kconfig           |  14 +
-> >>  drivers/mfd/Makefile          |   1 +
-> >>  drivers/mfd/ds90ux9xx-core.c  | 879 ++++++++++++++++++++++++++++++++++
-> >>  include/linux/mfd/ds90ux9xx.h |  42 ++
-> >>  4 files changed, 936 insertions(+)
-> >>  create mode 100644 drivers/mfd/ds90ux9xx-core.c
-> >>  create mode 100644 include/linux/mfd/ds90ux9xx.h
-> >>
-> >> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> >> index 8c5dfdce4326..a969fa123f64 100644
-> >> --- a/drivers/mfd/Kconfig
-> >> +++ b/drivers/mfd/Kconfig
-> >> @@ -1280,6 +1280,20 @@ config MFD_DM355EVM_MSP
-> >>  	  boards.  MSP430 firmware manages resets and power sequencing,
-> >>  	  inputs from buttons and the IR remote, LEDs, an RTC, and more.
-> >>  
-> >> +config MFD_DS90UX9XX
-> >> +	tristate "TI DS90Ux9xx FPD-Link de-/serializer driver"
-> >> +	depends on I2C && OF
-> >> +	select MFD_CORE
-> >> +	select REGMAP_I2C
-> >> +	help
-> >> +	  Say yes here to enable support for TI DS90UX9XX de-/serializer ICs.
-> >> +
-> >> +	  This driver provides basic support for setting up the de-/serializer
-> >> +	  chips. Additional functionalities like connection handling to
-> >> +	  remote de-/serializers, I2C bridging, pin multiplexing, GPIO
-> >> +	  controller and so on are provided by separate drivers and should
-> >> +	  enabled individually.
-> > 
-> > This is not an MFD driver.
+Hi,
+
+On 11.10.2018 10:27, Linus Walleij wrote:
+> Hi Wojciech,
 > 
-> Why do you think so? The representation of the ICs into device tree format
-> of hardware description shows that this is a truly MFD driver with multiple
-> IP subcomponents naturally mapped into MFD cells.
-
-This driver does too much real work ('stuff') to be an MFD driver.
-MFD drivers should not need to care of; links, gates, modes, pixels,
-frequencies maps or properties.  Nor should they contain elaborate
-sysfs structures to control the aforementioned 'stuff'.
-
-Granted, there may be some code in there which could be appropriate
-for an MFD driver.  However most of it needs moving out into a
-function driver (or two).
-
-> Basically it is possible to replace explicit of_platform_populate() by
-> adding a "simple-mfd" compatible, if it is desired.
+> (Thanks also Randy for forwarding this!)
 > 
-> > After a 30 second Google of what this device actually does, perhaps
-> > drivers/media might be a better fit?
+> On Wed, Oct 10, 2018 at 6:32 PM wzab <wzab@ise.pw.edu.pl> wrote:
 > 
-> I assume it would be quite unusual to add a driver with NO media functions
-> and controls into drivers/media.
+>> The function of_get_named_gpiod_flags in older versions of the kernel
+>> (up to 4.7.10 - https://elixir.bootlin.com/linux/v4.7.10/source/drivers/gpio/gpiolib-of.c#L75 )
+>> contained an important workaround:
+>>
+>> /* .of_xlate might decide to not fill in the flags, so clear it. */if (flags)
+>>    *flags = 0; Unfortunately, newer kernels do not contain it. Therefore if the
+>> "xlat" function in the gpiochip driver does not set flags, (like e.g.
+>> the Xilinx AXI GPIO driver: https://github.com/Xilinx/linux-xlnx/blob/c2ba891326bb472da59b6a2da29aca218d337687/drivers/gpio/gpio-xilinx.c#L262 )
+>> the random, unitialized value from the stack in of_find_gpio
+>> ( https://elixir.bootlin.com/linux/v4.18.13/source/drivers/gpio/gpiolib-of.c#L228 )
+>> is used, which results in random settings of e.g., OPEN DRAIN or OPEN SOURCE mode.
+>>
+>> I have also reported the problem in the Xilinx forum:
+>> https://forums.xilinx.com/t5/Embedded-Linux/Bug-in-of-get-named-gpiod-flags-function-in-the-kernel-random/td-p/897695
+> 
+> It seems the commit removing this is:
+> 
+> commit 762c2e46c0591d207289105c8718e4adf29b2b34
+> "gpio: of: remove of_gpiochip_and_xlate() and struct gg_data"
+> 
+> But I honestly don't see a problem with it.
+> 
+> You are referencing an out-of-tree driver. Use the in-tree gpio-xilinx.c
+> that does not do any custom xlate and you will be fine.
+> 
+> I looked over the driver doing custom flag translation in the kernel tree,
+> and they all set flags, so this is not a problem in the upstream kernel.
 
-drivers/media may very well not be the correct place for this.  In my
-30 second Google, I saw that this device has a lot to do with cameras,
-hence my media association.
+There was an attempt to sync up xilinx internal gpio driver with
+mainline by someone else but not sure what's the status.
+If you have issue with xilinx internal patch please talk to us.
+If the problem is with mainline please use this mailing list.
 
-If *all* else fails, there is always drivers/misc, but this should be
-avoided if at all possible.
-
-> Laurent, can you please share your opinion?
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks,
+Michal
