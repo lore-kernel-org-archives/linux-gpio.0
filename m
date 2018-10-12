@@ -1,164 +1,40 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
- driver
-Date: Fri, 12 Oct 2018 13:58:15 +0300
-Message-ID: <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-5-vz@mleia.com> <20181012060314.GU4939@dell>
- <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
- <20181012083924.GW4939@dell>
- <eef99526-9232-8cd4-9a7c-c30114d58806@ideasonboard.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [GIT PULL] GPIO fix for v4.19
+Date: Fri, 12 Oct 2018 13:12:07 +0200
+Message-ID: <20181012111207.GE6536@kroah.com>
+References: <CACRpkdb-KP_m6+2oB9r-WbR9K3juC+EMjgktv7v-PS_OACie=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <eef99526-9232-8cd4-9a7c-c30114d58806@ideasonboard.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb-KP_m6+2oB9r-WbR9K3juC+EMjgktv7v-PS_OACie=w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: kieran.bingham@ideasonboard.com, Lee Jones <lee.jones@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Vladimir Zapolskiy <vz@mleia.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Kieran,
-
-On 10/12/2018 12:20 PM, Kieran Bingham wrote:
-> Hi Vladimir,
+On Fri, Oct 12, 2018 at 10:34:55AM +0200, Linus Walleij wrote:
+> Hi Greg,
 > 
-> On 12/10/18 09:39, Lee Jones wrote:
->> On Fri, 12 Oct 2018, Vladimir Zapolskiy wrote:
->>> On 10/12/2018 09:03 AM, Lee Jones wrote:
->>>> On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
->>>>
->>>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>>>
->>>>> The change adds I2C device driver for TI DS90Ux9xx de-/serializers,
->>>>> support of subdevice controllers is done in separate drivers, because
->>>>> not all IC functionality may be needed in particular situations, and
->>>>> this can be fine grained controlled in device tree.
->>>>>
->>>>> The development of the driver was a collaborative work, the
->>>>> contribution done by Balasubramani Vivekanandan includes:
->>>>> * original implementation of the driver based on a reference driver,
->>>>> * regmap powered interrupt controller support on serializers,
->>>>> * support of implicitly or improperly specified in device tree ICs,
->>>>> * support of device properties and attributes: backward compatible
->>>>>   mode, low frequency operation mode, spread spectrum clock generator.
->>>>>
->>>>> Contribution by Steve Longerbeam:
->>>>> * added ds90ux9xx_read_indirect() function,
->>>>> * moved number of links property and added ds90ux9xx_num_fpd_links(),
->>>>> * moved and updated ds90ux9xx_get_link_status() function to core driver,
->>>>> * added fpd_link_show device attribute.
->>>>>
->>>>> Sandeep Jain added support of pixel clock edge configuration.
->>>>>
->>>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>>> ---
->>>>>  drivers/mfd/Kconfig           |  14 +
->>>>>  drivers/mfd/Makefile          |   1 +
->>>>>  drivers/mfd/ds90ux9xx-core.c  | 879 ++++++++++++++++++++++++++++++++++
->>>>>  include/linux/mfd/ds90ux9xx.h |  42 ++
->>>>>  4 files changed, 936 insertions(+)
->>>>>  create mode 100644 drivers/mfd/ds90ux9xx-core.c
->>>>>  create mode 100644 include/linux/mfd/ds90ux9xx.h
->>>>>
->>>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
->>>>> index 8c5dfdce4326..a969fa123f64 100644
->>>>> --- a/drivers/mfd/Kconfig
->>>>> +++ b/drivers/mfd/Kconfig
->>>>> @@ -1280,6 +1280,20 @@ config MFD_DM355EVM_MSP
->>>>>  	  boards.  MSP430 firmware manages resets and power sequencing,
->>>>>  	  inputs from buttons and the IR remote, LEDs, an RTC, and more.
->>>>>  
->>>>> +config MFD_DS90UX9XX
->>>>> +	tristate "TI DS90Ux9xx FPD-Link de-/serializer driver"
->>>>> +	depends on I2C && OF
->>>>> +	select MFD_CORE
->>>>> +	select REGMAP_I2C
->>>>> +	help
->>>>> +	  Say yes here to enable support for TI DS90UX9XX de-/serializer ICs.
->>>>> +
->>>>> +	  This driver provides basic support for setting up the de-/serializer
->>>>> +	  chips. Additional functionalities like connection handling to
->>>>> +	  remote de-/serializers, I2C bridging, pin multiplexing, GPIO
->>>>> +	  controller and so on are provided by separate drivers and should
->>>>> +	  enabled individually.
->>>>
->>>> This is not an MFD driver.
->>>
->>> Why do you think so? The representation of the ICs into device tree format
->>> of hardware description shows that this is a truly MFD driver with multiple
->>> IP subcomponents naturally mapped into MFD cells.
->>
->> This driver does too much real work ('stuff') to be an MFD driver.
->> MFD drivers should not need to care of; links, gates, modes, pixels,
->> frequencies maps or properties.  Nor should they contain elaborate
->> sysfs structures to control the aforementioned 'stuff'.
->>
->> Granted, there may be some code in there which could be appropriate
->> for an MFD driver.  However most of it needs moving out into a
->> function driver (or two).
->>
->>> Basically it is possible to replace explicit of_platform_populate() by
->>> adding a "simple-mfd" compatible, if it is desired.
->>>
->>>> After a 30 second Google of what this device actually does, perhaps
->>>> drivers/media might be a better fit?
->>>
->>> I assume it would be quite unusual to add a driver with NO media functions
->>> and controls into drivers/media.
->>
->> drivers/media may very well not be the correct place for this.  In my
->> 30 second Google, I saw that this device has a lot to do with cameras,
->> hence my media association.
->>
->> If *all* else fails, there is always drivers/misc, but this should be
->> avoided if at all possible.
+> here is a last minute GPIO fix for the v4.19 series.
 > 
-> The device as a whole is FPD Link for camera devices I believe, but it
-
-I still don't understand (I could be biased though) why there is such
-a strong emphasis on cameras and media stuff in the discussion.
-
-No, "the device as a whole is FPD Link for camera devices" is a wrong
-statement. On hand I have a number of boards with serializers/deserializers
-from the TI DS90Ux9xx IC series and sensors are NOT connected to them.
-
-> certainly has different functions which are broken out in this
-> implementation.
-
-No, there is absolutely nothing broken out from the presented MFD drivers,
-the drivers are completely integral and basically I don't expect any.
-
-If you are concerned about media functionality, the correspondent MFD
-*cell* drivers will be added into drivers/media, drivers/gpu/drm or
-whatever is to be a proper place.
-
-> I think it might be quite awkward having the i2c components in
-> drivers/i2c and the media components in drivers/media/i2c, so what about
-> creating drivers/media/i2c/fpd-link (or such) as a container?
-
-I open drivers/media/i2c/Kconfig and all entries with no exception are
-under from 'if VIDEO_V4L2'. The MFD drivers do NOT require on depend on
-VIDEO_V4L2 or any other multimedia frameworks, nor the MFD drivers export
-any multimedia controls.
-
-> Our GMSL implementation is also a complex camera(s) device - but does
-> not yet use the MFD framework, perhaps that's something to add to my
-> todo list.
+> This fixes GPIO IRQchip parent assignment on a lot
+> of GPIO drivers.
 > 
-
-Okay, but the TI DS90Ux9xx is NOT a camera device, and it is NOT a multimedia
-device, but it is a pure MFD device so the argument is not applicable.
-
-> We currently keep all of the complexity within the max9286.c driver, but
-> I could foresee that being split further if more devices add to the
-> complexity of managing the bus. At which point we might want an
-> equivalent drivers/media/i2c/gmsl/ perhaps?
+> Please pull it in!
 > 
-
---
-Best wishes,
-Vladimir
-
->>> Laurent, can you please share your opinion?
+> Yours,
+> Linus Walleij
 > 
+> The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
+> 
+>   Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+> tags/gpio-v4.19-4
+
+Now merged, thanks.
+
+greg k-h
