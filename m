@@ -1,49 +1,117 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fix for v4.19
-Date: Fri, 12 Oct 2018 10:34:55 +0200
-Message-ID: <CACRpkdb-KP_m6+2oB9r-WbR9K3juC+EMjgktv7v-PS_OACie=w@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
+ driver
+Date: Fri, 12 Oct 2018 09:39:24 +0100
+Message-ID: <20181012083924.GW4939@dell>
+References: <20181008211205.2900-1-vz@mleia.com>
+ <20181008211205.2900-5-vz@mleia.com>
+ <20181012060314.GU4939@dell>
+ <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Vladimir Zapolskiy <vz@mleia.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Greg,
+On Fri, 12 Oct 2018, Vladimir Zapolskiy wrote:
+> On 10/12/2018 09:03 AM, Lee Jones wrote:
+> > On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
+> > 
+> >> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> >>
+> >> The change adds I2C device driver for TI DS90Ux9xx de-/serializers,
+> >> support of subdevice controllers is done in separate drivers, because
+> >> not all IC functionality may be needed in particular situations, and
+> >> this can be fine grained controlled in device tree.
+> >>
+> >> The development of the driver was a collaborative work, the
+> >> contribution done by Balasubramani Vivekanandan includes:
+> >> * original implementation of the driver based on a reference driver,
+> >> * regmap powered interrupt controller support on serializers,
+> >> * support of implicitly or improperly specified in device tree ICs,
+> >> * support of device properties and attributes: backward compatible
+> >>   mode, low frequency operation mode, spread spectrum clock generator.
+> >>
+> >> Contribution by Steve Longerbeam:
+> >> * added ds90ux9xx_read_indirect() function,
+> >> * moved number of links property and added ds90ux9xx_num_fpd_links(),
+> >> * moved and updated ds90ux9xx_get_link_status() function to core driver,
+> >> * added fpd_link_show device attribute.
+> >>
+> >> Sandeep Jain added support of pixel clock edge configuration.
+> >>
+> >> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> >> ---
+> >>  drivers/mfd/Kconfig           |  14 +
+> >>  drivers/mfd/Makefile          |   1 +
+> >>  drivers/mfd/ds90ux9xx-core.c  | 879 ++++++++++++++++++++++++++++++++++
+> >>  include/linux/mfd/ds90ux9xx.h |  42 ++
+> >>  4 files changed, 936 insertions(+)
+> >>  create mode 100644 drivers/mfd/ds90ux9xx-core.c
+> >>  create mode 100644 include/linux/mfd/ds90ux9xx.h
+> >>
+> >> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> >> index 8c5dfdce4326..a969fa123f64 100644
+> >> --- a/drivers/mfd/Kconfig
+> >> +++ b/drivers/mfd/Kconfig
+> >> @@ -1280,6 +1280,20 @@ config MFD_DM355EVM_MSP
+> >>  	  boards.  MSP430 firmware manages resets and power sequencing,
+> >>  	  inputs from buttons and the IR remote, LEDs, an RTC, and more.
+> >>  
+> >> +config MFD_DS90UX9XX
+> >> +	tristate "TI DS90Ux9xx FPD-Link de-/serializer driver"
+> >> +	depends on I2C && OF
+> >> +	select MFD_CORE
+> >> +	select REGMAP_I2C
+> >> +	help
+> >> +	  Say yes here to enable support for TI DS90UX9XX de-/serializer ICs.
+> >> +
+> >> +	  This driver provides basic support for setting up the de-/serializer
+> >> +	  chips. Additional functionalities like connection handling to
+> >> +	  remote de-/serializers, I2C bridging, pin multiplexing, GPIO
+> >> +	  controller and so on are provided by separate drivers and should
+> >> +	  enabled individually.
+> > 
+> > This is not an MFD driver.
+> 
+> Why do you think so? The representation of the ICs into device tree format
+> of hardware description shows that this is a truly MFD driver with multiple
+> IP subcomponents naturally mapped into MFD cells.
 
-here is a last minute GPIO fix for the v4.19 series.
+This driver does too much real work ('stuff') to be an MFD driver.
+MFD drivers should not need to care of; links, gates, modes, pixels,
+frequencies maps or properties.  Nor should they contain elaborate
+sysfs structures to control the aforementioned 'stuff'.
 
-This fixes GPIO IRQchip parent assignment on a lot
-of GPIO drivers.
+Granted, there may be some code in there which could be appropriate
+for an MFD driver.  However most of it needs moving out into a
+function driver (or two).
 
-Please pull it in!
+> Basically it is possible to replace explicit of_platform_populate() by
+> adding a "simple-mfd" compatible, if it is desired.
+> 
+> > After a 30 second Google of what this device actually does, perhaps
+> > drivers/media might be a better fit?
+> 
+> I assume it would be quite unusual to add a driver with NO media functions
+> and controls into drivers/media.
 
-Yours,
-Linus Walleij
+drivers/media may very well not be the correct place for this.  In my
+30 second Google, I saw that this device has a lot to do with cameras,
+hence my media association.
 
-The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
+If *all* else fails, there is always drivers/misc, but this should be
+avoided if at all possible.
 
-  Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
+> Laurent, can you please share your opinion?
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.19-4
-
-for you to fetch changes up to 3e779a2e7f909015f21428b66834127496110b6d:
-
-  gpio: Assign gpio_irq_chip::parents to non-stack pointer (2018-10-10
-14:03:27 +0200)
-
-----------------------------------------------------------------
-GPIO fix for the v4.19 series:
-- Fix up the interrupt parent for the irqdomains.
-
-----------------------------------------------------------------
-Stephen Boyd (1):
-      gpio: Assign gpio_irq_chip::parents to non-stack pointer
-
- drivers/gpio/gpiolib.c      | 3 ++-
- include/linux/gpio/driver.h | 7 +++++++
- 2 files changed, 9 insertions(+), 1 deletion(-)
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
