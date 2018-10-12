@@ -1,59 +1,90 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 3/5] clk: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Fri, 12 Oct 2018 18:52:41 +0200
-Message-ID: <20181012165241.GH2340@sirena.org.uk>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-3-ckeepax@opensource.cirrus.com>
- <153924124658.207691.10370075148426001371@swboyd.mtv.corp.google.com>
- <20181011145422.GG25351@sirena.org.uk>
- <153928658292.5275.11321177725702156165@swboyd.mtv.corp.google.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YrlhzR9YrZtruaFS"
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [RFT PATCH] mmc: pwrseq_simple: Fix incorrect handling of GPIO bitmap
+Date: Fri, 12 Oct 2018 21:09:01 +0200
+Message-ID: <20181012190901.1243-1-jmkrzyszt@gmail.com>
+References: <20180925192433.1377-1-jmkrzyszt@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <153928658292.5275.11321177725702156165@swboyd.mtv.corp.google.com>
+In-Reply-To: <20180925192433.1377-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, lee.jones@linaro.org, linus.walleij@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, NXP Linux Team <linux-imx@nxp.com>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, Heiko Stuebner <heiko@>
 List-Id: linux-gpio@vger.kernel.org
 
+Commit b9762bebc633 ("gpiolib: Pass bitmaps, not integer arrays, to
+get/set array") changed the way GPIO values are passed to
+gpiod_get/set_array_value() and friends.  The new code introduced into
+mmc_pwrseq_simple_set_gpios_value() incorrectly interpretes the 'value'
+argument as a bitmap of GPIO values and assigns it directly to the
+'values' bitmap variable passed to gpiod_set_array_value_cansleep()
+instead of filling that bitmap with bits equal to the 'value' argument.
+As a result, only member 0 of the array is handled correctly.
 
---YrlhzR9YrZtruaFS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Moreover, wrong assumption is taken about the 'values' bitmap size not
+exceding the number of bits of the 'value' argument type.
 
-On Thu, Oct 11, 2018 at 12:36:22PM -0700, Stephen Boyd wrote:
-> Quoting Mark Brown (2018-10-11 07:54:22)
-> > On Thu, Oct 11, 2018 at 12:00:46AM -0700, Stephen Boyd wrote:
+Fix it.
 
-> > > Is this used for anything besides getting the regmap? Can you get the
-> > > pointer to the parent in probe and use that to get the regmap pointer
-> > > from dev_get_remap() and also use the of_node of the parent to register
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+Hi,
 
-> > dev_get_regmap() is pretty expensive, I'd not advise using it in
-> > anything that might approximate a fast path.  It's kind of debatable
-> > when I2C gets involved but still feels wrong.
+I think that patch has been missed while we were resolving issues 
+related to GPIO fast bitmap processing.  Since all issues other than the 
+one addreessed by this patch have been been hopefully identified and 
+fixed, GPIO tree seems now to be in good shape in regard to that. 
+However, I believe pwrseq_simple is still broken.  Hence, I'm 
+resubmitting this patch to Ulf for inclusion in MMC tree, Cc: many other 
+people who are kindly requested to test it if possible.
 
-> I'm suggesting the regmap is acquired in probe and a pointer is stored
-> here in this structure. That is not a fastpath as far as I know.
+I've identified the following DT files representing devices which may be 
+affected (have more than one GPIO assigned to pwrseq_simple):
+- arch/arm/boot/dts/imx6qdl-sr-som-brcm.dtsi
+- arch/arm/boot/dts/exynos5250-snow-common.dtsi
+- arch/arm/boot/dts/imx6sl-warp.dts
+- arch/arm/boot/dts/omap3-igep0030.dts
+- arch/arm/boot/dts/omap3-igep0020.dts
+- arch/arm/boot/dts/rk3036-kylin.dts
+- arch/arm64/boot/dts/rockchip/rk3368-r88.dts
+- arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
 
-Ah, great - that's the intended usage.
+Please start with checking if pwrseq_simple from linux-next works for 
+you and if not, please test if this patch fixes the issue.
 
---YrlhzR9YrZtruaFS
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Janusz
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvA0VgACgkQJNaLcl1U
-h9AWSAf/bRb9XA4nmyIZXZ01LsvCh9qzzhBcZK8rnMdHUgpTfEHzByErkofBCbu9
-pkNZlcYzcBiyf4P+0zMHXJMzEXhX8OZzz4TQOZvTojgfo/UzhJFOJ3wFiuzJbqZK
-FTbHUNcVPEOPE+kWkHhM40+ZxGG9ETD9sRWlnQjcMLlwoQLPIIv7vhmgljUJ+BM/
-ZibZx7kvxYVEc11sPvkJ6WmMWJninFFRG9obj/R/Hsy/9OqNMVM1IUvSxFIWWPAu
-0joXz/xBHyvhGx1U79Fcb5f+hMc5Yuvr3YzEaQjX+cxf1KZkS2qhnGc4v9EnCRkW
-l14g4c+0bp32wQ57TsgcDZs0aDXKdw==
-=zUtC
------END PGP SIGNATURE-----
+ drivers/mmc/core/pwrseq_simple.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---YrlhzR9YrZtruaFS--
+diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
+index 7f882a2bb872..ece34c734693 100644
+--- a/drivers/mmc/core/pwrseq_simple.c
++++ b/drivers/mmc/core/pwrseq_simple.c
+@@ -40,13 +40,22 @@ static void mmc_pwrseq_simple_set_gpios_value(struct mmc_pwrseq_simple *pwrseq,
+ 	struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
+ 
+ 	if (!IS_ERR(reset_gpios)) {
+-		DECLARE_BITMAP(values, BITS_PER_TYPE(value));
++		unsigned long *values;
+ 		int nvalues = reset_gpios->ndescs;
+ 
+-		values[0] = value;
++		values = bitmap_alloc(nvalues, GFP_KERNEL);
++		if (!values)
++			return;
++
++		if (value)
++			bitmap_fill(values, nvalues);
++		else
++			bitmap_zero(values, nvalues);
+ 
+ 		gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
+ 					       reset_gpios->info, values);
++
++		kfree(values);
+ 	}
+ }
+ 
+-- 
+2.16.4
