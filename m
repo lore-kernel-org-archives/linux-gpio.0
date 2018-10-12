@@ -1,103 +1,76 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: REGRESSION: [PATCH v5 3/3] gpiolib: Show correct direction from the
- beginning
-Date: Fri, 12 Oct 2018 09:00:41 +0000
-Message-ID: <1539334839.30485.9.camel@toradex.com>
-References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
-         <20181005065300.22882-3-ricardo.ribalda@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 5/7] mfd: ds90ux9xx: add I2C bridge/alias and link
+ connection driver
+Date: Fri, 12 Oct 2018 10:03:29 +0100
+Message-ID: <20181012090329.GX4939@dell>
+References: <20181008211205.2900-1-vz@mleia.com>
+ <20181008211205.2900-6-vz@mleia.com>
+ <20181012060455.GV4939@dell>
+ <c8f01b88-c14f-867d-d796-7464b2e8ccfb@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181005065300.22882-3-ricardo.ribalda@gmail.com>
-Content-Language: en-US
-Content-ID: <4595EBAEC5900A46BAAF25BDB69658C2@eurprd05.prod.outlook.com>
+Content-Disposition: inline
+In-Reply-To: <c8f01b88-c14f-867d-d796-7464b2e8ccfb@mentor.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "timur@kernel.org" <timur@kernel.org>, "swboyd@chromium.org" <swboyd@chromium.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "jhugo@codeaurora.org" <jhugo@codeaurora.org>, "ricardo.ribalda@gmail.com" <ricardo.ribalda@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Vladimir Zapolskiy <vz@mleia.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTEwLTA1IGF0IDA4OjUzICswMjAwLCBSaWNhcmRvIFJpYmFsZGEgRGVsZ2Fk
-byB3cm90ZToNCj4gQ3VycmVudCBjb2RlIGFzc3VtZXMgdGhhdCB0aGUgZGlyZWN0aW9uIGlzIGlu
-cHV0IGlmIGRpcmVjdGlvbl9pbnB1dA0KPiBmdW5jdGlvbiBpcyBzZXQuDQo+IFRoaXMgbWlnaHQg
-bm90IGJlIHRoZSBjYXNlIG9uIEdQSU9zIHdpdGggcHJvZ3JhbW1hYmxlIGRpcmVjdGlvbi4NCg0K
-VW5mb3J0dW5hdGVseSwgdGhpcyBicmVha3MgYXQgbGVhc3QgQXBhbGlzIFQzMCBhbmQgQXBhbGlz
-IFRLMS4gRW5hYmxpbmcNCmVhcmx5Y29uIHJldmVhbHMgdGhlIGZvbGxvd2luZzoNCg0KWyAgICAw
-LjcyMTE2NV0gVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNl
-IGF0DQp2aXJ0dWFsIGFkZHJlDQpzcyAwMDAwMDFmOA0KWyAgICAwLjcyOTU3MF0gcGdkID0gKHB0
-cnZhbCkNClsgICAgMC43MzI0MTddIFswMDAwMDFmOF0gKnBnZD0wMDAwMDAwMA0KWyAgICAwLjcz
-NjEzN10gSW50ZXJuYWwgZXJyb3I6IE9vcHM6IDUgWyMxXSBQUkVFTVBUIFNNUCBBUk0NClsgICAg
-MC43NDE2NDNdIE1vZHVsZXMgbGlua2VkIGluOg0KWyAgICAwLjc0NDgxOV0gQ1BVOiAwIFBJRDog
-MSBDb21tOiBzd2FwcGVyLzAgTm90IHRhaW50ZWQgNC4xOS4wLXJjNy0NCm5leHQtMjAxODEwMQ0K
-MiAjNg0KWyAgICAwLjc1MjU3OV0gSGFyZHdhcmUgbmFtZTogTlZJRElBIFRlZ3JhIFNvQyAoRmxh
-dHRlbmVkIERldmljZSBUcmVlKQ0KWyAgICAwLjc1OTA5Ml0gUEMgaXMgYXQgZ3Bpb2RfaG9nKzB4
-MmMvMHgxNTANClsgICAgMC43NjMyNTVdIExSIGlzIGF0IG9mX2dwaW9jaGlwX2FkZCsweDM0Yy8w
-eDUxMA0KWyAgICAwLjc2ODA0MF0gcGMgOiBbPGMwNDRjOWE0Pl0gICAgbHIgOiBbPGMwNDRlODQw
-Pl0gICAgcHNyOiA2MDAwMDAxMw0KWyAgICAwLjc3NDUzNF0gc3AgOiBmNjhjOWNkMCAgaXAgOiAw
-MDAwMDAwMCAgZnAgOiBmNjhjOWQxOA0KWyAgICAwLjc3OTk0Nl0gcjEwOiBjMGNjYjNjOCAgcjkg
-OiAwMDAwMDAwMCAgcjggOiAwMDAwMDAwMA0KWyAgICAwLjc4NTM1OV0gcjcgOiAwMDAwMDAwNyAg
-cjYgOiBjMjAwMTljNCAgcjUgOiBmNmE3Yjk3MCAgcjQgOg0KZjZhNzhhMjQNClsgICAgMC43OTIx
-MjFdIHIzIDogMDAwMDAwMDAgIHIyIDogMDAwMDAwMDAgIHIxIDogYzIwMDE5YzQgIHIwIDoNCmY2
-YTdiOTcwDQpbICAgIDAuNzk4ODg0XSBGbGFnczogblpDdiAgSVJRcyBvbiAgRklRcyBvbiAgTW9k
-ZSBTVkNfMzIgIElTQQ0KQVJNICBTZWdtZW50IG5vbmUNClsgICAgMC44MDYyNzNdIENvbnRyb2w6
-IDEwYzUzODdkICBUYWJsZTogODAwMDQwNGEgIERBQzogMDAwMDAwNTENClsgICAgMC44MTIyMjdd
-IFByb2Nlc3Mgc3dhcHBlci8wIChwaWQ6IDEsIHN0YWNrIGxpbWl0ID0gMHgocHRydmFsKSkNClsg
-ICAgMC44MTg0NTFdIFN0YWNrOiAoMHhmNjhjOWNkMCB0byAweGY2OGNhMDAwKQ0KLi4uDQpbICAg
-IDEuMDQzNDkwXSBbPGMwNDRjOWE0Pl0gKGdwaW9kX2hvZykgZnJvbSBbPGMwNDRlODQwPl0NCihv
-Zl9ncGlvY2hpcF9hZGQrMHgzNGMvMHg1MTApDQpbICAgIDEuMDUxNTMxXSBbPGMwNDRlODQwPl0g
-KG9mX2dwaW9jaGlwX2FkZCkgZnJvbSBbPGMwNDRkMWNjPl0NCihncGlvY2hpcF9hZGRfZGF0YV93
-aXRoX2tleSsweDY2OC8weDk1OCkNClsgICAgMS4wNjEwOTFdIFs8YzA0NGQxY2M+XSAoZ3Bpb2No
-aXBfYWRkX2RhdGFfd2l0aF9rZXkpIGZyb20NCls8YzA0NGQ1MDQ+XSAoZGV2bV9ncGlvY2hpcF9h
-ZGRfZGF0YSsweDQ4LzB4ODQpDQpbICAgIDEuMDcxMTA5XSBbPGMwNDRkNTA0Pl0gKGRldm1fZ3Bp
-b2NoaXBfYWRkX2RhdGEpIGZyb20gWzxjMDQ1MTY2Yz5dDQoodGVncmFfZ3Bpb19wcm9iZSsweDJk
-NC8weDQyMCkNClsgICAgMS4wODA0MTNdIFs8YzA0NTE2NmM+XSAodGVncmFfZ3Bpb19wcm9iZSkg
-ZnJvbSBbPGMwNTc0MDQwPl0NCihwbGF0Zm9ybV9kcnZfcHJvYmUrMHg0OC8weDk4KQ0KWyAgICAx
-LjA4OTE3MV0gWzxjMDU3NDA0MD5dIChwbGF0Zm9ybV9kcnZfcHJvYmUpIGZyb20gWzxjMDU3MjE2
-ND5dDQoocmVhbGx5X3Byb2JlKzB4MWUwLzB4MmNjKQ0KWyAgICAxLjA5Nzc0Nl0gWzxjMDU3MjE2
-ND5dIChyZWFsbHlfcHJvYmUpIGZyb20gWzxjMDU3MjNiND5dDQooZHJpdmVyX3Byb2JlX2Rldmlj
-ZSsweDYwLzB4MTZjKQ0KWyAgICAxLjEwNjMxN10gWzxjMDU3MjNiND5dIChkcml2ZXJfcHJvYmVf
-ZGV2aWNlKSBmcm9tIFs8YzA1NzI1OWM+XQ0KKF9fZHJpdmVyX2F0dGFjaCsweGRjLzB4ZTApDQpb
-ICAgIDEuMTE1MDcxXSBbPGMwNTcyNTljPl0gKF9fZHJpdmVyX2F0dGFjaCkgZnJvbSBbPGMwNTcw
-NGE4Pl0NCihidXNfZm9yX2VhY2hfZGV2KzB4NzQvMHhiNCkNClsgICAgMS4xMjM1NTRdIFs8YzA1
-NzA0YTg+XSAoYnVzX2Zvcl9lYWNoX2RldikgZnJvbSBbPGMwNTcxNjQ0Pl0NCihidXNfYWRkX2Ry
-aXZlcisweDFjMC8weDIwNCkNClsgICAgMS4xMzIxMjJdIFs8YzA1NzE2NDQ+XSAoYnVzX2FkZF9k
-cml2ZXIpIGZyb20gWzxjMDU3MzFiOD5dDQooZHJpdmVyX3JlZ2lzdGVyKzB4NzQvMHgxMDgpDQpb
-ICAgIDEuMTQwNTIxXSBbPGMwNTczMWI4Pl0gKGRyaXZlcl9yZWdpc3RlcikgZnJvbSBbPGMwMTAy
-ZWJjPl0NCihkb19vbmVfaW5pdGNhbGwrMHg1NC8weDI4NCkNClsgICAgMS4xNDkwMTVdIFs8YzAx
-MDJlYmM+XSAoZG9fb25lX2luaXRjYWxsKSBmcm9tIFs8YzBlMDExMzQ+XQ0KKGtlcm5lbF9pbml0
-X2ZyZWVhYmxlKzB4MmQwLzB4MzY0KQ0KWyAgICAxLjE1ODA0M10gWzxjMGUwMTEzND5dIChrZXJu
-ZWxfaW5pdF9mcmVlYWJsZSkgZnJvbSBbPGMwYTI0Yzc4Pl0NCihrZXJuZWxfaW5pdCsweDgvMHgx
-MTApDQpbICAgIDEuMTY2NTI3XSBbPGMwYTI0Yzc4Pl0gKGtlcm5lbF9pbml0KSBmcm9tIFs8YzAx
-MDEwZTg+XQ0KKHJldF9mcm9tX2ZvcmsrMHgxNC8weDJjKQ0KWyAgICAxLjE3NDM3NV0gRXhjZXB0
-aW9uIHN0YWNrKDB4ZjY4YzlmYjAgdG8gMHhmNjhjOWZmOCkNCi4uLg0KDQpKdXN0IHJldmVydGlu
-ZyB0aGlzIG9uZSBwYXRjaCBtYWRlIGl0IGJvb3QgYWdhaW4uIEkgd2lsbCBpbnZlc3RpZ2F0ZQ0K
-ZnVydGhlci4uLg0KDQo+IFNpZ25lZC1vZmYtYnk6IFJpY2FyZG8gUmliYWxkYSBEZWxnYWRvIDxy
-aWNhcmRvLnJpYmFsZGFAZ21haWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3Bpby9ncGlvbGli
-LmMgfCAyNyArKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAx
-MyBpbnNlcnRpb25zKCspLCAxNCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwaW8vZ3Bpb2xpYi5jIGIvZHJpdmVycy9ncGlvL2dwaW9saWIuYw0KPiBpbmRleCA5MDcw
-MTliNjdhNTguLmUwMTZiMjI2NThmZiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncGlvL2dwaW9s
-aWIuYw0KPiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi5jDQo+IEBAIC0xMzQ5LDIwICsxMzQ5
-LDYgQEAgaW50IGdwaW9jaGlwX2FkZF9kYXRhX3dpdGhfa2V5KHN0cnVjdA0KPiBncGlvX2NoaXAg
-KmNoaXAsIHZvaWQgKmRhdGEsDQo+ICANCj4gIAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZncGlv
-X2xvY2ssIGZsYWdzKTsNCj4gIA0KPiAtCWZvciAoaSA9IDA7IGkgPCBjaGlwLT5uZ3BpbzsgaSsr
-KSB7DQo+IC0JCXN0cnVjdCBncGlvX2Rlc2MgKmRlc2MgPSAmZ2Rldi0+ZGVzY3NbaV07DQo+IC0N
-Cj4gLQkJZGVzYy0+Z2RldiA9IGdkZXY7DQo+IC0NCj4gLQkJLyogUkVWSVNJVDogbW9zdCBoYXJk
-d2FyZSBpbml0aWFsaXplcyBHUElPcyBhcw0KPiBpbnB1dHMgKG9mdGVuDQo+IC0JCSAqIHdpdGgg
-cHVsbHVwcyBlbmFibGVkKSBzbyBwb3dlciB1c2FnZSBpcw0KPiBtaW5pbWl6ZWQuIExpbnV4DQo+
-IC0JCSAqIGNvZGUgc2hvdWxkIHNldCB0aGUgZ3BpbyBkaXJlY3Rpb24gZmlyc3QgdGhpbmc7DQo+
-IGJ1dCB1bnRpbA0KPiAtCQkgKiBpdCBkb2VzLCBhbmQgaW4gY2FzZSBjaGlwLT5nZXRfZGlyZWN0
-aW9uIGlzIG5vdA0KPiBzZXQsIHdlIG1heQ0KPiAtCQkgKiBleHBvc2UgdGhlIHdyb25nIGRpcmVj
-dGlvbiBpbiBzeXNmcy4NCj4gLQkJICovDQo+IC0JCWRlc2MtPmZsYWdzID0gIWNoaXAtPmRpcmVj
-dGlvbl9pbnB1dCA/ICgxIDw8DQo+IEZMQUdfSVNfT1VUKSA6IDA7DQo+IC0JfQ0KPiAtDQo+ICAj
-aWZkZWYgQ09ORklHX1BJTkNUUkwNCj4gIAlJTklUX0xJU1RfSEVBRCgmZ2Rldi0+cGluX3Jhbmdl
-cyk7DQo+ICAjZW5kaWYNCj4gQEAgLTEzOTEsNiArMTM3NywxOSBAQCBpbnQgZ3Bpb2NoaXBfYWRk
-X2RhdGFfd2l0aF9rZXkoc3RydWN0DQo+IGdwaW9fY2hpcCAqY2hpcCwgdm9pZCAqZGF0YSwNCj4g
-IAlpZiAoc3RhdHVzKQ0KPiAgCQlnb3RvIGVycl9yZW1vdmVfY2hpcDsNCj4gIA0KPiArCWZvciAo
-aSA9IDA7IGkgPCBjaGlwLT5uZ3BpbzsgaSsrKSB7DQo+ICsJCXN0cnVjdCBncGlvX2Rlc2MgKmRl
-c2MgPSAmZ2Rldi0+ZGVzY3NbaV07DQo+ICsNCj4gKwkJZGVzYy0+Z2RldiA9IGdkZXY7DQo+ICsN
-Cj4gKwkJaWYgKGNoaXAtPmdldF9kaXJlY3Rpb24gJiYNCj4gZ3Bpb2NoaXBfbGluZV9pc192YWxp
-ZChjaGlwLCBpKSkNCj4gKwkJCWRlc2MtPmZsYWdzID0gIWNoaXAtPmdldF9kaXJlY3Rpb24oY2hp
-cCwgaSkNCj4gPw0KPiArCQkJCQkoMSA8PCBGTEFHX0lTX09VVCkgOiAwOw0KPiArCQllbHNlDQo+
-ICsJCQlkZXNjLT5mbGFncyA9ICFjaGlwLT5kaXJlY3Rpb25faW5wdXQgPw0KPiArCQkJCQkoMSA8
-PCBGTEFHX0lTX09VVCkgOiAwOw0KPiArCX0NCj4gKw0KPiAgCWFjcGlfZ3Bpb2NoaXBfYWRkKGNo
-aXApOw0KPiAgDQo+ICAJbWFjaGluZV9ncGlvY2hpcF9hZGQoY2hpcCk7
+On Fri, 12 Oct 2018, Vladimir Zapolskiy wrote:
+> On 10/12/2018 09:04 AM, Lee Jones wrote:
+> > On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
+> > 
+> >> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> >>
+> >> The change adds TI DS90Ux9xx I2C bridge/alias subdevice driver and
+> >> FPD Link connection handling mechanism.
+> >>
+> >> Access to I2C devices connected to a remote de-/serializer is done in
+> >> a transparent way, on established link detection event such devices
+> >> are registered on an I2C bus, which serves a local de-/serializer IC.
+> >>
+> >> The development of the driver was a collaborative work, the
+> >> contribution done by Balasubramani Vivekanandan includes:
+> >> * original simplistic implementation of the driver,
+> >> * support of implicitly specified devices in device tree,
+> >> * support of multiple FPD links for TI DS90Ux9xx,
+> >> * other kind of valuable review comments, clean-ups and fixes.
+> >>
+> >> Also Steve Longerbeam made the following changes:
+> >> * clear address maps after linked device removal,
+> >> * disable pass-through in disconnection,
+> >> * qualify locked status with non-zero remote address.
+> >>
+> >> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> >> ---
+> >>  drivers/mfd/Kconfig                |   8 +
+> >>  drivers/mfd/Makefile               |   1 +
+> >>  drivers/mfd/ds90ux9xx-i2c-bridge.c | 764 +++++++++++++++++++++++++++++
+> >>  3 files changed, 773 insertions(+)
+> >>  create mode 100644 drivers/mfd/ds90ux9xx-i2c-bridge.c
+> > 
+> > Shouldn't this live in drivers/i2c?
+> 
+> no, the driver is not for an I2C controller of any kind, and the driver does
+> not register itself in the I2C subsystem by calling i2c_add_adapter() or
+> i2c_add_numbered_adapter() or i2c_mux_add_adapter() etc, this topic was
+> discussed with Wolfram also.
+> 
+> Formally the driver converts the managed IC into a multi-address I2C
+> slave device, I understand that it does not sound like a well suited driver
+> for MFD, but ds90ux9xx-core.c and ds90ux9xx-i2c-bridge.c drivers are quite
+> tightly coupled.
+
+Using MFD as the default dumping ground for anything which does more
+than one thing has also been discussed before. :)
+
+You need to figure out what function this device provides and
+re-locate it into the subsystem which it best fits.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
