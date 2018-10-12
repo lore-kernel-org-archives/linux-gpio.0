@@ -1,100 +1,29 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH 5/7] mfd: ds90ux9xx: add I2C bridge/alias and link
- connection driver
-Date: Fri, 12 Oct 2018 17:36:39 +0300
-Message-ID: <0be75b0d-eb61-02e5-a086-be6a9d32841a@mleia.com>
-References: <20181008211205.2900-1-vz@mleia.com> <20181012060455.GV4939@dell>
- <c8f01b88-c14f-867d-d796-7464b2e8ccfb@mentor.com> <1584081.CVFmJobd6K@avalon>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 1/7] dt-bindings: mfd: Add ST Multi-Function eXpander
+ (STMFX) core bindings
+Date: Fri, 12 Oct 2018 09:39:24 -0500
+Message-ID: <20181012143924.GA13208@bogus>
+References: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
+ <1538048404-9041-2-git-send-email-amelie.delaunay@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1584081.CVFmJobd6K@avalon>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1538048404-9041-2-git-send-email-amelie.delaunay@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, Amelie Delaunay <amelie.delaunay@st.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laurent
-
-On 10/12/2018 04:12 PM, Laurent Pinchart wrote:
-> Hi Vladimir,
+On Thu, 27 Sep 2018 13:39:58 +0200, Amelie Delaunay wrote:
+> This patch adds documentation of device tree bindings for the
+> STMicroelectronics Multi-Function eXpander (STMFX) MFD core.
 > 
-> (CC'ing Wolfram)
-> 
-> On Friday, 12 October 2018 10:32:32 EEST Vladimir Zapolskiy wrote:
->> On 10/12/2018 09:04 AM, Lee Jones wrote:
->>> On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
->>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>>
->>>> The change adds TI DS90Ux9xx I2C bridge/alias subdevice driver and
->>>> FPD Link connection handling mechanism.
->>>>
->>>> Access to I2C devices connected to a remote de-/serializer is done in
->>>> a transparent way, on established link detection event such devices
->>>> are registered on an I2C bus, which serves a local de-/serializer IC.
->>>>
->>>> The development of the driver was a collaborative work, the
->>>> contribution done by Balasubramani Vivekanandan includes:
->>>> * original simplistic implementation of the driver,
->>>> * support of implicitly specified devices in device tree,
->>>> * support of multiple FPD links for TI DS90Ux9xx,
->>>> * other kind of valuable review comments, clean-ups and fixes.
->>>>
->>>> Also Steve Longerbeam made the following changes:
->>>> * clear address maps after linked device removal,
->>>> * disable pass-through in disconnection,
->>>> * qualify locked status with non-zero remote address.
->>>>
->>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>> ---
->>>>
->>>>  drivers/mfd/Kconfig                |   8 +
->>>>  drivers/mfd/Makefile               |   1 +
->>>>  drivers/mfd/ds90ux9xx-i2c-bridge.c | 764 +++++++++++++++++++++++++++++
->>>>  3 files changed, 773 insertions(+)
->>>>  create mode 100644 drivers/mfd/ds90ux9xx-i2c-bridge.c
->>>
->>> Shouldn't this live in drivers/i2c?
->>
->> no, the driver is not for an I2C controller of any kind, and the driver does
->> not register itself in the I2C subsystem by calling i2c_add_adapter() or
->> i2c_add_numbered_adapter() or i2c_mux_add_adapter() etc, this topic was
->> discussed with Wolfram also.
-> 
-> (Who is now on CC)
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/stmfx.txt | 28 +++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
 > 
 
-Wolfram has copies of the drivers and discussion right from the beginning,
-hopefully he won't get two copies ;)
-
->> Formally the driver converts the managed IC into a multi-address I2C
->> slave device, I understand that it does not sound like a well suited driver
->> for MFD, but ds90ux9xx-core.c and ds90ux9xx-i2c-bridge.c drivers are quite
->> tightly coupled.
-> 
-> As mentioned in other e-mails in this thread I don't think this should be 
-> split out to a separate driver,> I would move the functionality to the 
-> ds90ux9xx driver.
-
-The proposal may have the grounds, but the I2C bridging functionality of ICs
-is quite detached from all other ones, thus it found its place in the cell
-driver per se.
-
-> You may want to register an I2C mux, but as you have a single port, that
-> could be overkill. I haven't studied in details how to best support this
-> chip using the existing I2C subsystems APIs (which we may want to extend
-> if it needed), but I believe that (in your use cases) the deserializer
-> should be a child of the serializer, and modeled as an I2C device.
-> 
-
-Formally in OF terms to define a link between devices by a phandle should
-be sufficient, panels are not the children of LVDS controllers under OF graph
-constraints in DT representation, the panels become secondary in runtime
-only, I'd like to reuse the concept. Also it adds a better sense of symmetry
-of deserializer <-> serializer connections relatively to a SoC/data source.
-
---
-Best wishes,
-Vladimir
+Reviewed-by: Rob Herring <robh@kernel.org>
