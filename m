@@ -1,24 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fix for v4.19
-Date: Fri, 12 Oct 2018 10:30:18 +0200
-Message-ID: <CACRpkdYaWwrwYvOK9PoFE7GvyAZxVA5JqPbCRSpLHLVcQubp6w@mail.gmail.com>
+Subject: [GIT PULL] GPIO fix for v4.19
+Date: Fri, 12 Oct 2018 10:34:55 +0200
+Message-ID: <CACRpkdb-KP_m6+2oB9r-WbR9K3juC+EMjgktv7v-PS_OACie=w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Greg KH <gregkh@linuxfoundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Marco Felsch <m.felsch@pengutronix.de>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
 Hi Greg,
 
-Here is a last minute pin control fix for the v4.19 series.
+here is a last minute GPIO fix for the v4.19 series.
 
-Please pull it in. It fixes interrupts on the MCP23s08.
+This fixes GPIO IRQchip parent assignment on a lot
+of GPIO drivers.
+
+Please pull it in!
 
 Yours,
 Linus Walleij
-
 
 The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
 
@@ -26,20 +28,22 @@ The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.19-5
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.19-4
 
-for you to fetch changes up to f259f896f2348f0302f6f88d4382378cf9d23a7e:
+for you to fetch changes up to 3e779a2e7f909015f21428b66834127496110b6d:
 
-  pinctrl: mcp23s08: fix irq and irqchip setup order (2018-10-10 14:36:35 +0200)
-
-----------------------------------------------------------------
-A single pin control fix for v4.19:
-- Interrupt setup in the MCP23S08 driver.
+  gpio: Assign gpio_irq_chip::parents to non-stack pointer (2018-10-10
+14:03:27 +0200)
 
 ----------------------------------------------------------------
-Marco Felsch (1):
-      pinctrl: mcp23s08: fix irq and irqchip setup order
+GPIO fix for the v4.19 series:
+- Fix up the interrupt parent for the irqdomains.
 
- drivers/pinctrl/pinctrl-mcp23s08.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+----------------------------------------------------------------
+Stephen Boyd (1):
+      gpio: Assign gpio_irq_chip::parents to non-stack pointer
+
+ drivers/gpio/gpiolib.c      | 3 ++-
+ include/linux/gpio/driver.h | 7 +++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
