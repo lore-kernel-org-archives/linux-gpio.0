@@ -1,31 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V3 1/2] dt-bindings: pinctrl: document Broadcom Northstar
- pin mux controller
-Date: Fri, 12 Oct 2018 11:13:45 +0200
-Message-ID: <CACRpkda2wTT3U=VCCcTroBGsib+aF=Nkjbk2-v_++0BROXkC=A@mail.gmail.com>
-References: <20180926193103.21241-1-zajec5@gmail.com>
- <20181011222229.GA7470@bogus>
+Subject: Re: [PATCH] pinctrl: rzn1: remove unnecessary unsigned integer comparison
+Date: Fri, 12 Oct 2018 11:17:27 +0200
+Message-ID: <CACRpkdb9b6kxgj736OmLhBvzhR26DT+bE2Y=jGaMB3411oa3yw@mail.gmail.com>
+References: <20181011204042.GA17125@embeddedor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181011222229.GA7470@bogus>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181011204042.GA17125@embeddedor.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-UmFmYcWCLCBjb3VsZCB5b3UgcGF0Y2ggdGhlIGJpbmRpbmdzIHdpdGggUm9iIGNvbW1lbnRzIHNv
-IEkgZG9uJ3QgaGF2ZQp0byBwdWxsIHRoZSBwYXRjaCBvdXQgb2YgbXkgdHJlZSBvciByZXZlcnQg
-aXQ/CgpZb3VycywKTGludXMgV2FsbGVpagoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJt
-LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21h
-aWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+Sorry for top-posting, Geert is maintainer for this driver.
+
+Yours,
+Linus Walleij
+
+On Thu, Oct 11, 2018 at 10:40 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+>
+> There is no need to compare ipctl->mdio_func[mdio] with => 0, because
+> such comparison is always true. Notice that *mdio_func* is of type
+> u32 (32 bits, unsigned).
+>
+> Fix this by removing such comparison.
+>
+> Addresses-Coverity-ID: 1474166 ("Unsigned compared against 0")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/pinctrl/pinctrl-rzn1.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
+> index ce05e3a..b5650d8 100644
+> --- a/drivers/pinctrl/pinctrl-rzn1.c
+> +++ b/drivers/pinctrl/pinctrl-rzn1.c
+> @@ -195,7 +195,7 @@ static void rzn1_hw_set_lock(struct rzn1_pinctrl *ipctl, u8 lock, u8 value)
+>  static void rzn1_pinctrl_mdio_select(struct rzn1_pinctrl *ipctl, int mdio,
+>                                      u32 func)
+>  {
+> -       if (ipctl->mdio_func[mdio] >= 0 && ipctl->mdio_func[mdio] != func)
+> +       if (ipctl->mdio_func[mdio] != func)
+>                 dev_warn(ipctl->dev, "conflicting setting for mdio%d!\n", mdio);
+>         ipctl->mdio_func[mdio] = func;
+>
+> --
+> 2.7.4
+>
