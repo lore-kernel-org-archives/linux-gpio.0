@@ -1,31 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: REGRESSION: [PATCH v5 3/3] gpiolib: Show correct direction from
- the beginning
-Date: Fri, 12 Oct 2018 11:08:50 +0200
-Message-ID: <CACRpkdY89b-hy_aoBiZXX6KqyJrZd0fX9-XCGcF9XjPBy6Lwrw@mail.gmail.com>
-References: <20181005065300.22882-1-ricardo.ribalda@gmail.com>
- <20181005065300.22882-3-ricardo.ribalda@gmail.com> <1539334839.30485.9.camel@toradex.com>
+Subject: Re: [PATCH V3 1/2] dt-bindings: pinctrl: document Broadcom Northstar
+ pin mux controller
+Date: Fri, 12 Oct 2018 11:13:45 +0200
+Message-ID: <CACRpkda2wTT3U=VCCcTroBGsib+aF=Nkjbk2-v_++0BROXkC=A@mail.gmail.com>
+References: <20180926193103.21241-1-zajec5@gmail.com>
+ <20181011222229.GA7470@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1539334839.30485.9.camel@toradex.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: timur@kernel.org, Stephen Boyd <swboyd@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jhugo@codeaurora.org, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181011222229.GA7470@bogus>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 11:00 AM Marcel Ziswiler
-<marcel.ziswiler@toradex.com> wrote:
-> On Fri, 2018-10-05 at 08:53 +0200, Ricardo Ribalda Delgado wrote:
-> > Current code assumes that the direction is input if direction_input
-> > function is set.
-> > This might not be the case on GPIOs with programmable direction.
->
-> Unfortunately, this breaks at least Apalis T30 and Apalis TK1. Enabling
-> earlycon reveals the following:
-
-Does this (just applied) patch fix the issue?
-https://marc.info/?l=linux-kernel&m=153932470412013&w=2
-
-Yours,
-Linus Walleij
+UmFmYcWCLCBjb3VsZCB5b3UgcGF0Y2ggdGhlIGJpbmRpbmdzIHdpdGggUm9iIGNvbW1lbnRzIHNv
+IEkgZG9uJ3QgaGF2ZQp0byBwdWxsIHRoZSBwYXRjaCBvdXQgb2YgbXkgdHJlZSBvciByZXZlcnQg
+aXQ/CgpZb3VycywKTGludXMgV2FsbGVpagoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJt
+LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21h
+aWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
