@@ -1,47 +1,53 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] gpio: fix SNPS_CREG kconfig dependency warning
-Date: Fri, 12 Oct 2018 20:46:29 -0700
-Message-ID: <8bfd2cd6-702a-878c-ac41-b61698835f1a@infradead.org>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
+ driver
+Date: Sat, 13 Oct 2018 15:33:21 +0300
+Message-ID: <646af723-b78b-4481-50d9-e1b8f57abd79@mentor.com>
+References: <20181008211205.2900-1-vz@mleia.com>
+ <20181008211205.2900-5-vz@mleia.com> <20181012060314.GU4939@dell>
+ <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
+ <20181012083924.GW4939@dell>
+ <eef99526-9232-8cd4-9a7c-c30114d58806@ideasonboard.com>
+ <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com>
+ <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
+In-Reply-To: <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To: kieran.bingham@ideasonboard.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Vladimir Zapolskiy <vz@mleia.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi Kieran,
 
-Fix kconfig warning for GPIO_SNPS_CREG:
+On 10/12/2018 02:47 PM, Kieran Bingham wrote:
+> Hi Vladimir,
+> 
 
-WARNING: unmet direct dependencies detected for OF_GPIO
-  Depends on [n]: GPIOLIB [=y] && OF [=n] && HAS_IOMEM [=y]
-  Selected by [y]:
-  - GPIO_SNPS_CREG [=y] && GPIOLIB [=y] && HAS_IOMEM [=y] && (ARC || COMPILE_TEST [=y])
+[snip]
 
-Drivers in drivers/gpio/Kconfig depend on OF_GPIO, not select it.
-This prevents attempting to build when OF is not enabled.
+> 
+> Essentially they are multi purpose buses - which do not yet have a home.
+> We have used media as a home because of our use case.
+> 
+> The use case whether they transfer frames from a camera or to a display
+> are of course closely related, but ultimately covered by two separate
+> subsystems at the pixel level (DRM vs V4L, or other for other data)
+> 
+> Perhaps as they are buses - on a level with USB or I2C (except they can
+> of course carry I2C or Serial as well as 'bi-directional video' etc ),
+> they are looking for their own subsystem.
+> 
+> Except I don't think we don't want to add a new subsystem for just one
+> (or two) devices...
+> 
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
-Found in mmotm but comes from/applies to linux-next.
+I suppose that the incomplete list includes Maxim GMSL, TI FPD-Link III,
+SMSC/Microchip MOST (drivers/staging/most -- what's the destination after
+exiting staging?) an Inova APIX.
 
- drivers/gpio/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20181012.orig/drivers/gpio/Kconfig
-+++ linux-next-20181012/drivers/gpio/Kconfig
-@@ -439,7 +439,7 @@ config GPIO_SIOX
- config GPIO_SNPS_CREG
- 	bool "Synopsys GPIO via CREG (Control REGisters) driver"
- 	depends on ARC || COMPILE_TEST
--	select OF_GPIO
-+	depends on OF_GPIO
- 	help
- 	  This driver supports GPIOs via CREG on various Synopsys SoCs.
- 	  This is a single-register MMIO GPIO driver for complex cases
+--
+Best wishes,
+Vladimir
