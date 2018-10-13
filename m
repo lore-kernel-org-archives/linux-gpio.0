@@ -1,53 +1,56 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
- driver
-Date: Sat, 13 Oct 2018 15:33:21 +0300
-Message-ID: <646af723-b78b-4481-50d9-e1b8f57abd79@mentor.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-5-vz@mleia.com> <20181012060314.GU4939@dell>
- <63733d2e-f95e-8894-f2b0-0b551b5cfeeb@mentor.com>
- <20181012083924.GW4939@dell>
- <eef99526-9232-8cd4-9a7c-c30114d58806@ideasonboard.com>
- <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com>
- <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: [PATCH V2 0/2] pinctrl: imx: add imx8qxp pinctrl support
+Date: Sat, 13 Oct 2018 13:32:02 +0000
+Message-ID: <1539437252-20603-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kieran.bingham@ideasonboard.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Vladimir Zapolskiy <vz@mleia.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "A.s. Dong" <aisheng.dong@nxp.com>, "dongas86@gmail.com" <dongas86@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Kieran,
+This patch series adds i.MX8QXP pinctrl support which is based
+on the pad service provided by SCU firmware.
 
-On 10/12/2018 02:47 PM, Kieran Bingham wrote:
-> Hi Vladimir,
-> 
+Note it depends on SCU APIs patch set which has already been merged by Shawn.
+So suppose this patch series can go through shawn's tree.
 
-[snip]
+Note the binding part is also merged into scu binding doc according to
+Rob's suggestion.
+https://www.spinics.net/lists/arm-kernel/msg680738.html
 
-> 
-> Essentially they are multi purpose buses - which do not yet have a home.
-> We have used media as a home because of our use case.
-> 
-> The use case whether they transfer frames from a camera or to a display
-> are of course closely related, but ultimately covered by two separate
-> subsystems at the pixel level (DRM vs V4L, or other for other data)
-> 
-> Perhaps as they are buses - on a level with USB or I2C (except they can
-> of course carry I2C or Serial as well as 'bi-directional video' etc ),
-> they are looking for their own subsystem.
-> 
-> Except I don't think we don't want to add a new subsystem for just one
-> (or two) devices...
-> 
+v1->v2:
+ * scu firmware headfile path update
+ * structure name and api usage update
+ * move SCU Pad API implementation into driver
+ * add binding headfile pad-imx8qxp.h
 
-I suppose that the incomplete list includes Maxim GMSL, TI FPD-Link III,
-SMSC/Microchip MOST (drivers/staging/most -- what's the destination after
-exiting staging?) an Inova APIX.
+Dong Aisheng (2):
+  pinctrl: fsl: add scu based pinctrl support
+  pinctrl: imx: add imx8qxp driver
 
---
-Best wishes,
-Vladimir
+ drivers/pinctrl/freescale/Kconfig           |  11 +
+ drivers/pinctrl/freescale/Makefile          |   2 +
+ drivers/pinctrl/freescale/pinctrl-imx.c     | 425 ++++++++++------
+ drivers/pinctrl/freescale/pinctrl-imx.h     |  67 ++-
+ drivers/pinctrl/freescale/pinctrl-imx8qxp.c | 232 +++++++++
+ drivers/pinctrl/freescale/pinctrl-scu.c     | 121 +++++
+ include/dt-bindings/pinctrl/pads-imx8qxp.h  | 751 ++++++++++++++++++++++++++++
+ 7 files changed, 1439 insertions(+), 170 deletions(-)
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imx8qxp.c
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-scu.c
+ create mode 100644 include/dt-bindings/pinctrl/pads-imx8qxp.h
+
+-- 
+2.7.4
