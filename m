@@ -1,84 +1,79 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
- driver
-Date: Sat, 13 Oct 2018 18:10:25 +0300
-Message-ID: <369ef3ac-6f68-c450-713f-762b1c5cd5c9@mentor.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com>
- <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
- <3599186.afdMBtdL0k@avalon>
+From: "wzabolot@elektron.elka.pw.edu.pl" <wzabolot@elektron.elka.pw.edu.pl>
+Subject: Re: Bug introduced in the of_get_named_gpiod_flags function.
+Date: Sat, 13 Oct 2018 17:53:00 +0200
+Message-ID: <efcb67bf-bdf3-e3a8-5139-0f778ea00f1d@elektron.elka.pw.edu.pl>
+References: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
+ <CACRpkdYQBxvHh-AfODddzc5G+BMBhUBSRXUdLVO8_99yniUYPQ@mail.gmail.com>
+ <5d33d03a-5d62-c8c8-c9cc-2ccbe1b464f2@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3599186.afdMBtdL0k@avalon>
+In-Reply-To: <5d33d03a-5d62-c8c8-c9cc-2ccbe1b464f2@xilinx.com>
+Content-Language: pl-PL
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: kieran.bingham@ideasonboard.com, Lee Jones <lee.jones@linaro.org>, Vladimir Zapolskiy <vz@mleia.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michal Simek <michal.simek@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, wzab@ise.pw.edu.pl, Randy Dunlap <rdunlap@infradead.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laurent,
-
-On 10/12/2018 04:01 PM, Laurent Pinchart wrote:
-> Hello Vladimir,
-> 
-> On Friday, 12 October 2018 14:47:52 EEST Kieran Bingham wrote:
->> On 12/10/18 11:58, Vladimir Zapolskiy wrote:
-
-[snip]
-
->> Essentially they are multi purpose buses - which do not yet have a home.
->> We have used media as a home because of our use case.
+On 10/12/18 10:54 AM, Michal Simek wrote:
+> Hi,
+>
+> On 11.10.2018 10:27, Linus Walleij wrote:
+>> Hi Wojciech,
 >>
->> The use case whether they transfer frames from a camera or to a display
->> are of course closely related, but ultimately covered by two separate
->> subsystems at the pixel level (DRM vs V4L, or other for other data)
+>> (Thanks also Randy for forwarding this!)
 >>
->> Perhaps as they are buses - on a level with USB or I2C (except they can
->> of course carry I2C or Serial as well as 'bi-directional video' etc ),
->> they are looking for their own subsystem.
+>> On Wed, Oct 10, 2018 at 6:32 PM wzab <wzab@ise.pw.edu.pl> wrote:
 >>
->> Except I don't think we don't want to add a new subsystem for just one
->> (or two) devices...
-> 
-> I'm not sure a new subsystem is needed. As you've noted there's an overlap 
-> between drivers/media/ and drivers/gpu/drm/ in terms of supported hardware.
-> We even have a devices supported by two drivers, one in drivers/media/ and
-> one in drivers/gpu/drm/ (I'm thinking about the adv7511 in particular).
-> This is a well known issue, and so far nothing has been done in mainline
-> to try and solve it.
+>>> The function of_get_named_gpiod_flags in older versions of the kernel
+>>> (up to 4.7.10 - https://elixir.bootlin.com/linux/v4.7.10/source/drivers/gpio/gpiolib-of.c#L75 )
+>>> contained an important workaround:
+>>>
+>>> /* .of_xlate might decide to not fill in the flags, so clear it. */if (flags)
+>>>    *flags = 0; Unfortunately, newer kernels do not contain it. Therefore if the
+>>> "xlat" function in the gpiochip driver does not set flags, (like e.g.
+>>> the Xilinx AXI GPIO driver: https://github.com/Xilinx/linux-xlnx/blob/c2ba891326bb472da59b6a2da29aca218d337687/drivers/gpio/gpio-xilinx.c#L262 )
+>>> the random, unitialized value from the stack in of_find_gpio
+>>> ( https://elixir.bootlin.com/linux/v4.18.13/source/drivers/gpio/gpiolib-of.c#L228 )
+>>> is used, which results in random settings of e.g., OPEN DRAIN or OPEN SOURCE mode.
+>>>
+>>> I have also reported the problem in the Xilinx forum:
+>>> https://forums.xilinx.com/t5/Embedded-Linux/Bug-in-of-get-named-gpiod-flags-function-in-the-kernel-random/td-p/897695
+>> It seems the commit removing this is:
+>>
+>> commit 762c2e46c0591d207289105c8718e4adf29b2b34
+>> "gpio: of: remove of_gpiochip_and_xlate() and struct gg_data"
+>>
+>> But I honestly don't see a problem with it.
+>>
+>> You are referencing an out-of-tree driver. Use the in-tree gpio-xilinx.c
+>> that does not do any custom xlate and you will be fine.
+>>
+>> I looked over the driver doing custom flag translation in the kernel tree,
+>> and they all set flags, so this is not a problem in the upstream kernel.
+> There was an attempt to sync up xilinx internal gpio driver with
+> mainline by someone else but not sure what's the status.
+> If you have issue with xilinx internal patch please talk to us.
+> If the problem is with mainline please use this mailing list.
+>
+> Thanks,
+> Michal
 
-I agree that there's an overlap between drivers/media/ and drivers/gpu/drm/,
-formally a hypothetical (sic!) DS90Ux9xx video bridge cell driver should be
-added into both subsystems also, and the actual driver of two should be
-selected in runtime. I call such a driver 'hypothetical', because in fact
-I don't have it, and I'm not so sure that its existence is justified, but
-that's only because DS90Ux9xx video bridge functionality is _transparent_,
-it does not have any controls literally, but it is a pure luck eventually.
+The question is, if there may be any other in-tree GPIO controller
+driver that does not initialize those flags?
 
-So, as I've stated in my cover letter, I can misuse yours 'lvds-encoder'
-driver only for the purpose of establishing a mediated link between 
-an LVDS controller and a panel over a serializer-deserializer pair.
+Anyway the current situation is somehow dangerous.
 
-> Trying to find another home in drivers/mfd/ to escape from the problem isn't a 
-> good solution in my opinion. The best option from a Linux point of view would 
-> be to unify V4L2 and DRM/KMS when it comes to bridge support, but that's a 
-> long way down the road (I won't complain if you want to give it a go though 
-> :-)).
+Maybe the best solution would be to initialize the automatic variable in
+the of_find_gpio?
 
-I return you a wider smile :)
+With best regards,
 
-> As your use cases are display, focused, I would propose to start with 
-> drivers/gpu/drm/bridge/, and leave the problem of camera support for first 
-> person who will have such a use case.
+Wojtek
 
-Frankly speaking I would like to start from copy-pasting your 'lvds-encoder'
-driver into an 'absolutely-transparent-video-bridge' driver with no LVDS
-or 'encoder' specifics, adding just a new compatible may suffice, if the
-driver is renamed/redefined.
-
-PS, I remember I owe you a reference OF snippet of data path to a panel.
-
---
-Best wishes,
-Vladimir
+-- 
+Wojciech M Zabolotny, PhD
+Institute of Electronic Systems
+Faculty of Electronics and Information Technology
+Warsaw University of Technology
