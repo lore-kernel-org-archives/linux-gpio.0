@@ -1,40 +1,60 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [RESEND PATCH v4 3/8] gpio: 104-dio-48e: Utilize
- for_each_set_clump macro
-Date: Mon, 15 Oct 2018 13:59:33 +0200
-Message-ID: <afbe5c62-f003-ca92-d185-8e6e9340c75d@rasmusvillemoes.dk>
-References: <cover.1538441919.git.vilhelm.gray@gmail.com>
- <5906381114b14d5b0359510a1d23accbd239eaa5.1538441919.git.vilhelm.gray@gmail.com>
- <822be05b-092b-41c2-3c31-8981acd5cb9e@rasmusvillemoes.dk>
- <20181014041933.GA7335@icarus>
+From: =?UTF-8?Q?Wojciech_Zabo=c5=82otny?= <wzab@ise.pw.edu.pl>
+Subject: Re: Bug introduced in the of_get_named_gpiod_flags function.
+Date: Mon, 15 Oct 2018 15:41:20 +0200
+Message-ID: <d8faabe9-1123-3d0e-6b7d-8335cd2b6a44@ise.pw.edu.pl>
+References: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
+ <CACRpkdYQBxvHh-AfODddzc5G+BMBhUBSRXUdLVO8_99yniUYPQ@mail.gmail.com>
+ <5d33d03a-5d62-c8c8-c9cc-2ccbe1b464f2@xilinx.com>
+ <efcb67bf-bdf3-e3a8-5139-0f778ea00f1d@elektron.elka.pw.edu.pl>
+ <CACRpkdaeBMc-wqZxh0vVXRiRMvTHDFXxOk0aaxN=swcnLBhG5w@mail.gmail.com>
+Reply-To: wzab@ise.pw.edu.pl
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181014041933.GA7335@icarus>
-Content-Language: en-US
+In-Reply-To: <CACRpkdaeBMc-wqZxh0vVXRiRMvTHDFXxOk0aaxN=swcnLBhG5w@mail.gmail.com>
+Content-Language: pl-PL
 Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: linus.walleij@linaro.org, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
+To: Linus Walleij <linus.walleij@linaro.org>, wzabolot@elektron.elka.pw.edu.pl
+Cc: Michal Simek <michal.simek@xilinx.com>, Randy Dunlap <rdunlap@infradead.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2018-10-14 06:19, William Breathitt Gray wrote:
+On 13.10.2018 18:23, Linus Walleij wrote:
+> On Sat, Oct 13, 2018 at 5:53 PM wzabolot@elektron.elka.pw.edu.pl
+> <wzabolot@elektron.elka.pw.edu.pl> wrote:
+>
+>> The question is, if there may be any other in-tree GPIO controller
+>> driver that does not initialize those flags?
+> So as I said, I looked over them and they all initialize
+> their flags.
+>
+>> Anyway the current situation is somehow dangerous.
+> Not very dangerous compared to much other kernel code.
+>
+>> Maybe the best solution would be to initialize the automatic variable in
+>> the of_find_gpio?
+> Patches welcom, make sure they are tested with mainline
+> code and drivers.
+>
+> Yours.
+> Linus Walleij
 
-> a bit value of 0 in the
-> bits array does not necessarily mean the input was not requested, but
-> may instead mean that the value at the input is 0;
+OK. So I suggested correction of the Xilinx GPIO driver so that it always sets the flags:
 
-sure enough, but...
+static int xgpio_xlate(struct gpio_chip *gc,
+		       const struct of_phandle_args *gpiospec, u32 *flags)
+{
+	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+	struct xgpio_instance *chip = container_of(mm_gc, struct xgpio_instance,
+						   mmchip);
+        if(flags)
+              * flags = 0;
 
-> therefore, the caller
-> must keep track of the requested inputs rather than try to deduce them
-> from the values in the bits array.
+	if (gpiospec->args[1] == chip->offset)
+		return gpiospec->args[0];
 
-...I don't agree that this logically follows. A caller might reasonably
-expect not to find any bits set in positions other than those in mask. A
-simple example would be caller that just tried to ask "are any of
-_these_ inputs set"; it would be reasonable to implement that using
-bitmap_empty() on the returned bitset, without first having to mask by
-the mask he passed in.
+	return -EINVAL;
+}
 
-Rasmus
+With best regards,
+Wojtek
