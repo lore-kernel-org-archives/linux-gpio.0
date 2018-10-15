@@ -1,28 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/5] pinctrl: mediatek: pinctrl-mtk-common-v2: Make eint_m u16
-Date: Mon, 15 Oct 2018 16:18:00 +0200
-Message-ID: <CACRpkdZAem09Qb_bUBk+QA5ngdjGTxqLxTtMMsSnO7rTME1Njw@mail.gmail.com>
-References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org> <20181008191411.32555-5-manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH] pinctrl: rzn1: remove unnecessary unsigned integer comparison
+Date: Mon, 15 Oct 2018 16:21:23 +0200
+Message-ID: <CACRpkdZKtK3xEyc3SG88_xp=fcotL5nC9rJoyB6FFK910Bo74Q@mail.gmail.com>
+References: <20181011204042.GA17125@embeddedor.com> <CACRpkdb9b6kxgj736OmLhBvzhR26DT+bE2Y=jGaMB3411oa3yw@mail.gmail.com>
+ <3c7f85b1-b80d-a963-f599-587dd49d1f12@embeddedor.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181008191411.32555-5-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <3c7f85b1-b80d-a963-f599-587dd49d1f12@embeddedor.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh+dt@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Amit Kucheria <amit.kucheria@linaro.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 8, 2018 at 9:14 PM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-
-> For SoC's which lacks EINT support, U16_MAX is assigned to both eint_m
-> and eint_n through macro NO_EINT_SUPPORT. This will generate integer
-> overflow warning because eint_m is declared as u8 type. Hence modify
-> the eint_m type to u16.
+On Fri, Oct 12, 2018 at 11:28 AM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> On 10/12/18 11:17 AM, Linus Walleij wrote:
+> > Sorry for top-posting, Geert is maintainer for this driver.
+> >
 >
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Oh okay.
+>
+> This is what I get when I run the get_maintainer scripts on the rzn1 driver:
+>
+> $ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback drivers/pinctrl/pinctrl-rzn1.c
+> Linus Walleij <linus.walleij@linaro.org> (maintainer:PIN CONTROL SUBSYSTEM)
+> linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM)
+> linux-kernel@vger.kernel.org (open list)
 
-Patch applied with Matthias' review tag, thanks!
+Hm I bet it needs a MAINTAINERS update.
+Geert can you assume maintainership?
 
 Yours,
 Linus Walleij
