@@ -1,60 +1,28 @@
-From: =?UTF-8?Q?Wojciech_Zabo=c5=82otny?= <wzab@ise.pw.edu.pl>
-Subject: Re: Bug introduced in the of_get_named_gpiod_flags function.
-Date: Mon, 15 Oct 2018 15:41:20 +0200
-Message-ID: <d8faabe9-1123-3d0e-6b7d-8335cd2b6a44@ise.pw.edu.pl>
-References: <90dbf770-5262-5128-e585-c44d086568f9@ise.pw.edu.pl>
- <CACRpkdYQBxvHh-AfODddzc5G+BMBhUBSRXUdLVO8_99yniUYPQ@mail.gmail.com>
- <5d33d03a-5d62-c8c8-c9cc-2ccbe1b464f2@xilinx.com>
- <efcb67bf-bdf3-e3a8-5139-0f778ea00f1d@elektron.elka.pw.edu.pl>
- <CACRpkdaeBMc-wqZxh0vVXRiRMvTHDFXxOk0aaxN=swcnLBhG5w@mail.gmail.com>
-Reply-To: wzab@ise.pw.edu.pl
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/5] pinctrl: mediatek: pinctrl-mtk-common-v2: Make eint_m u16
+Date: Mon, 15 Oct 2018 16:18:00 +0200
+Message-ID: <CACRpkdZAem09Qb_bUBk+QA5ngdjGTxqLxTtMMsSnO7rTME1Njw@mail.gmail.com>
+References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org> <20181008191411.32555-5-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaeBMc-wqZxh0vVXRiRMvTHDFXxOk0aaxN=swcnLBhG5w@mail.gmail.com>
-Content-Language: pl-PL
+In-Reply-To: <20181008191411.32555-5-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, wzabolot@elektron.elka.pw.edu.pl
-Cc: Michal Simek <michal.simek@xilinx.com>, Randy Dunlap <rdunlap@infradead.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh+dt@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Amit Kucheria <amit.kucheria@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 13.10.2018 18:23, Linus Walleij wrote:
-> On Sat, Oct 13, 2018 at 5:53 PM wzabolot@elektron.elka.pw.edu.pl
-> <wzabolot@elektron.elka.pw.edu.pl> wrote:
+On Mon, Oct 8, 2018 at 9:14 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+
+> For SoC's which lacks EINT support, U16_MAX is assigned to both eint_m
+> and eint_n through macro NO_EINT_SUPPORT. This will generate integer
+> overflow warning because eint_m is declared as u8 type. Hence modify
+> the eint_m type to u16.
 >
->> The question is, if there may be any other in-tree GPIO controller
->> driver that does not initialize those flags?
-> So as I said, I looked over them and they all initialize
-> their flags.
->
->> Anyway the current situation is somehow dangerous.
-> Not very dangerous compared to much other kernel code.
->
->> Maybe the best solution would be to initialize the automatic variable in
->> the of_find_gpio?
-> Patches welcom, make sure they are tested with mainline
-> code and drivers.
->
-> Yours.
-> Linus Walleij
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-OK. So I suggested correction of the Xilinx GPIO driver so that it always sets the flags:
+Patch applied with Matthias' review tag, thanks!
 
-static int xgpio_xlate(struct gpio_chip *gc,
-		       const struct of_phandle_args *gpiospec, u32 *flags)
-{
-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-	struct xgpio_instance *chip = container_of(mm_gc, struct xgpio_instance,
-						   mmchip);
-        if(flags)
-              * flags = 0;
-
-	if (gpiospec->args[1] == chip->offset)
-		return gpiospec->args[0];
-
-	return -EINVAL;
-}
-
-With best regards,
-Wojtek
+Yours,
+Linus Walleij
