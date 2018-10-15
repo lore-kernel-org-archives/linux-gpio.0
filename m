@@ -1,110 +1,84 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFT PATCH] mmc: pwrseq_simple: Fix incorrect handling of GPIO
- bitmap
-Date: Mon, 15 Oct 2018 10:32:08 +0200
-Message-ID: <20181015083209eucas1p2fb3d1961745fdb3007dec317c6441142~duxEkRvmp2005320053eucas1p2D@eucas1p2.samsung.com>
-References: <20180925192433.1377-1-jmkrzyszt@gmail.com>
-        <CGME20181012190748epcas5p3dc41f6d0f9c69f22351209b2e7ea66f3@epcas5p3.samsung.com>
-        <20181012190901.1243-1-jmkrzyszt@gmail.com>
+From: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+Subject: Re: [PATCH V3 1/2] dt-bindings: pinctrl: document Broadcom Northstar
+ pin mux controller
+Date: Mon, 15 Oct 2018 10:56:41 +0200
+Message-ID: <7f08ed7bf11a22163bdfd56ff96a9262@milecki.pl>
+References: <20180926193103.21241-1-zajec5@gmail.com>
+ <20181011222229.GA7470@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181012190901.1243-1-jmkrzyszt@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, NXP Linux Team <linux-imx@nxp.com>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181011222229.GA7470@bogus>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Janusz,
-
-On 2018-10-12 21:09, Janusz Krzysztofik wrote:
-> Commit b9762bebc633 ("gpiolib: Pass bitmaps, not integer arrays, to
-> get/set array") changed the way GPIO values are passed to
-> gpiod_get/set_array_value() and friends.  The new code introduced into
-> mmc_pwrseq_simple_set_gpios_value() incorrectly interpretes the 'value'
-> argument as a bitmap of GPIO values and assigns it directly to the
-> 'values' bitmap variable passed to gpiod_set_array_value_cansleep()
-> instead of filling that bitmap with bits equal to the 'value' argument.
-> As a result, only member 0 of the array is handled correctly.
->
-> Moreover, wrong assumption is taken about the 'values' bitmap size not
-> exceding the number of bits of the 'value' argument type.
->
-> Fix it.
->
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> ---
-> Hi,
->
-> I think that patch has been missed while we were resolving issues 
-> related to GPIO fast bitmap processing.  Since all issues other than the 
-> one addreessed by this patch have been been hopefully identified and 
-> fixed, GPIO tree seems now to be in good shape in regard to that. 
-> However, I believe pwrseq_simple is still broken.  Hence, I'm 
-> resubmitting this patch to Ulf for inclusion in MMC tree, Cc: many other 
-> people who are kindly requested to test it if possible.
->
-> I've identified the following DT files representing devices which may be 
-> affected (have more than one GPIO assigned to pwrseq_simple):
-> - arch/arm/boot/dts/imx6qdl-sr-som-brcm.dtsi
-> - arch/arm/boot/dts/exynos5250-snow-common.dtsi
-
-On Samsung Snow Chromebook it doesn't change anything. Board boots and
-detects WiFi SDIO card before and after applying it on top on Linux
-next-20181012.
-
-Tested-by: Marek Szyprowski <m.szyprowski
-
-> - arch/arm/boot/dts/imx6sl-warp.dts
-> - arch/arm/boot/dts/omap3-igep0030.dts
-> - arch/arm/boot/dts/omap3-igep0020.dts
-> - arch/arm/boot/dts/rk3036-kylin.dts
-> - arch/arm64/boot/dts/rockchip/rk3368-r88.dts
-> - arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
->
-> Please start with checking if pwrseq_simple from linux-next works for 
-> you and if not, please test if this patch fixes the issue.
->
-> Thanks,
-> Janusz
->
->
->  drivers/mmc/core/pwrseq_simple.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
-> index 7f882a2bb872..ece34c734693 100644
-> --- a/drivers/mmc/core/pwrseq_simple.c
-> +++ b/drivers/mmc/core/pwrseq_simple.c
-> @@ -40,13 +40,22 @@ static void mmc_pwrseq_simple_set_gpios_value(struct mmc_pwrseq_simple *pwrseq,
->  	struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
->  
->  	if (!IS_ERR(reset_gpios)) {
-> -		DECLARE_BITMAP(values, BITS_PER_TYPE(value));
-> +		unsigned long *values;
->  		int nvalues = reset_gpios->ndescs;
->  
-> -		values[0] = value;
-> +		values = bitmap_alloc(nvalues, GFP_KERNEL);
-> +		if (!values)
-> +			return;
-> +
-> +		if (value)
-> +			bitmap_fill(values, nvalues);
-> +		else
-> +			bitmap_zero(values, nvalues);
->  
->  		gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
->  					       reset_gpios->info, values);
-> +
-> +		kfree(values);
->  	}
->  }
->  
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+T24gMjAxOC0xMC0xMiAwMDoyMiwgUm9iIEhlcnJpbmcgd3JvdGU6Cj4gT24gV2VkLCBTZXAgMjYs
+IDIwMTggYXQgMDk6MzE6MDJQTSArMDIwMCwgUmFmYcWCIE1pxYJlY2tpIHdyb3RlOgo+PiBGcm9t
+OiBSYWZhxYIgTWnFgmVja2kgPHJhZmFsQG1pbGVja2kucGw+Cj4+IAo+PiBOb3J0aHN0YXIgaGFz
+IG11eCBjb250cm9sbGVyIGp1c3QgbGlrZSBOb3J0aHN0YXIgUGx1cyBhbmQgTm9ydGhzdGFyMi4K
+Pj4gSXQncyBhIGJpdCBkaWZmZXJlbnQgdGhvdWdoIChkaWZmZXJlbnQgcmVnaXN0ZXJzICYgcGlu
+cykgc28gaXQgCj4+IHJlcXVpcmVzCj4+IGl0cyBvd24gYmluZGluZy4KPj4gCj4+IEl0J3MgbmVl
+ZGVkIHRvIGFsbG93IG90aGVyIGJsb2NrIGJpbmRpbmdzIHNwZWNpZnkgcmVxdWlyZWQgbXV4IHNl
+dHVwLgo+PiAKPj4gU2lnbmVkLW9mZi1ieTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tp
+LnBsPgo+PiBSZXZpZXdlZC1ieTogRmxvcmlhbiBGYWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5j
+b20+Cj4+IC0tLQo+PiBWMjogVXNlICJjcnVfZ3Bpb19jb250cm9sIgo+PiAgICAgQWRkIG1vcmUg
+ZnVuY3Rpb25zICYgZ3JvdXBzCj4+ICAgICBJbmNsdWRlIEZsb3JpYW4ncyBSZXZpZXdlZC1ieQo+
+PiBWMzogVXNlIDMgZGlmZmVyZW50IGJpbmRpbmdzIGFzIGF2YWlsYWJsZSBwaW5zIGRlcGVuZCBv
+biB0aGUgY2hpcHNldC4KPj4gICAgIFN0cmluZ3MgbWF0Y2ggCj4+IERvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9hcm0vYmNtL2JyY20sYmNtNDcwOC50eHQKPj4gLS0tCj4+ICAuLi4v
+YmluZGluZ3MvcGluY3RybC9icmNtLGJjbTQ3MDgtcGlubXV4LnR4dCAgICAgICB8IDQyIAo+PiAr
+KysrKysrKysrKysrKysrKysrKysrCj4+ICAxIGZpbGUgY2hhbmdlZCwgNDIgaW5zZXJ0aW9ucygr
+KQo+PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IAo+PiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvcGluY3RybC9icmNtLGJjbTQ3MDgtcGlubXV4LnR4dAo+PiAKPj4gZGlmZiAtLWdpdCAK
+Pj4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9icmNtLGJjbTQ3
+MDgtcGlubXV4LnR4dCAKPj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGlu
+Y3RybC9icmNtLGJjbTQ3MDgtcGlubXV4LnR4dAo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+PiBp
+bmRleCAwMDAwMDAwMDAwMDAuLmFmOTA2ZjE5NmU4Ywo+PiAtLS0gL2Rldi9udWxsCj4+ICsrKyAK
+Pj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9icmNtLGJjbTQ3
+MDgtcGlubXV4LnR4dAo+PiBAQCAtMCwwICsxLDQyIEBACj4+ICtCcm9hZGNvbSBOb3J0aHN0YXIg
+cGlucyBtdXggY29udHJvbGxlcgo+PiArCj4+ICtTb21lIG9mIE5vcnRoc3RhciBTb0NzJ3MgcGlu
+cyBjYW4gYmUgdXNlZCBmb3IgdmFyaW91cyBwdXJwb3NlcyB0aGFua3MgCj4+IHRvIHRoZSBtdXgK
+Pj4gK2NvbnRyb2xsZXIuIFRoaXMgYmluZGluZyBhbGxvd3MgZGVzY3JpYmluZyBtdXggY29udHJv
+bGxlciBhbmQgbGlzdGluZyAKPj4gYXZhaWxhYmxlCj4+ICtmdW5jdGlvbnMuIFRoZXkgY2FuIGJl
+IHJlZmVyZW5jZWQgbGF0ZXIgYnkgb3RoZXIgYmluZGluZ3MgdG8gbGV0IAo+PiBzeXN0ZW0KPj4g
+K2NvbmZpZ3VyZSBjb250cm9sbGVyIGNvcnJlY3RseS4KPj4gKwo+PiArQSBsaXN0IG9mIHBpbnMg
+dmFyaWVzIGFjcm9zcyBjaGlwc2V0cyBzbyBmZXcgYmluZGluZ3MgYXJlIGF2YWlsYWJsZS4KPj4g
+Kwo+PiArUmVxdWlyZWQgcHJvcGVydGllczoKPj4gKy0gY29tcGF0aWJsZTogbXVzdCBiZSBvbmUg
+b2Y6Cj4+ICsJImJyY20sYmNtNDcwOC1waW5tdXgiCj4+ICsJImJyY20sYmNtNDcwOS1waW5tdXgi
+Cj4+ICsJImJyY20sYmNtNTMwMTItcGlubXV4Igo+PiArLSByZWc6IGlvbWVtIGFkZHJlc3MgcmFu
+Z2Ugb2YgQ1JVIChDZW50cmFsIFJlc291cmNlIFVuaXQpIHBpbiAKPj4gcmVnaXN0ZXJzCj4gCj4g
+UGVyaGFwcyAnY3J1JyBpbiB0aGUgY29tcGF0aWJsZSBpZiB0aGF0J3Mgd2hhdCB0aGUgaC93IGlz
+IGNhbGxlZD8KPiAKPiBBbHNvLCBpZiB0aGlzIGlzIGEgc3ViLWJsb2NrLCB0aGVuIGl0IHNob3Vs
+ZCBiZSBhIGNoaWxkIG9mIHRoZSBibG9jawo+IHdoaWNoIHNob3VsZCBiZSBkZWZpbmVkIGhlcmUu
+CgpJdCB0b29rIG1lIHNvbWUgdGltZSB0byBkbyBzb21lIGV4dHJhIHJlc2VhcmNoIG9uIHRoZSB3
+aG9sZSBDUlUgdGhpbmcuCgpWYWx1YWJsZSByZXNvdXJjZXM6ClsxXSBiY201MzAxeF9kbXUuYyAo
+ZnJvbSB0aGUgU0RLKQpbMl0gYmNtNTMwMXhfcGNpZS5jIChmcm9tIHRoZSBTREspClszXSBodHRw
+czovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzc4ODg2NTEvCls0XSBodHRwczovL3BhdGNo
+d29yay5rZXJuZWwub3JnL3BhdGNoLzUwNTE0NzEvCgpGaXJzdCBvZiBhbGwgQ1JVIHNlZW1zIHRv
+IGJlIGEgc3ViLWJsb2NrIG9mIHRoZSBETVUgKHdoaWNoIHN0YW5kcyBmb3IKIkRldmljZSBNYW5h
+Z2VtZW50IFVuaXQiIGFjY29yZGluZyB0byB0aGUgWzFdKS4gRE1VIHNlZW1zIHRvIGJlCmluZGVw
+ZW5kZW50IGJsb2NrIGF0IDB4MTgwMGMwMDAgd2l0aCBhIHNpemUgb2YgMHgxMDAwLgoKSXQgaXNu
+J3QgYWN0dWFsbHkgY2xlYXIgd2hhdCB0aGUgQ1JVIHN0YW5kcyBmb3IuIEluIEJyb2FkY29tJ3Mg
+Y2FzZToKMS4gQWNjb3JkaW5nIHRvIHRoZSBbM10gaXQncyAiQ2xvY2sgYW5kIFJlc2V0IFVuaXQi
+CjIuIEFjY29yZGluZyB0byB0aGUgWzRdIGl0J3MgYSAiY2VudHJhbCByZXNvdXJjZSB1bml0IgpP
+dGhlciB2ZW5kb3JzIHNlZW0gdG8gdXNlIENSVSBuYW1lIGZvciAiQ2xvY2sgYW5kIFJlc2V0IFVu
+aXQiLgoKSW4gYW55IGNhc2UsIHlvdSdyZSByaWdodCBSb2IsIGl0J3MgYSBzdWItYmxvY2ssIGEg
+c2V0IG9mIHJhbmRvbQpyZWdpc3RlcnMgdGhhdCBjb250cm9sIFNvQy4KClNvIEkgdGhpbmsgdGhh
+dDoKMSkgV2Ugc2hvdWxkIGhhdmUgYSBub2RlIGZvciBETVUgYW5kIENSVQoyKSBXZSBzaG91bGQg
+bm90IGluY2x1ZGUgImNydSIgaW4gYmluZGluZ3MgYXMgcGlubXV4aW5nIHNlZW1zIHRvIGJlIHBh
+cnQKICAgIG9mIFNvQyB0aGF0IGp1c3QgaGFwcGVucyB0byBiZSBjb250cm9sbGVkIHVzaW5nIENS
+VSByZWdpc3RlcnMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
+aW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2xpbnV4LWFybS1rZXJuZWwK
