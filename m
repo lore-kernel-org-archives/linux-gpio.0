@@ -1,16 +1,11 @@
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V2 2/2] pinctrl: imx: add imx8qxp driver
-Date: Mon, 15 Oct 2018 09:17:59 +0000
-Message-ID: <AM0PR04MB42113287716E78582C7E513D80FD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1539437252-20603-1-git-send-email-aisheng.dong@nxp.com>
- <1539437252-20603-3-git-send-email-aisheng.dong@nxp.com>
- <20181015070648.7ss65nv7ozrsypj2@pengutronix.de>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+Subject: [PATCH] dt-bindings: pinctrl: bcm4708-pinmux: improve example binding
+Date: Mon, 15 Oct 2018 11:30:13 +0200
+Message-ID: <20181015093013.31651-1-zajec5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181015070648.7ss65nv7ozrsypj2@pengutronix.de>
-Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,52 +15,40 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: "dongas86@gmail.com" <dongas86@gmail.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Fabio Estevam <festevam@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-[...]
-
-> > diff --git a/include/dt-bindings/pinctrl/pads-imx8qxp.h
-> > b/include/dt-bindings/pinctrl/pads-imx8qxp.h
-> > new file mode 100644
-> > index 0000000..8f477c3
-> > --- /dev/null
-> > +++ b/include/dt-bindings/pinctrl/pads-imx8qxp.h
-> > @@ -0,0 +1,751 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > +/*
-> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> > + * Copyright 2017~2018 NXP
-> > + */
-> > +
-> > +#ifndef _SC_PADS_H
-> > +#define _SC_PADS_H
-> > +
-> > +/* pin id */
-> > +#define SC_P_PCIE_CTRL0_PERST_B                  0
-> 
-> As said in the thread adding board support: These should have a proper
-> IMX8QP_ prefix.
-> 
-
-Yes, I will add them, thanks for the suggestion.
-
-Regards
-Dong Aisheng
-
-> Sascha
-> 
-> --
-> Pengutronix e.K.                           |
-> |
-> Industrial Linux Solutions                 |
-> https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.
-> pengutronix.de%2F&amp;data=02%7C01%7Caisheng.dong%40nxp.com%7C49
-> 46ed233f5a4432d45508d6326cc8f9%7C686ea1d3bc2b4c6fa92cd99c5c3016
-> 35%7C0%7C0%7C636751840141389833&amp;sdata=YtJ2ODYWvV%2F4%2Bj
-> v%2FY1foOogv0ncuUc5KE6SPhEX0aVg%3D&amp;reserved=0  |
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0
-> |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:
-> +49-5121-206917-5555 |
+RnJvbTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgoKQnJvYWRjb20gU29DIHBp
+bnMgYXJlIGNvbnRyb2xsZWQgdXNpbmcgQ1JVICgiQ2xvY2sgYW5kIFJlc2V0IFVuaXQiIG9yCiJD
+ZW50cmFsIFJlc291cmNlIFVuaXQiKSByZWdpc3RlcnMuIFRoZXJlIGFyZSBtb3JlIENSVSByZWdp
+c3RlcnMgYW5kCmZ1bmN0aW9ucyBzbyBDUlUgc2hvdWxkIGJlIHJlcHJlc2VudGVkIGFzIGEgc2Vw
+YXJhdGVkIGJsb2NrIGluIERULgoKTW9yZW92ZXIgQ1JVIGlzIGEgc3ViLWJsb2NrIG9mIERNVSAo
+IkRldmljZSBNYW5hZ2VtZW50IFVuaXQiKSBzbyB0aGF0Cm9uZSBzaG91bGQgYWxzbyBnZXQgaXRz
+IG93biBub2RlLgoKU2lnbmVkLW9mZi1ieTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tp
+LnBsPgotLS0KIC4uLi9iaW5kaW5ncy9waW5jdHJsL2JyY20sYmNtNDcwOC1waW5tdXgudHh0ICAg
+ICAgIHwgMzEgKysrKysrKysrKysrKysrKy0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDIzIGluc2Vy
+dGlvbnMoKyksIDggZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvYnJjbSxiY200NzA4LXBpbm11eC50eHQgYi9Eb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9icmNtLGJjbTQ3MDgtcGlubXV4LnR4
+dAppbmRleCBhZjkwNmYxOTZlOGMuLjBjZTEzMmM3ZTA0YyAxMDA2NDQKLS0tIGEvRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvYnJjbSxiY200NzA4LXBpbm11eC50eHQK
+KysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvYnJjbSxiY200
+NzA4LXBpbm11eC50eHQKQEAgLTMwLDEzICszMCwyOCBAQCBGb3IgZG9jdW1lbnRhdGlvbiBvZiBz
+dWJub2RlcyBzZWU6CiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9w
+aW5jdHJsLWJpbmRpbmdzLnR4dAogCiBFeGFtcGxlOgotCXBpbmN0cmxAMTgwMGMxYzAgewotCQlj
+b21wYXRpYmxlID0gImJyY20sYmNtNDcwOC1waW5tdXgiOwotCQlyZWcgPSA8MHgxODAwYzFjMCAw
+eDI0PjsKLQkJcmVnLW5hbWVzID0gImNydV9ncGlvX2NvbnRyb2wiOwotCi0JCXNwaSB7Ci0JCQlm
+dW5jdGlvbiA9ICJzcGkiOwotCQkJZ3JvdXBzID0gInNwaV9ncnAiOworCWRtdUAxODAwYzAwMCB7
+CisJCWNvbXBhdGlibGUgPSAic2ltcGxlLWJ1cyI7CisJCXJhbmdlcyA9IDwwIDB4MTgwMGMwMDAg
+MHgxMDAwPjsKKwkJI2FkZHJlc3MtY2VsbHMgPSA8MT47CisJCSNzaXplLWNlbGxzID0gPDE+Owor
+CisJCWNydUAxMDAgeworCQkJY29tcGF0aWJsZSA9ICJzaW1wbGUtYnVzIjsKKwkJCXJlZyA9IDww
+eDEwMCAweDFhND47CisJCQlyYW5nZXM7CisJCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKKwkJCSNz
+aXplLWNlbGxzID0gPDE+OworCisgCQkJcGluLWNvbnRyb2xsZXJAMWMwIHsKKwkJCQljb21wYXRp
+YmxlID0gImJyY20sYmNtNDcwOC1waW5tdXgiOworCQkJCXJlZyA9IDwweDFjMCAweDI0PjsKKwkJ
+CQlyZWctbmFtZXMgPSAiY3J1X2dwaW9fY29udHJvbCI7CisKKwkJCQlzcGktcGlucyB7CisJCQkJ
+CWZ1bmN0aW9uID0gInNwaSI7CisJCQkJCWdyb3VwcyA9ICJzcGlfZ3JwIjsKKwkJCQl9OworCQkJ
+fTsKIAkJfTsKIAl9OwotLSAKMi4xMy43CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJt
+LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21h
+aWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
