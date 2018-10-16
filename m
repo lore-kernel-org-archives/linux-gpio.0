@@ -1,84 +1,110 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD driver
-Date: Tue, 16 Oct 2018 16:12:02 +0300
-Message-ID: <6392366.NPbusjoGUK@avalon>
-References: <20181008211205.2900-1-vz@mleia.com> <3599186.afdMBtdL0k@avalon> <369ef3ac-6f68-c450-713f-762b1c5cd5c9@mentor.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 5/5] pinctrl: mediatek: Add initial pinctrl driver for
+ MT6797 SoC
+Date: Tue, 16 Oct 2018 15:58:41 +0200
+Message-ID: <e7abee72-23a3-4716-baf0-484514bbb019@gmail.com>
+References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
+ <20181008191411.32555-6-manivannan.sadhasivam@linaro.org>
+ <c8d65395-c60c-5d06-92ad-c389642c22ba@gmail.com>
+ <20181011164429.GA18174@Mani-XPS-13-9360>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <369ef3ac-6f68-c450-713f-762b1c5cd5c9@mentor.com>
+In-Reply-To: <20181011164429.GA18174@Mani-XPS-13-9360>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: kieran.bingham@ideasonboard.com, Lee Jones <lee.jones@linaro.org>, Vladimir Zapolskiy <vz@mleia.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: sean.wang@mediatek.com, linus.walleij@linaro.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org, Mars Cheng <mars.cheng@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Vladimir,
 
-On Saturday, 13 October 2018 18:10:25 EEST Vladimir Zapolskiy wrote:
-> On 10/12/2018 04:01 PM, Laurent Pinchart wrote:
-> > On Friday, 12 October 2018 14:47:52 EEST Kieran Bingham wrote:
-> >> On 12/10/18 11:58, Vladimir Zapolskiy wrote:
-> [snip]
-> 
-> >> Essentially they are multi purpose buses - which do not yet have a home.
-> >> We have used media as a home because of our use case.
-> >> 
-> >> The use case whether they transfer frames from a camera or to a display
-> >> are of course closely related, but ultimately covered by two separate
-> >> subsystems at the pixel level (DRM vs V4L, or other for other data)
-> >> 
-> >> Perhaps as they are buses - on a level with USB or I2C (except they can
-> >> of course carry I2C or Serial as well as 'bi-directional video' etc ),
-> >> they are looking for their own subsystem.
-> >> 
-> >> Except I don't think we don't want to add a new subsystem for just one
-> >> (or two) devices...
-> > 
-> > I'm not sure a new subsystem is needed. As you've noted there's an overlap
-> > between drivers/media/ and drivers/gpu/drm/ in terms of supported
-> > hardware. We even have a devices supported by two drivers, one in drivers/
-> > media/ and one in drivers/gpu/drm/ (I'm thinking about the adv7511 in
-> > particular). This is a well known issue, and so far nothing has been done
-> > in mainline to try and solve it.
-> 
-> I agree that there's an overlap between drivers/media/ and drivers/gpu/drm/,
-> formally a hypothetical (sic!) DS90Ux9xx video bridge cell driver should be
-> added into both subsystems also, and the actual driver of two should be
-> selected in runtime. I call such a driver 'hypothetical', because in fact I
-> don't have it, and I'm not so sure that its existence is justified, but
-> that's only because DS90Ux9xx video bridge functionality is _transparent_,
-> it does not have any controls literally, but it is a pure luck eventually.
 
-I don't think that's entirely correct, there's at least the video bus width 
-(18-bit/24-bit) that needs to be selected. You currently do so through a 
-pinctrl property, but that's not right.
+On 11/10/2018 18:44, Manivannan Sadhasivam wrote:
+> On Thu, Oct 11, 2018 at 05:50:19PM +0200, Matthias Brugger wrote:
+>>
+>>
+>> On 08/10/2018 21:14, Manivannan Sadhasivam wrote:
+>>> Add initial pinctrl driver for Mediatek MT6797 SoC supporting only
+>>> GPIO and pinmux configurations.
+>>>
+>>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>> ---
+>>>  drivers/pinctrl/mediatek/Kconfig              |    7 +
+>>>  drivers/pinctrl/mediatek/Makefile             |    1 +
+>>>  drivers/pinctrl/mediatek/pinctrl-mt6797.c     |   82 +
+>>>  drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h | 2430 +++++++++++++++++
+>>>  4 files changed, 2520 insertions(+)
+>>>  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6797.c
+>>>  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+>>>
+>> [...]
+>>> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+>>> new file mode 100644
+>>> index 000000000000..8949d2a15c39
+>>> --- /dev/null
+>>> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+>>> @@ -0,0 +1,2430 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/*
+>>> + * Based on pinctrl-mtk-mt6765.h
+>>> + *
+>>> + * Copyright (C) 2018 MediaTek Inc.
+>>> + *
+>>> + * Author: ZH Chen <zh.chen@mediatek.com>
+>>> + *
+>>> + * Copyright (c) 2018 Manivannan Sadhasivam
+>>> + */
+>>> +
+>>> +#ifndef __PINCTRL_MTK_MT6797_H
+>>> +#define __PINCTRL_MTK_MT6797_H
+>>> +
+>>> +#include "pinctrl-paris.h"
+>>> +
+>>> +static const struct mtk_pin_desc mtk_pins_mt6797[] = {
+>>> +	MTK_PIN(
+>>> +		0, "GPIO0",
+>>> +		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
+>>> +		DRV_GRP3,
+>>
+>> As far as I have seen, you put all pins in driving group 3, but from the public
+>> available "Functional Specification" (page 51-81) I can see that there exist
+>> several driving groups:
+>> 2/4/6/8 mA (DRV_GRP3)
+>> 4/8/12/16 mA (not sure which group this is)
+>> 2/4/6/8/10/12/14/16 mA (DRV_GRP4).
+>>
+> 
+> Not sure about that. But I derived the configuration from DRV_CFGx
+> registers available in "Application Software Register Table - Part 1"
+> from page no: 906.
+> 
+> This register supports 2/4/6/8mA and this belongs to DRV_GRP2/DRV_GRP3
+> [1].
 
-> So, as I've stated in my cover letter, I can misuse yours 'lvds-encoder'
-> driver only for the purpose of establishing a mediated link between
-> an LVDS controller and a panel over a serializer-deserializer pair.
-> 
-> > Trying to find another home in drivers/mfd/ to escape from the problem
-> > isn't a good solution in my opinion. The best option from a Linux point
-> > of view would be to unify V4L2 and DRM/KMS when it comes to bridge
-> > support, but that's a long way down the road (I won't complain if you
-> > want to give it a go though> 
-> > :-)).
-> 
-> I return you a wider smile :)
-> 
-> > As your use cases are display, focused, I would propose to start with
-> > drivers/gpu/drm/bridge/, and leave the problem of camera support for first
-> > person who will have such a use case.
-> 
-> Frankly speaking I would like to start from copy-pasting your 'lvds-encoder'
-> driver into an 'absolutely-transparent-video-bridge' driver with no LVDS or
-> 'encoder' specifics, adding just a new compatible may suffice, if the
-> driver is renamed/redefined.
-> 
-> PS, I remember I owe you a reference OF snippet of data path to a panel.
+I can see other driving groups as defined in the "Functional Specification" [1]
+which gets also reflected in the "Application Software Register Table - Part 1"
+[2], see for example page 852.
 
--- 
+CCing Mars, maybe he can help to clarify.
+
 Regards,
+Matthias
 
-Laurent Pinchart
+[1]
+https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Functional_Specification_V1_0.pdf
+[2]
+https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Register_Table_Part_1.pdf
+
+> 
+> Still I'm not fully confident of my choice here. Maybe Sean can throw
+> some inputs!
+> 
+> Thanks,
+> Mani
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c#n40
+> 
+>> Regards,
+>> Matthias
+>>
