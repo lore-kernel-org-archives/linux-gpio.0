@@ -1,110 +1,102 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 5/5] pinctrl: mediatek: Add initial pinctrl driver for
- MT6797 SoC
-Date: Tue, 16 Oct 2018 15:58:41 +0200
-Message-ID: <e7abee72-23a3-4716-baf0-484514bbb019@gmail.com>
-References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
- <20181008191411.32555-6-manivannan.sadhasivam@linaro.org>
- <c8d65395-c60c-5d06-92ad-c389642c22ba@gmail.com>
- <20181011164429.GA18174@Mani-XPS-13-9360>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 5/7] mfd: ds90ux9xx: add I2C bridge/alias and link connection driver
+Date: Tue, 16 Oct 2018 17:06:06 +0300
+Message-ID: <2291401.VxyBGcGQdW@avalon>
+References: <20181008211205.2900-1-vz@mleia.com> <1584081.CVFmJobd6K@avalon> <0be75b0d-eb61-02e5-a086-be6a9d32841a@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181011164429.GA18174@Mani-XPS-13-9360>
-Content-Language: en-US
+In-Reply-To: <0be75b0d-eb61-02e5-a086-be6a9d32841a@mleia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: sean.wang@mediatek.com, linus.walleij@linaro.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org, Mars Cheng <mars.cheng@mediatek.com>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Vladimir,
 
-
-On 11/10/2018 18:44, Manivannan Sadhasivam wrote:
-> On Thu, Oct 11, 2018 at 05:50:19PM +0200, Matthias Brugger wrote:
->>
->>
->> On 08/10/2018 21:14, Manivannan Sadhasivam wrote:
->>> Add initial pinctrl driver for Mediatek MT6797 SoC supporting only
->>> GPIO and pinmux configurations.
->>>
->>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->>> ---
->>>  drivers/pinctrl/mediatek/Kconfig              |    7 +
->>>  drivers/pinctrl/mediatek/Makefile             |    1 +
->>>  drivers/pinctrl/mediatek/pinctrl-mt6797.c     |   82 +
->>>  drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h | 2430 +++++++++++++++++
->>>  4 files changed, 2520 insertions(+)
->>>  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6797.c
->>>  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
->>>
->> [...]
->>> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
->>> new file mode 100644
->>> index 000000000000..8949d2a15c39
->>> --- /dev/null
->>> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
->>> @@ -0,0 +1,2430 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +/*
->>> + * Based on pinctrl-mtk-mt6765.h
->>> + *
->>> + * Copyright (C) 2018 MediaTek Inc.
->>> + *
->>> + * Author: ZH Chen <zh.chen@mediatek.com>
->>> + *
->>> + * Copyright (c) 2018 Manivannan Sadhasivam
->>> + */
->>> +
->>> +#ifndef __PINCTRL_MTK_MT6797_H
->>> +#define __PINCTRL_MTK_MT6797_H
->>> +
->>> +#include "pinctrl-paris.h"
->>> +
->>> +static const struct mtk_pin_desc mtk_pins_mt6797[] = {
->>> +	MTK_PIN(
->>> +		0, "GPIO0",
->>> +		MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
->>> +		DRV_GRP3,
->>
->> As far as I have seen, you put all pins in driving group 3, but from the public
->> available "Functional Specification" (page 51-81) I can see that there exist
->> several driving groups:
->> 2/4/6/8 mA (DRV_GRP3)
->> 4/8/12/16 mA (not sure which group this is)
->> 2/4/6/8/10/12/14/16 mA (DRV_GRP4).
->>
+On Friday, 12 October 2018 17:36:39 EEST Vladimir Zapolskiy wrote:
+> On 10/12/2018 04:12 PM, Laurent Pinchart wrote:
+> > On Friday, 12 October 2018 10:32:32 EEST Vladimir Zapolskiy wrote:
+> >> On 10/12/2018 09:04 AM, Lee Jones wrote:
+> >>> On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
+> >>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> >>>> 
+> >>>> The change adds TI DS90Ux9xx I2C bridge/alias subdevice driver and
+> >>>> FPD Link connection handling mechanism.
+> >>>> 
+> >>>> Access to I2C devices connected to a remote de-/serializer is done in
+> >>>> a transparent way, on established link detection event such devices
+> >>>> are registered on an I2C bus, which serves a local de-/serializer IC.
+> >>>> 
+> >>>> The development of the driver was a collaborative work, the
+> >>>> contribution done by Balasubramani Vivekanandan includes:
+> >>>> * original simplistic implementation of the driver,
+> >>>> * support of implicitly specified devices in device tree,
+> >>>> * support of multiple FPD links for TI DS90Ux9xx,
+> >>>> * other kind of valuable review comments, clean-ups and fixes.
+> >>>> 
+> >>>> Also Steve Longerbeam made the following changes:
+> >>>> * clear address maps after linked device removal,
+> >>>> * disable pass-through in disconnection,
+> >>>> * qualify locked status with non-zero remote address.
+> >>>> 
+> >>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> >>>> ---
+> >>>> 
+> >>>>  drivers/mfd/Kconfig                |   8 +
+> >>>>  drivers/mfd/Makefile               |   1 +
+> >>>>  drivers/mfd/ds90ux9xx-i2c-bridge.c | 764 +++++++++++++++++++++++++++++
+> >>>>  3 files changed, 773 insertions(+)
+> >>>>  create mode 100644 drivers/mfd/ds90ux9xx-i2c-bridge.c
+> >>> 
+> >>> Shouldn't this live in drivers/i2c?
+> >> 
+> >> no, the driver is not for an I2C controller of any kind, and the driver
+> >> does not register itself in the I2C subsystem by calling
+> >> i2c_add_adapter() or i2c_add_numbered_adapter() or i2c_mux_add_adapter()
+> >> etc, this topic was discussed with Wolfram also.
+> > 
+> > (Who is now on CC)
 > 
-> Not sure about that. But I derived the configuration from DRV_CFGx
-> registers available in "Application Software Register Table - Part 1"
-> from page no: 906.
+> Wolfram has copies of the drivers and discussion right from the beginning,
+> hopefully he won't get two copies ;)
 > 
-> This register supports 2/4/6/8mA and this belongs to DRV_GRP2/DRV_GRP3
-> [1].
+> >> Formally the driver converts the managed IC into a multi-address I2C
+> >> slave device, I understand that it does not sound like a well suited
+> >> driver for MFD, but ds90ux9xx-core.c and ds90ux9xx-i2c-bridge.c drivers
+> >> are quite tightly coupled.
+> > 
+> > As mentioned in other e-mails in this thread I don't think this should be
+> > split out to a separate driver,> I would move the functionality to the
+> > ds90ux9xx driver.
+> 
+> The proposal may have the grounds, but the I2C bridging functionality of ICs
+> is quite detached from all other ones, thus it found its place in the cell
+> driver per se.
+> 
+> > You may want to register an I2C mux, but as you have a single port, that
+> > could be overkill. I haven't studied in details how to best support this
+> > chip using the existing I2C subsystems APIs (which we may want to extend
+> > if it needed), but I believe that (in your use cases) the deserializer
+> > should be a child of the serializer, and modeled as an I2C device.
+> 
+> Formally in OF terms to define a link between devices by a phandle should
+> be sufficient, panels are not the children of LVDS controllers under OF
+> graph constraints in DT representation, the panels become secondary in
+> runtime only, I'd like to reuse the concept. Also it adds a better sense of
+> symmetry of deserializer <-> serializer connections relatively to a
+> SoC/data source.
 
-I can see other driving groups as defined in the "Functional Specification" [1]
-which gets also reflected in the "Application Software Register Table - Part 1"
-[2], see for example page 852.
+As I explained, DT models control buses through parent/child relationships. 
+That's why I2C slaves are children of their I2C master. OF graph adds a second 
+topology to describe data connections, which are orthogonal to the control bus 
+relationship. In your case the device at the remote side of the link is 
+controlled over the link, and that control flow goes from the SoC to the 
+device on the local side of the link. That's why the remote device should be a 
+child of the local device.
 
-CCing Mars, maybe he can help to clarify.
-
+-- 
 Regards,
-Matthias
 
-[1]
-https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Functional_Specification_V1_0.pdf
-[2]
-https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Register_Table_Part_1.pdf
-
-> 
-> Still I'm not fully confident of my choice here. Maybe Sean can throw
-> some inputs!
-> 
-> Thanks,
-> Mani
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c#n40
-> 
->> Regards,
->> Matthias
->>
+Laurent Pinchart
