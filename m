@@ -1,102 +1,61 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 5/7] mfd: ds90ux9xx: add I2C bridge/alias and link connection driver
-Date: Tue, 16 Oct 2018 17:06:06 +0300
-Message-ID: <2291401.VxyBGcGQdW@avalon>
-References: <20181008211205.2900-1-vz@mleia.com> <1584081.CVFmJobd6K@avalon> <0be75b0d-eb61-02e5-a086-be6a9d32841a@mleia.com>
+From: Paul Walmsley <paul.walmsley@sifive.com>
+Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM
+ Controller.
+Date: Tue, 16 Oct 2018 10:31:42 -0700
+Message-ID: <6e108e3c-15c1-b13b-ac3e-60c5eb209c7b@sifive.com>
+References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+ <1539111085-25502-2-git-send-email-atish.patra@wdc.com>
+ <20181010134926.GD21134@ulmo> <25758ab9-eb36-741b-6264-42412b3ddd8e@wdc.com>
+ <20181016110142.GC8852@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0be75b0d-eb61-02e5-a086-be6a9d32841a@mleia.com>
+In-Reply-To: <20181016110142.GC8852@ulmo>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Atish Patra <atish.patra@wdc.com>, Rob Herring <robh+dt@kernel.org>
+Cc: mark.rutland@arm.com, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, Wesley Terpstra <wesley@sifive.com>, linus.walleij@linaro.org, palmer@sifive.com, linux-kernel@vger.kernel.org, hch@infradead.org, linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Vladimir,
 
-On Friday, 12 October 2018 17:36:39 EEST Vladimir Zapolskiy wrote:
-> On 10/12/2018 04:12 PM, Laurent Pinchart wrote:
-> > On Friday, 12 October 2018 10:32:32 EEST Vladimir Zapolskiy wrote:
-> >> On 10/12/2018 09:04 AM, Lee Jones wrote:
-> >>> On Tue, 09 Oct 2018, Vladimir Zapolskiy wrote:
-> >>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> >>>> 
-> >>>> The change adds TI DS90Ux9xx I2C bridge/alias subdevice driver and
-> >>>> FPD Link connection handling mechanism.
-> >>>> 
-> >>>> Access to I2C devices connected to a remote de-/serializer is done in
-> >>>> a transparent way, on established link detection event such devices
-> >>>> are registered on an I2C bus, which serves a local de-/serializer IC.
-> >>>> 
-> >>>> The development of the driver was a collaborative work, the
-> >>>> contribution done by Balasubramani Vivekanandan includes:
-> >>>> * original simplistic implementation of the driver,
-> >>>> * support of implicitly specified devices in device tree,
-> >>>> * support of multiple FPD links for TI DS90Ux9xx,
-> >>>> * other kind of valuable review comments, clean-ups and fixes.
-> >>>> 
-> >>>> Also Steve Longerbeam made the following changes:
-> >>>> * clear address maps after linked device removal,
-> >>>> * disable pass-through in disconnection,
-> >>>> * qualify locked status with non-zero remote address.
-> >>>> 
-> >>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> >>>> ---
-> >>>> 
-> >>>>  drivers/mfd/Kconfig                |   8 +
-> >>>>  drivers/mfd/Makefile               |   1 +
-> >>>>  drivers/mfd/ds90ux9xx-i2c-bridge.c | 764 +++++++++++++++++++++++++++++
-> >>>>  3 files changed, 773 insertions(+)
-> >>>>  create mode 100644 drivers/mfd/ds90ux9xx-i2c-bridge.c
-> >>> 
-> >>> Shouldn't this live in drivers/i2c?
-> >> 
-> >> no, the driver is not for an I2C controller of any kind, and the driver
-> >> does not register itself in the I2C subsystem by calling
-> >> i2c_add_adapter() or i2c_add_numbered_adapter() or i2c_mux_add_adapter()
-> >> etc, this topic was discussed with Wolfram also.
-> > 
-> > (Who is now on CC)
-> 
-> Wolfram has copies of the drivers and discussion right from the beginning,
-> hopefully he won't get two copies ;)
-> 
-> >> Formally the driver converts the managed IC into a multi-address I2C
-> >> slave device, I understand that it does not sound like a well suited
-> >> driver for MFD, but ds90ux9xx-core.c and ds90ux9xx-i2c-bridge.c drivers
-> >> are quite tightly coupled.
-> > 
-> > As mentioned in other e-mails in this thread I don't think this should be
-> > split out to a separate driver,> I would move the functionality to the
-> > ds90ux9xx driver.
-> 
-> The proposal may have the grounds, but the I2C bridging functionality of ICs
-> is quite detached from all other ones, thus it found its place in the cell
-> driver per se.
-> 
-> > You may want to register an I2C mux, but as you have a single port, that
-> > could be overkill. I haven't studied in details how to best support this
-> > chip using the existing I2C subsystems APIs (which we may want to extend
-> > if it needed), but I believe that (in your use cases) the deserializer
-> > should be a child of the serializer, and modeled as an I2C device.
-> 
-> Formally in OF terms to define a link between devices by a phandle should
-> be sufficient, panels are not the children of LVDS controllers under OF
-> graph constraints in DT representation, the panels become secondary in
-> runtime only, I'd like to reuse the concept. Also it adds a better sense of
-> symmetry of deserializer <-> serializer connections relatively to a
-> SoC/data source.
+On 10/16/18 4:01 AM, Thierry Reding wrote:
+> On Mon, Oct 15, 2018 at 03:57:35PM -0700, Atish Patra wrote:
+>> On 10/10/18 6:49 AM, Thierry Reding wrote:
+>>> On Tue, Oct 09, 2018 at 11:51:22AM -0700, Atish Patra wrote:
+>>>> +Required properties:
+>>>> +- compatible: should be one of
+>>>> +	"sifive,fu540-c000-pwm0","sifive,pwm0".
+>>> What's the '0' in here? A version number?
+>>>
+>> I think yes. Since fu540 is the first Linux capable RISC-V core, SiFive Guys
+>> decided mark it as version 0.
+>>
+>> @Wesly: Please correct me if I am wrong.
+> It seems fairly superfluous to me to have a version number in additon to
+> the fu540-c000, which already seems to be the core plus some sort of
+> part number. Do you really expect there to be any changes in the SoC
+> that would require a different compatible string at this point? If the
+> SoC has taped out, how will you ever get a different version of the PWM
+> IP in it?
+>
+> I would expect any improvements or changes to the PWM IP to show up in a
+> different SoC generation, at which point it would be something like
+> "sifive,fu640-c000" maybe, or perhaps "sifive,fu540-d000", or whatever
+> the numbering is.
 
-As I explained, DT models control buses through parent/child relationships. 
-That's why I2C slaves are children of their I2C master. OF graph adds a second 
-topology to describe data connections, which are orthogonal to the control bus 
-relationship. In your case the device at the remote side of the link is 
-controlled over the link, and that control flow goes from the SoC to the 
-device on the local side of the link. That's why the remote device should be a 
-child of the local device.
 
--- 
-Regards,
+The "0" suffix refers to a revision number for the underlying PWM IP block.
 
-Laurent Pinchart
+It's certainly important to keep that version number on the 
+"sifive,pwm0" compatible string that doesn't have the chip name 
+associated with it.
+
+As to whether there could ever be a FU540-C000 part with different IP 
+block versions on it: FU540-C000 is ultimately a marketing name.  While 
+theoretically we shouldn't have another "FU540-C000" chip with different 
+peripheral IP block versions on it, I don't think any engineer can 
+guarantee that it won't happen.
+
+
+- Paul
