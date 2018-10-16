@@ -1,59 +1,84 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Subject: Re: [PATCH V3 1/2] dt-bindings: pinctrl: document Broadcom Northstar
- pin mux controller
-Date: Tue, 16 Oct 2018 11:06:09 +0200
-Message-ID: <CACna6rwLas5m9kX6YEgv4=2_qq2KuHsh3eNfd5Atbw4Adx8w4g@mail.gmail.com>
-References: <20180926193103.21241-1-zajec5@gmail.com>
- <20181011222229.GA7470@bogus>
- <7f08ed7bf11a22163bdfd56ff96a9262@milecki.pl>
- <CACRpkdapyFnu=GAqEzK56+a5Gef+vcXsa7a6iJE=isi2MMWKTw@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC 1/4] pwm: sifive: Add DT documentation for SiFive PWM
+ Controller.
+Date: Tue, 16 Oct 2018 12:51:03 +0200
+Message-ID: <20181016105103.GB8852@ulmo>
+References: <1539111085-25502-1-git-send-email-atish.patra@wdc.com>
+ <1539111085-25502-2-git-send-email-atish.patra@wdc.com>
+ <20181010135109.GE21134@ulmo>
+ <ef19e79a-d975-bde4-1692-65389ead7c15@wdc.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdapyFnu=GAqEzK56+a5Gef+vcXsa7a6iJE=isi2MMWKTw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, devicetree@vger.kernel.org, Ray Jui <rjui@broadcom.com>, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="XF85m9dhOBO43t/C"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <ef19e79a-d975-bde4-1692-65389ead7c15@wdc.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Atish Patra <atish.patra@wdc.com>
+Cc: Wesley Terpstra <wesley@sifive.com>, palmer@sifive.com, linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, mark.rutland@arm.com, hch@infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-T24gVHVlLCAxNiBPY3QgMjAxOCBhdCAwOTo0MSwgTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVp
-akBsaW5hcm8ub3JnPiB3cm90ZToKPiBPbiBNb24sIE9jdCAxNSwgMjAxOCBhdCAxMDo1NiBBTSBS
-YWZhxYIgTWnFgmVja2kgPHJhZmFsQG1pbGVja2kucGw+IHdyb3RlOgo+Cj4gPiA+IFBlcmhhcHMg
-J2NydScgaW4gdGhlIGNvbXBhdGlibGUgaWYgdGhhdCdzIHdoYXQgdGhlIGgvdyBpcyBjYWxsZWQ/
-Cj4gPiA+Cj4gPiA+IEFsc28sIGlmIHRoaXMgaXMgYSBzdWItYmxvY2ssIHRoZW4gaXQgc2hvdWxk
-IGJlIGEgY2hpbGQgb2YgdGhlIGJsb2NrCj4gPiA+IHdoaWNoIHNob3VsZCBiZSBkZWZpbmVkIGhl
-cmUuCj4gPgo+ID4gSXQgdG9vayBtZSBzb21lIHRpbWUgdG8gZG8gc29tZSBleHRyYSByZXNlYXJj
-aCBvbiB0aGUgd2hvbGUgQ1JVIHRoaW5nLgo+ID4KPiA+IFZhbHVhYmxlIHJlc291cmNlczoKPiA+
-IFsxXSBiY201MzAxeF9kbXUuYyAoZnJvbSB0aGUgU0RLKQo+ID4gWzJdIGJjbTUzMDF4X3BjaWUu
-YyAoZnJvbSB0aGUgU0RLKQo+ID4gWzNdIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0
-Y2gvNzg4ODY1MS8KPiA+IFs0XSBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzUw
-NTE0NzEvCj4gPgo+ID4gRmlyc3Qgb2YgYWxsIENSVSBzZWVtcyB0byBiZSBhIHN1Yi1ibG9jayBv
-ZiB0aGUgRE1VICh3aGljaCBzdGFuZHMgZm9yCj4gPiAiRGV2aWNlIE1hbmFnZW1lbnQgVW5pdCIg
-YWNjb3JkaW5nIHRvIHRoZSBbMV0pLiBETVUgc2VlbXMgdG8gYmUKPiA+IGluZGVwZW5kZW50IGJs
-b2NrIGF0IDB4MTgwMGMwMDAgd2l0aCBhIHNpemUgb2YgMHgxMDAwLgo+ID4KPiA+IEl0IGlzbid0
-IGFjdHVhbGx5IGNsZWFyIHdoYXQgdGhlIENSVSBzdGFuZHMgZm9yLiBJbiBCcm9hZGNvbSdzIGNh
-c2U6Cj4gPiAxLiBBY2NvcmRpbmcgdG8gdGhlIFszXSBpdCdzICJDbG9jayBhbmQgUmVzZXQgVW5p
-dCIKPiA+IDIuIEFjY29yZGluZyB0byB0aGUgWzRdIGl0J3MgYSAiY2VudHJhbCByZXNvdXJjZSB1
-bml0Igo+ID4gT3RoZXIgdmVuZG9ycyBzZWVtIHRvIHVzZSBDUlUgbmFtZSBmb3IgIkNsb2NrIGFu
-ZCBSZXNldCBVbml0Ii4KPiA+Cj4gPiBJbiBhbnkgY2FzZSwgeW91J3JlIHJpZ2h0IFJvYiwgaXQn
-cyBhIHN1Yi1ibG9jaywgYSBzZXQgb2YgcmFuZG9tCj4gPiByZWdpc3RlcnMgdGhhdCBjb250cm9s
-IFNvQy4KPiA+Cj4gPiBTbyBJIHRoaW5rIHRoYXQ6Cj4gPiAxKSBXZSBzaG91bGQgaGF2ZSBhIG5v
-ZGUgZm9yIERNVSBhbmQgQ1JVCj4gPiAyKSBXZSBzaG91bGQgbm90IGluY2x1ZGUgImNydSIgaW4g
-YmluZGluZ3MgYXMgcGlubXV4aW5nIHNlZW1zIHRvIGJlIHBhcnQKPiA+ICAgICBvZiBTb0MgdGhh
-dCBqdXN0IGhhcHBlbnMgdG8gYmUgY29udHJvbGxlZCB1c2luZyBDUlUgcmVnaXN0ZXJzCj4KPiBP
-SyBkbyB5b3Ugd2FudCBtZSB0byByZXZlcnQgdGhlIHBhdGNoZXMgb3IgZG8geW91IHdhbnQgdG8K
-PiBmaXggdGhpcyBzdHVmZiBvbiB0b3Agb2YgdGhlIHBhdGNoZXMgdGhhdCBhcmUgYWxyZWFkeSBp
-biB0aGUgdHJlZT8KPiBJJ20gZmluZSBlaXRoZXIgd2F5LgoKSSdtIGZpbmUgZWl0aGVyIHdheSwg
-dGhhbmtzIGZvciB0YWtpbmcgY2FyZSBvZiBteSB3b3JrIQoKLS0gClJhZmHFggoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBt
-YWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9s
-aXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+
+--XF85m9dhOBO43t/C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Oct 15, 2018 at 03:45:46PM -0700, Atish Patra wrote:
+> On 10/10/18 6:51 AM, Thierry Reding wrote:
+> > On Tue, Oct 09, 2018 at 11:51:22AM -0700, Atish Patra wrote:
+> > [...]
+> > > +- interrupts: one interrupt per PWM channel (currently unused in the=
+ driver)
+> >=20
+> > This should probably say what the interrupt is used for. And once you
+> > have that, remove the comment about it being unused in the driver. DT
+> > is OS agnostic, so "driver" is very unspecific and your claim may
+> > actually be false.
+> >=20
+> > Thierry
+> >=20
+> As per my understanding, they are generated by hardware but no usage of p=
+wm
+> interrupts as of now.
+
+It might be useful to say when they are generated. Are they generated
+once per period? At the beginning or the end of the period? That kind
+of thing.
+
+> I am not sure if removing the entire entry is a good idea.
+> What would be the best way to represent that information ?
+>=20
+> May be this ?
+>=20
+> +-interrupts: one interrupt per PWM channel. No usage in HiFive Unleashed
+> SoC.
+
+Why do you think you need to say that they are unused? If the hardware
+generates these interrupts, then they are "used". If no driver currently
+has a use for them, that's driver specific and doesn't belong in the DT
+bindings.
+
+Thierry
+
+--XF85m9dhOBO43t/C
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvFwpcACgkQ3SOs138+
+s6GQiQ//cUGJvtTzXfrt/nIdB6bUI2UeshHcJ0hyljO7U2HxZlpf8Du+EPvio9qJ
+8Y5SiGyZ1McNwiKhIzk1cw4riC8ezQdCpjlvx9EKumzHSsrBm1IFrg8nm9yb8W1a
+T918g96hSfN3uiSPJuVqg/uK41kO0ZHuY12Az+a5U0LAdoN5fx9H9eoWOjRzIOG/
+lfZ+afy6GIC94imlKbUjYKhYihTRw7+Xvg1XIVcmNVKSCp8Peyrz6/Pvt34796gj
+z4Us9bKUw3P2Z7Iqfn4b9LDKj5ap/pxMdwCd77hFx2UXKJlukVJjQbRsVAAxUi3/
+2iSNTvT73JT6E6xoOcqKS8tJs91nWtbkHY44sFar9iy/fiqH59JcdV+r7f2EzH5g
+2T8bkSGFw1IBW16QrJbWEqPNW45adFFZTju7kAjYdM9NcMGaoNZ1fxLxw0g+aD8Z
+tC7zFStY1MOWNFsOHnUckDTaQp5twZvz5+MvQECU+XbKswcovGstIkNgXe+p+tNP
+dL2Tl1UlH8LIjzopB/LwQ1Re+fjMlq+L+uuWCdKkzl4OkY6RgXtdm5kfbqIsGh6m
+7XPU8OmUkUlMelHt372Tx/cjEaqLaYyBxtyunydIGaTGGdF8W+WMAw729IUMCQAH
+9mBkVv4I+N1XvvZwN1d9RNbQmZoTWa/IBHxuAxVQ5VE/UEGUoBQ=
+=f7GF
+-----END PGP SIGNATURE-----
+
+--XF85m9dhOBO43t/C--
