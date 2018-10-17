@@ -1,59 +1,101 @@
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH V3 0/2] pinctrl: imx: add imx8qxp pinctrl support
-Date: Wed, 17 Oct 2018 06:04:41 +0000
-Message-ID: <1539756011-32559-1-git-send-email-aisheng.dong@nxp.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: protected pins and debugfs
+Date: Wed, 17 Oct 2018 00:28:18 -0700
+Message-ID: <153976129822.5275.14566790707614483813@swboyd.mtv.corp.google.com>
+References: <9aec322678417753fe4022691f4bfdbe@codeaurora.org>
+ <153897864285.119890.13024399324598460044@swboyd.mtv.corp.google.com>
+ <5848ff92c1388b7d6904e88b57bbfec8@codeaurora.org>
+ <91594b8e6578d542dc7cbebf34458b0c@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>, "dongas86@gmail.com" <dongas86@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <91594b8e6578d542dc7cbebf34458b0c@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sodagudi Prasad <psodagud@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This patch series adds i.MX8QXP pinctrl support which is based on
-the pad service provided by SCU firmware.
+Quoting Sodagudi Prasad (2018-10-16 19:00:45)
+> On 2018-10-10 12:40, Sodagudi Prasad wrote:
+> > On 2018-10-07 23:04, Stephen Boyd wrote:
+> >> Quoting Sodagudi Prasad (2018-10-03 05:38:24)
+> >>> =
 
-Note it depends on SCU APIs patch set which has already been merged by Shawn.
-So suppose this patch series can go through shawn's tree.
+> >>>          for (i =3D 0; i < chip->ngpio; i++, gpio++) {
+> >>> +               label =3D gpiochip_is_requested(chip, i);
+> >>> +               if (!label)
+> >>> +                       continue;
+> >>>                  msm_gpio_dbg_show_one(s, NULL, chip, i, gpio);
+> >>> -               seq_puts(s, "\n");
+> >>>          }
+> >>>   }
+> >>> =
 
-Note the binding part is also merged into scu binding doc according to
-Rob's suggestion.
-https://www.spinics.net/lists/arm-kernel/msg680738.html
+> >> =
 
-v2->v3:
- * Pad name update (add IMX8QXP prefix)
+> >> Does something not work with the following code in
+> >> msm_gpio_dbg_show_one()?
+> >> =
 
-v1->v2:
- * scu firmware headfile path update
- * structure name and api usage update
- * move SCU Pad API implementation into driver
- * add binding headfile pad-imx8qxp.h
+> >> =
 
-Dong Aisheng (2):
-  pinctrl: fsl: add scu based pinctrl support
-  pinctrl: imx: add imx8qxp driver
+> >>         if (!gpiochip_line_is_valid(chip, offset))
+> >>              return;
+> > =
 
- drivers/pinctrl/freescale/Kconfig           |  11 +
- drivers/pinctrl/freescale/Makefile          |   2 +
- drivers/pinctrl/freescale/pinctrl-imx.c     | 425 ++++++++++------
- drivers/pinctrl/freescale/pinctrl-imx.h     |  67 ++-
- drivers/pinctrl/freescale/pinctrl-imx8qxp.c | 232 +++++++++
- drivers/pinctrl/freescale/pinctrl-scu.c     | 121 +++++
- include/dt-bindings/pinctrl/pads-imx8qxp.h  | 751 ++++++++++++++++++++++++++++
- 7 files changed, 1439 insertions(+), 170 deletions(-)
- create mode 100644 drivers/pinctrl/freescale/pinctrl-imx8qxp.c
- create mode 100644 drivers/pinctrl/freescale/pinctrl-scu.c
- create mode 100644 include/dt-bindings/pinctrl/pads-imx8qxp.h
+> > Hi Stephen,
+> > I didnt realize that these changes are merged on tip. I was testing on
+> > 4.14 kernel.
+> > =
 
--- 
-2.7.4
+> > https://lore.kernel.org/patchwork/patch/878107/
+> > https://lore.kernel.org/patchwork/patch/878106/
+> > https://lore.kernel.org/patchwork/patch/878109/
+> =
+
+> =
+
+> Hi Stephen,
+> =
+
+> After checking this further, adding "gpio-reserved-ranges" in not good =
+
+> option. Because of the following reasons.
+> 1) These gpio information changes from platform to platform. So need to =
+
+> maintain reserved-range properly for each platform.
+
+This was known. The best approach was to populate this based on what the
+firmware chooses to lock down, which didn't seem to change very often
+from what I recall being told.
+
+> 2) Also some of the gpio can be changed to secure/protected gpio =
+
+> dynamically based on the use case.
+
+This is new information. How exactly do these pins change dynamically?
+Perhaps gpiolib needs to gain more support for the mask to change at
+runtime instead of being populated once at boot time from DT.  Seems
+like a patch could be written for gpiolib to handle that if it really is
+something that needs to be done.
+
+> =
+
+> It looks adding the "gpio-reserved-ranges" ranges is not good option for =
+
+> most of the platforms.
+> =
+
+> Can you please check the initial patch suggested in this thread? Please =
+
+> let me know if you have any other options for the above points.
+> =
+
+
+The initial patch in this thread takes a Qualcomm centric approach to
+the problem, which probably works just fine, but we would like to push
+the solution to problem into the core framework so that other SoCs can
+benefit from common code. Please look into handling the runtime swapping
+in the gpiolib core so that we don't have a one-off solution for
+Qualcomm here.
