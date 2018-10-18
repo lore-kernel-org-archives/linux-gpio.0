@@ -1,66 +1,120 @@
 From: Sean Wang <sean.wang@kernel.org>
-Subject: Re: [PATCH 2/5] arm64: dts: mediatek: mt6797: Add pinctrl support
-Date: Thu, 18 Oct 2018 22:24:25 +0800
-Message-ID: <CAGp9LzqKEpmJMZhU0KW2GWXT4mxEiMqA0xhGxeX2kv+7_ADtKw@mail.gmail.com>
-References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org> <20181008191411.32555-3-manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 5/5] pinctrl: mediatek: Add initial pinctrl driver for
+ MT6797 SoC
+Date: Thu, 18 Oct 2018 23:06:08 +0800
+Message-ID: <CAGp9LzoP2zkryhJCQNGpe9X0+7yUd31ffV7vM4j6KvTdfPpCrA@mail.gmail.com>
+References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
+ <20181008191411.32555-6-manivannan.sadhasivam@linaro.org> <c8d65395-c60c-5d06-92ad-c389642c22ba@gmail.com>
+ <20181011164429.GA18174@Mani-XPS-13-9360> <e7abee72-23a3-4716-baf0-484514bbb019@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181008191411.32555-3-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <e7abee72-23a3-4716-baf0-484514bbb019@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: manivannan.sadhasivam@linaro.org
-Cc: =?UTF-8?B?U2VhbiBXYW5nICjnjovlv5fkupgp?= <sean.wang@mediatek.com>, linus.walleij@linaro.org, matthias.bgg@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: matthias.bgg@gmail.com
+Cc: manivannan.sadhasivam@linaro.org, linus.walleij@linaro.org, =?UTF-8?B?U2VhbiBXYW5nICjnjovlv5fkupgp?= <sean.wang@mediatek.com>, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, linux-mediatek@lists.infradead.org, mars.cheng@mediatek.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 9, 2018 at 3:16 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On Tue, Oct 16, 2018 at 10:01 PM Matthias Brugger
+<matthias.bgg@gmail.com> wrote:
 >
-> Add pinctrl support for Mediatek MT6797 SoC.
 >
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  arch/arm64/boot/dts/mediatek/mt6797.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
 >
-> diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> index 4beaa71107d7..231230d32d09 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> @@ -14,6 +14,7 @@
->  #include <dt-bindings/clock/mt6797-clk.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/pinctrl/mt6797-pinfunc.h>
+> On 11/10/2018 18:44, Manivannan Sadhasivam wrote:
+> > On Thu, Oct 11, 2018 at 05:50:19PM +0200, Matthias Brugger wrote:
+> >>
+> >>
+> >> On 08/10/2018 21:14, Manivannan Sadhasivam wrote:
+> >>> Add initial pinctrl driver for Mediatek MT6797 SoC supporting only
+> >>> GPIO and pinmux configurations.
+> >>>
+> >>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> >>> ---
+> >>>  drivers/pinctrl/mediatek/Kconfig              |    7 +
+> >>>  drivers/pinctrl/mediatek/Makefile             |    1 +
+> >>>  drivers/pinctrl/mediatek/pinctrl-mt6797.c     |   82 +
+> >>>  drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h | 2430 +++++++++++++++++
+> >>>  4 files changed, 2520 insertions(+)
+> >>>  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6797.c
+> >>>  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+> >>>
+> >> [...]
+> >>> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+> >>> new file mode 100644
+> >>> index 000000000000..8949d2a15c39
+> >>> --- /dev/null
+> >>> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+> >>> @@ -0,0 +1,2430 @@
+> >>> +/* SPDX-License-Identifier: GPL-2.0 */
+> >>> +/*
+> >>> + * Based on pinctrl-mtk-mt6765.h
+> >>> + *
+> >>> + * Copyright (C) 2018 MediaTek Inc.
+> >>> + *
+> >>> + * Author: ZH Chen <zh.chen@mediatek.com>
+> >>> + *
+> >>> + * Copyright (c) 2018 Manivannan Sadhasivam
+> >>> + */
+> >>> +
+> >>> +#ifndef __PINCTRL_MTK_MT6797_H
+> >>> +#define __PINCTRL_MTK_MT6797_H
+> >>> +
+> >>> +#include "pinctrl-paris.h"
+> >>> +
+> >>> +static const struct mtk_pin_desc mtk_pins_mt6797[] = {
+> >>> +   MTK_PIN(
+> >>> +           0, "GPIO0",
+> >>> +           MTK_EINT_FUNCTION(NO_EINT_SUPPORT, NO_EINT_SUPPORT),
+> >>> +           DRV_GRP3,
+> >>
+> >> As far as I have seen, you put all pins in driving group 3, but from the public
+> >> available "Functional Specification" (page 51-81) I can see that there exist
+> >> several driving groups:
+> >> 2/4/6/8 mA (DRV_GRP3)
+> >> 4/8/12/16 mA (not sure which group this is)
+> >> 2/4/6/8/10/12/14/16 mA (DRV_GRP4).
+> >>
+> >
+> > Not sure about that. But I derived the configuration from DRV_CFGx
+> > registers available in "Application Software Register Table - Part 1"
+> > from page no: 906.
+> >
+> > This register supports 2/4/6/8mA and this belongs to DRV_GRP2/DRV_GRP3
+> > [1].
 >
->  / {
->         compatible = "mediatek,mt6797";
-> @@ -129,6 +130,19 @@
->                 #clock-cells = <1>;
->         };
+> I can see other driving groups as defined in the "Functional Specification" [1]
+> which gets also reflected in the "Application Software Register Table - Part 1"
+> [2], see for example page 852.
 >
-> +       pio: pinctrl@10005000 {
-> +               compatible = "mediatek,mt6797-pinctrl";
-> +               reg = <0 0x10005000 0 0x1000>,
-> +                     <0 0x10002000 0 0x400>,
-> +                     <0 0x10002400 0 0x400>,
-> +                     <0 0x10002800 0 0x400>,
-> +                     <0 0x10002C00 0 0x400>;
-> +               reg-names = "gpio", "iocfgl", "iocfgb",
-> +                           "iocfgr", "iocfgt";
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +       };
-> +
+> CCing Mars, maybe he can help to clarify.
+>
 
-The content looks good to me, but the dt-binding document is required
-to be added for MT6797 SoC before the DTS instance is being added.
+the driver currently only supports the basic operation, not including
+driving operation, so
+what value for the driving mode for a certain pin seems not really
+matter in the early patch. I think these advanced operations can be
+added with another patch.
 
->         scpsys: scpsys@10006000 {
->                 compatible = "mediatek,mt6797-scpsys";
->                 #power-domain-cells = <1>;
-> --
-> 2.17.1
+> Regards,
+> Matthias
 >
+> [1]
+> https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Functional_Specification_V1_0.pdf
+> [2]
+> https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Register_Table_Part_1.pdf
+>
+> >
+> > Still I'm not fully confident of my choice here. Maybe Sean can throw
+> > some inputs!
+> >
+> > Thanks,
+> > Mani
+> >
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c#n40
+> >
+> >> Regards,
+> >> Matthias
+> >>
 >
 > _______________________________________________
 > Linux-mediatek mailing list
