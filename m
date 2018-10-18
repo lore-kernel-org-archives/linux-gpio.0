@@ -1,78 +1,100 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: bcm4708-pinmux: improve example
- binding
-Date: Thu, 18 Oct 2018 14:15:32 -0500
-Message-ID: <CAL_Jsq+LLudweNdte_g9D_29ak3ErCxxrmHBu5HJ7tc4Ymx4OA@mail.gmail.com>
-References: <20181015093013.31651-1-zajec5@gmail.com>
+From: Rajat Jain <rajatja@google.com>
+Subject: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before using NULL
+Date: Thu, 18 Oct 2018 14:51:01 -0700
+Message-ID: <20181018215101.169847-1-rajatja@google.com>
+References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181015093013.31651-1-zajec5@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Rajat Jain <rajatja@google.com>, rajatxjain@gmail.com, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-T24gTW9uLCBPY3QgMTUsIDIwMTggYXQgNDozMCBBTSBSYWZhxYIgTWnFgmVja2kgPHphamVjNUBn
-bWFpbC5jb20+IHdyb3RlOgo+Cj4gRnJvbTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tp
-LnBsPgo+Cj4gQnJvYWRjb20gU29DIHBpbnMgYXJlIGNvbnRyb2xsZWQgdXNpbmcgQ1JVICgiQ2xv
-Y2sgYW5kIFJlc2V0IFVuaXQiIG9yCj4gIkNlbnRyYWwgUmVzb3VyY2UgVW5pdCIpIHJlZ2lzdGVy
-cy4gVGhlcmUgYXJlIG1vcmUgQ1JVIHJlZ2lzdGVycyBhbmQKPiBmdW5jdGlvbnMgc28gQ1JVIHNo
-b3VsZCBiZSByZXByZXNlbnRlZCBhcyBhIHNlcGFyYXRlZCBibG9jayBpbiBEVC4KPgo+IE1vcmVv
-dmVyIENSVSBpcyBhIHN1Yi1ibG9jayBvZiBETVUgKCJEZXZpY2UgTWFuYWdlbWVudCBVbml0Iikg
-c28gdGhhdAo+IG9uZSBzaG91bGQgYWxzbyBnZXQgaXRzIG93biBub2RlLgo+Cj4gU2lnbmVkLW9m
-Zi1ieTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgo+IC0tLQo+ICAuLi4vYmlu
-ZGluZ3MvcGluY3RybC9icmNtLGJjbTQ3MDgtcGlubXV4LnR4dCAgICAgICB8IDMxICsrKysrKysr
-KysrKysrKystLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDIzIGluc2VydGlvbnMoKyksIDggZGVs
-ZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL3BpbmN0cmwvYnJjbSxiY200NzA4LXBpbm11eC50eHQgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvcGluY3RybC9icmNtLGJjbTQ3MDgtcGlubXV4LnR4dAo+IGluZGV4IGFm
-OTA2ZjE5NmU4Yy4uMGNlMTMyYzdlMDRjIDEwMDY0NAo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL2JyY20sYmNtNDcwOC1waW5tdXgudHh0Cj4gKysrIGIv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvYnJjbSxiY200NzA4LXBp
-bm11eC50eHQKPiBAQCAtMzAsMTMgKzMwLDI4IEBAIEZvciBkb2N1bWVudGF0aW9uIG9mIHN1Ym5v
-ZGVzIHNlZToKPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvcGlu
-Y3RybC1iaW5kaW5ncy50eHQKPgo+ICBFeGFtcGxlOgo+IC0gICAgICAgcGluY3RybEAxODAwYzFj
-MCB7Cj4gLSAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAiYnJjbSxiY200NzA4LXBpbm11eCI7
-Cj4gLSAgICAgICAgICAgICAgIHJlZyA9IDwweDE4MDBjMWMwIDB4MjQ+Owo+IC0gICAgICAgICAg
-ICAgICByZWctbmFtZXMgPSAiY3J1X2dwaW9fY29udHJvbCI7Cj4gLQo+IC0gICAgICAgICAgICAg
-ICBzcGkgewo+IC0gICAgICAgICAgICAgICAgICAgICAgIGZ1bmN0aW9uID0gInNwaSI7Cj4gLSAg
-ICAgICAgICAgICAgICAgICAgICAgZ3JvdXBzID0gInNwaV9ncnAiOwo+ICsgICAgICAgZG11QDE4
-MDBjMDAwIHsKPiArICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzaW1wbGUtYnVzIjsKCkV2
-ZXJ5dGhpbmcgaW4gdGhlIERNVSBpcyBnb2luZyB0byB3YXJyYW50IGhhdmluZyBzdWItbm9kZXM/
-CgpXYW50aW5nIGEgbm9kZSBwZXIgcHJvdmlkZXIgKGNsb2NrcywgcmVzZXQsIHBoeSwgZXRjLikg
-aXMgY29tbW9uLCBidXQKSSB0ZW5kIHRvIHB1c2ggYmFjayBvbiB0aGF0IGlmIGl0J3Mgb25seSB0
-byBpbnN0YW50aWF0ZSBkcml2ZXJzIGFuZAp0aGVyZSBhcmVuJ3QgYW55IERUIHJlc291cmNlcyB3
-aXRoaW4gdGhlIG5vZGVzLiBBIHBpbmN0cmwgaXMgb25lIGNhc2UKdGhhdCdzIGp1c3RpZmllZCwg
-YnV0IHdoYXQgaXMgYSBiaXQgdW51c3VhbCBoZXJlIGlzIHRoZSAnc2ltcGxlLWJ1cycKbm9kZXMg
-Zm9yIHRoaW5ncyB0aGF0IGFyZSBtb3JlIHRoYW4gYSBjb2xsZWN0aW9uIG9mIGluZGVwZW5kZW50
-CmRldmljZXMuCgo+ICsgICAgICAgICAgICAgICByYW5nZXMgPSA8MCAweDE4MDBjMDAwIDB4MTAw
-MD47Cj4gKyAgICAgICAgICAgICAgICNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ICsgICAgICAgICAg
-ICAgICAjc2l6ZS1jZWxscyA9IDwxPjsKPiArCj4gKyAgICAgICAgICAgICAgIGNydUAxMDAgewo+
-ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAic2ltcGxlLWJ1cyI7CgpTYW1l
-IHF1ZXN0aW9uIGhlcmUuCgo+ICsgICAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwweDEwMCAw
-eDFhND47Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmFuZ2VzOwo+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICNzaXplLWNlbGxzID0gPDE+Owo+ICsKPiArICAgICAgICAgICAgICAgICAgICAgICBwaW4tY29u
-dHJvbGxlckAxYzAgewoKJ3BpbmN0cmwnIHdhcyB0aGUgc3RhbmRhcmQgbmFtZS4KCj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gImJyY20sYmNtNDcwOC1waW5t
-dXgiOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVnID0gPDB4MWMwIDB4MjQ+
-Owo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVnLW5hbWVzID0gImNydV9ncGlv
-X2NvbnRyb2wiOwo+ICsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNwaS1waW5z
-IHsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZnVuY3Rpb24gPSAi
-c3BpIjsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZ3JvdXBzID0g
-InNwaV9ncnAiOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfTsKPiArICAgICAg
-ICAgICAgICAgICAgICAgICB9Owo+ICAgICAgICAgICAgICAgICB9Owo+ICAgICAgICAgfTsKPiAt
-LQo+IDIuMTMuNwo+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
-LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9saW51eC1hcm0ta2VybmVsCg==
+Problem:
+
+The card detect IRQ does not work with modern BIOS (that want
+to use DSD to provide the card detect GPIO to the driver).
+
+Details:
+
+(Discussion: https://lkml.org/lkml/2018/9/25/1113)
+
+The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
+request the gpio descriptor for the "card detect" (or carrier detect?) pin.
+This pin is specified in the ACPI for the SDHC device:
+
+ * Either as a resource using _CRS. This is a method used by legacy BIOS.
+   (The driver needs to tell which resource index).
+
+ * Or as a named property ("cd-gpio") in DSD (which may internally point
+   to an entry in _CRS). This way, the driver can lookup using a string.
+   This is what modern BIOS prefer to use.
+
+This API finally results in a call to the following code:
+
+struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
+{
+...
+   /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
+...
+   if (!acpi_can_fallback_to_crs(adev, con_id))
+          return ERR_PTR(-ENOENT);
+...
+   /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
+...
+}
+
+Note that this means that if the ACPI has _DSD properties, the kernel
+will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
+will always be false for any device hat has _DSD entries).
+
+The SDHCI driver is thus currently broken on a modern BIOS (even if
+BIOS provides both _CRS and DSD entries, either of which could be used for
+a successful lookup). Ironically, none of these will be used for the
+lookup currently because:
+
+* Since the con_id is NULL, acpi_find_gpio() does not find a matching
+  entry in DSDT. (The DSDT entry has the property name = "cd-gpio")
+
+* Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
+  returns false (because device properties have been populated from
+  DSD), thus the _CRS is never used for the lookup.
+
+Fix:
+
+Try "cd" for lookup in the _DSD before falling back to using NULL so
+as to try looking up in the _CRS.
+
+I've tested this patch successfully with both Legacy BIOS (that
+provide only _CRS method) as well as modern BIOS (that provide both
+_CRS and DSD). Also the use of "cd" also appears to be farly consistent
+across other users of this API (other MMC host controller drivers).
+
+Signed-off-by: Rajat Jain <rajatja@google.com>
+---
+ drivers/mmc/host/sdhci-pci-core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 7bfd366d970d..e53333c695b3 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -1762,8 +1762,13 @@ static struct sdhci_pci_slot *sdhci_pci_probe_slot(
+ 		device_init_wakeup(&pdev->dev, true);
+ 
+ 	if (slot->cd_idx >= 0) {
+-		ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
++		ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
+ 					   slot->cd_override_level, 0, NULL);
++		if (ret && ret != -EPROBE_DEFER)
++			ret = mmc_gpiod_request_cd(host->mmc, NULL,
++						   slot->cd_idx,
++						   slot->cd_override_level,
++						   0, NULL);
+ 		if (ret == -EPROBE_DEFER)
+ 			goto remove;
+ 
+-- 
+2.19.1.568.g152ad8e336-goog
