@@ -1,82 +1,133 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH 2/5] arm64: dts: mediatek: mt6797: Add pinctrl support
-Date: Fri, 19 Oct 2018 13:57:13 +0530
-Message-ID: <20181019082713.GA2641@Mani-XPS-13-9360>
-References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
- <20181008191411.32555-3-manivannan.sadhasivam@linaro.org>
- <CAGp9LzoSA=06CF_yNMOHnfmRnFzpBA4R2YGhbWmxdSKci2uF0w@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
+ using NULL
+Date: Fri, 19 Oct 2018 12:13:24 +0300
+Message-ID: <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
+References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
+ <20181018215101.169847-1-rajatja@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAGp9LzoSA=06CF_yNMOHnfmRnFzpBA4R2YGhbWmxdSKci2uF0w@mail.gmail.com>
+In-Reply-To: <20181018215101.169847-1-rajatja@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@kernel.org>
-Cc: Sean Wang =?utf-8?B?KOeOi+W/l+S6mCk=?= <sean.wang@mediatek.com>, linus.walleij@linaro.org, matthias.bgg@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Rajat Jain <rajatja@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Rajat Jain <rajatxjain@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dtor@google.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 10:07:52PM +0800, Sean Wang wrote:
-> On Tue, Oct 9, 2018 at 3:16 AM Manivannan Sadhasivam <
-> manivannan.sadhasivam@linaro.org> wrote:
-> 
-> > Add pinctrl support for Mediatek MT6797 SoC.
-> >
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/mediatek/mt6797.dtsi | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> > b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> > index 4beaa71107d7..231230d32d09 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> > +++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> > @@ -14,6 +14,7 @@
-> >  #include <dt-bindings/clock/mt6797-clk.h>
-> >  #include <dt-bindings/interrupt-controller/irq.h>
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +#include <dt-bindings/pinctrl/mt6797-pinfunc.h>
-> >
-> >  / {
-> >         compatible = "mediatek,mt6797";
-> > @@ -129,6 +130,19 @@
-> >                 #clock-cells = <1>;
-> >         };
-> >
-> > +       pio: pinctrl@10005000 {
-> > +               compatible = "mediatek,mt6797-pinctrl";
-> > +               reg = <0 0x10005000 0 0x1000>,
-> > +                     <0 0x10002000 0 0x400>,
-> > +                     <0 0x10002400 0 0x400>,
-> > +                     <0 0x10002800 0 0x400>,
-> > +                     <0 0x10002C00 0 0x400>;
-> > +               reg-names = "gpio", "iocfgl", "iocfgb",
-> > +                           "iocfgr", "iocfgt";
-> > +               gpio-controller;
-> > +               #gpio-cells = <2>;
-> > +       };
-> > +
-> >
-> 
-> The content looks good to me, but the dt-binding document is still being
-> added the support for MT6797 SoC before the dts instance is being applied.
-> 
+On Fri, Oct 19, 2018 at 12:53 AM Rajat Jain <rajatja@google.com> wrote:
+>
+> Problem:
+>
+> The card detect IRQ does not work with modern BIOS (that want
+> to use DSD to provide the card detect GPIO to the driver).
+>
+> Details:
 >
 
-Okay, will add a binding doc in next revision.
+> (Discussion: https://lkml.org/lkml/2018/9/25/1113)
 
-Thanks,
-Mani
+We have a Link tag for such references.
 
-> >         scpsys: scpsys@10006000 {
-> >                 compatible = "mediatek,mt6797-scpsys";
-> >                 #power-domain-cells = <1>;
-> > --
-> > 2.17.1
-> >
-> >
-> > _______________________________________________
-> > Linux-mediatek mailing list
-> > Linux-mediatek@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
-> >
+> The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
+> request the gpio descriptor for the "card detect" (or carrier detect?) pin.
+
+card detect is a right term.
+
+> This pin is specified in the ACPI for the SDHC device:
+>
+>  * Either as a resource using _CRS. This is a method used by legacy BIOS.
+>    (The driver needs to tell which resource index).
+>
+>  * Or as a named property ("cd-gpio") in DSD (which may internally point
+
+cd-gpios (gpio suffix is a legacy).
+
+>    to an entry in _CRS). This way, the driver can lookup using a string.
+>    This is what modern BIOS prefer to use.
+>
+> This API finally results in a call to the following code:
+>
+> struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
+> {
+> ...
+>    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
+> ...
+>    if (!acpi_can_fallback_to_crs(adev, con_id))
+>           return ERR_PTR(-ENOENT);
+> ...
+>    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
+> ...
+> }
+>
+> Note that this means that if the ACPI has _DSD properties, the kernel
+> will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
+> will always be false for any device hat has _DSD entries).
+>
+> The SDHCI driver is thus currently broken on a modern BIOS
+
+> (even if
+> BIOS provides both _CRS and DSD entries, either of which could be used for
+
+_DSD
+
+> a successful lookup).
+
+This is incorrect. _DSD for GPIOs without any accompanying _CRS
+doesn't make any sense.
+
+> Ironically, none of these will be used for the
+> lookup currently because:
+>
+> * Since the con_id is NULL, acpi_find_gpio() does not find a matching
+>   entry in DSDT. (The DSDT entry has the property name = "cd-gpio")
+
+cd-gpios
+
+>
+> * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
+>   returns false (because device properties have been populated from
+>   DSD), thus the _CRS is never used for the lookup.
+
+_DSD
+
+>
+> Fix:
+>
+> Try "cd" for lookup in the _DSD before falling back to using NULL so
+> as to try looking up in the _CRS.
+>
+> I've tested this patch successfully with both Legacy BIOS (that
+> provide only _CRS method) as well as modern BIOS (that provide both
+> _CRS and DSD). Also the use of "cd" also appears to be farly consistent
+
+_DSD
+fairly
+
+> across other users of this API (other MMC host controller drivers).
+
+>         if (slot->cd_idx >= 0) {
+> -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
+> +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
+>                                            slot->cd_override_level, 0, NULL);
+
+Yes.
+
+> +               if (ret && ret != -EPROBE_DEFER)
+> +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
+> +                                                  slot->cd_idx,
+> +                                                  slot->cd_override_level,
+> +                                                  0, NULL);
+
+And no. Instead of this part you need to provide an ACPI GPIO mapping table.
+
+See examples, like
+net/rfkill/rfkill-gpio.c
+
+(look for acpi_rfkill_default_gpios)
+
+>                 if (ret == -EPROBE_DEFER)
+>                         goto remove;
+
+-- 
+With Best Regards,
+Andy Shevchenko
