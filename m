@@ -1,67 +1,82 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
-Date: Sun, 21 Oct 2018 10:31:59 +0200
-Message-ID: <20181021083159.GA7893@amd>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-3-git-send-email-dan@emutex.com>
- <CAHp75VcOxBFvr4MSd=y61t7eFAv=9pFzMsumd7=2jbW3aZ4O4g@mail.gmail.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/6] gpio: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 21:59:55 +0200
+Message-ID: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcOxBFvr4MSd=y61t7eFAv=9pFzMsumd7=2jbW3aZ4O4g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Dan O'Donovan <dan@emutex.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, carlos.iglesias@emutex.com, Javier Arteaga <javier@emutex.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+I got tired of fixing this in Renesas drivers manually, so I took the big
+hammer. Remove this cumbersome code pattern which got copy-pasted too much
+already:
 
---0OAP2g/MAC+5xKAE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
++	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
 
-On Sat 2018-10-20 14:17:58, Andy Shevchenko wrote:
-1;2802;0c> On Fri, Oct 19, 2018 at 8:27 PM Dan O'Donovan <dan@emutex.com> w=
-rote:
-> >
-> > From: Javier Arteaga <javier@emutex.com>
-> >
-> > Allow userspace to use the on-board LEDs as "upboard:<color>:".
->=20
->=20
->=20
-> > +#include <linux/kernel.h>
-> > +#include <linux/leds.h>
-> > +#include <linux/mfd/upboard.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/acpi.h>
->=20
-> For better maintenance keep this ordered.
+A branch, tested by buildbot, can be found here:
 
-This is good as-is.
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
 
-									Pavel
+I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
+it and did not find one occasion where it could be simplified like this. Not
+much of a surprise because driver_data is usually set in probe() functions
+which access struct platform_device in many other ways.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+I am open for other comments, suggestions, too, of course.
 
---0OAP2g/MAC+5xKAE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Here is the cocci-script I created:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+@@
+struct device* d;
+identifier pdev;
+expression *ptr;
+@@
+(
+-	struct platform_device *pdev = to_platform_device(d);
+|
+-	struct platform_device *pdev;
+	...
+-	pdev = to_platform_device(d);
+)
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
 
-iEYEARECAAYFAlvMOX8ACgkQMOfwapXb+vJ5QACfcVC9dJE79Pdp2IXxB/lAt3IC
-Za4Anjew84xudUHv++zcwxjD8P8dyTln
-=efvM
------END PGP SIGNATURE-----
+	ptr =
+-	platform_get_drvdata(pdev)
++	dev_get_drvdata(d)
 
---0OAP2g/MAC+5xKAE--
+	<... when != pdev
+-	&pdev->dev
++	d
+	...>
+
+Kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (6):
+  gpio: gpio-dwapb: simplify getting .driver_data
+  gpio: gpio-lynxpoint: simplify getting .driver_data
+  gpio: gpio-mxc: simplify getting .driver_data
+  gpio: gpio-omap: simplify getting .driver_data
+  gpio: gpio-tegra: simplify getting .driver_data
+  gpio: gpio-zynq: simplify getting .driver_data
+
+ drivers/gpio/gpio-dwapb.c     |  6 ++----
+ drivers/gpio/gpio-lynxpoint.c |  3 +--
+ drivers/gpio/gpio-mxc.c       |  6 ++----
+ drivers/gpio/gpio-omap.c      | 12 ++++--------
+ drivers/gpio/gpio-tegra.c     |  6 ++----
+ drivers/gpio/gpio-zynq.c      |  6 ++----
+ 6 files changed, 13 insertions(+), 26 deletions(-)
+
+-- 
+2.19.0
