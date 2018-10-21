@@ -1,80 +1,51 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/5] pinctrl: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:26 +0200
-Message-ID: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 2/5] pinctrl: intel: pinctrl-cherryview: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:28 +0200
+Message-ID: <20181021200032.1833-3-wsa+renesas@sang-engineering.com>
+References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-I got tired of fixing this in Renesas drivers manually, so I took the big
-hammer. Remove this cumbersome code pattern which got copy-pasted too much
-already:
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
 
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ep93xx_keypad *keypad = platform_get_drvdata(pdev);
-+	struct ep93xx_keypad *keypad = dev_get_drvdata(dev);
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-A branch, tested by buildbot, can be found here:
+Build tested only. buildbot is happy.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git coccinelle/get_drvdata
-
-I have been asked if it couldn't be done for dev_set_drvdata as well. I checked
-it and did not find one occasion where it could be simplified like this. Not
-much of a surprise because driver_data is usually set in probe() functions
-which access struct platform_device in many other ways.
-
-I am open for other comments, suggestions, too, of course.
-
-Here is the cocci-script I created:
-
-@@
-struct device* d;
-identifier pdev;
-expression *ptr;
-@@
-(
--	struct platform_device *pdev = to_platform_device(d);
-|
--	struct platform_device *pdev;
-	...
--	pdev = to_platform_device(d);
-)
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-	ptr =
--	platform_get_drvdata(pdev)
-+	dev_get_drvdata(d)
-
-	<... when != pdev
--	&pdev->dev
-+	d
-	...>
-
-Kind regards,
-
-   Wolfram
-
-
-Wolfram Sang (5):
-  pinctrl: intel: pinctrl-baytrail: simplify getting .driver_data
-  pinctrl: intel: pinctrl-cherryview: simplify getting .driver_data
-  pinctrl: intel: pinctrl-intel: simplify getting .driver_data
-  pinctrl: pinctrl-amd: simplify getting .driver_data
-  pinctrl: pinctrl-at91-pio4: simplify getting .driver_data
-
- drivers/pinctrl/intel/pinctrl-baytrail.c   | 6 ++----
  drivers/pinctrl/intel/pinctrl-cherryview.c | 6 ++----
- drivers/pinctrl/intel/pinctrl-intel.c      | 6 ++----
- drivers/pinctrl/pinctrl-amd.c              | 6 ++----
- drivers/pinctrl/pinctrl-at91-pio4.c        | 6 ++----
- 5 files changed, 10 insertions(+), 20 deletions(-)
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 9b0f4b9ef482..f685abef68c3 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1744,8 +1744,7 @@ static int chv_pinctrl_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int chv_pinctrl_suspend_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
++	struct chv_pinctrl *pctrl = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	int i;
+ 
+@@ -1778,8 +1777,7 @@ static int chv_pinctrl_suspend_noirq(struct device *dev)
+ 
+ static int chv_pinctrl_resume_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
++	struct chv_pinctrl *pctrl = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	int i;
+ 
 -- 
 2.19.0
