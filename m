@@ -1,15 +1,15 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/5] pinctrl: intel: pinctrl-baytrail: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 22:00:27 +0200
-Message-ID: <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
-References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 5/6] gpio: gpio-tegra: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:00 +0200
+Message-ID: <20181021200002.1472-6-wsa+renesas@sang-engineering.com>
+References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 We should get 'driver_data' from 'struct device' directly. Going via
@@ -20,32 +20,32 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/pinctrl/intel/pinctrl-baytrail.c | 6 ++----
+ drivers/gpio/gpio-tegra.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 6d1a43c0c251..a1c2548123a1 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -1838,8 +1838,7 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 47dbd19751d0..02f6db925fd5 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -404,8 +404,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
  #ifdef CONFIG_PM_SLEEP
- static int byt_gpio_suspend(struct device *dev)
+ static int tegra_gpio_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+	struct byt_gpio *vg = dev_get_drvdata(dev);
- 	int i;
+-	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
++	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	unsigned int b, p;
  
- 	for (i = 0; i < vg->soc_data->npins; i++) {
-@@ -1867,8 +1866,7 @@ static int byt_gpio_suspend(struct device *dev)
+@@ -444,8 +443,7 @@ static int tegra_gpio_resume(struct device *dev)
  
- static int byt_gpio_resume(struct device *dev)
+ static int tegra_gpio_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+	struct byt_gpio *vg = dev_get_drvdata(dev);
- 	int i;
+-	struct tegra_gpio_info *tgi = platform_get_drvdata(pdev);
++	struct tegra_gpio_info *tgi = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 	unsigned int b, p;
  
- 	for (i = 0; i < vg->soc_data->npins; i++) {
 -- 
 2.19.0
