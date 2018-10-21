@@ -1,7 +1,7 @@
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 3/6] gpio: gpio-mxc: simplify getting .driver_data
-Date: Sun, 21 Oct 2018 21:59:58 +0200
-Message-ID: <20181021200002.1472-4-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 6/6] gpio: gpio-zynq: simplify getting .driver_data
+Date: Sun, 21 Oct 2018 22:00:01 +0200
+Message-ID: <20181021200002.1472-7-wsa+renesas@sang-engineering.com>
 References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,7 +9,7 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181021200002.1472-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
 We should get 'driver_data' from 'struct device' directly. Going via
@@ -20,32 +20,32 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/gpio/gpio-mxc.c | 6 ++----
+ drivers/gpio/gpio-zynq.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 995cf0b9e0b1..5c69516e90b1 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -552,8 +552,7 @@ static void mxc_gpio_restore_regs(struct mxc_gpio_port *port)
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index 3f5fcdd5a429..ac9b02c9598f 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -693,8 +693,7 @@ static int __maybe_unused zynq_gpio_resume(struct device *dev)
  
- static int __maybe_unused mxc_gpio_noirq_suspend(struct device *dev)
+ static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct mxc_gpio_port *port = platform_get_drvdata(pdev);
-+	struct mxc_gpio_port *port = dev_get_drvdata(dev);
+-	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
++	struct zynq_gpio *gpio = dev_get_drvdata(dev);
  
- 	mxc_gpio_save_regs(port);
- 	clk_disable_unprepare(port->clk);
-@@ -563,8 +562,7 @@ static int __maybe_unused mxc_gpio_noirq_suspend(struct device *dev)
+ 	clk_disable_unprepare(gpio->clk);
  
- static int __maybe_unused mxc_gpio_noirq_resume(struct device *dev)
+@@ -703,8 +702,7 @@ static int __maybe_unused zynq_gpio_runtime_suspend(struct device *dev)
+ 
+ static int __maybe_unused zynq_gpio_runtime_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct mxc_gpio_port *port = platform_get_drvdata(pdev);
-+	struct mxc_gpio_port *port = dev_get_drvdata(dev);
- 	int ret;
+-	struct zynq_gpio *gpio = platform_get_drvdata(pdev);
++	struct zynq_gpio *gpio = dev_get_drvdata(dev);
  
- 	ret = clk_prepare_enable(port->clk);
+ 	return clk_prepare_enable(gpio->clk);
+ }
 -- 
 2.19.0
