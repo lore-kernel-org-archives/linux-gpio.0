@@ -1,7 +1,7 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 5/6] gpio: pci-idio-16: Mask read inputs for get_multiple
-Date: Mon, 22 Oct 2018 21:10:06 +0900
-Message-ID: <4e02f26b801f271e80b7738a851b52ab7ffde649.1540209293.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 6/6] gpio: pcie-idio-24: Mask read inputs for get_multiple
+Date: Mon, 22 Oct 2018 21:10:20 +0900
+Message-ID: <820f8297d25932ba9dad2dfb50ceee3f803f83cc.1540209293.git.vilhelm.gray@gmail.com>
 References: <cover.1540209293.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -18,15 +18,15 @@ only requested input states are returned in the bits array.
 Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-pci-idio-16.c | 2 +-
+ drivers/gpio/gpio-pcie-idio-24.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
-index 25d16b2af1c3..6b7349783223 100644
---- a/drivers/gpio/gpio-pci-idio-16.c
-+++ b/drivers/gpio/gpio-pci-idio-16.c
-@@ -146,7 +146,7 @@ static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
- 		port_state = ioread8(ports[i]);
+diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
+index f953541e7890..52f1647a46fd 100644
+--- a/drivers/gpio/gpio-pcie-idio-24.c
++++ b/drivers/gpio/gpio-pcie-idio-24.c
+@@ -243,7 +243,7 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
+ 			port_state = ioread8(&idio24gpio->reg->ttl_in0_7);
  
  		/* store acquired bits at respective bits array offset */
 -		bits[word_index] |= port_state << word_offset;
