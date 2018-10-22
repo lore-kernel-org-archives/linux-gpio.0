@@ -1,7 +1,7 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 3/6] gpio: gpio-mm: Mask read inputs for get_multiple
-Date: Mon, 22 Oct 2018 21:09:31 +0900
-Message-ID: <b4f8835ed44d25b8aca276d3ce6773143b53fe08.1540209293.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 4/6] gpio: ws16c48: Mask read inputs for get_multiple
+Date: Mon, 22 Oct 2018 21:09:49 +0900
+Message-ID: <304924e41af041f873abb5c3fe4701d0a870219b.1540209293.git.vilhelm.gray@gmail.com>
 References: <cover.1540209293.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -18,15 +18,15 @@ only requested input states are returned in the bits array.
 Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-gpio-mm.c | 2 +-
+ drivers/gpio/gpio-ws16c48.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
-index b56ff2efbf36..8c150fd68d9d 100644
---- a/drivers/gpio/gpio-gpio-mm.c
-+++ b/drivers/gpio/gpio-gpio-mm.c
-@@ -211,7 +211,7 @@ static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- 		port_state = inb(gpiommgpio->base + ports[i]);
+diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
+index c7028eb0b8e1..5cf3697bfb15 100644
+--- a/drivers/gpio/gpio-ws16c48.c
++++ b/drivers/gpio/gpio-ws16c48.c
+@@ -169,7 +169,7 @@ static int ws16c48_gpio_get_multiple(struct gpio_chip *chip,
+ 		port_state = inb(ws16c48gpio->base + i);
  
  		/* store acquired bits at respective bits array offset */
 -		bits[word_index] |= port_state << word_offset;
