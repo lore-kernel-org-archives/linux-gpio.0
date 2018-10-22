@@ -1,237 +1,177 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v9 4/9] dt-bindings: i3c: Document core bindings
-Date: Mon, 22 Oct 2018 15:45:46 -0500
-Message-ID: <20181022204546.GA3889@bogus>
-References: <20181022133404.2061-1-boris.brezillon@bootlin.com>
- <20181022133404.2061-5-boris.brezillon@bootlin.com>
+From: Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
+ using NULL
+Date: Mon, 22 Oct 2018 16:34:55 -0700
+Message-ID: <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
+References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
+ <20181018215101.169847-1-rajatja@google.com> <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181022133404.2061-5-boris.brezillon@bootlin.com>
+In-Reply-To: <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeau>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "Hunter, Adrian" <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rajat Jain <rajatxjain@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 03:33:59PM +0200, Boris Brezillon wrote:
-> A new I3C subsystem has been added and a generic description has been
-> created to represent the I3C bus and the devices connected on it.
-> 
-> Document this generic representation.
-> 
-> Cc: Rob Herring <robh@kernel.org>
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> ---
-> Rob,
-> 
-> Can you have a look at this v9. I know you previously acked this
-> binding but I changed a bit the way we declare I2C devices and thus
-> had to drop your Ack.
-> The IS_I2C_DEV bit no long exists, and we instead consider that any
-> device with the 2nd reg entry set to 0 is an I2C device, which is
-> just fine because this entry is supposed to contain the upper part of
-> the Provisional ID which is basically the MIPI manufacturer ID,
-> and 0 is not a valid manufacturer ID.
-> 
-> By doing that we make reg definition more straightforward and can
-> drop the ugly {I2C,I3C}_DEV() macros.
-> 
-> Regards,
-> 
-> Boris
-> 
-> Changes in v9:
-> - Rework the way we encode the I2C vs I3C device in the reg property
->   so that we don't need the funky macros to define and I3C or I2C dev
-> - Drop Rob's Reviewed-by
-> 
-> Changes in v8:
-> - None
-> 
-> Changes in v7:
-> - None
-> 
-> Changes in v6:
-> - None
-> 
-> Changes in v5:
-> - Add Rob's R-b
-> 
-> Changes in v4:
-> - Clarify the fact that static address == I3C address and dynamic
->   address == I3C address
-> - Use i2c-scl-hz in the example
-> 
-> Changes in v3:
-> - Rename {i2c,i3c}-scl-frequency DT prop into {i2c,i3c}-scl-hz
-> - Rework the way we expose the provisional ID and LVR information
-> - Rename dynamic-address into assigned-address
-> - Enforce the I3C master node name
-> 
-> Changes in v2:
-> - Define how to describe I3C devices in the DT and when it should be
->   used. Note that the parsing of I3C devices is not yet implemented in
->   the framework. Will be added when someone really needs it.
-> ---
->  Documentation/devicetree/bindings/i3c/i3c.txt | 138 ++++++++++++++++++
->  1 file changed, 138 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/i3c/i3c.txt b/Documentation/devicetree/bindings/i3c/i3c.txt
-> new file mode 100644
-> index 000000000000..7021468e0205
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i3c/i3c.txt
-> @@ -0,0 +1,138 @@
-> +Generic device tree bindings for I3C busses
-> +===========================================
-> +
-> +This document describes generic bindings that should be used to describe I3C
-> +busses in a device tree.
-> +
-> +Required properties
-> +-------------------
-> +
-> +- #address-cells  - should be <3>. Read more about addresses below.
-> +- #size-cells     - should be <0>.
-> +- compatible      - name of the I3C master controller driving the I3C bus
-> +
-> +For other required properties e.g. to describe register sets,
-> +clocks, etc. check the binding documentation of the specific driver.
-> +The node describing an I3C bus should be named i3c-master.
-> +
-> +Optional properties
-> +-------------------
-> +
-> +These properties may not be supported by all I3C master drivers. Each I3C
-> +master bindings should specify which of them are supported.
-> +
-> +- i3c-scl-hz: frequency of the SCL signal used for I3C transfers.
-> +	      When undefined the core sets it to 12.5MHz.
-> +
-> +- i2c-scl-hz: frequency of the SCL signal used for I2C transfers.
-> +	      When undefined, the core looks at LVR (Legacy Virtual Register)
-> +	      values of I2C devices described in the device tree to determine
-> +	      the maximum I2C frequency.
-> +
-> +I2C devices
-> +===========
-> +
-> +Each I2C device connected to the bus should be described in a subnode. All
-> +properties described in Documentation/devicetree/bindings/i2c/i2c.txt are
-> +valid here, but several new properties have been added.
-> +
-> +New constraint on existing properties:
-> +--------------------------------------
-> +- reg: contains 3 cells
-> +  + first cell : still encoding the I2C address
-> +
-> +  + second cell: shall be 0
-> +
-> +  + third cell: shall encode the I3C LVR (Legacy Virtual Register)
-> +	bit[31:8]: unused/ignored
-> +	bit[7:5]: I2C device index. Possible values
-> +	* 0: I2C device has a 50 ns spike filter
-> +	* 1: I2C device does not have a 50 ns spike filter but supports high
-> +	     frequency on SCL
-> +	* 2: I2C device does not have a 50 ns spike filter and is not tolerant
-> +	     to high frequencies
-> +	* 3-7: reserved
-> +
-> +	bit[4]: tell whether the device operates in FM (Fast Mode) or FM+ mode
-> +	* 0: FM+ mode
-> +	* 1: FM mode
-> +
-> +	bit[3:0]: device type
-> +	* 0-15: reserved
-> +
-> +I3C devices
-> +===========
-> +
-> +All I3C devices are supposed to support DAA (Dynamic Address Assignment), and
-> +are thus discoverable. So, by default, I3C devices do not have to be described
-> +in the device tree.
-> +This being said, one might want to attach extra resources to these devices,
-> +and those resources may have to be described in the device tree, which in turn
-> +means we have to describe I3C devices.
-> +
-> +Another use case for describing an I3C device in the device tree is when this
-> +I3C device has a static I2C address and we want to assign it a specific I3C
-> +dynamic address before the DAA takes place (so that other devices on the bus
-> +can't take this dynamic address).
-> +
-> +The I3C device should be names <device-type>@<static-i2c-address>,<i3c-pid>,
-> +where device-type is describing the type of device connected on the bus
-> +(gpio-controller, sensor, ...).
-> +
-> +Required properties
-> +-------------------
-> +- reg: contains 3 cells
-> +  + first cell : encodes the static I2C address. Should be 0 if the device does
-> +		 not have one (0 is not a valid I2C address).
-> +
-> +  + second and third cells: should encode the ProvisionalID. The second cell
-> +			    contains the manufacturer ID left-shifted by 1.
-> +			    The third cell contains ORing of the part ID
-> +			    left-shifted by 16, the instance ID left-shifted
-> +			    by 12 and the extra information. This encoding is
-> +			    following the PID definition provided by the I3C
-> +			    specification.
-> +
-> +Optional properties
-> +-------------------
-> +- assigned-address: dynamic address to be assigned to this device. This
-> +		    property is only valid if the I3C device has a static
-> +		    address (first cell of the reg property != 0).
-> +
-> +
-> +Example:
-> +
-> +	i3c-master@d040000 {
-> +		compatible = "cdns,i3c-master";
-> +		clocks = <&coreclock>, <&i3csysclock>;
-> +		clock-names = "pclk", "sysclk";
-> +		interrupts = <3 0>;
-> +		reg = <0x0d040000 0x1000>;
-> +		#address-cells = <3>;
-> +		#size-cells = <0>;
-> +
-> +		status = "okay";
+Hi Andy,
 
-Don't show status in examples.
+Thanks for your review.
 
-> +		i2c-scl-hz = <100000>;
-> +
-> +		/* I2C device. */
-> +		nunchuk: nunchuk@52 {
+On Fri, Oct 19, 2018 at 2:13 AM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Fri, Oct 19, 2018 at 12:53 AM Rajat Jain <rajatja@google.com> wrote:
+> >
+> > Problem:
+> >
+> > The card detect IRQ does not work with modern BIOS (that want
+> > to use DSD to provide the card detect GPIO to the driver).
+> >
+> > Details:
+> >
+>
+> > (Discussion: https://lkml.org/lkml/2018/9/25/1113)
+>
+> We have a Link tag for such references.
+>
+> > The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
+> > request the gpio descriptor for the "card detect" (or carrier detect?) pin.
+>
+> card detect is a right term.
+>
+> > This pin is specified in the ACPI for the SDHC device:
+> >
+> >  * Either as a resource using _CRS. This is a method used by legacy BIOS.
+> >    (The driver needs to tell which resource index).
+> >
+> >  * Or as a named property ("cd-gpio") in DSD (which may internally point
+>
+> cd-gpios (gpio suffix is a legacy).
+>
+> >    to an entry in _CRS). This way, the driver can lookup using a string.
+> >    This is what modern BIOS prefer to use.
+> >
+> > This API finally results in a call to the following code:
+> >
+> > struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
+> > {
+> > ...
+> >    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
+> > ...
+> >    if (!acpi_can_fallback_to_crs(adev, con_id))
+> >           return ERR_PTR(-ENOENT);
+> > ...
+> >    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
+> > ...
+> > }
+> >
+> > Note that this means that if the ACPI has _DSD properties, the kernel
+> > will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
+> > will always be false for any device hat has _DSD entries).
+> >
+> > The SDHCI driver is thus currently broken on a modern BIOS
+>
+> > (even if
+> > BIOS provides both _CRS and DSD entries, either of which could be used for
+>
+> _DSD
+>
+> > a successful lookup).
+>
+> This is incorrect. _DSD for GPIOs without any accompanying _CRS
+> doesn't make any sense.
+>
+> > Ironically, none of these will be used for the
+> > lookup currently because:
+> >
+> > * Since the con_id is NULL, acpi_find_gpio() does not find a matching
+> >   entry in DSDT. (The DSDT entry has the property name = "cd-gpio")
+>
+> cd-gpios
+>
+> >
+> > * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
+> >   returns false (because device properties have been populated from
+> >   DSD), thus the _CRS is never used for the lookup.
+>
+> _DSD
+>
+> >
+> > Fix:
+> >
+> > Try "cd" for lookup in the _DSD before falling back to using NULL so
+> > as to try looking up in the _CRS.
+> >
+> > I've tested this patch successfully with both Legacy BIOS (that
+> > provide only _CRS method) as well as modern BIOS (that provide both
+> > _CRS and DSD). Also the use of "cd" also appears to be farly consistent
+>
+> _DSD
+> fairly
 
-Might clarify somewhere above that I2C only device unit-address is just 
-the 1st cell value.
+I can fix the commit log to take care of all your review comments.
 
-> +			compatible = "nintendo,nunchuk";
-> +			reg = <0x52 0x80000010 0x0>;
+>
+> > across other users of this API (other MMC host controller drivers).
+>
+> >         if (slot->cd_idx >= 0) {
+> > -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
+> > +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
+> >                                            slot->cd_override_level, 0, NULL);
+>
+> Yes.
+>
+> > +               if (ret && ret != -EPROBE_DEFER)
+> > +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
+> > +                                                  slot->cd_idx,
+> > +                                                  slot->cd_override_level,
+> > +                                                  0, NULL);
+>
+> And no. Instead of this part you need to provide an ACPI GPIO mapping table.
 
-Cell 2 should be updated?
+Sure, I am willing to do so, and I tried earlier too. However, certain
+doubts arose in my mind when I tried that and I posted my questions
+earlier (https://lkml.org/lkml/2018/9/28/507) but couldn't elicit any
+response. Unfortunately I still do not have answers. My primary
+questions are:
 
-> +		};
-> +
-> +		/* I3C device with a static I2C address. */
-> +		thermal_sensor: sensor@68,39200144004 {
-> +			reg = <0x68 0x392 0x144004>;
-> +			assigned-address = <0xa>;
-> +		};
-> +
-> +		/*
-> +		 * I3C device without a static I2C address but requiring
-> +		 * resources described in the DT.
-> +		 */
-> +		sensor@0,39200154004 {
-> +			reg = <0x0 0x392 0x154004>;
-> +			clocks = <&clock_provider 0>;
-> +		};
-> +	};
-> +
-> -- 
-> 2.17.1
-> 
+1) - It seems that 1 SDHCI device may support multiple slots (looking
+at the code). It is not clear to me if they could share card detect
+interrupts, or should have separate ones? Also, the driver may not
+really know? So should I add 1 or two pins using the
+devm_acpi_dev_add_driver_gpios(). Is some one familiar with SDHC
+driver can answer these questions, it shall be great.
+
+2) I'm not really sure what should I set "active_low" to? Isn't this
+something that should be specified by platform / ACPI too, and driver
+should just be able to say say choose whatever the ACPI says?
+
+struct acpi_gpio_params {
+        unsigned int crs_entry_index;
+        unsigned int line_index;
+        bool active_low;
+};
+
+Since I do not understand the above two issues, and thus I chose the
+safest path and not disturb the current code so as not to cause any
+regressions.
+
+Please let me know, and I'm happy to re-spin my patch.
+
+Thanks,
+
+Rajat
+
+>
+> See examples, like
+> net/rfkill/rfkill-gpio.c
+>
+> (look for acpi_rfkill_default_gpios)
+>
+> >                 if (ret == -EPROBE_DEFER)
+> >                         goto remove;
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
