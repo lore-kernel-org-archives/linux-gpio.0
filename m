@@ -1,177 +1,346 @@
-From: Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
- using NULL
-Date: Mon, 22 Oct 2018 16:34:55 -0700
-Message-ID: <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
-References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
- <20181018215101.169847-1-rajatja@google.com> <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
+ driver
+Date: Tue, 23 Oct 2018 09:16:44 +0100
+Message-ID: <f0a52a64-a7e7-b266-a402-1279036fad36@mleia.com>
+References: <20181008211205.2900-1-vz@mleia.com>
+ <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com>
+ <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
+ <3599186.afdMBtdL0k@avalon> <735126c6-9780-a9ef-4fd0-699d6876ed37@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
+In-Reply-To: <735126c6-9780-a9ef-4fd0-699d6876ed37@mleia.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Hunter, Adrian" <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rajat Jain <rajatxjain@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, kieran.bingham@ideasonboard.com, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Andy,
+Hi Laurent,
 
-Thanks for your review.
+On 10/12/2018 02:59 PM, Vladimir Zapolskiy wrote:
+> Hello Laurent.
+> 
+> On 10/12/2018 04:01 PM, Laurent Pinchart wrote:
+>> Hello Vladimir,
+>>
 
-On Fri, Oct 19, 2018 at 2:13 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Fri, Oct 19, 2018 at 12:53 AM Rajat Jain <rajatja@google.com> wrote:
-> >
-> > Problem:
-> >
-> > The card detect IRQ does not work with modern BIOS (that want
-> > to use DSD to provide the card detect GPIO to the driver).
-> >
-> > Details:
-> >
->
-> > (Discussion: https://lkml.org/lkml/2018/9/25/1113)
->
-> We have a Link tag for such references.
->
-> > The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
-> > request the gpio descriptor for the "card detect" (or carrier detect?) pin.
->
-> card detect is a right term.
->
-> > This pin is specified in the ACPI for the SDHC device:
-> >
-> >  * Either as a resource using _CRS. This is a method used by legacy BIOS.
-> >    (The driver needs to tell which resource index).
-> >
-> >  * Or as a named property ("cd-gpio") in DSD (which may internally point
->
-> cd-gpios (gpio suffix is a legacy).
->
-> >    to an entry in _CRS). This way, the driver can lookup using a string.
-> >    This is what modern BIOS prefer to use.
-> >
-> > This API finally results in a call to the following code:
-> >
-> > struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
-> > {
-> > ...
-> >    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
-> > ...
-> >    if (!acpi_can_fallback_to_crs(adev, con_id))
-> >           return ERR_PTR(-ENOENT);
-> > ...
-> >    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
-> > ...
-> > }
-> >
-> > Note that this means that if the ACPI has _DSD properties, the kernel
-> > will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
-> > will always be false for any device hat has _DSD entries).
-> >
-> > The SDHCI driver is thus currently broken on a modern BIOS
->
-> > (even if
-> > BIOS provides both _CRS and DSD entries, either of which could be used for
->
-> _DSD
->
-> > a successful lookup).
->
-> This is incorrect. _DSD for GPIOs without any accompanying _CRS
-> doesn't make any sense.
->
-> > Ironically, none of these will be used for the
-> > lookup currently because:
-> >
-> > * Since the con_id is NULL, acpi_find_gpio() does not find a matching
-> >   entry in DSDT. (The DSDT entry has the property name = "cd-gpio")
->
-> cd-gpios
->
-> >
-> > * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
-> >   returns false (because device properties have been populated from
-> >   DSD), thus the _CRS is never used for the lookup.
->
-> _DSD
->
-> >
-> > Fix:
-> >
-> > Try "cd" for lookup in the _DSD before falling back to using NULL so
-> > as to try looking up in the _CRS.
-> >
-> > I've tested this patch successfully with both Legacy BIOS (that
-> > provide only _CRS method) as well as modern BIOS (that provide both
-> > _CRS and DSD). Also the use of "cd" also appears to be farly consistent
->
-> _DSD
-> fairly
+...
 
-I can fix the commit log to take care of all your review comments.
+>> then move to the driver side. In that area I would like to have a full example 
+>> of a system using these chips, as the "initial support" is too limited for a 
+>> proper review. This won't come as a surprise, but I will expect the OF graph 
+>> bindings to be used to model data connections.
+>>
+> 
+> The leverage of "the initial support" to "the complete support" requires:
+> * audio bridge cell driver -- trivial, just one mute/unmute control,
+> * interrupt controller cell driver -- trivial, but for sake of perfection
+>   it requires some minimal changes in drivers/base/regmap/regmap-irq.c
+> * DS90Ux940 MIPI CSI-2 -- non-trivial one, but we have it ready, I just
+>   don't want to add it to the pile at the moment, otherwise we'll continue
+>   discussing cameras, and I'd like to postpone it :)
+> 
+> No more than that is needed to get absolutely complete support of 5 claimed
+> DS90UB9xx ICs, really. 5 other DS90UH9xx will require HDCP support in addition.
+> 
+> I'll try to roll out an example of DTS snippet soon.
 
->
-> > across other users of this API (other MMC host controller drivers).
->
-> >         if (slot->cd_idx >= 0) {
-> > -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
-> > +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
-> >                                            slot->cd_override_level, 0, NULL);
->
-> Yes.
->
-> > +               if (ret && ret != -EPROBE_DEFER)
-> > +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
-> > +                                                  slot->cd_idx,
-> > +                                                  slot->cd_override_level,
-> > +                                                  0, NULL);
->
-> And no. Instead of this part you need to provide an ACPI GPIO mapping table.
+Below I share an example of the serializer and deserializer equipped boards
+described in DT.
 
-Sure, I am willing to do so, and I tried earlier too. However, certain
-doubts arose in my mind when I tried that and I posted my questions
-earlier (https://lkml.org/lkml/2018/9/28/507) but couldn't elicit any
-response. Unfortunately I still do not have answers. My primary
-questions are:
+The example naturally describes *two* simplistic boards in device tree
+representation -- main board with an application SoC (ordinary i.MX6*)
+and panel display module board. For demonstation I select a simple
+FPD-Link III connection between two boards, note that significantly
+more advanced configurations are also supported by the published
+drivers, for example deliberately I skip audio bridging functionality.
 
-1) - It seems that 1 SDHCI device may support multiple slots (looking
-at the code). It is not clear to me if they could share card detect
-interrupts, or should have separate ones? Also, the driver may not
-really know? So should I add 1 or two pins using the
-devm_acpi_dev_add_driver_gpios(). Is some one familiar with SDHC
-driver can answer these questions, it shall be great.
+The main board features:
+* TI DS90UB927Q serializer (LVDS input) at 0xc, connected to SoC over I2C2,
+  SoC GPIO5[10] signal is connected to the IC PDB pin,
+* a status LED connected to DS90UB927Q GPIO2, it shall turn on,
+  if FPD-Link III connection is established,
+* TI DS90UB928Q GPIO0 line signal is pulled-up,
+* TI DS90UB927Q GPIO3 line serves as generic GPIO, it is supposed to be
+  controlled from userspace,
+* TI DS90UB927Q INTB line is connected to SoC GPIO5[4], the line serves
+  as an interrupt line routed from a touchscreen controller on a panel
+  display module.
 
-2) I'm not really sure what should I set "active_low" to? Isn't this
-something that should be specified by platform / ACPI too, and driver
-should just be able to say say choose whatever the ACPI says?
+The panel display module board features:
+* TI DS90UB928Q deserializer (LVDS output), *mapped* to have 0x3b address,
+* AUO C070EAT01 panel,
+* I2C EEPROM at 0x50, *mapped* to have 0x52 address on SoC I2C bus,
+* Atmel MaxTouch touchscreen controller at 0x4b, *mapped* to have 0x60
+  address on SoC I2C bus, power-up control signal is connected to DS90UB928Q GPIO4,
+* a status LED connected to DS90UB928Q GPIO0, its on/off status shall
+  repeat a user-defined status of DS90UB927Q GPIO0 on the main board,
+* TI DS90UB928Q GPIO1 controls panel backlight, bridges DS90UB927Q
+  GPIO1 signal level, which in turn is connected to a SoC controlled GPIO,
+* TI DS90UB928Q GPIO2 line signal is pulled-up,
+* TI DS90UB928Q GPIO3 line serves as generic GPIOs, it is supposed to be
+  controlled from userspace.
 
-struct acpi_gpio_params {
-        unsigned int crs_entry_index;
-        unsigned int line_index;
-        bool active_low;
+All OF hard-coded controls like pinmuxing, I2C bridging of a remote
+deserializer and I2C devices behind it, GPIO line state setting and so
+forth must be applied with no interaction from a user -- and it just
+works with the current / published versions of the drivers, in other
+words a panel display module as a whole is truly hot-pluggable over
+FPD-Link III connection.
+
+The example is quite close to ones found in reality, if we put aside
+production main boards from the real world, *the panel display modules*
+or sensor modules (in case of a reverted serializer to deserializer link
+connection to SoC) are even more complex, they host FPGAs, all kinds of
+sensors, RF tuners, audio sources and sinks, and loads of other
+incredible and fascinating stuff.
+
+The published drivers allow to support very intricate and fine grained
+control of "remote" PCBs, and reducing the complexity to "just a media
+device" level could be done only if various IC functions are excluded
+from the consideration. Here my purpose is to demonstrate that
+* pinmux and GPIO controller functions are crucial and non-replaceable,
+* I2C bridge function modeled as another cell device actually does not
+  fit into the existing I2C host/mux device driver models, and it is
+  a completely new abstraction with custom device tree properties,
+* video bridge is absolutely transparent, thus trivial, and is modeled
+  as another cell device, if needed it would be possible to write a
+  DRM driver at no cost,
+* reusing OF graph model fits naturally, bus vs. link discussion can
+  be started separately, note that LVDS (a.k.a FPD-Link) is formally
+  an electric bus, so please define the difference,
+* to sum up I see no real objections to the given model of IC series
+  support in Linux as an MFD parent device driver, plus pinmux/GPIO
+  controller cell device driver, plus other needed cell device drivers.
+
+For video bridging I fabricated a "video-bridge" device driver, it can
+be substituted by your "lvds-encoder" driver, here I just need a simple
+transparent video bridge driver with NO media controls, its only purpose
+is to establish OF graph links, also note that on "remote" side a
+video bridge cell node can be omitted (but it may ).
+
+The example is NOT build tested and it may contain errors of secondary
+importance, but it tends to repeat the real usage and description of
+TI DS90Ux9xx equipped boards.
+
+======== The panel display module board device tree description ========
+
+/ {
+	display-module {
+		panel {
+			compatible = "auo,c070eat01", "panel-lvds";
+			pinctrl-names = "default";
+			pinctrl-0 = <&panel_pins>;
+
+			width-mm = <153>;
+			height-mm = <90>;
+
+			data-mapping = "jeida-24";
+
+			panel-timing {
+				clock-frequency = <71000000>;
+				hactive = <1280>;
+				vactive = <800>;
+				hsync-len = <70>;
+				hfront-porch = <20>;
+				hback-porch = <70>;
+				vsync-len = <5>;
+				vfront-porch = <3>;
+				vback-porch = <15>;
+			};
+
+			port {
+				panel_input: endpoint {
+					remote-endpoint = <&ds90ub928_output>;
+				};
+			};
+		};
+
+		deserializer: deserializer {
+			compatible = "ti,ds90ub928q", "ti,ds90ux9xx";
+
+			i2c-bridge {
+				compatible = "ti,ds90ux9xx-i2c-bridge";
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				touchscreen@4b {
+					compatible = "atmel,maxtouch";
+					reg = <0x4b>;
+					pinctrl-names = "default";
+					pinctrl-0 = <&touchscreen_pins>;
+					interrupt-parent = <&ds90ub927_intc>;
+					interrupts = <0>;
+					atmel,mtu = <200>;
+				};
+
+				eeprom@50 {
+					compatible = "microchip,24lc128";
+					reg = <0x50>;
+					pagesize = <64>;
+				};
+			};
+
+			ds90ub928_pctrl: pin-controller {
+				compatible = "ti,ds90ub928q-pinctrl", "ti,ds90ux9xx-pinctrl";
+				gpio-controller;
+				#gpio-cells = <2>;
+				gpio-ranges = <&ds90ub928_pctrl 0 0 8>;
+
+				pinctrl-names = "default";
+				pinctrl-0 = <&led_pins>;
+
+				led_pins: pinmux {
+					gpio-remote {
+						pins = "gpio0";
+						function = "gpio-remote";
+					};
+				};
+
+				panel_pins: panel-pwm {
+					gpio-remote {
+						pins = "gpio1";
+						function = "gpio-remote";
+					};
+				};
+
+				touchscreen_pins: touchscreen-power-up {
+					gpio-hog;
+					gpios = <4 GPIO_ACTIVE_HIGH>;
+					output-high;
+				};
+			};
+
+			/*
+			 * For simplicity video-bridge can be simply removed here
+			 * by "connecting" ds90ub927_fpd to &panel_input directly.
+			 */
+			video-bridge {
+				compatible = "ti,ds90ux9xx-video-bridge", "video-bridge";
+
+				ports {
+					#address-cells = <1>;
+					#size-cells = <0>;
+
+					port@0 {
+						reg = <0>;
+						ds90ub928_fpd: endpoint {
+							remote-endpoint = <&ds90ub927_fpd>;
+						};
+					};
+
+					port@1 {
+						reg = <1>;
+						ds90ub928_output: endpoint {
+							remote-endpoint = <&panel_input>;
+						};
+					};
+				};
+			};
+		};
+	};
 };
 
-Since I do not understand the above two issues, and thus I chose the
-safest path and not disturb the current code so as not to cause any
-regressions.
+======== The main board device tree description ========
 
-Please let me know, and I'm happy to re-spin my patch.
+/ {
+	/* iMX6 series SoC for demonstration purpose */
 
-Thanks,
+	&ldb {
+		status = "okay";
 
-Rajat
+		lvds-channel@1 {
+			status = "okay";
+			fsl,data-mapping = "jeida";
+			fsl,data-width = <24>;
 
->
-> See examples, like
-> net/rfkill/rfkill-gpio.c
->
-> (look for acpi_rfkill_default_gpios)
->
-> >                 if (ret == -EPROBE_DEFER)
-> >                         goto remove;
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+			port@4 {
+				reg = <4>;
+
+				lvds1_out: endpoint {
+					remote-endpoint = <&ds90ub927_lvds>;
+				};
+			};
+		};
+	};
+
+	&i2c2 {
+		status = "okay";
+		clock-frequency = <400000>;
+
+		serializer: serializer@c {
+			compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
+			reg = <0xc>;
+			power-gpios = <&gpio5 10 GPIO_ACTIVE_HIGH>;
+			ti,backward-compatible-mode = <0>;
+			ti,low-frequency-mode = <0>;
+
+			i2c-bridge {
+				compatible = "ti,ds90ux9xx-i2c-bridge";
+				ti,i2c-bridges = <&deserializer 0 0x3b>;
+				ti,i2c-bridge-maps = <0 0x4b 0x60>, <0 0x50 0x52>;
+			};
+
+			ds90ub927_intc: interrupt-controller {
+				compatible = "ti,ds90ub927-intc";
+				interrupt-parent = <&gpio5>;
+				interrupts = <4 IRQ_TYPE_EDGE_RISING>;
+				interrupt-controller;
+				#interrupt-cells = <1>;
+			};
+
+			ds90ub927_pctrl: pin-controller {
+				compatible = "ti,ds90ub927b-pinctrl", "ti,ds90ux9xx-pinctrl";
+				gpio-controller;
+				#gpio-cells = <2>;
+				gpio-ranges = <&ds90ub927_pctrl 0 0 8>;
+
+				/* Wired to some SoC controlled GPIO */
+				pwm-backlight {
+					gpio-hog;
+					gpios = <1 GPIO_ACTIVE_HIGH>;
+					input;
+				};
+
+				led_pins: pinmux {
+					gpio-remote {
+						pins = "gpio2";
+						function = "gpio-remote";
+					};
+				};
+			};
+
+			video-bridge {
+				compatible = "ti,ds90ux9xx-video-bridge", "video-bridge";
+
+				ports {
+					#address-cells = <1>;
+					#size-cells = <0>;
+
+					port@0 {
+						reg = <0>;
+						ds90ub927_lvds: endpoint {
+							remote-endpoint = <&lvds1_out>;
+						};
+					};
+
+					port@1 {
+						reg = <1>;
+						ds90ub927_fpd: endpoint {
+							remote-endpoint = <&ds90ub928_fpd>;
+						};
+					};
+				};
+			};
+		};
+	};
+};
+
+==== end of example =====
+
+--
+Best wishes,
+Vladimir
