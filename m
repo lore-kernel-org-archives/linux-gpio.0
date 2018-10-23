@@ -1,68 +1,61 @@
-From: Oskari Lemmela <oskari@lemmela.net>
-Subject: [PATCH v5 06/11] arm64: dts: allwinner: axp803: add AC and battery power supplies
-Date: Tue, 23 Oct 2018 21:53:25 +0300
-Message-ID: <20181023185330.10472-7-oskari@lemmela.net>
-References: <20181023185330.10472-1-oskari@lemmela.net>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
+Date: Tue, 23 Oct 2018 20:54:53 +0200
+Message-ID: <20181023185453.GA27397@amd>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-3-git-send-email-dan@emutex.com>
+ <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181023185330.10472-1-oskari@lemmela.net>
+Content-Disposition: inline
+In-Reply-To: <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Vasily Khoruzhick <anarsoul@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, Oskari Lemmela <oskari@lemmela.net>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Parts of the AXP803 are compatible with their counterparts on the AXP813.
-Add DT nodes ADC, GPIO, AC and battery power supplies.
 
-Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
----
- arch/arm64/boot/dts/allwinner/axp803.dtsi | 33 +++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+--jRHKVT23PllUwdXP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/allwinner/axp803.dtsi b/arch/arm64/boot/dts/allwinner/axp803.dtsi
-index e5eae8bafc42..c3a618e1279a 100644
---- a/arch/arm64/boot/dts/allwinner/axp803.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/axp803.dtsi
-@@ -49,6 +49,39 @@
- 	interrupt-controller;
- 	#interrupt-cells = <1>;
- 
-+	ac_power_supply: ac-power-supply {
-+		compatible = "x-powers,axp803-ac-power-supply",
-+			     "x-powers,axp813-ac-power-supply";
-+		status = "disabled";
-+	};
-+
-+	axp_adc: adc {
-+		compatible = "x-powers,axp803-adc", "x-powers,axp813-adc";
-+		#io-channel-cells = <1>;
-+	};
-+
-+	axp_gpio: gpio {
-+		compatible = "x-powers,axp803-gpio", "x-powers,axp813-gpio";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		gpio0_ldo: gpio0-ldo {
-+			pins = "GPIO0";
-+			function = "ldo";
-+		};
-+
-+		gpio1_ldo: gpio1-ldo {
-+			pins = "GPIO1";
-+			function = "ldo";
-+		};
-+	};
-+
-+	battery_power_supply: battery-power-supply {
-+		compatible = "x-powers,axp803-battery-power-supply",
-+			     "x-powers,axp813-battery-power-supply";
-+		status = "disabled";
-+	};
-+
- 	regulators {
- 		/* Default work frequency for buck regulators */
- 		x-powers,dcdc-freq = <3000>;
--- 
-2.17.1
+Hi!
+
+> > +	led->field =3D devm_regmap_field_alloc(dev, regmap, conf);
+> > +	if (IS_ERR(led->field))
+> > +		return PTR_ERR(led->field);
+> > +
+> > +	led->cdev.max_brightness =3D 1;
+>=20
+> s/1/LED_ON/
+
+Actually, I prefer constant 1 here, as it makes it immediately obvious
+this supports just 0/1.
+
+Yes, LED_ON is also 1, but I had to grep the header files for
+that... (I thought it was 255).
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--jRHKVT23PllUwdXP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvPbn0ACgkQMOfwapXb+vKJ0wCgs05bYwEDzqTvqEaSr6m7/qay
+y7YAn2yT6+0M45hzqiLsckrjnAXtEXAA
+=Q3b8
+-----END PGP SIGNATURE-----
+
+--jRHKVT23PllUwdXP--
