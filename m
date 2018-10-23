@@ -1,38 +1,198 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH] pinctrl: meson: fix pinconf bias disable
-Date: Tue, 23 Oct 2018 18:03:19 +0200
-Message-ID: <20181023160319.27003-1-jbrunet@baylibre.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
+Date: Tue, 23 Oct 2018 20:50:48 +0200
+Message-ID: <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-3-git-send-email-dan@emutex.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1539969334-24577-3-git-send-email-dan@emutex.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
 List-Id: linux-gpio@vger.kernel.org
 
-If a bias is enabled on a pin of an Amlogic SoC, calling .pin_config_set()
-with PIN_CONFIG_BIAS_DISABLE will not disable the bias. Instead it will
-force a pull-down bias on the pin.
+Hi Javier,
 
-Instead of the pull type register bank, the driver should access the pull
-enable register bank.
+Thank you for the patch.
 
-Fixes: 6ac730951104 ("pinctrl: add driver for Amlogic Meson SoCs")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have few trivial issues below, please take a look.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 29a458da78db..4f3ab18636a3 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -192,7 +192,7 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
- 			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
- 
- 			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
--			ret = regmap_update_bits(pc->reg_pull, reg,
-+			ret = regmap_update_bits(pc->reg_pullen, reg,
- 						 BIT(bit), 0);
- 			if (ret)
- 				return ret;
+On 10/19/2018 07:15 PM, Dan O'Donovan wrote:
+> From: Javier Arteaga <javier@emutex.com>
+> 
+> Allow userspace to use the on-board LEDs as "upboard:<color>:".
+> 
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Signed-off-by: Javier Arteaga <javier@emutex.com>
+> Signed-off-by: Dan O'Donovan <dan@emutex.com>
+> ---
+>  drivers/leds/Kconfig        |  10 +++++
+>  drivers/leds/Makefile       |   1 +
+>  drivers/leds/leds-upboard.c | 104 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 115 insertions(+)
+>  create mode 100644 drivers/leds/leds-upboard.c
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 44097a3..0ed8857 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -756,6 +756,16 @@ config LEDS_NIC78BX
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called leds-nic78bx.
+>  
+> +config LEDS_UPBOARD
+> +	tristate "LED support for the UP Squared"
+> +	depends on LEDS_CLASS
+> +	depends on MFD_UPBOARD
+> +	help
+> +	  This option enables support for the LEDs on the UP Squared board.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called leds-upboard.
+> +
+>  comment "LED Triggers"
+>  source "drivers/leds/trigger/Kconfig"
+>  
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 420b5d2..c85f18f 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -78,6 +78,7 @@ obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
+>  obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
+>  obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
+>  obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
+> +obj-$(CONFIG_LEDS_UPBOARD)		+= leds-upboard.o
+>  
+>  # LED SPI Drivers
+>  obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
+> diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
+> new file mode 100644
+> index 0000000..34a6973
+> --- /dev/null
+> +++ b/drivers/leds/leds-upboard.c
+> @@ -0,0 +1,104 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// UP Board LED driver
+> +//
+> +// Copyright (c) 2018, Emutex Ltd.
+> +//
+> +// Author: Javier Arteaga <javier@emutex.com>
+> +//
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/leds.h>
+> +#include <linux/mfd/upboard.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/acpi.h>
+
+The last include should go first to keep alphabetical order.
+
+> +
+> +#define to_upboard_led(cdev) container_of(cdev, struct upboard_led, cdev)
+> +
+> +static const char * const upboard_led_names[] = {
+> +	"upboard:blue:",
+> +	"upboard:yellow:",
+> +	"upboard:green:",
+> +	"upboard:red:",
+> +};
+> +
+> +struct upboard_led {
+> +	struct regmap_field *field;
+> +	struct led_classdev cdev;
+> +};
+> +
+> +static enum led_brightness upboard_led_brightness_get(struct led_classdev *cdev)
+> +{
+> +	struct upboard_led *led = to_upboard_led(cdev);
+> +	int brightness = 0;
+> +
+> +	regmap_field_read(led->field, &brightness);
+
+Please check the return value.
+
+> +	return brightness;
+> +}
+> +
+> +static void upboard_led_brightness_set(struct led_classdev *cdev,
+> +				       enum led_brightness brightness)
+> +{
+> +	struct upboard_led *led = to_upboard_led(cdev);
+> +
+> +	regmap_field_write(led->field, brightness);
+
+Ditto.
+
+> +}
+> +
+> +static int upboard_led_probe(struct platform_device *pdev)
+> +{
+> +	unsigned int led_index = pdev->id;
+> +	struct device *dev = &pdev->dev;
+> +	struct acpi_device *adev;
+> +	struct upboard_led *led;
+> +	struct regmap *regmap;
+> +	struct reg_field conf = {
+> +		.reg = UPBOARD_REG_FUNC_EN0,
+> +		.lsb = led_index,
+> +		.msb = led_index,
+> +	};
+> +
+> +	adev = ACPI_COMPANION(dev);
+> +	if (!adev || strcmp(acpi_device_hid(adev), "AANT0F01"))
+> +		return -ENODEV;
+> +
+> +	if (led_index >= ARRAY_SIZE(upboard_led_names))
+> +		return -EINVAL;
+> +
+> +	if (!dev->parent)
+> +		return -EINVAL;
+> +
+> +	regmap = dev_get_regmap(dev->parent, NULL);
+> +	if (!regmap)
+> +		return -EINVAL;
+> +
+> +	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
+> +	if (!led)
+> +		return -ENOMEM;
+> +
+> +	led->field = devm_regmap_field_alloc(dev, regmap, conf);
+> +	if (IS_ERR(led->field))
+> +		return PTR_ERR(led->field);
+> +
+> +	led->cdev.max_brightness = 1;
+
+s/1/LED_ON/
+
+> +	led->cdev.brightness_get = upboard_led_brightness_get;
+> +	led->cdev.brightness_set = upboard_led_brightness_set;
+> +	led->cdev.name = upboard_led_names[led_index];
+> +
+> +	return devm_led_classdev_register(dev, &led->cdev);
+> +}
+> +
+> +static struct platform_driver upboard_led_driver = {
+> +	.driver = {
+> +		.name = "upboard-led",
+> +	},
+> +};
+> +
+> +module_platform_driver_probe(upboard_led_driver, upboard_led_probe);
+> +
+> +MODULE_ALIAS("platform:upboard-led");
+> +MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
+> +MODULE_DESCRIPTION("UP Board LED driver");
+> +MODULE_LICENSE("GPL v2");
+> 
+
 -- 
-2.17.2
+Best regards,
+Jacek Anaszewski
