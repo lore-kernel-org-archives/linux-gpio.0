@@ -1,198 +1,64 @@
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
-Date: Tue, 23 Oct 2018 20:50:48 +0200
-Message-ID: <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-3-git-send-email-dan@emutex.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Oskari Lemmela <oskari@lemmela.net>
+Subject: [PATCH v5 00/11] AXP8x3 AC and battery power supply support
+Date: Tue, 23 Oct 2018 21:53:19 +0300
+Message-ID: <20181023185330.10472-1-oskari@lemmela.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1539969334-24577-3-git-send-email-dan@emutex.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Jonathan Cameron <jic23@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Vasily Khoruzhick <anarsoul@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, Oskari Lemmela <oskari@lemmela.net>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Javier,
+AXP813 AC power supply support with input current and
+voltage limiting support.
 
-Thank you for the patch.
+AXP803 AC and battery power supply support.
 
-I have few trivial issues below, please take a look.
+Changes in v5:
+* Return correct input current limit for values 0x6 and 0x7
+* Add specific compatibles for AXP803
+* Change commit messages
+* Add Vasily Khoruzhick Pinebook DTS patch
 
-On 10/19/2018 07:15 PM, Dan O'Donovan wrote:
-> From: Javier Arteaga <javier@emutex.com>
-> 
-> Allow userspace to use the on-board LEDs as "upboard:<color>:".
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> Signed-off-by: Javier Arteaga <javier@emutex.com>
-> Signed-off-by: Dan O'Donovan <dan@emutex.com>
-> ---
->  drivers/leds/Kconfig        |  10 +++++
->  drivers/leds/Makefile       |   1 +
->  drivers/leds/leds-upboard.c | 104 ++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 115 insertions(+)
->  create mode 100644 drivers/leds/leds-upboard.c
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 44097a3..0ed8857 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -756,6 +756,16 @@ config LEDS_NIC78BX
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called leds-nic78bx.
->  
-> +config LEDS_UPBOARD
-> +	tristate "LED support for the UP Squared"
-> +	depends on LEDS_CLASS
-> +	depends on MFD_UPBOARD
-> +	help
-> +	  This option enables support for the LEDs on the UP Squared board.
-> +
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called leds-upboard.
-> +
->  comment "LED Triggers"
->  source "drivers/leds/trigger/Kconfig"
->  
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 420b5d2..c85f18f 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -78,6 +78,7 @@ obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
->  obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
->  obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
->  obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
-> +obj-$(CONFIG_LEDS_UPBOARD)		+= leds-upboard.o
->  
->  # LED SPI Drivers
->  obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
-> diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
-> new file mode 100644
-> index 0000000..34a6973
-> --- /dev/null
-> +++ b/drivers/leds/leds-upboard.c
-> @@ -0,0 +1,104 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// UP Board LED driver
-> +//
-> +// Copyright (c) 2018, Emutex Ltd.
-> +//
-> +// Author: Javier Arteaga <javier@emutex.com>
-> +//
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/leds.h>
-> +#include <linux/mfd/upboard.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/acpi.h>
+Changes in v4:
+* Change order of axp20x-gpio in axp20x.c
+* Fix indentation and spaces to tabs in axp20x.c
 
-The last include should go first to keep alphabetical order.
+Changes in v3:
+* Reorder ac_power_supply DT node
+* Rename axp20x_ac_power_set_property function
+* Split mfd commit 
 
-> +
-> +#define to_upboard_led(cdev) container_of(cdev, struct upboard_led, cdev)
-> +
-> +static const char * const upboard_led_names[] = {
-> +	"upboard:blue:",
-> +	"upboard:yellow:",
-> +	"upboard:green:",
-> +	"upboard:red:",
-> +};
-> +
-> +struct upboard_led {
-> +	struct regmap_field *field;
-> +	struct led_classdev cdev;
-> +};
-> +
-> +static enum led_brightness upboard_led_brightness_get(struct led_classdev *cdev)
-> +{
-> +	struct upboard_led *led = to_upboard_led(cdev);
-> +	int brightness = 0;
-> +
-> +	regmap_field_read(led->field, &brightness);
+Changes in v2:
+* Reuse axp813 compatibles for axp803
+* Refactor axp20x_ac_power.c
 
-Please check the return value.
+Oskari Lemmela (10):
+  dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
+  dt-bindings: power: supply: axp20x: add AXP803 power bindings
+  dt-bindings: gpio: gpio-axp209: add AXP803 GPIO bindings
+  dt-bindings: iio: adc: add AXP803 ADC bindings
+  ARM: dts: axp81x: add AC power supply subnode
+  arm64: dts: allwinner: axp803: add AC and battery power supplies
+  arm64: dts: allwinner: a64: sopine-baseboard: enable power supplies
+  power: supply: add AC power supply driver for AXP813
+  mfd: axp20x: Add AC power supply cell for AXP813
+  mfd: axp20x: Add supported cells for AXP803
 
-> +	return brightness;
-> +}
-> +
-> +static void upboard_led_brightness_set(struct led_classdev *cdev,
-> +				       enum led_brightness brightness)
-> +{
-> +	struct upboard_led *led = to_upboard_led(cdev);
-> +
-> +	regmap_field_write(led->field, brightness);
+Vasily Khoruzhick (1):
+  arm64: dts: allwinner: a64: pinebook: enable power supplies
 
-Ditto.
-
-> +}
-> +
-> +static int upboard_led_probe(struct platform_device *pdev)
-> +{
-> +	unsigned int led_index = pdev->id;
-> +	struct device *dev = &pdev->dev;
-> +	struct acpi_device *adev;
-> +	struct upboard_led *led;
-> +	struct regmap *regmap;
-> +	struct reg_field conf = {
-> +		.reg = UPBOARD_REG_FUNC_EN0,
-> +		.lsb = led_index,
-> +		.msb = led_index,
-> +	};
-> +
-> +	adev = ACPI_COMPANION(dev);
-> +	if (!adev || strcmp(acpi_device_hid(adev), "AANT0F01"))
-> +		return -ENODEV;
-> +
-> +	if (led_index >= ARRAY_SIZE(upboard_led_names))
-> +		return -EINVAL;
-> +
-> +	if (!dev->parent)
-> +		return -EINVAL;
-> +
-> +	regmap = dev_get_regmap(dev->parent, NULL);
-> +	if (!regmap)
-> +		return -EINVAL;
-> +
-> +	led = devm_kzalloc(dev, sizeof(*led), GFP_KERNEL);
-> +	if (!led)
-> +		return -ENOMEM;
-> +
-> +	led->field = devm_regmap_field_alloc(dev, regmap, conf);
-> +	if (IS_ERR(led->field))
-> +		return PTR_ERR(led->field);
-> +
-> +	led->cdev.max_brightness = 1;
-
-s/1/LED_ON/
-
-> +	led->cdev.brightness_get = upboard_led_brightness_get;
-> +	led->cdev.brightness_set = upboard_led_brightness_set;
-> +	led->cdev.name = upboard_led_names[led_index];
-> +
-> +	return devm_led_classdev_register(dev, &led->cdev);
-> +}
-> +
-> +static struct platform_driver upboard_led_driver = {
-> +	.driver = {
-> +		.name = "upboard-led",
-> +	},
-> +};
-> +
-> +module_platform_driver_probe(upboard_led_driver, upboard_led_probe);
-> +
-> +MODULE_ALIAS("platform:upboard-led");
-> +MODULE_AUTHOR("Javier Arteaga <javier@emutex.com>");
-> +MODULE_DESCRIPTION("UP Board LED driver");
-> +MODULE_LICENSE("GPL v2");
-> 
+ .../devicetree/bindings/gpio/gpio-axp209.txt  |  2 +
+ .../bindings/iio/adc/axp20x_adc.txt           |  2 +
+ .../bindings/power/supply/axp20x_ac_power.txt |  4 +
+ .../bindings/power/supply/axp20x_battery.txt  |  1 +
+ arch/arm/boot/dts/axp81x.dtsi                 |  5 +
+ arch/arm64/boot/dts/allwinner/axp803.dtsi     | 33 +++++++
+ .../dts/allwinner/sun50i-a64-pinebook.dts     |  8 ++
+ .../allwinner/sun50i-a64-sopine-baseboard.dts |  8 ++
+ drivers/mfd/axp20x.c                          | 20 ++++
+ drivers/power/supply/axp20x_ac_power.c        | 94 +++++++++++++++++++
+ include/linux/mfd/axp20x.h                    |  1 +
+ 11 files changed, 178 insertions(+)
 
 -- 
-Best regards,
-Jacek Anaszewski
+2.17.1
