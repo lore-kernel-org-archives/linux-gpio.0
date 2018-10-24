@@ -1,40 +1,86 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH] MAINTAINERS: add myself as co-maintainer of gpiolib
-Date: Wed, 24 Oct 2018 17:38:43 +0200
-Message-ID: <20181024153843.16021-1-brgl@bgdev.pl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] gpio: pl061: Move irq_chip definition inside struct pl061
+Date: Wed, 24 Oct 2018 22:59:15 +0530
+Message-ID: <20181024172915.15544-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Michael Turquette <mturquette@baylibre.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Keeping the irq_chip definition static will make it shared with multiple
+giochips in the system. This practice is considered to be bad and now we
+will get the below warning from gpiolib core:
 
-As discussed with Linus Walleij - I'm adding myself as
-the co-maintainer.
+"detected irqchip that is shared with multiple gpiochips: please fix the
+driver."
 
-Cc: Benoît Cousson <bcousson@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hence, move the irq_chip definition from static to `struct pl061` for
+using a unique irq_chip for each gpiochip.
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-pl061.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index af2a61a31a8e..facf6a859854 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6279,6 +6279,7 @@ F:	tools/testing/selftests/gpio/
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 2afd9de84a0d..dc42571e6fdc 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -54,6 +54,7 @@ struct pl061 {
  
- GPIO SUBSYSTEM
- M:	Linus Walleij <linus.walleij@linaro.org>
-+M:	Bartosz Golaszewski <bgolaszewski@baylibre.com>
- L:	linux-gpio@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- S:	Maintained
+ 	void __iomem		*base;
+ 	struct gpio_chip	gc;
++	struct irq_chip		irq_chip;
+ 	int			parent_irq;
+ 
+ #ifdef CONFIG_PM
+@@ -281,15 +282,6 @@ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
+ 	return irq_set_irq_wake(pl061->parent_irq, state);
+ }
+ 
+-static struct irq_chip pl061_irqchip = {
+-	.name		= "pl061",
+-	.irq_ack	= pl061_irq_ack,
+-	.irq_mask	= pl061_irq_mask,
+-	.irq_unmask	= pl061_irq_unmask,
+-	.irq_set_type	= pl061_irq_type,
+-	.irq_set_wake	= pl061_irq_set_wake,
+-};
+-
+ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ {
+ 	struct device *dev = &adev->dev;
+@@ -328,6 +320,13 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	/*
+ 	 * irq_chip support
+ 	 */
++	pl061->irq_chip.name = dev_name(dev);
++	pl061->irq_chip.irq_ack	= pl061_irq_ack;
++	pl061->irq_chip.irq_mask = pl061_irq_mask;
++	pl061->irq_chip.irq_unmask = pl061_irq_unmask;
++	pl061->irq_chip.irq_set_type = pl061_irq_type;
++	pl061->irq_chip.irq_set_wake = pl061_irq_set_wake;
++
+ 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
+ 	irq = adev->irq[0];
+ 	if (irq < 0) {
+@@ -336,14 +335,14 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	}
+ 	pl061->parent_irq = irq;
+ 
+-	ret = gpiochip_irqchip_add(&pl061->gc, &pl061_irqchip,
++	ret = gpiochip_irqchip_add(&pl061->gc, &pl061->irq_chip,
+ 				   0, handle_bad_irq,
+ 				   IRQ_TYPE_NONE);
+ 	if (ret) {
+ 		dev_info(&adev->dev, "could not add irqchip\n");
+ 		return ret;
+ 	}
+-	gpiochip_set_chained_irqchip(&pl061->gc, &pl061_irqchip,
++	gpiochip_set_chained_irqchip(&pl061->gc, &pl061->irq_chip,
+ 				     irq, pl061_irq_handler);
+ 
+ 	amba_set_drvdata(adev, pl061);
 -- 
-2.19.1
+2.17.1
