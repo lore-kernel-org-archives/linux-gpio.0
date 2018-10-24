@@ -1,52 +1,60 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH V2 3/8] dt-bindings: gpio: vf610: add optional clocks
- property
-Date: Wed, 24 Oct 2018 16:55:43 -0500
-Message-ID: <20181024215543.GA26387@bogus>
-References: <1540295058-26090-1-git-send-email-aisheng.dong@nxp.com>
- <1540295058-26090-4-git-send-email-aisheng.dong@nxp.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v9 6/9] i3c: master: Add driver for Cadence IP
+Date: Wed, 24 Oct 2018 17:43:00 -0500
+Message-ID: <380d73a8-2e54-3cee-2fdd-c6e891df93f7@ti.com>
+References: <20181022133404.2061-1-boris.brezillon@bootlin.com>
+ <20181022133404.2061-7-boris.brezillon@bootlin.com>
+ <20181024202048.7e3534f7@bbrezillon>
+ <99a506e3-d9d5-0d3e-26e1-031447c14857@ti.com>
+ <20181024230432.66dd71df@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1540295058-26090-4-git-send-email-aisheng.dong@nxp.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>, Mark Rutland <mark.rutland@arm.com>, "dongas86@gmail.com" <dongas86@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, Stefan Agner <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181024230432.66dd71df@bbrezillon>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hel>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 23 Oct 2018 11:49:13 +0000, "A.s. Dong" wrote:
-> On some SoCs(e.g. MX7ULP), GPIO clock is gatable and maybe
-> disabled by default. Users have to make sure it's enabled before
-> being able to access controller registers, otherwise an external
-> abort error may occur. Let's add the optional clocks property to
-> handle this case.
+
+
+On 10/24/18 4:04 PM, Boris Brezillon wrote:
+> On Wed, 24 Oct 2018 15:25:17 -0500
+> Grygorii Strashko <grygorii.strashko@ti.com> wrote:
 > 
-> For ULP GPIO clock, it includes two separate clocks: one is for
-> GPIO controller Input/Output function clock while another is
-> GPIO port control clock for interrupt function.
+>> On 10/24/18 1:20 PM, Boris Brezillon wrote:
+>>> Hi Arnd,
+>>>
+>>> On Mon, 22 Oct 2018 15:34:01 +0200
+>>> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+>>>
+>>>    
+>>>> +
+>>>> +static void cdns_i3c_master_rd_from_rx_fifo(struct cdns_i3c_master *master,
+>>>> +					    u8 *bytes, int nbytes)
+>>>> +{
+>>>> +	readsl(master->regs + RX_FIFO, bytes, nbytes / 4);
+>>>
+>>> Vitor reported a problem with readsl(): this function expects the 2nd
+>>> argument to be aligned on 32-bit, which is not guaranteed here. Unless
+>>> you see a better solution, I'll switch back to a loop doing:
+>>>
+>>> 	for (i = 0; i < nbytes; i += 4) {
+>>> 		u32 tmp = __raw_readl(...);
+>>
+>> Pls, do not use __raw io.
 > 
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-> v1->v2:
->  * new patch
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-vf610.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Except this is exactly what I want here, unless you have a
+> replacement for "readl() without a mem-barrier and without endianness
+> conversion"
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Not sure why endianness is the problem. readl_relaxed?
+Sry, I've missed that this is part of the driver not i3c core,
+so minor/ignore.
+
+-- 
+regards,
+-grygorii
