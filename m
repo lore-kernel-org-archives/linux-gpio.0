@@ -1,50 +1,69 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH] pinctrl: meson: fix pinconf bias disable
-Date: Wed, 24 Oct 2018 15:25:06 +0200
-Message-ID: <e59dce0c-e26c-1918-724c-8508fd841678@baylibre.com>
-References: <20181023160319.27003-1-jbrunet@baylibre.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Muchun Song <smuchun@gmail.com>
+Subject: [PATCH] gpiolib: fix possible use after free on label
+Date: Wed, 24 Oct 2018 21:40:40 +0800
+Message-ID: <20181024134040.115413-1-smuchun@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181023160319.27003-1-jbrunet@baylibre.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 23/10/2018 18:03, Jerome Brunet wrote:
-> If a bias is enabled on a pin of an Amlogic SoC, calling .pin_config_set()
-> with PIN_CONFIG_BIAS_DISABLE will not disable the bias. Instead it will
-> force a pull-down bias on the pin.
-> 
-> Instead of the pull type register bank, the driver should access the pull
-> enable register bank.
-> 
-> Fixes: 6ac730951104 ("pinctrl: add driver for Amlogic Meson SoCs")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/pinctrl/meson/pinctrl-meson.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-> index 29a458da78db..4f3ab18636a3 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
-> @@ -192,7 +192,7 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
->  			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
->  
->  			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
-> -			ret = regmap_update_bits(pc->reg_pull, reg,
-> +			ret = regmap_update_bits(pc->reg_pullen, reg,
->  						 BIT(bit), 0);
->  			if (ret)
->  				return ret;
-> 
+gpiod_request_commit() copies the pointer to the label
+passed as an argument only to be used later. But there's a
+chance the caller could immediately free the passed string
+(e.g., local variable). This could trigger a use after free
+when we use gpio label(e.g., gpiochip_unlock_as_irq(),
+gpiochip_is_requested()).
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+To be on the safe side: duplicate the string with
+kstrdup_const() so that if an unaware user passes an address
+to a stack-allocated buffer, we won't get the arbitrary label.
 
-Nice catch !
+Signed-off-by: Muchun Song <smuchun@gmail.com>
+---
+ drivers/gpio/gpiolib.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Neil
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 25187403e3ac..e600c5f5d9a7 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2270,6 +2270,12 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 	unsigned long		flags;
+ 	unsigned		offset;
+ 
++	if (label) {
++		label = kstrdup_const(label, GFP_KERNEL);
++		if (!label)
++			return -ENOMEM;
++	}
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+ 	/* NOTE:  gpio_request() can be called in early boot,
+@@ -2280,6 +2286,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 		desc_set_label(desc, label ? : "?");
+ 		status = 0;
+ 	} else {
++		kfree_const(label);
+ 		status = -EBUSY;
+ 		goto done;
+ 	}
+@@ -2296,6 +2303,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 
+ 		if (status < 0) {
+ 			desc_set_label(desc, NULL);
++			kfree_const(label);
+ 			clear_bit(FLAG_REQUESTED, &desc->flags);
+ 			goto done;
+ 		}
+@@ -2391,6 +2399,7 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
+ 			chip->free(chip, gpio_chip_hwgpio(desc));
+ 			spin_lock_irqsave(&gpio_lock, flags);
+ 		}
++		kfree_const(desc->label);
+ 		desc_set_label(desc, NULL);
+ 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
+ 		clear_bit(FLAG_REQUESTED, &desc->flags);
+-- 
+2.17.1
