@@ -1,99 +1,73 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
- using NULL
-Date: Wed, 24 Oct 2018 13:02:30 +0300
-Message-ID: <20181024100230.GQ10650@smile.fi.intel.com>
-References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
- <20181018215101.169847-1-rajatja@google.com>
- <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
- <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
+Date: Wed, 24 Oct 2018 13:13:40 +0300
+Message-ID: <20181024101340.GR10650@smile.fi.intel.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-3-git-send-email-dan@emutex.com>
+ <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
+ <16591e6735e32baad10f083c688119ce79d12911.camel@perches.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
+In-Reply-To: <16591e6735e32baad10f083c688119ce79d12911.camel@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rajat Jain <rajatja@google.com>
-Cc: "Hunter, Adrian" <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rajat Jain <rajatxjain@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 04:34:55PM -0700, Rajat Jain wrote:
-> On Fri, Oct 19, 2018 at 2:13 AM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Fri, Oct 19, 2018 at 12:53 AM Rajat Jain <rajatja@google.com> wrote:
-
-> > > across other users of this API (other MMC host controller drivers).
-> >
-> > >         if (slot->cd_idx >= 0) {
-> > > -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
-> > > +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
-> > >                                            slot->cd_override_level, 0, NULL);
-> >
-> > Yes.
-> >
-> > > +               if (ret && ret != -EPROBE_DEFER)
-> > > +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
-> > > +                                                  slot->cd_idx,
-> > > +                                                  slot->cd_override_level,
-> > > +                                                  0, NULL);
-> >
-> > And no. Instead of this part you need to provide an ACPI GPIO mapping table.
+On Tue, Oct 23, 2018 at 12:23:13PM -0700, Joe Perches wrote:
+> On Tue, 2018-10-23 at 20:50 +0200, Jacek Anaszewski wrote:
+> > > diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
+> > > new file mode 100644
+> > > index 0000000..34a6973
+> > > --- /dev/null
+> > > +++ b/drivers/leds/leds-upboard.c
+> > > @@ -0,0 +1,104 @@
+> []
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/leds.h>
+> > > +#include <linux/mfd/upboard.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/regmap.h>
+> > > +#include <linux/acpi.h>
+> > 
+> > The last include should go first to keep alphabetical order.
 > 
-> Sure, I am willing to do so, and I tried earlier too. However, certain
-> doubts arose in my mind when I tried that and I posted my questions
-> earlier (https://lkml.org/lkml/2018/9/28/507) but couldn't elicit any
-> response. Unfortunately I still do not have answers. My primary
-> questions are:
-> 
-> 1) - It seems that 1 SDHCI device may support multiple slots (looking
-> at the code). It is not clear to me if they could share card detect
-> interrupts, or should have separate ones? 
+> There is no accepted single kernel style for #include
+> file ordering.
 
-This is more likely question to HW engineers of your platform with a caveat
-that there should be a way to distinguish exact slot in which card is being
-inserted.
+There is a rule of (subtly) better maintenance.
+If you need to add / remove some header later in a (long) list of unordered
+list, it would be error prone.
 
-> Also, the driver may not
-> really know? 
+Just run `make includecheck` and see the result.
 
-I think in such case the bug in HW design and / or driver.
+I personally fixed some header duplications and removal of init.h in unsorted
+lists, which have been missed by some reasons.
 
-> So should I add 1 or two pins using the
-> devm_acpi_dev_add_driver_gpios().
+> drivers/leds does not use a single style nor is this
+> particular variant documented anywhere to my knowledge.
 
-This depends on the above, e.g. HW design, ACPI tables.
+Neither does kernel in general.
+But kernel is evolving and styles also. When you do such statement consider to
+divide by a time period when certain code was pushed to upstream.
 
-> Is some one familiar with SDHC
-> driver can answer these questions, it shall be great.
+> Until such a time when either a local preferred style
+> document or a treewide preferred style exists, please
+> stop asking people to modify #include ordering for
+> various styles like reverse christmas tree by length,
+> alphabetic ordering, or other individual styles.
 
-Actually above questions better to ask in linux-mmc mailing list, which by the
-fact is in Cc list already. So, wait for someone to clarify.
+Why? It makes a sense to ask for new code (and even for patches against old one in some cases).
 
+> My preferred style would always have kernel.h first
+> as that may help with precompiled headers and overall
+> kernel compilation time one day.
 
-> 2) I'm not really sure what should I set "active_low" to? Isn't this
-> something that should be specified by platform / ACPI too, and driver
-> should just be able to say say choose whatever the ACPI says?
-> 
-> struct acpi_gpio_params {
->         unsigned int crs_entry_index;
->         unsigned int line_index;
->         bool active_low;
-> };
-
-
-ACPI specification misses this property, that's why we have it in the
-structure. In your case it should be provided by _DSD and thus be consistent
-with the hardcoded values.
-
-> Since I do not understand the above two issues, and thus I chose the
-> safest path and not disturb the current code so as not to cause any
-> regressions.
-
-As far as I can see in the above it is disturbing the current code more than
-needed.
-
-> 
-> Please let me know, and I'm happy to re-spin my patch.
+How ordering would screw this up?
 
 -- 
 With Best Regards,
