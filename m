@@ -1,63 +1,89 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH 5/5] pinctrl: pinctrl-at91-pio4: simplify getting
- .driver_data
-Date: Wed, 24 Oct 2018 13:15:18 +0200
-Message-ID: <20181024111518.GA15587@piout.net>
-References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
- <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 0/3] UP Squared board drivers
+Date: Wed, 24 Oct 2018 16:05:04 +0300
+Message-ID: <20181024130504.GU10650@smile.fi.intel.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <1539969334-24577-1-git-send-email-dan@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Dan O'Donovan <dan@emutex.com>
+Cc: linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 21/10/2018 22:00:31+0200, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
+On Fri, Oct 19, 2018 at 06:15:31PM +0100, Dan O'Donovan wrote:
+> Hi all,
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> This series adds platform support for AAEON's UP Squared, a x86 SBC
+> based on Apollo Lake [1]. Specifically, it enables control for the board
+> pin headers and for the LEDs, as both of these features are only
+> available behind a FPGA-based platform controller.
+> 
+> This is structured around a MFD driver that provides a regmap interface
+> to that platform controller to each MFD cell.
+> 
+> The series is carved out from an out-of-tree support patchset, initially
+> written for the original UP Board [2] and then extended through the past
+> year to support new entries in the lineup (UP Board, UP Squared and
+> UP Core) [3].
+> 
+> Here we only submit support for UP Squared to simplify review. Still,
+> the driver is designed so that it can easily gain support for the other
+> boards.
+> 
+> V1 was originally submitted by Javier Arteaga in April 2018 as an RFC [4].
+> This V2 aims to address the feedback gratefully received from that.
 
-> ---
+Are you attending ELCE in Edinburgh?
+
 > 
-> Build tested only. buildbot is happy.
+> [1]: http://www.up-board.org/upsquared/specifications-up2/
+> [2]: https://lkml.kernel.org/r/1467648434-29080-1-git-send-email-dan@emutex.com
+> [3]: https://github.com/emutex/ubilinux-kernel/commits/upboard-4.9
+> [4]: https://lore.kernel.org/lkml/20180421085009.28773-1-javier@emutex.com/
 > 
->  drivers/pinctrl/pinctrl-at91-pio4.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> V2:
+> * Rewrote regmap r/w handlers to avoid duplication and improve readability
+> * Simplified data passing between MFD parent and child device drivers
+> * Removed incorrect __init attribute from probe functions
+> * Moved MFD cell definitions into same patch as MFD driver and simplified them
+> * Promoted some dev_dbg instances to dev_err for probe error cases
+> * Decoupled MFD cell reference from ACPI driver data
+> * Miscellanous coding style improvements
+> * Fixed license mismatches
 > 
-> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-> index 5a850491a5cb..4ee135d7b883 100644
-> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
-> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-> @@ -868,8 +868,7 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
->  
->  static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-> +	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
->  	int i, j;
->  
->  	/*
-> @@ -897,8 +896,7 @@ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
->  
->  static int __maybe_unused atmel_pctrl_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-> +	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
->  	int i, j;
->  
->  	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
+> Javier Arteaga (3):
+>   mfd: upboard: Add UP2 platform controller driver
+>   leds: upboard: Add LED support
+>   pinctrl: upboard: Add UP2 pinctrl and gpio driver
+> 
+>  drivers/leds/Kconfig              |  10 +
+>  drivers/leds/Makefile             |   1 +
+>  drivers/leds/leds-upboard.c       | 104 ++++++++
+>  drivers/mfd/Kconfig               |  17 ++
+>  drivers/mfd/Makefile              |   1 +
+>  drivers/mfd/upboard.c             | 344 +++++++++++++++++++++++++
+>  drivers/pinctrl/Kconfig           |  13 +
+>  drivers/pinctrl/Makefile          |   1 +
+>  drivers/pinctrl/pinctrl-upboard.c | 519 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/upboard.h       |  44 ++++
+>  10 files changed, 1054 insertions(+)
+>  create mode 100644 drivers/leds/leds-upboard.c
+>  create mode 100644 drivers/mfd/upboard.c
+>  create mode 100644 drivers/pinctrl/pinctrl-upboard.c
+>  create mode 100644 include/linux/mfd/upboard.h
+> 
 > -- 
-> 2.19.0
+> 2.7.4
+> 
+> 
+> ------
+> This email has been scanned for spam and malware by The Email Laundry.
 > 
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+With Best Regards,
+Andy Shevchenko
