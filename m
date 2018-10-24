@@ -1,89 +1,50 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 0/3] UP Squared board drivers
-Date: Wed, 24 Oct 2018 16:05:04 +0300
-Message-ID: <20181024130504.GU10650@smile.fi.intel.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH] pinctrl: meson: fix pinconf bias disable
+Date: Wed, 24 Oct 2018 15:25:06 +0200
+Message-ID: <e59dce0c-e26c-1918-724c-8508fd841678@baylibre.com>
+References: <20181023160319.27003-1-jbrunet@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1539969334-24577-1-git-send-email-dan@emutex.com>
+In-Reply-To: <20181023160319.27003-1-jbrunet@baylibre.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan O'Donovan <dan@emutex.com>
-Cc: linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 06:15:31PM +0100, Dan O'Donovan wrote:
-> Hi all,
+On 23/10/2018 18:03, Jerome Brunet wrote:
+> If a bias is enabled on a pin of an Amlogic SoC, calling .pin_config_set()
+> with PIN_CONFIG_BIAS_DISABLE will not disable the bias. Instead it will
+> force a pull-down bias on the pin.
 > 
-> This series adds platform support for AAEON's UP Squared, a x86 SBC
-> based on Apollo Lake [1]. Specifically, it enables control for the board
-> pin headers and for the LEDs, as both of these features are only
-> available behind a FPGA-based platform controller.
+> Instead of the pull type register bank, the driver should access the pull
+> enable register bank.
 > 
-> This is structured around a MFD driver that provides a regmap interface
-> to that platform controller to each MFD cell.
+> Fixes: 6ac730951104 ("pinctrl: add driver for Amlogic Meson SoCs")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/pinctrl/meson/pinctrl-meson.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> The series is carved out from an out-of-tree support patchset, initially
-> written for the original UP Board [2] and then extended through the past
-> year to support new entries in the lineup (UP Board, UP Squared and
-> UP Core) [3].
-> 
-> Here we only submit support for UP Squared to simplify review. Still,
-> the driver is designed so that it can easily gain support for the other
-> boards.
-> 
-> V1 was originally submitted by Javier Arteaga in April 2018 as an RFC [4].
-> This V2 aims to address the feedback gratefully received from that.
-
-Are you attending ELCE in Edinburgh?
-
-> 
-> [1]: http://www.up-board.org/upsquared/specifications-up2/
-> [2]: https://lkml.kernel.org/r/1467648434-29080-1-git-send-email-dan@emutex.com
-> [3]: https://github.com/emutex/ubilinux-kernel/commits/upboard-4.9
-> [4]: https://lore.kernel.org/lkml/20180421085009.28773-1-javier@emutex.com/
-> 
-> V2:
-> * Rewrote regmap r/w handlers to avoid duplication and improve readability
-> * Simplified data passing between MFD parent and child device drivers
-> * Removed incorrect __init attribute from probe functions
-> * Moved MFD cell definitions into same patch as MFD driver and simplified them
-> * Promoted some dev_dbg instances to dev_err for probe error cases
-> * Decoupled MFD cell reference from ACPI driver data
-> * Miscellanous coding style improvements
-> * Fixed license mismatches
-> 
-> Javier Arteaga (3):
->   mfd: upboard: Add UP2 platform controller driver
->   leds: upboard: Add LED support
->   pinctrl: upboard: Add UP2 pinctrl and gpio driver
-> 
->  drivers/leds/Kconfig              |  10 +
->  drivers/leds/Makefile             |   1 +
->  drivers/leds/leds-upboard.c       | 104 ++++++++
->  drivers/mfd/Kconfig               |  17 ++
->  drivers/mfd/Makefile              |   1 +
->  drivers/mfd/upboard.c             | 344 +++++++++++++++++++++++++
->  drivers/pinctrl/Kconfig           |  13 +
->  drivers/pinctrl/Makefile          |   1 +
->  drivers/pinctrl/pinctrl-upboard.c | 519 ++++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/upboard.h       |  44 ++++
->  10 files changed, 1054 insertions(+)
->  create mode 100644 drivers/leds/leds-upboard.c
->  create mode 100644 drivers/mfd/upboard.c
->  create mode 100644 drivers/pinctrl/pinctrl-upboard.c
->  create mode 100644 include/linux/mfd/upboard.h
-> 
-> -- 
-> 2.7.4
-> 
-> 
-> ------
-> This email has been scanned for spam and malware by The Email Laundry.
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+> index 29a458da78db..4f3ab18636a3 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+> @@ -192,7 +192,7 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+>  			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
+>  
+>  			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
+> -			ret = regmap_update_bits(pc->reg_pull, reg,
+> +			ret = regmap_update_bits(pc->reg_pullen, reg,
+>  						 BIT(bit), 0);
+>  			if (ret)
+>  				return ret;
 > 
 
--- 
-With Best Regards,
-Andy Shevchenko
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+
+Nice catch !
+
+Neil
