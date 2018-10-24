@@ -1,46 +1,63 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v2 2/3] leds: upboard: Add LED support
-Date: Wed, 24 Oct 2018 03:24:44 -0700
-Message-ID: <f9b3b4377768249febf62bb5d5c5f5b6197f627f.camel@perches.com>
-References: <20180421085009.28773-1-javier@emutex.com>
-         <1539969334-24577-1-git-send-email-dan@emutex.com>
-         <1539969334-24577-3-git-send-email-dan@emutex.com>
-         <ede59ef8-7caf-413d-6858-33a1eab5f084@gmail.com>
-         <16591e6735e32baad10f083c688119ce79d12911.camel@perches.com>
-         <20181024101340.GR10650@smile.fi.intel.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH 5/5] pinctrl: pinctrl-at91-pio4: simplify getting
+ .driver_data
+Date: Wed, 24 Oct 2018 13:15:18 +0200
+Message-ID: <20181024111518.GA15587@piout.net>
+References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+ <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181024101340.GR10650@smile.fi.intel.com>
+Content-Disposition: inline
+In-Reply-To: <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Dan O'Donovan <dan@emutex.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 2018-10-24 at 13:13 +0300, Andy Shevchenko wrote:
-> On Tue, Oct 23, 2018 at 12:23:13PM -0700, Joe Perches wrote:
-> > Until such a time when either a local preferred style
-> > document or a treewide preferred style exists, please
-> > stop asking people to modify #include ordering for
-> > various styles like reverse christmas tree by length,
-> > alphabetic ordering, or other individual styles.
+On 21/10/2018 22:00:31+0200, Wolfram Sang wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
 > 
-> Why? It makes a sense to ask for new code (and even for patches against old one in some cases).
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-It's just a nit and frequently impossible to require as
-ordering dependencies between include files do exist.
-
-> > My preferred style would always have kernel.h first
-> > as that may help with precompiled headers and overall
-> > kernel compilation time one day.
+> ---
 > 
-> How ordering would screw this up?
+> Build tested only. buildbot is happy.
+> 
+>  drivers/pinctrl/pinctrl-at91-pio4.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+> index 5a850491a5cb..4ee135d7b883 100644
+> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
+> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+> @@ -868,8 +868,7 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
+>  
+>  static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+> +	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
+>  	int i, j;
+>  
+>  	/*
+> @@ -897,8 +896,7 @@ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
+>  
+>  static int __maybe_unused atmel_pctrl_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+> +	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
+>  	int i, j;
+>  
+>  	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
+> -- 
+> 2.19.0
+> 
 
-gcc has many limits on the use of precompiled headers.
-
-https://gcc.gnu.org/onlinedocs/gcc/Precompiled-Headers.html
-
-Precompiled headers are often shared by multiple
-compilation units and precompilation can be stopped
-after a specific header.
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
