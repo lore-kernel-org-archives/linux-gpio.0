@@ -1,26 +1,40 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 04/11] dt-bindings: iio: adc: add AXP803 ADC bindings
-Date: Wed, 24 Oct 2018 08:56:33 -0500
-Message-ID: <20181024135633.GA342@bogus>
-References: <20181023185330.10472-1-oskari@lemmela.net>
- <20181023185330.10472-5-oskari@lemmela.net>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] MAINTAINERS: add myself as co-maintainer of gpiolib
+Date: Wed, 24 Oct 2018 17:38:43 +0200
+Message-ID: <20181024153843.16021-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181023185330.10472-5-oskari@lemmela.net>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Lee Jones <lee.jones@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Vasily Khoruzhick <anarsoul@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, Oskari Lemmela <oskari@lemmela.net>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Michael Turquette <mturquette@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 23 Oct 2018 21:53:23 +0300, Oskari Lemmela wrote:
-> The AXP803 ADC is compatible with AXP813 ADC, but add
-> specific compatible for it.
-> 
-> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-> ---
->  Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+As discussed with Linus Walleij - I'm adding myself as
+the co-maintainer.
+
+Cc: Benoît Cousson <bcousson@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index af2a61a31a8e..facf6a859854 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6279,6 +6279,7 @@ F:	tools/testing/selftests/gpio/
+ 
+ GPIO SUBSYSTEM
+ M:	Linus Walleij <linus.walleij@linaro.org>
++M:	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+ L:	linux-gpio@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+ S:	Maintained
+-- 
+2.19.1
