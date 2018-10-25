@@ -1,63 +1,46 @@
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Thu, 25 Oct 2018 14:47:59 +0100
-Message-ID: <d0e76752-1b31-e9e3-d684-9d78ddc98172@opensource.cirrus.com>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell> <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025114205.GC4870@dell> <20181025124905.GF16508@imbe.wolfsonmicro.main>
- <20181025132043.GG16508@imbe.wolfsonmicro.main>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v9 6/9] i3c: master: Add driver for Cadence IP
+Date: Thu, 25 Oct 2018 17:30:26 +0200
+Message-ID: <CAK8P3a2DBgfvXs-9KzoDvbQpV+VN96xb7xHG-5=NDDgnt7ViVQ@mail.gmail.com>
+References: <20181022133404.2061-1-boris.brezillon@bootlin.com>
+ <20181022133404.2061-7-boris.brezillon@bootlin.com> <20181024202048.7e3534f7@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181025132043.GG16508@imbe.wolfsonmicro.main>
-Content-Language: en-US
+In-Reply-To: <20181024202048.7e3534f7@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>, Lee Jones <lee.jones@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@cod>
 List-Id: linux-gpio@vger.kernel.org
 
-On 25/10/18 14:20, Charles Keepax wrote:
-> On Thu, Oct 25, 2018 at 01:49:05PM +0100, Charles Keepax wrote:
->> On Thu, Oct 25, 2018 at 12:42:05PM +0100, Lee Jones wrote:
->>> On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
->>>> On 25/10/18 09:26, Charles Keepax wrote:
->>>>> On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
->>>>>> On Mon, 08 Oct 2018, Charles Keepax wrote:
->>>>>>> From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
->>>>> I really feel this isn't the driver you are objecting to as such
->>>>> but the way regmap operates and also we seem to always have the same
->>>>> discussions around regmap every time we push a driver.
->>>
->>> Absolutely.  I didn't like it before.  I like it even less now.
->>>
->>
->> I guess the question from my side becomes do you want to block
->> this driver pending on major refactoring to regmap? I will have a
->> think about what I can do but its going to affect a LOT of drivers.
->>
-> 
-> Actually one more thought, perhaps as a halfway for now i could
-> look into removing the readables
+On 10/24/18, Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> Hi Arnd,
+>
+> On Mon, 22 Oct 2018 15:34:01 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+>
+>
+>> +
+>> +static void cdns_i3c_master_rd_from_rx_fifo(struct cdns_i3c_master
+>> *master,
+>> +					    u8 *bytes, int nbytes)
+>> +{
+>> +	readsl(master->regs + RX_FIFO, bytes, nbytes / 4);
+>
+> Vitor reported a problem with readsl(): this function expects the 2nd
+> argument to be aligned on 32-bit, which is not guaranteed here. Unless
+> you see a better solution, I'll switch back to a loop doing:
+>
+> 	for (i = 0; i < nbytes; i += 4) {
+> 		u32 tmp = __raw_readl(...);
+> 		memcpy(bytes + i, &tmp,
+> 		       nbytes - i  > 4 ? 4 : nbytes - i);
+> 	}
 
-Be careful with that, there are some addresses that are illegal to
-access. What does regmap debugfs do if you don't have a readables
-list? Just reading a debugfs shouldn't be able to kill the hardware.
-You might need to add a precious list which is more error prone
-than listing the valid readables we are using.
+Could we maybe mandate that the buffer itself must be aligned here?
+What would be a reason why we see an unaligned target buffer?
 
-  and defaults. We lose some things
-> like error checking that we are reading real registers but as
-> this driver doesnt currently do cache syncs we might be able to
-> get away with this for now.
-> 
-> Unless anyone strenuously objects i will have a look at the
-> options there. As well as looking at wider refactoring but aiming
-> further out.
-> 
-> Thanks,
-> Charles
-> 
+The open-coded loop should generally work (maybe a little slower),
+but it does seem error-prone to use __raw_readl() in general.
+
+      Arnd
