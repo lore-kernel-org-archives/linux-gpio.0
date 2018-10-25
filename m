@@ -1,93 +1,108 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH V2 4/8] gpio: vf610: add optional clock support
-Date: Thu, 25 Oct 2018 19:58:47 +0200
-Message-ID: <c023948f3baee96cb186f970fdb71ebd@agner.ch>
-References: <1540295058-26090-1-git-send-email-aisheng.dong@nxp.com>
- <1540295058-26090-5-git-send-email-aisheng.dong@nxp.com>
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH v5 00/11] AXP8x3 AC and battery power supply support
+Date: Thu, 25 Oct 2018 15:30:17 +0200
+Message-ID: <20181025133017.2rdnbgmvdlx67kcz@earth.universe>
+References: <20181023185330.10472-1-oskari@lemmela.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1540295058-26090-5-git-send-email-aisheng.dong@nxp.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: dongas86@gmail.com, Linus Walleij <linus.walleij@linaro.org>, linux@armlinux.org.uk, linux-gpio@vger.kernel.org, robh+dt@kernel.org, dl-linux-imx <linux-imx@nxp.com>, kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>, shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ix4k4ufla4fevamq"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181023185330.10472-1-oskari@lemmela.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Oskari Lemmela <oskari@lemmela.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee.jones@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Vasily Khoruzhick <anarsoul@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 23.10.2018 13:49, A.s. Dong wrote:
-> Some SoCs need the gpio clock to be enabled before accessing
-> HW registers. This patch add the optional clock handling.
-> 
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-> v1->v2:
->  * new patch
-> ---
->  drivers/gpio/gpio-vf610.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-> index d4ad6d0..cbc4f44 100644
-> --- a/drivers/gpio/gpio-vf610.c
-> +++ b/drivers/gpio/gpio-vf610.c
-> @@ -16,6 +16,7 @@
->   */
->  
->  #include <linux/bitops.h>
-> +#include <linux/clk.h>
->  #include <linux/err.h>
->  #include <linux/gpio.h>
->  #include <linux/init.h>
-> @@ -256,6 +257,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> +	struct clk *clk_gpio, *clk_port;
->  	struct vf610_gpio_port *port;
->  	struct resource *iores;
->  	struct gpio_chip *gc;
-> @@ -280,6 +282,24 @@ static int vf610_gpio_probe(struct platform_device *pdev)
->  	if (port->irq < 0)
->  		return port->irq;
->  
-> +	clk_gpio = devm_clk_get(&pdev->dev, "gpio");
-> +	clk_port = devm_clk_get(&pdev->dev, "port");
 
-Are you sure that those are two independent clocks? On i.MX 7 usually
-there was a single clock gate controlling multiple clocks at once (which
-should be modeled as a single clock gate in the clock tree).
+--ix4k4ufla4fevamq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---
-Stefan 
+Hi,
 
-> +	if ((PTR_ERR(clk_gpio) == -EPROBE_DEFER) ||
-> +	    (PTR_ERR(clk_port) == -EPROBE_DEFER)) {
-> +		return -EPROBE_DEFER;
-> +	} else if (!IS_ERR_OR_NULL(clk_gpio) &&
-> +		   !IS_ERR_OR_NULL(clk_port)) {
-> +		ret = clk_prepare_enable(clk_gpio);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = clk_prepare_enable(clk_port);
-> +		if (ret) {
-> +			clk_disable_unprepare(clk_gpio);
-> +			return ret;
-> +		}
-> +	}
-> +
->  	gc = &port->gc;
->  	gc->of_node = np;
->  	gc->parent = dev;
+Patches 1, 2 & 9 look good to me and do not seem to have any
+dependencies. I plan to merge them after the merge window
+for 4.20 closes.
+
+-- Sebastian
+
+On Tue, Oct 23, 2018 at 09:53:19PM +0300, Oskari Lemmela wrote:
+> AXP813 AC power supply support with input current and
+> voltage limiting support.
+>=20
+> AXP803 AC and battery power supply support.
+>=20
+> Changes in v5:
+> * Return correct input current limit for values 0x6 and 0x7
+> * Add specific compatibles for AXP803
+> * Change commit messages
+> * Add Vasily Khoruzhick Pinebook DTS patch
+>=20
+> Changes in v4:
+> * Change order of axp20x-gpio in axp20x.c
+> * Fix indentation and spaces to tabs in axp20x.c
+>=20
+> Changes in v3:
+> * Reorder ac_power_supply DT node
+> * Rename axp20x_ac_power_set_property function
+> * Split mfd commit=20
+>=20
+> Changes in v2:
+> * Reuse axp813 compatibles for axp803
+> * Refactor axp20x_ac_power.c
+>=20
+> Oskari Lemmela (10):
+>   dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
+>   dt-bindings: power: supply: axp20x: add AXP803 power bindings
+>   dt-bindings: gpio: gpio-axp209: add AXP803 GPIO bindings
+>   dt-bindings: iio: adc: add AXP803 ADC bindings
+>   ARM: dts: axp81x: add AC power supply subnode
+>   arm64: dts: allwinner: axp803: add AC and battery power supplies
+>   arm64: dts: allwinner: a64: sopine-baseboard: enable power supplies
+>   power: supply: add AC power supply driver for AXP813
+>   mfd: axp20x: Add AC power supply cell for AXP813
+>   mfd: axp20x: Add supported cells for AXP803
+>=20
+> Vasily Khoruzhick (1):
+>   arm64: dts: allwinner: a64: pinebook: enable power supplies
+>=20
+>  .../devicetree/bindings/gpio/gpio-axp209.txt  |  2 +
+>  .../bindings/iio/adc/axp20x_adc.txt           |  2 +
+>  .../bindings/power/supply/axp20x_ac_power.txt |  4 +
+>  .../bindings/power/supply/axp20x_battery.txt  |  1 +
+>  arch/arm/boot/dts/axp81x.dtsi                 |  5 +
+>  arch/arm64/boot/dts/allwinner/axp803.dtsi     | 33 +++++++
+>  .../dts/allwinner/sun50i-a64-pinebook.dts     |  8 ++
+>  .../allwinner/sun50i-a64-sopine-baseboard.dts |  8 ++
+>  drivers/mfd/axp20x.c                          | 20 ++++
+>  drivers/power/supply/axp20x_ac_power.c        | 94 +++++++++++++++++++
+>  include/linux/mfd/axp20x.h                    |  1 +
+>  11 files changed, 178 insertions(+)
+>=20
+> --=20
+> 2.17.1
+>=20
+
+--ix4k4ufla4fevamq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvRxWcACgkQ2O7X88g7
++pqoYBAAml3HrRrerjuL11bRxxoJSeTc/PBvyYsHevJyPQTmFLHninb0wnrdGOJJ
+bGXD4y4w/EPusLhkGCfmVmWuPTPZG4wnf5gJfHBOmFoTOcmjF68ASShpavKbCUH/
+WEMp8mYT+o2eCSWbIuKrEb+6T+PI3ue8i+LpEx4B9i5nb2qg69zR//V1YP7CRK0E
+rp1YUX4cIuBzxGSyi3SEbJGFOhrHeckCeWAvPi8DDlP7pXssO2qquAkb2tGzvJNF
+UUz3JVlB4MOWNxhscTZIzQ2GDKGrcKNqqwK+PFPt5ewvr3bY/tJcmGc+IBPcrqls
+zWPeex8tincMb5o6f4HuBwK0EDIR4wlne88km/OSRaW065wSE6xF377IlUmEkdam
+1PNPYbGr6hckdATIgNeMtNPsd8b13zNQGWYcp718+lPo+Bbmqb5sYh8whU80s734
+h6JIbfv5H4kr/r/4qcW13QU991bz6o0cMCmw9m0IikR5WI/PGL+Lu3R4u3jPU/+U
+iCFNr5/oPBPBTg9epvSf9tGqu1PlbZtxJN2T5vpf67KKaUKczdb4+b86ZDxMcTAe
+/ruSHYohiS3FD1JGT/S/s0cn0Q5qsN3pRMOaBnuaMgD/YIQpAPMmnD3xVCLg+3wD
+ymj/0XhXTMnAXvNdasIVofcNuUmX/VtCEgCb0A/gJGiPTo9+xNA=
+=0RM0
+-----END PGP SIGNATURE-----
+
+--ix4k4ufla4fevamq--
