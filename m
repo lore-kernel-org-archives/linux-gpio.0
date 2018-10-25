@@ -1,52 +1,110 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Thu, 25 Oct 2018 11:56:26 +0100
-Message-ID: <20181025105626.GE16508@imbe.wolfsonmicro.main>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell>
- <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025101248.GT2103@sirena.org.uk>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 1/3] mfd: upboard: Add UP2 platform controller driver
+Date: Thu, 25 Oct 2018 12:05:05 +0100
+Message-ID: <20181025110505.GA4870@dell>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-2-git-send-email-dan@emutex.com>
+ <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181025101248.GT2103@sirena.org.uk>
+In-Reply-To: <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>, Lee Jones <lee.jones@linaro.org>, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Dan O'Donovan <dan@emutex.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, carlos.iglesias@emutex.com, Javier Arteaga <javier@emutex.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 11:12:48AM +0100, Mark Brown wrote:
-> On Thu, Oct 25, 2018 at 10:28:16AM +0100, Richard Fitzgerald wrote:
-> > On 25/10/18 09:26, Charles Keepax wrote:
-> > > On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
-> > > I really feel this isn't the driver you are objecting to as such
-> > > but the way regmap operates and also we seem to always have the same
-> > > discussions around regmap every time we push a driver. Is there
-> > > any way me, you and Mark could hash this out and find out a way to
-> > > handle regmaps that is acceptable to you? I don't suppose you are
-> > > in Edinburgh at the moment for ELCE?
-> 
-> > I suppose if Mark was willing to promote the regmap drivers to be a
-> > top-level subsystem that could contain the regmap definitions of devices
-> > then we could dump our regmap definitions in there, where Mark can review
-> > it as he's familiar with regmap and the chips and the reasons why things
-> > are done the way they are, rather than Lee having to stress about it every
-> > time we need to create an MFD device that uses regmap. Though that would
-> > make the initialization of an MFD rather awkward with the code required
-> > to init the MFD it not actually being in the MFD tree.
-> 
-> I'm not totally against dumping the data tables in some other directory
-> (we could do ../regmap/tables or whatever) but I fear it's going to
-> cause otherwise needless cross tree issues.
+On Sat, 20 Oct 2018, Andy Shevchenko wrote:
 
-I guess there is a question here, if i split the regmap stuff
-into a separate file within mfd would that be enough? Is it just
-the mixing of these tables and the code you object to Lee or is
-it the fact the tables exist at all?
+> On Fri, Oct 19, 2018 at 8:26 PM Dan O'Donovan <dan@emutex.com> wrote:
+> >
+> > From: Javier Arteaga <javier@emutex.com>
+> >
+> > UP Squared (UP2) is a x86 SBC from AAEON based on Intel Apollo Lake. It
+> > features a MAX 10 FPGA that routes lines from both SoC and on-board
+> > devices to two I/O headers:
+> >
+> >                                 +------------------------+
+> >                                 | 40-pin RPi-like header |
+> >                          +------|         (HAT)          |
+> >                          |      +------------------------+
+> >     +-------+    +--------+
+> >     |       |    |        |     +------------------------+
+> >     |  SoC  |----|  FPGA  |-----|  Custom UP2 pin header |
+> >     |       |    |        |     |        (EXHAT)         |
+> >     +-------+    +--------+     +------------------------+
+> >                          |
+> >                          +------* On-board devices: LED, VLS...
+> >
+> > This is intended to enable vendor-specific applications to customize I/O
+> > header pinout, as well as include low-latency functionality. It also
+> > performs voltage level translation between the SoC (1.8V) and HAT header
+> > (3.3V).
+> >
+> > Out of the box, this block implements a platform controller with a
+> > GPIO-bitbanged control interface. It's enumerated by ACPI and provides
+> > registers to control:
+> >
+> > - Configuration of all FPGA-routed header lines. These can be driven
+> >   SoC-to-header, header-to-SoC or set in high impedance.
+> >
+> > - On-board LEDs and enable lines for other platform devices.
+> >
+> > Add core support for this platform controller as a MFD device, exposing
+> > these registers as a regmap.
+> 
+> Can we see a link to or an excerpt of ACPI table for this device?
+> 
+> > +#define set_clear(u, x) gpiod_set_value((u)->clear_gpio, (x))
+> > +#define set_strobe(u, x) gpiod_set_value((u)->strobe_gpio, (x))
+> > +#define set_datain(u, x) gpiod_set_value((u)->datain_gpio, (x))
+> > +#define get_dataout(u) gpiod_get_value((u)->dataout_gpio)
+> 
+> I think these macros don't bring much value. (Up to you and Lee to decide)
 
-Thanks,
-Charles
+I agree.
+
+In fact I think they only serve to obfuscate instead of clarify.
+
+[...]
+
+> > +               set_strobe(ddata, 0);
+> > +               set_strobe(ddata, 1);
+> > +               *val |= get_dataout(ddata) << i;
+> > +       }
+> > +}
+> 
+> > +static int upboard_check_supported(struct device *dev, struct regmap *regmap)
+> > +{
+> > +       uint8_t manufacturer_id, build, major, minor, patch;
+> > +       unsigned int platform_id, firmware_id;
+> > +       int ret;
+> 
+> > +       manufacturer_id = platform_id & 0xff;
+> 
+> Redundant & 0xff part.
+
+Maybe not required, but lets the reader know it's intended.
+
+[...]
+
+> > +       ret = upboard_init_gpio(dev);
+> > +       if (ret) {
+> > +               if (ret != -EPROBE_DEFER)
+> > +                       dev_err(dev, "failed to init GPIOs: %d", ret);
+> > +               return ret;
+> > +       }
+> 
+> I don't know if probe_err() helper is going to be a part of v4.21
+> (which this series targets), it would be good to use it.
+
+Interesting.  What does it do?
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
