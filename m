@@ -1,140 +1,109 @@
-From: Nathan Chancellor <natechancellor@gmail.com>
-Subject: Re: [PATCH] pinctrl: generic: Avoid several implicit enum conversions
-Date: Thu, 25 Oct 2018 14:04:56 -0700
-Message-ID: <20181025210456.GA14792@flashbox>
-References: <20180925061855.19557-1-natechancellor@gmail.com>
- <CACRpkdadODxsuae7uhwcfBBMQ-eZ8bvnV71fhDCuudbJEbhhYA@mail.gmail.com>
- <20180925161459.GA15840@flashbox>
- <CAKwvOdkh0rqWcw4r7Y=Ki_MNJPoJNnvm3uGp4Q726PaESxZAnQ@mail.gmail.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: RE: [PATCH V2 4/8] gpio: vf610: add optional clock support
+Date: Fri, 26 Oct 2018 03:49:32 +0000
+Message-ID: <AM0PR04MB42115EAC49CC0F67BE45CCB380F00@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1540295058-26090-1-git-send-email-aisheng.dong@nxp.com>
+ <1540295058-26090-5-git-send-email-aisheng.dong@nxp.com>
+ <c023948f3baee96cb186f970fdb71ebd@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdkh0rqWcw4r7Y=Ki_MNJPoJNnvm3uGp4Q726PaESxZAnQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <c023948f3baee96cb186f970fdb71ebd@agner.ch>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: "dongas86@gmail.com" <dongas86@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 09:23:09AM -0700, Nick Desaulniers wrote:
-> On Tue, Sep 25, 2018 at 9:15 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > On Tue, Sep 25, 2018 at 12:58:16PM +0200, Linus Walleij wrote:
-> > > On Tue, Sep 25, 2018 at 8:19 AM Nathan Chancellor
-> > > <natechancellor@gmail.com> wrote:
-> > >
-> > > > Clang warns when one enumerated type is implicitly converted to another,
-> > > > which happens several times in the pinctrl drivers for a few reasons:
-> > > >
-> > > > * The PCONFDUMP macro, which sets the param member in pin_config_item.
-> > > > * The pinconf_generic_params structure, which is used by drivers to
-> > > >   configure their bindings, which has a param member like pin_config_item.
-> > > > * The pinconf_to_config_packed, which takes either the generic enum
-> > > >   pin_config_param or a specialized one.
-> > > >
-> > > > Drivers are allowed to extend this enumerated type because of the gap
-> > > > betweem PIN_CONFIG_END and PIN_CONFIG_MAX. Make it clear to Clang that
-> > > > this is allowed by changing param's type in all of these instances to
-> > > > int so no conversion needs to happen.
-> > > >
-> > > > Link: https://github.com/ClangBuiltLinux/linux/issues/138
-> > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > >
-> > > I'm not superhappy about this because that enum is great for readability,
-> > > even if the static syntax checker is unhappy.
-> > >
-> > > If we can't have an enum here I would argue that we can just as well
-> > > remove the enum altogether and just use #define for the config
-> > > parameters, would you agree?
-> > >
-> > > Yours,
-> > > Linus Walleij
-> >
-> > Hi Linus,
-> >
-> > I see no reason to get rid of the enums. All this patch should do is
-> > silence Clang's warnings because there is no other way to tell it that
-> > this construct is okay except for changing the parameter/member type to
-> > int (so no conversion needs to happen) or an explicit cast, which will
-> > result in more noise in my opinion since this warning happens at least
-> > 10-15 times in the pinctrl drivers. There's no fundamental change to
-> > how the enums are used.
-> >
-> > See these other commits for similar fixes:
-> >
-> > 3eb95feac113 ("mm/zsmalloc.c: change stat type parameter to int")
-> > 04fecbf51b3c ("mm: memcontrol: use int for event/state parameter in several functions")
-> >
-> > Cheers!
-> > Nathan
+> -----Original Message-----
+> From: Stefan Agner [mailto:stefan@agner.ch]
+> Sent: Friday, October 26, 2018 1:59 AM
+[...]
 > 
-> That or all of the call sites should have explicit casts to the base enum.
+> On 23.10.2018 13:49, A.s. Dong wrote:
+> > Some SoCs need the gpio clock to be enabled before accessing HW
+> > registers. This patch add the optional clock handling.
+> >
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Stefan Agner <stefan@agner.ch>
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Cc: linux-gpio@vger.kernel.org
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > ---
+> > v1->v2:
+> >  * new patch
+> > ---
+> >  drivers/gpio/gpio-vf610.c | 20 ++++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> >
+> > diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+> > index d4ad6d0..cbc4f44 100644
+> > --- a/drivers/gpio/gpio-vf610.c
+> > +++ b/drivers/gpio/gpio-vf610.c
+> > @@ -16,6 +16,7 @@
+> >   */
+> >
+> >  #include <linux/bitops.h>
+> > +#include <linux/clk.h>
+> >  #include <linux/err.h>
+> >  #include <linux/gpio.h>
+> >  #include <linux/init.h>
+> > @@ -256,6 +257,7 @@ static int vf610_gpio_probe(struct platform_device
+> > *pdev)  {
+> >  	struct device *dev = &pdev->dev;
+> >  	struct device_node *np = dev->of_node;
+> > +	struct clk *clk_gpio, *clk_port;
+> >  	struct vf610_gpio_port *port;
+> >  	struct resource *iores;
+> >  	struct gpio_chip *gc;
+> > @@ -280,6 +282,24 @@ static int vf610_gpio_probe(struct platform_device
+> *pdev)
+> >  	if (port->irq < 0)
+> >  		return port->irq;
+> >
+> > +	clk_gpio = devm_clk_get(&pdev->dev, "gpio");
+> > +	clk_port = devm_clk_get(&pdev->dev, "port");
+> 
+> Are you sure that those are two independent clocks? On i.MX 7 usually there
+> was a single clock gate controlling multiple clocks at once (which should be
+> modeled as a single clock gate in the clock tree).
 > 
 
-I don't know why I never replied to this...
+Yes, they're two separate clocks in HW for gpio and port controller respectively.
+One is for GPIO general purpose input/output function which another for port Interrupt.
+Just like we have separate register ranges for gpio and port.
 
-In my opinion, there are enough of these warnings to warrant changing
-the type of param globally (arm64 allyesconfig):
+Regards
+Dong Aisheng
 
-drivers/pinctrl/bcm/pinctrl-bcm2835.c:707:40: warning: implicit conversion from enumeration type 'enum bcm2835_pinconf_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/sprd/pinctrl-sprd.c:845:19: warning: implicit conversion from enumeration type 'enum sprd_pinconf_params' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/sprd/pinctrl-sprd.c:846:22: warning: implicit conversion from enumeration type 'enum sprd_pinconf_params' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/sprd/pinctrl-sprd.c:851:12: warning: implicit conversion from enumeration type 'enum sprd_pinconf_params' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/sprd/pinctrl-sprd.c:852:12: warning: implicit conversion from enumeration type 'enum sprd_pinconf_params' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/pinctrl-max77620.c:56:12: warning: implicit conversion from enumeration type 'enum max77620_pinconf_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/pinctrl-max77620.c:59:12: warning: implicit conversion from enumeration type 'enum max77620_pinconf_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/pinctrl-max77620.c:62:12: warning: implicit conversion from enumeration type 'enum max77620_pinconf_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/pinctrl-max77620.c:65:12: warning: implicit conversion from enumeration type 'enum max77620_pinconf_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/pinctrl-max77620.c:68:12: warning: implicit conversion from enumeration type 'enum max77620_pinconf_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/pinctrl-max77620.c:71:12: warning: implicit conversion from enumeration type 'enum max77620_pinconf_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/pinctrl-lpc18xx.c:643:29: warning: implicit conversion from enumeration type 'enum lpc18xx_pin_config_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/pinctrl/pinctrl-lpc18xx.c:648:12: warning: implicit conversion from enumeration type 'enum lpc18xx_pin_config_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/rtc/rtc-omap.c:574:21: warning: implicit conversion from enumeration type 'enum rtc_pin_config_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-drivers/rtc/rtc-omap.c:579:12: warning: implicit conversion from enumeration type 'enum rtc_pin_config_param' to different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-
-The construct of extending pin_config_param with another enumerated type
-is something that could be added in new drivers so there would be upkeep
-of adding explicit casts if that happens, at least until something like
-0day can add support for Clang so driver authors get alerted of these
-warnings. Even that doesn't sound like a particularly welcoming model
-to me.
-
-Linus, did you have any other objections to this patch given my
-reasoning in these past couple of emails or would you like me to try
-adding explicit casts to all of these call sites? For example, changing
-pinctrl-sprd.c would look something like the diff below (I personally
-think this looks kind of ugly but I'm willing to do whatever the
-maintainer is comfortable with in order to fix these warnings).
-
-Let me know what you think,
-Nathan
-
-======================================================================================
-
-diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
-index 4537b5453996..9c82ba4dceff 100644
---- a/drivers/pinctrl/sprd/pinctrl-sprd.c
-+++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
-@@ -842,14 +842,14 @@ static const struct pinconf_ops sprd_pinconf_ops = {
- };
- 
- static const struct pinconf_generic_params sprd_dt_params[] = {
--       {"sprd,control", SPRD_PIN_CONFIG_CONTROL, 0},
--       {"sprd,sleep-mode", SPRD_PIN_CONFIG_SLEEP_MODE, 0},
-+       {"sprd,control", (enum pin_config_param)SPRD_PIN_CONFIG_CONTROL, 0},
-+       {"sprd,sleep-mode", (enum pin_config_param)SPRD_PIN_CONFIG_SLEEP_MODE, 0},
- };
- 
- #ifdef CONFIG_DEBUG_FS
- static const struct pin_config_item sprd_conf_items[] = {
--       PCONFDUMP(SPRD_PIN_CONFIG_CONTROL, "global control", NULL, true),
--       PCONFDUMP(SPRD_PIN_CONFIG_SLEEP_MODE, "sleep mode", NULL, true),
-+       PCONFDUMP((enum pin_config_param)SPRD_PIN_CONFIG_CONTROL, "global control", NULL, true),
-+       PCONFDUMP((enum pin_config_param)SPRD_PIN_CONFIG_SLEEP_MODE, "sleep mode", NULL, true),
- };
- #endif
- 
-> -- 
-> Thanks,
-> ~Nick Desaulniers
+> --
+> Stefan
+> 
+> > +	if ((PTR_ERR(clk_gpio) == -EPROBE_DEFER) ||
+> > +	    (PTR_ERR(clk_port) == -EPROBE_DEFER)) {
+> > +		return -EPROBE_DEFER;
+> > +	} else if (!IS_ERR_OR_NULL(clk_gpio) &&
+> > +		   !IS_ERR_OR_NULL(clk_port)) {
+> > +		ret = clk_prepare_enable(clk_gpio);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		ret = clk_prepare_enable(clk_port);
+> > +		if (ret) {
+> > +			clk_disable_unprepare(clk_gpio);
+> > +			return ret;
+> > +		}
+> > +	}
+> > +
+> >  	gc = &port->gc;
+> >  	gc->of_node = np;
+> >  	gc->parent = dev;
