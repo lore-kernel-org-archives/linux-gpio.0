@@ -1,188 +1,323 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH v9 6/9] i3c: master: Add driver for Cadence IP
-Date: Fri, 26 Oct 2018 09:57:07 +0200
-Message-ID: <20181026095707.3cd9b511@bbrezillon>
-References: <20181022133404.2061-1-boris.brezillon@bootlin.com>
-        <20181022133404.2061-7-boris.brezillon@bootlin.com>
-        <20181024202048.7e3534f7@bbrezillon>
-        <CAK8P3a2DBgfvXs-9KzoDvbQpV+VN96xb7xHG-5=NDDgnt7ViVQ@mail.gmail.com>
-        <20181025180720.1790f6a1@bbrezillon>
-        <CAK8P3a02ELWiMB_pe0bzbsMfdqYOG1G0bFnSHzGu3ZbQHatH2w@mail.gmail.com>
-        <20181025183005.3c0fa452@bbrezillon>
-        <CAK8P3a0WDRpukjDBm1rGPnZiH2FJRpquWhEknOBg=CphNOYOwg@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Date: Fri, 26 Oct 2018 09:00:51 +0100
+Message-ID: <20181026080051.GK4870@dell>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+ <20181025074459.GF4939@dell>
+ <20181025082621.GD16508@imbe.wolfsonmicro.main>
+ <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+ <20181025114205.GC4870@dell>
+ <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a0WDRpukjDBm1rGPnZiH2FJRpquWhEknOBg=CphNOYOwg@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, gregkh <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@he>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Arnd,
+On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
 
-On Fri, 26 Oct 2018 09:43:25 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
-
-> On Thu, Oct 25, 2018 at 6:30 PM Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
-> > On Thu, 25 Oct 2018 18:13:51 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Thu, Oct 25, 2018 at 6:07 PM Boris Brezillon <boris.brezillon@bootlin.com> wrote:  
-> > > > On Thu, 25 Oct 2018 17:30:26 +0200
-> > > > Arnd Bergmann <arnd@arndb.de> wrote:  
-> > > > > On 10/24/18, Boris Brezillon <boris.brezillon@bootlin.com> wrote:  
-> > > > > > On Mon, 22 Oct 2018 15:34:01 +0200  
-> > > > I guess I could dynamically allocate the payload, but that requires
-> > > > going over all users of i3c_send_ccc_cmd() to patch them.  
-> > >
-> > > This reminds me that Wolfram mentioned in his ELC talk that the
-> > > buffers on i3c should all be DMA capable to make life easier for
-> > > i3c master drivers that want to implement DMA transfers.  
-> >
-> > And this is the case for all buffers passed to
-> > i3c_device_do_priv_xfers() (and soon i3c_device_send_hdr_cmd()),
-> > but I did not enforce that for the internal
-> > i3c_master_send_ccc_cmd_locked() helper, maybe I should...
-> > It was just convenient to place the object to be transmitted/received on
-> > the stack.  
+> On 25/10/18 12:42, Lee Jones wrote:
+> > On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
+> > > On 25/10/18 09:26, Charles Keepax wrote:
+> > > > On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
+> > > > > On Mon, 08 Oct 2018, Charles Keepax wrote:
+> > > > > > From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> > > > > > +static const struct reg_default lochnagar1_reg_defaults[] = {
+> > > > > > +	{ LOCHNAGAR1_CDC_AIF1_SEL,    0x00 },
+> > > > > > +	{ LOCHNAGAR1_CDC_AIF2_SEL,    0x00 },
+> > > > ...
+> > > > > > +	{ LOCHNAGAR1_LED1,            0x00 },
+> > > > > > +	{ LOCHNAGAR1_LED2,            0x00 },
+> > > > > > +	{ LOCHNAGAR1_I2C_CTRL,        0x01 },
+> > > > > > +};
+> > > > > 
+> > > > > Why do you need to specify each register value?
+> > > > 
+> > > > The way regmap operates it needs to know the starting value of
+> > > > each register. It will use this to initialise the cache and to
+> > > > determine if writes need to actually update the hardware on
+> > > > cache_syncs after devices have been powered back up.
+> > 
+> > That sounds crazy to me.  Some devices have thousands of registers.
 > 
-> Ok. Is i3c_master_send_ccc_cmd_locked() what implements the public
-> interfaces then, or is this something else?
+> Largely the point. How long do you think it would take to populate the
+> cache if you had to read thousands of registers over I2C? Boot time matters.
+> Deferring it until it's touched can create various unpredictable and
+> annoying behaviour later, for example if a lot of cache entries are
+> written while the chip is asleep and the initial values weren't known
+> then a suspend/resume cannot filter out writes that are setting the
+> register to its default (which regmap does to avoid unnecessary bus traffic).
+> So the resume could have a large amount of unnecessary overhead writing
+> registers to a value they already have or reading the initial values of
+> those registers.
 
-i3c_master_send_ccc_cmd_locked() calls master->ops->send_ccc_cmd(), so
-it's part of the master controller interface.
+One more register read when initially writing to a register and one
+more when resuming doesn't sound like a vast amount of over-head.
 
+> > At a line per register, that's thousands of lines of code/cruft.
+> > Especially seeing as most (sane?) register layouts I've seen default
+> > to zero.
 > 
-> If you place a buffer on the stack, it is not DMA capable, but
-> it is guaranteed to be at least 32-bit word aligned, and should
-> not cause an exception in readsl(), unless it starts with a couple of
-> (not multiple of four)  extra bytes that are not sent to the devices.
-> Is that what happens here?
+> Not a valid generalization. And it's not a question of sanity, the purpose
+> of the register and the overhead to setup a use-case also matter.
+> There are many reasons why the default of a register might not be zero.
+> Take a look at drivers/mfd/wm5110-tables.c, a lot of the registers don't
+> have a default of zero (and that's only the registers accessed by the driver.)
+> It's particularly true of registers that affect things like voltage and
+> current sources, zero might be a very inappropriate default - even dangerous.
+> Also enable bits, if some things must power-up enabled and others don't, unless
+> you want a chip that has a confusing mix of inverted and non-inverted enable
+> bits. Another side to this is to reduce the number of writes to enable _typical_
+> behaviour - if an IP block has say 100 registers and you have to write all of
+> them to make it work that's a lot of overhead compared to them defaulting to
+> typical values used 99.9% of the time and you only need to write one or two
+> registers to use it.
 
-Here is the report I received from Vitor:
+Not sure what you think I was suggesting above.  If the default values
+are actually non-zero that's fine - we'll either leave them as they
+are (if they are never changed, in which case Regmap doesn't even need
+to know about them), document only those (non-zero) ones or wait until
+they are read for the first time, then populate the cache.
 
-"
-	Hi Boris,
+Setting up the cache manually also sounds like a vector for potential
+failure.  At least if you were to cache dynamically on first write
+(either on start-up or after sleep) then the actual value will be
+cached, rather than what a piece of C code says it should be.
 
-
-	I'm trying this new patch-set version but I get some issues when use 
-	readsl() function.
-
-	Basically the system complain about memory alignment.
-
-	As exemple when I try to read the PID from the device
-
-	> +static int i3c_master_getpid_locked(struct i3c_master_controller *master,
-	> +				    struct i3c_device_info *info)
-	> +{
-	> +	struct i3c_ccc_getpid getpid;  
-
-	at this point the getpid struct it is already unaligned with
-
-	i3c_master_getpid_locked:1129 getpid_add=0x9a249c7a
-
-	> +	struct i3c_ccc_cmd_dest dest = {
-	> +		.addr = info->dyn_addr,
-	> +		.payload.len = sizeof(struct i3c_ccc_getpid),
-	> +		.payload.data = &getpid,
-	> +	};
-	> +	struct i3c_ccc_cmd cmd = {
-	> +		.rnw = true,
-	> +		.id = I3C_CCC_GETPID,
-	> +		.dests = &dest,
-	> +		.ndests = 1,
-	> +	};
-	> +	int ret, i;
-	> +
-	> +	ret = i3c_master_send_ccc_cmd_locked(master, &cmd);
-	> +	if (ret)
-	> +		return ret;
-	> +
-	> +	info->pid = 0;
-	> +	for (i = 0; i < sizeof(getpid.pid); i++) {
-	> +		int sft = (sizeof(getpid.pid) - i - 1) * 8;
-	> +
-	> +		info->pid |= (u64)getpid.pid[i] << sft;
-	> +	}
-	> +
-	> +	return 0;
-	> +}
-	> +  
-
-	and them when
-
-	static void dw_i3c_master_read_rx_fifo(struct dw_i3c_master *master,
-	                        u8 *bytes, int nbytes)
-	{
-	     readsl(master->regs + RX_TX_DATA_PORT, bytes, nbytes / 4);
-	...
-	}
-
-	the system crash.
-
-	Misaligned Access
-	Path: (null)
-	CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc1 #88
-	
-	[ECR   ]: 0x00230400 => Misaligned r/w from 0x9a249c7a
-	[EFA   ]: 0x9a249c7a
-	[BLINK ]: dw_i3c_master_irq_handler+0x200/0x2fc [dw_i3c_master]
-	[ERET  ]: dw_i3c_master_irq_handler+0x224/0x2fc [dw_i3c_master]
-	[STAT32]: 0x00000a4c : K DE     A1 E2
-	BTA: 0x70038e44  SP: 0x8071fe58  FP: 0x00000000
-	LPS: 0x8060e63e LPE: 0x8060e642 LPC: 0x00000000
-	r00: 0x00000033 r01: 0x00000004 r02: 0x00000000
-	r03: 0xd0002014 r04: 0x00000006 r05: 0x00000000
-	r06: 0x9a249c7a r07: 0x39307260 r08: 0xe10b6900
-	r09: 0x00000013 r10: 0x00000000 r11: 0x000000c9
-	r12: 0x0a613763
-
-	Do you have any idea about this?
-
-
-	Best regards,
-
-	Vitor Soares
-"
-
+>   Then default values can be changed at the leisure of the
+> > s/w.
 > 
-> > > If we have buffers here that are not aligned to cache lines
-> > > (or even just 32 bit words), doesn't that also mean that the
-> > > same buffers are not DMA capable either?  
-> >
-> > Yep, if it's not cache-line-aligned (and on the stack), it's not
-> > DMA-able.  
+> Potentially with a lot of overhead, especially on those chips with thousands
+> of registers to set to useful non-zero values before you can use it.
 > 
-> This sounds like a more fundamental problem to solve first
-> then. Obviously it is incredibly /useful/ to be able to put short
-> i2c or i3c messages on the stack, but allowing that in general
-> also prevents the use of DMA without bounce buffers.
+> Lochnagar doesn't have that many registers but convention and consistency also
+> comes into play. Regmap is used in a particular way and it helps people a lot
+> if every driver using it follows the convention.
 
-Actually, we have the same problem in MTD (UBI passes vmalloced
-buffers to the MTD stack), so I understand this concern very well,
-and I agree that enforcing all buffers passed to the controller to
-be DMA capable is the right thing to do.
+Precisely my point.  Lochnagar is a small device yet it's required to
+submit hundreds of lines of Regmap tables.  Imagine what that would
+look like for a large device.
 
-I guess I just didn't think about internal APIs when I made this
-modification which explains why CCC cmds were left behind.
-
+> > Even if it is absolutely critical that you have to supply these to
+> > Regmap up-front, instead of on first use/read, why can't you just
+> > supply the oddball non-zero ones?
 > 
-> One way to address this might be to always bounce any
-> messages that are less than a cache line through a
-> (pre-)kmallocated buffer, and require any longer messages
-> to be cache capable. This could also solve the issue with
-> readsl(), but it would be a rather confusing user interface.
+> If you aren't happy with the regmap subsystem you could send some
+> patches to change it to what you would be happy with (and patch the ~1300
+> drivers that use it)
+
+That may well happen.  This is the pre-patch discussion.
+
+Apologies that it had to happen on your submission, but this is that
+alerted me to the issue(s).
+
+> Like any kernel subsystem it has an API that we have to obey to be able to
+> use it.
+
+Again, this isn't about Lochnagar.
+
+> > > > > > +static const struct reg_sequence lochnagar1_patch[] = {
+> > > > > > +	{ 0x40, 0x0083 },
+> > > > > > +	{ 0x46, 0x0001 },
+> > > > > > +	{ 0x47, 0x0018 },
+> > > > > > +	{ 0x50, 0x0000 },
+> > > > > > +};
+> > > > > 
+> > > > > I'm really not a fan of these so call 'patches'.
+> > > > > 
+> > > > > Can't you set the registers up proper way?
+> > > > > 
+> > > > 
+> > > > I will see if we could move any out of here or define any of the
+> > > > registers but as we have discussed before it is not always possible.
+> > > > 
+> > > 
+> > > Also patches generally come out of hardware tuning/qualification/tools
+> > > as this list of address,value. So it's easy for people to dump an update
+> > > into the driver as a trivial copy-paste but more work if they have to
+> > > reverse-engineer the patch list from hardware/datasheet into what each
+> > > line "means" and then find the relevant lines of code to change. It's also
+> > > much easier to answer the question "Have these hardware patches been
+> > > applied to the driver?" if we have them in the original documented format.
+> > > It just makes people's lives more difficult if they have to search around
+> > > the code to try to find something that looks like the originally specified
+> > > patch list. We don't use them just as a lazy way to setup some registers.
+> > 
+> > I understand why they normally exist (sometimes people are just lazy
+> > too) (Mark: BTW chicken-bits sound delicious!).  They're just ugly
+> > from an Open Source PoV.
 > 
-> Another option might be to have separate interfaces for
-> "short" and "long" messages at the API level and have
-> distinct rules for those: short would always be bounced
-> by the i3c code, and long puts restrictions on the buffer
-> location.
+> In my opinion a lot of the source code in Linux is much uglier than
+> these tables.
 
-Hm, let's keep the API simple. I'll just mandate that all payload bufs
-passed to i3c_master_send_ccc_cmd_locked() be dynamically allocated.
+Right.  I usually comment on those (when I see them) too.
 
-Thanks for your feedback.
+Besides, just because some people committing murder, doesn't mean
+other people shouldn't go to jail for stealing a car.
 
-Boris
+> > > > > > +static bool lochnagar2_readable_register(struct device *dev, unsigned int reg)
+> > > > > > +{
+> > > > > > +	switch (reg) {
+> > > > > > +	case LOCHNAGAR_SOFTWARE_RESET:
+> > > > > > +	case LOCHNAGAR_FIRMWARE_ID1:
+> > > > > > +	case LOCHNAGAR_FIRMWARE_ID2:
+> > > > ...
+> > > > > > +	case LOCHNAGAR2_MICVDD_CTRL2:
+> > > > > > +	case LOCHNAGAR2_VDDCORE_CDC_CTRL1:
+> > > > > > +	case LOCHNAGAR2_VDDCORE_CDC_CTRL2:
+> > > > > > +	case LOCHNAGAR2_SOUNDCARD_AIF_CTRL:
+> > > > > > +		return true;
+> > > > > > +	default:
+> > > > > > +		return false;
+> > > > > > +	}
+> > > > > > +}
+> > > > > > +
+> > > > > > +static bool lochnagar2_volatile_register(struct device *dev, unsigned int reg)
+> > > > > > +{
+> > > > > > +	switch (reg) {
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL1:
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL2:
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL3:
+> > > > ...
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL13:
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL14:
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL15:
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL16:
+> > > > > > +	case LOCHNAGAR2_ANALOGUE_PATH_CTRL1:
+> > > > > > +		return true;
+> > > > > > +	default:
+> > > > > > +		return false;
+> > > > > > +	}
+> > > > > > +}
+> > > > > 
+> > > > > This is getting silly now.  Can't you use ranges?
+> > > > 
+> > > > I can if you feel strongly about it? But it does make the drivers
+> > > > much more error prone and significantly more annoying to work
+> > > > with. I find it is really common to be checking that a register
+> > > > is handled correctly through the regmap callbacks and it is nice
+> > > > to just be able to grep for that. Obviously this won't work for
+> > > > all devices/regmaps as well since many will not have consecutive
+> > > > addresses on registers, for example having multi-byte registers
+> > > > that are byte addressed.
+> > > > 
+> > > > How far would you like me to take this as well? Is it just the
+> > > > numeric registers you want ranges for ie.
+> > > > 
+> > > > LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR_GPIO_CHANNEL16
+> > > > 
+> > > > Or is it all consecutive registers even if they are unrelated
+> > > > (exmaple is probably not accurate as I haven't checked the
+> > > > addresses):
+> > > > 
+> > > > LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR2_ANALOGURE_PATH_CTRL1
+> > > > 
+> > > > I don't mind the first at all but the second is getting really
+> > > > horrible in my opinion.
+> > 
+> > My issue is that we have one end of the scale, where contributors are
+> > submitting patches, trying to remove a line of code here, a line of
+> > code there, then there are patches like this one which describe the
+> > initial value, readable status, writable status and volatile status of
+> > each and every register.
+> 
+> If we could add support for new devices by removing lines of code that
+> would be cool :). Eventually Linux would support every piece of hardware
+> and be zero lines of code.
+
+I'm starting to think that you've missed the point. ;)
+
+> > The API is obscene and needs a re-work IMHO.
+> > 
+> > I really hope we do not really have to list every register, but *if we
+> > absolutely must*, let's do it once:
+> > 
+> >    REG_ADDRESS, WRV, INITIAL_VALUE
+> 
+> To re-iterate, regmap is a standard kernel subsystem. It's not owned by Cirrus,
+> so it's not our responsibility if you don't like it. Mark Brown is the maintainer.
+
+Sounds very much like you are saying, "it's not Cirrus' fault,
+therefore it is not my problem"?  Which is a terrible attitude.
+
+Remember that the Linux kernel is an open community.  Anyone should be
+free to discuss any relevant issue.  If we decide to take this
+off-line, which is likely, then so be it.  In the mean time, as a
+contributor to this community project, it's absolutely your
+responsibly to help discuss and potentially solve wider issues than
+just your lines of code.
+
+> Submit your patches to Mark and the owners of those ~1300 drivers to propose
+> changes to regmap that you would be happy with.
+
+Quoting myself from above:
+
+  "That may well happen.  This is the pre-patch discussion.
+
+  Apologies that it had to happen on your submission, but this is that
+  alerted me to the issue(s)."
+
+> > > > > > +static const struct reg_default lochnagar2_reg_defaults[] = {
+> > > > > > +	{ LOCHNAGAR2_CDC_AIF1_CTRL,         0x0000 },
+> > > > > > +	{ LOCHNAGAR2_CDC_AIF2_CTRL,         0x0000 },
+> > > > > > +	{ LOCHNAGAR2_CDC_AIF3_CTRL,         0x0000 },
+> > > > > > +	{ LOCHNAGAR2_DSP_AIF1_CTRL,         0x0000 },
+> > > > ...
+> > > > > > +	{ LOCHNAGAR2_MINICARD_RESETS,       0x0000 },
+> > > > > > +	{ LOCHNAGAR2_ANALOGUE_PATH_CTRL2,   0x0000 },
+> > > > > > +	{ LOCHNAGAR2_COMMS_CTRL4,           0x0001 },
+> > > > > > +	{ LOCHNAGAR2_SPDIF_CTRL,            0x0008 },
+> > > > > > +	{ LOCHNAGAR2_POWER_CTRL,            0x0001 },
+> > > > > > +	{ LOCHNAGAR2_SOUNDCARD_AIF_CTRL,    0x0000 },
+> > > > > > +};
+> > > > > 
+> > > > > OMG!  Vile, vile vile!
+> > > > 
+> > > > I really feel this isn't the driver you are objecting to as such
+> > > > but the way regmap operates and also we seem to always have the same
+> > > > discussions around regmap every time we push a driver.
+> > 
+> > Absolutely.  I didn't like it before.  I like it even less now.
+> > 
+> > > > Is there
+> > > > any way me, you and Mark could hash this out and find out a way to
+> > > > handle regmaps that is acceptable to you? I don't suppose you are
+> > > > in Edinburgh at the moment for ELCE?
+> > 
+> > I'm not at ELCE I'm afraid.
+> > 
+> > > I suppose if Mark was willing to promote the regmap drivers to be a
+> > > top-level subsystem that could contain the regmap definitions of devices
+> > > then we could dump our regmap definitions in there, where Mark can review
+> > > it as he's familiar with regmap and the chips and the reasons why things
+> > > are done the way they are, rather than Lee having to stress about it every
+> > > time we need to create an MFD device that uses regmap. Though that would
+> > > make the initialization of an MFD rather awkward with the code required
+> > > to init the MFD it not actually being in the MFD tree.
+> > 
+> > My issue isn't where all this bumph lives.
+> > 
+> > It's the fact that it's required (at least at this level) at all.
+> > 
+> 
+> As above, if one subsystem owner doesn't like another subsystem then those
+> subsystem owners should talk to each other and sort something out. It shouldn't
+> block patches that are just trying to use the subsystem as it currently exists
+> in the kernel.
+
+Again, no one is blocking this patch.
+
+This driver was submitted for review/discussion.  We are discussing.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
