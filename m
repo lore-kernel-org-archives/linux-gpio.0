@@ -1,216 +1,112 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Fri, 26 Oct 2018 21:32:23 +0100
-Message-ID: <20181026203223.GC27137@sirena.org.uk>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell>
- <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025114205.GC4870@dell>
- <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
- <20181026080051.GK4870@dell>
+From: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Subject: [PATCH] pinctrl: bcm2835: Use raw spinlock for RT compatibility
+Date: Sat, 27 Oct 2018 10:15:33 +0200
+Message-ID: <d71c523a8a0af5628da59a44223a357102c2a193.1540627754.git.lukas@wunner.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2/5bycvrmDh4d1IB"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181026080051.GK4870@dell>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rpi-kernel>,
+ <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rpi-kernel/>
+List-Post: <mailto:linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel>,
+ <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "linux-rpi-kernel" <linux-rpi-kernel-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
+Cc: linux-rt-users-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mathias Duckeck <m.duckeck-XB/JSsFECOqzQB+pC5nmwQ@public.gmane.org>, Tiejun Chen <tiejun.china-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
+The BCM2835 pinctrl driver acquires a spinlock in its ->irq_enable,
+->irq_disable and ->irq_set_type callbacks.  Spinlocks become sleeping
+locks with CONFIG_PREEMPT_RT_FULL=y, therefore invocation of one of the
+callbacks in atomic context may cause a hard lockup if at least two GPIO
+pins in the same bank are used as interrupts.  The issue doesn't occur
+with just a single interrupt pin per bank because the lock is never
+contended.  I'm experiencing such lockups with GPIO 8 and 28 used as
+level-triggered interrupts, i.e. with ->irq_disable being invoked on
+reception of every IRQ.
 
---2/5bycvrmDh4d1IB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The critical section protected by the spinlock is very small (one bitop
+and one RMW of an MMIO register), hence converting to a raw spinlock
+seems a better trade-off than converting the driver to threaded IRQ
+handling (which would increase latency to handle an interrupt).
 
-On Fri, Oct 26, 2018 at 09:00:51AM +0100, Lee Jones wrote:
-> On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
+Cc: Mathias Duckeck <m.duckeck-XB/JSsFECOqzQB+pC5nmwQ@public.gmane.org>
+Signed-off-by: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+---
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-> > Largely the point. How long do you think it would take to populate the
-> > cache if you had to read thousands of registers over I2C? Boot time matters.
-> > Deferring it until it's touched can create various unpredictable and
-> > annoying behaviour later, for example if a lot of cache entries are
-> > written while the chip is asleep and the initial values weren't known
-> > then a suspend/resume cannot filter out writes that are setting the
-> > register to its default (which regmap does to avoid unnecessary bus traffic).
-> > So the resume could have a large amount of unnecessary overhead writing
-> > registers to a value they already have or reading the initial values of
-> > those registers.
-
-> One more register read when initially writing to a register and one
-> more when resuming doesn't sound like a vast amount of over-head.
-
-Especially on resume extra register I/O really adds up - people really
-care how long their system takes to come back from suspend, and how
-quickly individual devices come back.  For devices that are on slow
-buses like I2C this means that every register operation counts.  Boot
-can be similarly pressured of course, though it's a less frequent issue
-for these devices.
-
-> Not sure what you think I was suggesting above.  If the default values
-> are actually non-zero that's fine - we'll either leave them as they
-> are (if they are never changed, in which case Regmap doesn't even need
-> to know about them), document only those (non-zero) ones or wait until
-> they are read for the first time, then populate the cache.
-
-You can't assume that the device is in power on reset state unless the
-driver reset it itself which may or may not be a good idea or even
-possible, sometimes it's what you want but at other times even if it's
-possible it can cause user visible disruption during the boot process
-which is undesirable.
-
-> Setting up the cache manually also sounds like a vector for potential
-> failure.  At least if you were to cache dynamically on first write
-> (either on start-up or after sleep) then the actual value will be
-> cached, rather than what a piece of C code says it should be.
-
-Even where there's no problem getting the hardware into a clean state it
-can rapidly get very, very expensive to do this with larger register
-sets on slow buses, and at the framework level we can't assume that
-readback support is even present on the device (the earliest versions of
-cache support were written to support such devices).  Some of the
-userspaces that regmap devices get used with end up wanting to apply a
-bunch of configuration at startup, if we can cut down on the amount of
-I/O that's involved in doing that it can help them quite a bit.  You
-also get userspaces that want to enumerate device state at startup,
-that's a bit easier to change in userspace but it's not an unreasonable
-thing to want to do and can also get very I/O heavy.
-
-There is some potential for errors to be introduced but equally these
-tables can be both generated and verified mechanically, tasks that are
-particularly straightforward for the device vendors to do.  There are
-also potential risks in doing this at runtime if we didn't get the
-device reset, if we don't accurately mark the volatile registers as
-volatile or if there's otherwise bugs in the code.
-
-> Precisely my point.  Lochnagar is a small device yet it's required to
-> submit hundreds of lines of Regmap tables.  Imagine what that would
-> look like for a large device.
-
-There's no *requirement* to provide the data even if you're using the
-cache (and the cache support is entirely optional), there's just costs
-to not providing it in terms of what features you can get from the
-regmap API and the performance of the system.  Not every device is going
-to be bothered by those costs, many devices don't provide all of the
-data they could.
-
-I'm not clear to me that Lochnagar will particularly benefit from
-providing the cache defaults but it sounds like you've raised concerns
-about other devices which would, and it seems clear that the readability
-information is very useful for this device if there's registers that
-it's unsafe to try to read from.
-
-> > > Even if it is absolutely critical that you have to supply these to
-> > > Regmap up-front, instead of on first use/read, why can't you just
-> > > supply the oddball non-zero ones?
-
-That doesn't work, we need to know both if the register has a default
-value and what that value is - there's no great value in only supplying
-the defaults for registers with non-zero values.
-
-> > If you aren't happy with the regmap subsystem you could send some
-> > patches to change it to what you would be happy with (and patch the ~1300
-> > drivers that use it)
-
-> That may well happen.  This is the pre-patch discussion.
-
-> Apologies that it had to happen on your submission, but this is that
-> alerted me to the issue(s).
-
-The regmap cache API has been this way since it was introduced in 2011
-FWIW, we did add range based support later which is purely data driven.
-
-> > Like any kernel subsystem it has an API that we have to obey to be able to
-> > use it.
-
-> Again, this isn't about Lochnagar.
-
-I think from the perspective of Richard and Charles who are just trying
-to get their driver merged this is something of an abstract distinction.
-If the driver were merged and this discussion were happening separately
-their perspective would most likely be different.
-
-> > > The API is obscene and needs a re-work IMHO.
-
-> > > I really hope we do not really have to list every register, but *if we
-> > > absolutely must*, let's do it once:
-
-> > >    REG_ADDRESS, WRV, INITIAL_VALUE
-
-There is the option to specify range based access tables instead of a
-function, for a lot of devices this is a nice, easy way to specify
-things that makes more sense so we support it.  We don't combine the
-tables because they're range based and if there is 100% overlap you can
-always just point at the same table.
-
-We allow the functions partly because it lets people handle weird cases
-but also because it turned out when I looked at this that a lot of the
-time the compiler output for switch statements was pretty efficient with
-sparse register maps and it makes the code incredibly simple, much
-simpler than trying to parse access tables into a more efficient data
-structure and IIRC more compact too.  It's possible that those tradeoffs
-have changed since but at the time there was a class of devices where it
-wasn't clear that putting more effort in would result in substantially
-better outcomes.
-
-> > To re-iterate, regmap is a standard kernel subsystem. It's not owned by Cirrus,
-> > so it's not our responsibility if you don't like it. Mark Brown is the maintainer.
-
-> Sounds very much like you are saying, "it's not Cirrus' fault,
-> therefore it is not my problem"?  Which is a terrible attitude.
-
-I think from the perspective of Charles and Richard this is sounding an
-awful lot like you want them (or someone else) to rewrite a very widely
-used kernel API before they can get their driver merged.  To me that
-would be a completely disproportionate amount of effort for their goal
-but unfortunately people do get asked to do things like that so it's not
-an unreasonable fear for them to have.
-
-> Remember that the Linux kernel is an open community.  Anyone should be
-> free to discuss any relevant issue.  If we decide to take this
-> off-line, which is likely, then so be it.  In the mean time, as a
-> contributor to this community project, it's absolutely your
-> responsibly to help discuss and potentially solve wider issues than
-> just your lines of code.
-
-It's also a community of people with differing amounts of ability to
-contribute, due to things like time, energy and so on.  Not everyone can
-work on everything they want to, let alone other things people ask them
-to look at.
-
-> > As above, if one subsystem owner doesn't like another subsystem then those
-> > subsystem owners should talk to each other and sort something out. It shouldn't
-> > block patches that are just trying to use the subsystem as it currently exists
-> > in the kernel.
-
-> Again, no one is blocking this patch.
-
-> This driver was submitted for review/discussion.  We are discussing.
-
-I kind of said this above but just to be clear this driver seems to me
-like an idiomatic user of the regmap API as it is today.  My guess is
-that we could probably loose the defaults tables and not suffer too much
-but equally well they don't hurt from a regmap point of view.
-
-Reviwed-by: Mark Brown <broonie@kernel.org>
-
---2/5bycvrmDh4d1IB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvTedYACgkQJNaLcl1U
-h9Dy/gf+IWGkOx2z6VrGgX6MVSxByvgRL6zFyYl/utyNdrjTfHk8RXlDk0v5b2r4
-LwRzZ2jHUUrcZ64X280vKQ5saIdikGlb6z0GWt0X6X5BBLooPwD7V0uMm3LZDttb
-41AyZ74fQmfTgICe80FuumK0IiRHPr+jYVcPI2p/mQBV5lfchZH/3fZ+QZ23MJY7
-g4Dik9mvkbIX0tz/un8N5C5flr8YwaPTC9kH0dGYrO1yB7qh6jq87H9fqMa4jDXo
-ISBr3edxfZdrHE3tj9b8fqUOLOOIfJGbKvL6pEi17ixq7yZJsmp+d0UsCWGBU0Xv
-qo6Br/xw7MjZwAa63NykvEiFtfg0sA==
-=VKBt
------END PGP SIGNATURE-----
-
---2/5bycvrmDh4d1IB--
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index fa530913a2c8..08925d24180b 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -90,7 +90,7 @@ struct bcm2835_pinctrl {
+ 	struct gpio_chip gpio_chip;
+ 	struct pinctrl_gpio_range gpio_range;
+ 
+-	spinlock_t irq_lock[BCM2835_NUM_BANKS];
++	raw_spinlock_t irq_lock[BCM2835_NUM_BANKS];
+ };
+ 
+ /* pins are just named GPIO0..GPIO53 */
+@@ -461,10 +461,10 @@ static void bcm2835_gpio_irq_enable(struct irq_data *data)
+ 	unsigned bank = GPIO_REG_OFFSET(gpio);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&pc->irq_lock[bank], flags);
++	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
+ 	set_bit(offset, &pc->enabled_irq_map[bank]);
+ 	bcm2835_gpio_irq_config(pc, gpio, true);
+-	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
++	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
+ }
+ 
+ static void bcm2835_gpio_irq_disable(struct irq_data *data)
+@@ -476,12 +476,12 @@ static void bcm2835_gpio_irq_disable(struct irq_data *data)
+ 	unsigned bank = GPIO_REG_OFFSET(gpio);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&pc->irq_lock[bank], flags);
++	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
+ 	bcm2835_gpio_irq_config(pc, gpio, false);
+ 	/* Clear events that were latched prior to clearing event sources */
+ 	bcm2835_gpio_set_bit(pc, GPEDS0, gpio);
+ 	clear_bit(offset, &pc->enabled_irq_map[bank]);
+-	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
++	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
+ }
+ 
+ static int __bcm2835_gpio_irq_set_type_disabled(struct bcm2835_pinctrl *pc,
+@@ -584,7 +584,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	spin_lock_irqsave(&pc->irq_lock[bank], flags);
++	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
+ 
+ 	if (test_bit(offset, &pc->enabled_irq_map[bank]))
+ 		ret = __bcm2835_gpio_irq_set_type_enabled(pc, gpio, type);
+@@ -596,7 +596,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
+ 	else
+ 		irq_set_handler_locked(data, handle_level_irq);
+ 
+-	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
++	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
+ 
+ 	return ret;
+ }
+@@ -1047,7 +1047,7 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
+ 		for_each_set_bit(offset, &events, 32)
+ 			bcm2835_gpio_wr(pc, GPEDS0 + i * 4, BIT(offset));
+ 
+-		spin_lock_init(&pc->irq_lock[i]);
++		raw_spin_lock_init(&pc->irq_lock[i]);
+ 	}
+ 
+ 	err = gpiochip_add_data(&pc->gpio_chip, pc);
+-- 
+2.19.1
