@@ -1,82 +1,63 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
- using NULL
-Date: Mon, 29 Oct 2018 19:43:56 +0200
-Message-ID: <20181029174356.GR10650@smile.fi.intel.com>
-References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
- <20181018215101.169847-1-rajatja@google.com>
- <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
- <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
- <20181024100230.GQ10650@smile.fi.intel.com>
- <CAE_wzQ-80NCNbzbFx1eEDwEEOEAbv-5u+W171iUagY2pOahbmw@mail.gmail.com>
- <CAHp75VfMHqT+aAGVaXzXGbzF2=VEABOOaGhkjfV-D0NPbBM+Rw@mail.gmail.com>
- <CACK8Z6GMsfVEpefzwvVgS44Eg=PQzcNOaC3GA9F2OzrBxvpchw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [PATCH 1/2] pinctrl: sh-pfc: Introduce VIN_DATA_PIN_GROUP_VER
+Date: Mon, 29 Oct 2018 19:13:43 +0100
+Message-ID: <1540836824-4636-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACK8Z6GMsfVEpefzwvVgS44Eg=PQzcNOaC3GA9F2OzrBxvpchw@mail.gmail.com>
+In-Reply-To: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rajat Jain <rajatja@google.com>
-Cc: Dmitry Torokhov <dtor@google.com>, "Hunter, Adrian" <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rajat Jain <rajatxjain@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, horms@verge.net.au
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 10:22:02AM -0700, Rajat Jain wrote:
-> On Mon, Oct 29, 2018 at 8:23 AM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Wed, Oct 24, 2018 at 9:03 PM Dmitry Torokhov <dtor@google.com> wrote:
-> > > On Wed, Oct 24, 2018 at 3:02 AM Andy Shevchenko
-> > > <andy.shevchenko@gmail.com> wrote:
-> > > > On Mon, Oct 22, 2018 at 04:34:55PM -0700, Rajat Jain wrote:
-> > > > > On Fri, Oct 19, 2018 at 2:13 AM Andy Shevchenko
-> > > > > <andy.shevchenko@gmail.com> wrote:
+VIN data groups may appear on different sets of pins, usually named
+"vinX_data_[a|b]". The existing VIN_DATA_PIN_GROUP() does not support appending
+the 'a' or 'b' suffix, leading to the definition of groups names not consistent
+with the ones defined using SH_PFC_PIN_GROUP() macro.
 
-> > > > > Also, the driver may not
-> > > > > really know?
-> > > >
-> > > > I think in such case the bug in HW design and / or driver.
-> > >
-> > > Why? You can have a shared or dedicated interrupt and the driver does
-> > > not really need to know if it can poll the status.
-> >
-> > Yes, that's my point either we get 1:1 mapping between slot and GPIOs
-> > or have a possibility to read back from some register(s) the actual
-> > status of all of them, otherwise it's a bad design.
-> 
-> No, AFAIU, the driver only should only be able to read the status of
-> *the* interrupt that was fired? (as opposite to the ability to read
-> *all of them* when an interrupt fires).
+Fix this by adding a macro that supports appending suffixes when required.
 
-I can't be sure in the details of this (sdhci) driver, I'm not a maintainer of
-that one. So, my above conclusions are purely generic.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-> > > > > 2) I'm not really sure what should I set "active_low" to? Isn't this
-> > > > > something that should be specified by platform / ACPI too, and driver
-> > > > > should just be able to say say choose whatever the ACPI says?
-> > > > >
-> > > > > struct acpi_gpio_params {
-> > > > >         unsigned int crs_entry_index;
-> > > > >         unsigned int line_index;
-> > > > >         bool active_low;
-> > > > > };
-
-
-> > > > ACPI specification misses this property, that's why we have it in the
-> > > > structure. In your case it should be provided by _DSD and thus be consistent
-> > > > with the hardcoded values.
-> > >
-> > > Again, you think as if the driver was platform specific; it is not. I
-> > > have 1000s of systems with different ACPI tables. Let's say half of
-> > > them use one polarity, and half another. Which polarity do you propose
-> > > to use?
-> >
-> > Use one table for one half and another for the rest.
-> 
-> But how does driver determine which table to use for which platform?
-> (Currently the driver is platform independent).
-
-Based on vendor and device IDs in any form of it.
-
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 458ae0a..2930e9a 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -54,17 +54,27 @@ struct sh_pfc_pin_group {
+ 
+ /*
+  * Using union vin_data saves memory occupied by the VIN data pins.
+- * VIN_DATA_PIN_GROUP() is  a macro  used  to describe the VIN pin groups
+- * in this case.
++ *
++ * VIN_DATA_PIN_GROUP() is  a macro  used  to describe the VIN pin groups,
++ * while VIN_DATA_PIN_GROUP_VER() is used when the same pin group can appear
++ * on different sets of pins.
+  */
+-#define VIN_DATA_PIN_GROUP(n, s)				\
+-	{							\
+-		.name = #n#s,					\
++#define __VIN_DATA_PIN_GROUP(n, s)				\
+ 		.pins = n##_pins.data##s,			\
+ 		.mux = n##_mux.data##s,				\
+ 		.nr_pins = ARRAY_SIZE(n##_pins.data##s),	\
+ 	}
+ 
++#define VIN_DATA_PIN_GROUP(n, s)				\
++	{							\
++		.name = #n#s,					\
++		__VIN_DATA_PIN_GROUP(n, s)
++
++#define VIN_DATA_PIN_GROUP_VER(n, v, s)				\
++	{							\
++		.name = #n#s"_"#v,				\
++		__VIN_DATA_PIN_GROUP(n##_##v, s)
++
+ union vin_data {
+ 	unsigned int data24[24];
+ 	unsigned int data20[20];
 -- 
-With Best Regards,
-Andy Shevchenko
+2.7.4
