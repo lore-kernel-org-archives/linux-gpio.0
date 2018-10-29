@@ -1,40 +1,48 @@
-From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-Subject: Re: [PATCH v5 04/11] dt-bindings: iio: adc: add AXP803 ADC bindings
-Date: Sun, 28 Oct 2018 15:40:11 +0000
-Message-ID: <20181028154011.04efdecf@archlinux>
-References: <20181023185330.10472-1-oskari@lemmela.net>
-        <20181023185330.10472-5-oskari@lemmela.net>
-        <20181024135633.GA342@bogus>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Vitor soares <vitor.soares@synopsys.com>
+Subject: [PATCH 0/3] Add driver for Synopsys DesignWare I3C master IP
+Date: Mon, 29 Oct 2018 10:06:55 +0000
+Message-ID: <1540807618-13246-1-git-send-email-soares@synopsys.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181024135633.GA342@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Oskari Lemmela <oskari@lemmela.net>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Lee Jones <lee.jones@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Vasily Khoruzhick <anarsoul@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
+To: boris.brezillon@bootlin.com, wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de
+Cc: psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, vitor.soares@synopsys.com, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org, joao.pinto@synopsys.com, luis.oliveira@synopsys.com, manuel.abreu@synopsys.com, gustavo.pimentel@synopsys.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 24 Oct 2018 08:56:33 -0500
-Rob Herring <robh@kernel.org> wrote:
+This patch series is a proposal for the I3C master driver for Synopsys IP.
+This patch is to be applied on top of I3C subsystem RFC V10 submitted bu Boris Brezillon.
 
-> On Tue, 23 Oct 2018 21:53:23 +0300, Oskari Lemmela wrote:
-> > The AXP803 ADC is compatible with AXP813 ADC, but add
-> > specific compatible for it.
-> > 
-> > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-> > ---
-> >  Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >   
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+The change made on bufs passed to i3c_master_send_ccc_cmd_locked() be dynamically allocated allow the use of writesl/readsl() function on I3C transfers.
+For I2C transfers still have memory misalignment on bufs and if the client try to read more than 4bytes the system stops. This will fixed next version.
 
-This doesn't seem to have any dependencies with the other patches
-so applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to ignore.  However I am a little curious to know
-why we would add the ID and then not use it (that I can see)?
+Supported features:
+  Regular CCC commands.
+  I3C private transfers.
+  I2C transfers.
 
-Thanks,
+Missing functionalities:
+  Support for I3C_BUS_MODE_MIXED_SLOW.
+  Hot-join.
+  IBI.
 
-Jonathan
+Main change between v1 and v2:
+  Add controller version on dt-binding
+  The driver now calls writesl/readsl() instead readl/writel
+  Rename some variables in the driver
+   
+
+Vitor soares (3):
+  i3c: master: Add driver for Synopsys DesignWare IP
+  dt-bindings: i3c: Document Synopsys DesignWare I3C master bindings
+  MAINTAINERS: Add myself as the dw-i3c-master module maintainer
+
+ .../devicetree/bindings/i3c/snps,dw-i3c-master.txt |   42 +
+ MAINTAINERS                                        |    6 +
+ drivers/i3c/master/Kconfig                         |   13 +
+ drivers/i3c/master/Makefile                        |    1 +
+ drivers/i3c/master/dw-i3c-master.c                 | 1217 ++++++++++++++++++++
+ 5 files changed, 1279 insertions(+)
+ create mode 100755 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+ create mode 100755 drivers/i3c/master/dw-i3c-master.c
+
+-- 
+2.7.4
