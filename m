@@ -1,41 +1,60 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 1/3] i3c: master: Add driver for Synopsys DesignWare IP
-Date: Mon, 29 Oct 2018 06:41:00 -0700
-Message-ID: <20181029134100.GD28520@bombadil.infradead.org>
-References: <1540807618-13246-1-git-send-email-soares@synopsys.com>
- <1540807618-13246-2-git-send-email-soares@synopsys.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: Re: [PATCH 5/5] pinctrl: pinctrl-at91-pio4: simplify getting
+ .driver_data
+Date: Mon, 29 Oct 2018 15:32:10 +0100
+Message-ID: <20181029143210.m3ymirqjkhoty2wu@M43218.corp.atmel.com>
+References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
+ <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1540807618-13246-2-git-send-email-soares@synopsys.com>
+In-Reply-To: <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vitor soares <vitor.soares@synopsys.com>
-Cc: boris.brezillon@bootlin.com, wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org, joao.pinto@synopsys.com, luis
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 10:06:56AM +0000, Vitor soares wrote:
-> +config DW_I3C_MASTER
-> +	tristate "Synospsys DesignWare I3C master driver"
-> +	depends on I3C
+On Sun, Oct 21, 2018 at 10:00:31PM +0200, Wolfram Sang wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
-> +	depends on !(ALPHA || PARISC)
+Thanks
 
-why?
-
-> +	help
-> +	  Support·for·Synopsys·DesignWare·MIPI·I3C·Controller.
-
-These strange characters (displayed as a centred dot on my terminal)
-should probably be spaces.
-
-> +static struct dw_i3c_xfer *
-> +dw_i3c_master_alloc_xfer(struct dw_i3c_master *master, unsigned int ncmds)
-> +{
-> +	struct dw_i3c_xfer *xfer;
-> +
-> +	xfer = kzalloc(sizeof(*xfer) + (ncmds * sizeof(*xfer->cmds)),
-> +		       GFP_KERNEL);
-
-You should be using struct_size() here.
+> ---
+> 
+> Build tested only. buildbot is happy.
+> 
+>  drivers/pinctrl/pinctrl-at91-pio4.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+> index 5a850491a5cb..4ee135d7b883 100644
+> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
+> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+> @@ -868,8 +868,7 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
+>  
+>  static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+> +	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
+>  	int i, j;
+>  
+>  	/*
+> @@ -897,8 +896,7 @@ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
+>  
+>  static int __maybe_unused atmel_pctrl_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+> +	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
+>  	int i, j;
+>  
+>  	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
+> -- 
+> 2.19.0
+> 
