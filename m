@@ -1,100 +1,84 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Mon, 29 Oct 2018 12:57:29 +0000
-Message-ID: <20181029125729.GW2103@sirena.org.uk>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell>
- <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025114205.GC4870@dell>
- <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
- <20181026080051.GK4870@dell>
- <20181026203223.GC27137@sirena.org.uk>
- <20181029110439.GS4870@dell>
+From: Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: Re: [PATCH v5 04/11] dt-bindings: iio: adc: add AXP803 ADC bindings
+Date: Mon, 29 Oct 2018 14:07:57 +0100
+Message-ID: <20181029130757.m5okrfvusjl5fu5m@qschulz>
+References: <20181023185330.10472-1-oskari@lemmela.net>
+ <20181023185330.10472-5-oskari@lemmela.net>
+ <20181024135633.GA342@bogus>
+ <20181028154011.04efdecf@archlinux>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eV9cGEf2bJwTs/8b"
+        protocol="application/pgp-signature"; boundary="d247wavwh5lwf5wa"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181029110439.GS4870@dell>
+In-Reply-To: <20181028154011.04efdecf@archlinux>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Cc: Rob Herring <robh@kernel.org>, Oskari Lemmela <oskari@lemmela.net>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Lee Jones <lee.jones@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Vasily Khoruzhick <anarsoul@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 
---eV9cGEf2bJwTs/8b
+--d247wavwh5lwf5wa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 29, 2018 at 11:04:39AM +0000, Lee Jones wrote:
-> On Fri, 26 Oct 2018, Mark Brown wrote:
+Hi Jonathan,
 
-> > There's no *requirement* to provide the data even if you're using the
-> > cache (and the cache support is entirely optional), there's just costs
-> > to not providing it in terms of what features you can get from the
-> > regmap API and the performance of the system.  Not every device is going
-> > to be bothered by those costs, many devices don't provide all of the
-> > data they could.
+On Sun, Oct 28, 2018 at 03:40:11PM +0000, Jonathan Cameron wrote:
+> On Wed, 24 Oct 2018 08:56:33 -0500
+> Rob Herring <robh@kernel.org> wrote:
+>=20
+> > On Tue, 23 Oct 2018 21:53:23 +0300, Oskari Lemmela wrote:
+> > > The AXP803 ADC is compatible with AXP813 ADC, but add
+> > > specific compatible for it.
+> > >=20
+> > > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+> > > ---
+> > >  Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >  =20
+> >=20
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+>=20
+> This doesn't seem to have any dependencies with the other patches
+> so applied to the togreg branch of iio.git and pushed out as testing
+> for the autobuilders to ignore.  However I am a little curious to know
+> why we would add the ID and then not use it (that I can see)?
+>=20
 
-> So what do we do in the case where, due to the size of the device, the
-> amount of lines required by these tables go from crazy to grotesque?
+Sometimes with Allwinner (and X-Powers), two IPs seem identical until we
+discover something that is slightly different. When this happens, we
+have to add a compatible to differentiate both. However, we would also
+need to change the Device Tree to change the compatible. We would need
+to handle the driver behaviour for both Device Trees.
 
-My recommendation when the tables get in the way of the rest of the
-driver is to move them into a separate file that contains only tables,
-these get big but they're sitting in a separate file that only contains
-big data tables so they're fairly simple to look at (and generate or
-whatever) and people working on the active code don't need to look at
-them.
+So better anticipate a possible difference so that we don't have to do
+some hacks in the driver to handle the device correctly.
 
-> > That doesn't work, we need to know both if the register has a default
-> > value and what that value is - there's no great value in only supplying
-> > the defaults for registers with non-zero values.
+As always, Chen-Yu or Maxime may know better so I'm just stating what I
+seem to recall.
 
-> All registers have a default value.  Why can't we assume that if a
-> register is writable and a default value was omitted then the default
-> is zero?
+Quentin
 
-There are volatile registers which can't be part of the cache as the
-hardware might change the state, and we have things like device
-identification registers which are fixed but which we want to read from
-the device.  This second set of registers can usually be modelled quite
-happily as volatile registers though, we don't tend to read them often.
-
-There's also registers where the user just didn't tell us what's going
-on, either through oversight or because there's some code that touches
-undocumented test registers at runtime for quirk reasons using a read,
-modify write cycle.  We could try to insist that the device drivers
-always provide a default or mark things as volatile but that's likely to
-be an uphill struggle and more error prone.
-
-> Ah wait!  As I was typing the above, I just had a thought.  We don't
-> actually provide a list of writable registers do we?  Only a the
-> ability to verify if one is writable (presumably) before a write.
-
-> That's frustrating!
-
-You can provide the writability information either with the function or
-with data.  The tables code doesn't currently scale very well to large,
-sparse register maps but that could in theory be optimized.  Few devices
-bother providing distinct writability information as it's not often an
-issue.
-
---eV9cGEf2bJwTs/8b
+--d247wavwh5lwf5wa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvXA7YACgkQJNaLcl1U
-h9CxeQf/W/V27ESuSoJs3wMr5mCJ3gVVxZd4wQ3AdCL4pMP2+epl+aQnWUQNHwY5
-PKJ2DINsrzAvtNq0fSdHVIzaRI4pEwftPxWdQvMOiGompOv3n0LMR9npUkdHEkOY
-dlLL5pgmWyTlesYy9FJ0d0JKUg1Y1Dwpl0mkP5zqmUpXdLAYBWITE8pQiRzCgmXQ
-ME8NjY92OdQQfuZqoIOkckO/PZa58z2VJzWpRWnCEmzsyPh2YcyWe+SFga0+9F2Z
-2iO1mGcTa50Xh5ACebTjOCFClG9swwnkVaOAwOGfEkl7Z3KbK4+b1ctGFECCM9vy
-pntQ6p9rm6cjs47nPc/thANV2xLGJA==
-=rOR1
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlvXBiwACgkQhLiadT7g
+8aNGohAAqGgoY6iEBWbxr5CUbqS3mda6QQ8HkBcE9EqDT/JpjKiQmRay4qZyJ6pC
+u54eWJFzyZOyOmzhVUhP9TTa6yt0+A/tmyOtEUwkH2rU4IPqmwrjJ4PAnk4aFLw5
+EsPN25o9Zk60y9bhvclDkw1MHldvPJER6ejygP90zOcwqIc5DjrQfY4aPnImnRZ1
++Cs/zct/IVUScTCOMdqvOT5mff/8OkKRmbw6+Ukr/11RPIm2zly61i0XWoyXslkv
+xZhhP+Fs7G3+Zs7cUmxkTNliyJ4wHkHD9p00fSB2DKWB0Xj+SeYziWvLZF/tVV1J
+zhcfRy1yVI3gU5Uvf9kd5/ONHQt06yNVtSusEpmV19WKznoJqrn9IFLmXqJC2ayv
+8mVHDSRP3ci0k4hVC3kpQF3SkVe/kYpxdzea7u+d+Lv6xg2j9QRqsJN/IL9sY0Ss
+JFrQVxrhEolYScRpEoORWU7e5phhrGxK2W9wFO2iHVbH5M3vVZnWa3L4RZf5NiwR
+Zadjk2idbdpn3FBMmOi3QKtT7xlsPHauv8vCr2BVEnQFIJMqvNt9Ny0t+ZDLfw5h
+/JaVZs1pOcKwzvJvtch1wtbrCPTgzHJLEU2gO7bWWXolBnYx28PYKjgtRgl/RLvM
+m0taZizWks/8EqaYlGFYpoUoBYTNnYRivcoJV602PQk1gmzcvYk=
+=YFs6
 -----END PGP SIGNATURE-----
 
---eV9cGEf2bJwTs/8b--
+--d247wavwh5lwf5wa--
