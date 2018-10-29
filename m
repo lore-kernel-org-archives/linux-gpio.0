@@ -1,60 +1,40 @@
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: Re: [PATCH 5/5] pinctrl: pinctrl-at91-pio4: simplify getting
- .driver_data
-Date: Mon, 29 Oct 2018 15:32:10 +0100
-Message-ID: <20181029143210.m3ymirqjkhoty2wu@M43218.corp.atmel.com>
-References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com>
- <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 0/4] pinctrl: meson: fix pull bits
+Date: Mon, 29 Oct 2018 16:13:36 +0100
+Message-ID: <20181029151340.9087-1-jbrunet@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181021200032.1833-6-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Oct 21, 2018 at 10:00:31PM +0200, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+This patchset fixes the inversion between pull (up/down) and pull enable
+bits on the GPIO AO bank of all amlogic when have, except the axg family.
 
-Thanks
+The problem has been found while testing bias setting on the libretech
+aml-s905x-cc on GPIO_AO 5. Unfortunately the bias register of this bank is
+not described in the public datasheet of the s905x, but it is in the
+one of the A113D, which gave a clue.
 
-> ---
-> 
-> Build tested only. buildbot is happy.
-> 
->  drivers/pinctrl/pinctrl-at91-pio4.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-> index 5a850491a5cb..4ee135d7b883 100644
-> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
-> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-> @@ -868,8 +868,7 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
->  
->  static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-> +	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
->  	int i, j;
->  
->  	/*
-> @@ -897,8 +896,7 @@ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
->  
->  static int __maybe_unused atmel_pctrl_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-> +	struct atmel_pioctrl *atmel_pioctrl = dev_get_drvdata(dev);
->  	int i, j;
->  
->  	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
-> -- 
-> 2.19.0
-> 
+This was tested on gxl libretech aml-s905x-cc. Since all Amlogic we have
+got so far derive from each other, there is no reason for things to be
+any different on the meson8(b).
+
+I would have preferred to make a single patch to fix this but the commit
+introducing the mistake the is different for each SoC, so a single patch
+could be more difficult/annoying to backport.
+
+Jerome Brunet (4):
+  pinctrl: meson: fix gxbb ao pull register bits
+  pinctrl: meson: fix gxl ao pull register bits
+  pinctrl: meson: fix meson8 ao pull register bits
+  pinctrl: meson: fix meson8b ao pull register bits
+
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson8.c     | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson8b.c    | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+-- 
+2.17.2
