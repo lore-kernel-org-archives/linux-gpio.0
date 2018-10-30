@@ -1,12 +1,12 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/6] gpio: gpio-mxc: simplify getting .driver_data
-Date: Tue, 30 Oct 2018 14:15:14 +0100
-Message-ID: <CACRpkdb0fkqK5fVKhN4+QDbO=6ex4V0kwXgERVCua7NSOjfWqw@mail.gmail.com>
-References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com> <20181021200002.1472-4-wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH 4/5] pinctrl: pinctrl-amd: simplify getting .driver_data
+Date: Tue, 30 Oct 2018 14:16:46 +0100
+Message-ID: <CACRpkdbOM5N+OBbZnT0SQATpsRdXZLEE1YgODW9ZGewytGVdYQ@mail.gmail.com>
+References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com> <20181021200032.1833-5-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181021200002.1472-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200032.1833-5-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
@@ -20,7 +20,7 @@ On Sun, Oct 21, 2018 at 10:00 PM Wolfram Sang
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Patch applied for v4.21.
+Patch applied.
 
 Yours,
 Linus Walleij
