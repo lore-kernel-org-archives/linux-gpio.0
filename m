@@ -1,37 +1,69 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] gpio: sch311x: clean an indentation issue, remove extraneous space
-Date: Tue, 30 Oct 2018 14:07:22 +0000
-Message-ID: <20181030140722.2853-1-colin.king@canonical.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Muchun Song <smuchun@gmail.com>
+Subject: [PATCH RESEND] gpiolib: Fix possible use after free on label
+Date: Tue, 30 Oct 2018 23:22:29 +0800
+Message-ID: <20181030152229.90375-1-smuchun@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+gpiod_request_commit() copies the pointer to the label
+passed as an argument only to be used later. But there's a
+chance the caller could immediately free the passed string
+(e.g., local variable). This could trigger a use after free
+when we use gpio label(e.g., gpiochip_unlock_as_irq(),
+gpiochip_is_requested()).
 
-Trivial fix to clean up an indentation issue, remove space
+To be on the safe side: duplicate the string with
+kstrdup_const() so that if an unaware user passes an address
+to a stack-allocated buffer, we won't get the arbitrary label.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Muchun Song <smuchun@gmail.com>
 ---
- drivers/gpio/gpio-sch311x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpio/gpio-sch311x.c b/drivers/gpio/gpio-sch311x.c
-index 5497f0a88cf0..4df5335469fd 100644
---- a/drivers/gpio/gpio-sch311x.c
-+++ b/drivers/gpio/gpio-sch311x.c
-@@ -188,7 +188,7 @@ static void sch311x_gpio_set(struct gpio_chip *chip, unsigned offset,
- 	struct sch311x_gpio_block *block = gpiochip_get_data(chip);
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 25187403e3ac..e600c5f5d9a7 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2270,6 +2270,12 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 	unsigned long		flags;
+ 	unsigned		offset;
  
- 	spin_lock(&block->lock);
--	 __sch311x_gpio_set(block, offset, value);
-+	__sch311x_gpio_set(block, offset, value);
- 	spin_unlock(&block->lock);
- }
++	if (label) {
++		label = kstrdup_const(label, GFP_KERNEL);
++		if (!label)
++			return -ENOMEM;
++	}
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
  
+ 	/* NOTE:  gpio_request() can be called in early boot,
+@@ -2280,6 +2286,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 		desc_set_label(desc, label ? : "?");
+ 		status = 0;
+ 	} else {
++		kfree_const(label);
+ 		status = -EBUSY;
+ 		goto done;
+ 	}
+@@ -2296,6 +2303,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 
+ 		if (status < 0) {
+ 			desc_set_label(desc, NULL);
++			kfree_const(label);
+ 			clear_bit(FLAG_REQUESTED, &desc->flags);
+ 			goto done;
+ 		}
+@@ -2391,6 +2399,7 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
+ 			chip->free(chip, gpio_chip_hwgpio(desc));
+ 			spin_lock_irqsave(&gpio_lock, flags);
+ 		}
++		kfree_const(desc->label);
+ 		desc_set_label(desc, NULL);
+ 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
+ 		clear_bit(FLAG_REQUESTED, &desc->flags);
 -- 
-2.19.1
+2.17.1
