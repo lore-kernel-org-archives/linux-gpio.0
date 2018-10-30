@@ -1,97 +1,38 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI
- DS90Ux9xx ICs
-Date: Wed, 31 Oct 2018 01:40:54 +0200
-Message-ID: <8ae609a1-f3ce-e216-d572-bf509ca482f9@mleia.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-2-vz@mleia.com>
- <fd0a91c9-6e38-5a18-12e5-955fbf81bfce@lucaceresoli.net>
+From: Sean Wang <sean.wang@kernel.org>
+Subject: Re: [PATCH 5/5] pinctrl: mediatek: Add initial pinctrl driver for
+ MT6797 SoC
+Date: Tue, 30 Oct 2018 16:45:52 -0700
+Message-ID: <CAGp9LzpssWX2TxPdD0yWtmav2XGdG68ztx+hV1DxjRX52q0qvg@mail.gmail.com>
+References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
+ <20181008191411.32555-6-manivannan.sadhasivam@linaro.org> <c8d65395-c60c-5d06-92ad-c389642c22ba@gmail.com>
+ <20181011164429.GA18174@Mani-XPS-13-9360> <e7abee72-23a3-4716-baf0-484514bbb019@gmail.com>
+ <CAGp9LzoP2zkryhJCQNGpe9X0+7yUd31ffV7vM4j6KvTdfPpCrA@mail.gmail.com> <CACRpkdb-Er8z6JdvYWE8UXUa3dfVSu4S-VbnqvcV+vf9erJuNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fd0a91c9-6e38-5a18-12e5-955fbf81bfce@lucaceresoli.net>
-Content-Language: en-US
+In-Reply-To: <CACRpkdb-Er8z6JdvYWE8UXUa3dfVSu4S-VbnqvcV+vf9erJuNw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Luca Ceresoli <luca@lucaceresoli.net>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Vasut <marek.vasut@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Sandeep Jain <Sandeep_Jain@mentor.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?B?U2VhbiBXYW5nICjnjovlv5fkupgp?= <sean.wang@mediatek.com>, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, linux-mediatek@lists.infradead.org, Cheng Mars <mars.cheng@mediatek.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Luca,
+sure, the version of driver looked good to me, add the missing Acked-by from me
 
-thank you for review, please find my comments below.
+Acked-by: Sean Wang <sean.wang@kernel.org>
 
-On 10/30/2018 06:43 PM, Luca Ceresoli wrote:
-> Hi Vladimir,
-> 
-> On 08/10/18 23:11, Vladimir Zapolskiy wrote:
->> From: Sandeep Jain <Sandeep_Jain@mentor.com>
->>
->> The change adds device tree binding description of TI DS90Ux9xx
->> series of serializer and deserializer controllers which support video,
->> audio and control data transmission over FPD-III Link connection.
-> [...]
->> +Example:
->> +
->> +serializer: serializer@c {
->> +	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
->> +	reg = <0xc>;
->> +	power-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>;
->> +	ti,backward-compatible-mode = <0>;
->> +	ti,low-frequency-mode = <0>;
->> +	ti,pixel-clock-edge = <0>;
->> +	...
->> +}
->> +
->> +deserializer: deserializer@3c {
->> +	compatible = "ti,ds90ub940q", "ti,ds90ux9xx";
->> +	reg = <0x3c>;
->> +	power-gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
->> +	...
->> +}
-> 
-> Interesting patchset, thanks. At the moment I'm working on a driver for
-> the TI FPD-III camera serdes chips [0]. At very first sight they have
-> many commonalities with the display chipsets [1] you implemented. Did
-> you have a look into them? Do you think they could be implemented by the
-> same driver?
 
-Absolutely, I believe that it should be no more than a matter of adding
-the correspondent data fields to describe IC specifics to the set of the
-published drivers.
-
-In general, and from my experience, there is no big difference between
-camera and display ICs from the series, my understanding is that it's
-just a marketing or common usecase difference.
-
-> 
-> The camera serdes chips lack some features found on the display chips
-> (e.g. audio, white balance). OTOH they have dual or quad input
-> deserializers, which adds complexity.
-
-For what it's worth the shown core drivers support DS90Ux940 (2 mutually
-exclusive links, the support is already added to the series of drivers)
-and DS90UB964 (4 parallel independent links) ICs, both deserializers are
-used in connection to camera sensors.
-
-So, the short answer is that multi-link ICs are also well supported,
-and my intention is to push the essential core drivers firstly, then
-add remarkably more trivial DRM and V4L2 drivers as cell drivers.
-
-> I'm commenting on the details in reply to the following patches
-> documenting the DT bindings.
-> 
-
-Thank you for review, I'm planning to collect more review comments and
-publish v2 in about two weeks, any kind of essential rework is not
-expected, the selected design of having an MFD and the drivers are
-proven to be easily scalable, as usual any additional wanted features
-could be added later on.
-
-> [0] http://www.ti.com/interface/fpd-link-serdes/camera-serdes/overview.html
-> [1] http://www.ti.com/interface/fpd-link-serdes/display-serdes/overview.html
-> 
-
---
-Best wishes,
-Vladimir
+On Tue, Oct 30, 2018 at 5:51 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Thu, Oct 18, 2018 at 5:06 PM Sean Wang <sean.wang@kernel.org> wrote:
+>
+> > the driver currently only supports the basic operation, not including
+> > driving operation, so
+> > what value for the driving mode for a certain pin seems not really
+> > matter in the early patch. I think these advanced operations can be
+> > added with another patch.
+>
+> Sean can you provide an Acked-by for the pinctrl part so I can merge
+> it once Manivannan resends it for v4.21?
+>
+> Yours,
+> Linus Walleij
