@@ -1,164 +1,65 @@
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V2 4/8] gpio: vf610: add optional clock support
-Date: Tue, 30 Oct 2018 15:34:20 +0000
-Message-ID: <AM0PR04MB4211E1AF4C505728604A511B80CC0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1540295058-26090-1-git-send-email-aisheng.dong@nxp.com>
- <1540295058-26090-5-git-send-email-aisheng.dong@nxp.com>
- <c023948f3baee96cb186f970fdb71ebd@agner.ch>
- <AM0PR04MB42115EAC49CC0F67BE45CCB380F00@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <24253e7336192f7afeefe385953d04b3@agner.ch>
+From: Luca Ceresoli <luca@lucaceresoli.net>
+Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI
+ DS90Ux9xx ICs
+Date: Tue, 30 Oct 2018 17:43:41 +0100
+Message-ID: <fd0a91c9-6e38-5a18-12e5-955fbf81bfce@lucaceresoli.net>
+References: <20181008211205.2900-1-vz@mleia.com>
+ <20181008211205.2900-2-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <24253e7336192f7afeefe385953d04b3@agner.ch>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181008211205.2900-2-vz@mleia.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: "dongas86@gmail.com" <dongas86@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vladimir Zapolskiy <vz@mleia.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Marek Vasut <marek.vasut@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Sandeep Jain <Sandeep_Jain@mentor.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Stefan,
+Hi Vladimir,
 
+On 08/10/18 23:11, Vladimir Zapolskiy wrote:
+> From: Sandeep Jain <Sandeep_Jain@mentor.com>
+> 
+> The change adds device tree binding description of TI DS90Ux9xx
+> series of serializer and deserializer controllers which support video,
+> audio and control data transmission over FPD-III Link connection.
 [...]
-> 
-> On 26.10.2018 05:49, A.s. Dong wrote:
-> >> -----Original Message-----
-> >> From: Stefan Agner [mailto:stefan@agner.ch]
-> >> Sent: Friday, October 26, 2018 1:59 AM
-> > [...]
-> >>
-> >> On 23.10.2018 13:49, A.s. Dong wrote:
-> >> > Some SoCs need the gpio clock to be enabled before accessing HW
-> >> > registers. This patch add the optional clock handling.
-> >> >
-> >> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> >> > Cc: Stefan Agner <stefan@agner.ch>
-> >> > Cc: Shawn Guo <shawnguo@kernel.org>
-> >> > Cc: linux-gpio@vger.kernel.org
-> >> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> >> > ---
-> >> > v1->v2:
-> >> >  * new patch
-> >> > ---
-> >> >  drivers/gpio/gpio-vf610.c | 20 ++++++++++++++++++++
-> >> >  1 file changed, 20 insertions(+)
-> >> >
-> >> > diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-> >> > index d4ad6d0..cbc4f44 100644
-> >> > --- a/drivers/gpio/gpio-vf610.c
-> >> > +++ b/drivers/gpio/gpio-vf610.c
-> >> > @@ -16,6 +16,7 @@
-> >> >   */
-> >> >
-> >> >  #include <linux/bitops.h>
-> >> > +#include <linux/clk.h>
-> >> >  #include <linux/err.h>
-> >> >  #include <linux/gpio.h>
-> >> >  #include <linux/init.h>
-> >> > @@ -256,6 +257,7 @@ static int vf610_gpio_probe(struct
-> >> > platform_device
-> >> > *pdev)  {
-> >> >  	struct device *dev = &pdev->dev;
-> >> >  	struct device_node *np = dev->of_node;
-> >> > +	struct clk *clk_gpio, *clk_port;
-> >> >  	struct vf610_gpio_port *port;
-> >> >  	struct resource *iores;
-> >> >  	struct gpio_chip *gc;
-> >> > @@ -280,6 +282,24 @@ static int vf610_gpio_probe(struct
-> >> > platform_device
-> >> *pdev)
-> >> >  	if (port->irq < 0)
-> >> >  		return port->irq;
-> >> >
-> >> > +	clk_gpio = devm_clk_get(&pdev->dev, "gpio");
-> >> > +	clk_port = devm_clk_get(&pdev->dev, "port");
-> >>
-> >> Are you sure that those are two independent clocks? On i.MX 7 usually
-> >> there was a single clock gate controlling multiple clocks at once
-> >> (which should be modeled as a single clock gate in the clock tree).
-> >>
-> >
-> > Yes, they're two separate clocks in HW for gpio and port controller
-> > respectively.
-> > One is for GPIO general purpose input/output function which another
-> > for port Interrupt.
-> > Just like we have separate register ranges for gpio and port.
-> 
-> Oh I see, that is the same with Vybrid actually. However, in Vybrid, for some
-> reason, there is only a clock for port (Port X multiplexing control).
-> 
-> Can we make port clock independently optional?
-> 
-> E.g.
-> 
-> 	clk_port = devm_clk_get(&pdev->dev, "port");
-> 	if (clk_gpio == ERR_PTR(-EPROBE_DEFER))
-> 		return -EPROBE_DEFER;
-> 
-> 	clk_gpio = devm_clk_get(&pdev->dev, "gpio");
-> 	if (clk_gpio == ERR_PTR(-EPROBE_DEFER))
-> 		return -EPROBE_DEFER;
-> 
-> 	if (!IS_ERR_OR_NULL(clk_port)) {
-> 		ret = clk_prepare_enable(clk_port);
-> 		if (ret)
-> 			return ret;
-> 	}
-> 
-> 	if (!IS_ERR_OR_NULL(clk_gpio))
-> 		ret = clk_prepare_enable(clk_gpio);
-> 		if (ret) {
-> 			clk_disable_unprepare(clk_port);
-> 			return ret;
-> 		}
-> 	}
-> 
-> Also there is some error handling a bit further down which needs proper
-> disabling the clocks.
-> 
+> +Example:
+> +
+> +serializer: serializer@c {
+> +	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
+> +	reg = <0xc>;
+> +	power-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>;
+> +	ti,backward-compatible-mode = <0>;
+> +	ti,low-frequency-mode = <0>;
+> +	ti,pixel-clock-edge = <0>;
+> +	...
+> +}
+> +
+> +deserializer: deserializer@3c {
+> +	compatible = "ti,ds90ub940q", "ti,ds90ux9xx";
+> +	reg = <0x3c>;
+> +	power-gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
+> +	...
+> +}
 
-Got it, thanks for the suggestion.
-Will change in next version.
+Interesting patchset, thanks. At the moment I'm working on a driver for
+the TI FPD-III camera serdes chips [0]. At very first sight they have
+many commonalities with the display chipsets [1] you implemented. Did
+you have a look into them? Do you think they could be implemented by the
+same driver?
 
-Regards
-Dong Aisheng
+The camera serdes chips lack some features found on the display chips
+(e.g. audio, white balance). OTOH they have dual or quad input
+deserializers, which adds complexity.
 
-> --
-> Stefan
-> 
-> 
-> >
-> > Regards
-> > Dong Aisheng
-> >
-> >> --
-> >> Stefan
-> >>
-> >> > +	if ((PTR_ERR(clk_gpio) == -EPROBE_DEFER) ||
-> >> > +	    (PTR_ERR(clk_port) == -EPROBE_DEFER)) {
-> >> > +		return -EPROBE_DEFER;
-> >> > +	} else if (!IS_ERR_OR_NULL(clk_gpio) &&
-> >> > +		   !IS_ERR_OR_NULL(clk_port)) {
-> >> > +		ret = clk_prepare_enable(clk_gpio);
-> >> > +		if (ret)
-> >> > +			return ret;
-> >> > +
-> >> > +		ret = clk_prepare_enable(clk_port);
-> >> > +		if (ret) {
-> >> > +			clk_disable_unprepare(clk_gpio);
-> >> > +			return ret;
-> >> > +		}
-> >> > +	}
-> >> > +
-> >> >  	gc = &port->gc;
-> >> >  	gc->of_node = np;
-> >> >  	gc->parent = dev;
+I'm commenting on the details in reply to the following patches
+documenting the DT bindings.
+
+[0] http://www.ti.com/interface/fpd-link-serdes/camera-serdes/overview.html
+[1] http://www.ti.com/interface/fpd-link-serdes/display-serdes/overview.html
+
+Bye,
+-- 
+Luca
