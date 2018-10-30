@@ -1,14 +1,17 @@
 From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V3 0/2] pinctrl: imx: add imx8qxp pinctrl support
-Date: Tue, 30 Oct 2018 14:03:15 +0000
-Message-ID: <AM0PR04MB42115149EDDF6ED4C503F13780CC0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1539756011-32559-1-git-send-email-aisheng.dong@nxp.com>
- <CACRpkdaYD9S4n0__=Ff8-U3Ze1RFDQHNK3t62Yo8TOhqVdcj5Q@mail.gmail.com>
+Subject: RE: [PATCH V2 4/8] gpio: vf610: add optional clock support
+Date: Tue, 30 Oct 2018 15:34:20 +0000
+Message-ID: <AM0PR04MB4211E1AF4C505728604A511B80CC0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1540295058-26090-1-git-send-email-aisheng.dong@nxp.com>
+ <1540295058-26090-5-git-send-email-aisheng.dong@nxp.com>
+ <c023948f3baee96cb186f970fdb71ebd@agner.ch>
+ <AM0PR04MB42115EAC49CC0F67BE45CCB380F00@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <24253e7336192f7afeefe385953d04b3@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdaYD9S4n0__=Ff8-U3Ze1RFDQHNK3t62Yo8TOhqVdcj5Q@mail.gmail.com>
+In-Reply-To: <24253e7336192f7afeefe385953d04b3@agner.ch>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -19,40 +22,143 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dong Aisheng <dongas86@gmail.com>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: "dongas86@gmail.com" <dongas86@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Hi Stefan,
 
 [...]
-
-> I wanted to apply this series for v4.21 but it doesn't work. The patches look
-> very weird, I think because of the Exchange server you are using to send them.
-> It contains things like this:
 > 
-> ontent-Type: text/plain; charset="iso-8859-1"
-> Content-Transfer-Encoding: quoted-printable
-> MIME-Version: 1.0
-> X-OriginatorOrg: nxp.com
-> X-MS-Exchange-CrossTenant-Network-Message-Id:
-> 5ed53ba8-dd6f-4c85-7264-08d633f66fd7
-> X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 06:04:45.7080
-> (UTC)
-> X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-> X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-> X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4179
+> On 26.10.2018 05:49, A.s. Dong wrote:
+> >> -----Original Message-----
+> >> From: Stefan Agner [mailto:stefan@agner.ch]
+> >> Sent: Friday, October 26, 2018 1:59 AM
+> > [...]
+> >>
+> >> On 23.10.2018 13:49, A.s. Dong wrote:
+> >> > Some SoCs need the gpio clock to be enabled before accessing HW
+> >> > registers. This patch add the optional clock handling.
+> >> >
+> >> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> >> > Cc: Stefan Agner <stefan@agner.ch>
+> >> > Cc: Shawn Guo <shawnguo@kernel.org>
+> >> > Cc: linux-gpio@vger.kernel.org
+> >> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> >> > ---
+> >> > v1->v2:
+> >> >  * new patch
+> >> > ---
+> >> >  drivers/gpio/gpio-vf610.c | 20 ++++++++++++++++++++
+> >> >  1 file changed, 20 insertions(+)
+> >> >
+> >> > diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+> >> > index d4ad6d0..cbc4f44 100644
+> >> > --- a/drivers/gpio/gpio-vf610.c
+> >> > +++ b/drivers/gpio/gpio-vf610.c
+> >> > @@ -16,6 +16,7 @@
+> >> >   */
+> >> >
+> >> >  #include <linux/bitops.h>
+> >> > +#include <linux/clk.h>
+> >> >  #include <linux/err.h>
+> >> >  #include <linux/gpio.h>
+> >> >  #include <linux/init.h>
+> >> > @@ -256,6 +257,7 @@ static int vf610_gpio_probe(struct
+> >> > platform_device
+> >> > *pdev)  {
+> >> >  	struct device *dev = &pdev->dev;
+> >> >  	struct device_node *np = dev->of_node;
+> >> > +	struct clk *clk_gpio, *clk_port;
+> >> >  	struct vf610_gpio_port *port;
+> >> >  	struct resource *iores;
+> >> >  	struct gpio_chip *gc;
+> >> > @@ -280,6 +282,24 @@ static int vf610_gpio_probe(struct
+> >> > platform_device
+> >> *pdev)
+> >> >  	if (port->irq < 0)
+> >> >  		return port->irq;
+> >> >
+> >> > +	clk_gpio = devm_clk_get(&pdev->dev, "gpio");
+> >> > +	clk_port = devm_clk_get(&pdev->dev, "port");
+> >>
+> >> Are you sure that those are two independent clocks? On i.MX 7 usually
+> >> there was a single clock gate controlling multiple clocks at once
+> >> (which should be modeled as a single clock gate in the clock tree).
+> >>
+> >
+> > Yes, they're two separate clocks in HW for gpio and port controller
+> > respectively.
+> > One is for GPIO general purpose input/output function which another
+> > for port Interrupt.
+> > Just like we have separate register ranges for gpio and port.
 > 
-> Can you double-check and resend?
+> Oh I see, that is the same with Vybrid actually. However, in Vybrid, for some
+> reason, there is only a clock for port (Port X multiplexing control).
+> 
+> Can we make port clock independently optional?
+> 
+> E.g.
+> 
+> 	clk_port = devm_clk_get(&pdev->dev, "port");
+> 	if (clk_gpio == ERR_PTR(-EPROBE_DEFER))
+> 		return -EPROBE_DEFER;
+> 
+> 	clk_gpio = devm_clk_get(&pdev->dev, "gpio");
+> 	if (clk_gpio == ERR_PTR(-EPROBE_DEFER))
+> 		return -EPROBE_DEFER;
+> 
+> 	if (!IS_ERR_OR_NULL(clk_port)) {
+> 		ret = clk_prepare_enable(clk_port);
+> 		if (ret)
+> 			return ret;
+> 	}
+> 
+> 	if (!IS_ERR_OR_NULL(clk_gpio))
+> 		ret = clk_prepare_enable(clk_gpio);
+> 		if (ret) {
+> 			clk_disable_unprepare(clk_port);
+> 			return ret;
+> 		}
+> 	}
+> 
+> Also there is some error handling a bit further down which needs proper
+> disabling the clocks.
+> 
 
-Yes, that's weird.
-I will check and re-send.
-
-Thanks for the notification.
+Got it, thanks for the suggestion.
+Will change in next version.
 
 Regards
 Dong Aisheng
 
+> --
+> Stefan
 > 
-> Yours,
-> Linus Walleij
+> 
+> >
+> > Regards
+> > Dong Aisheng
+> >
+> >> --
+> >> Stefan
+> >>
+> >> > +	if ((PTR_ERR(clk_gpio) == -EPROBE_DEFER) ||
+> >> > +	    (PTR_ERR(clk_port) == -EPROBE_DEFER)) {
+> >> > +		return -EPROBE_DEFER;
+> >> > +	} else if (!IS_ERR_OR_NULL(clk_gpio) &&
+> >> > +		   !IS_ERR_OR_NULL(clk_port)) {
+> >> > +		ret = clk_prepare_enable(clk_gpio);
+> >> > +		if (ret)
+> >> > +			return ret;
+> >> > +
+> >> > +		ret = clk_prepare_enable(clk_port);
+> >> > +		if (ret) {
+> >> > +			clk_disable_unprepare(clk_gpio);
+> >> > +			return ret;
+> >> > +		}
+> >> > +	}
+> >> > +
+> >> >  	gc = &port->gc;
+> >> >  	gc->of_node = np;
+> >> >  	gc->parent = dev;
