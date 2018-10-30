@@ -1,124 +1,109 @@
-From: jacopo mondi <jacopo@jmondi.org>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: Introduce VIN_DATA_PIN_GROUP_VER
-Date: Tue, 30 Oct 2018 08:34:44 +0100
-Message-ID: <20181030073444.GE15991@w540>
-References: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
- <1540836824-4636-2-git-send-email-jacopo+renesas@jmondi.org>
- <1822236810.335136.1540871186977@webmail.strato.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH v2] mmc: sdhci-pci: Try "cd" for card-detect lookup before
+ using NULL
+Date: Tue, 30 Oct 2018 09:53:28 +0200
+Message-ID: <79f9fb1f-9318-6265-d642-11d57719f287@intel.com>
+References: <CAA93t1oaZ5zkv+BsGnYZg6pqKv0DzXi3j8oZHUyTyffUWHtHug@mail.gmail.com>
+ <20181029221701.51376-1-rajatja@google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sT9gWZPUZYhvPS56"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1822236810.335136.1540871186977@webmail.strato.com>
+In-Reply-To: <20181029221701.51376-1-rajatja@google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, horms@verge.net.au, linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rajat Jain <rajatja@google.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rajat Jain <rajatxjain@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
+On 30/10/18 12:17 AM, Rajat Jain wrote:
+> Problem:
+> 
+> The card detect IRQ does not work with modern BIOS (that want
+> to use _DSD to provide the card detect GPIO to the driver).
+> 
+> Details:
+> 
+> The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
+> request the gpio descriptor for the "card detect" pin.
+> This pin is specified in the ACPI for the SDHC device:
+> 
+>  * Either as a resource using _CRS. This is a method used by legacy BIOS.
+>    (The driver needs to tell which resource index).
+> 
+>  * Or as a named property ("cd-gpios"/"cd-gpio") in _DSD (which internally
+>    points to an entry in _CRS). This way, the driver can lookup using a
+>    string. This is what modern BIOS prefer to use.
+> 
+> This API finally results in a call to the following code:
+> 
+> struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
+> {
+> ...
+>    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
+> ...
+>    if (!acpi_can_fallback_to_crs(adev, con_id))
+>           return ERR_PTR(-ENOENT);
+> ...
+>    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
+> ...
+> }
+> 
+> Note that this means that if the ACPI has _DSD properties, the kernel
+> will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
+> will always be false for any device hat has _DSD entries).
+> 
+> The SDHCI driver is thus currently broken on a modern BIOS, even if
+> BIOS provides both _CRS (for index based lookup) and _DSD entries (for
+> string based lookup). Ironically, none of these will be used for the
+> lookup currently because:
+> 
+> * Since the con_id is NULL, acpi_find_gpio() does not find a matching
+>   entry in DSDT. (The _DSDT entry has the property name = "cd-gpios")
+> 
+> * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
+>   returns false (because device properties have been populated from
+>   _DSD), thus the _CRS is never used for the lookup.
+> 
+> Fix:
+> 
+> Try "cd" for lookup in the _DSD before falling back to using NULL so
+> as to try looking up in the _CRS.
+> 
+> I've tested this patch successfully with both Legacy BIOS (that
+> provide only _CRS method) as well as modern BIOS (that provide both
+> _CRS and _DSD). Also the use of "cd" appears to be fairly consistent
+> across other users of this API (other MMC host controller drivers).
+> 
+> Link: https://lkml.org/lkml/2018/9/25/1113
+> Signed-off-by: Rajat Jain <rajatja@google.com>
 
---sT9gWZPUZYhvPS56
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+This is good enough for a fix.  An ACPI GPIO mappings table can be done later.
 
-Hi Uli,
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-On Tue, Oct 30, 2018 at 04:46:26AM +0100, Ulrich Hecht wrote:
->
-> > On October 29, 2018 at 7:13 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> >
-> >
-> > VIN data groups may appear on different sets of pins, usually named
-> > "vinX_data_[a|b]". The existing VIN_DATA_PIN_GROUP() does not support appending
-> > the 'a' or 'b' suffix, leading to the definition of groups names not consistent
-> > with the ones defined using SH_PFC_PIN_GROUP() macro.
-> >
-> > Fix this by adding a macro that supports appending suffixes when required.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  drivers/pinctrl/sh-pfc/sh_pfc.h | 20 +++++++++++++++-----
-> >  1 file changed, 15 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> > index 458ae0a..2930e9a 100644
-> > --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> > +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> > @@ -54,17 +54,27 @@ struct sh_pfc_pin_group {
-> >
-> >  /*
-> >   * Using union vin_data saves memory occupied by the VIN data pins.
-> > - * VIN_DATA_PIN_GROUP() is  a macro  used  to describe the VIN pin groups
-> > - * in this case.
-> > + *
-> > + * VIN_DATA_PIN_GROUP() is  a macro  used  to describe the VIN pin groups,
->
-> Maybe fix the odd spacing, while you're at it?
-
-Ups, I have missed it.
-
-Thanks, I'll wait for more feedbacks and add your tag to the next
-version.
-
-Thanks
-  j
-
->
-> > + * while VIN_DATA_PIN_GROUP_VER() is used when the same pin group can appear
-> > + * on different sets of pins.
-> >   */
-> > -#define VIN_DATA_PIN_GROUP(n, s)				\
-> > -	{							\
-> > -		.name = #n#s,					\
-> > +#define __VIN_DATA_PIN_GROUP(n, s)				\
-> >  		.pins = n##_pins.data##s,			\
-> >  		.mux = n##_mux.data##s,				\
-> >  		.nr_pins = ARRAY_SIZE(n##_pins.data##s),	\
-> >  	}
-> >
-> > +#define VIN_DATA_PIN_GROUP(n, s)				\
-> > +	{							\
-> > +		.name = #n#s,					\
-> > +		__VIN_DATA_PIN_GROUP(n, s)
-> > +
-> > +#define VIN_DATA_PIN_GROUP_VER(n, v, s)				\
-> > +	{							\
-> > +		.name = #n#s"_"#v,				\
-> > +		__VIN_DATA_PIN_GROUP(n##_##v, s)
-> > +
-> >  union vin_data {
-> >  	unsigned int data24[24];
-> >  	unsigned int data20[20];
-> > --
-> > 2.7.4
-> >
->
-> With or without the whitespace fix:
->
-> Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
->
-> CU
-> Uli
-
---sT9gWZPUZYhvPS56
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJb2AmUAAoJEHI0Bo8WoVY8TFQQAIsZnPDnlNBvl+MeaWF+O0QP
-85Ej7Az3Evfmz/ZMQTrNUyLbdhRMmmrYxnnURldaJA2WVZgvmQbWWGDjRLdppg2E
-tMoAXnbyBqVOsb26aQjIlHil+J2Qh95fFqv/u3gXQm9k2GRDG4/eUVsvFMSHbev3
-T3FXOpLIPdx6C6XHdAy1tMgnkzlGzIDKFoDRvUt/2s0MIdcTO9UNyIAmFUjlc+gq
-YIKDJK8JjJxKuSZY2o9SeHk6Fh5F9FQv2JLl8xIZzFbV6yoYUPoB5qht+0NAObot
-HD+NxlMlFCFP/lvBgPRgAzREhwvzKrvRhD8UMydGPy9R4Y+AQ2Qf32Bgw+VnZnho
-9uceAQ6yYzA477/7llFKfnO/429DmiPhjuiT/POBEyXtAPGOwV7RkzYBQdDVyjPi
-gjEEk4LDwpxAuHhG0MMgW3xLDCbl9G8R0lZTuoDZMX6LJOycZuHn+6yb4hFDr3/X
-2mGtXp2Y6cX9nsMSTEZMM6YJ5iNBdkNza0r7Jc/IuL+fLh88ihfnUdGcP7kEOArO
-EhO9r4vVydMGofYV1bGs36oTkjWzvhovxjLz8wR55TiWIX+Ipk/ZhywKXtstdgKk
-Rc49j4jwzK3gPqtct8K6Nw4+bKWpyUiNsH50MrYKO6GRc63Gpk2mzuFUlxVzNCpr
-78LjLBmbMlfvtXs/JC9u
-=/rtT
------END PGP SIGNATURE-----
-
---sT9gWZPUZYhvPS56--
+> ---
+> v2: Fix the commit log to take care of Andy's comments.
+> 
+>  drivers/mmc/host/sdhci-pci-core.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+> index 7bfd366d970d..e53333c695b3 100644
+> --- a/drivers/mmc/host/sdhci-pci-core.c
+> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> @@ -1762,8 +1762,13 @@ static struct sdhci_pci_slot *sdhci_pci_probe_slot(
+>  		device_init_wakeup(&pdev->dev, true);
+>  
+>  	if (slot->cd_idx >= 0) {
+> -		ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
+> +		ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
+>  					   slot->cd_override_level, 0, NULL);
+> +		if (ret && ret != -EPROBE_DEFER)
+> +			ret = mmc_gpiod_request_cd(host->mmc, NULL,
+> +						   slot->cd_idx,
+> +						   slot->cd_override_level,
+> +						   0, NULL);
+>  		if (ret == -EPROBE_DEFER)
+>  			goto remove;
+>  
+> 
