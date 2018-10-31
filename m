@@ -1,91 +1,204 @@
-From: Dan O'Donovan <dan.odonovan@emutex.com>
-Subject: Re: [PATCH v2 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Date: Wed, 31 Oct 2018 19:55:39 +0000
-Message-ID: <4ba11985-c71e-e526-8478-8bfe0e208429@emutex.com>
-References: <20180421085009.28773-1-javier@emutex.com>
- <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1539969334-24577-4-git-send-email-dan@emutex.com>
- <CAHp75Vc8jxK6mcjOxmuOD0CTqYvfSSL=HMPpRVtOyCb6LxVB2w@mail.gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: Re: [PATCH 2/7] dt-bindings: mfd: ds90ux9xx: add description of TI
+ DS90Ux9xx I2C bridge
+Date: Wed, 31 Oct 2018 22:12:37 +0200
+Message-ID: <2c90affe-0972-751d-8312-3d15d130c3fb@mleia.com>
+References: <20181008211205.2900-1-vz@mleia.com>
+ <20181008211205.2900-3-vz@mleia.com>
+ <b9a617da-1712-2d28-d25c-e3c413a4e9f0@lucaceresoli.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vc8jxK6mcjOxmuOD0CTqYvfSSL=HMPpRVtOyCb6LxVB2w@mail.gmail.com>
+In-Reply-To: <b9a617da-1712-2d28-d25c-e3c413a4e9f0@lucaceresoli.net>
 Content-Language: en-US
-Content-ID: <87C31841509831468D8F76348AFB44BF@EURP190.PROD.OUTLOOK.COM>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Dan O'Donovan <dan.odonovan@emutex.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Carlos Iglesias <carlos.iglesias@emutex.com>, Javier Arteaga <javier@emutex.com>
+To: Luca Ceresoli <luca@lucaceresoli.net>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Vasut <marek.vasut@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 List-Id: linux-gpio@vger.kernel.org
 
-VGhhbmtzIGZvciB5b3VyIHJldmlldyBmZWVkYmFjaywgQW5keSHCoCBJJ2xsIHNlbmQgYSB2MyBz
-aG9ydGx5IHdpdGggdGhvc2UgY2hhbmdlcyB5b3Ugc3VnZ2VzdGVkLsKgIEkndmUgYWRkZWQgc29t
-ZSBjb21tZW50cyBpbmxpbmUgYmVsb3cuDQoNCk9uIDEwLzIwLzIwMTggMTI6NDAgUE0sIEFuZHkg
-U2hldmNoZW5rbyB3cm90ZToNCj4gT24gRnJpLCBPY3QgMTksIDIwMTggYXQgODoyNCBQTSBEYW4g
-TydEb25vdmFuIDxkYW5AZW11dGV4LmNvbT4gd3JvdGU6DQo+DQo+PiArc3RhdGljIGludCB1cGJv
-YXJkX2dldF9mdW5jdGlvbnNfY291bnQoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2KQ0KPj4g
-K3sNCj4+ICsgICAgICAgcmV0dXJuIDA7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBpbnQgdXBi
-b2FyZF9nZXRfZnVuY3Rpb25fZ3JvdXBzKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCj4+
-ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBzZWxl
-Y3RvciwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IGNo
-YXIgKiBjb25zdCAqKmdyb3VwcywNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHVuc2lnbmVkIGludCAqbnVtX2dyb3VwcykNCj4+ICt7DQo+PiArICAgICAgICpncm91
-cHMgPSBOVUxMOw0KPj4gKyAgICAgICAqbnVtX2dyb3VwcyA9IDA7DQo+PiArICAgICAgIHJldHVy
-biAwOw0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgY29uc3QgY2hhciAqdXBib2FyZF9nZXRfZnVu
-Y3Rpb25fbmFtZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQo+PiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgc2VsZWN0b3IpDQo+
-PiArew0KPj4gKyAgICAgICByZXR1cm4gTlVMTDsNCj4+ICt9DQo+PiArDQo+PiArc3RhdGljIGlu
-dCB1cGJvYXJkX3NldF9tdXgoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBp
-bnQgZnVuY3Rpb24sDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQg
-Z3JvdXApDQo+PiArew0KPj4gKyAgICAgICByZXR1cm4gMDsNCj4+ICt9DQo+IEhtbS4uLiBEbyB5
-b3UgbmVlZCB0aG9zZSBzdHVicz8gU2FtZSBRIGZvciBvdGhlciBzdHVicyBpbiB0aGUgZmlsZS4N
-Ckl0IGxvb2tzIGxpa2UgdGhleSdyZSByZXF1aXJlZCBieSBwaW5jdHJsIGNvcmUsIHdoaWNoIHJl
-dHVybnMgYW4gZXJyb3IgaWYgdGhleSdyZSBub3QgcHJvdmlkZWQuDQoNCj4+ICtzdGF0aWMgaW50
-IHVwYm9hcmRfZ3Bpb19yZXF1ZXN0X2VuYWJsZShzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYs
-DQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgcGluY3Ry
-bF9ncGlvX3JhbmdlICpyYW5nZSwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHVuc2lnbmVkIGludCBwaW4pDQo+PiArew0KPj4gKyAgICAgICBjb25zdCBzdHJ1Y3Qg
-cGluX2Rlc2MgKiBjb25zdCBwZCA9IHBpbl9kZXNjX2dldChwY3RsZGV2LCBwaW4pOw0KPj4gKyAg
-ICAgICBjb25zdCBzdHJ1Y3QgdXBib2FyZF9waW4gKnA7DQo+PiArICAgICAgIGludCByZXQ7DQo+
-PiArDQo+PiArICAgICAgIGlmICghcGQpDQo+PiArICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5W
-QUw7DQo+IFdoZW4gaXQgcG9zc2libGUgdG8gaGFwcGVuPw0KPiBTYW1lIFEgZm9yIHRoZSByZXN0
-IHNhbWUgZXhjZXJwdHMuDQpBZ3JlZWQsIGl0IHNob3VsZG4ndCBiZSBwb3NzaWJsZS7CoCBJIHdp
-bGwgcmVtb3ZlIHRoZXNlIGNoZWNrcy4NCg0KPj4gKw0KPj4gKyAgICAgICBpZiAob2Zmc2V0ICsg
-MSA+IHBjdHJsLT5uc29jX2dwaW9zIHx8ICFwY3RybC0+c29jX2dwaW9zW29mZnNldF0pDQo+PiAr
-ICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVOT0RFVik7DQo+IG9mZnNldCA+PSA/DQo+
-IElzIGl0IGV2ZW4gcG9zc2libGU/DQpBZ3JlZWQsIGl0IHNob3VsZG4ndCBiZSBwb3NzaWJsZS7C
-oCBJIHdpbGwgcmVtb3ZlIHRoZXNlIGNoZWNrcy4NCg0KPj4gK3N0YXRpYyBpbnQgdXBib2FyZF9w
-aW5jdHJsX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+PiArew0KPj4gKyAg
-ICAgICBzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Ow0KPj4gKyAgICAgICBzdHJ1Y3Qg
-cGluY3RybF9kZXNjICpwY3RsZGVzYzsNCj4+ICsgICAgICAgc3RydWN0IHVwYm9hcmRfcGluY3Ry
-bCAqcGN0cmw7DQo+PiArICAgICAgIHN0cnVjdCB1cGJvYXJkX3BpbiAqcGluczsNCj4+ICsgICAg
-ICAgc3RydWN0IGFjcGlfZGV2aWNlICphZGV2Ow0KPj4gKyAgICAgICBzdHJ1Y3QgcmVnbWFwICpy
-ZWdtYXA7DQo+PiArICAgICAgIHVuc2lnbmVkIGludCBpOw0KPj4gKyAgICAgICBpbnQgcmV0Ow0K
-Pj4gKyAgICAgICBhZGV2ID0gQUNQSV9DT01QQU5JT04oZGV2KTsNCj4+ICsgICAgICAgaWYgKCFh
-ZGV2IHx8IHN0cmNtcChhY3BpX2RldmljZV9oaWQoYWRldiksICJBQU5UMEYwMSIpKQ0KPj4gKyAg
-ICAgICAgICAgICAgIHJldHVybiAtRU5PREVWOw0KPiBTYW1lIFEgYXMgcGVyIExFRCBkcml2ZXIu
-DQpJIGFncmVlLsKgIEkgd2lsbCByZW1vdmUgdGhpcyBjaGVjaywgYm90aCBoZXJlIGFuZCBpbiB0
-aGUgTEVEIGRyaXZlci4NCg0KPj4gKyAgICAgICAgICAgICAgIGlmIChwZC0+ZHJ2X2RhdGEpIHsN
-Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCByZWdfZmllbGQgKmZpZWxkID0gcGQt
-PmRydl9kYXRhOw0KPj4gKw0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgcGluLT5mdW5jX2Vu
-ID0gZGV2bV9yZWdtYXBfZmllbGRfYWxsb2MoZGV2LCByZWdtYXAsDQo+PiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAqZmllbGQp
-Ow0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKElTX0VSUihwaW4tPmZ1bmNfZW4pKQ0K
-Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gUFRSX0VSUihwaW4tPmZ1
-bmNfZW4pOw0KPj4gKyAgICAgICAgICAgICAgIH0NCj4+ICsNCj4+ICsgICAgICAgICAgICAgICBw
-aW4tPmdwaW9fZW4gPSB1cGJvYXJkX2ZpZWxkX2FsbG9jKGRldiwgcmVnbWFwLA0KPj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVVBCT0FSRF9SRUdf
-R1BJT19FTjAsIGkpOw0KPj4gKyAgICAgICAgICAgICAgIGlmIChJU19FUlIocGluLT5ncGlvX2Vu
-KSkNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBQVFJfRVJSKHBpbi0+Z3Bpb19l
-bik7DQo+PiArDQo+PiArICAgICAgICAgICAgICAgcGluLT5ncGlvX2RpciA9IHVwYm9hcmRfZmll
-bGRfYWxsb2MoZGV2LCByZWdtYXAsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgVVBCT0FSRF9SRUdfR1BJT19ESVIwLCBpKTsNCj4+ICsgICAg
-ICAgICAgICAgICBpZiAoSVNfRVJSKHBpbi0+Z3Bpb19kaXIpKQ0KPj4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgcmV0dXJuIFBUUl9FUlIocGluLT5ncGlvX2Rpcik7DQo+PiArDQo+PiArICAgICAg
-ICAgICAgICAgKChzdHJ1Y3QgcGluY3RybF9waW5fZGVzYyAqKXBkKS0+ZHJ2X2RhdGEgPSBwaW47
-DQo+IEknbSBub3Qgc3VyZSBJIHVuZGVyc3RhbmQgdGhlIHB1cnBvc2Ugb2YgdGhpcyBjYXN0aW5n
-Lg0KV2hlbiB0aGUgcGQgcG9pbnRlciBpcyByZXRyaWV2ZWQgZnJvbSBzdHJ1Y3QgcGluY3RybF9k
-ZXNjLCBpdCBoYXMgYSBjb25zdCBjb25zdHJhaW50LsKgIFRoZSBwdXJwb3NlIG9mIHRoZSBjYXN0
-IGlzIHRvIGJ5cGFzcyB0aGF0IGNvbnN0cmFpbnQgZm9yIHRoaXMgdXNlIGNhc2UsIGJlY2F1c2Ug
-dGhpcyBjb2RlIGlzIGFsbG9jYXRpbmcgYW5kIHNldHRpbmcgZHJ2X2RhdGEgZHluYW1pY2FsbHkg
-aGVyZSBhdCBydW4tdGltZSByYXRoZXIgdGhhbiBhdCBjb21waWxlLXRpbWUuDQo=
+Hi Luca,
+
+thank you for review.
+
+On 10/30/2018 06:43 PM, Luca Ceresoli wrote:
+> Hi Vladimir,
+> 
+> On 08/10/18 23:12, Vladimir Zapolskiy wrote:
+>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>>
+>> TI DS90Ux9xx de-/serializers are capable to route I2C messages to
+>> I2C slave devices connected to a remote de-/serializer in a pair,
+>> the change adds description of device tree bindings of the subcontroller
+>> to configure and enable this functionality.
+>>
+>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>> ---
+>>  .../bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt  | 61 +++++++++++++++++++
+>>  1 file changed, 61 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
+>> new file mode 100644
+>> index 000000000000..4169e382073a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/ti,ds90ux9xx-i2c-bridge.txt
+>> @@ -0,0 +1,61 @@
+>> +TI DS90Ux9xx de-/serializer I2C bridge subcontroller
+>> +
+>> +Required properties:
+>> +- compatible: Must contain a generic "ti,ds90ux9xx-i2c-bridge" value and
+>> +	may contain one more specific value from the list:
+>> +	"ti,ds90ux925-i2c-bridge",
+>> +	"ti,ds90ux926-i2c-bridge",
+>> +	"ti,ds90ux927-i2c-bridge",
+>> +	"ti,ds90ux928-i2c-bridge",
+>> +	"ti,ds90ux940-i2c-bridge".
+>> +
+>> +Required properties of a de-/serializer device connected to a local I2C bus:
+>> +- ti,i2c-bridges: List of phandles to remote de-/serializer devices with
+>> +	two arguments: id of a local de-/serializer FPD link and an assigned
+>> +	I2C address of a remote de-/serializer to be accessed on a local
+>> +	I2C bus.
+>> +
+>> +Optional properties of a de-/serializer device connected to a local I2C bus:
+>> +- ti,i2c-bridge-maps: List of 3-cell values:
+>> +	- the first argument is id of a local de-/serializer FPD link,
+>> +	- the second argument is an I2C address of a device connected to
+>> +	  a remote de-/serializer IC,
+>> +	- the third argument is an I2C address of the remote I2C device
+>> +	  for access on a local I2C bus.
+> 
+> BTW I usually use names "remove slave" address and "alias" for bullets 2
+> and 3. These are the names from the datasheets, and are clearer IMO.
+> 
+
+Definitely you are correct, I find that verbose descriptions might be
+more appropriate and self-explanatory for anyone, who is not closely familiar
+with the IC series. I'll consider to add the names from the datasheets
+as well.
+
+> Now to the big stuff.
+> 
+> I find a static map in the "local" chip DT node is a limit. You might
+> have to support multiple models of remote device, where you'll know the
+> model only when after it gets connected. Think Beaglebone capes, but
+> over FPD-Link 3. This scenario opens several issues, but specifically
+> for I2C address mapping I addressed it by adding in the "local" chip's
+> DT node a pool of I2C aliases it can use. The DT author is responsible
+> to pick addresses that are not used on the same I2C bus, which cannot be
+> done at runtime reliably.
+
+Here I see several important topics raised.
+
+1) A static map in the "local" chip DT node is not a limit in sense that
+   it is optional, so it would be a working model just to omit the property,
+   however it may (or may not) require another handlers to bridge remote
+   I2C devices, for instance 'ti,i2c-bridge-pass-all' property, or new
+   UAPI.
+
+2) About supporting multiple models of remote PCBs in the same dts file,
+   it might be an excessive complication to predict a proper description
+   of an unknown in advance complex device, so, a better solution should
+   be to apply DT overlays in runtime, but at any time the hardware
+   description and the mapping shall be precisely defined.
+
+3) About a pool of vacant I2C addresses, I dislike the idea that there
+   will be no definite or constant I2C address in runtime for a particular
+   remote slave device. As I've mentioned above, it would be better to
+   utilize DT overlays to handle "multiple models of remote device"
+   dynamically in runtime, adding this feature could be done on top of
+   the shown code.
+
+> Here's my current draft on a dual/quad port deserializer:
+> 
+> &i2c0 {
+>     serializer@3d {
+>         reg = <0x3d>;
+>         ...
+> 
+>         /* Guaranteed not physically present on i2c0 */
+>         i2c-alias-pool = /bits/ 8 <0x20 0x21 0x22 0x23 0x24 0x25>;
+> 
+>         rxports {
+>             #address-cells = <1>;
+>             #size-cells = <0>;
+> 
+>             rxport@0 {
+>                 reg = <0>;
+>                 remote-i2c-bus { /* The proxied I2C bus on rxport 0 */
+>                     #address-cells = <1>;
+>                     #size-cells = <0>;
+> 
+>                     eeprom@51 {
+>                         reg = <0x51>;
+>                         compatible = "at,24c02";
+>                     };
+>                 };
+> 
+>             rxport@1 {
+>                 reg = <1>;
+>                 remote-i2c-bus { /* The proxied I2C bus on rxport 1 */
+>                     #address-cells = <1>;
+>                     #size-cells = <0>;
+> 
+>                     eeprom@51 {
+>                         reg = <0x51>;
+>                         compatible = "at,24c02";
+>                     };
+>                 };
+>             };
+>         };
+>     };
+> };
+> 
+> At probe time the serializer driver instantiates one new i2c_adapter for
+> each rxport. Any remote device is added (removed) to that adapter, then
+> the driver finds an available alias and maps (unmaps) it. The
+
+I avoid using i2c_adapter object, because then you get a confusing access
+to right the same device on two logical I2C buses. This is not the way
+how I2C muxes operate or are expected to operate, commonly I2C muxes contain
+a protocol to access muxed devices, which are "invisible" on a host bus,
+and here a local IC behaves like an I2C device with multiple addresses.
+
+Note, that following an advice from Wolfram I'm going to send the i2c-bridge
+cell driver into inclusion under drivers/i2c/muxes/ , even if the device
+driver does not register a mux.
+
+> transactions are handled in a way similar to i2c-mux, i.e. the ds90*
+> i2c_adapter has a master_xfer callback that changes the remote slave
+> address to the corresponding alias, then calls parent->algo->master_xfer().
+> 
+> Note how both eeproms in the example have the same physical address.
+> They will be given two different aliases.
+
+The question is how to determine which runtime assigned address represents
+which eeprom of two. The remote/alias scheme I propose makes it transparent.
+
+>> +- ti,i2c-bridge-auto-ack: Enables AUTO ACK mode.
+> 
+> It this useful other than for debugging? And, as Laurent noted, this
+> should not be in DT: it doesn't describe the hardware.
+> 
+
+I'll drop it, I've just checked that it is unused in any of production dts
+files, which are accessible to me.
+
+By "hardware description" I generally mean a hardware specific handle.
+If IC supports a meaningful, one time programmable non-standard 1-bit field
+configuration, then using a bool property in DT sounds reasonable to me.
+
+>> +- ti,i2c-bridge-pass-all: Enables PASS ALL mode, remote I2C slave devices
+>> +	are accessible on a local (host) I2C bus without I2C address
+>> +	remappings.
+> 
+> It should be clear from the DT docs that either ti,i2c-bridge-pass-all
+> is enabled or the alias map/pool is used, but not both.
+> 
+
+Sure, I'll add this information, thank you for pointing it out.
+
+--
+Best wishes,
+Vladimir
