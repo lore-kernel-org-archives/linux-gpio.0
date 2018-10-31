@@ -1,37 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/6] Mask read inputs for get_multiple callbacks
-Date: Wed, 31 Oct 2018 10:00:26 +0100
-Message-ID: <CACRpkdYcOVmJjdoVRpoMObxxmLa0-o4Kf9eQiL9zKZsEKb4YoQ@mail.gmail.com>
-References: <cover.1540209293.git.vilhelm.gray@gmail.com>
+Subject: Re: [PATCH 0/5] Add Pinctrl and GPIO support for HI3670 SoC
+Date: Wed, 31 Oct 2018 10:43:00 +0100
+Message-ID: <CACRpkdbMSYt5aH9fwRijtO=VG1nLAnfxTsfxGza+_Z2iGj2+-A@mail.gmail.com>
+References: <20181023190655.12004-1-manivannan.sadhasivam@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1540209293.git.vilhelm.gray@gmail.com>
+In-Reply-To: <20181023190655.12004-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Xu Wei <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 2:08 PM William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Tue, Oct 23, 2018 at 9:07 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-> The implementation for several drivers' get_multiple callbacks return
-> additional input states that were not requested by the mask passed in.
-> Although the current caller in the kernel does not care, it would be
-> prudent to ensure the behavior of the get_multiple implementations is to
-> return exactly the requested input states and not more. This patchset
-> ensures such behavior by applying a final mask on the read inputs before
-> setting the bits array.
+> This patchset adds Pinctrl and GPIO support for HI3670 SoC from HiSilicon
+> found in the HiKey970 developement board. Also, the remaining UARTs are
+> enabled and GPIO line names are added based on the Schematics and the
+> 96Boards Consumer Edition spec.
 >
-> William Breathitt Gray (6):
->   gpio: 104-dio-48e: Mask read inputs for get_multiple
->   gpio: 104-idi-48e: Mask the read inputs for get_multiple
->   gpio: gpio-mm: Mask read inputs for get_multiple
->   gpio: ws16c48: Mask read inputs for get_multiple
->   gpio: pci-idio-16: Mask read inputs for get_multiple
->   gpio: pcie-idio-24: Mask read inputs for get_multiple
+> Note: These patches are based on the below common clk patches pushed
+> earlier:
+>
+> arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
+> arm64: dts: hisilicon: Source SoC clock for UART6
 
-All patches applied for v4.21.
+All looks good to me.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+for the series.
 
 Yours,
 Linus Walleij
