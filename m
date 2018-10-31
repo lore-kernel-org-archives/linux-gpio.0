@@ -1,38 +1,63 @@
-From: Sean Wang <sean.wang@kernel.org>
-Subject: Re: [PATCH 5/5] pinctrl: mediatek: Add initial pinctrl driver for
- MT6797 SoC
-Date: Tue, 30 Oct 2018 16:45:52 -0700
-Message-ID: <CAGp9LzpssWX2TxPdD0yWtmav2XGdG68ztx+hV1DxjRX52q0qvg@mail.gmail.com>
-References: <20181008191411.32555-1-manivannan.sadhasivam@linaro.org>
- <20181008191411.32555-6-manivannan.sadhasivam@linaro.org> <c8d65395-c60c-5d06-92ad-c389642c22ba@gmail.com>
- <20181011164429.GA18174@Mani-XPS-13-9360> <e7abee72-23a3-4716-baf0-484514bbb019@gmail.com>
- <CAGp9LzoP2zkryhJCQNGpe9X0+7yUd31ffV7vM4j6KvTdfPpCrA@mail.gmail.com> <CACRpkdb-Er8z6JdvYWE8UXUa3dfVSu4S-VbnqvcV+vf9erJuNw@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v5 04/11] dt-bindings: iio: adc: add AXP803 ADC bindings
+Date: Wed, 31 Oct 2018 10:29:59 +0800
+Message-ID: <CAGb2v65JKj_7VcEr1KuZVop85hn-3h73NrExprpmLbKZiosD5Q@mail.gmail.com>
+References: <20181023185330.10472-1-oskari@lemmela.net> <20181023185330.10472-5-oskari@lemmela.net>
+ <20181024135633.GA342@bogus> <20181028154011.04efdecf@archlinux> <20181029130757.m5okrfvusjl5fu5m@qschulz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb-Er8z6JdvYWE8UXUa3dfVSu4S-VbnqvcV+vf9erJuNw@mail.gmail.com>
+In-Reply-To: <20181029130757.m5okrfvusjl5fu5m@qschulz>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?B?U2VhbiBXYW5nICjnjovlv5fkupgp?= <sean.wang@mediatek.com>, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, linux-mediatek@lists.infradead.org, Cheng Mars <mars.cheng@mediatek.com>, linux-arm-kernel@lists.infradead.org
+To: jic23@jic23.retrosnub.co.uk
+Cc: Rob Herring <robh@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "open list:THERMAL" <linux-pm@vger.kernel.org>, linux-iio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Vasily Khoruzhick <anarsoul@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, devicetree <devicetree@vger.kernel.org>, oskari@lemmela.net, linux-gpio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Quentin Schulz <quentin.schulz@bootlin.com>
 List-Id: linux-gpio@vger.kernel.org
 
-sure, the version of driver looked good to me, add the missing Acked-by from me
+On Mon, Oct 29, 2018 at 9:10 PM Quentin Schulz
+<quentin.schulz@bootlin.com> wrote:
+>
+> Hi Jonathan,
+>
+> On Sun, Oct 28, 2018 at 03:40:11PM +0000, Jonathan Cameron wrote:
+> > On Wed, 24 Oct 2018 08:56:33 -0500
+> > Rob Herring <robh@kernel.org> wrote:
+> >
+> > > On Tue, 23 Oct 2018 21:53:23 +0300, Oskari Lemmela wrote:
+> > > > The AXP803 ADC is compatible with AXP813 ADC, but add
+> > > > specific compatible for it.
+> > > >
+> > > > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > >
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> >
+> > This doesn't seem to have any dependencies with the other patches
+> > so applied to the togreg branch of iio.git and pushed out as testing
+> > for the autobuilders to ignore.  However I am a little curious to know
+> > why we would add the ID and then not use it (that I can see)?
+> >
+>
+> Sometimes with Allwinner (and X-Powers), two IPs seem identical until we
+> discover something that is slightly different. When this happens, we
+> have to add a compatible to differentiate both. However, we would also
+> need to change the Device Tree to change the compatible. We would need
+> to handle the driver behaviour for both Device Trees.
+>
+> So better anticipate a possible difference so that we don't have to do
+> some hacks in the driver to handle the device correctly.
+>
+> As always, Chen-Yu or Maxime may know better so I'm just stating what I
+> seem to recall.
 
-Acked-by: Sean Wang <sean.wang@kernel.org>
+With Allwinner stuff (X-Powers included), sometimes the documents are
+incomplete or have errors. We tend to add a model-specific compatible
+just in case things turn out not to be so compatible, unless someone
+has triple-checked everything, documents and actual hardware included.
 
+However we don't actually document these, so this patch isn't strictly
+needed. (I suppose this might annoy the device tree binding maintainers.)
 
-On Tue, Oct 30, 2018 at 5:51 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Thu, Oct 18, 2018 at 5:06 PM Sean Wang <sean.wang@kernel.org> wrote:
->
-> > the driver currently only supports the basic operation, not including
-> > driving operation, so
-> > what value for the driving mode for a certain pin seems not really
-> > matter in the early patch. I think these advanced operations can be
-> > added with another patch.
->
-> Sean can you provide an Acked-by for the pinctrl part so I can merge
-> it once Manivannan resends it for v4.21?
->
-> Yours,
-> Linus Walleij
+ChenYu
