@@ -1,115 +1,81 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH 3/7] dt-bindings: pinctrl: ds90ux9xx: add description of
- TI DS90Ux9xx pinmux
-Date: Wed, 31 Oct 2018 22:31:36 +0200
-Message-ID: <cef7b8f6-4591-86e2-f2c9-f97845ad840a@mleia.com>
-References: <20181008211205.2900-1-vz@mleia.com> <8675619.KiXOS7fxCj@avalon>
- <9bd129b4-ce18-b036-9376-2cb1cb76aaf2@mentor.com> <2595665.eknevzee7a@avalon>
- <3bfa5338-16a0-f9e2-2c82-70af12e25fb1@lucaceresoli.net>
+From: Dan O'Donovan <dan.odonovan@emutex.com>
+Subject: Re: [PATCH v2 1/3] mfd: upboard: Add UP2 platform controller driver
+Date: Wed, 31 Oct 2018 20:40:45 +0000
+Message-ID: <cdf91d51-dfb5-b2dc-99af-60954cf32255@emutex.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-2-git-send-email-dan@emutex.com>
+ <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3bfa5338-16a0-f9e2-2c82-70af12e25fb1@lucaceresoli.net>
+In-Reply-To: <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
 Content-Language: en-US
+Content-ID: <FA21931C4422744687ECC1B11E2A1830@EURP190.PROD.OUTLOOK.COM>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Luca Ceresoli <luca@lucaceresoli.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Dan O'Donovan <dan.odonovan@emutex.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Carlos Iglesias <carlos.iglesias@emutex.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Luca,
-
-On 10/30/2018 06:44 PM, Luca Ceresoli wrote:
-> Hi Vladimir,
-> 
-> On 16/10/18 14:48, Laurent Pinchart wrote:
->> Hi Vladimir,
->>
->> On Saturday, 13 October 2018 16:47:48 EEST Vladimir Zapolskiy wrote:
->>> On 10/12/2018 03:01 PM, Laurent Pinchart wrote:
->>>> On Tuesday, 9 October 2018 00:12:01 EEST Vladimir Zapolskiy wrote:
->>>>> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>>>
->>>>> TI DS90Ux9xx de-/serializers have a capability to multiplex pin
->>>>> functions, in particular a pin may have selectable functions of GPIO,
->>>>> GPIO line transmitter, one of I2S lines, one of RGB24 video signal lines
->>>>> and so on.
->>>>>
->>>>> The change adds a description of DS90Ux9xx pin multiplexers and GPIO
->>>>> controllers.
->>>>>
->>>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> [...]
->>>>> +Available pins, groups and functions (reference to device datasheets):
->>>>> +
->>>>> +function: "gpio" ("gpio4" is on DS90Ux925 and DS90Ux926 only,
->>>>> +		  "gpio9" is on DS90Ux940 only)
->>>>> + - pins: "gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6",
->>>>> +	 "gpio7", "gpio8", "gpio9"
->>>>> +
->>>>> +function: "gpio-remote"
->>>>> + - pins: "gpio0", "gpio1", "gpio2", "gpio3"
->>>>> +
->>>>> +function: "pass" (DS90Ux940 specific only)
->>>>> + - pins: "gpio0", "gpio3"
->>>>
->>>> What do those functions mean ?
->>>
->>> "gpio" function should be already familiar to you.
->>
->> I assume this function is only available for the local device, not the remote 
->> one ?
->>
->>> "gpio-remote" function is the pin function for a GPIO line bridging.
->>>
->>> "pass" function sets a pin to a status pin function for detecting
->>> display timing issues, namely DE or Vsync length value mismatch.
->>
->> All this is not clear at all from the proposed DT bindings, it should be 
->> properly documented.
-> 
-> It's not clear to me as well. The "gpio-remote" can mean two different
-> things (at least in the camera serdes TI chips):
-> 
->  - a GPIO input on the the *local* chip, replicated as an output on the
->    *remote* chip
->  - a GPIO input on the the *remote* chip, replicated as an output on the
->    *local* chip
-> 
-> How to you differentiate them in DT?
-> 
-
-"gpio-remote" function is directly translated into "GPIOx Remote Enable"
-bit setting, the documentation says:
-
-1) Deserializer IC pin configuration:
-
-	Enable GPIO control from remote Serializer. The GPIO pin will
-	be an output, and the value is received from the remote Serializer.
-
-2) Serializer IC pin configuration:
-
-	Enable GPIO control from remote Deserializer. The GPIO pin will
-	be an output, and the value is received from the remote Deserializer.
-
-So, it is always an output signal, the line signal is "bridged" (repeated)
-as a corresponding line signal on a remote IC, note that there is no
-difference between serializer and deserializer ICs.
-
-> The "pass" function is also not clear. A comprehensive example would
-> help a lot.
-
-As this devicetree documentation says, the "pass" pin function is specific
-for DS90Ux940 deserializer, I would suggest to check its datasheet for
-getting a comprehensive answer, but I've already copy-pasted information
-from the datasheet into my previous answer to Laurent.
-
-The reason why the "pass" pin function is listed is quite simple, the
-pin function interferes other pin functions, see DS90Ux940 GPIO0 and
-GPIO3 controls, I hope I've managed to describe it properly by
-DS90UX940_GPIO(0, ...) and DS90UX940_GPIO(3, ...) pin descriptions in
-the pinctrl driver.
-
---
-Best wishes,
-Vladimir
+DQpPbiAxMC8yMC8yMDE4IDEyOjQ5IFBNLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6DQo+IE9uIEZy
+aSwgT2N0IDE5LCAyMDE4IGF0IDg6MjYgUE0gRGFuIE8nRG9ub3ZhbiA8ZGFuQGVtdXRleC5jb20+
+IHdyb3RlOg0KPj4gRnJvbTogSmF2aWVyIEFydGVhZ2EgPGphdmllckBlbXV0ZXguY29tPg0KPj4N
+Cj4+IFVQIFNxdWFyZWQgKFVQMikgaXMgYSB4ODYgU0JDIGZyb20gQUFFT04gYmFzZWQgb24gSW50
+ZWwgQXBvbGxvIExha2UuIEl0DQo+PiBmZWF0dXJlcyBhIE1BWCAxMCBGUEdBIHRoYXQgcm91dGVz
+IGxpbmVzIGZyb20gYm90aCBTb0MgYW5kIG9uLWJvYXJkDQo+PiBkZXZpY2VzIHRvIHR3byBJL08g
+aGVhZGVyczoNCj4+DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICstLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0rDQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwg
+NDAtcGluIFJQaS1saWtlIGhlYWRlciB8DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgKy0t
+LS0tLXwgICAgICAgICAoSEFUKSAgICAgICAgICB8DQo+PiAgICAgICAgICAgICAgICAgICAgICAg
+ICAgfCAgICAgICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+PiAgICAgKy0tLS0tLS0rICAg
+ICstLS0tLS0tLSsNCj4+ICAgICB8ICAgICAgIHwgICAgfCAgICAgICAgfCAgICAgKy0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLSsNCj4+ICAgICB8ICBTb0MgIHwtLS0tfCAgRlBHQSAgfC0tLS0tfCAg
+Q3VzdG9tIFVQMiBwaW4gaGVhZGVyIHwNCj4+ICAgICB8ICAgICAgIHwgICAgfCAgICAgICAgfCAg
+ICAgfCAgICAgICAgKEVYSEFUKSAgICAgICAgIHwNCj4+ICAgICArLS0tLS0tLSsgICAgKy0tLS0t
+LS0tKyAgICAgKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4+ICAgICAgICAgICAgICAgICAg
+ICAgICAgICB8DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgKy0tLS0tLSogT24tYm9hcmQg
+ZGV2aWNlczogTEVELCBWTFMuLi4NCj4+DQo+PiBUaGlzIGlzIGludGVuZGVkIHRvIGVuYWJsZSB2
+ZW5kb3Itc3BlY2lmaWMgYXBwbGljYXRpb25zIHRvIGN1c3RvbWl6ZSBJL08NCj4+IGhlYWRlciBw
+aW5vdXQsIGFzIHdlbGwgYXMgaW5jbHVkZSBsb3ctbGF0ZW5jeSBmdW5jdGlvbmFsaXR5LiBJdCBh
+bHNvDQo+PiBwZXJmb3JtcyB2b2x0YWdlIGxldmVsIHRyYW5zbGF0aW9uIGJldHdlZW4gdGhlIFNv
+QyAoMS44VikgYW5kIEhBVCBoZWFkZXINCj4+ICgzLjNWKS4NCj4+DQo+PiBPdXQgb2YgdGhlIGJv
+eCwgdGhpcyBibG9jayBpbXBsZW1lbnRzIGEgcGxhdGZvcm0gY29udHJvbGxlciB3aXRoIGENCj4+
+IEdQSU8tYml0YmFuZ2VkIGNvbnRyb2wgaW50ZXJmYWNlLiBJdCdzIGVudW1lcmF0ZWQgYnkgQUNQ
+SSBhbmQgcHJvdmlkZXMNCj4+IHJlZ2lzdGVycyB0byBjb250cm9sOg0KPj4NCj4+IC0gQ29uZmln
+dXJhdGlvbiBvZiBhbGwgRlBHQS1yb3V0ZWQgaGVhZGVyIGxpbmVzLiBUaGVzZSBjYW4gYmUgZHJp
+dmVuDQo+PiAgIFNvQy10by1oZWFkZXIsIGhlYWRlci10by1Tb0Mgb3Igc2V0IGluIGhpZ2ggaW1w
+ZWRhbmNlLg0KPj4NCj4+IC0gT24tYm9hcmQgTEVEcyBhbmQgZW5hYmxlIGxpbmVzIGZvciBvdGhl
+ciBwbGF0Zm9ybSBkZXZpY2VzLg0KPj4NCj4+IEFkZCBjb3JlIHN1cHBvcnQgZm9yIHRoaXMgcGxh
+dGZvcm0gY29udHJvbGxlciBhcyBhIE1GRCBkZXZpY2UsIGV4cG9zaW5nDQo+PiB0aGVzZSByZWdp
+c3RlcnMgYXMgYSByZWdtYXAuDQo+IENhbiB3ZSBzZWUgYSBsaW5rIHRvIG9yIGFuIGV4Y2VycHQg
+b2YgQUNQSSB0YWJsZSBmb3IgdGhpcyBkZXZpY2U/DQpTdXJlOiBodHRwczovL2dpc3QuZ2l0aHVi
+LmNvbS9EYW4tRW11dGV4LzYzODJjMjVmNGI4YjhjZGQ4MGU2MDU2ODg5Y2RmNDhiDQpJJ2xsIGFk
+ZCB0aGlzIHRvIHRoZSBjb3ZlciBsZXR0ZXIgZm9yIHYzIGFzIHdlbGwuDQoNCj4NCj4+ICsjZGVm
+aW5lIHNldF9jbGVhcih1LCB4KSBncGlvZF9zZXRfdmFsdWUoKHUpLT5jbGVhcl9ncGlvLCAoeCkp
+DQo+PiArI2RlZmluZSBzZXRfc3Ryb2JlKHUsIHgpIGdwaW9kX3NldF92YWx1ZSgodSktPnN0cm9i
+ZV9ncGlvLCAoeCkpDQo+PiArI2RlZmluZSBzZXRfZGF0YWluKHUsIHgpIGdwaW9kX3NldF92YWx1
+ZSgodSktPmRhdGFpbl9ncGlvLCAoeCkpDQo+PiArI2RlZmluZSBnZXRfZGF0YW91dCh1KSBncGlv
+ZF9nZXRfdmFsdWUoKHUpLT5kYXRhb3V0X2dwaW8pDQo+IEkgdGhpbmsgdGhlc2UgbWFjcm9zIGRv
+bid0IGJyaW5nIG11Y2ggdmFsdWUuIChVcCB0byB5b3UgYW5kIExlZSB0byBkZWNpZGUpDQpUaGVz
+ZSB3ZXJlIGFkZGVkIGluIHJlc3BvbnNlIHRvIG9uZSBvZiB5b3VyIHJldmlldyBjb21tZW50cyBv
+biB0aGUgb3JpZ2luYWwgcGF0Y2gtc2V0IDspDQpJIHRoaW5rIHRoZXkgZG8gc2xpZ2h0bHkgaW1w
+cm92ZSB0aGUgY29kZSByZWFkYWJpbGl0eSBzbyBJJ2xsIGxlYXZlIHRoZW0gdGhlcmUgaWYgdGhl
+cmUgYXJlIG5vIG9iamVjdGlvbnMuDQoNCj4NCj4NCj4+ICtzdGF0aWMgdm9pZCBfX3JlZ19pb193
+cml0ZShjb25zdCBzdHJ1Y3QgdXBib2FyZF9kZGF0YSAqIGNvbnN0IGRkYXRhLA0KPj4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IHNpemUsIHVuc2lnbmVkIGludCB2YWwp
+DQo+PiArew0KPj4gKyAgICAgICBpbnQgaTsNCj4+ICsNCj4+ICsgICAgICAgLyoNCj4+ICsgICAg
+ICAgICogREFUQUlOIGlzIGxhdGNoZWQgb24gZWFjaCByaXNpbmcgZWRnZSBvZiB0aGUgU1RST0JF
+IHNpZ25hbC4NCj4+ICsgICAgICAgICogRGF0YSAocmVnaXN0ZXIgYWRkcmVzcyBvciB2YWx1ZSkg
+aXMgc2VudCBNU2IgZmlyc3QuDQo+PiArICAgICAgICAqLw0KPj4gKyAgICAgICBmb3IgKGkgPSBz
+aXplIC0gMTsgaSA+PSAwOyBpLS0pIHsNCj4gd2hpbGUgKHNpemUtLSkNClllcCwgbXVjaCBuZWF0
+ZXIuwqAgSSdsbCBjaGFuZ2UgdGhhdCwgdGhhbmtzIcKgIERpdHRvIGZvciB0aGUgb3RoZXIgY29t
+bWVudHMgb24gdGhpcyBmaWxlLisgcmV0ID0gdXBib2FyZF9pbml0X2dwaW8oZGV2KTsNCg0KPj4g
+KyAgICAgICBpZiAocmV0KSB7DQo+PiArICAgICAgICAgICAgICAgaWYgKHJldCAhPSAtRVBST0JF
+X0RFRkVSKQ0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgZGV2X2VycihkZXYsICJmYWlsZWQg
+dG8gaW5pdCBHUElPczogJWQiLCByZXQpOw0KPj4gKyAgICAgICAgICAgICAgIHJldHVybiByZXQ7
+DQo+PiArICAgICAgIH0NCj4gSSBkb24ndCBrbm93IGlmIHByb2JlX2VycigpIGhlbHBlciBpcyBn
+b2luZyB0byBiZSBhIHBhcnQgb2YgdjQuMjENCj4gKHdoaWNoIHRoaXMgc2VyaWVzIHRhcmdldHMp
+LCBpdCB3b3VsZCBiZSBnb29kIHRvIHVzZSBpdC4NCkkgbGVmdCB0aGlzIG91dCBmb3Igbm93IGlu
+IGNhc2UgaXQgY2F1c2VzIGFueSBhd2t3YXJkbmVzcyB3aXRoIG1lcmdpbmcuwqAgSG9wZSB0aGF0
+J3Mgb2suDQoNCg==
