@@ -1,42 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RESEND V3 2/2] pinctrl: imx: add imx8qxp driver
-Date: Wed, 31 Oct 2018 12:01:17 +0100
-Message-ID: <CACRpkdZmpOkOV8__KVn6=HB2vwioS_x+aZf8UuxNHSStzUy6=Q@mail.gmail.com>
-References: <1540908354-26809-1-git-send-email-aisheng.dong@nxp.com>
- <1540908354-26809-3-git-send-email-aisheng.dong@nxp.com>
+Subject: Re: [PATCH] pinctrl: generic: Avoid several implicit enum conversions
+Date: Wed, 31 Oct 2018 14:33:24 +0100
+Message-ID: <CACRpkda9LhdQybgci8gYs13L5pHWvDx43_Ftn5s+ERLLFPvLjQ@mail.gmail.com>
+References: <20180925061855.19557-1-natechancellor@gmail.com>
+ <CACRpkdadODxsuae7uhwcfBBMQ-eZ8bvnV71fhDCuudbJEbhhYA@mail.gmail.com>
+ <20180925161459.GA15840@flashbox> <CAKwvOdkh0rqWcw4r7Y=Ki_MNJPoJNnvm3uGp4Q726PaESxZAnQ@mail.gmail.com>
+ <20181025210456.GA14792@flashbox>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1540908354-26809-3-git-send-email-aisheng.dong@nxp.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: Dong Aisheng <dongas86@gmail.com>, Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181025210456.GA14792@flashbox>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 3:10 PM A.s. Dong <aisheng.dong@nxp.com> wrote:
+On Thu, Oct 25, 2018 at 11:04 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 
-> MX8QXP contains a system controller that is responsible for controlling
-> the pad setting of the IPs that are present. Communication between the
-> host processor running an OS and the system controller happens through
-> a SCU protocol. This patch adds the SCU based MX8QXP pinctrl driver.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> In my opinion, there are enough of these warnings to warrant changing
+> the type of param globally (arm64 allyesconfig):
 
-Patch applied.
+Yeah as it is from the compiler, sure we need to get rid of it.
+
+> Linus, did you have any other objections to this patch given my
+> reasoning in these past couple of emails or would you like me to try
+> adding explicit casts to all of these call sites?
+
+I would favor the model to:
+
+1. Replace all occurences of enum pin_config_param with unsigned
+   int.
+
+2. Replace the whole definition of enum pin_config_param with
+   #define PIN_CONFIG_BIAS_BUS_HOLD 0
+   #define PIN_CONFIG_BIAS_DISABLE 1
+   etc etc.
+
+I think it is not a good idea to try to do both at the same time.
+
+A slightly lesser evil variant is to add a few PIN_CONFIG_CUSTOM_1
+PIN_CONFIG_CUSTOM_2 etc at the end of the enum and just
+#define MY_CONFIG PIN_CONFIG_CUSTOM_1
+in all drivers that use these.
 
 Yours,
 Linus Walleij
