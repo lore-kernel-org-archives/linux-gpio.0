@@ -1,23 +1,22 @@
 From: Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] pinctrl: bcm2835: Use define directive for BCM2835_PINCONF_PARAM_PULL
-Date: Wed, 31 Oct 2018 17:46:54 -0700
-Message-ID: <20181101004653.7552-1-natechancellor@gmail.com>
+Subject: [PATCH] pinctrl: max77620: Use define directive for max77620_pinconf_param values
+Date: Wed, 31 Oct 2018 17:50:21 -0700
+Message-ID: <20181101005021.8393-1-natechancellor@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
 Clang warns when one enumerated type is implicitly converted to another:
 
-drivers/pinctrl/bcm/pinctrl-bcm2835.c:707:40: warning: implicit
-conversion from enumeration type 'enum bcm2835_pinconf_param' to
-different enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        configs[0] = pinconf_to_config_packed(BCM2835_PINCONF_PARAM_PULL, pull);
-                     ~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~
-1 warning generated.
+drivers/pinctrl/pinctrl-max77620.c:56:12: warning: implicit conversion
+from enumeration type 'enum max77620_pinconf_param' to different
+enumeration type 'enum pin_config_param' [-Wenum-conversion]
+                .param = MAX77620_ACTIVE_FPS_SOURCE,
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is expected that pinctrl drivers can extend pin_config_param because
 of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
@@ -25,27 +24,36 @@ isn't an issue. Most drivers that take advantage of this define the
 PIN_CONFIG variables as constants, rather than enumerated values. Do the
 same thing here so that Clang no longer warns.
 
+Link: https://github.com/ClangBuiltLinux/linux/issues/139
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-max77620.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index fa530913a2c8..b035c3fc0471 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -72,10 +72,8 @@
- #define GPIO_REG_OFFSET(p)	((p) / 32)
- #define GPIO_REG_SHIFT(p)	((p) % 32)
+diff --git a/drivers/pinctrl/pinctrl-max77620.c b/drivers/pinctrl/pinctrl-max77620.c
+index a7f37063518e..3d05bc1937d4 100644
+--- a/drivers/pinctrl/pinctrl-max77620.c
++++ b/drivers/pinctrl/pinctrl-max77620.c
+@@ -34,14 +34,12 @@ enum max77620_pin_ppdrv {
+ 	MAX77620_PIN_PP_DRV,
+ };
  
--enum bcm2835_pinconf_param {
--	/* argument: bcm2835_pinconf_pull */
--	BCM2835_PINCONF_PARAM_PULL = (PIN_CONFIG_END + 1),
+-enum max77620_pinconf_param {
+-	MAX77620_ACTIVE_FPS_SOURCE = PIN_CONFIG_END + 1,
+-	MAX77620_ACTIVE_FPS_POWER_ON_SLOTS,
+-	MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS,
+-	MAX77620_SUSPEND_FPS_SOURCE,
+-	MAX77620_SUSPEND_FPS_POWER_ON_SLOTS,
+-	MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS,
 -};
-+/* argument: bcm2835_pinconf_pull */
-+#define BCM2835_PINCONF_PARAM_PULL	(PIN_CONFIG_END + 1)
++#define MAX77620_ACTIVE_FPS_SOURCE		(PIN_CONFIG_END + 1)
++#define MAX77620_ACTIVE_FPS_POWER_ON_SLOTS	(PIN_CONFIG_END + 2)
++#define MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS	(PIN_CONFIG_END + 3)
++#define MAX77620_SUSPEND_FPS_SOURCE		(PIN_CONFIG_END + 4)
++#define MAX77620_SUSPEND_FPS_POWER_ON_SLOTS	(PIN_CONFIG_END + 5)
++#define MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS	(PIN_CONFIG_END + 6)
  
- struct bcm2835_pinctrl {
- 	struct device *dev;
+ struct max77620_pin_function {
+ 	const char *name;
 -- 
 2.19.1
