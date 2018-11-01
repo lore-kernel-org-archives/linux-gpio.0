@@ -1,71 +1,46 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 1/3] mfd: upboard: Add UP2 platform controller driver
-Date: Thu, 1 Nov 2018 08:07:12 +0000
-Message-ID: <20181101080712.GB15973@dell>
-References: <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1541018689-20625-1-git-send-email-dan@emutex.com>
- <1541018689-20625-2-git-send-email-dan@emutex.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH] pinctrl: bcm2835: Use define directive for
+ BCM2835_PINCONF_PARAM_PULL
+Date: Thu, 1 Nov 2018 09:18:34 +0100
+Message-ID: <4619d04e-3f17-f1d8-2cca-a9b62f063d75@i2se.com>
+References: <20181101004653.7552-1-natechancellor@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1541018689-20625-2-git-send-email-dan@emutex.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan O'Donovan <dan@emutex.com>
-Cc: linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181101004653.7552-1-natechancellor@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Nathan Chancellor <natechancellor@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, linux-gpio@vger.kernel.org, Ray Jui <rjui@broadcom.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 31 Oct 2018, Dan O'Donovan wrote:
-
-> UP Squared (UP2) is a x86 SBC from AAEON based on Intel Apollo Lake. It
-> features a MAX 10 FPGA that routes lines from both SoC and on-board
-> devices to two I/O headers:
-> 
->                                 +------------------------+
->                                 | 40-pin RPi-like header |
->                          +------|         (HAT)          |
->                          |      +------------------------+
->     +-------+    +--------+
->     |       |    |        |     +------------------------+
->     |  SoC  |----|  FPGA  |-----|  Custom UP2 pin header |
->     |       |    |        |     |        (EXHAT)         |
->     +-------+    +--------+     +------------------------+
->                          |
->                          +------* On-board devices: LED, VLS...
-> 
-> This is intended to enable vendor-specific applications to customize I/O
-> header pinout, as well as include low-latency functionality. It also
-> performs voltage level translation between the SoC (1.8V) and HAT header
-> (3.3V).
-> 
-> Out of the box, this block implements a platform controller with a
-> GPIO-bitbanged control interface. It's enumerated by ACPI and provides
-> registers to control:
-> 
-> - Configuration of all FPGA-routed header lines. These can be driven
->   SoC-to-header, header-to-SoC or set in high impedance.
-> 
-> - On-board LEDs and enable lines for other platform devices.
-> 
-> Add core support for this platform controller as a MFD device, exposing
-> these registers as a regmap.
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Dan O'Donovan <dan@emutex.com>
+Am 01.11.18 um 01:46 schrieb Nathan Chancellor:
+> Clang warns when one enumerated type is implicitly converted to another:
+>
+> drivers/pinctrl/bcm/pinctrl-bcm2835.c:707:40: warning: implicit
+> conversion from enumeration type 'enum bcm2835_pinconf_param' to
+> different enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>         configs[0] = pinconf_to_config_packed(BCM2835_PINCONF_PARAM_PULL, pull);
+>                      ~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> 1 warning generated.
+>
+> It is expected that pinctrl drivers can extend pin_config_param because
+> of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+> isn't an issue. Most drivers that take advantage of this define the
+> PIN_CONFIG variables as constants, rather than enumerated values. Do the
+> same thing here so that Clang no longer warns.
+>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 > ---
->  drivers/mfd/Kconfig         |  17 +++
->  drivers/mfd/Makefile        |   1 +
->  drivers/mfd/upboard.c       | 336 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/upboard.h |  44 ++++++
->  4 files changed, 398 insertions(+)
->  create mode 100644 drivers/mfd/upboard.c
->  create mode 100644 include/linux/mfd/upboard.h
+>  
 
-Looks like you've ignored the review comments here too.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
