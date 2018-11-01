@@ -1,61 +1,56 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH v2 2/7] power: supply: bq24190_charger: add support for bq24192 variant
-Date: Wed, 31 Oct 2018 20:11:44 -0400
-Message-ID: <20181101001149.13453-3-masneyb@onstation.org>
-References: <20181101001149.13453-1-masneyb@onstation.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] pinctrl: sprd: Use define directive for sprd_pinconf_params values
+Date: Wed, 31 Oct 2018 17:44:10 -0700
+Message-ID: <20181101004410.6893-1-natechancellor@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181101001149.13453-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, bjorn.andersson@linaro.org, linus.walleij@linaro.org
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-gpio@vger.kernel.org, jonathan@marek.ca, masneyb@onstation.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Jonathan Marek <jonathan@marek.ca>
+Clang warns when one enumerated type is implicitly converted to another:
 
-This patch adds support for the bq24192 variant to bq24190_charger.
+drivers/pinctrl/sprd/pinctrl-sprd.c:845:19: warning: implicit conversion
+from enumeration type 'enum sprd_pinconf_params' to different
+enumeration type 'enum pin_config_param' [-Wenum-conversion]
+        {"sprd,control", SPRD_PIN_CONFIG_CONTROL, 0},
+        ~                ^~~~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/sprd/pinctrl-sprd.c:846:22: warning: implicit conversion
+from enumeration type 'enum sprd_pinconf_params' to different
+enumeration type 'enum pin_config_param' [-Wenum-conversion]
+        {"sprd,sleep-mode", SPRD_PIN_CONFIG_SLEEP_MODE, 0},
+        ~                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-[masneyb@onstation.org: Changed if statement to a switch based on
-feedback from Sebastian Reichel.]
-Signed-off-by: Brian Masney <masneyb@onstation.org>
+It is expected that pinctrl drivers can extend pin_config_param because
+of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+isn't an issue. Most drivers that take advantage of this define the
+PIN_CONFIG variables as constants, rather than enumerated values. Do the
+same thing here so that Clang no longer warns.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/138
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/power/supply/bq24190_charger.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sprd/pinctrl-sprd.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/supply/bq24190_charger.c
-index b58df04d03b3..44d3aff32885 100644
---- a/drivers/power/supply/bq24190_charger.c
-+++ b/drivers/power/supply/bq24190_charger.c
-@@ -1637,8 +1637,12 @@ static int bq24190_hw_init(struct bq24190_dev_info *bdi)
- 	if (ret < 0)
- 		return ret;
- 
--	if (v != BQ24190_REG_VPRS_PN_24190 &&
--	    v != BQ24190_REG_VPRS_PN_24192I) {
-+	switch (v) {
-+	case BQ24190_REG_VPRS_PN_24190:
-+	case BQ24190_REG_VPRS_PN_24192:
-+	case BQ24190_REG_VPRS_PN_24192I:
-+		break;
-+	default:
- 		dev_err(bdi->dev, "Error unknown model: 0x%02x\n", v);
- 		return -ENODEV;
- 	}
-@@ -1931,6 +1935,7 @@ static const struct dev_pm_ops bq24190_pm_ops = {
- 
- static const struct i2c_device_id bq24190_i2c_ids[] = {
- 	{ "bq24190" },
-+	{ "bq24192" },
- 	{ "bq24192i" },
- 	{ },
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+index 4537b5453996..7d9a44bd0047 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.c
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+@@ -159,10 +159,8 @@ struct sprd_pinctrl {
+ 	struct sprd_pinctrl_soc_info *info;
  };
-@@ -1939,6 +1944,7 @@ MODULE_DEVICE_TABLE(i2c, bq24190_i2c_ids);
- #ifdef CONFIG_OF
- static const struct of_device_id bq24190_of_match[] = {
- 	{ .compatible = "ti,bq24190", },
-+	{ .compatible = "ti,bq24192", },
- 	{ .compatible = "ti,bq24192i", },
- 	{ },
- };
+ 
+-enum sprd_pinconf_params {
+-	SPRD_PIN_CONFIG_CONTROL = PIN_CONFIG_END + 1,
+-	SPRD_PIN_CONFIG_SLEEP_MODE = PIN_CONFIG_END + 2,
+-};
++#define SPRD_PIN_CONFIG_CONTROL		(PIN_CONFIG_END + 1)
++#define SPRD_PIN_CONFIG_SLEEP_MODE	(PIN_CONFIG_END + 2)
+ 
+ static int sprd_pinctrl_get_id_by_name(struct sprd_pinctrl *sprd_pctl,
+ 				       const char *name)
 -- 
-2.17.2
+2.19.1
