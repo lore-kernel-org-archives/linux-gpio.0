@@ -1,48 +1,90 @@
-From: Dan O'Donovan <dan.odonovan@emutex.com>
-Subject: Re: [PATCH v3 3/3] pinctrl: upboard: Add UP2 pinctrl and gpio driver
-Date: Wed, 31 Oct 2018 21:39:32 +0000
-Message-ID: <ee46cc57-28c0-dc3e-ead1-f979c0eb516e@emutex.com>
-References: <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1541018689-20625-1-git-send-email-dan@emutex.com>
- <1541018689-20625-4-git-send-email-dan@emutex.com>
- <CACRpkdajUt7Brrf9jCOhEvrzvx24A8tp1NpGKuDPi_0uh5++eg@mail.gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
+Subject: Re: [PATCH] pinctrl: generic: Avoid several implicit enum conversions
+Date: Wed, 31 Oct 2018 17:03:38 -0700
+Message-ID: <20181101000338.GA32577@flashbox>
+References: <20180925061855.19557-1-natechancellor@gmail.com>
+ <CACRpkdadODxsuae7uhwcfBBMQ-eZ8bvnV71fhDCuudbJEbhhYA@mail.gmail.com>
+ <20180925161459.GA15840@flashbox>
+ <CAKwvOdkh0rqWcw4r7Y=Ki_MNJPoJNnvm3uGp4Q726PaESxZAnQ@mail.gmail.com>
+ <20181025210456.GA14792@flashbox>
+ <CACRpkda9LhdQybgci8gYs13L5pHWvDx43_Ftn5s+ERLLFPvLjQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdajUt7Brrf9jCOhEvrzvx24A8tp1NpGKuDPi_0uh5++eg@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <CAB8E5971349104080D19B6121C90987@EURP190.PROD.OUTLOOK.COM>
+Content-Disposition: inline
+In-Reply-To: <CACRpkda9LhdQybgci8gYs13L5pHWvDx43_Ftn5s+ERLLFPvLjQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Dan O'Donovan <dan.odonovan@emutex.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Carlos Iglesias <carlos.iglesias@emutex.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-DQpPbiAxMC8zMS8yMDE4IDA5OjMwIFBNLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0KPiBIaSBEYW4s
-DQo+DQo+IE9uIFdlZCwgT2N0IDMxLCAyMDE4IGF0IDk6NDUgUE0gRGFuIE8nRG9ub3ZhbiA8ZGFu
-QGVtdXRleC5jb20+IHdyb3RlOg0KPg0KPj4gVGhlIFVQMiBib2FyZCBmZWF0dXJlcyBhIFJhc3Bi
-ZXJyeSBQaSBjb21wYXRpYmxlIHBpbiBoZWFkZXIgKEhBVCkgYW5kIGENCj4+IGJvYXJkLXNwZWNp
-ZmljIGV4cGFuc2lvbiBjb25uZWN0b3IgKEVYSEFUKS4gQm90aCBleHBvc2UgYXNzb3J0ZWQNCj4+
-IGZ1bmN0aW9ucyBmcm9tIGVpdGhlciB0aGUgU29DIChzdWNoIGFzIEdQSU8sIEkyQywgU1BJLCBV
-QVJULi4uKSBvciBvdGhlcg0KPj4gb24tYm9hcmQgZGV2aWNlcyAoQURDLCBGUEdBIElQIGJsb2Nr
-cy4uLikuDQo+Pg0KPj4gVGhlc2UgbGluZXMgYXJlIHJvdXRlZCB0aHJvdWdoIGFuIG9uLWJvYXJk
-IEZQR0EuIFRoZSBwbGF0Zm9ybSBjb250cm9sbGVyDQo+PiBpbiBpdHMgc3RvY2sgZmlybXdhcmUg
-cHJvdmlkZXMgcmVnaXN0ZXIgZmllbGRzIHRvIGNoYW5nZToNCj4+DQo+PiAtIExpbmUgZW5hYmxl
-IChGUEdBIHBpbnMgZW5hYmxlZCAvIGhpZ2ggaW1wZWRhbmNlKQ0KPj4gLSBMaW5lIGRpcmVjdGlv
-biAoU29DIGRyaXZlbiAvIEZQR0EgZHJpdmVuKQ0KPj4NCj4+IFRvIGVuYWJsZSB1c2luZyBTb0Mg
-R1BJT3Mgb24gdGhlIHBpbiBoZWFkZXIsIHRoaXMgYXJyYW5nZW1lbnQgcmVxdWlyZXMNCj4+IGJv
-dGggY29uZmlndXJpbmcgdGhlIHBsYXRmb3JtIGNvbnRyb2xsZXIsIGFuZCB1cGRhdGluZyB0aGUg
-U29DIHBhZA0KPj4gcmVnaXN0ZXJzIGluIHN5bmMuDQo+Pg0KPj4gQWRkIGEgZnJvbnRlbmQgcGlu
-Y3RybC9HUElPIGRyaXZlciB0aGF0IHJlZ2lzdGVycyBhIG5ldyBzZXQgb2YgR1BJTw0KPj4gbGlu
-ZXMgZm9yIHRoZSBoZWFkZXIgcGlucy4gV2hlbiB0aGVzZSBhcmUgcmVxdWVzdGVkLCB0aGUgZHJp
-dmVyDQo+PiBwcm9wYWdhdGVzIHRoaXMgcmVxdWVzdCB0byB0aGUgYmFja2VuZCBTb0MgcGluY3Ry
-bC9HUElPIGRyaXZlciBieQ0KPj4gZ3JhYmJpbmcgYSBHUElPIGRlc2NyaXB0b3IgZm9yIHRoZSBt
-YXRjaGluZyBTb0MgR1BJTyBsaW5lLiBUaGUgbmVlZGVkDQo+PiBtYXBwaW5nIGZvciB0aGlzIGlz
-IHJldHJpZXZlZCB2aWEgQUNQSSBwcm9wZXJ0aWVzLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IERh
-biBPJ0Rvbm92YW4gPGRhbkBlbXV0ZXguY29tPg0KPiBJdCBhcHBlYXJzIHlvdSBtaXNzZWQgbXkg
-cmV2aWV3IGNvbW1lbnRzIHNvIHBsZWFzZSByZWFkIHRoZW0NCj4gYW5kIHJlcGx5IG9yIHJlc3Bp
-biB0aGUgcGF0Y2ggYWNjb3JkaW5nbHkuDQpIaSBMaW51cy7CoCBVbmZvcnR1bmF0ZWx5IEkgZGlk
-IG1pc3MgeW91ciBjb21tZW50cyBjb21wbGV0ZWx5LsKgIFNvbWVob3csIHRoZXkgd2VyZW4ndCBp
-biBteSBJbmJveCwgYnV0IEkgZm91bmQgdGhlbSBpbiB0aGUgb25saW5lIGFyY2hpdmVzIG5vdy7C
-oCBUaGFua3MgZm9yIGxldHRpbmcgbWUga25vdy4NCkknbGwgcmVwbHkgdG8gdGhvc2Ugc29vbi4N
-Cj4NCj4gWW91cnMsDQo+IExpbnVzIFdhbGxlaWoNCg0K
+On Wed, Oct 31, 2018 at 02:33:24PM +0100, Linus Walleij wrote:
+> On Thu, Oct 25, 2018 at 11:04 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> 
+> > In my opinion, there are enough of these warnings to warrant changing
+> > the type of param globally (arm64 allyesconfig):
+> 
+> Yeah as it is from the compiler, sure we need to get rid of it.
+> 
+> > Linus, did you have any other objections to this patch given my
+> > reasoning in these past couple of emails or would you like me to try
+> > adding explicit casts to all of these call sites?
+> 
+> I would favor the model to:
+> 
+> 1. Replace all occurences of enum pin_config_param with unsigned
+>    int.
+> 
+
+Given that there are 57 files with this definition and some include it
+multiple time, this doesn't seem super reasonable in my opinion.
+
+> 2. Replace the whole definition of enum pin_config_param with
+>    #define PIN_CONFIG_BIAS_BUS_HOLD 0
+>    #define PIN_CONFIG_BIAS_DISABLE 1
+>    etc etc.
+> 
+> I think it is not a good idea to try to do both at the same time.
+> 
+> A slightly lesser evil variant is to add a few PIN_CONFIG_CUSTOM_1
+> PIN_CONFIG_CUSTOM_2 etc at the end of the enum and just
+> #define MY_CONFIG PIN_CONFIG_CUSTOM_1
+> in all drivers that use these.
+> 
+
+Some drivers actually just define their pin config params like:
+
+#define VAR (PIN_CONFIG_END + 1)
+
+In fact, more drivers do that than not. I will go ahead and draft some
+patches tonight and send them out tonight to see what driver authors
+think.
+
+Example with drivers/pinctrl/sprd/pinctrl-sprd.c
+
+================================================
+
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+index 4537b5453996..7d9a44bd0047 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.c
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+@@ -159,10 +159,8 @@ struct sprd_pinctrl {
+        struct sprd_pinctrl_soc_info *info;
+ };
+ 
+-enum sprd_pinconf_params {
+-       SPRD_PIN_CONFIG_CONTROL = PIN_CONFIG_END + 1,
+-       SPRD_PIN_CONFIG_SLEEP_MODE = PIN_CONFIG_END + 2,
+-};
++#define SPRD_PIN_CONFIG_CONTROL                (PIN_CONFIG_END + 1)
++#define SPRD_PIN_CONFIG_SLEEP_MODE     (PIN_CONFIG_END + 2)
+ 
+ static int sprd_pinctrl_get_id_by_name(struct sprd_pinctrl *sprd_pctl,
+                                       const char *name)
+
+> Yours,
+> Linus Walleij
+
+Thank you for the reply and advice!
+Nathan
