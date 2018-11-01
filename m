@@ -1,27 +1,23 @@
 From: Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] pinctrl: sprd: Use define directive for sprd_pinconf_params values
-Date: Wed, 31 Oct 2018 17:44:10 -0700
-Message-ID: <20181101004410.6893-1-natechancellor@gmail.com>
+Subject: [PATCH] pinctrl: bcm2835: Use define directive for BCM2835_PINCONF_PARAM_PULL
+Date: Wed, 31 Oct 2018 17:46:54 -0700
+Message-ID: <20181101004653.7552-1-natechancellor@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>
+Cc: Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
 Clang warns when one enumerated type is implicitly converted to another:
 
-drivers/pinctrl/sprd/pinctrl-sprd.c:845:19: warning: implicit conversion
-from enumeration type 'enum sprd_pinconf_params' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        {"sprd,control", SPRD_PIN_CONFIG_CONTROL, 0},
-        ~                ^~~~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/sprd/pinctrl-sprd.c:846:22: warning: implicit conversion
-from enumeration type 'enum sprd_pinconf_params' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        {"sprd,sleep-mode", SPRD_PIN_CONFIG_SLEEP_MODE, 0},
-        ~                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/bcm/pinctrl-bcm2835.c:707:40: warning: implicit
+conversion from enumeration type 'enum bcm2835_pinconf_param' to
+different enumeration type 'enum pin_config_param' [-Wenum-conversion]
+        configs[0] = pinconf_to_config_packed(BCM2835_PINCONF_PARAM_PULL, pull);
+                     ~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
 
 It is expected that pinctrl drivers can extend pin_config_param because
 of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
@@ -29,28 +25,27 @@ isn't an issue. Most drivers that take advantage of this define the
 PIN_CONFIG variables as constants, rather than enumerated values. Do the
 same thing here so that Clang no longer warns.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/138
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/pinctrl/sprd/pinctrl-sprd.c | 6 ++----
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
-index 4537b5453996..7d9a44bd0047 100644
---- a/drivers/pinctrl/sprd/pinctrl-sprd.c
-+++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
-@@ -159,10 +159,8 @@ struct sprd_pinctrl {
- 	struct sprd_pinctrl_soc_info *info;
- };
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index fa530913a2c8..b035c3fc0471 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -72,10 +72,8 @@
+ #define GPIO_REG_OFFSET(p)	((p) / 32)
+ #define GPIO_REG_SHIFT(p)	((p) % 32)
  
--enum sprd_pinconf_params {
--	SPRD_PIN_CONFIG_CONTROL = PIN_CONFIG_END + 1,
--	SPRD_PIN_CONFIG_SLEEP_MODE = PIN_CONFIG_END + 2,
+-enum bcm2835_pinconf_param {
+-	/* argument: bcm2835_pinconf_pull */
+-	BCM2835_PINCONF_PARAM_PULL = (PIN_CONFIG_END + 1),
 -};
-+#define SPRD_PIN_CONFIG_CONTROL		(PIN_CONFIG_END + 1)
-+#define SPRD_PIN_CONFIG_SLEEP_MODE	(PIN_CONFIG_END + 2)
++/* argument: bcm2835_pinconf_pull */
++#define BCM2835_PINCONF_PARAM_PULL	(PIN_CONFIG_END + 1)
  
- static int sprd_pinctrl_get_id_by_name(struct sprd_pinctrl *sprd_pctl,
- 				       const char *name)
+ struct bcm2835_pinctrl {
+ 	struct device *dev;
 -- 
 2.19.1
