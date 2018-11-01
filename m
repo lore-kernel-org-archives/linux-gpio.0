@@ -1,72 +1,56 @@
-From: Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH v2] pinctrl: lpc18xx: Use define directive for PIN_CONFIG_GPIO_PIN_INT
-Date: Thu,  1 Nov 2018 08:00:08 -0700
-Message-ID: <20181101150007.14145-1-natechancellor@gmail.com>
-References: <20181101005257.8778-1-natechancellor@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] gpiolib: Fix possible use after free on label
+Date: Thu, 1 Nov 2018 16:27:58 +0100
+Message-ID: <CACRpkdaURruTj6W=ozXpKEvLpxLa=6tLdDywac1uj61Hg8ZKpA@mail.gmail.com>
+References: <20181101131250.41636-1-smuchun@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181101005257.8778-1-natechancellor@gmail.com>
+In-Reply-To: <20181101131250.41636-1-smuchun@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>
+To: smuchun@gmail.com, Nicolas Pitre <nico@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Clang warns when one enumerated type is implicitly converted to another:
+On Thu, Nov 1, 2018 at 2:13 PM Muchun Song <smuchun@gmail.com> wrote:
 
-drivers/pinctrl/pinctrl-lpc18xx.c:643:29: warning: implicit conversion
-from enumeration type 'enum lpc18xx_pin_config_param' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        {"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
-        ~                          ^~~~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/pinctrl-lpc18xx.c:648:12: warning: implicit conversion
-from enumeration type 'enum lpc18xx_pin_config_param' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-        PCONFDUMP(PIN_CONFIG_GPIO_PIN_INT, "gpio pin int", NULL, true),
-        ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
-macro 'PCONFDUMP'
-        .param = a, .display = b, .format = c, .has_arg = d     \
-                 ^
-2 warnings generated.
+> gpiod_request_commit() copies the pointer to the label passed as
+> an argument only to be used later. But there's a chance the caller
+> could immediately free the passed string(e.g., local variable).
+> This could trigger a use after free when we use gpio label(e.g.,
+> gpiochip_unlock_as_irq(), gpiochip_is_requested()).
+>
+> To be on the safe side: duplicate the string with kstrdup_const()
+> so that if an unaware user passes an address to a stack-allocated
+> buffer, we won't get the arbitrary label.
+>
+> Also fix gpiod_set_consumer_name().
+>
+> Signed-off-by: Muchun Song <smuchun@gmail.com>
 
-It is expected that pinctrl drivers can extend pin_config_param because
-of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
-isn't an issue. Most drivers that take advantage of this define the
-PIN_CONFIG variables as constants, rather than enumerated values. Do the
-same thing here so that Clang no longer warns.
+I am still a bit worried about the kstrdup_const() that this
+introduces. The tinyfication people will not like that we now
+copy every GPIO line name from the device tree into a
+new reference copy.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/140
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
+What we *REALLY* want to do is:
 
-v1 -> v2:
+const char *str;
+const char *ref;
 
-* Improve comment so kernel-doc doesn't warn.
+if (pointer_on_stack(str))
+   ref = kstrdup_const(str);
+else
+   ref = str;
 
- drivers/pinctrl/pinctrl-lpc18xx.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+Isn't this possible to achieve somehow? If not, why not?
+I suspect maybe there is no simple solution to this, but
+what about a really complicated and hard solution?
 
-diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
-index a14bc5e5fc24..06be55dab341 100644
---- a/drivers/pinctrl/pinctrl-lpc18xx.c
-+++ b/drivers/pinctrl/pinctrl-lpc18xx.c
-@@ -630,14 +630,8 @@ static const struct pinctrl_pin_desc lpc18xx_pins[] = {
- 	LPC18XX_PIN(i2c0_sda, PIN_I2C0_SDA),
- };
- 
--/**
-- * enum lpc18xx_pin_config_param - possible pin configuration parameters
-- * @PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt
-- * 	controller.
-- */
--enum lpc18xx_pin_config_param {
--	PIN_CONFIG_GPIO_PIN_INT = PIN_CONFIG_END + 1,
--};
-+/* PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt controller */
-+#define PIN_CONFIG_GPIO_PIN_INT		(PIN_CONFIG_END + 1)
- 
- static const struct pinconf_generic_params lpc18xx_params[] = {
- 	{"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
--- 
-2.19.1
+I'm looping in Nico for advice.
+
+Maybe I will end up applying it anyway but I'm not sure.
+The patch looks good otherwise.
+
+Yours,
+Linus Walleij
