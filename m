@@ -1,63 +1,45 @@
-From: Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] pinctrl: zynq: Use define directive for PIN_CONFIG_IO_STANDARD
-Date: Wed, 31 Oct 2018 17:57:24 -0700
-Message-ID: <20181101005724.9622-1-natechancellor@gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH] pinctrl: sprd: Use define directive for
+ sprd_pinconf_params values
+Date: Thu, 1 Nov 2018 13:57:42 +0800
+Message-ID: <CAMz4kuJg9gWtqy4mFsEV12c=kH_-999xeabPEJmb2P_usKRoMQ@mail.gmail.com>
+References: <20181101004410.6893-1-natechancellor@gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181101004410.6893-1-natechancellor@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michal Simek <michal.simek@xilinx.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, Nathan Chancellor <natechancellor@gmail.com>
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Nick Desaulniers <ndesaulniers@google.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Clang warns when one enumerated type is implicitly converted to another:
+On 1 November 2018 at 08:44, Nathan Chancellor <natechancellor@gmail.com> wrote:
+> Clang warns when one enumerated type is implicitly converted to another:
+>
+> drivers/pinctrl/sprd/pinctrl-sprd.c:845:19: warning: implicit conversion
+> from enumeration type 'enum sprd_pinconf_params' to different
+> enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>         {"sprd,control", SPRD_PIN_CONFIG_CONTROL, 0},
+>         ~                ^~~~~~~~~~~~~~~~~~~~~~~
+> drivers/pinctrl/sprd/pinctrl-sprd.c:846:22: warning: implicit conversion
+> from enumeration type 'enum sprd_pinconf_params' to different
+> enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>         {"sprd,sleep-mode", SPRD_PIN_CONFIG_SLEEP_MODE, 0},
+>         ~                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> It is expected that pinctrl drivers can extend pin_config_param because
+> of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+> isn't an issue. Most drivers that take advantage of this define the
+> PIN_CONFIG variables as constants, rather than enumerated values. Do the
+> same thing here so that Clang no longer warns.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/138
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
 
-drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
-enumeration type 'enum zynq_pin_config_param' to different enumeration
-type 'enum pin_config_param' [-Wenum-conversion]
-        {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
-        ~               ^~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
-enumeration type 'enum zynq_pin_config_param' to different enumeration
-type 'enum pin_config_param' [-Wenum-conversion]
-        = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
-            ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
-macro 'PCONFDUMP'
-        .param = a, .display = b, .format = c, .has_arg = d     \
-                 ^
-2 warnings generated.
+Looks reasonable to me. Thanks.
+Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
 
-It is expected that pinctrl drivers can extend pin_config_param because
-of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
-isn't an issue. Most drivers that take advantage of this define the
-PIN_CONFIG variables as constants, rather than enumerated values. Do the
-same thing here so that Clang no longer warns.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/pinctrl/pinctrl-zynq.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
-index a0daf27042bd..57046c221756 100644
---- a/drivers/pinctrl/pinctrl-zynq.c
-+++ b/drivers/pinctrl/pinctrl-zynq.c
-@@ -972,14 +972,11 @@ enum zynq_io_standards {
- };
- 
- /**
-- * enum zynq_pin_config_param - possible pin configuration parameters
-  * @PIN_CONFIG_IOSTANDARD: if the pin can select an IO standard, the argument to
-  *	this parameter (on a custom format) tells the driver which alternative
-  *	IO standard to use.
-  */
--enum zynq_pin_config_param {
--	PIN_CONFIG_IOSTANDARD = PIN_CONFIG_END + 1,
--};
-+#define PIN_CONFIG_IOSTANDARD		(PIN_CONFIG_END + 1)
- 
- static const struct pinconf_generic_params zynq_dt_params[] = {
- 	{"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
 -- 
-2.19.1
+Baolin Wang
+Best Regards
