@@ -1,46 +1,85 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: [PATCH] pinctrl: bcm2835: Use define directive for
- BCM2835_PINCONF_PARAM_PULL
-Date: Thu, 1 Nov 2018 09:18:34 +0100
-Message-ID: <4619d04e-3f17-f1d8-2cca-a9b62f063d75@i2se.com>
-References: <20181101004653.7552-1-natechancellor@gmail.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH] pinctrl: lpc18xx: Use define directive for
+ PIN_CONFIG_GPIO_PIN_INT
+Date: Thu, 1 Nov 2018 10:52:14 +0200
+Message-ID: <0af2686f-3d9a-3ca6-e5c2-2955ffbd8bd5@mentor.com>
+References: <20181101005257.8778-1-natechancellor@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181101004653.7552-1-natechancellor@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181101005257.8778-1-natechancellor@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Nathan Chancellor <natechancellor@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, linux-gpio@vger.kernel.org, Ray Jui <rjui@broadcom.com>, Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: Vladimir Zapolskiy <vz@mleia.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Am 01.11.18 um 01:46 schrieb Nathan Chancellor:
+Hi Nathan,
+
+thank you for your patch.
+
+On 11/01/2018 02:52 AM, Nathan Chancellor wrote:
 > Clang warns when one enumerated type is implicitly converted to another:
->
-> drivers/pinctrl/bcm/pinctrl-bcm2835.c:707:40: warning: implicit
-> conversion from enumeration type 'enum bcm2835_pinconf_param' to
-> different enumeration type 'enum pin_config_param' [-Wenum-conversion]
->         configs[0] = pinconf_to_config_packed(BCM2835_PINCONF_PARAM_PULL, pull);
->                      ~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> 1 warning generated.
->
+> 
+> drivers/pinctrl/pinctrl-lpc18xx.c:643:29: warning: implicit conversion
+> from enumeration type 'enum lpc18xx_pin_config_param' to different
+> enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>         {"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
+>         ~                          ^~~~~~~~~~~~~~~~~~~~~~~
+> drivers/pinctrl/pinctrl-lpc18xx.c:648:12: warning: implicit conversion
+> from enumeration type 'enum lpc18xx_pin_config_param' to different
+> enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>         PCONFDUMP(PIN_CONFIG_GPIO_PIN_INT, "gpio pin int", NULL, true),
+>         ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
+> macro 'PCONFDUMP'
+>         .param = a, .display = b, .format = c, .has_arg = d     \
+>                  ^
+> 2 warnings generated.
+> 
 > It is expected that pinctrl drivers can extend pin_config_param because
 > of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
 > isn't an issue. Most drivers that take advantage of this define the
 > PIN_CONFIG variables as constants, rather than enumerated values. Do the
 > same thing here so that Clang no longer warns.
->
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/140
 > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 > ---
+>  drivers/pinctrl/pinctrl-lpc18xx.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
+> index a14bc5e5fc24..4bee606088e1 100644
+> --- a/drivers/pinctrl/pinctrl-lpc18xx.c
+> +++ b/drivers/pinctrl/pinctrl-lpc18xx.c
+> @@ -631,13 +631,10 @@ static const struct pinctrl_pin_desc lpc18xx_pins[] = {
+>  };
 >  
+>  /**
+> - * enum lpc18xx_pin_config_param - possible pin configuration parameters
+>   * @PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt
+>   * 	controller.
+>   */
+> -enum lpc18xx_pin_config_param {
+> -	PIN_CONFIG_GPIO_PIN_INT = PIN_CONFIG_END + 1,
+> -};
+> +#define PIN_CONFIG_GPIO_PIN_INT		(PIN_CONFIG_END + 1)
+>  
+>  static const struct pinconf_generic_params lpc18xx_params[] = {
+>  	{"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
+> 
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+The change, if it is applied, starts to produce a W=1 warning:
+
+	drivers/pinctrl/pinctrl-lpc18xx.c:634: warning: Cannot understand  * @PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt on line 634 - I thought it was a doc line
+
+Could you please take a look how to satisfy process_name() check from scripts/kernel-doc?
+
+My proposals are:
+1) change the first line of the comment block from '/**' to '/*',
+2) remove '@' prefix symbol and place pinconf description on one line.
+
+--
+Best wishes,
+Vladimir
