@@ -1,56 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: Fix possible use after free on label
-Date: Thu, 1 Nov 2018 16:27:58 +0100
-Message-ID: <CACRpkdaURruTj6W=ozXpKEvLpxLa=6tLdDywac1uj61Hg8ZKpA@mail.gmail.com>
-References: <20181101131250.41636-1-smuchun@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] pinctrl: mt7622: fix small typo
+Date: Thu,  1 Nov 2018 11:44:27 -0400
+Message-ID: <20181101154427.23110-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181101131250.41636-1-smuchun@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: smuchun@gmail.com, Nicolas Pitre <nico@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: sean.wang@mediatek.com, linus.walleij@linaro.org, matthias.bgg@gmail.com
+Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 2:13 PM Muchun Song <smuchun@gmail.com> wrote:
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> gpiod_request_commit() copies the pointer to the label passed as
-> an argument only to be used later. But there's a chance the caller
-> could immediately free the passed string(e.g., local variable).
-> This could trigger a use after free when we use gpio label(e.g.,
-> gpiochip_unlock_as_irq(), gpiochip_is_requested()).
->
-> To be on the safe side: duplicate the string with kstrdup_const()
-> so that if an unaware user passes an address to a stack-allocated
-> buffer, we won't get the arbitrary label.
->
-> Also fix gpiod_set_consumer_name().
->
-> Signed-off-by: Muchun Song <smuchun@gmail.com>
-
-I am still a bit worried about the kstrdup_const() that this
-introduces. The tinyfication people will not like that we now
-copy every GPIO line name from the device tree into a
-new reference copy.
-
-What we *REALLY* want to do is:
-
-const char *str;
-const char *ref;
-
-if (pointer_on_stack(str))
-   ref = kstrdup_const(str);
-else
-   ref = str;
-
-Isn't this possible to achieve somehow? If not, why not?
-I suspect maybe there is no simple solution to this, but
-what about a really complicated and hard solution?
-
-I'm looping in Nico for advice.
-
-Maybe I will end up applying it anyway but I'm not sure.
-The patch looks good otherwise.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+index 6f931b85701b..9b00c5e6ba8e 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
+@@ -977,7 +977,7 @@ static int mtk_hw_pin_field_lookup(struct mtk_pinctrl *hw, int pin,
+ 		return -EINVAL;
+ 	}
+ 
+-	/* Caculated bits as the overall offset the pin is located at */
++	/* Calculated bits as the overall offset the pin is located at */
+ 	bits = c->s_bit + (pin - c->s_pin) * (c->x_bits);
+ 
+ 	/* Fill pfd from bits and 32-bit register applied is assumed */
+-- 
+2.17.0
