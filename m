@@ -1,296 +1,93 @@
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Thu, 1 Nov 2018 14:17:23 +0000
-Message-ID: <b5dd5b3f-929a-d9be-1d43-36c2f087179c@opensource.cirrus.com>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell> <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025114205.GC4870@dell>
- <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
- <20181026080051.GK4870@dell> <20181026203223.GC27137@sirena.org.uk>
- <20181029110439.GS4870@dell> <20181101102828.GM16508@imbe.wolfsonmicro.main>
+From: Nathan Chancellor <natechancellor@gmail.com>
+Subject: Re: [PATCH] pinctrl: lpc18xx: Use define directive for
+ PIN_CONFIG_GPIO_PIN_INT
+Date: Thu, 1 Nov 2018 07:58:50 -0700
+Message-ID: <20181101145850.GA13794@flashbox>
+References: <20181101005257.8778-1-natechancellor@gmail.com>
+ <0af2686f-3d9a-3ca6-e5c2-2955ffbd8bd5@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181101102828.GM16508@imbe.wolfsonmicro.main>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <0af2686f-3d9a-3ca6-e5c2-2955ffbd8bd5@mentor.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>, Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Vladimir Zapolskiy <vz@mleia.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 01/11/18 10:28, Charles Keepax wrote:
-> On Mon, Oct 29, 2018 at 11:04:39AM +0000, Lee Jones wrote:
->> On Fri, 26 Oct 2018, Mark Brown wrote:
->>> On Fri, Oct 26, 2018 at 09:00:51AM +0100, Lee Jones wrote:
->>>> On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
+On Thu, Nov 01, 2018 at 10:52:14AM +0200, Vladimir Zapolskiy wrote:
+> Hi Nathan,
 > 
+> thank you for your patch.
+> 
+> On 11/01/2018 02:52 AM, Nathan Chancellor wrote:
+> > Clang warns when one enumerated type is implicitly converted to another:
+> > 
+> > drivers/pinctrl/pinctrl-lpc18xx.c:643:29: warning: implicit conversion
+> > from enumeration type 'enum lpc18xx_pin_config_param' to different
+> > enumeration type 'enum pin_config_param' [-Wenum-conversion]
+> >         {"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
+> >         ~                          ^~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/pinctrl/pinctrl-lpc18xx.c:648:12: warning: implicit conversion
+> > from enumeration type 'enum lpc18xx_pin_config_param' to different
+> > enumeration type 'enum pin_config_param' [-Wenum-conversion]
+> >         PCONFDUMP(PIN_CONFIG_GPIO_PIN_INT, "gpio pin int", NULL, true),
+> >         ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
+> > macro 'PCONFDUMP'
+> >         .param = a, .display = b, .format = c, .has_arg = d     \
+> >                  ^
+> > 2 warnings generated.
+> > 
+> > It is expected that pinctrl drivers can extend pin_config_param because
+> > of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+> > isn't an issue. Most drivers that take advantage of this define the
+> > PIN_CONFIG variables as constants, rather than enumerated values. Do the
+> > same thing here so that Clang no longer warns.
+> > 
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/140
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >  drivers/pinctrl/pinctrl-lpc18xx.c | 5 +----
+> >  1 file changed, 1 insertion(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
+> > index a14bc5e5fc24..4bee606088e1 100644
+> > --- a/drivers/pinctrl/pinctrl-lpc18xx.c
+> > +++ b/drivers/pinctrl/pinctrl-lpc18xx.c
+> > @@ -631,13 +631,10 @@ static const struct pinctrl_pin_desc lpc18xx_pins[] = {
+> >  };
+> >  
+> >  /**
+> > - * enum lpc18xx_pin_config_param - possible pin configuration parameters
+> >   * @PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt
+> >   * 	controller.
+> >   */
+> > -enum lpc18xx_pin_config_param {
+> > -	PIN_CONFIG_GPIO_PIN_INT = PIN_CONFIG_END + 1,
+> > -};
+> > +#define PIN_CONFIG_GPIO_PIN_INT		(PIN_CONFIG_END + 1)
+> >  
+> >  static const struct pinconf_generic_params lpc18xx_params[] = {
+> >  	{"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
+> > 
+> 
+> The change, if it is applied, starts to produce a W=1 warning:
+> 
+> 	drivers/pinctrl/pinctrl-lpc18xx.c:634: warning: Cannot understand  * @PIN_CONFIG_GPIO_PIN_INT: route gpio to the gpio pin interrupt on line 634 - I thought it was a doc line
+> 
+> Could you please take a look how to satisfy process_name() check from scripts/kernel-doc?
+> 
+> My proposals are:
+> 1) change the first line of the comment block from '/**' to '/*',
+> 2) remove '@' prefix symbol and place pinconf description on one line.
+> 
+> --
+> Best wishes,
+> Vladimir
 
-<snip>
+Hi Vladimir,
 
->>>> Precisely my point.  Lochnagar is a small device yet it's required to
->>>> submit hundreds of lines of Regmap tables.  Imagine what that would
->>>> look like for a large device.
->>>
->>> There's no *requirement* to provide the data even if you're using the
->>> cache (and the cache support is entirely optional), there's just costs
->>> to not providing it in terms of what features you can get from the
->>> regmap API and the performance of the system.  Not every device is going
->>> to be bothered by those costs, many devices don't provide all of the
->>> data they could.
->>
->> So what do we do in the case where, due to the size of the device, the
->> amount of lines required by these tables go from crazy to grotesque?
->>
-> 
-> Ultimately, I guess I have always just viewed it as just data
-> tables. Its a lot of lines of source but its not complicated,
-> and complexity has really always been the thing I try to avoid.
->
+Thank you for the review! I will go ahead and send a v2 with that fixed.
 
-Again my question is why does it matter how many lines of source the tables
-take? Unlike actual code, reducing the number of lines in a table doesn't
-mean its more efficient. The tables aren't even particularly large when
-compiled, a few kilobytes for CS47L90, which the users of that codec don't
-care about compared to speed.
-
-I can give a size comparison based on the Madera patches. When built as
-modules for 32-bit ARM, the pinctrl driver for the (very simple) GPIOs on
-those codecs builds to 22kB. All the regmap tables for the CS47L90
-(the largest codec), including the defaults and all the readable/volatile
-functions, builds to 23kB, and the smaller (but still quite big) CS47L35
-to 16kB. So we're talking <= a trivial pinctrl driver even for a big
-complex device like a CS47L90 with >1350 registers. For another comparison
-the bulk of the CS47L90 object is the audio driver, which is ~2.2MB. So
-the regmap tables are < 0.1%.
-
->>>>>> Even if it is absolutely critical that you have to supply these to
->>>>>> Regmap up-front, instead of on first use/read, why can't you just
->>>>>> supply the oddball non-zero ones?
->>>
->>> That doesn't work, we need to know both if the register has a default
->>> value and what that value is - there's no great value in only supplying
->>> the defaults for registers with non-zero values.
->>
->> All registers have a default value.  Why can't we assume that if a
->> register is writable and a default value was omitted then the default
->> is zero?
-> 
-> Defaults basically serve two purposes in regmap:
-> 
->   1) Initialise the register cache.
-> 
->      There are basically three ways you could handle this
->      (at least that I can think of) and regmap supports all
->      three. Obviously each with their own pros and cons:
-> 
->       1.1) Table of default values
->            + Fast boot time
->            - Uses some additional memory
->       1.2) Read all the registers from the device on boot
->            + Uses less memory
->            - Potentially very slow boot time
->       1.3) Only read values as you touch registers
->            + Uses less memory
->            + Usually no significant impact on boot time
->            - Can't do read or read/write/modify operations on
->              previously untouched registers whilst chip is off
-> 
->      1.3 does probably make sense here for Lochnagar since we
->      don't currently power things down. However, it is worth
->      noting that such an approach is extremely challenging for many
->      devices. For example the CODECs generally have all sorts of
->      actual user-facing interface that needs to be accessible
->      regardless of if the CODEC is powered up or down and powering it
->      up to access registers would end up being either horrific on
->      power consumption and/or horrific in terms of code complexity.
-> 
->      1.1 and 1.2 are basically a straight trade off. Generally
->      for our devices we talking loads of registers and
->      potentially connected over I2C. Our customers care deeply
->      about device boot time, Android has specs for such things
->      and often it is tight for a system to make those specs.
->      Conversly, generally the products we integrate into have
->      a fairly large amount of memory. As such this is a no
->      brainer of a choice for most of our devices.
-> 
->   2) Determine what registers should be synchronised on a cache
->      sync.
-> 
->      A cache sync is usually done when pulling a device out of
->      low power mode to reapply the currently desired register
->      settings. As discussed in 1) we don't currently do cache
->      syncs on Lochnagar, but this would affect most of our
->      parts. Again I can see three approaches to synchronising
->      the cache:
-> 
->       2.1) Sync out registers that arn't at their default value
->            + Only syncs register that are actually needed
->            - Requires a table of defaults to work
->       2.2) Store a per register dirty flag in the cache
->            + No up front table required in the driver
->            + Potentially less memory as only a single bit required
->              per register, although realising that saving might be
->              very hard on some cache types
->            - May sync registers that arn't required
->       2.3) Sync all registers from the cache
->            + No memory usage
->            - Potentially large penalty for cache sync
-> 
->      Regmap has options to do 2.3, however for most of our
->      devices that would be totally unacceptable. Our parts have
->      a lot of registers most of which are cacheable and for
->      power reasons cache syncs happen as the audio path is being
->      brought up. Again Android has targets here and they are
->      in low 10's of millseconds so bus accesses really do matter.
-> 
->      2.1 is the normal proceedure in regmap, although this
->      is defined on a per cache implementation basis, with the
->      core providing 2.1 as a default.
-> 
->      Again it's a bit of a trade off between 2.1 and 2.2, but
->      given 1 pretty much requires us to know the defaults
->      anyway, 2.1 will in general make the most sense, at least
->      for Cirrus parts.
-> 
-> So I would conclude, certainly for most Cirrus devices, we
-> do need to know the defaults at least for the vast majority
-> of registers. I guess the next question would be could we
-> generate some of the defaults table to reduce the table size
-> in the driver. I would agree with you that the only sensible
-> approach to reducing the defaults table size I can see would be
-> to not have to specify defaults for registers with a default
-> of zero. As an example to set expectations cs47l90, probably
-> the largest CODEC we have made, has 1357 defaults of which
-> 693 are zero so ~50%.
-> 
-> The issue really boils down to how do we tell the difference
-> between a register that has no default, and one that has a default
-> of zero? There are a few problems I can foresee on this front:
-> 
->   1) There are occasions where people use a readable,
->      non-volatile register with no default for things like
->      device ID or revision. The idea being it can be read once
->      which will populate it into the cache then it never needs
->      to be read from the hardware again. Especially useful if
->      this information might be required whilst the hardware
->      is powered down.
-> 
->      We could potentially update such drivers to mark the
->      register as volatile and then store the value explicitly
->      in the drivers data structures?
-> 
->   2) There are occasions where a readable, writeable,
->      non-volatile register cannot be given a fixed default.
->      Usually this will be registers that are configured by
->      firmware or hardware during boot but then have control
->      passed to the kernel.
-> 
->      For example a couple of registers on Lochnagar will be
->      configured by the board controller itself depending on
->      the CODEC that is attached, mostly regulators that are
->      enabled during boot being set to appropriate voltages to
->      avoid hardware damage. To handle these we don't give them
->      defaults which forces a read from the device but then after
->      that we can use the cache.
-> 
->      For this one would probably have to add a new register
->      property (in addition to the existing readable, writeable,
->      volatile, and precious) for no default. Which would require
->      an additional callback. Although I guess that would cover 1
->      as well, and normally there would be very few registers in
->      this catagory.
-> 
->   3) Rather nervous there are other issues I am not currently
->      thinking of this is a widely used API and I am mostly
->      familiar only with the style of devices I work with.
-> 
->      We could potentially add an assume zero defaults flag,
->      that would at least then only apply the change to devices
->      that opt in?
-> 
-> One other related thing that rests on my mind is that creating
-> the defaults table is going to be a little intensive. I guess
-> it is not so bad if using the ranges API, so perhaps we would
-> need to tie it in with that. Although it is still a little
-> fiddly as you need to work out overlaps between the ranges for
-> different properties to be more efficient than just checking
-> each register.  For the callback based systems though you
-> would have to check each register and for example coming
-> back to cs47l90, the highest register address is 0x3FFE7C
-> which means you would need to call over 4 million callbacks
-> probably multiple times whilst constructing your defaults table.
->
-
-Part of the point of the cache is that you can read and write non-volatile
-register values without powering up the hardware. For that to work for
-registers with zero defaults you have 3 options:
-
-1) Add extra conditionals into the regmap cache code so that if a register
-is accessed and a default hasn't been declared, check (using some other
-configuration table or function) whether this is one that must be populated
-from the hardware or can be assumed to be zero.
-   + would work
-   - it's more overhead in the cache code paths and the caching code is
-     already adding code path overhead. It's not safe to assume "well we
-     only need to do this once so it's ok", what if a time-critical block
-     of code accesses a large sequence of registers that all invoke this
-     extra code path?
-
-2) Power-up the hardware during boot and touch all the registers with
-zero values.
-   + ensures the cache is pre-populated with all defaults so no deferred
-     overhead that could happen at an inconvenient time as (1) would.
-   - adds boot time overhead.
-   - if the registers are sparse (as on Cirrus codecs) this can't be a
-     simple loop, it would need a table and we were trying to avoid
-     tabulating registers that have a zero default
-
-3) Regmap initializes to zero all cache entries where the register default
-wasn't given and the register is not in the list "non-volatile registers that
-must be populated from the real hardware value"
-   + as (2) it avoids the potential of a large deferred cache initialization
-     at an inconvenient time.
-   - a missing address in the defaults table could be
-        i.   a register with a zero default,
-        ii.  a register that must be initialized from the hardware,
-        iii. an unused address.
-     The only way regmap could decide would be to check the readable/writable
-     definitions and a new table of "non-volatile registers that must be
-     populated from the real hardware value" to decide whether the address
-     is a register or not. For a very large sparse register map there could
-     be a huge number of addresses that have to be checked. We can get some
-     idea how long this might take, regmap's debugfs builds a table this way
-     and for the largest Cirrus codec (not upstream yet) we've seen this take
-     up to 2 minutes (on an ARM CPU). While that's a maximum it gives some
-     idea - even if we added only 10 seconds to boot time that's 10 seconds
-     to long for most users of our codecs.
-
-4) Regmap pre-populates the entire cache with zeros and then fills in any
-non-zero defaults from the provided defaults table.
-    + simpler to implement in regmap than (3)
-    - more overhead than (3), you have to fill the whole cache so you're
-      invoking the full 2 minute overhead that I mentioned in (3).
-
-In practice (1) is feasible and could be acceptable for some devices
-(but those are quite likely also devices where the current defaults table
-isn't large anyway). It would have to be an option flag because it could
-break the behaviour of existing regmap clients. But the potential for a
-deferred overhead popping up at bad times might not always be acceptable.
-One particular bad place is syncing the cache around a suspend/resume to
-know the default values to eliminate useless writes so effectively (1) is
-turning into (3). As a suspend/resume can be subject to tight OS limits
-on time to setup a use-case it's not something we want to be bloating,
-even if it's only on the first invocation.
-
-In fact if there was anything we really wanted to contribute to regmap it
-would be things that makes it faster. There don't seem to be any options
-for shortening the data tables that don't also make regmap slower in some
-way. I suppose if someone could make regmap faster we'd then have some
-extra leeway to put in things that add overhead but then it's a shame to
-have gained some speed and then take it away.
-
-<snip>
+Nathan
