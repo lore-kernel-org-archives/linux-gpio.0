@@ -1,73 +1,122 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Thu, 1 Nov 2018 12:04:33 +0000
-Message-ID: <20181101120433.GC6425@sirena.org.uk>
-References: <20181025074459.GF4939@dell>
- <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025114205.GC4870@dell>
- <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
- <20181026080051.GK4870@dell>
- <20181026203223.GC27137@sirena.org.uk>
- <20181029110439.GS4870@dell>
- <20181101102828.GM16508@imbe.wolfsonmicro.main>
- <71938ce2-00da-8ee0-c010-58c2670ee327@opensource.cirrus.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TYecfFk8j8mZq+dy"
+From: Muchun Song <smuchun@gmail.com>
+Subject: [PATCH v2] gpiolib: Fix possible use after free on label
+Date: Thu,  1 Nov 2018 21:12:50 +0800
+Message-ID: <20181101131250.41636-1-smuchun@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <71938ce2-00da-8ee0-c010-58c2670ee327@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Lee Jones <lee.jones@linaro.org>, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+gpiod_request_commit() copies the pointer to the label passed as
+an argument only to be used later. But there's a chance the caller
+could immediately free the passed string(e.g., local variable).
+This could trigger a use after free when we use gpio label(e.g.,
+gpiochip_unlock_as_irq(), gpiochip_is_requested()).
 
---TYecfFk8j8mZq+dy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+To be on the safe side: duplicate the string with kstrdup_const()
+so that if an unaware user passes an address to a stack-allocated
+buffer, we won't get the arbitrary label.
 
-On Thu, Nov 01, 2018 at 11:40:01AM +0000, Richard Fitzgerald wrote:
-> On 01/11/18 10:28, Charles Keepax wrote:
+Also fix gpiod_set_consumer_name().
 
-> > So pulling this out from earlier discussions in this thread,
-> > it seems I can happily move all the child device registration
-> > into device tree. I will also try this for the next version of
-> > the patch, unless anyone wants to object? But it does change
-> > the DT binding quite a lot as the individual sub drivers now
-> > each require their own node rather than one single unified
-> > Lochnagar node.
+Signed-off-by: Muchun Song <smuchun@gmail.com>
+---
+ drivers/gpio/gpiolib.c        | 25 +++++++++++++++++++++----
+ include/linux/gpio/consumer.h |  6 ++++--
+ 2 files changed, 25 insertions(+), 6 deletions(-)
 
-> We went through this discussion with the Madera MFD patches. I had
-> originally implemented it using DT to register the child drivers and
-> it was nice in some ways each driver having its own node. But Mark
-> and Rob didn't like it so I went back to non-DT child registration with
-> all sharing the parent MFD node. It would be nice if we could stick to
-> one way of doing it so that Cirrus drivers don't flip-flop between
-> different styles of DT binding.
-
-The basic concern I have is encoding the current Linux idea of how to
-split the subfunctions up into drivers into an ABI - the clocks in CODEC
-drivers is the obvious example, they might want to be in the clock API
-in future.  If there's a very direct mapping onto individual hardware
-blocks that worries me a lot less since it's more obviously reflecting
-how the hardware is designed.
-
---TYecfFk8j8mZq+dy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlva69EACgkQJNaLcl1U
-h9CNKQf+IE/F7jz5M6NjKEd2X3SqqJcqEP1+CXLXM3Ny1yMI272FpSrV6BiQczlY
-Xjy0PP+Y+YsAHtyfaybjuf1s5E8iq8SN5XJk5Tw1pobUGjIKAnESL/0h3bf+jHtM
-xXAxmCfZP8QjJ/Gy42AgUf7+UWjycAmBlwqecvsViEUWRVctxsGYRh7ZrYrs7kEz
-/pjPMF2QG8mMkqSVGvMQuPtQrKL3Thd/IMlzUmMCF8hpKKjEYe6Yj3mKvOD4X7lx
-dnxvYEnH5tlkHiaVQ7K3JIJKTftVPwxdXiTDj0RePWR9mMdbKXe6kn8f272Yyer2
-fkAY/Ak3PYDPAH7NkXmYVp2xz1naAg==
-=l5Yg
------END PGP SIGNATURE-----
-
---TYecfFk8j8mZq+dy--
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 25187403e3ac..550918268549 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2270,6 +2270,12 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 	unsigned long		flags;
+ 	unsigned		offset;
+ 
++	if (label) {
++		label = kstrdup_const(label, GFP_KERNEL);
++		if (!label)
++			return -ENOMEM;
++	}
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+ 	/* NOTE:  gpio_request() can be called in early boot,
+@@ -2280,6 +2286,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 		desc_set_label(desc, label ? : "?");
+ 		status = 0;
+ 	} else {
++		kfree_const(label);
+ 		status = -EBUSY;
+ 		goto done;
+ 	}
+@@ -2296,6 +2303,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 
+ 		if (status < 0) {
+ 			desc_set_label(desc, NULL);
++			kfree_const(label);
+ 			clear_bit(FLAG_REQUESTED, &desc->flags);
+ 			goto done;
+ 		}
+@@ -2391,6 +2399,7 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
+ 			chip->free(chip, gpio_chip_hwgpio(desc));
+ 			spin_lock_irqsave(&gpio_lock, flags);
+ 		}
++		kfree_const(desc->label);
+ 		desc_set_label(desc, NULL);
+ 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
+ 		clear_bit(FLAG_REQUESTED, &desc->flags);
+@@ -3212,11 +3221,19 @@ EXPORT_SYMBOL_GPL(gpiod_cansleep);
+  * @desc: gpio to set the consumer name on
+  * @name: the new consumer name
+  */
+-void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
++int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
+ {
+-	VALIDATE_DESC_VOID(desc);
+-	/* Just overwrite whatever the previous name was */
+-	desc->label = name;
++	VALIDATE_DESC(desc);
++	if (name) {
++		name = kstrdup_const(name, GFP_KERNEL);
++		if (!name)
++			return -ENOMEM;
++	}
++
++	kfree_const(desc->label);
++	desc_set_label(desc, name);
++
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_consumer_name);
+ 
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 21ddbe440030..acc4279ad5e3 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -142,7 +142,7 @@ int gpiod_is_active_low(const struct gpio_desc *desc);
+ int gpiod_cansleep(const struct gpio_desc *desc);
+ 
+ int gpiod_to_irq(const struct gpio_desc *desc);
+-void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
++int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
+ 
+ /* Convert between the old gpio_ and new gpiod_ interfaces */
+ struct gpio_desc *gpio_to_desc(unsigned gpio);
+@@ -465,10 +465,12 @@ static inline int gpiod_to_irq(const struct gpio_desc *desc)
+ 	return -EINVAL;
+ }
+ 
+-static inline void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
++static inline int gpiod_set_consumer_name(struct gpio_desc *desc,
++					  const char *name)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return -EINVAL;
+ }
+ 
+ static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
+-- 
+2.17.1
