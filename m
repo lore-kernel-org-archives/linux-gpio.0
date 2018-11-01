@@ -1,139 +1,44 @@
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Thu, 1 Nov 2018 11:40:01 +0000
-Message-ID: <71938ce2-00da-8ee0-c010-58c2670ee327@opensource.cirrus.com>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell> <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025114205.GC4870@dell>
- <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
- <20181026080051.GK4870@dell> <20181026203223.GC27137@sirena.org.uk>
- <20181029110439.GS4870@dell> <20181101102828.GM16508@imbe.wolfsonmicro.main>
+From: David Laight <David.Laight@ACULAB.COM>
+Subject: RE: [PATCH] pinctrl: generic: Avoid several implicit enum conversions
+Date: Thu, 1 Nov 2018 11:46:25 +0000
+Message-ID: <2ddee1f762ab404a8acc8ce05c96da78@AcuMS.aculab.com>
+References: <20180925061855.19557-1-natechancellor@gmail.com>
+ <CACRpkdadODxsuae7uhwcfBBMQ-eZ8bvnV71fhDCuudbJEbhhYA@mail.gmail.com>
+ <20180925161459.GA15840@flashbox>
+ <CAKwvOdkh0rqWcw4r7Y=Ki_MNJPoJNnvm3uGp4Q726PaESxZAnQ@mail.gmail.com>
+ <20181025210456.GA14792@flashbox>
+ <CACRpkda9LhdQybgci8gYs13L5pHWvDx43_Ftn5s+ERLLFPvLjQ@mail.gmail.com>
+ <20181101000338.GA32577@flashbox>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181101102828.GM16508@imbe.wolfsonmicro.main>
+In-Reply-To: <20181101000338.GA32577@flashbox>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>, Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: 'Nathan Chancellor' <natechancellor@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 01/11/18 10:28, Charles Keepax wrote:
-> On Mon, Oct 29, 2018 at 11:04:39AM +0000, Lee Jones wrote:
->> On Fri, 26 Oct 2018, Mark Brown wrote:
->>> On Fri, Oct 26, 2018 at 09:00:51AM +0100, Lee Jones wrote:
->>>> On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
+From: Nathan Chancellor
+> Sent: 01 November 2018 00:04
+...
+> > A slightly lesser evil variant is to add a few PIN_CONFIG_CUSTOM_1
+> > PIN_CONFIG_CUSTOM_2 etc at the end of the enum and just
+> > #define MY_CONFIG PIN_CONFIG_CUSTOM_1
+> > in all drivers that use these.
+> >
 > 
-> I have re-ordered some of the quotes here for the benefit
-> of clarity. I will start with the Lochnagar focused bits
-> and then cover some of the more general regmap discussion.
-> Apologies for the wall of text towards the end but it seemed
-> wise to explore some of the why for parts of the current regmap
-> implementation and some of the implications for changing it.
+> Some drivers actually just define their pin config params like:
 > 
->>> I think from the perspective of Richard and Charles who are just trying
->>> to get their driver merged this is something of an abstract distinction.
->>> If the driver were merged and this discussion were happening separately
->>> their perspective would most likely be different.
->>
->> Charles has already mentioned that he'd take a look at the current
->> *use* (not changing the API, but the way in which Lochnagar
->> *uses/consumes* it).  Actions which would be most welcomed.
->>
->>> I kind of said this above but just to be clear this driver seems to me
->>> like an idiomatic user of the regmap API as it is today.  My guess is
->>> that we could probably loose the defaults tables and not suffer too much
->>> but equally well they don't hurt from a regmap point of view.
->>
->> Perhaps Charles could elaborate on whether this is possible or not?
-> 
-> So on this front I have had a look through and we can drop the
-> defaults tables for Lochnagar, although as I shall cover later
-> Lochnagar is the exceptional case with respect to our normal
-> devices.
-> 
->> Utilising range support here would certainly help IMHO.
->>
-> 
-> I am rather hesitant to switch to the range API. Whilst it is
-> significantly more clear in certain situations, such as say
-> mapping out the memory for a DSP, where there exist large
-> amorphis blobs of identical function registers. I am really
-> not convinced it really suits something like the register map
-> that controls Lochnagar. You have an intertwinned mix of
-> various purpose registers, each with a clearly defined name
-> and potentially with quite fine grained properties.
-> 
-> Certainly when working with the driver I want to be able to
-> fairly quickly see what registers are marked as by name. The
-> callbacks are very simple and I don't need to look up where
-> register are in the regmap to be able check their attributes.
-> But perhaps I have just got too used to seeing these callbacks,
-> things do have a way of becoming normal after being exposed to
-> them for a while.
-> 
-> What I will try for the next spin is to try to use as much:
-> 
->    case REG1...REG2:
-> 
-> As I can without totally sacrificing grepability/clarity and
-> hopefully that will get us to a compromise we can all live
-> with at least for now. Lochnagar is a fairly small part so it
-> feels like this should be doable.
-> 
->>>>> +       ret = devm_of_platform_populate(dev);
->>>>> +       if (ret < 0) {
->>>>> +               dev_err(dev, "Failed to populate child
->>>>> nodes:
->>>>> %d\n", ret);
->>>>> +               return ret;
->>>>> +       }
->>>>
->>>> Please do not mix OF and MFD device registration
->>>> strategies.
->>>>
->>>> Pick one and register all devices through your chosen
->>>> method.
->>>
->>> Hmmm we use this to do things like register some fixed
->>> regulators
->>> and clocks that don't need any control but do need to be
->>> associated
->>> with the device. I could do that through the MFD although it
->>> is in
->>> direct conflict with the feedback on the clock patches I
->>> received
->>> to move the fixed clocks into devicetree rather than
->>> registering
->>> them manually (see v2 of the patch chain).
->>
->> The I suggest moving everything to DT.
-> 
-> So pulling this out from earlier discussions in this thread,
-> it seems I can happily move all the child device registration
-> into device tree. I will also try this for the next version of
-> the patch, unless anyone wants to object? But it does change
-> the DT binding quite a lot as the individual sub drivers now
-> each require their own node rather than one single unified
-> Lochnagar node.
-> 
+> #define VAR (PIN_CONFIG_END + 1)
 
-We went through this discussion with the Madera MFD patches. I had
-originally implemented it using DT to register the child drivers and
-it was nice in some ways each driver having its own node. But Mark
-and Rob didn't like it so I went back to non-DT child registration with
-all sharing the parent MFD node. It would be nice if we could stick to
-one way of doing it so that Cirrus drivers don't flip-flop between
-different styles of DT binding.
+You probably want to add 'custom' definitions after PIN_CONFIG_END
+so that a future compiler versions doesn't generate an error
+because (PIN_CONFIG_END + 1) isn't a valid value for the enum.
 
-With the Madera MFD, since it now uses non-DT registration of children
-if there was a reason we need to be able to register DT-defined children
-(and there are potential uses like adding platform-specific virtual
-regulators that are treated as a child) the bindings are now fixed so we
-would end up having a mixed non-DT and DT registration.
+	David
 
-<snip>
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
