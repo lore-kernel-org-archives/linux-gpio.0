@@ -1,45 +1,52 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH] pinctrl: sprd: Use define directive for
- sprd_pinconf_params values
-Date: Thu, 1 Nov 2018 13:57:42 +0800
-Message-ID: <CAMz4kuJg9gWtqy4mFsEV12c=kH_-999xeabPEJmb2P_usKRoMQ@mail.gmail.com>
-References: <20181101004410.6893-1-natechancellor@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 0/4] Add initial pinctrl support for MT6797 SoC
+Date: Thu,  1 Nov 2018 11:49:03 +0530
+Message-ID: <20181101061907.20224-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181101004410.6893-1-natechancellor@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Nick Desaulniers <ndesaulniers@google.com>
+To: sean.wang@mediatek.com, linus.walleij@linaro.org, matthias.bgg@gmail.com, robh+dt@kernel.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 1 November 2018 at 08:44, Nathan Chancellor <natechancellor@gmail.com> wrote:
-> Clang warns when one enumerated type is implicitly converted to another:
->
-> drivers/pinctrl/sprd/pinctrl-sprd.c:845:19: warning: implicit conversion
-> from enumeration type 'enum sprd_pinconf_params' to different
-> enumeration type 'enum pin_config_param' [-Wenum-conversion]
->         {"sprd,control", SPRD_PIN_CONFIG_CONTROL, 0},
->         ~                ^~~~~~~~~~~~~~~~~~~~~~~
-> drivers/pinctrl/sprd/pinctrl-sprd.c:846:22: warning: implicit conversion
-> from enumeration type 'enum sprd_pinconf_params' to different
-> enumeration type 'enum pin_config_param' [-Wenum-conversion]
->         {"sprd,sleep-mode", SPRD_PIN_CONFIG_SLEEP_MODE, 0},
->         ~                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> It is expected that pinctrl drivers can extend pin_config_param because
-> of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
-> isn't an issue. Most drivers that take advantage of this define the
-> PIN_CONFIG variables as constants, rather than enumerated values. Do the
-> same thing here so that Clang no longer warns.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/138
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
+This patchset adds initial pinctrl support for Mediatek MT6797 SoC.
+The pinctrl driver is based on the vendor binding as like MT6765 and
+implements only GPIO and pinmux functionalities.
 
-Looks reasonable to me. Thanks.
-Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+The devicetree binding document consists of pinmux, pinconf and
+interrupt functionalities documented since the binding should describe
+what the hardware is capable of rather than what the driver offers.
+
+This patchset has been tested on 96Boards MediatekX20 development board.
+
+Thanks,
+Mani
+
+Changes in v2:
+
+* Added devicetree bindings for Pin Controller
+* Dropped the applied warning fix patch
+* Added Tested-by tag from Matthias Brugger
+* Added Acked-by tag from Sean Wang
+
+Manivannan Sadhasivam (4):
+  dt-bindings: pinctrl: Add devicetree bindings for MT6797 SoC Pinctrl
+  arm64: dts: mediatek: mt6797: Add pinctrl support
+  arm64: dts: mediatek: x20: Add pinmux support for UART1
+  pinctrl: mediatek: Add initial pinctrl driver for MT6797 SoC
+
+ .../bindings/pinctrl/pinctrl-mt6797.txt       |   74 +
+ .../boot/dts/mediatek/mt6797-x20-dev.dts      |    2 +
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi      |   21 +
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6797.c     |   82 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h | 2430 +++++++++++++++++
+ include/dt-bindings/pinctrl/mt6797-pinfunc.h  | 1368 ++++++++++
+ 8 files changed, 3985 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6797.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+ create mode 100644 include/dt-bindings/pinctrl/mt6797-pinfunc.h
 
 -- 
-Baolin Wang
-Best Regards
+2.17.1
