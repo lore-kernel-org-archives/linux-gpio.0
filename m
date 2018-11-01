@@ -1,52 +1,53 @@
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 0/4] Add initial pinctrl support for MT6797 SoC
-Date: Thu,  1 Nov 2018 11:49:03 +0530
-Message-ID: <20181101061907.20224-1-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 2/4] arm64: dts: mediatek: mt6797: Add pinctrl support
+Date: Thu,  1 Nov 2018 11:49:05 +0530
+Message-ID: <20181101061907.20224-3-manivannan.sadhasivam@linaro.org>
+References: <20181101061907.20224-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181101061907.20224-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: sean.wang@mediatek.com, linus.walleij@linaro.org, matthias.bgg@gmail.com, robh+dt@kernel.org
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This patchset adds initial pinctrl support for Mediatek MT6797 SoC.
-The pinctrl driver is based on the vendor binding as like MT6765 and
-implements only GPIO and pinmux functionalities.
+Add pinctrl support for Mediatek MT6797 SoC.
 
-The devicetree binding document consists of pinmux, pinconf and
-interrupt functionalities documented since the binding should describe
-what the hardware is capable of rather than what the driver offers.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-This patchset has been tested on 96Boards MediatekX20 development board.
-
-Thanks,
-Mani
-
-Changes in v2:
-
-* Added devicetree bindings for Pin Controller
-* Dropped the applied warning fix patch
-* Added Tested-by tag from Matthias Brugger
-* Added Acked-by tag from Sean Wang
-
-Manivannan Sadhasivam (4):
-  dt-bindings: pinctrl: Add devicetree bindings for MT6797 SoC Pinctrl
-  arm64: dts: mediatek: mt6797: Add pinctrl support
-  arm64: dts: mediatek: x20: Add pinmux support for UART1
-  pinctrl: mediatek: Add initial pinctrl driver for MT6797 SoC
-
- .../bindings/pinctrl/pinctrl-mt6797.txt       |   74 +
- .../boot/dts/mediatek/mt6797-x20-dev.dts      |    2 +
- arch/arm64/boot/dts/mediatek/mt6797.dtsi      |   21 +
- drivers/pinctrl/mediatek/Kconfig              |    7 +
- drivers/pinctrl/mediatek/Makefile             |    1 +
- drivers/pinctrl/mediatek/pinctrl-mt6797.c     |   82 +
- drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h | 2430 +++++++++++++++++
- include/dt-bindings/pinctrl/mt6797-pinfunc.h  | 1368 ++++++++++
- 8 files changed, 3985 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6797.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
- create mode 100644 include/dt-bindings/pinctrl/mt6797-pinfunc.h
-
+diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+index 4beaa71107d7..231230d32d09 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+@@ -14,6 +14,7 @@
+ #include <dt-bindings/clock/mt6797-clk.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/pinctrl/mt6797-pinfunc.h>
+ 
+ / {
+ 	compatible = "mediatek,mt6797";
+@@ -129,6 +130,19 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
++	pio: pinctrl@10005000 {
++		compatible = "mediatek,mt6797-pinctrl";
++		reg = <0 0x10005000 0 0x1000>,
++		      <0 0x10002000 0 0x400>,
++		      <0 0x10002400 0 0x400>,
++		      <0 0x10002800 0 0x400>,
++		      <0 0x10002C00 0 0x400>;
++		reg-names = "gpio", "iocfgl", "iocfgb",
++			    "iocfgr", "iocfgt";
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
+ 	scpsys: scpsys@10006000 {
+ 		compatible = "mediatek,mt6797-scpsys";
+ 		#power-domain-cells = <1>;
 -- 
 2.17.1
