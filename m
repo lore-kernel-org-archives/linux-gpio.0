@@ -1,69 +1,51 @@
-From: =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH v2 bus+gpio 2/4] dt-bindings: bus: Document moxtet bus binding
-Date: Fri,  2 Nov 2018 11:35:37 +0100
-Message-ID: <20181102103539.6077-2-marek.behun@nic.cz>
-References: <20181102103539.6077-1-marek.behun@nic.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181102103539.6077-1-marek.behun@nic.cz>
-Sender: linux-kernel-owner@vger.kernel.org
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH] gpio: don't free unallocated ida on gpiochip_add_data_with_key() error path
+Date: Fri,  2 Nov 2018 15:39:43 +0200
+Message-ID: <20181102133943.7798-1-vz@mleia.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tony Lindgren <tony@atomide.com>, Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This adds device tree binding documentation for the Moxtet bus, a bus
-via which the different modules connected to the Turris Mox router can
-be configured.
+The change corrects the error path in gpiochip_add_data_with_key()
+by avoiding to call ida_simple_remove(), if ida_simple_get() returns
+an error.
 
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
+Note that ida_simple_remove()/ida_free() throws a BUG(), if id argument
+is negative, it allows to easily check the correctness of the fix by
+fuzzing the return value from ida_simple_get().
+
+Fixes: ff2b13592299 ("gpio: make the gpiochip a real device")
+Cc: stable@vger.kernel.org # v4.6+
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 ---
- .../devicetree/bindings/bus/moxtet.txt        | 34 +++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/bus/moxtet.txt
+ drivers/gpio/gpiolib.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/bus/moxtet.txt b/Documentation/devicetree/bindings/bus/moxtet.txt
-new file mode 100644
-index 000000000000..19a1bab61e8a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/bus/moxtet.txt
-@@ -0,0 +1,34 @@
-+Turris Mox module configuration bus (over SPI)
-+
-+Required properties:
-+ - compatible		: Should be "cznic,moxtet".
-+ - #address-cells	: Has to be 1
-+ - #size-cells		: Has to be 0
-+For other required and optional properties of SPI slave nodes please refer to
-+../spi/spi-bus.txt.
-+
-+Required properties of subnodes:
-+ - reg			: Should be position on the Moxtet bus
-+
-+The driver finds the devices connected to the bus by itself, but it may be
-+needed to reference some of them from other parts of the device tree. In that
-+case the devices can be defined as subnodes of the moxtet node.
-+
-+Example:
-+
-+	moxtet@1 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "cznic,moxtet";
-+		reg = <1>;
-+		spi-max-frequency = <10000000>;
-+		spi-cpol;
-+		spi-cpha;
-+
-+		moxtet_sfp: moxtet-sfp@0 {
-+			compatible = "cznic,moxtet-sfp";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			reg = <0>;
-+		}
-+	};
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 230e41562462..a2cbb474901c 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1295,7 +1295,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	gdev->descs = kcalloc(chip->ngpio, sizeof(gdev->descs[0]), GFP_KERNEL);
+ 	if (!gdev->descs) {
+ 		status = -ENOMEM;
+-		goto err_free_gdev;
++		goto err_free_ida;
+ 	}
+ 
+ 	if (chip->ngpio == 0) {
+@@ -1427,8 +1427,9 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	kfree_const(gdev->label);
+ err_free_descs:
+ 	kfree(gdev->descs);
+-err_free_gdev:
++err_free_ida:
+ 	ida_simple_remove(&gpio_ida, gdev->id);
++err_free_gdev:
+ 	/* failures here can mean systems won't boot... */
+ 	pr_err("%s: GPIOs %d..%d (%s) failed to register, %d\n", __func__,
+ 	       gdev->base, gdev->base + gdev->ngpio - 1,
 -- 
-2.18.1
+2.17.1
