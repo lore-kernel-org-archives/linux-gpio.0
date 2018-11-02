@@ -1,14 +1,15 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V4 04/10] gpio: vf610: add optional clock support
-Date: Fri, 2 Nov 2018 10:36:35 +0100
-Message-ID: <CACRpkdaO-cUd7wVksboUU0-qu20aBo370Rio=GkNH11U0CB4Jw@mail.gmail.com>
+Subject: Re: [PATCH V4 05/10] dt-bindings: pinctrl: imx7ulp: back to imx
+ legacy binding for consistency
+Date: Fri, 2 Nov 2018 10:37:50 +0100
+Message-ID: <CACRpkdb=1gKHCnd2njRdDbf_dg8H-H3Zmzy8J_H2OoRNa7omnw@mail.gmail.com>
 References: <1541149669-10857-1-git-send-email-aisheng.dong@nxp.com>
- <1541149669-10857-5-git-send-email-aisheng.dong@nxp.com>
+ <1541149669-10857-6-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1541149669-10857-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1541149669-10857-6-git-send-email-aisheng.dong@nxp.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,28 +20,33 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: Dong Aisheng <dongas86@gmail.com>, Russell King <linux@armlinux.org.uk>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Dong Aisheng <dongas86@gmail.com>, Russell King <linux@armlinux.org.uk>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 10:12 AM A.s. Dong <aisheng.dong@nxp.com> wrote:
+On Fri, Nov 2, 2018 at 10:13 AM A.s. Dong <aisheng.dong@nxp.com> wrote:
 
-> Some SoCs need the gpio clock to be enabled before accessing
-> HW registers. This patch add the optional clock handling.
+> We already had an earlier conclusion that all new i.MX Socs will keep
+> using the legacy i.MX Pinctrl bindings instead of generic pin config.
+> However, MX7ULP generic pin config binding support has already been in
+> tree before that time. Per SoC maintainers' suggestions, in order to
+> get a better consistency for all i.MX devices, we'd like to go back to
+> imx legacy binding for MX7ULP as well.
 >
+> Cc: Rob Herring <robh+dt@kernel.org>
 > Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Stefan Agner <stefan@agner.ch>
 > Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
 > Cc: linux-gpio@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
 > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 > ---
-> v2->v3:
->  * error checking updated according to Russell's suggestion:
->    ptr == ERR_PTR(-EPROBE_DEFER)
->  * clock independently checking
+> ChangeLog:
+>  v3: new patch
 
-Please look at my feedback for v2 as well, sorry for
-the synchronization problems here... Didn't see this
-version until after replying.
+Can I have some ACKs from the other Freescale people on this
+so I see that there is a wide consensus for this?
 
 Yours,
 Linus Walleij
