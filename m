@@ -1,51 +1,45 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH] gpio: don't free unallocated ida on gpiochip_add_data_with_key() error path
-Date: Fri,  2 Nov 2018 15:39:43 +0200
-Message-ID: <20181102133943.7798-1-vz@mleia.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, stable@vger.kernel.org
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH V4 05/10] dt-bindings: pinctrl: imx7ulp: back to imx
+ legacy binding for consistency
+Date: Fri, 2 Nov 2018 12:43:27 -0300
+Message-ID: <CAOMZO5ASm-_fd9xK=j1t2OLJAoaX7uGc9RRp6NtAjn+mtFkTYg@mail.gmail.com>
+References: <1541149669-10857-1-git-send-email-aisheng.dong@nxp.com>
+ <1541149669-10857-6-git-send-email-aisheng.dong@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1541149669-10857-6-git-send-email-aisheng.dong@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Dong Aisheng <dongas86@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Russell King - ARM Linux <linux@armlinux.org.uk>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The change corrects the error path in gpiochip_add_data_with_key()
-by avoiding to call ida_simple_remove(), if ida_simple_get() returns
-an error.
+On Fri, Nov 2, 2018 at 6:13 AM A.s. Dong <aisheng.dong@nxp.com> wrote:
+>
+> We already had an earlier conclusion that all new i.MX Socs will keep
+> using the legacy i.MX Pinctrl bindings instead of generic pin config.
+> However, MX7ULP generic pin config binding support has already been in
+> tree before that time. Per SoC maintainers' suggestions, in order to
+> get a better consistency for all i.MX devices, we'd like to go back to
+> imx legacy binding for MX7ULP as well.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Note that ida_simple_remove()/ida_free() throws a BUG(), if id argument
-is negative, it allows to easily check the correctness of the fix by
-fuzzing the return value from ida_simple_get().
-
-Fixes: ff2b13592299 ("gpio: make the gpiochip a real device")
-Cc: stable@vger.kernel.org # v4.6+
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
- drivers/gpio/gpiolib.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 230e41562462..a2cbb474901c 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1295,7 +1295,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	gdev->descs = kcalloc(chip->ngpio, sizeof(gdev->descs[0]), GFP_KERNEL);
- 	if (!gdev->descs) {
- 		status = -ENOMEM;
--		goto err_free_gdev;
-+		goto err_free_ida;
- 	}
- 
- 	if (chip->ngpio == 0) {
-@@ -1427,8 +1427,9 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	kfree_const(gdev->label);
- err_free_descs:
- 	kfree(gdev->descs);
--err_free_gdev:
-+err_free_ida:
- 	ida_simple_remove(&gpio_ida, gdev->id);
-+err_free_gdev:
- 	/* failures here can mean systems won't boot... */
- 	pr_err("%s: GPIOs %d..%d (%s) failed to register, %d\n", __func__,
- 	       gdev->base, gdev->base + gdev->ngpio - 1,
--- 
-2.17.1
+Acked-by: Fabio Estevam <fabio.estevam@nxp.com>
