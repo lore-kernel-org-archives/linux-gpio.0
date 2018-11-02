@@ -1,38 +1,70 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: [PATCH] pinctrl: mediatek: Fix dependencies for EINT_MTK
-Date: Thu,  1 Nov 2018 19:57:28 -0700
-Message-ID: <20181102025728.963-1-olof@lixom.net>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: [PATCH V4 03/10] dt-bindings: gpio: vf610: add optional clocks
+ property
+Date: Fri, 2 Nov 2018 09:12:48 +0000
+Message-ID: <1541149669-10857-4-git-send-email-aisheng.dong@nxp.com>
+References: <1541149669-10857-1-git-send-email-aisheng.dong@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1541149669-10857-1-git-send-email-aisheng.dong@nxp.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "A.s. Dong" <aisheng.dong@nxp.com>, Mark Rutland <mark.rutland@arm.com>, "dongas86@gmail.com" <dongas86@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, Stefan Agner <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Fixes the following config-time warning:
+On some SoCs(e.g. MX7ULP), GPIO clock is gatable and maybe
+disabled by default. Users have to make sure it's enabled before
+being able to access controller registers, otherwise an external
+abort error may occur. Let's add the optional clocks property to
+handle this case.
 
-WARNING: unmet direct dependencies detected for EINT_MTK
-  Depends on [n]: PINCTRL [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n]) && (PINCTRL_MTK [=n] || PINCTRL_MTK_MOORE [=n] || COMPILE_TEST [=n])
-  Selected by [y]:
-  - PINCTRL_MTK_PARIS [=y] && PINCTRL [=y] && OF [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n])
+For ULP GPIO clock, it includes two separate clocks: one is for
+GPIO controller Input/Output function clock while another is
+GPIO port control clock for interrupt function.
 
-Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: linux-gpio@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/pinctrl/mediatek/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2->v3:
+ * no changes
+v1->v2:
+ * new patch
+---
+ Documentation/devicetree/bindings/gpio/gpio-vf610.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 9d142e1da567..50efc9cc8ee7 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -3,7 +3,7 @@ menu "MediaTek pinctrl drivers"
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.txt b/Documentation/devicetree/bindings/gpio/gpio-vf610.txt
+index 0ccbae4..ae254aa 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-vf610.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.txt
+@@ -24,6 +24,12 @@ Required properties for GPIO node:
+       4 = active high level-sensitive.
+       8 = active low level-sensitive.
  
- config EINT_MTK
- 	bool "MediaTek External Interrupt Support"
--	depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || COMPILE_TEST
-+	depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
- 	select GPIOLIB
- 	select IRQ_DOMAIN
++Optional properties:
++-clocks:	Must contain an entry for each entry in clock-names.
++		See common clock-bindings.txt for details.
++-clock-names:	A list of clock names. For imx7ulp, it must contain
++		"gpio", "port".
++
+ Note: Each GPIO port should have an alias correctly numbered in "aliases"
+ node.
  
 -- 
-2.11.0
+2.7.4
