@@ -1,80 +1,170 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v5 04/11] dt-bindings: iio: adc: add AXP803 ADC bindings
-Date: Mon, 5 Nov 2018 13:47:50 +0800
-Message-ID: <CAGb2v66mH5_J0K4ArFduvvQ2aE7mZxcyLORNPODj79-xhiKapQ@mail.gmail.com>
-References: <20181023185330.10472-1-oskari@lemmela.net> <20181023185330.10472-5-oskari@lemmela.net>
- <20181024135633.GA342@bogus> <20181028154011.04efdecf@archlinux>
- <20181029130757.m5okrfvusjl5fu5m@qschulz> <CAGb2v65JKj_7VcEr1KuZVop85hn-3h73NrExprpmLbKZiosD5Q@mail.gmail.com>
- <20181103102153.4f0481ad@archlinux>
+From: Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH 2/2] dt-bindings: pinctrl: update bindings for MT7629 SoC
+Date: Mon, 5 Nov 2018 16:43:41 +0800
+Message-ID: <85278445c65854dca6d4f9993a0ca2d048b9e5d8.1541143226.git.ryder.lee@mediatek.com>
+References: <6fe4c5fbed14391b6b7fb7d44e42e133e718d6f9.1541143226.git.ryder.lee@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181103102153.4f0481ad@archlinux>
+In-Reply-To: <6fe4c5fbed14391b6b7fb7d44e42e133e718d6f9.1541143226.git.ryder.lee@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jic23@jic23.retrosnub.co.uk
-Cc: Rob Herring <robh@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "open list:THERMAL" <linux-pm@vger.kernel.org>, linux-iio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Vasily Khoruzhick <anarsoul@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, devicetree <devicetree@vger.kernel.org>, oskari@lemmela.net, linux-gpio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Quentin Schulz <quentin.schulz@bootlin.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, Weijie Gao <weijie.gao@mediatek.com>, Roy Luo <cheng-hao.luo@mediatek.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Ryder Lee <ryder.lee@mediatek.com>, Sean Wang <sean.wang@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Nov 3, 2018 at 6:22 PM Jonathan Cameron
-<jic23@jic23.retrosnub.co.uk> wrote:
->
-> On Wed, 31 Oct 2018 10:29:59 +0800
-> Chen-Yu Tsai <wens@csie.org> wrote:
->
-> > On Mon, Oct 29, 2018 at 9:10 PM Quentin Schulz
-> > <quentin.schulz@bootlin.com> wrote:
-> > >
-> > > Hi Jonathan,
-> > >
-> > > On Sun, Oct 28, 2018 at 03:40:11PM +0000, Jonathan Cameron wrote:
-> > > > On Wed, 24 Oct 2018 08:56:33 -0500
-> > > > Rob Herring <robh@kernel.org> wrote:
-> > > >
-> > > > > On Tue, 23 Oct 2018 21:53:23 +0300, Oskari Lemmela wrote:
-> > > > > > The AXP803 ADC is compatible with AXP813 ADC, but add
-> > > > > > specific compatible for it.
-> > > > > >
-> > > > > > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-> > > > > > ---
-> > > > > >  Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt | 2 ++
-> > > > > >  1 file changed, 2 insertions(+)
-> > > > > >
-> > > > >
-> > > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > >
-> > > > This doesn't seem to have any dependencies with the other patches
-> > > > so applied to the togreg branch of iio.git and pushed out as testing
-> > > > for the autobuilders to ignore.  However I am a little curious to know
-> > > > why we would add the ID and then not use it (that I can see)?
-> > > >
-> > >
-> > > Sometimes with Allwinner (and X-Powers), two IPs seem identical until we
-> > > discover something that is slightly different. When this happens, we
-> > > have to add a compatible to differentiate both. However, we would also
-> > > need to change the Device Tree to change the compatible. We would need
-> > > to handle the driver behaviour for both Device Trees.
-> > >
-> > > So better anticipate a possible difference so that we don't have to do
-> > > some hacks in the driver to handle the device correctly.
-> > >
-> > > As always, Chen-Yu or Maxime may know better so I'm just stating what I
-> > > seem to recall.
-> >
-> > With Allwinner stuff (X-Powers included), sometimes the documents are
-> > incomplete or have errors. We tend to add a model-specific compatible
-> > just in case things turn out not to be so compatible, unless someone
-> > has triple-checked everything, documents and actual hardware included.
-> >
-> > However we don't actually document these, so this patch isn't strictly
-> > needed. (I suppose this might annoy the device tree binding maintainers.)
-> >
-> > ChenYu
-> I don't think it does any harm so I'll leave it in place.  Thanks for
-> the explanations.
+This updates bindings for MT7629 pinctrl driver.
 
-It might cause a bit of confusion though. We are not targetting these
-compatibles in terms of driver support, and they should not be used
-individually. IMO dropping this patch altogether is better. In the
-device tree we would use the tuplet axp803 + axp813.
+Cc: Sean Wang <sean.wang@kernel.org>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ .../devicetree/bindings/pinctrl/pinctrl-mt7622.txt | 128 +++++++++++++++++++++
+ 1 file changed, 128 insertions(+)
 
-ChenYu
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
+index 3b69513..4dedce4 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
+@@ -3,6 +3,7 @@
+ Required properties for the root node:
+  - compatible: Should be one of the following
+ 	       "mediatek,mt7622-pinctrl" for MT7622 SoC
++	       "mediatek,mt7629-pinctrl" for MT7629 SoC
+  - reg: offset and length of the pinctrl space
+ 
+  - gpio-controller: Marks the device node as a GPIO controller.
+@@ -324,6 +325,133 @@ group.
+ 	"uart4_2_rts_cts"		"uart"		95, 96
+ 	"watchdog"			"watchdog"	78
+ 
++
++== Valid values for pins, function and groups on MT7629 ==
++
++	Pin #:  Valid values for pins
++	-----------------------------
++	PIN 0: "TOP_5G_CLK"
++	PIN 1: "TOP_5G_DATA"
++	PIN 2: "WF0_5G_HB0"
++	PIN 3: "WF0_5G_HB1"
++	PIN 4: "WF0_5G_HB2"
++	PIN 5: "WF0_5G_HB3"
++	PIN 6: "WF0_5G_HB4"
++	PIN 7: "WF0_5G_HB5"
++	PIN 8: "WF0_5G_HB6"
++	PIN 9: "XO_REQ"
++	PIN 10: "TOP_RST_N"
++	PIN 11: "SYS_WATCHDOG"
++	PIN 12: "EPHY_LED0_N_JTDO"
++	PIN 13: "EPHY_LED1_N_JTDI"
++	PIN 14: "EPHY_LED2_N_JTMS"
++	PIN 15: "EPHY_LED3_N_JTCLK"
++	PIN 16: "EPHY_LED4_N_JTRST_N"
++	PIN 17: "WF2G_LED_N"
++	PIN 18: "WF5G_LED_N"
++	PIN 19: "I2C_SDA"
++	PIN 20: "I2C_SCL"
++	PIN 21: "GPIO_9"
++	PIN 22: "GPIO_10"
++	PIN 23: "GPIO_11"
++	PIN 24: "GPIO_12"
++	PIN 25: "UART1_TXD"
++	PIN 26: "UART1_RXD"
++	PIN 27: "UART1_CTS"
++	PIN 28: "UART1_RTS"
++	PIN 29: "UART2_TXD"
++	PIN 30: "UART2_RXD"
++	PIN 31: "UART2_CTS"
++	PIN 32: "UART2_RTS"
++	PIN 33: "MDI_TP_P1"
++	PIN 34: "MDI_TN_P1"
++	PIN 35: "MDI_RP_P1"
++	PIN 36: "MDI_RN_P1"
++	PIN 37: "MDI_RP_P2"
++	PIN 38: "MDI_RN_P2"
++	PIN 39: "MDI_TP_P2"
++	PIN 40: "MDI_TN_P2"
++	PIN 41: "MDI_TP_P3"
++	PIN 42: "MDI_TN_P3"
++	PIN 43: "MDI_RP_P3"
++	PIN 44: "MDI_RN_P3"
++	PIN 45: "MDI_RP_P4"
++	PIN 46: "MDI_RN_P4"
++	PIN 47: "MDI_TP_P4"
++	PIN 48: "MDI_TN_P4"
++	PIN 49: "SMI_MDC"
++	PIN 50: "SMI_MDIO"
++	PIN 51: "PCIE_PERESET_N"
++	PIN 52: "PWM_0"
++	PIN 53: "GPIO_0"
++	PIN 54: "GPIO_1"
++	PIN 55: "GPIO_2"
++	PIN 56: "GPIO_3"
++	PIN 57: "GPIO_4"
++	PIN 58: "GPIO_5"
++	PIN 59: "GPIO_6"
++	PIN 60: "GPIO_7"
++	PIN 61: "GPIO_8"
++	PIN 62: "SPI_CLK"
++	PIN 63: "SPI_CS"
++	PIN 64: "SPI_MOSI"
++	PIN 65: "SPI_MISO"
++	PIN 66: "SPI_WP"
++	PIN 67: "SPI_HOLD"
++	PIN 68: "UART0_TXD"
++	PIN 69: "UART0_RXD"
++	PIN 70: "TOP_2G_CLK"
++	PIN 71: "TOP_2G_DATA"
++	PIN 72: "WF0_2G_HB0"
++	PIN 73: "WF0_2G_HB1"
++	PIN 74: "WF0_2G_HB2"
++	PIN 75: "WF0_2G_HB3"
++	PIN 76: "WF0_2G_HB4"
++	PIN 77: "WF0_2G_HB5"
++	PIN 78: "WF0_2G_HB6"
++
++Valid values for function are:
++	"eth", "i2c", "led", "flash", "pcie", "pwm", "spi", "uart", "watchdog"
++
++	Valid value			function	pins (in pin#)
++	-------------------------------------------------------------------------
++	"wf0_2g"			"eth"		70, 71, 72, 73, 74, 75,
++							76, 77, 78
++	"wf0_5g"			"eth"		0, 1, 2, 3, 4, 5, 6, 7
++							8, 9, 10
++	"mdc_mdio"			"eth"		23, 24
++	"i2c_0"				"i2c"		19, 20
++	"i2c_1"				"i2c"		53, 54
++	"ephy_leds"			"led"		12, 13, 14, 15, 16, 17, 18
++	"ephy0_led"			"led"		12
++	"ephy1_led"			"led"		13
++	"ephy2_led"			"led"		14
++	"ephy3_led"			"led"		15
++	"ephy4_led"			"led"		16
++	"wf2g_led"			"led"		17
++	"wf5g_led"			"led"		18
++	"snfi"				"flash"		62, 63, 64, 65, 66, 67
++	"spi_nor"			"flash"		62, 63, 64, 65, 66, 67
++	"pcie_pereset"			"pcie"		51
++	"pcie_wake"			"pcie"		55
++	"pcie_clkreq"			"pcie"		56
++	"pwm_0"				"pwm"		52
++	"pwm_1"				"pwm"		61
++	"spi_0"				"spi"		21, 22, 23, 24
++	"spi_1"				"spi"		62, 63, 64, 65
++	"spi_wp"			"spi"		66
++	"spi_hold"			"spi"		67
++	"uart0_txd_rxd"			"uart"		68, 69
++	"uart1_0_txd_rxd"		"uart"		25, 26
++	"uart1_0_cts_rts"		"uart"		27, 28
++	"uart1_1_txd_rxd"		"uart"		53, 54
++	"uart1_1_cts_rts"		"uart"		55, 56
++	"uart2_0_txd_rxd"		"uart"		29, 30
++	"uart2_0_cts_rts"		"uart"		31, 32
++	"uart2_1_txd_rxd"		"uart"		57, 58
++	"uart2_1_cts_rts"		"uart"		59, 60
++	"watchdog"			"watchdog"	11
++
+ Example:
+ 
+ 	pio: pinctrl@10211000 {
+-- 
+1.9.1
