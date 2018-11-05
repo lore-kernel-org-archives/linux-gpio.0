@@ -1,16 +1,15 @@
 From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V4 05/10] dt-bindings: pinctrl: imx7ulp: back to imx
- legacy binding for consistency
-Date: Mon, 5 Nov 2018 13:04:02 +0000
-Message-ID: <AM0PR04MB4211131EC2158CF7FC111CA380CA0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1541149669-10857-1-git-send-email-aisheng.dong@nxp.com>
- <1541149669-10857-6-git-send-email-aisheng.dong@nxp.com>
- <CACRpkdb=1gKHCnd2njRdDbf_dg8H-H3Zmzy8J_H2OoRNa7omnw@mail.gmail.com>
+Subject: RE: [PATCH V3 04/10] gpio: vf610: add optional clock support
+Date: Mon, 5 Nov 2018 13:34:44 +0000
+Message-ID: <AM0PR04MB4211ED21CABA5434F2E7BF9180CA0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1540996688-23681-1-git-send-email-aisheng.dong@nxp.com>
+ <1540996688-23681-5-git-send-email-aisheng.dong@nxp.com>
+ <CACRpkda2XUXBCvb5mYgDrYtCL8dA24uQXaBrHrMLH4PFNdq_MQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdb=1gKHCnd2njRdDbf_dg8H-H3Zmzy8J_H2OoRNa7omnw@mail.gmail.com>
+In-Reply-To: <CACRpkda2XUXBCvb5mYgDrYtCL8dA24uQXaBrHrMLH4PFNdq_MQ@mail.gmail.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -21,48 +20,64 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Sascha Hauer <s.hauer@pengutronix.de>
-Cc: "open list:OPEN FIRMWARE AND
- FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Dong Aisheng <dongas86@gmail.com>, Russell King <linux@armlinux.org.uk>, Stefan Agner <stefan@agner.ch>, "open list:GPIO
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dong Aisheng <dongas86@gmail.com>, Russell King <linux@armlinux.org.uk>, Stefan Agner <stefan@agner.ch>, "open list:GPIO
  SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
 > -----Original Message-----
 > From: Linus Walleij [mailto:linus.walleij@linaro.org]
-> Sent: Friday, November 2, 2018 5:38 PM
+> Sent: Friday, November 2, 2018 5:33 PM
 [...]
+> On Wed, Oct 31, 2018 at 3:43 PM A.s. Dong <aisheng.dong@nxp.com> wrote:
 > 
-> On Fri, Nov 2, 2018 at 10:13 AM A.s. Dong <aisheng.dong@nxp.com> wrote:
+> > +       clk_port = devm_clk_get(&pdev->dev, "port");
+> > +       if (clk_port == ERR_PTR(-EPROBE_DEFER))
+> > +               return -EPROBE_DEFER;
+> > +
+> > +       clk_gpio = devm_clk_get(&pdev->dev, "gpio");
+> > +       if (clk_gpio == ERR_PTR(-EPROBE_DEFER))
+> > +               return -EPROBE_DEFER;
+> > +
+> > +       if (!IS_ERR_OR_NULL(clk_port)) {
+> > +               ret = clk_prepare_enable(clk_port);
+> > +               if (ret)
+> > +                       return ret;
+> > +       }
+> > +
+> > +       if (!IS_ERR_OR_NULL(clk_gpio)) {
+> > +               ret = clk_prepare_enable(clk_gpio);
+> > +               if (ret) {
+> > +                       clk_disable_unprepare(clk_port);
+> > +                       return ret;
+> > +               }
+> > +       }
 > 
-> > We already had an earlier conclusion that all new i.MX Socs will keep
-> > using the legacy i.MX Pinctrl bindings instead of generic pin config.
-> > However, MX7ULP generic pin config binding support has already been in
-> > tree before that time. Per SoC maintainers' suggestions, in order to
-> > get a better consistency for all i.MX devices, we'd like to go back to
-> > imx legacy binding for MX7ULP as well.
-> >
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: Stefan Agner <stefan@agner.ch>
-> > Cc: Sascha Hauer <kernel@pengutronix.de>
-> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> > Cc: linux-gpio@vger.kernel.org
-> > Cc: devicetree@vger.kernel.org
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > ---
-> > ChangeLog:
-> >  v3: new patch
+> I think IS_ERR_OR_NULL() is considered harmful among other things.
 > 
-> Can I have some ACKs from the other Freescale people on this so I see that
-> there is a wide consensus for this?
+> What about this pattern:
+> 
+>         clk = devm_clk_get(dev, "foo");
+>         if (!IS_ERR(clk)) {
+>                 ret = clk_prepare_enable(clk);
+>                 if (ret)
+>                         return ret;
+>         } else if (PTR_ERR(clk) == -EPROBE_DEFER) {
+>                 /*
+>                  * Percolate deferrals, for anything else,
+>                  * just live without the clocking.
+>                  */
+>                 return PTR_ERR(clk);
+>         }
+> 
+> You also need to introduce code to disable the clock on
+> .remove() or the clock will always be on after this module has probed. This
+> applies also to builtin drivers, unless you suppress the sysfs attributes and use
+> platform_driver_probe()
 > 
 
-You can also refer to some comments from here
-https://www.spinics.net/lists/arm-kernel/msg683812.html
-
-Sascha & Shawn,
-Would you also give a sign-offs?
+Looks good to me. Will update the patch.
+Thanks for the suggestion.
 
 Regards
 Dong Aisheng
