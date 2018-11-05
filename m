@@ -1,51 +1,27 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH V4 05/10] dt-bindings: pinctrl: imx7ulp: back to imx
- legacy binding for consistency
-Date: Mon, 5 Nov 2018 13:46:48 -0600
-Message-ID: <CAL_JsqJN-RqxLzchCUJbCm3uxY22VZMZHVdqXAJSzhLzsBgHZg@mail.gmail.com>
-References: <1541149669-10857-1-git-send-email-aisheng.dong@nxp.com>
- <1541149669-10857-6-git-send-email-aisheng.dong@nxp.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/7] dt-bindings: power: supply: bq24190_charger: add
+ bq24192 and usb-otg-vbus
+Date: Mon, 5 Nov 2018 15:59:16 -0600
+Message-ID: <20181105215916.GA9820@bogus>
+References: <20181101001149.13453-1-masneyb@onstation.org>
+ <20181101001149.13453-2-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1541149669-10857-6-git-send-email-aisheng.dong@nxp.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: devicetree@vger.kernel.org, Dong Aisheng <dongas86@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181101001149.13453-2-masneyb@onstation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, bjorn.andersson@linaro.org, linus.walleij@linaro.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-gpio@vger.kernel.org, jonathan@marek.ca, masneyb@onstation.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 4:13 AM A.s. Dong <aisheng.dong@nxp.com> wrote:
->
-> We already had an earlier conclusion that all new i.MX Socs will keep
-> using the legacy i.MX Pinctrl bindings instead of generic pin config.
-> However, MX7ULP generic pin config binding support has already been in
-> tree before that time. Per SoC maintainers' suggestions, in order to
-> get a better consistency for all i.MX devices, we'd like to go back to
-> imx legacy binding for MX7ULP as well.
->
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+On Wed, 31 Oct 2018 20:11:43 -0400, Brian Masney wrote:
+> Add support for the ti,bq24192 variant and a child node for the
+> usb-otg-vbus regulator.
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
 > ---
-> ChangeLog:
->  v3: new patch
-> ---
->  .../bindings/pinctrl/fsl,imx7ulp-pinctrl.txt       | 66 ++++++++++------------
->  1 file changed, 29 insertions(+), 37 deletions(-)
+>  .../devicetree/bindings/power/supply/bq24190.txt         | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
