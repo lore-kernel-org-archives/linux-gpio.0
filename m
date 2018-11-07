@@ -1,42 +1,56 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 1/3] i3c: master: Add driver for Synopsys DesignWare IP
-Date: Wed, 7 Nov 2018 09:37:41 -0800
-Message-ID: <20181107173741.GL3074@bombadil.infradead.org>
-References: <1540807618-13246-1-git-send-email-soares@synopsys.com>
- <1540807618-13246-2-git-send-email-soares@synopsys.com>
- <20181107170553.GJ3074@bombadil.infradead.org>
- <d2540ea9-edbd-3b36-0647-54919a9dfa2d@synopsys.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 0/4] Add initial pinctrl support for MT6797 SoC
+Date: Wed,  7 Nov 2018 23:18:40 +0530
+Message-ID: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <d2540ea9-edbd-3b36-0647-54919a9dfa2d@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: vitor <vitor.soares@synopsys.com>
-Cc: boris.brezillon@bootlin.com, wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org, joao.pinto@synopsys.com, luis
+To: sean.wang@kernel.org, linus.walleij@linaro.org, matthias.bgg@gmail.com, robh+dt@kernel.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 05:30:22PM +0000, vitor wrote:
-> Hi Matthew,
-> 
-> 
-> On 07/11/18 17:05, Matthew Wilcox wrote:
-> > On Mon, Oct 29, 2018 at 10:06:56AM +0000, Vitor soares wrote:
-> > > Add driver for Synopsys DesignWare I3C master IP
-> > The so-called "data sheet" (actually just an advertising brochure)
-> 
-> The datasheet is there to download.
+This patchset adds initial pinctrl support for Mediatek MT6797 SoC.
+The pinctrl driver is based on the vendor binding as like MT6765 and
+implements only GPIO and pinmux functionalities.
 
-Really?  I went to the link in your message, filled out the stupid
-information box that your company has now decided to start spamming
-me with, and I got a 2-page brochure telling me how wonderful it was.
-It's *called* a datasheet.  Even right there in its name: dwc_mipi_i3c_ds.pdf
-It's not a data sheet.
+The devicetree binding document consists of pinmux, pinconf and
+interrupt functionalities documented since the binding should describe
+what the hardware is capable of rather than what the driver offers.
 
-> Right now the driver does not support DMA interface which will be added
-> later as the other missed I3C features.
-> 
-> What do you suggest to avoid this misunderstanding?
+This patchset has been tested on 96Boards MediatekX20 development board.
 
-A big missing feature like that is probably worth mentioning in a comment.
-eg: TODO: DMA support.
+Thanks,
+Mani
+
+Changes in v3:
+
+* Modified bindings doc according to Sean's suggestion.
+
+Changes in v2:
+
+* Added devicetree bindings for Pin Controller
+* Dropped the applied warning fix patch
+* Added Tested-by tag from Matthias Brugger
+* Added Acked-by tag from Sean Wang
+
+Manivannan Sadhasivam (4):
+  dt-bindings: pinctrl: Add devicetree bindings for MT6797 SoC Pinctrl
+  arm64: dts: mediatek: mt6797: Add pinctrl support
+  arm64: dts: mediatek: x20: Add pinmux support for UART1
+  pinctrl: mediatek: Add initial pinctrl driver for MT6797 SoC
+
+ .../bindings/pinctrl/pinctrl-mt6797.txt       |   83 +
+ .../boot/dts/mediatek/mt6797-x20-dev.dts      |    2 +
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi      |   21 +
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6797.c     |   82 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h | 2430 +++++++++++++++++
+ include/dt-bindings/pinctrl/mt6797-pinfunc.h  | 1368 ++++++++++
+ 8 files changed, 3994 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6797.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6797.h
+ create mode 100644 include/dt-bindings/pinctrl/mt6797-pinfunc.h
+
+-- 
+2.17.1
