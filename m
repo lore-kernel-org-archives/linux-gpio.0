@@ -1,117 +1,131 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [Ksummit-discuss] [TECH TOPIC] SoC maintainer group
-Date: Wed, 07 Nov 2018 01:32:59 +0200
-Message-ID: <3189677.9XQFCzzJyO@avalon>
-References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add VIN4 and VIN5
+Date: Wed, 7 Nov 2018 09:39:35 +0100
+Message-ID: <CAMuHMdUd=bYrKu4v0OssWPA=ZAYuiUANahy8x8xNGUoUoXmLCA@mail.gmail.com>
+References: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUWP=zBfn8ff1PZ-f7WegQiYU7omGkAM-Fh1uNUxF2XNQ@mail.gmail.com>
+ <20181106090756.GP20885@w540> <CAMuHMdWbrA1hgh3kw+fvL0x3ciNKHV52uhDX0FNJzU_Grb_+qQ@mail.gmail.com>
+ <20181106093121.GA24024@w540>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
+In-Reply-To: <20181106093121.GA24024@w540>
 Sender: linux-kernel-owner@vger.kernel.org
-To: ksummit-discuss@lists.linuxfoundation.org
-Cc: Olof Johansson <olof@lixom.net>, rmk@armlinux.org.uk, Kevin Hilman <khilman@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@sifive.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org, linux-clk <linux-clk@vger.kernel.org>, Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+To: Jacopo Mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon Horman <horms@verge.net.au>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Olof,
+Hi Jacopo,
 
-On Wednesday, 7 November 2018 00:16:27 EET Olof Johansson wrote:
-> Hi KS organizers (and others),
->=20
-> This is a late topic proposal, hopefully there is still time on the agend=
-a.
->=20
-> We=E2=80=99ve recently been discussing some maintainer model changes as
-> described below, and would like a slot to discuss the idea and solicit
-> feedback/comments from the others there.
->=20
->=20
-> This started with Arnd and I finally being in one place at the same
-> time, and talking about how we want to evolve arm-soc maintainership
-> moving forward. We've been independently thinking of ways to expand
-> the group and making it more self-service for everybody, but there's a
-> bunch of tooling needed to make it run smoothly beyond the smaller
-> group we have now.
->=20
-> In the end, we ended up looking at it from a slightly different angle:
-> Right now, when contributors show up with new platform support, the
-> first hill they need to climb is figuring out how they need to carve
-> up their platform among all the various maintainers, how to make sure
-> they're all handshaking on keeping things stable, and get code
-> submitted. It's awkward, not well documented and one of the biggest
-> overheads we have on our side as well.
->=20
-> When we started talking to other maintainers, we're also realizing
-> that we are currently duplicating a lot of work. In particular, we
-> often all get cc:d on patch series, so we all need to read and filter,
-> and assume that other maintainers spot the right patches, etc.
->=20
-> We have discussed a few different options, and it seems like pooling
-> more of the contribution flow to a group of co-maintainers is a useful
-> approach. Initially, we're considering the arm-soc platforms, clock
-> drivers and pinctrl drivers, which all tend to be affected by new
-> platform contributions in this way, and often end up cross-cc:d on
-> everything. Additionally, the flow for successfully merging a new
-> platform or SoC needs to be documented and advertised. This is true
-> whether or not we change the way that maintainers coordinate amongst
-> themselves, or whether or not we change the current workflow used by
-> platform contributors today.
->=20
-> So, we're planning to change things up a bit. We're starting a new
-> group that pools current arm-soc, clk and pinctrl drivers and
-> maintainers into one funnel. We'll set up a new mail alias for the
-> maintainer group, and one shared patchwork to collect contributions.
-> We still expect developers to use existing mailing lists, and we still
-> expect for example ARM platform maintainers to keep their workflow of
-> collecting patches for their platform like they do today. Down the
-> road it might make sense to incorporate other driver subsystems as
-> well.
->=20
-> Beyond this, we're going to keep a close eye on the drm-misc tree,
-> which is exploring a move to gitlab (and working with gitlab on adding
-> the features they need to move over). If they get a broad maintainer
-> model working well in that environment it could be something we reuse
-> for ourselves too.
+(sorry, seems I prepared a reply, but forgot to press "Send")
 
-gitlab is an umbrella term that covers many features proposed by the produc=
-t.=20
-Are there particular features that you already think you would be intereste=
-d=20
-in, or features that you already know you wouldn't want to use ?
+On Tue, Nov 6, 2018 at 10:31 AM jacopo mondi <jacopo@jmondi.org> wrote:
+> On Tue, Nov 06, 2018 at 10:24:30AM +0100, Geert Uytterhoeven wrote:
+> > On Tue, Nov 6, 2018 at 10:08 AM jacopo mondi <jacopo@jmondi.org> wrote:
+> > > On Mon, Nov 05, 2018 at 06:19:22PM +0100, Geert Uytterhoeven wrote:
+> > > > On Mon, Oct 29, 2018 at 7:14 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > > > >    this two patches add supports for VIN4 and VIN5 interfaces to R-Car M3-N.
+> > > > >
+> > > > > On this SoC (and in the forthcoming support for E3 R8A77990) the VIN groups
+> > > > > could appear on different sets of pins, usually the 'a' and 'b' one.
+> > > > >
+> > > > > With the existing VIN_DATA_PIN_GROUP macro we have to specify group names as:
+> > > > >
+> > > > > VIN_DATA_PIN_GROUP(vin4_data_a, 8)
+> > > > >
+> > > > > which results in the group being named as "vin4_data_a_8" which is
+> > > > > un-consistent with the canonical group names (eg. "vin4_data8_a").
+> > > > >
+> > > > > This series adds a macro that allows to specify the group 'version' along with
+> > > > > the pin and mux numbers in patch [1/1]. I haven't been able to find a better
+> > > > > term than 'version' as 'group' was already taken. Suggestions welcome.
+> > > >
+> > > > Yeah, the datasheet also calls these groups :-(
+> > > > A possible alternative is to use "variant"?
+> > > >
+> > > > Or, what about avoiding the name issue by making the VIN_DATA_PIN_GROUP()
+> > > > macro varargs, and passing the "variant" as the (optional) third parameter?
+> > > > That way existing users work as a before, while you can also write e.g.
+> > > >
+> > > >     VIN_DATA_PIN_GROUP_VER(vin4_data, 8, _a),
+> > >
+> > > Indeed.
+> > >
+> > > Would something along the following lines fly for you?
+> > >
+> > > #define VIN_DATA_PIN_GROUP(n, s, ...)                                   \
+> > >         {                                                               \
+> > >                 .name = #n#s#__VA_ARGS__,                               \
+> > >                 .pins = n##__VA_ARGS__##_pins.data##s,                  \
+> > >                 .mux = n##__VA_ARGS__##_mux.data##s,                    \
+> > >                 .nr_pins = ARRAY_SIZE(n##__VA_ARGS__##_pins.data##s),   \
+> > >         }
+> > >
+> > > It can be used as:
+> > > VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
+> > > VIN_DATA_PIN_GROUP(vin5_data, 8),
+> > >
+> > > With your ack on this, I'll send v2.
+> >
+> > Thank you, that is exactly what I had in mind.
+> >
+> > > > > As I cannot test VIN4 nor VIN5 on Salvator-XS as the parallel pins are not
+> > > > > wired, I made sure the macro creates correct names and fields not only by
+> > > > > compile testing it, but with a small C program [1] that replicates the VIN data
+> > > > > layout defined in the PFC module and access fields (and has helped me testing
+> > > > > more easily the preprocessor stringification/concatenation process).
+> > > > >
+> > > > > Final note: Simon, you took the E3 patches in your tree, and I expect them to
+> > > > > land on v4.20-rc1. They use the old macros, are follow up patches ok?)
+> > > >
+> > > > Which patches are using these macro names, and are in v4.20-rc1?
+> > > >
+> > > > BTW, "grep vin._data_[a-z][0-9] drivers/pinctrl/sh-pfc/*o" tells me we already
+> > > > have broken groups names on r8a7792, r8a7795, and r8a7796.
+> > > > Fortunately we have no known users of them, so they can be fixed.
+> > > >
+> > >
+> > > On v4.20-rc1 the grep returns none for me :/
+> > > git grep v4.20-rc1 "vin._data_[a-z][0-9]" drivers/pinctrl/sh-pfc/
+> >
+> > I grepped the .o files, to make sure it would see the final strings, which
+> > obviously works in the build tree only ;-)
+>
+> Ah yes, stupid me.
+>
+> >
+> > For the source tree, please try:
+> >
+> >     git grep -w VIN_DATA_PIN_GROUP.*_[a-z] v4.20-rc1
+>
+> Argh, there are quite a few of them, but fortunately no users so far.
+>
+> Is it ok fixing them in v2 of this series with follow-up patches, or
+> would you like a single patch that introduces the variadic macro and
+> replaces all the occurrences in the per-SoC PFC modules in one go?
 
-> This group will also take on the responsibility of putting together
-> the documentation and expected patch flow for new platform/SoC
-> contributors. That documentation will need to evolve a bit over time
-> as we try out this new collaboration between maintainers.
->=20
-> To avoid an appearance of "ARM is taking over all architectures",
-> we'll rename this to just the plain "SoC tree/group", and drop ARM
-> from the name. As mentioned already initially we're anticipating
-> covering ARM (32/64-bit like before) and RISC-V platform areas in a
-> similar way. For other older/minor architectures that are
-> semi-orphaned, we might pick up code as needed when it affects us,
-> depending on maintainer status at the other end.
->=20
-> We're doing the groundwork now, and will get trees/lists/patchworks
-> setup for the next release cycle.
->=20
->=20
-> People involved so far are:
->=20
-> Olof Johansson (arm-soc)
-> Arnd Bergmann (arm-soc)
-> Kevin Hilman (arm-soc)
-> Mike Turquette (clk)
-> Stephen Boyd (clk)
-> Linus Walleij (pinctrl + more)
-> Mike Brown (gpio/regmap + more)
->=20
->=20
-> Thanks!
->=20
-> -Olof (on behalf of the group)
+Given the r8a7795 and r8a7796 issues were introduced in v4.17:
 
-=2D-=20
-Regards,
+    a5c2949ff7bd9e04 ("pinctrl: sh-pfc: r8a7796: Deduplicate VIN4 pin
+definitions")
+    9942a5b52990b8d5 ("pinctrl: sh-pfc: r8a7795: Deduplicate VIN4 pin
+definitions")
 
-Laurent Pinchart
+while the r8a7792 issue date back to v4.9:
+
+    7dd74bb1f058786e ("pinctrl: sh-pfc: r8a7792: Add VIN pin groups")
+
+I think separate patches are easier for backporting.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
