@@ -1,180 +1,62 @@
-From: Sean Wang <sean.wang@kernel.org>
-Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: update bindings for MT7629 SoC
-Date: Wed, 7 Nov 2018 02:07:46 -0800
-Message-ID: <CAGp9Lzp65DVT4vjwG=EerP5puXSLVz2ePJvbsoa2kK8QU4_WMw@mail.gmail.com>
-References: <6fe4c5fbed14391b6b7fb7d44e42e133e718d6f9.1541143226.git.ryder.lee@mediatek.com>
- <85278445c65854dca6d4f9993a0ca2d048b9e5d8.1541143226.git.ryder.lee@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH] pinctrl: meson-gxl: remove invalid GPIOX tsin_a pins
+Date: Wed,  7 Nov 2018 11:42:38 +0100
+Message-ID: <1541587358-17654-1-git-send-email-narmstrong@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <85278445c65854dca6d4f9993a0ca2d048b9e5d8.1541143226.git.ryder.lee@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: ryder.lee@mediatek.com
-Cc: Linus Walleij <linus.walleij@linaro.org>, robh+dt@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, weijie.gao@mediatek.com, cheng-hao.luo@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+To: linus.walleij@linaro.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 5, 2018 at 12:43 AM Ryder Lee <ryder.lee@mediatek.com> wrote:
->
-> This updates bindings for MT7629 pinctrl driver.
->
-> Cc: Sean Wang <sean.wang@kernel.org>
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  .../devicetree/bindings/pinctrl/pinctrl-mt7622.txt | 128 +++++++++++++++++++++
->  1 file changed, 128 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
-> index 3b69513..4dedce4 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
-> @@ -3,6 +3,7 @@
->  Required properties for the root node:
->   - compatible: Should be one of the following
->                "mediatek,mt7622-pinctrl" for MT7622 SoC
-> +              "mediatek,mt7629-pinctrl" for MT7629 SoC
->   - reg: offset and length of the pinctrl space
->
->   - gpio-controller: Marks the device node as a GPIO controller.
-> @@ -324,6 +325,133 @@ group.
->         "uart4_2_rts_cts"               "uart"          95, 96
->         "watchdog"                      "watchdog"      78
->
-> +
-> +== Valid values for pins, function and groups on MT7629 ==
-> +
-> +       Pin #:  Valid values for pins
-> +       -----------------------------
-> +       PIN 0: "TOP_5G_CLK"
-> +       PIN 1: "TOP_5G_DATA"
-> +       PIN 2: "WF0_5G_HB0"
-> +       PIN 3: "WF0_5G_HB1"
-> +       PIN 4: "WF0_5G_HB2"
-> +       PIN 5: "WF0_5G_HB3"
-> +       PIN 6: "WF0_5G_HB4"
-> +       PIN 7: "WF0_5G_HB5"
-> +       PIN 8: "WF0_5G_HB6"
-> +       PIN 9: "XO_REQ"
-> +       PIN 10: "TOP_RST_N"
-> +       PIN 11: "SYS_WATCHDOG"
-> +       PIN 12: "EPHY_LED0_N_JTDO"
-> +       PIN 13: "EPHY_LED1_N_JTDI"
-> +       PIN 14: "EPHY_LED2_N_JTMS"
-> +       PIN 15: "EPHY_LED3_N_JTCLK"
-> +       PIN 16: "EPHY_LED4_N_JTRST_N"
-> +       PIN 17: "WF2G_LED_N"
-> +       PIN 18: "WF5G_LED_N"
-> +       PIN 19: "I2C_SDA"
-> +       PIN 20: "I2C_SCL"
-> +       PIN 21: "GPIO_9"
-> +       PIN 22: "GPIO_10"
-> +       PIN 23: "GPIO_11"
-> +       PIN 24: "GPIO_12"
-> +       PIN 25: "UART1_TXD"
-> +       PIN 26: "UART1_RXD"
-> +       PIN 27: "UART1_CTS"
-> +       PIN 28: "UART1_RTS"
-> +       PIN 29: "UART2_TXD"
-> +       PIN 30: "UART2_RXD"
-> +       PIN 31: "UART2_CTS"
-> +       PIN 32: "UART2_RTS"
-> +       PIN 33: "MDI_TP_P1"
-> +       PIN 34: "MDI_TN_P1"
-> +       PIN 35: "MDI_RP_P1"
-> +       PIN 36: "MDI_RN_P1"
-> +       PIN 37: "MDI_RP_P2"
-> +       PIN 38: "MDI_RN_P2"
-> +       PIN 39: "MDI_TP_P2"
-> +       PIN 40: "MDI_TN_P2"
-> +       PIN 41: "MDI_TP_P3"
-> +       PIN 42: "MDI_TN_P3"
-> +       PIN 43: "MDI_RP_P3"
-> +       PIN 44: "MDI_RN_P3"
-> +       PIN 45: "MDI_RP_P4"
-> +       PIN 46: "MDI_RN_P4"
-> +       PIN 47: "MDI_TP_P4"
-> +       PIN 48: "MDI_TN_P4"
-> +       PIN 49: "SMI_MDC"
-> +       PIN 50: "SMI_MDIO"
-> +       PIN 51: "PCIE_PERESET_N"
-> +       PIN 52: "PWM_0"
-> +       PIN 53: "GPIO_0"
-> +       PIN 54: "GPIO_1"
-> +       PIN 55: "GPIO_2"
-> +       PIN 56: "GPIO_3"
-> +       PIN 57: "GPIO_4"
-> +       PIN 58: "GPIO_5"
-> +       PIN 59: "GPIO_6"
-> +       PIN 60: "GPIO_7"
-> +       PIN 61: "GPIO_8"
-> +       PIN 62: "SPI_CLK"
-> +       PIN 63: "SPI_CS"
-> +       PIN 64: "SPI_MOSI"
-> +       PIN 65: "SPI_MISO"
-> +       PIN 66: "SPI_WP"
-> +       PIN 67: "SPI_HOLD"
-> +       PIN 68: "UART0_TXD"
-> +       PIN 69: "UART0_RXD"
-> +       PIN 70: "TOP_2G_CLK"
-> +       PIN 71: "TOP_2G_DATA"
-> +       PIN 72: "WF0_2G_HB0"
-> +       PIN 73: "WF0_2G_HB1"
-> +       PIN 74: "WF0_2G_HB2"
-> +       PIN 75: "WF0_2G_HB3"
-> +       PIN 76: "WF0_2G_HB4"
-> +       PIN 77: "WF0_2G_HB5"
-> +       PIN 78: "WF0_2G_HB6"
-> +
-> +Valid values for function are:
-> +       "eth", "i2c", "led", "flash", "pcie", "pwm", "spi", "uart", "watchdog"
+The GPIOX tsin_a pins wrongly uses the SDCard pinctrl bits, this
+patch completely removes these pins entries until we find out what
+are the correct bits and registers to be used instead.
 
-Should we add "ext" as the function and its related groups explaining
-in the below?
+Fixes: 5a6ae9b80139 ("pinctrl: meson-gxl: add tsin_a pins")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-It seems a missing line happens here, that is
-Valid values for groups are:
-> +
-> +       Valid value                     function        pins (in pin#)
-> +       -------------------------------------------------------------------------
-> +       "wf0_2g"                        "eth"           70, 71, 72, 73, 74, 75,
-> +                                                       76, 77, 78
-> +       "wf0_5g"                        "eth"           0, 1, 2, 3, 4, 5, 6, 7
-> +                                                       8, 9, 10
-> +       "mdc_mdio"                      "eth"           23, 24
-> +       "i2c_0"                         "i2c"           19, 20
-> +       "i2c_1"                         "i2c"           53, 54
-> +       "ephy_leds"                     "led"           12, 13, 14, 15, 16, 17, 18
-> +       "ephy0_led"                     "led"           12
-> +       "ephy1_led"                     "led"           13
-> +       "ephy2_led"                     "led"           14
-> +       "ephy3_led"                     "led"           15
-> +       "ephy4_led"                     "led"           16
-> +       "wf2g_led"                      "led"           17
-> +       "wf5g_led"                      "led"           18
-> +       "snfi"                          "flash"         62, 63, 64, 65, 66, 67
-> +       "spi_nor"                       "flash"         62, 63, 64, 65, 66, 67
-> +       "pcie_pereset"                  "pcie"          51
-> +       "pcie_wake"                     "pcie"          55
-> +       "pcie_clkreq"                   "pcie"          56
-> +       "pwm_0"                         "pwm"           52
-> +       "pwm_1"                         "pwm"           61
-> +       "spi_0"                         "spi"           21, 22, 23, 24
-> +       "spi_1"                         "spi"           62, 63, 64, 65
-> +       "spi_wp"                        "spi"           66
-> +       "spi_hold"                      "spi"           67
-> +       "uart0_txd_rxd"                 "uart"          68, 69
-> +       "uart1_0_txd_rxd"               "uart"          25, 26
-> +       "uart1_0_cts_rts"               "uart"          27, 28
-> +       "uart1_1_txd_rxd"               "uart"          53, 54
-> +       "uart1_1_cts_rts"               "uart"          55, 56
-> +       "uart2_0_txd_rxd"               "uart"          29, 30
-> +       "uart2_0_cts_rts"               "uart"          31, 32
-> +       "uart2_1_txd_rxd"               "uart"          57, 58
-> +       "uart2_1_cts_rts"               "uart"          59, 60
-> +       "watchdog"                      "watchdog"      11
-> +
->  Example:
->
->         pio: pinctrl@10211000 {
-> --
-> 1.9.1
->
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+index 7dae1d7..3277d17 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+@@ -239,13 +239,9 @@ static const unsigned int eth_link_led_pins[]	= { GPIOZ_14 };
+ static const unsigned int eth_act_led_pins[]	= { GPIOZ_15 };
+ 
+ static const unsigned int tsin_a_d0_pins[]	= { GPIODV_0 };
+-static const unsigned int tsin_a_d0_x_pins[]	= { GPIOX_10 };
+ static const unsigned int tsin_a_clk_pins[]	= { GPIODV_8 };
+-static const unsigned int tsin_a_clk_x_pins[]	= { GPIOX_11 };
+ static const unsigned int tsin_a_sop_pins[]	= { GPIODV_9 };
+-static const unsigned int tsin_a_sop_x_pins[]	= { GPIOX_8 };
+ static const unsigned int tsin_a_d_valid_pins[] = { GPIODV_10 };
+-static const unsigned int tsin_a_d_valid_x_pins[] = { GPIOX_9 };
+ static const unsigned int tsin_a_fail_pins[]	= { GPIODV_11 };
+ static const unsigned int tsin_a_dp_pins[] = {
+ 	GPIODV_1, GPIODV_2, GPIODV_3, GPIODV_4, GPIODV_5, GPIODV_6, GPIODV_7,
+@@ -432,10 +428,6 @@ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
+ 	GROUP(spi_miso,		5,	2),
+ 	GROUP(spi_ss0,		5,	1),
+ 	GROUP(spi_sclk,		5,	0),
+-	GROUP(tsin_a_sop_x,	6,	3),
+-	GROUP(tsin_a_d_valid_x,	6,	2),
+-	GROUP(tsin_a_d0_x,	6,	1),
+-	GROUP(tsin_a_clk_x,	6,	0),
+ 
+ 	/* Bank Z */
+ 	GROUP(eth_mdio,		4,	23),
+@@ -698,8 +690,8 @@ static const char * const eth_led_groups[] = {
+ };
+ 
+ static const char * const tsin_a_groups[] = {
+-	"tsin_a_clk", "tsin_a_clk_x", "tsin_a_sop", "tsin_a_sop_x",
+-	"tsin_a_d_valid", "tsin_a_d_valid_x", "tsin_a_d0", "tsin_a_d0_x",
++	"tsin_a_clk", "tsin_a_sop",
++	"tsin_a_d_valid", "tsin_a_d0",
+ 	"tsin_a_dp", "tsin_a_fail",
+ };
+ 
+-- 
+2.7.4
