@@ -1,184 +1,49 @@
-From: jacopo mondi <jacopo@jmondi.org>
-Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a77965: Add VIN4 and VIN5
-Date: Wed, 7 Nov 2018 10:35:11 +0100
-Message-ID: <20181107093511.GX15991@w540>
-References: <1540836824-4636-1-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdUWP=zBfn8ff1PZ-f7WegQiYU7omGkAM-Fh1uNUxF2XNQ@mail.gmail.com>
- <20181106090756.GP20885@w540>
- <CAMuHMdWbrA1hgh3kw+fvL0x3ciNKHV52uhDX0FNJzU_Grb_+qQ@mail.gmail.com>
- <20181106093121.GA24024@w540>
- <CAMuHMdUd=bYrKu4v0OssWPA=ZAYuiUANahy8x8xNGUoUoXmLCA@mail.gmail.com>
+From: Sean Wang <sean.wang@kernel.org>
+Subject: Re: [PATCH] pinctrl: mediatek: Fix dependencies for EINT_MTK
+Date: Wed, 7 Nov 2018 02:00:43 -0800
+Message-ID: <CAGp9Lzq3rgNs=uuXDVTurwgGrCjDQg=rje0rpetbzeMX7U-XLg@mail.gmail.com>
+References: <20181102025728.963-1-olof@lixom.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7QsOHKuLbhbLTwLB"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUd=bYrKu4v0OssWPA=ZAYuiUANahy8x8xNGUoUoXmLCA@mail.gmail.com>
+In-Reply-To: <20181102025728.963-1-olof@lixom.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon Horman <horms@verge.net.au>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: olof@lixom.net
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
+Thanks for the catch.
 
---7QsOHKuLbhbLTwLB
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Acked-by: Sean Wang <sean.wang@kernel.org>
 
-Hi Geert,
-
-On Wed, Nov 07, 2018 at 09:39:35AM +0100, Geert Uytterhoeven wrote:
-> Hi Jacopo,
+On Thu, Nov 1, 2018 at 7:57 PM Olof Johansson <olof@lixom.net> wrote:
 >
-> (sorry, seems I prepared a reply, but forgot to press "Send")
+> Fixes the following config-time warning:
 >
-> On Tue, Nov 6, 2018 at 10:31 AM jacopo mondi <jacopo@jmondi.org> wrote:
-> > On Tue, Nov 06, 2018 at 10:24:30AM +0100, Geert Uytterhoeven wrote:
-> > > On Tue, Nov 6, 2018 at 10:08 AM jacopo mondi <jacopo@jmondi.org> wrote:
-> > > > On Mon, Nov 05, 2018 at 06:19:22PM +0100, Geert Uytterhoeven wrote:
-> > > > > On Mon, Oct 29, 2018 at 7:14 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> > > > > >    this two patches add supports for VIN4 and VIN5 interfaces to R-Car M3-N.
-> > > > > >
-> > > > > > On this SoC (and in the forthcoming support for E3 R8A77990) the VIN groups
-> > > > > > could appear on different sets of pins, usually the 'a' and 'b' one.
-> > > > > >
-> > > > > > With the existing VIN_DATA_PIN_GROUP macro we have to specify group names as:
-> > > > > >
-> > > > > > VIN_DATA_PIN_GROUP(vin4_data_a, 8)
-> > > > > >
-> > > > > > which results in the group being named as "vin4_data_a_8" which is
-> > > > > > un-consistent with the canonical group names (eg. "vin4_data8_a").
-> > > > > >
-> > > > > > This series adds a macro that allows to specify the group 'version' along with
-> > > > > > the pin and mux numbers in patch [1/1]. I haven't been able to find a better
-> > > > > > term than 'version' as 'group' was already taken. Suggestions welcome.
-> > > > >
-> > > > > Yeah, the datasheet also calls these groups :-(
-> > > > > A possible alternative is to use "variant"?
-> > > > >
-> > > > > Or, what about avoiding the name issue by making the VIN_DATA_PIN_GROUP()
-> > > > > macro varargs, and passing the "variant" as the (optional) third parameter?
-> > > > > That way existing users work as a before, while you can also write e.g.
-> > > > >
-> > > > >     VIN_DATA_PIN_GROUP_VER(vin4_data, 8, _a),
-> > > >
-> > > > Indeed.
-> > > >
-> > > > Would something along the following lines fly for you?
-> > > >
-> > > > #define VIN_DATA_PIN_GROUP(n, s, ...)                                   \
-> > > >         {                                                               \
-> > > >                 .name = #n#s#__VA_ARGS__,                               \
-> > > >                 .pins = n##__VA_ARGS__##_pins.data##s,                  \
-> > > >                 .mux = n##__VA_ARGS__##_mux.data##s,                    \
-> > > >                 .nr_pins = ARRAY_SIZE(n##__VA_ARGS__##_pins.data##s),   \
-> > > >         }
-> > > >
-> > > > It can be used as:
-> > > > VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
-> > > > VIN_DATA_PIN_GROUP(vin5_data, 8),
-> > > >
-> > > > With your ack on this, I'll send v2.
-> > >
-> > > Thank you, that is exactly what I had in mind.
-> > >
-> > > > > > As I cannot test VIN4 nor VIN5 on Salvator-XS as the parallel pins are not
-> > > > > > wired, I made sure the macro creates correct names and fields not only by
-> > > > > > compile testing it, but with a small C program [1] that replicates the VIN data
-> > > > > > layout defined in the PFC module and access fields (and has helped me testing
-> > > > > > more easily the preprocessor stringification/concatenation process).
-> > > > > >
-> > > > > > Final note: Simon, you took the E3 patches in your tree, and I expect them to
-> > > > > > land on v4.20-rc1. They use the old macros, are follow up patches ok?)
-> > > > >
-> > > > > Which patches are using these macro names, and are in v4.20-rc1?
-> > > > >
-> > > > > BTW, "grep vin._data_[a-z][0-9] drivers/pinctrl/sh-pfc/*o" tells me we already
-> > > > > have broken groups names on r8a7792, r8a7795, and r8a7796.
-> > > > > Fortunately we have no known users of them, so they can be fixed.
-> > > > >
-> > > >
-> > > > On v4.20-rc1 the grep returns none for me :/
-> > > > git grep v4.20-rc1 "vin._data_[a-z][0-9]" drivers/pinctrl/sh-pfc/
-> > >
-> > > I grepped the .o files, to make sure it would see the final strings, which
-> > > obviously works in the build tree only ;-)
-> >
-> > Ah yes, stupid me.
-> >
-> > >
-> > > For the source tree, please try:
-> > >
-> > >     git grep -w VIN_DATA_PIN_GROUP.*_[a-z] v4.20-rc1
-> >
-> > Argh, there are quite a few of them, but fortunately no users so far.
-> >
-> > Is it ok fixing them in v2 of this series with follow-up patches, or
-> > would you like a single patch that introduces the variadic macro and
-> > replaces all the occurrences in the per-SoC PFC modules in one go?
+> WARNING: unmet direct dependencies detected for EINT_MTK
+>   Depends on [n]: PINCTRL [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n]) && (PINCTRL_MTK [=n] || PINCTRL_MTK_MOORE [=n] || COMPILE_TEST [=n])
+>   Selected by [y]:
+>   - PINCTRL_MTK_PARIS [=y] && PINCTRL [=y] && OF [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n])
 >
-> Given the r8a7795 and r8a7796 issues were introduced in v4.17:
+> Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
+> Signed-off-by: Olof Johansson <olof@lixom.net>
+> ---
+>  drivers/pinctrl/mediatek/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
->     a5c2949ff7bd9e04 ("pinctrl: sh-pfc: r8a7796: Deduplicate VIN4 pin
-> definitions")
->     9942a5b52990b8d5 ("pinctrl: sh-pfc: r8a7795: Deduplicate VIN4 pin
-> definitions")
+> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+> index 9d142e1da567..50efc9cc8ee7 100644
+> --- a/drivers/pinctrl/mediatek/Kconfig
+> +++ b/drivers/pinctrl/mediatek/Kconfig
+> @@ -3,7 +3,7 @@ menu "MediaTek pinctrl drivers"
 >
-> while the r8a7792 issue date back to v4.9:
->
->     7dd74bb1f058786e ("pinctrl: sh-pfc: r8a7792: Add VIN pin groups")
->
-> I think separate patches are easier for backporting.
-
-Fine, I've sent yesterday:
-"[PATCH v4 0/4] sh-pfc: Variadic VIN_DATA_PIN_GROUP macro + updates"
-which includes: "pinctrl: sh-pfc: Fix VIN versioned groups name" that
-changes all users of VIN_DATA_PIN_GROUP in one go.
-
-I'll split that and re-send.
-
-Before resending, if there are comments on:
-"pinctrl: sh-pfc: r8a77965: Add VIN[4|5] groups/functions" and
-"pinctrl: sh-pfc: r8a77990: Add VIN[4|5] groups/functions"
-
-which are included in that very same series, I'll like to address
-them before sending v5 out.
-
-Thanks
-   j
-
->
-> Thanks!
->
-> Gr{oetje,eeting}s,
->
->                         Geert
+>  config EINT_MTK
+>         bool "MediaTek External Interrupt Support"
+> -       depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || COMPILE_TEST
+> +       depends on PINCTRL_MTK || PINCTRL_MTK_MOORE || PINCTRL_MTK_PARIS || COMPILE_TEST
+>         select GPIOLIB
+>         select IRQ_DOMAIN
 >
 > --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 2.11.0
 >
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
---7QsOHKuLbhbLTwLB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJb4rHPAAoJEHI0Bo8WoVY8wbYQAItgqo/XX6/F+CJTGDE4niMI
-NIFh74/yDTk/d/awdckf9aRo6zkUUPMZuzAAgei68Pu89Q06uS3qiNe1tIwj6Q8f
-vAUQjRTLrj7Hc0Q2JHk/HSwPbnkQNxVV1Lr9FMN6AM5RRso9o39tz1Lc3zucUjek
-KSPuPa6VwbmcYxDrxV/1/xAD7jRkWex8jQi3OnlqOgt/j06eQpqWWt5c7ImK+SUC
-w4OAtm/anvjYkOGkantRgsL+AqFKZt8HMrJ5nVzGiapo8CmP5vlehmdprE0elWvI
-Ezt7c+QcabbpZUdnMicJq+pi+RKGKh38d53hed2Jqbg65xvFa/S3E3C2oVP5CWkF
-3FZvDEHQvHwS/Arxt98QP3a8bAYTEUEJAvYPjIHX2lMVaRifYljFqE3cBnMl4Ny9
-2cNZj5YRrezJEMP9ld7SBWENUw3BSN+MI9M1MpRApwuE0FxOSRwEmcA0JmflNTEP
-VKucouh4pcNsYzoHG4/D3mltJRbM0y4B2bWv++31PiQfHIFZD9CN2YHudWiUUDTg
-58tyXcUQN96uP0wCIbA5fedjT4fbC83GkP9Du/UI/a+XHjXBbT//qx8J1XbrS7zd
-o3tdVp70xAqqLXwvg7SFSuGPLKNYF2ViBf9wabiTAxsxhdNtNEw0gFHviSQ+5T78
-UbnT5FX0d115RMMgS5SU
-=E+36
------END PGP SIGNATURE-----
-
---7QsOHKuLbhbLTwLB--
