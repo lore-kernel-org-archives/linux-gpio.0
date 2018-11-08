@@ -1,144 +1,49 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 2/3] gpio: mockup: add locking
-Date: Thu,  8 Nov 2018 17:52:54 +0100
-Message-ID: <20181108165255.9940-3-brgl@bgdev.pl>
-References: <20181108165255.9940-1-brgl@bgdev.pl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Vitor soares <vitor.soares@synopsys.com>
+Subject: [PATCH v3 0/3] Add driver for Synopsys DesignWare I3C master IP
+Date: Thu,  8 Nov 2018 17:14:08 +0000
+Message-ID: <1541697251-20392-1-git-send-email-soares@synopsys.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181108165255.9940-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+To: boris.brezillon@bootlin.com, wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de
+Cc: psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, vitor.soares@synopsys.com, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org, joao.pinto@synopsys.com
 List-Id: linux-gpio@vger.kernel.org
 
-While no user reported any race condition problems with gpio-mockup,
-let's be on the safe side and use a mutex when performing any changes
-on the dummy chip structures.
+This patch series is a proposal for the I3C master driver for Synopsys IP.
+This patch is to be applied on top of I3C subsystem RFC V10 submitted by
+Boris Brezillon.
 
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- drivers/gpio/gpio-mockup.c | 50 ++++++++++++++++++++++++++++++++------
- 1 file changed, 43 insertions(+), 7 deletions(-)
+Supported features:
+  Regular CCC commands.
+  I3C private transfers.
+  I2C transfers.
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 6a50f9f59c90..3cd92912c414 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -54,6 +54,7 @@ struct gpio_mockup_chip {
- 	struct gpio_mockup_line_status *lines;
- 	struct irq_sim irqsim;
- 	struct dentry *dbg_dir;
-+	struct mutex lock;
- };
- 
- struct gpio_mockup_dbgfs_private {
-@@ -82,29 +83,53 @@ static int gpio_mockup_range_ngpio(unsigned int index)
- 	return gpio_mockup_ranges[index * 2 + 1];
- }
- 
--static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-+static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
- 	return chip->lines[offset].value;
- }
- 
--static void gpio_mockup_set(struct gpio_chip *gc,
--			    unsigned int offset, int value)
-+static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+	int val;
-+
-+	mutex_lock(&chip->lock);
-+	val = __gpio_mockup_get(gc, offset);
-+	mutex_unlock(&chip->lock);
-+
-+	return val;
-+}
-+
-+static void __gpio_mockup_set(struct gpio_chip *gc,
-+			      unsigned int offset, int value)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
- 	chip->lines[offset].value = !!value;
- }
- 
-+static void gpio_mockup_set(struct gpio_chip *gc,
-+			   unsigned int offset, int value)
-+{
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+
-+	mutex_lock(&chip->lock);
-+	__gpio_mockup_set(gc, offset, value);
-+	mutex_unlock(&chip->lock);
-+}
-+
- static void gpio_mockup_set_multiple(struct gpio_chip *gc,
- 				     unsigned long *mask, unsigned long *bits)
- {
-+	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 	unsigned int bit;
- 
-+	mutex_lock(&chip->lock);
- 	for_each_set_bit(bit, mask, gc->ngpio)
--		gpio_mockup_set(gc, bit, test_bit(bit, bits));
--
-+		__gpio_mockup_set(gc, bit, test_bit(bit, bits));
-+	mutex_unlock(&chip->lock);
- }
- 
- static int gpio_mockup_dirout(struct gpio_chip *gc,
-@@ -112,8 +137,10 @@ static int gpio_mockup_dirout(struct gpio_chip *gc,
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
--	gpio_mockup_set(gc, offset, value);
-+	mutex_lock(&chip->lock);
-+	__gpio_mockup_set(gc, offset, value);
- 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_OUT;
-+	mutex_unlock(&chip->lock);
- 
- 	return 0;
- }
-@@ -122,7 +149,9 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
-+	mutex_lock(&chip->lock);
- 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_IN;
-+	mutex_unlock(&chip->lock);
- 
- 	return 0;
- }
-@@ -130,8 +159,13 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
- static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-+	int direction;
- 
--	return !chip->lines[offset].dir;
-+	mutex_lock(&chip->lock);
-+	direction = !chip->lines[offset].dir;
-+	mutex_unlock(&chip->lock);
-+
-+	return direction;
- }
- 
- static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
-@@ -283,6 +317,8 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 			return -ENOMEM;
- 	}
- 
-+	mutex_init(&chip->lock);
-+
- 	gc = &chip->gc;
- 	gc->base = base;
- 	gc->ngpio = ngpio;
+Missing functionalities:
+  Support DMA interface.
+  Support for I3C_BUS_MODE_MIXED_SLOW.
+  Hot-join.
+  IBI.
+
+Main change between v2 and v3:
+- Minor fixes. They are described in each patch
+
+Main change between v1 and v2:
+- Add controller version on dt-binding
+- The driver now calls writesl/readsl() instead readl/writel
+- Rename some variables in the driver
+
+Vitor soares (3):
+  i3c: master: Add driver for Synopsys DesignWare IP
+  dt-bindings: i3c: Document Synopsys DesignWare I3C master bindings
+  MAINTAINERS: Add myself as the dw-i3c-master module maintainer
+
+ .../devicetree/bindings/i3c/snps,dw-i3c-master.txt |   42 +
+ MAINTAINERS                                        |    6 +
+ drivers/i3c/master/Kconfig                         |   15 +
+ drivers/i3c/master/Makefile                        |    1 +
+ drivers/i3c/master/dw-i3c-master.c                 | 1216 ++++++++++++++++++++
+ 5 files changed, 1280 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+ create mode 100644 drivers/i3c/master/dw-i3c-master.c
+
 -- 
-2.19.1
+2.7.4
