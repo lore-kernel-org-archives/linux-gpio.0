@@ -1,63 +1,85 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: Add devicetree bindings for
- MT6797 SoC Pinctrl
-Date: Thu, 8 Nov 2018 09:35:54 +0530
-Message-ID: <20181108040551.GB3046@Mani-XPS-13-9360>
-References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org>
- <20181107174844.5381-2-manivannan.sadhasivam@linaro.org>
- <1541643072.23791.3.camel@mtksdaap41>
+From: Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH] pinctrl: zynq: Use define directive for
+ PIN_CONFIG_IO_STANDARD
+Date: Thu, 8 Nov 2018 07:45:42 +0100
+Message-ID: <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
+References: <20181101005724.9622-1-natechancellor@gmail.com>
+ <68ae935a-aec3-915c-bfe6-d69bfb93d702@xilinx.com>
+ <20181107085503.GA31517@flashbox>
+ <9d52cd84-440f-9a40-d0ec-1397abb24c98@xilinx.com>
+ <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1541643072.23791.3.camel@mtksdaap41>
+In-Reply-To: <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: sean.wang@kernel.org, linus.walleij@linaro.org, matthias.bgg@gmail.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Nick Desaulniers <ndesaulniers@google.com>, michal.simek@xilinx.com
+Cc: Nathan Chancellor <natechancellor@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 10:11:12AM +0800, Yingjoe Chen wrote:
-> On Wed, 2018-11-07 at 23:18 +0530, Manivannan Sadhasivam wrote:
-> > Add devicetree bindings for Mediatek MT6797 SoC Pin Controller.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  .../bindings/pinctrl/pinctrl-mt6797.txt       |   83 +
-> >  include/dt-bindings/pinctrl/mt6797-pinfunc.h  | 1368 +++++++++++++++++
-> >  2 files changed, 1451 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt
-> >  create mode 100644 include/dt-bindings/pinctrl/mt6797-pinfunc.h
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt
-> > new file mode 100644
-> > index 000000000000..bd83401e6179
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt
+On 07. 11. 18 18:48, Nick Desaulniers wrote:
+> On Wed, Nov 7, 2018 at 1:01 AM Michal Simek <michal.simek@xilinx.com> wrote:
+>>
+>> On 07. 11. 18 9:55, Nathan Chancellor wrote:
+>>> On Wed, Nov 07, 2018 at 09:46:12AM +0100, Michal Simek wrote:
+>>>> On 01. 11. 18 1:57, Nathan Chancellor wrote:
+>>>>> Clang warns when one enumerated type is implicitly converted to another:
+>>>>>
+>>>>> drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
+>>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
+>>>>> type 'enum pin_config_param' [-Wenum-conversion]
+>>>>>         {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
+>>>>>         ~               ^~~~~~~~~~~~~~~~~~~~~
+>>>>> drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
+>>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
+>>>>> type 'enum pin_config_param' [-Wenum-conversion]
+>>>>>         = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
+>>>>>             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
+>>>>> macro 'PCONFDUMP'
+>>>>>         .param = a, .display = b, .format = c, .has_arg = d     \
+>>>>>                  ^
+>>>>> 2 warnings generated.
+>>>>
+>>>> This is interesting. I have never tried to use llvm for building the
+>>>> kernel. Do you have any description how this can be done?
+>>>>
+>>>
+>>> Depending on what version of Clang you have access to, it is usually just as
+>>> simple as running 'make ARCH=arm CC=clang CROSS_COMPILE=arm-linux-gnueabi-'.
+>>>
+>>> Clang 7.0+ is recommended but 6.0 might work too.
+>>
+>> TBH I would expect to download container and run this there to make sure
+>> that I don't break anything else.
 > 
-> Sorry if this is discussed.
-> 
-> What's the difference between this and
-> Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt?
-> Should this be added to pinctrl-mt65xx.txt?
->
+> This is the first request we've had for a container in order to test a
+> patch.  If it comes up again from other folks, I think it makes sense
+> to create one.  Until then, its nice to have.  It's definitely
+> overkill for this patch.
 
-Currently there are 3 different pinctrl core's available for MediaTek
-SoCs:
+I have played with it to see that error and here are some steps I did.
 
-1. Legacy core - pinctrl-mtk-common.c
-2. Moore core - pinctrl-moore.c pinctrl-mtk-common-v2.c
-3. Paris core - pinctrl-paris.c pinctrl-mtk-common-v2.c
+docker run --name test-clang -it --rm debian:latest bash
+apt-get update
+apt-get install gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu clang git bc
+build-essential bison flex make llvm vim libssl-dev sparse
 
-AFAIU pinctrl-mt65xx binding documents the SoC's based on MediaTek's legacy
-pinctrl-mtk-common.c core. Whereas MT6797 is based on the MediaTek's Paris
-core. There isn't any binding doc available for the Paris core SoC's yet.
-That's why I have created a new bindings doc and expecting the remaining SoC's
-of Paris family to be included in new pinctrl-mt6797.txt.
+git clone
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git --depth 1
+cd linux
 
-Hope this makes clear!
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
+
+make defconfig
+make CC=clang drivers/pinctrl/pinctrl-zynq.o C=1 V=1
+
+There was not a problem to run it for arm64 but I had issues to run this
+for arm32.
+Do you see any problem with above steps?
 
 Thanks,
-Mani
-
-> Joe.C
-> 
-> 
+Michal
