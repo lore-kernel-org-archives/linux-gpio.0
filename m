@@ -1,42 +1,36 @@
-From: Vitor soares <vitor.soares@synopsys.com>
-Subject: [PATCH v3 3/3] MAINTAINERS: Add myself as the dw-i3c-master module maintainer
-Date: Thu,  8 Nov 2018 17:14:11 +0000
-Message-ID: <1541697251-20392-4-git-send-email-soares@synopsys.com>
-References: <1541697251-20392-1-git-send-email-soares@synopsys.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
+Date: Thu, 8 Nov 2018 21:35:46 +0100
+Message-ID: <20181108203546.54rncnydgamud5z3@pengutronix.de>
+References: <20181108165255.9940-1-brgl@bgdev.pl>
+ <20181108165255.9940-2-brgl@bgdev.pl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1541697251-20392-1-git-send-email-soares@synopsys.com>
+Content-Disposition: inline
+In-Reply-To: <20181108165255.9940-2-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: boris.brezillon@bootlin.com, wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de
-Cc: psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, vitor.soares@synopsys.com, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org, joao.pinto@synopsys.com
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Vitor soares <soares@synopsys.com>
----
-Change in v3:
-- Remove dummy characters
+Hello Bartosz,
 
-Change in v2:
-- None
+On Thu, Nov 08, 2018 at 05:52:53PM +0100, Bartosz Golaszewski wrote:
+> Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
+> beginning") fixed an existing issue but broke libgpiod tests by
+> changing the default direction of dummy lines to output.
 
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+The indicated commit only changed what was shown in debugfs, but didn't
+touch the actual direction of a GPIO, doesn't it? If someone called
+gpiod_get_direction before it would have returned "output", too, unless
+I miss something.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 293c863..39910b3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6930,6 +6930,12 @@ F:	drivers/i3c/
- F:	include/linux/i3c/
- F:	include/dt-bindings/i3c/
- 
-+I3C DRIVER FOR SYNOPSYS DESIGNWARE
-+M:	Vitor Soares <soares@synopsys.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
-+F:	drivers/i3c/master/dw*
-+
- IA64 (Itanium) PLATFORM
- M:	Tony Luck <tony.luck@intel.com>
- M:	Fenghua Yu <fenghua.yu@intel.com>
+Best regards
+Uwe
+
 -- 
-2.7.4
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
