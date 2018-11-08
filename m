@@ -1,85 +1,61 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH] pinctrl: zynq: Use define directive for
- PIN_CONFIG_IO_STANDARD
-Date: Thu, 8 Nov 2018 07:45:42 +0100
-Message-ID: <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
-References: <20181101005724.9622-1-natechancellor@gmail.com>
- <68ae935a-aec3-915c-bfe6-d69bfb93d702@xilinx.com>
- <20181107085503.GA31517@flashbox>
- <9d52cd84-440f-9a40-d0ec-1397abb24c98@xilinx.com>
- <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: [PATCH 2/6] regulator: lochnagar: Move driver to binding from DT
+Date: Thu, 8 Nov 2018 10:14:01 +0000
+Message-ID: <20181108101405.14062-3-ckeepax@opensource.cirrus.com>
+References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nick Desaulniers <ndesaulniers@google.com>, michal.simek@xilinx.com
-Cc: Nathan Chancellor <natechancellor@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
+To: lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 07. 11. 18 18:48, Nick Desaulniers wrote:
-> On Wed, Nov 7, 2018 at 1:01 AM Michal Simek <michal.simek@xilinx.com> wrote:
->>
->> On 07. 11. 18 9:55, Nathan Chancellor wrote:
->>> On Wed, Nov 07, 2018 at 09:46:12AM +0100, Michal Simek wrote:
->>>> On 01. 11. 18 1:57, Nathan Chancellor wrote:
->>>>> Clang warns when one enumerated type is implicitly converted to another:
->>>>>
->>>>> drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
->>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
->>>>> type 'enum pin_config_param' [-Wenum-conversion]
->>>>>         {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
->>>>>         ~               ^~~~~~~~~~~~~~~~~~~~~
->>>>> drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
->>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
->>>>> type 'enum pin_config_param' [-Wenum-conversion]
->>>>>         = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
->>>>>             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>>> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
->>>>> macro 'PCONFDUMP'
->>>>>         .param = a, .display = b, .format = c, .has_arg = d     \
->>>>>                  ^
->>>>> 2 warnings generated.
->>>>
->>>> This is interesting. I have never tried to use llvm for building the
->>>> kernel. Do you have any description how this can be done?
->>>>
->>>
->>> Depending on what version of Clang you have access to, it is usually just as
->>> simple as running 'make ARCH=arm CC=clang CROSS_COMPILE=arm-linux-gnueabi-'.
->>>
->>> Clang 7.0+ is recommended but 6.0 might work too.
->>
->> TBH I would expect to download container and run this there to make sure
->> that I don't break anything else.
-> 
-> This is the first request we've had for a container in order to test a
-> patch.  If it comes up again from other folks, I think it makes sense
-> to create one.  Until then, its nice to have.  It's definitely
-> overkill for this patch.
+Based on review comments on the MFD driver, move the child drivers for
+the Lochnagar MFD over to binding through device tree.
 
-I have played with it to see that error and here are some steps I did.
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
 
-docker run --name test-clang -it --rm debian:latest bash
-apt-get update
-apt-get install gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu clang git bc
-build-essential bison flex make llvm vim libssl-dev sparse
-
-git clone
-git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git --depth 1
-cd linux
-
-export ARCH=arm64
-export CROSS_COMPILE=aarch64-linux-gnu-
-
-make defconfig
-make CC=clang drivers/pinctrl/pinctrl-zynq.o C=1 V=1
-
-There was not a problem to run it for arm64 but I had issues to run this
-for arm32.
-Do you see any problem with above steps?
+Mark, I would maybe hold on merging this one until discussions
+on this version of the patch chain are done, just incase we
+decide to go back to the single DT entry.
 
 Thanks,
-Michal
+Charles
+
+ drivers/regulator/lochnagar-regulator.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
+index 182198246479f..d08fe830b39c1 100644
+--- a/drivers/regulator/lochnagar-regulator.c
++++ b/drivers/regulator/lochnagar-regulator.c
+@@ -222,7 +222,7 @@ static int lochnagar_regulator_probe(struct platform_device *pdev)
+ 	struct regulator_dev *rdev;
+ 	int ret, i;
+ 
+-	config.dev = lochnagar->dev;
++	config.dev = dev;
+ 	config.regmap = lochnagar->regmap;
+ 	config.driver_data = lochnagar;
+ 
+@@ -241,9 +241,15 @@ static int lochnagar_regulator_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct of_device_id lochnagar_of_match[] = {
++	{ .compatible = "cirrus,lochnagar-regulator" },
++	{},
++};
++
+ static struct platform_driver lochnagar_regulator_driver = {
+ 	.driver = {
+ 		.name = "lochnagar-regulator",
++		.of_match_table = of_match_ptr(lochnagar_of_match),
+ 	},
+ 
+ 	.probe = lochnagar_regulator_probe,
+-- 
+2.11.0
