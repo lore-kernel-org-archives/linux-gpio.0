@@ -1,62 +1,96 @@
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [PATCH] MAINTAINERS: merge at91 pinctrl entries
-Date: Thu, 8 Nov 2018 14:14:42 +0100
-Message-ID: <20181108131442.27911-1-ludovic.desroches@microchip.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
+Subject: Re: [PATCH] pinctrl: zynq: Use define directive for
+ PIN_CONFIG_IO_STANDARD
+Date: Thu, 8 Nov 2018 08:01:16 -0700
+Message-ID: <20181108150116.GA2830@flashbox>
+References: <20181101005724.9622-1-natechancellor@gmail.com>
+ <68ae935a-aec3-915c-bfe6-d69bfb93d702@xilinx.com>
+ <20181107085503.GA31517@flashbox>
+ <9d52cd84-440f-9a40-d0ec-1397abb24c98@xilinx.com>
+ <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
+ <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Cc: alexandre.belloni@bootlin.com, Ludovic Desroches <ludovic.desroches@microchip.com>, plagnioj@jcrosoft.com, linus.walleij@linaro.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-In order to be aware of all changes related to at91 pinctrl drivers,
-merge the two entries. Make use of the opportunity to replace Atmel by
-Microchip.
+On Thu, Nov 08, 2018 at 07:45:42AM +0100, Michal Simek wrote:
+> On 07. 11. 18 18:48, Nick Desaulniers wrote:
+> > On Wed, Nov 7, 2018 at 1:01 AM Michal Simek <michal.simek@xilinx.com> wrote:
+> >>
+> >> On 07. 11. 18 9:55, Nathan Chancellor wrote:
+> >>> On Wed, Nov 07, 2018 at 09:46:12AM +0100, Michal Simek wrote:
+> >>>> On 01. 11. 18 1:57, Nathan Chancellor wrote:
+> >>>>> Clang warns when one enumerated type is implicitly converted to another:
+> >>>>>
+> >>>>> drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
+> >>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
+> >>>>> type 'enum pin_config_param' [-Wenum-conversion]
+> >>>>>         {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
+> >>>>>         ~               ^~~~~~~~~~~~~~~~~~~~~
+> >>>>> drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
+> >>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
+> >>>>> type 'enum pin_config_param' [-Wenum-conversion]
+> >>>>>         = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
+> >>>>>             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >>>>> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
+> >>>>> macro 'PCONFDUMP'
+> >>>>>         .param = a, .display = b, .format = c, .has_arg = d     \
+> >>>>>                  ^
+> >>>>> 2 warnings generated.
+> >>>>
+> >>>> This is interesting. I have never tried to use llvm for building the
+> >>>> kernel. Do you have any description how this can be done?
+> >>>>
+> >>>
+> >>> Depending on what version of Clang you have access to, it is usually just as
+> >>> simple as running 'make ARCH=arm CC=clang CROSS_COMPILE=arm-linux-gnueabi-'.
+> >>>
+> >>> Clang 7.0+ is recommended but 6.0 might work too.
+> >>
+> >> TBH I would expect to download container and run this there to make sure
+> >> that I don't break anything else.
+> > 
+> > This is the first request we've had for a container in order to test a
+> > patch.  If it comes up again from other folks, I think it makes sense
+> > to create one.  Until then, its nice to have.  It's definitely
+> > overkill for this patch.
+> 
+> I have played with it to see that error and here are some steps I did.
+> 
+> docker run --name test-clang -it --rm debian:latest bash
+> apt-get update
+> apt-get install gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu clang git bc
+> build-essential bison flex make llvm vim libssl-dev sparse
+> 
+> git clone
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git --depth 1
+> cd linux
+> 
+> export ARCH=arm64
+> export CROSS_COMPILE=aarch64-linux-gnu-
+> 
+> make defconfig
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
----
+This should also have 'CC=clang' because compiler detection happens in
+Kconfig now so compiler flags get properly set. Other than that, looks
+good and I was able to build pinctrl-zynq.o without any issues with
+those commands.
 
-I am maintaining both at91 pinctrl drivers but it's not convenient to
-not be in copy of the patches concerning pinctrl-at91. For this reason,
-I merge the two entries.
+Cheers!
+Nathan
 
- MAINTAINERS | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c78aca287970..a3c14a19885c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11727,18 +11727,12 @@ F:	Documentation/driver-api/pinctl.rst
- F:	drivers/pinctrl/
- F:	include/linux/pinctrl/
- 
--PIN CONTROLLER - ATMEL AT91
--M:	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
--L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--S:	Maintained
--F:	drivers/pinctrl/pinctrl-at91.*
--
--PIN CONTROLLER - ATMEL AT91 PIO4
-+PIN CONTROLLER - MICROCHIP AT91
- M:	Ludovic Desroches <ludovic.desroches@microchip.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-gpio@vger.kernel.org
- S:	Supported
--F:	drivers/pinctrl/pinctrl-at91-pio4.*
-+F:	drivers/pinctrl/pinctrl-at91*
- 
- PIN CONTROLLER - FREESCALE
- M:	Dong Aisheng <aisheng.dong@nxp.com>
--- 
-2.19.1
+> make CC=clang drivers/pinctrl/pinctrl-zynq.o C=1 V=1
+> 
+> There was not a problem to run it for arm64 but I had issues to run this
+> for arm32.
+> Do you see any problem with above steps?
+> 
+> Thanks,
+> Michal
+> 
