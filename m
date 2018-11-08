@@ -1,82 +1,41 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 2/3] gpio: mockup: add locking
-Date: Thu, 8 Nov 2018 22:13:59 +0100
-Message-ID: <20181108211359.44scwickq4pxsuqy@pengutronix.de>
-References: <20181108165255.9940-1-brgl@bgdev.pl>
- <20181108165255.9940-3-brgl@bgdev.pl>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH 2/6] regulator: lochnagar: Move driver to binding from DT
+Date: Thu, 8 Nov 2018 21:59:41 +0000
+Message-ID: <20181108215941.GU16508@imbe.wolfsonmicro.main>
+References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
+ <20181108101405.14062-3-ckeepax@opensource.cirrus.com>
+ <20181108121629.GD6675@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181108165255.9940-3-brgl@bgdev.pl>
+In-Reply-To: <20181108121629.GD6675@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 05:52:54PM +0100, Bartosz Golaszewski wrote:
-> While no user reported any race condition problems with gpio-mockup,
-> let's be on the safe side and use a mutex when performing any changes
-> on the dummy chip structures.
+On Thu, Nov 08, 2018 at 12:16:29PM +0000, Mark Brown wrote:
+> On Thu, Nov 08, 2018 at 10:14:01AM +0000, Charles Keepax wrote:
 > 
-> Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
->  drivers/gpio/gpio-mockup.c | 50 ++++++++++++++++++++++++++++++++------
->  1 file changed, 43 insertions(+), 7 deletions(-)
+> > +static const struct of_device_id lochnagar_of_match[] = {
+> > +	{ .compatible = "cirrus,lochnagar-regulator" },
+> > +	{},
+> > +};
 > 
-> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-> index 6a50f9f59c90..3cd92912c414 100644
-> --- a/drivers/gpio/gpio-mockup.c
-> +++ b/drivers/gpio/gpio-mockup.c
-> @@ -54,6 +54,7 @@ struct gpio_mockup_chip {
->  	struct gpio_mockup_line_status *lines;
->  	struct irq_sim irqsim;
->  	struct dentry *dbg_dir;
-> +	struct mutex lock;
->  };
->  
->  struct gpio_mockup_dbgfs_private {
-> @@ -82,29 +83,53 @@ static int gpio_mockup_range_ngpio(unsigned int index)
->  	return gpio_mockup_ranges[index * 2 + 1];
->  }
->  
-> -static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-> +static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
->  {
->  	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
->  
->  	return chip->lines[offset].value;
->  }
->  
-> -static void gpio_mockup_set(struct gpio_chip *gc,
-> -			    unsigned int offset, int value)
-> +static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-> +	int val;
-> +
-> +	mutex_lock(&chip->lock);
-> +	val = __gpio_mockup_get(gc, offset);
-> +	mutex_unlock(&chip->lock);
-> +
-> +	return val;
-> +}
+> This is obviously just dumping the Linux driver model into the DT, the
+> regulators are clearly different.  If you want to explicitly list the
+> regulators in DT it'd be better to reflect the hardware and enumerate
+> the regulators individually - you can use one driver for all the MICVDDs
+> and a separate one for VDDCORE for example.
 
-I think this function doesn't need locking. I returns a single value and
-if there is a race and some other process currently changes the value it
-matters little if the return value is zero or not.
+Agreed, would be relatively doable for regulators, might be a bit
+verbose for the clock, but I really don't see how to handle
+pinctrl.
 
-But even with this kept unchanged the patch looks good.
+I guess I will wait and see what the other maintainers think but
+personally I would really be inclined to keep the binding the
+same as the last version if we can.
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-
-Thanks
-Uwe
-
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Thanks,
+Charles
