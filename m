@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 1/3] gpio: mockup: fix indicated direction
-Date: Thu,  8 Nov 2018 17:52:53 +0100
-Message-ID: <20181108165255.9940-2-brgl@bgdev.pl>
+Subject: [PATCH 3/3] gpio: mockup: implement get_multiple()
+Date: Thu,  8 Nov 2018 17:52:55 +0100
+Message-ID: <20181108165255.9940-4-brgl@bgdev.pl>
 References: <20181108165255.9940-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -12,40 +12,47 @@ To: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
-beginning") fixed an existing issue but broke libgpiod tests by
-changing the default direction of dummy lines to output.
-
-We don't break user-space so make gpio-mockup behave as before.
+We already support set_multiple(). Implement get_multiple() as well.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-mockup.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 8269cffc2967..6a50f9f59c90 100644
+index 3cd92912c414..a4c054cf9c5f 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -35,8 +35,8 @@
- #define gpio_mockup_err(...)	pr_err(GPIO_MOCKUP_NAME ": " __VA_ARGS__)
- 
- enum {
--	GPIO_MOCKUP_DIR_OUT = 0,
--	GPIO_MOCKUP_DIR_IN = 1,
-+	GPIO_MOCKUP_DIR_IN = 0,
-+	GPIO_MOCKUP_DIR_OUT = 1,
- };
- 
- /*
-@@ -131,7 +131,7 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
--	return chip->lines[offset].dir;
-+	return !chip->lines[offset].dir;
+@@ -102,6 +102,22 @@ static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+ 	return val;
  }
  
- static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
++static int gpio_mockup_get_multiple(struct gpio_chip *gc,
++				    unsigned long *mask, unsigned long *bits)
++{
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++	unsigned int bit, val;
++
++	mutex_lock(&chip->lock);
++	for_each_set_bit(bit, mask, gc->ngpio) {
++		val = __gpio_mockup_get(gc, bit);
++		__assign_bit(bit, bits, val);
++	}
++	mutex_unlock(&chip->lock);
++
++	return 0;
++}
++
+ static void __gpio_mockup_set(struct gpio_chip *gc,
+ 			      unsigned int offset, int value)
+ {
+@@ -327,6 +343,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	gc->parent = dev;
+ 	gc->get = gpio_mockup_get;
+ 	gc->set = gpio_mockup_set;
++	gc->get_multiple = gpio_mockup_get_multiple;
+ 	gc->set_multiple = gpio_mockup_set_multiple;
+ 	gc->direction_output = gpio_mockup_dirout;
+ 	gc->direction_input = gpio_mockup_dirin;
 -- 
 2.19.1
