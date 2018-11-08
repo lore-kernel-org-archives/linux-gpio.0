@@ -1,51 +1,62 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/6] regulator: lochnagar: Move driver to binding from DT
-Date: Thu, 8 Nov 2018 12:16:29 +0000
-Message-ID: <20181108121629.GD6675@sirena.org.uk>
-References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
- <20181108101405.14062-3-ckeepax@opensource.cirrus.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: [PATCH] MAINTAINERS: merge at91 pinctrl entries
+Date: Thu, 8 Nov 2018 14:14:42 +0100
+Message-ID: <20181108131442.27911-1-ludovic.desroches@microchip.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Hf61M2y+wYpnELGG"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181108101405.14062-3-ckeepax@opensource.cirrus.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: alexandre.belloni@bootlin.com, Ludovic Desroches <ludovic.desroches@microchip.com>, plagnioj@jcrosoft.com, linus.walleij@linaro.org
 List-Id: linux-gpio@vger.kernel.org
 
+In order to be aware of all changes related to at91 pinctrl drivers,
+merge the two entries. Make use of the opportunity to replace Atmel by
+Microchip.
 
---Hf61M2y+wYpnELGG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+---
 
-On Thu, Nov 08, 2018 at 10:14:01AM +0000, Charles Keepax wrote:
+I am maintaining both at91 pinctrl drivers but it's not convenient to
+not be in copy of the patches concerning pinctrl-at91. For this reason,
+I merge the two entries.
 
-> +static const struct of_device_id lochnagar_of_match[] = {
-> +	{ .compatible = "cirrus,lochnagar-regulator" },
-> +	{},
-> +};
+ MAINTAINERS | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-This is obviously just dumping the Linux driver model into the DT, the
-regulators are clearly different.  If you want to explicitly list the
-regulators in DT it'd be better to reflect the hardware and enumerate
-the regulators individually - you can use one driver for all the MICVDDs
-and a separate one for VDDCORE for example.
-
---Hf61M2y+wYpnELGG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvkKRwACgkQJNaLcl1U
-h9Bftgf/YG896fIVqX6Do66HLJIcHNJAzK00x3THF6XqoLUIBKhVrovcy7fW69jw
-Vw2QDuIv8oet/R2vvKPFrx153wE1ADwU5CfBfufFigUi+OPJTAVKHzVZUurYEcnQ
-ULPI+vcXMD8jDaKVFRIGIM9/CtPll/c1Rcu0T4WsCdAWXQ0C4lJ+gBe8Cge8kDTX
-U3h0jvOIHd9mnWiK/GCfSINRDyeYGeVn1SXuMfYOlrmCkNou8TQVI/phg50Q6+2Q
-C0f3oNXRlgQoQe01AqXussavzBQ7dAV1o8ClN3FFgfSkdZjfWy/APBcN5RuBmGAH
-+Gjtsp7RPdWYoMk/weGZwBMXNt/8BQ==
-=78JL
------END PGP SIGNATURE-----
-
---Hf61M2y+wYpnELGG--
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c78aca287970..a3c14a19885c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11727,18 +11727,12 @@ F:	Documentation/driver-api/pinctl.rst
+ F:	drivers/pinctrl/
+ F:	include/linux/pinctrl/
+ 
+-PIN CONTROLLER - ATMEL AT91
+-M:	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+-L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-S:	Maintained
+-F:	drivers/pinctrl/pinctrl-at91.*
+-
+-PIN CONTROLLER - ATMEL AT91 PIO4
++PIN CONTROLLER - MICROCHIP AT91
+ M:	Ludovic Desroches <ludovic.desroches@microchip.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-gpio@vger.kernel.org
+ S:	Supported
+-F:	drivers/pinctrl/pinctrl-at91-pio4.*
++F:	drivers/pinctrl/pinctrl-at91*
+ 
+ PIN CONTROLLER - FREESCALE
+ M:	Dong Aisheng <aisheng.dong@nxp.com>
+-- 
+2.19.1
