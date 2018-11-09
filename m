@@ -1,112 +1,100 @@
 From: Anson Huang <anson.huang@nxp.com>
-Subject: [PATCH] gpio: mxc: move gpio noirq suspend/resume to syscore phase
-Date: Fri, 9 Nov 2018 04:56:56 +0000
-Message-ID: <1541739112-383-1-git-send-email-Anson.Huang@nxp.com>
+Subject: RE: [PATCH] gpio: mxc: skip GPIO_IMR restore in noirq resume
+Date: Fri, 9 Nov 2018 05:01:12 +0000
+Message-ID: <DB3PR0402MB39160977196DBEA775A4AFCEF5C60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1541674114-843-1-git-send-email-Anson.Huang@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1541674114-843-1-git-send-email-Anson.Huang@nxp.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Cc: dl-linux-imx <linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-During noirq suspend/resume phase, GPIO irq could arrive
-and its registers like IMR will be changed by irq handle
-process, to make the GPIO registers exactly when it is
-powered ON after resume, move the GPIO noirq suspend/resume
-callback to syscore suspend/resume phase, local irq is
-disabled at this phase so GPIO registers are atomic.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/gpio/gpio-mxc.c | 39 ++++++++++++++++++++++++---------------
- 1 file changed, 24 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 5c69516..2d1dfa1 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -17,6 +17,7 @@
- #include <linux/irqchip/chained_irq.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/syscore_ops.h>
- #include <linux/gpio/driver.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -550,31 +551,38 @@ static void mxc_gpio_restore_regs(struct mxc_gpio_por=
-t *port)
- 	writel(port->gpio_saved_reg.dr, port->base + GPIO_DR);
- }
-=20
--static int __maybe_unused mxc_gpio_noirq_suspend(struct device *dev)
-+static int mxc_gpio_syscore_suspend(void)
- {
--	struct mxc_gpio_port *port =3D dev_get_drvdata(dev);
-+	struct mxc_gpio_port *port;
-=20
--	mxc_gpio_save_regs(port);
--	clk_disable_unprepare(port->clk);
-+	/* walk through all ports */
-+	list_for_each_entry(port, &mxc_gpio_ports, node) {
-+		mxc_gpio_save_regs(port);
-+		clk_disable_unprepare(port->clk);
-+	}
-=20
- 	return 0;
- }
-=20
--static int __maybe_unused mxc_gpio_noirq_resume(struct device *dev)
-+static void mxc_gpio_syscore_resume(void)
- {
--	struct mxc_gpio_port *port =3D dev_get_drvdata(dev);
-+	struct mxc_gpio_port *port;
- 	int ret;
-=20
--	ret =3D clk_prepare_enable(port->clk);
--	if (ret)
--		return ret;
--	mxc_gpio_restore_regs(port);
--
--	return 0;
-+	/* walk through all ports */
-+	list_for_each_entry(port, &mxc_gpio_ports, node) {
-+		ret =3D clk_prepare_enable(port->clk);
-+		if (ret) {
-+			pr_err("mxc: failed to enable gpio clock %d\n", ret);
-+			return;
-+		}
-+		mxc_gpio_restore_regs(port);
-+	}
- }
-=20
--static const struct dev_pm_ops mxc_gpio_dev_pm_ops =3D {
--	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mxc_gpio_noirq_suspend, mxc_gpio_noirq_resu=
-me)
-+static struct syscore_ops mxc_gpio_syscore_ops =3D {
-+	.suspend =3D mxc_gpio_syscore_suspend,
-+	.resume =3D mxc_gpio_syscore_resume,
- };
-=20
- static struct platform_driver mxc_gpio_driver =3D {
-@@ -582,7 +590,6 @@ static struct platform_driver mxc_gpio_driver =3D {
- 		.name	=3D "gpio-mxc",
- 		.of_match_table =3D mxc_gpio_dt_ids,
- 		.suppress_bind_attrs =3D true,
--		.pm =3D &mxc_gpio_dev_pm_ops,
- 	},
- 	.probe		=3D mxc_gpio_probe,
- 	.id_table	=3D mxc_gpio_devtype,
-@@ -590,6 +597,8 @@ static struct platform_driver mxc_gpio_driver =3D {
-=20
- static int __init gpio_mxc_init(void)
- {
-+	register_syscore_ops(&mxc_gpio_syscore_ops);
-+
- 	return platform_driver_register(&mxc_gpio_driver);
- }
- subsys_initcall(gpio_mxc_init);
---=20
-2.7.4
+UGxlYXNlIGlnbm9yZSB0aGlzIHBhdGNoLCBhcyBpdCBjYW4gTk9UIGNvbXBsZXRlbHkgZml4IHRo
+ZSBpc3N1ZSBvZiB0aGUgY2FzZSB3aGVuIEdQSU8gSVJRIGNvbWluZyBkdXJpbmcgdGhlIG5vaXJx
+IHN1c3BlbmQvcmVzdW1lIHBoYXNlLCB0aGUgY29ycmVjdCBzb2x1dGlvbiBzaG91bGQgYmUgdG8g
+c2F2ZS9yZXN0b3JlIHRoZSBHUElPIHJlZ2lzdGVycyB3aGVuIGxvY2FsIGlycSBpcyBvZmYsIHNv
+IG1vdmUgdGhlIEdQSU8gbm9pcnEgc3VzcGVuZC9yZXN1bWUgdG8gc3lzY29yZSBwaGFzZSwgSSBo
+YXZlIHNlbmQgb3V0IGFub3RoZXIgcGF0Y2ggIltQQVRDSF0gZ3BpbzogbXhjOiBtb3ZlIGdwaW8g
+bm9pcnEgc3VzcGVuZC9yZXN1bWUgdG8gc3lzY29yZSBwaGFzZSIsIHBsZWFzZSByZXZpZXcgdGhp
+cyBwYXRjaCwgdGhhbmtzIQ0KDQpCZXN0IFJlZ2FyZHMhDQpBbnNvbiBIdWFuZw0KDQo+IC0tLS0t
+T3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFuc29uIEh1YW5nDQo+IFNlbnQ6IDIwMTjE
+6jEx1MI4yNUgMTg6NTQNCj4gVG86IGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZzsgYmdvbGFzemV3
+c2tpQGJheWxpYnJlLmNvbTsNCj4gbGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5j
+b20+DQo+IFN1YmplY3Q6IFtQQVRDSF0gZ3BpbzogbXhjOiBza2lwIEdQSU9fSU1SIHJlc3RvcmUg
+aW4gbm9pcnEgcmVzdW1lDQo+IA0KPiBEdXJpbmcgdGhlIHRpbWUgd2luZG93IG9mIG5vaXJxIHN1
+c3BlbmQgYW5kIG5vaXJxIHJlc3VtZSwgaWYgYSBHUElPIHBpbiBpcw0KPiBlbmFibGVkIGFzIHN5
+c3RlbSB3YWtldXAgc291cmNlLCB0aGUgY29ycmVzcG9uZGluZyBHUElPIGxpbmUncyBJUlEgd2ls
+bCBiZQ0KPiB1bm1hc2tlZCwgYW5kIEdQSU8gYmFuayB3aWxsIE5PVCBsb3N0IHBvd2VyLCB3aGVu
+IEdQSU8gaXJxIGFycml2ZXMsIGdlbmVyaWMNCj4gaXJxIGhhbmRsZXIgd2lsbCBtYXNrIGl0IHVu
+dGlsIEdQSU8gZHJpdmVyIGlzIHJlYWR5IHRvIGhhbmRsZSBpdCwgYnV0IGluIEdQSU8gbm9pcnEN
+Cj4gcmVzdW1lIGNhbGxiYWNrLCBjdXJyZW50IGltcGxlbWVudGF0aW9uIHdpbGwgcmVzdG9yZSB0
+aGUgSU1SIHJlZ2lzdGVyIHVzaW5nDQo+IHRoZSB2YWx1ZSBzYXZlZCBpbiBwcmV2aW91cyBub2ly
+cSBzdXNwZW5kIGNhbGxiYWNrIHdoaWNoIGlzIHVubWFza2VkLCBzbyB0aGlzDQo+IEdQSU8gbGlu
+ZSB3aXRoIElSUSBwZW5kaW5nIHdpbGwgYmUgdW5tYXNrZWQgYWdhaW4gYWZ0ZXIgR1BJTyBJTVIg
+cmVnaXRzdGVyIGlzDQo+IHJlc3RvcmVkLCBBUk0gd2lsbCBiZSB0cmlnZ2VyZWQgdG8gaGFuZGxl
+IHRoaXMgSVJRIGFnYWluLCBiZWNhdXNlIG9mIHRoZSBjaGFuZ2UNCj4gb2YgY29tbWl0IGJmMjJm
+ZjQ1YmVkNiAoImdlbmlycTogQXZvaWQgdW5uZWNlc3NhcnkgbG93IGxldmVsIGlycSBmdW5jdGlv
+bg0KPiBjYWxscyIpLCB0aGUgbWFza19pcnEgZnVuY3Rpb24gd2lsbCBjaGVjayB0aGUgc3RhdHVz
+IG9mIGlycV9kYXRhIHRvIGRlY2lkZQ0KPiB3aGV0aGVyIHRvIG1hc2sgdGhlIGlycSwgaW4gdGhp
+cyBzY2VuYXJpbywgc2luY2UgdGhlIEdQSU8gSVJRIGlzIGJlaW5nIG1hc2tlZA0KPiBiZWZvcmUg
+R1BJTyBub2lycSByZXN1bWUsIElSUURfSVJRX01BU0tFRCBmbGFnIGlzIHNldCwgc28gdGhlIHNl
+Y29uZCB0aW1lDQo+IEdQSU8gSVJRIHRyaWdnZXJlZCBieSByZXN0b3JpbmcgR1BJTyBJTVIgcmVn
+aXN0ZXIsIHRoZSBpcnFfbWFzayBjYWxsYmFjayB3aWxsDQo+IGJlIHNraXBwZWQgYW5kIGNhdXNl
+IEFSTSBidXN5IGhhbmRsaW5nIHRoZSBHUElPIElSUSBjb21lIGFsbCB0aGUgd2F5IGFuZA0KPiBu
+byByZXNwb25zZSB0byB1c2VyIGFueW1vcmUuDQo+IA0KPiBUbyBtYWtlIHRoZSBzY2VuYXJpbyBl
+YXN5IHRvIHVuZGVyc3RhbmQsIEkgdGFrZSBHUElPMV8wIGZvciBleGFtcGxlIHdoZW4gaXQNCj4g
+aXMgdXNlZCBhcyB3YWtlIHVwIHNvdXJjZToNCj4gDQo+IDEuIEdQSU8xXzAgaXMgZW5hYmxlZCBh
+cyB3YWtldXAgc291cmNlLCBpdCB3aWxsIGJlIHVubWFza2VkOyAyLiBJbiBub2lycQ0KPiBzdXNw
+ZW5kLCBHUElPIGRyaXZlciBzYXZlcyBHUElPMV8wJ3MgbWFzayBzdGF0ZSBpbg0KPiAgICBJTVIg
+cmVnaXN0ZXIgYXMgInVubWFza2VkIjsNCj4gMy4gU3lzdGVtIGdvIGludG8gc3VzcGVuZDsNCj4g
+NC4gR1BJTzFfMCBJUlEgYXJyaXZlcywgc3lzdGVtIHdha2VzIHVwOyA1LiBCZWZvcmUgbm9pcnEg
+cmVzdW1lIHBoYXNlLCBBUk0NCj4gaGFuZGxlcyB0aGUgR1BJTzFfMCBJUlEsIHNldA0KPiAgICBJ
+UlFEX0lSUV9NQVNLRUQgZmxhZyBhbmQgY2FsbCBHUElPIGlycV9tYXNrIGNhbGxiYWNrIHRvIG1h
+c2sNCj4gICAgaXQsIGFzIEdQSU8gZHJpdmVyIGlzIE5PVCByZWFkeSB0byBoYW5kbGUgaXQsIG5v
+dyBHUElPMV8wDQo+ICAgIElSUSBpcyBtYXNrZWQ7DQo+IDYuIEluIEdQSU8gbm9pcnEgcmVzdW1l
+LCBHUElPIGRyaXZlciByZXN0b3JlcyBHUElPIHJlZ2lzdGVycywNCj4gICAgR1BJTzFfMCBJUlEg
+d2lsbCBiZSByZXN0b3JlZCB0byB1bm1hc2sgc3RhdGUgYWdhaW4gYW5kIHN5c3RlbQ0KPiAgICBJ
+UlEgdHJpZ2dlcmVkOw0KPiA3LiBBUk0gaGFuZGxlcyBHUElPMV8wIElSUSBhZ2FpbiwgdGhpcyB0
+aW1lIHRoZSBHUElPMV8wIHdpbGwgTk9UIGJlDQo+ICAgIG1hc2tlZCBzaW5jZSBpdHMgaXJxX2Rh
+dGEgYWxyZWFkeSBoYXMgSVJRRF9JUlFfTUFTS0VEIGZsYWcgc2V0OyA4Lg0KPiBHUElPMV8wIElS
+USBrZWVwcyBjb21pbmcsIEFSTSB3aWxsIGJlIGJ1c3kgaGFuZGxpbmcgaXQgYnV0IGFsd2F5cw0K
+PiAgICBza2lwIHRoZSBpcnFfbWFzayBvcGVyYXRpb24sIHN5c3RlbSBubyByZXNwb25zZS4NCj4g
+DQo+IEFsdGhvdWdoIHRoaXMgaXNzdWUgaXMgZXhwb3NlZCBieSBjb21taXQgYmYyMmZmNDViZWQ2
+ICgiZ2VuaXJxOiBBdm9pZA0KPiB1bm5lY2Vzc2FyeSBsb3cgbGV2ZWwgaXJxIGZ1bmN0aW9uIGNh
+bGxzIiksIGJ1dCBhY3R1YWxseSB3ZSBzaG91bGQgc2tpcCB0aGUgR1BJTw0KPiBJTVIgcmVnaXN0
+ZXIgcmVzdG9yZSwgYXMgdGhlIElNUiByZWdpc3RlciBpcyBOT1QgYXRvbWljIGR1cmluZyB0aGUg
+dGltZSB3aW5kb3cNCj4gb2YgR1BJTyBub2lycSBzdXNwZW5kIGFuZCBub2lycSByZXN1bWUsIGl0
+IGNvdWxkIGJlIGNoYW5nZWQgYnkgQVJNIGlmIHRoZXJlDQo+IGlzIEdQSU8gSVJRIHBlbmRpbmcg
+YXQgdGhpcyB3aW5kb3cuDQo+IA0KPiBGb3IgdGhlIHNjZW5hcmlvIG9mIEdQSU8gYmFuayBsb3N0
+IHBvd2VyLCB0aGF0IG1lYW5zIG5vIEdQSU8gcGluIGlzIGVuYWJsZWQNCj4gYXMgd2FrZXVwIHNv
+dXJjZSwgYWxsIEdQSU8gSVJRcyB3aWxsIGJlIG1hc2tlZCBhbmQgaXQgaXMgc2FtZSBhcyB0aGUg
+cmVzZXQNCj4gdmFsdWUgd2hlbiBHUElPIGJhbmsgcG93ZXIgT04sIHNvIG5vIGlzc3VlIGZvciB0
+aGlzIGNhc2UuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdA
+bnhwLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2dwaW8vZ3Bpby1teGMuYyB8IDIgLS0NCj4gIDEg
+ZmlsZSBjaGFuZ2VkLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3Bpby9ncGlvLW14Yy5jIGIvZHJpdmVycy9ncGlvL2dwaW8tbXhjLmMgaW5kZXgNCj4gNWM2OTUx
+Ni4uM2Q3NGFkNyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncGlvL2dwaW8tbXhjLmMNCj4gKysr
+IGIvZHJpdmVycy9ncGlvL2dwaW8tbXhjLmMNCj4gQEAgLTUzMSw3ICs1MzEsNiBAQCBzdGF0aWMg
+dm9pZCBteGNfZ3Bpb19zYXZlX3JlZ3Moc3RydWN0IG14Y19ncGlvX3BvcnQNCj4gKnBvcnQpDQo+
+IA0KPiAgCXBvcnQtPmdwaW9fc2F2ZWRfcmVnLmljcjEgPSByZWFkbChwb3J0LT5iYXNlICsgR1BJ
+T19JQ1IxKTsNCj4gIAlwb3J0LT5ncGlvX3NhdmVkX3JlZy5pY3IyID0gcmVhZGwocG9ydC0+YmFz
+ZSArIEdQSU9fSUNSMik7DQo+IC0JcG9ydC0+Z3Bpb19zYXZlZF9yZWcuaW1yID0gcmVhZGwocG9y
+dC0+YmFzZSArIEdQSU9fSU1SKTsNCj4gIAlwb3J0LT5ncGlvX3NhdmVkX3JlZy5nZGlyID0gcmVh
+ZGwocG9ydC0+YmFzZSArIEdQSU9fR0RJUik7DQo+ICAJcG9ydC0+Z3Bpb19zYXZlZF9yZWcuZWRn
+ZV9zZWwgPSByZWFkbChwb3J0LT5iYXNlICsgR1BJT19FREdFX1NFTCk7DQo+ICAJcG9ydC0+Z3Bp
+b19zYXZlZF9yZWcuZHIgPSByZWFkbChwb3J0LT5iYXNlICsgR1BJT19EUik7IEBAIC01NDQsNw0K
+PiArNTQzLDYgQEAgc3RhdGljIHZvaWQgbXhjX2dwaW9fcmVzdG9yZV9yZWdzKHN0cnVjdCBteGNf
+Z3Bpb19wb3J0ICpwb3J0KQ0KPiANCj4gIAl3cml0ZWwocG9ydC0+Z3Bpb19zYXZlZF9yZWcuaWNy
+MSwgcG9ydC0+YmFzZSArIEdQSU9fSUNSMSk7DQo+ICAJd3JpdGVsKHBvcnQtPmdwaW9fc2F2ZWRf
+cmVnLmljcjIsIHBvcnQtPmJhc2UgKyBHUElPX0lDUjIpOw0KPiAtCXdyaXRlbChwb3J0LT5ncGlv
+X3NhdmVkX3JlZy5pbXIsIHBvcnQtPmJhc2UgKyBHUElPX0lNUik7DQo+ICAJd3JpdGVsKHBvcnQt
+PmdwaW9fc2F2ZWRfcmVnLmdkaXIsIHBvcnQtPmJhc2UgKyBHUElPX0dESVIpOw0KPiAgCXdyaXRl
+bChwb3J0LT5ncGlvX3NhdmVkX3JlZy5lZGdlX3NlbCwgcG9ydC0+YmFzZSArIEdQSU9fRURHRV9T
+RUwpOw0KPiAgCXdyaXRlbChwb3J0LT5ncGlvX3NhdmVkX3JlZy5kciwgcG9ydC0+YmFzZSArIEdQ
+SU9fRFIpOw0KPiAtLQ0KPiAyLjcuNA0KDQo=
