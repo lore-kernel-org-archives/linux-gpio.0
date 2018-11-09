@@ -1,51 +1,43 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH] pinctrl: max77620: Use define directive for
- max77620_pinconf_param values
-Date: Fri, 9 Nov 2018 16:18:47 +0530
-Message-ID: <442c61c6-4a23-ae98-b017-cb129ba3af54@nvidia.com>
-References: <20181101005021.8393-1-natechancellor@gmail.com>
- <CACRpkdY0YnUCFYahabGr7GBetBHs++QygDs3KVB=hMRBv0fGZg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
+Date: Fri, 9 Nov 2018 12:13:44 +0100
+Message-ID: <CAMRc=Mev6RMvVox2Sx6s80+obLg4QWAL=_hwcf34m2iMXwEbOg@mail.gmail.com>
+References: <20181108165255.9940-1-brgl@bgdev.pl> <20181108165255.9940-2-brgl@bgdev.pl>
+ <20181108203546.54rncnydgamud5z3@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY0YnUCFYahabGr7GBetBHs++QygDs3KVB=hMRBv0fGZg@mail.gmail.com>
+In-Reply-To: <20181108203546.54rncnydgamud5z3@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Nathan Chancellor <natechancellor@gmail.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nick Desaulniers <ndesaulniers@google.com>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+czw., 8 lis 2018 o 21:35 Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+>
+> Hello Bartosz,
+>
+> On Thu, Nov 08, 2018 at 05:52:53PM +0100, Bartosz Golaszewski wrote:
+> > Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
+> > beginning") fixed an existing issue but broke libgpiod tests by
+> > changing the default direction of dummy lines to output.
+>
+> The indicated commit only changed what was shown in debugfs, but didn't
+> touch the actual direction of a GPIO, doesn't it? If someone called
+> gpiod_get_direction before it would have returned "output", too, unless
+> I miss something.
+>
 
+This commit (3edfb7bd76bd) sets the correct direction of the line by
+actually calling get_direction() instead of assuming input if
+direction_input is not NULL. It just so happened that previously the
+default direction of gpio-mockup lines was output but it would be
+displayed as input due to this inconsistency.
 
-On Friday 09 November 2018 02:31 PM, Linus Walleij wrote:
-> On Thu, Nov 1, 2018 at 1:51 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
->
->> Clang warns when one enumerated type is implicitly converted to another:
->>
->> drivers/pinctrl/pinctrl-max77620.c:56:12: warning: implicit conversion
->> from enumeration type 'enum max77620_pinconf_param' to different
->> enumeration type 'enum pin_config_param' [-Wenum-conversion]
->>                  .param = MAX77620_ACTIVE_FPS_SOURCE,
->>                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
->>
->> It is expected that pinctrl drivers can extend pin_config_param because
->> of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
->> isn't an issue. Most drivers that take advantage of this define the
->> PIN_CONFIG variables as constants, rather than enumerated values. Do the
->> same thing here so that Clang no longer warns.
->>
->> Link: https://github.com/ClangBuiltLinux/linux/issues/139
->> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> Patch tentatively applied.
->
-> This seems to be the direction we need to be going with a lot
-> of CLANG business.
->
-> Laxman: you weren't CCed, so tell us if you dislike it for some
-> reason.
->
-Looked changes and it is great. MISRA-C also happy with macros instead 
-of enum.
+My commit fixes it by simply setting the value of GPIO_MOCKUP_DIR_IN
+to 0 so that when we kzalloc the line structure, we'll get the right
+direction automatically.
 
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+Bart
