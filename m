@@ -1,44 +1,51 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH v2 5/7] pinctrl: qcom: spmi-gpio: fix gpio-hog related
- boot issues
-Date: Fri, 9 Nov 2018 05:22:13 -0500
-Message-ID: <20181109102213.dijt35etkzwdvu2a@ad8ea8ed68ae>
-References: <20181101001149.13453-1-masneyb@onstation.org>
- <20181101001149.13453-6-masneyb@onstation.org>
- <CACRpkdaabE-ekKQp93CiFtN_Qp6OohEUE-qufsX=12u2p_SXtw@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH] pinctrl: max77620: Use define directive for
+ max77620_pinconf_param values
+Date: Fri, 9 Nov 2018 16:18:47 +0530
+Message-ID: <442c61c6-4a23-ae98-b017-cb129ba3af54@nvidia.com>
+References: <20181101005021.8393-1-natechancellor@gmail.com>
+ <CACRpkdY0YnUCFYahabGr7GBetBHs++QygDs3KVB=hMRBv0fGZg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaabE-ekKQp93CiFtN_Qp6OohEUE-qufsX=12u2p_SXtw@mail.gmail.com>
+In-Reply-To: <CACRpkdY0YnUCFYahabGr7GBetBHs++QygDs3KVB=hMRBv0fGZg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jonathan@marek.ca
+To: Linus Walleij <linus.walleij@linaro.org>, Nathan Chancellor <natechancellor@gmail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nick Desaulniers <ndesaulniers@google.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 09:59:08AM +0100, Linus Walleij wrote:
-> On Thu, Nov 1, 2018 at 1:12 AM Brian Masney <masneyb@onstation.org> wrote:
-> 
-> > When attempting to setup up a gpio hog, device probing would repeatedly
-> > fail with -EPROBE_DEFERED errors. It was caused by a circular dependency
-> > between the gpio and pinctrl frameworks. If the gpio-ranges property is
-> > present in device tree, then the gpio framework will handle the gpio pin
-> > registration and eliminate the circular dependency.
-> >
-> > See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
-> > gpio-hog related boot issues") for a detailed commit message that
-> > explains the issue in much more detail. The code comment in this commit
-> > came from Christian's commit.
-> >
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> 
-> No word from Bjorn but I trust my own intuition and applied it.
-> 
-> Björn: shout if it's wrong.
-> 
-> Question: should this also be done for pinctrl-ssbi-gpio.c?
 
-Yes, I believe so.
 
-Brian
+On Friday 09 November 2018 02:31 PM, Linus Walleij wrote:
+> On Thu, Nov 1, 2018 at 1:51 AM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+>
+>> Clang warns when one enumerated type is implicitly converted to another:
+>>
+>> drivers/pinctrl/pinctrl-max77620.c:56:12: warning: implicit conversion
+>> from enumeration type 'enum max77620_pinconf_param' to different
+>> enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>>                  .param = MAX77620_ACTIVE_FPS_SOURCE,
+>>                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> It is expected that pinctrl drivers can extend pin_config_param because
+>> of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+>> isn't an issue. Most drivers that take advantage of this define the
+>> PIN_CONFIG variables as constants, rather than enumerated values. Do the
+>> same thing here so that Clang no longer warns.
+>>
+>> Link: https://github.com/ClangBuiltLinux/linux/issues/139
+>> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> Patch tentatively applied.
+>
+> This seems to be the direction we need to be going with a lot
+> of CLANG business.
+>
+> Laxman: you weren't CCed, so tell us if you dislike it for some
+> reason.
+>
+Looked changes and it is great. MISRA-C also happy with macros instead 
+of enum.
+
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
