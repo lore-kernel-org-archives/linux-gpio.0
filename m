@@ -1,57 +1,87 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
-Date: Fri, 9 Nov 2018 18:23:01 +0100
-Message-ID: <CAMRc=MfY7c21NOBNnVgXKimywXHFifwek5B76Y_3DgmM_hBbgw@mail.gmail.com>
-References: <20181108165255.9940-1-brgl@bgdev.pl> <20181108165255.9940-2-brgl@bgdev.pl>
- <20181108203546.54rncnydgamud5z3@pengutronix.de> <CAMRc=Mev6RMvVox2Sx6s80+obLg4QWAL=_hwcf34m2iMXwEbOg@mail.gmail.com>
- <20181109115424.pe4w26nmt6xplzto@pengutronix.de> <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
- <20181109131036.v6d645ojv6jr7v3y@pengutronix.de> <CAMRc=Mf18udrM=2=SZHMg3M2akcccPXb7Fr81vXODpNgjf+uJw@mail.gmail.com>
- <20181109143950.gy7swu6vgaqgg7dw@pengutronix.de> <CAMRc=McF482n+57e6Vz9H1dEQ5QS+4p88SYg6ZjNuUMYZx6t3Q@mail.gmail.com>
- <20181109170323.6b2nj5vvtwu3d5ee@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Evan Green <evgreen@chromium.org>
+Subject: [PATCH] pinctrl: msm: Add sleep pinctrl state transitions
+Date: Fri,  9 Nov 2018 14:28:35 -0800
+Message-ID: <20181109222835.60607-1-evgreen@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181109170323.6b2nj5vvtwu3d5ee@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Stephen Boyd <swboyd@chromium.org>, Evan Green <evgreen@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-pt., 9 lis 2018 o 18:03 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
->
-> Hello Bartosz,
->
-> On Fri, Nov 09, 2018 at 04:24:10PM +0100, Bartosz Golaszewski wrote:
-> > pt., 9 lis 2018 o 15:39 Uwe Kleine-K=C3=B6nig
-> > <u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
-> > > On Fri, Nov 09, 2018 at 02:53:16PM +0100, Bartosz Golaszewski wrote:
-> > > > pt., 9 lis 2018 o 14:10 Uwe Kleine-K=C3=B6nig
-> > > > <u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
-> > > > > Which test failed exactly?
-> > > >
-> > > > All gpioinfo tests that check the output of this command and expect=
- to
-> > > > see input as line direction.
-> > >
-> > > This wasn't the answer I expected. The background of my question was:
-> > > This failing test seems to expect that a given GPIO is an input. If t=
-hat
-> > > expectation already exists after the gpio is only requested, then the
-> > > test is broken and a fix is necessary there.
-> >
-> > The test is only expected to work with gpio-mockup which is a dummy
-> > testing module. I believe its behavior should be as deterministic as
-> > possible to the point where newly created chips always have the same
-> > direction.
->
-> Given that the initial direction of a GPIO isn't fixed in my eyes the
-> test should be able to cope with both possibilities. I'd say it's a bug
-> in the test if it doesn't.
->
+Add PM suspend callbacks to the msm core driver that select the
+sleep and default pinctrl states. Then wire those callbacks up
+in the sdm845 driver, for those boards that may have GPIO hogs
+that need to change state during suspend.
 
-As I said before: it is and should be fixed in this specific case.
-This isn't real hardware.
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
 
-Bart
+ drivers/pinctrl/qcom/pinctrl-msm.c    | 16 ++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-msm.h    |  2 ++
+ drivers/pinctrl/qcom/pinctrl-sdm845.c |  4 ++++
+ 3 files changed, 22 insertions(+)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 7c7d083e2c0dc..d505d0a50f0a5 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -1072,6 +1072,22 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
+ 		}
+ }
+ 
++int msm_pinctrl_suspend(struct device *dev)
++{
++	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
++
++	return pinctrl_force_sleep(pctrl->pctrl);
++}
++EXPORT_SYMBOL(msm_pinctrl_suspend);
++
++int msm_pinctrl_resume(struct device *dev)
++{
++	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
++
++	return pinctrl_force_default(pctrl->pctrl);
++}
++EXPORT_SYMBOL(msm_pinctrl_resume);
++
+ int msm_pinctrl_probe(struct platform_device *pdev,
+ 		      const struct msm_pinctrl_soc_data *soc_data)
+ {
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
+index 29172fdf5882c..e163ca600ecd3 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.h
++++ b/drivers/pinctrl/qcom/pinctrl-msm.h
+@@ -123,6 +123,8 @@ struct msm_pinctrl_soc_data {
+ 	unsigned int ntiles;
+ };
+ 
++int msm_pinctrl_suspend(struct device *dev);
++int msm_pinctrl_resume(struct device *dev);
+ int msm_pinctrl_probe(struct platform_device *pdev,
+ 		      const struct msm_pinctrl_soc_data *soc_data);
+ int msm_pinctrl_remove(struct platform_device *pdev);
+diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+index 2ab7a88857579..a3ac9cbeabad1 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
++++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+@@ -1287,6 +1287,9 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
+ 	.ngpios = 150,
+ };
+ 
++static SIMPLE_DEV_PM_OPS(sdm845_pinctrl_dev_pm_ops, msm_pinctrl_suspend,
++			 msm_pinctrl_resume);
++
+ static int sdm845_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	return msm_pinctrl_probe(pdev, &sdm845_pinctrl);
+@@ -1300,6 +1303,7 @@ static const struct of_device_id sdm845_pinctrl_of_match[] = {
+ static struct platform_driver sdm845_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "sdm845-pinctrl",
++		.pm = &sdm845_pinctrl_dev_pm_ops,
+ 		.of_match_table = sdm845_pinctrl_of_match,
+ 	},
+ 	.probe = sdm845_pinctrl_probe,
+-- 
+2.16.4
