@@ -1,50 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: zynq: Use define directive for PIN_CONFIG_IO_STANDARD
-Date: Fri, 9 Nov 2018 10:26:06 +0100
-Message-ID: <CACRpkdZ1424qqPbYrP+vE6WTA81nHb=5Pi7vxD7cgJ9vOonj9Q@mail.gmail.com>
-References: <20181101005724.9622-1-natechancellor@gmail.com> <20181107085639.32366-1-natechancellor@gmail.com>
+Subject: Re: [PATCH] pinctrl: generic: Avoid several implicit enum conversions
+Date: Fri, 9 Nov 2018 10:29:02 +0100
+Message-ID: <CACRpkdYDgV8RWifqzu-MQxD-ZR87UeyQkxXuwB-yuXoUb0Mtbw@mail.gmail.com>
+References: <20180925061855.19557-1-natechancellor@gmail.com>
+ <CACRpkdadODxsuae7uhwcfBBMQ-eZ8bvnV71fhDCuudbJEbhhYA@mail.gmail.com>
+ <20180925161459.GA15840@flashbox> <CAKwvOdkh0rqWcw4r7Y=Ki_MNJPoJNnvm3uGp4Q726PaESxZAnQ@mail.gmail.com>
+ <20181025210456.GA14792@flashbox> <CACRpkda9LhdQybgci8gYs13L5pHWvDx43_Ftn5s+ERLLFPvLjQ@mail.gmail.com>
+ <20181101000338.GA32577@flashbox>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181107085639.32366-1-natechancellor@gmail.com>
+In-Reply-To: <20181101000338.GA32577@flashbox>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Michal Simek <michal.simek@xilinx.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nick Desaulniers <ndesaulniers@google.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 9:57 AM Nathan Chancellor
+On Thu, Nov 1, 2018 at 1:03 AM Nathan Chancellor
 <natechancellor@gmail.com> wrote:
+> [Me]
+> > A slightly lesser evil variant is to add a few PIN_CONFIG_CUSTOM_1
+> > PIN_CONFIG_CUSTOM_2 etc at the end of the enum and just
+> > #define MY_CONFIG PIN_CONFIG_CUSTOM_1
+> > in all drivers that use these.
+> >
+>
+> Some drivers actually just define their pin config params like:
+>
+> #define VAR (PIN_CONFIG_END + 1)
+>
+> In fact, more drivers do that than not. I will go ahead and draft some
+> patches tonight and send them out tonight to see what driver authors
+> think.
 
-> Clang warns when one enumerated type is implicitly converted to another:
->
-> drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
-> enumeration type 'enum zynq_pin_config_param' to different enumeration
-> type 'enum pin_config_param' [-Wenum-conversion]
->         {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
->         ~               ^~~~~~~~~~~~~~~~~~~~~
-> drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
-> enumeration type 'enum zynq_pin_config_param' to different enumeration
-> type 'enum pin_config_param' [-Wenum-conversion]
->         = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
->             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
-> macro 'PCONFDUMP'
->         .param = a, .display = b, .format = c, .has_arg = d     \
->                  ^
-> 2 warnings generated.
->
-> It is expected that pinctrl drivers can extend pin_config_param because
-> of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
-> isn't an issue. Most drivers that take advantage of this define the
-> PIN_CONFIG variables as constants, rather than enumerated values. Do the
-> same thing here so that Clang no longer warns.
->
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->
-> v1 -> v2:
+This seems to work. Is your kernel compile working without
+warnings after this round of patches?
 
-This v2 version applied with Michal's ACK.
+Thanks for driving this BTW.
 
 Yours,
 Linus Walleij
