@@ -1,28 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: bcm2835: Use define directive for BCM2835_PINCONF_PARAM_PULL
-Date: Fri, 9 Nov 2018 10:23:13 +0100
-Message-ID: <CACRpkdZBtrwEdGQu_XfaYpFarn5x=HpXVj32uczgfJYTNP8kjw@mail.gmail.com>
-References: <20181101004653.7552-1-natechancellor@gmail.com>
+Subject: Re: [PATCH v2] pinctrl: lpc18xx: Use define directive for PIN_CONFIG_GPIO_PIN_INT
+Date: Fri, 9 Nov 2018 10:24:28 +0100
+Message-ID: <CACRpkdZLywABfeHYvV6wGKU7iVe-RVHBB+12iCC3-7BxmcRpeQ@mail.gmail.com>
+References: <20181101005257.8778-1-natechancellor@gmail.com> <20181101150007.14145-1-natechancellor@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181101004653.7552-1-natechancellor@gmail.com>
+In-Reply-To: <20181101150007.14145-1-natechancellor@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nick Desaulniers <ndesaulniers@google.com>
+Cc: Vladimir Zapolskiy <vz@mleia.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nick Desaulniers <ndesaulniers@google.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 1:47 AM Nathan Chancellor
+On Thu, Nov 1, 2018 at 4:02 PM Nathan Chancellor
 <natechancellor@gmail.com> wrote:
 
 > Clang warns when one enumerated type is implicitly converted to another:
 >
-> drivers/pinctrl/bcm/pinctrl-bcm2835.c:707:40: warning: implicit
-> conversion from enumeration type 'enum bcm2835_pinconf_param' to
-> different enumeration type 'enum pin_config_param' [-Wenum-conversion]
->         configs[0] = pinconf_to_config_packed(BCM2835_PINCONF_PARAM_PULL, pull);
->                      ~~~~~~~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> 1 warning generated.
+> drivers/pinctrl/pinctrl-lpc18xx.c:643:29: warning: implicit conversion
+> from enumeration type 'enum lpc18xx_pin_config_param' to different
+> enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>         {"nxp,gpio-pin-interrupt", PIN_CONFIG_GPIO_PIN_INT, 0},
+>         ~                          ^~~~~~~~~~~~~~~~~~~~~~~
+> drivers/pinctrl/pinctrl-lpc18xx.c:648:12: warning: implicit conversion
+> from enumeration type 'enum lpc18xx_pin_config_param' to different
+> enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>         PCONFDUMP(PIN_CONFIG_GPIO_PIN_INT, "gpio pin int", NULL, true),
+>         ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
+> macro 'PCONFDUMP'
+>         .param = a, .display = b, .format = c, .has_arg = d     \
+>                  ^
+> 2 warnings generated.
 >
 > It is expected that pinctrl drivers can extend pin_config_param because
 > of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
@@ -30,9 +39,13 @@ On Thu, Nov 1, 2018 at 1:47 AM Nathan Chancellor
 > PIN_CONFIG variables as constants, rather than enumerated values. Do the
 > same thing here so that Clang no longer warns.
 >
+> Link: https://github.com/ClangBuiltLinux/linux/issues/140
 > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>
+> v1 -> v2:
 
-Patch applied with Stefan's ACK.
+This v2 version applied.
 
 Yours,
 Linus Walleij
