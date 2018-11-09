@@ -1,39 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 5/7] pinctrl: qcom: spmi-gpio: fix gpio-hog related
- boot issues
-Date: Fri, 9 Nov 2018 09:59:08 +0100
-Message-ID: <CACRpkdaabE-ekKQp93CiFtN_Qp6OohEUE-qufsX=12u2p_SXtw@mail.gmail.com>
-References: <20181101001149.13453-1-masneyb@onstation.org> <20181101001149.13453-6-masneyb@onstation.org>
+Subject: Re: [PATCH] pinctrl: max77620: Use define directive for
+ max77620_pinconf_param values
+Date: Fri, 9 Nov 2018 10:01:53 +0100
+Message-ID: <CACRpkdY0YnUCFYahabGr7GBetBHs++QygDs3KVB=hMRBv0fGZg@mail.gmail.com>
+References: <20181101005021.8393-1-natechancellor@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181101001149.13453-6-masneyb@onstation.org>
+In-Reply-To: <20181101005021.8393-1-natechancellor@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: masneyb@onstation.org, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jonathan@marek.ca
+To: Nathan Chancellor <natechancellor@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nick Desaulniers <ndesaulniers@google.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 1:12 AM Brian Masney <masneyb@onstation.org> wrote:
+On Thu, Nov 1, 2018 at 1:51 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 
-> When attempting to setup up a gpio hog, device probing would repeatedly
-> fail with -EPROBE_DEFERED errors. It was caused by a circular dependency
-> between the gpio and pinctrl frameworks. If the gpio-ranges property is
-> present in device tree, then the gpio framework will handle the gpio pin
-> registration and eliminate the circular dependency.
+> Clang warns when one enumerated type is implicitly converted to another:
 >
-> See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
-> gpio-hog related boot issues") for a detailed commit message that
-> explains the issue in much more detail. The code comment in this commit
-> came from Christian's commit.
+> drivers/pinctrl/pinctrl-max77620.c:56:12: warning: implicit conversion
+> from enumeration type 'enum max77620_pinconf_param' to different
+> enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>                 .param = MAX77620_ACTIVE_FPS_SOURCE,
+>                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
 >
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> It is expected that pinctrl drivers can extend pin_config_param because
+> of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+> isn't an issue. Most drivers that take advantage of this define the
+> PIN_CONFIG variables as constants, rather than enumerated values. Do the
+> same thing here so that Clang no longer warns.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/139
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-No word from Bjorn but I trust my own intuition and applied it.
+Patch tentatively applied.
 
-Bj=C3=B6rn: shout if it's wrong.
+This seems to be the direction we need to be going with a lot
+of CLANG business.
 
-Question: should this also be done for pinctrl-ssbi-gpio.c?
+Laxman: you weren't CCed, so tell us if you dislike it for some
+reason.
 
 Yours,
 Linus Walleij
