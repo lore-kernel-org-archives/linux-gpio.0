@@ -1,23 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mt7622: fix small typo
-Date: Fri, 9 Nov 2018 10:46:05 +0100
-Message-ID: <CACRpkdZ4gDfK9TtAiiExo-PyYi8qcpPCf5_KHMV_dnoJ05ychw@mail.gmail.com>
-References: <20181101154427.23110-1-tiny.windzz@gmail.com>
+Subject: Re: [PATCH V4 05/10] dt-bindings: pinctrl: imx7ulp: back to imx
+ legacy binding for consistency
+Date: Fri, 9 Nov 2018 10:50:12 +0100
+Message-ID: <CACRpkdZ-oNJyOk0Xh10y44yzhMsodCx0uKpWL7iSCyzyEfaH5g@mail.gmail.com>
+References: <1541149669-10857-1-git-send-email-aisheng.dong@nxp.com>
+ <1541149669-10857-6-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181101154427.23110-1-tiny.windzz@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: tiny.windzz@gmail.com
-Cc: Sean Wang <sean.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1541149669-10857-6-git-send-email-aisheng.dong@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Dong Aisheng <dongas86@gmail.com>, Russell King <linux@armlinux.org.uk>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 4:44 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
+On Fri, Nov 2, 2018 at 10:13 AM A.s. Dong <aisheng.dong@nxp.com> wrote:
 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> We already had an earlier conclusion that all new i.MX Socs will keep
+> using the legacy i.MX Pinctrl bindings instead of generic pin config.
+> However, MX7ULP generic pin config binding support has already been in
+> tree before that time. Per SoC maintainers' suggestions, in order to
+> get a better consistency for all i.MX devices, we'd like to go back to
+> imx legacy binding for MX7ULP as well.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+> ChangeLog:
+>  v3: new patch
 
-This patch does not apply to v4.20-rc1, please check and
-rebase of not already fixed, and resend.
+Patch applied with Fabio's and Rob's ACKs.
 
 Yours,
 Linus Walleij
