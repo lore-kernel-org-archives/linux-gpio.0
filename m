@@ -1,28 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: clean up indentation issues, add
- missing tab
-Date: Fri, 9 Nov 2018 09:55:23 +0100
-Message-ID: <CACRpkdYv08SESk5psSin+PogkV3m+1QDSdiWMRE9tREUZVxemA@mail.gmail.com>
-References: <20181031184241.5439-1-colin.king@canonical.com>
+Subject: Re: [PATCH v2 5/7] pinctrl: qcom: spmi-gpio: fix gpio-hog related
+ boot issues
+Date: Fri, 9 Nov 2018 09:59:08 +0100
+Message-ID: <CACRpkdaabE-ekKQp93CiFtN_Qp6OohEUE-qufsX=12u2p_SXtw@mail.gmail.com>
+References: <20181101001149.13453-1-masneyb@onstation.org> <20181101001149.13453-6-masneyb@onstation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181031184241.5439-1-colin.king@canonical.com>
+In-Reply-To: <20181101001149.13453-6-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: sean.wang@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: masneyb@onstation.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, jonathan@marek.ca
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 7:42 PM Colin King <colin.king@canonical.com> wrote:
+On Thu, Nov 1, 2018 at 1:12 AM Brian Masney <masneyb@onstation.org> wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
+> When attempting to setup up a gpio hog, device probing would repeatedly
+> fail with -EPROBE_DEFERED errors. It was caused by a circular dependency
+> between the gpio and pinctrl frameworks. If the gpio-ranges property is
+> present in device tree, then the gpio framework will handle the gpio pin
+> registration and eliminate the circular dependency.
 >
-> Trivial fix to clean up indentation issues, add one level of
-> indentation on two if statements.
+> See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
+> gpio-hog related boot issues") for a detailed commit message that
+> explains the issue in much more detail. The code comment in this commit
+> came from Christian's commit.
 >
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
 
-Patch applied.
+No word from Bjorn but I trust my own intuition and applied it.
+
+Bj=C3=B6rn: shout if it's wrong.
+
+Question: should this also be done for pinctrl-ssbi-gpio.c?
 
 Yours,
 Linus Walleij
