@@ -1,58 +1,69 @@
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V5 1/1] gpio: vf610: add optional clock support
-Date: Sat, 10 Nov 2018 14:25:06 +0000
-Message-ID: <AM0PR04MB4211715479C2EE5BE865DD5280C70@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <CACRpkdaO-cUd7wVksboUU0-qu20aBo370Rio=GkNH11U0CB4Jw@mail.gmail.com>
- <1541426614-17299-1-git-send-email-aisheng.dong@nxp.com>
- <CACRpkdYpmfkB82OLG8ksVO9xFz+uW3OAC1uFwEztCS9CNNZeSg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdYpmfkB82OLG8ksVO9xFz+uW3OAC1uFwEztCS9CNNZeSg@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dong Aisheng <dongas86@gmail.com>, Russell King <linux@armlinux.org.uk>, Stefan Agner <stefan@agner.ch>, "open list:GPIO
- SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH 12/17] pinctrl: bcm2835: Switch to SPDX identifier
+Date: Sat, 10 Nov 2018 17:15:11 +0100
+Message-ID: <1541866511-7856-1-git-send-email-stefan.wahren@i2se.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Anholt <eric@anholt.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, Stefan Wahren <stefan.wahren@i2se.com>, Simon Arlott <simon@arlott.org>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-gpio@vger.kernel.org
 
-[...]
-> 
-> This looks good but doesn't apply to the GPIO "devel" branch for some reason:
-> 
-> $ git am --signoff dong1.patch
-> Applying: gpio: vf610: add optional clock support
-> error: patch failed: drivers/gpio/gpio-vf610.c:16
-> error: drivers/gpio/gpio-vf610.c: patch does not apply Patch failed at 0001
-> gpio: vf610: add optional clock support Use 'git am --show-current-patch' to
-> see the failed patch When you have resolved this problem, run "git am
-> --continue".
-> If you prefer to skip this patch, run "git am --skip" instead.
-> To restore the original branch and stop patching, run "git am --abort".
-> 
-> $ patch -p1 < dong1.patch
-> patching file drivers/gpio/gpio-vf610.c
-> Hunk #1 succeeded at 7 with fuzz 2 (offset -9 lines).
-> Hunk #2 FAILED at 42.
-> patch: **** malformed patch at line 136: ev)
-> 
-> Can you check and rebase/resend?
+Adopt the SPDX license identifier headers to ease license compliance
+management.
 
-Thanks for reporting this. I just resent the patch after rebase against gpio tree.
-Sorry for the inconvenience.
-Please let me know if any issue.
+Cc: Simon Arlott <simon@arlott.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 11 +----------
+ include/dt-bindings/pinctrl/bcm2835.h |  8 +-------
+ 2 files changed, 2 insertions(+), 17 deletions(-)
 
-Regards
-Dong Aisheng
-> 
-> Yours,
-> Linus Walleij
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index 08925d2..0e08d5b 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Driver for Broadcom BCM2835 GPIO unit (pinctrl + GPIO)
+  *
+@@ -6,16 +7,6 @@
+  * This driver is inspired by:
+  * pinctrl-nomadik.c, please see original file for copyright information
+  * pinctrl-tegra.c, please see original file for copyright information
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/bitmap.h>
+diff --git a/include/dt-bindings/pinctrl/bcm2835.h b/include/dt-bindings/pinctrl/bcm2835.h
+index e4e4fdf..32a721e8 100644
+--- a/include/dt-bindings/pinctrl/bcm2835.h
++++ b/include/dt-bindings/pinctrl/bcm2835.h
+@@ -1,14 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Header providing constants for bcm2835 pinctrl bindings.
+  *
+  * Copyright (C) 2015 Stefan Wahren <stefan.wahren@i2se.com>
+- *
+- * The code contained herein is licensed under the GNU General Public
+- * License. You may obtain a copy of the GNU General Public License
+- * Version 2 at the following locations:
+- *
+- * http://www.opensource.org/licenses/gpl-license.html
+- * http://www.gnu.org/copyleft/gpl.html
+  */
+ 
+ #ifndef __DT_BINDINGS_PINCTRL_BCM2835_H__
+-- 
+2.7.4
