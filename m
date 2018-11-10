@@ -1,102 +1,81 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] pinctrl: msm: Add sleep pinctrl state transitions
-Date: Fri, 9 Nov 2018 23:20:45 -0800
-Message-ID: <20181110072045.GB4373@minitux>
-References: <20181109222835.60607-1-evgreen@chromium.org>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH 00/17] bcm2835: Treewide switch to SPDX identifier
+Date: Sat, 10 Nov 2018 15:17:56 +0100
+Message-ID: <1541859476-6210-1-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181109222835.60607-1-evgreen@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Evan Green <evgreen@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <swboyd@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Eric Anholt <eric@anholt.net>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Vinod Koul <vkoul@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jassi Brar <jassisinghbrar@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Mark Brown <broonie@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edube>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, linux-pwm@vger.kernel.org, alsa-devel@alsa-project.org, linux-pm@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri 09 Nov 14:28 PST 2018, Evan Green wrote:
+After fixing the module license of some bcm2835 drivers in "Fix MODULE_LICENSE
+of bcm2835 drivers", we can finally switch all outstanding bcm2835 /
+Raspberry Pi drivers to SPDX identifier and drop the unnecessary license text.
+I omit the staging area, because there are proposed a lot of changes for
+vc04_services. 
 
-> Add PM suspend callbacks to the msm core driver that select the
-> sleep and default pinctrl states. Then wire those callbacks up
-> in the sdm845 driver, for those boards that may have GPIO hogs
-> that need to change state during suspend.
-> 
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> ---
-> 
->  drivers/pinctrl/qcom/pinctrl-msm.c    | 16 ++++++++++++++++
->  drivers/pinctrl/qcom/pinctrl-msm.h    |  2 ++
->  drivers/pinctrl/qcom/pinctrl-sdm845.c |  4 ++++
->  3 files changed, 22 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 7c7d083e2c0dc..d505d0a50f0a5 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -1072,6 +1072,22 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
->  		}
->  }
->  
-> +int msm_pinctrl_suspend(struct device *dev)
-> +{
-> +	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
-> +
-> +	return pinctrl_force_sleep(pctrl->pctrl);
-> +}
-> +EXPORT_SYMBOL(msm_pinctrl_suspend);
-> +
-> +int msm_pinctrl_resume(struct device *dev)
-> +{
-> +	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
-> +
-> +	return pinctrl_force_default(pctrl->pctrl);
-> +}
-> +EXPORT_SYMBOL(msm_pinctrl_resume);
-> +
->  int msm_pinctrl_probe(struct platform_device *pdev,
->  		      const struct msm_pinctrl_soc_data *soc_data)
->  {
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
-> index 29172fdf5882c..e163ca600ecd3 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.h
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.h
-> @@ -123,6 +123,8 @@ struct msm_pinctrl_soc_data {
->  	unsigned int ntiles;
->  };
->  
-> +int msm_pinctrl_suspend(struct device *dev);
-> +int msm_pinctrl_resume(struct device *dev);
->  int msm_pinctrl_probe(struct platform_device *pdev,
->  		      const struct msm_pinctrl_soc_data *soc_data);
->  int msm_pinctrl_remove(struct platform_device *pdev);
-> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> index 2ab7a88857579..a3ac9cbeabad1 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> @@ -1287,6 +1287,9 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
->  	.ngpios = 150,
->  };
->  
-> +static SIMPLE_DEV_PM_OPS(sdm845_pinctrl_dev_pm_ops, msm_pinctrl_suspend,
-> +			 msm_pinctrl_resume);
+I hope it is okay to have the binding header integrated in the tree-wise
+patches instead of a separate one. This should avoid conflicts while merging.
 
-I don't expect this to differ between the various platforms, so how
-about moving it to pinctrl-msm?
+Stefan Wahren (17):
+  ARM: dts: bcm2835-rpi-zero: Switch to SPDX identifier
+  ARM: mach-bcm: Switch bcm2835 and platsmp to SPDX identifier
+  hw_random: bcm2835-rng: Switch to SPDX identifier
+  clk: bcm2835: Switch to SPDX identifier
+  clocksource: bcm2835: Switch to SPDX identifier
+  dma: bcm2835: Switch to SPDX identifier
+  firmware: raspberrypi: Switch to SPDX identifier
+  i2c: bcm2835: Switch to SPDX identifier
+  irqchip: bcm283x: Switch to SPDX identifier
+  mailbox: bcm2835: Switch to SPDX identifier
+  mmc: bcm2835: Switch to SPDX identifier
+  pinctrl: bcm2835: Switch to SPDX identifier
+  pwm: bcm2835: Switch to SPDX identifier
+  soc: bcm: Switch raspberrypi-power to SPDX identifier
+  spi: bcm2835: Switch to SPDX identifier
+  thermal: bcm2835: Switch to SPDX identifier
+  ASoc: bcm2835-i2s: Switch to SPDX identifier
 
-Regards,
-Bjorn
+ arch/arm/boot/dts/bcm2835-rpi-zero-w.dts      |  8 +-------
+ arch/arm/boot/dts/bcm2835-rpi-zero.dts        |  8 +-------
+ arch/arm/mach-bcm/board_bcm2835.c             | 11 +----------
+ arch/arm/mach-bcm/platsmp.c                   | 10 +---------
+ arch/arm/mach-bcm/platsmp.h                   |  6 +-----
+ drivers/char/hw_random/bcm2835-rng.c          |  7 ++-----
+ drivers/clk/bcm/clk-bcm2835-aux.c             | 11 +----------
+ drivers/clk/bcm/clk-bcm2835.c                 | 12 +-----------
+ drivers/clocksource/bcm2835_timer.c           | 15 +--------------
+ drivers/dma/bcm2835-dma.c                     | 11 +----------
+ drivers/firmware/raspberrypi.c                |  5 +----
+ drivers/i2c/busses/i2c-bcm2835.c              | 10 +---------
+ drivers/irqchip/irq-bcm2835.c                 | 11 +----------
+ drivers/irqchip/irq-bcm2836.c                 | 11 +----------
+ drivers/mailbox/bcm2835-mailbox.c             |  8 +-------
+ drivers/mmc/host/bcm2835.c                    | 13 +------------
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c         | 11 +----------
+ drivers/pwm/pwm-bcm2835.c                     |  5 +----
+ drivers/soc/bcm/raspberrypi-power.c           |  5 +----
+ drivers/spi/spi-bcm2835.c                     | 11 +----------
+ drivers/spi/spi-bcm2835aux.c                  | 11 +----------
+ drivers/thermal/broadcom/bcm2835_thermal.c    | 11 +----------
+ include/dt-bindings/clock/bcm2835-aux.h       | 10 +---------
+ include/dt-bindings/clock/bcm2835.h           | 10 +---------
+ include/dt-bindings/pinctrl/bcm2835.h         |  8 +-------
+ include/dt-bindings/power/raspberrypi-power.h |  5 +----
+ include/soc/bcm2835/raspberrypi-firmware.h    |  5 +----
+ sound/soc/bcm/bcm2835-i2s.c                   | 10 +---------
+ 28 files changed, 29 insertions(+), 230 deletions(-)
 
-> +
->  static int sdm845_pinctrl_probe(struct platform_device *pdev)
->  {
->  	return msm_pinctrl_probe(pdev, &sdm845_pinctrl);
-> @@ -1300,6 +1303,7 @@ static const struct of_device_id sdm845_pinctrl_of_match[] = {
->  static struct platform_driver sdm845_pinctrl_driver = {
->  	.driver = {
->  		.name = "sdm845-pinctrl",
-> +		.pm = &sdm845_pinctrl_dev_pm_ops,
->  		.of_match_table = sdm845_pinctrl_of_match,
->  	},
->  	.probe = sdm845_pinctrl_probe,
-> -- 
-> 2.16.4
-> 
+-- 
+2.7.4
