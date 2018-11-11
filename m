@@ -1,84 +1,59 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: ssbi-gpio: fix gpio-hog related boot
- issues
-Date: Sat, 10 Nov 2018 22:48:50 -0800
-Message-ID: <20181111064850.GA10088@minitux>
-References: <20181111013411.14153-1-masneyb@onstation.org>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 1/3] mfd: upboard: Add UP2 platform controller driver
+Date: Sun, 11 Nov 2018 12:29:44 +0100
+Message-ID: <20181111112944.GA27666@amd>
+References: <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1541018689-20625-1-git-send-email-dan@emutex.com>
+ <1541018689-20625-2-git-send-email-dan@emutex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181111013411.14153-1-masneyb@onstation.org>
+In-Reply-To: <1541018689-20625-2-git-send-email-dan@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>
-Cc: linus.walleij@linaro.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan O'Donovan <dan@emutex.com>
+Cc: linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, Carlos Iglesias <carlos.iglesias@emutex.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat 10 Nov 17:34 PST 2018, Brian Masney wrote:
 
-> When attempting to setup up a gpio hog, device probing will repeatedly
-> fail with -EPROBE_DEFERED errors. It is caused by a circular dependency
-> between the gpio and pinctrl frameworks. If the gpio-ranges property is
-> present in device tree, then the gpio framework will handle the gpio pin
-> registration and eliminate the circular dependency.
-> 
-> See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
-> gpio-hog related boot issues") for a detailed commit message that
-> explains the issue in much more detail. The code comment in this commit
-> came from Christian's commit.
-> 
-> I did not test this change against any hardware supported by this
-> particular driver, however I was able to validate this same fix works
-> for pinctrl-spmi-gpio.c using a LG Nexus 5 (hammerhead) phone.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hi!
 
-Regards,
-Bjorn
-
-> ---
-> For the patch and discussion regarding pinctrl-spmi-gpio.c, see
-> https://lore.kernel.org/lkml/20181101001149.13453-6-masneyb@onstation.org/
-> 
->  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> index 6b30bef829ab..ded7d765af2e 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> @@ -762,12 +762,23 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	ret = gpiochip_add_pin_range(&pctrl->chip,
-> -				     dev_name(pctrl->dev),
-> -				     0, 0, pctrl->chip.ngpio);
-> -	if (ret) {
-> -		dev_err(pctrl->dev, "failed to add pin range\n");
-> -		goto unregister_gpiochip;
+> +static void __reg_io_start(const struct upboard_ddata * const ddata)
+> +{
 > +	/*
-> +	 * For DeviceTree-supported systems, the gpio core checks the
-> +	 * pinctrl's device node for the "gpio-ranges" property.
-> +	 * If it is present, it takes care of adding the pin ranges
-> +	 * for the driver. In this case the driver can skip ahead.
-> +	 *
-> +	 * In order to remain compatible with older, existing DeviceTree
-> +	 * files which don't set the "gpio-ranges" property or systems that
-> +	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
+> +	 * CLEAR signal must be pulsed low before any register access.
+> +	 * This resets internal counters in the controller and marks
+> +	 * the start of a new register access.
 > +	 */
-> +	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
-> +		ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
-> +					     0, 0, pctrl->chip.ngpio);
-> +		if (ret) {
-> +			dev_err(pctrl->dev, "failed to add pin range\n");
-> +			goto unregister_gpiochip;
-> +		}
->  	}
->  
->  	platform_set_drvdata(pdev, pctrl);
-> -- 
-> 2.17.2
-> 
+> +	set_clear(ddata, 0);
+> +	set_clear(ddata, 1);
+> +}
+
+We normally reserve __ prefix for different stuff. This is not using
+it appropriately.
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--HcAYCG3uE/tztfnV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvoEqgACgkQMOfwapXb+vJW6QCggp4a+m3xauUoHQ3g7SOBg8Kw
+w/8AoLHm+xmWtStIi0AZooRWYKr4kZnw
+=puC8
+-----END PGP SIGNATURE-----
+
+--HcAYCG3uE/tztfnV--
