@@ -1,94 +1,74 @@
-From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-Subject: Re: [PATCH v5 04/11] dt-bindings: iio: adc: add AXP803 ADC bindings
-Date: Sun, 11 Nov 2018 15:30:09 +0000
-Message-ID: <20181111152952.0375b969@archlinux>
-References: <20181023185330.10472-1-oskari@lemmela.net>
-        <20181023185330.10472-5-oskari@lemmela.net>
-        <20181024135633.GA342@bogus>
-        <20181028154011.04efdecf@archlinux>
-        <20181029130757.m5okrfvusjl5fu5m@qschulz>
-        <CAGb2v65JKj_7VcEr1KuZVop85hn-3h73NrExprpmLbKZiosD5Q@mail.gmail.com>
-        <20181103102153.4f0481ad@archlinux>
-        <CAGb2v66mH5_J0K4ArFduvvQ2aE7mZxcyLORNPODj79-xhiKapQ@mail.gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
+Date: Sun, 11 Nov 2018 17:59:17 +0100
+Message-ID: <20181111165917.zrbg3xbhlitto7xs@pengutronix.de>
+References: <20181108203546.54rncnydgamud5z3@pengutronix.de>
+ <CAMRc=Mev6RMvVox2Sx6s80+obLg4QWAL=_hwcf34m2iMXwEbOg@mail.gmail.com>
+ <20181109115424.pe4w26nmt6xplzto@pengutronix.de>
+ <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
+ <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
+ <CAMRc=Mf18udrM=2=SZHMg3M2akcccPXb7Fr81vXODpNgjf+uJw@mail.gmail.com>
+ <20181109143950.gy7swu6vgaqgg7dw@pengutronix.de>
+ <CAMRc=McF482n+57e6Vz9H1dEQ5QS+4p88SYg6ZjNuUMYZx6t3Q@mail.gmail.com>
+ <20181109170323.6b2nj5vvtwu3d5ee@pengutronix.de>
+ <CAMRc=MfY7c21NOBNnVgXKimywXHFifwek5B76Y_3DgmM_hBbgw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGb2v66mH5_J0K4ArFduvvQ2aE7mZxcyLORNPODj79-xhiKapQ@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MfY7c21NOBNnVgXKimywXHFifwek5B76Y_3DgmM_hBbgw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "open list:THERMAL" <linux-pm@vger.kernel.org>, linux-iio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Vasily Khoruzhick <anarsoul@gmail.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, devicetree <devicetree@vger.kernel.org>, oskari@lemmela.net, linux-gpio@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Quentin Schulz <quentin.schulz@bootlin.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 5 Nov 2018 13:47:50 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
-
-> On Sat, Nov 3, 2018 at 6:22 PM Jonathan Cameron
-> <jic23@jic23.retrosnub.co.uk> wrote:
+On Fri, Nov 09, 2018 at 06:23:01PM +0100, Bartosz Golaszewski wrote:
+> pt., 9 lis 2018 o 18:03 Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> napisał(a):
 > >
-> > On Wed, 31 Oct 2018 10:29:59 +0800
-> > Chen-Yu Tsai <wens@csie.org> wrote:
-> >  
-> > > On Mon, Oct 29, 2018 at 9:10 PM Quentin Schulz
-> > > <quentin.schulz@bootlin.com> wrote:  
-> > > >
-> > > > Hi Jonathan,
-> > > >
-> > > > On Sun, Oct 28, 2018 at 03:40:11PM +0000, Jonathan Cameron wrote:  
-> > > > > On Wed, 24 Oct 2018 08:56:33 -0500
-> > > > > Rob Herring <robh@kernel.org> wrote:
-> > > > >  
-> > > > > > On Tue, 23 Oct 2018 21:53:23 +0300, Oskari Lemmela wrote:  
-> > > > > > > The AXP803 ADC is compatible with AXP813 ADC, but add
-> > > > > > > specific compatible for it.
-> > > > > > >
-> > > > > > > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-> > > > > > > ---
-> > > > > > >  Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt | 2 ++
-> > > > > > >  1 file changed, 2 insertions(+)
-> > > > > > >  
-> > > > > >
-> > > > > > Reviewed-by: Rob Herring <robh@kernel.org>  
+> > Hello Bartosz,
+> >
+> > On Fri, Nov 09, 2018 at 04:24:10PM +0100, Bartosz Golaszewski wrote:
+> > > pt., 9 lis 2018 o 15:39 Uwe Kleine-König
+> > > <u.kleine-koenig@pengutronix.de> napisał(a):
+> > > > On Fri, Nov 09, 2018 at 02:53:16PM +0100, Bartosz Golaszewski wrote:
+> > > > > pt., 9 lis 2018 o 14:10 Uwe Kleine-König
+> > > > > <u.kleine-koenig@pengutronix.de> napisał(a):
+> > > > > > Which test failed exactly?
 > > > > >
-> > > > > This doesn't seem to have any dependencies with the other patches
-> > > > > so applied to the togreg branch of iio.git and pushed out as testing
-> > > > > for the autobuilders to ignore.  However I am a little curious to know
-> > > > > why we would add the ID and then not use it (that I can see)?
-> > > > >  
+> > > > > All gpioinfo tests that check the output of this command and expect to
+> > > > > see input as line direction.
 > > > >
-> > > > Sometimes with Allwinner (and X-Powers), two IPs seem identical until we
-> > > > discover something that is slightly different. When this happens, we
-> > > > have to add a compatible to differentiate both. However, we would also
-> > > > need to change the Device Tree to change the compatible. We would need
-> > > > to handle the driver behaviour for both Device Trees.
-> > > >
-> > > > So better anticipate a possible difference so that we don't have to do
-> > > > some hacks in the driver to handle the device correctly.
-> > > >
-> > > > As always, Chen-Yu or Maxime may know better so I'm just stating what I
-> > > > seem to recall.  
+> > > > This wasn't the answer I expected. The background of my question was:
+> > > > This failing test seems to expect that a given GPIO is an input. If that
+> > > > expectation already exists after the gpio is only requested, then the
+> > > > test is broken and a fix is necessary there.
 > > >
-> > > With Allwinner stuff (X-Powers included), sometimes the documents are
-> > > incomplete or have errors. We tend to add a model-specific compatible
-> > > just in case things turn out not to be so compatible, unless someone
-> > > has triple-checked everything, documents and actual hardware included.
-> > >
-> > > However we don't actually document these, so this patch isn't strictly
-> > > needed. (I suppose this might annoy the device tree binding maintainers.)
-> > >
-> > > ChenYu  
-> > I don't think it does any harm so I'll leave it in place.  Thanks for
-> > the explanations.  
+> > > The test is only expected to work with gpio-mockup which is a dummy
+> > > testing module. I believe its behavior should be as deterministic as
+> > > possible to the point where newly created chips always have the same
+> > > direction.
+> >
+> > Given that the initial direction of a GPIO isn't fixed in my eyes the
+> > test should be able to cope with both possibilities. I'd say it's a bug
+> > in the test if it doesn't.
+> >
 > 
-> It might cause a bit of confusion though. We are not targetting these
-> compatibles in terms of driver support, and they should not be used
-> individually. IMO dropping this patch altogether is better. In the
-> device tree we would use the tuplet axp803 + axp813.
-> 
-OK. Dropped.
+> As I said before: it is and should be fixed in this specific case.
+> This isn't real hardware.
 
-Thanks,
+Not sure if we agree here yet. What do you want to fix? The driver or
+the test?
 
-Jonathan
+In my eyes test driven development is great. But if something breaks
+because the test is wrong, please don't "fix" the system to repair the
+test, but modify the test to be able to handle reality.
 
-> ChenYu
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
