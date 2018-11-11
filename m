@@ -1,41 +1,69 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH] pinctrl: imx: make sure that maps are fully initialized
-Date: Sat, 10 Nov 2018 15:49:00 -0200
-Message-ID: <CAOMZO5CF0KoAckvJ++FuQcaj2d1bNBCvZMzThuezUCQ95+od_g@mail.gmail.com>
-References: <1541871439-4882-1-git-send-email-martin@kaiser.cx>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Brian Masney <masneyb@onstation.org>
+Subject: [PATCH] pinctrl: qcom: ssbi-gpio: fix gpio-hog related boot issues
+Date: Sat, 10 Nov 2018 20:34:11 -0500
+Message-ID: <20181111013411.14153-1-masneyb@onstation.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1541871439-4882-1-git-send-email-martin@kaiser.cx>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Kaiser <martin@kaiser.cx>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Sascha Hauer <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: bjorn.andersson@linaro.org, linus.walleij@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Martin,
+When attempting to setup up a gpio hog, device probing will repeatedly
+fail with -EPROBE_DEFERED errors. It is caused by a circular dependency
+between the gpio and pinctrl frameworks. If the gpio-ranges property is
+present in device tree, then the gpio framework will handle the gpio pin
+registration and eliminate the circular dependency.
 
-On Sat, Nov 10, 2018 at 3:39 PM Martin Kaiser <martin@kaiser.cx> wrote:
->
-> The commit that added scu based pinctrl support introduced a regression
-> for the mmio case. In the for-loop where the maps are initialized, we
-> end up creating a partially initialized map in some cases. This causes a
-> kernel panic when such a map is used at a later stage.
->
-> When scu is not used and and a pin uses the default pad configuration,
-> the current code sets the map's type and data.configs.group_or_pin but
-> no configs or num_configs are set. The previous code without scu
-> support did not create a new map at all in this case and did not
-> increment the counter.
->
-> Fix this by setting the map type and data.configs.group_or_pin only when
-> a configuration was set before, either by scu or by mmio using a
-> non-default pad config. Increment the counter only if a new map was
-> created.
->
-> Fixes: b96eea718bf6 ("pinctrl: fsl: add scu based pinctrl support")
-> Cc: A.s. Dong <aisheng.dong@nxp.com>
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
+gpio-hog related boot issues") for a detailed commit message that
+explains the issue in much more detail. The code comment in this commit
+came from Christian's commit.
 
-Thanks for the fix:
+I did not test this change against any hardware supported by this
+particular driver, however I was able to validate this same fix works
+for pinctrl-spmi-gpio.c using a LG Nexus 5 (hammerhead) phone.
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+---
+For the patch and discussion regarding pinctrl-spmi-gpio.c, see
+https://lore.kernel.org/lkml/20181101001149.13453-6-masneyb@onstation.org/
+
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+index 6b30bef829ab..ded7d765af2e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -762,12 +762,23 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = gpiochip_add_pin_range(&pctrl->chip,
+-				     dev_name(pctrl->dev),
+-				     0, 0, pctrl->chip.ngpio);
+-	if (ret) {
+-		dev_err(pctrl->dev, "failed to add pin range\n");
+-		goto unregister_gpiochip;
++	/*
++	 * For DeviceTree-supported systems, the gpio core checks the
++	 * pinctrl's device node for the "gpio-ranges" property.
++	 * If it is present, it takes care of adding the pin ranges
++	 * for the driver. In this case the driver can skip ahead.
++	 *
++	 * In order to remain compatible with older, existing DeviceTree
++	 * files which don't set the "gpio-ranges" property or systems that
++	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
++	 */
++	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
++		ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
++					     0, 0, pctrl->chip.ngpio);
++		if (ret) {
++			dev_err(pctrl->dev, "failed to add pin range\n");
++			goto unregister_gpiochip;
++		}
+ 	}
+ 
+ 	platform_set_drvdata(pdev, pctrl);
+-- 
+2.17.2
