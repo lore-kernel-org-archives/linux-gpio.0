@@ -1,74 +1,40 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
-Date: Sun, 11 Nov 2018 17:59:17 +0100
-Message-ID: <20181111165917.zrbg3xbhlitto7xs@pengutronix.de>
-References: <20181108203546.54rncnydgamud5z3@pengutronix.de>
- <CAMRc=Mev6RMvVox2Sx6s80+obLg4QWAL=_hwcf34m2iMXwEbOg@mail.gmail.com>
- <20181109115424.pe4w26nmt6xplzto@pengutronix.de>
- <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
- <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
- <CAMRc=Mf18udrM=2=SZHMg3M2akcccPXb7Fr81vXODpNgjf+uJw@mail.gmail.com>
- <20181109143950.gy7swu6vgaqgg7dw@pengutronix.de>
- <CAMRc=McF482n+57e6Vz9H1dEQ5QS+4p88SYg6ZjNuUMYZx6t3Q@mail.gmail.com>
- <20181109170323.6b2nj5vvtwu3d5ee@pengutronix.de>
- <CAMRc=MfY7c21NOBNnVgXKimywXHFifwek5B76Y_3DgmM_hBbgw@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
+Date: Sun, 11 Nov 2018 09:39:32 -0800
+Message-ID: <20181111173932.GA12254@kroah.com>
+References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMRc=MfY7c21NOBNnVgXKimywXHFifwek5B76Y_3DgmM_hBbgw@mail.gmail.com>
+In-Reply-To: <20181026144333.12276-1-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>devi
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 06:23:01PM +0100, Bartosz Golaszewski wrote:
-> pt., 9 lis 2018 o 18:03 Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> napisał(a):
-> >
-> > Hello Bartosz,
-> >
-> > On Fri, Nov 09, 2018 at 04:24:10PM +0100, Bartosz Golaszewski wrote:
-> > > pt., 9 lis 2018 o 15:39 Uwe Kleine-König
-> > > <u.kleine-koenig@pengutronix.de> napisał(a):
-> > > > On Fri, Nov 09, 2018 at 02:53:16PM +0100, Bartosz Golaszewski wrote:
-> > > > > pt., 9 lis 2018 o 14:10 Uwe Kleine-König
-> > > > > <u.kleine-koenig@pengutronix.de> napisał(a):
-> > > > > > Which test failed exactly?
-> > > > >
-> > > > > All gpioinfo tests that check the output of this command and expect to
-> > > > > see input as line direction.
-> > > >
-> > > > This wasn't the answer I expected. The background of my question was:
-> > > > This failing test seems to expect that a given GPIO is an input. If that
-> > > > expectation already exists after the gpio is only requested, then the
-> > > > test is broken and a fix is necessary there.
-> > >
-> > > The test is only expected to work with gpio-mockup which is a dummy
-> > > testing module. I believe its behavior should be as deterministic as
-> > > possible to the point where newly created chips always have the same
-> > > direction.
-> >
-> > Given that the initial direction of a GPIO isn't fixed in my eyes the
-> > test should be able to cope with both possibilities. I'd say it's a bug
-> > in the test if it doesn't.
-> >
+On Fri, Oct 26, 2018 at 04:43:24PM +0200, Boris Brezillon wrote:
+> Hi Greg,
 > 
-> As I said before: it is and should be fixed in this specific case.
-> This isn't real hardware.
+> I think we've reached a point where we can eventually consider the I3C
+> framework for inclusion in 4.20 (5.0?). A few more issues were reported
+> on v9 and fixed in v10. I can't guarantee that the implementation is
+> free of bugs but I still think it's worth merging it in v4.20: it's a
+> new subsystem, so we don't risk regressions, and the only way we can
+> detect other issues is by having other people experiment with this
+> implementation.
+> 
+> The only remaining concern raised by Arnd is the fact that both hosts
+> and slaves share the same bus type and are differentiated thanks to
+> their device_type, which IMHO is fine since this is what other
+> subsystems do (plus I don't see other solutions to have both I3C
+> devices and I3C buses represented under /sys/bus/i3c/).
 
-Not sure if we agree here yet. What do you want to fix? The driver or
-the test?
+Yeah, it's not the nicest, but it will work, we did it also for USB and
+greybus and it solves the issue.
 
-In my eyes test driven development is great. But if something breaks
-because the test is wrong, please don't "fix" the system to repair the
-test, but modify the test to be able to handle reality.
+This all looks good to me, so I've queued it up.  Let's see if
+linux-next has any problems with it.  Thanks for sticking with it, nice
+work!
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+greg k-h
