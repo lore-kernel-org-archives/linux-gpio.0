@@ -1,106 +1,63 @@
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH] pinctrl: imx: Fix imx_dt_node_to_map handling of
- IMX_NO_PAD_CTL
-Date: Mon, 12 Nov 2018 15:33:21 +0000
-Message-ID: <AM0PR04MB421189893528B45B404CC15E80C10@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1547d44dba63cbfd1b813018866f8916013b3381.1541973902.git.leonard.crestez@nxp.com>
+From: Martin Kaiser <martin@kaiser.cx>
+Subject: Re: [PATCH] pinctrl: imx: make sure that maps are fully initialized
+Date: Mon, 12 Nov 2018 16:37:21 +0100
+Message-ID: <20181112153721.ekgpql3pj3bbv6ee@viti.kaiser.cx>
+References: <1541871439-4882-1-git-send-email-martin@kaiser.cx>
+ <AM0PR04MB4290D734ED5D039A903DA2DBEEC00@AM0PR04MB4290.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1547d44dba63cbfd1b813018866f8916013b3381.1541973902.git.leonard.crestez@nxp.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Leonard Crestez <leonard.crestez@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, Fabio Estevam <fabio.estevam@nxp.com>, Martin Kaiser <martin@kaiser.cx>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <AM0PR04MB4290D734ED5D039A903DA2DBEEC00@AM0PR04MB4290.eurprd04.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: "A.s. Dong" <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Pengutronix Kernel Team <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
 Hi Leonard,
 
-> -----Original Message-----
-> From: Leonard Crestez
-> Sent: Monday, November 12, 2018 6:15 AM
-[...]
-> 
-> After changes for SCU support the IMX_NO_PAD_CTL flag is not longer handled
-> correctly in imx_dt_node_to_map. Pins with this flag are no longer skipped
-> and the new_map array can overflow and corrupt memory.
-> 
-> This fixes imx6-sabreauto boards failing to boot.
-> 
-> Fixes: b96eea718bf6 ("pinctrl: fsl: add scu based pinctrl support")
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Thus wrote Leonard Crestez (leonard.crestez@nxp.com):
 
-Please see another more simpler fix just sent out with both you and Martin Kaiser's tags.
-Thanks for the effort.
+> On 11/10/18 7:37 PM, Martin Kaiser wrote:
+> > The commit that added scu based pinctrl support introduced a regression
+> > for the mmio case. In the for-loop where the maps are initialized, we
+> > end up creating a partially initialized map in some cases. This causes a
+> > kernel panic when such a map is used at a later stage.
 
-Regards
-Dong Aisheng
+> > Fixes: b96eea718bf6 ("pinctrl: fsl: add scu based pinctrl support")
+> > Cc: A.s. Dong <aisheng.dong@nxp.com>
 
-> 
-> ---
->  drivers/pinctrl/freescale/pinctrl-imx.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
-> A different was posted earlier:
-> https://lore.kernel.org/patchwork/patch/1009504/
-> 
-> I don't think that's correct because it assumes num_configs is zero-initialized
-> but new_map comes from kmalloc_array.
-> 
-> Code is clearer if SCU and MMIO paths are separate.
-> 
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
-> b/drivers/pinctrl/freescale/pinctrl-imx.c
-> index 78d33dfb4d2d..51312e81eff7 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> @@ -106,29 +106,31 @@ static int imx_dt_node_to_map(struct pinctrl_dev
-> *pctldev,
-> 
->  	/* create config map */
->  	new_map++;
->  	for (i = j = 0; i < grp->num_pins; i++) {
->  		pin = &((struct imx_pin *)(grp->data))[i];
-> -		new_map[j].type = PIN_MAP_TYPE_CONFIGS_PIN;
-> -		new_map[j].data.configs.group_or_pin =
-> -					pin_get_name(pctldev, pin->pin);
-> -
->  		if (info->flags & IMX_USE_SCU) {
->  			/*
->  			 * For SCU case, we set mux and conf together
->  			 * in one IPC call
->  			 */
-> +			new_map[j].type = PIN_MAP_TYPE_CONFIGS_PIN;
-> +			new_map[j].data.configs.group_or_pin =
-> +					pin_get_name(pctldev, pin->pin);
->  			new_map[j].data.configs.configs =
->  					(unsigned long *)&pin->conf.scu;
->  			new_map[j].data.configs.num_configs = 2;
-> +			++j;
->  		} else if (!(pin->conf.mmio.config & IMX_NO_PAD_CTL)) {
-> +			new_map[j].type = PIN_MAP_TYPE_CONFIGS_PIN;
-> +			new_map[j].data.configs.group_or_pin =
-> +					pin_get_name(pctldev, pin->pin);
->  			new_map[j].data.configs.configs =
->  					&pin->conf.mmio.config;
->  			new_map[j].data.configs.num_configs = 1;
-> +			++j;
->  		}
-> -
-> -		j++;
->  	}
-> 
->  	dev_dbg(pctldev->dev, "maps: function %s group %s num %d\n",
->  		(*map)->data.mux.function, (*map)->data.mux.group, map_num);
-> 
-> --
-> 2.17.1
+> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+> > @@ -108,9 +108,6 @@ static int imx_dt_node_to_map(struct pinctrl_dev *pctldev,
+> >   	new_map++;
+> >   	for (i = j = 0; i < grp->num_pins; i++) {
+> >   		pin = &((struct imx_pin *)(grp->data))[i];
+> > -		new_map[j].type = PIN_MAP_TYPE_CONFIGS_PIN;
+> > -		new_map[j].data.configs.group_or_pin =
+> > -					pin_get_name(pctldev, pin->pin);
+
+> >   		if (info->flags & IMX_USE_SCU) {
+> >   			/*
+> > @@ -126,7 +123,12 @@ static int imx_dt_node_to_map(struct pinctrl_dev *pctldev,
+> >   			new_map[j].data.configs.num_configs = 1;
+> >   		}
+
+> > -		j++;
+> > +		if (new_map[j].data.configs.num_configs) {
+> > +			new_map[j].type = PIN_MAP_TYPE_CONFIGS_PIN;
+> > +			new_map[j].data.configs.group_or_pin =
+> > +				pin_get_name(pctldev, pin->pin);
+> > +			j++;
+> > +		}
+
+> Sorry but I don't think this is correct.
+
+> The new_map array is allocated with kmalloc_array so we can't rely on 
+> new_map[j].data.configs.num_configs being initialized to zero unless 
+> assigned to.
+
+you're right. There's no guarantee that the memory area is initialized
+to 0.
+
+Regards,
+Martin
