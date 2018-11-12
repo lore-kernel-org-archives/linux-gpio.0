@@ -1,82 +1,82 @@
-From: Craig Tatlor <ctatlor97@gmail.com>
-Subject: [PATCH] pinctrl: sdm660: Set tile property for pingroups
-Date: Mon, 12 Nov 2018 20:25:53 +0000
-Message-ID: <20181112202553.1410-1-ctatlor97@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: gpio: add sama5d2 PIOBU support
+Date: Mon, 12 Nov 2018 12:57:33 -0600
+Message-ID: <5bea0ec9.1c69fb81.db750.9b4e@mx.google.com>
+References: <1541603580-17448-1-git-send-email-andrei.stefanescu@microchip.com>
+ <1541603580-17448-2-git-send-email-andrei.stefanescu@microchip.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: ctatlor97@gmail.com, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1541603580-17448-2-git-send-email-andrei.stefanescu@microchip.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrei.Stefanescu@microchip.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, gregkh@linuxfoundation.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Ludovic.Desroches@microchip.com, linux-arm-kernel@lists.infradead.org, Cristian.Birsan@microchip.com
 List-Id: linux-gpio@vger.kernel.org
 
-This was missed when tiles support was added in a revison and
-causes the driver to fail to load.
+On Wed, Nov 07, 2018 at 03:12:32PM +0000, Andrei.Stefanescu@microchip.com wrote:
+> This patch describes the compatible and the device tree
+> bindings necessary for the sama5d2 PIOBU GPIO
+> controller driver.
 
-Fixes: 9cf0c526bc58 ("pinctrl: qcom: Add sdm660 pinctrl driver")
-Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
----
- drivers/pinctrl/qcom/pinctrl-sdm660.c | 28 ++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+Bindings describe the h/w, not drivers.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-sdm660.c b/drivers/pinctrl/qcom/pinctrl-sdm660.c
-index 6838b38555a1..1bfb0ae6b387 100644
---- a/drivers/pinctrl/qcom/pinctrl-sdm660.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sdm660.c
-@@ -33,7 +33,7 @@ enum {
- 	}
- 
- 
--#define PINGROUP(id, base, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
-+#define PINGROUP(id, _tile, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
- 	{					        \
- 		.name = "gpio" #id,			\
- 		.pins = gpio##id##_pins,		\
-@@ -51,11 +51,12 @@ enum {
- 			msm_mux_##f9			\
- 		},				        \
- 		.nfuncs = 10,				\
--		.ctl_reg = base + REG_SIZE * id,	\
--		.io_reg = base + 0x4 + REG_SIZE * id,		\
--		.intr_cfg_reg = base + 0x8 + REG_SIZE * id,		\
--		.intr_status_reg = base + 0xc + REG_SIZE * id,	\
--		.intr_target_reg = base + 0x8 + REG_SIZE * id,	\
-+		.ctl_reg = REG_SIZE * id,		\
-+		.io_reg = 0x4 + REG_SIZE * id,		\
-+		.intr_cfg_reg = 0x8 + REG_SIZE * id,	\
-+		.intr_status_reg = 0xc + REG_SIZE * id,	\
-+		.intr_target_reg = 0x8 + REG_SIZE * id,	\
-+		.tile = _tile,			\
- 		.mux_bit = 2,			\
- 		.pull_bit = 0,			\
- 		.drv_bit = 6,			\
-@@ -82,6 +83,7 @@ enum {
- 		.intr_cfg_reg = 0,			\
- 		.intr_status_reg = 0,			\
- 		.intr_target_reg = 0,			\
-+		.tile = NORTH,				\
- 		.mux_bit = -1,				\
- 		.pull_bit = pull,			\
- 		.drv_bit = drv,				\
-@@ -1397,13 +1399,13 @@ static const struct msm_pingroup sdm660_groups[] = {
- 	PINGROUP(111, SOUTH, _, _, _, _, _, _, _, _, _),
- 	PINGROUP(112, SOUTH, _, _, _, _, _, _, _, _, _),
- 	PINGROUP(113, SOUTH, _, _, _, _, _, _, _, _, _),
--	SDC_QDSD_PINGROUP(sdc1_clk, 0x99a000, 13, 6),
--	SDC_QDSD_PINGROUP(sdc1_cmd, 0x99a000, 11, 3),
--	SDC_QDSD_PINGROUP(sdc1_data, 0x99a000, 9, 0),
--	SDC_QDSD_PINGROUP(sdc2_clk, 0x99b000, 14, 6),
--	SDC_QDSD_PINGROUP(sdc2_cmd, 0x99b000, 11, 3),
--	SDC_QDSD_PINGROUP(sdc2_data, 0x99b000, 9, 0),
--	SDC_QDSD_PINGROUP(sdc1_rclk, 0x99a000, 15, 0),
-+	SDC_QDSD_PINGROUP(sdc1_clk, 0x9a000, 13, 6),
-+	SDC_QDSD_PINGROUP(sdc1_cmd, 0x9a000, 11, 3),
-+	SDC_QDSD_PINGROUP(sdc1_data, 0x9a000, 9, 0),
-+	SDC_QDSD_PINGROUP(sdc2_clk, 0x9b000, 14, 6),
-+	SDC_QDSD_PINGROUP(sdc2_cmd, 0x9b000, 11, 3),
-+	SDC_QDSD_PINGROUP(sdc2_data, 0x9b000, 9, 0),
-+	SDC_QDSD_PINGROUP(sdc1_rclk, 0x9a000, 15, 0),
- };
- 
- static const struct msm_pinctrl_soc_data sdm660_pinctrl = {
--- 
-2.19.1
+> 
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
+> ---
+>  .../bindings/gpio/gpio-sama5d2-piobu.txt           | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sama5d2-piobu.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-sama5d2-piobu.txt b/Documentation/devicetree/bindings/gpio/gpio-sama5d2-piobu.txt
+> new file mode 100644
+> index 0000000..791ac51
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-sama5d2-piobu.txt
+> @@ -0,0 +1,23 @@
+> +GPIO controller for SAMA5D2 PIOBU pins.
+> +
+> +This pins have the property of not losing their voltage
+> +during Backup/Self-refresh mode.
+> +
+> +These bindings should be set to a node in the dtsi file.
+> +
+> +Required properties:
+> +- compatible:		"syscon", "microchip,sama5d2-piobu"
+
+Why the syscon?
+
+syscon should be last if it remains.
+
+> +- #gpio-cells:		There are 2. The pin number is the
+> +			first, the second represents additional
+> +			parameters such as GPIO_ACTIVE_HIGH/LOW.
+> +- gpio-controller:	Marks the port as GPIO controller.
+
+No interrupt capability?
+
+> +
+> +Example:
+> +
+> +	secumod@fc040000 {
+
+gpio@...
+
+> +		compatible = "syscon", "microchip,sama5d2-piobu";
+> +		reg = <0xfc040000 0x100>;
+> +
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +	};
+> -- 
+> 2.7.4
+> 
