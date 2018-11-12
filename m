@@ -1,11 +1,14 @@
 From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH 1/1] pinctrl: imx: fix NO_PAD_CTL setting for MMIO pads
-Date: Mon, 12 Nov 2018 15:25:48 +0000
-Message-ID: <1542036051-23840-1-git-send-email-aisheng.dong@nxp.com>
+Subject: RE: [PATCH] pinctrl: imx: Fix imx_dt_node_to_map handling of
+ IMX_NO_PAD_CTL
+Date: Mon, 12 Nov 2018 15:33:21 +0000
+Message-ID: <AM0PR04MB421189893528B45B404CC15E80C10@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1547d44dba63cbfd1b813018866f8916013b3381.1541973902.git.leonard.crestez@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1547d44dba63cbfd1b813018866f8916013b3381.1541973902.git.leonard.crestez@nxp.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -16,64 +19,88 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>, "dongas86@gmail.com" <dongas86@gmail.com>, "martin@kaiser.cx" <martin@kaiser.cx>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Leonard Crestez <leonard.crestez@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Leonard Crestez <leonard.crestez@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, Fabio Estevam <fabio.estevam@nxp.com>, Martin Kaiser <martin@kaiser.cx>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
 
-After patch b96eea718bf6 ("pinctrl: fsl: add scu based pinctrl support"),
-NO_PAD_CTL pads map are not skipped anymore which results in
-a possible memory corruption. As we actually only need to create config
-maps for SCU pads and MMIO pads which are not using the default config
-(a.k.a IMX_NO_PAD_CTL), so let's add a proper check before creating
-the config maps. And during MMIO pads parsing, we also need update the
-list_p point as SCU case to ensure the pin data next parsed is correct.
+Hi Leonard,
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Fixes: b96eea718bf6 ("pinctrl: fsl: add scu based pinctrl support")
-Reported-by: Martin Kaiser <martin@kaiser.cx>
-Suggested-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/pinctrl/freescale/pinctrl-imx.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+> -----Original Message-----
+> From: Leonard Crestez
+> Sent: Monday, November 12, 2018 6:15 AM
+[...]
+> 
+> After changes for SCU support the IMX_NO_PAD_CTL flag is not longer handled
+> correctly in imx_dt_node_to_map. Pins with this flag are no longer skipped
+> and the new_map array can overflow and corrupt memory.
+> 
+> This fixes imx6-sabreauto boards failing to boot.
+> 
+> Fixes: b96eea718bf6 ("pinctrl: fsl: add scu based pinctrl support")
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index 78d33df..188001b 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -108,6 +108,15 @@ static int imx_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	new_map++;
- 	for (i = j = 0; i < grp->num_pins; i++) {
- 		pin = &((struct imx_pin *)(grp->data))[i];
-+
-+		/*
-+		 * We only create config maps for SCU pads or MMIO pads that
-+		 * are not using the default config(a.k.a IMX_NO_PAD_CTL)
-+		 */
-+		if (!(info->flags & IMX_USE_SCU) &&
-+		    (pin->conf.mmio.config & IMX_NO_PAD_CTL))
-+			continue;
-+
- 		new_map[j].type = PIN_MAP_TYPE_CONFIGS_PIN;
- 		new_map[j].data.configs.group_or_pin =
- 					pin_get_name(pctldev, pin->pin);
-@@ -120,7 +129,7 @@ static int imx_dt_node_to_map(struct pinctrl_dev *pctldev,
- 			new_map[j].data.configs.configs =
- 					(unsigned long *)&pin->conf.scu;
- 			new_map[j].data.configs.num_configs = 2;
--		} else if (!(pin->conf.mmio.config & IMX_NO_PAD_CTL)) {
-+		} else {
- 			new_map[j].data.configs.configs =
- 					&pin->conf.mmio.config;
- 			new_map[j].data.configs.num_configs = 1;
-@@ -549,6 +558,8 @@ static void imx_pinctrl_parse_pin_mmio(struct imx_pinctrl *ipctl,
- 		pin_mmio->config = config & ~IMX_PAD_SION;
- 	}
- 
-+	*list_p = list;
-+
- 	dev_dbg(ipctl->dev, "%s: 0x%x 0x%08lx", info->pins[*pin_id].name,
- 			     pin_mmio->mux_mode, pin_mmio->config);
- }
--- 
-2.7.4
+Please see another more simpler fix just sent out with both you and Martin Kaiser's tags.
+Thanks for the effort.
+
+Regards
+Dong Aisheng
+
+> 
+> ---
+>  drivers/pinctrl/freescale/pinctrl-imx.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> A different was posted earlier:
+> https://lore.kernel.org/patchwork/patch/1009504/
+> 
+> I don't think that's correct because it assumes num_configs is zero-initialized
+> but new_map comes from kmalloc_array.
+> 
+> Code is clearer if SCU and MMIO paths are separate.
+> 
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
+> b/drivers/pinctrl/freescale/pinctrl-imx.c
+> index 78d33dfb4d2d..51312e81eff7 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> @@ -106,29 +106,31 @@ static int imx_dt_node_to_map(struct pinctrl_dev
+> *pctldev,
+> 
+>  	/* create config map */
+>  	new_map++;
+>  	for (i = j = 0; i < grp->num_pins; i++) {
+>  		pin = &((struct imx_pin *)(grp->data))[i];
+> -		new_map[j].type = PIN_MAP_TYPE_CONFIGS_PIN;
+> -		new_map[j].data.configs.group_or_pin =
+> -					pin_get_name(pctldev, pin->pin);
+> -
+>  		if (info->flags & IMX_USE_SCU) {
+>  			/*
+>  			 * For SCU case, we set mux and conf together
+>  			 * in one IPC call
+>  			 */
+> +			new_map[j].type = PIN_MAP_TYPE_CONFIGS_PIN;
+> +			new_map[j].data.configs.group_or_pin =
+> +					pin_get_name(pctldev, pin->pin);
+>  			new_map[j].data.configs.configs =
+>  					(unsigned long *)&pin->conf.scu;
+>  			new_map[j].data.configs.num_configs = 2;
+> +			++j;
+>  		} else if (!(pin->conf.mmio.config & IMX_NO_PAD_CTL)) {
+> +			new_map[j].type = PIN_MAP_TYPE_CONFIGS_PIN;
+> +			new_map[j].data.configs.group_or_pin =
+> +					pin_get_name(pctldev, pin->pin);
+>  			new_map[j].data.configs.configs =
+>  					&pin->conf.mmio.config;
+>  			new_map[j].data.configs.num_configs = 1;
+> +			++j;
+>  		}
+> -
+> -		j++;
+>  	}
+> 
+>  	dev_dbg(pctldev->dev, "maps: function %s group %s num %d\n",
+>  		(*map)->data.mux.function, (*map)->data.mux.group, map_num);
+> 
+> --
+> 2.17.1
