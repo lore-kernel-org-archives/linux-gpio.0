@@ -1,95 +1,44 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2] mmc: sdhci-pci: Try "cd" for card-detect lookup before
- using NULL
-Date: Mon, 12 Nov 2018 13:25:49 +0200
-Message-ID: <CAHp75VezX-agNFp2wEHorH7U9NmZgpX-PfXdBbGDETnJY2AFGA@mail.gmail.com>
-References: <CAA93t1oaZ5zkv+BsGnYZg6pqKv0DzXi3j8oZHUyTyffUWHtHug@mail.gmail.com>
- <20181029221701.51376-1-rajatja@google.com> <CAPDyKFpqzpxUzZe-ekfwg1Nqeg1RFB1bdbSNwrGPwtfNds4p0w@mail.gmail.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: [PATCH] gpio: drop broken to_gpio_irq_chip() helper
+Date: Mon, 12 Nov 2018 15:10:28 +0100
+Message-ID: <20181112141028.10213-1-johan@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFpqzpxUzZe-ekfwg1Nqeg1RFB1bdbSNwrGPwtfNds4p0w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rajat Jain <rajatja@google.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-mmc <linux-mmc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Rajat Jain <rajatxjain@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dtor@google.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, Thierry Reding <treding@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 1:05 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> On 29 October 2018 at 23:17, Rajat Jain <rajatja@google.com> wrote:
-> > Problem:
-> >
-> > The card detect IRQ does not work with modern BIOS (that want
-> > to use _DSD to provide the card detect GPIO to the driver).
-> >
-> > Details:
-> >
-> > The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
-> > request the gpio descriptor for the "card detect" pin.
-> > This pin is specified in the ACPI for the SDHC device:
-> >
-> >  * Either as a resource using _CRS. This is a method used by legacy BIOS.
-> >    (The driver needs to tell which resource index).
-> >
-> >  * Or as a named property ("cd-gpios"/"cd-gpio") in _DSD (which internally
-> >    points to an entry in _CRS). This way, the driver can lookup using a
-> >    string. This is what modern BIOS prefer to use.
-> >
-> > This API finally results in a call to the following code:
-> >
-> > struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
-> > {
-> > ...
-> >    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
-> > ...
-> >    if (!acpi_can_fallback_to_crs(adev, con_id))
-> >           return ERR_PTR(-ENOENT);
-> > ...
-> >    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
-> > ...
-> > }
-> >
-> > Note that this means that if the ACPI has _DSD properties, the kernel
-> > will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
-> > will always be false for any device hat has _DSD entries).
-> >
-> > The SDHCI driver is thus currently broken on a modern BIOS, even if
-> > BIOS provides both _CRS (for index based lookup) and _DSD entries (for
-> > string based lookup). Ironically, none of these will be used for the
-> > lookup currently because:
-> >
-> > * Since the con_id is NULL, acpi_find_gpio() does not find a matching
-> >   entry in DSDT. (The _DSDT entry has the property name = "cd-gpios")
-> >
-> > * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
-> >   returns false (because device properties have been populated from
-> >   _DSD), thus the _CRS is never used for the lookup.
-> >
-> > Fix:
-> >
-> > Try "cd" for lookup in the _DSD before falling back to using NULL so
-> > as to try looking up in the _CRS.
-> >
-> > I've tested this patch successfully with both Legacy BIOS (that
-> > provide only _CRS method) as well as modern BIOS (that provide both
-> > _CRS and _DSD). Also the use of "cd" appears to be fairly consistent
-> > across other users of this API (other MMC host controller drivers).
-> >
-> > Link: https://lkml.org/lkml/2018/9/25/1113
-> > Signed-off-by: Rajat Jain <rajatja@google.com>
->
-> Applied for fixes, thanks!
->
-> Should I add a stable tag to this as well?
+Drop the broken to_gpio_irq_chip() container_of() helper, which would
+break the build for anyone who tries to use it.
 
-If you go with that it might make sense to have Fixes tag against
+Specifically, struct gpio_irq_chip only holds a pointer to a struct
+irq_chip so using container_of() on an irq-chip pointer makes no sense.
 
-commit f10e4bf6632b5be11cea875b66ba959833a69258
-Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date:   Tue May 23 20:03:19 2017 +0300
+Fixes: da80ff81a8f5 ("gpio: Move irqchip into struct gpio_irq_chip")
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ include/linux/gpio/driver.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
-   gpio: acpi: Even more tighten up ACPI GPIO lookups
-
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 2db62b550b95..21bff1f14fde 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -166,11 +166,6 @@ struct gpio_irq_chip {
+ 	 */
+ 	void		(*irq_disable)(struct irq_data *data);
+ };
+-
+-static inline struct gpio_irq_chip *to_gpio_irq_chip(struct irq_chip *chip)
+-{
+-	return container_of(chip, struct gpio_irq_chip, chip);
+-}
+ #endif
+ 
+ /**
 -- 
-With Best Regards,
-Andy Shevchenko
+2.19.1
