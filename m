@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 1/3] ARM: davinci: define gpio interrupts as separate resources
-Date: Tue, 13 Nov 2018 14:50:49 +0100
-Message-ID: <20181113135051.15308-2-brgl@bgdev.pl>
+Subject: [PATCH 2/3] gpio: davinci: restore a way to manually specify the GPIO base
+Date: Tue, 13 Nov 2018 14:50:50 +0100
+Message-ID: <20181113135051.15308-3-brgl@bgdev.pl>
 References: <20181113135051.15308-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,74 +14,52 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Since commit eb3744a2dd01 ("gpio: davinci: Do not assume continuous
-IRQ numbering") the davinci GPIO driver fails to probe if we boot
-in legacy mode from any of the board files. Since the driver now
-expects every interrupt to be defined as a separate resource, split
-the definition in devices-da8xx.c instead of having a single continuous
-interrupt range.
+Commit 587f7a694f01 ("gpio: davinci: Use dev name for label and
+automatic base selection") broke the network support in legacy boot
+mode for da850-evm since we can no longer request the MDIO clock GPIO.
 
-Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ numbering")
+Other boards may be broken too, which I haven't tested.
+
+The problem is in the fact that most board files still use the legacy
+GPIO API where lines are requested by numbers rather than descriptors.
+
+While this should be fixed eventually, in order to unbreak the board
+for now - provide a way to manually specify the GPIO base in platform
+data.
+
+Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automatic base selection")
 Cc: stable@vger.kernel.org
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/devices-da8xx.c | 42 ++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-davinci.c                | 2 +-
+ include/linux/platform_data/gpio-davinci.h | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 1fd3619f6a09..8c4ae9866e3c 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -701,9 +701,49 @@ static struct resource da8xx_gpio_resources[] = {
- 	},
- 	{ /* interrupt */
- 		.start	= IRQ_DA8XX_GPIO0,
--		.end	= IRQ_DA8XX_GPIO8,
-+		.end	= IRQ_DA8XX_GPIO0,
- 		.flags	= IORESOURCE_IRQ,
- 	},
-+	{
-+		.start	= IRQ_DA8XX_GPIO1,
-+		.end	= IRQ_DA8XX_GPIO1,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.start  = IRQ_DA8XX_GPIO2,
-+		.end    = IRQ_DA8XX_GPIO2,
-+		.flags  = IORESOURCE_IRQ,
-+	},
-+	{
-+		.start  = IRQ_DA8XX_GPIO3,
-+		.end    = IRQ_DA8XX_GPIO3,
-+		.flags  = IORESOURCE_IRQ,
-+	},
-+	{
-+		.start  = IRQ_DA8XX_GPIO4,
-+		.end    = IRQ_DA8XX_GPIO4,
-+		.flags  = IORESOURCE_IRQ,
-+	},
-+	{
-+		.start  = IRQ_DA8XX_GPIO5,
-+		.end    = IRQ_DA8XX_GPIO5,
-+		.flags  = IORESOURCE_IRQ,
-+	},
-+	{
-+		.start  = IRQ_DA8XX_GPIO6,
-+		.end    = IRQ_DA8XX_GPIO6,
-+		.flags  = IORESOURCE_IRQ,
-+	},
-+	{
-+		.start  = IRQ_DA8XX_GPIO7,
-+		.end    = IRQ_DA8XX_GPIO7,
-+		.flags  = IORESOURCE_IRQ,
-+	},
-+	{
-+		.start  = IRQ_DA8XX_GPIO8,
-+		.end    = IRQ_DA8XX_GPIO8,
-+		.flags  = IORESOURCE_IRQ,
-+	}
- };
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 5c1564fcc24e..bdb29e51b417 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -258,7 +258,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	chips->chip.set = davinci_gpio_set;
  
- static struct platform_device da8xx_gpio_device = {
+ 	chips->chip.ngpio = ngpio;
+-	chips->chip.base = -1;
++	chips->chip.base = pdata->no_auto_base ? pdata->base : -1;
+ 
+ #ifdef CONFIG_OF_GPIO
+ 	chips->chip.of_gpio_n_cells = 2;
+diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
+index f92a47e18034..a93841bfb9f7 100644
+--- a/include/linux/platform_data/gpio-davinci.h
++++ b/include/linux/platform_data/gpio-davinci.h
+@@ -17,6 +17,8 @@
+ #define __DAVINCI_GPIO_PLATFORM_H
+ 
+ struct davinci_gpio_platform_data {
++	bool	no_auto_base;
++	u32	base;
+ 	u32	ngpio;
+ 	u32	gpio_unbanked;
+ };
 -- 
 2.19.1
