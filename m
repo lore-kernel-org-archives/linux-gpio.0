@@ -1,97 +1,68 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] pinctrl: sdm660: Set tile property for pingroups
-Date: Mon, 12 Nov 2018 18:50:12 -0800
-Message-ID: <20181113025012.GD10088@minitux>
-References: <20181112202553.1410-1-ctatlor97@gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
+Date: Tue, 13 Nov 2018 07:57:25 +0100
+Message-ID: <20181113065725.mxc6i22c4wmu32de@pengutronix.de>
+References: <20181109115424.pe4w26nmt6xplzto@pengutronix.de>
+ <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
+ <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
+ <CAMRc=Mf18udrM=2=SZHMg3M2akcccPXb7Fr81vXODpNgjf+uJw@mail.gmail.com>
+ <20181109143950.gy7swu6vgaqgg7dw@pengutronix.de>
+ <CAMRc=McF482n+57e6Vz9H1dEQ5QS+4p88SYg6ZjNuUMYZx6t3Q@mail.gmail.com>
+ <20181109170323.6b2nj5vvtwu3d5ee@pengutronix.de>
+ <CAMRc=MfY7c21NOBNnVgXKimywXHFifwek5B76Y_3DgmM_hBbgw@mail.gmail.com>
+ <20181111165917.zrbg3xbhlitto7xs@pengutronix.de>
+ <CAMRc=Mfs_Wwm9bW121iMLrAAfuYhhekQnFRHYZBYU=Ry_dEKwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181112202553.1410-1-ctatlor97@gmail.com>
+In-Reply-To: <CAMRc=Mfs_Wwm9bW121iMLrAAfuYhhekQnFRHYZBYU=Ry_dEKwg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Craig Tatlor <ctatlor97@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon 12 Nov 12:25 PST 2018, Craig Tatlor wrote:
+Hello Bartosz,
 
-> This was missed when tiles support was added in a revison and
-> causes the driver to fail to load.
+On Mon, Nov 12, 2018 at 03:14:31PM +0100, Bartosz Golaszewski wrote:
+> > > As I said before: it is and should be fixed in this specific case.
+> > > This isn't real hardware.
+
+Not being "real hardware" is hardly an argument that matters here.
+
+> > Not sure if we agree here yet. What do you want to fix? The driver or
+> > the test?
+> >
+> > In my eyes test driven development is great. But if something breaks
+> > because the test is wrong, please don't "fix" the system to repair the
+> > test, but modify the test to be able to handle reality.
+> >
 > 
-> Fixes: 9cf0c526bc58 ("pinctrl: qcom: Add sdm660 pinctrl driver")
-> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
-> ---
+> No, we don't have an agreement. You think I should fix the test, I
+> think the dummy driver should continue behaving like before.
 
-Sorry for not spotting this in my previous review.
+It's arguable if after your patch the driver behaves as before. IMHO the
+initial direction was output from the start before. This was just
+shadowed by the an inconsitency that was fixed some time ago.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
->  drivers/pinctrl/qcom/pinctrl-sdm660.c | 28 ++++++++++++++-------------
->  1 file changed, 15 insertions(+), 13 deletions(-)
+> Given that there's no real hardware behind, the direction of newly
+> created dummy lines has always been deterministic - input. Certain
+> tests have been relying on it. I want to keep on doing it. There's no
+> harm. It's not broken logic as the very purpose of this module is to
+> allow for easy testing of the UAPI.
 > 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm660.c b/drivers/pinctrl/qcom/pinctrl-sdm660.c
-> index 6838b38555a1..1bfb0ae6b387 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-sdm660.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-sdm660.c
-> @@ -33,7 +33,7 @@ enum {
->  	}
->  
->  
-> -#define PINGROUP(id, base, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
-> +#define PINGROUP(id, _tile, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
->  	{					        \
->  		.name = "gpio" #id,			\
->  		.pins = gpio##id##_pins,		\
-> @@ -51,11 +51,12 @@ enum {
->  			msm_mux_##f9			\
->  		},				        \
->  		.nfuncs = 10,				\
-> -		.ctl_reg = base + REG_SIZE * id,	\
-> -		.io_reg = base + 0x4 + REG_SIZE * id,		\
-> -		.intr_cfg_reg = base + 0x8 + REG_SIZE * id,		\
-> -		.intr_status_reg = base + 0xc + REG_SIZE * id,	\
-> -		.intr_target_reg = base + 0x8 + REG_SIZE * id,	\
-> +		.ctl_reg = REG_SIZE * id,		\
-> +		.io_reg = 0x4 + REG_SIZE * id,		\
-> +		.intr_cfg_reg = 0x8 + REG_SIZE * id,	\
-> +		.intr_status_reg = 0xc + REG_SIZE * id,	\
-> +		.intr_target_reg = 0x8 + REG_SIZE * id,	\
-> +		.tile = _tile,			\
->  		.mux_bit = 2,			\
->  		.pull_bit = 0,			\
->  		.drv_bit = 6,			\
-> @@ -82,6 +83,7 @@ enum {
->  		.intr_cfg_reg = 0,			\
->  		.intr_status_reg = 0,			\
->  		.intr_target_reg = 0,			\
-> +		.tile = NORTH,				\
->  		.mux_bit = -1,				\
->  		.pull_bit = pull,			\
->  		.drv_bit = drv,				\
-> @@ -1397,13 +1399,13 @@ static const struct msm_pingroup sdm660_groups[] = {
->  	PINGROUP(111, SOUTH, _, _, _, _, _, _, _, _, _),
->  	PINGROUP(112, SOUTH, _, _, _, _, _, _, _, _, _),
->  	PINGROUP(113, SOUTH, _, _, _, _, _, _, _, _, _),
-> -	SDC_QDSD_PINGROUP(sdc1_clk, 0x99a000, 13, 6),
-> -	SDC_QDSD_PINGROUP(sdc1_cmd, 0x99a000, 11, 3),
-> -	SDC_QDSD_PINGROUP(sdc1_data, 0x99a000, 9, 0),
-> -	SDC_QDSD_PINGROUP(sdc2_clk, 0x99b000, 14, 6),
-> -	SDC_QDSD_PINGROUP(sdc2_cmd, 0x99b000, 11, 3),
-> -	SDC_QDSD_PINGROUP(sdc2_data, 0x99b000, 9, 0),
-> -	SDC_QDSD_PINGROUP(sdc1_rclk, 0x99a000, 15, 0),
-> +	SDC_QDSD_PINGROUP(sdc1_clk, 0x9a000, 13, 6),
-> +	SDC_QDSD_PINGROUP(sdc1_cmd, 0x9a000, 11, 3),
-> +	SDC_QDSD_PINGROUP(sdc1_data, 0x9a000, 9, 0),
-> +	SDC_QDSD_PINGROUP(sdc2_clk, 0x9b000, 14, 6),
-> +	SDC_QDSD_PINGROUP(sdc2_cmd, 0x9b000, 11, 3),
-> +	SDC_QDSD_PINGROUP(sdc2_data, 0x9b000, 9, 0),
-> +	SDC_QDSD_PINGROUP(sdc1_rclk, 0x9a000, 15, 0),
->  };
->  
->  static const struct msm_pinctrl_soc_data sdm660_pinctrl = {
-> -- 
-> 2.19.1
-> 
+> So unless something *else* is wrong with this patch, I intend to push
+> it upstream.
+
+Note I don't oppose to the patch as is. Just the motiviation is wrong
+and I'd do both: Modify the mockup driver to start with direction=input
+and modify the tests to not expect this.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
