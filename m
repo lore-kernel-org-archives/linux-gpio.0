@@ -1,202 +1,149 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 4/6] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Tue, 13 Nov 2018 08:31:05 +0000
-Message-ID: <20181113083105.GC3513@dell>
-References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
- <20181108101405.14062-5-ckeepax@opensource.cirrus.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 0/2] USB: serial: gpio line-name fix and FT232R CBUS gpio
+ support
+Date: Tue, 13 Nov 2018 10:33:53 +0100
+Message-ID: <20181113093353.GK13311@localhost>
+References: <20180930122703.7115-1-johan@kernel.org>
+ <CACRpkdaG-S-6LfCKgxz4jdbD=kRO7q7k_8FAHqsSNBPdC07iDA@mail.gmail.com>
+ <20181005134014.GH3774@localhost>
+ <CACRpkdbxShE3XEXNaKoFKWgAUVGUHU8rf0KaYV44coucu4=cRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181108101405.14062-5-ckeepax@opensource.cirrus.com>
+In-Reply-To: <CACRpkdbxShE3XEXNaKoFKWgAUVGUHU8rf0KaYV44coucu4=cRA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org, pados@pados.hu, Loic Poulain <loic.poulain@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 08 Nov 2018, Charles Keepax wrote:
+Hi Linus,
 
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform. This driver supports the board
-> controller chip on the Lochnagar board. Audio system topology,
-> clocking and power can all be controlled through the Lochnagar
-> controller chip, allowing the device under test to be used in
-> a variety of possible use cases.
-> 
-> As the Lochnagar is a fairly complex device this MFD driver
-> allows the drivers for the various features to be bound
-> in. Initially clocking, regulator and pinctrl will be added as
-> these are necessary to configure the system. But in time at least
-> audio and voltage/current monitoring will also be added.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
-> 
-> Changes since v3:
->  - Bind in child drivers through device tree rather than using mfd_add_devices
->  - Remove defaults arrays for regmap
->  - Use a lot of ... in the regmap readable/volatile callbacks
->  - Explicitly include register headers, rather than relying on lochnagar.h
->  - Add some kernel doc
->  - Some minor cosmetic fixups
->  - Add a lockdep_assert in lochnagar_update_config
-> 
-> Thanks,
-> Charles
-> 
->  MAINTAINERS                         |  17 ++
->  drivers/mfd/Kconfig                 |   8 +
->  drivers/mfd/Makefile                |   2 +
->  drivers/mfd/lochnagar-i2c.c         | 394 ++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/lochnagar.h       |  55 +++++
->  include/linux/mfd/lochnagar1_regs.h | 157 ++++++++++++++
->  include/linux/mfd/lochnagar2_regs.h | 253 +++++++++++++++++++++++
->  7 files changed, 886 insertions(+)
->  create mode 100644 drivers/mfd/lochnagar-i2c.c
->  create mode 100644 include/linux/mfd/lochnagar.h
->  create mode 100644 include/linux/mfd/lochnagar1_regs.h
->  create mode 100644 include/linux/mfd/lochnagar2_regs.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f4855974f3250..0398c8752e610 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3567,6 +3567,23 @@ L:	netdev@vger.kernel.org
->  S:	Maintained
->  F:	drivers/net/ethernet/cirrus/ep93xx_eth.c
->  
-> +CIRRUS LOGIC LOCHNAGAR DRIVER
-> +M:	Charles Keepax <ckeepax@opensource.cirrus.com>
-> +M:	Richard Fitzgerald <rf@opensource.cirrus.com>
-> +L:	patches@opensource.cirrus.com
-> +S:	Supported
-> +F:	drivers/clk/clk-lochnagar.c
-> +F:	drivers/mfd/lochnagar-i2c.c
-> +F:	drivers/pinctrl/cirrus/pinctrl-lochnagar*
-> +F:	drivers/regulator/lochnagar-regulator.c
-> +F:	include/dt-bindings/clk/lochnagar.h
-> +F:	include/dt-bindings/pinctrl/lochnagar.h
-> +F:	include/linux/mfd/lochnagar*
-> +F:	Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt
-> +F:	Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
-> +F:	Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.txt
-> +F:	Documentation/devicetree/bindings/regulator/cirrus,lochnagar.txt
-> +
->  CISCO FCOE HBA DRIVER
->  M:	Satish Kharat <satishkh@cisco.com>
->  M:	Sesidhar Baddela <sebaddel@cisco.com>
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 8c5dfdce4326c..51de2db3f6537 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1685,6 +1685,14 @@ config MFD_VX855
->  	  VIA VX855/VX875 south bridge. You will need to enable the vx855_spi
->  	  and/or vx855_gpio drivers for this to do anything useful.
->  
-> +config MFD_LOCHNAGAR
-> +	bool "Cirrus Logic Lochnagar Audio Development Board"
-> +	select MFD_CORE
-> +	select REGMAP_I2C
-> +	depends on I2C=y && OF
-> +	help
-> +	  Support for Cirrus Logic Lochnagar audio development board.
-> +
->  config MFD_ARIZONA
->  	select REGMAP
->  	select REGMAP_IRQ
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 12980a4ad4608..93284316d5307 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -37,6 +37,8 @@ obj-$(CONFIG_MFD_T7L66XB)	+= t7l66xb.o tmio_core.o
->  obj-$(CONFIG_MFD_TC6387XB)	+= tc6387xb.o tmio_core.o
->  obj-$(CONFIG_MFD_TC6393XB)	+= tc6393xb.o tmio_core.o
->  
-> +obj-$(CONFIG_MFD_LOCHNAGAR)	+= lochnagar-i2c.o
-> +
->  obj-$(CONFIG_MFD_ARIZONA)	+= arizona-core.o
->  obj-$(CONFIG_MFD_ARIZONA)	+= arizona-irq.o
->  obj-$(CONFIG_MFD_ARIZONA_I2C)	+= arizona-i2c.o
-> diff --git a/drivers/mfd/lochnagar-i2c.c b/drivers/mfd/lochnagar-i2c.c
-> new file mode 100644
-> index 0000000000000..133159d7646ed
-> --- /dev/null
-> +++ b/drivers/mfd/lochnagar-i2c.c
-> @@ -0,0 +1,394 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Lochnagar I2C bus interface
-> + *
-> + * Copyright (c) 2012-2018 Cirrus Logic, Inc. and
-> + *                         Cirrus Logic International Semiconductor Ltd.
-> + *
-> + * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/lockdep.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <linux/mfd/lochnagar.h>
-> +#include <linux/mfd/lochnagar1_regs.h>
-> +#include <linux/mfd/lochnagar2_regs.h>
-> +
-> +#define LOCHNAGAR_BOOT_RETRIES		10
-> +#define LOCHNAGAR_BOOT_DELAY_MS		350
-> +
-> +#define LOCHNAGAR_CONFIG_POLL_US	10000
-> +
-> +static bool lochnagar1_readable_register(struct device *dev, unsigned int reg)
-> +{
-> +	switch (reg) {
-> +	case LOCHNAGAR_SOFTWARE_RESET:
-> +	case LOCHNAGAR_FIRMWARE_ID1...LOCHNAGAR_FIRMWARE_ID2:
-> +	case LOCHNAGAR1_CDC_AIF1_SEL...LOCHNAGAR1_CDC_AIF3_SEL:
-> +	case LOCHNAGAR1_CDC_MCLK1_SEL...LOCHNAGAR1_CDC_MCLK2_SEL:
-> +	case LOCHNAGAR1_CDC_AIF_CTRL1...LOCHNAGAR1_CDC_AIF_CTRL2:
-> +	case LOCHNAGAR1_EXT_AIF_CTRL:
-> +	case LOCHNAGAR1_DSP_AIF1_SEL...LOCHNAGAR1_DSP_AIF2_SEL:
-> +	case LOCHNAGAR1_DSP_CLKIN_SEL:
-> +	case LOCHNAGAR1_DSP_AIF:
-> +	case LOCHNAGAR1_GF_AIF1...LOCHNAGAR1_GF_AIF2:
-> +	case LOCHNAGAR1_PSIA_AIF:
-> +	case LOCHNAGAR1_PSIA1_SEL...LOCHNAGAR1_PSIA2_SEL:
-> +	case LOCHNAGAR1_SPDIF_AIF_SEL:
-> +	case LOCHNAGAR1_GF_AIF3_SEL...LOCHNAGAR1_GF_AIF4_SEL:
-> +	case LOCHNAGAR1_GF_CLKOUT1_SEL:
-> +	case LOCHNAGAR1_GF_AIF1_SEL...LOCHNAGAR1_GF_AIF2_SEL:
-> +	case LOCHNAGAR1_GF_GPIO2...LOCHNAGAR1_GF_GPIO7:
-> +	case LOCHNAGAR1_RST:
-> +	case LOCHNAGAR1_LED1...LOCHNAGAR1_LED2:
-> +	case LOCHNAGAR1_I2C_CTRL:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
+Sorry about the late reply, this one got buried in the mailbox during
+conference travels.
 
-Niiiiiice!
+On Wed, Oct 10, 2018 at 11:36:28AM +0200, Linus Walleij wrote:
+> On Fri, Oct 5, 2018 at 3:40 PM Johan Hovold <johan@kernel.org> wrote:
+> > On Mon, Oct 01, 2018 at 11:43:55AM +0200, Linus Walleij wrote:
+> 
+> > > The idea is to make it possible for userspace to look up a GPIO
+> > > on a chip by name, so if the gpiochip has a unique name,
+> > > and the line name is unique on that chip it should be good
+> > > enough.
+> >
+> > I haven't really had time do dig into this again, but is this also an
+> > issue with the chardev interface?
+> >
+> > I thought this was one of the things
+> > you wanted to get right with the new interface, so hopefully that's
+> > already taken care of.
+> 
+> It is always possible to use /dev/gpiochipN and offet M on
+> that gpiochip to pick a unique line. That is a unique offset
+> on a unique chip. The gpiochip also has a "label" which may
+> be something user-readable such as part numer, but the unique
+> string is its name such as "gpiochip0".
 
-Driver is much better for me to swallow like this.
+Right.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> For symbolic look-up though, like a file has to have a unique
+> path, the name of the line should be unique.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Sure, but there's no way to guarantee that (consider pluggable devices)
+unless you encode the topology in the name.
+
+> It is allowed to have unnamed lines though, so it is only a
+> hint. While I would like all drivers to uniquely name their
+> lines in DT or ACPI, or using the .names array in the gpio_chip
+> struct, it cannot be enforced because of legacy support,
+> so many old systems had no names specified, and
+> the DT and ACPI properties to name lines were introduced
+> after the chardev actually.
+
+Oh, that's right.
+
+> All I enforce is that if names are added, they should be
+> unique.
+
+Which effectively means you cannot have a driver provide default line
+names, as that would cause conflicts if there are ever more than one
+such device in a system (be it i2c or pluggable USB).
+
+> What we *could* do is conjure a unique name per line if
+> the hardware description doesn't provice one... like
+> "line0", "line1", "line2"... "lineN" on the chip.
+> 
+> Should we add a patch like that? The only side effect
+> I can see if that maybe the footprint increase is not so
+> nice.
+> 
+> I had it in mind but it slipped of my radar. It would make
+> all lines always have unique names.
+
+No, I don't think that's needed or desirable.
+
+But take the concrete use case at hand; a gpio controller connected over
+USB. These FTDI devices exposes four gpios on a set of pins that differ
+from model to model. On some devices these lines are available on a set
+of pins named CBUS0..CBUS3, on others a different set of pins such as
+ACBUS5, ACBUS6, ACBUS8 and ACBUS9 are used.
+
+Exporting which line is exposed on which pin obviously has some worth,
+but this is currently not possible due to the requirement that line
+names must be unique.
+
+Having an interface that allows you to look up say ACBUS6 given a
+particular gpiochip would also be useful to have (user space knows which
+USB device it is interested in so finding the gpiochip is straight
+forward).
+
+Perhaps the chardev interface could return a set of matched gpiochips if
+a particular line name is found on several chips for user space to
+iterate over.
+
+Essentially what I'm going for is to have the line names only be
+required to be unique per chip, and let user space deal with any
+collisions.
+
+The flat line name space really only works for something like DT, and
+then only if you actually have access to the DTS (I'm assuming there's
+no uniqueness requirement in the binding docs?).
+
+But you could still run into trouble if an i2c driver provides default
+names, or if you use anything pluggable.
+
+> > If the flat name space is only an issue with the legacy interface we
+> > might get away with simply not using the line names in sysfs when a new
+> > chip flag is set (unless we can resue .can_sleep, but there seems to be
+> > some i2c devices already using line names).
+> 
+> Hm. So you mean it is bad that the exporting GPIOs in the old
+> sysfs brings out the line name in sysfs if the line is named.
+
+Right, this specifically prevents using line names with pluggable
+devices.
+
+> I just want the sysfs to die, but yeah what you say makes
+> sense. I don't know if it's such a big issue, my focus has been
+> on making the chardev more appetizing and the sysfs
+> uncomfortably oldschool amongst users. This would make it
+> even more uncomfortable.
+> 
+> But I don't know if the old sysfs users actually use the line
+> names much?
+
+The problem is that the line names are used in sysfs as device names
+(file names) instead of "gpioN" whenever a line name has been specified.
+So on systems with line names defined, we would definitely risk
+regressions if we simply stopped exporting gpios using those names.
+
+Doing so for a subset of devices (e.g. i2c, or anything connected over a
+slow bus) may still be considered though. That would also deal with the
+USB case.
+
+But again, I'm not sure if we'd run into other problems with the chardev
+interface (e.g. what happens if I lookup "CBUS3" and there are more than
+one match?).
+
+Thanks,
+Johan
