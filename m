@@ -1,48 +1,69 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 3/3] ARM: dts: stm32: Add hwlock for pinctrl
-Date: Tue, 13 Nov 2018 10:58:06 +0100
-Message-ID: <2e76818f-28a0-1151-11f0-a9e8d3b5fd09@st.com>
-References: <20181113095142.32015-1-benjamin.gaignard@st.com>
- <20181113095142.32015-4-benjamin.gaignard@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Parthiban Nallathambi <pn@denx.de>
+Subject: [PATCH v6 0/5] Add Actions Semi S700 pinctrl support
+Date: Tue, 13 Nov 2018 11:07:04 +0100
+Message-ID: <20181113100709.5615-1-pn@denx.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181113095142.32015-4-benjamin.gaignard@st.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>, linus.walleij@linaro.org, robh+dt@kernel.org
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
+To: linus.walleij@linaro.org, manivannan.sadhasivam@linaro.org, afaerber@suse.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will.deacon@arm.com, mp-cs@actions-semi.com, thomas.liau@actions-semi.com, linux@cubietech.com, pn@denx.de, sravanhome@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Benjamin
+This patchset adds pinctrl support for Actions Semi S700 SoC.
+Pinmux functions are only accessible for pin groups while pinconf
+parameters are available for both pin groups and individual pins.
 
-On 11/13/18 10:51 AM, Benjamin Gaignard wrote:
-> Define a hwspinlock to be used by pin-controller
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->   arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 1 +
->   1 file changed, 1 insertion(+)
-> 
+pinctrl driver is verified using the Cubieboard7.
 
-In commit title please add for which SoC it is targeted. If you don't 
-have to send new version for driver or dt-bindings, I will do it when 
-I'll apply.
+common functionalities from s900 is moved for all Actions Semi
+SoC's usage.
+Common pad control configurations are moved to SoC specific
 
-regards
-Alex
+dts entry for pinctrl depends on clock driver which is still under review:
+https://patchwork.kernel.org/patch/10533959/
 
-> diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-> index c4851271e810..2886e5a6ac27 100644
-> --- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-> @@ -14,6 +14,7 @@
->   			ranges = <0 0x50002000 0xa400>;
->   			interrupt-parent = <&exti>;
->   			st,syscfg = <&exti 0x60 0xff>;
-> +			hwlocks = <&hsem 0>;
->   			pins-are-numbered;
->   
->   			gpioa: gpio@50002000 {
-> 
+Thanks,
+Saravanan
+Parthiban
+
+Changelog in v2
+- GPIO Interrupt support is added
+- Device tree entry for GPIO and Interrupt configured
+- GPIO and pinctrl define reorder, commit message findings fixed
+
+depends on owl GPIO Interrupt support
+https://patchwork.kernel.org/patch/10483477/
+
+Chnagelog in v3
+- Fixed 0-DAY bisectibility error
+
+Chnagelog in v4
+- Fixed 0-DAY sparse warnings on static declaration
+
+Chnagelog in v5
+- Rebase to mainline
+
+Chnagelog in v6
+- Rebase to 4.20-rc2 mainline
+- Fixed nitpick findings in v5
+
+Saravanan Sekar (5):
+  pinctrl: actions: define constructor generic to Actions Semi SoC's
+  pinctrl: actions: define pad control configurtion to SoC specific
+  dt-bindings: pinctrl: Add bindings for Actions Semi S700 SoC
+  pinctrl: actions: Add Actions Semi S700 pinctrl driver
+  arm64: dts: actions: Add pinctrl node for Actions Semi S700
+
+ .../bindings/pinctrl/actions,s700-pinctrl.txt |  170 ++
+ arch/arm64/boot/dts/actions/s700.dtsi         |   16 +
+ drivers/pinctrl/actions/Kconfig               |    6 +
+ drivers/pinctrl/actions/Makefile              |    1 +
+ drivers/pinctrl/actions/pinctrl-owl.c         |   71 +-
+ drivers/pinctrl/actions/pinctrl-owl.h         |  142 +-
+ drivers/pinctrl/actions/pinctrl-s700.c        | 1912 +++++++++++++++++
+ drivers/pinctrl/actions/pinctrl-s900.c        |  205 +-
+ 8 files changed, 2324 insertions(+), 199 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
+ create mode 100644 drivers/pinctrl/actions/pinctrl-s700.c
+
+-- 
+2.17.2
