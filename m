@@ -1,51 +1,32 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH] pinctrl: meson: fix pull enable register calculation
-Date: Tue, 13 Nov 2018 14:34:08 +0100
-Message-ID: <cee83bac-a55a-0c60-e410-9c1ce4c6b60d@baylibre.com>
-References: <20181113105536.6459-1-jbrunet@baylibre.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/3] ARM: davinci: fix ethernet support on da850-evm
+Date: Tue, 13 Nov 2018 14:50:48 +0100
+Message-ID: <20181113135051.15308-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181113105536.6459-1-jbrunet@baylibre.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 13/11/2018 11:55, Jerome Brunet wrote:
-> We just changed the code so we apply bias disable on the correct
-> register but forgot to align the register calculation. The result
-> is that we apply the change on the correct register, but possibly
-> at the incorrect offset/bit
-> 
-> This went undetected because offsets tends to be the same between
-> REG_PULL and REG_PULLEN for a given pin the EE controller. This
-> is not true for the AO controller.
-> 
-> Fixes: e39f9dd8206a ("pinctrl: meson: fix pinconf bias disable")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/pinctrl/meson/pinctrl-meson.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-> index 53d449076dee..ea87d739f534 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
-> @@ -191,7 +191,8 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
->  		case PIN_CONFIG_BIAS_DISABLE:
->  			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
->  
-> -			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
-> +			meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg,
-> +					       &bit);
->  			ret = regmap_update_bits(pc->reg_pullen, reg,
->  						 BIT(bit), 0);
->  			if (ret)
-> 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-I saw it aswell,
+Ethernet doesn't work on da850-evm in legacy boot mode since v4.19. This
+series addresses two problems I've found. I guess with this kind of
+intrusive changes in the GPIO driver, other boards may be broken at the
+moment too.
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Bartosz Golaszewski (3):
+  ARM: davinci: define gpio interrupts as separate resources
+  gpio: davinci: restore a way to manually specify the GPIO base
+  ARM: davinci: fix da850-evm boot in legacy mode
+
+ arch/arm/mach-davinci/da850.c              |  4 ++-
+ arch/arm/mach-davinci/devices-da8xx.c      | 42 +++++++++++++++++++++-
+ drivers/gpio/gpio-davinci.c                |  2 +-
+ include/linux/platform_data/gpio-davinci.h |  2 ++
+ 4 files changed, 47 insertions(+), 3 deletions(-)
+
+-- 
+2.19.1
