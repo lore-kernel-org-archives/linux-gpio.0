@@ -1,98 +1,51 @@
-From: vitor <vitor.soares@synopsys.com>
-Subject: Re: [PATCH v3 2/3] dt-bindings: i3c: Document Synopsys DesignWare I3C
- master bindings
-Date: Tue, 13 Nov 2018 11:11:26 +0000
-Message-ID: <db819b2d-7426-4d40-fe8a-caf62cd2912f@synopsys.com>
-References: <1541697251-20392-1-git-send-email-soares@synopsys.com>
- <1541697251-20392-3-git-send-email-soares@synopsys.com>
- <20181112101703.024ba1f3@bbrezillon>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH v4 3/6] mfd: lochnagar: Add initial binding documentation
+Date: Tue, 13 Nov 2018 11:16:52 +0000
+Message-ID: <20181113111652.GV16508@imbe.wolfsonmicro.main>
+References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
+ <20181108101405.14062-4-ckeepax@opensource.cirrus.com>
+ <20181113082825.GB3513@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181112101703.024ba1f3@bbrezillon>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20181113082825.GB3513@dell>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Vitor soares <vitor.soares@synopsys.com>
-Cc: wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Boris,
+On Tue, Nov 13, 2018 at 08:28:25AM +0000, Lee Jones wrote:
+> On Thu, 08 Nov 2018, Charles Keepax wrote:
+> 
+> > Lochnagar is an evaluation and development board for Cirrus
+> > Logic Smart CODEC and Amp devices. It allows the connection of
+> > most Cirrus Logic devices on mini-cards, as well as allowing
+> > connection of various application processor systems to provide a
+> > full evaluation platform. This driver supports the board
+> > controller chip on the Lochnagar board.
+> > 
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> > ---
+> > 
+> > I have dropped Rob and Stephen's Acks from this patch on
+> > account of the scale of the changes since v3.
+> > 
+> > Changes since v3:
+> >  - Split the binding up into separate parts for the individual subsystems
+> >  - Added documentation for the fixed clocks that are done through DT
+> > 
+> > Thanks,
+> > Charles
+> > 
+> >  .../devicetree/bindings/clock/cirrus,lochnagar.txt |  89 +++++++++++++
+> >  .../devicetree/bindings/mfd/cirrus,lochnagar.txt   |  70 ++++++++++
+> 
+> I think these should all be seperate patches.
+> 
 
-On 12/11/18 09:17, Boris Brezillon wrote:
-> On Thu,  8 Nov 2018 17:14:10 +0000
-> Vitor soares <vitor.soares@synopsys.com> wrote:
->
->> Document Synopsys DesignWare I3C master module
->>
->> Signed-off-by: Vitor soares <soares@synopsys.com>
->> ---
->> Changes in v3:
->> - Remove dummy characters
->>
->> Changes in v2:
->> - Address the changes in Documentation/devicetree/bindings/i3c/i3c.txt
->> - Add controller version on compatible string
->>
->>   .../devicetree/bindings/i3c/snps,dw-i3c-master.txt | 42 ++++++++++++++++++++++
->>   1 file changed, 42 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
->>
->> diff --git a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
->> new file mode 100644
->> index 0000000..b930c09
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
->> @@ -0,0 +1,42 @@
->> +Bindings for Synopsys DesignWare I3C master block
->> +=================================================
->> +
->> +Required properties:
->> +--------------------
->> +- compatible: shall be "snps,dw-i3c-master-1.00a"
->> +- clocks: shall reference the core_clk
-> Are you sure this IP only requires only one clock? If you're unsure,
-> you'd better have a clock-names prop.
-Yes, the controller only has this clock dependency to configure the SCL.
->
->> +- interrupts: the interrupt line connected to this I3C master
->> +- reg: Offset and length of I3C master registers
->> +
->> +Mandatory properties defined by the generic binding (see
->> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
->> +
->> +- #address-cells: shall be set to 3
->> +- #size-cells: shall be set to 0
->> +
->> +Optional properties defined by the generic binding (see
->> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
->> +
->> +- i2c-scl-hz
->> +- i3c-scl-hz
->> +
->> +I3C device connected on the bus follow the generic description (see
->> +Documentation/devicetree/bindings/i3c/i3c.txt for more details).
->> +
->> +Example:
->> +
->> +	i3c-master@2000 {
->> +		compatible = "snps,dw-i3c-master-1.00a";
->> +		#address-cells = <3>;
->> +		#size-cells = <0>;
->> +		reg = <0x02000 0x1000>;
->> +		interrupts = <0>;
->> +		clocks = <&i3cclk>;
->> +
->> +		eeprom@57{
->> +			compatible = "atmel,24c01";
->> +			reg = < 0x57 0x0 0x10>;
-> 			       ^ remove this white space.
->
->> +			pagesize = <0x8>;
->> +		};
->> +	};
->> +
+I will need to do a respin for the regulator changes anyway so
+can split them up then.
 
-Best regards,
-
-Vitor Soares
+Thanks,
+Charles
