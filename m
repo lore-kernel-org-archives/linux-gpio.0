@@ -1,68 +1,54 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
-Date: Tue, 13 Nov 2018 07:57:25 +0100
-Message-ID: <20181113065725.mxc6i22c4wmu32de@pengutronix.de>
-References: <20181109115424.pe4w26nmt6xplzto@pengutronix.de>
- <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
- <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
- <CAMRc=Mf18udrM=2=SZHMg3M2akcccPXb7Fr81vXODpNgjf+uJw@mail.gmail.com>
- <20181109143950.gy7swu6vgaqgg7dw@pengutronix.de>
- <CAMRc=McF482n+57e6Vz9H1dEQ5QS+4p88SYg6ZjNuUMYZx6t3Q@mail.gmail.com>
- <20181109170323.6b2nj5vvtwu3d5ee@pengutronix.de>
- <CAMRc=MfY7c21NOBNnVgXKimywXHFifwek5B76Y_3DgmM_hBbgw@mail.gmail.com>
- <20181111165917.zrbg3xbhlitto7xs@pengutronix.de>
- <CAMRc=Mfs_Wwm9bW121iMLrAAfuYhhekQnFRHYZBYU=Ry_dEKwg@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 3/6] mfd: lochnagar: Add initial binding documentation
+Date: Tue, 13 Nov 2018 08:28:25 +0000
+Message-ID: <20181113082825.GB3513@dell>
+References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
+ <20181108101405.14062-4-ckeepax@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMRc=Mfs_Wwm9bW121iMLrAAfuYhhekQnFRHYZBYU=Ry_dEKwg@mail.gmail.com>
+In-Reply-To: <20181108101405.14062-4-ckeepax@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Bartosz,
+On Thu, 08 Nov 2018, Charles Keepax wrote:
 
-On Mon, Nov 12, 2018 at 03:14:31PM +0100, Bartosz Golaszewski wrote:
-> > > As I said before: it is and should be fixed in this specific case.
-> > > This isn't real hardware.
-
-Not being "real hardware" is hardly an argument that matters here.
-
-> > Not sure if we agree here yet. What do you want to fix? The driver or
-> > the test?
-> >
-> > In my eyes test driven development is great. But if something breaks
-> > because the test is wrong, please don't "fix" the system to repair the
-> > test, but modify the test to be able to handle reality.
-> >
+> Lochnagar is an evaluation and development board for Cirrus
+> Logic Smart CODEC and Amp devices. It allows the connection of
+> most Cirrus Logic devices on mini-cards, as well as allowing
+> connection of various application processor systems to provide a
+> full evaluation platform. This driver supports the board
+> controller chip on the Lochnagar board.
 > 
-> No, we don't have an agreement. You think I should fix the test, I
-> think the dummy driver should continue behaving like before.
-
-It's arguable if after your patch the driver behaves as before. IMHO the
-initial direction was output from the start before. This was just
-shadowed by the an inconsitency that was fixed some time ago.
-
-> Given that there's no real hardware behind, the direction of newly
-> created dummy lines has always been deterministic - input. Certain
-> tests have been relying on it. I want to keep on doing it. There's no
-> harm. It's not broken logic as the very purpose of this module is to
-> allow for easy testing of the UAPI.
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> ---
 > 
-> So unless something *else* is wrong with this patch, I intend to push
-> it upstream.
+> I have dropped Rob and Stephen's Acks from this patch on
+> account of the scale of the changes since v3.
+> 
+> Changes since v3:
+>  - Split the binding up into separate parts for the individual subsystems
+>  - Added documentation for the fixed clocks that are done through DT
+> 
+> Thanks,
+> Charles
+> 
+>  .../devicetree/bindings/clock/cirrus,lochnagar.txt |  89 +++++++++++++
+>  .../devicetree/bindings/mfd/cirrus,lochnagar.txt   |  70 ++++++++++
 
-Note I don't oppose to the patch as is. Just the motiviation is wrong
-and I'd do both: Modify the mockup driver to start with direction=input
-and modify the tests to not expect this.
+I think these should all be seperate patches.
 
-Best regards
-Uwe
+Code looks okay to me though.
+
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-K�nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
