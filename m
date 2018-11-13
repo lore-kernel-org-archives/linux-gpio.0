@@ -1,52 +1,51 @@
-From: vitor <vitor.soares@synopsys.com>
-Subject: Re: [PATCH v3 2/3] dt-bindings: i3c: Document Synopsys DesignWare I3C
- master bindings
-Date: Tue, 13 Nov 2018 11:20:15 +0000
-Message-ID: <ec1059fa-420e-ee18-1831-170904c0ccd0@synopsys.com>
-References: <1541697251-20392-1-git-send-email-soares@synopsys.com>
- <1541697251-20392-3-git-send-email-soares@synopsys.com>
- <20181113020957.GA31668@bogus>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH] pinctrl: meson: fix pull enable register calculation
+Date: Tue, 13 Nov 2018 14:34:08 +0100
+Message-ID: <cee83bac-a55a-0c60-e410-9c1ce4c6b60d@baylibre.com>
+References: <20181113105536.6459-1-jbrunet@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181113020957.GA31668@bogus>
+In-Reply-To: <20181113105536.6459-1-jbrunet@baylibre.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Vitor soares <vitor.soares@synopsys.com>
-Cc: boris.brezillon@bootlin.com, wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromi
+To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Rob,
+On 13/11/2018 11:55, Jerome Brunet wrote:
+> We just changed the code so we apply bias disable on the correct
+> register but forgot to align the register calculation. The result
+> is that we apply the change on the correct register, but possibly
+> at the incorrect offset/bit
+> 
+> This went undetected because offsets tends to be the same between
+> REG_PULL and REG_PULLEN for a given pin the EE controller. This
+> is not true for the AO controller.
+> 
+> Fixes: e39f9dd8206a ("pinctrl: meson: fix pinconf bias disable")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/pinctrl/meson/pinctrl-meson.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+> index 53d449076dee..ea87d739f534 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+> @@ -191,7 +191,8 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+>  		case PIN_CONFIG_BIAS_DISABLE:
+>  			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
+>  
+> -			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
+> +			meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg,
+> +					       &bit);
+>  			ret = regmap_update_bits(pc->reg_pullen, reg,
+>  						 BIT(bit), 0);
+>  			if (ret)
+> 
 
-On 13/11/18 02:09, Rob Herring wrote:
-> On Thu, Nov 08, 2018 at 05:14:10PM +0000, Vitor soares wrote:
->> Document Synopsys DesignWare I3C master module
->>
->> Signed-off-by: Vitor soares <soares@synopsys.com>
-> Please make your author and S-o-b emails match.
+I saw it aswell,
 
-This is an alias and both email will work. Anyway I agree that should be 
-the same that appear in the mailing list and I will change it.
-
->> ---
->> Changes in v3:
->> - Remove dummy characters
->>
->> Changes in v2:
->> - Address the changes in Documentation/devicetree/bindings/i3c/i3c.txt
->> - Add controller version on compatible string
->>
->>   .../devicetree/bindings/i3c/snps,dw-i3c-master.txt | 42 ++++++++++++++++++++++
->>   1 file changed, 42 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
-> Otherwise,
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Thanks for review.
-
-
-Best regards,
-
-Vitor Soares
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
