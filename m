@@ -1,176 +1,46 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 2/2] kernel: Add reset button platform device for APU2/APU3
-Date: Wed, 14 Nov 2018 11:00:38 +0200
-Message-ID: <CAHp75Vcmu927EWKHcydVT6+yiN_UG2JcR+xi=hrt1F+UrZXi=Q@mail.gmail.com>
-References: <20181114072658.11457-1-fe@dev.tdt.de> <20181114072658.11457-3-fe@dev.tdt.de>
+From: David Wu <david.wu@rock-chips.com>
+Subject: Re: [PATCH 1/2] pinctrl: rockchip: allow specifying the regmap
+ location for pin-routes
+Date: Wed, 14 Nov 2018 20:15:06 +0800
+Message-ID: <62b7937e-0d7e-d142-285e-6dc15e6f5822@rock-chips.com>
+References: <20181111210047.30375-1-heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181114072658.11457-3-fe@dev.tdt.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Eckert <fe@dev.tdt.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Joe Perches <joe@perches.com>, Christian Lamparter <chunkeey@gmail.com>, piotr.krol@3mdeb.com, Darren Hart <dvhart@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="gbk"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181111210047.30375-1-heiko@sntech.de>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Heiko Stuebner <heiko@sntech.de>, linus.walleij@linaro.org
+Cc: linux-rockchip@lists.infradead.org, shawn.lin@rock-chips.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, =?UTF-8?B?6K645YmR576k?= <jay.xu@rock-chips.com>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko.stuebner@bq.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 9:27 AM Florian Eckert <fe@dev.tdt.de> wrote:
->
-> This will add a x86 platform device "gpio-keys-polled" which uses the
-> new gpio-apu drive for APU2 and APU3 boards from PC Engines.
-
-Subject more likely should start from x86/platform.
-
-On the other hand, why it's under arch/x86 and not part of PDx86
-(drivers/platform/x86)?
-
->
-> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
-> ---
->  arch/x86/Kconfig               | 14 ++++++++
->  arch/x86/platform/Makefile     |  1 +
->  arch/x86/platform/amd/Makefile |  1 +
->  arch/x86/platform/amd/apu.c    | 72 ++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 88 insertions(+)
->  create mode 100644 arch/x86/platform/amd/Makefile
->  create mode 100644 arch/x86/platform/amd/apu.c
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 9d734f3c8234..97c53286fdb6 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2820,6 +2820,20 @@ config TS5500
->
->  endif # X86_32
->
-> +if X86_64
-> +config APU
-> +       bool "PCEngines APU System Support"
-> +       help
-> +         This option enables system support for the PCEngines APU platform.
-> +         At present this just sets up the reset button control on
-> +         APU2/APU3 boards. However, other system specific setup should
-> +         get added here.
-> +
-> +         Note: You must still enable the drivers for GPIO and LED support
-> +         (GPIO_APU & LEDS_APU) to actually use the LEDs and the GPIOs
-> +
-> +endif # X86_64
-> +
->  config AMD_NB
->         def_bool y
->         depends on CPU_SUP_AMD && PCI
-> diff --git a/arch/x86/platform/Makefile b/arch/x86/platform/Makefile
-> index d0e835470d01..a95d18810c29 100644
-> --- a/arch/x86/platform/Makefile
-> +++ b/arch/x86/platform/Makefile
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  # Platform specific code goes here
->  obj-y  += atom/
-> +obj-y  += amd/
->  obj-y  += ce4100/
->  obj-y  += efi/
->  obj-y  += geode/
-> diff --git a/arch/x86/platform/amd/Makefile b/arch/x86/platform/amd/Makefile
-> new file mode 100644
-> index 000000000000..bf04c5799d7f
-> --- /dev/null
-> +++ b/arch/x86/platform/amd/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_APU)              +=apu.o
-> diff --git a/arch/x86/platform/amd/apu.c b/arch/x86/platform/amd/apu.c
-> new file mode 100644
-> index 000000000000..a4b695881177
-> --- /dev/null
-> +++ b/arch/x86/platform/amd/apu.c
-> @@ -0,0 +1,72 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * System Specific setup for PC-Engines APU2/APU3 devices
-> + *
-> + * Copyright (C) 2018 Florian Eckert <fe@dev.tdt.de>
-> + */
-> +
-> +#include <linux/platform_device.h>
-
-> +#include <linux/gpio.h>
-
-Mustn't be present in new code. Either consumer or driver (in very
-rare cases both, not here)
-
-> +#include <linux/input.h>
-> +#include <linux/gpio_keys.h>
-> +#include <linux/dmi.h>
-> +
-> +static struct gpio_keys_button apu_gpio_buttons[] = {
-> +       {
-> +               .code                   = KEY_RESTART,
-> +               .gpio                   = 20,
-> +               .active_low             = 1,
-> +               .desc                   = "Reset button",
-> +               .type                   = EV_KEY,
-> +               .debounce_interval      = 60,
-> +       }
-> +};
-> +
-> +static struct gpio_keys_platform_data apu_buttons_data = {
-> +       .buttons                = apu_gpio_buttons,
-> +       .nbuttons               = ARRAY_SIZE(apu_gpio_buttons),
-> +       .poll_interval          = 20,
-> +};
-> +
-> +static struct platform_device apu_buttons_dev = {
-> +       .name                   = "gpio-keys-polled",
-> +       .id                     = 1,
-> +       .dev = {
-> +               .platform_data          = &apu_buttons_data,
-> +       }
-> +};
-> +
-> +static struct platform_device *apu_devs[] __initdata = {
-> +               &apu_buttons_dev,
-> +};
-> +
-> +static void __init register_apu(void)
-> +{
-> +       /* Setup push button control through gpio-apu driver */
-> +       platform_add_devices(apu_devs, ARRAY_SIZE(apu_devs));
-> +}
-> +
-> +static int __init apu_init(void)
-> +{
-
-> +       if (!dmi_match(DMI_SYS_VENDOR, "PC Engines")) {
-> +               pr_err("No PC Engines board detected\n");
-> +               return -ENODEV;
-> +       }
-> +
-> +       if (!(dmi_match(DMI_PRODUCT_NAME, "APU2") ||
-> +             dmi_match(DMI_PRODUCT_NAME, "apu2") ||
-> +             dmi_match(DMI_PRODUCT_NAME, "PC Engines apu2") ||
-> +             dmi_match(DMI_PRODUCT_NAME, "APU3") ||
-> +             dmi_match(DMI_PRODUCT_NAME, "apu3") ||
-> +             dmi_match(DMI_PRODUCT_NAME, "PC Engines apu3"))) {
-> +               pr_err("Unknown PC Engines board: %s\n",
-> +                       dmi_get_system_info(DMI_PRODUCT_NAME));
-> +               return -ENODEV;
-> +       }
-
-Do we really need this here?
-If so, perhaps a common code should be created in a way like
-x86_apple_machine global variable?
-
-> +
-> +       register_apu();
-> +
-> +       return 0;
-> +}
-> +
-> +device_initcall(apu_init);
-> --
-> 2.11.0
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+SGkgSGVpa28sCgrU2iAyMDE4LzExLzEyIMnPzuc1OjAwLCBIZWlrbyBTdHVlYm5lciDQtLXAOgo+
+IEZyb206IEhlaWtvIFN0dWVibmVyPGhlaWtvLnN0dWVibmVyQGJxLmNvbT4KPiAKPiBSaWdodCBu
+b3cgd2UgZXhwZWN0IHRoZSBwaW4tcm91bnRpbmcgc2V0dGluZ3MgdG8gYmUgaW4gdGhlIHNhbWUg
+YXJlYQo+IGFzIHRoZSBpb211eCBzZXR0aW5nIGl0c2VsZi4gQW5kIHdoaWxlIHRoYXQgc2VlbXMg
+dG8gYmUgdHJ1ZSBmb3IgYWxsCj4gbmV3ZXIgUm9ja2NoaXAgc29jcywgYmFjayBpbiB0aGUgd2ls
+ZCB3ZXN0IGRheXMgb2Ygb2xkIHRoaXMgd2Fzbid0IHRydWUuCj4gCj4gTm93YWRheXMgcGluIHNl
+dHRpbmdzIGluIHRoZSBHUkYgbm9ybWFsbHkgc3RheSBpbiB0aGUgR1JGIGFuZCB0aGUgc2FtZQo+
+IGlzIHRydWUgZm9yIHBpbnMgY29uZmlndXJlZCBmcm9tIFBNVSByZWdpc3RlcnMuIEJ1dCBvbGQg
+c29jcyBsaWtlIHRoZQo+IHJrMzE4OCByZWFsbHkgc3ByaW5rbGUgcGluIHNldHRpbmdzIHNvbWV3
+aGF0IHJhbmRvbWx5IHRocm91Z2ggYm90aAo+IGZvciBpdHMgYmFuazAuCj4gCj4gVGhlcmVmb3Jl
+IGFkZCB0aGUgb3B0aW9uIHRvIHNwZWNpZnkgYSBsb2NhdGlvbiBmb3IgdGhlIHJvdXRlIHNldHRp
+bmcsCj4gc28gdGhhdCB3ZSBjYW4gbWFwIG9sZGVyIHNvY3MgY29ycmVjdGx5LiBXZSdsbCBrZWVw
+ICJzYW1lIiBhcyB0aGUKPiBkZWZhdWx0LCBzbyB0aGF0IHdlIG9ubHkgbmVlZCB0byBzcGVjaWZ5
+IGEgbG9jYXRpb24gaW4gdGhlIGNvcm5lci1jYXNlcwo+IGRlc2NyaWJlZCBhYm92ZS4KPiAKPiBT
+aWduZWQtb2ZmLWJ5OiBIZWlrbyBTdHVlYm5lcjxoZWlrby5zdHVlYm5lckBicS5jb20+CgpWZXJ5
+IGdvb2QsIGZvciB0aGUgbWl4ZWQgY2FzZSwgcmVhbGx5IG5lZWQgdG8gZG8gdGhlIHN1cHBsZW1l
+bnQuCgpSZXZpZXdlZC1ieTogRGF2aWQgV3UgPGRhdmlkLnd1QHJvY2stY2hpcHMuY29tPgoKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1r
+ZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpo
+dHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJu
+ZWwK
