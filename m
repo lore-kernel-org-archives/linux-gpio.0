@@ -1,12 +1,12 @@
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 1/2] gpio: Add driver for PC Engines APU2/APU3 GPIOs
-Date: Wed, 14 Nov 2018 10:53:14 +0200
-Message-ID: <CAHp75VfeDzXeb7g2rz2CUcfnLCeGxn-nVC8hiwzqV9E=mCEx4w@mail.gmail.com>
-References: <20181114072658.11457-1-fe@dev.tdt.de> <20181114072658.11457-2-fe@dev.tdt.de>
+Subject: Re: [PATCH v3 2/2] kernel: Add reset button platform device for APU2/APU3
+Date: Wed, 14 Nov 2018 11:00:38 +0200
+Message-ID: <CAHp75Vcmu927EWKHcydVT6+yiN_UG2JcR+xi=hrt1F+UrZXi=Q@mail.gmail.com>
+References: <20181114072658.11457-1-fe@dev.tdt.de> <20181114072658.11457-3-fe@dev.tdt.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181114072658.11457-2-fe@dev.tdt.de>
+In-Reply-To: <20181114072658.11457-3-fe@dev.tdt.de>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Florian Eckert <fe@dev.tdt.de>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Joe Perches <joe@perches.com>, Christian Lamparter <chunkeey@gmail.com>, piotr.krol@3mdeb.com, Darren Hart <dvhart@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
@@ -14,356 +14,136 @@ List-Id: linux-gpio@vger.kernel.org
 
 On Wed, Nov 14, 2018 at 9:27 AM Florian Eckert <fe@dev.tdt.de> wrote:
 >
-> Add a new device driver "gpio-apu" which will handle the GPIOs onAPU2
-> and APU3 devices from PC Engines.
->
-> APU2 (https://pcengines.ch/schema/apu2c.pdf page 7):
-> - G32 is "button_reset" connected to the smd-button on the frontpanel
-> - G50 is "mpcie2_reset" connected to mPCIe2 reset line
-> - G51 is "mpcie3_reset" connected to mPCIe3 reset line
->
-> APU3 (https://pcengines.ch/schema/apu3c.pdf page 7):
-> - G32 is "button_reset" connected to the smd-button on the frontpanel
-> - G50 is "mpcie2_reset" connected to mPCIe2 reset line
-> - G51 is "mpcie3_reset" connected to mPCIe3 reset line
-> - G33 is "simswap" connected to SIM switch IC to swap the SIM between
->   mPCIe2 and mPCIe3 slot
+> This will add a x86 platform device "gpio-keys-polled" which uses the
+> new gpio-apu drive for APU2 and APU3 boards from PC Engines.
+
+Subject more likely should start from x86/platform.
+
+On the other hand, why it's under arch/x86 and not part of PDx86
+(drivers/platform/x86)?
+
 >
 > Signed-off-by: Florian Eckert <fe@dev.tdt.de>
 > ---
->  drivers/gpio/Kconfig    |   8 ++
->  drivers/gpio/Makefile   |   1 +
->  drivers/gpio/gpio-apu.c | 312 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 321 insertions(+)
->  create mode 100644 drivers/gpio/gpio-apu.c
+>  arch/x86/Kconfig               | 14 ++++++++
+>  arch/x86/platform/Makefile     |  1 +
+>  arch/x86/platform/amd/Makefile |  1 +
+>  arch/x86/platform/amd/apu.c    | 72 ++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 88 insertions(+)
+>  create mode 100644 arch/x86/platform/amd/Makefile
+>  create mode 100644 arch/x86/platform/amd/apu.c
 >
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 833a1b51c948..f9e603d5670c 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -117,6 +117,14 @@ config GPIO_AMDPT
->           driver for GPIO functionality on Promontory IOHub
->           Require ACPI ASL code to enumerate as a platform device.
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 9d734f3c8234..97c53286fdb6 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2820,6 +2820,20 @@ config TS5500
 >
-> +config GPIO_APU
-> +       tristate "PC Engines APU2/APU3 GPIO support"
-> +       depends on X86
-> +       select GPIO_GENERIC
+>  endif # X86_32
+>
+> +if X86_64
+> +config APU
+> +       bool "PCEngines APU System Support"
 > +       help
-> +         Say Y here to support GPIO functionality on APU2/APU3 boards
-> +         from PC Engines.
+> +         This option enables system support for the PCEngines APU platform.
+> +         At present this just sets up the reset button control on
+> +         APU2/APU3 boards. However, other system specific setup should
+> +         get added here.
 > +
->  config GPIO_ASPEED
->         tristate "Aspeed GPIO support"
->         depends on (ARCH_ASPEED || COMPILE_TEST) && OF_GPIO
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index 671c4477c951..9c27523fb189 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -29,6 +29,7 @@ obj-$(CONFIG_GPIO_ALTERA)     += gpio-altera.o
->  obj-$(CONFIG_GPIO_ALTERA_A10SR)        += gpio-altera-a10sr.o
->  obj-$(CONFIG_GPIO_AMD8111)     += gpio-amd8111.o
->  obj-$(CONFIG_GPIO_AMDPT)       += gpio-amdpt.o
-> +obj-$(CONFIG_GPIO_APU)         += gpio-apu.o
->  obj-$(CONFIG_GPIO_ARIZONA)     += gpio-arizona.o
->  obj-$(CONFIG_GPIO_ATH79)       += gpio-ath79.o
->  obj-$(CONFIG_GPIO_ASPEED)      += gpio-aspeed.o
-> diff --git a/drivers/gpio/gpio-apu.c b/drivers/gpio/gpio-apu.c
+> +         Note: You must still enable the drivers for GPIO and LED support
+> +         (GPIO_APU & LEDS_APU) to actually use the LEDs and the GPIOs
+> +
+> +endif # X86_64
+> +
+>  config AMD_NB
+>         def_bool y
+>         depends on CPU_SUP_AMD && PCI
+> diff --git a/arch/x86/platform/Makefile b/arch/x86/platform/Makefile
+> index d0e835470d01..a95d18810c29 100644
+> --- a/arch/x86/platform/Makefile
+> +++ b/arch/x86/platform/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  # Platform specific code goes here
+>  obj-y  += atom/
+> +obj-y  += amd/
+>  obj-y  += ce4100/
+>  obj-y  += efi/
+>  obj-y  += geode/
+> diff --git a/arch/x86/platform/amd/Makefile b/arch/x86/platform/amd/Makefile
 > new file mode 100644
-> index 000000000000..df166c0d8258
+> index 000000000000..bf04c5799d7f
 > --- /dev/null
-> +++ b/drivers/gpio/gpio-apu.c
-> @@ -0,0 +1,312 @@
+> +++ b/arch/x86/platform/amd/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_APU)              +=apu.o
+> diff --git a/arch/x86/platform/amd/apu.c b/arch/x86/platform/amd/apu.c
+> new file mode 100644
+> index 000000000000..a4b695881177
+> --- /dev/null
+> +++ b/arch/x86/platform/amd/apu.c
+> @@ -0,0 +1,72 @@
 > +// SPDX-License-Identifier: GPL-2.0
-> +/* PC Engines APU2/APU3 GPIO device driver
+> +/*
+> + * System Specific setup for PC-Engines APU2/APU3 devices
 > + *
 > + * Copyright (C) 2018 Florian Eckert <fe@dev.tdt.de>
 > + */
 > +
-> +#include <linux/dmi.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/input.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
 > +#include <linux/platform_device.h>
-> +
-> +#define DEVNAME                "gpio-apu"
-> +
-> +#define APU_FCH_ACPI_MMIO_BASE 0xFED80000
-> +#define APU_FCH_GPIO_BASE      (APU_FCH_ACPI_MMIO_BASE + 0x1500)
-> +#define APU_GPIO_BIT_RD        16
-> +#define APU_GPIO_BIT_WR        22
-> +#define APU_GPIO_BIT_DIR       23
-> +
-> +struct apu_gpio_pdata {
-> +       struct platform_device *pdev;
-> +       struct gpio_chip *chip;
-> +       unsigned long *offset;          /* base register offset */
-> +       void __iomem **addr;            /* remapped iomem addresses */
-> +       spinlock_t lock;                /* lock register access */
-> +};
-> +
-> +static struct apu_gpio_pdata *apu_gpio;
-> +
-> +/* APU2 */
-> +static unsigned long apu2_gpio_offset[] = {
-> +       APU_FCH_GPIO_BASE + 89 * sizeof(u32),
-> +       APU_FCH_GPIO_BASE + 67 * sizeof(u32),
-> +       APU_FCH_GPIO_BASE + 66 * sizeof(u32),
-> +};
-> +static const char * const apu2_gpio_names[] = {
-> +       "button_reset",
-> +       "mpcie2_reset",
-> +       "mpcie3_reset",
-> +};
-> +
-> +/* APU3 */
-> +static unsigned long apu3_gpio_offset[] = {
-> +       APU_FCH_GPIO_BASE + 89 * sizeof(u32),
-> +       APU_FCH_GPIO_BASE + 67 * sizeof(u32),
-> +       APU_FCH_GPIO_BASE + 66 * sizeof(u32),
-> +       APU_FCH_GPIO_BASE + 90 * sizeof(u32),
-> +};
-> +static const char * const apu3_gpio_names[] = {
-> +       "button_reset",
-> +       "mpcie2_reset",
-> +       "mpcie3_reset",
-> +       "simswap",
-> +};
-> +
-> +static int gpio_apu_get_dir(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       u32 val;
-> +
-> +       spin_lock(&apu_gpio->lock);
-> +
-> +       val = ~ioread32(apu_gpio->addr[offset]);
-> +       val = (val >> APU_GPIO_BIT_DIR) & 1;
-> +
-> +       spin_unlock(&apu_gpio->lock);
-> +
-> +       return val;
-> +}
-> +
-> +static int gpio_apu_dir_in(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       u32 val;
-> +
-> +       spin_lock(&apu_gpio->lock);
-> +
-> +       val = ioread32(apu_gpio->addr[offset]);
-> +       val &= ~BIT(APU_GPIO_BIT_DIR);
-> +       iowrite32(val, apu_gpio->addr[offset]);
-> +
-> +       spin_unlock(&apu_gpio->lock);
-> +
-> +       return 0;
-> +}
-> +
-> +static int gpio_apu_dir_out(struct gpio_chip *chip, unsigned int offset,
-> +               int value)
-> +{
-> +       u32 val;
-> +
-> +       spin_lock(&apu_gpio->lock);
-> +
-> +       val = ioread32(apu_gpio->addr[offset]);
-> +       val |= BIT(APU_GPIO_BIT_DIR);
-> +       iowrite32(val, apu_gpio->addr[offset]);
-> +
-> +       spin_unlock(&apu_gpio->lock);
-> +
-> +       return 0;
-> +}
-> +
-> +static int gpio_apu_get_data(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       u32 val;
-> +
-> +       spin_lock(&apu_gpio->lock);
-> +
-> +       val = ioread32(apu_gpio->addr[offset]);
 
-> +       val = (val >> APU_GPIO_BIT_RD) & 1;
+> +#include <linux/gpio.h>
 
-This can be done outside of spin lock as a part of return statement.
+Mustn't be present in new code. Either consumer or driver (in very
+rare cases both, not here)
 
+> +#include <linux/input.h>
+> +#include <linux/gpio_keys.h>
+> +#include <linux/dmi.h>
 > +
-> +       spin_unlock(&apu_gpio->lock);
-> +
-> +       return val;
-> +}
-> +
-> +static void gpio_apu_set_data(struct gpio_chip *chip, unsigned int offset,
-> +               int value)
-> +{
-> +       u32 val;
-> +
-> +       spin_lock(&apu_gpio->lock);
-> +
-> +       val = ioread32(apu_gpio->addr[offset]);
-> +       if (value)
-> +               val |= BIT(APU_GPIO_BIT_WR);
-> +       else
-> +               val &= ~BIT(APU_GPIO_BIT_WR);
-> +       iowrite32(val, apu_gpio->addr[offset]);
-> +
-> +       spin_unlock(&apu_gpio->lock);
-> +}
-> +
-> +static const struct dmi_system_id apu_gpio_dmi_table[] __initconst = {
-> +       /* PC Engines APU2 with "Legacy" bios < 4.0.8 */
+> +static struct gpio_keys_button apu_gpio_buttons[] = {
 > +       {
-> +               .ident = "apu2",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "APU2")
-> +               }
-> +       },
-> +       /* PC Engines APU2 with "Legacy" bios >= 4.0.8 */
-> +       {
-> +               .ident = "apu2",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "apu2")
-> +               }
-> +       },
-> +       /* PC Engines APU2 with "Mainline" bios */
-> +       {
-> +               .ident = "apu2",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
-> +               }
-> +       },
-> +       /* PC Engines APU3 with "Legacy" bios < 4.0.8 */
-> +       {
-> +               .ident = "apu3",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "APU3")
-> +               }
-> +       },
-> +       /* PC Engines APU3 with "Legacy" bios >= 4.0.8 */
-> +       {
-> +               .ident = "apu3",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "apu3")
-> +               }
-> +       },
-> +       /* PC Engines APU3 with "Mainline" bios */
-> +       {
-> +               .ident = "apu3",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-> +                       DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
-> +               }
-> +       },
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(dmi, apu_gpio_dmi_table);
-> +
-> +static struct gpio_chip gpio_apu_chip = {
-> +       .label = "gpio-apu",
-> +       .owner = THIS_MODULE,
-> +       .base = 20,
-> +       .get_direction = gpio_apu_get_dir,
-> +       .direction_input = gpio_apu_dir_in,
-> +       .direction_output = gpio_apu_dir_out,
-> +       .get = gpio_apu_get_data,
-> +       .set = gpio_apu_set_data,
-> +};
-> +
-> +static int __init apu_gpio_probe(struct platform_device *pdev)
-> +{
-
-> +       int i;
-
-unsigned int i; ?
-
-> +
-> +       apu_gpio = devm_kzalloc(&pdev->dev, sizeof(*apu_gpio), GFP_KERNEL);
-
-> +
-
-Redundant blank line.
-
-> +       if (!apu_gpio)
-> +               return -ENOMEM;
-> +
-> +       apu_gpio->pdev = pdev;
-> +       apu_gpio->chip = &gpio_apu_chip;
-> +       spin_lock_init(&apu_gpio->lock);
-> +
-
-> +       if (dmi_match(DMI_BOARD_NAME, "APU3") ||
-> +           dmi_match(DMI_BOARD_NAME, "apu3") ||
-> +           dmi_match(DMI_BOARD_NAME, "PC Engines apu3")) {
-
-This branch...
-
-> +               apu_gpio->addr = devm_kzalloc(&pdev->dev,
-> +                               sizeof(apu3_gpio_offset),
-> +                               GFP_KERNEL);
-> +
-> +               if (!apu_gpio->addr)
-> +                       return -ENOMEM;
-> +
-> +               apu_gpio->offset = apu3_gpio_offset;
-> +               apu_gpio->chip->names = apu3_gpio_names;
-> +               apu_gpio->chip->ngpio = ARRAY_SIZE(apu3_gpio_offset);
-> +               for (i = 0; i < ARRAY_SIZE(apu3_gpio_offset); i++) {
-> +                       apu_gpio->addr[i] = devm_ioremap(&pdev->dev,
-> +                                       apu_gpio->offset[i], sizeof(u32));
-> +                       if (!apu_gpio->addr[i])
-> +                               return -ENOMEM;
-> +               }
-> +       } else if (dmi_match(DMI_BOARD_NAME, "APU2") ||
-> +                  dmi_match(DMI_BOARD_NAME, "apu2") ||
-> +                  dmi_match(DMI_BOARD_NAME, "PC Engines apu2")) {
-
-...and this one can be done as a callback functions in a regular DMI
-table. See, for example, drivers in drivers/platform/x86.
-
-> +               apu_gpio->addr = devm_kzalloc(&pdev->dev,
-> +                               sizeof(apu2_gpio_offset),
-> +                               GFP_KERNEL);
-> +
-> +               if (!apu_gpio->addr)
-> +                       return -ENOMEM;
-> +
-> +               apu_gpio->offset = apu2_gpio_offset;
-> +               apu_gpio->chip->names = apu2_gpio_names;
-> +               apu_gpio->chip->ngpio = ARRAY_SIZE(apu2_gpio_offset);
-> +               for (i = 0; i < ARRAY_SIZE(apu2_gpio_offset); i++) {
-> +                       apu_gpio->addr[i] = devm_ioremap(&pdev->dev,
-> +                                       apu_gpio->offset[i], sizeof(u32));
-> +                       if (!apu_gpio->addr[i])
-> +                               return -ENOMEM;
-> +               }
+> +               .code                   = KEY_RESTART,
+> +               .gpio                   = 20,
+> +               .active_low             = 1,
+> +               .desc                   = "Reset button",
+> +               .type                   = EV_KEY,
+> +               .debounce_interval      = 60,
 > +       }
-> +
-> +       return devm_gpiochip_add_data(&pdev->dev, apu_gpio->chip, NULL);
-> +}
-> +
-> +static struct platform_driver apu_gpio_driver = {
-> +       .driver = {
-> +               .name = KBUILD_MODNAME,
-> +       },
 > +};
 > +
-> +static int __init apu_gpio_init(void)
-> +{
-> +       struct platform_device *pdev;
-> +       int err;
+> +static struct gpio_keys_platform_data apu_buttons_data = {
+> +       .buttons                = apu_gpio_buttons,
+> +       .nbuttons               = ARRAY_SIZE(apu_gpio_buttons),
+> +       .poll_interval          = 20,
+> +};
 > +
+> +static struct platform_device apu_buttons_dev = {
+> +       .name                   = "gpio-keys-polled",
+> +       .id                     = 1,
+> +       .dev = {
+> +               .platform_data          = &apu_buttons_data,
+> +       }
+> +};
+> +
+> +static struct platform_device *apu_devs[] __initdata = {
+> +               &apu_buttons_dev,
+> +};
+> +
+> +static void __init register_apu(void)
+> +{
+> +       /* Setup push button control through gpio-apu driver */
+> +       platform_add_devices(apu_devs, ARRAY_SIZE(apu_devs));
+> +}
+> +
+> +static int __init apu_init(void)
+> +{
 
 > +       if (!dmi_match(DMI_SYS_VENDOR, "PC Engines")) {
 > +               pr_err("No PC Engines board detected\n");
 > +               return -ENODEV;
 > +       }
+> +
 > +       if (!(dmi_match(DMI_PRODUCT_NAME, "APU2") ||
 > +             dmi_match(DMI_PRODUCT_NAME, "apu2") ||
 > +             dmi_match(DMI_PRODUCT_NAME, "PC Engines apu2") ||
@@ -371,53 +151,21 @@ table. See, for example, drivers in drivers/platform/x86.
 > +             dmi_match(DMI_PRODUCT_NAME, "apu3") ||
 > +             dmi_match(DMI_PRODUCT_NAME, "PC Engines apu3"))) {
 > +               pr_err("Unknown PC Engines board: %s\n",
-> +                               dmi_get_system_info(DMI_PRODUCT_NAME));
+> +                       dmi_get_system_info(DMI_PRODUCT_NAME));
 > +               return -ENODEV;
 > +       }
 
-Similar here, you can get a first match in the table and if none, bail out.
+Do we really need this here?
+If so, perhaps a common code should be created in a way like
+x86_apple_machine global variable?
 
 > +
-> +       pdev = platform_device_register_simple(KBUILD_MODNAME, -1, NULL, 0);
-> +       if (IS_ERR(pdev)) {
-> +               pr_err("Device allocation failed\n");
-> +               return PTR_ERR(pdev);
-> +       }
+> +       register_apu();
 > +
-> +       err = platform_driver_probe(&apu_gpio_driver, apu_gpio_probe);
-> +       if (err) {
-> +               pr_err("Probe platform driver failed\n");
-> +               platform_device_unregister(pdev);
-> +       }
-> +
-
-> +       pr_info("%s: APU2/3 GPIO driver module loaded\n", DEVNAME);
-
-Noise
-
-> +
-> +       return err;
+> +       return 0;
 > +}
 > +
-> +static void __exit apu_gpio_exit(void)
-> +{
-> +       gpiochip_remove(apu_gpio->chip);
-> +       platform_device_unregister(apu_gpio->pdev);
-> +       platform_driver_unregister(&apu_gpio_driver);
-
-> +       pr_info("%s: APU2/3 GPIO driver module unloaded\n", DEVNAME);
-
-Noise
-
-> +}
-> +
-> +module_init(apu_gpio_init);
-> +module_exit(apu_gpio_exit);
-> +
-> +MODULE_AUTHOR("Florian Eckert");
-> +MODULE_DESCRIPTION("PC Engines APU2/3 family GPIO driver");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:gpio_apu");
+> +device_initcall(apu_init);
 > --
 > 2.11.0
 >
