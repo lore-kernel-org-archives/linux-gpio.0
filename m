@@ -1,41 +1,54 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: [PATCH v0 0/2] Initial Allwinner T3 support.
-Date: Thu, 15 Nov 2018 23:31:23 +0800
-Message-ID: <CAGb2v65V82YFjOp5K9tZSrBW8epiPE+t0qU8o_v1CsOU1GM08Q@mail.gmail.com>
-References: <20181114082033.GA20712@arx-s1> <20181115151813.a27uov3zmgzjcerf@flea>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBV5CW3PQKGQEPESJ5OI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20181115151813.a27uov3zmgzjcerf@flea>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Linux Doc Mailing List <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH] gpio: pxa: fix legacy non pinctrl aware builds again
+Date: Thu, 15 Nov 2018 18:16:38 +0100
+Message-ID: <20181115171638.5704-1-robert.jarzmik@free.fr>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 11:18 PM Maxime Ripard
-<maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org> wrote:
->
-> Hi!
->
-> On Wed, Nov 14, 2018 at 04:20:33PM +0800, hao_zhang wrote:
-> > Initial Allwinner T3 support.
-> >
-> > Allwinner T3 (sun8i) SoC features a Quad-Core Cortex-A7 ARM CPU, and a
-> > Mali400 MP2 GPU from ARM. It is a not-pin-compatible quad core sucessor
-> > of the A20). It's also known as the Allwinner R40 for In-Car
-> > Entertainment usage.
->
-> That series looks good, thanks!  The only thing that would need to be
-> reworked is your Signed-off-by name, which (I guess?) should be
-> written the same way than in your Copyright info.
+As pointed out by Gregor, spitz keyboard matrix is broken, with or
+without CONFIG_PINCTRL set, quoting :
+"The gpio matrix keypard on the Zaurus C3x00 (see spitz.c) does not work
+properly. Noticeable are that rshift+c does nothing where as lshift+c
+creates C.  Opposite it is for rshift+a vs lshift+a, here only rshift
+works. This affects a few other combinations using the rshift or lshift
+buttons."
 
-And also the author name of your git commits.
+As a matter of fact, as for platform_data based builds CONFIG_PINCTRL=n
+is required for now (as opposed for devicetree builds where it should be
+set), this means gpio driver should change the direction, which is what
+was attempted by commit c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl
+aware builds").
 
-Thanks
+Unfortunately, the input case was inverted, and the direction change was
+never done. This wasn't seen up until now because the initial platform
+setup (MFP) was setting this direction. Yet in Gregory's case, the
+matrix-keypad driver changes back and forth the direction dynamically,
+and this is why he's the first to report it.
+
+Fixes: c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl aware builds")
+Tested-by: Greg <greguu@null.net>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+ drivers/gpio/gpio-pxa.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index 63536655f274..501147c5f3ca 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -268,8 +268,8 @@ static int pxa_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ 
+ 	if (pxa_gpio_has_pinctrl()) {
+ 		ret = pinctrl_gpio_direction_input(chip->base + offset);
+-		if (!ret)
+-			return 0;
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	spin_lock_irqsave(&gpio_lock, flags);
+-- 
+2.11.0
