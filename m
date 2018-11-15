@@ -1,65 +1,44 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH v4 0/3] Add driver for Synopsys DesignWare I3C master IP
-Date: Thu, 15 Nov 2018 20:29:16 +0100
-Message-ID: <20181115202916.613df7b3@bbrezillon>
-References: <1542118193-24925-1-git-send-email-vitor.soares@synopsys.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: pxa: fix legacy non pinctrl aware builds again
+Date: Thu, 15 Nov 2018 23:49:07 +0100
+Message-ID: <CACRpkdbJ6AoF=Y0XzrMrfg_oFX_DhdhQ_hafbtacD8N=g1uXRA@mail.gmail.com>
+References: <20181115171638.5704-1-robert.jarzmik@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1542118193-24925-1-git-send-email-vitor.soares@synopsys.com>
+In-Reply-To: <20181115171638.5704-1-robert.jarzmik@free.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vitor Soares <vitor.soares@synopsys.com>
-Cc: wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org, joao.pinto@synopsys.com
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 13 Nov 2018 14:09:50 +0000
-Vitor Soares <vitor.soares@synopsys.com> wrote:
+On Thu, Nov 15, 2018 at 6:16 PM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 
-> This patch series is a proposal for the I3C master driver for Synopsys IP.
-> This patch is to be applied on top of I3C subsystem RFC V10 submitted by
-> Boris Brezillon.
-> 
-> Supported features:
->   Regular CCC commands.
->   I3C private transfers.
->   I2C transfers.
-> 
-> Missing functionalities:
->   Support DMA interface.
->   Support for I3C_BUS_MODE_MIXED_SLOW.
->   Hot-join.
->   IBI.
+> As pointed out by Gregor, spitz keyboard matrix is broken, with or
+> without CONFIG_PINCTRL set, quoting :
+> "The gpio matrix keypard on the Zaurus C3x00 (see spitz.c) does not work
+> properly. Noticeable are that rshift+c does nothing where as lshift+c
+> creates C.  Opposite it is for rshift+a vs lshift+a, here only rshift
+> works. This affects a few other combinations using the rshift or lshift
+> buttons."
+>
+> As a matter of fact, as for platform_data based builds CONFIG_PINCTRL=n
+> is required for now (as opposed for devicetree builds where it should be
+> set), this means gpio driver should change the direction, which is what
+> was attempted by commit c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl
+> aware builds").
+>
+> Unfortunately, the input case was inverted, and the direction change was
+> never done. This wasn't seen up until now because the initial platform
+> setup (MFP) was setting this direction. Yet in Gregory's case, the
+> matrix-keypad driver changes back and forth the direction dynamically,
+> and this is why he's the first to report it.
+>
+> Fixes: c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl aware builds")
+> Tested-by: Greg <greguu@null.net>
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Patchset queued to i3c/next.
+Patch applied for fixes.
 
-Thanks,
-
-Boris
-
-> 
-> Main change between v3 and v4:
-> - Minor fixes. They are described in each patch
-> 
-> Main change between v2 and v3:
-> - Minor fixes. They are described in each patch
-> 
-> Main change between v1 and v2:
-> - Add controller version on dt-binding
-> - The driver now calls writesl/readsl() instead readl/writel
-> - Rename some variables in the driver
-> 
-> Vitor Soares (3):
->   i3c: master: Add driver for Synopsys DesignWare IP
->   dt-binding: i3c: Document Synopsys DesignWare I3C
->   MAINTAINERS: Add myself as the dw-i3c-master module maintainer
-> 
->  .../devicetree/bindings/i3c/snps,dw-i3c-master.txt |   41 +
->  MAINTAINERS                                        |    6 +
->  drivers/i3c/master/Kconfig                         |   14 +
->  drivers/i3c/master/Makefile                        |    1 +
->  drivers/i3c/master/dw-i3c-master.c                 | 1216 ++++++++++++++++++++
->  5 files changed, 1278 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
->  create mode 100644 drivers/i3c/master/dw-i3c-master.c
-> 
+Yours,
+Linus Walleij
