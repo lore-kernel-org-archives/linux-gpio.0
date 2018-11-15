@@ -1,26 +1,25 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 3/4] arm64: dts: mediatek: x20: Add pinmux support for UART1
-Date: Thu, 15 Nov 2018 11:07:48 +0100
-Message-ID: <CACRpkdafzzsMdCSNPsk_FaF1iqJv=oXwKvB-rq5j5Ey+RNd=JQ@mail.gmail.com>
-References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org> <20181107174844.5381-4-manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v6 0/5] Add Actions Semi S700 pinctrl support
+Date: Thu, 15 Nov 2018 11:10:06 +0100
+Message-ID: <CACRpkdbpgjPEbur76BPjkXUN01zcUENcAyp=NsH4Bh_PiFBssw@mail.gmail.com>
+References: <20181113100709.5615-1-pn@denx.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181107174844.5381-4-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20181113100709.5615-1-pn@denx.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: sean.wang@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh+dt@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Amit Kucheria <amit.kucheria@linaro.org>
+To: pn@denx.de
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, mp-cs@actions-semi.com, "Thomas C. Liau" <thomas.liau@actions-semi.com>, linux@cubietech.com, saravanan sekar <sravanhome@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 6:49 PM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On Tue, Nov 13, 2018 at 11:07 AM Parthiban Nallathambi <pn@denx.de> wrote:
 
-> Add pinmux support for UART1 on MediatekX20 Development board based
-> on Mediatek MT6797 SoC.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> This patchset adds pinctrl support for Actions Semi S700 SoC.
+> Pinmux functions are only accessible for pin groups while pinconf
+> parameters are available for both pin groups and individual pins.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+This looks good to me, just waiting for Manivannan to look it
+over and ACK.
 
 Yours,
 Linus Walleij
