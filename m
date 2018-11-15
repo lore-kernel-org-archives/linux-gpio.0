@@ -1,29 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: meson-gxl: remove invalid GPIOX tsin_a pins
-Date: Thu, 15 Nov 2018 10:28:49 +0100
-Message-ID: <CACRpkdYpk1Mts9SxQq5nAdBBcWyZJouYgwR6uQaKMOe8o6u=OA@mail.gmail.com>
-References: <1541587358-17654-1-git-send-email-narmstrong@baylibre.com>
+Subject: Re: [PATCH 2/3] MAINTAINERS: add maintainer for sama5d2 PIOBU GPIO driver
+Date: Thu, 15 Nov 2018 10:40:19 +0100
+Message-ID: <CACRpkdbg5LTYAkSZTmLvfjWyhOrOFw9xEQKB_WgVOMULAii_yQ@mail.gmail.com>
+References: <1541603580-17448-1-git-send-email-andrei.stefanescu@microchip.com>
+ <1541603580-17448-3-git-send-email-andrei.stefanescu@microchip.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1541587358-17654-1-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1541603580-17448-3-git-send-email-andrei.stefanescu@microchip.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andrei.Stefanescu@microchip.com
+Cc: Greg KH <gregkh@linuxfoundation.org>, Nicolas Ferre <Nicolas.Ferre@microchip.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ludovic Desroches <Ludovic.Desroches@microchip.com>, Cristian.Birsan@microchip.com, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 11:42 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Wed, Nov 7, 2018 at 4:12 PM <Andrei.Stefanescu@microchip.com> wrote:
 
-> The GPIOX tsin_a pins wrongly uses the SDCard pinctrl bits, this
-> patch completely removes these pins entries until we find out what
-> are the correct bits and registers to be used instead.
+> This patch adds a maintainer for the sama5d2 GPIO controller
+> driver.
 >
-> Fixes: 5a6ae9b80139 ("pinctrl: meson-gxl: add tsin_a pins")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
 
-Patch applied.
-It doesn't look like a regression so I only applied it for
-next (v4.21).
+Just merge this in with the driver patch, thanks!
 
 Yours,
 Linus Walleij
