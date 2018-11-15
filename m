@@ -1,176 +1,79 @@
-From: Florian Eckert <fe@dev.tdt.de>
-Subject: [PATCH v4 2/2] platform: Add reset button device for PC Engines APU boards
-Date: Thu, 15 Nov 2018 14:32:01 +0100
-Message-ID: <20181115133201.29092-3-fe@dev.tdt.de>
-References: <20181115133201.29092-1-fe@dev.tdt.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
+Date: Thu, 15 Nov 2018 06:25:54 -0800
+Message-ID: <CAK8P3a0gmCtMac7ctKZ3r=2Dxo03pYvuXkQ7c4Vnt9yMoLDMSQ@mail.gmail.com>
+References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
+ <76b1d15d-232c-d8ba-5eba-8394e71be725@synopsys.com> <20181115135731.25f60990@bbrezillon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181115133201.29092-1-fe@dev.tdt.de>
+In-Reply-To: <20181115135731.25f60990@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, andy.shevchenko@gmail.com, piotr.krol@3mdeb.com, Eckert.Florian@googlemail.com, dvhart@infradead.org
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Florian Eckert <fe@dev.tdt.de>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Vitor Soares <vitor.soares@synopsys.com>, Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, gregkh <gregkh@linuxfoundation.org>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland>
 List-Id: linux-gpio@vger.kernel.org
 
-Add a platform/x86 device "gpio-keys-polled" for the frontpanel reset button.
-This device uses the gpio-apu driver for APU borads from PC Engines.
+On Thu, Nov 15, 2018 at 4:58 AM Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> +Mark Brown for the question about /dev/spidev
+> On Thu, 15 Nov 2018 12:14:37 +0000
+> vitor <vitor.soares@synopsys.com> wrote:
+> > My initial thoughts are to do the same think as for i2c, expose the
+> > buses or the i3c_devices and use ioctl for private transfers.
+>
+> Exposing the bus is dangerous IMO, because an I3C bus is not like an
+> I2C bus:
+>
+>    * I3C device needs to be discovered through DAA
+>    * I2C devices need to be declared ahead of time, and LVR is used to
+>      determine the limitations on the bus at runtime
+>
+> So you'd anyway be able to interact only with devices that have
+> previously been discovered.
+>
+> Note that the virtual I2C bus is already exposed, but any command
+> targeting an address that is not attached to a registered I2C dev will
+> get a -ENOENT error.
+>
+> What we could do though, is expose I3C devices that do not have a
+> driver in kernel space, like spidev does.
+>
+> > Some
+> > direct CCC commands can be sent through the /sys as you plan for SETNEWDA .
+>
+> Yes, CCC commands that need to be exposed to userspace should be
+> exposed through sysfs, or, if we decide to create a /dev/i3cX device
+> per bus, through ioctls.
+>
+> >
+> > What do you think about this?
+>
+> I think this request is perfectly valid, we just need to decide how it
+> should be done, and before we take this decision, I'd like to get
+> inputs from other maintainers.
+>
+> Mark, Wolfram, Arnd, Greg, any opinion?
 
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
----
- drivers/platform/x86/Kconfig                  |  11 +++
- drivers/platform/x86/Makefile                 |   1 +
- drivers/platform/x86/pcengines-apu-platform.c | 114 ++++++++++++++++++++++++++
- 3 files changed, 126 insertions(+)
- create mode 100644 drivers/platform/x86/pcengines-apu-platform.c
+I think for a new user space interface, it makes sense to explore a number of
+different options before making the final decision.
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 54f6a40c75c6..5cd27c2174cb 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1288,6 +1288,17 @@ config INTEL_ATOMISP2_PM
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called intel_atomisp2_pm.
- 
-+config PCENGINES_APU_PLATFORM
-+	bool "PCEngines APU System Support"
-+	depends on X86_64 && DMI && GPIOLIB
-+	help
-+	  This option enables system support for the PCEngines APU platform.
-+	  At present this just adds the GPIO reset button platform device on
-+	  APU2/APU3 boards.
-+
-+	  Note: You must still enable the drivers for GPIO and LED support
-+	  (GPIO_APU & LEDS_APU) to actually use the LEDs and the GPIOs.
-+
- endif # X86_PLATFORM_DEVICES
- 
- config PMC_ATOM
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index 39ae94135406..f899cc4c6b48 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -96,3 +96,4 @@ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
- obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
- obj-$(CONFIG_I2C_MULTI_INSTANTIATE)	+= i2c-multi-instantiate.o
- obj-$(CONFIG_INTEL_ATOMISP2_PM)	+= intel_atomisp2_pm.o
-+obj-$(CONFIG_PCENGINES_APU_PLATFORM)	+= pcengines-apu-platform.o
-diff --git a/drivers/platform/x86/pcengines-apu-platform.c b/drivers/platform/x86/pcengines-apu-platform.c
-new file mode 100644
-index 000000000000..3bfbaa93cb11
---- /dev/null
-+++ b/drivers/platform/x86/pcengines-apu-platform.c
-@@ -0,0 +1,114 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * System Specific setup for PC-Engines APU2/APU3 devices
-+ *
-+ * Copyright (C) 2018 Florian Eckert <fe@dev.tdt.de>
-+ */
-+
-+#include <linux/dmi.h>
-+#include <linux/gpio_keys.h>
-+#include <linux/input.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+static const struct dmi_system_id apu2_gpio_dmi_table[] __initconst = {
-+	/* PC Engines APU2 with "Legacy" bios < 4.0.8 */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "APU2")
-+		}
-+	},
-+	/* PC Engines APU2 with "Legacy" bios >= 4.0.8 */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "apu2")
-+		}
-+	},
-+	/* PC Engines APU2 with "Mainline" bios */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
-+		}
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(dmi, apu2_gpio_dmi_table);
-+
-+static const struct dmi_system_id apu3_gpio_dmi_table[] __initconst = {
-+	/* PC Engines APU3 with "Legacy" bios < 4.0.8 */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "APU3")
-+		}
-+	},
-+	/* PC Engines APU3 with "Legacy" bios >= 4.0.8 */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "apu3")
-+		}
-+	},
-+	/* PC Engines APU3 with "Mainline" bios */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
-+		}
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(dmi, apu3_gpio_dmi_table);
-+
-+
-+static struct gpio_keys_button apu_gpio_buttons[] = {
-+	{
-+		.code			= KEY_RESTART,
-+		.gpio			= 20,
-+		.active_low		= 1,
-+		.desc			= "Reset button",
-+		.type			= EV_KEY,
-+		.debounce_interval	= 60,
-+	}
-+};
-+
-+static struct gpio_keys_platform_data apu_buttons_data = {
-+	.buttons		= apu_gpio_buttons,
-+	.nbuttons		= ARRAY_SIZE(apu_gpio_buttons),
-+	.poll_interval		= 20,
-+};
-+
-+static struct platform_device apu_button_dev = {
-+	.name			= "gpio-keys-polled",
-+	.id			= 1,
-+	.dev = {
-+		.platform_data		= &apu_buttons_data,
-+	}
-+};
-+
-+static int __init apu_init(void)
-+{
-+	if (!(dmi_check_system(apu2_gpio_dmi_table)) &&
-+		!(dmi_check_system(apu3_gpio_dmi_table))) {
-+		return -ENODEV;
-+	}
-+
-+	return platform_device_register(&apu_button_dev);
-+}
-+
-+static void __exit apu_exit(void)
-+{
-+	platform_device_unregister(&apu_button_dev);
-+}
-+
-+module_init(apu_init);
-+module_exit(apu_exit);
--- 
-2.11.0
+I agree about better not exposing the bus as a /dev/i3c* node, and that we
+probably do need to expose individual devices in some form to allow
+writing complete user space drivers that can do everything a kernel driver
+can do.
+
+Can you describe what a low-level interface to the device looks like
+in the kernel? Can this be abstracted as simply pread()/pwrite() plus
+an interrupt mechanism, or do we need a set of ioctl() operations as
+well?
+
+If it can be purely based on a regmap abstraction, a sysfs inteface
+might be sufficient, though that has some downsides with permission
+management compared to a /dev/* node.
+
+Another option might be the use of a socket interface, which also
+has some issues in terms of permission management, but might
+be a good fit if we could abstract bus transactions as packets that
+can be queued.
+
+       Arnd
