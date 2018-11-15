@@ -1,43 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/3] mfd: upboard: Add UP2 platform controller driver
-Date: Thu, 15 Nov 2018 15:56:27 +0100
-Message-ID: <CACRpkda=xz=6sVuM1r81krR+09gOTaxBkab3_Xj0qMEB5AdVtQ@mail.gmail.com>
-References: <1539969334-24577-1-git-send-email-dan@emutex.com>
- <1541018689-20625-1-git-send-email-dan@emutex.com> <1541018689-20625-2-git-send-email-dan@emutex.com>
- <20181111112944.GA27666@amd>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
+Date: Thu, 15 Nov 2018 16:01:37 +0100
+Message-ID: <20181115150137.GB4169@kunai>
+References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
+ <76b1d15d-232c-d8ba-5eba-8394e71be725@synopsys.com>
+ <20181115135731.25f60990@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="i9LlY+UWpKt15+FH"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181111112944.GA27666@amd>
+Content-Disposition: inline
+In-Reply-To: <20181115135731.25f60990@bbrezillon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Dan O'Donovan <dan@emutex.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-leds@vger.kernel.org, carlos.iglesias@emutex.com
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: vitor <vitor.soares@synopsys.com>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellio>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 12:29 PM Pavel Machek <pavel@ucw.cz> wrote:
->
-> > +static void __reg_io_start(const struct upboard_ddata * const ddata)
-> > +{
-> > +     /*
-> > +      * CLEAR signal must be pulsed low before any register access.
-> > +      * This resets internal counters in the controller and marks
-> > +      * the start of a new register access.
-> > +      */
-> > +     set_clear(ddata, 0);
-> > +     set_clear(ddata, 1);
-> > +}
->
-> We normally reserve __ prefix for different stuff. This is not using
-> it appropriately.
 
-+1
+--i9LlY+UWpKt15+FH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I actively dislike __underscore_notation as it seems to be
-completely arbitrary and ambiguous. I think even
-do_the_stuff_reg_io_start() is better.
+Hi Boris,
 
-But please come up with something to the point and
-descriptive! :)
+> What we could do though, is expose I3C devices that do not have a
+> driver in kernel space, like spidev does.
 
-Yours,
-Linus Walleij
+...
+
+> Mark, Wolfram, Arnd, Greg, any opinion?
+
+Is there a benefit for having drivers in userspace? My gut feeling is to
+encourage people to write kernel drivers. If this is, for some reason,
+not possible for some driver, then we have a use case at hand to test
+the then-to-be-developed userspace interface against. Until then, I
+personally wouldn't waste effort on designing it without a user in
+sight.
+
+Dunno if you have that, but a debug interface (exchanging data with
+clients) on the other hand would be super useful most probably. Maybe
+you can start having that in debugfs and already learn from it if you
+ever want to move some interface outside of debugfs?
+
+Kind regards,
+
+   Wolfram
+
+
+--i9LlY+UWpKt15+FH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvtilEACgkQFA3kzBSg
+KbZgrxAAnFddvV2JFwTmL+pCc42D4FXaCvrGViEzLVgkMVXziaNTd2fgsowj0Gdh
+UZWnUbWd5YklqE4MxirpuHmsQvbYlYQ46r2eS22Xbfd/8JqdgNdRHep3jLYc4M4f
+TC8MCNU4u/j0m8pGvdEvRJZpLVI5qlHUBl9rP8locXiCUrW5Tsb7AnvUdZ/Vsv39
+MYC4yzGp7JZbO9LgPpHS1BRy+H3W2pQdquivQQEh1IIc/pqyehbN3c4MK23ZyBbZ
+7EGHMzvM6JHcVtgV547oJLNzJ5oyzKUpyRfqO7rhHA8drdZqEsULLFVeAmL7ee+x
+6GC8iYG0Fz+juySLh9Gk2c+k0gpnGBCiQZqu/kAssI/cXA+vGAMOb6WIrRrgfV6l
+m3RcxTqB4IbdLVJWOMXukNF4LoJXOSNIy991K167umJF4/l17WIlhCQahMcsBUm+
+HoXcPaiI7qTKhT1KHXCd6hoKz0PaRO8LMGG7ZOtJyJEPb/i+/khyNOejo2tmNO/J
+aBc1kWhEwNeBMPUQynlr/hgtHQ4+fudBr5dQjJieOVNjVZLJiZQYPglIaj6sQqRv
+RAmIa9erFrftKn8Wye2I5uGLG9FnljVTbtb1vfH8X2oeGIKG2VldDtHGahYBpx01
+4GIH4afxFT7b1VRbbhEqouiwS29o+GKEh45yR2uOKQ8Ham8pBSQ=
+=Ox07
+-----END PGP SIGNATURE-----
+
+--i9LlY+UWpKt15+FH--
