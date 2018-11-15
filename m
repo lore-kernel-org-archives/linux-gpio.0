@@ -1,92 +1,45 @@
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v6 0/5] Add Actions Semi S700 pinctrl support
-Date: Thu, 15 Nov 2018 16:31:04 +0530
-Message-ID: <20181115110104.GB15537@Mani-XPS-13-9360>
-References: <20181113100709.5615-1-pn@denx.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] MAINTAINERS: merge at91 pinctrl entries
+Date: Thu, 15 Nov 2018 12:04:12 +0100
+Message-ID: <CACRpkdZWMwGDLsBBRRtotMrdfo4x6t-rqj5zpy4xiFGqvBypAA@mail.gmail.com>
+References: <20181108131442.27911-1-ludovic.desroches@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181113100709.5615-1-pn@denx.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Parthiban Nallathambi <pn@denx.de>
-Cc: linus.walleij@linaro.org, afaerber@suse.de, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will.deacon@arm.com, mp-cs@actions-semi.com, thomas.liau@actions-semi.com, linux@cubietech.com, sravanhome@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181108131442.27911-1-ludovic.desroches@microchip.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 11:07:04AM +0100, Parthiban Nallathambi wrote:
-> This patchset adds pinctrl support for Actions Semi S700 SoC.
-> Pinmux functions are only accessible for pin groups while pinconf
-> parameters are available for both pin groups and individual pins.
-> 
-> pinctrl driver is verified using the Cubieboard7.
-> 
-> common functionalities from s900 is moved for all Actions Semi
-> SoC's usage.
-> Common pad control configurations are moved to SoC specific
+On Thu, Nov 8, 2018 at 2:15 PM Ludovic Desroches
+<ludovic.desroches@microchip.com> wrote:
+
+> In order to be aware of all changes related to at91 pinctrl drivers,
+> merge the two entries. Make use of the opportunity to replace Atmel by
+> Microchip.
 >
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+(...)
+> -PIN CONTROLLER - ATMEL AT91
+> -M:     Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
 
-Hi Parthiban,
+I haven't seen a mail from Jean-Christophe in years, last patch he
+wrote is from 2015, last mail I can find is from february
+last year.
 
-This series looks good to me. Just spotted one nitpick in bindings
-patch. Please note that I don't have any S900 device currently to test
-the patches. Although nothing looks like breaking.
+I guess if we don't hear back from him within a week or so I will
+just apply this and you assume maintaintership for the old
+AT91 driver.
 
-So for the whole series,
-
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-Thanks a ton for picking it up!
-
-Regards,
-Mani
-
-> dts entry for pinctrl depends on clock driver which is still under review:
-> https://patchwork.kernel.org/patch/10533959/
-> 
-> Thanks,
-> Saravanan
-> Parthiban
-> 
-> Changelog in v2
-> - GPIO Interrupt support is added
-> - Device tree entry for GPIO and Interrupt configured
-> - GPIO and pinctrl define reorder, commit message findings fixed
-> 
-> depends on owl GPIO Interrupt support
-> https://patchwork.kernel.org/patch/10483477/
-> 
-> Chnagelog in v3
-> - Fixed 0-DAY bisectibility error
-> 
-> Chnagelog in v4
-> - Fixed 0-DAY sparse warnings on static declaration
-> 
-> Chnagelog in v5
-> - Rebase to mainline
-> 
-> Chnagelog in v6
-> - Rebase to 4.20-rc2 mainline
-> - Fixed nitpick findings in v5
-> 
-> Saravanan Sekar (5):
->   pinctrl: actions: define constructor generic to Actions Semi SoC's
->   pinctrl: actions: define pad control configurtion to SoC specific
->   dt-bindings: pinctrl: Add bindings for Actions Semi S700 SoC
->   pinctrl: actions: Add Actions Semi S700 pinctrl driver
->   arm64: dts: actions: Add pinctrl node for Actions Semi S700
-> 
->  .../bindings/pinctrl/actions,s700-pinctrl.txt |  170 ++
->  arch/arm64/boot/dts/actions/s700.dtsi         |   16 +
->  drivers/pinctrl/actions/Kconfig               |    6 +
->  drivers/pinctrl/actions/Makefile              |    1 +
->  drivers/pinctrl/actions/pinctrl-owl.c         |   71 +-
->  drivers/pinctrl/actions/pinctrl-owl.h         |  142 +-
->  drivers/pinctrl/actions/pinctrl-s700.c        | 1912 +++++++++++++++++
->  drivers/pinctrl/actions/pinctrl-s900.c        |  205 +-
->  8 files changed, 2324 insertions(+), 199 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
->  create mode 100644 drivers/pinctrl/actions/pinctrl-s700.c
-> 
-> -- 
-> 2.17.2
-> 
+Yours,
+Linus Walleij
