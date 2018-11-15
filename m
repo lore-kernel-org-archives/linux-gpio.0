@@ -1,52 +1,62 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH RESEND V3 1/2] pinctrl: fsl: add scu based pinctrl support
-Date: Wed, 14 Nov 2018 17:02:16 -0800
-Message-ID: <7h8t1vgnl3.fsf@eze.i-did-not-set--mail-host-address--so-tickle-me>
-References: <1540908354-26809-1-git-send-email-aisheng.dong@nxp.com>
- <1540908354-26809-2-git-send-email-aisheng.dong@nxp.com>
- <7hin0zgp84.fsf@eze.i-did-not-set--mail-host-address--so-tickle-me>
- <CAOMZO5DU6ATmJkXrDd7XJ2_xwjWOa+o1LOdCb_Y0DDdLJAB1nw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.20
+Date: Thu, 15 Nov 2018 09:29:25 +0100
+Message-ID: <CACRpkdYht47bTGK_LSy9xqXAJ4axdarC0zqRoKpR4zOwjG-qRQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAOMZO5DU6ATmJkXrDd7XJ2_xwjWOa+o1LOdCb_Y0DDdLJAB1nw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Dong Aisheng <dongas86@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Fabio Estevam <festevam@gmail.com> writes:
+Hi Linus,
 
-> Hi Kevin,
->
-> On Wed, Nov 14, 2018 at 10:26 PM Kevin Hilman <khilman@baylibre.com> wrote:
->
->> kernelCI found boot failure caused by this patch.
->>
->> imx6 started failing in kernelCI in next-20181114 on several wand
->> boards[1].  There was no kernel output, after uboot started the kernel.
->>
->> Using the imx6q-wandboard, I bisected it down to this commit.
->>
->> I verified that reverting this commit on top of next-20181114 fixes the
->> problem.
->
-> Thanks for the report.
->
-> Dong has sent a fix for this issue:
-> https://www.spinics.net/lists/arm-kernel/msg686738.html
+here are some few pin control fixes for v4.20. Just meson
+(a very specific hardware) and establishing a git repo for
+Intel pin control.
 
-Ah, I was too slow. ;)
+Please pull it in!
 
-Anyways, I tested/validated that patch and replied on list.
+Yours,
+Linus Walleij
 
-Kevin
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.20-2
+
+for you to fetch changes up to 595b0674ce781e38522097b18718ce3c3bffc1a1:
+
+  MAINTAINERS: Add tree link for Intel pin control driver (2018-11-09
+11:36:51 +0100)
+
+----------------------------------------------------------------
+Pin control fixes for the v4.20 series:
+
+- A bunch of meson fixes for this (Allwinner) platform.
+
+- Establish a git repo for Intel pin control in MAINTAINERS.
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      MAINTAINERS: Add tree link for Intel pin control driver
+
+Jerome Brunet (5):
+      pinctrl: meson: fix pinconf bias disable
+      pinctrl: meson: fix gxbb ao pull register bits
+      pinctrl: meson: fix gxl ao pull register bits
+      pinctrl: meson: fix meson8 ao pull register bits
+      pinctrl: meson: fix meson8b ao pull register bits
+
+ MAINTAINERS                                | 1 +
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson.c      | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson8.c     | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson8b.c    | 2 +-
+ 6 files changed, 6 insertions(+), 5 deletions(-)
