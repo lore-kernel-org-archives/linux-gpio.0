@@ -1,30 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: Fix dependencies for EINT_MTK
-Date: Thu, 15 Nov 2018 10:26:15 +0100
-Message-ID: <CACRpkdbRZGxQoi7Pe=-unjHC4ToyOR1MJjKQqySs1Hunhs+TYA@mail.gmail.com>
-References: <20181102025728.963-1-olof@lixom.net>
+Subject: Re: [PATCH] pinctrl: meson-gxl: remove invalid GPIOX tsin_a pins
+Date: Thu, 15 Nov 2018 10:28:49 +0100
+Message-ID: <CACRpkdYpk1Mts9SxQq5nAdBBcWyZJouYgwR6uQaKMOe8o6u=OA@mail.gmail.com>
+References: <1541587358-17654-1-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181102025728.963-1-olof@lixom.net>
+In-Reply-To: <1541587358-17654-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: sean.wang@kernel.org, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 3:57 AM Olof Johansson <olof@lixom.net> wrote:
+On Wed, Nov 7, 2018 at 11:42 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-> Fixes the following config-time warning:
+> The GPIOX tsin_a pins wrongly uses the SDCard pinctrl bits, this
+> patch completely removes these pins entries until we find out what
+> are the correct bits and registers to be used instead.
 >
-> WARNING: unmet direct dependencies detected for EINT_MTK
->   Depends on [n]: PINCTRL [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n]) && (PINCTRL_MTK [=n] || PINCTRL_MTK_MOORE [=n] || COMPILE_TEST [=n])
->   Selected by [y]:
->   - PINCTRL_MTK_PARIS [=y] && PINCTRL [=y] && OF [=y] && (ARCH_MEDIATEK [=y] || COMPILE_TEST [=n])
->
-> Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
-> Signed-off-by: Olof Johansson <olof@lixom.net>
+> Fixes: 5a6ae9b80139 ("pinctrl: meson-gxl: add tsin_a pins")
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Patch applied with Sean's ACK!
+Patch applied.
+It doesn't look like a regression so I only applied it for
+next (v4.21).
 
 Yours,
 Linus Walleij
