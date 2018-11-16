@@ -1,37 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: ssbi-gpio: fix gpio-hog related boot issues
-Date: Fri, 16 Nov 2018 23:14:49 +0100
-Message-ID: <CACRpkdbdEkegcMMmwAQdAc=_n7vcu5M1KGx9KfgvFKbk4ZQ12Q@mail.gmail.com>
-References: <20181111013411.14153-1-masneyb@onstation.org>
+From: Sean Wang <sean.wang@kernel.org>
+Subject: Re: [PATCH] pinctrl: mediatek: Convert to using %pOFn instead of device_node.name
+Date: Fri, 16 Nov 2018 15:46:19 -0800
+Message-ID: <CAGp9LzpgZsj79Tf5Hee45Wt6ag+WHV0SMWd6qvvtj4G3pzAZKQ@mail.gmail.com>
+References: <20181116220540.17222-1-robh@kernel.org> <20181116220540.17222-4-robh@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181111013411.14153-1-masneyb@onstation.org>
+In-Reply-To: <20181116220540.17222-4-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: masneyb@onstation.org
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: robh@kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 2:34 AM Brian Masney <masneyb@onstation.org> wrote:
-
-> When attempting to setup up a gpio hog, device probing will repeatedly
-> fail with -EPROBE_DEFERED errors. It is caused by a circular dependency
-> between the gpio and pinctrl frameworks. If the gpio-ranges property is
-> present in device tree, then the gpio framework will handle the gpio pin
-> registration and eliminate the circular dependency.
+On Fri, Nov 16, 2018 at 2:06 PM Rob Herring <robh@kernel.org> wrote:
 >
-> See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
-> gpio-hog related boot issues") for a detailed commit message that
-> explains the issue in much more detail. The code comment in this commit
-> came from Christian's commit.
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
 >
-> I did not test this change against any hardware supported by this
-> particular driver, however I was able to validate this same fix works
-> for pinctrl-spmi-gpio.c using a LG Nexus 5 (hammerhead) phone.
+> Cc: Sean Wang <sean.wang@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+
+Acked-by: Sean Wang <sean.wang@kernel.org>
+
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-paris.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> index d2179028f134..7ff5ffa88198 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> @@ -419,8 +419,8 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+>
+>         pins = of_find_property(node, "pinmux", NULL);
+>         if (!pins) {
+> -               dev_err(hw->dev, "missing pins property in node %s .\n",
+> -                       node->name);
+> +               dev_err(hw->dev, "missing pins property in node %pOFn .\n",
+> +                       node);
+>                 return -EINVAL;
+>         }
+>
+> --
+> 2.19.1
+>
