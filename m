@@ -1,29 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: mxc: move gpio noirq suspend/resume to syscore phase
-Date: Fri, 16 Nov 2018 22:56:22 +0100
-Message-ID: <CACRpkdY8j0kohUxRAtcfvK865EVDQXGXrB7d5+crXM4AMK1Dxg@mail.gmail.com>
-References: <1541739112-383-1-git-send-email-Anson.Huang@nxp.com>
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH] pinctrl: mediatek: Convert to using %pOFn instead of device_node.name
+Date: Fri, 16 Nov 2018 16:05:40 -0600
+Message-ID: <20181116220540.17222-4-robh@kernel.org>
+References: <20181116220540.17222-1-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1541739112-383-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <20181116220540.17222-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anson Huang <anson.huang@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 5:56 AM Anson Huang <anson.huang@nxp.com> wrote:
+In preparation to remove the node name pointer from struct device_node,
+convert printf users to use the %pOFn format specifier.
 
-> During noirq suspend/resume phase, GPIO irq could arrive
-> and its registers like IMR will be changed by irq handle
-> process, to make the GPIO registers exactly when it is
-> powered ON after resume, move the GPIO noirq suspend/resume
-> callback to syscore suspend/resume phase, local irq is
-> disabled at this phase so GPIO registers are atomic.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Cc: Sean Wang <sean.wang@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/pinctrl/mediatek/pinctrl-paris.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Patch applied. Cc Fabio so he knows it happens.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index d2179028f134..7ff5ffa88198 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -419,8 +419,8 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 
+ 	pins = of_find_property(node, "pinmux", NULL);
+ 	if (!pins) {
+-		dev_err(hw->dev, "missing pins property in node %s .\n",
+-			node->name);
++		dev_err(hw->dev, "missing pins property in node %pOFn .\n",
++			node);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.19.1
