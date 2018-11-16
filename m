@@ -1,45 +1,38 @@
-From: Rob Herring <robh@kernel.org>
-Subject: [PATCH] pinctrl: mediatek: Convert to using %pOFn instead of device_node.name
-Date: Fri, 16 Nov 2018 16:05:40 -0600
-Message-ID: <20181116220540.17222-4-robh@kernel.org>
-References: <20181116220540.17222-1-robh@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH RESEND V5 1/1] gpio: vf610: add optional clock support
+Date: Fri, 16 Nov 2018 23:10:06 +0100
+Message-ID: <CACRpkdb=B2RRTb1J9s=es3nGGUPM5rhugMPWe5Jc761teyOPVw@mail.gmail.com>
+References: <1541859384-32301-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181116220540.17222-1-robh@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1541859384-32301-1-git-send-email-aisheng.dong@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: Dong Aisheng <dongas86@gmail.com>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-In preparation to remove the node name pointer from struct device_node,
-convert printf users to use the %pOFn format specifier.
+On Sat, Nov 10, 2018 at 3:21 PM A.s. Dong <aisheng.dong@nxp.com> wrote:
 
-Cc: Sean Wang <sean.wang@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/pinctrl/mediatek/pinctrl-paris.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Some SoCs need the gpio clock to be enabled before accessing
+> HW registers. This patch add the optional clock handling.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index d2179028f134..7ff5ffa88198 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -419,8 +419,8 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 
- 	pins = of_find_property(node, "pinmux", NULL);
- 	if (!pins) {
--		dev_err(hw->dev, "missing pins property in node %s .\n",
--			node->name);
-+		dev_err(hw->dev, "missing pins property in node %pOFn .\n",
-+			node);
- 		return -EINVAL;
- 	}
- 
--- 
-2.19.1
+Patch applied.
+
+Yours,
+Linus Walleij
