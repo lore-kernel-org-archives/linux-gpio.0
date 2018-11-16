@@ -1,38 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] ARM: davinci: fix ethernet support on da850-evm
-Date: Fri, 16 Nov 2018 22:51:08 +0100
-Message-ID: <CACRpkda4aarCn=PHPSWfMgtOZhcGA2ifcA7_ujYgmj+do2+N+Q@mail.gmail.com>
-References: <20181113135051.15308-1-brgl@bgdev.pl>
+Subject: Re: [PATCH] gpio: mxc: move gpio noirq suspend/resume to syscore phase
+Date: Fri, 16 Nov 2018 22:56:22 +0100
+Message-ID: <CACRpkdY8j0kohUxRAtcfvK865EVDQXGXrB7d5+crXM4AMK1Dxg@mail.gmail.com>
+References: <1541739112-383-1-git-send-email-Anson.Huang@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181113135051.15308-1-brgl@bgdev.pl>
+In-Reply-To: <1541739112-383-1-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "Nori, Sekhar" <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Anson Huang <anson.huang@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 2:51 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Fri, Nov 9, 2018 at 5:56 AM Anson Huang <anson.huang@nxp.com> wrote:
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> During noirq suspend/resume phase, GPIO irq could arrive
+> and its registers like IMR will be changed by irq handle
+> process, to make the GPIO registers exactly when it is
+> powered ON after resume, move the GPIO noirq suspend/resume
+> callback to syscore suspend/resume phase, local irq is
+> disabled at this phase so GPIO registers are atomic.
 >
-> Ethernet doesn't work on da850-evm in legacy boot mode since v4.19. This
-> series addresses two problems I've found. I guess with this kind of
-> intrusive changes in the GPIO driver, other boards may be broken at the
-> moment too.
->
-> Bartosz Golaszewski (3):
->   ARM: davinci: define gpio interrupts as separate resources
->   gpio: davinci: restore a way to manually specify the GPIO base
->   ARM: davinci: fix da850-evm boot in legacy mode
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-I have some patches starting to move DaVinci over to using only
-descriptor tables, but that's not somthing we can pull off overnight
-so I guess we have to go for this solution.
-
-Can we have ACKs from the DaVinci maintainers so I can merge
-all three patches through the GPIO tree fixes? Else I'm fine
-with merging through ARM SoC.
+Patch applied. Cc Fabio so he knows it happens.
 
 Yours,
 Linus Walleij
