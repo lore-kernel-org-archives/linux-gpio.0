@@ -1,31 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: rockchip: add rk3188 routes to switch
- between nand and emmc
-Date: Sat, 17 Nov 2018 13:19:16 +0100
-Message-ID: <CACRpkdZO852hScSgCGQVspcLSCK99B5ofM9mNkGUj-uQHwfS+g@mail.gmail.com>
-References: <20181111210047.30375-1-heiko@sntech.de> <20181111210047.30375-2-heiko@sntech.de>
+Subject: Re: [PATCH] pinctrl: sdm660: Set tile property for pingroups
+Date: Sat, 17 Nov 2018 13:25:37 +0100
+Message-ID: <CACRpkdZMnjuJocK0VjXD7WsP2VtnF3-0=Mu_4ENiVAx9nZ+F3g@mail.gmail.com>
+References: <20181112202553.1410-1-ctatlor97@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181111210047.30375-2-heiko@sntech.de>
+In-Reply-To: <20181112202553.1410-1-ctatlor97@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, David Wu <david.wu@rock-chips.com>, heiko.stuebner@bq.com
+To: Craig Tatlor <ctatlor97@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 10:01 PM Heiko Stuebner <heiko@sntech.de> wrote:
+On Mon, Nov 12, 2018 at 9:26 PM Craig Tatlor <ctatlor97@gmail.com> wrote:
 
-> From: Heiko Stuebner <heiko.stuebner@bq.com>
+> This was missed when tiles support was added in a revison and
+> causes the driver to fail to load.
 >
-> The rk3188 has pins that are not handled through the regular iomuxing
-> for handling either nand-flash or an emmc and are set through only one
-> specifal setting. So utilize the routing function to simply do that
-> setting depending on one of the core nand/emmc signals that are actually
-> regular pins handled through pinctrl.
->
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@bq.com>
+> Fixes: 9cf0c526bc58 ("pinctrl: qcom: Add sdm660 pinctrl driver")
+> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
 
-Patch applied.
+Patch applied for fixes with Bj=C3=B6rn's tag!
 
 Yours,
 Linus Walleij
