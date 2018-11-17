@@ -1,27 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sdm660: Set tile property for pingroups
-Date: Sat, 17 Nov 2018 13:25:37 +0100
-Message-ID: <CACRpkdZMnjuJocK0VjXD7WsP2VtnF3-0=Mu_4ENiVAx9nZ+F3g@mail.gmail.com>
-References: <20181112202553.1410-1-ctatlor97@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v1 2/2] dt-bindings: pinctrl: update bindings for MT7629
+ SoC
+Date: Sat, 17 Nov 2018 10:04:43 -0600
+Message-ID: <20181117160443.GA1462@bogus>
+References: <5d63d26156d2972b7e9f55c9743b66d7c6dac2ec.1541986223.git.ryder.lee@mediatek.com>
+ <46ee25bb5ac7a7aa0245e2b02e9a0e870ff09551.1541986223.git.ryder.lee@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181112202553.1410-1-ctatlor97@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <46ee25bb5ac7a7aa0245e2b02e9a0e870ff09551.1541986223.git.ryder.lee@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Craig Tatlor <ctatlor97@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, Weijie Gao <weijie.gao@mediatek.com>, Roy Luo <cheng-hao.luo@mediatek.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Ryder Lee <ryder.lee@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 9:26 PM Craig Tatlor <ctatlor97@gmail.com> wrote:
+On Mon, 12 Nov 2018 09:45:06 +0800, Ryder Lee wrote:
+> This updates bindings for MT7629 pinctrl driver.
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+> Changes since v1:
+> -add new function for wifi.
+> -add more descriptions.
+> ---
+>  .../devicetree/bindings/pinctrl/pinctrl-mt7622.txt | 131 +++++++++++++++++++++
+>  1 file changed, 131 insertions(+)
+> 
 
-> This was missed when tiles support was added in a revison and
-> causes the driver to fail to load.
->
-> Fixes: 9cf0c526bc58 ("pinctrl: qcom: Add sdm660 pinctrl driver")
-> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
-
-Patch applied for fixes with Bj=C3=B6rn's tag!
-
-Yours,
-Linus Walleij
+Reviewed-by: Rob Herring <robh@kernel.org>
