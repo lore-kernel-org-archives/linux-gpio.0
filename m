@@ -1,105 +1,121 @@
-From: Robert Abel <rabel@robertabel.eu>
-Subject: [of] deadlock b/c of gpiochip and pinctrl dependency
-Date: Sat, 17 Nov 2018 22:15:43 +0100
-Message-ID: <6409e5aa-4129-0706-2704-f5f609bb54a8@robertabel.eu>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Mesih Kilinc <mesihkilinc@gmail.com>
+Subject: [RFC PATCH v2 00/14] initial support for "suniv" Allwinner new ARM9 SoC
+Date: Sun, 18 Nov 2018 17:16:59 +0300
+Message-ID: <cover.1542546735.git.mesihkilinc@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc: Mesih Kilinc <mesihkilinc@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>, Julian Calaby <julian.calaby@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi!
+This is the second version of RFC patchset for Allwinner ARMv5 F1C100s
+SoC. Icenowy (author of the initial patchset) allowed me to continue.
+For patch 1~3 which introduces first ARMv5 Allwinner SoC I looked 
+freescale,imx configs and tried to organize patches better. 
+Addressed comment from Maxime Ripard and added SoC name to
+compatibles and filenames. 
+Addressed comment from Rob Herring and added dt-bindings.
 
-I found a dependency issue with gpiochip and pinctrl while using the gpio-hog feature that was implemented by Benoit
-Parrot in f625d4601759f. Relevant device-tree overlay shown below [3].
+This is my first patch. Sorry for any inconvenience :-)
 
-I ran into a deadlock situation, because adding a gpiochip requires a registered pinctrl with registered ranges, because
-the function to add the gpiochip will check for hogged pins and request gpio pin functionality for them.
-This works in situations when gpiochip and pinctrl functionality don't depend on each other. However, consider the
-following code, which is from the bcm2835 driver for Raspberry Pi found here [1]:
+Original cover later:
 
-pinctrl-bcm2835.c:
-    err = gpiochip_add_data(&pc->gpio_chip, pc);
-    if (err) {
-            dev_err(dev, "could not add GPIO chip    n");
-            return err;
-    }
+This is the RFC initial patchset for the "new" Allwinner SUNIV ARM9 SoC.
 
-    ...
+The same die is packaged differently, come with different co-packaged
+DRAM or shipped with different SDK; and then made many model names: F23,
+F25, F1C100A, F1C100S, F1C200S, F1C500, F1C600, R6, etc. These SoCs all
+share a common feature set and are packaged similarly (eLQFP128 for SoCs
+without co-packaged DRAM, QFN88 for with DRAM). As their's no
+functionality hidden on the QFN88 models (except DRAM interface not
+exported), it's not clever to differentiate them. So I will use suniv as
+common name of all these SoCs.
 
-    pc->pctl_dev = devm_pinctrl_register(dev, &bcm2835_pinctrl_desc, pc);
-    if (IS_ERR(pc->pctl_dev)) {
-        gpiochip_remove(&pc->gpio_chip);
-        return PTR_ERR(pc->pctl_dev);
-    }
+As it's the first not ARMv7+ Allwinner SoC to get supported, this
+patchset firstly made CONFIG_ARCH_SUNXI a common config item, and let
+selectable CONFIG_ARCH_SUNXI_V{5,7} to internally select it. This makes
+reusing most work possible. This is PATCH 1~2.
 
-    ...
+The ARM9 has neither GIC nor arch_timer, like the sun4i/5i Cortex-A8
+SoCs. So adapt the IRQ and timer driver used by sun4i/5i to support
+suniv. This is PATCH 3~5.
 
-    pinctrl_add_gpio_range(pc->pctl_dev, &pc->gpio_range);
+Then it's the common way to support a new SoC -- pinctrl, CCU and
+initial DT.
 
+Changes since v1:
+- Patch "ARM: add CONFIG_ARCH_SUNXI_V7 for differentiate ARMv5/v7
+  Allwinner SoCs"
+  - Instead of using a common bool config use a common menuconfig. 
+  - Use ARCH_MULTI_V7 to differentiate V7 SoCs.
+  - Addressed comment from Julian Calaby
+- Patch "ARM: sunxi: add Allwinner ARMv5 SoCs"
+  - Use ARCH_MULTI_V5 to differentiate V5 SoCs.
+  - removed "allwinner,suniv" board compatible string
+  - Added dt-bindings
+- Patch "irqchip/sun4i: add support for suniv interrupt controller"
+  - Added dt-bindings
+  - Changed "allwinner,suniv-ic" to "allwinner,suniv-f1c100s-ic"
+- Patch "clocksource: sun4i: add a compatible for suniv"
+  - Added dt-bindings
+  - Changed "allwinner,suniv-timer" to "allwinner,suniv-f1c100s-timer"
+- Patch "pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)"
+  - Added dt-bindings
+  - Renamed suniv-pinctrl to suniv-f1c100s-pinctrl
+- Patch "clk: sunxi-ng: add support for suniv F1C100s SoC"
+  - Added dt-bindings
+  - Renamed suniv-ccu to suniv-f1c100s-ccu
+- Patch "ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
+  - Addressed comment from Rask Ingemann Lambertsen
 
-It's not very obvious, that calling gpiochip_add_data should only be done after adding the required ranges to pinctrl,
-because the following happens:
+Mesih Kilinc (14):
+  ARM: add CONFIG_ARCH_SUNXI_V7 for differentiate ARMv5/v7 Allwinner
+    SoCs
+  dt-bindings: arm: Add new Allwinner ARMv5 F1C100s SoC
+  ARM: sunxi: add Allwinner ARMv5 SoCs
+  dt-bindings: interrupt-controller: Add suniv interrupt-controller
+  irqchip/sun4i: add support for suniv interrupt controller
+  dt-bindings: timer: Add Allwinner suniv timer
+  clocksource: sun4i: add a compatible for suniv
+  clocksource/drivers/sun4i: register as sched_clock on suniv
+  dt-bindings: pinctrl: Add Allwinner suniv F1C100s pinctrl
+  pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)
+  dt-bindings: clock: Add Allwinner suniv F1C100s CCU
+  clk: sunxi-ng: add support for suniv F1C100s SoC
+  ARM: dts: suniv: add initial DTSI file for F1C100s
+  ARM: suniv: f1c100s: add device tree for Lichee Pi Nano
 
-gpiochip_add_data(_with_key):
-  of_gpiochip_add:
-    of_gpiochip_scan_gpios:
-      for_each_available_child_of_node(chip->of_node, np) with "gpio-hog":
-        gpiod_hog
-          gpiochip_request_own_desc:
-            gpiod_request_commit:
-              status = chip->request(chip, gpio_chip_hwgpio(desc)):
-                gpiochip_generic_request(...):
-                  pinctrl_gpio_request:
-                    pinctrl_get_device_gpio_range:
-                      /* GPIO range not found, because it wasn't registered yet */
-                      return -EPROBE_DEFER;
+ Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
+ .../interrupt-controller/allwinner,sun4i-ic.txt    |   5 +-
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+ .../bindings/timer/allwinner,sun4i-timer.txt       |   5 +-
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts  |  26 +
+ arch/arm/boot/dts/suniv-f1c100s.dtsi               | 158 ++++++
+ arch/arm/mach-sunxi/Kconfig                        |  39 +-
+ arch/arm/mach-sunxi/Makefile                       |   3 +-
+ arch/arm/mach-sunxi/sunxi_v5.c                     |  22 +
+ drivers/clk/sunxi-ng/Kconfig                       |   5 +
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c           | 536 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h           |  34 ++
+ drivers/clocksource/sun4i_timer.c                  |   5 +-
+ drivers/irqchip/irq-sun4i.c                        |  47 +-
+ drivers/pinctrl/sunxi/Kconfig                      |   4 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-suniv-f1c100s.c      | 417 ++++++++++++++++
+ include/dt-bindings/clock/suniv-ccu-f1c100s.h      |  69 +++
+ include/dt-bindings/reset/suniv-ccu-f1c100s.h      |  37 ++
+ 22 files changed, 1401 insertions(+), 18 deletions(-)
+ create mode 100644 arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+ create mode 100644 arch/arm/boot/dts/suniv-f1c100s.dtsi
+ create mode 100644 arch/arm/mach-sunxi/sunxi_v5.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-suniv-f1c100s.c
+ create mode 100644 include/dt-bindings/clock/suniv-ccu-f1c100s.h
+ create mode 100644 include/dt-bindings/reset/suniv-ccu-f1c100s.h
 
-This of course deadlocks my system, because everything ends up waiting on the gpiochip, which cannot ever be
-instantiated. I couldn't find any documentation explicitly mentioning this dependency between gpiochip and pinctrl.
-My workaround for the moment is to re-order the gpiochip_add_data call after the devm_pinctrl_register and
-pinctrl_add_gpio_range calls. I haven't observed any ill effect, but I'm not sure what other components may already act
-on pinctrl while gpiochip is dangling or if any of the other functions that are called by add require it as well.
-
-Obviously, this approach won't work for SoCs where setting certain pinctrl settings need to touch gpio settings to e.g.
-activate pull-ups.
-
-In general, I sought the same functionality that Markus Pargmann was trying to implement in 2015 [2].
-That is, to name and possibly export gpios through device tree.
-
-It seems disadvantageous that one cannot currently specify pinctrl settings while hogging or export by name.
-Dynamic device tree overlays also don't work. Perhaps an actual driver instead of the hogging mechanism would solve all
-dependency issues better?
-
-Regards,
-
-Robert
-
-Please CC, as I'm off-list.
-
-
-  [1]: https://github.com/raspberrypi/linux/blob/83ea2e93/drivers/pinctrl/bcm/pinctrl-bcm2835.c#L1027
-  [2]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/357418.html
-  [3]: gpio-hog.dtso
-       /dts-v1/;
-       /plugin/;
-
-       #include <dt-bindings/gpio/gpio.h>
-
-       / {
-           compatible = "brcm,bcm2708";
-           fragment@0 {
-               target = <&gpio>;
-               __overlay__ {
-                   myLed {
-                       gpios = <18 GPIO_ACTIVE_HIGH>;
-                       gpio-hog;
-                       output-low;
-                   };
-               };
-           };
-       };
+-- 
+2.7.4
