@@ -1,53 +1,51 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 2/3] gpio: mockup: add locking
-Date: Mon, 19 Nov 2018 10:09:02 +0100
-Message-ID: <CAMRc=Me9Ypsz_NH7j1K1TxR8u=9qF9opKPri10Jkn3G=_tdssg@mail.gmail.com>
-References: <20181108165255.9940-1-brgl@bgdev.pl> <20181108165255.9940-3-brgl@bgdev.pl>
- <CACRpkdb71d2yCmxWDBaHY+60A9UDG1u0ACuXUq9pcH13_yA6-g@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ARM: davinci: fix ethernet support on da850-evm
+Date: Mon, 19 Nov 2018 10:11:23 +0100
+Message-ID: <CAMRc=MeAR=aW0FKNyRm0xy075BkF=cpDJyJDiwtWpWcmkdmF2A@mail.gmail.com>
+References: <20181113135051.15308-1-brgl@bgdev.pl> <CACRpkda4aarCn=PHPSWfMgtOZhcGA2ifcA7_ujYgmj+do2+N+Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb71d2yCmxWDBaHY+60A9UDG1u0ACuXUq9pcH13_yA6-g@mail.gmail.com>
+In-Reply-To: <CACRpkda4aarCn=PHPSWfMgtOZhcGA2ifcA7_ujYgmj+do2+N+Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-pt., 16 lis 2018 o 22:43 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
+pt., 16 lis 2018 o 22:51 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
 =82(a):
 >
-> On Thu, Nov 8, 2018 at 5:53 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> On Tue, Nov 13, 2018 at 2:51 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
+:
 >
-> > While no user reported any race condition problems with gpio-mockup,
-> > let's be on the safe side and use a mutex when performing any changes
-> > on the dummy chip structures.
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > >
-> > Suggested-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> > Ethernet doesn't work on da850-evm in legacy boot mode since v4.19. Thi=
+s
+> > series addresses two problems I've found. I guess with this kind of
+> > intrusive changes in the GPIO driver, other boards may be broken at the
+> > moment too.
+> >
+> > Bartosz Golaszewski (3):
+> >   ARM: davinci: define gpio interrupts as separate resources
+> >   gpio: davinci: restore a way to manually specify the GPIO base
+> >   ARM: davinci: fix da850-evm boot in legacy mode
 >
-> I tried to apply this but it failed, does it require patch 1?
->
-
-Yes, because of the change in get_direction().
-
-> I can pull in the next -rc after I merged the fix in that case
-> and we can apply on top.
->
-
-This is fine, it's aimed for 4.21 anyway.
-
-> __gpio_*
-> I tend to dislike __underscore_notation because I feel it
-> is semantically ambguous. I prefer a proper name, even
-> to the point that I prefer inner_function_foo over __foo,
-> but it's your driver and I might be a bit grumpy. :)
+> I have some patches starting to move DaVinci over to using only
+> descriptor tables, but that's not somthing we can pull off overnight
+> so I guess we have to go for this solution.
 >
 
-I think this is a common and intuitive pattern in the kernel codebase.
-Many subsystems and drivers use '__' to mark functions that execute
-internal logic and expect certain locks to be held etc.
-
-If you don't mind, I'd like to leave it like this.
+Nice, would you mind sharing the development branch? I'm interested in
+it as well and may be doing some work on that early 2019 so let's sync
+to avoid duplicating the effort.
 
 Bart
+
+> Can we have ACKs from the DaVinci maintainers so I can merge
+> all three patches through the GPIO tree fixes? Else I'm fine
+> with merging through ARM SoC.
+>
+> Yours,
+> Linus Walleij
