@@ -1,51 +1,41 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-Date: Mon, 19 Nov 2018 16:18:38 +0000
-Message-ID: <20181119161838.10610-1-phil.edworthy@renesas.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] pinctrl: mediatek: Convert to using %pOFn instead of device_node.name
+Date: Mon, 19 Nov 2018 13:07:41 -0600
+Message-ID: <CAL_Jsq+r6JrKKcHnmBSncdEaw=7Jhobv_w8PJrH=sbY2qtxOTQ@mail.gmail.com>
+References: <20181116220540.17222-1-robh@kernel.org> <20181116220540.17222-4-robh@kernel.org>
+ <CAGp9LzpgZsj79Tf5Hee45Wt6ag+WHV0SMWd6qvvtj4G3pzAZKQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGp9LzpgZsj79Tf5Hee45Wt6ag+WHV0SMWd6qvvtj4G3pzAZKQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>
+To: Sean Wang <sean.wang@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This fixes the check for unused mdio bus setting and the following static
-checker warning:
- drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
- warn: always true condition '(ipctl->mdio_func[mdio] >= 0) => (0-u32max >= 0)'
+On Fri, Nov 16, 2018 at 5:46 PM Sean Wang <sean.wang@kernel.org> wrote:
+>
+> On Fri, Nov 16, 2018 at 2:06 PM Rob Herring <robh@kernel.org> wrote:
+> >
+> > In preparation to remove the node name pointer from struct device_node,
+> > convert printf users to use the %pOFn format specifier.
+> >
+> > Cc: Sean Wang <sean.wang@kernel.org>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> > Cc: linux-mediatek@lists.infradead.org
+> > Cc: linux-gpio@vger.kernel.org
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+>
+> Acked-by: Sean Wang <sean.wang@kernel.org>
 
-It also fixes the return var when calling of_get_child_count()
+BTW, messages to you bounce:
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v2:
- - Don't rely on rely on the implicit typecast from -1 to uint
----
- drivers/pinctrl/pinctrl-rzn1.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+<sean.wang@mediatek.com> (expanded from <sean.wang@kernel.org>): host
+    mailgw01.mediatek.com[216.200.240.184] said: 550 Relaying mail to
+    sean.wang@mediatek.com is not allowed (in reply to RCPT TO command)
 
-diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
-index 57886dcff53d..cc0e5aa9128a 100644
---- a/drivers/pinctrl/pinctrl-rzn1.c
-+++ b/drivers/pinctrl/pinctrl-rzn1.c
-@@ -112,7 +112,7 @@ struct rzn1_pinctrl {
- 	struct rzn1_pinctrl_regs __iomem *lev2;
- 	u32 lev1_protect_phys;
- 	u32 lev2_protect_phys;
--	u32 mdio_func[2];
-+	int mdio_func[2];
- 
- 	struct rzn1_pin_group *groups;
- 	unsigned int ngroups;
-@@ -810,8 +810,8 @@ static int rzn1_pinctrl_probe_dt(struct platform_device *pdev,
- 	struct device_node *np = pdev->dev.of_node;
- 	struct device_node *child;
- 	unsigned int maxgroups = 0;
--	unsigned int nfuncs = 0;
- 	unsigned int i = 0;
-+	int nfuncs = 0;
- 	int ret;
- 
- 	nfuncs = of_get_child_count(np);
--- 
-2.17.1
+Perhaps you need your kernel.org account to route somewhere else.
+
+Rob
