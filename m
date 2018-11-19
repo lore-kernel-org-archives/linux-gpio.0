@@ -1,51 +1,41 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 2/3] gpio: davinci: restore a way to manually specify the
- GPIO base
-Date: Mon, 19 Nov 2018 15:20:07 +0100
-Message-ID: <CAMRc=MfxjhRB5mYcqB82aJfP0+qXNGqBsa8bzV6eCKfGggcpZw@mail.gmail.com>
-References: <20181113135051.15308-1-brgl@bgdev.pl> <20181113135051.15308-3-brgl@bgdev.pl>
- <CACRpkdZkZeVSi3O1AR-uZFcBEwp6BN95UxkgKHZz3FJbOHS3mw@mail.gmail.com>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v7 5/5] arm64: dts: actions: Add pinctrl node for Actions
+ Semi S700
+Date: Mon, 19 Nov 2018 19:59:50 +0530
+Message-ID: <20181119142950.GA3364@Mani-XPS-13-9360>
+References: <20181115124748.268286-1-pn@denx.de>
+ <20181115124748.268286-6-pn@denx.de>
+ <CACRpkdZqvnmzzAn4SRWuchniMn7K6GrxUXynW=Hf5zrgDH11JQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZkZeVSi3O1AR-uZFcBEwp6BN95UxkgKHZz3FJbOHS3mw@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZqvnmzzAn4SRWuchniMn7K6GrxUXynW=Hf5zrgDH11JQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>
-Cc: Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, stable <stable@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, pn@denx.de
+Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, mp-cs@actions-semi.com, "Thomas C. Liau" <thomas.liau@actions-semi.com>, linux@cubietech.com, saravanan sekar <sravanhome@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-pon., 19 lis 2018 o 14:19 Linus Walleij <linus.walleij@linaro.org> napisa=
-=C5=82(a):
->
-> On Tue, Nov 13, 2018 at 2:51 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
-:
->
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Nov 19, 2018 at 02:13:25PM +0100, Linus Walleij wrote:
+> On Thu, Nov 15, 2018 at 1:48 PM Parthiban Nallathambi <pn@denx.de> wrote:
+> 
+> > From: Saravanan Sekar <sravanhome@gmail.com>
 > >
-> > Commit 587f7a694f01 ("gpio: davinci: Use dev name for label and
-> > automatic base selection") broke the network support in legacy boot
-> > mode for da850-evm since we can no longer request the MDIO clock GPIO.
+> > Add pinctrl nodes for Actions Semi S700 SoC
 > >
-> > Other boards may be broken too, which I haven't tested.
-> >
-> > The problem is in the fact that most board files still use the legacy
-> > GPIO API where lines are requested by numbers rather than descriptors.
-> >
-> > While this should be fixed eventually, in order to unbreak the board
-> > for now - provide a way to manually specify the GPIO base in platform
-> > data.
-> >
-> > Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automat=
-ic base selection")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> I guess this will be merged throug ARM SoC?
+> > Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> > Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> > Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Please merge this through the ARM SoC tree.
 >
 
-Yes, if Sekhar's fine with that.
+Applied to dt-next branch of my tree with Linus's Reviewed-by tag.
 
-Bart
+Thanks,
+Mani
+
+> Yours,
+> Linus Walleij
