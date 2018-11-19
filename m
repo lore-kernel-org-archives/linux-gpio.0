@@ -1,31 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: Convert to using %pOFn instead of device_node.name
-Date: Mon, 19 Nov 2018 15:14:19 +0100
-Message-ID: <CACRpkdZnS4BkUJN_rjjPcCQAMDd0_4KZ_LgmYYtmuuBuRg6jgw@mail.gmail.com>
-References: <20181116220540.17222-1-robh@kernel.org> <20181116220540.17222-4-robh@kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 2/3] gpio: davinci: restore a way to manually specify the
+ GPIO base
+Date: Mon, 19 Nov 2018 15:20:07 +0100
+Message-ID: <CAMRc=MfxjhRB5mYcqB82aJfP0+qXNGqBsa8bzV6eCKfGggcpZw@mail.gmail.com>
+References: <20181113135051.15308-1-brgl@bgdev.pl> <20181113135051.15308-3-brgl@bgdev.pl>
+ <CACRpkdZkZeVSi3O1AR-uZFcBEwp6BN95UxkgKHZz3FJbOHS3mw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181116220540.17222-4-robh@kernel.org>
+In-Reply-To: <CACRpkdZkZeVSi3O1AR-uZFcBEwp6BN95UxkgKHZz3FJbOHS3mw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, sean.wang@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 11:06 PM Rob Herring <robh@kernel.org> wrote:
-
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
+pon., 19 lis 2018 o 14:19 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
 >
-> Cc: Sean Wang <sean.wang@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> On Tue, Nov 13, 2018 at 2:51 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
+:
+>
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Commit 587f7a694f01 ("gpio: davinci: Use dev name for label and
+> > automatic base selection") broke the network support in legacy boot
+> > mode for da850-evm since we can no longer request the MDIO clock GPIO.
+> >
+> > Other boards may be broken too, which I haven't tested.
+> >
+> > The problem is in the fact that most board files still use the legacy
+> > GPIO API where lines are requested by numbers rather than descriptors.
+> >
+> > While this should be fixed eventually, in order to unbreak the board
+> > for now - provide a way to manually specify the GPIO base in platform
+> > data.
+> >
+> > Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automat=
+ic base selection")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> I guess this will be merged throug ARM SoC?
+>
 
-Patch applied with Sean's ACK.
+Yes, if Sekhar's fine with that.
 
-Yours,
-Linus Walleij
+Bart
