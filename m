@@ -1,35 +1,132 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: stm32: protect configuration registers with
- a hwspinlock
-Date: Mon, 19 Nov 2018 13:20:46 +0100
-Message-ID: <CACRpkdZD5EurbTRyUg7AWRZqVQ-6rmUQDUmVVCFU3r0Y1bwnVg@mail.gmail.com>
-References: <20181113095142.32015-1-benjamin.gaignard@st.com> <20181113095142.32015-3-benjamin.gaignard@st.com>
+From: vitor <vitor.soares@synopsys.com>
+Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
+Date: Mon, 19 Nov 2018 12:35:42 +0000
+Message-ID: <ffcc3c3d-0bfd-23e2-5fbb-00cfbcd6b7af@synopsys.com>
+References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
+ <76b1d15d-232c-d8ba-5eba-8394e71be725@synopsys.com>
+ <20181115135731.25f60990@bbrezillon> <20181115150137.GB4169@kunai>
+ <20181115162826.42b54776@bbrezillon>
+ <1d64f21a-ad24-94e0-2c17-25729ef59a31@synopsys.com>
+ <20181115200058.1869afdb@bbrezillon>
+ <5f946406-a205-3802-aefd-ebd8b5a72b0b@synopsys.com>
+ <20181116141639.31074113@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181113095142.32015-3-benjamin.gaignard@st.com>
+In-Reply-To: <20181116141639.31074113@bbrezillon>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Alexandre TORGUE <alexandre.torgue@st.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>, vitor <vitor.soares@synopsys.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>, Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>, Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>, Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetr>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 10:51 AM Benjamin Gaignard
-<benjamin.gaignard@linaro.org> wrote:
+Hi Boris,
 
-> If a hwspinlock if defined in device tree use it to protect
-> configuration registers.
+On 16/11/18 13:16, Boris Brezillon wrote:
+> On Fri, 16 Nov 2018 12:31:42 +0000
+> vitor <vitor.soares@synopsys.com> wrote:
 >
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+>> Hi Boris,
+>>
+>>
+>> On 15/11/18 19:00, Boris Brezillon wrote:
+>>> On Thu, 15 Nov 2018 18:03:47 +0000
+>>> vitor <vitor.soares@synopsys.com> wrote:
+>>>   
+>>>> Hi Boris,
+>>>>
+>>>>
+>>>> On 15/11/18 15:28, Boris Brezillon wrote:
+>>>>> On Thu, 15 Nov 2018 16:01:37 +0100
+>>>>> Wolfram Sang <wsa@the-dreams.de> wrote:
+>>>>>      
+>>>>>> Hi Boris,
+>>>>>>      
+>>>>>>> What we could do though, is expose I3C devices that do not have a
+>>>>>>> driver in kernel space, like spidev does.
+>>>>>> ...
+>>>>>>      
+>>>>>>> Mark, Wolfram, Arnd, Greg, any opinion?
+>>>>>> Is there a benefit for having drivers in userspace? My gut feeling is to
+>>>>>> encourage people to write kernel drivers. If this is, for some reason,
+>>>>>> not possible for some driver, then we have a use case at hand to test
+>>>>>> the then-to-be-developed userspace interface against. Until then, I
+>>>>>> personally wouldn't waste effort on designing it without a user in
+>>>>>> sight.
+>>>>> I kind of agree with that. Vitor, do you have a use case in mind for
+>>>>> such userspace drivers? I don't think it's worth designing an API for
+>>>>> something we don't need (yet).
+>>>> My use case is a tool for tests, lets say like the i2c tools.
+>>> What would you like to test exactly?
+>>>   
+>>>> There is
+>>>> other subsystems, some of them mentioned on this thread, that have and
+>>>> ioctl system call or other method to change parameters or send data.
+>>> I don't think they added the /dev interface before having a real use
+>>> case for it.
+>>>   
+>>>> I rise this topic because I really think it worth to define now how this
+>>>> should be design (and for me how to do the things right) to avoid future
+>>>> issues.
+>>> Actually it should be done the other way around: you should have a real
+>>> need and the /dev interface should be designed to fulfill this need.
+>>> Based on this real use case we can discuss other potential usage that
+>>> might appear in the future and try to design something more
+>>> future-proof, but clearly, this userspace interface should be driven by
+>>> a real/well-defined use case.
+>>>
+>>> Also, exposing things to userspace is way more risky than adding a new
+>>> in-kernel subsystem/framework, because it then becomes part of the
+>>> stable ABI.
+>>>
+>>> To make things clearer, I'm not against the idea of exposing I3C
+>>> devices (or I3C buses) to userspace, but I'd like to understand what you
+>>> plan to do with that. If this is about testing, what kind of tests
+>>> you'd like to run. If this is about developing drivers in userspace,
+>>> why can't these be done in kernel space (license issues?), and what
+>>> would those drivers be allowed to do?
+>>
+>> Basically I need a tool that help me during the development and to avoid
+>> me to write a dummy driver for each device that I test.
+> But we want I3C device drivers to be upstreamed, so why not developing a
+> real driver everytime you test a new device and submitting it upstream?
 
-Patch applied with Alex' ACK.
 
-Out of curiosity: what is it protecting against?
-I would guess simultaneous access from another CPU
-but the commit doesn't say.
+Usually the devices that I test aren't the final product so it isn't 
+easy to do the upstream.
 
-Simultaneous access from two CPUs makes it extra important
-that all register access is read-modify-write, so I'd have a second
-check over the code to make sure this is the case.
+But when possible I plan to do that.
 
-Yours,
-Linus Walleij
+
+>
+>> For instances do some read/write,
+> Doing SDR/DDR transfers is probably acceptable, but I still think we
+> should push hard to have kernel drivers when that's possible.
+>
+>> get/set ccc commands,
+> Exposing CCC commands is definitely not a good idea, since they're not
+> even exposed to kernel drivers.
+>
+>> if something
+>> goes wrong during the bus initialization have a to debug etc...
+> Can't we add such a debug infrastructure in the kernel. Maybe we can
+> expose debugfs files too if that helps, though if those debugfs files
+> are actually used by userspace libs/tools, it's not any better than
+> ioctls or sysfs files, since they will anyway become a stable ABI.
+>
+>>
+>> For me this is a valid use case and I imagine when people start to
+>> develop in i3c this interface will help everyone.
+> How about you propose an i3cdev driver that allow users to do SDR
+> transfers throuh an ioctl?
+
+I think that was for v6 I started to something to expose the bus like in 
+i2c-dev, but I liked the idea of expose only the device doesn't have a 
+driver. Do you know if  there is already something in the kernel doing 
+the same?
+
+
+Best regards,
+
+Vitor Soares
