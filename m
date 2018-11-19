@@ -1,107 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 1/2] gpio: Add driver for PC Engines APU boards
-Date: Mon, 19 Nov 2018 14:46:06 +0100
-Message-ID: <CACRpkdZx-GgfgfGmB6KmTjzBEMnKyq3pUsHsgaZ1uBooN_sj9g@mail.gmail.com>
-References: <20181115133201.29092-1-fe@dev.tdt.de> <20181115133201.29092-2-fe@dev.tdt.de>
+Subject: Re: [PATCH 1/1] pinctrl: imx: fix NO_PAD_CTL setting for MMIO pads
+Date: Mon, 19 Nov 2018 14:52:50 +0100
+Message-ID: <CACRpkdajsAde9YL6G+2WZi+TUXd4QH5TfmwMcXCg=nL4eUJGLA@mail.gmail.com>
+References: <1542036051-23840-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181115133201.29092-2-fe@dev.tdt.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: fe@dev.tdt.de
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, piotr.krol@3mdeb.com, Eckert.Florian@googlemail.com, Darren Hart <dvhart@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1542036051-23840-1-git-send-email-aisheng.dong@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: Dong Aisheng <dongas86@gmail.com>, Martin Kaiser <martin@kaiser.cx>, Stefan Agner <stefan@agner.ch>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Leonard Crestez <leonard.crestez@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 2:32 PM Florian Eckert <fe@dev.tdt.de> wrote:
+On Mon, Nov 12, 2018 at 4:25 PM A.s. Dong <aisheng.dong@nxp.com> wrote:
 
-> Add a new device driver "gpio-apu" which will handle the GPIOs on APU2
-> and APU3 devices from PC Engines.
+> After patch b96eea718bf6 ("pinctrl: fsl: add scu based pinctrl support"),
+> NO_PAD_CTL pads map are not skipped anymore which results in
+> a possible memory corruption. As we actually only need to create config
+> maps for SCU pads and MMIO pads which are not using the default config
+> (a.k.a IMX_NO_PAD_CTL), so let's add a proper check before creating
+> the config maps. And during MMIO pads parsing, we also need update the
+> list_p point as SCU case to ensure the pin data next parsed is correct.
 >
-> APU2 (https://pcengines.ch/schema/apu2c.pdf page 7):
-> - G32 is "button_reset" connected to the smd-button on the frontpanel
-> - G50 is "mpcie2_reset" connected to mPCIe2 reset line
-> - G51 is "mpcie3_reset" connected to mPCIe3 reset line
->
-> APU3 (https://pcengines.ch/schema/apu3c.pdf page 7):
-> - G32 is "button_reset" connected to the smd-button on the frontpanel
-> - G50 is "mpcie2_reset" connected to mPCIe2 reset line
-> - G51 is "mpcie3_reset" connected to mPCIe3 reset line
-> - G33 is "simswap" connected to SIM switch IC to swap the SIM between
->   mPCIe2 and mPCIe3 slot
->
-> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Fixes: b96eea718bf6 ("pinctrl: fsl: add scu based pinctrl support")
+> Reported-by: Martin Kaiser <martin@kaiser.cx>
+> Suggested-by: Leonard Crestez <leonard.crestez@nxp.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-This is looking better and better! Thanks to everyone helping out
-and thanks for your perseverance Florian!
-
-> +config GPIO_APU
-> +       tristate "PC Engines APU2/APU3 GPIO support"
-> +       depends on X86
-> +       select GPIO_GENERIC
-
-Excellent idea.
-
-But it seems you are not using this. You would be using
-it if you used bgpio_init() but if I understand correctly this
-driver cannot use that because this GPIO is something like
-one register per pin, correct?
-
-Let me suggest:
-
-> +struct apu_gpio_pdata {
-> +       struct platform_device *pdev;
-> +       struct gpio_chip *chip;
-
-Make that a real member of this struct and not a pointer.
-I.e. just remove the "*".
-
-> +static struct apu_gpio_pdata *apu_gpio;
-
-Why a static local? It seems you can just pass around
-the pointer.
-
-> +static int gpio_apu_get_dir(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       u32 val;
-> +
-> +       spin_lock(&apu_gpio->lock);
-> +
-> +       val = ~ioread32(apu_gpio->addr[offset]);
-> +       val = (val >> APU_GPIO_BIT_DIR) & 1;
-
-I would just:
-
-#include <linux/bits.h>
-
-val = ~ioread32(apu_gpio->addr[offset]);
-spin_unlock();
-
-return !!(val & BIT(APU_GPIO_BIT_DIR));
-
-This clamps the value to [0,1] in a nice way.
-
-> +static int gpio_apu_get_data(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       u32 val;
-> +
-> +       spin_lock(&apu_gpio->lock);
-> +
-> +       val = ioread32(apu_gpio->addr[offset]);
-> +
-> +       spin_unlock(&apu_gpio->lock);
-> +
-> +       return (val >> APU_GPIO_BIT_RD) & 1;
-
-return !!(val & BIT(APU_GPIO_BIT_RD));
-
-> +       return devm_gpiochip_add_data(&pdev->dev, apu_gpio->chip, NULL);
-
-Instead of passing NULL pas apu_gpio as the last argument and in
-all callbacks you can use:
-
-struct apu_gpio_pdata *apu_gpio = gpiochip_get_data(gc);
-
-To get a pointer to the per-instance state container.
+Patch applied with all the test tags!
 
 Yours,
 Linus Walleij
