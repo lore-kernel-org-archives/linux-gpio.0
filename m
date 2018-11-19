@@ -1,27 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 0/5] Add Actions Semi S700 pinctrl support
-Date: Mon, 19 Nov 2018 14:15:02 +0100
-Message-ID: <CACRpkdbBmujFjpu0uyH4vTN8BUfp8Mq0Yt1KWnfTkihQ34pJLA@mail.gmail.com>
-References: <20181115124748.268286-1-pn@denx.de>
+Subject: Re: [PATCH] pinctrl: meson: fix pull enable register calculation
+Date: Mon, 19 Nov 2018 14:18:19 +0100
+Message-ID: <CACRpkdZ=pqxvmQdXhyGTMM9x4-rocwWkwdJv=yduO5WDwQ8z6g@mail.gmail.com>
+References: <20181113105536.6459-1-jbrunet@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181115124748.268286-1-pn@denx.de>
+In-Reply-To: <20181113105536.6459-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: pn@denx.de
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, mp-cs@actions-semi.com, "Thomas C. Liau" <thomas.liau@actions-semi.com>, linux@cubietech.com, saravanan sekar <sravanhome@gmail.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 1:48 PM Parthiban Nallathambi <pn@denx.de> wrote:
+On Tue, Nov 13, 2018 at 11:55 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-> This patchset adds pinctrl support for Actions Semi S700 SoC.
-> Pinmux functions are only accessible for pin groups while pinconf
-> parameters are available for both pin groups and individual pins.
+> We just changed the code so we apply bias disable on the correct
+> register but forgot to align the register calculation. The result
+> is that we apply the change on the correct register, but possibly
+> at the incorrect offset/bit
+>
+> This went undetected because offsets tends to be the same between
+> REG_PULL and REG_PULLEN for a given pin the EE controller. This
+> is not true for the AO controller.
+>
+> Fixes: e39f9dd8206a ("pinctrl: meson: fix pinconf bias disable")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-This v7 patch set applied for v4.21, thanks a *lot* for your work!
-
-Let's see if there is some bugs to shake out in the linux-next
-builds, the grunt work is done.
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
