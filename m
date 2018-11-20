@@ -1,124 +1,74 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: [PATCH v5 3/8] clk: lochnagar: Add initial binding documentation
-Date: Tue, 20 Nov 2018 14:16:26 +0000
-Message-ID: <20181120141631.18949-3-ckeepax@opensource.cirrus.com>
-References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
+Date: Tue, 20 Nov 2018 18:17:42 +0100
+Message-ID: <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
+References: <20181120134032.31645-1-brgl@bgdev.pl>
+ <20181120134032.31645-2-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
+Content-Disposition: inline
+In-Reply-To: <20181120134032.31645-2-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org
-Cc: mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Lochnagar is an evaluation and development board for Cirrus
-Logic Smart CODEC and Amp devices. It allows the connection of
-most Cirrus Logic devices on mini-cards, as well as allowing
-connection of various application processor systems to provide a
-full evaluation platform. This driver supports the board
-controller chip on the Lochnagar board.
+On Tue, Nov 20, 2018 at 02:40:31PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The irq_sim irqchip doesn't allow to configure the sensitivity so every
+> call to irq_sim_fire() fires a dummy interrupt. This used to not matter
+> for gpio-mockup (one of the irq_sim users) until commit fa38869b0161
+> ("gpiolib: Don't support irq sharing for userspace") which made it
+> impossible for gpio-mockup to ignore certain events (e.g. only receive
+> notifications about rising edge events).
+> 
+> Introduce a specialized variant of irq_sim_fire() which takes another
+> argument called edge. allowing to specify the trigger type for the
+> dummy interrupt.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- .../devicetree/bindings/clock/cirrus,lochnagar.txt | 89 ++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
+I wonder if it's worth the effort to fix irq_sim. If you take a look in
+my gpio-simulator patch, it is trivial to get it right without external
+help with an amount of code that is usual for a driver that handles
+irqs.
 
-diff --git a/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt b/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
-new file mode 100644
-index 000000000000..c1b5478d5432
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
-@@ -0,0 +1,89 @@
-+Cirrus Logic Lochnagar Audio Development Board
-+
-+Lochnagar is an evaluation and development board for Cirrus Logic
-+Smart CODEC and Amp devices. It allows the connection of most Cirrus
-+Logic devices on mini-cards, as well as allowing connection of
-+various application processor systems to provide a full evaluation
-+platform.  Audio system topology, clocking and power can all be
-+controlled through the Lochnagar, allowing the device under test
-+to be used in a variety of possible use cases.
-+
-+This binding document describes the binding for the clock portion of
-+the driver.
-+
-+Also see these documents for generic binding information:
-+  [1] Clock : ../clock/clock-bindings.txt
-+
-+And these for relevant defines:
-+  [2] include/dt-bindings/clock/lochnagar.h
-+
-+This binding must be part of the Lochnagar MFD binding:
-+  [3] ../mfd/cirrus,lochnagar.txt
-+
-+Required properties:
-+
-+  - compatible : One of the following strings:
-+                 "cirrus,lochnagar1-clk"
-+                 "cirrus,lochnagar2-clk"
-+
-+  - #clock-cells : Must be 1. The first cell indicates the clock
-+    number, see [2] for available clocks and [1].
-+
-+Optional properties:
-+
-+  - clocks : Must contain an entry for each clock in clock-names.
-+  - clock-names : May contain entries for each of the following
-+    clocks:
-+     - ln-cdc-clkout : Output clock from CODEC card.
-+     - ln-dsp-clkout : Output clock from DSP card.
-+     - ln-gf-mclk1,ln-gf-mclk2,ln-gf-mclk3,ln-gf-mclk4 : Optional
-+       input audio clocks from host system.
-+     - ln-psia1-mclk, ln-psia2-mclk : Optional input audio clocks from
-+       external connector.
-+     - ln-spdif-clkout : Optional input audio clock from SPDIF.
-+     - ln-adat-clkout : Optional input audio clock from ADAT.
-+     - ln-pmic-32k : On board fixed regulator.
-+     - ln-clk-12m : On board fixed regulator.
-+     - ln-clk-11m : On board fixed regulator.
-+     - ln-clk-24m : On board fixed regulator.
-+     - ln-clk-22m : On board fixed regulator.
-+     - ln-usb-clk-24m : On board fixed regulator.
-+     - ln-usb-clk-12m : On board fixed regulator.
-+
-+  - assigned-clocks : A list of Lochnagar clocks to be reparented, see
-+    [2] for available clocks.
-+  - assigned-clock-parents : Parents to be assigned to the clocks
-+    listed in "assigned-clocks".
-+
-+Optional sub-nodes:
-+
-+  - fixed-clock nodes may be registered for the following on board clocks:
-+     - ln-pmic-32k : 32768 kHz
-+     - ln-clk-12m : 12288000 kHz
-+     - ln-clk-11m : 11298600 kHz
-+     - ln-clk-24m : 24576000 kHz
-+     - ln-clk-22m : 22579200 kHz
-+     - ln-usb-clk-24m : 24576000 kHz
-+     - ln-usb-clk-12m : 12288000 kHz
-+
-+Example:
-+
-+lochnagar-clk {
-+	compatible = "cirrus,lochnagar2-clk";
-+
-+	#clock-cells = <1>;
-+
-+	clocks = <&clk-audio>, <&clk_pmic>;
-+	clock-names = "ln-gf-mclk2", "ln-pmic-32k";
-+
-+	assigned-clocks = <&lochnagar-clk LOCHNAGAR_CDC_MCLK1>,
-+			  <&lochnagar-clk LOCHNAGAR_CDC_MCLK2>;
-+	assigned-clock-parents = <&clk-audio>,
-+				 <&clk-pmic>;
-+
-+	clk-pmic: clk-pmic {
-+		compatible = "fixed-clock";
-+		clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
-+};
+> @@ -161,12 +171,28 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
+>   */
+>  void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
+>  {
+> -	if (sim->irqs[offset].enabled) {
+> +	/* Don't care about the edge. */
+> +	irq_sim_fire_edge(sim, offset, IRQ_TYPE_EDGE_BOTH);
+
+Conceptually irq_sim_fire_edge should be defined above irq_sim_fire.
+
+> +EXPORT_SYMBOL_GPL(irq_sim_fire);
+> +
+> +/**
+> + * irq_sim_fire_edge - Enqueue an interrupt, specify the edge.
+> + *
+> + * @sim:        The interrupt simulator object.
+> + * @offset:     Offset of the simulated interrupt which should be fired.
+> + * edge:        Edge of the interrupt (IRQ_TYPE_EDGE_RISING/FALLING).
+> + */
+> +void irq_sim_fire_edge(struct irq_sim *sim, unsigned int offset, int edge)
+> +{
+> +	struct irq_sim_irq_ctx *irq = &sim->irqs[offset];
+> +
+> +	if (irq->enabled && (irq->edge & edge)) {
+>  		set_bit(offset, sim->work_ctx.pending);
+>  		irq_work_queue(&sim->work_ctx.work);
+>  	}
+>  }
+> -EXPORT_SYMBOL_GPL(irq_sim_fire);
+> +EXPORT_SYMBOL_GPL(irq_sim_fire_edge);
+
+Best regards
+Uwe
+
 -- 
-2.11.0
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
