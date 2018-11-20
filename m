@@ -1,55 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] gpio: mockup: add locking
-Date: Tue, 20 Nov 2018 09:46:50 +0100
-Message-ID: <CACRpkdasK1UoNz34skdb+NbEE7SQuMhkij+xGW=Y6Pc5LF3AxQ@mail.gmail.com>
-References: <20181108165255.9940-1-brgl@bgdev.pl> <20181108165255.9940-3-brgl@bgdev.pl>
- <CACRpkdb71d2yCmxWDBaHY+60A9UDG1u0ACuXUq9pcH13_yA6-g@mail.gmail.com> <CAMRc=Me9Ypsz_NH7j1K1TxR8u=9qF9opKPri10Jkn3G=_tdssg@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFC PATCH v2 05/14] irqchip/sun4i: add support for
+ suniv interrupt controller
+Date: Tue, 20 Nov 2018 09:48:15 +0100
+Message-ID: <20181120084815.rvh63cvvhxj6sbs2@flea>
+References: <cover.1542546735.git.mesihkilinc@gmail.com>
+ <d693414b1693a9018956bcc589a9048e88fbc8f6.1542546735.git.mesihkilinc@gmail.com>
+Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=Me9Ypsz_NH7j1K1TxR8u=9qF9opKPri10Jkn3G=_tdssg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7nbopu3lgekzonta"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBWUUZ7PQKGQEGRXZZHI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <d693414b1693a9018956bcc589a9048e88fbc8f6.1542546735.git.mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 10:09 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> pt., 16 lis 2018 o 22:43 Linus Walleij <linus.walleij@linaro.org> napisa=
-=C5=82(a):
 
-> > __gpio_*
-> > I tend to dislike __underscore_notation because I feel it
-> > is semantically ambguous. I prefer a proper name, even
-> > to the point that I prefer inner_function_foo over __foo,
-> > but it's your driver and I might be a bit grumpy. :)
->
-> I think this is a common and intuitive pattern in the kernel codebase.
-> Many subsystems and drivers use '__' to mark functions that execute
-> internal logic and expect certain locks to be held etc.
+--7nbopu3lgekzonta
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 
-You say it yourself: interpretation depends on context.
+Hi,
 
-I might be especially stupid for being unable to discern
-meaning from context in these cases and so what is
-intuitive for some is just not intuitive for me.
+On Sun, Nov 18, 2018 at 05:17:04PM +0300, Mesih Kilinc wrote:
+> The new F-series SoCs (suniv) from Allwinner use an stripped version of
+> the interrupt controller in A10/A13.
+> 
+> Add support for it in irq-sun4i driver.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> Signed-off-by: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/irqchip/irq-sun4i.c | 47 ++++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 42 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
+> index e3e5b91..2abf662 100644
+> --- a/drivers/irqchip/irq-sun4i.c
+> +++ b/drivers/irqchip/irq-sun4i.c
+> @@ -23,13 +23,26 @@
+>  
+>  #include <asm/exception.h>
+>  
+> +enum sun4i_irq_type {
+> +	sun4i_ic,
+> +	suniv_ic
+> +};
+> +
+> +static enum sun4i_irq_type sun4i_irq_type;
 
-Example:
-set_bit() vs __set_bit()
+You don't really need that type. It's completely redundant with the
+compatible.
 
-Apparently some kernel developers think it is completely
-obvious that the latter is the unlocked non-atomic version
-of set_bit(). However I was confused for years with no
-idea as to what the difference was.
+> +static int sun4i_irq_enable_reg_offset;
+> +static int sun4i_irq_mask_reg_offset;
 
-Had it simply been named set_bit_nonatomic(), at the
-cost of a few characters, confusion on my part would be
-avoided and at least to me the world would be a better
-place.
+Ideally, this should be a structure so that we can easily extend it
+without adding more and more global variables. And the type shouldn't
+be signed.
 
-> If you don't mind, I'd like to leave it like this.
+Maxime
 
-No big deal, keep it as is :)
-
-Yours,
-Linus Walleij
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+--7nbopu3lgekzonta--
