@@ -1,87 +1,44 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFC PATCH v2 01/14] ARM: add CONFIG_ARCH_SUNXI_V7
- for differentiate ARMv5/v7 Allwinner SoCs
-Date: Tue, 20 Nov 2018 09:40:16 +0100
-Message-ID: <20181120084016.nrvpylj64ok3d5ch@flea>
-References: <cover.1542546735.git.mesihkilinc@gmail.com>
- <abbb75165c8ef41da6963d72f4155ad6ae79140c.1542546735.git.mesihkilinc@gmail.com>
-Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/3] ARM: davinci: fix ethernet support on da850-evm
+Date: Tue, 20 Nov 2018 09:40:27 +0100
+Message-ID: <CACRpkdaN+SsF+gGPV7KTT_E6k7_KAFhSgUKR=Jg0-fSjrx8V=Q@mail.gmail.com>
+References: <20181113135051.15308-1-brgl@bgdev.pl> <CACRpkda4aarCn=PHPSWfMgtOZhcGA2ifcA7_ujYgmj+do2+N+Q@mail.gmail.com>
+ <CAMRc=MeAR=aW0FKNyRm0xy075BkF=cpDJyJDiwtWpWcmkdmF2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7zekhgszpvxaw4mg"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBB64QZ7PQKGQE5D3IJRY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <abbb75165c8ef41da6963d72f4155ad6ae79140c.1542546735.git.mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMRc=MeAR=aW0FKNyRm0xy075BkF=cpDJyJDiwtWpWcmkdmF2A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "Nori, Sekhar" <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
+On Mon, Nov 19, 2018 at 10:11 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> pt., 16 lis 2018 o 22:51 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
 
---7zekhgszpvxaw4mg
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+> > I have some patches starting to move DaVinci over to using only
+> > descriptor tables, but that's not somthing we can pull off overnight
+> > so I guess we have to go for this solution.
+> >
+>
+> Nice, would you mind sharing the development branch? I'm interested in
+> it as well and may be doing some work on that early 2019 so let's sync
+> to avoid duplicating the effort.
 
-Hi,
+Just a stab:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commi=
+t/?h=3Dgpio-descriptors-leds&id=3Db4db69c2a066a87c990a6757720284df88f11f57
 
-On Sun, Nov 18, 2018 at 05:17:00PM +0300, Mesih Kilinc wrote:
-> Allwinner also has some ARMv5 SoCs.
-> 
-> In order to add support for them, add a CONFIG_ARCH_SUNXI_V7 bool config
-> which is selected when a ARMv7 soc is selected, and make CONFIG_ARCH_SUNXI
-> a common option which is selected by both V7 and V5 sunxi option.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> Signed-off-by: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+It will also require this patch (as I realized after talking to the PXA
+people):
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commi=
+t/?h=3Dgpio-descriptors-mmc-cd-wp&id=3D1911a4fe1ed8805080d8c7e0adc298f74053=
+1c3b
 
-I'm not sure why Icenowy has her SoB here?
+I guess I should queue the naming patch in some immutable branch
+or something so it can be pulled in all over the place.
 
-> ---
->  arch/arm/mach-sunxi/Kconfig  | 25 +++++++++++++++++--------
->  arch/arm/mach-sunxi/Makefile |  2 +-
->  2 files changed, 18 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
-> index d9c8ecf..5db17ec 100644
-> --- a/arch/arm/mach-sunxi/Kconfig
-> +++ b/arch/arm/mach-sunxi/Kconfig
-> @@ -6,31 +6,38 @@ menuconfig ARCH_SUNXI
->  	select GENERIC_IRQ_CHIP
->  	select GPIOLIB
->  	select PINCTRL
-> -	select PM_OPP
-> -	select SUN4I_TIMER
->  	select RESET_CONTROLLER
-> +	help
-> +	  Support for Allwinner ARM-based family of processors
->  
->  if ARCH_SUNXI
->  
-> +if ARCH_MULTI_V7
-> +
-> +config ARCH_SUNXI_V7
-> +	bool
-> +	select PM_OPP
-> +	select SUN4I_TIMER
-> +
->  config MACH_SUN4I
->  	bool "Allwinner A10 (sun4i) SoCs support"
-> -	default ARCH_SUNXI
-> +	select ARCH_SUNXI_V7
-
-It changes the behaviour a bit. It used to be enabled by default, it
-doesn't anymore.
-
-Maxime
-
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
---7zekhgszpvxaw4mg--
+Yours,
+Linus Walleij
