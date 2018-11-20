@@ -1,32 +1,55 @@
-From: Florian Eckert <fe@dev.tdt.de>
-Subject: Re: [PATCH v4 1/2] gpio: Add driver for PC Engines APU boards
-Date: Tue, 20 Nov 2018 08:14:23 +0100
-Message-ID: <80375fc16119693c868b2896bcc3c26b@dev.tdt.de>
-References: <20181115133201.29092-1-fe@dev.tdt.de>
- <20181115133201.29092-2-fe@dev.tdt.de>
- <CACRpkdZx-GgfgfGmB6KmTjzBEMnKyq3pUsHsgaZ1uBooN_sj9g@mail.gmail.com>
+From: <Andrei.Stefanescu@microchip.com>
+Subject: [PATCH v2 0/2] add SAMA5D2 PIOBU GPIO driver
+Date: Tue, 20 Nov 2018 08:08:33 +0000
+Message-ID: <1542701330-23466-1-git-send-email-andrei.stefanescu@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZx-GgfgfGmB6KmTjzBEMnKyq3pUsHsgaZ1uBooN_sj9g@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, piotr.krol@3mdeb.com, Eckert.Florian@googlemail.com, Darren Hart <dvhart@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, linux-kernel@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: linus.walleij@linaro.org, gregkh@linuxfoundation.org, Nicolas.Ferre@microchip.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Ludovic.Desroches@microchip.com, Cristian.Birsan@microchip.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Andrei.Stefanescu@microchip.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Linus
+On SAMA5D2 SoC the PIOBU pins do not lose their
+voltage during Backup/Self-refresh mode. This can
+be useful, for example, when the voltage must remain
+positive for a peripheral during Backup/Self-refresh
+mode (suspend-to ram is the Linux equivalent state).
 
->> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
-> 
-> This is looking better and better! Thanks to everyone helping out
-> and thanks for your perseverance Florian!
-> 
+v2:
+- make driver be a subnode of the syscon node
+- change Kconfig to depend on MFD_SYSCON and select GPIO_SYSCON
+- change include header from linux/gpio.h to linux/gpio/driver.h
+- include linux/bits.h header
+- change intrusion in comment to tamper
+- fix kerneldoc of functions
+- replace GPIOF_DIR_* flags with 0/1
+- replace ?: statement with if-else
+- remove the use of sama5d2_piobu_template_chip
+- retrieve syscon via syscon_node_to_regmap(pdev->dev.parent->of_node);
 
-I have to thanks for reviewing my driver.
-This is the way opensource works.
+Note that PIOBU_REG_SIZE is used to determine the register to write to
+with regmap:
+	reg =3D PIOBU_BASE + pin * PIOBU_REG_SIZE;
 
-Thanks for the feedback i will update the driver with your suggestions.
+Also, no irq capability implemented.
 
-   - Florian
+Andrei Stefanescu (2):
+  dt-bindings: gpio: add SAMA5D2 PIOBU support
+  gpio: add driver for SAMA5D2 PIOBU pins
+
+ .../bindings/gpio/gpio-sama5d2-piobu.txt           |  31 +++
+ MAINTAINERS                                        |   7 +
+ drivers/gpio/Kconfig                               |  11 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-sama5d2-piobu.c                  | 253 +++++++++++++++++=
+++++
+ 5 files changed, 303 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sama5d2-pio=
+bu.txt
+ create mode 100644 drivers/gpio/gpio-sama5d2-piobu.c
+
+--=20
+2.7.4
