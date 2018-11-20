@@ -1,31 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/2] add SAMA5D2 PIOBU GPIO driver
-Date: Tue, 20 Nov 2018 11:02:03 +0100
-Message-ID: <CACRpkdZj4g9Ht-4sHjFMCmaeZnwmM3AcMaN2rQ65O1Ykgp2eWg@mail.gmail.com>
-References: <1542701330-23466-1-git-send-email-andrei.stefanescu@microchip.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH] gpio: dwapb: Correct the DT node name in the example
+Date: Tue, 20 Nov 2018 11:17:09 +0000
+Message-ID: <20181120111709.22128-1-phil.edworthy@renesas.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1542701330-23466-1-git-send-email-andrei.stefanescu@microchip.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrei.Stefanescu@microchip.com
-Cc: Greg KH <gregkh@linuxfoundation.org>, Nicolas Ferre <Nicolas.Ferre@microchip.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ludovic Desroches <Ludovic.Desroches@microchip.com>, Cristian.Birsan@microchip.com, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+To: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Andrei,
+The sub-nodes should not be called gpio-controller, but simply gpio.
 
-On Tue, Nov 20, 2018 at 9:08 AM <Andrei.Stefanescu@microchip.com> wrote:
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+---
+ Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> On SAMA5D2 SoC the PIOBU pins do not lose their
-> voltage during Backup/Self-refresh mode. This can
-> be useful, for example, when the voltage must remain
-> positive for a peripheral during Backup/Self-refresh
-> mode (suspend-to ram is the Linux equivalent state).
->
-> v2:
-
-This version looks good to me, I'm just waiting for a DT
-binding review.
-
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+index 7276b50c3506..839dd32ffe11 100644
+--- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+@@ -43,7 +43,7 @@ gpio: gpio@20000 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+ 
+-	porta: gpio-controller@0 {
++	porta: gpio@0 {
+ 		compatible = "snps,dw-apb-gpio-port";
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+@@ -55,7 +55,7 @@ gpio: gpio@20000 {
+ 		interrupts = <0>;
+ 	};
+ 
+-	portb: gpio-controller@1 {
++	portb: gpio@1 {
+ 		compatible = "snps,dw-apb-gpio-port";
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+-- 
+2.17.1
