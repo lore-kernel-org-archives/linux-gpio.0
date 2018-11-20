@@ -1,44 +1,113 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] ARM: davinci: fix ethernet support on da850-evm
-Date: Tue, 20 Nov 2018 09:40:27 +0100
-Message-ID: <CACRpkdaN+SsF+gGPV7KTT_E6k7_KAFhSgUKR=Jg0-fSjrx8V=Q@mail.gmail.com>
-References: <20181113135051.15308-1-brgl@bgdev.pl> <CACRpkda4aarCn=PHPSWfMgtOZhcGA2ifcA7_ujYgmj+do2+N+Q@mail.gmail.com>
- <CAMRc=MeAR=aW0FKNyRm0xy075BkF=cpDJyJDiwtWpWcmkdmF2A@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [RFC PATCH v2 03/14] ARM: sunxi: add Allwinner ARMv5 SoCs
+Date: Tue, 20 Nov 2018 09:42:45 +0100
+Message-ID: <20181120084245.bnjdaf647e6tdlku@flea>
+References: <cover.1542546735.git.mesihkilinc@gmail.com>
+ <8f07fac854eaaea63e199fe0e80cf20004dffbdf.1542546735.git.mesihkilinc@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="f4q6buea7vbu6n7w"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=MeAR=aW0FKNyRm0xy075BkF=cpDJyJDiwtWpWcmkdmF2A@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <8f07fac854eaaea63e199fe0e80cf20004dffbdf.1542546735.git.mesihkilinc@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "Nori, Sekhar" <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Mesih Kilinc <mesihkilinc@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>, Julian Calaby <julian.calaby@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 10:11 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> pt., 16 lis 2018 o 22:51 Linus Walleij <linus.walleij@linaro.org> napisa=
-=C5=82(a):
 
-> > I have some patches starting to move DaVinci over to using only
-> > descriptor tables, but that's not somthing we can pull off overnight
-> > so I guess we have to go for this solution.
-> >
->
-> Nice, would you mind sharing the development branch? I'm interested in
-> it as well and may be doing some work on that early 2019 so let's sync
-> to avoid duplicating the effort.
+--f4q6buea7vbu6n7w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Just a stab:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commi=
-t/?h=3Dgpio-descriptors-leds&id=3Db4db69c2a066a87c990a6757720284df88f11f57
+On Sun, Nov 18, 2018 at 05:17:02PM +0300, Mesih Kilinc wrote:
+> Add option for Allwinner ARMv5 SoCs and SoC F1C100s (which has a die
+> used for many new F-series products, including F1C100A, F1C100s, F1C200s,
+> F1C500, F1C600).
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+> ---
+>  arch/arm/mach-sunxi/Kconfig    | 14 +++++++++++++-
+>  arch/arm/mach-sunxi/Makefile   |  1 +
+>  arch/arm/mach-sunxi/sunxi_v5.c | 22 ++++++++++++++++++++++
+>  3 files changed, 36 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/mach-sunxi/sunxi_v5.c
+>=20
+> diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+> index 5db17ec..066644c 100644
+> --- a/arch/arm/mach-sunxi/Kconfig
+> +++ b/arch/arm/mach-sunxi/Kconfig
+> @@ -1,6 +1,6 @@
+>  menuconfig ARCH_SUNXI
+>  	bool "Allwinner SoCs"
+> -	depends on ARCH_MULTI_V7
+> +	depends on ARCH_MULTI_V5 || ARCH_MULTI_V7
+>  	select ARCH_HAS_RESET_CONTROLLER
+>  	select CLKSRC_MMIO
+>  	select GENERIC_IRQ_CHIP
+> @@ -64,4 +64,16 @@ config ARCH_SUNXI_MC_SMP
+> =20
+>  endif
+> =20
+> +if ARCH_MULTI_V5
+> +
+> +config ARCH_SUNXI_V5
+> +	bool
+> +	select SUN4I_TIMER
 
-It will also require this patch (as I realized after talking to the PXA
-people):
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/commi=
-t/?h=3Dgpio-descriptors-mmc-cd-wp&id=3D1911a4fe1ed8805080d8c7e0adc298f74053=
-1c3b
+If SUN4I_TIMER is needed both by the armv5 and armv7 cores, why did we
+need to move it out of ARCH_SUNXI?
 
-I guess I should queue the naming patch in some immutable branch
-or something so it can be pulled in all over the place.
+> +config MACH_SUNIV
+> +	bool "Allwinner new F-series (suniv) SoCs support"
 
-Yours,
-Linus Walleij
+I would drop the "new" here.
+
+> +++ b/arch/arm/mach-sunxi/sunxi_v5.c
+> @@ -0,0 +1,22 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device Tree support for Allwinner F series SoCs
+> + *
+> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + * Copyright (C) 2018 Mesih Kilinc <mesihkilinc@gmail.com>
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2.  This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+> + */
+> +
+> +#include <asm/mach/arch.h>
+> +
+> +static const char * const suniv_board_dt_compat[] =3D {
+> +	"allwinner,suniv-f1c100s",
+> +	NULL,
+> +};
+> +
+> +DT_MACHINE_START(SUNXI_DT, "Allwinner suniv Family")
+> +	.dt_compat	=3D suniv_board_dt_compat,
+> +MACHINE_END
+
+Do we really need a separate file for that?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--f4q6buea7vbu6n7w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PJBQAKCRDj7w1vZxhR
+xYLpAP9rCPbc1QsZM0YP5XXJlABPGK4Zg27MF0Ul2TZafIW9FwEArf/W5NzApR+d
+G/uBrwKajJEKBB5Jh2P4rZBA1CZ0gA0=
+=HggK
+-----END PGP SIGNATURE-----
+
+--f4q6buea7vbu6n7w--
