@@ -1,13 +1,13 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 06/12] gpio: davinci: restore a way to manually specify the GPIO base
-Date: Wed, 21 Nov 2018 10:35:17 +0100
-Message-ID: <20181121093523.12503-7-brgl@bgdev.pl>
+Subject: [PATCH 08/12] ARM: davinci: dm365: set the GPIO base to 0
+Date: Wed, 21 Nov 2018 10:35:19 +0100
+Message-ID: <20181121093523.12503-9-brgl@bgdev.pl>
 References: <20181121093523.12503-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 In-Reply-To: <20181121093523.12503-1-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: stable-owner@vger.kernel.org
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -15,52 +15,32 @@ List-Id: linux-gpio@vger.kernel.org
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
 Commit 587f7a694f01 ("gpio: davinci: Use dev name for label and
-automatic base selection") broke the network support in legacy boot
-mode for da850-evm since we can no longer request the MDIO clock GPIO.
+automatic base selection") broke the GPIO support on DaVinci boards
+in legacy mode by allowing gpiolib to set the GPIO base automatically.
 
-Other boards may be broken too, which I haven't tested.
-
-The problem is in the fact that most board files still use the legacy
-GPIO API where lines are requested by numbers rather than descriptors.
-
-While this should be fixed eventually, in order to unbreak the board
-for now - provide a way to manually specify the GPIO base in platform
-data.
+DaVinci board files use the legacy GPIO API with hard-coded GPIO line
+numbers. Use the new fields in struct davinci_gpio_platform_data to
+manually set the GPIO base to 0.
 
 Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automatic base selection")
 Cc: stable@vger.kernel.org
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-davinci.c                | 2 +-
- include/linux/platform_data/gpio-davinci.h | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/mach-davinci/dm365.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 5c1564fcc24e..bdb29e51b417 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -258,7 +258,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	chips->chip.set = davinci_gpio_set;
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 42665914166a..01fb2b0c82de 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -308,6 +308,8 @@ static struct resource dm365_gpio_resources[] = {
+ };
  
- 	chips->chip.ngpio = ngpio;
--	chips->chip.base = -1;
-+	chips->chip.base = pdata->no_auto_base ? pdata->base : -1;
- 
- #ifdef CONFIG_OF_GPIO
- 	chips->chip.of_gpio_n_cells = 2;
-diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
-index f92a47e18034..a93841bfb9f7 100644
---- a/include/linux/platform_data/gpio-davinci.h
-+++ b/include/linux/platform_data/gpio-davinci.h
-@@ -17,6 +17,8 @@
- #define __DAVINCI_GPIO_PLATFORM_H
- 
- struct davinci_gpio_platform_data {
-+	bool	no_auto_base;
-+	u32	base;
- 	u32	ngpio;
- 	u32	gpio_unbanked;
+ static struct davinci_gpio_platform_data dm365_gpio_platform_data = {
++	.no_auto_base	= true,
++	.base		= 0,
+ 	.ngpio		= 104,
+ 	.gpio_unbanked	= 8,
  };
 -- 
 2.19.1
