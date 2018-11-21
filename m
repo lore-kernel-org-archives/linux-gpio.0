@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 10/12] ARM: davinci: dm355: set the GPIO base to 0
-Date: Wed, 21 Nov 2018 10:35:21 +0100
-Message-ID: <20181121093523.12503-11-brgl@bgdev.pl>
+Subject: [PATCH 12/12] ARM: davinci: dm644x: set the GPIO base to 0
+Date: Wed, 21 Nov 2018 10:35:23 +0100
+Message-ID: <20181121093523.12503-13-brgl@bgdev.pl>
 References: <20181121093523.12503-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -26,20 +26,20 @@ Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automatic base s
 Cc: stable@vger.kernel.org
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/dm355.c | 2 ++
+ arch/arm/mach-davinci/dm644x.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index 2b0f5d97ab7c..4c6e0bef4509 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -584,6 +584,8 @@ static struct resource dm355_gpio_resources[] = {
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index de1ec6dc01e9..38f92b7d413e 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -518,6 +518,8 @@ static struct resource dm644_gpio_resources[] = {
  };
  
- static struct davinci_gpio_platform_data dm355_gpio_platform_data = {
+ static struct davinci_gpio_platform_data dm644_gpio_platform_data = {
 +	.no_auto_base	= true,
 +	.base		= 0,
- 	.ngpio		= 104,
+ 	.ngpio		= 71,
  };
  
 -- 
