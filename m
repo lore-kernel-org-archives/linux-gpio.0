@@ -1,111 +1,74 @@
-From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Subject: Re: [RFC PATCH v2 03/14] ARM: sunxi: add Allwinner
- ARMv5 SoCs
-Date: Wed, 21 Nov 2018 07:36:38 +0800
-Message-ID: <464C921F-1AA7-4475-9085-25D03D21AFE2@aosc.io>
-References: <cover.1542546735.git.mesihkilinc@gmail.com> <8f07fac854eaaea63e199fe0e80cf20004dffbdf.1542546735.git.mesihkilinc@gmail.com> <20181120084245.bnjdaf647e6tdlku@flea>
-Reply-To: icenowy-h8G6r0blFSE@public.gmane.org
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 1/3] ARM: davinci: define gpio interrupts as separate resources
+Date: Wed, 21 Nov 2018 09:51:41 +0100
+Message-ID: <CAMpxmJV8rEC5s4Mi-_3g_V1oojt_WpiRkB1RrCCYJGF+fiwYLA@mail.gmail.com>
+References: <20181113135051.15308-1-brgl@bgdev.pl> <20181113135051.15308-2-brgl@bgdev.pl>
+ <c092b014-d5cf-f1ad-de91-6696b05cdf17@ti.com> <63ac671f-b202-2533-3878-af16149fbdbb@ti.com>
+ <b30f6b76-52c1-89ca-dbf3-a4156d1fb55e@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBDS6XAN6ZADRBGVV2LPQKGQEHBO6Z3I-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20181120084245.bnjdaf647e6tdlku@flea>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <b30f6b76-52c1-89ca-dbf3-a4156d1fb55e@ti.com>
+Sender: stable-owner@vger.kernel.org
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: j-keerthy@ti.com, Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, arm-soc <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, stable@vger.kernel.org, lokeshvutla@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
+=C5=9Br., 21 lis 2018 o 00:07 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
+>
+> On 20/11/18 12:08 PM, J, KEERTHY wrote:
+> >
+> >
+> > On 11/20/2018 2:22 AM, Sekhar Nori wrote:
+> >> On 13/11/18 7:20 PM, Bartosz Golaszewski wrote:
+> >>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>>
+> >>> Since commit eb3744a2dd01 ("gpio: davinci: Do not assume continuous
+> >>> IRQ numbering") the davinci GPIO driver fails to probe if we boot
+> >>> in legacy mode from any of the board files. Since the driver now
+> >>> expects every interrupt to be defined as a separate resource, split
+> >>> the definition in devices-da8xx.c instead of having a single continuo=
+us
+> >>> interrupt range.
+> >>>
+> >>> Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ
+> >>> numbering")
+> >>> Cc: stable@vger.kernel.org
+> >>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>
+> >> There are a number of other boards that need such fixing too. And the
+> >> commit in question does not do a good job of explaining why it was
+> >> needed in the first place. The description  just repeats what can be
+> >> inferred by reading the patch.
+> >
+> > Cc Lokesh
+> >
+> > Sekhar,
+> >
+> > DT explicitly mentions every IRQ number. The patch in discussion
+> > explicitly calls platform_get_irq for all the interrupts which to me is
+> > the right thing to do as: platform_get_irq-->
+> > of_irq_get-->irq_create_of_mapping--> sequence is to be done for every =
+IRQ.
+> >
+> > k3-am654 definitely will need explicit calls to platform_get_irq as it
+> > will be involving interrupt router and interrupt numbers need not be
+> > continuous.
+> >
+> > So i do not think reverting the patch is the right idea.
+>
+> Well, all of this description of patch motivation should have been in
+> the patch description to begin with.
+>
+> Bartosz, can you please extend this patch to fix this problem for other
+> DaVinci SoCs too? I am on the road this week, but will do my best to
+> queue these fixes at the earliest .
+>
+> Thanks,
+> Sekhar
 
+Ok, to make it easier for you, I'll resend all the patches addressing
+the GPIO issue.
 
-=E4=BA=8E 2018=E5=B9=B411=E6=9C=8820=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=884=
-:42:45, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org> =E5=86=99=E5=88=B0:
->On Sun, Nov 18, 2018 at 05:17:02PM +0300, Mesih Kilinc wrote:
->> Add option for Allwinner ARMv5 SoCs and SoC F1C100s (which has a die
->> used for many new F-series products, including F1C100A, F1C100s,
->F1C200s,
->> F1C500, F1C600).
->>=20
->> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
->> Signed-off-by: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  arch/arm/mach-sunxi/Kconfig    | 14 +++++++++++++-
->>  arch/arm/mach-sunxi/Makefile   |  1 +
->>  arch/arm/mach-sunxi/sunxi_v5.c | 22 ++++++++++++++++++++++
->>  3 files changed, 36 insertions(+), 1 deletion(-)
->>  create mode 100644 arch/arm/mach-sunxi/sunxi_v5.c
->>=20
->> diff --git a/arch/arm/mach-sunxi/Kconfig
->b/arch/arm/mach-sunxi/Kconfig
->> index 5db17ec..066644c 100644
->> --- a/arch/arm/mach-sunxi/Kconfig
->> +++ b/arch/arm/mach-sunxi/Kconfig
->> @@ -1,6 +1,6 @@
->>  menuconfig ARCH_SUNXI
->>  	bool "Allwinner SoCs"
->> -	depends on ARCH_MULTI_V7
->> +	depends on ARCH_MULTI_V5 || ARCH_MULTI_V7
->>  	select ARCH_HAS_RESET_CONTROLLER
->>  	select CLKSRC_MMIO
->>  	select GENERIC_IRQ_CHIP
->> @@ -64,4 +64,16 @@ config ARCH_SUNXI_MC_SMP
->> =20
->>  endif
->> =20
->> +if ARCH_MULTI_V5
->> +
->> +config ARCH_SUNXI_V5
->> +	bool
->> +	select SUN4I_TIMER
->
->If SUN4I_TIMER is needed both by the armv5 and armv7 cores, why did we
->need to move it out of ARCH_SUNXI?
->
->> +config MACH_SUNIV
->> +	bool "Allwinner new F-series (suniv) SoCs support"
->
->I would drop the "new" here.
-
-Sorry, but old F-series SoCs are not suniv. They are sunii or sun3i.
-
->
->> +++ b/arch/arm/mach-sunxi/sunxi_v5.c
->> @@ -0,0 +1,22 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Device Tree support for Allwinner F series SoCs
->> + *
->> + * Copyright (C) 2017 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
->> + * Copyright (C) 2018 Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> + *
->> + * This file is licensed under the terms of the GNU General Public
->> + * License version 2.  This program is licensed "as is" without any
->> + * warranty of any kind, whether express or implied.
->> + */
->> +
->> +#include <asm/mach/arch.h>
->> +
->> +static const char * const suniv_board_dt_compat[] =3D {
->> +	"allwinner,suniv-f1c100s",
->> +	NULL,
->> +};
->> +
->> +DT_MACHINE_START(SUNXI_DT, "Allwinner suniv Family")
->> +	.dt_compat	=3D suniv_board_dt_compat,
->> +MACHINE_END
->
->Do we really need a separate file for that?
->
->Maxime
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+Bart
