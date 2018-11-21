@@ -1,74 +1,47 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 1/3] ARM: davinci: define gpio interrupts as separate resources
-Date: Wed, 21 Nov 2018 09:51:41 +0100
-Message-ID: <CAMpxmJV8rEC5s4Mi-_3g_V1oojt_WpiRkB1RrCCYJGF+fiwYLA@mail.gmail.com>
-References: <20181113135051.15308-1-brgl@bgdev.pl> <20181113135051.15308-2-brgl@bgdev.pl>
- <c092b014-d5cf-f1ad-de91-6696b05cdf17@ti.com> <63ac671f-b202-2533-3878-af16149fbdbb@ti.com>
- <b30f6b76-52c1-89ca-dbf3-a4156d1fb55e@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 00/12] ARM: davinci: fix GPIO breakage after v4.19
+Date: Wed, 21 Nov 2018 10:35:11 +0100
+Message-ID: <20181121093523.12503-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <b30f6b76-52c1-89ca-dbf3-a4156d1fb55e@ti.com>
-Sender: stable-owner@vger.kernel.org
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: j-keerthy@ti.com, Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, arm-soc <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, stable@vger.kernel.org, lokeshvutla@ti.com
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-=C5=9Br., 21 lis 2018 o 00:07 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
->
-> On 20/11/18 12:08 PM, J, KEERTHY wrote:
-> >
-> >
-> > On 11/20/2018 2:22 AM, Sekhar Nori wrote:
-> >> On 13/11/18 7:20 PM, Bartosz Golaszewski wrote:
-> >>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>>
-> >>> Since commit eb3744a2dd01 ("gpio: davinci: Do not assume continuous
-> >>> IRQ numbering") the davinci GPIO driver fails to probe if we boot
-> >>> in legacy mode from any of the board files. Since the driver now
-> >>> expects every interrupt to be defined as a separate resource, split
-> >>> the definition in devices-da8xx.c instead of having a single continuo=
-us
-> >>> interrupt range.
-> >>>
-> >>> Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ
-> >>> numbering")
-> >>> Cc: stable@vger.kernel.org
-> >>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>
-> >> There are a number of other boards that need such fixing too. And the
-> >> commit in question does not do a good job of explaining why it was
-> >> needed in the first place. The description  just repeats what can be
-> >> inferred by reading the patch.
-> >
-> > Cc Lokesh
-> >
-> > Sekhar,
-> >
-> > DT explicitly mentions every IRQ number. The patch in discussion
-> > explicitly calls platform_get_irq for all the interrupts which to me is
-> > the right thing to do as: platform_get_irq-->
-> > of_irq_get-->irq_create_of_mapping--> sequence is to be done for every =
-IRQ.
-> >
-> > k3-am654 definitely will need explicit calls to platform_get_irq as it
-> > will be involving interrupt router and interrupt numbers need not be
-> > continuous.
-> >
-> > So i do not think reverting the patch is the right idea.
->
-> Well, all of this description of patch motivation should have been in
-> the patch description to begin with.
->
-> Bartosz, can you please extend this patch to fix this problem for other
-> DaVinci SoCs too? I am on the road this week, but will do my best to
-> queue these fixes at the earliest .
->
-> Thanks,
-> Sekhar
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Ok, to make it easier for you, I'll resend all the patches addressing
-the GPIO issue.
+This is the entire set of changes needed to fix the broken GPIO support
+for DaVinci boards in legacy mode after certain changes made to the
+GPIO driver in 4.19, namely: commits 587f7a694f01 ("gpio: davinci: Use
+dev name for label and automatic base selection") and eb3744a2dd01
+("gpio: davinci: Do not assume continuous IRQ numbering").
 
-Bart
+Bartosz Golaszewski (12):
+  ARM: davinci: da8xx: define gpio interrupts as separate resources
+  ARM: davinci: dm365: define gpio interrupts as separate resources
+  ARM: davinci: dm646x: define gpio interrupts as separate resources
+  ARM: davinci: dm355: define gpio interrupts as separate resources
+  ARM: davinci: dm644x: define gpio interrupts as separate resources
+  gpio: davinci: restore a way to manually specify the GPIO base
+  ARM: davinci: da850: set the GPIO base to 0
+  ARM: davinci: dm365: set the GPIO base to 0
+  ARM: davinci: dm646x: set the GPIO base to 0
+  ARM: davinci: dm355: set the GPIO base to 0
+  ARM: davinci: da830: set the GPIO base to 0
+  ARM: davinci: dm644x: set the GPIO base to 0
+
+ arch/arm/mach-davinci/da830.c              |  4 ++-
+ arch/arm/mach-davinci/da850.c              |  4 ++-
+ arch/arm/mach-davinci/devices-da8xx.c      | 40 ++++++++++++++++++++++
+ arch/arm/mach-davinci/dm355.c              | 32 +++++++++++++++++
+ arch/arm/mach-davinci/dm365.c              | 37 ++++++++++++++++++++
+ arch/arm/mach-davinci/dm644x.c             | 22 ++++++++++++
+ arch/arm/mach-davinci/dm646x.c             | 12 +++++++
+ drivers/gpio/gpio-davinci.c                |  2 +-
+ include/linux/platform_data/gpio-davinci.h |  2 ++
+ 9 files changed, 152 insertions(+), 3 deletions(-)
+
+-- 
+2.19.1
