@@ -1,63 +1,31 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 05/12] ARM: davinci: dm644x: define gpio interrupts as separate resources
-Date: Wed, 21 Nov 2018 10:35:16 +0100
-Message-ID: <20181121093523.12503-6-brgl@bgdev.pl>
-References: <20181121093523.12503-1-brgl@bgdev.pl>
+From: Hao Zhang <hao5781286@gmail.com>
+Subject: [PATCH v1 0/2] Initial Allwinner T3 support.
+Date: Wed, 21 Nov 2018 23:43:01 +0800
+Message-ID: <20181121154301.GA4053@arx-s1>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181121093523.12503-1-brgl@bgdev.pl>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, stable@vger.kernel.org
+To: robh+dt@kernel.org, maxime.ripard@free-electrons.com, wens@csie.org, icenowy@aosc.io
+Cc: linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com, hao5781286@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Initial Allwinner T3 support.
 
-Since commit eb3744a2dd01 ("gpio: davinci: Do not assume continuous
-IRQ numbering") the davinci GPIO driver fails to probe if we boot
-in legacy mode from any of the board files. Since the driver now
-expects every interrupt to be defined as a separate resource, split
-the definition of IRQ resources instead of having a single continuous
-interrupt range.
+Allwinner T3 (sun8i) SoC features a Quad-Core Cortex-A7 ARM CPU, and a
+Mali400 MP2 GPU from ARM. It is a not-pin-compatible quad core sucessor
+of the A20). It's also known as the Allwinner R40.
 
-Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ numbering")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/dm644x.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Hao Zhang (2):
+  ARM: dts: sun8i: Add board dts file for t3-cqa3t-bv3.
+  Documentation: ARM: sunxi: Add Allwinner SoC T3.
 
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index 0720da7809a6..de1ec6dc01e9 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -492,6 +492,26 @@ static struct resource dm644_gpio_resources[] = {
- 	},
- 	{	/* interrupt */
- 		.start	= IRQ_GPIOBNK0,
-+		.end	= IRQ_GPIOBNK0,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.start	= IRQ_GPIOBNK1,
-+		.end	= IRQ_GPIOBNK1,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.start	= IRQ_GPIOBNK2,
-+		.end	= IRQ_GPIOBNK2,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.start	= IRQ_GPIOBNK3,
-+		.end	= IRQ_GPIOBNK3,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.start	= IRQ_GPIOBNK4,
- 		.end	= IRQ_GPIOBNK4,
- 		.flags	= IORESOURCE_IRQ,
- 	},
+ Documentation/devicetree/bindings/arm/sunxi.txt |   3 +-
+ arch/arm/boot/dts/Makefile                      |   1 +
+ arch/arm/boot/dts/sun8i-t3-cqa3t-bv3.dts        | 226 ++++++++++++++++++++++++
+ 3 files changed, 229 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/sun8i-t3-cqa3t-bv3.dts
+
 -- 
-2.19.1
+2.7.4
