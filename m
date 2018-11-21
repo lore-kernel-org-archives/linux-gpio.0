@@ -1,90 +1,48 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Subject: Re: [PATCH] gpio: mt7621: handle failure of devm_kasprintf()
-Date: Wed, 21 Nov 2018 18:01:16 +0100
-Message-ID: <20181121170116.GA10656@osadl.at>
-References: <1542818142-27800-1-git-send-email-hofrat@osadl.org>
- <CAMpxmJUNYWqk4PEKcZ5o5PMR3RhMhudK+Pf+Pfo64mvJ8ND2wQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CAMpxmJUNYWqk4PEKcZ5o5PMR3RhMhudK+Pf+Pfo64mvJ8ND2wQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, sergio.paracuellos@gmail.com, linux-mediatek@lists.infradead.org, hofrat@osadl.org, matthias.bgg@gmail.com, arm-soc <linux-arm-kernel@lists.infradead.org>
+From: Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH 1/2] gpio: mt7621: report failure of devm_kasprintf()
+Date: Wed, 21 Nov 2018 19:06:12 +0100
+Message-ID: <1542823573-20228-1-git-send-email-hofrat@osadl.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Nicholas Mc Guire <hofrat@osadl.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 05:43:43PM +0100, Bartosz Golaszewski wrote:
-> ??r., 21 lis 2018 o 17:39 Nicholas Mc Guire <hofrat@osadl.org> napisa??(a=
-):
-> >
-> > kasprintf() may return NULL on failure of internal allocation thus the
-> > assigned  label  is not safe if not explicitly checked. On error
-> > mediatek_gpio_bank_probe() returns negative values so -ENOMEM in the
-> > (unlikely) failure case should be fine here.
-> >
-> > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> > Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
-> > ---
-> >
-> > Problem located with experimental coccinelle script
-> >
-> > Patch was compile tested with: omega2p_defconfig, SOC_MT7621=3Dy,
-> > GPIOLIB=3Dy, GPIO_MT7621=3Dy
-> >
-> > Patch is against 4.20-rc3 (localversion-next is next-20181121)
-> >
-> >  drivers/gpio/gpio-mt7621.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
-> > index d72af6f..42f0c67 100644
-> > --- a/drivers/gpio/gpio-mt7621.c
-> > +++ b/drivers/gpio/gpio-mt7621.c
-> > @@ -244,6 +244,10 @@ mediatek_gpio_bank_probe(struct device *dev,
-> >         rg->chip.of_xlate =3D mediatek_gpio_xlate;
-> >         rg->chip.label =3D devm_kasprintf(dev, GFP_KERNEL, "%s-bank%d",
-> >                                         dev_name(dev), bank);
-> > +       if (!rg->chip.label) {
-> > +               dev_err(dev, "Could not allocate label\n");
-> =
+kasprintf() may return NULL on failure of internal allocation thus the
+assigned  label  is not safe if not explicitly checked. On error
+mediatek_gpio_bank_probe() returns negative values so -ENOMEM in the
+(unlikely) failure case should be fine here.
 
-> No need for an error message here, an -ENOMEM says enough.
->
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
+---
 
-I just thought its more consistent with the rest of
-the code - and as it is a highly unlikely event it would
-probably be hard to pinpoint as some of the other functions
-can return -ENOMEM (but with a message).
+V2: The dev_err() for the unlikely case of the devm_kasprintf()
+    failing was removed on request from Bartosz Golaszewski 
+    <bgolaszewski@baylibre.com>
 
-....and the call site of mediatek_gpio_bank_probe() actually =
+Problem located with experimental coccinelle script
 
-currently ignores the return value so the -ENOMEM would go
-unnoticed which is a bug as well - patch for that a bit later.
+Patch was compile tested with: omega2p_defconfig, SOC_MT7621=y,
+GPIOLIB=y, GPIO_MT7621=y
 
-anyway fine with me - I=B4ll send a V2 and drop the dev_err() here.
+Patch is against 4.20-rc3 (localversion-next is next-20181121)
 
-thx!
-hofrat
- =
+ drivers/gpio/gpio-mt7621.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> Bart
-> =
-
-> > +               return -ENOMEM;
-> > +       }
-> >
-> >         ret =3D devm_gpiochip_add_data(dev, &rg->chip, mtk);
-> >         if (ret < 0) {
-> > --
-> > 2.1.4
-> >
+diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+index d72af6f..1ec95bc 100644
+--- a/drivers/gpio/gpio-mt7621.c
++++ b/drivers/gpio/gpio-mt7621.c
+@@ -244,6 +244,8 @@ mediatek_gpio_bank_probe(struct device *dev,
+ 	rg->chip.of_xlate = mediatek_gpio_xlate;
+ 	rg->chip.label = devm_kasprintf(dev, GFP_KERNEL, "%s-bank%d",
+ 					dev_name(dev), bank);
++	if (!rg->chip.label)
++		return -ENOMEM;
+ 
+ 	ret = devm_gpiochip_add_data(dev, &rg->chip, mtk);
+ 	if (ret < 0) {
+-- 
+2.1.4
