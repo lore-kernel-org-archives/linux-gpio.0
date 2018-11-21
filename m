@@ -1,47 +1,63 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 07/12] ARM: davinci: da850: set the GPIO base to 0
-Date: Wed, 21 Nov 2018 10:35:18 +0100
-Message-ID: <20181121093523.12503-8-brgl@bgdev.pl>
+Subject: [PATCH 05/12] ARM: davinci: dm644x: define gpio interrupts as separate resources
+Date: Wed, 21 Nov 2018 10:35:16 +0100
+Message-ID: <20181121093523.12503-6-brgl@bgdev.pl>
 References: <20181121093523.12503-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181121093523.12503-1-brgl@bgdev.pl>
-Sender: stable-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>, Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Commit 587f7a694f01 ("gpio: davinci: Use dev name for label and
-automatic base selection") broke the network support in legacy boot
-mode for da850-evm since we can no longer request the MDIO clock GPIO.
+Since commit eb3744a2dd01 ("gpio: davinci: Do not assume continuous
+IRQ numbering") the davinci GPIO driver fails to probe if we boot
+in legacy mode from any of the board files. Since the driver now
+expects every interrupt to be defined as a separate resource, split
+the definition of IRQ resources instead of having a single continuous
+interrupt range.
 
-We now have the option to specify the GPIO base manually for davinci,
-so add the relevant fields to platform data.
-
-Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automatic base selection")
+Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ numbering")
 Cc: stable@vger.kernel.org
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/da850.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/mach-davinci/dm644x.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index 4528bbf0c861..e7b78df2bfef 100644
---- a/arch/arm/mach-davinci/da850.c
-+++ b/arch/arm/mach-davinci/da850.c
-@@ -719,7 +719,9 @@ int __init da850_register_vpif_capture(struct vpif_capture_config
- }
- 
- static struct davinci_gpio_platform_data da850_gpio_platform_data = {
--	.ngpio = 144,
-+	.no_auto_base	= true,
-+	.base		= 0,
-+	.ngpio		= 144,
- };
- 
- int __init da850_register_gpio(void)
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 0720da7809a6..de1ec6dc01e9 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -492,6 +492,26 @@ static struct resource dm644_gpio_resources[] = {
+ 	},
+ 	{	/* interrupt */
+ 		.start	= IRQ_GPIOBNK0,
++		.end	= IRQ_GPIOBNK0,
++		.flags	= IORESOURCE_IRQ,
++	},
++	{
++		.start	= IRQ_GPIOBNK1,
++		.end	= IRQ_GPIOBNK1,
++		.flags	= IORESOURCE_IRQ,
++	},
++	{
++		.start	= IRQ_GPIOBNK2,
++		.end	= IRQ_GPIOBNK2,
++		.flags	= IORESOURCE_IRQ,
++	},
++	{
++		.start	= IRQ_GPIOBNK3,
++		.end	= IRQ_GPIOBNK3,
++		.flags	= IORESOURCE_IRQ,
++	},
++	{
++		.start	= IRQ_GPIOBNK4,
+ 		.end	= IRQ_GPIOBNK4,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
 -- 
 2.19.1
