@@ -1,46 +1,60 @@
-From: Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] gpio: mt7621: handle failure of devm_kasprintf()
-Date: Wed, 21 Nov 2018 17:35:42 +0100
-Message-ID: <1542818142-27800-1-git-send-email-hofrat@osadl.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] gpio: mt7621: handle failure of devm_kasprintf()
+Date: Wed, 21 Nov 2018 17:43:43 +0100
+Message-ID: <CAMpxmJUNYWqk4PEKcZ5o5PMR3RhMhudK+Pf+Pfo64mvJ8ND2wQ@mail.gmail.com>
+References: <1542818142-27800-1-git-send-email-hofrat@osadl.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1542818142-27800-1-git-send-email-hofrat@osadl.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Nicholas Mc Guire <hofrat@osadl.org>
+To: hofrat@osadl.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, matthias.bgg@gmail.com, sergio.paracuellos@gmail.com, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, arm-soc <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-kasprintf() may return NULL on failure of internal allocation thus the
-assigned  label  is not safe if not explicitly checked. On error
-mediatek_gpio_bank_probe() returns negative values so -ENOMEM in the
-(unlikely) failure case should be fine here.
+=C5=9Br., 21 lis 2018 o 17:39 Nicholas Mc Guire <hofrat@osadl.org> napisa=
+=C5=82(a):
+>
+> kasprintf() may return NULL on failure of internal allocation thus the
+> assigned  label  is not safe if not explicitly checked. On error
+> mediatek_gpio_bank_probe() returns negative values so -ENOMEM in the
+> (unlikely) failure case should be fine here.
+>
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
+> ---
+>
+> Problem located with experimental coccinelle script
+>
+> Patch was compile tested with: omega2p_defconfig, SOC_MT7621=3Dy,
+> GPIOLIB=3Dy, GPIO_MT7621=3Dy
+>
+> Patch is against 4.20-rc3 (localversion-next is next-20181121)
+>
+>  drivers/gpio/gpio-mt7621.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+> index d72af6f..42f0c67 100644
+> --- a/drivers/gpio/gpio-mt7621.c
+> +++ b/drivers/gpio/gpio-mt7621.c
+> @@ -244,6 +244,10 @@ mediatek_gpio_bank_probe(struct device *dev,
+>         rg->chip.of_xlate =3D mediatek_gpio_xlate;
+>         rg->chip.label =3D devm_kasprintf(dev, GFP_KERNEL, "%s-bank%d",
+>                                         dev_name(dev), bank);
+> +       if (!rg->chip.label) {
+> +               dev_err(dev, "Could not allocate label\n");
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
----
+No need for an error message here, an -ENOMEM says enough.
 
-Problem located with experimental coccinelle script
+Bart
 
-Patch was compile tested with: omega2p_defconfig, SOC_MT7621=y,
-GPIOLIB=y, GPIO_MT7621=y
-
-Patch is against 4.20-rc3 (localversion-next is next-20181121)
-
- drivers/gpio/gpio-mt7621.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
-index d72af6f..42f0c67 100644
---- a/drivers/gpio/gpio-mt7621.c
-+++ b/drivers/gpio/gpio-mt7621.c
-@@ -244,6 +244,10 @@ mediatek_gpio_bank_probe(struct device *dev,
- 	rg->chip.of_xlate = mediatek_gpio_xlate;
- 	rg->chip.label = devm_kasprintf(dev, GFP_KERNEL, "%s-bank%d",
- 					dev_name(dev), bank);
-+	if (!rg->chip.label) {
-+		dev_err(dev, "Could not allocate label\n");
-+		return -ENOMEM;
-+	}
- 
- 	ret = devm_gpiochip_add_data(dev, &rg->chip, mtk);
- 	if (ret < 0) {
--- 
-2.1.4
+> +               return -ENOMEM;
+> +       }
+>
+>         ret =3D devm_gpiochip_add_data(dev, &rg->chip, mtk);
+>         if (ret < 0) {
+> --
+> 2.1.4
+>
