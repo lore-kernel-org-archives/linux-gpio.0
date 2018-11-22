@@ -1,66 +1,32 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [RFC PATCH v3 07/17] clocksource: sun4i: add a compatible for
- suniv
-Date: Thu, 22 Nov 2018 14:23:41 +0100
-Message-ID: <a732f908-c70e-ce30-ad18-ddbb6879995f@linaro.org>
-References: <cover.1542824904.git.mesihkilinc@gmail.com>
- <60bc70fc43743f664de76abf3ab0a01cd7924458.1542824904.git.mesihkilinc@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH] gpio: restore original GPLv2+ license of gpiolib-of.c sources
+Date: Thu, 22 Nov 2018 15:59:01 +0200
+Message-ID: <20181122135901.31849-1-vz@mleia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <60bc70fc43743f664de76abf3ab0a01cd7924458.1542824904.git.mesihkilinc@gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mesih Kilinc <mesihkilinc@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>, Julian Calaby <julian.calaby@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 21/11/2018 19:30, Mesih Kilinc wrote:
-> The suniv (new F-series) chip has a timer with less functionality than
-> the A10 timer, e.g. it has only 3 channels.
-> 
-> Add a new compatible for it. As we didn't use the extra channels on A10
-> either now, the code needn't to be changed.
-> 
-> The suniv chip is based on ARM926EJ-S CPU, thus it has no architecture timer.
-> 
-> Register sun4i_timer as sched_clock on it.
-> 
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+It's easy to verify that the change of drivers/gpio/gpiolib-of.c license
+header to SPDX standard changes the license from GPLv2+ to GPLv2, and
+this change corrects it.
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Fixes: dae5f0afcfc3 ("gpio: Use SPDX header for core library")
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ drivers/gpio/gpiolib-of.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/clocksource/sun4i_timer.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
-> index 6e0180a..65f38f6 100644
-> --- a/drivers/clocksource/sun4i_timer.c
-> +++ b/drivers/clocksource/sun4i_timer.c
-> @@ -186,7 +186,8 @@ static int __init sun4i_timer_init(struct device_node *node)
->  	 */
->  	if (of_machine_is_compatible("allwinner,sun4i-a10") ||
->  	    of_machine_is_compatible("allwinner,sun5i-a13") ||
-> -	    of_machine_is_compatible("allwinner,sun5i-a10s"))
-> +	    of_machine_is_compatible("allwinner,sun5i-a10s") ||
-> +	    of_machine_is_compatible("allwinner,suniv-f1c100s"))
->  		sched_clock_register(sun4i_timer_sched_read, 32,
->  				     timer_of_rate(&to));
->  
-> @@ -218,3 +219,5 @@ static int __init sun4i_timer_init(struct device_node *node)
->  }
->  TIMER_OF_DECLARE(sun4i, "allwinner,sun4i-a10-timer",
->  		       sun4i_timer_init);
-> +TIMER_OF_DECLARE(suniv, "allwinner,suniv-f1c100s-timer",
-> +		       sun4i_timer_init);
-> 
-
-
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 7f1260c78270..59cb87325179 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * OF helpers for the GPIO API
+  *
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.17.1
