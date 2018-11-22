@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 01/21] pinctrl: meson: fix pinconf bias disable
-Date: Thu, 22 Nov 2018 14:54:32 -0500
-Message-ID: <20181122195452.13520-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 01/15] pinctrl: meson: fix pinconf bias disable
+Date: Thu, 22 Nov 2018 14:56:07 -0500
+Message-ID: <20181122195621.13776-1-sashal@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -29,10 +29,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 66ed70c12733..6c43322dbb97 100644
+index 9443c9d408c6..df61a71420b1 100644
 --- a/drivers/pinctrl/meson/pinctrl-meson.c
 +++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -273,7 +273,7 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+@@ -275,7 +275,7 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
  			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
  
  			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
