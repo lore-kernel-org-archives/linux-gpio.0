@@ -1,74 +1,88 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-Date: Wed, 21 Nov 2018 20:15:09 +0100
-Message-ID: <20181121191509.ia2vcklvx4q2rh56@pengutronix.de>
-References: <20181120134032.31645-1-brgl@bgdev.pl>
- <20181120134032.31645-2-brgl@bgdev.pl>
- <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
- <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH v1 1/2] ARM: dts: sun8i: Add board dts file for
+ t3-cqa3t-bv3.
+Date: Thu, 22 Nov 2018 09:19:09 +0100
+Message-ID: <20181122081909.2u3kt3ih5ma2dl2y@flea>
+References: <20181121154356.GA4359@arx-s1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="twq3molfx3dmoi2t"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
+In-Reply-To: <20181121154356.GA4359@arx-s1>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Hao Zhang <hao5781286@gmail.com>
+Cc: robh+dt@kernel.org, wens@csie.org, icenowy@aosc.io, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Bartosz,
 
-On Wed, Nov 21, 2018 at 05:34:32PM +0100, Bartosz Golaszewski wrote:
-> wt., 20 lis 2018 o 18:17 Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> napisał(a):
-> >
-> > On Tue, Nov 20, 2018 at 02:40:31PM +0100, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > The irq_sim irqchip doesn't allow to configure the sensitivity so every
-> > > call to irq_sim_fire() fires a dummy interrupt. This used to not matter
-> > > for gpio-mockup (one of the irq_sim users) until commit fa38869b0161
-> > > ("gpiolib: Don't support irq sharing for userspace") which made it
-> > > impossible for gpio-mockup to ignore certain events (e.g. only receive
-> > > notifications about rising edge events).
-> > >
-> > > Introduce a specialized variant of irq_sim_fire() which takes another
-> > > argument called edge. allowing to specify the trigger type for the
-> > > dummy interrupt.
-> >
-> > I wonder if it's worth the effort to fix irq_sim. If you take a look in
-> > my gpio-simulator patch, it is trivial to get it right without external
-> > help with an amount of code that is usual for a driver that handles
-> > irqs.
-> 
-> You're basically recommending handcrafting another local piece of code
-> for simulating interrupts - something that multiple users may be
-> interested in. You did that in your proposed gpio-simulator and I
-> still can't understand why you couldn't reuse the existing solution.
-> Even if it's broken for your use-case, it's surely easier to fix it
-> than to rewrite and duplicate it? There are very few cases where code
-> consolidation is not a good thing and I don't think this is one of
-> them.
+--twq3molfx3dmoi2t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I don't say that factoring out common stuff is bad. But if in the end
-you call
+On Wed, Nov 21, 2018 at 11:43:57PM +0800, Hao Zhang wrote:
+> The T3/R40/V40 using the same sdk and config file in allwinner
+> sdk, it seem they are the same SOC just with different name, so
+> compatible with R40.
+>=20
+> The t3-cqa3t-bv3 based on Allwinner T3 SoC, it has various connectors,
+> leds, buttons, and sell on:
+> https://item.taobao.com/item.htm?spm=3D2013.1.w4023-4203040713.25.62704cc=
+e7UCgLS&id=3D557154455330
+>=20
+> It features:
+>  - X-Powers AXP221s PMIC connected to i2c0
+>  - 1/2 GB DDR3 DRAM
+>  - 8 GB eMMC
+>  - 2x USB 2.0 hosts
+>  - 1x USB 2.0 OTG
+>  - 2 LVDS connectors
+>  - 24 bit RGB LCD connector
+>  - HDMI output
+>  - DVP camera interface (support 500w cmos camera)
+>  - GPIO connectors
+>  - 5 TTL uarts and 2 RS232 uarts
+>  - 1 RS485 connector
+>  - support i2c capacitive tp and usb infrared tp
+>  - boot control, reset and user buttons
+>  - 3.5mm headphone and 3.5mm mic jack
+>  - 100M RJ45
+>  - micro SD card slot
+>  - DC power jack
+>  - RCT power slot
+>  - 1 CVBS TVIN
+>  - 1 CVBS TVOUT
+>  - 2 customer leds
+>  - 1 buzzer
+>  - 1 minipcie
+>  - I2C output
+>  - SPI output
+>  - PCM output
+>  - wifi and bt connector reserved.
+>=20
+> Board info can find here:
+> https://github.com/Axl-zhang/Allwinner-V40-T3-R40-manual
+>=20
+> Signed-off-by: Hao Zhang <hao5781286@gmail.com>
 
-	irq_sim_something(some, parameters, offset);
+Applied both patches, thanks!
+Maxime
 
-with the simulator and if you don't use the irq simulator you do
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-	irq = irq_find_mapping(irqdomain, offset);
-	generic_handle_irq(irq);
+--twq3molfx3dmoi2t
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I prefer the latter because it's only a single additional line and in
-return it's more obvious what it does because it's the same that many
-other drivers (for real hardware) also do.
+-----BEGIN PGP SIGNATURE-----
 
-Best regards
-Uwe
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/ZmfQAKCRDj7w1vZxhR
+xa6DAP4sp8sY/XXSN4qWLdHs41eBFO/p3gmW3bsc8NYx/ruhVAD+NUtOtxWkL4D/
+hwyorMZuxpCFUm/1eC7+RbngPPNzzg4=
+=4bRA
+-----END PGP SIGNATURE-----
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+--twq3molfx3dmoi2t--
