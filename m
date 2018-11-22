@@ -1,51 +1,66 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFC PATCH v3 09/17] pinctrl: sunxi: add support
- for suniv F1C100s (newer F-series SoCs)
-Date: Thu, 22 Nov 2018 09:45:26 +0100
-Message-ID: <20181122084526.gc5qfez4ppxstq3d@flea>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [RFC PATCH v3 07/17] clocksource: sun4i: add a compatible for
+ suniv
+Date: Thu, 22 Nov 2018 14:23:41 +0100
+Message-ID: <a732f908-c70e-ce30-ad18-ddbb6879995f@linaro.org>
 References: <cover.1542824904.git.mesihkilinc@gmail.com>
- <fc20d96f5531d7d1eb5ce3d5cf920c8bf59cad58.1542824904.git.mesihkilinc@gmail.com>
-Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
+ <60bc70fc43743f664de76abf3ab0a01cd7924458.1542824904.git.mesihkilinc@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="eposblfbribc57f5"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBMOZ3HPQKGQEI6RMG6A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <fc20d96f5531d7d1eb5ce3d5cf920c8bf59cad58.1542824904.git.mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <60bc70fc43743f664de76abf3ab0a01cd7924458.1542824904.git.mesihkilinc@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mesih Kilinc <mesihkilinc@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>, Julian Calaby <julian.calaby@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
+On 21/11/2018 19:30, Mesih Kilinc wrote:
+> The suniv (new F-series) chip has a timer with less functionality than
+> the A10 timer, e.g. it has only 3 channels.
+> 
+> Add a new compatible for it. As we didn't use the extra channels on A10
+> either now, the code needn't to be changed.
+> 
+> The suniv chip is based on ARM926EJ-S CPU, thus it has no architecture timer.
+> 
+> Register sun4i_timer as sched_clock on it.
+> 
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 
---eposblfbribc57f5
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Hi,
+> ---
+>  drivers/clocksource/sun4i_timer.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
+> index 6e0180a..65f38f6 100644
+> --- a/drivers/clocksource/sun4i_timer.c
+> +++ b/drivers/clocksource/sun4i_timer.c
+> @@ -186,7 +186,8 @@ static int __init sun4i_timer_init(struct device_node *node)
+>  	 */
+>  	if (of_machine_is_compatible("allwinner,sun4i-a10") ||
+>  	    of_machine_is_compatible("allwinner,sun5i-a13") ||
+> -	    of_machine_is_compatible("allwinner,sun5i-a10s"))
+> +	    of_machine_is_compatible("allwinner,sun5i-a10s") ||
+> +	    of_machine_is_compatible("allwinner,suniv-f1c100s"))
+>  		sched_clock_register(sun4i_timer_sched_read, 32,
+>  				     timer_of_rate(&to));
+>  
+> @@ -218,3 +219,5 @@ static int __init sun4i_timer_init(struct device_node *node)
+>  }
+>  TIMER_OF_DECLARE(sun4i, "allwinner,sun4i-a10-timer",
+>  		       sun4i_timer_init);
+> +TIMER_OF_DECLARE(suniv, "allwinner,suniv-f1c100s-timer",
+> +		       sun4i_timer_init);
+> 
 
-On Wed, Nov 21, 2018 at 09:30:42PM +0300, Mesih Kilinc wrote:
-> +static const struct sunxi_pinctrl_desc suniv_f1c100s_pinctrl_data = {
-> +	.pins = suniv_f1c100s_pins,
-> +	.npins = ARRAY_SIZE(suniv_f1c100s_pins),
-> +	.irq_banks = 3,
-> +	.disable_strict_mode = true,
-> +};
-
-One thing I forgot to check before giving my Acked-by, you shouldn't
-disable the strict mode here, this is only meant as a legacy option,
-new drivers need to enforce it.
-
-Maxime
 
 -- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
---eposblfbribc57f5--
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
