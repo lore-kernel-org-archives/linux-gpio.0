@@ -1,38 +1,71 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v5 6/8] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Fri, 23 Nov 2018 09:15:40 +0000
-Message-ID: <20181123091540.GL16508@imbe.wolfsonmicro.main>
-References: <20181120141631.18949-6-ckeepax@opensource.cirrus.com>
- <201811231606.fDWBzL7a%fengguang.wu@intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
+Date: Fri, 23 Nov 2018 10:40:56 +0100
+Message-ID: <CAMuHMdU2ski3S4FhD5kOhtzxvpin8M5MoYwK7X5gqYZ+HoL0DA@mail.gmail.com>
+References: <20181119161838.10610-1-phil.edworthy@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <201811231606.fDWBzL7a%fengguang.wu@intel.com>
+In-Reply-To: <20181119161838.10610-1-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: kbuild-all@01.org, lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 05:00:57PM +0800, kbuild test robot wrote:
-> Hi Charles,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on ljones-mfd/for-mfd-next]
-> [also build test ERROR on v4.20-rc3]
-> [cannot apply to next-20181122]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->    drivers/regulator/lochnagar-regulator.c: In function 'lochnagar_micbias_of_parse':
+Hi Phil,
 
-> >> drivers/regulator/lochnagar-regulator.c:115:7: error: 'LOCHNAGAR2_P2_MICBIAS_SRC_SHIFT' undeclared (first use in this function); did you mean 'LOCHNAGAR_DEVICE_ID_SHIFT'?
->           LOCHNAGAR2_P2_MICBIAS_SRC_SHIFT;
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Thanks for your patch!
 
-These issues will resolve themselves in the merge, this patch is
-already merged in Mark's tree and will resolve the issue:
+On Mon, Nov 19, 2018 at 5:18 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> This fixes the check for unused mdio bus setting and the following static
+> checker warning:
+>  drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
+>  warn: always true condition '(ipctl->mdio_func[mdio] >= 0) => (0-u32max >= 0)'
+>
+> It also fixes the return var when calling of_get_child_count()
 
-fa2bb8b97d77 ("regulator: lochnagar: Explicitly include register headers")
+I think this should be a separate patch.
 
-Thanks,
-Charles
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+BTW, I have a question about rzn1_pinctrl_mdio_select():
+
+static void rzn1_pinctrl_mdio_select(struct rzn1_pinctrl *ipctl, int mdio,
+                                     u32 func)
+{
+        if (ipctl->mdio_func[mdio] >= 0 && ipctl->mdio_func[mdio] != func)
+                dev_warn(ipctl->dev, "conflicting setting for mdio%d!\n", mdio);
+        ipctl->mdio_func[mdio] = func;
+
+        dev_dbg(ipctl->dev, "setting mdio%d to %u\n", mdio, func);
+
+        writel(func, &ipctl->lev2->l2_mdio[mdio]);
+}
+
+The check warns the user if it overrides an already initialized MDIO function
+with a different value.
+However, there is no method to uninitialize (reset to -1) mdio_func[], to
+avoid getting the warning.
+
+For a use case, I was thinking about a DT overlay that would cause the
+MDIO function to be initialized on loading, and needs to uninitialize the
+MDIO function on removing.
+
+Perhaps that is very unlikely or even impossible, given the function of the
+pins controlled by the MDIO function?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
