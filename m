@@ -1,37 +1,82 @@
 From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] pinctrl: rzn1: Fix of_get_child_count() error check
-Date: Fri, 23 Nov 2018 10:54:28 +0000
-Message-ID: <20181123105428.13457-2-phil.edworthy@renesas.com>
-References: <20181123105428.13457-1-phil.edworthy@renesas.com>
+Subject: RE: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
+Date: Fri, 23 Nov 2018 11:06:22 +0000
+Message-ID: <TY1PR01MB1769EDCA6858BAEA3A18FB0AF5D40@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20181119161838.10610-1-phil.edworthy@renesas.com>
+ <CAMuHMdU2ski3S4FhD5kOhtzxvpin8M5MoYwK7X5gqYZ+HoL0DA@mail.gmail.com>
+ <TY1PR01MB1769DE254148618373F2918CF5D40@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdUUjoUmA2R8=PXp-hvYvowb3L-dnP6EDcGkLZJG344Yug@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181123105428.13457-1-phil.edworthy@renesas.com>
+In-Reply-To: <CAMuHMdUUjoUmA2R8=PXp-hvYvowb3L-dnP6EDcGkLZJG344Yug@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-If we assign the result of of_get_child_count() to an unsigned int,
-the code will not detect any errors. Therefore assign it to an int
-instead.
-
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- drivers/pinctrl/pinctrl-rzn1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
-index a04235e3bec4..cc0e5aa9128a 100644
---- a/drivers/pinctrl/pinctrl-rzn1.c
-+++ b/drivers/pinctrl/pinctrl-rzn1.c
-@@ -810,8 +810,8 @@ static int rzn1_pinctrl_probe_dt(struct platform_device *pdev,
- 	struct device_node *np = pdev->dev.of_node;
- 	struct device_node *child;
- 	unsigned int maxgroups = 0;
--	unsigned int nfuncs = 0;
- 	unsigned int i = 0;
-+	int nfuncs = 0;
- 	int ret;
- 
- 	nfuncs = of_get_child_count(np);
--- 
-2.17.1
+SGkgR2VlcnQsDQoNCk9uIDIzIE5vdmVtYmVyIDIwMTggMTA6MTYgR2VlcnQgVXl0dGVyaG9ldmVu
+IHdyb3RlOg0KPiBPbiBGcmksIE5vdiAyMywgMjAxOCBhdCAxMTowNyBBTSBQaGlsIEVkd29ydGh5
+IHdyb3RlOg0KPiA+IE9uIDIzIE5vdmVtYmVyIDIwMTggMDk6NDEgR2VlcnQgVXl0dGVyaG9ldmVu
+IHdyb3RlOg0KPiA+ID4gU3ViamVjdDogUmU6IFtQQVRDSF0gcGluY3RybDogcnpuMTogRml4IGNo
+ZWNrIGZvciB1c2VkIE1ESU8gYnVzIE9uDQo+ID4gPiBNb24sIE5vdiAxOSwgMjAxOCBhdCA1OjE4
+IFBNIFBoaWwgRWR3b3J0aHkgd3JvdGU6DQo+ID4gPiA+IFRoaXMgZml4ZXMgdGhlIGNoZWNrIGZv
+ciB1bnVzZWQgbWRpbyBidXMgc2V0dGluZyBhbmQgdGhlIGZvbGxvd2luZw0KPiA+ID4gPnN0YXRp
+YyBjaGVja2VyIHdhcm5pbmc6DQo+ID4gPiA+ICBkcml2ZXJzL3BpbmN0cmwvcGluY3RybC1yem4x
+LmM6MTk4IHJ6bjFfcGluY3RybF9tZGlvX3NlbGVjdCgpDQo+ID4gPiA+ICB3YXJuOiBhbHdheXMg
+dHJ1ZSBjb25kaXRpb24gJyhpcGN0bC0+bWRpb19mdW5jW21kaW9dID49IDApID0+DQo+ID4gPiA+
+KDAtdTMybWF4ID0gMCknDQo+ID4gPiA+DQo+ID4gPiA+IEl0IGFsc28gZml4ZXMgdGhlIHJldHVy
+biB2YXIgd2hlbiBjYWxsaW5nIG9mX2dldF9jaGlsZF9jb3VudCgpDQo+ID4gPg0KPiA+ID4gSSB0
+aGluayB0aGlzIHNob3VsZCBiZSBhIHNlcGFyYXRlIHBhdGNoLg0KPiA+IE9rLCBJJ2xsIHNwbGl0
+IHRoZW0uDQo+IA0KPiBUaGFua3MhDQo+IA0KPiA+ID4gQlRXLCBJIGhhdmUgYSBxdWVzdGlvbiBh
+Ym91dCByem4xX3BpbmN0cmxfbWRpb19zZWxlY3QoKToNCj4gPiA+DQo+ID4gPiBzdGF0aWMgdm9p
+ZCByem4xX3BpbmN0cmxfbWRpb19zZWxlY3Qoc3RydWN0IHJ6bjFfcGluY3RybCAqaXBjdGwsIGlu
+dCBtZGlvLA0KPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHUzMiBm
+dW5jKSB7DQo+ID4gPiAgICAgICAgIGlmIChpcGN0bC0+bWRpb19mdW5jW21kaW9dID49IDAgJiYg
+aXBjdGwtPm1kaW9fZnVuY1ttZGlvXSAhPSBmdW5jKQ0KPiA+ID4gICAgICAgICAgICAgICAgIGRl
+dl93YXJuKGlwY3RsLT5kZXYsICJjb25mbGljdGluZyBzZXR0aW5nIGZvciBtZGlvJWQhXG4iLCBt
+ZGlvKTsNCj4gPiA+ICAgICAgICAgaXBjdGwtPm1kaW9fZnVuY1ttZGlvXSA9IGZ1bmM7DQo+ID4g
+Pg0KPiA+ID4gICAgICAgICBkZXZfZGJnKGlwY3RsLT5kZXYsICJzZXR0aW5nIG1kaW8lZCB0byAl
+dVxuIiwgbWRpbywgZnVuYyk7DQo+ID4gPg0KPiA+ID4gICAgICAgICB3cml0ZWwoZnVuYywgJmlw
+Y3RsLT5sZXYyLT5sMl9tZGlvW21kaW9dKTsgfQ0KPiA+ID4NCj4gPiA+IFRoZSBjaGVjayB3YXJu
+cyB0aGUgdXNlciBpZiBpdCBvdmVycmlkZXMgYW4gYWxyZWFkeSBpbml0aWFsaXplZCBNRElPDQo+
+ID4gPiBmdW5jdGlvbiB3aXRoIGEgZGlmZmVyZW50IHZhbHVlLg0KPiA+ID4gSG93ZXZlciwgdGhl
+cmUgaXMgbm8gbWV0aG9kIHRvIHVuaW5pdGlhbGl6ZSAocmVzZXQgdG8gLTEpDQo+ID4gPiBtZGlv
+X2Z1bmNbXSwgdG8gYXZvaWQgZ2V0dGluZyB0aGUgd2FybmluZy4NCj4gPiA+DQo+ID4gPiBGb3Ig
+YSB1c2UgY2FzZSwgSSB3YXMgdGhpbmtpbmcgYWJvdXQgYSBEVCBvdmVybGF5IHRoYXQgd291bGQg
+Y2F1c2UNCj4gPiA+IHRoZSBNRElPIGZ1bmN0aW9uIHRvIGJlIGluaXRpYWxpemVkIG9uIGxvYWRp
+bmcsIGFuZCBuZWVkcyB0bw0KPiA+ID4gdW5pbml0aWFsaXplIHRoZSBNRElPIGZ1bmN0aW9uIG9u
+IHJlbW92aW5nLg0KPiA+ID4NCj4gPiA+IFBlcmhhcHMgdGhhdCBpcyB2ZXJ5IHVubGlrZWx5IG9y
+IGV2ZW4gaW1wb3NzaWJsZSwgZ2l2ZW4gdGhlIGZ1bmN0aW9uDQo+ID4gPiBvZiB0aGUgcGlucyBj
+b250cm9sbGVkIGJ5IHRoZSBNRElPIGZ1bmN0aW9uPw0KPiA+IEkgaGFkbid0IGNvbnNpZGVyZWQg
+dGhhdCBEVCBvdmVybGF5IHBvc3NpYmlsaXR5Li4uDQo+ID4gU2luY2UgdGhpcyBNRElPIG11eGlu
+ZyBzZWxlY3RzIG9uZSBvZiBzZXZlcmFsIGRpZmZlcmVudCBJUCBibG9ja3MgYXMNCj4gPiB0aGUg
+TURJTyBtYXN0ZXIsIEkgZ3Vlc3MgaXQgY291bGQgaGFwcGVuLiBIb3dldmVyLCB0aGlzIGlzIHBy
+ZXR0eSB1bmxpa2VseSENCj4gPg0KPiA+IEkgY2FuJ3Qgc2VlIGFueSB3YXkgdmlhIHRoZSBwaW5j
+dHJsX29wcyBvciBwaW5jb25mX29wcyB0byAndW5kbycgYSBwaW4NCj4gPiBzZXR0aW5nLCBob3cg
+d291bGQgdGhpcyB3b3JrPw0KPiANCj4gQWN0dWFsbHkgdGhlIHBpbmN0cmwgY29yZSB3b3VsZG4n
+dCB1bmRvIHRoZSBjb25maWd1cmF0aW9uIG9uIERUIG92ZXJsYXkNCj4gdW5sb2FkLCBidXQgd291
+bGQganVzdCBkbyB0aGUgbmV3IGNvbmZpZ3VyYXRpb24gd2hlbiBsb2FkaW5nIHRoZSBuZXcgRFQN
+Cj4gb3ZlcmxheS4NCj4gSGVuY2UgdGhhdCB3b3VsZCBwcmludCB0aGUgd2FybmluZywgYnV0IHdv
+cmsgcmVnYXJkbGVzcy4NCj4gT25seSBmb3IgR1BJT3MgdGhlcmUgd291bGQgYmUgYW4gdW5kbyBz
+dGVwIChmcmVlaW5nIHRoZSByZXF1ZXN0ZWQgR1BJTykuDQo+IA0KPiA+IElmIGEgRFQgb3Zlcmxh
+eSBjYXVzZXMgcmVtb3ZlKCkgdGhlbiBwcm9iZSgpIHRvIGJlIGNhbGxlZCBhZ2FpbiwgdGhlDQo+
+ID4gZHJpdmVyIHJlc2V0cyBtZGlvX2Z1bmNbXSBpbiBwcm9iZSgpLCBzbyBpdCdsbCB3b3JrLg0K
+PiANCj4gVHlwaWNhbGx5IGEgRFQgb3ZlcmxheSB3b3VsZCBvbmx5IGNvbnRyb2wgSS9PIGRldmlj
+ZXMsIG5vdCB0aGUgYWN0dWFsIHBpbmN0cmwNCj4gZGV2aWNlLCBzbyB0aGUgcGluIGNvbnRyb2xs
+ZXIgZHJpdmVyJ3MgLnByb2JlKCkgd291bGRuJ3QgYmUgY2FsbGVkLg0KPiANCj4gQnV0IEkgYWdy
+ZWUgaXQncyB1bmxpa2VseSBhbmQgcmFyZSwgYW5kIHdvdWxkIHN0aWxsIHdvcmsuIEFuZCBwcm9i
+YWJseSB5b3UgZG8NCj4gd2FudCB0byBrZWVwIHRoZSB3YXJuaW5nLiAgRFQgb3ZlcmxheXMgYXJl
+IHN0aWxsIGV4cGVyaW1lbnRhbCwgYXMgdGhlcmUncyBubw0KPiB1cHN0cmVhbSBzdXBwb3J0IGZv
+ciBsb2FkaW5nIGEgcmFuZG9tIERUIG92ZXJsYXkgYXQgcnVudGltZS4NCg0KT2ssIEknbGwgbGVh
+dmUgaXQgYXMgaXQgaXMgdGhlbi4gSWYgaXQgZXZlciBiZWNvbWVzIGFuIGlzc3VlLCB3ZSBjYW4g
+bG9vayBhZ2Fpbi4NCg0KVGhhbmtzDQpQaGlsDQoNCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0K
+PiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVy
+aG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51
+eC0NCj4gbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNo
+bmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFs
+a2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcg
+bGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRv
+cnZhbGRzDQo=
