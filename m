@@ -1,71 +1,58 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-Date: Fri, 23 Nov 2018 10:40:56 +0100
-Message-ID: <CAMuHMdU2ski3S4FhD5kOhtzxvpin8M5MoYwK7X5gqYZ+HoL0DA@mail.gmail.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+Subject: RE: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
+Date: Fri, 23 Nov 2018 10:01:22 +0000
+Message-ID: <TY1PR01MB1769DE254148618373F2918CF5D40@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 References: <20181119161838.10610-1-phil.edworthy@renesas.com>
+ <CAMuHMdU2ski3S4FhD5kOhtzxvpin8M5MoYwK7X5gqYZ+HoL0DA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181119161838.10610-1-phil.edworthy@renesas.com>
+In-Reply-To: <CAMuHMdU2ski3S4FhD5kOhtzxvpin8M5MoYwK7X5gqYZ+HoL0DA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Jacopo Mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Phil,
-
-Thanks for your patch!
-
-On Mon, Nov 19, 2018 at 5:18 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> This fixes the check for unused mdio bus setting and the following static
-> checker warning:
->  drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
->  warn: always true condition '(ipctl->mdio_func[mdio] >= 0) => (0-u32max >= 0)'
->
-> It also fixes the return var when calling of_get_child_count()
-
-I think this should be a separate patch.
-
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-BTW, I have a question about rzn1_pinctrl_mdio_select():
-
-static void rzn1_pinctrl_mdio_select(struct rzn1_pinctrl *ipctl, int mdio,
-                                     u32 func)
-{
-        if (ipctl->mdio_func[mdio] >= 0 && ipctl->mdio_func[mdio] != func)
-                dev_warn(ipctl->dev, "conflicting setting for mdio%d!\n", mdio);
-        ipctl->mdio_func[mdio] = func;
-
-        dev_dbg(ipctl->dev, "setting mdio%d to %u\n", mdio, func);
-
-        writel(func, &ipctl->lev2->l2_mdio[mdio]);
-}
-
-The check warns the user if it overrides an already initialized MDIO function
-with a different value.
-However, there is no method to uninitialize (reset to -1) mdio_func[], to
-avoid getting the warning.
-
-For a use case, I was thinking about a DT overlay that would cause the
-MDIO function to be initialized on loading, and needs to uninitialize the
-MDIO function on removing.
-
-Perhaps that is very unlikely or even impossible, given the function of the
-pins controlled by the MDIO function?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIDIzIE5vdmVtYmVyIDIwMTggMDk6NDEgR2VlcnQgVXl0dGVyaG9ldmVu
+IHdyb3RlOg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBwaW5jdHJsOiByem4xOiBGaXggY2hlY2sg
+Zm9yIHVzZWQgTURJTyBidXMNCj4gT24gTW9uLCBOb3YgMTksIDIwMTggYXQgNToxOCBQTSBQaGls
+IEVkd29ydGh5IHdyb3RlOg0KPiA+IFRoaXMgZml4ZXMgdGhlIGNoZWNrIGZvciB1bnVzZWQgbWRp
+byBidXMgc2V0dGluZyBhbmQgdGhlIGZvbGxvd2luZw0KPiA+IHN0YXRpYyBjaGVja2VyIHdhcm5p
+bmc6DQo+ID4gIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLXJ6bjEuYzoxOTggcnpuMV9waW5jdHJs
+X21kaW9fc2VsZWN0KCkNCj4gPiAgd2FybjogYWx3YXlzIHRydWUgY29uZGl0aW9uICcoaXBjdGwt
+Pm1kaW9fZnVuY1ttZGlvXSA+PSAwKSA9PiAoMC11MzJtYXgNCj4gPj0gMCknDQo+ID4NCj4gPiBJ
+dCBhbHNvIGZpeGVzIHRoZSByZXR1cm4gdmFyIHdoZW4gY2FsbGluZyBvZl9nZXRfY2hpbGRfY291
+bnQoKQ0KPiANCj4gSSB0aGluayB0aGlzIHNob3VsZCBiZSBhIHNlcGFyYXRlIHBhdGNoLg0KT2ss
+IEknbGwgc3BsaXQgdGhlbS4NCg0KDQo+ID4gUmVwb3J0ZWQtYnk6IERhbiBDYXJwZW50ZXIgPGRh
+bi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQaGlsIEVkd29ydGh5
+IDxwaGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPg0KPiANCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5
+dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+IA0KPiBCVFcsIEkgaGF2ZSBh
+IHF1ZXN0aW9uIGFib3V0IHJ6bjFfcGluY3RybF9tZGlvX3NlbGVjdCgpOg0KPiANCj4gc3RhdGlj
+IHZvaWQgcnpuMV9waW5jdHJsX21kaW9fc2VsZWN0KHN0cnVjdCByem4xX3BpbmN0cmwgKmlwY3Rs
+LCBpbnQgbWRpbywNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHUzMiBm
+dW5jKSB7DQo+ICAgICAgICAgaWYgKGlwY3RsLT5tZGlvX2Z1bmNbbWRpb10gPj0gMCAmJiBpcGN0
+bC0+bWRpb19mdW5jW21kaW9dICE9IGZ1bmMpDQo+ICAgICAgICAgICAgICAgICBkZXZfd2Fybihp
+cGN0bC0+ZGV2LCAiY29uZmxpY3Rpbmcgc2V0dGluZyBmb3IgbWRpbyVkIVxuIiwgbWRpbyk7DQo+
+ICAgICAgICAgaXBjdGwtPm1kaW9fZnVuY1ttZGlvXSA9IGZ1bmM7DQo+IA0KPiAgICAgICAgIGRl
+dl9kYmcoaXBjdGwtPmRldiwgInNldHRpbmcgbWRpbyVkIHRvICV1XG4iLCBtZGlvLCBmdW5jKTsN
+Cj4gDQo+ICAgICAgICAgd3JpdGVsKGZ1bmMsICZpcGN0bC0+bGV2Mi0+bDJfbWRpb1ttZGlvXSk7
+IH0NCj4gDQo+IFRoZSBjaGVjayB3YXJucyB0aGUgdXNlciBpZiBpdCBvdmVycmlkZXMgYW4gYWxy
+ZWFkeSBpbml0aWFsaXplZCBNRElPIGZ1bmN0aW9uDQo+IHdpdGggYSBkaWZmZXJlbnQgdmFsdWUu
+DQo+IEhvd2V2ZXIsIHRoZXJlIGlzIG5vIG1ldGhvZCB0byB1bmluaXRpYWxpemUgKHJlc2V0IHRv
+IC0xKSBtZGlvX2Z1bmNbXSwgdG8NCj4gYXZvaWQgZ2V0dGluZyB0aGUgd2FybmluZy4NCj4gDQo+
+IEZvciBhIHVzZSBjYXNlLCBJIHdhcyB0aGlua2luZyBhYm91dCBhIERUIG92ZXJsYXkgdGhhdCB3
+b3VsZCBjYXVzZSB0aGUgTURJTw0KPiBmdW5jdGlvbiB0byBiZSBpbml0aWFsaXplZCBvbiBsb2Fk
+aW5nLCBhbmQgbmVlZHMgdG8gdW5pbml0aWFsaXplIHRoZSBNRElPDQo+IGZ1bmN0aW9uIG9uIHJl
+bW92aW5nLg0KPiANCj4gUGVyaGFwcyB0aGF0IGlzIHZlcnkgdW5saWtlbHkgb3IgZXZlbiBpbXBv
+c3NpYmxlLCBnaXZlbiB0aGUgZnVuY3Rpb24gb2YgdGhlDQo+IHBpbnMgY29udHJvbGxlZCBieSB0
+aGUgTURJTyBmdW5jdGlvbj8NCkkgaGFkbid0IGNvbnNpZGVyZWQgdGhhdCBEVCBvdmVybGF5IHBv
+c3NpYmlsaXR5Li4uDQpTaW5jZSB0aGlzIE1ESU8gbXV4aW5nIHNlbGVjdHMgb25lIG9mIHNldmVy
+YWwgZGlmZmVyZW50IElQIGJsb2NrcyBhcyB0aGUNCk1ESU8gbWFzdGVyLCBJIGd1ZXNzIGl0IGNv
+dWxkIGhhcHBlbi4gSG93ZXZlciwgdGhpcyBpcyBwcmV0dHkgdW5saWtlbHkhDQoNCkkgY2FuJ3Qg
+c2VlIGFueSB3YXkgdmlhIHRoZSBwaW5jdHJsX29wcyBvciBwaW5jb25mX29wcyB0byAndW5kbycg
+YSBwaW4NCnNldHRpbmcsIGhvdyB3b3VsZCB0aGlzIHdvcms/DQpJZiBhIERUIG92ZXJsYXkgY2F1
+c2VzIHJlbW92ZSgpIHRoZW4gcHJvYmUoKSB0byBiZSBjYWxsZWQgYWdhaW4sIHRoZSBkcml2ZXIN
+CnJlc2V0cyBtZGlvX2Z1bmNbXSBpbiBwcm9iZSgpLCBzbyBpdCdsbCB3b3JrLg0KDQpUaGFua3Mh
+DQpQaGlsDQo=
