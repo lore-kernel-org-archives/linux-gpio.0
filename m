@@ -1,293 +1,113 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH] gpiolib-acpi: Only defer request_irq for GpioInt ACPI event handlers
-Date: Mon, 26 Nov 2018 11:42:31 +0100
-Message-ID: <20181126104231.18322-1-hdegoede@redhat.com>
+From: vitor <vitor.soares@synopsys.com>
+Subject: Re: [PATCH] i3c: master: dw: split dw-i3c-master.c into master and
+ bus specific parts
+Date: Mon, 26 Nov 2018 12:06:24 +0000
+Message-ID: <83115f47-1326-cb33-a7dc-4bc8ff95befa@synopsys.com>
+References: <ade2c1a8d1eb48681b01ccdc9bed22caf5e96c4b.1542904564.git.soares@synopsys.com>
+ <20181122210202.6af50fcc@bbrezillon>
+ <6d513e04-3a57-1989-429c-64631101c5a2@synopsys.com>
+ <20181123135004.7fd1cd58@bbrezillon>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181123135004.7fd1cd58@bbrezillon>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>, vitor <vitor.soares@synopsys.com>
+Cc: wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org
 List-Id: linux-gpio@vger.kernel.org
 
-Commit 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event handlers
-from a late_initcall") deferred the entire acpi_gpiochip_request_interrupt
-call for each event resource.
+Hi Boris,
 
-This means it also delays the gpiochip_request_own_desc(..., "ACPI:Event")
-call. This is a problem if some AML code reads the GPIO pin before we
-run the deferred acpi_gpiochip_request_interrupt, because in that case
-acpi_gpio_adr_space_handler() will already have called
-gpiochip_request_own_desc(..., "ACPI:OpRegion") causing the call from
-acpi_gpiochip_request_interrupt to fail with -EBUSY and we will fail to
-register an event handler.
 
-acpi_gpio_adr_space_handler is prepared for acpi_gpiochip_request_interrupt
-already having claimed the pin, but the other way around does not work.
+On 23/11/18 12:50, Boris Brezillon wrote:
+> On Fri, 23 Nov 2018 12:39:31 +0000
+> vitor <vitor.soares@synopsys.com> wrote:
+>
+>> Hi Boris,
+>>
+>>
+>> On 22/11/18 20:02, Boris Brezillon wrote:
+>>> On Thu, 22 Nov 2018 17:54:54 +0000
+>>> Vitor Soares <vitor.soares@synopsys.com> wrote:
+>>>   
+>>>> From: Vitor Soares <soares@synopsys.com>
+>>>>
+>>>> This patch slipts dw-i3c-master.c into three pieces:
+>>>> 	dw-i3c-master.c - contains the code that interacts directly with the
+>>>> 	core in master mode.
+>>>>
+>>>> 	dw-i3c-platdrv.c - contains the code specific to the platform driver.
+>>>>
+>>>> 	dw-i3c-core.h - contains the definitions and declarations shared by
+>>>> 	dw-i3c-master and dw-i3c-platdrv
+>>>>
+>>>> This patch will allow SOC integrators to add their code specific to
+>>>> DesignWare I3C IP.
+>>> Isn't it too early to do this change? Can't we wait until we have a SoC
+>>> that actually embeds this IP?
+>>
+>> I'm trying to turn it more flexible so the other can reuse the code.
+> Looking at the separation you've done here, I don't see why you need
+> it. All the resources you request are generic, so why not just adding a
+> new compat in the of_match_table?
 
-One example of a problem this causes, is the event handler for the OTG
-ID pin on a Prowise PT301 tablet not registering, keeping the port stuck
-in whatever mode it was in during boot and e.g. only allowing charging
-after a reboot.
+I understand your point.
 
-This commit fixes this by only deferring the request_irq call and the
-initial run of edge-triggered IRQs instead of deferring all of
-acpi_gpiochip_request_interrupt.
 
-Cc: stable@vger.kernel.org
-Fixes: 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event ...")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/gpio/gpiolib-acpi.c | 136 +++++++++++++++++++-----------------
- 1 file changed, 73 insertions(+), 63 deletions(-)
+I'm just following what it's done in others Synopsys drivers and what I 
+expect is that in the future we will have the same for the I3C.
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 55b72fbe1631..bda19373835a 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -22,8 +22,12 @@
- struct acpi_gpio_event {
- 	struct list_head node;
- 	acpi_handle handle;
-+	irq_handler_t handler;
- 	unsigned int pin;
- 	unsigned int irq;
-+	unsigned long irqflags;
-+	bool irq_is_wake;
-+	bool irq_requested;
- 	struct gpio_desc *desc;
- };
- 
-@@ -49,10 +53,10 @@ struct acpi_gpio_chip {
- 
- /*
-  * For gpiochips which call acpi_gpiochip_request_interrupts() before late_init
-- * (so builtin drivers) we register the ACPI GpioInt event handlers from a
-+ * (so builtin drivers) we register the ACPI GpioInt irq-handlers from a
-  * late_initcall_sync handler, so that other builtin drivers can register their
-  * OpRegions before the event handlers can run.  This list contains gpiochips
-- * for which the acpi_gpiochip_request_interrupts() has been deferred.
-+ * for which the acpi_gpiochip_request_irqs() call has been deferred.
-  */
- static DEFINE_MUTEX(acpi_gpio_deferred_req_irqs_lock);
- static LIST_HEAD(acpi_gpio_deferred_req_irqs_list);
-@@ -133,8 +137,43 @@ bool acpi_gpio_get_irq_resource(struct acpi_resource *ares,
- }
- EXPORT_SYMBOL_GPL(acpi_gpio_get_irq_resource);
- 
--static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
--						   void *context)
-+static void acpi_gpiochip_request_irq(struct acpi_gpio_chip *acpi_gpio,
-+				      struct acpi_gpio_event *event)
-+{
-+	int ret, value;
-+
-+	ret = request_threaded_irq(event->irq, NULL, event->handler,
-+				   event->irqflags, "ACPI:Event", event);
-+	if (ret) {
-+		dev_err(acpi_gpio->chip->parent,
-+			"Failed to setup interrupt handler for %d\n",
-+			event->irq);
-+		return;
-+	}
-+
-+	if (event->irq_is_wake)
-+		enable_irq_wake(event->irq);
-+
-+	event->irq_requested = true;
-+
-+	/* Make sure we trigger the initial state of edge-triggered IRQs */
-+	value = gpiod_get_raw_value_cansleep(event->desc);
-+	if (((event->irqflags & IRQF_TRIGGER_RISING) && value == 1) ||
-+	    ((event->irqflags & IRQF_TRIGGER_FALLING) && value == 0))
-+		event->handler(event->irq, event);
-+}
-+
-+static void acpi_gpiochip_request_irqs(struct acpi_gpio_chip *acpi_gpio)
-+{
-+	struct acpi_gpio_event *event;
-+
-+	list_for_each_entry(event, &acpi_gpio->events, node)
-+		acpi_gpiochip_request_irq(acpi_gpio, event);
-+}
-+
-+static acpi_status
-+acpi_gpiochip_request_interrupt_desc(struct acpi_resource *ares,
-+				     void *context)
- {
- 	struct acpi_gpio_chip *acpi_gpio = context;
- 	struct gpio_chip *chip = acpi_gpio->chip;
-@@ -143,8 +182,7 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
- 	struct acpi_gpio_event *event;
- 	irq_handler_t handler = NULL;
- 	struct gpio_desc *desc;
--	unsigned long irqflags;
--	int ret, pin, irq, value;
-+	int ret, pin, irq;
- 
- 	if (!acpi_gpio_get_irq_resource(ares, &agpio))
- 		return AE_OK;
-@@ -175,8 +213,6 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
- 
- 	gpiod_direction_input(desc);
- 
--	value = gpiod_get_value_cansleep(desc);
--
- 	ret = gpiochip_lock_as_irq(chip, pin);
- 	if (ret) {
- 		dev_err(chip->parent, "Failed to lock GPIO as interrupt\n");
-@@ -189,64 +225,42 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
- 		goto fail_unlock_irq;
- 	}
- 
--	irqflags = IRQF_ONESHOT;
-+	event = kzalloc(sizeof(*event), GFP_KERNEL);
-+	if (!event)
-+		goto fail_unlock_irq;
-+
-+	event->irqflags = IRQF_ONESHOT;
- 	if (agpio->triggering == ACPI_LEVEL_SENSITIVE) {
- 		if (agpio->polarity == ACPI_ACTIVE_HIGH)
--			irqflags |= IRQF_TRIGGER_HIGH;
-+			event->irqflags |= IRQF_TRIGGER_HIGH;
- 		else
--			irqflags |= IRQF_TRIGGER_LOW;
-+			event->irqflags |= IRQF_TRIGGER_LOW;
- 	} else {
- 		switch (agpio->polarity) {
- 		case ACPI_ACTIVE_HIGH:
--			irqflags |= IRQF_TRIGGER_RISING;
-+			event->irqflags |= IRQF_TRIGGER_RISING;
- 			break;
- 		case ACPI_ACTIVE_LOW:
--			irqflags |= IRQF_TRIGGER_FALLING;
-+			event->irqflags |= IRQF_TRIGGER_FALLING;
- 			break;
- 		default:
--			irqflags |= IRQF_TRIGGER_RISING |
--				    IRQF_TRIGGER_FALLING;
-+			event->irqflags |= IRQF_TRIGGER_RISING |
-+					   IRQF_TRIGGER_FALLING;
- 			break;
- 		}
- 	}
- 
--	event = kzalloc(sizeof(*event), GFP_KERNEL);
--	if (!event)
--		goto fail_unlock_irq;
--
- 	event->handle = evt_handle;
-+	event->handler = handler;
- 	event->irq = irq;
-+	event->irq_is_wake = agpio->wake_capable == ACPI_WAKE_CAPABLE;
- 	event->pin = pin;
- 	event->desc = desc;
- 
--	ret = request_threaded_irq(event->irq, NULL, handler, irqflags,
--				   "ACPI:Event", event);
--	if (ret) {
--		dev_err(chip->parent,
--			"Failed to setup interrupt handler for %d\n",
--			event->irq);
--		goto fail_free_event;
--	}
--
--	if (agpio->wake_capable == ACPI_WAKE_CAPABLE)
--		enable_irq_wake(irq);
--
- 	list_add_tail(&event->node, &acpi_gpio->events);
- 
--	/*
--	 * Make sure we trigger the initial state of the IRQ when using RISING
--	 * or FALLING.  Note we run the handlers on late_init, the AML code
--	 * may refer to OperationRegions from other (builtin) drivers which
--	 * may be probed after us.
--	 */
--	if (((irqflags & IRQF_TRIGGER_RISING) && value == 1) ||
--	    ((irqflags & IRQF_TRIGGER_FALLING) && value == 0))
--		handler(event->irq, event);
--
- 	return AE_OK;
- 
--fail_free_event:
--	kfree(event);
- fail_unlock_irq:
- 	gpiochip_unlock_as_irq(chip, pin);
- fail_free_desc:
-@@ -283,6 +297,9 @@ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip)
- 	if (ACPI_FAILURE(status))
- 		return;
- 
-+	acpi_walk_resources(handle, "_AEI",
-+			    acpi_gpiochip_request_interrupt_desc, acpi_gpio);
-+
- 	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
- 	defer = !acpi_gpio_deferred_req_irqs_done;
- 	if (defer)
-@@ -290,11 +307,8 @@ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip)
- 			 &acpi_gpio_deferred_req_irqs_list);
- 	mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
- 
--	if (defer)
--		return;
--
--	acpi_walk_resources(handle, "_AEI",
--			    acpi_gpiochip_request_interrupt, acpi_gpio);
-+	if (!defer)
-+		acpi_gpiochip_request_irqs(acpi_gpio);
- }
- EXPORT_SYMBOL_GPL(acpi_gpiochip_request_interrupts);
- 
-@@ -331,10 +345,13 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
- 	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio->events, node) {
- 		struct gpio_desc *desc;
- 
--		if (irqd_is_wakeup_set(irq_get_irq_data(event->irq)))
--			disable_irq_wake(event->irq);
-+		if (event->irq_requested) {
-+			if (event->irq_is_wake)
-+				disable_irq_wake(event->irq);
-+
-+			free_irq(event->irq, event);
-+		}
- 
--		free_irq(event->irq, event);
- 		desc = event->desc;
- 		if (WARN_ON(IS_ERR(desc)))
- 			continue;
-@@ -1200,23 +1217,16 @@ bool acpi_can_fallback_to_crs(struct acpi_device *adev, const char *con_id)
- 	return con_id == NULL;
- }
- 
--/* Run deferred acpi_gpiochip_request_interrupts() */
--static int acpi_gpio_handle_deferred_request_interrupts(void)
-+/* Run deferred acpi_gpiochip_request_irqs() */
-+static int acpi_gpio_handle_deferred_request_irqs(void)
- {
- 	struct acpi_gpio_chip *acpi_gpio, *tmp;
- 
- 	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
- 	list_for_each_entry_safe(acpi_gpio, tmp,
- 				 &acpi_gpio_deferred_req_irqs_list,
--				 deferred_req_irqs_list_entry) {
--		acpi_handle handle;
--
--		handle = ACPI_HANDLE(acpi_gpio->chip->parent);
--		acpi_walk_resources(handle, "_AEI",
--				    acpi_gpiochip_request_interrupt, acpi_gpio);
--
--		list_del_init(&acpi_gpio->deferred_req_irqs_list_entry);
--	}
-+				 deferred_req_irqs_list_entry)
-+		acpi_gpiochip_request_irqs(acpi_gpio);
- 
- 	acpi_gpio_deferred_req_irqs_done = true;
- 	mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
-@@ -1224,4 +1234,4 @@ static int acpi_gpio_handle_deferred_request_interrupts(void)
- 	return 0;
- }
- /* We must use _sync so that this runs after the first deferred_probe run */
--late_initcall_sync(acpi_gpio_handle_deferred_request_interrupts);
-+late_initcall_sync(acpi_gpio_handle_deferred_request_irqs);
--- 
-2.19.1
+Some of the current generic functions might be override according with 
+SoC requirements (e.g i2c-designware, pcie-designware).
+
+
+for now what do you prefer?
+
+>>
+>>>   
+>>>> Signed-off-by: Vitor Soares <soares@synopsys.com>
+>>>> ---
+>>>>    drivers/i3c/master/Kconfig          |   9 +-
+>>>>    drivers/i3c/master/Makefile         |   5 +-
+>>>>    drivers/i3c/master/dw-i3c-core.h    | 214 ++++++++++++++++++++++++++
+>>>>    drivers/i3c/master/dw-i3c-master.c  | 299 ++----------------------------------
+>>>>    drivers/i3c/master/dw-i3c-platdrv.c | 112 ++++++++++++++
+> Just realized the driver is named dw-i3c-master, while the cadence
+> driver is named i3c-master-cdns.c. I'll send a patch to make that
+> consistent and follow the initial naming scheme: i3c-master-<ipname>.c.
+
+As I shared with you in previous email, the structure that I have in 
+mind is this one:
+
+- core.h (or common.h, any though?)
+
+- common.c
+
+- master.c
+
+- slave.c
+
+
+so for me doesn't make sense to have for instance: i3c-master-dw-slave.c
+
+But seeing what is already in the kernel I wasn't coherent and it should 
+be named to i3c-designware-master.c
+
+
+or
+
+
+follow this https://lkml.org/lkml/2017/7/12/430
+
+
+This topic rise another one related with the master folder. I understand 
+that now the subsystem doesn't have slave support but the name is 
+limited. Isn't better to have something like controller or busses? What 
+do you have in mind for the slave?
+
+
+Best regards,
+
+Vitor Soares
