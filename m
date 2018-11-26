@@ -1,112 +1,85 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH] gpiolib-acpi: Only defer request_irq for GpioInt ACPI
- event handlers
-Date: Mon, 26 Nov 2018 14:46:29 +0100
-Message-ID: <7c97b88a-4999-217a-d961-c481582af684@redhat.com>
-References: <20181126104231.18322-1-hdegoede@redhat.com>
- <20181126125355.GE10650@smile.fi.intel.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 4/6] DEV: CLK: add function to check the
+ using clock name of driver.
+Date: Mon, 26 Nov 2018 16:26:37 +0100
+Message-ID: <20181126152637.GB19710@ulmo>
+References: <20181125162118.GA5358@arx-s1>
+Reply-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20181126125355.GE10650@smile.fi.intel.com>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, stable@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
+Return-path: <linux-sunxi+bncBDTKFPPJUEHRBMFB6DPQKGQEXWYIPOY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20181125162118.GA5358@arx-s1>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
 
-On 26-11-18 13:53, Andy Shevchenko wrote:
-> On Mon, Nov 26, 2018 at 11:42:31AM +0100, Hans de Goede wrote:
->> Commit 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event handlers
->> from a late_initcall") deferred the entire acpi_gpiochip_request_interrupt
->> call for each event resource.
->>
->> This means it also delays the gpiochip_request_own_desc(..., "ACPI:Event")
->> call. This is a problem if some AML code reads the GPIO pin before we
->> run the deferred acpi_gpiochip_request_interrupt, because in that case
->> acpi_gpio_adr_space_handler() will already have called
->> gpiochip_request_own_desc(..., "ACPI:OpRegion") causing the call from
->> acpi_gpiochip_request_interrupt to fail with -EBUSY and we will fail to
->> register an event handler.
->>
->> acpi_gpio_adr_space_handler is prepared for acpi_gpiochip_request_interrupt
->> already having claimed the pin, but the other way around does not work.
->>
->> One example of a problem this causes, is the event handler for the OTG
->> ID pin on a Prowise PT301 tablet not registering, keeping the port stuck
->> in whatever mode it was in during boot and e.g. only allowing charging
->> after a reboot.
->>
->> This commit fixes this by only deferring the request_irq call and the
->> initial run of edge-triggered IRQs instead of deferring all of
->> acpi_gpiochip_request_interrupt.
-> 
-> Thanks for a patch with such nice description.
-> I have couple of nitpicks and one question below.
-> 
-> 
->>    * For gpiochips which call acpi_gpiochip_request_interrupts() before late_init
->> - * (so builtin drivers) we register the ACPI GpioInt event handlers from a
->> + * (so builtin drivers) we register the ACPI GpioInt irq-handlers from a
-> 
-> I would rather spell "IRQ handlers"
+--7iMSBzlTiPOCCT2k
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 
-Ok.
+On Mon, Nov 26, 2018 at 12:21:18AM +0800, Hao Zhang wrote:
+> In some situation we want to check clock whether is we want
+> and after the driver been probed use to change different clock source.
+> 
+> Signed-off-by: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/clk/clk.c            | 6 ++++++
+>  include/linux/clk-provider.h | 1 +
+>  2 files changed, 7 insertions(+)
 
->>    * late_initcall_sync handler, so that other builtin drivers can register their
->>    * OpRegions before the event handlers can run.  This list contains gpiochips
->> - * for which the acpi_gpiochip_request_interrupts() has been deferred.
->> + * for which the acpi_gpiochip_request_irqs() call has been deferred.
-> 
->>   	mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
->>   
->> -	if (defer)
->> -		return;
->> -
->> -	acpi_walk_resources(handle, "_AEI",
->> -			    acpi_gpiochip_request_interrupt, acpi_gpio);
->> +	if (!defer)
->> +		acpi_gpiochip_request_irqs(acpi_gpio);
-> 
-> Can we leave above condition and put here just
+This doesn't seem right. If you're going to change to to a different
+clock source anyway, why would you even want to know what it was set
+before that? Isn't that completely irrelevant?
 
-Ok.
+But if you really need this, perhaps a combination of clk_get() and
+clk_is_match() would be a better approach? Perhaps best to let Mike
+and Stephen share their feelings about this kind of API.
 
-> 	acpi_gpiochip_request_irqs(acpi_gpio);
-> 
-> ?
-> 
->>   	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio->events, node) {
->>   		struct gpio_desc *desc;
->>   
->> +		if (event->irq_requested) {
->> +			if (event->irq_is_wake)
->> +				disable_irq_wake(event->irq);
->> +
->> +			free_irq(event->irq, event);
->> +		}
->>   
-> 
-> 
->>   		desc = event->desc;
->>   		if (WARN_ON(IS_ERR(desc)))
-> 
-> I don't remember if I asked already about possible memory leak here.
-> Am I reading code right?
-> 
->>   			continue;
-> 
-> Reading more code, I'm even not sure if this condition could ever happen.
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index d31055a..3d2c2cd 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3466,6 +3466,12 @@ static int devm_clk_hw_match(struct device *dev, void *res, void *data)
+>  	return hw == data;
+>  }
+>  
+> +bool devm_clk_name_match(struct clk *clk, const char *string)
+> +{
+> +	return match_string(&clk->con_id, 1, string) == 0;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_clk_name_match);
 
-You're right an event with an IS_ERR(desc) is never added to the list
-of events, so this condition can never happen. I will add a follow up
-patch to v2 removing this unnecessary check.
+Also, there's nothing about this that would be device-managed, so the
+devm_ prefix on the function name is misleading.
 
-I will prepare a v2 of this patch this evening or tomorrow.
+>  /**
+>   * devm_clk_unregister - resource managed clk_unregister()
+>   * @clk: clock to unregister
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 08b1aa7..5cd2eed 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -764,6 +764,7 @@ struct clk *devm_clk_register(struct device *dev, struct clk_hw *hw);
+>  int __must_check clk_hw_register(struct device *dev, struct clk_hw *hw);
+>  int __must_check devm_clk_hw_register(struct device *dev, struct clk_hw *hw);
+>  
+> +bool devm_clk_name_match(struct clk *clk, const char *string);
+>  void clk_unregister(struct clk *clk);
+>  void devm_clk_unregister(struct device *dev, struct clk *clk);
 
-Regards,
+You use this from clock consumers, so clk-provider.h is not the right
+place for it. Also, you'll want to add a dummy implementation for the
+case where CONFIG_COMMON_CLK is not set.
 
-Hans
+Thierry
+--7iMSBzlTiPOCCT2k--
