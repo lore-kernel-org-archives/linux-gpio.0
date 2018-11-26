@@ -1,29 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: restore original GPLv2+ license of gpiolib-of.c sources
-Date: Mon, 26 Nov 2018 00:04:02 +0100
-Message-ID: <CACRpkdYROOnn03WbqTf+8X_JKWbT9yXHLFkzr-fsJoBr5sUmEQ@mail.gmail.com>
-References: <20181122135901.31849-1-vz@mleia.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] MAINTAINERS: remove a duplicate entry for gpio-mockup
+Date: Mon, 26 Nov 2018 09:15:58 +0100
+Message-ID: <20181126081558.32175-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181122135901.31849-1-vz@mleia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 2:59 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> It's easy to verify that the change of drivers/gpio/gpiolib-of.c license
-> header to SPDX standard changes the license from GPLv2+ to GPLv2, and
-> this change corrects it.
->
-> Fixes: dae5f0afcfc3 ("gpio: Use SPDX header for core library")
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+I'll be getting all GPIO e-mail now, so remove my name from reviewers
+of gpio-mockup.
 
-Whoops my mistake.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-Patch applied!
-
-Yours,
-Linus Walleij
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 380e43f585d3..021c73808212 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6299,7 +6299,6 @@ F:	drivers/media/rc/gpio-ir-tx.c
+ 
+ GPIO MOCKUP DRIVER
+ M:	Bamvor Jian Zhang <bamv2005@gmail.com>
+-R:	Bartosz Golaszewski <brgl@bgdev.pl>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	drivers/gpio/gpio-mockup.c
+-- 
+2.19.1
