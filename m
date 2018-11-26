@@ -1,36 +1,25 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH] MAINTAINERS: remove a duplicate entry for gpio-mockup
-Date: Mon, 26 Nov 2018 09:15:58 +0100
-Message-ID: <20181126081558.32175-1-brgl@bgdev.pl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: dwapb: Correct the DT node name in the example
+Date: Mon, 26 Nov 2018 09:42:50 +0100
+Message-ID: <CACRpkdbaWRTiA5=Ost7TUWRuf5fT3UK9wz8kTf_g3jqZjB8Zfg@mail.gmail.com>
+References: <20181120111709.22128-1-phil.edworthy@renesas.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181120111709.22128-1-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Hoan Tran <hotran@apm.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Nov 20, 2018 at 12:17 PM Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
 
-I'll be getting all GPIO e-mail now, so remove my name from reviewers
-of gpio-mockup.
+> The sub-nodes should not be called gpio-controller, but simply gpio.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+Patch applied.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 380e43f585d3..021c73808212 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6299,7 +6299,6 @@ F:	drivers/media/rc/gpio-ir-tx.c
- 
- GPIO MOCKUP DRIVER
- M:	Bamvor Jian Zhang <bamv2005@gmail.com>
--R:	Bartosz Golaszewski <brgl@bgdev.pl>
- L:	linux-gpio@vger.kernel.org
- S:	Maintained
- F:	drivers/gpio/gpio-mockup.c
--- 
-2.19.1
+Yours,
+Linus Walleij
