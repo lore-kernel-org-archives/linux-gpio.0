@@ -1,66 +1,66 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v3 1/6] Documentation: ARM: sunxi: pwm: add Allwinner
- sun8i.
-Date: Tue, 27 Nov 2018 08:04:18 +0100
-Message-ID: <20181127070418.khdi4wslyv4lmngv@pengutronix.de>
-References: <20181125161859.GA5277@arx-s1>
+From: Sean Wang <sean.wang@kernel.org>
+Subject: Re: [PATCH 1/2] gpio: mt7621: report failure of devm_kasprintf()
+Date: Mon, 26 Nov 2018 23:20:53 -0800
+Message-ID: <CAGp9LzqF7odHdOk85Z=iVG2ecuDcKXwod=9r0Kh2CDeZWZiK=g@mail.gmail.com>
+References: <1542823573-20228-1-git-send-email-hofrat@osadl.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181125161859.GA5277@arx-s1>
+In-Reply-To: <1542823573-20228-1-git-send-email-hofrat@osadl.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hao Zhang <hao5781286@gmail.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org, mturquette@baylibre.com, sboyd@kernel.org, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
+To: hofrat@osadl.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, sergio.paracuellos@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, bgolaszewski@baylibre.com, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hello,
+Nicholas Mc Guire <hofrat@osadl.org> =E6=96=BC 2018=E5=B9=B411=E6=9C=8821=
+=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=8810:13=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> kasprintf() may return NULL on failure of internal allocation thus the
+> assigned  label  is not safe if not explicitly checked. On error
+> mediatek_gpio_bank_probe() returns negative values so -ENOMEM in the
+> (unlikely) failure case should be fine here.
+>
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
 
-On Mon, Nov 26, 2018 at 12:18:59AM +0800, Hao Zhang wrote:
-> This patch adds Allwinner sun8i pwm binding document.
-> 
-> Signed-off-by: Hao Zhang <hao5781286@gmail.com>
+Acked-by: Sean Wang <sean.wang@kernel.org>
+
+> Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
 > ---
->  .../devicetree/bindings/pwm/pwm-sun8i.txt          | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> new file mode 100644
-> index 0000000..7531d85
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> @@ -0,0 +1,24 @@
-> +Allwinner sun8i R40/V40/T3 SoC PWM controller
-> +
-> +Required properties:
-> +  - compatible: Should be one of:
-> +    - "allwinner,sun8i-r40-pwm"
-> +  - reg: Physical base address and length of the controller's registers
-> +  - interrupts: Should contain interrupt.
-> +  - clocks: From common clock binding, handle to the parent clock.
-> +  - clock-names: Must contain the clock names described just above.
-> +  - pwm-channels: PWM channels of the controller.
-> +  - #pwm-cells: Should be 3. See pwm.txt in this directory for a description of
-> +    the cells format.
-
-I wonder why "interrupts" is needed here. I guess this is only needed
-for waveform capture? Is this only "optional"? The driver doesn't use
-it.
-
-Apart from this interrupts property this is all pretty standard and I
-wonder if we could merge several documents into one.
-
-For example Documentation/devicetree/bindings/pwm/pwm-st.txt looks
-identically apart from "pwm-channels" being called "st,pwm-num-chan"
-there. (It even has an interrupts property. Should the st driver move to
-"pwm-channels", too?)
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+>
+> V2: The dev_err() for the unlikely case of the devm_kasprintf()
+>     failing was removed on request from Bartosz Golaszewski
+>     <bgolaszewski@baylibre.com>
+>
+> Problem located with experimental coccinelle script
+>
+> Patch was compile tested with: omega2p_defconfig, SOC_MT7621=3Dy,
+> GPIOLIB=3Dy, GPIO_MT7621=3Dy
+>
+> Patch is against 4.20-rc3 (localversion-next is next-20181121)
+>
+>  drivers/gpio/gpio-mt7621.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+> index d72af6f..1ec95bc 100644
+> --- a/drivers/gpio/gpio-mt7621.c
+> +++ b/drivers/gpio/gpio-mt7621.c
+> @@ -244,6 +244,8 @@ mediatek_gpio_bank_probe(struct device *dev,
+>         rg->chip.of_xlate =3D mediatek_gpio_xlate;
+>         rg->chip.label =3D devm_kasprintf(dev, GFP_KERNEL, "%s-bank%d",
+>                                         dev_name(dev), bank);
+> +       if (!rg->chip.label)
+> +               return -ENOMEM;
+>
+>         ret =3D devm_gpiochip_add_data(dev, &rg->chip, mtk);
+>         if (ret < 0) {
+> --
+> 2.1.4
+>
+>
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
