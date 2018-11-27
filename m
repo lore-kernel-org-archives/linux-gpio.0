@@ -1,76 +1,47 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v5 3/8] clk: lochnagar: Add initial binding documentation
-Date: Tue, 27 Nov 2018 09:34:24 +0000
-Message-ID: <20181127093424.GR16508@imbe.wolfsonmicro.main>
-References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
- <20181120141631.18949-3-ckeepax@opensource.cirrus.com>
- <20181126201645.GA2094@bogus>
+From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFC PATCH v4 05/17] irqchip/sun4i: Add a struct to
+ hold global variables
+Date: Tue, 27 Nov 2018 10:48:14 +0100
+Message-ID: <20181127094814.zxv5ovgw2xhfe5vh@flea>
+References: <cover.1543131714.git.mesihkilinc@gmail.com>
+ <2904a51d360af76765eccfb3b963a867a06a14ee.1543131714.git.mesihkilinc@gmail.com>
+Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="c5zxhz2sc4rhe6ig"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBB6VF6TPQKGQE4KWNGDQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Content-Disposition: inline
-In-Reply-To: <20181126201645.GA2094@bogus>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+In-Reply-To: <2904a51d360af76765eccfb3b963a867a06a14ee.1543131714.git.mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 02:16:45PM -0600, Rob Herring wrote:
-> On Tue, Nov 20, 2018 at 02:16:26PM +0000, Charles Keepax wrote:
-> > Lochnagar is an evaluation and development board for Cirrus
-> > Logic Smart CODEC and Amp devices. It allows the connection of
-> > most Cirrus Logic devices on mini-cards, as well as allowing
-> > connection of various application processor systems to provide a
-> > full evaluation platform. This driver supports the board
-> > controller chip on the Lochnagar board.
-> > 
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> > ---
-> > +  - compatible : One of the following strings:
-> > +                 "cirrus,lochnagar1-clk"
-> > +                 "cirrus,lochnagar2-clk"
+
+--c5zxhz2sc4rhe6ig
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+
+On Sun, Nov 25, 2018 at 10:43:08AM +0300, Mesih Kilinc wrote:
+> In order to support different chips, IC specific data should be hold in
+> a struct. This patch moves irq_base and irq_domain global variables to
+> struct.
 > 
-> What's the 1 vs. 2?
-> 
+> Signed-off-by: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-There are two versions of the device, we need to be able to
-differenciate between them in the driver.
+Acked-by: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
 
-> > +     - ln-pmic-32k : On board fixed regulator.
-> 
-> regulator?
+Thanks!
+Maxime
 
-Well that is a spectacular copy and paste oversight sorry about
-that will get it fixed up.
-
-> 
-> > +     - ln-clk-12m : On board fixed regulator.
-> > +     - ln-clk-11m : On board fixed regulator.
-> > +     - ln-clk-24m : On board fixed regulator.
-> > +     - ln-clk-22m : On board fixed regulator.
-> > +     - ln-usb-clk-24m : On board fixed regulator.
-> > +     - ln-usb-clk-12m : On board fixed regulator.
-
-> > +lochnagar-clk {
-> > +	compatible = "cirrus,lochnagar2-clk";
-> > +
-> > +	#clock-cells = <1>;
-> > +
-> > +	clocks = <&clk-audio>, <&clk_pmic>;
-> > +	clock-names = "ln-gf-mclk2", "ln-pmic-32k";
-> > +
-> > +	assigned-clocks = <&lochnagar-clk LOCHNAGAR_CDC_MCLK1>,
-> > +			  <&lochnagar-clk LOCHNAGAR_CDC_MCLK2>;
-> > +	assigned-clock-parents = <&clk-audio>,
-> > +				 <&clk-pmic>;
-> > +
-> > +	clk-pmic: clk-pmic {
-> 
-> This isn't really any relationship to the parent and I think shouldn't 
-> be a sub-node.
-> 
-
-Yeah sorry that is a good point will move it out.
-
-Thanks,
-Charles
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+--c5zxhz2sc4rhe6ig--
