@@ -1,78 +1,76 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Subject: Re: [PATCH 2/2] gpio: mt7621: pass mediatek_gpio_bank_probe()
- failure up the stack
-Date: Tue, 27 Nov 2018 09:37:23 +0100
-Message-ID: <20181127083722.GA7641@osadl.at>
-References: <1542823573-20228-1-git-send-email-hofrat@osadl.org>
- <1542823573-20228-2-git-send-email-hofrat@osadl.org>
- <CAGp9LzoT7ueXyyVSYQdWOU0JkQDWMVcwCuSE3gJnEn0fLLjCBA@mail.gmail.com>
- <20181127080113.GA2426@osadl.at>
- <CAGp9LzoNKmJvTccQd7Syi_XMew4Mhf_tXsMAAZ+asE5btH9Dag@mail.gmail.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH v5 3/8] clk: lochnagar: Add initial binding documentation
+Date: Tue, 27 Nov 2018 09:34:24 +0000
+Message-ID: <20181127093424.GR16508@imbe.wolfsonmicro.main>
+References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
+ <20181120141631.18949-3-ckeepax@opensource.cirrus.com>
+ <20181126201645.GA2094@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAGp9LzoNKmJvTccQd7Syi_XMew4Mhf_tXsMAAZ+asE5btH9Dag@mail.gmail.com>
+In-Reply-To: <20181126201645.GA2094@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@kernel.org>
-Cc: bgolaszewski@baylibre.com, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, sergio.paracuellos@gmail.com, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, hofrat@osadl.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 12:32:59AM -0800, Sean Wang wrote:
-> >
-> > On Mon, Nov 26, 2018 at 11:49:26PM -0800, Sean Wang wrote:
-> > > Nicholas Mc Guire <hofrat@osadl.org> ??? 2018???11???21??? ?????? ??????10:13?????????
-> > > >
-> > > > The error cases of mediatek_gpio_bank_probe() would go unnoticed (except
-> > > > for the dev_err() messages). The probe function should return an error
-> > > > if one of the banks failed to initialize properly.
-> > > >
-> > > > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> > > > Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
-> > > > ---
-> > > >
-> > > > Patch was compile tested with: omega2p_defconfig, SOC_MT7621=y,
-> > > > GPIOLIB=y, GPIO_MT7621=y
-> > > >
-> > > > Patch is against 4.20-rc3 (localversion-next is next-20181121)
-> > > >
-> > > >  drivers/gpio/gpio-mt7621.c | 8 ++++++--
-> > > >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
-> > > > index 1ec95bc..68fca8b 100644
-> > > > --- a/drivers/gpio/gpio-mt7621.c
-> > > > +++ b/drivers/gpio/gpio-mt7621.c
-> > > > @@ -297,6 +297,7 @@ mediatek_gpio_probe(struct platform_device *pdev)
-> > > >         struct device_node *np = dev->of_node;
-> > > >         struct mtk *mtk;
-> > > >         int i;
-> > > > +       int ret;
-> > > >
-> > > >         mtk = devm_kzalloc(dev, sizeof(*mtk), GFP_KERNEL);
-> > > >         if (!mtk)
-> > > > @@ -311,8 +312,11 @@ mediatek_gpio_probe(struct platform_device *pdev)
-> > > >         platform_set_drvdata(pdev, mtk);
-> > > >         mediatek_gpio_irq_chip.name = dev_name(dev);
-> > > >
-> > > > -       for (i = 0; i < MTK_BANK_CNT; i++)
-> > > > -               mediatek_gpio_bank_probe(dev, np, i);
-> > > > +       for (i = 0; i < MTK_BANK_CNT; i++) {
-> > > > +               ret = mediatek_gpio_bank_probe(dev, np, i);
-> > > > +               if (!ret)
-> > >
-> > > it should be if (ret < 0) ?
-> >
-> > I don´t think so mediatek_gpio_bank_probe() returns 0 on success
-> > and all other returns are error paths - while the current code
-> > only returns negative values I do thik that any non 0 would be
-> > an error indication so !ret should be fine here.
-> >
-> !0 would be true
->
-...sorry - stupid me - thanks for catching that !
+On Mon, Nov 26, 2018 at 02:16:45PM -0600, Rob Herring wrote:
+> On Tue, Nov 20, 2018 at 02:16:26PM +0000, Charles Keepax wrote:
+> > Lochnagar is an evaluation and development board for Cirrus
+> > Logic Smart CODEC and Amp devices. It allows the connection of
+> > most Cirrus Logic devices on mini-cards, as well as allowing
+> > connection of various application processor systems to provide a
+> > full evaluation platform. This driver supports the board
+> > controller chip on the Lochnagar board.
+> > 
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> > ---
+> > +  - compatible : One of the following strings:
+> > +                 "cirrus,lochnagar1-clk"
+> > +                 "cirrus,lochnagar2-clk"
+> 
+> What's the 1 vs. 2?
+> 
 
-thx!
-hofrat
- 
+There are two versions of the device, we need to be able to
+differenciate between them in the driver.
+
+> > +     - ln-pmic-32k : On board fixed regulator.
+> 
+> regulator?
+
+Well that is a spectacular copy and paste oversight sorry about
+that will get it fixed up.
+
+> 
+> > +     - ln-clk-12m : On board fixed regulator.
+> > +     - ln-clk-11m : On board fixed regulator.
+> > +     - ln-clk-24m : On board fixed regulator.
+> > +     - ln-clk-22m : On board fixed regulator.
+> > +     - ln-usb-clk-24m : On board fixed regulator.
+> > +     - ln-usb-clk-12m : On board fixed regulator.
+
+> > +lochnagar-clk {
+> > +	compatible = "cirrus,lochnagar2-clk";
+> > +
+> > +	#clock-cells = <1>;
+> > +
+> > +	clocks = <&clk-audio>, <&clk_pmic>;
+> > +	clock-names = "ln-gf-mclk2", "ln-pmic-32k";
+> > +
+> > +	assigned-clocks = <&lochnagar-clk LOCHNAGAR_CDC_MCLK1>,
+> > +			  <&lochnagar-clk LOCHNAGAR_CDC_MCLK2>;
+> > +	assigned-clock-parents = <&clk-audio>,
+> > +				 <&clk-pmic>;
+> > +
+> > +	clk-pmic: clk-pmic {
+> 
+> This isn't really any relationship to the parent and I think shouldn't 
+> be a sub-node.
+> 
+
+Yeah sorry that is a good point will move it out.
+
+Thanks,
+Charles
