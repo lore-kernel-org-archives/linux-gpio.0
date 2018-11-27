@@ -1,199 +1,132 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v3 6/6] ARM: PWM: add allwinner sun8i R40/T3/V40 PWM
- support.
-Date: Tue, 27 Nov 2018 11:33:54 +0100
-Message-ID: <20181127103354.mdisx2qy42faep3s@pengutronix.de>
-References: <20181125162319.GA5422@arx-s1>
- <20181126213158.q5m5bbwnmewud2gb@pengutronix.de>
+From: vitor <vitor.soares@synopsys.com>
+Subject: Re: [PATCH] i3c: master: dw: split dw-i3c-master.c into master and
+ bus specific parts
+Date: Tue, 27 Nov 2018 11:50:53 +0000
+Message-ID: <0912ea50-b365-d583-9d33-1dff236acbad@synopsys.com>
+References: <ade2c1a8d1eb48681b01ccdc9bed22caf5e96c4b.1542904564.git.soares@synopsys.com>
+ <20181122210202.6af50fcc@bbrezillon>
+ <6d513e04-3a57-1989-429c-64631101c5a2@synopsys.com>
+ <20181123135004.7fd1cd58@bbrezillon>
+ <83115f47-1326-cb33-a7dc-4bc8ff95befa@synopsys.com>
+ <20181126133550.51469816@bbrezillon>
+ <4e9c0461-02a3-80b2-c9b7-2e9ea9b38f8b@synopsys.com>
+ <20181126195618.352eafb1@bbrezillon>
+ <4c743a9a-d636-d34c-b7e3-913f18e6c754@synopsys.com>
+ <20181126223334.08105d89@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181126213158.q5m5bbwnmewud2gb@pengutronix.de>
+In-Reply-To: <20181126223334.08105d89@bbrezillon>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hao Zhang <hao5781286@gmail.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org, mturquette@baylibre.com, sboyd@kernel.org, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
+To: Boris Brezillon <boris.brezillon@bootlin.com>, vitor <vitor.soares@synopsys.com>
+Cc: wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hello,
+Hi Boris
 
-On Mon, Nov 26, 2018 at 10:31:58PM +0100, Uwe Kleine-König wrote:
-> On Mon, Nov 26, 2018 at 12:23:19AM +0800, Hao Zhang wrote:
-> > The sun8i R40/T3/V40 PWM has 8 PWM channals and divides to 4 PWM pairs,
-> > each PWM pair built-in 1 clock module, 2 timer logic module and 1
-> > programmable dead-time generator, it also support waveform capture.
-> > It has 2 clock sources OSC24M and APB1, it is different with the
-> > sun4i-pwm driver, Therefore add a new driver for it.
-> > 
-> > Signed-off-by: Hao Zhang <hao5781286@gmail.com>
-> > ---
-> >  drivers/pwm/Kconfig     |  12 +-
-> >  drivers/pwm/Makefile    |   1 +
-> >  drivers/pwm/pwm-sun8i.c | 418 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 430 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/pwm/pwm-sun8i.c
-> > 
-> > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> > index 504d252..6105ac8 100644
-> > --- a/drivers/pwm/Kconfig
-> > +++ b/drivers/pwm/Kconfig
-> > @@ -426,7 +426,7 @@ config PWM_STMPE
-> >  	  expanders.
-> >  
-> >  config PWM_SUN4I
-> > -	tristate "Allwinner PWM support"
-> > +	tristate "Allwinner SUN4I PWM support"
-> >  	depends on ARCH_SUNXI || COMPILE_TEST
-> >  	depends on HAS_IOMEM && COMMON_CLK
-> >  	help
-> > @@ -435,6 +435,16 @@ config PWM_SUN4I
-> >  	  To compile this driver as a module, choose M here: the module
-> >  	  will be called pwm-sun4i.
-> >  
-> > +config PWM_SUN8I
-> > +	tristate "Allwinner SUN8I (R40/V40/T3) PWM support"
-> > +	depends on ARCH_SUNXI || COMPILE_TEST
-> > +	depends on HAS_IOMEM && COMMON_CLK
-> > +	help
-> > +	  Generic PWM framework driver for Allwinner R40/V40/T3 SoCs.
-> > +
-> > +	  To compile this driver as a module, choose M here: the module
-> > +	  will be called pwm-sun8i.
-> > +
-> >  config PWM_TEGRA
-> >  	tristate "NVIDIA Tegra PWM support"
-> >  	depends on ARCH_TEGRA
-> > diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> > index 9c676a0..32c8d2d 100644
-> > --- a/drivers/pwm/Makefile
-> > +++ b/drivers/pwm/Makefile
-> > @@ -43,6 +43,7 @@ obj-$(CONFIG_PWM_STM32)		+= pwm-stm32.o
-> >  obj-$(CONFIG_PWM_STM32_LP)	+= pwm-stm32-lp.o
-> >  obj-$(CONFIG_PWM_STMPE)		+= pwm-stmpe.o
-> >  obj-$(CONFIG_PWM_SUN4I)		+= pwm-sun4i.o
-> > +obj-$(CONFIG_PWM_SUN8I)		+= pwm-sun8i.o
-> >  obj-$(CONFIG_PWM_TEGRA)		+= pwm-tegra.o
-> >  obj-$(CONFIG_PWM_TIECAP)	+= pwm-tiecap.o
-> >  obj-$(CONFIG_PWM_TIEHRPWM)	+= pwm-tiehrpwm.o
-> > diff --git a/drivers/pwm/pwm-sun8i.c b/drivers/pwm/pwm-sun8i.c
-> > new file mode 100644
-> > index 0000000..d8597e4
-> > --- /dev/null
-> > +++ b/drivers/pwm/pwm-sun8i.c
-> > @@ -0,0 +1,418 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +// Copyright (C) 2018 Hao Zhang <hao5781286@gmail.com>
+On 26/11/18 21:33, Boris Brezillon wrote:
+> On Mon, 26 Nov 2018 20:11:39 +0000
+> vitor <vitor.soares@synopsys.com> wrote:
+>
+> Look at the bus discovery mechanism, the notion of DCR (close to the
+> concept of USB class), or the fact that each dev has a unique
+> manufacturer+PID pair (which resemble the product/vendor ID concept)
+> that allows us to easily bind a dev to a driver without requiring a
+> static description.
 
-Given that the documentation is publically available, I suggest to add a
-link to it in a comment here.
-(http://linux-sunxi.org/File:Allwinner_R40_User_Manual_V1.0.pdf)
 
-> > +	/* calculate and set prescaler, div table, PWM entire cycle */
-> > +	clk_div = val;
-> > +	while (clk_div > 65535) {
-> > +		prescaler++;
-> > +		clk_div = val;
-> > +		do_div(clk_div, 1U << div_id);
-> > +		do_div(clk_div, prescaler + 1);
-> > +
-> > +		if (prescaler == 255) {
-> > +			prescaler = 0;
-> > +			div_id++;
-> > +			if (div_id == 9) {
-> > +				dev_err(sun8i_pwm->chip.dev,
-> > +					"unsupport period value\n");
-> > +				return -EINVAL;
-> > +			}
-> > +		}
-> > +	}
-> 
-> Noting the underlying formula for the calculation and the bitwidth for
-> the related register fields above would be good.
-> 
-> > +
-> > +	sun8i_pwm_set_value(sun8i_pwm, PWM_PERIOD_REG(ch),
-> > +			    PWM_ENTIRE_CYCLE, clk_div << 16);
-> > +	sun8i_pwm_set_value(sun8i_pwm, PWM_CTR_REG(ch),
-> > +			    PWM_PRESCAL_K, prescaler << 0);
-> > +	sun8i_pwm_set_value(sun8i_pwm, CLK_CFG_REG(ch),
-> > +			    CLK_DIV_M, div_id << 0);
-> > +
-> > +	/* set duty cycle */
-> > +	val = state->period;
-> > +	do_div(val, clk_div);
-> > +	clk_div = state->duty_cycle;
-> > +	do_div(clk_div, val);
-> > +	if (clk_div > 65535)
-> > +		clk_div = 65535;
-> > +
-> > +	sun8i_pwm_set_value(sun8i_pwm, PWM_PERIOD_REG(ch),
-> > +			    PWM_ACT_CYCLE, clk_div << 0);
-> 
-> Why "<< 0"?
-> 
-> > +	return 0;
-> > +}
-> > +
-> > +static int sun8i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> > +			   struct pwm_state *state)
-> > +{
-> > +	int ret;
-> > +	struct sun8i_pwm_chip *sun8i_pwm = to_sun8i_pwm_chip(chip);
-> > +	struct pwm_state cstate;
-> > +
-> > +	pwm_get_state(pwm, &cstate);
-> > +	if (!cstate.enabled) {
-> > +		ret = clk_prepare_enable(sun8i_pwm->clk);
-> > +		if (ret) {
-> > +			dev_err(chip->dev, "Failed to enable PWM clock\n");
-> > +			return ret;
-> > +		}
-> > +	}
-> > +
-> > +	if ((cstate.period != state->period) ||
-> > +	    (cstate.duty_cycle != state->duty_cycle)) {
-> > +		ret = sun8i_pwm_config(sun8i_pwm, pwm->hwpwm, state);
-> > +		if (ret) {
-> > +			dev_err(chip->dev, "Failed to config PWM\n");
-> > +			return ret;
-> > +		}
-> > +	}
-> 
-> sun8i_pwm_config writes the registers that are relevant for period and
-> duty_cycle. When do these values take effect? If it's already here,
-> switching the polarity below might introduce a glitch.
+The major feature close to USB is this one and it can be found in others 
+protocols (standardization process).
 
-I think this is the case after taking a look into the reference manual.
+Just to close this topic I3C vs USB, IMO it's wrong to pass the message 
+that the I3C is closer to USB than I2C even more because I3C support the 
+I2C on the fly.
 
-There are two 16 bit fields in the PWM_PERIOD_REG. One specifies the
-number of clock ticks defining the period ("PWM_ENTIRE_CYCLE") and the
-other the duty cycle ("PWM_ACT_CYCLE").
 
-So if you go from duty_cycle=5 + period=10 + POLARITY_NORMAL to
-duty_cycle=3 + period=10 + POLARITY_INVERTED this might generate:
+>
+>>
+>> I'm not sure but I think that a controller cannot change between gadget
+>> to host in USB in runtime.
+> That's called USB OTG. Okay, to be fair, it's not exactly the same, and
+> the mastership handover in I3C is probably more complex than what we
+> have with USB OTG (I'm not a USB expert, so I might be wrong here).
+>
+>> Even so, this kind of behavior is more likely
+>> to have in an I3C bus.
+> Maybe.
 
- ____      __           ______
-/    \____/  \_________/      \__/
-^         ^         ^         ^
 
-Also there is a PWM_PERIOD_RDY bit field that probably has to be
-consulted before writing to the PWM_PERIOD_REG register.
+Sorry, with the proliferation of sensors I cannot see a multi master 
+sensor network based on USB.
 
-It's not entirely clear to me if the PWM_ACT_STA bit that is used for
-inversion is shadowed until the next period, too. That's what I assumed
-above. If it's not the wave might look as follows:
 
- ____      __  _____    ______
-/    \____/  \/     \__/      \__/
-^         ^   *     ^         ^
+>> Sorry for that and don't take me wrong... maybe I should rise this
+>> question early but this only came up now when I started splitting and
+>> thinking where to put what is for master for slave, what is common and
+>> the thing of putting everything of controller in a folder.
+> So you have such a dual-role controller?
 
-Where * marks the point where the inversion starts to take effect.
 
-Best regards
-Uwe
+Yes, we already talked about secondary master support.
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+> What I call a slave controller would be something that lets you reply to
+> SDR/DDR transactions or fill a generic regmap that would be exposed to
+> other masters on the bus. This way we could implement generic slave
+> drivers in Linux (the same way we have gadget drivers). Anything else
+> is likely to be to specific to be exposed as a generic framework.
+
+
+I would bet to do something like in i2c, we don't need the same level of 
+complexity found in USB.
+
+
+>>
+>> Taking the USB as exemple do you prefer a dwc folder on i3c root?
+> Hm, not sure I like this idea either. So I see 2 options:
+>
+> 1/ put all controller drivers (both master and slave ones) in a common
+>     directory (drivers/i3c/controllers) as you suggest, and prefix them
+>     correctly (i3c-master-<ip>.c, i3c-slave-<ip>.c and i3c-dual-<ip>.c)
+
+
+I agree with the controller folder but not with prefix. Please check 
+what is already in the kernel.
+
+
+> 2/ place them in separate directories: drivers/i3c/{master,slave,dual}
+>
+> I'm fine either way.
+
+
+In this case and taking what is already in the kernel it will be 
+drivers/i3c/{master, slave, dwc, other with the same architecture as dwc}.
+
+
+>>> I'm okay changing it, but I want to understand why the proposed
+>>> separation is not good.
+>>
+>> I already tell you my use case and as I said maybe someone can advise :)
+>>
+> I think I understand your concerns now, but only because you started to
+> mention a few things that were not clearly stated before (at least, I
+> didn't understand it this way), like the fact that your controller (and
+> probably others too) supports dual-role, or the fact that you plan to
+> expose your IP through the PCI bus.
+
+
+I miss to mention PCI but since the beginning refer the slave and the 
+common part.
+
+Splitting the driver is something that soon or later I will have to do. 
+If you prefer later I'm ok with that.
+
+
+I think this discussion is starting to be counterproductive with arguing 
+of both parts. Unfortunately I don't see anyone given their inputs too.
+
+To be clear, the subsystem is nice and I working with daily. As I said 
+this is something that I dealing now and I'm telling what I think that 
+is not correct.
