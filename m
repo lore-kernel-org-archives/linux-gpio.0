@@ -1,60 +1,84 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 1/6] Documentation: ARM: sunxi: pwm: add
- Allwinner sun8i.
-Date: Tue, 27 Nov 2018 08:52:26 +0100
-Message-ID: <20181127075226.qo3mv3o6etqdjaop@flea>
-References: <20181125161859.GA5277@arx-s1>
-Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
+From: Nicholas Mc Guire <der.herr@hofr.at>
+Subject: Re: [PATCH 2/2] gpio: mt7621: pass mediatek_gpio_bank_probe()
+ failure up the stack
+Date: Tue, 27 Nov 2018 09:01:13 +0100
+Message-ID: <20181127080113.GA2426@osadl.at>
+References: <1542823573-20228-1-git-send-email-hofrat@osadl.org>
+ <1542823573-20228-2-git-send-email-hofrat@osadl.org>
+ <CAGp9LzoT7ueXyyVSYQdWOU0JkQDWMVcwCuSE3gJnEn0fLLjCBA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBT7P6PPQKGQEFX23PAI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181125161859.GA5277@arx-s1>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <CAGp9LzoT7ueXyyVSYQdWOU0JkQDWMVcwCuSE3gJnEn0fLLjCBA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sean Wang <sean.wang@kernel.org>
+Cc: hofrat@osadl.org, Linus Walleij <linus.walleij@linaro.org>, sergio.paracuellos@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, bgolaszewski@baylibre.com, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 12:18:59AM +0800, Hao Zhang wrote:
-> This patch adds Allwinner sun8i pwm binding document.
+On Mon, Nov 26, 2018 at 11:49:26PM -0800, Sean Wang wrote:
+> Nicholas Mc Guire <hofrat@osadl.org> ??? 2018???11???21??? ?????? ??????10:13?????????
+> >
+> > The error cases of mediatek_gpio_bank_probe() would go unnoticed (except
+> > for the dev_err() messages). The probe function should return an error
+> > if one of the banks failed to initialize properly.
+> >
+> > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> > Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
+> > ---
+> >
+> > Patch was compile tested with: omega2p_defconfig, SOC_MT7621=y,
+> > GPIOLIB=y, GPIO_MT7621=y
+> >
+> > Patch is against 4.20-rc3 (localversion-next is next-20181121)
+> >
+> >  drivers/gpio/gpio-mt7621.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+> > index 1ec95bc..68fca8b 100644
+> > --- a/drivers/gpio/gpio-mt7621.c
+> > +++ b/drivers/gpio/gpio-mt7621.c
+> > @@ -297,6 +297,7 @@ mediatek_gpio_probe(struct platform_device *pdev)
+> >         struct device_node *np = dev->of_node;
+> >         struct mtk *mtk;
+> >         int i;
+> > +       int ret;
+> >
+> >         mtk = devm_kzalloc(dev, sizeof(*mtk), GFP_KERNEL);
+> >         if (!mtk)
+> > @@ -311,8 +312,11 @@ mediatek_gpio_probe(struct platform_device *pdev)
+> >         platform_set_drvdata(pdev, mtk);
+> >         mediatek_gpio_irq_chip.name = dev_name(dev);
+> >
+> > -       for (i = 0; i < MTK_BANK_CNT; i++)
+> > -               mediatek_gpio_bank_probe(dev, np, i);
+> > +       for (i = 0; i < MTK_BANK_CNT; i++) {
+> > +               ret = mediatek_gpio_bank_probe(dev, np, i);
+> > +               if (!ret)
 > 
-> Signed-off-by: Hao Zhang <hao5781286-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  .../devicetree/bindings/pwm/pwm-sun8i.txt          | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
+> it should be if (ret < 0) ?
+
+I don´t think so mediatek_gpio_bank_probe() returns 0 on success
+and all other returns are error paths - while the current code
+only returns negative values I do thik that any non 0 would be
+an error indication so !ret should be fine here.
+
+thx!
+hofrat
+
 > 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> new file mode 100644
-> index 0000000..7531d85
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-> @@ -0,0 +1,24 @@
-> +Allwinner sun8i R40/V40/T3 SoC PWM controller
-> +
-> +Required properties:
-> +  - compatible: Should be one of:
-> +    - "allwinner,sun8i-r40-pwm"
-> +  - reg: Physical base address and length of the controller's registers
-> +  - interrupts: Should contain interrupt.
-> +  - clocks: From common clock binding, handle to the parent clock.
-> +  - clock-names: Must contain the clock names described just above.
-
-You didn't describe those names in that document.
-
-You seem to have used mux-0 and mux-1 for the clock names. I guess we
-don't have to use a name there, we can simply use the position to find
-out (as long as it's documented in the binding)
-
-Maxime
-
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> > +                       return ret;
+> > +       }
+> >
+> >         return 0;
+> >  }
+> > --
+> > 2.1.4
+> >
+> >
+> > _______________________________________________
+> > Linux-mediatek mailing list
+> > Linux-mediatek@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
