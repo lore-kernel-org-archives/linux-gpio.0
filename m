@@ -1,176 +1,59 @@
-From: Florian Eckert <fe@dev.tdt.de>
-Subject: [PATCH v5 2/2] platform: Add reset button device for PC Engines APU boards
-Date: Tue, 27 Nov 2018 14:25:08 +0100
-Message-ID: <20181127132508.5501-3-fe@dev.tdt.de>
-References: <20181127132508.5501-1-fe@dev.tdt.de>
+From: Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH V2] gpio: mt7621: pass mediatek_gpio_bank_probe() failure up the stack
+Date: Tue, 27 Nov 2018 18:00:18 +0100
+Message-ID: <1543338018-708-1-git-send-email-hofrat@osadl.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181127132508.5501-1-fe@dev.tdt.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, bgolaszewski@baylibre.com, dvhart@infradead.org, andy@infradead.org, Eckert.Florian@googlemail.com
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, Florian Eckert <fe@dev.tdt.de>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Matthias Brugger <matthias.bgg@gmail.com>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Nicholas Mc Guire <hofrat@osadl.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add a platform/x86 device "gpio-keys-polled" for the frontpanel reset button.
-This device uses the gpio-apu driver for APU borads from PC Engines.
+The error cases of mediatek_gpio_bank_probe() would go unnoticed (except
+for the dev_err() messages). The probe function should return an error
+if one of the banks failed to initialize properly indicated by
+not returning non-0.
 
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
 ---
- drivers/platform/x86/Kconfig                  |  11 +++
- drivers/platform/x86/Makefile                 |   1 +
- drivers/platform/x86/pcengines-apu-platform.c | 114 ++++++++++++++++++++++++++
- 3 files changed, 126 insertions(+)
- create mode 100644 drivers/platform/x86/pcengines-apu-platform.c
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 54f6a40c75c6..5cd27c2174cb 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1288,6 +1288,17 @@ config INTEL_ATOMISP2_PM
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called intel_atomisp2_pm.
+V2: A logic error spoted by Sean Wang <sean.wang@kernel.org> the
+    success case is 0 and thus returning early should be on on 
+    ret!=0 and not on !ret - thanks for catching this stupid mistake !
+
+Patch was compile tested with: omega2p_defconfig, SOC_MT7621=y,
+GPIOLIB=y, GPIO_MT7621=y
+
+Patch is against 4.20-rc3 (localversion-next is next-20181121)
+
+ drivers/gpio/gpio-mt7621.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+index 1ec95bc..68fca8b 100644
+--- a/drivers/gpio/gpio-mt7621.c
++++ b/drivers/gpio/gpio-mt7621.c
+@@ -297,6 +297,7 @@ mediatek_gpio_probe(struct platform_device *pdev)
+ 	struct device_node *np = dev->of_node;
+ 	struct mtk *mtk;
+ 	int i;
++	int ret;
  
-+config PCENGINES_APU_PLATFORM
-+	bool "PCEngines APU System Support"
-+	depends on X86_64 && DMI && GPIOLIB
-+	help
-+	  This option enables system support for the PCEngines APU platform.
-+	  At present this just adds the GPIO reset button platform device on
-+	  APU2/APU3 boards.
-+
-+	  Note: You must still enable the drivers for GPIO and LED support
-+	  (GPIO_APU & LEDS_APU) to actually use the LEDs and the GPIOs.
-+
- endif # X86_PLATFORM_DEVICES
+ 	mtk = devm_kzalloc(dev, sizeof(*mtk), GFP_KERNEL);
+ 	if (!mtk)
+@@ -311,8 +312,11 @@ mediatek_gpio_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, mtk);
+ 	mediatek_gpio_irq_chip.name = dev_name(dev);
  
- config PMC_ATOM
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index 39ae94135406..f899cc4c6b48 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -96,3 +96,4 @@ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
- obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
- obj-$(CONFIG_I2C_MULTI_INSTANTIATE)	+= i2c-multi-instantiate.o
- obj-$(CONFIG_INTEL_ATOMISP2_PM)	+= intel_atomisp2_pm.o
-+obj-$(CONFIG_PCENGINES_APU_PLATFORM)	+= pcengines-apu-platform.o
-diff --git a/drivers/platform/x86/pcengines-apu-platform.c b/drivers/platform/x86/pcengines-apu-platform.c
-new file mode 100644
-index 000000000000..3bfbaa93cb11
---- /dev/null
-+++ b/drivers/platform/x86/pcengines-apu-platform.c
-@@ -0,0 +1,114 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * System Specific setup for PC-Engines APU2/APU3 devices
-+ *
-+ * Copyright (C) 2018 Florian Eckert <fe@dev.tdt.de>
-+ */
-+
-+#include <linux/dmi.h>
-+#include <linux/gpio_keys.h>
-+#include <linux/input.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+static const struct dmi_system_id apu2_gpio_dmi_table[] __initconst = {
-+	/* PC Engines APU2 with "Legacy" bios < 4.0.8 */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "APU2")
-+		}
-+	},
-+	/* PC Engines APU2 with "Legacy" bios >= 4.0.8 */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "apu2")
-+		}
-+	},
-+	/* PC Engines APU2 with "Mainline" bios */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
-+		}
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(dmi, apu2_gpio_dmi_table);
-+
-+static const struct dmi_system_id apu3_gpio_dmi_table[] __initconst = {
-+	/* PC Engines APU3 with "Legacy" bios < 4.0.8 */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "APU3")
-+		}
-+	},
-+	/* PC Engines APU3 with "Legacy" bios >= 4.0.8 */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "apu3")
-+		}
-+	},
-+	/* PC Engines APU3 with "Mainline" bios */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
-+		}
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(dmi, apu3_gpio_dmi_table);
-+
-+
-+static struct gpio_keys_button apu_gpio_buttons[] = {
-+	{
-+		.code			= KEY_RESTART,
-+		.gpio			= 20,
-+		.active_low		= 1,
-+		.desc			= "Reset button",
-+		.type			= EV_KEY,
-+		.debounce_interval	= 60,
+-	for (i = 0; i < MTK_BANK_CNT; i++)
+-		mediatek_gpio_bank_probe(dev, np, i);
++	for (i = 0; i < MTK_BANK_CNT; i++) {
++		ret = mediatek_gpio_bank_probe(dev, np, i);
++		if (ret)
++			return ret;
 +	}
-+};
-+
-+static struct gpio_keys_platform_data apu_buttons_data = {
-+	.buttons		= apu_gpio_buttons,
-+	.nbuttons		= ARRAY_SIZE(apu_gpio_buttons),
-+	.poll_interval		= 20,
-+};
-+
-+static struct platform_device apu_button_dev = {
-+	.name			= "gpio-keys-polled",
-+	.id			= 1,
-+	.dev = {
-+		.platform_data		= &apu_buttons_data,
-+	}
-+};
-+
-+static int __init apu_init(void)
-+{
-+	if (!(dmi_check_system(apu2_gpio_dmi_table)) &&
-+		!(dmi_check_system(apu3_gpio_dmi_table))) {
-+		return -ENODEV;
-+	}
-+
-+	return platform_device_register(&apu_button_dev);
-+}
-+
-+static void __exit apu_exit(void)
-+{
-+	platform_device_unregister(&apu_button_dev);
-+}
-+
-+module_init(apu_init);
-+module_exit(apu_exit);
+ 
+ 	return 0;
+ }
 -- 
-2.11.0
+2.1.4
