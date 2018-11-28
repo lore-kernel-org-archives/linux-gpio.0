@@ -1,81 +1,107 @@
-From: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v5 17/17] ARM: suniv: f1c100s: add device tree
- for Lichee Pi Nano
-Date: Thu, 29 Nov 2018 01:33:27 +0300
-Message-ID: <d7d83183c481102f30dfde7fadb9ce3db8ac43e2.1543443475.git.mesihkilinc@gmail.com>
-References: <cover.1543443475.git.mesihkilinc@gmail.com>
-Reply-To: mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH 0/2] gpio: lpc18xx: add GPIO pin interrupt controller support
+Date: Thu, 29 Nov 2018 00:48:39 +0200
+Message-ID: <20181128224841.3646-1-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDI4VHO5SYLBBANQ7TPQKGQEHLQQYRI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <cover.1543443475.git.mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Cc: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Lichee Pi Nano is a F1C100s board by Lichee Pi.
+>From LPC18xx and LPC43xx User Manuals the GPIO controller consists of
+the following blocks:
+* GPIO pin interrupt block at 0x40087000, this change adds its support,
+* GPIO GROUP0 interrupt block at 0x40088000,
+* GPIO GROUP1 interrupt block at 0x40089000,
+* GPIO port block at 0x400F4000, it is supported by the original driver.
 
-Add initial device tree for it.
+While the blocks are relatively independant and potentially they can
+be defined under their own device tree nodes, all blocks share the
+same clock to enable access to register interfaces and the same reset
+signal.
 
-Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Signed-off-by: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- arch/arm/boot/dts/Makefile                        |  2 ++
- arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts | 26 +++++++++++++++++++++++
- 2 files changed, 28 insertions(+)
- create mode 100644 arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+The change extends the existing gpio@400f4000 device tree node described
+in arch/arm/boot/dts/lpc18xx.dtsi by adding 'reg-names' property to
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b0e966d..2b96a5b 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1066,6 +1066,8 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- dtb-$(CONFIG_MACH_SUN9I) += \
- 	sun9i-a80-optimus.dtb \
- 	sun9i-a80-cubieboard4.dtb
-+dtb-$(CONFIG_MACH_SUNIV) += \
-+	suniv-f1c100s-licheepi-nano.dtb
- dtb-$(CONFIG_ARCH_TANGO) += \
- 	tango4-vantage-1172.dtb
- dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
-diff --git a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
-new file mode 100644
-index 0000000..a1154e6
---- /dev/null
-+++ b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR X11)
-+/*
-+ * Copyright 2018 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-+ */
-+
-+/dts-v1/;
-+#include "suniv-f1c100s.dtsi"
-+
-+/ {
-+	model = "Lichee Pi Nano";
-+	compatible = "licheepi,licheepi-nano", "allwinner,suniv-f1c100s";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pe_pins>;
-+	status = "okay";
-+};
+	gpio: gpio@400f4000 {
+		compatible = "nxp,lpc1850-gpio";
+		reg = <0x400f4000 0x4000>, <0x40087000 0x1000>,
+		      <0x40088000 0x1000>, <0x40089000 0x1000>;
+		reg-names = "gpio", "gpio-pin-ic",
+			    "gpio-group0-ic", "gpio-gpoup1-ic";
+		clocks = <&ccu1 CLK_CPU_GPIO>;
+		resets = <&rgu 28>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+
+Note that all 4 blocks find their place, but the functional change adds
+support of the GPIO pin interrupt contoller only.
+
+Alternative and probably better representation of the GPIO pin interrupt
+contoller block can be like this one added in parallel to gpio@400f4000 {}:
+
+	gpio_pin: interrupt-controller@40087000 {
+		compatible = "nxp,lpc1850-gpio-pin-ic";
+		reg = <0x40087000 0x1000>;
+		clocks = <&ccu1 CLK_CPU_GPIO>;
+		resets = <&rgu 28>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+
+The unpleasant side effects associated with this representation are:
+
+1) both gpio@400f4000 and interrupt-controller@40087000 (plus potential
+   interrupt-controller@40088000 and interrupt-controller@40089000) share
+   the same reset and the same clock,
+2) separate device node and 'compatible' imply a new drivers/irqchip/
+   driver, it is totally okay, but
+3) while Linux device drivers provide interfaces and support well usage
+   of the same reset or clock, interrupt controller drivers does not
+   depend on clock providers, of_clk_get() will ask for defer, but
+   IRQCHIP_DECLARE()d initialization won't be reprobed,
+4) it might be more or less reliably assumed that GPIO pin interrupt
+   controller does not get any consumer in runtime, who is not the
+   consumer of the same GPIO which serves as an interrupt, so implicitly
+   access to the interrupt controller functions will happen after
+   the registration of the GPIO controller driver, which in turn enables
+   the shared clock, and thus access to the interrupt controller registers
+   will be successful then, but you see, the complexity and indirection
+   leads to unavoidable fragility.
+
+So, I go ahead with the extension of the exisitng GPIO controller device
+node, comments and other opinions are welcome as usual.
+
+The change depends on a minor clean-up series, which was sent aforehand:
+* https://marc.info/?l=linux-gpio&m=154344413726424&w=1
+
+The actual lpc18xx.dtsi change will be sent afterwards after getting
+the acceptance of the proposed device tree node changes.
+
+Marc, this is the change, which I had a luck to discuss with you on ELCE.
+
+Vladimir Zapolskiy (2):
+  dt-bindings: gpio: lpc18xx: describe interrupt controllers of GPIO controller
+  gpio: lpc18xx: add GPIO pin interrupt controller support
+
+ .../bindings/gpio/nxp,lpc1850-gpio.txt        |  38 ++-
+ drivers/gpio/Kconfig                          |   1 +
+ drivers/gpio/gpio-lpc18xx.c                   | 267 +++++++++++++++++-
+ 3 files changed, 293 insertions(+), 13 deletions(-)
+
 -- 
-2.7.4
+2.17.1
