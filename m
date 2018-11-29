@@ -1,45 +1,46 @@
-From: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 13/17] clk: sunxi-ng: add support for
- suniv F1C100s SoC
-Date: Thu, 29 Nov 2018 09:39:52 +0300
-Message-ID: <20181129063952.623svjr7pti7apah@ThinkPad>
-References: <cover.1543443475.git.mesihkilinc@gmail.com>
- <cc1357c9272628b4d89af007cead83117d9ba6e9.1543443475.git.mesihkilinc@gmail.com>
- <154345243603.88331.17915868280143383591@swboyd.mtv.corp.google.com>
-Reply-To: mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 1/2] gpiolib-acpi: Only defer request_irq for GpioInt
+ ACPI event handlers
+Date: Thu, 29 Nov 2018 10:53:19 +0200
+Message-ID: <20181129085319.GJ2296@lahna.fi.intel.com>
+References: <20181128165756.20908-1-hdegoede@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDI4VHO5SYLBBPMT73PQKGQEDOO6HLQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <154345243603.88331.17915868280143383591-n1Xw8LXHxjTHt/MElyovVYaSKrA+ACpX0E9HWUfgJXw@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20181128165756.20908-1-hdegoede@redhat.com>
+Sender: stable-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 18/11/28 04:47, Stephen Boyd wrote:
-> Quoting Mesih Kilinc (2018-11-28 14:33:23)
-> > diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-> > new file mode 100644
-> > index 0000000..d4bc1b8
-> > --- /dev/null
-> > +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-> > @@ -0,0 +1,541 @@
-> > +/*
-> > + * Copyright (c) 2016 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> > + *
-> > + * SPDX-License-Identifier: GPL-2.0
+On Wed, Nov 28, 2018 at 05:57:55PM +0100, Hans de Goede wrote:
+> Commit 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event handlers
+> from a late_initcall") deferred the entire acpi_gpiochip_request_interrupt
+> call for each event resource.
 > 
-> Please fix this location.
+> This means it also delays the gpiochip_request_own_desc(..., "ACPI:Event")
+> call. This is a problem if some AML code reads the GPIO pin before we
+> run the deferred acpi_gpiochip_request_interrupt, because in that case
+> acpi_gpio_adr_space_handler() will already have called
+> gpiochip_request_own_desc(..., "ACPI:OpRegion") causing the call from
+> acpi_gpiochip_request_interrupt to fail with -EBUSY and we will fail to
+> register an event handler.
+> 
+> acpi_gpio_adr_space_handler is prepared for acpi_gpiochip_request_interrupt
+> already having claimed the pin, but the other way around does not work.
+> 
+> One example of a problem this causes, is the event handler for the OTG
+> ID pin on a Prowise PT301 tablet not registering, keeping the port stuck
+> in whatever mode it was in during boot and e.g. only allowing charging
+> after a reboot.
+> 
+> This commit fixes this by only deferring the request_irq call and the
+> initial run of edge-triggered IRQs instead of deferring all of
+> acpi_gpiochip_request_interrupt.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event ...")
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-I am very sorry, I should have been more carefull. Should I resend whole
-patchset or just resending this patch is enough? 
-
-Thanks,
-Mesih
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
