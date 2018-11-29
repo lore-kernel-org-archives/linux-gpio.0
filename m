@@ -1,118 +1,51 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH 1/2] dt-bindings: gpio: lpc18xx: describe interrupt
- controllers of GPIO controller
-Date: Thu, 29 Nov 2018 00:48:40 +0200
-Message-ID: <20181128224841.3646-2-vz@mleia.com>
-References: <20181128224841.3646-1-vz@mleia.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v5 13/17] clk: sunxi-ng: add support for suniv F1C100s SoC
+Date: Wed, 28 Nov 2018 16:47:16 -0800
+Message-ID: <154345243603.88331.17915868280143383591@swboyd.mtv.corp.google.com>
+References: <cover.1543443475.git.mesihkilinc@gmail.com>
+ <cc1357c9272628b4d89af007cead83117d9ba6e9.1543443475.git.mesihkilinc@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181128224841.3646-1-vz@mleia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cc1357c9272628b4d89af007cead83117d9ba6e9.1543443475.git.mesihkilinc@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc: Mesih Kilinc <mesihkilinc@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>, Julian Calaby <julian.calaby@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
->From LPC18xx and LPC43xx User Manuals the GPIO controller consists of
-the following weakly connected blocks:
-* GPIO pin interrupt block at 0x40087000,
-* GPIO GROUP0 interrupt block at 0x40088000,
-* GPIO GROUP1 interrupt block at 0x40089000,
-* GPIO port block at 0x400F4000.
+Quoting Mesih Kilinc (2018-11-28 14:33:23)
+> diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi=
+-ng/ccu-suniv-f1c100s.c
+> new file mode 100644
+> index 0000000..d4bc1b8
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+> @@ -0,0 +1,541 @@
+> +/*
+> + * Copyright (c) 2016 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
 
-While all 4 sub-controller blocks have their own I/O addresses, moreover
-all 3 interrupt blocks are APB0 peripherals and high-speed GPIO block is
-an AHB slave, according to the hardware manual interrupt controllers and
-GPIO controller block are seen as a single device, all 4 sub-controllers
-have the shared reset signal RGU #28 and the same shared clock to access
-registers CLK_Mx_GPIO on CCU1.
+Please fix this location.
 
-The change adds descriptions of the currently missing interrupt controller
-blocks found on GPIO controller, new added properties are 'reg-names',
-'resets', 'interrupt-controller' and '#interrupt-cells', also the example
-is updated to reflect the changes in device tree binding description.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h b/drivers/clk/sunxi=
+-ng/ccu-suniv-f1c100s.h
+> new file mode 100644
+> index 0000000..1da687a
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
+> @@ -0,0 +1,34 @@
+> +/*
+> + * Copyright 2017 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * SPDX-License-Identifier: GPL-2.0+
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
- .../bindings/gpio/nxp,lpc1850-gpio.txt        | 38 ++++++++++++++-----
- 1 file changed, 29 insertions(+), 9 deletions(-)
+Ditto.
 
-diff --git a/Documentation/devicetree/bindings/gpio/nxp,lpc1850-gpio.txt b/Documentation/devicetree/bindings/gpio/nxp,lpc1850-gpio.txt
-index eb7cdd69e10b..627efc78ecf2 100644
---- a/Documentation/devicetree/bindings/gpio/nxp,lpc1850-gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/nxp,lpc1850-gpio.txt
-@@ -3,12 +3,24 @@ NXP LPC18xx/43xx GPIO controller Device Tree Bindings
- 
- Required properties:
- - compatible		: Should be "nxp,lpc1850-gpio"
--- reg			: Address and length of the register set for the device
--- clocks		: Clock specifier (see clock bindings for details)
--- gpio-controller	: Marks the device node as a GPIO controller.
--- #gpio-cells 		: Should be two
--			  - First cell is the GPIO line number
--			  - Second cell is used to specify polarity
-+- reg			: List of addresses and lengths of the GPIO controller
-+			  register sets
-+- reg-names		: Should be "gpio", "gpio-pin-ic", "gpio-group0-ic" and
-+			  "gpio-gpoup1-ic"
-+- clocks		: Phandle and clock specifier pair for GPIO controller
-+- resets		: Phandle and reset specifier pair for GPIO controller
-+- gpio-controller	: Marks the device node as a GPIO controller
-+- #gpio-cells 		: Should be two:
-+			  - The first cell is the GPIO line number
-+			  - The second cell is used to specify polarity
-+- interrupt-controller	: Marks the device node as an interrupt controller
-+- #interrupt-cells	: Should be two:
-+			  - The first cell is an interrupt number within
-+			    0..9 range, for GPIO pin interrupts it is equal
-+			    to 'nxp,gpio-pin-interrupt' property value of
-+			    GPIO pin configuration, 8 is for GPIO GROUP0
-+			    interrupt, 9 is for GPIO GROUP1 interrupt
-+			  - The second cell is used to specify interrupt type
- 
- Optional properties:
- - gpio-ranges		: Mapping between GPIO and pinctrl
-@@ -19,21 +31,29 @@ Example:
- 
- gpio: gpio@400f4000 {
- 	compatible = "nxp,lpc1850-gpio";
--	reg = <0x400f4000 0x4000>;
-+	reg = <0x400f4000 0x4000>, <0x40087000 0x1000>,
-+	      <0x40088000 0x1000>, <0x40089000 0x1000>;
-+	reg-names = "gpio", "gpio-pin-ic",
-+		    "gpio-group0-ic", "gpio-gpoup1-ic";
- 	clocks = <&ccu1 CLK_CPU_GPIO>;
-+	resets = <&rgu 28>;
- 	gpio-controller;
- 	#gpio-cells = <2>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
- 	gpio-ranges =	<&pinctrl LPC_GPIO(0,0)  LPC_PIN(0,0)  2>,
- 			...
- 			<&pinctrl LPC_GPIO(7,19) LPC_PIN(f,5)  7>;
- };
- 
- gpio_joystick {
--	compatible = "gpio-keys-polled";
-+	compatible = "gpio-keys";
- 	...
- 
--	button@0 {
-+	button0 {
- 		...
-+		interrupt-parent = <&gpio>;
-+		interrupts = <1 IRQ_TYPE_EDGE_BOTH>;
- 		gpios = <&gpio LPC_GPIO(4,8) GPIO_ACTIVE_LOW>;
- 	};
- };
--- 
-2.17.1
+> + */
+> +
