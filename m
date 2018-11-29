@@ -1,62 +1,55 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 33/68] gpio: pxa: fix legacy non pinctrl aware builds again
-Date: Thu, 29 Nov 2018 00:55:24 -0500
-Message-ID: <20181129055559.159228-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 34/68] gpio: mockup: fix indicated direction
+Date: Thu, 29 Nov 2018 00:55:25 -0500
+Message-ID: <20181129055559.159228-34-sashal@kernel.org>
 References: <20181129055559.159228-1-sashal@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Robert Jarzmik <robert.jarzmik@free.fr>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
 
-[ Upstream commit 70cdb6ad6dc342d9643a00c9092e88f0075f2b9a ]
+[ Upstream commit bff466bac59994cfcceabe4d0be5fdc1c20cd5b8 ]
 
-As pointed out by Gregor, spitz keyboard matrix is broken, with or
-without CONFIG_PINCTRL set, quoting :
-"The gpio matrix keypard on the Zaurus C3x00 (see spitz.c) does not work
-properly. Noticeable are that rshift+c does nothing where as lshift+c
-creates C.  Opposite it is for rshift+a vs lshift+a, here only rshift
-works. This affects a few other combinations using the rshift or lshift
-buttons."
+Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
+beginning") fixed an existing issue but broke libgpiod tests by
+changing the default direction of dummy lines to output.
 
-As a matter of fact, as for platform_data based builds CONFIG_PINCTRL=n
-is required for now (as opposed for devicetree builds where it should be
-set), this means gpio driver should change the direction, which is what
-was attempted by commit c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl
-aware builds").
+We don't break user-space so make gpio-mockup behave as before.
 
-Unfortunately, the input case was inverted, and the direction change was
-never done. This wasn't seen up until now because the initial platform
-setup (MFP) was setting this direction. Yet in Gregory's case, the
-matrix-keypad driver changes back and forth the direction dynamically,
-and this is why he's the first to report it.
-
-Fixes: c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl aware builds")
-Tested-by: Greg <greguu@null.net>
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-pxa.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-mockup.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index c18712dabf93..9f3f166f1760 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -268,8 +268,8 @@ static int pxa_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index d66b7a768ecd..945bd13e5e79 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -32,8 +32,8 @@
+ #define gpio_mockup_err(...)	pr_err(GPIO_MOCKUP_NAME ": " __VA_ARGS__)
  
- 	if (pxa_gpio_has_pinctrl()) {
- 		ret = pinctrl_gpio_direction_input(chip->base + offset);
--		if (!ret)
--			return 0;
-+		if (ret)
-+			return ret;
- 	}
+ enum {
+-	GPIO_MOCKUP_DIR_OUT = 0,
+-	GPIO_MOCKUP_DIR_IN = 1,
++	GPIO_MOCKUP_DIR_IN = 0,
++	GPIO_MOCKUP_DIR_OUT = 1,
+ };
  
- 	spin_lock_irqsave(&gpio_lock, flags);
+ /*
+@@ -135,7 +135,7 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+-	return chip->lines[offset].dir;
++	return !chip->lines[offset].dir;
+ }
+ 
+ static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
 -- 
 2.17.1
