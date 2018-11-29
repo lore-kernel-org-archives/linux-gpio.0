@@ -1,10 +1,10 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 34/68] gpio: mockup: fix indicated direction
-Date: Thu, 29 Nov 2018 00:55:25 -0500
-Message-ID: <20181129055559.159228-34-sashal@kernel.org>
-References: <20181129055559.159228-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 18/35] gpio: mockup: fix indicated direction
+Date: Thu, 29 Nov 2018 01:00:52 -0500
+Message-ID: <20181129060110.159878-18-sashal@kernel.org>
+References: <20181129060110.159878-1-sashal@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
+In-Reply-To: <20181129060110.159878-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
@@ -28,11 +28,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index d66b7a768ecd..945bd13e5e79 100644
+index 9532d86a82f7..d99c8d8da9a0 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -32,8 +32,8 @@
- #define gpio_mockup_err(...)	pr_err(GPIO_MOCKUP_NAME ": " __VA_ARGS__)
+@@ -35,8 +35,8 @@
+ #define GPIO_MOCKUP_MAX_RANGES	(GPIO_MOCKUP_MAX_GC * 2)
  
  enum {
 -	GPIO_MOCKUP_DIR_OUT = 0,
@@ -42,7 +42,7 @@ index d66b7a768ecd..945bd13e5e79 100644
  };
  
  /*
-@@ -135,7 +135,7 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
+@@ -112,7 +112,7 @@ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
  {
  	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
  
@@ -50,6 +50,6 @@ index d66b7a768ecd..945bd13e5e79 100644
 +	return !chip->lines[offset].dir;
  }
  
- static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
+ static int gpio_mockup_name_lines(struct device *dev,
 -- 
 2.17.1
