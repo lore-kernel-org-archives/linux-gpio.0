@@ -1,26 +1,62 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v5 12/17] dt-bindings: clock: Add Allwinner suniv F1C100s CCU
-Date: Wed, 28 Nov 2018 16:47:33 -0800
-Message-ID: <154345245385.88331.8344308999294645427@swboyd.mtv.corp.google.com>
-References: <cover.1543443475.git.mesihkilinc@gmail.com>
- <47d0f466155e3d678d3383655856c1e15e975870.1543443475.git.mesihkilinc@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 33/68] gpio: pxa: fix legacy non pinctrl aware builds again
+Date: Thu, 29 Nov 2018 00:55:24 -0500
+Message-ID: <20181129055559.159228-33-sashal@kernel.org>
+References: <20181129055559.159228-1-sashal@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <47d0f466155e3d678d3383655856c1e15e975870.1543443475.git.mesihkilinc@gmail.com>
+In-Reply-To: <20181129055559.159228-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc: Mesih Kilinc <mesihkilinc@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>, Julian Calaby <julian.calaby@gmail.com>
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Mesih Kilinc (2018-11-28 14:33:22)
-> Add compatiple string for Allwinner suniv F1C100s CCU.
-> Add clock and reset definitions.
-> =
+From: Robert Jarzmik <robert.jarzmik@free.fr>
 
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
+[ Upstream commit 70cdb6ad6dc342d9643a00c9092e88f0075f2b9a ]
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+As pointed out by Gregor, spitz keyboard matrix is broken, with or
+without CONFIG_PINCTRL set, quoting :
+"The gpio matrix keypard on the Zaurus C3x00 (see spitz.c) does not work
+properly. Noticeable are that rshift+c does nothing where as lshift+c
+creates C.  Opposite it is for rshift+a vs lshift+a, here only rshift
+works. This affects a few other combinations using the rshift or lshift
+buttons."
+
+As a matter of fact, as for platform_data based builds CONFIG_PINCTRL=n
+is required for now (as opposed for devicetree builds where it should be
+set), this means gpio driver should change the direction, which is what
+was attempted by commit c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl
+aware builds").
+
+Unfortunately, the input case was inverted, and the direction change was
+never done. This wasn't seen up until now because the initial platform
+setup (MFP) was setting this direction. Yet in Gregory's case, the
+matrix-keypad driver changes back and forth the direction dynamically,
+and this is why he's the first to report it.
+
+Fixes: c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl aware builds")
+Tested-by: Greg <greguu@null.net>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpio-pxa.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index c18712dabf93..9f3f166f1760 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -268,8 +268,8 @@ static int pxa_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ 
+ 	if (pxa_gpio_has_pinctrl()) {
+ 		ret = pinctrl_gpio_direction_input(chip->base + offset);
+-		if (!ret)
+-			return 0;
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	spin_lock_irqsave(&gpio_lock, flags);
+-- 
+2.17.1
