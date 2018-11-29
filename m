@@ -1,29 +1,28 @@
 From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] ARM: OMAP1: ams-delta: Provide GPIO lookup table for LED
- device
-Date: Thu, 29 Nov 2018 12:02:00 -0800
-Message-ID: <20181129200200.GA53235@atomide.com>
-References: <20181105232349.17351-1-jmkrzyszt@gmail.com>
- <CACRpkdYxgh9Nvh3WsOmE25KRHhn-E9NJ-4wVSzt6SjOTRCuYLg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ARN: OMAP1: ams-delta: Post-GPIO-refresh cleanups
+Date: Thu, 29 Nov 2018 12:05:43 -0800
+Message-ID: <20181129200543.GD53235@atomide.com>
+References: <20181107201746.14705-1-jmkrzyszt@gmail.com>
+ <CACRpkdb5=2iAaZfLfzuGm9EhHwZxXe4E7-yB28Dn3LAxnyszNg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYxgh9Nvh3WsOmE25KRHhn-E9NJ-4wVSzt6SjOTRCuYLg@mail.gmail.com>
+In-Reply-To: <CACRpkdb5=2iAaZfLfzuGm9EhHwZxXe4E7-yB28Dn3LAxnyszNg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-leds@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-* Linus Walleij <linus.walleij@linaro.org> [181114 12:51]:
-> On Tue, Nov 6, 2018 at 12:22 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+* Linus Walleij <linus.walleij@linaro.org> [181115 10:46]:
+> On Wed, Nov 7, 2018 at 9:16 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 > 
-> > Global GPIO numbers no longer have to be passed to leds-gpio driver,
-> > replace their assignment with a lookup table.
-> >
-> > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> > Janusz Krzysztofik (3):
+> >       ARM: OMAP1: ams-delta: Drop board specific global GPIO numbers
+> >       ARM: OMAP1: ams-delta: Drop unused symbols from the board header
+> >       ARM: OMAP1: ams-delta: Move AMS_DELTA_LATCH2_NGPIO to the board file
 > 
-> Excellent Janusz! :)
+> This series:
 > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Applying into omap-for-v4.21/omap1 thanks.
