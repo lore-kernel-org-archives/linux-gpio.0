@@ -1,181 +1,294 @@
-From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Subject: Re: [PATCH v5 00/17] initial support for "suniv"
- Allwinner new ARM9 SoC
-Date: Fri, 30 Nov 2018 07:45:34 +0800
-Message-ID: <3CE89E4F-BDE2-4715-8B15-B0167273C613@aosc.io>
-References: <cover.1543443475.git.mesihkilinc@gmail.com> <20181129214730.6d6aju4jurai6rmv@plaes.org>
-Reply-To: icenowy-h8G6r0blFSE@public.gmane.org
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v5 7/8] clk: lochnagar: Add support for the Cirrus Logic Lochnagar
+Date: Thu, 29 Nov 2018 23:53:51 -0800
+Message-ID: <154356443157.88331.15749597863624143993@swboyd.mtv.corp.google.com>
+References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
+ <20181120141631.18949-7-ckeepax@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBDS6XAN6ZADRBS7UQHQAKGQEYAO7JWY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20181129214730.6d6aju4jurai6rmv-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.orgPriit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>, Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181120141631.18949-7-ckeepax@opensource.cirrus.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.cirrus.com>, broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+Quoting Charles Keepax (2018-11-20 06:16:30)
+> diff --git a/drivers/clk/clk-lochnagar.c b/drivers/clk/clk-lochnagar.c
+> new file mode 100644
+> index 000000000000..8b2a78689715
+> --- /dev/null
+> +++ b/drivers/clk/clk-lochnagar.c
+> @@ -0,0 +1,360 @@
+[...]
+> +
+> +static int lochnagar_regmap_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +       struct lochnagar_clk *lclk =3D lochnagar_hw_to_lclk(hw);
+> +       struct lochnagar_clk_priv *priv =3D lclk->priv;
+> +       struct regmap *regmap =3D priv->regmap;
+> +       int ret;
+> +
+> +       /*
+> +        * Some clocks on Lochnagar can either generate a clock themselves
+> +        * or accept an external clock, these default to generating the c=
+lock
+> +        * themselves. If we set a parent however we should update the di=
+r_mask
+> +        * to indicate to the hardware that this clock will now be receiv=
+ing an
+> +        * external clock.
 
+Hmm ok. So the plan is to configure parents in DT or from driver code if
+the configuration is to accept an external clk? I guess this works.
 
-=E4=BA=8E 2018=E5=B9=B411=E6=9C=8830=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=885=
-:47:30, Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org> =E5=86=99=E5=88=B0:
->On Thu, Nov 29, 2018 at 01:33:10AM +0300, Mesih Kilinc wrote:
->> This is the fifth version of patchset for Allwinner ARMv5 F1C100s
->> SoC. Addressed comments from Maxime Ripard and Rob Herring, added
->signatures.
->
->IIRC, the original author of these patches was Icenowy, what happened
->to this?
+> +        */
+> +       if (lclk->dir_mask) {
+> +               ret =3D regmap_update_bits(regmap, lclk->cfg_reg,
+> +                                        lclk->dir_mask, lclk->dir_mask);
+> +               if (ret < 0) {
+> +                       dev_err(priv->dev, "Failed to set %s direction: %=
+d\n",
+> +                               lclk->name, ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       ret =3D regmap_update_bits(regmap, lclk->src_reg, lclk->src_mask,=
+ index);
+> +       if (ret < 0)
+> +               dev_err(priv->dev, "Failed to reparent %s: %d\n",
+> +                       lclk->name, ret);
+> +
+> +       return ret;
+> +}
+> +
+> +static u8 lochnagar_regmap_get_parent(struct clk_hw *hw)
+> +{
+> +       struct lochnagar_clk *lclk =3D lochnagar_hw_to_lclk(hw);
+> +       struct lochnagar_clk_priv *priv =3D lclk->priv;
+> +       struct regmap *regmap =3D priv->regmap;
+> +       unsigned int val;
+> +       int ret;
+> +
+> +       ret =3D regmap_read(regmap, lclk->src_reg, &val);
+> +       if (ret < 0) {
+> +               dev_err(priv->dev, "Failed to read parent of %s: %d\n",
+> +                       lclk->name, ret);
 
-I lost interest on maintaining this.
+The error messages in the above functions could be spammy. Just let
+drivers who fail when using these clks ops print errors and maybe
+downgrade these to debug? If you don't agree with this it's fine, I'll
+just hope to never see these prints change to debug in the future.
 
->>=20
->> Changes since v4:
->> - Patch "dt-bindings: pinctrl: Add Allwinner suniv F1C100s pinctrl"
->>   - This patch applied for 4.21.
->> - Patch "pinctrl: sunxi: add support for suniv F1C100s (newer
->F-series SoCs)"
->>   - This patch applied for 4.21.
->> - Patch "dt-bindings: clock: Add Allwinner suniv F1C100s CCU"
->>   - Fixed license identifier position
->>   - Added DMA fields.
->> - Patch "clk: sunxi-ng: add support for suniv F1C100s SoC"
->>   - Added DMA reset and clock support.
->> - Patch "ARM: dts: suniv: add initial DTSI file for F1C100s"
->>   - Remove dt-binding headers.=20
->>   - Fix uart0 pin label.
->> - Patch "ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
->>   - Fix uart0 pin label.
->>=20
->> Changes since v3:
->> - Patch "ARM: Check ARCH_MULTI_V7 to differentiate ARMv5/v7 Allwinner
->SoCs"
->>   - Remove CONFIG_ARCH_SUNXI_Vx. Use ARCH_MULTI_Vx to differentiate
->SoC's
->>   - Change KConfig ARCH_SUNXI selection: 'select' to 'default'.=20
->> - Patch "irqchip/sun4i: Add a struct to hold global variables"
->>   - Split irq_sun4i.c changes to 3 patch.
->> - Patch "pinctrl: sunxi: add support for suniv F1C100s (newer
->F-series SoCs)"
->>   - pinctrl-suniv-f1c100s: remove: disable_strict_mode =3D true
->> - Patch "ARM: dts: suniv: add initial DTSI file for F1C100s"
->>   - suniv-f1c100s.dtsi: remove unnecessary componenets.
->>   - Instead of patching drivers, add original compatible string with=20
->> f1c100s compatibles.
->>   - Add Acked-by signatures.
->>=20
->> Changes since v2:
->> - Patch "ARM: sunxi: add Allwinner ARMv5 SoCs"
->>   - Move SUN4I_TIMER option to ARCH_SUNXI
->>   - Added help text for MACH_SUNIV
->> - Patch "irqchip/sun4i: add support for suniv interrupt controller"
->>   - Defined sunxi_irq_chip_data struct and used it to differentiate
->>     registers between different chips.
->> - Patch " ARM: dts: suniv: add initial DTSI file for F1C100s"
->>   - Removed unnecessary fake clock.
->>   - Fixed compatible strings.
->>=20
->> Changes since v1:
->> - Patch "ARM: add CONFIG_ARCH_SUNXI_V7 for differentiate ARMv5/v7
->>   Allwinner SoCs"
->>   - Instead of using a common bool config use a common menuconfig.=20
->>   - Use ARCH_MULTI_V7 to differentiate V7 SoCs.
->>   - Addressed comment from Julian Calaby
->> - Patch "ARM: sunxi: add Allwinner ARMv5 SoCs"
->>   - Use ARCH_MULTI_V5 to differentiate V5 SoCs.
->>   - removed "allwinner,suniv" board compatible string
->>   - Added dt-bindings
->> - Patch "irqchip/sun4i: add support for suniv interrupt controller"
->>   - Added dt-bindings
->>   - Changed "allwinner,suniv-ic" to "allwinner,suniv-f1c100s-ic"
->> - Patch "clocksource: sun4i: add a compatible for suniv"
->>   - Added dt-bindings
->>   - Changed "allwinner,suniv-timer" to
->"allwinner,suniv-f1c100s-timer"
->> - Patch "pinctrl: sunxi: add support for suniv F1C100s (newer
->F-series SoCs)"
->>   - Added dt-bindings
->>   - Renamed suniv-pinctrl to suniv-f1c100s-pinctrl
->> - Patch "clk: sunxi-ng: add support for suniv F1C100s SoC"
->>   - Added dt-bindings
->>   - Renamed suniv-ccu to suniv-f1c100s-ccu
->> - Patch "ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
->>   - Addressed comment from Rask Ingemann Lambertsen
->>=20
->> Thanks!
->>=20
->> Mesih Kilinc (17):
->>   ARM: Check ARCH_MULTI_V7 to differentiate ARMv5/v7 Allwinner SoCs
->>   dt-bindings: arm: Add new Allwinner ARMv5 F1C100s SoC
->>   ARM: sunxi: add Allwinner ARMv5 SoCs
->>   dt-bindings: interrupt-controller: Add suniv interrupt-controller
->>   irqchip/sun4i: Add a struct to hold global variables
->>   irqchip/sun4i: Move IC specific register offsets to struct
->>   irqchip/sun4i: Add support for Allwinner ARMv5 F1C100s
->>   dt-bindings: timer: Add Allwinner suniv timer
->>   clocksource: sun4i: add a compatible for suniv
->>   dt-bindings: pinctrl: Add Allwinner suniv F1C100s pinctrl
->>   pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)
->>   dt-bindings: clock: Add Allwinner suniv F1C100s CCU
->>   clk: sunxi-ng: add support for suniv F1C100s SoC
->>   dt-bindings: sram: Add Allwinner suniv F1C100s
->>   dt-bindings: watchdog: Add Allwinner ARMv5 F1C100s wdt
->>   ARM: dts: suniv: add initial DTSI file for F1C100s
->>   ARM: suniv: f1c100s: add device tree for Lichee Pi Nano
->>=20
->>  Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
->>  .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
->>  .../interrupt-controller/allwinner,sun4i-ic.txt    |   4 +-
->>  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
->>  .../devicetree/bindings/sram/sunxi-sram.txt        |   4 +
->>  .../bindings/timer/allwinner,sun4i-timer.txt       |   4 +-
->>  .../devicetree/bindings/watchdog/sunxi-wdt.txt     |   1 +
->>  arch/arm/boot/dts/Makefile                         |   2 +
->>  arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts  |  26 +
->>  arch/arm/boot/dts/suniv-f1c100s.dtsi               | 147 ++++++
->>  arch/arm/mach-sunxi/Kconfig                        |  19 +-
->>  arch/arm/mach-sunxi/sunxi.c                        |  10 +
->>  drivers/clk/sunxi-ng/Kconfig                       |   5 +
->>  drivers/clk/sunxi-ng/Makefile                      |   1 +
->>  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c           | 541
->+++++++++++++++++++++
->>  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h           |  34 ++
->>  drivers/clocksource/sun4i_timer.c                  |   5 +-
->>  drivers/irqchip/irq-sun4i.c                        | 106 ++--
->>  drivers/pinctrl/sunxi/Kconfig                      |   4 +
->>  drivers/pinctrl/sunxi/Makefile                     |   1 +
->>  drivers/pinctrl/sunxi/pinctrl-suniv-f1c100s.c      | 416
->++++++++++++++++
->>  include/dt-bindings/clock/suniv-ccu-f1c100s.h      |  70 +++
->>  include/dt-bindings/reset/suniv-ccu-f1c100s.h      |  38 ++
->>  23 files changed, 1408 insertions(+), 33 deletions(-)
->>  create mode 100644 arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
->>  create mode 100644 arch/arm/boot/dts/suniv-f1c100s.dtsi
->>  create mode 100644 drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
->>  create mode 100644 drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
->>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-suniv-f1c100s.c
->>  create mode 100644 include/dt-bindings/clock/suniv-ccu-f1c100s.h
->>  create mode 100644 include/dt-bindings/reset/suniv-ccu-f1c100s.h
->>=20
->> --=20
->> 2.7.4
->>=20
->> --=20
->> You received this message because you are subscribed to the Google
->Groups "linux-sunxi" group.
->> To unsubscribe from this group and stop receiving emails from it,
->send an email to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
->> For more options, visit https://groups.google.com/d/optout.
+> +               return priv->nparents;
+> +       }
+> +
+> +       val &=3D lclk->src_mask;
+> +
+> +       return val;
+> +}
+> +
+> +static const struct clk_ops lochnagar_clk_regmap_ops =3D {
+> +       .prepare =3D lochnagar_regmap_prepare,
+> +       .unprepare =3D lochnagar_regmap_unprepare,
+> +       .set_parent =3D lochnagar_regmap_set_parent,
+> +       .get_parent =3D lochnagar_regmap_get_parent,
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+Is regmap important to have in the name of these functions and struct?
+I'd prefer it was just clk instead of regmap.
+
+> +};
+> +
+> +static int lochnagar_init_parents(struct lochnagar_clk_priv *priv)
+> +{
+> +       struct device_node *np =3D priv->dev->of_node;
+> +       int i, j;
+> +
+> +       switch (priv->type) {
+> +       case LOCHNAGAR1:
+> +               memcpy(priv->lclks, lochnagar1_clks, sizeof(lochnagar1_cl=
+ks));
+> +
+> +               priv->nparents =3D ARRAY_SIZE(lochnagar1_clk_parents);
+> +               priv->parents =3D devm_kmemdup(priv->dev, lochnagar1_clk_=
+parents,
+> +                                            sizeof(lochnagar1_clk_parent=
+s),
+> +                                            GFP_KERNEL);
+> +               break;
+> +       case LOCHNAGAR2:
+> +               memcpy(priv->lclks, lochnagar2_clks, sizeof(lochnagar2_cl=
+ks));
+> +
+> +               priv->nparents =3D ARRAY_SIZE(lochnagar2_clk_parents);
+> +               priv->parents =3D devm_kmemdup(priv->dev, lochnagar2_clk_=
+parents,
+> +                                            sizeof(lochnagar2_clk_parent=
+s),
+> +                                            GFP_KERNEL);
+
+Why do we need to kmemdup it? The clk framework already deep copies
+everything from clk_init structure.
+
+> +               break;
+> +       default:
+> +               dev_err(priv->dev, "Unknown Lochnagar type: %d\n", priv->=
+type);
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (!priv->parents)
+> +               return -ENOMEM;
+> +
+> +       for (i =3D 0; i < priv->nparents; i++) {
+> +               j =3D of_property_match_string(np, "clock-names",
+> +                                            priv->parents[i]);
+> +               if (j >=3D 0)
+> +                       priv->parents[i] =3D of_clk_get_parent_name(np, j=
+);
+
+Isn't this of_clk_parent_fill()? But there are holes or something?
+
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int lochnagar_init_clks(struct lochnagar_clk_priv *priv)
+> +{
+> +       struct clk_init_data clk_init =3D {
+> +               .ops =3D &lochnagar_clk_regmap_ops,
+> +               .parent_names =3D priv->parents,
+> +               .num_parents =3D priv->nparents,
+> +       };
+> +       struct lochnagar_clk *lclk;
+> +       int ret, i;
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(priv->lclks); i++) {
+
+We already have an array of clks.
+
+> +               lclk =3D &priv->lclks[i];
+> +
+> +               if (!lclk->name)
+> +                       continue;
+> +
+> +               clk_init.name =3D lclk->name;
+> +
+> +               lclk->priv =3D priv;
+> +               lclk->hw.init =3D &clk_init;
+> +
+> +               ret =3D devm_clk_hw_register(priv->dev, &lclk->hw);
+> +               if (ret) {
+> +                       dev_err(priv->dev, "Failed to register %s: %d\n",
+> +                               lclk->name, ret);
+> +                       return ret;
+> +               }
+> +
+> +               priv->clk_data->hws[i] =3D &lclk->hw;
+
+But then we copy the pointers into here to use of_clk_hw_onecell_get().
+Can you just roll your own function to use your own array of clk
+structures? I know it's sort of sad, but it avoids a copy.
+
+> +       }
+> +
+> +       priv->clk_data->num =3D ARRAY_SIZE(priv->lclks);
+> +
+> +       ret =3D devm_of_clk_add_hw_provider(priv->dev, of_clk_hw_onecell_=
+get,
+> +                                         priv->clk_data);
+> +       if (ret < 0) {
+> +               dev_err(priv->dev, "Failed to register provider: %d\n", r=
+et);
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+
+Simplify this to
+
+	if (ret < 0)
+		dev_err(...)
+
+	return ret;
+
+> +}
+> +
+> +static const struct of_device_id lochnagar_of_match[] =3D {
+> +       { .compatible =3D "cirrus,lochnagar1-clk", .data =3D (void *)LOCH=
+NAGAR1 },
+> +       { .compatible =3D "cirrus,lochnagar2-clk", .data =3D (void *)LOCH=
+NAGAR2 },
+> +       {},
+
+Nitpick: Drop the comma, it's the sentinel so nothing should come after.
+
+> +};
+
+Any MODULE_DEVICE_TABLE?
+
+> +
+> +static int lochnagar_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct lochnagar_clk_priv *priv;
+> +       const struct of_device_id *of_id;
+> +       int ret;
+> +
+> +       of_id =3D of_match_device(lochnagar_of_match, dev);
+> +       if (!of_id)
+> +               return -EINVAL;
+> +
+> +       priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       priv->clk_data =3D devm_kzalloc(dev, struct_size(priv->clk_data, =
+hws,
+> +                                                      ARRAY_SIZE(priv->l=
+clks)),
+> +                                     GFP_KERNEL);
+> +       if (!priv->clk_data)
+> +               return -ENOMEM;
+> +
+> +       priv->dev =3D dev;
+> +       priv->regmap =3D dev_get_regmap(dev->parent, NULL);
+> +       priv->type =3D (enum lochnagar_type)of_id->data;
+> +
+> +       ret =3D lochnagar_init_parents(priv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D lochnagar_init_clks(priv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return 0;
+> +}
+> +
+> +static struct platform_driver lochnagar_clk_driver =3D {
+> +       .driver =3D {
+> +               .name =3D "lochnagar-clk",
+> +               .of_match_table =3D of_match_ptr(lochnagar_of_match),
+
+I suspect of_match_ptr() makes the build complain about unused match
+table when CONFIG_OF=3DN. Can you try building it that way?
+
+> +       },
+> +
+
+Nitpick: Why the extra newline?
+
+> +       .probe =3D lochnagar_clk_probe,
+> +};
+> +module_platform_driver(lochnagar_clk_driver);
+> +
+> +MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
+> +MODULE_DESCRIPTION("Clock driver for Cirrus Logic Lochnagar Board");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:lochnagar-clk");
+
+I think MODULE_ALIAS is not needed if it's this simple?
