@@ -1,75 +1,54 @@
-From: Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] pinctrl: sx150x: handle failure case of devm_kstrdup
-Date: Sun,  2 Dec 2018 11:04:17 +0100
-Message-ID: <1543745057-31616-1-git-send-email-hofrat@osadl.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
+Date: Sun, 2 Dec 2018 12:29:00 +0000
+Message-ID: <20181202122900.79922c91@why.wild-wind.fr.eu.org>
+References: <20181120134032.31645-1-brgl@bgdev.pl>
+        <20181120134032.31645-2-brgl@bgdev.pl>
+        <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
+        <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
+        <20181121191509.ia2vcklvx4q2rh56@pengutronix.de>
+        <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
+        <20181125211854.idnqxz4pco3r7ydr@pengutronix.de>
+        <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
+        <CACRpkdY9-umyz=T8v0ZmfOx8tFapvDguS3B=BYAVkY73BrkxqQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdY9-umyz=T8v0ZmfOx8tFapvDguS3B=BYAVkY73BrkxqQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-devm_kstrdup() may return NULL if internal allocation failed.
-Thus using  label, name  is unsafe without checking. Therefor
-in the unlikely case of allocation failure, sx150x_probe() simply
-returns -ENOMEM.
+On Fri, 30 Nov 2018 23:26:25 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
----
+> On Thu, Nov 29, 2018 at 7:14 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> 
+> > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
+> > sharing for userspace") some libgpiod tests are failing because we can
+> > no longer depend on reading the value of a dummy GPIO after detecting
+> > an interrupt to know the edge of the interrupt. While these interrupts
+> > are triggered from debugfs and debugfs is not required to maintain
+> > compatibility, I thing having a working test suite for the GPIO
+> > subsystem and uAPI is worth applying these two patches and also the
+> > previous one[1].
+> >
+> > Can we have them applied for 4.20 or are there any objections?  
+> 
+> I'm fine with applying them if I can just get an ACK from one of the IRQ
+> maintainers (Thomas, Marc).
 
-Problem located with an experimental coccinelle script
+I'm fine with that patch, with the provision that (nitpick) the edge
+field is turned into a bool instead of an int.
 
-Patch was compile tested with: lpc32xx_defconfig (implies PINCTRL_SX150X=y)
-Note that while lpc32xx_defconfig contains PINCTRL_SX150X=y after make
-lpc32xx_defconfig it is *not* set - seems to be a missing entry in
-drivers/pincrtl/Kconfig - so PINCRTL and PINCTRL_SX150X had to be
-manually enabled.
+With that,
 
-Patch is against 4.20-rc4 (localversion-next is next-20181130)
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
- drivers/pinctrl/pinctrl-sx150x.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Thanks,
 
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index cbf58a1..4d87d75 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1166,7 +1166,6 @@ static int sx150x_probe(struct i2c_client *client,
- 	}
- 
- 	/* Register GPIO controller */
--	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
- 	pctl->gpio.base = -1;
- 	pctl->gpio.ngpio = pctl->data->npins;
- 	pctl->gpio.get_direction = sx150x_gpio_get_direction;
-@@ -1180,6 +1179,10 @@ static int sx150x_probe(struct i2c_client *client,
- 	pctl->gpio.of_node = dev->of_node;
- #endif
- 	pctl->gpio.can_sleep = true;
-+	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
-+	if (!pctl->gpio.label)
-+		return -ENOMEM;
-+
- 	/*
- 	 * Setting multiple pins is not safe when all pins are not
- 	 * handled by the same regmap register. The oscio pin (present
-@@ -1200,13 +1203,15 @@ static int sx150x_probe(struct i2c_client *client,
- 
- 	/* Add Interrupt support if an irq is specified */
- 	if (client->irq > 0) {
--		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
--						   GFP_KERNEL);
- 		pctl->irq_chip.irq_mask = sx150x_irq_mask;
- 		pctl->irq_chip.irq_unmask = sx150x_irq_unmask;
- 		pctl->irq_chip.irq_set_type = sx150x_irq_set_type;
- 		pctl->irq_chip.irq_bus_lock = sx150x_irq_bus_lock;
- 		pctl->irq_chip.irq_bus_sync_unlock = sx150x_irq_bus_sync_unlock;
-+		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
-+						   GFP_KERNEL);
-+		if (!pctl->irq_chip.name)
-+			return -ENOMEM;
- 
- 		pctl->irq.masked = ~0;
- 		pctl->irq.sense = 0;
+	M.
 -- 
-2.1.4
+Without deviation from the norm, progress is not possible.
