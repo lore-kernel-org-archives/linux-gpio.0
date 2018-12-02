@@ -1,54 +1,53 @@
-From: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 13/17] clk: sunxi-ng: add support for
- suniv F1C100s SoC
-Date: Sun, 2 Dec 2018 23:26:42 +0300
-Message-ID: <20181202202642.y5me76jyktzbfzbd@ThinkPad>
-References: <cover.1543443475.git.mesihkilinc@gmail.com>
- <cc1357c9272628b4d89af007cead83117d9ba6e9.1543443475.git.mesihkilinc@gmail.com>
- <154345243603.88331.17915868280143383591@swboyd.mtv.corp.google.com>
- <20181129063952.623svjr7pti7apah@ThinkPad>
- <154353465409.88331.8677593357765162802@swboyd.mtv.corp.google.com>
-Reply-To: mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
+Date: Sun, 2 Dec 2018 22:56:13 +0100
+Message-ID: <20181202215613.jcfrxwl4taiqgsql@pengutronix.de>
+References: <20181120134032.31645-1-brgl@bgdev.pl>
+ <20181120134032.31645-2-brgl@bgdev.pl>
+ <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
+ <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
+ <20181121191509.ia2vcklvx4q2rh56@pengutronix.de>
+ <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
+ <20181125211854.idnqxz4pco3r7ydr@pengutronix.de>
+ <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDI4VHO5SYLBBBMASHQAKGQEFMJVDPQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <154353465409.88331.8677593357765162802-n1Xw8LXHxjTHt/MElyovVYaSKrA+ACpX0E9HWUfgJXw@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 18/11/29 03:37, Stephen Boyd wrote:
-> Quoting Mesih Kilinc (2018-11-28 22:39:52)
-> > On 18/11/28 04:47, Stephen Boyd wrote:
-> > > Quoting Mesih Kilinc (2018-11-28 14:33:23)
-> > > > diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-> > > > new file mode 100644
-> > > > index 0000000..d4bc1b8
-> > > > --- /dev/null
-> > > > +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-> > > > @@ -0,0 +1,541 @@
-> > > > +/*
-> > > > + * Copyright (c) 2016 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> > > > + *
-> > > > + * SPDX-License-Identifier: GPL-2.0
-> > > 
-> > > Please fix this location.
-> > 
-> > I am very sorry, I should have been more carefull. Should I resend whole
-> > patchset or just resending this patch is enough? 
-> > 
-> 
-> Just this one? Who do you intend to pick up these patches?
-> 
+Hello,
 
-I have send as v6 patchset. Thanks! 
+On Thu, Nov 29, 2018 at 07:14:45PM +0100, Bartosz Golaszewski wrote:
+> We're getting too much into details of how to handle simulated
+> interrupts and we can continue discussing it, but meanwhile I'd like
+> to address a different thing:
+> 
+> Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
+> sharing for userspace") some libgpiod tests are failing because we can
+> no longer depend on reading the value of a dummy GPIO after detecting
+> an interrupt to know the edge of the interrupt. While these interrupts
+> are triggered from debugfs and debugfs is not required to maintain
+> compatibility, I thing having a working test suite for the GPIO
+> subsystem and uAPI is worth applying these two patches and also the
+> previous one[1].
+> 
+> Can we have them applied for 4.20 or are there any objections?
 
-Mesih
+Just for the record: I objected the patch, Bartosz agrees to discuss
+further and but because this is too much detail the patch should now be
+applied anyhow to fix the test suite of an external project. This seems
+wrong to me.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
