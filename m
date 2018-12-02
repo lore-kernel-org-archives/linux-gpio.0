@@ -1,57 +1,148 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-Date: Sun, 2 Dec 2018 18:00:22 +0100
-Message-ID: <CAMRc=MczHf3Q+826QDMMNAFU3WMKHR3L-Tj=Da4ydVRDcZThCA@mail.gmail.com>
-References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-2-brgl@bgdev.pl>
- <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de> <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
- <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <CACRpkdY9-umyz=T8v0ZmfOx8tFapvDguS3B=BYAVkY73BrkxqQ@mail.gmail.com> <20181202122900.79922c91@why.wild-wind.fr.eu.org>
+From: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v6 00/17] initial support for "suniv" Allwinner
+ new ARM9 SoC
+Date: Sun,  2 Dec 2018 23:23:34 +0300
+Message-ID: <cover.1543781680.git.mesihkilinc@gmail.com>
+Reply-To: mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181202122900.79922c91@why.wild-wind.fr.eu.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-path: <linux-sunxi+bncBDI4VHO5SYLBB276SDQAKGQEFTW4KLI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Cc: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-niedz., 2 gru 2018 o 13:29 Marc Zyngier <marc.zyngier@arm.com> napisa=C5=82=
-(a):
->
-> On Fri, 30 Nov 2018 23:26:25 +0100
-> Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> > On Thu, Nov 29, 2018 at 7:14 PM Bartosz Golaszewski <brgl@bgdev.pl> wro=
-te:
-> >
-> > > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
-> > > sharing for userspace") some libgpiod tests are failing because we ca=
-n
-> > > no longer depend on reading the value of a dummy GPIO after detecting
-> > > an interrupt to know the edge of the interrupt. While these interrupt=
-s
-> > > are triggered from debugfs and debugfs is not required to maintain
-> > > compatibility, I thing having a working test suite for the GPIO
-> > > subsystem and uAPI is worth applying these two patches and also the
-> > > previous one[1].
-> > >
-> > > Can we have them applied for 4.20 or are there any objections?
-> >
-> > I'm fine with applying them if I can just get an ACK from one of the IR=
-Q
-> > maintainers (Thomas, Marc).
->
-> I'm fine with that patch, with the provision that (nitpick) the edge
-> field is turned into a bool instead of an int.
->
-> With that,
->
-> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
->
+This is the sixth version of patchset for Allwinner ARMv5 F1C100s
+SoC. Addressed comments from Stephen Boyd, added signatures.
 
-I wanted to reuse the already existing IRQ_TYPE_EDGE_RISING/FALLING
-defines which I think makes more sense here than a boolean.
+Changes since v5:
+- Patch "clk: sunxi-ng: add support for suniv F1C100s SoC"
+  - Fixed license identifier position
 
-Bart
+Changes since v4:
+- Patch "dt-bindings: pinctrl: Add Allwinner suniv F1C100s pinctrl"
+  - This patch applied for 4.21.
+- Patch "pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)"
+  - This patch applied for 4.21.
+- Patch "dt-bindings: clock: Add Allwinner suniv F1C100s CCU"
+  - Fixed license identifier position
+  - Added DMA fields.
+- Patch "clk: sunxi-ng: add support for suniv F1C100s SoC"
+  - Added DMA reset and clock support.
+- Patch "ARM: dts: suniv: add initial DTSI file for F1C100s"
+  - Remove dt-binding headers. 
+  - Fix uart0 pin label.
+- Patch "ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
+  - Fix uart0 pin label.
+
+Changes since v3:
+- Patch "ARM: Check ARCH_MULTI_V7 to differentiate ARMv5/v7 Allwinner SoCs"
+  - Remove CONFIG_ARCH_SUNXI_Vx. Use ARCH_MULTI_Vx to differentiate SoC's
+  - Change KConfig ARCH_SUNXI selection: 'select' to 'default'. 
+- Patch "irqchip/sun4i: Add a struct to hold global variables"
+  - Split irq_sun4i.c changes to 3 patch.
+- Patch "pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)"
+  - pinctrl-suniv-f1c100s: remove: disable_strict_mode = true
+- Patch "ARM: dts: suniv: add initial DTSI file for F1C100s"
+  - suniv-f1c100s.dtsi: remove unnecessary componenets.
+  - Instead of patching drivers, add original compatible string with 
+f1c100s compatibles.
+  - Add Acked-by signatures.
+
+Changes since v2:
+- Patch "ARM: sunxi: add Allwinner ARMv5 SoCs"
+  - Move SUN4I_TIMER option to ARCH_SUNXI
+  - Added help text for MACH_SUNIV
+- Patch "irqchip/sun4i: add support for suniv interrupt controller"
+  - Defined sunxi_irq_chip_data struct and used it to differentiate
+    registers between different chips.
+- Patch " ARM: dts: suniv: add initial DTSI file for F1C100s"
+  - Removed unnecessary fake clock.
+  - Fixed compatible strings.
+
+Changes since v1:
+- Patch "ARM: add CONFIG_ARCH_SUNXI_V7 for differentiate ARMv5/v7
+  Allwinner SoCs"
+  - Instead of using a common bool config use a common menuconfig. 
+  - Use ARCH_MULTI_V7 to differentiate V7 SoCs.
+  - Addressed comment from Julian Calaby
+- Patch "ARM: sunxi: add Allwinner ARMv5 SoCs"
+  - Use ARCH_MULTI_V5 to differentiate V5 SoCs.
+  - removed "allwinner,suniv" board compatible string
+  - Added dt-bindings
+- Patch "irqchip/sun4i: add support for suniv interrupt controller"
+  - Added dt-bindings
+  - Changed "allwinner,suniv-ic" to "allwinner,suniv-f1c100s-ic"
+- Patch "clocksource: sun4i: add a compatible for suniv"
+  - Added dt-bindings
+  - Changed "allwinner,suniv-timer" to "allwinner,suniv-f1c100s-timer"
+- Patch "pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)"
+  - Added dt-bindings
+  - Renamed suniv-pinctrl to suniv-f1c100s-pinctrl
+- Patch "clk: sunxi-ng: add support for suniv F1C100s SoC"
+  - Added dt-bindings
+  - Renamed suniv-ccu to suniv-f1c100s-ccu
+- Patch "ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
+  - Addressed comment from Rask Ingemann Lambertsen
+
+Thanks!
+
+Mesih Kilinc (17):
+  ARM: Check ARCH_MULTI_V7 to differentiate ARMv5/v7 Allwinner SoCs
+  dt-bindings: arm: Add new Allwinner ARMv5 F1C100s SoC
+  ARM: sunxi: add Allwinner ARMv5 SoCs
+  dt-bindings: interrupt-controller: Add suniv interrupt-controller
+  irqchip/sun4i: Add a struct to hold global variables
+  irqchip/sun4i: Move IC specific register offsets to struct
+  irqchip/sun4i: Add support for Allwinner ARMv5 F1C100s
+  dt-bindings: timer: Add Allwinner suniv timer
+  clocksource: sun4i: add a compatible for suniv
+  dt-bindings: pinctrl: Add Allwinner suniv F1C100s pinctrl
+  pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)
+  dt-bindings: clock: Add Allwinner suniv F1C100s CCU
+  clk: sunxi-ng: add support for suniv F1C100s SoC
+  dt-bindings: sram: Add Allwinner suniv F1C100s
+  dt-bindings: watchdog: Add Allwinner ARMv5 F1C100s wdt
+  ARM: dts: suniv: add initial DTSI file for F1C100s
+  ARM: suniv: f1c100s: add device tree for Lichee Pi Nano
+
+ Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
+ .../interrupt-controller/allwinner,sun4i-ic.txt    |   4 +-
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+ .../devicetree/bindings/sram/sunxi-sram.txt        |   4 +
+ .../bindings/timer/allwinner,sun4i-timer.txt       |   4 +-
+ .../devicetree/bindings/watchdog/sunxi-wdt.txt     |   1 +
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts  |  26 +
+ arch/arm/boot/dts/suniv-f1c100s.dtsi               | 147 ++++++
+ arch/arm/mach-sunxi/Kconfig                        |  19 +-
+ arch/arm/mach-sunxi/sunxi.c                        |  10 +
+ drivers/clk/sunxi-ng/Kconfig                       |   5 +
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c           | 541 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h           |  34 ++
+ drivers/clocksource/sun4i_timer.c                  |   5 +-
+ drivers/irqchip/irq-sun4i.c                        | 106 ++--
+ drivers/pinctrl/sunxi/Kconfig                      |   4 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-suniv-f1c100s.c      | 416 ++++++++++++++++
+ include/dt-bindings/clock/suniv-ccu-f1c100s.h      |  70 +++
+ include/dt-bindings/reset/suniv-ccu-f1c100s.h      |  38 ++
+ 23 files changed, 1408 insertions(+), 33 deletions(-)
+ create mode 100644 arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+ create mode 100644 arch/arm/boot/dts/suniv-f1c100s.dtsi
+ create mode 100644 drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-suniv-f1c100s.c
+ create mode 100644 include/dt-bindings/clock/suniv-ccu-f1c100s.h
+ create mode 100644 include/dt-bindings/reset/suniv-ccu-f1c100s.h
+
+-- 
+2.7.4
