@@ -1,60 +1,125 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 2/2] gpio: mockup: use irq_sim_fire_edge()
-Date: Mon, 3 Dec 2018 12:09:16 +0100
-Message-ID: <20181203110916.eseh2udxvhi4lf3v@pengutronix.de>
-References: <20181120134032.31645-1-brgl@bgdev.pl>
- <20181120134032.31645-3-brgl@bgdev.pl>
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: [PATCH 1/2] pinctrl: sunxi: a64: Rename function csi0
+ to csi
+Date: Mon,  3 Dec 2018 23:40:59 +0800
+Message-ID: <20181203154100.4280-2-wens@csie.org>
+References: <20181203154100.4280-1-wens@csie.org>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181120134032.31645-3-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBD45SXQAKGQEE5R53DY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20181203154100.4280-1-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Jagan Teki <jagan-dyjBcgdgk7Pe9wHmmfpqLFaTQe2KTcn/@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 02:40:32PM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> We now have a specialized variant of irq_sim_fire() - use it in
-> gpio-mockup so that we only generate events of types that were
-> requested with the LINEEVENT ioctl().
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/gpio/gpio-mockup.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-> index a4c054cf9c5f..18563d2c7876 100644
-> --- a/drivers/gpio/gpio-mockup.c
-> +++ b/drivers/gpio/gpio-mockup.c
-> @@ -199,7 +199,7 @@ static ssize_t gpio_mockup_event_write(struct file *file,
->  	struct gpio_mockup_chip *chip;
->  	struct seq_file *sfile;
->  	struct gpio_desc *desc;
-> -	int rv, val;
-> +	int rv, val, edge;
->  
->  	rv = kstrtoint_from_user(usr_buf, size, 0, &val);
->  	if (rv)
-> @@ -213,7 +213,8 @@ static ssize_t gpio_mockup_event_write(struct file *file,
->  	chip = priv->chip;
->  
->  	gpiod_set_value_cansleep(desc, val);
-> -	irq_sim_fire(&chip->irqsim, priv->offset);
-> +	edge = val == 0 ? IRQ_TYPE_EDGE_FALLING : IRQ_TYPE_EDGE_RISING;
-> +	irq_sim_fire_edge(&chip->irqsim, priv->offset, edge);
+The A64 only has one CSI (camera sensor interface) controller. The
+datasheet also lists the function as CSI_XXX instead of CSI0_XXX.
 
-If I write 0 twice into the debugfs file, does it fire two irqs or only
-one? I think it fires two but only one would be the right behaviour?!
+Rename the function names now before any there are any users.
 
-Best regards
-Uwe
+Fixes: 96851d391d02 ("drivers: pinctrl: add driver for Allwinner A64 SoC")
+Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+---
+ drivers/pinctrl/sunxi/pinctrl-sun50i-a64.c | 28 +++++++++++-----------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-a64.c b/drivers/pinctrl/sunxi/pinctrl-sun50i-a64.c
+index f5f77432ce6f..8b974b2a2486 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun50i-a64.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-a64.c
+@@ -323,71 +323,71 @@ static const struct sunxi_desc_pin a64_pins[] = {
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 0),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* PCK */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* PCK */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* CLK */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 1),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* CK */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* CK */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* ERR */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 2),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* HSYNC */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* HSYNC */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* SYNC */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 3),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* VSYNC */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* VSYNC */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* DVLD */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 4),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* D0 */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* D0 */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* D0 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 5),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* D1 */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* D1 */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* D1 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 6),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* D2 */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* D2 */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* D2 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 7),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* D3 */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* D3 */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* D3 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 8),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* D4 */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* D4 */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* D4 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 9),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* D5 */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* D5 */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* D5 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 10),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* D6 */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* D6 */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* D6 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 11),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0"),		/* D7 */
++		  SUNXI_FUNCTION(0x2, "csi"),		/* D7 */
+ 		  SUNXI_FUNCTION(0x4, "ts0")),		/* D7 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 12),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0")),		/* SCK */
++		  SUNXI_FUNCTION(0x2, "csi")),		/* SCK */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 13),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "csi0")),		/* SDA */
++		  SUNXI_FUNCTION(0x2, "csi")),		/* SDA */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 14),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.20.0.rc1
