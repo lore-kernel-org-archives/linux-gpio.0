@@ -1,18 +1,18 @@
 From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v6 16/17] ARM: dts: suniv: add initial DTSI
- file for F1C100s
-Date: Mon, 3 Dec 2018 10:01:27 +0100
-Message-ID: <20181203090127.enxxh5ah7eehbql7@flea>
+Subject: Re: [PATCH v6 17/17] ARM: suniv: f1c100s: add device
+ tree for Lichee Pi Nano
+Date: Mon, 3 Dec 2018 10:03:06 +0100
+Message-ID: <20181203090306.7e6mdjqzj7pmg4gv@flea>
 References: <cover.1543781680.git.mesihkilinc@gmail.com>
- <dafe3e548064535cfc32934c079b53a5c45fcd48.1543781680.git.mesihkilinc@gmail.com>
+ <125b26f154ad1373179d67fcde30df056e883ac8.1543781680.git.mesihkilinc@gmail.com>
 Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cgoydzqpbnyatpx4"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBB47BSPQAKGQEISHOIJI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="qeuv22isdg5ditpp"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBVPCSPQAKGQET4JYQPI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Content-Disposition: inline
-In-Reply-To: <dafe3e548064535cfc32934c079b53a5c45fcd48.1543781680.git.mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <125b26f154ad1373179d67fcde30df056e883ac8.1543781680.git.mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -24,14 +24,14 @@ Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreC
 List-Id: linux-gpio@vger.kernel.org
 
 
---cgoydzqpbnyatpx4
+--qeuv22isdg5ditpp
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 
-On Sun, Dec 02, 2018 at 11:23:50PM +0300, Mesih Kilinc wrote:
-> F1C100s is one product with the suniv die, which has a 32MiB co-packaged
-> DDR1 DRAM chip. As we have the support for suniv pin controller and CCU now, add a
-> initial DTSI for it.
+On Sun, Dec 02, 2018 at 11:23:51PM +0300, Mesih Kilinc wrote:
+> Lichee Pi Nano is a F1C100s board by Lichee Pi.
+> 
+> Add initial device tree for it.
 > 
 > Signed-off-by: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
@@ -42,4 +42,4 @@ Maxime
 Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
---cgoydzqpbnyatpx4--
+--qeuv22isdg5ditpp--
