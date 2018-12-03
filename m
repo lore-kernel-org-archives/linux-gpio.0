@@ -1,56 +1,38 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-Date: Sun, 2 Dec 2018 23:20:27 +0100
-Message-ID: <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
-References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-2-brgl@bgdev.pl>
- <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de> <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
- <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <20181202215613.jcfrxwl4taiqgsql@pengutronix.de>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: Add devicetree bindings for
+ MT6797 SoC Pinctrl
+Date: Mon, 3 Dec 2018 02:08:35 +0100
+Message-ID: <c1f63dd8-1c06-1797-025c-2cd4891d905d@gmail.com>
+References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org>
+ <20181107174844.5381-2-manivannan.sadhasivam@linaro.org>
+ <CACRpkda25cuiPCe9ouvDDSpFwZ2z=Pm8pK=5jC-7OAcYwPSvvA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181202215613.jcfrxwl4taiqgsql@pengutronix.de>
+In-Reply-To: <CACRpkda25cuiPCe9ouvDDSpFwZ2z=Pm8pK=5jC-7OAcYwPSvvA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: sean.wang@kernel.org, Rob Herring <robh+dt@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Amit Kucheria <amit.kucheria@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-niedz., 2 gru 2018 o 22:56 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
->
-> Hello,
->
-> On Thu, Nov 29, 2018 at 07:14:45PM +0100, Bartosz Golaszewski wrote:
-> > We're getting too much into details of how to handle simulated
-> > interrupts and we can continue discussing it, but meanwhile I'd like
-> > to address a different thing:
-> >
-> > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
-> > sharing for userspace") some libgpiod tests are failing because we can
-> > no longer depend on reading the value of a dummy GPIO after detecting
-> > an interrupt to know the edge of the interrupt. While these interrupts
-> > are triggered from debugfs and debugfs is not required to maintain
-> > compatibility, I thing having a working test suite for the GPIO
-> > subsystem and uAPI is worth applying these two patches and also the
-> > previous one[1].
-> >
-> > Can we have them applied for 4.20 or are there any objections?
->
-> Just for the record: I objected the patch, Bartosz agrees to discuss
-> further and but because this is too much detail the patch should now be
-> applied anyhow to fix the test suite of an external project. This seems
-> wrong to me.
->
+Hi Linus,
 
-Just to look at it from a different perspective: we have a project
-whose tests rely on a behavior that was changed by Uwe's patch. While
-the patch is fine, we need to find a correct way of testing the GPIO
-user API. This may take a long time. In order to not break the tests
-of an external project in 4.20 I propose to patch the interrupt
-simulator (a component only used for testing) for now and to revisit
-it later without time pressure.
+On 15/11/2018 11:04, Linus Walleij wrote:
+> On Wed, Nov 7, 2018 at 6:49 PM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> 
+>> Add devicetree bindings for Mediatek MT6797 SoC Pin Controller.
+>>
+>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Patch applied.
+> 
 
-Best regards,
-Bartosz
+Could you provide a stable tree for me, so that I can take the dts parts?
+I just realized that my build is broken because of the missing dt-bindings
+header file.
+
+Regards,
+Matthias
