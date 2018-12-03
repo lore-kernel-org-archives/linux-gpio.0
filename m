@@ -1,38 +1,50 @@
-From: Florian Eckert <fe@dev.tdt.de>
-Subject: Re: [PATCH v5 0/2] Add device driver for APU2/APU3 GPIOs
-Date: Mon, 03 Dec 2018 08:58:23 +0100
-Message-ID: <51e0d3f36dc23de801f2fdfc990f6c23@dev.tdt.de>
-References: <20181127132508.5501-1-fe@dev.tdt.de>
- <CAHp75VfFYJQzTv_oe8RKPo03-FLYHy6BkrKaG23svAKtC+jVBg@mail.gmail.com>
- <583ca922b4a877a4b0577994e40ddf5f@dev.tdt.de>
- <CAHp75VcKu4fhP8=NH7fgfSFCh6xdCLWrNLcsHSuWvMcW+irfmA@mail.gmail.com>
- <70e7b8e2346b9837273b5edce0524584@dev.tdt.de>
- <CAHp75VfSKz8sauUKq2pxUhQ6xvmX4UeOBw6eEA+71=NUyWES9g@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v6 13/17] clk: sunxi-ng: add support for
+ suniv F1C100s SoC
+Date: Mon, 3 Dec 2018 09:55:31 +0100
+Message-ID: <20181203085531.exlmkfs6b4ejv5dr@flea>
+References: <cover.1543781680.git.mesihkilinc@gmail.com>
+ <b3d266d9f5f0f7504701c3bbec819acde6d19257.1543781680.git.mesihkilinc@gmail.com>
+Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VfSKz8sauUKq2pxUhQ6xvmX4UeOBw6eEA+71=NUyWES9g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Eckert.Florian@googlemail.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rnvyyf5rs3zyws7h"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBDW7SPQAKGQE63VCWYQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <b3d266d9f5f0f7504701c3bbec819acde6d19257.1543781680.git.mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Andy
 
->> > Btw, is the statement in above email still actual? "...I can fix
->> > required things."
-> 
->> Yes i will fix your hints tomorrow and send a v6 of my patchset.
->> Thank you for your hints and time
->> It would be nice if you could fix ACPI problemmatik.
-> 
-> I would like to see the ACPI dump for that...
+--rnvyyf5rs3zyws7h
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 
-See https://github.com/openwrt/openwrt/pull/1232#issuecomment-443224576
-In this comment Michał Żygowski appended to this thread the missing
-files you want to have.
+On Sun, Dec 02, 2018 at 11:23:47PM +0300, Mesih Kilinc wrote:
+> diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+> new file mode 100644
+> index 0000000..ea335a6
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+> @@ -0,0 +1,541 @@
+> +/* SPDX-License-Identifier: GPL-2.0
 
-Regards
-Flo
+This isn't the proper SPDX format, and this is reported by
+checkpatch. I've fixed it while applying, but please make sure to run
+checkpatch.
+
+Maxime
+
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+--rnvyyf5rs3zyws7h--
