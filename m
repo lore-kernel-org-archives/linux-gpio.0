@@ -1,18 +1,18 @@
 From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v6 15/17] dt-bindings: watchdog: Add
- Allwinner ARMv5 F1C100s wdt
-Date: Mon, 3 Dec 2018 09:58:42 +0100
-Message-ID: <20181203085842.mpst2t73znwgtudf@flea>
+Subject: Re: [PATCH v6 16/17] ARM: dts: suniv: add initial DTSI
+ file for F1C100s
+Date: Mon, 3 Dec 2018 10:01:27 +0100
+Message-ID: <20181203090127.enxxh5ah7eehbql7@flea>
 References: <cover.1543781680.git.mesihkilinc@gmail.com>
- <fb0c64319cbb5c2b062844ff38aba7b7323eefcb.1543781680.git.mesihkilinc@gmail.com>
+ <dafe3e548064535cfc32934c079b53a5c45fcd48.1543781680.git.mesihkilinc@gmail.com>
 Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="m4fvvd6pyti6fryv"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBB2HASPQAKGQE4ZFJ5TI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="cgoydzqpbnyatpx4"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBB47BSPQAKGQEISHOIJI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Content-Disposition: inline
-In-Reply-To: <fb0c64319cbb5c2b062844ff38aba7b7323eefcb.1543781680.git.mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <dafe3e548064535cfc32934c079b53a5c45fcd48.1543781680.git.mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -24,16 +24,16 @@ Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreC
 List-Id: linux-gpio@vger.kernel.org
 
 
---m4fvvd6pyti6fryv
+--cgoydzqpbnyatpx4
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 
-On Sun, Dec 02, 2018 at 11:23:49PM +0300, Mesih Kilinc wrote:
-> Allwinner ARMv5 F1C100s has similar watchdog timer to sun6i A31.
-> Add definition for it.
+On Sun, Dec 02, 2018 at 11:23:50PM +0300, Mesih Kilinc wrote:
+> F1C100s is one product with the suniv die, which has a 32MiB co-packaged
+> DDR1 DRAM chip. As we have the support for suniv pin controller and CCU now, add a
+> initial DTSI for it.
 > 
 > Signed-off-by: Mesih Kilinc <mesihkilinc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Reviewed-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
 Applied, thanks!
 Maxime
@@ -42,4 +42,4 @@ Maxime
 Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
---m4fvvd6pyti6fryv--
+--cgoydzqpbnyatpx4--
