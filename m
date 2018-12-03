@@ -1,71 +1,100 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-Date: Mon, 3 Dec 2018 11:23:38 +0100
-Message-ID: <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com>
-References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-2-brgl@bgdev.pl>
- <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de> <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
- <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <20181202215613.jcfrxwl4taiqgsql@pengutronix.de> <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH] pinctrl: meson: fix G12A ao pull registers base address
+Date: Mon, 3 Dec 2018 11:27:58 +0100
+Message-ID: <a240773f-7b05-d950-e5e9-23d7983c7f35@baylibre.com>
+References: <20181203030533.10989-1-xingyu.chen@amlogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
+In-Reply-To: <20181203030533.10989-1-xingyu.chen@amlogic.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Xingyu Chen <xingyu.chen@amlogic.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: jbrunet@baylibre.com, khilman@baylibre.com, carlo@caione.org, martin.blumenstingl@googlemail.com, robh@kernel.org, jianxin.pan@amlogic.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-niedz., 2 gru 2018 o 23:20 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82=
-(a):
->
-> niedz., 2 gru 2018 o 22:56 Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
-> >
-> > Hello,
-> >
-> > On Thu, Nov 29, 2018 at 07:14:45PM +0100, Bartosz Golaszewski wrote:
-> > > We're getting too much into details of how to handle simulated
-> > > interrupts and we can continue discussing it, but meanwhile I'd like
-> > > to address a different thing:
-> > >
-> > > Thomas, Linus: after commit fa38869b0161 ("gpiolib: Don't support irq
-> > > sharing for userspace") some libgpiod tests are failing because we ca=
-n
-> > > no longer depend on reading the value of a dummy GPIO after detecting
-> > > an interrupt to know the edge of the interrupt. While these interrupt=
-s
-> > > are triggered from debugfs and debugfs is not required to maintain
-> > > compatibility, I thing having a working test suite for the GPIO
-> > > subsystem and uAPI is worth applying these two patches and also the
-> > > previous one[1].
-> > >
-> > > Can we have them applied for 4.20 or are there any objections?
-> >
-> > Just for the record: I objected the patch, Bartosz agrees to discuss
-> > further and but because this is too much detail the patch should now be
-> > applied anyhow to fix the test suite of an external project. This seems
-> > wrong to me.
-> >
->
-> Just to look at it from a different perspective: we have a project
-> whose tests rely on a behavior that was changed by Uwe's patch. While
-> the patch is fine, we need to find a correct way of testing the GPIO
-> user API. This may take a long time. In order to not break the tests
-> of an external project in 4.20 I propose to patch the interrupt
-> simulator (a component only used for testing) for now and to revisit
-> it later without time pressure.
->
-> Best regards,
-> Bartosz
+Hi Xingyu,
 
-In fact after re-reading this conversation I'm still not sure what
-your objection is exactly. You're proposing a solution that may well
-be nicely engineered but it's specific to your gpio-simulator.
-Meanwhile I'm trying to provide a more generalized API for more
-testing modules to use.
 
-Why exactly would you not merge this fix?
+On 03/12/2018 04:05, Xingyu Chen wrote:
+> Since Meson G12A SoC, Introduce new ao registers AO_RTI_PULL_UP_EN_REG
+> and AO_GPIO_O.
+> 
+> These bits of controlling output level are remapped to the new register
+> AO_GPIO_O, and the AO_GPIO_O_EN_N support only controlling output enable.
+> 
+> These bits of controlling pull enable are remapped to the new register
+> AO_RTI_PULL_UP_EN_REG, and the AO_RTI_PULL_UP_REG support only controlling
+> pull type(up/down).
+> 
+> The new layout of ao gpio/pull registers is as follows:
+> - AO_GPIO_O_EN_N        [offset: 0x9 << 2]
+> - AO_GPIO_I             [offset: 0xa << 2]
+> - AO_RTI_PULL_UP_REG    [offset: 0xb << 2]
+> - AO_RTI_PULL_UP_EN_REG [offset: 0xc << 2]
+> - AO_GPIO_O             [offset: 0xd << 2]
+> 
+> From above, we can see ao GPIO registers region has been separated by the
+> ao pull registers. In order to ensure the continuity of the region on
+> software, the ao GPIO and ao pull registers use the same base address, but
+> can be identified by the offset.
+> 
+> Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
+> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> ---
+>  drivers/pinctrl/meson/pinctrl-meson.c | 22 ++++++++++++----------
+>  1 file changed, 12 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+> index 53d449076dee..7ff40cd7a0cb 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+> @@ -31,6 +31,9 @@
+>   * In some cases the register ranges for pull enable and pull
+>   * direction are the same and thus there are only 3 register ranges.
+>   *
+> + * Since Meson G12A SoC, the ao register ranges for gpio, pull enable
+> + * and pull direction are the same, so there are only 2 register ranges.
+> + *
+>   * For the pull and GPIO configuration every bank uses a contiguous
+>   * set of bits in the register sets described above; the same register
+>   * can be shared by more banks with different offsets.
+> @@ -487,23 +490,22 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
+>  		return PTR_ERR(pc->reg_mux);
+>  	}
+>  
+> -	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+> -	if (IS_ERR(pc->reg_pull)) {
+> -		dev_err(pc->dev, "pull registers not found\n");
+> -		return PTR_ERR(pc->reg_pull);
+> +	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+> +	if (IS_ERR(pc->reg_gpio)) {
+> +		dev_err(pc->dev, "gpio registers not found\n");
+> +		return PTR_ERR(pc->reg_gpio);
+>  	}
+>  
+> +	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+> +	/* Use gpio region if pull one is not present */
+> +	if (IS_ERR(pc->reg_pull))
+> +		pc->reg_pull = pc->reg_gpio;
+> +
+>  	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
+>  	/* Use pull region if pull-enable one is not present */
+>  	if (IS_ERR(pc->reg_pullen))
+>  		pc->reg_pullen = pc->reg_pull;
+>  
+> -	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+> -	if (IS_ERR(pc->reg_gpio)) {
+> -		dev_err(pc->dev, "gpio registers not found\n");
+> -		return PTR_ERR(pc->reg_gpio);
+> -	}
+> -
+>  	return 0;
+>  }
+>  
+> 
+Doesn't it need an update of the bindings ?
 
-Bart
+Neil
