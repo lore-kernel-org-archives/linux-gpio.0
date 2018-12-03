@@ -1,100 +1,118 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 Subject: Re: [PATCH] pinctrl: meson: fix G12A ao pull registers base address
-Date: Mon, 3 Dec 2018 11:27:58 +0100
-Message-ID: <a240773f-7b05-d950-e5e9-23d7983c7f35@baylibre.com>
+Date: Mon, 03 Dec 2018 11:36:32 +0100
+Message-ID: <f2ceff1edcb2c103d0128a838ff630bb3c147bf5.camel@baylibre.com>
 References: <20181203030533.10989-1-xingyu.chen@amlogic.com>
+         <a240773f-7b05-d950-e5e9-23d7983c7f35@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181203030533.10989-1-xingyu.chen@amlogic.com>
-Content-Language: en-US
+In-Reply-To: <a240773f-7b05-d950-e5e9-23d7983c7f35@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Xingyu Chen <xingyu.chen@amlogic.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: jbrunet@baylibre.com, khilman@baylibre.com, carlo@caione.org, martin.blumenstingl@googlemail.com, robh@kernel.org, jianxin.pan@amlogic.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>, Xingyu Chen <xingyu.chen@amlogic.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: khilman@baylibre.com, carlo@caione.org, martin.blumenstingl@googlemail.com, robh@kernel.org, jianxin.pan@amlogic.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Xingyu,
+On Mon, 2018-12-03 at 11:27 +0100, Neil Armstrong wrote:
+> Hi Xingyu,
+> 
+> 
+> On 03/12/2018 04:05, Xingyu Chen wrote:
+> > Since Meson G12A SoC, Introduce new ao registers AO_RTI_PULL_UP_EN_REG
+> > and AO_GPIO_O.
+> > 
+> > These bits of controlling output level are remapped to the new register
+> > AO_GPIO_O, and the AO_GPIO_O_EN_N support only controlling output enable.
+> > 
+> > These bits of controlling pull enable are remapped to the new register
+> > AO_RTI_PULL_UP_EN_REG, and the AO_RTI_PULL_UP_REG support only controlling
+> > pull type(up/down).
+> > 
+> > The new layout of ao gpio/pull registers is as follows:
+> > - AO_GPIO_O_EN_N        [offset: 0x9 << 2]
+> > - AO_GPIO_I             [offset: 0xa << 2]
+> > - AO_RTI_PULL_UP_REG    [offset: 0xb << 2]
+> > - AO_RTI_PULL_UP_EN_REG [offset: 0xc << 2]
+> > - AO_GPIO_O             [offset: 0xd << 2]
+> > 
+> > From above, we can see ao GPIO registers region has been separated by the
+> > ao pull registers. In order to ensure the continuity of the region on
+> > software, the ao GPIO and ao pull registers use the same base address, but
+> > can be identified by the offset.
+> > 
+> > Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
+> > Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+> > Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> > ---
+> >  drivers/pinctrl/meson/pinctrl-meson.c | 22 ++++++++++++----------
+> >  1 file changed, 12 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/pinctrl/meson/pinctrl-meson.c
+> > b/drivers/pinctrl/meson/pinctrl-meson.c
+> > index 53d449076dee..7ff40cd7a0cb 100644
+> > --- a/drivers/pinctrl/meson/pinctrl-meson.c
+> > +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+> > @@ -31,6 +31,9 @@
+> >   * In some cases the register ranges for pull enable and pull
+> >   * direction are the same and thus there are only 3 register ranges.
+> >   *
+> > + * Since Meson G12A SoC, the ao register ranges for gpio, pull enable
+> > + * and pull direction are the same, so there are only 2 register ranges.
+> > + *
+> >   * For the pull and GPIO configuration every bank uses a contiguous
+> >   * set of bits in the register sets described above; the same register
+> >   * can be shared by more banks with different offsets.
+> > @@ -487,23 +490,22 @@ static int meson_pinctrl_parse_dt(struct
+> > meson_pinctrl *pc,
+> >  		return PTR_ERR(pc->reg_mux);
+> >  	}
+> >  
+> > -	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+> > -	if (IS_ERR(pc->reg_pull)) {
+> > -		dev_err(pc->dev, "pull registers not found\n");
+> > -		return PTR_ERR(pc->reg_pull);
+> > +	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+> > +	if (IS_ERR(pc->reg_gpio)) {
+> > +		dev_err(pc->dev, "gpio registers not found\n");
+> > +		return PTR_ERR(pc->reg_gpio);
+> >  	}
+> >  
+> > +	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+> > +	/* Use gpio region if pull one is not present */
+> > +	if (IS_ERR(pc->reg_pull))
+> > +		pc->reg_pull = pc->reg_gpio;
+> > +
+> >  	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
+> >  	/* Use pull region if pull-enable one is not present */
+> >  	if (IS_ERR(pc->reg_pullen))
+> >  		pc->reg_pullen = pc->reg_pull;
+> >  
+> > -	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+> > -	if (IS_ERR(pc->reg_gpio)) {
+> > -		dev_err(pc->dev, "gpio registers not found\n");
+> > -		return PTR_ERR(pc->reg_gpio);
+> > -	}
+> > -
+> >  	return 0;
+> >  }
+> >  
+> > 
+> Doesn't it need an update of the bindings ?
 
+Going even further, shouldn't we stop trying make multiple regions out of
+this, and have just one ? 
 
-On 03/12/2018 04:05, Xingyu Chen wrote:
-> Since Meson G12A SoC, Introduce new ao registers AO_RTI_PULL_UP_EN_REG
-> and AO_GPIO_O.
-> 
-> These bits of controlling output level are remapped to the new register
-> AO_GPIO_O, and the AO_GPIO_O_EN_N support only controlling output enable.
-> 
-> These bits of controlling pull enable are remapped to the new register
-> AO_RTI_PULL_UP_EN_REG, and the AO_RTI_PULL_UP_REG support only controlling
-> pull type(up/down).
-> 
-> The new layout of ao gpio/pull registers is as follows:
-> - AO_GPIO_O_EN_N        [offset: 0x9 << 2]
-> - AO_GPIO_I             [offset: 0xa << 2]
-> - AO_RTI_PULL_UP_REG    [offset: 0xb << 2]
-> - AO_RTI_PULL_UP_EN_REG [offset: 0xc << 2]
-> - AO_GPIO_O             [offset: 0xd << 2]
-> 
-> From above, we can see ao GPIO registers region has been separated by the
-> ao pull registers. In order to ensure the continuity of the region on
-> software, the ao GPIO and ao pull registers use the same base address, but
-> can be identified by the offset.
-> 
-> Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
-> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-> ---
->  drivers/pinctrl/meson/pinctrl-meson.c | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-> index 53d449076dee..7ff40cd7a0cb 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
-> @@ -31,6 +31,9 @@
->   * In some cases the register ranges for pull enable and pull
->   * direction are the same and thus there are only 3 register ranges.
->   *
-> + * Since Meson G12A SoC, the ao register ranges for gpio, pull enable
-> + * and pull direction are the same, so there are only 2 register ranges.
-> + *
->   * For the pull and GPIO configuration every bank uses a contiguous
->   * set of bits in the register sets described above; the same register
->   * can be shared by more banks with different offsets.
-> @@ -487,23 +490,22 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
->  		return PTR_ERR(pc->reg_mux);
->  	}
->  
-> -	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
-> -	if (IS_ERR(pc->reg_pull)) {
-> -		dev_err(pc->dev, "pull registers not found\n");
-> -		return PTR_ERR(pc->reg_pull);
-> +	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
-> +	if (IS_ERR(pc->reg_gpio)) {
-> +		dev_err(pc->dev, "gpio registers not found\n");
-> +		return PTR_ERR(pc->reg_gpio);
->  	}
->  
-> +	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
-> +	/* Use gpio region if pull one is not present */
-> +	if (IS_ERR(pc->reg_pull))
-> +		pc->reg_pull = pc->reg_gpio;
-> +
->  	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
->  	/* Use pull region if pull-enable one is not present */
->  	if (IS_ERR(pc->reg_pullen))
->  		pc->reg_pullen = pc->reg_pull;
->  
-> -	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
-> -	if (IS_ERR(pc->reg_gpio)) {
-> -		dev_err(pc->dev, "gpio registers not found\n");
-> -		return PTR_ERR(pc->reg_gpio);
-> -	}
-> -
->  	return 0;
->  }
->  
-> 
-Doesn't it need an update of the bindings ?
+On all the Amlogic SoC we have seen so far, all the regions a very (VERY)
+close to each other. It seems very unlikely that there something unrelated to
+GPIO in between.
 
-Neil
+It looks like everything is mostly there in the driver to deal with offset, so
+change would be minimal.
+
+Of course, for  DT stability we will need to carry the legacy, but for newer
+SoC, such as the g12, does it really makes sense to have multiple regions ?
+
+> 
+> Neil
+> 
