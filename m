@@ -1,126 +1,108 @@
-From: vitor <vitor.soares@synopsys.com>
-Subject: Re: [PATCH] i3c: master: dw: split dw-i3c-master.c into master and
- bus specific parts
-Date: Tue, 4 Dec 2018 00:34:20 +0000
-Message-ID: <623809f3-1d1f-a10c-783a-07b545c5955c@synopsys.com>
-References: <ade2c1a8d1eb48681b01ccdc9bed22caf5e96c4b.1542904564.git.soares@synopsys.com>
- <20181122210202.6af50fcc@bbrezillon>
- <6d513e04-3a57-1989-429c-64631101c5a2@synopsys.com>
- <20181123135004.7fd1cd58@bbrezillon>
- <83115f47-1326-cb33-a7dc-4bc8ff95befa@synopsys.com>
- <20181126133550.51469816@bbrezillon>
- <4e9c0461-02a3-80b2-c9b7-2e9ea9b38f8b@synopsys.com>
- <20181126195618.352eafb1@bbrezillon>
- <4c743a9a-d636-d34c-b7e3-913f18e6c754@synopsys.com>
- <20181126223334.08105d89@bbrezillon>
- <0912ea50-b365-d583-9d33-1dff236acbad@synopsys.com>
- <20181127133350.0361f998@bbrezillon>
+From: Xingyu Chen <xingyu.chen@amlogic.com>
+Subject: Re: [PATCH] pinctrl: meson: fix G12A ao pull registers base address
+Date: Tue, 4 Dec 2018 10:05:00 +0800
+Message-ID: <b3ccafc4-0bd2-273b-b0b2-96bbdeb9ee1b@amlogic.com>
+References: <20181203030533.10989-1-xingyu.chen@amlogic.com>
+ <a240773f-7b05-d950-e5e9-23d7983c7f35@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181127133350.0361f998@bbrezillon>
-Content-Language: en-US
+In-Reply-To: <a240773f-7b05-d950-e5e9-23d7983c7f35@baylibre.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@bootlin.com>, vitor <vitor.soares@synopsys.com>
-Cc: wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linus.walleij@linaro.org, Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org
+To: Neil Armstrong <narmstrong@baylibre.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: jbrunet@baylibre.com, khilman@baylibre.com, carlo@caione.org, martin.blumenstingl@googlemail.com, robh@kernel.org, jianxin.pan@amlogic.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Boris,
 
 
-Sorry for the delayed response.
-
-
-On 27/11/18 12:33, Boris Brezillon wrote:
-> Hi Vitor,
->
-> On Tue, 27 Nov 2018 11:50:53 +0000
-> vitor<vitor.soares@synopsys.com>  wrote:
->
->
->>>> Sorry for that and don't take me wrong... maybe I should rise this
->>>> question early but this only came up now when I started splitting and
->>>> thinking where to put what is for master for slave, what is common and
->>>> the thing of putting everything of controller in a folder.
->>> So you have such a dual-role controller?
->> Yes, we already talked about secondary master support.
-> There's a difference between a secondary master that waits for its time
-> to become the currrent master, and a secondary master that provides I3C
-> device features when it's acting as a slave (sensor, GPIO
-> controller, ...). So far we focused on supporting the former. If
-> there's a need for the latter, then we should start thinking about the
-> slave framework...
->
->>> What I call a slave controller would be something that lets you reply to
->>> SDR/DDR transactions or fill a generic regmap that would be exposed to
->>> other masters on the bus. This way we could implement generic slave
->>> drivers in Linux (the same way we have gadget drivers). Anything else
->>> is likely to be to specific to be exposed as a generic framework.
->> I would bet to do something like in i2c, we don't need the same level of
->> complexity found in USB.
-> Can you detail a bit more what you have in mind? I don't think we can
-> do like I2C, simply because we need to expose a valid DCR +
-> manuf-ID/PID so that other masters can bind the device to the
-> appropriate driver on their side. Plus, if we're about to expose
-> generic profiles, we likely don't want each I3C slave controller driver
-> to do that on its own.
-
-
-I think this should be discuss in another thread. Do you agree?
-
-
->>>> Taking the USB as exemple do you prefer a dwc folder on i3c root?
->>> Hm, not sure I like this idea either. So I see 2 options:
->>>
->>> 1/ put all controller drivers (both master and slave ones) in a common
->>>      directory (drivers/i3c/controllers) as you suggest, and prefix them
->>>      correctly (i3c-master-<ip>.c, i3c-slave-<ip>.c and i3c-dual-<ip>.c)
->> I agree with the controller folder but not with prefix. Please check
->> what is already in the kernel.
-> If we mix everything in the same subdir, I'd like to have an easy way
-> to quickly identify those that are slave controllers and those that are
-> master controllers. For the dual-role thing, maybe we can consider them
-> as master (ones with advances slave features).
->
-> Would you be okay with drivers/i3c/controllers/{designware,dw}/..., so
-> that you can have all designware drivers (for both slave and master
-> blocks) in the same dir?
-
-
-Yes, that was what I trying to tell you. For me this might be the best 
-option.
-
-I would like to avoid having dual role i3c driver in a master folder.
-
-
-> For those that are placed directly under drivers/i3c/controllers/...
-> (because they only have one .c file), I'd like to keep a standard
-> prefix.
-
-
-I don't disagree, and for those that have more than one file they should 
-be in a folder, right?
-
-What prefix do you have in mind for those files inside a folder?
-
-
->> To be clear, the subsystem is nice and I working with daily. As I said
->> this is something that I dealing now and I'm telling what I think that
->> is not correct.
+On 2018/12/3 18:27, Neil Armstrong wrote:
+> Hi Xingyu,
+> 
+> 
+> On 03/12/2018 04:05, Xingyu Chen wrote:
+>> Since Meson G12A SoC, Introduce new ao registers AO_RTI_PULL_UP_EN_REG
+>> and AO_GPIO_O.
 >>
-> Come on! All I've seen so far are complaints on tiny details, it
-> definitely doesn't prevent you from adding new features.
->
-> Regards,
->
-> Boris
-
-
-No, it's not. But as you can see to slipt the driver in parts this 
-subject has some relevance.
-
-
-Best regards,
-
-Vitor Soares
+>> These bits of controlling output level are remapped to the new register
+>> AO_GPIO_O, and the AO_GPIO_O_EN_N support only controlling output enable.
+>>
+>> These bits of controlling pull enable are remapped to the new register
+>> AO_RTI_PULL_UP_EN_REG, and the AO_RTI_PULL_UP_REG support only controlling
+>> pull type(up/down).
+>>
+>> The new layout of ao gpio/pull registers is as follows:
+>> - AO_GPIO_O_EN_N        [offset: 0x9 << 2]
+>> - AO_GPIO_I             [offset: 0xa << 2]
+>> - AO_RTI_PULL_UP_REG    [offset: 0xb << 2]
+>> - AO_RTI_PULL_UP_EN_REG [offset: 0xc << 2]
+>> - AO_GPIO_O             [offset: 0xd << 2]
+>>
+>>  From above, we can see ao GPIO registers region has been separated by the
+>> ao pull registers. In order to ensure the continuity of the region on
+>> software, the ao GPIO and ao pull registers use the same base address, but
+>> can be identified by the offset.
+>>
+>> Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
+>> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+>> ---
+>>   drivers/pinctrl/meson/pinctrl-meson.c | 22 ++++++++++++----------
+>>   1 file changed, 12 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+>> index 53d449076dee..7ff40cd7a0cb 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+>> @@ -31,6 +31,9 @@
+>>    * In some cases the register ranges for pull enable and pull
+>>    * direction are the same and thus there are only 3 register ranges.
+>>    *
+>> + * Since Meson G12A SoC, the ao register ranges for gpio, pull enable
+>> + * and pull direction are the same, so there are only 2 register ranges.
+>> + *
+>>    * For the pull and GPIO configuration every bank uses a contiguous
+>>    * set of bits in the register sets described above; the same register
+>>    * can be shared by more banks with different offsets.
+>> @@ -487,23 +490,22 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
+>>   		return PTR_ERR(pc->reg_mux);
+>>   	}
+>>   
+>> -	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+>> -	if (IS_ERR(pc->reg_pull)) {
+>> -		dev_err(pc->dev, "pull registers not found\n");
+>> -		return PTR_ERR(pc->reg_pull);
+>> +	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+>> +	if (IS_ERR(pc->reg_gpio)) {
+>> +		dev_err(pc->dev, "gpio registers not found\n");
+>> +		return PTR_ERR(pc->reg_gpio);
+>>   	}
+>>   
+>> +	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+>> +	/* Use gpio region if pull one is not present */
+>> +	if (IS_ERR(pc->reg_pull))
+>> +		pc->reg_pull = pc->reg_gpio;
+>> +
+>>   	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
+>>   	/* Use pull region if pull-enable one is not present */
+>>   	if (IS_ERR(pc->reg_pullen))
+>>   		pc->reg_pullen = pc->reg_pull;
+>>   
+>> -	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+>> -	if (IS_ERR(pc->reg_gpio)) {
+>> -		dev_err(pc->dev, "gpio registers not found\n");
+>> -		return PTR_ERR(pc->reg_gpio);
+>> -	}
+>> -
+>>   	return 0;
+>>   }
+>>   
+>>
+> Doesn't it need an update of the bindings ?
+> 
+> Neil
+> 
+Thanks, I will update it in next patch
+> .
+> 
