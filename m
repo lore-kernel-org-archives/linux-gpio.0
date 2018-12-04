@@ -1,84 +1,131 @@
 From: Florian Eckert <fe@dev.tdt.de>
-Subject: Re: [PATCH v5 0/2] Add device driver for APU2/APU3 GPIOs
-Date: Tue, 04 Dec 2018 10:58:24 +0100
-Message-ID: <84a2396b0b5ba34a2339d35159a97a89@dev.tdt.de>
+Subject: Re: [PATCH v5 1/2] gpio: Add driver for PC Engines APU boards
+Date: Tue, 04 Dec 2018 11:17:37 +0100
+Message-ID: <9102ea20a4f7fec9021ea4e11570865a@dev.tdt.de>
 References: <20181127132508.5501-1-fe@dev.tdt.de>
- <CAHp75VfFYJQzTv_oe8RKPo03-FLYHy6BkrKaG23svAKtC+jVBg@mail.gmail.com>
- <583ca922b4a877a4b0577994e40ddf5f@dev.tdt.de>
- <CAHp75VcKu4fhP8=NH7fgfSFCh6xdCLWrNLcsHSuWvMcW+irfmA@mail.gmail.com>
- <70e7b8e2346b9837273b5edce0524584@dev.tdt.de>
- <CAHp75VfSKz8sauUKq2pxUhQ6xvmX4UeOBw6eEA+71=NUyWES9g@mail.gmail.com>
- <51e0d3f36dc23de801f2fdfc990f6c23@dev.tdt.de>
- <CAHp75VdEgm-=jHgJXz_mM6DZMnFVEeZW_es3VyL4L2V+khYWtg@mail.gmail.com>
+ <20181127132508.5501-2-fe@dev.tdt.de>
+ <CAHp75Vc0-t=nBGPbYjbaJDoPEg77xKLVDuhUtFQ6imgnkNuz-g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
+Content-Type: text/plain; charset=US-ASCII;
  format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdEgm-=jHgJXz_mM6DZMnFVEeZW_es3VyL4L2V+khYWtg@mail.gmail.com>
+In-Reply-To: <CAHp75Vc0-t=nBGPbYjbaJDoPEg77xKLVDuhUtFQ6imgnkNuz-g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Eckert.Florian@googlemail.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
->> >> Yes i will fix your hints tomorrow and send a v6 of my patchset.
->> >> Thank you for your hints and time
->> >> It would be nice if you could fix ACPI problemmatik.
->> >
->> > I would like to see the ACPI dump for that...
->> 
->> See 
->> https://github.com/openwrt/openwrt/pull/1232#issuecomment-443224576
->> In this comment Michał Żygowski appended to this thread the missing
->> files you want to have.
 
-> So, let me clarify what we have:
->  - some platforms are in the wild with old BIOS with broken ACPI tables
 
-correct
+> /*
+>  * Multi-line comments
+>  * have this style
+>  */
 
->  - you still may fix the things for new BIOS version for all affected 
-> platforms
+fixed
 
-I have seen that this is a lot of work and I didn't think it was so 
-complicated!
-To get the GPIO support for APU2/APU3 merged into the gpio subsystem.
-I am little confused what i should do now. By the way I only have one 
-board (APU3).
 
->  - you need to support both
+>> +#include <linux/kernel.h>
+> 
+> kbuild bot complains for absence of
+> 
+> #include <linux/mod_devicetable.h>
+> 
+> here.
+> 
 
-That is not necessary from my point of view. I am fine if the driver 
-supports at least
-the current BIOS version. And if the coreboot maintainer fixes the ACPI 
-problem
-then we could extend the driver and add the ACPI stuff.
-But this not in my hand, right?
+fixed
 
-> For broken firmware you need to do the following:
->  - create an MFD driver, which would instantiate GPIO and GPIO keys
-> support (at least)
->  - create one of each above drivers w/o any DMI crap (should be done
-> as a part of MFD driver)
+>> +static int gpio_apu_get_dir(struct gpio_chip *chip, unsigned int 
+>> offset)
+>> +{
+>> +       u32 val;
+>> +       struct apu_gpio_pdata *apu_gpio = gpiochip_get_data(chip);
+>> +
+>> +       spin_lock(&apu_gpio->lock);
+>> +
+> 
+>> +       val = ~ioread32(apu_gpio->addr[offset]);
+> 
+> There is no need to do ~ under spin lock.
+> 
 
-I will have a look how to achieve this.
-If we want to support all BIOS version.
-And is a must have to get the driver into mainline.
+fixed
 
-> For fixed BIOS you need to add the following (example, not a fully
-> correct solution) at the level behind SB:
+>> +
+>> +       spin_unlock(&apu_gpio->lock);
+>> +
+>> +       return !!(val & BIT(APU_GPIO_BIT_DIR));
+>> +}
+> 
+>> +       if (dmi_check_system(apu3_gpio_dmi_table)) {
+> 
+> (1)
+> 
+>> +               apu_gpio->addr = devm_kzalloc(&pdev->dev,
+>> +                               sizeof(apu3_gpio_offset),
+>> +                               GFP_KERNEL);
+> 
+>> +
+> 
+> No need to have this blank line. Same for the other cases.
+> 
 
-I do not understand how I could fix this. I have no idea from ACPI.
-I have not found any driver where I can inspire myself.
+fixed
+
+>> +               if (!apu_gpio->addr)
+>> +                       return -ENOMEM;
+> 
+>> +       } else if (dmi_check_system(apu2_gpio_dmi_table)) {
+> 
+> (2)
+> 
+> I think I have already told about (1) and (2). You may create two
+> callbacks and utilize .callback member in DMI table.
+> 
+
+Done but I do not seen any advantage. I used the following driver as 
+basis.
+https://github.com/torvalds/linux/blob/master/drivers/leds/leds-clevo-mail.c
+
+>> +       }
+> 
+>> +static int __init apu_gpio_init(void)
+>> +{
+> 
+>> +       if (!(dmi_check_system(apu2_gpio_dmi_table)) &&
+>> +               !(dmi_check_system(apu3_gpio_dmi_table))) {
+>> +               pr_err("No PC Engines board detected\n");
+>> +               return -ENODEV;
+>> +       }
+> 
+> I don't think we need this.
+> 
+
+see below
+
+
+>> +}
+>> +
+>> +module_init(apu_gpio_init);
+>> +module_exit(apu_gpio_exit);
 
 > 
-> Scope (SB)
-> {
->   Device(GPIO)
->   {
+> After removing unneeded checks why not to simple use
+> module_platform_driver()
+> ?
 
-> After updating firmware you would need just an ACPI ID table to be
-> added to the GPIO driver. MFD driver should not be enumerated at all.
-
-That's maybe coming next when the coreboot maintainers have their bios 
-fixed, right?
+I have fixed all the above hints from you now but using 
+"module_platform_driver" is no option.
+I played around with them but the driver does not find any device. So I 
+need the init function
+to add a platform device. Only if I do this way driver and device will 
+find and match. And I
+see the gpios under /sys/class/gpio. So I think I need this?
+I have not find any driver who has the same problems
+I used the following drivers as my basis:
+https://github.com/torvalds/linux/blob/master/drivers/leds/leds-apu.c
+https://github.com/torvalds/linux/blob/master/drivers/leds/leds-clevo-mail.c
+They all use dmi and need init/exit for platform device register and 
+unregister
