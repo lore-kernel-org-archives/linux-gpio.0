@@ -1,40 +1,49 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH] pinctrl: sunxi: a83t: Fix IRQ offset typo for PH11
-Date: Tue,  4 Dec 2018 17:04:57 +0800
-Message-ID: <20181204090457.15597-1-wens@csie.org>
+From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: sunxi: a83t: Fix IRQ offset typo
+ for PH11
+Date: Tue, 4 Dec 2018 10:12:04 +0100
+Message-ID: <20181204091204.jtzk5gf2clumjwiq@flea>
+References: <20181204090457.15597-1-wens@csie.org>
+Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ntukseib6hpdpxly"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBB34JTHQAKGQERPJ22KI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20181204090457.15597-1-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Pin PH11 is used on various A83T board to detect a change in the OTG
-port's ID pin, as in when an OTG host cable is plugged in.
 
-The incorrect offset meant the gpiochip/irqchip was activating the wrong
-pin for interrupts.
+--ntukseib6hpdpxly
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 
-Fixes: 4730f33f0d82 ("pinctrl: sunxi: add allwinner A83T PIO controller support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Dec 04, 2018 at 05:04:57PM +0800, Chen-Yu Tsai wrote:
+> Pin PH11 is used on various A83T board to detect a change in the OTG
+> port's ID pin, as in when an OTG host cable is plugged in.
+> 
+> The incorrect offset meant the gpiochip/irqchip was activating the wrong
+> pin for interrupts.
+> 
+> Fixes: 4730f33f0d82 ("pinctrl: sunxi: add allwinner A83T PIO controller support")
+> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
-index 6624499eae72..4ada80317a3b 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
-@@ -568,7 +568,7 @@ static const struct sunxi_desc_pin sun8i_a83t_pins[] = {
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 11),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
--		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 1)),	/* PH_EINT11 */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 11)),	/* PH_EINT11 */
- };
- 
- static const struct sunxi_pinctrl_desc sun8i_a83t_pinctrl_data = {
+Acked-by: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+
+Maxime
+
 -- 
-2.20.0.rc1
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+--ntukseib6hpdpxly--
