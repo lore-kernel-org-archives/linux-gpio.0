@@ -1,50 +1,84 @@
-From: <Andrei.Stefanescu@microchip.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: add SAMA5D2 PIOBU support
-Date: Tue, 4 Dec 2018 09:58:10 +0000
-Message-ID: <b581a73c-2f72-5915-5fc8-3cf9f5518a9c@microchip.com>
-References: <1542701330-23466-1-git-send-email-andrei.stefanescu@microchip.com>
- <1542701330-23466-2-git-send-email-andrei.stefanescu@microchip.com>
+From: Florian Eckert <fe@dev.tdt.de>
+Subject: Re: [PATCH v5 0/2] Add device driver for APU2/APU3 GPIOs
+Date: Tue, 04 Dec 2018 10:58:24 +0100
+Message-ID: <84a2396b0b5ba34a2339d35159a97a89@dev.tdt.de>
+References: <20181127132508.5501-1-fe@dev.tdt.de>
+ <CAHp75VfFYJQzTv_oe8RKPo03-FLYHy6BkrKaG23svAKtC+jVBg@mail.gmail.com>
+ <583ca922b4a877a4b0577994e40ddf5f@dev.tdt.de>
+ <CAHp75VcKu4fhP8=NH7fgfSFCh6xdCLWrNLcsHSuWvMcW+irfmA@mail.gmail.com>
+ <70e7b8e2346b9837273b5edce0524584@dev.tdt.de>
+ <CAHp75VfSKz8sauUKq2pxUhQ6xvmX4UeOBw6eEA+71=NUyWES9g@mail.gmail.com>
+ <51e0d3f36dc23de801f2fdfc990f6c23@dev.tdt.de>
+ <CAHp75VdEgm-=jHgJXz_mM6DZMnFVEeZW_es3VyL4L2V+khYWtg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1542701330-23466-2-git-send-email-andrei.stefanescu@microchip.com>
-Content-Language: en-US
-Content-ID: <EF3978FE7B95694CA14EBFFA432BB883@namprd11.prod.outlook.com>
+In-Reply-To: <CAHp75VdEgm-=jHgJXz_mM6DZMnFVEeZW_es3VyL4L2V+khYWtg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org
-Cc: linus.walleij@linaro.org, gregkh@linuxfoundation.org, Nicolas.Ferre@microchip.com, mark.rutland@arm.com, Ludovic.Desroches@microchip.com, Cristian.Birsan@microchip.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Eckert.Florian@googlemail.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGVsbG8gUm9iLA0KDQpDb3VsZCB5b3UgcGxlYXNlIHRlbGwgbWUgaWYgdGhlcmUgYXJlIGFueSBp
-bXByb3ZlbWVudHMNCnRvIGJlIG1hZGUgdG8gdGhlIHBhdGNoPw0KDQpCZXN0IHJlZ2FyZHMsDQpB
-bmRyZWkNCg0KT24gMjAuMTEuMjAxOCAxMDowOCwgQW5kcmVpIFN0ZWZhbmVzY3UgLSBNNTA1MDYg
-d3JvdGU6DQo+IFRoaXMgcGF0Y2ggZGVzY3JpYmVzIHRoZSBjb21wYXRpYmxlIGFuZCB0aGUgZGV2
-aWNlIHRyZWUNCj4gYmluZGluZ3MgbmVjZXNzYXJ5IGZvciB0aGUgU0FNQTVEMiBQSU9CVSBHUElP
-Lg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBBbmRyZWkgU3RlZmFuZXNjdSA8YW5kcmVpLnN0ZWZhbmVz
-Y3VAbWljcm9jaGlwLmNvbT4NCj4gLS0tDQo+ICAgLi4uL2JpbmRpbmdzL2dwaW8vZ3Bpby1zYW1h
-NWQyLXBpb2J1LnR4dCAgICAgICAgICAgfCAzMSArKysrKysrKysrKysrKysrKysrKysrDQo+ICAg
-MSBmaWxlIGNoYW5nZWQsIDMxIGluc2VydGlvbnMoKykNCj4gICBjcmVhdGUgbW9kZSAxMDA2NDQg
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby1zYW1hNWQyLXBpb2J1
-LnR4dA0KPg0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L2dwaW8vZ3Bpby1zYW1hNWQyLXBpb2J1LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9ncGlvL2dwaW8tc2FtYTVkMi1waW9idS50eHQNCj4gbmV3IGZpbGUgbW9kZSAxMDA2
-NDQNCj4gaW5kZXggMDAwMDAwMC4uMmUyNjBlMQ0KPiAtLS0gL2Rldi9udWxsDQo+ICsrKyBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8tc2FtYTVkMi1waW9idS50
-eHQNCj4gQEAgLTAsMCArMSwzMSBAQA0KPiArR1BJTyBjb250cm9sbGVyIGZvciBTQU1BNUQyIFBJ
-T0JVIHBpbnMuDQo+ICsNCj4gK1RoZXNlIHBpbnMgaGF2ZSB0aGUgcHJvcGVydHkgb2Ygbm90IGxv
-c2luZyB0aGVpciB2b2x0YWdlDQo+ICtkdXJpbmcgQmFja3VwL1NlbGYtcmVmcmVzaCBtb2RlLg0K
-PiArDQo+ICtUaGVzZSBiaW5kaW5ncyBzaG91bGQgYmUgc2V0IHRvIGEgbm9kZSBpbiB0aGUgZHRz
-aSBmaWxlLg0KPiArDQo+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiArLSBjb21wYXRpYmxlOgkJ
-InN5c2NvbiIsICJtaWNyb2NoaXAsc2FtYTVkMi1waW9idSINCj4gKy0gI2dwaW8tY2VsbHM6CQlU
-aGVyZSBhcmUgMi4gVGhlIHBpbiBudW1iZXIgaXMgdGhlDQo+ICsJCQlmaXJzdCwgdGhlIHNlY29u
-ZCByZXByZXNlbnRzIGFkZGl0aW9uYWwNCj4gKwkJCXBhcmFtZXRlcnMgc3VjaCBhcyBHUElPX0FD
-VElWRV9ISUdIL0xPVy4NCj4gKy0gZ3Bpby1jb250cm9sbGVyOglNYXJrcyB0aGUgcG9ydCBhcyBH
-UElPIGNvbnRyb2xsZXIuDQo+ICsNCj4gK05vdGUgdGhhdCB0aGUgZHJpdmVyIHVzZXMgc3lzY29u
-IGFuZCBzaG91bGQgYmUgdGhlIGNoaWxkIG9mDQo+ICt0aGUgc3lzY29uIG5vZGUuDQo+ICsNCj4g
-K0V4YW1wbGU6DQo+ICsNCj4gKwlzZWN1bW9kQGZjMDQwMDAwIHsNCj4gKwkJY29tcGF0aWJsZSA9
-ICJhdG1lbCxzYW1hNWQyLXNlY3Vtb2QiLCAic3lzY29uIiwgInNpbXBsZS1tZmQiOw0KPiArCQlz
-dGF0dXMgPSAib2theSI7DQo+ICsJCXJlZyA9IDwweGZjMDQwMDAwIDB4MTAwPjsNCj4gKw0KPiAr
-CQlwaW9CVTogcGlvYnUgew0KPiArCQkJc3RhdHVzID0gIm9rYXkiOw0KPiArCQkJY29tcGF0aWJs
-ZSA9ICJtaWNyb2NoaXAsc2FtYTVkMi1waW9idSI7DQo+ICsJCQlncGlvLWNvbnRyb2xsZXI7DQo+
-ICsJCQkjZ3Bpby1jZWxscyA9IDwyPjsNCj4gKwkJfTsNCj4gKwl9Ow0K
+>> >> Yes i will fix your hints tomorrow and send a v6 of my patchset.
+>> >> Thank you for your hints and time
+>> >> It would be nice if you could fix ACPI problemmatik.
+>> >
+>> > I would like to see the ACPI dump for that...
+>> 
+>> See 
+>> https://github.com/openwrt/openwrt/pull/1232#issuecomment-443224576
+>> In this comment Michał Żygowski appended to this thread the missing
+>> files you want to have.
+
+> So, let me clarify what we have:
+>  - some platforms are in the wild with old BIOS with broken ACPI tables
+
+correct
+
+>  - you still may fix the things for new BIOS version for all affected 
+> platforms
+
+I have seen that this is a lot of work and I didn't think it was so 
+complicated!
+To get the GPIO support for APU2/APU3 merged into the gpio subsystem.
+I am little confused what i should do now. By the way I only have one 
+board (APU3).
+
+>  - you need to support both
+
+That is not necessary from my point of view. I am fine if the driver 
+supports at least
+the current BIOS version. And if the coreboot maintainer fixes the ACPI 
+problem
+then we could extend the driver and add the ACPI stuff.
+But this not in my hand, right?
+
+> For broken firmware you need to do the following:
+>  - create an MFD driver, which would instantiate GPIO and GPIO keys
+> support (at least)
+>  - create one of each above drivers w/o any DMI crap (should be done
+> as a part of MFD driver)
+
+I will have a look how to achieve this.
+If we want to support all BIOS version.
+And is a must have to get the driver into mainline.
+
+> For fixed BIOS you need to add the following (example, not a fully
+> correct solution) at the level behind SB:
+
+I do not understand how I could fix this. I have no idea from ACPI.
+I have not found any driver where I can inspire myself.
+
+> 
+> Scope (SB)
+> {
+>   Device(GPIO)
+>   {
+
+> After updating firmware you would need just an ACPI ID table to be
+> added to the GPIO driver. MFD driver should not be enumerated at all.
+
+That's maybe coming next when the coreboot maintainers have their bios 
+fixed, right?
