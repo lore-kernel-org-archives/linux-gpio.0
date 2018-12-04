@@ -1,138 +1,40 @@
-From: Xingyu Chen <xingyu.chen@amlogic.com>
-Subject: Re: [PATCH] pinctrl: meson: fix G12A ao pull registers base address
-Date: Tue, 4 Dec 2018 10:10:22 +0800
-Message-ID: <e0fd351c-91ee-b662-80d6-ac4d2a8b6cb0@amlogic.com>
-References: <20181203030533.10989-1-xingyu.chen@amlogic.com>
- <a240773f-7b05-d950-e5e9-23d7983c7f35@baylibre.com>
- <f2ceff1edcb2c103d0128a838ff630bb3c147bf5.camel@baylibre.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH] pinctrl: sunxi: a83t: Fix IRQ offset typo for PH11
+Date: Tue,  4 Dec 2018 17:04:57 +0800
+Message-ID: <20181204090457.15597-1-wens@csie.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f2ceff1edcb2c103d0128a838ff630bb3c147bf5.camel@baylibre.com>
-Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: khilman@baylibre.com, carlo@caione.org, martin.blumenstingl@googlemail.com, robh@kernel.org, jianxin.pan@amlogic.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Xingyu Chen <xingyu.chen@amlogic.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+Pin PH11 is used on various A83T board to detect a change in the OTG
+port's ID pin, as in when an OTG host cable is plugged in.
 
+The incorrect offset meant the gpiochip/irqchip was activating the wrong
+pin for interrupts.
 
-On 2018/12/3 18:36, Jerome Brunet wrote:
-> On Mon, 2018-12-03 at 11:27 +0100, Neil Armstrong wrote:
->> Hi Xingyu,
->>
->>
->> On 03/12/2018 04:05, Xingyu Chen wrote:
->>> Since Meson G12A SoC, Introduce new ao registers AO_RTI_PULL_UP_EN_REG
->>> and AO_GPIO_O.
->>>
->>> These bits of controlling output level are remapped to the new register
->>> AO_GPIO_O, and the AO_GPIO_O_EN_N support only controlling output enable.
->>>
->>> These bits of controlling pull enable are remapped to the new register
->>> AO_RTI_PULL_UP_EN_REG, and the AO_RTI_PULL_UP_REG support only controlling
->>> pull type(up/down).
->>>
->>> The new layout of ao gpio/pull registers is as follows:
->>> - AO_GPIO_O_EN_N        [offset: 0x9 << 2]
->>> - AO_GPIO_I             [offset: 0xa << 2]
->>> - AO_RTI_PULL_UP_REG    [offset: 0xb << 2]
->>> - AO_RTI_PULL_UP_EN_REG [offset: 0xc << 2]
->>> - AO_GPIO_O             [offset: 0xd << 2]
->>>
->>>  From above, we can see ao GPIO registers region has been separated by the
->>> ao pull registers. In order to ensure the continuity of the region on
->>> software, the ao GPIO and ao pull registers use the same base address, but
->>> can be identified by the offset.
->>>
->>> Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
->>> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
->>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
->>> ---
->>>   drivers/pinctrl/meson/pinctrl-meson.c | 22 ++++++++++++----------
->>>   1 file changed, 12 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c
->>> b/drivers/pinctrl/meson/pinctrl-meson.c
->>> index 53d449076dee..7ff40cd7a0cb 100644
->>> --- a/drivers/pinctrl/meson/pinctrl-meson.c
->>> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
->>> @@ -31,6 +31,9 @@
->>>    * In some cases the register ranges for pull enable and pull
->>>    * direction are the same and thus there are only 3 register ranges.
->>>    *
->>> + * Since Meson G12A SoC, the ao register ranges for gpio, pull enable
->>> + * and pull direction are the same, so there are only 2 register ranges.
->>> + *
->>>    * For the pull and GPIO configuration every bank uses a contiguous
->>>    * set of bits in the register sets described above; the same register
->>>    * can be shared by more banks with different offsets.
->>> @@ -487,23 +490,22 @@ static int meson_pinctrl_parse_dt(struct
->>> meson_pinctrl *pc,
->>>   		return PTR_ERR(pc->reg_mux);
->>>   	}
->>>   
->>> -	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
->>> -	if (IS_ERR(pc->reg_pull)) {
->>> -		dev_err(pc->dev, "pull registers not found\n");
->>> -		return PTR_ERR(pc->reg_pull);
->>> +	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
->>> +	if (IS_ERR(pc->reg_gpio)) {
->>> +		dev_err(pc->dev, "gpio registers not found\n");
->>> +		return PTR_ERR(pc->reg_gpio);
->>>   	}
->>>   
->>> +	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
->>> +	/* Use gpio region if pull one is not present */
->>> +	if (IS_ERR(pc->reg_pull))
->>> +		pc->reg_pull = pc->reg_gpio;
->>> +
->>>   	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
->>>   	/* Use pull region if pull-enable one is not present */
->>>   	if (IS_ERR(pc->reg_pullen))
->>>   		pc->reg_pullen = pc->reg_pull;
->>>   
->>> -	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
->>> -	if (IS_ERR(pc->reg_gpio)) {
->>> -		dev_err(pc->dev, "gpio registers not found\n");
->>> -		return PTR_ERR(pc->reg_gpio);
->>> -	}
->>> -
->>>   	return 0;
->>>   }
->>>   
->>>
->> Doesn't it need an update of the bindings ?
-> 
-> Going even further, shouldn't we stop trying make multiple regions out of
-> this, and have just one ?
-> 
-> On all the Amlogic SoC we have seen so far, all the regions a very (VERY)
-> close to each other. It seems very unlikely that there something unrelated to
-> GPIO in between.
-> 
-> It looks like everything is mostly there in the driver to deal with offset, so
-> change would be minimal.
-> 
-> Of course, for  DT stability we will need to carry the legacy, but for newer
-> SoC, such as the g12, does it really makes sense to have multiple regions ?
-> 
-Hi, Jerome
-the ee gpio, pull and pull-en register regions are discontinuous, some 
-addresses are reserved between them and maybe used for other module. For 
-example [G12A]:
-range of gpio register address offset:    (0x010 << 2) - (0x022 << 2)
-range of pull register address offset:    (0x03a << 2) - (0x03f << 2)
-range of pull-en register address offset: (0x048 << 2) - (0x04d << 2)
+Fixes: 4730f33f0d82 ("pinctrl: sunxi: add allwinner A83T PIO controller support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-keeping the multiple register regions seems to be more flexible and 
-friendly for Meson Series SoCs at present.
-
->>
->> Neil
->>
-> 
-> 
-> .
-> 
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
+index 6624499eae72..4ada80317a3b 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
+@@ -568,7 +568,7 @@ static const struct sunxi_desc_pin sun8i_a83t_pins[] = {
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 11),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 1)),	/* PH_EINT11 */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 11)),	/* PH_EINT11 */
+ };
+ 
+ static const struct sunxi_pinctrl_desc sun8i_a83t_pinctrl_data = {
+-- 
+2.20.0.rc1
