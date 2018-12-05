@@ -1,78 +1,41 @@
-From: Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH] selftests: gpio: Find libmount with pkg-config if available
-Date: Thu, 6 Dec 2018 00:15:13 +0100
-Message-ID: <CADYN=9LEVUgz_ou6kWrXZGBpUZ5Ti7BB+0Uxp1NtP18BJDVHCg@mail.gmail.com>
-References: <20181016214659.22362-1-daniel.diaz@linaro.org> <CACRpkda1i_NDnBGgrEoY2ewdSvSnJFVLWWvmSGCu0sNS0hLyiQ@mail.gmail.com>
+From: shuah <shuah@kernel.org>
+Subject: Re: [PATCH] selftests: gpio: Find libmount with pkg-config if
+ available
+Date: Wed, 5 Dec 2018 16:21:30 -0700
+Message-ID: <6dc6f709-6940-4f63-c8d0-9cbbbd39ac2a@kernel.org>
+References: <20181016214659.22362-1-daniel.diaz@linaro.org>
+ <CACRpkda1i_NDnBGgrEoY2ewdSvSnJFVLWWvmSGCu0sNS0hLyiQ@mail.gmail.com>
+ <CADYN=9LEVUgz_ou6kWrXZGBpUZ5Ti7BB+0Uxp1NtP18BJDVHCg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda1i_NDnBGgrEoY2ewdSvSnJFVLWWvmSGCu0sNS0hLyiQ@mail.gmail.com>
+In-Reply-To: <CADYN=9LEVUgz_ou6kWrXZGBpUZ5Ti7BB+0Uxp1NtP18BJDVHCg@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?B?RGFuaWVsIETDrWF6?= <daniel.diaz@linaro.org>, Shuah Khan <shuah@kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Bamvor Zhang <bamv2005@gmail.com>, brgl@bgdev.pl, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Anders Roxell <anders.roxell@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Bamvor Zhang <bamv2005@gmail.com>, brgl@bgdev.pl, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, shuah <shuah@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 5 Dec 2018 at 22:50, Linus Walleij <linus.walleij@linaro.org> wrote=
-:
->
-> Sorry for top-posting,
->
-> I don't understand the selftest environment very well so I do not know
-> if this is the right thing to do.
->
-> I can merge the patch through the GPIO tree but I need a nod from
-> someone wise, like Shuah Khan or Anders Roxell (Anders has been
-> using the GPIO selftests) that this is the direction we want to go.
+On 12/5/18 4:15 PM, Anders Roxell wrote:
+> On Wed, 5 Dec 2018 at 22:50, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>
+>> Sorry for top-posting,
+>>
+>> I don't understand the selftest environment very well so I do not know
+>> if this is the right thing to do.
+>>
+>> I can merge the patch through the GPIO tree but I need a nod from
+>> someone wise, like Shuah Khan or Anders Roxell (Anders has been
+>> using the GPIO selftests) that this is the direction we want to go.
+> 
+> Yes this makes sense and its already in linux-next.
+> 
 
-Yes this makes sense and its already in linux-next.
+Linus,
 
-Cheers,
-Anders
+Great. I pulled this in last week into kselftest next for 4.21-rc1 
+thinking that this is a good direction.
 
->
-> Yours,
-> Linus Walleij
->
-> On Tue, Oct 16, 2018 at 11:47 PM Daniel D=C3=ADaz <daniel.diaz@linaro.org=
-> wrote:
->
-> > If pkg-config is available, use it to define the CFLAGS and
-> > LDLIBS needed for libmount; else, use the current hard-coded
-> > paths and options.
-> >
-> > Using pkg-config is very helpful for cross-compilation
-> > environments, and is sometimes readily available on developer
-> > boxes to ensure we get the right compiler/linker options for
-> > the given package.
-> >
-> > Signed-off-by: Daniel D=C3=ADaz <daniel.diaz@linaro.org>
-> > ---
-> >  tools/testing/selftests/gpio/Makefile | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/self=
-tests/gpio/Makefile
-> > index 46648427d537..f22b22aef7bf 100644
-> > --- a/tools/testing/selftests/gpio/Makefile
-> > +++ b/tools/testing/selftests/gpio/Makefile
-> > @@ -1,7 +1,13 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> >
-> > -CFLAGS +=3D -O2 -g -std=3Dgnu99 -Wall -I../../../../usr/include/
-> > -LDLIBS +=3D -lmount -I/usr/include/libmount
-> > +MOUNT_CFLAGS :=3D $(shell pkg-config --cflags mount 2>/dev/null)
-> > +MOUNT_LDLIBS :=3D $(shell pkg-config --libs mount 2>/dev/null)
-> > +ifeq ($(MOUNT_LDLIBS),)
-> > +MOUNT_LDLIBS :=3D -lmount -I/usr/include/libmount
-> > +endif
-> > +
-> > +CFLAGS +=3D -O2 -g -std=3Dgnu99 -Wall -I../../../../usr/include/ $(MOU=
-NT_CFLAGS)
-> > +LDLIBS +=3D $(MOUNT_LDLIBS)
-> >
-> >  TEST_PROGS :=3D gpio-mockup.sh
-> >  TEST_FILES :=3D gpio-mockup-sysfs.sh
-> > --
-> > 2.17.1
-> >
+thanks,
+-- Shuah
