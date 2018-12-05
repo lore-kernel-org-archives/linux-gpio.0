@@ -1,45 +1,54 @@
-From: <Andrei.Stefanescu@microchip.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: add SAMA5D2 PIOBU support
-Date: Wed, 5 Dec 2018 11:06:35 +0000
-Message-ID: <2600b55c-f8fd-ab82-6372-a75f22e382f8@microchip.com>
-References: <1542701330-23466-1-git-send-email-andrei.stefanescu@microchip.com>
- <1542701330-23466-2-git-send-email-andrei.stefanescu@microchip.com>
- <20181204232237.GA16883@bogus>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: Add devicetree bindings for
+ MT6797 SoC Pinctrl
+Date: Wed, 5 Dec 2018 13:00:52 +0100
+Message-ID: <CACRpkdYCsh3AfmV-7ym-ffjp2k-kaNRqY1O3rd9h-WoUPYM_bw@mail.gmail.com>
+References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org>
+ <20181107174844.5381-2-manivannan.sadhasivam@linaro.org> <CACRpkda25cuiPCe9ouvDDSpFwZ2z=Pm8pK=5jC-7OAcYwPSvvA@mail.gmail.com>
+ <c1f63dd8-1c06-1797-025c-2cd4891d905d@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181204232237.GA16883@bogus>
-Content-Language: en-US
-Content-ID: <8784F2D07FE7FA4895DD596BA0F854A9@namprd11.prod.outlook.com>
+In-Reply-To: <c1f63dd8-1c06-1797-025c-2cd4891d905d@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh@kernel.org
-Cc: linus.walleij@linaro.org, gregkh@linuxfoundation.org, Nicolas.Ferre@microchip.com, mark.rutland@arm.com, Ludovic.Desroches@microchip.com, Cristian.Birsan@microchip.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Matthias Brugger <matthias.bgg@gmail.com>, arm-soc <arm@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, sean.wang@kernel.org, Rob Herring <robh+dt@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Amit Kucheria <amit.kucheria@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGVsbG8gUm9iLA0KDQpUaGFuayB5b3UgZm9yIHlvdXIgZmVlZGJhY2suDQoNCkkgd2lsbCBhZGQg
-YSBiaXQgb2YgY29udGV4dCByZWdhcmRpbmcgdGhlIHNlY3Vtb2QuIFRoZSANCiJhdG1lbCxzYW1h
-NWQyLXNlY3Vtb2QiDQpjb21wYXRpYmxlIHN0cmluZyBpcyBub3QgdXNlZCBmb3IgbG9hZGluZyBh
-IGRyaXZlci4gSXQgaXMgdXNlZCBieSBhdG1lbCANCnNlY3VyYW0NCmRyaXZlciAoZHJpdmVycy9t
-aXNjL3NyYW0uYykgd2hpY2ggaGFzIGFjY2VzcyB0byBzZWN1bW9kJ3MgcmVnaXN0ZXJzIHZpYToN
-Cg0KIMKgwqDCoCBzeXNjb25fcmVnbWFwX2xvb2t1cF9ieV9jb21wYXRpYmxlKCJhdG1lbCxzYW1h
-NWQyLXNlY3Vtb2QiKQ0KDQpTbyB0aGUgc2VjdW1vZCBleHBvcnRzIG11bHRpcGxlIGhhcmR3YXJl
-IGZ1bmN0aW9ucywgZWc6IHRoZSBzZWN1cmFtLCB0aGUgDQpQSU9CVQ0KcGlucyB3aGljaCBjYW4g
-YmUgdXNlZCBhcyBHUElPIHBpbnMuDQoNCk15IGluaXRpYWwgcGF0Y2ggaGFkIHRoZSAibWljcm9j
-aGlwLHNhbWE1ZDItcGlvYnUiIGNvbXBhdGlibGUgYXBwZW5kZWQgDQp0byB0aGUNCnNlY3Vtb2Qn
-cyBjb21wYXRpYmxlIGUuZy46DQoNCnNlY3Vtb2RAZmMwNDAwMDAgew0KIMKgwqDCoCBjb21wYXRp
-YmxlID0gInN5c2NvbiIsICJtaWNyb2NoaXAsc2FtYTVkMi1waW9idSI7DQouLi4NCg0KVGFraW5n
-IGludG8gY29uc2lkZXJhdGlvbiBMaW51cyBXYWxsZWlqJ3MgYWR2aWNlIEkgYXJyaXZlZCB0byB0
-aGUgY3VycmVudA0KdmVyc2lvbi4gSSB0aG91Z2h0IHRoaXMgd2FzIGEgZ29vZCBpZGVhIGJlY2F1
-c2UgaXQgc2VwYXJhdGVzIHRoZSBzZWN1bW9kIA0Kbm9kZQ0KZnJvbSB0aGUgR1BJTyBjb250cm9s
-bGVyIG5vZGUuIFBsZWFzZSBub3RpY2UgdGhhdCBzZWN1cmFtIG5vZGUgaXMgYWxyZWFkeQ0Kc2Vw
-YXJhdGVkIGZyb20gc2VjdW1vZCBub2RlIChpdCBpcyBhIHNlcGFyYXRlIG5vZGUgaW4gdGhlIGRl
-dmljZSB0cmVlKS4NCg0KSSBoYXZlIGEgZmV3IHF1ZXN0aW9ucyBiZWNhdXNlIEkgYW0gbm90IHN1
-cmUgb2YgdGhlIGJlc3QgYXBwcm9hY2g6DQoNCjEuIElzIGl0IG9rIHRvIGhhdmUgdGhlIEdQSU8g
-Y29udHJvbGxlciBhcyBhIGNoaWxkIG5vZGU/DQoyLiBJIHVzZWQgc2ltcGxlLW1mZCBiZWNhdXNl
-IGl0IHdhcyB0aGUgb25seSB3YXkgSSBjb3VsZCB0aGluayBvZiBpbiANCm9yZGVyIHRvDQogwqDC
-oCBnZXQgdGhlIGRyaXZlciBwcm9iZWQuDQozLiBTaG91bGQgSSBhZGQgYSByZWdpc3RlciByYW5n
-ZT8gSSB0aG91Z2h0IHRoYXQgYmVjYXVzZSB0aGUgZHJpdmVyIHVzZXMgDQpzeXNjb24NCiDCoMKg
-IGl0IGlzIG5vdCBuZWNlc3NhcnkgdG8gYWRkIHRoZSByZWdpc3RlciByYW5nZS4gQWxzbywgdGhl
-IHJlZ2lzdGVyIA0KcmFuZ2Ugd291bGQNCiDCoMKgIGhhdmUgYmVlbiBhIHN1YnNldCBvZiB0aGUg
-c2VjdW1vZCdzIHJlZ2lzdGVyIHJhbmdlLg0KDQo=
+On Mon, Dec 3, 2018 at 2:08 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
+> On 15/11/2018 11:04, Linus Walleij wrote:
+> > On Wed, Nov 7, 2018 at 6:49 PM Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> >> Add devicetree bindings for Mediatek MT6797 SoC Pin Controller.
+> >>
+> >> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> >
+> > Patch applied.
+> >
+>
+> Could you provide a stable tree for me, so that I can take the dts parts?
+> I just realized that my build is broken because of the missing dt-bindings
+> header file.
+
+Since I pulled other changes on top it is too late for me to put that
+in an immutable branch and merge into my tree separately,
+you would have to pull in the whole "devel" branch from the
+pin control tree.
+
+What we sometimes do is simply apply the *EXACT* same patch
+to two git trees. Git will cope with that as long as they are
+absolutely *IDENTICAL*. (The patch will appear twice in the
+git log with different hashes but they will merge without
+problems, a bit unelegant but it works.)
+
+So in your situation I would extract this patch from the pinctrl
+tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=devel&id=95d2f00657ad4c2c3eacd8a871a7aa022c3fe7d9
+and apply it with some notice to the maintainers about
+the situation.
+
+ARM SoC folks: agreed?
+
+Yours,
+Linus Walleij
