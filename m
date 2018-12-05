@@ -1,86 +1,45 @@
-From: Rob Herring <robh@kernel.org>
+From: <Andrei.Stefanescu@microchip.com>
 Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: add SAMA5D2 PIOBU support
-Date: Tue, 4 Dec 2018 17:22:37 -0600
-Message-ID: <20181204232237.GA16883@bogus>
+Date: Wed, 5 Dec 2018 11:06:35 +0000
+Message-ID: <2600b55c-f8fd-ab82-6372-a75f22e382f8@microchip.com>
 References: <1542701330-23466-1-git-send-email-andrei.stefanescu@microchip.com>
  <1542701330-23466-2-git-send-email-andrei.stefanescu@microchip.com>
+ <20181204232237.GA16883@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1542701330-23466-2-git-send-email-andrei.stefanescu@microchip.com>
+In-Reply-To: <20181204232237.GA16883@bogus>
+Content-Language: en-US
+Content-ID: <8784F2D07FE7FA4895DD596BA0F854A9@namprd11.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrei.Stefanescu@microchip.com
+To: robh@kernel.org
 Cc: linus.walleij@linaro.org, gregkh@linuxfoundation.org, Nicolas.Ferre@microchip.com, mark.rutland@arm.com, Ludovic.Desroches@microchip.com, Cristian.Birsan@microchip.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 08:08:36AM +0000, Andrei.Stefanescu@microchip.com wrote:
-> This patch describes the compatible and the device tree
-> bindings necessary for the SAMA5D2 PIOBU GPIO.
-> 
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
-> ---
->  .../bindings/gpio/gpio-sama5d2-piobu.txt           | 31 ++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sama5d2-piobu.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-sama5d2-piobu.txt b/Documentation/devicetree/bindings/gpio/gpio-sama5d2-piobu.txt
-> new file mode 100644
-> index 0000000..2e260e1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-sama5d2-piobu.txt
-
-microchip,sama5d2-piobu.txt for the file name.
-
-> @@ -0,0 +1,31 @@
-> +GPIO controller for SAMA5D2 PIOBU pins.
-> +
-> +These pins have the property of not losing their voltage
-> +during Backup/Self-refresh mode.
-> +
-> +These bindings should be set to a node in the dtsi file.
-> +
-> +Required properties:
-> +- compatible:		"syscon", "microchip,sama5d2-piobu"
-
-syscon should be removed.
-
-> +- #gpio-cells:		There are 2. The pin number is the
-> +			first, the second represents additional
-> +			parameters such as GPIO_ACTIVE_HIGH/LOW.
-> +- gpio-controller:	Marks the port as GPIO controller.
-> +
-> +Note that the driver uses syscon and should be the child of
-> +the syscon node.
-
-child of the "atmel,sama5d2-secumod" node to be more specific.
-
-But why do you need a child node? The parent can be a gpio provider. 
-What other nodes does this need?
-
-> +
-> +Example:
-> +
-> +	secumod@fc040000 {
-> +		compatible = "atmel,sama5d2-secumod", "syscon", "simple-mfd";
-
-This is not documented as being a simple-mfd.
-
-> +		status = "okay";
-> +		reg = <0xfc040000 0x100>;
-> +
-> +		pioBU: piobu {
-
-gpio {
-
-Is there not a register range you can put here?
-
-> +			status = "okay";
-> +			compatible = "microchip,sama5d2-piobu";
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +		};
-> +	};
-> -- 
-> 2.7.4
-> 
+SGVsbG8gUm9iLA0KDQpUaGFuayB5b3UgZm9yIHlvdXIgZmVlZGJhY2suDQoNCkkgd2lsbCBhZGQg
+YSBiaXQgb2YgY29udGV4dCByZWdhcmRpbmcgdGhlIHNlY3Vtb2QuIFRoZSANCiJhdG1lbCxzYW1h
+NWQyLXNlY3Vtb2QiDQpjb21wYXRpYmxlIHN0cmluZyBpcyBub3QgdXNlZCBmb3IgbG9hZGluZyBh
+IGRyaXZlci4gSXQgaXMgdXNlZCBieSBhdG1lbCANCnNlY3VyYW0NCmRyaXZlciAoZHJpdmVycy9t
+aXNjL3NyYW0uYykgd2hpY2ggaGFzIGFjY2VzcyB0byBzZWN1bW9kJ3MgcmVnaXN0ZXJzIHZpYToN
+Cg0KIMKgwqDCoCBzeXNjb25fcmVnbWFwX2xvb2t1cF9ieV9jb21wYXRpYmxlKCJhdG1lbCxzYW1h
+NWQyLXNlY3Vtb2QiKQ0KDQpTbyB0aGUgc2VjdW1vZCBleHBvcnRzIG11bHRpcGxlIGhhcmR3YXJl
+IGZ1bmN0aW9ucywgZWc6IHRoZSBzZWN1cmFtLCB0aGUgDQpQSU9CVQ0KcGlucyB3aGljaCBjYW4g
+YmUgdXNlZCBhcyBHUElPIHBpbnMuDQoNCk15IGluaXRpYWwgcGF0Y2ggaGFkIHRoZSAibWljcm9j
+aGlwLHNhbWE1ZDItcGlvYnUiIGNvbXBhdGlibGUgYXBwZW5kZWQgDQp0byB0aGUNCnNlY3Vtb2Qn
+cyBjb21wYXRpYmxlIGUuZy46DQoNCnNlY3Vtb2RAZmMwNDAwMDAgew0KIMKgwqDCoCBjb21wYXRp
+YmxlID0gInN5c2NvbiIsICJtaWNyb2NoaXAsc2FtYTVkMi1waW9idSI7DQouLi4NCg0KVGFraW5n
+IGludG8gY29uc2lkZXJhdGlvbiBMaW51cyBXYWxsZWlqJ3MgYWR2aWNlIEkgYXJyaXZlZCB0byB0
+aGUgY3VycmVudA0KdmVyc2lvbi4gSSB0aG91Z2h0IHRoaXMgd2FzIGEgZ29vZCBpZGVhIGJlY2F1
+c2UgaXQgc2VwYXJhdGVzIHRoZSBzZWN1bW9kIA0Kbm9kZQ0KZnJvbSB0aGUgR1BJTyBjb250cm9s
+bGVyIG5vZGUuIFBsZWFzZSBub3RpY2UgdGhhdCBzZWN1cmFtIG5vZGUgaXMgYWxyZWFkeQ0Kc2Vw
+YXJhdGVkIGZyb20gc2VjdW1vZCBub2RlIChpdCBpcyBhIHNlcGFyYXRlIG5vZGUgaW4gdGhlIGRl
+dmljZSB0cmVlKS4NCg0KSSBoYXZlIGEgZmV3IHF1ZXN0aW9ucyBiZWNhdXNlIEkgYW0gbm90IHN1
+cmUgb2YgdGhlIGJlc3QgYXBwcm9hY2g6DQoNCjEuIElzIGl0IG9rIHRvIGhhdmUgdGhlIEdQSU8g
+Y29udHJvbGxlciBhcyBhIGNoaWxkIG5vZGU/DQoyLiBJIHVzZWQgc2ltcGxlLW1mZCBiZWNhdXNl
+IGl0IHdhcyB0aGUgb25seSB3YXkgSSBjb3VsZCB0aGluayBvZiBpbiANCm9yZGVyIHRvDQogwqDC
+oCBnZXQgdGhlIGRyaXZlciBwcm9iZWQuDQozLiBTaG91bGQgSSBhZGQgYSByZWdpc3RlciByYW5n
+ZT8gSSB0aG91Z2h0IHRoYXQgYmVjYXVzZSB0aGUgZHJpdmVyIHVzZXMgDQpzeXNjb24NCiDCoMKg
+IGl0IGlzIG5vdCBuZWNlc3NhcnkgdG8gYWRkIHRoZSByZWdpc3RlciByYW5nZS4gQWxzbywgdGhl
+IHJlZ2lzdGVyIA0KcmFuZ2Ugd291bGQNCiDCoMKgIGhhdmUgYmVlbiBhIHN1YnNldCBvZiB0aGUg
+c2VjdW1vZCdzIHJlZ2lzdGVyIHJhbmdlLg0KDQo=
