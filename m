@@ -1,161 +1,78 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: [PATCH v2 4/7] power: supply: bq24190_charger: add extcon
- support for USB OTG
-Date: Wed, 5 Dec 2018 22:56:44 +0100
-Message-ID: <20181205215644.icx7jpisfhpd2edb@earth.universe>
-References: <20181101001149.13453-1-masneyb@onstation.org>
- <20181101001149.13453-5-masneyb@onstation.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH] selftests: gpio: Find libmount with pkg-config if available
+Date: Thu, 6 Dec 2018 00:15:13 +0100
+Message-ID: <CADYN=9LEVUgz_ou6kWrXZGBpUZ5Ti7BB+0Uxp1NtP18BJDVHCg@mail.gmail.com>
+References: <20181016214659.22362-1-daniel.diaz@linaro.org> <CACRpkda1i_NDnBGgrEoY2ewdSvSnJFVLWWvmSGCu0sNS0hLyiQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pxuayx6qoqhqiddd"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181101001149.13453-5-masneyb@onstation.org>
+In-Reply-To: <CACRpkda1i_NDnBGgrEoY2ewdSvSnJFVLWWvmSGCu0sNS0hLyiQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, bjorn.andersson@linaro.org, linus.walleij@linaro.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-gpio@vger.kernel.org, jonathan@marek.ca
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?B?RGFuaWVsIETDrWF6?= <daniel.diaz@linaro.org>, Shuah Khan <shuah@kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Bamvor Zhang <bamv2005@gmail.com>, brgl@bgdev.pl, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Wed, 5 Dec 2018 at 22:50, Linus Walleij <linus.walleij@linaro.org> wrote=
+:
+>
+> Sorry for top-posting,
+>
+> I don't understand the selftest environment very well so I do not know
+> if this is the right thing to do.
+>
+> I can merge the patch through the GPIO tree but I need a nod from
+> someone wise, like Shuah Khan or Anders Roxell (Anders has been
+> using the GPIO selftests) that this is the direction we want to go.
 
---pxuayx6qoqhqiddd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes this makes sense and its already in linux-next.
 
-Hi,
+Cheers,
+Anders
 
-On Wed, Oct 31, 2018 at 08:11:46PM -0400, Brian Masney wrote:
-> Add extcon support so that we can notify USB drivers of cable state
-> changes. Based on work from Jonathan Marek. USB OTG was tested on a LG
-> Nexus 5 (hammerhead) phone.
->=20
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
-
-Thanks, queued.
-
--- Sebastian
-
->  drivers/power/supply/bq24190_charger.c | 37 +++++++++++++++++++++++++-
->  1 file changed, 36 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/suppl=
-y/bq24190_charger.c
-> index 9e7f3e33458a..4e64e6ac95c5 100644
-> --- a/drivers/power/supply/bq24190_charger.c
-> +++ b/drivers/power/supply/bq24190_charger.c
-> @@ -21,6 +21,7 @@
->  #include <linux/workqueue.h>
->  #include <linux/gpio.h>
->  #include <linux/i2c.h>
-> +#include <linux/extcon-provider.h>
-> =20
->  #define	BQ24190_MANUFACTURER	"Texas Instruments"
-> =20
-> @@ -159,6 +160,7 @@
->  struct bq24190_dev_info {
->  	struct i2c_client		*client;
->  	struct device			*dev;
-> +	struct extcon_dev		*edev;
->  	struct power_supply		*charger;
->  	struct power_supply		*battery;
->  	struct delayed_work		input_current_limit_work;
-> @@ -174,6 +176,11 @@ struct bq24190_dev_info {
->  	u8				watchdog;
->  };
-> =20
-> +static const unsigned int bq24190_usb_extcon_cable[] =3D {
-> +	EXTCON_USB,
-> +	EXTCON_NONE,
-> +};
-> +
->  /*
->   * The tables below provide a 2-way mapping for the value that goes in
->   * the register field and the real-world value that it represents.
-> @@ -1528,6 +1535,20 @@ static const struct power_supply_desc bq24190_batt=
-ery_desc =3D {
->  	.property_is_writeable	=3D bq24190_battery_property_is_writeable,
->  };
-> =20
-> +static int bq24190_configure_usb_otg(struct bq24190_dev_info *bdi, u8 ss=
-_reg)
-> +{
-> +	bool otg_enabled;
-> +	int ret;
-> +
-> +	otg_enabled =3D !!(ss_reg & BQ24190_REG_SS_VBUS_STAT_MASK);
-> +	ret =3D extcon_set_state_sync(bdi->edev, EXTCON_USB, otg_enabled);
-> +	if (ret < 0)
-> +		dev_err(bdi->dev, "Can't set extcon state to %d: %d\n",
-> +			otg_enabled, ret);
-> +
-> +	return ret;
-> +}
-> +
->  static void bq24190_check_status(struct bq24190_dev_info *bdi)
->  {
->  	const u8 battery_mask_ss =3D BQ24190_REG_SS_CHRG_STAT_MASK;
-> @@ -1597,8 +1618,10 @@ static void bq24190_check_status(struct bq24190_de=
-v_info *bdi)
->  		bdi->ss_reg =3D ss_reg;
->  	}
-> =20
-> -	if (alert_charger || alert_battery)
-> +	if (alert_charger || alert_battery) {
->  		power_supply_changed(bdi->charger);
-> +		bq24190_configure_usb_otg(bdi, ss_reg);
-> +	}
->  	if (alert_battery && bdi->battery)
->  		power_supply_changed(bdi->battery);
-> =20
-> @@ -1732,6 +1755,14 @@ static int bq24190_probe(struct i2c_client *client,
->  		return -EINVAL;
->  	}
-> =20
-> +	bdi->edev =3D devm_extcon_dev_allocate(dev, bq24190_usb_extcon_cable);
-> +	if (IS_ERR(bdi->edev))
-> +		return PTR_ERR(bdi->edev);
-> +
-> +	ret =3D devm_extcon_dev_register(dev, bdi->edev);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	pm_runtime_enable(dev);
->  	pm_runtime_use_autosuspend(dev);
->  	pm_runtime_set_autosuspend_delay(dev, 600);
-> @@ -1778,6 +1809,10 @@ static int bq24190_probe(struct i2c_client *client,
->  		goto out_charger;
->  	}
-> =20
-> +	ret =3D bq24190_configure_usb_otg(bdi, bdi->ss_reg);
-> +	if (ret < 0)
-> +		goto out_charger;
-> +
->  	ret =3D bq24190_sysfs_create_group(bdi);
->  	if (ret < 0) {
->  		dev_err(dev, "Can't create sysfs entries\n");
-> --=20
-> 2.17.2
->=20
-
---pxuayx6qoqhqiddd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwISZsACgkQ2O7X88g7
-+pp7Ig//RFKKi1+HQ2lMv/3spEdJZK9mtsO6/vt7JRvHN9DTj1a1y8bMaqP3OJ1n
-E45GxJ+KkvVhBqyxu3wZfyfgbh1kpXXu/JJYO2t3F2FfsT+7/YBdm2/mAMJM1DTt
-GZiFOy9VBYjsA7KreyimN1L3BGOhI1DUItvzFFHZGQqft1ic2yuA/9eLNn5bUgm0
-TxLX86e0RsOWS2msMjNoIt53d+8+sLtdlaQjpO7xMdmgqxtCUtsJkH75XyP7CxA0
-ehWY38bdtvV4s+QQyBNXKmZ9MJ+gZAahdvi0s1gzJcRZaut8EXN5ps+pjAdKpro6
-zR//Ofhk13ZFN9/SuTafiJx5vqUEFPXFzn8t7xCw1fsD4OLiy7sFMe37X/YAQypD
-EynyXAhAjsidSsRgfCpHH2igJzmi/0PLch4us4bjAvL2mpgHiDs5iN/C8ot3bU0B
-uo/lHwhbQtD4GNQq7U2C/pmgeLSkHzfyiaP/2k1GaBUVclDoXcD4cHc8BwNWeAlX
-bXfS56yj/gDUGEz0ZkGNt71vLqhY4nzHFpFeHNdIC7HrU6U6FiJOVyMsbfwDlsZq
-K4xBVWhy8dhS/8XeDlyY/yVimaMKItpCsVh+Ow0HBM+8eW6XeqyNvsz5cBvgLl/W
-LbtHnsrLN+UD5cHvUyNb3pr0vf0g5ThpUvYU/SaG9s6HCrHUBCY=
-=4yC/
------END PGP SIGNATURE-----
-
---pxuayx6qoqhqiddd--
+>
+> Yours,
+> Linus Walleij
+>
+> On Tue, Oct 16, 2018 at 11:47 PM Daniel D=C3=ADaz <daniel.diaz@linaro.org=
+> wrote:
+>
+> > If pkg-config is available, use it to define the CFLAGS and
+> > LDLIBS needed for libmount; else, use the current hard-coded
+> > paths and options.
+> >
+> > Using pkg-config is very helpful for cross-compilation
+> > environments, and is sometimes readily available on developer
+> > boxes to ensure we get the right compiler/linker options for
+> > the given package.
+> >
+> > Signed-off-by: Daniel D=C3=ADaz <daniel.diaz@linaro.org>
+> > ---
+> >  tools/testing/selftests/gpio/Makefile | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/self=
+tests/gpio/Makefile
+> > index 46648427d537..f22b22aef7bf 100644
+> > --- a/tools/testing/selftests/gpio/Makefile
+> > +++ b/tools/testing/selftests/gpio/Makefile
+> > @@ -1,7 +1,13 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >
+> > -CFLAGS +=3D -O2 -g -std=3Dgnu99 -Wall -I../../../../usr/include/
+> > -LDLIBS +=3D -lmount -I/usr/include/libmount
+> > +MOUNT_CFLAGS :=3D $(shell pkg-config --cflags mount 2>/dev/null)
+> > +MOUNT_LDLIBS :=3D $(shell pkg-config --libs mount 2>/dev/null)
+> > +ifeq ($(MOUNT_LDLIBS),)
+> > +MOUNT_LDLIBS :=3D -lmount -I/usr/include/libmount
+> > +endif
+> > +
+> > +CFLAGS +=3D -O2 -g -std=3Dgnu99 -Wall -I../../../../usr/include/ $(MOU=
+NT_CFLAGS)
+> > +LDLIBS +=3D $(MOUNT_LDLIBS)
+> >
+> >  TEST_PROGS :=3D gpio-mockup.sh
+> >  TEST_FILES :=3D gpio-mockup-sysfs.sh
+> > --
+> > 2.17.1
+> >
