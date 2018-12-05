@@ -1,56 +1,48 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-Date: Wed, 5 Dec 2018 14:20:00 +0100
-Message-ID: <20181205132000.f7n2stv2pxldzcxu@pengutronix.de>
-References: <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de>
- <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <20181202215613.jcfrxwl4taiqgsql@pengutronix.de>
- <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
- <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com>
- <20181203104923.gcb2bcsaoczjcjhk@pengutronix.de>
- <CAMRc=Me3srKHXLvdAVLAaVOyW79D378EGVh=dTXbCxo7FiyAsA@mail.gmail.com>
- <20181203110654.53o3prw3qu3u2uyf@pengutronix.de>
- <CACRpkdahWTts9Vz_vdC8dfd_HxCb3NmiFcwK=x-tVvFRcRm3tg@mail.gmail.com>
+From: Song Qiang <songqiang1304521@gmail.com>
+Subject: Re: Externally multiplexing interfaces on the same processor pins
+Date: Wed, 5 Dec 2018 22:29:19 +0800
+Message-ID: <ca1c00e1-8104-b697-24dd-d43a47adcac1@gmail.com>
+References: <BL0PR05MB4594E94CC5D74DC038E35EFBA90A0@BL0PR05MB4594.namprd05.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdahWTts9Vz_vdC8dfd_HxCb3NmiFcwK=x-tVvFRcRm3tg@mail.gmail.com>
+In-Reply-To: <BL0PR05MB4594E94CC5D74DC038E35EFBA90A0@BL0PR05MB4594.namprd05.prod.outlook.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Frederick Heinecke <fheinecke@ksu.edu>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 01:19:54PM +0100, Linus Walleij wrote:
-> On Mon, Dec 3, 2018 at 12:06 PM Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > On Mon, Dec 03, 2018 at 11:57:26AM +0100, Bartosz Golaszewski wrote:
-> 
-> > > It used to live in the gpio-mockup driver and I generalized it
-> > > precisely because there was another driver - iio evgen - which was
-> > > doing basically the same thing. While I don't know if there'll be more
-> > > users (I'd guess it would be useful for testing purposes of other
-> > > subsystems) having the same functionality implemented once is better
-> > > than twice.
-> >
-> > The iio testing driver only needs the trigger and relies on an irq that
-> > then calls the registerd handler. The iio driver doesn't need to tune
-> > the edge sensitivity though and if your mockup driver just only calls
-> > the fire routine if the configured sensitivity justifies that,
-> > everything should work as expected.
-> 
-> Simulating edges in the generic IRQ simulator codes seems
-> generally useful to me, even if there is just one user now.
 
-I cannot imagine another potential user. Which kind of driver could use
-that that is not a gpio simulator?
+On 8/29/18 2:46 AM, Frederick Heinecke wrote:
+> Hello all,
+>
+> Does anybody here know how the kernel handles externally multiplexed peripherals and and what the proper way to setup the device tree for multiplexed peripherals? For example, if I have two interfaces (say USB and I2C) on the same pins, and I want both to be available and usable (not at the same time of course), does the kernel natively support this or is this something that needs to be written into the drivers for both interfaces? Could the kernel or a user-space process potentially attempt to access both at the same time?
+>
+>   Here's a poorly drawn example of what I'm asking about: https://i.snag.gy/SJQnH1.jpg
+>       
+>   Thank you,
+>   
+>   Fred Heinecke
+>      
 
-Best regards
-Uwe
+Hi Fred,
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+Recently I've been looking at a devices just act as you described. A FT232H 
+adapter. It has several interfaces including i2c, spi, jtag, etc but share some 
+pins. As far as I know these kind of devices should fall in mfd subsystem and as 
+for mfd subsystem, it handles devices with functions enabled together. Doing 
+what we want would need dynamic device register and unregister support. I;m just 
+planning to write a more support driver for FT232H and I handle this situation 
+with another sysfs entry 'current_mode', through this, I select which mode this 
+device should be working on. I haven't found any facility in kernel supports this.
+
+Would you share what you device is? I think we can help you insight the 
+corresponding driver and check how did the manufacture do with it.
+
+
+yours,
+
+Song Qiang
