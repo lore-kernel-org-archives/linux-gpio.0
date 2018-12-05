@@ -1,61 +1,313 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-Date: Wed, 5 Dec 2018 13:38:11 +0100
-Message-ID: <CAMpxmJWAZevmCkDDgLVTY5REGPB3HA5JAtNDtxT0NMt964GQCQ@mail.gmail.com>
-References: <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
- <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <20181202215613.jcfrxwl4taiqgsql@pengutronix.de> <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
- <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com>
- <20181203104923.gcb2bcsaoczjcjhk@pengutronix.de> <CAMRc=Me3srKHXLvdAVLAaVOyW79D378EGVh=dTXbCxo7FiyAsA@mail.gmail.com>
- <20181203110654.53o3prw3qu3u2uyf@pengutronix.de> <CACRpkdahWTts9Vz_vdC8dfd_HxCb3NmiFcwK=x-tVvFRcRm3tg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: uniphier: convert to SPDX License Identifier
+Date: Wed,  5 Dec 2018 21:53:39 +0900
+Message-ID: <1544014419-5028-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdahWTts9Vz_vdC8dfd_HxCb3NmiFcwK=x-tVvFRcRm3tg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: u.kleine-koenig@pengutronix.de, Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-=C5=9Br., 5 gru 2018 o 13:20 Linus Walleij <linus.walleij@linaro.org> napis=
-a=C5=82(a):
->
-> On Mon, Dec 3, 2018 at 12:06 PM Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > On Mon, Dec 03, 2018 at 11:57:26AM +0100, Bartosz Golaszewski wrote:
->
-> > > It used to live in the gpio-mockup driver and I generalized it
-> > > precisely because there was another driver - iio evgen - which was
-> > > doing basically the same thing. While I don't know if there'll be mor=
-e
-> > > users (I'd guess it would be useful for testing purposes of other
-> > > subsystems) having the same functionality implemented once is better
-> > > than twice.
-> >
-> > The iio testing driver only needs the trigger and relies on an irq that
-> > then calls the registerd handler. The iio driver doesn't need to tune
-> > the edge sensitivity though and if your mockup driver just only calls
-> > the fire routine if the configured sensitivity justifies that,
-> > everything should work as expected.
->
-> Simulating edges in the generic IRQ simulator codes seems
-> generally useful to me, even if there is just one user now.
->
-> Certainly for any kind of IRQ testing, it could be interesting to
-> throw several low-to-high and high-to-low transitions
-> on a driver and see how it reacts.
->
-> But it is up to the irqchip maintainers to state whether they
-> agree.
->
+checkpatch.pl suggests to use SPDX license tag. I am happy to
+follow it.
 
-All that would be great, but at this point I just want to fix broken
-tests in user-space. After that we can think about how to
-improve/approach simulating interrupts all we want.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Marc: is my explanation for using an int instead of bool for
-irq_sim_fire_edge() fine? Can Linus pick this up for fixes?
+ drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 18 ++++--------------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 18 ++++--------------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 18 ++++--------------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c  | 18 ++++--------------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c | 18 ++++--------------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 18 ++++--------------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c | 18 ++++--------------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c | 18 ++++--------------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c | 18 ++++--------------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c | 18 ++++--------------
+ drivers/pinctrl/uniphier/pinctrl-uniphier.h      | 11 +----------
+ 11 files changed, 41 insertions(+), 150 deletions(-)
 
-Bart
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+index add8e87..b2412f1 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2015-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2015-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/list.h>
+ #include <linux/mfd/syscon.h>
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+index 280dca7..ce7cde0 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2016-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2016-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+index d2d56c9..91670913 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2016-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2016-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+index 03d87ad..4e7a99f 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2015-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2015-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+index 31f36ea..2b089d1 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2015-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2015-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+index 4326f5c..583a2cd 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2015-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program5 is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2015-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+index ae79815..92d85cc 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2015-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program5 is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2015-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+index 7975bd7..436e23c 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2015-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2015-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+index b16ce28..91d77c1 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+index cb44568..8b17f23 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+@@ -1,17 +1,7 @@
+-/*
+- * Copyright (C) 2015-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2015-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier.h b/drivers/pinctrl/uniphier/pinctrl-uniphier.h
+index c63e3c8..3b30ca0 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier.h
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier.h
+@@ -1,16 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * Copyright (C) 2015-2017 Socionext Inc.
+  *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef __PINCTRL_UNIPHIER_H__
+-- 
+2.7.4
