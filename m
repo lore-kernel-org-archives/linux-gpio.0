@@ -1,41 +1,56 @@
-From: shuah <shuah@kernel.org>
-Subject: Re: [PATCH] selftests: gpio: Find libmount with pkg-config if
- available
-Date: Wed, 5 Dec 2018 16:21:30 -0700
-Message-ID: <6dc6f709-6940-4f63-c8d0-9cbbbd39ac2a@kernel.org>
-References: <20181016214659.22362-1-daniel.diaz@linaro.org>
- <CACRpkda1i_NDnBGgrEoY2ewdSvSnJFVLWWvmSGCu0sNS0hLyiQ@mail.gmail.com>
- <CADYN=9LEVUgz_ou6kWrXZGBpUZ5Ti7BB+0Uxp1NtP18BJDVHCg@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] pinctrl: Use of_node_name_eq for node name comparisons
+Date: Wed, 5 Dec 2018 21:25:17 -0800
+Message-ID: <CA+Ln22Gj=1PovdRT9HCun4vkZmHfGh2t6ouOTrFqSZHiNvK1Zw@mail.gmail.com>
+References: <20181205195050.4759-20-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CADYN=9LEVUgz_ou6kWrXZGBpUZ5Ti7BB+0Uxp1NtP18BJDVHCg@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20181205195050.4759-20-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anders Roxell <anders.roxell@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Bamvor Zhang <bamv2005@gmail.com>, brgl@bgdev.pl, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, shuah <shuah@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 12/5/18 4:15 PM, Anders Roxell wrote:
-> On Wed, 5 Dec 2018 at 22:50, Linus Walleij <linus.walleij@linaro.org> wrote:
->>
->> Sorry for top-posting,
->>
->> I don't understand the selftest environment very well so I do not know
->> if this is the right thing to do.
->>
->> I can merge the patch through the GPIO tree but I need a nod from
->> someone wise, like Shuah Khan or Anders Roxell (Anders has been
->> using the GPIO selftests) that this is the direction we want to go.
-> 
-> Yes this makes sense and its already in linux-next.
-> 
+2018=E5=B9=B412=E6=9C=885=E6=97=A5(=E6=B0=B4) 11:51 Rob Herring <robh@kerne=
+l.org>:
+>
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/=
+samsung/pinctrl-samsung.c
+> index ee6ee2338606..de0477bb469d 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1071,7 +1071,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl=
+_drv_data *d,
+>                         continue;
+>                 bank =3D d->pin_banks;
+>                 for (i =3D 0; i < d->nr_banks; ++i, ++bank) {
+> -                       if (!strcmp(bank->name, np->name)) {
+> +                       if (of_node_name_eq(np, bank->name)) {
+>                                 bank->of_node =3D np;
+>                                 break;
+>                         }
+> --
+> 2.19.1
+>
 
-Linus,
+Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Great. I pulled this in last week into kselftest next for 4.21-rc1 
-thinking that this is a good direction.
-
-thanks,
--- Shuah
+Best regards,
+Tomasz
