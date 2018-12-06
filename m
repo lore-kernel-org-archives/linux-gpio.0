@@ -1,7 +1,7 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 1/2] pinctrl: sunxi: Deal with per-bank regulators
-Date: Thu,  6 Dec 2018 15:02:03 +0100
-Message-ID: <3401ca7517927243f567899819e0d02eee12984f.1544104801.git-series.maxime.ripard@bootlin.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH 0/2] pinctrl: sunxi: Account for per-bank GPIO regulators
+Date: Thu, 6 Dec 2018 23:28:21 +0800
+Message-ID: <CAGb2v672oGHpeKEb4HV8ecZro2v-NPC9cV_DKPdNv9dy2OTREQ@mail.gmail.com>
 References: <cover.50931fbda5c95345087740e4c1ef5a57fdd53480.1544104801.git-series.maxime.ripard@bootlin.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -17,148 +17,54 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Mylene Josserand <mylene.josserand@bootlin.com>, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The Allwinner SoCs have on most of their GPIO banks a regulator input.
+On Thu, Dec 6, 2018 at 10:02 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> Hi,
+>
+> Here is a first attempt at getting the regulators properly accounted for
+> the GPIO banks on the Allwinner SoCs.
 
-This issue was mainly ignored so far because either the regulator was a
-static regulator that would be providing power anyway, or the bank was used
-for a feature unsupported so far (CSI). For the odd cases, enabling it in
-the bootloader was the preferred option.
+Cool. This is better than what I had in mind, which involved a deferred
+task to grab the regulators.
 
-However, now that we are starting to support those features, and that we
-can't really rely on the bootloader for this, we need to model those
-regulators as such in the DT.
+> The main interogation I have currently is whether we should always try to
+> get the regulator for the current branch, or if we should restrict it to
+> the one available on the SoCs.
 
-This is slightly more complicated than what it looks like, since some
-regulators will be tied to the PMIC, and in order to have access to the
-PMIC bus, you need to mux its pins, which will need the pinctrl driver,
-that needs the regulator driver to be registered. And this is how you get a
-circular dependency.
+Not sure what you mean here, but we should probably just list the actual
+names.
 
-In practice however, the hardware cannot fall into this case since it would
-result in a completely unusable bus. In order to avoid that circular
-dependency, we can thus get and enable the regulators at pin_request time.
-We'll then need to account for the references of all the pins of a
-particular branch to know when to put the reference, but it works pretty
-nicely once implemented.
+For pre-A20 SoCs (A10/A10s/A13), they aren't even named VCC-Px. Instead
+they are named after the primary function of the pin bank, such as
+VCC-CARD, VCC-NAND, VCC-CSI0, VCC-CSI1.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 63 ++++++++++++++++++++++++++++-
- drivers/pinctrl/sunxi/pinctrl-sunxi.h |  6 +++-
- 2 files changed, 69 insertions(+)
+For pin banks that don't have per-bank power inputs, you should fall back
+to VCC-IO, or VCC-RTC in the case of the PL pins.
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 34e17376ef99..5d9184d18c16 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -26,6 +26,7 @@
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinmux.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
-@@ -693,12 +694,74 @@ sunxi_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+static int sunxi_pmx_request(struct pinctrl_dev *pctldev, unsigned offset)
-+{
-+	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+	unsigned short bank = offset / PINS_PER_BANK;
-+	struct sunxi_pinctrl_regulator *s_reg = &pctl->regulators[bank];
-+	struct regulator *reg;
-+	int ret;
-+
-+	reg = s_reg->regulator;
-+	if (!reg) {
-+		char supply[16];
-+
-+		snprintf(supply, sizeof(supply), "vcc-p%c", 'a' + bank);
-+		reg = regulator_get(pctl->dev, supply);
-+		if (IS_ERR(reg)) {
-+			dev_err(pctl->dev, "Couldn't get bank P%c regulator\n",
-+				'A' + bank);
-+			return PTR_ERR(reg);
-+		}
-+
-+		s_reg->regulator = reg;
-+		refcount_set(&s_reg->refcount, 1);
-+	} else {
-+		refcount_inc(&s_reg->refcount);
-+	}
-+
-+	ret = regulator_enable(reg);
-+	if (ret) {
-+		dev_err(pctl->dev,
-+			"Couldn't enable bank P%c regulator\n", 'A' + bank);
-+		goto out;
-+	}
-+
-+	return 0;
-+
-+out:
-+	if (refcount_dec_and_test(&s_reg->refcount)) {
-+		regulator_put(s_reg->regulator);
-+		s_reg->regulator = NULL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int sunxi_pmx_free(struct pinctrl_dev *pctldev, unsigned offset)
-+{
-+	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+	unsigned short bank = offset / PINS_PER_BANK;
-+	struct sunxi_pinctrl_regulator *s_reg = &pctl->regulators[bank];
-+
-+	if (!refcount_dec_and_test(&s_reg->refcount))
-+		return 0;
-+
-+	regulator_disable(s_reg->regulator);
-+	regulator_put(s_reg->regulator);
-+	s_reg->regulator = NULL;
-+
-+	return 0;
-+}
-+
- static const struct pinmux_ops sunxi_pmx_ops = {
- 	.get_functions_count	= sunxi_pmx_get_funcs_cnt,
- 	.get_function_name	= sunxi_pmx_get_func_name,
- 	.get_function_groups	= sunxi_pmx_get_func_groups,
- 	.set_mux		= sunxi_pmx_set_mux,
- 	.gpio_set_direction	= sunxi_pmx_gpio_set_direction,
-+	.request		= sunxi_pmx_request,
-+	.free			= sunxi_pmx_free,
- 	.strict			= true,
- };
- 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index 4a892e7dde66..e340d2a24b44 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -126,11 +126,17 @@ struct sunxi_pinctrl_group {
- 	unsigned	pin;
- };
- 
-+struct sunxi_pinctrl_regulator {
-+	struct regulator	*regulator;
-+	refcount_t		refcount;
-+};
-+
- struct sunxi_pinctrl {
- 	void __iomem			*membase;
- 	struct gpio_chip		*chip;
- 	const struct sunxi_pinctrl_desc	*desc;
- 	struct device			*dev;
-+	struct sunxi_pinctrl_regulator	regulators[12];
- 	struct irq_domain		*domain;
- 	struct sunxi_pinctrl_function	*functions;
- 	unsigned			nfunctions;
--- 
-git-series 0.9.1
+So here's the rub: On A33 and later SoCs that are paired with a PMIC, VCC-PL
+or VCC-RTC is powered by the RTC regulator of the PMIC, which only gets
+registered when the PMIC regulator driver is probed, which needs the RSB
+controller, which needs the pin controller and the PL pins...
+
+ChenYu
+
+>
+> Let me know what you think,
+> Maxime
+>
+> Maxime Ripard (2):
+>   pinctrl: sunxi: Deal with per-bank regulators
+>   ARM: dts: sun7i: bananapi: Add GPIO banks regulators
+>
+>  arch/arm/boot/dts/sun7i-a20-bananapi.dts |  5 ++-
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c    | 63 +++++++++++++++++++++++++-
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.h    |  6 ++-
+>  3 files changed, 74 insertions(+)
+>
+> base-commit: 651022382c7f8da46cb4872a545ee1da6d097d2a
+> --
+> git-series 0.9.1
