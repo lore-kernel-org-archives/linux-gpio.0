@@ -1,33 +1,27 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 4/8] pinctrl: lochnagar: Add initial binding
- documentation
-Date: Fri, 7 Dec 2018 11:07:54 -0600
-Message-ID: <20181207170754.GA6499@bogus>
-References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
- <20181120141631.18949-4-ckeepax@opensource.cirrus.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v6 00/17] initial support for "suniv" Allwinner new ARM9
+ SoC
+Date: Fri, 7 Dec 2018 18:16:43 +0000
+Message-ID: <156a7c2e-7368-d0e8-bb08-4e02345f54cd@arm.com>
+References: <cover.1543781680.git.mesihkilinc@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181120141631.18949-4-ckeepax@opensource.cirrus.com>
+In-Reply-To: <cover.1543781680.git.mesihkilinc@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Mesih Kilinc <mesihkilinc@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>, Julian Calaby <julian.calaby@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 20 Nov 2018 14:16:27 +0000, Charles Keepax wrote:
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform. This driver supports the board
-> controller chip on the Lochnagar board.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->  .../bindings/pinctrl/cirrus,lochnagar.txt          | 141 +++++++++++++++++++++
->  1 file changed, 141 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.txt
-> 
+On 02/12/2018 20:23, Mesih Kilinc wrote:
+> This is the sixth version of patchset for Allwinner ARMv5 F1C100s
+> SoC. Addressed comments from Stephen Boyd, added signatures.
+I've queued the 4 irqchip patches for 4.21.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
