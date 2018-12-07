@@ -1,41 +1,32 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH v2 6/7] ARM: dts: qcom: msm8974: add gpio-ranges
-Date: Fri, 7 Dec 2018 06:41:17 -0500
-Message-ID: <20181207114117.GA30737@basecamp>
-References: <20181101001149.13453-1-masneyb@onstation.org>
- <20181101001149.13453-7-masneyb@onstation.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: sx150x: handle failure case of devm_kstrdup
+Date: Fri, 7 Dec 2018 13:23:28 +0100
+Message-ID: <CACRpkdYB9i5fy9KyBBsqoh4Mh6RgtOx15mTHd_cmT=nHS=f0Dw@mail.gmail.com>
+References: <1543745057-31616-1-git-send-email-hofrat@osadl.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181101001149.13453-7-masneyb@onstation.org>
+In-Reply-To: <1543745057-31616-1-git-send-email-hofrat@osadl.org>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-gpio@vger.kernel.org, jonathan@marek.ca, sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, bjorn.andersson@linaro.org, linus.walleij@linaro.org
+To: Nicholas Mc Guire <hofrat@osadl.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 08:11:48PM -0400, Brian Masney wrote:
-> This adds the gpio-ranges property to pm8941_gpios so that the GPIO
-> pins are initialized by the GPIO framework and not pinctrl. This fixes
-> a circular dependency so GPIO hogging can be used on this board.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+On Sun, Dec 2, 2018 at 11:08 AM Nicholas Mc Guire <hofrat@osadl.org> wrote:
 
-Hi Andy,
+> devm_kstrdup() may return NULL if internal allocation failed.
+> Thus using  label, name  is unsafe without checking. Therefor
+> in the unlikely case of allocation failure, sx150x_probe() simply
+> returns -ENOMEM.
+>
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
 
-All of the dependencies for USB have been merged into their respective
-trees. Patches 6 and 7 in this series are the only two that are
-outstanding for your consideration.
+Patch applied.
 
-I know that I'm still waiting for a review from Dmitry regarding the new
-vibrator driver [1] and we're nearing the end of the development cycle.
-In case he runs into an issue with that driver, I verified that I can use
-git am to apply patches 6 and 7 in this series for USB, and the patch
-for WiFi [2] without the bindings for the vibrator. I'm hoping to get as
-much of this merged into this kernel development cycle as possible.
+> Problem located with an experimental coccinelle script
 
-[1] https://lore.kernel.org/lkml/20181025012937.2154-1-masneyb@onstation.org/
-[2] https://lore.kernel.org/lkml/20181104215034.3677-1-masneyb@onstation.org/
+I like this script.
 
-Thanks,
-
-Brian
+Yours,
+Linus Walleij
