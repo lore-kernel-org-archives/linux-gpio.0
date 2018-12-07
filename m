@@ -1,155 +1,168 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: [PATCH] gpio: gpio-omap: Revert deferred wakeup quirk handling for
- regressions
-Date: Fri,  7 Dec 2018 11:08:29 -0800
-Message-ID: <20181207190829.57864-1-tony@atomide.com>
+From: Sean Wang <sean.wang@kernel.org>
+Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: Add devicetree bindings for
+ MT6797 SoC Pinctrl
+Date: Fri, 7 Dec 2018 13:42:59 -0800
+Message-ID: <CAGp9Lzp9auBd5+gbrz5hZTM054JsWXs=NfSnO5EvczrJ8HOcGQ@mail.gmail.com>
+References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org>
+ <20181107174844.5381-2-manivannan.sadhasivam@linaro.org> <CACRpkda25cuiPCe9ouvDDSpFwZ2z=Pm8pK=5jC-7OAcYwPSvvA@mail.gmail.com>
+ <c1f63dd8-1c06-1797-025c-2cd4891d905d@gmail.com> <CACRpkdYCsh3AfmV-7ym-ffjp2k-kaNRqY1O3rd9h-WoUPYM_bw@mail.gmail.com>
+ <CAOesGMhcBXLRRKdOMdq3Bg8fOGX6F0gWMJ3zzg0jW9bg9VeW7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Keerthy <j-keerthy@ti.com>, Tero Kristo <t-kristo@ti.com>, linux-gpio@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, Ladislav Michl <ladis@linux-mips.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOesGMhcBXLRRKdOMdq3Bg8fOGX6F0gWMJ3zzg0jW9bg9VeW7A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: olof@lixom.net
+Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, arm@kernel.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, robh+dt@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org
 List-Id: linux-gpio@vger.kernel.org
 
-Commit ec0daae685b2 ("gpio: omap: Add level wakeup handling for omap4
-based SoCs") attempted to fix omap4 GPIO wakeup handling as it was
-blocking deeper SoC idle states. However this caused a regression for
-GPIOs during runtime having over second long latencies for Ethernet
-GPIO interrupt as reportedy by Russell King <rmk+kernel@armlinux.org.uk>.
+Hi Olof,
 
-Let's fix this issue by doing a partial revert of the breaking commit.
-We still want to keep the quirk handling around as it is also used for
-OMAP_GPIO_QUIRK_IDLE_REMOVE_TRIGGER.
+I'm a guy from MediaTek.
+Thanks for your input and we will get these bad things to be better.
 
-The real fix for omap4 GPIO wakeup handling involves fixes for
-omap_set_gpio_trigger() and omap_gpio_unmask_irq() and will be posted
-separately. And we must keep the wakeup bit enabled during runtime
-because of module doing clock autogating with autoidle configured.
+On Fri, Dec 7, 2018 at 10:42 AM Olof Johansson <olof@lixom.net> wrote:
+>
+> On Wed, Dec 5, 2018 at 4:01 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
+> > On Mon, Dec 3, 2018 at 2:08 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
+> > > On 15/11/2018 11:04, Linus Walleij wrote:
+> > > > On Wed, Nov 7, 2018 at 6:49 PM Manivannan Sadhasivam
+> > > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > >
+> > > >> Add devicetree bindings for Mediatek MT6797 SoC Pin Controller.
+> > > >>
+> > > >> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > >
+> > > > Patch applied.
+> > > >
+> > >
+> > > Could you provide a stable tree for me, so that I can take the dts parts?
+> > > I just realized that my build is broken because of the missing dt-bindings
+> > > header file.
+> >
+> > Since I pulled other changes on top it is too late for me to put that
+> > in an immutable branch and merge into my tree separately,
+> > you would have to pull in the whole "devel" branch from the
+> > pin control tree.
+> >
+> > What we sometimes do is simply apply the *EXACT* same patch
+> > to two git trees. Git will cope with that as long as they are
+> > absolutely *IDENTICAL*. (The patch will appear twice in the
+> > git log with different hashes but they will merge without
+> > problems, a bit unelegant but it works.)
+> >
+> > So in your situation I would extract this patch from the pinctrl
+> > tree:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=devel&id=95d2f00657ad4c2c3eacd8a871a7aa022c3fe7d9
+> > and apply it with some notice to the maintainers about
+> > the situation.
+> >
+> > ARM SoC folks: agreed?
+>
+> So, applying the patches in parallel is fine, but this made me look at
+> the actual patches and file contents, and they seem to be a bit messy.
+>
 
-Reported-by: Russell King <rmk+kernel@armlinux.org.uk>
-Fixes: ec0daae685b2 ("gpio: omap: Add level wakeup handling for omap4
-based SoCs")
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Ladislav Michl <ladis@linux-mips.org>
-Cc: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/gpio/gpio-omap.c | 64 ++++------------------------------------
- 1 file changed, 5 insertions(+), 59 deletions(-)
+I've also noticed the messy thing so we've changed these doable SoCs
+to using generic pinctrl bindings like MT7622 and MT7629 to get rid of
+the big header. And for the other SoCs, they still tend to keep vendor
+binding because of historical reasons, the related board makers
+preferences and it is indeed a little hard to change what these people
+used to.
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -32,7 +32,6 @@
- #define OMAP4_GPIO_DEBOUNCINGTIME_MASK 0xFF
- 
- #define OMAP_GPIO_QUIRK_IDLE_REMOVE_TRIGGER	BIT(2)
--#define OMAP_GPIO_QUIRK_DEFERRED_WKUP_EN	BIT(1)
- 
- struct gpio_regs {
- 	u32 irqenable1;
-@@ -379,18 +378,9 @@ static inline void omap_set_gpio_trigger(struct gpio_bank *bank, int gpio,
- 			readl_relaxed(bank->base + bank->regs->fallingdetect);
- 
- 	if (likely(!(bank->non_wakeup_gpios & gpio_bit))) {
--		/* Defer wkup_en register update until we idle? */
--		if (bank->quirks & OMAP_GPIO_QUIRK_DEFERRED_WKUP_EN) {
--			if (trigger)
--				bank->context.wake_en |= gpio_bit;
--			else
--				bank->context.wake_en &= ~gpio_bit;
--		} else {
--			omap_gpio_rmw(base, bank->regs->wkup_en, gpio_bit,
--				      trigger != 0);
--			bank->context.wake_en =
--				readl_relaxed(bank->base + bank->regs->wkup_en);
--		}
-+		omap_gpio_rmw(base, bank->regs->wkup_en, gpio_bit, trigger != 0);
-+		bank->context.wake_en =
-+			readl_relaxed(bank->base + bank->regs->wkup_en);
- 	}
- 
- 	/* This part needs to be executed always for OMAP{34xx, 44xx} */
-@@ -942,44 +932,6 @@ omap2_gpio_disable_level_quirk(struct gpio_bank *bank)
- 		       bank->base + bank->regs->risingdetect);
- }
- 
--/*
-- * On omap4 and later SoC variants a level interrupt with wkup_en
-- * enabled blocks the GPIO functional clock from idling until the GPIO
-- * instance has been reset. To avoid that, we must set wkup_en only for
-- * idle for level interrupts, and clear level registers for the duration
-- * of idle. The level interrupts will be still there on wakeup by their
-- * nature.
-- */
--static void __maybe_unused
--omap4_gpio_enable_level_quirk(struct gpio_bank *bank)
--{
--	/* Update wake register for idle, edge bits might be already set */
--	writel_relaxed(bank->context.wake_en,
--		       bank->base + bank->regs->wkup_en);
--
--	/* Clear level registers for idle */
--	writel_relaxed(0, bank->base + bank->regs->leveldetect0);
--	writel_relaxed(0, bank->base + bank->regs->leveldetect1);
--}
--
--static void __maybe_unused
--omap4_gpio_disable_level_quirk(struct gpio_bank *bank)
--{
--	/* Restore level registers after idle */
--	writel_relaxed(bank->context.leveldetect0,
--		       bank->base + bank->regs->leveldetect0);
--	writel_relaxed(bank->context.leveldetect1,
--		       bank->base + bank->regs->leveldetect1);
--
--	/* Clear saved wkup_en for level, it will be set for next idle again */
--	bank->context.wake_en &= ~(bank->context.leveldetect0 |
--				   bank->context.leveldetect1);
--
--	/* Update wake with only edge configuration */
--	writel_relaxed(bank->context.wake_en,
--		       bank->base + bank->regs->wkup_en);
--}
--
- /*---------------------------------------------------------------------*/
- 
- static int omap_mpuio_suspend_noirq(struct device *dev)
-@@ -1412,12 +1364,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 				omap_set_gpio_dataout_mask_multiple;
- 	}
- 
--	if (bank->quirks & OMAP_GPIO_QUIRK_DEFERRED_WKUP_EN) {
--		bank->funcs.idle_enable_level_quirk =
--			omap4_gpio_enable_level_quirk;
--		bank->funcs.idle_disable_level_quirk =
--			omap4_gpio_disable_level_quirk;
--	} else if (bank->quirks & OMAP_GPIO_QUIRK_IDLE_REMOVE_TRIGGER) {
-+	if (bank->quirks & OMAP_GPIO_QUIRK_IDLE_REMOVE_TRIGGER) {
- 		bank->funcs.idle_enable_level_quirk =
- 			omap2_gpio_enable_level_quirk;
- 		bank->funcs.idle_disable_level_quirk =
-@@ -1806,8 +1753,7 @@ static const struct omap_gpio_platform_data omap4_pdata = {
- 	.regs = &omap4_gpio_regs,
- 	.bank_width = 32,
- 	.dbck_flag = true,
--	.quirks = OMAP_GPIO_QUIRK_IDLE_REMOVE_TRIGGER |
--		  OMAP_GPIO_QUIRK_DEFERRED_WKUP_EN,
-+	.quirks = OMAP_GPIO_QUIRK_IDLE_REMOVE_TRIGGER,
- };
- 
- static const struct of_device_id omap_gpio_match[] = {
--- 
-2.19.2
+> This feedback is more to the MT maintainers/developers than you, Linus
+> (obviously):
+>
+> These header files are huge, and they're inconsistent in the way they
+> define these constants:
+>
+> include/dt-bindings/pinctrl/mt7623-pinfunc.h:
+> #define MT7623_PIN_21_PCM_TX_FUNC_GPIO21 (MTK_PIN_NO(21) | 0)
+> #define MT7623_PIN_21_PCM_TX_FUNC_PCM_TX (MTK_PIN_NO(21) | 1)
+> #define MT7623_PIN_21_PCM_TX_FUNC_MRG_TX (MTK_PIN_NO(21) | 2)
+> #define MT7623_PIN_21_PCM_TX_FUNC_MRG_RX (MTK_PIN_NO(21) | 3)
+> #define MT7623_PIN_21_PCM_TX_FUNC_PCM_RX (MTK_PIN_NO(21) | 4)
+> #define MT7623_PIN_21_PCM_TX_FUNC_CONN_DSP_JMS (MTK_PIN_NO(21) | 5)
+> #define MT7623_PIN_21_PCM_TX_FUNC_AP_PCM_TX (MTK_PIN_NO(21) | 6)
+>
+> include/dt-bindings/pinctrl/mt6397-pinfunc.h:
+> #define MT6397_PIN_24_ROW4__FUNC_GPIO24 (MTK_PIN_NO(24) | 0)
+> #define MT6397_PIN_24_ROW4__FUNC_ROW4 (MTK_PIN_NO(24) | 1)
+> #define MT6397_PIN_24_ROW4__FUNC_EINT22_1X (MTK_PIN_NO(24) | 2)
+> #define MT6397_PIN_24_ROW4__FUNC_SCL2_3X (MTK_PIN_NO(24) | 3)
+> #define MT6397_PIN_24_ROW4__FUNC_TEST_IN15 (MTK_PIN_NO(24) | 6)
+> #define MT6397_PIN_24_ROW4__FUNC_TEST_OUT15 (MTK_PIN_NO(24) | 7)
+>
+> include/dt-bindings/pinctrl/mt6797-pinfunc.h:
+> #define MT6797_GPIO34__FUNC_GPIO34 (MTK_PIN_NO(34) | 0)
+> #define MT6797_GPIO34__FUNC_CMFLASH (MTK_PIN_NO(34) | 1)
+> #define MT6797_GPIO34__FUNC_CLKM0 (MTK_PIN_NO(34) | 2)
+> #define MT6797_GPIO34__FUNC_UDI_NTRST (MTK_PIN_NO(34) | 3)
+> #define MT6797_GPIO34__FUNC_SCP_JTAG_TRSTN (MTK_PIN_NO(34) | 4)
+> #define MT6797_GPIO34__FUNC_CONN_MCU_TRST_B (MTK_PIN_NO(34) | 5)
+> #define MT6797_GPIO34__FUNC_MD_UTXD0 (MTK_PIN_NO(34) | 6)
+> #define MT6797_GPIO34__FUNC_C2K_DM_JTINTP (MTK_PIN_NO(34) | 7)
+>
+> So, is it a pin or a GPIO and why does 6797 use different naming
+> scheme?
+
+They all stand for the pin and list all the functions which the pin
+can be switched to.
+
+MT6797 is the first mtk pinctrl driver not contributed by mediatek people,
+we will try to fix these confusing things and should be careful
+keeping the naming be uniform in the future.
+
+> Why do some of them have __FUNC and some _FUNC?Why do some
+> have the non-gpio function as part of the name and some do not?
+>
+
+ditto, we will try to fix and keep the naming be uniform
+
+> Also, "pin 24 row 4 func row4"? Seems to have very limited value to
+> describe it in that manner, it's just overly verbose without adding
+> information.
+
+All the function names for a pin totally are same (copied) with
+hardware document describes. That means it's default function of the
+pin the hardware provides.
+
+>
+> Some other SoCs tend to use a pinctrl specifier that is two-cell <pin
+> function> instead of trying to pack them into one integer.
+
+I'm not the initial developer for the vendor binding. but I guessed
+the initial thought trying to pack them into one integer can decrease
+the risk of inconsistency between pin and function, especially
+there're more than some hundred pins and functions present on SoC.
+
+> That seems
+> a lot more practical, especially since the base GPIO function seems to
+> generically be '0'. So the pin number would go in the first cell, and
+> the function in the second.
+>
+> Finally, I don't see how the header file is used in the code at all?
+>
+> The main idea behind the dt bindings header files is that they would
+> provide shared constants between the DT and the driver in the kernel.
+> If the constants are never used (i.e. they're just register values,
+> like today), then there's no need to merge the dt header with the
+> driver at all, it should go with the DT contents instead.
+
+Yes, it should be better to go with DT contents, not be the interface
+between DT and driver. These pin names are totally the same with these
+pin names shown on the schematic diagram, so it works more like
+providing an easy to remember text to allow people configure its pin
+easier while crossing reference schematic diagram.
+
+> So, for
+> example, if you used something like a format of <pin function>
+> properties, the header file could contain both the string
+> representation of the function for debug, as well as the values, all
+> derived from one place. Today all you have string representations for
+> is "func0".."func15" through mtk_gpio_functions[]. Seems like an
+> improvement all around?
+>
+>
+> -Olof
