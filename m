@@ -1,32 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: rza1: report if devm_kasptrinf() fails
-Date: Fri, 7 Dec 2018 10:24:49 +0100
-Message-ID: <CACRpkda6ketyah+L7VbGNHjgh85DffaAkQmeEpjTO08Zb_Wbag@mail.gmail.com>
-References: <1543077033-7016-1-git-send-email-hofrat@osadl.org>
+Subject: Re: [PATCH] MAINTAINERS: remove a duplicate entry for gpio-mockup
+Date: Fri, 7 Dec 2018 10:26:11 +0100
+Message-ID: <CACRpkdZU6bUKUq0vRrhEW1jr4kUHy72Bn9ZZkc5B9sVvUjaeNg@mail.gmail.com>
+References: <20181126081558.32175-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1543077033-7016-1-git-send-email-hofrat@osadl.org>
+In-Reply-To: <20181126081558.32175-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Mc Guire <hofrat@osadl.org>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 5:34 PM Nicholas Mc Guire <hofrat@osadl.org> wrote:
+On Mon, Nov 26, 2018 at 9:16 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> devm_kasprintf() may return NULL on failure of internal allocation
-> thus the assignments are not safe if not checked. On error
-> rza1_pinctrl_register() respectively rza1_parse_gpiochip() return
-> negative values so -ENOMEM in the (unlikely) failure case of
-> devm_kasprintf() should be fine here.
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+> I'll be getting all GPIO e-mail now, so remove my name from reviewers
+> of gpio-mockup.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This patch needs to be handled by Geert Uytterhoeven,
-who maintain the Renesas pin controllers.
-
-If he didn't get it you might have to resend the patch to him.
+It doesn't hurt but OK, patch applied!
 
 Yours,
 Linus Walleij
