@@ -1,36 +1,56 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 2/5] genirq: Export irq_chip_set_wake_parent()
-Date: Fri, 7 Dec 2018 00:12:56 +0100 (CET)
-Message-ID: <alpine.DEB.2.21.1812070012350.3743@nanos.tec.linutronix.de>
-References: <20181129170312.23625-1-thierry.reding@gmail.com> <20181129170312.23625-3-thierry.reding@gmail.com> <CACRpkdbRswRmMWFGuB6pMWeUVdB6=rxqC-o4ytv1VhK-2yjWDg@mail.gmail.com> <cd55816a-68da-c7d3-5dc7-bfe0b27c2ad2@arm.com>
+From: <Andrei.Stefanescu@microchip.com>
+Subject: [PATCH v3 0/2] add SAMA5D2 PIOBU GPIO driver
+Date: Fri, 7 Dec 2018 06:46:24 +0000
+Message-ID: <1544165160-13653-1-git-send-email-andrei.stefanescu@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cd55816a-68da-c7d3-5dc7-bfe0b27c2ad2@arm.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, gregkh@linuxfoundation.org, Nicolas.Ferre@microchip.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Ludovic.Desroches@microchip.com, Cristian.Birsan@microchip.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Andrei.Stefanescu@microchip.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 6 Dec 2018, Marc Zyngier wrote:
+On SAMA5D2 SoC the PIOBU pins do not lose their
+voltage during Backup/Self-refresh mode. This can
+be useful, for example, when the voltage must remain
+positive for a peripheral during Backup/Self-refresh
+mode (suspend-to ram is the Linux equivalent state).
 
-> On 05/12/2018 21:31, Linus Walleij wrote:
-> > On Thu, Nov 29, 2018 at 6:03 PM Thierry Reding <thierry.reding@gmail.com> wrote:
-> > 
-> >> From: Thierry Reding <treding@nvidia.com>
-> >>
-> >> Interrupt controllers in a hierarchy want to use this function to
-> >> propogate ->irq_set_wake() operations to their parent domains.
-> >>
-> >> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > 
-> > Tglx/Marc: is this change OK? (ACK?)
-> 
-> It looks OK to me, as it is consistent with irq_chip_set_type_parent,
-> among others.
-> 
-> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+v3:
+- change driver's compatible to atmel,sama5d2-secumod
+- get syscon using syscon_node_to_regmap(pdev->dev.of_node)
+- document how to use SECUMOD as a gpio-controller
 
-No objections either:
+v2:
+- make driver be a subnode of the syscon node
+- change Kconfig to depend on MFD_SYSCON and select GPIO_SYSCON
+- change include header from linux/gpio.h to linux/gpio/driver.h
+- include linux/bits.h header
+- change intrusion in comment to tamper
+- fix kerneldoc of functions
+- replace GPIOF_DIR_* flags with 0/1
+- replace ?: statement with if-else
+- remove the use of sama5d2_piobu_template_chip
+- retrieve syscon via syscon_node_to_regmap(pdev->dev.parent->of_node);
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Note that PIOBU_REG_SIZE is used to determine the register to write to
+with regmap:
+	reg =3D PIOBU_BASE + pin * PIOBU_REG_SIZE;
+
+Also, no irq capability implemented.
+
+Andrei Stefanescu (2):
+  dt-bindings: arm: atmel: describe SECUMOD usage as a GPIO controller
+  gpio: add driver for SAMA5D2 PIOBU pins
+
+ .../devicetree/bindings/arm/atmel-sysregs.txt      |  12 +-
+ MAINTAINERS                                        |   6 +
+ drivers/gpio/gpio-sama5d2-piobu.c                  | 253 +++++++++++++++++=
+++++
+ 3 files changed, 270 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpio/gpio-sama5d2-piobu.c
+
+--=20
+2.7.4
