@@ -1,32 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sx150x: handle failure case of devm_kstrdup
-Date: Fri, 7 Dec 2018 13:23:28 +0100
-Message-ID: <CACRpkdYB9i5fy9KyBBsqoh4Mh6RgtOx15mTHd_cmT=nHS=f0Dw@mail.gmail.com>
-References: <1543745057-31616-1-git-send-email-hofrat@osadl.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/2] pinctrl: sunxi: a64: Drop numeral from csi0/ts0
+Date: Fri, 7 Dec 2018 13:30:14 +0100
+Message-ID: <CACRpkdYbdDfN93oXEkSmoFAEdrQwzk7mTCreOgem6RTJPWVj5A@mail.gmail.com>
+References: <20181203154100.4280-1-wens@csie.org>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1543745057-31616-1-git-send-email-hofrat@osadl.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Mc Guire <hofrat@osadl.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBY6PVHQAKGQENYZERXA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20181203154100.4280-1-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, jagan-dyjBcgdgk7Pe9wHmmfpqLFaTQe2KTcn/@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Dec 2, 2018 at 11:08 AM Nicholas Mc Guire <hofrat@osadl.org> wrote:
+On Mon, Dec 3, 2018 at 4:41 PM Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org> wrote:
 
-> devm_kstrdup() may return NULL if internal allocation failed.
-> Thus using  label, name  is unsafe without checking. Therefor
-> in the unlikely case of allocation failure, sx150x_probe() simply
-> returns -ENOMEM.
+> This small series renames the csi0 and ts0 pin function names to csi and
+> ts. This makes the names match the datasheet. As there are only one of
+> each type of controller, having a numeral suffix doesn't make sense.
 >
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
+> I'd like to do the rename now while we don't have users nor support for
+> these two controllers. I planned to send this together with CSI support
+> for the A64, but Jagan beat me to it, so here it is.
 
-Patch applied.
-
-> Problem located with an experimental coccinelle script
-
-I like this script.
+Patch applied with Maxime's ACK.
 
 Yours,
 Linus Walleij
