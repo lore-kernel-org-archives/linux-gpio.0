@@ -1,68 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: lpc18xx: add GPIO pin interrupt controller
- support
-Date: Fri, 7 Dec 2018 11:00:20 +0100
-Message-ID: <CACRpkdamMQCvi_JSck9y8xHyNUST9zq=j=kfwvD92_JMpcAPgA@mail.gmail.com>
-References: <20181128224841.3646-1-vz@mleia.com>
- <20181128224841.3646-3-vz@mleia.com>
+Subject: Re: [PATCH v2 1/2] gpiolib-acpi: Only defer request_irq for GpioInt
+ ACPI event handlers
+Date: Fri, 7 Dec 2018 11:02:27 +0100
+Message-ID: <CACRpkdZL5A5MyLr+pBEq+QFARMXbW4FO3H2_t_VTq8XxszPqKA@mail.gmail.com>
+References: <20181128165756.20908-1-hdegoede@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181128224841.3646-3-vz@mleia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20181128165756.20908-1-hdegoede@redhat.com>
+Sender: stable-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 11:48 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
+On Wed, Nov 28, 2018 at 5:58 PM Hans de Goede <hdegoede@redhat.com> wrote:
 
-> The change adds support of LPC18xx/LPC43xx GPIO pin interrupt controller
-> block within SoC GPIO controller. The new interrupt controller driver
-> allows to configure and capture edge or level interrupts on 8 arbitrary
-> selectedinput GPIO pins, and lift the signals to be reported as NVIC rising
-> edge interrupts. Configuration of a particular GPIO pin to serve as
-> interrupt and its mapping to an interrupt on NVIC is done by SCU pin
-> controller, for more details see description of 'nxp,gpio-pin-interrupt'
-> device tree property of a GPIO pin [1].
+> Commit 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event handlers
+> from a late_initcall") deferred the entire acpi_gpiochip_request_interrupt
+> call for each event resource.
 >
-> From LPC18xx and LPC43xx User Manuals the GPIO controller consists of
-> the following blocks:
-> * GPIO pin interrupt block at 0x40087000, this change adds its support,
-> * GPIO GROUP0 interrupt block at 0x40088000,
-> * GPIO GROUP1 interrupt block at 0x40089000,
-> * GPIO port block at 0x400F4000, it is supported by the original driver.
+> This means it also delays the gpiochip_request_own_desc(..., "ACPI:Event")
+> call. This is a problem if some AML code reads the GPIO pin before we
+> run the deferred acpi_gpiochip_request_interrupt, because in that case
+> acpi_gpio_adr_space_handler() will already have called
+> gpiochip_request_own_desc(..., "ACPI:OpRegion") causing the call from
+> acpi_gpiochip_request_interrupt to fail with -EBUSY and we will fail to
+> register an event handler.
 >
-> While all 4 sub-controller blocks have their own I/O addresses, moreover
-> all 3 interrupt blocks are APB0 peripherals and high-speed GPIO block is
-> an AHB slave, according to the hardware manual the GPIO controller is
-> seen as a single block, and 4 sub-controllers have the shared reset signal
-> RGU #28 and clock to register interface CLK_CPU_GPIO on CCU1.
+> acpi_gpio_adr_space_handler is prepared for acpi_gpiochip_request_interrupt
+> already having claimed the pin, but the other way around does not work.
 >
-> Likely support of two GPIO group interrupt blocks won't be added in short
-> term, because the mechanism to mask several interrupt sources is not well
-> defined.
+> One example of a problem this causes, is the event handler for the OTG
+> ID pin on a Prowise PT301 tablet not registering, keeping the port stuck
+> in whatever mode it was in during boot and e.g. only allowing charging
+> after a reboot.
 >
-> [1] Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
+> This commit fixes this by only deferring the request_irq call and the
+> initial run of edge-triggered IRQs instead of deferring all of
+> acpi_gpiochip_request_interrupt.
 >
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> Cc: stable@vger.kernel.org
+> Fixes: 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event ...")
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+> Changes in v2:
 
-It's quite complex, but your implementation is so crisp and clean
-that there is nothing to complain about really.
-
-We are discussing putting some hierarchy handling into the
-gpiolib core, so you might want to simplify the code later to
-make use of this, but for now it's perfectly fine.
-
-Patch applied.
+Patch applied for fixes with Andy's and Mika's tags.
 
 Yours,
 Linus Walleij
