@@ -1,7 +1,7 @@
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 5/6] pinctrl: meson: meson8: add the missing GPIO_GROUPs for BOOT and CARD
-Date: Sun,  9 Dec 2018 20:50:54 +0100
-Message-ID: <20181209195055.26813-6-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 6/6] pinctrl: meson: meson8b: add the missing GPIO_GROUPs for BOOT and CARD
+Date: Sun,  9 Dec 2018 20:50:55 +0100
+Message-ID: <20181209195055.26813-7-martin.blumenstingl@googlemail.com>
 References: <20181209195055.26813-1-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -17,20 +17,20 @@ configured in devicetree using groups = BOOTx or groups = CARDx. This
 makes the behavior consistent with other pins inside the same driver as
 well as with the BOOT and CARD pins of the GXBB and GXL pinctrl drivers.
 
-Fixes: 6ac730951104a4 ("pinctrl: add driver for Amlogic Meson SoCs")
+Fixes: 0fefcb6876d0d6 ("pinctrl: Add support for Meson8b")
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson8.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 28 +++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index 5f4935a81295..785e29e74a56 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -506,6 +506,32 @@ static struct meson_pmx_group meson8_cbus_groups[] = {
- 	GPIO_GROUP(GPIOZ_12),
- 	GPIO_GROUP(GPIOZ_13),
- 	GPIO_GROUP(GPIOZ_14),
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+index b455e0c7a282..c69ca95b1ad5 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8b.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+@@ -403,6 +403,34 @@ static struct meson_pmx_group meson8b_cbus_groups[] = {
+ 	GPIO_GROUP(GPIOH_8),
+ 	GPIO_GROUP(GPIOH_9),
+ 
 +	GPIO_GROUP(CARD_0),
 +	GPIO_GROUP(CARD_1),
 +	GPIO_GROUP(CARD_2),
@@ -38,6 +38,7 @@ index 5f4935a81295..785e29e74a56 100644
 +	GPIO_GROUP(CARD_4),
 +	GPIO_GROUP(CARD_5),
 +	GPIO_GROUP(CARD_6),
++
 +	GPIO_GROUP(BOOT_0),
 +	GPIO_GROUP(BOOT_1),
 +	GPIO_GROUP(BOOT_2),
@@ -57,8 +58,9 @@ index 5f4935a81295..785e29e74a56 100644
 +	GPIO_GROUP(BOOT_16),
 +	GPIO_GROUP(BOOT_17),
 +	GPIO_GROUP(BOOT_18),
- 
- 	/* bank X */
- 	GROUP(sd_d0_a,		8,	5),
++
+ 	GPIO_GROUP(DIF_0_P),
+ 	GPIO_GROUP(DIF_0_N),
+ 	GPIO_GROUP(DIF_1_P),
 -- 
 2.19.2
