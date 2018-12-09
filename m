@@ -1,7 +1,7 @@
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 4/6] pinctrl: meson: meson8: rename the "gpio" function to "gpio_periphs"
-Date: Sun,  9 Dec 2018 20:50:53 +0100
-Message-ID: <20181209195055.26813-5-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 3/6] pinctrl: meson: meson8: rename the "gpio" function to "gpio_periphs"
+Date: Sun,  9 Dec 2018 20:50:52 +0100
+Message-ID: <20181209195055.26813-4-martin.blumenstingl@googlemail.com>
 References: <20181209195055.26813-1-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -21,26 +21,26 @@ No functional changes since thee "gpio" function is currently not used.
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson8b.c | 4 ++--
+ drivers/pinctrl/meson/pinctrl-meson8.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index 91cffc051055..b455e0c7a282 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -622,7 +622,7 @@ static struct meson_pmx_group meson8b_aobus_groups[] = {
- 	GROUP(i2s_lr_clk_in,	0,	14),
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
+index e482672e833a..5f4935a81295 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8.c
+@@ -774,7 +774,7 @@ static struct meson_pmx_group meson8_aobus_groups[] = {
+ 	GROUP(hdmi_cec_ao,		0,	17),
  };
  
 -static const char * const gpio_groups[] = {
 +static const char * const gpio_periphs_groups[] = {
  	"GPIOX_0", "GPIOX_1", "GPIOX_2", "GPIOX_3", "GPIOX_4",
  	"GPIOX_5", "GPIOX_6", "GPIOX_7", "GPIOX_8", "GPIOX_9",
- 	"GPIOX_10", "GPIOX_11", "GPIOX_16", "GPIOX_17", "GPIOX_18",
-@@ -839,7 +839,7 @@ static const char * const tsin_b_groups[] = {
+ 	"GPIOX_10", "GPIOX_11", "GPIOX_12", "GPIOX_13", "GPIOX_14",
+@@ -996,7 +996,7 @@ static const char * const hdmi_cec_ao_groups[] = {
  };
  
- static struct meson_pmx_func meson8b_cbus_functions[] = {
+ static struct meson_pmx_func meson8_cbus_functions[] = {
 -	FUNCTION(gpio),
 +	FUNCTION(gpio_periphs),
  	FUNCTION(sd_a),
