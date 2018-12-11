@@ -1,242 +1,162 @@
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: [PATCH] pinctrl: add drive for I2C related pins on MT8183
-Date: Tue, 11 Dec 2018 16:01:23 +0800
-Message-ID: <20181211080123.1397-2-zhiyong.tao@mediatek.com>
-References: <20181211080123.1397-1-zhiyong.tao@mediatek.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH] regmap: regmap-irq/gpio-max77620: add level-irq support
+Date: Tue, 11 Dec 2018 10:44:30 +0200
+Message-ID: <20181211084430.GC32557@localhost.localdomain>
+References: <20181210081437.GA32228@localhost.localdomain>
+ <e378d050-01b4-9a6c-1c17-1f1ca04dd16e@mentor.com>
+ <20181211063825.GA32557@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181211080123.1397-1-zhiyong.tao@mediatek.com>
+Content-Disposition: inline
+In-Reply-To: <20181211063825.GA32557@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, matthias.bgg@gmail.com
-Cc: srv_heupstream@mediatek.com, liguo.zhang@mediatek.com, eddie.huang@mediatek.com, hongkun.cao@mediatek.com, biao.huang@mediatek.com, hongzhou.yang@mediatek.com, chuanjia.liu@mediatek.com, erin.lo@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: mazziesaccount@gmail.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
 List-Id: linux-gpio@vger.kernel.org
 
-This patch provides the advanced drive for I2C used pins on MT8183.
+Hello Again All,
 
-Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
----
- drivers/pinctrl/mediatek/pinctrl-mt8183.c        | 50 ++++++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 45 +++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h | 13 ++++++
- drivers/pinctrl/mediatek/pinctrl-paris.c         | 20 ++++++++++
- 4 files changed, 128 insertions(+)
+Sorry for multiple posts but I had second look at this and...
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8183.c b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-index 6262fd3678ea..5244e1b27b1d 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-@@ -472,6 +472,51 @@ static const struct mtk_pin_field_calc mt8183_pin_r1_range[] = {
- 	PIN_FIELD_BASE(133, 133, 8, 0x0D0, 0x10, 13, 1),
- };
- 
-+static const struct mtk_pin_field_calc mt8183_pin_drv_en_dis_range[] = {
-+	PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 20, 1),
-+	PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 15, 1),
-+	PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 12, 1),
-+	PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 7, 1),
-+	PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 12, 1),
-+	PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 9, 1),
-+	PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 19, 1),
-+	PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 22, 1),
-+	PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 24, 1),
-+	PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 27, 1),
-+	PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 17, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_drv_e0_range[] = {
-+	PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 21, 1),
-+	PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 16, 1),
-+	PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 13, 1),
-+	PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 8, 1),
-+	PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 13, 1),
-+	PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 10, 1),
-+	PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 20, 1),
-+	PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 23, 1),
-+	PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 25, 1),
-+	PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 15, 1),
-+	PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 28, 1),
-+	PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 18, 1),
-+};
-+
-+static const struct mtk_pin_field_calc mt8183_pin_drv_e1_range[] = {
-+	PIN_FIELD_BASE(48, 48, 3, 0x0F0, 0x10, 22, 1),
-+	PIN_FIELD_BASE(49, 49, 3, 0x0F0, 0x10, 17, 1),
-+	PIN_FIELD_BASE(50, 50, 4, 0x0F0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(51, 51, 4, 0x0F0, 0x10, 9, 1),
-+	PIN_FIELD_BASE(81, 81, 5, 0x0F0, 0x10, 14, 1),
-+	PIN_FIELD_BASE(82, 82, 5, 0x0F0, 0x10, 11, 1),
-+	PIN_FIELD_BASE(83, 83, 5, 0x0F0, 0x10, 21, 1),
-+	PIN_FIELD_BASE(84, 84, 5, 0x0F0, 0x10, 24, 1),
-+	PIN_FIELD_BASE(103, 103, 6, 0x0F0, 0x10, 26, 1),
-+	PIN_FIELD_BASE(104, 104, 6, 0x0F0, 0x10, 16, 1),
-+	PIN_FIELD_BASE(105, 105, 6, 0x0F0, 0x10, 29, 1),
-+	PIN_FIELD_BASE(106, 106, 6, 0x0F0, 0x10, 19, 1),
-+};
-+
- static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
- 	[PINCTRL_PIN_REG_MODE] = MTK_RANGE(mt8183_pin_mode_range),
- 	[PINCTRL_PIN_REG_DIR] = MTK_RANGE(mt8183_pin_dir_range),
-@@ -485,6 +530,9 @@ static const struct mtk_pin_reg_calc mt8183_reg_cals[PINCTRL_PIN_REG_MAX] = {
- 	[PINCTRL_PIN_REG_PUPD] = MTK_RANGE(mt8183_pin_pupd_range),
- 	[PINCTRL_PIN_REG_R0] = MTK_RANGE(mt8183_pin_r0_range),
- 	[PINCTRL_PIN_REG_R1] = MTK_RANGE(mt8183_pin_r1_range),
-+	[PINCTRL_PIN_REG_DRV_EN_DIS] = MTK_RANGE(mt8183_pin_drv_en_dis_range),
-+	[PINCTRL_PIN_REG_DRV_E0] = MTK_RANGE(mt8183_pin_drv_e0_range),
-+	[PINCTRL_PIN_REG_DRV_E1] = MTK_RANGE(mt8183_pin_drv_e1_range),
- };
- 
- static const char * const mt8183_pinctrl_register_base_names[] = {
-@@ -517,6 +565,8 @@ static const struct mtk_pin_soc mt8183_data = {
- 	.drive_get = mtk_pinconf_drive_get_rev1,
- 	.adv_pull_get = mtk_pinconf_adv_pull_get,
- 	.adv_pull_set = mtk_pinconf_adv_pull_set,
-+	.adv_drive_get = mtk_pinconf_adv_drive_get,
-+	.adv_drive_set = mtk_pinconf_adv_drive_set,
- };
- 
- static const struct of_device_id mt8183_pinctrl_of_match[] = {
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 4a9e0d4c2bbc..da024279ec59 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -668,3 +668,48 @@ int mtk_pinconf_adv_pull_get(struct mtk_pinctrl *hw,
- 
- 	return 0;
- }
-+
-+int mtk_pinconf_adv_drive_set(struct mtk_pinctrl *hw,
-+			      const struct mtk_pin_desc *desc, bool enable,
-+			      u32 arg)
-+{
-+	int err;
-+
-+	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV_E0, arg & 1);
-+	if (err)
-+		return 0;
-+
-+	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV_E1,
-+			       !!(arg & 2));
-+	if (err)
-+		return 0;
-+
-+	arg = enable ? 1 : 0;
-+
-+	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DRV_EN_DIS, arg);
-+
-+	return err;
-+}
-+
-+int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
-+			      const struct mtk_pin_desc *desc, u32 *val)
-+{
-+	u32 en, e0, e1;
-+	int err;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV_EN_DIS, &en);
-+	if (err)
-+		return err;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV_E0, &e0);
-+	if (err)
-+		return err;
-+
-+	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DRV_E1, &e1);
-+	if (err)
-+		return err;
-+
-+	*val = (e0 | e1 << 1 | en << 2) & 0x7;
-+
-+	return 0;
-+}
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-index 6d24522739d9..795a3b10d54e 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-@@ -63,6 +63,9 @@ enum {
- 	PINCTRL_PIN_REG_IES,
- 	PINCTRL_PIN_REG_PULLEN,
- 	PINCTRL_PIN_REG_PULLSEL,
-+	PINCTRL_PIN_REG_DRV_EN_DIS,
-+	PINCTRL_PIN_REG_DRV_E0,
-+	PINCTRL_PIN_REG_DRV_E1,
- 	PINCTRL_PIN_REG_MAX,
- };
- 
-@@ -224,6 +227,11 @@ struct mtk_pin_soc {
- 	int (*adv_pull_get)(struct mtk_pinctrl *hw,
- 			    const struct mtk_pin_desc *desc, bool pullup,
- 			    u32 *val);
-+	int (*adv_drive_set)(struct mtk_pinctrl *hw,
-+			     const struct mtk_pin_desc *desc, bool enable,
-+			     u32 arg);
-+	int (*adv_drive_get)(struct mtk_pinctrl *hw,
-+			     const struct mtk_pin_desc *desc, u32 *val);
- 
- 	/* Specific driver data */
- 	void				*driver_data;
-@@ -287,5 +295,10 @@ int mtk_pinconf_adv_pull_set(struct mtk_pinctrl *hw,
- int mtk_pinconf_adv_pull_get(struct mtk_pinctrl *hw,
- 			     const struct mtk_pin_desc *desc, bool pullup,
- 			     u32 *val);
-+int mtk_pinconf_adv_drive_set(struct mtk_pinctrl *hw,
-+			      const struct mtk_pin_desc *desc, bool enable,
-+			     u32 arg);
-+int mtk_pinconf_adv_drive_get(struct mtk_pinctrl *hw,
-+			      const struct mtk_pin_desc *desc, u32 *val);
- 
- #endif /* __PINCTRL_MTK_COMMON_V2_H */
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index d2179028f134..ef4ccaa59e55 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -20,12 +20,16 @@
- #define MTK_PIN_CONFIG_RDSEL	(PIN_CONFIG_END + 2)
- #define MTK_PIN_CONFIG_PU_ADV	(PIN_CONFIG_END + 3)
- #define MTK_PIN_CONFIG_PD_ADV	(PIN_CONFIG_END + 4)
-+#define MTK_PIN_CONFIG_DRV_EN_ADV	(PIN_CONFIG_END + 5)
-+#define MTK_PIN_CONFIG_DRV_DIS_ADV	(PIN_CONFIG_END + 6)
- 
- static const struct pinconf_generic_params mtk_custom_bindings[] = {
- 	{"mediatek,tdsel",	MTK_PIN_CONFIG_TDSEL,		0},
- 	{"mediatek,rdsel",	MTK_PIN_CONFIG_RDSEL,		0},
- 	{"mediatek,pull-up-adv", MTK_PIN_CONFIG_PU_ADV,		1},
- 	{"mediatek,pull-down-adv", MTK_PIN_CONFIG_PD_ADV,	1},
-+	{"mediatek,drive-enable-adv", MTK_PIN_CONFIG_DRV_EN_ADV,	2},
-+	{"mediatek,drive-disable-adv", MTK_PIN_CONFIG_DRV_DIS_ADV,	2},
- };
- 
- #ifdef CONFIG_DEBUG_FS
-@@ -34,6 +38,8 @@ static const struct pin_config_item mtk_conf_items[] = {
- 	PCONFDUMP(MTK_PIN_CONFIG_RDSEL, "rdsel", NULL, true),
- 	PCONFDUMP(MTK_PIN_CONFIG_PU_ADV, "pu-adv", NULL, true),
- 	PCONFDUMP(MTK_PIN_CONFIG_PD_ADV, "pd-adv", NULL, true),
-+	PCONFDUMP(MTK_PIN_CONFIG_DRV_EN_ADV, "drive-enable-adv", NULL, true),
-+	PCONFDUMP(MTK_PIN_CONFIG_DRV_DIS_ADV, "drive-disable-adv", NULL, true),
- };
- #endif
- 
-@@ -311,6 +317,20 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			return -ENOTSUPP;
- 		}
- 		break;
-+	case MTK_PIN_CONFIG_DRV_EN_ADV:
-+	case MTK_PIN_CONFIG_DRV_DIS_ADV:
-+		if (hw->soc->adv_drive_set) {
-+			bool enable;
-+
-+			enable = param == MTK_PIN_CONFIG_DRV_EN_ADV;
-+			err = hw->soc->adv_drive_set(hw, desc, enable,
-+						    arg);
-+			if (err)
-+				return err;
-+		} else {
-+			return -ENOTSUPP;
-+		}
-+		break;
- 	default:
- 		err = -ENOTSUPP;
- 	}
+On Tue, Dec 11, 2018 at 08:38:25AM +0200, Matti Vaittinen wrote:
+> Hello Vladimir,
+> 
+> Thanks for the review.
+> 
+> On Mon, Dec 10, 2018 at 05:16:28PM +0200, Vladimir Zapolskiy wrote:
+> > On 12/10/2018 10:14 AM, Matti Vaittinen wrote:
+> > > Add level active IRQ support to regmap-irq irqchip. Change breaks
+> > > existing regmap-irq type setting. Convert the existing drivers which
+> > > use regmap-irq with trigger type setting (gpio-max77620) to work
+> > > with this new approach. So we do not magically support level-active
+> > > IRQs on gpio-max77620 - but add support to the regmap-irq for chips
+> > > which support them =)
+> > > 
+> > > We do not support distinguishing situation where HW supports rising
+> > > and falling edge detection but not both. Separating this would require
+> > > inventing yet another flags for IRQ types.
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > ---
+> > > I did both the regmap-irq and max77620 changes in same commit because
+> > > I'd rather not cause spot where max77620 breaks. Besides the changes in
+> > > max77620 driver are trivial. Please let me know if this is not Ok.
+> > > 
+> > > Reason why I submit this patch now - even though my driver which would
+> > > use level active type setting with regmap-irq is not yet ready for
+> > > being submited - is that I'd like to minimize amount of existing drivers
+> > > we need to patch. And if we add level active irq support like this then
+> > > we must patch all existing drivers using type setting with regmap-irq.
+> > > So doing this now when only max77620 uses type setting may be easier
+> > > than postponing this to the future.
+> > > 
+> > > And finally - I don't have max77620 so I have only done _wery_ limited
+> > > testing. So I would really appreciate if someone had time to review this
+> > > thoroughly - and even happier if someone had possibility to try this out
+> > > with the max77620.
+> > > 
+> > 
+> > [snip]
+> > 
+> > > diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+> > > index a367d59c301d..91c431ad98c3 100644
+> > > --- a/include/linux/regmap.h
+> > > +++ b/include/linux/regmap.h
+> > > @@ -1098,6 +1098,9 @@ int regmap_fields_update_bits_base(struct regmap_field *field,  unsigned int id,
+> > >   * @type_reg_offset: Offset register for the irq type setting.
+> > >   * @type_rising_mask: Mask bit to configure RISING type irq.
+> > >   * @type_falling_mask: Mask bit to configure FALLING type irq.
+> > > + * @type_level_low_mask: Mask bit to configure LEVEL_LOW type irq.
+> > > + * @type_level_high_mask: Mask bit to configure LEVEL_HIGH type irq.
+> > > + * @types_supported: logical OR of IRQ_TYPE_* flags indicating supported types.
+> > 
+> > While the existing interface is awful, you don't make it better.
+> > 
+> > .types_supported value is always derived from non-zero .type_*_mask values, so
+> > it is simply not needed, as well as the whole change to gpio-max77620.c driver.
+> 
+> Right. I didn't consider the "type_inverted" flag in the struct
+> regmap_irq_chip. I thought that "mask" is actually a register value -
+> which could be zero for some HWs. Thanks for pointing that out. It will
+> really make "types_supported" useless.
+
+After second check - type_inverted won't help if we have case where
+both the 'all bits set' and 'all bits zeroed' are valid type specifiers.
+We *could* have HW register specified as:
+
+IRQ Trigger control reg:
+
+bits [7:2] reserved - don't touch, undocumented magic debug stuff
+bits [1:0] IRQ trigger type:
+  00 => Rising Edge
+  01 => Falling Edge
+  10 => Level Low
+  11 => Level High.
+
+For such setup we would have:
+
+type_rising_mask = 0x0,
+type_falling_mask = 0x1,
+type_level_low_mask = 0x2,
+type_level_high_mask = 0x3,
+
+- and I see no way of tellng the type_rising_mask is valid.
+
+I admit this is actually not pretty. We don't really give *mask* here
+but we give the actual configuration value - and actually, for example
+transitioning from falling to low would make HW to wrongly go to
+type_level_high - if the values here were really regarded as *masks*.
+
+But when we look at the implementation, we are treating these masks as
+actual values - so code does the correct thing and zeroes the whole
+'type area':
+
+        d->type_buf[reg] &= ~(irq_data->type_falling_mask |
+                              irq_data->type_rising_mask |
+                              irq_data->type_level_low_mask |
+                              irq_data->type_level_high_mask);
+
+before applying the desired mask (value):
+
+        switch (type) {
+        case IRQ_TYPE_EDGE_FALLING:
+                d->type_buf[reg] |= irq_data->type_falling_mask;
+                break;
+	...
+
+So I would still go by adding the types_supported field to advertice
+also those types which are set using value '0'. I would additionally
+consider renaming the type_*_mask to type_*_val. What's your take on
+this?
+
+> 
+> So please just drop this patch for now. There seems to be no need to
+> touch the existing regmap-irq users after all so I can submit this patch
+> together with the driver which needs to support the level active IRQs.
+> 
+
+So, it seems we still need to patch the gpio-max77620.c, right? So I
+guess I could try submitting the next version prior the rest of the
+driver.
+
+> > 
+> > >   */
+> > >  struct regmap_irq {
+> > >  	unsigned int reg_offset;
+> > > @@ -1105,6 +1108,9 @@ struct regmap_irq {
+> > >  	unsigned int type_reg_offset;
+> > >  	unsigned int type_rising_mask;
+> > >  	unsigned int type_falling_mask;
+> > > +	unsigned int type_level_low_mask;
+> > > +	unsigned int type_level_high_mask;
+> > > +	unsigned int types_supported;
+> > >  };
+> > >  
+> > >  #define REGMAP_IRQ_REG(_irq, _off, _mask)		\
+
 -- 
-2.12.5
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
