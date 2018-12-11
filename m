@@ -1,192 +1,143 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: Add devicetree bindings for
- MT6797 SoC Pinctrl
-Date: Tue, 11 Dec 2018 07:41:09 -0800
-Message-ID: <20181211154109.trgger4syzsvpio6@localhost>
-References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org>
- <20181107174844.5381-2-manivannan.sadhasivam@linaro.org>
- <CACRpkda25cuiPCe9ouvDDSpFwZ2z=Pm8pK=5jC-7OAcYwPSvvA@mail.gmail.com>
- <c1f63dd8-1c06-1797-025c-2cd4891d905d@gmail.com>
- <CACRpkdYCsh3AfmV-7ym-ffjp2k-kaNRqY1O3rd9h-WoUPYM_bw@mail.gmail.com>
- <CAOesGMhcBXLRRKdOMdq3Bg8fOGX6F0gWMJ3zzg0jW9bg9VeW7A@mail.gmail.com>
- <CAGp9Lzp9auBd5+gbrz5hZTM054JsWXs=NfSnO5EvczrJ8HOcGQ@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH 0/2] pinctrl: sunxi: Account for per-bank GPIO regulators
+Date: Tue, 11 Dec 2018 18:01:35 +0100
+Message-ID: <20181211170135.3e4rjkjmoe6imcsl@flea>
+References: <cover.50931fbda5c95345087740e4c1ef5a57fdd53480.1544104801.git-series.maxime.ripard@bootlin.com>
+ <CAGb2v672oGHpeKEb4HV8ecZro2v-NPC9cV_DKPdNv9dy2OTREQ@mail.gmail.com>
+ <20181206154748.45iqfnlirm6blt4k@flea>
+ <CAGb2v65wEMd0iCMBD83Sr5fpEkTte6S9-sJyoYLJmGzEOFYJNQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAGp9Lzp9auBd5+gbrz5hZTM054JsWXs=NfSnO5EvczrJ8HOcGQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, arm@kernel.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, robh+dt@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, amit.kucheria@linaro.org
+Content-Type: multipart/mixed; boundary="===============5147596880131905508=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAGb2v65wEMd0iCMBD83Sr5fpEkTte6S9-sJyoYLJmGzEOFYJNQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 01:42:59PM -0800, Sean Wang wrote:
-> Hi Olof,
-> 
-> I'm a guy from MediaTek.
-> Thanks for your input and we will get these bad things to be better.
-> 
-> On Fri, Dec 7, 2018 at 10:42 AM Olof Johansson <olof@lixom.net> wrote:
-> >
-> > On Wed, Dec 5, 2018 at 4:01 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+
+--===============5147596880131905508==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="u4ha7fbmu6qapv4v"
+Content-Disposition: inline
+
+
+--u4ha7fbmu6qapv4v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+On Fri, Dec 07, 2018 at 12:01:18AM +0800, Chen-Yu Tsai wrote:
+> On Thu, Dec 6, 2018 at 11:47 PM Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
+> > On Thu, Dec 06, 2018 at 11:28:21PM +0800, Chen-Yu Tsai wrote:
+> > > On Thu, Dec 6, 2018 at 10:02 PM Maxime Ripard <maxime.ripard@bootlin.=
+com> wrote:
+> > > > The main interogation I have currently is whether we should always =
+try to
+> > > > get the regulator for the current branch, or if we should restrict =
+it to
+> > > > the one available on the SoCs.
 > > >
-> > > On Mon, Dec 3, 2018 at 2:08 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
-> > > > On 15/11/2018 11:04, Linus Walleij wrote:
-> > > > > On Wed, Nov 7, 2018 at 6:49 PM Manivannan Sadhasivam
-> > > > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > > >
-> > > > >> Add devicetree bindings for Mediatek MT6797 SoC Pin Controller.
-> > > > >>
-> > > > >> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > > >
-> > > > > Patch applied.
-> > > > >
-> > > >
-> > > > Could you provide a stable tree for me, so that I can take the dts parts?
-> > > > I just realized that my build is broken because of the missing dt-bindings
-> > > > header file.
+> > > Not sure what you mean here, but we should probably just list the act=
+ual
+> > > names.
+> >
+> > The A20 for example doesn't have a VCC-PB regulator, so do we want to
+> > try to grab it if we request a PB* pin, or should we just know that
+> > somehow and not do it?
+>=20
+> AFAIK, pin banks that don't have a separate supply are powered collective=
+ly
+> by VCC-IO, as mentioned below in my previous reply.
+
+Sigh, it was too easy :)
+
+Is VCC-IO supposed to be used for something else in the SoCs (and
+therefore could be ignored?) or not?
+
+Otherwise, we could have some hack where if the regulator is missing,
+or if it's marked always-on, we just skip it, and if it isn't we emit
+a warning. It should cover most cases, while keeping the code quite
+simple.
+
+> > > For pre-A20 SoCs (A10/A10s/A13), they aren't even named VCC-Px. Inste=
+ad
+> > > they are named after the primary function of the pin bank, such as
+> > > VCC-CARD, VCC-NAND, VCC-CSI0, VCC-CSI1.
+> >
+> > I'd really prefer to stick to vcc-pX, that's pretty obvious even for
+> > those older SoCs, and we can maintain some consistency that way.
+>=20
+> IRRC Mark said that supply names should match design names, not what is
+> convenient. And then again there's the fallback for those that don't have
+> separate rails.
+
+That would require to complicate the logic a bit, to have something
+less obvious. I'd really like to avoid it if possible.
+
+> > > For pin banks that don't have per-bank power inputs, you should fall =
+back
+> > > to VCC-IO, or VCC-RTC in the case of the PL pins.
 > > >
-> > > Since I pulled other changes on top it is too late for me to put that
-> > > in an immutable branch and merge into my tree separately,
-> > > you would have to pull in the whole "devel" branch from the
-> > > pin control tree.
-> > >
-> > > What we sometimes do is simply apply the *EXACT* same patch
-> > > to two git trees. Git will cope with that as long as they are
-> > > absolutely *IDENTICAL*. (The patch will appear twice in the
-> > > git log with different hashes but they will merge without
-> > > problems, a bit unelegant but it works.)
-> > >
-> > > So in your situation I would extract this patch from the pinctrl
-> > > tree:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=devel&id=95d2f00657ad4c2c3eacd8a871a7aa022c3fe7d9
-> > > and apply it with some notice to the maintainers about
-> > > the situation.
-> > >
-> > > ARM SoC folks: agreed?
+> > > So here's the rub: On A33 and later SoCs that are paired with a PMIC,=
+ VCC-PL
+> > > or VCC-RTC is powered by the RTC regulator of the PMIC, which only ge=
+ts
+> > > registered when the PMIC regulator driver is probed, which needs the =
+RSB
+> > > controller, which needs the pin controller and the PL pins...
 > >
-> > So, applying the patches in parallel is fine, but this made me look at
-> > the actual patches and file contents, and they seem to be a bit messy.
-> >
-> 
-> I've also noticed the messy thing so we've changed these doable SoCs
-> to using generic pinctrl bindings like MT7622 and MT7629 to get rid of
-> the big header. And for the other SoCs, they still tend to keep vendor
-> binding because of historical reasons, the related board makers
-> preferences and it is indeed a little hard to change what these people
-> used to.
+> > I haven't seen any VCC-P* on the A33, do you have a reference?
+>=20
+> The A33 has a VCC-PD. This is not listed in the datasheet, but is shown in
+> schematics. Other pins would be powered by VCC-IO, with the exception of =
+PL,
+> which would be power by VCC-RTC. The last bit is just a guess. We should
+> probably ask Allwinner, or try to do some tests.
 
-Yeah, changing bindings means that downstream DT files will need updates, which
-can be awkward. But it's worth paying attention to moving forward.
+Ack.
 
-> 
-> > This feedback is more to the MT maintainers/developers than you, Linus
-> > (obviously):
-> >
-> > These header files are huge, and they're inconsistent in the way they
-> > define these constants:
-> >
-> > include/dt-bindings/pinctrl/mt7623-pinfunc.h:
-> > #define MT7623_PIN_21_PCM_TX_FUNC_GPIO21 (MTK_PIN_NO(21) | 0)
-> > #define MT7623_PIN_21_PCM_TX_FUNC_PCM_TX (MTK_PIN_NO(21) | 1)
-> > #define MT7623_PIN_21_PCM_TX_FUNC_MRG_TX (MTK_PIN_NO(21) | 2)
-> > #define MT7623_PIN_21_PCM_TX_FUNC_MRG_RX (MTK_PIN_NO(21) | 3)
-> > #define MT7623_PIN_21_PCM_TX_FUNC_PCM_RX (MTK_PIN_NO(21) | 4)
-> > #define MT7623_PIN_21_PCM_TX_FUNC_CONN_DSP_JMS (MTK_PIN_NO(21) | 5)
-> > #define MT7623_PIN_21_PCM_TX_FUNC_AP_PCM_TX (MTK_PIN_NO(21) | 6)
-> >
-> > include/dt-bindings/pinctrl/mt6397-pinfunc.h:
-> > #define MT6397_PIN_24_ROW4__FUNC_GPIO24 (MTK_PIN_NO(24) | 0)
-> > #define MT6397_PIN_24_ROW4__FUNC_ROW4 (MTK_PIN_NO(24) | 1)
-> > #define MT6397_PIN_24_ROW4__FUNC_EINT22_1X (MTK_PIN_NO(24) | 2)
-> > #define MT6397_PIN_24_ROW4__FUNC_SCL2_3X (MTK_PIN_NO(24) | 3)
-> > #define MT6397_PIN_24_ROW4__FUNC_TEST_IN15 (MTK_PIN_NO(24) | 6)
-> > #define MT6397_PIN_24_ROW4__FUNC_TEST_OUT15 (MTK_PIN_NO(24) | 7)
-> >
-> > include/dt-bindings/pinctrl/mt6797-pinfunc.h:
-> > #define MT6797_GPIO34__FUNC_GPIO34 (MTK_PIN_NO(34) | 0)
-> > #define MT6797_GPIO34__FUNC_CMFLASH (MTK_PIN_NO(34) | 1)
-> > #define MT6797_GPIO34__FUNC_CLKM0 (MTK_PIN_NO(34) | 2)
-> > #define MT6797_GPIO34__FUNC_UDI_NTRST (MTK_PIN_NO(34) | 3)
-> > #define MT6797_GPIO34__FUNC_SCP_JTAG_TRSTN (MTK_PIN_NO(34) | 4)
-> > #define MT6797_GPIO34__FUNC_CONN_MCU_TRST_B (MTK_PIN_NO(34) | 5)
-> > #define MT6797_GPIO34__FUNC_MD_UTXD0 (MTK_PIN_NO(34) | 6)
-> > #define MT6797_GPIO34__FUNC_C2K_DM_JTINTP (MTK_PIN_NO(34) | 7)
-> >
-> > So, is it a pin or a GPIO and why does 6797 use different naming
-> > scheme?
-> 
-> They all stand for the pin and list all the functions which the pin
-> can be switched to.
-> 
-> MT6797 is the first mtk pinctrl driver not contributed by mediatek people,
-> we will try to fix these confusing things and should be careful
-> keeping the naming be uniform in the future.
-> 
-> > Why do some of them have __FUNC and some _FUNC?Why do some
-> > have the non-gpio function as part of the name and some do not?
-> >
-> 
-> ditto, we will try to fix and keep the naming be uniform
+Maxime
 
-Sounds good!
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-> > Also, "pin 24 row 4 func row4"? Seems to have very limited value to
-> > describe it in that manner, it's just overly verbose without adding
-> > information.
-> 
-> All the function names for a pin totally are same (copied) with
-> hardware document describes. That means it's default function of the
-> pin the hardware provides.
+--u4ha7fbmu6qapv4v
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yeah, I can see how that happens. Also, often the hardware documents don't
-aggregate in the same way that our software does, so they won't notice
-inconsistencies between versions in the same way (nobody really tries to make
-one document with pin names between different chip families on the hardware
-side).
+-----BEGIN PGP SIGNATURE-----
 
-> > Some other SoCs tend to use a pinctrl specifier that is two-cell <pin
-> > function> instead of trying to pack them into one integer.
-> 
-> I'm not the initial developer for the vendor binding. but I guessed
-> the initial thought trying to pack them into one integer can decrease
-> the risk of inconsistency between pin and function, especially
-> there're more than some hundred pins and functions present on SoC.
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXA/tagAKCRDj7w1vZxhR
+xZCcAQCY18jobwTB/KwxPyJuCg0AtOnpY1WitxiYMP3aR2XIEgD+M5Vijf0oHj/Q
+im8qsbkU4Jv+1Ccf0FZ7T122uSQeTQ8=
+=a9sm
+-----END PGP SIGNATURE-----
 
-Yeah, I can see that benefit, but it can also be caught with our new schemas
-and/or by drivers in some cases. Having a binding that's a natural way of
-describing the hardware without encoding it tends to be preferred.
-
-> > That seems
-> > a lot more practical, especially since the base GPIO function seems to
-> > generically be '0'. So the pin number would go in the first cell, and
-> > the function in the second.
-> >
-> > Finally, I don't see how the header file is used in the code at all?
-> >
-> > The main idea behind the dt bindings header files is that they would
-> > provide shared constants between the DT and the driver in the kernel.
-> > If the constants are never used (i.e. they're just register values,
-> > like today), then there's no need to merge the dt header with the
-> > driver at all, it should go with the DT contents instead.
-> 
-> Yes, it should be better to go with DT contents, not be the interface
-> between DT and driver. These pin names are totally the same with these
-> pin names shown on the schematic diagram, so it works more like
-> providing an easy to remember text to allow people configure its pin
-> easier while crossing reference schematic diagram.
-
-You can still have symbols for the pin numbers if you want, but if you build
-your header file a bit more elabroate you can easily expose the pin and
-function names through sysfs instead, which helps debugging.
-
-> > So, for
-> > example, if you used something like a format of <pin function>
-> > properties, the header file could contain both the string
-> > representation of the function for debug, as well as the values, all
-> > derived from one place. Today all you have string representations for
-> > is "func0".."func15" through mtk_gpio_functions[]. Seems like an
-> > improvement all around?
+--u4ha7fbmu6qapv4v--
 
 
--Olof
+--===============5147596880131905508==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============5147596880131905508==--
