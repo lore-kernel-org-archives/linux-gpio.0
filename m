@@ -1,41 +1,56 @@
-From: Joel Stanley <joel@jms.id.au>
+From: Nathan Chancellor <natechancellor@gmail.com>
 Subject: Re: [PATCH] pinctrl: aspeed: Wrap -Woverride-init with cc-option
-Date: Tue, 11 Dec 2018 10:46:26 +1030
-Message-ID: <CACPK8XfxQxMqLo10FSRPHdUVt4vr5K32xB2C_SXLAPEza--v0w@mail.gmail.com>
-References: <20181211000506.7559-1-natechancellor@gmail.com> <1544487006.3301683.1605247720.567E9685@webmail.messagingengine.com>
+Date: Mon, 10 Dec 2018 17:25:25 -0700
+Message-ID: <20181211002525.GA8468@flashbox>
+References: <20181211000506.7559-1-natechancellor@gmail.com>
+ <1544487006.3301683.1605247720.567E9685@webmail.messagingengine.com>
+ <CACPK8XfxQxMqLo10FSRPHdUVt4vr5K32xB2C_SXLAPEza--v0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1544487006.3301683.1605247720.567E9685@webmail.messagingengine.com>
+Content-Disposition: inline
+In-Reply-To: <CACPK8XfxQxMqLo10FSRPHdUVt4vr5K32xB2C_SXLAPEza--v0w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Nathan Chancellor <natechancellor@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-aspeed@lists.ozlabs.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Andrew Jeffery <andrew@aj.id.au>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-aspeed@lists.ozlabs.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 11 Dec 2018 at 10:40, Andrew Jeffery <andrew@aj.id.au> wrote:
->
->
->
-> On Tue, 11 Dec 2018, at 10:35, Nathan Chancellor wrote:
-> > Clang does not support this option:
+On Tue, Dec 11, 2018 at 10:46:26AM +1030, Joel Stanley wrote:
+> On Tue, 11 Dec 2018 at 10:40, Andrew Jeffery <andrew@aj.id.au> wrote:
 > >
-> > warning: unknown warning option '-Woverride-init'; did you mean
-> > '-Woverride-module'? [-Wunknown-warning-option]
-> > 1 warning generated.
 > >
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->
-> Acked-by: Andrew Jeffery <andrew@aj.id.au>
+> >
+> > On Tue, 11 Dec 2018, at 10:35, Nathan Chancellor wrote:
+> > > Clang does not support this option:
+> > >
+> > > warning: unknown warning option '-Woverride-init'; did you mean
+> > > '-Woverride-module'? [-Wunknown-warning-option]
+> > > 1 warning generated.
+> > >
+> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> >
+> > Acked-by: Andrew Jeffery <andrew@aj.id.au>
+> 
+> Thanks Nathan.
+> 
+> Andrew explained to me that this warning helps find bugs when
+> developing the complicated (some would say crazy) set of macros that
+> this pinctrl driver uses. It would be good to have this warning
+> available in clang. Do we have a clang issue opened for that?
+> 
+> Acked-by: Joel Stanley <joel@jms.id.au>
+> 
+> Cheers,
+> 
+> Joel
 
-Thanks Nathan.
+Hi Joel,
 
-Andrew explained to me that this warning helps find bugs when
-developing the complicated (some would say crazy) set of macros that
-this pinctrl driver uses. It would be good to have this warning
-available in clang. Do we have a clang issue opened for that?
+I just opened https://github.com/ClangBuiltLinux/linux/issues/293.
 
-Acked-by: Joel Stanley <joel@jms.id.au>
+I searched the LLVM issue tracker and haven't see any reference of this.
+I can file an issue but if you are a little more familiar with this
+warning, you are welcome to do it instead.
 
-Cheers,
-
-Joel
+Thanks for the quick response,
+Nathan
