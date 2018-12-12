@@ -1,62 +1,62 @@
-From: Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH] pinctrl: mediatek: improve dependencies for PINCTRL_MTK_MOORE
-Date: Wed, 12 Dec 2018 17:58:52 +0800
-Message-ID: <d80dd05f6dbfc8fe7e85509cc00ebd8ec739b4d2.1544608681.git.ryder.lee@mediatek.com>
+From: <Andrei.Stefanescu@microchip.com>
+Subject: [PATCH v4 1/2] dt-bindings: arm: atmel: describe SECUMOD usage as a
+ GPIO controller
+Date: Wed, 12 Dec 2018 11:57:11 +0000
+Message-ID: <1544615784-29331-2-git-send-email-andrei.stefanescu@microchip.com>
+References: <1544615784-29331-1-git-send-email-andrei.stefanescu@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1544615784-29331-1-git-send-email-andrei.stefanescu@microchip.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Sean Wang <sean.wang@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Weijie Gao <weijie.gao@mediatek.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Ryder Lee <ryder.lee@mediatek.com>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, gregkh@linuxfoundation.org, Nicolas.Ferre@microchip.com, mark.rutland@arm.com
+Cc: Ludovic.Desroches@microchip.com, Cristian.Birsan@microchip.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Andrei.Stefanescu@microchip.com
 List-Id: linux-gpio@vger.kernel.org
 
-Improve dependencies for the pinctrl drivers which select
-PINCTRL_MTK_MOORE as its core layer.
----
- drivers/pinctrl/mediatek/Kconfig | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+This patch describes the Security Module's usage as a GPIO
+controller for its PIOBU pins. These pins have the special
+property of maintaining their voltage during suspend-to-mem.
 
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index d8cb584..3a41dc8 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -23,6 +23,7 @@ config PINCTRL_MTK_MOORE
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
- 	select GPIOLIB
-+	select EINT_MTK
- 	select OF_GPIO
- 
- config PINCTRL_MTK_PARIS
-@@ -45,14 +46,14 @@ config PINCTRL_MT2701
- config PINCTRL_MT7623
- 	bool "Mediatek MT7623 pin control with generic binding"
- 	depends on MACH_MT7623 || COMPILE_TEST
--	depends on PINCTRL_MTK_MOORE
--	default y
-+	default MACH_MT7623
-+	select PINCTRL_MTK_MOORE
- 
- config PINCTRL_MT7629
- 	bool "Mediatek MT7629 pin control"
- 	depends on MACH_MT7629 || COMPILE_TEST
--	depends on PINCTRL_MTK_MOORE
--	default y
-+	default MACH_MT7629
-+	select PINCTRL_MTK_MOORE
- 
- config PINCTRL_MT8135
- 	bool "Mediatek MT8135 pin control"
-@@ -93,8 +94,8 @@ config PINCTRL_MT6797
- config PINCTRL_MT7622
- 	bool "MediaTek MT7622 pin control"
- 	depends on ARM64 || COMPILE_TEST
--	depends on PINCTRL_MTK_MOORE
--	default y
-+	default ARM64 && ARCH_MEDIATEK
-+	select PINCTRL_MTK_MOORE
- 
- config PINCTRL_MT8173
- 	bool "Mediatek MT8173 pin control"
--- 
-1.9.1
+Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
+---
+ Documentation/devicetree/bindings/arm/atmel-sysregs.txt | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/arm/atmel-sysregs.txt b/Docu=
+mentation/devicetree/bindings/arm/atmel-sysregs.txt
+index 4b96608..c89db84 100644
+--- a/Documentation/devicetree/bindings/arm/atmel-sysregs.txt
++++ b/Documentation/devicetree/bindings/arm/atmel-sysregs.txt
+@@ -158,14 +158,24 @@ Security Module (SECUMOD)
+=20
+ The Security Module macrocell provides all necessary secure functions to a=
+void
+ voltage, temperature, frequency and mechanical attacks on the chip. It als=
+o
+-embeds secure memories that can be scrambled
++embeds secure memories that can be scrambled.
++
++The Security Module also offers the PIOBU pins which can be used as GPIO p=
+ins.
++Note that they maintain their voltage during Backup/Self-refresh.=20
+=20
+ required properties:
+ - compatible: Should be "atmel,<chip>-secumod", "syscon".
+   <chip> can be "sama5d2".
+ - reg: Should contain registers location and length
++- gpio-controller:	Marks the port as GPIO controller.
++- #gpio-cells:		There are 2. The pin number is the
++			first, the second represents additional
++			parameters such as GPIO_ACTIVE_HIGH/LOW.
++
+=20
+ 	secumod@fc040000 {
+ 		compatible =3D "atmel,sama5d2-secumod", "syscon";
+ 		reg =3D <0xfc040000 0x100>;
++		gpio-controller;
++		#gpio-cells =3D <2>;
+ 	};
+--=20
+2.7.4
