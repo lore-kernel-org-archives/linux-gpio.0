@@ -1,28 +1,63 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH v1] pinctrl: mediatek: improve Kconfig dependencies
-Date: Thu, 13 Dec 2018 08:49:46 -0800
-Message-ID: <7hlg4ts76d.fsf@baylibre.com>
-References: <e4eb66dec2901016e01767932461c5d560762f66.1544666839.git.ryder.lee@mediatek.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC PATCH v2] regmap: regmap-irq/gpio-max77620: add level-irq
+ support
+Date: Thu, 13 Dec 2018 18:20:26 +0000
+Message-ID: <20181213182026.GX10669@sirena.org.uk>
+References: <20181211140555.GA5872@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="QQ0dNM4HnH4+xgqD"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e4eb66dec2901016e01767932461c5d560762f66.1544666839.git.ryder.lee@mediatek.com>
+Content-Disposition: inline
+In-Reply-To: <20181211140555.GA5872@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Sean Wang <sean.wang@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Weijie Gao <weijie.gao@mediatek.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Ryder Lee <ryder.lee@mediatek.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mazziesaccount@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, vladimir_zapolskiy@mentor.com
 List-Id: linux-gpio@vger.kernel.org
 
-Ryder Lee <ryder.lee@mediatek.com> writes:
 
-> Remove prompts to make all pinctrl cores to non-visible symbols and
-> make sure the target SoCs would be coupled with the corresponding
-> cores.
->
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+--QQ0dNM4HnH4+xgqD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Kevin Hilman <khilman@baylibre.com>
+On Tue, Dec 11, 2018 at 04:05:55PM +0200, Matti Vaittinen wrote:
 
-Tested on the mt7623-rfb1 board which has been failing in kernelCI, and
-this patch gets things booting again.
+> One specific question hit me while doing this. Why does the regmap-irq
+> core do default trigger type configuration? I did leave this in the
+> patch - but to me it is strange. For me it would be unexpected that the
+> HW default trigger level is changed by common code. I would understand
+> if change was done by some board specific code, or code specific to a
+> chip - but 'core' doing this seems wrong to me. Should it be removed?
 
-Kevin
+I can't remember and can't find any record of any discussion of it which
+is odd, might've been on IRC or something.  Let's just remove it and see
+what breaks, since we generally provide the type along with the request
+for the interrupt I'm not sure how often the default actually gets used. =
+=20
+Possibly safer as a second patch though in case there is a good reason
+that I missed so we can easily revert it.
+
+Unfortunately this also collides with a change I applied earlier on from
+Bartosz which supports chips that use masks instead of a separate type
+register to handle types so it'll need respinning, sorry about that.  It
+does look safe to me but it's possible I missed something.  Equally it
+only seems to be some quite old Tegra systems using the max77620 so
+perhaps mainline usage of affected devices is limited anyway...
+
+--QQ0dNM4HnH4+xgqD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwSoukACgkQJNaLcl1U
+h9DTUgf+Nn/sT9v2nc1Owok4i4RdYdocHxSUnJ98ZZVLknBIFd01JLu5p3W067IC
+h/X5zmu2oF0E6VSvIiBmzhYW+qMKwRp8zakpHyrU7kYvWCtbesLJvFlFt4+MXuqw
+94Q/WbdEb51JtlqhUioi7Flj53bBByDQPKVaXzAHoP8AznfFoOMNYzcLOruEQS9S
+UpwPYl4oppkIzUXHz22b+vxfvCxmkba8LTegos7rkFwEm+ASzC/D2815dGZ2/geq
+HpEtvwuxamN9aLwUFuxjZKmsM/kDOXD/QLZpBwDhMgk4q/rlqS+mWcjnj7Kvivmx
+lmgUYY2Cs6m0TjmiLtzzMAj1EANPTg==
+=KWEc
+-----END PGP SIGNATURE-----
+
+--QQ0dNM4HnH4+xgqD--
