@@ -1,47 +1,86 @@
-From: shuah <shuah@kernel.org>
-Subject: Re: [PATCH] selftests: Fix test errors related to lib.mk khdr target
-Date: Thu, 13 Dec 2018 16:56:54 -0700
-Message-ID: <b6ed53db-981e-9d9b-8838-fcd7773e7f42@kernel.org>
-References: <20181213200011.10779-1-shuah@kernel.org>
- <623cdf7b-fc3c-2a93-c61a-a043e3d7f75b@redhat.com>
- <25593aa4-a2a7-6567-11f2-b702b6e5563c@kernel.org>
- <f4dddfa8-1493-5fd5-58a9-ea6ff2b25f9c@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Martin Schiller <ms@dev.tdt.de>
+Subject: [PATCH] pinctrl: xway: fix gpio-hog related boot issues
+Date: Fri, 14 Dec 2018 08:48:25 +0100
+Message-ID: <20181214074825.6976-1-ms@dev.tdt.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f4dddfa8-1493-5fd5-58a9-ea6ff2b25f9c@redhat.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>, tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org, bamv2005@gmail.com, brgl@bgdev.pl, fathi.boudra@linaro.org, anders.roxell@linaro.org, daniel.diaz@linaro.org, pintu.ping@gmail.com, drjones@redhat.com, hofsass@google.com, peterx@redhat.com, peng.hao2@zte.com.cn, wei@redhat.com, davem@davemloft.net, dcaratti@redhat.com, akpm@linux-foundation.org, mhocko@suse.com, khalid.aziz@oracle.com, mpe@ellerman.id.au, aneesh.kumar@linux.vnet.ibm.com, dima@arista.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org, shuah <shuah@kernel.org>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On 12/13/18 4:40 PM, Paolo Bonzini wrote:
-> On 13/12/18 23:50, shuah wrote:
->>>
->>> Looks good.  Could you please provide a topic branch so that we can
->>> avoid conflicts between our trees at the next merge window.
->>>
->>
->> Thanks. The topic branch is
->>
->> git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
->>
->> I will apply it in a day or two to get ready for the merge window.
-> 
-> There are already other patches in that branch; a topic branch only
-> includes this one on top of Linus's tree, so that it is independent from
-> other changes being made in both your and my tree.
-> 
-> You should create a new branch in linux-kselftest.git, pull it into
-> next, and tell me the name so that I can pull the same branch into kvm.git.
-> 
+This patch is based on commit a86caa9ba5d7 ("pinctrl: msm: fix gpio-hog
+related boot issues").
 
-You can find just this patch on top of 4.20-rc6 in
+It fixes the issue that the gpio ranges needs to be defined before
+gpiochip_add().
 
-git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git 
-khdr_fix topic branch.
+Therefore, we also have to swap the order of registering the pinctrl
+driver and registering the gpio chip.
 
-thanks,
--- Shuah
+You also have to add the "gpio-ranges" property to the pinctrl device
+node to get it finally working.
+
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+---
+ drivers/pinctrl/pinctrl-xway.c | 39 +++++++++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
+index 93f8bd04e7fe..ae74b260b014 100644
+--- a/drivers/pinctrl/pinctrl-xway.c
++++ b/drivers/pinctrl/pinctrl-xway.c
+@@ -1746,14 +1746,6 @@ static int pinmux_xway_probe(struct platform_device *pdev)
+ 	}
+ 	xway_pctrl_desc.pins = xway_info.pads;
+ 
+-	/* register the gpio chip */
+-	xway_chip.parent = &pdev->dev;
+-	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Failed to register gpio chip\n");
+-		return ret;
+-	}
+-
+ 	/* setup the data needed by pinctrl */
+ 	xway_pctrl_desc.name	= dev_name(&pdev->dev);
+ 	xway_pctrl_desc.npins	= xway_chip.ngpio;
+@@ -1775,10 +1767,33 @@ static int pinmux_xway_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	/* finish with registering the gpio range in pinctrl */
+-	xway_gpio_range.npins = xway_chip.ngpio;
+-	xway_gpio_range.base = xway_chip.base;
+-	pinctrl_add_gpio_range(xway_info.pctrl, &xway_gpio_range);
++	/* register the gpio chip */
++	xway_chip.parent = &pdev->dev;
++	xway_chip.owner = THIS_MODULE;
++	xway_chip.of_node = pdev->dev.of_node;
++	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to register gpio chip\n");
++		return ret;
++	}
++
++	/*
++	 * For DeviceTree-supported systems, the gpio core checks the
++	 * pinctrl's device node for the "gpio-ranges" property.
++	 * If it is present, it takes care of adding the pin ranges
++	 * for the driver. In this case the driver can skip ahead.
++	 *
++	 * In order to remain compatible with older, existing DeviceTree
++	 * files which don't set the "gpio-ranges" property or systems that
++	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
++	 */
++	if (!of_property_read_bool(pdev->dev.of_node, "gpio-ranges")) {
++		/* finish with registering the gpio range in pinctrl */
++		xway_gpio_range.npins = xway_chip.ngpio;
++		xway_gpio_range.base = xway_chip.base;
++		pinctrl_add_gpio_range(xway_info.pctrl, &xway_gpio_range);
++	}
++
+ 	dev_info(&pdev->dev, "Init done\n");
+ 	return 0;
+ }
+-- 
+2.11.0
