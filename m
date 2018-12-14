@@ -1,86 +1,56 @@
-From: Martin Schiller <ms@dev.tdt.de>
-Subject: [PATCH] pinctrl: xway: fix gpio-hog related boot issues
-Date: Fri, 14 Dec 2018 08:48:25 +0100
-Message-ID: <20181214074825.6976-1-ms@dev.tdt.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.20
+Date: Fri, 14 Dec 2018 09:12:57 +0100
+Message-ID: <CACRpkdZqeKmrMr7SsAzZHCLM+z4=eyz2XhjYFdhJJLaFDH84zQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch is based on commit a86caa9ba5d7 ("pinctrl: msm: fix gpio-hog
-related boot issues").
+Hi Linus,
 
-It fixes the issue that the gpio ranges needs to be defined before
-gpiochip_add().
+here are some three pin control fixes for the v4.20 series.
+Just odd drivers, so nothing particularly interesting. Details
+in the signed tag.
 
-Therefore, we also have to swap the order of registering the pinctrl
-driver and registering the gpio chip.
+Please pull it in!
 
-You also have to add the "gpio-ranges" property to the pinctrl device
-node to get it finally working.
+Yours,
+Linus Walleij
 
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
----
- drivers/pinctrl/pinctrl-xway.c | 39 +++++++++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+The following changes since commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6:
 
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index 93f8bd04e7fe..ae74b260b014 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -1746,14 +1746,6 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 	}
- 	xway_pctrl_desc.pins = xway_info.pads;
- 
--	/* register the gpio chip */
--	xway_chip.parent = &pdev->dev;
--	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to register gpio chip\n");
--		return ret;
--	}
--
- 	/* setup the data needed by pinctrl */
- 	xway_pctrl_desc.name	= dev_name(&pdev->dev);
- 	xway_pctrl_desc.npins	= xway_chip.ngpio;
-@@ -1775,10 +1767,33 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	/* finish with registering the gpio range in pinctrl */
--	xway_gpio_range.npins = xway_chip.ngpio;
--	xway_gpio_range.base = xway_chip.base;
--	pinctrl_add_gpio_range(xway_info.pctrl, &xway_gpio_range);
-+	/* register the gpio chip */
-+	xway_chip.parent = &pdev->dev;
-+	xway_chip.owner = THIS_MODULE;
-+	xway_chip.of_node = pdev->dev.of_node;
-+	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to register gpio chip\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * For DeviceTree-supported systems, the gpio core checks the
-+	 * pinctrl's device node for the "gpio-ranges" property.
-+	 * If it is present, it takes care of adding the pin ranges
-+	 * for the driver. In this case the driver can skip ahead.
-+	 *
-+	 * In order to remain compatible with older, existing DeviceTree
-+	 * files which don't set the "gpio-ranges" property or systems that
-+	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
-+	 */
-+	if (!of_property_read_bool(pdev->dev.of_node, "gpio-ranges")) {
-+		/* finish with registering the gpio range in pinctrl */
-+		xway_gpio_range.npins = xway_chip.ngpio;
-+		xway_gpio_range.base = xway_chip.base;
-+		pinctrl_add_gpio_range(xway_info.pctrl, &xway_gpio_range);
-+	}
-+
- 	dev_info(&pdev->dev, "Init done\n");
- 	return 0;
- }
--- 
-2.11.0
+  Linux 4.20-rc3 (2018-11-18 13:33:44 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.20-3
+
+for you to fetch changes up to 478b6767ad26ab86d9ecc341027dd09a87b1f997:
+
+  pinctrl: sunxi: a83t: Fix IRQ offset typo for PH11 (2018-12-07 13:32:19 +0100)
+
+----------------------------------------------------------------
+Pin control fixes for the v4.20 series:
+- Set the tile property on Qualcomm SDM60.
+- Fix up enable register calculation for the Meson
+- Fix an IRQ offset on the Sunxi (Allwinner)
+
+----------------------------------------------------------------
+Chen-Yu Tsai (1):
+      pinctrl: sunxi: a83t: Fix IRQ offset typo for PH11
+
+Craig Tatlor (1):
+      pinctrl: sdm660: Set tile property for pingroups
+
+Jerome Brunet (1):
+      pinctrl: meson: fix pull enable register calculation
+
+ drivers/pinctrl/meson/pinctrl-meson.c      |  3 ++-
+ drivers/pinctrl/qcom/pinctrl-sdm660.c      | 28 +++++++++++++++-------------
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c |  2 +-
+ 3 files changed, 18 insertions(+), 15 deletions(-)
