@@ -1,52 +1,33 @@
-From: Aisheng Dong <aisheng.dong@nxp.com>
-Subject: [PATCH 1/1] pinctrl: imx8qxp: break the dependency on SOC_IMX8QXP
-Date: Fri, 14 Dec 2018 10:04:50 +0000
-Message-ID: <1544781567-18040-1-git-send-email-aisheng.dong@nxp.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add r8a774c0 (RZ/G2E) support
+Date: Fri, 14 Dec 2018 11:06:21 +0100
+Message-ID: <CAMuHMdUiSXfkHOzNzNCZdaOg4O4FYs6JZT-EH_ZuwbAfr6P_xA@mail.gmail.com>
+References: <1544732294-5996-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Aisheng Dong <aisheng.dong@nxp.com>, "dongas86@gmail.com" <dongas86@gmail.com>, Fabio Estevam <festevam@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1544732294-5996-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-ARM64 SoC does not encourage people to add more finegrained SoC
-config options rather than a single ARCH_<family> in arch Kconfig.
-So this patch aims to break the dependency on SOC_IMX8QXP which
-will be removed later.
+On Thu, Dec 13, 2018 at 9:18 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Document Renesas' RZ/G2E (R8A774C0) GPIO blocks compatibility within the
+> relevant dt-bindings.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/pinctrl/freescale/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index 2d6db43..f7d3579 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -130,7 +130,7 @@ config PINCTRL_IMX8MQ
- 
- config PINCTRL_IMX8QXP
- 	bool "IMX8QXP pinctrl driver"
--	depends on SOC_IMX8QXP
-+	depends on ARCH_MXC && ARM64
- 	select PINCTRL_IMX_SCU
- 	help
- 	  Say Y here to enable the imx8qxp pinctrl driver
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
