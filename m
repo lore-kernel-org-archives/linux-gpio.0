@@ -1,51 +1,52 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH] selftests: Fix test errors related to lib.mk khdr target
-Date: Fri, 14 Dec 2018 10:52:44 +0100
-Message-ID: <63f872e4-b0be-7ba3-735a-f6b04cd3db0c@redhat.com>
-References: <20181213200011.10779-1-shuah@kernel.org>
- <623cdf7b-fc3c-2a93-c61a-a043e3d7f75b@redhat.com>
- <25593aa4-a2a7-6567-11f2-b702b6e5563c@kernel.org>
- <f4dddfa8-1493-5fd5-58a9-ea6ff2b25f9c@redhat.com>
- <b6ed53db-981e-9d9b-8838-fcd7773e7f42@kernel.org>
+From: Aisheng Dong <aisheng.dong@nxp.com>
+Subject: [PATCH 1/1] pinctrl: imx8qxp: break the dependency on SOC_IMX8QXP
+Date: Fri, 14 Dec 2018 10:04:50 +0000
+Message-ID: <1544781567-18040-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b6ed53db-981e-9d9b-8838-fcd7773e7f42@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: shuah <shuah@kernel.org>, tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org, bamv2005@gmail.com, brgl@bgdev.pl, fathi.boudra@linaro.org, anders.roxell@linaro.org, daniel.diaz@linaro.org, pintu.ping@gmail.com, drjones@redhat.com, hofsass@google.com, peterx@redhat.com, peng.hao2@zte.com.cn, wei@redhat.com, davem@davemloft.net, dcaratti@redhat.com, akpm@linux-foundation.org, mhocko@suse.com, khalid.aziz@oracle.com, mpe@ellerman.id.au, aneesh.kumar@linux.vnet.ibm.com, dima@arista.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Aisheng Dong <aisheng.dong@nxp.com>, "dongas86@gmail.com" <dongas86@gmail.com>, Fabio Estevam <festevam@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 14/12/18 00:56, shuah wrote:
-> On 12/13/18 4:40 PM, Paolo Bonzini wrote:
->> On 13/12/18 23:50, shuah wrote:
->>>>
->>>> Looks good.  Could you please provide a topic branch so that we can
->>>> avoid conflicts between our trees at the next merge window.
->>>>
->>>
->>> Thanks. The topic branch is
->>>
->>> git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
->>>
->>> I will apply it in a day or two to get ready for the merge window.
->>
->> There are already other patches in that branch; a topic branch only
->> includes this one on top of Linus's tree, so that it is independent from
->> other changes being made in both your and my tree.
->>
->> You should create a new branch in linux-kselftest.git, pull it into
->> next, and tell me the name so that I can pull the same branch into
->> kvm.git.
->>
-> 
-> You can find just this patch on top of 4.20-rc6 in
-> 
-> git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
-> khdr_fix topic branch.
+ARM64 SoC does not encourage people to add more finegrained SoC
+config options rather than a single ARCH_<family> in arch Kconfig.
+So this patch aims to break the dependency on SOC_IMX8QXP which
+will be removed later.
 
-Great, thanks.
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/pinctrl/freescale/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Paolo
+diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+index 2d6db43..f7d3579 100644
+--- a/drivers/pinctrl/freescale/Kconfig
++++ b/drivers/pinctrl/freescale/Kconfig
+@@ -130,7 +130,7 @@ config PINCTRL_IMX8MQ
+ 
+ config PINCTRL_IMX8QXP
+ 	bool "IMX8QXP pinctrl driver"
+-	depends on SOC_IMX8QXP
++	depends on ARCH_MXC && ARM64
+ 	select PINCTRL_IMX_SCU
+ 	help
+ 	  Say Y here to enable the imx8qxp pinctrl driver
+-- 
+2.7.4
