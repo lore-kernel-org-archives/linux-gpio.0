@@ -1,32 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: Use of_node_name_eq for node name comparisons
-Date: Fri, 14 Dec 2018 16:03:31 +0100
-Message-ID: <CACRpkda2qA4AQG3sT+7LEvuGV=8EtnLFnAn8WCPbnoD75X7EbQ@mail.gmail.com>
-References: <20181205195050.4759-20-robh@kernel.org>
+Subject: Re: [PATCH] gpiolib: Fix return value of gpio_to_desc() stub if !GPIOLIB
+Date: Fri, 14 Dec 2018 16:06:17 +0100
+Message-ID: <CACRpkdZf2pqS04H0DVvQAig2WGFcD9i-kwK=LExT_Nar4Lyu_Q@mail.gmail.com>
+References: <1544089549-23629-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181205195050.4759-20-robh@kernel.org>
+In-Reply-To: <1544089549-23629-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 8:51 PM Rob Herring <robh@kernel.org> wrote:
+On Thu, Dec 6, 2018 at 10:45 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
+> If CONFIG_GPOILIB is not set, the stub of gpio_to_desc() should return
+> the same type of error as regular version: NULL.  All the callers
+> compare the return value of gpio_to_desc() against NULL, so returned
+> ERR_PTR would be treated as non-error case leading to dereferencing of
+> error value.
 >
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Fixes: 79a9becda894 ("gpiolib: export descriptor-based GPIO interface")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Patch applied!
+Patch applied. I kept the Fixes but removed stable, I do not know
+of any regression it is fixing.
 
 Yours,
 Linus Walleij
