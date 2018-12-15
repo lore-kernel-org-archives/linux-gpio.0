@@ -1,26 +1,22 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio-omap.txt: add reg and interrupts properties
-Date: Fri, 14 Dec 2018 23:02:40 +0100
-Message-ID: <CACRpkdbWevcW+3yCoRNrggFNPFykQtbJe_rv_n+ypWg-V_Owzg@mail.gmail.com>
-References: <20181214194822.lvavgczxq4cy7v64@arbad>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add r8a774c0 (RZ/G2E) support
+Date: Sat, 15 Dec 2018 14:51:30 +0100
+Message-ID: <20181215135130.ternno5paye6ej5x@verge.net.au>
+References: <1544732294-5996-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181214194822.lvavgczxq4cy7v64@arbad>
+Content-Disposition: inline
+In-Reply-To: <1544732294-5996-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andreas Klinger <ak@it-klinger.de>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 8:48 PM Andreas Klinger <ak@it-klinger.de>
-wrote:> Document properties reg and interrupts for OMAP GPIO
-controller bindings
->
-> Also add unit address in node name of the example
->
-> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+On Thu, Dec 13, 2018 at 08:18:14PM +0000, Fabrizio Castro wrote:
+> Document Renesas' RZ/G2E (R8A774C0) GPIO blocks compatibility within the
+> relevant dt-bindings.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
