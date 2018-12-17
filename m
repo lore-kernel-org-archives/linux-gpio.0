@@ -1,35 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: xway: fix gpio-hog related boot issues
-Date: Mon, 17 Dec 2018 15:32:51 +0100
-Message-ID: <CACRpkdaTR-Bb6MBtP34GCEtjqfxSNr5PQjDZ_PFqX2B+odGu-w@mail.gmail.com>
-References: <20181214074825.6976-1-ms@dev.tdt.de>
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add r8a774c0 (RZ/G2E) support
+Date: Mon, 17 Dec 2018 15:34:26 +0100
+Message-ID: <CACRpkdaCUg9pgS3bsuXpdzi3zTB5YYF-R0Be0w4QbaiHspw9gA@mail.gmail.com>
+References: <1544732294-5996-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181214074825.6976-1-ms@dev.tdt.de>
+In-Reply-To: <1544732294-5996-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Schiller <ms@dev.tdt.de>, John Crispin <john@phrozen.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 8:48 AM Martin Schiller <ms@dev.tdt.de> wrote:
+On Thu, Dec 13, 2018 at 9:18 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
 
-> This patch is based on commit a86caa9ba5d7 ("pinctrl: msm: fix gpio-hog
-> related boot issues").
+> Document Renesas' RZ/G2E (R8A774C0) GPIO blocks compatibility within the
+> relevant dt-bindings.
 >
-> It fixes the issue that the gpio ranges needs to be defined before
-> gpiochip_add().
->
-> Therefore, we also have to swap the order of registering the pinctrl
-> driver and registering the gpio chip.
->
-> You also have to add the "gpio-ranges" property to the pinctrl device
-> node to get it finally working.
->
-> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Patch applied unless John Crispin has objections, it looks
-good to me!
+Patch applied with Geert's and Simon's ACKs!
 
 Yours,
 Linus Walleij
