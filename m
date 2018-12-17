@@ -1,69 +1,51 @@
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [RFC PATCH v2] regmap: regmap-irq/gpio-max77620: add level-irq
- support
-Date: Mon, 17 Dec 2018 10:42:48 +0200
-Message-ID: <20181217084248.GC2477@localhost.localdomain>
-References: <20181211140555.GA5872@localhost.localdomain>
- <20181213182026.GX10669@sirena.org.uk>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: [PATCH] gpio: mvebu: only fail on missing clk if pwm is actually to be used
+Date: Mon, 17 Dec 2018 09:43:13 +0100
+Message-ID: <20181217084313.15379-1-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181213182026.GX10669@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: mazziesaccount@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, vladimir_zapolskiy@mentor.com, matti.vaittinen@fi.rohmeurope.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Cc: kernel@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thierry Reding <thierry.reding@gmail.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Mark,
+The gpio IP on Armada 370 at offset 0x18180 has neither a clk nor pwm
+registers. So there is no need for a clk as the pwm isn't used anyhow.
+So only check for the clk in the presence of the pwm registers. This fixes
+a failure to probe the gpio driver for the above mentioned gpio device.
 
-On Thu, Dec 13, 2018 at 06:20:26PM +0000, Mark Brown wrote:
-> On Tue, Dec 11, 2018 at 04:05:55PM +0200, Matti Vaittinen wrote:
-> 
-> > One specific question hit me while doing this. Why does the regmap-irq
-> > core do default trigger type configuration? I did leave this in the
-> > patch - but to me it is strange. For me it would be unexpected that the
-> > HW default trigger level is changed by common code. I would understand
-> > if change was done by some board specific code, or code specific to a
-> > chip - but 'core' doing this seems wrong to me. Should it be removed?
-> 
-> I can't remember and can't find any record of any discussion of it which
-> is odd, might've been on IRC or something.  Let's just remove it and see
-> what breaks, since we generally provide the type along with the request
-> for the interrupt I'm not sure how often the default actually gets used.  
-> Possibly safer as a second patch though in case there is a good reason
-> that I missed so we can easily revert it.
+Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/gpio/gpio-mvebu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-So how do you see this - should the regmap_add_irq_chip read the current
-type setting information from HW and populate the cached type values
-based on the current HW configuration? (I think that would be corect
-thing to do).
-
-> Unfortunately this also collides with a change I applied earlier on from
-> Bartosz which supports chips that use masks instead of a separate type
-> register to handle types so it'll need respinning, sorry about that.
-
-No problem - I'll fetch the latest changes from regulator tree and see
-how to fit this in. It may be this will be done after the holidays
-though - I'm not sure how my schedules are during the next few weeks...
-Besides I have also this "main IRQ status" -thing ongoing.
-
->  It
-> does look safe to me but it's possible I missed something.  Equally it
-> only seems to be some quite old Tegra systems using the max77620 so
-> perhaps mainline usage of affected devices is limited anyway...
-
-Right. This makes me wonder if there is some other preferred approach on
-this... How other drivers are doing the type configurations? Why they
-are not using regmap-irq? Am I missing something? But what comes to
-changing the regmap-irq type-setting this is definitely a good news =)
-And... Thanks for all the feedback and support Mark!
-
-Br,
-	Matti Vaittinen
-
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 6e02148c208b..adc768f908f1 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -773,9 +773,6 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 				     "marvell,armada-370-gpio"))
+ 		return 0;
+ 
+-	if (IS_ERR(mvchip->clk))
+-		return PTR_ERR(mvchip->clk);
+-
+ 	/*
+ 	 * There are only two sets of PWM configuration registers for
+ 	 * all the GPIO lines on those SoCs which this driver reserves
+@@ -786,6 +783,9 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 	if (!res)
+ 		return 0;
+ 
++	if (IS_ERR(mvchip->clk))
++		return PTR_ERR(mvchip->clk);
++
+ 	/*
+ 	 * Use set A for lines of GPIO chip with id 0, B for GPIO chip
+ 	 * with id 1. Don't allow further GPIO chips to be used for PWM.
 -- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+2.19.2
