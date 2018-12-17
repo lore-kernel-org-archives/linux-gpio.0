@@ -1,43 +1,69 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 1/1] pinctrl: imx8qxp: break the dependency on SOC_IMX8QXP
-Date: Sun, 16 Dec 2018 16:08:01 +0800
-Message-ID: <20181216080800.GI13243@dragon>
-References: <1544781567-18040-1-git-send-email-aisheng.dong@nxp.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [RFC PATCH v2] regmap: regmap-irq/gpio-max77620: add level-irq
+ support
+Date: Mon, 17 Dec 2018 10:42:48 +0200
+Message-ID: <20181217084248.GC2477@localhost.localdomain>
+References: <20181211140555.GA5872@localhost.localdomain>
+ <20181213182026.GX10669@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1544781567-18040-1-git-send-email-aisheng.dong@nxp.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Aisheng Dong <aisheng.dong@nxp.com>
-Cc: "dongas86@gmail.com" <dongas86@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Fabio Estevam <festevam@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <20181213182026.GX10669@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: mazziesaccount@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, vladimir_zapolskiy@mentor.com, matti.vaittinen@fi.rohmeurope.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 10:04:50AM +0000, Aisheng Dong wrote:
-> ARM64 SoC does not encourage people to add more finegrained SoC
-> config options rather than a single ARCH_<family> in arch Kconfig.
-> So this patch aims to break the dependency on SOC_IMX8QXP which
-> will be removed later.
+Hello Mark,
 
-Option SOC_IMX8QXP hasn't hit mainline, so the removal of the option is
-only about updating your platform series under reviewing.  That said, we
-do not really need to mention that in the commit log.  Otherwise,
-
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-
+On Thu, Dec 13, 2018 at 06:20:26PM +0000, Mark Brown wrote:
+> On Tue, Dec 11, 2018 at 04:05:55PM +0200, Matti Vaittinen wrote:
 > 
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > One specific question hit me while doing this. Why does the regmap-irq
+> > core do default trigger type configuration? I did leave this in the
+> > patch - but to me it is strange. For me it would be unexpected that the
+> > HW default trigger level is changed by common code. I would understand
+> > if change was done by some board specific code, or code specific to a
+> > chip - but 'core' doing this seems wrong to me. Should it be removed?
+> 
+> I can't remember and can't find any record of any discussion of it which
+> is odd, might've been on IRC or something.  Let's just remove it and see
+> what breaks, since we generally provide the type along with the request
+> for the interrupt I'm not sure how often the default actually gets used.  
+> Possibly safer as a second patch though in case there is a good reason
+> that I missed so we can easily revert it.
+
+So how do you see this - should the regmap_add_irq_chip read the current
+type setting information from HW and populate the cached type values
+based on the current HW configuration? (I think that would be corect
+thing to do).
+
+> Unfortunately this also collides with a change I applied earlier on from
+> Bartosz which supports chips that use masks instead of a separate type
+> register to handle types so it'll need respinning, sorry about that.
+
+No problem - I'll fetch the latest changes from regulator tree and see
+how to fit this in. It may be this will be done after the holidays
+though - I'm not sure how my schedules are during the next few weeks...
+Besides I have also this "main IRQ status" -thing ongoing.
+
+>  It
+> does look safe to me but it's possible I missed something.  Equally it
+> only seems to be some quite old Tegra systems using the max77620 so
+> perhaps mainline usage of affected devices is limited anyway...
+
+Right. This makes me wonder if there is some other preferred approach on
+this... How other drivers are doing the type configurations? Why they
+are not using regmap-irq? Am I missing something? But what comes to
+changing the regmap-irq type-setting this is definitely a good news =)
+And... Thanks for all the feedback and support Mark!
+
+Br,
+	Matti Vaittinen
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
