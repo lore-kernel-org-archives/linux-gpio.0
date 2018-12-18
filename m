@@ -1,77 +1,44 @@
-From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-Subject: [PATCH] pinctrl: bcm: ns: support updated DT binding as syscon subnode
-Date: Tue, 18 Dec 2018 16:58:08 +0100
-Message-ID: <20181218155808.19517-1-zajec5@gmail.com>
+From: Jan Kotas <jank@cadence.com>
+Subject: [PATCH v3 0/2] gpio: Add a driver for Cadence GPIO controller
+Date: Tue, 18 Dec 2018 16:10:40 +0000
+Message-ID: <20181218161042.16366-1-jank@cadence.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, bgolaszewski@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kotas <jank@cadence.com>
 List-Id: linux-gpio@vger.kernel.org
 
-RnJvbTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgoKRG9jdW1lbnRhdGlvbiBo
-YXMgYmVlbiByZWNlbnRseSB1cGRhdGVkIHNwZWNpZnlpbmcgdGhhdCBwaW5jdHJsIHNob3VsZApi
-ZSBzdWJub2RlIG9mIHRoZSBDUlUgInN5c2NvbiIuIFN1cHBvcnQgdGhhdCBieSB1c2luZyBwYXJl
-bnQgbm9kZSBmb3IKcmVnbWFwIGFuZCByZWFkaW5nICJvZmZzZXQiIHByb3BlcnR5IGZyb20gdGhl
-IERULgoKU2lnbmVkLW9mZi1ieTogUmFmYcWCIE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgot
-LS0KIGRyaXZlcnMvcGluY3RybC9iY20vcGluY3RybC1ucy5jIHwgMjkgKysrKysrKysrKysrKysr
-KysrKy0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxOSBpbnNlcnRpb25zKCspLCAxMCBkZWxl
-dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvYmNtL3BpbmN0cmwtbnMuYyBi
-L2RyaXZlcnMvcGluY3RybC9iY20vcGluY3RybC1ucy5jCmluZGV4IGQ3ZjgxNzVkMmMxYy4uZTc5
-NjkwYmQ4Yjg1IDEwMDY0NAotLS0gYS9kcml2ZXJzL3BpbmN0cmwvYmNtL3BpbmN0cmwtbnMuYwor
-KysgYi9kcml2ZXJzL3BpbmN0cmwvYmNtL3BpbmN0cmwtbnMuYwpAQCAtNSw2ICs1LDcgQEAKIAog
-I2luY2x1ZGUgPGxpbnV4L2Vyci5oPgogI2luY2x1ZGUgPGxpbnV4L2lvLmg+CisjaW5jbHVkZSA8
-bGludXgvbWZkL3N5c2Nvbi5oPgogI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPgogI2luY2x1ZGUg
-PGxpbnV4L29mLmg+CiAjaW5jbHVkZSA8bGludXgvb2ZfZGV2aWNlLmg+CkBAIC0xMiw2ICsxMyw3
-IEBACiAjaW5jbHVkZSA8bGludXgvcGluY3RybC9waW5jdHJsLmg+CiAjaW5jbHVkZSA8bGludXgv
-cGluY3RybC9waW5tdXguaD4KICNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KKyNp
-bmNsdWRlIDxsaW51eC9yZWdtYXAuaD4KICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+CiAKICNkZWZp
-bmUgRkxBR19CQ000NzA4CQlCSVQoMSkKQEAgLTIyLDcgKzI0LDggQEAgc3RydWN0IG5zX3BpbmN0
-cmwgewogCXN0cnVjdCBkZXZpY2UgKmRldjsKIAl1bnNpZ25lZCBpbnQgY2hpcHNldF9mbGFnOwog
-CXN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldjsKLQl2b2lkIF9faW9tZW0gKmJhc2U7CisJc3Ry
-dWN0IHJlZ21hcCAqcmVnbWFwOworCXUzMiBvZmZzZXQ7CiAKIAlzdHJ1Y3QgcGluY3RybF9kZXNj
-IHBjdGxkZXNjOwogCXN0cnVjdCBuc19waW5jdHJsX2dyb3VwICpncm91cHM7CkBAIC0yMjksOSAr
-MjMyLDkgQEAgc3RhdGljIGludCBuc19waW5jdHJsX3NldF9tdXgoc3RydWN0IHBpbmN0cmxfZGV2
-ICpwY3RybF9kZXYsCiAJCXVuc2V0IHw9IEJJVChwaW5fbnVtYmVyKTsKIAl9CiAKLQl0bXAgPSBy
-ZWFkbChuc19waW5jdHJsLT5iYXNlKTsKKwlyZWdtYXBfcmVhZChuc19waW5jdHJsLT5yZWdtYXAs
-IG5zX3BpbmN0cmwtPm9mZnNldCwgJnRtcCk7CiAJdG1wICY9IH51bnNldDsKLQl3cml0ZWwodG1w
-LCBuc19waW5jdHJsLT5iYXNlKTsKKwlyZWdtYXBfd3JpdGUobnNfcGluY3RybC0+cmVnbWFwLCBu
-c19waW5jdHJsLT5vZmZzZXQsIHRtcCk7CiAKIAlyZXR1cm4gMDsKIH0KQEAgLTI2MywxMyArMjY2
-LDEzIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIG5zX3BpbmN0cmxfb2ZfbWF0
-Y2hfdGFibGVbXSA9IHsKIHN0YXRpYyBpbnQgbnNfcGluY3RybF9wcm9iZShzdHJ1Y3QgcGxhdGZv
-cm1fZGV2aWNlICpwZGV2KQogewogCXN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7CisJ
-c3RydWN0IGRldmljZV9ub2RlICpucCA9IGRldi0+b2Zfbm9kZTsKIAljb25zdCBzdHJ1Y3Qgb2Zf
-ZGV2aWNlX2lkICpvZl9pZDsKIAlzdHJ1Y3QgbnNfcGluY3RybCAqbnNfcGluY3RybDsKIAlzdHJ1
-Y3QgcGluY3RybF9kZXNjICpwY3RsZGVzYzsKIAlzdHJ1Y3QgcGluY3RybF9waW5fZGVzYyAqcGlu
-OwogCXN0cnVjdCBuc19waW5jdHJsX2dyb3VwICpncm91cDsKIAlzdHJ1Y3QgbnNfcGluY3RybF9m
-dW5jdGlvbiAqZnVuY3Rpb247Ci0Jc3RydWN0IHJlc291cmNlICpyZXM7CiAJaW50IGk7CiAKIAlu
-c19waW5jdHJsID0gZGV2bV9remFsbG9jKGRldiwgc2l6ZW9mKCpuc19waW5jdHJsKSwgR0ZQX0tF
-Uk5FTCk7CkBAIC0yODcsMTIgKzI5MCwxOCBAQCBzdGF0aWMgaW50IG5zX3BpbmN0cmxfcHJvYmUo
-c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAkJcmV0dXJuIC1FSU5WQUw7CiAJbnNfcGlu
-Y3RybC0+Y2hpcHNldF9mbGFnID0gKHVpbnRwdHJfdClvZl9pZC0+ZGF0YTsKIAotCXJlcyA9IHBs
-YXRmb3JtX2dldF9yZXNvdXJjZV9ieW5hbWUocGRldiwgSU9SRVNPVVJDRV9NRU0sCi0JCQkJCSAg
-ICJjcnVfZ3Bpb19jb250cm9sIik7Ci0JbnNfcGluY3RybC0+YmFzZSA9IGRldm1faW9yZW1hcF9y
-ZXNvdXJjZShkZXYsIHJlcyk7Ci0JaWYgKElTX0VSUihuc19waW5jdHJsLT5iYXNlKSkgewotCQlk
-ZXZfZXJyKGRldiwgIkZhaWxlZCB0byBtYXAgcGluY3RybCByZWdzXG4iKTsKLQkJcmV0dXJuIFBU
-Ul9FUlIobnNfcGluY3RybC0+YmFzZSk7CisJbnNfcGluY3RybC0+cmVnbWFwID0gc3lzY29uX25v
-ZGVfdG9fcmVnbWFwKG9mX2dldF9wYXJlbnQobnApKTsKKwlpZiAoSVNfRVJSKG5zX3BpbmN0cmwt
-PnJlZ21hcCkpIHsKKwkJaW50IGVyciA9IFBUUl9FUlIobnNfcGluY3RybC0+cmVnbWFwKTsKKwor
-CQlkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBtYXAgcGluY3RybCByZWdzOiAlZFxuIiwgZXJyKTsK
-KworCQlyZXR1cm4gZXJyOworCX0KKworCWlmIChvZl9wcm9wZXJ0eV9yZWFkX3UzMihucCwgIm9m
-ZnNldCIsICZuc19waW5jdHJsLT5vZmZzZXQpKSB7CisJCWRldl9lcnIoZGV2LCAiRmFpbGVkIHRv
-IGdldCByZWdpc3RlciBvZmZzZXRcbiIpOworCQlyZXR1cm4gLUVOT0VOVDsKIAl9CiAKIAltZW1j
-cHkocGN0bGRlc2MsICZuc19waW5jdHJsX2Rlc2MsIHNpemVvZigqcGN0bGRlc2MpKTsKLS0gCjIu
-MTMuNwoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
-bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
-LWFybS1rZXJuZWwK
+This patchset adds a driver support for Cadence GPIO controller.
+
+Number of supported lines is configurable.
+The driver initializes all pins as inputs in probe().
+Currently it only supports level-sensitive interrupts.
+
+The interrupts controller was tested with I2C and SPI IPs
+acting as interrupt sources.
+
+Changes since V2:
+	Added spinlocks in request, free and irq_set_type functions.
+
+Changes since V1:
+	Switched to generic GPIO infrastructure.
+	Redesigned interrupts, now uses chained irqchip.
+	Drop support for edge-sensitive interrupts.
+	Restore bypass settings at unexport/remove.
+
+Jan Kotas (2):
+  dt-bindings: gpio: Add bindings for Cadence GPIO
+  gpio: Add Cadence GPIO driver
+
+ .../devicetree/bindings/gpio/cdns,gpio.txt         |  44 ++++
+ drivers/gpio/Kconfig                               |   8 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-cadence.c                        | 291 +++++++++++++++++++++
+ 4 files changed, 344 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/cdns,gpio.txt
+ create mode 100644 drivers/gpio/gpio-cadence.c
+
+-- 
+2.15.0
