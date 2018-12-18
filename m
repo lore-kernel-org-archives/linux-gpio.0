@@ -1,67 +1,92 @@
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [RFC PATCH v2] regmap: regmap-irq/gpio-max77620: add level-irq
- support
-Date: Tue, 18 Dec 2018 11:00:03 +0200
-Message-ID: <20181218090003.GE2477@localhost.localdomain>
-References: <20181211140555.GA5872@localhost.localdomain>
- <20181213182026.GX10669@sirena.org.uk>
- <20181217084248.GC2477@localhost.localdomain>
- <20181217180722.GG27909@sirena.org.uk>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v5 0/8] Introduce the for_each_set_clump8 macro
+Date: Tue, 18 Dec 2018 19:11:32 +0900
+Message-ID: <cover.1545126272.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181217180722.GG27909@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: mazziesaccount@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, vladimir_zapolskiy@mentor.com
+To: linus.walleij@linaro.org
+Cc: akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 06:07:22PM +0000, Mark Brown wrote:
-> On Mon, Dec 17, 2018 at 10:42:48AM +0200, Matti Vaittinen wrote:
-> > On Thu, Dec 13, 2018 at 06:20:26PM +0000, Mark Brown wrote:
-> 
-> > > I can't remember and can't find any record of any discussion of it which
-> > > is odd, might've been on IRC or something.  Let's just remove it and see
-> > > what breaks, since we generally provide the type along with the request
-> > > for the interrupt I'm not sure how often the default actually gets used.  
-> > > Possibly safer as a second patch though in case there is a good reason
-> > > that I missed so we can easily revert it.
-> 
-> > So how do you see this - should the regmap_add_irq_chip read the current
-> > type setting information from HW and populate the cached type values
-> > based on the current HW configuration? (I think that would be corect
-> > thing to do).
-> 
-> Yes.
+Changes in v5:
+  - Restrict the function of the for_each_set_clump macro to handle only
+    8-bit clumps (i.e. for_each_set_clump8)
+  - Introduce the bitmap_get_value8 and bitmap_set_value8 functions to
+    get and set 8-bit values respectively
+  - Reimplement the for_each_set_clump macro to return the bit offset
+    and clump value; this simplifies the arguments list and aligns the
+    macro use to similar macros such as find_next_bit et al.
 
-I'll go with this then. I'll try sending the patch removing the default
-edge configuration still today.
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
 
-> 
-> > >  It
-> > > does look safe to me but it's possible I missed something.  Equally it
-> > > only seems to be some quite old Tegra systems using the max77620 so
-> > > perhaps mainline usage of affected devices is limited anyway...
-> 
-> > Right. This makes me wonder if there is some other preferred approach on
-> > this... How other drivers are doing the type configurations? Why they
-> > are not using regmap-irq? Am I missing something? But what comes to
-> > changing the regmap-irq type-setting this is definitely a good news =)
-> 
-> I suspect a lot of devices lack configurability or have never actually
-> done anything where configurability would matter - probably the biggest
-> use of regmap-irq is interrupts internal to a chip where there's no real
-> need for that, and even where there are GPIOs I'd be surprised if many
-> of them were actually used as interrupts rather than dumb outputs or
-> something given that most embedded systems have an abundance of GPIOs
-> directly on the SoC which are much better.
+This patchset introduces the for_each_set_clump8 macro and utilizes it
+in several GPIO drivers. The for_each_set_clump macro8 facilitates a
+for-loop syntax that iterates over a memory region entire groups of set
+bits at a time.
 
-Thanks for the explanation =) This makes sense.
+For example, suppose you would like to iterate over a 32-bit integer 8
+bits at a time, skipping over 8-bit groups with no set bit, where
+XXXXXXXX represents the current 8-bit group:
 
+    Example:        10111110 00000000 11111111 00110011
+    First loop:     10111110 00000000 11111111 XXXXXXXX
+    Second loop:    10111110 00000000 XXXXXXXX 00110011
+    Third loop:     XXXXXXXX 00000000 11111111 00110011
+
+Each iteration of the loop returns the next 8-bit group that has at
+least one set bit.
+
+The for_each_set_clump8 macro has four parameters:
+
+    * start: set to the bit offset of the current clump
+    * clump: set to the current clump value
+    * bits: bitmap to search within
+    * size: bitmap size in number of bits
+
+In this version of the patchset, the for_each_set_clump macro has been
+reimplemented and simplified based on the suggestions provided by Rasmus
+Villemoes and Andy Shevchenko in the version 4 submission.
+
+In particular, the function of the for_each_set_clump macro has been
+restricted to handle only 8-bit clumps; the drivers that use the
+for_each_set_clump macro only handle 8-bit ports so a generic
+for_each_set_clump implementation is not necessary. Thus, a solution for
+odd-sized clumps (e.g. 3-bit, 7-bit, etc.) mismatching word boundaries
+can be postponed until a driver appears that actually requires a generic
+for_each_set_clump implementation.
+
+In addition, the bitmap_get_value8 and bitmap_set_value8 functions are
+introduced to get and set 8-bit values respectively. Their use is based
+on the behavior suggested in the previous patchset version review.
+Similarly, the implementation of the find_next_clump function has been
+simplified in order for the function to match the syntax and use of the
+find_next_bit function.
+
+William Breathitt Gray (8):
+  bitops: Introduce the for_each_set_clump8 macro
+  lib/test_bitmap.c: Add for_each_set_clump8 test cases
+  gpio: 104-dio-48e: Utilize for_each_set_clump8 macro
+  gpio: 104-idi-48: Utilize for_each_set_clump8 macro
+  gpio: gpio-mm: Utilize for_each_set_clump8 macro
+  gpio: ws16c48: Utilize for_each_set_clump8 macro
+  gpio: pci-idio-16: Utilize for_each_set_clump8 macro
+  gpio: pcie-idio-24: Utilize for_each_set_clump8 macro
+
+ drivers/gpio/gpio-104-dio-48e.c   |  71 ++++++-------------
+ drivers/gpio/gpio-104-idi-48.c    |  36 ++--------
+ drivers/gpio/gpio-gpio-mm.c       |  71 ++++++-------------
+ drivers/gpio/gpio-pci-idio-16.c   |  73 +++++++-------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 109 +++++++++++-------------------
+ drivers/gpio/gpio-ws16c48.c       |  71 ++++++-------------
+ include/asm-generic/bitops/find.h |  14 ++++
+ include/linux/bitops.h            |   5 ++
+ lib/find_bit.c                    |  63 +++++++++++++++++
+ lib/test_bitmap.c                 |  67 ++++++++++++++++++
+ 10 files changed, 281 insertions(+), 299 deletions(-)
 
 -- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+2.20.1
