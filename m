@@ -1,181 +1,298 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v5 8/8] gpio: pcie-idio-24: Utilize for_each_set_clump8 macro
-Date: Tue, 18 Dec 2018 19:14:08 +0900
-Message-ID: <ffb25b258c0d4ad53cd18e6a11e35964be3d07ba.1545126272.git.vilhelm.gray@gmail.com>
-References: <cover.1545126272.git.vilhelm.gray@gmail.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq support
+Date: Tue, 18 Dec 2018 13:59:31 +0200
+Message-ID: <20181218115931.GA21253@localhost.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1545126272.git.vilhelm.gray@gmail.com>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk, William Breathitt Gray <vilhelm.gray@gmail.com>
+To: mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc: heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, vladimir_zapolskiy@mentor.com
 List-Id: linux-gpio@vger.kernel.org
 
-Replace verbose implementation in get_multiple/set_multiple callbacks
-with for_each_set_clump8 macro to simplify code and improve clarity.
+Add level active IRQ support to regmap-irq irqchip. Change breaks
+existing regmap-irq type setting. Convert the existing drivers which
+use regmap-irq with trigger type setting (gpio-max77620) to work
+with this new approach. So we do not magically support level-active
+IRQs on gpio-max77620 - but add support to the regmap-irq for chips
+which support them =)
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+We do not support distinguishing situation where HW supports rising
+and falling edge detection but not both. Separating this would require
+inventing yet another flags for IRQ types.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/gpio/gpio-pcie-idio-24.c | 109 ++++++++++++-------------------
- 1 file changed, 40 insertions(+), 69 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
-index 52f1647a46fd..b1686b052633 100644
---- a/drivers/gpio/gpio-pcie-idio-24.c
-+++ b/drivers/gpio/gpio-pcie-idio-24.c
-@@ -198,52 +198,34 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- 	unsigned long *mask, unsigned long *bits)
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
--	size_t i;
--	const unsigned int gpio_reg_size = 8;
--	unsigned int bits_offset;
--	size_t word_index;
--	unsigned int word_offset;
--	unsigned long word_mask;
--	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
--	unsigned long port_state;
-+	unsigned int offset;
-+	unsigned long gpio_mask;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23, &idio24gpio->reg->in0_7,
- 		&idio24gpio->reg->in8_15, &idio24gpio->reg->in16_23,
- 	};
-+	size_t index;
-+	unsigned long port_state;
- 	const unsigned long out_mode_mask = BIT(1);
+Version 3 of this patch is intended to be functionally identical to v2.
+This patch is rebased on top of a tree which contains changes:
+"regmap: irq: handle HW using separate rising/falling edge interrupts"
+from Bartosz Golaszewski and the change
+"regmap: regmap-irq: Remove default irq type setting from core"
+(proposed here):
+https://lore.kernel.org/lkml/20181218105813.GA6957@localhost.localdomain/
+
+There should not be direct dependency to "regmap: regmap-irq: Remove
+default irq type setting from core" though. Patch was also tested to
+apply cleany on regmap-tree.
+
+Same statement regarding testing applies - gpio-max77620 are only
+tested to compile. All real testing would be _HIGHLY_ appreciated.
+
+ drivers/base/regmap/regmap-irq.c | 35 ++++++++++-----
+ drivers/gpio/gpio-max77620.c     | 96 ++++++++++++++++++++++++++--------------
+ include/linux/regmap.h           | 27 ++++++++---
+ 3 files changed, 110 insertions(+), 48 deletions(-)
+
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index 8b216b2e2c19..31d23c9a5ae7 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -199,7 +199,7 @@ static void regmap_irq_enable(struct irq_data *data)
+ 	const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
+ 	unsigned int mask, type;
  
- 	/* clear bits array to a clean slate */
- 	bitmap_zero(bits, chip->ngpio);
+-	type = irq_data->type_falling_mask | irq_data->type_rising_mask;
++	type = irq_data->type.type_falling_val | irq_data->type.type_rising_val;
  
--	/* get bits are evaluated a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports) + 1; i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* word index for bits array */
--		word_index = BIT_WORD(bits_offset);
--
--		/* gpio offset within current word of bits array */
--		word_offset = bits_offset % BITS_PER_LONG;
--
--		/* mask of get bits for current gpio within current word */
--		word_mask = mask[word_index] & (port_mask << word_offset);
--		if (!word_mask) {
--			/* no get bits in this port so skip to next one */
--			continue;
--		}
-+	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
-+		index = offset / 8;
+ 	/*
+ 	 * The type_in_mask flag means that the underlying hardware uses
+@@ -234,27 +234,42 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
+ 	struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
+ 	struct regmap *map = d->map;
+ 	const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
+-	int reg = irq_data->type_reg_offset / map->reg_stride;
++	int reg;
++	const struct regmap_irq_type *t = &irq_data->type;
  
- 		/* read bits from current gpio port (port 6 is TTL GPIO) */
--		if (i < 6)
--			port_state = ioread8(ports[i]);
-+		if (index < 6)
-+			port_state = ioread8(ports[index]);
- 		else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask)
- 			port_state = ioread8(&idio24gpio->reg->ttl_out0_7);
- 		else
- 			port_state = ioread8(&idio24gpio->reg->ttl_in0_7);
- 
--		/* store acquired bits at respective bits array offset */
--		bits[word_index] |= (port_state << word_offset) & word_mask;
-+		port_state &= gpio_mask;
+-	if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
+-		return 0;
++	if ((t->types_supported & type) != type)
++		return -ENOTSUPP;
 +
-+		bitmap_set_value8(bits, &port_state, offset);
++	reg = t->type_reg_offset / map->reg_stride;
+ 
+-	d->type_buf[reg] &= ~(irq_data->type_falling_mask |
+-					irq_data->type_rising_mask);
++	if (t->type_reg_mask)
++		d->type_buf[reg] &= ~t->type_reg_mask;
++	else
++		d->type_buf[reg] &= ~(t->type_falling_val |
++				      t->type_rising_val |
++				      t->type_level_low_val |
++				      t->type_level_high_val);
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_FALLING:
+-		d->type_buf[reg] |= irq_data->type_falling_mask;
++		d->type_buf[reg] |= t->type_falling_val;
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_RISING:
+-		d->type_buf[reg] |= irq_data->type_rising_mask;
++		d->type_buf[reg] |= t->type_rising_val;
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_BOTH:
+-		d->type_buf[reg] |= (irq_data->type_falling_mask |
+-					irq_data->type_rising_mask);
++		d->type_buf[reg] |= (t->type_falling_val |
++					t->type_rising_val);
+ 		break;
+ 
++	case IRQ_TYPE_LEVEL_HIGH:
++		d->type_buf[reg] |= t->type_level_high_val;
++		break;
++
++	case IRQ_TYPE_LEVEL_LOW:
++		d->type_buf[reg] |= t->type_level_low_val;
++		break;
+ 	default:
+ 		return -EINVAL;
  	}
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index 538bce4b5b42..65fa3a198ebd 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -25,60 +25,92 @@ struct max77620_gpio {
  
- 	return 0;
-@@ -294,59 +276,48 @@ static void idio_24_gpio_set_multiple(struct gpio_chip *chip,
- 	unsigned long *mask, unsigned long *bits)
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
--	size_t i;
--	unsigned long bits_offset;
-+	unsigned int offset;
- 	unsigned long gpio_mask;
--	const unsigned int gpio_reg_size = 8;
--	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
--	unsigned long flags;
--	unsigned int out_state;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23
- 	};
-+	size_t index;
-+	unsigned int bitmask;
-+	unsigned long flags;
-+	unsigned int out_state;
- 	const unsigned long out_mode_mask = BIT(1);
--	const unsigned int ttl_offset = 48;
--	const size_t ttl_i = BIT_WORD(ttl_offset);
--	const unsigned int word_offset = ttl_offset % BITS_PER_LONG;
--	const unsigned long ttl_mask = (mask[ttl_i] >> word_offset) & port_mask;
--	const unsigned long ttl_bits = (bits[ttl_i] >> word_offset) & ttl_mask;
--
--	/* set bits are processed a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports); i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* check if any set bits for current port */
--		gpio_mask = (*mask >> bits_offset) & port_mask;
--		if (!gpio_mask) {
--			/* no set bits for this port so move on to next port */
--			continue;
--		}
+ static const struct regmap_irq max77620_gpio_irqs[] = {
+ 	[0] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE0,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 0,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE0,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 0,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[1] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE1,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 1,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE1,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 1,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[2] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE2,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 2,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE2,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 2,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[3] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE3,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 3,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE3,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 3,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[4] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE4,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 4,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE4,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 4,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[5] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE5,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 5,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE5,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 5,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[6] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE6,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 6,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE6,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 6,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ 	[7] = {
+-		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE7,
+-		.type_rising_mask = MAX77620_CNFG_GPIO_INT_RISING,
+-		.type_falling_mask = MAX77620_CNFG_GPIO_INT_FALLING,
+ 		.reg_offset = 0,
+-		.type_reg_offset = 7,
++		.mask = MAX77620_IRQ_LVL2_GPIO_EDGE7,
++		.type = {
++			.type_rising_val = MAX77620_CNFG_GPIO_INT_RISING,
++			.type_falling_val = MAX77620_CNFG_GPIO_INT_FALLING,
++			.type_reg_mask = MAX77620_CNFG_GPIO_INT_MASK,
++			.type_reg_offset = 7,
++			.types_supported = IRQ_TYPE_EDGE_BOTH,
++		},
+ 	},
+ };
  
--		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
-+		index = offset / 8;
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index b7aa50cfb306..a904f87151e8 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -1089,22 +1089,37 @@ int regmap_fields_read(struct regmap_field *field, unsigned int id,
+ int regmap_fields_update_bits_base(struct regmap_field *field,  unsigned int id,
+ 				   unsigned int mask, unsigned int val,
+ 				   bool *change, bool async, bool force);
++/**
++ * struct regmap_irq_type - IRQ type definitions.
++ *
++ * @type_reg_offset: Offset register for the irq type setting.
++ * @type_rising_val: Register value to configure RISING type irq.
++ * @type_falling_val: Register value to configure FALLING type irq.
++ * @type_level_low_val: Register value to configure LEVEL_LOW type irq.
++ * @type_level_high_val: Register value to configure LEVEL_HIGH type irq.
++ * @types_supported: logical OR of IRQ_TYPE_* flags indicating supported types.
++ */
++struct regmap_irq_type {
++	unsigned int type_reg_offset;
++	unsigned int type_reg_mask;
++	unsigned int type_rising_val;
++	unsigned int type_falling_val;
++	unsigned int type_level_low_val;
++	unsigned int type_level_high_val;
++	unsigned int types_supported;
++};
  
--		/* process output lines */
--		out_state = ioread8(ports[i]) & ~gpio_mask;
--		out_state |= (*bits >> bits_offset) & gpio_mask;
--		iowrite8(out_state, ports[i]);
-+		bitmask = bitmap_get_value8(bits, offset) & gpio_mask;
+ /**
+  * struct regmap_irq - Description of an IRQ for the generic regmap irq_chip.
+  *
+  * @reg_offset: Offset of the status/mask register within the bank
+  * @mask:       Mask used to flag/control the register.
+- * @type_reg_offset: Offset register for the irq type setting.
+- * @type_rising_mask: Mask bit to configure RISING type irq.
+- * @type_falling_mask: Mask bit to configure FALLING type irq.
++ * @type:	IRQ trigger type setting details if supported.
+  */
+ struct regmap_irq {
+ 	unsigned int reg_offset;
+ 	unsigned int mask;
+-	unsigned int type_reg_offset;
+-	unsigned int type_rising_mask;
+-	unsigned int type_falling_mask;
++	struct regmap_irq_type type;
+ };
  
--		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
--	}
-+		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
- 
--	/* check if setting TTL lines and if they are in output mode */
--	if (!ttl_mask || !(ioread8(&idio24gpio->reg->ctl) & out_mode_mask))
--		return;
-+		/* read bits from current gpio port (port 6 is TTL GPIO) */
-+		if (index < 6) {
-+			out_state = ioread8(ports[index]);
-+		} else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask) {
-+			out_state = ioread8(&idio24gpio->reg->ttl_out0_7);
-+		} else {
-+			/* skip TTL GPIO if set for input */
-+			raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
-+			continue;
-+		}
- 
--	/* handle TTL output */
--	raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+		/* set requested bit states */
-+		out_state &= ~gpio_mask;
-+		out_state |= bitmask;
- 
--	/* process output lines */
--	out_state = ioread8(&idio24gpio->reg->ttl_out0_7) & ~ttl_mask;
--	out_state |= ttl_bits;
--	iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
-+		/* write bits for current gpio port (port 6 is TTL GPIO) */
-+		if (index < 6)
-+			iowrite8(out_state, ports[index]);
-+		else
-+			iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
- 
--	raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
-+		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
-+	}
- }
- 
- static void idio_24_irq_ack(struct irq_data *data)
+ #define REGMAP_IRQ_REG(_irq, _off, _mask)		\
 -- 
-2.20.1
+2.14.3
+
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
