@@ -1,44 +1,52 @@
-From: <chuanjia.liu@mediatek.com>
-Subject: [PATCH v2] pinctrl:mediatek:add judgment conditions
-Date: Tue, 18 Dec 2018 10:31:22 +0800
-Message-ID: <1545100282-15756-1-git-send-email-chuanjia.liu@mediatek.com>
+From: Martin Schiller <ms@dev.tdt.de>
+Subject: Re: [PATCH] pinctrl: xway: fix gpio-hog related boot issues
+Date: Tue, 18 Dec 2018 07:43:11 +0100
+Message-ID: <aaa1ff6b4b6c18168fc9caf803aa253b@dev.tdt.de>
+References: <20181214074825.6976-1-ms@dev.tdt.de>
+ <CACRpkdaTR-Bb6MBtP34GCEtjqfxSNr5PQjDZ_PFqX2B+odGu-w@mail.gmail.com>
+ <f84d3544-417d-182e-2dd1-8a79585c40e5@phrozen.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f84d3544-417d-182e-2dd1-8a79585c40e5@phrozen.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sean.wang@kernel.org, linus.walleij@linaro.org, matthias.bgg@gmail.com, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: zhiyong.tao@mediatek.com, eddie.huang@mediatek.com, hailong.fan@mediatek.com, youlin.pei@mediatek.com, chuanjia.liu@mediatek.com, Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+To: John Crispin <john@phrozen.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+On 2018-12-17 17:45, John Crispin wrote:
+> On 17/12/2018 15:32, Linus Walleij wrote:
+>> On Fri, Dec 14, 2018 at 8:48 AM Martin Schiller <ms@dev.tdt.de> wrote:
+>> 
+>>> This patch is based on commit a86caa9ba5d7 ("pinctrl: msm: fix 
+>>> gpio-hog
+>>> related boot issues").
+>>> 
+>>> It fixes the issue that the gpio ranges needs to be defined before
+>>> gpiochip_add().
+>>> 
+>>> Therefore, we also have to swap the order of registering the pinctrl
+>>> driver and registering the gpio chip.
+>>> 
+>>> You also have to add the "gpio-ranges" property to the pinctrl device
+>>> node to get it finally working.
+>>> 
+>>> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+>> Patch applied unless John Crispin has objections, it looks
+>> good to me!
+>> 
+>> Yours,
+>> Linus Walleij
+> 
+> 
+> sorry did not see the patch in my inbox
+> 
 
-This patch avoid return err when virtual gpio set SMT.
+Sorry, that was my fault.
+I've added everyone from getmaintainers.pl output, but forgot to also 
+add you.
 
-Signed-off-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
----
-change note:
-v2 : 1. delete virtual gpio number
-     2. add judgment conditions
----
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 4a9e0d4c2bbc..a576e417744a 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -290,7 +290,11 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
- 		return err;
- 
- 	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
--	if (err)
-+
-+	/* SMT doesn't support virtual GPIO, add err != -ENOTSUPP is used for
-+	 * avoid return err when virtual gpio set SMT.
-+	 */
-+	if (err && err != -ENOTSUPP)
- 		return err;
- 
- 	return 0;
--- 
-2.19.1
+Regards,
+Martin
