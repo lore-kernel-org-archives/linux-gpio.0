@@ -1,31 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] gpio: Add Cadence GPIO driver
-Date: Mon, 17 Dec 2018 23:21:47 +0100
-Message-ID: <CACRpkdYq5Eg2DrwdED-yTZ4kMoCxew+0rdU-b4zuinOf7BEr6Q@mail.gmail.com>
-References: <20181217153652.20056-1-jank@cadence.com> <20181217153652.20056-3-jank@cadence.com>
- <CAMpxmJXrjyK3m4JwgkxwkHjSj-ugb7UzwNrYcBwYjWwj+JBNxw@mail.gmail.com>
+From: <chuanjia.liu@mediatek.com>
+Subject: [PATCH v2] pinctrl:mediatek:add judgment conditions
+Date: Tue, 18 Dec 2018 10:31:22 +0800
+Message-ID: <1545100282-15756-1-git-send-email-chuanjia.liu@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMpxmJXrjyK3m4JwgkxwkHjSj-ugb7UzwNrYcBwYjWwj+JBNxw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Jan Kotas <jank@cadence.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio <linux-gpio@vger.kernel.org>, linux-devicetree <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: sean.wang@kernel.org, linus.walleij@linaro.org, matthias.bgg@gmail.com, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: zhiyong.tao@mediatek.com, eddie.huang@mediatek.com, hailong.fan@mediatek.com, youlin.pei@mediatek.com, chuanjia.liu@mediatek.com, Chuanjia Liu <Chuanjia.Liu@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 4:51 PM Bartosz Golaszewski
-<bgolaszewski@baylibre.com> wrote:
+From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
 
-> The driver looks good but is there any particular reason not to use
-> regmap for register IO?
+This patch avoid return err when virtual gpio set SMT.
 
-I thought we only use regmap for MMIO when the register range is
-shared (as in a system controller) so that some registers are for this,
-some register or even bits in a register for some other driver, so they
-need the spinlock in the regmap to protect the register range.
+Signed-off-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+---
+change note:
+v2 : 1. delete virtual gpio number
+     2. add judgment conditions
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-It is also nice for shadowing/caching of register contents I guess,
-wat does this driver get from regmap MMIO?
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 4a9e0d4c2bbc..a576e417744a 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -290,7 +290,11 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
+ 		return err;
+ 
+ 	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
+-	if (err)
++
++	/* SMT doesn't support virtual GPIO, add err != -ENOTSUPP is used for
++	 * avoid return err when virtual gpio set SMT.
++	 */
++	if (err && err != -ENOTSUPP)
+ 		return err;
+ 
+ 	return 0;
+-- 
+2.19.1
