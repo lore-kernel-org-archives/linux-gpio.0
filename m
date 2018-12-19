@@ -1,181 +1,74 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v6 8/8] gpio: pcie-idio-24: Utilize for_each_set_clump8 macro
-Date: Wed, 19 Dec 2018 15:02:41 +0900
-Message-ID: <e3209836fdc9a2d7a4aad55dc5e102e7c131ac9d.1545198260.git.vilhelm.gray@gmail.com>
-References: <cover.1545198260.git.vilhelm.gray@gmail.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq
+ support
+Date: Wed, 19 Dec 2018 08:48:42 +0200
+Message-ID: <20181219064842.GG2477@localhost.localdomain>
+References: <20181218115931.GA21253@localhost.localdomain>
+ <201812182306.X3vcHVlL%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1545198260.git.vilhelm.gray@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <201812182306.X3vcHVlL%fengguang.wu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk, William Breathitt Gray <vilhelm.gray@gmail.com>
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, vladimir_zapolskiy@mentor.com
 List-Id: linux-gpio@vger.kernel.org
 
-Replace verbose implementation in get_multiple/set_multiple callbacks
-with for_each_set_clump8 macro to simplify code and improve clarity.
-
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+On Tue, Dec 18, 2018 at 11:36:22PM +0800, kbuild test robot wrote:
+> Hi Matti,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on regmap/for-next]
+> [also build test ERROR on next-20181218]
+> [cannot apply to v4.20-rc7]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Matti-Vaittinen/regmap-regmap-irq-gpio-max77620-add-level-irq-support/20181218-225844
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+> config: x86_64-randconfig-x006-201850 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/base/regmap/regmap-irq.c: In function 'regmap_add_irq_chip':
+> >> drivers/base/regmap/regmap-irq.c:644:24: error: 'const struct regmap_irq' has no member named 'type_reg_offset'; did you mean 'reg_offset'?
+>        reg = chip->irqs[i].type_reg_offset / map->reg_stride;
+>                            ^~~~~~~~~~~~~~~
+>                            reg_offset
+> >> drivers/base/regmap/regmap-irq.c:645:41: error: 'const struct regmap_irq' has no member named 'type_rising_mask'
+>        d->type_buf_def[reg] |= chip->irqs[i].type_rising_mask |
+>                                             ^
+> >> drivers/base/regmap/regmap-irq.c:646:19: error: 'const struct regmap_irq' has no member named 'type_falling_mask'
+>          chip->irqs[i].type_falling_mask;
 ---
- drivers/gpio/gpio-pcie-idio-24.c | 109 ++++++++++++-------------------
- 1 file changed, 40 insertions(+), 69 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
-index 52f1647a46fd..b1686b052633 100644
---- a/drivers/gpio/gpio-pcie-idio-24.c
-+++ b/drivers/gpio/gpio-pcie-idio-24.c
-@@ -198,52 +198,34 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- 	unsigned long *mask, unsigned long *bits)
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
--	size_t i;
--	const unsigned int gpio_reg_size = 8;
--	unsigned int bits_offset;
--	size_t word_index;
--	unsigned int word_offset;
--	unsigned long word_mask;
--	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
--	unsigned long port_state;
-+	unsigned int offset;
-+	unsigned long gpio_mask;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23, &idio24gpio->reg->in0_7,
- 		&idio24gpio->reg->in8_15, &idio24gpio->reg->in16_23,
- 	};
-+	size_t index;
-+	unsigned long port_state;
- 	const unsigned long out_mode_mask = BIT(1);
- 
- 	/* clear bits array to a clean slate */
- 	bitmap_zero(bits, chip->ngpio);
- 
--	/* get bits are evaluated a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports) + 1; i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* word index for bits array */
--		word_index = BIT_WORD(bits_offset);
--
--		/* gpio offset within current word of bits array */
--		word_offset = bits_offset % BITS_PER_LONG;
--
--		/* mask of get bits for current gpio within current word */
--		word_mask = mask[word_index] & (port_mask << word_offset);
--		if (!word_mask) {
--			/* no get bits in this port so skip to next one */
--			continue;
--		}
-+	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
-+		index = offset / 8;
- 
- 		/* read bits from current gpio port (port 6 is TTL GPIO) */
--		if (i < 6)
--			port_state = ioread8(ports[i]);
-+		if (index < 6)
-+			port_state = ioread8(ports[index]);
- 		else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask)
- 			port_state = ioread8(&idio24gpio->reg->ttl_out0_7);
- 		else
- 			port_state = ioread8(&idio24gpio->reg->ttl_in0_7);
- 
--		/* store acquired bits at respective bits array offset */
--		bits[word_index] |= (port_state << word_offset) & word_mask;
-+		port_state &= gpio_mask;
-+
-+		bitmap_set_value8(bits, &port_state, offset);
- 	}
- 
- 	return 0;
-@@ -294,59 +276,48 @@ static void idio_24_gpio_set_multiple(struct gpio_chip *chip,
- 	unsigned long *mask, unsigned long *bits)
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
--	size_t i;
--	unsigned long bits_offset;
-+	unsigned int offset;
- 	unsigned long gpio_mask;
--	const unsigned int gpio_reg_size = 8;
--	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
--	unsigned long flags;
--	unsigned int out_state;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23
- 	};
-+	size_t index;
-+	unsigned int bitmask;
-+	unsigned long flags;
-+	unsigned int out_state;
- 	const unsigned long out_mode_mask = BIT(1);
--	const unsigned int ttl_offset = 48;
--	const size_t ttl_i = BIT_WORD(ttl_offset);
--	const unsigned int word_offset = ttl_offset % BITS_PER_LONG;
--	const unsigned long ttl_mask = (mask[ttl_i] >> word_offset) & port_mask;
--	const unsigned long ttl_bits = (bits[ttl_i] >> word_offset) & ttl_mask;
--
--	/* set bits are processed a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports); i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* check if any set bits for current port */
--		gpio_mask = (*mask >> bits_offset) & port_mask;
--		if (!gpio_mask) {
--			/* no set bits for this port so move on to next port */
--			continue;
--		}
- 
--		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
-+		index = offset / 8;
- 
--		/* process output lines */
--		out_state = ioread8(ports[i]) & ~gpio_mask;
--		out_state |= (*bits >> bits_offset) & gpio_mask;
--		iowrite8(out_state, ports[i]);
-+		bitmask = bitmap_get_value8(bits, offset) & gpio_mask;
- 
--		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
--	}
-+		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
- 
--	/* check if setting TTL lines and if they are in output mode */
--	if (!ttl_mask || !(ioread8(&idio24gpio->reg->ctl) & out_mode_mask))
--		return;
-+		/* read bits from current gpio port (port 6 is TTL GPIO) */
-+		if (index < 6) {
-+			out_state = ioread8(ports[index]);
-+		} else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask) {
-+			out_state = ioread8(&idio24gpio->reg->ttl_out0_7);
-+		} else {
-+			/* skip TTL GPIO if set for input */
-+			raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
-+			continue;
-+		}
- 
--	/* handle TTL output */
--	raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+		/* set requested bit states */
-+		out_state &= ~gpio_mask;
-+		out_state |= bitmask;
- 
--	/* process output lines */
--	out_state = ioread8(&idio24gpio->reg->ttl_out0_7) & ~ttl_mask;
--	out_state |= ttl_bits;
--	iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
-+		/* write bits for current gpio port (port 6 is TTL GPIO) */
-+		if (index < 6)
-+			iowrite8(out_state, ports[index]);
-+		else
-+			iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
- 
--	raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
-+		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
-+	}
- }
- 
- static void idio_24_irq_ack(struct irq_data *data)
--- 
-2.20.1
+> > Version 3 of this patch is intended to be functionally identical to v2.
+> > This patch is rebased on top of a tree which contains changes:
+> > "regmap: irq: handle HW using separate rising/falling edge interrupts"
+> > from Bartosz Golaszewski and the change
+> > "regmap: regmap-irq: Remove default irq type setting from core"
+> > (proposed here):
+> > https://lore.kernel.org/lkml/20181218105813.GA6957@localhost.localdomain/
+> > 
+> > There should not be direct dependency to "regmap: regmap-irq: Remove
+> > default irq type setting from core" though. Patch was also tested to
+> > apply cleany on regmap-tree.
+
+I forgot that the block of code the commit "regmap: regmap-irq: Remove
+default irq type setting from core" removes do use the old type specifiers
+whcih this patch changes. So even though this patch applies cleanly on tree
+which does not include "regmap: regmap-irq: Remove default irq type setting
+from core" - it does not mean there is no dependency. This was my brain fart.
+There is dependency. "regmap: regmap-irq: Remove default irq type setting
+from core" should be applied prior this patch.
+
+Should I combine these two patches as a series (and resend them) or what is
+the correct way to note the dependency?
+
+Br,
+	Matti Vaittinen
