@@ -1,36 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] MAINTAINERS: merge at91 pinctrl entries
-Date: Fri, 21 Dec 2018 11:25:22 +0100
-Message-ID: <CACRpkdanMiqM6kV=ZZao-K8_7WzRFb3ymVV6eMSBzYZF3xA34w@mail.gmail.com>
-References: <20181108131442.27911-1-ludovic.desroches@microchip.com>
+Subject: Re: [PATCH][next] gpiolib-acpi: remove unused variable 'err', cleans
+ up build warning
+Date: Fri, 21 Dec 2018 11:31:24 +0100
+Message-ID: <CACRpkdZn_s6LHeqTZqEMhzpY=u2jcda_YUvnfX0qwEw8kMWJOw@mail.gmail.com>
+References: <20181218122802.28157-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181108131442.27911-1-ludovic.desroches@microchip.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181218122802.28157-1-colin.king@canonical.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 2:15 PM Ludovic Desroches
-<ludovic.desroches@microchip.com> wrote:
+On Tue, Dec 18, 2018 at 1:28 PM Colin King <colin.king@canonical.com> wrote=
+:
 
-> In order to be aware of all changes related to at91 pinctrl drivers,
-> merge the two entries. Make use of the opportunity to replace Atmel by
-> Microchip.
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Variable err is defined but never used. Remove it. Cleans up warning:
+>
+> warning: unused variable =E2=80=98err=E2=80=99 [-Wunused-variable]
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.
+Patch applied with Mika's ACK.
 
 Yours,
 Linus Walleij
