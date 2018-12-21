@@ -1,35 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/6] pinctrl: various fixes for Meson8 and Meson8b SoCs
-Date: Fri, 21 Dec 2018 11:01:35 +0100
-Message-ID: <CACRpkdZ+vUwEcEyMj0Snsy_F8AmELSMt1wGbhMsQi7A=_tY3RQ@mail.gmail.com>
-References: <20181209195055.26813-1-martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: sunxi: Add supply properties
+Date: Fri, 21 Dec 2018 11:04:55 +0100
+Message-ID: <CACRpkdavvJKhcOGPTRW1DQabFaLh9r9WxC1vd60r96Jcww1Pfg@mail.gmail.com>
+References: <20181217131626.17098-1-maxime.ripard@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181209195055.26813-1-martin.blumenstingl@googlemail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181217131626.17098-1-maxime.ripard@bootlin.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Dec 9, 2018 at 8:51 PM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
+On Mon, Dec 17, 2018 at 2:16 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-> While debugging an USB issue on my Odroid-C1 I found a few issues with
-> the pinctrl driver for the Meson8 and Meson8b SoCs:
-> - GPIOAO pins cannot be specified as GPIO group in device-tree
-> - (not a bugfix bug an improvement) make the gpio_periphs group naming
->   consistent with drivers for newer SoCs
-> - add missing GPIO_GROUP definitions for the pins in the BOOT and CARD
->   banks
+> The pinctrl node can have multiple regulators for each of its GPIO banks.
+> Add the property descriptions.
 >
-> I added the correct "Fixes" tag to all commits where applicable. These
-> fixes don't affect any existing boards or functionality. Thus I suggest
-> to apply them for next (v4.21) instead of sending them to mainline.
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-All patches applied for v4.21!
-
-Sorry for taking some time to process.
+Patch applied as uncontroversial. Voltage regulators are just
+standard bindings.
 
 Yours,
 Linus Walleij
