@@ -1,24 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: aspeed: remove duplicated statement
-Date: Fri, 21 Dec 2018 11:14:48 +0100
-Message-ID: <CACRpkdZr7zX2cvk-T93Ahj3Q2cE7-ey+T4Kr0n_==jae3KGr0Q@mail.gmail.com>
-References: <20181212215305.3852170-1-taoren@fb.com>
+Subject: Re: [PATCH v1] pinctrl: mediatek: improve Kconfig dependencies
+Date: Fri, 21 Dec 2018 11:17:25 +0100
+Message-ID: <CACRpkdZMgnj2S8xPPFm3PnDGrqTerOwWcS-+Uruy1uLH24HRLg@mail.gmail.com>
+References: <e4eb66dec2901016e01767932461c5d560762f66.1544666839.git.ryder.lee@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181212215305.3852170-1-taoren@fb.com>
+In-Reply-To: <e4eb66dec2901016e01767932461c5d560762f66.1544666839.git.ryder.lee@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tao Ren <taoren@fb.com>
-Cc: Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-aspeed@lists.ozlabs.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Weijie Gao <weijie.gao@mediatek.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 10:53 PM Tao Ren <taoren@fb.com> wrote:
+On Thu, Dec 13, 2018 at 3:28 AM Ryder Lee <ryder.lee@mediatek.com> wrote:
 
-> Remove duplicated assignment statement from aspeed_gpio_probe() function.
+> Remove prompts to make all pinctrl cores to non-visible symbols and
+> make sure the target SoCs would be coupled with the corresponding
+> cores.
 >
-> Signed-off-by: Tao Ren <taoren@fb.com>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
-Patch applied with Joel's ACK.
+Patch applied with ACK and Tested-by.
 
 Yours,
 Linus Walleij
