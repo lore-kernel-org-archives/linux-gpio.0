@@ -1,35 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: sunxi: Add supply properties
-Date: Fri, 21 Dec 2018 11:04:55 +0100
-Message-ID: <CACRpkdavvJKhcOGPTRW1DQabFaLh9r9WxC1vd60r96Jcww1Pfg@mail.gmail.com>
-References: <20181217131626.17098-1-maxime.ripard@bootlin.com>
+Subject: Re: [PATCH] pinctrl: msm: mark PM functions as __maybe_unused
+Date: Fri, 21 Dec 2018 11:07:40 +0100
+Message-ID: <CACRpkdYOU1-8Cj9zfYQ7i_gGhM-NrYcQOiZbJC=rdZKxPs_q+w@mail.gmail.com>
+References: <20181210205955.3254660-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181217131626.17098-1-maxime.ripard@bootlin.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181210205955.3254660-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <swboyd@chromium.org>, Timur Tabi <timur@codeaurora.org>, Douglas Anderson <dianders@chromium.org>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 2:16 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Mon, Dec 10, 2018 at 9:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
 
-> The pinctrl node can have multiple regulators for each of its GPIO banks.
-> Add the property descriptions.
+> Without CONFIG_PM_SLEEP, we get annoyting warnings about unused functions:
 >
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> drivers/pinctrl/qcom/pinctrl-msm.c:1082:12: error: 'msm_pinctrl_resume' defined but not used [-Werror=unused-function]
+>  static int msm_pinctrl_resume(struct device *dev)
+>             ^~~~~~~~~~~~~~~~~~
+> drivers/pinctrl/qcom/pinctrl-msm.c:1075:12: error: 'msm_pinctrl_suspend' defined but not used [-Werror=unused-function]
+>  static int msm_pinctrl_suspend(struct device *dev)
+>
+> Mark them as __maybe_unused to shut up the warning and silently drop
+> the functions without having to add ugly #ifdefs.
+>
+> Fixes: 977d057ad346 ("pinctrl: msm: Add sleep pinctrl state transitions")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Patch applied as uncontroversial. Voltage regulators are just
-standard bindings.
+Patch applied w/ACKs and fixing a typo.
 
 Yours,
 Linus Walleij
