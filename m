@@ -1,26 +1,25 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1] pinctrl: mediatek: improve Kconfig dependencies
-Date: Fri, 21 Dec 2018 11:17:25 +0100
-Message-ID: <CACRpkdZMgnj2S8xPPFm3PnDGrqTerOwWcS-+Uruy1uLH24HRLg@mail.gmail.com>
-References: <e4eb66dec2901016e01767932461c5d560762f66.1544666839.git.ryder.lee@mediatek.com>
+Subject: Re: [PATCH] pinctrl: uniphier: constify uniphier_pinctrl_socdata
+Date: Fri, 21 Dec 2018 11:18:28 +0100
+Message-ID: <CACRpkdZhSXrfnweMomHctCCofNzfCHH5EVZJ5j0aZnz-Luz79Q@mail.gmail.com>
+References: <1544777086-24510-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e4eb66dec2901016e01767932461c5d560762f66.1544666839.git.ryder.lee@mediatek.com>
+In-Reply-To: <1544777086-24510-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Weijie Gao <weijie.gao@mediatek.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 3:28 AM Ryder Lee <ryder.lee@mediatek.com> wrote:
+On Fri, Dec 14, 2018 at 9:45 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> Remove prompts to make all pinctrl cores to non-visible symbols and
-> make sure the target SoCs would be coupled with the corresponding
-> cores.
+> These are constant data.
 >
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Patch applied with ACK and Tested-by.
+Patch applied!
 
 Yours,
 Linus Walleij
