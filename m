@@ -1,32 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 2/2] gpio: add driver for SAMA5D2 PIOBU pins
-Date: Fri, 21 Dec 2018 10:57:03 +0100
-Message-ID: <CACRpkdaeyHOhGDR4HAJR6sSVFA-fGXNwY63rzicER-GFoBQtPA@mail.gmail.com>
-References: <1544615784-29331-1-git-send-email-andrei.stefanescu@microchip.com>
- <1544615784-29331-3-git-send-email-andrei.stefanescu@microchip.com>
+Subject: Re: [PATCH 0/6] pinctrl: various fixes for Meson8 and Meson8b SoCs
+Date: Fri, 21 Dec 2018 11:01:35 +0100
+Message-ID: <CACRpkdZ+vUwEcEyMj0Snsy_F8AmELSMt1wGbhMsQi7A=_tY3RQ@mail.gmail.com>
+References: <20181209195055.26813-1-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1544615784-29331-3-git-send-email-andrei.stefanescu@microchip.com>
+In-Reply-To: <20181209195055.26813-1-martin.blumenstingl@googlemail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrei.Stefanescu@microchip.com
-Cc: Rob Herring <robh+dt@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Nicolas Ferre <Nicolas.Ferre@microchip.com>, Mark Rutland <mark.rutland@arm.com>, Ludovic Desroches <Ludovic.Desroches@microchip.com>, Cristian.Birsan@microchip.com, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 12:57 PM <Andrei.Stefanescu@microchip.com> wrote:
+On Sun, Dec 9, 2018 at 8:51 PM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
 
-> PIOBU pins do not lose their voltage during Backup/Self-refresh.
-> This patch adds a simple GPIO controller for them and a
-> maintainer for the driver.
+> While debugging an USB issue on my Odroid-C1 I found a few issues with
+> the pinctrl driver for the Meson8 and Meson8b SoCs:
+> - GPIOAO pins cannot be specified as GPIO group in device-tree
+> - (not a bugfix bug an improvement) make the gpio_periphs group naming
+>   consistent with drivers for newer SoCs
+> - add missing GPIO_GROUP definitions for the pins in the BOOT and CARD
+>   banks
 >
-> This driver adds support for using the pins as GPIO
-> offering the possibility to read/set the voltage.
->
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
+> I added the correct "Fixes" tag to all commits where applicable. These
+> fixes don't affect any existing boards or functionality. Thus I suggest
+> to apply them for next (v4.21) instead of sending them to mainline.
 
-Patch applied for v4.21, sorry for taking so long to reply!
+All patches applied for v4.21!
 
-Good work on this driver Andrei, it looks really nice now.
+Sorry for taking some time to process.
 
 Yours,
 Linus Walleij
