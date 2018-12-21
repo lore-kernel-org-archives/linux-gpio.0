@@ -1,209 +1,297 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/5] gpio: Add support for hierarchical IRQ domains
-Date: Fri, 21 Dec 2018 14:20:41 +0100
-Message-ID: <CACRpkdY-mfADtyxhR1LRDSrOidrekRao-M97niBi9cwpf+cstg@mail.gmail.com>
-References: <20181129170312.23625-1-thierry.reding@gmail.com>
- <20181129170312.23625-2-thierry.reding@gmail.com> <CACRpkdYhgCsr2w-MgwdLDvcZXDhkvn2_sgvGW8VskK1=3kVASw@mail.gmail.com>
- <20181218220652.GB4227@mithrandir>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH v5 7/8] clk: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Date: Fri, 21 Dec 2018 13:50:37 +0000
+Message-ID: <20181221135037.GH16508@imbe.wolfsonmicro.main>
+References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
+ <20181120141631.18949-7-ckeepax@opensource.cirrus.com>
+ <154356443157.88331.15749597863624143993@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181218220652.GB4227@mithrandir>
+Content-Disposition: inline
+In-Reply-To: <154356443157.88331.15749597863624143993@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Brian Masney <masneyb@onstation.org>, NeilBrown <neil@brown.name>, Marc Zyngier <marc.zyngier@arm.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Cc:ing Neil Brown who might hit me on the fingers for
-some statements here, let's see :)
+On Thu, Nov 29, 2018 at 11:53:51PM -0800, Stephen Boyd wrote:
+> Quoting Charles Keepax (2018-11-20 06:16:30)
 
-On Tue, Dec 18, 2018 at 11:06 PM Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Fri, Dec 14, 2018 at 02:41:01PM +0100, Linus Walleij wrote:
+Apologies for the delay on this we have been very swamped at this
+end lately.
 
-> > > -       gpiochip->to_irq = gpiochip_to_irq;
-> > > +       /*
-> > > +        * Allow GPIO chips to override the ->to_irq() if they really need to.
-> > > +        * This should only be very rarely needed, the majority should be fine
-> > > +        * with gpiochip_to_irq().
-> > > +        */
-> > > +       if (!gpiochip->to_irq)
-> > > +               gpiochip->to_irq = gpiochip_to_irq;
-> >
-> > And I see this is what your driver does, which leaves the default
-> > domain hierarchy callback path unused.
->
-> Actually this is only temporary until the patch that uses a sparse
-> number space (with the valid masks). After the last patch in the series
-> the need to override this goes away, so I could follow-up with a patch
-> to revert this. Or alternatively we could squash the two Tegra patches.
-> I think keeping them separate is slightly nicer.
+> > diff --git a/drivers/clk/clk-lochnagar.c b/drivers/clk/clk-lochnagar.c
+> > new file mode 100644
+> > index 000000000000..8b2a78689715
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-lochnagar.c
+> > @@ -0,0 +1,360 @@
+> [...]
+> > +
+> > +static int lochnagar_regmap_set_parent(struct clk_hw *hw, u8 index)
+> > +{
+> > +       struct lochnagar_clk *lclk = lochnagar_hw_to_lclk(hw);
+> > +       struct lochnagar_clk_priv *priv = lclk->priv;
+> > +       struct regmap *regmap = priv->regmap;
+> > +       int ret;
+> > +
+> > +       /*
+> > +        * Some clocks on Lochnagar can either generate a clock themselves
+> > +        * or accept an external clock, these default to generating the clock
+> > +        * themselves. If we set a parent however we should update the dir_mask
+> > +        * to indicate to the hardware that this clock will now be receiving an
+> > +        * external clock.
+> 
+> Hmm ok. So the plan is to configure parents in DT or from driver code if
+> the configuration is to accept an external clk? I guess this works.
+> 
 
-OK then!
+Actually from further discussions on the hardware side it seems
+this is handled automatically by the hardware so we no longer
+need to set these direction bits. As such I will remove them in
+the next spin.
 
-> Of course, I would even prefer to not move to the sparse number space,
-> but you seemed to feel very strongly about it last time we discussed
-> this.
+> > +        */
+> > +       if (lclk->dir_mask) {
+> > +               ret = regmap_update_bits(regmap, lclk->cfg_reg,
+> > +                                        lclk->dir_mask, lclk->dir_mask);
+> > +               if (ret < 0) {
+> > +                       dev_err(priv->dev, "Failed to set %s direction: %d\n",
+> > +                               lclk->name, ret);
+> > +                       return ret;
+> > +               }
+> > +       }
+> > +
+> > +       ret = regmap_update_bits(regmap, lclk->src_reg, lclk->src_mask, index);
+> > +       if (ret < 0)
+> > +               dev_err(priv->dev, "Failed to reparent %s: %d\n",
+> > +                       lclk->name, ret);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static u8 lochnagar_regmap_get_parent(struct clk_hw *hw)
+> > +{
+> > +       struct lochnagar_clk *lclk = lochnagar_hw_to_lclk(hw);
+> > +       struct lochnagar_clk_priv *priv = lclk->priv;
+> > +       struct regmap *regmap = priv->regmap;
+> > +       unsigned int val;
+> > +       int ret;
+> > +
+> > +       ret = regmap_read(regmap, lclk->src_reg, &val);
+> > +       if (ret < 0) {
+> > +               dev_err(priv->dev, "Failed to read parent of %s: %d\n",
+> > +                       lclk->name, ret);
+> 
+> The error messages in the above functions could be spammy. Just let
+> drivers who fail when using these clks ops print errors and maybe
+> downgrade these to debug? If you don't agree with this it's fine, I'll
+> just hope to never see these prints change to debug in the future.
+> 
 
-Admittedly it is one of those things where I am working on intuition
-and as such it may be wrong.
+Seems reasonable to me I will change them to debug prints.
 
-The main reason in this case is to keep interfaces simple.
-Of course "simple" is a bit subjective. But keeping to a
-certain predictable pattern makes things easier to understand
-as long as the pattern is somewhat reasonable.
+> > +               return priv->nparents;
+> > +       }
+> > +
+> > +       val &= lclk->src_mask;
+> > +
+> > +       return val;
+> > +}
+> > +
+> > +static const struct clk_ops lochnagar_clk_regmap_ops = {
+> > +       .prepare = lochnagar_regmap_prepare,
+> > +       .unprepare = lochnagar_regmap_unprepare,
+> > +       .set_parent = lochnagar_regmap_set_parent,
+> > +       .get_parent = lochnagar_regmap_get_parent,
+> 
+> Is regmap important to have in the name of these functions and struct?
+> I'd prefer it was just clk instead of regmap.
+> 
 
-This pattern I think it is related to the irqdomains: in the
-irqdomains a linear irqdomain with dynamically allocated
-IRQ descriptors from a sparse number space is clearly
-preferred.
+Again no objection happy to rename.
 
-By similarity and the fact that we are mapping GPIOs to
-IRQs here, I think it is more intuitive and less confusing
-to use a linear GPIO offset range and dynamically
-allocated GPIO descriptors.
+> > +};
+> > +
+> > +static int lochnagar_init_parents(struct lochnagar_clk_priv *priv)
+> > +{
+> > +       struct device_node *np = priv->dev->of_node;
+> > +       int i, j;
+> > +
+> > +       switch (priv->type) {
+> > +       case LOCHNAGAR1:
+> > +               memcpy(priv->lclks, lochnagar1_clks, sizeof(lochnagar1_clks));
+> > +
+> > +               priv->nparents = ARRAY_SIZE(lochnagar1_clk_parents);
+> > +               priv->parents = devm_kmemdup(priv->dev, lochnagar1_clk_parents,
+> > +                                            sizeof(lochnagar1_clk_parents),
+> > +                                            GFP_KERNEL);
+> > +               break;
+> > +       case LOCHNAGAR2:
+> > +               memcpy(priv->lclks, lochnagar2_clks, sizeof(lochnagar2_clks));
+> > +
+> > +               priv->nparents = ARRAY_SIZE(lochnagar2_clk_parents);
+> > +               priv->parents = devm_kmemdup(priv->dev, lochnagar2_clk_parents,
+> > +                                            sizeof(lochnagar2_clk_parents),
+> > +                                            GFP_KERNEL);
+> 
+> Why do we need to kmemdup it? The clk framework already deep copies
+> everything from clk_init structure.
+> 
 
-Today we do not allocate GPIO descriptors
-dynamically, they are allocated as part of the gpiochip
-struct. But I do see it as an end goal to allocate them
-dynamically or at least not allocate GPIO descriptors for
-the "holes" in the .valid_mask.
+The copy is needed for the updates to the list down below.
 
-> > It's better if you indirect the pointer like we do with some other
-> > irqchip stuff (see Hans Verkuils patches), i.e. if ->to_irq
-> > is defined, we save that function pointer and call that at the
-> > end of the gpiochip_to_irq() pointer, then we override it
-> > with our own.
-> >
-> > Since the Tegra186 clearly .to_irq() clearly is mostly the
-> > same plus some extra, this should work fine and give
-> > lesser lines of code in that driver.
->
-> That sounds an awful lot like a midlayer. I'm not a big fan of that at
-> all. There are various reasons for this, but others have described it in
-> much better detail than I could. See here for example:
->
->         https://lwn.net/Articles/336262/
+> > +               break;
+> > +       default:
+> > +               dev_err(priv->dev, "Unknown Lochnagar type: %d\n", priv->type);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       if (!priv->parents)
+> > +               return -ENOMEM;
+> > +
+> > +       for (i = 0; i < priv->nparents; i++) {
+> > +               j = of_property_match_string(np, "clock-names",
+> > +                                            priv->parents[i]);
+> > +               if (j >= 0)
+> > +                       priv->parents[i] = of_clk_get_parent_name(np, j);
+> 
+> Isn't this of_clk_parent_fill()? But there are holes or something?
+> 
 
-Reading that article I do not think gpiolib qualifies as midlayer,
-since it is after all optional and not every driver uses it, so
-it is available on a case-by-case basis. The article even says:
+I guess rather than a fill, this is perhaps more of a name and
+replace. I could make this a core function if you prefer? I think
+there are a couple of other drivers that could also use it,
+although might be worth doing that as a separate series rather
+than holding this one up.
 
-"That common functionality which it is so tempting to put in a
-midlayer should instead be provided as library routines which
-can used, augmented, or ignored by each bottom level
-driver independently."
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int lochnagar_init_clks(struct lochnagar_clk_priv *priv)
+> > +{
+> > +       struct clk_init_data clk_init = {
+> > +               .ops = &lochnagar_clk_regmap_ops,
+> > +               .parent_names = priv->parents,
+> > +               .num_parents = priv->nparents,
+> > +       };
+> > +       struct lochnagar_clk *lclk;
+> > +       int ret, i;
+> > +
+> > +       for (i = 0; i < ARRAY_SIZE(priv->lclks); i++) {
+> 
+> We already have an array of clks.
+> 
+> > +               lclk = &priv->lclks[i];
+> > +
+> > +               if (!lclk->name)
+> > +                       continue;
+> > +
+> > +               clk_init.name = lclk->name;
+> > +
+> > +               lclk->priv = priv;
+> > +               lclk->hw.init = &clk_init;
+> > +
+> > +               ret = devm_clk_hw_register(priv->dev, &lclk->hw);
+> > +               if (ret) {
+> > +                       dev_err(priv->dev, "Failed to register %s: %d\n",
+> > +                               lclk->name, ret);
+> > +                       return ret;
+> > +               }
+> > +
+> > +               priv->clk_data->hws[i] = &lclk->hw;
+> 
+> But then we copy the pointers into here to use of_clk_hw_onecell_get().
+> Can you just roll your own function to use your own array of clk
+> structures? I know it's sort of sad, but it avoids a copy.
+> 
 
-Contrast that by the SCSI emulation in libata: is it even
-possible to bypass? Not really, no. gpiolib is not like that.
+Apologies for not doing it this way the first time, looks much
+clearer that way round.
 
-> In this particular case one potential problem is that gpiochip_to_irq()
-> might not always do the right things for everyone, and that it turn may
-> incentivize people to work around it creatively. For example, one driver
-> may want to perform some operation before gpiochip_to_irq() is called,
-> while another driver may have to perform an operation after the call. If
-> you move towards a midlayer there's no way to satisfy both, unless you
-> go and add pre- and post-operations of some sort.
+> > +       }
+> > +
+> > +       priv->clk_data->num = ARRAY_SIZE(priv->lclks);
+> > +
+> > +       ret = devm_of_clk_add_hw_provider(priv->dev, of_clk_hw_onecell_get,
+> > +                                         priv->clk_data);
+> > +       if (ret < 0) {
+> > +               dev_err(priv->dev, "Failed to register provider: %d\n", ret);
+> > +               return ret;
+> > +       }
+> > +
+> > +       return 0;
+> 
+> Simplify this to
+> 
+> 	if (ret < 0)
+> 		dev_err(...)
+> 
+> 	return ret;
+> 
 
-I don't really buy into that.
+No problem.
 
-gpiochip_to_irq() is *ONLY* a translation mechanism. The main
-abstraction is and should be irqchip.
+> > +}
+> > +
+> > +static const struct of_device_id lochnagar_of_match[] = {
+> > +       { .compatible = "cirrus,lochnagar1-clk", .data = (void *)LOCHNAGAR1 },
+> > +       { .compatible = "cirrus,lochnagar2-clk", .data = (void *)LOCHNAGAR2 },
+> > +       {},
+> 
+> Nitpick: Drop the comma, it's the sentinel so nothing should come after.
+> 
 
-In usecases like device tree the same device exposes a
-gpiochip API and an irqchip API and those two are supposed
-to be orthogonal. The Documentation/driver-api/gpio/driver.rst
-says:
+Again no problem.
 
---------8<----------8<--------8<--------8<--------
-It is legal for any IRQ consumer to request an IRQ from any irqchip no matter
-if that is a combined GPIO+IRQ driver. The basic premise is that gpio_chip and
-irq_chip are orthogonal, and offering their services independent of each
-other.
+> > +};
+> 
+> Any MODULE_DEVICE_TABLE?
+> 
 
-gpiod_to_irq() is just a convenience function to figure out the IRQ for a
-certain GPIO line and should not be relied upon to have been called before
-the IRQ is used.
+Yes oversight there, will add that.
 
-So always prepare the hardware and make it ready for action in respective
-callbacks from the GPIO and irqchip APIs. Do not rely on gpiod_to_irq() having
-been called first.
+> > +static struct platform_driver lochnagar_clk_driver = {
+> > +       .driver = {
+> > +               .name = "lochnagar-clk",
+> > +               .of_match_table = of_match_ptr(lochnagar_of_match),
+> 
+> I suspect of_match_ptr() makes the build complain about unused match
+> table when CONFIG_OF=N. Can you try building it that way?
+> 
 
-This orthogonality leads to ambiguities that we need to solve: if there is
-competition inside the subsystem which side is using the resource (a certain
-GPIO line and register for example) it needs to deny certain operations and
-keep track of usage inside of the gpiolib subsystem. This is why the API
-below exists.
---------8<----------8<--------8<--------8<--------
+The driver depends on the MFD which in turn depends on CONFIG_OF
+so that shouldn't be a problem.
 
-So now indeed it seems that your implementation actually
-has a bug here. I didn't see it before: if we make use of
-the irq off the irqchip without gpiochip_to_irq() having
-been called before, will the (hierarchical) IRQ still work?
+> > +       },
+> > +
+> 
+> Nitpick: Why the extra newline?
+> 
 
-Much of the idea and reason behind GPIOLIB_IRQCHIP is
-to make sure this can hold true.
+Happy to remove.
 
-So this hunk of your original patch:
+> > +       .probe = lochnagar_clk_probe,
+> > +};
+> > +module_platform_driver(lochnagar_clk_driver);
+> > +
+> > +MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
+> > +MODULE_DESCRIPTION("Clock driver for Cirrus Logic Lochnagar Board");
+> > +MODULE_LICENSE("GPL v2");
+> > +MODULE_ALIAS("platform:lochnagar-clk");
+> 
+> I think MODULE_ALIAS is not needed if it's this simple?
+> 
 
-+       if (irq_domain_is_hierarchy(domain)) {
-+               struct irq_fwspec spec;
-+
-+               spec.fwnode = domain->fwnode;
-+               spec.param_count = 2;
-+               spec.param[0] = offset;
-+               spec.param[1] = 0;
-+
-+               return irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec);
-+       }
+Not actually sure on this one, to be honest its mostly cargo
+culted from other drivers. I will investigate and see what I dig
+up but if has any pointers I would greatly appreciate it.
 
-Is probably misplaced: gpiochip_to_irq() should really
-only contain irq_create_mapping() which is what will
-also be done by the device tree (or ACPI, I hope) core
-when providing an irq as a resource.
+Should be able to send another version very shortly.
 
-The snippet above needs to go somewhere else, if it
-needs to happen before any of the irqchip callbacks
-then just loop over all the IRQs in
-gpiochip_add_irqchip() and allocate IRQs for all valid
-IRQs from the start as a last resort I suppose.
-
-A last alternative would be to assume that all other ways
-an IRQ is mapped (besides using gpiochip_to_irq()) will
-also do the same thing. E.g, you would have to go into
-drivers/of/irq.c and patch irq_of_parse_and_map()
-to do the same thing. This is the site that creates the
-mapping when .to_irq() is not called in the DT case.
-
-Maybe the DT or irqchip maintainers can give a better
-answer to how this should happen. Relying on .to_irq()
-to always be called is certainly not the answer. We already
-did that mistake in the past :(
-
-> I'd like to propose that we instead provide gpiochip_to_irq() as a
-> helper that drivers can call into.
-
->        static int foo_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
->        {
->                /* do something before */
->                ...
->
->               err = gpiochip_to_irq(chip, offset);
->               if (err < 0)
->                       return err;
->
->               /* do something after */
->               ...
->       }
-
-Under your assumptions that is fine, and the same reason as to
-why we control pins and regulators and clock in callbacks from
-say .suspend() instead of enforcing a certain order. It could be
-necessary if the translation gets complicated enough.
-
-But right now I am mostly worried that this implementation does
-not cover for the fact that we have to make sure that hierarchical
-irqchips in gpiolib work even if .to_irq() was not called first.
-
-Yours,
-Linus Walleij
+Thanks,
+Charles
