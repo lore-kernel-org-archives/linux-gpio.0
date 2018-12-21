@@ -1,41 +1,36 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v5 7/8] clk: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Date: Fri, 21 Dec 2018 15:28:55 +0000
-Message-ID: <20181221152855.GI16508@imbe.wolfsonmicro.main>
-References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
- <20181120141631.18949-7-ckeepax@opensource.cirrus.com>
- <154356443157.88331.15749597863624143993@swboyd.mtv.corp.google.com>
- <20181221135037.GH16508@imbe.wolfsonmicro.main>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH 0/3] Few fix for pins configuration on Armada 37xx
+Date: Fri, 21 Dec 2018 18:32:56 +0100
+Message-ID: <20181221173259.8372-1-gregory.clement@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181221135037.GH16508@imbe.wolfsonmicro.main>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@bootlin.com>, =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>, Marcin Wojtas <mw@semihalf.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 01:50:37PM +0000, Charles Keepax wrote:
-> On Thu, Nov 29, 2018 at 11:53:51PM -0800, Stephen Boyd wrote:
-> > Quoting Charles Keepax (2018-11-20 06:16:30)
-> > > +MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
-> > > +MODULE_DESCRIPTION("Clock driver for Cirrus Logic Lochnagar Board");
-> > > +MODULE_LICENSE("GPL v2");
-> > > +MODULE_ALIAS("platform:lochnagar-clk");
-> > 
-> > I think MODULE_ALIAS is not needed if it's this simple?
-> > 
-> 
-> Not actually sure on this one, to be honest its mostly cargo
-> culted from other drivers. I will investigate and see what I dig
-> up but if has any pointers I would greatly appreciate it.
-> 
+Hello,
 
->From what I can find out it looks like MODULE_ALIAS is indeed
-redundant on DT only drivers, which these are at the moment so
-will remove and give it a test.
+this small series fixes wrong pins configuration we currently have on
+Armada 37xx.
 
-Thanks,
-Charles
+For now it is especially annoying it we want to enable suspend to
+RAM for PCie.
+
+Gregory
+
+Gregory CLEMENT (2):
+  pinctrl: armada-37xx: add missing pin: PCIe1 Wakeup
+  pinctrl: dt-bindings: Fix the armada-37xx documentation
+
+Marek Behún (1):
+  pinctrl: armada-37xx: Correct mpp definitions
+
+ .../pinctrl/marvell,armada-37xx-pinctrl.txt   | 24 ++++++++++++++-----
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c   | 11 +++++----
+ 2 files changed, 25 insertions(+), 10 deletions(-)
+
+-- 
+2.19.2
