@@ -1,35 +1,64 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH v2] pinctrl: ocelot: add MSCC Jaguar2 support
-Date: Fri, 21 Dec 2018 12:04:47 +0100
-Message-ID: <20181221110447.GN2188@piout.net>
-References: <20181220144431.11143-1-alexandre.belloni@bootlin.com>
- <CACRpkdaM-N9BmG=bFZAkZcojcKbXDnar0tRWAW0a3E1VwsD==A@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Re: [PATCH fixes 4.20] dt-bindings: pinctrl: bcm4708-pinmux: rework
+ binding to use syscon
+Date: Fri, 21 Dec 2018 12:07:56 +0100
+Message-ID: <CACna6rx2P3ncP6ekksxGVZGBJ6YQtsOFkv6eK0BTxvMDRHZHxg@mail.gmail.com>
+References: <20181218155744.19409-1-zajec5@gmail.com>
+ <CACRpkdYoZtZci3BJ=-2AGr4vz7-OVJ9UwppYviMAiotBn2EU6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaM-N9BmG=bFZAkZcojcKbXDnar0tRWAW0a3E1VwsD==A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdYoZtZci3BJ=-2AGr4vz7-OVJ9UwppYviMAiotBn2EU6Q@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 21/12/2018 11:51:15+0100, Linus Walleij wrote:
-> On Thu, Dec 20, 2018 at 3:44 PM Alexandre Belloni
-> <alexandre.belloni@bootlin.com> wrote:
-> 
-> > Jaguar2 has the same register layout as Ocelot but it has 64 pins, meaning
-> > that there are 2 registers instead of one.
-> >
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> 
-> Pulled out v1 and applied this instead.
-> 
-
-Thank you Linus.
-
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+T24gRnJpLCAyMSBEZWMgMjAxOCBhdCAxMTo0NSwgTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVp
+akBsaW5hcm8ub3JnPiB3cm90ZToKPiBPbiBUdWUsIERlYyAxOCwgMjAxOCBhdCA0OjU4IFBNIFJh
+ZmHFgiBNacWCZWNraSA8emFqZWM1QGdtYWlsLmNvbT4gd3JvdGU6Cj4KPiA+IEZyb206IFJhZmHF
+giBNacWCZWNraSA8cmFmYWxAbWlsZWNraS5wbD4KPiA+Cj4gPiBBcyBwb2ludGVkIGJ5IFJvYiwg
+Q1JVIGlzIGEga2luZCBvZiBibG9jayB0aGF0IGNhbid0IGJlIGd1YXJhbnRlZWQgdG8KPiA+IGhh
+dmUgZXZlcnl0aGluZyBleHBvc2VkIGFzIHN1Ym5vZGVzLiBJdCdzIGEgc2V0IG9mIHZhcmlvdXMg
+cmVnaXN0ZXJzCj4gPiB0aGF0IGFyZW4ndCB0aWVkIHRvIGFueSBzaW5nbGUgZGV2aWNlLiBJdCBj
+b3VsZCBiZSBkZXNjcmliZWQgbXVjaCBtb3JlCj4gPiBhY2N1cmF0ZWx5IGFzIE1GRCAoTXVsdGkt
+RnVuY3Rpb24gRGV2aWNlKS4KPiA+Cj4gPiBTb21lIGhhcmR3YXJlIGJsb2NrcyBtYXkgaW5kZWVk
+IHdhbnQgdG8gYWNjZXNzIGEgcmVnaXN0ZXIgb3IgdHdvIG9mIHRoZQo+ID4gQ1JVIHdoaWNoIHJl
+cXVpcmVzIGRlc2NyaWJpbmcgaXQgYXMgdGhlICJzeXNjb24iLgo+ID4KPiA+IFdoaWxlIGF0IGl0
+IHJlcGxhY2UgZXhtcGxlIG5vZGUgbmFtZSB3aXRoIHRoZSBzdGFuZGFyZCAicGluY3RybCIgKGFs
+c28KPiA+IHBvaW50ZWQgb3V0IGJ5IFJvYikuCj4gPgo+ID4gU2lnbmVkLW9mZi1ieTogUmFmYcWC
+IE1pxYJlY2tpIDxyYWZhbEBtaWxlY2tpLnBsPgo+ID4gLS0tCj4gPiBIaSBMaW51cywKPiA+Cj4g
+PiBBZnRlciBiZWluZyBwaW5nZWQgYWJvdXQgdGhlIHBpbmN0cmwgZHJpdmVyIEkgcmVhbGl6ZWQg
+SSBuZXZlciBhZGRyZXNzZWQKPiA+IFJvYidzIGNvbW1lbnRzIGZyb20gdGhlIGUtbWFpbCB0aHJl
+YWQ6Cj4gPgo+ID4gW1BBVENIXSBkdC1iaW5kaW5nczogcGluY3RybDogYmNtNDcwOC1waW5tdXg6
+IGltcHJvdmUgZXhhbXBsZSBiaW5kaW5nCj4gPiBodHRwczovL3d3dy5zcGluaWNzLm5ldC9saXN0
+cy9hcm0ta2VybmVsL21zZzY4MjgzOC5odG1sCj4gPiBodHRwczovL3BhdGNod29yay5vemxhYnMu
+b3JnL3BhdGNoLzk4NDAyNC8KPiA+Cj4gPiBSb2IgaGFzIHBvaW50ZWQgY29ycmVjdGx5IChhcyBh
+bHdheXMpIHRoYXQgZGVzY3JpYmluZyBDUlUgdXNpbmcKPiA+ICJzaW1wbGUtYnVzIiBoYXMgaXRz
+IGltcGxpY2F0aW9ucyBhbmQgbWF5IGh1bnQgdXMgYmFjayBpZiB3ZSBldmVyCj4gPiByZWFsaXpl
+IHdlIHdpbGwgd2FudCB0byByZWZlcmVuY2UgaXQgYXMgInN5c2NvbiIuIFRoYXQgaXMgcHJldHR5
+IGxpa2VseQo+ID4gYWN0dWFsbHkuCj4gPgo+ID4gVG8gZml4IHRoYXQgd2hpbGUgc3RpbGwgcG9z
+c2libGUgKGJlZm9yZSBoYXZpbmcgdGhhdCBEb2N1bWVudGF0aW9uIGluCj4gPiBhbnkgc3RhYmxl
+IHJlbGVhc2UpIEknZCBsaWtlIHlvdSB0byBjb25zaWRlciB0YWtpbmcgdGhpcyBwYXRjaCBmb3Ig
+dGhlCj4gPiA0LjIwIHJlbGVhc2UgaWYgeW91IGZpbmQgaXQgcG9zc2libGUuCj4gPgo+ID4gSSdt
+IHdlbGwgYXdhcmUgaXQncyBkYW1uIGxhdGUuIEknbSBhd2FyZSBJJ3ZlIHNjcmV3ZWQgdXAuIEkn
+bSBzb3JyeS4KPiA+Cj4gPiBJJ20gYWZyYWlkIEkgY2Fubm90IGZpeCBpdCBhbnlob3cuIEp1c3Qg
+dGFrZSBhIGxvb2sgYXQgdGhhdCBwYXRjaCBhbmQKPiA+IGZlZWwgZnJlZSB0byBzYXkgSSdtIGNy
+YXp5IGNvbWluZyB3aXRoIGl0IHNvIGxhdGUuCj4KPiBJIGp1c3QgYXBwbGllZCBpdC4gSXQncyBu
+b3QgbGlrZSBpdCdzIGV0Y2hlZCBpbiBzdG9uZSB0aG91Z2ggc29tZQo+IHBlb3BsZSBtYXkgaGF2
+ZSB0aGF0IG1lbnRhbCBtb2RlbC4KPgo+IElmIHRoZSBEVCBtYWludGFpbmVycyBoYXZlIGZ1cnRo
+ZXIgY29uY2VybnMgd2UgY2FuIHBhdGNoIGl0Cj4gYWdhaW4uCj4KPiBSb3VnaCBjb25zZW5zdXMg
+YW5kIHJ1bm5pbmcgY29kZS4KClRoYW5rIHlvdSwgSSBhcHByZWNpYXRlIGl0IQoKLS0gClJhZmHF
+ggoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgt
+YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJt
+LWtlcm5lbAo=
