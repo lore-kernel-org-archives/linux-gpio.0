@@ -1,73 +1,50 @@
-From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
-Subject: Re: [PATCH v2] pinctrl:mediatek:add judgment conditions
-Date: Tue, 25 Dec 2018 11:40:34 +0800
-Message-ID: <1545709234.17628.1.camel@mhfsdcap03>
-References: <1545100282-15756-1-git-send-email-chuanjia.liu@mediatek.com>
-         <CAGp9Lzoo6bw-3Hr56rgbL6EhrRvXX2y5pajaOo13c5MV9FsO7Q@mail.gmail.com>
+From: <chuanjia.liu@mediatek.com>
+Subject: [PATCH v3] pinctrl:mediatek:add EINT support to virtual GPIOs
+Date: Tue, 25 Dec 2018 12:23:58 +0800
+Message-ID: <1545711838-20444-1-git-send-email-chuanjia.liu@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGp9Lzoo6bw-3Hr56rgbL6EhrRvXX2y5pajaOo13c5MV9FsO7Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Zhiyong Tao =?UTF-8?Q?=28=E9=99=B6=E5=BF=97=E5=8B=87=29?= <Zhiyong.Tao@mediatek.com>, Eddie Huang =?UTF-8?Q?=28=E9=BB=83=E6=99=BA=E5=82=91=29?= <eddie.huang@mediatek.com>, Hailong Fan =?UTF-8?Q?=28=E8=8C=83=E6=B5=B7=E9=BE=99=29?= <Hailong.Fan@mediatek.com>, Youlin Pei =?UTF-8?Q?=28=E8=A3=B4=E5=8F=8B=E6=9E=97=29?= <youlin.pei@mediatek.com>
+To: sean.wang@kernel.org, linus.walleij@linaro.org, matthias.bgg@gmail.com, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: youlin.pei@mediatek.com, eddie.huang@mediatek.com, zhiyong.tao@mediatek.com, hailong.fan@mediatek.com, Chuanjia Liu <Chuanjia.Liu@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, 2018-12-23 at 02:50 +0800, Sean Wang wrote:
-> On Mon, Dec 17, 2018 at 6:32 PM <chuanjia.liu@mediatek.com> wrote:
-> >
-> 
-> I thought the subject still is much general, it should be further
-> improved with something like "add EINT support to virtual GPIOs" and
-> should say more about what virtual GPIOs means by MTKers in the patch
-> description because "virtual" is a usual term used throughout the
-> kernel and that would easily cause others to fail to interpret
-> correctly.
-> 
-Thank you for your advice,I will modify subject and description.
-> > From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
-> >
-> > This patch avoid return err when virtual gpio set SMT.
-> >
-> > Signed-off-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
-> > ---
-> > change note:
-> > v2 : 1. delete virtual gpio number
-> >      2. add judgment conditions
-> > ---
-> >  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > index 4a9e0d4c2bbc..a576e417744a 100644
-> > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > @@ -290,7 +290,11 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
-> >                 return err;
-> >
-> >         err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
-> > -       if (err)
-> > +
-> > +       /* SMT doesn't support virtual GPIO, add err != -ENOTSUPP is used for
-> > +        * avoid return err when virtual gpio set SMT.
-> > +        */
-> 
-> I'd prefer to the comments as the below
-> 
-> /*
-> SMT is supposed to be supported by every real GPIO and doesn't support
-> virtual GPIOs, so the extra condition err != -ENOTSUPP is just for
-> adding EINT support to these virtual GPIOs. It should add an extra
-> flag in the pin descriptor when more pins with distinctive
-> characteristic come out.
-> */
-> 
-Thank you for your advice,I will modify comments.
-> > +       if (err && err != -ENOTSUPP)
-> >                 return err;
-> >
-> >         return 0;
-> > --
-> > 2.19.1
-> >
+From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+
+Virtual gpio only used inside SOC and not being exported to outside SOC.
+Some modules use virtual gpio as eint and doesn't nedd SMT.
+So this patch add EINT support to virtual GPIOs.
+
+Signed-off-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+---
+change note:
+v3 : 1. modify subject and description
+      2. modify comments
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 4a9e0d4c2bbc..a0db145f798d 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -290,7 +290,15 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
+ 		return err;
+ 
+ 	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
+-	if (err)
++	/*
++	 *SMT is supposed to be supported by every real GPIO and doesn't
++	 *support virtual GPIOs, so the extra condition err != -ENOTSUPP
++	 *is just for adding EINT support to these virtual GPIOs. It should
++	 *add an extra flag in the pin descriptor when more pins with
++	 *distinctive characteristic come out.
++	 */
++
++	if (err && err != -ENOTSUPP)
+ 		return err;
+ 
+ 	return 0;
+-- 
+2.19.1
