@@ -1,50 +1,133 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 01/35] pinctrl: meson: fix pull enable register calculation
-Date: Wed, 26 Dec 2018 17:41:08 -0500
-Message-ID: <20181226224142.150866-1-sashal@kernel.org>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq
+ support
+Date: Thu, 27 Dec 2018 09:35:31 +0200
+Message-ID: <20181227073531.GA2461@localhost.localdomain>
+References: <20181218115931.GA21253@localhost.localdomain>
+ <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, Mark Brown <broonie@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+Hello Geert,
 
-[ Upstream commit 614b1868a125a0ba24be08f3a7fa832ddcde6bca ]
+Sorry for waiting - I just opened my computer after the holidays.
 
-We just changed the code so we apply bias disable on the correct
-register but forgot to align the register calculation. The result
-is that we apply the change on the correct register, but possibly
-at the incorrect offset/bit
+On Wed, Dec 26, 2018 at 12:39:17PM +0100, Geert Uytterhoeven wrote:
+> Hi Matti,
+> 
+> On Tue, Dec 18, 2018 at 1:00 PM Matti Vaittinen
+> <matti.vaittinen@fi.rohmeurope.com> wrote:
+> > Add level active IRQ support to regmap-irq irqchip. Change breaks
+> > existing regmap-irq type setting. Convert the existing drivers which
+> 
+> Indeed it does.
+> 
+> > use regmap-irq with trigger type setting (gpio-max77620) to work
+> > with this new approach. So we do not magically support level-active
+> > IRQs on gpio-max77620 - but add support to the regmap-irq for chips
+> > which support them =)
+> >
+> > We do not support distinguishing situation where HW supports rising
+> > and falling edge detection but not both. Separating this would require
+> > inventing yet another flags for IRQ types.
+> >
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> 
+> This is now upstream as commit 1c2928e3e3212252 ("regmap:
+> regmap-irq/gpio-max77620: add level-irq support"), and breaks da9063-rtc
+> on the Renesas Koelsch board:
+> 
+>     genirq: Setting trigger mode 8 for irq 157 failed
+> (regmap_irq_set_type+0x0/0x140)
+>     da9063-rtc da9063-rtc: Failed to request ALARM IRQ 157: -524
+>     da9063-rtc: probe of da9063-rtc failed with error -524
 
-This went undetected because offsets tends to be the same between
-REG_PULL and REG_PULLEN for a given pin the EE controller. This
-is not true for the AO controller.
+This is strange as I do not see any type setting support code in
+drivers/mfd/da9063-irq.c. The type setting registers are neither
+specified in static const struct regmap_irq_chip da9063l_irq_chip nor
+in static const struct regmap_irq_chip da9063_irq_chip. Hence I don't
+understand how the da9063 could have been supporting IRQ type setting in
+first place.
 
-Fixes: e39f9dd8206a ("pinctrl: meson: fix pinconf bias disable")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pinctrl/meson/pinctrl-meson.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> > ---
+> >
+> > Version 3 of this patch is intended to be functionally identical to v2.
+> > This patch is rebased on top of a tree which contains changes:
+> > "regmap: irq: handle HW using separate rising/falling edge interrupts"
+> > from Bartosz Golaszewski and the change
+> > "regmap: regmap-irq: Remove default irq type setting from core"
+> > (proposed here):
+> > https://lore.kernel.org/lkml/20181218105813.GA6957@localhost.localdomain/
+> >
+> > There should not be direct dependency to "regmap: regmap-irq: Remove
+> > default irq type setting from core" though. Patch was also tested to
+> > apply cleany on regmap-tree.
+> >
+> > Same statement regarding testing applies - gpio-max77620 are only
+> > tested to compile. All real testing would be _HIGHLY_ appreciated.
+> >
+> >  drivers/base/regmap/regmap-irq.c | 35 ++++++++++-----
+> >  drivers/gpio/gpio-max77620.c     | 96 ++++++++++++++++++++++++++--------------
+> >  include/linux/regmap.h           | 27 ++++++++---
+> >  3 files changed, 110 insertions(+), 48 deletions(-)
+> >
+> > diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+> > index 8b216b2e2c19..31d23c9a5ae7 100644
+> > --- a/drivers/base/regmap/regmap-irq.c
+> > +++ b/drivers/base/regmap/regmap-irq.c
+> > @@ -199,7 +199,7 @@ static void regmap_irq_enable(struct irq_data *data)
+> >         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
+> >         unsigned int mask, type;
+> >
+> > -       type = irq_data->type_falling_mask | irq_data->type_rising_mask;
+> > +       type = irq_data->type.type_falling_val | irq_data->type.type_rising_val;
+> >
+> >         /*
+> >          * The type_in_mask flag means that the underlying hardware uses
+> > @@ -234,27 +234,42 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
+> >         struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
+> >         struct regmap *map = d->map;
+> >         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
+> > -       int reg = irq_data->type_reg_offset / map->reg_stride;
+> > +       int reg;
+> > +       const struct regmap_irq_type *t = &irq_data->type;
+> >
+> > -       if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
+> > -               return 0;
+> > +       if ((t->types_supported & type) != type)
+> > +               return -ENOTSUPP;
+> 
+> Given types_supported defaults to zero, I think this breaks every existing
+> setup using REGMAP_IRQ_REG().
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index df61a71420b1..8e73641bd823 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -274,7 +274,8 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
- 		case PIN_CONFIG_BIAS_DISABLE:
- 			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
- 
--			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
-+			meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg,
-+					       &bit);
- 			ret = regmap_update_bits(pc->reg_pullen, reg,
- 						 BIT(bit), 0);
- 			if (ret)
+Not really. The type setting support is not too old or widely used in
+regmap_irq. If the type_base and num_type_reg in struct regmap_irq_chip
+have not been given the type setting has not been supported. And the
+macro REGMAP_IRQ_REG() has not been initializing those fields - they
+must have been explicitly set by the driver. Only in-tree driver which
+really used the regmap_irq type-setting was gpio-max77620 (if my
+grepping did not go totally wrong). Is your version of
+drivers/mfd/da9063-irq.c same I can see in
+https://elixir.bootlin.com/linux/v4.20/source/drivers/mfd/da9063-irq.c ?
+
+I will try to see if the regmap_irq code has just silently ignored irq
+type setting requests if type setting information has not been populated
+by driver. May that has been changed by my patch. I wonder what would be
+the correct action if there is no type-setting information in
+struct regmap_irq_chip - and if type setting irq callbacks are called.
+
+Br,
+	Matti Vaittinen
+
 -- 
-2.19.1
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
