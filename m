@@ -1,42 +1,24 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Interrupt storm from pinctrl-amd on Acer AN515-42
-Date: Fri, 28 Dec 2018 13:48:29 +0100
-Message-ID: <CACRpkdaDT9xZe6r3pJvYqubrvHh4+PkV8D38yYMEbv8fhdHMKQ@mail.gmail.com>
-References: <4085fc648ff5086bd6e6237d74d2a11e945a617b.camel@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: pr-tracker-bot@kernel.org
+Subject: Re: [GIT PULL] GPIO bulk changes for the v4.21 kernel
+Date: Sat, 29 Dec 2018 05:35:05 +0000
+Message-ID: <20181229053505.9301.47837.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+References: <CACRpkdYD7469+XPRhNHRVtwkQzsWJ5-AK7cD_yVcDCLko-P-dw@mail.gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4085fc648ff5086bd6e6237d74d2a11e945a617b.camel@gmail.com>
+In-Reply-To: <CACRpkdYD7469+XPRhNHRVtwkQzsWJ5-AK7cD_yVcDCLko-P-dw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Leonard Crestez <cdleonard@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Daniel Kurtz <djkurtz@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Daniel Drake <drake@endlessm.com>, Nitesh Kumar Agrawal <Nitesh-kumar.Agrawal@amd.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 12:02 AM Leonard Crestez <cdleonard@gmail.com> wrote:
+The pull request you sent on Thu, 27 Dec 2018 10:23:35 +0100:
 
-> Digging a little deeper it seems the touchpad interrupt is active on
-> boot and since it's configured as "level" and no touchpad driver is
-> available yet there does not seem to be any way to clear it.
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v4.21-1
 
-I think these are called "spurious interrupts".
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/24dc83635ffe3c93d8122099a83ee228c9b7e4f7
 
-> I don't know how this should be handled, booting with an active enabled but
-> unclearable interrupt seems like a platform bug to me. There is even an
-> option to set touchpad to "basic" which does some sort of ps2 emulation
-> but the IRQ issue still happens!
->
-> One workaround is to explicitly disable the interrupt from the handler
-> if no mapping is found; this will keep it disabled until
-> amd_gpio_irq_set_type is called later.
+Thank you!
 
-I don't know how x86 and ACPI systems usually deal with this stuff
-so I'm kind of lost. On the embedded systems that I develop on,
-I would just disable all interrupts on probe() (usually writing 0x0 in
-some interrupt enable register) and then they will get enabled
-once consumers need them.
-
-But I have come to understand that maybe ACPI systems are
-not so happy about drivers doing things like that?
-
-Yours,
-Linus Walleij
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
