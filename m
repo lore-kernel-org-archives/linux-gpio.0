@@ -1,24 +1,43 @@
-From: pr-tracker-bot@kernel.org
-Subject: Re: [GIT PULL] GPIO bulk changes for the v4.21 kernel
-Date: Sat, 29 Dec 2018 05:35:05 +0000
-Message-ID: <20181229053505.9301.47837.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-References: <CACRpkdYD7469+XPRhNHRVtwkQzsWJ5-AK7cD_yVcDCLko-P-dw@mail.gmail.com>
+From: Brian Masney <masneyb@onstation.org>
+Subject: [PATCH 0/3] qcom: spmi: add support for hierarchical IRQ chip
+Date: Sat, 29 Dec 2018 06:47:52 -0500
+Message-ID: <20181229114755.8711-1-masneyb@onstation.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYD7469+XPRhNHRVtwkQzsWJ5-AK7cD_yVcDCLko-P-dw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: linus.walleij@linaro.org, sboyd@kernel.org, bjorn.andersson@linaro.org, andy.gross@linaro.org
+Cc: marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The pull request you sent on Thu, 27 Dec 2018 10:23:35 +0100:
+This patch series adds hierarchical IRQ chip support to spmi-gpio so
+that device tree consumers can request an IRQ directly from the GPIO
+block rather than having to request an IRQ from the underlying PMIC.
+The first patch in this series converts pmic-arb to use the version 2
+IRQ interface and patches 2 and 3 add support for the hierarchical
+IRQ chip to spmi-gpio.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v4.21-1
+For more background information, see the email thread with Linus
+Walleij's excellent description of the problem at
+https://www.spinics.net/lists/linux-gpio/msg34655.html.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/24dc83635ffe3c93d8122099a83ee228c9b7e4f7
+The patches need to be applied in the order that I have them in order
+to allow for a proper bisection, however part of the series can be
+applied without any breakage. Maybe the spmi-arb change can go in
+for v4.21 and the spmi-gpio changes can go in for v4.22?
 
-Thank you!
+This work was tested on a LG Nexus 5 (hammerhead) phone. My status page
+at https://masneyb.github.io/nexus-5-upstream/ describes what is working
+so far with an upstream kernel.
+
+Brian Masney (3):
+  spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical
+    IRQ chips
+  qcom: spmi-gpio: add support for hierarchical IRQ chip
+  ARM: dts: qcom: msm8974: add interrupt properties
+
+ arch/arm/boot/dts/qcom-pm8941.dtsi       |   3 +
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 119 ++++++++++++++++++++++-
+ drivers/spmi/spmi-pmic-arb.c             |  91 ++++++++++++-----
+ 3 files changed, 182 insertions(+), 31 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.17.2
