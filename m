@@ -1,15 +1,13 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] ARM: dts: meson8m2: mxiii-plus: mark the SD card
- detection GPIO active-low
-Date: Sun, 30 Dec 2018 20:54:59 +0100
-Message-ID: <CACRpkdZ95J8LmVbBDJ=ms0sJwV+T4jvQeN-huXOE_pmtB+Ykwg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ARM: dts: meson: fix SD card cd-gpio (pre v4.21-rc)
+Date: Sun, 30 Dec 2018 20:57:08 +0100
+Message-ID: <CACRpkdZ4bex+wm4vGWhDLSAsXnaVeHWEp6Rf4g8NQZmXnFfneQ@mail.gmail.com>
 References: <20181229125711.5205-1-martin.blumenstingl@googlemail.com>
- <20181229125711.5205-4-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181229125711.5205-4-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20181229125711.5205-1-martin.blumenstingl@googlemail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -26,22 +24,24 @@ List-Id: linux-gpio@vger.kernel.org
 On Sat, Dec 29, 2018 at 1:57 PM Martin Blumenstingl
 <martin.blumenstingl@googlemail.com> wrote:
 
-> After commit 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device
-> tree") SD cards are not detected anymore.
+> However, while reviewing the .dts files for the 32-bit Amlogic Meson
+> boards I found that the cd-gpios are specified incorrectly in the .dts.
+> Documentation/devicetree/bindings/mmc/mmc.txt states: "[...] using the
+> "cd-inverted" property means, that the CD line is active high, i.e. it
+> is high, when a card is inserted".
+> This is not the case on all currently supported 32-bit Meson boards, so
+> this switches the cd-gpios
+> - from GPIO_ACTIVE_HIGH with the "cd-inverted" property being set
+> - to GPIO_ACTIVE_LOW with the "cd-inverted" property being absent
 >
-> The CD GPIO is "active low" on the MXIII-Plus. The MMC dt-bindings
-> specify: "[...] using the "cd-inverted" property means, that the CD line
-> is active high, i.e. it is high, when a card is inserted".
->
-> Fix the description of the SD card by marking it as GPIO_ACTIVE_LOW and
-> drop the "cd-inverted" property. This makes the definition consistent
-> with the existing dt-bindings and fixes the check whether an SD card is
-> inserted.
->
-> Fixes: 35ee52bea66c74 ("ARM: dts: meson8m2: add support for the Tronsmart MXIII Plus")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> This fix also works even if the following two commits are reverted:
+> - 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
+> - 81c85ec15a1946 ("gpio: OF: Parse MMC-specific CD and WP properties")
 
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Thanks for looking into this, I think fixing the device trees is
+orthogonal to fixing the issue I created, let's fix both!
 
 Yours,
 Linus Walleij
