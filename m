@@ -1,47 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] ARM: dts: meson: fix SD card cd-gpio (pre v4.21-rc)
-Date: Sun, 30 Dec 2018 20:57:08 +0100
-Message-ID: <CACRpkdZ4bex+wm4vGWhDLSAsXnaVeHWEp6Rf4g8NQZmXnFfneQ@mail.gmail.com>
-References: <20181229125711.5205-1-martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 0/3] qcom: spmi: add support for hierarchical IRQ chip
+Date: Sun, 30 Dec 2018 21:11:29 +0100
+Message-ID: <CACRpkdY8SvDUqHaem+wgV_xynzyWVqLnv5705mBEZ_SOuD_45g@mail.gmail.com>
+References: <20181229114755.8711-1-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181229125711.5205-1-martin.blumenstingl@googlemail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linus.luessing@c0d3.blue, Bartosz Golaszewski <bgolaszewski@baylibre.com>, balbes-150@yandex.ru, Kevin Hilman <khilman@baylibre.com>, linux-mmc <linux-mmc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181229114755.8711-1-masneyb@onstation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Shawn Guo <shawnguo@kernel.org>, Doug Anderson <dianders@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-arm-msm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Dec 29, 2018 at 1:57 PM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
+On Sat, Dec 29, 2018 at 12:48 PM Brian Masney <masneyb@onstation.org> wrote:
 
-> However, while reviewing the .dts files for the 32-bit Amlogic Meson
-> boards I found that the cd-gpios are specified incorrectly in the .dts.
-> Documentation/devicetree/bindings/mmc/mmc.txt states: "[...] using the
-> "cd-inverted" property means, that the CD line is active high, i.e. it
-> is high, when a card is inserted".
-> This is not the case on all currently supported 32-bit Meson boards, so
-> this switches the cd-gpios
-> - from GPIO_ACTIVE_HIGH with the "cd-inverted" property being set
-> - to GPIO_ACTIVE_LOW with the "cd-inverted" property being absent
->
-> This fix also works even if the following two commits are reverted:
-> - 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
-> - 81c85ec15a1946 ("gpio: OF: Parse MMC-specific CD and WP properties")
+> This patch series adds hierarchical IRQ chip support to spmi-gpio so
+> that device tree consumers can request an IRQ directly from the GPIO
+> block rather than having to request an IRQ from the underlying PMIC.
+> The first patch in this series converts pmic-arb to use the version 2
+> IRQ interface and patches 2 and 3 add support for the hierarchical
+> IRQ chip to spmi-gpio.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Very nice stuff!
 
-Thanks for looking into this, I think fixing the device trees is
-orthogonal to fixing the issue I created, let's fix both!
+> The patches need to be applied in the order that I have them in order
+> to allow for a proper bisection, however part of the series can be
+> applied without any breakage. Maybe the spmi-arb change can go in
+> for v4.21 and the spmi-gpio changes can go in for v4.22?
+
+I'm fairly sure the SPMI maintainer (Stephen Boyd) can just ACK the
+patch once he's happy with it and I can then apply it all to
+the pin control tree.
+
+> This work was tested on a LG Nexus 5 (hammerhead) phone. My status page
+> at https://masneyb.github.io/nexus-5-upstream/ describes what is working
+> so far with an upstream kernel.
+
+I'm a big fan of your work. I have a few of these devices as well,
+so the day I manage to create a serial cable for it, I'll gladly test
+this stuff and see what I can add.
 
 Yours,
 Linus Walleij
