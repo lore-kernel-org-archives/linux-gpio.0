@@ -1,12 +1,14 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [RFT][PATCH] gpio: sama5d2-piobu: Set proper output level for
- direction_output
-Date: Mon, 31 Dec 2018 17:52:56 +0800
-Message-ID: <20181231095256.14814-1-axel.lin@ingics.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 0/3] ARM: dts: meson: fix SD card cd-gpio (pre v4.21-rc)
+Date: Mon, 31 Dec 2018 12:03:05 +0100
+Message-ID: <CAFBinCBG-==df7swBsWvg9banuxH5JFyHRAwv2poZUMa3h3MVw@mail.gmail.com>
+References: <20181229125711.5205-1-martin.blumenstingl@googlemail.com>
+ <CACRpkdZ4bex+wm4vGWhDLSAsXnaVeHWEp6Rf4g8NQZmXnFfneQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdZ4bex+wm4vGWhDLSAsXnaVeHWEp6Rf4g8NQZmXnFfneQ@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,72 +19,38 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Axel Lin <axel.lin@ingics.com>, Andrei Stefanescu <andrei.stefanescu@microchip.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: linus.luessing@c0d3.blue, Bartosz Golaszewski <bgolaszewski@baylibre.com>, balbes-150@yandex.ru, Kevin Hilman <khilman@baylibre.com>, linux-mmc <linux-mmc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Set proper output level base on the argument of direction_output.
-Also remove sama5d2_piobu_set_direction() as there is only one caller
-now.
+Hi Linus,
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
-Hi Andrei,
-I don't have this h/w, so please test if this patch works.
+On Sun, Dec 30, 2018 at 8:57 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Sat, Dec 29, 2018 at 1:57 PM Martin Blumenstingl
+> <martin.blumenstingl@googlemail.com> wrote:
+>
+> > However, while reviewing the .dts files for the 32-bit Amlogic Meson
+> > boards I found that the cd-gpios are specified incorrectly in the .dts.
+> > Documentation/devicetree/bindings/mmc/mmc.txt states: "[...] using the
+> > "cd-inverted" property means, that the CD line is active high, i.e. it
+> > is high, when a card is inserted".
+> > This is not the case on all currently supported 32-bit Meson boards, so
+> > this switches the cd-gpios
+> > - from GPIO_ACTIVE_HIGH with the "cd-inverted" property being set
+> > - to GPIO_ACTIVE_LOW with the "cd-inverted" property being absent
+> >
+> > This fix also works even if the following two commits are reverted:
+> > - 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
+> > - 81c85ec15a1946 ("gpio: OF: Parse MMC-specific CD and WP properties")
+>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+thank you for reviewing my series!
 
-BTW, I think this change is better than just adding 
-sama5d2_piobu_set(chip, pin, value); call in sama5d2_piobu_direction_output
-becasue only write register once for setting direction_output.
+> Thanks for looking into this, I think fixing the device trees is
+> orthogonal to fixing the issue I created, let's fix both!
+I fully agree. if I still have time I'll look into a patch for the MMC
+core later today, otherwise I'll try to do it tomorrow
 
-Thanks,
-Axel
 
- drivers/gpio/gpio-sama5d2-piobu.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpio/gpio-sama5d2-piobu.c b/drivers/gpio/gpio-sama5d2-piobu.c
-index 03a000659fa1..7d718557092e 100644
---- a/drivers/gpio/gpio-sama5d2-piobu.c
-+++ b/drivers/gpio/gpio-sama5d2-piobu.c
-@@ -108,16 +108,6 @@ static int sama5d2_piobu_read_value(struct gpio_chip *chip, unsigned int pin,
- 	return val & mask;
- }
- 
--/**
-- * sama5d2_piobu_set_direction() - mark pin as input or output
-- */
--static int sama5d2_piobu_set_direction(struct gpio_chip *chip,
--				       unsigned int direction,
--				       unsigned int pin)
--{
--	return sama5d2_piobu_write_value(chip, pin, PIOBU_DIRECTION, direction);
--}
--
- /**
-  * sama5d2_piobu_get_direction() - gpiochip get_direction
-  */
-@@ -138,7 +128,7 @@ static int sama5d2_piobu_get_direction(struct gpio_chip *chip,
- static int sama5d2_piobu_direction_input(struct gpio_chip *chip,
- 					 unsigned int pin)
- {
--	return sama5d2_piobu_set_direction(chip, PIOBU_IN, pin);
-+	return sama5d2_piobu_write_value(chip, pin, PIOBU_DIRECTION, PIOBU_IN);
- }
- 
- /**
-@@ -147,7 +137,13 @@ static int sama5d2_piobu_direction_input(struct gpio_chip *chip,
- static int sama5d2_piobu_direction_output(struct gpio_chip *chip,
- 					  unsigned int pin, int value)
- {
--	return sama5d2_piobu_set_direction(chip, PIOBU_OUT, pin);
-+	unsigned int val = PIOBU_OUT;
-+
-+	if (value)
-+		val |= PIOBU_HIGH;
-+
-+	return sama5d2_piobu_write_value(chip, pin, PIOBU_DIRECTION | PIOBU_SOD,
-+					 val);
- }
- 
- /**
--- 
-2.17.1
+Regards
+Martin
