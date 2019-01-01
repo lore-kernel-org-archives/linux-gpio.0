@@ -1,72 +1,42 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq
- support
-Date: Mon, 31 Dec 2018 19:11:27 +0000
-Message-ID: <20181231191127.GL1846@sirena.org.uk>
-References: <20181218115931.GA21253@localhost.localdomain>
- <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
- <20181227073531.GA2461@localhost.localdomain>
- <20181227075648.GB2461@localhost.localdomain>
- <20181228080533.GC2461@localhost.localdomain>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/1] mmc: fix boards with CD GPIO and "cd-inverted"
+Date: Tue,  1 Jan 2019 20:44:13 +0100
+Message-ID: <20190101194414.24766-1-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eWbcAUUbgrfSEG1c"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181228080533.GC2461@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, Greg KH <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: linux@roeck-us.net, bgolaszewski@baylibre.com, ulf.hansson@linaro.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 List-Id: linux-gpio@vger.kernel.org
 
+As I explained in my original mail [0] I observed that some of my boards
+were not detecting their SD card anymore:
+- Meson8b Odroid-C1: the one one Kernel CI and another one on my desk
+- Meson8b EC-100: on my desk
+- Meson GXBB Odroid-C2: on Kernel CI
 
---eWbcAUUbgrfSEG1c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+git bisect pointed to the following commit:
+89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
 
-On Fri, Dec 28, 2018 at 10:05:33AM +0200, Matti Vaittinen wrote:
+The one-line change from this series is supposed to fix this issue for
+v4.21 (mainline git master).
+As explained in the patch description the MMC core code which manages
+the GPIO inversion can be cleaned up once no driver depends on it
+anymore (it seems that only one driver is left, but I don't have
+hardware for it so I can't test it). More details can also be found
+in my discussion with Linus on this topic: [1]
 
-> Last night - just when I was about to get some sleep - it stroke me. I
-> think the correct thing to do would be leaving the irq_set_type to NULL
-> for those IRQ chips which do not support type setting. If we do that,
-> then the irq core will take care of situations where user requests type
-> setting but the chip does not support it. Which means the regmap-irq
-> would be no different from any other irq chip where type setting is not
-> supported.
 
-Yes, this is the best fix - let the framework handle things properly.
-We'll need a second set of operations and to select which to use based
-on having type information but that's fine.
+[0] https://marc.info/?l=linux-gpio&m=154609359306731&w=3
+[1] https://marc.info/?l=linux-mmc&m=154626524506451&w=3
 
-> So at the cost of removing "const" from regmap_irq_chip we could do:
 
-...
+Martin Blumenstingl (1):
+  mmc: core: don't override the CD GPIO level when "cd-inverted" is set
 
-> Mark, Geert, what do you think? (And maybe same for the .irq_set_wake -
-> but I did omit this as I have never looked at the wake functionality
-> before).
+ drivers/mmc/core/host.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We need a separate struct as otherwise if there's multiple devices with
-regmap irq_chip implementations then they'll collide with each other but
-otherwise I like this approach (or we could copy the irq_chip struct
-when registering and then modify which is going to scale a bit better -
-you're probably right that we need to do the same thing for the wake
-configuration.  I'll still look at applying your patch as a temporary
-fix though.
-
---eWbcAUUbgrfSEG1c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwqad4ACgkQJNaLcl1U
-h9Bc0Af8DMJruSFgiVs/MWljDlBa743YhF8i6QW5jYRmLkU6Rm6iD5FJAJ8sGXag
-R/h/8Z8o9HoZn62qHkinaOvZa/hg4at63kwp6riLnIsJFS1uCSacwBpCNTf1LvyW
-Zv5Cd4WVW+ldiaVEWJPcV23UWqjHWdSMEtYG2/FUycSoTMZNzHLiZc27euQ3Izi1
-bGQEAGJU/5koBsDa2eoLkbmFg58Kc5HBcmw0wPgLnRX5/8LcXMrrh7dF8bypLJDG
-K7+WrkyFLgDBGZ8QHdzVUUHUj7+W5o2xkB5/yTedou/e0dr2jtgcrfHSvMitCePa
-eGKlmA0VqMLTsEhp+wvK55Iy0lmAjg==
-=U4/g
------END PGP SIGNATURE-----
-
---eWbcAUUbgrfSEG1c--
+-- 
+2.20.1
