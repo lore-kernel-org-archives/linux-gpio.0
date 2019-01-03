@@ -1,57 +1,60 @@
-From: <chuanjia.liu@mediatek.com>
-Subject: [PATCH v5] pinctrl: mediatek: add EINT support to virtual GPIOs
-Date: Thu, 3 Jan 2019 11:37:15 +0800
-Message-ID: <1546486635-16829-1-git-send-email-chuanjia.liu@mediatek.com>
+From: "Fried, Ramon" <ramon.fried@linux.intel.com>
+Subject: RFC: gpio: mmio: add support for 3 direction regs
+Date: Thu, 3 Jan 2019 09:36:04 +0200
+Message-ID: <32edfd70-95dc-26a1-2ea6-143344cb2384@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: sean.wang@kernel.org, linus.walleij@linaro.org, matthias.bgg@gmail.com, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: youlin.pei@mediatek.com, zhiyong.tao@mediatek.com, eddie.huang@mediatek.com, hailong.fan@mediatek.com, "chuanjia.liu" <Chuanjia.Liu@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, vladimir.kondratiev@linux.intel.com
 List-Id: linux-gpio@vger.kernel.org
 
-From: "chuanjia.liu" <Chuanjia.Liu@mediatek.com>
+Hi.
 
-Virtual gpio only used inside SOC and not being exported to outside SOC.
-Some modules use virtual gpio as eint and doesn't need SMT.
-So this patch add EINT support to virtual GPIOs.
+I'm working on a driver for STA2X11 GPIO controller who seems to fit best to the generic mmio driver,
+the only problem I have is with the dir register case.
+The STA2X11 has 3 registers for dir, one for data, one for set and one for clear.
+The generic-mmio driver has support for this fashion for the dat & set & clear registers but not for dirout/dirin registers.
 
-Signed-off-by: chuanjia.liu <Chuanjia.Liu@mediatek.com>
----
-change note:
-v5: This patch is the same as v4,re-upload due to
-      mail permissions issues	 
----
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+I wonder if support for this is generic enough to deserve a patch, if so I'm willing to quickly add this support, if not, adding a flag such as below, will allow partly using the generic mmio driver only for set/get and the direction can be handled outside the driver.
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 4a9e0d4c2bbc..b1c368455d30 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -290,7 +290,13 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
- 		return err;
- 
- 	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
--	if (err)
-+	/* SMT is supposed to be supported by every real GPIO and doesn't
-+	 * support virtual GPIOs, so the extra condition err != -ENOTSUPP
-+	 * is just for adding EINT support to these virtual GPIOs. It should
-+	 * add an extra flag in the pin descriptor when more pins with
-+	 * distinctive characteristic come out.
-+	 */
-+	if (err && err != -ENOTSUPP)
- 		return err;
- 
- 	return 0;
--- 
-2.19.1
+Thanks,
+Ramon
+
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index a4d5eb3..4f91526 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -435,6 +435,7 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+ #define BGPIOF_BIG_ENDIAN_BYTE_ORDER   BIT(3)
+ #define BGPIOF_READ_OUTPUT_REG_SET     BIT(4) /* reg_set stores output value */
+ #define BGPIOF_NO_OUTPUT               BIT(5) /* only input */
++#define BGPIOF_NO_DIRECTION            BIT(6)
+ 
+ #endif
+
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index 935292a..66f6448 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -554,6 +554,8 @@ static int bgpio_setup_direction(struct gpio_chip *gc,
+                gc->direction_input = bgpio_dir_in;
+                gc->get_direction = bgpio_get_dir;
+                gc->bgpio_dir_inverted = true;
++       } else if (flags & BGPIOF_NO_DIRECTION) {
++               return 0;
+        } else {
+                if (flags & BGPIOF_NO_OUTPUT)
+                        gc->direction_output = bgpio_dir_out_err;
+@@ -638,7 +640,7 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+        if (gc->set == bgpio_set_set &&
+                        !(flags & BGPIOF_UNREADABLE_REG_SET))
+                gc->bgpio_data = gc->read_reg(gc->reg_set);
+-       if (gc->reg_dir && !(flags & BGPIOF_UNREADABLE_REG_DIR))
++       if (gc->reg_dir && !(flags & (BGPIOF_UNREADABLE_REG_DIR | BGPIOF_NO_DIRECTION)))
+                gc->bgpio_dir = gc->read_reg(gc->reg_dir);
+ 
+        return ret;
