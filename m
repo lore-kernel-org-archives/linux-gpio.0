@@ -1,53 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] mmc: core: don't override the CD GPIO level when
- "cd-inverted" is set
-Date: Thu, 3 Jan 2019 23:05:57 +0100
-Message-ID: <CACRpkda8cSt7J8+2P1xpOn13KkS_xmeO1MBRR9dXZcWXgzpQwQ@mail.gmail.com>
-References: <20190101194414.24766-1-martin.blumenstingl@googlemail.com> <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 3/3] ARM: dts: qcom: msm8974: add interrupt properties
+Date: Thu, 03 Jan 2019 16:29:37 -0800
+Message-ID: <154656177748.15366.4715288412613717364@swboyd.mtv.corp.google.com>
+References: <20181229114755.8711-1-masneyb@onstation.org> <20181229114755.8711-4-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20181229114755.8711-4-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Brian Masney <masneyb@onstation.org>, andy.gross@linaro.org, bjorn.andersson@linaro.org, linus.walleij@linaro.org
+Cc: marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 1, 2019 at 8:44 PM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
+Quoting Brian Masney (2018-12-29 03:47:55)
+> Add interrupt properties now that spmi-gpio is a proper hierarchical IRQ
+> chip.
+>=20
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+>  arch/arm/boot/dts/qcom-pm8941.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/qcom-pm8941.dtsi b/arch/arm/boot/dts/qcom-=
+pm8941.dtsi
+> index 9a91b758f7aa..d0b7f0eff288 100644
+> --- a/arch/arm/boot/dts/qcom-pm8941.dtsi
+> +++ b/arch/arm/boot/dts/qcom-pm8941.dtsi
+> @@ -65,6 +65,9 @@
+>                         gpio-controller;
+>                         gpio-ranges =3D <&pm8941_gpios 0 0 36>;
+>                         #gpio-cells =3D <2>;
+> +                       interrupt-parent =3D <&spmi_bus>;
+> +                       interrupt-controller;
+> +                       #interrupt-cells =3D <4>;
+>                         interrupts =3D <0 0xc0 0 IRQ_TYPE_NONE>,
+>                                      <0 0xc1 0 IRQ_TYPE_NONE>,
+>                                      <0 0xc2 0 IRQ_TYPE_NONE>,
 
-> Since commit 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device
-> tree") gpiolib-of parses the "cd-gpios" property and flips the polarity
-> if "cd-inverted" is also set. This results in the "cd-inverted" property
-> being evaluated twice, which effectively makes it a no-op:
-> - first in drivers/gpio/gpiolib-of.c (of_xlate_and_get_gpiod_flags) when
->   setting up the CD GPIO
-> - then again in drivers/mmc/core/slot-gpio.c (mmc_gpio_get_cd) when
->   reading the CD GPIO value at runtime
->
-> On boards which are using device-tree with the "cd-inverted" property
-> being set any inserted card are not detected anymore. This is due to the
-> MMC core treating the CD GPIO with the wrong polarity.
->
-> Disable "override_cd_active_level" for the card detection GPIO which is
-> parsed using mmc_of_parse. This fixes SD card detection on the boards
-> which are currently using the "cd-inverted" device-tree property (tested
-> on Meson8b Odroid-C1 and Meson8b EC-100).
->
-> This does not remove the CD GPIO inversion logic from the MMC core
-> because there's at least one driver (sdhci-pci-core for Intel BayTrail
-> based boards) which still passes "override_cd_active_level = true" to
-> mmc_gpiod_request_cd(). Due to lack of hardware for testing this is left
-> untouched.
-> In the future the GPIO inversion logic for both, card and read-only
-> detection can be removed once no driver is using it anymore.
->
-> Fixes: 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-
-OK two steps forward, one step back, that's a good fix for now, I
-can fix it properly for v4.22.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+Shouldn't we remove the interrupts property here then? Although we use
+it to count the number of gpios that are supported so I guess we'll have
+to specify it all the time now just to know how many pins there are.
+Alternatively we change the driver to know about all the different
+compatibles and use the right number of gpios for each compatible string
+that we see.
