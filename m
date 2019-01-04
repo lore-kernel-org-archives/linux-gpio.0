@@ -1,89 +1,53 @@
-From: shuah <shuah@kernel.org>
-Subject: Re: selftests/bpf doesn't compile
-Date: Fri, 4 Jan 2019 12:07:23 -0700
-Message-ID: <e7aac6da-26f0-f700-5ed0-12b8c5c918b3@kernel.org>
-References: <20170908111923.27434-1-thomas@m3y3r.de>
- <20170908230155.esge2mctk5d5g7gb@ast-mbp> <59B32231.9090406@iogearbox.net>
- <ed20875b-7a01-fbc8-e8d1-3929ba35c8ac@kernel.org>
- <295553a4-aadc-e5d1-229e-22d1966bc9f5@kernel.org>
- <CAMuHMdXRN=mSKTjZNBSxQi-pkgSrKqeANxD-GB+hqC8pDjx7nQ@mail.gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] pinctrl: sirf: atlas7: use struct_size() in devm_kzalloc()
+Date: Fri, 4 Jan 2019 15:35:08 -0600
+Message-ID: <20190104213508.GA20333@embeddedor>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXRN=mSKTjZNBSxQi-pkgSrKqeANxD-GB+hqC8pDjx7nQ@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Thomas Meyer <thomas@m3y3r.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>, Networking <netdev@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-kbuild <linux-kbuild@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, shuah <shuah@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Geert,
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-On 1/4/19 10:16 AM, Geert Uytterhoeven wrote:
-> Hi Shuah,
-> 
-> CC kbuild, gpio
-> 
-> On Thu, Sep 14, 2017 at 5:34 PM Shuah Khan <shuah@kernel.org> wrote:
->> bpf test depends on clang and fails to compile when
->>
->> ------------------------------------------------------
->> make -C tools/testing/selftests/bpf run_tests
->>
->>
->> make: clang: Command not found
->> Makefile:39: recipe for target '.linux-kselftest/tools/testing/selftests/bpf/test_pkt_access.o' failed
->> make: *** [./linux-kselftest/tools/testing/selftests/bpf/test_pkt_access.o] Error 127
->> make: Leaving directory '.linux-kselftest/tools/testing/selftests/bpf'
-> 
-> The above failure is indeed due to missing clang.
-> 
->> With "make TARGETS=bpf kselftest" it fails earlier:
->>
->> make[3]: Entering directory './linux-kselftest/tools/lib/bpf'
->> Makefile:40: tools/scripts/Makefile.arch: No such file or directory
->> Makefile:84: tools/build/Makefile.feature: No such file or directory
->> Makefile:143: tools/build/Makefile.include: No such file or directory
-> 
-> This is due to srctree being "." instead of the actual source tree,
-> when invoked as "make kselftest".
-> When using "make -C tools/testing/selftests", srctree is correct.
-> 
-> tools/testing/selftests/bpf/Makefile has:
-> 
->      $(BPFOBJ): force
->              $(MAKE) -C $(BPFDIR) OUTPUT=$(OUTPUT)/
-> 
-> to enter the tools/lib/bpf directory to force a build of libbpf.a
-> 
-> Note that tools/gpio has the same issue.
-> 
-> There seem to be _four_ different ways to build kselftests
-> (Documentation/dev-tools/kselftest.rst):
-> 
->      make kselftest
->      make O=/path/to/output kselftest
->      make -C tools/testing/selftests
->      make O=/path/to/output -C tools/testing/selftests
-> 
-> I'm not so fond of the latter two, as they basically run make from
-> somewhere inside the tree, which complicates things. I believe we don't
-> support this anywhere else.
-> 
-> Each of the four seem to have (different) issues. Especially when you
-> throw cross-compiling into the mix. And care about where installed
-> headers end up (yes, kselftest calls headers_install internally).
-> 
-> I'm working on fixes for some of them, but I don't know how to fix the
-> srctree issue.
-> 
+struct foo {
+    int stuff;
+    void *entry[];
+};
 
-I will take a look at the srctree problem and fix it. I have had to fix
-a few individual test Makefiles after ksefltest headers_install went in.
+instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
 
-It will be in a week or two. I am taking some time off this week and
-next week other than for occasional email checking.
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
 
-thanks,
--- Shuah
+instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index 4ba171827428..8a0eee044264 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -6007,8 +6007,8 @@ static int atlas7_gpio_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* retrieve gpio descriptor data */
+-	a7gc = devm_kzalloc(&pdev->dev, sizeof(*a7gc) +
+-			sizeof(struct atlas7_gpio_bank) * nbank, GFP_KERNEL);
++	a7gc = devm_kzalloc(&pdev->dev, struct_size(a7gc, banks, nbank),
++			    GFP_KERNEL);
+ 	if (!a7gc)
+ 		return -ENOMEM;
+ 
+-- 
+2.20.1
