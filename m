@@ -1,49 +1,97 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH] gpiolib: fix line event timestamps for nested irqs
-Date: Fri,  4 Jan 2019 11:32:26 +0100
-Message-ID: <20190104103226.2878-1-brgl@bgdev.pl>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: selftests/bpf doesn't compile
+Date: Fri, 4 Jan 2019 18:16:31 +0100
+Message-ID: <CAMuHMdXRN=mSKTjZNBSxQi-pkgSrKqeANxD-GB+hqC8pDjx7nQ@mail.gmail.com>
+References: <20170908111923.27434-1-thomas@m3y3r.de> <20170908230155.esge2mctk5d5g7gb@ast-mbp>
+ <59B32231.9090406@iogearbox.net> <ed20875b-7a01-fbc8-e8d1-3929ba35c8ac@kernel.org>
+ <295553a4-aadc-e5d1-229e-22d1966bc9f5@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <295553a4-aadc-e5d1-229e-22d1966bc9f5@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Shuah Khan <shuah@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, Thomas Meyer <thomas@m3y3r.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>, Networking <netdev@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-kbuild <linux-kbuild@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Shuah,
 
-Nested interrupts run inside the calling thread's context and the top
-half handler is never called which means that we never read the
-timestamp.
+CC kbuild, gpio
 
-This issue came up when trying to read line events from a gpiochip
-using regmap_irq_chip for interrupts.
+On Thu, Sep 14, 2017 at 5:34 PM Shuah Khan <shuah@kernel.org> wrote:
+> bpf test depends on clang and fails to compile when
+>
+> ------------------------------------------------------
+> make -C tools/testing/selftests/bpf run_tests
+>
+>
+> make: clang: Command not found
+> Makefile:39: recipe for target '.linux-kselftest/tools/testing/selftests/bpf/test_pkt_access.o' failed
+> make: *** [./linux-kselftest/tools/testing/selftests/bpf/test_pkt_access.o] Error 127
+> make: Leaving directory '.linux-kselftest/tools/testing/selftests/bpf'
 
-Fix it by reading the timestamp from the irq thread function if it's
-still 0 by the time the second handler is called.
+The above failure is indeed due to missing clang.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpiolib.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> With "make TARGETS=bpf kselftest" it fails earlier:
+>
+> make[3]: Entering directory './linux-kselftest/tools/lib/bpf'
+> Makefile:40: tools/scripts/Makefile.arch: No such file or directory
+> Makefile:84: tools/build/Makefile.feature: No such file or directory
+> Makefile:143: tools/build/Makefile.include: No such file or directory
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 1651d7f0a303..330c52e19b7e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -828,6 +828,13 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
- 	/* Do not leak kernel stack to userspace */
- 	memset(&ge, 0, sizeof(ge));
- 
-+	/*
-+	 * We may be running from a nested threaded interrupt in which case
-+	 * we didn't get the timestamp from lineevent_irq_handler().
-+	 */
-+	if (!le->timestamp)
-+		le->timestamp = ktime_get_real_ns();
-+
- 	ge.timestamp = le->timestamp;
- 
- 	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
+This is due to srctree being "." instead of the actual source tree,
+when invoked as "make kselftest".
+When using "make -C tools/testing/selftests", srctree is correct.
+
+tools/testing/selftests/bpf/Makefile has:
+
+    $(BPFOBJ): force
+            $(MAKE) -C $(BPFDIR) OUTPUT=$(OUTPUT)/
+
+to enter the tools/lib/bpf directory to force a build of libbpf.a
+
+Note that tools/gpio has the same issue.
+
+There seem to be _four_ different ways to build kselftests
+(Documentation/dev-tools/kselftest.rst):
+
+    make kselftest
+    make O=/path/to/output kselftest
+    make -C tools/testing/selftests
+    make O=/path/to/output -C tools/testing/selftests
+
+I'm not so fond of the latter two, as they basically run make from
+somewhere inside the tree, which complicates things. I believe we don't
+support this anywhere else.
+
+Each of the four seem to have (different) issues. Especially when you
+throw cross-compiling into the mix. And care about where installed
+headers end up (yes, kselftest calls headers_install internally).
+
+I'm working on fixes for some of them, but I don't know how to fix the
+srctree issue.
+
+Anyone with a suggestion?
+
+Thanks!
+
+> make[3]: *** No rule to make target 'tools/build/Makefile.include'.  Stop.
+> make[3]: Leaving directory '.linux-kselftest/tools/lib/bpf'
+> Makefile:34: recipe for target './linux-kselftest/tools/testing/selftests/bpf/libbpf.a' failed
+> make[2]: *** [./linux-kselftest/tools/testing/selftests/bpf/libbpf.a] Error 2
+> make[2]: Leaving directory './linux-kselftest/tools/testing/selftests/bpf'
+> Makefile:69: recipe for target 'all' failed
+> make[1]: *** [all] Error 2
+> Makefile:1190: recipe for target 'kselftest' failed
+> make: *** [kselftest] Error 2
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.19.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
