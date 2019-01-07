@@ -1,42 +1,137 @@
 From: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH 2/3] qcom: spmi-gpio: add support for hierarchical IRQ
- chip
-Date: Sat, 5 Jan 2019 07:51:15 -0500
-Message-ID: <20190105125115.GA2647@basecamp>
-References: <20181229114755.8711-1-masneyb@onstation.org>
- <20181229114755.8711-3-masneyb@onstation.org>
- <154656291378.15366.8661245319757182529@swboyd.mtv.corp.google.com>
- <20190105120844.GA2298@basecamp>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Subject: [PATCH v2 3/5] spmi: pmic-arb: convert to v2 irq interfaces to support hierarchical IRQ chips
+Date: Sun,  6 Jan 2019 21:11:43 -0500
+Message-ID: <20190107021145.6370-4-masneyb@onstation.org>
+References: <20190107021145.6370-1-masneyb@onstation.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190105120844.GA2298@basecamp>
+In-Reply-To: <20190107021145.6370-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: andy.gross@linaro.org, bjorn.andersson@linaro.org, linus.walleij@linaro.org, marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: linus.walleij@linaro.org, sboyd@kernel.org, bjorn.andersson@linaro.org, andy.gross@linaro.org, lee.jones@linaro.org
+Cc: marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Jan 05, 2019 at 07:08:44AM -0500, Brian Masney wrote:
-> > I also seem to recall that GPIO numbering starts from 1 instead of
-> > 0, so please keep that in mind.
-> 
-> I'm using the pinctrl numbering, which is zero based.
-> 
-> / # head /sys/kernel/debug/pinctrl/fc4cf000.spmi\:pm8941@0\:gpios@c000/pins 
-> registered pins: 36
-> pin 0 (gpio1) 
-> pin 1 (gpio2) 
-> pin 2 (gpio3) 
-> pin 3 (gpio4) 
-> pin 4 (gpio5) 
-> pin 5 (gpio6) 
-> pin 6 (gpio7) 
-> pin 7 (gpio8) 
-> pin 8 (gpio9) 
+Convert the spmi-pmic-arb IRQ code to use the version 2 IRQ interface
+in order to support hierarchical IRQ chips. This is necessary so that
+spmi-gpio can be setup as a hierarchical IRQ chip with pmic-arb as the
+parent. IRQ chips in device tree should be usable from the start without
+the consumer having to make an additional call to gpio[d]_to_irq() to
+get the proper IRQ on the parent. Driver was tested on a LG Nexus 5
+(hammerhead) phone.
 
-After more thought: the pin numbering from pinctrl is an implementation
-detail that device tree should not be aware of. This needs to be the
-GPIO pin number. I'll correct this in v2.
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+---
+Changes since v1:
+- Add intspec variable to qpnpint_irq_domain_translate to reduce the
+  overall diff.
+- Remove irq_domain_disassociate hack.
 
-Brian
+ drivers/spmi/spmi-pmic-arb.c | 58 +++++++++++++++++++++++-------------
+ 1 file changed, 38 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+index 360b8218f322..356bc3f66e22 100644
+--- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -666,7 +666,8 @@ static int qpnpint_get_irqchip_state(struct irq_data *d,
+ 	return 0;
+ }
+ 
+-static int qpnpint_irq_request_resources(struct irq_data *d)
++static int qpnpint_irq_domain_activate(struct irq_domain *domain,
++				       struct irq_data *d, bool reserve)
+ {
+ 	struct spmi_pmic_arb *pmic_arb = irq_data_get_irq_chip_data(d);
+ 	u16 periph = hwirq_to_per(d->hwirq);
+@@ -692,27 +693,25 @@ static struct irq_chip pmic_arb_irqchip = {
+ 	.irq_set_type	= qpnpint_irq_set_type,
+ 	.irq_set_wake	= qpnpint_irq_set_wake,
+ 	.irq_get_irqchip_state	= qpnpint_get_irqchip_state,
+-	.irq_request_resources = qpnpint_irq_request_resources,
+ 	.flags		= IRQCHIP_MASK_ON_SUSPEND,
+ };
+ 
+-static int qpnpint_irq_domain_dt_translate(struct irq_domain *d,
+-					   struct device_node *controller,
+-					   const u32 *intspec,
+-					   unsigned int intsize,
+-					   unsigned long *out_hwirq,
+-					   unsigned int *out_type)
++static int qpnpint_irq_domain_translate(struct irq_domain *d,
++					struct irq_fwspec *fwspec,
++					unsigned long *out_hwirq,
++					unsigned int *out_type)
+ {
+ 	struct spmi_pmic_arb *pmic_arb = d->host_data;
++	u32 *intspec = fwspec->param;
+ 	u16 apid, ppid;
+ 	int rc;
+ 
+ 	dev_dbg(&pmic_arb->spmic->dev, "intspec[0] 0x%1x intspec[1] 0x%02x intspec[2] 0x%02x\n",
+ 		intspec[0], intspec[1], intspec[2]);
+ 
+-	if (irq_domain_get_of_node(d) != controller)
++	if (irq_domain_get_of_node(d) != pmic_arb->spmic->dev.of_node)
+ 		return -EINVAL;
+-	if (intsize != 4)
++	if (fwspec->param_count != 4)
+ 		return -EINVAL;
+ 	if (intspec[0] > 0xF || intspec[1] > 0xFF || intspec[2] > 0x7)
+ 		return -EINVAL;
+@@ -740,17 +739,34 @@ static int qpnpint_irq_domain_dt_translate(struct irq_domain *d,
+ 	return 0;
+ }
+ 
+-static int qpnpint_irq_domain_map(struct irq_domain *d,
+-				  unsigned int virq,
+-				  irq_hw_number_t hwirq)
+-{
+-	struct spmi_pmic_arb *pmic_arb = d->host_data;
+ 
++static void qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
++				   struct irq_domain *domain, unsigned int virq,
++				   irq_hw_number_t hwirq)
++{
+ 	dev_dbg(&pmic_arb->spmic->dev, "virq = %u, hwirq = %lu\n", virq, hwirq);
+ 
+-	irq_set_chip_and_handler(virq, &pmic_arb_irqchip, handle_level_irq);
+-	irq_set_chip_data(virq, d->host_data);
+-	irq_set_noprobe(virq);
++	irq_domain_set_info(domain, virq, hwirq, &pmic_arb_irqchip, pmic_arb,
++			    handle_level_irq, NULL, NULL);
++}
++
++static int qpnpint_irq_domain_alloc(struct irq_domain *domain,
++				    unsigned int virq, unsigned int nr_irqs,
++				    void *data)
++{
++	struct spmi_pmic_arb *pmic_arb = domain->host_data;
++	struct irq_fwspec *fwspec = data;
++	irq_hw_number_t hwirq;
++	unsigned int type;
++	int ret, i;
++
++	ret = qpnpint_irq_domain_translate(domain, fwspec, &hwirq, &type);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < nr_irqs; i++)
++		qpnpint_irq_domain_map(pmic_arb, domain, virq + i, hwirq + i);
++
+ 	return 0;
+ }
+ 
+@@ -1126,8 +1142,10 @@ static const struct pmic_arb_ver_ops pmic_arb_v5 = {
+ };
+ 
+ static const struct irq_domain_ops pmic_arb_irq_domain_ops = {
+-	.map	= qpnpint_irq_domain_map,
+-	.xlate	= qpnpint_irq_domain_dt_translate,
++	.activate = qpnpint_irq_domain_activate,
++	.alloc = qpnpint_irq_domain_alloc,
++	.free = irq_domain_free_irqs_common,
++	.translate = qpnpint_irq_domain_translate,
+ };
+ 
+ static int spmi_pmic_arb_probe(struct platform_device *pdev)
+-- 
+2.17.2
