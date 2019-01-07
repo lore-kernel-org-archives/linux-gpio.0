@@ -1,82 +1,30 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 1/3] ARM: dts: meson8b: odroidc1: mark the SD card
- detection GPIO active-low
-Date: Mon, 7 Jan 2019 14:21:01 +0530
-Message-ID: <CANAwSgQjoXqbV2hDs4W3kR=7ULK0gkR24V6SiEJw2+mYsaNcVQ@mail.gmail.com>
-References: <20181229125711.5205-1-martin.blumenstingl@googlemail.com>
- <20181229125711.5205-2-martin.blumenstingl@googlemail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/5] spmi: pmic-arb: hardcode IRQ counts
+Date: Mon, 7 Jan 2019 11:47:16 +0100
+Message-ID: <CACRpkdas_OLjbAAX=chzwwoVjW35L3iS=BhpNXS9QC6ccFMtsA@mail.gmail.com>
+References: <20190107021145.6370-1-masneyb@onstation.org> <20190107021145.6370-2-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181229125711.5205-2-martin.blumenstingl@googlemail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: =?UTF-8?Q?Linus_L=C3=BCssing?= <linus.luessing@c0d3.blue>, linux-gpio@vger.kernel.org, balbes-150@yandex.ru, Kevin Hilman <khilman@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, linux-mmc@vger.kernel.org, bgolaszewski@baylibre.com, Guenter Roeck <linux@roeck-us.net>, linux-amlogic@lists.infradead.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190107021145.6370-2-masneyb@onstation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, Lee Jones <lee.jones@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Shawn Guo <shawnguo@kernel.org>, Doug Anderson <dianders@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-arm-msm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Martin,
+On Mon, Jan 7, 2019 at 3:11 AM Brian Masney <masneyb@onstation.org> wrote:
 
-On Sat, 29 Dec 2018 at 18:28, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> After commit 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device
-> tree") SD cards are not detected anymore.
->
-> The CD GPIO is "active low" on Odroid-C1. The MMC dt-bindings specify:
-> "[...] using the "cd-inverted" property means, that the CD line is active
-> high, i.e. it is high, when a card is inserted".
->
-> Fix the description of the SD card by marking it as GPIO_ACTIVE_LOW and
-> drop the "cd-inverted" property. This makes the definition consistent
-> with the existing dt-bindings and fixes the check whether an SD card is
-> inserted.
->
-> Fixes: e03efbce6bebf5 ("ARM: dts: meson8b-odroidc1: add microSD support")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  arch/arm/boot/dts/meson8b-odroidc1.dts | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
-> index 58669abda259..070d69889f3e 100644
-> --- a/arch/arm/boot/dts/meson8b-odroidc1.dts
-> +++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
-> @@ -273,8 +273,7 @@
->                 cap-sd-highspeed;
->                 disable-wp;
->
-> -               cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -               cd-inverted;
-> +               cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->
->                 vmmc-supply = <&tflash_vdd>;
->                 vqmmc-supply = <&tf_io>;
-> --
-> 2.20.1
->
+> Note: The qcom,pms405-gpio looks suspicious to me. The existing code
+> will start at gpio1, which is supposed to be a hole according to the
+> comment. I can fix this in a later patch if there is a desire. I didn't
+> do it now to try to keep this series as small as possible. Its no
+> worse than what was there before.
 
-Please add my on my Odroid c1+
+If the range has holes the valid_mask should be set up to mask
+them off for this variant.
 
-Tested-by: Anand Moon <linux.amoon@gmail.com>
+That would be a separate patch though and hardly your problem
+as you say.
 
-My Odroid C2 is also fails to bootup with out these changes.
-Can you send patch to fix them as well.
-
-Best Regards
-
--Anand
-
->
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+Yours,
+Linus Walleij
