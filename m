@@ -1,96 +1,93 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 02/97] gpio: pl061: Move irq_chip definition inside struct pl061
-Date: Tue,  8 Jan 2019 14:28:11 -0500
-Message-ID: <20190108192949.122407-2-sashal@kernel.org>
-References: <20190108192949.122407-1-sashal@kernel.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 1/3] ARM: dts: meson8b: odroidc1: mark the SD card
+ detection GPIO active-low
+Date: Tue, 8 Jan 2019 23:02:37 +0100
+Message-ID: <CAFBinCCRTCV2TUhaDGtjQbXp2bSh4cnP6pW25B0JVpCK64qYVg@mail.gmail.com>
+References: <20181229125711.5205-1-martin.blumenstingl@googlemail.com>
+ <20181229125711.5205-2-martin.blumenstingl@googlemail.com>
+ <CANAwSgQjoXqbV2hDs4W3kR=7ULK0gkR24V6SiEJw2+mYsaNcVQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CANAwSgQjoXqbV2hDs4W3kR=7ULK0gkR24V6SiEJw2+mYsaNcVQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: =?UTF-8?Q?Linus_L=C3=BCssing?= <linus.luessing@c0d3.blue>, linux-gpio@vger.kernel.org, balbes-150@yandex.ru, Kevin Hilman <khilman@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, linux-mmc@vger.kernel.org, bgolaszewski@baylibre.com, Guenter Roeck <linux@roeck-us.net>, linux-amlogic@lists.infradead.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Hi Anand,
 
-[ Upstream commit ed8dce4c6f726b7f3c6bf40859b92a9e32f189c1 ]
+On Mon, Jan 7, 2019 at 9:51 AM Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> Hi Martin,
+>
+> On Sat, 29 Dec 2018 at 18:28, Martin Blumenstingl
+> <martin.blumenstingl@googlemail.com> wrote:
+> >
+> > After commit 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device
+> > tree") SD cards are not detected anymore.
+> >
+> > The CD GPIO is "active low" on Odroid-C1. The MMC dt-bindings specify:
+> > "[...] using the "cd-inverted" property means, that the CD line is active
+> > high, i.e. it is high, when a card is inserted".
+> >
+> > Fix the description of the SD card by marking it as GPIO_ACTIVE_LOW and
+> > drop the "cd-inverted" property. This makes the definition consistent
+> > with the existing dt-bindings and fixes the check whether an SD card is
+> > inserted.
+> >
+> > Fixes: e03efbce6bebf5 ("ARM: dts: meson8b-odroidc1: add microSD support")
+> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> > ---
+> >  arch/arm/boot/dts/meson8b-odroidc1.dts | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
+> > index 58669abda259..070d69889f3e 100644
+> > --- a/arch/arm/boot/dts/meson8b-odroidc1.dts
+> > +++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
+> > @@ -273,8 +273,7 @@
+> >                 cap-sd-highspeed;
+> >                 disable-wp;
+> >
+> > -               cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+> > -               cd-inverted;
+> > +               cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+> >
+> >                 vmmc-supply = <&tflash_vdd>;
+> >                 vqmmc-supply = <&tf_io>;
+> > --
+> > 2.20.1
+> >
+>
+> Please add my on my Odroid c1+
+>
+> Tested-by: Anand Moon <linux.amoon@gmail.com>
+thank you for testing this!
 
-Keeping the irq_chip definition static will make it shared with multiple
-giochips in the system. This practice is considered to be bad and now we
-will get the below warning from gpiolib core:
+> My Odroid C2 is also fails to bootup with out these changes.
+> Can you send patch to fix them as well.
+I sent a more generic patch (after a discussion with Linus) which will
+fix all boards with the "cd-inverted" property even if we don't fix
+the .dts files: [0]
+(that doesn't mean that this patch is obsolete, but it means that we
+restore compatibility with .dts which use the "cd-inverted" property)
 
-"detected irqchip that is shared with multiple gpiochips: please fix the
-driver."
+it would be great if you could test that on your Odroid-C2 and give
+your Tested-by on that as well!
 
-Hence, move the irq_chip definition from static to `struct pl061` for
-using a unique irq_chip for each gpiochip.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpio-pl061.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+Regards
+Martin
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 2afd9de84a0d..dc42571e6fdc 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -54,6 +54,7 @@ struct pl061 {
- 
- 	void __iomem		*base;
- 	struct gpio_chip	gc;
-+	struct irq_chip		irq_chip;
- 	int			parent_irq;
- 
- #ifdef CONFIG_PM
-@@ -281,15 +282,6 @@ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
- 	return irq_set_irq_wake(pl061->parent_irq, state);
- }
- 
--static struct irq_chip pl061_irqchip = {
--	.name		= "pl061",
--	.irq_ack	= pl061_irq_ack,
--	.irq_mask	= pl061_irq_mask,
--	.irq_unmask	= pl061_irq_unmask,
--	.irq_set_type	= pl061_irq_type,
--	.irq_set_wake	= pl061_irq_set_wake,
--};
--
- static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- {
- 	struct device *dev = &adev->dev;
-@@ -328,6 +320,13 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 	/*
- 	 * irq_chip support
- 	 */
-+	pl061->irq_chip.name = dev_name(dev);
-+	pl061->irq_chip.irq_ack	= pl061_irq_ack;
-+	pl061->irq_chip.irq_mask = pl061_irq_mask;
-+	pl061->irq_chip.irq_unmask = pl061_irq_unmask;
-+	pl061->irq_chip.irq_set_type = pl061_irq_type;
-+	pl061->irq_chip.irq_set_wake = pl061_irq_set_wake;
-+
- 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
- 	irq = adev->irq[0];
- 	if (irq < 0) {
-@@ -336,14 +335,14 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 	}
- 	pl061->parent_irq = irq;
- 
--	ret = gpiochip_irqchip_add(&pl061->gc, &pl061_irqchip,
-+	ret = gpiochip_irqchip_add(&pl061->gc, &pl061->irq_chip,
- 				   0, handle_bad_irq,
- 				   IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_info(&adev->dev, "could not add irqchip\n");
- 		return ret;
- 	}
--	gpiochip_set_chained_irqchip(&pl061->gc, &pl061_irqchip,
-+	gpiochip_set_chained_irqchip(&pl061->gc, &pl061->irq_chip,
- 				     irq, pl061_irq_handler);
- 
- 	amba_set_drvdata(adev, pl061);
--- 
-2.19.1
+
+[0] https://patchwork.kernel.org/patch/10745961/
