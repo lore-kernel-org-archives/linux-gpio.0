@@ -1,11 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 01/53] gpio: pl061: Move irq_chip definition inside struct pl061
-Date: Tue,  8 Jan 2019 14:31:29 -0500
-Message-ID: <20190108193222.123316-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 02/97] gpio: pl061: Move irq_chip definition inside struct pl061
+Date: Tue,  8 Jan 2019 14:28:11 -0500
+Message-ID: <20190108192949.122407-2-sashal@kernel.org>
+References: <20190108192949.122407-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -32,7 +34,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 10 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 6aaaab79c205..f6e1e0e306a3 100644
+index 2afd9de84a0d..dc42571e6fdc 100644
 --- a/drivers/gpio/gpio-pl061.c
 +++ b/drivers/gpio/gpio-pl061.c
 @@ -54,6 +54,7 @@ struct pl061 {
