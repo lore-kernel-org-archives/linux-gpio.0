@@ -1,170 +1,96 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [RFT][PATCH v1] gpiolib: acpi: Introduce ACPI_GPIO_QUIRK_ONLY_GPIOIO
-Date: Tue,  8 Jan 2019 20:02:05 +0200
-Message-ID: <20190108180205.55109-1-andriy.shevchenko@linux.intel.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 002/117] gpio: pl061: Move irq_chip definition inside struct pl061
+Date: Tue,  8 Jan 2019 14:24:30 -0500
+Message-ID: <20190108192628.121270-2-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-New quirk enforces search for GPIO based on its type.
-Note, supplied index in the mapping table must be 0.
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+[ Upstream commit ed8dce4c6f726b7f3c6bf40859b92a9e32f189c1 ]
+
+Keeping the irq_chip definition static will make it shared with multiple
+giochips in the system. This practice is considered to be bad and now we
+will get the below warning from gpiolib core:
+
+"detected irqchip that is shared with multiple gpiochips: please fix the
+driver."
+
+Hence, move the irq_chip definition from static to `struct pl061` for
+using a unique irq_chip for each gpiochip.
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
+ drivers/gpio/gpio-pl061.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-- it was sent few weeks ago to Hans for testing, but better to re-test
-- it's supposed to go via ASoC subsystem due to recent changes made for sound driver
-
- drivers/gpio/gpiolib-acpi.c           | 15 ++++--
- include/linux/acpi.h                  |  2 +
- sound/soc/intel/boards/bytcr_rt5651.c | 74 ++++-----------------------
- 3 files changed, 22 insertions(+), 69 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 259cf6ab969b..4d291b75cb9f 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -530,17 +530,24 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
- 	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
- 		return 1;
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 2afd9de84a0d..dc42571e6fdc 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -54,6 +54,7 @@ struct pl061 {
  
--	if (lookup->n++ == lookup->index && !lookup->desc) {
-+	if (!lookup->desc) {
- 		const struct acpi_resource_gpio *agpio = &ares->data.gpio;
--		int pin_index = lookup->pin_index;
-+		bool gpioint = agpio->connection_type == ACPI_RESOURCE_GPIO_TYPE_INT;
-+		int pin_index;
+ 	void __iomem		*base;
+ 	struct gpio_chip	gc;
++	struct irq_chip		irq_chip;
+ 	int			parent_irq;
  
-+		if (lookup->info.quirks & ACPI_GPIO_QUIRK_ONLY_GPIOIO && gpioint)
-+			lookup->index++;
-+
-+		if (lookup->n++ != lookup->index)
-+			return 1;
-+
-+		pin_index = lookup->pin_index;
- 		if (pin_index >= agpio->pin_table_length)
- 			return 1;
+ #ifdef CONFIG_PM
+@@ -281,15 +282,6 @@ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
+ 	return irq_set_irq_wake(pl061->parent_irq, state);
+ }
  
- 		lookup->desc = acpi_get_gpiod(agpio->resource_source.string_ptr,
- 					      agpio->pin_table[pin_index]);
--		lookup->info.gpioint =
--			agpio->connection_type == ACPI_RESOURCE_GPIO_TYPE_INT;
-+		lookup->info.gpioint = gpioint;
- 
- 		/*
- 		 * Polarity and triggering are only specified for GpioInt
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 1e89c688139f..7af06794e6fd 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -1020,6 +1020,8 @@ struct acpi_gpio_mapping {
- 
- /* Ignore IoRestriction field */
- #define ACPI_GPIO_QUIRK_NO_IO_RESTRICTION	BIT(0)
-+/* Choose one of GpioIo() type */
-+#define ACPI_GPIO_QUIRK_ONLY_GPIOIO		BIT(1)
- 
- 	unsigned int quirks;
- };
-diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
-index b618d984e2d5..5bfbbdc2a62a 100644
---- a/sound/soc/intel/boards/bytcr_rt5651.c
-+++ b/sound/soc/intel/boards/bytcr_rt5651.c
-@@ -844,74 +844,18 @@ static const struct x86_cpu_id cherrytrail_cpu_ids[] = {
- 	{}
- };
- 
--static const struct acpi_gpio_params first_gpio = { 0, 0, false };
--static const struct acpi_gpio_params second_gpio = { 1, 0, false };
-+static const struct acpi_gpio_params ext_amp_enable_gpios = { 0, 0, false };
- 
--static const struct acpi_gpio_mapping byt_rt5651_amp_en_first[] = {
--	{ "ext-amp-enable-gpios", &first_gpio, 1 },
--	{ },
+-static struct irq_chip pl061_irqchip = {
+-	.name		= "pl061",
+-	.irq_ack	= pl061_irq_ack,
+-	.irq_mask	= pl061_irq_mask,
+-	.irq_unmask	= pl061_irq_unmask,
+-	.irq_set_type	= pl061_irq_type,
+-	.irq_set_wake	= pl061_irq_set_wake,
 -};
 -
--static const struct acpi_gpio_mapping byt_rt5651_amp_en_second[] = {
--	{ "ext-amp-enable-gpios", &second_gpio, 1 },
-+static const struct acpi_gpio_mapping cht_rt5651_gpios[] = {
-+	/*
-+	 * Some boards have I2cSerialBusV2, GpioIo, GpioInt as ACPI resources, other
-+	 * boards may  have I2cSerialBusV2, GpioInt, GpioIo instead. We want the
-+	 * GpioIo one for the ext-amp-enable-gpio. That's why quirk is enabled.
-+	 */
-+	{ "ext-amp-enable-gpios", &ext_amp_enable_gpios, 1, ACPI_GPIO_QUIRK_ONLY_GPIOIO },
- 	{ },
- };
+ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ {
+ 	struct device *dev = &adev->dev;
+@@ -328,6 +320,13 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	/*
+ 	 * irq_chip support
+ 	 */
++	pl061->irq_chip.name = dev_name(dev);
++	pl061->irq_chip.irq_ack	= pl061_irq_ack;
++	pl061->irq_chip.irq_mask = pl061_irq_mask;
++	pl061->irq_chip.irq_unmask = pl061_irq_unmask;
++	pl061->irq_chip.irq_set_type = pl061_irq_type;
++	pl061->irq_chip.irq_set_wake = pl061_irq_set_wake;
++
+ 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
+ 	irq = adev->irq[0];
+ 	if (irq < 0) {
+@@ -336,14 +335,14 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	}
+ 	pl061->parent_irq = irq;
  
--/*
-- * Some boards have I2cSerialBusV2, GpioIo, GpioInt as ACPI resources, other
-- * boards may  have I2cSerialBusV2, GpioInt, GpioIo instead. We want the
-- * GpioIo one for the ext-amp-enable-gpio and both count for the index in
-- * acpi_gpio_params index.  So we have 2 different mappings and the code
-- * below figures out which one to use.
-- */
--struct byt_rt5651_acpi_resource_data {
--	int gpio_count;
--	int gpio_int_idx;
--};
--
--static int snd_byt_rt5651_acpi_resource(struct acpi_resource *ares, void *arg)
--{
--	struct byt_rt5651_acpi_resource_data *data = arg;
--
--	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
--		return 0;
--
--	if (ares->data.gpio.connection_type == ACPI_RESOURCE_GPIO_TYPE_INT)
--		data->gpio_int_idx = data->gpio_count;
--
--	data->gpio_count++;
--	return 0;
--}
--
--static void snd_byt_rt5651_mc_pick_amp_en_gpio_mapping(struct device *codec)
--{
--	struct byt_rt5651_acpi_resource_data data = { 0, -1 };
--	LIST_HEAD(resources);
--	int ret;
--
--	ret = acpi_dev_get_resources(ACPI_COMPANION(codec), &resources,
--				     snd_byt_rt5651_acpi_resource, &data);
--	if (ret < 0) {
--		dev_warn(codec, "Failed to get ACPI resources, not adding external amplifier GPIO mapping\n");
--		return;
--	}
--
--	/* All info we need is gathered during the walk */
--	acpi_dev_free_resource_list(&resources);
--
--	switch (data.gpio_int_idx) {
--	case 0:
--		byt_rt5651_gpios = byt_rt5651_amp_en_second;
--		break;
--	case 1:
--		byt_rt5651_gpios = byt_rt5651_amp_en_first;
--		break;
--	default:
--		dev_warn(codec, "Unknown GpioInt index %d, not adding external amplifier GPIO mapping\n",
--			 data.gpio_int_idx);
--	}
--}
--
- struct acpi_chan_package {   /* ACPICA seems to require 64 bit integers */
- 	u64 aif_value;       /* 1: AIF1, 2: AIF2 */
- 	u64 mclock_value;    /* usually 25MHz (0x17d7940), ignored */
-@@ -1037,7 +981,7 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
+-	ret = gpiochip_irqchip_add(&pl061->gc, &pl061_irqchip,
++	ret = gpiochip_irqchip_add(&pl061->gc, &pl061->irq_chip,
+ 				   0, handle_bad_irq,
+ 				   IRQ_TYPE_NONE);
+ 	if (ret) {
+ 		dev_info(&adev->dev, "could not add irqchip\n");
+ 		return ret;
+ 	}
+-	gpiochip_set_chained_irqchip(&pl061->gc, &pl061_irqchip,
++	gpiochip_set_chained_irqchip(&pl061->gc, &pl061->irq_chip,
+ 				     irq, pl061_irq_handler);
  
- 	/* Cherry Trail devices use an external amplifier enable gpio */
- 	if (x86_match_cpu(cherrytrail_cpu_ids) && !byt_rt5651_gpios)
--		snd_byt_rt5651_mc_pick_amp_en_gpio_mapping(codec_dev);
-+		byt_rt5651_gpios = cht_rt5651_gpios;
- 
- 	if (byt_rt5651_gpios) {
- 		devm_acpi_dev_add_driver_gpios(codec_dev, byt_rt5651_gpios);
+ 	amba_set_drvdata(adev, pl061);
 -- 
-2.19.2
+2.19.1
