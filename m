@@ -1,79 +1,71 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 1/1] mmc: core: don't override the CD GPIO level when
- "cd-inverted" is set
-Date: Thu, 10 Jan 2019 00:24:58 +0530
-Message-ID: <CANAwSgQVaeAb5ta+zC6Fhc3xLjSCMY5-XzQpK7SwdS4LNAYfNA@mail.gmail.com>
-References: <20190101194414.24766-1-martin.blumenstingl@googlemail.com> <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
+From: Otto Sabart <ottosabart@seberm.com>
+Subject: [PATCH 1/1] doc: gpio-mvebu: fix broken reference to
+ cp110-system-controller0.txt file
+Date: Wed, 9 Jan 2019 20:07:41 +0100
+Message-ID: <8fd140950dd0bb859f9a48d8b25fb919cbb3cc6b.1547059503.git.ottosabart@seberm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Linux Kernel <linux-kernel@vger.kernel.org>, bgolaszewski@baylibre.com, linux-amlogic@lists.infradead.org, Guenter Roeck <linux@roeck-us.net>
+To: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Martin,
 
-On Wed, 2 Jan 2019 at 01:14, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> Since commit 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device
-> tree") gpiolib-of parses the "cd-gpios" property and flips the polarity
-> if "cd-inverted" is also set. This results in the "cd-inverted" property
-> being evaluated twice, which effectively makes it a no-op:
-> - first in drivers/gpio/gpiolib-of.c (of_xlate_and_get_gpiod_flags) when
->   setting up the CD GPIO
-> - then again in drivers/mmc/core/slot-gpio.c (mmc_gpio_get_cd) when
->   reading the CD GPIO value at runtime
->
-> On boards which are using device-tree with the "cd-inverted" property
-> being set any inserted card are not detected anymore. This is due to the
-> MMC core treating the CD GPIO with the wrong polarity.
->
-> Disable "override_cd_active_level" for the card detection GPIO which is
-> parsed using mmc_of_parse. This fixes SD card detection on the boards
-> which are currently using the "cd-inverted" device-tree property (tested
-> on Meson8b Odroid-C1 and Meson8b EC-100).
->
-> This does not remove the CD GPIO inversion logic from the MMC core
-> because there's at least one driver (sdhci-pci-core for Intel BayTrail
-> based boards) which still passes "override_cd_active_level = true" to
-> mmc_gpiod_request_cd(). Due to lack of hardware for testing this is left
-> untouched.
-> In the future the GPIO inversion logic for both, card and read-only
-> detection can be removed once no driver is using it anymore.
->
-> Fixes: 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/mmc/core/host.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-> index f57f5de54206..cf58ccaf22d5 100644
-> --- a/drivers/mmc/core/host.c
-> +++ b/drivers/mmc/core/host.c
-> @@ -234,7 +234,7 @@ int mmc_of_parse(struct mmc_host *host)
->                 if (device_property_read_bool(dev, "broken-cd"))
->                         host->caps |= MMC_CAP_NEEDS_POLL;
->
-> -               ret = mmc_gpiod_request_cd(host, "cd", 0, true,
-> +               ret = mmc_gpiod_request_cd(host, "cd", 0, false,
->                                            cd_debounce_delay_ms * 1000,
->                                            &cd_gpio_invert);
->                 if (!ret)
-> --
-> 2.20.1
->
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please add my.
-Tested on Odroidc1+ and Odroidc2 both booted up fine.
+The cp110-system-controller0.txt file was renamed to
+cp110-system-controller.txt.
 
-Tested-by: Anand Moon <linux.amoon@gmail.com>
+Fixes: 4aa5496980e4 ("dt-bindings: cp110: rename cp110 syscon file")
+Signed-off-by: Otto Sabart <ottosabart@seberm.com>
+---
+ Documentation/devicetree/bindings/gpio/gpio-mvebu.txt | 2 --
+ 1 file changed, 2 deletions(-)
 
->
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt b/Docume=
+ntation/devicetree/bindings/gpio/gpio-mvebu.txt
+index 38ca2201e8ae..2e097b57f170 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
+@@ -14,8 +14,6 @@ Required properties:
+=20
+     "marvell,armada-8k-gpio" should be used for the Armada 7K and 8K
+     SoCs (either from AP or CP), see
+-    Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0=
+=2Etxt
+-    and
+     Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.=
+txt
+     for specific details about the offset property.
+=20
+--=20
+2.17.2
+
+
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlw2Rn4ACgkQgjuumfi+
+Hjxfiw/9Fk7Ox0asGlTrDCjLScq8iEd1p1iAgMz26Ut5NKHWaKqBEGajxQIhQnUN
+utxLjTWH8QDcGItpbzvTYcnKrF+mRhcpDvHZ/O8dhac5ZYA7qcA/106aRB/MSogh
+u3/GeVNokIGUtXi8xepJvm9vmYnhdgqOild8hxc9Frr1x26ORpgPBbWurcf7YFZJ
+SET3fv86kPjPWaLakjT67ULGPhhX5RxJv8M4QllsyLJfvBntrxH5ACMovdTciV8A
+PBEWQQ1gMlD4cCnrvviuG/ySZig0JCG2DcYWaZsp8yOw+zYFExavgSHkoxESFC/P
+1UoVldOmp5QKGOMYfrD4SjysZJnaLhsw/kJVGDwTiHtXc5iYd95Jercp47Vmd8TJ
+u2bkmgEIVlCkAiMjZBuYlxr0HI6kISe55V+FqCtco3q8/ZUQCnUOsL3gkFDMtepq
+2fvD9Lw9Crr3lrcnCZVLJYMAZ8oKxNSQCuMCZjMiHeJyE7T1yNJbK80QruG4tKO1
+k504yGakideglEWAXUJaKuevEBGALwxLBZu+EkMFdBHPGLcbALNcfAIhbdniX6lQ
+o6+XZkHxrU4hxnyZtnFJTucPSQ1oLcCqgEF5PtasXnhCmTWF6wGsc0EN4tWWIq0E
+pWvNLfoaHb4CS4PeDSP04GA63D1A6t7FSH+fHmhswgUS2PpoQ1U=
+=/a7b
+-----END PGP SIGNATURE-----
+
+--4Ckj6UjgE2iN1+kY--
