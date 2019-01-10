@@ -1,48 +1,107 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 1/2] pinctrl: sunxi: Increase size of regulator array
-Date: Thu, 10 Jan 2019 16:26:32 +0800
-Message-ID: <20190110082633.6321-1-wens@csie.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] gpio: pcf857x: Fix interrupts on multiple instances
+Date: Thu, 10 Jan 2019 10:17:33 +0100
+Message-ID: <CAMpxmJUx+LGUDoQQrAp6inWohFzM4W1E2gwWdQ2=O_wHAt164A@mail.gmail.com>
+References: <1547025084-16999-1-git-send-email-rogerq@ti.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1547025084-16999-1-git-send-email-rogerq@ti.com>
+Sender: stable-owner@vger.kernel.org
+To: Roger Quadros <rogerq@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Stable # 4 . 20+" <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On the A80, the pin banks go up to PN, which translates to the 14th
-entry in the regulator array. The array is only 12 entries long, which
-causes the sunxi_pmx_{request,free} functions to access beyond the
-array on the A80 and the A31 (which has pin bank PM). While the
-accessed data is still valid allocated data within the same driver
-data structure, it is likely not a pointer.
+=C5=9Br., 9 sty 2019 o 10:11 Roger Quadros <rogerq@ti.com> napisa=C5=82(a):
+>
+> When multiple instances of pcf857x chips are present, a fix up
+> message [1] is printed during the probe of the 2nd and later
+> instances.
+>
+> The issue is that the driver is using the same irq_chip data
+> structure between multiple instances.
+>
+> Fix this by allocating the irq_chip data structure per instance.
+>
+> [1] fix up message addressed by this patch
+> [    1.212100] gpio gpiochip9: (pcf8575): detected irqchip that is shared=
+ with multiple gpiochips: please fix the driver.
+>
+> Cc: Stable <stable@vger.kernel.org> # 4.20+
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> ---
+>  drivers/gpio/gpio-pcf857x.c | 26 ++++++++++++--------------
+>  1 file changed, 12 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+> index adf72dd..68a35b6 100644
+> --- a/drivers/gpio/gpio-pcf857x.c
+> +++ b/drivers/gpio/gpio-pcf857x.c
+> @@ -84,6 +84,7 @@ MODULE_DEVICE_TABLE(of, pcf857x_of_table);
+>   */
+>  struct pcf857x {
+>         struct gpio_chip        chip;
+> +       struct irq_chip         irqchip;
+>         struct i2c_client       *client;
+>         struct mutex            lock;           /* protect 'out' */
+>         unsigned                out;            /* software latch */
+> @@ -252,18 +253,6 @@ static void pcf857x_irq_bus_sync_unlock(struct irq_d=
+ata *data)
+>         mutex_unlock(&gpio->lock);
+>  }
+>
+> -static struct irq_chip pcf857x_irq_chip =3D {
+> -       .name           =3D "pcf857x",
+> -       .irq_enable     =3D pcf857x_irq_enable,
+> -       .irq_disable    =3D pcf857x_irq_disable,
+> -       .irq_ack        =3D noop,
+> -       .irq_mask       =3D noop,
+> -       .irq_unmask     =3D noop,
+> -       .irq_set_wake   =3D pcf857x_irq_set_wake,
+> -       .irq_bus_lock           =3D pcf857x_irq_bus_lock,
+> -       .irq_bus_sync_unlock    =3D pcf857x_irq_bus_sync_unlock,
+> -};
+> -
+>  /*----------------------------------------------------------------------=
+---*/
+>
+>  static int pcf857x_probe(struct i2c_client *client,
+> @@ -376,8 +365,17 @@ static int pcf857x_probe(struct i2c_client *client,
+>
+>         /* Enable irqchip if we have an interrupt */
+>         if (client->irq) {
+> +               gpio->irqchip.name =3D "pcf857x",
+> +               gpio->irqchip.irq_enable =3D pcf857x_irq_enable,
+> +               gpio->irqchip.irq_disable =3D pcf857x_irq_disable,
+> +               gpio->irqchip.irq_ack =3D noop,
+> +               gpio->irqchip.irq_mask =3D noop,
+> +               gpio->irqchip.irq_unmask =3D noop,
+> +               gpio->irqchip.irq_set_wake =3D pcf857x_irq_set_wake,
+> +               gpio->irqchip.irq_bus_lock =3D pcf857x_irq_bus_lock,
+> +               gpio->irqchip.irq_bus_sync_unlock =3D pcf857x_irq_bus_syn=
+c_unlock,
+>                 status =3D gpiochip_irqchip_add_nested(&gpio->chip,
+> -                                                    &pcf857x_irq_chip,
+> +                                                    &gpio->irqchip,
+>                                                      0, handle_level_irq,
+>                                                      IRQ_TYPE_NONE);
+>                 if (status) {
+> @@ -392,7 +390,7 @@ static int pcf857x_probe(struct i2c_client *client,
+>                 if (status)
+>                         goto fail;
+>
+> -               gpiochip_set_nested_irqchip(&gpio->chip, &pcf857x_irq_chi=
+p,
+> +               gpiochip_set_nested_irqchip(&gpio->chip, &gpio->irqchip,
+>                                             client->irq);
+>                 gpio->irq_parent =3D client->irq;
+>         }
+> --
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>
 
-Increase the size of the regulator array from 12 to 14. This is a simple
-fix. While we could have the code take into account the fact that R_PIO
-pin banks start from PL, or maybe even dynamically allocate the array
-based on the last pin of the pin controller, the size reduction probably
-isn't worth the additional code complexity.
+Applied to fixes. Thanks!
 
-Fixes: 9a2a566adb00 ("pinctrl: sunxi: Deal with per-bank regulators")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-This fixes a crash due to an invalid pointer on the A80.
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index e340d2a24b44..e8161aa17dab 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -136,7 +136,7 @@ struct sunxi_pinctrl {
- 	struct gpio_chip		*chip;
- 	const struct sunxi_pinctrl_desc	*desc;
- 	struct device			*dev;
--	struct sunxi_pinctrl_regulator	regulators[12];
-+	struct sunxi_pinctrl_regulator	regulators[14];
- 	struct irq_domain		*domain;
- 	struct sunxi_pinctrl_function	*functions;
- 	unsigned			nfunctions;
--- 
-2.20.1
+Bart
