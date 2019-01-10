@@ -1,48 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] ARM: config: spear3xx: Activate PL111 DRM driver
-Date: Thu, 10 Jan 2019 15:39:17 +0100
-Message-ID: <20190110143917.9054-2-linus.walleij@linaro.org>
-References: <20190110143917.9054-1-linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: mvebu: implement get_direction
+Date: Thu, 10 Jan 2019 16:20:35 +0100
+Message-ID: <CACRpkdY3Uphb13rAcnWvnd=cirHYeqkWk3sb3yWSNL=jzA1cHg@mail.gmail.com>
+References: <024cc24efa7b99186750f90c91880b29357d379d.1547123182.git.baruch@tkos.co.il>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190110143917.9054-1-linus.walleij@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.linux@gmail.com>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <024cc24efa7b99186750f90c91880b29357d379d.1547123182.git.baruch@tkos.co.il>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: linux-pwm@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Sven Auhagen <sven.auhagen@voleatech.de>, Jason Cooper <jason@lakedaemon.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>, Gregory Clement <gregory.clement@bootlin.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Bjorn Helgaas <bhelgaas@google.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This disables the old FBDEV driver and enables the PL111
-DRM driver on the SPEAr3xx.
+On Thu, Jan 10, 2019 at 1:27 PM Baruch Siach <baruch@tkos.co.il> wrote:
 
-There are some device trees in the kernel that switches
-the DT node for the PL110 to "okay" but none of these
-have any display defined, so we can safely switch to this
-driver before we get any users starting to define
-displays. Let them do it on top of the new driver
-infrastructure instead.
+> struct gpio_chip documentation recommends to always implement this
+> callback function.
+>
+> A more concrete motivation is to be able (in combination with
+> GPIOD_ASIS) to detect whether the bootloader has changed the state of a
+> GPIO signal.
+>
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm/configs/spear3xx_defconfig | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+This is strongly recommended for all drivers to implment so patch
+applied.
 
-diff --git a/arch/arm/configs/spear3xx_defconfig b/arch/arm/configs/spear3xx_defconfig
-index 6753b373bee8..c42e3204e2fa 100644
---- a/arch/arm/configs/spear3xx_defconfig
-+++ b/arch/arm/configs/spear3xx_defconfig
-@@ -50,8 +50,10 @@ CONFIG_GPIO_PL061=y
- # CONFIG_HWMON is not set
- CONFIG_WATCHDOG=y
- CONFIG_ARM_SP805_WATCHDOG=y
--CONFIG_FB=y
--CONFIG_FB_ARMCLCD=y
-+CONFIG_DRM=y
-+CONFIG_DRM_PL111=y
-+CONFIG_BACKLIGHT_LCD_SUPPORT=y
-+CONFIG_BACKLIGHT_CLASS_DEVICE=y
- CONFIG_USB=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_OHCI_HCD=y
--- 
-2.19.2
+Yours,
+Linus Walleij
