@@ -1,107 +1,69 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH] gpio: pcf857x: Fix interrupts on multiple instances
-Date: Thu, 10 Jan 2019 10:17:33 +0100
-Message-ID: <CAMpxmJUx+LGUDoQQrAp6inWohFzM4W1E2gwWdQ2=O_wHAt164A@mail.gmail.com>
-References: <1547025084-16999-1-git-send-email-rogerq@ti.com>
+From: Loys Ollivier <lollivier@baylibre.com>
+Subject: Re: [PATCH 1/1] mmc: core: don't override the CD GPIO level when "cd-inverted" is set
+Date: Thu, 10 Jan 2019 12:33:09 +0100
+Message-ID: <8636q0u4qy.fsf@baylibre.com>
+References: <20190101194414.24766-1-martin.blumenstingl@googlemail.com> <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1547025084-16999-1-git-send-email-rogerq@ti.com>
-Sender: stable-owner@vger.kernel.org
-To: Roger Quadros <rogerq@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Stable # 4 . 20+" <stable@vger.kernel.org>
+Content-Type: text/plain; format=flowed
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-mmc@vger.kernel.org, linux@roeck-us.net, bgolaszewski@baylibre.com, ulf.hansson@linaro.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-=C5=9Br., 9 sty 2019 o 10:11 Roger Quadros <rogerq@ti.com> napisa=C5=82(a):
+Hi Martin,
+
+On Tue 01 Jan 2019 at 19:44, Martin Blumenstingl wrote:
+
+> Since commit 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device
+> tree") gpiolib-of parses the "cd-gpios" property and flips the polarity
+> if "cd-inverted" is also set. This results in the "cd-inverted" property
+> being evaluated twice, which effectively makes it a no-op:
+> - first in drivers/gpio/gpiolib-of.c (of_xlate_and_get_gpiod_flags) when
+>   setting up the CD GPIO
+> - then again in drivers/mmc/core/slot-gpio.c (mmc_gpio_get_cd) when
+>   reading the CD GPIO value at runtime
 >
-> When multiple instances of pcf857x chips are present, a fix up
-> message [1] is printed during the probe of the 2nd and later
-> instances.
+> On boards which are using device-tree with the "cd-inverted" property
+> being set any inserted card are not detected anymore. This is due to the
+> MMC core treating the CD GPIO with the wrong polarity.
 >
-> The issue is that the driver is using the same irq_chip data
-> structure between multiple instances.
+> Disable "override_cd_active_level" for the card detection GPIO which is
+> parsed using mmc_of_parse. This fixes SD card detection on the boards
+> which are currently using the "cd-inverted" device-tree property (tested
+> on Meson8b Odroid-C1 and Meson8b EC-100).
 >
-> Fix this by allocating the irq_chip data structure per instance.
+> This does not remove the CD GPIO inversion logic from the MMC core
+> because there's at least one driver (sdhci-pci-core for Intel BayTrail
+> based boards) which still passes "override_cd_active_level = true" to
+> mmc_gpiod_request_cd(). Due to lack of hardware for testing this is left
+> untouched.
+> In the future the GPIO inversion logic for both, card and read-only
+> detection can be removed once no driver is using it anymore.
 >
-> [1] fix up message addressed by this patch
-> [    1.212100] gpio gpiochip9: (pcf8575): detected irqchip that is shared=
- with multiple gpiochips: please fix the driver.
->
-> Cc: Stable <stable@vger.kernel.org> # 4.20+
-> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> Fixes: 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > ---
->  drivers/gpio/gpio-pcf857x.c | 26 ++++++++++++--------------
->  1 file changed, 12 insertions(+), 14 deletions(-)
+>  drivers/mmc/core/host.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-> index adf72dd..68a35b6 100644
-> --- a/drivers/gpio/gpio-pcf857x.c
-> +++ b/drivers/gpio/gpio-pcf857x.c
-> @@ -84,6 +84,7 @@ MODULE_DEVICE_TABLE(of, pcf857x_of_table);
->   */
->  struct pcf857x {
->         struct gpio_chip        chip;
-> +       struct irq_chip         irqchip;
->         struct i2c_client       *client;
->         struct mutex            lock;           /* protect 'out' */
->         unsigned                out;            /* software latch */
-> @@ -252,18 +253,6 @@ static void pcf857x_irq_bus_sync_unlock(struct irq_d=
-ata *data)
->         mutex_unlock(&gpio->lock);
->  }
->
-> -static struct irq_chip pcf857x_irq_chip =3D {
-> -       .name           =3D "pcf857x",
-> -       .irq_enable     =3D pcf857x_irq_enable,
-> -       .irq_disable    =3D pcf857x_irq_disable,
-> -       .irq_ack        =3D noop,
-> -       .irq_mask       =3D noop,
-> -       .irq_unmask     =3D noop,
-> -       .irq_set_wake   =3D pcf857x_irq_set_wake,
-> -       .irq_bus_lock           =3D pcf857x_irq_bus_lock,
-> -       .irq_bus_sync_unlock    =3D pcf857x_irq_bus_sync_unlock,
-> -};
-> -
->  /*----------------------------------------------------------------------=
----*/
->
->  static int pcf857x_probe(struct i2c_client *client,
-> @@ -376,8 +365,17 @@ static int pcf857x_probe(struct i2c_client *client,
->
->         /* Enable irqchip if we have an interrupt */
->         if (client->irq) {
-> +               gpio->irqchip.name =3D "pcf857x",
-> +               gpio->irqchip.irq_enable =3D pcf857x_irq_enable,
-> +               gpio->irqchip.irq_disable =3D pcf857x_irq_disable,
-> +               gpio->irqchip.irq_ack =3D noop,
-> +               gpio->irqchip.irq_mask =3D noop,
-> +               gpio->irqchip.irq_unmask =3D noop,
-> +               gpio->irqchip.irq_set_wake =3D pcf857x_irq_set_wake,
-> +               gpio->irqchip.irq_bus_lock =3D pcf857x_irq_bus_lock,
-> +               gpio->irqchip.irq_bus_sync_unlock =3D pcf857x_irq_bus_syn=
-c_unlock,
->                 status =3D gpiochip_irqchip_add_nested(&gpio->chip,
-> -                                                    &pcf857x_irq_chip,
-> +                                                    &gpio->irqchip,
->                                                      0, handle_level_irq,
->                                                      IRQ_TYPE_NONE);
->                 if (status) {
-> @@ -392,7 +390,7 @@ static int pcf857x_probe(struct i2c_client *client,
->                 if (status)
->                         goto fail;
->
-> -               gpiochip_set_nested_irqchip(&gpio->chip, &pcf857x_irq_chi=
-p,
-> +               gpiochip_set_nested_irqchip(&gpio->chip, &gpio->irqchip,
->                                             client->irq);
->                 gpio->irq_parent =3D client->irq;
->         }
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
->
+> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+> index f57f5de54206..cf58ccaf22d5 100644
+> --- a/drivers/mmc/core/host.c
+> +++ b/drivers/mmc/core/host.c
+> @@ -234,7 +234,7 @@ int mmc_of_parse(struct mmc_host *host)
+>  		if (device_property_read_bool(dev, "broken-cd"))
+>  			host->caps |= MMC_CAP_NEEDS_POLL;
+>  
+> -		ret = mmc_gpiod_request_cd(host, "cd", 0, true,
+> +		ret = mmc_gpiod_request_cd(host, "cd", 0, false,
+>  					   cd_debounce_delay_ms * 1000,
+>  					   &cd_gpio_invert);
+>  		if (!ret)
 
-Applied to fixes. Thanks!
+Test on libretech-cc, sd is fixed with that patch.
 
-Bart
+Tested-by: Loys Ollivier <loys.ollivier@gmail.com>
+-- 
+-L
