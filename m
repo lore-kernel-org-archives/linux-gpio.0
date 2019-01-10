@@ -1,41 +1,73 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH 2/2] PCI: armada8k: don't toggle reset twice
-Date: Thu, 10 Jan 2019 14:19:12 +0100
-Message-ID: <20190110131912.GB29612@lunn.ch>
-References: <024cc24efa7b99186750f90c91880b29357d379d.1547123182.git.baruch@tkos.co.il>
- <94cd23a60c647020dd87a923684b59255b89f02c.1547123182.git.baruch@tkos.co.il>
- <20190110125548.GA29612@lunn.ch> <8736q0irwy.fsf@tarshish>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] ARM: config: Update SPEAr 3xx defconfig
+Date: Thu, 10 Jan 2019 15:39:16 +0100
+Message-ID: <20190110143917.9054-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <8736q0irwy.fsf@tarshish>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: linux-pwm@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Sven Auhagen <sven.auhagen@voleatech.de>, Jason Cooper <jason@lakedaemon.net>, linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Bjorn Helgaas <bhelgaas@google.com>, Gregory Clement <gregory.clement@bootlin.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.linux@gmail.com>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-> Sven Auhagen reported the same issue with Intel NIC attached to
-> mini-PCIe slots on a custom Armada 8K design.
+This config is updates to the latest structure of the
+Kconfig menus so we can apply DRM driver changes on top.
 
-O.K. so that suggests the issue is on the Armada side.
- 
-> How would you suggest to investigate this issue?
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ arch/arm/configs/spear3xx_defconfig | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-I presume reboot works O.K? So it is possible to toggle the reset
-multiple times, but reboot must do something additional which makes it
-work? Do you have sources for the bootloader?
-
-Are there status bits in the comphy about the state of the link? Maybe
-comphy needs to be kicked to reestablish the link?
-
-       Andrew
+diff --git a/arch/arm/configs/spear3xx_defconfig b/arch/arm/configs/spear3xx_defconfig
+index 2c5e8df33191..6753b373bee8 100644
+--- a/arch/arm/configs/spear3xx_defconfig
++++ b/arch/arm/configs/spear3xx_defconfig
+@@ -1,21 +1,21 @@
+ CONFIG_SYSVIPC=y
++CONFIG_PREEMPT=y
+ CONFIG_BSD_PROCESS_ACCT=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_MODULES=y
+-CONFIG_MODULE_UNLOAD=y
+-CONFIG_MODVERSIONS=y
+-CONFIG_PARTITION_ADVANCED=y
+ # CONFIG_ARCH_MULTI_V7 is not set
+ CONFIG_PLAT_SPEAR=y
+ CONFIG_ARCH_SPEAR3XX=y
+ CONFIG_MACH_SPEAR300=y
+ CONFIG_MACH_SPEAR310=y
+ CONFIG_MACH_SPEAR320=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_MODVERSIONS=y
++CONFIG_PARTITION_ADVANCED=y
+ CONFIG_BINFMT_MISC=y
+ CONFIG_NET=y
+ CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+ CONFIG_MTD=y
+-CONFIG_MTD_OF_PARTS=y
+ CONFIG_MTD_BLOCK=y
+ CONFIG_MTD_NAND=y
+ CONFIG_MTD_NAND_FSMC=y
+@@ -32,8 +32,6 @@ CONFIG_NETDEVICES=y
+ # CONFIG_NET_VENDOR_SMSC is not set
+ CONFIG_STMMAC_ETH=y
+ # CONFIG_WLAN is not set
+-CONFIG_INPUT_FF_MEMLESS=y
+-# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
+ # CONFIG_KEYBOARD_ATKBD is not set
+ CONFIG_KEYBOARD_SPEAR=y
+ # CONFIG_INPUT_MOUSE is not set
+@@ -78,8 +76,8 @@ CONFIG_JFFS2_FS=y
+ CONFIG_NLS_DEFAULT="utf8"
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ASCII=m
+-CONFIG_MAGIC_SYSRQ=y
++CONFIG_DEBUG_INFO=y
+ CONFIG_DEBUG_FS=y
++CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_KERNEL=y
+ CONFIG_DEBUG_SPINLOCK=y
+-CONFIG_DEBUG_INFO=y
+-- 
+2.19.2
