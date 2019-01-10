@@ -1,69 +1,76 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH 2/2] pinctrl: sunxi: Fix and simplify pin bank regulator
- handling
-Date: Thu, 10 Jan 2019 16:28:51 +0100
-Message-ID: <20190110152851.g33mgpfgzeatj332@flea>
-References: <20190110082633.6321-1-wens@csie.org>
- <20190110082633.6321-2-wens@csie.org>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH 2/2] PCI: armada8k: don't toggle reset twice
+Date: Thu, 10 Jan 2019 17:57:24 +0200
+Message-ID: <87zhs8h5ej.fsf@tarshish>
+References: <024cc24efa7b99186750f90c91880b29357d379d.1547123182.git.baruch@tkos.co.il>
+ <94cd23a60c647020dd87a923684b59255b89f02c.1547123182.git.baruch@tkos.co.il>
+ <20190110125548.GA29612@lunn.ch> <8736q0irwy.fsf@tarshish>
+ <20190110131912.GB29612@lunn.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2pnopejneh27lbcz"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190110082633.6321-2-wens@csie.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20190110131912.GB29612@lunn.ch>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux-pwm@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Sven Auhagen <sven.auhagen@voleatech.de>, Jason Cooper <jason@lakedaemon.net>, linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Thierry Reding <thierry.reding@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Bjorn Helgaas <bhelgaas@google.com>, Gregory Clement <gregory.clement@bootlin.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Andrew,
 
---2pnopejneh27lbcz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jan 10 2019, Andrew Lunn wrote:
+>> Sven Auhagen reported the same issue with Intel NIC attached to
+>> mini-PCIe slots on a custom Armada 8K design.
+>
+> O.K. so that suggests the issue is on the Armada side.
+>  
+>> How would you suggest to investigate this issue?
+>
+> I presume reboot works O.K? So it is possible to toggle the reset
+> multiple times, but reboot must do something additional which makes it
+> work? Do you have sources for the bootloader?
 
-On Thu, Jan 10, 2019 at 04:26:33PM +0800, Chen-Yu Tsai wrote:
-> The new per-pin-bank regulator handling code in the sunxi pinctrl driver
-> has mismatched conditions for enabling and disabling the regulator: it
-> is enabled each time a pin is requested, but only disabled when the
-> pin-bank's reference count reaches zero.
->=20
-> Since we are doing reference counting already, there's no need to enable
-> the regulator each time a pin is requested. Instead we can just do it
-> for the first requested pin of each pin-bank. Thus we can reverse the
-> test and bail out early if it's not the first occurrence.
->=20
-> Fixes: 9a2a566adb00 ("pinctrl: sunxi: Deal with per-bank regulators")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+The bootloader is current U-Boot master as BL33 of Marvell provided ATF
+version 18.12, current latest.
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> Are there status bits in the comphy about the state of the link? Maybe
+> comphy needs to be kicked to reestablish the link?
 
-> I'm getting the feeling that the current code is prone to race
-> conditions when pinctrl sets are actively switched during runtime, or
-> gpios are requested and freed from userspace.
->=20
-> Any ideas?
+Maybe. The U-Boot comphy PCIe initialization routine
+comphy_pcie_power_up() is long and complex.
 
-IIRC, I've looked into it when writing that patch and there's an upper
-mutex that prevents request from being called multiple times at
-once. Linus might prove me wrong though.
+The ATF code also carries PCIe comphy initialization with this text:
 
-Maxime
+https://github.com/MarvellEmbeddedProcessors/atf-marvell/blob/atf-v1.5-armada-18.12/drivers/marvell/comphy/phy-comphy-cp110.c#L1170
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+        /* In Armada 8K DB boards, PCIe initialization can be executed
+         * only once (PCIe reset performed during chip power on and
+         * it cannot be executed via GPIO later).
+         * This means that power on can be executed only once, so let's
+         * mark if the caller is bootloader or Linux.
+         * If bootloader -> run power on.
+         * If Linux -> exit.
+         *
+         * TODO: In MacciatoBIN, PCIe reset is connected via GPIO,
+         * so after GPIO reset is added to Linux Kernel, it can be
+         * powered-on by Linux.
+         */
+        if (!called_from_uboot)
+                return ret;
 
---2pnopejneh27lbcz
-Content-Type: application/pgp-signature; name="signature.asc"
+It looks like vendor code is using a similar trick.
 
------BEGIN PGP SIGNATURE-----
+baruch
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXDdkswAKCRDj7w1vZxhR
-xT4RAQDm0VrViQOqnAb+y4lxm/C2Kk6e0f9nii3jW/wt7IavcgEA2l2fHktJKyQS
-bjMr8bur8Y3On3zKYvDRU+a+LHjdEAc=
-=+NHo
------END PGP SIGNATURE-----
-
---2pnopejneh27lbcz--
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
