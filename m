@@ -1,18 +1,18 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mcp23s08: use struct_size() in devm_kzalloc()
-Date: Fri, 11 Jan 2019 13:23:46 +0100
-Message-ID: <CACRpkdavhVgmNzuS=CSouTNZjqGsD68acwvPwJPPz4gfE1jw+Q@mail.gmail.com>
-References: <20190104173733.GA29979@embeddedor>
+Subject: Re: [PATCH] pinctrl: sirf: atlas7: use struct_size() in devm_kzalloc()
+Date: Fri, 11 Jan 2019 13:24:52 +0100
+Message-ID: <CACRpkdYoVLARk8oxqFesKZ0FDyqCoaoxLdTXR=0TS5N_PQdyTw@mail.gmail.com>
+References: <20190104213508.GA20333@embeddedor>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190104173733.GA29979@embeddedor>
+In-Reply-To: <20190104213508.GA20333@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
 To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Barry Song <baohua@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 6:37 PM Gustavo A. R. Silva
+On Fri, Jan 4, 2019 at 10:35 PM Gustavo A. R. Silva
 <gustavo@embeddedor.com> wrote:
 
 > One of the more common cases of allocation size calculations is finding
