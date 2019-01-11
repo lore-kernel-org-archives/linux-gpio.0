@@ -1,58 +1,104 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/8] gpio: zynq: Wakeup gpio controller when it is used as
- IRQ controller
-Date: Fri, 11 Jan 2019 15:37:07 +0100
-Message-ID: <CACRpkdZVfH_LYQov5mkMvp6BWjkVsisawWuE1PMp0b8dW5Qc=g@mail.gmail.com>
-References: <cover.1502103715.git.michal.simek@xilinx.com>
- <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
- <CACRpkdZE-Edr7fWZY5VQM1_65iw7MYGP-iDa2ExZsPxpM0rurQ@mail.gmail.com>
- <6da5fd79-fbc8-b613-954f-dcbe2ef8d6c5@xilinx.com>
- <20190107164210.3ecf37e8@windsurf>
- <CACRpkdafBpC14TxBNVN2AemkBz-yKkXkKfNpdgkYKQX3qFemag@mail.gmail.com>
- <20190111135413.73dad0b2@windsurf>
+From: Lars Poeschel <poeschel@lemonage.de>
+Subject: [PATCH] pinctrl: mcp23s08: Allocate irq_chip dynamic
+Date: Fri, 11 Jan 2019 17:25:16 +0100
+Message-ID: <20190111162516.28197-1-poeschel@lemonage.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190111135413.73dad0b2@windsurf>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Josh Cartwright <josh.cartwright@ni.com>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, Nava kishore Manne <navam@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "monstr@monstr.eu" <monstr@monstr.eu>, Borsodi Petr <Petr.Borsodi@i.cz>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Shubhrajyoti Datta <shubhraj@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: Lars Poeschel <poeschel@lemonage.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 1:54 PM Thomas Petazzoni
-<thomas.petazzoni@bootlin.com> wrote:
-> On Fri, 11 Jan 2019 10:54:20 +0100, Linus Walleij wrote:
->
-> > My stance is that the driver is responsible of enabling and managing
-> > runtime PM for its hardware block(s).
-> >
-> > Runtime PM in the core should only be added if the core needs to
-> > be aware about it, such as is the case when e.g. a block device
-> > needs to drain its write buffer before going to runtime sleep.
-> >
-> > I fail so see why the GPIO core need to be aware about this.
->
-> In this very same thread at
-> https://www.spinics.net/lists/arm-kernel/msg600515.html, you kind of
-> proposed to handle this in the core in fact :-) Though indeed you said
-> that the core could provide helpers.
+Keeping the irq_chip definition static shares it with multiple instances
+of the mcp23s08 gpiochip in the system. This is bad and now we get this
+warning from gpiolib core:
 
-Yeah allright, I have never been good with consistency but what I guess
-I would mean to say (today) is that the driver needs to be in the driver
-seat (heh) and opting in to any runtime PM support.
+"detected irqchip that is shared with multiple gpiochips: please fix the
+driver."
 
-This is in contrast with "midlayer" where all drivers are forced to behave
-"as if" they had runtime PM (i.e. calls are done to the runtime PM helpers
-even if the device doesn't really activate runtime PM).
+Hence, move the irq_chip definition from being driver static into the
+struct mcp23s08. So a unique irq_chip is used for each gpiochip
+instance.
 
-Yours,
-Linus Walleij
+Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+---
+ drivers/pinctrl/pinctrl-mcp23s08.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index b03481ef99a1..3b1785e56174 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -68,6 +68,7 @@ struct mcp23s08 {
+ 	struct mutex		lock;
+ 
+ 	struct gpio_chip	chip;
++	struct irq_chip		irq_chip;
+ 
+ 	struct regmap		*regmap;
+ 	struct device		*dev;
+@@ -607,15 +608,6 @@ static void mcp23s08_irq_bus_unlock(struct irq_data *data)
+ 	mutex_unlock(&mcp->lock);
+ }
+ 
+-static struct irq_chip mcp23s08_irq_chip = {
+-	.name = "gpio-mcp23xxx",
+-	.irq_mask = mcp23s08_irq_mask,
+-	.irq_unmask = mcp23s08_irq_unmask,
+-	.irq_set_type = mcp23s08_irq_set_type,
+-	.irq_bus_lock = mcp23s08_irq_bus_lock,
+-	.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock,
+-};
+-
+ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
+ {
+ 	struct gpio_chip *chip = &mcp->chip;
+@@ -645,7 +637,7 @@ static int mcp23s08_irqchip_setup(struct mcp23s08 *mcp)
+ 	int err;
+ 
+ 	err =  gpiochip_irqchip_add_nested(chip,
+-					   &mcp23s08_irq_chip,
++					   &mcp->irq_chip,
+ 					   0,
+ 					   handle_simple_irq,
+ 					   IRQ_TYPE_NONE);
+@@ -656,7 +648,7 @@ static int mcp23s08_irqchip_setup(struct mcp23s08 *mcp)
+ 	}
+ 
+ 	gpiochip_set_nested_irqchip(chip,
+-				    &mcp23s08_irq_chip,
++				    &mcp->irq_chip,
+ 				    mcp->irq);
+ 
+ 	return 0;
+@@ -1042,6 +1034,13 @@ static int mcp230xx_probe(struct i2c_client *client,
+ 		return -ENOMEM;
+ 
+ 	mcp->irq = client->irq;
++	mcp->irq_chip.name = dev_name(&client->dev);
++	mcp->irq_chip.irq_mask = mcp23s08_irq_mask;
++	mcp->irq_chip.irq_unmask = mcp23s08_irq_unmask;
++	mcp->irq_chip.irq_set_type = mcp23s08_irq_set_type;
++	mcp->irq_chip.irq_bus_lock = mcp23s08_irq_bus_lock;
++	mcp->irq_chip.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock;
++
+ 	status = mcp23s08_probe_one(mcp, &client->dev, client, client->addr,
+ 				    id->driver_data, pdata->base, 0);
+ 	if (status)
+@@ -1152,6 +1151,13 @@ static int mcp23s08_probe(struct spi_device *spi)
+ 		chips--;
+ 		data->mcp[addr] = &data->chip[chips];
+ 		data->mcp[addr]->irq = spi->irq;
++		data->mcp[addr]->irq_chip.name = dev_name(&spi->dev);
++		data->mcp[addr]->irq_chip.irq_mask = mcp23s08_irq_mask;
++		data->mcp[addr]->irq_chip.irq_unmask = mcp23s08_irq_unmask;
++		data->mcp[addr]->irq_chip.irq_set_type = mcp23s08_irq_set_type;
++		data->mcp[addr]->irq_chip.irq_bus_lock = mcp23s08_irq_bus_lock;
++		data->mcp[addr]->irq_chip.irq_bus_sync_unlock =
++			mcp23s08_irq_bus_unlock;
+ 		status = mcp23s08_probe_one(data->mcp[addr], &spi->dev, spi,
+ 					    0x40 | (addr << 1), type,
+ 					    pdata->base, addr);
+-- 
+2.20.1
