@@ -1,14 +1,13 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFT][PATCH] gpio: sama5d2-piobu: Set proper output level for
- direction_output
-Date: Fri, 11 Jan 2019 10:35:32 +0100
-Message-ID: <CACRpkdYT8eb2PD2fOvHo7MsSi7Ltqjbjk=udnKsW-q2YSFcGUQ@mail.gmail.com>
-References: <20181231095256.14814-1-axel.lin@ingics.com>
+Subject: Re: [PATCH v4] pinctrl: mediatek: add EINT support to virtual GPIOs
+Date: Fri, 11 Jan 2019 10:36:59 +0100
+Message-ID: <CACRpkda_-C2aqGWqAbGJK9RRUF9zn=nqJq71tSP-j6pyjgb2rg@mail.gmail.com>
+References: <1546419614-31207-1-git-send-email-chuanjia.liu@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181231095256.14814-1-axel.lin@ingics.com>
+In-Reply-To: <1546419614-31207-1-git-send-email-chuanjia.liu@mediatek.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,20 +17,24 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrei Stefanescu <andrei.stefanescu@microchip.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: chuanjia.liu@mediatek.com, Sean Wang <sean.wang@kernel.org>
+Cc: youlin.pei@mediatek.com, Zhiyong Tao <zhiyong.tao@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, hailong.fan@mediatek.com, Matthias Brugger <matthias.bgg@gmail.com>, huang eddie <eddie.huang@mediatek.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 10:53 AM Axel Lin <axel.lin@ingics.com> wrote:
+On Wed, Jan 2, 2019 at 10:00 AM <chuanjia.liu@mediatek.com> wrote:
 
-> Set proper output level base on the argument of direction_output.
-> Also remove sama5d2_piobu_set_direction() as there is only one caller
-> now.
+> From: "chuanjia.liu" <Chuanjia.Liu@mediatek.com>
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Virtual gpio only used inside SOC and not being exported to outside SOC.
+> Some modules use virtual gpio as eint and doesn't need SMT.
+> So this patch add EINT support to virtual GPIOs.
+>
+> Signed-off-by: chuanjia.liu <Chuanjia.Liu@mediatek.com>
+> ---
+> change note:
+> v4: modify description and comments
 
-Patch tentatively applied as non-critical fix (for v5.1) unless
-Andrei has concerns.
+Just waiting for an ACK from Sean before I apply this.
 
 Yours,
 Linus Walleij
