@@ -1,36 +1,54 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: fix build errors for moore core when
- CONFIG_OF is not enabled
-Date: Fri, 11 Jan 2019 15:25:38 +0100
-Message-ID: <CACRpkdaJ29di4GxcHNa+pUtV62aF+8SRKTzYMAJHd-8j0oiX=Q@mail.gmail.com>
-References: <64a23e6f8751ee6f1387a611a9d5dba43694b0d0.1546999151.git.ryder.lee@mediatek.com>
+Subject: Re: [PATCH 1/1] mmc: core: don't override the CD GPIO level when
+ "cd-inverted" is set
+Date: Fri, 11 Jan 2019 15:28:44 +0100
+Message-ID: <CACRpkdYTQjiPbLGQ8E_mByAY0e_byN8iW=jBVPw3QRxh4_fB_A@mail.gmail.com>
+References: <20190101194414.24766-1-martin.blumenstingl@googlemail.com> <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <64a23e6f8751ee6f1387a611a9d5dba43694b0d0.1546999151.git.ryder.lee@mediatek.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Sean Wang <sean.wang@kernel.org>, Weijie Gao <weijie.gao@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 3:14 AM Ryder Lee <ryder.lee@mediatek.com> wrote:
+On Tue, Jan 1, 2019 at 8:44 PM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
 
-> on i386 or x86_64:
+> Since commit 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device
+> tree") gpiolib-of parses the "cd-gpios" property and flips the polarity
+> if "cd-inverted" is also set. This results in the "cd-inverted" property
+> being evaluated twice, which effectively makes it a no-op:
+> - first in drivers/gpio/gpiolib-of.c (of_xlate_and_get_gpiod_flags) when
+>   setting up the CD GPIO
+> - then again in drivers/mmc/core/slot-gpio.c (mmc_gpio_get_cd) when
+>   reading the CD GPIO value at runtime
 >
-> Lots of build errors for drivers/pinctrl/mediatek/pinctrl-moore.c when
-> CONFIG_OF is not enabled (but COMPILE_TEST is).
+> On boards which are using device-tree with the "cd-inverted" property
+> being set any inserted card are not detected anymore. This is due to the
+> MMC core treating the CD GPIO with the wrong polarity.
+>
+> Disable "override_cd_active_level" for the card detection GPIO which is
+> parsed using mmc_of_parse. This fixes SD card detection on the boards
+> which are currently using the "cd-inverted" device-tree property (tested
+> on Meson8b Odroid-C1 and Meson8b EC-100).
+>
+> This does not remove the CD GPIO inversion logic from the MMC core
+> because there's at least one driver (sdhci-pci-core for Intel BayTrail
+> based boards) which still passes "override_cd_active_level = true" to
+> mmc_gpiod_request_cd(). Due to lack of hardware for testing this is left
+> untouched.
+> In the future the GPIO inversion logic for both, card and read-only
+> detection can be removed once no driver is using it anymore.
+>
+> Fixes: 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Patch applied with Seans ACK and trimming down the subject
-and commit message a bit :)
+I applied this to the GPIO fixes with the ACKs.
+
+Ulf is on vacation but I managed to get his ACK over chat,
+so I will try to get this upstream ASAP.
 
 Yours,
 Linus Walleij
