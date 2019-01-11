@@ -1,77 +1,28 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v3 1/2] pinctrl: meson: meson8b: add the eth_rxd2 and
- eth_rxd3 pins
-Date: Fri, 11 Jan 2019 20:52:05 +0100
-Message-ID: <CAFBinCB41iRf-5AdUir9Z9AYPGP4-yfD4B3Yn9+v+dxSFJoELA@mail.gmail.com>
-References: <20181229143556.27339-1-martin.blumenstingl@googlemail.com>
- <20181229143556.27339-2-martin.blumenstingl@googlemail.com>
- <7hzhs8ovag.fsf@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 6/6] ARM: dts: qcom: pma8084: add interrupt controller properties
+Date: Fri, 11 Jan 2019 13:57:03 -0800
+Message-ID: <154724382301.169631.10873741059969967637@swboyd.mtv.corp.google.com>
+References: <20190110011258.17227-1-masneyb@onstation.org> <20190110011258.17227-7-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <7hzhs8ovag.fsf@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: linus.luessing@c0d3.blue, jianxin.pan@amlogic.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, ingrassia@epigenesys.com, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190110011258.17227-7-masneyb@onstation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>, andy.gross@linaro.org, bjorn.andersson@linaro.org, linus.walleij@linaro.org
+Cc: marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Kevin,
+Quoting Brian Masney (2019-01-09 17:12:58)
+> Add interrupt controller properties now that spmi-gpio is a proper
+> hierarchical IRQ chip. The interrupts property is no longer needed so
+> remove it.
+>=20
+> This change was not tested on any hardware but the same change was
+> tested on qcom-pm8941.dtsi using a LG Nexus 5 (hammerhead) phone with
+> no issues.
+>=20
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
 
-On Fri, Jan 11, 2019 at 2:08 AM Kevin Hilman <khilman@baylibre.com> wrote:
->
-> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->
-> > Gigabit Ethernet requires the Ethernet TXD0..3 and RXD0..3 data lines.
-> > Add the missing eth_rxd2 and eth_rxd3 definitions so we don't have to
-> > rely on the bootloader to set them up correctly.
-> >
-> > The vendor u-boot sources for Odroid-C1 use the following Ethernet
-> > pinmux configuration:
-> >   SET_CBUS_REG_MASK(PERIPHS_PIN_MUX_6, 0x3f4f);
-> >   SET_CBUS_REG_MASK(PERIPHS_PIN_MUX_7, 0xf00000);
-> > This translates to the following pin groups in the mainline kernel:
-> > - register 6 bit  0: eth_rxd1 (DIF_0_P)
-> > - register 6 bit  1: eth_rxd0 (DIF_0_N)
-> > - register 6 bit  2: eth_rx_dv (DIF_1_P)
-> > - register 6 bit  3: eth_rx_clk (DIF_1_N)
-> > - register 6 bit  6: eth_tx_en (DIF_3_P)
-> > - register 6 bit  8: eth_ref_clk (DIF_3_N)
-> > - register 6 bit  9: eth_mdc (DIF_4_P)
-> > - register 6 bit 10: eth_mdio_en (DIF_4_N)
-> > - register 6 bit 11: eth_tx_clk (GPIOH_9)
-> > - register 6 bit 12: eth_txd2 (GPIOH_8)
-> > - register 6 bit 13: eth_txd3 (GPIOH_7)
-> > - register 7 bit 20: eth_txd0_0 (GPIOH_6)
-> > - register 7 bit 21: eth_txd1_0 (GPIOH_5)
-> > - register 7 bit 22: eth_rxd3 (DIF_2_P)
-> > - register 7 bit 23: eth_rxd2 (DIF_2_N)
-> >
-> > All functions except eth_rxd2 and eth_rxd3 are already supported by the
-> > pinctrl-meson8b driver.
-> >
-> > Suggested-by: Jianxin Pan <jianxin.pan@amlogic.com>
-> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->
-> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-thank you for reviewing this!
-
-I just realized that I forgot to CC the linux-gpio mailing list as
-well as Linus Walleij on this patch (fixing that with this mail) -
-sorry for that.
-right now this patch is applied to linux-amlogic.git's v5.1/dt branch.
-please let me know whether you would like to keep it in your tree or
-if you would like me to re-send it (including Linus and the linux-gpio
-list this time...)
-
-
-Regards
-Martin
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
