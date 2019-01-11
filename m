@@ -1,28 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] Few fix for pins configuration on Armada 37xx
-Date: Fri, 11 Jan 2019 09:54:47 +0100
-Message-ID: <CACRpkdZbano_a1CgF8mzUULZwgUL5rP3bnHPhvm+yB_G=wohbg@mail.gmail.com>
-References: <20181221173259.8372-1-gregory.clement@bootlin.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v6 1/8] bitops: Introduce the for_each_set_clump8 macro
+Date: Fri, 11 Jan 2019 10:00:46 +0100
+Message-ID: <81f3038e-301b-7c0d-a6ef-90b9dadcab51@rasmusvillemoes.dk>
+References: <cover.1545198260.git.vilhelm.gray@gmail.com>
+ <9fb3981cbcfbce3fb8b42bf419d734c0e5a44d0e.1545198260.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181221173259.8372-1-gregory.clement@bootlin.com>
+In-Reply-To: <9fb3981cbcfbce3fb8b42bf419d734c0e5a44d0e.1545198260.git.vilhelm.gray@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Antoine Tenart <antoine.tenart@bootlin.com>, =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>, Marcin Wojtas <mw@semihalf.com>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, linus.walleij@linaro.org
+Cc: akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 6:33 PM Gregory CLEMENT
-<gregory.clement@bootlin.com> wrote:
+On 19/12/2018 07.00, William Breathitt Gray wrote:
+> +/**
+> + * bitmap_set_value8 - set an 8-bit value within a memory region
+> + * @bitmap: address to the bitmap memory region
+> + * @value: the 8-bit value
+> + * @start: bit offset of the 8-bit value
+> + */
+> +void bitmap_set_value8(unsigned long *const bitmap,
+> +		       const unsigned long *const value,
+> +		       const unsigned int start)
+> +{
+> +	const size_t index = BIT_WORD(start);
+> +	const unsigned int offset = start % BITS_PER_LONG;
+> +	const unsigned long mask = GENMASK(7, offset);
+> +
+> +	bitmap[index] &= ~mask;
+> +	bitmap[index] |= (*value << offset) & mask;
+> +}
 
-> this small series fixes wrong pins configuration we currently have on
-> Armada 37xx.
->
-> For now it is especially annoying it we want to enable suspend to
-> RAM for PCie.
+errh, why pass the value by reference? That seems rather odd. Also, if
+anybody passes a value that doesn't fit in 8 bits, they get what they
+deserve; IOW I don't see a reason for the masking in the last line, but
+if its convenient for the users, keep it. In any case, please change the
+type of value.
 
-All three patches applied for next (v5.1) with Miquel's
-test tag.
-
-Yours,
-Linus Walleij
+Rasmus
