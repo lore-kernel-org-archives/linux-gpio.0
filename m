@@ -1,60 +1,55 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH] gpiolib: fix line event timestamps for nested irqs
-Date: Fri, 11 Jan 2019 14:45:08 +0100
-Message-ID: <CAMRc=Md_8MBbc7RSwyPNMGYnJyQqvSgoyHYhEgQf5C4ac_K9eA@mail.gmail.com>
-References: <20190104103226.2878-1-brgl@bgdev.pl> <CACRpkdacXeBEh2UMmigSo+zYQCj3yMyNRfxHjqhu_kiZ2JMXbg@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH 1/2] pinctrl: sunxi: Increase size of regulator array
+Date: Fri, 11 Jan 2019 21:46:21 +0800
+Message-ID: <CAGb2v67h3W9-aeN+Y62af=g+RjZiKwi_pw-VYstTds7R13ox4g@mail.gmail.com>
+References: <20190110082633.6321-1-wens@csie.org> <20190110152632.hdlo3h4e7yzzjtug@flea>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdacXeBEh2UMmigSo+zYQCj3yMyNRfxHjqhu_kiZ2JMXbg@mail.gmail.com>
+In-Reply-To: <20190110152632.hdlo3h4e7yzzjtug@flea>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-pt., 11 sty 2019 o 13:19 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
-=82(a):
+On Thu, Jan 10, 2019 at 11:26 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
 >
-> On Fri, Jan 4, 2019 at 11:32 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
-:
+> Hi,
 >
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> On Thu, Jan 10, 2019 at 04:26:32PM +0800, Chen-Yu Tsai wrote:
+> > On the A80, the pin banks go up to PN, which translates to the 14th
+> > entry in the regulator array. The array is only 12 entries long, which
+> > causes the sunxi_pmx_{request,free} functions to access beyond the
+> > array on the A80 and the A31 (which has pin bank PM). While the
+> > accessed data is still valid allocated data within the same driver
+> > data structure, it is likely not a pointer.
 > >
-> > Nested interrupts run inside the calling thread's context and the top
-> > half handler is never called which means that we never read the
-> > timestamp.
+> > Increase the size of the regulator array from 12 to 14. This is a simple
+> > fix. While we could have the code take into account the fact that R_PIO
+> > pin banks start from PL, or maybe even dynamically allocate the array
+> > based on the last pin of the pin controller, the size reduction probably
+> > isn't worth the additional code complexity.
 > >
-> > This issue came up when trying to read line events from a gpiochip
-> > using regmap_irq_chip for interrupts.
-> >
-> > Fix it by reading the timestamp from the irq thread function if it's
-> > still 0 by the time the second handler is called.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > Fixes: 9a2a566adb00 ("pinctrl: sunxi: Deal with per-bank regulators")
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 >
-> Oh that's right. Should this not have Fixes: and Cc: stable?
->
-> > +       /*
-> > +        * We may be running from a nested threaded interrupt in which =
-case
-> > +        * we didn't get the timestamp from lineevent_irq_handler().
-> > +        */
-> > +       if (!le->timestamp)
-> > +               le->timestamp =3D ktime_get_real_ns();
-> > +
-> >         ge.timestamp =3D le->timestamp;
->
-> I would merge these:
->
-> if (!le->timestamp)
->     ge.timestamp =3D ktime_get_real_ns();
-> else
->     ge.timestamp =3D le->timestamp;
->
-> Yours,
-> Linus Walleij
+> I definitely overlooked the R_PIO case, sorry. I guess the proper fix
+> would be the first alternative one you suggested, and we should take
+> the pin_base into account. There's no need to store twice such a large
+> array for this case.
 
-I'll fix both issues and resend.
+OK.
 
-Bart
+I wonder if we should try to get rid of pin_base though, at least as far
+as the pinctrl core is concerned. In other words, in our description we'd
+still have PL0 == 352, but when the pin is registered, PL0 == 0. This is
+OK since each pinctrl device has its own numbering space. And it would
+match up with what we use for GPIO.
+
+It would also be better to nail this down one way or the other if we want
+to use the gpio-ranges property.
+
+Either way this would be a separate patch.
+
+ChenYu
