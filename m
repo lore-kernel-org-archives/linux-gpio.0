@@ -1,42 +1,60 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: imx: add imx8qm driver
-Date: Fri, 11 Jan 2019 09:26:21 +0100
-Message-ID: <CACRpkdaM1XhZ6Ff3qVKTPxG8E9+y0J2Wo2ms2dnnotGDvt+TkQ@mail.gmail.com>
-References: <1545146239-30993-1-git-send-email-aisheng.dong@nxp.com>
- <1545146239-30993-3-git-send-email-aisheng.dong@nxp.com>
+Subject: Re: [PATCH] gpiolib: Fix potential Spectre v1 vulnerabilities
+Date: Fri, 11 Jan 2019 09:39:13 +0100
+Message-ID: <CACRpkdbttVUV50oAOO=v6Nw+PQTEqufP+53pZMOPYwX6fmXEiQ@mail.gmail.com>
+References: <20181217213430.GA28450@embeddedor>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1545146239-30993-3-git-send-email-aisheng.dong@nxp.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Aisheng Dong <aisheng.dong@nxp.com>
-Cc: "dongas86@gmail.com" <dongas86@gmail.com>, Fabio Estevam <festevam@gmail.com>, "stefan@agner.ch" <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181217213430.GA28450@embeddedor>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 4:23 PM Aisheng Dong <aisheng.dong@nxp.com> wrote:
+On Mon, Dec 17, 2018 at 10:34 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
 
-> MX8QM contains a system controller that is responsible for controlling
-> the pad setting of the IPs that are present. Communication between the
-> host processor running an OS and the system controller happens through
-> a SCU protocol. This patch adds the SCU based MX8QM pinctrl driver.
+> offset and lineinfo.line_offset are indirectly controlled by user-space,
+> hence leading to a potential exploitation of the Spectre variant 1
+> vulnerability.
 >
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> This issue was detected with the help of Smatch:
+>
+> drivers/gpio/gpiolib.c:580 linehandle_create() warn: potential spectre issue 'gdev->descs' [r] (local cap)
+> drivers/gpio/gpiolib.c:927 lineevent_create() warn: potential spectre issue 'gdev->descs' [r] (local cap)
+> drivers/gpio/gpiolib.c:1053 gpio_ioctl() warn: potential spectre issue 'gdev->descs' [r] (local cap)
+>
+> Fix this by sanitizing both offset and lineinfo.line_offset before
+> using them to index gdev->descs.
+>
+> Notice that given that speculation windows are large, the policy is
+> to kill the speculation on the first load and not worry if it can be
+> completed with a dependent load/store [1].
+>
+> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Somehow I managed to apply the DT bindings but not this driver.
-I blame it on christmas stress. Patch applied now.
+I don't know what to do with this patch and I am also worried that
+it is dangerous and irresponsible to drop it.
+
+I am worried because I simply don't understand the conditions under which
+this can be exploited, to what extent, and I am worried that I am sacrificing
+performance for security that is not needed on this
+performance-critical path, which is why I am asking for performance
+effects: I really would like it if someone could take this for a ride
+on some x86 system with the mockdev and libgpiod.
+
+It's not like gdev->descs is a secret or contain anything sensitive,
+the typical info is just electronic set-up. I get the idea from the commit
+message that this is all that may be exposed?
+
+If this can be exploited to expose the whole of kernel memory on the
+other hand ("speculation windows are large"), I would be an idiot if I
+don't apply it. But then the commit message would say that the entire
+memory is at risk?
 
 Yours,
 Linus Walleij
