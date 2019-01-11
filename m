@@ -1,104 +1,57 @@
-From: Lars Poeschel <poeschel@lemonage.de>
-Subject: [PATCH] pinctrl: mcp23s08: Allocate irq_chip dynamic
-Date: Fri, 11 Jan 2019 17:25:16 +0100
-Message-ID: <20190111162516.28197-1-poeschel@lemonage.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2] gpiolib: fix line event timestamps for nested irqs
+Date: Fri, 11 Jan 2019 18:43:47 +0100
+Message-ID: <20190111174347.25040-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: Lars Poeschel <poeschel@lemonage.de>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Keeping the irq_chip definition static shares it with multiple instances
-of the mcp23s08 gpiochip in the system. This is bad and now we get this
-warning from gpiolib core:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-"detected irqchip that is shared with multiple gpiochips: please fix the
-driver."
+Nested interrupts run inside the calling thread's context and the top
+half handler is never called which means that we never read the
+timestamp.
 
-Hence, move the irq_chip definition from being driver static into the
-struct mcp23s08. So a unique irq_chip is used for each gpiochip
-instance.
+This issue came up when trying to read line events from a gpiochip
+using regmap_irq_chip for interrupts.
 
-Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+Fix it by reading the timestamp from the irq thread function if it's
+still 0 by the time the second handler is called.
+
+Fixes: d58f2bf261fd ("gpio: Timestamp events in hardirq handler")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/pinctrl/pinctrl-mcp23s08.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+v1 -> v2:
+- add Fixes: to the commit message and Cc stable
+- directly assing ktime_get_real_ns() to ge.timestamp
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index b03481ef99a1..3b1785e56174 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -68,6 +68,7 @@ struct mcp23s08 {
- 	struct mutex		lock;
+ drivers/gpio/gpiolib.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 1651d7f0a303..d1adfdf50fb3 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -828,7 +828,14 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
+ 	/* Do not leak kernel stack to userspace */
+ 	memset(&ge, 0, sizeof(ge));
  
- 	struct gpio_chip	chip;
-+	struct irq_chip		irq_chip;
+-	ge.timestamp = le->timestamp;
++	/*
++	 * We may be running from a nested threaded interrupt in which case
++	 * we didn't get the timestamp from lineevent_irq_handler().
++	 */
++	if (!le->timestamp)
++		ge.timestamp = ktime_get_real_ns();
++	else
++		ge.timestamp = le->timestamp;
  
- 	struct regmap		*regmap;
- 	struct device		*dev;
-@@ -607,15 +608,6 @@ static void mcp23s08_irq_bus_unlock(struct irq_data *data)
- 	mutex_unlock(&mcp->lock);
- }
- 
--static struct irq_chip mcp23s08_irq_chip = {
--	.name = "gpio-mcp23xxx",
--	.irq_mask = mcp23s08_irq_mask,
--	.irq_unmask = mcp23s08_irq_unmask,
--	.irq_set_type = mcp23s08_irq_set_type,
--	.irq_bus_lock = mcp23s08_irq_bus_lock,
--	.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock,
--};
--
- static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
- {
- 	struct gpio_chip *chip = &mcp->chip;
-@@ -645,7 +637,7 @@ static int mcp23s08_irqchip_setup(struct mcp23s08 *mcp)
- 	int err;
- 
- 	err =  gpiochip_irqchip_add_nested(chip,
--					   &mcp23s08_irq_chip,
-+					   &mcp->irq_chip,
- 					   0,
- 					   handle_simple_irq,
- 					   IRQ_TYPE_NONE);
-@@ -656,7 +648,7 @@ static int mcp23s08_irqchip_setup(struct mcp23s08 *mcp)
- 	}
- 
- 	gpiochip_set_nested_irqchip(chip,
--				    &mcp23s08_irq_chip,
-+				    &mcp->irq_chip,
- 				    mcp->irq);
- 
- 	return 0;
-@@ -1042,6 +1034,13 @@ static int mcp230xx_probe(struct i2c_client *client,
- 		return -ENOMEM;
- 
- 	mcp->irq = client->irq;
-+	mcp->irq_chip.name = dev_name(&client->dev);
-+	mcp->irq_chip.irq_mask = mcp23s08_irq_mask;
-+	mcp->irq_chip.irq_unmask = mcp23s08_irq_unmask;
-+	mcp->irq_chip.irq_set_type = mcp23s08_irq_set_type;
-+	mcp->irq_chip.irq_bus_lock = mcp23s08_irq_bus_lock;
-+	mcp->irq_chip.irq_bus_sync_unlock = mcp23s08_irq_bus_unlock;
-+
- 	status = mcp23s08_probe_one(mcp, &client->dev, client, client->addr,
- 				    id->driver_data, pdata->base, 0);
- 	if (status)
-@@ -1152,6 +1151,13 @@ static int mcp23s08_probe(struct spi_device *spi)
- 		chips--;
- 		data->mcp[addr] = &data->chip[chips];
- 		data->mcp[addr]->irq = spi->irq;
-+		data->mcp[addr]->irq_chip.name = dev_name(&spi->dev);
-+		data->mcp[addr]->irq_chip.irq_mask = mcp23s08_irq_mask;
-+		data->mcp[addr]->irq_chip.irq_unmask = mcp23s08_irq_unmask;
-+		data->mcp[addr]->irq_chip.irq_set_type = mcp23s08_irq_set_type;
-+		data->mcp[addr]->irq_chip.irq_bus_lock = mcp23s08_irq_bus_lock;
-+		data->mcp[addr]->irq_chip.irq_bus_sync_unlock =
-+			mcp23s08_irq_bus_unlock;
- 		status = mcp23s08_probe_one(data->mcp[addr], &spi->dev, spi,
- 					    0x40 | (addr << 1), type,
- 					    pdata->base, addr);
+ 	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
+ 	    && le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE) {
 -- 
-2.20.1
+2.19.1
