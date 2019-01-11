@@ -1,57 +1,58 @@
 From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 1/6] pinctrl: qcom: spmi-gpio: hardcode IRQ counts
-Date: Fri, 11 Jan 2019 14:00:58 -0800
-Message-ID: <154724405834.169631.5375710339019706473@swboyd.mtv.corp.google.com>
-References: <20190110011258.17227-1-masneyb@onstation.org> <20190110011258.17227-2-masneyb@onstation.org>
+Subject: Re: [PATCH v3 3/6] gpio: add irq domain activate/deactivate functions
+Date: Fri, 11 Jan 2019 14:05:49 -0800
+Message-ID: <154724434941.169631.6671178005596601495@swboyd.mtv.corp.google.com>
+References: <20190110011258.17227-1-masneyb@onstation.org> <20190110011258.17227-4-masneyb@onstation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190110011258.17227-2-masneyb@onstation.org>
+In-Reply-To: <20190110011258.17227-4-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Brian Masney <masneyb@onstation.org>, andy.gross@linaro.org, bjorn.andersson@linaro.org, linus.walleij@linaro.org
 Cc: marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Brian Masney (2019-01-09 17:12:53)
-> @@ -1062,14 +1056,15 @@ static int pmic_gpio_remove(struct platform_devic=
-e *pdev)
->         return 0;
->  }
-> =20
-> +/* data contains the number of GPIOs */
->  static const struct of_device_id pmic_gpio_of_match[] =3D {
-> -       { .compatible =3D "qcom,pm8916-gpio" },   /* 4 GPIO's */
-> -       { .compatible =3D "qcom,pm8941-gpio" },   /* 36 GPIO's */
-> -       { .compatible =3D "qcom,pm8994-gpio" },   /* 22 GPIO's */
-> -       { .compatible =3D "qcom,pmi8994-gpio" },  /* 10 GPIO's */
-> -       { .compatible =3D "qcom,pma8084-gpio" },  /* 22 GPIO's */
-> -       { .compatible =3D "qcom,pms405-gpio" },   /* 12 GPIO's, holes on =
-1 9 10 */
-> -       { .compatible =3D "qcom,spmi-gpio" }, /* Generic */
-> +       { .compatible =3D "qcom,pm8916-gpio", .data =3D (void *) 4 },
-> +       { .compatible =3D "qcom,pm8941-gpio", .data =3D (void *) 36 },
-> +       { .compatible =3D "qcom,pm8994-gpio", .data =3D (void *) 22 },
-> +       { .compatible =3D "qcom,pmi8994-gpio", .data =3D (void *) 10 },
-> +       { .compatible =3D "qcom,pma8084-gpio", .data =3D (void *) 22 },
-> +       /* pms405 has 12 GPIOs with holes on 1, 9, and 10 */
-> +       { .compatible =3D "qcom,pms405-gpio", .data =3D (void *) 12 },
+Quoting Brian Masney (2019-01-09 17:12:55)
+> This adds the two new functions gpiochip_irq_domain_activate and
+> gpiochip_irq_domain_deactivate that can be used as the activate and
+> deactivate functions in the struct irq_domain_ops. This is for
+> situations where only gpiochip_{lock,unlock}_as_irq needs to be called.
+> SPMI and SSBI GPIO are two users that will initially use these
+> functions.
+>=20
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+> Stephen: Reply if you want a Suggested-by tag for this.
 
-We've been lazy and not been updating this file.
+Sure. Add it please.
 
- $ git grep "qcom,spmi-gpio"
- arch/arm/boot/dts/qcom-pm8941.dtsi:                     compatible =3D "qc=
-om,pm8941-gpio", "qcom,spmi-gpio";
- arch/arm/boot/dts/qcom-pma8084.dtsi:                    compatible =3D "qc=
-om,pma8084-gpio", "qcom,spmi-gpio";
- arch/arm64/boot/dts/qcom/pm8005.dtsi:                   compatible =3D "qc=
-om,pm8005-gpio", "qcom,spmi-gpio";
- arch/arm64/boot/dts/qcom/pm8998.dtsi:                   compatible =3D "qc=
-om,pm8998-gpio", "qcom,spmi-gpio";
- arch/arm64/boot/dts/qcom/pmi8994.dtsi:                  compatible =3D "qc=
-om,pmi8994-gpio", "qcom,spmi-gpio";
- arch/arm64/boot/dts/qcom/pmi8998.dtsi:                  compatible =3D "qc=
-om,pmi8998-gpio", "qcom,spmi-gpio";
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
 
-So we'll need to add pm8005, pm8998, pmi8998 here with their pin counts
-too to avoid breaking those devices with this patch.
+Minor question but otherwise
+
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+
+> +/**
+> + * gpiochip_irq_domain_deactivate() - Unlock a GPIO used as an IRQ
+> + * @domain: The IRQ domain used by this IRQ chip
+> + * @data: Outermost irq_data associated with the IRQ
+> + *
+> + * This function is a wrapper that will call &gpiochip_unlock_as_irq and=
+ is to
+
+Is this kernel-doc notation to refer to functions and structures with
+ampersand only? According to the docs[1] we should put () after
+functions and '&struct' before structures.
+
+> + * be used as the deactivate function for the struct &irq_domain_ops. The
+> + * host_data for the IRQ domain must be the struct &gpiochip.
+> + */
+> +void gpiochip_irq_domain_deactivate(struct irq_domain *domain,
+> +                                   struct irq_data *data)
+> +{
+> +       struct gpio_chip *chip =3D domain->host_data;
+> +
+
+[1] https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html?highli=
+ght=3Dcross%20references#highlights-and-cross-references
