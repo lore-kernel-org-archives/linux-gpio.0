@@ -1,54 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] mmc: core: don't override the CD GPIO level when
- "cd-inverted" is set
-Date: Fri, 11 Jan 2019 15:28:44 +0100
-Message-ID: <CACRpkdYTQjiPbLGQ8E_mByAY0e_byN8iW=jBVPw3QRxh4_fB_A@mail.gmail.com>
-References: <20190101194414.24766-1-martin.blumenstingl@googlemail.com> <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 2/8] gpio: zynq: Wakeup gpio controller when it is used as
+ IRQ controller
+Date: Fri, 11 Jan 2019 15:37:07 +0100
+Message-ID: <CACRpkdZVfH_LYQov5mkMvp6BWjkVsisawWuE1PMp0b8dW5Qc=g@mail.gmail.com>
+References: <cover.1502103715.git.michal.simek@xilinx.com>
+ <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
+ <CACRpkdZE-Edr7fWZY5VQM1_65iw7MYGP-iDa2ExZsPxpM0rurQ@mail.gmail.com>
+ <6da5fd79-fbc8-b613-954f-dcbe2ef8d6c5@xilinx.com>
+ <20190107164210.3ecf37e8@windsurf>
+ <CACRpkdafBpC14TxBNVN2AemkBz-yKkXkKfNpdgkYKQX3qFemag@mail.gmail.com>
+ <20190111135413.73dad0b2@windsurf>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Ulf Hansson <ulf.hansson@linaro.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190111135413.73dad0b2@windsurf>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc: Josh Cartwright <josh.cartwright@ni.com>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, Nava kishore Manne <navam@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "monstr@monstr.eu" <monstr@monstr.eu>, Borsodi Petr <Petr.Borsodi@i.cz>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Shubhrajyoti Datta <shubhraj@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 1, 2019 at 8:44 PM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
+On Fri, Jan 11, 2019 at 1:54 PM Thomas Petazzoni
+<thomas.petazzoni@bootlin.com> wrote:
+> On Fri, 11 Jan 2019 10:54:20 +0100, Linus Walleij wrote:
+>
+> > My stance is that the driver is responsible of enabling and managing
+> > runtime PM for its hardware block(s).
+> >
+> > Runtime PM in the core should only be added if the core needs to
+> > be aware about it, such as is the case when e.g. a block device
+> > needs to drain its write buffer before going to runtime sleep.
+> >
+> > I fail so see why the GPIO core need to be aware about this.
+>
+> In this very same thread at
+> https://www.spinics.net/lists/arm-kernel/msg600515.html, you kind of
+> proposed to handle this in the core in fact :-) Though indeed you said
+> that the core could provide helpers.
 
-> Since commit 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device
-> tree") gpiolib-of parses the "cd-gpios" property and flips the polarity
-> if "cd-inverted" is also set. This results in the "cd-inverted" property
-> being evaluated twice, which effectively makes it a no-op:
-> - first in drivers/gpio/gpiolib-of.c (of_xlate_and_get_gpiod_flags) when
->   setting up the CD GPIO
-> - then again in drivers/mmc/core/slot-gpio.c (mmc_gpio_get_cd) when
->   reading the CD GPIO value at runtime
->
-> On boards which are using device-tree with the "cd-inverted" property
-> being set any inserted card are not detected anymore. This is due to the
-> MMC core treating the CD GPIO with the wrong polarity.
->
-> Disable "override_cd_active_level" for the card detection GPIO which is
-> parsed using mmc_of_parse. This fixes SD card detection on the boards
-> which are currently using the "cd-inverted" device-tree property (tested
-> on Meson8b Odroid-C1 and Meson8b EC-100).
->
-> This does not remove the CD GPIO inversion logic from the MMC core
-> because there's at least one driver (sdhci-pci-core for Intel BayTrail
-> based boards) which still passes "override_cd_active_level = true" to
-> mmc_gpiod_request_cd(). Due to lack of hardware for testing this is left
-> untouched.
-> In the future the GPIO inversion logic for both, card and read-only
-> detection can be removed once no driver is using it anymore.
->
-> Fixes: 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Yeah allright, I have never been good with consistency but what I guess
+I would mean to say (today) is that the driver needs to be in the driver
+seat (heh) and opting in to any runtime PM support.
 
-I applied this to the GPIO fixes with the ACKs.
-
-Ulf is on vacation but I managed to get his ACK over chat,
-so I will try to get this upstream ASAP.
+This is in contrast with "midlayer" where all drivers are forced to behave
+"as if" they had runtime PM (i.e. calls are done to the runtime PM helpers
+even if the device doesn't really activate runtime PM).
 
 Yours,
 Linus Walleij
