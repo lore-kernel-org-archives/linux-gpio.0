@@ -1,60 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: Fix potential Spectre v1 vulnerabilities
-Date: Fri, 11 Jan 2019 09:39:13 +0100
-Message-ID: <CACRpkdbttVUV50oAOO=v6Nw+PQTEqufP+53pZMOPYwX6fmXEiQ@mail.gmail.com>
-References: <20181217213430.GA28450@embeddedor>
+Subject: Re: [PATCH v6 1/8] bitops: Introduce the for_each_set_clump8 macro
+Date: Fri, 11 Jan 2019 09:42:46 +0100
+Message-ID: <CACRpkdaL3LY6esgBfpJcox7AzQ8RoreqV0_gzM-AmQ_mYQHueQ@mail.gmail.com>
+References: <cover.1545198260.git.vilhelm.gray@gmail.com> <9fb3981cbcfbce3fb8b42bf419d734c0e5a44d0e.1545198260.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181217213430.GA28450@embeddedor>
+In-Reply-To: <9fb3981cbcfbce3fb8b42bf419d734c0e5a44d0e.1545198260.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-arch@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 10:34 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
+On Wed, Dec 19, 2018 at 7:00 AM William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-> offset and lineinfo.line_offset are indirectly controlled by user-space,
-> hence leading to a potential exploitation of the Spectre variant 1
-> vulnerability.
+> This macro iterates for each 8-bit group of bits (clump) with set bits,
+> within a bitmap memory region. For each iteration, "start" is set to the
+> bit offset of the found clump, while the respective clump value is
+> stored to the location pointed by "clump". Additionally, the
+> bitmap_get_value8 and bitmap_set_value8 functions are introduced to
+> respectively get and set an 8-bit value in a bitmap memory region.
 >
-> This issue was detected with the help of Smatch:
->
-> drivers/gpio/gpiolib.c:580 linehandle_create() warn: potential spectre issue 'gdev->descs' [r] (local cap)
-> drivers/gpio/gpiolib.c:927 lineevent_create() warn: potential spectre issue 'gdev->descs' [r] (local cap)
-> drivers/gpio/gpiolib.c:1053 gpio_ioctl() warn: potential spectre issue 'gdev->descs' [r] (local cap)
->
-> Fix this by sanitizing both offset and lineinfo.line_offset before
-> using them to index gdev->descs.
->
-> Notice that given that speculation windows are large, the policy is
-> to kill the speculation on the first load and not worry if it can be
-> completed with a dependent load/store [1].
->
-> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-I don't know what to do with this patch and I am also worried that
-it is dangerous and irresponsible to drop it.
+I am still waiting for feedback from the core lib maintainers on this patch.
+If I just get an ACK I can apply it to the GPIO tree, if noone else cares
+I might just go in and apply it, but it feels slightly outside of my
+jurisdiction.
 
-I am worried because I simply don't understand the conditions under which
-this can be exploited, to what extent, and I am worried that I am sacrificing
-performance for security that is not needed on this
-performance-critical path, which is why I am asking for performance
-effects: I really would like it if someone could take this for a ride
-on some x86 system with the mockdev and libgpiod.
+Maybe people were just a bit stressed out around christmas?
 
-It's not like gdev->descs is a secret or contain anything sensitive,
-the typical info is just electronic set-up. I get the idea from the commit
-message that this is all that may be exposed?
-
-If this can be exploited to expose the whole of kernel memory on the
-other hand ("speculation windows are large"), I would be an idiot if I
-don't apply it. But then the commit message would say that the entire
-memory is at risk?
+What about looking at it now?
 
 Yours,
 Linus Walleij
