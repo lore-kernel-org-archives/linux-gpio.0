@@ -1,43 +1,37 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v6 1/8] bitops: Introduce the for_each_set_clump8 macro
-Date: Fri, 11 Jan 2019 10:00:46 +0100
-Message-ID: <81f3038e-301b-7c0d-a6ef-90b9dadcab51@rasmusvillemoes.dk>
-References: <cover.1545198260.git.vilhelm.gray@gmail.com>
- <9fb3981cbcfbce3fb8b42bf419d734c0e5a44d0e.1545198260.git.vilhelm.gray@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFT][PATCH] gpio: sama5d2-piobu: Set proper output level for
+ direction_output
+Date: Fri, 11 Jan 2019 10:35:32 +0100
+Message-ID: <CACRpkdYT8eb2PD2fOvHo7MsSi7Ltqjbjk=udnKsW-q2YSFcGUQ@mail.gmail.com>
+References: <20181231095256.14814-1-axel.lin@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9fb3981cbcfbce3fb8b42bf419d734c0e5a44d0e.1545198260.git.vilhelm.gray@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>, linus.walleij@linaro.org
-Cc: akpm@linux-foundation.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com, Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20181231095256.14814-1-axel.lin@ingics.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andrei Stefanescu <andrei.stefanescu@microchip.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 19/12/2018 07.00, William Breathitt Gray wrote:
-> +/**
-> + * bitmap_set_value8 - set an 8-bit value within a memory region
-> + * @bitmap: address to the bitmap memory region
-> + * @value: the 8-bit value
-> + * @start: bit offset of the 8-bit value
-> + */
-> +void bitmap_set_value8(unsigned long *const bitmap,
-> +		       const unsigned long *const value,
-> +		       const unsigned int start)
-> +{
-> +	const size_t index = BIT_WORD(start);
-> +	const unsigned int offset = start % BITS_PER_LONG;
-> +	const unsigned long mask = GENMASK(7, offset);
-> +
-> +	bitmap[index] &= ~mask;
-> +	bitmap[index] |= (*value << offset) & mask;
-> +}
+On Mon, Dec 31, 2018 at 10:53 AM Axel Lin <axel.lin@ingics.com> wrote:
 
-errh, why pass the value by reference? That seems rather odd. Also, if
-anybody passes a value that doesn't fit in 8 bits, they get what they
-deserve; IOW I don't see a reason for the masking in the last line, but
-if its convenient for the users, keep it. In any case, please change the
-type of value.
+> Set proper output level base on the argument of direction_output.
+> Also remove sama5d2_piobu_set_direction() as there is only one caller
+> now.
+>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-Rasmus
+Patch tentatively applied as non-critical fix (for v5.1) unless
+Andrei has concerns.
+
+Yours,
+Linus Walleij
