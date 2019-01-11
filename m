@@ -1,44 +1,60 @@
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/8] gpio: zynq: Wakeup gpio controller when it is used
- as IRQ controller
-Date: Fri, 11 Jan 2019 13:54:13 +0100
-Message-ID: <20190111135413.73dad0b2@windsurf>
-References: <cover.1502103715.git.michal.simek@xilinx.com>
-        <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
-        <CACRpkdZE-Edr7fWZY5VQM1_65iw7MYGP-iDa2ExZsPxpM0rurQ@mail.gmail.com>
-        <6da5fd79-fbc8-b613-954f-dcbe2ef8d6c5@xilinx.com>
-        <20190107164210.3ecf37e8@windsurf>
-        <CACRpkdafBpC14TxBNVN2AemkBz-yKkXkKfNpdgkYKQX3qFemag@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH] gpiolib: fix line event timestamps for nested irqs
+Date: Fri, 11 Jan 2019 14:45:08 +0100
+Message-ID: <CAMRc=Md_8MBbc7RSwyPNMGYnJyQqvSgoyHYhEgQf5C4ac_K9eA@mail.gmail.com>
+References: <20190104103226.2878-1-brgl@bgdev.pl> <CACRpkdacXeBEh2UMmigSo+zYQCj3yMyNRfxHjqhu_kiZ2JMXbg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdafBpC14TxBNVN2AemkBz-yKkXkKfNpdgkYKQX3qFemag@mail.gmail.com>
+In-Reply-To: <CACRpkdacXeBEh2UMmigSo+zYQCj3yMyNRfxHjqhu_kiZ2JMXbg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michal Simek <michal.simek@xilinx.com>, Nava kishore Manne <navam@xilinx.com>, Josh Cartwright <josh.cartwright@ni.com>, "monstr@monstr.eu" <monstr@monstr.eu>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, Borsodi Petr <Petr.Borsodi@i.cz>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, Shubhrajyoti Datta <shubhraj@xilinx.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Linus,
+pt., 11 sty 2019 o 13:19 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
+=82(a):
+>
+> On Fri, Jan 4, 2019 at 11:32 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
+:
+>
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Nested interrupts run inside the calling thread's context and the top
+> > half handler is never called which means that we never read the
+> > timestamp.
+> >
+> > This issue came up when trying to read line events from a gpiochip
+> > using regmap_irq_chip for interrupts.
+> >
+> > Fix it by reading the timestamp from the irq thread function if it's
+> > still 0 by the time the second handler is called.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Oh that's right. Should this not have Fixes: and Cc: stable?
+>
+> > +       /*
+> > +        * We may be running from a nested threaded interrupt in which =
+case
+> > +        * we didn't get the timestamp from lineevent_irq_handler().
+> > +        */
+> > +       if (!le->timestamp)
+> > +               le->timestamp =3D ktime_get_real_ns();
+> > +
+> >         ge.timestamp =3D le->timestamp;
+>
+> I would merge these:
+>
+> if (!le->timestamp)
+>     ge.timestamp =3D ktime_get_real_ns();
+> else
+>     ge.timestamp =3D le->timestamp;
+>
+> Yours,
+> Linus Walleij
 
-On Fri, 11 Jan 2019 10:54:20 +0100, Linus Walleij wrote:
+I'll fix both issues and resend.
 
-> My stance is that the driver is responsible of enabling and managing
-> runtime PM for its hardware block(s).
-> 
-> Runtime PM in the core should only be added if the core needs to
-> be aware about it, such as is the case when e.g. a block device
-> needs to drain its write buffer before going to runtime sleep.
-> 
-> I fail so see why the GPIO core need to be aware about this.
-
-In this very same thread at
-https://www.spinics.net/lists/arm-kernel/msg600515.html, you kind of
-proposed to handle this in the core in fact :-) Though indeed you said
-that the core could provide helpers.
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Bart
