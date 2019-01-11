@@ -1,36 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] spmi: pmic-arb: convert to v2 irq interfaces to
- support hierarchical IRQ chips
-Date: Fri, 11 Jan 2019 13:29:21 +0100
-Message-ID: <CACRpkda4j6WAS-s1Eo6q64dKwvSDYKsEstbWSG4PBeU9jNiZvQ@mail.gmail.com>
-References: <20181229114755.8711-1-masneyb@onstation.org> <20181229114755.8711-2-masneyb@onstation.org>
- <154664792383.15366.9346249356552958882@swboyd.mtv.corp.google.com> <20190105014503.GA32383@basecamp>
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/8] gpio: zynq: Wakeup gpio controller when it is used
+ as IRQ controller
+Date: Fri, 11 Jan 2019 13:54:13 +0100
+Message-ID: <20190111135413.73dad0b2@windsurf>
+References: <cover.1502103715.git.michal.simek@xilinx.com>
+        <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
+        <CACRpkdZE-Edr7fWZY5VQM1_65iw7MYGP-iDa2ExZsPxpM0rurQ@mail.gmail.com>
+        <6da5fd79-fbc8-b613-954f-dcbe2ef8d6c5@xilinx.com>
+        <20190107164210.3ecf37e8@windsurf>
+        <CACRpkdafBpC14TxBNVN2AemkBz-yKkXkKfNpdgkYKQX3qFemag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190105014503.GA32383@basecamp>
+In-Reply-To: <CACRpkdafBpC14TxBNVN2AemkBz-yKkXkKfNpdgkYKQX3qFemag@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Shawn Guo <shawnguo@kernel.org>, Doug Anderson <dianders@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-arm-msm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michal Simek <michal.simek@xilinx.com>, Nava kishore Manne <navam@xilinx.com>, Josh Cartwright <josh.cartwright@ni.com>, "monstr@monstr.eu" <monstr@monstr.eu>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, Borsodi Petr <Petr.Borsodi@i.cz>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, Shubhrajyoti Datta <shubhraj@xilinx.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Jan 5, 2019 at 2:45 AM Brian Masney <masneyb@onstation.org> wrote:
-> [Stephen]
-> > Otherwise patch looks good to me. Thanks for working on this. Are you
-> > going to convert the ssbi master and gpio chip too?
->
-> Yes, I will do that work as well once this patch series is accepted.
-> I currently don't have the hardware to test it, but I'm willing to pick
-> up a cheap device on ebay. Any suggestions for something that boots a
-> mainline kernel with the ssbi? It looks like the Sony Xperia Z phone is
-> one of the supported devices.
+Hello Linus,
 
-I think my APQ8060 DragonBoard uses SSBI:
-https://dflund.se/~triad/krad/dragonboard/
-arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
+On Fri, 11 Jan 2019 10:54:20 +0100, Linus Walleij wrote:
 
-So I can test it. Or even  write the patch once the SSPI is merged and
-known working.
+> My stance is that the driver is responsible of enabling and managing
+> runtime PM for its hardware block(s).
+> 
+> Runtime PM in the core should only be added if the core needs to
+> be aware about it, such as is the case when e.g. a block device
+> needs to drain its write buffer before going to runtime sleep.
+> 
+> I fail so see why the GPIO core need to be aware about this.
 
-Yours,
-Linus Walleij
+In this very same thread at
+https://www.spinics.net/lists/arm-kernel/msg600515.html, you kind of
+proposed to handle this in the core in fact :-) Though indeed you said
+that the core could provide helpers.
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
