@@ -1,94 +1,53 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v4 1/1] pinctrl: meson: meson8b: add the eth_rxd2 and eth_rxd3
- pins
-Date: Sat, 12 Jan 2019 13:59:13 +0100
-Message-ID: <20190112125913.22085-2-martin.blumenstingl@googlemail.com>
-References: <20190112125913.22085-1-martin.blumenstingl@googlemail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [RFT][PATCH v1] gpiolib: acpi: Introduce
+ ACPI_GPIO_QUIRK_ONLY_GPIOIO
+Date: Sun, 13 Jan 2019 08:50:27 +0100
+Message-ID: <fbb55ce7-0ca3-a1ad-249e-764840c46804@redhat.com>
+References: <20190108180205.55109-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdYgBsvNR1PFuzmMegpjraWRi58ACb-=mBrUDvLoi_5J_g@mail.gmail.com>
+ <20190111194929.GW9170@smile.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190112125913.22085-1-martin.blumenstingl@googlemail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, khilman@baylibre.com, ingrassia@epigenesys.com, linux-arm-kernel@lists.infradead.org, Jianxin Pan <jianxin.pan@amlogic.com>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20190111194929.GW9170@smile.fi.intel.com>
+Content-Language: en-US
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Jie Yang <yang.jie@linux.intel.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Mark Brown <broonie@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Gigabit Ethernet requires the Ethernet TXD0..3 and RXD0..3 data lines.
-Add the missing eth_rxd2 and eth_rxd3 definitions so we don't have to
-rely on the bootloader to set them up correctly.
+Hi,
 
-The vendor u-boot sources for Odroid-C1 use the following Ethernet
-pinmux configuration:
-  SET_CBUS_REG_MASK(PERIPHS_PIN_MUX_6, 0x3f4f);
-  SET_CBUS_REG_MASK(PERIPHS_PIN_MUX_7, 0xf00000);
-This translates to the following pin groups in the mainline kernel:
-- register 6 bit  0: eth_rxd1 (DIF_0_P)
-- register 6 bit  1: eth_rxd0 (DIF_0_N)
-- register 6 bit  2: eth_rx_dv (DIF_1_P)
-- register 6 bit  3: eth_rx_clk (DIF_1_N)
-- register 6 bit  6: eth_tx_en (DIF_3_P)
-- register 6 bit  8: eth_ref_clk (DIF_3_N)
-- register 6 bit  9: eth_mdc (DIF_4_P)
-- register 6 bit 10: eth_mdio_en (DIF_4_N)
-- register 6 bit 11: eth_tx_clk (GPIOH_9)
-- register 6 bit 12: eth_txd2 (GPIOH_8)
-- register 6 bit 13: eth_txd3 (GPIOH_7)
-- register 7 bit 20: eth_txd0_0 (GPIOH_6)
-- register 7 bit 21: eth_txd1_0 (GPIOH_5)
-- register 7 bit 22: eth_rxd3 (DIF_2_P)
-- register 7 bit 23: eth_rxd2 (DIF_2_N)
+On 11-01-19 20:49, Andy Shevchenko wrote:
+> On Fri, Jan 11, 2019 at 03:21:39PM +0100, Linus Walleij wrote:
+>> On Tue, Jan 8, 2019 at 7:02 PM Andy Shevchenko
+>> <andriy.shevchenko@linux.intel.com> wrote:
+>>
+>>> New quirk enforces search for GPIO based on its type.
+>>> Note, supplied index in the mapping table must be 0.
+>>>
+>>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>
+>> (...)
+>>
+>>>   sound/soc/intel/boards/bytcr_rt5651.c | 74 ++++-----------------------
+>>
+>> Do we have an ACK from the maintainer of this file?
+>> It's Hans I think. Ideally also from Mark Brown.
+> 
+> I hope to get Hans' Tested-by on this.
 
-All functions except eth_rxd2 and eth_rxd3 are already supported by the
-pinctrl-meson8b driver.
+Yes I've testing this on my TODO.
 
-Suggested-by: Jianxin Pan <jianxin.pan@amlogic.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
-Reviewed-by: Emiliano Ingrassia <ingrassia@epigenesys.com>
----
- drivers/pinctrl/meson/pinctrl-meson8b.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Regards,
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index c69ca95b1ad5..84938bd73ac2 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -346,6 +346,8 @@ static const unsigned int eth_rx_dv_pins[]	= { DIF_1_P };
- static const unsigned int eth_rx_clk_pins[]	= { DIF_1_N };
- static const unsigned int eth_txd0_1_pins[]	= { DIF_2_P };
- static const unsigned int eth_txd1_1_pins[]	= { DIF_2_N };
-+static const unsigned int eth_rxd3_pins[]	= { DIF_2_P };
-+static const unsigned int eth_rxd2_pins[]	= { DIF_2_N };
- static const unsigned int eth_tx_en_pins[]	= { DIF_3_P };
- static const unsigned int eth_ref_clk_pins[]	= { DIF_3_N };
- static const unsigned int eth_mdc_pins[]	= { DIF_4_P };
-@@ -599,6 +601,8 @@ static struct meson_pmx_group meson8b_cbus_groups[] = {
- 	GROUP(eth_ref_clk,	6,	8),
- 	GROUP(eth_mdc,		6,	9),
- 	GROUP(eth_mdio_en,	6,	10),
-+	GROUP(eth_rxd3,		7,	22),
-+	GROUP(eth_rxd2,		7,	23),
- };
- 
- static struct meson_pmx_group meson8b_aobus_groups[] = {
-@@ -748,7 +752,7 @@ static const char * const ethernet_groups[] = {
- 	"eth_tx_clk", "eth_tx_en", "eth_txd1_0", "eth_txd1_1",
- 	"eth_txd0_0", "eth_txd0_1", "eth_rx_clk", "eth_rx_dv",
- 	"eth_rxd1", "eth_rxd0", "eth_mdio_en", "eth_mdc", "eth_ref_clk",
--	"eth_txd2", "eth_txd3"
-+	"eth_txd2", "eth_txd3", "eth_rxd3", "eth_rxd2"
- };
- 
- static const char * const i2c_a_groups[] = {
--- 
-2.20.1
+Hans
