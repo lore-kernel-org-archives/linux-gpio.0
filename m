@@ -1,12 +1,16 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2 1/2] pinctrl: sunxi: Fix and simplify pin bank regulator
- handling
-Date: Sun, 13 Jan 2019 17:57:22 +0800
-Message-ID: <20190113095723.25295-1-wens@csie.org>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH 2/2] PCI: armada8k: don't toggle reset twice
+Date: Sun, 13 Jan 2019 14:38:00 +0200
+Message-ID: <87pnt0vil3.fsf@tarshish>
+References: <024cc24efa7b99186750f90c91880b29357d379d.1547123182.git.baruch@tkos.co.il>
+ <94cd23a60c647020dd87a923684b59255b89f02c.1547123182.git.baruch@tkos.co.il>
+ <20190110125548.GA29612@lunn.ch> <8736q0irwy.fsf@tarshish>
+ <20190110131912.GB29612@lunn.ch> <87zhs8h5ej.fsf@tarshish>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <87zhs8h5ej.fsf@tarshish>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,92 +20,67 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux-pwm@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Sven Auhagen <sven.auhagen@voleatech.de>, Jason Cooper <jason@lakedaemon.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-pci@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Bjorn Helgaas <bhelgaas@google.com>, Gregory Clement <gregory.clement@bootlin.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The new per-pin-bank regulator handling code in the sunxi pinctrl driver
-has mismatched conditions for enabling and disabling the regulator: it
-is enabled each time a pin is requested, but only disabled when the
-pin-bank's reference count reaches zero.
+Hi Andrew,
 
-Since we are doing reference counting already, there's no need to enable
-the regulator each time a pin is requested. Instead we can just do it
-for the first requested pin of each pin-bank. Thus we can reverse the
-test and bail out early if it's not the first occurrence.
+On Thu, Jan 10 2019, Baruch Siach wrote:
+> On Thu, Jan 10 2019, Andrew Lunn wrote:
+>>> Sven Auhagen reported the same issue with Intel NIC attached to
+>>> mini-PCIe slots on a custom Armada 8K design.
+>>
+>> O.K. so that suggests the issue is on the Armada side.
+>>
+>>> How would you suggest to investigate this issue?
+>>
+>> I presume reboot works O.K? So it is possible to toggle the reset
+>> multiple times, but reboot must do something additional which makes it
+>> work? Do you have sources for the bootloader?
+>
+> The bootloader is current U-Boot master as BL33 of Marvell provided ATF
+> version 18.12, current latest.
+>
+>> Are there status bits in the comphy about the state of the link? Maybe
+>> comphy needs to be kicked to reestablish the link?
+>
+> Maybe. The U-Boot comphy PCIe initialization routine
+> comphy_pcie_power_up() is long and complex.
+>
+> The ATF code also carries PCIe comphy initialization with this text:
+>
+> https://github.com/MarvellEmbeddedProcessors/atf-marvell/blob/atf-v1.5-armada-18.12/drivers/marvell/comphy/phy-comphy-cp110.c#L1170
+>
+>         /* In Armada 8K DB boards, PCIe initialization can be executed
+>          * only once (PCIe reset performed during chip power on and
+>          * it cannot be executed via GPIO later).
+>          * This means that power on can be executed only once, so let's
+>          * mark if the caller is bootloader or Linux.
+>          * If bootloader -> run power on.
+>          * If Linux -> exit.
+>          *
+>          * TODO: In MacciatoBIN, PCIe reset is connected via GPIO,
+>          * so after GPIO reset is added to Linux Kernel, it can be
+>          * powered-on by Linux.
+>          */
+>         if (!called_from_uboot)
+>                 return ret;
 
-Fixes: 9a2a566adb00 ("pinctrl: sunxi: Deal with per-bank regulators")
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-Changes since v1:
+Another look at this comment made me realize that we need comphy
+initialization support in the kernel for PCIe reset to work correctly.
 
-  - Moved before the other fix. Both fixes are needed, but having this
-    one first made reworking the other one easier.
+The workaround that this patch proposes will not solve the problem for
+v5.0, since the GPIO get_direction patch will only appear in v5.1.
 
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 36 ++++++++++++---------------
- 1 file changed, 16 insertions(+), 20 deletions(-)
+So the only viable solution for v5.0 is to revert the gpio reset signal
+patch (commit 3d71746c42).
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 5d9184d18c16..9ad6e9c2adab 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -699,25 +699,21 @@ static int sunxi_pmx_request(struct pinctrl_dev *pctldev, unsigned offset)
- 	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
- 	unsigned short bank = offset / PINS_PER_BANK;
- 	struct sunxi_pinctrl_regulator *s_reg = &pctl->regulators[bank];
--	struct regulator *reg;
-+	struct regulator *reg = s_reg->regulator;
-+	char supply[16];
- 	int ret;
- 
--	reg = s_reg->regulator;
--	if (!reg) {
--		char supply[16];
--
--		snprintf(supply, sizeof(supply), "vcc-p%c", 'a' + bank);
--		reg = regulator_get(pctl->dev, supply);
--		if (IS_ERR(reg)) {
--			dev_err(pctl->dev, "Couldn't get bank P%c regulator\n",
--				'A' + bank);
--			return PTR_ERR(reg);
--		}
--
--		s_reg->regulator = reg;
--		refcount_set(&s_reg->refcount, 1);
--	} else {
-+	if (reg) {
- 		refcount_inc(&s_reg->refcount);
-+		return 0;
-+	}
-+
-+	snprintf(supply, sizeof(supply), "vcc-p%c", 'a' + bank);
-+	reg = regulator_get(pctl->dev, supply);
-+	if (IS_ERR(reg)) {
-+		dev_err(pctl->dev, "Couldn't get bank P%c regulator\n",
-+			'A' + bank);
-+		return PTR_ERR(reg);
- 	}
- 
- 	ret = regulator_enable(reg);
-@@ -727,13 +723,13 @@ static int sunxi_pmx_request(struct pinctrl_dev *pctldev, unsigned offset)
- 		goto out;
- 	}
- 
-+	s_reg->regulator = reg;
-+	refcount_set(&s_reg->refcount, 1);
-+
- 	return 0;
- 
- out:
--	if (refcount_dec_and_test(&s_reg->refcount)) {
--		regulator_put(s_reg->regulator);
--		s_reg->regulator = NULL;
--	}
-+	regulator_put(s_reg->regulator);
- 
- 	return ret;
- }
--- 
-2.20.1
+Thanks for your review.
+
+baruch
+
+--
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
