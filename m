@@ -1,98 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: hlwd: Add basic IRQ support
-Date: Mon, 14 Jan 2019 11:20:49 +0100
-Message-ID: <CACRpkdYyMwu+hFQF4PUSb8N8zo3QEFt5=curhsdTFP1FCtGpNw@mail.gmail.com>
-References: <20190113135844.13109-1-j.neuschaefer@gmx.net> <20190113135844.13109-2-j.neuschaefer@gmx.net>
+From: Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH 2/3] pinctrl: freescale: fix link errors
+Date: Mon, 14 Jan 2019 11:22:40 +0100
+Message-ID: <CADYN=9JF6GFRxzuQ2Dcruxaa_BKUVLHfqoAtzghgV-_jzKTcvg@mail.gmail.com>
+References: <20190114095659.23082-1-anders.roxell@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190113135844.13109-2-j.neuschaefer@gmx.net>
+In-Reply-To: <20190114095659.23082-1-anders.roxell@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: aisheng.dong@nxp.com, Fabio Estevam <festevam@gmail.com>, shawnguo@kernel.org, stefan@agner.ch, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Jonathan,
+On Mon, 14 Jan 2019 at 10:57, Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> Fix link errors when PINCTRL_IMX_SCU or PINCTRL_IMXBQXP is enabled as a
+> module and the dependent module is built-in.
+>
+> ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinctrl_sc_ipc_init':
+> pinctrl-scu.c:(.text+0x10): undefined reference to `imx_scu_get_handle'
+> ld: pinctrl-scu.c:(.text+0x10): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_get_handle'
+> ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_get_scu':
+> pinctrl-scu.c:(.text+0xa0): undefined reference to `imx_scu_call_rpc'
+> ld: pinctrl-scu.c:(.text+0xa0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_call_rpc'
+> ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_set_scu':
+> pinctrl-scu.c:(.text+0x1b4): undefined reference to `imx_scu_call_rpc'
+> ld: pinctrl-scu.c:(.text+0x1b4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_call_rpc'
+> ld: drivers/pinctrl/freescale/pinctrl-imx8qxp.o: in function `imx8qxp_pinctrl_probe':
+> pinctrl-imx8qxp.c:(.text+0x28): undefined reference to `imx_pinctrl_probe'
+> ld: pinctrl-imx8qxp.c:(.text+0x28): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_pinctrl_probe'
+>
+> Rework so both depends on IMX_SCU=y.
+>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  drivers/pinctrl/freescale/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+> index b318c24b61be..ac158309cfe9 100644
+> --- a/drivers/pinctrl/freescale/Kconfig
+> +++ b/drivers/pinctrl/freescale/Kconfig
+> @@ -7,7 +7,7 @@ config PINCTRL_IMX
+>
+>  config PINCTRL_IMX_SCU
+>         bool
+> -       depends on IMX_SCU
+> +       depends on IMX_SCU=y
+>         select PINCTRL_IMX
+>
+>  config PINCTRL_IMX1_CORE
+> @@ -138,7 +138,7 @@ config PINCTRL_IMX8QM
+>
+>  config PINCTRL_IMX8QXP
+>         bool "IMX8QXP pinctrl driver"
+> -       depends on ARCH_MXC && ARM64
+> +       depends on IMX_SCU=y && ARCH_MXC && ARM64
+>         select PINCTRL_IMX_SCU
+>         help
+>           Say Y here to enable the imx8qxp pinctrl driver
+> --
+> 2.19.2
+>
 
-thanks for the patch! It is looking very good.
-Some minor comments:
+This patch is incomplete, I will send out a new patch that adds
+'depends on IMX_SCU=y &&'
+on all configs that selects PINCTRL_IMX_SCU.
 
-On Sun, Jan 13, 2019 at 3:00 PM Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
-
->         select GPIO_GENERIC
-> +       select GPIOLIB_IRQCHIP
-
-Nice!
-
-> +static void hlwd_gpio_irqhandler(struct irq_desc *desc)
-> +{
-> +       struct hlwd_gpio *hlwd =3D
-> +               gpiochip_get_data(irq_desc_get_handler_data(desc));
-> +       struct irq_chip *chip =3D irq_desc_get_chip(desc);
-> +       unsigned long flags;
-> +       unsigned long pending;
-> +       int hwirq;
-> +
-> +       spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
-> +       pending =3D hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTFLAG);
-> +       pending &=3D hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
-
-Please just access IO directly instead through the helper.
-ioread32be()/iowrite32be() I suppose?
-
-> +static void hlwd_gpio_irq_ack(struct irq_data *data)
-> +{
-> +       struct hlwd_gpio *hlwd =3D
-> +               gpiochip_get_data(irq_data_get_irq_chip_data(data));
-> +
-> +       hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTFLAG, BIT(data->hw=
-irq));
-
-Dito.
-
-> +       spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
-> +       mask =3D hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
-> +       mask &=3D ~BIT(data->hwirq);
-> +       hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTMASK, mask);
-
-Dito.
-
-> +       spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
-> +       mask =3D hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
-> +       mask |=3D BIT(data->hwirq);
-> +       hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTMASK, mask);
-
-Dito.
-
-> +       switch (flow_type) {
-> +       case IRQ_TYPE_LEVEL_HIGH:
-> +               level =3D hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTL=
-VL);
-> +               level |=3D BIT(data->hwirq);
-> +               hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL, level=
-);
-> +               break;
-> +       case IRQ_TYPE_LEVEL_LOW:
-> +               level =3D hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTL=
-VL);
-> +               level &=3D ~BIT(data->hwirq);
-> +               hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL, level=
-);
-> +               break;
-
-Dito.
-
-> +       hlwd->irqc.name =3D "GPIO";
-
-What about using something device-unique?
-
-hlwd->irqc.name =3D dev_name(&pdev->dev);
-
-for example?
-
-otherwise it looks fine!
-
-Yours,
-Linus Walleij
+Cheers,
+Anders
