@@ -1,62 +1,64 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH 2/2] PCI: armada8k: don't toggle reset twice
-Date: Mon, 14 Jan 2019 09:19:09 +0200
-Message-ID: <20190114071909.5cz4pg4bsdo7htob@sapphire.tkos.co.il>
-References: <024cc24efa7b99186750f90c91880b29357d379d.1547123182.git.baruch@tkos.co.il>
- <94cd23a60c647020dd87a923684b59255b89f02c.1547123182.git.baruch@tkos.co.il>
- <20190110125548.GA29612@lunn.ch> <8736q0irwy.fsf@tarshish>
- <20190110131912.GB29612@lunn.ch> <87zhs8h5ej.fsf@tarshish>
- <87pnt0vil3.fsf@tarshish> <20190113154028.GB4635@lunn.ch>
- <CACRpkdY6UPcWds3swtRM_OMu3hCJcdicbo29b5JEcRBNC4L+vg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for v5.0
+Date: Mon, 14 Jan 2019 09:27:04 +0100
+Message-ID: <CACRpkdbP+kAp6px=QOZ6SDMLKVEYsjEA=CoR7D4whv0c4+motw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdY6UPcWds3swtRM_OMu3hCJcdicbo29b5JEcRBNC4L+vg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Sven Auhagen <sven.auhagen@voleatech.de>, Jason Cooper <jason@lakedaemon.net>, linux-pwm@vger.kernel.org, linux-pci <linux-pci@vger.kernel.org>, Gregory Clement <gregory.clement@bootlin.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Bjorn Helgaas <bhelgaas@google.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 List-Id: linux-gpio@vger.kernel.org
 
 Hi Linus,
 
-On Mon, Jan 14, 2019 at 12:35:01AM +0100, Linus Walleij wrote:
-> On Sun, Jan 13, 2019 at 4:40 PM Andrew Lunn <andrew@lunn.ch> wrote:
-> > > Another look at this comment made me realize that we need comphy
-> > > initialization support in the kernel for PCIe reset to work correctly.
-> > >
-> > > The workaround that this patch proposes will not solve the problem for
-> > > v5.0, since the GPIO get_direction patch will only appear in v5.1.
-> >
-> > You could ask for it to be applied to v5.0 since a real fix depends on
-> > it.
-> 
-> If it makes a piece of hardware work that was working before and
-> now is not working as a result of other kernel changes I would
-> definately apply it because that is a clear cut regression.
-> 
-> I am under the impression that this is the case?
+here are some GPIO fixes for the v5.0 series.
 
-The gpio-mvebu get_direction support enables a workaround for a regression 
-introduced in commit 3d71746c420c1 on the Macchiatobin platform. An 
-alternative solution is to revert the offending commit. The revert will not 
-break any known platform that has been previously supported in mainline 
-kernel. I tend to think that revert is a better course of action.
+The patch hitting the MMC/SD subsystem is fixing up my own
+mess when moving semantics from MMC/SD over to gpiolib.
+Ulf is on vacation but I managed to reach him on chat and
+obtain his ACK.
 
-It is up to the PCI maintainers to decide.
+The other two are early-rc fixes that are not super serious
+but pretty annoying so I'd like to get rid of them.
 
-baruch
+Please pull it in!
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+Yours,
+Linus Walleij
+
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v5.0-2
+
+for you to fetch changes up to e3e4767bd550b3f19278e42bcce143e0d2316ba2:
+
+  mmc: core: don't override the CD GPIO level when "cd-inverted" is
+set (2019-01-11 15:27:35 +0100)
+
+----------------------------------------------------------------
+GPIO fixes for the v5.0 series:
+- Get rid of some WARN_ON() from the ACPI code
+- Staticize a symbol
+- Fix MMC polarity detection
+
+----------------------------------------------------------------
+Hans de Goede (1):
+      gpiolib-acpi: Remove unnecessary WARN_ON from
+acpi_gpiochip_free_interrupts
+
+Martin Blumenstingl (1):
+      mmc: core: don't override the CD GPIO level when "cd-inverted" is set
+
+Wei Yongjun (1):
+      gpio: pca953x: Make symbol 'pca953x_i2c_regmap' static
+
+ drivers/gpio/gpio-pca953x.c | 2 +-
+ drivers/gpio/gpiolib-acpi.c | 7 +------
+ drivers/mmc/core/host.c     | 2 +-
+ 3 files changed, 3 insertions(+), 8 deletions(-)
