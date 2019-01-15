@@ -1,81 +1,47 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: fix Strago DMI workaround
-Date: Tue, 15 Jan 2019 07:32:58 +0200
-Message-ID: <20190115053258.GA9170@smile.fi.intel.com>
-References: <20190115033836.GA150475@dtor-ws>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH 1/2] gpio: sprd: Fix the incorrect data register
+Date: Tue, 15 Jan 2019 15:52:58 +0800
+Message-ID: <732ea4f8ff1bf3ad28bda543ae8e1727c78f8b3b.1547538574.git.baolin.wang@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190115033836.GA150475@dtor-ws>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org, bgolaszewski@baylibre.com, orsonzhai@gmail.com, zhang.lyra@gmail.com
+Cc: baolin.wang@linaro.org, neo.hou@unisoc.com, broonie@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 07:38:36PM -0800, Dmitry Torokhov wrote:
-> Well, hopefully 3rd time is a charm. We tried making that check
-> DMI_BIOS_VERSION and DMI_BOARD_VERSION, but the real one is
-> DMI_PRODUCT_VERSION.
+From: Neo Hou <neo.hou@unisoc.com>
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Since differnt type EICs have its own data register to read, thus fix the
+incorrect data register.
 
-> Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1631930
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-cherryview.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> index 9b0f4b9ef482..8efe8ea45602 100644
-> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> @@ -1507,7 +1507,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
-> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
-> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1515,7 +1515,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
-> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
-> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1523,7 +1523,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
-> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
-> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1531,7 +1531,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
-> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
-> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
->  		},
->  	},
->  	{}
-> -- 
-> 2.20.1.97.g81188d93c3-goog
-> 
-> 
-> -- 
-> Dmitry
+Signed-off-by: Neo Hou <neo.hou@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ drivers/gpio/gpio-eic-sprd.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index e0d6a0a..257df59 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -180,7 +180,18 @@ static void sprd_eic_free(struct gpio_chip *chip, unsigned int offset)
+ 
+ static int sprd_eic_get(struct gpio_chip *chip, unsigned int offset)
+ {
+-	return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
++	struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
++
++	switch (sprd_eic->type) {
++	case SPRD_EIC_DEBOUNCE:
++		return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
++	case SPRD_EIC_ASYNC:
++		return sprd_eic_read(chip, offset, SPRD_EIC_ASYNC_DATA);
++	case SPRD_EIC_SYNC:
++		return sprd_eic_read(chip, offset, SPRD_EIC_SYNC_DATA);
++	default:
++		return -ENOTSUPP;
++	}
+ }
+ 
+ static int sprd_eic_direction_input(struct gpio_chip *chip, unsigned int offset)
 -- 
-With Best Regards,
-Andy Shevchenko
+1.7.9.5
