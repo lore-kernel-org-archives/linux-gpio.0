@@ -1,67 +1,48 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v4 13/14] arm64: dts: qcom: pmi8998: add interrupt
- controller properties
-Date: Mon, 14 Jan 2019 16:43:56 -0800
-Message-ID: <20190115004356.GQ9278@minitux>
+From: Brian Masney <masneyb@onstation.org>
+Subject: Re: [PATCH v4 03/14] pinctrl: qcom: spmi-gpio: hardcode IRQ counts
+Date: Mon, 14 Jan 2019 20:14:32 -0500
+Message-ID: <20190115011432.GA7900@basecamp>
 References: <20190113154716.5145-1-masneyb@onstation.org>
- <20190113154716.5145-14-masneyb@onstation.org>
+ <20190113154716.5145-4-masneyb@onstation.org>
+ <20190115003428.GJ9278@minitux>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190113154716.5145-14-masneyb@onstation.org>
+In-Reply-To: <20190115003428.GJ9278@minitux>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Masney <masneyb@onstation.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linus.walleij@linaro.org, sboyd@kernel.org, andy.gross@linaro.org, marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun 13 Jan 07:47 PST 2019, Brian Masney wrote:
+On Mon, Jan 14, 2019 at 04:34:28PM -0800, Bjorn Andersson wrote:
+> > -	npins = platform_irq_count(pdev);
+> > -	if (!npins)
+> > -		return -EINVAL;
+> > -	if (npins < 0)
+> > -		return npins;
+> > -
+> > -	BUG_ON(npins > ARRAY_SIZE(pmic_gpio_groups));
+> > +	npins = (u16)(uintptr_t) device_get_match_data(&pdev->dev);
+> 
+> Why u16, afaict npins is an int? I'm pretty sure you can leave the last
+> cast as implicit and as it's not actually a pointer that we're acquiring
+> casting it to "unsigned long" is the idiomatic way.
+> 
+> Apart from this the change looks good.
+> 
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-> Add interrupt controller properties now that spmi-gpio is a proper
-> hierarchical IRQ chip. The interrupts property is no longer needed so
-> remove it.
-> 
-> This change was not tested on any hardware but the same change was
-> tested on qcom-pm8941.dtsi using a LG Nexus 5 (hammerhead) phone with
-> no issues.
-> 
+I can change it to this:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+npins = (uintptr_t) device_get_match_data(&pdev->dev);
 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
-> This is a new patch introduced in V4.
-> 
->  arch/arm64/boot/dts/qcom/pmi8998.dtsi | 16 ++--------------
->  1 file changed, 2 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/pmi8998.dtsi b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-> index da3285e216e2..051f57e7d6ac 100644
-> --- a/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pmi8998.dtsi
-> @@ -14,20 +14,8 @@
->  			reg = <0xc000>;
->  			gpio-controller;
->  			#gpio-cells = <2>;
-> -			interrupts = <0 0xc0 0 IRQ_TYPE_NONE>,
-> -				     <0 0xc1 0 IRQ_TYPE_NONE>,
-> -				     <0 0xc2 0 IRQ_TYPE_NONE>,
-> -				     <0 0xc3 0 IRQ_TYPE_NONE>,
-> -				     <0 0xc4 0 IRQ_TYPE_NONE>,
-> -				     <0 0xc5 0 IRQ_TYPE_NONE>,
-> -				     <0 0xc6 0 IRQ_TYPE_NONE>,
-> -				     <0 0xc7 0 IRQ_TYPE_NONE>,
-> -				     <0 0xc8 0 IRQ_TYPE_NONE>,
-> -				     <0 0xc9 0 IRQ_TYPE_NONE>,
-> -				     <0 0xca 0 IRQ_TYPE_NONE>,
-> -				     <0 0xcb 0 IRQ_TYPE_NONE>,
-> -				     <0 0xcc 0 IRQ_TYPE_NONE>,
-> -				     <0 0xcd 0 IRQ_TYPE_NONE>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
->  		};
->  	};
->  
-> -- 
-> 2.17.2
-> 
+I'll send out V5 on Wednesday evening (GMT-5) to give time for any other
+reviews that may trickle in.
+
+Thanks Bjorn, Stephen, and Linus for the reviews. This was a fun task; I
+learned a lot working on it.
+
+I'll also convert SSBI based on this series.
+
+Brian
