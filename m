@@ -1,67 +1,140 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 1/2] gpio: sprd: Fix the incorrect data register
-Date: Wed, 16 Jan 2019 09:27:28 +0100
-Message-ID: <CAMpxmJWamqR23xsWQZgkPO7sOEWrvKER4niG2brndCZGpsZChw@mail.gmail.com>
-References: <24594f8799f6aabdeaad3935fe36d832fb465148.1547615070.git.baolin.wang@linaro.org>
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH 1/2] gpio: pca953x: reduce indentation level in pca953x_irq_setup()
+Date: Wed, 16 Jan 2019 10:31:57 +0100
+Message-ID: <20190116093158.2850-1-thomas.petazzoni@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <24594f8799f6aabdeaad3935fe36d832fb465148.1547615070.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Orson Zhai <orsonzhai@gmail.com>, Lyra Zhang <zhang.lyra@gmail.com>, neo.hou@unisoc.com, Mark Brown <broonie@kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marex@denx.de>, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 List-Id: linux-gpio@vger.kernel.org
 
-=C5=9Br., 16 sty 2019 o 06:06 Baolin Wang <baolin.wang@linaro.org> napisa=
-=C5=82(a):
->
-> From: Neo Hou <neo.hou@unisoc.com>
->
-> Since differnt type EICs have its own data register to read, thus fix the
-> incorrect data register.
->
-> Fixes: 25518e024e3a ("gpio: Add Spreadtrum EIC driver support")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Neo Hou <neo.hou@unisoc.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
-> Changes from v1:
->  - Add fix tag and CC stable.
-> ---
->  drivers/gpio/gpio-eic-sprd.c |   13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
-> index e0d6a0a..257df59 100644
-> --- a/drivers/gpio/gpio-eic-sprd.c
-> +++ b/drivers/gpio/gpio-eic-sprd.c
-> @@ -180,7 +180,18 @@ static void sprd_eic_free(struct gpio_chip *chip, un=
-signed int offset)
->
->  static int sprd_eic_get(struct gpio_chip *chip, unsigned int offset)
->  {
-> -       return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
-> +       struct sprd_eic *sprd_eic =3D gpiochip_get_data(chip);
-> +
-> +       switch (sprd_eic->type) {
-> +       case SPRD_EIC_DEBOUNCE:
-> +               return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
-> +       case SPRD_EIC_ASYNC:
-> +               return sprd_eic_read(chip, offset, SPRD_EIC_ASYNC_DATA);
-> +       case SPRD_EIC_SYNC:
-> +               return sprd_eic_read(chip, offset, SPRD_EIC_SYNC_DATA);
-> +       default:
-> +               return -ENOTSUPP;
-> +       }
->  }
->
->  static int sprd_eic_direction_input(struct gpio_chip *chip, unsigned int=
- offset)
-> --
-> 1.7.9.5
->
+The current design of pca953x_irq_setup() is:
 
-Both applied for fixes, thanks!
+ if (all conditions to support IRQ are met) {
+   lots of code to support IRQs, which goes to a serious indentation
+   level.
+ }
 
-Bartosz
+ return 0;
+
+It makes more sense to handle this like this:
+
+ if (!all conditions to support IRQ are met)
+   return 0;
+
+ handle IRQ support
+
+This commit does just this change, reducing by one tab the indentation
+level of the IRQ setup code. Thanks to this reduced indentation level,
+we are less restricted by the 80-column limit, and we can have more
+function arguments on the same line.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ drivers/gpio/gpio-pca953x.c | 84 ++++++++++++++++++-------------------
+ 1 file changed, 42 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 0dc96419efe3..4f91ce497dd1 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -702,53 +702,53 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
+ 	int reg_direction[MAX_BANK];
+ 	int ret, i;
+ 
+-	if (client->irq && irq_base != -1
+-			&& (chip->driver_data & PCA_INT)) {
+-		ret = pca953x_read_regs(chip,
+-					chip->regs->input, chip->irq_stat);
+-		if (ret)
+-			return ret;
++	if (!client->irq)
++		return 0;
+ 
+-		/*
+-		 * There is no way to know which GPIO line generated the
+-		 * interrupt.  We have to rely on the previous read for
+-		 * this purpose.
+-		 */
+-		regmap_bulk_read(chip->regmap, chip->regs->direction,
+-				 reg_direction, NBANK(chip));
+-		for (i = 0; i < NBANK(chip); i++)
+-			chip->irq_stat[i] &= reg_direction[i];
+-		mutex_init(&chip->irq_lock);
+-
+-		ret = devm_request_threaded_irq(&client->dev,
+-					client->irq,
+-					   NULL,
+-					   pca953x_irq_handler,
+-					   IRQF_TRIGGER_LOW | IRQF_ONESHOT |
+-						   IRQF_SHARED,
+-					   dev_name(&client->dev), chip);
+-		if (ret) {
+-			dev_err(&client->dev, "failed to request irq %d\n",
+-				client->irq);
+-			return ret;
+-		}
++	if (irq_base == -1)
++		return 0;
+ 
+-		ret =  gpiochip_irqchip_add_nested(&chip->gpio_chip,
+-						   &pca953x_irq_chip,
+-						   irq_base,
+-						   handle_simple_irq,
+-						   IRQ_TYPE_NONE);
+-		if (ret) {
+-			dev_err(&client->dev,
+-				"could not connect irqchip to gpiochip\n");
+-			return ret;
+-		}
++	if (!(chip->driver_data & PCA_INT))
++		return 0;
+ 
+-		gpiochip_set_nested_irqchip(&chip->gpio_chip,
+-					    &pca953x_irq_chip,
+-					    client->irq);
++	ret = pca953x_read_regs(chip, chip->regs->input, chip->irq_stat);
++	if (ret)
++		return ret;
++
++	/*
++	 * There is no way to know which GPIO line generated the
++	 * interrupt.  We have to rely on the previous read for
++	 * this purpose.
++	 */
++	regmap_bulk_read(chip->regmap, chip->regs->direction, reg_direction,
++			 NBANK(chip));
++	for (i = 0; i < NBANK(chip); i++)
++		chip->irq_stat[i] &= reg_direction[i];
++	mutex_init(&chip->irq_lock);
++
++	ret = devm_request_threaded_irq(&client->dev, client->irq,
++					NULL, pca953x_irq_handler,
++					IRQF_TRIGGER_LOW | IRQF_ONESHOT |
++					IRQF_SHARED,
++					dev_name(&client->dev), chip);
++	if (ret) {
++		dev_err(&client->dev, "failed to request irq %d\n",
++			client->irq);
++		return ret;
++	}
++
++	ret =  gpiochip_irqchip_add_nested(&chip->gpio_chip, &pca953x_irq_chip,
++					   irq_base, handle_simple_irq,
++					   IRQ_TYPE_NONE);
++	if (ret) {
++		dev_err(&client->dev,
++			"could not connect irqchip to gpiochip\n");
++		return ret;
+ 	}
+ 
++	gpiochip_set_nested_irqchip(&chip->gpio_chip, &pca953x_irq_chip,
++				    client->irq);
++
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
