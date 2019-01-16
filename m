@@ -1,42 +1,43 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2] gpiolib: fix line event timestamps for nested irqs
-Date: Wed, 16 Jan 2019 16:36:50 +0100
-Message-ID: <CAMRc=MdNGJhaGMMwwLHPO0hnoM6vZbdAX8xEHC75QSmZwjZt-g@mail.gmail.com>
-References: <20190111174347.25040-1-brgl@bgdev.pl> <20190116133544.5288A2082F@mail.kernel.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH STABLE v4.19.15] gpiolib: fix line event timestamps for
+ nested irqs
+Date: Wed, 16 Jan 2019 17:02:16 +0100
+Message-ID: <20190116160216.GA4594@kroah.com>
+References: <20190116153557.13720-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190116133544.5288A2082F@mail.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190116153557.13720-1-brgl@bgdev.pl>
 Sender: stable-owner@vger.kernel.org
-To: Sasha Levin <sashal@kernel.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sasha Levin <sashal@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-=C5=9Br., 16 sty 2019 o 14:35 Sasha Levin <sashal@kernel.org> napisa=C5=82(=
-a):
->
-> Hi,
->
-> [This is an automated email]
->
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: d58f2bf261fd gpio: Timestamp events in hardirq handler.
->
-> The bot has tested the following trees: v4.20.2, v4.19.15.
->
-> v4.20.2: Build OK!
-> v4.19.15: Failed to apply! Possible dependencies:
->     Unable to calculate
->
->
-> How should we proceed with this patch?
->
+On Wed, Jan 16, 2019 at 04:35:57PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Nested interrupts run inside the calling thread's context and the top
+> half handler is never called which means that we never read the
+> timestamp.
+> 
+> This issue came up when trying to read line events from a gpiochip
+> using regmap_irq_chip for interrupts.
+> 
+> Fix it by reading the timestamp from the irq thread function if it's
+> still 0 by the time the second handler is called.
+> 
+> Fixes: d58f2bf261fd ("gpio: Timestamp events in hardirq handler")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+> Hi Sasha,
+> 
+> this is a backport for v4.19.y series. The original patch didn't apply
+> due to a conflict.
 
-I sent a backport of this patch.
+What is the git commit id for this patch in Linus's tree?
 
-Bart
+thanks,
 
-> --
-> Thanks,
-> Sasha
+greg k-h
