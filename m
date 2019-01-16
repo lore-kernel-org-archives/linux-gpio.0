@@ -1,108 +1,59 @@
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH 2/2] gpio: pca953x: use a per instance irq_chip structure
-Date: Wed, 16 Jan 2019 10:31:58 +0100
-Message-ID: <20190116093158.2850-2-thomas.petazzoni@bootlin.com>
-References: <20190116093158.2850-1-thomas.petazzoni@bootlin.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH STABLE v4.19.15] gpiolib: fix line event timestamps for nested irqs
+Date: Wed, 16 Jan 2019 16:35:57 +0100
+Message-ID: <20190116153557.13720-1-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190116093158.2850-1-thomas.petazzoni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marex@denx.de>, Paul Kocialkowski <paul.kocialkowski@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-When a system has two PCA953x GPIO expanders, the kernel complains with:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-gpio gpiochip2: (0-0021): detected irqchip that is shared with multiple gpiochips: please fix the driver.
+Nested interrupts run inside the calling thread's context and the top
+half handler is never called which means that we never read the
+timestamp.
 
-Indeed, there is a single instance of "struct irq_chip" that gets
-re-used for both PCA953x instance. This commit moves the "struct
-irq_chip" to be part of the "struct pca953x_chip", so that we have one
-"struct irq_chip" per PCA953X instance.
+This issue came up when trying to read line events from a gpiochip
+using regmap_irq_chip for interrupts.
 
-As part of this, the name of the irq_chip is also made different on a
-per-instance basis, now using the dev_name() of the I2C device. This
-changes what is visible in /proc/interrupts.
+Fix it by reading the timestamp from the irq thread function if it's
+still 0 by the time the second handler is called.
 
-Before:
-
- 47:          0          0   pca953x  10 Edge      e0100000.sdhci cd
- 48:          0          0   pca953x   6 Edge      e0101000.sdhci cd
-
-After:
-
- 47:          0          0    0-0020  10 Edge      e0100000.sdhci cd
- 48:          2          0    0-0020   6 Edge      e0101000.sdhci cd
-
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Fixes: d58f2bf261fd ("gpio: Timestamp events in hardirq handler")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-pca953x.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+Hi Sasha,
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 4f91ce497dd1..de52f63863db 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -150,6 +150,7 @@ struct pca953x_chip {
- 	u8 irq_stat[MAX_BANK];
- 	u8 irq_trig_raise[MAX_BANK];
- 	u8 irq_trig_fall[MAX_BANK];
-+	struct irq_chip irq_chip;
- #endif
+this is a backport for v4.19.y series. The original patch didn't apply
+due to a conflict.
+
+ drivers/gpio/gpiolib.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a8e01d99919c..b3ab6c428423 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -817,7 +817,15 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
+ 	/* Do not leak kernel stack to userspace */
+ 	memset(&ge, 0, sizeof(ge));
  
- 	struct i2c_client *client;
-@@ -594,16 +595,6 @@ static void pca953x_irq_shutdown(struct irq_data *d)
- 	chip->irq_trig_fall[d->hwirq / BANK_SZ] &= ~mask;
- }
- 
--static struct irq_chip pca953x_irq_chip = {
--	.name			= "pca953x",
--	.irq_mask		= pca953x_irq_mask,
--	.irq_unmask		= pca953x_irq_unmask,
--	.irq_bus_lock		= pca953x_irq_bus_lock,
--	.irq_bus_sync_unlock	= pca953x_irq_bus_sync_unlock,
--	.irq_set_type		= pca953x_irq_set_type,
--	.irq_shutdown		= pca953x_irq_shutdown,
--};
--
- static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
- {
- 	u8 cur_stat[MAX_BANK];
-@@ -699,6 +690,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
- 			     int irq_base)
- {
- 	struct i2c_client *client = chip->client;
-+	struct irq_chip *irq_chip = &chip->irq_chip;
- 	int reg_direction[MAX_BANK];
- 	int ret, i;
- 
-@@ -737,7 +729,15 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
- 		return ret;
- 	}
- 
--	ret =  gpiochip_irqchip_add_nested(&chip->gpio_chip, &pca953x_irq_chip,
-+	irq_chip->name = dev_name(&chip->client->dev);
-+	irq_chip->irq_mask = pca953x_irq_mask;
-+	irq_chip->irq_unmask = pca953x_irq_unmask;
-+	irq_chip->irq_bus_lock = pca953x_irq_bus_lock;
-+	irq_chip->irq_bus_sync_unlock = pca953x_irq_bus_sync_unlock;
-+	irq_chip->irq_set_type = pca953x_irq_set_type;
-+	irq_chip->irq_shutdown = pca953x_irq_shutdown;
+-	ge.timestamp = le->timestamp;
++	/*
++	 * We may be running from a nested threaded interrupt in which case
++	 * we didn't get the timestamp from lineevent_irq_handler().
++	 */
++	if (!le->timestamp)
++		ge.timestamp = ktime_get_real_ns();
++	else
++		ge.timestamp = le->timestamp;
 +
-+	ret =  gpiochip_irqchip_add_nested(&chip->gpio_chip, irq_chip,
- 					   irq_base, handle_simple_irq,
- 					   IRQ_TYPE_NONE);
- 	if (ret) {
-@@ -746,8 +746,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
- 		return ret;
- 	}
+ 	level = gpiod_get_value_cansleep(le->desc);
  
--	gpiochip_set_nested_irqchip(&chip->gpio_chip, &pca953x_irq_chip,
--				    client->irq);
-+	gpiochip_set_nested_irqchip(&chip->gpio_chip, irq_chip, client->irq);
- 
- 	return 0;
- }
+ 	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
 -- 
-2.20.1
+2.19.1
