@@ -1,42 +1,32 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH v5 01/14] dt-bindings: pinctrl: qcom-pmic-gpio: add qcom,pmi8998-gpio binding
-Date: Wed, 16 Jan 2019 19:32:21 -0500
-Message-ID: <20190117003234.22127-2-masneyb@onstation.org>
-References: <20190117003234.22127-1-masneyb@onstation.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] Documentation: gpio: driver: fix wire name for I2C
+Date: Thu, 17 Jan 2019 11:13:21 +0100
+Message-ID: <20190117101321.2164-1-wsa+renesas@sang-engineering.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190117003234.22127-1-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, sboyd@kernel.org, bjorn.andersson@linaro.org, andy.gross@linaro.org
-Cc: marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add support for the PMI8998 GPIO variant to the Qualcomm PMIC GPIO
-binding document.
+Typo: the data line is called "SDA" not "SCA".
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-Changes since v4:
-- None
+ Documentation/driver-api/gpio/driver.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch introduced in v4.
-
- Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-index 759aa1732e48..7f64a7e92c28 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-@@ -19,6 +19,7 @@ PMIC's from Qualcomm.
- 		    "qcom,pm8998-gpio"
- 		    "qcom,pma8084-gpio"
- 		    "qcom,pmi8994-gpio"
-+		    "qcom,pmi8998-gpio"
- 		    "qcom,pms405-gpio"
+diff --git a/Documentation/driver-api/gpio/driver.rst b/Documentation/driver-api/gpio/driver.rst
+index a92d8837b62b..3043167fc557 100644
+--- a/Documentation/driver-api/gpio/driver.rst
++++ b/Documentation/driver-api/gpio/driver.rst
+@@ -135,7 +135,7 @@ This configuration is normally used as a way to achieve one of two things:
+ - inverse wire-OR on an I/O line, for example a GPIO line, making it possible
+   for any driving stage on the line to drive it low even if any other output
+   to the same line is simultaneously driving it high. A special case of this
+-  is driving the SCL and SCA lines of an I2C bus, which is by definition a
++  is driving the SCL and SDA lines of an I2C bus, which is by definition a
+   wire-OR bus.
  
- 		    And must contain either "qcom,spmi-gpio" or "qcom,ssbi-gpio"
+ Both usecases require that the line be equipped with a pull-up resistor. This
 -- 
-2.17.2
+2.11.0
