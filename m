@@ -1,32 +1,40 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] Documentation: gpio: driver: fix wire name for I2C
-Date: Thu, 17 Jan 2019 11:13:21 +0100
-Message-ID: <20190117101321.2164-1-wsa+renesas@sang-engineering.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 0/3] pinctrl: meson: g12a fixes
+Date: Thu, 17 Jan 2019 11:23:12 +0100
+Message-ID: <20190117102315.1833-1-jbrunet@baylibre.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Typo: the data line is called "SDA" not "SCA".
+This patchset fixes the initial pinctrl support added for th g12a SoC
+family, which is mainly around the register regions claimed by the
+driver.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/driver-api/gpio/driver.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Linus, would it possible for you to provide a tag with these changes to
+Kevin ?
 
-diff --git a/Documentation/driver-api/gpio/driver.rst b/Documentation/driver-api/gpio/driver.rst
-index a92d8837b62b..3043167fc557 100644
---- a/Documentation/driver-api/gpio/driver.rst
-+++ b/Documentation/driver-api/gpio/driver.rst
-@@ -135,7 +135,7 @@ This configuration is normally used as a way to achieve one of two things:
- - inverse wire-OR on an I/O line, for example a GPIO line, making it possible
-   for any driving stage on the line to drive it low even if any other output
-   to the same line is simultaneously driving it high. A special case of this
--  is driving the SCL and SCA lines of an I2C bus, which is by definition a
-+  is driving the SCL and SDA lines of an I2C bus, which is by definition a
-   wire-OR bus.
- 
- Both usecases require that the line be equipped with a pull-up resistor. This
+ATM, we can only use the devices for which the pinmux is already set by
+the bootloader. Enabling the broken pinctrl driver could cause regressions
+in kernelCI. Having a tag, would allow us to start using pinctrl on this
+SoC in this cycle, w/o regression. It would be nice :)
+
+Jerome
+
+Jerome Brunet (2):
+  dt-bindings: pinctrl: meson: update register descriptions
+  pinctrl: meson: add optional region for drive strength
+
+Xingyu Chen (1):
+  pinctrl: meson: fix G12A ao pull registers base address
+
+ .../bindings/pinctrl/meson,pinctrl.txt        | 10 ++++----
+ drivers/pinctrl/meson/pinctrl-meson.c         | 24 ++++++++++++-------
+ drivers/pinctrl/meson/pinctrl-meson.h         |  1 +
+ 3 files changed, 22 insertions(+), 13 deletions(-)
+
 -- 
-2.11.0
+2.20.1
