@@ -1,14 +1,11 @@
 From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH RFC V2 2/4] pinctrl: bcm2835: Direct GPIO config changes to
- generic pinctrl
-Date: Mon, 21 Jan 2019 08:11:23 +0100
-Message-ID: <1548054685-3781-3-git-send-email-stefan.wahren@i2se.com>
-References: <1548054685-3781-1-git-send-email-stefan.wahren@i2se.com>
+Subject: [PATCH RFC V2 0/4] pinctrl: bcm2835: improve libgpiod output
+Date: Mon, 21 Jan 2019 08:11:21 +0100
+Message-ID: <1548054685-3781-1-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1548054685-3781-1-git-send-email-stefan.wahren@i2se.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,35 +19,30 @@ To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@
 Cc: Stefan Wahren <stefan.wahren@i2se.com>, linux-gpio@vger.kernel.org, Lukas Wunner <lukas@wunner.de>, Peter Robinson <pbrobinson@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-In order to support GPIO config changes direct these to the generic pinctrl.
-This also requires an adjust of the return code for unsupported parameter
-otherwise gpiod_configure_flags wont work as expected.
+Based on a recent discussion [1],[2] about the unexpected output of gpioinfo
+this patch series tries to improve the situation. Patches 1-3 are specific
+changes for bcm2835 while the last one is the intended improvement for gpiolib.
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes in V2:
+- take strict mode into account as suggested by Linus
+- add bcm2835 specific changes
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 19eb4fd..183d1ff 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -341,6 +341,7 @@ static const struct gpio_chip bcm2835_gpio_chip = {
- 	.get_direction = bcm2835_gpio_get_direction,
- 	.get = bcm2835_gpio_get,
- 	.set = bcm2835_gpio_set,
-+	.set_config = gpiochip_generic_config,
- 	.base = -1,
- 	.ngpio = BCM2835_NUM_GPIOS,
- 	.can_sleep = false,
-@@ -960,7 +961,7 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
- 			break;
- 
- 		default:
--			return -EINVAL;
-+			return -ENOTSUPP;
- 
- 		} /* switch param type */
- 	} /* for each config */
+[1] - https://marc.info/?l=linux-gpio&m=154716249606544
+[2] - https://marc.info/?l=linux-gpio&m=154747265118765
+
+Stefan Wahren (4):
+  pinctrl: bcm2835: declare pin config as generic
+  pinctrl: bcm2835: Direct GPIO config changes to generic pinctrl
+  pinctrl: bcm2835: activate strict mux mode
+  gpiolib: Take MUX usage into account
+
+ drivers/gpio/gpiolib.c                |  3 ++-
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c |  5 ++++-
+ drivers/pinctrl/core.c                | 23 +++++++++++++++++++++++
+ drivers/pinctrl/pinmux.c              | 18 ++++++++++++++++++
+ drivers/pinctrl/pinmux.h              |  7 +++++++
+ include/linux/pinctrl/consumer.h      |  6 ++++++
+ 6 files changed, 60 insertions(+), 2 deletions(-)
+
 -- 
 2.7.4
