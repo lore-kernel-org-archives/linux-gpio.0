@@ -1,46 +1,27 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH RFC V2 1/4] pinctrl: bcm2835: declare pin config as generic
-Date: Mon, 21 Jan 2019 08:11:22 +0100
-Message-ID: <1548054685-3781-2-git-send-email-stefan.wahren@i2se.com>
-References: <1548054685-3781-1-git-send-email-stefan.wahren@i2se.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: config: Update SPEAr 3xx defconfig
+Date: Mon, 21 Jan 2019 08:52:42 +0530
+Message-ID: <CAOh2x=mEb8GOkveMrOe=sRt-6UJKjXsQQJAPOhGOLKz15WCMUQ@mail.gmail.com>
+References: <20190110143917.9054-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1548054685-3781-1-git-send-email-stefan.wahren@i2se.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Eric Anholt <eric@anholt.net>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, linux-gpio@vger.kernel.org, Lukas Wunner <lukas@wunner.de>, Peter Robinson <pbrobinson@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190110143917.9054-1-linus.walleij@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Since commit 0de704955ee44 ("pinctrl: bcm2835: Add support for
-generic pinctrl binding") this driver is capable to use the generic
-interface. So declare this accordingly.
+On Thu, Jan 10, 2019 at 8:09 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> This config is updates to the latest structure of the
+> Kconfig menus so we can apply DRM driver changes on top.
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  arch/arm/configs/spear3xx_defconfig | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 1 +
- 1 file changed, 1 insertion(+)
+I missed this email somehow :(
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index f180aa4..19eb4fd 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -969,6 +969,7 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
- }
- 
- static const struct pinconf_ops bcm2835_pinconf_ops = {
-+	.is_generic = true,
- 	.pin_config_get = bcm2835_pinconf_get,
- 	.pin_config_set = bcm2835_pinconf_set,
- };
--- 
-2.7.4
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
