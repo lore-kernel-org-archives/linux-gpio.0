@@ -1,31 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: cherryview: fix Strago DMI workaround
-Date: Mon, 21 Jan 2019 13:06:27 +0100
-Message-ID: <CACRpkda8yBg=jqn+YJq_M8MTCAH8EkLuFbVi6mkUmxCf5B6m8g@mail.gmail.com>
-References: <20190115033836.GA150475@dtor-ws>
+Subject: Re: [PATCH] gpio: sprd: Remove unused irq trigger setting
+Date: Mon, 21 Jan 2019 13:47:32 +0100
+Message-ID: <CACRpkdZwFX4_LQoyVp8OxNXaz3CN9fJHHAcyeT5FzUrY0DMytg@mail.gmail.com>
+References: <972fd6c1a222b35159671ca82fb63db1632c3ba3.1548046988.git.baolin.wang@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190115033836.GA150475@dtor-ws>
+In-Reply-To: <972fd6c1a222b35159671ca82fb63db1632c3ba3.1548046988.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Orson Zhai <orsonzhai@gmail.com>, Lyra Zhang <zhang.lyra@gmail.com>, neo.hou@unisoc.com, Mark Brown <broonie@kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 4:38 AM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Mon, Jan 21, 2019 at 6:06 AM Baolin Wang <baolin.wang@linaro.org> wrote:
 
-> Well, hopefully 3rd time is a charm. We tried making that check
-> DMI_BIOS_VERSION and DMI_BOARD_VERSION, but the real one is
-> DMI_PRODUCT_VERSION.
+> The Spreadtrum PMIC interrupt controller has no registers to set irq
+> trigger type, since it is always high level trigger. That means the
+> PMIC EIC controller as a child device of PMIC INTC does not need to
+> set the trigger type, so remove it.
 >
-> Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1631930
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-Patch applied for fixes with the ACKs!
+Patch applied.
 
 Yours,
 Linus Walleij
