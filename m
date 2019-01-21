@@ -1,33 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mcp23s08: Allocate irq_chip dynamic
-Date: Mon, 21 Jan 2019 14:19:49 +0100
-Message-ID: <CACRpkdZFFu=wgHw0BqXUHiC5euGwWuYbr5bH60zDvFr+q394=w@mail.gmail.com>
-References: <20190111162516.28197-1-poeschel@lemonage.de>
+From: Ramon Fried <ramon.fried@linux.intel.com>
+Subject: pinctrl: -EAGAIN not supported but documented
+Date: Mon, 21 Jan 2019 15:28:50 +0200
+Message-ID: <94b9acab-a739-a014-b068-768f40de38ec@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190111162516.28197-1-poeschel@lemonage.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lars Poeschel <poeschel@lemonage.de>
-Cc: "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 4:16 PM Lars Poeschel <poeschel@lemonage.de> wrote:
+Hi Linus,
 
-> Keeping the irq_chip definition static shares it with multiple instances
-> of the mcp23s08 gpiochip in the system. This is bad and now we get this
-> warning from gpiolib core:
->
-> "detected irqchip that is shared with multiple gpiochips: please fix the
-> driver."
->
-> Hence, move the irq_chip definition from being driver static into the
-> struct mcp23s08. So a unique irq_chip is used for each gpiochip
-> instance.
->
-> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+Stated in Documentation/driver-api/pinctl.rst:
 
-Patch applied.
+Since some controllers have special logic for handling entire groups of pins
+they can exploit the special whole-group pin control function. The
+pin_config_group_set() callback is allowed to return the error code -EAGAIN,
+for groups it does not want to handle, or if it just wants to do some
+group-level handling and then fall through to iterate over all pins, in 
+which
+case each individual pin will be treated by separate pin_config_set() 
+calls as
+well.
 
-Yours,
-Linus Walleij
+----
+
+This is not supported, and there's no code for handling it.
+
+Should we add the necessary code or just remove the wrong documentation.
+
+Thanks,
+
+Ramon
