@@ -1,32 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sunxi: Correct number of IRQ banks on H6 main
- pin controller
-Date: Mon, 21 Jan 2019 14:41:31 +0100
-Message-ID: <CACRpkdYkmsf00=Bws=Kf9_8zYo5k4_fyEHoGamvDA5PN-1PmyQ@mail.gmail.com>
-References: <20190115024543.12928-1-wens@csie.org>
+Subject: Re: [PATCH 04/13] dt-bindings: gpio: add DT bindings for max77650
+Date: Mon, 21 Jan 2019 15:04:51 +0100
+Message-ID: <CACRpkdYkX2XK2G0WmjjJSdAWGJsBndtYJsdNPS+hWwpqaH8Z1A@mail.gmail.com>
+References: <20190118134244.22253-1-brgl@bgdev.pl> <20190118134244.22253-5-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190115024543.12928-1-wens@csie.org>
-Sender: stable-owner@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190118134244.22253-5-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylib>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 3:45 AM Chen-Yu Tsai <wens@csie.org> wrote:
+On Fri, Jan 18, 2019 at 2:43 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> The H6 main pin controller has four banks of interrupt-triggering pins.
-> The driver as originally submitted only specified three, but had pin
-> descriptions referencing a fourth bank. This results in a out-of-bounds
-> access into .irq_array of struct sunxi_pinctrl. This however did not
-> result in a crash until v4.20, with commit a66d972465d1 ("devres: Align
-> data[] to ARCH_KMALLOC_MINALIGN"), which changed the alignment of memory
-> region returned by devm_kcalloc(). The increase likely moved the
-> out-of-bounds access into the next, unmapped page.
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Add the DT binding document for the GPIO module of max77650.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Nice work rootcausing this!
-
-Patch applied for fixes with the tested-by and ACK.
+Very simple so not much to complain about :)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
