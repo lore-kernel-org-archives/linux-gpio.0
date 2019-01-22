@@ -1,65 +1,89 @@
 From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH v2 1/2] pinctrl: remove pinctrl/machine.h inclusion from pinctrl/pinconf.h
-Date: Tue, 22 Jan 2019 23:18:21 +0200
-Message-ID: <20190122211822.7016-2-vz@mleia.com>
-References: <20190122211822.7016-1-vz@mleia.com>
+Subject: [PATCH v2 0/2] pinctrl: remove unused 'pinconf-config' debugfs interface
+Date: Tue, 22 Jan 2019 23:18:20 +0200
+Message-ID: <20190122211822.7016-1-vz@mleia.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190122211822.7016-1-vz@mleia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Meunier <laurent.meunier@st.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Russell King <linux@arm.linux.org.uk>, Charles Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Meunier <laurent.meunier@st.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Russell King <linux@arm.linux.org.uk>
 List-Id: linux-gpio@vger.kernel.org
 
-The change adds explicit inclusion of linux/pinctrl/machine.h header
-to the only needed pinctrl-madera-core.c file, and therefore inclusion
-of pinctrl/machine.h header from pinctrl/pinconf.h can be removed.
+The main goal of the change is to remove .pin_config_dbg_parse_modify
+callback before a driver with its support appears. So far the in-kernel
+interface did not attract any users since its introduction 5 years ago.
 
-The change is preparatory to a follow-up reversal of commit f07512e615dd
-("pinctrl/pinconfig: add debug interface").
+Originally .pin_config_dbg_parse_modify callback and the associated
+'pinconf-config' debugfs file were introduced in commit f07512e615dd
+("pinctrl/pinconfig: add debug interface"), a short description of
+'pinconf-config' usage for debugging can be expressed this way:
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
----
+Write to 'pinconf-config' (see pinconf_dbg_config_write() function):
+
+% echo -n modify $map_type $device_name $state_name $pin_name $config > \
+	/sys/kernel/debug/pinctrl/$pinctrl/pinconf-config
+
+It supposes to update a global (therefore single!) 'pinconf_dbg_conf'
+variable with an alternative setting, the arguments should match
+an existing pinconf device and some registered pinctrl mapping 'map':
+
+* $map_type is either 'config_pin' or 'config_group', it should match
+  'map->type' value of PIN_MAP_TYPE_CONFIGS_PIN or
+   PIN_MAP_TYPE_CONFIGS_GROUP accordingly,
+* $device_name should match 'map->dev_name' string value,
+* $state_name should match 'map->name' string value,
+* $pin_name should match 'map->data.configs.group_or_pin' string value,
+
+If all above has matched, then $config is a new value to be set by calling
+pinconfops->pin_config_dbg_parse_modify(pctldev, config, matched_config).
+
+After a successful write into 'pinconf-config' a user can read the file
+to get information about that single modified pin configuration.
+
+The fact is .pin_config_dbg_parse_modify callback has never been defined
+in 'struct pinconf_ops' of any pinconf driver, thus an actual modification
+of a pin or group state on any present pinconf controller does not happen,
+and it declares that all related code is no more than dead code.
+
+I discovered the issue while attempting to add .pin_config_dbg_parse_modify
+support in some drivers and found that too short 'MAX_NAME_LEN' set by
+
+  drivers/pinctrl/pinconf.c:372:#define MAX_NAME_LEN 15
+
+is practically insufficient to store a regular pinctrl device name,
+which are like 'e6060000.pin-controller-sh-pfc' or pin names like
+'MX6QDL_PAD_ENET_REF_CLK', thus it is another indicator that the code
+is barely usable, insufficiently tested and unprepossessing.
+
+Of course it might be possible to increase MAX_NAME_LEN, and then add
+.pin_config_dbg_parse_modify callbacks to the drivers, but the whole
+idea of such a limited debug option looks inviable. A more flexible
+way to functionally substitute the original approach is to implicitly
+or explicitly use pinctrl_select_state() function whenever needed.
+
+The proposal is to remove the changes added by commit f07512e615dd
+("pinctrl/pinconfig: add debug interface") for now, as described in
+patch 2/2 commit message it may affect only non-vanilla kernels formally.
+
+Note that still it is a debugfs UAPI change, which is supposed to be
+unstable, however, since 'pinconf-config' file is plainly unusable
+on vanilla, I won't expect any user reports or asks to restore it back,
+this my assumption nudges me not to add an RFC tag to the published
+change.
+
 Changes from v1 to v2:
-* new change to mitigate a compile time warning caused by a removal of
-  implicit header inclusion, the issue was reported against v1 change.
+* added one patch against cirrus/pinctrl-madera-core.c to avoid a compile
+  time warning due to a removed header inclusion
 
-This change might be percepted as a bit awkward, but I leave a room to
-extend it to other drivers, if it becomes needed. However apparently
-only pinctrl/cirrus/pinctrl-madera-core.c misses explicit inclusion of
-linux/pinctrl/machine.h header.
+Vladimir Zapolskiy (2):
+  pinctrl: remove pinctrl/machine.h inclusion from pinctrl/pinconf.h
+  pinctrl: remove unused 'pinconf-config' debugfs interface
 
- drivers/pinctrl/cirrus/pinctrl-madera-core.c | 1 +
- include/linux/pinctrl/pinconf.h              | 2 --
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ drivers/pinctrl/cirrus/pinctrl-madera-core.c |   1 +
+ drivers/pinctrl/pinconf.c                    | 222 -------------------
+ include/linux/pinctrl/pinconf.h              |   6 -
+ 3 files changed, 1 insertion(+), 228 deletions(-)
 
-diff --git a/drivers/pinctrl/cirrus/pinctrl-madera-core.c b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-index a5dda832024a..7c9694593f79 100644
---- a/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-+++ b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-@@ -14,6 +14,7 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
-+#include <linux/pinctrl/machine.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
- #include <linux/pinctrl/pinconf.h>
-diff --git a/include/linux/pinctrl/pinconf.h b/include/linux/pinctrl/pinconf.h
-index 8dd85d302b90..109468d9d849 100644
---- a/include/linux/pinctrl/pinconf.h
-+++ b/include/linux/pinctrl/pinconf.h
-@@ -14,8 +14,6 @@
- 
- #ifdef CONFIG_PINCONF
- 
--#include <linux/pinctrl/machine.h>
--
- struct pinctrl_dev;
- struct seq_file;
- 
 -- 
 2.20.1
