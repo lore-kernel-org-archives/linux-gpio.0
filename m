@@ -1,31 +1,65 @@
-From: Andy Gross <andy.gross@linaro.org>
-Subject: Re: [PATCH v6 00/15] qcom: spmi: add support for hierarchical IRQ
- chip
-Date: Tue, 22 Jan 2019 15:13:46 -0600
-Message-ID: <20190122211346.GA30582@hector.attlocal.net>
-References: <20190119204252.18370-1-masneyb@onstation.org>
- <CACRpkdap+AJ+eDVusg=ShwRKXOuR=tAyNLBeCxsxuu28DSfisQ@mail.gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH v2 1/2] pinctrl: remove pinctrl/machine.h inclusion from pinctrl/pinconf.h
+Date: Tue, 22 Jan 2019 23:18:21 +0200
+Message-ID: <20190122211822.7016-2-vz@mleia.com>
+References: <20190122211822.7016-1-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdap+AJ+eDVusg=ShwRKXOuR=tAyNLBeCxsxuu28DSfisQ@mail.gmail.com>
+In-Reply-To: <20190122211822.7016-1-vz@mleia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Brian Masney <masneyb@onstation.org>, Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Shawn Guo <shawnguo@kernel.org>, Doug Anderson <dianders@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-arm-msm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Meunier <laurent.meunier@st.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Russell King <linux@arm.linux.org.uk>, Charles Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:31:20PM +0100, Linus Walleij wrote:
-> On Sat, Jan 19, 2019 at 9:43 PM Brian Masney <masneyb@onstation.org> wrote:
-> 
-> > This patch series adds hierarchical IRQ chip support to spmi-gpio so
-> > that device tree consumers can request an IRQ directly from the GPIO
-> > block rather than having to request an IRQ from the underlying PMIC.
-> 
-> I have applied all these patches including the DTS patches to the GPIO
-> tree and pushed for linux-next.
-> 
-> If all works out well I will solidify the branch, pull it into the pin control
-> tree as well and offer the branch to ARM SoC.
+The change adds explicit inclusion of linux/pinctrl/machine.h header
+to the only needed pinctrl-madera-core.c file, and therefore inclusion
+of pinctrl/machine.h header from pinctrl/pinconf.h can be removed.
 
-Thanks Linus!
+The change is preparatory to a follow-up reversal of commit f07512e615dd
+("pinctrl/pinconfig: add debug interface").
+
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+---
+Changes from v1 to v2:
+* new change to mitigate a compile time warning caused by a removal of
+  implicit header inclusion, the issue was reported against v1 change.
+
+This change might be percepted as a bit awkward, but I leave a room to
+extend it to other drivers, if it becomes needed. However apparently
+only pinctrl/cirrus/pinctrl-madera-core.c misses explicit inclusion of
+linux/pinctrl/machine.h header.
+
+ drivers/pinctrl/cirrus/pinctrl-madera-core.c | 1 +
+ include/linux/pinctrl/pinconf.h              | 2 --
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/cirrus/pinctrl-madera-core.c b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
+index a5dda832024a..7c9694593f79 100644
+--- a/drivers/pinctrl/cirrus/pinctrl-madera-core.c
++++ b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
+@@ -14,6 +14,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
++#include <linux/pinctrl/machine.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+ #include <linux/pinctrl/pinconf.h>
+diff --git a/include/linux/pinctrl/pinconf.h b/include/linux/pinctrl/pinconf.h
+index 8dd85d302b90..109468d9d849 100644
+--- a/include/linux/pinctrl/pinconf.h
++++ b/include/linux/pinctrl/pinconf.h
+@@ -14,8 +14,6 @@
+ 
+ #ifdef CONFIG_PINCONF
+ 
+-#include <linux/pinctrl/machine.h>
+-
+ struct pinctrl_dev;
+ struct seq_file;
+ 
+-- 
+2.20.1
