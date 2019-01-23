@@ -1,62 +1,62 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH -next] gpio: davinci: drop pointless static qualifier
-Date: Wed, 23 Jan 2019 17:12:58 +0100
-Message-ID: <CAMpxmJWMMukZ4XPcpb55EGNKoXjmaOFW9SVAT=0SxhHvtkTrzQ@mail.gmail.com>
-References: <20190123084912.13376-1-yuehaibing@huawei.com> <f1c0c8d3-49de-bf5d-32c1-1717ea238107@ti.com>
+Subject: Re: [PATCH v3 1/2] gpio: altera-a10sr: Set proper output level for direction_output
+Date: Wed, 23 Jan 2019 17:16:31 +0100
+Message-ID: <CAMpxmJXQKvbOMaSBzgr-4bv4fO-ObDwZAjexc84-uHvOB2aj1g@mail.gmail.com>
+References: <20190123000058.28317-1-axel.lin@ingics.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f1c0c8d3-49de-bf5d-32c1-1717ea238107@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: YueHaibing <yuehaibing@huawei.com>, Linus Walleij <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190123000058.28317-1-axel.lin@ingics.com>
+Sender: stable-owner@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thor Thayer <thor.thayer@linux.intel.com>, linux-gpio <linux-gpio@vger.kernel.org>, "Stable # 4 . 20+" <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-=C5=9Br., 23 sty 2019 o 11:32 Keerthy <j-keerthy@ti.com> napisa=C5=82(a):
+=C5=9Br., 23 sty 2019 o 01:01 Axel Lin <axel.lin@ingics.com> napisa=C5=82(a=
+):
 >
-> On 23/01/19 2:19 PM, YueHaibing wrote:
-> > There is no need to have the 'gpio_unbanked' variable static since
-> > new value always be assigned before use it.
+> The altr_a10sr_gpio_direction_output should set proper output level
+> based on the value argument.
 >
-> Acked-by: Keerthy <j-keerthy@ti.com>
+> Fixes: 26a48c4cc2f1 ("gpio: altera-a10sr: Add A10 System Resource Chip GP=
+IO support.")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Tested by: Thor Thayer <thor.thayer@linux.intel.com>
+> Reviewed by: Thor Thayer <thor.thayer@linux.intel.com>
+> ---
+> v3: Add Fixes tag and cc stable
+> v2: Based on Bartosz's comment to split the patch.
+>     1/2 is bug fix
+>     2/2 is coding style fix and fix checkpatch warning
+>  drivers/gpio/gpio-altera-a10sr.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 >
-> >
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > ---
-> >  drivers/gpio/gpio-davinci.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> > index bdb29e5..f250454 100644
-> > --- a/drivers/gpio/gpio-davinci.c
-> > +++ b/drivers/gpio/gpio-davinci.c
-> > @@ -465,7 +465,7 @@ static const struct irq_domain_ops davinci_gpio_irq=
-_ops =3D {
-> >
-> >  static struct irq_chip *davinci_gpio_get_irq_chip(unsigned int irq)
-> >  {
-> > -     static struct irq_chip_type gpio_unbanked;
-> > +     struct irq_chip_type gpio_unbanked;
-> >
-> >       gpio_unbanked =3D *irq_data_get_chip_type(irq_get_irq_data(irq));
-> >
-> > @@ -474,7 +474,7 @@ static struct irq_chip *davinci_gpio_get_irq_chip(u=
-nsigned int irq)
-> >
-> >  static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
-> >  {
-> > -     static struct irq_chip gpio_unbanked;
-> > +     struct irq_chip gpio_unbanked;
-> >
-> >       gpio_unbanked =3D *irq_get_chip(irq);
-> >       return &gpio_unbanked;
-> >
+> diff --git a/drivers/gpio/gpio-altera-a10sr.c b/drivers/gpio/gpio-altera-=
+a10sr.c
+> index 6b11f1314248..7f9e0304b510 100644
+> --- a/drivers/gpio/gpio-altera-a10sr.c
+> +++ b/drivers/gpio/gpio-altera-a10sr.c
+> @@ -66,8 +66,10 @@ static int altr_a10sr_gpio_direction_input(struct gpio=
+_chip *gc,
+>  static int altr_a10sr_gpio_direction_output(struct gpio_chip *gc,
+>                                             unsigned int nr, int value)
+>  {
+> -       if (nr <=3D (ALTR_A10SR_OUT_VALID_RANGE_HI - ALTR_A10SR_LED_VALID=
+_SHIFT))
+> +       if (nr <=3D (ALTR_A10SR_OUT_VALID_RANGE_HI - ALTR_A10SR_LED_VALID=
+_SHIFT)) {
+> +               altr_a10sr_gpio_set(gc, nr, value);
+>                 return 0;
+> +       }
+>         return -EINVAL;
+>  }
+>
+> --
+> 2.17.1
 >
 
-Good catch! While it would probably never result in a race condition
-as it is always called from probe(), it's still wrong so patch
-applied.
+Both applied, thanks!
 
-Thanks,
 Bart
