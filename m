@@ -1,199 +1,101 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [alsa-devel] [RFT][PATCH v2] gpiolib: acpi: Introduce
- ACPI_GPIO_QUIRK_ONLY_GPIOIO
-Date: Thu, 24 Jan 2019 13:18:40 +0100
-Message-ID: <e5e54be2-7be1-9496-b455-336e9edfb406@redhat.com>
-References: <20190109105245.25954-1-andriy.shevchenko@linux.intel.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [RFC PATCH v1 13/13] watchdog: bd70528: Initial support for ROHM
+ BD70528 watchdog block
+Date: Thu, 24 Jan 2019 06:37:47 -0800
+Message-ID: <20190124143747.GA29002@roeck-us.net>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <ec70833179d1953dbc91e01901b79d3319ff013d.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190122154750.GB1705@roeck-us.net>
+ <20190122171023.GC2559@localhost.localdomain>
+ <20190122174056.GB4964@roeck-us.net>
+ <20190122180309.GD2559@localhost.localdomain>
+ <20190123174728.uu7zhno5xea2bga7@earth.universe>
+ <20190124104434.GF2559@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190109105245.25954-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190124104434.GF2559@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Sebastian Reichel <sre@kernel.org>, mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
-
-On 09-01-19 11:52, Andy Shevchenko wrote:
-> New quirk enforces search for GPIO based on its type,
-> i.e. iterate over GpioIo resources only.
+On Thu, Jan 24, 2019 at 12:44:35PM +0200, Matti Vaittinen wrote:
+> On Wed, Jan 23, 2019 at 06:47:28PM +0100, Sebastian Reichel wrote:
+> > Hi,
+> > 
+> > On Tue, Jan 22, 2019 at 08:03:09PM +0200, Matti Vaittinen wrote:
+> > > On Tue, Jan 22, 2019 at 09:40:56AM -0800, Guenter Roeck wrote:
+> > > > On Tue, Jan 22, 2019 at 07:10:23PM +0200, Matti Vaittinen wrote:
+> > > > > On Tue, Jan 22, 2019 at 07:47:50AM -0800, Guenter Roeck wrote:
+> > > > > > On Tue, Jan 22, 2019 at 11:48:36AM +0200, Matti Vaittinen wrote:
+> > > > > > > +static int bd70528_wdt_probe(struct platform_device *pdev)
+> > > > > > > +{
+> > > > > > > +	struct bd70528 *tmp;
+> > > > > > > +	struct bd70528 *bd70528;
+> > > > > > > +	int ret;
+> > > > > > > +
+> > > > > > > +	tmp = dev_get_drvdata(pdev->dev.parent);
+> > > > > > > +	if (!tmp) {
+> > > > > > > +		dev_err(&pdev->dev, "No MFD driver data\n");
+> > > > > > > +		return -EINVAL;
+> > > > > > > +	}
+> > > > > > > +	bd70528 = devm_kzalloc(&pdev->dev, sizeof(*bd70528), GFP_KERNEL);
+> > > > > > > +	if (!bd70528)
+> > > > > > > +		return -ENOMEM;
+> > > > > > > +
+> > > > > > > +	*bd70528 = *tmp;
+> > > > > > > +	bd70528->chip.dev = &pdev->dev;
+> > > > > > 
+> > > > > > This is wrong.
+> > > > > > You should not copy the parent's driver data but have local driver
+> > > > > > data as needed which then points to the parent's driver data if
+> > > > > > needed. I assume this is why the mutex is a pointer, but that
+> > > > > > just shows that the whole approach is wrong.
+> > > > > 
+> > > > > Mutex is a pointer because we want to use same mutex from WDT and RTC.
+> > > > > We can sure point to parent data but then we still need our own dev
+> > > > > pointer. So we can have a struct with pointer to parent data and dev
+> > > > > pointer - but I'm not at all sure it is any clearer.
+> > > > 
+> > > > As I said, that is wrong. To say it in plaintext, I won't accept
+> > > > the driver if it copies the parent's driver data. The driver should
+> > > > have and use its own driver data, and only maintain a pointer to
+> > > > its parent's driver data. And most definitely you don't want to
+> > > > copy and use any device data structure from the parent.
+> > > 
+> > > Allright. At the moment the WDT driver only needs regmap pointer from
+> > > parent. I'm not sure if it will later need DT or "chip type" - but I
+> > > will change this.
+> > 
+> > You probably want to use this:
+> > 
+> > dev_get_regmap(pdev->dev.parent, NULL);
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
+> Thanks a bunch Sebastian. All help is highly appreciated!! =)
 > 
-> - it was sent few weeks ago to Hans for testing, but better to re-test
-
-I've just re-tested this on a device which uses the speaker-enable
-GPIO with a rt5651 codec, still works as advertised:
-
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-
-> - it's supposed to go via ASoC subsystem due to recent changes made for
->    sound driver
+> Unfortunately I forgot to mention the key thing - the RTC mutex. We also
+> need that because RTC needs to stop WDT when RTC is adjusted as the WDT
+> uses RTC as counter - and jumping the RTC WDT enabled might trigger WDT
+> or have other consequences.
 > 
-> v2:
-> - Expand explanation why this quirk might be needed (Mika)
+> Se even if we used dev_get_regmap (which is slightly heavier than
+> accessing direct pointer) - we would still need at least the mutex from
+> parent data, possibly also the chip type and if we want to avoid code
+> dublication - then also the WDT start/stop function.
 > 
->   drivers/gpio/gpiolib-acpi.c           | 15 ++++--
->   include/linux/acpi.h                  |  7 +++
->   sound/soc/intel/boards/bytcr_rt5651.c | 74 ++++-----------------------
->   3 files changed, 27 insertions(+), 69 deletions(-)
+> Thus I guess we can as well keep the regmap in parent data because we
+> need the parent data anyways, right?
 > 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index 259cf6ab969b..4d291b75cb9f 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -530,17 +530,24 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
->   	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
->   		return 1;
->   
-> -	if (lookup->n++ == lookup->index && !lookup->desc) {
-> +	if (!lookup->desc) {
->   		const struct acpi_resource_gpio *agpio = &ares->data.gpio;
-> -		int pin_index = lookup->pin_index;
-> +		bool gpioint = agpio->connection_type == ACPI_RESOURCE_GPIO_TYPE_INT;
-> +		int pin_index;
->   
-> +		if (lookup->info.quirks & ACPI_GPIO_QUIRK_ONLY_GPIOIO && gpioint)
-> +			lookup->index++;
-> +
-> +		if (lookup->n++ != lookup->index)
-> +			return 1;
-> +
-> +		pin_index = lookup->pin_index;
->   		if (pin_index >= agpio->pin_table_length)
->   			return 1;
->   
->   		lookup->desc = acpi_get_gpiod(agpio->resource_source.string_ptr,
->   					      agpio->pin_table[pin_index]);
-> -		lookup->info.gpioint =
-> -			agpio->connection_type == ACPI_RESOURCE_GPIO_TYPE_INT;
-> +		lookup->info.gpioint = gpioint;
->   
->   		/*
->   		 * Polarity and triggering are only specified for GpioInt
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 1e89c688139f..430fd0b6df7b 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -1020,6 +1020,13 @@ struct acpi_gpio_mapping {
->   
->   /* Ignore IoRestriction field */
->   #define ACPI_GPIO_QUIRK_NO_IO_RESTRICTION	BIT(0)
-> +/*
-> + * When ACPI GPIO mapping table is in use the index parameter inside it
-> + * refers to the GPIO resource in _CRS method. That index has no
-> + * distinction of actual type of the resource. When consumer wants to
-> + * get GpioIo type explicitly, this quirk may be used.
-> + */
-> +#define ACPI_GPIO_QUIRK_ONLY_GPIOIO		BIT(1)
->   
->   	unsigned int quirks;
->   };
-> diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
-> index b618d984e2d5..99d0c01a1bec 100644
-> --- a/sound/soc/intel/boards/bytcr_rt5651.c
-> +++ b/sound/soc/intel/boards/bytcr_rt5651.c
-> @@ -844,74 +844,18 @@ static const struct x86_cpu_id cherrytrail_cpu_ids[] = {
->   	{}
->   };
->   
-> -static const struct acpi_gpio_params first_gpio = { 0, 0, false };
-> -static const struct acpi_gpio_params second_gpio = { 1, 0, false };
-> +static const struct acpi_gpio_params ext_amp_enable_gpios = { 0, 0, false };
->   
-> -static const struct acpi_gpio_mapping byt_rt5651_amp_en_first[] = {
-> -	{ "ext-amp-enable-gpios", &first_gpio, 1 },
-> -	{ },
-> -};
-> -
-> -static const struct acpi_gpio_mapping byt_rt5651_amp_en_second[] = {
-> -	{ "ext-amp-enable-gpios", &second_gpio, 1 },
-> +static const struct acpi_gpio_mapping cht_rt5651_gpios[] = {
-> +	/*
-> +	 * Some boards have I2cSerialBusV2, GpioIo, GpioInt as ACPI resources,
-> +	 * other boards may  have I2cSerialBusV2, GpioInt, GpioIo instead.
-> +	 * We want the GpioIo one for the ext-amp-enable-gpio.
-> +	 */
-> +	{ "ext-amp-enable-gpios", &ext_amp_enable_gpios, 1, ACPI_GPIO_QUIRK_ONLY_GPIOIO },
->   	{ },
->   };
->   
-> -/*
-> - * Some boards have I2cSerialBusV2, GpioIo, GpioInt as ACPI resources, other
-> - * boards may  have I2cSerialBusV2, GpioInt, GpioIo instead. We want the
-> - * GpioIo one for the ext-amp-enable-gpio and both count for the index in
-> - * acpi_gpio_params index.  So we have 2 different mappings and the code
-> - * below figures out which one to use.
-> - */
-> -struct byt_rt5651_acpi_resource_data {
-> -	int gpio_count;
-> -	int gpio_int_idx;
-> -};
-> -
-> -static int snd_byt_rt5651_acpi_resource(struct acpi_resource *ares, void *arg)
-> -{
-> -	struct byt_rt5651_acpi_resource_data *data = arg;
-> -
-> -	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
-> -		return 0;
-> -
-> -	if (ares->data.gpio.connection_type == ACPI_RESOURCE_GPIO_TYPE_INT)
-> -		data->gpio_int_idx = data->gpio_count;
-> -
-> -	data->gpio_count++;
-> -	return 0;
-> -}
-> -
-> -static void snd_byt_rt5651_mc_pick_amp_en_gpio_mapping(struct device *codec)
-> -{
-> -	struct byt_rt5651_acpi_resource_data data = { 0, -1 };
-> -	LIST_HEAD(resources);
-> -	int ret;
-> -
-> -	ret = acpi_dev_get_resources(ACPI_COMPANION(codec), &resources,
-> -				     snd_byt_rt5651_acpi_resource, &data);
-> -	if (ret < 0) {
-> -		dev_warn(codec, "Failed to get ACPI resources, not adding external amplifier GPIO mapping\n");
-> -		return;
-> -	}
-> -
-> -	/* All info we need is gathered during the walk */
-> -	acpi_dev_free_resource_list(&resources);
-> -
-> -	switch (data.gpio_int_idx) {
-> -	case 0:
-> -		byt_rt5651_gpios = byt_rt5651_amp_en_second;
-> -		break;
-> -	case 1:
-> -		byt_rt5651_gpios = byt_rt5651_amp_en_first;
-> -		break;
-> -	default:
-> -		dev_warn(codec, "Unknown GpioInt index %d, not adding external amplifier GPIO mapping\n",
-> -			 data.gpio_int_idx);
-> -	}
-> -}
-> -
->   struct acpi_chan_package {   /* ACPICA seems to require 64 bit integers */
->   	u64 aif_value;       /* 1: AIF1, 2: AIF2 */
->   	u64 mclock_value;    /* usually 25MHz (0x17d7940), ignored */
-> @@ -1037,7 +981,7 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
->   
->   	/* Cherry Trail devices use an external amplifier enable gpio */
->   	if (x86_match_cpu(cherrytrail_cpu_ids) && !byt_rt5651_gpios)
-> -		snd_byt_rt5651_mc_pick_amp_en_gpio_mapping(codec_dev);
-> +		byt_rt5651_gpios = cht_rt5651_gpios;
->   
->   	if (byt_rt5651_gpios) {
->   		devm_acpi_dev_add_driver_gpios(codec_dev, byt_rt5651_gpios);
-> 
+
+You are free to _use_ the parent data. Just not copy it.
+
+Another possibility would be for the parent to provide platform
+data for the rtc driver to use, and that platform data would
+include pointers to the regmap and to the rtc mutex.
+
+However, again, the one thing you can _not_ do is to copy the parent's
+driver data.
+
+Guenter
