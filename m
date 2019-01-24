@@ -1,55 +1,96 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 10/13] gpio: max77650: add GPIO support
-Date: Thu, 24 Jan 2019 11:30:18 +0100
-Message-ID: <CACRpkdacfOLSs1GPew4gMtL_BX0OTXqBQNWzWZMwAkk+Ah2ETQ@mail.gmail.com>
-References: <20190118134244.22253-1-brgl@bgdev.pl> <20190118134244.22253-11-brgl@bgdev.pl>
- <CACRpkdZhy7yBZrGLxhRGaac7v5jZhgUSz9gZAhFXbevJbKjpZw@mail.gmail.com> <CAMRc=Me6OSKDk7bN4++M68DjoeArd+gZx16o0oQBXfRoCWBt2A@mail.gmail.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [RFC PATCH v1 13/13] watchdog: bd70528: Initial support for ROHM
+ BD70528 watchdog block
+Date: Thu, 24 Jan 2019 12:44:35 +0200
+Message-ID: <20190124104434.GF2559@localhost.localdomain>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <ec70833179d1953dbc91e01901b79d3319ff013d.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190122154750.GB1705@roeck-us.net>
+ <20190122171023.GC2559@localhost.localdomain>
+ <20190122174056.GB4964@roeck-us.net>
+ <20190122180309.GD2559@localhost.localdomain>
+ <20190123174728.uu7zhno5xea2bga7@earth.universe>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=Me6OSKDk7bN4++M68DjoeArd+gZx16o0oQBXfRoCWBt2A@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20190123174728.uu7zhno5xea2bga7@earth.universe>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Brian Masney <masneyb@onstation.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 6:07 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Wed, Jan 23, 2019 at 06:47:28PM +0100, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Tue, Jan 22, 2019 at 08:03:09PM +0200, Matti Vaittinen wrote:
+> > On Tue, Jan 22, 2019 at 09:40:56AM -0800, Guenter Roeck wrote:
+> > > On Tue, Jan 22, 2019 at 07:10:23PM +0200, Matti Vaittinen wrote:
+> > > > On Tue, Jan 22, 2019 at 07:47:50AM -0800, Guenter Roeck wrote:
+> > > > > On Tue, Jan 22, 2019 at 11:48:36AM +0200, Matti Vaittinen wrote:
+> > > > > > +static int bd70528_wdt_probe(struct platform_device *pdev)
+> > > > > > +{
+> > > > > > +	struct bd70528 *tmp;
+> > > > > > +	struct bd70528 *bd70528;
+> > > > > > +	int ret;
+> > > > > > +
+> > > > > > +	tmp = dev_get_drvdata(pdev->dev.parent);
+> > > > > > +	if (!tmp) {
+> > > > > > +		dev_err(&pdev->dev, "No MFD driver data\n");
+> > > > > > +		return -EINVAL;
+> > > > > > +	}
+> > > > > > +	bd70528 = devm_kzalloc(&pdev->dev, sizeof(*bd70528), GFP_KERNEL);
+> > > > > > +	if (!bd70528)
+> > > > > > +		return -ENOMEM;
+> > > > > > +
+> > > > > > +	*bd70528 = *tmp;
+> > > > > > +	bd70528->chip.dev = &pdev->dev;
+> > > > > 
+> > > > > This is wrong.
+> > > > > You should not copy the parent's driver data but have local driver
+> > > > > data as needed which then points to the parent's driver data if
+> > > > > needed. I assume this is why the mutex is a pointer, but that
+> > > > > just shows that the whole approach is wrong.
+> > > > 
+> > > > Mutex is a pointer because we want to use same mutex from WDT and RTC.
+> > > > We can sure point to parent data but then we still need our own dev
+> > > > pointer. So we can have a struct with pointer to parent data and dev
+> > > > pointer - but I'm not at all sure it is any clearer.
+> > > 
+> > > As I said, that is wrong. To say it in plaintext, I won't accept
+> > > the driver if it copies the parent's driver data. The driver should
+> > > have and use its own driver data, and only maintain a pointer to
+> > > its parent's driver data. And most definitely you don't want to
+> > > copy and use any device data structure from the parent.
+> > 
+> > Allright. At the moment the WDT driver only needs regmap pointer from
+> > parent. I'm not sure if it will later need DT or "chip type" - but I
+> > will change this.
+> 
+> You probably want to use this:
+> 
+> dev_get_regmap(pdev->dev.parent, NULL);
 
-> Thank you for your review. While I think you're right about the issue
-> being present in this driver, I'm not sure it's really a problem. Do
-> we actually require every gpio-controller to also be a stand-alone
-> interrupt-controller?
+Thanks a bunch Sebastian. All help is highly appreciated!! =)
 
-Absolutely not :D
+Unfortunately I forgot to mention the key thing - the RTC mutex. We also
+need that because RTC needs to stop WDT when RTC is adjusted as the WDT
+uses RTC as counter - and jumping the RTC WDT enabled might trigger WDT
+or have other consequences.
 
-Just GPIO is fine.
+Se even if we used dev_get_regmap (which is slightly heavier than
+accessing direct pointer) - we would still need at least the mutex from
+parent data, possibly also the chip type and if we want to avoid code
+dublication - then also the WDT start/stop function.
 
-> The binding document for the GPIO module doesn't
-> mention this - it only requires the gpio-controller property. Without
-> the "interrupt-controller" property dtc will bail-out if anyone uses
-> this node as the interrupt parent.
->
-> If I'm wrong and we do require it, then I think we need to update
-> Documentation/devicetree/bindings/gpio/gpio.txt.
+Thus I guess we can as well keep the regmap in parent data because we
+need the parent data anyways, right?
 
-What is weird is if a driver with DT bindings not mentioning IRQ
-and only probing from DT start implementing IRQ support, that
-becomes quite inconsistent. So then max77650_gpio_to_irq()
-should just return -ENOTSUPP
-or something for now, then it's fine.
+Br
+	Matti Vaittinen
 
-We can add the (complicated) IRQ handling later.
+-- 
+Matti Vaittinen
+ROHM Semiconductors
 
-I am trying to eat my own dogfood here, I was sweating all
-last night trying to implement a hierarchical IRQ controller.
-There is no running away from that now. :/
-
-Apparently doing hierarchical IRQs demand that all irq
-controllers up to the top-level SoC IRQ controller support
-hierarchical interrupts using the v2 version of the irqdomain
-API, and currently it seems like the ARM
-GIC seems like the only top level IRQ controller that can
-do that.
-
-Yours,
-Linus Walleij
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
