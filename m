@@ -1,61 +1,47 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 3/9] irq/irq_sim: provide irq_sim_get_type()
-Date: Wed, 23 Jan 2019 20:18:24 +0100
-Message-ID: <20190123191824.btuaq4s5rvc236n3@pengutronix.de>
-References: <20190123141538.29408-1-brgl@bgdev.pl>
- <20190123141538.29408-4-brgl@bgdev.pl>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [RFC PATCH v1 03/13] regulator: bd718x7 use chip specific and
+ generic data structs
+Date: Thu, 24 Jan 2019 09:16:35 +0200
+Message-ID: <20190124071635.GE2559@localhost.localdomain>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <3fb3eab3a8a2767404588d0a0a531273fddfc659.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190123155121.GB7503@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190123141538.29408-4-brgl@bgdev.pl>
+In-Reply-To: <20190123155121.GB7503@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, linux@roeck-us.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Bartosz,
+Hello Mark,
 
-On Wed, Jan 23, 2019 at 03:15:32PM +0100, Bartosz Golaszewski wrote:
-> Provide a helper that allows users to retrieve the configured flow type
-> of dummy interrupts. That allows certain users to decide whether an irq
-> needs to be fired depending on its edge/level/... configuration.
+Thanks again for looking through my changes =)
 
-You don't talk about the .set_type callback here; is this intended?
+On Wed, Jan 23, 2019 at 03:51:21PM +0000, Mark Brown wrote:
+> On Tue, Jan 22, 2019 at 11:43:28AM +0200, Matti Vaittinen wrote:
+> > Header rohm-bd718x7.h was split to generic and component specific
+> > parts. This changed the struct bd718x7. Adapt the regulator driver to
+> > these changes.
+> 
+> Acked-by: Mark Brown <broonie@kernel.org>
+> 
+> Does this need to be squashed into the earlier commit for bisection?
 
-I wonder how you think this should be used. Assume the mockup-driver is
-directed to pull up a certain line, does it do something like that:
+Yes. If we don't want to break the compilation between commits then
+the patches 2, 3 and 4 should be squashed into one. I sent them as
+separare changes for easier review. I can squash them and send them
+squashed if they are Ok to Lee and Stephen. Please just let me know
+whose tree I should use as the basis so I can do rebasing if needed.
+(Or is there some better way to do changes like this?)
 
-	def mockup_setval(self, val):
-		irqtype = irq_sim_get_type(...)
-		if irqtype == LEVEL_HIGH:
-			if val:
-				fire_irq()
-
-		else if irqtype == EDGE_RISING:
-			if val and not prev_val:
-				fire_irq()
-
-		else if irqtype == LEVEL_LOW:
-			if not val:
-				fire_irq()
-
-		else if irqtype == EDGE_FALLING:
-			if not val and prev_val:
-				fire_irq()
-
-I wonder if that logic should be done in the same place as where the irq
-type is stored. Otherwise that .type member is only a data store
-provided by the irq simulator. So I suggest to either move the variable
-that mirrors the current level of the line into the irq simulator, or
-keep the irqtype variable in the mockup driver. Both approaches would
-make it unnecessary to provide an accessor function for the type member.
-
-Best regards
-Uwe
+Br,
+	Matti Vaittinen 
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
