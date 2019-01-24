@@ -1,47 +1,65 @@
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [RFC PATCH v1 03/13] regulator: bd718x7 use chip specific and
- generic data structs
-Date: Thu, 24 Jan 2019 09:16:35 +0200
-Message-ID: <20190124071635.GE2559@localhost.localdomain>
-References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <3fb3eab3a8a2767404588d0a0a531273fddfc659.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <20190123155121.GB7503@sirena.org.uk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 3/9] irq/irq_sim: provide irq_sim_get_type()
+Date: Thu, 24 Jan 2019 08:46:56 +0100
+Message-ID: <CAMRc=Me58SFJOMxie5aTkOAHRqS7bjdOSAaZSY8wjPK7tntTfQ@mail.gmail.com>
+References: <20190123141538.29408-1-brgl@bgdev.pl> <20190123141538.29408-4-brgl@bgdev.pl>
+ <20190123191824.btuaq4s5rvc236n3@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190123155121.GB7503@sirena.org.uk>
+In-Reply-To: <20190123191824.btuaq4s5rvc236n3@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, linux@roeck-us.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Mark,
+=C5=9Br., 23 sty 2019 o 20:18 Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+>
+> Hello Bartosz,
+>
+> On Wed, Jan 23, 2019 at 03:15:32PM +0100, Bartosz Golaszewski wrote:
+> > Provide a helper that allows users to retrieve the configured flow type
+> > of dummy interrupts. That allows certain users to decide whether an irq
+> > needs to be fired depending on its edge/level/... configuration.
+>
+> You don't talk about the .set_type callback here; is this intended?
+>
+> I wonder how you think this should be used. Assume the mockup-driver is
+> directed to pull up a certain line, does it do something like that:
+>
+>         def mockup_setval(self, val):
+>                 irqtype =3D irq_sim_get_type(...)
+>                 if irqtype =3D=3D LEVEL_HIGH:
+>                         if val:
+>                                 fire_irq()
+>
+>                 else if irqtype =3D=3D EDGE_RISING:
+>                         if val and not prev_val:
+>                                 fire_irq()
+>
+>                 else if irqtype =3D=3D LEVEL_LOW:
+>                         if not val:
+>                                 fire_irq()
+>
+>                 else if irqtype =3D=3D EDGE_FALLING:
+>                         if not val and prev_val:
+>                                 fire_irq()
+>
+> I wonder if that logic should be done in the same place as where the irq
+> type is stored. Otherwise that .type member is only a data store
+> provided by the irq simulator. So I suggest to either move the variable
+> that mirrors the current level of the line into the irq simulator, or
+> keep the irqtype variable in the mockup driver. Both approaches would
+> make it unnecessary to provide an accessor function for the type member.
+>
 
-Thanks again for looking through my changes =)
+Yeah, might be better to go back to my previous idea of adding
+irq_sim_fire_edge(), but maybe it should be irq_sim_fire_type()
+instead, so that irq_sim_fire() fires unconditionally and
+irq_sim_fire_type() would fire only if the passed flag is the same as
+the one previously configured by the set_type() callback.
 
-On Wed, Jan 23, 2019 at 03:51:21PM +0000, Mark Brown wrote:
-> On Tue, Jan 22, 2019 at 11:43:28AM +0200, Matti Vaittinen wrote:
-> > Header rohm-bd718x7.h was split to generic and component specific
-> > parts. This changed the struct bd718x7. Adapt the regulator driver to
-> > these changes.
-> 
-> Acked-by: Mark Brown <broonie@kernel.org>
-> 
-> Does this need to be squashed into the earlier commit for bisection?
-
-Yes. If we don't want to break the compilation between commits then
-the patches 2, 3 and 4 should be squashed into one. I sent them as
-separare changes for easier review. I can squash them and send them
-squashed if they are Ok to Lee and Stephen. Please just let me know
-whose tree I should use as the basis so I can do rebasing if needed.
-(Or is there some better way to do changes like this?)
-
-Br,
-	Matti Vaittinen 
-
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Thanks,
+Bartosz
