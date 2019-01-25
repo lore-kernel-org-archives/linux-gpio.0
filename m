@@ -1,58 +1,66 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH 4/9] mfd: pm8xxx: disassociate old virq if hwirq mapping already exists
-Date: Fri, 25 Jan 2019 11:22:57 -0500
-Message-ID: <20190125162302.14036-5-masneyb@onstation.org>
-References: <20190125162302.14036-1-masneyb@onstation.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [RFT][PATCH v2] gpiolib: acpi: Introduce
+ ACPI_GPIO_QUIRK_ONLY_GPIOIO
+Date: Fri, 25 Jan 2019 19:44:42 +0200
+Message-ID: <20190125174442.GR9224@smile.fi.intel.com>
+References: <20190109105245.25954-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdZAOaqPQkKzyNate3A67Ce0T+V7ig+Y3BV4ycx==U5jkQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190125162302.14036-1-masneyb@onstation.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZAOaqPQkKzyNate3A67Ce0T+V7ig+Y3BV4ycx==U5jkQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, sboyd@kernel.org, bjorn.andersson@linaro.org, andy.gross@linaro.org, marc.zyngier@arm.com, lee.jones@linaro.org
-Cc: tglx@linutronix.de, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam Girdwood <liam.r.girdwood@linux.intel.com>, Jie Yang <yang.jie@linux.intel.com>, Mark Brown <broonie@kernel.org>, "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Check to see if the hwirq is already associated with another virq on
-this IRQ domain. If so, then disassociate it before associating the
-hwirq with the new virq.
+On Mon, Jan 21, 2019 at 02:03:09PM +0100, Linus Walleij wrote:
+> On Wed, Jan 9, 2019 at 11:52 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > New quirk enforces search for GPIO based on its type,
+> > i.e. iterate over GpioIo resources only.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >
+> > - it was sent few weeks ago to Hans for testing, but better to re-test
+> > - it's supposed to go via ASoC subsystem due to recent changes made for
+> >   sound driver
+> >
+> > v2:
+> > - Expand explanation why this quirk might be needed (Mika)
+> 
+> I tried to apply this but it doesn't apply on the GPIO devel
+> branch.
+> 
+> I suppose because of Hans de Goede's
+> commit 72893f0c6bd399ce84e3c1c9fc69d234fe37d098
+> Author: Hans de Goede <hdegoede@redhat.com>
+> Date:   Mon Dec 31 21:55:21 2018 +0100
+> 
+>     gpiolib-acpi: Preserve non direction flags when updating gpiod_flags
+> 
+> Could you rebase and resend?
 
-This is a temporary hack that is needed in order to not break git
-bisect for existing boards. The next patch in this series converts
-ssbi-gpio to be a hierarchical IRQ chip, then there are several patches
-to update all of the device tree files, and finally this patch will be
-reverted within the same patch series.
+Linus, as I mentioned in comments above this should go via ASoC tree, there is
+no conflicts with gpio/devel for GPIO matters.
 
-IRQs for ssbi-gpio are all initially setup without an IRQ hierarchy
-this driver is probed due to the interrupts property in device tree.
-Once ssbi-gpio is converted to be a hierarchical IRQ chip in the next
-patch, existing users of gpio[d]_to_irq() will call pmic_gpio_to_irq(),
-and that will use the new IRQ chip code in ssbi-gpio that sets up the
-IRQ in an IRQ hierarchy. The hwirq is now associated with two Linux
-virqs and interrupts will not work as expected. This patch corrects
-that issue.
+So, please, give your Ack and hopefully Mark will apply this soon.
 
-This change was not tested on any actual hardware, however the same
-change was made to spmi-pmic-arb.c and tested on a LG Nexus 5
-(hammerhead) phone.
+> 
+> (Also pick up Mika's ACK.)
+> 
+> PS I'm a bit split about pure ACPI patches, part of me see it as an
+> "intel thing" so that you could very well collect it in the Intel
+> GPIO tree and send me pull requests, on the other hand it is
+> ACPI and sometimes applied in Rafael's tree. Maybe just as good
+> that I keep picking them separately like this?
+> 
+> Yours,
+> Linus Walleij
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
----
- drivers/mfd/qcom-pm8xxx.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
-index a976890c4019..97b931465601 100644
---- a/drivers/mfd/qcom-pm8xxx.c
-+++ b/drivers/mfd/qcom-pm8xxx.c
-@@ -387,6 +387,11 @@ static void pm8xxx_irq_domain_map(struct pm_irq_chip *chip,
- 				  irq_hw_number_t hwirq, unsigned int type)
- {
- 	irq_flow_handler_t handler;
-+	unsigned int old_virq;
-+
-+	old_virq = irq_find_mapping(domain, hwirq);
-+	if (old_virq)
-+		irq_domain_disassociate(domain, old_virq);
- 
- 	if (type & IRQ_TYPE_EDGE_BOTH)
- 		handler = handle_edge_irq;
 -- 
-2.17.2
+With Best Regards,
+Andy Shevchenko
