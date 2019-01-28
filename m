@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 137/304] gpio: mt7621: pass mediatek_gpio_bank_probe() failure up the stack
-Date: Mon, 28 Jan 2019 10:40:54 -0500
-Message-ID: <20190128154341.47195-137-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 136/304] gpio: mt7621: report failure of devm_kasprintf()
+Date: Mon, 28 Jan 2019 10:40:53 -0500
+Message-ID: <20190128154341.47195-136-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,47 +14,35 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit a109c2dbb571b10bb9969285b646f57309c98251 ]
+[ Upstream commit 59d646c775d6ae688ee90fda9f2a4270c47b7490 ]
 
-The error cases of mediatek_gpio_bank_probe() would go unnoticed (except
-for the dev_err() messages). The probe function should return an error
-if one of the banks failed to initialize properly indicated by
-not returning non-0.
+kasprintf() may return NULL on failure of internal allocation thus the
+assigned  label  is not safe if not explicitly checked. On error
+mediatek_gpio_bank_probe() returns negative values so -ENOMEM in the
+(unlikely) failure case should be fine here.
 
 Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
 Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Acked-by: Sean Wang <sean.wang@kernel.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mt7621.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-mt7621.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
-index 1ec95bc18f5b..00e954f22bc9 100644
+index d72af6f6cdbd..1ec95bc18f5b 100644
 --- a/drivers/gpio/gpio-mt7621.c
 +++ b/drivers/gpio/gpio-mt7621.c
-@@ -297,6 +297,7 @@ mediatek_gpio_probe(struct platform_device *pdev)
- 	struct device_node *np = dev->of_node;
- 	struct mtk *mtk;
- 	int i;
-+	int ret;
+@@ -244,6 +244,8 @@ mediatek_gpio_bank_probe(struct device *dev,
+ 	rg->chip.of_xlate = mediatek_gpio_xlate;
+ 	rg->chip.label = devm_kasprintf(dev, GFP_KERNEL, "%s-bank%d",
+ 					dev_name(dev), bank);
++	if (!rg->chip.label)
++		return -ENOMEM;
  
- 	mtk = devm_kzalloc(dev, sizeof(*mtk), GFP_KERNEL);
- 	if (!mtk)
-@@ -311,8 +312,11 @@ mediatek_gpio_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, mtk);
- 	mediatek_gpio_irq_chip.name = dev_name(dev);
- 
--	for (i = 0; i < MTK_BANK_CNT; i++)
--		mediatek_gpio_bank_probe(dev, np, i);
-+	for (i = 0; i < MTK_BANK_CNT; i++) {
-+		ret = mediatek_gpio_bank_probe(dev, np, i);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	return 0;
- }
+ 	ret = devm_gpiochip_add_data(dev, &rg->chip, mtk);
+ 	if (ret < 0) {
 -- 
 2.19.1
