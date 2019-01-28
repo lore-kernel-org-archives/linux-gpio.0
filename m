@@ -1,83 +1,119 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: remove unused 'pinconf-config' debugfs interface
-Date: Mon, 28 Jan 2019 13:36:59 +0100
-Message-ID: <CACRpkdYn+LgeRaL4=UPLGYxdCpnoj8r3Yp=A6yHADr=fhB_UFg@mail.gmail.com>
-References: <20190120151357.11106-1-vz@mleia.com>
+Subject: Re: [RFC PATCH v2 09/10] power: supply: Initial support for ROHM
+ BD70528 PMIC charger block
+Date: Mon, 28 Jan 2019 13:49:04 +0100
+Message-ID: <CACRpkdYTCgXo8FeitEfRujeWdshnsR3Kn57cKUZsA3CsZ5Cnrw@mail.gmail.com>
+References: <20190125110600.GA29332@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190120151357.11106-1-vz@mleia.com>
+In-Reply-To: <20190125110600.GA29332@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Laurent Meunier <laurent.meunier@st.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Russell King <linux@arm.linux.org.uk>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Baolin Wang <baolin.wang@linaro.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jan 20, 2019 at 4:14 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
+Hi Matti!
 
-> The main goal of the change is to remove .pin_config_dbg_parse_modify
-> callback before a driver with its support appears. So far the in-kernel
-> interface did not attract any users since its introduction 5 years ago.
->
-> Originally .pin_config_dbg_parse_modify callback and the associated
-> 'pinconf-config' debugfs file were introduced in commit f07512e615dd
-> ("pinctrl/pinconfig: add debug interface"), a short description of
-> 'pinconf-config' usage for debugging can be expressed this way:
->
-> Write to 'pinconf-config' (see pinconf_dbg_config_write() function):
->
-> % echo -n modify $map_type $device_name $state_name $pin_name $config > \
->         /sys/kernel/debug/pinctrl/$pinctrl/pinconf-config
->
-> It supposes to update a global (therefore single!) 'pinconf_dbg_conf'
-> variable with an alternative setting, the arguments should match
-> an existing pinconf device and some registered pinctrl mapping 'map':
->
-> * $map_type is either 'config_pin' or 'config_group', it should match
->   'map->type' value of PIN_MAP_TYPE_CONFIGS_PIN or
->    PIN_MAP_TYPE_CONFIGS_GROUP accordingly,
-> * $device_name should match 'map->dev_name' string value,
-> * $state_name should match 'map->name' string value,
-> * $pin_name should match 'map->data.configs.group_or_pin' string value,
->
-> If all above has matched, then $config is a new value to be set by calling
-> pinconfops->pin_config_dbg_parse_modify(pctldev, config, matched_config).
->
-> After a successful write into 'pinconf-config' a user can read the file
-> to get information about that single modified pin configuration.
->
-> The fact is .pin_config_dbg_parse_modify callback has never been defined
-> in 'struct pinconf_ops' of any pinconf driver, thus an actual modification
-> of a pin or group state on any present pinconf controller does not happen,
-> and it declares that all related code is no more than dead code.
->
-> I discovered the issue while attempting to add .pin_config_dbg_parse_modify
-> support in some drivers and found that too short 'MAX_NAME_LEN' set by
->
->   drivers/pinctrl/pinconf.c:372:#define MAX_NAME_LEN 15
->
-> is practically insufficient to store a regular pinctrl device name,
-> which are like 'e6060000.pin-controller-sh-pfc' or pin names like
-> 'MX6QDL_PAD_ENET_REF_CLK', thus it is another indicator that the code
-> is barely usable, insufficiently tested and unprepossessing.
->
-> Of course it might be possible to increase MAX_NAME_LEN, and then add
-> .pin_config_dbg_parse_modify callbacks to the drivers, but the whole
-> idea of such a limited debug option looks inviable. A more flexible
-> way to functionally substitute the original approach is to implicitly
-> or explicitly use pinctrl_select_state() function whenever needed.
->
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-> Cc: Laurent Meunier <laurent.meunier@st.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
+Thanks for your patch.
 
-This is fine, the build robot is complaining of some missing
-prototype though, probably some implicit include that
-disappeared when you removed <linux/pinctrl/machine.h>
-from the <linux/pinctrl/pinconf.h> file.
+We are going to have a problem with the power subsystem.
 
-Will you send a v2 with this fixed? (I think just leaving the
-include in place would be a quickfix.)
+These charging drivers are growing wild. This is starting to get out
+of hand, we need some more framework for properly handling charging
+state machines the kernel. Not specifically your problem, but
+when working on the driver try to keep generic support in mind.
+
+On Fri, Jan 25, 2019 at 12:06 PM Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
+
+> +#define CHG_STAT_SUSPEND       0x0
+> +#define CHG_STAT_TRICKLE       0x1
+> +#define CHG_STAT_FAST          0x3
+> +#define CHG_STAT_TOPOFF                0xe
+> +#define CHG_STAT_DONE          0xf
+> +#define CHG_STAT_OTP_TRICKLE   0x10
+> +#define CHG_STAT_OTP_FAST      0x11
+> +#define CHG_STAT_OTP_DONE      0x12
+> +#define CHG_STAT_TSD_TRICKLE   0x20
+> +#define CHG_STAT_TSD_FAST      0x21
+> +#define CHG_STAT_TSD_TOPOFF    0x22
+> +#define CHG_STAT_BAT_ERR       0x7f
+
+So what I am seeing is that these states are starting to turn up in more
+and more drivers, so we really need to think about a central management
+component for charging state machines. I do not think they are all
+that different after all.
+
+> +BD_ERR_IRQ_HND(BAT_OV_DET, "Battery overvoltage detected\n");
+> +BD_ERR_IRQ_HND(DBAT_DET, "Dead battery detected\n");
+> +BD_ERR_IRQ_HND(COLD_DET, "Battery cold\n");
+> +BD_ERR_IRQ_HND(HOT_DET, "Battery hot\n");
+> +BD_ERR_IRQ_HND(CHG_TSD, "Charger thermal shutdown\n");
+> +BD_ERR_IRQ_HND(DCIN2_OV_DET, "DCIN2 overvoltage detected\n");
+> +
+> +BD_INFO_IRQ_HND(BAT_OV_RES, "Battery voltage back to normal\n");
+> +BD_INFO_IRQ_HND(COLD_RES, "Battery temperature back to normal\n");
+> +BD_INFO_IRQ_HND(HOT_RES, "Battery temperature back to normal\n");
+> +BD_INFO_IRQ_HND(BAT_RMV, "Battery removed\n");
+> +BD_INFO_IRQ_HND(BAT_DET, "Battery detected\n");
+> +BD_INFO_IRQ_HND(DCIN2_OV_RES, "DCIN2 voltage back to normal\n");
+> +BD_INFO_IRQ_HND(DCIN2_RMV, "DCIN2 removed\n");
+> +BD_INFO_IRQ_HND(DCIN2_DET, "DCIN2 detected\n");
+> +BD_INFO_IRQ_HND(DCIN1_RMV, "DCIN1 removed\n");
+> +BD_INFO_IRQ_HND(DCIN1_DET, "DCIN1 detected\n");
+
+So we have states and events, and these events form edges
+between the states, right?
+
+I am certain you must have a graphical picture of this state
+machine somewhere, it seems to be how charging hardware people
+do their thinking.
+
+> +/*
+> + * For BD70528 voltage/current limits we happily accept any value which
+> + * belongs the range. We could check if value matching the selector is
+> + * desired by computing the range min + (sel - sel_low) * range step - but
+> + * I guess it is enough if we use voltage/current which is closest (below)
+> + * the requested?
+> + */
+> +static int find_selector_for_value_low(struct linear_range *r, int selectors,
+> +                                      unsigned int val, unsigned int *sel,
+> +                                      bool *found)
+> +{
+> +       int i;
+> +       int ret = -EINVAL;
+> +
+> +       *found = false;
+> +       for (i = 0; i < selectors; i++) {
+> +               if (r[i].min <= val) {
+> +                       if (r[i].min + r[i].step * r[i].vals >= val) {
+> +                               *found = true;
+> +                               *sel = r[i].low_sel + (val - r[i].min) /
+> +                                      r[i].step;
+> +                               ret = 0;
+> +                               break;
+> +                       }
+> +                       /*
+> +                        * If the range max is smaller than requested
+> +                        * we can set the max supported value from range
+> +                        */
+> +                       *sel = r[i].low_sel + r[i].vals;
+> +                       ret = 0;
+> +               }
+> +       }
+> +       return ret;
+> +}
+
+If I'm not mistaken this is yet another instance of linear interpolation
+from a table?
+
+We really need to think about abstracting this. Last time this
+duplication appeared I suggested adding linear interpolation
+primitives to:
+include/linux/fixp-arith.h
+
+I don't know what others say though?
 
 Yours,
 Linus Walleij
