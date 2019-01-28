@@ -1,44 +1,61 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
- bd70528 RTC
-Date: Mon, 28 Jan 2019 22:20:09 +0100
-Message-ID: <20190128212009.GE18309@piout.net>
-References: <20190125110536.GA29321@localhost.localdomain>
+From: Dmitry Voytik <voytikd@gmail.com>
+Subject: [PATCH] pinctrl: mediatek: fix dependencies for PINCTRL_MT76XX
+Date: Mon, 28 Jan 2019 23:35:21 +0100
+Message-ID: <20190128223521.2690-1-voytikd@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190125110536.GA29321@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, wim@linux-watchdog.org, linux@roeck-us.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Sean Wang <sean.wang@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Ryder Lee <ryder.lee@mediatek.com>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Dmitry Voytik <voytikd@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello,
+How to reproduce the problem:
+$ make tinyconfig
+$ make menuconfig
+then enable:
+ CONFIG_COMPILE_TEST=y
+ CONFIG_PINCTRL=y
+and any of these:
+ CONFIG_PINCTRL_MT7622=y
+ CONFIG_PINCTRL_MT7629=y
+ CONFIG_PINCTRL_MT7623=y
 
-On 25/01/2019 13:05:36+0200, Matti Vaittinen wrote:
-> +static const struct rtc_class_ops bd70528_rtc_ops = {
-> +	.read_time	= bd70528_get_time,
-> +	.set_time	= bd70528_set_time,
-> +	.read_alarm	= bd70528_read_alarm,
-> +	.set_alarm	= bd70528_set_alarm,
+This combination causes build failure.
 
-You actually need to provide a .alarm_irq_enable callback, else there is
-no way to disable a set alarm.
+Fix the problem by making PINCTRL_MT76XX to depend on CONFIG_OF=y.
 
-> +	rtc = devm_rtc_device_register(&pdev->dev, "bd70528-rtc",
-> +				       &bd70528_rtc_ops, THIS_MODULE);
-> +	if (IS_ERR(rtc)) {
-> +		dev_err(&pdev->dev, "Registering RTC failed\n");
-> +		return PTR_ERR(rtc);
-> +	}
+Signed-off-by: Dmitry Voytik <voytikd@gmail.com>
+---
+ drivers/pinctrl/mediatek/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Please use devm_rtc_allocate_device() and set rtc->range_min and
-rtc->range_max before registering with rtc_register_device() (which can
-be done after trying to request the irq).
-
-
+diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+index 1817786ab6aa..a005cbccb4f7 100644
+--- a/drivers/pinctrl/mediatek/Kconfig
++++ b/drivers/pinctrl/mediatek/Kconfig
+@@ -45,12 +45,14 @@ config PINCTRL_MT2701
+ config PINCTRL_MT7623
+ 	bool "Mediatek MT7623 pin control with generic binding"
+ 	depends on MACH_MT7623 || COMPILE_TEST
++	depends on OF
+ 	default MACH_MT7623
+ 	select PINCTRL_MTK_MOORE
+ 
+ config PINCTRL_MT7629
+ 	bool "Mediatek MT7629 pin control"
+ 	depends on MACH_MT7629 || COMPILE_TEST
++	depends on OF
+ 	default MACH_MT7629
+ 	select PINCTRL_MTK_MOORE
+ 
+@@ -92,6 +94,7 @@ config PINCTRL_MT6797
+ 
+ config PINCTRL_MT7622
+ 	bool "MediaTek MT7622 pin control"
++	depends on OF
+ 	depends on ARM64 || COMPILE_TEST
+ 	default ARM64 && ARCH_MEDIATEK
+ 	select PINCTRL_MTK_MOORE
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.20.1
