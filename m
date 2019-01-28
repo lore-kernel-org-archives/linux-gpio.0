@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 128/304] pinctrl: nuvoton: check for devm_kasprintf() failure
-Date: Mon, 28 Jan 2019 10:40:45 -0500
-Message-ID: <20190128154341.47195-128-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 137/304] gpio: mt7621: pass mediatek_gpio_bank_probe() failure up the stack
+Date: Mon, 28 Jan 2019 10:40:54 -0500
+Message-ID: <20190128154341.47195-137-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,34 +14,47 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 4be1eaf322f07bb9694618fd2763a3a1f0a3dd25 ]
+[ Upstream commit a109c2dbb571b10bb9969285b646f57309c98251 ]
 
-devm_kasprintf() may return NULL on failure of internal allocation thus
-the assignment to  .label  is not safe if not checked. On error
-npcm7xx_gpio_of() returns negative values so -ENOMEM in the
-(unlikely) failure case of devm_kasprintf() should be fine here.
+The error cases of mediatek_gpio_bank_probe() would go unnoticed (except
+for the dev_err() messages). The probe function should return an error
+if one of the banks failed to initialize properly indicated by
+not returning non-0.
 
+Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
 Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 3b588e43ee5c ("pinctrl: nuvoton: add NPCM7xx pinctrl and GPIO driver")
+Acked-by: Sean Wang <sean.wang@kernel.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpio/gpio-mt7621.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-index 7ad50d9268aa..3bda620d18bb 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-@@ -1932,6 +1932,9 @@ static int npcm7xx_gpio_of(struct npcm7xx_pinctrl *pctrl)
- 			pctrl->gpio_bank[id].gc.label =
- 				devm_kasprintf(pctrl->dev, GFP_KERNEL, "%pOF",
- 					       np);
-+			if (pctrl->gpio_bank[id].gc.label == NULL)
-+				return -ENOMEM;
-+
- 			pctrl->gpio_bank[id].gc.dbg_show = npcmgpio_dbg_show;
- 			pctrl->gpio_bank[id].direction_input =
- 				pctrl->gpio_bank[id].gc.direction_input;
+diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+index 1ec95bc18f5b..00e954f22bc9 100644
+--- a/drivers/gpio/gpio-mt7621.c
++++ b/drivers/gpio/gpio-mt7621.c
+@@ -297,6 +297,7 @@ mediatek_gpio_probe(struct platform_device *pdev)
+ 	struct device_node *np = dev->of_node;
+ 	struct mtk *mtk;
+ 	int i;
++	int ret;
+ 
+ 	mtk = devm_kzalloc(dev, sizeof(*mtk), GFP_KERNEL);
+ 	if (!mtk)
+@@ -311,8 +312,11 @@ mediatek_gpio_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, mtk);
+ 	mediatek_gpio_irq_chip.name = dev_name(dev);
+ 
+-	for (i = 0; i < MTK_BANK_CNT; i++)
+-		mediatek_gpio_bank_probe(dev, np, i);
++	for (i = 0; i < MTK_BANK_CNT; i++) {
++		ret = mediatek_gpio_bank_probe(dev, np, i);
++		if (ret)
++			return ret;
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.19.1
