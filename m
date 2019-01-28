@@ -1,52 +1,83 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: [PATCH RFC V2 0/4] pinctrl: bcm2835: improve libgpiod output
-Date: Mon, 28 Jan 2019 10:23:35 +0100
-Message-ID: <1363edbf-51cf-54d4-e2a2-79ee4c3e501b@i2se.com>
-References: <1548054685-3781-1-git-send-email-stefan.wahren@i2se.com>
- <CACRpkdb1fUYz+a9QrO_jEcKgMNJO3ApZAVDR0gqz_Hd=WVQ35g@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: remove unused 'pinconf-config' debugfs interface
+Date: Mon, 28 Jan 2019 13:36:59 +0100
+Message-ID: <CACRpkdYn+LgeRaL4=UPLGYxdCpnoj8r3Yp=A6yHADr=fhB_UFg@mail.gmail.com>
+References: <20190120151357.11106-1-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdb1fUYz+a9QrO_jEcKgMNJO3ApZAVDR0gqz_Hd=WVQ35g@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Eric Anholt <eric@anholt.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>, Peter Robinson <pbrobinson@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190120151357.11106-1-vz@mleia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Laurent Meunier <laurent.meunier@st.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Russell King <linux@arm.linux.org.uk>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Sun, Jan 20, 2019 at 4:14 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
 
-Am 28.01.19 um 09:06 schrieb Linus Walleij:
-> On Mon, Jan 21, 2019 at 8:11 AM Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> The main goal of the change is to remove .pin_config_dbg_parse_modify
+> callback before a driver with its support appears. So far the in-kernel
+> interface did not attract any users since its introduction 5 years ago.
 >
->> Based on a recent discussion [1],[2] about the unexpected output of gpioinfo
->> this patch series tries to improve the situation. Patches 1-3 are specific
->> changes for bcm2835 while the last one is the intended improvement for gpiolib.
->>
->> Changes in V2:
->> - take strict mode into account as suggested by Linus
->> - add bcm2835 specific changes
-> Ooops started to apply this but now I noticed it's in RFC state so I
-> backed them out and wait for a non-RFC version first.
-
-i will split this series and resend the non-controversial part (Patch 1+2).
-
-Stefan
-
+> Originally .pin_config_dbg_parse_modify callback and the associated
+> 'pinconf-config' debugfs file were introduced in commit f07512e615dd
+> ("pinctrl/pinconfig: add debug interface"), a short description of
+> 'pinconf-config' usage for debugging can be expressed this way:
 >
-> Yours,
-> Linus Walleij
+> Write to 'pinconf-config' (see pinconf_dbg_config_write() function):
 >
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> % echo -n modify $map_type $device_name $state_name $pin_name $config > \
+>         /sys/kernel/debug/pinctrl/$pinctrl/pinconf-config
+>
+> It supposes to update a global (therefore single!) 'pinconf_dbg_conf'
+> variable with an alternative setting, the arguments should match
+> an existing pinconf device and some registered pinctrl mapping 'map':
+>
+> * $map_type is either 'config_pin' or 'config_group', it should match
+>   'map->type' value of PIN_MAP_TYPE_CONFIGS_PIN or
+>    PIN_MAP_TYPE_CONFIGS_GROUP accordingly,
+> * $device_name should match 'map->dev_name' string value,
+> * $state_name should match 'map->name' string value,
+> * $pin_name should match 'map->data.configs.group_or_pin' string value,
+>
+> If all above has matched, then $config is a new value to be set by calling
+> pinconfops->pin_config_dbg_parse_modify(pctldev, config, matched_config).
+>
+> After a successful write into 'pinconf-config' a user can read the file
+> to get information about that single modified pin configuration.
+>
+> The fact is .pin_config_dbg_parse_modify callback has never been defined
+> in 'struct pinconf_ops' of any pinconf driver, thus an actual modification
+> of a pin or group state on any present pinconf controller does not happen,
+> and it declares that all related code is no more than dead code.
+>
+> I discovered the issue while attempting to add .pin_config_dbg_parse_modify
+> support in some drivers and found that too short 'MAX_NAME_LEN' set by
+>
+>   drivers/pinctrl/pinconf.c:372:#define MAX_NAME_LEN 15
+>
+> is practically insufficient to store a regular pinctrl device name,
+> which are like 'e6060000.pin-controller-sh-pfc' or pin names like
+> 'MX6QDL_PAD_ENET_REF_CLK', thus it is another indicator that the code
+> is barely usable, insufficiently tested and unprepossessing.
+>
+> Of course it might be possible to increase MAX_NAME_LEN, and then add
+> .pin_config_dbg_parse_modify callbacks to the drivers, but the whole
+> idea of such a limited debug option looks inviable. A more flexible
+> way to functionally substitute the original approach is to implicitly
+> or explicitly use pinctrl_select_state() function whenever needed.
+>
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> Cc: Laurent Meunier <laurent.meunier@st.com>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+
+This is fine, the build robot is complaining of some missing
+prototype though, probably some implicit include that
+disappeared when you removed <linux/pinctrl/machine.h>
+from the <linux/pinctrl/pinconf.h> file.
+
+Will you send a v2 with this fixed? (I think just leaving the
+include in place would be a quickfix.)
+
+Yours,
+Linus Walleij
