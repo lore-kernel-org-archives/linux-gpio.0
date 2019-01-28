@@ -1,128 +1,98 @@
 From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
- bd70528 RTC
-Date: Mon, 28 Jan 2019 09:48:49 +0200
-Message-ID: <20190128074849.GB2030@localhost.localdomain>
-References: <20190125110536.GA29321@localhost.localdomain>
- <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
+Subject: Re: [RFC PATCH v2 10/10] watchdog: bd70528: Initial support for ROHM
+ BD70528 watchdog block
+Date: Mon, 28 Jan 2019 10:00:35 +0200
+Message-ID: <20190128080035.GC2030@localhost.localdomain>
+References: <20190125110625.GA29348@localhost.localdomain>
+ <1d05ec19-daf6-f1d9-f80c-57fc92906d22@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
+In-Reply-To: <1d05ec19-daf6-f1d9-f80c-57fc92906d22@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Guenter Roeck <linux@roeck-us.net>
 Cc: mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Thanks again Guenter,
-
-On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
-> On 1/25/19 3:05 AM, Matti Vaittinen wrote:
-> > +/*
-> > + * We read regs RTC_SEC => RTC_YEAR
-> > + * this struct is ordered according to chip registers.
-> > + * Keep it u8 only to avoid padding issues.
-> > + */
-> > +struct bd70528_rtc_day {
-> > +	u8 sec;
-> > +	u8 min;
-> > +	u8 hour;
-> > +};
+On Sat, Jan 26, 2019 at 08:36:14AM -0800, Guenter Roeck wrote:
+> On 1/25/19 3:06 AM, Matti Vaittinen wrote:
+> > +/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
+> > +#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
+> > +/* Minimum time is 1 second */
+> > +#define WDT_MIN_MS 1000
+> > +#define DEFAULT_TIMEOUT 60
 > > +
-> > +struct bd70528_rtc_data {
-> > +	struct bd70528_rtc_day time;
-> > +	u8 week;
-> > +	u8 day;
-> > +	u8 month;
-> > +	u8 year;
-> > +};
-> > +
-> > +struct bd70528_rtc_wake {
-> > +	struct bd70528_rtc_day time;
-> > +	u8 ctrl;
-> > +};
-> > +
-> > +struct bd70528_rtc_alm {
-> > +	struct bd70528_rtc_data data;
-> > +	u8 alm_mask;
-> > +	u8 alm_repeat;
-> > +};
-> 
-> At least some of the above are directly associated with chip registers.
-> I don't think this will work for all architectures without explicit packed
-> attribute.
-
-Allright. I was thinking of that but thought that most of the
-architectures using this PMIC would handle alignments fine if I used
-only u8 members. I did consider using __attribute__((packed)) - but I'm
-not sure if we hit into troubles with that too. I guess some people
-would like to compile kernel with other compiler(s) but gcc - although
-I'm not sure if this should be taken into account. I'll try doing some
-study on this - unless someone replies to this and just tells how this
-should be done. (I am pretty sure I can find the answer from mail
-archives though). I'll try adding some packing hint for compiler at v3.
-
-> > +		if ((!enable) == (!(*old_state & BD70528_WAKE_STATE_BIT)))
-> > +			return 0;
-> 
-> I think
-> 		if (enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
-> would be much better readable. Even if not, there are way too many ()
-> in the above conditional.
-
-Allright. I'll fix this
- 
-> > +	if (alm.alm_mask & BD70528_MASK_ALM_EN)
-> > +		a->enabled = 0;
-> > +	else
-> > +		a->enabled = 1;
-> > +
-> Without conditional:
-> 	a->enabled = !(alm.alm_mask & BD70528_MASK_ALM_EN);
-> 
-
-Right. Much nicer, thanks! I'll change this.
-
-> > +static int bd70528_set_time(struct device *dev, struct rtc_time *t)
+> > +static int bd70528_wdt_probe(struct platform_device *pdev)
 > > +{
-> > +	int ret, old_states;
-> > +	struct bd70528_rtc_data rtc_data;
-> > +	struct bd70528_rtc *r = dev_get_drvdata(dev);
-> > +	struct bd70528 *bd70528 = r->mfd;
+> > +	struct bd70528 *bd70528;
+> > +	struct wdtbd70528 *w;
+> > +	int ret;
+> > +	unsigned int reg;
+> > +	struct watchdog_device *wdt;
 > > +
-> > +	ret = bd70528_disable_rtc_based_timers(r, &old_states);
+> > +	bd70528 = dev_get_drvdata(pdev->dev.parent);
+> > +	if (!bd70528) {
+> > +		dev_err(&pdev->dev, "No MFD driver data\n");
+> > +		return -EINVAL;
+> > +	}
+> > +	w = devm_kzalloc(&pdev->dev, sizeof(*w), GFP_KERNEL);
+> > +	if (!w)
+> > +		return -ENOMEM;
+> > +	w->bd = bd70528;
+> 
+> Unless I am missing something, only the mutex and the regmap pointer
+> are used from struct bd70528. With that in mind, it might be desirable
+> to copy those pointers to struct wdtbd70528 to avoid the additional
+> dereferencing at runtime.
+
+You are not missing anyting. If we ever add support for another PMIC
+variant we will probably be using also the chip_type. Untill then only
+the mutex and regmap. (And maybe the of_node if we have any RTC
+properties in DT). So at this point we just use regmap and mutex. I will
+change this.
+
+> > +	w->dev = &pdev->dev;
+> > +
+> > +	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
+> > +	if (!wdt)
+> > +		return -ENOMEM;
 > > +
 > 
-> AFAICS the disable/enable functions are only called once. Since they
-> also apply set / clear a mutex, I find that a bit confusing. I think
-> it would be better to fold the code into this function. If anything,
-> I could imagine something like
+> struct watchdog_device can be part of struct wdtbd70528. Two separate allocations
+> are not necessary.
+
+Correct. Thanks for pointing that out. I'll simplify this.
+
+> > +	wdt->info = &bd70528_wdt_info;
+> > +	wdt->ops =  &bd70528_wdt_ops;
+> > +	wdt->min_hw_heartbeat_ms = WDT_MIN_MS;
+> > +	wdt->max_hw_heartbeat_ms = WDT_MAX_MS;
+> > +	wdt->parent = pdev->dev.parent;
+> > +	wdt->timeout = DEFAULT_TIMEOUT;
+> > +	watchdog_set_drvdata(wdt, w);
+> > +	watchdog_init_timeout(wdt, 0, pdev->dev.parent);
+> > +
+> > +	ret = bd70528_wdt_set_timeout(wdt, wdt->timeout);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev, "Failed to set the watchdog timeout\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	mutex_lock(&bd70528->rtc_timer_lock);
+> > +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WDT_CTRL, &reg);
+> > +	mutex_unlock(&bd70528->rtc_timer_lock);
+> > +
 > 
-> 	mutex_lock();
-> 	ret = bd70528_set_time_locked();
-> 	mutex_unlock()
-> 
-> to simplify error handling.
+> I don't see the point for the above mutex locks. This is just reading a
+> single register. regmap itself provides locking for that already.
 
-Yep. Makes sense. I'll tidy this.
-
-> > +	ret = regmap_bulk_read(bd70528->chip.regmap,
-> > +			       BD70528_REG_RTC_START, &rtc_data,
-> > +			       sizeof(rtc_data));
-> > +
-> > +	tm2rtc(t, &rtc_data);
-> > +
-> > +	ret = regmap_bulk_write(bd70528->chip.regmap,
-> > +				BD70528_REG_RTC_START, &rtc_data,
-> > +				sizeof(rtc_data));
-> > +
-> > +	ret = bd70528_re_enable_rtc_based_timers(r, old_states);
-> > +
-> 
-> Kind of off that all the error returns are ignored here.
-
-And I'll fix this too.
-
+It has a purpose here - but I'd better add a comment. We want to get the
+initial state of WDG here. If the probe is executed when RTC time is being
+set we may read the state just when RTC is (temporarily) disabling WDT -
+and we might tell the WDT core that WDT is disabled - even if it is
+actually enabled. The mutex prevents us from reading the WDT state when
+RTC is being set.
+ 
 Br,
 	Matti Vaittinen
