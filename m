@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 080/107] pinctrl: meson: meson8: fix the GPIO function for the GPIOAO pins
-Date: Mon, 28 Jan 2019 11:19:20 -0500
-Message-ID: <20190128161947.57405-80-sashal@kernel.org>
-References: <20190128161947.57405-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 135/170] pinctrl: meson: meson8: fix the GPIO function for the GPIOAO pins
+Date: Mon, 28 Jan 2019 11:11:25 -0500
+Message-ID: <20190128161200.55107-135-sashal@kernel.org>
+References: <20190128161200.55107-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
+In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
@@ -34,10 +34,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+)
 
 diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index 07f1cb21c1b8..0de7fa414beb 100644
+index 970f6f14502c..591b01657378 100644
 --- a/drivers/pinctrl/meson/pinctrl-meson8.c
 +++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -736,7 +736,9 @@ static const char * const gpio_groups[] = {
+@@ -808,7 +808,9 @@ static const char * const gpio_groups[] = {
  	"BOOT_5", "BOOT_6", "BOOT_7", "BOOT_8", "BOOT_9",
  	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
  	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
@@ -47,7 +47,7 @@ index 07f1cb21c1b8..0de7fa414beb 100644
  	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
  	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
  	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
-@@ -908,6 +910,7 @@ static struct meson_pmx_func meson8_cbus_functions[] = {
+@@ -1030,6 +1032,7 @@ static struct meson_pmx_func meson8_cbus_functions[] = {
  };
  
  static struct meson_pmx_func meson8_aobus_functions[] = {
