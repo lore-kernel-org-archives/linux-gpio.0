@@ -1,14 +1,13 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RFC V2 1/4] pinctrl: bcm2835: declare pin config as generic
-Date: Mon, 28 Jan 2019 09:02:19 +0100
-Message-ID: <CACRpkdb82d0roqCW+NV_PbchamtoJV_gr3ODRzjwac7Rwi=kZQ@mail.gmail.com>
+Subject: Re: [PATCH RFC V2 0/4] pinctrl: bcm2835: improve libgpiod output
+Date: Mon, 28 Jan 2019 09:06:15 +0100
+Message-ID: <CACRpkdb1fUYz+a9QrO_jEcKgMNJO3ApZAVDR0gqz_Hd=WVQ35g@mail.gmail.com>
 References: <1548054685-3781-1-git-send-email-stefan.wahren@i2se.com>
- <1548054685-3781-2-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1548054685-3781-2-git-send-email-stefan.wahren@i2se.com>
+In-Reply-To: <1548054685-3781-1-git-send-email-stefan.wahren@i2se.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,15 +21,18 @@ To: Stefan Wahren <stefan.wahren@i2se.com>
 Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Eric Anholt <eric@anholt.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Lukas Wunner <lukas@wunner.de>, Peter Robinson <pbrobinson@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 8:12 AM Stefan Wahren <stefan.wahren@i2se.com> wrote:
+On Mon, Jan 21, 2019 at 8:11 AM Stefan Wahren <stefan.wahren@i2se.com> wrote:
 
-> Since commit 0de704955ee44 ("pinctrl: bcm2835: Add support for
-> generic pinctrl binding") this driver is capable to use the generic
-> interface. So declare this accordingly.
+> Based on a recent discussion [1],[2] about the unexpected output of gpioinfo
+> this patch series tries to improve the situation. Patches 1-3 are specific
+> changes for bcm2835 while the last one is the intended improvement for gpiolib.
 >
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> Changes in V2:
+> - take strict mode into account as suggested by Linus
+> - add bcm2835 specific changes
 
-Patch applied.
+Ooops started to apply this but now I noticed it's in RFC state so I
+backed them out and wait for a non-RFC version first.
 
 Yours,
 Linus Walleij
