@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 255/304] pinctrl: meson: meson8: fix the GPIO function for the GPIOAO pins
-Date: Mon, 28 Jan 2019 10:42:52 -0500
-Message-ID: <20190128154341.47195-255-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 206/304] pinctrl: rza1: Handle devm_kasprintf() failure cases
+Date: Mon, 28 Jan 2019 10:42:03 -0500
+Message-ID: <20190128154341.47195-206-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,51 +9,49 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
+Cc: Nicholas Mc Guire <hofrat@osadl.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Sasha Levin <sashal@kernel.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 42f9b48cc5402be11d2364275eb18c257d2a79e8 ]
+[ Upstream commit db221412cd2014506642967155698825ad80f6b6 ]
 
-The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
-only belong to the pin controller in the AO domain. With the current
-definition these pins cannot be referred to in .dts files as group
-(which is possible on GXBB and GXL for example).
+devm_kasprintf() may return NULL on failure of internal allocation
+thus the assignments are not safe if not checked. On error
+rza1_pinctrl_register() respectively rza1_parse_gpiochip() return
+negative values so -ENOMEM in the (unlikely) failure case of
+devm_kasprintf() should be fine here.
 
-Add a separate "gpio_aobus" function to fix the mapping between the pin
-controller and the GPIO pins in the AO domain. This is similar to how
-the GXBB and GXL drivers implement this functionality.
-
-Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson8.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pinctrl/pinctrl-rza1.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index 86466173114d..e482672e833a 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -807,7 +807,9 @@ static const char * const gpio_groups[] = {
- 	"BOOT_5", "BOOT_6", "BOOT_7", "BOOT_8", "BOOT_9",
- 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
- 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
-+};
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index 14eb576c04a2..9cfe9d0520ac 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -1225,6 +1225,9 @@ static int rza1_parse_gpiochip(struct rza1_pinctrl *rza1_pctl,
+ 	chip->base	= -1;
+ 	chip->label	= devm_kasprintf(rza1_pctl->dev, GFP_KERNEL, "%pOFn",
+ 					 np);
++	if (!chip->label)
++		return -ENOMEM;
++
+ 	chip->ngpio	= of_args.args[2];
+ 	chip->of_node	= np;
+ 	chip->parent	= rza1_pctl->dev;
+@@ -1326,6 +1329,8 @@ static int rza1_pinctrl_register(struct rza1_pinctrl *rza1_pctl)
+ 		pins[i].number = i;
+ 		pins[i].name = devm_kasprintf(rza1_pctl->dev, GFP_KERNEL,
+ 					      "P%u-%u", port, pin);
++		if (!pins[i].name)
++			return -ENOMEM;
  
-+static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
- 	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
- 	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
-@@ -1030,6 +1032,7 @@ static struct meson_pmx_func meson8_cbus_functions[] = {
- };
- 
- static struct meson_pmx_func meson8_aobus_functions[] = {
-+	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(remote),
- 	FUNCTION(i2c_slave_ao),
+ 		if (i % RZA1_PINS_PER_PORT == 0) {
+ 			/*
 -- 
 2.19.1
