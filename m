@@ -1,73 +1,77 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 136/170] pinctrl: meson: meson8b: fix the GPIO function for the GPIOAO pins
-Date: Mon, 28 Jan 2019 11:11:26 -0500
-Message-ID: <20190128161200.55107-136-sashal@kernel.org>
-References: <20190128161200.55107-1-sashal@kernel.org>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
+ bd70528 RTC
+Date: Mon, 28 Jan 2019 18:16:59 +0200
+Message-ID: <20190128161659.GA2121@localhost.localdomain>
+References: <20190125110536.GA29321@localhost.localdomain>
+ <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
+ <20190128074849.GB2030@localhost.localdomain>
+ <11ff93bf-c71f-7489-841f-09bf757a8ba7@roeck-us.net>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <11ff93bf-c71f-7489-841f-09bf757a8ba7@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Mon, Jan 28, 2019 at 06:02:47AM -0800, Guenter Roeck wrote:
+> On 1/27/19 11:48 PM, Matti Vaittinen wrote:
+> > Thanks again Guenter,
+> > 
+> > On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
+> > > On 1/25/19 3:05 AM, Matti Vaittinen wrote:
+> > > > +/*
+> > > > + * We read regs RTC_SEC => RTC_YEAR
+> > > > + * this struct is ordered according to chip registers.
+> > > > + * Keep it u8 only to avoid padding issues.
+> > > > + */
+> > > > +struct bd70528_rtc_day {
+> > > > +	u8 sec;
+> > > > +	u8 min;
+> > > > +	u8 hour;
+> > > > +};
+> > > > +
+> > > > +struct bd70528_rtc_data {
+> > > > +	struct bd70528_rtc_day time;
+> > > > +	u8 week;
+> > > > +	u8 day;
+> > > > +	u8 month;
+> > > > +	u8 year;
+> > > > +};
+> > > > +
+> > > > +struct bd70528_rtc_wake {
+> > > > +	struct bd70528_rtc_day time;
+> > > > +	u8 ctrl;
+> > > > +};
+> > > > +
+> > > > +struct bd70528_rtc_alm {
+> > > > +	struct bd70528_rtc_data data;
+> > > > +	u8 alm_mask;
+> > > > +	u8 alm_repeat;
+> > > > +};
+> > > 
+> > > At least some of the above are directly associated with chip registers.
+> > > I don't think this will work for all architectures without explicit packed
+> > > attribute.
+> > 
+> > Allright. I was thinking of that but thought that most of the
+> > architectures using this PMIC would handle alignments fine if I used
+> > only u8 members. I did consider using __attribute__((packed)) - but I'm
+> > not sure if we hit into troubles with that too. I guess some people
+> > would like to compile kernel with other compiler(s) but gcc - although
+> > I'm not sure if this should be taken into account. I'll try doing some
+> > study on this - unless someone replies to this and just tells how this
+> > should be done. (I am pretty sure I can find the answer from mail
+> > archives though). I'll try adding some packing hint for compiler at v3.
+> > 
+> 
+> Use __packed ?
 
-[ Upstream commit 2b745ac3cceb8fc1d9985990c8241a821ea97e53 ]
+Right. That appends to __attribute__((packed)) on gcc. I'll use that.
+Thanks for the tip :)
 
-The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
-only belong to the pin controller in the AO domain. With the current
-definition these pins cannot be referred to in .dts files as group
-(which is possible on GXBB and GXL for example).
-
-Add a separate "gpio_aobus" function to fix the mapping between the pin
-controller and the GPIO pins in the AO domain. This is similar to how
-the GXBB and GXL drivers implement this functionality.
-
-Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pinctrl/meson/pinctrl-meson8b.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index 71f216b5b0b9..a6fff215e60f 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -649,16 +649,18 @@ static const char * const gpio_groups[] = {
- 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
- 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
- 
--	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
--	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
--	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
--	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N",
--
- 	"DIF_0_P", "DIF_0_N", "DIF_1_P", "DIF_1_N",
- 	"DIF_2_P", "DIF_2_N", "DIF_3_P", "DIF_3_N",
- 	"DIF_4_P", "DIF_4_N"
- };
- 
-+static const char * const gpio_aobus_groups[] = {
-+	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
-+	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
-+	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
-+	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N"
-+};
-+
- static const char * const sd_a_groups[] = {
- 	"sd_d0_a", "sd_d1_a", "sd_d2_a", "sd_d3_a", "sd_clk_a",
- 	"sd_cmd_a"
-@@ -874,6 +876,7 @@ static struct meson_pmx_func meson8b_cbus_functions[] = {
- };
- 
- static struct meson_pmx_func meson8b_aobus_functions[] = {
-+	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(uart_ao_b),
- 	FUNCTION(i2c_slave_ao),
--- 
-2.19.1
+Br,
+	Matti Vaittinen
