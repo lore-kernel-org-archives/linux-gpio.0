@@ -1,61 +1,57 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH RESEND 4/4] Pinctrl: Ingenic: Fix const declaration.
-Date: Mon, 28 Jan 2019 11:22:42 -0800
-Message-ID: <c6de4935a2b3acdbcc9146af702322c58707c9f5.camel@perches.com>
-References: <1548410393-6981-1-git-send-email-zhouyanjie@zoho.com>
-         <1548410393-6981-5-git-send-email-zhouyanjie@zoho.com>
-         <1548439157.1804.1@crapouillou.net>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 12/13] input: max77650: add onkey support
+Date: Mon, 28 Jan 2019 11:22:53 -0800
+Message-ID: <20190128192253.GD34692@dtor-ws>
+References: <20190118134244.22253-1-brgl@bgdev.pl>
+ <20190118134244.22253-13-brgl@bgdev.pl>
+ <20190119090318.GB187380@dtor-ws>
+ <CAMRc=MfOWWK+nfYLt03EFe-ekTnbDr6oCoqd=n3dpMjz1sELMQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1548439157.1804.1@crapouillou.net>
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MfOWWK+nfYLt03EFe-ekTnbDr6oCoqd=n3dpMjz1sELMQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Cercueil <paul@crapouillou.net>, Zhou Yanjie <zhouyanjie@zoho.com>
-Cc: linus.walleij@linaro.org, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, paul.burton@mips.com, syq@debian.org, jiaxun.yang@flygoat.com, 772753199@qq.com
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 2019-01-25 at 14:59 -0300, Paul Cercueil wrote:
-> On Fri, Jan 25, 2019 at 6:59 AM, Zhou Yanjie <zhouyanjie@zoho.com> 
-> wrote:
-> > Warning is reported when checkpatch indicates that
-> > "static const char * array" should be changed to
-> > "static const char * const".
-[]
-> > diff --git a/drivers/pinctrl/pinctrl-ingenic.c 
-[]
-> > @@ -172,23 +172,25 @@ static const struct group_desc jz4740_groups[] 
-[]
-> > +static const char * const jz4740_mmc_groups[] = { "mmc-1bit", 
-> > "mmc-4bit", };
-> >  static const struct function_desc jz4740_functions[] = {
-> >  	{ "mmc", jz4740_mmc_groups, ARRAY_SIZE(jz4740_mmc_groups), },
+On Mon, Jan 21, 2019 at 11:52:50AM +0100, Bartosz Golaszewski wrote:
+> sob., 19 sty 2019 o 10:03 Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> napisał(a):
+> >
+> > Hi Bartosz,
+> >
+> > On Fri, Jan 18, 2019 at 02:42:43PM +0100, Bartosz Golaszewski wrote:
+> > > +     input_set_capability(onkey->input, EV_KEY, onkey->code);
+> > > +
+> > > +     rv = devm_request_threaded_irq(dev, irq_f, NULL,
+> >
+> > Why threaded interrupt with only hard interrupt handler? If parent
+> > interrupt is threaded use "any_context_irq" here.
+> >
 > 
-> With this patch applied I get this:
+> Hi Dmitry,
 > 
-> drivers/pinctrl/pinctrl-ingenic.c:196:11: attention : initialization 
-> discards
-> ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
->   { "mmc", jz4740_mmc_groups, ARRAY_SIZE(jz4740_mmc_groups), },
->            ^~~~~~~~~~~~~~~~~
+> actually it's the other way around. Take a look at the function
+> prototype for  devm_request_threaded_irq()[1].
+> 
+> The third parameter is the hard-irq handler (NULL in my patch), the
+> fourth is the thread function. Actually even if I did what you're
+> saying - it would never work as this is a nested irq for which the
+> hard-irq handler is never called.
 
-You could change group_names to const char * const group_names
-in pinmux.h
+Sorry, my eyes must have crossed. Still, from the driver POV the
+interrupt does not have to be threaded, this is dictated by the
+constraints beyond the driver control. For these cases we have
+devm_request_any_context_irq() that takes essentially only "hard" IRQ
+handler, but internally either does request_irq() or
+request_threaded_irq(), depending on the context (whether the interrupt
+is nested or not). Using devm_request_any_context_irq() should not have
+any behavioral changes, but documents the logic better.
 
----
- drivers/pinctrl/pinmux.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks.
 
-diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
-index 3319535c76cb..2b903774ba5c 100644
---- a/drivers/pinctrl/pinmux.h
-+++ b/drivers/pinctrl/pinmux.h
-@@ -122,7 +122,7 @@ static inline void pinmux_init_device_debugfs(struct dentry *devroot,
-  */
- struct function_desc {
- 	const char *name;
--	const char **group_names;
-+	const char * const *group_names;
- 	int num_group_names;
- 	void *data;
- };
+-- 
+Dmitry
