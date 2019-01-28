@@ -1,57 +1,59 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 12/13] input: max77650: add onkey support
-Date: Mon, 28 Jan 2019 11:22:53 -0800
-Message-ID: <20190128192253.GD34692@dtor-ws>
-References: <20190118134244.22253-1-brgl@bgdev.pl>
- <20190118134244.22253-13-brgl@bgdev.pl>
- <20190119090318.GB187380@dtor-ws>
- <CAMRc=MfOWWK+nfYLt03EFe-ekTnbDr6oCoqd=n3dpMjz1sELMQ@mail.gmail.com>
+From: Jerry Hoemann <jerry.hoemann@hpe.com>
+Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
+ bd70528 RTC
+Date: Mon, 28 Jan 2019 13:26:56 -0700
+Message-ID: <20190128202656.GA17466@anatevka>
+References: <20190125110536.GA29321@localhost.localdomain>
+ <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
+Reply-To: Jerry.Hoemann@hpe.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMRc=MfOWWK+nfYLt03EFe-ekTnbDr6oCoqd=n3dpMjz1sELMQ@mail.gmail.com>
+In-Reply-To: <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:52:50AM +0100, Bartosz Golaszewski wrote:
-> sob., 19 sty 2019 o 10:03 Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> napisał(a):
-> >
-> > Hi Bartosz,
-> >
-> > On Fri, Jan 18, 2019 at 02:42:43PM +0100, Bartosz Golaszewski wrote:
-> > > +     input_set_capability(onkey->input, EV_KEY, onkey->code);
-> > > +
-> > > +     rv = devm_request_threaded_irq(dev, irq_f, NULL,
-> >
-> > Why threaded interrupt with only hard interrupt handler? If parent
-> > interrupt is threaded use "any_context_irq" here.
-> >
-> 
-> Hi Dmitry,
-> 
-> actually it's the other way around. Take a look at the function
-> prototype for  devm_request_threaded_irq()[1].
-> 
-> The third parameter is the hard-irq handler (NULL in my patch), the
-> fourth is the thread function. Actually even if I did what you're
-> saying - it would never work as this is a nested irq for which the
-> hard-irq handler is never called.
+On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
+> On 1/25/19 3:05 AM, Matti Vaittinen wrote:
 
-Sorry, my eyes must have crossed. Still, from the driver POV the
-interrupt does not have to be threaded, this is dictated by the
-constraints beyond the driver control. For these cases we have
-devm_request_any_context_irq() that takes essentially only "hard" IRQ
-handler, but internally either does request_irq() or
-request_threaded_irq(), depending on the context (whether the interrupt
-is nested or not). Using devm_request_any_context_irq() should not have
-any behavioral changes, but documents the logic better.
 
-Thanks.
+
+> > +static int bd70528_set_wake(struct bd70528 *bd70528,
+> > +			    int enable, int *old_state)
+> > +{
+> > +	int ret;
+> > +	unsigned int ctrl_reg;
+> > +
+> > +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WAKE_EN, &ctrl_reg);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (old_state) {
+> > +		if (ctrl_reg & BD70528_MASK_WAKE_EN)
+> > +			*old_state |= BD70528_WAKE_STATE_BIT;
+> > +		else
+> > +			*old_state &= ~BD70528_WAKE_STATE_BIT;
+> > +
+> > +		if ((!enable) == (!(*old_state & BD70528_WAKE_STATE_BIT)))
+> > +			return 0;
+> 
+> I think
+> 		if (enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
+> would be much better readable. Even if not, there are way too many ()
+> in the above conditional.
+> 
+
+The substitution is not equivalent to original.  I think you mean:
+
+ 		if (!!enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
+
+
 
 -- 
-Dmitry
+
+-----------------------------------------------------------------------------
+Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
+-----------------------------------------------------------------------------
