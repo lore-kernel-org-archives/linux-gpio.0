@@ -1,105 +1,169 @@
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [RFC PATCH v2 10/10] watchdog: bd70528: Initial support for ROHM
- BD70528 watchdog block
-Date: Mon, 28 Jan 2019 10:13:47 +0200
-Message-ID: <20190128081347.GD2030@localhost.localdomain>
-References: <20190125110625.GA29348@localhost.localdomain>
- <1d05ec19-daf6-f1d9-f80c-57fc92906d22@roeck-us.net>
- <20190128080035.GC2030@localhost.localdomain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH RFC V2 4/4] gpiolib: Take MUX usage into account
+Date: Mon, 28 Jan 2019 10:06:46 +0100
+Message-ID: <CACRpkdb5DjAMRYkT+b0U6HVk7E6ccLT79-LB=QGQWWtE17aPUg@mail.gmail.com>
+References: <1548054685-3781-1-git-send-email-stefan.wahren@i2se.com>
+ <1548054685-3781-5-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190128080035.GC2030@localhost.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1548054685-3781-5-git-send-email-stefan.wahren@i2se.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Eric Anholt <eric@anholt.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Lukas Wunner <lukas@wunner.de>, Peter Robinson <pbrobinson@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 10:00:35AM +0200, Matti Vaittinen wrote:
-> On Sat, Jan 26, 2019 at 08:36:14AM -0800, Guenter Roeck wrote:
-> > On 1/25/19 3:06 AM, Matti Vaittinen wrote:
-> > > +/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
-> > > +#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
-> > > +/* Minimum time is 1 second */
-> > > +#define WDT_MIN_MS 1000
-> > > +#define DEFAULT_TIMEOUT 60
-> > > +
-> > > +static int bd70528_wdt_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct bd70528 *bd70528;
-> > > +	struct wdtbd70528 *w;
-> > > +	int ret;
-> > > +	unsigned int reg;
-> > > +	struct watchdog_device *wdt;
-> > > +
-> > > +	bd70528 = dev_get_drvdata(pdev->dev.parent);
-> > > +	if (!bd70528) {
-> > > +		dev_err(&pdev->dev, "No MFD driver data\n");
-> > > +		return -EINVAL;
-> > > +	}
-> > > +	w = devm_kzalloc(&pdev->dev, sizeof(*w), GFP_KERNEL);
-> > > +	if (!w)
-> > > +		return -ENOMEM;
-> > > +	w->bd = bd70528;
-> > 
-> > Unless I am missing something, only the mutex and the regmap pointer
-> > are used from struct bd70528. With that in mind, it might be desirable
-> > to copy those pointers to struct wdtbd70528 to avoid the additional
-> > dereferencing at runtime.
-> 
-> You are not missing anyting. If we ever add support for another PMIC
-> variant we will probably be using also the chip_type. Untill then only
-> the mutex and regmap. (And maybe the of_node if we have any RTC
-> properties in DT). So at this point we just use regmap and mutex. I will
-> change this.
+Hi Stefan!
 
-Oh, but actually we are also using the WDT state setting function
-provided by MFD. And this is taking the struct bd70528 as parameter. So
-maybe we can keep it like this afterall? 
+I like the idea with these patches.
 
-> 
-> > > +	w->dev = &pdev->dev;
-> > > +
-> > > +	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
-> > > +	if (!wdt)
-> > > +		return -ENOMEM;
-> > > +
-> > 
-> > struct watchdog_device can be part of struct wdtbd70528. Two separate allocations
-> > are not necessary.
-> 
-> Correct. Thanks for pointing that out. I'll simplify this.
-> 
-> > > +	wdt->info = &bd70528_wdt_info;
-> > > +	wdt->ops =  &bd70528_wdt_ops;
-> > > +	wdt->min_hw_heartbeat_ms = WDT_MIN_MS;
-> > > +	wdt->max_hw_heartbeat_ms = WDT_MAX_MS;
-> > > +	wdt->parent = pdev->dev.parent;
-> > > +	wdt->timeout = DEFAULT_TIMEOUT;
-> > > +	watchdog_set_drvdata(wdt, w);
-> > > +	watchdog_init_timeout(wdt, 0, pdev->dev.parent);
-> > > +
-> > > +	ret = bd70528_wdt_set_timeout(wdt, wdt->timeout);
-> > > +	if (ret) {
-> > > +		dev_err(&pdev->dev, "Failed to set the watchdog timeout\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	mutex_lock(&bd70528->rtc_timer_lock);
-> > > +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WDT_CTRL, &reg);
-> > > +	mutex_unlock(&bd70528->rtc_timer_lock);
-> > > +
-> > 
-> > I don't see the point for the above mutex locks. This is just reading a
-> > single register. regmap itself provides locking for that already.
-> 
-> It has a purpose here - but I'd better add a comment. We want to get the
-> initial state of WDG here. If the probe is executed when RTC time is being
-> set we may read the state just when RTC is (temporarily) disabling WDT -
-> and we might tell the WDT core that WDT is disabled - even if it is
-> actually enabled. The mutex prevents us from reading the WDT state when
-> RTC is being set.
->  
-> Br,
-> 	Matti Vaittinen
+Some thinking aloud below:
+
+On Mon, Jan 21, 2019 at 8:11 AM Stefan Wahren <stefan.wahren@i2se.com> wrote:
+
+
+> @@ -1075,7 +1075,8 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>                     test_bit(FLAG_IS_HOGGED, &desc->flags) ||
+>                     test_bit(FLAG_USED_AS_IRQ, &desc->flags) ||
+>                     test_bit(FLAG_EXPORT, &desc->flags) ||
+> -                   test_bit(FLAG_SYSFS, &desc->flags))
+> +                   test_bit(FLAG_SYSFS, &desc->flags) ||
+> +                   pinctrl_gpio_is_in_use(chip->base + lineinfo.line_offset))
+
+So the idea is that if a line is already in use somehow, we do not
+present it to userspace. Fair enough.
+
+> +bool pinctrl_gpio_is_in_use(unsigned gpio)
+
+Please rename it pinctrl_gpio_can_use_line(), as it is more
+specific. (Also see below as to why.)
+
+> +{
+> +       struct pinctrl_dev *pctldev;
+> +       struct pinctrl_gpio_range *range;
+> +       bool result;
+> +       int pin;
+> +
+> +       if (pinctrl_get_device_gpio_range(gpio, &pctldev, &range))
+> +               return false;
+
+So if this tries to obtain the GPIO range, if the gpio line
+is not found in any range, we decide that it is not in use.
+
+Add a comment saying that if we don't find a range, it probably
+means we are using a GPIO driver without a backing
+pin controller, so we bail out. (Just like the stub does, maybe
+add that kind of comment to the stub as well.)
+
+> +       mutex_lock(&pctldev->mutex);
+> +
+> +       /* Convert to the pin controllers number space */
+> +       pin = gpio_to_pin(range, gpio);
+> +
+> +       result = pinmux_is_in_use(pctldev, pin);
+
+It gets hard to understand the code here, we need to either add
+a comment on what's going on or rename that function
+(as described below) or both.
+
+> +
+> +       mutex_unlock(&pctldev->mutex);
+> +
+> +       return result;
+> +}
+> +EXPORT_SYMBOL_GPL(pinctrl_gpio_is_in_use);
+
+(...)
+
+> +bool pinmux_is_in_use(struct pinctrl_dev *pctldev, unsigned pin)
+
+Please name is pinmux_can_be_used_for_gpio() as non-strict
+pin controllers allow non-exclusive use and return false,
+and that is something GPIO-specific.
+
+I see the idea with the naming, but the fact that this will
+return false in some cases where the pin is actually is in
+use makes the function name misleading.
+
+Add some kerneldoc above it explaining that this returns true
+if the pin is in any kind of use whether by a function or some
+GPIO and the controller is strict.
+
+> +{
+> +       struct pin_desc *desc = pin_desc_get(pctldev, pin);
+> +       const struct pinmux_ops *ops = pctldev->desc->pmxops;
+> +
+> +       if (!desc) {
+> +               dev_err(pctldev->dev,
+> +                       "pin %u is not registered so it cannot be requested\n",
+> +                       pin);
+
+Is this error message really relevant?
+
+Should be something like "cannot be inspected" but I suspect it
+should just silently return false.
+
+> +               return false;
+> +       }
+> +
+> +       if (ops->strict && desc->mux_usecount)
+> +               return true;
+
+We return here if the pin is used for some function.
+
+This *could* create a problem for some systems.
+
+In those systems, a pin controller may define a hog in the
+device tree like this:
+
+pinctrl@800000 {
+                        foo_gpios: foo {
+                                bar {
+                                        pins = "gpio57";
+                                        bias-pull-up;
+                                };
+                        };
+                        pinctrl-names = "default";
+                        pinctrl-0 = <&foo_gpios>;
+};
+
+This means this controller is not using the fast path with
+gpio_owner etc, but instead has created one group per
+GPIO pin, which is a common solution.
+
+What the device tree want to do is set this pin up as GPIO,
+and apply a pull up, but still expects that pin to be used
+from userspace later on. This patch however, would
+hide the pin from userspace if the pin controller is strict.
+
+I don't know for sure if this is a real problem, probably not
+because such a pin controller should be careful not to
+set itself as strict. (That would strictly speaking be a bug IMO, they
+are already hogging the line mux and thus the pin controller
+itself IS using it, so....) But if someone is using this approach
+today it would cause a regression.
+
+But I think we are safe.
+
+> +       return ops->strict && !!desc->gpio_owner;
+
+This catches the case for gpio controllers using the
+fast path to access GPIOs very nicely, i.e. controllers
+implementing .gpio_request_enable() etc in their
+struct pinmux_ops.
+
+Add a comment saying that all non-strict controllers
+will return false here thus making all pins in a GPIO range
+available for use.
+
+Yours,
+Linus Walleij
