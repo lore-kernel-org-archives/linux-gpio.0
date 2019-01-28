@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 004/170] pinctrl: bcm2835: Use raw spinlock for RT compatibility
-Date: Mon, 28 Jan 2019 11:09:14 -0500
-Message-ID: <20190128161200.55107-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 074/170] pinctrl: sx150x: handle failure case of devm_kstrdup
+Date: Mon, 28 Jan 2019 11:10:24 -0500
+Message-ID: <20190128161200.55107-74-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,104 +9,66 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Lukas Wunner <lukas@wunner.de>, Mathias Duckeck <m.duckeck@kunbus.de>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Cc: Nicholas Mc Guire <hofrat@osadl.org>, Linus Walleij <linus.walleij@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 3c7b30f704b6f5e53eed6bf89cf2c8d1b38b02c0 ]
+[ Upstream commit a9d9f6b83f1bb05da849b3540e6d1f70ef1c2343 ]
 
-The BCM2835 pinctrl driver acquires a spinlock in its ->irq_enable,
-->irq_disable and ->irq_set_type callbacks.  Spinlocks become sleeping
-locks with CONFIG_PREEMPT_RT_FULL=y, therefore invocation of one of the
-callbacks in atomic context may cause a hard lockup if at least two GPIO
-pins in the same bank are used as interrupts.  The issue doesn't occur
-with just a single interrupt pin per bank because the lock is never
-contended.  I'm experiencing such lockups with GPIO 8 and 28 used as
-level-triggered interrupts, i.e. with ->irq_disable being invoked on
-reception of every IRQ.
+devm_kstrdup() may return NULL if internal allocation failed.
+Thus using  label, name  is unsafe without checking. Therefor
+in the unlikely case of allocation failure, sx150x_probe() simply
+returns -ENOMEM.
 
-The critical section protected by the spinlock is very small (one bitop
-and one RMW of an MMIO register), hence converting to a raw spinlock
-seems a better trade-off than converting the driver to threaded IRQ
-handling (which would increase latency to handle an interrupt).
-
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Acked-by: Julia Cartwright <julia@ni.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/pinctrl/pinctrl-sx150x.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index ff782445dfb7..e72bf2502eca 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -92,7 +92,7 @@ struct bcm2835_pinctrl {
- 	struct gpio_chip gpio_chip;
- 	struct pinctrl_gpio_range gpio_range;
- 
--	spinlock_t irq_lock[BCM2835_NUM_BANKS];
-+	raw_spinlock_t irq_lock[BCM2835_NUM_BANKS];
- };
- 
- /* pins are just named GPIO0..GPIO53 */
-@@ -471,10 +471,10 @@ static void bcm2835_gpio_irq_enable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	set_bit(offset, &pc->enabled_irq_map[bank]);
- 	bcm2835_gpio_irq_config(pc, gpio, true);
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- }
- 
- static void bcm2835_gpio_irq_disable(struct irq_data *data)
-@@ -486,12 +486,12 @@ static void bcm2835_gpio_irq_disable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	bcm2835_gpio_irq_config(pc, gpio, false);
- 	/* Clear events that were latched prior to clearing event sources */
- 	bcm2835_gpio_set_bit(pc, GPEDS0, gpio);
- 	clear_bit(offset, &pc->enabled_irq_map[bank]);
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- }
- 
- static int __bcm2835_gpio_irq_set_type_disabled(struct bcm2835_pinctrl *pc,
-@@ -594,7 +594,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
- 	unsigned long flags;
- 	int ret;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 
- 	if (test_bit(offset, &pc->enabled_irq_map[bank]))
- 		ret = __bcm2835_gpio_irq_set_type_enabled(pc, gpio, type);
-@@ -606,7 +606,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
- 	else
- 		irq_set_handler_locked(data, handle_level_irq);
- 
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- 
- 	return ret;
- }
-@@ -1021,7 +1021,7 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
- 		for_each_set_bit(offset, &events, 32)
- 			bcm2835_gpio_wr(pc, GPEDS0 + i * 4, BIT(offset));
- 
--		spin_lock_init(&pc->irq_lock[i]);
-+		raw_spin_lock_init(&pc->irq_lock[i]);
+diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+index 70a0228f4e7f..2d0f4f760326 100644
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -1166,7 +1166,6 @@ static int sx150x_probe(struct i2c_client *client,
  	}
  
- 	err = gpiochip_add_data(&pc->gpio_chip, pc);
+ 	/* Register GPIO controller */
+-	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
+ 	pctl->gpio.base = -1;
+ 	pctl->gpio.ngpio = pctl->data->npins;
+ 	pctl->gpio.get_direction = sx150x_gpio_get_direction;
+@@ -1180,6 +1179,10 @@ static int sx150x_probe(struct i2c_client *client,
+ 	pctl->gpio.of_node = dev->of_node;
+ #endif
+ 	pctl->gpio.can_sleep = true;
++	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
++	if (!pctl->gpio.label)
++		return -ENOMEM;
++
+ 	/*
+ 	 * Setting multiple pins is not safe when all pins are not
+ 	 * handled by the same regmap register. The oscio pin (present
+@@ -1200,13 +1203,15 @@ static int sx150x_probe(struct i2c_client *client,
+ 
+ 	/* Add Interrupt support if an irq is specified */
+ 	if (client->irq > 0) {
+-		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
+-						   GFP_KERNEL);
+ 		pctl->irq_chip.irq_mask = sx150x_irq_mask;
+ 		pctl->irq_chip.irq_unmask = sx150x_irq_unmask;
+ 		pctl->irq_chip.irq_set_type = sx150x_irq_set_type;
+ 		pctl->irq_chip.irq_bus_lock = sx150x_irq_bus_lock;
+ 		pctl->irq_chip.irq_bus_sync_unlock = sx150x_irq_bus_sync_unlock;
++		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
++						   GFP_KERNEL);
++		if (!pctl->irq_chip.name)
++			return -ENOMEM;
+ 
+ 		pctl->irq.masked = ~0;
+ 		pctl->irq.sense = 0;
 -- 
 2.19.1
