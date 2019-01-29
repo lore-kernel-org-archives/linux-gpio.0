@@ -1,82 +1,59 @@
-From: Dmitry Voytik <voytikd@gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: fix dependencies for PINCTRL_MT76XX
-Date: Tue, 29 Jan 2019 07:22:35 +0100
-Message-ID: <3e1acf90-9975-12cb-5e78-24e4bd03b507@gmail.com>
-References: <20190128223521.2690-1-voytikd@gmail.com>
- <CAGp9LzoVZQx2fb-ETY=sGBB3Xx81jC8t2krczv7h=dVNE-ph2Q@mail.gmail.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
+ bd70528 RTC
+Date: Tue, 29 Jan 2019 09:01:03 +0200
+Message-ID: <20190129070103.GA2551@localhost.localdomain>
+References: <20190125110536.GA29321@localhost.localdomain>
+ <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
+ <20190128202656.GA17466@anatevka>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGp9LzoVZQx2fb-ETY=sGBB3Xx81jC8t2krczv7h=dVNE-ph2Q@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190128202656.GA17466@anatevka>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Ryder Lee <ryder.lee@mediatek.com>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-
-
-On 1/29/19 6:02 AM, Sean Wang wrote:
-> On Mon, Jan 28, 2019 at 2:35 PM Dmitry Voytik <voytikd@gmail.com> wrote:
->>
->> How to reproduce the problem:
->> $ make tinyconfig
->> $ make menuconfig
->> then enable:
->>  CONFIG_COMPILE_TEST=y
->>  CONFIG_PINCTRL=y
->> and any of these:
->>  CONFIG_PINCTRL_MT7622=y
->>  CONFIG_PINCTRL_MT7629=y
->>  CONFIG_PINCTRL_MT7623=y
->>
->> This combination causes build failure.
->>
->> Fix the problem by making PINCTRL_MT76XX to depend on CONFIG_OF=y.
->>
->> Signed-off-by: Dmitry Voytik <voytikd@gmail.com>
->> ---
->>  drivers/pinctrl/mediatek/Kconfig | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
->> index 1817786ab6aa..a005cbccb4f7 100644
->> --- a/drivers/pinctrl/mediatek/Kconfig
->> +++ b/drivers/pinctrl/mediatek/Kconfig
->> @@ -45,12 +45,14 @@ config PINCTRL_MT2701
->>  config PINCTRL_MT7623
->>         bool "Mediatek MT7623 pin control with generic binding"
->>         depends on MACH_MT7623 || COMPILE_TEST
->> +       depends on OF
->>         default MACH_MT7623
->>         select PINCTRL_MTK_MOORE
->>
->>  config PINCTRL_MT7629
->>         bool "Mediatek MT7629 pin control"
->>         depends on MACH_MT7629 || COMPILE_TEST
->> +       depends on OF
->>         default MACH_MT7629
->>         select PINCTRL_MTK_MOORE
->>
->> @@ -92,6 +94,7 @@ config PINCTRL_MT6797
->>
->>  config PINCTRL_MT7622
->>         bool "MediaTek MT7622 pin control"
->> +       depends on OF
->>         depends on ARM64 || COMPILE_TEST
->>         default ARM64 && ARCH_MEDIATEK
->>         select PINCTRL_MTK_MOORE
->> --
->> 2.20.1
->>
+On Mon, Jan 28, 2019 at 01:26:56PM -0700, Jerry Hoemann wrote:
+> On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
+> > On 1/25/19 3:05 AM, Matti Vaittinen wrote:
+> > > +static int bd70528_set_wake(struct bd70528 *bd70528,
+> > > +			    int enable, int *old_state)
+> > > +{
+> > > +	int ret;
+> > > +	unsigned int ctrl_reg;
+> > > +
+> > > +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WAKE_EN, &ctrl_reg);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	if (old_state) {
+> > > +		if (ctrl_reg & BD70528_MASK_WAKE_EN)
+> > > +			*old_state |= BD70528_WAKE_STATE_BIT;
+> > > +		else
+> > > +			*old_state &= ~BD70528_WAKE_STATE_BIT;
+> > > +
+> > > +		if ((!enable) == (!(*old_state & BD70528_WAKE_STATE_BIT)))
+> > > +			return 0;
+> > 
+> > I think
+> > 		if (enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
+> > would be much better readable. Even if not, there are way too many ()
+> > in the above conditional.
+> > 
 > 
-> It seems the commit 2d2d478576d71000b29c52668c5712c825ee9af8 already
-> fixed the problem or is there something I'm missing?
+> The substitution is not equivalent to original.  I think you mean:
 > 
+>  		if (!!enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
 
-Opps, sorry. Should have checked linux-pinctrl.git.
-Sorry for spamming.
+Thanks Jerry! Good catch! I originally wanted that all non-zero values
+of 'enable' would be 'true'. So maybe I just use the original approach
+but get rid of extra parenthesis which were pointed out by Guenter.
 
-BR,
-Dmitry.
+		if (!enable == !(*old_state & BD70528_WAKE_STATE_BIT))
+should do it just fine, right?
+
+Br,
+	Matti
