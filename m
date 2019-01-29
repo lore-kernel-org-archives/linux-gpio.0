@@ -1,49 +1,78 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v2 3/9] irq/irq_sim: provide irq_sim_fire_type()
-Date: Tue, 29 Jan 2019 10:07:06 +0100
-Message-ID: <20190129090706.33wcxb6d2c64yx7c@pengutronix.de>
-References: <20190129084411.30495-1-brgl@bgdev.pl>
- <20190129084411.30495-4-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 10/13] gpio: max77650: add GPIO support
+Date: Tue, 29 Jan 2019 12:00:32 +0100
+Message-ID: <CAMRc=MftwsuooC8vLmnGYiiKj2rVShXeuekTrho8JRihjiBJ+w@mail.gmail.com>
+References: <20190118134244.22253-1-brgl@bgdev.pl> <20190118134244.22253-11-brgl@bgdev.pl>
+ <CACRpkdZhy7yBZrGLxhRGaac7v5jZhgUSz9gZAhFXbevJbKjpZw@mail.gmail.com>
+ <CAMRc=Me6OSKDk7bN4++M68DjoeArd+gZx16o0oQBXfRoCWBt2A@mail.gmail.com> <CACRpkdacfOLSs1GPew4gMtL_BX0OTXqBQNWzWZMwAkk+Ah2ETQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190129084411.30495-4-brgl@bgdev.pl>
+In-Reply-To: <CACRpkdacfOLSs1GPew4gMtL_BX0OTXqBQNWzWZMwAkk+Ah2ETQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Brian Masney <masneyb@onstation.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Bartosz,
+czw., 24 sty 2019 o 11:30 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
+>
+> On Mon, Jan 21, 2019 at 6:07 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote=
+:
+>
+> > Thank you for your review. While I think you're right about the issue
+> > being present in this driver, I'm not sure it's really a problem. Do
+> > we actually require every gpio-controller to also be a stand-alone
+> > interrupt-controller?
+>
+> Absolutely not :D
+>
+> Just GPIO is fine.
+>
+> > The binding document for the GPIO module doesn't
+> > mention this - it only requires the gpio-controller property. Without
+> > the "interrupt-controller" property dtc will bail-out if anyone uses
+> > this node as the interrupt parent.
+> >
+> > If I'm wrong and we do require it, then I think we need to update
+> > Documentation/devicetree/bindings/gpio/gpio.txt.
+>
+> What is weird is if a driver with DT bindings not mentioning IRQ
+> and only probing from DT start implementing IRQ support, that
+> becomes quite inconsistent. So then max77650_gpio_to_irq()
+> should just return -ENOTSUPP
+> or something for now, then it's fine.
+>
 
-On Tue, Jan 29, 2019 at 09:44:05AM +0100, Bartosz Golaszewski wrote:
-> -void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
-> +void irq_sim_fire_type(struct irq_sim *sim,
-> +		       unsigned int offset, unsigned int type)
->  {
->  	struct irq_sim_irq_ctx *ctx = irq_sim_get_ctx(sim, offset);
->  
-> -	if (ctx->enabled) {
-> +	/* Only care about relevant flags. */
-> +	type &= IRQ_TYPE_SENSE_MASK;
-> +
-> +	if (ctx->enabled && (ctx->type & type)) {
->  		set_bit(offset, sim->work_ctx.pending);
->  		irq_work_queue(&sim->work_ctx.work);
->  	}
->  }
-> -EXPORT_SYMBOL_GPL(irq_sim_fire);
-> +EXPORT_SYMBOL_GPL(irq_sim_fire_type);
+I don't see it as weird at all. I see the need to define the register
+and interrupt resources in DT for SoC peripherals becaue SoCs often
+reuse IPs. But in the case of a self-contained i2c PMIC - the modules
+such as GPIO are tightly coupled with the core functionality. In the
+case of this device for example: there isn't even a separate set of
+mask/status registers for GPIO interrupts.
 
-This looks better than the previous variant. I wonder if it would be
-still more sensible to have type only in the mockup driver. But I don't
-have the complete picture here and it might be easier this way.
+Most mfd devices setup the resources in a hard-coded manner.
 
-Best regards
-Uwe
+> We can add the (complicated) IRQ handling later.
+>
+> I am trying to eat my own dogfood here, I was sweating all
+> last night trying to implement a hierarchical IRQ controller.
+> There is no running away from that now. :/
+>
+> Apparently doing hierarchical IRQs demand that all irq
+> controllers up to the top-level SoC IRQ controller support
+> hierarchical interrupts using the v2 version of the irqdomain
+> API, and currently it seems like the ARM
+> GIC seems like the only top level IRQ controller that can
+> do that.
+>
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Yep, and for that reason I can't use the regmap irq_chip abstraction
+for now because it doesn't implement support for hierarchical
+interrupts either.
+
+How about the cascaded gpiochip irq_chip?
+
+Best regards,
+Bartosz
