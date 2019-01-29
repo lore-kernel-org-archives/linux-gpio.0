@@ -1,59 +1,79 @@
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
- bd70528 RTC
-Date: Tue, 29 Jan 2019 09:01:03 +0200
-Message-ID: <20190129070103.GA2551@localhost.localdomain>
-References: <20190125110536.GA29321@localhost.localdomain>
- <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
- <20190128202656.GA17466@anatevka>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/9] gpio: mockup: improve the user-space testing interface
+Date: Tue, 29 Jan 2019 09:44:02 +0100
+Message-ID: <20190129084411.30495-1-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190128202656.GA17466@anatevka>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jerry Hoemann <jerry.hoemann@hpe.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 01:26:56PM -0700, Jerry Hoemann wrote:
-> On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
-> > On 1/25/19 3:05 AM, Matti Vaittinen wrote:
-> > > +static int bd70528_set_wake(struct bd70528 *bd70528,
-> > > +			    int enable, int *old_state)
-> > > +{
-> > > +	int ret;
-> > > +	unsigned int ctrl_reg;
-> > > +
-> > > +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WAKE_EN, &ctrl_reg);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	if (old_state) {
-> > > +		if (ctrl_reg & BD70528_MASK_WAKE_EN)
-> > > +			*old_state |= BD70528_WAKE_STATE_BIT;
-> > > +		else
-> > > +			*old_state &= ~BD70528_WAKE_STATE_BIT;
-> > > +
-> > > +		if ((!enable) == (!(*old_state & BD70528_WAKE_STATE_BIT)))
-> > > +			return 0;
-> > 
-> > I think
-> > 		if (enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
-> > would be much better readable. Even if not, there are way too many ()
-> > in the above conditional.
-> > 
-> 
-> The substitution is not equivalent to original.  I think you mean:
-> 
->  		if (!!enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Thanks Jerry! Good catch! I originally wanted that all non-zero values
-of 'enable' would be 'true'. So maybe I just use the original approach
-but get rid of extra parenthesis which were pointed out by Guenter.
+This series aims at reworking the gpio-mockup debugfs interface. The
+reason for that is the fact that certain known problems with this
+testing module exist and the user-space tests are broken anyway
+after commit fa38869b0161 ("gpiolib: Don't support irq sharing
+for userspace") which made it impossible for gpio-mockup to ignore
+certain events (e.g. only receive notifications about rising edge
+events).
 
-		if (!enable == !(*old_state & BD70528_WAKE_STATE_BIT))
-should do it just fine, right?
+The first three patches improve the interrupt simulator. The first one
+makes the struct irq_chip part of the irq_sim structure so that we can
+support multiple instances at once. The second delegates the irq number
+mapping to the irq domain subsystem. The third patch provides a helper
+that will allow users to specify the type of the fired interrupt so that
+the configuration set by the set_type() callback can be taken into account.
 
-Br,
-	Matti
+Next six patches improve the gpio-mockup module. Patches 4-5 have been
+reviewed before but missed the last merge window. Patch 6 is there
+because we're already breaking the debugfs interface anyway and it
+removes a link that has no users. Patches 7-8 are minor tweaks.
+
+Last patch introduces a rework of the debugfs interface. With this
+change each mockup chip is represented by a directory named after the
+chip's device name under <debugfs mount point>/gpio-mockup/. Each line
+is represented by a file using the line's offset as the name under the
+chip's directory. Reading from the line's file yields the current
+*value*, writing to the line's file changes the current "pull". Default
+pull for mockup lines is down. More info on that can be found in the
+comment added by this change to the gpio-mockup code.
+
+This is somewhat inspired by the idea of the gpio-simulator by
+Uwe Kleine-König except that I strongly belive that when testing
+certain user API code paths we should not be using the same paths for
+verification. That's why there's a separate interface (debugfs) sharing
+as little as possible with the character device that allows to check if
+various operations (reading and setting values, events) work as
+expected instead of two connected dummy chips sharing the same
+interface.
+
+If accepted this will of course require major modification of user-space
+tests in libgpiod once upstream.
+
+v1 -> v2:
+- instead of providing the irq_sim_get_type() helper, move the irq type
+  logic into the simulator and provide a helper that allows users to specify
+  the type of the fired interrupt
+
+Bartosz Golaszewski (9):
+  irq/irq_sim: don't share the irq_chip structure between simulators
+  irq/irq_sim: use irq domain
+  irq/irq_sim: provide irq_sim_fire_type()
+  gpio: mockup: add locking
+  gpio: mockup: implement get_multiple()
+  gpio: mockup: don't create the debugfs link named after the label
+  gpio: mockup: change the type of 'offset' to unsigned int
+  gpio: mockup: change the signature of unlocked get/set helpers
+  gpio: mockup: rework debugfs interface
+
+ drivers/gpio/gpio-mockup.c | 185 +++++++++++++++++++++++++++++++------
+ include/linux/irq_sim.h    |  17 +++-
+ kernel/irq/irq_sim.c       | 126 ++++++++++++++++++-------
+ 3 files changed, 263 insertions(+), 65 deletions(-)
+
+-- 
+2.19.1
