@@ -1,76 +1,99 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for the v5.0 series, take two
-Date: Wed, 30 Jan 2019 10:08:56 +0100
-Message-ID: <CACRpkdZWGrinXV5oF0c5aggi51TKTR5GsL1nO3gA+6RMO7U3bg@mail.gmail.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: [RFC PATCH v3 05/10] clk: bd718x7: Support ROHM BD70528 clk block
+Date: Wed, 30 Jan 2019 11:09:19 +0200
+Message-ID: <b72bdb7c851496834d66d6f69221788d70a43990.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+To: mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc: heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, linux@roeck-us.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+ROHM BD70528 is an ultra low power PMIC with similar 32K clk as
+bd718x7. Only difference (from clk perspective) is register address.
+Add support for controlling BD70528 clk using bd718x7 driver.
 
-here is a bunch of GPIO fixes for the v5.0 series. I was helped out
-by Bartosz in collecting these fixes, for which I am very grateful,
-the biggest achievement in GPIO right now is work distribution.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/clk/Kconfig       |  6 +++---
+ drivers/clk/clk-bd718x7.c | 21 +++++++++++++++++----
+ 2 files changed, 20 insertions(+), 7 deletions(-)
 
-There is one serious core fix (timestamping) and a bunch of driver
-fixes.
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e5b2fe80eab4..992cfb86f2ca 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -285,10 +285,10 @@ config COMMON_CLK_STM32H7
+ 
+ config COMMON_CLK_BD718XX
+ 	tristate "Clock driver for ROHM BD718x7 PMIC"
+-	depends on MFD_ROHM_BD718XX
++	depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528
+ 	help
+-	  This driver supports ROHM BD71837 and ROHM BD71847
+-	  PMICs clock gates.
++	  This driver supports ROHM BD71837, ROHM BD71847 and
++	  ROHM BD70528 PMICs clock gates.
+ 
+ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index 461228ebf703..41c1374f4217 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -8,6 +8,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/mfd/rohm-bd718x7.h>
++#include <linux/mfd/rohm-bd70528.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+ #include <linux/regmap.h>
+@@ -86,9 +87,21 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "No parent clk found\n");
+ 		return -EINVAL;
+ 	}
+-
+-	c->reg = BD718XX_REG_OUT32K;
+-	c->mask = BD718XX_OUT32K_EN;
++	switch (mfd->chip_type) {
++	case ROHM_CHIP_TYPE_BD71837:
++	case ROHM_CHIP_TYPE_BD71847:
++
++		c->reg = BD718XX_REG_OUT32K;
++		c->mask = BD718XX_OUT32K_EN;
++		break;
++	case ROHM_CHIP_TYPE_BD70528:
++		c->reg = BD70528_REG_CLK_OUT;
++		c->mask = BD70528_CLK_OUT_EN_MASK;
++		break;
++	default:
++		dev_err(&pdev->dev, "Unknown clk chip\n");
++		return -EINVAL;
++	}
+ 	c->mfd = mfd;
+ 	c->pdev = pdev;
+ 	c->hw.init = &init;
+@@ -119,5 +132,5 @@ static struct platform_driver bd71837_clk = {
+ module_platform_driver(bd71837_clk);
+ 
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+-MODULE_DESCRIPTION("BD71837/BD71847 chip clk driver");
++MODULE_DESCRIPTION("BD71837/BD71847/BD70528 chip clk driver");
+ MODULE_LICENSE("GPL");
+-- 
+2.14.3
 
-Please pull it in! Details in the signed tag.
 
-Yours,
-Linus Walleij
+-- 
+Matti Vaittinen
+ROHM Semiconductors Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
-The following changes since commit 49a57857aeea06ca831043acbb0fa5e0f50602fd:
-
-  Linux 5.0-rc3 (2019-01-21 13:14:44 +1300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v5.0-3
-
-for you to fetch changes up to 7ae710f9f8b2cf95297e7bbfe1c09789a7dc43d4:
-
-  gpio: vf610: Mask all GPIO interrupts (2019-01-28 15:28:43 +0100)
-
-----------------------------------------------------------------
-GPIO fixes for the v5.0 series:
-- Fix timestamps on nested IRQs
-- Handle IRQs properly in multiple instances of PCF857x
-- Use the right data register and IRQ type setting in the
-  Spreadtrum GPIO driver
-- Let the value argument work properly when setting direction
-  in the Altera GPIO driver
-- Mask interrupts properly in the vf610 driver
-
-----------------------------------------------------------------
-Andrew Lunn (1):
-      gpio: vf610: Mask all GPIO interrupts
-
-Axel Lin (1):
-      gpio: altera-a10sr: Set proper output level for direction_output
-
-Bartosz Golaszewski (1):
-      gpiolib: fix line event timestamps for nested irqs
-
-Linus Walleij (1):
-      Merge tag 'gpio-5.0-rc4-fixes-for-linus' of
-git://git.kernel.org/.../brgl/linux into fixes
-
-Neo Hou (2):
-      gpio: sprd: Fix the incorrect data register
-      gpio: sprd: Fix incorrect irq type setting for the async EIC
-
-Roger Quadros (1):
-      gpio: pcf857x: Fix interrupts on multiple instances
-
- drivers/gpio/gpio-altera-a10sr.c |  4 +++-
- drivers/gpio/gpio-eic-sprd.c     | 14 +++++++++++++-
- drivers/gpio/gpio-pcf857x.c      | 26 ++++++++++++--------------
- drivers/gpio/gpio-vf610.c        |  5 +++++
- drivers/gpio/gpiolib.c           |  9 ++++++++-
- 5 files changed, 41 insertions(+), 17 deletions(-)
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
