@@ -1,24 +1,31 @@
-From: pr-tracker-bot@kernel.org
-Subject: Re: [GIT PULL] GPIO fixes for the v5.0 series, take two
-Date: Wed, 30 Jan 2019 17:45:04 +0000
-Message-ID: <154887030436.3523.13116179291683735423.pr-tracker-bot@kernel.org>
-References: <CACRpkdZWGrinXV5oF0c5aggi51TKTR5GsL1nO3gA+6RMO7U3bg@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v2 12/13] input: max77650: add onkey support
+Date: Wed, 30 Jan 2019 10:53:28 -0800
+Message-ID: <20190130185328.GA149208@dtor-ws>
+References: <20190129133545.1931-1-brgl@bgdev.pl>
+ <20190129133545.1931-14-brgl@bgdev.pl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZWGrinXV5oF0c5aggi51TKTR5GsL1nO3gA+6RMO7U3bg@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20190129133545.1931-14-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The pull request you sent on Wed, 30 Jan 2019 10:08:56 +0100:
+On Tue, Jan 29, 2019 at 02:35:44PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Add support for the push- and slide-button events for max77650.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.0-3
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/877ef51d53abfdadabc64809d045d9c27c1cf757
+Please feel free to merge with other patches (MFD tree I suppose?).
 
-Thank you!
+Thanks.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Dmitry
