@@ -1,90 +1,24 @@
-From: =?utf-8?b?UmVuw6k=?= van Dorst <opensource-91nzXlUTePbQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] gpio: MT7621: use a per instance irq_chip structure
-Date: Wed, 30 Jan 2019 16:22:30 +0000
-Message-ID: <20190130162230.Horde.nyhJdHZru4NYC2azaENKwnd@www.vdorst.com>
-References: <20190130151744.11145-1-opensource@vdorst.com>
- <CAMpxmJVj_ZrwjHbfmXQ+SANHU+m+4r6OzyhqXA33aR+z4H33Fg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"; DelSp="Yes"
-Content-Transfer-Encoding: base64
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <CAMpxmJVj_ZrwjHbfmXQ+SANHU+m+4r6OzyhqXA33aR+z4H33Fg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Disposition: inline
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Cc: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, gerg-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: pr-tracker-bot@kernel.org
+Subject: Re: [GIT PULL] GPIO fixes for the v5.0 series, take two
+Date: Wed, 30 Jan 2019 17:45:04 +0000
+Message-ID: <154887030436.3523.13116179291683735423.pr-tracker-bot@kernel.org>
+References: <CACRpkdZWGrinXV5oF0c5aggi51TKTR5GsL1nO3gA+6RMO7U3bg@mail.gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZWGrinXV5oF0c5aggi51TKTR5GsL1nO3gA+6RMO7U3bg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-UXVvdGluZyBCYXJ0b3N6IEdvbGFzemV3c2tpIDxiZ29sYXN6ZXdza2lAYmF5bGlicmUuY29tPjoK
-Cj4gxZtyLiwgMzAgc3R5IDIwMTkgbyAxNjoyMiBSZW7DqSB2YW4gRG9yc3QgPG9wZW5zb3VyY2VA
-dmRvcnN0LmNvbT4gbmFwaXNhxYIoYSk6Cj4+Cj4+IFRoaXMgZml4ZXMgdGhlIGtlcm5lbCBjb21w
-bGFpbnM6Cj4+IGdwaW8gZ3Bpb2NoaXAxOiAoMWUwMDA2MDAuZ3Bpby1iYW5rMSk6IGRldGVjdGVk
-IGlycWNoaXAgdGhhdCBpcyBzaGFyZWQKPj4gICAgICAgICAgICAgd2l0aCBtdWx0aXBsZSBncGlv
-Y2hpcHM6IHBsZWFzZSBmaXggdGhlIGRyaXZlci4KPj4gZ3BpbyBncGlvY2hpcDI6ICgxZTAwMDYw
-MC5ncGlvLWJhbmsyKTogZGV0ZWN0ZWQgaXJxY2hpcCB0aGF0IGlzIHNoYXJlZAo+PiAgICAgICAg
-ICAgICB3aXRoIG11bHRpcGxlIGdwaW9jaGlwczogcGxlYXNlIGZpeCB0aGUgZHJpdmVyLgo+Pgo+
-PiBTaWduZWQtb2ZmLWJ5OiBSZW7DqSB2YW4gRG9yc3QgPG9wZW5zb3VyY2VAdmRvcnN0LmNvbT4K
-Pj4gQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnCj4+IENjOiBsaW51eC1tZWRpYXRla0Bs
-aXN0cy5pbmZyYWRlYWQub3JnCj4+IENjOiBnZXJnQGtlcm5lbC5vcmcKPgoKSGkgQmFydCwKCj4g
-UGxlYXNlIGFkZCB0aGUgRml4ZXM6IHRhZyBhbmQgQ2Mgc3RhYmxlIHdoaWxlIHlvdSdyZSBhdCBp
-dC4KCkZpeGVkIGluIHYyLgoKR3JlYXRzLAoKUmVuw6kKCj4gQmFydAo+Cj4+IC0tLQo+PiAgZHJp
-dmVycy9ncGlvL2dwaW8tbXQ3NjIxLmMgfCAxOSArKysrKysrKysrLS0tLS0tLS0tCj4+ICAxIGZp
-bGUgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgOSBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3Bpby9ncGlvLW10NzYyMS5jIGIvZHJpdmVycy9ncGlvL2dwaW8tbXQ3
-NjIxLmMKPj4gaW5kZXggMDBlOTU0ZjIyYmM5Li44OWZiMDAwNDgwZGMgMTAwNjQ0Cj4+IC0tLSBh
-L2RyaXZlcnMvZ3Bpby9ncGlvLW10NzYyMS5jCj4+ICsrKyBiL2RyaXZlcnMvZ3Bpby9ncGlvLW10
-NzYyMS5jCj4+IEBAIC0zMCw2ICszMCw3IEBACj4+ICAjZGVmaW5lIEdQSU9fUkVHX0VER0UgICAg
-ICAgICAgMHhBMAo+Pgo+PiAgc3RydWN0IG10a19nYyB7Cj4+ICsgICAgICAgc3RydWN0IGlycV9j
-aGlwIGlycV9jaGlwOwo+PiAgICAgICAgIHN0cnVjdCBncGlvX2NoaXAgY2hpcDsKPj4gICAgICAg
-ICBzcGlubG9ja190IGxvY2s7Cj4+ICAgICAgICAgaW50IGJhbms7Cj4+IEBAIC0xODksMTIgKzE5
-MCw2IEBAIG1lZGlhdGVrX2dwaW9faXJxX3R5cGUoc3RydWN0IGlycV9kYXRhICpkLCAgCj4+IHVu
-c2lnbmVkIGludCB0eXBlKQo+PiAgICAgICAgIHJldHVybiAwOwo+PiAgfQo+Pgo+PiAtc3RhdGlj
-IHN0cnVjdCBpcnFfY2hpcCBtZWRpYXRla19ncGlvX2lycV9jaGlwID0gewo+PiAtICAgICAgIC5p
-cnFfdW5tYXNrICAgICAgICAgICAgID0gbWVkaWF0ZWtfZ3Bpb19pcnFfdW5tYXNrLAo+PiAtICAg
-ICAgIC5pcnFfbWFzayAgICAgICAgICAgICAgID0gbWVkaWF0ZWtfZ3Bpb19pcnFfbWFzaywKPj4g
-LSAgICAgICAuaXJxX21hc2tfYWNrICAgICAgICAgICA9IG1lZGlhdGVrX2dwaW9faXJxX21hc2ss
-Cj4+IC0gICAgICAgLmlycV9zZXRfdHlwZSAgICAgICAgICAgPSBtZWRpYXRla19ncGlvX2lycV90
-eXBlLAo+PiAtfTsKPj4KPj4gIHN0YXRpYyBpbnQKPj4gIG1lZGlhdGVrX2dwaW9feGxhdGUoc3Ry
-dWN0IGdwaW9fY2hpcCAqY2hpcCwKPj4gQEAgLTI1NCw2ICsyNDksMTMgQEAgbWVkaWF0ZWtfZ3Bp
-b19iYW5rX3Byb2JlKHN0cnVjdCBkZXZpY2UgKmRldiwKPj4gICAgICAgICAgICAgICAgIHJldHVy
-biByZXQ7Cj4+ICAgICAgICAgfQo+Pgo+PiArICAgICAgIHJnLT5pcnFfY2hpcC5uYW1lID0gZGV2
-X25hbWUoZGV2KTsKPj4gKyAgICAgICByZy0+aXJxX2NoaXAucGFyZW50X2RldmljZSA9IGRldjsK
-Pj4gKyAgICAgICByZy0+aXJxX2NoaXAuaXJxX3VubWFzayA9IG1lZGlhdGVrX2dwaW9faXJxX3Vu
-bWFzazsKPj4gKyAgICAgICByZy0+aXJxX2NoaXAuaXJxX21hc2sgPSBtZWRpYXRla19ncGlvX2ly
-cV9tYXNrOwo+PiArICAgICAgIHJnLT5pcnFfY2hpcC5pcnFfbWFza19hY2sgPSBtZWRpYXRla19n
-cGlvX2lycV9tYXNrOwo+PiArICAgICAgIHJnLT5pcnFfY2hpcC5pcnFfc2V0X3R5cGUgPSBtZWRp
-YXRla19ncGlvX2lycV90eXBlOwo+PiArCj4+ICAgICAgICAgaWYgKG10ay0+Z3Bpb19pcnEpIHsK
-Pj4gICAgICAgICAgICAgICAgIC8qCj4+ICAgICAgICAgICAgICAgICAgKiBNYW51YWxseSByZXF1
-ZXN0IHRoZSBpcnEgaGVyZSBpbnN0ZWFkIG9mIHBhc3NpbmcKPj4gQEAgLTI3MCwxNCArMjcyLDE0
-IEBAIG1lZGlhdGVrX2dwaW9fYmFua19wcm9iZShzdHJ1Y3QgZGV2aWNlICpkZXYsCj4+ICAgICAg
-ICAgICAgICAgICAgICAgICAgIHJldHVybiByZXQ7Cj4+ICAgICAgICAgICAgICAgICB9Cj4+Cj4+
-IC0gICAgICAgICAgICAgICByZXQgPSBncGlvY2hpcF9pcnFjaGlwX2FkZCgmcmctPmNoaXAsICAK
-Pj4gJm1lZGlhdGVrX2dwaW9faXJxX2NoaXAsCj4+ICsgICAgICAgICAgICAgICByZXQgPSBncGlv
-Y2hpcF9pcnFjaGlwX2FkZCgmcmctPmNoaXAsICZyZy0+aXJxX2NoaXAsCj4+ICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAwLCBoYW5kbGVfc2ltcGxlX2lycSwgIAo+
-PiBJUlFfVFlQRV9OT05FKTsKPj4gICAgICAgICAgICAgICAgIGlmIChyZXQpIHsKPj4gICAgICAg
-ICAgICAgICAgICAgICAgICAgZGV2X2VycihkZXYsICJmYWlsZWQgdG8gYWRkIGdwaW9jaGlwX2ly
-cWNoaXBcbiIpOwo+PiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gcmV0Owo+PiAgICAg
-ICAgICAgICAgICAgfQo+Pgo+PiAtICAgICAgICAgICAgICAgZ3Bpb2NoaXBfc2V0X2NoYWluZWRf
-aXJxY2hpcCgmcmctPmNoaXAsICAKPj4gJm1lZGlhdGVrX2dwaW9faXJxX2NoaXAsCj4+ICsgICAg
-ICAgICAgICAgICBncGlvY2hpcF9zZXRfY2hhaW5lZF9pcnFjaGlwKCZyZy0+Y2hpcCwgJnJnLT5p
-cnFfY2hpcCwKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-bXRrLT5ncGlvX2lycSwgTlVMTCk7Cj4+ICAgICAgICAgfQo+Pgo+PiBAQCAtMzEwLDcgKzMxMiw2
-IEBAIG1lZGlhdGVrX2dwaW9fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPj4g
-ICAgICAgICBtdGstPmdwaW9faXJxID0gaXJxX29mX3BhcnNlX2FuZF9tYXAobnAsIDApOwo+PiAg
-ICAgICAgIG10ay0+ZGV2ID0gZGV2Owo+PiAgICAgICAgIHBsYXRmb3JtX3NldF9kcnZkYXRhKHBk
-ZXYsIG10ayk7Cj4+IC0gICAgICAgbWVkaWF0ZWtfZ3Bpb19pcnFfY2hpcC5uYW1lID0gZGV2X25h
-bWUoZGV2KTsKPj4KPj4gICAgICAgICBmb3IgKGkgPSAwOyBpIDwgTVRLX0JBTktfQ05UOyBpKysp
-IHsKPj4gICAgICAgICAgICAgICAgIHJldCA9IG1lZGlhdGVrX2dwaW9fYmFua19wcm9iZShkZXYs
-IG5wLCBpKTsKPj4gLS0KPj4gMi4xOS4xCj4+CgoKCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1tZWRpYXRlayBtYWlsaW5nIGxpc3QKTGludXgt
-bWVkaWF0ZWtAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2xpbnV4LW1lZGlhdGVrCg==
+The pull request you sent on Wed, 30 Jan 2019 10:08:56 +0100:
+
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.0-3
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/877ef51d53abfdadabc64809d045d9c27c1cf757
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
