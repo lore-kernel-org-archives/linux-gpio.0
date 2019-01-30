@@ -1,65 +1,73 @@
-From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH] dt-bindings: pinctrl: Document the i.MX50 IOMUXC binding
-Date: Tue, 29 Jan 2019 17:55:28 +0100
-Message-ID: <20190129165530.7606-1-j.neuschaefer@gmx.net>
+From: Jerry Hoemann <jerry.hoemann@hpe.com>
+Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
+ bd70528 RTC
+Date: Tue, 29 Jan 2019 17:24:04 -0700
+Message-ID: <20190130002404.GA19729@anatevka>
+References: <20190125110536.GA29321@localhost.localdomain>
+ <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
+ <20190128202656.GA17466@anatevka>
+ <20190129070103.GA2551@localhost.localdomain>
+Reply-To: Jerry.Hoemann@hpe.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190129070103.GA2551@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Dong Aisheng <dong.aisheng@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-AFAICS from the i.MX50 Reference Manual, the i.MX50 IOMUXC works the
-same as the one in i.MX51, so I copied fsl,imx51-pinctrl.txt and changed
-the text to imx50.
+On Tue, Jan 29, 2019 at 09:01:03AM +0200, Matti Vaittinen wrote:
+> On Mon, Jan 28, 2019 at 01:26:56PM -0700, Jerry Hoemann wrote:
+> > On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
+> > > On 1/25/19 3:05 AM, Matti Vaittinen wrote:
+> > > > +static int bd70528_set_wake(struct bd70528 *bd70528,
+> > > > +			    int enable, int *old_state)
+> > > > +{
+> > > > +	int ret;
+> > > > +	unsigned int ctrl_reg;
+> > > > +
+> > > > +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WAKE_EN, &ctrl_reg);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	if (old_state) {
+> > > > +		if (ctrl_reg & BD70528_MASK_WAKE_EN)
+> > > > +			*old_state |= BD70528_WAKE_STATE_BIT;
+> > > > +		else
+> > > > +			*old_state &= ~BD70528_WAKE_STATE_BIT;
+> > > > +
+> > > > +		if ((!enable) == (!(*old_state & BD70528_WAKE_STATE_BIT)))
+> > > > +			return 0;
+> > > 
+> > > I think
+> > > 		if (enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
+> > > would be much better readable. Even if not, there are way too many ()
+> > > in the above conditional.
+> > > 
+> > 
+> > The substitution is not equivalent to original.  I think you mean:
+> > 
+> >  		if (!!enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
+> 
+> Thanks Jerry! Good catch! I originally wanted that all non-zero values
+> of 'enable' would be 'true'. So maybe I just use the original approach
+> but get rid of extra parenthesis which were pointed out by Guenter.
+> 
+> 		if (!enable == !(*old_state & BD70528_WAKE_STATE_BIT))
+> should do it just fine, right?
+> 
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-Cc: Dong Aisheng <dong.aisheng@linaro.org>
-Cc: Shawn Guo <shawn.guo@linaro.org>
----
- .../bindings/pinctrl/fsl,imx50-pinctrl.txt    | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt
+The use of "!!" to turn an int into one of two Boolean values (0 | 1)
+is used extensively in Linux and as such might make the intent of
+the code a bit clearer which I take as checking to see the states
+match.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt
-new file mode 100644
-index 000000000000..6da01d619d33
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt
-@@ -0,0 +1,32 @@
-+* Freescale IMX50 IOMUX Controller
-+
-+Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
-+and usage.
-+
-+Required properties:
-+- compatible: "fsl,imx50-iomuxc"
-+- fsl,pins: two integers array, represents a group of pins mux and config
-+  setting. The format is fsl,pins = <PIN_FUNC_ID CONFIG>, PIN_FUNC_ID is a
-+  pin working on a specific function, CONFIG is the pad setting value like
-+  pull-up for this pin. Please refer to imx50 datasheet for the valid pad
-+  config settings.
-+
-+CONFIG bits definition:
-+PAD_CTL_HVE			(1 << 13)
-+PAD_CTL_HYS			(1 << 8)
-+PAD_CTL_PKE			(1 << 7)
-+PAD_CTL_PUE			(1 << 6)
-+PAD_CTL_PUS_100K_DOWN		(0 << 4)
-+PAD_CTL_PUS_47K_UP		(1 << 4)
-+PAD_CTL_PUS_100K_UP		(2 << 4)
-+PAD_CTL_PUS_22K_UP		(3 << 4)
-+PAD_CTL_ODE			(1 << 3)
-+PAD_CTL_DSE_LOW			(0 << 1)
-+PAD_CTL_DSE_MED			(1 << 1)
-+PAD_CTL_DSE_HIGH		(2 << 1)
-+PAD_CTL_DSE_MAX			(3 << 1)
-+PAD_CTL_SRE_FAST		(1 << 0)
-+PAD_CTL_SRE_SLOW		(0 << 0)
-+
-+Refer to imx50-pinfunc.h in device tree source folder for all available
-+imx50 PIN_FUNC_ID.
+But, I will defer to you and Guenter on the question.
+
 -- 
-2.20.1
+
+-----------------------------------------------------------------------------
+Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
+-----------------------------------------------------------------------------
