@@ -1,75 +1,43 @@
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [RFC PATCH v3 06/10] devicetree: bindings: Document first ROHM
- BD70528 bindings
-Date: Thu, 31 Jan 2019 08:40:51 +0200
-Message-ID: <20190131064050.GC23791@localhost.localdomain>
-References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
- <eb5d03f3adc72db580a10f95ff6cb07aefce5b47.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
- <20190130185344.GA14789@bogus>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 12/13] input: max77650: add onkey support
+Date: Thu, 31 Jan 2019 09:15:01 +0100
+Message-ID: <CAMRc=McaqqmU6S_Yz35ZMvhWtWO4hTASA0fmL5CT4JizbYgu4Q@mail.gmail.com>
+References: <20190129133545.1931-1-brgl@bgdev.pl> <20190129133545.1931-14-brgl@bgdev.pl>
+ <20190130185328.GA149208@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190130185344.GA14789@bogus>
+In-Reply-To: <20190130185328.GA149208@dtor-ws>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, linux@roeck-us.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Rob,
+=C5=9Br., 30 sty 2019 o 19:53 Dmitry Torokhov <dmitry.torokhov@gmail.com> n=
+apisa=C5=82(a):
+>
+> On Tue, Jan 29, 2019 at 02:35:44PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Add support for the push- and slide-button events for max77650.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>
+> Please feel free to merge with other patches (MFD tree I suppose?).
+>
 
-Thanks for taking the carefull look once again =)
+Hi Dmitry,
 
-On Wed, Jan 30, 2019 at 12:53:44PM -0600, Rob Herring wrote:
-> On Wed, Jan 30, 2019 at 11:09:55AM +0200, Matti Vaittinen wrote:
-> > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-> > drivers) and 4 GPIO pins which can be configured for I/O or
-> > as interrupt sources withe configurable trigger levels.
-> > 
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 104 +++++++++++++++++++++
+I'm not sure what the policy is on merging MFD drivers, but I'm seeing
+that Mark Brown has already picked up the regulator part into his tree
+(including the binding document). I think you can just pick up the
+input patches and it will simply not show up in Kconfig until the core
+mfd module is upstream.
 
-snip
+@Mark: could you please confirm it?
 
-> > + - interrupt-parent	: Phandle to the parent interrupt controller.
-> 
-> Don't document this. It is implied and could be in a parent node.
-
-Allright. I'll remove this then.
-
-> > + - clock-frequency	: Should be 32768
-> 
-> Forget to drop this?
-
-Well spotted. The rate should come from parent clock. I'll drop this
-too.
-
-> > +Example:
-> > +/* external oscillator */
-> > +osc: oscillator {
-> > +	compatible = "fixed-clock";
-> > +	#clock-cells = <1>;
-> > +	clock-frequency  = <32768>;
-> > +	clock-output-names = "osc";
-> > +};
-> > +
-> > +pmic: bd70528@4b {
-> 
-> pmic@4b
-> 
-> Node names should be generic.
-
-Ok. I will change this.
-
-Br,
-	Matti
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Best regards,
+Bartosz Golaszewski
