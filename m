@@ -1,81 +1,75 @@
-From: Greg Ungerer <gerg-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCHv2] gpio: MT7621: use a per instance irq_chip structure
-Date: Thu, 31 Jan 2019 10:55:22 +1000
-Message-ID: <ecccbc5f-bfca-f452-3c3b-14b4655eb00c@kernel.org>
-References: <20190130161048.9852-1-opensource@vdorst.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [RFC PATCH v3 06/10] devicetree: bindings: Document first ROHM
+ BD70528 bindings
+Date: Thu, 31 Jan 2019 08:40:51 +0200
+Message-ID: <20190131064050.GC23791@localhost.localdomain>
+References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+ <eb5d03f3adc72db580a10f95ff6cb07aefce5b47.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190130185344.GA14789@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190130161048.9852-1-opensource-91nzXlUTePbQT0dZR+AlfA@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: =?UTF-8?Q?Ren=c3=a9_van_Dorst?= <opensource-91nzXlUTePbQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190130185344.GA14789@bogus>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, linux@roeck-us.net, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgUmVuw6ksCgpPbiAzMS8xLzE5IDI6MTAgYW0sIFJlbsOpIHZhbiBEb3JzdCB3cm90ZToKPiBU
-aGlzIGZpeGVzIHRoZSBrZXJuZWwgY29tcGxhaW5zOgo+IGdwaW8gZ3Bpb2NoaXAxOiAoMWUwMDA2
-MDAuZ3Bpby1iYW5rMSk6IGRldGVjdGVkIGlycWNoaXAgdGhhdCBpcyBzaGFyZWQKPiAJICAgIHdp
-dGggbXVsdGlwbGUgZ3Bpb2NoaXBzOiBwbGVhc2UgZml4IHRoZSBkcml2ZXIuCj4gZ3BpbyBncGlv
-Y2hpcDI6ICgxZTAwMDYwMC5ncGlvLWJhbmsyKTogZGV0ZWN0ZWQgaXJxY2hpcCB0aGF0IGlzIHNo
-YXJlZAo+IAkgICAgd2l0aCBtdWx0aXBsZSBncGlvY2hpcHM6IHBsZWFzZSBmaXggdGhlIGRyaXZl
-ci4KPiAKPiBGaXhlczogNGJhOWMzYWZkYTQxICgiZ3BpbzogbXQ3NjIxOiBBZGQgYSBkcml2ZXIg
-Zm9yIE1UNzYyMSIpCj4gU2lnbmVkLW9mZi1ieTogUmVuw6kgdmFuIERvcnN0IDxvcGVuc291cmNl
-QHZkb3JzdC5jb20+Cj4gQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnCj4gQ2M6IGxpbnV4
-LW1lZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBDYzogZ2VyZ0BrZXJuZWwub3JnCj4gQ2M6
-IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcKCldvcmtzIGdyZWF0IG9uIG15IE1UNzYyMSBoYXJkd2Fy
-ZS4KClRlc3RlZC1ieTogR3JlZyBVbmdlcmVyIDxnZXJnQGtlcm5lbC5vcmc+CgpSZWdhcmRzCkdy
-ZWcKCgo+IC0tLQo+ICAgZHJpdmVycy9ncGlvL2dwaW8tbXQ3NjIxLmMgfCAyMCArKysrKysrKysr
-LS0tLS0tLS0tLQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDEwIGRlbGV0
-aW9ucygtKQo+IAo+IHYyOiBSZW1vdmUgYW4gZW1wdHkgbGluZQo+ICAgICAgQWRkIENjIHN0YWJs
-ZQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwaW8vZ3Bpby1tdDc2MjEuYyBiL2RyaXZlcnMv
-Z3Bpby9ncGlvLW10NzYyMS5jCj4gaW5kZXggMDBlOTU0ZjIyYmM5Li43NDQwMWUwYWRiMjkgMTAw
-NjQ0Cj4gLS0tIGEvZHJpdmVycy9ncGlvL2dwaW8tbXQ3NjIxLmMKPiArKysgYi9kcml2ZXJzL2dw
-aW8vZ3Bpby1tdDc2MjEuYwo+IEBAIC0zMCw2ICszMCw3IEBACj4gICAjZGVmaW5lIEdQSU9fUkVH
-X0VER0UJCTB4QTAKPiAgIAo+ICAgc3RydWN0IG10a19nYyB7Cj4gKwlzdHJ1Y3QgaXJxX2NoaXAg
-aXJxX2NoaXA7Cj4gICAJc3RydWN0IGdwaW9fY2hpcCBjaGlwOwo+ICAgCXNwaW5sb2NrX3QgbG9j
-azsKPiAgIAlpbnQgYmFuazsKPiBAQCAtMTg5LDEzICsxOTAsNiBAQCBtZWRpYXRla19ncGlvX2ly
-cV90eXBlKHN0cnVjdCBpcnFfZGF0YSAqZCwgdW5zaWduZWQgaW50IHR5cGUpCj4gICAJcmV0dXJu
-IDA7Cj4gICB9Cj4gICAKPiAtc3RhdGljIHN0cnVjdCBpcnFfY2hpcCBtZWRpYXRla19ncGlvX2ly
-cV9jaGlwID0gewo+IC0JLmlycV91bm1hc2sJCT0gbWVkaWF0ZWtfZ3Bpb19pcnFfdW5tYXNrLAo+
-IC0JLmlycV9tYXNrCQk9IG1lZGlhdGVrX2dwaW9faXJxX21hc2ssCj4gLQkuaXJxX21hc2tfYWNr
-CQk9IG1lZGlhdGVrX2dwaW9faXJxX21hc2ssCj4gLQkuaXJxX3NldF90eXBlCQk9IG1lZGlhdGVr
-X2dwaW9faXJxX3R5cGUsCj4gLX07Cj4gLQo+ICAgc3RhdGljIGludAo+ICAgbWVkaWF0ZWtfZ3Bp
-b194bGF0ZShzdHJ1Y3QgZ3Bpb19jaGlwICpjaGlwLAo+ICAgCQkgICAgY29uc3Qgc3RydWN0IG9m
-X3BoYW5kbGVfYXJncyAqc3BlYywgdTMyICpmbGFncykKPiBAQCAtMjU0LDYgKzI0OCwxMyBAQCBt
-ZWRpYXRla19ncGlvX2JhbmtfcHJvYmUoc3RydWN0IGRldmljZSAqZGV2LAo+ICAgCQlyZXR1cm4g
-cmV0Owo+ICAgCX0KPiAgIAo+ICsJcmctPmlycV9jaGlwLm5hbWUgPSBkZXZfbmFtZShkZXYpOwo+
-ICsJcmctPmlycV9jaGlwLnBhcmVudF9kZXZpY2UgPSBkZXY7Cj4gKwlyZy0+aXJxX2NoaXAuaXJx
-X3VubWFzayA9IG1lZGlhdGVrX2dwaW9faXJxX3VubWFzazsKPiArCXJnLT5pcnFfY2hpcC5pcnFf
-bWFzayA9IG1lZGlhdGVrX2dwaW9faXJxX21hc2s7Cj4gKwlyZy0+aXJxX2NoaXAuaXJxX21hc2tf
-YWNrID0gbWVkaWF0ZWtfZ3Bpb19pcnFfbWFzazsKPiArCXJnLT5pcnFfY2hpcC5pcnFfc2V0X3R5
-cGUgPSBtZWRpYXRla19ncGlvX2lycV90eXBlOwo+ICsKPiAgIAlpZiAobXRrLT5ncGlvX2lycSkg
-ewo+ICAgCQkvKgo+ICAgCQkgKiBNYW51YWxseSByZXF1ZXN0IHRoZSBpcnEgaGVyZSBpbnN0ZWFk
-IG9mIHBhc3NpbmcKPiBAQCAtMjcwLDE0ICsyNzEsMTQgQEAgbWVkaWF0ZWtfZ3Bpb19iYW5rX3By
-b2JlKHN0cnVjdCBkZXZpY2UgKmRldiwKPiAgIAkJCXJldHVybiByZXQ7Cj4gICAJCX0KPiAgIAo+
-IC0JCXJldCA9IGdwaW9jaGlwX2lycWNoaXBfYWRkKCZyZy0+Y2hpcCwgJm1lZGlhdGVrX2dwaW9f
-aXJxX2NoaXAsCj4gKwkJcmV0ID0gZ3Bpb2NoaXBfaXJxY2hpcF9hZGQoJnJnLT5jaGlwLCAmcmct
-PmlycV9jaGlwLAo+ICAgCQkJCQkgICAwLCBoYW5kbGVfc2ltcGxlX2lycSwgSVJRX1RZUEVfTk9O
-RSk7Cj4gICAJCWlmIChyZXQpIHsKPiAgIAkJCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGFkZCBn
-cGlvY2hpcF9pcnFjaGlwXG4iKTsKPiAgIAkJCXJldHVybiByZXQ7Cj4gICAJCX0KPiAgIAo+IC0J
-CWdwaW9jaGlwX3NldF9jaGFpbmVkX2lycWNoaXAoJnJnLT5jaGlwLCAmbWVkaWF0ZWtfZ3Bpb19p
-cnFfY2hpcCwKPiArCQlncGlvY2hpcF9zZXRfY2hhaW5lZF9pcnFjaGlwKCZyZy0+Y2hpcCwgJnJn
-LT5pcnFfY2hpcCwKPiAgIAkJCQkJICAgICBtdGstPmdwaW9faXJxLCBOVUxMKTsKPiAgIAl9Cj4g
-ICAKPiBAQCAtMzEwLDcgKzMxMSw2IEBAIG1lZGlhdGVrX2dwaW9fcHJvYmUoc3RydWN0IHBsYXRm
-b3JtX2RldmljZSAqcGRldikKPiAgIAltdGstPmdwaW9faXJxID0gaXJxX29mX3BhcnNlX2FuZF9t
-YXAobnAsIDApOwo+ICAgCW10ay0+ZGV2ID0gZGV2Owo+ICAgCXBsYXRmb3JtX3NldF9kcnZkYXRh
-KHBkZXYsIG10ayk7Cj4gLQltZWRpYXRla19ncGlvX2lycV9jaGlwLm5hbWUgPSBkZXZfbmFtZShk
-ZXYpOwo+ICAgCj4gICAJZm9yIChpID0gMDsgaSA8IE1US19CQU5LX0NOVDsgaSsrKSB7Cj4gICAJ
-CXJldCA9IG1lZGlhdGVrX2dwaW9fYmFua19wcm9iZShkZXYsIG5wLCBpKTsKPiAKCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LW1lZGlhdGVrIG1h
-aWxpbmcgbGlzdApMaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0
-cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtbWVkaWF0ZWsK
+Hello Rob,
+
+Thanks for taking the carefull look once again =)
+
+On Wed, Jan 30, 2019 at 12:53:44PM -0600, Rob Herring wrote:
+> On Wed, Jan 30, 2019 at 11:09:55AM +0200, Matti Vaittinen wrote:
+> > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
+> > drivers) and 4 GPIO pins which can be configured for I/O or
+> > as interrupt sources withe configurable trigger levels.
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 104 +++++++++++++++++++++
+
+snip
+
+> > + - interrupt-parent	: Phandle to the parent interrupt controller.
+> 
+> Don't document this. It is implied and could be in a parent node.
+
+Allright. I'll remove this then.
+
+> > + - clock-frequency	: Should be 32768
+> 
+> Forget to drop this?
+
+Well spotted. The rate should come from parent clock. I'll drop this
+too.
+
+> > +Example:
+> > +/* external oscillator */
+> > +osc: oscillator {
+> > +	compatible = "fixed-clock";
+> > +	#clock-cells = <1>;
+> > +	clock-frequency  = <32768>;
+> > +	clock-output-names = "osc";
+> > +};
+> > +
+> > +pmic: bd70528@4b {
+> 
+> pmic@4b
+> 
+> Node names should be generic.
+
+Ok. I will change this.
+
+Br,
+	Matti
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
