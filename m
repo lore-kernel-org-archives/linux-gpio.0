@@ -1,55 +1,41 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] pinctrl: qcom: qcs404: Drop unused UFS_RESET macro
-Date: Thu, 31 Jan 2019 09:38:53 -0800
-Message-ID: <20190131173853.27706-1-bjorn.andersson@linaro.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v2 12/13] input: max77650: add onkey support
+Date: Thu, 31 Jan 2019 11:18:35 -0800
+Message-ID: <CAKdAkRQUAMsT7SA7oAaEmLrkZ6hOdAqCC9RC6HGRsjJ+TvASrQ@mail.gmail.com>
+References: <20190129133545.1931-1-brgl@bgdev.pl> <20190129133545.1931-14-brgl@bgdev.pl>
+ <20190130185328.GA149208@dtor-ws> <CAMRc=McaqqmU6S_Yz35ZMvhWtWO4hTASA0fmL5CT4JizbYgu4Q@mail.gmail.com>
+ <20190131122813.GB20797@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190131122813.GB20797@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The UFS_RESET macro serves no purpose on QCS404, remove it.
+On Thu, Jan 31, 2019 at 4:28 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Thu, Jan 31, 2019 at 09:15:01AM +0100, Bartosz Golaszewski wrote:
+>
+> > I'm not sure what the policy is on merging MFD drivers, but I'm seeing
+> > that Mark Brown has already picked up the regulator part into his tree
+> > (including the binding document). I think you can just pick up the
+> > input patches and it will simply not show up in Kconfig until the core
+> > mfd module is upstream.
+>
+> > @Mark: could you please confirm it?
+>
+> Right, as it's a new MFD the Kconfig will stop it causing build breakage
+> until the MFD is merged.  I'm doing it partly just to cut down on the
+> amount of mail from resends while the rest of the series gets reviewed.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-qcs404.c | 25 -------------------------
- 1 file changed, 25 deletions(-)
+Ugh, I might have pulled it in if it did not reference the new header
+file. As a rule I try to enable all symbols that result in input
+devices being created so as much of input code is covered... I'd
+prefer input piece be merged with MFD.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-qcs404.c b/drivers/pinctrl/qcom/pinctrl-qcs404.c
-index 4ffd56ff809e..1c6ba978c69f 100644
---- a/drivers/pinctrl/qcom/pinctrl-qcs404.c
-+++ b/drivers/pinctrl/qcom/pinctrl-qcs404.c
-@@ -95,31 +95,6 @@ enum {
- 		.intr_detection_width = -1,		\
- 	}
- 
--#define UFS_RESET(pg_name, offset)				\
--	{						\
--		.name = #pg_name,			\
--		.pins = pg_name##_pins,			\
--		.npins = (unsigned int)ARRAY_SIZE(pg_name##_pins),	\
--		.ctl_reg = offset,			\
--		.io_reg = offset + 0x4,			\
--		.intr_cfg_reg = 0,			\
--		.intr_status_reg = 0,			\
--		.intr_target_reg = 0,			\
--		.tile = NORTH,				\
--		.mux_bit = -1,				\
--		.pull_bit = 3,				\
--		.drv_bit = 0,				\
--		.oe_bit = -1,				\
--		.in_bit = -1,				\
--		.out_bit = 0,				\
--		.intr_enable_bit = -1,			\
--		.intr_status_bit = -1,			\
--		.intr_target_bit = -1,			\
--		.intr_raw_status_bit = -1,		\
--		.intr_polarity_bit = -1,		\
--		.intr_detection_bit = -1,		\
--		.intr_detection_width = -1,		\
--	}
- static const struct pinctrl_pin_desc qcs404_pins[] = {
- 	PINCTRL_PIN(0, "GPIO_0"),
- 	PINCTRL_PIN(1, "GPIO_1"),
+Thanks.
+
 -- 
-2.18.0
+Dmitry
