@@ -1,55 +1,47 @@
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: Re: [PATCH 5/7] dt-bindings: add bindings for SAM9X60
-Date: Thu, 31 Jan 2019 13:36:30 +0100
-Message-ID: <20190131123630.opxm5saomkp3b55h@M43218.corp.atmel.com>
+From: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH 3/7] pinctrl: at91: add compatibles for SAM9X60 pin
+ controller
+Date: Thu, 31 Jan 2019 16:16:18 +0000
+Message-ID: <e23b96ad-b920-4caf-d774-2c5c43d7cea8@microchip.com>
 References: <1548937733-20189-1-git-send-email-claudiu.beznea@microchip.com>
- <1548937733-20189-6-git-send-email-claudiu.beznea@microchip.com>
+ <1548937733-20189-4-git-send-email-claudiu.beznea@microchip.com>
+ <20190131123310.wwikkuiniqlcg445@M43218.corp.atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1548937733-20189-6-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <20190131123310.wwikkuiniqlcg445@M43218.corp.atmel.com>
+Content-Language: en-US
+Content-ID: <F481A476EBBBAA4DBE1912293A56F57D@namprd11.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Claudiu Beznea - M18063 <Claudiu.Beznea@microchip.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>, "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 01:29:40PM +0100, Claudiu Beznea - M18063 wrote:
-> From: Claudiu Beznea <claudiu.beznea@microchip.com>
-> 
-> Add device tree binding for SAM9X60 pin controller.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-> index 40e33dfc36fd..c2d51ed86d47 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-> @@ -19,7 +19,7 @@ such as pull-up, multi drive, etc.
->  
->  Required properties for iomux controller:
->  - compatible: "atmel,at91rm9200-pinctrl" or "atmel,at91sam9x5-pinctrl"
-> -		or "atmel,sama5d3-pinctrl"
-> +		or "atmel,sama5d3-pinctrl" or "microchip,sam9x60-pictrl"
-
-Typo s/microchip,sam9x60-pictrl/microchip,sam9x60-pinctrl
-
->  - atmel,mux-mask: array of mask (periph per bank) to describe if a pin can be
->    configured in this periph mode. All the periph and bank need to be describe.
->  
-> @@ -117,7 +117,8 @@ Some requirements for using atmel,at91rm9200-pinctrl binding:
->  4. The gpio controller must be describe in the pinctrl simple-bus.
->  
->  For each bank the required properties are:
-> -- compatible: "atmel,at91sam9x5-gpio" or "atmel,at91rm9200-gpio"
-> +- compatible: "atmel,at91sam9x5-gpio" or "atmel,at91rm9200-gpio" or
-> +  "microchip,sam9x60-gpio"
->  - reg: physical base address and length of the controller's registers
->  - interrupts: interrupt outputs from the controller
->  - interrupt-controller: marks the device node as an interrupt controller
-> -- 
-> 2.7.4
-> 
+DQoNCk9uIDMxLjAxLjIwMTkgMTQ6MzMsIEx1ZG92aWMgRGVzcm9jaGVzIHdyb3RlOg0KPiBPbiBU
+aHUsIEphbiAzMSwgMjAxOSBhdCAwMToyOTozM1BNICswMTAwLCBDbGF1ZGl1IEJlem5lYSAtIE0x
+ODA2MyB3cm90ZToNCj4+IEZyb206IENsYXVkaXUgQmV6bmVhIDxjbGF1ZGl1LmJlem5lYUBtaWNy
+b2NoaXAuY29tPg0KPj4NCj4+IEFkZCBjb21wYXRpYmxlcyBmb3IgU0FNOVg2MCBwaW4gY29udHJv
+bGxlci4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBDbGF1ZGl1IEJlem5lYSA8Y2xhdWRpdS5iZXpu
+ZWFAbWljcm9jaGlwLmNvbT4NCj4+IC0tLQ0KPj4gIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0
+OTEuYyB8IDIgKysNCj4+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQo+Pg0KPj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0OTEuYyBiL2RyaXZlcnMvcGlu
+Y3RybC9waW5jdHJsLWF0OTEuYw0KPj4gaW5kZXggNDY0NDNiOTdkODExLi41NDU2YTI2OTJiOGMg
+MTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1hdDkxLmMNCj4+ICsrKyBi
+L2RyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0OTEuYw0KPj4gQEAgLTEyMTUsNiArMTIxNSw3IEBA
+IHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGF0OTFfcGluY3RybF9vZl9tYXRjaFtd
+ID0gew0KPj4gIAl7IC5jb21wYXRpYmxlID0gImF0bWVsLHNhbWE1ZDMtcGluY3RybCIsIC5kYXRh
+ID0gJnNhbWE1ZDNfb3BzIH0sDQo+PiAgCXsgLmNvbXBhdGlibGUgPSAiYXRtZWwsYXQ5MXNhbTl4
+NS1waW5jdHJsIiwgLmRhdGEgPSAmYXQ5MXNhbTl4NV9vcHMgfSwNCj4+ICAJeyAuY29tcGF0aWJs
+ZSA9ICJhdG1lbCxhdDkxcm05MjAwLXBpbmN0cmwiLCAuZGF0YSA9ICZhdDkxcm05MjAwX29wcyB9
+LA0KPj4gKwl7IC5jb21wYXRpYmxlID0gIm1pY3JvY2hpcCxzYW05eDYwLXBpY3RybCIsIC5kYXRh
+ID0gJnNhbTl4NjBfb3BzIH0sDQo+IA0KPiBUeXBvIHMvbWljcm9jaGlwLHNhbTl4NjAtcGljdHJs
+L21pY3JvY2hpcCxzYW05eDYwLXBpbmN0cmwNCg0KVGhhbmsgeW91LCBMdWRvdmljISBJJ2xsIHNl
+bmQgYSB2Mi4NCg0KPiANCj4+ICAJeyAvKiBzZW50aW5lbCAqLyB9DQo+PiAgfTsNCj4+ICANCj4+
+IEBAIC0xNzU3LDYgKzE3NTgsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGdwaW9fY2hpcCBhdDkx
+X2dwaW9fdGVtcGxhdGUgPSB7DQo+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQg
+YXQ5MV9ncGlvX29mX21hdGNoW10gPSB7DQo+PiAgCXsgLmNvbXBhdGlibGUgPSAiYXRtZWwsYXQ5
+MXNhbTl4NS1ncGlvIiwgLmRhdGEgPSAmYXQ5MXNhbTl4NV9vcHMsIH0sDQo+PiAgCXsgLmNvbXBh
+dGlibGUgPSAiYXRtZWwsYXQ5MXJtOTIwMC1ncGlvIiwgLmRhdGEgPSAmYXQ5MXJtOTIwMF9vcHMg
+fSwNCj4+ICsJeyAuY29tcGF0aWJsZSA9ICJtaWNyb2NoaXAsc2FtOXg2MC1ncGlvIiwgLmRhdGEg
+PSAmc2FtOXg2MF9vcHMgfSwNCj4+ICAJeyAvKiBzZW50aW5lbCAqLyB9DQo+PiAgfTsNCj4+ICAN
+Cj4+IC0tIA0KPj4gMi43LjQNCj4+DQo+IA0K
