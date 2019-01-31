@@ -1,53 +1,35 @@
-From: <Claudiu.Beznea@microchip.com>
-Subject: [PATCH v2 3/7] pinctrl: at91: add compatibles for SAM9X60 pin
- controller
-Date: Thu, 31 Jan 2019 16:18:11 +0000
-Message-ID: <1548951466-26297-4-git-send-email-claudiu.beznea@microchip.com>
-References: <1548951466-26297-1-git-send-email-claudiu.beznea@microchip.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1548951466-26297-1-git-send-email-claudiu.beznea@microchip.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com, Ludovic.Desroches@microchip.com
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Claudiu.Beznea@microchip.com
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] pinctrl: qcom: qcs404: Correct SDC tile
+Date: Thu, 31 Jan 2019 09:29:53 -0800
+Message-ID: <20190131172953.27339-1-bjorn.andersson@linaro.org>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+The SDC controls live in the south tile, not the north one. Correct this
+so that we program the right registers.
 
-Add compatibles for SAM9X60 pin controller.
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: stable@vger.kernel.org
+Fixes: 22eb8301dbc1 ("pinctrl: qcom: Add qcs404 pinctrl driver")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/pinctrl/pinctrl-at91.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-qcs404.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.=
-c
-index 46443b97d811..5456a2692b8c 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1215,6 +1215,7 @@ static const struct of_device_id at91_pinctrl_of_matc=
-h[] =3D {
- 	{ .compatible =3D "atmel,sama5d3-pinctrl", .data =3D &sama5d3_ops },
- 	{ .compatible =3D "atmel,at91sam9x5-pinctrl", .data =3D &at91sam9x5_ops }=
-,
- 	{ .compatible =3D "atmel,at91rm9200-pinctrl", .data =3D &at91rm9200_ops }=
-,
-+	{ .compatible =3D "microchip,sam9x60-pinctrl", .data =3D &sam9x60_ops },
- 	{ /* sentinel */ }
- };
-=20
-@@ -1757,6 +1758,7 @@ static const struct gpio_chip at91_gpio_template =3D =
-{
- static const struct of_device_id at91_gpio_of_match[] =3D {
- 	{ .compatible =3D "atmel,at91sam9x5-gpio", .data =3D &at91sam9x5_ops, },
- 	{ .compatible =3D "atmel,at91rm9200-gpio", .data =3D &at91rm9200_ops },
-+	{ .compatible =3D "microchip,sam9x60-gpio", .data =3D &sam9x60_ops },
- 	{ /* sentinel */ }
- };
-=20
---=20
-2.7.4
+diff --git a/drivers/pinctrl/qcom/pinctrl-qcs404.c b/drivers/pinctrl/qcom/pinctrl-qcs404.c
+index 7aae52a09ff0..4ffd56ff809e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-qcs404.c
++++ b/drivers/pinctrl/qcom/pinctrl-qcs404.c
+@@ -79,7 +79,7 @@ enum {
+ 		.intr_cfg_reg = 0,			\
+ 		.intr_status_reg = 0,			\
+ 		.intr_target_reg = 0,			\
+-		.tile = NORTH,				\
++		.tile = SOUTH,				\
+ 		.mux_bit = -1,				\
+ 		.pull_bit = pull,			\
+ 		.drv_bit = drv,				\
+-- 
+2.18.0
