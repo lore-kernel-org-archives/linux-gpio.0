@@ -1,56 +1,66 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH V3 2/2] pinctrl: bcm2835: Direct GPIO config changes to
- generic pinctrl
-Date: Sun,  3 Feb 2019 14:02:34 +0100
-Message-ID: <1549198954-4711-3-git-send-email-stefan.wahren@i2se.com>
-References: <1549198954-4711-1-git-send-email-stefan.wahren@i2se.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH -next 1/2] genirq: export irq_chip_set_wake_parent
+ symbol
+Date: Sun, 3 Feb 2019 13:05:33 +0000
+Message-ID: <20190203130533.072b235e@why.wild-wind.fr.eu.org>
+References: <20190203123131.28323-1-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1549198954-4711-1-git-send-email-stefan.wahren@i2se.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Eric Anholt <eric@anholt.net>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, linux-gpio@vger.kernel.org, Lukas Wunner <lukas@wunner.de>, Peter Robinson <pbrobinson@gmail.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190203123131.28323-1-masneyb@onstation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>
+Cc: linus.walleij@linaro.org, tglx@linutronix.de, andy.gross@linaro.org, sboyd@kernel.org, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-In order to support GPIO config changes direct these to the generic pinctrl.
-This also requires an adjust of the return code for unsupported parameter
-otherwise gpiod_configure_flags wont work as expected.
+On Sun,  3 Feb 2019 07:31:30 -0500
+Brian Masney <masneyb@onstation.org> wrote:
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hi Brian,
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 19eb4fd..183d1ff 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -341,6 +341,7 @@ static const struct gpio_chip bcm2835_gpio_chip = {
- 	.get_direction = bcm2835_gpio_get_direction,
- 	.get = bcm2835_gpio_get,
- 	.set = bcm2835_gpio_set,
-+	.set_config = gpiochip_generic_config,
- 	.base = -1,
- 	.ngpio = BCM2835_NUM_GPIOS,
- 	.can_sleep = false,
-@@ -960,7 +961,7 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
- 			break;
- 
- 		default:
--			return -EINVAL;
-+			return -ENOTSUPP;
- 
- 		} /* switch param type */
- 	} /* for each config */
+> Export the irq_chip_set_wake_parent symbol so that drivers with
+> hierarchical IRQ chips can be built as a module.
+> 
+> This fixes a build failure in linux-next's spmi-gpio when using
+> allmodconfig.
+
+I don't think the mention of linux-next helps in the commit message. It
+would have been better together with the note below.
+
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> Reported-by: Mark Brown <broonie@kernel.org>
+
+Otherwise:
+
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+
+Thanks,
+
+	M.
+
+> ---
+> See https://www.spinics.net/lists/linux-next/msg46362.html for Mark's
+> message.
+> 
+>  kernel/irq/chip.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+> index 34e969069488..086d5a34b5a0 100644
+> --- a/kernel/irq/chip.c
+> +++ b/kernel/irq/chip.c
+> @@ -1381,6 +1381,7 @@ int irq_chip_set_wake_parent(struct irq_data *data, unsigned int on)
+>  
+>  	return -ENOSYS;
+>  }
+> +EXPORT_SYMBOL_GPL(irq_chip_set_wake_parent);
+>  #endif
+>  
+>  /**
+
+
+
 -- 
-2.7.4
+Without deviation from the norm, progress is not possible.
