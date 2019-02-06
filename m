@@ -1,95 +1,145 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 0/9] gpio: mockup: improve the user-space testing interface
-Date: Wed, 6 Feb 2019 11:23:46 +0100
-Message-ID: <CAMRc=MdyJO4F+GJ6S-moxQ1znQXatL6H27RFFiuaaOuLQdvnAA@mail.gmail.com>
-References: <20190129084411.30495-1-brgl@bgdev.pl>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: Re: [PATCH v2 1/7] pinctrl: at91: add option to use drive strength
+ bits
+Date: Wed, 6 Feb 2019 11:24:06 +0100
+Message-ID: <20190206102406.r45rb5bfjk2j45dr@M43218.corp.atmel.com>
+References: <1548951466-26297-1-git-send-email-claudiu.beznea@microchip.com>
+ <1548951466-26297-2-git-send-email-claudiu.beznea@microchip.com>
+ <20190206081304.cv344rjzvz7wzih5@M43218.corp.atmel.com>
+ <f0022bfc-6deb-de77-857c-c70d41f4fc78@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190129084411.30495-1-brgl@bgdev.pl>
+Content-Disposition: inline
+In-Reply-To: <f0022bfc-6deb-de77-857c-c70d41f4fc78@microchip.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Claudiu.Beznea@microchip.com
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-wt., 29 sty 2019 o 09:44 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a=
-):
->
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> This series aims at reworking the gpio-mockup debugfs interface. The
-> reason for that is the fact that certain known problems with this
-> testing module exist and the user-space tests are broken anyway
-> after commit fa38869b0161 ("gpiolib: Don't support irq sharing
-> for userspace") which made it impossible for gpio-mockup to ignore
-> certain events (e.g. only receive notifications about rising edge
-> events).
->
-> The first three patches improve the interrupt simulator. The first one
-> makes the struct irq_chip part of the irq_sim structure so that we can
-> support multiple instances at once. The second delegates the irq number
-> mapping to the irq domain subsystem. The third patch provides a helper
-> that will allow users to specify the type of the fired interrupt so that
-> the configuration set by the set_type() callback can be taken into accoun=
-t.
->
-> Next six patches improve the gpio-mockup module. Patches 4-5 have been
-> reviewed before but missed the last merge window. Patch 6 is there
-> because we're already breaking the debugfs interface anyway and it
-> removes a link that has no users. Patches 7-8 are minor tweaks.
->
-> Last patch introduces a rework of the debugfs interface. With this
-> change each mockup chip is represented by a directory named after the
-> chip's device name under <debugfs mount point>/gpio-mockup/. Each line
-> is represented by a file using the line's offset as the name under the
-> chip's directory. Reading from the line's file yields the current
-> *value*, writing to the line's file changes the current "pull". Default
-> pull for mockup lines is down. More info on that can be found in the
-> comment added by this change to the gpio-mockup code.
->
-> This is somewhat inspired by the idea of the gpio-simulator by
-> Uwe Kleine-K=C3=B6nig except that I strongly belive that when testing
-> certain user API code paths we should not be using the same paths for
-> verification. That's why there's a separate interface (debugfs) sharing
-> as little as possible with the character device that allows to check if
-> various operations (reading and setting values, events) work as
-> expected instead of two connected dummy chips sharing the same
-> interface.
->
-> If accepted this will of course require major modification of user-space
-> tests in libgpiod once upstream.
->
-> v1 -> v2:
-> - instead of providing the irq_sim_get_type() helper, move the irq type
->   logic into the simulator and provide a helper that allows users to spec=
-ify
->   the type of the fired interrupt
->
-> Bartosz Golaszewski (9):
->   irq/irq_sim: don't share the irq_chip structure between simulators
->   irq/irq_sim: use irq domain
->   irq/irq_sim: provide irq_sim_fire_type()
->   gpio: mockup: add locking
->   gpio: mockup: implement get_multiple()
->   gpio: mockup: don't create the debugfs link named after the label
->   gpio: mockup: change the type of 'offset' to unsigned int
->   gpio: mockup: change the signature of unlocked get/set helpers
->   gpio: mockup: rework debugfs interface
->
->  drivers/gpio/gpio-mockup.c | 185 +++++++++++++++++++++++++++++++------
->  include/linux/irq_sim.h    |  17 +++-
->  kernel/irq/irq_sim.c       | 126 ++++++++++++++++++-------
->  3 files changed, 263 insertions(+), 65 deletions(-)
->
-> --
-> 2.19.1
->
+On Wed, Feb 06, 2019 at 09:46:28AM +0000, Claudiu.Beznea@microchip.com wrote:
+> 
+> 
+> On 06.02.2019 10:13, Ludovic Desroches wrote:
+> > On Thu, Jan 31, 2019 at 05:18:04PM +0100, Claudiu Beznea - M18063 wrote:
+> >> From: Claudiu Beznea <claudiu.beznea@microchip.com>
+> >>
+> >> SAM9X60 uses high and low drive strengths. To implement this, in
+> >> at91_pinctrl_mux_ops::set_drivestrength and
+> >> at91_pinctrl_mux_ops::get_drivestrength we need bit numbers of
+> >> drive strengths (1 for low, 2 for high), thus change the code to
+> >> allow the usage of drive strength bit numbers.
+> >>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> >> ---
+> >>  drivers/pinctrl/pinctrl-at91.c | 32 ++++++++++++++++++++------------
+> >>  1 file changed, 20 insertions(+), 12 deletions(-)
+> >>
+> >> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+> >> index 3d49bbbcdbc7..31f06dafca2e 100644
+> >> --- a/drivers/pinctrl/pinctrl-at91.c
+> >> +++ b/drivers/pinctrl/pinctrl-at91.c
+> >> @@ -72,10 +72,15 @@ static int gpio_banks;
+> >>   * DRIVE_STRENGTH_DEFAULT is just a placeholder to avoid changing the drive
+> >>   * strength when there is no dt config for it.
+> >>   */
+> >> -#define DRIVE_STRENGTH_DEFAULT		(0 << DRIVE_STRENGTH_SHIFT)
+> >> -#define DRIVE_STRENGTH_LOW          (1 << DRIVE_STRENGTH_SHIFT)
+> >> -#define DRIVE_STRENGTH_MED          (2 << DRIVE_STRENGTH_SHIFT)
+> >> -#define DRIVE_STRENGTH_HI           (3 << DRIVE_STRENGTH_SHIFT)
+> >> +enum drive_strength_bit {
+> >> +	DRIVE_STRENGTH_BIT_DEF,
+> >> +	DRIVE_STRENGTH_BIT_LOW,
+> >> +	DRIVE_STRENGTH_BIT_MED,
+> >> +	DRIVE_STRENGTH_BIT_HI,
+> >> +};
+> >> +
+> >> +#define DRIVE_STRENGTH_BIT_MSK(name)	(DRIVE_STRENGTH_BIT_##name << \
+> >> +					 DRIVE_STRENGTH_SHIFT)
+> >>  
+> >>  /**
+> >>   * struct at91_pmx_func - describes AT91 pinmux functions
+> >> @@ -551,7 +556,7 @@ static unsigned at91_mux_sama5d3_get_drivestrength(void __iomem *pio,
+> >>  	/* SAMA5 strength is 1:1 with our defines,
+> >>  	 * except 0 is equivalent to low per datasheet */
+> >>  	if (!tmp)
+> >> -		tmp = DRIVE_STRENGTH_LOW;
+> >> +		tmp = DRIVE_STRENGTH_BIT_MSK(LOW);
+> >>  
+> >>  	return tmp;
+> >>  }
+> >> @@ -564,7 +569,7 @@ static unsigned at91_mux_sam9x5_get_drivestrength(void __iomem *pio,
+> >>  
+> >>  	/* strength is inverse in SAM9x5s hardware with the pinctrl defines
+> >>  	 * hardware: 0 = hi, 1 = med, 2 = low, 3 = rsvd */
+> >> -	tmp = DRIVE_STRENGTH_HI - tmp;
+> >> +	tmp = DRIVE_STRENGTH_BIT_MSK(HI) - tmp;
+> >>  
+> >>  	return tmp;
+> >>  }
+> >> @@ -600,7 +605,7 @@ static void at91_mux_sam9x5_set_drivestrength(void __iomem *pio, unsigned pin,
+> >>  
+> >>  	/* strength is inverse on SAM9x5s with our defines
+> >>  	 * 0 = hi, 1 = med, 2 = low, 3 = rsvd */
+> >> -	setting = DRIVE_STRENGTH_HI - setting;
+> >> +	setting = DRIVE_STRENGTH_BIT_MSK(HI) - setting;
+> >>  
+> >>  	set_drive_strength(pio + at91sam9x5_get_drive_register(pin), pin,
+> >>  				setting);
+> >> @@ -959,11 +964,11 @@ static int at91_pinconf_set(struct pinctrl_dev *pctldev,
+> >>  	}					\
+> >>  } while (0)
+> >>  
+> >> -#define DBG_SHOW_FLAG_MASKED(mask,flag) do {	\
+> >> +#define DBG_SHOW_FLAG_MASKED(mask,flag,name) do {	\
+> > 
+> > checkpatch error: space required
+> 
+> I'm aware of that but I added it in the way it was previously (were the
+> checkpatch error was still present). Please let me know if you want me to
+> send a new version fixing this.
 
-Marc, Thomas,
+I think it's the opportunity to fix it. If you can resend a new version
+including my ack.
 
-if there are no objections - could you please ack the three first
-patches and let me take them through the GPIO tree? I would really
-appreciate if we could have them in v5.1.
+Regards
 
-Bart
+Ludovic
+
+> 
+> Thank you,
+> Claudiu Beznea
+> 
+> > 
+> >>  	if ((config & mask) == flag) {		\
+> >>  		if (num_conf)			\
+> >>  			seq_puts(s, "|");	\
+> >> -		seq_puts(s, #flag);		\
+> >> +		seq_puts(s, #name);		\
+> >>  		num_conf++;			\
+> >>  	}					\
+> >>  } while (0)
+> >> @@ -981,9 +986,12 @@ static void at91_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+> >>  	DBG_SHOW_FLAG(PULL_DOWN);
+> >>  	DBG_SHOW_FLAG(DIS_SCHMIT);
+> >>  	DBG_SHOW_FLAG(DEGLITCH);
+> >> -	DBG_SHOW_FLAG_MASKED(DRIVE_STRENGTH, DRIVE_STRENGTH_LOW);
+> >> -	DBG_SHOW_FLAG_MASKED(DRIVE_STRENGTH, DRIVE_STRENGTH_MED);
+> >> -	DBG_SHOW_FLAG_MASKED(DRIVE_STRENGTH, DRIVE_STRENGTH_HI);
+> >> +	DBG_SHOW_FLAG_MASKED(DRIVE_STRENGTH, DRIVE_STRENGTH_BIT_MSK(LOW),
+> >> +			     DRIVE_STRENGTH_LOW);
+> >> +	DBG_SHOW_FLAG_MASKED(DRIVE_STRENGTH, DRIVE_STRENGTH_BIT_MSK(MED),
+> >> +			     DRIVE_STRENGTH_MED);
+> >> +	DBG_SHOW_FLAG_MASKED(DRIVE_STRENGTH, DRIVE_STRENGTH_BIT_MSK(HI),
+> >> +			     DRIVE_STRENGTH_HI);
+> >>  	DBG_SHOW_FLAG(DEBOUNCE);
+> >>  	if (config & DEBOUNCE) {
+> >>  		val = config >> DEBOUNCE_VAL_SHIFT;
+> >> -- 
+> >> 2.7.4
+> >>
+> > 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
