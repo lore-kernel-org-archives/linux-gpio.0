@@ -1,95 +1,77 @@
-From: <Claudiu.Beznea@microchip.com>
-Subject: Re: [PATCH v2 1/7] pinctrl: at91: add option to use drive strength
- bits
-Date: Wed, 6 Feb 2019 09:46:28 +0000
-Message-ID: <f0022bfc-6deb-de77-857c-c70d41f4fc78@microchip.com>
-References: <1548951466-26297-1-git-send-email-claudiu.beznea@microchip.com>
- <1548951466-26297-2-git-send-email-claudiu.beznea@microchip.com>
- <20190206081304.cv344rjzvz7wzih5@M43218.corp.atmel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/9] mfd: pm8xxx: convert to v2 irq interfaces to support
+ hierarchical IRQ chips
+Date: Wed, 6 Feb 2019 11:02:08 +0100
+Message-ID: <CACRpkdYuH6QnumRnAUbzJCwrj58mog68FJu6Tvi_48bLzsBbZg@mail.gmail.com>
+References: <20190125162302.14036-1-masneyb@onstation.org> <20190125162302.14036-4-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190206081304.cv344rjzvz7wzih5@M43218.corp.atmel.com>
-Content-Language: en-US
-Content-ID: <4C770342E8E3C249B19C195ADB94C3BA@namprd11.prod.outlook.com>
+In-Reply-To: <20190125162302.14036-4-masneyb@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Shawn Guo <shawnguo@kernel.org>, Doug Anderson <dianders@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-arm-msm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
 List-Id: linux-gpio@vger.kernel.org
 
-DQoNCk9uIDA2LjAyLjIwMTkgMTA6MTMsIEx1ZG92aWMgRGVzcm9jaGVzIHdyb3RlOg0KPiBPbiBU
-aHUsIEphbiAzMSwgMjAxOSBhdCAwNToxODowNFBNICswMTAwLCBDbGF1ZGl1IEJlem5lYSAtIE0x
-ODA2MyB3cm90ZToNCj4+IEZyb206IENsYXVkaXUgQmV6bmVhIDxjbGF1ZGl1LmJlem5lYUBtaWNy
-b2NoaXAuY29tPg0KPj4NCj4+IFNBTTlYNjAgdXNlcyBoaWdoIGFuZCBsb3cgZHJpdmUgc3RyZW5n
-dGhzLiBUbyBpbXBsZW1lbnQgdGhpcywgaW4NCj4+IGF0OTFfcGluY3RybF9tdXhfb3BzOjpzZXRf
-ZHJpdmVzdHJlbmd0aCBhbmQNCj4+IGF0OTFfcGluY3RybF9tdXhfb3BzOjpnZXRfZHJpdmVzdHJl
-bmd0aCB3ZSBuZWVkIGJpdCBudW1iZXJzIG9mDQo+PiBkcml2ZSBzdHJlbmd0aHMgKDEgZm9yIGxv
-dywgMiBmb3IgaGlnaCksIHRodXMgY2hhbmdlIHRoZSBjb2RlIHRvDQo+PiBhbGxvdyB0aGUgdXNh
-Z2Ugb2YgZHJpdmUgc3RyZW5ndGggYml0IG51bWJlcnMuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTog
-Q2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhQG1pY3JvY2hpcC5jb20+DQo+PiAtLS0NCj4+
-ICBkcml2ZXJzL3BpbmN0cmwvcGluY3RybC1hdDkxLmMgfCAzMiArKysrKysrKysrKysrKysrKysr
-Ky0tLS0tLS0tLS0tLQ0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyMCBpbnNlcnRpb25zKCspLCAxMiBk
-ZWxldGlvbnMoLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwt
-YXQ5MS5jIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYXQ5MS5jDQo+PiBpbmRleCAzZDQ5YmJi
-Y2RiYzcuLjMxZjA2ZGFmY2EyZSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvcGluY3RybC9waW5j
-dHJsLWF0OTEuYw0KPj4gKysrIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtYXQ5MS5jDQo+PiBA
-QCAtNzIsMTAgKzcyLDE1IEBAIHN0YXRpYyBpbnQgZ3Bpb19iYW5rczsNCj4+ICAgKiBEUklWRV9T
-VFJFTkdUSF9ERUZBVUxUIGlzIGp1c3QgYSBwbGFjZWhvbGRlciB0byBhdm9pZCBjaGFuZ2luZyB0
-aGUgZHJpdmUNCj4+ICAgKiBzdHJlbmd0aCB3aGVuIHRoZXJlIGlzIG5vIGR0IGNvbmZpZyBmb3Ig
-aXQuDQo+PiAgICovDQo+PiAtI2RlZmluZSBEUklWRV9TVFJFTkdUSF9ERUZBVUxUCQkoMCA8PCBE
-UklWRV9TVFJFTkdUSF9TSElGVCkNCj4+IC0jZGVmaW5lIERSSVZFX1NUUkVOR1RIX0xPVyAgICAg
-ICAgICAoMSA8PCBEUklWRV9TVFJFTkdUSF9TSElGVCkNCj4+IC0jZGVmaW5lIERSSVZFX1NUUkVO
-R1RIX01FRCAgICAgICAgICAoMiA8PCBEUklWRV9TVFJFTkdUSF9TSElGVCkNCj4+IC0jZGVmaW5l
-IERSSVZFX1NUUkVOR1RIX0hJICAgICAgICAgICAoMyA8PCBEUklWRV9TVFJFTkdUSF9TSElGVCkN
-Cj4+ICtlbnVtIGRyaXZlX3N0cmVuZ3RoX2JpdCB7DQo+PiArCURSSVZFX1NUUkVOR1RIX0JJVF9E
-RUYsDQo+PiArCURSSVZFX1NUUkVOR1RIX0JJVF9MT1csDQo+PiArCURSSVZFX1NUUkVOR1RIX0JJ
-VF9NRUQsDQo+PiArCURSSVZFX1NUUkVOR1RIX0JJVF9ISSwNCj4+ICt9Ow0KPj4gKw0KPj4gKyNk
-ZWZpbmUgRFJJVkVfU1RSRU5HVEhfQklUX01TSyhuYW1lKQkoRFJJVkVfU1RSRU5HVEhfQklUXyMj
-bmFtZSA8PCBcDQo+PiArCQkJCQkgRFJJVkVfU1RSRU5HVEhfU0hJRlQpDQo+PiAgDQo+PiAgLyoq
-DQo+PiAgICogc3RydWN0IGF0OTFfcG14X2Z1bmMgLSBkZXNjcmliZXMgQVQ5MSBwaW5tdXggZnVu
-Y3Rpb25zDQo+PiBAQCAtNTUxLDcgKzU1Niw3IEBAIHN0YXRpYyB1bnNpZ25lZCBhdDkxX211eF9z
-YW1hNWQzX2dldF9kcml2ZXN0cmVuZ3RoKHZvaWQgX19pb21lbSAqcGlvLA0KPj4gIAkvKiBTQU1B
-NSBzdHJlbmd0aCBpcyAxOjEgd2l0aCBvdXIgZGVmaW5lcywNCj4+ICAJICogZXhjZXB0IDAgaXMg
-ZXF1aXZhbGVudCB0byBsb3cgcGVyIGRhdGFzaGVldCAqLw0KPj4gIAlpZiAoIXRtcCkNCj4+IC0J
-CXRtcCA9IERSSVZFX1NUUkVOR1RIX0xPVzsNCj4+ICsJCXRtcCA9IERSSVZFX1NUUkVOR1RIX0JJ
-VF9NU0soTE9XKTsNCj4+ICANCj4+ICAJcmV0dXJuIHRtcDsNCj4+ICB9DQo+PiBAQCAtNTY0LDcg
-KzU2OSw3IEBAIHN0YXRpYyB1bnNpZ25lZCBhdDkxX211eF9zYW05eDVfZ2V0X2RyaXZlc3RyZW5n
-dGgodm9pZCBfX2lvbWVtICpwaW8sDQo+PiAgDQo+PiAgCS8qIHN0cmVuZ3RoIGlzIGludmVyc2Ug
-aW4gU0FNOXg1cyBoYXJkd2FyZSB3aXRoIHRoZSBwaW5jdHJsIGRlZmluZXMNCj4+ICAJICogaGFy
-ZHdhcmU6IDAgPSBoaSwgMSA9IG1lZCwgMiA9IGxvdywgMyA9IHJzdmQgKi8NCj4+IC0JdG1wID0g
-RFJJVkVfU1RSRU5HVEhfSEkgLSB0bXA7DQo+PiArCXRtcCA9IERSSVZFX1NUUkVOR1RIX0JJVF9N
-U0soSEkpIC0gdG1wOw0KPj4gIA0KPj4gIAlyZXR1cm4gdG1wOw0KPj4gIH0NCj4+IEBAIC02MDAs
-NyArNjA1LDcgQEAgc3RhdGljIHZvaWQgYXQ5MV9tdXhfc2FtOXg1X3NldF9kcml2ZXN0cmVuZ3Ro
-KHZvaWQgX19pb21lbSAqcGlvLCB1bnNpZ25lZCBwaW4sDQo+PiAgDQo+PiAgCS8qIHN0cmVuZ3Ro
-IGlzIGludmVyc2Ugb24gU0FNOXg1cyB3aXRoIG91ciBkZWZpbmVzDQo+PiAgCSAqIDAgPSBoaSwg
-MSA9IG1lZCwgMiA9IGxvdywgMyA9IHJzdmQgKi8NCj4+IC0Jc2V0dGluZyA9IERSSVZFX1NUUkVO
-R1RIX0hJIC0gc2V0dGluZzsNCj4+ICsJc2V0dGluZyA9IERSSVZFX1NUUkVOR1RIX0JJVF9NU0so
-SEkpIC0gc2V0dGluZzsNCj4+ICANCj4+ICAJc2V0X2RyaXZlX3N0cmVuZ3RoKHBpbyArIGF0OTFz
-YW05eDVfZ2V0X2RyaXZlX3JlZ2lzdGVyKHBpbiksIHBpbiwNCj4+ICAJCQkJc2V0dGluZyk7DQo+
-PiBAQCAtOTU5LDExICs5NjQsMTEgQEAgc3RhdGljIGludCBhdDkxX3BpbmNvbmZfc2V0KHN0cnVj
-dCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCj4+ICAJfQkJCQkJXA0KPj4gIH0gd2hpbGUgKDApDQo+
-PiAgDQo+PiAtI2RlZmluZSBEQkdfU0hPV19GTEFHX01BU0tFRChtYXNrLGZsYWcpIGRvIHsJXA0K
-Pj4gKyNkZWZpbmUgREJHX1NIT1dfRkxBR19NQVNLRUQobWFzayxmbGFnLG5hbWUpIGRvIHsJXA0K
-PiANCj4gY2hlY2twYXRjaCBlcnJvcjogc3BhY2UgcmVxdWlyZWQNCg0KSSdtIGF3YXJlIG9mIHRo
-YXQgYnV0IEkgYWRkZWQgaXQgaW4gdGhlIHdheSBpdCB3YXMgcHJldmlvdXNseSAod2VyZSB0aGUN
-CmNoZWNrcGF0Y2ggZXJyb3Igd2FzIHN0aWxsIHByZXNlbnQpLiBQbGVhc2UgbGV0IG1lIGtub3cg
-aWYgeW91IHdhbnQgbWUgdG8NCnNlbmQgYSBuZXcgdmVyc2lvbiBmaXhpbmcgdGhpcy4NCg0KVGhh
-bmsgeW91LA0KQ2xhdWRpdSBCZXpuZWENCg0KPiANCj4+ICAJaWYgKChjb25maWcgJiBtYXNrKSA9
-PSBmbGFnKSB7CQlcDQo+PiAgCQlpZiAobnVtX2NvbmYpCQkJXA0KPj4gIAkJCXNlcV9wdXRzKHMs
-ICJ8Iik7CVwNCj4+IC0JCXNlcV9wdXRzKHMsICNmbGFnKTsJCVwNCj4+ICsJCXNlcV9wdXRzKHMs
-ICNuYW1lKTsJCVwNCj4+ICAJCW51bV9jb25mKys7CQkJXA0KPj4gIAl9CQkJCQlcDQo+PiAgfSB3
-aGlsZSAoMCkNCj4+IEBAIC05ODEsOSArOTg2LDEyIEBAIHN0YXRpYyB2b2lkIGF0OTFfcGluY29u
-Zl9kYmdfc2hvdyhzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQo+PiAgCURCR19TSE9XX0ZM
-QUcoUFVMTF9ET1dOKTsNCj4+ICAJREJHX1NIT1dfRkxBRyhESVNfU0NITUlUKTsNCj4+ICAJREJH
-X1NIT1dfRkxBRyhERUdMSVRDSCk7DQo+PiAtCURCR19TSE9XX0ZMQUdfTUFTS0VEKERSSVZFX1NU
-UkVOR1RILCBEUklWRV9TVFJFTkdUSF9MT1cpOw0KPj4gLQlEQkdfU0hPV19GTEFHX01BU0tFRChE
-UklWRV9TVFJFTkdUSCwgRFJJVkVfU1RSRU5HVEhfTUVEKTsNCj4+IC0JREJHX1NIT1dfRkxBR19N
-QVNLRUQoRFJJVkVfU1RSRU5HVEgsIERSSVZFX1NUUkVOR1RIX0hJKTsNCj4+ICsJREJHX1NIT1df
-RkxBR19NQVNLRUQoRFJJVkVfU1RSRU5HVEgsIERSSVZFX1NUUkVOR1RIX0JJVF9NU0soTE9XKSwN
-Cj4+ICsJCQkgICAgIERSSVZFX1NUUkVOR1RIX0xPVyk7DQo+PiArCURCR19TSE9XX0ZMQUdfTUFT
-S0VEKERSSVZFX1NUUkVOR1RILCBEUklWRV9TVFJFTkdUSF9CSVRfTVNLKE1FRCksDQo+PiArCQkJ
-ICAgICBEUklWRV9TVFJFTkdUSF9NRUQpOw0KPj4gKwlEQkdfU0hPV19GTEFHX01BU0tFRChEUklW
-RV9TVFJFTkdUSCwgRFJJVkVfU1RSRU5HVEhfQklUX01TSyhISSksDQo+PiArCQkJICAgICBEUklW
-RV9TVFJFTkdUSF9ISSk7DQo+PiAgCURCR19TSE9XX0ZMQUcoREVCT1VOQ0UpOw0KPj4gIAlpZiAo
-Y29uZmlnICYgREVCT1VOQ0UpIHsNCj4+ICAJCXZhbCA9IGNvbmZpZyA+PiBERUJPVU5DRV9WQUxf
-U0hJRlQ7DQo+PiAtLSANCj4+IDIuNy40DQo+Pg0KPiANCg==
+Hi Brian!
+
+Thanks for this patch!
+
+On Fri, Jan 25, 2019 at 5:23 PM Brian Masney <masneyb@onstation.org> wrote:
+
+> The IRQ handler was hardcoded as handle_level_irq and this patch
+> properly sets the handler to either handle_edge_irq or handle_level_irq
+> depending on the IRQ type.
+
+Done like so:
+
+> +               flow_handler = handle_edge_irq;
+
+This creates a problem and makes my kernel crash, because
+handle_edge_irq() *unconditionally* calls chip->irq_ack(),
+and since this chip does not implement .irq_ack(), it crashes.
+
+I tried to just add a void .irq_ack(). That instead made the
+kernel hang.
+
+If I just assign handle_level_irq() as before (just replaced
+all assignments of handle_edge_irq with handle_level_irq)
+it boots nicely, AND the interrupts are working fine on the
+ADC calibration path, and further readings of the ADC
+generates new IRQs, as expected!
+
+The handle_edge_irq and .irq_ack() call path is for hardware
+that require an explicit ACK (such as writing a bit in some
+register) when handling edge IRQs. This is necessary in some
+hardware because of the transient nature of edge IRQs.
+This is not necessary on some hardware that will simply
+clear the flag when something is reading the status register.
+I think this is the case with PM8xxx and you can safely use
+handle_level_irq with all IRQs. It looks counterintuitive and
+maybe the function handle_edge_irq() has a stupid name.
+Just drop this handle_edge_irq() business for now.
+
+This was tested on the APQ8060 DragonBoard.
+
+However this happens:
+
+[    3.007727] mmci-pl18x 12180000.sdcc: ignoring dependency for
+device, assuming no driver
+[    3.007970] mmci-pl18x 12200000.sdcc: ignoring dependency for
+device, assuming no driver
+[    3.014984] mpu3050-i2c 1-0068: ignoring dependency for device,
+assuming no driver
+[    3.023543] cm3605 cm3605: ignoring dependency for device, assuming no driver
+[    3.030532] ak8975 1-000c: ignoring dependency for device, assuming no driver
+[    3.037729] bmp280 1-0077: ignoring dependency for device, assuming no driver
+[    3.044789] reg-fixed-voltage regulators:xc622a331mrg: ignoring
+dependency for device, assuming no driver
+[    3.052485] smsc911x 1b800000.ethernet-ebi2: ignoring dependency
+for device, assuming no driver
+
+But I think that is because these all use ssbi-gpio interrupts and
+these are now handled properly so I will try to fix the device
+tree and send a separate patch that you can include.
+
+Yours,
+Linus Walleij
