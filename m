@@ -1,63 +1,54 @@
-From: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/9] pinctrl: sunxi: Support I/O bias
- voltage setting on A80
-Date: Wed, 6 Feb 2019 13:17:18 +0100
-Message-ID: <20190206121718.3yqbirt5l3qwneco@flea>
-References: <20190206033239.3619-1-wens@csie.org>
- <20190206033239.3619-2-wens@csie.org>
-Reply-To: maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/9] mfd: pm8xxx: convert to v2 irq interfaces to support
+ hierarchical IRQ chips
+Date: Wed, 6 Feb 2019 14:07:52 +0100
+Message-ID: <CACRpkdZMe+JEQOa1yBfOoAErrC41Q9rggwxNb=_uwq1m2QKWyw@mail.gmail.com>
+References: <20190125162302.14036-1-masneyb@onstation.org> <20190125162302.14036-4-masneyb@onstation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="p6xjb2ugcpauju6t"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBUFA5PRAKGQEDYWZ5VQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20190206033239.3619-2-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190125162302.14036-4-masneyb@onstation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Brian Masney <masneyb@onstation.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Shawn Guo <shawnguo@kernel.org>, Doug Anderson <dianders@chromium.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>, Niklas Cassel <niklas.cassel@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-arm-msm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Brian!
 
---p6xjb2ugcpauju6t
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+I found one more bug in this patch, still not the last bug but I'm still
+digging around:
 
-On Wed, Feb 06, 2019 at 11:32:31AM +0800, Chen-Yu Tsai wrote:
-> The A80 SoC has configuration registers for I/O bias voltage. Incorrect
-> settings would make the affected peripherals inoperable in some cases,
-> such as Ethernet RGMII signals biased at 2.5V with the settings still
-> at 3.3V. However low speed signals such as MDIO on the same group of
-> pins seem to be unaffected.
-> 
-> Previously there was no way to know what the actual voltage used was,
-> short of hard-coding a value in the device tree. With the new pin bank
-> regulator supply support in place, the driver can now query the
-> regulator for its voltage, and if it's valid (as opposed to being the
-> dummy regulator), set the bias voltage setting accordingly.
-> 
-> Add a quirk to denote the presence of the configuration registers, and
-> a function to set the correct setting based on the voltage read back
-> from the regulator.
-> 
-> This is only done when the regulator is first acquired and enabled.
-> While it would be nice to have a notifier on the regulator so that when
-> the voltage changes, the driver can update the setting, in practice no
-> board currently supports dynamic changing of the I/O voltages.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+On Fri, Jan 25, 2019 at 5:23 PM Brian Masney <masneyb@onstation.org> wrote:
 
-Acked-by: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>
+> +struct pm_irq_data {
+> +       int num_irqs;
+> +       struct irq_chip *irq_chip;
+> +       void (*irq_handler)(struct irq_desc *desc);
+> +};
+> +
+>  struct pm_irq_chip {
+>         struct regmap           *regmap;
+>         spinlock_t              pm_irq_lock;
+>         struct irq_domain       *irqdomain;
+> -       unsigned int            num_irqs;
+>         unsigned int            num_blocks;
+>         unsigned int            num_masters;
+>         u8                      config[0];
+> -};
+> -
+> -struct pm_irq_data {
+> -       int num_irqs;
+> -       const struct irq_domain_ops  *irq_domain_ops;
+> -       void (*irq_handler)(struct irq_desc *desc);
+> +       const struct pm_irq_data *pm_irq_data;
+>  };
 
-Maxime
+This doesn't work: the config[0] must be the tail element
+of the struct since we allocate dynamically the trailing
+config[] bytes.
 
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
---p6xjb2ugcpauju6t--
+As it looks now, the *pm_irq_data gets overwritten by
+the configs and it crashes.
+
+Yours,
+Linus Walleij
