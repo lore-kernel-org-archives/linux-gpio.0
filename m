@@ -1,28 +1,184 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: [PATCH v7 00/10] support ROHM BD70528 PMIC
-Date: Wed, 06 Feb 2019 20:31:32 +0200
-Message-ID: <87o97ovke3.fsf@codeaurora.org>
-References: <cover.1549444366.git.matti.vaittinen@fi.rohmeurope.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3] gpiolib: acpi: Introduce
+	ACPI_GPIO_QUIRK_ONLY_GPIOIO
+Date: Wed,  6 Feb 2019 22:49:46 +0200
+Message-ID: <20190206204946.61730-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1549444366.git.matti.vaittinen@fi.rohmeurope.com> (Matti
-        Vaittinen's message of "Wed, 6 Feb 2019 11:35:36 +0200")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mazziesaccount@gmail.com, Guenter Roeck <linux@roeck-us.net>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Hans de Goede <hdegoede@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> writes:
+New quirk enforces search for GPIO based on its type,
+i.e. iterate over GpioIo resources only.
 
-> Patch series introducing support for ROHM BD70528 PMIC
->
-> Please note that patch 1 breaks compilation without patches 2 and 3
-> Knowing the bd718x7 driver is already in upstream, it might be good
-> if this change went through single tree, right?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/gpio/gpiolib-acpi.c           | 15 ++++--
+ include/linux/acpi.h                  |  7 +++
+ sound/soc/intel/boards/bytcr_rt5651.c | 74 ++++-----------------------
+ 3 files changed, 27 insertions(+), 69 deletions(-)
 
-That would break bisect, please avoid that. So after applying patches
-from a patchset one by one the compilation should always succeed.
-
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 15077c0797b9..2513593f9800 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -533,17 +533,24 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ 	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
+ 		return 1;
+ 
+-	if (lookup->n++ == lookup->index && !lookup->desc) {
++	if (!lookup->desc) {
+ 		const struct acpi_resource_gpio *agpio = &ares->data.gpio;
+-		int pin_index = lookup->pin_index;
++		bool gpioint = agpio->connection_type == ACPI_RESOURCE_GPIO_TYPE_INT;
++		int pin_index;
+ 
++		if (lookup->info.quirks & ACPI_GPIO_QUIRK_ONLY_GPIOIO && gpioint)
++			lookup->index++;
++
++		if (lookup->n++ != lookup->index)
++			return 1;
++
++		pin_index = lookup->pin_index;
+ 		if (pin_index >= agpio->pin_table_length)
+ 			return 1;
+ 
+ 		lookup->desc = acpi_get_gpiod(agpio->resource_source.string_ptr,
+ 					      agpio->pin_table[pin_index]);
+-		lookup->info.gpioint =
+-			agpio->connection_type == ACPI_RESOURCE_GPIO_TYPE_INT;
++		lookup->info.gpioint = gpioint;
+ 
+ 		/*
+ 		 * Polarity and triggering are only specified for GpioInt
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 13f5cb2c4763..7a3dffe8f971 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -1014,6 +1014,13 @@ struct acpi_gpio_mapping {
+ 
+ /* Ignore IoRestriction field */
+ #define ACPI_GPIO_QUIRK_NO_IO_RESTRICTION	BIT(0)
++/*
++ * When ACPI GPIO mapping table is in use the index parameter inside it
++ * refers to the GPIO resource in _CRS method. That index has no
++ * distinction of actual type of the resource. When consumer wants to
++ * get GpioIo type explicitly, this quirk may be used.
++ */
++#define ACPI_GPIO_QUIRK_ONLY_GPIOIO		BIT(1)
+ 
+ 	unsigned int quirks;
+ };
+diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
+index c3b7732929cc..b0a4d297176e 100644
+--- a/sound/soc/intel/boards/bytcr_rt5651.c
++++ b/sound/soc/intel/boards/bytcr_rt5651.c
+@@ -844,74 +844,18 @@ static const struct x86_cpu_id cherrytrail_cpu_ids[] = {
+ 	{}
+ };
+ 
+-static const struct acpi_gpio_params first_gpio = { 0, 0, false };
+-static const struct acpi_gpio_params second_gpio = { 1, 0, false };
++static const struct acpi_gpio_params ext_amp_enable_gpios = { 0, 0, false };
+ 
+-static const struct acpi_gpio_mapping byt_rt5651_amp_en_first[] = {
+-	{ "ext-amp-enable-gpios", &first_gpio, 1 },
+-	{ },
+-};
+-
+-static const struct acpi_gpio_mapping byt_rt5651_amp_en_second[] = {
+-	{ "ext-amp-enable-gpios", &second_gpio, 1 },
++static const struct acpi_gpio_mapping cht_rt5651_gpios[] = {
++	/*
++	 * Some boards have I2cSerialBusV2, GpioIo, GpioInt as ACPI resources,
++	 * other boards may  have I2cSerialBusV2, GpioInt, GpioIo instead.
++	 * We want the GpioIo one for the ext-amp-enable-gpio.
++	 */
++	{ "ext-amp-enable-gpios", &ext_amp_enable_gpios, 1, ACPI_GPIO_QUIRK_ONLY_GPIOIO },
+ 	{ },
+ };
+ 
+-/*
+- * Some boards have I2cSerialBusV2, GpioIo, GpioInt as ACPI resources, other
+- * boards may  have I2cSerialBusV2, GpioInt, GpioIo instead. We want the
+- * GpioIo one for the ext-amp-enable-gpio and both count for the index in
+- * acpi_gpio_params index.  So we have 2 different mappings and the code
+- * below figures out which one to use.
+- */
+-struct byt_rt5651_acpi_resource_data {
+-	int gpio_count;
+-	int gpio_int_idx;
+-};
+-
+-static int snd_byt_rt5651_acpi_resource(struct acpi_resource *ares, void *arg)
+-{
+-	struct byt_rt5651_acpi_resource_data *data = arg;
+-
+-	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
+-		return 0;
+-
+-	if (ares->data.gpio.connection_type == ACPI_RESOURCE_GPIO_TYPE_INT)
+-		data->gpio_int_idx = data->gpio_count;
+-
+-	data->gpio_count++;
+-	return 0;
+-}
+-
+-static void snd_byt_rt5651_mc_pick_amp_en_gpio_mapping(struct device *codec)
+-{
+-	struct byt_rt5651_acpi_resource_data data = { 0, -1 };
+-	LIST_HEAD(resources);
+-	int ret;
+-
+-	ret = acpi_dev_get_resources(ACPI_COMPANION(codec), &resources,
+-				     snd_byt_rt5651_acpi_resource, &data);
+-	if (ret < 0) {
+-		dev_warn(codec, "Failed to get ACPI resources, not adding external amplifier GPIO mapping\n");
+-		return;
+-	}
+-
+-	/* All info we need is gathered during the walk */
+-	acpi_dev_free_resource_list(&resources);
+-
+-	switch (data.gpio_int_idx) {
+-	case 0:
+-		byt_rt5651_gpios = byt_rt5651_amp_en_second;
+-		break;
+-	case 1:
+-		byt_rt5651_gpios = byt_rt5651_amp_en_first;
+-		break;
+-	default:
+-		dev_warn(codec, "Unknown GpioInt index %d, not adding external amplifier GPIO mapping\n",
+-			 data.gpio_int_idx);
+-	}
+-}
+-
+ struct acpi_chan_package {   /* ACPICA seems to require 64 bit integers */
+ 	u64 aif_value;       /* 1: AIF1, 2: AIF2 */
+ 	u64 mclock_value;    /* usually 25MHz (0x17d7940), ignored */
+@@ -1038,7 +982,7 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
+ 
+ 	/* Cherry Trail devices use an external amplifier enable gpio */
+ 	if (x86_match_cpu(cherrytrail_cpu_ids) && !byt_rt5651_gpios)
+-		snd_byt_rt5651_mc_pick_amp_en_gpio_mapping(codec_dev);
++		byt_rt5651_gpios = cht_rt5651_gpios;
+ 
+ 	if (byt_rt5651_gpios) {
+ 		devm_acpi_dev_add_driver_gpios(codec_dev, byt_rt5651_gpios);
 -- 
-Kalle Valo
+2.20.1
