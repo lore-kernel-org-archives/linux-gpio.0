@@ -1,65 +1,73 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3] pinctrl: samsung: Remove legacy API for handling external wakeup interrupts mask
-Date: Tue,  5 Feb 2019 20:59:09 +0100
-Message-ID: <20190205195909.3565-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: [PATCH 9/9] ARM: dts: sun9i: cubieboard4: Enable GMAC
+Date: Wed,  6 Feb 2019 11:32:39 +0800
+Message-ID: <20190206033239.3619-10-wens@csie.org>
+References: <20190206033239.3619-1-wens@csie.org>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBYVK5HRAKGQERCXMUIQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20190206033239.3619-1-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Remove the legacy, ugly API of exposing the static value of external
-wakeup interrupts mask, because all arch-machine users where converted
-to use generic implementation from pinctrl driver.
+The Cubieboard4 has a Realtek RTL8211E ethernet PHY which uses RGMII to
+talk to the MAC. The PHY is powered by 2 regulators: cldo1 for the PHY's
+core logic and gpio1-ldo for I/O. The latter also powers the SoC side
+pins. As there is no binding to model a second regulator supply for the
+PHY, it is omitted. It is however properly modeled for the PIO.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
+Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
 ---
+ arch/arm/boot/dts/sun9i-a80-cubieboard4.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Dear Linus,
-
-Could you apply this directly? It is an old cleanup patch, waiting for
-dependencies to get into mainline (v5.0-rc1).
-
-Changes since v3:
-1. Rebased on latest linux-next.
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index f49ea3d92aa1..ebc27b06718c 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -325,13 +325,6 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 	return ret;
- }
+diff --git a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+index 0daab9b374e6..28c034928d67 100644
+--- a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
++++ b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+@@ -133,6 +133,19 @@
+ 	status = "okay";
+ };
  
--static u32 exynos_eint_wake_mask = 0xffffffff;
--
--u32 exynos_get_eint_wake_mask(void)
--{
--	return exynos_eint_wake_mask;
--}
--
- static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- {
- 	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
-@@ -342,10 +335,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- 	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
++&gmac {
++	pinctrl-names = "default";
++	pinctrl-0 = <&gmac_rgmii_pins>;
++	phy = <&phy1>;
++	phy-mode = "rgmii";
++	phy-supply = <&reg_cldo1>;
++	status = "okay";
++
++	phy1: ethernet-phy@1 {
++		reg = <1>;
++	};
++};
++
+ &i2c3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c3_pins>;
+@@ -402,6 +415,14 @@
+ 				 */
+ 				regulator-min-microvolt = <3300000>;
+ 				regulator-max-microvolt = <3300000>;
++				/*
++				 * The PHY requires 20ms after all voltages
++				 * are applied until core logic is ready and
++				 * 30ms after the reset pin is de-asserted.
++				 * Set a 100ms delay to account for PMIC
++				 * ramp time and board traces.
++				 */
++				regulator-enable-ramp-delay = <100000>;
+ 				regulator-name = "vcc-gmac-phy";
+ 			};
  
- 	if (!on)
--		exynos_eint_wake_mask |= bit;
-+		our_chip->eint_wake_mask_value |= bit;
- 	else
--		exynos_eint_wake_mask &= ~bit;
--	our_chip->eint_wake_mask_value = exynos_eint_wake_mask;
-+		our_chip->eint_wake_mask_value &= ~bit;
- 
- 	return 0;
- }
 -- 
-2.17.1
+2.20.1
