@@ -1,49 +1,65 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: [PATCH 2/9] ARM: dts: sun9i: a80-optimus: Add node for
- AXP809's unused dc1sw regulator
-Date: Wed,  6 Feb 2019 11:32:32 +0800
-Message-ID: <20190206033239.3619-3-wens@csie.org>
-References: <20190206033239.3619-1-wens@csie.org>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v5.0-rc
+Date: Wed, 6 Feb 2019 09:09:39 +0100
+Message-ID: <CACRpkdYfCT9eBfrKZBA_Do3PcCwvTCX9odD1uHDyZQKdJ4KsNg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBYNK5HRAKGQELHBSDQA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20190206033239.3619-1-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jason Kridner <jdk@ti.com>, Chen-Yu Tsai <wens@csie.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The DC1SW output from the AXP809 is unused. Unused regulators should
-still be listed so as to be considered to be fully constrained.
+Hi Linus,
 
-Fixes: aa4a27bc819e ("ARM: dts: sun9i: a80-optimus: Add AXP809 PMIC
-		      device node and regulators")
-Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
----
- arch/arm/boot/dts/sun9i-a80-optimus.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+here are some overdue pin control fixes for the v5.0
+series. Was too busy to send them until now.
 
-diff --git a/arch/arm/boot/dts/sun9i-a80-optimus.dts b/arch/arm/boot/dts/sun9i-a80-optimus.dts
-index 58a199b0e494..1ee2792b3a27 100644
---- a/arch/arm/boot/dts/sun9i-a80-optimus.dts
-+++ b/arch/arm/boot/dts/sun9i-a80-optimus.dts
-@@ -213,6 +213,10 @@
- 				regulator-name = "vdd-cpus-09-usbh";
- 			};
- 
-+			dc1sw {
-+				/* unused */
-+			};
-+
- 			reg_dcdc1: dcdc1 {
- 				regulator-always-on;
- 				regulator-min-microvolt = <3000000>;
--- 
-2.20.1
+Please pull them in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v5.0-2
+
+for you to fetch changes up to 10098709b4ee6f6f19f25ba81d9c6f83518c584c:
+
+  pinctrl: sunxi: Correct number of IRQ banks on H6 main pin
+controller (2019-01-22 10:52:39 +0100)
+
+----------------------------------------------------------------
+Pin control fixes for the v5.0 series:
+- Mediatek Kconfig fix
+- Sunxi regulator, IRQ banks and pin base fixup
+- Intel Cherryview Strago DMI workaround
+- Potential regmap problem on mcp23s08
+
+----------------------------------------------------------------
+Chen-Yu Tsai (3):
+      pinctrl: sunxi: Fix and simplify pin bank regulator handling
+      pinctrl: sunxi: Consider pin_base when calculating regulator array index
+      pinctrl: sunxi: Correct number of IRQ banks on H6 main pin controller
+
+Dmitry Torokhov (1):
+      pinctrl: cherryview: fix Strago DMI workaround
+
+Jason Kridner (1):
+      pinctrl: mcp23s08: spi: Fix regmap allocation for mcp23s18
+
+Ryder Lee (1):
+      pinctrl: mediatek: fix Kconfig build errors for moore core
+
+ drivers/pinctrl/intel/pinctrl-cherryview.c |  8 +++---
+ drivers/pinctrl/mediatek/Kconfig           |  3 ++
+ drivers/pinctrl/pinctrl-mcp23s08.c         |  7 ++++-
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c  |  2 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c      | 44 +++++++++++++++---------------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h      |  2 +-
+ 6 files changed, 37 insertions(+), 29 deletions(-)
