@@ -1,59 +1,28 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/9] pinctrl: sunxi: Support I/O bias
- voltage setting on A80
-Date: Wed, 6 Feb 2019 09:14:11 +0100
-Message-ID: <CACRpkda45Zhopkk+P9-poDut-gJdJg5POPGSa_Rt_wqE24GGqg@mail.gmail.com>
-References: <20190206033239.3619-1-wens@csie.org> <20190206033239.3619-2-wens@csie.org>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: qcs404: Correct SDC tile
+Date: Wed, 6 Feb 2019 09:24:17 +0100
+Message-ID: <CACRpkdbWmxib6QBOdOxZV87OhDzB-ygNTFwOjL5uaPtk51_1tg@mail.gmail.com>
+References: <20190131172953.27339-1-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBYFO5LRAKGQEL2E5NLA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20190206033239.3619-2-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190131172953.27339-1-bjorn.andersson@linaro.org>
+Sender: stable-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 4:32 AM Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org> wrote:
+On Thu, Jan 31, 2019 at 6:30 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 
-> The A80 SoC has configuration registers for I/O bias voltage. Incorrect
-> settings would make the affected peripherals inoperable in some cases,
-> such as Ethernet RGMII signals biased at 2.5V with the settings still
-> at 3.3V. However low speed signals such as MDIO on the same group of
-> pins seem to be unaffected.
+> The SDC controls live in the south tile, not the north one. Correct this
+> so that we program the right registers.
 >
-> Previously there was no way to know what the actual voltage used was,
-> short of hard-coding a value in the device tree. With the new pin bank
-> regulator supply support in place, the driver can now query the
-> regulator for its voltage, and if it's valid (as opposed to being the
-> dummy regulator), set the bias voltage setting accordingly.
->
-> Add a quirk to denote the presence of the configuration registers, and
-> a function to set the correct setting based on the voltage read back
-> from the regulator.
->
-> This is only done when the regulator is first acquired and enabled.
-> While it would be nice to have a notifier on the regulator so that when
-> the voltage changes, the driver can update the setting, in practice no
-> board currently supports dynamic changing of the I/O voltages.
->
-> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+> Cc: stable@vger.kernel.org
+> Fixes: 22eb8301dbc1 ("pinctrl: qcom: Add qcs404 pinctrl driver")
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Hi Chen-Yu,
-
-thanks for the patch! I tried to apply it on the pinctrl devel branch
-(for v5.1) but it failed to apply, I assume because it depends on
-the fixes that I just sent to Torvalds.
-
-Shall we proceed like this that I merge v5.0-rc6 as soon as it is
-out and then try to apply this on top of that instead, so we get
-rid of this conflict?
+Patch applied for fixes with Vinod's review tag.
 
 Yours,
 Linus Walleij
