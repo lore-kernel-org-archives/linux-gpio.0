@@ -1,52 +1,88 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v8 1/8] mfd: regulator: clk: split rohm-bd718x7.h
-Date: Thu, 7 Feb 2019 11:41:03 +0000
-Message-ID: <20190207114103.GF20638@dell>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <58a56ac25564baa221d471e878a3e4f5d9081f36.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH] pinctrl: ingenic: Add LCD pins for the JZ4725B SoC
+Date: Thu,  7 Feb 2019 10:55:36 -0300
+Message-ID: <20190207135536.6757-1-paul@crapouillou.net>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <58a56ac25564baa221d471e878a3e4f5d9081f36.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Guenter Roeck <linux@roeck-us.net>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 07 Feb 2019, Matti Vaittinen wrote:
+Add the pins and groups for the "lcd" pin function in the JZ4725B SoC.
 
-> Split the bd718x7.h to ROHM common and bd718x7 specific parts
-> so that we do not need to add same things in every new ROHM
-> PMIC header. Please note that this change requires changes also
-> in bd718x7 sub-device drivers for regulators and clk.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-> 
-> Please note that I maintained the acks from Mark and Stephen even
-> though this is a squash of 3 commits and both Mark and Stephen had
-> only acked one of the patches. (The patch which touched their area
-> clk for Stephen, regulators for Mark). I interpreted their acks as
-> 'the split is in general Ok and portion I am interested in is fine'
-> and thus maintained the acks. Please let me know if this is not Ok.
-> 
->  drivers/clk/clk-bd718x7.c             |  6 +++---
->  drivers/mfd/rohm-bd718x7.c            | 23 ++++++++++++-----------
->  drivers/regulator/bd718x7-regulator.c | 24 ++++++++++++------------
->  include/linux/mfd/rohm-bd718x7.h      | 22 ++++++++--------------
->  include/linux/mfd/rohm-generic.h      | 20 ++++++++++++++++++++
->  5 files changed, 55 insertions(+), 40 deletions(-)
->  create mode 100644 include/linux/mfd/rohm-generic.h
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/pinctrl/pinctrl-ingenic.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
+diff --git a/drivers/pinctrl/pinctrl-ingenic.c b/drivers/pinctrl/pinctrl-ingenic.c
+index db6b48ea5f47..49532e3ecb1e 100644
+--- a/drivers/pinctrl/pinctrl-ingenic.c
++++ b/drivers/pinctrl/pinctrl-ingenic.c
+@@ -233,6 +233,19 @@ static int jz4725b_pwm_pwm2_pins[] = { 0x4c, };
+ static int jz4725b_pwm_pwm3_pins[] = { 0x4d, };
+ static int jz4725b_pwm_pwm4_pins[] = { 0x4e, };
+ static int jz4725b_pwm_pwm5_pins[] = { 0x4f, };
++static int jz4725b_lcd_8bit_pins[] = {
++	0x72, 0x73, 0x74,
++	0x60, 0x61, 0x62, 0x63,
++	0x64, 0x65, 0x66, 0x67,
++};
++static int jz4725b_lcd_16bit_pins[] = {
++	0x68, 0x69, 0x6a, 0x6b,
++	0x6c, 0x6d, 0x6e, 0x6f,
++};
++static int jz4725b_lcd_18bit_pins[] = { 0x70, 0x71, };
++static int jz4725b_lcd_24bit_pins[] = { 0x76, 0x77, 0x78, 0x79, };
++static int jz4725b_lcd_special_pins[] = { 0x76, 0x77, 0x78, 0x79, };
++static int jz4725b_lcd_generic_pins[] = { 0x75, };
+ 
+ static int jz4725b_mmc0_1bit_funcs[] = { 1, 1, 1, };
+ static int jz4725b_mmc0_4bit_funcs[] = { 1, 0, 1, };
+@@ -251,6 +264,12 @@ static int jz4725b_pwm_pwm2_funcs[] = { 0, };
+ static int jz4725b_pwm_pwm3_funcs[] = { 0, };
+ static int jz4725b_pwm_pwm4_funcs[] = { 0, };
+ static int jz4725b_pwm_pwm5_funcs[] = { 0, };
++static int jz4725b_lcd_8bit_funcs[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
++static int jz4725b_lcd_16bit_funcs[] = { 0, 0, 0, 0, 0, 0, 0, 0, };
++static int jz4725b_lcd_18bit_funcs[] = { 0, 0, };
++static int jz4725b_lcd_24bit_funcs[] = { 1, 1, 1, 1, };
++static int jz4725b_lcd_special_funcs[] = { 0, 0, 0, 0, };
++static int jz4725b_lcd_generic_funcs[] = { 0, };
+ 
+ static const struct group_desc jz4725b_groups[] = {
+ 	INGENIC_PIN_GROUP("mmc0-1bit", jz4725b_mmc0_1bit),
+@@ -270,6 +289,12 @@ static const struct group_desc jz4725b_groups[] = {
+ 	INGENIC_PIN_GROUP("pwm3", jz4725b_pwm_pwm3),
+ 	INGENIC_PIN_GROUP("pwm4", jz4725b_pwm_pwm4),
+ 	INGENIC_PIN_GROUP("pwm5", jz4725b_pwm_pwm5),
++	INGENIC_PIN_GROUP("lcd-8bit", jz4725b_lcd_8bit),
++	INGENIC_PIN_GROUP("lcd-16bit", jz4725b_lcd_16bit),
++	INGENIC_PIN_GROUP("lcd-18bit", jz4725b_lcd_18bit),
++	INGENIC_PIN_GROUP("lcd-24bit", jz4725b_lcd_24bit),
++	INGENIC_PIN_GROUP("lcd-special", jz4725b_lcd_special),
++	INGENIC_PIN_GROUP("lcd-generic", jz4725b_lcd_generic),
+ };
+ 
+ static const char *jz4725b_mmc0_groups[] = { "mmc0-1bit", "mmc0-4bit", };
+@@ -285,6 +310,10 @@ static const char *jz4725b_pwm2_groups[] = { "pwm2", };
+ static const char *jz4725b_pwm3_groups[] = { "pwm3", };
+ static const char *jz4725b_pwm4_groups[] = { "pwm4", };
+ static const char *jz4725b_pwm5_groups[] = { "pwm5", };
++static const char *jz4725b_lcd_groups[] = {
++	"lcd-8bit", "lcd-16bit", "lcd-18bit", "lcd-24bit",
++	"lcd-special", "lcd-generic",
++};
+ 
+ static const struct function_desc jz4725b_functions[] = {
+ 	{ "mmc0", jz4725b_mmc0_groups, ARRAY_SIZE(jz4725b_mmc0_groups), },
+@@ -297,6 +326,7 @@ static const struct function_desc jz4725b_functions[] = {
+ 	{ "pwm3", jz4725b_pwm3_groups, ARRAY_SIZE(jz4725b_pwm3_groups), },
+ 	{ "pwm4", jz4725b_pwm4_groups, ARRAY_SIZE(jz4725b_pwm4_groups), },
+ 	{ "pwm5", jz4725b_pwm5_groups, ARRAY_SIZE(jz4725b_pwm5_groups), },
++	{ "lcd", jz4725b_lcd_groups, ARRAY_SIZE(jz4725b_lcd_groups), },
+ };
+ 
+ static const struct ingenic_chip_info jz4725b_chip_info = {
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.11.0
