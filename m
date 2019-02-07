@@ -1,48 +1,53 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH 0/3] pinctrl: meson: g12a fixes
-Date: Wed, 06 Feb 2019 19:11:23 -0800
-Message-ID: <7h36p0i97o.fsf@baylibre.com>
-References: <20190117102315.1833-1-jbrunet@baylibre.com> <CACRpkdb7pje9mrgOQoiWTRxGQC8xsOvJ9a8PCguM807unPtpCg@mail.gmail.com> <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v7 00/10] support ROHM BD70528 PMIC
+Date: Thu, 7 Feb 2019 07:57:38 +0200
+Message-ID: <20190207055738.GA5798@localhost.localdomain>
+References: <cover.1549444366.git.matti.vaittinen@fi.rohmeurope.com>
+ <87o97ovke3.fsf@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com>
+Content-Disposition: inline
+In-Reply-To: <87o97ovke3.fsf@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: mazziesaccount@gmail.com, Guenter Roeck <linux@roeck-us.net>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+Moro Kalle,
 
-> On Mon, 2019-01-21 at 14:53 +0100, Linus Walleij wrote:
->> On Thu, Jan 17, 2019 at 11:23 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
->> 
->> > This patchset fixes the initial pinctrl support added for th g12a SoC
->> > family, which is mainly around the register regions claimed by the
->> > driver.
->> > 
->> > Linus, would it possible for you to provide a tag with these changes to
->> > Kevin ?
->> 
->> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-meson-fixes
->> 
->> > ATM, we can only use the devices for which the pinmux is already set by
->> > the bootloader. Enabling the broken pinctrl driver could cause regressions
->> > in kernelCI. Having a tag, would allow us to start using pinctrl on this
->> > SoC in this cycle, w/o regression. It would be nice :)
->> 
->> When you say "this cycle" do you mean I should target fixes (v5.0-rcN)
->> or next (v5.1) with these patches?
->
-> I was referring to the 5.1 release but it is a good question, I did not really
-> think about 5.0.
->
-> Those changes are mainly fixes, so guess it could go in the 5.0 but support
-> for this SoC is still in its early stages, so either way is fine by me. 
->
-> Whatever is simpler for you I guess ;)
+On Wed, Feb 06, 2019 at 08:31:32PM +0200, Kalle Valo wrote:
+> Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> writes:
+> 
+> > Patch series introducing support for ROHM BD70528 PMIC
+> >
+> > Please note that patch 1 breaks compilation without patches 2 and 3
+> > Knowing the bd718x7 driver is already in upstream, it might be good
+> > if this change went through single tree, right?
+> 
+> That would break bisect, please avoid that. So after applying patches
+> from a patchset one by one the compilation should always succeed.
 
-If it's not too late, v5.0-rc is simpler for me as it means not having
-to deal with this as a dependency branch/tag.
+Right. Thanks for the reminder. Mark did also ask about this earlier.
+This split was originally done to clearly point out changes impacting
+in-tree drivers on separate subsystems/trees (mfd, clk and regulators).
 
-Kevin
+But you are right, these should be squashed before applying. I have now
+received acks from Mark and Stephen so I guess I can squash them even
+though Lee has not yet commented anything yet. I guess that 7 previous
+versions do already clearly enough point out these changes =)
+
+I will squash them in next version. Thanks for the reminder.
+
+> 
+> -- 
+> Kalle Valo
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
