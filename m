@@ -1,141 +1,89 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 2/2] x86: pcengines apuv2 gpio/leds/keys platform driver
-Date: Thu, 7 Feb 2019 20:24:31 +0200
-Message-ID: <CAHp75Vc35zXh2fM94TfEjgunPKFqQqvBACjd4gHHQTe0r3AVtQ@mail.gmail.com>
-References: <1549559639-9447-1-git-send-email-info@metux.net> <1549559639-9447-2-git-send-email-info@metux.net>
+From: Gerlando Falauto <gerlando.falauto@gmail.com>
+Subject: debugging irq threaded handler not getting called
+Date: Thu, 7 Feb 2019 21:24:00 +0100
+Message-ID: <CABMprFit_4dv7FjjOUfFPSZgoL8AMM594qwi1SyB+x6iTcJpEg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1549559639-9447-2-git-send-email-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andy@infradead.org>, Darren Hart <dvhart@infradead.org>
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 7:14 PM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
+Hi,
 
-Thanks for the patch, my comments below.
+I'm having a hard time debugging a custom SPI device with multiple
+interrupt GPIO pins, connected to a Samsung Artik 710 SoC module.
 
-> Driver for PCengines APUv2 board that supports GPIOs via AMD PCH
-> and attached LEDs and keys.
+The device is a microcontroller acting as an SPI-CAN bridge (emulating
+the hi3110, so SPI slave device) for two separate can busses.
+[The idea was to make it emulate two separate hi3110 devices, each
+with its own interrupt pin, and tweak the hi311x.c driver].
+So I have 2 instances of the same device in the device tree, each with
+its own GPIO as interrupt source:
 
-You should put here why ACPI can't be used for providing a necessary
-information.
-For example, 'The driver is targeting old platforms that do not have a
-proper entry in ACPI tables for these devices. In new version of BIOS
-this going to be fixed."
+    can0: can@0 {
+      /*.... */
+        interrupts = <26 IRQ_TYPE_LEVEL_HIGH>;
+    }
 
-Besides same comments as per other patch in the series, can you tell
-why it's not an MFD driver?
+    can1: can@1 {
+      /*.... */
+        interrupts = <27 IRQ_TYPE_LEVEL_HIGH>;
+    }
 
-> +       depends on KEYBOARD_GPIO
-> +       depends on KEYBOARD_GPIO_POLLED
-> +       depends on LEDS_GPIO
+Interrupts are requested as threaded and one-shot, on HIGH level:
 
-Why?
-Is any of this fatal to have driver not registered?
+    unsigned long flags = IRQF_ONESHOT | IRQF_TRIGGER_HIGH;
+    ret = request_threaded_irq(spi->irq, NULL, hi3110_can_ist,
+                   flags, DEVICE_NAME, priv);
 
 
-> +/* TODO
-> +   * support apu1 board (different fch, different register layouts
-> +   * add spinlocks
-> +*/
+The threaded IRQ handler essentially does its job and always returns
+IRQ_HANDLED:
 
-Either remove this, or fix it properly. TODO is not going to be upstream.
+    static irqreturn_t hi3110_can_ist(int irq, void *dev_id) {
 
-> +#define FCH_ACPI_MMIO_BASE     0xFED80000
-> +#define FCH_GPIO_OFFSET                0x1500
-> +#define FCH_GPIO_SIZE          0x300
+      /* Does its business */
+      return IRQ_HANDLED;
+    }
 
-0x0300
+I understand having a level trigger with ONESHOT should just re-enable
+the interrupt at the end of the threaded handler.
+Two interrupts could occur at mostly the same time, and this approach
+seems to handle concurrency correctly with their locks.
+The SPI bus is shared, but transactions look just fine.
 
-> +#define GPIO_BASE              100
-> +
-> +#define GPIO_LED1              (GPIO_BASE+0)
-> +#define GPIO_LED2              (GPIO_BASE+1)
-> +#define GPIO_LED3              (GPIO_BASE+2)
-> +#define GPIO_MODESW            (GPIO_BASE+3)
-> +#define GPIO_SIMSWAP           (GPIO_BASE+4)
+What happens is that under moderately heavy load (100+100 irq/s),
+after some minutes one of the two interrupts is not served anymore.
+On a logic analyzer, the interrupt pin stays high forever with no
+interaction with the SPI bus.
+What's weird is that it's always the second instance to expose this
+behavior. The first instance keeps working just fine, serving its
+interrupts nicely.
 
-Have namespace issues.
+I traced execution of the threaded handler on the analyzer, driving a
+GPIO high/low at the very start/end of the handler.
+You can see it go high right after the interrupt goes high, and go low
+afterwards.
+So the handler code always returns, and IRQ_HANDLED is the only
+possible return value.
 
-> +static struct amd_fch_gpio_reg apu2_gpio_regs[] = {
-> +       { 0x44 }, // GPIO_57 -- LED1
-> +       { 0x45 }, // GPIO_58 -- LED2
-> +       { 0x46 }, // GPIO_59 -- LED3
-> +       { 0x59 }, // GPIO_32 -- LED4 -- GE32 -- #modesw
-> +       { 0x5A }, // GPIO_33 -- LED5 -- GE33 -- simswap
-> +       { 0x42 }, // GPIO_51 -- LED6
-> +       { 0x43 }, // GPIO_55 -- LED7
-> +       { 0x47 }, // GPIO_64 -- LED8
-> +       { 0x48 }, // GPIO_68 -- LED9
-> +       { 0x4C }, // GPIO_70 -- LED10
+When this issue happens, the interrupt pin goes high but the driven
+GPIO stays low -- this means the threaded handler never gets called.
+I assume there's nothing more I should do other than just returning
+IRQ_HANDLED to get the interrupt to get re-enabled, but I suspect
+this doesn't really happen for some reason.
 
-Keep it sorted and consider to use 'gpio-names' property.
+I also tried swapping the two interrupt lines, but again it's always
+the second instance to get disabled, even though it's now on a
+different pin.
 
-> +};
+Any suggestion on how I can dynamically inspect whether (and WHY?) the
+interrupt was left disabled?
+I saw some interesting entries in sysfs to inspect irq status
+(https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-kernel-irq)
+but I'm running a custom 4.4 kernel so that's unfortunately not available.
+Any idea would be highly appreciated!
 
-> +static struct platform_device *apu_gpio_pdev = NULL;
-> +static struct platform_device *apu_leds_pdev = NULL;
-> +static struct platform_device *apu_keys_pdev = NULL;
-
-Redundant assignments.
-
-> +static int __init apu_gpio_init(void)
-> +{
-> +       int rc;
-
-> +       const struct dmi_system_id *dmi = dmi_first_match(apu_gpio_dmi_table);
-
-Split it to three lines.
-
-const struct ... *id;
-
-id = dmi_first_match(...);
-if (!id)
-
-> +       if (!dmi) {
-> +               pr_err(KBUILD_MODNAME ": failed to detect apu board via dmi\n");
-> +               return -ENODEV;
-> +       }
-
-> +                       -1,                                     /* id */
-
-PLATFORM_DEVID_NONE ?
-
-> +fail:
-> +       if (!IS_ERR(apu_keys_pdev))
-> +               platform_device_unregister(apu_keys_pdev);
-> +       if (!IS_ERR(apu_leds_pdev))
-> +               platform_device_unregister(apu_leds_pdev);
-> +       if (!IS_ERR(apu_gpio_pdev))
-> +               platform_device_unregister(apu_gpio_pdev);
-
-So, why the failure of the registration of any of these devices is fatal?
-
-> +}
-
-> +static void __exit apu_gpio_exit(void)
-> +{
-
-> +       if (!IS_ERR(apu_keys_pdev))
-
-Redundant.
-See commit 99fef587ff98 ("driver core: platform: Respect return code
-of platform_device_register_full()") for the details.
-
-> +               platform_device_unregister(apu_keys_pdev);
-> +       if (!IS_ERR(apu_leds_pdev))
-> +               platform_device_unregister(apu_leds_pdev);
-> +       if (!IS_ERR(apu_gpio_pdev))
-> +               platform_device_unregister(apu_gpio_pdev);
-> +}
-
-> +MODULE_LICENSE("GPL");
-
-License mismatch.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thank you,
+Gerlando
