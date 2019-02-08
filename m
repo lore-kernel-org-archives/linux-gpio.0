@@ -1,132 +1,206 @@
-From: Brian Masney <masneyb@onstation.org>
-Subject: [PATCH v2 02/11] genirq: introduce irq_domain_translate_twocell
-Date: Thu,  7 Feb 2019 21:16:22 -0500
-Message-ID: <20190208021631.30252-3-masneyb@onstation.org>
-References: <20190208021631.30252-1-masneyb@onstation.org>
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v8 2/8] mfd: bd70528: Support ROHM bd70528 PMIC - core
+Date: Fri, 8 Feb 2019 09:30:42 +0200
+Message-ID: <20190208073042.GA3012@localhost.localdomain>
+References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+ <50d1debf03bbd07f49b2c5a85cf9672439cbd0ac.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190207140053.GG20638@dell>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190208021631.30252-1-masneyb@onstation.org>
+Content-Disposition: inline
+In-Reply-To: <20190207140053.GG20638@dell>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, sboyd@kernel.org, bjorn.andersson@linaro.org, andy.gross@linaro.org, marc.zyngier@arm.com, lee.jones@linaro.org
-Cc: tglx@linutronix.de, shawnguo@kernel.org, dianders@chromium.org, linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org, niklas.cassel@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Guenter Roeck <linux@roeck-us.net>, heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com, robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org, bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it, alexandre.belloni@bootlin.com, wim@linux-watchdog.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add a new function irq_domain_translate_twocell() that is to be used as
-the translate function in struct irq_domain_ops for the v2 IRQ API.
+Hello Again Lee,
 
-This patch also changes irq_domain_xlate_twocell() from the v1 IRQ API
-to call irq_domain_translate_twocell() in the v2 IRQ API. This required
-changes to of_phandle_args_to_fwspec()'s arguments so that it can be
-called from multiple places.
+After a good night sleep few things came to my mind =)
 
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Brian Masney <masneyb@onstation.org>
----
-Changes since v1:
-- Included Marc Zyngier's changes to irq_domain_xlate_twocell() and
-  of_phandle_args_to_fwspec().
+On Thu, Feb 07, 2019 at 02:00:53PM +0000, Lee Jones wrote:
+> On Thu, 07 Feb 2019, Matti Vaittinen wrote:
+> 
+> > +
+> > +static struct mfd_cell bd70528_mfd_cells[] = {
+> > +	{ .name = "bd70528-pmic", },
+> > +	{ .name = "bd70528-gpio", },
+> > +	/*
+> > +	 * We use BD71837 driver to drive the clk block. Only differences to
+> > +	 * BD70528 clock gate are the register address and mask.
+> > +	 */
+> > +	{ .name = "bd718xx-clk", },
+> > +	{ .name = "bd70528-wdt", },
+> > +	{
+> > +		.name = "bd70528-power",
+> > +		.resources = &charger_irqs[0],
+> > +		.num_resources = ARRAY_SIZE(charger_irqs),
+> > +	},
+> > +	{
+> 
+> These should be on the same line.
 
- include/linux/irqdomain.h |  5 +++++
- kernel/irq/irqdomain.c    | 45 +++++++++++++++++++++++++++++----------
- 2 files changed, 39 insertions(+), 11 deletions(-)
+I know I said 'Ok' yesterday. And I can change the styling to what ever
+suits you - but I am not entirely sure what you mean by this? Do you
+mean that the brackets should be on same line? After a quick look to
+few other MFD devices it seems to be common convention to have these on
+separate lines - and such style is used also at other locations
+throughout this file. 
 
-diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index 35965f41d7be..fcefe0c7263f 100644
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@ -419,6 +419,11 @@ int irq_domain_xlate_onetwocell(struct irq_domain *d, struct device_node *ctrlr,
- 			const u32 *intspec, unsigned int intsize,
- 			irq_hw_number_t *out_hwirq, unsigned int *out_type);
- 
-+int irq_domain_translate_twocell(struct irq_domain *d,
-+				 struct irq_fwspec *fwspec,
-+				 unsigned long *out_hwirq,
-+				 unsigned int *out_type);
-+
- /* IPI functions */
- int irq_reserve_ipi(struct irq_domain *domain, const struct cpumask *dest);
- int irq_destroy_ipi(unsigned int irq, const struct cpumask *dest);
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 45c74373c7a4..c35434f70e71 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -729,16 +729,17 @@ static int irq_domain_translate(struct irq_domain *d,
- 	return 0;
- }
- 
--static void of_phandle_args_to_fwspec(struct of_phandle_args *irq_data,
-+static void of_phandle_args_to_fwspec(struct device_node *np, const u32 *args,
-+				      unsigned int count,
- 				      struct irq_fwspec *fwspec)
- {
- 	int i;
- 
--	fwspec->fwnode = irq_data->np ? &irq_data->np->fwnode : NULL;
--	fwspec->param_count = irq_data->args_count;
-+	fwspec->fwnode = np ? &np->fwnode : NULL;
-+	fwspec->param_count = count;
- 
--	for (i = 0; i < irq_data->args_count; i++)
--		fwspec->param[i] = irq_data->args[i];
-+	for (i = 0; i < count; i++)
-+		fwspec->param[i] = args[i];
- }
- 
- unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
-@@ -836,7 +837,9 @@ unsigned int irq_create_of_mapping(struct of_phandle_args *irq_data)
- {
- 	struct irq_fwspec fwspec;
- 
--	of_phandle_args_to_fwspec(irq_data, &fwspec);
-+	of_phandle_args_to_fwspec(irq_data->np, irq_data->args,
-+				  irq_data->args_count, &fwspec);
-+
- 	return irq_create_fwspec_mapping(&fwspec);
- }
- EXPORT_SYMBOL_GPL(irq_create_of_mapping);
-@@ -928,11 +931,10 @@ int irq_domain_xlate_twocell(struct irq_domain *d, struct device_node *ctrlr,
- 			const u32 *intspec, unsigned int intsize,
- 			irq_hw_number_t *out_hwirq, unsigned int *out_type)
- {
--	if (WARN_ON(intsize < 2))
--		return -EINVAL;
--	*out_hwirq = intspec[0];
--	*out_type = intspec[1] & IRQ_TYPE_SENSE_MASK;
--	return 0;
-+	struct irq_fwspec fwspec;
-+
-+	of_phandle_args_to_fwspec(ctrlr, intspec, intsize, &fwspec);
-+	return irq_domain_translate_twocell(d, &fwspec, out_hwirq, out_type);
- }
- EXPORT_SYMBOL_GPL(irq_domain_xlate_twocell);
- 
-@@ -968,6 +970,27 @@ const struct irq_domain_ops irq_domain_simple_ops = {
- };
- EXPORT_SYMBOL_GPL(irq_domain_simple_ops);
- 
-+/**
-+ * irq_domain_translate_twocell() - Generic translate for direct two cell
-+ * bindings
-+ *
-+ * Device Tree IRQ specifier translation function which works with two cell
-+ * bindings where the cell values map directly to the hwirq number
-+ * and linux irq flags.
-+ */
-+int irq_domain_translate_twocell(struct irq_domain *d,
-+				 struct irq_fwspec *fwspec,
-+				 unsigned long *out_hwirq,
-+				 unsigned int *out_type)
-+{
-+	if (WARN_ON(fwspec->param_count < 2))
-+		return -EINVAL;
-+	*out_hwirq = fwspec->param[0];
-+	*out_type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(irq_domain_translate_twocell);
-+
- int irq_domain_alloc_descs(int virq, unsigned int cnt, irq_hw_number_t hwirq,
- 			   int node, const struct irq_affinity_desc *affinity)
- {
+> > +static const struct regmap_access_table volatile_regs = {
+> > +	.yes_ranges = &volatile_ranges[0],
+> > +	.n_yes_ranges = ARRAY_SIZE(volatile_ranges),
+> > +};
+> > +
+> > +static struct regmap_config bd70528_regmap = {
+> > +	.reg_bits = 8,
+> > +	.val_bits = 8,
+> > +	.volatile_table = &volatile_regs,
+> > +	.max_register = BD70528_MAX_REGISTER,
+> > +	.cache_type = REGCACHE_RBTREE,
+> > +};
+> 
+> '\n' here.
+> 
+> > +/* bit [0] - Shutdown register */
+> > +unsigned int bit0_offsets[] = {0};
+> > +/* bit [1] - Power failure register */
+> > +unsigned int bit1_offsets[] = {1};
+> > +/* bit [2] - VR FAULT register */
+> > +unsigned int bit2_offsets[] = {2};
+> > +/* bit [3] - PMU register interrupts */
+> > +unsigned int bit3_offsets[] = {3};
+> > +/* bit [4] - Charger 1 and Charger 2 registers */
+> > +unsigned int bit4_offsets[] = {4, 5};
+> > +/* bit [5] - RTC register */
+> > +unsigned int bit5_offsets[] = {6};
+> > +/* bit [6] - GPIO register */
+> > +unsigned int bit6_offsets[] = {7};
+> > +/* bit [7] - Invalid operation register */
+> > +unsigned int bit7_offsets[] = {8};
+> 
+> What on earth is this?
+
+Would this comment help:
+/*
+ * Mapping of main IRQ register bits to sub irq register offsets so
+ * that we can access corect sub IRQ registers based on bits that
+ * are set in main IRQ register.
+ */
+
+/* bit [0] - Shutdown register */
+unsigned int bit0_offsets[] = {0};
+/* bit [1] - Power failure register */
+unsigned int bit1_offsets[] = {1};
+/* bit [2] - VR FAULT register */
+unsigned int bit2_offsets[] = {2};
+/* bit [3] - PMU register interrupts */
+unsigned int bit3_offsets[] = {3};
+/* bit [4] - Charger 1 and Charger 2 registers */
+unsigned int bit4_offsets[] = {4, 5};
+/* bit [5] - RTC register */
+unsigned int bit5_offsets[] = {6};
+/* bit [6] - GPIO register */
+unsigned int bit6_offsets[] = {7};
+/* bit [7] - Invalid operation register */
+unsigned int bit7_offsets[] = {8};
+
+> > +static int bd70528_wdt_set(struct bd70528 *bd70528, int enable, int *old_state)
+> > +{
+[..]
+> > +}
+> 
+> Shouldn't this be one in the WDT driver?
+
+Maybe I should explain it like this:
+
+/*
+ * Both the WDT and RTC drivers need to be able to control WDT. WDT uses
+ * RTC for timeouts and setting the RTC may trigger watchdog. Thus the
+ * RTC must disable the WDT when RTC time is set. We provide WDT disabling
+ * code from the MFD parent as we don't want to make direct dependency
+ * between RTC and WDT. Some may want to use only WDT or only RTC.
+ */
+
+#define WD_CTRL_MAGIC1 0x55
+#define WD_CTRL_MAGIC2 0xAA
+
+static int bd70528_wdt_set(struct bd70528 *bd70528, int enable, int *old_state)
+{
+
+> > +	/*
+> > +	 * Disallow type setting for all IRQs by default as
+> > +	 *  most of them do not support setting type.
+> > +	 */
+> > +	for (i = 0; i < ARRAY_SIZE(irqs); i++)
+> > +		irqs[i].type.types_supported = 0;
+> > +
+> > +	irqs[BD70528_INT_GPIO0].type.type_reg_offset = 0;
+> > +	irqs[BD70528_INT_GPIO0].type.type_rising_val = 0x20;
+> > +	irqs[BD70528_INT_GPIO0].type.type_falling_val = 0x10;
+> > +	irqs[BD70528_INT_GPIO0].type.type_level_high_val = 0x40;
+> > +	irqs[BD70528_INT_GPIO0].type.type_level_low_val = 0x50;
+> > +	irqs[BD70528_INT_GPIO0].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
+> > +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+> > +	irqs[BD70528_INT_GPIO1].type.type_reg_offset = 2;
+> > +	irqs[BD70528_INT_GPIO1].type.type_rising_val = 0x20;
+> > +	irqs[BD70528_INT_GPIO1].type.type_falling_val = 0x10;
+> > +	irqs[BD70528_INT_GPIO1].type.type_level_high_val = 0x40;
+> > +	irqs[BD70528_INT_GPIO1].type.type_level_low_val = 0x50;
+> > +	irqs[BD70528_INT_GPIO1].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
+> > +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+> > +	irqs[BD70528_INT_GPIO2].type.type_reg_offset = 4;
+> > +	irqs[BD70528_INT_GPIO2].type.type_rising_val = 0x20;
+> > +	irqs[BD70528_INT_GPIO2].type.type_falling_val = 0x10;
+> > +	irqs[BD70528_INT_GPIO2].type.type_level_high_val = 0x40;
+> > +	irqs[BD70528_INT_GPIO2].type.type_level_low_val = 0x50;
+> > +	irqs[BD70528_INT_GPIO2].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
+> > +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+> > +	irqs[BD70528_INT_GPIO3].type.type_reg_offset = 6;
+> > +	irqs[BD70528_INT_GPIO3].type.type_rising_val = 0x20;
+> > +	irqs[BD70528_INT_GPIO3].type.type_falling_val = 0x10;
+> > +	irqs[BD70528_INT_GPIO3].type.type_level_high_val = 0x40;
+> > +	irqs[BD70528_INT_GPIO3].type.type_level_low_val = 0x50;
+> > +	irqs[BD70528_INT_GPIO3].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
+> > +				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+> 
+> Could you please explain:
+> 
+> a) what you're doing here
+> b) why you don't mass assign them
+>     - seeing as most of the data is identical.
+
+I am not sure this is what you meant by mass assignment? Something like
+below?
+
+I think this makes the code slightly more confusing yet much shorter.
+What would you say? Is this what you had in mind?
+
+        /*
+         * Set IRQ typesetting information for GPIO pins 0 - 3
+         */
+        for (i = 0; i < 4; i++) {
+                struct regmap_irq_type *type;
+
+                type = &irqs[BD70528_INT_GPIO0 + i].type;
+                type->type_reg_offset = 2 * i;
+                type-<type_rising_val = 0x20;
+                type->type_falling_val = 0x10;
+                type->type_level_high_val = 0x40;
+                type->type_level_low_val = 0x50;
+                type->types_supported = (IRQ_TYPE_EDGE_BOTH |
+                                IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
+        }
+
+Br,
+	Matti Vaittinen
+
 -- 
-2.17.2
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
