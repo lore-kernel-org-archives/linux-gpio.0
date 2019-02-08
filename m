@@ -1,38 +1,47 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v8 0/8] Introduce the for_each_set_clump8 macro
-Date: Fri, 8 Feb 2019 18:39:08 +0200
-Message-ID: <20190208163908.GR9224@smile.fi.intel.com>
-References: <cover.1547445576.git.vilhelm.gray@gmail.com>
- <20190129170734.688a6adf91267cc6f1b5fa08@linux-foundation.org>
+Subject: Re: [PATCH v3] gpiolib: acpi: Introduce
+	ACPI_GPIO_QUIRK_ONLY_GPIOIO
+Date: Fri, 8 Feb 2019 18:53:41 +0200
+Message-ID: <20190208165341.GS9224@smile.fi.intel.com>
+References: <20190206204946.61730-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdbewwKFzHLz8Ok5Kh9gijK-AtKUykTKL1fdQ=zAWYDCoQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
 Content-Disposition: inline
-In-Reply-To: <20190129170734.688a6adf91267cc6f1b5fa08@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk
+In-Reply-To: <CACRpkdbewwKFzHLz8Ok5Kh9gijK-AtKUykTKL1fdQ=zAWYDCoQ@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, Mark Brown <broonie@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 05:07:34PM -0800, Andrew Morton wrote:
-> On Mon, 14 Jan 2019 15:19:17 +0900 William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
-
-> It's a shame that it doesn't actually dercease the kernel line count,
-> but there are other benefits.
+On Fri, Feb 08, 2019 at 03:51:56PM +0100, Linus Walleij wrote:
+> On Wed, Feb 6, 2019 at 9:49 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 > 
-> The patches are missing the hoped-for acks, but I think you maintain
-> most/all of those drivers.
+> > New quirk enforces search for GPIO based on its type,
+> > i.e. iterate over GpioIo resources only.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > Tested-by: Hans de Goede <hdegoede@redhat.com>
+> 
+> I suppose I ACKed that because it needed to be applied in some
+> other tree (sorry for short teflon-type memory...)
 
-I'm okay with the code as well, so,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+I still hope Mark will apply to ASoC tree.
+Mark?
 
-> Do we have any expectation that these facilities will be used by
-> anything other than GPIO?  If not then perhaps they should be sited
-> within drivers/gpio (presumably as a standalone module) until such a
-> need is found?
-
-I think I have an example out of GPIO realm. But I need time to prove that.
-In any case I tend to bend to the generic exposure than to local one.
 
 -- 
 With Best Regards,
