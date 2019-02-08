@@ -1,7 +1,8 @@
 From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH RESEND V3 1/2] pinctrl: bcm2835: declare pin config as generic
-Date: Fri,  8 Feb 2019 13:21:12 +0100
-Message-ID: <1549628473-4485-2-git-send-email-stefan.wahren@i2se.com>
+Subject: [PATCH RESEND V3 2/2] pinctrl: bcm2835: Direct GPIO config changes to
+ generic pinctrl
+Date: Fri,  8 Feb 2019 13:21:13 +0100
+Message-ID: <1549628473-4485-3-git-send-email-stefan.wahren@i2se.com>
 References: <1549628473-4485-1-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,26 +22,35 @@ To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@
 Cc: Stefan Wahren <stefan.wahren@i2se.com>, linux-gpio@vger.kernel.org, Lukas Wunner <lukas@wunner.de>, Peter Robinson <pbrobinson@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Since commit 0de704955ee44 ("pinctrl: bcm2835: Add support for
-generic pinctrl binding") this driver is capable to use the generic
-interface. So declare this accordingly.
+In order to support GPIO config changes direct these to the generic pinctrl.
+This also requires an adjust of the return code for unsupported parameter
+otherwise gpiod_configure_flags wont work as expected.
 
 Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 ---
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index f180aa4..19eb4fd 100644
+index 19eb4fd..183d1ff 100644
 --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
 +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -969,6 +969,7 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
- }
+@@ -341,6 +341,7 @@ static const struct gpio_chip bcm2835_gpio_chip = {
+ 	.get_direction = bcm2835_gpio_get_direction,
+ 	.get = bcm2835_gpio_get,
+ 	.set = bcm2835_gpio_set,
++	.set_config = gpiochip_generic_config,
+ 	.base = -1,
+ 	.ngpio = BCM2835_NUM_GPIOS,
+ 	.can_sleep = false,
+@@ -960,7 +961,7 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
+ 			break;
  
- static const struct pinconf_ops bcm2835_pinconf_ops = {
-+	.is_generic = true,
- 	.pin_config_get = bcm2835_pinconf_get,
- 	.pin_config_set = bcm2835_pinconf_set,
- };
+ 		default:
+-			return -EINVAL;
++			return -ENOTSUPP;
+ 
+ 		} /* switch param type */
+ 	} /* for each config */
 -- 
 2.7.4
