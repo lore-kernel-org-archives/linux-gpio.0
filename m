@@ -1,30 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Document the i.MX50 IOMUXC binding
-Date: Fri, 8 Feb 2019 12:35:56 +0100
-Message-ID: <CACRpkdYdmtA_O-NVCBV7=j+A+u5piRUULiV-HLEnu0dtkT0yyw@mail.gmail.com>
-References: <20190129165530.7606-1-j.neuschaefer@gmx.net>
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH 0/3] gpio: drop a few unneeded irq_{request,release}_resources implementations
+Date: Fri,  8 Feb 2019 12:51:58 +0100
+Message-ID: <20190208115201.7518-1-thomas.petazzoni@bootlin.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190129165530.7606-1-j.neuschaefer@gmx.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 5:55 PM Jonathan Neusch=C3=A4fer
-<j.neuschaefer@gmx.net> wrote:
+Hello,
 
-> AFAICS from the i.MX50 Reference Manual, the i.MX50 IOMUXC works the
-> same as the one in i.MX51, so I copied fsl,imx51-pinctrl.txt and changed
-> the text to imx50.
->
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> Cc: Dong Aisheng <dong.aisheng@linaro.org>
-> Cc: Shawn Guo <shawn.guo@linaro.org>
+Three GPIO drivers in the tree implement the
+irq_{request,release}_resources hooks with what is in fact the default
+implementation provided by the GPIO core, making this driver-specific
+code redundant.
 
-i.MX people. can you please look at this patch?
+It is worth mentioning that I do not own any of the affected
+platforms, to the three patches have only been built-tested. Each is
+Cc'ed to the appropriate maintainer, except gpio-em that has no
+platform-specific maintainer.
 
-Yours,
-Linus Walleij
+Best regards,
+
+Thomas Petazzoni
+
+Thomas Petazzoni (3):
+  gpio: bcm-kona: drop ->irq_{request,release}_resources hooks
+  gpio: dwapb: drop ->irq_{request,release}_resources hooks
+  gpio: em: drop ->irq_{request,release}_resources hooks
+
+ drivers/gpio/gpio-bcm-kona.c | 16 ----------------
+ drivers/gpio/gpio-dwapb.c    | 27 ---------------------------
+ drivers/gpio/gpio-em.c       | 25 -------------------------
+ 3 files changed, 68 deletions(-)
+
+-- 
+2.20.1
