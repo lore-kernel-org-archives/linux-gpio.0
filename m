@@ -1,36 +1,51 @@
-From: z-Hoan Tran - OS <hoan@os.amperecomputing.com>
-Subject: Re: [PATCH] MAINTAINERS: drop Hoan Tran, e-mail is bouncing
-Date: Fri, 8 Feb 2019 16:59:45 +0000
-Message-ID: <d0d4a6cb-a899-803e-23c7-6ed6a7609072@os.amperecomputing.com>
-References: <20190208115411.7675-1-thomas.petazzoni@bootlin.com>
- <CACRpkdbd8zEXVW_R-Qui89ot4JAGJB1HXZm65OWsbf=zfVn7bg@mail.gmail.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH 0/3] pinctrl: meson: g12a fixes
+Date: Fri, 08 Feb 2019 09:27:07 -0800
+Message-ID: <7ho97mgphw.fsf@baylibre.com>
+References: <20190117102315.1833-1-jbrunet@baylibre.com> <CACRpkdb7pje9mrgOQoiWTRxGQC8xsOvJ9a8PCguM807unPtpCg@mail.gmail.com> <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com> <CACRpkdb4105RwXhiyVd1dz5mjYO_u6CxTbCySbqUWBv=yhF1qg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbd8zEXVW_R-Qui89ot4JAGJB1HXZm65OWsbf=zfVn7bg@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <EDCCED4BDFD45047AC609DD7FF12064F@prod.exchangelabs.com>
+In-Reply-To: <CACRpkdb4105RwXhiyVd1dz5mjYO_u6CxTbCySbqUWBv=yhF1qg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gMi84LzE5IDY6MzQgQU0sIExpbnVzIFdhbGxlaWogd3JvdGU6DQo+IE9uIEZyaSwgRmViIDgs
-IDIwMTkgYXQgMTI6NTQgUE0gVGhvbWFzIFBldGF6em9uaQ0KPiA8dGhvbWFzLnBldGF6em9uaUBi
-b290bGluLmNvbT4gd3JvdGU6DQo+DQo+PiBIb2FuIFRyYW4ncyBlLW1haWwgaXMgYm91bmNpbmc6
-DQo+Pg0KPj4gPGhvdHJhbkBhcG0uY29tPjogaG9zdCBBU1BNWC5MLkdPT0dMRS5DT01bNjQuMjMz
-LjE2Ny4yNl0gc2FpZDogNTUwLTUuMi4xIFRoZQ0KPj4gICAgICBlbWFpbCBhY2NvdW50IHRoYXQg
-eW91IHRyaWVkIHRvIHJlYWNoIGlzIGRpc2FibGVkLiBMZWFybiBtb3JlIGF0IDU1MCA1LjIuMQ0K
-Pj4gICAgICBodHRwczovL3N1cHBvcnQuZ29vZ2xlLmNvbS9tYWlsLz9wPURpc2FibGVkVXNlciBx
-MTk0c2kxNzgwNDAyd21lLjE0NyAtDQo+PiAgICAgIGdzbXRwIChpbiByZXBseSB0byBSQ1BUIFRP
-IGNvbW1hbmQpDQo+Pg0KPj4gU28gbGV0J3MgcmVtb3ZlIHRoaXMgZS1tYWlsIGFkZHJlc3MgZnJv
-bSB0aGUgTUFJTlRBSU5FUlMgZmlsZSwgYW5kDQo+PiB1cGRhdGUgdGhlIHN0YXR1cyBvZiB0aGUg
-ZHJpdmVyIGhlIHdhcyBtYWludGFpbmluZy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBUaG9tYXMg
-UGV0YXp6b25pIDx0aG9tYXMucGV0YXp6b25pQGJvb3RsaW4uY29tPg0KPiBIb2FuIHNob3VsZCB3
-ZSBzaW1wbHkgY2hhbmdlIGl0IHRvOg0KPiBIb2FuIFRyYW4gPEhvYW5Ab3MuYW1wZXJlY29tcHV0
-aW5nLmNvbT4gPw0KPg0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0KDQpIaSBMaW51cywNCg0K
-DQpTb3JyeSBmb3IgdGhlIGluY29udmVuaWVuY2UuDQoNCldlJ3JlIHBvc3RpbmcgYSBwYXRjaCB0
-byBjaGFuZ2UgdG8gdGhlIG5ldyBlbWFpbC4NCg0KWzFdIE1BSU5UQUlORVJTOiBVcGRhdGUgQW1w
-ZXJlIGVtYWlsIGFkZHJlc3MNCg0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8x
-MDc4NzU1Ny8NCg0KDQpSZWdhcmRzDQoNCkhvYW4NCg0K
+Linus Walleij <linus.walleij@linaro.org> writes:
+
+> On Mon, Jan 21, 2019 at 4:36 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>> On Mon, 2019-01-21 at 14:53 +0100, Linus Walleij wrote:
+>> > On Thu, Jan 17, 2019 at 11:23 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>> >
+>> > > This patchset fixes the initial pinctrl support added for th g12a SoC
+>> > > family, which is mainly around the register regions claimed by the
+>> > > driver.
+>> > >
+>> > > Linus, would it possible for you to provide a tag with these changes to
+>> > > Kevin ?
+>> >
+>> > https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-meson-fixes
+>> >
+>> > > ATM, we can only use the devices for which the pinmux is already set by
+>> > > the bootloader. Enabling the broken pinctrl driver could cause regressions
+>> > > in kernelCI. Having a tag, would allow us to start using pinctrl on this
+>> > > SoC in this cycle, w/o regression. It would be nice :)
+>> >
+>> > When you say "this cycle" do you mean I should target fixes (v5.0-rcN)
+>> > or next (v5.1) with these patches?
+>>
+>> I was referring to the 5.1 release but it is a good question, I did not really
+>> think about 5.0.
+>>
+>> Those changes are mainly fixes, so guess it could go in the 5.0 but support
+>> for this SoC is still in its early stages, so either way is fine by me.
+>>
+>> Whatever is simpler for you I guess ;)
+>
+> I already merged it for devel and other stuff on top so it will be for v5.1
+> as it looks now.
+
+OK, assuming that tag is still valid (and immutable), that works for me.
+
+Kevin
