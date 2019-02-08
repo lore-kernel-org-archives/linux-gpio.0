@@ -1,51 +1,69 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH 0/3] pinctrl: meson: g12a fixes
-Date: Fri, 08 Feb 2019 09:27:07 -0800
-Message-ID: <7ho97mgphw.fsf@baylibre.com>
-References: <20190117102315.1833-1-jbrunet@baylibre.com> <CACRpkdb7pje9mrgOQoiWTRxGQC8xsOvJ9a8PCguM807unPtpCg@mail.gmail.com> <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com> <CACRpkdb4105RwXhiyVd1dz5mjYO_u6CxTbCySbqUWBv=yhF1qg@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3] gpiolib: acpi: Introduce
+	ACPI_GPIO_QUIRK_ONLY_GPIOIO
+Date: Fri, 8 Feb 2019 17:29:27 +0000
+Message-ID: <20190208172927.GH6695@sirena.org.uk>
+References: <20190206204946.61730-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkdbewwKFzHLz8Ok5Kh9gijK-AtKUykTKL1fdQ=zAWYDCoQ@mail.gmail.com>
+ <20190208165341.GS9224@smile.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb4105RwXhiyVd1dz5mjYO_u6CxTbCySbqUWBv=yhF1qg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============5309931317860013505=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20190208165341.GS9224@smile.fi.intel.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Linus Walleij <linus.walleij@linaro.org> writes:
 
-> On Mon, Jan 21, 2019 at 4:36 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->> On Mon, 2019-01-21 at 14:53 +0100, Linus Walleij wrote:
->> > On Thu, Jan 17, 2019 at 11:23 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
->> >
->> > > This patchset fixes the initial pinctrl support added for th g12a SoC
->> > > family, which is mainly around the register regions claimed by the
->> > > driver.
->> > >
->> > > Linus, would it possible for you to provide a tag with these changes to
->> > > Kevin ?
->> >
->> > https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-meson-fixes
->> >
->> > > ATM, we can only use the devices for which the pinmux is already set by
->> > > the bootloader. Enabling the broken pinctrl driver could cause regressions
->> > > in kernelCI. Having a tag, would allow us to start using pinctrl on this
->> > > SoC in this cycle, w/o regression. It would be nice :)
->> >
->> > When you say "this cycle" do you mean I should target fixes (v5.0-rcN)
->> > or next (v5.1) with these patches?
->>
->> I was referring to the 5.1 release but it is a good question, I did not really
->> think about 5.0.
->>
->> Those changes are mainly fixes, so guess it could go in the 5.0 but support
->> for this SoC is still in its early stages, so either way is fine by me.
->>
->> Whatever is simpler for you I guess ;)
->
-> I already merged it for devel and other stuff on top so it will be for v5.1
-> as it looks now.
+--===============5309931317860013505==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="poemUeGtc2GQvHuH"
+Content-Disposition: inline
 
-OK, assuming that tag is still valid (and immutable), that works for me.
 
-Kevin
+--poemUeGtc2GQvHuH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Feb 08, 2019 at 06:53:41PM +0200, Andy Shevchenko wrote:
+
+> I still hope Mark will apply to ASoC tree.
+> Mark?
+
+I'd be a lot more likely to apply it if there's something in the mail
+after the --- saying something about that...
+
+--poemUeGtc2GQvHuH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxdvHcACgkQJNaLcl1U
+h9AvkQf9EB5BOV7DAMAkMZgKxeswi3a7XmmJiQqosHqLP7lCisBsjG6ENhv1E9XS
+BeaDjm2YIxJNJebe7U6BgBcnCMah8928i2vRq0fi2KE2aZ0b+IytUP6iTM/0ug15
+XxWv2FZfGU02aaVKaLe+b3X3X6loAZIy8VcyazO66mhQuy8lW9KkRsSFcnv9sBEA
+TVpXG0ro9qKLEEd9i2TImJcyTZkIe4wVjBsfk1fhi4qM1OgGs7jM4VMb2YP2xqDQ
+uNbhPMEMGH+/3Zzfk60NM3gJQIJEn5xkvj9RO/SJ12sXAN3v5L7RssUeKxPJUtjd
+wk52Gtazg7Eb0Pqi8q5Cvh7IvOQUhQ==
+=CJ8g
+-----END PGP SIGNATURE-----
+
+--poemUeGtc2GQvHuH--
+
+--===============5309931317860013505==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============5309931317860013505==--
