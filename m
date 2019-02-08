@@ -1,48 +1,36 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v3] gpiolib: acpi: Introduce
-	ACPI_GPIO_QUIRK_ONLY_GPIOIO
-Date: Fri, 8 Feb 2019 18:53:41 +0200
-Message-ID: <20190208165341.GS9224@smile.fi.intel.com>
-References: <20190206204946.61730-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdbewwKFzHLz8Ok5Kh9gijK-AtKUykTKL1fdQ=zAWYDCoQ@mail.gmail.com>
+From: z-Hoan Tran - OS <hoan@os.amperecomputing.com>
+Subject: Re: [PATCH] MAINTAINERS: drop Hoan Tran, e-mail is bouncing
+Date: Fri, 8 Feb 2019 16:59:45 +0000
+Message-ID: <d0d4a6cb-a899-803e-23c7-6ed6a7609072@os.amperecomputing.com>
+References: <20190208115411.7675-1-thomas.petazzoni@bootlin.com>
+ <CACRpkdbd8zEXVW_R-Qui89ot4JAGJB1HXZm65OWsbf=zfVn7bg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbewwKFzHLz8Ok5Kh9gijK-AtKUykTKL1fdQ=zAWYDCoQ@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, Mark Brown <broonie@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbd8zEXVW_R-Qui89ot4JAGJB1HXZm65OWsbf=zfVn7bg@mail.gmail.com>
+Content-Language: en-US
+Content-ID: <EDCCED4BDFD45047AC609DD7FF12064F@prod.exchangelabs.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 03:51:56PM +0100, Linus Walleij wrote:
-> On Wed, Feb 6, 2019 at 9:49 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > New quirk enforces search for GPIO based on its type,
-> > i.e. iterate over GpioIo resources only.
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > Tested-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> I suppose I ACKed that because it needed to be applied in some
-> other tree (sorry for short teflon-type memory...)
-
-I still hope Mark will apply to ASoC tree.
-Mark?
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+T24gMi84LzE5IDY6MzQgQU0sIExpbnVzIFdhbGxlaWogd3JvdGU6DQo+IE9uIEZyaSwgRmViIDgs
+IDIwMTkgYXQgMTI6NTQgUE0gVGhvbWFzIFBldGF6em9uaQ0KPiA8dGhvbWFzLnBldGF6em9uaUBi
+b290bGluLmNvbT4gd3JvdGU6DQo+DQo+PiBIb2FuIFRyYW4ncyBlLW1haWwgaXMgYm91bmNpbmc6
+DQo+Pg0KPj4gPGhvdHJhbkBhcG0uY29tPjogaG9zdCBBU1BNWC5MLkdPT0dMRS5DT01bNjQuMjMz
+LjE2Ny4yNl0gc2FpZDogNTUwLTUuMi4xIFRoZQ0KPj4gICAgICBlbWFpbCBhY2NvdW50IHRoYXQg
+eW91IHRyaWVkIHRvIHJlYWNoIGlzIGRpc2FibGVkLiBMZWFybiBtb3JlIGF0IDU1MCA1LjIuMQ0K
+Pj4gICAgICBodHRwczovL3N1cHBvcnQuZ29vZ2xlLmNvbS9tYWlsLz9wPURpc2FibGVkVXNlciBx
+MTk0c2kxNzgwNDAyd21lLjE0NyAtDQo+PiAgICAgIGdzbXRwIChpbiByZXBseSB0byBSQ1BUIFRP
+IGNvbW1hbmQpDQo+Pg0KPj4gU28gbGV0J3MgcmVtb3ZlIHRoaXMgZS1tYWlsIGFkZHJlc3MgZnJv
+bSB0aGUgTUFJTlRBSU5FUlMgZmlsZSwgYW5kDQo+PiB1cGRhdGUgdGhlIHN0YXR1cyBvZiB0aGUg
+ZHJpdmVyIGhlIHdhcyBtYWludGFpbmluZy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBUaG9tYXMg
+UGV0YXp6b25pIDx0aG9tYXMucGV0YXp6b25pQGJvb3RsaW4uY29tPg0KPiBIb2FuIHNob3VsZCB3
+ZSBzaW1wbHkgY2hhbmdlIGl0IHRvOg0KPiBIb2FuIFRyYW4gPEhvYW5Ab3MuYW1wZXJlY29tcHV0
+aW5nLmNvbT4gPw0KPg0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0KDQpIaSBMaW51cywNCg0K
+DQpTb3JyeSBmb3IgdGhlIGluY29udmVuaWVuY2UuDQoNCldlJ3JlIHBvc3RpbmcgYSBwYXRjaCB0
+byBjaGFuZ2UgdG8gdGhlIG5ldyBlbWFpbC4NCg0KWzFdIE1BSU5UQUlORVJTOiBVcGRhdGUgQW1w
+ZXJlIGVtYWlsIGFkZHJlc3MNCg0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8x
+MDc4NzU1Ny8NCg0KDQpSZWdhcmRzDQoNCkhvYW4NCg0K
