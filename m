@@ -1,61 +1,82 @@
-From: Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH v2 11/15] dt-bindings: pinctrl: milbeaut: Add Milbeaut M10V pinctrl description
-Date: Fri,  8 Feb 2019 21:33:07 +0900
-Message-ID: <1549629187-3177-1-git-send-email-sugaya.taichi@socionext.com>
+From: Brian Masney <masneyb@onstation.org>
+Subject: [PATCH -next] spmi: pmic-arb: revert "validate type when mapping IRQ"
+Date: Fri,  8 Feb 2019 07:36:35 -0500
+Message-ID: <20190208123635.26755-1-masneyb@onstation.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Takao Orito <orito.takao@socionext.com>, Kazuhiro Kasai <kasai.kazuhiro@socionext.com>, Shinji Kanematsu <kanematsu.shinji@socionext.com>, Jassi Brar <jaswinder.singh@linaro.org>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Sugaya Taichi <sugaya.taichi@socionext.com>
+To: linus.walleij@linaro.org
+Cc: sboyd@kernel.org, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add DT bindings document for Milbeaut M10V pinctrl.
+Validation of the IRQ type was added to spmi pmic-arb, however spmi-mpp
+in device tree still uses IRQ_TYPE_NONE. This commit caused the
+spmi-mpp probe to fail since platform_irq_count() would return 0.
+Correct this by backing out the previous patch.
 
-Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+Fixes: 135ef21ab064 ("spmi: pmic-arb: validate type when mapping IRQ")
 ---
- .../pinctrl/socionext,milbeaut-pinctrl.txt         | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/socionext,milbeaut-pinctrl.txt
+Linus: I think that the better longer-term approach is to just embed the
+IRQ counts similar to what is now in spmi-gpio. Since we are getting
+close to the end of the dev cycle, I think it is safer to just drop
+the old patch for the time being. I'll commit to doing that work for the
+next dev cycle, although I can send you that change this weekend if you
+prefer that we go that route instead.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/socionext,milbeaut-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/socionext,milbeaut-pinctrl.txt
-new file mode 100644
-index 0000000..6b54191
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/socionext,milbeaut-pinctrl.txt
-@@ -0,0 +1,35 @@
-+Milbeaut SoCs pin controller
-+
-+Required properties:
-+- compatible: should be one of the following:
-+    "socionext,milbeaut-m10v-pinctrl"  - for m10v SoC
-+- reg: offset and length of the register set.
-+- reg-names: should be "pinctrl", "exiu".
-+- gpio-controller: marks the device node as a gpio controller.
-+- gpio-cells: should be 2.
-+- interrupt-controller: marks the device node as a interrupt controller.
-+- interrupt-cells: should be 2.
-+- clocks: phandle to the input clock.
-+- interrupts: three interrupts specifer.
-+- interrupt-names: corresponds "interrupts" factor.
-+
-+Example:
-+	pinctrl: pinctrl@1d022000 {
-+		compatible = "socionext,milbeaut-m10v-pinctrl";
-+		reg = <0x1d022000 0x1000>,
-+			<0x1c26f000 0x1000>;
-+		reg-names = "pinctrl", "exiu";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		clocks = <&clk 2>;
-+		interrupts = <0 54 4>, <0 55 4>, <0 56 4>, <0 57 4>,
-+				<0 58 4>, <0 59 4>, <0 60 4>, <0 61 4>,
-+				<0 62 4>, <0 63 4>, <0 64 4>, <0 65 4>,
-+				<0 66 4>, <0 67 4>, <0 68 4>, <0 69 4>;
-+		interrupt-names = "pin-48", "pin-49", "pin-50", "pin-51",
-+				"pin-52", "pin-53", "pin-54", "pin-55",
-+				"pin-56", "pin-57", "pin-58", "pin-59",
-+				"pin-60", "pin-61", "pin-62", "pin-63";
-+	}
+My ssbi-gpio series does not have this issue.
+
+ drivers/spmi/spmi-pmic-arb.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+index 316e2708f3ba..928759242e42 100644
+--- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -740,9 +740,9 @@ static int qpnpint_irq_domain_translate(struct irq_domain *d,
+ }
+ 
+ 
+-static int qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
+-				  struct irq_domain *domain, unsigned int virq,
+-				  irq_hw_number_t hwirq, unsigned int type)
++static void qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
++				   struct irq_domain *domain, unsigned int virq,
++				   irq_hw_number_t hwirq, unsigned int type)
+ {
+ 	irq_flow_handler_t handler;
+ 
+@@ -751,15 +751,11 @@ static int qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
+ 
+ 	if (type & IRQ_TYPE_EDGE_BOTH)
+ 		handler = handle_edge_irq;
+-	else if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+-		handler = handle_level_irq;
+ 	else
+-		return -EINVAL;
++		handler = handle_level_irq;
+ 
+ 	irq_domain_set_info(domain, virq, hwirq, &pmic_arb_irqchip, pmic_arb,
+ 			    handler, NULL, NULL);
+-
+-	return 0;
+ }
+ 
+ static int qpnpint_irq_domain_alloc(struct irq_domain *domain,
+@@ -776,12 +772,9 @@ static int qpnpint_irq_domain_alloc(struct irq_domain *domain,
+ 	if (ret)
+ 		return ret;
+ 
+-	for (i = 0; i < nr_irqs; i++) {
+-		ret = qpnpint_irq_domain_map(pmic_arb, domain, virq + i,
+-					     hwirq + i, type);
+-		if (ret)
+-			return ret;
+-	}
++	for (i = 0; i < nr_irqs; i++)
++		qpnpint_irq_domain_map(pmic_arb, domain, virq + i, hwirq + i,
++				       type);
+ 
+ 	return 0;
+ }
 -- 
-1.9.1
+2.17.2
