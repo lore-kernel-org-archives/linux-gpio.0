@@ -1,69 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3] gpiolib: acpi: Introduce
-	ACPI_GPIO_QUIRK_ONLY_GPIOIO
-Date: Fri, 8 Feb 2019 17:29:27 +0000
-Message-ID: <20190208172927.GH6695@sirena.org.uk>
-References: <20190206204946.61730-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdbewwKFzHLz8Ok5Kh9gijK-AtKUykTKL1fdQ=zAWYDCoQ@mail.gmail.com>
- <20190208165341.GS9224@smile.fi.intel.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH 1/2] x86: gpio: AMD G-Series pch gpio platform driver
+Date: Fri, 08 Feb 2019 09:47:16 -0800
+Message-ID: <dfd0101f4a596600e2f0f8cf36886cf01c7dcb67.camel@perches.com>
+References: <1549588593-4856-1-git-send-email-lkml@metux.net>
+         <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5309931317860013505=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190208165341.GS9224@smile.fi.intel.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Enrico Weigelt, metux IT consult" <info@metux.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Fri, 2019-02-08 at 15:25 +0100, Linus Walleij wrote:
+> > +/*
+> > + * GPIO driver for the AMD G series FCH (eg. GX-412TC)
+> > + *
+> > + * Copyright (C) 2018 metux IT consult
+> > + * Author: Enrico Weigelt <info@metux.net>
+> > + *
+> > + * SPDX-License-Identifier: GPL+
+> > + */
+> 
+> I think checkpatch will complain on that SPDX thing.
+> Copy something from one of the other drivers, it should be
+> on the first line of the file.
 
---===============5309931317860013505==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="poemUeGtc2GQvHuH"
-Content-Disposition: inline
+Actually, checkpatch will complain that there isn't
+an SPDX license on line 1 but will not complain about
+the existence of an SPDX license on other line numbers.
 
-
---poemUeGtc2GQvHuH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Feb 08, 2019 at 06:53:41PM +0200, Andy Shevchenko wrote:
-
-> I still hope Mark will apply to ASoC tree.
-> Mark?
-
-I'd be a lot more likely to apply it if there's something in the mail
-after the --- saying something about that...
-
---poemUeGtc2GQvHuH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxdvHcACgkQJNaLcl1U
-h9AvkQf9EB5BOV7DAMAkMZgKxeswi3a7XmmJiQqosHqLP7lCisBsjG6ENhv1E9XS
-BeaDjm2YIxJNJebe7U6BgBcnCMah8928i2vRq0fi2KE2aZ0b+IytUP6iTM/0ug15
-XxWv2FZfGU02aaVKaLe+b3X3X6loAZIy8VcyazO66mhQuy8lW9KkRsSFcnv9sBEA
-TVpXG0ro9qKLEEd9i2TImJcyTZkIe4wVjBsfk1fhi4qM1OgGs7jM4VMb2YP2xqDQ
-uNbhPMEMGH+/3Zzfk60NM3gJQIJEn5xkvj9RO/SJ12sXAN3v5L7RssUeKxPJUtjd
-wk52Gtazg7Eb0Pqi8q5Cvh7IvOQUhQ==
-=CJ8g
------END PGP SIGNATURE-----
-
---poemUeGtc2GQvHuH--
-
---===============5309931317860013505==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============5309931317860013505==--
+Perhaps checkpatch _should_ complain when it sees an
+SPDX license identifier outside the expected line.
