@@ -1,11 +1,13 @@
 From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH RESEND V3 0/2] pinctrl: bcm2835: Improve generic behavior
-Date: Fri,  8 Feb 2019 13:21:11 +0100
-Message-ID: <1549628473-4485-1-git-send-email-stefan.wahren@i2se.com>
+Subject: [PATCH RESEND V3 1/2] pinctrl: bcm2835: declare pin config as generic
+Date: Fri,  8 Feb 2019 13:21:12 +0100
+Message-ID: <1549628473-4485-2-git-send-email-stefan.wahren@i2se.com>
+References: <1549628473-4485-1-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1549628473-4485-1-git-send-email-stefan.wahren@i2se.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,19 +21,26 @@ To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@
 Cc: Stefan Wahren <stefan.wahren@i2se.com>, linux-gpio@vger.kernel.org, Lukas Wunner <lukas@wunner.de>, Peter Robinson <pbrobinson@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-This series is the non-controversial part of "pinctrl: bcm2835: improve
-libgpiod output". It has been split up in order to apply for the next
-kernel release.
+Since commit 0de704955ee44 ("pinctrl: bcm2835: Add support for
+generic pinctrl binding") this driver is capable to use the generic
+interface. So declare this accordingly.
 
-Changes in V3:
-- drop patches #3 and #4 from former series
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Stefan Wahren (2):
-  pinctrl: bcm2835: declare pin config as generic
-  pinctrl: bcm2835: Direct GPIO config changes to generic pinctrl
-
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index f180aa4..19eb4fd 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -969,6 +969,7 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
+ }
+ 
+ static const struct pinconf_ops bcm2835_pinconf_ops = {
++	.is_generic = true,
+ 	.pin_config_get = bcm2835_pinconf_get,
+ 	.pin_config_set = bcm2835_pinconf_set,
+ };
 -- 
 2.7.4
