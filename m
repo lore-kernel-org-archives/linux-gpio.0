@@ -1,37 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V3 2/2] pinctrl: bcm2835: Direct GPIO config changes to
- generic pinctrl
-Date: Fri, 8 Feb 2019 13:13:30 +0100
-Message-ID: <CACRpkdZzywMnP49pyUgobr8YmiyoV6g3Jiq1ft+NEQFnR3gbEA@mail.gmail.com>
-References: <1549198954-4711-1-git-send-email-stefan.wahren@i2se.com>
- <1549198954-4711-3-git-send-email-stefan.wahren@i2se.com>
+Subject: Re: [PATCH v4 01/10] dt-bindings: mfd: add DT bindings for max77650
+Date: Fri, 8 Feb 2019 13:15:26 +0100
+Message-ID: <CACRpkdaERR=jBf-mchuEEyRu_vb8vr8CoZ5uL6apPGD9gOgw=w@mail.gmail.com>
+References: <20190205091237.6448-1-brgl@bgdev.pl> <20190205091237.6448-2-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1549198954-4711-3-git-send-email-stefan.wahren@i2se.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Eric Anholt <eric@anholt.net>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Lukas Wunner <lukas@wunner.de>, Peter Robinson <pbrobinson@gmail.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190205091237.6448-2-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Feb 3, 2019 at 2:03 PM Stefan Wahren <stefan.wahren@i2se.com> wrote:
+On Tue, Feb 5, 2019 at 10:12 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> In order to support GPIO config changes direct these to the generic pinctrl.
-> This also requires an adjust of the return code for unsupported parameter
-> otherwise gpiod_configure_flags wont work as expected.
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> Add a DT binding document for max77650 ultra-low power PMIC. This
+> describes the core mfd device and the GPIO module.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Patch applied.
+This is a good solution!
+
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
