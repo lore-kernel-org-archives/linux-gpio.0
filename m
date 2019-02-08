@@ -1,42 +1,26 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpiolib: acpi: Introduce
-	ACPI_GPIO_QUIRK_ONLY_GPIOIO
-Date: Fri, 8 Feb 2019 15:51:56 +0100
-Message-ID: <CACRpkdbewwKFzHLz8Ok5Kh9gijK-AtKUykTKL1fdQ=zAWYDCoQ@mail.gmail.com>
-References: <20190206204946.61730-1-andriy.shevchenko@linux.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 1/2] x86: gpio: AMD G-Series pch gpio platform driver
+Date: Fri, 8 Feb 2019 17:20:05 +0200
+Message-ID: <CAHp75VeRatTj__4Vm4wxvLQZxRf4L5RNHvZ2QAGvDBynprkroA@mail.gmail.com>
+References: <1549588593-4856-1-git-send-email-lkml@metux.net> <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190206204946.61730-1-andriy.shevchenko@linux.intel.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, Mark Brown <broonie@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Enrico Weigelt, metux IT consult" <lkml@metux.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Enrico Weigelt, metux IT consult" <info@metux.net>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 9:49 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-
-> New quirk enforces search for GPIO based on its type,
-> i.e. iterate over GpioIo resources only.
+On Fri, Feb 8, 2019 at 4:26 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Tested-by: Hans de Goede <hdegoede@redhat.com>
+> Hi Enrico!
+>
+> Thanks for your patch! I would really like Andy to have a look at it
+> too, he's more on top of things in the x86 world.
 
-I suppose I ACKed that because it needed to be applied in some
-other tree (sorry for short teflon-type memory...)
+Seems that is the same version sent twice. I already gave a long review on it.
 
-If I should just apply it, tell me!
-
-Yours,
-Linus Walleij
+-- 
+With Best Regards,
+Andy Shevchenko
