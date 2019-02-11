@@ -1,46 +1,46 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v2 12/15] pinctrl: milbeaut: Add Milbeaut M10V pinctrl
-Date: Mon, 11 Feb 2019 23:09:39 +0900
-Message-ID: <CAK7LNAQx1Ee7a5CAhbaxKv8wiiuX_aP4ie7+_BqBSGh-dmchPQ@mail.gmail.com>
-References: <1549628897-32345-1-git-send-email-sugaya.taichi@socionext.com> <CACRpkdZCpyJDL+zy-NftXJNah2u6t75cVCDmh_L0+ZyXv7J2LA@mail.gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] gpio: sprd: Add missing break in switch statement
+Date: Mon, 11 Feb 2019 12:50:01 -0600
+Message-ID: <20190211185001.GA19472@embeddedor>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZCpyJDL+zy-NftXJNah2u6t75cVCDmh_L0+ZyXv7J2LA@mail.gmail.com>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sugaya Taichi <sugaya.taichi@socionext.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Takao Orito <orito.takao@socionext.com>, Kazuhiro Kasai <kasai.kazuhiro@socionext.com>, Shinji Kanematsu <kanematsu.shinji@socionext.com>, Jassi Brar <jaswinder.singh@linaro.org>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Brian Masney <masneyb@onstation.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linaro.org>, Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kees Cook <keescook@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Fix the following warning by adding a missing break:
 
-On Fri, Feb 8, 2019 at 10:27 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> Hi Sugaya,
->
-> thank you for the patch!
->
-> Since Masahiro has previously added the Uniphier pin control driver
-> I would like him to provide a review of this patch, if possible. I also
-> want to make sure that the hardware is different enough from the
-> existing Uniphier pin control so that it really needs a new
-> driver, else I suppose it should be refactored to be part of
-> the pinctrl/uniphier drivers (we can of course rename it
-> pinctrl/socionext if only naming is an issue).
+drivers/gpio/gpio-eic-sprd.c: In function ‘sprd_eic_irq_set_type’:
+drivers/gpio/gpio-eic-sprd.c:403:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   switch (flow_type) {
+   ^~~~~~
+drivers/gpio/gpio-eic-sprd.c:435:2: note: here
+  default:
+  ^~~~~~~
 
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
 
-Milbeaut and UniPhier are totally different platforms,
-so no code is shareable.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpio/gpio-eic-sprd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-At most, they could share the directory,
-drivers/pinctrl/socionext/, if you like.
-
-I know you prefer grouping by SoC-family
-instead of by vendor-name as you stated in the
-"Moving ARM dts files" discussion.
-
-
-
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index e41223c05f6e..f0223cee9774 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -432,6 +432,7 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
+ 		default:
+ 			return -ENOTSUPP;
+ 		}
++		break;
+ 	default:
+ 		dev_err(chip->parent, "Unsupported EIC type.\n");
+ 		return -ENOTSUPP;
 -- 
-Best Regards
-Masahiro Yamada
+2.20.1
