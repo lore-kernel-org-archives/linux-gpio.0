@@ -1,104 +1,108 @@
 From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v2 1/9] irq/irq_sim: don't share the irq_chip structure
- between simulators
-Date: Mon, 11 Feb 2019 22:28:39 +0000
-Message-ID: <20190211222839.7a7ad87f@why.wild-wind.fr.eu.org>
+Subject: Re: [PATCH v2 0/9] gpio: mockup: improve the user-space testing
+ interface
+Date: Mon, 11 Feb 2019 22:33:13 +0000
+Message-ID: <20190211223313.34f6c8be@why.wild-wind.fr.eu.org>
 References: <20190129084411.30495-1-brgl@bgdev.pl>
-        <20190129084411.30495-2-brgl@bgdev.pl>
+        <CAMRc=MdyJO4F+GJ6S-moxQ1znQXatL6H27RFFiuaaOuLQdvnAA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190129084411.30495-2-brgl@bgdev.pl>
+In-Reply-To: <CAMRc=MdyJO4F+GJ6S-moxQ1znQXatL6H27RFFiuaaOuLQdvnAA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5p?= =?UTF-8?B?Zw==?= <u.kleine-koenig@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 29 Jan 2019 09:44:03 +0100
+On Wed, 6 Feb 2019 11:23:46 +0100
 Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> wt., 29 sty 2019 o 09:44 Bartosz Golaszewski <brgl@bgdev.pl> napisał(a):
+> >
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > This series aims at reworking the gpio-mockup debugfs interface. The
+> > reason for that is the fact that certain known problems with this
+> > testing module exist and the user-space tests are broken anyway
+> > after commit fa38869b0161 ("gpiolib: Don't support irq sharing
+> > for userspace") which made it impossible for gpio-mockup to ignore
+> > certain events (e.g. only receive notifications about rising edge
+> > events).
+> >
+> > The first three patches improve the interrupt simulator. The first one
+> > makes the struct irq_chip part of the irq_sim structure so that we can
+> > support multiple instances at once. The second delegates the irq number
+> > mapping to the irq domain subsystem. The third patch provides a helper
+> > that will allow users to specify the type of the fired interrupt so that
+> > the configuration set by the set_type() callback can be taken into account.
+> >
+> > Next six patches improve the gpio-mockup module. Patches 4-5 have been
+> > reviewed before but missed the last merge window. Patch 6 is there
+> > because we're already breaking the debugfs interface anyway and it
+> > removes a link that has no users. Patches 7-8 are minor tweaks.
+> >
+> > Last patch introduces a rework of the debugfs interface. With this
+> > change each mockup chip is represented by a directory named after the
+> > chip's device name under <debugfs mount point>/gpio-mockup/. Each line
+> > is represented by a file using the line's offset as the name under the
+> > chip's directory. Reading from the line's file yields the current
+> > *value*, writing to the line's file changes the current "pull". Default
+> > pull for mockup lines is down. More info on that can be found in the
+> > comment added by this change to the gpio-mockup code.
+> >
+> > This is somewhat inspired by the idea of the gpio-simulator by
+> > Uwe Kleine-König except that I strongly belive that when testing
+> > certain user API code paths we should not be using the same paths for
+> > verification. That's why there's a separate interface (debugfs) sharing
+> > as little as possible with the character device that allows to check if
+> > various operations (reading and setting values, events) work as
+> > expected instead of two connected dummy chips sharing the same
+> > interface.
+> >
+> > If accepted this will of course require major modification of user-space
+> > tests in libgpiod once upstream.
+> >
+> > v1 -> v2:
+> > - instead of providing the irq_sim_get_type() helper, move the irq type
+> >   logic into the simulator and provide a helper that allows users to specify
+> >   the type of the fired interrupt
+> >
+> > Bartosz Golaszewski (9):
+> >   irq/irq_sim: don't share the irq_chip structure between simulators
+> >   irq/irq_sim: use irq domain
+> >   irq/irq_sim: provide irq_sim_fire_type()
+> >   gpio: mockup: add locking
+> >   gpio: mockup: implement get_multiple()
+> >   gpio: mockup: don't create the debugfs link named after the label
+> >   gpio: mockup: change the type of 'offset' to unsigned int
+> >   gpio: mockup: change the signature of unlocked get/set helpers
+> >   gpio: mockup: rework debugfs interface
+> >
+> >  drivers/gpio/gpio-mockup.c | 185 +++++++++++++++++++++++++++++++------
+> >  include/linux/irq_sim.h    |  17 +++-
+> >  kernel/irq/irq_sim.c       | 126 ++++++++++++++++++-------
+> >  3 files changed, 263 insertions(+), 65 deletions(-)
+> >
+> > --
+> > 2.19.1
+> >  
 > 
-> We want to support multiple instances of irq_sim. Make struct irq_chip
-> part of the irq_sim structure.
+> Marc, Thomas,
+> 
+> if there are no objections - could you please ack the three first
+> patches and let me take them through the GPIO tree? I would really
+> appreciate if we could have them in v5.1.
 
-Why? There is nothing dynamic in an irqchip structure. It is all code
-that is set in stone for the lifetime of the irqchip.
+There are certainly a number of questions that have to be answered
+before this can be merged. I can't find a rational for patch #1, and
+patch #2 looks like a set of misuse of APIs.
 
-I've sure you have a use for such indirection, so why don't you explain
-what you have in mind?
+At the very least, I'd like to see these questions answered, and the
+code in patch #2 fixed.
 
 Thanks,
 
 	M.
-
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  include/linux/irq_sim.h |  2 ++
->  kernel/irq/irq_sim.c    | 12 +++++-------
->  2 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-> index 4500d453a63e..eda132c22b57 100644
-> --- a/include/linux/irq_sim.h
-> +++ b/include/linux/irq_sim.h
-> @@ -6,6 +6,7 @@
->  #ifndef _LINUX_IRQ_SIM_H
->  #define _LINUX_IRQ_SIM_H
->  
-> +#include <linux/irq.h>
->  #include <linux/irq_work.h>
->  #include <linux/device.h>
->  
-> @@ -25,6 +26,7 @@ struct irq_sim_irq_ctx {
->  };
->  
->  struct irq_sim {
-> +	struct irq_chip		chip;
->  	struct irq_sim_work_ctx	work_ctx;
->  	int			irq_base;
->  	unsigned int		irq_count;
-> diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-> index 98a20e1594ce..b732e4e2e45b 100644
-> --- a/kernel/irq/irq_sim.c
-> +++ b/kernel/irq/irq_sim.c
-> @@ -25,12 +25,6 @@ static void irq_sim_irqunmask(struct irq_data *data)
->  	irq_ctx->enabled = true;
->  }
->  
-> -static struct irq_chip irq_sim_irqchip = {
-> -	.name		= "irq_sim",
-> -	.irq_mask	= irq_sim_irqmask,
-> -	.irq_unmask	= irq_sim_irqunmask,
-> -};
-> -
->  static void irq_sim_handle_irq(struct irq_work *work)
->  {
->  	struct irq_sim_work_ctx *work_ctx;
-> @@ -74,6 +68,10 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
->  		return sim->irq_base;
->  	}
->  
-> +	sim->chip.name = "irq_sim";
-> +	sim->chip.irq_mask = irq_sim_irqmask;
-> +	sim->chip.irq_unmask = irq_sim_irqunmask;
-> +
->  	sim->work_ctx.pending = bitmap_zalloc(num_irqs, GFP_KERNEL);
->  	if (!sim->work_ctx.pending) {
->  		kfree(sim->irqs);
-> @@ -84,7 +82,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
->  	for (i = 0; i < num_irqs; i++) {
->  		sim->irqs[i].irqnum = sim->irq_base + i;
->  		sim->irqs[i].enabled = false;
-> -		irq_set_chip(sim->irq_base + i, &irq_sim_irqchip);
-> +		irq_set_chip(sim->irq_base + i, &sim->chip);
->  		irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
->  		irq_set_handler(sim->irq_base + i, &handle_simple_irq);
->  		irq_modify_status(sim->irq_base + i,
-
-
-
 -- 
 Without deviation from the norm, progress is not possible.
