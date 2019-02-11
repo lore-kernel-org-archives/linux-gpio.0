@@ -1,45 +1,46 @@
-From: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Subject: Re: [PATCH] gpio: zynq: properly support runtime PM for GPIO used as interrupts
-Date: Mon, 11 Feb 2019 19:06:42 +0530
-Message-ID: <CAKfKVtFu0V7GVrZJ_THHAm-gAddp37iKv=JQQaWt_C+xZJEEWw@mail.gmail.com>
-References: <20190208104046.21817-1-thomas.petazzoni@bootlin.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v2 12/15] pinctrl: milbeaut: Add Milbeaut M10V pinctrl
+Date: Mon, 11 Feb 2019 23:09:39 +0900
+Message-ID: <CAK7LNAQx1Ee7a5CAhbaxKv8wiiuX_aP4ie7+_BqBSGh-dmchPQ@mail.gmail.com>
+References: <1549628897-32345-1-git-send-email-sugaya.taichi@socionext.com> <CACRpkdZCpyJDL+zy-NftXJNah2u6t75cVCDmh_L0+ZyXv7J2LA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190208104046.21817-1-thomas.petazzoni@bootlin.com>
+In-Reply-To: <CACRpkdZCpyJDL+zy-NftXJNah2u6t75cVCDmh_L0+ZyXv7J2LA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Michal Simek <michal.simek@xilinx.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sugaya Taichi <sugaya.taichi@socionext.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Takao Orito <orito.takao@socionext.com>, Kazuhiro Kasai <kasai.kazuhiro@socionext.com>, Shinji Kanematsu <kanematsu.shinji@socionext.com>, Jassi Brar <jaswinder.singh@linaro.org>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Brian Masney <masneyb@onstation.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Thomas,
+Hi Linus,
 
-Thanks for the patch.
+On Fri, Feb 8, 2019 at 10:27 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> Hi Sugaya,
+>
+> thank you for the patch!
+>
+> Since Masahiro has previously added the Uniphier pin control driver
+> I would like him to provide a review of this patch, if possible. I also
+> want to make sure that the hardware is different enough from the
+> existing Uniphier pin control so that it really needs a new
+> driver, else I suppose it should be refactored to be part of
+> the pinctrl/uniphier drivers (we can of course rename it
+> pinctrl/socionext if only naming is an issue).
 
-On Fri, Feb 8, 2019 at 4:13 PM Thomas Petazzoni
-<thomas.petazzoni@bootlin.com> wrote:
->
-> The Zynq GPIO driver currently implements runtime PM by:
->
->  - Enabling runtime PM support in ->probe() and letting the runtime PM
->    reference counter drop to zero at the end of ->probe().
->
->  - Increasing the runtime PM reference counter in ->request() and
->    decreasing it in ->free().
->
-> However, the latter is not sufficient: when a GPIO is used as an
-> interrupt, ->request() and ->free() are not called. Due to this, the
-> runtime PM counter remains to zero when the only GPIOs in use are used
-> as interrupts, causing them to simply not work.
->
-> To address this problem, this commit implement the
-> ->irq_request_resources() and ->irq_release_resources() hooks,
-> ensuring that the runtime PM counter is properly
-> incremented/decremented. Since we override the default hooks, we keep
-> the existing behavior by making sure they call gpiochip_reqres_irq() /
-> gpiochip_relres_irq() respectively.
->
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-> ---
-Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
->
+
+Milbeaut and UniPhier are totally different platforms,
+so no code is shareable.
+
+At most, they could share the directory,
+drivers/pinctrl/socionext/, if you like.
+
+I know you prefer grouping by SoC-family
+instead of by vendor-name as you stated in the
+"Moving ARM dts files" discussion.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
