@@ -1,31 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] Documenation: driver-api: fix gpio/board.rst warning
-Date: Mon, 11 Feb 2019 09:10:03 +0100
-Message-ID: <CACRpkdb+YefEc4nWifPm1pjOuDLg=DiAPOM9gaftJAc4xmDODA@mail.gmail.com>
-References: <13290065-5568-c0d0-9e7b-7a02ad71dbb0@infradead.org>
+Subject: Re: [PATCH] pinctrl: meson: meson8b: fix the sdxc_a data 1..3 pins
+Date: Mon, 11 Feb 2019 09:16:05 +0100
+Message-ID: <CACRpkdY3ygTU3UvA=Gu36S+Gte_WpR3stX5H-8Od42fJyDdSug@mail.gmail.com>
+References: <20190209010101.12210-1-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <13290065-5568-c0d0-9e7b-7a02ad71dbb0@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190209010101.12210-1-martin.blumenstingl@googlemail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 7:28 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+On Sat, Feb 9, 2019 at 2:01 AM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
 
-> From: Randy Dunlap <rdunlap@infradead.org>
+> Fix the mismatch between the "sdxc_d13_1_a" pin group definition from
+> meson8b_cbus_groups and the entry in sdxc_a_groups ("sdxc_d0_13_1_a").
+> This makes it possible to use "sdxc_d13_1_a" in device-tree files to
+> route the MMC data 1..3 pins to GPIOX_1..3.
 >
-> Fix markup warning: insert a blank line before the list.
->
-> Documentation/driver-api/gpio/board.rst:209: WARNING: Unexpected indentation.
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Cc: linux-gpio@vger.kernel.org
+> Fixes: 0fefcb6 ("pinctrl: Add support for Meson8b")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Patch applied.
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
